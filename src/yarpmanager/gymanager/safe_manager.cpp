@@ -64,118 +64,123 @@ void SafeManager::threadRelease()
 void SafeManager::run()
 {
     waitSemaphore();
+    ThreadAction local_action = action;
+    std::vector<int> local_modIds = modIds;
+    std::vector<int> local_conIds = conIds;
+    std::vector<int> local_resIds = resIds;
+    postSemaphore();
 
-    switch(action){ 
+    switch(local_action){ 
     case MRUN:{
-            for(unsigned int i=0; i<modIds.size(); i++)
-                Manager::run(modIds[i], true);
+            for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::run(local_modIds[i], true);
             break;
         }
     case MSTOP:{
-            for(unsigned int i=0; i<modIds.size(); i++)
-                Manager::stop(modIds[i], true);
+            for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::stop(local_modIds[i], true);
             break;
         }
     case MKILL:{
-            for(unsigned int i=0; i<modIds.size(); i++)
-                Manager::kill(modIds[i], true);
+            for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::kill(local_modIds[i], true);
             break;
         }
     case MCONNECT:{
-            for(unsigned int i=0; i<conIds.size(); i++)
+            for(unsigned int i=0; i<local_conIds.size(); i++)
             {
-                if(Manager::connect(conIds[i]))
+                if(Manager::connect(local_conIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
                 }
-                refreshPortStatus(conIds[i]);
+                refreshPortStatus(local_conIds[i]);
             }
             break;
         }
     case MDISCONNECT:{
-            for(unsigned int i=0; i<conIds.size(); i++)
+            for(unsigned int i=0; i<local_conIds.size(); i++)
             {
-                if(Manager::disconnect(conIds[i]))
+                if(Manager::disconnect(local_conIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
                 }
-                refreshPortStatus(conIds[i]);
+                refreshPortStatus(local_conIds[i]);
             }
             break;
         }
 
     case MREFRESH:{
-            for(unsigned int i=0; i<modIds.size(); i++)
+            for(unsigned int i=0; i<local_modIds.size(); i++)
             {
-                if(Manager::running(modIds[i]))
+                if(Manager::running(local_modIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onModStart(modIds[i]);
+                    if(eventReceiver) eventReceiver->onModStart(local_modIds[i]);
                 }
-                else if(Manager::suspended(modIds[i]))
+                else if(Manager::suspended(local_modIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onModStop(modIds[i]);
+                    if(eventReceiver) eventReceiver->onModStop(local_modIds[i]);
                 }
             }
 
-            for(unsigned int i=0; i<conIds.size(); i++)
+            for(unsigned int i=0; i<local_conIds.size(); i++)
             {
-                if(Manager::connected(conIds[i]))
+                if(Manager::connected(local_conIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
                 }
-                refreshPortStatus(conIds[i]);
+                refreshPortStatus(local_conIds[i]);
             }
 
-            for(unsigned int i=0; i<resIds.size(); i++)
+            for(unsigned int i=0; i<local_resIds.size(); i++)
             {
-                if(Manager::exist(resIds[i]))
+                if(Manager::exist(local_resIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onResAvailable(resIds[i]);
+                    if(eventReceiver) eventReceiver->onResAvailable(local_resIds[i]);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onResUnAvailable(resIds[i]);
+                    if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
                 }
             }
             break;
         }
 
     case MREFRESH_CNN:{
-            for(unsigned int i=0; i<conIds.size(); i++)
+            for(unsigned int i=0; i<local_conIds.size(); i++)
             {
-                if(Manager::connected(conIds[i]))
+                if(Manager::connected(local_conIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConConnect(local_conIds[i]);
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
+                    if(eventReceiver) eventReceiver->onConDisconnect(local_conIds[i]);
                 }
-                refreshPortStatus(conIds[i]);
+                refreshPortStatus(local_conIds[i]);
             }
         }
  
     case MATTACHSTDOUT:{
-            for(unsigned int i=0; i<modIds.size(); i++)
-                Manager::attachStdout(modIds[i]);
+            for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::attachStdout(local_modIds[i]);
             break;
         }
 
     case MDETACHSTDOUT:{
-            for(unsigned int i=0; i<modIds.size(); i++)
-                Manager::detachStdout(modIds[i]);
+            for(unsigned int i=0; i<local_modIds.size(); i++)
+                Manager::detachStdout(local_modIds[i]);
             break;
         }
 
@@ -185,29 +190,32 @@ void SafeManager::run()
 
     if(eventReceiver)
         eventReceiver->onError();
-
-    postSemaphore();
-
 }
 
 void SafeManager::safeRun(std::vector<int>& MIDs)
 {
+    waitSemaphore();
     modIds = MIDs;
     action = MRUN;
+    postSemaphore();
     yarp::os::Thread::start();
 }
 
 void SafeManager::safeStop(std::vector<int>& MIDs)
 {
+    waitSemaphore();
     modIds = MIDs;
     action = MSTOP;
+    postSemaphore();
     yarp::os::Thread::start();
 }
 
 void SafeManager::safeKill(std::vector<int>& MIDs)
 {
+    waitSemaphore();
     modIds = MIDs;
     action = MKILL;
+    postSemaphore();
     yarp::os::Thread::start();
 
 }
@@ -215,16 +223,20 @@ void SafeManager::safeKill(std::vector<int>& MIDs)
 
 void SafeManager::safeConnect(std::vector<int>& CIDs)
 {
+    waitSemaphore();
     conIds = CIDs;
     action = MCONNECT;
+    postSemaphore();
     yarp::os::Thread::start();
 }
 
 
 void SafeManager::safeDisconnect(std::vector<int>& CIDs)
 {
+    waitSemaphore();
     conIds = CIDs;
     action = MDISCONNECT;
+    postSemaphore();
     yarp::os::Thread::start();
 }
 
@@ -233,25 +245,31 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
                      std::vector<int>& CIDs, 
                      std::vector<int>& RIDs)
 {
+    waitSemaphore();
     modIds = MIDs;
     conIds = CIDs;
     resIds = RIDs;
     action = MREFRESH;
+    postSemaphore();
     yarp::os::Thread::start();
 }
 
 
 void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 {
+    waitSemaphore();
     modIds = MIDs;
     action = MATTACHSTDOUT;
+    postSemaphore();
     yarp::os::Thread::start();
 }
 
 void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 {
+    waitSemaphore();
     modIds = MIDs;
     action = MDETACHSTDOUT;
+    postSemaphore();
     yarp::os::Thread::start();
 }
 

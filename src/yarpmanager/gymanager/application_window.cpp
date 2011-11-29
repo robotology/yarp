@@ -670,9 +670,6 @@ void ApplicationWindow::setCellsEditable(void)
 
 bool ApplicationWindow::onRun(void)
 {
-    if(!manager.checkSemaphore())
-        return false;
-   
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -697,7 +694,6 @@ bool ApplicationWindow::onRun(void)
         }
     }
     setCellsEditable(); 
-    manager.postSemaphore();
     manager.safeRun(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
     return true;    
@@ -706,9 +702,6 @@ bool ApplicationWindow::onRun(void)
 
 bool ApplicationWindow::onStop(void)
 {
-    if(!manager.checkSemaphore())
-        return false;
-
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -724,7 +717,6 @@ bool ApplicationWindow::onStop(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    manager.postSemaphore();
     manager.safeStop(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
     return true;    
@@ -734,9 +726,6 @@ bool ApplicationWindow::onStop(void)
 
 bool ApplicationWindow::onKill(void)
 {
-    if(!manager.checkSemaphore())
-        return false;
-    
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -752,7 +741,6 @@ bool ApplicationWindow::onKill(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    manager.postSemaphore();
     manager.safeKill(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
     return true;    
@@ -762,9 +750,6 @@ bool ApplicationWindow::onKill(void)
 
 bool ApplicationWindow::onConnect(void) 
 { 
-    if(!manager.checkSemaphore())
-        return false;
-   
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -788,7 +773,6 @@ bool ApplicationWindow::onConnect(void)
     }
 
     setCellsEditable();
-    manager.postSemaphore();
     manager.safeConnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
     return true;    
@@ -797,9 +781,6 @@ bool ApplicationWindow::onConnect(void)
 
 bool ApplicationWindow::onDisconnect(void) 
 {
-    if(!manager.checkSemaphore())
-        return false;
-
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -815,7 +796,6 @@ bool ApplicationWindow::onDisconnect(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    manager.postSemaphore();
     manager.safeDisconnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
     return true;    
@@ -824,9 +804,6 @@ bool ApplicationWindow::onDisconnect(void)
 
 bool ApplicationWindow::onRefresh(void)
 {
-    if(!manager.checkSemaphore())
-        return false;
-    
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -873,7 +850,6 @@ bool ApplicationWindow::onRefresh(void)
         }
     }
     
-    manager.postSemaphore();
     manager.safeRefresh(m_ModuleIDs, 
                         m_ConnectionIDs, 
                         m_ResourceIDs);
@@ -885,9 +861,6 @@ bool ApplicationWindow::onRefresh(void)
 
 bool ApplicationWindow::onAttachStdout()
 { 
-    if(!manager.checkSemaphore())
-        return false;
-
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -908,7 +881,6 @@ bool ApplicationWindow::onAttachStdout()
         m_MapstdWnds[id]->show();
         m_MapstdWnds[id]->raise();
     }
-    manager.postSemaphore();
     manager.safeAttachStdout(m_ModuleIDs);
 
     return true;
@@ -916,14 +888,10 @@ bool ApplicationWindow::onAttachStdout()
 
 bool ApplicationWindow::onDetachStdout(void)
 {
-    if(!manager.checkSemaphore())
-        return false;
-
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
         sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
-    manager.postSemaphore();
     manager.safeDetachStdout(m_ModuleIDs);
     return true;
 }
