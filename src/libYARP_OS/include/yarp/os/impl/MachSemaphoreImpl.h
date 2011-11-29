@@ -13,7 +13,7 @@
 #include <mach/mach_init.h>
 #include <mach/semaphore.h>
 #include <mach/task.h>
-
+#include <yarp/os/impl/Logger.h>
 
 class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
 public:
