@@ -45,11 +45,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
                    LPSTR lpCmdLine,
                    int nCmdShow) {
 #else
+
 #include <errno.h>
 #include <sys/types.h>
 #include <signal.h>
 
-int main(int argc, char *argv[]) {
+int main(int __argc, char *__argv[]) {
 #endif
 
     yarp::os::Network yarp;
@@ -57,12 +58,6 @@ int main(int argc, char *argv[]) {
 
     yarp::os::Property cmdline;
     yarp::os::Property config;
-
-#if defined(WIN32) || defined(WIN64)
-    cmdline.fromCommand(__argc, __argv);
-#else
-    cmdline.fromCommand(argc, argv);
-#endif 
 
     if(cmdline.check("help"))
     {
@@ -112,21 +107,17 @@ int main(int argc, char *argv[]) {
 
 
 #if defined(WIN32) || defined(WIN64)
-    Gtk::Main kit(__argc, __argv);
     //setup signal handler for windows
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) onSignal);
     ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) onSignal);
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) onSignal);
 
 #else
-    Gtk::Main kit(argc, argv);
-    struct sigaction new_action, old_action;
-     
-    /* Set up the structure to specify the new action. */
+    // Set up the structure to specify the new action.
+    struct sigaction new_action, old_action;     
     new_action.sa_handler = onSignal;
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;
-
     sigaction (SIGINT, NULL, &old_action);
     if (old_action.sa_handler != SIG_IGN)
         sigaction (SIGINT, &new_action, NULL);
@@ -138,9 +129,14 @@ int main(int argc, char *argv[]) {
         sigaction (SIGTERM, &new_action, NULL);
 #endif
 
+    if(!Glib::thread_supported())
+        Glib::thread_init();
+    gdk_threads_init();
+    GDK_THREADS_ENTER();
+    Gtk::Main kit(__argc, __argv);
     MainWindow window(config);
-    //Shows the window and returns when it is closed.
     Gtk::Main::run(window);
+    GDK_THREADS_LEAVE();
     return 0;
 }
 

@@ -178,6 +178,7 @@ public:
     bool onRefresh(void);
     bool onSelectAll(void);
     bool onAttachStdout(void);
+    bool onDetachStdout(void);
     void onPModuleSelectAll() { m_refTreeModSelection->select_all(); }
     void onPConnectionSelectAll() { m_refTreeConSelection->select_all(); }
     void onPResourceSelectAll() { m_refTreeResSelection->select_all(); }
@@ -274,9 +275,6 @@ private:
     Glib::RefPtr<Gdk::Pixbuf> m_refPixUnAvailable;
 
     std::map<int, StdoutWindow*> m_MapstdWnds;
-    yarp::os::Semaphore semStdout;
-    yarp::os::Semaphore semGui;
-
 
     void createWidgets(void);
     void setupSignals(void);

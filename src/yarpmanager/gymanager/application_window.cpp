@@ -673,7 +673,6 @@ bool ApplicationWindow::onRun(void)
     if(!manager.checkSemaphore())
         return false;
    
-    semGui.wait();    
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -698,7 +697,6 @@ bool ApplicationWindow::onRun(void)
         }
     }
     setCellsEditable(); 
-    semGui.post();
     manager.postSemaphore();
     manager.safeRun(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
@@ -711,7 +709,6 @@ bool ApplicationWindow::onStop(void)
     if(!manager.checkSemaphore())
         return false;
 
-    semGui.wait();   
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -727,7 +724,6 @@ bool ApplicationWindow::onStop(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    semGui.post();
     manager.postSemaphore();
     manager.safeStop(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
@@ -741,7 +737,6 @@ bool ApplicationWindow::onKill(void)
     if(!manager.checkSemaphore())
         return false;
     
-    semGui.wait();
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -757,7 +752,6 @@ bool ApplicationWindow::onKill(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    semGui.post();
     manager.postSemaphore();
     manager.safeKill(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
@@ -771,7 +765,6 @@ bool ApplicationWindow::onConnect(void)
     if(!manager.checkSemaphore())
         return false;
    
-    semGui.wait();
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -795,7 +788,6 @@ bool ApplicationWindow::onConnect(void)
     }
 
     setCellsEditable();
-    semGui.post();
     manager.postSemaphore();
     manager.safeConnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
@@ -808,7 +800,6 @@ bool ApplicationWindow::onDisconnect(void)
     if(!manager.checkSemaphore())
         return false;
 
-    semGui.wait();
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -824,7 +815,6 @@ bool ApplicationWindow::onDisconnect(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    semGui.post();
     manager.postSemaphore();
     manager.safeDisconnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
@@ -837,7 +827,6 @@ bool ApplicationWindow::onRefresh(void)
     if(!manager.checkSemaphore())
         return false;
     
-    semGui.wait();
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -884,7 +873,6 @@ bool ApplicationWindow::onRefresh(void)
         }
     }
     
-    semGui.post();
     manager.postSemaphore();
     manager.safeRefresh(m_ModuleIDs, 
                         m_ConnectionIDs, 
@@ -897,7 +885,7 @@ bool ApplicationWindow::onRefresh(void)
 
 bool ApplicationWindow::onAttachStdout()
 { 
-    if(!semStdout.check() || !manager.checkSemaphore())
+    if(!manager.checkSemaphore())
         return false;
 
     m_ModuleIDs.clear();
@@ -915,18 +903,30 @@ bool ApplicationWindow::onAttachStdout()
             ostringstream strTitle;
             if(getModRowByID(id, &row))
                 strTitle<<getApplicationName()<<":"<<row[m_modColumns.m_col_name]<<":"<<id;
-            m_MapstdWnds[id] = new StdoutWindow(m_pParent, id, strTitle.str().c_str());
+            m_MapstdWnds[id] = new StdoutWindow(this, id, strTitle.str().c_str());
         }
         m_MapstdWnds[id]->show();
         m_MapstdWnds[id]->raise();
     }
-    semStdout.post();
     manager.postSemaphore();
     manager.safeAttachStdout(m_ModuleIDs);
 
     return true;
 }
 
+bool ApplicationWindow::onDetachStdout(void)
+{
+    if(!manager.checkSemaphore())
+        return false;
+
+    m_ModuleIDs.clear();
+    m_refTreeModSelection = m_TreeModView.get_selection();
+    m_refTreeModSelection->selected_foreach_iter(
+        sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
+    manager.postSemaphore();
+    manager.safeDetachStdout(m_ModuleIDs);
+    return true;
+}
 
 void ApplicationWindow::onTabCloseRequest() 
 { 
@@ -957,14 +957,14 @@ bool ApplicationWindow::onClose(void)
     ostringstream msg;
     msg<<"Closing "<<getApplicationName()<<"!";
     Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
-    dialog.set_secondary_text( "Running modules will be killed on close. Are you sure?");
+    dialog.set_secondary_text("You have some running module. After closing the application window you might not be able to recover them. Are you sure?");
 
     if(dialog.run() != Gtk::RESPONSE_YES)
         return false;
 
     // killing all application
-    manager.kill();
-    yarp::os::Time::delay(2);
+    //manager.kill();
+    //yarp::os::Time::delay(2);
     releaseApplication();
     return true;
 } 
@@ -982,7 +982,7 @@ bool ApplicationWindow::onSelectAll(void)
 
 void ApplicationWindow::onModStart(int which) 
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(getModRowByID(which, &row))
     {
@@ -991,13 +991,13 @@ void ApplicationWindow::onModStart(int which)
         row.set_value(0, m_refPixRunning);
     }
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 
 void ApplicationWindow::onModStop(int which) 
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(getModRowByID(which, &row))
     {
@@ -1007,12 +1007,12 @@ void ApplicationWindow::onModStop(int which)
     }
     setCellsEditable();
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 void ApplicationWindow::onConConnect(int which) 
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(getConRowByID(which, &row))
     {
@@ -1021,13 +1021,13 @@ void ApplicationWindow::onConConnect(int which)
         row.set_value(0, m_refPixConnected);
     }
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 
 void ApplicationWindow::onConDisconnect(int which) 
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(getConRowByID(which, &row))
     {
@@ -1037,13 +1037,13 @@ void ApplicationWindow::onConDisconnect(int which)
     }
     setCellsEditable();
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 
 void ApplicationWindow::onConAvailable(int from, int to)
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(from >= 0)
     {
@@ -1057,13 +1057,13 @@ void ApplicationWindow::onConAvailable(int from, int to)
             row[m_conColumns.m_col_to_color] = Gdk::Color("#008C00");
     }
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 
 void ApplicationWindow::onConUnAvailable(int from, int to)
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(from >= 0)
     {
@@ -1077,13 +1077,13 @@ void ApplicationWindow::onConUnAvailable(int from, int to)
             row[m_conColumns.m_col_to_color] = Gdk::Color("#BF0303");
     }
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 
 void ApplicationWindow::onResAvailable(int which)
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(getResRowByID(which, &row))
     {
@@ -1093,12 +1093,12 @@ void ApplicationWindow::onResAvailable(int which)
     }
     setCellsEditable();
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 void ApplicationWindow::onResUnAvailable(int which) 
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
     if(getResRowByID(which, &row))
     {
@@ -1108,36 +1108,30 @@ void ApplicationWindow::onResUnAvailable(int which)
     }
     setCellsEditable();
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 void ApplicationWindow::onError(void) 
 {
-    semGui.wait();
+    GDK_THREADS_ENTER();
     reportErrors();
-    semGui.post();
+    GDK_THREADS_LEAVE();
 }
 
 void ApplicationWindow::onModStdout(int which, const char* msg)
 {
-    if(semStdout.check())
+    GDK_THREADS_ENTER();
+    std::map<int, StdoutWindow*>::iterator itr = m_MapstdWnds.find(which); 
+    if(itr != m_MapstdWnds.end())
     {
-        std::map<int, StdoutWindow*>::iterator itr = m_MapstdWnds.find(which); 
-        if(itr != m_MapstdWnds.end())
-        {
-            StdoutWindow* wnd = (*itr).second;
-            //wnd->getMessageList()->addMessage(msg);
-            wnd->addMessage(msg);
-        }
-        yarp::os::Time::delay(0.1);
-        semStdout.post();
+        StdoutWindow* wnd = (*itr).second;
+        wnd->addMessage(msg);
     }
+    GDK_THREADS_LEAVE();
 }
 
 void ApplicationWindow::releaseApplication(void)
 {
-
-    semStdout.wait();
     std::map<int, StdoutWindow*>::iterator itr; 
     for(itr=m_MapstdWnds.begin(); itr!=m_MapstdWnds.end(); itr++)
     {
@@ -1145,7 +1139,6 @@ void ApplicationWindow::releaseApplication(void)
         delete (*itr).second;
     }
     m_MapstdWnds.clear();
-    semStdout.post();
     
     m_refPixSuspended.reset();
     m_refPixRunning.reset();

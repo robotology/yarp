@@ -369,7 +369,7 @@ void LocalBroker::run()
                     strmsg += string(buff);
                 if(eventSink && strmsg.size())           
                     eventSink->onBrokerStdout(strmsg.c_str());
-                yarp::os::Time::delay(1.0); // this prevents event flooding
+                yarp::os::Time::delay(0.5); // this prevents event flooding
            }
         }
     }
@@ -535,7 +535,8 @@ bool LocalBroker::startStdout(void)
     fd_stdout = fdopen(pipe_to_stdout[READ_FROM_PIPE], "r");
     if(!fd_stdout)
     {
-        close(pipe_to_stdout[READ_FROM_PIPE]);
+        strError = "cannot open pipe. " + string(strerror(errno));
+        //close(pipe_to_stdout[READ_FROM_PIPE]);
         return false;
     }
 
@@ -567,7 +568,7 @@ int LocalBroker::ExecuteCmd(void)
         return 0;
     }
   
-    ret = pipe(pipe_to_stdout);
+    ret = pipe2(pipe_to_stdout, O_NONBLOCK);
     if (ret!=0)
     {
         strError = string("Can't create stdout pipe because") + string(strerror(errno));

@@ -8,16 +8,15 @@
  */
 
 #ifndef _STDOUTWINDOW_H_
-#define _STDOUTWINDOW_H__H_
+#define _STDOUTWINDOW_H_
 
 #include <gtkmm.h>
 
 //class StdoutWindow;
-class StdoutWindow: public Gtk::Window
-
+class StdoutWindow: public Gtk::Window 
 {
 public:
-    StdoutWindow(Gtk::Window* parent, int ID, const char* title=NULL);
+    StdoutWindow(Gtk::Widget* parent, int ID, const char* title=NULL);
 
     virtual ~StdoutWindow();
     void addMessage(const char* msg);
@@ -25,20 +24,17 @@ public:
     void disableTimeStamp(void) { bTimeStamp = false; } 
 
 protected:
-    void onPMenuClear();
     void onPMenuSave();
+    bool on_delete_event(GdkEventAny* event);
 
 private:
     int m_ID;
     bool bTimeStamp; 
-    Gtk::Window* m_pParent;
+    Gtk::Widget* m_pParent;
     Glib::RefPtr<Gtk::TextBuffer> m_refTextBuff;
-    Glib::RefPtr<Gtk::UIManager> m_refUIManager;
-    Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
     Gtk::VBox m_VBox;
     Gtk::ScrolledWindow m_ScrollModView;
     Gtk::TextView m_textView;
-
 };
 
 
