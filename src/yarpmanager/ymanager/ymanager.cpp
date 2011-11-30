@@ -321,13 +321,13 @@ bool YConsoleManager::exit(void)
 
     string ans;
     cout<<WARNING<<"WARNING: ";
-    cout<<INFO<<"yarpmanager will terminate all of the running modules on exit. Are you sure? [No/yes] "<<ENDC;
+    cout<<INFO<<"You have some running modules. You might not be able to recover them later. Are you sure? [No/yes] "<<ENDC;
     getline(cin, ans);
     if(compareString(ans.c_str(),"yes"))
     {
         bShouldRun = false; 
-        kill();
-        reportErrors();
+        //kill();
+        //reportErrors();
         return true;
     }
     return false;
@@ -571,10 +571,14 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         ExecutablePContainer modules = getExecutables();
         ExecutablePIterator moditr;
         unsigned int id = 0;
+        bShouldRun = false;
         for(moditr=modules.begin(); moditr<modules.end(); moditr++)
         {
             if(running(id))
+            {
+                bShouldRun = true;
                 cout<<OKGREEN<<"<RUNNING> ";
+            }
             else
                 cout<<FAIL<<"<STOPPED> ";
             cout<<INFO<<"("<<id<<") ";

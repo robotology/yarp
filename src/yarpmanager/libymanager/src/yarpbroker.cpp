@@ -23,7 +23,7 @@
 #endif 
 
 using namespace yarp::os;
-
+using namespace std;
 
 YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
 {
@@ -114,7 +114,10 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
     
     ostringstream sstrID;
     sstrID<<ID;
-    strTag = strHost + strCmd + sstrID.str();
+    strTag = strHost + strCmd + strParam + strEnv + sstrID.str();
+    string::iterator itr;
+    for(itr=strTag.begin(); itr!=strTag.end(); itr++)        
+        if((*itr) == ' ') (*itr) = ':';
 
     if(!NetworkBase::checkNetwork(5.0))
     {

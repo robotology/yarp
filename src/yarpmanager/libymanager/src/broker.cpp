@@ -10,10 +10,11 @@
 
 #include "broker.h"
 
-unsigned int Broker::UNIQUEID = 0;
+//unsigned int Broker::UNIQUEID = 0;
 
 Broker::Broker()
 {
+    UNIQUEID = 0;
     eventSink = NULL;
     bWithWatchDog = false;
 }
@@ -29,6 +30,6 @@ void Broker::setEventSink(BrokerEventSink* pEventSink)
 
 unsigned int Broker::generateID(void) 
 { 
-    return Broker::UNIQUEID++; 
+    return UNIQUEID++; 
 }
 

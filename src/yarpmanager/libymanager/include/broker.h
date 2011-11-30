@@ -64,7 +64,7 @@ public:
     bool hasWatchDog(void) { return bWithWatchDog; }
   
 protected:
-    static unsigned int UNIQUEID; 
+    unsigned int UNIQUEID; 
     BrokerEventSink* eventSink;
     bool bWithWatchDog;
     
