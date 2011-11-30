@@ -568,7 +568,7 @@ int LocalBroker::ExecuteCmd(void)
         return 0;
     }
   
-    ret = pipe2(pipe_to_stdout, O_NONBLOCK);
+    ret = pipe(pipe_to_stdout);
     if (ret!=0)
     {
         strError = string("Can't create stdout pipe because") + string(strerror(errno));
