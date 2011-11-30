@@ -126,7 +126,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
     if(!exists(strHost.c_str()))
     {
         strError = szhost;
-        strError += " dose not exist. check yarprun is running as server.";
+        strError += " does not exist. check yarprun is running as server.";
         semParam.post();
         return false;       
     }
