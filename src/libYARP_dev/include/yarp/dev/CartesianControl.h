@@ -24,7 +24,10 @@ namespace yarp {
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for a cartesian controller.
+ * Interface for a cartesian controller. 
+ *  
+ * Please read carefully the <a 
+ * href="http://eris.liralab.it/iCub/main/dox/html/icub_cartesian_interface.html">documentation</a>. 
  */
 class yarp::dev::ICartesianControl
 {

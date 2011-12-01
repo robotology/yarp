@@ -25,7 +25,10 @@ namespace yarp {
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for a gaze controller.
+ * Interface for a gaze controller. 
+ *  
+ * Please read carefully the <a 
+ * href="http://eris.liralab.it/iCub/main/dox/html/icub_gaze_interface.html">documentation</a>.
  */
 class yarp::dev::IGazeControl
 {
