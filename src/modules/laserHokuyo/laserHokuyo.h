@@ -35,6 +35,7 @@ protected:
    
     yarp::os::Semaphore mutex;
 
+    bool fake;
     int cardId;
 	int period;
     int sensorsNum;
@@ -42,7 +43,8 @@ protected:
 	int end_position;
 	int error_codes;
     int internal_status;
-	enum laser_mode_type {GD_MODE=1, MD_MODE=0};
+    enum units_enum {UNITS_M =0, UNITS_MM, UNITS_INCH, UNITS_FEET} measurement_units;
+	enum laser_mode_type {FAKE_MODE=2, GD_MODE=1, MD_MODE=0};
 	enum error_code
 	{
 		STATUS_ACQUISITION_COMPLETE =1,

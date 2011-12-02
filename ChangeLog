@@ -1,3 +1,10 @@
+2011-12-02  Marco Randazzo <marco.randazzo@iit.it>
+
+    * src/modules/laserHokuyo.cpp
+	* src/modules/laserHokuyo.h
+	Added the new option 'fake' to test the module without any attached laser sensor.
+	Added the new option 'Measurement_Units'. it can be set M/MM/INCH/FEET. (default: M)
+    
 2011-11-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h,
