@@ -201,6 +201,21 @@ public:
     }
 };
 
+class ServiceUser : public Thread {
+public:
+    Port p;
+
+    ServiceUser(const char *name) {
+        p.open(name);
+    }
+
+    virtual void run() {
+        Bottle cmd, reply;
+        cmd.fromString("[add] 1 2");
+        p.write(cmd,reply);
+    }
+};
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
@@ -1060,6 +1075,27 @@ public:
     }
 
 
+    void testInterruptReply() {
+        report(0,"checking interrupt for a port with pending reply...");
+        PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
+
+        ServiceUser output("/out");
+        Port input;
+        input.open("/in");
+        Network::connect(output.p.getName(),input.getName());
+        output.start();
+        Bottle cmd, reply;
+        input.read(cmd,true);
+        reply.addInt(cmd.get(1).asInt()+cmd.get(2).asInt());
+        checkEqual(cmd.toString().c_str(),"[add] 1 2","cmd received ok");
+        input.interrupt();
+        input.reply(reply);
+        input.close();
+        output.stop();
+        output.p.close();
+        report(0,"successfully closed");        
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1100,6 +1136,8 @@ public:
         testReportsWithRpcClient();
 
         testInterrupt();
+
+        testInterruptReply();
 
         NetworkBase::setLocalMode(false);
     }

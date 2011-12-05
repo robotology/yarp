@@ -141,12 +141,14 @@ public:
                 return false;
                 //throw IOException("Port::read shutting down");
             }
-            stateMutex.wait();
-            ConnectionWriter *writer = reader.getWriter();
-            if (writer!=NULL) {
-                result = readResult = writeDelegate->write(*writer);
+            if (writeDelegate!=NULL) {
+                stateMutex.wait();
+                ConnectionWriter *writer = reader.getWriter();
+                if (writer!=NULL) {
+                    result = readResult = writeDelegate->write(*writer);
+                }
+                stateMutex.post();
             }
-            stateMutex.post();
             if (dropDue) {
                 reader.requestDrop();
             }
@@ -163,7 +165,7 @@ public:
         // decided not to.
         if (replyDue) {
             Bottle emptyMessage;
-            reply(emptyMessage,false);
+            reply(emptyMessage,false,false);
             replyDue = false;
             dropDue = false;
         }
@@ -189,11 +191,11 @@ public:
         return result;
     }
 
-    bool reply(PortWriter& writer, bool drop) {
-
+    bool reply(PortWriter& writer, bool drop, bool /*interrupted*/) {
+        // send reply even if interrupt has happened in interim
+        if (!replyDue) return false;
         replyDue = false;
         dropDue = drop;
-
         writeDelegate = &writer;
         consume.post();
         produce.wait();
@@ -503,14 +505,12 @@ bool Port::read(PortReader& reader, bool willReply) {
 
 bool Port::reply(PortWriter& writer) {
     PortCoreAdapter& core = HELPER(implementation);
-    if (core.isInterrupted()) return false;
-    return core.reply(writer,false);
+    return core.reply(writer,false,core.isInterrupted());
 }
 
 bool Port::replyAndDrop(PortWriter& writer) {
     PortCoreAdapter& core = HELPER(implementation);
-    if (core.isInterrupted()) return false;
-    return core.reply(writer,true);
+    return core.reply(writer,true,core.isInterrupted());
 }
 
 /**

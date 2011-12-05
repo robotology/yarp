@@ -1,3 +1,10 @@
+2011-12-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Port.cpp: if port is interrupted between
+	a read-with-reply and the corresponding reply, go ahead and
+	send that reply (since the other side will be expecting it)
+	[thanks Carlo Ciliberto]
+
 2011-12-02  Marco Randazzo <marco.randazzo@iit.it>
 
     * src/modules/laserHokuyo.cpp
