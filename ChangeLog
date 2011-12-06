@@ -1,3 +1,9 @@
+2011-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: when closing
+	a port, better interrupt any RPC send-reply currently in operation.
+	[thanks Carlo Ciliberto]
+
 2011-12-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Port.cpp: if port is interrupted between

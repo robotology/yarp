@@ -277,20 +277,6 @@ void PortCore::interrupt() {
 
 
 void PortCore::closeMain() {
-    /*
-    if (manual) {
-        for (unsigned int i=0; i<units.size(); i++) {
-            PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
-                unit->setDoomed();
-            }
-        }
-        cleanUnits();
-        manual = false;
-        return;
-    }
-    */
-
     stateMutex.wait();
     if (finishing||!running) {
         stateMutex.post();
@@ -315,6 +301,7 @@ void PortCore::closeMain() {
             if (unit!=NULL) {
                 if (unit->isInput()) {
                     if (!unit->isDoomed()) {
+                        unit->interrupt();
                         Route r = unit->getRoute();
                         String s = r.getFromName();
                         if (s.length()>=1) {
@@ -503,12 +490,17 @@ void PortCore::reapUnits() {
     cleanUnits();
 }
 
-void PortCore::cleanUnits() {
+void PortCore::cleanUnits(bool blocking) {
+    if (blocking) {
+        stateMutex.wait();
+    } else {
+        blocking = stateMutex.check();
+        if (!blocking) return;
+    }
     int updatedInputCount = 0;
     int updatedOutputCount = 0;
     int updatedDataOutputCount = 0;
     YARP_DEBUG(log,"/ routine check of connections to this port begins");
-    stateMutex.wait();
     if (!finished) {
     
         for (unsigned int i=0; i<units.size(); i++) {
@@ -555,10 +547,12 @@ void PortCore::cleanUnits() {
         }
         //YMSG(("cleanUnits: there are now %d units\n", units.size()));
     }
-    inputCount = updatedInputCount;
-    outputCount = updatedOutputCount;
     dataOutputCount = updatedDataOutputCount;
     stateMutex.post();
+    packetMutex.wait();
+    inputCount = updatedInputCount;
+    outputCount = updatedOutputCount;
+    packetMutex.post();
     YARP_DEBUG(log,"\\ routine check of connections to this port ends");
 }
 
@@ -1099,8 +1093,10 @@ bool PortCore::send(PortWriter& writer, PortReader *reader,
 
 bool PortCore::sendHelper(PortWriter& writer, 
                           int mode, PortReader *reader, PortWriter *callback) {
+    if (interrupted||finishing) return false;
 
     bool all_ok = true;
+    bool gotReply = false;
     int logCount = 0;
     String envelopeString = envelope;
 
@@ -1144,11 +1140,14 @@ bool PortCore::sendHelper(PortWriter& writer,
                         packet->inc();
                         packetMutex.post();
                         YMSG(("------- -- presend\n"));
+                        bool gotReplyOne = false;
                         void *out = unit->send(writer,reader,
                                                (callback!=NULL)?callback:(&writer),
                                                (void *)packet,
                                                envelopeString,
-                                               waiter,waitBeforeSend);
+                                               waiter,waitBeforeSend,
+                                               &gotReplyOne);
+                        gotReply = gotReply||gotReplyOne;
                         YMSG(("------- -- send\n"));
                         if (out!=NULL) {
                             packetMutex.wait();
@@ -1182,6 +1181,12 @@ bool PortCore::sendHelper(PortWriter& writer,
     stateMutex.post();
     YMSG(("------- send out real\n"));
 
+    if (waitAfterSend) {
+        if (reader) {
+            all_ok = all_ok && gotReply;
+        }
+    }
+
     return all_ok;
 }
 
@@ -1212,18 +1217,18 @@ bool PortCore::isWriting() {
 
 
 int PortCore::getInputCount() {
-    cleanUnits();
-    stateMutex.wait();
+    cleanUnits(false);
+    packetMutex.wait();
     int result = inputCount;
-    stateMutex.post();
+    packetMutex.post();
     return result;
 }
 
 int PortCore::getOutputCount() {
-    cleanUnits();
-    stateMutex.wait();
+    cleanUnits(false);
+    packetMutex.wait();
     int result = outputCount;
-    stateMutex.post();
+    packetMutex.post();
     return result;
 }
 

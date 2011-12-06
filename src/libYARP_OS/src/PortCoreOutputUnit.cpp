@@ -230,7 +230,8 @@ Route PortCoreOutputUnit::getRoute() {
     return PortCoreUnit::getRoute();
 }
 
-void PortCoreOutputUnit::sendHelper() {
+bool PortCoreOutputUnit::sendHelper() {
+    bool replied = false;
     bool done = false;
     if (op!=NULL) {
 
@@ -300,7 +301,7 @@ void PortCoreOutputUnit::sendHelper() {
 
         if (!done) {
             if (op->isActive()) {
-                op->write(buf);
+                replied = op->write(buf);
             }
             if (!op->isOk()) {
                 done = true;
@@ -318,6 +319,7 @@ void PortCoreOutputUnit::sendHelper() {
         closing = true;
         setDoomed(true);
     }
+    return replied;
 }
 
 void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
@@ -326,7 +328,10 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                void *tracker,
                                const String& envelopeString,
                                bool waitAfter,
-                               bool waitBefore) {
+                               bool waitBefore,
+                               bool *gotReply) {
+    bool replied = false;
+
     if (!waitBefore || !waitAfter) {
         if (running == false) {
             // we must have a thread if we're going to be skipping waits
@@ -348,7 +353,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
 
         sending = true;
         if (waitAfter==true) {
-            sendHelper();
+            replied = sendHelper();
             sending = false;
         } else {
             trackerMutex.wait();
@@ -361,6 +366,12 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
     } else {
         YARP_DEBUG(Logger::get(),
                    "skipping connection tagged as sending something");
+    }
+
+    if (waitAfter) {
+        if (gotReply!=NULL) {
+            *gotReply = replied;
+        }
     }
 
     // return tracker that we no longer need

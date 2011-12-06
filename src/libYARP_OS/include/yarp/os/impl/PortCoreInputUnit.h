@@ -81,6 +81,7 @@ public:
 
     virtual Route getRoute();
 
+    virtual bool interrupt();
 
 private:
     InputProtocol *ip;

@@ -81,7 +81,8 @@ public:
                        void *tracker,
                        const String& envelope,
                        bool waitAfter,
-                       bool waitBefore);
+                       bool waitBefore,
+                       bool *gotReply);
 
     virtual void *takeTracker();
 
@@ -98,7 +99,7 @@ private:
     void *cachedTracker;
     String cachedEnvelope;
 
-    void sendHelper();
+    bool sendHelper();
 
     void closeBasic();
 

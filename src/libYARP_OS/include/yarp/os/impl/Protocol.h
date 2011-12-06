@@ -417,7 +417,8 @@ public:
     }
 
 
-    virtual void write(SizedWriter& writer) {
+    virtual bool write(SizedWriter& writer) {
+        bool replied = false;
         this->writer = &writer;
         if (isActive()) {
             YARP_ASSERT(delegate!=NULL);
@@ -431,11 +432,12 @@ public:
                 }
                 reader.reset(is(),&getStreams(), getRoute(),
                              messageLen,delegate->isTextMode());
-                reply->read(reader);
+                replied = reply->read(reader);
             }
             expectAck(); //MOVE ack to after reply, if present
         }
         this->writer = NULL;
+        return replied;
     }
 
     void reply(SizedWriter& writer) {

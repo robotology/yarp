@@ -360,7 +360,7 @@ private:
     void closeUnits();
 
     // called anytime, garbage collects terminated units
-    void cleanUnits();
+    void cleanUnits(bool blocking = true);
 
     // only called by the manager
     void reapUnits();

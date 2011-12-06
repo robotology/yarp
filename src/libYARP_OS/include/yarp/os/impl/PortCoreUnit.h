@@ -70,7 +70,8 @@ public:
                        void *tracker,
                        const String& envelope,                       
                        bool waitAfter = true,
-                       bool waitBefore = true) {
+                       bool waitBefore = true,
+                       bool *gotReply = NULL) {
         // do nothing
         return tracker;
     }
@@ -80,6 +81,10 @@ public:
     }
 
     virtual bool isBusy() {
+        return false;
+    }
+
+    virtual bool interrupt() {
         return false;
     }
 

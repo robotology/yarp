@@ -442,6 +442,19 @@ void PortCoreInputUnit::runSimulation() {
 }
 
 
+bool PortCoreInputUnit::interrupt() {
+    // give a kick (unfortunately unavoidable)
+    access.wait();
+    if (!closing) {
+        if (ip!=NULL) {
+            ip->interrupt();
+        }
+        closing = true;
+    }
+    access.post();
+    return true;
+}
+
 void PortCoreInputUnit::closeMain() {
     access.wait();
     Route r = getRoute();
@@ -452,20 +465,8 @@ void PortCoreInputUnit::closeMain() {
     YARP_DEBUG(log,"PortCoreInputUnit closing");
 
     if (running) {
-        // give a kick (unfortunately unavoidable)
-        access.wait();
-        if (ip!=NULL) {
-            YARP_DEBUG(log,"PortCoreInputUnit interrupting");
-            //while (running) {
-            //YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupt pulse");
-            ip->interrupt();
-            //  Time::delay(0.01);
-            //}
-            YARP_DEBUG(log,"PortCoreInputUnit interrupted");
-        }
-        closing = true;
-        access.post();
         YARP_DEBUG(log,"PortCoreInputUnit joining");
+        interrupt();
         join();
         YARP_DEBUG(log,"PortCoreInputUnit joined");
     }

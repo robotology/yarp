@@ -51,7 +51,7 @@ public:
 
     virtual bool checkStreams() = 0;
 
-    virtual void write(SizedWriter& writer) = 0;
+    virtual bool write(SizedWriter& writer) = 0;
 
     virtual void interrupt() = 0;
 
