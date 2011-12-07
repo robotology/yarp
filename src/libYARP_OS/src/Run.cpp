@@ -27,12 +27,12 @@
 #include <signal.h>
 #endif
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     HANDLE  yarp::os::Run::hZombieHunter=NULL;
     HANDLE* yarp::os::Run::aHandlesVector=NULL;
 #endif
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 inline yarp::os::ConstString lastError2String()
 {
     int error=GetLastError();
@@ -241,7 +241,7 @@ int yarp::os::Run::Server()
 	signal(SIGINT,sigint_handler);
 	signal(SIGTERM,sigint_handler);
 
-	#if !defined(WIN32) && !defined(WIN64)
+	#if !defined(WIN32)
 	signal(SIGCHLD,sigchild_handler); 
 	#endif
 
@@ -395,7 +395,7 @@ int yarp::os::Run::Server()
 	Run::mStdioVector.Killall(SIGTERM);
 	Run::mProcessVector.Killall(SIGTERM);
 	
-	#if defined(WIN32) || defined(WIN64)
+	#if defined(WIN32)
 	Run::mProcessVector.mutex.wait();
 	if (yarp::os::Run::hZombieHunter) TerminateThread(yarp::os::Run::hZombieHunter,0);
 	Run::mProcessVector.mutex.post();
@@ -556,7 +556,7 @@ void yarp::os::Run::Help(const char *msg)
 
 // WINDOWS
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 
 // CMD SERVER
 yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)

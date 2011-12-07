@@ -296,7 +296,7 @@ static void handler (int sig) {
 // This wait is required otherwise windows shuts down the process after we return from
 // the signal handler. We could not find better way to handle clean remote shutdown of 
 // processes in windows.
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 static void handler_sigbreak(int sig)
 {
 	raise(SIGINT);
@@ -314,7 +314,7 @@ int RFModule::runModule() {
         ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
     }
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) handler_sigbreak);
 #endif
 

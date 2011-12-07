@@ -159,7 +159,7 @@ public:
 	static YarpRunInfoVector mProcessVector;
     static YarpRunInfoVector mStdioVector;
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     static HANDLE  hZombieHunter;
     static HANDLE* aHandlesVector;
 #else

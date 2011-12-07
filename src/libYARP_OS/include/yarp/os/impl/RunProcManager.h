@@ -14,7 +14,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     typedef DWORD PID;
     typedef HANDLE FDESC;
 #else
@@ -39,7 +39,7 @@ public:
 
     virtual void Clean(){ mPidCmd=0; }
     
-    #if !defined(WIN32) && !defined(WIN64)
+    #if !defined(WIN32)
     virtual bool waitPid()
     {
         return waitpid(mPidCmd,0,WNOHANG)==mPidCmd;
@@ -69,7 +69,7 @@ public:
 	int Signal(yarp::os::ConstString& alias,int signum);
 	int Killall(int signum);
 	
-	#if defined(WIN32) || defined(WIN64) 
+	#if defined(WIN32)
 	void GetHandles(HANDLE* &lpHandles,DWORD &nCount);
 	#else
 	void CleanZombies();
@@ -111,7 +111,7 @@ public:
 	
 	virtual void Clean();
 
-    #if !defined(WIN32) && !defined(WIN64)
+    #if !defined(WIN32)
 	virtual bool waitPid();
     #endif
 

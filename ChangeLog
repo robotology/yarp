@@ -1,3 +1,16 @@
+2011-12-07 Lorenzo Natale <lorenzo.natale@iit.it>
+
+	* src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
+	* src/libYARP_OS/include/yarp/os/Run.h
+	* src/libYARP_OS/src/Companion.cpp
+	* src/libYARP_OS/src/RFModule.cpp
+	* src/libYARP_OS/src/Run.cpp
+	* src/libYARP_OS/src/RunProcManager.cpp
+	* src/libYARP_OS/src/RunReadWrite.cpp
+	
+	Redirection to stdio uses plain strings to improve formatting. 
+    Remove redundant check if WIN32 || WIN64 since WIN64 => WIN32	
+	
 2011-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: when closing

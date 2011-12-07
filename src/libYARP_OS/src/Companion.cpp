@@ -96,7 +96,7 @@ static void companion_sigterm_handler(int sig) {
     companion_sigint_handler(sig);
 }
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 static void companion_sigbreak_handler()
 {
     raise(SIGINT);
@@ -112,7 +112,7 @@ static void companion_install_handler() {
 	signal(SIGINT,companion_sigint_handler);
 	signal(SIGTERM,companion_sigterm_handler);
 
-    #if defined(WIN32) || defined(WIN64)
+    #if defined(WIN32)
     signal(SIGBREAK, (ACE_SignalHandler) companion_sigbreak_handler);
     #else
     signal(SIGHUP, (ACE_SignalHandler) companion_sighup_handler);

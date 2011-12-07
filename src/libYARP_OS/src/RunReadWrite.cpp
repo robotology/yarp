@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #endif
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 static void sigbreakHandler(int sig)
 {
     raise(SIGINT);
@@ -41,7 +41,7 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
     signal(SIGINT,wSigintHandler);
     signal(SIGTERM,wSigintHandler);
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     signal(SIGBREAK,(ACE_SignalHandler)sigbreakHandler);
 #else
     signal(SIGHUP,SIG_IGN);
@@ -66,7 +66,8 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
             if (txt[0]>=32 || txt[0]=='\n' || txt[0]=='\r' || txt[0]=='\t' || txt[0]=='\0') 
             {
                 yarp::os::Bottle bot;
-                bot.fromString(txt.c_str());
+                bot.addString(txt.c_str());
+                //bot.fromString(txt.c_str());
                 mWPort.write(bot);
             }
             else
@@ -103,6 +104,7 @@ std::string RunWrite::getStdin()
         char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
         if (result!=NULL) 
         {
+#if 0
             for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
 
             {
@@ -113,7 +115,9 @@ std::string RunWrite::getStdin()
                     break;
                 }
             }
+#endif
             txt+=buf;
+            done=true;
         } 
         else 
         {
@@ -142,7 +146,7 @@ int RunRead::loop(yarp::os::ConstString& uuid)
     signal(SIGINT,rSigintHandler);
     signal(SIGTERM,rSigintHandler);
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     signal(SIGBREAK,(ACE_SignalHandler)sigbreakHandler);
 #else
     signal(SIGHUP,SIG_IGN);
@@ -176,17 +180,25 @@ bool RunRead::read(yarp::os::ConnectionReader& reader)
 
     if (bot.read(reader))
     {
+        if (bot.size()==1)
+        {
+            ACE_OS::printf("%s",bot.get(0).asString().c_str());
+            ACE_OS::fflush(stdout);
+            return true;
+        }
+
         if (bot.size()==2 && bot.get(0).isInt() && bot.get(1).isString()) 
         {
             if (bot.get(0).asInt()!=1) 
             {
-                ACE_OS::printf("%s\n",bot.get(1).asString().c_str());
+                ACE_OS::printf("%s",bot.get(1).asString().c_str());
                 ACE_OS::fflush(stdout);
             }
         } 
         else
         {
-            ACE_OS::printf("%s\n", bot.toString().c_str());
+            //ACE_OS::printf("%s\n", bot.toString().c_str());
+            ACE_OS::printf("%s",bot.get(0).asString().c_str());
             ACE_OS::fflush(stdout);
         }
         return true;
@@ -206,6 +218,7 @@ std::string RunRead::getStdin()
         char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
         if (result!=NULL) 
         {
+#if 0
             for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
 
             {
@@ -216,7 +229,9 @@ std::string RunRead::getStdin()
                     break;
                 }
             }
+#endif
             txt+=buf;
+            done=true;
         } 
         else 
         {
@@ -239,7 +254,7 @@ static void rSigintHandler(int sig)
 
 static void rwSigintHandler(int sig);
 
-#if !defined(WIN32) && !defined(WIN64)
+#if !defined(WIN32)
 static void sighupHandler(int sig);
 #endif
 
@@ -250,7 +265,7 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
     signal(SIGINT,rwSigintHandler);
     signal(SIGTERM,rwSigintHandler);
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     signal(SIGBREAK,(ACE_SignalHandler)sigbreakHandler);
 #else
     signal(SIGHUP,sighupHandler);
@@ -287,7 +302,8 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
             if (txt[0]>=32 || txt[0]=='\n' || txt[0]=='\r' || txt[0]=='\0' || txt[0]=='\t') 
             {
                 yarp::os::Bottle bot;
-                bot.fromString(txt.c_str());
+                //bot.fromString(txt.c_str());
+                bot.addString(txt.c_str());
                 mWPort.write(bot);
             }
             else
@@ -325,7 +341,7 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
 
 void RunReadWrite::close()
 {
-#if !defined(WIN32) && !defined(WIN64)
+#if !defined(WIN32)
     mDone.wait();        
     if (!mClosed) 
     {
@@ -349,7 +365,7 @@ void RunReadWrite::close()
         system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_i").c_str());
         system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_o").c_str());
 
-#if !defined(WIN32) && !defined(WIN64)
+#if !defined(WIN32)
     }
     mDone.post();
 #endif
@@ -365,19 +381,27 @@ bool RunReadWrite::read(yarp::os::ConnectionReader& reader)
 
     if (bot.read(reader))
     {
+        if (bot.size()==1)
+        {
+            ACE_OS::printf("%s",bot.get(0).asString().c_str());
+            ACE_OS::fflush(stdout);
+            return true;
+        }
+
         if (bot.size()==2 && bot.get(0).isInt() && bot.get(1).isString()) 
         {
             if (bot.get(0).asInt()!=1) 
-            {
-                ACE_OS::printf("%s\n",bot.get(1).asString().c_str());
-                ACE_OS::fflush(stdout);
-            }
-        } 
+                {
+                    ACE_OS::printf("%s",bot.get(1).asString().c_str());
+                    ACE_OS::fflush(stdout);
+                }
+        }
         else
         {
             ACE_OS::printf("%s\n", bot.toString().c_str());
             ACE_OS::fflush(stdout);
         }
+
         return true;
     }
 
@@ -395,8 +419,8 @@ std::string RunReadWrite::getStdin()
         char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
         if (result!=NULL) 
         {
+#if 0
             for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
-
             {
                 if (buf[i]=='\n') 
                 {
@@ -405,6 +429,7 @@ std::string RunReadWrite::getStdin()
                     break;
                 }
             }
+#endif
             txt+=buf;
         } 
         else 
