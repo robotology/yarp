@@ -116,8 +116,9 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
     sstrID<<ID;
     strTag = strHost + strCmd + strParam + strEnv + sstrID.str();
     string::iterator itr;
-    for(itr=strTag.begin(); itr!=strTag.end(); itr++)        
-        if((*itr) == ' ') (*itr) = ':';
+    for(itr=strTag.begin(); itr!=strTag.end(); itr++)
+        if(((*itr) == ' ') || ((*itr) == '/') ) 
+            (*itr) = ':';
 
     if(!NetworkBase::checkNetwork(5.0))
     {
@@ -319,6 +320,7 @@ Property& YarpBroker::runProperty(void)
         command.put("stdio", strStdio.c_str());
     if(!strEnv.empty())
         command.put("env", strEnv.c_str());
+    //command.put("hold", "hold");
     return command;
 }
 
