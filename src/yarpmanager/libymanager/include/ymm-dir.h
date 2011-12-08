@@ -18,7 +18,7 @@
 
 //#include <ace/OS.h>
     
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 
     #define PATH_SEPERATOR      "\\"
 

@@ -7,7 +7,7 @@
  *
  */
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
 #endif
@@ -36,7 +36,7 @@ Options:\n\
 void onSignal(int signum);
 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 #include <yarp/os/impl/PlatformSignal.h>
 #include <windows.h>
 
@@ -106,7 +106,7 @@ int main(int __argc, char *__argv[]) {
         config.put("auto_dependency", "no");
 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     //setup signal handler for windows
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) onSignal);
     ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) onSignal);

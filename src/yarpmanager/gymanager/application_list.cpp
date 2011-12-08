@@ -7,7 +7,7 @@
  *
  */
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
 #endif
@@ -152,7 +152,7 @@ bool ApplicationList::addApplication(Application* app)
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
     descrow[m_appColumns.m_col_name] = fname;
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
         //check it
 #else
     descrow.set_value(0,Gtk::IconTheme::get_default()->load_icon("document", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));

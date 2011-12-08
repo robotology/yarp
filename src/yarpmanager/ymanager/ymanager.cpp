@@ -17,7 +17,7 @@
 using namespace yarp::os;
 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     #include <yarp/os/impl/PlatformSignal.h>
     #define HEADER      ""
     #define OKBLUE      ""
@@ -80,7 +80,7 @@ Options:\n\
   --version               Show current version\n"
 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 static Manager* __pManager = NULL;
 #endif
 
@@ -91,7 +91,7 @@ static Manager* __pManager = NULL;
 YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 {
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     __pManager = (Manager*) this;
 #endif
 
@@ -202,7 +202,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 #endif
 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) YConsoleManager::onSignal);
     ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) YConsoleManager::onSignal);
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) YConsoleManager::onSignal);
@@ -236,7 +236,7 @@ YConsoleManager::~YConsoleManager()
 
 void YConsoleManager::onSignal(int signum)
 {
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     cout<<INFO<<"[force exit] yarpmanager will terminate all of the running modules on exit.";
     if( __pManager)
         __pManager->kill();
@@ -303,7 +303,7 @@ void YConsoleManager::myMain(void)
         }
     }
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     if(bShouldRun)
     {
         kill();
@@ -970,7 +970,7 @@ void YConsoleManager::updateAppNames(vector<string>* names)
 void YConsoleManager::setColorTheme(ColorTheme theme)
 {
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     // do nothing here
 #else
     switch(theme) {

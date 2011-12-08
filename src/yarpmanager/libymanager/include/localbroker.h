@@ -89,7 +89,7 @@ private:
     bool psCmd(int pid);
     bool killCmd(int pid);
     bool stopCmd(int pid);
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     // for windows
 #else    
     int waitPipe(int pipe_fd);

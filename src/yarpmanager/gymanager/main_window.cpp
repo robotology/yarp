@@ -8,7 +8,7 @@
  */
 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     #pragma warning (disable : 4250) 
     #pragma warning (disable : 4520)
 #else

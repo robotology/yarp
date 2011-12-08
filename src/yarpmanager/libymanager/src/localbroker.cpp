@@ -20,7 +20,7 @@
 #define WRITE_TO_PIPE           1
 #define READ_FROM_PIPE          0
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     #define SIGKILL 9
 #else
     #include <stdlib.h>
@@ -120,7 +120,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
     }
     */
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     // do nothing
     strError = "Local broker is currently supported only on Unix.";
     bInitialized = false;
@@ -354,7 +354,7 @@ bool LocalBroker::threadInit()
 void LocalBroker::run() 
 {
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     //windows implementaion
 #else
     while(!Thread::isStopping())
@@ -426,7 +426,7 @@ int LocalBroker::CountArgs(char *str)
 }
 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
 bool LocalBroker::startStdout(void)
 {
     //LocalStdout::Instance().registerBroker(this);

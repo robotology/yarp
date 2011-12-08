@@ -18,7 +18,7 @@
 #define KILL_TIMEOUT            10.0
 #define EVENT_THREAD_PERIOD     500 
 
-#if defined(WIN32) || defined(WIN64)
+#if defined(WIN32)
     #define SIGKILL 9
 #endif 
 
@@ -464,10 +464,10 @@ bool YarpBroker::threadInit()
 void YarpBroker::run() 
 {
     Bottle *input;
-    if( (input=stdioPort.read(false)) )
+    if( (input=stdioPort.read(false)) && eventSink)
     {   
-        if(eventSink)           
-            eventSink->onBrokerStdout(input->toString().c_str());
+        for (int i=0; i<input->size(); i++) 
+            eventSink->onBrokerStdout(input->get(i).asString().c_str());
     }
 }
 
