@@ -859,6 +859,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
+%extend yarp::sig::Image {
+  std::string tostring() const {
+    return std::string((const char *)self->getRawImage(),
+		       (size_t)self->getRawImageSize());
+  }
+
+  // no copy, make sure to keep string alive
+  void fromstring(const std::string& str, int w, int h) {
+    self->setExternal((char *)str.c_str(),w,h);
+  }
+}
+
 #endif
 
 

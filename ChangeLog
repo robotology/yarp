@@ -1,3 +1,9 @@
+2011-12-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: add ImageRgb.tostring method to python
+	wrappers, as fallback method for reading YARP images in
+	python opencv.
+
 2011-12-07 Lorenzo Natale <lorenzo.natale@iit.it>
 
 	* src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
