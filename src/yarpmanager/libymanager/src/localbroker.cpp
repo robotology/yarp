@@ -21,6 +21,7 @@
 #define READ_FROM_PIPE          0
 
 #if defined(WIN32)
+    #include<Windows.h>
     #define SIGKILL 9
 #else
     #include <stdlib.h>
@@ -35,6 +36,35 @@
 #endif 
 
 using namespace yarp::os;
+
+
+#if defined(WIN32)
+class LocalTerminateParams
+{
+public:
+    LocalTerminateParams(DWORD id) {
+        nWin = 0;
+        dwID = id;
+    }
+
+    ~LocalTerminateParams(){}
+    int nWin;
+    DWORD dwID;
+};
+
+BOOL CALLBACK LocalTerminateAppEnum(HWND hwnd, LPARAM lParam)
+{
+    LocalTerminateParams* params=(LocalTerminateParams*)lParam;
+    DWORD dwID;
+    GetWindowThreadProcessId(hwnd, &dwID);
+    if (dwID==params->dwID)
+    {
+        params->nWin++;
+        PostMessage(hwnd,WM_CLOSE,0,0);
+    }
+    return TRUE ;
+}
+#endif 
 
 LocalBroker::LocalBroker()
 {
@@ -122,9 +152,8 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
 
 #if defined(WIN32)
     // do nothing
-    strError = "Local broker is currently supported only on Unix.";
-    bInitialized = false;
-    return false;
+    bInitialized = true;
+    return true;
 #else   
     /* avoiding zombie */
     struct sigaction new_action; 
@@ -427,35 +456,139 @@ int LocalBroker::CountArgs(char *str)
 
 
 #if defined(WIN32)
+
+string LocalBroker::lastError2String()
+{
+    int error=GetLastError();
+    char buff[1024];
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,NULL,error,0,buff,1024,NULL);
+    return string(buff);
+}
+
 bool LocalBroker::startStdout(void)
 {
-    //LocalStdout::Instance().registerBroker(this);
     return false;
 }
 
 void LocalBroker::stopStdout(void)
 { 
-    //LocalStdout::Instance().unregisterBroker(this);
 }
 
 int LocalBroker::ExecuteCmd(void)
 {
-    return 0;
+    // RUN COMMAND
+    PROCESS_INFORMATION cmd_process_info;
+    ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
+    STARTUPINFO cmd_startup_info;
+    ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
+    cmd_startup_info.cb=sizeof(STARTUPINFO); 
+
+    string strCmdLine = strCmd + string(" ") + strParam; 
+
+    /*
+     * setting environment variable for child process
+     */
+    TCHAR chNewEnv[32767]; 
+
+    // Get a pointer to the env block. 
+    LPTCH chOldEnv = GetEnvironmentStrings();
+    
+    // copying parent env variables
+    LPTSTR lpOld = (LPTSTR) chOldEnv;
+    LPTSTR lpNew = (LPTSTR) chNewEnv;
+    while (*lpOld)
+    {
+        lstrcpy(lpNew, lpOld);
+        lpOld += lstrlen(lpOld) + 1;
+        lpNew += lstrlen(lpNew) + 1;
+    }
+
+    // adding new env variables
+    yarp::os::ConstString cstrEnvName;
+    if(strEnv.size())
+    {
+        lstrcpy(lpNew, (LPTCH) strEnv.c_str());
+        lpNew += lstrlen(lpNew) + 1;
+    }
+   
+    // closing env block
+    *lpNew = (TCHAR)0;   
+
+    bool bWorkdir=(strWorkdir.size()) ? true : false;
+    string strWorkdirOk = bWorkdir ? strWorkdir+string("\\") : "";
+
+    BOOL bSuccess=CreateProcess(NULL,   // command name
+                                (char*)(strWorkdirOk+strCmdLine).c_str(), // command line 
+                                NULL,          // process security attributes 
+                                NULL,          // primary thread security attributes 
+                                TRUE,          // handles are inherited 
+                                CREATE_NEW_PROCESS_GROUP, // creation flags 
+                                (LPVOID) chNewEnv, // use new environment 
+                                bWorkdir?strWorkdirOk.c_str():NULL, // working directory 
+                                &cmd_startup_info,   // STARTUPINFO pointer 
+                                &cmd_process_info);  // receives PROCESS_INFORMATION 
+
+    if (!bSuccess && bWorkdir)
+    {
+            bSuccess=CreateProcess(NULL,    // command name
+                                    (char*)(strCmdLine.c_str()), // command line 
+                                    NULL,          // process security attributes 
+                                    NULL,          // primary thread security attributes 
+                                    TRUE,          // handles are inherited 
+                                    CREATE_NEW_PROCESS_GROUP, // creation flags 
+                                    (LPVOID) chNewEnv, // use new environment 
+                                    strWorkdirOk.c_str(), // working directory 
+                                    &cmd_startup_info,   // STARTUPINFO pointer 
+                                    &cmd_process_info);  // receives PROCESS_INFORMATION 
+    }
+    
+    // deleting old environment variable
+    FreeEnvironmentStrings(chOldEnv);
+
+    if (!bSuccess)
+    { 
+        strError = string("Can't execute command because ") + lastError2String();
+        return 0;
+    }
+    
+    return cmd_process_info.dwProcessId;
 }
 
 bool LocalBroker::psCmd(int pid)
 {
-    return false;
+    HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_QUERY_INFORMATION, FALSE, pid);
+    if (hProc==NULL)
+        return false;
+    
+    DWORD status;
+    GetExitCodeProcess(hProc , &status);
+    CloseHandle(hProc);
+    return (status==STILL_ACTIVE);
 }
 
 bool LocalBroker::killCmd(int pid)
 {
-    return false;
+    HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE, FALSE, pid);
+    if (hProc==NULL)
+        return false;
+    
+    BOOL bRet = TerminateProcess(hProc, 0);
+    CloseHandle(hProc);
+    return bRet ? true : false;
 }
 
 bool LocalBroker::stopCmd(int pid)
 {
-    return false;
+    HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE, FALSE, pid);
+    if (hProc==NULL)
+        return false;
+
+    LocalTerminateParams params(pid);
+    EnumWindows((WNDENUMPROC)LocalTerminateAppEnum,(LPARAM)&params);
+    if (!params.nWin)
+        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid);
+    CloseHandle(hProc);
+    return true;    
 }
 
 #else   //for UNIX
@@ -549,7 +682,6 @@ bool LocalBroker::startStdout(void)
 
 void LocalBroker::stopStdout(void)
 { 
-    //LocalStdout::Instance().unregisterBroker(this);
     Thread::stop();
     if(fd_stdout)
         fclose(fd_stdout);

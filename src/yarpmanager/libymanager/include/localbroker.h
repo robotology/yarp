@@ -18,7 +18,6 @@
 #include <sstream>
 #include <iostream>
 
-
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/BufferedPort.h>
@@ -90,7 +89,7 @@ private:
     bool killCmd(int pid);
     bool stopCmd(int pid);
 #if defined(WIN32)
-    // for windows
+    string lastError2String();
 #else    
     int waitPipe(int pipe_fd);
     int waitPipeSignal(int pipe_fd);
@@ -106,3 +105,4 @@ private:
 //}
 
 #endif //__LOCALBROKER__
+
