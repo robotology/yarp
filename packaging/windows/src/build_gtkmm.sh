@@ -94,6 +94,21 @@ if [ "$ext" = "zip" ]; then
 		rm -rf gtkmm
 		exit 1
 	  }
+	  
+	  ## we follow instructions in gtkmm/redist/README
+	  cd gtkmm
+	  mv bin bin-backup
+	  mkdir bin
+	  cp redist/*.dll bin/
+	  
+	  cd bin
+	  rm libsigc-*.dll libglibmm-*.dll libgiomm-*.dll libcairomm-*.dll libpangomm-*.dll libatkmm-*.dll libgdkmm-*.dll libgtkmm-*.dll libxml++-*.dll libglademm-*.dll;
+
+	  cd ..
+	  cp bin-backup/*vc[0-9]0*.dll bin
+	  rm bin-backup -rf
+	  
+	  cd ..
 	fi
 	#mv $fname.zip store-$fname.zip
 	#mv $fname.exe store-$fname.exe
