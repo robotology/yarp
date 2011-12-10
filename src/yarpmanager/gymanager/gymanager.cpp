@@ -39,20 +39,22 @@ void onSignal(int signum);
 #if defined(WIN32)
 #include <yarp/os/impl/PlatformSignal.h>
 #include <windows.h>
-
+/*
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine,
                    int nCmdShow) {
+*/
+
 #else
 
 #include <errno.h>
 #include <sys/types.h>
 #include <signal.h>
-
-int main(int __argc, char *__argv[]) {
 #endif
 
+int main(int __argc, char *__argv[]) 
+{
     yarp::os::Network yarp;
     yarp.setVerbosity(-1);
 

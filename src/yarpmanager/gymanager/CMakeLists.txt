@@ -36,7 +36,8 @@ ELSE (APPLE)
 	# GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES 
 
 	IF (WIN32 AND NOT CYGWIN)
-		ADD_EXECUTABLE(gyarpmanager WIN32 ${folder_source} ${folder_header})
+        #ADD_EXECUTABLE(gyarpmanager WIN32 ${folder_source} ${folder_header})
+        ADD_EXECUTABLE(gyarpmanager ${folder_source} ${folder_header})
 		TARGET_LINK_LIBRARIES(gyarpmanager YARP_init YARP_OS YARP_manager ${GtkMM_LIBRARIES})
 	ELSE (WIN32 AND NOT CYGWIN)
 		ADD_EXECUTABLE(gyarpmanager ${folder_source} ${folder_header} )

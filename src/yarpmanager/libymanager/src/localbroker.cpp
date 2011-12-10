@@ -193,10 +193,15 @@ bool LocalBroker::stop()
     if(!bInitialized) return true;
     if(bOnlyConnector) return false;
 
-    stopStdout();
-
     strError.clear();
+#if defined(WIN32)
     stopCmd(ID);
+    stopStdout();    
+#else
+    stopStdout();
+    stopCmd(ID);
+#endif
+
     double base = Time::now();
     while(!timeout(base, STOP_TIMEOUT))
     {
@@ -216,10 +221,16 @@ bool LocalBroker::kill()
     if(!bInitialized) return true;
     if(bOnlyConnector) return false;
     
-    stopStdout();
-
     strError.clear();
-    killCmd(ID);
+
+#if defined(WIN32)
+    stopCmd(ID);
+    stopStdout();    
+#else
+    stopStdout();
+    stopCmd(ID);
+#endif
+
     double base = Time::now();
     while(!timeout(base, KILL_TIMEOUT))
     {
@@ -385,6 +396,19 @@ void LocalBroker::run()
 
 #if defined(WIN32)
     //windows implementaion
+    DWORD dwRead; 
+    CHAR buff[1024];
+    while(!Thread::isStopping())
+    {
+        BOOL bRet = ReadFile(read_from_pipe_cmd_to_stdout, 
+                             buff, 1023, &dwRead, NULL);
+        if(!bRet)
+            break;
+        buff[dwRead] = (CHAR)0;
+        if(eventSink && strlen(buff)) 
+            eventSink->onBrokerStdout(buff);
+        yarp::os::Time::delay(0.5); // this prevents event flooding        
+    }
 #else
     while(!Thread::isStopping())
     {
@@ -467,24 +491,39 @@ string LocalBroker::lastError2String()
 
 bool LocalBroker::startStdout(void)
 {
-    return false;
+    if (!CloseHandle(write_to_pipe_cmd_to_stdout))
+        return false; 
+    Thread::start();
+    return true;
 }
 
 void LocalBroker::stopStdout(void)
-{ 
+{
+    Thread::stop();
 }
 
 int LocalBroker::ExecuteCmd(void)
 {
-    // RUN COMMAND
-    PROCESS_INFORMATION cmd_process_info;
-    ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
-    STARTUPINFO cmd_startup_info;
-    ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
-    cmd_startup_info.cb=sizeof(STARTUPINFO); 
-
     string strCmdLine = strCmd + string(" ") + strParam; 
 
+    // Setting up child process and pipe for stdout 
+    SECURITY_ATTRIBUTES pipe_sec_attr; 
+    pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES); 
+    pipe_sec_attr.bInheritHandle = TRUE; 
+    pipe_sec_attr.lpSecurityDescriptor = NULL;
+    CreatePipe(&read_from_pipe_cmd_to_stdout, 
+               &write_to_pipe_cmd_to_stdout, 
+               &pipe_sec_attr, 0);
+
+    PROCESS_INFORMATION cmd_process_info;    
+    STARTUPINFO cmd_startup_info;
+    ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
+    ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
+    cmd_startup_info.cb = sizeof(STARTUPINFO); 
+    cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
+    cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
+    cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
+   
     /*
      * setting environment variable for child process
      */
@@ -544,6 +583,9 @@ int LocalBroker::ExecuteCmd(void)
     
     // deleting old environment variable
     FreeEnvironmentStrings(chOldEnv);
+
+    CloseHandle(cmd_process_info.hProcess);
+    CloseHandle(cmd_process_info.hThread);
 
     if (!bSuccess)
     { 

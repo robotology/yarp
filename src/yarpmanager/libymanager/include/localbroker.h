@@ -30,6 +30,10 @@
 
 #include "broker.h" 
 
+#if defined(WIN32)
+    #include<Windows.h>
+#endif
+
 //namespace ymm {
 
 /**
@@ -89,6 +93,8 @@ private:
     bool killCmd(int pid);
     bool stopCmd(int pid);
 #if defined(WIN32)
+    HANDLE read_from_pipe_cmd_to_stdout;    
+    HANDLE write_to_pipe_cmd_to_stdout; 
     string lastError2String();
 #else    
     int waitPipe(int pipe_fd);
