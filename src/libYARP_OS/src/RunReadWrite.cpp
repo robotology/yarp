@@ -431,6 +431,7 @@ std::string RunReadWrite::getStdin()
             }
 #endif
             txt+=buf;
+			done=true;
         } 
         else 
         {
