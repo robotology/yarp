@@ -51,6 +51,7 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
 
     if (!mWPort.open(mWPortName.c_str()))
     {
+        YARP_ERROR(yarp::os::impl::Logger::get(),"RunWrite: could not open output port\n");
         return 1;
     }
 
@@ -95,35 +96,13 @@ void RunWrite::close()
 
 std::string RunWrite::getStdin() 
 {
-    bool done=false;
     std::string txt="";
     char buf[2048];
 
-    while (!done) 
-    {
-        char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
-        if (result!=NULL) 
-        {
-#if 0
-            for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
-
-            {
-                if (buf[i]=='\n') 
-                {
-                    buf[i]='\0';
-                    done=true;
-                    break;
-                }
-            }
-#endif
-            txt+=buf;
-            done=true;
-        } 
-        else 
-        {
-            done=true;
-        }
-    }
+    char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
+    if (result!=NULL) 
+        txt+=buf;
+    
     return txt;
 }
 
@@ -157,6 +136,7 @@ int RunRead::loop(yarp::os::ConstString& uuid)
 
     if (!mRPort.open(mRPortName.c_str()))
     {
+        YARP_ERROR(yarp::os::impl::Logger::get(),"RunRead: could not open input port\n");
         return 1;
     }
 
@@ -209,35 +189,13 @@ bool RunRead::read(yarp::os::ConnectionReader& reader)
 
 std::string RunRead::getStdin() 
 {
-    bool done=false;
     std::string txt="";
     char buf[2048];
 
-    while (!done) 
-    {
-        char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
-        if (result!=NULL) 
-        {
-#if 0
-            for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
+    char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
+    if (result!=NULL) 
+          txt+=buf;
 
-            {
-                if (buf[i]=='\n') 
-                {
-                    buf[i]='\0';
-                    done=true;
-                    break;
-                }
-            }
-#endif
-            txt+=buf;
-            done=true;
-        } 
-        else 
-        {
-            done=true;
-        }
-    }
     return txt;
 }
 
@@ -279,11 +237,13 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
 
     if (!mRPort.open(mRPortName.c_str()))
     {
+        YARP_ERROR(yarp::os::impl::Logger::get(),"RunReadWrite: could not open input port\n");
         return 1;
     }
 
     if (!mWPort.open(mWPortName.c_str()))
     {
+        YARP_ERROR(yarp::os::impl::Logger::get(),"RunReadWrite: could not open output port\n");
         mRPort.close();
         yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
         return 1;
@@ -313,27 +273,6 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
         }
     }
 
-/*
-#if !defined(WIN32) && !defined(WIN64)
-    mDone.wait();        
-    if (!mClosed) 
-    {
-        mClosed=true;
-#endif            
-
-        mRPort.interrupt();
-        mRPort.close();
-        yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
-
-        mWPort.interrupt();
-        mWPort.close();
-        yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
-
-#if !defined(WIN32) && !defined(WIN64)
-    }
-    mDone.post();
-#endif
-*/
     close();
 
     return 0;
@@ -362,8 +301,16 @@ void RunReadWrite::close()
         mWPort.close();
         yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
 
-        system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_i").c_str());
-        system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_o").c_str());
+        int ret=0;
+        ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_i").c_str());
+
+        if (ret!=0)
+            YARP_LOG_ERROR("call to system returned error");
+
+        ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_o").c_str());
+
+        if (ret!=0)
+            YARP_LOG_ERROR("call to system returned error");
 
 #if !defined(WIN32)
     }
@@ -410,34 +357,13 @@ bool RunReadWrite::read(yarp::os::ConnectionReader& reader)
 
 std::string RunReadWrite::getStdin() 
 {
-    bool done=false;
     std::string txt="";
     char buf[2048];
 
-    while (!done) 
-    {
-        char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
-        if (result!=NULL) 
-        {
-#if 0
-            for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
-            {
-                if (buf[i]=='\n') 
-                {
-                    buf[i]='\0';
-                    done=true;
-                    break;
-                }
-            }
-#endif
-            txt+=buf;
-			done=true;
-        } 
-        else 
-        {
-            done=true;
-        }
-    }
+    char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
+    if (result!=NULL) 
+        txt+=buf;
+
     return txt;
 }
 
