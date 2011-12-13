@@ -40,20 +40,39 @@ fname=transfer-$BUNDLE_YARP_VERSION
 
 fname2=$fname-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
 
-mkdir -p $fname2
-cd $fname2 || exit 1
-OUT_DIR=$PWD
+#mkdir -p $fname2
+#cd $fname2 || exit 1
+#OUT_DIR=$PWD
 
+releasedir=yarp-$BUNDLE_YARP_VERSION
+mkdir -p transfer
+cd transfer
+mkdir -p $releasedir
+mkdir -p $releasedir/windows
+
+target="$site_user@$site:$site_dir/$OPT_HUMAN_PLATFORM_NAME/"
+	
 for f in `cd $YARP_CORE_PACKAGE_DIR; ls *.exe`; do
 	YARP_CORE_PACKAGE_NAME="$f"
-	target="$site_user@$site:$site_dir/$OPT_HUMAN_PLATFORM_NAME/"
-	echo "Getting package"
-	echo "  Directory: $YARP_CORE_PACKAGE_DIR"
-	echo "  File: $YARP_CORE_PACKAGE_NAME"
-	echo "Sending package"
-	echo "  Target: $target"
-	scp $YARP_CORE_PACKAGE_DIR/$YARP_CORE_PACKAGE_NAME $target || exit 1
+	cp $YARP_CORE_PACKAGE_DIR/$YARP_CORE_PACKAGE_NAME $releasedir/windows
+	echo "Copying package to local directory"
 done
+
+#now rsync to sourceforge
+target="$site_user@$site:$site_dir"
+echo "Transferring $releasedir to $target"
+rsync $releasedir $target --recursive
+
+#for f in `cd $YARP_CORE_PACKAGE_DIR; ls *.exe`; do
+#	YARP_CORE_PACKAGE_NAME="$f"
+#	target="$site_user@$site:$site_dir/$OPT_HUMAN_PLATFORM_NAME/"
+#	echo "Getting package"
+#	echo "  Directory: $YARP_CORE_PACKAGE_DIR"
+#	echo "  File: $YARP_CORE_PACKAGE_NAME"
+#	echo "Sending package"
+#	echo "  Target: $target"
+#	scp $YARP_CORE_PACKAGE_DIR/$YARP_CORE_PACKAGE_NAME $target || exit 1
+#done
 
 (
 	echo "export TRANSFER_PACKAGE_DIR='$YARP_CORE_PACKAGE_DIR'"
