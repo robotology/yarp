@@ -52,6 +52,7 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Arjan Gijsberts
   Alessandro Scalzo
   Martin Peniak
+  Carlo Ciliberto
   Arnaud Degroote
   Ze Ji
   Vadim Tikhanoff
@@ -73,7 +74,6 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Lars Schillingmann
   Francesco Nori
   Christian Wressnegger
-  Carlo Ciliberto
   Breno Carneiro Pinheiro
   Baris Akgun
   Andrew Stout
@@ -172,39 +172,63 @@ All files used in the default YARP build are compatible with the
 LGPL.  Optional modules may require use of YARP under the GPL, 
 rather than the LGPL.
 
-src/yarpmanager/libymanager/tinyxml/tinyxml.h
-  Copyright: Lee Thomason
-  CopyPolicy: BSD
-
-src/yarpmanager/libymanager/tinyxml/tinyxml.cpp
-  Copyright: Lee Thomason
-  CopyPolicy: BSD
-
-src/yarpmanager/libymanager/tinyxml/tinystr.h
-  Copyright: Lee Thomason
-  CopyPolicy: BSD
-
-src/yarpmanager/libymanager/tinyxml/tinystr.cpp
-  Copyright: Lee Thomason
-  CopyPolicy: BSD
-
-src/yarpmanager/libymanager/tinyxml/tinyxmlparser.cpp
-  Copyright: Lee Thomason
-  CopyPolicy: BSD
-
-src/yarpmanager/libymanager/tinyxml/tinyxmlerror.cpp
-  Copyright: (c) 2000-2006 Lee Thomason (www.grinninglizard.com)
-  CopyPolicy: BSD
-
 src/libYARP_sig/include/yarp/sig/IplImage.h
   Copyright: (C) 2000, Intel Corporation, all rights reserved.
   CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
+
+src/yarpserver/sqlite/sqlite3.h
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+src/yarpserver/sqlite/sqlite3.c
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+src/modules/kinect/OpenNI/README.txt
+  Copyright: (C) 2011 Duarte Aragao
+  CopyPolicy: Released under the terms of the GNU GPL 2.0
+
+src/modules/kinect/freenect/ServerKinect.h
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/KinectExample.cpp
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/KinectDeviceDriver.h
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/CMakeLists.txt
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/KinectDeviceDriver.cpp
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/vfw/vfw_extra_from_australia.h
+  Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
+  CopyPolicy: Released under the terms of the GNU GPL v2. or later
+
+src/modules/vfw/vfw_extra_from_wine.h
+  Copyright: (C) 2007 the Wine project
+  CopyPolicy: Released under the terms of the GNU GPL v2.1. or later
+
+src/modules/jrkerr/picservo.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 src/modules/jrkerr/nmccom.h
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
 src/modules/jrkerr/sio_util.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/picservo.cpp
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
@@ -216,15 +240,31 @@ src/modules/jrkerr/sio_util.h
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/jrkerr/picservo.cpp
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
+src/modules/urbtc/kernel_module/README.TXT
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
 
-src/modules/jrkerr/picservo.h
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
+src/modules/urbtc/kernel_module/urobotc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/kernel_module/urbtc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/kernel_module/urbtc.c
+  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/README.TXT
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
 
 src/modules/dimax_u2c/I2c.cpp
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/u2c_common_func.h
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: GPL
 
@@ -236,76 +276,36 @@ src/modules/dimax_u2c/i2cbridge.h
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: GPL
 
-src/modules/dimax_u2c/u2c_common_func.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
+src/yarpmanager/libymanager/tinyxml/tinyxml.h
+  Copyright: Lee Thomason
+  CopyPolicy: BSD
 
-src/modules/urbtc/README.TXT
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
+src/yarpmanager/libymanager/tinyxml/tinystr.cpp
+  Copyright: Lee Thomason
+  CopyPolicy: BSD
 
-src/modules/urbtc/kernel_module/README.TXT
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
+src/yarpmanager/libymanager/tinyxml/tinyxmlparser.cpp
+  Copyright: Lee Thomason
+  CopyPolicy: BSD
 
-src/modules/urbtc/kernel_module/urbtc.c
-  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
-  CopyPolicy: Released under the terms of the GNU GPL version 2
+src/yarpmanager/libymanager/tinyxml/tinystr.h
+  Copyright: Lee Thomason
+  CopyPolicy: BSD
 
-src/modules/urbtc/kernel_module/urobotc.h
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
+src/yarpmanager/libymanager/tinyxml/tinyxml.cpp
+  Copyright: Lee Thomason
+  CopyPolicy: BSD
 
-src/modules/urbtc/kernel_module/urbtc.h
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
+src/yarpmanager/libymanager/tinyxml/tinyxmlerror.cpp
+  Copyright: (c) 2000-2006 Lee Thomason (www.grinninglizard.com)
+  CopyPolicy: BSD
 
-src/modules/kinect/freenect/KinectDeviceDriver.h
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/freenect/CMakeLists.txt
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/freenect/ServerKinect.h
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/freenect/KinectDeviceDriver.cpp
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/freenect/KinectExample.cpp
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/OpenNI/README.txt
-  Copyright: (C) 2011 Duarte Aragao
-  CopyPolicy: Released under the terms of the GNU GPL 2.0
-
-src/modules/vfw/vfw_extra_from_australia.h
-  Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
-  CopyPolicy: Released under the terms of the GNU GPL v2. or later
-
-src/modules/vfw/vfw_extra_from_wine.h
-  Copyright: (C) 2007 the Wine project
-  CopyPolicy: Released under the terms of the GNU GPL v2.1. or later
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.cpp
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.h
-  Copyright: 2002, 2003 Chris Morley
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.h
+  Copyright: (c) 2002-2003 by Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.cpp
@@ -316,31 +316,11 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.cpp
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpc.h
-  Copyright: (c) 2002-2003 by Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.h
-  Copyright: (c) 2002-2003 by Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.h
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -348,7 +328,7 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.h
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -356,11 +336,23 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.h
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcException.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcException.h
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpc.h
+  Copyright: (c) 2002-2003 by Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -368,21 +360,49 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.cpp
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/libYARP_OS/include/yarp/os/impl/TcpStream.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/include/yarp/os/impl/TcpAcceptor.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/include/yarp/os/impl/TcpConnector.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/include/hmac/hmac_sha2.h
+  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/include/hmac/sha2.h
+  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
 
 src/libYARP_OS/src/TcpStream.cpp
   Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
   CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/src/TcpConnector.cpp
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/src/hmac_sha2.c
-  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
-  CopyPolicy: 3-clause BSD
 
 src/libYARP_OS/src/TcpAcceptor.cpp
   Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
@@ -396,50 +416,21 @@ src/libYARP_OS/src/Random.cpp
   Copyright: 1994, Everett F. Carter Jr.
   CopyPolicy: Preserve copyright notice
 
-src/libYARP_OS/include/hmac/sha2.h
-  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
-  CopyPolicy: 3-clause BSD
+src/libYARP_OS/src/TcpConnector.cpp
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
 
-src/libYARP_OS/include/hmac/hmac_sha2.h
+src/libYARP_OS/src/hmac_sha2.c
   Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
   CopyPolicy: 3-clause BSD
 
-src/libYARP_OS/include/yarp/os/impl/TcpConnector.h
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/include/yarp/os/impl/TcpAcceptor.h
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/include/yarp/os/impl/TcpStream.h
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/yarpserver/sqlite/sqlite3.h
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
-
-src/yarpserver/sqlite/sqlite3.c
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
-
-conf/YarpCheckStructHasMember.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: BSD
+LGPL.TXT
+  Copyright: (C) 1991, 1999 Free Software Foundation, Inc.
+  CopyPolicy: copying and distributing verbatim copies allowed
 
 conf/FindBoost.cmake
   Copyright: (c) 2006 Andreas Schneider <mail@cynapses.org>
   CopyPolicy: BSD
-
-conf/FindGSL.cmake
-  Copyright: (C) 2010 Jan Woetzel
-  CopyPolicy: Use under LGPL or BSD license at your choice
-
-conf/FindGtkMMWin32.cmake
-  Copyright: (C) 2009 RobotCub Consortium
-  Authors: Giorgio Metta, Alessandro Scalzo and Lorenzo Natale
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 conf/FindGtkMM.cmake
   Copyright: (C) 2009 RobotCub Consortium
@@ -448,6 +439,14 @@ conf/FindGtkMM.cmake
 
 conf/FindFFMPEG.cmake
   Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
+  CopyPolicy: BSD
+
+conf/YarpCheckTypeSize.cmake
+  Copyright: 2007-2009 Kitware, Inc.
+  CopyPolicy: BSD
+
+conf/YarpCheckStructHasMember.cmake
+  Copyright: 2007-2009 Kitware, Inc.
   CopyPolicy: BSD
 
 conf/FindOpenCV.cmake
@@ -459,12 +458,17 @@ conf/FindGtkMMUnix.cmake
   Authors: Giorgio Metta, Lorenzo Natale, Stephen Hart
   CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-conf/YarpCheckTypeSize.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: BSD
+conf/FindGSL.cmake
+  Copyright: (C) 2010 Jan Woetzel
+  CopyPolicy: Use under LGPL or BSD license at your choice
 
-LGPL.TXT
-  Copyright: (C) 1991, 1999 Free Software Foundation, Inc.
+conf/FindGtkMMWin32.cmake
+  Copyright: (C) 2009 RobotCub Consortium
+  Authors: Giorgio Metta, Alessandro Scalzo and Lorenzo Natale
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+GPL.TXT
+  Copyright: (C) 1989, 1991 Free Software Foundation, Inc.,
   CopyPolicy: copying and distributing verbatim copies allowed
 
 example/gtk/gtkdemo.cpp
@@ -474,8 +478,4 @@ example/gtk/gtkdemo.cpp
 example/yayarpview/CImg.h
   Copyright: 2004 David Tschumperle
   CopyPolicy: CeCILL license (use, modify, redistribute)
-
-GPL.TXT
-  Copyright: (C) 1989, 1991 Free Software Foundation, Inc.,
-  CopyPolicy: copying and distributing verbatim copies allowed
 

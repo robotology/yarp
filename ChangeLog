@@ -1,3 +1,6 @@
+2011-12-13 Lorenzo Natale <lorenzo.natale@iit.it>
+        * Tagging 2.3.14 
+
 2011-12-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: add ImageRgb.tostring method to python
