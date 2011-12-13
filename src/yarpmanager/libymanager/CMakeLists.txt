@@ -22,7 +22,7 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/tinyxml)
 include_directories(${ACE_INCLUDE_DIRS})
 
-add_library(YARP_manager ${folder_source} ${folder_header})
+add_library(YARP_manager STATIC ${folder_source} ${folder_header})
 target_link_libraries(YARP_manager YARP_sig YARP_OS)
 
 #install(TARGETS YARP_manager EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
