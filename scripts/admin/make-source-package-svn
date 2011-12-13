@@ -118,3 +118,14 @@ echo "==================================================================="
 echo $PWD
 find . -maxdepth 2
 
+## preparing a directory with the files for rsync to sourceforge.
+
+mkdir -p $PACKAGE
+cp windows/$PACKAGE.zip $PACKAGE
+cp unix/$PACKAGE.tar.gz $PACKAGE
+
+echo "You can now sync $BASE/$PACKAGE to sourceforge:"
+echo "cd $BASE"
+echo "rsync --recursive yarp-2.3.14 YOUR_USERNATE,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2"
+
+
