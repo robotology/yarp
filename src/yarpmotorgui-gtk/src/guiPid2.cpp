@@ -37,6 +37,26 @@
 //const int debug_base = 10;
 const int debug_base = 0;
 
+double filt (double& v)
+{
+    double sampling = 1000;
+    v/=1000; //from mHz to Hz
+    double s = -2*tan(3.14159265*v/sampling); // v frequency in hertz
+    v = (2+s)/(2-s);
+    v *= 10000;
+    return v;
+}
+
+double unfilt (double& v)
+{
+    double sampling = 1000;
+    v /= 10000;
+    double s = (2*v-2)/(1+v);
+    v = atan(s/-2)*sampling/3.14159265;
+    v *= 1000; //from Hz to mHz
+    return v;
+}
+
 //*********************************************************************************
 // This callback exits from the Pid dialog
 void guiPid2::destroy_win (GtkButton *dummy1, GtkWidget *dummy2)
@@ -235,8 +255,8 @@ void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
   iDbg->getDebugParameter(*joint, debug_base+3, &debug_param[3]);
   iDbg->setDebugParameter(*joint, debug_base+4,  debug_param[4]); debug_param[4] = 0;
   iDbg->getDebugParameter(*joint, debug_base+4, &debug_param[4]);
-  iDbg->setDebugParameter(*joint, debug_base+5,  debug_param[5]); debug_param[5] = 0;
-  iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]);
+  iDbg->setDebugParameter(*joint, debug_base+5,  filt(debug_param[5])); debug_param[5] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]); unfilt(debug_param[5]);
   iDbg->setDebugParameter(*joint, debug_base+6,  debug_param[6]); debug_param[6] = 0;
   iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
   iDbg->setDebugParameter(*joint, debug_base+7,  debug_param[7]); debug_param[7] = 0;
@@ -409,7 +429,7 @@ void guiPid2::guiPid2(void *button, void* data)
 	iDbg->getDebugParameter(*joint, debug_base+2, &debug_param[2]);
 	iDbg->getDebugParameter(*joint, debug_base+3, &debug_param[3]);
 	iDbg->getDebugParameter(*joint, debug_base+4, &debug_param[4]);
-	iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]);
+	iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]); unfilt(debug_param[5]);
 	iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
 	iDbg->getDebugParameter(*joint, debug_base+7, &debug_param[7]);
   }
@@ -493,10 +513,10 @@ void guiPid2::guiPid2(void *button, void* data)
   changePidValue((int) debug_param[4], note_pag4, dbg_debug4Des, 110, 280, "Desired Debug4\nbEMF gain");
   //debug_param5
   dbg_debug5Entry   =  gtk_entry_new();
-  displayPidValue((int) debug_param[5], note_pag4, dbg_debug5Entry, 0, 350, "Current Debug5");
+  displayPidValue((int) debug_param[5], note_pag4, dbg_debug5Entry, 0, 350, "Current Debug5\nfilt freq(mHz)");
   //debug_param5 desired
   dbg_debug5Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[5], note_pag4, dbg_debug5Des, 110, 350, "Desired Debug5");
+  changePidValue((int) debug_param[5], note_pag4, dbg_debug5Des, 110, 350, "Desired Debug5\nfilt freq(mHz)");
   //debug_param6
   dbg_debug6Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[6], note_pag4, dbg_debug6Entry, 0, 420, "Current debug6");
