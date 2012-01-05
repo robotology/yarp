@@ -8,16 +8,16 @@
 # yarpmanager 
 
 
-option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" OFF)
+option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" ON)
 
 if (CREATE_YMANAGER)
 	add_subdirectory(libymanager)
 	add_subdirectory(ymanager)	
 	if (CREATE_GUIS)
-		option(CREATE_YMANAGER_GUI "Do you want to compile GUI for Yarp module manager?" OFF)
-		if(CREATE_YMANAGER_GUI)
+#		option(CREATE_YMANAGER_GUI "Do you want to compile GUI for Yarp module manager?" OFF)
+#		if(CREATE_YMANAGER_GUI)
 			add_subdirectory(gymanager)
-		endif(CREATE_YMANAGER_GUI)
+#		endif()
 	endif (CREATE_GUIS)
 endif (CREATE_YMANAGER)
 
