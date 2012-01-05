@@ -266,7 +266,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Memory mem;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                        mem.setTotalSpace((Capacity)atoll(element->GetText()));               
+                        mem.setTotalSpace((Capacity)atol(element->GetText()));               
                    computer.setMemory(mem);
                 } // end of memory tag
 
@@ -276,7 +276,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Storage stg;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                        stg.setTotalSpace((Capacity)atoll(element->GetText()));               
+                        stg.setTotalSpace((Capacity)atol(element->GetText()));               
                    computer.setStorage(stg);
                 } // end of storage tag
 
@@ -342,7 +342,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("global_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setGlobalMemory((Capacity)atoll(element->GetText()));            
+                            gpu.setGlobalMemory((Capacity)atol(element->GetText()));            
                     } // end of global memory tag
 
                     // shared memory
@@ -351,7 +351,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("shared_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setSharedMemory((Capacity)atoll(element->GetText()));            
+                            gpu.setSharedMemory((Capacity)atol(element->GetText()));            
                     } // end of shared memory tag
 
                     // constant memory
@@ -360,7 +360,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("constant_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setConstantMemory((Capacity)atoll(element->GetText()));            
+                            gpu.setConstantMemory((Capacity)atol(element->GetText()));            
                     } // end of shared memory tag
 
                    computer.addPeripheral(gpu);
