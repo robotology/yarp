@@ -1046,7 +1046,7 @@ float KnowledgeBase::calculateLoad(Computer* comp)
 {
     LoadAvg load = comp->getProcessor().getCPULoad();
     int siblings = comp->getProcessor().getSiblings();
-    if(!siblings) siblings = 1;
+    if(siblings == 0) siblings = 1;
     //cout<<comp->getName()<<": "<<load.loadAverage1<<", "<<load.loadAverage5<<", "<<load.loadAverage15;
     //cout<<" ("<<siblings<<")"<<endl;    
     float lavg = (float)((load.loadAverage1*15.0 + 
@@ -1268,9 +1268,9 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
             // with load balancer tunning value;
             // It will help for better load distribution among nodes 
             Computer* comp = dynamic_cast<Computer*>(provider);
-            float default_tunning = 0.1F;
+            float default_tunning = 0.1;
             if(comp && (comp->getProcessor().getSiblings() > 0))
-                default_tunning = 1.0F / (float)comp->getProcessor().getSiblings();
+                default_tunning = 1.0 / (float)comp->getProcessor().getSiblings();
             float tunner = (module->getRank()<10)? default_tunning : (float)module->getRank()/100.0F;
             updateResourceWeight(*graph, provider, candidateLink->weight()+tunner);
         }

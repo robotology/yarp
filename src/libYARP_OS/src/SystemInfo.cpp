@@ -81,8 +81,8 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
 MemoryInfo SystemInfo::getMemoryInfo(void)
 {
     MemoryInfo memory;
-    memory.totalSpace = -1;
-    memory.freeSpace = -1;
+    memory.totalSpace = 0;
+    memory.freeSpace = 0;
 
 #if defined(__linux__)
     char buffer[128];
@@ -108,8 +108,8 @@ MemoryInfo SystemInfo::getMemoryInfo(void)
 StorageInfo SystemInfo::getStorageInfo(void)
 {
     StorageInfo storage;
-    storage.totalSpace = -1;
-    storage.freeSpace = -1;
+    storage.totalSpace = 0;
+    storage.freeSpace = 0;
 
 #if defined(__linux__)
     yarp::os::ConstString strHome = getUserInfo().homeDir; 
@@ -214,10 +214,11 @@ NetworkInfo SystemInfo::getNetworkInfo(void)
 ProcessorInfo SystemInfo::getProcessorInfo(void)
 {
     ProcessorInfo processor;
-    processor.cores = -1;
-    processor.frequency = -1.0;
-    processor.family = -1;
-    processor.modelNumber = -1; 
+    processor.cores = 0;
+    processor.frequency = 0.0;
+    processor.family = 0;
+    processor.modelNumber = 0; 
+    processor.siblings = 0;
 
 #if defined(__linux__)
     char buffer[128];
@@ -295,7 +296,7 @@ PlatformInfo SystemInfo::getPlatformInfo(void)
 UserInfo SystemInfo::getUserInfo(void)
 {
     UserInfo user;
-    user.userID = -1;
+    user.userID = 0;
 
 #if defined(__linux__)
     struct passwd* pwd = getpwuid(getuid());
@@ -314,10 +315,10 @@ UserInfo SystemInfo::getUserInfo(void)
 LoadInfo SystemInfo::getLoadInfo(void)
 {
     LoadInfo load;
-    load.cpuLoad1 = -1.0;
-    load.cpuLoad5 = -1.0;
-    load.cpuLoad15 = -1.0;
-    load.cpuLoadInstant = -1;
+    load.cpuLoad1 = 0.0;
+    load.cpuLoad5 = 0.0;
+    load.cpuLoad15 = 0.0;
+    load.cpuLoadInstant = 0;
 
 #if defined(__linux__)
     FILE* procload = fopen("/proc/loadavg", "r");

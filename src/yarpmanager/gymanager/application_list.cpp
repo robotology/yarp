@@ -13,7 +13,6 @@
 #endif
 
 
-
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -59,18 +58,35 @@ ApplicationList::ApplicationList()
     m_appRow = *(m_refTreeModel->append());
     m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_appRow[m_appColumns.m_col_name] = "Applications";
-    m_appRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, 
-                                                                Gtk::ICON_LOOKUP_USE_BUILTIN));
+    m_appRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            folder_ico.width,
+                                            folder_ico.height,
+                                            folder_ico.bytes_per_pixel*folder_ico.width));
+                                                               
     m_modRow = *(m_refTreeModel->append());
     m_modRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_modRow[m_appColumns.m_col_name] = "Modules";
-    m_modRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, 
-                                                                Gtk::ICON_LOOKUP_USE_BUILTIN));
+    m_modRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            folder_ico.width,
+                                            folder_ico.height,
+                                            folder_ico.bytes_per_pixel*folder_ico.width));
+                                                               
     m_resRow = *(m_refTreeModel->append());
     m_resRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_resRow[m_appColumns.m_col_name] = "Resources";
-    m_resRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, 
-                                                                Gtk::ICON_LOOKUP_USE_BUILTIN));
+    m_resRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            folder_ico.width,
+                                            folder_ico.height,
+                                            folder_ico.bytes_per_pixel*folder_ico.width));
 
     show_all_children();
 }
@@ -156,7 +172,6 @@ bool ApplicationList::addApplication(Application* app)
     childrow[m_appColumns.m_col_type] = APPLICATION;
     childrow[m_appColumns.m_col_name] = app->getName();
     childrow[m_appColumns.m_col_filename] = app->getXmlFile();
-
     childrow.set_value(0, Gdk::Pixbuf::create_from_data(application_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
@@ -178,9 +193,13 @@ bool ApplicationList::addApplication(Application* app)
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = app->getXmlFile();
-    descrow.set_value(0, Gtk::IconTheme::get_default()->load_icon("document", 
-                                                                    16, 
-                                                                    Gtk::ICON_LOOKUP_USE_BUILTIN));
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            document_ico.width,
+                                            document_ico.height,
+                                            document_ico.bytes_per_pixel*document_ico.width));
     return true;
 }
 
@@ -225,10 +244,14 @@ bool ApplicationList::addComputer(Computer* comp)
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = comp->getXmlFile();
-
-    descrow.set_value(0, Gtk::IconTheme::get_default()->load_icon("document", 
-                                                                    16, 
-                                                                    Gtk::ICON_LOOKUP_USE_BUILTIN));                                           
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            document_ico.width,
+                                            document_ico.height,
+                                            document_ico.bytes_per_pixel*document_ico.width));
+                                                                   
     return true;
 }
 
@@ -271,9 +294,13 @@ bool ApplicationList::addModule(Module* mod)
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = mod->getXmlFile();
-    descrow.set_value(0, Gtk::IconTheme::get_default()->load_icon("document", 
-                                                                    16, 
-                                                                    Gtk::ICON_LOOKUP_USE_BUILTIN));                                           
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            document_ico.width,
+                                            document_ico.height,
+                                            document_ico.bytes_per_pixel*document_ico.width));
     return true;
 }
 
