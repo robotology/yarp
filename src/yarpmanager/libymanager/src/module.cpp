@@ -22,14 +22,29 @@ Module::Module(const char* szName) : Node(MODULE)
 
 Module::Module(const Module &mod) : Node(mod)
 {
+    Module::swap(mod);
+}
+
+
+Module& Module::operator=(const Module& rhs)
+{
+    Node::operator=(rhs);
+    Module::swap(rhs);
+    return *this;
+}
+
+
+void Module::swap(const Module &mod)
+{
+    clear();
     iRank = mod.iRank;
     strName = mod.strName;
     arguments = mod.arguments;
     strVersion = mod.strVersion;
     strDescription = mod.strDescription;
     strHost = mod.strHost;
+    bForced = mod.bForced;
     authors = mod.authors;
-    platforms = mod.platforms; 
     outputs = mod.outputs;
     inputs = mod.inputs;
     strXmlFile = mod.strXmlFile;
@@ -38,6 +53,9 @@ Module::Module(const Module &mod) : Node(mod)
     strStdio = mod.strStdio;
     strBroker = mod.strBroker;
     strPrefix = mod.strPrefix; 
+    // deep copy    
+    for(int i=0; i<mod.resourceCount(); i++)
+        addResource(mod.getResourceAt(i));   
 }
 
 
@@ -51,29 +69,8 @@ Node* Module::clone(void)
 }
 
 
-bool Module::addPlatform(Platform &platform)
-{
-    //__CHECK_NULLPTR(platform);
-    platforms.push_back(platform);  
-    return true;
-}
-
-
-bool Module::removePlatform(Platform& platform)
-{
-    //__CHECK_NULLPTR(platform);
-    
-    PlatformIterator itr = findPlatform(platform);
-    if(itr == platforms.end()) 
-        return true;
-    platforms.erase(itr);
-    return true;
-}
-
-
 bool Module::addArgument(Argument &argument)
 {
-    //__CHECK_NULLPTR(platform);
     arguments.push_back(argument);  
     return true;
 }
@@ -129,13 +126,23 @@ bool Module::removeInput(InputData& input)
 }
 
 
-PlatformIterator Module::findPlatform(Platform& platform) 
+bool Module::addResource(GenericResource& res)
 {
-    PlatformIterator itr;
-    for(itr=platforms.begin(); itr<platforms.end(); itr++) 
-        if ((*itr) == platform)
-            return itr;
-    return platforms.end();
+    GenericResource* newres = (GenericResource*) res.clone();
+    newres->setOwner(this);
+    resources.push_back(newres);    
+    return true;
+}
+
+
+bool Module::removeResource(GenericResource& res)
+{
+    ResourcePIterator itr = findResource(res);
+    if(itr == resources.end()) 
+        return true;
+    resources.erase(itr);
+    delete (*itr);
+    return true;
 }
 
 
@@ -167,4 +174,42 @@ OutputIterator Module::findOutput(OutputData& output)
             return itr;         
     return outputs.end();
 }
+
+ResourcePIterator Module::findResource(GenericResource& res) 
+{
+    ResourcePIterator itr;
+    for(itr=resources.begin(); itr<resources.end(); itr++) 
+        if (*(*itr) == res)
+            return itr;         
+    return resources.end();
+}
+
+void Module::clear(void)
+{
+    iRank = 1;
+    strName.clear();
+    arguments.clear();
+    strVersion.clear();
+    strDescription.clear();
+    strHost.clear();
+    bForced = false;
+    authors.clear();
+    outputs.clear();
+    inputs.clear();
+    strXmlFile.clear();
+    strParam.clear();
+    strWorkDir.clear();
+    strStdio.clear();
+    strBroker.clear();
+    strPrefix.clear();
+
+    for(ResourcePIterator itr = resources.begin(); 
+        itr != resources.end(); itr++)
+    {
+        delete (*itr);
+        *itr = NULL;
+    }
+    resources.clear();
+}
+    
 

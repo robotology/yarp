@@ -13,6 +13,7 @@
 
 #include <gtkmm.h>
 #include "application.h"
+#include "primresource.h"
 
 //Tree model columns:
 class AppModelColumns : public Gtk::TreeModel::ColumnRecord
@@ -23,17 +24,13 @@ public:
         add(m_col_refPix); 
         add(m_col_name); 
         add(m_col_type);
+        add(m_col_filename);
         }
-/*
-    ~AppModelColumns(){
-
-    }
-*/
     //Gtk::TreeModelColumn<int> m_col_id;
     Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
     Gtk::TreeModelColumn<Glib::ustring> m_col_name;
     Gtk::TreeModelColumn<NodeType> m_col_type;
-
+    Gtk::TreeModelColumn<Glib::ustring> m_col_filename;
 };
 
 
@@ -44,16 +41,25 @@ public:
     ApplicationList();
     virtual ~ApplicationList();
     bool addApplication(Application* app);
-    bool removeApplication(const char* szAppName);
+    bool addComputer(Computer* comp);
+    bool addModule(Module* mod);
 
+    bool removeApplication(const char* szAppName);
+    bool removeModule(const char* szModName);
+    bool removeResource(const char* szResName);
+    
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     AppModelColumns m_appColumns;
+    AppModelColumns m_resColumns;
+
     Gtk::TreeView* getTreeView(void) { return &m_TreeView;}
 
 protected:
     Gtk::TreeView m_TreeView; //The Tree View.
     Gtk::TreeModel::Row m_appRow;
     Gtk::TreeModel::Row m_modRow;
+    Gtk::TreeModel::Row m_resRow;
+    Glib::RefPtr<Gdk::Pixbuf> m_refPixComputer;
 };
 
 

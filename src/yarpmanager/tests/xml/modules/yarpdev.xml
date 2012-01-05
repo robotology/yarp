@@ -1,38 +1,29 @@
 <module>
-	<name>yarpdev</name>
-	<description> Yarp device manipulator</description>
-	<version>1.0</version>
-	<rank>1</rank>
-	
-	<arguments>
-		<param desc="a device name"> device </param>
-		<param desc="list all available devices"> list </param>
-	</arguments>
-			
-	<authors>
-		<author email=""> Fitzpatrick Paul </author>
-	</authors>
-	
-	<platforms>
-		<os dist=""> LINUX </os>
-		<os dist=""> WINDOWS </os>
-		<os dist=""> MAC </os>
-	</platforms>
-		
-	<data>
-		<input>
-			<type>YARP</type>
-			<port carrier="TCP">/root</port>
-			<required>yes</required>
-			<priority>yes</priority>
-			<description>needs /root port from yarpserver</description>
-		</input>	
-	</data>
+    <name>yarpdev</name>
+    <description> Yarp device manipulator</description>
+    <version>1.0</version>
+    
+    <arguments>
+        <param desc="a device name"> device </param>
+        <param desc="list all available devices"> list </param>
+    </arguments>
+            
+    <authors>
+        <author email=""> Fitzpatrick Paul </author>
+    </authors>
 
-	<development>
-		<include></include>
-		<library>YARP</library>
-	</development>
-	
+    <data> 
+    </data>     
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <development>
+        <include></include>
+        <library>YARP</library>
+    </development>
+    
 </module>
 

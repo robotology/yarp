@@ -150,7 +150,6 @@ RSTATE Executable::state(void)
     execMachine->refresh();
 
     const char* strState = execMachine->currentState()->getName();
-//  cout<<getID()<<": "<<strState<<endl;
 
     if(compareString(strState, "SUSPENDED"))
         return SUSPENDED;

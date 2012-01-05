@@ -24,6 +24,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
+#include <yarp/os/impl/SystemInfo.h>
 
 #include "broker.h" 
 
@@ -52,13 +53,17 @@ public:
      bool connect(const char* from, const char* to, 
                         const char* carrier);
      bool disconnect(const char* from, const char* to);
-     bool running(void);
+     int running(void);
      bool exists(const char* port);
      bool connected(const char* from, const char* to);
      const char* error(void);
      bool initialized(void) { return bInitialized;}
      bool attachStdout(void);
      void detachStdout(void);
+
+     bool getSystemInfo(const char* server, 
+                        SystemInfoSerializer& info);
+     bool getAllPorts(vector<std::string> &stingList);
 
 public: // for rate thread
     void run();
@@ -81,14 +86,16 @@ private:
     bool bOnlyConnector;
     bool bInitialized;
     yarp::os::Semaphore semParam;
-
+ 
     string strStdioUUID;
     yarp::os::BufferedPort<yarp::os::Bottle> stdioPort;
+    yarp::os::Port port;
 
     bool timeout(double base, double timeout);
     yarp::os::Property& runProperty(void);      
     int requestServer(yarp::os::Property& config);
-    yarp::os::Bottle SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target);
+    int SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target, 
+                yarp::os::Bottle& resp, float fTimeout=5.0);
 
 };
  

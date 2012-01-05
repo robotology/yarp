@@ -31,6 +31,8 @@ public:
     void onTabCloseRequest(Widget* wdg); 
     //Glib::RefPtr<MessagesList> m_refMessageList;
     MessagesList* m_refMessageList;
+    
+    void reportErrors(void);
 
 protected:
 
@@ -39,6 +41,7 @@ protected:
     void onMenuFileQuit();
     void onMenuFileNewApp();
     void onMenuFileNewMod();
+    void onMenuFileNewRes();
     void onMenuFileOpen();
     void onMenuFileClose();
     void onMenuFileSave();
@@ -53,6 +56,8 @@ protected:
     void onMenuManageDisconnect();
     void onMenuManageRefresh();
     void onMenuEditSellAll();
+    void onMenuEditExportGraph();
+
     void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
                 Gtk::TreeViewColumn* column);
     void onAppListButtonPressed(GdkEventButton* event);
@@ -62,6 +67,7 @@ protected:
 
     void onPAppMenuLoad();
     void onPAppMenuRemove();
+    void onPAppMenuReopen();
 
     void on_size_allocate(Gtk::Allocation& allocation);
 
@@ -87,6 +93,9 @@ private:
     Glib::RefPtr<Gtk::IconFactory> m_factory;
 
     void manageApplication(const char* szName);
+    void manageResource(const char* szName);
+    void manageModule(const char* szName);
+
     bool safeExit(void);
     void closeTab(int page_num);
     void createWidgets(void);
@@ -94,7 +103,6 @@ private:
     void setupActions(void);
     void setupSignals(void);
     bool loadRecursiveApplications(const char* szPath);
-    void reportErrors(void);
     void syncApplicationList(void);
 };
 

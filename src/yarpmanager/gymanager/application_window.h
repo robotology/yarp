@@ -177,8 +177,10 @@ public:
     bool onDisconnect(void);
     bool onRefresh(void);
     bool onSelectAll(void);
+    bool onExportGraph(void);
     bool onAttachStdout(void);
     bool onDetachStdout(void);
+    void onPMenuLoadBalance(void);
     void onPModuleSelectAll() { m_refTreeModSelection->select_all(); }
     void onPConnectionSelectAll() { m_refTreeConSelection->select_all(); }
     void onPResourceSelectAll() { m_refTreeResSelection->select_all(); }
@@ -206,6 +208,7 @@ public:
     void onConAvailable(int from, int to);
     void onConUnAvailable(int from, int to);
     void onError(void);
+    void onLoadBalance(void);
 
 protected:
     void selectedModuleCallback(const Gtk::TreeModel::iterator& iter);
@@ -222,7 +225,6 @@ protected:
     void onPMenuDisconnect() { onDisconnect(); }
     void onPMenuRefresh() { onRefresh(); }
     void onPMenuAttachStdout() { onAttachStdout(); }
-    //void onPMenuSelectAll() { onSelectAll(); }
 
     Gtk::VPaned m_VPaned;
     Gtk::HPaned m_HPaned;
@@ -273,6 +275,7 @@ private:
     Glib::RefPtr<Gdk::Pixbuf> m_refPixDisconnected;
     Glib::RefPtr<Gdk::Pixbuf> m_refPixAvailable;
     Glib::RefPtr<Gdk::Pixbuf> m_refPixUnAvailable;
+    Glib::RefPtr<Gdk::Pixbuf> m_refPixComputer;
 
     std::map<int, StdoutWindow*> m_MapstdWnds;
 
@@ -283,8 +286,11 @@ private:
     bool getConRowByID(int id, Gtk::TreeModel::Row* row );
     bool getResRowByID(int id, Gtk::TreeModel::Row* row );
     void setCellsEditable(void);
+    bool areAllShutdown(void);
 
     void prepareManagerFrom(Manager* lazy, const char* szName);
+    void updateApplicationWindow(void);
+
     void reportErrors(void);
     
     void doClose(void);

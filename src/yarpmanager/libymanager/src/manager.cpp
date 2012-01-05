@@ -12,6 +12,9 @@
 #include "yarpbroker.h"
 #include "localbroker.h"
 #include "xmlapploader.h"
+#include "xmlmodloader.h"
+#include "xmlresloader.h"
+
 #include "singleapploader.h"
 
 
@@ -31,19 +34,17 @@ Manager::Manager(bool withWatchDog) : MEvent()
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
-    bAutoDependancy = true;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;  
-    knowledge.createFrom(NULL, NULL);
+    knowledge.createFrom(NULL, NULL, NULL);
 }
 
-Manager::Manager(const char* szModPath,
-            const char* szAppPath, bool withWatchDog)
+Manager::Manager(const char* szModPath, const char* szAppPath, 
+                 const char* szResPath, bool withWatchDog)
 {
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
-    bAutoDependancy = true;
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;  
 
@@ -57,7 +58,12 @@ Manager::Manager(const char* szModPath,
     if(!appload.init())
         pAppLoad = NULL;
     
-    knowledge.createFrom(pModLoad, pAppLoad);
+    XmlResLoader resload(szResPath, NULL);
+    XmlResLoader* pResLoad = &resload;
+    if(!resload.init())
+        pResLoad = NULL;
+
+    knowledge.createFrom(pModLoad, pAppLoad, pResLoad);
 }
 
 
@@ -115,6 +121,31 @@ bool Manager::addModules(const char* szPath)
 }
 
 
+bool Manager::addResource(const char* szFileName)
+{
+    XmlResLoader resload(szFileName);
+    if(!resload.init())
+        return false; 
+    GenericResource* resource;
+    bool bloaded = false;
+    while((resource = resload.getNextResource()))
+           bloaded |= knowledge.addResource(resource);
+    return bloaded;
+}
+
+
+bool Manager::addResources(const char* szPath)
+{
+    XmlResLoader resload(szPath, NULL);
+    if(!resload.init())
+        return false; 
+    GenericResource* resource;
+    while((resource = resload.getNextResource()))
+        knowledge.addResource(resource);
+    return true;
+}
+
+
 bool Manager::removeApplication(const char* szAppName)
 {
     //Note: use it with care. it is better we first check that no application
@@ -133,6 +164,42 @@ bool Manager::removeApplication(const char* szAppName)
 }
 
 
+bool Manager::removeModule(const char* szModName)
+{
+    //Note: use it with care. it is better we first check that no application
+    //is loaded. 
+    if(!runnables.empty())
+    {
+        logger->addError("Module cannot be removed if there is a loaded application");
+        return false;
+    }
+
+    Module* mod = knowledge.getModule(szModName);
+    if(!mod)
+        return false;
+
+    return knowledge.removeModule(mod);
+}
+
+bool Manager::removeResource(const char* szResName)
+{
+    //Note: use it with care. it is better we first check that no application
+    //is loaded. 
+    if(!runnables.empty())
+    {
+        logger->addError("Resource cannot be removed if there is a loaded application");
+        return false;
+    }
+
+    GenericResource* res = knowledge.getResource(szResName);
+    if(!res)
+        return false;
+
+    return knowledge.removeResource(res);
+}
+
+
+
 bool Manager::loadApplication(const char* szAppName)
 {
     __CHECK_NULLPTR(szAppName);
@@ -142,33 +209,49 @@ bool Manager::loadApplication(const char* szAppName)
         logger->addError("Please stop current running application first.");
         return false;
     }
-    strAppName = szAppName;
-    if(!knowledge.reasolveDependency(szAppName, bAutoDependancy))
-        return false;
-    
-    return prepare();
+
+    strAppName = szAppName;    
+
+    // set all resources as unavailable
+    ResourcePContainer allresources = knowledge.getResources();
+    for(unsigned int i=0; i<allresources.size(); i++)
+    {
+        Computer* comp = dynamic_cast<Computer*>(allresources[i]);
+        if(comp)
+            comp->setAvailability(false);
+    }
+
+    return prepare(true);     
 }
 
-bool Manager::prepare(void)
+bool Manager::loadBalance(void)
 {
+    updateResources();
+    bool ret = prepare(false);
+    return ret;
+}
+
+
+bool Manager::prepare(bool silent)
+{
+    knowledge.reasolveDependency(strAppName.c_str(), bAutoDependancy, silent);
+
     clearExecutables();
     connections.clear();
     modules.clear();
     resources.clear();
-
     connections = knowledge.getSelConnection();
     modules = knowledge.getSelModules();
     resources = knowledge.getSelResources();
     
     /**
-     *  TODO: we need to initialize a module with a local broker if the
-     *  host property is empty. 
-     *  Thus we can use specific broker for remote execution and a local 
-     *  broker for local execution.
+     *  we need to initialize a module with a local broker if the
+     *  host property is set to "localhost". 
      *
-     *  Resources should also be added to the relevant executable. up to now
+     * TODO: Resources should also be added to the relevant executable. up to now
      *  all of them will be handled by manager. 
-     */ 
+     */
+
     ModulePIterator itr;
     int id = 0;
     for(itr=modules.begin(); itr!=modules.end(); itr++)
@@ -181,7 +264,7 @@ bool Manager::prepare(void)
             strCurrentBroker = strDefBroker;
 
         Broker* broker = NULL;
-        if(!strlen((*itr)->getHost()))
+        if(compareString((*itr)->getHost(), "localhost"))
             broker = new LocalBroker;
         else if(strCurrentBroker == string(BROKER_YARPRUN))
             broker = new YarpBroker;
@@ -200,8 +283,7 @@ bool Manager::prepare(void)
             strCurrentBroker = BROKER_YARPRUN;
         }
 
-        Executable* exe = new Executable(broker, (MEvent*)this, 
-                                        bWithWatchDog);
+        Executable* exe = new Executable(broker, (MEvent*)this, bWithWatchDog);
         exe->setID(id++);
         exe->setCommand((*itr)->getName());
         exe->setParam((*itr)->getParam());
@@ -221,17 +303,13 @@ bool Manager::prepare(void)
         CnnIterator cnn;
         for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
             if((*cnn).owner() == (*itr))
-            {
                 exe->addConnection(*cnn);
-                //connections.erase(cnn);
-            }
-
+                
         runnables.push_back(exe);
     }
 
     return true;
 }
-
 
 bool Manager::updateExecutable(unsigned int id, const char* szparam,
                 const char* szhost, const char* szstdio,
@@ -285,7 +363,6 @@ bool Manager::updateConnection(unsigned int id, const char* from,
 }
 
 
-
 bool Manager::exist(unsigned int id)
 {
     if(id>=resources.size())
@@ -294,10 +371,141 @@ bool Manager::exist(unsigned int id)
         return false;
     }
 
-    YarpBroker connector; 
-    connector.init();
-    return connector.exists(resources[id]->getPort());
+    GenericResource* res = resources[id];
+    if(compareString(res->getName(), "localhost"))
+        return true;
+
+    if(dynamic_cast<Computer*>(res) || dynamic_cast<ResYarpPort*>(res))
+    {
+        if(res->getName())
+        {
+            YarpBroker broker;
+            broker.init();
+            string strPort = res->getName();
+            if(strPort[0] != '/')
+                strPort = string("/") + strPort;     
+            res->setAvailability(broker.exists(strPort.c_str()));
+        }
+    }
+    return res->getAvailability();
 }
+
+
+bool Manager::updateResources(void)
+{
+    YarpBroker broker;
+    broker.init();
+
+    // finding all available yarp ports 
+    vector<string> ports;
+    broker.getAllPorts(ports);
+
+    ResourcePContainer allresources = knowledge.getResources();
+    for(unsigned int i=0; i<allresources.size(); i++)
+    {
+        Computer* comp = dynamic_cast<Computer*>(allresources[i]);
+        if(updateResource(comp))
+        {
+             //set all as unavailable  
+            for(int i=0; i<comp->peripheralCount(); i++)
+            {
+                ResYarpPort* res = 
+                    dynamic_cast<ResYarpPort*>(&comp->getPeripheralAt(i));
+                if(res)
+                    res->setAvailability(false);
+            }
+
+            // adding all available yarp ports as peripherals
+            for(unsigned int i=0; i<ports.size(); i++)
+            {
+                ResYarpPort resport;
+                resport.setName(ports[i].c_str());
+                resport.setPort(ports[i].c_str());
+                                         
+                bool bfound = false;
+                for(int i=0; i<comp->peripheralCount(); i++)
+                {
+                    ResYarpPort* res = 
+                        dynamic_cast<ResYarpPort*>(&comp->getPeripheralAt(i));
+                    if(res && (string(res->getName()) == string(resport.getName())))
+                    {
+                        res->setAvailability(true);
+                        bfound = true;
+                        break;
+                    }
+                }
+                if(!bfound)
+                    comp->addPeripheral(resport);
+            }
+        } 
+    } // end of for 
+
+    return true;
+}
+
+
+bool Manager::updateResource(const char* szName)
+{
+    GenericResource* res = knowledge.getResource(szName);
+    if(!res)
+        return false;
+    return updateResource(res);
+}
+
+bool Manager::updateResource(GenericResource* resource)
+{
+    YarpBroker broker;
+    broker.init();
+
+    Computer* comp = dynamic_cast<Computer*>(resource);
+    if(!comp || !strlen(comp->getName()))
+        return false;
+
+    if(compareString(comp->getName(), "localhost"))
+        return false;
+
+    SystemInfoSerializer info;
+    string strServer = comp->getName();
+    if(strServer[0] != '/')
+        strServer = string("/") + strServer;
+    if(!broker.getSystemInfo(strServer.c_str(), info))
+    {
+        logger->addError(broker.error());        
+        comp->setAvailability(false);
+    }
+    else
+    {
+        comp->setAvailability(true);        
+        
+        comp->getMemory().setTotalSpace(info.memory.totalSpace*1024);
+        comp->getMemory().setFreeSpace(info.memory.freeSpace*1024);
+
+        comp->getStorage().setTotalSpace(info.storage.totalSpace*1024);
+        comp->getStorage().setFreeSpace(info.storage.freeSpace*1024);
+
+        comp->getNetwork().setIP4(info.network.ip4);
+        comp->getNetwork().setIP6(info.network.ip6);
+        comp->getNetwork().setMAC(info.network.mac);
+        
+         
+        comp->getProcessor().setArchitecture(info.processor.architecture);                
+        comp->getProcessor().setCores(info.processor.cores);
+        comp->getProcessor().setSiblings(info.processor.siblings);
+        comp->getProcessor().setFrequency(info.processor.frequency);
+        comp->getProcessor().setModel(info.processor.model);
+        LoadAvg load;
+        load.loadAverage1 = info.load.cpuLoad1;
+        load.loadAverage5 = info.load.cpuLoad5;
+        load.loadAverage15 = info.load.cpuLoad15;
+        comp->getProcessor().setCPULoad(load);
+        
+        comp->getPlatform().setName(info.platform.name);
+        comp->getPlatform().setDistribution(info.platform.distribution);
+        comp->getPlatform().setRelease(info.platform.release);
+    }
+    return true;
+}
+
 
 bool Manager::existPortFrom(unsigned int id)
 {
@@ -336,15 +544,13 @@ bool Manager::checkDependency(void)
      */
     bool ret = true;
     ResourcePIterator itrRes; 
-    YarpBroker resChecker; 
     for(itrRes=resources.begin(); itrRes!=resources.end(); itrRes++)
     {
-        ResYarpPort* res = (*itrRes); 
-        if(!resChecker.exists(res->getPort()))
+        if(!(*itrRes)->getAvailability())
         {
             ret = false;
             ostringstream err;
-            err<<"Port "<<res->getPort()<<" is not available!";
+            err<<"Resource "<<(*itrRes)->getName()<<" is not available!";
             logger->addError(err);
         }
     }
@@ -594,8 +800,6 @@ void Manager::clearExecutables(void)
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
-        //if((*itr)->getBroker())
-        //  delete (*itr)->getBroker();
         /**
          * broker will be delated by Executable
          */

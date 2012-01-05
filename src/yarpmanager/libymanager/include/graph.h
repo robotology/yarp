@@ -27,9 +27,6 @@ using namespace std;
 typedef map<string, Node*> NodePContainer;
 typedef map<string, Node*>::iterator NodePIterator;
 
-//typedef vector<Node>::iterator NodeIterator;
-//typedef vector<Node> NodeContainer;
-
 class GraphIterator;
 
 /**
@@ -61,12 +58,7 @@ public:
     Node* getNode( const char* szLabel);
     GraphIterator begin(void);
     GraphIterator end(void);
-    // it is better we put them as part of KnowlegeBase class
-//  bool storeGraph(const char* szFileName);
-//  bool loadGraph(const char* szFileName);
-//  bool exportDotGraph(const char* szFileName);
-    
-
+   
 protected:
 
 private:

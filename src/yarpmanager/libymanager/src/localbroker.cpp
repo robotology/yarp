@@ -246,11 +246,11 @@ bool LocalBroker::kill()
 }
 
 
-bool LocalBroker::running(void)
+int LocalBroker::running(void)
 {
-    if(!bInitialized) return false;
-    if(bOnlyConnector) return false;
-    return psCmd(ID);
+    if(!bInitialized) return 0;
+    if(bOnlyConnector) return 0;
+    return (psCmd(ID))?1:0;
 }
 
 

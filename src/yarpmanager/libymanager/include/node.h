@@ -42,6 +42,7 @@ public:
          }
     virtual ~Link(){}
     Node* to() { return connectTo; }
+    void setWeight(float w) { fWeight = w; }
     float weight(void) { return fWeight; }
     void setVirtual(bool virtualLink) { bVirtual = virtualLink;}
     bool isVirtual(void){ return bVirtual; }
@@ -105,6 +106,9 @@ private:
     NodeType type;  
     string label;
 };
+
+typedef vector<Node*> NodePVector;
+typedef vector<Node*>::iterator NodePVIterator;
 
 //}
 

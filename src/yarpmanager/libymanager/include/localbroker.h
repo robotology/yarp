@@ -55,7 +55,7 @@ public:
      bool connect(const char* from, const char* to, 
                         const char* carrier);
      bool disconnect(const char* from, const char* to);
-     bool running(void);
+     int running(void);
      bool exists(const char* port);
      bool connected(const char* from, const char* to);
      const char* error(void);

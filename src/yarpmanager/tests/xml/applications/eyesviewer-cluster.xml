@@ -1,42 +1,34 @@
 
 <application>
 	<!-- Generic information-->
-	<name>EyesViewer</name>
-	<description> A fake eobot eyes viewer</description>
+	<name>EyesViewer-Cluster</name>
+	<description> A fake robot eyes viewer running on a cluster of computer</description>
 	<version>1.0</version>
 	
 	<authors>
 		<author email="ali.paikan@iit.it"> Ali Paikan </author>
 	</authors>
 	
-	<!-- ports prefix (will be added to all modules and applications)-->
-	<!--<prefix>...</prefix> -->
-	
 	<!-- Required modules -->		
 	<module>
 		<name>yarpview</name>
-		<node>local</node>
 		<prefix>/RightView</prefix>
 	</module>
 
 	<module>
 		<name>yarpview</name>
-		<node>local</node>
 		<prefix>/LeftView</prefix>
 	</module>
 
+	<module>
+		<name>yarpdev</name>
+		<parameters> --device test_grabber --name /left/eye</parameters>
+	</module>
 
-	<!-- Required applications -->
-	<application> 
-		<name>FakeEyes</name>
-		<prefix>/left</prefix>
-	 </application>
-
-	<application> 
-		<name>FakeEyes</name>
-		<prefix>/right</prefix>
-	 </application>
-
+	<module>
+		<name>yarpdev</name>
+		<parameters> --device test_grabber --name /right/eye</parameters>
+	</module>
 
 	<!-- Required connections -->
 	<connection>

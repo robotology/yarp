@@ -13,7 +13,7 @@
 #define __SINGLEAPPLOADER__
 
 #include "ymm-types.h" 
-#include "apploader.h"
+#include "manifestloader.h"
 
 //namespace ymm {
 

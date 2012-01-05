@@ -13,8 +13,7 @@
 	<module>
 		<name>yarpdev</name>
 		<parameters> --device test_grabber --name /eye</parameters>
-		<node>local</node>
-		<broker>yarprun</broker>
+		<node>localhost</node>
 	</module>
 
 </application>

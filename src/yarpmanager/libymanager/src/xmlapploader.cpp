@@ -111,6 +111,12 @@ bool XmlAppLoader::init(void)
     return true;
 }
 
+void XmlAppLoader::reset(void)
+{
+    fini();
+    init();
+}
+
 
 void XmlAppLoader::fini(void)
 {
@@ -259,7 +265,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             {
                 if(res->GetText())
                 {
-                    ResYarpPort resource("unknown port");
+                    ResYarpPort resource(res->GetText());
                     resource.setPort(res->GetText());
                     app.addResource(resource);
                 }
@@ -375,7 +381,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             if(from && to)
             {
                 string strCarrier;
-                if((protocol=(TiXmlElement*) cnn->FirstChild("protocol")))
+                if((protocol=(TiXmlElement*) cnn->FirstChild("protocol")) &&
+                    protocol->GetText())
                     strCarrier = protocol->GetText();
                 Connection connection(from->GetText(),
                                     to->GetText(),

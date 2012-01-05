@@ -31,23 +31,28 @@ class Manager : public MEvent{
 
 public: 
     Manager( bool withWatchDog=false);
-    Manager(const char* szModPath,
-            const char* szAppPath, bool withWatchDog=false);
+    Manager(const char* szModPath, const char* szAppPath, 
+            const char* szResPath, bool withWatchDog=false);
     virtual ~Manager();
 
     bool addApplication(const char* szFileName);
     bool addApplications(const char* szPath);
     bool addModule(const char* szFileName);
     bool addModules(const char* szPath); 
-    
+    bool addResource(const char* szFileName);
+    bool addResources(const char* szPath); 
+   
     bool removeApplication(const char* szAppName);
+    bool removeModule(const char* szModName);
+    bool removeResource(const char* szResName);
+
     bool loadApplication(const char* szAppName);
     bool updateExecutable(unsigned int id, const char* szparam,
                 const char* szhost, const char* szstdio,
                 const char* szworkdir, const char* szenv );
     bool updateConnection(unsigned int id, const char* from,
                 const char* to, const char* carrier); 
-
+    
     bool run(void);
     bool run(unsigned int id, bool async=false);
     bool stop(void);
@@ -70,6 +75,9 @@ public:
     bool existPortTo(unsigned int id);
     bool attachStdout(unsigned int id);
     bool detachStdout(unsigned int id);
+    bool updateResources(void);
+    bool updateResource(const char* szName);
+    bool loadBalance(void);
 
     void setDefaultBroker(const char* szBroker) { if(szBroker) strDefBroker = szBroker; }
     const char* defaultBroker(void) { return strDefBroker.c_str(); }
@@ -129,9 +137,9 @@ private:
     bool allRunning(void);
     bool oneRunning(void);
     bool allStopped(void);
-    bool prepare();
+    bool prepare(bool silent=true);
     bool timeout(double base, double timeout);
-
+    bool updateResource(GenericResource* resource);
 };
  
  

@@ -123,6 +123,14 @@ void ApplicationWindow::createWidgets(void)
                                 nores_ico.height,
                                 nores_ico.bytes_per_pixel*nores_ico.width);
 
+    m_refPixComputer = Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+                                Gdk::COLORSPACE_RGB,
+                                true,
+                                8,
+                                computer_ico.width,
+                                computer_ico.height,
+                                computer_ico.bytes_per_pixel*computer_ico.width);
+
     //Add the Model’s column to the Module View’s columns:  
     Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Module"));
     Gtk::CellRendererText* cellText = Gtk::manage(new Gtk::CellRendererText());
@@ -277,12 +285,14 @@ void ApplicationWindow::createWidgets(void)
     // adding popup menubar
     m_refActionGroup = Gtk::ActionGroup::create();
 //  m_refActionGroup->add(Gtk::Action::create("PopupModules", "PopupModules"));
-    m_refActionGroup->add( Gtk::Action::create("PManageRun", Gtk::Stock::EXECUTE, "_Run", "Run Application"),
+    m_refActionGroup->add( Gtk::Action::create("PManageRun", Gtk::StockID("YRUN"), "_Run", "Run Application"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuRun) );
-    m_refActionGroup->add( Gtk::Action::create("PManageStop", Gtk::Stock::STOP ,"_Stop", "Stop Application"),
+    m_refActionGroup->add( Gtk::Action::create("PManageStop", Gtk::StockID("YSTOP") ,"_Stop", "Stop Application"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuStop) );
-    m_refActionGroup->add( Gtk::Action::create("PManageKill", Gtk::Stock::CLOSE,"_Kill", "Kill Application"),
+    m_refActionGroup->add( Gtk::Action::create("PManageKill", Gtk::StockID("YKILL"),"_Kill", "Kill Application"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuKill) );
+    m_refActionGroup->add( Gtk::Action::create("PManageLoadBalance", Gtk::StockID("YPROCESSOR"), "Assign _hosts", "Assign hosts to modules"),
+                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuLoadBalance) );
     m_refActionGroup->add( Gtk::Action::create("PManageConnect", Gtk::Stock::CONNECT, "_Connect", "Connect links"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuConnect) );
     m_refActionGroup->add( Gtk::Action::create("PManageDisconnect", Gtk::Stock::DISCONNECT, "_Disconnect", "Disconnect links"),
@@ -291,7 +301,7 @@ void ApplicationWindow::createWidgets(void)
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
     m_refActionGroup->add( Gtk::Action::create("PManageStdout", Gtk::Stock::NETWORK, "_Attach to stdout", "Attach to standart output"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuAttachStdout) );        
-    m_refActionGroup->add( Gtk::Action::create("PModuleSelAll", Gtk::Stock::SELECT_ALL, "_Select all modules", "Select all modules"),
+    m_refActionGroup->add( Gtk::Action::create("PModuleSelAll", Gtk::Stock::SELECT_ALL, "Select _all modules", "Select all modules"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPModuleSelectAll) );
     m_refActionGroup->add( Gtk::Action::create("PConenctionSelAll", Gtk::Stock::SELECT_ALL, "_Select all connections", "Select all connections"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPConnectionSelectAll) );
@@ -311,6 +321,7 @@ void ApplicationWindow::createWidgets(void)
         "      <menuitem action='PManageRefresh'/>"
         "      <menuitem action='PModuleSelAll'/>"
         "      <menuitem action='PManageStdout'/>"
+        "      <menuitem action='PManageLoadBalance'/>"
         " </popup>"
         " <popup name='PopupConnections'>"
         "      <menuitem action='PManageConnect'/>"
@@ -374,62 +385,71 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 
     // loading application
     if(manager.loadApplication(szAppName))
-    {
-
-        ExecutablePContainer modules = manager.getExecutables();
-        CnnContainer connections  = manager.getConnections();
-        ExecutablePIterator moditr;
-        CnnIterator cnnitr;
-
-        int id = 0;  
-        for(moditr=modules.begin(); moditr<modules.end(); moditr++)
-        {
-            m_modRow = *(m_refTreeModModel->append());
-            m_modRow[m_modColumns.m_col_id] = (*moditr)->getID();
-            m_modRow[m_modColumns.m_col_name] = (*moditr)->getCommand();
-            m_modRow.set_value(0, m_refPixSuspended);
-            m_modRow[m_modColumns.m_col_status] = "stopped";
-            m_modRow[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
-            m_modRow[m_modColumns.m_col_host] = (*moditr)->getHost();
-            m_modRow[m_modColumns.m_col_param] = (*moditr)->getParam();
-            m_modRow[m_modColumns.m_col_stdio] = (*moditr)->getStdio();
-            m_modRow[m_modColumns.m_col_wdir] = (*moditr)->getWorkDir();
-            m_modRow[m_modColumns.m_col_env] = (*moditr)->getEnv();
-        }
-
-        id = 0;  
-        for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
-        {
-            m_conRow = *(m_refTreeConModel->append());
-            m_conRow[m_conColumns.m_col_id] = id++;
-            m_conRow.set_value(0, m_refPixDisconnected);
-            
-            if((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo())
-                m_conRow[m_conColumns.m_col_type] = "External";
-            else
-                m_conRow[m_conColumns.m_col_type] = "Internal";
-
-            m_conRow[m_conColumns.m_col_from] = (*cnnitr).from();
-            m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
-            m_conRow[m_conColumns.m_col_carrier] = carrierToStr((*cnnitr).carrier());
-            m_conRow[m_conColumns.m_col_status] = "disconnected";
-            m_conRow[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
-            //m_conRow[m_conColumns.m_col_from_color] = Gdk::Color("#BF0303");
-        }
-        
-        id = 0;
-        ResourcePIterator itrS;
-        for(itrS=manager.getResources().begin(); itrS!=manager.getResources().end(); itrS++)
-        {
-            m_resRow = *(m_refTreeResModel->append());
-            m_resRow[m_resColumns.m_col_id] = id++;
-            m_resRow.set_value(0, m_refPixUnAvailable);
-            m_resRow[m_resColumns.m_col_res] = (*itrS)->getPort();
-            m_resRow[m_resColumns.m_col_status] = "unknown";
-            m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
-        }
-    }
+       updateApplicationWindow();
+    
     reportErrors();
+}
+
+void ApplicationWindow::updateApplicationWindow(void)
+{
+    
+    m_refTreeModModel->clear();
+    m_refTreeConModel->clear();
+    m_refTreeResModel->clear();
+
+    ExecutablePContainer modules = manager.getExecutables();
+    CnnContainer connections  = manager.getConnections();
+    ExecutablePIterator moditr;
+    CnnIterator cnnitr;
+
+    int id = 0;  
+    for(moditr=modules.begin(); moditr<modules.end(); moditr++)
+    {
+        m_modRow = *(m_refTreeModModel->append());
+        m_modRow[m_modColumns.m_col_id] = (*moditr)->getID();
+        m_modRow[m_modColumns.m_col_name] = (*moditr)->getCommand();
+        m_modRow.set_value(0, m_refPixSuspended);
+        m_modRow[m_modColumns.m_col_status] = "stopped";
+        m_modRow[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
+        m_modRow[m_modColumns.m_col_host] = (*moditr)->getHost();
+        m_modRow[m_modColumns.m_col_param] = (*moditr)->getParam();
+        m_modRow[m_modColumns.m_col_stdio] = (*moditr)->getStdio();
+        m_modRow[m_modColumns.m_col_wdir] = (*moditr)->getWorkDir();
+        m_modRow[m_modColumns.m_col_env] = (*moditr)->getEnv();
+    }
+
+    id = 0;  
+    for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
+    {
+        m_conRow = *(m_refTreeConModel->append());
+        m_conRow[m_conColumns.m_col_id] = id++;
+        m_conRow.set_value(0, m_refPixDisconnected);
+        
+        if((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo())
+            m_conRow[m_conColumns.m_col_type] = "External";
+        else
+            m_conRow[m_conColumns.m_col_type] = "Internal";
+
+        m_conRow[m_conColumns.m_col_from] = (*cnnitr).from();
+        m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
+        m_conRow[m_conColumns.m_col_carrier] = carrierToStr((*cnnitr).carrier());
+        m_conRow[m_conColumns.m_col_status] = "disconnected";
+        m_conRow[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
+        //m_conRow[m_conColumns.m_col_from_color] = Gdk::Color("#BF0303");
+    }
+    
+    id = 0;
+    ResourcePIterator itrS;
+    for(itrS=manager.getResources().begin(); itrS!=manager.getResources().end(); itrS++)
+    {
+        m_resRow = *(m_refTreeResModel->append());
+        m_resRow[m_resColumns.m_col_id] = id++;
+        m_resRow.set_value(0, m_refPixUnAvailable);
+        m_resRow[m_resColumns.m_col_res] = (*itrS)->getName();
+        m_resRow[m_resColumns.m_col_status] = "unknown";
+        m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
+    }
+
 }
 
 
@@ -609,33 +629,31 @@ bool ApplicationWindow::getResRowByID(int id, Gtk::TreeModel::Row* row )
     return false;
 }
 
-
-void ApplicationWindow::setCellsEditable(void)
+bool ApplicationWindow::areAllShutdown(void)
 {
-    bool bAllModOk = true;  
     typedef Gtk::TreeModel::Children type_children;
     type_children children = m_refTreeModModel->children();
     for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
     {
         if((*iter)[m_modColumns.m_col_status] != Glib::ustring("stopped"))
-        {
-            bAllModOk = false;
-            break;
-        }
+            return false;
     }
 
     // check for connection status 
-    bool bAllConOk = true;  
     children = m_refTreeConModel->children();
     for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
     {
         if((*iter)[m_conColumns.m_col_status] != Glib::ustring("disconnected"))
-        {
-            bAllConOk = false;
-            break;
-        }
+            return false;
     }
 
+    return true;
+}
+
+void ApplicationWindow::setCellsEditable(void)
+{
+
+    bool bFlag = areAllShutdown();
 
     for(unsigned int i=3; i<m_TreeModView.get_columns().size(); i++)
     {
@@ -644,9 +662,9 @@ void ApplicationWindow::setCellsEditable(void)
         if(render)
         {
             #ifdef GLIBMM_PROPERTIES_ENABLED
-                render->property_editable() = (bAllModOk && bAllConOk);
+                render->property_editable() = bFlag;
             #else
-                render->_validated.set_property("editable", (bAllModOk && bAllConOk));
+                render->_validated.set_property("editable", bFlag);
             #endif      
         }
     }
@@ -658,18 +676,19 @@ void ApplicationWindow::setCellsEditable(void)
         if(render)
         {
             #ifdef GLIBMM_PROPERTIES_ENABLED
-                render->property_editable() = (bAllModOk && bAllConOk);
+                render->property_editable() = bFlag;
             #else
-                render->_validated.set_property("editable", (bAllModOk && bAllConOk));
+                render->_validated.set_property("editable", bFlag);
             #endif      
         }
     }
-
 }
 
 
 bool ApplicationWindow::onRun(void)
 {
+    if(manager.busy()) return false;
+
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -702,6 +721,8 @@ bool ApplicationWindow::onRun(void)
 
 bool ApplicationWindow::onStop(void)
 {
+    if(manager.busy()) return false;
+
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -726,6 +747,8 @@ bool ApplicationWindow::onStop(void)
 
 bool ApplicationWindow::onKill(void)
 {
+    if(manager.busy()) return false;
+
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -750,6 +773,8 @@ bool ApplicationWindow::onKill(void)
 
 bool ApplicationWindow::onConnect(void) 
 { 
+    if(manager.busy()) return false;
+
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -781,6 +806,8 @@ bool ApplicationWindow::onConnect(void)
 
 bool ApplicationWindow::onDisconnect(void) 
 {
+    if(manager.busy()) return false;
+
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -804,6 +831,8 @@ bool ApplicationWindow::onDisconnect(void)
 
 bool ApplicationWindow::onRefresh(void)
 {
+    if(manager.busy()) return false;
+
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -861,6 +890,8 @@ bool ApplicationWindow::onRefresh(void)
 
 bool ApplicationWindow::onAttachStdout()
 { 
+    if(manager.busy()) return false;
+
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -888,6 +919,8 @@ bool ApplicationWindow::onAttachStdout()
 
 bool ApplicationWindow::onDetachStdout(void)
 {
+    if(manager.busy()) return false;
+
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -895,6 +928,34 @@ bool ApplicationWindow::onDetachStdout(void)
     manager.safeDetachStdout(m_ModuleIDs);
     return true;
 }
+
+void ApplicationWindow::onPMenuLoadBalance(void)
+{
+    if(areAllShutdown() && !manager.busy())
+    {
+        typedef Gtk::TreeModel::Children type_children;
+        type_children children = m_refTreeModModel->children();
+        for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
+        {
+            Gtk::TreeModel::Row row = (*iter);
+            row[m_modColumns.m_col_status] = "waiting";
+            row[m_modColumns.m_col_host] = "?";
+            row[m_modColumns.m_col_color] = Gdk::Color("#000000");
+
+            row.set_value(0, m_refPixWaiting);
+        }
+ 
+        manager.safeLoadBalance();
+        yarp::os::Time::delay(0.1);
+    }
+    else
+    {
+        ErrorLogger* logger  = ErrorLogger::Instance(); 
+        logger->addError("Running modules should be stopped before assigning hosts.");
+        reportErrors();
+    }
+}
+
 
 void ApplicationWindow::onTabCloseRequest() 
 { 
@@ -904,6 +965,8 @@ void ApplicationWindow::onTabCloseRequest()
 
 bool ApplicationWindow::onClose(void) 
 {
+    if(manager.busy()) return false;
+
     bool bAllStoped = true; 
     typedef Gtk::TreeModel::Children type_children;
     type_children children = m_refTreeModModel->children();
@@ -946,6 +1009,37 @@ bool ApplicationWindow::onSelectAll(void)
     return true;
 }
 
+bool ApplicationWindow::onExportGraph(void)
+{
+    Gtk::FileChooserDialog dialog("Export to GraphViz");
+    dialog.set_transient_for(*m_pParent);
+    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+    dialog.set_do_overwrite_confirmation(true);
+
+    //Add response buttons the the dialog:
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+
+
+    //Add filters, so that only certain file types can be selected:
+    Gtk::FileFilter filter_any;
+    filter_any.set_name("GraphViz format (dot)");
+    filter_any.add_pattern("*.dot");
+    dialog.add_filter(filter_any);
+
+    if(dialog.run() == Gtk::RESPONSE_OK)
+    {
+        string fname = dialog.get_filename();
+        if(!manager.exportDependencyGraph(fname.c_str()))
+        {
+            ErrorLogger* logger  = ErrorLogger::Instance(); 
+            logger->addError("Cannot export graph");
+            reportErrors();
+            return false;
+        }
+    }
+    return true;
+}
 
 
 void ApplicationWindow::onModStart(int which) 
@@ -1097,6 +1191,15 @@ void ApplicationWindow::onModStdout(int which, const char* msg)
     }
     GDK_THREADS_LEAVE();
 }
+
+void ApplicationWindow::onLoadBalance(void)
+{
+    GDK_THREADS_ENTER();
+    updateApplicationWindow();
+    reportErrors();
+    GDK_THREADS_LEAVE();
+}
+
 
 void ApplicationWindow::releaseApplication(void)
 {

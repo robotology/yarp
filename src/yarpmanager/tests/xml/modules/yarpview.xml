@@ -2,7 +2,6 @@
 	<name>yarpview</name>
 	<description> Yarp image viewer</description>
 	<version>1.0</version>
-	<rank>1</rank>
 	
 	<arguments>
 	</arguments>
@@ -11,33 +10,24 @@
 		<author email=""> Paul Fitzpatrick </author>
 	</authors>
 	
-	<platforms>
-		<os dist="all"> LINUX </os>
-		<os dist="all"> WINDOWS </os>
-		<os dist="all"> MAC </os>
-	</platforms>
-		
 	<data> 
 		<input>
-			<type>YARP</type>
-			<port carrier="TCP">/root</port>
-			<required>yes</required>
-			<priority>yes</priority>
-			<description>needs /root port from yarpserver</description>
-		</input>	
-
-		<input>
 			<type>cartesian-image</type>
-			<port carrier="TCP">/yarpview/img:i</port>
+			<port carrier="UDP">/yarpview/img:i</port>
 			<required>no</required>
 			<priority>no</priority>
 			<description></description>
 		</input>	
 	</data>		
-	
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
 	<development>
 		<include></include>
-		<library></library>
+		<library>YARP</library>
 	</development>
 	
 </module>

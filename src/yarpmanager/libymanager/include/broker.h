@@ -49,7 +49,7 @@ public:
     virtual bool connect(const char* from, const char* to, 
                         const char* carrier) = 0;
     virtual bool disconnect(const char* from, const char* to) = 0;
-    virtual bool running(void) = 0;
+    virtual int  running(void) = 0; // 0 if is not running and 1 if is running; otherwise -1.
     virtual bool exists(const char* port) = 0;
     virtual bool connected(const char* from, const char* to) = 0;
     virtual const char* error(void) = 0;

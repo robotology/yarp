@@ -61,6 +61,8 @@ int main(int __argc, char *__argv[])
     yarp::os::Property cmdline;
     yarp::os::Property config;
 
+    cmdline.fromCommand(__argc, __argv);
+
     if(cmdline.check("help"))
     {
         cout<<HELP_MESSAGE<<endl;
@@ -89,6 +91,9 @@ int main(int __argc, char *__argv[])
     if(!config.check("modpath"))
         config.put("modpath", "./");
     
+    if(!config.check("respath"))
+        config.put("respath", "./");
+
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");
     

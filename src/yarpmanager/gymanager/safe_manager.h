@@ -31,6 +31,7 @@ typedef enum __ThreadAction {
     MREFRESH_CNN,
     MATTACHSTDOUT,
     MDETACHSTDOUT,
+    MLOADBALANCE,
     MNOTHING
 } ThreadAction;
 
@@ -49,6 +50,7 @@ public:
     virtual void onConAvailable(int from, int to) {}
     virtual void onConUnAvailable(int from, int to) {}
     virtual void onError(void) {}
+    virtual void onLoadBalance(void) {}
 };
 
 
@@ -74,11 +76,13 @@ public:
                      std::vector<int>& RIDs);
     void safeAttachStdout(std::vector<int>& MIDs);
     void safeDetachStdout(std::vector<int>& MIDs);
+    void safeLoadBalance(void);
 
 
     bool checkSemaphore(void){ return semManage.check(); }
     void postSemaphore(void) { semManage.post(); }
     void waitSemaphore(void) { semManage.wait(); }
+    bool busy(void) {return busyAction; } 
 
 protected:
     void onExecutableStart(void* which);
@@ -94,6 +98,7 @@ private:
     yarp::os::Property* m_pConfig;
     ApplicationEvent* eventReceiver;
     ThreadAction action;
+    bool busyAction;
     yarp::os::Semaphore semManage;
     std::vector<int> modIds;
     std::vector<int> conIds;

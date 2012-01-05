@@ -1,0 +1,34 @@
+<application>
+  <!-- Generic information-->
+  <name>ApplicationName</name>
+  <description>Template Application</description>
+  <version></version>
+
+  <authors>
+      <author email=""> author.name </author>
+  </authors>
+
+  <!-- Required modules -->
+  <module>
+      <name>Module_Name</name>
+      <parameters></parameters>
+      <node></node>
+      <stdio></stdio>
+      <prefix></prefix>
+  </module>
+
+  <!-- Embedded applications -->
+  <application>
+      <name>Application_Name</name>
+      <prefix></prefix>
+   </application>
+
+  <!-- Required connections -->
+  <connection>
+      <from></from>
+      <to></to>
+      <protocol></protocol>
+  </connection>
+
+</application>
+

@@ -18,43 +18,12 @@
 #include "node.h"
 #include "data.h"
 #include "utility.h"
+#include "resource.h"
 
 using namespace std; 
 
 //namespace ymm {
 
-
-/**
- * Class Platform  
- */
-class Platform{
-
-public: 
-    Platform(OS _os, const char* szDist) {
-        os = _os;
-        if(szDist) strDist = szDist; 
-    }
-    
-    Platform(const char* szOS, const char* szDist) {
-        if(szDist) strDist = szDist; 
-        os = strToOS(szOS);
-    }
-
-    virtual ~Platform(){}
-    
-    OS getOS(void) { return os; }
-    const char* getDistribution(void) { return strDist.c_str(); } 
-    
-    bool operator==(const Platform& plat) {     
-        return ((os == plat.os) && (strDist == plat.strDist)); 
-    }
-    
-protected:
-
-private:
-    OS os;
-    string strDist;
-};
 
 
 /**
@@ -85,10 +54,8 @@ private:
 };
 
 
-typedef vector<Platform> PlatformContainer;
 typedef vector<InputData> InputContainer;
 typedef vector<OutputData> OutputContainer;
-typedef vector<Platform>::iterator PlatformIterator;
 typedef vector<InputData>::iterator InputIterator;
 typedef vector<OutputData>::iterator OutputIterator;
 typedef vector<string> AuthorContainer;
@@ -107,17 +74,16 @@ public:
     Module(const char* szName);
     Module(const Module &mod);
     virtual ~Module();
-    virtual Node* clone(void);
-    void setName(const char* szName) { 
-        if(szName){
-            strName = szName; 
-        }
-    }
+    virtual Node* clone(void);        
+    Module& operator=(const Module& rhs);
+
+    void setName(const char* szName) { if(szName) strName = szName; }
     void setRank(int rank) {iRank = rank;}
     void setVersion(const char* szVersion) { if(szVersion) strVersion = szVersion; }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     void setHost(const char* szHost) { if(szHost) strHost = szHost; }
-
+    void setForced(bool flag) { bForced = flag; }
+    
     void setParam(const char* szParam) { if(szParam) strParam = szParam; }
     void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
     void setWorkDir(const char* szWDir) { if(szWDir) strWorkDir = szWDir; }
@@ -130,7 +96,8 @@ public:
     const char* getVersion(void) { return strVersion.c_str(); }
     const char* getDescription(void) { return strDescription.c_str(); }
     const char* getHost(void) { return strHost.c_str(); }   
-    
+    bool getForced(void) { return bForced; }
+  
     const char* getParam(void) { return strParam.c_str(); } 
     const char* getXmlFile(void) { return strXmlFile.c_str(); }
     const char* getWorkDir(void) { return strWorkDir.c_str(); } 
@@ -140,12 +107,12 @@ public:
 
     int argumentCount(void) { return arguments.size(); }
     Argument& getArgumentAt(int index){ return arguments[index]; }
-    int platformCount(void) { return platforms.size(); }
-    Platform& getPlatformAt(int index){ return platforms[index]; }
     int outputCount(void) { return outputs.size(); }
     OutputData& getOutputAt(int index) { return outputs[index]; }
     int inputCount(void) { return inputs.size(); }
     InputData& getInputAt(int index) { return inputs[index]; } 
+    int resourceCount(void) const { return resources.size(); }
+    GenericResource& getResourceAt(int index) const { return *(resources[index]); }
 
     void addAuthor(const char* szAuthor) { authors.push_back(szAuthor); }
     int authorCount(void) { return authors.size(); }
@@ -153,35 +120,19 @@ public:
     
     bool addArgument(Argument& arg);
     bool removeArgument(Argument& argument);
-    bool addPlatform(Platform& platform);
-    bool removePlatform(Platform& platform);    
     bool addOutput(OutputData& output);
     bool removeOutput(OutputData& output);
     bool addInput(InputData& input);
     bool removeInput(InputData& input);
-    
+    bool addResource(GenericResource& res);
+    bool removeResource(GenericResource& res);
+   
     void clearInputs(void) { inputs.clear(); }
     void clearOutputs(void) { outputs.clear(); }
-    void clearPlatforms(void) { platforms.clear(); }    
-    void clear(void){
-        iRank = 0;
-        strName.clear();
-        arguments.clear();
-        strVersion.clear();
-        strDescription.clear();
-        strHost.clear();
-        authors.clear();
-        platforms.clear();
-        outputs.clear();
-        inputs.clear();
-        strXmlFile.clear();
-        strParam.clear();
-        strWorkDir.clear();
-        strStdio.clear();
-        strBroker.clear();
-        strPrefix.clear();
-    }
-    
+    void clearResources(void) { resources.clear(); }
+
+    void clear(void);
+
 protected:
 
 private:
@@ -189,12 +140,13 @@ private:
     string strVersion;
     string strDescription;
     string strHost;
+    bool bForced;
     int iRank;
     ArgumentContainer arguments;
     AuthorContainer authors;
-    PlatformContainer platforms; 
     OutputContainer outputs;
     InputContainer inputs;
+    ResourcePContainer resources;
 
     string strParam;
     string strXmlFile;
@@ -203,12 +155,16 @@ private:
     string strBroker;
     string strPrefix;
 
-    PlatformIterator findPlatform(Platform& platform);
     ArgumentIterator findArgument(Argument& argument);
     InputIterator findInput(InputData& input);
     OutputIterator findOutput(OutputData& output); 
+    ResourcePIterator findResource(GenericResource& output); 
+    void swap(const Module &mod);
+
 };
 
+typedef vector<Module*> ModulePContainer;
+typedef vector<Module*>::iterator ModulePIterator;
 
 
 #define PRINT_MODULE(m)\
@@ -226,10 +182,10 @@ private:
         cout<<"Authors  : "<<endl;\
         for(int i=0; i<m->authorCount(); i++)\
             cout<<"           "<<m->getAuthorAt(i)<<endl;\
-        cout<<"Platforms: "<<endl;\
+        /*cout<<"Platforms: "<<endl;\
         for(int i=0; i<m->platformCount(); i++)\
             cout<<"           "<<m->getPlatformAt(i).getOS()\
-            <<", "<<m->getPlatformAt(i).getDistribution()<<endl;\
+            <<", "<<m->getPlatformAt(i).getDistribution()<<endl;*/\
         cout<<"Inputs   : "<<endl;\
         for(int i=0; i<m->inputCount(); i++)\
         {\

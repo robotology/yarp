@@ -20,38 +20,81 @@ using namespace std;
 
 //namespace ymm {
 
+class GenericResource : public Node 
+{
+public:
+    GenericResource(const char* szTypeName);
+    GenericResource(const GenericResource &res);
+    virtual ~GenericResource();
+    
+    void setAvailability(bool flag) { bAvailable = flag; }
+    bool getAvailability(void) { return bAvailable; }
+    void setDisable(bool flag) { bDisabled = flag; }
+    bool getDisable(void) { return bDisabled; }
 
-class ResYarpPort : public Node{
-
-public: 
-    ResYarpPort(void);
-    ResYarpPort(const char* szName);
-    ResYarpPort(const ResYarpPort &res);
-    virtual ~ResYarpPort();
-    virtual Node* clone(void);
     void setName(const char* szName) { if(szName) strName = szName; }   
     const char* getName(void) { return strName.c_str(); }
-    void setPort(const char* szPort) { if(szPort) strPort = szPort; }
-    const char* getPort(void) { return strPort.c_str(); }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     const char* getDescription(void) { return strDescription.c_str(); }
+    const char* getTypeName(void) { return strTypeName.c_str(); }
+
     void setOwner(Node* owner) { modOwner = owner; }
-    const Node* owner(void) { return modOwner; }
+    Node* owner(void) { return modOwner; }
+    void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
+    const char* getXmlFile(void) { return strXmlFile.c_str(); }
+
+    //virtual Node* clone(void);
+    virtual bool satisfy(GenericResource* resource) = 0;
     
-    bool operator==(const ResYarpPort& res) {       
+    bool operator==(const GenericResource& res) {       
         return (strName == res.strName); 
     }
     
 protected:
 
 private:
+    bool bAvailable;
+    bool bDisabled;
     string strName;
-    string strPort; 
+    string strTypeName;
     string strDescription;
     Node*  modOwner; 
+    string strXmlFile;
+
 };
- 
- 
+
+typedef vector<GenericResource*> ResourcePContainer;
+typedef vector<GenericResource*>::iterator ResourcePIterator;
+
+
+
+/**
+* Class MultiResource
+*/
+class MultiResource : public GenericResource 
+{
+public: 
+    MultiResource(void);
+    MultiResource(const char* szName);
+    MultiResource(const MultiResource& rhs);
+    MultiResource& operator=(const MultiResource& rhs);
+    virtual ~MultiResource();
+    virtual Node* clone(void);
+    virtual bool satisfy(GenericResource* resource);
+  
+    int resourceCount(void) const { return resources.size(); }
+    GenericResource& getResourceAt(int index) const { return *(resources[index]); }
+    bool addResource(GenericResource& res);
+    void clear();
+
+protected:
+
+private:
+    ResourcePContainer resources;
+    void swap(const MultiResource &res);
+};
+
+
 //}
 
 #endif //__RESOURCE__

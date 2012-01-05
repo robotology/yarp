@@ -74,14 +74,18 @@ void Suspended::moduleFailed(void) { /* do nothing*/ }
 
 
 // refresh() from Suspended can be used for recovering from 
-// unexptect termination of manager. 
+// unexptected termination of manager. 
 void Suspended::refresh(void)
 {
-    if(executable->getBroker()->running())
+    ErrorLogger* logger = ErrorLogger::Instance();
+    int ret = executable->getBroker()->running();
+    if(ret == 1)
     {
         executable->getEvent()->onExecutableStart(executable);
         castEvent(EventFactory::recoverEvent);
     }
+    else if(ret == -1)
+        logger->addError(executable->getBroker()->error());
 }
 
 
@@ -222,8 +226,12 @@ void Connecting::connectAllPorts(void)
 
 void Connecting::refresh(void)
 {
-    if(!executable->getBroker()->running())
+    ErrorLogger* logger = ErrorLogger::Instance();
+    int ret = executable->getBroker()->running();
+    if(ret == 0)
         Connecting::moduleFailed(); 
+    else if(ret == -1)
+        logger->addError(executable->getBroker()->error());
 }
 
 void Connecting::kill(void)
@@ -256,8 +264,13 @@ Running::~Running()
 
 void Running::refresh(void)
 {
-    if(!executable->getBroker()->running())
-        Running::moduleFailed();    
+    ErrorLogger* logger = ErrorLogger::Instance();
+    int ret = executable->getBroker()->running();
+    if(ret == 0)
+        Running::moduleFailed();
+    else if(ret == -1)
+        logger->addError(executable->getBroker()->error());
+
 }
 
 void Running::start(void)
@@ -370,8 +383,13 @@ void Dying::disconnectAllPorts(void)
 
 void Dying::refresh(void)
 {
-    if(!executable->getBroker()->running())
-        Dying::moduleFailed();  
+    ErrorLogger* logger = ErrorLogger::Instance();
+    int ret = executable->getBroker()->running();
+    if(ret == 0)
+        Dying::moduleFailed();
+    else if(ret == -1)
+        logger->addError(executable->getBroker()->error());
+
 }
 
 void Dying::kill(void) { /* do nothing */ }
@@ -418,14 +436,18 @@ void Dead::kill(void)
 }
 
 // refresh() from Dead can be used for recovering from 
-// unexptect termination of manager. 
+// unexpect termination of manager. 
 void Dead::refresh(void)
 {
-    if(executable->getBroker()->running())
+    ErrorLogger* logger = ErrorLogger::Instance();
+    int ret = executable->getBroker()->running();
+    if(ret == 1)
     {
         executable->getEvent()->onExecutableStart(executable);
         castEvent(EventFactory::recoverEvent);
     }
+    else if(ret == -1)
+        logger->addError(executable->getBroker()->error());
 }
 
 

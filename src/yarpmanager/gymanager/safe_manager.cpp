@@ -10,7 +10,7 @@
 #include "safe_manager.h"
 
 
-SafeManager::SafeManager():action(MNOTHING)
+SafeManager::SafeManager():action(MNOTHING), busyAction(false)
 {
 }
 
@@ -43,6 +43,15 @@ bool SafeManager::prepare(Manager* lazy,
 
     // making manager from lazy manager
     KnowledgeBase* lazy_kb = lazy->getKnowledgeBase();
+
+    ModulePContainer mods =  lazy_kb->getModules();
+    for(ModulePIterator itr=mods.begin(); itr!=mods.end(); itr++)
+        getKnowledgeBase()->addModule((*itr));
+
+    ResourcePContainer res =  lazy_kb->getResources();
+    for(ResourcePIterator itr=res.begin(); itr!=res.end(); itr++)
+        getKnowledgeBase()->addResource((*itr));
+
     ApplicaitonPContainer apps =  lazy_kb->getApplications();
     for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
         getKnowledgeBase()->addApplication((*itr));
@@ -124,7 +133,7 @@ void SafeManager::run()
                 {
                     if(eventReceiver) eventReceiver->onModStart(local_modIds[i]);
                 }
-                else if(Manager::suspended(local_modIds[i]))
+                else //if(Manager::suspended(local_modIds[i]))
                 {
                     if(eventReceiver) eventReceiver->onModStop(local_modIds[i]);
                 }
@@ -154,6 +163,7 @@ void SafeManager::run()
                     if(eventReceiver) eventReceiver->onResUnAvailable(local_resIds[i]);
                 }
             }
+            busyAction = false;
             break;
         }
 
@@ -184,6 +194,14 @@ void SafeManager::run()
             break;
         }
 
+    case MLOADBALANCE:{
+                Manager::loadBalance();
+                if(eventReceiver) eventReceiver->onLoadBalance();
+                busyAction = false;
+            break;
+        }
+
+
     default:
         break;
     };
@@ -194,6 +212,7 @@ void SafeManager::run()
 
 void SafeManager::safeRun(std::vector<int>& MIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     modIds = MIDs;
     action = MRUN;
@@ -203,6 +222,7 @@ void SafeManager::safeRun(std::vector<int>& MIDs)
 
 void SafeManager::safeStop(std::vector<int>& MIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     modIds = MIDs;
     action = MSTOP;
@@ -212,6 +232,7 @@ void SafeManager::safeStop(std::vector<int>& MIDs)
 
 void SafeManager::safeKill(std::vector<int>& MIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     modIds = MIDs;
     action = MKILL;
@@ -223,6 +244,7 @@ void SafeManager::safeKill(std::vector<int>& MIDs)
 
 void SafeManager::safeConnect(std::vector<int>& CIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     conIds = CIDs;
     action = MCONNECT;
@@ -233,6 +255,7 @@ void SafeManager::safeConnect(std::vector<int>& CIDs)
 
 void SafeManager::safeDisconnect(std::vector<int>& CIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     conIds = CIDs;
     action = MDISCONNECT;
@@ -245,11 +268,13 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
                      std::vector<int>& CIDs, 
                      std::vector<int>& RIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     modIds = MIDs;
     conIds = CIDs;
     resIds = RIDs;
     action = MREFRESH;
+    busyAction = true;
     postSemaphore();
     yarp::os::Thread::start();
 }
@@ -257,6 +282,7 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
 
 void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     modIds = MIDs;
     action = MATTACHSTDOUT;
@@ -266,11 +292,22 @@ void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 
 void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 {
+    if(busyAction) return; 
     waitSemaphore();
     modIds = MIDs;
     action = MDETACHSTDOUT;
     postSemaphore();
     yarp::os::Thread::start();
+}
+
+void SafeManager::safeLoadBalance(void)
+{
+   if(busyAction) return; 
+   waitSemaphore();
+   action = MLOADBALANCE;
+   busyAction = true;
+   postSemaphore();
+   yarp::os::Thread::start();
 }
 
 void SafeManager::onExecutableStart(void* which)

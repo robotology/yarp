@@ -1,0 +1,73 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>module_name</name>
+    <description>Template module</description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+        <param desc="first parameter"> param1 </param>
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email=""> author1 </author>
+    </authors>
+
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>
+        <!-- input data if available-->
+        <input>
+            <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
+            <type>DataType</type>
+
+            <!-- input port which receive the data. -->
+            <port carrier="tcp">/portname</port>
+
+            <!-- required input means the execution of module depends on
+                 this input data. Notice that not all the input are required
+                 for a module to perform its task (e.g. control input, status
+                 request input). -->
+            <required>yes</required>
+
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+        <!-- output datas if available -->
+        <output>
+            <type>DataType</type>
+            <port carrier="tcp">/portname</port>
+            <description></description>
+        </output>
+    </data>
+
+    <!-- physical and logical resource dependencies can be introduced in this
+         section. Dependencies must follow resource conceptional models. Currently
+         available resource models are 'memory', 'processor', 'storage', 'network',
+         'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced
+         inside <computer></computer> tags. While resources described inside <computer>
+         tags represent conjunctional dependency, resources from different <computer>
+         tags can be seen as disjunctions. Meaning that If a module depend on either
+         resource R1 or R2 they can be introduced inside two different <computer> tags.
+         Resource dependencies should be introduced if they are really required. For
+         example, if module's performance drops significantly in case of memory swapping,
+         a memory resource dependency can be introduced with the required memory space. -->
+    <dependencies>
+        <computer>
+            <gpu>
+                <capability>1.3</capability>
+            </gpu> 
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library></library>
+    </development>
+
+</module>
+

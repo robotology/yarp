@@ -69,7 +69,7 @@ __   __\n\
                                   |___/"
 
 #define WELCOME_MESSAGE     "type \"help\" for more information."
-#define VERSION_MESSAGE     "Version 1.0"
+#define VERSION_MESSAGE     "Version 1.1"
 
 #define HELP_MESSAGE        "\
 Usage:\n\
@@ -133,6 +133,9 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     if(!config.check("modpath"))
         config.put("modpath", "./");
     
+    if(!config.check("respath"))
+        config.put("respath", "./");
+   
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");
     
@@ -186,6 +189,9 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     if(config.check("modpath"))
         addModules(config.find("modpath").asString().c_str());
+
+    if(config.check("respath"))
+        addResources(config.find("respath").asString().c_str());
 
     if(config.check("apppath"))
     {
@@ -859,7 +865,7 @@ void YConsoleManager::which(void)
     for(itrS=getResources().begin(); itrS!=getResources().end(); itrS++)
     {
         cout<<INFO<<"("<<id++<<") ";
-        cout<<OKBLUE<<(*itrS)->getName()<<INFO<<" ["<<(*itrS)->getPort()<<"]"<<ENDC<<endl;
+        cout<<OKBLUE<<(*itrS)->getName()<<INFO<<" ["<<(*itrS)->getTypeName()<<"]"<<ENDC<<endl;
     }
     cout<<endl;
 }

@@ -14,7 +14,7 @@
 #define __XMLAPPLOADER__
 
 #include "ymm-types.h" 
-#include "apploader.h"
+#include "manifestloader.h"
 
 //namespace ymm {
 
@@ -30,6 +30,7 @@ public:
     virtual ~XmlAppLoader();
     bool init(void);
     void fini(void);
+    void reset(void);
     Application* getNextApplication(void);
     
 protected:

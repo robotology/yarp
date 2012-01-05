@@ -17,7 +17,8 @@
 #include "node.h"
 #include "module.h"
 #include "utility.h"
-#include "resource.h"
+#include "logicresource.h"
+#include "primresource.h"
 
 using namespace std; 
 
@@ -249,15 +250,7 @@ public:
     bool operator==(const Application& app) {       
         return (strName == app.strName); 
     }
-/*  
-    bool operator<(const Application& alt) const {      
-        return strName.compare(alt.strName)<0; 
-    }
-
-    bool operator>(const Application& alt) const {      
-        return strName.compare(alt.strName)>0; 
-    }
-*/
+    
     void clear(void) {
         strName.clear();
         strVersion.clear();
@@ -291,7 +284,9 @@ private:
     CnnIterator findConnection(Connection& cnn);
 };
  
- 
+typedef vector<Application*> ApplicaitonPContainer;
+typedef vector<Application*>::iterator ApplicationPIterator;
+
 //}
 
 #endif //__APPLICATION__
