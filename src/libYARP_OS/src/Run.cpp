@@ -12,6 +12,7 @@
 #include <yarp/os/impl/RunProcManager.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Run.h>
+#include <yarp/os/impl/SystemInfo.h>
 
 #ifndef YARP_HAS_ACE
 #ifndef __APPLE__
@@ -154,7 +155,8 @@ int yarp::os::Run::main(int argc, char *argv[])
      || config.check("exit") 
      || config.check("isrunning")
      || config.check("ps")
-     || config.check("env"))
+     || config.check("env")
+     || config.check("sysinfo"))
     { 
         return sendToServer(config);
     }
@@ -250,6 +252,7 @@ int yarp::os::Run::Server()
         Bottle msg;
         port.read(msg,true);
 
+        
         fprintf(stderr,"%s\n",msg.toString().c_str());
         fflush(stdout);
 
@@ -379,6 +382,13 @@ int yarp::os::Run::Server()
             fprintf(stderr,"Run::Server() killstdio(%s)\n",msg.find("killstdio").asString().c_str());
             yarp::os::ConstString alias(msg.find("killstdio").asString());
             mStdioVector.Signal(alias,SIGTERM);
+            continue;
+        }
+
+        if (msg.check("sysinfo"))
+        {
+            SystemInfoSerializer sysinfo;
+            port.reply(sysinfo);
             continue;
         }
 
@@ -520,6 +530,77 @@ int yarp::os::Run::sendToServer(yarp::os::Property& config)
         return response.get(0).asString()=="running"?0:2;
     }
 
+    if(config.check("sysinfo"))
+    {
+        if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return YARPRUN_ERROR; }
+        
+        msg.addList()=config.findGroup("sysinfo");
+       
+        Port port;
+        port.setTimeout(5.0);
+        port.open("...");
+        bool connected = yarp::os::NetworkBase::connect(port.getName(), 
+                                                        config.find("on").asString());
+        if(!connected)
+        {
+            fprintf(stderr, "RESPONSE:\n=========\n");
+            fprintf(stderr, "Cannot connect to remote server, aborting...\n");
+            port.close();           
+            return YARPRUN_ERROR;
+        }
+
+        SystemInfoSerializer info;
+        int ret = port.write(msg, info);
+        NetworkBase::disconnect(port.getName().c_str(), 
+                                config.find("on").asString());
+        port.close();
+        
+        fprintf(stdout, "RESPONSE:\n=========\n\n");
+            
+        if(!ret)
+        {
+            fprintf(stdout, "No response. (timeout)\n");
+            return YARPRUN_ERROR;
+        }
+
+        fprintf(stdout, "Platform name    : %s\n", info.platform.name.c_str());
+        fprintf(stdout, "Platform dist    : %s\n", info.platform.distribution.c_str());
+        fprintf(stdout, "Platform release : %s\n", info.platform.release.c_str());
+        fprintf(stdout, "Platform code    : %s\n", info.platform.codename.c_str());
+        fprintf(stdout, "Platform kernel  : %s\n\n", info.platform.kernel.c_str());
+
+        fprintf(stdout, "User Id        : %d\n", info.user.userID);
+        fprintf(stdout, "User name      : %s\n", info.user.userName.c_str());
+        fprintf(stdout, "User real name : %s\n", info.user.realName.c_str());
+        fprintf(stdout, "User home dir  : %s\n\n", info.user.homeDir.c_str());
+
+        fprintf(stdout, "Cpu load Ins.: %d\n", info.load.cpuLoadInstant);
+        fprintf(stdout, "Cpu load 1   : %.2lf\n", info.load.cpuLoad1);
+        fprintf(stdout, "Cpu load 5   : %.2lf\n", info.load.cpuLoad5);
+        fprintf(stdout, "Cpu load 15  : %.2lf\n\n", info.load.cpuLoad15);
+
+        fprintf(stdout, "Memory total : %dM\n", info.memory.totalSpace);
+        fprintf(stdout, "Memory free  : %dM\n\n", info.memory.freeSpace);
+
+        fprintf(stdout, "Storage total : %dM\n", info.storage.totalSpace);
+        fprintf(stdout, "Storage free  : %dM\n\n", info.storage.freeSpace);
+
+        fprintf(stdout, "Processor model     : %s\n", info.processor.model.c_str());
+        fprintf(stdout, "Processor model num : %d\n", info.processor.modelNumber);
+        fprintf(stdout, "Processor family    : %d\n", info.processor.family);
+        fprintf(stdout, "Processor vendor    : %s\n", info.processor.vendor.c_str());
+        fprintf(stdout, "Processor arch      : %s\n", info.processor.architecture.c_str());
+        fprintf(stdout, "Processor cores     : %d\n", info.processor.cores);
+        fprintf(stdout, "Processor siblings  : %d\n", info.processor.siblings);
+        fprintf(stdout, "Processor Mhz       : %.2lf\n\n", info.processor.frequency);
+    
+        //fprintf(stdout, "Network IP4 : %s\n", info.network.ip4.c_str());
+        //fprintf(stdout, "Network IP6 : %s\n", info.network.ip6.c_str());
+        //fprintf(stdout, "Network mac : %s\n\n", info.network.mac.c_str());
+       
+        return 0;
+    }
+
     if (config.check("exit"))
     {
         if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return YARPRUN_ERROR; }
@@ -547,6 +628,7 @@ void yarp::os::Run::Help(const char *msg)
     fprintf(stderr,"yarp run --on SERVERPORT --sigtermall\nterminate all commands\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --ps\nreport commands running on SERVERPORT\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --isrunning TAG\nTAG command is running?\n\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --sysinfo\nreport system information of SERVERPORT\n\n"); 
     fprintf(stderr,"yarp run --on SERVERPORT --exit\nstop SERVERPORT server\n\n");  
 }
 
