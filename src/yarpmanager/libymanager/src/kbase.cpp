@@ -1268,9 +1268,9 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
             // with load balancer tunning value;
             // It will help for better load distribution among nodes 
             Computer* comp = dynamic_cast<Computer*>(provider);
-            float default_tunning = 0.1;
+            float default_tunning = 0.1F;
             if(comp && (comp->getProcessor().getSiblings() > 0))
-                default_tunning = 1.0 / (float)comp->getProcessor().getSiblings();
+                default_tunning = 1.0F / (float)comp->getProcessor().getSiblings();
             float tunner = (module->getRank()<10)? default_tunning : (float)module->getRank()/100.0F;
             updateResourceWeight(*graph, provider, candidateLink->weight()+tunner);
         }
