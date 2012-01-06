@@ -84,7 +84,9 @@ MainWindow::MainWindow( yarp::os::Property &config)
 MainWindow::~MainWindow()
 {
     delete m_refMessageList;
+#if (GLIBMM_MAJOR_VERSION == 2 && GLIBMM_MINOR_VERSION >= 16)
     m_factory.reset();
+#endif    
 }
 
 void MainWindow::on_size_allocate(Gtk::Allocation& allocation)
@@ -216,7 +218,9 @@ void MainWindow::createWidgets(void)
     Gtk::Widget* pToolbar = m_refUIManager->get_widget("/ToolBar") ;
     if(pToolbar)
     {
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
         ((Gtk::Toolbar*)pToolbar)->set_icon_size(Gtk::IconSize(Gtk::ICON_SIZE_SMALL_TOOLBAR));
+#endif        
         m_VBox.pack_start(*pToolbar, Gtk::PACK_SHRINK);
     }
 
@@ -284,18 +288,21 @@ void MainWindow::setupStocks(void)
     Gtk::StockID runID = Gtk::StockID("YRUN");
     Gtk::StockID procID = Gtk::StockID("YPROCESSOR");
     Gtk::StockID importID = Gtk::StockID("YIMPORT");
+    Gtk::StockID selallID = Gtk::StockID("YSELECTALL");
 
     Gtk::StockItem killStock(killID, "YKILL");
     Gtk::StockItem stopStock(killID, "YSTOP");
     Gtk::StockItem runStock(runID, "YRUN");
     Gtk::StockItem procStock(procID, "YPROCESSOR");
     Gtk::StockItem importStock(importID, "YIMPORT");
+    Gtk::StockItem selallStock(selallID, "YSELECTALL");
 
     Gtk::Stock::add(killStock);
     Gtk::Stock::add(stopStock);
     Gtk::Stock::add(runStock);
     Gtk::Stock::add(procStock);
     Gtk::Stock::add(importStock);
+    Gtk::Stock::add(selallStock);
 
     Gtk::IconSet killIcon(Gdk::Pixbuf::create_from_data(kill_ico.pixel_data, 
                         Gdk::COLORSPACE_RGB,
@@ -337,11 +344,20 @@ void MainWindow::setupStocks(void)
                         import_ico.height,
                         import_ico.bytes_per_pixel*import_ico.width));
 
+    Gtk::IconSet selallIcon(Gdk::Pixbuf::create_from_data(selectall_ico.pixel_data, 
+                        Gdk::COLORSPACE_RGB,
+                        true,
+                        8,
+                        selectall_ico.width,
+                        selectall_ico.height,
+                        selectall_ico.bytes_per_pixel*selectall_ico.width));
+
     m_factory->add(killID, killIcon);
     m_factory->add(stopID, stopIcon);
     m_factory->add(runID, runIcon);
     m_factory->add(procID, procIcon);
     m_factory->add(importID, importIcon);
+    m_factory->add(selallID, selallIcon);
 
 }
 
@@ -375,7 +391,7 @@ void MainWindow::setupActions(void)
                         sigc::mem_fun(*this, &MainWindow::onMenuFileSave) );
     m_refActionGroup->add( Gtk::Action::create("FileSaveAs", Gtk::Stock::SAVE_AS),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileSaveAs) );
-    m_refActionGroup->add( Gtk::Action::create("FileImport",Gtk::StockID("YIMPORT") ,"_Import...", "Import xml files"),
+    m_refActionGroup->add( Gtk::Action::create("FileImport", Gtk::StockID("YIMPORT") ,"_Import...", "Import xml files"),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileImport) );
 
     m_refActionGroup->add(Gtk::Action::create("FileQuit", Gtk::Stock::QUIT),
@@ -383,7 +399,7 @@ void MainWindow::setupActions(void)
     
     //Edit menu:
     m_refActionGroup->add( Gtk::Action::create("EditMenu", "Edit") );
-    m_refActionGroup->add( Gtk::Action::create("EditSelAll", Gtk::Stock::SELECT_ALL, "Select All", "Select all"),
+    m_refActionGroup->add( Gtk::Action::create("EditSelAll", Gtk::StockID("YSELECTALL"), "Select All", "Select all"),
                         sigc::mem_fun(*this, &MainWindow::onMenuEditSellAll) );
     m_refActionGroup->add( Gtk::Action::create("EditExportGraph", Gtk::Stock::CONVERT, "Export graph...", "Export graph"),
                         sigc::mem_fun(*this, &MainWindow::onMenuEditExportGraph) );
@@ -1035,7 +1051,10 @@ void MainWindow::onMenuHelpOnlineHelp()
 void MainWindow::onMenuHelpAbout()
 {
     Gtk::AboutDialog dialog; 
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 6)
     dialog.set_program_name("YARP Manager");
+#endif
+
     dialog.set_version("1.1");
     dialog.set_copyright(
             "2011 (C) Robotics, Brain and Cognitive Sciences\n"
@@ -1316,8 +1335,9 @@ void MainWindow::manageApplication(const char* szName)
         ml->set_text(name);
         m_mainTab.append_page(*pAppWnd, *hb, *ml);
         hb->show_all_children();
-
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 10)
         m_mainTab.set_tab_reorderable(*pAppWnd);
+#endif        
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }
@@ -1386,8 +1406,9 @@ void MainWindow::manageResource(const char* szName)
         ml->set_text(name);
         m_mainTab.append_page(*pResWnd, *hb, *ml);
         hb->show_all_children();
-
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 10)
         m_mainTab.set_tab_reorderable(*pResWnd);
+#endif        
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }
@@ -1454,8 +1475,9 @@ void MainWindow::manageModule(const char* szName)
         ml->set_text(name);
         m_mainTab.append_page(*pModWnd, *hb, *ml);
         hb->show_all_children();
-
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 10)
         m_mainTab.set_tab_reorderable(*pModWnd);
+#endif        
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }

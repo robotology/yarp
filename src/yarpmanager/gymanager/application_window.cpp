@@ -301,11 +301,11 @@ void ApplicationWindow::createWidgets(void)
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
     m_refActionGroup->add( Gtk::Action::create("PManageStdout", Gtk::Stock::NETWORK, "_Attach to stdout", "Attach to standart output"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuAttachStdout) );        
-    m_refActionGroup->add( Gtk::Action::create("PModuleSelAll", Gtk::Stock::SELECT_ALL, "Select _all modules", "Select all modules"),
+    m_refActionGroup->add( Gtk::Action::create("PModuleSelAll", Gtk::StockID("YSELECTALL"), "Select _all modules", "Select all modules"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPModuleSelectAll) );
-    m_refActionGroup->add( Gtk::Action::create("PConenctionSelAll", Gtk::Stock::SELECT_ALL, "_Select all connections", "Select all connections"),
+    m_refActionGroup->add( Gtk::Action::create("PConenctionSelAll", Gtk::StockID("YSELECTALL"), "_Select all connections", "Select all connections"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPConnectionSelectAll) );
-    m_refActionGroup->add( Gtk::Action::create("PReseourceSelAll", Gtk::Stock::SELECT_ALL, "_Select all resources", "Select all resources"),
+    m_refActionGroup->add( Gtk::Action::create("PReseourceSelAll", Gtk::StockID("YSELECTALL"), "_Select all resources", "Select all resources"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPResourceSelectAll) );
 
     m_refUIManager = Gtk::UIManager::create();
@@ -1211,6 +1211,7 @@ void ApplicationWindow::releaseApplication(void)
     }
     m_MapstdWnds.clear();
     
+#if (GLIBMM_MAJOR_VERSION == 2 && GLIBMM_MINOR_VERSION >= 16)
     m_refPixSuspended.reset();
     m_refPixRunning.reset();
     m_refPixWaiting.reset();
@@ -1218,6 +1219,7 @@ void ApplicationWindow::releaseApplication(void)
     m_refPixDisconnected.reset();
     m_refPixAvailable.reset();
     m_refPixUnAvailable.reset();
+#endif    
 }
 
 
