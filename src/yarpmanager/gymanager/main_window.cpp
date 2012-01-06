@@ -1051,7 +1051,7 @@ void MainWindow::onMenuHelpOnlineHelp()
 void MainWindow::onMenuHelpAbout()
 {
     Gtk::AboutDialog dialog; 
-#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 6)
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
     dialog.set_program_name("YARP Manager");
 #endif
 
