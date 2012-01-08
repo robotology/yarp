@@ -1,9 +1,9 @@
 /*
  *  Yarp Modules Manager
  *  Copyright: (C) 2010 RobotCub Consortium
- *				Italian Institute of Technology (IIT)
- *				Via Morego 30, 16163, 
- *				Genova, Italy
+ *              Italian Institute of Technology (IIT)
+ *              Via Morego 30, 16163, 
+ *              Genova, Italy
  * 
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *  Authors: Ali Paikan <ali.paikan@iit.it>
@@ -83,7 +83,6 @@ typedef struct _UserInfo {
     int userID;
 } UserInfo;
 
-
 /**
  * Class SystemInfo
  */
@@ -97,6 +96,10 @@ public:
     static PlatformInfo getPlatformInfo(void);
     static LoadInfo getLoadInfo(void);
     static UserInfo getUserInfo(void);
+#if defined(WIN32)
+    static void enableCpuLoadCollector(void);
+    static void disableCpuLoadCollector(void);    
+#endif    
 };
 
 
@@ -107,11 +110,11 @@ public:
 class SystemInfoSerializer: public yarp::os::Portable 
 {
 public:
-	SystemInfoSerializer(){}
-	virtual ~SystemInfoSerializer(){}
+    SystemInfoSerializer(){}
+    virtual ~SystemInfoSerializer(){}
 
-	virtual bool read(yarp::os::ConnectionReader& connection);
-	virtual bool write(yarp::os::ConnectionWriter& connection);
+    virtual bool read(yarp::os::ConnectionReader& connection);
+    virtual bool write(yarp::os::ConnectionWriter& connection);
 
 public:
     MemoryInfo memory;

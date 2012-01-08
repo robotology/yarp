@@ -247,6 +247,11 @@ int yarp::os::Run::Server()
     signal(SIGCHLD,sigchild_handler); 
     #endif
 
+	// Enabling cpu load collector on windows 
+	#if defined(WIN32)
+		SystemInfo::enableCpuLoadCollector();
+	#endif
+
     while (pServerPort) 
     {
         Bottle msg;
