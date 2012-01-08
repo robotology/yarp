@@ -745,15 +745,14 @@ PlatformInfo SystemInfo::getPlatformInfo(void)
         else if((osver.dwMajorVersion == 6) && (osver.dwMinorVersion == 0) &&
             (osver.wProductType != VER_NT_WORKSTATION))
            platform.distribution = "Server 2008"; 
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-            (GetSystemMetrics(SM_SERVERR2) != 0))
-           platform.distribution = "Server 2003 R2"; 
+        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
+           platform.distribution = "Server 2003"; 
     //    else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
     //        (osver.wSuiteMask & VER_SUITE_WH_SERVER))
     //       platform.distribution = "Home Server";         
-        else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
-                (GetSystemMetrics(SM_SERVERR2) == 0))
-           platform.distribution = "Server 2003"; 
+    //    else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
+    //            (GetSystemMetrics(SM_SERVERR2) != 0))
+    //       platform.distribution = "Server 2003 R2"; 
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2) &&
                 (osver.wProductType == VER_NT_WORKSTATION))
                 /* &&(osver.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)*/
