@@ -36,7 +36,7 @@ Node* Platform::clone(void)
 
 bool Platform::satisfy(GenericResource* resource)
 {   
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     Platform* os = dynamic_cast<Platform*>(resource);
@@ -83,7 +83,7 @@ Node* ResYarpPort::clone(void)
 
 bool ResYarpPort::satisfy(GenericResource* resource)
 {   
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     ResYarpPort* resport = dynamic_cast<ResYarpPort*>(resource);

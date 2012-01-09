@@ -223,7 +223,16 @@ bool ApplicationList::addComputer(Computer* comp)
     childrow[m_appColumns.m_col_name] = comp->getName();
     childrow[m_appColumns.m_col_filename] = comp->getXmlFile();
 
-    childrow.set_value(0, Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+    if(comp->getDisable())
+        childrow.set_value(0, Gdk::Pixbuf::create_from_data(computer_disable_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            computer_disable_ico.width,
+                                            computer_disable_ico.height,
+                                            computer_disable_ico.bytes_per_pixel*computer_disable_ico.width)); 
+    else
+        childrow.set_value(0, Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,

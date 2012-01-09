@@ -63,7 +63,7 @@ Node* GPU::clone(void)
 
 bool GPU::satisfy(GenericResource* resource)
 {
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     GPU* gpu = dynamic_cast<GPU*>(resource);

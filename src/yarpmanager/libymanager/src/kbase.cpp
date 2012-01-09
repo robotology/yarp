@@ -135,8 +135,8 @@ bool KnowledgeBase::addResource(GenericResource* res)
     __CHECK_NULLPTR(res);
 
     // a disabled resource should not be used.
-    if(res->getDisable())
-        return true;
+    //if(res->getDisable())
+    //    return true;
     
     ErrorLogger* logger  = ErrorLogger::Instance();
     res->setLabel(res->getName());      

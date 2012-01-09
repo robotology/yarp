@@ -36,7 +36,7 @@ Memory::Memory(const Memory &resource) : GenericResource(resource)
 
 bool Memory::satisfy(GenericResource* resource)
 {
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     Memory* mem = dynamic_cast<Memory*>(resource);
@@ -83,7 +83,7 @@ Storage::Storage(const Storage &resource) : GenericResource(resource)
 
 bool Storage::satisfy(GenericResource* resource)
 {
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     Storage* mem = dynamic_cast<Storage*>(resource);
@@ -127,7 +127,7 @@ Network::Network(const Network &resource) : GenericResource(resource)
 
 bool Network::satisfy(GenericResource* resource)
 {
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     Network* net = dynamic_cast<Network*>(resource);
@@ -187,7 +187,7 @@ Processor::Processor(const Processor &resource) : GenericResource(resource)
 
 bool Processor::satisfy(GenericResource* resource)
 {
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     Processor* proc = dynamic_cast<Processor*>(resource);
@@ -254,7 +254,7 @@ bool Computer::addPeripheral(GenericResource& res)
 
 bool Computer::satisfy(GenericResource* resource)
 {
-    if(!getAvailability())
+    if(!getAvailability() || getDisable())
         return false;
 
     MultiResource* mres = dynamic_cast<MultiResource*>(resource);
