@@ -5,11 +5,11 @@
  */
 
 /**
- * @page yarpmanager (g)yarpmanager: a way of running and managing multiple programs on a set of machine
+ * @page yarpmanager (g)yarpmanager: a way of running and managing multiple programs on a set of machines
 
 \author Ali Paikan
 
-The command-line utility 'yarpmanager' along with 'gyarpmanager' are tools for running and managing multiple programs on a set of machine.  
+The command-line utility 'yarpmanager' along with the gui 'gyarpmanager' are tools for running and managing multiple programs on a set of machines.  
 
 \section features Features 
 Some of the features of (g)yarpmanager are highlighted here: 
@@ -195,12 +195,12 @@ Here is an example of application description file in XML format:
 \subsection app_notes Notes
  - In application description file, if you set <node></node> to "localhost", the manager will use an internal module launcher to run the module  on localhost.
  - Leaving <node></node> empty, later you can use the load balancer to automatically assign module to a node for better performance. 
- - <prefix> refers to port name's prefix. It will be added to the all ports name that the module opens. For example, if a module open "/Port1" and <prefix>/MyPrefix</prefix>, after launching the module, the real port name will be "/Myprefix/Port1". 
+ - <prefix> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and <prefix>/MyPrefix</prefix>, after launching the module, the real port name will be "/Myprefix/Port1". 
  - Other applications can be integrated by recalling their names. Setting <prefix> for an embedded application, port prefix will be applied to all modules and connections which are not set as external.  
 
 
 \section resource Resource description file 
-Resource description file can be used to provide a general information about cluster of machines. In very simple form, resource description file is a list of the names of cluster's machines.  
+The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.  
 
 Here is an example of resource description file in XML format: 
 \htmlonly
@@ -251,7 +251,7 @@ Here is an example of resource description file in XML format:
 
 
 \section module Module description file 
-Module description file can be used to provide general information of module and it's dependencies.
+The module description file can be used to provide general information of module and its dependencies.
 
 Here is an example of module description file in XML format: 
 \htmlonly
@@ -322,7 +322,7 @@ Here is an example of module description file in XML format:
  - <type> refers to nominal type of data (e.g. ImageFrame, String).
  - Required input means the execution of module depends on availability of the input data. Notice that not all the input are required for a module to perform its task (e.g. status request input).
  - <priority> forces the execution of module to be delayed until the required data becomes available on the port.
- - Physical and logical resource dependencies can be introduced using <dependencies> tag. Dependencies must follow resource conceptional models. Currently available resource models are 'memory', 'processor', 'storage', 'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced inside <computer></computer> tags. While resources described inside <computer> tags, represent conjunctional dependency, resources from different <computer> tags can be seen as disjunctions. Meaning that If a module depend on either resource R1 or R2, they can be introduced inside two different <computer> tags. Resource dependencies should be introduced if they are really required. For example, if module's performance drops significantly in case of memory swapping, a memory resource dependency can be introduced with the required memory space.
+ - Physical and logical resource dependencies can be introduced using <dependencies> tag. Dependencies must follow resource conceptional models. Currently available resource models are 'memory', 'processor', 'storage', 'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced inside <computer></computer> tags. While resources described inside <computer> tags, represent conjunctional dependency, resources from different <computer> tags can be seen as disjunctions. Meaning that if a module depends on either resource R1 or R2, they can be introduced inside two different <computer> tags. Resource dependencies should be introduced if they are really required. For example, if module's performance drops significantly in case of memory swapping, a memory resource dependency can be introduced with the required memory space.
  - If module depends on specific platform (Operating system), a <platform> dependency should be introduced. 
  
  Resource conceptional model which can be used as module's dependency: 
