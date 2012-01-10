@@ -42,9 +42,11 @@ Getting set up:
 \li \ref yarp_cluster
 \li \ref yarp
 
-Programming:
+Using yarp:
 \li \ref yarp_cmake_hello
 \li \ref tutorials
+\li \ref yarprun
+\li \ref yarpmanager
 
 Highlights:
 \li \ref note_ports
