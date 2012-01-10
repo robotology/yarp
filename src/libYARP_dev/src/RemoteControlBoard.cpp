@@ -1755,7 +1755,7 @@ public:
         bool ret=true;
         for (int j=0;j<nj;j++)
         {
-            ret=ret&&setPid(j, pids[j]);
+            ret=ret&&setTorquePid(j, pids[j]);
         }
         return ret;
     }

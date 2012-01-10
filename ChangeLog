@@ -1,3 +1,8 @@
+2012-01-10  Marco Randazzo <marco.randazzo@iit.it>
+    * src/libYARP_dev/src/RemoteControlBoard.cpp
+    
+    fixed bug in method setTorquePids(): the method was setting the position pid, not the torque pid
+    
 2011-12-13 Lorenzo Natale <lorenzo.natale@iit.it>
         * Tagging 2.3.14 
 
