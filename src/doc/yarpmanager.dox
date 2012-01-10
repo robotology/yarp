@@ -13,19 +13,21 @@ The command-line utility 'yarpmanager' along with the gui 'gyarpmanager' are too
 
 \section features Features 
 Some of the features of (g)yarpmanager are highlighted here: 
-- Run, stop, kill and monitor multiple programs on localhost or remote machines. 
-- Establish port connections manually or automatically. 
+- Running, stopping, killing and monitoring multiple programs on localhost or remote machines. 
+- Establish port connections manually or automatically.
 - Managing multiple programs grouped as different applications. 
 - Running programs while respecting their input and resource dependencies. 
-- Recovering program from failure.
+- Recovering programs from failure.
 - Using internal launcher to speed-up launching program on localhost.
-- Automatically assigning programs to machines using load balancing and smart resource discovery mechanism for better performance. 
-- Discovering information and status of machines in cluster (e.g. Hardware, platform, CPU load).
+- Automatically assigning programs to machines using load balancing and smart resource discovery mechanism for improving performance. 
+- Discovering information and status of machines in cluster of computer (e.g. Hardware, platform, CPU load).
 - Enabling users to specify resource dependencies of a program using module description file. 
 - Enabling users to provide information about specific devices (e.g GPU) available on machines using resource description file.
-- Create new Application, Module and Resource using XML template files. 
-- Modify program parameters from GUI. 
-- Modify and reload XML description files from GUI. 
+- Creating new Application, Module and Resource using XML template files. 
+- Including multiple instances of an application inside another application.
+- Renaming ports name on run time using port prefix mechanism. 
+- Modifying program parameters from GUI. 
+- Modifying and reload XML description files from GUI. 
 
 \section concepts What is?
 - Module, is an executable binary file (program) developed using YARP or any other libraries.
@@ -61,7 +63,7 @@ module_failure = prompt
 # parameters: Ignore|terminate|prompt
 connection_failure = prompt
 
-# Automatically stablish all connection
+# Automatically establish all connection
 # parameters: Yes|no
 auto_connect = no
 
@@ -251,7 +253,7 @@ Here is an example of resource description file in XML format:
 
 
 \section module Module description file 
-The module description file can be used to provide general information of module and its dependencies.
+Module description file can be used to provide general information of module and its dependencies. It is mainly used by load balancer to automatically assigns machines to module which satisfy dependencies of the module. By default, if there is no module description, load balancer assumes that the module can be executed on every available machines. Despite it is not \b mandatory, it is always useful to have XML description of each module which shows how it should be used for application building (e.g parameters, inputs, outputs).     
 
 Here is an example of module description file in XML format: 
 \htmlonly
