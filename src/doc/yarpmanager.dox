@@ -1,0 +1,416 @@
+/*
+ * Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page yarpmanager (g)yarpmanager: a way of running and managing multiple programs on a set of machine
+
+\author Ali Paikan
+
+The command-line utility 'yarpmanager' along with 'gyarpmanager' are tools for running and managing multiple programs on a set of machine.  
+
+\section features Features 
+Some of the features of (g)yarpmanager are highlighted here: 
+- Run, stop, kill and monitor multiple programs on localhost or remote machines. 
+- Establish port connections manually or automatically. 
+- Managing multiple programs grouped as different applications. 
+- Running programs while respecting their input and resource dependencies. 
+- Recovering program from failure.
+- Using internal launcher to speed-up launching program on localhost.
+- Automatically assigning programs to machines using load balancing and smart resource discovery mechanism for better performance. 
+- Discovering information and status of machines in cluster (e.g. Hardware, platform, CPU load).
+- Enabling users to specify resource dependencies of a program using module description file. 
+- Enabling users to provide information about specific devices (e.g GPU) available on machines using resource description file.
+- Create new Application, Module and Resource using XML template files. 
+- Modify program parameters from GUI. 
+- Modify and reload XML description files from GUI. 
+
+\section concepts What is?
+- Module, is an executable binary file (program) developed using YARP or any other libraries.
+- Application, refers to a collection of modules and connections or other applications. 
+- Resource refers to any physical or logical resources which are needed by a module. (e.g Computer, Memory, GPU, Platform)  
+
+See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts. 
+
+\section configuration Configuration
+Default configuration file known as 'ymanager.ini' can be automatically loaded by (g)yarpmanager from the folder running the manager or via any other file comes after the paramater '--config'.
+Below shows an example of configuration file: 
+
+\verbatim
+# Path to application description files
+apppath =  "./xml/applications"
+load_subfolders = yes
+
+# Path to module description files
+modpath =  "./xml/modules"
+
+# Path to resource description files
+respath =  "./xml/resources"
+
+# Fault tolerance
+# parameters: yes|No
+watchdog = no
+
+# Module failure awareness (if watchdog is enabled)
+# parameters: Ignore|terminate|prompt|recover
+module_failure = prompt
+
+# Connection failure awareness (if watchdog is enabled)
+# parameters: Ignore|terminate|prompt
+connection_failure = prompt
+
+# Automatically stablish all connection
+# parameters: Yes|no
+auto_connect = no
+
+# Appearance (for yarpmanager)
+# parameters: No|dark|light
+color_theme = dark
+
+# External editor (e.g. gedit, notepad)
+external_editor = gvim
+\endverbatim
+
+Items 'apppath', 'modpath' and 'respath' respectively point to the folder where the XML description files of Applications, Modules and Resources can be found. If 'load_subfolders=yes', applications description files will be  recursively loaded from sub folders of 'apppath'.
+Set 'external_editor' to your preferable text editor. It will be used by gyarpmanager for editing XML file. 
+
+
+\section examples Running examples
+First make sure you have a name server running. Open a terminal and type:
+\verbatim
+$ yarpserver
+\endverbatim
+
+\subsection example_y Using yarpmanager
+Open another terminal and try this: 
+\verbatim
+$ cd ${YARP_ROOT}/src/yarpmanager/tests
+$ yarpmanager
+>> help
+     # a list of yarpmanager keywords
+>> list app 
+     # you should see EyesViewer-Localhost, FakeEyes, ...
+>> load app EyesViewer-Localhost
+>> run
+>> connect
+     # you should see moving red bar
+>> disconnect
+>> stop
+>> exit
+\endverbatim
+
+\subsection example_g Using gyarpmanager
+Open another terminal and try this: 
+\verbatim
+$ cd ${YARP_ROOT}/src/yarpmanager/tests
+$ gyarpmanager
+\endverbatim
+
+- From "Entities" panel, click the triangle beside Applications, then  double-click "EyesViewer-Localhost".
+- From menu "Manage" press "Run" to run all modules
+- From menu "Manage" press "Connect" to establish all connections. 
+- To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop". 
+
+To run "EyesViewer-Cluster" using load balancer you need to have yarprun running as server. 
+Open a terminal and type: 
+\verbatim
+$ yarprun --server /node1 
+\endverbatim
+
+Open another one and type: 
+\verbatim
+$ yarprun --server /node2
+\endverbatim
+
+Then try this: 
+\verbatim
+$ cd ${YARP_ROOT}/src/yarpmanager/tests
+$ gyarpmanager
+\endverbatim
+
+- From "Entities" frame, click the triangle beside Applications, then  double-click "EyesViewer-Cluster".
+- From the right side, right-click on the frame where you can see all modules and choose "Assign hosts". You will see that modules will be automatically assigned to available nodes. (here /node1 and /node2) 
+- From menu "Manage" press "Run" to run all modules
+- From menu "Manage" press "Connect" to establish all connections. 
+- To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop". 
+
+
+\section application Application description file 
+Application description file is a collection of modules (programs) or other applications and connections. 
+ 
+Here is an example of application description file in XML format: 
+\htmlonly
+<div class="fragment"><pre class="fragment">
+<tt><b><font color="#00458A">&lt;application&gt;</font></b>
+
+  <i><font color="#9A1900">&lt;!-- Generic information--&gt;</font></i>
+  <b><font color="#00458A">&lt;name&gt;</font></b>ApplicationName<b><font color="#00458A">&lt;/name&gt;</font></b>
+  <b><font color="#00458A">&lt;description&gt;</font></b>Template Application<b><font color="#00458A">&lt;/description&gt;</font></b>
+  <b><font color="#00458A">&lt;version&gt;&lt;/version&gt;</font></b>
+
+  <b><font color="#00458A">&lt;authors&gt;</font></b>
+      <b><font color="#00458A">&lt;author</font></b> <font color="#009900">email</font><font color="#990000">=</font><font color="#FF0000">""</font><b><font color="#00458A">&gt;</font></b> first author.name <b><font color="#00458A">&lt;/author&gt;</font></b>
+      <b><font color="#00458A">&lt;author</font></b> <font color="#009900">email</font><font color="#990000">=</font><font color="#FF0000">""</font><b><font color="#00458A">&gt;</font></b> second author.name <b><font color="#00458A">&lt;/author&gt;</font></b>
+      ...
+  <b><font color="#00458A">&lt;/authors&gt;</font></b>
+
+  <i><font color="#9A1900">&lt;!-- Required modules. --&gt;</font></i>
+  <b><font color="#00458A">&lt;module&gt;</font></b>
+      <b><font color="#00458A">&lt;name&gt;</font></b>Module_Name<b><font color="#00458A">&lt;/name&gt;</font></b>
+      <b><font color="#00458A">&lt;parameters&gt;&lt;/parameters&gt;</font></b>
+      <b><font color="#00458A">&lt;node&gt;&lt;/node&gt;</font></b>
+      <b><font color="#00458A">&lt;stdio&gt;&lt;/stdio&gt;</font></b>
+      <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
+  <b><font color="#00458A">&lt;/module&gt;</font></b>
+  ...
+    
+  <i><font color="#9A1900">&lt;!-- Embedded applications --&gt;</font></i>
+  <b><font color="#00458A">&lt;application&gt;</font></b>
+      <b><font color="#00458A">&lt;name&gt;</font></b>Application_Name<b><font color="#00458A">&lt;/name&gt;</font></b>
+      <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
+   <b><font color="#00458A">&lt;/application&gt;</font></b>
+   ...
+    
+  <i><font color="#9A1900">&lt;!-- Required connections --&gt;</font></i>
+  <b><font color="#00458A">&lt;connection&gt;</font></b>
+      <b><font color="#00458A">&lt;from&gt;&lt;/from&gt;</font></b>
+      <b><font color="#00458A">&lt;to&gt;&lt;/to&gt;</font></b>
+      <b><font color="#00458A">&lt;protocol&gt;&lt;/protocol&gt;</font></b>
+  <b><font color="#00458A">&lt;/connection&gt;</font></b>
+  
+  <b><font color="#00458A">&lt;connection&gt;</font></b>
+      <b><font color="#00458A">&lt;from</font></b> <font color="#009900">external</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#00458A">&gt;&lt;/from&gt;</font></b>
+      <b><font color="#00458A">&lt;to&gt;&lt;/to&gt;</font></b>
+      <b><font color="#00458A">&lt;protocol&gt;&lt;/protocol&gt;</font></b>
+  <b><font color="#00458A">&lt;/connection&gt;</font></b>  
+  ...
+  
+<b><font color="#00458A">&lt;/application&gt;</font></b>
+</tt></pre>
+</div>
+\endhtmlonly 
+
+\subsection app_notes Notes
+ - In application description file, if you set <node></node> to "localhost", the manager will use an internal module launcher to run the module  on localhost.
+ - Leaving <node></node> empty, later you can use the load balancer to automatically assign module to a node for better performance. 
+ - <prefix> refers to port name's prefix. It will be added to the all ports name that the module opens. For example, if a module open "/Port1" and <prefix>/MyPrefix</prefix>, after launching the module, the real port name will be "/Myprefix/Port1". 
+ - Other applications can be integrated by recalling their names. Setting <prefix> for an embedded application, port prefix will be applied to all modules and connections which are not set as external.  
+
+
+\section resource Resource description file 
+Resource description file can be used to provide a general information about cluster of machines. In very simple form, resource description file is a list of the names of cluster's machines.  
+
+Here is an example of resource description file in XML format: 
+\htmlonly
+<div class="fragment"><pre class="fragment">
+<tt><b><font color="#00458A">&lt;resources&gt;</font></b>
+    <i><font color="#9A1900">&lt;!-- Multiple computers can be introduced --&gt;</font></i>
+    <b><font color="#00458A">&lt;computer&gt;</font></b>
+        <b><font color="#00458A">&lt;name&gt;</font></b>hostname1<b><font color="#00458A">&lt;/name&gt;</font></b>
+        <b><font color="#00458A">&lt;description&gt;</font></b>Template resource<b><font color="#00458A">&lt;/description&gt;</font></b>
+
+        <i><font color="#9A1900">&lt;!-- A disabled resource will not be used by load balancer. --&gt;</font></i>
+        <b><font color="#00458A">&lt;disable&gt;</font></b>no<b><font color="#00458A">&lt;/disable&gt;</font></b>
+    <b><font color="#00458A">&lt;/computer&gt;</font></b>
+
+    <b><font color="#00458A">&lt;computer&gt;</font></b>
+        <b><font color="#00458A">&lt;name&gt;</font></b>hostname2<b><font color="#00458A">&lt;/name&gt;</font></b>
+        <b><font color="#00458A">&lt;description&gt;</font></b>a computer with GPU device<b><font color="#00458A">&lt;/description&gt;</font></b>
+        <b><font color="#00458A">&lt;disable&gt;</font></b>no<b><font color="#00458A">&lt;/disable&gt;</font></b> 
+        <i><font color="#9A1900">&lt;!-- GPU description section. --&gt;</font></i>
+        <b><font color="#00458A">&lt;gpu&gt;</font></b>
+            <b><font color="#00458A">&lt;name&gt;</font></b>Tesla C1060<b><font color="#00458A">&lt;/name&gt;</font></b>
+            <b><font color="#00458A">&lt;cores&gt;</font></b>240<b><font color="#00458A">&lt;/cores&gt;</font></b> 
+            <b><font color="#00458A">&lt;frequency&gt;</font></b>1600<b><font color="#00458A">&lt;/frequency&gt;</font></b>
+            <b><font color="#00458A">&lt;capability&gt;</font></b>1.3<b><font color="#00458A">&lt;/capability&gt;</font></b>
+            <b><font color="#00458A">&lt;registers_block&gt;</font></b>128<b><font color="#00458A">&lt;/registers_block&gt;</font></b>
+            <b><font color="#00458A">&lt;thread_block&gt;</font></b>512<b><font color="#00458A">&lt;/thread_block&gt;</font></b>
+            <b><font color="#00458A">&lt;overlap&gt;</font></b>yes<b><font color="#00458A">&lt;/overlap&gt;</font></b>
+            <b><font color="#00458A">&lt;global_memory&gt;</font></b>
+                <b><font color="#00458A">&lt;total_space&gt;</font></b>4000000<b><font color="#00458A">&lt;/total_space&gt;</font></b>
+            <b><font color="#00458A">&lt;/global_memory&gt;</font></b>
+            <b><font color="#00458A">&lt;shared_memory&gt;</font></b>
+                <b><font color="#00458A">&lt;total_space&gt;</font></b>128<b><font color="#00458A">&lt;/total_space&gt;</font></b>
+            <b><font color="#00458A">&lt;/shared_memory&gt;</font></b>
+            <b><font color="#00458A">&lt;constant_memory&gt;</font></b>
+                <b><font color="#00458A">&lt;total_space&gt;</font></b>16<b><font color="#00458A">&lt;/total_space&gt;</font></b>
+            <b><font color="#00458A">&lt;/constant_memory&gt;</font></b>
+        <b><font color="#00458A">&lt;/gpu&gt;</font></b> 
+    <b><font color="#00458A">&lt;/computer&gt;</font></b>
+    ...
+    
+<b><font color="#00458A">&lt;/resources&gt;</font></b>
+</tt></pre>
+</div>
+\endhtmlonly
+
+\subsection res_notes Notes
+ - Platform, Memory, Storage and Processor specification will be discovered automatically by (g)yarpmanager. But, if it is required, peripherals such as GPU should to be specifically introduced.
+
+
+\section module Module description file 
+Module description file can be used to provide general information of module and it's dependencies.
+
+Here is an example of module description file in XML format: 
+\htmlonly
+<div class="fragment"><pre class="fragment">
+<tt><b><font color="#00458A">&lt;module&gt;</font></b>    
+    <b><font color="#00458A">&lt;name&gt;</font></b>module_name<b><font color="#00458A">&lt;/name&gt;</font></b>
+    <b><font color="#00458A">&lt;description&gt;</font></b>Template module<b><font color="#00458A">&lt;/description&gt;</font></b>
+    <b><font color="#00458A">&lt;version&gt;</font></b>1.0<b><font color="#00458A">&lt;/version&gt;</font></b>
+
+    <i><font color="#9A1900">&lt;!-- &lt;arguments&gt; can have multiple &lt;param&gt; tags--&gt;</font></i>
+    <b><font color="#00458A">&lt;arguments&gt;</font></b>
+        <b><font color="#00458A">&lt;param</font></b> <font color="#009900">desc</font><font color="#990000">=</font><font color="#FF0000">"first parameter"</font><b><font color="#00458A">&gt;</font></b> param1 <b><font color="#00458A">&lt;/param&gt;</font></b>
+    <b><font color="#00458A">&lt;/arguments&gt;</font></b>
+
+    <i><font color="#9A1900">&lt;!-- &lt;authors&gt; can have multiple &lt;author&gt; tags. --&gt;</font></i>
+    <b><font color="#00458A">&lt;authors&gt;</font></b>
+        <b><font color="#00458A">&lt;author</font></b> <font color="#009900">email</font><font color="#990000">=</font><font color="#FF0000">""</font><b><font color="#00458A">&gt;</font></b> author1 <b><font color="#00458A">&lt;/author&gt;</font></b>
+    <b><font color="#00458A">&lt;/authors&gt;</font></b>
+
+     <i><font color="#9A1900">&lt;!-- &lt;data&gt; can have multiple &lt;input&gt; or &lt;output&gt; tags. --&gt;</font></i>
+     <b><font color="#00458A">&lt;data&gt;</font></b>
+        <i><font color="#9A1900">&lt;!-- input data if available--&gt;</font></i>
+        <b><font color="#00458A">&lt;input&gt;</font></b>            
+            <b><font color="#00458A">&lt;type&gt;</font></b>DataType<b><font color="#00458A">&lt;/type&gt;</font></b>
+
+            <i><font color="#9A1900">&lt;!-- input port which receives the data. --&gt;</font></i>
+            <b><font color="#00458A">&lt;port</font></b> <font color="#009900">carrier</font><font color="#990000">=</font><font color="#FF0000">"tcp"</font><b><font color="#00458A">&gt;</font></b>/portname<b><font color="#00458A">&lt;/port&gt;</font></b>            
+            <b><font color="#00458A">&lt;required&gt;</font></b>yes<b><font color="#00458A">&lt;/required&gt;</font></b>           
+            <b><font color="#00458A">&lt;priority&gt;</font></b>no<b><font color="#00458A">&lt;/priority&gt;</font></b>
+            <b><font color="#00458A">&lt;description&gt;&lt;/description&gt;</font></b>
+        <b><font color="#00458A">&lt;/input&gt;</font></b>
+        ...
+        
+        <i><font color="#9A1900">&lt;!-- output data if available --&gt;</font></i>
+        <b><font color="#00458A">&lt;output&gt;</font></b>
+            <b><font color="#00458A">&lt;type&gt;</font></b>DataType<b><font color="#00458A">&lt;/type&gt;</font></b>
+            <b><font color="#00458A">&lt;port</font></b> <font color="#009900">carrier</font><font color="#990000">=</font><font color="#FF0000">"tcp"</font><b><font color="#00458A">&gt;</font></b>/portname<b><font color="#00458A">&lt;/port&gt;</font></b>
+            <b><font color="#00458A">&lt;description&gt;&lt;/description&gt;</font></b>
+        <b><font color="#00458A">&lt;/output&gt;</font></b>
+        ...
+        
+    <b><font color="#00458A">&lt;/data&gt;</font></b>
+    
+    <b><font color="#00458A">&lt;dependencies&gt;</font></b>
+        <b><font color="#00458A">&lt;computer&gt;</font></b>
+            <b><font color="#00458A">&lt;gpu&gt;</font></b>
+                <b><font color="#00458A">&lt;capability&gt;</font></b>1.3<b><font color="#00458A">&lt;/capability&gt;</font></b>
+            <b><font color="#00458A">&lt;/gpu&gt;</font></b> 
+            ...
+        <b><font color="#00458A">&lt;/computer&gt;</font></b>
+        ...
+    <b><font color="#00458A">&lt;/dependencies&gt;</font></b>
+
+    <i><font color="#9A1900">&lt;!-- specific libraries or header files which are used for development --&gt;</font></i>
+    <b><font color="#00458A">&lt;development&gt;</font></b>
+        <b><font color="#00458A">&lt;header&gt;&lt;/header&gt;</font></b>
+        <b><font color="#00458A">&lt;library&gt;&lt;/library&gt;</font></b>
+    <b><font color="#00458A">&lt;/development&gt;</font></b>
+
+<b><font color="#00458A">&lt;/module&gt;</font></b>
+</tt></pre>
+</div>
+\endhtmlonly
+
+\subsection mode_notes Notes
+ 
+ - <name> should match its executable file's name.
+ - <type> refers to nominal type of data (e.g. ImageFrame, String).
+ - Required input means the execution of module depends on availability of the input data. Notice that not all the input are required for a module to perform its task (e.g. status request input).
+ - <priority> forces the execution of module to be delayed until the required data becomes available on the port.
+ - Physical and logical resource dependencies can be introduced using <dependencies> tag. Dependencies must follow resource conceptional models. Currently available resource models are 'memory', 'processor', 'storage', 'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced inside <computer></computer> tags. While resources described inside <computer> tags, represent conjunctional dependency, resources from different <computer> tags can be seen as disjunctions. Meaning that If a module depend on either resource R1 or R2, they can be introduced inside two different <computer> tags. Resource dependencies should be introduced if they are really required. For example, if module's performance drops significantly in case of memory swapping, a memory resource dependency can be introduced with the required memory space.
+ - If module depends on specific platform (Operating system), a <platform> dependency should be introduced. 
+ 
+ Resource conceptional model which can be used as module's dependency: 
+\htmlonly
+<div class="fragment"><pre class="fragment">
+<tt><b><font color="#00458A">&lt;platform&gt;</font></b>
+    <b><font color="#00458A">&lt;name&gt;&lt;/name&gt;</font></b>
+    <b><font color="#00458A">&lt;distribution&gt;&lt;/distribution&gt;</font></b>
+    <b><font color="#00458A">&lt;release&gt;&lt;/release&gt;</font></b>
+<b><font color="#00458A">&lt;/platform&gt;</font></b>
+
+<b><font color="#00458A">&lt;yarp_port&gt;</font></b>
+    <b><font color="#00458A">&lt;name&gt;&lt;/name&gt;</font></b>   <i><font color="#9A1900">&lt;!-- yarp port name --&gt;</font></i>
+<b><font color="#00458A">&lt;yarp_port&gt;</font></b>           
+
+<b><font color="#00458A">&lt;memory&gt;</font></b>
+    <b><font color="#00458A">&lt;free_space&gt;&lt;/free_space&gt;</font></b>    <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
+<b><font color="#00458A">&lt;/memory&gt;</font></b>
+
+<b><font color="#00458A">&lt;storage&gt;</font></b>
+    <b><font color="#00458A">&lt;free_space&gt;&lt;/free_space&gt;</font></b>    <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
+<b><font color="#00458A">&lt;/storage&gt;</font></b>
+
+<b><font color="#00458A">&lt;processor&gt;</font></b>
+    <b><font color="#00458A">&lt;architecture&gt;&lt;/architecture&gt;</font></b>
+    <b><font color="#00458A">&lt;cores&gt;&lt;/cores&gt;</font></b>
+    <b><font color="#00458A">&lt;frequency&gt;&lt;/frequency&gt;</font></b>
+    <b><font color="#00458A">&lt;model&gt;&lt;/model&gt;</font></b>
+<b><font color="#00458A">&lt;/processor&gt;</font></b>
+
+<b><font color="#00458A">&lt;gpu&gt;</font></b>
+    <b><font color="#00458A">&lt;name&gt;&lt;/name&gt;</font></b>
+    <b><font color="#00458A">&lt;cores&gt;&lt;/cores&gt;</font></b>
+    <b><font color="#00458A">&lt;capability&gt;&lt;/capability&gt;</font></b>
+    <b><font color="#00458A">&lt;registers_block&gt;&lt;/registers_block&gt;</font></b>
+    <b><font color="#00458A">&lt;thread_block&gt;&lt;/thread_block&gt;</font></b>
+    <b><font color="#00458A">&lt;overlap&gt;&lt;/overlap&gt;</font></b>
+    <b><font color="#00458A">&lt;global_memory&gt;</font></b>
+        <b><font color="#00458A">&lt;total_space&gt;&lt;/total_space&gt;</font></b>     <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
+    <b><font color="#00458A">&lt;/global_memory&gt;</font></b>
+    <b><font color="#00458A">&lt;shared_memory&gt;</font></b>
+        <b><font color="#00458A">&lt;total_space&gt;&lt;/total_space&gt;</font></b>     <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
+    <b><font color="#00458A">&lt;/shared_memory&gt;</font></b>
+    <b><font color="#00458A">&lt;constant_memory&gt;</font></b>
+        <b><font color="#00458A">&lt;total_space&gt;&lt;/total_space&gt;</font></b>     <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
+    <b><font color="#00458A">&lt;/constant_memory&gt;</font></b>
+<b><font color="#00458A">&lt;/gpu&gt;</font></b>     
+</tt></pre>
+</div>
+\endhtmlonly
+
+\section create Create new XML description file
+gyarpmanager allows for creating new application, module and resource description file using predifined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then 
+- From "File>New" menu chose "New Application". ("New Module" for module and "New Resource" for resource)
+- Chose your application folder and enter proper name (e.g "my-test-app.xml") to save it. The template file will be open using 'external_editor'. 
+- Modify and save it. 
+- Open it using gyarpmanager. 
+
+\subsection create_notes Notes
+- (g)yarpmanager allows for identical application names (they will be listed as MyApp(1), MyApp(2), ...). But it is strongly recommended to have unique proper name for each application. Notice that, duplicate names for modules and resources are not allowed and will be ignored by (g)yarpmanager.   
+- If you modify the XML description file, you need to "reopen" it. Identically, you can "remove" and "open" it from GUI. 
+ 
+\section export Generate application dependency graph
+The arrangement of modules and resources within an application can be visualized as dependency graph. For Instance, dependency graph of application "EyesViewer-Localhost" used in above example is shown below. 
+\image html app-graph.jpg "EyesViewer-Localhost"
+
+As shown in the graph, application "EyesViewer-Localhost" consists of two instances of "FakeEyes" with their relevant modules. Each module is associated with a node marked as "MultipleResource". It is linked to machines which satisfy its requirements. Notice that here, "localhost" is specifically assigned by user to each modules; Thus there is no link to machines "node1" and "node2". 
+ The graph is generated in DOT format which can be visualized using Graphviz tools. To generate the graph:
+ - Open an application using gyarpmanager (See above example \ref example_g)
+ - From "Edit" menu chose "Export graph"
+ - Give a name (e.g "MyApp.dot") and save it. 
+ 
+Or open an application using yarpmanager (See above example \ref example_y) and type : 
+\verbatim
+>> export MyApp.dot
+\endverbatim
+ 
+To visualize the graph, Linux users can open a terminal and try this: 
+\verbatim
+$ sudo apt-get install graphviz
+$ dot -Tpdf -o MyApp.pdf MyApp.dot
+\endverbatim
+  
+Windows users can download Graphviz tools from http://www.graphviz.org/Download_windows.php and in windows console type : 
+   
+\verbatim
+ C:\...\> dot -Tpdf -o MyApp.pdf MyApp.dot
+\endverbatim
+
+ 
+*/
