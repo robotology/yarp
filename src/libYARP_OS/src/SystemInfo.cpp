@@ -36,7 +36,7 @@ using namespace yarp::os;
 #include <Lmcons.h>
 #include <comdef.h>     // for using bstr_t class
 
-#if (defined(WINVER)) && (WINVER>0x0502)
+#if (defined(WINVER)) && (WINVER>=0x0502)
 #include <pdh.h>
 #include <pdhmsg.h>
 #pragma comment(lib, "pdh.lib")
@@ -150,7 +150,7 @@ public:
     //bool threadInit()
     //void threadRelease()
 private: 
-#if (defined(WINVER)) && (WINVER>0x0502)    
+#if (defined(WINVER)) && (WINVER>=0x0502)    
     double phdCpuLoad()
     {        
         DWORD ret;
@@ -181,13 +181,13 @@ private:
 #endif;   
 
 private:
-#if (defined(WINVER)) && (WINVER>0x0502)        
-    bool firstRun;
+#if (defined(WINVER)) && (WINVER>=0x0502)    
     PDH_STATUS            phdStatus;    
     HQUERY                hPhdQuery;
     PDH_FMT_COUNTERVALUE  phdFmtValue;
     HCOUNTER              phdCounter;
 #endif
+    bool firstRun;
     LoadInfo load;
     std::vector<int> samples; 
     yarp::os::Semaphore sem;
