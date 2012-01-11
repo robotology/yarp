@@ -34,7 +34,13 @@ using namespace yarp::os;
 #include <windows.h>
 #include <shlobj.h>
 #include <Lmcons.h>
-#include <comdef.h>	    // for using bstr_t class
+#include <comdef.h>     // for using bstr_t class
+
+#if (defined(WINVER)) && (WINVER>0x0502)
+#include <pdh.h>
+#include <pdhmsg.h>
+#pragma comment(lib, "pdh.lib")
+#endif 
 
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Semaphore.h>
@@ -89,315 +95,12 @@ bool getCpuEntry(const char* tag, const char *buff, yarp::os::ConstString& value
 
 
 #if defined(WIN32)
-
-#pragma pack(push,8)
-
-#define TOTALBYTES      100*1024
-#define BYTEINCREMENT   10*1024
-
-template <class T>
-class CPerfCounters
-{
-public:
-	CPerfCounters()
-	{
-	}
-	~CPerfCounters()
-	{
-	}
-
-	T GetCounterValue(PERF_DATA_BLOCK **pPerfData, 
-                      DWORD dwObjectIndex, 
-                      DWORD dwCounterIndex, LPCTSTR pInstanceName = NULL)
-	{
-		QueryPerformanceData(pPerfData, dwObjectIndex, dwCounterIndex);
-
-	    PPERF_OBJECT_TYPE pPerfObj = NULL;
-		T lnValue = {0};
-
-		// Get the first object type.
-		pPerfObj = FirstObject( *pPerfData );
-
-		// Look for the given object index
-
-		for( DWORD i=0; i < (*pPerfData)->NumObjectTypes; i++ )
-		{
-
-			if (pPerfObj->ObjectNameTitleIndex == dwObjectIndex)
-			{
-				lnValue = GetCounterValue(pPerfObj, dwCounterIndex, pInstanceName);
-				break;
-			}
-
-			pPerfObj = NextObject( pPerfObj );
-		}
-		return lnValue;
-	}
-
-protected:
-
-	class CBuffer
-	{
-	public:
-		CBuffer(UINT Size)
-		{
-			m_Size = Size;
-			m_pBuffer = (LPBYTE) malloc( Size*sizeof(BYTE) );
-		}
-		~CBuffer()
-		{
-			free(m_pBuffer);
-		}
-		void *Realloc(UINT Size)
-		{
-			m_Size = Size;
-			m_pBuffer = (LPBYTE) realloc( m_pBuffer, Size );
-			return m_pBuffer;
-		}
-
-		void Reset()
-		{
-			memset(m_pBuffer,NULL,m_Size);
-		}
-		operator LPBYTE ()
-		{
-			return m_pBuffer;
-		}
-
-		UINT GetSize()
-		{
-			return m_Size;
-		}
-	public:
-		LPBYTE m_pBuffer;
-	private:
-		UINT m_Size;
-	};
-
-	void QueryPerformanceData(PERF_DATA_BLOCK **pPerfData, DWORD dwObjectIndex, DWORD dwCounterIndex)
-	{
-		static CBuffer Buffer(TOTALBYTES);
-
-		DWORD BufferSize = Buffer.GetSize();
-		LONG lRes;
-
-		char keyName[32];
-		sprintf(keyName,"%d",dwObjectIndex);
-
-		Buffer.Reset();
-		while( (lRes = RegQueryValueEx( HKEY_PERFORMANCE_DATA,
-								   keyName,
-								   NULL,
-								   NULL,
-								   Buffer,
-								   &BufferSize )) == ERROR_MORE_DATA )
-		{
-			// Get a buffer that is big enough.
-			BufferSize += BYTEINCREMENT;
-			Buffer.Realloc(BufferSize);
-		}
-		*pPerfData = (PPERF_DATA_BLOCK) Buffer.m_pBuffer;
-	}
-
-	T GetCounterValue(PPERF_OBJECT_TYPE pPerfObj, DWORD dwCounterIndex, LPCTSTR pInstanceName)
-	{
-		PPERF_COUNTER_DEFINITION pPerfCntr = NULL;
-		PPERF_INSTANCE_DEFINITION pPerfInst = NULL;
-		PPERF_COUNTER_BLOCK pCounterBlock = NULL;
-
-		// Get the first counter.
-
-		pPerfCntr = FirstCounter( pPerfObj );
-
-		for( DWORD j=0; j < pPerfObj->NumCounters; j++ )
-		{
-			if (pPerfCntr->CounterNameTitleIndex == dwCounterIndex)
-				break;
-
-			// Get the next counter.
-
-			pPerfCntr = NextCounter( pPerfCntr );
-		}
-
-		if( pPerfObj->NumInstances == PERF_NO_INSTANCES )		
-		{
-			pCounterBlock = (PPERF_COUNTER_BLOCK) ((LPBYTE) pPerfObj + pPerfObj->DefinitionLength);
-		}
-		else
-		{
-			pPerfInst = FirstInstance( pPerfObj );
-		
-			// Look for instance pInstanceName
-			_bstr_t bstrInstance;
-			_bstr_t bstrInputInstance = pInstanceName;
-			for( int k=0; k < pPerfObj->NumInstances; k++ )
-			{
-				bstrInstance = (wchar_t *)((PBYTE)pPerfInst + pPerfInst->NameOffset);
-				if (!stricmp((LPCTSTR)bstrInstance, (LPCTSTR)bstrInputInstance))
-				{
-					pCounterBlock = (PPERF_COUNTER_BLOCK) ((LPBYTE) pPerfInst + pPerfInst->ByteLength);
-					break;
-				}
-				
-				// Get the next instance.
-
-				pPerfInst = NextInstance( pPerfInst );
-			}
-		}
-
-		if (pCounterBlock)
-		{
-			T *lnValue = NULL;
-			lnValue = (T*)((LPBYTE) pCounterBlock + pPerfCntr->CounterOffset);
-			return *lnValue;
-		}
-		return -1;
-	}
-
-	/*****************************************************************
-	 *                                                               *
-	 * Functions used to navigate through the performance data.      *
-	 *                                                               *
-	 *****************************************************************/
-
-	PPERF_OBJECT_TYPE FirstObject( PPERF_DATA_BLOCK PerfData )
-	{
-		return( (PPERF_OBJECT_TYPE)((PBYTE)PerfData + PerfData->HeaderLength) );
-	}
-
-	PPERF_OBJECT_TYPE NextObject( PPERF_OBJECT_TYPE PerfObj )
-	{
-		return( (PPERF_OBJECT_TYPE)((PBYTE)PerfObj + PerfObj->TotalByteLength) );
-	}
-
-	PPERF_COUNTER_DEFINITION FirstCounter( PPERF_OBJECT_TYPE PerfObj )
-	{
-		return( (PPERF_COUNTER_DEFINITION) ((PBYTE)PerfObj + PerfObj->HeaderLength) );
-	}
-
-	PPERF_COUNTER_DEFINITION NextCounter( PPERF_COUNTER_DEFINITION PerfCntr )
-	{
-		return( (PPERF_COUNTER_DEFINITION)((PBYTE)PerfCntr + PerfCntr->ByteLength) );
-	}
-
-	PPERF_INSTANCE_DEFINITION FirstInstance( PPERF_OBJECT_TYPE PerfObj )
-	{
-		return( (PPERF_INSTANCE_DEFINITION)((PBYTE)PerfObj + PerfObj->DefinitionLength) );
-	}
-
-	PPERF_INSTANCE_DEFINITION NextInstance( PPERF_INSTANCE_DEFINITION PerfInst )
-	{
-		PPERF_COUNTER_BLOCK PerfCntrBlk;
-
-		PerfCntrBlk = (PPERF_COUNTER_BLOCK)((PBYTE)PerfInst + PerfInst->ByteLength);
-
-		return( (PPERF_INSTANCE_DEFINITION)((PBYTE)PerfCntrBlk + PerfCntrBlk->ByteLength) );
-	}
-};
-
-#pragma pack(pop)
-
-class CCpuUsage
-{
-public:
-	CCpuUsage();
-	virtual ~CCpuUsage();
-	int GetCpuUsage();
-	BOOL EnablePerformaceCounters(BOOL bEnable = TRUE);
-private:
-	bool			m_bFirstTime;
-	LONGLONG		m_lnOldValue ;
-	LARGE_INTEGER	m_OldPerfTime100nSec;
-};
-
-
-#define SYSTEM_OBJECT_INDEX					2		// 'System' object
-#define PROCESS_OBJECT_INDEX				230		// 'Process' object
-#define PROCESSOR_OBJECT_INDEX				238		// 'Processor' object
-#define TOTAL_PROCESSOR_TIME_COUNTER_INDEX	240		// '% Total processor time' counter (valid in WinNT under 'System' object)
-#define PROCESSOR_TIME_COUNTER_INDEX		6		// '% processor time' counter (for Win2K/XP)
-
-
-CCpuUsage::CCpuUsage()
-{
-	m_bFirstTime = true;
-	m_lnOldValue = 0;
-	memset(&m_OldPerfTime100nSec, 0, sizeof(m_OldPerfTime100nSec));
-}
-
-CCpuUsage::~CCpuUsage()
-{
-}
-
-BOOL CCpuUsage::EnablePerformaceCounters(BOOL bEnable)
-{
-#if (defined(WINVER)) && (WINVER<0x0500)
-	CRegKey regKey;
-	if (regKey.Open(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Services\\PerfOS\\Performance") != ERROR_SUCCESS)
-		return FALSE;
-
-	regKey.SetValue(!bEnable, "Disable Performance Counters");
-	regKey.Close();
-
-	if (regKey.Open(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Services\\PerfProc\\Performance") != ERROR_SUCCESS)
-		return FALSE;
-
-	regKey.SetValue(!bEnable, "Disable Performance Counters");
-	regKey.Close();
-#endif   
-	return TRUE;
-}
-
-int CCpuUsage::GetCpuUsage()
-{
-	if (m_bFirstTime)
-		EnablePerformaceCounters();
-	
-	// Cpu usage counter is 8 byte length.
-	CPerfCounters<LONGLONG> PerfCounters;
-	char szInstance[256] = {0};
-
-    DWORD dwObjectIndex = PROCESSOR_OBJECT_INDEX;
-	DWORD dwCpuUsageIndex = PROCESSOR_TIME_COUNTER_INDEX;
-	strcpy(szInstance,"_Total");
-   
-	int				CpuUsage = 0;
-	LONGLONG		lnNewValue = 0;
-	PPERF_DATA_BLOCK pPerfData = NULL;
-	LARGE_INTEGER	NewPerfTime100nSec = {0};
-
-	lnNewValue = PerfCounters.GetCounterValue(&pPerfData, dwObjectIndex, dwCpuUsageIndex, szInstance);
-	NewPerfTime100nSec = pPerfData->PerfTime100nSec;
-
-	if (m_bFirstTime)
-	{
-		m_bFirstTime = false;
-		m_lnOldValue = lnNewValue;
-		m_OldPerfTime100nSec = NewPerfTime100nSec;
-		return 0;
-	}
-
-	LONGLONG lnValueDelta = lnNewValue - m_lnOldValue;
-	double DeltaPerfTime100nSec = (double)NewPerfTime100nSec.QuadPart - (double)m_OldPerfTime100nSec.QuadPart;
-
-	m_lnOldValue = lnNewValue;
-	m_OldPerfTime100nSec = NewPerfTime100nSec;
-
-	double a = (double)lnValueDelta / DeltaPerfTime100nSec;
-
-	double f = (1.0 - a) * 100.0;
-	CpuUsage = (int)(f + 0.5);	// rounding the result
-	if (CpuUsage < 0)
-		return 0;
-	return CpuUsage;
-}
-
-
 class CpuLoadCollector: public yarp::os::RateThread 
 {
 public:
     CpuLoadCollector():RateThread(5000) 
     {
+       firstRun = true;
        load.cpuLoad1 = 0.0;
        load.cpuLoad5 = 0.0;
        load.cpuLoad15 = 0.0;
@@ -411,7 +114,7 @@ public:
     void run() 
     {
         sem.wait();
-        load.cpuLoadInstant = usage.GetCpuUsage();
+        load.cpuLoadInstant = (int) phdCpuLoad();
         samples.push_back(load.cpuLoadInstant);
         if(samples.size() > 180)
             samples.erase(samples.begin());
@@ -446,9 +149,45 @@ public:
 
     //bool threadInit()
     //void threadRelease()
-    
+private: 
+#if (defined(WINVER)) && (WINVER>0x0502)    
+    double phdCpuLoad()
+    {        
+        DWORD ret;
+        if(firstRun)
+        {
+            phdStatus = PdhOpenQuery(NULL, 0, &hPhdQuery);
+            if(phdStatus != ERROR_SUCCESS)
+                return 0;
+
+            PdhAddCounter(hPhdQuery, TEXT("\\Processor(_Total)\\% Processor Time"),0,&phdCounter);             
+            PdhCollectQueryData(hPhdQuery);
+            firstRun = false;
+            return 0;
+        }
+
+        phdStatus = PdhCollectQueryData(hPhdQuery);
+        if(phdStatus != ERROR_SUCCESS)        
+            return 0;
+        phdStatus = PdhGetFormattedCounterValue(phdCounter, 
+                                                PDH_FMT_DOUBLE|PDH_FMT_NOCAP100,
+                                                &ret, &phdFmtValue);
+        if(phdStatus != ERROR_SUCCESS)
+            return 0;
+        return phdFmtValue.doubleValue;
+    }
+#else
+    double phdCpuLoad() { return 0.0; }
+#endif;   
+
 private:
-    CCpuUsage usage;
+#if (defined(WINVER)) && (WINVER>0x0502)        
+    bool firstRun;
+    PDH_STATUS            phdStatus;    
+    HQUERY                hPhdQuery;
+    PDH_FMT_COUNTERVALUE  phdFmtValue;
+    HCOUNTER              phdCounter;
+#endif
     LoadInfo load;
     std::vector<int> samples; 
     yarp::os::Semaphore sem;
