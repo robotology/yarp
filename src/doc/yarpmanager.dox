@@ -9,46 +9,50 @@
 
 \author Ali Paikan
 
-The command-line utility 'yarpmanager' along with the gui 'gyarpmanager' are tools for running and managing multiple programs on a set of machines.  
+The command-line utility "yarpmanager" and its graphical companion "gyarpmanager", are tools for running and managing multiple programs on a set of machines.
 
 \section features Features 
-Some of the features of (g)yarpmanager are highlighted here: 
 - Running, stopping, killing and monitoring multiple programs on localhost or remote machines. 
-- Establish port connections manually or automatically.
-- Managing multiple programs grouped as different applications. 
-- Running programs while respecting their input and resource dependencies. 
+- Making port connections manually or automatically.
+- Managing multiple programs which are grouped as different applications. 
+- Running programs concerning their dependencies. 
 - Recovering programs from failure.
-- Using internal launcher to speed-up launching program on localhost.
+- Using internal launcher to speed up program execution on localhost.
 - Automatically assigning programs to machines using load balancing and smart resource discovery mechanism for improving performance. 
-- Discovering information and status of machines in cluster of computer (e.g. Hardware, platform, CPU load).
-- Enabling users to specify resource dependencies of a program using module description file. 
-- Enabling users to provide information about specific devices (e.g GPU) available on machines using resource description file.
-- Creating new Application, Module and Resource using XML template files. 
+- Discovering information and status of machines in cluster of computers (e.g. Hardware, platform, CPU load).
+- Allowing users to specify resource dependencies of program using module description file. 
+- Allowing users to provide information about specific devices (e.g GPU) of machines using resource description file.
+- Creating new Application, Module and Resource using XML template file. 
 - Including multiple instances of an application inside another application.
-- Renaming ports name on run time using port prefix mechanism. 
-- Modifying program parameters from GUI. 
-- Modifying and reload XML description files from GUI. 
+- Renaming ports name at run time using port prefix mechanism. 
+- Modifying program's parameters from GUI. 
+- Modifying and reloading XML description files from GUI. 
 
 \section concepts What is?
-- Module, is an executable binary file (program) developed using YARP or any other libraries.
-- Application, refers to a collection of modules and connections or other applications. 
-- Resource refers to any physical or logical resources which are needed by a module. (e.g Computer, Memory, GPU, Platform)  
+- Module, is an executable binary file (program) which is developed using YARP or any other libraries.
+- Application, refers to a collection of modules, connections and other applications. 
+- Resource refers to any physical or logical resources which are needed by module. (e.g Computer, Memory, GPU, Platform)  
 
 See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts. 
 
 \section configuration Configuration
-Default configuration file known as 'ymanager.ini' can be automatically loaded by (g)yarpmanager from the folder running the manager or via any other file comes after the paramater '--config'.
-Below shows an example of configuration file: 
+Default configuration file known as "ymanager.ini" can be automatically loaded by (g)yarpmanager from the same folder running the manager; or it can be indicated by parameter "--config".
+\verbatim
+$ yarpmanager --config <my_config_file>
+$ gyarpmanager --config <my_config_file>
+\endverbatim
+
+The below example shows the syntax of configuration file: 
 
 \verbatim
-# Path to application description files
+# Path to the folder which contains application description files
 apppath =  "./xml/applications"
 load_subfolders = yes
 
-# Path to module description files
+# Path to the folder which contains module description files
 modpath =  "./xml/modules"
 
-# Path to resource description files
+# Path to the folder which contains module description files
 respath =  "./xml/resources"
 
 # Fault tolerance
@@ -63,7 +67,7 @@ module_failure = prompt
 # parameters: Ignore|terminate|prompt
 connection_failure = prompt
 
-# Automatically establish all connection
+# Automatically establish all connections
 # parameters: Yes|no
 auto_connect = no
 
@@ -75,7 +79,7 @@ color_theme = dark
 external_editor = gvim
 \endverbatim
 
-Items 'apppath', 'modpath' and 'respath' respectively point to the folder where the XML description files of Applications, Modules and Resources can be found. If 'load_subfolders=yes', applications description files will be  recursively loaded from sub folders of 'apppath'.
+Items 'apppath', 'modpath' and 'respath' respectively point to the folder where the XML description files of Applications, Modules and Resources can be found. All description file names must have ".xml" extension. If 'load_subfolders=yes', applications description files will be  recursively loaded from sub folders of 'apppath'.
 Set 'external_editor' to your preferable text editor. It will be used by gyarpmanager for editing XML file. 
 
 
@@ -110,7 +114,7 @@ $ cd ${YARP_ROOT}/src/yarpmanager/tests
 $ gyarpmanager
 \endverbatim
 
-- From "Entities" panel, click the triangle beside Applications, then  double-click "EyesViewer-Localhost".
+- From "Entities" frame, click the triangle beside Applications, then  double-click "EyesViewer-Localhost".
 - From menu "Manage" press "Run" to run all modules
 - From menu "Manage" press "Connect" to establish all connections. 
 - To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop". 
@@ -133,11 +137,12 @@ $ gyarpmanager
 \endverbatim
 
 - From "Entities" frame, click the triangle beside Applications, then  double-click "EyesViewer-Cluster".
-- From the right side, right-click on the frame where you can see all modules and choose "Assign hosts". You will see that modules will be automatically assigned to available nodes. (here /node1 and /node2) 
+- From the right side, right-click on the frame where you can see all modules and form the pop-up menu chose "Assign hosts". You will see that modules will be automatically assigned to available nodes. (here /node1 and /node2) 
 - From menu "Manage" press "Run" to run all modules
 - From menu "Manage" press "Connect" to establish all connections. 
 - To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop". 
 
+\note You can use "Assign hosts" whenever all modules are stopped and connections are disconnected.   
 
 \section application Application description file 
 Application description file is a collection of modules (programs) or other applications and connections. 
@@ -195,10 +200,10 @@ Here is an example of application description file in XML format:
 \endhtmlonly 
 
 \subsection app_notes Notes
- - In application description file, if you set <node></node> to "localhost", the manager will use an internal module launcher to run the module  on localhost.
+ - In application description file, if you set <node></node> to "localhost", the manager will use an internal module launcher to run the module on localhost.
  - Leaving <node></node> empty, later you can use the load balancer to automatically assign module to a node for better performance. 
  - <prefix> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and <prefix>/MyPrefix</prefix>, after launching the module, the real port name will be "/Myprefix/Port1". 
- - Other applications can be integrated by recalling their names. Setting <prefix> for an embedded application, port prefix will be applied to all modules and connections which are not set as external.  
+ - Other applications can be integrated by indicating their names. Setting <prefix> for an included application, port prefix will be applied to all modules and connections which are not set as external.  
 
 
 \section resource Resource description file 
@@ -249,11 +254,11 @@ Here is an example of resource description file in XML format:
 \endhtmlonly
 
 \subsection res_notes Notes
- - Platform, Memory, Storage and Processor specification will be discovered automatically by (g)yarpmanager. But, if it is required, peripherals such as GPU should to be specifically introduced.
+ - Platform, Memory, Storage and Processor specification will be discovered automatically by (g)yarpmanager; but, peripherals such as GPU should to be specifically introduced.
 
 
 \section module Module description file 
-Module description file can be used to provide general information of module and its dependencies. It is mainly used by load balancer to automatically assigns machines to module which satisfy dependencies of the module. By default, if there is no module description, load balancer assumes that the module can be executed on every available machines. Despite it is not \b mandatory, it is always useful to have XML description of each module which shows how it should be used for application building (e.g parameters, inputs, outputs).     
+Module description file can be used to provide general information of module and its dependencies. It is mainly used by load balancer to automatically assign machines to module which satisfy the dependencies. By default, if there is no module description, load balancer assumes that the module can be executed on every available machines. Despite it is \b not \b mandatory, it is always useful to have XML description of each module which shows how it should be used for application building (e.g parameters, inputs, outputs).     
 
 Here is an example of module description file in XML format: 
 \htmlonly
@@ -320,12 +325,12 @@ Here is an example of module description file in XML format:
 
 \subsection mode_notes Notes
  
- - <name> should match its executable file's name.
+ - <name> should match its executable file name.
  - <type> refers to nominal type of data (e.g. ImageFrame, String).
- - Required input means the execution of module depends on availability of the input data. Notice that not all the input are required for a module to perform its task (e.g. status request input).
- - <priority> forces the execution of module to be delayed until the required data becomes available on the port.
- - Physical and logical resource dependencies can be introduced using <dependencies> tag. Dependencies must follow resource conceptional models. Currently available resource models are 'memory', 'processor', 'storage', 'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced inside <computer></computer> tags. While resources described inside <computer> tags, represent conjunctional dependency, resources from different <computer> tags can be seen as disjunctions. Meaning that if a module depends on either resource R1 or R2, they can be introduced inside two different <computer> tags. Resource dependencies should be introduced if they are really required. For example, if module's performance drops significantly in case of memory swapping, a memory resource dependency can be introduced with the required memory space.
- - If module depends on specific platform (Operating system), a <platform> dependency should be introduced. 
+ - Required input means that execution of module depends on availability of the input data. Notice that not all the input are required for a module to perform its task (e.g. status request input).
+ - <priority>yes</priority> forces the execution of module to be delayed until the port become available.
+ - Physical and logical resource dependencies can be introduced using <dependencies> tag. Dependencies must follow resource conceptional models. Currently available models are 'memory', 'processor', 'storage', 'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced inside <computer></computer> tags. Resources inside a <computer> tag, represent conjunctional dependency.  Resources from different <computer> tags can be seen as disjunctions. Meaning that, if a module depends on either resource R1 or R2, they can be introduced inside two different <computer> tags. Resource dependencies should be introduced if they are really required. For example, if module's performance drops significantly in case of memory swapping, a memory resource dependency can be introduced with the required memory space.
+ - In a multi-platform cluster of computers, if a module depends on specific platform (Operating system), <platform> dependency should be introduced. 
  
  Resource conceptional model which can be used as module's dependency: 
 \htmlonly
