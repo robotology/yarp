@@ -220,7 +220,7 @@ bool ApplicationList::addComputer(Computer* comp)
 {
     typedef Gtk::TreeModel::Children type_children;
 
-    type_children children = m_refTreeModel->children();
+    //type_children children = m_refTreeModel->children();
     type_children reschild = m_resRow->children();
     for(type_children::iterator itr = reschild.begin(); itr!= reschild.end(); ++itr)
     {
