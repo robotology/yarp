@@ -327,6 +327,16 @@ yarp::os::Bottle YarpRunInfoVector::PS()
         grp.addString(m_apList[i]->IsActive()?"running":"zombie");
         line.addList()=grp;
 
+        grp.clear();
+        grp.addString("cmd"); 
+        grp.addString(m_apList[i]->mCmd.c_str());
+        line.addList()=grp;
+
+        grp.clear();
+        grp.addString("env"); 
+        grp.addString(m_apList[i]->mEnv.c_str());
+        line.addList()=grp;
+
         ps.addList()=line;
     }
 

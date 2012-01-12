@@ -80,6 +80,31 @@ private:
 };
 
 
+/**
+ * Abstract Class TempLoader  
+ */
+
+typedef struct _AppTemplate {
+    string name;
+    string tmpFileName;
+} AppTemplate;
+
+
+class TempLoader {
+public: 
+    TempLoader(void) {}
+    virtual ~TempLoader() {}
+    virtual bool init(void) = 0; 
+    virtual void fini(void) = 0;
+    virtual void reset(void) = 0;
+    virtual AppTemplate* getNextAppTemplate(void) = 0;
+    
+protected:
+
+private:
+
+};
+
 
 
 //}

@@ -47,13 +47,19 @@ public:
     #endif
 
 	virtual bool IsActive();
-	
+
+    void setCmd(yarp::os::ConstString cmd) { mCmd = cmd; }
+    void setEnv(yarp::os::ConstString env) { mEnv = env; }
+
 protected:
 	yarp::os::ConstString mAlias;
 	yarp::os::ConstString mOn;
 	PID mPidCmd;
 	HANDLE mHandleCmd; // only windows
 	bool mHold;        // only linux
+
+    yarp::os::ConstString mCmd;
+    yarp::os::ConstString mEnv;
 
 	friend class YarpRunInfoVector; 
 };

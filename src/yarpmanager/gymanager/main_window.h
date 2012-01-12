@@ -103,6 +103,7 @@ private:
     void setupActions(void);
     void setupSignals(void);
     bool loadRecursiveApplications(const char* szPath);
+    bool loadRecursiveTemplates(const char* szPath);
     void syncApplicationList(void);
 };
 

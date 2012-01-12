@@ -27,6 +27,7 @@
 #include <yarp/os/impl/SystemInfo.h>
 
 #include "broker.h" 
+#include "primresource.h"
 
 using namespace std; 
 //using namespace yarp::os;
@@ -63,6 +64,8 @@ public:
 
      bool getSystemInfo(const char* server, 
                         SystemInfoSerializer& info);
+     bool getAllProcesses(const char* server, 
+                        ProcessContainer &processes);
      bool getAllPorts(vector<std::string> &stingList);
 
 public: // for rate thread

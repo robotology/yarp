@@ -323,6 +323,7 @@ int YarpBroker::running(void)
     return ((response.get(0).asString() == "running")?1:0);
 }
 
+
 bool YarpBroker::attachStdout(void)
 {
     return true;
@@ -514,6 +515,50 @@ bool YarpBroker::getAllPorts(vector<string> &ports)
 
     return true;
 }
+
+bool YarpBroker::getAllProcesses(const char* server, 
+                                 ProcessContainer& processes)
+{
+    if(!strlen(server))
+        return false;
+   
+    processes.clear();
+    strError.clear();
+    yarp::os::Bottle msg,grp,response;
+    
+    grp.clear();
+    grp.addString("ps");
+    msg.addList()=grp;
+   
+    int ret = SendMsg(msg, server, response, 3.0);
+    if((ret == YARPRUN_OK) || (ret == YARPRUN_NORESPONSE))
+    {
+        for(int i=0; i<response.size(); i++)
+        {
+            Process proc; 
+            ConstString sprc;
+            if(response.get(i).check("pid"))
+                proc.pid = response.get(i).find("pid").asInt();
+            if(response.get(i).check("cmd"))
+               sprc = response.get(i).find("cmd").asString();
+            if(response.get(i).check("env") && 
+               response.get(i).find("env").asString().length())
+               sprc = sprc + ConstString("; ") + response.get(i).find("env").asString();
+            proc.command = sprc.c_str();    
+            processes.push_back(proc);            
+        }
+        return true;
+    }
+
+    strError = "cannot ask ";
+    strError += server;
+    strError += " to give the list of running processes.";
+    strError += yarprun_err_msg[ret];
+    return false;
+}
+
+
+
 
 const char* YarpBroker::error(void)
 {

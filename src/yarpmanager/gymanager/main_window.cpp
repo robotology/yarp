@@ -35,6 +35,7 @@
 #include "module_window.h"
 #include "icon_res.h"
 #include "template_res.h"
+#include "xmltemploader.h"
 
 using namespace std;
 
@@ -69,7 +70,10 @@ MainWindow::MainWindow( yarp::os::Property &config)
     if(config.check("apppath"))
     {
         if(config.find("load_subfolders").asString() == "yes")
+        {
             loadRecursiveApplications(config.find("apppath").asString().c_str());
+            loadRecursiveTemplates(config.find("apppath").asString().c_str());
+        }
         else
             lazyManager.addApplications(config.find("apppath").asString().c_str()); 
     }
@@ -466,6 +470,44 @@ void MainWindow::reportErrors(void)
             m_refMessageList->addWarning(err);
     }   
 }
+
+bool MainWindow::loadRecursiveTemplates(const char* szPath)
+{       
+    string strPath = szPath;
+    if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+            strPath = strPath + string(PATH_SEPERATOR);
+
+    DIR *dir;
+    struct dirent *entry;
+    if ((dir = opendir(strPath.c_str())) == NULL)
+        return false;
+
+    // loading from current folder
+    AppTemplate* tmp;
+    XmlTempLoader tempload(strPath.c_str(), NULL);
+    if(tempload.init())
+    {
+        while((tmp = tempload.getNextAppTemplate()))
+            m_applicationList.addAppTemplate(tmp);
+    }
+
+    while((entry = readdir(dir)))
+    {
+        if((string(entry->d_name) != string(".")) 
+        && (string(entry->d_name) != string("..")))
+        {
+
+            string name = strPath + string(entry->d_name);
+            loadRecursiveTemplates(name.c_str());
+        }
+    }
+    closedir(dir);
+    
+    return true;
+}
+
+
 
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {

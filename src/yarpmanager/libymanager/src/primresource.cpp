@@ -328,6 +328,7 @@ void Computer::swap(const Computer &comp)
     processor = comp.processor;
     network = comp.network;
     platform = comp.platform;
+    processes = comp.processes;
     // deep copy    
     for(int i=0; i<comp.peripheralCount(); i++)
         addPeripheral(comp.getPeripheralAt(i));
@@ -341,6 +342,7 @@ void Computer::clear(void)
         peripheralResources[i] = NULL;
     }
     peripheralResources.clear();
+    processes.clear();
 }
 
 

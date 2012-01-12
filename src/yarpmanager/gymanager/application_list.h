@@ -14,6 +14,7 @@
 #include <gtkmm.h>
 #include "application.h"
 #include "primresource.h"
+#include "xmltemploader.h"
 
 //Tree model columns:
 class AppModelColumns : public Gtk::TreeModel::ColumnRecord
@@ -43,6 +44,7 @@ public:
     bool addApplication(Application* app);
     bool addComputer(Computer* comp);
     bool addModule(Module* mod);
+    bool addAppTemplate(AppTemplate* temp);
 
     bool removeApplication(const char* szAppName);
     bool removeModule(const char* szModName);
@@ -59,6 +61,7 @@ protected:
     Gtk::TreeModel::Row m_appRow;
     Gtk::TreeModel::Row m_modRow;
     Gtk::TreeModel::Row m_resRow;
+    Gtk::TreeModel::Row m_tempRow;
     Glib::RefPtr<Gdk::Pixbuf> m_refPixComputer;
 };
 

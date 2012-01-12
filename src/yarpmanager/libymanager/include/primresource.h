@@ -150,6 +150,13 @@ private:
 /**
  * Class Computer
  */
+typedef struct _Process {
+    string command;
+    int pid;
+} Process;
+
+typedef vector<Process> ProcessContainer;
+typedef vector<Process>::iterator ProcessIterator;
 
 class Computer : public GenericResource {
 public: 
@@ -178,6 +185,9 @@ public:
     bool addPeripheral(GenericResource& res);
     void clear(void);
 
+    // processes list
+    ProcessContainer& getProcesses(void) { return processes; }
+
 protected:
 
 private:
@@ -187,6 +197,11 @@ private:
     Network network;
     Platform platform;
     ResourcePContainer peripheralResources;
+
+    // Processes are not actually part of a resource and only 
+    // will be used by gyarpmanager for listing processes running
+    // on Computer
+    ProcessContainer processes;
 
     bool satisfyComputer(Computer* comp);
     bool satisfyComputerResource(GenericResource* resource);

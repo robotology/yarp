@@ -922,8 +922,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
     FlushFileBuffers(write_to_pipe_cmd_to_stdout);
 
     // EVERYTHING IS ALL RIGHT
-
-    mProcessVector.Add(new YarpRunCmdWithStdioInfo(strAlias,
+    YarpRunCmdWithStdioInfo* pInf = new YarpRunCmdWithStdioInfo(strAlias,
                                                    mPortName,
                                                    strStdio,
                                                    cmd_process_info.dwProcessId,
@@ -936,7 +935,12 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
                                                    read_from_pipe_cmd_to_stdout,
                                                    write_to_pipe_cmd_to_stdout,
                                                    cmd_process_info.hProcess,
-                                                   false));
+                                                   false);
+    
+    pInf->setCmd(strCmd);
+    if(msg.check("env"))
+        pInf->setEnv(msg.find("env").asString());
+    mProcessVector.Add(pInf);
 
     Bottle result;
     result.addInt(cmd_process_info.dwProcessId);
@@ -1069,12 +1073,16 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
     }
 
     // EVERYTHING IS ALL RIGHT
-
-    mProcessVector.Add(new YarpRunProcInfo(strAlias,
+    YarpRunProcInfo* pInf = new YarpRunProcInfo(strAlias,
                                            mPortName,
                                            cmd_process_info.dwProcessId,
                                            cmd_process_info.hProcess,
-                                           false));
+                                           false);
+    pInf->setCmd(strCmd);
+    if(msg.check("env"))
+        pInf->setEnv(msg.find("env").asString());
+
+    mProcessVector.Add(pInf);
 
     Bottle result;
     result.addInt(cmd_process_info.dwProcessId);
@@ -1563,8 +1571,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 
             if (IS_PARENT_OF(pid_cmd))
             {
-                mProcessVector.Add(
-                    new YarpRunCmdWithStdioInfo(
+                
+                YarpRunCmdWithStdioInfo* pInf = new YarpRunCmdWithStdioInfo(
                         strAlias,
                         mPortName,
                         strStdio,
@@ -1579,8 +1587,11 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                         pipe_cmd_to_stdout[WRITE_TO_PIPE],
                         NULL,
                         false
-                    )
-                );
+                    );
+                pInf->setCmd(strCmd);
+                if(msg.check("env"))
+                    pInf->setEnv(msg.find("env").asString());                   
+                mProcessVector.Add(pInf);
                 
                 FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
                 int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
@@ -1925,7 +1936,11 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
     
     if (IS_PARENT_OF(pid_cmd))
     {
-        mProcessVector.Add(new YarpRunProcInfo(strAlias,mPortName,pid_cmd,NULL,false));
+        YarpRunProcInfo* pInf = new YarpRunProcInfo(strAlias,mPortName,pid_cmd,NULL,false);
+        pInf->setCmd(strCmd);
+        if(msg.check("env"))
+            pInf->setEnv(msg.find("env").asString());
+        mProcessVector.Add(pInf);
         
         char pidstr[16];
         sprintf(pidstr,"%d",pid_cmd);

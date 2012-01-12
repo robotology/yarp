@@ -13,6 +13,8 @@
 #endif
 
 #include "resource_window.h"
+#include "yarpbroker.h"
+#include "primresource.h"
 #include "icon_res.h"
 #include "ymm-dir.h"
 
@@ -58,8 +60,29 @@ ResourceWindow::~ResourceWindow()
 
 void ResourceWindow::onRefresh()
 {
+    ErrorLogger* logger  = ErrorLogger::Instance();
+
     if(m_pManager->updateResource(m_pComputer->getName()))
+    {
+        YarpBroker broker;
+        broker.init();
+    
+        string strServer = m_pComputer->getName();
+        if(strServer[0] != '/')
+            strServer = string("/") + strServer;
+        // Processes list
+        ProcessContainer processes;
+        if(broker.getAllProcesses(strServer.c_str(), processes))
+        {
+            m_pComputer->getProcesses().clear();
+            for(unsigned int i=0; i<processes.size(); i++)
+                m_pComputer->getProcesses().push_back(processes[i]);
+        }
+        else
+            logger->addError(broker.error());        
+
         updateWidget();
+    }
     m_pParent->reportErrors();
 }
 
@@ -83,7 +106,33 @@ void ResourceWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Description";
     row[m_Columns.m_col_value] = m_pComputer->getDescription();
- 
+
+    row = *(m_refTreeModel->append());
+    row[m_Columns.m_col_name] = "Disable";
+    if(!m_pComputer->getDisable())
+    {
+        row[m_Columns.m_col_value] = "No";
+        row.set_value(0, Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+                                                Gdk::COLORSPACE_RGB,
+                                                true,
+                                                8,
+                                                computer_ico.width,
+                                                computer_ico.height,
+                                                computer_ico.bytes_per_pixel*computer_ico.width));
+    }
+    else
+    {
+        row[m_Columns.m_col_value] = "Yes";
+        row.set_value(0, Gdk::Pixbuf::create_from_data(computer_disable_ico.pixel_data, 
+                                                Gdk::COLORSPACE_RGB,
+                                                true,
+                                                8,
+                                                computer_disable_ico.width,
+                                                computer_disable_ico.height,
+                                                computer_disable_ico.bytes_per_pixel*computer_disable_ico.width));
+    }
+
+
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Availablity";
     if(m_pComputer->getAvailability())
@@ -258,6 +307,28 @@ void ResourceWindow::updateWidget()
         childrow = *(m_refTreeModel->append(row.children()));
         childrow[m_Columns.m_col_name] = m_pComputer->getPeripheralAt(i).getTypeName();
         childrow[m_Columns.m_col_value] = m_pComputer->getPeripheralAt(i).getName();
+    }
+
+    // Processes
+    row = *(m_refTreeModel->append());
+    row[m_Columns.m_col_name] = "Processes";
+    row[m_Columns.m_col_value] = "";
+    row.set_value(0, Gdk::Pixbuf::create_from_data(process_ico.pixel_data, 
+                                            Gdk::COLORSPACE_RGB,
+                                            true,
+                                            8,
+                                            process_ico.width,
+                                            process_ico.height,
+                                            process_ico.bytes_per_pixel*process_ico.width));
+
+    ProcessContainer processes = m_pComputer->getProcesses();
+    for(unsigned int i=0; i<processes.size(); i++)
+    {
+        childrow = *(m_refTreeModel->append(row.children()));
+        char buff[64];
+        sprintf(buff, "%d", processes[i].pid);
+        childrow[m_Columns.m_col_name] = Glib::ustring(buff);
+        childrow[m_Columns.m_col_value] = processes[i].command;
     }
 
 }
