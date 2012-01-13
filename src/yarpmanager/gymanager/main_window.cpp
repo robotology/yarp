@@ -187,13 +187,36 @@ void MainWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='ManageRefresh'/>"
         " </popup>"
-        " <popup name='PopupApplication'>"
+        " <popup name='PopupGeneral'>"
         "      <menuitem action='FileOpen'/>"
         "      <menuitem action='FileImport'/>"
         "      <menuitem action='PAppRemove'/>"
         "      <menuitem action='PAppReopen'/>"
-        "      <separator/>"
+        " </popup>"
+        " <popup name='PopupFolders'>"
+        "      <menuitem action='FileOpen'/>"
+        "      <menuitem action='FileImport'/>"
+        " </popup>"
+        " <popup name='PopupFile'>"
+        "      <menuitem action='PEditFile'/>"
+        " </popup>"
+        " <popup name='PopupApplication'>"
         "      <menuitem action='PAppLoad'/>"   
+        "      <separator/>"
+        "      <menuitem action='PAppReopen'/>"
+        "      <menuitem action='PAppRemove'/>"
+        " </popup>"
+        " <popup name='PopupModule'>"
+        "      <menuitem action='PModLoad'/>"   
+        "      <separator/>"
+        "      <menuitem action='PAppReopen'/>"
+        "      <menuitem action='PAppRemove'/>"
+        " </popup>"
+        " <popup name='PopupResource'>"
+        "      <menuitem action='PResLoad'/>"   
+        "      <separator/>"
+        "      <menuitem action='PAppReopen'/>"
+        "      <menuitem action='PAppRemove'/>"
         " </popup>"
         "</ui>";
 
@@ -386,7 +409,7 @@ void MainWindow::setupActions(void)
                 Gtk::Stock::NEW, "New _Resource", "Create a new Resource"),
                 sigc::mem_fun(*this, &MainWindow::onMenuFileNewRes));
                
-    m_refActionGroup->add( Gtk::Action::create("FileOpen", Gtk::Stock::OPEN),
+    m_refActionGroup->add( Gtk::Action::create("FileOpen", Gtk::Stock::OPEN  ,"_Open File", "Open xml file"),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileOpen) );
     m_refActionGroup->add( Gtk::Action::create("FileClose", Gtk::Stock::CLOSE),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileClose) );
@@ -395,7 +418,7 @@ void MainWindow::setupActions(void)
                         sigc::mem_fun(*this, &MainWindow::onMenuFileSave) );
     m_refActionGroup->add( Gtk::Action::create("FileSaveAs", Gtk::Stock::SAVE_AS),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileSaveAs) );
-    m_refActionGroup->add( Gtk::Action::create("FileImport", Gtk::StockID("YIMPORT") ,"_Import...", "Import xml files"),
+    m_refActionGroup->add( Gtk::Action::create("FileImport", Gtk::StockID("YIMPORT") ,"_Import Files...", "Import xml files"),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileImport) );
 
     m_refActionGroup->add(Gtk::Action::create("FileQuit", Gtk::Stock::QUIT),
@@ -438,6 +461,12 @@ void MainWindow::setupActions(void)
                            
     m_refActionGroup->add( Gtk::Action::create("PAppLoad", Gtk::Stock::APPLY, "_Load Application", "Load Application"),
                             sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
+    m_refActionGroup->add( Gtk::Action::create("PModLoad", Gtk::Stock::APPLY, "_Load Module", "Load Module"),
+                            sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
+    m_refActionGroup->add( Gtk::Action::create("PResLoad", Gtk::Stock::APPLY, "_Load Resource", "Load Resource"),
+                            sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
+    m_refActionGroup->add( Gtk::Action::create("PEditFile", Gtk::Stock::EDIT , "_Edit File", "Edit xml file"),
+                        sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
 
     // initial sensitivity
     //m_refActionGroup->get_action("FileNew")->set_sensitive(false);
@@ -930,12 +959,54 @@ void MainWindow::onPAppMenuLoad()
             Glib::ustring strName = row[m_applicationList.m_appColumns.m_col_name];
             manageApplication(strName.c_str());
         }
+        else if(row[m_applicationList.m_appColumns.m_col_type] == MODULE)
+        {
+            Glib::ustring strName = row[m_applicationList.m_appColumns.m_col_name];
+            manageModule(strName.c_str());
+        }
+        else if(row[m_applicationList.m_appColumns.m_col_type] == RESOURCE)
+        {
+            Glib::ustring strName = row[m_applicationList.m_appColumns.m_col_name];
+            manageResource(strName.c_str());
+        }
+        else if(row[m_applicationList.m_appColumns.m_col_type] == NODE_FILENAME)
+        {
+            Glib::ustring name = row[m_applicationList.m_appColumns.m_col_filename];
+            ErrorLogger* logger  = ErrorLogger::Instance(); 
+            if(m_config.check("external_editor"))
+            {
+                 
+                LocalBroker launcher;
+                if(launcher.init(m_config.find("external_editor").asString().c_str(),
+                                 name.c_str(), NULL, NULL, NULL, NULL))
+                    if(!launcher.start() && strlen(launcher.error()))
+                    {
+                        ostringstream msg;
+                        msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
+                        msg<<". "<<launcher.error();
+                        logger->addError(msg);
+                        reportErrors();
+                    }
+            }
+            else
+            {
+                logger->addError("External editor is not set.");
+                reportErrors();
+            }
+        }
+
     }
 }
 
 
 void MainWindow::onPAppMenuRemove()
 {
+    ostringstream msg;
+    Gtk::MessageDialog dialog("Removing!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
+    dialog.set_secondary_text("Are you sure to remove this item?");
+    if(dialog.run() != Gtk::RESPONSE_YES)
+        return;
+
     Gtk::TreeModel::iterator iter = 
         m_applicationList.getTreeView()->get_selection()->get_selected();
     if(iter) //If anything is selected
@@ -1212,7 +1283,6 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
     //if it's a mouse click 
     if(event->type == GDK_BUTTON_PRESS)
     {
-
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
         bool bOnItem = m_applicationList.getTreeView()->get_path_at_pos(
@@ -1221,6 +1291,8 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
         bool bOnAppItem = false;
         bool bOnModItem = false;
         bool bOnResItem = false;
+        bool bOnFileItem = false;
+        bool bOnFolderItem = false;
         if(path)
         {
             Gtk::TreeModel::iterator iter = 
@@ -1231,44 +1303,59 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
                 bOnModItem = true;
             if((*iter)[m_applicationList.m_appColumns.m_col_type] == RESOURCE)
                 bOnResItem = true;
-              
-        }
+             if((*iter)[m_applicationList.m_appColumns.m_col_type] == NODE_FILENAME)
+                bOnFileItem = true;             
+             if((*iter)[m_applicationList.m_appColumns.m_col_type] == NODE_OTHER)
+                bOnFolderItem = true;
+       }
             //Do something with the row.
             
         // if it's not a free click
-        if(bOnItem && bOnAppItem)
+        if(bOnItem && bOnAppItem && (event->button == 3))
         {   
-            m_refActionGroup->get_action("PAppRemove")->set_sensitive(true);
-            m_refActionGroup->get_action("PAppReopen")->set_sensitive(true);
-            m_refActionGroup->get_action("PAppLoad")->set_sensitive(true);      
+            Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+                        m_refUIManager->get_widget("/PopupApplication"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);
         }
-        else if(bOnItem && bOnModItem)
+        else if(bOnItem && bOnModItem && (event->button == 3))
         {
-            m_refActionGroup->get_action("PAppRemove")->set_sensitive(true);
-            m_refActionGroup->get_action("PAppReopen")->set_sensitive(true);
-            m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
+            Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+                        m_refUIManager->get_widget("/PopupModule"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);
         }
-        else if(bOnItem && bOnResItem)
+        else if(bOnItem && bOnResItem && (event->button == 3))
         {
-            m_refActionGroup->get_action("PAppRemove")->set_sensitive(true);
-            m_refActionGroup->get_action("PAppReopen")->set_sensitive(true);
-            m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
+            Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+                        m_refUIManager->get_widget("/PopupResource"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);
         }
-        else
+        else if(bOnItem && bOnFolderItem && (event->button == 3))        
         {
-            m_refActionGroup->get_action("PAppRemove")->set_sensitive(false);
-            m_refActionGroup->get_action("PAppReopen")->set_sensitive(false);
-            m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
-        }
-#endif  
+            Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+                        m_refUIManager->get_widget("/PopupFolders"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);
+        }        
+        else if(bOnItem && bOnFileItem && (event->button == 3))
+        {
+             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+                        m_refUIManager->get_widget("/PopupFile"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);          
+        }       
+#else  
         // if it's a right click 
         if(event->button == 3)
         {
             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
-                        m_refUIManager->get_widget("/PopupApplication"));
+                        m_refUIManager->get_widget("/PopupGeneral"));
             if(pMenu)
-            pMenu->popup(event->button, event->time);
+                pMenu->popup(event->button, event->time);
         }
+#endif        
     }
 }
 

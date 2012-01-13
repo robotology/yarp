@@ -239,8 +239,9 @@ void ResourceWindow::updateWidget()
     {
         float sibling = (float)m_pComputer->getProcessor().getSiblings();
         if(!sibling) sibling = 1.0F;
-        sprintf(buff, "%.1f%%",
-                (float)(m_pComputer->getProcessor().getCPULoad().loadAverageInstant / sibling)*100.0F);
+        float loadP = (float)(m_pComputer->getProcessor().getCPULoad().loadAverageInstant / sibling)*100.0F;
+        if(loadP > 100.0F) loadP = 100.0F;
+        sprintf(buff, "%.1f%%", loadP);
     }
     childrow[m_Columns.m_col_value] = Glib::ustring(buff);
 
