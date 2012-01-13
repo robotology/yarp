@@ -104,6 +104,7 @@ private:
 
 
 typedef struct _LoadAvg {
+    double loadAverageInstant;
     double loadAverage1; 
     double loadAverage5;
     double loadAverage15;

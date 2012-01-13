@@ -232,20 +232,42 @@ void ResourceWindow::updateWidget()
                                             cpuload_ico.bytes_per_pixel*cpuload_ico.width));
 
     childrow = *(m_refTreeModel->append(row.children()));
-    childrow[m_Columns.m_col_name] = "Load avrage 1";
-    sprintf(buff, "%.2f", (float)m_pComputer->getProcessor().getCPULoad().loadAverage1);
+    childrow[m_Columns.m_col_name] = "Load instant";
+    if(compareString(m_pComputer->getPlatform().getName(), "WINDOWS"))
+        sprintf(buff, "%.1f%%", (float)m_pComputer->getProcessor().getCPULoad().loadAverageInstant);
+    else
+    {
+        float sibling = (float)m_pComputer->getProcessor().getSiblings();
+        if(!sibling) sibling = 1.0F;
+        sprintf(buff, "%.1f%%",
+                (float)(m_pComputer->getProcessor().getCPULoad().loadAverageInstant / sibling)*100.0F);
+    }
+    childrow[m_Columns.m_col_value] = Glib::ustring(buff);
+
+    float sibling = (float)m_pComputer->getProcessor().getSiblings();
+    if(!sibling) sibling = 1.0F;
+    float load1P = ((float)m_pComputer->getProcessor().getCPULoad().loadAverage1 / sibling)*100.0F;
+    if(load1P > 100.0F) load1P = 100.0F; 
+    float load5P = ((float)m_pComputer->getProcessor().getCPULoad().loadAverage5 / sibling)*100.0F;
+    if(load5P > 100.0F) load5P = 100.0F; 
+    float load15P = ((float)m_pComputer->getProcessor().getCPULoad().loadAverage15 / sibling)*100.0F;
+    if(load15P > 100.0F) load15P = 100.0F; 
+  
+    childrow = *(m_refTreeModel->append(row.children()));
+    childrow[m_Columns.m_col_name] = "Load average 1";
+    sprintf(buff, "%.1f%%", load1P);
     childrow[m_Columns.m_col_value] = Glib::ustring(buff);
 
     childrow = *(m_refTreeModel->append(row.children()));
-    childrow[m_Columns.m_col_name] = "Load avrage 5";
-    sprintf(buff, "%.2f", (float)m_pComputer->getProcessor().getCPULoad().loadAverage5);
+    childrow[m_Columns.m_col_name] = "Load average 5";
+    sprintf(buff, "%.1f%%", load5P);
     childrow[m_Columns.m_col_value] = Glib::ustring(buff);
 
     childrow = *(m_refTreeModel->append(row.children()));
-    childrow[m_Columns.m_col_name] = "Load avrage 15";
-    sprintf(buff, "%.2f", (float)m_pComputer->getProcessor().getCPULoad().loadAverage15);
+    childrow[m_Columns.m_col_name] = "Load average 15";
+    sprintf(buff, "%.1f%%", load15P);
     childrow[m_Columns.m_col_value] = Glib::ustring(buff);
-
+    m_TreeView.expand_row(m_refTreeModel->get_path(row), true);
 
     // Memory
     row = *(m_refTreeModel->append());

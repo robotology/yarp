@@ -494,6 +494,7 @@ bool Manager::updateResource(GenericResource* resource)
         comp->getProcessor().setFrequency(info.processor.frequency);
         comp->getProcessor().setModel(info.processor.model);
         LoadAvg load;
+        load.loadAverageInstant = (double)info.load.cpuLoadInstant;
         load.loadAverage1 = info.load.cpuLoad1;
         load.loadAverage5 = info.load.cpuLoad5;
         load.loadAverage15 = info.load.cpuLoad15;
