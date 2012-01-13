@@ -1,3 +1,9 @@
+2012-01-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCore.cpp: chrome browser play 
+	interesting games with http connections; don't display connections 
+	until they commit to a carrier.
+
 2012-01-10  Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/src/RemoteControlBoard.cpp
     

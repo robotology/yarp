@@ -909,12 +909,14 @@ void PortCore::describe(void *id, OutputStream *os) {
         if (unit!=NULL) {
             if (unit->isInput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
-                String msg = "There is an input connection from " + 
-                    route.getFromName() +
-                    " to " + route.getToName() + " using " + 
-                    route.getCarrierName();
-                bw.appendLine(msg);
-                ict++;
+                if (route.getCarrierName()!="") {
+                    String msg = "There is an input connection from " + 
+                        route.getFromName() +
+                        " to " + route.getToName() + " using " + 
+                        route.getCarrierName();
+                    bw.appendLine(msg);
+                    ict++;
+                }
             }
         }
     }
