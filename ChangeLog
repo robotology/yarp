@@ -1,6 +1,6 @@
 2012-01-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* src/libYARP_OS/src/PortCore.cpp: chrome browser play 
+	* src/libYARP_OS/src/PortCore.cpp: chrome browser plays 
 	interesting games with http connections; don't display connections 
 	until they commit to a carrier.
 
