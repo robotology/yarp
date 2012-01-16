@@ -199,6 +199,56 @@ Here is an example of application description file in XML format:
 </div>
 \endhtmlonly 
 
+\latexonly
+\noindent
+\mbox{}\textbf{\textless{}application\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \textit{\textless{}!-\/-\ Generic\ information-\/-\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}name\textgreater{}}ApplicationName\textbf{\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}description\textgreater{}}Template\ Application\textbf{\textless{}/description\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}version\textgreater{}\textless{}/version\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \textbf{\textless{}authors\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}author}\ email=\texttt{"{}"{}}\textbf{\textgreater{}}\ first\ author.name\ \textbf{\textless{}/author\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}author}\ email=\texttt{"{}"{}}\textbf{\textgreater{}}\ second\ author.name\ \textbf{\textless{}/author\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ ... \\
+\mbox{}\ \ \textbf{\textless{}/authors\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \textit{\textless{}!-\/-\ Required\ modules.\ -\/-\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}module\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}Module$\_$Name\textbf{\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}parameters\textgreater{}\textless{}/parameters\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}node\textgreater{}\textless{}/node\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}stdio\textgreater{}\textless{}/stdio\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}prefix\textgreater{}\textless{}/prefix\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}/module\textgreater{}} \\
+\mbox{}\ \ ... \\
+\mbox{}\ \ \ \  \\
+\mbox{}\ \ \textit{\textless{}!-\/-\ Embedded\ applications\ -\/-\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}application\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}Application$\_$Name\textbf{\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}prefix\textgreater{}\textless{}/prefix\textgreater{}} \\
+\mbox{}\ \ \ \textbf{\textless{}/application\textgreater{}} \\
+\mbox{}\ \ \ ... \\
+\mbox{}\ \ \ \  \\
+\mbox{}\ \ \textit{\textless{}!-\/-\ Required\ connections\ -\/-\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}connection\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}from\textgreater{}\textless{}/from\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}to\textgreater{}\textless{}/to\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}protocol\textgreater{}\textless{}/protocol\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}/connection\textgreater{}} \\
+\mbox{}\ \  \\
+\mbox{}\ \ \textbf{\textless{}connection\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}from}\ external=\texttt{"{}true"{}}\textbf{\textgreater{}\textless{}/from\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}to\textgreater{}\textless{}/to\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \textbf{\textless{}protocol\textgreater{}\textless{}/protocol\textgreater{}} \\
+\mbox{}\ \ \textbf{\textless{}/connection\textgreater{}}\ \  \\
+\mbox{}\ \ ... \\
+\mbox{}\ \  \\
+\mbox{}\textbf{\textless{}/application\textgreater{}} \\
+\mbox{}
+\endlatexonly
+
 \subsection app_notes Notes
  - In application description file, if you set <node></node> to "localhost", the manager will use an internal module launcher to run the module on localhost.
  - Leaving <node></node> empty, later you can use the load balancer to automatically assign module to a node for better performance. 
@@ -252,6 +302,48 @@ Here is an example of resource description file in XML format:
 </tt></pre>
 </div>
 \endhtmlonly
+
+\latexonly
+\noindent
+\mbox{}\textbf{\textless{}resources\textgreater{}} \\
+\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ Multiple\ computers\ can\ be\ introduced\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}computer\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}hostname1\textbf{\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}}Template\ resource\textbf{\textless{}/description\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ A\ disabled\ resource\ will\ not\ be\ used\ by\ load\ balancer.\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}disable\textgreater{}}no\textbf{\textless{}/disable\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}/computer\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textbf{\textless{}computer\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}hostname2\textbf{\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}}a\ computer\ with\ GPU\ device\textbf{\textless{}/description\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}disable\textgreater{}}no\textbf{\textless{}/disable\textgreater{}}\  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ GPU\ description\ section.\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}gpu\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}name\textgreater{}}Tesla\ C1060\textbf{\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}cores\textgreater{}}240\textbf{\textless{}/cores\textgreater{}}\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}frequency\textgreater{}}1600\textbf{\textless{}/frequency\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}capability\textgreater{}}1.3\textbf{\textless{}/capability\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}registers$\_$block\textgreater{}}128\textbf{\textless{}/registers$\_$block\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}thread$\_$block\textgreater{}}512\textbf{\textless{}/thread$\_$block\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}overlap\textgreater{}}yes\textbf{\textless{}/overlap\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}global$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}}4000000\textbf{\textless{}/total$\_$space\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/global$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}shared$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}}128\textbf{\textless{}/total$\_$space\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/shared$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}constant$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}}16\textbf{\textless{}/total$\_$space\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/constant$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/gpu\textgreater{}}\  \\
+\mbox{}\ \ \ \ \textbf{\textless{}/computer\textgreater{}} \\
+\mbox{}\ \ \ \ ... \\
+\mbox{}\ \ \ \  \\
+\mbox{}\textbf{\textless{}/resources\textgreater{}} \\
+\mbox{}
+\endlatexonly
 
 \subsection res_notes Notes
  - Platform, Memory, Storage and Processor specification will be discovered automatically by (g)yarpmanager; but, peripherals such as GPU should to be specifically introduced.
@@ -323,6 +415,67 @@ Here is an example of module description file in XML format:
 </div>
 \endhtmlonly
 
+\latexonly
+\noindent
+\mbox{}\textbf{\textless{}module\textgreater{}}\ \ \ \  \\
+\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}}module$\_$name\textbf{\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}description\textgreater{}}Template\ module\textbf{\textless{}/description\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}version\textgreater{}}1.0\textbf{\textless{}/version\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ \textless{}arguments\textgreater{}\ can\ have\ multiple\ \textless{}param\textgreater{}\ tags-\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}arguments\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}param}\ desc=\texttt{"{}first\ parameter"{}}\textbf{\textgreater{}}\ param1\ \textbf{\textless{}/param\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}/arguments\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ \textless{}authors\textgreater{}\ can\ have\ multiple\ \textless{}author\textgreater{}\ tags.\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}authors\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}author}\ email=\texttt{"{}"{}}\textbf{\textgreater{}}\ author1\ \textbf{\textless{}/author\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}/authors\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \textit{\textless{}!-\/-\ \textless{}data\textgreater{}\ can\ have\ multiple\ \textless{}input\textgreater{}\ or\ \textless{}output\textgreater{}\ tags.\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \ \textbf{\textless{}data\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ input\ data\ if\ available-\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}input\textgreater{}}\ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}type\textgreater{}}DataType\textbf{\textless{}/type\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ input\ port\ which\ receive\ the\ data.\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}port}\ carrier=\texttt{"{}tcp"{}}\textbf{\textgreater{}}/portname\textbf{\textless{}/port\textgreater{}}\ \ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}required\textgreater{}}yes\textbf{\textless{}/required\textgreater{}}\ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}priority\textgreater{}}no\textbf{\textless{}/priority\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}\textless{}/description\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/input\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ ... \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \ \ \ \ \textit{\textless{}!-\/-\ output\ datas\ if\ available\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}output\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}type\textgreater{}}DataType\textbf{\textless{}/type\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}port}\ carrier=\texttt{"{}tcp"{}}\textbf{\textgreater{}}/portname\textbf{\textless{}/port\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}description\textgreater{}\textless{}/description\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/output\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ ... \\
+\mbox{}\ \ \ \ \ \ \ \  \\
+\mbox{}\ \ \ \ \textbf{\textless{}/data\textgreater{}} \\
+\mbox{}\ \ \ \  \\
+\mbox{}\ \ \ \ \textbf{\textless{}dependencies\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}computer\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}gpu\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}capability\textgreater{}}1.3\textbf{\textless{}/capability\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ \textbf{\textless{}/gpu\textgreater{}}\  \\
+\mbox{}\ \ \ \ \ \ \ \ \ \ \ \ ... \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}/computer\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ ... \\
+\mbox{}\ \ \ \ \textbf{\textless{}/dependencies\textgreater{}} \\
+\mbox{} \\
+\mbox{}\ \ \ \ \textit{\textless{}!-\/-\ specific\ libraries\ or\ header\ files\ which\ are\ used\ for\ development\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}development\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}header\textgreater{}\textless{}/header\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}library\textgreater{}\textless{}/library\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}/development\textgreater{}} \\
+\mbox{} \\
+\mbox{}\textbf{\textless{}/module\textgreater{}} \\
+\mbox{}
+\endlatexonly
+
 \subsection mode_notes Notes
  
  - <name> should match its executable file name.
@@ -380,6 +533,53 @@ Here is an example of module description file in XML format:
 </tt></pre>
 </div>
 \endhtmlonly
+
+\latexonly
+\noindent
+\mbox{}\textbf{\textless{}platform\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}distribution\textgreater{}\textless{}/distribution\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}release\textgreater{}\textless{}/release\textgreater{}} \\
+\mbox{}\textbf{\textless{}/platform\textgreater{}} \\
+\mbox{} \\
+\mbox{}\textbf{\textless{}yarp$\_$port\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}\textless{}/name\textgreater{}}\ \ \ \textit{\textless{}!-\/-\ yarp\ port\ name\ -\/-\textgreater{}} \\
+\mbox{}\textbf{\textless{}yarp$\_$port\textgreater{}}\ \ \ \ \ \ \ \ \ \ \  \\
+\mbox{} \\
+\mbox{}\textbf{\textless{}memory\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}free$\_$space\textgreater{}\textless{}/free$\_$space\textgreater{}}\ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
+\mbox{}\textbf{\textless{}/memory\textgreater{}} \\
+\mbox{} \\
+\mbox{}\textbf{\textless{}storage\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}free$\_$space\textgreater{}\textless{}/free$\_$space\textgreater{}}\ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
+\mbox{}\textbf{\textless{}/storage\textgreater{}} \\
+\mbox{} \\
+\mbox{}\textbf{\textless{}processor\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}architecture\textgreater{}\textless{}/architecture\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}cores\textgreater{}\textless{}/cores\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}frequency\textgreater{}\textless{}/frequency\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}model\textgreater{}\textless{}/model\textgreater{}} \\
+\mbox{}\textbf{\textless{}/processor\textgreater{}} \\
+\mbox{} \\
+\mbox{}\textbf{\textless{}gpu\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}name\textgreater{}\textless{}/name\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}cores\textgreater{}\textless{}/cores\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}capability\textgreater{}\textless{}/capability\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}registers$\_$block\textgreater{}\textless{}/registers$\_$block\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}thread$\_$block\textgreater{}\textless{}/thread$\_$block\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}overlap\textgreater{}\textless{}/overlap\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}global$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}\textless{}/total$\_$space\textgreater{}}\ \ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}/global$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}shared$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}\textless{}/total$\_$space\textgreater{}}\ \ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}/shared$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}constant$\_$memory\textgreater{}} \\
+\mbox{}\ \ \ \ \ \ \ \ \textbf{\textless{}total$\_$space\textgreater{}\textless{}/total$\_$space\textgreater{}}\ \ \ \ \ \textit{\textless{}!-\/-\ in\ KB\ -\/-\textgreater{}} \\
+\mbox{}\ \ \ \ \textbf{\textless{}/constant$\_$memory\textgreater{}} \\
+\mbox{}\textbf{\textless{}/gpu\textgreater{}}\ \ \ \ \  \\
+\mbox{}
+\endlatexonly
 
 \section create Create new XML description file
 gyarpmanager allows for creating new application, module and resource description file using predifined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then 
