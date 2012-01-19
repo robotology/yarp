@@ -29,21 +29,25 @@ yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
         writer->reset(isTextMode());
     }
     writer->clear();
+    writePending = true;
     return writer;
 }
 
 
 void StreamConnectionReader::flushWriter() {
     if (writer!=NULL) {
-        if (str!=NULL) {
-            if (protocol!=NULL) {
-                protocol->reply(*writer);
-            } else {
-                writer->write(str->getOutputStream());
+        if (writePending) {
+            if (str!=NULL) {
+                if (protocol!=NULL) {
+                    protocol->reply(*writer);
+                } else {
+                    writer->write(str->getOutputStream());
+                }
+                writer->clear();
             }
-            writer->clear();
         }
     }
+    writePending = false;
 }
 
 

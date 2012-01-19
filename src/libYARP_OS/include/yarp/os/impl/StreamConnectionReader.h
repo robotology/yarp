@@ -45,6 +45,7 @@ public:
         messageLen = 0;
         textMode = false;
         writer = NULL;
+        writePending = false;
         valid = false;
         ref = NULL;
         err = false;
@@ -273,6 +274,7 @@ private:
     bool valid;
     bool err;
     bool shouldDrop;
+    bool writePending;
     Route route;
     yarp::os::Portable *ref;
 };
