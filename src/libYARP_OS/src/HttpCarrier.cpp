@@ -10,6 +10,7 @@
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/DummyConnector.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -123,15 +124,17 @@ void HttpTwoWayStream::apply(char ch) {
 
 
 
-HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
+HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
+                                   const char *prefix,
+                                   yarp::os::Property& prop) :
     delegate(delegate) {
 
     data = false;
     filterData = false;
     String s(txt);
     String sData = "";
-    Property p;
-    p.fromQuery(txt);
+    Property& p = prop;
+    //p.fromQuery(txt);
     if (p.check("cmd")) {
         s = p.check("cmd",Value("")).asString().c_str();
     } else if (p.check("data")) {
@@ -174,36 +177,79 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
     }
 
 
-    String from = "<input type=text name=data value=\"";
+    String from = prefix;
+    from += "<input type=text name=data value=\"";
     from += quoteFree(sData.c_str());
 
     from += "\"><input type=submit value=\"send data\"></form></p>\n"; 
     from += "<pre>\n";
-    Bytes b2((char*)from.c_str(),from.length());
-    delegate->getOutputStream().write(b2);
-    delegate->getOutputStream().flush();
 
-
-    if (s=="") {
-        s = "*";
+    bool classic = false;
+    // support old-style messages
+    if (s.length()<=1) classic = true;
+    if (s.length()>1) {
+        if (s[0]=='?' || s[1]=='?') {
+            classic = true;
+        }
+        if (s[0]=='d' && s[1]=='\n') {
+            classic = true;
+        }
     }
-    if (s[0]=='r') {
-        filterData = true;
-        String msg = "Reading data from port...\n";
-        Bytes tmp((char*)msg.c_str(),msg.length());
-        delegate->getOutputStream().write(tmp);
+    if (s.length()>=4) {
+        if (s[0]=='f'&&s[1]=='o'&&s[2]=='r'&&s[3]=='m') {
+            classic = true;
+        }
+        if (s[0]=='d'&&s[1]=='a'&&s[2]=='t'&&s[3]=='a') {
+            classic = true;
+        }
+        if (s[0]=='f'&&s[1]=='a'&&s[2]=='v'&&s[3]=='i') {
+            // kill favicon.ico, sorry
+            classic = true;
+        }
+    }
+    //printf("S is %s, classic? %d\n", s.c_str(), classic);
+
+    if (classic) {
+        Bytes b2((char*)from.c_str(),from.length());
+        delegate->getOutputStream().write(b2);
         delegate->getOutputStream().flush();
-    }
-    for (unsigned int i=0; i<s.length(); i++) {
-        if (s[i]==',') {
-            s[i] = '\n';
+
+        if (s=="") {
+            s = "*";
         }
-        if (s[i]=='+') {
-            s[i] = ' ';
+        if (s[0]=='r') {
+            filterData = true;
+            String msg = "Reading data from port...\n";
+            Bytes tmp((char*)msg.c_str(),msg.length());
+            delegate->getOutputStream().write(tmp);
+            delegate->getOutputStream().flush();
         }
+        for (unsigned int i=0; i<s.length(); i++) {
+            if (s[i]==',') {
+                s[i] = '\n';
+            }
+            if (s[i]=='+') {
+                s[i] = ' ';
+            }
+        }
+        sis.add(s);
+        sis.add("\nq\nq\nq\n");
+    } else {
+        sis.add("d\n");
+        for (int i=0; i<(int)s.length(); i++) {
+            if (s[i]=='/') {
+                s[i] = ' ';
+            }
+            if (s[i]=='?') {
+                s = s.substr(0,i);
+                break;
+            }
+        }
+        sis.add(s);
+        sis.add(" ");
+        sis.add(p.toString());
+        sis.add("\nq\n");
     }
-    sis.add(s);
-    sis.add("\nq\nq\nq\n");
 }
 
 
@@ -257,6 +303,9 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
         //printf("message: %s\n", url.c_str());
         input = url;
     }
+    prop.fromQuery(input.c_str());
+    prop.put("REQUEST_URI",url.c_str());
+    //printf("Property %s\n",prop.toString().c_str());
 
     String from = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body bgcolor='#ffffcc'><h1>yarp port ";
     from += proto.getRoute().getToName();
@@ -296,10 +345,46 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/form\">";
-    Bytes b2((char*)from.c_str(),from.length());
-    proto.os().write(b2);
-    proto.os().flush();
+
+    prefix = from;
+
+
+    //Bytes b2((char*)from.c_str(),from.length());
+    //proto.os().write(b2);
+    //proto.os().flush();
     // Message gets finished by the stream
 
     return proto.os().isOk();
 }
+
+
+bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
+    DummyConnector con;
+    con.setTextMode(true);
+    for (size_t i=writer.headerLength(); i<writer.length(); i++) {
+        con.getWriter().appendBlock(writer.data(i),writer.length(i));
+    }
+    Bottle b;
+    b.read(con.getReader());
+
+    // Could check response codes, mime types here.
+
+    ConstString body = b.find("web").toString();
+    if (body.length()!=0) {
+        ConstString mime = b.check("mime",Value("text/html")).asString();
+        String header("HTTP/1.1 200 OK\nContent-Type: ");
+        header += mime;
+        header += "\n\n";
+        Bytes b2((char*)header.c_str(),header.length());
+        proto.os().write(b2);
+
+        //body = b.toString();
+        Bytes b3((char*)body.c_str(),body.length());
+        proto.os().write(b3);
+    } else {
+        writer.write(proto.os());
+    }
+    proto.os().flush();
+    return proto.os().isOk();
+}
+

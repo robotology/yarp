@@ -1,5 +1,10 @@
 2012-01-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/web/web_test.cpp: example of custom http messages
+
+	* src/libYARP_OS/src/HttpCarrier.cpp: better support custom
+	http messages [thanks Juan G Victores]
+
 	* src/libYARP_OS/src/StreamConnectionReader.cpp: fix double
 	reply problem on forcibly-closed stream
 

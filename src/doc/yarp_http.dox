@@ -132,6 +132,17 @@ and not very helpful...
 For the record, the mjpeg carrier currently intercepts any URLs of the
 form "http://.../?ac".  Other URLs are handled by the default http carrier.
 
+@section yarp_http_custom Custom content
+
+If you do succumb to the temptation to make a mini-webserver, YARP >=
+2.3.15 will help you a little.  Requests that don't match the patterns
+above are passed on to the port in bottle-compatible format; you may
+simply reply to them to generate a custom webpage.  See the example
+web/web_test.cpp.  Be aware that this is a new feature of YARP that is
+not yet nailed down, so you may need to change your code when using
+the next version of YARP.
+
+\include example/web/web_test.cpp
 
  *
  */

@@ -13,6 +13,7 @@
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NetType.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
     namespace os {
@@ -57,7 +58,9 @@ private:
     StringInputStream sis;
     StringOutputStream sos;
 public:
-    HttpTwoWayStream(TwoWayStream *delegate, const char *txt);
+    HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
+                     const char *prefix,
+                     yarp::os::Property& prop);
 
     virtual ~HttpTwoWayStream() {
         if (delegate!=NULL) {
@@ -116,10 +119,11 @@ public:
  */
 class yarp::os::impl::HttpCarrier : public TcpCarrier {
 private:
-    String url, input;
+    String url, input, prefix;
     bool urlDone;
     bool expectPost;
     int contentLength;
+    yarp::os::Property prop;
 public:
     HttpCarrier() {
         url = "";
@@ -245,10 +249,15 @@ public:
 
     bool respondToHeader(Protocol& proto) {
         HttpTwoWayStream *stream = 
-            new HttpTwoWayStream(proto.giveStreams(),input.c_str());
+            new HttpTwoWayStream(proto.giveStreams(),
+                                 input.c_str(),
+                                 prefix.c_str(),
+                                 prop);
         proto.takeStreams(stream);
         return true;
     }
+
+    virtual bool reply(Protocol& proto, SizedWriter& writer);
 };
 
 #endif
