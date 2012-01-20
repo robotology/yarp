@@ -65,6 +65,8 @@ public:
 
     static ssize_t readDiscard(InputStream& is, size_t len);
 
+    static String toHexString(int x);
+
     static String toString(int x);
 
     static String toString(long x);

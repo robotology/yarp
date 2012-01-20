@@ -54,6 +54,7 @@ private:
     String part;
     bool data;
     bool filterData;
+    bool chunked;
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
@@ -90,8 +91,12 @@ public:
     }
 
     virtual void write(const Bytes& b) { // throws
-        for (size_t i=0; i<b.length(); i++) {
-            apply(b.get()[i]);
+        if (chunked) {
+            delegate->getOutputStream().write(b);
+        } else {
+            for (size_t i=0; i<b.length(); i++) {
+                apply(b.get()[i]);
+            }
         }
     }
 
@@ -110,6 +115,14 @@ public:
     virtual void endPacket() {
         delegate->endPacket();
     }
+
+    void flip() {
+        sis.add("r\n");
+    }
+
+    void finish() {
+        sis.add("q\n");
+    }
 };
 
 
@@ -124,6 +137,7 @@ private:
     bool expectPost;
     int contentLength;
     yarp::os::Property prop;
+    HttpTwoWayStream *stream;
 public:
     HttpCarrier() {
         url = "";
@@ -131,6 +145,7 @@ public:
         urlDone = false;
         expectPost = false;
         contentLength = 0;
+        stream = 0 /*NULL*/;
     }
 
     virtual String getName() {
@@ -248,16 +263,17 @@ public:
     }
 
     bool respondToHeader(Protocol& proto) {
-        HttpTwoWayStream *stream = 
-            new HttpTwoWayStream(proto.giveStreams(),
-                                 input.c_str(),
-                                 prefix.c_str(),
-                                 prop);
+        stream = new HttpTwoWayStream(proto.giveStreams(),
+                                      input.c_str(),
+                                      prefix.c_str(),
+                                      prop);
         proto.takeStreams(stream);
         return true;
     }
 
     virtual bool reply(Protocol& proto, SizedWriter& writer);
+
+    virtual bool write(Protocol& proto, SizedWriter& writer);
 };
 
 #endif

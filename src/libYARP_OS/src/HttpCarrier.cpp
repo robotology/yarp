@@ -131,6 +131,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
 
     data = false;
     filterData = false;
+    chunked = false;
     String s(txt);
     String sData = "";
     Property& p = prop;
@@ -210,19 +211,42 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
     //printf("S is %s, classic? %d\n", s.c_str(), classic);
 
     if (classic) {
-        Bytes b2((char*)from.c_str(),from.length());
+        String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n";
+        chunked = false;
+        if (s[0]=='r') {
+            header += "Transfer-Encoding: chunked\r\n";
+            chunked = true;
+        }
+        header += "\r\n";
+        int N = 2*1024;
+        String body = from;
+        if (chunked) {
+            body += "Reading data from port...\n";
+            header += NetType::toHexString(body.length()+N);
+            header += "\r\n";
+        }
+
+        Bytes b1((char*)header.c_str(),header.length());
+        delegate->getOutputStream().write(b1);
+
+        if (chunked) {
+            // chrome etc won't render until enough chars are received.
+            for (int i=0; i<N; i++) {
+                delegate->getOutputStream().write(' ');
+            }
+        }
+
+        Bytes b2((char*)body.c_str(),body.length());
         delegate->getOutputStream().write(b2);
+        delegate->getOutputStream().write('\r');
+        delegate->getOutputStream().write('\n');
         delegate->getOutputStream().flush();
 
         if (s=="") {
             s = "*";
         }
-        if (s[0]=='r') {
+        if (chunked) {
             filterData = true;
-            String msg = "Reading data from port...\n";
-            Bytes tmp((char*)msg.c_str(),msg.length());
-            delegate->getOutputStream().write(tmp);
-            delegate->getOutputStream().flush();
         }
         for (unsigned int i=0; i<s.length(); i++) {
             if (s[i]==',') {
@@ -232,9 +256,15 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
                 s[i] = ' ';
             }
         }
-        sis.add(s);
-        sis.add("\nq\nq\nq\n");
+        if (chunked) {
+            sis.add("r\n");
+        } else {
+            sis.add(s);
+            sis.add("\nq\n");
+        }
+
     } else {
+        chunked = true;
         sis.add("d\n");
         for (int i=0; i<(int)s.length(); i++) {
             if (s[i]=='/') {
@@ -248,7 +278,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
         sis.add(s);
         sis.add(" ");
         sis.add(p.toString());
-        sis.add("\nq\n");
+        sis.add("\n");
     }
 }
 
@@ -307,7 +337,7 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     prop.put("REQUEST_URI",url.c_str());
     //printf("Property %s\n",prop.toString().c_str());
 
-    String from = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body bgcolor='#ffffcc'><h1>yarp port ";
+    String from = "<html><body bgcolor='#ffffcc'><h1>yarp port ";
     from += proto.getRoute().getToName();
     from += "</h1>\n";
     Contact chome = NetworkBase::getNameServerContact();
@@ -358,6 +388,50 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
 }
 
 
+bool HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
+    printf("WRITE CALLED\n");
+    DummyConnector con;
+    con.setTextMode(true);
+    for (size_t i=writer.headerLength(); i<writer.length(); i++) {
+        con.getWriter().appendBlock(writer.data(i),writer.length(i));
+    }
+    Bottle b;
+    b.read(con.getReader());
+
+    ConstString body = b.find("web").toString();
+    if (body.length()!=0) {
+        ConstString header;
+        header += NetType::toHexString(body.length()).c_str();
+        header += "\r\n";
+
+        Bytes b2((char*)header.c_str(),header.length());
+        proto.os().write(b2);
+
+        Bytes b3((char*)body.c_str(),body.length());
+        proto.os().write(b3);
+
+        proto.os().write('\r');
+        proto.os().write('\n');
+
+    } else {
+        size_t len = 0;
+        for (size_t i=0; i<writer.length(); i++) {
+            len += writer.length(i);
+        }
+        ConstString header;
+        header += NetType::toHexString(len).c_str();
+        header += "\r\n";
+        Bytes b2((char*)header.c_str(),header.length());
+        proto.os().write(b2);
+        writer.write(proto.os());
+        proto.os().write('\r');
+        proto.os().write('\n');
+    }
+    proto.os().flush();
+    return proto.os().isOk();
+}
+
+
 bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
     DummyConnector con;
     con.setTextMode(true);
@@ -367,9 +441,46 @@ bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
     Bottle b;
     b.read(con.getReader());
 
+    ConstString body = b.find("web").toString();
+
+    if (b.check("stream")) {
+        ConstString mime = b.check("mime",Value("text/html")).asString();
+        String header("HTTP/1.1 200 OK\r\nContent-Type: ");
+        header += mime;
+        header += "\r\n";
+        header += "Transfer-Encoding: chunked\r\n";
+        header += "\r\n";
+        int N = 2*1024;
+        header += NetType::toHexString(body.length()+N);
+        header += "\r\n";
+
+        Bytes b2((char*)header.c_str(),header.length());
+        proto.os().write(b2);
+        
+        // chrome etc won't render until enough chars are received.
+        for (int i=0; i<N; i++) {
+            proto.os().write(' ');
+        }
+
+        Bytes b3((char*)body.c_str(),body.length());
+        proto.os().write(b3);
+
+        proto.os().write('\r');
+        proto.os().write('\n');
+
+
+        if (stream!=NULL) {
+            stream->flip();
+        }
+        return true;
+    }
+
+    if (stream!=NULL) {
+        stream->finish();
+    }
+
     // Could check response codes, mime types here.
 
-    ConstString body = b.find("web").toString();
     if (body.length()!=0) {
         ConstString mime = b.check("mime",Value("text/html")).asString();
         String header("HTTP/1.1 200 OK\nContent-Type: ");

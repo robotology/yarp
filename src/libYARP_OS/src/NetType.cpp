@@ -87,6 +87,12 @@ ssize_t NetType::readDiscard(InputStream& is, size_t len) {
 }
 
 
+String NetType::toHexString(int x) {
+    char buf[256];
+    ACE_OS::sprintf(buf,"%x",x);
+    return buf;
+}
+
 String NetType::toString(int x) {
     char buf[256];
     ACE_OS::sprintf(buf,"%d",x);

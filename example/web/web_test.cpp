@@ -40,6 +40,16 @@ div { padding-bottom: 10px; } \n\
         prefix += "<link href=\"/css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n";
         prefix += "</head>\n<body>\n";
 
+        if (code=="push") {
+            prefix += "<h1>Potato count</h1>\n";
+            prefix += "<div>(<a href='/test'>back</a>)</div>\n";
+
+            response.addString(prefix);
+            response.addString("stream");
+            response.addInt(1);
+            return response.write(*out);
+        }
+
         ConstString postfix = "</body>\n</html>";
 
         ConstString txt = prefix;
@@ -50,6 +60,7 @@ div { padding-bottom: 10px; } \n\
         } else {
             txt += ConstString("<div>So today is ") + request.find("day").asString() + ", is it? Hmm. I don't think I'm going to bother remembering that.</div>\n";
         }
+        txt += "<div><a href='/push'>How many potatoes?</a> (streaming example)</div>\n";
         txt += postfix;
 
         response.addString(txt);
@@ -76,11 +87,22 @@ int main(int argc, char *argv[]) {
     if (!server.open(contact)) return 1;
     contact = server.where();
 
+    int at = 0;
     while (true) {
-        printf("Server running, visit: http://%s:%d/test\n",
-               contact.getHost().c_str(),
-               contact.getPort());
-        Time::delay(10);
+        if (at%10==0) {
+            printf("Server running, count at %d, visit: http://%s:%d/test\n",
+                   at,
+                   contact.getHost().c_str(),
+                   contact.getPort());
+        }
+        Bottle push;
+        push.addString("web");
+        ConstString div = ConstString("<div>")+ConstString::toString(at)+
+            " potatoes</div>";
+        push.addString(div);
+        server.write(push);
+        at++;
+        Time::delay(1);
     }
 
     return 0;

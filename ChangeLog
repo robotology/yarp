@@ -1,3 +1,11 @@
+2012-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/web/web_test.cpp: update example to show streaming
+	web content
+
+	* src/libYARP_OS/src/HttpCarrier.cpp: add streaming web 
+	content [thanks Juan G Victores]
+
 2012-01-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/web/web_test.cpp: example of custom http messages
