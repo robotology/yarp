@@ -389,7 +389,6 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
 
 
 bool HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
-    printf("WRITE CALLED\n");
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {
@@ -414,16 +413,14 @@ bool HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
         proto.os().write('\n');
 
     } else {
-        size_t len = 0;
-        for (size_t i=0; i<writer.length(); i++) {
-            len += writer.length(i);
-        }
+        ConstString txt = b.toString() + "\r\n";
         ConstString header;
-        header += NetType::toHexString(len).c_str();
+        header += NetType::toHexString(txt.length()).c_str();
         header += "\r\n";
         Bytes b2((char*)header.c_str(),header.length());
         proto.os().write(b2);
-        writer.write(proto.os());
+        Bytes b3((char*)txt.c_str(),txt.length());
+        proto.os().write(b3);
         proto.os().write('\r');
         proto.os().write('\n');
     }
