@@ -21,6 +21,7 @@
 #include <yarp/math/SVD.h>
 
 #include <math.h>
+#include <string>
 
 using namespace yarp::os::impl;
 using namespace yarp::sig;
