@@ -40,7 +40,7 @@ public:
             checkTrue(false, testName.c_str());
         }
         for(size_t i=0; i<a.size(); i++){
-            if(abs(a[i]-b[i])>TOL){
+            if(fabs(a[i]-b[i])>TOL){
                 if(verbose) printf("a != b: %s != %s\n", a.toString(3).c_str(), b.toString(3).c_str());
                 checkTrue(false, testName.c_str());
             }
@@ -65,7 +65,7 @@ public:
         }
         for(int r=0; r<A.rows(); r++){
             for(int c=0; c<A.cols(); c++){
-                if(abs(A(r,c)-B(r,c))>TOL){
+                if(fabs(A(r,c)-B(r,c))>TOL){
                     if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
                     checkTrue(false, testName.c_str());
                 }

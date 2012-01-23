@@ -39,7 +39,7 @@ public:
         }
         for(int r=0; r<A.rows(); r++){
             for(int c=0; c<A.cols(); c++){
-                if(abs(A(r,c)-B(r,c))>TOL){
+                if(fabs(A(r,c)-B(r,c))>TOL){
                     if(verbose) printf("A != B: %s != %s\n", A.toString(3).c_str(), B.toString(3).c_str());
                     checkTrue(false, testName.c_str());
                 }
@@ -94,7 +94,7 @@ public:
         {
             do{
                 M = Rand::matrix(m,m);  // create a random nonsingular square matrix
-            }while(abs(det(M))<TOL);
+            }while(fabs(det(M))<TOL);
             Minv = pinv(M, TOL);
             assertEqual(M*Minv, eye(m), "pinv of square nonsingular matrix");
         }
