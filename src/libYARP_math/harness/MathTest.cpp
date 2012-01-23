@@ -105,7 +105,6 @@ public:
         Vector rangeMax(n, 100);
         double s = Rand::scalar(rangeMin[0], rangeMax[0]);    // scalar
         double s2 = Rand::scalar(rangeMin[0], rangeMax[0]);   // scalar
-        double s3 = Rand::scalar(rangeMin[0], rangeMax[0]);   // scalar
         Vector a1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
         Vector b1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
         Vector c1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
@@ -260,6 +259,8 @@ public:
     }
     
     void matrixInv() {
+        Vector v(0);
+
         report(0,"checking matrix inversions...");
         Matrix A(4,4);
         int counter = 1;
@@ -336,8 +337,6 @@ public:
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
         double s = Rand::scalar(rangeMin[0], rangeMax[0]);    // scalar
-        double s2 = Rand::scalar(rangeMin[0], rangeMax[0]);   // scalar
-        double s3 = Rand::scalar(rangeMin[0], rangeMax[0]);   // scalar
         Vector a1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
         Vector b1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
         Vector c1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
@@ -401,8 +400,6 @@ public:
         Vector rangeMin(n, -100);
         Vector rangeMax(n, 100);
         double s = Rand::scalar(rangeMin[0], rangeMax[0]);    // scalar
-        double s2 = Rand::scalar(rangeMin[0], rangeMax[0]);   // scalar
-        double s3 = Rand::scalar(rangeMin[0], rangeMax[0]);   // scalar
         Vector a1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
         Vector b1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
         Vector c1 = Rand::vector(rangeMin.subVector(0,0), rangeMax.subVector(0,0));   // 1 dim vector
