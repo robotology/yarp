@@ -18,7 +18,11 @@ using namespace yarp::sig;
 
 
 /**
-* Perform SVD decomposition on a NxM matrix. Golub Reinsch method.
+* Factorize the M-by-N matrix 'in' into the singular value decomposition in = U S V^T for M >= N.
+* The diagonal elements of the singular value matrix S are stored in the vector S.
+* The singular values are non-negative and form a non-increasing sequence from S_1 to S_N. 
+* The matrix V contains the elements of V in untransposed form. To form the product U S V^T it 
+* is necessary to take the transpose of V. This routine uses the Golub-Reinsch SVD algorithm. 
 */
 void yarp::math::SVD(const Matrix &in, 
             Matrix &U,
@@ -35,8 +39,8 @@ void yarp::math::SVD(const Matrix &in,
 }
 
 /**
-* Perform SVD decomposition on a NxM matrix. 
-* Modified Golub Reinsch method. fast for M>>N.
+* Perform SVD decomposition on a MxN matrix (for M >= N).
+* Modified Golub Reinsch method. Fast for M>>N.
 */
 void yarp::math::SVDMod(const Matrix &in, 
             Matrix &U,
@@ -55,8 +59,8 @@ void yarp::math::SVDMod(const Matrix &in,
 }
 
 /**
-* Perform SVD decomposition on a NxM matrix. 
-* Jacobi method.
+* Perform SVD decomposition on a matrix using the Jacobi method. The Jacobi method
+* can compute singular values to higher relative accuracy than Golub-Reinsch algorithms.
 */
 void yarp::math::SVDJacobi(const Matrix &in, 
             Matrix &U,
@@ -70,9 +74,10 @@ void yarp::math::SVDJacobi(const Matrix &in,
 }
 
 /**
-* Perform the moore-penrose pseudo-inverse on 
-* a NxM matrix. 
-* 
+* Perform the moore-penrose pseudo-inverse on a MxN matrix for M >= N.
+* @param in input matrix 
+* @param tol singular values less than tol are set to zero
+* @return pseudo-inverse of the matrix 'in'
 */
 Matrix yarp::math::pinv(const Matrix &in, double tol)
 {
@@ -86,14 +91,7 @@ Matrix yarp::math::pinv(const Matrix &in, double tol)
 
 	Matrix Spinv = zeros(n,n);
 	for (int c=0;c<n; c++)
-	{
-		for(int r=0;r<n;r++)
-		{
-			if ( r==c && Sdiag(c)> tol)
-				Spinv(r,c) = 1/Sdiag(c);
-			else
-				Spinv(r,c) = 0;
-		}
-	}
+		if ( Sdiag(c)> tol)
+			Spinv(c,c) = 1/Sdiag(c);
 	return V*Spinv*U.transposed();
 }

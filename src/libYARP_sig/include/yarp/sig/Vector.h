@@ -255,6 +255,18 @@ public:
         updateGslData();
     }
 
+    /**
+    * Build a vector and initialize it with def.
+    * @param s the size
+    * @param def a default value used to fill the vector
+    */
+    explicit Vector(size_t s, const double &def)
+    {
+        storage.resize(s,def);
+        allocGslData();
+        updateGslData();
+    }
+
     ~Vector()
     {
         freeGslData();

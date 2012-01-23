@@ -1,3 +1,19 @@
+2012-01-23  Andrea Del Prete  <andrea.delprete@iit.it>
+
+	* src\libYARP_sig\include\yarp\sig\Vector.h: add constructor with default value
+    * src\libYARP_math\include\yarp\math\Math.h: 
+    * src\libYARP_math\src\math.cpp: 
+        - add operator '+' to sum scalar to vector and viceversa
+        - add operator '-' to subtract scalar to vector and viceversa
+        - add operators +=, -=, *=, /= for all operations between vectors, matrices, scalars
+        - add method ones that returns a vector with all ones
+        - add method eye: takes 1 param and builds square identity matrix
+        - add overloading method cat: build a vector from 3/4/5 scalar values
+    * src\libYARP_math\include\yarp\math\SVD.h: documentation improved
+    * src\libYARP_math\src\SVD.cpp: method pinv optimized
+    * src\libYARP_math\harness\MathTest.cpp: add tests on new operators
+    * src\libYARP_math\harness\svdTest.cpp: add test on pinv
+    
 2012-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/web/web_test.cpp: update example to show streaming
