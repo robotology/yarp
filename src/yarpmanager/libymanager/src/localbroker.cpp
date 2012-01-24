@@ -763,6 +763,9 @@ int LocalBroker::ExecuteCmd(void)
 		//int saved_stderr = dup(STDERR_FILENO);
         dup2(pipe_to_stdout[WRITE_TO_PIPE], STDOUT_FILENO);
 		dup2(pipe_to_stdout[WRITE_TO_PIPE], STDERR_FILENO);
+        fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) | O_NONBLOCK);
+        fcntl(STDERR_FILENO, F_SETFL, fcntl(STDERR_FILENO, F_GETFL) | O_NONBLOCK);
+
         close(pipe_to_stdout[WRITE_TO_PIPE]);
         close(pipe_to_stdout[READ_FROM_PIPE]);
 
