@@ -80,7 +80,11 @@ run_in_chroot test_chroot "yes | apt-get install gdebi-core" || {
     echo "  # install *.deb"
     exit 1
 }
-run_in_chroot test_chroot "cd tmp && gdebi --non-interactive *.deb" || exit 1
+#run_in_chroot test_chroot "cd tmp && gdebi --non-interactive *.deb" || exit 1
 
-echo "To enter test chroot, run:"
+# _AC_
+
+run_in_chroot test_chroot "dpkg -i /tmp/$YARP_PACKAGE"
+
+echo "To enter test chroot, run: ($YARP_PACKAGE)"
 echo "  sudo chroot $YARP_PACKAGE_DIR/test_chroot"
