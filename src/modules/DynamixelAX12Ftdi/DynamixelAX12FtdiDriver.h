@@ -279,7 +279,10 @@ public:
     bool getEncoderSpeeds(double *spds);
     bool getEncoderAcceleration(int j, double *spds);
     bool getEncoderAccelerations(double *accs);
-
+    bool setRefTorques(const double* t);
+    bool setRefTorque(int j, double t);
+    bool getTorqueRange(int j, double* min, double* max);
+    bool getTorqueRanges(double* min, double* max);
 private:
 
     double *positions;

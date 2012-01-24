@@ -744,6 +744,22 @@ bool DynamixelAX12FtdiDriver::setEncoders(const double *vals) {
     return NOT_YET_IMPLEMENTED("setEncoders");
 }
 
+bool DynamixelAX12FtdiDriver::setRefTorques(const double* t) {
+    return NOT_YET_IMPLEMENTED("setRefTorques");
+}
+
+bool DynamixelAX12FtdiDriver::setRefTorque(int j, double t) {
+    return NOT_YET_IMPLEMENTED("setRefTorque");
+}
+
+bool DynamixelAX12FtdiDriver::getTorqueRange(int j, double* min, double* max) {
+    return NOT_YET_IMPLEMENTED("getTorqueRange");
+}
+
+bool DynamixelAX12FtdiDriver::getTorqueRanges(double* min, double* max) {
+    return NOT_YET_IMPLEMENTED("getTorqueRanges");
+}
+
 bool DynamixelAX12FtdiDriver::getEncoder(int j, double *v) {
     *v = -1; // invalid value for encoder of AX12 motor
     int ret = 1;
