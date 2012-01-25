@@ -15,19 +15,19 @@
 #define _SYSTEMINFO_H_
 
 #include <yarp/os/ConstString.h>
-#include <yarp/os/Portable.h>
 
-/*
+
 namespace yarp {
   namespace os {
-    class SystemInfo;
-    class SystemInfoSerializer;
+      namespace impl{
+        class SystemInfo;
+      }
   }
 }
-*/
 
 
 typedef int capacity_t;
+
 
 typedef struct _MemoryInfo {
     capacity_t totalSpace;
@@ -86,7 +86,7 @@ typedef struct _UserInfo {
 /**
  * Class SystemInfo
  */
-class SystemInfo 
+class YARP_OS_impl_API yarp::os::impl::SystemInfo 
 {
 public:   
     static MemoryInfo getMemoryInfo(void);
@@ -100,30 +100,6 @@ public:
     static void enableCpuLoadCollector(void);
     static void disableCpuLoadCollector(void);    
 #endif    
-};
-
-
-
-/**
- * Class SystemInfoSerializer
- */
-class SystemInfoSerializer: public yarp::os::Portable 
-{
-public:
-    SystemInfoSerializer(){}
-    virtual ~SystemInfoSerializer(){}
-
-    virtual bool read(yarp::os::ConnectionReader& connection);
-    virtual bool write(yarp::os::ConnectionWriter& connection);
-
-public:
-    MemoryInfo memory;
-    StorageInfo storage;
-    NetworkInfo network;
-    ProcessorInfo processor;
-    PlatformInfo platform;
-    LoadInfo load;
-    UserInfo user;
 };
 
 #endif //_SYSTEMINFO_H_

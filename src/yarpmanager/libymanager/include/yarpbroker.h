@@ -25,6 +25,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/os/impl/SystemInfo.h>
+#include <yarp/os/impl/SystemInfoSerializer.h>
 
 #include "broker.h" 
 #include "primresource.h"
@@ -63,7 +64,7 @@ public:
      void detachStdout(void);
 
      bool getSystemInfo(const char* server, 
-                        SystemInfoSerializer& info);
+                        yarp::os::impl::SystemInfoSerializer& info);
      bool getAllProcesses(const char* server, 
                         ProcessContainer &processes);
      bool getAllPorts(vector<std::string> &stingList);

@@ -33,6 +33,7 @@ const char* yarprun_err_msg[] = { " (Ok) ",
                                   " (Undefined message) " };
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 using namespace std;
 
 YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)

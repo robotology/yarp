@@ -17,7 +17,6 @@
 
 #include "singleapploader.h"
 
-
 #define RUN_TIMEOUT             10      // Run timeout in seconds
 #define STOP_TIMEOUT            30      // Stop timeout in seconds
 #define KILL_TIMEOUT            10      // kill timeout in seconds
@@ -464,7 +463,7 @@ bool Manager::updateResource(GenericResource* resource)
     if(compareString(comp->getName(), "localhost"))
         return false;
 
-    SystemInfoSerializer info;
+    yarp::os::impl::SystemInfoSerializer info;
     string strServer = comp->getName();
     if(strServer[0] != '/')
         strServer = string("/") + strServer;

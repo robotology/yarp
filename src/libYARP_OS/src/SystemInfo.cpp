@@ -14,7 +14,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <yarp/os/impl/SystemInfo.h>
+#include <yarp/os/impl/SystemInfoSerializer.h>
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 #if defined(__linux__)
 #include <unistd.h>

@@ -13,6 +13,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Run.h>
 #include <yarp/os/impl/SystemInfo.h>
+#include <yarp/os/impl/SystemInfoSerializer.h>
 
 #ifndef YARP_HAS_ACE
 #ifndef __APPLE__
@@ -249,7 +250,7 @@ int yarp::os::Run::Server()
 
 	// Enabling cpu load collector on windows 
 	#if defined(WIN32)
-		SystemInfo::enableCpuLoadCollector();
+		yarp::os::impl::SystemInfo::enableCpuLoadCollector();
 	#endif
 
     while (pServerPort) 
@@ -392,7 +393,7 @@ int yarp::os::Run::Server()
 
         if (msg.check("sysinfo"))
         {
-            SystemInfoSerializer sysinfo;
+            yarp::os::impl::SystemInfoSerializer sysinfo;
             port.reply(sysinfo);
             continue;
         }
@@ -554,7 +555,7 @@ int yarp::os::Run::sendToServer(yarp::os::Property& config)
             return YARPRUN_ERROR;
         }
 
-        SystemInfoSerializer info;
+        yarp::os::impl::SystemInfoSerializer info;
         int ret = port.write(msg, info);
         NetworkBase::disconnect(port.getName().c_str(), 
                                 config.find("on").asString());
