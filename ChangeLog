@@ -1,3 +1,8 @@
+2012-01-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_math/src/math.cpp: recent changes give signed/unsigned
+	problems; fix for Linux.
+
 2012-01-25 Lorenzo Natale <lorenzo.natale@iit.it>
     * Various fixes for correct dll generation on WIN32
     * re-tagging rc 2.3.15

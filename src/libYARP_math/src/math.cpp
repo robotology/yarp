@@ -60,9 +60,9 @@ Vector yarp::math::operator+(const Vector &a, const Vector &b)
 
 Vector& yarp::math::operator+=(Vector &a, const Vector &b)
 {
-    int s=a.size();
+    size_t s=a.size();
     YARP_ASSERT(s==b.size());
-    for (int k=0; k<s;k++)
+    for (size_t k=0; k<s;k++)
         a[k]+=b[k];
     return a;
 }
@@ -115,9 +115,9 @@ Vector yarp::math::operator-(const Vector &a, const Vector &b)
 
 Vector& yarp::math::operator-=(Vector &a, const Vector &b)
 {
-    int s=a.size();
+    size_t s=a.size();
     YARP_ASSERT(s==b.size());
-    for (int k=0; k<s;k++)
+    for (size_t k=0; k<s;k++)
         a[k]-=b[k];
     return a;
 }
@@ -210,9 +210,9 @@ Vector yarp::math::operator*(const Vector &a, const Vector &b)
 
 Vector& yarp::math::operator*=(Vector &a, const Vector &b)
 {
-    int n =a.length();
+    size_t n =a.length();
     YARP_ASSERT(n==b.length());
-    for (int i=0; i<n; i++)
+    for (size_t i=0; i<n; i++)
         a[i]*=b[i];
     return a;
 }
@@ -220,8 +220,8 @@ Vector& yarp::math::operator*=(Vector &a, const Vector &b)
 Vector yarp::math::operator*(const yarp::sig::Vector &a, const yarp::sig::Matrix &m)
 {
     // to be implemented (why??? A.D.P.)
-    YARP_ASSERT(a.size()==m.rows());
-    Vector ret(m.cols());
+    YARP_ASSERT(a.size()==(size_t)m.rows());
+    Vector ret((size_t)m.cols());
 
     gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
         (const gsl_vector *) a.getGslVector(), 0.0, 
@@ -231,7 +231,7 @@ Vector yarp::math::operator*(const yarp::sig::Vector &a, const yarp::sig::Matrix
 
 Vector& yarp::math::operator*=(yarp::sig::Vector &a, const yarp::sig::Matrix &m)
 {
-    YARP_ASSERT(a.size()==m.rows());
+    YARP_ASSERT(a.size()==(size_t)m.rows());
     Vector a2(a);
     a.resize(m.cols());
     gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
@@ -242,8 +242,8 @@ Vector& yarp::math::operator*=(yarp::sig::Vector &a, const yarp::sig::Matrix &m)
 
 Vector yarp::math::operator*(const yarp::sig::Matrix &m, const yarp::sig::Vector &a)
 {
-    YARP_ASSERT(m.cols()==a.size());
-    Vector ret(m.rows());
+    YARP_ASSERT((size_t)m.cols()==a.size());
+    Vector ret((size_t)m.rows());
     ret=0.0;
 
     gsl_blas_dgemv(CblasNoTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
@@ -261,9 +261,9 @@ Vector yarp::math::operator/(const Vector &a, const Vector &b)
 
 Vector& yarp::math::operator/=(Vector &a, const Vector &b)
 {
-    int n =a.length();
+    size_t n =a.length();
     YARP_ASSERT(n==b.length());
-    for (int i=0; i<n; i++)
+    for (size_t i=0; i<n; i++)
         a[i]/=b[i];
     return a;
 }
@@ -346,7 +346,7 @@ Matrix yarp::math::pile(const yarp::sig::Matrix &m1, const yarp::sig::Matrix &m2
 Matrix yarp::math::pile(const yarp::sig::Matrix &m, const yarp::sig::Vector &v)
 {
     int c = m.cols();
-    YARP_ASSERT(c==v.size());
+    YARP_ASSERT((size_t)c==v.size());
     int r = m.rows();
     Matrix res(r+1, c);
     cblas_dcopy(r*c, m.data(), 1, res.data(), 1);  // copy first r rows
@@ -357,7 +357,7 @@ Matrix yarp::math::pile(const yarp::sig::Matrix &m, const yarp::sig::Vector &v)
 Matrix yarp::math::pile(const yarp::sig::Vector &v, const yarp::sig::Matrix &m)
 {
     int c = m.cols();
-    YARP_ASSERT(c==v.size());
+    YARP_ASSERT((size_t)c==v.size());
     int r = m.rows();
     Matrix res(r+1, c);
     cblas_dcopy(c, v.data(), 1, res.data(), 1);         // copy first row
@@ -367,9 +367,9 @@ Matrix yarp::math::pile(const yarp::sig::Vector &v, const yarp::sig::Matrix &m)
 
 Matrix yarp::math::pile(const yarp::sig::Vector &v1, const yarp::sig::Vector &v2)
 {
-    int n = v1.size();
+    size_t n = v1.size();
     YARP_ASSERT(n==v2.size());
-    Matrix res(2, n);
+    Matrix res(2, (int)n);
     cblas_dcopy(n, v1.data(), 1, res.data(), 1);         // copy first row
     cblas_dcopy(n, v2.data(), 1, res[1], 1);           // copy last r rows    
     return res;
@@ -392,7 +392,7 @@ Matrix yarp::math::cat(const yarp::sig::Matrix &m1, const yarp::sig::Matrix &m2)
 Matrix yarp::math::cat(const yarp::sig::Matrix &m, const yarp::sig::Vector &v)
 {
     int r = m.rows();
-    YARP_ASSERT(r==v.size());
+    YARP_ASSERT((size_t)r==v.size());
     int c = m.cols();
     Matrix res(r, c+1);
     for(int i=0;i<r;i++){
@@ -405,7 +405,7 @@ Matrix yarp::math::cat(const yarp::sig::Matrix &m, const yarp::sig::Vector &v)
 Matrix yarp::math::cat(const yarp::sig::Vector &v, const yarp::sig::Matrix &m)
 {
     int r = m.rows();
-    YARP_ASSERT(r==v.size());
+    YARP_ASSERT((size_t)r==v.size());
     int c = m.cols();
     Matrix res(r, c+1);
     for(int i=0;i<r;i++){
