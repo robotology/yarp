@@ -13,6 +13,8 @@
 
 int main(int argc, char *argv[]) {
     char buf[1000];
+    char *pending_buf = NULL;
+    int pending_len = 0;
     yarpAddress addr;
     yarpConnection con;
     int res;
@@ -34,10 +36,9 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     while (res>=0) {
-        res = yarp_receive_line(con,buf,sizeof(buf));
-        if (res>=0) {
-            printf("%s\n", buf);
-        }
+        res = yarp_receive_lines(con,buf,sizeof(buf),&pending_buf,&pending_len);
+        if (res<=0) break;
+        printf("%s\n", buf);
     }
     yarp_disconnect(con);
     yarp_fini();

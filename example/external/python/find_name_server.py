@@ -25,6 +25,7 @@ def find_name_server():
     namespace_filename = os.path.join(base,"yarp_namespace.conf")
     if os.path.exists(namespace_filename):
         namespace = open(namespace_filename).read().strip()
+        namespace = namespace.replace("\"","")
         print "Namespace set to", namespace
         server_filename = namespace.replace("/","_") + ".conf"
     else:

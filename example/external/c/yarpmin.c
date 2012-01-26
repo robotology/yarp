@@ -288,30 +288,43 @@ int yarp_receive(yarpConnection connection, char *buf, int len) {
 }
 
 
-int yarp_receive_line(yarpConnection connection, char *buf, int len) {
+int yarp_receive_lines(yarpConnection connection, char *buf, int len, 
+                       char **pending_buf, int *pending_len) {
     int i;
     int res = 0;
-    // wait for a message to come back from the server
-	for (i=0; i<len; i++) {
-        buf[i] = '\0';
-	}
-    while (len>0) {
-        res = yarp_receive(connection,buf,len);
-        if (res<0) {
-            break;
-        }
+    char *start = buf;
+    if (*pending_len) {
+        memmove(buf,*pending_buf,*pending_len);
+        res = *pending_len;
+    }
+    while (res>=0) {
         for (i=0; i<res; i++) {
-            if (buf[i]=='\n'||buf[i]=='\r') {
+            if (buf[i]=='\r') {
                 buf[i] = '\0';
-                return 0;
+            }
+            if (buf[i]=='\n') {
+                buf[i] = '\0';
+                *pending_buf = buf+i+1;
+                *pending_len = (res - i - 1);
+                return *pending_buf-start;
             }
         }
         buf += res;
         len -= res;
+        res = yarp_receive(connection,buf,len);
+        if (res==0) break;
     }
+    *pending_buf = NULL;
+    *pending_len = 0;
+    if (len>0) buf[0] = '\0';
     return res;
 }
 
+int yarp_receive_line(yarpConnection connection, char *buf, int len) {
+    char *pending_buf = NULL;
+    int pending_len = 0;
+    return yarp_receive_lines(connection,buf,len,&pending_buf,&pending_len);
+}
 
 int yarp_receive_binary(yarpConnection connection, char *buf, int len) {
     int i;
