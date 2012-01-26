@@ -99,7 +99,7 @@ read as "pull messages out of hash-tag /chatter").
 
 Alternatively, this works as well:
 \verbatim
-yarp read topic://chatter /read
+yarp read /read topic://chatter
 \endverbatim
 In general, connections to topics can be made and broken using 
 "yarp connect" and "yarp disconnect" (or, from code, Network::connect

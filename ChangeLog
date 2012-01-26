@@ -1,5 +1,8 @@
 2012-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/doc/yarp_with_ros.dox: fix typo [thanks Zhenli Lu],
+	"yarp read topic://chatter /read" -> "yarp read /read topic://chatter"
+
 	* example/external/python/find_name_server.py: strip quote character
 
 	* example/external/c/yarpmin.c: fix text-mode buffering
