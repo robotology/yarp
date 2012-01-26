@@ -1,5 +1,10 @@
 2012-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/external/nameserver_proxy/main.cpp: demo of proxying
+	queries to a foreign name server.  Useful for "yarp-without-yarp"
+	applications on a system using the ROS name server 
+	[thanks Zhenli Lu]
+
 	* src/libYARP_name/include/yarp/name/all.h: commit missing catch-all
 	file for name service.
 

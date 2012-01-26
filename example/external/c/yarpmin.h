@@ -19,6 +19,10 @@ typedef long int yarpConnection;
 /* initialize YARP, find name server */
 yarpAddressPtr yarp_init();
 
+/* initialize YARP with a predetermined name server */
+yarpAddressPtr yarp_init_with(const char *name_server_host,
+                              int name_server_socket_port);
+
 /* shut down YARP */
 void yarp_fini();
 

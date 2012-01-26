@@ -177,6 +177,12 @@ int find_name_server(int verbose) {
 }
 
 yarpAddressPtr yarp_init() {
+    return yarp_init_with(NULL,0);
+}
+
+
+yarpAddressPtr yarp_init_with(const char *name_server_host,
+                              int name_server_socket_port) {
     int res;
 #ifdef WIN32
     int     wsaRc;
@@ -194,16 +200,25 @@ yarpAddressPtr yarp_init() {
         perror("wsaData.wVersion");
     }
 #endif
-    strncpy(yarp_server.host,"127.0.0.1",sizeof(yarp_server.host));
-    yarp_server.port_number = 10000;
-    res = find_name_server(0);
-    if (res<0) {
-        find_name_server(1);
-        exit(1);
+    if (name_server_host==NULL) {
+        strncpy(yarp_server.host,"127.0.0.1",sizeof(yarp_server.host));
+    } else {
+        strncpy(yarp_server.host,name_server_host,sizeof(yarp_server.host));
+    }
+    if (name_server_socket_port<=0) {
+        yarp_server.port_number = 10000;
+        res = find_name_server(0);
+        if (res<0) {
+            find_name_server(1);
+            exit(1);
+        }
+    } else {
+        yarp_server.port_number = name_server_socket_port;
     }
     yarp_is_initialized = 1;
     return &yarp_server;
 }
+
 
 void yarp_fini() {
 }

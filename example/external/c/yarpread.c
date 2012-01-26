@@ -18,12 +18,16 @@ int main(int argc, char *argv[]) {
     yarpAddress addr;
     yarpConnection con;
     int res;
-    if (argc!=2) {
+    if (argc<2) {
         printf("Call as:\n  %s /port/to/read/from\n",
                argv[0]);
         exit(1);
     }
-    yarp_init();
+    if (argc==4) {
+        yarp_init_with(argv[2],atoi(argv[3]));
+    } else {
+        yarp_init();
+    }
     res = yarp_port_lookup(&addr,argv[1]);
     if (res<0) {
         printf("Failed to find port\n");
