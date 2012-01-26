@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -491,7 +491,9 @@ int Companion::cmdName(int argc, char *argv[]) {
     style.quiet = true;
     Bottle cmd, reply;
     for (int i=0; i<argc; i++) {
-        cmd.addString(argv[i]);
+        Value v;
+        v.fromString(argv[i]);
+        cmd.add(v);
     }
 
     ConstString key = cmd.get(0).asString();

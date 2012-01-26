@@ -1,5 +1,9 @@
 2012-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Companion.cpp (cmdName): bugfix - port 
+	numbers in a "yarp name register ..." command were not being
+	read correctly.
+
 	* example/external/nameserver_proxy/main.cpp: demo of proxying
 	queries to a foreign name server.  Useful for "yarp-without-yarp"
 	applications on a system using the ROS name server 
