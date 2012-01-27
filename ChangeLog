@@ -1,3 +1,6 @@
+2012-01-27 Lorenzo Natale <lorenzo.natale@iit.it>
+        * tagging 2.3.15
+
 2012-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Companion.cpp (cmdName): bugfix - port 
