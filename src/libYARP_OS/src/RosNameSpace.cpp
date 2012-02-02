@@ -31,7 +31,7 @@ Contact RosNameSpace::queryName(const char *name) {
     Bottle cmd,reply;
     cmd.addString("lookupNode");
     cmd.addString("dummy_id");
-    cmd.addString(name);
+    cmd.addString(toRosNodeName(name));
     //printf("Writing to %s\n",getNameServerContact().toString().c_str());
     NetworkBase::write(getNameServerContact(),
                        cmd, reply);
