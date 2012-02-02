@@ -42,6 +42,12 @@ _yarp()
                     completion="${carrier}"
                 fi
                 ;;
+            read)
+                if [ $COMP_CWORD -eq 3 ]; then
+                    ### complete destination port
+                    completion=$(_get_yarp_ports)
+                fi
+                ;;
             write)
                 if [ $COMP_CWORD -eq 3 ]; then
                     ### complete destination port
