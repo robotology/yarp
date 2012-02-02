@@ -292,5 +292,278 @@ This is a valid .msg file, and can be used directly in ROS.
 See some more examples in the yarp source code, in the 
 example/yarpros_examples directory.
 
+
+\section yarp_with_ros_link How ROS and YARP are linked
+
+ROS and YARP are linked based on
+the entities that are individually addressable
+on the network.  For YARP, these are primarily "port" names:
+\verbatim
+$ yarp name query /read
+registration name /read ip 10.42.43.1 port 10002 type tcp
+\endverbatim
+For ROS, these are primarily "node" names:
+\verbatim
+$ rosnode info /talker
+Node [/talker]
+...
+contacting node http://icubsrv:38770/ ...
+Pid: 15083
+\endverbatim
+
+In YARP, the relationship between "port" names and network addresses
+is stored by a program called "yarpserver".  In ROS, the relationship
+between "node" names and network addresses is stored by a program
+called "roscore".
+
+Now let's think about how connections are named.  In YARP, a
+connection is created by the user or a manager program between two
+named ports.  In ROS, connections are created by roscore between two
+named nodes (there's an important detail about "topics" we'll come right
+back to).
+
+By equating ports in YARP with nodes in ROS, we get that:
+ \li Matching entities are network-addressable.
+ \li Connections are between matching entities.
+
+A difference between YARP and ROS is that in ROS, roscore manages
+connections based on "topic names".  Each node can declare that it
+"publishes" or "subscribes" to a set of topic names.  Each node that
+publishes to a given topic name will be connected to each node that
+subscribes to that topic name.  In YARP, logic for topic names exists
+in yarpserver (see \ref persistent_connections_topics)
+but is rarely used; connections are usually made in a
+less restricted way.  For YARP/ROS interoperability, the set of
+ports/nodes that need to interoperate should stick with the topic-style
+connection rule.
+
+It is convenient, when talking about YARP and ROS together,
+to call ports and nodes "portnodes".  YARP and ROS agree
+that portnodes are individually network-addressable, and connections
+are made between pairs of portnodes.
+
+\section yarp_with_ros_admin How ROS and YARP are linked: administrative messages
+
+In ROS, administrative messages are transmitted using XMLRPC.  The
+network address for a node is expected to point to a listener
+expecting XMLRPC messages.  With an optional carrier, YARP ports become
+also willing to speak XMLRPC (see settings in \ref yarp_with_ros_requirements).
+
+The roscore program will expect nodes to respond to particular
+commands expressed in XMLRPC.  Key ones are:
+ \li publisherUpdate
+ \li requestTopic
+
+With the XMLRPC carrier, YARP ports would receive these messages in a
+format they understand, but didn't know what to do with them.  Support
+has since been added to process these requests appropriately.  So YARP
+ports now understand both YARP native administrative messages, and
+basic ROS administrative messages.  
+
+
+\section yarp_with_ros_types How ROS and YARP are linked: types
+
+ROS uses a simple IDL to describe structures.  For example, 
+we can define a structure of three floating point numbers in a file
+called Point.msg:
+\verbatim
+float64 x
+float64 y
+float64 z
+\endverbatim
+For use in ROS C++ clients, this .msg file would be first converted
+to a .h with appropriate serializers.  It is straightforward
+to convert .msg files to YARP-style serializers, and
+this has been implemented, see \ref yarp_with_ros_types.
+Currently, Point.msg would convert to:
+\code
+// This is an automatically generated file.
+// Generated from this Point.msg definition:
+//   float64 x
+//   float64 y
+//   float64 z
+// Instances of this class can be read and written with YARP ports,
+// using a ROS-compatible format.
+
+#ifndef YARPMSG_TYPE_Point
+#define YARPMSG_TYPE_Point
+
+#include <string>
+#include <vector>
+#include <yarp/os/Portable.h>
+#include <yarp/os/ConstString.h>
+#include <yarp/os/NetInt32.h>
+#include <yarp/os/NetInt64.h>
+#include <yarp/os/NetFloat32.h>
+#include <yarp/os/NetFloat64.h>
+
+class Point : public yarp::os::Portable {
+public:
+  yarp::os::ConstString getTypeName() const {
+    return "Point";
+  }
+
+  yarp::os::NetFloat64 x;
+  yarp::os::NetFloat64 y;
+  yarp::os::NetFloat64 z;
+
+  bool read(yarp::os::ConnectionReader& connection) {
+    // *** x ***
+    x = connection.expectDouble();
+
+    // *** y ***
+    y = connection.expectDouble();
+
+    // *** z ***
+    z = connection.expectDouble();
+    return !connection.isError();
+  }
+
+  bool write(yarp::os::ConnectionWriter& connection) {
+    // *** x ***
+    connection.appendDouble(x);
+
+    // *** y ***
+    connection.appendDouble(y);
+
+    // *** z ***
+    connection.appendDouble(z);
+    return !connection.isError();
+  }
+};
+
+#endif
+\endcode
+
+Here's an example program to write such points:
+\code
+#include <stdio.h>
+#include <yarp/os/all.h>
+#include "yarp/Point.h"
+
+using namespace yarp::os;
+
+int main(int argc, char *argv[]) {
+  Network yarp;
+  BufferedPort<Point> port;
+  if (argc!=2) {
+    fprintf(stderr,"Please supply port name\n");
+    return 1;
+  }
+  if (!port.open(argv[1])) {
+    fprintf(stderr,"Failed to open port\n");
+    return 1;
+  }
+  while (true) {
+    Point& pt = port.prepare();
+    pt.x = 10;
+    pt.y = 20;
+    pt.z = 30;
+    printf("Wrote point %g %g %g\n", pt.x, pt.y, pt.z);
+    port.write();
+    Time::delay(0.5);
+  }
+
+  return 0;
+}
+\endcode
+
+To write the points on a topic called "/point", call 
+this program with a port name like "/foo+#/point".
+
+Here's an example program to read such points:
+\code
+#include <stdio.h>
+#include <yarp/os/all.h>
+#include "yarp/Point.h"
+
+using namespace yarp::os;
+
+int main(int argc, char *argv[]) {
+  Network yarp;
+  BufferedPort<Point> port;
+  if (argc!=2) {
+    fprintf(stderr,"Please supply port name\n");
+    return 1;
+  } 
+  if (!port.open(argv[1])) {
+    fprintf(stderr,"Failed to open port\n");
+    return 1;
+  }
+
+  while (true) {
+    Point *pt = port.read();
+    if (!pt) continue;
+    printf("Read point %g %g %g\n", pt->x, pt->y, pt->z);
+  }
+
+  return 0;
+}
+\endcode
+
+To read the points from a topic called "/point", call 
+this program with a port name like "/bar-#/point".
+
+
+\section yarp_with_ros_yarpros The yarpros program
+
+The yarpros program is a utility with a grab-bag of tools for working 
+with ROS.  Here is its help:
+
+\verbatim
+Welcome to yarpros.
+
+  yarpros roscore
+     register port /roscore to refer to ROS_MASTER_URI
+       $ yarpros roscore
+
+  yarpros roscore <hostname> <port number>
+     manually register port /roscore to point to the ros master
+       $ yarpros roscore 192.168.0.1 11311
+
+  yarpros pub[lisher] <node> <topic>
+     register a ROS publisher <node>/<topic> pair as a port called <node><topic>
+       $ yarpros publisher /talker /chatter
+       # this registers a port called /talker/chatter
+
+  yarpros pub[lisher] <port> <node> <topic>
+     register a ROS publisher <node>/<topic> pair as a port called <port>
+       $ yarpros publisher /talker /talker /chatter
+
+  yarpros sub[scriber] <node> <topic>
+     register a ROS subscriber <node>/<topic> pair as a port called <node><topic>
+       $ yarpros subscriber /listener /chatter
+       # this registers a port called /listener/chatter
+
+  yarpros sub[scriber] <yarp> <node> <topic>
+     register a ROS subscriber <node>/<topic> pair as a port called <port>
+       $ yarpros subscriber /listener /listener /chatter
+
+  yarpros service <yarp> <node> <service>
+     register a ROS service <node>/<service> pair as a port called <port>
+       $ yarpros service /adder /add_two_ints_server /add_two_ints
+
+  yarpros node <name>
+     register a ROS node name with YARP
+       $ yarpros node /talker
+
+  yarpros type <name>
+     generate YARP header files from <name>.msg
+       $ yarpros type PointCloud2
+
+  yarpros sniff out <port>
+     suggest .msg for output from <port> 
+       $ yarpros sniff out /grabber
+
+  yarpros sniff in <port>
+     suggest .msg for input to <port> 
+       $ yarpros sniff in /grabber
+Here are some general options:
+
+  yarpros --verbose
+     give verbose output for debugging
+\endverbatim
+
+
  *
  */
