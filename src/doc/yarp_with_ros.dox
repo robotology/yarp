@@ -261,12 +261,36 @@ public:
 The PointCloud2 datatype can then be used to communicate with 
 a ROS topic of that type (see \ref port_expert for background).
 
- *
- */
 
-\section yarp_with_ros_faking_types Reading existing YARP ports from ROS
+
+\section yarp_with_ros_existing Reading existing YARP ports from ROS
 
 To read existing YARP ports from ROS, we need to define their
-type for ROS's benefit.  This is doable, see example/yarpros_examples in
-the source code.
+type for ROS's benefit.  There is a tool to help with this.
 
+For testing purposes, let's start a fake motor control board:
+\verbatim
+yarpdev --device test_motor --name /motor
+\endverbatim
+
+One of the ports this creates is /motor/state:o.  ROS forbids
+port names with ":" in them, and YARP versions 2.3.15 and earlier 
+didn't have a work-around for this, so make sure you are using
+YARP trunk or YARP version > 2.3.15 for this part.
+
+To see how to access /motor/state:o from ROS, do:
+\verbatim
+yarpros sniff out /motor/state:o
+\endverbatim
+This gives us the following rather arcane lines:
+\verbatim
+int32 v_tag # set to 266 (BOTTLE_TAG_LIST+code)
+float64[] v # suggested length: 4
+\endverbatim
+This is a valid .msg file, and can be used directly in ROS.
+
+See some more examples in the yarp source code, in the 
+example/yarpros_examples directory.
+
+ *
+ */

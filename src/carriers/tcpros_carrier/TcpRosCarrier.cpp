@@ -246,7 +246,9 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
         // needed.
         if (translate==TCPROS_TRANSLATE_UNKNOWN) {
             dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
-            FlexImage *img = wi.checkForImage(writer);
+            FlexImage *img = NULL; //
+            // wi.checkForImage(writer);
+            // inhibit image conversion
             if (img) {
                 translate = TCPROS_TRANSLATE_IMAGE;
                 ConstString frame = "/frame";

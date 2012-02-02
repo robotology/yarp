@@ -12,23 +12,21 @@
 
 waggler is written in unmodified ROS, and does not use YARP.  It publishes
 a stream of position control commands that are suitable for hooking up
-to YARP controlboard implementations (e.g. the iCub robot, or the
-test_motor device).  They can also be streamed to "yarp read".
+to YARP controlboard implementations (e.g. the iCub robot, simulator,
+or the test_motor device).  They can also be streamed to "yarp read".
 
-Make sure the example directory is in your ROS_PACKAGE_PATH.
+YARP users: For compiling:
+ * Make sure the $YARP_ROOT/example directory is in your ROS_PACKAGE_PATH.
+ * Do "rosmake" in the current directory.
 
-Make sure when compiling YARP you enable the TCPROS and XMLRPC carriers.
+Follow the steps in $YARP_ROOT/src/doc/yarp_with_ros.dox.
 Then run waggler.  Then do:
 \verbatim
-  # tell yarp where roscore is
-  yarpros roscore localhost 11311  # replace localhost as appropriate
-  # register the topic pos_cmd on node waggler as a virtual port
-  # called /waggler
-  yarpros import /waggler /waggler /pos_cmd
-  # run this in a separate terminal if you don't have the simulator
-  yarp read /read  
-  # now hook things up!
-  yarp connect /waggler /read
+  yarp read /read-#/pos
+\endverbatim
+or run the iCub simulator and do:
+\verbatim
+  yarp connect topic://pos /icubSim/left_arm/rpc:i
 \endverbatim
 
 

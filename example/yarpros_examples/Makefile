@@ -177,6 +177,32 @@ clean-test-results/fast:
 .PHONY : clean-test-results/fast
 
 #=============================================================================
+# Target rules for targets named grab_enc
+
+# Build rule for target.
+grab_enc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 grab_enc
+.PHONY : grab_enc
+
+# fast build rule for target.
+grab_enc/fast:
+	$(MAKE) -f CMakeFiles/grab_enc.dir/build.make CMakeFiles/grab_enc.dir/build
+.PHONY : grab_enc/fast
+
+#=============================================================================
+# Target rules for targets named grab_image
+
+# Build rule for target.
+grab_image: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 grab_image
+.PHONY : grab_image
+
+# fast build rule for target.
+grab_image/fast:
+	$(MAKE) -f CMakeFiles/grab_image.dir/build.make CMakeFiles/grab_image.dir/build
+.PHONY : grab_image/fast
+
+#=============================================================================
 # Target rules for targets named rosbuild_precompile
 
 # Build rule for target.
@@ -333,6 +359,36 @@ waggler/fast:
 .PHONY : waggler/fast
 
 # target to build an object file
+src/grab_encoders.o:
+	$(MAKE) -f CMakeFiles/grab_enc.dir/build.make CMakeFiles/grab_enc.dir/src/grab_encoders.o
+.PHONY : src/grab_encoders.o
+
+# target to preprocess a source file
+src/grab_encoders.i:
+	$(MAKE) -f CMakeFiles/grab_enc.dir/build.make CMakeFiles/grab_enc.dir/src/grab_encoders.i
+.PHONY : src/grab_encoders.i
+
+# target to generate assembly for a file
+src/grab_encoders.s:
+	$(MAKE) -f CMakeFiles/grab_enc.dir/build.make CMakeFiles/grab_enc.dir/src/grab_encoders.s
+.PHONY : src/grab_encoders.s
+
+# target to build an object file
+src/grab_image.o:
+	$(MAKE) -f CMakeFiles/grab_image.dir/build.make CMakeFiles/grab_image.dir/src/grab_image.o
+.PHONY : src/grab_image.o
+
+# target to preprocess a source file
+src/grab_image.i:
+	$(MAKE) -f CMakeFiles/grab_image.dir/build.make CMakeFiles/grab_image.dir/src/grab_image.i
+.PHONY : src/grab_image.i
+
+# target to generate assembly for a file
+src/grab_image.s:
+	$(MAKE) -f CMakeFiles/grab_image.dir/build.make CMakeFiles/grab_image.dir/src/grab_image.s
+.PHONY : src/grab_image.s
+
+# target to build an object file
 src/waggler.o:
 	$(MAKE) -f CMakeFiles/waggler.dir/build.make CMakeFiles/waggler.dir/src/waggler.o
 .PHONY : src/waggler.o
@@ -360,6 +416,8 @@ help:
 	@echo "... ROSBUILD_gensrv_lisp"
 	@echo "... clean-test-results"
 	@echo "... edit_cache"
+	@echo "... grab_enc"
+	@echo "... grab_image"
 	@echo "... rebuild_cache"
 	@echo "... rosbuild_precompile"
 	@echo "... rosbuild_premsgsrvgen"
@@ -373,6 +431,12 @@ help:
 	@echo "... test-results-run"
 	@echo "... tests"
 	@echo "... waggler"
+	@echo "... src/grab_encoders.o"
+	@echo "... src/grab_encoders.i"
+	@echo "... src/grab_encoders.s"
+	@echo "... src/grab_image.o"
+	@echo "... src/grab_image.i"
+	@echo "... src/grab_image.s"
 	@echo "... src/waggler.o"
 	@echo "... src/waggler.i"
 	@echo "... src/waggler.s"

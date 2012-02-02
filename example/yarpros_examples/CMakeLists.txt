@@ -34,3 +34,9 @@ rosbuild_genmsg()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 rosbuild_add_executable(waggler src/waggler.cpp)
 target_link_libraries(waggler rosconsole ros roslib XmlRpc)
+
+rosbuild_add_executable(grab_image src/grab_image.cpp)
+target_link_libraries(grab_image rosconsole ros roslib XmlRpc)
+
+rosbuild_add_executable(grab_enc src/grab_encoders.cpp)
+target_link_libraries(grab_enc rosconsole ros roslib XmlRpc)
