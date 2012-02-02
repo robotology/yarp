@@ -5,11 +5,11 @@
 # Make sure that YARP_DIR is set in your environment to wherever you 
 # compiled YARP.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
-FIND_PACKAGE(YARP REQUIRED)
+find_package(YARP REQUIRED)
 
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-ADD_EXECUTABLE(nameserver_proxy main.cpp)
-TARGET_LINK_LIBRARIES(nameserver_proxy ${YARP_LIBRARIES})
+include_directories(${YARP_INCLUDE_DIRS})
+add_executable(nameserver_proxy main.cpp)
+target_link_libraries(nameserver_proxy ${YARP_LIBRARIES})
 
