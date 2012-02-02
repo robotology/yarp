@@ -1337,6 +1337,12 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     if (cmd.get(0).asString()=="requestTopic") {
         vocab = VOCAB4('r','t','o','p');
     }
+    if (cmd.get(0).asString()=="getPid") {
+        vocab = VOCAB3('p','i','d');
+    }
+    if (cmd.get(0).asString()=="getBusInfo") {
+        vocab = VOCAB3('b','u','s');
+    }
 
     switch (vocab) {
     case VOCAB4('h','e','l','p'):
@@ -1571,6 +1577,22 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             lst.addString("TCPROS");
             lst.addString(addr.getName().c_str());
             lst.addInt(addr.getPort());
+            reader.requestDrop(); // ROS likes to close down.
+        }
+        break;
+    case VOCAB3('p','i','d'):
+        {
+            result.addInt(1);
+            result.addString("");
+            result.addInt(ACE_OS::getpid());
+            reader.requestDrop(); // ROS likes to close down.
+        }
+        break;
+    case VOCAB3('b','u','s'):
+        {
+            result.addInt(1);
+            result.addString("");
+            result.addList().addList();
             reader.requestDrop(); // ROS likes to close down.
         }
         break;

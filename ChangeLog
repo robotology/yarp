@@ -1,3 +1,12 @@
+2012-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCore.cpp (adminBlock): give semi-sensible
+	responses to getPid and getBusInfo so "rosnode info /port" is
+	happy.
+
+	* src/carriers/xmlrpc_carrier/XmlRpcStream.cpp (read): getPid
+	and getBusInfo are administrative messages
+
 2012-01-27 Lorenzo Natale <lorenzo.natale@iit.it>
         * tagging 2.3.15
 

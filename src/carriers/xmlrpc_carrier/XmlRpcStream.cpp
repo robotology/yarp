@@ -134,6 +134,12 @@ ssize_t XmlRpcStream::read(const Bytes& b) {
                         if (cprefix=="requestTopic") {
                             isAdmin = true;
                         }
+                        if (cprefix=="getPid") {
+                            isAdmin = true;
+                        }
+                        if (cprefix=="getBusInfo") {
+                            isAdmin = true;
+                        }
                     }
                     prefix = isAdmin?"a\n":"d\n";
                     prefix += cprefix;
