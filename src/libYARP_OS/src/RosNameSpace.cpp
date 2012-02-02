@@ -87,7 +87,7 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
         // topic
         cmd.clear();
         cmd.addString("registerPublisher");
-        cmd.addString(contact.getName().c_str());
+        cmd.addString(toRosNodeName(contact.getName().c_str()));
         cmd.addString("/yarp/registration");
         cmd.addString("*");
         Contact c = rosify(contact);
@@ -328,3 +328,40 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     return ok;
 
 }
+
+
+ConstString RosNameSpace::toRosName(const ConstString& name) {
+    if (name.find(":")==ConstString::npos) return name;
+    ConstString result;
+    for (int i=0; i<name.length(); i++) {
+        if (name[i]!=':') {
+            result += name[i];
+        } else {
+            result += "__";
+        }
+    }
+    return result;
+}
+
+ConstString RosNameSpace::fromRosName(const ConstString& name) {
+    if (name.find("__")==ConstString::npos) return name;
+    // length is at least 2
+    ConstString result;
+    int ct = 0;
+    for (int i=0; i<name.length(); i++) {
+        if (name[i]!='_') {
+            if (ct) result += '_';
+            result += name[i];
+            ct = 0;
+        } else {
+            ct++;
+            if (ct==2) {
+                result += ':';
+                ct = 0;
+            }
+        }
+    }
+    if (ct) result += '_';
+    return result;
+}
+

@@ -55,7 +55,7 @@ public:
                                     ContactStyle style) {
         Bottle cmd;
         cmd.addString("registerPublisher");
-        cmd.addString(src.getName());
+        cmd.addString(toRosNodeName(src.getName()));
         cmd.addString(dest.getName());
         cmd.addString("*");
         cmd.addString(rosify(src).toString());
@@ -68,7 +68,7 @@ public:
                                     ContactStyle style) {
         Bottle cmd;
         cmd.addString("registerSubscriber");
-        cmd.addString(dest.getName());
+        cmd.addString(toRosNodeName(dest.getName()));
         cmd.addString(src.getName());
         cmd.addString("*");
         cmd.addString(rosify(dest).toString());
@@ -81,7 +81,7 @@ public:
                                          ContactStyle style) {
         Bottle cmd;
         cmd.addString("unregisterPublisher");
-        cmd.addString(src.getName());
+        cmd.addString(toRosNodeName(src.getName()));
         cmd.addString(dest.getName());
         cmd.addString(rosify(src).toString());
         return connectTopic(cmd,false,src,dest,style,false);
@@ -92,7 +92,7 @@ public:
                                          ContactStyle style) {
         Bottle cmd;
         cmd.addString("unregisterSubscriber");
-        cmd.addString(dest.getName());
+        cmd.addString(toRosNodeName(dest.getName()));
         cmd.addString(src.getName());
         cmd.addString(rosify(dest).toString());
         return connectTopic(cmd,true,src,dest,style,false);
@@ -163,6 +163,27 @@ public:
         return false;
     }
 
+
+    /**
+     *
+     * Possible ROS names are a subset of YARP names.
+     * For nodes, in practice there isn't much restriction, except
+     * ":" is definitely ruled out.  Since plenty of valid
+     * YARP ports have a ":" in them, we need to quote this.
+     *
+     */
+    static ConstString toRosName(const ConstString& name);
+
+    static ConstString fromRosName(const ConstString& name);
+
+
+    static ConstString toRosNodeName(const ConstString& name) {
+        return toRosName(name);
+    }
+
+    static ConstString fromRosNodeName(const ConstString& name) {
+        return fromRosName(name);
+    }
 
     static Contact rosify(const Contact& contact) {
         return Contact::bySocket("http",contact.getHost().c_str(),

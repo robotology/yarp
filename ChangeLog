@@ -1,5 +1,9 @@
 2012-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/RosNameSpace.h: ROS does not
+	allow ":" in node names, so we need to encode ":" characters
+	in port names when registering them on a roscore instance.
+
 	* src/libYARP_OS/src/PortCore.cpp (adminBlock): give semi-sensible
 	responses to getPid and getBusInfo so "rosnode info /port" is
 	happy.
