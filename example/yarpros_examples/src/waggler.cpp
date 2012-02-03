@@ -25,8 +25,8 @@ int main(int argc, char** argv) {
 
   ros::init(argc, argv, "waggler");
   ros::NodeHandle n;
-  ros::Publisher waggler_pub = n.advertise<yarpros_examples::VocabVocabDoubles>("pos", 100);
-  ros::Rate loop_rate(0.25);
+  ros::Publisher waggler_pub = n.advertise<yarpros_examples::VocabVocabDoubles>("motor", 100);
+  ros::Rate loop_rate(1.0);
 
   int count = 0;
   while (ros::ok()) {
@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
       msg.setpoints[i] = 0;
     }
     msg.setpoints[0] = -50*(count%2);
-    msg.setpoints[1] = 50*(count%2);
+    msg.setpoints[1] = 30+20*(count%2);
     msg.setpoints[3] = 25*(count%4);
 
     waggler_pub.publish(msg);
