@@ -100,7 +100,7 @@ Buffering behavior varies from browser to browser - YARP does its best
 to flush data in a timely fashion but you may have to try different
 browsers or browser settings to get good results.
 
-@section yarp_http_recv_images Viewing images
+@section yarp_http_recv_images Viewing images in a browser
 
 Image streams can be viewed in the browser if the mjpeg carrier has
 been enabled.

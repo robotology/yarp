@@ -342,12 +342,22 @@ to call ports and nodes "portnodes".  YARP and ROS agree
 that portnodes are individually network-addressable, and connections
 are made between pairs of portnodes.
 
+In ROS, there is one portnode per program, and a single portnode can
+publish/subscribe distinct data to many topics.  In YARP there
+may be many portnodes per program, and each portnode can
+publish/subscribe a single type of data to many topics.  This 
+difference doesn't seem to be a deal-breaker so far, and allows
+existing YARP programs to be used with ROS without 
+any source-code modification.
+
 \section yarp_with_ros_admin How ROS and YARP are linked: administrative messages
 
 In ROS, administrative messages are transmitted using XMLRPC.  The
 network address for a node is expected to point to a listener
 expecting XMLRPC messages.  With an optional carrier, YARP ports become
 also willing to speak XMLRPC (see settings in \ref yarp_with_ros_requirements).
+Of course they continue to also accept all other YARP carriers
+(see \ref carrier_config).
 
 The roscore program will expect nodes to respond to particular
 commands expressed in XMLRPC.  Key ones are:

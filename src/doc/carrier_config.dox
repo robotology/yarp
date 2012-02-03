@@ -35,10 +35,14 @@ carriers.
 - \ref carrier_config_text
 - \ref carrier_config_text_ack
 - \ref carrier_config_fast_tcp
+- \ref carrier_config_http
 \endif
 
-Experimental carriers:
+Optional carriers:
 \li \ref carrier_config_mpi
+\li \ref carrier_config_mjpeg
+\li \ref carrier_config_xmlrpc
+\li \ref carrier_config_tcpros
 
 \section carrier_config_tcp tcp carrier
 
@@ -142,7 +146,7 @@ ports /src and /dest by typing:
 yarp connect /src /dest shmem
 \endverbatim
 
-CAREFUL: Such connections will not work unless the source and
+\note Such connections will not work unless the source and
 destination ports are on the same machine.  That is the nature
 of shared memory.
 
@@ -158,11 +162,8 @@ ports /src and /dest by typing:
 yarp connect /src /dest local
 \endverbatim
 
-CAREFUL: Such connections will not work unless the source and
+\note Such connections will not work unless the source and
 destination ports belong to the same process.
-
-CAREFUL: This carrier is experimental.  Please report any problems
-you encounter.
 
 For ports that are in control of message allocation and reuse
 (i.e. BufferedPort ports), this is a very efficient carrier.
@@ -215,6 +216,78 @@ yarp connect /src /dest fast_tcp
 This can be useful to get a bit more speed in cases where flow is
 producer-limited, not consumer-limited.  In general though it
 is safer to use the regular \ref carrier_config_tcp "tcp carrier".
+
+\section carrier_config_http http carrier
+
+This is a carrier for use from web browsers.  It is not intended
+for port-to-port connections.  See \ref yarp_http 
+for details.
+
+\section carrier_config_mjpeg mjpeg (mjpeg-over-http) carrier
+
+This carrier is for transporting images only.  It is handy for
+reading directly from IP cameras, or streaming images to a 
+browser (most modern browsers can directly render mjpeg-over-http
+streams).  See \ref yarp_http_recv_images.
+
+\verbatim
+yarp connect /src /dest mjpeg
+\endverbatim
+
+To compile this carrier, turn on CREATE_OPTIONAL_CARRIERS and then
+ENABLE_yarpcar_mjpeg_carrier in CMake.  There will be an extra CMake
+option called MJPEG_AUTOCOMPRESS.  If turned on, this carrier will
+deliver images of standard YARP image format to ports.  If turned
+off, this carrier will deliver blobs that can be read by
+yarp::os::ManagedBytes or yarp::os::Bottle.  See 
+yarp::mjpeg::MjpegDecompression for helper functions.
+The motivation for disabling automatic decompression is to reduce
+load for clients that need to read images only occasionally.
+
+\section carrier_config_xmlrpc xmlrpc carrier
+
+This carrier transmits and receives messages in XMLRPC format.
+
+\verbatim
+yarp connect /src /dest local
+\endverbatim
+
+Messages are automatically converted to and from Bottle-compatible
+format.  Here is the mapping used:
+ \li XMLRPC int = Bottle int
+ \li XMLRPC string = Bottle string
+ \li XMLRPC double = Bottle double
+ \li XMLRPC array = Bottle list
+ \li XMLRPC struct = Bottle list
+
+Both arrays and structures in XMLRPC are mapped to Bottle lists.
+Structures are mapped to a list with the tag "dict" prepended,
+followed by sublists with key-value mappings:
+\verbatim
+  (dict (key1 val1) (key2 val2))
+\endverbatim
+
+The yarp::os::Bottle find/findGroup/check methods will work fine on
+such lists, or you could populate a Property object if you want fast
+look-up.
+
+If you want to convert a Bottle list that may start with the
+string "dict" or "list", prepend the keyword "list".
+\verbatim
+  (list ...)
+\endverbatim
+That keyword will be silently consumed, and will guarantee
+that an XMLRPC array is produced.
+
+XMLRPC messages that start with a string may be treated as an
+administrative message (and not passed on to the client reading
+from a port) if the initial string is one of the following:
+ \li publisherUpdate
+ \li requestTopic
+ \li getPid
+ \li getBusInfo
+
+This is for ROS compatibility (see \ref yarp_with_ros).
 
 
 *
