@@ -232,6 +232,10 @@ public:
         return address;
     }
 
+    void resetPortName(const char *str) {
+        address = address.addRegName(str);
+    }
+
     /**
      * Get the creator of callbacks.
      */

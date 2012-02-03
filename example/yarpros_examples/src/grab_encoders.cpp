@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "yarp_encoder_listener");
   ros::NodeHandle n;
-  ros::Subscriber chatter_sub = n.subscribe("yarp_enc", 1, chatterCallback);
+  ros::Subscriber chatter_sub = n.subscribe("pos", 1, chatterCallback);
   ros::spin();
 }
 

@@ -77,8 +77,8 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
     if (node=="") {
         node = name;
     }
-    YARP_SPRINTF3(Logger::get(),debug,"Name [%s] sub [%s] pub [%s]",
-                  name.c_str(), sub.c_str(), pub.c_str());
+    YARP_SPRINTF4(Logger::get(),debug,"Name [%s] Node [%s] sub [%s] pub [%s]",
+                  name.c_str(), node.c_str(), sub.c_str(), pub.c_str());
 
     {
         Bottle cmd, reply;
@@ -87,7 +87,8 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
         // topic
         cmd.clear();
         cmd.addString("registerPublisher");
-        cmd.addString(toRosNodeName(contact.getName().c_str()));
+        cmd.addString(toRosNodeName(node));
+        //cmd.addString(toRosNodeName(contact.getName().c_str()));
         cmd.addString("/yarp/registration");
         cmd.addString("*");
         Contact c = rosify(contact);
@@ -99,10 +100,10 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
     }
 
     if (pub!="") {
-        NetworkBase::connect(full,ConstString("topic:/") + pub);
+        NetworkBase::connect(node, ConstString("topic:/") + pub);
     }
     if (sub!="") {
-        NetworkBase::connect(ConstString("topic:/") + sub, full);
+        NetworkBase::connect(ConstString("topic:/") + sub, node);
     }
 
     /*
@@ -197,7 +198,7 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
     }
     */
 
-    return contact;
+    return contact.addName(node);
 }
 
 Contact RosNameSpace::unregisterName(const char *rname) {

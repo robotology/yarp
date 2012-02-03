@@ -348,6 +348,7 @@ bool Port::open(const Contact& contact, bool registerName,
         Contact contactFull = NetworkBase::registerContact(contact2);
         address = Address::fromContact(contactFull);
     }
+
     core.setControlRegistration(registerName);
     success = (address.isValid()||local)&&(fakeName==NULL);
 
@@ -367,8 +368,11 @@ bool Port::open(const Contact& contact, bool registerName,
                                           address.getName().c_str(),
                                           address.getPort());
             contact2 = contact2.addName(address.getRegName().c_str());
-            NetworkBase::registerContact(contact2);
+            Contact newName = NetworkBase::registerContact(contact2);
+            core.resetPortName(newName.getName());
+            address = core.getAddress();
         }
+
         if (core.getVerbosity()>=1) {
             YARP_INFO(Logger::get(),
                       String("Port ") +
