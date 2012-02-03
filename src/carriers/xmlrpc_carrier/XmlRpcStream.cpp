@@ -28,7 +28,16 @@ Value toValue(XmlRpcValue& v, bool outer) {
         return Value((double)v);
         break;
     case XmlRpcValue::TypeString:
-        return Value(((string)v).c_str());
+        {
+            string s = (string)v;
+            if (s[0]!='[') {
+                return Value(s.c_str());
+            } else {
+                Value v;
+                v.fromString(s.c_str());
+                return v;
+            }
+        }
         break;
     case XmlRpcValue::TypeArray:
         {

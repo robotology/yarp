@@ -24,7 +24,9 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
     } else if (vin.isDouble()) {
         vout = vin.asDouble();
     } else if (vin.isString()) {
-        vout = vin.asString();
+        vout = vin.asString(); 
+    } else if (vin.isVocab()) {
+        vout = ConstString("[") + vin.toString() + "]";
     } else if (vin.isList()) {
         Bottle *bot = vin.asList();
         bool struc = true;
