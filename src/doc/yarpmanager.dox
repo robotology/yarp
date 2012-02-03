@@ -11,9 +11,11 @@
 
 The command-line utility "yarpmanager" and its graphical companion "gyarpmanager", are tools for running and managing multiple programs on a set of machines.
 
+\image html ymgui.jpg "yarpmanager and gyarpmanager"
+
 \section features Features 
 - Running, stopping, killing and monitoring multiple programs on localhost or remote machines. 
-- Making port connections manually or automatically.
+- Establishing port's connections manually and automatically.
 - Managing multiple programs which are grouped as different applications. 
 - Running programs concerning their dependencies. 
 - Recovering programs from failure.
