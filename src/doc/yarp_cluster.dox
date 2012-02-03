@@ -21,8 +21,9 @@ If you are doing any non-trivial networking, you need to learn how
 to test your network and debug throughput issues.  A key resource
 in this battle is the "iperf" program. 
 
-- Download from  http://dast.nlanr.net/Projects/Iperf/
-- FAQ at  http://dast.nlanr.net/Projects/Iperf/iperf_faq.php
+- Download from http://iperf.sourceforge.net/
+- Linux: apt-get install iperf (or similar command)
+- OSX: brew install iperf (if you use homebrew)
 
 Please make sure you have iperf available on all your machines 
 before going any further.
