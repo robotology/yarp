@@ -213,12 +213,12 @@ public:
     void checkCopyCtor()
     {
         report(0,"check matrix copy constructor works...");
-        Matrix m(4,4);
+        Matrix m(10,40);
         int r=0;
         int c=0;
-        for(r=0; r<4; r++)
+        for(r=0; r<10; r++)
         {
-            for (c=0; c<4; c++)
+            for (c=0; c<40; c++)
                 m[r][c]=1333;
         }
 
@@ -227,8 +227,8 @@ public:
         checkEqual(m.cols(),m2.cols(),"cols matches");
 
         bool ok=true;
-        for(r=0; r<4; r++)
-            for (c=0; c<4; c++)
+        for(r=0; r<10; r++)
+            for (c=0; c<40; c++)
                 ok=ok && ((m[r])[c]==(m2[r])[c]);
 
         checkTrue(ok,"elements match");
@@ -240,11 +240,11 @@ public:
 
     void checkCopy() {
         report(0,"check matrix copy operator works...");
-        Matrix m(4,4);
+        Matrix m(10,40);
         int r=0;
         int c=0;
-        for(r=0; r<4; r++)
-            for (c=0; c<4; c++)
+        for(r=0; r<10; r++)
+            for (c=0; c<40; c++)
                 m[r][c]=99;
 
         Matrix m2;
@@ -253,8 +253,8 @@ public:
         checkEqual(m.cols(),m2.cols(),"cols matches");
 
         bool ok=true;
-        for(r=0; r<4; r++)
-            for (c=0; c<4; c++)
+        for(r=0; r<10; r++)
+            for (c=0; c<40; c++)
                 ok=ok && (m[r][c]==m2[r][c]);
         checkTrue(ok,"elements match");   
     }
@@ -330,17 +330,42 @@ public:
         checkTrue(ok,"elements match");
     }
 
-    virtual void runTests() {
-        Network::setLocalMode(true);
-        checkCopyCtor();
-        checkCopy();
-        checkSendReceive();
-        checkOperators();
-        checkGsl();
-        checkBottle();
-        Network::setLocalMode(false);
-        checkSubmatrix();
+    void checkResize()
+    {
+        Matrix ones;
+        ones.resize(10, 10);
+        ones=1.1; //set all values to 1.1
+
+        ones.resize(12, 15);
+
+        bool ok=true;
+        for(unsigned int r=0; r<10; r++)
+            for(unsigned int c=0; c<10; c++)
+                ok=ok&&(ones[r][c]==1.1);
+
+        checkTrue(ok,"resize(int r, int c) keeps old values");
+
+        ones.resize(3, 5);
+        ok=true;
+        for(unsigned int r=0; r<3; r++)
+            for(unsigned int c=0; c<5; c++)
+                ok=ok&&(ones[r][c]==1.1);
+
+        checkTrue(ok,"resizing to smaller size keeps old values");
     }
+
+    virtual void runTests() {
+            Network::setLocalMode(true);
+            checkCopyCtor();
+            checkCopy();
+            checkResize();
+            checkSubmatrix();
+            checkGsl();
+        
+            checkBottle();
+            checkSendReceive();
+            Network::setLocalMode(false);
+        }
 };
 
 static MatrixTest theMatrixTest;

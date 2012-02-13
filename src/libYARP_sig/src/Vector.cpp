@@ -140,8 +140,7 @@ Vector::Vector(size_t s, const double *p)
 {
     storage.resize(s);
 
-    for(size_t k=0; k<storage.size(); k++)
-        storage[k]=p[k];
+    memcpy(storage.getFirst(), p, sizeof(double)*s);
 
     allocGslData();
     updateGslData();
@@ -149,8 +148,7 @@ Vector::Vector(size_t s, const double *p)
 
 void Vector::zero()
 {
-    for(size_t k=0; k<storage.size(); k++)
-        storage[k]=0;
+    memset(storage.getFirst(), 0, sizeof(double)*storage.size());
 }
 
 const Vector &Vector::operator=(double v)

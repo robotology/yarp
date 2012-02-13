@@ -295,7 +295,45 @@ public:
         if (v1==v2)
             ok=false;
 
-        checkTrue(ok, "operator== for vectors work");
+        checkTrue(ok, "operator== for vectors works");
+    }
+
+    void checkResize()
+    {
+        Vector ones;
+        ones.resize(10, 1.1);
+
+        bool ok=true;
+        for(unsigned int k=0; k<ones.size(); k++)
+            ok=ok&&(ones[k]==1.1);
+
+        checkTrue(ok, "resize(int, double) works");
+
+        ones.resize(15);
+        // fill new values
+        for(unsigned int k=10; k<ones.size(); k++)
+            ones[k]=1.1;
+
+        ok=true;
+        for(unsigned int k=0; k<ones.size(); k++)
+            ok=ok&&ones(ones[k]==1.1);
+
+        checkTrue(ok, "resize(int) works");
+
+        ones.resize(9);
+        ok=true;
+        for(unsigned int k=0; k<ones.size(); k++)
+            ok=ok&&ones(ones[k]==1.1);
+
+        checkTrue(ok, "resizing to smaller vector");
+
+        ones.resize(10, 42.42);
+
+        ok=true;
+        for(unsigned int k=0; k<ones.size(); k++)
+            ok=ok&&(ones[k]==42.42);
+
+        checkTrue(ok, "resize(int, double) works");
     }
 
     virtual void runTests() {
@@ -306,6 +344,7 @@ public:
         checkSendReceive();
         checkOperators();
         checkGsl();
+        checkResize();
         Network::setLocalMode(false);
     }
 };

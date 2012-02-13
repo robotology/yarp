@@ -1,3 +1,15 @@
+2012-02-13 Lorenzo Natale <lorenzo.natale@iit.it>
+    * src/libYARP_math/harness/MathTest.cpp
+	  src/libYARP_sig/harness/MatrixTest.cpp
+	  src/libYARP_sig/harness/VectorTest.cpp
+	  src/libYARP_sig/include/yarp/sig/Matrix.h
+	  src/libYARP_sig/include/yarp/sig/Vector.h
+	  src/libYARP_sig/src/Matrix.cpp
+	  src/libYARP_sig/src/Vector.cpp
+ 
+    Modified Vector::resize() and Matrix::resize() to keep 
+	old content when it exists 
+
 2012-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/RosNameSpace.h: ROS does not

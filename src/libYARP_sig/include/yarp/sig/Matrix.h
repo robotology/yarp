@@ -7,14 +7,18 @@
 *
 */
 
+// 26/01/2012: Changed storage from vector to double *. Resize() now maintain old content.
+
 // $Id: Matrix.h,v 1.16 2008-10-27 19:00:32 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
 
 #include <stdlib.h> //defines size_t
+#include <memory.h> //memset
 #include <yarp/os/Portable.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/os/ManagedBytes.h>
 
 /**
 * \file Matrix.h contains the definition of a Matrix type 
@@ -28,7 +32,7 @@ namespace yarp {
 
 namespace yarp {
     namespace sig {
-        bool YARP_sig_API submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
+        YARP_sig_API bool submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
     }
 }
 
@@ -43,9 +47,9 @@ namespace yarp {
 class YARP_sig_API yarp::sig::Matrix: public yarp::os::Portable
 {
 private:
-    VectorOf<double> storage;
+    double *storage;
     void *gslData;
-    double *first;
+    //double *first;
     double **matrix; //double pointer access to elements
 
     int nrows;
@@ -64,7 +68,7 @@ private:
 
 public:
     Matrix():
-      first(0),
+          storage(0),
           matrix(0),
           nrows(0),
           ncols(0)
@@ -72,30 +76,12 @@ public:
           allocGslData();
       }
 
-      Matrix(int r, int c):
-      first(0),
-          matrix(0),
-          nrows(r),
-          ncols(c)
-      {
-          storage.resize(r*c,0.0);
-          allocGslData();
-          updatePointers();
-      }
-
+      Matrix(int r, int c);
+      
       /**
       * Copy constructor.
       */
-      Matrix(const Matrix &m): yarp::os::Portable(),
-      storage(m.storage),
-          first(0),
-          matrix(0)
-      {
-          nrows=m.nrows;
-          ncols=m.ncols;
-          allocGslData();
-          updatePointers();
-      }
+      Matrix(const Matrix &m);
 
       /**
       * Destructor.
@@ -127,7 +113,7 @@ public:
       { return ncols; }
 
       /**
-      * Resize the matrix.
+      * Resize the matrix, if matrix in not empty preserve old content.
       * @param r number of rows
       * @param c number of columns
       */
@@ -293,14 +279,14 @@ public:
       * @return the pointer to the first element
       */
       inline double *data()
-      {return storage.getFirst();}
+      {return storage;}
 
       /**
       * Return a pointer to the first element (const version).
       * @return the (const) pointer to the first element
       */
       inline const double *data() const
-      {return storage.getFirst();}
+      {return storage;}
 
       /**
       * True iff all elements of a match all element of b.

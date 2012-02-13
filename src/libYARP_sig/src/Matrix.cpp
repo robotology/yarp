@@ -161,14 +161,12 @@ ConstString Matrix::toString(int precision, int width, const char* endRowStr) co
 
 void Matrix::updatePointers()
 {
-    first=storage.getFirst();
-
     if (matrix!=0)
         delete [] matrix;
 
     int r=0;
     matrix=new double* [nrows];
-    matrix[0]=first;
+    matrix[0]=storage;
     for(r=1;r<nrows; r++)
     {
         matrix[r]=matrix[r-1]+ncols;
@@ -178,19 +176,23 @@ void Matrix::updatePointers()
 
 const Matrix &Matrix::operator=(const Matrix &r)
 {
-    storage=r.storage;
+    if (storage)
+        delete [] storage;
+    
     nrows=r.nrows;
     ncols=r.ncols;
+
+    storage=new double[ncols*nrows];
+    memcpy(storage, r.storage, ncols*nrows*sizeof(double));
+
     updatePointers();
     return *this;
 }
 
 const Matrix &Matrix::operator=(double v)
 {
-    double *tmp=storage.getFirst();
-
     for(int k=0; k<nrows*ncols; k++)
-        tmp[k]=v;
+        storage[k]=v;
 
     return *this;
 }
@@ -202,21 +204,63 @@ Matrix::~Matrix()
     freeGslData();
 }
 
-void Matrix::resize(int r, int c)
+void Matrix::resize(int new_r, int new_c)
 {
-    nrows=r;
-    ncols=c;
+    double *new_storage=new double[new_r*new_c];
 
-    storage.resize(r*c,0.0);
+    const int copy_r=(new_r<nrows) ? new_r:nrows;
+    const int copy_c=(new_c<ncols) ? new_c:ncols;
+    //copy_r = (new_r<nrows) ? new_r:nrows;
+        
+    if (storage!=0)
+    {
+        double *tmp_new=new_storage;
+        double *tmp_current=storage;
+        // copy content
+        
+        const int stepN=(new_c-copy_c);
+        const int stepC=(ncols-copy_c);
+
+// favor performance for small matrices
+#if 0
+        for(int r=0; r<copy_r;r++)
+        {
+            for(int c=0;c<copy_c;c++)
+                *tmp_new++=*tmp_current++;
+            tmp_new+=stepN;
+            tmp_current=matrix[r];
+        }
+#endif
+
+// favor performance with large matrices
+        for(int r=0; r<copy_r;r++)
+        {
+            memcpy(tmp_new, tmp_current, sizeof(double)*copy_c);
+            tmp_new+=new_c;
+            tmp_current=matrix[r];
+        }
+
+
+        delete [] storage;
+    }
+    else
+    {
+        //zero memory
+        memset(new_storage, 0, sizeof(double)*new_r*new_c);
+    }
+
+    storage=new_storage;
+
+    nrows=new_r;
+    ncols=new_c;
+
+    // storage.resize(r*c);
     updatePointers();
 }
 
 void Matrix::zero()
 {
-    for (int k=0; k<ncols*nrows; k++)
-    {
-        storage[k]=0;
-    }
+    memset(storage, 0, sizeof(double)*ncols*nrows);
 }
 
 Matrix Matrix::transposed() const
@@ -391,3 +435,35 @@ bool Matrix::setSubcol(const Vector &v, int r, int c)
         (*this)[r+i][c] = v[i];
     return true;
 }
+
+Matrix::Matrix(int r, int c):
+	storage(0),
+    matrix(0),
+    nrows(r),
+    ncols(c)
+{
+	storage=new double [r*c];
+    memset(storage, 0, r*c*sizeof(double));
+    allocGslData();
+    updatePointers();
+}
+
+Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
+          storage(0),
+          matrix(0)
+{
+	nrows=m.nrows;
+    ncols=m.ncols;
+          
+    allocGslData();
+
+    if (m.storage!=0) 
+    {
+            storage=new double [nrows*ncols];
+            memcpy(storage, m.storage, nrows*ncols*sizeof(double));
+
+            updatePointers();
+    }
+}
+
+	 

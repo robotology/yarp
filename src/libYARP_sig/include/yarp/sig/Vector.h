@@ -7,6 +7,8 @@
 *
 */
 
+// 26/01/2012: Changed storage from vector to double *. Resize() now maintain old content.
+
 // $Id: Vector.h,v 1.27 2009-03-26 13:15:44 natta Exp $
 
 #ifndef _YARP2_VECTOR_
@@ -141,15 +143,20 @@ public:
 
     virtual void resize(size_t size)
     {
-        T def = (T)0;
-        resize(size, def);
+        // T def = (T)0;
+        // resize(size, def);
+        bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
+        bytes.setUsed(size*sizeof(T));
+        _updatePointers();
     }
 
     void resize(size_t size, const T&def)
     {
+        /* 
         bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
         bytes.setUsed(size*sizeof(T));
-        _updatePointers();
+        _updatePointers(); */
+        resize(size); 
         for (size_t i=0; i<size; i++) { (*this)[i] = def; }
     }
 
@@ -309,13 +316,13 @@ public:
     */
     void resize(size_t s)
     {
-        storage.resize(s,0.0);
+        storage.resize(s);
         //allocGslData();
         updateGslData();
     }
 
     /**
-    * Resize the vector.
+    * Resize the vector, if the vector is not empty preserve old content.
     * @param s the new size
     * @param def a default value used to fill the vector
     */

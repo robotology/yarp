@@ -20,6 +20,8 @@
 #include <yarp/math/Rand.h>
 #include <yarp/math/SVD.h>
 
+#include <yarp/os/Time.h>
+
 #include <math.h>
 #include <string>
 
