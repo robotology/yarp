@@ -201,6 +201,10 @@ Matrix::~Matrix()
 {
     if (matrix!=0)
         delete [] matrix;
+
+    if (storage!=0)
+        delete [] storage;
+
     freeGslData();
 }
 
