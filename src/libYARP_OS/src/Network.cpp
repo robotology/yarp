@@ -87,6 +87,7 @@ static int enactConnection(const Contact& src,
     ContactStyle rpc;
     rpc.admin = true;
     rpc.quiet = style.quiet;
+    rpc.timeout = style.timeout;
 
     if (mode==YARP_ENACT_EXISTS) {
         Bottle cmd, reply;
@@ -423,21 +424,14 @@ static int metaConnect(const char *csrc,
 
 
 bool NetworkBase::connect(const char *src, const char *dest, 
-                      const char *carrier, bool quiet) {
-    ContactStyle style;
-    style.quiet = quiet;
-    if (carrier!=NULL) {
-        style.carrier = carrier;
-    }
+                          const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_CONNECT);
     return result == 0;
-
 }
 
 
-bool NetworkBase::disconnect(const char *src, const char *dest, bool quiet) {
-    ContactStyle style;
-    style.quiet = quiet;
+bool NetworkBase::disconnect(const char *src, const char *dest, 
+                             const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_DISCONNECT);
     return result == 0;
 }
@@ -705,12 +699,11 @@ bool NetworkBase::write(const Contact& contact,
 }
 
 
-bool NetworkBase::isConnected(const char *src, const char *dest, bool quiet) {
-    ContactStyle style;
-    style.quiet = quiet;
+bool NetworkBase::isConnected(const char *src, const char *dest, 
+                              const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_EXISTS);
     if (result!=0) {
-        if (!quiet) {
+        if (!style.quiet) {
             printf("No connection from %s to %s found\n",
                    src, dest);
         }

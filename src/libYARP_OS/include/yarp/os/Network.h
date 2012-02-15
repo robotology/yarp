@@ -85,7 +85,24 @@ public:
      */
     static bool connect(const char *src, const char *dest,
                         const char *carrier = 0 /*NULL*/,
-                        bool quiet=true);
+                        bool quiet=true) {
+        ContactStyle style;
+        style.quiet = quiet;
+        if (carrier!=NULL) {
+            style.carrier = carrier;
+        }
+        return connect(src,dest,style);
+    }
+
+    /**
+     * Request that an output port connect to an input port.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param style options for connection
+     * @return true on success, false on failure
+     */
+    static bool connect(const char *src, const char *dest,
+                        const ContactStyle& style);
 
     /**
      * Request that an output port disconnect from an input port.
@@ -95,7 +112,21 @@ public:
      * @return true on success, false on failure
      */
     static bool disconnect(const char *src, const char *dest, 
-                           bool quiet=true);
+                           bool quiet=true) {
+        ContactStyle style;
+        style.quiet = quiet;
+        return disconnect(src,dest,style);
+    }
+
+    /**
+     * Request that an output port disconnect from an input port.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param style options for network communication related to disconnection
+     * @return true on success, false on failure
+     */
+    static bool disconnect(const char *src, const char *dest, 
+                           const ContactStyle& style);
 
     /**
      * Check if a connection exists between two ports.
@@ -105,7 +136,21 @@ public:
      * @return true if there is a connection
      */
     static bool isConnected(const char *src, const char *dest, 
-                            bool quiet=true);
+                            bool quiet=true) {
+        ContactStyle style;
+        style.quiet = quiet;
+        return isConnected(src,dest,style);
+    }
+
+    /**
+     * Check if a connection exists between two ports.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param style options for network communication needed to check connection
+     * @return true if there is a connection
+     */
+    static bool isConnected(const char *src, const char *dest, 
+                            const ContactStyle& style);
 
     /**
      * Check for a port to be ready and responsive.
