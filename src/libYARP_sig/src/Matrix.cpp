@@ -222,11 +222,11 @@ void Matrix::resize(int new_r, int new_c)
         double *tmp_current=storage;
         // copy content
         
+// favor performance for small matrices
+#if 0
         const int stepN=(new_c-copy_c);
         const int stepC=(ncols-copy_c);
 
-// favor performance for small matrices
-#if 0
         for(int r=0; r<copy_r;r++)
         {
             for(int c=0;c<copy_c;c++)
