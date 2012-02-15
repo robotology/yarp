@@ -1,3 +1,9 @@
+2012-02-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/hmac/hmac_sha2.h: move
+	hmac to a location that can reasonably be installed without
+	conflict with other libraries [thanks Kail Frank]
+
 2012-02-13 Lorenzo Natale <lorenzo.natale@iit.it>
     * src/libYARP_math/harness/MathTest.cpp
 	  src/libYARP_sig/harness/MatrixTest.cpp

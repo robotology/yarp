@@ -118,7 +118,7 @@ public:
 
     /**
      *
-     * Check if this carrier uses a broadcast mechansim.  This flag
+     * Check if this carrier uses a broadcast mechanism.  This flag
      * is used to determine whether it is appropriate to send "kill"
      * messages using a carrier or whether they should be sent
      * "out-of-band"

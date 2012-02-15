@@ -37,7 +37,7 @@
 #ifndef _HMAC_SHA2_H
 #define _HMAC_SHA2_H
 
-#include <hmac/sha2.h>
+#include <yarp/os/impl/hmac/sha2.h>
 
 #ifdef __cplusplus
 extern "C" {

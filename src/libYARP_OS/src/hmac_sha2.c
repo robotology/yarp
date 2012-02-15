@@ -36,7 +36,7 @@
 
 #include <string.h>
 
-#include <hmac/hmac_sha2.h>
+#include <yarp/os/impl/hmac/hmac_sha2.h>
 
 /* HMAC-SHA-224 functions */
 
