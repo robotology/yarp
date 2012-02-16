@@ -24,7 +24,7 @@ For Ubuntu users, here's a quick summary:
   yarp check
 \endverbatim
 For Microsoft Windows users, there are compiled releases of YARP
-available at http://eris.liralab.it/yarp/downloads/yarp2/windows/ - you'll 
+available at http://sourceforge.net/projects/yarp0/files/yarp2/ - you'll 
 need to select the right one for your compiler.
 
 Here are the more general steps needed to install YARP:
