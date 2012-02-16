@@ -429,7 +429,8 @@ int Companion::cmdExists(int argc, char *argv[]) {
 
 
 
-int Companion::exists(const char *target, bool silent) {
+int Companion::exists(const char *target, const ContactStyle& style) {
+    bool silent = style.quiet;
     Contact address = NetworkBase::queryName(target);
     if (!address.isValid()) {
         if (!silent) {
@@ -437,7 +438,13 @@ int Companion::exists(const char *target, bool silent) {
         }
         return 2;
     }
-    OutputProtocol *out = Carriers::connect(Address::fromContact(address));
+
+    Address address2 = Address::fromContact(address);
+    if (style.timeout>=0) {
+        address2.setTimeout((float)style.timeout);
+    }
+    OutputProtocol *out = Carriers::connect(address2);
+
     if (out==NULL) {
         if (!silent) {
             printf("Cannot connect to port %s\n", target);

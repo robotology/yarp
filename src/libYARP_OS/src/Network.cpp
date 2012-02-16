@@ -437,8 +437,8 @@ bool NetworkBase::disconnect(const char *src, const char *dest,
 }
 
 
-bool NetworkBase::exists(const char *port, bool quiet) {
-    int result = Companion::exists(port,quiet);
+bool NetworkBase::exists(const char *port, const ContactStyle& style) {
+    int result = Companion::exists(port,style);
     if (result==0) {
         Companion::poll(port,true);
     }

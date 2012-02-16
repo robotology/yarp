@@ -12,6 +12,7 @@
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/PortWriter.h>
+#include <yarp/os/ContactStyle.h>
 
 #include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/impl/PlatformVector.h>
@@ -74,7 +75,13 @@ public:
 
     static int wait(const char *target, bool silent = false); 
 
-    static int exists(const char *target, bool silent = false); 
+    static int exists(const char *target, bool silent = false) {
+        ContactStyle style;
+        style.quiet = silent;
+        return exists(target,style);
+    } 
+
+    static int exists(const char *target, const ContactStyle& style); 
 
     /**
      * Create a port to read Bottles and prints them to standard input.

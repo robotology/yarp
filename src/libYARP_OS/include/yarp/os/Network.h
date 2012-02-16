@@ -10,6 +10,7 @@
 #ifndef _YARP2_NETWORK_
 #define _YARP2_NETWORK_
 
+#include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Value.h>
@@ -33,28 +34,6 @@ namespace yarp {
 #define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _devices();
 #define YARP_REGISTER_PLUGINS(name) add_ ## name ## _devices();
 
-/**
- * \ingroup comm_class
- *
- * Preferences for how to communicate with a contact.
- *
- */
-class YARP_OS_API yarp::os::ContactStyle {
-public:
-    bool admin;
-    bool quiet;
-    double timeout;
-    ConstString carrier;
-    bool expectReply;
-
-    ContactStyle() {
-        admin = false;
-        quiet = false;
-        timeout = -1;
-        carrier = "";
-        expectReply = true;
-    }
-};
 
 /**
  * \ingroup comm_class
@@ -146,7 +125,7 @@ public:
      * Check if a connection exists between two ports.
      * @param src the name of an output port
      * @param dest the name of an input port
-     * @param style options for network communication needed to check connection
+     * @param style options for network communication
      * @return true if there is a connection
      */
     static bool isConnected(const char *src, const char *dest, 
@@ -158,7 +137,19 @@ public:
      * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
-    static bool exists(const char *port, bool quiet=true);
+    static bool exists(const char *port, bool quiet=true) {
+        ContactStyle style;
+        style.quiet = quiet;
+        return exists(port,style);
+    }
+
+    /**
+     * Check for a port to be ready and responsive.
+     * @param port the name of a port
+     * @param style options for network communication
+     * @return true on success, false on failure
+     */
+    static bool exists(const char *port, const ContactStyle& style);
 
 	/**
      * Wait for a port to be ready and responsive.
