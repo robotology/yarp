@@ -42,6 +42,8 @@ folder the file 'data.log' contains the information (taken from
 the envelope field of the port) line by line as follows: 
  
 \code 
+Type: [Bottle]/[Image:ppm]/[Image:ppm; Video:compressed_avi(MPEG-4)] 
+ 
 [pck id] [time stamp] [bottle content (or image_file_name)] 
    0       1.234         0 1 2 3 ...
    1       1.235         4 5 6 7 ...
@@ -350,6 +352,7 @@ class DumpThread : public RateThread
 {
 private:
     DumpQueue     &buf;
+    DumpType       type;
     ofstream       fout;
     char           dirName[255];
     char           logFile[255];
@@ -368,12 +371,12 @@ private:
 #endif
 
 public:
-    DumpThread(DumpQueue &Q, const char *_dirName, int szToWrite, bool _saveData, bool _videoOn) :
-               RateThread(50), buf(Q), blockSize(szToWrite), saveData(_saveData), videoOn(_videoOn)
+    DumpThread(DumpType _type, DumpQueue &Q, const char *_dirName, int szToWrite, bool _saveData, bool _videoOn) :
+               RateThread(50), type(_type), buf(Q), blockSize(szToWrite), saveData(_saveData), videoOn(_videoOn)
     {
         strcpy(dirName,_dirName);
         strcpy(logFile,dirName);        
-        strcat(logFile,"/data.log");        
+        strcat(logFile,"/data.log");
 
     #ifdef ADD_VIDEO
         strcpy(videoFile,dirName);
@@ -396,6 +399,19 @@ public:
 
             if (!ret)
                 cout << "unable to open file" << endl;
+
+            fout<<"Type: ";
+            if (type==bottle)
+                fout<<"Bottle;"<<endl;
+            else if (type==image)
+            {
+                fout<<"Image:ppm;";
+                if (videoOn)
+                    fout<<" Video:compressed_avi(MPEG-4);";
+                fout<<endl;
+            }
+
+            fout<<endl;
 
             return ret;
         }
@@ -600,7 +616,7 @@ public:
         createFullPath(dirName);
 
         q=new DumpQueue();
-        t=new DumpThread(*q,dirName,100,saveData,videoOn);
+        t=new DumpThread(type,*q,dirName,100,saveData,videoOn);
 
         if (!t->start())
         {
