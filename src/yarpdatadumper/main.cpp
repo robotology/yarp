@@ -408,7 +408,7 @@ public:
         bool writeToDisk=false;
 
         buf.lock();
-        unsigned int sz=buf.size(); //!!! access to size must be proteceted: problem spotted with Linux stl
+        unsigned int sz=buf.size(); //!!! access to size must be protected: problem spotted with Linux stl
         buf.unlock();
 
         // each 10 seconds it issues a writeToDisk command straightaway
