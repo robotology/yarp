@@ -1,3 +1,9 @@
+2012-02-17  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+        * src/libYARP_dev/include/yarp/dev/GazeControl.h:
+        added two new functionalities implemented by get3DPointFromAngles()
+        and getAnglesFrom3DPoint() methods.
+
 2012-02-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/hmac/hmac_sha2.h: move

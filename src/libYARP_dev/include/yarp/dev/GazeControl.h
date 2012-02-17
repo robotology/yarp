@@ -270,6 +270,38 @@ public:
                                    yarp::sig::Vector &x)=0;
 
     /**
+    * Get the 3-d coordinates corresponding to the angular
+    * positions. [wait for reply] 
+    * @param mode selects the angular mode: 0 for absolute, 1 for 
+    *             relative mode.
+    * @param ang a 3-d vector which contains the actual angles 
+    *            azimuth/elevation/vergence (degrees).
+    * @param x the returned 3-d point given wrt the root reference 
+    *          frame (meters).
+    * @return true/false on success/failure. 
+    */
+    virtual bool get3DPointFromAngles(const int mode,
+                                      const yarp::sig::Vector &ang,
+                                      yarp::sig::Vector &x)=0;
+
+    /**
+    * Get the absolute angular coordinates corresponding to the 3-d 
+    * point. [wait for reply] 
+    * @param x the 3-d point given wrt the root reference frame
+    *          (meters).
+    * @param ang a 3-d vector which is filled with the  
+    *            azimuth/elevation/vergence coordinates in the
+    *            absolute mode (degrees).
+    * @return true/false on success/failure. 
+    *  
+    * @note The only angular frame that can be referred is the 
+    *       absolute one since it is not trivial/unique to compute
+    *       the relative vergence angle.
+    */
+    virtual bool getAnglesFrom3DPoint(const yarp::sig::Vector &x,
+                                      yarp::sig::Vector &ang)=0;
+
+    /**
     * Triangulate two points given in the image planes to find the 
     * corresponding 3-d point in the space. [wait for reply] 
     * @param pxl a 2-d vector which contains the (u,v) coordinates 
