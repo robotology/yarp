@@ -294,9 +294,7 @@ public:
     *            absolute mode (degrees).
     * @return true/false on success/failure. 
     *  
-    * @note The only angular frame that can be referred is the 
-    *       absolute one since it is not trivial/unique to compute
-    *       the relative vergence angle.
+    * @note Only absolute angular frame can be referred.
     */
     virtual bool getAnglesFrom3DPoint(const yarp::sig::Vector &x,
                                       yarp::sig::Vector &ang)=0;
