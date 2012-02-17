@@ -1,3 +1,9 @@
+2012-02-17  Andrea Del Prete  <andrea.delprete@iit.it>
+    * src/libYARP_sig/src/Vector.cpp
+    Modify Vector::operator=() so that it does not reallocate
+    the memory if the new vector has the same size as the current
+    vector.
+
 2012-02-17  Ugo Pattacini  <ugo.pattacini@iit.it>
 
         * src/libYARP_dev/include/yarp/dev/GazeControl.h:

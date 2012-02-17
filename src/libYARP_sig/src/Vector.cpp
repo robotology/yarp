@@ -131,8 +131,15 @@ bool Vector::setSubvector(int position, const Vector &v)
 
 const Vector &Vector::operator=(const Vector &r)
 {
-    storage=r.storage;
-    updateGslData();
+    if(storage.size() == r.storage.size())
+    {
+        memcpy(storage.getFirst(), r.storage.getFirst(), sizeof(double)*storage.size());
+    }
+    else
+    {
+        storage=r.storage;
+        updateGslData();
+    }
     return *this;
 }
 
