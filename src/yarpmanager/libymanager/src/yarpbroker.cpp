@@ -384,8 +384,12 @@ bool YarpBroker::connect(const char* from, const char* to,
         strError += " does not exist.";
         return false;
     }
-        
-    NetworkBase::connect(from, to, carrier);
+    
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
+    style.carrier = carrier;
+    NetworkBase::connect(from, to, style);
     if(!connected(from, to))
     {
         strError = "cannot connect ";
@@ -427,8 +431,11 @@ bool YarpBroker::disconnect(const char* from, const char* to)
     
     if(!connected(from, to))
         return true;
-
-    if(!NetworkBase::disconnect(from, to))
+   
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
+    if(!NetworkBase::disconnect(from, to, style))
     {
         strError = "cannot disconnect ";
         strError +=from;
@@ -441,14 +448,20 @@ bool YarpBroker::disconnect(const char* from, const char* to)
 
 bool YarpBroker::exists(const char* port)
 {
-    return NetworkBase::exists(port);
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
+    return NetworkBase::exists(port, style);
 }
 
 bool YarpBroker::connected(const char* from, const char* to)
 {
     if(!exists(from) || !exists(to))
         return false;
-    return NetworkBase::isConnected(from, to);
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
+    return NetworkBase::isConnected(from, to, style);
 }
 
 
