@@ -202,7 +202,7 @@ particular command gets through, and what the response to it is.
 In this case, we need something new.  Messages with replies are possible
 with normal ports. However, this can be dangerous. For this reason 
 YARP provides specialized classes (yarp::os::RpcClient and yarp::os::RpcServer)
-which allows to catch errors and provide informative messages (see \rev rpc_ports for details).
+which allows to catch errors and provide informative messages (see \ref rpc_ports for details).
 
 Here's how we can do it,
 on the sender side:
