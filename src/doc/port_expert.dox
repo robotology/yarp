@@ -199,10 +199,15 @@ is going to become tightly coupled, and a network of processes written
 this way is much less robust and malleable than with streaming 
 communication.  However, sometimes you really want to be sure a
 particular command gets through, and what the response to it is.
-In this case, we need something new.  Here's how we can do it,
+In this case, we need something new.  Messages with replies are possible
+with normal ports. However, this can be dangerous. For this reason 
+YARP provides specialized classes (yarp::os::RpcClient and yarp::os::RpcServer)
+which allows to catch errors and provide informative messages (see \rev rpc_ports for details).
+
+Here's how we can do it,
 on the sender side:
 \code
-Port p;            // Create a port.
+RpcClient p;       // Create a port.
 p.open("/out");    // Give it a name on the network.
 while (true) {
   Bottle in,out;   // Make places to store things.
@@ -214,7 +219,7 @@ while (true) {
 
 On the receiver side:
 \code
-Port p;            // Create a port.
+RpcServer p;       // Create a port.
 p.open("/in");     // Give it a name on the network.
 Bottle in, out;    // Make places to store things.
 while (true) {
