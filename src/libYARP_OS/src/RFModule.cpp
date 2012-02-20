@@ -158,6 +158,13 @@ public:
         return true;
     }
 
+    bool attach(yarp::os::RpcServer& source) 
+    {
+        attachedToPort=true;
+        source.setReader(*this);
+        return true;
+    }
+
     bool attachTerminal()
     {
         attachedTerminal=true;
@@ -236,6 +243,11 @@ RFModule::~RFModule() {
 * receives data.
 */
 bool RFModule::attach(yarp::os::Port &source) {
+    HELPER(implementation).attach(source);
+    return true;
+}
+
+bool RFModule::attach(yarp::os::RpcServer &source) {
     HELPER(implementation).attach(source);
     return true;
 }

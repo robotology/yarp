@@ -12,6 +12,7 @@
 
 #include <yarp/os/Port.h>
 #include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/RpcServer.h>
 #include <yarp/os/ResourceFinder.h>
 
 namespace yarp {
@@ -110,10 +111,17 @@ public:
 
     /**
     * Make any input from a Port object go to the respond() method.
-    * @param port the port to attach
-    * @return true if port was attached correctly.
+    * @param source the port to attach
+    * @return true if source was attached correctly.
     */
     virtual bool attach(yarp::os::Port& source);
+
+    /**
+    * Make any input from an RpcServer object go to the respond() method.
+    * @param source the RpcServer port to attach
+    * @return true if source was attached correctly.
+    */
+    virtual bool attach(yarp::os::RpcServer& source);
 
     /**
     * Make any input from standard input (usually the keyboard) go to
