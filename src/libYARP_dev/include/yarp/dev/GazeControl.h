@@ -142,7 +142,7 @@ public:
 
     /**
     * Move the gaze to a location specified by a pixel within the 
-    * image plane and the vergence. [do not wait for reply] 
+    * image plane using the vergence. [do not wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
     * @param px a 2-d vector which contains the (u,v) coordinates of
