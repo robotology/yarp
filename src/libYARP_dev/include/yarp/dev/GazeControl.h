@@ -71,8 +71,8 @@ public:
     /**
     * Get the current gaze configuration in terms of azimuth and 
     * elevation angles wrt to the absolute reference frame along 
-    * with the vergence. All angles are expressed in degrees [do not
-    * wait for reply] 
+    * with the vergence. All angles are expressed in degrees. [do 
+    * not wait for reply] 
     * @param ang a 3-d vector which is filled with the actual 
     *         angles azimuth/elevation/vergence (degrees).
     * @return true/false on success/failure. 
@@ -94,7 +94,7 @@ public:
 
     /**
     * Move the gaze to a specified gazing angles configuration given
-    * in the absolute reference frame [do not wait for reply] 
+    * in the absolute reference frame. [do not wait for reply] 
     * @param ang a 3-d vector which contains the desired gazing 
     *         angles (azimuth/elevation/vergence) expressed in the
     *         absolute reference frame (degrees).
@@ -108,7 +108,7 @@ public:
 
     /**
     * Move the gaze to a specified gazing angles configuration given
-    * in the relative reference frame [do not wait for reply] 
+    * in the relative reference frame. [do not wait for reply] 
     * @param ang a 3-d vector which contains the desired gazing 
     *         angles (azimuth/elevation/vergence) expressed in the
     *         relative reference frame (degrees).
@@ -123,7 +123,7 @@ public:
 
     /**
     * Move the gaze to a location specified by a pixel within the 
-    * image plane [do not wait for reply] 
+    * image plane. [do not wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
     * @param px a 2-d vector which contains the (u,v) coordinates of
@@ -141,9 +141,23 @@ public:
                                  const double z=1.0)=0;
 
     /**
+    * Move the gaze to a location specified by a pixel within the 
+    * image plane and the vergence. [do not wait for reply] 
+    * @param camSel selects the image plane: 0 for the left, 1 for 
+    *              the right.
+    * @param px a 2-d vector which contains the (u,v) coordinates of
+    *           the pixel within the image plane.
+    * @param ver the vergence angle given in degree.
+    * @return true/false on success/failure. 
+    */
+    virtual bool lookAtMonoPixelWithVergence(const int camSel,
+                                             const yarp::sig::Vector &px,
+                                             const double ver)=0;
+
+    /**
     * Move the gaze to a location specified by two pixels 
     * representing the same 3-d point as seen from within both image
-    * planes [do not wait for reply] 
+    * planes. [do not wait for reply] 
     * @param pxl a 2-d vector which contains the (u,v) coordinates 
     *           of the pixel within the left image plane.
     * @param pxr a 2-d vector which contains the (u,v) coordinates 
@@ -336,7 +350,8 @@ public:
     virtual bool getJointsVelocities(yarp::sig::Vector &qdot)=0;
 
     /**
-    * Returns the current options used by the stereo approach.
+    * Returns the current options used by the stereo approach. [wait 
+    * for reply] 
     * @param options is a property-like bottle containing the 
     *                current configuration employed by the internal
     *                pid.
@@ -368,7 +383,8 @@ public:
     virtual bool setEyesTrajTime(const double t)=0;
 
     /**
-    * Update the options used by the stereo approach.
+    * Update the options used by the stereo approach. [wait for 
+    * reply] 
     * @param options is a property-like bottle containing the new 
     *                configuration employed by the internal pid.
     * @return true/false on success/failure. 
