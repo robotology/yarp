@@ -18,7 +18,7 @@ target=$WEB_SERVER
 
 echo USER is "$WEB_USER"
 
-cd doc && timeout 600 rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP . $target:$WEB_DOC_DIR
+cd doc && timeout 600 rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP --delete . $target:$WEB_DOC_DIR
 
 
 
