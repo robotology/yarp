@@ -190,6 +190,22 @@ public:
     virtual bool getEyesTrajTime(double *t)=0;
 
     /**
+    * Get the current gain used to weigh the vestibulo-ocular reflex
+    * (VOR). [wait for reply] 
+    * @param gain the current gain.
+    * @return true/false on success/failure. 
+    */
+    virtual bool getVORGain(double *gain)=0;
+
+    /**
+    * Get the current gain used to weigh the oculo-collic reflex 
+    * (OCR). [wait for reply] 
+    * @param gain the current gain.
+    * @return true/false on success/failure. 
+    */
+    virtual bool getOCRGain(double *gain)=0;
+
+    /**
     * Get the current pose of the left eye frame. [wait for reply]
     * @param x a 3-d vector which is filled with the actual 
     *         position x,y,z (meters).
@@ -381,6 +397,26 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool setEyesTrajTime(const double t)=0;
+
+    /**
+    * Set the gain used to weigh the vestibulo-ocular reflex (VOR).
+    * [wait for reply] 
+    * @param gain the new gain.
+    * @return true/false on success/failure. 
+    *  
+    * @note To disable VOR set gain equal to 0.0. 
+    */
+    virtual bool setVORGain(const double gain)=0;
+
+    /**
+    * Set the gain used to weigh the oculo-collic reflex (OCR). 
+    * [wait for reply] 
+    * @param gain the new gain.
+    * @return true/false on success/failure. 
+    *  
+    * @note To disable OCR set gain equal to 0.0. 
+    */
+    virtual bool setOCRGain(const double gain)=0;
 
     /**
     * Update the options used by the stereo approach. [wait for 

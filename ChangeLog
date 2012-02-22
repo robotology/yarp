@@ -1,6 +1,10 @@
+2012-02-22  Ugo Pattacini  <ugo.pattacini@iit.it>
+        * src/libYARP_dev/include/yarp/dev/GazeControl.h:
+        added new methods for setting/getting VOR and OCR gains.
+
 2012-02-21  Ugo Pattacini  <ugo.pattacini@iit.it>
         * src/libYARP_dev/include/yarp/dev/GazeControl.h:
-        added the method lookAtMonoPixelWithVergence()
+        added the method lookAtMonoPixelWithVergence().
 
 2012-02-17  Andrea Del Prete  <andrea.delprete@iit.it>
     * src/libYARP_sig/src/Vector.cpp
