@@ -190,7 +190,15 @@ int yarp::os::Run::main(int argc, char *argv[])
 yarp::os::Bottle yarp::os::Run::SendMsg(Bottle& msg,yarp::os::ConstString target)
 {
     Port port;
-    port.open("...");
+    if (!port.open("..."))
+    {
+        Bottle response;
+        response.addString("RESPONSE:\n=========\n");
+        response.addString("Cannot open port, aborting...\n");
+        fprintf(stderr,"%s\n",response.toString().c_str());
+       
+        return response;
+    }
 
     bool connected=yarp::os::NetworkBase::connect(port.getName(), target);
 
@@ -238,7 +246,9 @@ void sigint_handler(int sig)
 int yarp::os::Run::Server()
 {
     Port port;
-    port.open(mPortName.c_str());
+    if (!port.open(mPortName.c_str()))
+        return YARPRUN_ERROR;
+    
     pServerPort=&port;
 
     signal(SIGINT,sigint_handler);
@@ -544,7 +554,13 @@ int yarp::os::Run::sendToServer(yarp::os::Property& config)
        
         Port port;
         port.setTimeout(5.0);
-        port.open("...");
+        if (!port.open("..."))
+        {
+            fprintf(stderr, "RESPONSE:\n=========\n");
+            fprintf(stderr, "Cannot open port, aborting...\n");
+            return YARPRUN_ERROR;
+        }
+
         bool connected = yarp::os::NetworkBase::connect(port.getName(), 
                                                         config.find("on").asString());
         if(!connected)
@@ -2132,7 +2148,8 @@ bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::Const
     printf(":: %s\n",msg.toString().c_str());
 
     Port port;
-    port.open("...");
+    if (!port.open("..."))
+        return false;
 
     bool connected=yarp::os::NetworkBase::connect(port.getName(), node);
     if (!connected)
