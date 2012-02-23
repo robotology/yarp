@@ -422,7 +422,7 @@ public:
     void writeSource(const string &sourceName)
     {
         mutex.wait();
-        fout << "Acquiring from Source: " << sourceName << endl;
+        fout << "Source: " << sourceName << endl;
         mutex.post();
     }
 
