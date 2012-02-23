@@ -188,9 +188,29 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 
+/**************************************************************************/
+void createFullPath(const char* path)
+{
+    if (yarp::os::stat(path))
+    {
+        string strPath=string(path);
+        size_t found=strPath.find_last_of("/");
+    
+        while (strPath[found]=='/')
+            found--;
+
+        createFullPath(strPath.substr(0,found+1).c_str());
+        yarp::os::mkdir(strPath.c_str());
+    }
+}
+
+
+/**************************************************************************/
 typedef enum { bottle, image } DumpType;
 
+
 // Abstract object definition for queueing
+/**************************************************************************/
 class DumpObj
 {
 public:
@@ -201,6 +221,7 @@ public:
 
 
 // Specialization for Bottle object
+/**************************************************************************/
 class DumpBottle : public DumpObj
 {
 private:
@@ -213,7 +234,7 @@ public:
     const DumpBottle &operator=(const DumpBottle &obj) { *p=*(obj.p); return *this; }
     ~DumpBottle() { delete p; }
 
-    virtual const string toFile(const char *dirName, unsigned int cnt)
+    const string toFile(const char *dirName, unsigned int cnt)
     {
         string ret;
         ret=p->toString();
@@ -221,10 +242,12 @@ public:
         return ret;
     }
 
-    virtual void *getPtr() { return NULL; }
+    void *getPtr() { return NULL; }
 };
 
+
 // Object creator of type Bottle - overloaded
+/**************************************************************************/
 DumpObj *factory(Bottle& obj)
 {
     DumpBottle *p=new DumpBottle(obj);
@@ -233,6 +256,7 @@ DumpObj *factory(Bottle& obj)
 
 
 // Specialization for Image object
+/**************************************************************************/
 class DumpImage : public DumpObj
 {
 private:
@@ -245,7 +269,7 @@ public:
     const DumpImage &operator=(const DumpImage &obj) { *p=*(obj.p); return *this; }
     ~DumpImage() { delete p; }
 
-    virtual const string toFile(const char *dirName, unsigned int cnt)
+    const string toFile(const char *dirName, unsigned int cnt)
     {
         string ret;
         char extfName[255];
@@ -260,10 +284,12 @@ public:
         return ret;
     }
 
-    virtual void *getPtr() { return p->getIplImage(); }
+    void *getPtr() { return p->getIplImage(); }
 };
 
+
 // Object creator of type Image - overloaded
+/**************************************************************************/
 DumpObj *factory(ImageOf<PixelBgr> &obj)
 {
     DumpImage *p=new DumpImage(obj);
@@ -272,6 +298,7 @@ DumpObj *factory(ImageOf<PixelBgr> &obj)
 
 
 // Definition of item to be put in the queue
+/**************************************************************************/
 typedef struct
 {
     int     seqNumber;
@@ -279,10 +306,12 @@ typedef struct
     DumpObj *obj;
 } DumpItem;
 
+
 // Definition of the queue
 // Two services act on this resource:
 // 1) the port, which listens to incoming data
 // 2) the thread, which stores the data to disk
+/**************************************************************************/
 class DumpQueue : public deque<DumpItem>
 {
 private:
@@ -294,6 +323,7 @@ public:
 };
 
 
+/**************************************************************************/
 template <class T>
 class DumpPort : public BufferedPort<T>
 {
@@ -314,7 +344,7 @@ private:
     bool firstIncomingData;
     bool rxTime;
 
-    virtual void onRead(T &obj)
+    void onRead(T &obj)
     {
         if (++cnt==dwnsample)
         {
@@ -347,7 +377,7 @@ private:
 };
 
 
-
+/**************************************************************************/
 class DumpThread : public RateThread
 {
 private:
@@ -387,7 +417,7 @@ public:
     #endif
     }
 
-    virtual bool threadInit()
+    bool threadInit()
     {
         oldTime=Time::now();
         counter=0;
@@ -419,7 +449,7 @@ public:
             return true;
     }
 
-    virtual void run()
+    void run()
     {
         bool writeToDisk=false;
 
@@ -504,7 +534,7 @@ public:
         }
     }
 
-    virtual void threadRelease()
+    void threadRelease()
     {
         if (saveData)
             fout.close();
@@ -517,9 +547,7 @@ public:
 };
 
 
-
-void createFullPath(const char*);
-
+/**************************************************************************/
 class DumpModule: public RFModule
 {
 private:
@@ -538,7 +566,7 @@ private:
 public:
     DumpModule() { }
 
-    virtual bool configure(ResourceFinder &rf)
+    bool configure(ResourceFinder &rf)
     {
         Time::turboBoost();
 
@@ -651,7 +679,7 @@ public:
         return true;
     }
 
-    virtual bool close()
+    bool close()
     {
         t->stop();
 
@@ -677,29 +705,12 @@ public:
         return true;
     }
 
-    virtual double getPeriod()    { return 1.0;  }
-    virtual bool   updateModule() { return true; }
+    double getPeriod()    { return 1.0;  }
+    bool   updateModule() { return true; }
 };
 
 
-
-void createFullPath(const char* path)
-{
-    if (yarp::os::stat(path))
-    {
-        string strPath=string(path);
-        size_t found=strPath.find_last_of("/");
-    
-        while (strPath[found]=='/')
-            found--;
-
-        createFullPath(strPath.substr(0,found+1).c_str());
-        yarp::os::mkdir(strPath.c_str());
-    }
-}
-
-
-
+/**************************************************************************/
 int main(int argc, char *argv[])
 {
     ResourceFinder rf;
