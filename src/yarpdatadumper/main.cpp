@@ -161,6 +161,7 @@ So, now, have a look inside the directory ./log
 #include <yarp/os/Network.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/PortReport.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/RateThread.h>
@@ -383,6 +384,7 @@ class DumpThread : public RateThread
 private:
     DumpQueue     &buf;
     DumpType       type;
+    Semaphore      mutex;
     ofstream       fout;
     char           dirName[255];
     char           logFile[255];
@@ -391,7 +393,7 @@ private:
     double         oldTime;
     
     bool           saveData;
-    bool           videoOn;        
+    bool           videoOn;
 
 #ifdef ADD_VIDEO
     char           videoFile[255];    
@@ -417,6 +419,13 @@ public:
     #endif
     }
 
+    void writeSource(const string &sourceName)
+    {
+        mutex.wait();
+        fout << "Acquiring from Source: " << sourceName << endl;
+        mutex.post();
+    }
+
     bool threadInit()
     {
         oldTime=Time::now();
@@ -432,13 +441,12 @@ public:
 
             fout<<"Type: ";
             if (type==bottle)
-                fout<<"Bottle;"<<endl;
+                fout<<"Bottle;";
             else if (type==image)
             {
                 fout<<"Image:ppm;";
                 if (videoOn)
                     fout<<" Video:compressed_avi(MPEG-4);";
-                fout<<endl;
             }
 
             fout<<endl;
@@ -509,12 +517,15 @@ public:
             {
                 buf.lock();
                 DumpItem item=buf.front();
+                buf.pop_front();
                 buf.unlock();
 
                 if (saveData)
                 {
+                    mutex.wait();
                     fout << item.seqNumber << '\t' << fixed << item.timeStamp << '\t';
                     fout << item.obj->toFile(dirName,counter++) << endl;
+                    mutex.post();
                 }
 
             #ifdef ADD_VIDEO
@@ -523,10 +534,6 @@ public:
             #endif
 
                 delete item.obj;
-
-                buf.lock();
-                buf.pop_front();
-                buf.unlock();
             }
 
             cumulSize+=sz;
@@ -548,6 +555,23 @@ public:
 
 
 /**************************************************************************/
+class DumpReporter : public PortReport
+{
+private:
+    DumpThread *thread;
+
+public:
+    DumpReporter() : thread(NULL) { }
+    void setThread(DumpThread *thread) { this->thread=thread; }
+    void report(const PortInfo &info)
+    {
+        if ((thread!=NULL) && info.created && info.incoming)
+            thread->writeSource(info.sourceName.c_str());
+    }
+};
+
+
+/**************************************************************************/
 class DumpModule: public RFModule
 {
 private:
@@ -555,6 +579,7 @@ private:
     DumpPort<Bottle>             *p_bottle;
     DumpPort<ImageOf<PixelBgr> > *p_image;
     DumpThread                   *t;
+    DumpReporter                  reporter;
     Port                          rpcPort;
     DumpType                      type;
     bool                          saveData;
@@ -654,17 +679,21 @@ public:
             return false;
         }
 
+        reporter.setThread(t);
+
         if (type==bottle)
         {
             p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime);
             p_bottle->useCallback();
             p_bottle->open(portName);
+            p_bottle->setReporter(reporter);
         }
         else
         {
             p_image=new DumpPort<ImageOf<PixelBgr> >(*q,dwnsample,rxTime);
             p_image->useCallback();
             p_image->open(portName);
+            p_image->setReporter(reporter);
         }
 
         char rpcPortName[255];
