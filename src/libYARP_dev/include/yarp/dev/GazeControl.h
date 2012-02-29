@@ -206,6 +206,14 @@ public:
     virtual bool getOCRGain(double *gain)=0;
 
     /**
+    * Query whether the very fast eyes movements (saccades) will be 
+    * employed or not. [wait for reply] 
+    * @param f the current saccades status.
+    * @return true/false on success/failure. 
+    */
+    virtual bool getSaccadesStatus(bool *f)=0;
+
+    /**
     * Get the current pose of the left eye frame. [wait for reply]
     * @param x a 3-d vector which is filled with the actual 
     *         position x,y,z (meters).
@@ -417,6 +425,17 @@ public:
     * @note To disable OCR set gain equal to 0.0. 
     */
     virtual bool setOCRGain(const double gain)=0;
+
+    /**
+    * Enable/disable the use of very fast eyes movements (saccades).
+    * [wait for reply] 
+    * @param f true/false to enable/disable saccades.
+    * @return true/false on success/failure. 
+    *  
+    * @note Vision processing algorithms might be heavily affected 
+    *       by saccades.
+    */
+    virtual bool setSaccadesStatus(const bool f)=0;
 
     /**
     * Update the options used by the stereo approach. [wait for 
