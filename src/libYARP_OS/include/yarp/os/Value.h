@@ -219,16 +219,10 @@ public:
     virtual size_t asBlobLength() const    { ok(); return proxy->asBlobLength(); }
 
     // documented in Portable
-    virtual bool read(ConnectionReader& connection) { 
-        ok(); 
-        return proxy->read(connection);
-    }
+    virtual bool read(ConnectionReader& connection);
 
     // documented in Portable
-    virtual bool write(ConnectionWriter& connection) {
-        ok(); 
-        return proxy->write(connection);
-    }
+    virtual bool write(ConnectionWriter& connection);
 
     // documented in Searchable
     virtual bool check(const char *key) {

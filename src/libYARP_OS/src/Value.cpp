@@ -128,3 +128,32 @@ const Value& Value::operator = (const Value& alt) {
 }
 
 
+bool Value::read(ConnectionReader& connection) {
+    if (proxy) { 
+        delete proxy;
+        proxy = 0;
+    }
+    int x = connection.expectInt();
+    if (x!=BOTTLE_TAG_LIST) return false;
+    x = connection.expectInt();
+    if (x==0) return true;
+    if (x!=1) return false;
+    x = connection.expectInt();
+    if (connection.isError()) return false;
+    Storable *s = Storable::createByCode(x);
+    setProxy(s);
+    if (!proxy) return false;
+    return s->readRaw(connection);
+}
+
+bool Value::write(ConnectionWriter& connection) {
+    if (!proxy) {
+        connection.appendInt(BOTTLE_TAG_LIST);
+        connection.appendInt(0);
+        return !connection.isError();
+    }
+    connection.appendInt(BOTTLE_TAG_LIST);
+    connection.appendInt(1);
+    return proxy->write(connection);
+}
+

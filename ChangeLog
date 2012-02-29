@@ -1,3 +1,12 @@
+2012-02-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Value.cpp: fix wire format of
+	Value objects [thanks Miguel Sarabia Del Castillo]
+
+	* src/libYARP_sig/harness/MatrixTest.cpp: add test for
+	serialization problem reported on robotcub-hackers
+	[thanks Miguel Sarabia Del Castillo]
+
 2012-02-22  Ugo Pattacini  <ugo.pattacini@iit.it>
         * src/libYARP_dev/include/yarp/dev/GazeControl.h:
         added new methods for setting/getting VOR and OCR gains.

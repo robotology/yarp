@@ -65,8 +65,11 @@ public:
     virtual const char *asBlob() const   { return (const char*)0; }
     virtual size_t asBlobLength() const     { return 0; }
 
-    virtual bool read(ConnectionReader& connection) = 0;
-    virtual bool write(ConnectionWriter& connection) = 0;
+    virtual bool read(ConnectionReader& connection);
+    virtual bool write(ConnectionWriter& connection);
+
+    virtual bool readRaw(ConnectionReader& connection) = 0;
+    virtual bool writeRaw(ConnectionWriter& connection) = 0;
 
     virtual bool check(const char *key);
 
@@ -174,6 +177,7 @@ public:
 
     virtual bool isLeaf() const { return true; }
 
+    static Storable *createByCode(int code);
 };
 
 
@@ -189,8 +193,8 @@ public:
     virtual String toStringFlex() const { return ""; }
     virtual void fromString(const String& src) {}
     virtual int getCode() const { return -1; }
-    virtual bool read(ConnectionReader& connection) { return false; }
-    virtual bool write(ConnectionWriter& connection) { return false; }
+    virtual bool readRaw(ConnectionReader& connection) { return false; }
+    virtual bool writeRaw(ConnectionWriter& connection) { return false; }
     virtual Storable *createStorable() const { return new StoreNull(); }
     virtual bool isNull() const { return true; }
     virtual void copy(const Storable& alt) {}
@@ -211,8 +215,8 @@ public:
     virtual String toStringFlex() const;
     virtual void fromString(const String& src);
     virtual int getCode() const { return code; }
-    virtual bool read(ConnectionReader& connection);
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { return new StoreInt(0); }
     virtual int asInt() const { return x; }
     virtual int asVocab() const { return x; }
@@ -238,8 +242,8 @@ public:
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
     virtual int getCode() const { return code; }
-    virtual bool read(ConnectionReader& connection);
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { return new StoreVocab(0); }
     virtual int asInt() const { return x; }
     virtual int asVocab() const { return x; }
@@ -265,8 +269,8 @@ public:
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
     virtual int getCode() const { return code; }
-    virtual bool read(ConnectionReader& connection);
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { 
         return new StoreString(String("")); 
     }
@@ -293,8 +297,8 @@ public:
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
     virtual int getCode() const { return code; }
-    virtual bool read(ConnectionReader& connection);
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { 
         return new StoreBlob(String("")); 
     }
@@ -327,8 +331,8 @@ public:
     virtual String toStringFlex() const;
     virtual void fromString(const String& src);
     virtual int getCode() const { return code; }
-    virtual bool read(ConnectionReader& connection);
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { 
         return new StoreDouble(0); 
     }
@@ -358,8 +362,8 @@ public:
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
     virtual int getCode() const { return code+subCode(); }
-    virtual bool read(ConnectionReader& connection);
-    virtual bool write(ConnectionWriter& connection);
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { 
         return new StoreList(); 
     }

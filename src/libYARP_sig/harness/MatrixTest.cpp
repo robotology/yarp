@@ -13,6 +13,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/PortablePair.h>
 
 #include <yarp/gsl_compatibility.h>
 
@@ -354,6 +355,72 @@ public:
         checkTrue(ok,"resizing to smaller size keeps old values");
     }
 
+    void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc) {
+        m.resize((int)rr,(int)cc);
+        for(unsigned int r=0; r<rr; r++) {
+            for(unsigned int c=0; c<cc; c++) {
+                m[r][c] = r*cc+c;
+            }
+        }
+    }
+
+    void checkFormat() {
+        report(0,"check matrix format conforms to network standard...");
+
+        Matrix m;
+        unsigned int rr = 10;
+        unsigned int cc = 5;
+        makeTestMatrix(m,rr,cc);
+
+        BufferedConnectionWriter writer;
+        m.write(writer);
+        String s = writer.toString();
+        Bottle bot;
+        bot.fromBinary(s.c_str(),(int)s.length());
+        checkEqual(bot.get(0).asInt(),rr,"row count matches");
+        checkEqual(bot.get(1).asInt(),cc,"column count matches");
+        Bottle *lst = bot.get(2).asList();
+        checkTrue(lst!=NULL,"have data");
+        if (!lst) return;
+        checkEqual(lst->size(),(int)(rr*cc),"data length matches");
+        if (lst->size()!=(int)(rr*cc)) return;
+        bool ok = true;
+        for (int i=0; i<(int)(rr*cc); i++) {
+            double v = lst->get(i).asDouble();
+            if (fabs(v-i)>0.01) { 
+                ok = false;
+                checkEqual(v,i,"cell matches");
+                break;
+            }
+        }
+        checkTrue(ok,"data matches");
+    }
+
+    void checkPair() {
+        report(0,"checking portable-pair serialization...");
+        // potential problem reported by Miguel Sarabia Del Castillo
+
+        Matrix m;
+        unsigned int rr = 10;
+        unsigned int cc = 5;
+        makeTestMatrix(m,rr,cc);
+
+        double value = 3.14;
+
+        yarp::os::PortablePair<yarp::sig::Matrix, yarp::os::Value> msg, msg2;
+        msg.head = m;
+        msg.body = yarp::os::Value(value);
+
+        DummyConnector con;
+        msg.write(con.getWriter());
+        ConnectionReader& reader = con.getReader();
+        msg2.read(reader);
+        checkEqual(msg.head.rows(),msg2.head.rows(),"matrix row match");
+        checkEqual(msg.head.cols(),msg2.head.cols(),"matrix col match");
+        checkEqual(msg.body.asDouble(),msg2.body.asDouble(),"value match");
+    }
+
+
     virtual void runTests() {
             Network::setLocalMode(true);
             checkCopyCtor();
@@ -364,6 +431,10 @@ public:
         
             checkBottle();
             checkSendReceive();
+
+            checkFormat();
+            checkPair();
+
             Network::setLocalMode(false);
         }
 };

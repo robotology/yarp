@@ -291,17 +291,7 @@ size_t BottleImpl::size() const {
     return content.size();
 }
 
-
-bool BottleImpl::fromBytes(ConnectionReader& reader) {
-    if (reader.isError()) return false;
-    int id = speciality;
-    YMSG(("READING, nest flag is %d\n", nested));
-    if (id==0) {
-        id = reader.expectInt();
-        YMSG(("READ subcode %d\n", id));
-    } else {
-        YMSG(("READ skipped subcode %d\n", speciality));
-    }
+Storable *Storable::createByCode(int id) {
     Storable *storable = NULL;
     int subCode = 0;
     switch (id) {
@@ -336,12 +326,27 @@ bool BottleImpl::fromBytes(ConnectionReader& reader) {
         }
         break;
     }
+    return storable;
+}
+
+
+bool BottleImpl::fromBytes(ConnectionReader& reader) {
+    if (reader.isError()) return false;
+    int id = speciality;
+    YMSG(("READING, nest flag is %d\n", nested));
+    if (id==0) {
+        id = reader.expectInt();
+        YMSG(("READ subcode %d\n", id));
+    } else {
+        YMSG(("READ skipped subcode %d\n", speciality));
+    }
+    Storable *storable = Storable::createByCode(id);
     if (storable==NULL) {
         YARP_SPRINTF1(Logger::get(),error,"BottleImpl reader failed, unrecognized object code %d",id);
         //throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
         return false;
     }
-    storable->read(reader);
+    storable->readRaw(reader);
     add(storable);
     return true;
 }
@@ -560,7 +565,7 @@ void BottleImpl::synch() {
             if (s->isList()) {
                 s->asList()->setNested(true);
             }
-            s->write(writer);
+            s->writeRaw(writer);
         }
         String str = writer.toString();
         data.resize(str.length(),' ');
@@ -597,12 +602,12 @@ void StoreInt::fromString(const String& src) {
     x = ACE_OS::strtol(src.c_str(), (char **)NULL, 0);
 }
 
-bool StoreInt::read(ConnectionReader& reader) {
+bool StoreInt::readRaw(ConnectionReader& reader) {
     x = reader.expectInt();
     return true;
 }
 
-bool StoreInt::write(ConnectionWriter& writer) {
+bool StoreInt::writeRaw(ConnectionWriter& writer) {
     writer.appendInt(x);
     return true;
 }
@@ -634,12 +639,12 @@ void StoreVocab::fromStringNested(const String& src) {
     }
 }
 
-bool StoreVocab::read(ConnectionReader& reader) {
+bool StoreVocab::readRaw(ConnectionReader& reader) {
     x = reader.expectInt();
     return true;
 }
 
-bool StoreVocab::write(ConnectionWriter& writer) {
+bool StoreVocab::writeRaw(ConnectionWriter& writer) {
     writer.appendInt(x);
     return true;
 }
@@ -703,14 +708,14 @@ void StoreDouble::fromString(const String& src) {
 #endif
 }
 
-bool StoreDouble::read(ConnectionReader& reader) {
+bool StoreDouble::readRaw(ConnectionReader& reader) {
     NetFloat64 flt = 0;
     reader.expectBlock((const char*)&flt,sizeof(flt));
     x = flt;
     return true;
 }
 
-bool StoreDouble::write(ConnectionWriter& writer) {
+bool StoreDouble::writeRaw(ConnectionWriter& writer) {
     //writer.appendBlockCopy(Bytes((char*)&x,sizeof(x)));
     NetFloat64 flt = x;
     writer.appendBlock((char*)&flt,sizeof(flt));
@@ -823,7 +828,7 @@ void StoreString::fromStringNested(const String& src) {
 }
 
 
-bool StoreString::read(ConnectionReader& reader) {
+bool StoreString::readRaw(ConnectionReader& reader) {
     int len = reader.expectInt();
     String buf(YARP_STRINIT(len));
     reader.expectBlock((const char *)buf.c_str(),len);
@@ -832,7 +837,7 @@ bool StoreString::read(ConnectionReader& reader) {
     return true;
 }
 
-bool StoreString::write(ConnectionWriter& writer) {
+bool StoreString::writeRaw(ConnectionWriter& writer) {
     writer.appendInt((int)x.length()+1);
     writer.appendString(x.c_str(),'\0');
     return true;
@@ -881,7 +886,7 @@ void StoreBlob::fromStringNested(const String& src) {
 }
 
 
-bool StoreBlob::read(ConnectionReader& reader) {
+bool StoreBlob::readRaw(ConnectionReader& reader) {
     int len = reader.expectInt();
     String buf(YARP_STRINIT(len));
     reader.expectBlock((const char *)buf.c_str(),len);
@@ -890,7 +895,7 @@ bool StoreBlob::read(ConnectionReader& reader) {
     return true;
 }
 
-bool StoreBlob::write(ConnectionWriter& writer) {
+bool StoreBlob::writeRaw(ConnectionWriter& writer) {
     writer.appendInt((int)x.length());
     writer.appendBlock(x.c_str(),x.length());
     return true;
@@ -926,13 +931,13 @@ void StoreList::fromStringNested(const String& src) {
     }
 }
 
-bool StoreList::read(ConnectionReader& reader) {
+bool StoreList::readRaw(ConnectionReader& reader) {
     // not using the most efficient representation
     content.read(reader);
     return true;
 }
 
-bool StoreList::write(ConnectionWriter& writer) {
+bool StoreList::writeRaw(ConnectionWriter& writer) {
     // not using the most efficient representation
     content.write(writer);
     return true;
@@ -1100,3 +1105,14 @@ bool Storable::operator == (const Value& alt) const {
     return String(toString().c_str()) == alt.toString().c_str();
 }
 
+
+bool Storable::read(ConnectionReader& connection) {
+    int x = connection.expectInt();
+    if (x!=getCode()) return false;
+    return readRaw(connection);
+}
+
+bool Storable::write(ConnectionWriter& connection) {
+    connection.appendInt(getCode());
+    return writeRaw(connection);
+}
