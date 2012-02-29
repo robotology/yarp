@@ -389,7 +389,7 @@ public:
             double v = lst->get(i).asDouble();
             if (fabs(v-i)>0.01) { 
                 ok = false;
-                checkEqual(v,i,"cell matches");
+                checkEqualish(v,i,"cell matches");
                 break;
             }
         }
@@ -417,7 +417,7 @@ public:
         msg2.read(reader);
         checkEqual(msg.head.rows(),msg2.head.rows(),"matrix row match");
         checkEqual(msg.head.cols(),msg2.head.cols(),"matrix col match");
-        checkEqual(msg.body.asDouble(),msg2.body.asDouble(),"value match");
+        checkEqualish(msg.body.asDouble(),msg2.body.asDouble(),"value match");
 
         Bottle bot;
         bot.read(msg);
@@ -431,7 +431,7 @@ public:
         checkTrue(lst!=NULL,"have data");
         if (!lst) return;
         checkEqual(lst->size(),(int)(rr*cc),"data length matches");
-        checkEqual(bot2->get(0).asDouble(),value,"value match");
+        checkEqualish(bot2->get(0).asDouble(),value,"value match");
     }
 
 

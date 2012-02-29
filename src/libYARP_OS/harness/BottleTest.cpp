@@ -543,10 +543,10 @@ public:
         Value v(3.14);
         Bottle b;
         b.read(v);
-        checkEqual(b.get(0).asDouble(),3.14,"copy to bottle succeeded");
+        checkEqualish(b.get(0).asDouble(),3.14,"copy to bottle succeeded");
         Bottle b2;
         b.write(b2);
-        checkEqual(b2.get(0).asDouble(),3.14,"copy from bottle succeeded");
+        checkEqualish(b2.get(0).asDouble(),3.14,"copy from bottle succeeded");
     }
 
     virtual void runTests() {

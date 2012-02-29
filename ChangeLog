@@ -1,5 +1,8 @@
 2012-02-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/harness/BottleTest.cpp: use floating point
+	comparisons in tests [thanks Ugo Pattacini]
+
 	* src/libYARP_OS/src/Bottle.cpp: add Bottle::read(PortWriter)
 	helper function [thanks Miguel Sarabia Del Castillo]
 
