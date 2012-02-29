@@ -197,6 +197,23 @@ public:
      */
     bool read(ConnectionReader& reader);
 
+    /**
+     * Copy the bottle's value to a object that can read a serialization.
+     * Must be serialized in standard Bottle-compatible format.
+     * @param reader the serializable object
+     * @return true iff the bottle was written successfully.
+     */
+    bool write(PortReader& reader);
+
+    /**
+     * Set the bottle's value based on input from a serializable object.
+     * Must be serialized in standard Bottle-compatible format.
+     * @param writer the serializable object
+     * @return true iff the bottle was read successfully.
+     */
+    bool read(PortWriter& writer);
+
+
     void onCommencement();
 
     virtual bool check(const char *key);

@@ -12,6 +12,7 @@
 #include <yarp/os/impl/IOException.h>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/DummyConnector.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -404,3 +405,16 @@ Bottle& Searchable::findGroup(const char *key,
 }
 
 
+bool Bottle::write(PortReader& reader) {
+    DummyConnector con;
+    con.setTextMode(false);
+    write(con.getWriter());
+    return reader.read(con.getReader());
+}
+
+bool Bottle::read(PortWriter& writer) {
+    DummyConnector con;
+    con.setTextMode(false);
+    writer.write(con.getWriter());
+    return read(con.getReader());
+}

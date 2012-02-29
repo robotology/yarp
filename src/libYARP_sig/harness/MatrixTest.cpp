@@ -418,6 +418,20 @@ public:
         checkEqual(msg.head.rows(),msg2.head.rows(),"matrix row match");
         checkEqual(msg.head.cols(),msg2.head.cols(),"matrix col match");
         checkEqual(msg.body.asDouble(),msg2.body.asDouble(),"value match");
+
+        Bottle bot;
+        bot.read(msg);
+        Bottle *bot1 = bot.get(0).asList();
+        Bottle *bot2 = bot.get(1).asList();
+        checkTrue(bot1!=NULL&&bot2!=NULL,"got head/body");
+        if (bot1==NULL&&bot2==NULL) return;
+        checkEqual(bot1->get(0).asInt(),rr,"row count matches");
+        checkEqual(bot1->get(1).asInt(),cc,"column count matches");
+        Bottle *lst = bot1->get(2).asList();
+        checkTrue(lst!=NULL,"have data");
+        if (!lst) return;
+        checkEqual(lst->size(),(int)(rr*cc),"data length matches");
+        checkEqual(bot2->get(0).asDouble(),value,"value match");
     }
 
 

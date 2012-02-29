@@ -538,6 +538,17 @@ public:
         checkTrue(b2.isNull(), "bottle null copied correctly");
     }
 
+    void testSerialCopy() {
+        report(0,"test serialization by copy");
+        Value v(3.14);
+        Bottle b;
+        b.read(v);
+        checkEqual(b.get(0).asDouble(),3.14,"copy to bottle succeeded");
+        Bottle b2;
+        b.write(b2);
+        checkEqual(b2.get(0).asDouble(),3.14,"copy from bottle succeeded");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -567,6 +578,7 @@ public:
         testHex();
         testEmptyList();
         testNull();
+        testSerialCopy();
     }
 
     virtual String getName() {
