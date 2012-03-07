@@ -152,10 +152,7 @@ public:
      */
     bool replyAndDrop(PortWriter& writer);
 
-    /**
-     * Set an external reader for port data.
-     * @param reader the external reader to use
-     */
+    // documentation provided in Contactable
     void setReader(PortReader& reader);
 
     /**

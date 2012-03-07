@@ -145,6 +145,11 @@ public:
     virtual bool isWriting() {
         return port.isWriting();
     }
+
+    // documented in Contactable
+    void setReader(PortReader& reader) {
+        port.setReader(reader);
+    }
     
 private:
     // an RpcClient may be implemented with a regular port

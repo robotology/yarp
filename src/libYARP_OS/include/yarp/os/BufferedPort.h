@@ -208,6 +208,10 @@ public:
         this->reader.setReplier(reader);
     }
 
+    void setReader(PortReader& reader) {
+        setReplier(reader);
+    }
+
     /**
      * this method will be called with new data, as long as you've
      * requested this be done by calling useCallback()

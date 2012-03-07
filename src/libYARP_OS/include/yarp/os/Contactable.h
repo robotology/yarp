@@ -217,6 +217,13 @@ public:
      * @result true iff the port is writing in the background.
      */
     virtual bool isWriting() = 0;
+
+
+    /**
+     * Set an external reader for port data.
+     * @param reader the external reader to use
+     */
+    virtual void setReader(PortReader& reader) = 0;
 };
 
 #endif
