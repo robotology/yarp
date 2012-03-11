@@ -23,7 +23,7 @@
 #include "include/partMover.h"
 #include <string.h>
 #include <locale.h>
-
+#include "include/windowTools.h"
 
 /*
  * Performs coordinated movements
@@ -356,9 +356,14 @@ void partMover::home_all(GtkButton *button, partMover* currentPart)
 /*
  * Enable all PID and refresh position sliders
  */
-
 void partMover::calib_all(GtkButton *button, partMover* currentPart)
 {
+  //ask for confirmation
+  if (!dialog_question("Do you really want to recalibrate the whole part?")) 
+  {
+     return;
+  }
+
   IPositionControl *ipos = currentPart->pos;
   IControlCalibration2 *ical = currentPart->cal;
 	 

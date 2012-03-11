@@ -21,7 +21,7 @@
 
 #include "include/robotMotorGui.h"
 #include "include/partMover.h"
-
+#include "include/windowTools.h"
 #include <string.h>
 
 const int UPDATE_TIME = 200;   //update time in ms
@@ -51,6 +51,12 @@ void partMover::dis_click(GtkButton *button, gtkClassData* currentClassData)
 
 void partMover::calib_click(GtkButton *button, gtkClassData* currentClassData)
 {
+  //ask for confirmation
+  if (!dialog_question("Do you really want to recalibrate the joint?")) 
+  {
+     return;
+  }
+
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   IPositionControl *ipos = currentPart->pos;
@@ -248,6 +254,7 @@ bool partMover::entry_update(partMover *currentPart)
 
   IControlMode     *ictrl = currentPart->ctrlmode;
   IPositionControl  *ipos = currentPart->pos;
+  IVelocityControl  *ivel = currentPart->iVel;
   IEncoders       *iiencs = currentPart->iencs;
   ITorqueControl    *itrq = currentPart->trq;
   IAmplifierControl *iamp = currentPart->amp;
@@ -330,7 +337,7 @@ bool partMover::entry_update(partMover *currentPart)
   // the new icubinterface does not increase the bandwidth consumption
   // ret = true; useless guys!
   ret=ictrl->getControlModes(controlModes);
-  
+
   if (ret==false) fprintf(stderr,"ictrl->getControlMode failed\n" );
   for (k = 0; k < NUMBER_OF_JOINTS; k++)
   {
