@@ -113,7 +113,7 @@ GtkWidget * dialog_message_generator(GtkMessageType gtk_message_type, const char
     return message;
 }
 
-bool dialog_question (char* text)
+bool dialog_question (const char* text)
 {
     bool ret=false;
 

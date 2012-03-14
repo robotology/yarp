@@ -20,4 +20,5 @@
 #include <gtk/gtkmain.h>
 #include "gtkMessages.h"
 
-bool dialog_question (char* text);
+bool dialog_question (const char* text);
+
