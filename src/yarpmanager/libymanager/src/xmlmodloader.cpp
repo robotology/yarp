@@ -473,6 +473,8 @@ Module* XmlModLoader::parsXml(const char* szFile)
                             proc.setModel(element->GetText());
                         if((element = (TiXmlElement*) comptag->FirstChild("cores")))
                             proc.setCores((size_t)atoi(element->GetText()));               
+                        if((element = (TiXmlElement*) comptag->FirstChild("siblings")))
+                            proc.setSiblings((size_t)atoi(element->GetText()));                                           
                         if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
                             proc.setFrequency(atof(element->GetText()));
                         computer.setProcessor(proc);
