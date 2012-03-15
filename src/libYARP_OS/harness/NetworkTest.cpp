@@ -16,6 +16,8 @@
 #include <yarp/os/Bottle.h>
 
 #include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/TcpFace.h>
+#include <yarp/os/impl/Address.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;
@@ -67,12 +69,15 @@ public:
 
     void run() {
         Bottle b1,b2;
-        p.read(b1,true);
-        for (int i=0; i<10 && !isStopping(); i++) {
-            Time::delay(1);
+        while (!isStopping()) {
+            p.read(b1,true);
+            //printf("READ %s\n", b1.toString().c_str());
+            for (int i=0; i<10 && !isStopping(); i++) {
+                Time::delay(1);
+            }
+            b2.addString("you should not be seeing this");
+            p.reply(b2);
         }
-        b2.addString("you should not be seeing this");
-        p.reply(b2);
     }
 };
 
@@ -145,8 +150,8 @@ public:
         Network::unregisterName("/foo");
     }
 
-    void checkTimeout() {
-        report(0,"checking timeout");
+    void checkTimeoutNetworkWrite() {
+        report(0,"checking Network::write timeout");
         SlowResponder sr("/slow");
         sr.start();
         Bottle cmd("hello"), reply;
@@ -161,13 +166,34 @@ public:
         sr.stop();
     }
 
+    void checkTimeoutNetworkExists() {
+        ContactStyle style;
+        style.timeout = 2.0;
+        report(0,"checking Network::exists timeout");
+        Port p;
+        p.open("/tcp");
+        Contact c = p.where();
+        bool ok = Network::exists("/tcp",style);
+        checkTrue(ok,"a yarp port");
+        p.close();
+        TcpFace face;
+        Address address(c.getHost().c_str(),c.getPort());
+        checkTrue(face.open(address),"open server socket, timeout check proceeds");
+        Network::registerContact(c);
+        ok = Network::exists("/tcp",style);
+        Network::unregisterContact(c);
+        checkFalse(ok,"not a yarp port");
+        face.close();
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
         checkSync();
         checkComms();
         checkPropertySetGet();
-        checkTimeout();
+        checkTimeoutNetworkWrite();
+        checkTimeoutNetworkExists();
         Network::setLocalMode(false);
     }
 };

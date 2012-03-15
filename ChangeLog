@@ -1,8 +1,12 @@
 2012-03-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Network.cpp: respect timeout in
+	Network::exists for sockets that are reachable but
+	unresponsive.
+
 	* src/libYARP_OS/harness/NetworkTest.cpp: add test to make
-	sure timeout option in Network::write is effective
-	[thanks Ali Paikan]
+	sure timeout option in Network::write and Network::check
+	are effective [thanks Ali Paikan]
 
 2012-02-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

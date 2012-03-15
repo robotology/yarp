@@ -440,7 +440,15 @@ bool NetworkBase::disconnect(const char *src, const char *dest,
 bool NetworkBase::exists(const char *port, const ContactStyle& style) {
     int result = Companion::exists(port,style);
     if (result==0) {
-        Companion::poll(port,true);
+        //Companion::poll(port,true);
+        ContactStyle style2 = style;
+        style2.admin = true;
+        Bottle cmd("[ver]"), resp;
+        bool ok = NetworkBase::write(Contact::byName(port),cmd,resp,style2);
+        if (!ok) result = 1;
+        if (resp.get(0).toString()!="ver") {
+            result = 1;
+        }
     }
     return result == 0;
 }
