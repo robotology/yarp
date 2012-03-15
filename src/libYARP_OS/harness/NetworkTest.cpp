@@ -57,6 +57,24 @@ public:
     }
 };
 
+class SlowResponder : public Thread {
+public:
+    Port p;
+
+    SlowResponder(const char *name) {
+        p.open(name);
+    }
+
+    void run() {
+        Bottle b1,b2;
+        p.read(b1,true);
+        for (int i=0; i<10 && !isStopping(); i++) {
+            Time::delay(1);
+        }
+        b2.addString("you should not be seeing this");
+        p.reply(b2);
+    }
+};
 
 class NetworkTest : public UnitTest {
 public:
@@ -127,12 +145,29 @@ public:
         Network::unregisterName("/foo");
     }
 
+    void checkTimeout() {
+        report(0,"checking timeout");
+        SlowResponder sr("/slow");
+        sr.start();
+        Bottle cmd("hello"), reply;
+        ContactStyle style;
+        style.timeout = 2.0;
+        double start = Time::now();
+        Network::write(Contact::byName("/slow"),cmd,reply,style);
+        double duration = Time::now()-start;
+        bool goodTime = duration<9;
+        checkEqual(reply.get(0).asString().c_str(),"","check timeout happened");
+        checkTrue(goodTime,"timing looks ok");
+        sr.stop();
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
         checkSync();
         checkComms();
         checkPropertySetGet();
+        checkTimeout();
         Network::setLocalMode(false);
     }
 };
