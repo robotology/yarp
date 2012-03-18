@@ -36,6 +36,7 @@ Manager::Manager(bool withWatchDog) : MEvent()
     bRestricted = false;
     strDefBroker = BROKER_YARPRUN;  
     knowledge.createFrom(NULL, NULL, NULL);
+    connector.init();
 }
 
 Manager::Manager(const char* szModPath, const char* szAppPath, 
@@ -63,6 +64,7 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
         pResLoad = NULL;
 
     knowledge.createFrom(pModLoad, pAppLoad, pResLoad);
+    connector.init();
 }
 
 
@@ -378,12 +380,12 @@ bool Manager::exist(unsigned int id)
     {
         if(res->getName())
         {
-            YarpBroker broker;
-            broker.init();
+            //YarpBroker broker;
+            //broker.init();
             string strPort = res->getName();
             if(strPort[0] != '/')
                 strPort = string("/") + strPort;     
-            res->setAvailability(broker.exists(strPort.c_str()));
+            res->setAvailability(connector.exists(strPort.c_str()));
         }
     }
     return res->getAvailability();
@@ -515,8 +517,8 @@ bool Manager::existPortFrom(unsigned int id)
         return false;
     }
 
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
     return connector.exists(connections[id].from());
 }
 
@@ -529,8 +531,8 @@ bool Manager::existPortTo(unsigned int id)
         return false;
     }
 
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
     return connector.exists(connections[id].to());
 }
 
@@ -817,8 +819,8 @@ bool Manager::connect(unsigned int id)
         return false;
     }
 
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
 
     if( !connector.connect(connections[id].from(), 
                             connections[id].to(),
@@ -834,8 +836,8 @@ bool Manager::connect(unsigned int id)
 
 bool Manager::connect(void)
 {
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
         if( !connector.connect((*cnn).from(), (*cnn).to(),
@@ -857,8 +859,8 @@ bool Manager::disconnect(unsigned int id)
         return false;
     }
 
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
 
     if( !connector.disconnect(connections[id].from(), 
                             connections[id].to()) )
@@ -873,8 +875,8 @@ bool Manager::disconnect(unsigned int id)
 
 bool Manager::disconnect(void)
 {
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
         if( !connector.disconnect((*cnn).from(), (*cnn).to()) )
@@ -895,8 +897,8 @@ bool Manager::connected(unsigned int id)
         return false;
     }
 
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
     return connector.connected(connections[id].from(), 
                             connections[id].to());
 }
@@ -904,8 +906,8 @@ bool Manager::connected(unsigned int id)
 
 bool Manager::connected(void)
 {
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
     CnnIterator cnn;
     bool bConnected = true;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
@@ -932,8 +934,8 @@ bool Manager::checkPortsAvailable(Broker* broker)
 
 bool Manager::connectExtraPorts(void)
 {
-    YarpBroker connector; 
-    connector.init();
+    //YarpBroker connector; 
+    //connector.init();
     
     double base = yarp::os::Time::now();
     while(!timeout(base, 5.0))

@@ -17,6 +17,7 @@
 #include "kbase.h"
 #include "utility.h"
 #include "executable.h"
+#include "yarpbroker.h"
 
 using namespace std; 
 
@@ -122,7 +123,8 @@ private:
     ErrorLogger* logger;
     string strAppName;
     string strDefBroker;
-    
+    YarpBroker connector;
+
     KnowledgeBase knowledge; 
     ExecutablePContainer runnables; 
     CnnContainer connections;
