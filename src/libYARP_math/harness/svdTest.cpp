@@ -51,43 +51,43 @@ public:
 
     void svd()
     {
-        report(0,"checking SVD");
+        report(0,"checking SVD of skinny matrix");
 
-        Matrix M(6,5);
-        M=1;
-        Matrix U,V;
-        Vector s;
-        Matrix S;
-        S.resize(5,5);
+        int m=6, n=5, nTest=1;
+        Matrix U(m,n), V(n,n);
+        Vector s(n);
+        Matrix S(n,n);
 
-        U.resize(6,5);
-        s.resize(5);
-        V.resize(5,5);
+        for(int i=0;i<nTest;i++){
+            Matrix M = Rand::matrix(m,n)*100;
+            SVD(M, U, s, V);
+            S.diagonal(s);
+            Matrix T = U*S*V.transposed();
+            assertEqual(T, M, "SVD decomposition of skinny matrix");
+        }
+    }
 
-        SVD(M, U, s, V);
+    void svdFat()
+    {
+        report(0,"checking SVD of fat matrix");
 
-        S.diagonal(s);
+        int m=5, n=6, nTest=1;
+        Matrix U(m,m), V(n,m);
+        Vector s(m);
+        Matrix S(m,m);
 
-        Matrix T(6,5);
-        T=U*S*V.transposed();
-
-        bool svdOk=true;
-        for(int r=0;r<M.rows();r++)
-            for(int c=0;c<M.cols(); c++)
-            {
-                if (fabs(T[r][c]-M[r][c])>0.01)
-                    svdOk=false;
-            }
-
-        checkTrue(svdOk, "SVD decomposition");
-
-        //printf("%s\n", M.toString().c_str());
-        //printf("%s\n", T.toString().c_str());
+        for(int i=0;i<nTest;i++){
+            Matrix M = Rand::matrix(m,n)*100;
+            SVD(M, U, s, V);
+            S.diagonal(s);
+            Matrix T = U*S*V.transposed();
+            assertEqual(T, M, "SVD decomposition of fat matrix");
+        }
     }
 
     void pInv()
     {
-        report(0, "checking pInv");
+        report(0, "checking pInv of skinny/square matrix");
 
         int m=6, n=5, nTest=1;
         Matrix M, Minv;
@@ -114,10 +114,31 @@ public:
         }
     }
 
+    void pInvFat()
+    {
+        report(0, "checking pInv of fat matrix");
+        int m=4, n=5, nTest=1;
+        Matrix M, Minv;
+        Matrix U(m,m), V(m,n);
+        Vector s(m);
+        for(int i=0; i<nTest; i++)
+        {
+            do
+            {
+                M = Rand::matrix(m,n)*100;  // skinny full rank matrix
+                SVD(M, U, s, V);
+            }while(s[m-1] < TOL);
+            Minv = pinv(M, TOL);
+            assertEqual(M*Minv, eye(m), "pinv of full-rank fat matrix");
+        }
+    }
+
     virtual void runTests() 
     {
         svd();
+        svdFat();
         pInv();
+        pInvFat();
     }
 };
 

@@ -1,3 +1,9 @@
+2012-03-19  Andrea Del Prete  <andrea.delprete@iit.it>
+    * src/libYARP_math/src/SVD.cpp
+    * src/libYARP_math/include/yarp/math/SVD.h
+    * src/libYARP_math/harness/SVDTest.cpp
+    Add SVD and pseudo-inverse for fat matrices (and related tests).
+    
 2012-03-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Network.cpp: respect timeout in

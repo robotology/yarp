@@ -19,11 +19,19 @@ namespace yarp
     namespace math 
     {
         /**
-        * Factorize the M-by-N matrix 'in' into the singular value decomposition in = U S V^T for M >= N.
+        * Factorize the M-by-N matrix 'in' into the singular value decomposition in = U S V^T.
         * The diagonal elements of the singular value matrix S are stored in the vector S.
         * The singular values are non-negative and form a non-increasing sequence from S_1 to S_N. 
         * The matrix V contains the elements of V in untransposed form. To form the product U S V^T it 
-        * is necessary to take the transpose of V. This routine uses the Golub-Reinsch SVD algorithm. 
+        * is necessary to take the transpose of V. This routine uses the Golub-Reinsch SVD algorithm.
+        * Defining K as min(M, N) the the input matrices are:
+        * @param in input M-by-N matrix to decompose
+        * @param U output M-by-K orthogonal matrix
+        * @param S output K-dimensional vector containing the diagonal entries of the diagonal matrix S
+        * @param V output N-by-K orthogonal matrix
+        * @note The routine computes the “thin” version of the SVD. Mathematically, the “full” SVD is 
+        *       defined with U and V as square orthogonal matrices and S as an M-by-N diagonal matrix.
+        *       If U, S, V do not have the expected sizes they are resized automatically.
         */
         void YARP_math_API SVD(const yarp::sig::Matrix &in, 
             yarp::sig::Matrix &U,
@@ -49,7 +57,7 @@ namespace yarp
             yarp::sig::Matrix &V);
 
         /**
-        * Perform the moore-penrose pseudo-inverse on a MxN matrix for M >= N.
+        * Perform the moore-penrose pseudo-inverse of a matrix.
         * @param in input matrix 
         * @param tol singular values less than tol are set to zero
         * @return pseudo-inverse of the matrix 'in'
