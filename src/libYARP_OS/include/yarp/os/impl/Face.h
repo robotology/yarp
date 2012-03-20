@@ -27,7 +27,7 @@ namespace yarp {
 /**
  * The initial point-of-contact with a port.
  */
-class yarp::os::impl::Face {
+class YARP_OS_impl_API yarp::os::impl::Face {
 public:
     /**
      * Constructor.
