@@ -204,6 +204,32 @@ public:
         return true;
     }
 
+    bool isAbsolute(const char *path) {
+        if (path[0]=='/'||path[0]=='\\') {
+            return true;
+        }
+        ConstString str(path);
+        if (str.length()>1) {
+            if (str[1]==':') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool isRooted(const char *path) {
+        if (isAbsolute(path)) return true;
+        ConstString str(path);
+        if (str.length()>=2) {
+            if (str[0]=='.'&&(str[1]=='/'||str[1]=='\\')) {
+                return true;
+            }
+        } else if (str==".") {
+            return true;
+        }
+        return false;
+    }
+
     yarp::os::ConstString getPath(const char *base1, 
                                   const char *base2, 
                                   const char *base3, 
@@ -216,13 +242,21 @@ public:
             }
         }
         if (base2!=NULL) {
-            s = s + base2;
+            if (isRooted(base2)) {
+                s = base2;
+            } else {
+                s = s + base2;
+            }
             if (ConstString(base2)!="") {
                 s = s + "/";
             }
         }
         if (base3!=NULL) {
-            s = s + base3;
+            if (isRooted(base3)) {
+                s = base3;
+            } else {
+                s = s + base3;
+            }
             if (ConstString(base3)!="") {
                 s = s + "/";
             }
@@ -230,14 +264,6 @@ public:
 
         s = s + name;
         
-        ConstString user = base3;
-        if (user.length()>=2) {
-            if (user[0]=='.'&&(user[1]=='/'||user[1]=='\\')) {
-                s = user + "/" + name;
-            }
-        } else if (user==".") {
-            s = user + "/" + name;
-        }
         return s;
     }
 

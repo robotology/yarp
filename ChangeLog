@@ -1,3 +1,9 @@
+2012-03-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ResourceFinder.cpp: if context
+	is set to an absolute path, rather than an application
+	name, respect that [thanks Lorenzo Natale]
+
 2012-03-19  Andrea Del Prete  <andrea.delprete@iit.it>
     * src/libYARP_math/src/SVD.cpp
     * src/libYARP_math/include/yarp/math/SVD.h
