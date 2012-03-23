@@ -26,11 +26,15 @@ private:
 
         char date[256];        
         ACE::timestamp(date,256);
-        
+        for (int t=0; t<256 && date[t]; ++t)
+        {
+            if (date[t]==' ' || date[t]==':') date[t]='_';
+        }
+
         char path[512];
         sprintf(path,"%syarprun_log_%s.txt",temp,date);
 
-        mLogFile=fopen(path,"w"); 
+        mLogFile=fopen(path,"w");
     }
 
 public:
@@ -83,8 +87,8 @@ private:
 };
 
 #define CHECK_ENTER(label) YarprunCheckpoints::instance().push(label,__FILE__);
-#define CHECKPOINT(dummy) YarprunCheckpoints::instance().checkpoint(__FILE__);
-#define CHECK_EXIT(dummy) YarprunCheckpoints::instance().pop(__FILE__);
+#define CHECKPOINT() YarprunCheckpoints::instance().checkpoint(__FILE__);
+#define CHECK_EXIT() YarprunCheckpoints::instance().pop(__FILE__);
 
 #else
 
