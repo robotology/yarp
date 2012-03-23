@@ -9,7 +9,7 @@
 #ifndef __YARPRUN_RUN_CHECKPOINTS__
 #define __YARPRUN_RUN_CHECKPOINTS__
 
-#define YARPRUN_LOG
+//#define YARPRUN_LOG
 
 #ifdef YARPRUN_LOG
 
@@ -93,8 +93,8 @@ private:
 #else
 
 #define CHECK_ENTER(dummy)
-#define CHECKPOINT(dummy)
-#define CHECK_EXIT(dummy)
+#define CHECKPOINT()
+#define CHECK_EXIT()
 
 #endif
 
