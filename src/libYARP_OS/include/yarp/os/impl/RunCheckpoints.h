@@ -50,31 +50,31 @@ public:
         return singleton;
     }
 
-    void push(const char* label,const char* sFile)
+    void push(const char* label,const char* sFile,int line)
     {
         mLabels.push_back(std::string(label));
 
         if (mLogFile)
         {
-            fprintf(mLogFile,"%s: ENTER section %s line %d\n",sFile,label,__LINE__); 
+            fprintf(mLogFile,"%s: ENTER section %s line %d\n",sFile,label,line); 
             fflush(mLogFile);
         }
     }
 
-    void checkpoint(const char* sFile)
+    void checkpoint(const char* sFile,int line)
     {
         if (mLogFile)
         {
-            fprintf(mLogFile,"%s:       section %s line %d\n",sFile,mLabels.back().c_str(),__LINE__); 
+            fprintf(mLogFile,"%s:       section %s line %d\n",sFile,mLabels.back().c_str(),line); 
             fflush(mLogFile);
         }    
     }
 
-    void pop(const char* sFile)
+    void pop(const char* sFile,int line)
     {
         if (mLogFile)
         {
-            fprintf(mLogFile,"%s: EXIT  section %s line %d\n",sFile,mLabels.back().c_str(),__LINE__); 
+            fprintf(mLogFile,"%s: EXIT  section %s line %d\n",sFile,mLabels.back().c_str(),line); 
             fflush(mLogFile);
         }
 
@@ -86,9 +86,9 @@ private:
     std::list<std::string> mLabels;
 };
 
-#define CHECK_ENTER(label) YarprunCheckpoints::instance().push(label,__FILE__);
-#define CHECKPOINT() YarprunCheckpoints::instance().checkpoint(__FILE__);
-#define CHECK_EXIT() YarprunCheckpoints::instance().pop(__FILE__);
+#define CHECK_ENTER(label) YarprunCheckpoints::instance().push(label,__FILE__,__LINE__);
+#define CHECKPOINT() YarprunCheckpoints::instance().checkpoint(__FILE__,__LINE__);
+#define CHECK_EXIT() YarprunCheckpoints::instance().pop(__FILE__,__LINE__);
 
 #else
 
