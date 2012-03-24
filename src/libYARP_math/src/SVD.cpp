@@ -36,7 +36,7 @@ void yarp::math::SVD(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
 {
     int m=in.rows(), n=in.cols(), k = (m<n)?m:n;
     Vector work(k);
-    if(S.size()!=k) S.resize(k);
+    if((int)S.size()!=k) S.resize(k);
     if(m>=n)
     {
         U = in;
