@@ -1,3 +1,11 @@
+2012-03-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add
+	findNestedResourceFinder() function [thanks Lorenzo Natale]
+
+	* src/libYARP_OS/harness/ResourceFinderTest.cpp: add
+	test for nested sections in resource finders.
+
 2012-03-23 Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/include/yarp/os/impl/RunCheckpoints.h
 	* src/libYARP_OS/src/Run.cpp

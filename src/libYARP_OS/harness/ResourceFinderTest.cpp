@@ -147,10 +147,59 @@ public:
         checkEqual(rf.getContext().c_str(),"zig","recovered context");
     }
 
+    void testSubGroup() {
+        report(0,"test subgroup");
+        const char *fname0 = "_yarp_regression_subgroup_test.ini";
+        const char *fname1 = "_yarp_regression_subgroup_test_rf1.txt";
+        const char *fname2 = "_yarp_regression_subgroup_test_rf2.txt";
+        {
+            FILE *fout = fopen(fname0,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"[section1]\n");
+            fprintf(fout,"fname \"_yarp_regression_subgroup_test_rf1.txt\"\n");
+            fprintf(fout,"[section2]\n");
+            fprintf(fout,"fname \"_yarp_regression_subgroup_test_rf2.txt\"\n");
+            fclose(fout);
+            fout = NULL;
+        }
+        {
+            FILE *fout = fopen(fname1,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"x 1\n");
+            fclose(fout);
+            fout = NULL;
+        }
+        {
+            FILE *fout = fopen(fname2,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"x 2\n");
+            fclose(fout);
+            fout = NULL;
+        }
+        ResourceFinder rf;
+        const char *argv[] = { "ignore", 
+                               "--policy", "_yarp_regression_test",
+                               "--_yarp_regression_test", ".",
+                               "--from", fname0, 
+                               "--verbose", "0",
+                               NULL };
+        int argc = 9;
+        rf.configure("",argc,(char **)argv);
+        ResourceFinder rf1 = rf.findNestedResourceFinder("section1");
+        checkEqual(rf1.findFile("fname").c_str(),fname1,"section1 ok");
+        checkFalse(rf1.isNull(),"section1 not null ok");
+        ResourceFinder rf2 = rf.findNestedResourceFinder("section2");
+        checkEqual(rf2.findFile("fname").c_str(),fname2,"section2 ok");
+        checkFalse(rf2.isNull(),"section2 not null ok");
+        ResourceFinder rf3 = rf.findNestedResourceFinder("section3");
+        checkTrue(rf3.isNull(),"section3 null ok");
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
         testContext();
+        testSubGroup();
     }
 };
 

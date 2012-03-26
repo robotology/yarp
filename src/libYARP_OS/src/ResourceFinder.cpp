@@ -30,11 +30,8 @@ private:
     yarp::os::ConstString root;
     yarp::os::ConstString configFilePath;
     yarp::os::ConstString policyName;
-    yarp::os::Property config;
     bool verbose;
 public:
-    yarp::os::Property& getConfig() { return config; }
-
     ResourceFinderHelper() {
         verbose = false;
     }
@@ -62,7 +59,7 @@ public:
         return "";
     }
     
-    bool configureFromPolicy(const char *policyName) {
+    bool configureFromPolicy(Property& config, const char *policyName) {
         this->policyName = policyName;
         if (verbose) {
             fprintf(RTARGET,"||| policy set to %s\n", policyName);
@@ -143,7 +140,8 @@ public:
         return true;
     }
 
-    bool configure(const char *policyName, int argc, char *argv[], bool skip) {
+    bool configure(Property& config, const char *policyName, int argc, 
+                   char *argv[], bool skip) {
         Property p;
         p.fromCommand(argc,argv,skip);
 
@@ -164,7 +162,7 @@ public:
         }
 
         config.fromString(p.toString().c_str(),false);
-        bool result = configureFromPolicy(name.c_str());
+        bool result = configureFromPolicy(config,name.c_str());
         if (!result) return result;
 
         if (p.check("context")) {
@@ -185,7 +183,7 @@ public:
                 fprintf(RTARGET,"||| default config file specified as %s\n", 
                         from.c_str());
             }
-            ConstString corrected = findFile(from.c_str());
+            ConstString corrected = findFile(config,from.c_str());
             if (corrected!="") {
                 from = corrected;
             }
@@ -197,7 +195,7 @@ public:
         return true;
     }
 
-    bool setDefault(const char *key, const char *val) {
+    bool setDefault(Property& config, const char *key, const char *val) {
         if (!config.check(key)) {
             config.put(key,val);
         }
@@ -286,29 +284,30 @@ public:
         return "";
     }
 
-    yarp::os::ConstString findPath(const char *name) {
+    yarp::os::ConstString findPath(Property& config, const char *name) {
         ConstString fname = config.check(name,Value(name)).asString();
-        ConstString result = findFileBase(fname,true);
+        ConstString result = findFileBase(config,fname,true);
         return result;
     }
 
-    yarp::os::ConstString findPath() {
-        ConstString result = findFileBase("",true);
+    yarp::os::ConstString findPath(Property& config) {
+        ConstString result = findFileBase(config,"",true);
 		if (result=="") result = ".";
         return result;
     }
 
-    yarp::os::ConstString findFile(const char *name) {
+    yarp::os::ConstString findFile(Property& config, const char *name) {
         // name is now a key
         //printf("Status %s\n", config.toString().c_str());
         //printf("name %s\n", name);
         ConstString fname = config.check(name,Value(name)).asString();
         //printf("fname %s\n", fname.c_str());
-        ConstString result = findFileBase(fname,false);
+        ConstString result = findFileBase(config,fname,false);
         return result;
     }
 
-    yarp::os::ConstString findFileBase(const char *name, bool isDir) {
+    yarp::os::ConstString findFileBase(Property& config, const char *name, 
+                                       bool isDir) {
 
         ConstString cap = 
             config.check("capability_directory",Value("app")).asString();
@@ -386,7 +385,7 @@ public:
         return apps;
     }
 
-    ConstString context2path(const ConstString& context ) {
+    ConstString context2path(Property& config, const ConstString& context ) {
         ConstString cap = 
             config.check("capability_directory",Value("app")).asString();
         ConstString path = getPath(root,cap,context,"");
@@ -400,16 +399,28 @@ public:
 };
 
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
-#define CONFIG(x) ((*((ResourceFinderHelper*)(x))).getConfig())
 
 ResourceFinder::ResourceFinder() {
-    implementation = new ResourceFinderHelper;
+    implementation = new ResourceFinderHelper();
     YARP_ASSERT(implementation!=NULL);
+    owned = true;
+    nullConfig = false;
+}
+
+ResourceFinder::ResourceFinder(Searchable& data, void *implementation) {
+    this->implementation = implementation;
+    if (!data.isNull()) {
+        config.fromString(data.toString());
+    }
+    nullConfig = data.isNull();
+    owned = false;
 }
 
 ResourceFinder::~ResourceFinder() {
     if (implementation!=NULL) {
-        delete &HELPER(implementation);
+        if (owned) {
+            delete &HELPER(implementation);
+        }
         implementation = NULL;
     }
 }
@@ -417,7 +428,7 @@ ResourceFinder::~ResourceFinder() {
 
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
                                bool skipFirstArgument) {
-    return HELPER(implementation).configure(policyName,argc,argv,
+    return HELPER(implementation).configure(config,policyName,argc,argv,
                                             skipFirstArgument);
 }
 
@@ -430,20 +441,20 @@ bool ResourceFinder::clearContext() {
 }
 
 bool ResourceFinder::setDefault(const char *key, const char *val) {
-    return HELPER(implementation).setDefault(key,val);
+    return HELPER(implementation).setDefault(config,key,val);
 }
 
 
 yarp::os::ConstString ResourceFinder::findFile(const char *name) {
-    return HELPER(implementation).findFile(name);
+    return HELPER(implementation).findFile(config,name);
 }
 
 yarp::os::ConstString ResourceFinder::findPath(const char *name) {
-    return HELPER(implementation).findPath(name);
+    return HELPER(implementation).findPath(config,name);
 }
 
 yarp::os::ConstString ResourceFinder::findPath() {
-    return HELPER(implementation).findPath();
+    return HELPER(implementation).findPath(config);
 }
 
 
@@ -454,27 +465,27 @@ bool ResourceFinder::setVerbose(bool verbose) {
 
 
 bool ResourceFinder::check(const char *key) {
-    return CONFIG(implementation).check(key);
+    return config.check(key);
 }
 
 
 Value& ResourceFinder::find(const char *key) {
-    return CONFIG(implementation).find(key);
+    return config.find(key);
 }
 
 
 Bottle& ResourceFinder::findGroup(const char *key) {
-    return CONFIG(implementation).findGroup(key);
+    return config.findGroup(key);
 }
 
 
 bool ResourceFinder::isNull() const {
-    return CONFIG(implementation).isNull();
+    return nullConfig||config.isNull();
 }
 
 
 ConstString ResourceFinder::toString() const {
-    return CONFIG(implementation).toString();
+    return config.toString();
 }
 
 ConstString ResourceFinder::getContext() {
@@ -482,11 +493,17 @@ ConstString ResourceFinder::getContext() {
 }
 
 ConstString ResourceFinder::getContextPath() {
-    return HELPER(implementation).context2path(HELPER(implementation).getContext());
+    return HELPER(implementation).context2path(config, 
+                                               HELPER(implementation).getContext());
 }
 
 Bottle ResourceFinder::getContexts() {
     return HELPER(implementation).getContexts();
+}
+
+
+ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key) {
+    return ResourceFinder(findGroup(key),implementation);
 }
 
 

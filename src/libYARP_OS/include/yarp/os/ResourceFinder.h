@@ -14,6 +14,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
     namespace os {
@@ -165,6 +166,17 @@ public:
     virtual bool isNull() const;
     virtual ConstString toString() const;
 
+
+    /**
+     * Gets a section as a ResourceFinder object, retaining the
+     * context and configuration of the current ResourceFinder.
+     * This is a thin wrapper around the Searchable::findGroup method.
+     * @param key The section to look for
+     * @return A ResourceFinder corresponding to the named section
+     *
+     */
+    virtual ResourceFinder findNestedResourceFinder(const char *key);
+
     using Searchable::check;
     using Searchable::findGroup;
 private:
@@ -176,6 +188,11 @@ private:
     bool clearContext();
 
     void *implementation;
+    bool owned;
+    bool nullConfig;
+    yarp::os::Property config;
+
+    ResourceFinder(Searchable& data, void *implementation);
 };
 
 
