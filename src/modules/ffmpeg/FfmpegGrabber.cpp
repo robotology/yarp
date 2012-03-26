@@ -224,11 +224,21 @@ public:
                                          packet.data+bytesRead, 
                                          packet.size-bytesRead);
 #else
+#  ifdef FFEPOCH3            
+            AVPacket tmp = packet;
+            tmp.data += bytesRead;
+            tmp.size -= bytesRead;
+            int r = avcodec_decode_audio3(pCodecCtx, 
+                                          audioBuffer+bytesWritten, 
+                                          &ct,
+                                          &packet);
+#  else 
             int r = avcodec_decode_audio2(pCodecCtx, 
                                           audioBuffer+bytesWritten, 
                                           &ct,
                                           packet.data+bytesRead, 
                                           packet.size-bytesRead);
+#  endif
 #endif
             if (r<0) {
                 printf("error decoding audio\n");
@@ -260,8 +270,13 @@ public:
 
     bool getVideo(AVPacket& packet) {
         // Decode video frame
+#ifdef FFEPOCH3
+        avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, 
+                              &packet);
+#else
         avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
                              packet.data, packet.size);
+#endif
         
         // Did we get a video frame?
         if(frameFinished) {
@@ -547,10 +562,12 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 
 
     // Find the first video stream
-    int videoStream = videoDecoder.getStream(pFormatCtx,CODEC_TYPE_VIDEO,
+    int videoStream = videoDecoder.getStream(pFormatCtx,
+                                             CODEC_TYPE_VIDEO,
                                              "video");
     // Find the first audio stream
-    int audioStream = audioDecoder.getStream(pAudioFormatCtx,CODEC_TYPE_AUDIO,
+    int audioStream = audioDecoder.getStream(pAudioFormatCtx,
+                                             CODEC_TYPE_AUDIO,
                                              "audio");
 
     if (videoStream==-1&&audioStream==-1) {

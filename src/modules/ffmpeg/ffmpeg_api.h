@@ -51,5 +51,19 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
 			const AVPicture *src, int src_pix_fmt, 
 			int src_width, int src_height);
 
+#ifndef CODEC_TYPE_AUDIO
+#  define CodecType AVMediaType
+#  define CODEC_TYPE_UNKNOWN    AVMEDIA_TYPE_UNKNOWN
+#  define CODEC_TYPE_VIDEO      AVMEDIA_TYPE_VIDEO
+#  define CODEC_TYPE_AUDIO      AVMEDIA_TYPE_AUDIO
+#  define CODEC_TYPE_DATA       AVMEDIA_TYPE_DATA
+#  define CODEC_TYPE_SUBTITLE   AVMEDIA_TYPE_SUBTITLE
+#  define CODEC_TYPE_ATTACHMENT AVMEDIA_TYPE_ATTACHMENT
+#  define CODEC_TYPE_NB         AVMEDIA_TYPE_NB
+#  define PKT_FLAG_KEY          AV_PKT_FLAG_KEY
+#  define guess_format          av_guess_format
+#  define av_alloc_format_context avformat_alloc_context
+#  define FFEPOCH3
 #endif
 
+#endif
