@@ -75,12 +75,16 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         poly.view(str);
         bool a = true;
         bool v = true;
+        bool vraw = true;
         if (str!=NULL) {
             a = str->hasAudio();
             v = str->hasVideo();
+            vraw = str->hasRawVideo();
         } 
         if (v) {
             poly.view(fgImage);
+        }
+        if (vraw) {
             poly.view(fgImageRaw);
         }
         if (a) {

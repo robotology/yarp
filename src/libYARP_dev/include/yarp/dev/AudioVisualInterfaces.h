@@ -92,6 +92,10 @@ public:
     virtual bool hasAudio() = 0;
 
     virtual bool hasVideo() = 0;
+
+    virtual bool hasRawVideo() {
+        return hasVideo();
+    }
 };
 
 #endif

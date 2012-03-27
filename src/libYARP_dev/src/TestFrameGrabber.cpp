@@ -22,6 +22,7 @@ using namespace yarp::sig::draw;
 #define VOCAB_BALL VOCAB4('b','a','l','l')
 #define VOCAB_GRID VOCAB4('g','r','i','d')
 #define VOCAB_RAND VOCAB4('r','a','n','d')
+#define VOCAB_NONE VOCAB4('n','o','n','e')
 
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
@@ -31,8 +32,12 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     t -= ((t*1000)-(int)t)/1000;
     t+= 0.00042;
     stamp.update(t);
-    image.resize(w,h);
-    image.zero();
+    if (background.width()>0) {
+        image.copy(background);
+    } else {
+        image.zero();
+        image.resize(w,h);
+    }
     switch (mode) {
     case VOCAB_BALL:
         {
@@ -105,6 +110,8 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             }
         }
         break;
+    case VOCAB_NONE:
+        break;
     }
     ct++;
     if (ct>=image.height()) {
@@ -118,5 +125,70 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     }
     if (bx<0) bx = 0;
     if (by<0) by = 0;
+
+    /*
+    if (use_bayer) {
+        yarp::sig::ImageOf<yarp::sig::PixelMono> bayer;
+        makeSimpleBayer(image,bayer);
+        image.copy(bayer);
+    }
+    */
 }
 
+
+
+// From iCub staticgrabber device.
+// DF2 bayer sequence.
+// first row GBGBGB, second row RGRGRG.
+bool TestFrameGrabber::makeSimpleBayer(
+        ImageOf<PixelRgb>& img, 
+        ImageOf<PixelMono>& bayer) {
+
+    bayer.resize(img.width(), img.height());
+
+    const int w = img.width();
+    const int h = img.height();
+
+    int i, j;
+    for (i = 0; i < h; i++) {
+        PixelRgb *row = (PixelRgb *)img.getRow(i);
+        PixelMono *rd = (PixelMono *)bayer.getRow(i);
+
+        for (j = 0; j < w; j++) {
+
+            if ((i%2) == 0) {
+                switch (j%4) {
+                    case 0:
+                    case 2:
+                        *rd++ = row->g;
+                        row++;
+                        break;
+
+                    case 1:
+                    case 3:
+                        *rd++ = row->b;
+                        row++;
+                        break;
+                }                
+            }
+
+            if ((i%2) == 1) {
+                switch (j%4) {
+                    case 1:
+                    case 3:
+                        *rd++ = row->g;
+                        row++;
+                        break;
+
+                    case 0:
+                    case 2:
+                        *rd++ = row->r;
+                        row++;
+                        break;
+                }                
+            }
+        }
+    }
+
+    return true;
+}

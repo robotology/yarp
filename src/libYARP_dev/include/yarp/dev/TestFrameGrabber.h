@@ -13,7 +13,9 @@
 
 #include <stdio.h>
 
+#include <yarp/sig/ImageFile.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Time.h>
@@ -37,8 +39,10 @@ namespace yarp {
  */
 class YARP_dev_API yarp::dev::TestFrameGrabber : public DeviceDriver, 
                                                  public IFrameGrabberImage, 
+                                                 public IFrameGrabberImageRaw, 
                                                  public IFrameGrabberControls,
-                                                 public IPreciselyTimed
+                                                 public IPreciselyTimed,
+                                                 public IAudioVisualStream
 {
 private:
     int ct;
@@ -49,6 +53,7 @@ private:
     double first;
     double prev;
     int mode;
+    bool use_bayer;
 
 public:
     /**
@@ -64,6 +69,7 @@ public:
         first = 0;
         prev = 0;
         rnd = 0;
+        use_bayer = false;
     }
 
 
@@ -78,7 +84,9 @@ public:
      * <TR><TD> height </TD><TD> Height of image (default 128). </TD></TR>
      * <TR><TD> freq </TD><TD> Frequency in Hz to generate images (default 20Hz). </TD></TR>
      * <TR><TD> period </TD><TD> Inverse of freq - only set one of these. </TD></TR>
-     * <TR><TD> mode </TD><TD> Can be [ball] or [line] (default). </TD></TR>
+     * <TR><TD> mode </TD><TD> Can be [line] (default), [ball], [grid], [rand], [none]. </TD></TR>
+     * <TR><TD> src </TD><TD> Image file to read from (default: none). </TD></TR>
+     * <TR><TD> bayer </TD><TD> Emit a bayer image. </TD></TR>
      * </TABLE>
      *
      * @param config The options to use
@@ -104,7 +112,22 @@ public:
         }
         mode = config.check("mode",
                             yarp::os::Value(VOCAB_LINE, true),
-                            "bouncy [ball], scrolly [line], grid [grid], random [rand]").asVocab();
+                            "bouncy [ball], scrolly [line], grid [grid], random [rand], none [none]").asVocab();
+
+        if (config.check("src")) {
+            if (!yarp::sig::file::read(background,
+                                       config.check("src",
+                                                    yarp::os::Value("test.ppm"),
+                                                    "background image to use, if any").asString().c_str())) {
+                return false;
+            }
+            if (background.width()>0) {
+                w = background.width();
+                h = background.height();
+            }
+        }
+
+        use_bayer = config.check("bayer","should emit bayer test image?");
 
         if (yarp_show_info()) {
             if (freq!=-1) {
@@ -121,8 +144,7 @@ public:
         return true;
     }
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-
+    void timing() {
         double now = yarp::os::Time::now();
 
         if (now-prev>1000) {
@@ -138,8 +160,19 @@ public:
         // this is the controlled instant when we consider the
         // image as going out
         prev += period;
+    }
 
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+        timing();
         createTestImage(image);
+        return true;
+    }
+
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+        timing();
+        createTestImage(rgb_image);
+        makeSimpleBayer(rgb_image,image);
         return true;
     }
     
@@ -221,9 +254,22 @@ public:
         return stamp;
     }
 
+    virtual bool hasAudio() { return false; }
+
+    virtual bool hasVideo() { return !use_bayer; }
+
+    virtual bool hasRawVideo() {
+        return use_bayer;
+    }
+
 private:
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> background, rgb_image;
     yarp::os::Stamp stamp;
     void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+
+    bool makeSimpleBayer(yarp::sig::ImageOf<yarp::sig::PixelRgb>& src, 
+                         yarp::sig::ImageOf<yarp::sig::PixelMono>& bayer);
+
 };
 
 
