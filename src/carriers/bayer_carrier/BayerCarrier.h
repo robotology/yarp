@@ -42,6 +42,8 @@ private:
     
     bool need_reset;
     bool have_result;
+    bool happy;
+    bool half;
 public:
 
     ////////////////////////////////////////////////////////////////////////
@@ -52,6 +54,8 @@ public:
         need_reset = true;
         have_result = false;
         image_data_len = 0;
+        happy = true;
+        half = false;
     }
 
     virtual Carrier *create() {
@@ -76,7 +80,10 @@ public:
         parent = &reader;
     }
 
-    virtual bool processCore(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
+    virtual bool debayerFull(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
+                             yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
+
+    virtual bool debayerHalf(yarp::sig::ImageOf<yarp::sig::PixelMono>& src,
                              yarp::sig::ImageOf<yarp::sig::PixelRgb>& dest);
 
     virtual bool processBuffered();
@@ -162,7 +169,7 @@ public:
     }
 
     virtual bool isOk() {
-        return true;
+        return happy;
     }
 };
 

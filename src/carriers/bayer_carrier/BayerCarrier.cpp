@@ -9,33 +9,30 @@ using namespace yarp::sig;
 
 yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::ConnectionReader& reader) {
 
-#if 0
-  bool ok = in.read(reader);
-  out.copy(in);
-  out.pixel(0,0).r = 42;
-  out.write(con.getWriter());
-  return con.getReader();
-#endif
+  /*
+    // minimal test of image modification
+    in.read(reader);
+    out.copy(in);
+    out.pixel(0,0).r = 42;
+    out.write(con.getWriter());
+    return con.getReader();
+  */
 
-#if 0
-  bool ok = in.read(reader);
-  out.copy(in);
-  
+  /*
+    // minimal test of bottle modification
+    con.setTextMode(reader.isTextMode());
+    Bottle b;
+    b.read(reader);
+    b.addInt(42);
+    b.addString("(p.s. bork bork bork)");
+    b.write(con.getWriter());
+    return con.getReader();
+  */
 
-  con.setTextMode(reader.isTextMode());
-  Bottle b;
-  b.read(reader);
-  b.addString("BORK!");
-  b.write(con.getWriter());
-  printf("WRITING %s\n", b.toString().c_str());
-  return con.getReader();
-#endif
-
-#if 1
   bool ok = in.read(reader);
   if (!ok) {
-    fprintf(stderr,"BayerCarrier sadness\n");
-    exit(1);
+    happy = false;
+    return local;
   }
   ImageNetworkHeader header_in_cmp;
   header_in_cmp.setFromImage(in);
@@ -44,8 +41,15 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
   }
   have_result = false;
   if (need_reset) {
+    Searchable& config = reader.getConnectionModifiers();
+    half = false;
+    if (config.check("size")) {
+      if (config.find("size").asString() == "half") {
+	half = true;
+      }
+    }
     header_in.setFromImage(in);
-    printf("Need reset.\n");
+    //printf("Need reset.\n");
     processBuffered();
     need_reset = false;
   }
@@ -54,28 +58,127 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
   consumed = 0;
 
   return local;
-#endif
 }
 
 
-// A stub for bayer conversion
-bool BayerCarrier::processCore(yarp::sig::ImageOf<PixelMono>& src,
+bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
 			       yarp::sig::ImageOf<PixelRgb>& dest) {
-  IMGFOR(src,x,y) {
-    PixelMono& pi = src.pixel(x,y);
-    PixelRgb& po = dest.pixel(x,y);
-    po.r = pi;
-    po.g = ((x+y)%8==0)?42:0;
-    po.b = 0;
+  int w = src.width();
+  int h = src.height();
+  int wo = dest.width();
+  int ho = dest.height();
+  for (int yo=0; yo<ho; yo++) {
+    for (int xo=0; xo<wo; xo++) {
+      PixelRgb& po = dest.pixel(xo,yo);
+      int x = xo*2;
+      int y = yo*2;
+      if (x+1>=w-1 || y+1>=h-1) {
+	po = PixelRgb(0,0,0);
+	continue;
+      }
+      // Assumption: first row GBGBGB, second row RGRGRG.
+      po.r = src.pixel(x,y+1);
+      po.b = src.pixel(x+1,y);
+      po.g = (PixelMono)(0.5*(src.pixel(x,y)+src.pixel(x+1,y+1)));
+    }
+  }
+  return true;
+}
+
+// A stub for bayer conversion
+bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
+			       yarp::sig::ImageOf<PixelRgb>& dest) {
+  int w = dest.width();
+  int h = dest.height();
+  for (int y=0; y<h; y++) {
+    for (int x=0; x<w; x++) {
+      // Assumption: first row GBGBGB, second row RGRGRG.
+      PixelRgb& po = dest.pixel(x,y);
+
+      // G
+      if ((x+y)%2==0) {
+	po.g = src.pixel(x,y);
+      } else {
+	float g = 0;
+	int ct = 0;
+	if (x>0) { g += src.pixel(x-1,y); ct++; }
+	if (x<w-1) { g += src.pixel(x+1,y); ct++; }
+	if (y>0) { g += src.pixel(x,y-1); ct++; }
+	if (y<h-1) { g += src.pixel(x,y+1); ct++; }
+	if (ct>0) g /= ct;
+	po.g = (int)g;
+      }
+
+      // B
+      if (y%2==0 && x%2==1) {
+	po.b = src.pixel(x,y);
+      } else if (y%2==0) {
+	float b = 0;
+	int ct = 0;
+	if (x>0) { b += src.pixel(x-1,y); ct++; }
+	if (x<w-1) { b += src.pixel(x+1,y); ct++; }
+	if (ct>0) b /= ct;
+	po.b = (int)b;
+      } else if (x%2==1) {
+	float b = 0;
+	int ct = 0;
+	if (y>0) { b += src.pixel(x,y-1); ct++; }
+	if (y<h-1) { b += src.pixel(x,y+1); ct++; }
+	if (ct>0) b /= ct;
+	po.b = (int)b;
+      } else {
+	float b = 0;
+	int ct = 0;
+	if (x>0&&y>0) { b += src.pixel(x-1,y-1); ct++; }
+	if (x>0&&y<h-1) { b += src.pixel(x-1,y+1); ct++; }
+	if (x<w-1&&y>0) { b += src.pixel(x+1,y-1); ct++; }
+	if (x<w-1&&y<h-1) { b += src.pixel(x+1,y+1); ct++; }
+	if (ct>0) b /= ct;
+	po.b = (int)b;
+      }
+
+      // R
+      if (y%2==1 && x%2==0) {
+	po.r = src.pixel(x,y);
+      } else if (y%2==1) {
+	float r = 0;
+	int ct = 0;
+	if (x>0) { r += src.pixel(x-1,y); ct++; }
+	if (x<w-1) { r += src.pixel(x+1,y); ct++; }
+	if (ct>0) r /= ct;
+	po.r = (int)r;
+      } else if (x%2==0) {
+	float r = 0;
+	int ct = 0;
+	if (y>0) { r += src.pixel(x,y-1); ct++; }
+	if (y<h-1) { r += src.pixel(x,y+1); ct++; }
+	if (ct>0) r /= ct;
+	po.r = (int)r;
+      } else {
+	float r = 0;
+	int ct = 0;
+	if (x>0&&y>0) { r += src.pixel(x-1,y-1); ct++; }
+	if (x>0&&y<h-1) { r += src.pixel(x-1,y+1); ct++; }
+	if (x<w-1&&y>0) { r += src.pixel(x+1,y-1); ct++; }
+	if (x<w-1&&y<h-1) { r += src.pixel(x+1,y+1); ct++; }
+	if (ct>0) r /= ct;
+	po.r = (int)r;
+      }
+    }
   }
   return true;
 }
 
 bool BayerCarrier::processBuffered() {
   if (!have_result) {
-    printf("Copy-based conversion.\n");
-    out.resize(in);
-    processCore(in,out);
+    //printf("Copy-based conversion.\n");
+    if (half) {
+      out.resize(in.width()/2,in.height()/2);
+      debayerHalf(in,out);
+    } else {
+      out.resize(in);
+      debayerFull(in,out);
+    }
     header.setFromImage(out);
     image_data_len = (size_t)out.getRawImageSize();
   }
@@ -88,11 +191,15 @@ bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
     ACE_OS::memcpy(bytes.get(),out.getRawImage(),bytes.length());
     return true;
   }
-  printf("Copyless conversion\n");
+  //printf("Copyless conversion\n");
   ImageOf<PixelRgb> wrap;
   wrap.setQuantum(out.getQuantum());
   wrap.setExternal(bytes.get(),out.width(),out.height());
-  processCore(in,wrap);
+  if (half) {
+      debayerHalf(in,wrap);
+  } else {
+      debayerFull(in,wrap);
+  }
   return true;
 }
 
