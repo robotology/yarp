@@ -42,7 +42,8 @@ using namespace yarp::os;
 class ImageStorage {
 public:
     IplImage* pImage;
-    char **Data;       // this is not IPL. it's char to maintain IPL compatibility  
+    char **Data;  // this is not IPL. it's char to maintain IPL compatibility  
+    int extern_type_id;
     int quantum;
     bool topIsLow;
 
@@ -90,6 +91,7 @@ public:
         is_owner = 1;
         quantum = 0;
         topIsLow = true;
+        extern_type_id = 0;
     }
 
     ~ImageStorage() {
@@ -118,6 +120,7 @@ void ImageStorage::resize(int x, int y, int pixel_type,
         DBGPF1 printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
         _alloc_complete (x, y, pixel_type, quantum, topIsLow);
     }
+    extern_type_id = pixel_type;
 }
 
 
@@ -632,6 +635,9 @@ void Image::resize(int imgWidth, int imgHeight) {
         imgPixelCode = code; 
         change = true;
     }
+    if (imgPixelCode!=((ImageStorage*)implementation)->extern_type_id) {
+        change = true;
+    }
     if (size!=imgPixelSize) { 
         imgPixelSize = size; 
         change=true;
@@ -647,6 +653,7 @@ void Image::resize(int imgWidth, int imgHeight) {
                                                 imgQuantum,
                                                 topIsLow);
         synchronize();
+        //printf("CHANGE! %ld\n", (long int)(this));
     }
 }
 
@@ -789,11 +796,13 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             YARP_ASSERT(mem!=NULL);
             if (flex.getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
                        (int)header.width, (int)header.height, 
+                       (int)header.id,
                        (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, quantum %d, size %d\n",
-                       flex.width(), flex.height(), flex.getQuantum(), 
+                printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
+                       flex.width(), flex.height(), flex.getPixelCode(),
+                       flex.getQuantum(), 
                        flex.getRawImageSize());
             }
             YARP_ASSERT(flex.getRawImageSize()==header.imgSize);
@@ -810,11 +819,12 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             YARP_ASSERT(mem!=NULL);
             if (getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
                        (int)header.width, (int)header.height, 
+                       (int)header.id,
                        (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, quantum %d, size %d\n",
-                       width(), height(), getQuantum(), getRawImageSize());
+                printf("my space: width %d, height %d, code %d, quantum %d, size %d\n",
+                       width(), height(), getPixelCode(), getQuantum(), getRawImageSize());
             }
             YARP_ASSERT(getRawImageSize()==header.imgSize);
             ok = connection.expectBlock((char *)getRawImage(),

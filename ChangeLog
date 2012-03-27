@@ -1,3 +1,8 @@
+2012-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/src/Image.cpp: correctly reallocate 
+	memory when image type changes without change in dimension.
+
 2012-03-27  Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/src/RemoteControlBoard.cpp
     
