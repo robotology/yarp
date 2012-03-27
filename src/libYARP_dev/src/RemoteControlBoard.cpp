@@ -1125,13 +1125,13 @@ public:
                 Bottle& m = *(l.get(i).asList());
                 if (&m == 0)
                     return false;
-                pids->kp = m.get(0).asDouble();
-                pids->kd = m.get(1).asDouble();
-                pids->ki = m.get(2).asDouble();
-                pids->max_int = m.get(3).asDouble();
-                pids->max_output = m.get(4).asDouble();
-                pids->offset = m.get(5).asDouble();
-                pids->scale = m.get(6).asDouble();
+                pids[i].kp = m.get(0).asDouble();
+                pids[i].kd = m.get(1).asDouble();
+                pids[i].ki = m.get(2).asDouble();
+                pids[i].max_int = m.get(3).asDouble();
+                pids[i].max_output = m.get(4).asDouble();
+                pids[i].offset = m.get(5).asDouble();
+                pids[i].scale = m.get(6).asDouble();
             }
             return true;
         }

@@ -1,3 +1,8 @@
+2012-03-27  Marco Randazzo <marco.randazzo@iit.it>
+    * src/libYARP_dev/src/RemoteControlBoard.cpp
+    
+    fixed bug in method getPids(): the method was retrieving just the first pid of the list.
+  
 2012-03-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add
