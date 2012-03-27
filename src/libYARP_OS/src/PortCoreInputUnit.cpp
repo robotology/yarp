@@ -268,23 +268,13 @@ void PortCoreInputUnit::run() {
                     }
                 }
                 if (localReader) {
-                    /*bool ok =*/ localReader->read(br);
+                    localReader->read(br);
                     if (!br.isActive()) { done = true; break; }
-                    //if (!ok) continue;
                 } else {
-                    /*bool ok =*/ man.readBlock(br,id,os);
+                    man.readBlock(ip->modifyIncomingData(br),id,os);
                     if (!br.isActive()) { done = true; break; }
-                    //if (!ok) continue;
                 }
             }
-            /*
-              catch (IOException e) {
-              YARP_DEBUG(Logger::get(),e.toString() + " <<< user level PortCoreInputUnit exception, passing on");
-              done = true;
-              throw e;
-              }
-              }
-            */
             break;
         case 'a':
             {

@@ -83,3 +83,12 @@ Bytes StreamConnectionReader::readEnvelope() {
 }
 
 
+
+Searchable& StreamConnectionReader::getConnectionModifiers() {
+    if (config.size()==0) {
+        if (protocol) {
+            config.fromString(protocol->getSenderSpecifier().c_str());
+        }
+    }
+    return config;
+}

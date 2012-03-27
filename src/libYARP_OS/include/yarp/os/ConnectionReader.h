@@ -13,6 +13,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Bytes.h>
+#include <yarp/os/Searchable.h>
 
 namespace yarp {
     namespace os {
@@ -161,6 +162,15 @@ public:
      *
      */
     virtual void requestDrop() = 0;
+
+    /**
+     *
+     * Access modifiers associated with the connection, if any.
+     *
+     * @return connection configuration object
+     *
+     */
+    virtual Searchable& getConnectionModifiers() = 0;
 };
 
 #endif

@@ -144,6 +144,13 @@ void Protocol::setRoute(const Route& route) {
     }
 
     this->route = r;
+
+    if (!recv_delegate) {
+        Bottle b(getSenderSpecifier().c_str());
+        if (b.check("recv")) {
+            need_recv_delegate = true;
+        }
+    }
 }
 
 
@@ -171,4 +178,25 @@ String Protocol::getSenderSpecifier() {
     return from;
 }
 
+
+bool Protocol::getRecvDelegate() {
+    if (recv_delegate) return true;
+    if (!need_recv_delegate) return true;
+    Bottle b(getSenderSpecifier().c_str());
+    ConstString tag = b.find("recv").asString();
+    recv_delegate = Carriers::chooseCarrier(String(tag.c_str()));
+    if (!recv_delegate) {
+        fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
+                tag.c_str());
+        close();
+        return false;
+    }
+    if (!recv_delegate->modifiesIncomingData()) {
+        fprintf(stderr,"Carrier \"%s\" does not modify incoming data as expected.\n",
+                tag.c_str());
+        close();
+        return false;
+    }
+    return true;
+}
 

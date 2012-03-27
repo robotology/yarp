@@ -65,6 +65,9 @@ public:
     virtual void setEnvelope(const String& str) = 0;
 
     virtual bool setTimeout(double timeout) = 0;
+
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) = 0;
+
 };
 
 #endif

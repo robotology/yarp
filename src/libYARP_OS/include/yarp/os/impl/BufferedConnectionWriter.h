@@ -18,6 +18,7 @@
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Bottle.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -326,6 +327,7 @@ private:
     BufferedConnectionWriter writerStore;
     bool writing;
     bool wrote;
+    yarp::os::Bottle blank;
 public:
     ConnectionRecorder() {
         reader = NULL;
@@ -497,6 +499,10 @@ public:
     }
 
     virtual void requestDrop() {
+    }
+
+    virtual yarp::os::Searchable& getConnectionModifiers() {
+        return blank;
     }
 
     BufferedConnectionWriter& getMessage() { return readerStore; }

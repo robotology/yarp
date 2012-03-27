@@ -53,10 +53,11 @@ public:
         active = true;
         route = Route("null","null","tcp");
         delegate = NULL;
+        recv_delegate = NULL;
+        need_recv_delegate = false;
         messageLen = 0;
         pendingAck = false;
         writer = NULL;
-        altReader = NULL;
         ref = NULL;
         reader.setProtocol(this);
         envelope = "";
@@ -85,6 +86,13 @@ public:
         if (delegate==NULL) {
             delegate = Carriers::chooseCarrier(carrierName);
             if (delegate!=NULL) {
+                if (delegate->modifiesIncomingData()) {
+                    if (active) {
+                        fprintf(stderr,"Carrier \"%s\" cannot be used this way, try \"tcp+recv.%s\" instead.\n",carrierName.c_str(),carrierName.c_str());
+                    }
+                    close();
+                    return;
+                }
                 delegate->prepareSend(*this);
             }
         }
@@ -312,6 +320,11 @@ public:
             delete delegate;
             delegate = NULL;
         }
+        if (recv_delegate!=NULL) {
+            recv_delegate->close();
+            delete recv_delegate;
+            recv_delegate = NULL;
+        }
         //YARP_DEBUG(Logger::get(),"Protocol object closed");
     }
 
@@ -460,6 +473,7 @@ public:
 
 
     virtual yarp::os::ConnectionReader& beginRead() {
+        getRecvDelegate();
         if (delegate!=NULL) {
             bool ok = false;
             while (!ok) {
@@ -472,26 +486,25 @@ public:
                 }
             }
             respondToIndex();
-            if (altReader!=NULL) {
-                YARP_DEBUG(Logger::get(), "alternate reader in operation");
-                return *altReader;
-            }
         }
         return reader;
     }
+
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) {
+        if (recv_delegate) {
+            return recv_delegate->modifyIncomingData(reader);
+        }
+        return reader;
+    }
+
 
     virtual void suppressReply() {
         reader.suppressReply();
     }
 
     virtual void endRead() {
-        if (altReader!=NULL) {
-            //altReader->release();
-            sendAck();
-        } else {
-            reader.flushWriter();
-            sendAck();  //MOVE ack to after reply, if present
-        }
+        reader.flushWriter();
+        sendAck();  //MOVE ack to after reply, if present
     }
 
     virtual bool checkStreams() {
@@ -500,11 +513,6 @@ public:
 
     virtual void resetStreams() {
         shift.reset();
-    }
-
-
-    void setReader(yarp::os::ConnectionReader *altReader) {
-        this->altReader = altReader;
     }
 
 
@@ -529,6 +537,8 @@ public:
     }
 
 private:
+
+    bool getRecvDelegate();
 
     bool sendProtocolSpecifier() {
         YARP_ASSERT(delegate!=NULL);
@@ -618,12 +628,12 @@ private:
     yarp::os::ManagedBytes indexHeader;
     ShiftStream shift;
     bool active;
-    Carrier *delegate;
+    Carrier *delegate, *recv_delegate;
+    bool need_recv_delegate;
     Route route;
     //BufferedConnectionWriter writer;
     SizedWriter *writer;
     StreamConnectionReader reader;
-    yarp::os::ConnectionReader *altReader;
     yarp::os::Portable *ref;
     Address nullAddress;
     String envelope;

@@ -21,6 +21,7 @@
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/PlatformSize.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     namespace os {
@@ -258,6 +259,8 @@ public:
         return shouldDrop;
     }
 
+    virtual yarp::os::Searchable& getConnectionModifiers();
+
 private:
 
     bool isGood() {
@@ -277,6 +280,7 @@ private:
     bool writePending;
     Route route;
     yarp::os::Portable *ref;
+    yarp::os::Bottle config;
 };
 
 #endif

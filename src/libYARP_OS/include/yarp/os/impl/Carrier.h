@@ -15,6 +15,7 @@
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ConnectionReader.h>
 
 #define YARP_ENACT_CONNECT 1
 #define YARP_ENACT_DISCONNECT 2
@@ -393,6 +394,34 @@ public:
                         int mode,
                         bool reversed) {
         return -1;
+    }
+
+
+    /**
+     *
+     * Check if this carrier modifies incoming data through the
+     * Carrier::modifyIncomingData method
+     *
+     * @return true if carrier wants Carrier::modifyIncomingData called
+     *
+     */
+    virtual bool modifiesIncomingData() {
+        return false;
+    }
+
+    /**
+     *
+     * Modify incoming payload data, if appropriate.  Doesn't need to
+     * be done immediately, it is fine to hold onto a reference to the
+     * incoming data reader and use it on demand.  This can be handy
+     * in order to avoid unnecessary copies.
+     *
+     * @param reader for incoming data.
+     * @return reader for modified version of incoming data.
+     *
+     */
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) {
+        return reader;
     }
 };
 
