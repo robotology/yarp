@@ -1,3 +1,7 @@
+2012-03-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/src/ImageFile.cpp: support pgm.
+
 2012-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/src/Image.cpp: correctly reallocate 

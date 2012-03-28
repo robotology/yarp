@@ -246,11 +246,26 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
             fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
             return false;
         }
+
     if (!color)
         {
+            ImageOf<PixelMono> tmp;
+            tmp.resize(width,height);
+
+            const int w = tmp.width() * tmp.getPixelSize();
+            const int h = tmp.height();
+            const int pad = tmp.getRowSize();
+            unsigned char *dst = tmp.getRawImage ();
+
+            num = 0;
+            for (int i = 0; i < h; i++)
+                {
+                    num += (int)fread((void *) dst, 1, (size_t) w, fp);
+                    dst += pad;
+                }
             fclose(fp);
-            fprintf(stderr, "File is grayscale, conversion not yet supported\n");
-            return false;
+            img.copy(tmp);
+            return true;
         }
 	
     img.resize(width,height);
