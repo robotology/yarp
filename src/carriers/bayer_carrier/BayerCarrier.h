@@ -26,6 +26,15 @@ namespace yarp {
 }
 
 
+/**
+ *
+ * Decode bayer images and serve them as regular rgb.
+ * Affected by carrier modifiers.  Examples:
+ *   tcp+recv.bayer
+ *   tcp+recv.bayer+size.half
+ *   tcp+recv.bayer+size.half+order.bggr
+ *
+ */
 class yarp::os::impl::BayerCarrier : public yarp::os::impl::ModifyingCarrier,
                                      public yarp::os::ConnectionReader,
                                      public yarp::os::impl::InputStream {
@@ -44,6 +53,12 @@ private:
     bool have_result;
     bool happy;
     bool half;
+
+    // format offsets
+    int goff; // x offset to green on even rows
+    int roff; // y offset to red on even columns
+
+    bool setFormat(const char *fmt);
 public:
 
     ////////////////////////////////////////////////////////////////////////
@@ -56,6 +71,8 @@ public:
         image_data_len = 0;
         happy = true;
         half = false;
+        goff = 0;
+        roff = 1;
     }
 
     virtual Carrier *create() {

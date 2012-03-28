@@ -48,6 +48,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
 	half = true;
       }
     }
+    setFormat(config.check("order",Value("grbg")).asString().c_str());
     header_in.setFromImage(in);
     //printf("Need reset.\n");
     processBuffered();
@@ -67,6 +68,10 @@ bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
   int h = src.height();
   int wo = dest.width();
   int ho = dest.height();
+  int goff1 = 1-goff;
+  int roffx = roff?goff:goff1;
+  int boff = 1-roff;
+  int boffx = boff?goff:goff1;
   for (int yo=0; yo<ho; yo++) {
     for (int xo=0; xo<wo; xo++) {
       PixelRgb& po = dest.pixel(xo,yo);
@@ -76,10 +81,9 @@ bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
 	po = PixelRgb(0,0,0);
 	continue;
       }
-      // Assumption: first row GBGBGB, second row RGRGRG.
-      po.r = src.pixel(x,y+1);
-      po.b = src.pixel(x+1,y);
-      po.g = (PixelMono)(0.5*(src.pixel(x,y)+src.pixel(x+1,y+1)));
+      po.r = src.pixel(x+roffx,y+roff);
+      po.b = src.pixel(x+boffx,y+boff);
+      po.g = (PixelMono)(0.5*(src.pixel(x+goff,y)+src.pixel(x+goff1,y+1)));
     }
   }
   return true;
@@ -90,13 +94,16 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
 			       yarp::sig::ImageOf<PixelRgb>& dest) {
   int w = dest.width();
   int h = dest.height();
+  int goff1 = 1-goff;
+  int roffx = roff?goff:goff1;
+  int boff = 1-roff;
+  int boffx = boff?goff:goff1;
   for (int y=0; y<h; y++) {
     for (int x=0; x<w; x++) {
-      // Assumption: first row GBGBGB, second row RGRGRG.
       PixelRgb& po = dest.pixel(x,y);
 
       // G
-      if ((x+y)%2==0) {
+      if ((x+y)%2==goff) {
 	po.g = src.pixel(x,y);
       } else {
 	float g = 0;
@@ -110,16 +117,16 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
       }
 
       // B
-      if (y%2==0 && x%2==1) {
+      if (y%2==boff && x%2==boffx) {
 	po.b = src.pixel(x,y);
-      } else if (y%2==0) {
+      } else if (y%2==boff) {
 	float b = 0;
 	int ct = 0;
 	if (x>0) { b += src.pixel(x-1,y); ct++; }
 	if (x<w-1) { b += src.pixel(x+1,y); ct++; }
 	if (ct>0) b /= ct;
 	po.b = (int)b;
-      } else if (x%2==1) {
+      } else if (x%2==boffx) {
 	float b = 0;
 	int ct = 0;
 	if (y>0) { b += src.pixel(x,y-1); ct++; }
@@ -138,16 +145,16 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
       }
 
       // R
-      if (y%2==1 && x%2==0) {
+      if (y%2==roff && x%2==roffx) {
 	po.r = src.pixel(x,y);
-      } else if (y%2==1) {
+      } else if (y%2==roff) {
 	float r = 0;
 	int ct = 0;
 	if (x>0) { r += src.pixel(x-1,y); ct++; }
 	if (x<w-1) { r += src.pixel(x+1,y); ct++; }
 	if (ct>0) r /= ct;
 	po.r = (int)r;
-      } else if (x%2==0) {
+      } else if (x%2==roffx) {
 	float r = 0;
 	int ct = 0;
 	if (y>0) { r += src.pixel(x,y-1); ct++; }
@@ -235,3 +242,13 @@ ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
   }
   return -1;
 }
+
+
+bool BayerCarrier::setFormat(const char *fmt) {
+  ConstString f(fmt);
+  if (f.length()<2) return false;
+  goff = (f[0]=='g'||f[0]=='G')?0:1;
+  roff = (f[0]=='r'||f[0]=='R'||f[1]=='r'||f[1]=='R')?0:1;
+  return true;
+}
+

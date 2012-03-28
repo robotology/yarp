@@ -54,6 +54,7 @@ private:
     double prev;
     int mode;
     bool use_bayer;
+    bool use_mono;
 
 public:
     /**
@@ -70,6 +71,7 @@ public:
         prev = 0;
         rnd = 0;
         use_bayer = false;
+        use_mono = false;
     }
 
 
@@ -87,6 +89,7 @@ public:
      * <TR><TD> mode </TD><TD> Can be [line] (default), [ball], [grid], [rand], [none]. </TD></TR>
      * <TR><TD> src </TD><TD> Image file to read from (default: none). </TD></TR>
      * <TR><TD> bayer </TD><TD> Emit a bayer image. </TD></TR>
+     * <TR><TD> mono </TD><TD> Emit a monochrome image. </TD></TR>
      * </TABLE>
      *
      * @param config The options to use
@@ -128,6 +131,8 @@ public:
         }
 
         use_bayer = config.check("bayer","should emit bayer test image?");
+        use_mono = config.check("mono","should emit a monochrome image?");
+        use_mono = use_mono||use_bayer;
 
         if (yarp_show_info()) {
             if (freq!=-1) {
@@ -172,7 +177,11 @@ public:
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
         timing();
         createTestImage(rgb_image);
-        makeSimpleBayer(rgb_image,image);
+        if (use_bayer) {
+            makeSimpleBayer(rgb_image,image);
+        } else {
+            image.copy(rgb_image);
+        }
         return true;
     }
     
@@ -256,10 +265,10 @@ public:
 
     virtual bool hasAudio() { return false; }
 
-    virtual bool hasVideo() { return !use_bayer; }
+    virtual bool hasVideo() { return !use_mono; }
 
     virtual bool hasRawVideo() {
-        return use_bayer;
+        return use_mono;
     }
 
 private:

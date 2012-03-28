@@ -125,21 +125,14 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     }
     if (bx<0) bx = 0;
     if (by<0) by = 0;
-
-    /*
-    if (use_bayer) {
-        yarp::sig::ImageOf<yarp::sig::PixelMono> bayer;
-        makeSimpleBayer(image,bayer);
-        image.copy(bayer);
-    }
-    */
 }
 
 
 
 // From iCub staticgrabber device.
 // DF2 bayer sequence.
-// first row GBGBGB, second row RGRGRG.
+// -- in staticgrabber: first row GBGBGB, second row RGRGRG.
+// -- changed here to:  first row GRGRGR, second row BGBGBG.
 bool TestFrameGrabber::makeSimpleBayer(
         ImageOf<PixelRgb>& img, 
         ImageOf<PixelMono>& bayer) {
@@ -166,7 +159,7 @@ bool TestFrameGrabber::makeSimpleBayer(
 
                     case 1:
                     case 3:
-                        *rd++ = row->b;
+                        *rd++ = row->r;
                         row++;
                         break;
                 }                
@@ -182,7 +175,7 @@ bool TestFrameGrabber::makeSimpleBayer(
 
                     case 0:
                     case 2:
-                        *rd++ = row->r;
+                        *rd++ = row->b;
                         row++;
                         break;
                 }                
