@@ -290,5 +290,11 @@ from a port) if the initial string is one of the following:
 This is for ROS compatibility (see \ref yarp_with_ros).
 
 
+\section carrier_config_tcpros tcpros carrier
+
+This carrier is for interoperations with ROS.
+See \ref yarp_with_ros and http://www.ros.org/wiki/ROS/TCPROS
+
+
 *
 */
