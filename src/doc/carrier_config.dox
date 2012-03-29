@@ -43,6 +43,8 @@ Optional carriers:
 \li \ref carrier_config_mjpeg
 \li \ref carrier_config_xmlrpc
 \li \ref carrier_config_tcpros
+\li \ref carrier_config_bayer
+
 
 \section carrier_config_tcp tcp carrier
 
@@ -295,6 +297,49 @@ This is for ROS compatibility (see \ref yarp_with_ros).
 This carrier is for interoperations with ROS.
 See \ref yarp_with_ros and http://www.ros.org/wiki/ROS/TCPROS
 
+
+\section carrier_config_bayer bayer carrier
+
+The bayer carrier converts bayer images to rgb images on the
+receiver's side of a connection.  It is a modifying carrier,
+and so can be used in combination with other carriers.
+For example, suppose port /grabber is streaming bayer images.
+For concreteness, here's a test program to do that (back.ppm is
+an arbitrary test image in PPM format):
+\verbatim
+  yarpdev --device test_grabber --src back.ppm --bayer --name /grabber
+\endverbatim
+Suppose we start an image viewer and look at the stream from
+/grabber, using (for example) udp:
+\verbatim
+  yarpview /view
+  yarp connect /grabber /view udp
+\endverbatim
+We will see a monochrome, speckled image (a bayer image).  We
+can now reconnect with a connection that is configured to 
+"debayer" the image on the receiver side:
+\verbatim
+  yarp connect /grabber /view udp+recv.bayer 
+\endverbatim
+We should now see a color image.  To use a downsampling debayer
+algorithm, we can do:
+\verbatim
+  yarp connect /grabber /view udp+recv.bayer+size.half 
+\endverbatim
+or equivalently:
+\verbatim
+  yarp connect /grabber udp+recv.bayer+size.half://view
+\endverbatim
+
+If we are reading from a source using a non-default bayer
+color ordering, we can also specify this with the "order"
+carrier modifier:
+\verbatim
+  yarp connect /grabber /view udp+recv.bayer+order.bggr
+\endverbatim
+This says the first pixel on the first row is a blue color, 
+followed by green.  On the second row, the first pixel
+is green, followed by red.
 
 *
 */
