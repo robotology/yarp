@@ -77,9 +77,6 @@ enum {
 /* YARP will in fact use only one color coding type, so we take a shortcut */
 #define dc1394_get_color_coding_bit_size(x,y) (*y) = (3*8)
 
-/* Make sure memory reallocation is not happening without us knowing */
-#define free assert(1==0); free
-
 /*
  * Structure definition from libdc1394 video.h 
  *

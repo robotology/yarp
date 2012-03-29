@@ -341,5 +341,13 @@ This says the first pixel on the first row is a blue color,
 followed by green.  On the second row, the first pixel
 is green, followed by red.
 
+Debayer filters from libdc1394 are supported, and can be
+specified using the "method" carrier modifier:
+\verbatim
+  yarp connect /grabber /view tcp+recv.bayer+method.vng
+\endverbatim
+Available methods: bilinear, hqlinear, downsample, vng, ahd, nearest,
+simple.
+
 *
 */

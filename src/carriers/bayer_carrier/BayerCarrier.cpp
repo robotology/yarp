@@ -23,8 +23,9 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 
-
-void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc) {
+// can't seem to do ipl/opencv/yarp style end-of-row padding
+void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc, 
+                int filter) {
     if (!dc) return;
     dc->image = (unsigned char *) yimg.getRawImage();
     dc->size[0] = (uint32_t) yimg.width();
@@ -32,14 +33,14 @@ void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc) {
     dc->position[0] = 0;
     dc->position[1] = 0;
     dc->color_coding = (yimg.getPixelCode()==VOCAB_PIXEL_MONO)?DC1394_COLOR_CODING_RAW8:DC1394_COLOR_CODING_RGB8;
-    dc->color_filter = DC1394_COLOR_FILTER_GRBG; // to be set
+    dc->color_filter = (dc1394color_filter_t)filter;
     dc->yuv_byte_order = 0;
     dc->data_depth = 8;
     dc->stride = (uint32_t) yimg.getRowSize();
     dc->video_mode = DC1394_VIDEO_MODE_640x480_RGB8; // we are bluffing
     dc->image_bytes = (uint32_t)yimg.getRawImageSize();
-    dc->total_bytes = dc->image_bytes;
     dc->padding_bytes = 0;
+    dc->total_bytes = dc->image_bytes;
     dc->timestamp = 0;
     dc->frames_behind = 0;
     dc->camera = NULL;
@@ -75,9 +76,16 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     return con.getReader();
     */
 
+    // libdc1394 seems to need this.
+    // note that this can slow things down if input has padding.
+    in.setQuantum(1);
+    out.setQuantum(1);
+
+    Route r;
     bool ok = in.read(reader);
     if (!ok) {
         happy = false;
+        local.reset(*this, NULL, r, 0, false);
         return local;
     }
     ImageNetworkHeader header_in_cmp;
@@ -87,6 +95,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     }
     have_result = false;
     if (need_reset) {
+        int m = DC1394_BAYER_METHOD_BILINEAR;
         Searchable& config = reader.getConnectionModifiers();
         half = false;
         if (config.check("size")) {
@@ -94,13 +103,44 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
                 half = true;
             }
         }
+        if (config.check("method")) {
+            ConstString method = config.find("method").asString();
+            bayer_method_set = true;
+            if (method=="ahd") {
+                m = DC1394_BAYER_METHOD_AHD;
+            } else if (method=="bilinear") {
+                m = DC1394_BAYER_METHOD_BILINEAR;
+            } else if (method=="downsample") {
+                m = DC1394_BAYER_METHOD_DOWNSAMPLE;
+                half = true;
+            } else if (method=="edgesense") {
+                m = DC1394_BAYER_METHOD_EDGESENSE;
+            } else if (method=="hqlinear") {
+                m = DC1394_BAYER_METHOD_HQLINEAR;
+            } else if (method=="nearest") {
+                m = DC1394_BAYER_METHOD_NEAREST;
+            } else if (method=="simple") {
+                m = DC1394_BAYER_METHOD_SIMPLE;
+            } else if (method=="vng") {
+                m = DC1394_BAYER_METHOD_VNG;
+            } else {
+                if (!warned) {
+                    fprintf(stderr,"bayer method %s not recognized, try: ahd bilinear downsample edgesense hqlinear nearest simple vng\n", method.c_str());
+                    warned = true;
+                }
+                happy = false;
+                local.reset(*this, NULL, r, 0, false);
+                return local;
+            }
+        }
+
         setFormat(config.check("order",Value("grbg")).asString().c_str());
         header_in.setFromImage(in);
         //printf("Need reset.\n");
-        processBuffered();
+        bayer_method = m;
         need_reset = false;
+        processBuffered();
     }
-    Route r;
     local.reset(*this, NULL, r, sizeof(header)+image_data_len, false);
     consumed = 0;
 
@@ -110,15 +150,22 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
 
 bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
                                yarp::sig::ImageOf<PixelRgb>& dest) {
-    dc1394video_frame_t dc_src;
-    dc1394video_frame_t dc_dest;
-    setDcImage(src,&dc_src);
-    setDcImage(dest,&dc_dest);
-    dc1394_debayer_frames(&dc_src,&dc_dest,DC1394_BAYER_METHOD_DOWNSAMPLE);
-    return true;
+    // dc1394 doesn't seem safe for arbitrary data widths
+    if (src.width()%8==0) {
+        dc1394video_frame_t dc_src;
+        dc1394video_frame_t dc_dest;
+        setDcImage(src,&dc_src,dcformat);
+        setDcImage(dest,&dc_dest,dcformat);
+        dc1394_debayer_frames(&dc_src,&dc_dest,DC1394_BAYER_METHOD_DOWNSAMPLE);
+        return true;
+    }
 
-    /*
-      // a test implementation that doesn't use dc1394
+    if (bayer_method_set && !warned) {
+        fprintf(stderr, "Not using dc1394 debayer methods (image width not a multiple of 8)\n");
+        warned = true;
+    }
+
+    // a safer implementation that doesn't use dc1394
     int w = src.width();
     int h = src.height();
     int wo = dest.width();
@@ -141,21 +188,26 @@ bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
             po.g = (PixelMono)(0.5*(src.pixel(x+goff,y)+src.pixel(x+goff1,y+1)));
         }
     }
-    */
     return true;
 }
 
 bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
                                yarp::sig::ImageOf<PixelRgb>& dest) {
-    dc1394video_frame_t dc_src;
-    dc1394video_frame_t dc_dest;
-    setDcImage(src,&dc_src);
-    setDcImage(dest,&dc_dest);
-    dc1394_debayer_frames(&dc_src,&dc_dest,DC1394_BAYER_METHOD_BILINEAR);
-    return true;
+    // dc1394 doesn't seem safe for arbitrary data widths
+    if (src.width()%8==0) {
+        dc1394video_frame_t dc_src;
+        dc1394video_frame_t dc_dest;
+        setDcImage(src,&dc_src,dcformat);
+        setDcImage(dest,&dc_dest,dcformat);
+        dc1394_debayer_frames(&dc_src,&dc_dest,
+                              (dc1394bayer_method_t)bayer_method);
+        return true;
+    }
 
-    /*
-      // a test implementation that doesn't use dc1394
+    if (bayer_method_set && !warned) {
+        fprintf(stderr, "Not using dc1394 debayer methods (image width not a multiple of 8)\n");
+        warned = true;
+    }
     int w = dest.width();
     int h = dest.height();
     int goff1 = 1-goff;
@@ -238,7 +290,6 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
         }
     }
     return true;
-    */
 }
 
 bool BayerCarrier::processBuffered() {
@@ -310,10 +361,20 @@ ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
 
 
 bool BayerCarrier::setFormat(const char *fmt) {
+    dcformat = DC1394_COLOR_FILTER_GRBG;
     ConstString f(fmt);
     if (f.length()<2) return false;
     goff = (f[0]=='g'||f[0]=='G')?0:1;
     roff = (f[0]=='r'||f[0]=='R'||f[1]=='r'||f[1]=='R')?0:1;
+    if (goff==0&&roff==0) {
+        dcformat = DC1394_COLOR_FILTER_GRBG;
+    } else if (goff==0&&roff==1) {
+        dcformat = DC1394_COLOR_FILTER_GBRG;
+    } else if (goff==1&&roff==0) {
+        dcformat = DC1394_COLOR_FILTER_RGGB;
+    } else if (goff==1&&roff==1) {
+        dcformat = DC1394_COLOR_FILTER_BGGR;
+    }
     return true;
 }
 

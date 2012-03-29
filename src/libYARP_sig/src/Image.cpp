@@ -44,6 +44,7 @@ public:
     IplImage* pImage;
     char **Data;  // this is not IPL. it's char to maintain IPL compatibility  
     int extern_type_id;
+    int extern_type_quantum;
     int quantum;
     bool topIsLow;
 
@@ -92,6 +93,7 @@ public:
         quantum = 0;
         topIsLow = true;
         extern_type_id = 0;
+        extern_type_quantum = -1;
     }
 
     ~ImageStorage() {
@@ -121,6 +123,7 @@ void ImageStorage::resize(int x, int y, int pixel_type,
         _alloc_complete (x, y, pixel_type, quantum, topIsLow);
     }
     extern_type_id = pixel_type;
+    extern_type_quantum = quantum;
 }
 
 
@@ -638,6 +641,9 @@ void Image::resize(int imgWidth, int imgHeight) {
     if (imgPixelCode!=((ImageStorage*)implementation)->extern_type_id) {
         change = true;
     }
+    if (imgQuantum!=((ImageStorage*)implementation)->extern_type_quantum) {
+        change = true;
+    }
     if (size!=imgPixelSize) { 
         imgPixelSize = size; 
         change=true;
@@ -762,7 +768,7 @@ void Image::wrapIplImage(void *iplImage) {
 
 
 bool Image::read(yarp::os::ConnectionReader& connection) {
-    
+
     // auto-convert text mode interaction
     connection.convertTextMode();
     
@@ -775,11 +781,13 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     
     int q = getQuantum();
     if (q==0) {
-        q = YARP_IMAGE_ALIGN;
+        //q = YARP_IMAGE_ALIGN;
+        setQuantum(header.quantum);
+        q = getQuantum();
     }
     if (q!=header.quantum) {
-        
-        if ((header.depth*header.width)%q==0) {
+        if ((header.depth*header.width)%header.quantum==0 &&
+            (header.depth*header.width)%q==0) {
             header.quantum = q;
         }
     }

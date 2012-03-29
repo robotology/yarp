@@ -53,10 +53,15 @@ private:
     bool have_result;
     bool happy;
     bool half;
+    bool warned;
+    bool bayer_method_set;
+
+    int bayer_method;
 
     // format offsets
     int goff; // x offset to green on even rows
     int roff; // y offset to red on even columns
+    int dcformat;
 
     bool setFormat(const char *fmt);
 public:
@@ -71,8 +76,12 @@ public:
         image_data_len = 0;
         happy = true;
         half = false;
+        warned = false;
         goff = 0;
         roff = 1;
+        bayer_method = -1;
+        bayer_method_set = false;
+        dcformat = -1;
     }
 
     virtual Carrier *create() {
@@ -157,7 +166,7 @@ public:
     }
 
     virtual bool isValid() {
-        return local.isValid();
+        return true;
     }
 
     virtual bool isActive() {
@@ -165,7 +174,7 @@ public:
     }
 
     virtual bool isError() {
-        return local.isError()||parent->isError();
+        return local.isError()||parent->isError()||!happy;
     }
 
     virtual void requestDrop() {
