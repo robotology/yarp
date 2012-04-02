@@ -17,7 +17,7 @@
 
 #include <yarp/gsl_compatibility.h>
 
-
+#include <math.h>
 #include <vector>
 
 #include "TestList.h"
