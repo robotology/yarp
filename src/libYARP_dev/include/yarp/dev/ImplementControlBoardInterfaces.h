@@ -10,7 +10,7 @@
 #ifndef __YARP_IMPLEMENTCONTROLBOARDINTERFACES__
 #define __YARP_IMPLEMENTCONTROLBOARDINTERFACES__
 
-#include <yarp/dev/ControlboardInterfaces.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/api.h>
 
 namespace yarp{
