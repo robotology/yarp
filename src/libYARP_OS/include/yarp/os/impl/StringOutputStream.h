@@ -56,6 +56,8 @@ public:
         return true;
     }
 
+    const String& str() { return data; }
+
 private:
     String data;
 };

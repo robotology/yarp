@@ -56,6 +56,22 @@ public:
     }
 
     virtual bool dropRequested() = 0;
+
+
+    /**
+     *
+     * Call when writing is about to begin.
+     *
+     */
+    virtual void startWrite() = 0;
+
+    /**
+     *
+     * Call when all writing is finished.
+     *
+     */
+    virtual void stopWrite() = 0;
+
 };
 
 #endif

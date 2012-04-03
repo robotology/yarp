@@ -60,14 +60,17 @@ StreamConnectionReader::~StreamConnectionReader() {
 
 
 bool StreamConnectionReader::convertTextMode() {
-    Bottle bot;
     if (isTextMode()) {
-        bot.read(*this);
-        BufferedConnectionWriter writer;
-        bot.write(writer);
-        String s = writer.toString();
-        altStream.reset(s);
-        in = &altStream;
+        if (!convertedTextMode) {
+            Bottle bot;
+            bot.read(*this);
+            BufferedConnectionWriter writer;
+            bot.write(writer);
+            String s = writer.toString();
+            altStream.reset(s);
+            in = &altStream;
+            convertedTextMode = true;
+        }
     }
 
     return true;

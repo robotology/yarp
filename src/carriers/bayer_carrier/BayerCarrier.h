@@ -128,6 +128,10 @@ public:
         return local.expectInt();
     }
 
+    virtual bool pushInt(int x) {
+        return local.pushInt(x);
+    }
+
     virtual double expectDouble() {
         return local.expectDouble();
     }

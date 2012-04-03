@@ -432,6 +432,7 @@ public:
 
     virtual bool write(SizedWriter& writer) {
         bool replied = false;
+        writer.stopWrite();
         this->writer = &writer;
         if (isActive()) {
             YARP_ASSERT(delegate!=NULL);
@@ -454,6 +455,7 @@ public:
     }
 
     void reply(SizedWriter& writer) {
+        writer.stopWrite();
         delegate->reply(*this,writer);
     }
 

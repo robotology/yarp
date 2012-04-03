@@ -48,6 +48,7 @@ public:
 
     ConnectionReader& getReader()
     {
+        writer.stopWrite();
         String s = writer.toString();
         sis.reset();
         sis.add(s);

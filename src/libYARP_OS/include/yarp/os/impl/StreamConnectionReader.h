@@ -52,6 +52,8 @@ public:
         err = false;
         protocol = NULL;
         shouldDrop = false;
+        convertedTextMode = false;
+        pushedIntFlag = false;
     }
 
     virtual ~StreamConnectionReader();
@@ -66,6 +68,8 @@ public:
         this->valid = true;
         ref = NULL;
         err = false;
+        convertedTextMode = false;
+        pushedIntFlag = false;
     }
 
     void setProtocol(Protocol *protocol) {
@@ -92,8 +96,18 @@ public:
         return false;
     }
 
+    virtual bool pushInt(int x) {
+        if (pushedIntFlag) return false;
+        pushedIntFlag = true;
+        pushedInt = x;
+        return true;
+    }
 
     virtual int expectInt() {
+        if (pushedIntFlag) {
+            pushedIntFlag = false;
+            return pushedInt;
+        }
         //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return 0; }
         NetType::NetInt32 x = 0;
@@ -281,6 +295,9 @@ private:
     Route route;
     yarp::os::Portable *ref;
     yarp::os::Bottle config;
+    bool convertedTextMode;
+    bool pushedIntFlag;
+    int pushedInt;
 };
 
 #endif

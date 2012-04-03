@@ -58,8 +58,7 @@ public:
 
     }
 
-    void checkEnvelope() {
-        report(0, "checking envelopes work...");
+    void checkEnvelope(const char *mode) {
 
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
@@ -67,7 +66,7 @@ public:
         in.setStrict();
         in.open("/in");
         out.open("/out");
-        Network::connect("/out","/in");
+        Network::connect("/out","/in",mode);
 
         Bottle& outBot1 = out.prepare();   // Get the object
         outBot1.fromString("hello world"); // Set it up the way we want
@@ -101,7 +100,10 @@ public:
         // add tests here
         Network::setLocalMode(true);
         checkFormat();
-        checkEnvelope();
+        report(0, "checking envelopes work...");
+        checkEnvelope("tcp");
+        report(0, "checking envelopes work (text mode)...");
+        checkEnvelope("text");
         Network::setLocalMode(false);
     }
 };

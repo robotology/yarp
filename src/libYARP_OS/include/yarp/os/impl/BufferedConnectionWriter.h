@@ -50,6 +50,7 @@ public:
         ref = NULL;
         stopPool();
         shouldDrop = false;
+        convertTextModePending = false;
     }
 
     virtual ~BufferedConnectionWriter() {
@@ -61,6 +62,7 @@ public:
         clear();
         reader = NULL;
         ref = NULL;
+        convertTextModePending = false;
     }
 
     void clear() {
@@ -171,6 +173,7 @@ public:
     }
 
     bool write(ConnectionWriter& connection) {
+        stopWrite();
 		size_t i;
         for (i=0; i<header.size(); i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
@@ -184,6 +187,7 @@ public:
     }
 
     void write(OutputStream& os) {
+        stopWrite();
 		size_t i;
         for (i=0; i<header.size(); i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
@@ -223,6 +227,7 @@ public:
 
 
     String toString() {
+        stopWrite();
         StringOutputStream sos;
         write(sos);
         return sos.toString();
@@ -300,7 +305,17 @@ public:
         return shouldDrop;
     }
 
+    virtual void startWrite() {}
+
+    virtual void stopWrite() {
+        // convert, last thing, if requested
+        applyConvertTextMode();
+    }
+
 private:
+    bool applyConvertTextMode();
+
+
     PlatformVector<yarp::os::ManagedBytes *> lst;
     PlatformVector<yarp::os::ManagedBytes *> header;
     PlatformVector<yarp::os::ManagedBytes *> *target;
@@ -310,6 +325,7 @@ private:
     size_t poolLength;
     yarp::os::PortReader *reader;
     bool textMode;
+    bool convertTextModePending;
     yarp::os::Portable *ref;
     bool shouldDrop;
 };
@@ -327,12 +343,14 @@ private:
     BufferedConnectionWriter writerStore;
     bool writing;
     bool wrote;
+    bool skipNextInt;
     yarp::os::Bottle blank;
 public:
     ConnectionRecorder() {
         reader = NULL;
         writing = false;
         wrote = false;
+        skipNextInt = false;
     }
 
     /**
@@ -378,8 +396,18 @@ public:
 
     virtual int expectInt() {
         int x = reader->expectInt();
-        readerStore.appendInt(x);
+        if (!skipNextInt) {
+            readerStore.appendInt(x);
+        } else {
+            skipNextInt = false;
+        }
         return x;
+    }
+
+    virtual bool pushInt(int x) {
+        bool ok = reader->pushInt(x);
+        skipNextInt = skipNextInt || ok;
+        return ok;
     }
 
     virtual double expectDouble() {

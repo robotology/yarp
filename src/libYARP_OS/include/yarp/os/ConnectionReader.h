@@ -171,6 +171,14 @@ public:
      *
      */
     virtual Searchable& getConnectionModifiers() = 0;
+
+    /**
+     * Store an integer to return on the next call to expectInt()
+     * @param x the integer to store
+     * @return true on success
+     */
+    virtual bool pushInt(int x) = 0;
+
 };
 
 #endif
