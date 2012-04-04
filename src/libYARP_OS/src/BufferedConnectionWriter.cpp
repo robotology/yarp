@@ -32,6 +32,7 @@ bool BufferedConnectionWriter::applyConvertTextMode() {
         }
         target = &lst;
         lst.clear();
+        stopPool();
         Bytes data((char*)replacement.c_str(),replacement.length());
         appendBlockCopy(data);
     }
