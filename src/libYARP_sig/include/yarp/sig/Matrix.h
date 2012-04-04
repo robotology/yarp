@@ -262,6 +262,24 @@ public:
       Vector getCol(int c) const;
 
       /**
+      * Get a subrow of the matrix as a vector.
+      * @param r the row number
+      * @param c the first column number
+      * @param size the size of the subrow
+      * @return a vector which contains the requested subrow
+      */
+      Vector subrow(int r, int c, int size) const;
+
+      /**
+      * Get a subcolumn of the matrix as a vector.
+      * @param r the first row number
+      * @param c the column number
+      * @param size the size of the subcolumn
+      * @return a vector which contains the requested subcolumn
+      */
+      Vector subcol(int r, int c, int size) const;
+
+      /**
       * Print matrix to a string. Useful for display, writing to text.
       * To get a nice format the optional parameters precision and width may be used (same meaning as in printf and cout).
       * @param precision the number of digits to be printed after the decimal point.

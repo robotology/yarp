@@ -1,3 +1,8 @@
+2012-04-04  Andrea Del Prete  <andrea.delprete@iit.it>
+    * src/libYARP_sig/include/yarp/sig/Matrix.h
+	* src/libYARP_sig/src/Matrix.cpp
+    Add methods subrow and subcol
+
 2012-04-02 Lorenzo Natale <lorenzo.natale@iit.it>
     * Reorganization of control board interfaces in separate files
 	* Added IEncodersTimed
@@ -38,7 +43,6 @@
 	is set to an absolute path, rather than an application
 	name, respect that [thanks Lorenzo Natale]
 
->>>>>>> .r9103
 2012-03-19  Andrea Del Prete  <andrea.delprete@iit.it>
     * src/libYARP_math/src/SVD.cpp
     * src/libYARP_math/include/yarp/math/SVD.h

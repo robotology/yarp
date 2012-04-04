@@ -301,6 +301,32 @@ Vector Matrix::getCol(int c) const
     return ret;
 }
 
+Vector Matrix::subrow(int r, int c, int size) const
+{
+    if(r>=rows() || c+size-1>=cols())
+        return Vector(0);
+
+    Vector ret(size);
+
+    for(int i=0;i<size;i++)
+        ret[i]=(*this)[r][c+i];
+
+    return ret;
+}
+
+Vector Matrix::subcol(int r, int c, int size) const
+{
+    if(r+size-1>=rows() || c>=cols())
+        return Vector(0);
+
+    Vector ret(size);
+
+    for(int i=0;i<size;i++)
+        ret[i]=(*this)[r+i][c];
+
+    return ret;
+}
+
 const Matrix &Matrix::eye()
 {
     zero();
