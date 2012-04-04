@@ -96,6 +96,19 @@ public:
         checkEqualish(inStamp.getTime(),4,"time stamp 2 read");
     }
 
+    void checkString() {
+        report(0,"check string serialization");
+        {
+            Stamp env(42,3.0);
+            BufferedConnectionWriter buf(true);
+            env.write(buf);
+            String str = buf.toString();
+            Bottle bot(str.c_str());
+            checkEqual(bot.get(0).asInt(),42,"sequence ok");
+            checkEqualish(bot.get(1).asDouble(),3,"time ok");
+        }
+    }
+
     virtual void runTests() {
         // add tests here
         Network::setLocalMode(true);
@@ -104,6 +117,7 @@ public:
         checkEnvelope("tcp");
         report(0, "checking envelopes work (text mode)...");
         checkEnvelope("text");
+        checkString();
         Network::setLocalMode(false);
     }
 };

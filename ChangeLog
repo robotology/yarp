@@ -1,3 +1,11 @@
+2012-04-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/BufferedConnectionWriter.cpp: fix
+	for memory problem [thanks Lorenzo Natale]
+
+	* src/libYARP_OS/harness/StampTest.cpp: test for memory
+	problem report by Lorenzo [thanks Lorenzo Natale]
+
 2012-04-04  Andrea Del Prete  <andrea.delprete@iit.it>
     * src/libYARP_sig/include/yarp/sig/Matrix.h
 	* src/libYARP_sig/src/Matrix.cpp
