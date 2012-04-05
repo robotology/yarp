@@ -1,3 +1,8 @@
+2012-04-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/carriers/wire_rep_utils/WireTwiddler.h: add missing
+	methods start/stopWrite [thanks Stephane Lallee]
+
 2012-04-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/BufferedConnectionWriter.cpp: fix

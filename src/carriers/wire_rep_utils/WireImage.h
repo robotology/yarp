@@ -135,6 +135,10 @@ public:
     virtual yarp::os::Portable *getReference() { return NULL; }
 
     virtual bool dropRequested() { return false; }
+
+    virtual void startWrite() {}
+
+    virtual void stopWrite() {}
 };
 
 class WireImage {

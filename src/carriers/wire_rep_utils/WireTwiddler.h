@@ -233,6 +233,14 @@ public:
     virtual bool dropRequested() {
         return false;
     }
+
+    virtual void startWrite() {
+        parent->startWrite();
+    }
+
+    virtual void stopWrite() {
+        parent->stopWrite();
+    }
 };
 
 #endif

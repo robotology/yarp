@@ -53,6 +53,13 @@ public:
     }
 
     virtual bool dropRequested() { return false; }
+
+
+    virtual void startWrite() {
+    }
+
+    virtual void stopWrite() {
+    }
 };
 
 class WireBottle {
