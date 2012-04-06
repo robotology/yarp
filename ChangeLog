@@ -1,3 +1,9 @@
+2012-04-06  Andrea Del Prete  <andrea.delprete@iit.it>
+    * src/libYARP_math/src/math.cpp
+    * src\libYARP_math\include\yarp\math\Math.h
+    * src\libYARP_math\harness\MathTest.cpp
+    Add crossProductMatrix, outer product and related tests.
+
 2012-04-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/carriers/wire_rep_utils/WireTwiddler.h: add missing

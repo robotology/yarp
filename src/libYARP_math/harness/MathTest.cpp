@@ -93,6 +93,13 @@ public:
         assertEqual(A, b, testName);
     }
 
+    void assertEqual(const double &a, const double &b, string testName, bool verbose=false){
+        if(fabs(a-b)>TOL)
+            checkTrue(false, testName.c_str());
+        else
+            checkTrue(true, testName.c_str());
+    }
+
     void checkMiscOperations() {
         report(0,"check matrix misc operations...");
         Matrix mm(4,4);
@@ -483,6 +490,30 @@ public:
         Amn=Bmn; Amn/=s; assertEqual(Amn, Bmn/s, testName);
     }
 
+    void crossProduct()
+    {
+        report(0,"checking cross product...");
+        int n = 3;
+        Vector rangeMin(n, -100);
+        Vector rangeMax(n, 100);
+        Vector an = Rand::vector(rangeMin, rangeMax);         // 3 dim vector
+        Vector bn = Rand::vector(rangeMin, rangeMax);         // 3 dim vector
+        Matrix A(3,3);
+        double ann = norm(an);
+        double bnn = norm(bn);
+
+        string testName = "a x a = 0";
+        assertEqual(cross(an,an), zeros(n), testName);
+        testName = "norm(a x b) = norm(a)*norm(b)*sin(theta)";
+        assertEqual(norm(cross(an,bn)), ann*bnn*sqrt(1.0-pow(dot(an,bn)/(ann*bnn),2)), testName.c_str());
+        testName = "cross product = cross product matrix";
+        assertEqual(cross(an, bn), crossProductMatrix(an)*bn, testName);
+        crossProductMatrix(an, A);
+        assertEqual(A, crossProductMatrix(an), testName);
+        testName = "a x b = -b x a";
+        assertEqual(cross(an, bn), -1.0*cross(bn, an), testName);
+    }
+
     virtual void runTests() 
     {
         checkMiscOperations();
@@ -494,6 +525,7 @@ public:
         sumSubtractionOperators();
         productOperator();
         divisionOperator();
+        crossProduct();
     }
 };
 

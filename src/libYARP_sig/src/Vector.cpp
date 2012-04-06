@@ -170,14 +170,14 @@ const Vector &Vector::operator=(double v)
 
 bool Vector::operator==(const yarp::sig::Vector &r) const
 {
+    //check dimensions first
+    size_t c=size();
+    if (c!=r.size())
+        return false;
+
     const double *tmp1=data();
     const double *tmp2=r.data();
 
-    //check dimensions first
-    if (size()!=r.size())
-        return false;
-
-    size_t c=size();
     while(c--)
     {
         if (*tmp1++!=*tmp2++)

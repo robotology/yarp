@@ -219,7 +219,6 @@ Vector& yarp::math::operator*=(Vector &a, const Vector &b)
 
 Vector yarp::math::operator*(const yarp::sig::Vector &a, const yarp::sig::Matrix &m)
 {
-    // to be implemented (why??? A.D.P.)
     YARP_ASSERT(a.size()==(size_t)m.rows());
     Vector ret((size_t)m.cols());
 
@@ -484,9 +483,18 @@ Vector yarp::math::cat(double s1, double s2, double s3, double s4, double s5)
 double yarp::math::dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b)
 {
     YARP_ASSERT(a.size()==b.size());
-    double ret;
-    ret=cblas_ddot(a.size(), a.data(),1, b.data(),1);
-    return ret;
+    return cblas_ddot(a.size(), a.data(),1, b.data(),1);
+}
+
+Matrix yarp::math::outerProduct(const Vector &a, const Vector &b)
+{
+    size_t s = a.size();
+    YARP_ASSERT(s==b.size());
+    Matrix res(s, s);
+    for(size_t i=0;i<s;i++)
+        for(size_t j=0;j<s;j++)
+            res(i,j) = a(i) * b(j);
+    return res;
 }
 
 Vector yarp::math::cross(const Vector &a, const Vector &b)
@@ -498,6 +506,47 @@ Vector yarp::math::cross(const Vector &a, const Vector &b)
     v[1]=a[2]*b[0]-a[0]*b[2];
     v[2]=a[0]*b[1]-a[1]*b[0];
     return v;
+}
+
+bool yarp::math::cross(const Vector &a, const Vector &b, Vector &out)
+{
+    if(a.size()!=3 || b.size()!=3)
+        return false;
+    if(out.size()!=3)
+        out.resize(3);
+    out[0]=a[1]*b[2]-a[2]*b[1];
+    out[1]=a[2]*b[0]-a[0]*b[2];
+    out[2]=a[0]*b[1]-a[1]*b[0];
+    return true;
+}
+
+Matrix yarp::math::crossProductMatrix(const Vector &v)
+{
+    YARP_ASSERT(v.size()==3);
+    Matrix res = zeros(3,3);
+    res(1,0) = v(2); 
+    res(0,1) = -v(2); 
+    res(2,0) = -v(1); 
+    res(0,2) = v(1);
+    res(2,1) = v(0); 
+    res(1,2) = -v(0);
+    return res;
+}
+
+bool yarp::math::crossProductMatrix(const Vector &v, Matrix &res)
+{
+    if(v.size()!=3)
+        return false;
+    if(res.cols()!=3 || res.rows()!=3)
+        res.resize(3,3);
+    res(0,0) = res(1,1) = res(2,2) = 0.0;
+    res(1,0) = v(2); 
+    res(0,1) = -v(2); 
+    res(2,0) = -v(1); 
+    res(0,2) = v(1);
+    res(2,1) = v(0); 
+    res(1,2) = -v(0);
+    return true;
 }
 
 double yarp::math::norm(const Vector &v)

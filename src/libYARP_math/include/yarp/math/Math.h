@@ -346,18 +346,48 @@ namespace yarp
         YARP_math_API yarp::sig::Vector cat(double s1, double s2, double s3, double s4, double s5);
         
         /**
-        * Scalar product between vectors, returns a*b.
+        * Scalar product between vectors. 
+        * @return a^T*b, where a and b are column vectors
         */
         YARP_math_API double dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
-        * Returns the the cross product between two vectors. 
-        * @param a is the first input vector. 
-        * @param b is the second input vector. 
-        * @param verbose sets some verbosity. 
-        * @return axb.
+        * Outer product between vectors.
+        * @return a*b^T, where a and b are column vectors
+        */
+        YARP_math_API yarp::sig::Matrix outerProduct(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+        /**
+        * Compute the cross product between two vectors.
+        * @param a first input vector
+        * @param b second input vector
+        * @return axb
         */
         YARP_math_API yarp::sig::Vector cross(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+        /**
+        * Compute the cross product between two vectors. 
+        * @param a is the first input vector. 
+        * @param b is the second input vector. 
+        * @param out the result
+        * @return true if operation succeeded, false otherwise.
+        */
+        YARP_math_API bool cross(const yarp::sig::Vector &a, const yarp::sig::Vector &b, yarp::sig::Vector &out);
+
+        /**
+        * Compute the cross product matrix, that is a 3-by-3 skew-symmetric matrix.
+        * @param v the vector
+        * @return the cross product matrix
+        */
+        YARP_math_API yarp::sig::Matrix crossProductMatrix(const yarp::sig::Vector &v);
+
+        /**
+        * Compute the cross product matrix, that is a 3-by-3 skew-symmetric matrix.
+        * @param v the vector
+        * @param res the cross product matrix
+        * @return true if operation succeeded, false otherwise
+        */
+        YARP_math_API bool crossProductMatrix(const yarp::sig::Vector &v, yarp::sig::Matrix &res);
 
         /**
         * Returns the Euclidean norm of the vector. 
