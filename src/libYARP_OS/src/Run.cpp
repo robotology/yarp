@@ -2233,30 +2233,23 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 
     int c=0;
     char *command[16];
-    char cmdbuf[16][32];
+    for (int i=0; i<16; ++i) command[i]=NULL;
    
-    strcpy(cmdbuf[c++],"xterm");
-
-    strcpy(cmdbuf[c++],msg.check("hold")?"-hold":"+hold");
+    cmdcpy(command[c++],"xterm");
+    cmdcpy(command[c++],msg.check("hold")?"-hold":"+hold");
 
     if (msg.check("geometry"))
     {
-        strcpy(cmdbuf[c++],"-geometry");
-        strcpy(cmdbuf[c++],msg.find("geometry").asString().c_str());
+        cmdcpy(command[c++],"-geometry");
+        cmdcpy(command[c++],msg.find("geometry").asString().c_str());
     }
 
-    strcpy(cmdbuf[c++],"-title");
-    strcpy(cmdbuf[c++],strAlias.c_str());
+    cmdcpy(command[c++],"-title");
+    cmdcpy(command[c++],strAlias.c_str());
     
-    strcpy(cmdbuf[c++],"-e");    
-    strcpy(cmdbuf[c++],strCmd.c_str());
+    cmdcpy(command[c++],"-e");    
+    cmdcpy(command[c++],strCmd.c_str());
     
-    for (int i=0; i<c; ++i)
-    {
-        command[i]=cmdbuf[i];
-    }
-    command[c]=NULL;
-
     CHECKPOINT()
 
     int pid_cmd=fork();
@@ -2285,6 +2278,8 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 
         CHECK_EXIT()
 
+        cmdclean(command);
+
         return YARPRUN_ERROR;
     }
 
@@ -2308,6 +2303,8 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
         //fflush(stdout);
         fflush(stderr);
         
+        cmdclean(command);
+
         if (ret==YARPRUN_ERROR)
         {
             int error=errno;
@@ -2349,6 +2346,7 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
         result.clear();
      
         //yarp::os::Time::delay(0.5);
+        cmdclean(command);
         
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);

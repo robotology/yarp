@@ -182,6 +182,20 @@ protected:
 	static ConstString mPortName;
     static int mProcCNT;
 
+    static void cmdcpy(char* &dst,const char* src)
+    {
+        dst=new char[(strlen(src)/8+2)*16];
+        strcpy(dst,src);
+    }
+
+    static void cmdclean(char **cmd)
+    {
+        while (*cmd)
+        {
+            delete [] *cmd++;
+        }
+    }
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };
 
