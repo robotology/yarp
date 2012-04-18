@@ -237,9 +237,7 @@ public:
 
     const string toFile(const char *dirName, unsigned int cnt)
     {
-        string ret;
-        ret=p->toString();
-
+        string ret=p->toString().c_str();
         return ret;
     }
 
@@ -272,12 +270,11 @@ public:
 
     const string toFile(const char *dirName, unsigned int cnt)
     {
-        string ret;
         char extfName[255];
         char fName[255];
 
         sprintf(fName,"%.8d.ppm",cnt);
-        ret=fName;
+        string ret=fName;
 
         sprintf(extfName,"%s/%s",dirName,fName);
         file::write(*p,extfName);
