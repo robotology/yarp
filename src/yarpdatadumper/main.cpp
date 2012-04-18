@@ -523,7 +523,7 @@ public:
                 if (saveData)
                 {
                     mutex.wait();
-                    fout << item.seqNumber << '\t' << fixed << item.timeStamp << '\t';
+                    fout << item.seqNumber << ' ' << fixed << item.timeStamp << ' ';
                     fout << item.obj->toFile(dirName,counter++) << endl;
                     mutex.post();
                 }
