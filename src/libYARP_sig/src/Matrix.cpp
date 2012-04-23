@@ -74,17 +74,17 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
     int r=rows();
     int c=cols();
     if (header.listLen > 0)
+    {
+        if ( (r*c) != (int)(header.listLen))
         {
-            if ( (r*c) != (int)(header.listLen))
-                {
-                    resize(header.rows, header.cols);
-                }
-            
-            int l=0;
-            double *tmp=data();
-            for(l=0;l<header.listLen;l++)
-                tmp[l]=connection.expectDouble();
+            resize(header.rows, header.cols);
         }
+            
+        int l=0;
+        double *tmp=data();
+        for(l=0;l<header.listLen;l++)
+            tmp[l]=connection.expectDouble();
+    }
     else
         return false;
 
@@ -129,29 +129,29 @@ ConstString Matrix::toString(int precision, int width, const char* endRowStr) co
     int c, r;
     if(width>0) // if width is specified use a space as separator
     {
-        for(r=0;r<rows();r++)
+        for(r=0;r<nrows;r++)
         {        
-            for(c=0;c<cols();c++)
+            for(c=0;c<ncols;c++)
             {
                 sprintf(tmp, "% *.*lf ", width, precision, (*this)[r][c]);
                 ret+=tmp;
             }
             ret = ret.substr(0,ret.length()-1);     // remove the last character (space)
-            if(r<rows()-1)                          // if it is not the last row
+            if(r<nrows-1)                          // if it is not the last row
                 ret+= endRowStr;
         }
     }
     else    // if width is not specified use tab as separator
     {
-        for(r=0;r<rows();r++)
+        for(r=0;r<nrows;r++)
         {
-            for(c=0;c<cols();c++)
+            for(c=0;c<ncols;c++)
             {
                 sprintf(tmp, "% .*lf\t", precision, (*this)[r][c]);
                 ret+=tmp;
             }
             ret = ret.substr(0,ret.length()-1);     // remove the last character (tab)
-            if(r<rows()-1)                          // if it is not the last row
+            if(r<nrows-1)                          // if it is not the last row
                 ret+= endRowStr;
         }
     }
@@ -176,22 +176,32 @@ void Matrix::updatePointers()
 
 const Matrix &Matrix::operator=(const Matrix &r)
 {
-    if (storage)
-        delete [] storage;
+    if(nrows!=r.nrows || ncols!=r.ncols)
+    {
+        if (storage)
+            delete [] storage;
     
-    nrows=r.nrows;
-    ncols=r.ncols;
+        nrows=r.nrows;
+        ncols=r.ncols;
 
-    storage=new double[ncols*nrows];
-    memcpy(storage, r.storage, ncols*nrows*sizeof(double));
-
-    updatePointers();
+        storage=new double[ncols*nrows];
+        memcpy(storage, r.storage, ncols*nrows*sizeof(double));
+        updatePointers();
+    }
+    else
+    {
+        if(!storage)
+            storage=new double[ncols*nrows];
+        memcpy(storage, r.storage, ncols*nrows*sizeof(double));
+    }
+    
     return *this;
 }
 
 const Matrix &Matrix::operator=(double v)
 {
-    for(int k=0; k<nrows*ncols; k++)
+    int nelem = nrows*ncols;
+    for(int k=0; k<nelem; k++)
         storage[k]=v;
 
     return *this;
@@ -210,6 +220,9 @@ Matrix::~Matrix()
 
 void Matrix::resize(int new_r, int new_c)
 {
+    if(new_r==nrows && new_c==ncols)
+        return;
+
     double *new_storage=new double[new_r*new_c];
 
     const int copy_r=(new_r<nrows) ? new_r:nrows;
@@ -357,12 +370,12 @@ const Matrix &Matrix::diagonal(const Vector &d)
 
 bool Matrix::operator==(const yarp::sig::Matrix &r) const
 {
-    const double *tmp1=data();
-    const double *tmp2=r.data();
-
     //check dimensions first
     if ( (rows()!=r.rows()) || (cols()!=r.cols()))
         return false;
+
+    const double *tmp1=data();
+    const double *tmp2=r.data();
 
     int c=rows()*cols();
     while(c--)
@@ -448,20 +461,22 @@ bool Matrix::setSubmatrix(const yarp::sig::Matrix &m, int r, int c)
 
 bool Matrix::setSubrow(const Vector &v, int r, int c)
 {
-    if(r<0 || r>=nrows || c<0 || c+v.size()>=(size_t)ncols)
+    size_t s = v.size();
+    if(r<0 || r>=nrows || c<0 || c+s-1>=(size_t)ncols)
         return false;
 
-    for(size_t i=0;i<v.size();i++)
+    for(size_t i=0;i<s;i++)
         (*this)[r][i+c] = v[i];
     return true;
 }
 
 bool Matrix::setSubcol(const Vector &v, int r, int c)
 {
-    if(r<0 || r+v.size()>=(size_t)nrows || c<0 || c>=ncols)
+    size_t s = v.size();
+    if(r<0 || r+s-1>=(size_t)nrows || c<0 || c>=ncols)
         return false;
 
-    for(int i=0;i<(int)v.size();i++)
+    for(size_t i=0;i<(int)s;i++)
         (*this)[r+i][c] = v[i];
     return true;
 }
@@ -489,10 +504,10 @@ Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
 
     if (m.storage!=0) 
     {
-            storage=new double [nrows*ncols];
-            memcpy(storage, m.storage, nrows*ncols*sizeof(double));
+        storage=new double [nrows*ncols];
+        memcpy(storage, m.storage, nrows*ncols*sizeof(double));
 
-            updatePointers();
+        updatePointers();
     }
 }
 

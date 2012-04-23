@@ -62,7 +62,33 @@ namespace yarp
         * @param tol singular values less than tol are set to zero
         * @return pseudo-inverse of the matrix 'in'
         */
-        yarp::sig::Matrix YARP_math_API pinv(const yarp::sig::Matrix &in, double tol=0);
+        yarp::sig::Matrix YARP_math_API pinv(const yarp::sig::Matrix &in, double tol=0.0);
+
+        /**
+        * Perform the moore-penrose pseudo-inverse of a matrix.
+        * @param in input matrix 
+        * @param out pseudo-inverse of the matrix 'in'
+        * @param tol singular values less than tol are set to zero
+        */
+        void YARP_math_API pinv(const yarp::sig::Matrix &in, yarp::sig::Matrix &out, double tol=0.0);
+
+        /**
+        * Perform the moore-penrose pseudo-inverse of a matrix.
+        * @param in input matrix 
+        * @param sv vector containing the singular values of the iput matrix
+        * @param tol singular values less than tol are set to zero
+        * @return pseudo-inverse of the matrix 'in'
+        */
+        yarp::sig::Matrix YARP_math_API pinv(const yarp::sig::Matrix &in, yarp::sig::Vector &sv, double tol=0.0);
+
+        /**
+        * Perform the moore-penrose pseudo-inverse of a matrix.
+        * @param in input matrix 
+        * @param out pseudo-inverse of the matrix 'in'
+        * @param sv vector containing the singular values of the iput matrix
+        * @param tol singular values less than tol are set to zero
+        */
+        void YARP_math_API pinv(const yarp::sig::Matrix &in, yarp::sig::Matrix &out, yarp::sig::Vector &sv, double tol=0.0);
     }
 }
 

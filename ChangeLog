@@ -1,3 +1,10 @@
+2012-04-23  Andrea Del Prete  <andrea.delprete@iit.it>
+    * src/libYARP_math/src/math.cpp
+    * src\libYARP_math\include\yarp\math\Math.h
+    * src/libYARP_sig/src/Matrix.cpp
+    Add methods for pseudo-inverse that return singular value vector.
+    Some bug fixes and performance improvements in Matrix.
+    
 2012-04-23  Ugo Pattacini  <ugo.pattacini@iit.it>
     * src/libYAR_dev/include/yarp/dev/GazeControl.h
     Added a couple of new methods to check saccades termination
