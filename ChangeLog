@@ -1,3 +1,7 @@
+2012-04-23  Ugo Pattacini  <ugo.pattacini@iit.it>
+    * src/libYAR_dev/include/yarp/dev/GazeControl.h
+    Added a couple of new methods to check saccades termination
+
 2012-04-06  Andrea Del Prete  <andrea.delprete@iit.it>
     * src/libYARP_math/src/math.cpp
     * src\libYARP_math\include\yarp\math\Math.h

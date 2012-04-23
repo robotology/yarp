@@ -594,6 +594,23 @@ public:
     */
     virtual bool waitMotionDone(const double period=0.1, const double timeout=0.0)=0;
 
+    /** Check once if the saccade is terminated. [wait for reply]
+    * @param f where the result is returned.
+    * @return true/false on success/failure.
+    */
+    virtual bool checkSaccadeDone(bool *f)=0;
+
+    /** Wait until the current saccade is terminated. [wait for
+    *   reply]
+    * @param period specify the check time period (seconds). 
+    * @param timeout specify the check expiration time (seconds). If
+    *         timeout<=0 (as by default) the check will be performed
+    *         without time limitation.
+    * @return true for success, false for failure and timeout 
+    *         expired.
+    */
+    virtual bool waitSaccadeDone(const double period=0.1, const double timeout=0.0)=0;
+
     /** Ask for an immediate stop of the motion. [wait for reply]
     * @return true/false on success/failure. 
     */
