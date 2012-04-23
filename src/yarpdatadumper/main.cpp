@@ -101,6 +101,10 @@ The port the service is listening to.
 \section portsc_sec Ports Created
  
 - \e <portname> (e.g. /dump) 
+ 
+- \e <portname>/rpc which is a remote procedure call port useful
+  to shut down the service remotely by sending to this port the
+  'quit' command.
 
 \section in_files_sec Input Data Files
 None.
@@ -573,6 +577,7 @@ private:
     DumpPort<ImageOf<PixelBgr> > *p_image;
     DumpThread                   *t;
     DumpReporter                  reporter;
+    Port                          rpcPort;
     DumpType                      type;
     bool                          saveData;
     bool                          videoOn;
@@ -688,6 +693,13 @@ public:
             p_image->setReporter(reporter);
         }
 
+        char rpcPortName[255];
+        strcpy(rpcPortName,portName);
+        strcat(rpcPortName,"/rpc");
+
+        rpcPort.open(rpcPortName);
+        attach(rpcPort);
+
         cout << "Service launched with the port name: " << portName << endl;
 
         return true;
@@ -709,6 +721,9 @@ public:
             p_image->close();
             delete p_image;
         }
+
+        rpcPort.interrupt();
+        rpcPort.close();
 
         delete t;
         delete q;
