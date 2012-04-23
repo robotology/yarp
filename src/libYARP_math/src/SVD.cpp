@@ -126,7 +126,7 @@ Matrix yarp::math::pinv(const Matrix &in, Vector &sv, double tol)
 {
 	int m = in.rows(), n = in.cols(), k = m<n?m:n;
 	Matrix U(m,k), V(n,k);
-    if(sv.size()!=k)
+    if((int)sv.size()!=k)
         sv.resize(k);
 
 	yarp::math::SVD(in, U, sv, V);
@@ -143,7 +143,7 @@ void yarp::math::pinv(const Matrix &in, Matrix &out, Vector &sv, double tol)
 {
 	int m = in.rows(), n = in.cols(), k = m<n?m:n;
 	Matrix U(m,k), V(n,k);
-    if(sv.size()!=k)
+    if((int)sv.size()!=k)
         sv.resize(k);
 
 	yarp::math::SVD(in, U, sv, V);

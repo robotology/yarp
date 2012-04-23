@@ -476,7 +476,7 @@ bool Matrix::setSubcol(const Vector &v, int r, int c)
     if(r<0 || r+s-1>=(size_t)nrows || c<0 || c>=ncols)
         return false;
 
-    for(size_t i=0;i<(int)s;i++)
+    for(size_t i=0;i<s;i++)
         (*this)[r+i][c] = v[i];
     return true;
 }
