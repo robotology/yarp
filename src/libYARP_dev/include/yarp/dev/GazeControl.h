@@ -214,6 +214,14 @@ public:
     virtual bool getSaccadesStatus(bool *f)=0;
 
     /**
+    * Get the current inhibition period for saccadic movements. 
+    * [wait for reply] 
+    * @param period the current inhibition period (s).
+    * @return true/false on success/failure. 
+    */
+    virtual bool getSaccadesInhibitionPeriod(double *period)=0;
+
+    /**
     * Get the current pose of the left eye frame. [wait for reply]
     * @param x a 3-d vector which is filled with the actual 
     *         position x,y,z (meters).
@@ -436,6 +444,14 @@ public:
     *       by saccades.
     */
     virtual bool setSaccadesStatus(const bool f)=0;
+
+    /**
+    * Set the inhibition period for saccadic movements. [wait for 
+    * reply] 
+    * @param period the new inhibition period (s).
+    * @return true/false on success/failure. 
+    */
+    virtual bool setSaccadesInhibitionPeriod(const double period)=0;
 
     /**
     * Update the options used by the stereo approach. [wait for 
