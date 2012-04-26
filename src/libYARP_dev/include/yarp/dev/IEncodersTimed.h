@@ -39,7 +39,7 @@ public:
      * @stamps pointer to the array that will contain individual timestamps
      * @return true if all goes well, false if anything bad happens. 
      */
-    virtual bool getEncodersTimedRaw(double *encs, double *stamps);
+    virtual bool getEncodersTimedRaw(double *encs, double *stamps)=0;
     
      /**
      * Read the instantaneous acceleration of all axes.
@@ -48,7 +48,7 @@ public:
      * @stamp corresponding timestamp
      * @return true if all goes well, false if anything bad happens. 
      */
-    virtual bool getEncoderTimedRaw(int j, double *encs, double *stamp);
+    virtual bool getEncoderTimedRaw(int j, double *encs, double *stamp)=0;
 };
 
 /**
