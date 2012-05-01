@@ -8,9 +8,7 @@
  */
 
 
-#include <yarp/os/impl/String.h>
 #include <yarp/os/IConfig.h>
-#include <yarp/os/all.h>
 
 using namespace yarp::os;
 

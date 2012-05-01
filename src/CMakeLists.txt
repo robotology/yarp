@@ -17,6 +17,8 @@ link_directories(${YARP_TREE_LINK_DIRS})
 
 add_subdirectory(carriers)
 
+add_subdirectory(idls)
+
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_init)
 add_subdirectory(libyarpc)

@@ -47,6 +47,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
+#include <yarp/os/Wire.h>
 
 #endif
 

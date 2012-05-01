@@ -1,3 +1,11 @@
+2012-05-02  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/idls/thrift: merge from https://github.com/paulfitz/yarp_thrift
+	This is a basic thrift-based IDL, now available as an optional
+	plugin (turn on "CREATE_IDLS" in the CMake gui, reconfigure, then
+	turn on "ENABLE_yarpidl_thrift").  Basic example in example/idl.
+	This plugin will be subject to change for some time.
+
 2012-04-23  Andrea Del Prete  <andrea.delprete@iit.it>
     * src/libYARP_math/src/math.cpp
     * src\libYARP_math\include\yarp\math\Math.h

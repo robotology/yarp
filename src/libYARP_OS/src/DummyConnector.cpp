@@ -17,21 +17,35 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+class DummyConnectorReader : public StreamConnectionReader {
+public:
+    BufferedConnectionWriter *altWriter;
+    bool tmode;
+    
+    BufferedConnectionWriter *getWriter() {
+        altWriter->reset(tmode);
+        return altWriter;
+    }
+};
+
 class DummyConnectorHelper {
 private:
     BufferedConnectionWriter writer;
-    StreamConnectionReader reader;
+    DummyConnectorReader reader;
     StringInputStream sis;
     bool textMode;
 public:
 
     DummyConnectorHelper() : writer(false), textMode(false) {
+        reader.altWriter = &writer;
+        reader.tmode = textMode;
     }
 
     void setTextMode(bool textmode)
     {
         textMode = textmode;
         writer.reset(textMode);
+        reader.tmode = textMode;
     }
 
 
@@ -61,7 +75,6 @@ public:
     {
         writer.reset(textMode);
     }
-
 };
 
 
@@ -100,3 +113,4 @@ ConnectionReader& DummyConnector::getReader() {
 void DummyConnector::reset() {
     HELPER(implementation).reset();
 }
+
