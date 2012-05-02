@@ -1,3 +1,8 @@
+2012-05-02  Andrea Del Prete  <andrea.delprete@iit.it>
+    * src/libYARP_sig/src/Matrix.cpp
+    * src/libYARP_sig/harness/MatrixTest.cpp
+    Fix bug in method Matrix::read and modify related test.
+    
 2012-05-02  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/idls/thrift: merge from https://github.com/paulfitz/yarp_thrift

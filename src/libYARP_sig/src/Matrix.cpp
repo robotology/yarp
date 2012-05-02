@@ -75,7 +75,7 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
     int c=cols();
     if (header.listLen > 0)
     {
-        if ( (r*c) != (int)(header.listLen))
+        if ( r != (int)(header.rows) || c!=(int)(header.cols))
         {
             resize(header.rows, header.cols);
         }

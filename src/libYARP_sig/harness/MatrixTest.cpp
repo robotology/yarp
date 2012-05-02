@@ -263,7 +263,7 @@ public:
     void checkBottle() {
         report(0,"check bottle compatibility...");
         Bottle b("2 3 (0.0 1.1 2.2 3.3 4.4 5.5)");
-        Matrix m;
+        Matrix m(6,1);
         DummyConnector con;
         b.write(con.getWriter());
         m.read(con.getReader());
