@@ -224,9 +224,61 @@ bool RFModuleHelper::read(ConnectionReader& connection) {
 
 #define HELPER(x) (*((RFModuleHelper*)(x)))
 
+static RFModule *module = 0;
+static void handler (int sig) {
+    static int ct = 0;
+    ct++;
+    if (ct>3) {
+        ACE_OS::printf("Aborting (calling exit())...\n");
+        yarp::os::exit(1);
+    }
+    ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
+                   ct);
+
+    if (module!=0)
+    {
+        module->stopModule(false);
+    }
+
+  //  if (module!=NULL) {
+  //      Bottle cmd, reply;
+  //      cmd.fromString("quit");
+   //     module->safeRespond(cmd,reply);
+        //printf("sent %s, got %s\n", cmd.toString().c_str(),
+        //     reply.toString().c_str());
+   // }
+}
+
+// Special case for windows. Do not return, wait for the the main thread to return.
+// In any case windows will shut down the application after a timeout of 5 seconds.
+// This wait is required otherwise windows shuts down the process after we return from
+// the signal handler. We could not find better way to handle clean remote shutdown of 
+// processes in windows.
+#if defined(WIN32)
+static void handler_sigbreak(int sig)
+{
+	raise(SIGINT);
+}
+#endif
+
 RFModule::RFModule() {
     implementation = new RFModuleHelper(*this);
     stopFlag=false;
+
+    //set up signal handlers for catching ctrl-c
+    if (module==NULL) {
+        module = this;
+    } 
+    else {
+        ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
+    }
+
+#if defined(WIN32)
+    ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) handler_sigbreak);
+#endif
+
+    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
+    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
 }
 
 RFModule::~RFModule() {
@@ -277,62 +329,7 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
     return ok;
 }
 
-
-static RFModule *module = 0;
-static void handler (int sig) {
-    static int ct = 0;
-    ct++;
-    if (ct>3) {
-        ACE_OS::printf("Aborting (calling exit())...\n");
-        yarp::os::exit(1);
-    }
-    ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
-                   ct);
-
-    if (module!=0)
-    {
-        module->stopModule(false);
-    }
-
-  //  if (module!=NULL) {
-  //      Bottle cmd, reply;
-  //      cmd.fromString("quit");
-   //     module->safeRespond(cmd,reply);
-        //printf("sent %s, got %s\n", cmd.toString().c_str(),
-        //     reply.toString().c_str());
-   // }
-}
-
-// Special case for windows. Do not return, wait for the the main thread to return.
-// In any case windows will shut down the application after a timeout of 5 seconds.
-// This wait is required otherwise windows shuts down the process after we return from
-// the signal handler. We could not find better way to handle clean remote shutdown of 
-// processes in windows.
-#if defined(WIN32)
-static void handler_sigbreak(int sig)
-{
-	raise(SIGINT);
-}
-#endif
-
 int RFModule::runModule() {
-    stopFlag=false;
-
-    //set up signal handlers for catching ctr-c
-    if (module==NULL) {
-        module = this;
-    } 
-    else {
-        ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
-    }
-
-#if defined(WIN32)
-    ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) handler_sigbreak);
-#endif
-
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
-    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
-
     //setting up main loop
     bool loop=true;
 

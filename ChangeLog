@@ -1,4 +1,8 @@
 2012-05-03 Lorenzo Natale <lorenzo.natale@iit.it>
+    * RFModule: signal handling anticipated within the constructor
+    in order to catch possible ctrl-c also during the configure() method.
+
+2012-05-03 Lorenzo Natale <lorenzo.natale@iit.it>
     * Following Gaze Interface change tagging version number: 2.3.17
 	
 2012-05-02  Andrea Del Prete  <andrea.delprete@iit.it>
