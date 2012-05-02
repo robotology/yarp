@@ -652,6 +652,17 @@ public:
     *       time and so on.
     */
     virtual bool restoreContext(const int id)=0;
+
+    /** Allow specifying the type of time stamp user wants to
+    *   retrieve from the interface.
+    * @param selector selects the time stamp type: 0 for time stamps 
+    *                 relative to messages carrying information on
+    *                 fixation point, 1 for information on current
+    *                 angles, 2 for time stamps relative to calls to
+    *                 get[LeftEye|RightEye|Head]Pose methods.
+    * @return true/false on success/failure. 
+    */
+    virtual bool setStampSelector(const int selector)=0;
 };
 
 #endif
