@@ -15,12 +15,14 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Log.h>
 
 #include <yarp/sig/Vector.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
@@ -76,7 +78,7 @@ protected:
     yarp::dev::IAmplifierControl    *amp;
     yarp::dev::IControlLimits       *lim;
     yarp::dev::IAxisInfo            *info;
-    yarp::dev::IControlCalibration2   *ical2;
+    yarp::dev::IControlCalibration2 *ical2;
 
     int nj;
     Vector vect;
@@ -116,14 +118,15 @@ class yarp::dev::ServerControlBoard :
     public IPidControl,
     public IPositionControl,
     public IVelocityControl,
-	public ITorqueControl,
-	public IControlMode,
+    public ITorqueControl,
+    public IControlMode,
     public IEncoders,
     public IAmplifierControl,
     public IControlLimits,
     public IControlCalibration,
     public IControlCalibration2,
-    public IAxisInfo
+    public IAxisInfo,
+    public IPreciselyTimed
     // convenient to put these here just to make sure all
     // methods get implemented
 {
@@ -134,6 +137,9 @@ private:
     Port rpc_p;     // RPC to configure the robot
     Port state_p;   // out port to read the state
     Port control_p; // in port to command the robot
+
+    Stamp     stamp;
+    Semaphore stampMutex;
 
     PortWriterBuffer<yarp::sig::Vector> state_buffer;
     PortReaderBuffer<CommandMessage> control_buffer;
@@ -146,19 +152,19 @@ private:
 
     PolyDriver poly;
 
-    int               nj;
-    int               thread_period;
-    IPidControl       *pid;
-    IPositionControl  *pos;
-    IVelocityControl  *vel;
-	ITorqueControl    *trq;
-	IControlMode	  *mod;
-    IEncoders         *enc;
-    IAmplifierControl *amp;
-    IControlLimits    *lim;
-    IControlCalibration *calib;
+    int                   nj;
+    int                   thread_period;
+    IPidControl          *pid;
+    IPositionControl     *pos;
+    IVelocityControl     *vel;
+    ITorqueControl       *trq;
+    IControlMode         *mod;
+    IEncoders            *enc;
+    IAmplifierControl    *amp;
+    IControlLimits       *lim;
+    IControlCalibration  *calib;
     IControlCalibration2 *calib2;
-    IAxisInfo          *info;
+    IAxisInfo            *info;
     // LATER: other interfaces here.
 
     bool closeMain() {
@@ -381,10 +387,11 @@ public:
             }
 
             // bool ok = enc->getEncoders(&v[0]);
-            // LATER: deal with the ok == false.
-            static yarp::os::Stamp st;
-            st.update();
-            state_p.setEnvelope(st);
+            // LATER: deal with the ok == false.            
+            stampMutex.wait();
+            stamp.update();
+            stampMutex.post();
+            state_p.setEnvelope(stamp);
             state_buffer.write();
 
             now = Time::now();
@@ -1475,6 +1482,19 @@ public:
             return info->getAxisName(j, name);
         }
         return false;
+    }
+
+    /* IPreciselyTimed */
+    /**
+    * Get the time stamp for the last read data
+    * @return last time stamp.
+    */
+    virtual Stamp getLastInputStamp() {
+        Stamp ret;
+        stampMutex.wait();
+        ret = stamp;
+        stampMutex.post();
+        return ret;
     }
 };
 
