@@ -270,7 +270,7 @@ RFModule::RFModule() {
         module = this;
     } 
     else {
-        ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
+        ACE_OS::printf("Module::Module() signal handling currently only good for one module\n");
     }
 
 #if defined(WIN32)
