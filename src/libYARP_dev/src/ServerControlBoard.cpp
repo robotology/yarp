@@ -1490,9 +1490,8 @@ public:
     * @return last time stamp.
     */
     virtual Stamp getLastInputStamp() {
-        Stamp ret;
         stampMutex.wait();
-        ret = stamp;
+        Stamp ret = stamp;
         stampMutex.post();
         return ret;
     }
