@@ -435,6 +435,17 @@ public:
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
         return true;
     }
+
+    /**
+     *
+     * Give carrier a shot at looking at how the connection is set up.
+     * Currently only called for recv carriers.
+     * @return true if the carrier 
+     *
+     */
+    virtual bool configure(yarp::os::impl::Protocol& proto) {
+        return true;
+    }
 };
 
 #endif

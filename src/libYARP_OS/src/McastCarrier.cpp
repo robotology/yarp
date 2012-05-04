@@ -18,12 +18,12 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-ElectionOf<McastCarrier> *McastCarrier::caster = NULL;
+ElectionOf<McastCarrier,PeerRecord> *McastCarrier::caster = NULL;
 
-ElectionOf<McastCarrier>& McastCarrier::getCaster() {
+ElectionOf<McastCarrier,PeerRecord>& McastCarrier::getCaster() {
     NetworkBase::lock();
     if (caster==NULL) {
-        caster = new ElectionOf<McastCarrier>;
+        caster = new ElectionOf<McastCarrier,PeerRecord>;
         NetworkBase::unlock();
         if (caster==NULL) {
             YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");

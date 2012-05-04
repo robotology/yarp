@@ -69,6 +69,8 @@ public:
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) = 0;
 
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) = 0;
+
+    virtual bool skipIncomingData(yarp::os::ConnectionReader& reader) = 0;
 };
 
 #endif

@@ -1,3 +1,9 @@
+2012-05-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/carriers/priority_carrier/PriorityCarrier.cpp: create a 
+	stub for a modifying carrier that will choose messages based on
+	priority levels. [thanks Ali Paikan] [thanks Lorenzo Natale]
+
 2012-05-04  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/carriers/bayer_carrier/CMakeLists.txt: make visual studio 

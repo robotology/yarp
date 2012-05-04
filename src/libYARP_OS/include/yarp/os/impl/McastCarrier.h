@@ -38,9 +38,9 @@ protected:
     String mcastName;
     String key;
 
-    static ElectionOf<McastCarrier> *caster;
+    static ElectionOf<McastCarrier,PeerRecord> *caster;
 
-    static ElectionOf<McastCarrier>& getCaster();
+    static ElectionOf<McastCarrier,PeerRecord>& getCaster();
 
 public:
 

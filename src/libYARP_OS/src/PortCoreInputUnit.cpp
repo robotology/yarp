@@ -271,7 +271,11 @@ void PortCoreInputUnit::run() {
                     localReader->read(br);
                     if (!br.isActive()) { done = true; break; }
                 } else {
-                    man.readBlock(ip->modifyIncomingData(br),id,os);
+                    if (ip->acceptIncomingData(br)) {
+                        man.readBlock(ip->modifyIncomingData(br),id,os);
+                    } else {
+                        ip->skipIncomingData(br);
+                    }
                     if (!br.isActive()) { done = true; break; }
                 }
             }

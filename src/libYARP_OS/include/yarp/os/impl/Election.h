@@ -13,91 +13,155 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/PlatformMap.h>
+#include <yarp/os/Log.h>
+#include <stdio.h>
 
 namespace yarp {
     namespace os {
         namespace impl {
-            class Election;
-            template <class T> class ElectionOf;
+            class PeerRecord;
+            template <class T> class Election;
+            template <class T, class PR> class ElectionOf;
         }
     }
 }
+
+class yarp::os::impl::PeerRecord {
+public:
+    PLATFORM_MAP(void *,bool) peerSet;
+    typedef PLATFORM_MAP(void *,bool)::iterator iterator;
+    typedef PLATFORM_MAP(void *,bool)::const_iterator const_iterator;
+    
+    PeerRecord() {
+    }
+    
+    PeerRecord(const PeerRecord& alt) {
+    }
+    
+    void add(void *entity) {
+        PLATFORM_MAP_SET(peerSet,entity,true);
+    }
+    
+    void remove(void *entity) {
+        PLATFORM_MAP_UNSET(peerSet,entity);
+    }
+    
+    void *getFirst() {
+        if (peerSet.begin()!=peerSet.end()) {
+            return PLATFORM_MAP_ITERATOR_FIRST(peerSet.begin());
+        }
+        return NULL;
+    }
+};
+
 
 /**
  * Pick one of a set of peers to be "active".  Used for situations
  * where a manager is required for some resource used by several
  * peers, but it doesn't matter which peer plays that role.
+ *
+ * PR should be a subclass of PeerRecord.
  */
+template <class PR> 
 class YARP_OS_impl_API yarp::os::impl::Election {
 private:
     typedef void *voidPtr;
 
     yarp::os::Semaphore mutex;
 
-    class PeerRecord {
-    public:
-        PLATFORM_MAP(void *,bool) peerSet;
-
-        PeerRecord() {
-        }
-
-        PeerRecord(const PeerRecord& alt) {
-        }
-
-        void add(void *entity) {
-            PLATFORM_MAP_SET(peerSet,entity,true);
-            //peerSet.bind(entity,true);
-        }
-
-        void remove(void *entity) {
-            PLATFORM_MAP_UNSET(peerSet,entity);
-            //peerSet.unbind(entity);
-        }
-
-        void *getFirst() {
-            if (peerSet.begin()!=peerSet.end()) {
-                return PLATFORM_MAP_ITERATOR_FIRST(peerSet.begin());
-                //return (*(peerSet.begin())).ext_id_;
-            }
-            return NULL;
-        }
-    };
-
-
-    PLATFORM_MAP(YARP_KEYED_STRING,PeerRecord) nameMap;
+    PLATFORM_MAP(YARP_KEYED_STRING,PR) nameMap;
     long ct;
 
-    PeerRecord *getRecord(const String& key, bool create = false);
+    PR *getRecordRaw(const String& key, bool create = false) {
+        PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PR,entry);
+        int result = PLATFORM_MAP_FIND(nameMap,key,entry);
+        if (result==-1 && create) {
+            PLATFORM_MAP_SET(nameMap,key,PR());
+            result = PLATFORM_MAP_FIND(nameMap,key,entry);
+        }
+        if (result==-1) {
+            return NULL;
+        }
+        return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+    }
+ public:
+    Election() : mutex(1) {
+        ct = 0;
+    }
+    virtual ~Election() {}
 
- 
-public:
-    Election();
-    virtual ~Election();
+    PR *add(const String& key, void *entity) {
+        mutex.wait();
+        ct++;
+        PR *rec = getRecordRaw(key,true);
+        YARP_ASSERT(rec!=NULL);
+        rec->add(entity);
+        mutex.post();
+        return rec;
+    }
+    void remove(const String& key, void *entity) {
+        mutex.wait();
+        ct++;
+        PeerRecord *rec = getRecordRaw(key,false);
+        YARP_ASSERT(rec!=NULL);
+        rec->remove(entity);
+        if (rec->getFirst()==NULL) {
+            // PeerRecords persist regardless
+        }
+        mutex.post();    
+    }
 
-    void add(const String& key, void *entity);
-    void remove(const String& key, void *entity);
-    void *getElect(const String& key);
-    long getEventCount();
+    void *getElect(const String& key) {
+        mutex.wait();
+        PeerRecord *rec = getRecordRaw(key,false);
+        mutex.post();
+        if (rec!=NULL) {
+            return rec->getFirst();
+        }
+        return NULL;
+    }
+
+    PR *getRecord(const String& key) {
+        mutex.wait();
+        PeerRecord *rec = getRecordRaw(key,false);
+        mutex.post();
+        return rec;
+    }
+
+    long getEventCount() {
+        return ct;
+    }
+
+    void lock() { mutex.wait(); }
+    void unlock() { mutex.post(); }
 };
+
 
 /**
  * Type-safe wrapper for the Election class.
  */
-template <class T>
-class yarp::os::impl::ElectionOf : protected Election {
+template <class T, class PR>
+class yarp::os::impl::ElectionOf : protected Election<PR> {
 public:
-    void add(const String& key, T *entity) {
-        Election::add(key, entity);
+    PR *add(const String& key, T *entity) {
+        return Election<PR>::add(key, entity);
     }
 
     void remove(const String& key, T *entity) {
-        Election::remove(key, entity);
+        Election<PR>::remove(key, entity);
     }
 
     T *getElect(const String& key) {
-        return (T *)Election::getElect(key);
+        return (T *)Election<PR>::getElect(key);
     }
 
+    PR *getRecord(const String& key) {
+        return Election<PR>::getRecord(key);
+    }
+
+    void lock() { Election<PR>::lock(); }
+
+    void unlock() { Election<PR>::unlock(); }
 };
 
 #endif

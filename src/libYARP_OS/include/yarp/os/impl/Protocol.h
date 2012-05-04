@@ -506,6 +506,8 @@ public:
         return true;
     }
 
+    virtual bool skipIncomingData(yarp::os::ConnectionReader& reader);
+
     virtual void suppressReply() {
         reader.suppressReply();
     }
