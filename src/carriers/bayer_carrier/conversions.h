@@ -13,9 +13,10 @@
 /*
   libdc1294_bayer.c is taken verbatim from:
   http://libdc1394.svn.sourceforge.net/viewvc/libdc1394/trunk/libdc1394/dc1394/bayer.c?revision=535
-  
+
   This header file adapts it for use with YARP.
   We use some tricks for Windows compatibility
+  (UPDATE: you'll need to change the second "calloc" to "calloc2" in that file for MSVC support)
 
 */
 
@@ -132,7 +133,15 @@ typedef struct __dc1394_video_frame
 } dc1394video_frame_t;
 
 
+#ifdef _MSC_VER
+extern "C" 
+#endif
 dc1394error_t dc1394_debayer_frames(dc1394video_frame_t *in, dc1394video_frame_t *out, dc1394bayer_method_t method);
 
+#ifdef _MSC_VER
+#define calloc (unsigned char (*)[3])calloc
+#define calloc2 (unsigned short (*)[3])calloc
+#define pow(x,y) pow((float)(x),(float)(y))
 #endif
 
+#endif

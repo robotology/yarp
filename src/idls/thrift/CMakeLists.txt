@@ -48,6 +48,13 @@ if (NOT THRIFT_ROOT)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src_thrift/generate)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src_thrift/parse)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+  if (MSVC)
+    add_definitions(-DYY_NO_UNISTD_H -Dstrtoll=_strtoi64 -DPRIi64="I64i")
+	add_definitions(-DMINGW) # activate windows code in thrift
+	add_definitions(-DPATH_MAX=1000 -DS_ISDIR=0*)
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/msvc)
+	add_definitions(-D__STDC_VERSION__=199901L)
+  endif ()
   add_executable(yarpidl_thrift 
     src_gen/parser.cc
     src_gen/lexer.cc

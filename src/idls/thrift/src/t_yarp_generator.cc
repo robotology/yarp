@@ -110,7 +110,7 @@ class t_yarp_generator : public t_oop_generator {
 
   std::string function_prototype(t_function *tfn, const char *prefix=NULL);
 
-  std::string declare_field(t_field* tfield, bool init=false, bool pointer=false, bool constant=false, bool reference=false);
+  std::string declare_field(t_field* tfield, bool init=false, bool pointer=false, bool is_constant=false, bool reference=false);
 
   std::string type_name(t_type* ttype, bool in_typedef=false, bool arg=false);
   std::string base_type_name(t_base_type::t_base tbase);
@@ -517,7 +517,7 @@ void t_yarp_generator::generate_program_toc_row(t_program* tprog) {
  */
 void t_yarp_generator::generate_program() {
   // Make output directory
-  MKDIR(get_out_dir().c_str());
+  //MKDIR(get_out_dir().c_str()); // MSVC not happy with this - paul
 
   string fname = get_out_dir() + program_->get_name() + "_index.h";
   f_out_.open(fname.c_str());
@@ -1569,10 +1569,10 @@ void t_yarp_generator::generate_deserialize_list_element(ofstream& out,
   }
 }
 
-string t_yarp_generator::declare_field(t_field* tfield, bool init, bool pointer, bool constant, bool reference) {
+string t_yarp_generator::declare_field(t_field* tfield, bool init, bool pointer, bool is_constant, bool reference) {
   // TODO(mcslee): do we ever need to initialize the field?
   string result = "";
-  if (constant) {
+  if (is_constant) {
     result += "const ";
   }
   result += type_name(tfield->get_type());

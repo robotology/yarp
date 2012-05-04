@@ -1521,7 +1521,7 @@ dc1394_bayer_VNG_uint16(const uint16_t *restrict bayer,
             }
         }
     }
-    brow[4] = calloc (width*3, sizeof **brow);
+    brow[4] = calloc2 (width*3, sizeof **brow);
     //merror (brow[4], "vng_interpolate()");
     for (row=0; row < 3; row++)
         brow[row] = brow[4] + row*width;
