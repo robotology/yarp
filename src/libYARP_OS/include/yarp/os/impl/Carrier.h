@@ -423,6 +423,18 @@ public:
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) {
         return reader;
     }
+
+    /**
+     *
+     * Determine whether incoming data should be accepted.
+     *
+     * @param reader for incoming data.
+     * @return true if data should be accepted, false if it should be discarded.
+     *
+     */
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
+        return true;
+    }
 };
 
 #endif

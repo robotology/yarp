@@ -5,6 +5,7 @@
 
 #include <yarp/os/api.h>
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/Value.h>
 
 namespace yarp {
     namespace os {
@@ -18,6 +19,8 @@ namespace yarp {
  *
  */
 class YARP_OS_API yarp::os::NullConnectionReader : public ConnectionReader {
+private:
+    Value blank;
 public:
     virtual bool expectBlock(const char *data, size_t len) { return false; }
     virtual ConstString expectText(int terminatingChar = '\n') { return ""; }
@@ -36,6 +39,7 @@ public:
     virtual bool isActive() { return false; }
     virtual bool isError() { return true; }
     virtual void requestDrop() {}
+    virtual Searchable& getConnectionModifiers() { return blank; }
 };
 
 

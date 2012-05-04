@@ -499,6 +499,12 @@ public:
         return reader;
     }
 
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
+        if (recv_delegate) {
+            return recv_delegate->acceptIncomingData(reader);
+        }
+        return true;
+    }
 
     virtual void suppressReply() {
         reader.suppressReply();
