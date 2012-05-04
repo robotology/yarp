@@ -1692,7 +1692,7 @@ case VOCAB_SET:
             {
                 int axis = cmd.get(3).asInt();
                 switch(cmd.get(2).asVocab()) {
-                   case VOCAB_CM_POSITION:
+                    case VOCAB_CM_POSITION:
                         ok = mod->setPositionMode(axis);
                         break;
                     case VOCAB_CM_VELOCITY:
