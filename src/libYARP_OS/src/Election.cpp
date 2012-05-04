@@ -14,5 +14,4 @@ using namespace yarp::os::impl;
 
 // avoid no-symbol warnings
 void __election__crickets() {
-    return 1;
 }
