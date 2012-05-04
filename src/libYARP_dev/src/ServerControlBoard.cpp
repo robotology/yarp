@@ -15,12 +15,14 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Log.h>
 
 #include <yarp/sig/Vector.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
@@ -123,7 +125,8 @@ class yarp::dev::ServerControlBoard :
     public IControlLimits,
     public IControlCalibration,
     public IControlCalibration2,
-    public IAxisInfo
+    public IAxisInfo,
+    public IPreciselyTimed
     // convenient to put these here just to make sure all
     // methods get implemented
 {
@@ -135,7 +138,8 @@ private:
     Port state_p;   // out port to read the state
     Port control_p; // in port to command the robot
 
-    Stamp stamp;
+    Stamp     stamp;
+    Semaphore stampMutex;
 
     PortWriterBuffer<yarp::sig::Vector> state_buffer;
     PortReaderBuffer<CommandMessage> control_buffer;
@@ -384,7 +388,9 @@ public:
 
             // bool ok = enc->getEncoders(&v[0]);
             // LATER: deal with the ok == false.            
+            stampMutex.wait();
             stamp.update();
+            stampMutex.post();
             state_p.setEnvelope(stamp);
             state_buffer.write();
 
@@ -1476,6 +1482,18 @@ public:
             return info->getAxisName(j, name);
         }
         return false;
+    }
+
+    /* IPreciselyTimed */
+    /**
+    * Get the time stamp for the last read data
+    * @return last time stamp.
+    */
+    virtual Stamp getLastInputStamp() {
+        stampMutex.wait();
+        Stamp ret = stamp;
+        stampMutex.post();
+        return ret;
     }
 };
 
