@@ -78,7 +78,6 @@ protected:
     yarp::dev::IAmplifierControl    *amp;
     yarp::dev::IControlLimits       *lim;
     yarp::dev::IAxisInfo            *info;
-    yarp::dev::IPreciselyTimed      *tim;
     yarp::dev::IControlCalibration2 *ical2;
 
     int nj;
@@ -166,7 +165,6 @@ private:
     IControlCalibration  *calib;
     IControlCalibration2 *calib2;
     IAxisInfo            *info;
-    IPreciselyTimed      *tim;
     // LATER: other interfaces here.
 
     bool closeMain() {
@@ -205,7 +203,6 @@ public:
         calib  = NULL;
         calib2 = NULL;
         info   = NULL;
-        tim    = NULL;
         nj     = 0;
         thread_period = 20; // ms.
         verb = false;
@@ -322,7 +319,6 @@ public:
             poly.view(calib);
             poly.view(calib2);
             poly.view(info);
-            poly.view(tim);
             poly.view(trq);
             poly.view(mod);
         }
@@ -1579,7 +1575,6 @@ yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) {
     amp   = dynamic_cast<yarp::dev::IAmplifierControl *> (caller);
     lim   = dynamic_cast<yarp::dev::IControlLimits *> (caller);
     info  = dynamic_cast<yarp::dev::IAxisInfo *> (caller);
-    tim   = dynamic_cast<yarp::dev::IPreciselyTimed *> (caller);
     ical2 = dynamic_cast<yarp::dev::IControlCalibration2 *> (caller);
     nj    = 0;
 }
