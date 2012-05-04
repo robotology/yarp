@@ -1,3 +1,11 @@
+2012-05-04  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/carriers/bayer_carrier/CMakeLists.txt: make visual studio 
+	accept libdc1394 code, however begrudgingly [thanks Giorgio Metta]
+
+	* src/idls/thrift/CMakeLists.txt: make visual studio accept
+	thrift code, however begrudgingly [thanks Giorgio Metta]
+
 2012-05-03 Lorenzo Natale <lorenzo.natale@iit.it>
     * RFModule: signal handling anticipated within the constructor
     in order to catch possible ctrl-c also during the configure() method.
