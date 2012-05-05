@@ -23,7 +23,7 @@ public:
         String c1 = "Magnifico";
         String c2 = "Grasso";
         String c3 = "Bozo";
-        ElectionOf<String> elector;
+        ElectionOf<String,PeerRecord> elector;
         elector.add("italy",&c1);
         elector.add("italy",&c2);
         elector.add("france",&c3);
