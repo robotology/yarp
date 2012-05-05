@@ -475,6 +475,16 @@ public:
     *       the trajectory time and so on.
     */
     virtual bool restoreContext(const int id)=0;
+
+    /** Allow specifying the type of time stamp user wants to
+    *   retrieve from the interface.
+    * @param selector selects the time stamp type: 0 for time stamps 
+    *                 relative to messages carrying information on
+    *                 end-effector pose, 1 for information on pose
+    *                 of a specified link.
+    * @return true/false on success/failure. 
+    */
+    virtual bool setStampSelector(const int selector)=0;
 };
 
 #endif
