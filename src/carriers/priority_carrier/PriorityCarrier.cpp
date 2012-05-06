@@ -56,25 +56,47 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
 // Decide whether data should be accepted, for real.
 bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
                                        PriorityCarrier *source) {
+
+/*                                       
     printf("===============================================================\n");
     printf("A message has arrived. Thinking about whether to let it through\n");
     printf("Message is from %s\n", source->sourceName.c_str());
     printf("Priority level %g\n", source->priorityLevel);
-    printf("All connections:");
-    for (PeerRecord::iterator it = peerSet.begin(); it!=peerSet.end(); it++) {
+ */   
+
+    // updates message's arrival time 
+    double tNow = yarp::os::Time::now();
+    source->timeArrival = tNow;
+
+    // an inhibitory message will never be delivered. It will inhibit 
+    // future messages if it win priority fray. 
+    if(source->isInhibitory)
+    {
+        //printf("An inhibitory message arrived from %s:%g\n", 
+        //    source->sourceName.c_str(), source->priorityLevel);
+        return false; 
+    }
+
+    // now compete! 
+    bool accept = true;
+    for (PeerRecord::iterator it = peerSet.begin(); it!=peerSet.end(); it++) 
+    {
         PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
-        printf(" %s:%g", peer->sourceName.c_str(), peer->priorityLevel);
+        double p = peer->getActualPriority(tNow);
+        if(source->priorityLevel < p)
+        {
+            accept = false;
+            break;
+        }
     }
-    printf("\n");
-    printf("Eh, I'm going to ignore all that and just let every second message through :-)\n");
-    
-    static bool accept = true;
-    accept = !accept;
+
+    /*
     if (accept) {
-        printf("This message wins!\n");
+        printf("\nThis message wins!\n");
     } else {
-        printf("This message loses!\n");
+        printf("\nThis message loses!\n");
     }
+    */
     return accept;
 }
 
