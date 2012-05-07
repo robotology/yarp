@@ -358,7 +358,7 @@ bool Manager::updateConnection(unsigned int id, const char* from,
         
     connections[id].setFrom(from);
     connections[id].setTo(to);
-    connections[id].setCarrier( strToCarrier(carrier));
+    connections[id].setCarrier(carrier);
         
     return true;
 }
@@ -824,7 +824,7 @@ bool Manager::connect(unsigned int id)
 
     if( !connector.connect(connections[id].from(), 
                             connections[id].to(),
-                    carrierToStr(connections[id].carrier())) )
+                            connections[id].carrier()) )
     {
         logger->addError(connector.error());
         //cout<<connector.error()<<endl;
@@ -841,7 +841,7 @@ bool Manager::connect(void)
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
         if( !connector.connect((*cnn).from(), (*cnn).to(),
-                        carrierToStr((*cnn).carrier())) )
+                               (*cnn).carrier()) )
             {
                 logger->addError(connector.error());
                 //cout<<connector.error()<<endl;
@@ -947,7 +947,7 @@ bool Manager::connectExtraPorts(void)
         if(!(*cnn).owner() )
         {
             if( !connector.connect((*cnn).from(), (*cnn).to(),
-                        carrierToStr((*cnn).carrier())) )
+                                   (*cnn).carrier()) )
             {
                 logger->addError(connector.error());
                 //cout<<connector.error()<<endl;

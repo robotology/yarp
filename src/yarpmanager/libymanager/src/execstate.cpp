@@ -208,7 +208,7 @@ void Connecting::connectAllPorts(void)
             itr!=executable->getConnections().end(); itr++)
         {
             if( !executable->getBroker()->connect((*itr).from(), (*itr).to(), 
-                            carrierToStr((*itr).carrier())) )
+                                                 (*itr).carrier()) )
             {
                 ostringstream msg;
                 msg<<"cannot connect "<<(*itr).from() <<" to "<<(*itr).to();

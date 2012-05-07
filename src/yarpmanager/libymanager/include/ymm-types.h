@@ -33,6 +33,7 @@ typedef enum __OS {
     OTHER
 } OS;
 
+/*
 typedef enum __Carrier {
     TCP,
     UDP,
@@ -41,7 +42,7 @@ typedef enum __Carrier {
     TEXT,
     UNKNOWN
 } Carrier;
-
+*/
 
 
 

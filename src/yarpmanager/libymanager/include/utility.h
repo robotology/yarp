@@ -26,8 +26,6 @@ using namespace std;
 class Graph;
 
 bool compareString(const char* szFirst, const char* szSecond);
-Carrier strToCarrier(const char* szCar);
-const char* carrierToStr(Carrier cr);
 OS strToOS(const char* szOS);
 bool exportDotGraph(Graph& graph, const char* szFileName);
 

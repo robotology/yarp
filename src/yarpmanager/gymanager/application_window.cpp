@@ -432,7 +432,7 @@ void ApplicationWindow::updateApplicationWindow(void)
 
         m_conRow[m_conColumns.m_col_from] = (*cnnitr).from();
         m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
-        m_conRow[m_conColumns.m_col_carrier] = carrierToStr((*cnnitr).carrier());
+        m_conRow[m_conColumns.m_col_carrier] = (*cnnitr).carrier();
         m_conRow[m_conColumns.m_col_status] = "disconnected";
         m_conRow[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
         //m_conRow[m_conColumns.m_col_from_color] = Gdk::Color("#BF0303");

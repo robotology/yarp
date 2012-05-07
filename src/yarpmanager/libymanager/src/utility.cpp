@@ -100,7 +100,7 @@ ErrorLogger* ErrorLogger::Instance(void)
 } 
 
 
-
+/*
 Carrier strToCarrier(const char* szCar)
 {
     if(szCar) 
@@ -130,6 +130,7 @@ const char* carrierToStr(Carrier cr)
         default:{return("tcp");}
      }; 
 }
+*/
 
 OS strToOS(const char* szOS)
 {

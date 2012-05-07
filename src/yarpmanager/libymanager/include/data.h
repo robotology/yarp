@@ -40,8 +40,8 @@ public:
     const char* getName(void) { return strName.c_str(); }
     void setPort(const char* szPort) { if(szPort) strPort = szPort; }
     const char* getPort(void) { return strPort.c_str(); }
-    void setCarrier(Carrier cr) { carrier = cr; }
-    Carrier getCarrier(void) { return carrier; }
+    void setCarrier(const char* szCr) { if(szCr) carrier = szCr; }
+    const char* getCarrier(void) { return carrier.c_str(); }
     void setPriority(bool prio) { bWithPriority = prio; }
     void setRequired(bool req) { bRequired = req; }
     bool isRequired(void) { return bRequired; }
@@ -58,7 +58,7 @@ protected:
 private:
     string strName;
     string strPort; 
-    Carrier carrier;
+    string carrier;
     string strDescription;
     bool bWithPriority;
     bool bRequired;     
@@ -81,8 +81,8 @@ public:
     const char* getName(void) { return strName.c_str(); }
     void setPort(const char* szPort) { if(szPort) strPort = szPort; }
     const char* getPort(void) { return strPort.c_str(); }
-    void setCarrier(Carrier cr) { carrier = cr; }
-    Carrier getCarrier(void) { return carrier; }
+    void setCarrier(const char* szCr) { if(szCr) carrier = szCr; }
+    const char* getCarrier(void) { return carrier.c_str(); }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     const char* getDescription(void) { return strDescription.c_str(); }
     
@@ -95,7 +95,7 @@ protected:
 private:
     string strName;
     string strPort; 
-    Carrier carrier;
+    string carrier;
     string strDescription;
 };
  

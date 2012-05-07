@@ -386,7 +386,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     strCarrier = protocol->GetText();
                 Connection connection(from->GetText(),
                                     to->GetText(),
-                                    strToCarrier(strCarrier.c_str()));
+                                    strCarrier.c_str());
                 if(from->Attribute("external") && 
                     compareString(from->Attribute("external"), "true"))
                     connection.setFromExternal(true);

@@ -316,7 +316,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 if((element = (TiXmlElement*) data->FirstChild("port")))
                 {
                     output.setPort(element->GetText());                 
-                    output.setCarrier(strToCarrier(element->Attribute("carrier")));                     
+                    output.setCarrier(element->Attribute("carrier"));  
                 }
                 else
                 {
@@ -351,7 +351,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 if((element = (TiXmlElement*) data->FirstChild("port")))
                 {
                     input.setPort(element->GetText());                  
-                    input.setCarrier(strToCarrier(element->Attribute("carrier")));                      
+                    input.setCarrier(element->Attribute("carrier"));
                 }
                 else
                 {

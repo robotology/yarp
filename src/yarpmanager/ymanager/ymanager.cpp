@@ -620,7 +620,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
         cout<<INFO<<"("<<id<<") ";
         cout<<connections[id].from()<<" - "<<connections[id].to();
-                cout<<" ["<<carrierToStr(connections[id].carrier())<<"]"<<ENDC<<endl;
+                cout<<" ["<<connections[id].carrier()<<"]"<<ENDC<<endl;
         reportErrors();
         return true;
     }
@@ -639,7 +639,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
             cout<<INFO<<"("<<id<<") ";
             cout<<(*cnnitr).from()<<" - "<<(*cnnitr).to();
-                cout<<" ["<<carrierToStr((*cnnitr).carrier())<<"]"<<ENDC<<endl;
+                cout<<" ["<<(*cnnitr).carrier()<<"]"<<ENDC<<endl;
             id++;
         }
         return true;
@@ -853,7 +853,7 @@ void YConsoleManager::which(void)
     {
         cout<<INFO<<"("<<id++<<") ";
         cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
-            cout<<" ["<<carrierToStr((*cnnitr).carrier())<<"]";
+            cout<<" ["<<(*cnnitr).carrier()<<"]";
         if((*cnnitr).owner())
             cout<<" ["<<(*cnnitr).owner()->getName()<<"]";  
         cout<<ENDC<<endl;

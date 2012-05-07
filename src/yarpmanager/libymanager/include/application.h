@@ -59,10 +59,10 @@ typedef vector<Portmap>::iterator PortmapIterator;
 class Connection{
 
 public: 
-    Connection(const char* szFrom, const char* szTo, Carrier cr=UNKNOWN) {
+    Connection(const char* szFrom, const char* szTo, const char* szCr=NULL) {
         if(szFrom) strFrom = szFrom;
         if(szTo) strTo = szTo;
-        cCarrier = cr;
+        if(szCr) strCarrier = szCr;
         bWithPriority = false;
         modOwner = NULL;
         bExternalFrom = false;
@@ -73,12 +73,12 @@ public:
     const char* to(void) { return strTo.c_str();}
     void setFrom(const char* szFrom) { if(szFrom) strFrom = szFrom; }
     void setTo(const char* szTo) { if(szTo) strTo = szTo; }
-    void setCarrier(Carrier cr) { cCarrier = cr; }
+    void setCarrier(const char* szCr) { if(szCr) strCarrier = szCr; }
     void setFromExternal(bool ext) { bExternalFrom = ext;}
     void setToExternal(bool ext) { bExternalTo = ext; }
     bool isExternalFrom(void) { return bExternalFrom; }
     bool isExternalTo(void) { return bExternalTo; }
-    Carrier carrier(void) { return cCarrier; }
+    const char* carrier(void) { return strCarrier.c_str(); }
     void setOwner(Module* module){ modOwner = module; }
     Module* owner(void) { return modOwner; }
     void setPriority(bool withprio) { bWithPriority = withprio; }
@@ -94,7 +94,7 @@ private:
     string strTo;
     bool bExternalTo;
     bool bExternalFrom; 
-    Carrier cCarrier;
+    string strCarrier;
     Module* modOwner;
     bool bWithPriority; 
 };
