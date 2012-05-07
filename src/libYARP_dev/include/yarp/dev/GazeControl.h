@@ -365,7 +365,7 @@ public:
 
     /**
     * Get the joints target values where the controller is moving 
-    * the system. [wait for reply] 
+    * the system to. [wait for reply] 
     * @param qdes a vector which is filled with the desired joints 
     *         values (degrees).
     * @return true/false on success/failure. 
