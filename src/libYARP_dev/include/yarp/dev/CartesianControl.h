@@ -9,6 +9,7 @@
 #ifndef __YARPCARTESIANCONTROLINTERFACES__
 #define __YARPCARTESIANCONTROLINTERFACES__
 
+#include <yarp/os/Stamp.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
@@ -67,9 +68,12 @@ public:
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
     * (meters and radians). 
+    * @param stamp the stamp of the encoders employed to compute the
+    *              pose.
     * @return true/false on success/failure.
     */
-    virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+    virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o,
+                         yarp::os::Stamp *stamp=NULL)=0;
 
     /**
     * Get the current pose of the specified link belonging to the 
@@ -80,10 +84,13 @@ public:
     *         x,y,z (meters) of the given link reference frame.
     * @param od a 4-d vector which is filled with the actual 
     * orientation of the given link reference frame using axis-angle
-    * representation xa, ya, za, theta (meters and radians). 
+    * representation xa, ya, za, theta (meters and radians). \ 
+    * @param stamp the stamp of the encoders employed to compute the
+    *              pose.
     * @return true/false on success/failure.
     */
-    virtual bool getPose(const int axis, yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+    virtual bool getPose(const int axis, yarp::sig::Vector &x, yarp::sig::Vector &o,
+                         yarp::os::Stamp *stamp=NULL)=0;
 
     /**
     * Move the end-effector to a specified pose (position
@@ -475,16 +482,6 @@ public:
     *       the trajectory time and so on.
     */
     virtual bool restoreContext(const int id)=0;
-
-    /** Allow specifying the type of time stamp user wants to
-    *   retrieve from the interface.
-    * @param selector selects the time stamp type: 0 for time stamps 
-    *                 relative to messages carrying information on
-    *                 end-effector pose, 1 for information on pose
-    *                 of a specified link.
-    * @return true/false on success/failure. 
-    */
-    virtual bool setStampSelector(const int selector)=0;
 };
 
 #endif

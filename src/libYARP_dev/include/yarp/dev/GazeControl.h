@@ -10,6 +10,7 @@
 #define __YARPGAZECONTROLINTERFACES__
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
@@ -64,9 +65,11 @@ public:
     * Get the current fixation point. [do not wait for reply]
     * @param fp a 3-d vector which is filled with the actual 
     *         fixation point x,y,z (meters).
+    * @param stamp the stamp of the encoders employed to compute the
+    *              pose.
     * @return true/false on success/failure.
     */
-    virtual bool getFixationPoint(yarp::sig::Vector &fp)=0;
+    virtual bool getFixationPoint(yarp::sig::Vector &fp, yarp::os::Stamp *stamp=NULL)=0;
 
     /**
     * Get the current gaze configuration in terms of azimuth and 
@@ -75,13 +78,15 @@ public:
     * not wait for reply] 
     * @param ang a 3-d vector which is filled with the actual 
     *         angles azimuth/elevation/vergence (degrees).
+    * @param stamp the stamp of the encoders employed to compute the
+    *              pose.
     * @return true/false on success/failure. 
     *  
     * @note The absolute reference frame for the azimuth/elevation 
     *       couple is head-centered with the robot in rest
     *       configuration (i.e. torso and head angles zeroed).
     */
-    virtual bool getAngles(yarp::sig::Vector &ang)=0;
+    virtual bool getAngles(yarp::sig::Vector &ang, yarp::os::Stamp *stamp=NULL)=0;
 
     /**
     * Move the gaze to a specified fixation point in cartesian 
@@ -228,9 +233,12 @@ public:
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
     * (meters and radians). 
+    * @param stamp the stamp of the encoders employed to compute the
+    *              pose. 
     * @return true/false on success/failure.
     */
-    virtual bool getLeftEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+    virtual bool getLeftEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o,
+                                yarp::os::Stamp *stamp=NULL)=0;
 
     /**
     * Get the current pose of the right eye frame. [wait for reply]
@@ -239,9 +247,12 @@ public:
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
     * (meters and radians). 
+    * @param stamp the stamp of the encoders employed to compute the
+    *              pose. 
     * @return true/false on success/failure.
     */
-    virtual bool getRightEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+    virtual bool getRightEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o,
+                                 yarp::os::Stamp *stamp=NULL)=0;
 
     /**
     * Get the current pose of the head frame. [wait for reply]
@@ -250,6 +261,8 @@ public:
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
     * (meters and radians). 
+    * @param stamp the stamp of the encoders employed to compute the
+    *              pose. 
     * @return true/false on success/failure. 
     *  
     * @note The center of the head frame is located in the middle of
@@ -258,7 +271,8 @@ public:
     *       z-axis pointing forward, x-axis pointing rightward and
     *       y-axis pointing downward.
     */
-    virtual bool getHeadPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+    virtual bool getHeadPose(yarp::sig::Vector &x, yarp::sig::Vector &o,
+                             yarp::os::Stamp *stamp=NULL)=0;
 
     /**
     * Get the 2-d pixel point - whose cartesian coordinates are 
@@ -652,17 +666,6 @@ public:
     *       time and so on.
     */
     virtual bool restoreContext(const int id)=0;
-
-    /** Allow specifying the type of time stamp user wants to
-    *   retrieve from the interface.
-    * @param selector selects the time stamp type: 0 for time stamps 
-    *                 relative to messages carrying information on
-    *                 fixation point, 1 for information on current
-    *                 angles, 2 for time stamps relative to calls to
-    *                 get[LeftEye|RightEye|Head]Pose methods.
-    * @return true/false on success/failure. 
-    */
-    virtual bool setStampSelector(const int selector)=0;
 };
 
 #endif
