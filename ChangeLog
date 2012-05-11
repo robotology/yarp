@@ -1,4 +1,10 @@
-2012-05-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+2012-05-11  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* example/swig/yarp.i: apply patch from Lars to fix Java bindings
+	after recent reorganization of control board interfaces
+	[thanks Lars Schillingmann]
+
+2012-05-05  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/carriers/priority_carrier/PriorityCarrier.cpp: create a 
 	stub for a modifying carrier that will choose messages based on

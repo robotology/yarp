@@ -295,6 +295,11 @@ namespace yarp {
 %include <yarp/os/Time.h>
 %include <yarp/os/RFModule.h>
 %include <yarp/os/Stamp.h>
+%include <yarp/os/NameStore.h>
+%include <yarp/os/Searchable.h>
+%include <yarp/os/ContactStyle.h>
+%include <yarp/os/ResourceFinder.h>
+%include <yarp/os/RpcServer.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
@@ -325,6 +330,16 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/CartesianControl.h>
 %include <yarp/dev/GazeControl.h>
+%include <yarp/dev/IPositionControl.h>
+%include <yarp/dev/IEncoders.h>
+%include <yarp/dev/CalibratorInterfaces.h>
+%include <yarp/dev/ControlBoardPid.h>
+%include <yarp/dev/IControlMode.h>
+%include <yarp/dev/IEncoders.h>
+%include <yarp/dev/ITorqueControl.h>
+%include <yarp/dev/IImpedanceControl.h>
+%include <yarp/dev/IVelocityControl.h>
+%include <yarp/dev/IOpenLoopControl.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -575,6 +590,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 	
 	yarp::dev::IControlMode *viewIControlMode() {
 		yarp::dev::IControlMode *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::IOpenLoopControl *viewIOpenLoopControl() {
+	        yarp::dev::IOpenLoopControl *result;
 		self->view(result);
 		return result;
 	}
