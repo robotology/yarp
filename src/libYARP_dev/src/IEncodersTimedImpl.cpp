@@ -194,7 +194,7 @@ bool ImplementEncodersTimed::getEncodersTimed(double *v, double *t)
     bool ret;
     ret=iEncoders->getEncodersTimedRaw(temp, temp2);
 
-    castToMapper(helper)->accE2A(temp, v);
+    castToMapper(helper)->posE2A(temp, v);
     castToMapper(helper)->toUser(temp2, t);
     
     return ret;

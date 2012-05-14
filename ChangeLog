@@ -1,3 +1,7 @@
+2012-05-14 Lorenzo Natale <lorenzo.natale@iit.it>
+        * src/libYARP_dev/src/IEncodersTimedImpl.cpp: small bug 
+          mapping between encoders to angles
+
 2012-05-11  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* example/swig/yarp.i: apply patch from Lars to fix Java bindings
