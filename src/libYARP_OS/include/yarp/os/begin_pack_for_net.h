@@ -72,7 +72,7 @@
 #endif
 #endif
 
-#ifdef __LINUX__
+#ifdef __linux__
 #pragma pack(1)
 #define YARP_PACKING_CONSIDERED
 #else

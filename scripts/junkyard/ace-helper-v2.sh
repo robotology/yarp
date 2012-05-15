@@ -232,7 +232,7 @@ cat <<XXX
 #endif
 #endif
 
-#ifdef __LINUX__
+#ifdef __linux__
 #ifndef YARP2_LINUX
 #define YARP2_LINUX
 #endif

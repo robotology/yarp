@@ -545,7 +545,7 @@ ssize_t DgramTwoWayStream::read(const Bytes& b) {
                                   "The UDP/MCAST system buffer limit on your system is low.");
                         YARP_INFO(Logger::get(),
                                   "You may get packet loss under heavy conditions.");
-#ifdef __LINUX__
+#ifdef __linux__
                         YARP_INFO(Logger::get(),
                                   "To change the buffer limit on linux: sysctl -w net.core.rmem_max=8388608");
                         YARP_INFO(Logger::get(),

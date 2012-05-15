@@ -1,3 +1,12 @@
+2012-05-15  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/include/yarp/os/NetInt32.h,
+	src/libYARP_OS/include/yarp/os/begin_pack_for_net.h,
+	src/libYARP_OS/include/yarp/os/end_pack_for_net.h,
+	src/libYARP_OS/src/DgramTwoWayStream.cpp: apply patch from
+	Daniele Domenichelli update from using __LINUX__ to __linux__
+	[thanks Daniele Domenichelli]
+
 2012-05-15  Andrea Del Prete  <andrea.delprete@iit.it>
     * src\libYARP_math\include\yarp\math\SVD.h
     * src\libYARP_math\src\SVD.cpp 

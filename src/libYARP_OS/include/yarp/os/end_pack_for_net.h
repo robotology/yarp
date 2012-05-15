@@ -30,7 +30,7 @@
 #endif
 #endif
 
-#ifdef __LINUX__
+#ifdef __linux__
 #pragma pack()
 #define YARP_UNPACKING_CONSIDERED
 #endif
