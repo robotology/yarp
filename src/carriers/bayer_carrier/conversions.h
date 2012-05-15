@@ -142,6 +142,8 @@ dc1394error_t dc1394_debayer_frames(dc1394video_frame_t *in, dc1394video_frame_t
 #define calloc (unsigned char (*)[3])calloc
 #define calloc2 (unsigned short (*)[3])calloc
 #define pow(x,y) pow((float)(x),(float)(y))
+#else
+#define calloc2 calloc
 #endif
 
 #endif

@@ -1,5 +1,8 @@
 2012-05-15  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/carriers/bayer_carrier/conversions.h: Fix calloc2
+	macro on non-windows machines [thanks Carlo Ciliberto]
+
 	* src/libYARP_OS/include/yarp/os/NetInt32.h,
 	src/libYARP_OS/include/yarp/os/begin_pack_for_net.h,
 	src/libYARP_OS/include/yarp/os/end_pack_for_net.h,
