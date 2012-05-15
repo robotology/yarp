@@ -1,3 +1,7 @@
+# Copyright: (C) 2012 IITRBCS
+# Authors: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 find_path(THRIFT_ROOT compiler/cpp/src/thrifty.yy PATHS ${CMAKE_SOURCE_DIR}/thrift ${CMAKE_SOURCE_DIR}/../thrift ENV THRIFT_ROOT DOC "Location of Thrift source code repository (optional)")
 mark_as_advanced(THRIFT_ROOT)
 

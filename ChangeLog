@@ -155,14 +155,14 @@
 	comparisons in tests [thanks Ugo Pattacini]
 
 	* src/libYARP_OS/src/Bottle.cpp: add Bottle::read(PortWriter)
-	helper function [thanks Miguel Sarabia Del Castillo]
+	helper function [thanks Miguel Sarabia del Castillo]
 
 	* src/libYARP_OS/src/Value.cpp: fix wire format of
-	Value objects [thanks Miguel Sarabia Del Castillo]
+	Value objects [thanks Miguel Sarabia del Castillo]
 
 	* src/libYARP_sig/harness/MatrixTest.cpp: add test for
 	serialization problem reported on robotcub-hackers
-	[thanks Miguel Sarabia Del Castillo]
+	[thanks Miguel Sarabia del Castillo]
 
 2012-02-22  Ugo Pattacini  <ugo.pattacini@iit.it>
         * src/libYARP_dev/include/yarp/dev/GazeControl.h:
