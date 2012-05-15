@@ -75,7 +75,7 @@ namespace yarp
         /**
         * Perform the moore-penrose pseudo-inverse of a matrix.
         * @param in input matrix 
-        * @param sv vector containing the singular values of the iput matrix
+        * @param sv vector containing the singular values of the input matrix
         * @param tol singular values less than tol are set to zero
         * @return pseudo-inverse of the matrix 'in'
         */
@@ -85,10 +85,81 @@ namespace yarp
         * Perform the moore-penrose pseudo-inverse of a matrix.
         * @param in input matrix 
         * @param out pseudo-inverse of the matrix 'in'
-        * @param sv vector containing the singular values of the iput matrix
+        * @param sv vector containing the singular values of the input matrix
         * @param tol singular values less than tol are set to zero
         */
         void YARP_math_API pinv(const yarp::sig::Matrix &in, yarp::sig::Matrix &out, yarp::sig::Vector &sv, double tol=0.0);
+
+        /**
+        * Perform the damped pseudo-inverse of a matrix.
+        * @param in input matrix 
+        * @param sv vector containing the singular values of the input matrix
+        * @param damp damping factor
+        */
+        yarp::sig::Matrix YARP_math_API pinvDamped(const yarp::sig::Matrix &in, yarp::sig::Vector &sv, double damp);
+
+        /**
+        * Perform the damped pseudo-inverse of a matrix.
+        * @param in input matrix 
+        * @param damp damping factor
+        */
+        yarp::sig::Matrix YARP_math_API pinvDamped(const yarp::sig::Matrix &in, double damp);
+
+        /**
+        * Perform the damped pseudo-inverse of a matrix.
+        * @param in input matrix 
+        * @param out damped pseudo-inverse of the matrix 'in'
+        * @param damp damping factor
+        */
+        void YARP_math_API pinvDamped(const yarp::sig::Matrix &in, yarp::sig::Matrix &out, double damp);
+
+        /**
+        * Perform the damped pseudo-inverse of a matrix.
+        * @param in input matrix 
+        * @param out damped pseudo-inverse of the matrix 'in'
+        * @param sv vector containing the singular values of the input matrix
+        * @param damp damping factor
+        */
+        void YARP_math_API pinvDamped(const yarp::sig::Matrix &in, yarp::sig::Matrix &out, yarp::sig::Vector &sv, double damp);
+
+        /**
+        * Compute the projection matrix of A, that is defined as A times its pseudoinverse: A*pinv(A).
+        * Multiplying this projection matrix times a vector projects the vector in the range of A.
+        * @param A input matrix
+        * @param tol singular values less than tol are set to zero
+        * @return The projection matrix associated with the range of A
+        */
+        yarp::sig::Matrix YARP_math_API projectionMatrix(const yarp::sig::Matrix &A, double tol=0.0);
+
+        /**
+        * Compute the projection matrix of A, that is defined as A times its pseudoinverse: A*pinv(A).
+        * Multiplying this projection matrix times a vector projects the vector in the range of A.
+        * @param A input matrix
+        * @param out the projection matrix associated with the range of A
+        * @param tol singular values less than tol are set to zero
+        */
+        void YARP_math_API projectionMatrix(const yarp::sig::Matrix &A, yarp::sig::Matrix &out, double tol=0.0);
+
+        /**
+        * Compute the nullspace projection matrix of A, that is defined as the difference between the 
+        * identity matrix and the pseudoinverse of A times A: (I - pinv(A)*A).
+        * Multiplying this null projection matrix times a vector projects the vector in the nullspace of A.
+        * @param A input matrix
+        * @param tol singular values less than tol are set to zero
+        * @return The projection matrix associated with the nullspace of A
+        */
+        yarp::sig::Matrix YARP_math_API nullspaceProjection(const yarp::sig::Matrix &A, double tol=0.0);
+
+        /**
+        * Compute the nullspace projection matrix of A, that is defined as the difference between the 
+        * identity matrix and the pseudoinverse of A times A: (I - pinv(A)*A).
+        * Multiplying this projection matrix times a vector projects the vector in the range of A.
+        * @param A input matrix
+        * @param out the projection matrix associated with the nullspace of A
+        * @param tol singular values less than tol are set to zero
+        */
+        void YARP_math_API nullspaceProjection(const yarp::sig::Matrix &A, yarp::sig::Matrix &out, double tol=0.0);
+
     }
 }
 

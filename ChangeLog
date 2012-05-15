@@ -1,3 +1,10 @@
+2012-05-15  Andrea Del Prete  <andrea.delprete@iit.it>
+    * src\libYARP_math\include\yarp\math\SVD.h
+    * src\libYARP_math\src\SVD.cpp 
+    * src\libYARP_math\harness\svdTest.cpp
+    Add methods for damped pseudo-inverse, range projection matrix, 
+    nullspace projection matrix and related tests.
+
 2012-05-14 Lorenzo Natale <lorenzo.natale@iit.it>
         * src/libYARP_dev/src/IEncodersTimedImpl.cpp: small bug 
           mapping between encoders to angles
