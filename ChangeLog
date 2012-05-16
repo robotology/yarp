@@ -1,3 +1,10 @@
+2012-05-16  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/yarpserver/CMakeLists.txt: fix for Arch Linux build
+	[thanks Jean-David Boucher]
+
+	* src/yarpmanager/libymanager/src/localbroker.cpp: likewise
+
 2012-05-16 Lorenzo Natale <lorenzo.natale@iit.it>
         * src/libYARP_dev/src/RemoteControlBoard: now support IEncodersTimed
 

@@ -29,6 +29,7 @@
     #include <sys/stat.h>
     #include <fcntl.h>
     #include <errno.h>
+    #include <unistd.h>
 
     #define PIPE_TIMEOUT    0
     #define PIPE_EVENT      1

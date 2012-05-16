@@ -27,6 +27,9 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   if (YARP_USE_SYSTEM_SQLITE)
     target_link_libraries(yarpserversql sqlite3)
   endif ()
+  if (UNIX)
+    target_link_libraries(yarpserversql dl)
+  endif ()
 
   # preserve yarpserver3 executable for a while
   add_executable(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
