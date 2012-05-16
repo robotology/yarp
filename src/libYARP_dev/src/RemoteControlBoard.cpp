@@ -115,6 +115,23 @@ public:
         mutex.post();
     }
 
+    inline bool getLast(int j, double &v, Stamp &stamp, double &localArrivalTime)
+    {
+        if ((size_t) j>=last.size())
+            return false;
+
+        mutex.wait();
+        bool ret=valid;
+        if (ret)
+        {
+            v=last[j];
+            stamp=lastStamp;
+            localArrivalTime=now;
+        }
+        mutex.post();
+        return ret;
+    }
+
     inline bool getLast(yarp::sig::Vector &n, Stamp &stmp, double &localArrivalTime)
     {
         mutex.wait();
@@ -217,14 +234,14 @@ class yarp::dev::RemoteControlBoard :
     public IPidControl,
     public IPositionControl, 
     public IVelocityControl,
-    public IEncoders,
+    public IEncodersTimed,
     public IAmplifierControl,
     public IControlLimits,
     public IAxisInfo,
     public IPreciselyTimed,
     public IControlCalibration2,
     public ITorqueControl,
-	public IImpedanceControl,
+    public IImpedanceControl,
     public IControlMode,
     public IOpenLoopControl,
     public DeviceDriver 
@@ -242,8 +259,8 @@ protected:
 
     ConstString remote;
     ConstString local;
-    mutable Stamp lastStamp;
-    Semaphore mutex;
+    mutable Stamp lastStamp;  //this is shared among all calls that read encoders
+    // Semaphore mutex;
     int nj;
     bool njIsKnown;
 
@@ -490,7 +507,7 @@ protected:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
         cmd.addVocab(v2);
-		int i;
+        int i;
         Bottle& l1 = cmd.addList();
         for (i = 0; i < nj; i++)
             l1.addDouble(val1[i]);
@@ -596,7 +613,7 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             // ok
             *val1 = response.get(2).asDouble();
-			*val2 = response.get(3).asDouble();
+            *val2 = response.get(3).asDouble();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -763,9 +780,9 @@ protected:
                 return false;
 
             int nj1 = l1.size();
-			int nj2 = l2.size();
+            int nj2 = l2.size();
            // ACE_ASSERT (nj == nj1);
-		   // ACE_ASSERT (nj == nj2);
+           // ACE_ASSERT (nj == nj2);
 
             for (i = 0; i < nj1; i++)
                 val1[i] = l1.get(i).asDouble();
@@ -1247,7 +1264,33 @@ public:
     * @return true/false, upon success/failure (you knew it, uh?)
     */
     virtual bool getEncoder(int j, double *v) {
-        return get1V1I1D(VOCAB_ENCODER, j, v);
+        // return get1V1I1D(VOCAB_ENCODER, j, v);
+       double localArrivalTime;
+       bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+
+       if (Time::now()-localArrivalTime>TIMEOUT)
+           ret=false;
+
+       return ret;
+    }
+
+    /**
+    * Read the value of an encoder.
+    * @param j encoder number
+    * @param v pointer to storage for the return value
+    * @return true/false, upon success/failure (you knew it, uh?)
+    */
+    virtual bool getEncoderTimed(int j, double *v, double *t) {
+       // return get1V1I1D(VOCAB_ENCODER, j, v);
+       double localArrivalTime;
+       bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+
+       *t=lastStamp.getTime();
+
+       if (Time::now()-localArrivalTime>TIMEOUT)
+           ret=false;
+
+       return ret;
     }
 
     /**
@@ -1261,9 +1304,9 @@ public:
         Vector tmp(nj);
         double localArrivalTime=0.0;
 
-        mutex.wait();
+       // mutex.wait();
         bool ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-        mutex.post();
+       // mutex.post();
 
         if (ret)
         {
@@ -1282,6 +1325,41 @@ public:
         return ret;
     }
 
+    /**
+    * Read the position of all axes.
+    * @param encs pointer to the array that will contain the output
+    * @param ts pointer to the array that will contain timestamps
+    * @return true/false on success/failure
+    */
+    virtual bool getEncodersTimed(double *encs, double *ts) {
+        if (!isLive()) return false;
+        // particular case, does not use RPC
+        Vector tmp(nj);
+        double localArrivalTime=0.0;
+
+ //       mutex.wait();
+        bool ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
+ //       mutex.post();
+
+        if (ret)
+        {
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
+
+            YARP_ASSERT (tmp.size() == (size_t)nj);
+            for(int j=0; j<nj; j++)
+            {
+                encs[j]=tmp[j];
+                ts[j]=lastStamp.getTime();
+            }
+            ////////////////////////// HANDLE TIMEOUT
+            // fill the vector anyway
+            if (Time::now()-localArrivalTime>TIMEOUT)
+                ret=false;
+        }
+
+        return ret;
+    }
     /**
     * Read the istantaneous speed of an axis.
     * @param j axis number
@@ -1328,9 +1406,9 @@ public:
     */
     virtual Stamp getLastInputStamp() {
         Stamp ret;
-        mutex.wait();
+//        mutex.wait();
         ret = lastStamp;
-        mutex.post();
+//        mutex.post();
         return ret;
     }    
 

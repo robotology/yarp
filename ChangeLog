@@ -1,3 +1,6 @@
+2012-05-16 Lorenzo Natale <lorenzo.natale@iit.it>
+        * src/libYARP_dev/src/RemoteControlBoard: now support IEncodersTimed
+
 2012-05-15  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/carriers/bayer_carrier/conversions.h: Fix calloc2
