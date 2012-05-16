@@ -15,7 +15,6 @@
 # include <string>
 #endif
 
-#include "XmlRpcDispatch.h"
 #include "XmlRpcSource.h"
 
 namespace XmlRpc {
@@ -123,9 +122,6 @@ namespace XmlRpc {
 
     // Number of bytes expected in the response body (parsed from response header)
     int _contentLength;
-
-    // Event dispatcher
-    XmlRpcDispatch _disp;
 
   };	// class XmlRpcClient
 

@@ -13,12 +13,21 @@ if (NOT SKIP_xmlrpc_carrier)
   add_library(xmlrpc_carrier XmlRpcCarrier.h XmlRpcCarrier.cpp
     XmlRpcStream.h XmlRpcStream.cpp)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/xmlrpc)
+  if (FALSE)
+    add_library(xmlrpcpp xmlrpc/XmlRpcClient.cpp
+      xmlrpc/XmlRpcDispatch.cpp
+      xmlrpc/XmlRpcServer.cpp
+      xmlrpc/XmlRpcServerConnection.cpp
+      xmlrpc/XmlRpcServerMethod.cpp
+      xmlrpc/XmlRpcSocket.cpp
+      xmlrpc/XmlRpcSource.cpp
+      xmlrpc/XmlRpcUtil.cpp
+      xmlrpc/XmlRpcValue.cpp)
+  endif ()
   add_library(xmlrpcpp xmlrpc/XmlRpcClient.cpp
-                       xmlrpc/XmlRpcDispatch.cpp
                        xmlrpc/XmlRpcServer.cpp
                        xmlrpc/XmlRpcServerConnection.cpp
                        xmlrpc/XmlRpcServerMethod.cpp
-                       xmlrpc/XmlRpcSocket.cpp
                        xmlrpc/XmlRpcSource.cpp
                        xmlrpc/XmlRpcUtil.cpp
                        xmlrpc/XmlRpcValue.cpp)

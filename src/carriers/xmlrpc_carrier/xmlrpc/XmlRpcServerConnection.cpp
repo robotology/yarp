@@ -4,7 +4,6 @@
 
 #include "XmlRpcServerConnection.h"
 
-#include "XmlRpcSocket.h"
 #include "XmlRpc.h"
 #ifndef MAKEDEPEND
 # include <stdio.h>
@@ -65,8 +64,7 @@ XmlRpcServerConnection::handleEvent(unsigned /*eventType*/)
   if (_connectionState == WRITE_RESPONSE)
     if ( ! writeResponse()) return 0;
 
-  return (_connectionState == WRITE_RESPONSE) 
-        ? XmlRpcDispatch::WritableEvent : XmlRpcDispatch::ReadableEvent;
+  return 0;
 }
 
 void XmlRpcServerConnection::reset() {
@@ -201,31 +199,7 @@ XmlRpcServerConnection::readRequest(const std::string& txt)
 bool
 XmlRpcServerConnection::writeResponse()
 {
-  if (_response.length() == 0) {
-    executeRequest();
-    _bytesWritten = 0;
-    if (_response.length() == 0) {
-      XmlRpcUtil::error("XmlRpcServerConnection::writeResponse: empty response.");
-      return false;
-    }
-  }
-
-  // Try to write the response
-  if ( ! XmlRpcSocket::nbWrite(this->getfd(), _response, &_bytesWritten)) {
-    XmlRpcUtil::error("XmlRpcServerConnection::writeResponse: write error (%s).",XmlRpcSocket::getErrorMsg().c_str());
-    return false;
-  }
-  XmlRpcUtil::log(3, "XmlRpcServerConnection::writeResponse: wrote %d of %d bytes.", _bytesWritten, _response.length());
-
-  // Prepare to read the next request
-  if (_bytesWritten == int(_response.length())) {
-    _header = "";
-    _request = "";
-    _response = "";
-    _connectionState = READ_HEADER;
-  }
-
-  return _keepAlive;    // Continue monitoring this source if true
+  return false;
 }
 
 // Run the method, generate _response string

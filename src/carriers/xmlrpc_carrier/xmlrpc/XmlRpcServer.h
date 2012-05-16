@@ -16,7 +16,7 @@
 # include <string>
 #endif
 
-#include "XmlRpcDispatch.h"
+//#include "XmlRpcDispatch.h"
 #include "XmlRpcSource.h"
 
 namespace XmlRpc {
@@ -91,7 +91,7 @@ namespace XmlRpc {
     bool _introspectionEnabled;
 
     // Event dispatcher
-    XmlRpcDispatch _disp;
+    //XmlRpcDispatch _disp;
 
     // Collection of methods. This could be a set keyed on method name if we wanted...
     typedef std::map< std::string, XmlRpcServerMethod* > MethodMap;

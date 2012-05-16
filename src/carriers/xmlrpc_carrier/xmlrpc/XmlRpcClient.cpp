@@ -5,7 +5,6 @@
 
 #include "XmlRpcClient.h"
 
-#include "XmlRpcSocket.h"
 #include "XmlRpc.h"
 
 #include <stdio.h>
@@ -59,8 +58,6 @@ XmlRpcClient::close()
 {
   XmlRpcUtil::log(4, "XmlRpcClient::close: fd %d.", getfd());
   _connectionState = NO_CONNECTION;
-  _disp.exit();
-  _disp.removeSource(this);
   XmlRpcSource::close();
 }
 
@@ -79,36 +76,7 @@ struct ClearFlagOnExit {
 bool 
 XmlRpcClient::execute(const char* method, XmlRpcValue const& params, XmlRpcValue& result)
 {
-  XmlRpcUtil::log(1, "XmlRpcClient::execute: method %s (_connectionState %d).", method, _connectionState);
-
-  // This is not a thread-safe operation, if you want to do multithreading, use separate
-  // clients for each thread. If you want to protect yourself from multiple threads
-  // accessing the same client, replace this code with a real mutex.
-  if (_executing)
-    return false;
-
-  _executing = true;
-  ClearFlagOnExit cf(_executing);
-
-  _sendAttempts = 0;
-  _isFault = false;
-
-  if ( ! setupConnection())
-    return false;
-
-  if ( ! generateRequest(method, params))
-    return false;
-
-  result.clear();
-  double msTime = -1.0;   // Process until exit is called
-  _disp.work(msTime);
-
-  if (_connectionState != IDLE || ! parseResponse(result))
-    return false;
-
-  XmlRpcUtil::log(1, "XmlRpcClient::execute: method %s completed.", method);
-  _response = "";
-  return true;
+  return false;
 }
 
 // XmlRpcSource interface implementation
@@ -116,29 +84,7 @@ XmlRpcClient::execute(const char* method, XmlRpcValue const& params, XmlRpcValue
 unsigned
 XmlRpcClient::handleEvent(unsigned eventType)
 {
-  if (eventType == XmlRpcDispatch::Exception)
-  {
-    if (_connectionState == WRITE_REQUEST && _bytesWritten == 0)
-      XmlRpcUtil::error("Error in XmlRpcClient::handleEvent: could not connect to server (%s).", 
-                       XmlRpcSocket::getErrorMsg().c_str());
-    else
-      XmlRpcUtil::error("Error in XmlRpcClient::handleEvent (state %d): %s.", 
-                        _connectionState, XmlRpcSocket::getErrorMsg().c_str());
-    return 0;
-  }
-
-  if (_connectionState == WRITE_REQUEST)
-    if ( ! writeRequest()) return 0;
-
-  if (_connectionState == READ_HEADER)
-    if ( ! readHeader()) return 0;
-
-  if (_connectionState == READ_RESPONSE)
-    if ( ! readResponse()) return 0;
-
-  // This should probably always ask for Exception events too
-  return (_connectionState == WRITE_REQUEST) 
-        ? XmlRpcDispatch::WritableEvent : XmlRpcDispatch::ReadableEvent;
+  return 0;
 }
 
 
@@ -159,10 +105,6 @@ XmlRpcClient::setupConnection()
   _connectionState = WRITE_REQUEST;
   _bytesWritten = 0;
 
-  // Notify the dispatcher to listen on this source (calls handleEvent when the socket is writable)
-  _disp.removeSource(this);       // Make sure nothing is left over
-  _disp.addSource(this, XmlRpcDispatch::WritableEvent | XmlRpcDispatch::Exception);
-
   return true;
 }
 
@@ -171,32 +113,7 @@ XmlRpcClient::setupConnection()
 bool 
 XmlRpcClient::doConnect()
 {
-  int fd = XmlRpcSocket::socket();
-  if (fd < 0)
-  {
-    XmlRpcUtil::error("Error in XmlRpcClient::doConnect: Could not create socket (%s).", XmlRpcSocket::getErrorMsg().c_str());
-    return false;
-  }
-
-  XmlRpcUtil::log(3, "XmlRpcClient::doConnect: fd %d.", fd);
-  this->setfd(fd);
-
-  // Don't block on connect/reads/writes
-  if ( ! XmlRpcSocket::setNonBlocking(fd))
-  {
-    this->close();
-    XmlRpcUtil::error("Error in XmlRpcClient::doConnect: Could not set socket to non-blocking IO mode (%s).", XmlRpcSocket::getErrorMsg().c_str());
-    return false;
-  }
-
-  if ( ! XmlRpcSocket::connect(fd, _host, _port))
-  {
-    this->close();
-    XmlRpcUtil::error("Error in XmlRpcClient::doConnect: Could not connect to server (%s).", XmlRpcSocket::getErrorMsg().c_str());
-    return false;
-  }
-
-  return true;
+  return false;
 }
 
 // Encode the request to call the specified method with the specified parameters into xml
@@ -262,24 +179,7 @@ XmlRpcClient::generateHeader(std::string const& body)
 bool 
 XmlRpcClient::writeRequest()
 {
-  if (_bytesWritten == 0)
-    XmlRpcUtil::log(5, "XmlRpcClient::writeRequest (attempt %d):\n%s\n", _sendAttempts+1, _request.c_str());
-
-  // Try to write the request
-  if ( ! XmlRpcSocket::nbWrite(this->getfd(), _request, &_bytesWritten)) {
-    XmlRpcUtil::error("Error in XmlRpcClient::writeRequest: write error (%s).",XmlRpcSocket::getErrorMsg().c_str());
-    return false;
-  }
-    
-  XmlRpcUtil::log(3, "XmlRpcClient::writeRequest: wrote %d of %d bytes.", _bytesWritten, _request.length());
-
-  // Wait for the result
-  if (_bytesWritten == int(_request.length())) {
-    _header = "";
-    _response = "";
-    _connectionState = READ_HEADER;
-  }
-  return true;
+  return false;
 }
 
 void XmlRpcClient::reset() {
