@@ -10,7 +10,9 @@
 #if defined(_WINDOWS)
 # include <stdio.h>
 # include <winsock2.h>
-//# pragma lib(WS2_32.lib)
+# ifdef _MSC_VER
+#  pragma lib(WS2_32.lib)
+# endif
 
 # ifndef EINPROGRESS
 #   define EINPROGRESS	WSAEINPROGRESS
