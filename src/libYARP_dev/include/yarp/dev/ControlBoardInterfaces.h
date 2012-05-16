@@ -17,6 +17,7 @@
 /*! \file ControlBoardInterfaces.h define control board standard interfaces*/
 
 #include <yarp/dev/IEncoders.h>
+#include <yarp/dev/IEncodersTimed.h>
 #include <yarp/dev/ITorqueControl.h>
 #include <yarp/dev/IControlMode.h>
 #include <yarp/dev/IImpedanceControl.h>
