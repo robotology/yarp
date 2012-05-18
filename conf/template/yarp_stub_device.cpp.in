@@ -13,7 +13,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-void add_owned_@YARPDEV_NAME@(const char *owner) {
+YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     if (owner==NULL) {
         fprintf(stderr,"Cannot add stub for device @YARPDEV_NAME@\n");
         return;
@@ -29,6 +29,6 @@ void add_owned_@YARPDEV_NAME@(const char *owner) {
 }
 
 
-void add_@YARPDEV_NAME@() {
+YARP_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }

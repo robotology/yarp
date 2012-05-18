@@ -21,7 +21,7 @@ using namespace yarp::dev;
 YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,DeviceDriver)
 #endif
 
-void add_owned_@YARPDEV_NAME@(const char *owner) {
+YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     DriverCreator *factory = 
         new DriverCreatorOf<@YARPDEV_TYPE@>("@YARPDEV_NAME@",
                                            "@YARPDEV_WRAPPER@",
@@ -29,6 +29,6 @@ void add_owned_@YARPDEV_NAME@(const char *owner) {
     Drivers::factory().add(factory); // hand factory over to YARP
 }
 
-void add_@YARPDEV_NAME@() {
+YARP_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }

@@ -15,11 +15,11 @@ static int __custom_yarp_is_initialized = 0;
 // customizable initialization and shutdown functions
 
 #ifdef PLUGIN_INIT_FUNCTION
-extern "C" void PLUGIN_INIT_FUNCTION();
+extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION();
 #endif
 
 #ifdef PLUGIN_INIT_FUNCTION2
-extern "C" void PLUGIN_INIT_FUNCTION2();
+extern "C" YARP_IMPORT void PLUGIN_INIT_FUNCTION2();
 #endif
 
 extern "C" void yarpCustomInit() {

@@ -8,6 +8,7 @@
 
 #cmakedefine RUNTIME_YARPDEV
 
+#include <yarp/os/api.h>
 #include <yarp/os/impl/Carriers.h>
 using namespace yarp::os::impl;
 
@@ -18,11 +19,11 @@ using namespace yarp::os::impl;
 YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,Carrier)
 #endif
 
-void add_owned_@YARPDEV_NAME@(const char *owner) {
+YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     Carriers::addCarrierPrototype(new @YARPDEV_TYPE@);
 }
 
 
-void add_@YARPDEV_NAME@() {
+YARP_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }

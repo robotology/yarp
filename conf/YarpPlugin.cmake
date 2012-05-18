@@ -426,7 +426,7 @@ macro(END_PLUGIN_LIBRARY bundle_name)
 	  endif()
 	  list(GET owners 0 owner)
       list(REMOVE_AT owners 0)
-      set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern void add_owned_${dev}(const char *str);")
+      set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern YARP_IMPORT void add_owned_${dev}(const char *str);")
       set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_owned_${dev}(\"${owner}\");")
     endforeach()
     configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in

@@ -6,10 +6,12 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include <yarp/os/api.h>
+
 @YARP_CODE_PRE@
 
 // give the function for adding devices a consistent name
-extern "C" void add_@YARP_LIB_NAME@_devices();
+extern "C" YARP_EXPORT void add_@YARP_LIB_NAME@_devices();
 
 static bool @YARP_LIB_NAME@_added = false;
 
