@@ -12,7 +12,7 @@
 
 #include <yarp/conf/api.h>
 #ifndef YARP_wire_rep_utils_API
-#  ifdef YARP_wire_rep_utils_EXPORTS
+#  ifdef wire_rep_utils_EXPORTS
 #    define YARP_wire_rep_utils_API YARP_EXPORT
 #  else
 #     define YARP_wire_rep_utils_API YARP_IMPORT
