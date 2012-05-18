@@ -12,6 +12,8 @@
 
 #include <yarp/os/impl/SizedWriter.h>
 
+#include <wire_rep_utils_api.h>
+
 class SizedWriterTail : public yarp::os::impl::SizedWriter {
 private:
     yarp::os::impl::SizedWriter *delegate;
@@ -62,7 +64,7 @@ public:
     }
 };
 
-class WireBottle {
+class YARP_wire_rep_utils_API WireBottle {
 public:
     static bool checkBottle(void *cursor, int len);
     static bool extractBlobFromBottle(yarp::os::impl::SizedWriter& src,

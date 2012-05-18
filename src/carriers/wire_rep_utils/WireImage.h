@@ -16,6 +16,8 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/sig/Image.h>
 
+#include <wire_rep_utils_api.h>
+
     /*
     // layout for ROS:
     // Header header
@@ -141,7 +143,7 @@ public:
     virtual void stopWrite() {}
 };
 
-class WireImage {
+class YARP_wire_rep_utils_API WireImage {
 private:
     yarp::sig::FlexImage img;
 public:

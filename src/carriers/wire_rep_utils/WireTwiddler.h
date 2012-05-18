@@ -18,6 +18,8 @@
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/Bytes.h>
 
+#include <wire_rep_utils_api.h>
+
 #include <vector>
 #include <string>
 
@@ -50,7 +52,7 @@ public:
 };
 
 
-class WireTwiddler {
+class YARP_wire_rep_utils_API WireTwiddler {
 public:
     WireTwiddler() {
         buffer_start = 0;
@@ -106,7 +108,7 @@ public:
 
  */
 
-class WireTwiddlerReader : public yarp::os::impl::InputStream {
+class YARP_wire_rep_utils_API WireTwiddlerReader : public yarp::os::impl::InputStream {
 private:
     yarp::os::impl::InputStream& is;
     WireTwiddler& twiddler;
@@ -152,7 +154,7 @@ public:
 };
 
 
-class WireTwiddlerWriter : public yarp::os::impl::SizedWriter {
+class YARP_wire_rep_utils_API WireTwiddlerWriter : public yarp::os::impl::SizedWriter {
 private:
     yarp::os::impl::SizedWriter *parent;
     WireTwiddler *twiddler;
