@@ -24,7 +24,7 @@ using namespace std;
 
 bool verbose = false;
 
-string addPart(string t, string name, int code, string orig, string mode="") {
+string addPart(string t, string name, int code, Value *val, string orig, string mode="") {
     char buf[5000];
     if (mode=="length") {
         sprintf(buf,"%s %s # suggested length: %d", t.c_str(), name.c_str(), code);
@@ -56,7 +56,11 @@ string addPart(string t, string name, int code, string orig, string mode="") {
         }
         sprintf(buf,"%s %s # set to %d (=%s=%s)", t.c_str(), name.c_str(), code, r.c_str(), orig.c_str());
     } else {
-        sprintf(buf,"%s %s # set to %d (%s)", t.c_str(), name.c_str(), code, orig.c_str());
+        if (val) {
+            sprintf(buf,"%s %s # set to %s (%s)", t.c_str(), name.c_str(), val->toString().c_str(), orig.c_str());
+        } else {
+            sprintf(buf,"%s %s # set to %d (%s)", t.c_str(), name.c_str(), code, orig.c_str());
+        }
     }
     return buf;
 }
@@ -64,11 +68,11 @@ string addPart(string t, string name, int code, string orig, string mode="") {
 string showFormat(Bottle& b, string root) {
     string r;
     int code = b.getSpecialization();
-    r += addPart("int32",root + "_tag",BOTTLE_TAG_LIST+code,"BOTTLE_TAG_LIST+code");
+    r += addPart("int32",root + "_tag",BOTTLE_TAG_LIST+code,NULL,"BOTTLE_TAG_LIST+code");
     r += "\n";
     bool specialized = (code>0);
     if (code==BOTTLE_TAG_INT) {
-        r += addPart("int32[]",root,b.size(),"length","length");
+        r += addPart("int32[]",root,b.size(),NULL,"length","length");
         r += "\n";
         if (b.size()<50) {
             r += " # integers seen: ";
@@ -82,7 +86,7 @@ string showFormat(Bottle& b, string root) {
         return r;
     }
     if (code==BOTTLE_TAG_DOUBLE) {
-        r += addPart("float64[]",root,b.size(),"length","length");
+        r += addPart("float64[]",root,b.size(),NULL,"length","length");
         r += "\n";
         if (b.size()<50) {
             r += " # floats seen: ";
@@ -95,7 +99,7 @@ string showFormat(Bottle& b, string root) {
         }
         return r;
     }
-    r += addPart("int32",root + "_len",b.size(),"elements in list");
+    r += addPart("int32",root + "_len",b.size(),NULL,"elements in list");
     r += "\n";
     for (int i=0; i<b.size(); i++) {
         Value& v = b.get(i);
@@ -105,44 +109,44 @@ string showFormat(Bottle& b, string root) {
         sprintf(val_name,"%s%d", root.c_str(), i);
         if (v.isVocab()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB,
+                r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB,NULL,
                              "BOTTLE_TAG_VOCAB");
                 r += "\n";
             }
-            r += addPart("int32",val_name,v.asInt(),v.toString().c_str(),"vocab");
+            r += addPart("int32",val_name,v.asInt(),NULL,v.toString().c_str(),"vocab");
             r += "\n";
         } else if (v.isInt()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_INT,
+                r += addPart("int32",tag_name,BOTTLE_TAG_INT,NULL,
                              "BOTTLE_TAG_INT");
                 r += "\n";
             }
-            r += addPart("int32",val_name,v.asInt(),v.toString().c_str());
+            r += addPart("int32",val_name,v.asInt(),&v,v.toString().c_str());
             r += "\n";
         } else if (v.isDouble()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_DOUBLE,
+                r += addPart("int32",tag_name,BOTTLE_TAG_DOUBLE,NULL,
                              "BOTTLE_TAG_DOUBLE");
                 r += "\n";
             }
-            r += addPart("float64",val_name,v.asDouble(),v.toString().c_str());
+            r += addPart("float64",val_name,v.asInt(),&v,v.toString().c_str());
             r += "\n";
         } else if (v.isList()) {
             r += showFormat(*v.asList(), val_name);
         } else if (v.isBlob()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_BLOB,
+                r += addPart("int32",tag_name,BOTTLE_TAG_BLOB,NULL,
                              "BOTTLE_TAG_BLOB");
                 r += "\n";
             }
-            r += addPart("int8[]",val_name,v.asBlobLength(),"length","length");
+            r += addPart("int8[]",val_name,v.asBlobLength(),NULL,"length","length");
         } else if (v.isString()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_STRING,
+                r += addPart("int32",tag_name,BOTTLE_TAG_STRING,NULL,
                              "BOTTLE_TAG_STRING");
                 r += "\n";
             }
-            r += addPart("string",val_name,0,v.asString().c_str(),"string");
+            r += addPart("string",val_name,0,NULL,v.asString().c_str(),"string");
             r += "\n";
         } else {
             r += "IGNORED ";

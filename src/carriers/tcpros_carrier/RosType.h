@@ -74,6 +74,8 @@ public:
 
 class RosTypeCodeGen {
 public:
+    virtual ~RosTypeCodeGen() {}
+
     virtual bool beginType(const std::string& tname,
                            RosTypeCodeGenState& state) = 0;
 
