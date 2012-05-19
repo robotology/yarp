@@ -51,6 +51,10 @@ public:
                   RosTypeCodeGenState& state);
 };
 
+#ifdef _MSC_VER
+template class YARP_tcpros_carrier_API std::vector<RosType>;
+#endif
+
 typedef RosType RosField;
 
 class RosTypeCodeGenState {
