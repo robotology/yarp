@@ -1158,6 +1158,8 @@ void MainWindow::onPAppMenuReopen()
 
 void MainWindow::onMenuHelpOnlineHelp() 
 {
+    onMenuHelpAbout();
+    /*
     GError *error = NULL;
     gtk_show_uri(gdk_screen_get_default(), 
                  "http://eris.liralab.it/yarpdoc/yarpmanager.html",
@@ -1168,6 +1170,7 @@ void MainWindow::onMenuHelpOnlineHelp()
         dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
         dialog.run();
     }
+    */
 }
 
 void MainWindow::onMenuHelpAbout()
