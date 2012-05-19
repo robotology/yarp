@@ -53,7 +53,7 @@ public:
      bool stop();
      bool kill();
      bool connect(const char* from, const char* to, 
-                        const char* carrier);
+                        const char* carrier, bool persist=false);
      bool disconnect(const char* from, const char* to);
      int running(void);
      bool exists(const char* port);

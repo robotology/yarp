@@ -259,7 +259,7 @@ int LocalBroker::running(void)
  *  connecttion broker
  */ 
 bool LocalBroker::connect(const char* from, const char* to, 
-            const char* carrier)
+            const char* carrier, bool persist)
 {
     
     if(!from)

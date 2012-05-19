@@ -354,10 +354,10 @@ Property& YarpBroker::runProperty(void)
 
 
 /**
- *  connecttion broker
+ *  connection broker
  */ 
 bool YarpBroker::connect(const char* from, const char* to, 
-            const char* carrier)
+            const char* carrier, bool persist)
 {
     if(!from)
     {
@@ -371,32 +371,52 @@ bool YarpBroker::connect(const char* from, const char* to,
         return false;
     }
 
-    if(!exists(from))
-    {
-        strError = from;
-        strError += " does not exist.";
-        return false;
-    }
-
-    if(!exists(to))
-    {
-        strError = to;
-        strError += " does not exist.";
-        return false;
-    }
-    
     ContactStyle style;
     style.quiet = true;
     style.timeout = CONNECTION_TIMEOUT;
     style.carrier = carrier;
-    NetworkBase::connect(from, to, style);
-    if(!connected(from, to))
+
+    if(!persist)
     {
-        strError = "cannot connect ";
-        strError +=from;
-        strError += " to " + string(to);
-        return false;
+        if(!exists(from))
+        {
+            strError = from;
+            strError += " does not exist.";
+            return false;
+        }
+
+        if(!exists(to))
+        {
+            strError = to;
+            strError += " does not exist.";
+            return false;
+        }
+        
+        NetworkBase::connect(from, to, style);
+        if(!connected(from, to))
+        {
+            strError = "cannot connect ";
+            strError +=from;
+            strError += " to " + string(to);
+            return false;
+        }
     }
+    else
+    {
+        string topic = string("topic:/") + string(from) + string(to);
+        NetworkBase::connect(from, topic.c_str(), style);
+        NetworkBase::connect(topic.c_str(), to, style);
+        if(!connected(from, to))
+        {
+            strError = "a persistent connection from ";
+            strError +=from;
+            strError += " to " + string(to);
+            strError += " is created but not connected.";
+            return false;
+        }
+
+    }
+
     return true;
 }
 
@@ -415,6 +435,7 @@ bool YarpBroker::disconnect(const char* from, const char* to)
         return false;
     }
 
+    /*
     if(!exists(from))
     {
         strError = from;
@@ -428,7 +449,8 @@ bool YarpBroker::disconnect(const char* from, const char* to)
         strError += " does not exist.";
         return true;
     }
-    
+    */
+
     if(!connected(from, to))
         return true;
    
@@ -572,6 +594,19 @@ bool YarpBroker::getAllProcesses(const char* server,
 }
 
 
+bool YarpBroker::rmconnect(const char* from, const char* to)
+{
+    string topic = string(from) + string(to);
+    Bottle cmd, reply;
+    cmd.addString("untopic");
+    cmd.addString(topic.c_str());
+    return NetworkBase::write(NetworkBase::getNameServerContact(),
+                                 cmd,
+                                 reply,
+                                 false,
+                                 true, 
+                                 CONNECTION_TIMEOUT);
+}
 
 
 const char* YarpBroker::error(void)

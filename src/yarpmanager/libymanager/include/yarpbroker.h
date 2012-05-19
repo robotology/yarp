@@ -53,8 +53,9 @@ public:
      bool stop();
      bool kill();
      bool connect(const char* from, const char* to, 
-                        const char* carrier);
+                        const char* carrier, bool persist=false);
      bool disconnect(const char* from, const char* to);
+     bool rmconnect(const char* from, const char* to);
      int running(void);
      bool exists(const char* port);
      bool connected(const char* from, const char* to);
@@ -68,7 +69,7 @@ public:
      bool getAllProcesses(const char* server, 
                         ProcessContainer &processes);
      bool getAllPorts(vector<std::string> &stingList);
-
+     
 public: // for rate thread
     void run();
     bool threadInit();

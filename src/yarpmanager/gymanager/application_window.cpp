@@ -425,11 +425,16 @@ void ApplicationWindow::updateApplicationWindow(void)
         m_conRow[m_conColumns.m_col_id] = id++;
         m_conRow.set_value(0, m_refPixDisconnected);
         
-        if((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo())
-            m_conRow[m_conColumns.m_col_type] = "External";
+        
+        if((*cnnitr).isPersistent())
+            m_conRow[m_conColumns.m_col_type] = "Persistent";
         else
-            m_conRow[m_conColumns.m_col_type] = "Internal";
-
+        {
+            if((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo())
+                m_conRow[m_conColumns.m_col_type] = "External";
+            else
+                m_conRow[m_conColumns.m_col_type] = "Internal";
+        }
         m_conRow[m_conColumns.m_col_from] = (*cnnitr).from();
         m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
         m_conRow[m_conColumns.m_col_carrier] = (*cnnitr).carrier();

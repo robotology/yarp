@@ -39,7 +39,7 @@
 
 
 	<!-- Required connections -->
-	<connection>
+	<connection persist="true">
 		<from>/left/eye</from>
 		<to>/LeftView/yarpview/img:i</to>
 		<protocol>udp</protocol>

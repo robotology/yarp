@@ -64,6 +64,8 @@ public:
     bool connect(unsigned int id);
     bool disconnect(void);
     bool disconnect(unsigned int id);
+    bool rmconnect(unsigned int id);
+    bool rmconnect(void);
     bool running(void) { return allRunning(); }
     bool running(unsigned int id);
     bool suspended(void) { return allStopped(); }

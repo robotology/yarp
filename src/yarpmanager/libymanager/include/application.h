@@ -67,6 +67,7 @@ public:
         modOwner = NULL;
         bExternalFrom = false;
         bExternalTo = false;
+        bPersist = false;
     }
     virtual ~Connection(){}
     const char* from(void) { return strFrom.c_str();}
@@ -76,8 +77,10 @@ public:
     void setCarrier(const char* szCr) { if(szCr) strCarrier = szCr; }
     void setFromExternal(bool ext) { bExternalFrom = ext;}
     void setToExternal(bool ext) { bExternalTo = ext; }
+    void setPersistent(bool per) { bPersist = per; }
     bool isExternalFrom(void) { return bExternalFrom; }
     bool isExternalTo(void) { return bExternalTo; }
+    bool isPersistent(void) { return bPersist; }
     const char* carrier(void) { return strCarrier.c_str(); }
     void setOwner(Module* module){ modOwner = module; }
     Module* owner(void) { return modOwner; }
@@ -95,6 +98,7 @@ private:
     bool bExternalTo;
     bool bExternalFrom; 
     string strCarrier;
+    bool bPersist; 
     Module* modOwner;
     bool bWithPriority; 
 };

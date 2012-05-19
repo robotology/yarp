@@ -1158,7 +1158,16 @@ void MainWindow::onPAppMenuReopen()
 
 void MainWindow::onMenuHelpOnlineHelp() 
 {
-    onMenuHelpAbout();
+    GError *error = NULL;
+    gtk_show_uri(gdk_screen_get_default(), 
+                 "http://eris.liralab.it/yarpdoc/yarpmanager.html",
+                 gtk_get_current_event_time(), &error);
+    if(error)
+    {
+        Gtk::MessageDialog dialog("Cannot open online help!", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_CLOSE);
+        dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
+        dialog.run();
+    }
 }
 
 void MainWindow::onMenuHelpAbout()

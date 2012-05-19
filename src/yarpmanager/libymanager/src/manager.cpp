@@ -70,6 +70,8 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
 
 Manager::~Manager()
 {
+    // untopic persistent connections 
+    rmconnect();
     clearExecutables(); 
 }
 
@@ -802,9 +804,7 @@ void Manager::clearExecutables(void)
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
-        /**
-         * broker will be delated by Executable
-         */
+        // broker will be deleted by Executable
         delete (*itr);
     }
     runnables.clear();
@@ -824,7 +824,8 @@ bool Manager::connect(unsigned int id)
 
     if( !connector.connect(connections[id].from(), 
                             connections[id].to(),
-                            connections[id].carrier()) )
+                            connections[id].carrier(),
+                            connections[id].isPersistent()) )
     {
         logger->addError(connector.error());
         //cout<<connector.error()<<endl;
@@ -841,7 +842,7 @@ bool Manager::connect(void)
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
         if( !connector.connect((*cnn).from(), (*cnn).to(),
-                               (*cnn).carrier()) )
+                               (*cnn).carrier(), (*cnn).isPersistent()) )
             {
                 logger->addError(connector.error());
                 //cout<<connector.error()<<endl;
@@ -883,6 +884,38 @@ bool Manager::disconnect(void)
             {
                 logger->addError(connector.error());
                 //cout<<connector.error()<<endl;
+                return false;
+            }   
+    return true;
+}
+
+
+bool Manager::rmconnect(unsigned int id)
+{
+    if(id>=connections.size())
+    {
+        logger->addError("Connection id is out of range.");
+        return false;
+    }
+
+    if(!connector.rmconnect(connections[id].from(), 
+                            connections[id].to()) )
+    {
+        logger->addError(connector.error());
+        return false;
+    }   
+    
+    return true;
+}
+
+
+bool Manager::rmconnect(void)
+{
+    CnnIterator cnn;
+    for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+        if( !connector.rmconnect((*cnn).from(), (*cnn).to()) )
+            {
+                logger->addError(connector.error());
                 return false;
             }   
     return true;

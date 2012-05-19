@@ -405,6 +405,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         connection.setToExternal(true);
                 }
 
+                if(cnn->Attribute("persist") && 
+                        compareString(cnn->Attribute("persist"), "true"))
+                    connection.setPersistent(true);    
                 app.addConnection(connection);
             }
             else
