@@ -21,6 +21,8 @@
 #include <string>
 #include <map>
 
+#include <tcpros_carrier_api.h>
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -30,9 +32,9 @@ namespace yarp {
 }
 
 
-class yarp::os::impl::TcpRosStream : public TwoWayStream, 
-                                     public InputStream,
-                                     public OutputStream
+class YARP_tcpros_carrier_API yarp::os::impl::TcpRosStream : public TwoWayStream, 
+                                                             public InputStream,
+                                                             public OutputStream
 {
 private:
     TwoWayStream *delegate;
