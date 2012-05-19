@@ -13,6 +13,8 @@
 #include <RosType.h>
 #include <stdio.h>
 
+#include <tcpros_carrier_api.h>
+
 class RosYarpType {
 public:
     std::string rosType;
@@ -26,7 +28,7 @@ public:
     }
 };
 
-class RosTypeCodeGenYarp : public RosTypeCodeGen {
+class YARP_tcpros_carrier_API RosTypeCodeGenYarp : public RosTypeCodeGen {
 public:
     std::string counter;
     std::string len;

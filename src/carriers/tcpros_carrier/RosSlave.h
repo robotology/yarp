@@ -9,6 +9,8 @@
 
 #include <yarp/os/all.h>
 
+#include <tcpros_carrier_api.h>
+
 // temporary slave
 class RosSlave : public yarp::os::PortReader {
 private:

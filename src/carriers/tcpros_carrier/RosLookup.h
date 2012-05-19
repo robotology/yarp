@@ -10,7 +10,9 @@
 #include <stdio.h>
 #include <yarp/os/all.h>
 
-class RosLookup {
+#include <tcpros_carrier_api.h>
+
+class YARP_tcpros_carrier_API RosLookup {
 public:
     bool valid;
     yarp::os::ConstString hostname;

@@ -14,7 +14,9 @@
 #include <vector>
 #include <map>
 
-class RosTypeSearch {
+#include <tcpros_carrier_api.h>
+
+class YARP_tcpros_carrier_API RosTypeSearch {
 public:
     void addDirectory(const char *physical, const char *logical);
 
@@ -24,7 +26,7 @@ public:
 class RosTypeCodeGen;
 class RosTypeCodeGenState;
 
-class RosType {
+class YARP_tcpros_carrier_API RosType {
 public:
     bool isValid;
     bool isArray;
@@ -72,7 +74,7 @@ public:
     }
 };
 
-class RosTypeCodeGen {
+class YARP_tcpros_carrier_API RosTypeCodeGen {
 public:
     virtual ~RosTypeCodeGen() {}
 
@@ -98,7 +100,7 @@ public:
     }
 };
 
-class RosTypeCodeGenTest : public RosTypeCodeGen {
+class YARP_tcpros_carrier_API RosTypeCodeGenTest : public RosTypeCodeGen {
 public:
     virtual bool beginType(const std::string& tname, 
                            RosTypeCodeGenState& state);
