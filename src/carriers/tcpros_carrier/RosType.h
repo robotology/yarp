@@ -26,14 +26,40 @@ public:
 class RosTypeCodeGen;
 class RosTypeCodeGenState;
 
+
 class YARP_tcpros_carrier_API RosType {
+public:
+
+    // std::vector<RosType> subRosType; is awkward to export in a MSVC DLL
+    // so we work around it
+    class YARP_tcpros_carrier_API RosTypes {
+    public:
+        void *system_resource;
+        
+        RosTypes();
+        
+        virtual ~RosTypes();
+
+        RosTypes(const RosTypes& alt);
+
+        const RosTypes& operator=(const RosTypes& alt);
+        
+        void clear();
+        
+        void push_back(const RosType& t);
+        
+        size_t size();
+        
+        RosType& operator[](int i);
+    };
+
 public:
     bool isValid;
     bool isArray;
     bool isPrimitive;
     std::string rosType;
     std::string rosName;
-    std::vector<RosType> subRosType;
+    RosTypes subRosType;
     std::string txt;
 
     RosType() {
@@ -50,10 +76,6 @@ public:
     bool emitType(RosTypeCodeGen& gen, 
                   RosTypeCodeGenState& state);
 };
-
-#ifdef _MSC_VER
-template class YARP_tcpros_carrier_API std::vector<RosType>;
-#endif
 
 typedef RosType RosField;
 

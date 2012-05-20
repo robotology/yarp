@@ -65,6 +65,53 @@ vector<string> normalizedMessage(const string& line) {
     return all;
 }
 
+#define HELPER(x) (*((std::vector<RosType> *)(x)))
+
+RosType::RosTypes::RosTypes() {
+    system_resource = new std::vector<RosType>();
+    if (!system_resource) {
+        fprintf(stderr,"Failed to allocated storage for ros types\n");
+        exit(1);
+    }
+}
+
+RosType::RosTypes::~RosTypes() {
+    delete &HELPER(system_resource);
+    system_resource = NULL;
+}
+
+RosType::RosTypes::RosTypes(const RosTypes& alt) {
+    system_resource = new std::vector<RosType>();
+    if (!system_resource) {
+        fprintf(stderr,"Failed to allocated storage for ros types\n");
+        exit(1);
+    }
+    HELPER(system_resource) = HELPER(alt.system_resource);
+}
+
+const RosType::RosTypes& RosType::RosTypes::operator=(const RosTypes& alt) {
+    HELPER(system_resource) = HELPER(alt.system_resource);
+    return *this;
+}
+        
+
+
+void RosType::RosTypes::clear() {
+    HELPER(system_resource).clear();
+}
+
+void RosType::RosTypes::push_back(const RosType& t) {
+    HELPER(system_resource).push_back(t);
+}
+
+size_t RosType::RosTypes::size() {
+    return HELPER(system_resource).size();
+}
+
+RosType& RosType::RosTypes::operator[](int i) {
+    return HELPER(system_resource)[i];
+}
+
 
 bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
                    int nesting) {
