@@ -1158,8 +1158,7 @@ void MainWindow::onPAppMenuReopen()
 
 void MainWindow::onMenuHelpOnlineHelp() 
 {
-    onMenuHelpAbout();
-    /*
+ #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)  
     GError *error = NULL;
     gtk_show_uri(gdk_screen_get_default(), 
                  "http://eris.liralab.it/yarpdoc/yarpmanager.html",
@@ -1170,7 +1169,12 @@ void MainWindow::onMenuHelpOnlineHelp()
         dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
         dialog.run();
     }
-    */
+#else
+    Gtk::MessageDialog dialog("Please visit the following link.", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_CLOSE);
+    dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
+    dialog.run();
+
+#endif    
 }
 
 void MainWindow::onMenuHelpAbout()

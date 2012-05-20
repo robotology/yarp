@@ -44,14 +44,15 @@ using namespace yarp::os;
 #endif
 
 
+#define CMD_COUNTS          24
 #ifdef WITH_READLINE
     #include <readline/readline.h>
     #include <readline/history.h>
-    const char* commands[21] = {"help", "exit","list mod", "list app", "add mod",
-                  "add app", "load app", "run", "stop", "kill", 
+    const char* commands[CMD_COUNTS] = {"help", "exit","list mod", "list app", "list res", "add mod",
+                  "add app", "add res", "load app", "run", "stop", "kill", 
                   "connect", "disconnect", "which", "check state",
                   "check con", "check dep", "set", "get", "export",
-                  "show mod", " "};
+                  "show mod", "assign hosts", " "};
     char* command_generator (const char* text, int state);
     char* appname_generator (const char* text, int state);
     char ** my_completion (const char* text, int start, int end);
@@ -383,6 +384,18 @@ bool YConsoleManager::process(const vector<string> &cmdList)
          return true;
      }
 
+    /**
+     * add resource
+     */ 
+     if((cmdList.size() == 3) && 
+        (cmdList[0] == "add") && (cmdList[1] == "res"))
+     {
+         if(addResource(cmdList[2].c_str()))
+            cout<<INFO<<cmdList[2]<<" is successfully added."<<ENDC<<endl;
+         reportErrors();
+         return true;
+     }
+
 
     /**
      * load application 
@@ -701,6 +714,39 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     }   
 
     /**
+     *  list available resources
+     */
+    if((cmdList.size() == 2) && 
+        (cmdList[0] == "list") && (cmdList[1] == "res"))
+    {
+        KnowledgeBase* kb = getKnowledgeBase();
+        ResourcePContainer resources = kb->getResources();
+        int id = 0;
+        for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
+        {
+            Computer* comp = dynamic_cast<Computer*>(*itr);
+            if(comp)
+            {
+                string fname;
+                string fpath = comp->getXmlFile();
+                size_t pos = fpath.rfind(PATH_SEPERATOR);
+                if(pos!=string::npos)
+                    fname = fpath.substr(pos);
+                else
+                    fname = fpath;
+                cout<<INFO<<"("<<id++<<") ";
+                if(comp->getDisable())
+                    cout<<WARNING<<comp->getName()<<ENDC;
+                else
+                    cout<<OKBLUE<<comp->getName()<<ENDC;
+                cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
+            }
+        }
+        return true;
+    }   
+
+
+    /**
      *  export knowledgebase graph 
      */
     if((cmdList.size() == 2) && 
@@ -713,7 +759,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     
 
     /**
-     * show module's insformation 
+     * show module's information 
      */
     if((cmdList.size() == 3) && 
         (cmdList[0] == "show") && (cmdList[1] == "mod"))
@@ -793,6 +839,17 @@ bool YConsoleManager::process(const vector<string> &cmdList)
          return true;
      }
     
+    /**
+     * load balancing
+     */
+    if((cmdList.size() == 2) && 
+        (cmdList[0] == "assign") && (cmdList[1] == "hosts"))
+    {
+        loadBalance();
+        reportErrors();
+        return true;
+    }
+ 
     return false;
 }
 
@@ -804,8 +861,10 @@ void YConsoleManager::help(void)
     cout<<OKGREEN<<"exit"<<INFO<<"                    : exit yarp manager."<<ENDC<<endl;
     cout<<OKGREEN<<"list mod"<<INFO<<"                : list available modules."<<ENDC<<endl;
     cout<<OKGREEN<<"list app"<<INFO<<"                : list available applications."<<ENDC<<endl;
+    cout<<OKGREEN<<"list res"<<INFO<<"                : list available resources. (i.e. nodes in a cluster)"<<ENDC<<endl;
     cout<<OKGREEN<<"add mod <filename>"<<INFO<<"      : add a module from its description file."<<ENDC<<endl;
     cout<<OKGREEN<<"add app <filename>"<<INFO<<"      : add an application from its description file."<<ENDC<<endl;
+    cout<<OKGREEN<<"add res <filename>"<<INFO<<"      : add resources from a description file."<<ENDC<<endl;
     cout<<OKGREEN<<"load app <application>"<<INFO<<"  : load an application to run."<<endl;
 //  cout<<"load mod <module> <host>: load a module to run on an optional host."<<endl;
     cout<<OKGREEN<<"run [IDs]"<<INFO<<"               : run application or a modules indicated by IDs."<<ENDC<<endl;
@@ -823,7 +882,8 @@ void YConsoleManager::help(void)
 //  cout<<"edit mod <modname>      : open module relevant xml file to edit."<<endl;
 //  cout<<"edit app <appname>      : open application relevant xml file to edit."<<endl;
     cout<<OKGREEN<<"show mod <modname>"<<INFO<<"      : display module information (description, input, output,...)."<<ENDC<<endl;
-    
+    cout<<OKGREEN<<"assign hosts"<<INFO<<"            : automatically assign modules to proper nodes using load balancer."<<ENDC<<endl;
+   
     cout<<endl;
 }
 
@@ -1068,7 +1128,7 @@ char* command_generator (const char* text, int state)
       len = strlen (text);
     }
 
-  while ((list_index<21) && (name = (char*)commands[list_index]))
+  while ((list_index<CMD_COUNTS) && (name = (char*)commands[list_index]))
     {
       list_index++;
       if (strncmp (name, text, len) == 0)

@@ -182,8 +182,8 @@ Here is an example of application description file in XML format:
    <b><font color="#00458A">&lt;/application&gt;</font></b>
    ...
     
-  <i><font color="#9A1900">&lt;!-- Required connections --&gt;</font></i>
-  <b><font color="#00458A">&lt;connection&gt;</font></b>
+  <i><font color="#9A1900">&lt;!-- Required connections --&gt;</font></i>  
+  <b><font color="#00458A">&lt;connection</font></b> <font color="#009900">persist</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#00458A">&gt;</font></b>
       <b><font color="#00458A">&lt;from&gt;&lt;/from&gt;</font></b>
       <b><font color="#00458A">&lt;to&gt;&lt;/to&gt;</font></b>
       <b><font color="#00458A">&lt;protocol&gt;&lt;/protocol&gt;</font></b>
@@ -256,6 +256,7 @@ Here is an example of application description file in XML format:
  - Leaving <node></node> empty, later you can use the load balancer to automatically assign module to a node for better performance. 
  - <prefix> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and <prefix>/MyPrefix</prefix>, after launching the module, the real port name will be "/Myprefix/Port1". 
  - Other applications can be integrated by indicating their names. Setting <prefix> for an included application, port prefix will be applied to all modules and connections which are not set as external.  
+ - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in gyarpmanager).    
 
 
 \section resource Resource description file 
