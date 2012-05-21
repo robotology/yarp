@@ -10,10 +10,19 @@
 #include <stdio.h>
 #include <yarp/dev/Drivers.h>
 
+#cmakedefine BUILD_SHARED_LIBS
+#ifdef BUILD_SHARED_LIB
+#  define YARP_PLUGIN_IMPORT YARP_HELPER_DLL_IMPORT
+#  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
+#else
+#  define YARP_PLUGIN_IMPORT
+#  define YARP_PLUGIN_EXPORT
+#endif
+
 using namespace yarp::os;
 using namespace yarp::dev;
 
-YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
+YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     if (owner==NULL) {
         fprintf(stderr,"Cannot add stub for device @YARPDEV_NAME@\n");
         return;
@@ -29,6 +38,6 @@ YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
 }
 
 
-YARP_EXPORT void add_@YARPDEV_NAME@() {
+YARP_PLUGIN_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }

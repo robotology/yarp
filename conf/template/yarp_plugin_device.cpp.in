@@ -11,6 +11,15 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
 
+#cmakedefine BUILD_SHARED_LIBS
+#ifdef BUILD_SHARED_LIB
+#  define YARP_PLUGIN_IMPORT YARP_HELPER_DLL_IMPORT
+#  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
+#else
+#  define YARP_PLUGIN_IMPORT
+#  define YARP_PLUGIN_EXPORT
+#endif
+
 #include <@YARPDEV_INCLUDE@>
 
 using namespace yarp::os;
@@ -21,7 +30,7 @@ using namespace yarp::dev;
 YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,DeviceDriver)
 #endif
 
-YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
+YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     DriverCreator *factory = 
         new DriverCreatorOf<@YARPDEV_TYPE@>("@YARPDEV_NAME@",
                                            "@YARPDEV_WRAPPER@",
@@ -29,6 +38,6 @@ YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     Drivers::factory().add(factory); // hand factory over to YARP
 }
 
-YARP_EXPORT void add_@YARPDEV_NAME@() {
+YARP_PLUGIN_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }

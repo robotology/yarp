@@ -12,6 +12,15 @@
 #include <yarp/os/impl/Carriers.h>
 using namespace yarp::os::impl;
 
+#cmakedefine BUILD_SHARED_LIBS
+#ifdef BUILD_SHARED_LIB
+#  define YARP_PLUGIN_IMPORT YARP_HELPER_DLL_IMPORT
+#  define YARP_PLUGIN_EXPORT YARP_HELPER_DLL_EXPORT
+#else
+#  define YARP_PLUGIN_IMPORT
+#  define YARP_PLUGIN_EXPORT
+#endif
+
 #include <@YARPDEV_INCLUDE@>
 
 #ifdef RUNTIME_YARPDEV
@@ -19,11 +28,11 @@ using namespace yarp::os::impl;
 YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,Carrier)
 #endif
 
-YARP_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
+YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     Carriers::addCarrierPrototype(new @YARPDEV_TYPE@);
 }
 
 
-YARP_EXPORT void add_@YARPDEV_NAME@() {
+YARP_PLUGIN_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }
