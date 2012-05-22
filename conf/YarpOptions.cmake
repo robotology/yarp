@@ -56,11 +56,9 @@ endif (EXISTS ${STATLIB})
 
 #########################################################################
 # Control whether libraries are shared or static.
-# This option isn't really usable on windows right now.
 
 option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" FALSE)
 if (WIN32)
-  mark_as_advanced(CREATE_SHARED_LIBRARY)
   set(YARP_FILTER_API TRUE)
 endif (WIN32)
 
