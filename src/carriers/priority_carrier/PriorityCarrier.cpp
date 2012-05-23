@@ -49,47 +49,52 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
 
     priorityLevel = options.check("level",Value(1.0)).asDouble();
     timeConstant = options.check("tc",Value(1.0)).asDouble();
-    isInhibitory = options.check("inhibit",Value(0)).asInt()!=0;
+    stimulation = options.check("s",Value(priorityLevel)).asDouble();
+    // Zero stimulation is undefined and will be interpreted as S=P. 
+    if(stimulation == 0)
+        stimulation = priorityLevel;
+
+    // Negative stimulation will be interpreted as an inhibition 
+    isInhibitory = ( stimulation < 0);
+
     return true;
 }
 
 // Decide whether data should be accepted, for real.
 bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
                                        PriorityCarrier *source) {
-
-/*                                       
+   /*
     printf("===============================================================\n");
-    printf("A message has arrived. Thinking about whether to let it through\n");
     printf("Message is from %s\n", source->sourceName.c_str());
-    printf("Priority level %g\n", source->priorityLevel);
- */   
+    printf("level:%.2f, s:%.2f, tc:%.2f\n", 
+            source->priorityLevel, source->stimulation, source->timeConstant);
+    */
 
     // updates message's arrival time 
     double tNow = yarp::os::Time::now();
-    source->timeArrival = tNow;
 
-    // an inhibitory message will never be delivered. It will inhibit 
-    // future messages if it win priority fray. 
-    if(source->isInhibitory)
-    {
-        //printf("An inhibitory message arrived from %s:%g\n", 
-        //    source->sourceName.c_str(), source->priorityLevel);
-        return false; 
-    }
+    // stimulate and update message temporal priority 
+    source->stimulate(tNow);
 
     // now compete! 
-    bool accept = true;
+    bool accept = (fabs(source->temporalPriority) >= source->priorityLevel);
     for (PeerRecord::iterator it = peerSet.begin(); it!=peerSet.end(); it++) 
     {
         PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
-        double p = peer->getActualPriority(tNow);
-        if(source->priorityLevel < p)
+        if( peer != source)
         {
-            accept = false;
-            break;
-        }
+            // depressing other priorities 
+            peer->depress(tNow, source->stimulation);
+            if(fabs(source->temporalPriority) < fabs(peer->getActualPriority(tNow)))
+                accept = false;
+       }
     }
-
+    
+    // an inhibitory message will never be delivered. It will inhibit 
+    // future messages if it win priority fray. 
+    if(source->isInhibitory)
+        return false; 
+    
     /*
     if (accept) {
         printf("\nThis message wins!\n");
