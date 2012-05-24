@@ -63,7 +63,7 @@ public:
  * PR should be a subclass of PeerRecord.
  */
 template <class PR> 
-class YARP_OS_impl_API yarp::os::impl::Election {
+class yarp::os::impl::Election {
 private:
     typedef void *voidPtr;
 
