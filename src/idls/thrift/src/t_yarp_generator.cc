@@ -1325,15 +1325,15 @@ void t_yarp_generator::generate_serialize_container(ofstream& out,
 
   if (ttype->is_map()) {
     indent(out) <<
-      "xfer += oprot->writeMapBegin(" <<
+      "if (!writer.writeMapBegin(" <<
       type_to_enum(((t_map*)ttype)->get_key_type()) << ", " <<
       type_to_enum(((t_map*)ttype)->get_val_type()) << ", " <<
-      "static_cast<uint32_t>(" << prefix << ".size()));" << endl;
+      "static_cast<uint32_t>(" << prefix << ".size()))) return false;" << endl;
   } else if (ttype->is_set()) {
     indent(out) <<
-      "xfer += oprot->writeSetBegin(" <<
+      "if (!writer.writeSetBegin(" <<
       type_to_enum(((t_set*)ttype)->get_elem_type()) << ", " <<
-      "static_cast<uint32_t>(" << prefix << ".size()));" << endl;
+      "static_cast<uint32_t>(" << prefix << ".size()))) return false;" << endl;
   } else if (ttype->is_list()) {
     indent(out) <<
       "if (!writer.writeListBegin(" <<
@@ -1357,10 +1357,10 @@ void t_yarp_generator::generate_serialize_container(ofstream& out,
 
   if (ttype->is_map()) {
     indent(out) <<
-      "xfer += oprot->writeMapEnd();" << endl;
+      "if (!writer.writeMapEnd()) return false;" << endl;
   } else if (ttype->is_set()) {
     indent(out) <<
-      "xfer += oprot->writeSetEnd();" << endl;
+      "if (!writer.writeSetEnd()) return false;" << endl;
   } else if (ttype->is_list()) {
     indent(out) <<
       "if (!writer.writeListEnd()) return false;" << endl;
@@ -1372,11 +1372,15 @@ void t_yarp_generator::generate_serialize_container(ofstream& out,
 void t_yarp_generator::generate_serialize_map_element(ofstream& out,
 						      t_map* tmap,
 						      string iter) {
+  indent(out) << "if (!writer.writeListBegin(0,2)) return false;" << endl;
+
   t_field kfield(tmap->get_key_type(), iter + "->first");
   generate_serialize_field(out, &kfield, "");
 
   t_field vfield(tmap->get_val_type(), iter + "->second");
   generate_serialize_field(out, &vfield, "");
+
+  indent(out) << "if (!writer.writeListEnd()) return false;" << endl;
 }
 
 void t_yarp_generator::generate_serialize_set_element(ofstream& out,
@@ -1491,16 +1495,17 @@ void t_yarp_generator::generate_deserialize_container(ofstream& out,
 
   // Declare variables, read header
   if (ttype->is_map()) {
+    // kttpe and vtype available
     out <<
-      indent() << "::apache::thrift::protocol::TType " << ktype << ";" << endl <<
-      indent() << "::apache::thrift::protocol::TType " << vtype << ";" << endl <<
+      indent() << "yarp::os::idl::WireState " << ktype << ";" << endl <<
+      indent() << "yarp::os::idl::WireState " << vtype << ";" << endl <<
       indent() << "reader.readMapBegin(" <<
-                   ktype << ", " << vtype << ", " << size << ");" << endl;
+      ktype << ", " << vtype << ", " << size << ");" << endl;
   } else if (ttype->is_set()) {
     out <<
-      indent() << "::apache::thrift::protocol::TType " << etype << ";" << endl <<
+      indent() << "yarp::os::idl::WireState " << etype << ";" << endl <<
       indent() << "reader.readSetBegin(" <<
-                   etype << ", " << size << ");" << endl;
+      etype << ", " << size << ");" << endl;
   } else if (ttype->is_list()) {
     out <<
       indent() << "yarp::os::idl::WireState " << etype << ";" << endl <<
@@ -1546,6 +1551,15 @@ void t_yarp_generator::generate_deserialize_container(ofstream& out,
 void t_yarp_generator::generate_deserialize_map_element(ofstream& out,
 							t_map* tmap,
 							string prefix) {
+  string lst = tmp("_lst");
+  string size = tmp("_size");
+  indent(out) <<
+    indent() << "uint32_t " << size << ";" << endl;
+  out <<
+    indent() << "yarp::os::idl::WireState " << lst << ";" << endl <<
+    indent() << "reader.readListBegin(" <<
+    lst << ", " << size << ");" << endl;
+
   string key = tmp("_key");
   string val = tmp("_val");
   t_field fkey(tmap->get_key_type(), key);
@@ -1560,6 +1574,9 @@ void t_yarp_generator::generate_deserialize_map_element(ofstream& out,
     prefix << "[" << key << "];" << endl;
 
   generate_deserialize_field(out, &fval);
+
+  out <<
+    indent() << "reader.readListEnd();" << endl;
 }
 
 void t_yarp_generator::generate_deserialize_set_element(ofstream& out,

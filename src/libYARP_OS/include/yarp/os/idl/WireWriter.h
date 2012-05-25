@@ -150,7 +150,25 @@ public:
         return !writer.isError();
     }
 
+    bool writeSetBegin(int tag, uint32_t len) {
+        return writeListBegin(tag,len);
+    }
+
+    bool writeMapBegin(int tag, int tag2, uint32_t len) {
+        writer.appendInt(BOTTLE_TAG_LIST);
+        writer.appendInt((int)len);
+        return !writer.isError();
+    }
+
     bool writeListEnd() {
+        return true;
+    }
+
+    bool writeSetEnd() {
+        return true;
+    }
+
+    bool writeMapEnd() {
         return true;
     }
 };

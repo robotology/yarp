@@ -253,7 +253,23 @@ public:
         len = (uint32_t)state->len;
     }
 
+    void readSetBegin(WireState& nstate, uint32_t& len) {
+        readListBegin(nstate,len);
+    }
+
+    void readMapBegin(WireState& nstate, WireState& nstate2, uint32_t& len) {
+        readListBegin(nstate,len);
+    }
+
     void readListEnd() {
+        state = state->parent;
+    }
+
+    void readSetEnd() {
+        state = state->parent;
+    }
+
+    void readMapEnd() {
         state = state->parent;
     }
 private:
