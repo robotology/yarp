@@ -1,3 +1,8 @@
+2012-05-25  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* conf/YarpIDL.cmake: Make IDL friendlier to use if generated code
+	is being checked into version control.
+
 2012-05-16  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/yarpserver/CMakeLists.txt: fix for Arch Linux build

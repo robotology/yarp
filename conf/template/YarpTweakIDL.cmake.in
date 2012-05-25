@@ -1,0 +1,15 @@
+set (INCLUDES "@INCLUDES@")
+set (DEST_FILES "@DEST_FILES@")
+set (SRC_FILES "@SRC_FILES@")
+set (SRC_DIR "@SRC_DIR@")
+
+set (HEADERS "")
+foreach(inc ${INCLUDES})
+  set (HEADERS "${HEADERS}\n#include <${inc}>")
+endforeach()
+
+foreach(dest ${DEST_FILES})
+  list(GET SRC_FILES 0 src)
+  list(REMOVE_AT SRC_FILES 0)
+  configure_file(${SRC_DIR}/${src} ${dest} @ONLY)
+endforeach()

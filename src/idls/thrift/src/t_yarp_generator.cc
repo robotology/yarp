@@ -80,8 +80,13 @@ class t_yarp_generator : public t_oop_generator {
       const std::string& option_string)
     : t_oop_generator(program)
   {
-    (void) parsed_options;
     (void) option_string;  
+
+    std::map<std::string, std::string>::const_iterator iter;
+    
+    iter = parsed_options.find("cmake_supplies_headers");
+    cmake_supplies_headers_ = (iter != parsed_options.end());
+
     out_dir_base_ = "gen-yarp";
     gen_pure_enums_ = true;
   }
@@ -190,6 +195,7 @@ class t_yarp_generator : public t_oop_generator {
 
   std::ofstream f_out_;
   bool gen_pure_enums_;
+  bool cmake_supplies_headers_;
 
  void print_const_value(std::ofstream& out, std::string name, t_type* type, t_const_value* value);
   std::string render_const_value(std::ofstream& out, std::string name, t_type* type, t_const_value* value);
@@ -197,6 +203,12 @@ class t_yarp_generator : public t_oop_generator {
   int flat_element_count( t_type* type);
   int flat_element_count( t_struct* type);
   int flat_element_count(t_function* fn);
+
+  void auto_warn(ostream& f_srv_) {
+    f_srv_ << "// This is an automatically-generated file." << endl;
+    f_srv_ << "// It could get re-generated if the ALLOW_IDL_GENERATION flag is on." << endl;
+    f_srv_ << endl;
+  }
 };
 
 
@@ -792,12 +804,18 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   vector<t_field*> members = tstruct->get_members();
   vector<t_field*>::iterator mem_iter;
 
+  auto_warn(f_stt_);
   f_stt_ << "#ifndef YARP_THRIFT_GENERATOR_STRUCT_" << name << endl;
   f_stt_ << "#define YARP_THRIFT_GENERATOR_STRUCT_" << name << endl;
   f_stt_ << endl;
   f_stt_ << "#include <yarp/os/Wire.h>" << endl;
   f_stt_ << "#include <yarp/os/idl/WireTypes.h>" << endl;
+  if (cmake_supplies_headers_) {
+    f_stt_ << "@HEADERS@" << endl;
+  }
   f_stt_ << endl;
+
+
 
   f_stt_ << "class " << name << " : public yarp::os::idl::WirePortable {" << endl;
   f_stt_ << "public:" << endl;
@@ -996,25 +1014,32 @@ void t_yarp_generator::generate_service(t_service* tservice) {
   f_cpp_.open(f_cpp_name.c_str());
   
   {
-
+    auto_warn(f_srv_);
     f_srv_ << "#ifndef YARP_THRIFT_GENERATOR_" << svcname << endl;
     f_srv_ << "#define YARP_THRIFT_GENERATOR_" << svcname << endl;
     f_srv_ << endl;
     f_srv_ << "#include <yarp/os/Wire.h>" << endl;
     f_srv_ << "#include <yarp/os/idl/WireTypes.h>" << endl;
 
-    if (!program_->get_objects().empty()) {
-      vector<t_struct*> objects = program_->get_objects();
-      vector<t_struct*>::iterator o_iter;
-      for (o_iter = objects.begin(); o_iter != objects.end(); ++o_iter) {
-	f_srv_ << "#include <" << (*o_iter)->get_name() << ".h>" << endl;
+    auto_warn(f_cpp_);
+    if (!cmake_supplies_headers_) {
+      if (!program_->get_objects().empty()) {
+	vector<t_struct*> objects = program_->get_objects();
+	vector<t_struct*>::iterator o_iter;
+	for (o_iter = objects.begin(); o_iter != objects.end(); ++o_iter) {
+	  f_srv_ << "#include <" << (*o_iter)->get_name() << ".h>" << endl;
+	}
       }
+      f_srv_ << endl;
+
+      f_cpp_ << "#include <" << program_->get_name() << "_index.h>" << endl;
+    } else {
+      f_srv_ << "@HEADERS@" << endl << endl;
     }
-    f_srv_ << endl;
-
-
-    f_cpp_ << "#include <" << program_->get_name() << "_index.h>" << endl;
     f_cpp_ << "#include <yarp/os/idl/WireTypes.h>" << endl;
+    if (cmake_supplies_headers_) {
+      f_cpp_ << "@HEADERS@" << endl;
+    }
     f_cpp_ << endl;
     
     vector<t_function*> functions = tservice->get_functions();

@@ -13,6 +13,7 @@
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/NullConnectionWriter.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Vocab.h>
 #include <yarp/os/idl/WireState.h>
 #include <yarp/os/idl/WirePortable.h>
 
