@@ -238,15 +238,15 @@ string t_yarp_generator::type_to_enum(t_type* type) {
   } else if (type->is_enum()) {
     return "::apache::thrift::protocol::T_I32";
   } else if (type->is_struct()) {
-    return "::apache::thrift::protocol::T_STRUCT";
+    return "BOTTLE_TAG_LIST";
   } else if (type->is_xception()) {
     return "::apache::thrift::protocol::T_STRUCT";
   } else if (type->is_map()) {
-    return "::apache::thrift::protocol::T_MAP";
+    return "BOTTLE_TAG_LIST";
   } else if (type->is_set()) {
-    return "::apache::thrift::protocol::T_SET";
+    return "BOTTLE_TAG_LIST";
   } else if (type->is_list()) {
-    return "::apache::thrift::protocol::T_LIST";
+    return "BOTTLE_TAG_LIST";
   }
 
   throw "INVALID TYPE IN type_to_enum: " + type->get_name();
@@ -797,8 +797,14 @@ void t_yarp_generator::generate_const(t_const* tconst) {
 void t_yarp_generator::generate_struct(t_struct* tstruct) {
   string sttname = tstruct->get_name();
   string f_header_name = get_out_dir()+sttname+".h";
+  string f_cpp_name = get_out_dir()+sttname+".cpp";
   ofstream f_stt_;
   f_stt_.open(f_header_name.c_str());
+  ofstream f_cpp_;
+  f_cpp_.open(f_cpp_name.c_str());
+
+  auto_warn(f_cpp_);
+  f_cpp_ << "// In fact this file is blank, it isn't needed yet" << endl;
 
   string name = tstruct->get_name();
   vector<t_field*> members = tstruct->get_members();
@@ -1343,7 +1349,7 @@ void t_yarp_generator::generate_serialize_container(ofstream& out,
 
   string iter = tmp("_iter");
   out <<
-    indent() << type_name(ttype) << "::const_iterator " << iter << ";" << endl <<
+    indent() << type_name(ttype) << "::iterator " << iter << ";" << endl <<
     indent() << "for (" << iter << " = " << prefix  << ".begin(); " << iter << " != " << prefix << ".end(); ++" << iter << ")" << endl;
   scope_up(out);
     if (ttype->is_map()) {
