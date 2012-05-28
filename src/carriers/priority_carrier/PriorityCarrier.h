@@ -52,6 +52,7 @@ public:
     PriorityCarrier() {
         group = 0/*NULL*/;
         priorityLevel = timeConstant = timeArrival = 0;
+        timeResting = 0;
         stimulation = 0;
         isInhibitory = false;
     }
@@ -75,6 +76,7 @@ public:
         return "priority_carrier";
     }
   
+    /*
     void depress(double t, double depression) {
         temporalPriority = getActualPriority(t);
         if(isResting(temporalPriority) 
@@ -85,10 +87,12 @@ public:
                 temporalPriority = 0;
         }
     }
+    */
 
     void stimulate(double t) {
 
         temporalPriority = getActualPriority(t);
+        // if it is in active sate, stimulates.  
         if(!isResting(temporalPriority))
         {
             temporalPriority += fabs(stimulation);
@@ -100,39 +104,75 @@ public:
         }
     }
 
+    // 
+    // +P|   ---___
+    //   |   |     -__
+    //   |   |        -_
+    //  0|------------------>  (Active state)
+    //       Ta        Tc 
+    //  
+    //       Ta        Tr
+    //  0|-------------_---->  (Resting state && P<0)
+    //   |   |      __-
+    //   |   |  ___-
+    // -P|   ---
+    //
     //
     // P(t) = Pi * (-exp((t-Tc-Ta)/Tc*5) + 1.0)
     // t:time, Pi: temporal Priority level
     // Tc: reset time, Ta: arrival time
-    // 
+    //
     double getActualPriority(double t) {
-        double actualPriority;
+           
+        // we do not consider ports which has not seen any message 
+        // from them yet. 
+        if(timeArrival == 0)
+            return 0;
+ 
         double dt = t - timeArrival;
-        
-        if(!isResting(temporalPriority)) // a time variant message 
+ 
+        // Temporal priority is inverted if this is a neuron model and the temporal 
+        // priority has already reached to priority ceiling and waited for Tc. 
+        if((timeResting > 0)
+           && (dt >= fabs(timeConstant))
+           && (temporalPriority >= priorityLevel)) 
+           temporalPriority = -temporalPriority; 
+
+        double actualPriority;      
+        if(!isResting(temporalPriority)) // behavior is in active state
         {
-            // we do not consider sources which have not seen any 
-            // message from them yet
-            if((timeArrival == 0) || (dt > fabs(timeConstant)))
+            // After a gap bigger than Tc, the 
+            // priority is set to zero to avoid redundant calculation. 
+            if(dt > fabs(timeConstant))
                 actualPriority = 0;
             else
                 actualPriority = temporalPriority * 
                     (-exp((dt-fabs(timeConstant))/fabs(timeConstant)*5.0) + 1.0);        
         }
-        else // a time invariant message 
+        else // behavior is in resting state 
         {
-            if((dt > fabs(timeConstant)) && (temporalPriority > 0))
-                actualPriority = -temporalPriority;
-            else
+            // it is in waiting state for Tc
+            if(temporalPriority > 0)
                 actualPriority = temporalPriority;
+            else   
+            {
+                dt -= fabs(timeConstant);
+                // After a gap bigger than Tr, the 
+                // priority is set to zero to avoid redundant calculation. 
+                if(dt > fabs(timeResting))
+                    actualPriority = 0;
+                else
+                    actualPriority = temporalPriority * 
+                        (-exp((dt-fabs(timeResting))/fabs(timeResting)*5.0) + 1.0); 
+            }
         }
 
-       return actualPriority;
+        return actualPriority;
     }
 
-    bool isResting( double priority){    
-        return ((timeConstant < 0) 
-                && ((priority < 0) || (priority >= priorityLevel)));
+    bool isResting(double priority){    
+        return ((timeResting > 0) && 
+                ((priority < 0) || (priority >= priorityLevel)));
     }
 
     virtual bool configure(yarp::os::impl::Protocol& proto);
@@ -143,6 +183,7 @@ public:
 public:
     double priorityLevel;           // priority ceiling (P)   
     double timeConstant;            // priority reset time (tc)
+    double timeResting;             // priority resting time (tr)
     double stimulation;             // stimulation value of the message (s)
     double temporalPriority;        // current priority of the message
     double timeArrival;             // arrival time of the message 
