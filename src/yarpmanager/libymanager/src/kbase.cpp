@@ -377,6 +377,14 @@ bool KnowledgeBase::makeupApplication(Application* application)
         updateModule(tmpGraph, module, &mod);
         modList[mod.getName()] = modList[mod.getName()] + 1;
 
+        // adding module's resources to application resource list
+        ResourceIterator itr;
+        for(itr=mod.getResources().begin(); 
+            itr!=mod.getResources().end(); itr++)
+        {
+            (*itr).setOwner(module);
+            application->addResource(*itr);
+        }
         //Adding the module as an successor to the application 
         tmpGraph.addLink(application, module, 0, false); 
         

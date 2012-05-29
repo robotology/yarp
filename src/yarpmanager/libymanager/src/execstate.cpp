@@ -117,6 +117,26 @@ bool Ready::checkPriorityPorts(void)
     return true;
 }
 
+bool Ready::checkResources(void)
+{   
+    ResourceIterator itr;
+    for(itr=executable->getResources().begin(); 
+        itr!=executable->getResources().end(); itr++)
+    {
+        if(!executable->getBroker()->exists((*itr).getPort()))
+            return false;   
+    }
+    return true;
+}
+
+bool Ready::timeout(double base, double timeout)
+{
+    yarp::os::Time::delay(1.0);
+    if((yarp::os::Time::now()-base) > timeout)
+        return true;
+    return false; 
+}
+
 void Ready::startModule(void)
 {
     
@@ -130,6 +150,35 @@ void Ready::startModule(void)
         {
             yarp::os::Time::delay(1.0);
             if(bAborted) return;
+        }
+    }
+
+    // finding maximum resource-waiting timeout 
+    ResourceIterator itr;
+    double maxTimeout = 0;
+    for(itr=executable->getResources().begin(); 
+        itr!=executable->getResources().end(); itr++)
+    {
+        if((*itr).getTimeout() > maxTimeout)
+            maxTimeout = (*itr).getTimeout();
+    }
+
+    // waiting for resources
+    double base = yarp::os::Time::now();
+    while(!checkResources())
+    {
+        if(bAborted) return;
+
+        if(timeout(base, maxTimeout))
+        {
+            ostringstream msg;
+            msg<<"cannot run "<<executable->getCommand()<<" on "<<executable->getHost();
+            msg<<" : Timeout while waiting for some resources.";
+            logger->addError(msg);
+
+            castEvent(EventFactory::startModuleEventFailed);
+            executable->getEvent()->onExecutableDied(executable);
+            return;
         }
     }
 

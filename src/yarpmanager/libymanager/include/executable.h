@@ -87,6 +87,10 @@ public:
     void setEnv(const char* val) {if(val) strEnv = val; }
 
     void addConnection(Connection &cnn) { connections.push_back(cnn); }
+    CnnContainer& getConnections(void) { return connections;}
+    void addResource(ResYarpPort &res) { resources.push_back(res); }
+    ResourceContainer& getResources(void) { return resources; }
+    
     RSTATE state(void); 
     Broker* getBroker(void) { return broker; }
     MEvent* getEvent(void) { return event; }
@@ -97,7 +101,6 @@ public:
     const char* getWorkDir(void) { return strWorkdir.c_str(); }
     const char* getEnv(void) { return strEnv.c_str(); }
     int getID(void) { return theID; }
-    CnnContainer& getConnections(void) { return connections;}
 
     void enableAutoConnect(void) { bAutoConnect = true; }
     void disableAutoConnect(void) { bAutoConnect = false; }
@@ -120,7 +123,8 @@ private:
     Broker* broker;
     MEvent* event;
     CnnContainer connections;
-    
+    ResourceContainer resources;
+
     ExecMachine* execMachine; 
     ErrorLogger* logger;
     ConcurentWrapper* startWrapper;

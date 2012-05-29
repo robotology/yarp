@@ -107,6 +107,10 @@ private:
 typedef vector<Connection> CnnContainer;
 typedef vector<Connection>::iterator CnnIterator;
 
+typedef vector<ResYarpPort> ResourceContainer;
+typedef vector<ResYarpPort>::iterator ResourceIterator;
+
+
 
 /**
  * Class ModuleInterface  
@@ -141,7 +145,10 @@ public:
     bool operator==(const ModuleInterface& modint) {        
         return (strName == modint.strName); 
     }
-    
+   
+    void addResource(ResYarpPort &res) { resources.push_back(res); }
+    ResourceContainer& getResources(void) { return resources; }
+ 
     int portmapCount(void) { return portmaps.size(); }
     Portmap& getPortmapAt(int index){ return portmaps[index]; }
     bool addPortmap(Portmap &portmap);
@@ -158,6 +165,7 @@ private:
     string strBroker;
     string strPrefix;
     int iRank;
+    ResourceContainer resources;
     PortmapContainer portmaps;  
     PortmapIterator findPortmap(Portmap& portmap);
 };
@@ -194,9 +202,6 @@ private:
 
 typedef vector<ApplicationInterface> IApplicationContainer;
 typedef vector<ApplicationInterface>::iterator IApplicationIterator;
-
-typedef vector<ResYarpPort> ResourceContainer;
-typedef vector<ResYarpPort>::iterator ResourceIterator;
 
 /**
  * Class Application  

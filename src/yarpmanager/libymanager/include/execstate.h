@@ -97,8 +97,10 @@ public:
 
 private: 
     Executable* executable;
-    bool checkPriorityPorts(void);
     bool bAborted;
+    bool checkPriorityPorts(void);
+    bool checkResources(void);
+    bool timeout(double base, double timeout);
 };
 
 

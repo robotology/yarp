@@ -54,13 +54,16 @@ public:
     virtual ~ResYarpPort();
     void setPort(const char* szPort) { if(szPort) strPort = szPort; }
     const char* getPort(void) { return strPort.c_str(); }
+    void setTimeout(double t) { timeout = t; }
+    double getTimeout(void) { return timeout; }
     virtual Node* clone(void);
     virtual bool satisfy(GenericResource* resource);
-
+    
 protected:
 
 private:
     string strPort; 
+    double timeout;
 };
  
  

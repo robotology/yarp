@@ -308,7 +308,34 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             
                 if((element = (TiXmlElement*) mod->FirstChild("rank")))
                     module.setRank(atoi(element->GetText()));
-
+                
+                /* retrieving resources information*/
+                TiXmlElement* resources;
+                if((resources = (TiXmlElement*) mod->FirstChild("dependencies")))
+                {
+                    for(TiXmlElement* res = resources->FirstChildElement(); res;
+                            res = res->NextSiblingElement())
+                    {                        
+                        if(compareString(res->Value(), "port"))
+                        {
+                            if(res->GetText())
+                            {
+                                ResYarpPort resource(res->GetText());
+                                resource.setPort(res->GetText());
+                                if(res->Attribute("timeout"))
+                                    resource.setTimeout(atof(res->Attribute("timeout")));
+                                module.addResource(resource);
+                            }
+                        }
+                        else
+                        {
+                            ostringstream war;
+                            war<<"Unrecognized tag from "<<szFile<<" at line "\
+                               <<res->Row()<<".";
+                            logger->addWarning(war);                                
+                        }           
+                    }
+                }
                 /* retrieving portmaps */
                 for(TiXmlElement* map = mod->FirstChildElement(); map;
                             map = map->NextSiblingElement())

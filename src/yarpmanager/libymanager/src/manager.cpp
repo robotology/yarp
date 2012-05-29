@@ -307,7 +307,17 @@ bool Manager::prepare(bool silent)
         for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
             if((*cnn).owner() == (*itr))
                 exe->addConnection(*cnn);
-                
+
+        /**
+         * Adding resources to their owners 
+         */
+        for(unsigned int i=0; i<resources.size(); i++)
+        {
+            ResYarpPort* res = dynamic_cast<ResYarpPort*>(resources[i]);
+            if(res && (res->owner() == (*itr)))
+                exe->addResource(*res);
+        }
+
         runnables.push_back(exe);
     }
 

@@ -63,15 +63,18 @@ Platform::~Platform() { }
  */
 ResYarpPort::ResYarpPort(void) : GenericResource("ResYarpPort") 
 {
+    timeout = 0;
 }
 
 ResYarpPort::ResYarpPort(const char* szName) : GenericResource("ResYarpPort")
 {
+    timeout = 0;
     setName(szName);
 }
 
 ResYarpPort::ResYarpPort(const ResYarpPort &resource) : GenericResource(resource)
 {
+    timeout = resource.timeout;
     strPort = resource.strPort; 
 }
 
