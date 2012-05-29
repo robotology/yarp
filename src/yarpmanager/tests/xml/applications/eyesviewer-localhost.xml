@@ -23,6 +23,9 @@
 		<name>yarpview</name>
 		<node>localhost</node>
 		<prefix>/LeftView</prefix>
+        <dependencies>
+            <port timeout="10">/left/eye</port>
+        </dependencies>
 	</module>
 
 
