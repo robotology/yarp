@@ -38,6 +38,7 @@
 #include <yarp/os/Event.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/RateThread.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
