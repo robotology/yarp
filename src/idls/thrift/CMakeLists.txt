@@ -65,6 +65,7 @@ if (NOT THRIFT_ROOT)
     src_thrift/md5.c
     src_thrift/main.cc
     src_thrift/generate/t_generator.cc
+    src_thrift/generate/t_cpp_generator.cc # for reference
     src_thrift/parse/parse.cc
     src/t_yarp_generator
     )

@@ -66,6 +66,18 @@ public:
         return obj.write(*this);
     }
 
+    bool write(yarp::os::PortWriter& obj) {
+        return obj.write(writer);
+    }
+
+    bool writeNested(WirePortable& obj) {
+        return obj.write(writer);
+    }
+
+    bool writeNested(yarp::os::PortWriter& obj) {
+        return obj.write(writer);
+    }
+
     bool writeI32(int32_t x) {
         writer.appendInt(BOTTLE_TAG_INT);
         writer.appendInt((int)x);

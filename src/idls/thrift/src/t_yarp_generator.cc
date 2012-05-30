@@ -131,14 +131,21 @@ class t_yarp_generator : public t_oop_generator {
       (ttype->is_base_type() && (((t_base_type*)ttype)->get_base() == t_base_type::TYPE_STRING));
   }
 
+  void generate_count_field          (std::ofstream& out,
+				      t_field*    tfield,
+				      std::string prefix="",
+				      std::string suffix="");
+
   void generate_serialize_field          (std::ofstream& out,
                                           t_field*    tfield,
                                           std::string prefix="",
-                                          std::string suffix="");
+                                          std::string suffix="",
+					  bool force_nesting = false);
 
   void generate_serialize_struct         (std::ofstream& out,
                                           t_struct*   tstruct,
-                                          std::string prefix="");
+                                          std::string prefix="",
+					  bool force_nesting = false);
 
   void generate_serialize_container      (std::ofstream& out,
                                           t_type*     ttype,
@@ -167,11 +174,13 @@ class t_yarp_generator : public t_oop_generator {
   void generate_deserialize_field        (std::ofstream& out,
                                           t_field*    tfield,
                                           std::string prefix="",
-                                          std::string suffix="");
+                                          std::string suffix="",
+					  bool force_nested = false);
 
   void generate_deserialize_struct       (std::ofstream& out,
                                           t_struct*   tstruct,
-                                          std::string prefix="");
+                                          std::string prefix="",
+					  bool force_nested = true);
 
   void generate_deserialize_container    (std::ofstream& out,
                                           t_type*     ttype,
@@ -196,6 +205,15 @@ class t_yarp_generator : public t_oop_generator {
   std::ofstream f_out_;
   bool gen_pure_enums_;
   bool cmake_supplies_headers_;
+  std::map<std::string, std::string> structure_names_;
+
+  std::string get_struct_name(t_struct *tstruct) {
+    string sttname = tstruct->get_name();
+    if (structure_names_.find(sttname)==structure_names_.end()) {
+      return sttname;
+    }
+    return structure_names_[sttname];
+  }
 
  void print_const_value(std::ofstream& out, std::string name, t_type* type, t_const_value* value);
   std::string render_const_value(std::ofstream& out, std::string name, t_type* type, t_const_value* value);
@@ -209,6 +227,13 @@ class t_yarp_generator : public t_oop_generator {
     f_srv_ << "// It could get re-generated if the ALLOW_IDL_GENERATION flag is on." << endl;
     f_srv_ << endl;
   }
+
+  void generate_enum_constant_list(std::ofstream& f,
+                                   const vector<t_enum_value*>& constants,
+                                   const char* prefix,
+                                   const char* suffix,
+                                   bool include_values);
+
 };
 
 
@@ -306,18 +331,27 @@ string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg) {
 
   // Check if it needs to be namespaced
   string pname;
-  t_program* program = ttype->get_program();
-  if (program != NULL && program != program_) {
-    pname =
-      class_prefix +
-      namespace_prefix(program->get_namespace("cpp")) +
-      ttype->get_name();
-  } else {
-    pname = class_prefix + ttype->get_name();
+
+  if (ttype->is_struct()) {
+    if (structure_names_.find(ttype->get_name())!=structure_names_.end()) {
+      pname = structure_names_[ttype->get_name()];
+    }
   }
 
-  if (ttype->is_enum() && !gen_pure_enums_) {
-    pname += "::type";
+  if (pname=="") {
+    t_program* program = ttype->get_program();
+    if (program != NULL && program != program_) {
+      pname =
+	class_prefix +
+	namespace_prefix(program->get_namespace("cpp")) +
+	ttype->get_name();
+    } else {
+      pname = class_prefix + ttype->get_name();
+    }
+    
+    if (ttype->is_enum() && !gen_pure_enums_) {
+      pname += "::type";
+    }
   }
 
   if (arg) {
@@ -753,22 +787,160 @@ void t_yarp_generator::generate_typedef(t_typedef* ttypedef) {
  * @param tenum The enumeration
  */
 void t_yarp_generator::generate_enum(t_enum* tenum) {
-  string name = tenum->get_name();
-  f_out_ << "<div class=\"definition\">";
-  f_out_ << "<h3 id=\"Enum_" << name << "\">Enumeration: " << name
-   << "</h3>" << endl;
-  print_doc(tenum);
-  vector<t_enum_value*> values = tenum->get_constants();
-  vector<t_enum_value*>::iterator val_iter;
-  f_out_ << "<br/><table>" << endl;
-  for (val_iter = values.begin(); val_iter != values.end(); ++val_iter) {
-    f_out_ << "<tr><td><code>";
-    f_out_ << (*val_iter)->get_name();
-    f_out_ << "</code></td><td><code>";
-    f_out_ << (*val_iter)->get_value();
-    f_out_ << "</code></td></tr>" << endl;
+  std::string enum_name = tenum->get_name();
+  string f_header_name = get_out_dir()+enum_name+".h";
+  string f_cpp_name = get_out_dir()+enum_name+".cpp";
+  ofstream f_types_;
+  f_types_.open(f_header_name.c_str());
+  ofstream f_types_impl_;
+  f_types_impl_.open(f_cpp_name.c_str());
+  auto_warn(f_types_);
+  auto_warn(f_types_impl_);
+
+  f_types_ << "#ifndef YARP_THRIFT_GENERATOR_ENUM_" << enum_name << endl;
+  f_types_ << "#define YARP_THRIFT_GENERATOR_ENUM_" << enum_name << endl;
+  f_types_ << endl;
+  f_types_ << "#include <yarp/os/Wire.h>" << endl;
+  f_types_ << "#include <yarp/os/idl/WireTypes.h>" << endl;
+  if (cmake_supplies_headers_) {
+    f_types_ << "@HEADERS@" << endl;
   }
-  f_out_ << "</table></div>" << endl;
+  f_types_ << endl;
+
+  f_types_impl_ << "#include <yarp/os/Wire.h>" << endl;
+  f_types_impl_ << "#include <yarp/os/idl/WireTypes.h>" << endl;
+  if (cmake_supplies_headers_) {
+    f_types_impl_ << "@HEADERS@" << endl;
+  }
+  f_types_impl_ << endl;
+
+  vector<t_enum_value*> constants = tenum->get_constants();
+
+  if (!gen_pure_enums_) {
+    enum_name = "type";
+    f_types_ <<
+      indent() << "struct " << tenum->get_name() << " {" << endl;
+    indent_up();
+  }
+  f_types_ <<
+    indent() << "enum " << enum_name;
+
+  generate_enum_constant_list(f_types_, constants, "", "", true);
+
+  if (!gen_pure_enums_) {
+    indent_down();
+    f_types_ << "};" << endl;
+  }
+
+  f_types_ << endl;
+
+  /**
+     Generate a character array of enum names for debugging purposes.
+  */
+
+  std::string prefix = "";
+  if (!gen_pure_enums_) {
+    prefix = tenum->get_name() + "::";
+  }
+
+  /*
+  f_types_impl_ <<
+    indent() << "int _k" << tenum->get_name() << "Values[] =";
+  generate_enum_constant_list(f_types_impl_, constants, prefix.c_str(), "", false);
+
+  f_types_impl_ <<
+    indent() << "const char* _k" << tenum->get_name() << "Names[] =";
+  generate_enum_constant_list(f_types_impl_, constants, "\"", "\"", false);
+
+
+  f_types_ <<
+    indent() << "extern const std::map<int, const char*> _" <<
+    tenum->get_name() << "_VALUES_TO_NAMES;" << endl << endl;
+
+  f_types_impl_ <<
+    indent() << "const std::map<int, const char*> _" << tenum->get_name() <<
+    "_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(" << constants.size() <<
+    ", _k" << tenum->get_name() << "Values" <<
+    ", _k" << tenum->get_name() << "Names), " <<
+    "::apache::thrift::TEnumIterator(-1, NULL, NULL));" << endl << endl;
+  */
+
+  //generate_local_reflection(f_types_, tenum, false);
+  //generate_local_reflection(f_types_impl_, tenum, true);
+
+  f_types_ << "class " << enum_name << "Vocab : public yarp::os::idl::WireVocab {" << endl;
+  f_types_ << "public:" << endl;
+  indent_up();
+  indent(f_types_) << "virtual int fromString(const std::string& input);" << endl;
+  indent(f_types_) << "virtual std::string toString(int input);" << endl;
+  indent_down();
+  f_types_ << "};" << endl;
+  f_types_ << endl;
+
+  ostream& os = f_types_impl_;
+
+  os << "int " << enum_name << "Vocab::fromString(const std::string& input) {" << endl;
+  indent_up();
+  indent(os) << "// definitely needs optimizing :-)" << endl;
+  for (vector<t_enum_value*>::const_iterator c_iter = constants.begin(); 
+       c_iter != constants.end(); ++c_iter) {
+    indent(os) << "if (input==\"" << (*c_iter)->get_name() 
+	       << "\") return (int)" 
+	       << (*c_iter)->get_name() << ";"
+	       << endl;
+  }
+  indent(os) << "return -1;" << endl;
+  indent_down();
+  os << "}" << endl;
+
+
+  os << "std::string " << enum_name << "Vocab::toString(int input) {" << endl;
+  indent_up();
+  indent(os) << "switch((" << enum_name << ")input) {" << endl;
+  for (vector<t_enum_value*>::const_iterator c_iter = constants.begin(); 
+       c_iter != constants.end(); ++c_iter) {
+    indent(os) << "case " << (*c_iter)->get_name() << ":" << endl;
+    indent_up();
+    indent(os) << "return \"" << (*c_iter)->get_name() << "\";" << endl;
+    indent_down();
+  }
+  indent(os) << "}" << endl;
+  indent(os) << "return \"\";" << endl;
+  indent_down();
+  os << "}" << endl;
+
+
+  f_types_ << endl;
+
+  f_types_ << "#endif" << endl;
+}
+
+void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
+						   const vector<t_enum_value*>& constants,
+						   const char* prefix,
+						   const char* suffix,
+						   bool include_values) {
+  f << " {" << endl;
+  indent_up();
+
+  vector<t_enum_value*>::const_iterator c_iter;
+  bool first = true;
+  for (c_iter = constants.begin(); c_iter != constants.end(); ++c_iter) {
+    if (first) {
+      first = false;
+    } else {
+      f << "," << endl;
+    }
+    indent(f)
+      << prefix << (*c_iter)->get_name() << suffix;
+    if (include_values && (*c_iter)->has_value()) {
+      f << " = " << (*c_iter)->get_value();
+    }
+  }
+
+  f << endl;
+  indent_down();
+  indent(f) << "};" << endl;
 }
 
 /**
@@ -796,6 +968,12 @@ void t_yarp_generator::generate_const(t_const* tconst) {
  */
 void t_yarp_generator::generate_struct(t_struct* tstruct) {
   string sttname = tstruct->get_name();
+  if (tstruct->annotations_.find("yarp.name") != tstruct->annotations_.end()) {
+    // f_stt_ << tstruct->annotations_["yarp.name"] << endl;
+    structure_names_[sttname] = tstruct->annotations_["yarp.name"];
+    return;
+  }
+
   string f_header_name = get_out_dir()+sttname+".h";
   string f_cpp_name = get_out_dir()+sttname+".cpp";
   ofstream f_stt_;
@@ -820,8 +998,6 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     f_stt_ << "@HEADERS@" << endl;
   }
   f_stt_ << endl;
-
-
 
   f_stt_ << "class " << name << " : public yarp::os::idl::WirePortable {" << endl;
   f_stt_ << "public:" << endl;
@@ -949,7 +1125,21 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 		 << endl;
   scope_down(f_stt_);
 
-
+  /*
+  indent(f_stt_) << "int count(yarp::os::idl::WireWriter& writer) {" 
+		 << endl;
+  indent_up();
+  indent(f_stt_) << "int ct = 0;" 
+		 << endl;
+  for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    string mtype = print_type((*mem_iter)->get_type());
+    generate_count_field(f_stt_, *mem_iter, "");
+  }
+  indent(f_stt_) << "return ct;" 
+		 << endl;
+  scope_down(f_stt_);
+  */
 
   indent(f_stt_) << "bool write(yarp::os::ConnectionWriter& connection) {" 
 		 << endl;
@@ -1172,6 +1362,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     indent_up();
     indent(f_cpp_) << "yarp::os::idl::WireReader reader(connection);" << endl;
+    indent(f_cpp_) << "reader.expectAccept();" << endl;
     indent(f_cpp_) << "if (!reader.readListHeader()) return false;"
 		   << endl;
     indent(f_cpp_) << "yarp::os::ConstString tag = reader.readTag();" << endl;
@@ -1221,6 +1412,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	  generate_serialize_field(f_cpp_, &returnfield, "");
 	}
       } 
+      indent(f_cpp_) << "reader.accept();" << endl;
       indent(f_cpp_) << "return true;" << endl;
       indent_down();
       indent(f_cpp_) << "}" << endl;
@@ -1246,10 +1438,44 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 }
 
 
+void t_yarp_generator::generate_count_field(ofstream& out,
+					    t_field* tfield,
+					    string prefix,
+					    string suffix) {
+  t_type* type = get_true_type(tfield->get_type());
+
+  string name = prefix + tfield->get_name() + suffix;
+
+  if (type->is_void()) {
+    return;
+  }
+
+  if (type->is_struct() || type->is_xception()) {
+    indent(out) << "ct += writer.count(" << name << ");" << endl;
+  } else if (type->is_container()) {
+    string iter = tmp("_iter");
+    out <<
+      indent() << type_name(type) << "::iterator " << iter << ";" << endl <<
+      indent() << "for (" << iter << " = " << name  << ".begin(); " << name << " != " << name << ".end(); ++" << iter << ")" << endl;
+    scope_up(out);
+    out << "ct += " << iter << "->count(writer);" << endl;
+    scope_down(out);
+    indent(out) << "ct++;" << endl;
+  } else if (type->is_base_type() || type->is_enum()) {
+    indent(out) << "ct++;" << endl;
+  } else {
+    printf("DO NOT KNOW HOW TO COUNT FIELD '%s' TYPE '%s'\n",
+           name.c_str(),
+           type_name(type).c_str());
+  }
+}
+
+
 void t_yarp_generator::generate_serialize_field(ofstream& out,
 						t_field* tfield,
 						string prefix,
-						string suffix) {
+						string suffix,
+						bool force_nesting) {
   t_type* type = get_true_type(tfield->get_type());
 
   string name = prefix + tfield->get_name() + suffix;
@@ -1263,7 +1489,8 @@ void t_yarp_generator::generate_serialize_field(ofstream& out,
     indent(out) << "if (!writer.";
     generate_serialize_struct(out,
                               (t_struct*)type,
-                              name);
+                              name,
+			      force_nesting);
     out << ") return false;" << endl;
   } else if (type->is_container()) {
     generate_serialize_container(out, type, name);
@@ -1319,8 +1546,13 @@ void t_yarp_generator::generate_serialize_field(ofstream& out,
 
 void t_yarp_generator::generate_serialize_struct(ofstream& out,
 						 t_struct* tstruct,
-						 string prefix) {
-  out << "write(" << prefix << ")";
+						 string prefix,
+						 bool force_nesting) {
+  if (force_nesting) {
+    out << "writeNested(" << prefix << ")";
+  } else {
+    out << "write(" << prefix << ")";
+  }
 }
 
 void t_yarp_generator::generate_serialize_container(ofstream& out,
@@ -1393,14 +1625,14 @@ void t_yarp_generator::generate_serialize_set_element(ofstream& out,
 						      t_set* tset,
 						      string iter) {
   t_field efield(tset->get_elem_type(), "(*" + iter + ")");
-  generate_serialize_field(out, &efield, "");
+  generate_serialize_field(out, &efield, "", "", true);
 }
 
 void t_yarp_generator::generate_serialize_list_element(ofstream& out,
 						       t_list* tlist,
 						       string iter) {
   t_field efield(tlist->get_elem_type(), "(*" + iter + ")");
-  generate_serialize_field(out, &efield, "");
+  generate_serialize_field(out, &efield, "", "", true);
 }
 
 
@@ -1409,7 +1641,8 @@ void t_yarp_generator::generate_serialize_list_element(ofstream& out,
 void t_yarp_generator::generate_deserialize_field(ofstream& out,
 						  t_field* tfield,
 						  string prefix,
-						  string suffix) {
+						  string suffix,
+						  bool force_nested) {
   t_type* type = get_true_type(tfield->get_type());
 
   if (type->is_void()) {
@@ -1421,7 +1654,7 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
 
   if (type->is_struct() || type->is_xception()) {
     indent(out) << "if (!reader.";
-    generate_deserialize_struct(out, (t_struct*)type, name);
+    generate_deserialize_struct(out, (t_struct*)type, name, force_nested);
     out << ") return false;" << endl;
   } else if (type->is_container()) {
     generate_deserialize_container(out, type, name);
@@ -1464,9 +1697,11 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
     out << ") return false;" << endl;
   } else if (type->is_enum()) {
     string t = tmp("ecast");
+    string t2 = tmp("cvrt");
     out <<
       indent() << "int32_t " << t << ";" << endl <<
-      indent() << "xfer += iprot->readI32(" << t << ");" << endl <<
+      indent() << type_name(type) << "Vocab " << t2 << ";" << endl <<
+      indent() << "if (!reader.readEnum(" << t << "," << t2 << ")) return false;" << endl <<
       indent() << name << " = (" << type_name(type) << ")" << t << ";" << endl;
   } else {
     printf("DO NOT KNOW HOW TO DESERIALIZE FIELD '%s' TYPE '%s'\n",
@@ -1476,10 +1711,11 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
 
 void t_yarp_generator::generate_deserialize_struct(ofstream& out,
 						   t_struct* tstruct,
-						   string prefix) {
+						   string prefix,
+						   bool force_nested) {
   (void) tstruct;
   out <<
-    "read(" << prefix << ")";
+    "read" << (force_nested?"Nested":"") << "(" << prefix << ")";
 }
 
 void t_yarp_generator::generate_deserialize_container(ofstream& out,
@@ -1594,7 +1830,7 @@ void t_yarp_generator::generate_deserialize_set_element(ofstream& out,
   indent(out) <<
     declare_field(&felem) << endl;
 
-  generate_deserialize_field(out, &felem);
+  generate_deserialize_field(out, &felem,"","",true);
 
   indent(out) <<
     prefix << ".insert(" << elem << ");" << endl;
@@ -1609,11 +1845,11 @@ void t_yarp_generator::generate_deserialize_list_element(ofstream& out,
     string elem = tmp("_elem");
     t_field felem(tlist->get_elem_type(), elem);
     indent(out) << declare_field(&felem) << endl;
-    generate_deserialize_field(out, &felem);
+    generate_deserialize_field(out, &felem,"","",true);
     indent(out) << prefix << ".push_back(" << elem << ");" << endl;
   } else {
     t_field felem(tlist->get_elem_type(), prefix + "[" + index + "]");
-    generate_deserialize_field(out, &felem);
+    generate_deserialize_field(out, &felem,"","",true);
   }
 }
 

@@ -16,6 +16,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/idl/WireState.h>
 #include <yarp/os/idl/WirePortable.h>
+#include <yarp/os/idl/WireVocab.h>
 
 namespace yarp {
     namespace os {
@@ -41,6 +42,7 @@ public:
     std::string get_string;
     bool get_is_vocab;
     bool support_get_mode;
+    bool expecting;
 
     WireReader(ConnectionReader& reader) : reader(reader) {
         reader.convertTextMode();
@@ -49,6 +51,7 @@ public:
         flush_if_needed = false;
         get_mode = false;
         support_get_mode = false;
+        expecting = false;
     }
 
     ~WireReader() {
@@ -60,6 +63,15 @@ public:
         if (flush_if_needed) {
             clear();
         }
+    }
+
+    void expectAccept() {
+        expecting = true;
+        flush_if_needed = true;
+    }
+
+    void accept() {
+        expecting = false;
     }
 
     void allowGetMode() {
@@ -89,6 +101,18 @@ public:
 
     bool read(WirePortable& obj) {
         return obj.read(*this);
+    }
+
+    bool read(yarp::os::PortReader& obj) {
+        return obj.read(reader);
+    }
+
+    bool readNested(WirePortable& obj) {
+        return obj.read(reader);
+    }
+
+    bool readNested(yarp::os::PortReader& obj) {
+        return obj.read(reader);
     }
 
     bool readI32(int32_t& x) {
@@ -167,6 +191,33 @@ public:
         reader.expectBlock((const char *)str.c_str(),len);
         str.resize(len-1);
         return !reader.isError();
+    }
+
+    bool readEnum(int32_t& x, WireVocab& converter) {
+        int tag = state->code;
+        if (tag<0) {
+            tag = reader.expectInt();
+        }
+        if (tag==BOTTLE_TAG_INT) {
+            int v = reader.expectInt();
+            x = (int32_t) v;
+            state->len--;
+            return !reader.isError();
+        }
+        if (tag==BOTTLE_TAG_STRING) {
+            int len = reader.expectInt();
+            if (reader.isError()) return false;
+            if (len<1) return false;
+            std::string str;
+            str.resize(len);
+            reader.expectBlock((const char *)str.c_str(),len);
+            str.resize(len-1);
+            state->len--;
+            if (reader.isError()) return false;
+            x = (int32_t)converter.fromString(str);
+            return (x>=0);
+        }
+        return false;
     }
 
     bool readListHeader() {

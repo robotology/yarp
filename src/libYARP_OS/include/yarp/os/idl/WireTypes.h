@@ -22,6 +22,7 @@
 #include <yarp/os/idl/WireReader.h>
 #include <yarp/os/idl/WirePortable.h>
 #include <yarp/os/idl/WireState.h>
+#include <yarp/os/idl/WireVocab.h>
 #include <yarp/os/Wire.h>
 
 #endif
