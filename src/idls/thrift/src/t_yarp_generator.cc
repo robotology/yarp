@@ -120,8 +120,9 @@ class t_yarp_generator : public t_oop_generator {
   std::string type_name(t_type* ttype, bool in_typedef=false, bool arg=false);
   std::string base_type_name(t_base_type::t_base tbase);
   std::string namespace_prefix(std::string ns);
-  std::string namespace_open(std::string ns);
-  std::string namespace_close(std::string ns);
+  std::string namespace_decorate(std::string ns, std::string str);
+  bool namespace_open(ostream& os, std::string ns, bool terse = true);
+  void namespace_close(ostream& os, std::string ns, bool terse = true);
   bool is_complex_type(t_type* ttype) {
     ttype = get_true_type(ttype);
     return
@@ -213,6 +214,12 @@ class t_yarp_generator : public t_oop_generator {
       return sttname;
     }
     return structure_names_[sttname];
+  }
+
+  std::string get_namespace(t_program *program) {
+    std::string result = program->get_namespace("yarp");
+    if (result!="") return result;
+    return program->get_namespace("cpp");
   }
 
  void print_const_value(std::ofstream& out, std::string name, t_type* type, t_const_value* value);
@@ -343,7 +350,7 @@ string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg) {
     if (program != NULL && program != program_) {
       pname =
 	class_prefix +
-	namespace_prefix(program->get_namespace("cpp")) +
+	namespace_prefix(get_namespace(program)) +
 	ttype->get_name();
     } else {
       pname = class_prefix + ttype->get_name();
@@ -389,6 +396,14 @@ string t_yarp_generator::base_type_name(t_base_type::t_base tbase) {
 }
 
 
+string t_yarp_generator::namespace_decorate(string ns, string str) {
+  string prefix = namespace_prefix(ns);
+  if (prefix.find(" ::")==0) {
+    prefix = prefix.substr(3,prefix.length());
+  }
+  return prefix + str;
+}
+
 string t_yarp_generator::namespace_prefix(string ns) {
   // Always start with "::", to avoid possible name collisions with
   // other names in one of the current namespaces.
@@ -413,39 +428,47 @@ string t_yarp_generator::namespace_prefix(string ns) {
   return result;
 }
 
-string t_yarp_generator::namespace_open(string ns) {
+bool t_yarp_generator::namespace_open(ostream& os, string ns, bool terse) {
   if (ns.size() == 0) {
-    return "";
+    return false;
   }
-  string result = "";
+  ns += ".";
   string separator = "";
   string::size_type loc;
   while ((loc = ns.find(".")) != string::npos) {
-    result += separator;
-    result += "namespace ";
-    result += ns.substr(0, loc);
-    result += " {";
-    separator = " ";
+    if (!terse) indent(os);
+    os << separator << "namespace " << ns.substr(0, loc) << " {";
+    if (!terse) {
+      os << endl;
+      indent_up();
+    } else {
+      separator = " ";
+    }
     ns = ns.substr(loc+1);
   }
-  if (ns.size() > 0) {
-    result += separator + "namespace " + ns + " {";
+  if (terse) {
+    os << endl;
   }
-  return result;
+  return true;
 }
 
-string t_yarp_generator::namespace_close(string ns) {
-  if (ns.size() == 0) {
-    return "";
-  }
-  string result = "}";
+void t_yarp_generator::namespace_close(ostream& os, string ns, bool terse) {
+  if (ns.size() == 0) return;
+  ns += ".";
   string::size_type loc;
   while ((loc = ns.find(".")) != string::npos) {
-    result += "}";
+    if (!terse) {
+      indent_down();
+      indent(os) << "}";
+      os << endl;
+    } else {
+      os << "}";
+    }
     ns = ns.substr(loc+1);
   }
-  result += " // namespace";
-  return result;
+  if (terse) {
+    os << " // namespace" << endl;
+  }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -814,6 +837,15 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   }
   f_types_impl_ << endl;
 
+  string ns = get_namespace(program_);
+
+  namespace_open(f_types_,ns,false);
+  //indent(f_types_) << "enum " << enum_name << ";" << endl << endl;
+  //f_types_ << endl << endl;
+
+  namespace_open(f_types_impl_,ns);
+  f_types_impl_ << endl << endl;
+
   vector<t_enum_value*> constants = tenum->get_constants();
 
   if (!gen_pure_enums_) {
@@ -868,7 +900,12 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   //generate_local_reflection(f_types_, tenum, false);
   //generate_local_reflection(f_types_impl_, tenum, true);
 
-  f_types_ << "class " << enum_name << "Vocab : public yarp::os::idl::WireVocab {" << endl;
+  indent(f_types_) << "class " << enum_name << "Vocab;" << endl;
+  namespace_close(f_types_,ns,false);
+  f_types_ << endl;
+
+
+  f_types_ << "class " << namespace_decorate(ns,enum_name) << "Vocab : public yarp::os::idl::WireVocab {" << endl;
   f_types_ << "public:" << endl;
   indent_up();
   indent(f_types_) << "virtual int fromString(const std::string& input);" << endl;
@@ -909,8 +946,10 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   indent_down();
   os << "}" << endl;
 
-
   f_types_ << endl;
+
+  namespace_close(f_types_impl_,ns);
+  f_types_impl_ << endl << endl;
 
   f_types_ << "#endif" << endl;
 }
@@ -969,8 +1008,11 @@ void t_yarp_generator::generate_const(t_const* tconst) {
 void t_yarp_generator::generate_struct(t_struct* tstruct) {
   string sttname = tstruct->get_name();
   if (tstruct->annotations_.find("yarp.name") != tstruct->annotations_.end()) {
-    // f_stt_ << tstruct->annotations_["yarp.name"] << endl;
     structure_names_[sttname] = tstruct->annotations_["yarp.name"];
+    return;
+  }
+  if (tstruct->annotations_.find("cpp.name") != tstruct->annotations_.end()) {
+    structure_names_[sttname] = tstruct->annotations_["cpp.name"];
     return;
   }
 
@@ -999,7 +1041,16 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   }
   f_stt_ << endl;
 
-  f_stt_ << "class " << name << " : public yarp::os::idl::WirePortable {" << endl;
+  string ns = get_namespace(program_);
+  namespace_open(f_cpp_,ns);
+  f_cpp_ << endl << endl;
+
+  namespace_open(f_stt_,ns,false);
+  indent(f_stt_) << "class " << name << ";" << endl;
+  namespace_close(f_stt_,ns,false);
+  f_stt_ << endl << endl;
+
+  f_stt_ << "class " << namespace_decorate(ns,name) << " : public yarp::os::idl::WirePortable {" << endl;
   f_stt_ << "public:" << endl;
   indent_up();
 
@@ -1157,6 +1208,10 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   f_stt_ << "};" << endl;
 
   f_stt_ << endl;
+
+  namespace_close(f_cpp_,get_namespace(program_));
+  f_cpp_ << endl;
+
   f_stt_ << "#endif" << endl;
   f_stt_ << endl;
 }
@@ -1238,6 +1293,16 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     }
     f_cpp_ << endl;
     
+    string ns = get_namespace(program_);
+
+    namespace_open(f_srv_,ns,false);
+    indent(f_srv_) << "class " << service_name_ << ";" << endl;
+    namespace_close(f_srv_,ns,false);
+    f_srv_ << endl << endl;
+
+    namespace_open(f_cpp_,ns);
+    f_cpp_ << endl << endl;
+
     vector<t_function*> functions = tservice->get_functions();
     vector<t_function*>::iterator fn_iter = functions.begin();
     {
@@ -1300,7 +1365,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       }
     }
 
-    f_srv_ << "class " << service_name_ << " : public yarp::os::Wire {" << endl;
+    f_srv_ << "class " << namespace_decorate(ns,service_name_) << " : public yarp::os::Wire {" << endl;
     f_srv_ << "public:" << endl;
     indent_up();
 
@@ -1431,6 +1496,8 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     f_srv_ << "};" << endl
 	   << endl;
 
+    namespace_close(f_cpp_,ns);
+    f_cpp_ << endl << endl;
     
     f_srv_ << "#endif" << endl;
     f_srv_ << endl;
