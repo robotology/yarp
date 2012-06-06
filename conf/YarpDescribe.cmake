@@ -15,6 +15,15 @@ get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
 message(STATUS "In-tree includes: ${YARP_INCLUDE_DIRS}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
+set(YARP_HAS_IDL FALSE)
+if(ENABLE_yarpidl_thrift) 
+  set(YARP_HAS_IDL TRUE)
+  set(YARP_IDL_BINARY_HINT ${CMAKE_BINARY_DIR}/bin)
+  if (MSVC)
+    set(YARP_IDL_BINARY_HINT "${YARP_IDL_BINARY_HINT};${YARP_IDL_BINARY_HINT}/Debug;${YARP_IDL_BINARY_HINT}/Release") 
+  endif(MSVC)
+endif(ENABLE_yarpidl_thrift)
+
 set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 set(YARP_DEPENDENCY_FILENAME YARPDependencies.cmake)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
@@ -30,6 +39,7 @@ set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/${VERSIONED_LIB}/YARP.cmake)
 set(YARP_DEPENDENCY_FILENAME YARP.cmake)
 set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
 set(YARP_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
+set(YARP_IDL_BINARY_HINT ${CMAKE_INSTALL_PREFIX}/bin)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})

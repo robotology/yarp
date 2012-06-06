@@ -52,6 +52,12 @@ macro(yarp_idl thrift)
   endforeach()
   option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" ${MISSING})
   if (ALLOW_IDL_GENERATION OR MISSING)
+    find_package(YARP REQUIRED)
+    find_program(YARPIDL_LOCATION yarpidl_thrift HINTS ${YARP_IDL_BINARY_HINT})
+    if (NOT YARPIDL_LOCATION)
+      message(STATUS "Hints for yarpidl_thrift locaiton: ${YARP_IDL_BINARY_HINT}")
+      message(FATAL_ERROR "Cannot find yarpidl_thrift program")
+    endif ()
     set(RENAMING FALSE)
     foreach(arg ${CORE_ARGN})
       if (NOT arg STREQUAL "AS")
@@ -81,8 +87,8 @@ macro(yarp_idl thrift)
     endforeach()
     add_custom_command(OUTPUT ${DEST_FILES}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${dir}
-      COMMAND yarpidl_thrift -out ${dir} --gen yarp:cmake_supplies_headers ${abs_thrift}
+      COMMAND ${YARPIDL_LOCATION} -out ${dir} --gen yarp:cmake_supplies_headers ${abs_thrift}
       COMMAND ${CMAKE_COMMAND} -P ${dir}/tweak.cmake
-      DEPENDS ${thrift})
+      DEPENDS ${thrift} ${dir}/tweak.cmake)
   endif()
 endmacro()
