@@ -9,6 +9,7 @@
 #ifndef __YARPCARTESIANCONTROLINTERFACES__
 #define __YARPCARTESIANCONTROLINTERFACES__
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
@@ -482,6 +483,14 @@ public:
     *       the trajectory time and so on.
     */
     virtual bool restoreContext(const int id)=0;
+
+    /**
+    * Returns useful info on the operating state of the controller. 
+    * [wait for reply] 
+    * @param info is a property-like bottle containing the info.
+    * @return true/false on success/failure. 
+    */
+    virtual bool getInfo(yarp::os::Bottle &info)=0;
 };
 
 #endif

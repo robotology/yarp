@@ -666,6 +666,14 @@ public:
     *       time and so on.
     */
     virtual bool restoreContext(const int id)=0;
+
+    /**
+    * Returns useful info on the operating state of the controller. 
+    * [wait for reply] 
+    * @param info is a property-like bottle containing the info.
+    * @return true/false on success/failure. 
+    */
+    virtual bool getInfo(yarp::os::Bottle &info)=0;
 };
 
 #endif
