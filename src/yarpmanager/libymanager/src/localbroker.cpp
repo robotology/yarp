@@ -629,7 +629,10 @@ bool LocalBroker::stopCmd(int pid)
     LocalTerminateParams params(pid);
     EnumWindows((WNDENUMPROC)LocalTerminateAppEnum,(LPARAM)&params);
     if (!params.nWin)
+    {
+        GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid);
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid);
+    }    
     CloseHandle(hProc);
     return true;    
 }
