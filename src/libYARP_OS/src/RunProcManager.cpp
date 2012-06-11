@@ -746,6 +746,7 @@ bool TERMINATE(PID dwPID)
     else
     {
         CHECKPOINT()
+        GenerateConsoleCtrlEvent(CTRL_C_EVENT, dwPID);
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
         fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);    
     }
