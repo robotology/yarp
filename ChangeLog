@@ -1,3 +1,9 @@
+2012-06-12  Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/RunProcManager.cpp
+	Console application termination workaround: sends
+	anyway CTRL_C and CTRL_BREAK to application detected
+	as windows.
+
 2012-06-07  Ugo Pattacini  <ugo.pattacini@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/CartesianControl.h,GazeControl.h:
