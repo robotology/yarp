@@ -18,7 +18,7 @@
 /**
 \defgroup dataSetPlayer dataSetPlayer
 
-@ingroup icub_contrib_modules
+@ingroup icub_tools
 
 A module that reproduces in a synchronized way, previously acquired data (using dataDumper) from the iCub or other source of input.
 
