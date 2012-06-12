@@ -101,9 +101,10 @@ The parts name will be taken from each subdirectory of the /experiment1 forder.
 \section out_data_sec Output Data Files
 The player will send throught the ports all the data in a synchronised way.
 
-\todo 
+\todo {
  - main slider bar selection. This needs an on-click and on-release event in order not to interfere with update and playback
  - when the search for a directory has not provided anything (user selected directory containing only *.log files)
+}
 
 \section tested_os_sec Tested OS
 Windows, Linux
