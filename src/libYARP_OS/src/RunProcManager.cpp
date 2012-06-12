@@ -741,15 +741,18 @@ bool TERMINATE(PID dwPID)
     if (params.nWin)
     {
         CHECKPOINT()
-        fprintf(stdout,"%d terminated by WM_CLOSE\n",dwPID);
+        fprintf(stdout,"%d terminated by WM_CLOSE (sending anyway CTRL_C_EVENT/CTRL_BREAK_EVENT)\n",dwPID);
     }
     else
     {
         CHECKPOINT()
-        GenerateConsoleCtrlEvent(CTRL_C_EVENT, dwPID);
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
-        fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);    
+        //GenerateConsoleCtrlEvent(CTRL_C_EVENT,dwPID);
+        //GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
+        fprintf(stdout,"%d terminated by CTRL_C_EVENT/CTRL_BREAK_EVENT\n",dwPID);    
     }
+
+    GenerateConsoleCtrlEvent(CTRL_C_EVENT,dwPID);
+    GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
 
     fflush(stdout);
 
