@@ -2,13 +2,10 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-macro(yarp_idl_dir thrift dir)
-  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" name ${thrift})
-  set(${dir} ${CMAKE_CURRENT_BINARY_DIR}/${name})
-endmacro()
-
 macro(yarp_idl thrift)
-  yarp_idl_dir(${thrift} dir)
+  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" thrift_name ${thrift})
+  set(dir ${CMAKE_CURRENT_BINARY_DIR}/${thrift_name})
+
   set(INCLUDES)
   set(DEST_FILES)
   set(SRC_FILES)
@@ -72,6 +69,9 @@ macro(yarp_idl thrift)
       endif()
     endforeach()
     set(SRC_DIR ${dir})
+    get_filename_component(thrift_base ${thrift} NAME_WE)
+    set(SRC_INDEX ${thrift_base}_index.txt)
+    set(SRC_NAME ${thrift_base})
     configure_file(${YARP_MODULE_PATH}/template/YarpTweakIDL.cmake.in ${dir}/tweak.cmake @ONLY)
 
     get_filename_component(path_trift ${thrift} ABSOLUTE)

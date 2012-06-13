@@ -1,3 +1,8 @@
+2012-06-13  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* conf/template/YarpTweakIDL.cmake.in: reorder header files as 
+	needed [thanks Elena Ceseracciu]
+
 2012-06-12  Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/RunProcManager.cpp
 	Console application termination workaround: sends

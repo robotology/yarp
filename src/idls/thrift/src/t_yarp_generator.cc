@@ -592,6 +592,9 @@ void t_yarp_generator::generate_program() {
   f_out_.open(fname.c_str());
   f_out_ << "// Thrift module: " << program_->get_name() << endl;
 
+  string fname2 = get_out_dir() + program_->get_name() + "_index.txt";
+  ofstream f_out2_(fname2.c_str());
+
   //print_doc(program_);
 
   //generate_program_toc();
@@ -609,6 +612,8 @@ void t_yarp_generator::generate_program() {
     vector<t_enum*>::iterator en_iter;
     for (en_iter = enums.begin(); en_iter != enums.end(); ++en_iter) {
       generate_enum(*en_iter);
+      f_out_ << "#include \"" << (*en_iter)->get_name() << ".h\"" << endl;
+      f_out2_ << (*en_iter)->get_name() << ".h" << endl;
     }
   }
 
@@ -633,6 +638,7 @@ void t_yarp_generator::generate_program() {
       } else {
         generate_struct(*o_iter);
 	f_out_ << "#include \"" << (*o_iter)->get_name() << ".h\"" << endl;
+	f_out2_ << (*o_iter)->get_name() << ".h" << endl;
       }
     }
   }
@@ -646,10 +652,12 @@ void t_yarp_generator::generate_program() {
       service_name_ = get_service_name(*sv_iter);
       generate_service(*sv_iter);
       f_out_ << "#include \"" << (*sv_iter)->get_name() << ".h\"" << endl;
+      f_out2_ << (*sv_iter)->get_name() << ".h" << endl;
     }
   }
 
   f_out_.close();
+  f_out2_.close();
 
   generate_index();
 }
