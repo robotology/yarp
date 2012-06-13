@@ -115,6 +115,7 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Florent D'Halluin
   Fabien Benureau
   Emanuel Sousa
+  Elena Ceseracciu
   Dimitri Ognibene
   Daniele Domenichelli
   Charles Lesire-Cabaniols
@@ -127,7 +128,7 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
 The list of copyright holders for YARP is:
   Copyright 2003 2005 2006 2007 2008 2009 2010 2011 2012
   RobotCub Consortium (749 files)
-  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (155 files)
+  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (158 files)
   Giacomo Spigler (22 files)
   Duarte Aragao (16 files)
   Daniel Krieg (16 files)
@@ -315,10 +316,6 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -339,10 +336,6 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpc.h
   Copyright: (c) 2002-2003 by Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -352,14 +345,6 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.h
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
