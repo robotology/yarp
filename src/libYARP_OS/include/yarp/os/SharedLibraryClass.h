@@ -188,7 +188,7 @@ public:
     }
 
     void destroy(T *obj) {
-        if (!isValid()) return 0/*NULL*/;
+        if (!isValid()) return;
         getApi().destroy(obj);
     }
 };

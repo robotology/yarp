@@ -180,7 +180,7 @@ private:
     }
 #else
     double phdCpuLoad() { return 0.0; }
-#endif;   
+#endif
 
 private:
 #if (defined(WINVER)) && (WINVER>=0x0502)    
