@@ -18,9 +18,41 @@
 
 namespace yarp {
     namespace dev {
+        class CartesianEvent;
         class ICartesianControl;
     }
 }
+
+
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for a event notified by the cartesian controller. 
+ */
+class yarp::dev::CartesianEvent
+{
+public:
+    /** Contain the signature of the event as filled by the event
+     *  handler.
+     *  \n Available events are:
+     *  - "motion-onset": beginning of motion.
+     *  - "motion-done": end of motion.
+     *  - "closing": the server is being shut down.
+     *  - "*": a tag for all-events.
+     */
+    yarp::os::ConstString cartesianEventType;
+
+    /**
+     * Contain the time instant of the source when the event took 
+     * place, as filled by the event handler. 
+     */
+    double cartesianEventTime;
+
+    /**
+    * Event callback to be overridden by the user. 
+    */
+    virtual void cartesianEventCallback()=0;
+};
 
 
 /**
@@ -491,6 +523,25 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool getInfo(yarp::os::Bottle &info)=0;
+
+    /**
+    * Attaches an event callback to the specified event type. 
+    * @param type the event type. 
+    * @param event the event to be registered.
+    * @return true/false on success/failure. 
+    *  
+    * @note the special type "*" can be used to attach a callback to
+    *       all the available events.
+    */
+    virtual bool registerEvent(const yarp::os::ConstString &type,
+                               yarp::dev::CartesianEvent *event)=0;
+
+    /**
+    * Detach the any event callback to the specified event type. 
+    * @param type the event type. 
+    * @return true/false on success/failure. 
+    */
+    virtual bool unregisterEvent(const yarp::os::ConstString &type)=0;
 };
 
 #endif
