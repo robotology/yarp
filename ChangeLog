@@ -1,3 +1,8 @@
+2012-06-17  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+	* gaze interface: added two methods to handle the neck angle
+     user tolerance.
+
 2012-06-13  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* conf/template/YarpTweakIDL.cmake.in: reorder header files as 

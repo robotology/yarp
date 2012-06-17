@@ -606,6 +606,26 @@ public:
     */
     virtual bool clearNeckYaw()=0;
 
+    /** Return the current tolerance defined by the user to gaze at
+    *   the target with the neck, meaning that the neck will turn to
+    *   the target with a final "misalignment" specified by this
+    *   tolerance; the residual rotation will be covered by the eyes
+    *   movement. By default, the tolerance is zero, that is the
+    *   neck will be perfectly aligned with the target. [wait for
+    *   reply]
+    * @param angle the location where to store the current user 
+    *              tolerance [deg].
+    * @return true/false on success/failure. 
+    */
+    virtual bool getNeckAngleUserTolerance(double *angle)=0;
+
+    /** Specify a new tolerance to gaze at the target with the neck.
+    *   [wait for reply]
+    * @param angle the new angle user tolerance [deg].
+    * @return true/false on success/failure. 
+    */
+    virtual bool setNeckAngleUserTolerance(const double angle)=0;
+
     /** Check once if the current trajectory is terminated. [wait for
     *   reply]
     * @param f where the result is returned.
