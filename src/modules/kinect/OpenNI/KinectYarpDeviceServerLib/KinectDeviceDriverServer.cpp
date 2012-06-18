@@ -54,14 +54,19 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 	double *joint;
 	int index = 0;
 
+	//Creating a Stamp with the current system time in seconds.milliseconds
+	Stamp timestamp(index,Time::now());
+
 	//cameras data
 	if(_camerasON){
 		//image map data
 		_imgMapPort->prepare() = KinectSkeletonTracker::getKinect()->imgMap;
+		_imgMapPort->setEnvelope(timestamp);
 		_imgMapPort->write();
 
 		//image depth map data
 		_depthMapPort->prepare() = KinectSkeletonTracker::getKinect()->depthMap;
+		_depthMapPort->setEnvelope(timestamp);
 		_depthMapPort->write();
 	}
 
@@ -71,6 +76,7 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 			if(userSkeleton[i].skeletonState == SKELETON_TRACKING){
 				Bottle &botSkeleton = _skeletonPort->prepare();
 				botSkeleton.clear();
+				_skeletonPort->setEnvelope(timestamp);
 				//user number
 				Bottle &userBot = botSkeleton.addList();
 				userBot.addVocab(USER_VOCAB);
@@ -103,12 +109,14 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 			}else if(userSkeleton[i].skeletonState == USER_DETECTED){
 				Bottle &botDetected = _skeletonPort->prepare();
 				botDetected.clear();
+				_skeletonPort->setEnvelope(timestamp);
 				botDetected.addString(USER_DETECTED_MSG);
 				botDetected.addInt(i);
 				_skeletonPort->write();
 			}else if(userSkeleton[i].skeletonState == CALIBRATING){
 				Bottle &botCalib = _skeletonPort->prepare();
 				botCalib.clear();
+				_skeletonPort->setEnvelope(timestamp);
 				botCalib.addString(USER_CALIBRATING_MSG);
 				botCalib.addInt(i);
 				_skeletonPort->write();
@@ -116,6 +124,7 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 				userSkeleton[i].skeletonState = NO_USER;
 				Bottle &botCalib = _skeletonPort->prepare();
 				botCalib.clear();
+				_skeletonPort->setEnvelope(timestamp);
 				botCalib.addString(USER_LOST_MSG);
 				botCalib.addInt(i);
 				_skeletonPort->write();

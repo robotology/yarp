@@ -17,6 +17,7 @@
 #include <yarp/sig/all.h>
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/os/all.h>
+#include <yarp/os/Stamp.h>
 
 //this include could not be done here do to yarp compilation error :)
 //#include "KinectSkeletonTracker.h"

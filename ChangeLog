@@ -1,3 +1,8 @@
+2012-06-18  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/modules/kinect/OpenNI/KinectYarpDeviceServerLib/KinectDeviceDriverServer.cpp: apply patch to include timestamps in output 
+	[thanks Christian Dondrup]
+
 2012-06-17  Ugo Pattacini  <ugo.pattacini@iit.it>
 
 	* gaze interface: added two methods to handle the neck angle
