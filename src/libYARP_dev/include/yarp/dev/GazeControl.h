@@ -32,36 +32,49 @@ namespace yarp {
 class yarp::dev::GazeEvent
 {
 public:
-    /** The signature of the event as specified by the user.
-     *  \n Available events are:
-     *  - "motion-onset": beginning of motion.
-     *  - "motion-done": end of motion.
-     *  - "motion-ongoing": a motion check-point is attained.
-     *  - "closing": the server is being shut down.
-     *  - "suspended": the server has been suspeded.
-     *  - "resumed": the server has been resumed.
-     *  - "comm-timeout": the serve has been suspended because of a
-     *    communication timeout.
-     *  - "*": a tag for all-events.
-     *  
-     *  @note In case the type "*" is chosen by the user, then at
-     *        run time this field will be suitably maintained by the
-     *        event handler in order to notify the exact event type.
-     */
-    yarp::os::ConstString gazeEventType;
+    struct
+    {
+        /** The signature of the event as specified by the user.
+         *  \n Available events are:
+         *  - "motion-onset": beginning of motion.
+         *  - "motion-done": end of motion.
+         *  - "motion-ongoing": a motion check-point is attained.
+         *  - "closing": the server is being shut down.
+         *  - "suspended": the server has been suspeded.
+         *  - "resumed": the server has been resumed.
+         *  - "comm-timeout": the serve has been suspended because of a
+         *    communication timeout.
+         *  - "*": a tag for all-events.
+         */
+        yarp::os::ConstString type;
 
-    /**
-     * The user specifies the motion check-point that raises a 
-     * "motion-ongoing" event through this parameter which must be 
-     * in the range [0,1]. 
-     */
-    double gazeEventMotionOngoing;
+        /**
+         * The user specifies the motion check-point that raises a 
+         * "motion-ongoing" event through this parameter which must be 
+         * in the range [0,1]. 
+         */
+        double motionOngoingCheckPoint;
+    } gazeEventParameters;
 
-    /**
-     * Contain the time instant of the source when the event took 
-     * place, as filled by the event handler. 
-     */
-    double gazeEventTime;
+    struct
+    {
+        /** The signature of the received event as filled by the event
+         *  handler.
+         */
+        yarp::os::ConstString type;
+
+        /**
+         * Contain the time instant of the source when the event took 
+         * place, as filled by the event handler. 
+         */
+        double time;
+
+        /**
+         * Contain the motion check-point that raised a "motion-ongoing"
+         * event.
+         */
+        double motionOngoingCheckPoint;
+    } gazeEventVariables;
 
     /**
     * Event callback to be overridden by the user. 

@@ -32,24 +32,31 @@ namespace yarp {
 class yarp::dev::CartesianEvent
 {
 public:
-    /** The signature of the event as specified by the user.
-     *  \n Available events are:
-     *  - "motion-onset": beginning of motion.
-     *  - "motion-done": end of motion.
-     *  - "closing": the server is being shut down.
-     *  - "*": a tag for all-events.
-     *  
-     *  @note In case the type "*" is chosen by the user, then at
-     *        run time this field will be suitably maintained by the
-     *        event handler in order to notify the exact event type.
-     */
-    yarp::os::ConstString cartesianEventType;
+    struct
+    {
+        /** The signature of the event as specified by the user.
+         *  \n Available events are:
+         *  - "motion-onset": beginning of motion.
+         *  - "motion-done": end of motion.
+         *  - "closing": the server is being shut down.
+         *  - "*": a tag for all-events.
+         */
+        yarp::os::ConstString type;
+    } cartesianEventParameters;
 
-    /**
-     * Contain the time instant of the source when the event took 
-     * place, as filled by the event handler. 
-     */
-    double cartesianEventTime;
+    struct
+    {
+        /** The signature of the received event as filled by the event
+         *  handler.
+         */
+        yarp::os::ConstString type;
+
+        /**
+         * Contain the time instant of the source when the event took 
+         * place, as filled by the event handler. 
+         */
+        double time;
+    } cartesianEventVariables;
 
     /**
     * Event callback to be overridden by the user. 
