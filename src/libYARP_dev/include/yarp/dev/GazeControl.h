@@ -36,7 +36,7 @@ public:
      *  \n Available events are:
      *  - "motion-onset": beginning of motion.
      *  - "motion-done": end of motion.
-     *  - "motion-ongoing": a portion of motion is attained.
+     *  - "motion-ongoing": a motion check-point is attained.
      *  - "closing": the server is being shut down.
      *  - "suspended": the server has been suspeded.
      *  - "resumed": the server has been resumed.
@@ -51,7 +51,7 @@ public:
     yarp::os::ConstString gazeEventType;
 
     /**
-     * The user specifies the portion of motion that raises a 
+     * The user specifies the motion check-point that raises a 
      * "motion-ongoing" event through this parameter which must be 
      * in the range [0,1]. 
      */
