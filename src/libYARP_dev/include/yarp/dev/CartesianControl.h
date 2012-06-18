@@ -38,10 +38,18 @@ public:
          *  \n Available events are:
          *  - "motion-onset": beginning of motion.
          *  - "motion-done": end of motion.
+         *  - "motion-ongoing": a motion check-point is attained.
          *  - "closing": the server is being shut down.
          *  - "*": a tag for all-events.
          */
         yarp::os::ConstString type;
+
+        /**
+         * The user specifies the motion check-point that raises a 
+         * "motion-ongoing" event through this parameter which must be 
+         * in the range [0,1]. 
+         */
+        double motionOngoingCheckPoint;
     } cartesianEventParameters;
 
     struct
@@ -56,6 +64,12 @@ public:
          * place, as filled by the event handler. 
          */
         double time;
+
+        /**
+         * Contain the motion check-point that raised a "motion-ongoing"
+         * event.
+         */
+        double motionOngoingCheckPoint;
     } cartesianEventVariables;
 
     /**
