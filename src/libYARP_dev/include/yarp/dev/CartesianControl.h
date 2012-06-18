@@ -32,8 +32,7 @@ namespace yarp {
 class yarp::dev::CartesianEvent
 {
 public:
-    /** Contain the signature of the event as filled by the event
-     *  handler.
+    /** The signature of the event as specified by the user.
      *  \n Available events are:
      *  - "motion-onset": beginning of motion.
      *  - "motion-done": end of motion.
@@ -525,23 +524,21 @@ public:
     virtual bool getInfo(yarp::os::Bottle &info)=0;
 
     /**
-    * Attaches an event callback to the specified event type. 
-    * @param type the event type. 
+    * Register an event. 
     * @param event the event to be registered.
     * @return true/false on success/failure. 
     *  
     * @note the special type "*" can be used to attach a callback to
     *       all the available events.
     */
-    virtual bool registerEvent(const yarp::os::ConstString &type,
-                               yarp::dev::CartesianEvent *event)=0;
+    virtual bool registerEvent(yarp::dev::CartesianEvent *event)=0;
 
     /**
-    * Detach the any event callback to the specified event type. 
-    * @param type the event type. 
+    * Unregister a event.
+    * @param event the event to be unregistered.
     * @return true/false on success/failure. 
     */
-    virtual bool unregisterEvent(const yarp::os::ConstString &type)=0;
+    virtual bool unregisterEvent(yarp::dev::CartesianEvent *event)=0;
 };
 
 #endif
