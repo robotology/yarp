@@ -38,6 +38,10 @@ public:
      *  - "motion-onset": beginning of motion.
      *  - "motion-done": end of motion.
      *  - "closing": the server is being shut down.
+     *  - "suspended": the server has been suspeded.
+     *  - "resumed": the server has been resumed.
+     *  - "comm-timeout": the serve has been suspended because of a
+     *    communication timeout.
      *  - "*": a tag for all-events.
      */
     yarp::os::ConstString gazeEventType;
