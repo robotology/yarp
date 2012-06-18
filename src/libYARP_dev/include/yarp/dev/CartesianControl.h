@@ -531,14 +531,14 @@ public:
     * @note the special type "*" can be used to attach a callback to
     *       all the available events.
     */
-    virtual bool registerEvent(yarp::dev::CartesianEvent *event)=0;
+    virtual bool registerEvent(yarp::dev::CartesianEvent &event)=0;
 
     /**
     * Unregister a event.
     * @param event the event to be unregistered.
     * @return true/false on success/failure. 
     */
-    virtual bool unregisterEvent(yarp::dev::CartesianEvent *event)=0;
+    virtual bool unregisterEvent(yarp::dev::CartesianEvent &event)=0;
 };
 
 #endif
