@@ -38,6 +38,10 @@ public:
      *  - "motion-done": end of motion.
      *  - "closing": the server is being shut down.
      *  - "*": a tag for all-events.
+     *  
+     *  @note In case the type "*" is chosen by the user, then at
+     *        run time this field will be suitably maintained by the
+     *        event handler in order to notify the exact event type.
      */
     yarp::os::ConstString cartesianEventType;
 
