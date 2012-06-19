@@ -766,7 +766,7 @@ public:
     virtual bool registerEvent(yarp::dev::GazeEvent &event)=0;
 
     /**
-    * Unregister a event.
+    * Unregister an event.
     * @param event the event to be unregistered.
     * @return true/false on success/failure. 
     */

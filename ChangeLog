@@ -1,3 +1,8 @@
+2012-06-19  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+	* src/libYARP_dev/include/yarp/dev/CartesianControl.h,GazeControl.h:
+     added events handling.
+
 2012-06-18  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/modules/kinect/OpenNI/KinectYarpDeviceServerLib/KinectDeviceDriverServer.cpp: apply patch to include timestamps in output 
