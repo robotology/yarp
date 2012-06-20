@@ -1,3 +1,8 @@
+2012-06-20  Marco Randazzp  <marco.randazzo@iit.it>
+
+    *  src/libYARP_dev/include/yarp/dev/serverInertial.h
+    fixed issue related to the assignment of timestamps by the inertial driver
+    
 2012-06-19  Ugo Pattacini  <ugo.pattacini@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/CartesianControl.h,GazeControl.h:
