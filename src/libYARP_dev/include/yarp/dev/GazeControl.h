@@ -32,9 +32,9 @@ namespace yarp {
 class yarp::dev::GazeEvent
 {
 public:
-    struct
+    struct GazeEventParameters
     {
-        /** The signature of the event as specified by the user.
+	     /** The signature of the event as specified by the user.
          *  \n Available events are:
          *  - "motion-onset": beginning of motion.
          *  - "motion-done": end of motion.
@@ -54,11 +54,11 @@ public:
          * in the range [0,1]. 
          */
         double motionOngoingCheckPoint;
-    } gazeEventParameters;
+    };
 
-    struct
+	struct GazeEventVariables
     {
-        /** The signature of the received event as filled by the event
+	    /** The signature of the received event as filled by the event
          *  handler.
          */
         yarp::os::ConstString type;
@@ -74,7 +74,10 @@ public:
          * event.
          */
         double motionOngoingCheckPoint;
-    } gazeEventVariables;
+    };
+
+    GazeEventParameters gazeEventParameters;
+	GazeEventVariables gazeEventVariables;
 
     /**
     * Event callback to be overridden by the user. 

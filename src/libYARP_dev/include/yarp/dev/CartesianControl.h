@@ -32,8 +32,8 @@ namespace yarp {
 class yarp::dev::CartesianEvent
 {
 public:
-    struct
-    {
+    struct CartesianEventParameters
+	{
         /** The signature of the event as specified by the user.
          *  \n Available events are:
          *  - "motion-onset": beginning of motion.
@@ -50,10 +50,10 @@ public:
          * in the range [0,1]. 
          */
         double motionOngoingCheckPoint;
-    } cartesianEventParameters;
-
-    struct
-    {
+    };
+	
+    struct CartesianEventVariables
+	{
         /** The signature of the received event as filled by the event
          *  handler.
          */
@@ -70,7 +70,10 @@ public:
          * event.
          */
         double motionOngoingCheckPoint;
-    } cartesianEventVariables;
+    };
+	
+	CartesianEventParameters cartesianEventParameters;
+	CartesianEventVariables cartesianEventVariables;
 
     /**
     * Event callback to be overridden by the user. 
