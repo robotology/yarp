@@ -2,8 +2,8 @@
 # Authors: Vadim Tikhanoff
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-SET(PROJECTNAME dataSetPlayer)
-PROJECT(${PROJECTNAME})
+set(PROJECTNAME dataSetPlayer)
+project(${PROJECTNAME})
 
 # Search for source code.
 file(GLOB folder_source src/*.cpp src/*.cc src/*.c)
