@@ -2,6 +2,7 @@
  *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+ *  Copyright (C) 2006 Francesco Nori <francesco.nori@iit.it>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
