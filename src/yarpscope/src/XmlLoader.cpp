@@ -142,7 +142,7 @@ GPortScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
             } else {
                 graph_type = default_graph_type;
             }
-            if (plotElem->QueryIntAttribute("size", &graph_size) != TIXML_SUCCESS || graph_size <= 0) {
+            if (graphElem->QueryIntAttribute("size", &graph_size) != TIXML_SUCCESS || graph_size <= 0) {
                 graph_size = default_graph_size;
             }
 
