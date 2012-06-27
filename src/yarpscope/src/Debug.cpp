@@ -23,38 +23,24 @@
 #include <sstream>
 
 #include <stdlib.h>
+#include <glib/gmessages.h>
 
-namespace {
-bool debugEnabled = false;
-bool warningEnabled = true;
-}
 
 void GPortScope::Debug::print_output(MsgType t, const std::ostringstream &s)
 {
     switch (t) {
         case DebugType:
-            if (debugEnabled) {
-                std::cout << "DEBUG: " << s.str() << std::endl;
-            }
+            g_debug(s.str().c_str());
             break;
         case WarningType:
-            if (warningEnabled) {
-                std::cerr << "WARNING: " << s.str() << std::endl;
-            }
+            g_warning(s.str().c_str());
+            break;
+        case ErrorType:
+            g_critical(s.str().c_str());
             break;
         case FatalType:
-            std::cerr << "FATAL: " << s.str() << std::endl;
+            g_error(s.str().c_str());
             exit(1);
             break;
     }
-}
-
-void GPortScope::setDebug(bool enabled)
-{
-    debugEnabled = enabled;
-}
-
-void GPortScope::setWarning(bool enabled)
-{
-    warningEnabled = enabled;
 }
