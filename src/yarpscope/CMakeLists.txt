@@ -15,4 +15,6 @@ include_directories(${YARP_INCLUDE_DIRS}
 
 link_directories(${GTKDATABOXMM_LIBRARY_DIRS})
 
+add_definitions("-Wall --ansi")
+
 add_subdirectory(src)
