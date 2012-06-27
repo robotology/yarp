@@ -33,7 +33,12 @@ namespace GPortScope {
 class MainWindow : public Gtk::Window
 {
 public:
-    MainWindow();
+    MainWindow(int interval,
+               const Glib::ustring &local,
+               const Glib::ustring &remote,
+               unsigned int rows,
+               unsigned int cols);
+
     virtual ~MainWindow();
 
 private:

@@ -61,6 +61,13 @@ public:
     Gtk::VBox windowBox;
     DataPlot databox;
 
+    // From user options
+    int interval;
+    Glib::ustring remote;
+    Glib::ustring local;
+    unsigned int rows;
+    unsigned int cols;
+
     // Other private members
     bool running;
 };
@@ -130,12 +137,19 @@ void GPortScope::MainWindow::Private::on_action_actions_stop_start()
 }
 
 
-
-
-
-GPortScope::MainWindow::MainWindow()
+GPortScope::MainWindow::MainWindow(int interval,
+                                   const Glib::ustring &local,
+                                   const Glib::ustring &remote,
+                                   unsigned int rows,
+                                   unsigned int cols)
     : mPriv(new Private(this))
 {
+    mPriv->interval = interval;
+    mPriv->local = local;
+    mPriv->remote = remote;
+    mPriv->rows = rows;
+    mPriv->cols = cols;
+
     set_border_width(3);
     set_default_size(640, 480);
     set_icon_name("gportscope"); // FIXME

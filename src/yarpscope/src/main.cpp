@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     Glib::set_application_name(_("gPortScope"));
 
     // Create main window and update geometry and title
-    GPortScope::MainWindow mainWindow;
+    GPortScope::MainWindow mainWindow(interval, local, remote, rows, cols);
 
     if (rf.find("dx").isInt() && rf.find("dy").isInt()) {
         mainWindow.resize(rf.find("dx").asInt(), rf.find("dy").asInt());
