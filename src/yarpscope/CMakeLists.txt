@@ -3,7 +3,6 @@ option(CREATE_YARPSCOPE "Do you want to compile Yarp Port Scope?" OFF)
 if(CREATE_YARPSCOPE)
     set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
-    find_package(YARP REQUIRED)
     find_package(GtkMM REQUIRED)
 
     include_directories(${YARP_INCLUDE_DIRS}
