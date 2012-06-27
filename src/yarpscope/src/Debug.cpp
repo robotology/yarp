@@ -26,7 +26,7 @@
 
 namespace {
 bool debugEnabled = false;
-bool warningEnabled = false;
+bool warningEnabled = true;
 }
 
 void GPortScope::Debug::print_output(MsgType t, const std::ostringstream &s)
