@@ -192,21 +192,13 @@ GPortScope::MainWindow::MainWindow() :
     mPriv->refActionGroup->add(Gtk::Action::create("Quit", Gtk::Stock::QUIT),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_file_quit));
     mPriv->refActionGroup->add(Gtk::Action::create("MenuActions", _("_Actions")));
-    mPriv->refActionGroup->add(Gtk::ToggleAction::create("StopStart", _("Stop"), _("Stop plotting")),
+    mPriv->refActionGroup->add(Gtk::ToggleAction::create_with_icon_name("StopStart", "media-playback-pause", _("Stop"), _("Stop plotting")),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_stop_start));
     mPriv->refActionGroup->add(Gtk::Action::create("Clear", _("Clear"), _("Clear plots")),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_clear));
     mPriv->refActionGroup->add(Gtk::Action::create("MenuHelp", _("Help")));
     mPriv->refActionGroup->add(Gtk::Action::create("About", Gtk::Stock::ABOUT),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_help_about));
-
-    Glib::RefPtr <Gtk::Action> stopStartAction = mPriv->refActionGroup->get_action("StopStart");
-    if(!stopStartAction) {
-        fatal() << "Action \"StopStart\" is missing.";
-    }
-    stopStartAction->set_icon_name("media-playback-pause");
-
-
 
     mPriv->refUIManager->insert_action_group(mPriv->refActionGroup);
     add_accel_group(mPriv->refUIManager->get_accel_group());
