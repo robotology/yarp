@@ -56,8 +56,6 @@ int main(int argc, char *argv[])
     yarp::os::Property options;
     options.fromString(rf.toString());
 
-    yarp::os::Value &robot    = options.find("robot");
-    yarp::os::Value &part     = options.find("part");
     yarp::os::Value &rows     = options.find("rows");
     yarp::os::Value &cols     = options.find("cols");
     yarp::os::Value &interval = options.find("interval");
@@ -67,16 +65,10 @@ int main(int argc, char *argv[])
         GPortScope::setDebug(true);
 //    }
 
-    if (!options.check("robot")) {
-        debug() << "Missing --robot option. Using icub.";
+    if (!options.check("interval")) {
+        debug() << "Missing --interval option. Using 50 ms.";
     } else {
-        debug() << "Using" << robot.toString() << "robot.";
-    }
-
-    if (!options.check("part")) {
-        debug() << "Missing --part option. Using head.";
-    } else {
-        debug() << "Using" << part.toString() << "part.";
+        debug() << "Using" << interval.asInt() << "ms interval.";
     }
 
     if (!options.check("local")) {
@@ -97,12 +89,6 @@ int main(int argc, char *argv[])
         debug() << "Missing --cols option. Using 1.";
     } else {
         debug() << "Using" << cols.asInt() << "columns.";
-    }
-
-    if (!options.check("interval")) {
-        debug() << "Missing --interval option. Using 50 ms.";
-    } else {
-        debug() << "Using" << interval.asInt() << "ms interval.";
     }
 
     // Init gtkmm and gtkdataboxmm
