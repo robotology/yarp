@@ -279,7 +279,5 @@ YarpScope::MainWindow::~MainWindow()
 void YarpScope::MainWindow::setInterval(int interval)
 {
     mPriv->intervalSpinButton.set_value(interval);
-//    YarpScope::PortReader::instance().setInterval(interval);
-
 }
 
