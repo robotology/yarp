@@ -63,7 +63,7 @@ public:
                  int size);
 
     Gtk::Widget *getPlotWidget() const;
-    void redraw() const;
+    void redraw(bool increment = true) const;
 
 private:
 

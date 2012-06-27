@@ -131,6 +131,8 @@ public:
                 Index *idx = *iit;
                 idx->clearData();
             }
+
+                PlotManager::instance().redraw(false);
         }
 
         Glib::ustring remotePortName;

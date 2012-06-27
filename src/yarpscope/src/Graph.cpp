@@ -62,7 +62,7 @@ public:
 
     static GPortScope::Graph::Type stringToType(Glib::ustring typeStr);
 
-    void update();
+    void update(bool increment);
 
     Graph * const parent;
 
@@ -93,17 +93,17 @@ GPortScope::Graph::Type GPortScope::Graph::Private::stringToType(Glib::ustring t
     return GPortScope::Graph::TypeUnset;
 }
 
-void GPortScope::Graph::Private::update()
+void GPortScope::Graph::Private::update(bool increment)
 {
     for (int i = 0; i < plotSize - 1; i++) {
         Y_plot[i] = Y_plot[i+1];
     }
     Y_plot[plotSize - 1] = Y[curr++];
 
-    curr = curr % bufSize;
+    if (increment) {
+        curr = (curr + 1) % bufSize;
+    }
 }
-
-
 
 
 GPortScope::Graph::Graph(const Glib::ustring &remote,
@@ -194,7 +194,7 @@ const Glib::ustring& GPortScope::Graph::title() const
     return mPriv->title;
 }
 
-void GPortScope::Graph::update()
+void GPortScope::Graph::update(bool increment)
 {
-    mPriv->update();
+    mPriv->update(increment);
 }

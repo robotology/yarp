@@ -142,11 +142,11 @@ Gtk::Widget* GPortScope::PlotManager::getPlotWidget() const
     return &(mPriv->table);
 }
 
-void GPortScope::PlotManager::redraw() const
+void GPortScope::PlotManager::redraw(bool increment) const
 {
     for (std::vector<Graph*>::iterator it = mPriv->graphs.begin();
                 it != mPriv->graphs.end(); it++) {
-        (*it)->update();
+        (*it)->update(increment);
     }
     for (std::vector<DataPlot*>::iterator it = mPriv->plots.begin();
                 it != mPriv->plots.end(); it++) {

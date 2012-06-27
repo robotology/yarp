@@ -62,7 +62,7 @@ public:
     const Glib::ustring& title() const;
 
 protected:
-    void update();
+    void update(bool increment);
 
 private:
     class Private;
