@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
     Glib::ustring local = localValue.toString().c_str();
-    debug() << "Using local port(s)" << local;
+    debug() << "Using" << local << "as base name for local port(s).";
 
     // remote
     Glib::ustring remote;
@@ -114,6 +114,11 @@ int main(int argc, char *argv[])
     }
     if (options.check("cols")) {
         cols = options.find("cols").asInt();
+    }
+    if (rows <= 0 || cols <= 0) {
+        std::cerr << "ERROR: rows and cols should be positive integers." << std::endl << std::endl;
+        usage();
+        exit(1);
     }
     debug() << "Using" << rows << "rows and" << cols << "columns.";
 
