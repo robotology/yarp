@@ -31,20 +31,34 @@
 #include "MainWindow.h"
 #include "Debug.h"
 
+void usage() {
+    std::cout << "Usage: gPortScope [OPTIONS]" << std::endl;
+    std::cout << std::endl;
+    std::cout << "OPTIONS:" << std::endl;
+    std::cout << " --help             Print this help and exit." << std::endl;
+    std::cout << " --verbose          Verbose mode." << std::endl;
+    std::cout << " --interval=[int]   Initial refresh interval in milliseconds. (default 50ms)" << std::endl;
+    std::cout << " --local=[string]   Base name to assign to the local port(s). (default" << std::endl;
+    std::cout << "                    /gPortScope/vector:i)" << std::endl;
+    std::cout << " --remote=[string]  Remote port(s) to connect to at startup (default none)." << std::endl;
+    std::cout << " --rows=[uint]      Number of rows. (default 1)" << std::endl;
+    std::cout << " --cols=[uint]      Number of columns. (default 1)" << std::endl;
+    std::cout << " --dx=[uint]        Initial width of the window." << std::endl;
+    std::cout << " --dy=[uint]        Initial height of the window." << std::endl;
+    std::cout << " --x=[uint]         Initial X position of the window." << std::endl;
+    std::cout << " --y=[uint]         Initial Y position of the window." << std::endl;
+}
 
 int main(int argc, char *argv[])
 {
     // Setup resource finder
     yarp::os::ResourceFinder rf;
-    rf.setVerbose();
-    rf.setDefaultContext("gPortScope/conf");
-    rf.setDefaultConfigFile("gPortScope.ini");
+//    rf.setVerbose();
+//    rf.setDefaultContext("gPortScope/conf");
+//    rf.setDefaultConfigFile("gPortScope.ini");
     rf.configure("ICUB_ROOT", argc, argv);
 
     rf.setDefault("local", "/gPortScope/vector:i");
-    rf.setDefault("remote", "");
-    rf.setDefault("robot", "icub");
-    rf.setDefault("part", "head");
 
     //Yarp network initialization
     yarp::os::Network yarp;
@@ -56,40 +70,52 @@ int main(int argc, char *argv[])
     yarp::os::Property options;
     options.fromString(rf.toString());
 
-    yarp::os::Value &rows     = options.find("rows");
-    yarp::os::Value &cols     = options.find("cols");
-    yarp::os::Value &interval = options.find("interval");
-
-
 //    if (options.check("verbose")) {
         GPortScope::setDebug(true);
 //    }
 
-    if (!options.check("interval")) {
-        debug() << "Missing --interval option. Using 50 ms.";
-    } else {
-        debug() << "Using" << interval.asInt() << "ms interval.";
+    if (options.check("help")) {
+        usage();
+        exit(0);
     }
 
-    if (!options.check("local")) {
-        debug() << "Missing --name option. Using /portScope/vector:i.";
+    // interval
+    unsigned int interval = 50;
+    if (options.check("interval")) {
+        interval = options.find("interval").asInt();
     }
+    debug() << "Using" << interval << "ms interval.";
 
-    if (!options.check("remote")) {
+    // local
+    yarp::os::Value &localValue = options.find("local");
+    if (localValue.isNull()) {
+        std::cerr << "ERROR: local should not be empty." << std::endl << std::endl;
+        usage();
+        exit(1);
+    }
+    Glib::ustring local = localValue.toString().c_str();
+    debug() << "Using local port(s)" << local;
+
+    // remote
+    Glib::ustring remote;
+    yarp::os::Value &remoteValue = options.find("remote");
+    if (remoteValue.isNull()) {
         debug() << "Missing --remote option. Will wait for the connection...";
+    } else {
+        remote = remoteValue.toString().c_str();
+        debug() << "Using remote port(s)" << remote;
     }
 
-    if (!options.check("rows")) {
-        debug() << "Missing --rows option. Using 1.";
-    } else {
-        debug() << "Using" << rows.asInt() << "rows.";
+    // rows and cols
+    unsigned int rows = 1;
+    unsigned int cols = 1;
+    if (options.check("rows")) {
+        rows = options.find("rows").asInt();
     }
-
-    if (!options.check("cols")) {
-        debug() << "Missing --cols option. Using 1.";
-    } else {
-        debug() << "Using" << cols.asInt() << "columns.";
+    if (options.check("cols")) {
+        cols = options.find("cols").asInt();
     }
+    debug() << "Using" << rows << "rows and" << cols << "columns.";
 
     // Init gtkmm and gtkdataboxmm
     if(!Glib::thread_supported()) {
