@@ -23,13 +23,31 @@
 
 #include <gtkdataboxmm/databox.h>
 
+#include <gdkmm/color.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Bottle.h>
+
+
 namespace GPortScope {
 
-class DataPlot : public GtkDataboxMM::Databox
+class DataPlot : public GDatabox::Databox
 {
 public:
-    DataPlot();
+    DataPlot(const Glib::ustring &title,
+             int gridx,
+             int gridy,
+             int hspan,
+             int vspan,
+             int minval,
+             int maxval,
+             int size,
+             const Glib::ustring &bgcolor,
+             bool autorescale);
+
     virtual ~DataPlot();
+
+    void toggleAcquire(bool toggled);
+    int size() const;
 
 private:
     class Private;

@@ -18,37 +18,54 @@
  */
 
 
-#ifndef GPORTSCOPE_MAINWINDOW_H
-#define GPORTSCOPE_MAINWINDOW_H
+#ifndef GPORTSCOPE_PORTREADER_H
+#define GPORTSCOPE_PORTREADER_H
 
-#include <gtkmm/window.h>
+namespace Glib {
+class ustring;
+}
 
-namespace yarp {
-namespace os {
-class Value;
-} // namespace os
-} // namespace yarp
-
-namespace Gtk {
-class ActionGroup;
-class UIManager;
-} // namespace Gtk
-
-namespace GPortScope {
-
-class MainWindow : public Gtk::Window
+namespace GPortScope
 {
+
+class PortReader
+{
+protected:
+    PortReader();
+
 public:
-    MainWindow();
-    virtual ~MainWindow();
+    virtual ~PortReader();
+
+    static PortReader& instance();
 
     void setInterval(int interval);
+    int interval() const;
+
+    void toggleAcquire(bool acquire);
+    void toggleAcquire();
+    bool isAcquiring() const;
+
+    void clearData();
+
+    void acquireData(const Glib::ustring &remotePortName, int index);
+
+    float* X(const Glib::ustring &remotePortName, int index) const;
+    float* Y(const Glib::ustring &remotePortName, int index) const;
+    float* T(const Glib::ustring &remotePortName, int index) const;
+
+    int bufSize() const;
 
 private:
+
+    // not implemented
+    PortReader& operator=(const PortReader &other);
+    PortReader(const PortReader &other);
+
     class Private;
     Private * const mPriv;
 };
 
 } // namespace GPortScope
 
-#endif // GPORTSCOPE_MAINWINDOW_H
+
+#endif // GPORTSCOPE_PORTREADER_H

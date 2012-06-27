@@ -24,12 +24,15 @@
 #include <iosfwd>
 #include <sstream>
 
+#include <glibmm/ustring.h>
+
 #include <yarp/os/ConstString.h>
+
 
 namespace GPortScope
 {
 
-enum MsgType { DebugType, WarningType, FatalType };
+enum MsgType { DebugType, WarningType, ErrorType, FatalType };
 
 
 class Debug {
@@ -68,18 +71,17 @@ public:
     inline Debug& operator<<(const void * t) { stream->oss << t; stream->oss << ' '; return *this; }
 
     inline Debug& operator<<(yarp::os::ConstString t) { stream->oss << t.c_str(); stream->oss << ' '; return *this; }
+    inline Debug& operator<<(Glib::ustring t) { stream->oss << t.c_str(); stream->oss << ' '; return *this; }
 
 private:
     void print_output(MsgType t, const std::ostringstream &s);
 };
 
-void setDebug(bool enabled);
-void setWarning(bool enabled);
-
 }
 
 inline GPortScope::Debug debug() { return GPortScope::Debug(GPortScope::DebugType); }
 inline GPortScope::Debug warning() { return GPortScope::Debug(GPortScope::WarningType); }
+inline GPortScope::Debug error() { return GPortScope::Debug(GPortScope::ErrorType); }
 inline GPortScope::Debug fatal() { return GPortScope::Debug(GPortScope::FatalType); }
 
 

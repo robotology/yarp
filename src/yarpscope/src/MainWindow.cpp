@@ -20,8 +20,11 @@
 #include "MainWindow.h"
 #include "DataPlot.h"
 #include "Debug.h"
+#include "PlotManager.h"
+#include "PortReader.h"
 
 #include <glibmm/i18n.h>
+#include <glibmm/ustring.h>
 
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/actiongroup.h>
@@ -30,7 +33,14 @@
 #include <gtkmm/toolbar.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/menubar.h>
+#include <gtkmm/table.h>
+#include <gtkmm/toggleaction.h>
+#include <gtkmm/spinbutton.h>
 
+#include <yarp/os/Value.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Bottle.h>
+#include <gtkdataboxmm/bars.h>
 
 
 namespace GPortScope {
@@ -42,7 +52,14 @@ public:
         parent(parent),
         refActionGroup(Gtk::ActionGroup::create()),
         refUIManager(Gtk::UIManager::create()),
+        intervalAdjustment(1, -1, 1000),
+        intervalSpinButton(intervalAdjustment, 0.0, 0),
+        intervalLabel(_("Interval")),
         running(true)
+    {
+    }
+
+    ~Private()
     {
     }
 
@@ -50,6 +67,15 @@ public:
     void on_action_file_quit();
     void on_action_help_about();
     void on_action_actions_stop_start();
+    void on_action_actions_clear();
+    void on_action_interval_value_changed();
+
+    // Parse inputs
+    void parseInputs();
+
+    void setInputPort(DataPlot *plot, const Glib::ustring &local);
+    void connectRemotesToLocal(std::list<Glib::ustring> remotes, const Glib::ustring &local);
+    void setIndexMask(DataPlot *plot);
 
     // parent window
     MainWindow * const parent;
@@ -59,14 +85,13 @@ public:
     Glib::RefPtr<Gtk::UIManager> refUIManager;
 
     Gtk::VBox windowBox;
-    DataPlot databox;
 
-    // From user options
-    int interval;
-    Glib::ustring remote;
-    Glib::ustring local;
-    unsigned int rows;
-    unsigned int cols;
+    // Interval Button
+    Gtk::Adjustment intervalAdjustment;
+    Gtk::SpinButton intervalSpinButton;
+    Gtk::Label intervalLabel;
+    Gtk::VBox intervalVBox;
+    Gtk::ToolItem intervalToolItem;
 
     // Other private members
     bool running;
@@ -134,22 +159,26 @@ void GPortScope::MainWindow::Private::on_action_actions_stop_start()
     }
 
     running = !running;
+
+    PortReader::instance().toggleAcquire(running);
 }
 
-
-GPortScope::MainWindow::MainWindow(int interval,
-                                   const Glib::ustring &local,
-                                   const Glib::ustring &remote,
-                                   unsigned int rows,
-                                   unsigned int cols)
-    : mPriv(new Private(this))
+void GPortScope::MainWindow::Private::on_action_interval_value_changed()
 {
-    mPriv->interval = interval;
-    mPriv->local = local;
-    mPriv->remote = remote;
-    mPriv->rows = rows;
-    mPriv->cols = cols;
+    int interval = intervalSpinButton.get_value_as_int();
+    PortReader::instance().setInterval(interval);
+}
 
+void GPortScope::MainWindow::Private::on_action_actions_clear()
+{
+    PortReader::instance().clearData();
+}
+
+Glib::RefPtr<GDatabox::Bars> bars;
+
+GPortScope::MainWindow::MainWindow() :
+        mPriv(new Private(this))
+{
     set_border_width(3);
     set_default_size(640, 480);
     set_icon_name("gportscope"); // FIXME
@@ -163,8 +192,10 @@ GPortScope::MainWindow::MainWindow(int interval,
     mPriv->refActionGroup->add(Gtk::Action::create("Quit", Gtk::Stock::QUIT),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_file_quit));
     mPriv->refActionGroup->add(Gtk::Action::create("MenuActions", _("_Actions")));
-    mPriv->refActionGroup->add(Gtk::Action::create("StopStart", _("Stop"), _("Stop plotting")),
+    mPriv->refActionGroup->add(Gtk::ToggleAction::create("StopStart", _("Stop"), _("Stop plotting")),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_stop_start));
+    mPriv->refActionGroup->add(Gtk::Action::create("Clear", _("Clear"), _("Clear plots")),
+                sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_clear));
     mPriv->refActionGroup->add(Gtk::Action::create("MenuHelp", _("Help")));
     mPriv->refActionGroup->add(Gtk::Action::create("About", Gtk::Stock::ABOUT),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_help_about));
@@ -174,6 +205,7 @@ GPortScope::MainWindow::MainWindow(int interval,
         fatal() << "Action \"StopStart\" is missing.";
     }
     stopStartAction->set_icon_name("media-playback-pause");
+
 
 
     mPriv->refUIManager->insert_action_group(mPriv->refActionGroup);
@@ -188,6 +220,7 @@ GPortScope::MainWindow::MainWindow(int interval,
     "    </menu>"
     "    <menu action='MenuActions'>"
     "      <menuitem action='StopStart'/>"
+    "      <menuitem action='Clear'/>"
     "    </menu>"
     "    <menu action='MenuHelp'>"
     "      <menuitem action='About'/>"
@@ -195,6 +228,7 @@ GPortScope::MainWindow::MainWindow(int interval,
     "  </menubar>"
     "  <toolbar  name='ToolBar'>"
     "    <toolitem action='StopStart'/>"
+    "    <toolitem action='Clear'/>"
     "  </toolbar>"
     "</ui>";
 
@@ -222,7 +256,25 @@ GPortScope::MainWindow::MainWindow(int interval,
         fatal() << "building menus failed: \"/ToolBar\" is missing";
     }
 
-    mPriv->windowBox.pack_start(mPriv->databox);
+    mPriv->intervalSpinButton.set_value(PortReader::instance().interval());
+    mPriv->intervalSpinButton.signal_value_changed().connect(sigc::mem_fun(*mPriv, &GPortScope::MainWindow::Private::on_action_interval_value_changed));
+    mPriv->intervalVBox.pack_start(mPriv->intervalSpinButton);
+    mPriv->intervalVBox.pack_start(mPriv->intervalLabel);
+    mPriv->intervalToolItem.add(mPriv->intervalVBox);
+    toolbar->prepend(mPriv->intervalToolItem);
+
+    int PLOT_SIZE=201;
+    float *X = new float[PLOT_SIZE];
+    float *Y = new float[PLOT_SIZE];
+
+    for (int i = 0; i < PLOT_SIZE; i++) {
+        X[i] = i;
+        Y[i] = cos (i * 4 * G_PI / PLOT_SIZE) / 2 * 100;
+    }
+
+    bars = GDatabox::Bars::create(PLOT_SIZE, X, Y, Gdk::Color("Orange"));
+
+    mPriv->windowBox.pack_start(*PlotManager::instance().getPlotWidget());
 
     show_all_children();
 }
@@ -231,3 +283,11 @@ GPortScope::MainWindow::~MainWindow()
 {
     delete mPriv;
 }
+
+void GPortScope::MainWindow::setInterval(int interval)
+{
+    mPriv->intervalSpinButton.set_value(interval);
+//    GPortScope::PortReader::instance().setInterval(interval);
+
+}
+

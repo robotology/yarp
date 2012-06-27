@@ -17,23 +17,60 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GPORTSCOPE_PLOT_H
-#define GPORTSCOPE_PLOT_H
+#ifndef GPORTSCOPE_GRAPH_H
+#define GPORTSCOPE_GRAPH_H
 
-#include <gtkdataboxmm/points.h>
+#include <glibmm/refptr.h>
 
-namespace GPortScope {
 
-class Plot : public GtkDataboxMM::Points
+namespace Glib
+{
+class ustring;
+}
+
+namespace GDatabox
+{
+class Graph;
+}
+
+namespace GPortScope
+{
+class PlotManager;
+
+class Graph
 {
 public:
-    Plot(std::string inputPortName, unsigned int index);
-    virtual ~Plot();
+    enum Type
+    {
+        TypeUnset = 0,
+        TypePoints,
+        TypeLines,
+        TypeBars
+    };
+
+    Graph(const Glib::ustring &remote,
+          int index,
+          const Glib::ustring &title,
+          const Glib::ustring &color,
+          const Glib::ustring &type,
+          int size,
+          int plotSize);
+
+    virtual ~Graph();
+
+    Glib::RefPtr<GDatabox::Graph> graph() const;
+    const Glib::ustring& title() const;
+
+protected:
+    void update();
 
 private:
     class Private;
     Private * const mPriv;
+
+    friend class GPortScope::PlotManager;
 };
 
 } // namespace GPortScope
-#endif
+
+#endif // GPORTSCOPE_GRAPH_H

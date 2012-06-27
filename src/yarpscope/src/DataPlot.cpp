@@ -18,93 +18,122 @@
  */
 
 #include "DataPlot.h"
+#include "Debug.h"
 
 #include <gtkdataboxmm/lines.h>
 #include <gtkdataboxmm/bars.h>
 #include <gtkdataboxmm/points.h>
 #include <gtkdataboxmm/cross_simple.h>
+#include <gtkdataboxmm/grid.h>
 
-#define POINTS 2000
+#include <yarp/os/Bottle.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Stamp.h>
 
-namespace GPortScope {
 
-class DataPlot::Private
+class GPortScope::DataPlot::Private
 {
 public:
     Private(DataPlot *parent):
         parent(parent),
-        X(new float[POINTS]),
-        Y_lines(new float[POINTS]),
-        Y_bars(new float[POINTS]),
-        Y_points(new float[POINTS])
-
+        hlines(new float[9]),
+        vlines(new float[8])
     {
     }
 
     ~Private()
     {
-        delete X;
-        delete Y_lines;
-        delete Y_bars;
-        delete Y_points;
-    }
+        delete [] hlines;
+        delete [] vlines;
+   }
+
+    void createGrid();
 
     // parent DataPlot
     DataPlot * const parent;
 
-    // Graphs
-    Glib::RefPtr<GtkDataboxMM::Bars> bars;
-    Glib::RefPtr<GtkDataboxMM::Graph> lines;
-    Glib::RefPtr<GtkDataboxMM::Points> points;
-    Glib::RefPtr<GtkDataboxMM::CrossSimple> cross;
+    Glib::ustring title;
+    int gridx;
+    int gridy;
+    int hspan;
+    int vspan;
+    int minval;
+    int maxval;
+    int size;
+    Gdk::Color bgcolor;
+    bool autorescale;
 
-    // Points
-    float *X;
-    float *Y_lines;
-    float *Y_bars;
-    float *Y_points;
+    float *hlines;
+    float *vlines;
+    Glib::RefPtr<GDatabox::CrossSimple> cross;
+    Glib::RefPtr<GDatabox::Grid> grid;
 
-
+    bool acquire;
 };
 
-DataPlot::DataPlot() :
-    mPriv(new Private(this))
+void GPortScope::DataPlot::Private::createGrid()
 {
-//    set_enable_selection(false);
-//    set_enable_zoom(false);
-    modify_bg(Gtk::STATE_NORMAL, Gdk::Color("#EB00EB00EB00"));
-
-    for (int i = 0; i < POINTS; i++) {
-        mPriv->X[i] = i;
-        mPriv->Y_lines[i] = cos (i * 4 * G_PI / POINTS) / 2;
-        mPriv->Y_bars[i] = sin(i * 4 * G_PI / POINTS);
-        mPriv->Y_points[i] = ((float)rand() / RAND_MAX) * 2 - 1;
+    for (int i = 0; i < 9; i++) {
+        hlines[i] = ((maxval + minval) / 2) + ((maxval - minval) / 8) * (i - 4);
+    }
+    for (int i = 0; i < 8; i++) {
+        vlines[i] = size / 8.0 * (i + 1);
     }
 
-    mPriv->lines = GtkDataboxMM::Lines::create(POINTS, mPriv->X, mPriv->Y_lines, Gdk::Color("Red"), 3);
-    mPriv->bars = GtkDataboxMM::Bars::create(POINTS, mPriv->X, mPriv->Y_bars, Gdk::Color("Green"));
-    mPriv->points = GtkDataboxMM::Points::create(POINTS, mPriv->X, mPriv->Y_points, Gdk::Color("Blue"), 5);
-    mPriv->cross = GtkDataboxMM::CrossSimple::create(Gdk::Color("Black"));
+    grid = GDatabox::Grid::create(9, 8, hlines, vlines, Gdk::Color("Grey"));
+    cross = GDatabox::CrossSimple::create(Gdk::Color("DarkSlateGrey"));
 
-    graph_add(mPriv->cross);
-    graph_add(mPriv->lines);
-    graph_add(mPriv->bars);
-    graph_add(mPriv->points);
-
-   /* Create the GtkDatabox widget */
-//   gtk_databox_create_box_with_scrollbars_and_rulers (&box, &table,
-//                               TRUE, TRUE, FALSE, FALSE);
-
-    set_total_limits(-1000., 5000., -10000., 23000.);
-    auto_rescale(0.05);
+    parent->graph_add(grid);
+    parent->graph_add(cross);
 }
 
-DataPlot::~DataPlot()
+
+GPortScope::DataPlot::DataPlot(const Glib::ustring &title,
+                               int gridx, // FIXME needed?
+                               int gridy, // FIXME needed?
+                               int hspan, // FIXME needed?
+                               int vspan, // FIXME needed?
+                               int minval,
+                               int maxval,
+                               int size,
+                               const Glib::ustring &bgcolor,
+                               bool autorescale) :
+    mPriv(new Private(this))
+{
+    mPriv->title = title;
+    mPriv->gridx = gridx;
+    mPriv->gridy = gridy;
+    mPriv->hspan = hspan;
+    mPriv->vspan = vspan;
+    mPriv->minval = minval;
+    mPriv->maxval = maxval;
+    mPriv->size = size;
+    mPriv->bgcolor = (bgcolor.empty() ? Gdk::Color("LightSlateGray") : Gdk::Color(bgcolor));
+    mPriv->autorescale = autorescale;
+
+    mPriv->createGrid();
+    set_total_limits(-5., size + 5., maxval + 5, minval - 5);
+    if (autorescale) {
+        auto_rescale(0.05);
+    }
+
+    modify_bg(Gtk::STATE_NORMAL, mPriv->bgcolor);
+}
+
+
+GPortScope::DataPlot::~DataPlot()
 {
     delete mPriv;
 }
 
+void GPortScope::DataPlot::toggleAcquire(bool toggled)
+{
+    mPriv->acquire = toggled;
+}
 
-} // namespace GPortScope
-
-#include <gtkdatabox.h>
+int GPortScope::DataPlot::size() const
+{
+    return mPriv->size;
+}

@@ -17,44 +17,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Plot.h"
 
-#include <gdkmm/color.h>
+#ifndef GPORTSCOPE_XMLLOADER_H
+#define GPORTSCOPE_XMLLOADER_H
 
+namespace Glib {
+class ustring;
+}
 
-namespace GPortScope {
-class Plot::Private
+namespace GPortScope
+{
+class XmlLoader
 {
 public:
-    Private(Plot *parent):
-        parent(parent),
-        X(new float[points]),
-        Y(new float[points])
-    {
-    }
-
-    // parent DataPlot
-    Plot * const parent;
-
-    std::string inputPortName;
-    unsigned int index;
-
-    float *X;
-    float *Y;
-
-    static const unsigned int points = 1000;
+    XmlLoader(const Glib::ustring &filename);
 };
-}
+
+} // namespace GPortScope
 
 
-GPortScope::Plot::Plot(std::string inputPortName, unsigned int index) :
-    mPriv(new Private(this)),
-    GtkDataboxMM::Points(mPriv->points, mPriv->X, mPriv->Y, Gdk::Color("black"))
-{
-
-}
-
-GPortScope::Plot::~Plot()
-{
-    delete mPriv;
-}
+#endif // GPORTSCOPE_XMLLOADER_H
