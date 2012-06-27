@@ -21,6 +21,8 @@
 
 #include <iostream>
 
+#include <glibmm/i18n.h>
+
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/box.h>
@@ -30,111 +32,58 @@
 #include <gtkmm/uimanager.h>
 #include <gtkmm/menubar.h>
 
-#include <glibmm/i18n.h>
 
 
-GPortScope::MainWindow::MainWindow()
-    : m_refActionGroup(Gtk::ActionGroup::create()),
-      m_refUIManager(Gtk::UIManager::create()),
-      m_running(true)
+namespace GPortScope {
+
+class MainWindow::Private
 {
-    set_border_width(3);
-    set_default_size(640, 480);
-    set_icon_name("gportscope"); // FIXME
+    MainWindow *parent;
 
-    add(m_windowBox);
-
-    // Setup actions
-    m_refActionGroup = Gtk::ActionGroup::create();
-
-    m_refActionGroup->add(Gtk::Action::create("MenuFile", _("_File")));
-    m_refActionGroup->add(Gtk::Action::create("Quit", Gtk::Stock::QUIT),
-                sigc::mem_fun(*this, &MainWindow::on_action_file_quit));
-    m_refActionGroup->add(Gtk::Action::create("MenuActions", _("_Actions")));
-    m_refActionGroup->add(Gtk::Action::create("StopStart", _("Stop"), _("Stop plotting")),
-                sigc::mem_fun(*this, &MainWindow::on_action_actions_stop_start));
-    m_refActionGroup->add(Gtk::Action::create("MenuHelp", _("Help")));
-    m_refActionGroup->add(Gtk::Action::create("About", Gtk::Stock::ABOUT),
-                sigc::mem_fun(*this, &MainWindow::on_action_help_about));
-
-    Glib::RefPtr <Gtk::Action > stopStartAction = m_refActionGroup->get_action("StopStart");
-    if(!stopStartAction) {
-        std::cerr << "FATAL: Action \"StopStart\" is missing." << std::endl;
-    }
-    stopStartAction->set_icon_name("media-playback-pause");
-
-
-    m_refUIManager->insert_action_group(m_refActionGroup);
-    add_accel_group(m_refUIManager->get_accel_group());
-
-    Glib::ustring ui_info =
-    "<ui>"
-    "  <menubar name='MenuBar'>"
-    "    <menu action='MenuFile'>"
-    "      <separator />"
-    "      <menuitem action='Quit'/>"
-    "    </menu>"
-    "    <menu action='MenuActions'>"
-    "      <menuitem action='StopStart'/>"
-    "    </menu>"
-    "    <menu action='MenuHelp'>"
-    "      <menuitem action='About'/>"
-    "    </menu>"
-    "  </menubar>"
-    "  <toolbar  name='ToolBar'>"
-    "    <toolitem action='StopStart'/>"
-    "  </toolbar>"
-    "</ui>";
-
-    try {
-        m_refUIManager->add_ui_from_string(ui_info);
-    }
-    catch(const Glib::Error& ex) {
-        std::cerr << "FATAL: building menus failed: " <<  ex.what();
+public:
+    Private(MainWindow *parent):
+        parent(parent),
+        refActionGroup(Gtk::ActionGroup::create()),
+        refUIManager(Gtk::UIManager::create()),
+        running(true),
+        button(_("Hello World"))
+    {
     }
 
-    // Setup menu bar
-    Gtk::MenuBar* menubar = dynamic_cast<Gtk::MenuBar*>(m_refUIManager->get_widget("/MenuBar"));
-    if(menubar) {
-        m_windowBox.pack_start(*menubar, Gtk::PACK_SHRINK);
-    } else {
-        std::cerr << "FATAL: building menus failed: \"/MenuBar\" is missing" << std::endl;
-    }
+    // Signal handlers:
+    void on_action_file_quit();
+    void on_action_help_about();
+    void on_action_actions_stop_start();
 
-    // Setup toolbar
-    Gtk::Toolbar* toolbar = dynamic_cast<Gtk::Toolbar*>(m_refUIManager->get_widget("/ToolBar"));
-    if(toolbar) {
-        m_windowBox.pack_start(*toolbar, Gtk::PACK_SHRINK);
-        toolbar->set_toolbar_style(Gtk::TOOLBAR_BOTH);
-    } else {
-        std::cerr << "FATAL: building menus failed: \"/ToolBar\" is missing" << std::endl;
-    }
+    void on_button_clicked();
 
-    Gtk::Button button(_("Hello World"));
-    button.signal_clicked().connect(sigc::mem_fun(*this,
-                &MainWindow::on_button_clicked));
+    // Child widgets:
+    Gtk::VBox windowBox;
+    Gtk::Button button;
 
-    m_windowBox.pack_start(button);
+    Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
+    Glib::RefPtr<Gtk::UIManager> refUIManager;
 
-    show_all_children();
-}
+    // Other private members
+    bool running;
+};
 
-GPortScope::MainWindow::~MainWindow()
-{
-}
+} // GPortScope
 
-void GPortScope::MainWindow::on_action_file_quit()
+
+
+void GPortScope::MainWindow::Private::on_action_file_quit()
 {
     std::cout << "DEBUG: Quit clicked" << std::endl;
-    hide();
+    parent->hide();
 }
 
-void GPortScope::MainWindow::on_action_help_about()
+void GPortScope::MainWindow::Private::on_action_help_about()
 {
     std::cout << "DEBUG: About clicked" << std::endl;
 
     Gtk::AboutDialog dialog;
-    dialog.set_transient_for(*this);
+    dialog.set_transient_for(*parent);
 
     dialog.set_comments("A simple graphical user interface for visualizing the numerical content of a yarp port.");
 
@@ -161,19 +110,19 @@ void GPortScope::MainWindow::on_action_help_about()
     dialog.run();
 }
 
-void GPortScope::MainWindow::on_button_clicked()
+void GPortScope::MainWindow::Private::on_button_clicked()
 {
     std::cout << "Hello World" << std::endl;
 }
 
-void GPortScope::MainWindow::on_action_actions_stop_start()
+void GPortScope::MainWindow::Private::on_action_actions_stop_start()
 {
-    Glib::RefPtr<Gtk::Action> stopStartAction = m_refActionGroup->get_action("StopStart");
+    Glib::RefPtr<Gtk::Action> stopStartAction = refActionGroup->get_action("StopStart");
     if(!stopStartAction) {
         std::cerr << "FATAL: Action \"StopStart\" is missing." << std::endl;
     }
 
-    if (m_running) {
+    if (running) {
         std::cout << "DEBUG: Stop clicked" << std::endl;
         stopStartAction->set_icon_name("media-playback-start");
         stopStartAction->set_label(_("Start"));
@@ -185,5 +134,97 @@ void GPortScope::MainWindow::on_action_actions_stop_start()
         stopStartAction->set_tooltip(_("Stop plotting"));
     }
 
-    m_running = !m_running;
+    running = !running;
+}
+
+
+
+
+
+GPortScope::MainWindow::MainWindow()
+    : mPriv(new Private(this))
+{
+    set_border_width(3);
+    set_default_size(640, 480);
+    set_icon_name("gportscope"); // FIXME
+
+    add(mPriv->windowBox);
+
+    // Setup actions
+    mPriv->refActionGroup = Gtk::ActionGroup::create();
+
+    mPriv->refActionGroup->add(Gtk::Action::create("MenuFile", _("_File")));
+    mPriv->refActionGroup->add(Gtk::Action::create("Quit", Gtk::Stock::QUIT),
+                sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_file_quit));
+    mPriv->refActionGroup->add(Gtk::Action::create("MenuActions", _("_Actions")));
+    mPriv->refActionGroup->add(Gtk::Action::create("StopStart", _("Stop"), _("Stop plotting")),
+                sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_stop_start));
+    mPriv->refActionGroup->add(Gtk::Action::create("MenuHelp", _("Help")));
+    mPriv->refActionGroup->add(Gtk::Action::create("About", Gtk::Stock::ABOUT),
+                sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_help_about));
+
+    Glib::RefPtr <Gtk::Action > stopStartAction = mPriv->refActionGroup->get_action("StopStart");
+    if(!stopStartAction) {
+        std::cerr << "FATAL: Action \"StopStart\" is missing." << std::endl;
+    }
+    stopStartAction->set_icon_name("media-playback-pause");
+
+
+    mPriv->refUIManager->insert_action_group(mPriv->refActionGroup);
+    add_accel_group(mPriv->refUIManager->get_accel_group());
+
+    Glib::ustring ui_info =
+    "<ui>"
+    "  <menubar name='MenuBar'>"
+    "    <menu action='MenuFile'>"
+    "      <separator />"
+    "      <menuitem action='Quit'/>"
+    "    </menu>"
+    "    <menu action='MenuActions'>"
+    "      <menuitem action='StopStart'/>"
+    "    </menu>"
+    "    <menu action='MenuHelp'>"
+    "      <menuitem action='About'/>"
+    "    </menu>"
+    "  </menubar>"
+    "  <toolbar  name='ToolBar'>"
+    "    <toolitem action='StopStart'/>"
+    "  </toolbar>"
+    "</ui>";
+
+    try {
+        mPriv->refUIManager->add_ui_from_string(ui_info);
+    }
+    catch(const Glib::Error& ex) {
+        std::cerr << "FATAL: building menus failed: " <<  ex.what();
+    }
+
+    // Setup menu bar
+    Gtk::MenuBar* menubar = dynamic_cast<Gtk::MenuBar*>(mPriv->refUIManager->get_widget("/MenuBar"));
+    if(menubar) {
+        mPriv->windowBox.pack_start(*menubar, Gtk::PACK_SHRINK);
+    } else {
+        std::cerr << "FATAL: building menus failed: \"/MenuBar\" is missing" << std::endl;
+    }
+
+    // Setup toolbar
+    Gtk::Toolbar* toolbar = dynamic_cast<Gtk::Toolbar*>(mPriv->refUIManager->get_widget("/ToolBar"));
+    if(toolbar) {
+        mPriv->windowBox.pack_start(*toolbar, Gtk::PACK_SHRINK);
+        toolbar->set_toolbar_style(Gtk::TOOLBAR_BOTH);
+    } else {
+        std::cerr << "FATAL: building menus failed: \"/ToolBar\" is missing" << std::endl;
+    }
+
+    mPriv->button.signal_clicked().connect(sigc::mem_fun(*mPriv,
+                &MainWindow::Private::on_button_clicked));
+
+    mPriv->windowBox.pack_start(mPriv->button, Gtk::PACK_SHRINK);
+
+    show_all_children();
+}
+
+GPortScope::MainWindow::~MainWindow()
+{
+    delete mPriv;
 }

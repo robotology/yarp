@@ -22,8 +22,6 @@
 #define GPORTSCOPE_MAINWINDOW_H
 
 #include <gtkmm/window.h>
-#include <gtkmm/box.h>
-#include <glibmm/refptr.h>
 
 namespace Gtk {
 class ActionGroup;
@@ -40,21 +38,8 @@ public:
     virtual ~MainWindow();
 
 private:
-    // Signal handlers:
-    void on_action_file_quit();
-    void on_action_help_about();
-    void on_action_actions_stop_start();
-
-    void on_button_clicked();
-
-    // Child widgets:
-    Gtk::VBox m_windowBox;
-
-    Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
-    Glib::RefPtr<Gtk::UIManager> m_refUIManager;
-
-    // Other private members
-    bool m_running;
+    class Private;
+    Private * const mPriv;
 };
 
 } // GPortScope
