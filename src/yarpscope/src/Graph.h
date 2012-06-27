@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -17,8 +17,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GPORTSCOPE_GRAPH_H
-#define GPORTSCOPE_GRAPH_H
+#ifndef YARPSCOPE_GRAPH_H
+#define YARPSCOPE_GRAPH_H
 
 #include <glibmm/refptr.h>
 
@@ -33,7 +33,7 @@ namespace GDatabox
 class Graph;
 }
 
-namespace GPortScope
+namespace YarpScope
 {
 class PlotManager;
 
@@ -68,9 +68,9 @@ private:
     class Private;
     Private * const mPriv;
 
-    friend class GPortScope::PlotManager;
+    friend class YarpScope::PlotManager;
 };
 
-} // namespace GPortScope
+} // namespace YarpScope
 
-#endif // GPORTSCOPE_GRAPH_H
+#endif // YARPSCOPE_GRAPH_H

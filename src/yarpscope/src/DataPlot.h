@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef GPORTSCOPE_DATAPLOT_H
-#define GPORTSCOPE_DATAPLOT_H
+#ifndef YARPSCOPE_DATAPLOT_H
+#define YARPSCOPE_DATAPLOT_H
 
 #include <gtkdataboxmm/databox.h>
 
@@ -28,7 +28,7 @@
 #include <yarp/os/Bottle.h>
 
 
-namespace GPortScope {
+namespace YarpScope {
 
 class DataPlot : public GDatabox::Databox
 {
@@ -50,6 +50,6 @@ private:
     Private * const mPriv;
 };
 
-} // GPortScope
+} // YarpScope
 
-#endif // GPORTSCOPE_DATAPLOT_H
+#endif // YARPSCOPE_DATAPLOT_H

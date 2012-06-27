@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -33,7 +33,7 @@
 
 
 namespace {
-static GPortScope::PortReader *s_instance = NULL;
+static YarpScope::PortReader *s_instance = NULL;
 static Glib::Mutex s_mutex;
 static const int s_bufSize = 2000;
 static const Glib::ustring s_carrier = "mcast";
@@ -41,7 +41,7 @@ static const Glib::ustring s_carrier = "mcast";
 
 
 
-class GPortScope::PortReader::Private
+class YarpScope::PortReader::Private
 {
 public:
 
@@ -82,7 +82,7 @@ public:
     {
         Connection(const Glib::ustring &remotePortName) :
             remotePortName(remotePortName),
-            localPortName("/gPortScope" + remotePortName),
+            localPortName("/YarpScope" + remotePortName),
             localPort(new yarp::os::BufferedPort<yarp::os::Bottle>()),
             realTime(false),
             initialTime(0.0),
@@ -184,9 +184,9 @@ public:
 
 
 
-bool GPortScope::PortReader::Private::onTimeout()
+bool YarpScope::PortReader::Private::onTimeout()
 {
-    debug() << "GPortScope::PortReader::Private::onTimeout called";
+    debug() << "YarpScope::PortReader::Private::onTimeout called";
 
     if (!acquire) {
         return true;
@@ -255,7 +255,7 @@ bool GPortScope::PortReader::Private::onTimeout()
     return true;
 }
 
-void GPortScope::PortReader::Private::acquireData(const Glib::ustring& remotePortName, int index)
+void YarpScope::PortReader::Private::acquireData(const Glib::ustring& remotePortName, int index)
 {
     debug() << "PortReader: Acquiring data from port" << remotePortName << "index" << index;
     Connection *curr_connection = NULL;
@@ -288,7 +288,7 @@ void GPortScope::PortReader::Private::acquireData(const Glib::ustring& remotePor
 
 }
 
-void GPortScope::PortReader::Private::clearData()
+void YarpScope::PortReader::Private::clearData()
 {
     for (std::vector<Connection*>::iterator cit = connections.begin();
                 cit != connections.end(); cit++) {
@@ -297,7 +297,7 @@ void GPortScope::PortReader::Private::clearData()
     }
 }
 
-GPortScope::PortReader::Private::Connection* GPortScope::PortReader::Private::find(const Glib::ustring& remotePortName) const
+YarpScope::PortReader::Private::Connection* YarpScope::PortReader::Private::find(const Glib::ustring& remotePortName) const
 {
     for (std::vector<Connection*>::const_iterator cit = connections.begin();
                 cit != connections.end(); cit++) {
@@ -310,7 +310,7 @@ GPortScope::PortReader::Private::Connection* GPortScope::PortReader::Private::fi
 }
 
 
-GPortScope::PortReader::Private::Index* GPortScope::PortReader::Private::find(const Glib::ustring& remotePortName, int index) const
+YarpScope::PortReader::Private::Index* YarpScope::PortReader::Private::find(const Glib::ustring& remotePortName, int index) const
 {
     Connection *conn = find(remotePortName);
     if (conn) {
@@ -325,7 +325,7 @@ GPortScope::PortReader::Private::Index* GPortScope::PortReader::Private::find(co
     return NULL;
 }
 
-float* GPortScope::PortReader::Private::X(const Glib::ustring& remotePortName, int index) const
+float* YarpScope::PortReader::Private::X(const Glib::ustring& remotePortName, int index) const
 {
     Index *idx = find(remotePortName, index);
     if (idx) {
@@ -334,7 +334,7 @@ float* GPortScope::PortReader::Private::X(const Glib::ustring& remotePortName, i
     return NULL;
 }
 
-float* GPortScope::PortReader::Private::Y(const Glib::ustring& remotePortName, int index) const
+float* YarpScope::PortReader::Private::Y(const Glib::ustring& remotePortName, int index) const
 {
     Index *idx = find(remotePortName, index);
     if (idx) {
@@ -343,7 +343,7 @@ float* GPortScope::PortReader::Private::Y(const Glib::ustring& remotePortName, i
     return NULL;
 }
 
-float* GPortScope::PortReader::Private::T(const Glib::ustring& remotePortName, int index) const
+float* YarpScope::PortReader::Private::T(const Glib::ustring& remotePortName, int index) const
 {
     Index *idx = find(remotePortName, index);
     if (idx) {
@@ -353,18 +353,18 @@ float* GPortScope::PortReader::Private::T(const Glib::ustring& remotePortName, i
 }
 
 
-GPortScope::PortReader::PortReader() :
+YarpScope::PortReader::PortReader() :
     mPriv(new Private(this))
 {
     toggleAcquire(true);
 }
 
-GPortScope::PortReader::~PortReader()
+YarpScope::PortReader::~PortReader()
 {
     delete mPriv;
 }
 
-GPortScope::PortReader& GPortScope::PortReader::instance()
+YarpScope::PortReader& YarpScope::PortReader::instance()
 {
     // I don't know if a static Glib::Mutex is thread safe but it shouldn't be
     // used on concurrent threads during the creation, so it shouldn't be a
@@ -377,11 +377,11 @@ GPortScope::PortReader& GPortScope::PortReader::instance()
     return *s_instance;
 }
 
-void GPortScope::PortReader::toggleAcquire(bool acquire)
+void YarpScope::PortReader::toggleAcquire(bool acquire)
 {
     if (acquire && !mPriv->timer_connection.connected()) {
         mPriv->timer_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(*mPriv, &GPortScope::PortReader::Private::onTimeout), mPriv->interval);
+                sigc::mem_fun(*mPriv, &YarpScope::PortReader::Private::onTimeout), mPriv->interval);
     } else if (!acquire && mPriv->timer_connection.connected()) {
         mPriv->timer_connection.disconnect();
     }
@@ -389,17 +389,17 @@ void GPortScope::PortReader::toggleAcquire(bool acquire)
     mPriv->acquire = acquire;
 }
 
-void GPortScope::PortReader::toggleAcquire()
+void YarpScope::PortReader::toggleAcquire()
 {
     toggleAcquire(!mPriv->acquire);
 }
 
-bool GPortScope::PortReader::isAcquiring() const
+bool YarpScope::PortReader::isAcquiring() const
 {
     return mPriv->acquire;
 }
 
-void GPortScope::PortReader::setInterval(int interval)
+void YarpScope::PortReader::setInterval(int interval)
 {
     if (mPriv->timer_connection.connected()) {
         mPriv->timer_connection.disconnect();
@@ -408,40 +408,40 @@ void GPortScope::PortReader::setInterval(int interval)
     mPriv->interval = interval;
     if (mPriv->acquire) {
         mPriv->timer_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(*mPriv, &GPortScope::PortReader::Private::onTimeout), mPriv->interval);
+                sigc::mem_fun(*mPriv, &YarpScope::PortReader::Private::onTimeout), mPriv->interval);
     }
 }
 
-int GPortScope::PortReader::interval() const
+int YarpScope::PortReader::interval() const
 {
     return mPriv->interval;
 }
 
-void GPortScope::PortReader::clearData()
+void YarpScope::PortReader::clearData()
 {
     mPriv->clearData();
 }
 
 
-void GPortScope::PortReader::acquireData(const Glib::ustring& remotePortName, int index)
+void YarpScope::PortReader::acquireData(const Glib::ustring& remotePortName, int index)
 {
     mPriv->acquireData(remotePortName, index);
 }
 
-float* GPortScope::PortReader::X(const Glib::ustring& remotePortName, int index) const
+float* YarpScope::PortReader::X(const Glib::ustring& remotePortName, int index) const
 {
     return mPriv->X(remotePortName, index);
 }
-float* GPortScope::PortReader::Y(const Glib::ustring& remotePortName, int index) const
+float* YarpScope::PortReader::Y(const Glib::ustring& remotePortName, int index) const
 {
     return mPriv->Y(remotePortName, index);
 }
-float* GPortScope::PortReader::T(const Glib::ustring& remotePortName, int index) const
+float* YarpScope::PortReader::T(const Glib::ustring& remotePortName, int index) const
 {
     return mPriv->T(remotePortName, index);
 }
 
-int GPortScope::PortReader::bufSize() const
+int YarpScope::PortReader::bufSize() const
 {
     return s_bufSize;
 }

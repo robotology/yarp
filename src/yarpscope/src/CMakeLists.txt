@@ -1,4 +1,4 @@
-set(gPortScope_SRCS
+set(YarpScope_SRCS
     main.cpp
     DataPlot.cpp
     Debug.cpp
@@ -18,8 +18,8 @@ set(tinyxml_SRCS
     tinyxml/tinyxmlparser.cpp
 )
 
-set(gPortScope_SRCS
-    ${gPortScope_SRCS}
+set(YarpScope_SRCS
+    ${YarpScope_SRCS}
     ${tinyxml_SRCS}
 )
 
@@ -59,35 +59,35 @@ set(gtkdataboxmm_SRCS
     gtkdatabox/gtkdataboxmm/xyc_graph.cc
 )
 
-if(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
+if(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
     include_directories(gtkdatabox)
-    set(gPortScope_SRCS
-        ${gPortScope_SRCS}
+    set(YarpScope_SRCS
+        ${YarpScope_SRCS}
         ${gtkdataboxmm_SRCS}
     )
-    if(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
+    if(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOX)
         include_directories(gtkdatabox)
-        set(gPortScope_SRCS
-            ${gPortScope_SRCS}
+        set(YarpScope_SRCS
+            ${YarpScope_SRCS}
             ${gtkdatabox_SRCS}
         )
-    endif(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
-endif(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
+    endif(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOX)
+endif(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
 
 
 
-add_executable(gPortScope ${gPortScope_SRCS})
+add_executable(yarpscope ${YarpScope_SRCS})
 
 
-target_link_libraries(gPortScope
+target_link_libraries(yarpscope
                       ${YARP_LIBRARIES}
                       ${GTKMM_LIBRARIES}
 )
 
-if(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
-    target_link_libraries(gPortScope ${GTKDATABOXMM_LIBRARIES})
-else(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
-    if(GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
-        target_link_libraries(gPortScope ${GTKDATABOX_LIBRARIES})
-    endif(GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
-endif(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
+if(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
+    target_link_libraries(yarpscope ${GTKDATABOXMM_LIBRARIES})
+else(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
+    if(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
+        target_link_libraries(yarpscope ${GTKDATABOX_LIBRARIES})
+    endif(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
+endif(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)

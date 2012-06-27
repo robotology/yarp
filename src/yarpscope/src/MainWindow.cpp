@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -43,7 +43,7 @@
 #include <gtkdataboxmm/bars.h>
 
 
-namespace GPortScope {
+namespace YarpScope {
 
 class MainWindow::Private
 {
@@ -97,17 +97,17 @@ public:
     bool running;
 };
 
-} // GPortScope
+} // YarpScope
 
 
 
-void GPortScope::MainWindow::Private::on_action_file_quit()
+void YarpScope::MainWindow::Private::on_action_file_quit()
 {
     debug() << "Quit clicked";
     parent->hide();
 }
 
-void GPortScope::MainWindow::Private::on_action_help_about()
+void YarpScope::MainWindow::Private::on_action_help_about()
 {
     debug() << "About clicked";
 
@@ -139,7 +139,7 @@ void GPortScope::MainWindow::Private::on_action_help_about()
     dialog.run();
 }
 
-void GPortScope::MainWindow::Private::on_action_actions_stop_start()
+void YarpScope::MainWindow::Private::on_action_actions_stop_start()
 {
     Glib::RefPtr<Gtk::Action> stopStartAction = refActionGroup->get_action("StopStart");
     if(!stopStartAction) {
@@ -163,25 +163,25 @@ void GPortScope::MainWindow::Private::on_action_actions_stop_start()
     PortReader::instance().toggleAcquire(running);
 }
 
-void GPortScope::MainWindow::Private::on_action_interval_value_changed()
+void YarpScope::MainWindow::Private::on_action_interval_value_changed()
 {
     int interval = intervalSpinButton.get_value_as_int();
     PortReader::instance().setInterval(interval);
 }
 
-void GPortScope::MainWindow::Private::on_action_actions_clear()
+void YarpScope::MainWindow::Private::on_action_actions_clear()
 {
     PortReader::instance().clearData();
 }
 
 Glib::RefPtr<GDatabox::Bars> bars;
 
-GPortScope::MainWindow::MainWindow() :
+YarpScope::MainWindow::MainWindow() :
         mPriv(new Private(this))
 {
     set_border_width(3);
     set_default_size(640, 480);
-    set_icon_name("gportscope"); // FIXME
+    set_icon_name("yarpscope"); // FIXME
 
     add(mPriv->windowBox);
 
@@ -249,7 +249,7 @@ GPortScope::MainWindow::MainWindow() :
     }
 
     mPriv->intervalSpinButton.set_value(PortReader::instance().interval());
-    mPriv->intervalSpinButton.signal_value_changed().connect(sigc::mem_fun(*mPriv, &GPortScope::MainWindow::Private::on_action_interval_value_changed));
+    mPriv->intervalSpinButton.signal_value_changed().connect(sigc::mem_fun(*mPriv, &YarpScope::MainWindow::Private::on_action_interval_value_changed));
     mPriv->intervalVBox.pack_start(mPriv->intervalSpinButton);
     mPriv->intervalVBox.pack_start(mPriv->intervalLabel);
     mPriv->intervalToolItem.add(mPriv->intervalVBox);
@@ -271,15 +271,15 @@ GPortScope::MainWindow::MainWindow() :
     show_all_children();
 }
 
-GPortScope::MainWindow::~MainWindow()
+YarpScope::MainWindow::~MainWindow()
 {
     delete mPriv;
 }
 
-void GPortScope::MainWindow::setInterval(int interval)
+void YarpScope::MainWindow::setInterval(int interval)
 {
     mPriv->intervalSpinButton.set_value(interval);
-//    GPortScope::PortReader::instance().setInterval(interval);
+//    YarpScope::PortReader::instance().setInterval(interval);
 
 }
 

@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -35,12 +35,12 @@
 #include "PortReader.h"
 
 void usage() {
-    std::cout << "Usage: gPortScope [OPTIONS]" << std::endl;
+    std::cout << "Usage: yarpscope [OPTIONS]" << std::endl;
     std::cout << std::endl;
     std::cout << "OPTIONS:" << std::endl;
     std::cout << " --help             Print this help and exit." << std::endl;
     std::cout << std::endl;
-    std::cout << " --title [string]   Title of the window (default \"gPortScope\")" << std::endl;
+    std::cout << " --title [string]   Title of the window (default \"Yarp Port Scope\")" << std::endl;
     std::cout << " --x [uint]         Initial X position of the window." << std::endl;
     std::cout << " --y [uint]         Initial Y position of the window." << std::endl;
     std::cout << " --dx [uint]        Initial width of the window." << std::endl;
@@ -77,8 +77,8 @@ int main(int argc, char *argv[])
     // Setup resource finder
     yarp::os::ResourceFinder rf;
 //    rf.setVerbose();
-//    rf.setDefaultContext("gPortScope/conf");
-//    rf.setDefaultConfigFile("gPortScope.ini");
+//    rf.setDefaultContext("YarpScope/conf");
+//    rf.setDefaultConfigFile("YarpScope.ini");
     rf.configure("ICUB_ROOT", argc, argv); // FIXME Use another policy
 
     //Yarp network initialization
@@ -102,11 +102,11 @@ int main(int argc, char *argv[])
     }
     Gtk::Main kit(argc, argv);
     GDatabox::init();
-    Glib::set_application_name(_("gPortScope"));
+    Glib::set_application_name(_("Yarp Port Scope"));
 
 
     // Create main window
-    GPortScope::MainWindow mainWindow;
+    YarpScope::MainWindow mainWindow;
 
 
 // Generic options
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 // XML Mode Options
         const yarp::os::Value &xmlValue = options.find("xml");
         debug() << "Loading file" << xmlValue.toString();
-        GPortScope::XmlLoader xmlLoader(xmlValue.toString().c_str());
+        YarpScope::XmlLoader xmlLoader(xmlValue.toString().c_str());
     } else {
 // Command Line Mode Options
         // TODO Make a class
@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
 // Deprecated options
     // local
     if (options.check("local")) {
-        warning() << "--local option is deprecated. gPortScope now uses \"${YARP_PORT_PREFIX}/gPortScope/${REMOTE_PORT_NAME}\"";
+        warning() << "--local option is deprecated. YarpScope now uses \"${YARP_PORT_PREFIX}/YarpScope/${REMOTE_PORT_NAME}\"";
     }
 
 

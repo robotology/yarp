@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -43,10 +43,10 @@ namespace {
 }
 
 
-GPortScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
+YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
 {
-    GPortScope::PortReader &portReader = GPortScope::PortReader::instance();
-    GPortScope::PlotManager &plotManager = GPortScope::PlotManager::instance();
+    YarpScope::PortReader &portReader = YarpScope::PortReader::instance();
+    YarpScope::PlotManager &plotManager = YarpScope::PlotManager::instance();
 
 
     TiXmlDocument doc(filename.c_str());

@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -33,11 +33,11 @@
 
 
 namespace {
-static GPortScope::PlotManager *s_instance = NULL;
+static YarpScope::PlotManager *s_instance = NULL;
 static Glib::Mutex s_mutex;
 }
 
-class GPortScope::PlotManager::Private
+class YarpScope::PlotManager::Private
 {
 public:
     Private(PlotManager *p) :
@@ -64,17 +64,17 @@ public:
 };
 
 
-GPortScope::PlotManager::PlotManager() :
+YarpScope::PlotManager::PlotManager() :
     mPriv(new Private(this))
 {
 }
 
-GPortScope::PlotManager::~PlotManager()
+YarpScope::PlotManager::~PlotManager()
 {
     delete mPriv;
 }
 
-GPortScope::PlotManager& GPortScope::PlotManager::instance()
+YarpScope::PlotManager& YarpScope::PlotManager::instance()
 {
     // I don't know if a static Glib::Mutex is thread safe but it shouldn't be
     // used on concurrent threads during the creation, so it shouldn't be a
@@ -87,7 +87,7 @@ GPortScope::PlotManager& GPortScope::PlotManager::instance()
     return *s_instance;
 }
 
-int GPortScope::PlotManager::addPlot(const Glib::ustring &title,
+int YarpScope::PlotManager::addPlot(const Glib::ustring &title,
                                      int gridx,
                                      int gridy,
                                      int hspan,
@@ -99,7 +99,7 @@ int GPortScope::PlotManager::addPlot(const Glib::ustring &title,
                                      bool autorescale)
 {
     debug() << "Adding plot" << title << "in position" << gridx << gridy << hspan << vspan;
-    GPortScope::DataPlot *newplot = new DataPlot(title, minval, maxval, size, bgcolor, autorescale);
+    YarpScope::DataPlot *newplot = new DataPlot(title, minval, maxval, size, bgcolor, autorescale);
     mPriv->table.attach(*newplot, gridx, gridx + hspan, gridy, gridy + vspan);
     mPriv->table.show_all_children();
 
@@ -109,7 +109,7 @@ int GPortScope::PlotManager::addPlot(const Glib::ustring &title,
     return (mPriv->plots.size() - 1);
 }
 
-int GPortScope::PlotManager::addGraph(int plotIndex,
+int YarpScope::PlotManager::addGraph(int plotIndex,
                                       const Glib::ustring &remote,
                                       int index,
                                       const Glib::ustring &title,
@@ -137,12 +137,12 @@ int GPortScope::PlotManager::addGraph(int plotIndex,
     return (mPriv->plots.size() - 1); // FIXME useless
 }
 
-Gtk::Widget* GPortScope::PlotManager::getPlotWidget() const
+Gtk::Widget* YarpScope::PlotManager::getPlotWidget() const
 {
     return &(mPriv->table);
 }
 
-void GPortScope::PlotManager::redraw(bool increment) const
+void YarpScope::PlotManager::redraw(bool increment) const
 {
     for (std::vector<Graph*>::iterator it = mPriv->graphs.begin();
                 it != mPriv->graphs.end(); it++) {

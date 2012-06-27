@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -33,7 +33,7 @@
 #include <yarp/os/Stamp.h>
 
 
-class GPortScope::DataPlot::Private
+class YarpScope::DataPlot::Private
 {
 public:
     Private(DataPlot *parent):
@@ -73,7 +73,7 @@ public:
     bool acquire;
 };
 
-void GPortScope::DataPlot::Private::createGrid()
+void YarpScope::DataPlot::Private::createGrid()
 {
     for (int i = 0; i < 9; i++) {
         hlines[i] = ((maxval + minval) / 2) + ((maxval - minval) / 8) * (i - 4);
@@ -90,7 +90,7 @@ void GPortScope::DataPlot::Private::createGrid()
 }
 
 
-GPortScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
+YarpScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
                                int minval,
                                int maxval,
                                int size,
@@ -115,17 +115,17 @@ GPortScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
 }
 
 
-GPortScope::DataPlot::~DataPlot()
+YarpScope::DataPlot::~DataPlot()
 {
     delete mPriv;
 }
 
-void GPortScope::DataPlot::toggleAcquire(bool toggled)
+void YarpScope::DataPlot::toggleAcquire(bool toggled)
 {
     mPriv->acquire = toggled;
 }
 
-int GPortScope::DataPlot::size() const
+int YarpScope::DataPlot::size() const
 {
     return mPriv->size;
 }

@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -38,7 +38,7 @@ namespace {
 }
 
 
-class GPortScope::Graph::Private
+class YarpScope::Graph::Private
 {
 public:
     Private(Graph *parent):
@@ -60,7 +60,7 @@ public:
         }
     }
 
-    static GPortScope::Graph::Type stringToType(Glib::ustring typeStr);
+    static YarpScope::Graph::Type stringToType(Glib::ustring typeStr);
 
     void update(bool increment);
 
@@ -81,19 +81,19 @@ public:
 };
 
 
-GPortScope::Graph::Type GPortScope::Graph::Private::stringToType(Glib::ustring typeStr)
+YarpScope::Graph::Type YarpScope::Graph::Private::stringToType(Glib::ustring typeStr)
 {
     if (!typeStr.compare("points")) {
-        return GPortScope::Graph::TypePoints;
+        return YarpScope::Graph::TypePoints;
     } else if (!typeStr.compare("lines")) {
-        return GPortScope::Graph::TypeLines;
+        return YarpScope::Graph::TypeLines;
     } else if (!typeStr.compare("bars")) {
-        return GPortScope::Graph::TypeBars;
+        return YarpScope::Graph::TypeBars;
     }
-    return GPortScope::Graph::TypeUnset;
+    return YarpScope::Graph::TypeUnset;
 }
 
-void GPortScope::Graph::Private::update(bool increment)
+void YarpScope::Graph::Private::update(bool increment)
 {
 #if 0
     // TODO enable
@@ -112,7 +112,7 @@ void GPortScope::Graph::Private::update(bool increment)
 }
 
 
-GPortScope::Graph::Graph(const Glib::ustring &remote,
+YarpScope::Graph::Graph(const Glib::ustring &remote,
                          int index,
                          const Glib::ustring &title,
                          const Glib::ustring &color,
@@ -153,9 +153,9 @@ GPortScope::Graph::Graph(const Glib::ustring &remote,
         // TODO choose one color from a list
     }
 
-    mPriv->X = GPortScope::PortReader::instance().X(remote, index);
-    mPriv->Y = GPortScope::PortReader::instance().Y(remote, index);
-    mPriv->T = GPortScope::PortReader::instance().T(remote, index);
+    mPriv->X = YarpScope::PortReader::instance().X(remote, index);
+    mPriv->Y = YarpScope::PortReader::instance().Y(remote, index);
+    mPriv->T = YarpScope::PortReader::instance().T(remote, index);
 
     g_assert(mPriv->X && mPriv->Y && mPriv->T);
     if (!mPriv->X || !mPriv->Y || !mPriv->T) {
@@ -185,22 +185,22 @@ GPortScope::Graph::Graph(const Glib::ustring &remote,
 
 }
 
-GPortScope::Graph::~Graph()
+YarpScope::Graph::~Graph()
 {
     delete mPriv;
 }
 
-Glib::RefPtr< GDatabox::Graph > GPortScope::Graph::graph() const
+Glib::RefPtr< GDatabox::Graph > YarpScope::Graph::graph() const
 {
     return mPriv->graph;
 }
 
-const Glib::ustring& GPortScope::Graph::title() const
+const Glib::ustring& YarpScope::Graph::title() const
 {
     return mPriv->title;
 }
 
-void GPortScope::Graph::update(bool increment)
+void YarpScope::Graph::update(bool increment)
 {
     mPriv->update(increment);
 }

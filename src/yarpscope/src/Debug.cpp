@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -26,7 +26,7 @@
 #include <glib/gmessages.h>
 
 
-void GPortScope::Debug::print_output(MsgType t, const std::ostringstream &s)
+void YarpScope::Debug::print_output(MsgType t, const std::ostringstream &s)
 {
     switch (t) {
         case DebugType:

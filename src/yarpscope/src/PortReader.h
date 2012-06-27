@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -18,14 +18,14 @@
  */
 
 
-#ifndef GPORTSCOPE_PORTREADER_H
-#define GPORTSCOPE_PORTREADER_H
+#ifndef YARPSCOPE_PORTREADER_H
+#define YARPSCOPE_PORTREADER_H
 
 namespace Glib {
 class ustring;
 }
 
-namespace GPortScope
+namespace YarpScope
 {
 
 class PortReader
@@ -65,7 +65,7 @@ private:
     Private * const mPriv;
 };
 
-} // namespace GPortScope
+} // namespace YarpScope
 
 
-#endif // GPORTSCOPE_PORTREADER_H
+#endif // YARPSCOPE_PORTREADER_H

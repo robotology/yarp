@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef GPORTSCOPE_PLOTMANAGER_H
-#define GPORTSCOPE_PLOTMANAGER_H
+#ifndef YARPSCOPE_PLOTMANAGER_H
+#define YARPSCOPE_PLOTMANAGER_H
 
 
 namespace Glib {
@@ -30,7 +30,7 @@ namespace Gtk {
 class Widget;
 }
 
-namespace GPortScope
+namespace YarpScope
 {
 
 class PlotManager
@@ -75,7 +75,7 @@ private:
     Private * const mPriv;
 };
 
-} // namespace GPortScope
+} // namespace YarpScope
 
 
-#endif // GPORTSCOPE_PLOTMANAGER_H
+#endif // YARPSCOPE_PLOTMANAGER_H

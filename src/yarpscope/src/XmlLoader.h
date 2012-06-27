@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -18,14 +18,14 @@
  */
 
 
-#ifndef GPORTSCOPE_XMLLOADER_H
-#define GPORTSCOPE_XMLLOADER_H
+#ifndef YARPSCOPE_XMLLOADER_H
+#define YARPSCOPE_XMLLOADER_H
 
 namespace Glib {
 class ustring;
 }
 
-namespace GPortScope
+namespace YarpScope
 {
 class XmlLoader
 {
@@ -33,7 +33,7 @@ public:
     XmlLoader(const Glib::ustring &filename);
 };
 
-} // namespace GPortScope
+} // namespace YarpScope
 
 
-#endif // GPORTSCOPE_XMLLOADER_H
+#endif // YARPSCOPE_XMLLOADER_H

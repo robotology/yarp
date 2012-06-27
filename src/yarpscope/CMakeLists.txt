@@ -1,4 +1,4 @@
-project(gPortScope)
+project(YarpScope)
 
 cmake_minimum_required(VERSION 2.6.4)
 
@@ -11,22 +11,22 @@ include_directories(${YARP_INCLUDE_DIRS}
                     ${GTKMM_INCLUDE_DIRS}
 )
 
-set(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM OFF CACHE BOOL "Use system GtkDataboxMM library")
-mark_as_advanced(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
-if(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
+set(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM OFF CACHE BOOL "Use system GtkDataboxMM library")
+mark_as_advanced(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
+if(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
     find_package(GtkDataboxMM REQUIRED)
     include_directories(${GTKDATABOXMM_INCLUDE_DIRS})
     link_directories(${GTKDATABOXMM_LIBRARY_DIRS})
-    set(GPORTSCOPE_USE_SYSTEM_GTKDATABOX ON CACHE BOOL "Use system GtkDatabox library" FORCE)
-else(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
-    set(GPORTSCOPE_USE_SYSTEM_GTKDATABOX OFF CACHE BOOL "Use system GtkDatabox library")
-    mark_as_advanced(GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
-    if(GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
+    set(YARPSCOPE_USE_SYSTEM_GTKDATABOX ON CACHE BOOL "Use system GtkDatabox library" FORCE)
+else(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
+    set(YARPSCOPE_USE_SYSTEM_GTKDATABOX OFF CACHE BOOL "Use system GtkDatabox library")
+    mark_as_advanced(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
+    if(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
         find_package(GtkDatabox REQUIRED)
         include_directories(${GTKDATABOX_INCLUDE_DIRS})
         link_directories(${GTKDATABOX_LIBRARY_DIRS})
-    endif(GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
-endif(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
+    endif(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
+endif(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
 
 
 add_definitions("-Wall --ansi")

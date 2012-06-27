@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef GPORTSCOPE_MAINWINDOW_H
-#define GPORTSCOPE_MAINWINDOW_H
+#ifndef YARPSCOPE_MAINWINDOW_H
+#define YARPSCOPE_MAINWINDOW_H
 
 #include <gtkmm/window.h>
 
@@ -34,7 +34,7 @@ class ActionGroup;
 class UIManager;
 } // namespace Gtk
 
-namespace GPortScope {
+namespace YarpScope {
 
 class MainWindow : public Gtk::Window
 {
@@ -49,6 +49,6 @@ private:
     Private * const mPriv;
 };
 
-} // namespace GPortScope
+} // namespace YarpScope
 
-#endif // GPORTSCOPE_MAINWINDOW_H
+#endif // YARPSCOPE_MAINWINDOW_H

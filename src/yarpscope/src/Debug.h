@@ -1,5 +1,5 @@
 /*
- *  This file is part of gPortScope
+ *  This file is part of Yarp Port Scope
  *
  *  Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef GPORTSCOPE_DEBUG_H
-#define GPORTSCOPE_DEBUG_H
+#ifndef YARPSCOPE_DEBUG_H
+#define YARPSCOPE_DEBUG_H
 
 #include <iosfwd>
 #include <sstream>
@@ -29,7 +29,7 @@
 #include <yarp/os/ConstString.h>
 
 
-namespace GPortScope
+namespace YarpScope
 {
 
 enum MsgType { DebugType, WarningType, ErrorType, FatalType };
@@ -79,10 +79,10 @@ private:
 
 }
 
-inline GPortScope::Debug debug() { return GPortScope::Debug(GPortScope::DebugType); }
-inline GPortScope::Debug warning() { return GPortScope::Debug(GPortScope::WarningType); }
-inline GPortScope::Debug error() { return GPortScope::Debug(GPortScope::ErrorType); }
-inline GPortScope::Debug fatal() { return GPortScope::Debug(GPortScope::FatalType); }
+inline YarpScope::Debug debug() { return YarpScope::Debug(YarpScope::DebugType); }
+inline YarpScope::Debug warning() { return YarpScope::Debug(YarpScope::WarningType); }
+inline YarpScope::Debug error() { return YarpScope::Debug(YarpScope::ErrorType); }
+inline YarpScope::Debug fatal() { return YarpScope::Debug(YarpScope::FatalType); }
 
 
-#endif // GPORTSCOPE_DEBUG_H
+#endif // YARPSCOPE_DEBUG_H
