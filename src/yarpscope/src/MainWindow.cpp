@@ -19,8 +19,7 @@
 
 #include "MainWindow.h"
 #include "DataPlot.h"
-
-#include <iostream>
+#include "Debug.h"
 
 #include <glibmm/i18n.h>
 
@@ -31,6 +30,7 @@
 #include <gtkmm/toolbar.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/menubar.h>
+
 
 
 namespace GPortScope {
@@ -71,13 +71,13 @@ public:
 
 void GPortScope::MainWindow::Private::on_action_file_quit()
 {
-    std::cout << "DEBUG: Quit clicked" << std::endl;
+    debug() << "Quit clicked";
     parent->hide();
 }
 
 void GPortScope::MainWindow::Private::on_action_help_about()
 {
-    std::cout << "DEBUG: About clicked" << std::endl;
+    debug() << "About clicked";
 
     Gtk::AboutDialog dialog;
     dialog.set_transient_for(*parent);
@@ -111,16 +111,16 @@ void GPortScope::MainWindow::Private::on_action_actions_stop_start()
 {
     Glib::RefPtr<Gtk::Action> stopStartAction = refActionGroup->get_action("StopStart");
     if(!stopStartAction) {
-        std::cerr << "FATAL: Action \"StopStart\" is missing." << std::endl;
+        fatal() << "Action \"StopStart\" is missing.";
     }
 
     if (running) {
-        std::cout << "DEBUG: Stop clicked" << std::endl;
+        debug() << "Stop clicked";
         stopStartAction->set_icon_name("media-playback-start");
         stopStartAction->set_label(_("Start"));
         stopStartAction->set_tooltip(_("Start plotting"));
     } else {
-        std::cout << "DEBUG: Start clicked" << std::endl;
+        debug() << "Start clicked";
         stopStartAction->set_icon_name("media-playback-pause");
         stopStartAction->set_label(_("Stop"));
         stopStartAction->set_tooltip(_("Stop plotting"));
@@ -155,9 +155,9 @@ GPortScope::MainWindow::MainWindow()
     mPriv->refActionGroup->add(Gtk::Action::create("About", Gtk::Stock::ABOUT),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_help_about));
 
-    Glib::RefPtr <Gtk::Action > stopStartAction = mPriv->refActionGroup->get_action("StopStart");
+    Glib::RefPtr <Gtk::Action> stopStartAction = mPriv->refActionGroup->get_action("StopStart");
     if(!stopStartAction) {
-        std::cerr << "FATAL: Action \"StopStart\" is missing." << std::endl;
+        fatal() << "Action \"StopStart\" is missing.";
     }
     stopStartAction->set_icon_name("media-playback-pause");
 
@@ -188,7 +188,7 @@ GPortScope::MainWindow::MainWindow()
         mPriv->refUIManager->add_ui_from_string(ui_info);
     }
     catch(const Glib::Error& ex) {
-        std::cerr << "FATAL: building menus failed: " <<  ex.what();
+        fatal() << "building menus failed: " <<  ex.what();
     }
 
     // Setup menu bar
@@ -196,7 +196,7 @@ GPortScope::MainWindow::MainWindow()
     if(menubar) {
         mPriv->windowBox.pack_start(*menubar, Gtk::PACK_SHRINK);
     } else {
-        std::cerr << "FATAL: building menus failed: \"/MenuBar\" is missing" << std::endl;
+        fatal() << "building menus failed: \"/MenuBar\" is missing";
     }
 
     // Setup toolbar
@@ -205,7 +205,7 @@ GPortScope::MainWindow::MainWindow()
         mPriv->windowBox.pack_start(*toolbar, Gtk::PACK_SHRINK);
         toolbar->set_toolbar_style(Gtk::TOOLBAR_BOTH);
     } else {
-        std::cerr << "FATAL: building menus failed: \"/ToolBar\" is missing" << std::endl;
+        fatal() << "building menus failed: \"/ToolBar\" is missing";
     }
 
     mPriv->windowBox.pack_start(mPriv->databox);

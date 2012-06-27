@@ -26,7 +26,7 @@
 namespace Gtk {
 class ActionGroup;
 class UIManager;
-} // Gtk
+} // namespace Gtk
 
 namespace GPortScope {
 
@@ -41,6 +41,6 @@ private:
     Private * const mPriv;
 };
 
-} // GPortScope
+} // namespace GPortScope
 
 #endif // GPORTSCOPE_MAINWINDOW_H
