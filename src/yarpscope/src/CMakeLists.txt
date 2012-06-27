@@ -1,10 +1,12 @@
 set(gPortScope_SRCS
     main.cpp
     MainWindow.cpp
+    DataPlot.cpp
 )
 
 set(gPortScope_HDRS
     MainWindow.h
+    DataPlot.h
 )
 
 add_executable(gPortScope ${gPortScope_SRCS})
