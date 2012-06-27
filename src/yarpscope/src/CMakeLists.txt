@@ -59,20 +59,20 @@ set(gtkdataboxmm_SRCS
     gtkdatabox/gtkdataboxmm/xyc_graph.cc
 )
 
-if(NOT USE_SYSTEM_GTKDATABOXMM)
+if(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
     include_directories(gtkdatabox)
     set(gPortScope_SRCS
         ${gPortScope_SRCS}
         ${gtkdataboxmm_SRCS}
     )
-    if(NOT USE_SYSTEM_GTKDATABOX)
+    if(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
         include_directories(gtkdatabox)
         set(gPortScope_SRCS
             ${gPortScope_SRCS}
             ${gtkdatabox_SRCS}
         )
-    endif(NOT USE_SYSTEM_GTKDATABOX)
-endif(NOT USE_SYSTEM_GTKDATABOXMM)
+    endif(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
+endif(NOT GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
 
 
 
@@ -84,10 +84,10 @@ target_link_libraries(gPortScope
                       ${GTKMM_LIBRARIES}
 )
 
-if(USE_SYSTEM_GTKDATABOXMM)
+if(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
     target_link_libraries(gPortScope ${GTKDATABOXMM_LIBRARIES})
-else(USE_SYSTEM_GTKDATABOXMM)
-    if(USE_SYSTEM_GTKDATABOX)
+else(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
+    if(GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
         target_link_libraries(gPortScope ${GTKDATABOX_LIBRARIES})
-    endif(USE_SYSTEM_GTKDATABOX)
-endif(USE_SYSTEM_GTKDATABOXMM)
+    endif(GPORTSCOPE_USE_SYSTEM_GTKDATABOX)
+endif(GPORTSCOPE_USE_SYSTEM_GTKDATABOXMM)
