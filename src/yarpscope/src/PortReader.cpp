@@ -66,7 +66,7 @@ public:
         void clearData()
         {
             for (int i = 0; i < s_bufSize; i++) {
-                X[i] = i;
+                X[i] = 0;
                 Y[i] = 0;
                 T[i] = 0;
             }

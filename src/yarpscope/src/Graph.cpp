@@ -95,10 +95,9 @@ GPortScope::Graph::Type GPortScope::Graph::Private::stringToType(Glib::ustring t
 
 void GPortScope::Graph::Private::update(bool increment)
 {
-    for (int i = 0; i < plotSize - 1; i++) {
-        Y_plot[i] = Y_plot[i+1];
+    for (int i = 0; i < plotSize; i++) {
+        Y_plot[(plotSize - 1) - i] = Y[(curr - i) % bufSize];
     }
-    Y_plot[plotSize - 1] = Y[curr++];
 
     if (increment) {
         curr = (curr + 1) % bufSize;
