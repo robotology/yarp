@@ -26,11 +26,19 @@
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/actiongroup.h>
 #include <gtkmm/box.h>
-#include <gtkmm/button.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/toolbar.h>
 #include <gtkmm/uimanager.h>
 #include <gtkmm/menubar.h>
+
+#include <gtkdataboxmm/databox.h>
+#include <gtkdataboxmm/lines.h>
+#include <gtkdataboxmm/bars.h>
+#include <gtkdataboxmm/points.h>
+#include <gtkdataboxmm/cross_simple.h>
+
+
+#define POINTS 2000
 
 
 
@@ -38,16 +46,25 @@ namespace GPortScope {
 
 class MainWindow::Private
 {
-    MainWindow *parent;
-
 public:
     Private(MainWindow *parent):
         parent(parent),
         refActionGroup(Gtk::ActionGroup::create()),
         refUIManager(Gtk::UIManager::create()),
         running(true),
-        button(_("Hello World"))
+        X(new float[POINTS]),
+        Y_lines(new float[POINTS]),
+        Y_bars(new float[POINTS]),
+        Y_points(new float[POINTS])
     {
+    }
+
+    ~Private()
+    {
+        delete X;
+        delete Y_lines;
+        delete Y_bars;
+        delete Y_points;
     }
 
     // Signal handlers:
@@ -55,17 +72,28 @@ public:
     void on_action_help_about();
     void on_action_actions_stop_start();
 
-    void on_button_clicked();
+    // parent window
+    MainWindow *parent;
 
     // Child widgets:
-    Gtk::VBox windowBox;
-    Gtk::Button button;
-
     Glib::RefPtr<Gtk::ActionGroup> refActionGroup;
     Glib::RefPtr<Gtk::UIManager> refUIManager;
 
+    Gtk::VBox windowBox;
+    GtkDataboxMM::Databox databox;
+
+    // Graphs
+    Glib::RefPtr<GtkDataboxMM::Bars> bars;
+    Glib::RefPtr<GtkDataboxMM::Graph> lines;
+    Glib::RefPtr<GtkDataboxMM::Points> points;
+    Glib::RefPtr<GtkDataboxMM::CrossSimple> cross;
+
     // Other private members
     bool running;
+    float *X;
+    float *Y_lines;
+    float *Y_bars;
+    float *Y_points;
 };
 
 } // GPortScope
@@ -108,11 +136,6 @@ void GPortScope::MainWindow::Private::on_action_help_about()
                        "along with this program.  If not, see <http://www.gnu.org/licenses/>.");
 
     dialog.run();
-}
-
-void GPortScope::MainWindow::Private::on_button_clicked()
-{
-    std::cout << "Hello World" << std::endl;
 }
 
 void GPortScope::MainWindow::Private::on_action_actions_stop_start()
@@ -216,10 +239,35 @@ GPortScope::MainWindow::MainWindow()
         std::cerr << "FATAL: building menus failed: \"/ToolBar\" is missing" << std::endl;
     }
 
-    mPriv->button.signal_clicked().connect(sigc::mem_fun(*mPriv,
-                &MainWindow::Private::on_button_clicked));
+    mPriv->windowBox.pack_start(mPriv->databox);
+//    mPriv->databox.set_enable_selection(false);
+//    mPriv->databox.set_enable_zoom(false);
+    mPriv->databox.modify_bg(Gtk::STATE_NORMAL, Gdk::Color("#EB00EB00EB00"));
 
-    mPriv->windowBox.pack_start(mPriv->button, Gtk::PACK_SHRINK);
+    for (int i = 0; i < POINTS; i++) {
+        mPriv->X[i] = i;
+        mPriv->Y_lines[i] = cos (i * 4 * G_PI / POINTS) / 2;
+        mPriv->Y_bars[i] = sin(i * 4 * G_PI / POINTS);
+        mPriv->Y_points[i] = ((float)rand() / RAND_MAX) * 2 - 1;
+    }
+
+    mPriv->lines = GtkDataboxMM::Lines::create(POINTS, mPriv->X, mPriv->Y_lines, Gdk::Color("Red"), 3);
+    mPriv->bars = GtkDataboxMM::Bars::create(POINTS, mPriv->X, mPriv->Y_bars, Gdk::Color("Green"));
+    mPriv->points = GtkDataboxMM::Points::create(POINTS, mPriv->X, mPriv->Y_points, Gdk::Color("Blue"), 5);
+    mPriv->cross = GtkDataboxMM::CrossSimple::create(Gdk::Color("Black"));
+
+    mPriv->databox.graph_add(mPriv->cross);
+    mPriv->databox.graph_add(mPriv->lines);
+    mPriv->databox.graph_add(mPriv->bars);
+    mPriv->databox.graph_add(mPriv->points);
+
+   /* Create the GtkDatabox widget */
+//   gtk_databox_create_box_with_scrollbars_and_rulers (&box, &table,
+//                               TRUE, TRUE, FALSE, FALSE);
+
+
+    mPriv->databox.set_total_limits(-1000., 5000., -10000., 23000.);
+    mPriv->databox.auto_rescale(0.05);
 
     show_all_children();
 }

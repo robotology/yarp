@@ -11,5 +11,5 @@ add_executable(gPortScope ${gPortScope_SRCS})
 
 target_link_libraries(gPortScope ${YARP_LIBRARIES}
                                  ${GTKMM_LIBRARIES}
-                                 ${GTKDATABOX_LIBRARIES}
+                                 ${GTKDATABOXMM_LIBRARIES}
 )

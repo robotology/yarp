@@ -32,7 +32,6 @@ namespace GPortScope {
 
 class MainWindow : public Gtk::Window
 {
-
 public:
     MainWindow();
     virtual ~MainWindow();

@@ -26,6 +26,8 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
 
+#include <gtkdataboxmm/init.h>
+
 #include "MainWindow.h"
 
 int main(int argc, char *argv[])
@@ -54,6 +56,7 @@ int main(int argc, char *argv[])
     }
 
     Gtk::Main kit(argc, argv);
+    GtkDataboxMM::init();
     Glib::set_application_name(_("gPortScope"));
 
     GPortScope::MainWindow window;
