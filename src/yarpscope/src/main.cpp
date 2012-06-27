@@ -76,9 +76,9 @@ int main(int argc, char *argv[])
 {
     // Setup resource finder
     yarp::os::ResourceFinder rf;
-//    rf.setVerbose();
-//    rf.setDefaultContext("YarpScope/conf");
-//    rf.setDefaultConfigFile("YarpScope.ini");
+    rf.setVerbose();
+    rf.setDefaultContext("yarpscope/conf");
+    rf.setDefaultConfigFile("yarpscope.ini");
     rf.configure("ICUB_ROOT", argc, argv); // FIXME Use another policy
 
     //Yarp network initialization
