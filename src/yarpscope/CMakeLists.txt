@@ -3,11 +3,11 @@ option(CREATE_YARPSCOPE "Do you want to compile Yarp Port Scope?" OFF)
 if(CREATE_YARPSCOPE)
     set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
 
-    find_package(GtkMM REQUIRED)
+    get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+    include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-    include_directories(${YARP_INCLUDE_DIRS}
-                        ${GTKMM_INCLUDE_DIRS}
-    )
+    find_package(GtkMM REQUIRED)
+    include_directories (${GTKMM_INCLUDE_DIRS})
 
     set(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM OFF CACHE BOOL "Use system GtkDataboxMM library")
     mark_as_advanced(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
@@ -26,7 +26,8 @@ if(CREATE_YARPSCOPE)
         endif(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
     endif(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
 
-    add_definitions("-Wall --ansi")
+    add_definitions("--ansi")
 
-add_subdirectory(src)
+    add_subdirectory(src)
+
 endif(CREATE_YARPSCOPE)

@@ -78,9 +78,8 @@ endif(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
 
 add_executable(yarpscope ${YarpScope_SRCS})
 
-
 target_link_libraries(yarpscope
-                      ${YARP_LIBRARIES}
+                      YARP_init YARP_OS
                       ${GTKMM_LIBRARIES}
 )
 
