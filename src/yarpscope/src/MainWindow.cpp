@@ -194,7 +194,7 @@ GPortScope::MainWindow::MainWindow() :
     mPriv->refActionGroup->add(Gtk::Action::create("MenuActions", _("_Actions")));
     mPriv->refActionGroup->add(Gtk::ToggleAction::create_with_icon_name("StopStart", "media-playback-pause", _("Stop"), _("Stop plotting")),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_stop_start));
-    mPriv->refActionGroup->add(Gtk::Action::create("Clear", _("Clear"), _("Clear plots")),
+    mPriv->refActionGroup->add(Gtk::Action::create_with_icon_name("Clear", "edit-clear", _("Clear"), _("Clear plots")),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_clear));
     mPriv->refActionGroup->add(Gtk::Action::create("MenuHelp", _("Help")));
     mPriv->refActionGroup->add(Gtk::Action::create("About", Gtk::Stock::ABOUT),
