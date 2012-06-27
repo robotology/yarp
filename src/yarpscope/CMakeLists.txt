@@ -1,8 +1,6 @@
 option(CREATE_YARPSCOPE "Do you want to compile Yarp Port Scope?" OFF)
 
 if(CREATE_YARPSCOPE)
-    set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
-
     get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
     include_directories(${YARP_TREE_INCLUDE_DIRS})
 
