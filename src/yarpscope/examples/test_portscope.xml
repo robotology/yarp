@@ -5,6 +5,7 @@
           hspan="1"
           vspan="1"
           title="Plot 00"
+          size="60"
           minval="-100"
           maxval="100"
           bgcolor="LightSlateGrey">
