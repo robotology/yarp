@@ -34,10 +34,6 @@ class DataPlot : public GDatabox::Databox
 {
 public:
     DataPlot(const Glib::ustring &title,
-             int gridx,
-             int gridy,
-             int hspan,
-             int vspan,
              int minval,
              int maxval,
              int size,

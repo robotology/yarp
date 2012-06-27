@@ -90,11 +90,7 @@ void GPortScope::DataPlot::Private::createGrid()
 }
 
 
-GPortScope::DataPlot::DataPlot(const Glib::ustring &title,
-                               int gridx, // FIXME needed?
-                               int gridy, // FIXME needed?
-                               int hspan, // FIXME needed?
-                               int vspan, // FIXME needed?
+GPortScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
                                int minval,
                                int maxval,
                                int size,
@@ -103,10 +99,6 @@ GPortScope::DataPlot::DataPlot(const Glib::ustring &title,
     mPriv(new Private(this))
 {
     mPriv->title = title;
-    mPriv->gridx = gridx;
-    mPriv->gridy = gridy;
-    mPriv->hspan = hspan;
-    mPriv->vspan = vspan;
     mPriv->minval = minval;
     mPriv->maxval = maxval;
     mPriv->size = size;

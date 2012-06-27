@@ -99,7 +99,7 @@ int GPortScope::PlotManager::addPlot(const Glib::ustring &title,
                                      bool autorescale)
 {
     debug() << "Adding plot" << title << "in position" << gridx << gridy << hspan << vspan;
-    GPortScope::DataPlot *newplot = new DataPlot(title, gridx, gridy, hspan, vspan, minval, maxval, size, bgcolor, autorescale);
+    GPortScope::DataPlot *newplot = new DataPlot(title, minval, maxval, size, bgcolor, autorescale);
     mPriv->table.attach(*newplot, gridx, gridx + hspan, gridy, gridy + vspan);
     mPriv->table.show_all_children();
 
