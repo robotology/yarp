@@ -98,9 +98,6 @@ int main(int argc, char *argv[])
     }
 
     // Init gtkmm and gtkdataboxmm
-    if(!Glib::thread_supported()) {
-        Glib::thread_init();
-    }
     Gtk::Main kit(argc, argv);
     GDatabox::init();
     Glib::set_application_name(_("Yarp Port Scope"));
