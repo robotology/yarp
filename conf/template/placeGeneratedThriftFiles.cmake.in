@@ -1,0 +1,49 @@
+# Copyright: (C) 2012 IITRBCS
+# Authors: Elena Ceseracciu
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+FILE(GLOB headers RELATIVE @dir@/ "@dir@/*.h")
+FILE(GLOB sources RELATIVE @dir@/ "@dir@/*.cpp")
+
+set(@thriftName@Headers)
+set(@thriftName@Sources)
+
+# check that globbed files are really the ones we need from generated listfile
+FILE(STRINGS @dir@/@thriftName@_indexALL.txt index)
+#prepare include and src directories in the source tree
+make_directory("@output_dir@/include/@include_prefix@")
+make_directory("@output_dir@/src/@include_prefix@/")
+foreach(genFile ${index})
+  get_filename_component(type ${genFile} EXT)
+  if (${type} STREQUAL ".h")
+    list(FIND headers ${genFile} inclFound)
+    if (${inclFound} EQUAL -1)
+      message(WARNING "${genFile} not found in @thriftName@ Thrift dir!")
+    else(${inclFound} EQUAL -1) 
+      list(APPEND @thriftName@Headers include/@include_prefix@/${genFile})
+      FILE(COPY @dir@/${genFile} DESTINATION @output_dir@/include/@include_prefix@/)
+    endif(${inclFound} EQUAL -1)
+  elseif(${type} STREQUAL ".cpp")
+    list(FIND sources ${genFile} srcFound)
+    if (${srcFound} EQUAL -1)
+      message(WARNING "${genFile} not found in @thriftName@ Thrift dir!")
+    else(${srcFound} EQUAL -1) 
+      list(APPEND @thriftName@Sources src/@include_prefix@/${genFile})
+      FILE(COPY @dir@/${genFile} DESTINATION @output_dir@/src/@include_prefix@/)
+    endif(${srcFound} EQUAL -1)
+
+  else(${type} STREQUAL ".h")
+message(WARNING "Filename extension of ${genFile} is neither .h nor .cpp")
+  endif(${type} STREQUAL ".h")
+endforeach(genFile)
+
+set(@thriftName@HeaderString "")
+set(@thriftName@SourceString "")
+foreach( filename ${@thriftName@Headers})
+set(@thriftName@HeaderString "${@thriftName@HeaderString}${filename}\n")
+endforeach()
+foreach( filename ${@thriftName@Sources})
+set(@thriftName@SourceString "${@thriftName@SourceString}${filename}\n")
+endforeach()
+FILE(WRITE @fileListName@ ${@thriftName@HeaderString})
+FILE(APPEND @fileListName@ ${@thriftName@SourceString})

@@ -22,6 +22,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <set>
 
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -62,6 +63,7 @@ public:
   }
 };
 
+
 /**
  * YARP code generator
  *
@@ -86,9 +88,15 @@ class t_yarp_generator : public t_oop_generator {
     
     iter = parsed_options.find("cmake_supplies_headers");
     cmake_supplies_headers_ = (iter != parsed_options.end());
+    
+    iter = parsed_options.find("include_prefix");
+    use_include_prefix_ = (iter != parsed_options.end());
 
     out_dir_base_ = "gen-yarp";
     gen_pure_enums_ = true;
+    
+    need_common_=false;
+    
   }
 
   void generate_program();
@@ -102,6 +110,42 @@ class t_yarp_generator : public t_oop_generator {
    * Program-level generation functions
    */
 
+  bool use_include_prefix_;
+  std::string get_include_prefix(const t_program& program) const;
+  
+void getNeededType(t_type* curType, std::set<string>& neededTypes)
+{
+    string mtype;
+    if (curType->is_struct())
+    {
+        if (((t_struct*)curType)->annotations_.find("yarp.includefile") != ((t_struct*)curType)->annotations_.end()) 
+            mtype = ((t_struct*)curType)->annotations_["yarp.includefile"];
+        else
+            mtype = get_include_prefix(*(curType->get_program())) + curType->get_name() + ".h";
+        
+        neededTypes.insert(mtype);
+        cout << mtype <<endl;
+    }
+    
+    if (curType->is_enum())
+        mtype = get_include_prefix(*(curType->get_program())) + curType->get_name() + ".h";
+
+
+    if (curType->is_list())
+        getNeededType(((t_list*) curType)->get_elem_type(), neededTypes);
+    
+    if (curType->is_set())
+        getNeededType(((t_set*) curType)->get_elem_type(), neededTypes);
+    
+    if (curType->is_map()) 
+    {
+        getNeededType(((t_map*) curType)->get_key_type(), neededTypes);
+        getNeededType(((t_map*) curType)->get_val_type(), neededTypes);
+    }
+    
+
+}
+  
   void generate_typedef (t_typedef*  ttypedef);
   void generate_enum    (t_enum*     tenum);
   void generate_const   (t_const*    tconst);
@@ -204,6 +248,9 @@ class t_yarp_generator : public t_oop_generator {
   std::string type_to_enum(t_type* ttype);
 
   std::ofstream f_out_;
+  std::ofstream f_out_common_; //in addition to **_index.h - can they be the same file?
+  bool need_common_; //are there consts and typedef that we need to keep in a common file?
+  
   bool gen_pure_enums_;
   bool cmake_supplies_headers_;
   std::map<std::string, std::string> structure_names_;
@@ -594,13 +641,19 @@ void t_yarp_generator::generate_program() {
 
   string fname2 = get_out_dir() + program_->get_name() + "_index.txt";
   ofstream f_out2_(fname2.c_str());
+  
+  string fname3 = get_out_dir() + program_->get_name() + "_indexALL.txt";
+  ofstream f_out3_(fname3.c_str());
 
   //print_doc(program_);
 
   //generate_program_toc();
 
   if (!program_->get_consts().empty()) {
-    f_out_ << endl << "// Constants" << endl;
+      need_common_=true;
+      string fcommon_name= get_out_dir() + program_->get_name() + "_common.h";
+      f_out_common_.open(fcommon_name.c_str());
+    f_out_common_ << endl << "// Constants" << endl;
     vector<t_const*> consts = program_->get_consts();
     generate_consts(consts);
   }
@@ -614,12 +667,20 @@ void t_yarp_generator::generate_program() {
       generate_enum(*en_iter);
       f_out_ << "#include \"" << (*en_iter)->get_name() << ".h\"" << endl;
       f_out2_ << (*en_iter)->get_name() << ".h" << endl;
+      f_out3_ << (*en_iter)->get_name() << ".h" << endl;
+      f_out3_ << (*en_iter)->get_name() << ".cpp" << endl;
     }
   }
 
   if (!program_->get_typedefs().empty()) {
+      need_common_=true;
     // Generate typedefs
-    f_out_ << endl << "// Typedefs" << endl;
+    if (!f_out_common_.is_open())
+    {
+      string fcommon_name= get_out_dir() + program_->get_name() + "_common.h";
+      f_out_common_.open(fcommon_name.c_str());
+    }
+    f_out_common_ << endl << "// Typedefs" << endl;
     vector<t_typedef*> typedefs = program_->get_typedefs();
     vector<t_typedef*>::iterator td_iter;
     for (td_iter = typedefs.begin(); td_iter != typedefs.end(); ++td_iter) {
@@ -639,6 +700,8 @@ void t_yarp_generator::generate_program() {
         generate_struct(*o_iter);
 	f_out_ << "#include \"" << (*o_iter)->get_name() << ".h\"" << endl;
 	f_out2_ << (*o_iter)->get_name() << ".h" << endl;
+        if ((*o_iter)->annotations_.find("yarp.includefile") == (*o_iter)->annotations_.end())
+          f_out3_ << (*o_iter)->get_name() << ".h" << endl;
       }
     }
   }
@@ -653,11 +716,21 @@ void t_yarp_generator::generate_program() {
       generate_service(*sv_iter);
       f_out_ << "#include \"" << (*sv_iter)->get_name() << ".h\"" << endl;
       f_out2_ << (*sv_iter)->get_name() << ".h" << endl;
+      f_out3_ << (*sv_iter)->get_name() << ".h" << endl;
+      f_out3_ << (*sv_iter)->get_name() << ".cpp" << endl;
     }
+  }
+  
+  if (need_common_)
+  {
+      f_out2_ <<  program_->get_name() + "_common.h" << endl;
+      f_out3_ <<  program_->get_name() + "_common.h" << endl;
   }
 
   f_out_.close();
   f_out2_.close();
+  f_out3_.close();
+  f_out_common_.close();
 
   generate_index();
 }
@@ -802,14 +875,7 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue) {
  */
 void t_yarp_generator::generate_typedef(t_typedef* ttypedef) {
   string name = ttypedef->get_name();
-  f_out_ << "<div class=\"definition\">";
-  f_out_ << "<h3 id=\"Typedef_" << name << "\">Typedef: " << name
-   << "</h3>" << endl;
-  f_out_ << "<p><strong>Base type:</strong>&nbsp;";
-  print_type(ttypedef->get_type());
-  f_out_ << "</p>" << endl;
-  print_doc(ttypedef);
-  f_out_ << "</div>" << endl;
+  f_out_common_<< "typedef " << name << ttypedef->get_type() << ";" << endl;
 }
 
 /**
@@ -995,17 +1061,34 @@ void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
  */
 void t_yarp_generator::generate_const(t_const* tconst) {
   string name = tconst->get_name();
-  f_out_ << "<tr id=\"Const_" << name << "\"><td><code>" << name
-   << "</code></td><td><code>";
-  print_type(tconst->get_type());
-  f_out_ << "</code></td><td><code>";
-  print_const_value(tconst->get_value());
-  f_out_ << "</code></td></tr>";
-  if (tconst->has_doc()) {
-    f_out_ << "<tr><td colspan=\"3\"><blockquote>";
-    print_doc(tconst);
-    f_out_ << "</blockquote></td></tr>";
+  f_out_common_ << "const "<< print_type(tconst->get_type())<<" " << name << " = " << print_const_value(tconst->get_value()) <<";"<<endl;
+   
+//   if (tconst->has_doc()) {
+//     f_out_ << "<tr><td colspan=\"3\"><blockquote>";
+//     print_doc(tconst);
+//     f_out_ << "</blockquote></td></tr>";
+//   }
+}
+
+/**
+ * Returns the include prefix to use for a file generated by program, or the
+ * empty string if no include prefix should be used.
+ */
+string t_yarp_generator::get_include_prefix(const t_program& program) const {
+  string include_prefix = program.get_include_prefix();
+  if (!use_include_prefix_ ||
+      (include_prefix.size() > 0 && include_prefix[0] == '/')) {
+    // if flag is turned off or this is absolute path, return empty prefix
+    return "";
   }
+
+  string::size_type last_slash = string::npos;
+  if ((last_slash = include_prefix.rfind("/")) != string::npos) {
+   // return include_prefix.substr(0, last_slash) + "/" + out_dir_base_ + "/";
+   return include_prefix.substr(0, last_slash) + "/";
+  }
+
+  return "";
 }
 
 /**
@@ -1047,7 +1130,25 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   if (cmake_supplies_headers_) {
     f_stt_ << "@HEADERS@" << endl;
   }
+  else
+  {
+    if (need_common_)
+      f_stt_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;
+    std::set<string> neededTypes;
+    neededTypes.clear();
+    for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+      getNeededType((*mem_iter)->get_type(), neededTypes);
+    }
+    
+    for (std::set<string>::iterator inclIter=neededTypes.begin(); inclIter!=neededTypes.end(); ++inclIter){
+      f_stt_ << "#include <" << *inclIter << ">" << endl;
+    }
+        
+            
+  }
   f_stt_ << endl;
+
+
 
   string ns = get_namespace(program_);
   namespace_open(f_cpp_,ns);
@@ -1285,13 +1386,24 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       if (!program_->get_objects().empty()) {
 	vector<t_struct*> objects = program_->get_objects();
 	vector<t_struct*>::iterator o_iter;
-	for (o_iter = objects.begin(); o_iter != objects.end(); ++o_iter) {
-	  f_srv_ << "#include <" << (*o_iter)->get_name() << ".h>" << endl;
-	}
+
+        if (need_common_)
+            f_srv_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;
+  
+        std::set<string> neededTypes;
+        neededTypes.clear();
+        for (o_iter = objects.begin() ; o_iter != objects.end(); o_iter++) {
+            getNeededType(((t_type*)(*o_iter)), neededTypes);
+        }
+  
+        for (std::set<string>::iterator inclIter=neededTypes.begin(); inclIter!=neededTypes.end(); ++inclIter){
+            f_srv_ << "#include <" << *inclIter << ">" << endl;
+        }
       }
       f_srv_ << endl;
 
-      f_cpp_ << "#include <" << program_->get_name() << "_index.h>" << endl;
+      f_cpp_ << "#include <" << get_include_prefix(*(tservice->get_program())) + svcname + ".h>" <<endl;
+      //f_cpp_ << "#include <" << program_->get_name() << "_index.h>" << endl;
     } else {
       f_srv_ << "@HEADERS@" << endl << endl;
     }
