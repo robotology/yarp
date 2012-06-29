@@ -21,7 +21,7 @@ foreach(conf YarpPlugin.cmake YarpIDL.cmake YarpDevice.cmake FindOpenCV.cmake Fi
 	  DESTINATION share/yarp/cmake)
 endforeach()
 
-foreach(templ yarp_plugin_carrier.cpp.in yarp_plugin_device.cpp.in yarpdev_lib.cpp.in yarpdev_lib.h.in yarpdev_lib_main.cpp.in YarpTweakIDL.cmake.in)
+foreach(templ yarp_plugin_carrier.cpp.in yarp_plugin_device.cpp.in yarpdev_lib.cpp.in yarpdev_lib.h.in yarpdev_lib_main.cpp.in YarpTweakIDL.cmake.in placeGeneratedThriftFiles.cmake.in)
   install(FILES ${CMAKE_SOURCE_DIR}/conf/template/${templ} COMPONENT scripts 
 	  DESTINATION share/yarp/cmake/template)
 endforeach()

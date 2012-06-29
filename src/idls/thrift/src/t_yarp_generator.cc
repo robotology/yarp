@@ -124,25 +124,34 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
             mtype = get_include_prefix(*(curType->get_program())) + curType->get_name() + ".h";
         
         neededTypes.insert(mtype);
-        cout << mtype <<endl;
+       // cout << mtype <<endl;
+        return;
+    }
+
+    if (curType->is_enum())
+    {
+        mtype = get_include_prefix(*(curType->get_program())) + curType->get_name() + ".h";
+        neededTypes.insert(mtype);
+        return;
+    }
+
+
+    if (curType->is_list()){
+        getNeededType(((t_list*) curType)->get_elem_type(), neededTypes);
+        return;
     }
     
-    if (curType->is_enum())
-        mtype = get_include_prefix(*(curType->get_program())) + curType->get_name() + ".h";
-
-
-    if (curType->is_list())
-        getNeededType(((t_list*) curType)->get_elem_type(), neededTypes);
-    
-    if (curType->is_set())
+    if (curType->is_set()){
         getNeededType(((t_set*) curType)->get_elem_type(), neededTypes);
+        return;
+    }
     
     if (curType->is_map()) 
     {
         getNeededType(((t_map*) curType)->get_key_type(), neededTypes);
         getNeededType(((t_map*) curType)->get_val_type(), neededTypes);
+        return;
     }
-    
 
 }
   
@@ -909,6 +918,10 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
   if (cmake_supplies_headers_) {
     f_types_impl_ << "@HEADERS@" << endl;
   }
+  else
+  {
+    f_types_impl_<<  "#include <" << get_include_prefix(*program_) + enum_name + ".h>" <<endl;
+  }
   f_types_impl_ << endl;
 
   string ns = get_namespace(program_);
@@ -1132,6 +1145,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   }
   else
   {
+//    cout<< "Searching headers for " << name <<endl;
     if (need_common_)
       f_stt_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;
     std::set<string> neededTypes;
