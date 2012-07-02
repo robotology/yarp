@@ -39,6 +39,8 @@ public:
          *  - "motion-onset": beginning of motion.
          *  - "motion-done": end of motion.
          *  - "motion-ongoing": a motion check-point is attained.
+         *  - "saccade-onset": beginning of saccade.
+         *  - "saccade-done": end of saccade.
          *  - "closing": the server is being shut down.
          *  - "suspended": the server has been suspeded.
          *  - "resumed": the server has been resumed.
