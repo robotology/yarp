@@ -138,7 +138,7 @@ public:
     /**
     * Get the current fixation point. [do not wait for reply]
     * @param fp a 3-d vector which is filled with the actual 
-    *         fixation point x,y,z (meters).
+    *         fixation point x,y,z [m].
     * @param stamp the stamp of the encoders employed to compute the
     *              pose.
     * @return true/false on success/failure.
@@ -208,7 +208,7 @@ public:
     * @param px a 2-d vector which contains the (u,v) coordinates of
     *           the pixel within the image plane.
     * @param z the z-component of the point in the eye's reference 
-    *         frame (meters). A default value of 1.0 is assumed.
+    *         frame [m]. A default value of 1.0 is assumed.
     * @return true/false on success/failure. 
     *  
     * @note The component z can be seen also as the distance [m] 
@@ -295,18 +295,26 @@ public:
     /**
     * Get the current inhibition period for saccadic movements. 
     * [wait for reply] 
-    * @param period the current inhibition period (s).
+    * @param period the current inhibition period [s].
     * @return true/false on success/failure. 
     */
     virtual bool getSaccadesInhibitionPeriod(double *period)=0;
 
     /**
+    * Get the current activation angle for saccadic movements. [wait
+    * for reply] 
+    * @param angle the current activation angle [deg].
+    * @return true/false on success/failure. 
+    */
+    virtual bool getSaccadesActivationAngle(double *angle)=0;
+
+    /**
     * Get the current pose of the left eye frame. [wait for reply]
     * @param x a 3-d vector which is filled with the actual 
-    *         position x,y,z (meters).
+    *         position x,y,z [m].
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
-    * (meters and radians). 
+    * [m]/[rad]. 
     * @param stamp the stamp of the encoders employed to compute the
     *              pose. 
     * @return true/false on success/failure.
@@ -317,10 +325,10 @@ public:
     /**
     * Get the current pose of the right eye frame. [wait for reply]
     * @param x a 3-d vector which is filled with the actual 
-    *         position x,y,z (meters).
+    *         position x,y,z [m].
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
-    * (meters and radians). 
+    * [m]/[rad]. 
     * @param stamp the stamp of the encoders employed to compute the
     *              pose. 
     * @return true/false on success/failure.
@@ -331,10 +339,10 @@ public:
     /**
     * Get the current pose of the head frame. [wait for reply]
     * @param x a 3-d vector which is filled with the actual 
-    *         position x,y,z (meters).
+    *         position x,y,z [m].
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
-    * (meters and radians). 
+    * [m]/[rad]. 
     * @param stamp the stamp of the encoders employed to compute the
     *              pose. 
     * @return true/false on success/failure. 
@@ -354,8 +362,7 @@ public:
     * projection into the image plane. [wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
-    * @param x the 3-d point given wrt the root reference frame
-    *          (meters).
+    * @param x the 3-d point given wrt the root reference frame [m]. 
     * @param px the returned 2-d vector which contains the (u,v)
     *           coordinates of the pixel within the image plane.
     * @return true/false on success/failure. 
@@ -372,9 +379,9 @@ public:
     * @param px a 2-d vector which contains the (u,v) coordinates of
     *           the pixel within the image plane.
     * @param z the z-component of the point in the eye's reference 
-    *         frame (meters).
+    *         frame [m].
     * @param x the returned 3-d point given wrt the root reference 
-    *          frame (meters).
+    *          frame [m].
     * @return true/false on success/failure. 
     */
     virtual bool get3DPoint(const int camSel,
@@ -395,7 +402,7 @@ public:
     *              reference frame in its implicit form as:
     *              ax+by+cz+d=0.
     * @param x the returned 3-d point given wrt the root reference 
-    *          frame (meters).
+    *          frame [m].
     * @return true/false on success/failure. 
     */
     virtual bool get3DPointOnPlane(const int camSel,
@@ -411,7 +418,7 @@ public:
     * @param ang a 3-d vector which contains the actual angles 
     *            azimuth/elevation/vergence (degrees).
     * @param x the returned 3-d point given wrt the root reference 
-    *          frame (meters).
+    *          frame [m].
     * @return true/false on success/failure. 
     */
     virtual bool get3DPointFromAngles(const int mode,
@@ -421,8 +428,7 @@ public:
     /**
     * Get the absolute angular coordinates corresponding to the 3-d 
     * point. [wait for reply] 
-    * @param x the 3-d point given wrt the root reference frame
-    *          (meters).
+    * @param x the 3-d point given wrt the root reference frame [m].
     * @param ang a 3-d vector which is filled with the  
     *            azimuth/elevation/vergence coordinates in the
     *            absolute mode (degrees).
@@ -441,7 +447,7 @@ public:
     * @param pxr a 2-d vector which contains the (u,v) coordinates 
     *           of the pixel within the right image plane.
     * @param x the returned 3-d point given wrt the root reference 
-    *          frame (meters).
+    *          frame [m].
     * @return true/false on success/failure. 
     *  
     * @note The triangulation is deeply affected by uncertainties in
@@ -536,10 +542,18 @@ public:
     /**
     * Set the inhibition period for saccadic movements. [wait for 
     * reply] 
-    * @param period the new inhibition period (s).
+    * @param period the new inhibition period [s].
     * @return true/false on success/failure. 
     */
     virtual bool setSaccadesInhibitionPeriod(const double period)=0;
+
+    /**
+    * Set the activation angle for saccadic movements. [wait for 
+    * reply] 
+    * @param angle the new activation angle [deg].
+    * @return true/false on success/failure. 
+    */
+    virtual bool setSaccadesActivationAngle(const double angle)=0;
 
     /**
     * Update the options used by the stereo approach. [wait for 

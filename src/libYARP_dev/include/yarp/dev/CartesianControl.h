@@ -133,10 +133,10 @@ public:
     * Get the current pose of the end-effector. [do not wait for 
     * reply] 
     * @param x a 3-d vector which is filled with the actual 
-    *         position x,y,z (meters).
+    *         position x,y,z [m].
     * @param od a 4-d vector which is filled with the actual 
     * orientation using axis-angle representation xa, ya, za, theta 
-    * (meters and radians). 
+    * ([m] and [rad]). 
     * @param stamp the stamp of the encoders employed to compute the
     *              pose.
     * @return true/false on success/failure.
@@ -150,10 +150,10 @@ public:
     * @param axis joint index (regardless if it is actuated or 
     *            not). 
     * @param x a 3-d vector which is filled with the actual position
-    *         x,y,z (meters) of the given link reference frame.
+    *         x,y,z [m] of the given link reference frame.
     * @param od a 4-d vector which is filled with the actual 
     * orientation of the given link reference frame using axis-angle
-    * representation xa, ya, za, theta (meters and radians). \ 
+    * representation xa, ya, za, theta [m]/[rad].
     * @param stamp the stamp of the encoders employed to compute the
     *              pose.
     * @return true/false on success/failure.
@@ -168,7 +168,7 @@ public:
     *           x,y,z
     * @param od a 4-d vector which contains the desired orientation
     * using axis-angle representation (xa, ya, za, theta). 
-    * @param t set the trajectory duration time (seconds). If t<=0 
+    * @param t set the trajectory duration time [s]. If t<=0 
     *         (as by default) the current execution time is kept.
     * @return true/false on success/failure. 
     *  
@@ -181,8 +181,8 @@ public:
     * Move the end-effector to a specified position in cartesian 
     * space, ignore the orientation. [do not wait for reply] 
     * @param xd a 3-d vector which contains the desired position 
-    *          x,y,z (meters).
-    * @param t set the trajectory duration time (seconds). If t<=0 
+    *          x,y,z [m].
+    * @param t set the trajectory duration time [s]. If t<=0 
     *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure. 
     *  
@@ -194,10 +194,10 @@ public:
     * Move the end-effector to a specified pose (position
     * and orientation) in cartesian space. [wait for reply]
     * @param xd a 3-d vector which contains the desired position 
-    *          x,y,z (meters).
+    *          x,y,z [m].
     * @param od a 4-d vector which contains the desired orientation
     * using axis-angle representation (xa, ya, za, theta). 
-    * @param t set the trajectory duration time (seconds). If t<=0 
+    * @param t set the trajectory duration time [s]. If t<=0 
     *         (as by default) the current execution time is kept.
     * @return true/false on success/failure.
     */
@@ -208,8 +208,8 @@ public:
     * Move the end-effector to a specified position in cartesian 
     * space, ignore the orientation. [wait for reply] 
     * @param xd a 3-d vector which contains the desired position 
-    *          x,y,z (meters).
-    * @param t set the trajectory duration time (seconds). If t<=0 
+    *          x,y,z [m].
+    * @param t set the trajectory duration time [s]. If t<=0 
     *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure.
     */
@@ -219,14 +219,14 @@ public:
     * Get the actual desired pose and joints configuration as result
     * of kinematic inversion. [wait for reply] 
     * @param xdhat a 3-d vector which is filled with the actual 
-    *          desired position x,y,z (meters); it may differ from
-    *          the commanded xd.
+    *          desired position x,y,z [m]; it may differ from the
+    *          commanded xd.
     * @param odhat a 4-d vector which is filled with the actual 
     *          desired orientation using axis-angle representation
-    *          xa, ya, za, theta (meters and radians); it may differ
-    *          from the commanded od. 
+    *          xa, ya, za, theta [m]/[rad]; it may differ from the
+    *          commanded od.
     * @param qdhat the joints configuration through which the
-    *             couple (xdhat,odhat) is achieved (degrees).
+    *             couple (xdhat,odhat) is achieved [deg].
     * @return true/false on success/failure.
     */
     virtual bool getDesired(yarp::sig::Vector &xdhat, yarp::sig::Vector &odhat,
@@ -236,19 +236,19 @@ public:
     * Ask for inverting a given pose without actually moving there.
     * [wait for reply] 
     * @param xd a 3-d vector which contains the desired 
-    *          position x,y,z (meters).
+    *          position x,y,z [m].
     * @param od a 4-d vector which contains the desired 
     *          orientation using axis-angle representation xa, ya,
-    *          za, theta (meters and radians).
+    *          za, theta [m]/[rad].
     * @param xdhat a 3-d vector which is filled with the final 
-    *          position x,y,z (meters); it may differ from the
-    *          commanded xd.
+    *          position x,y,z [m]; it may differ from the commanded
+    *          xd.
     * @param odhat a 4-d vector which is filled with the final 
     *          orientation using axis-angle representation xa, ya,
-    *          za, theta (meters and radians); it may differ from
-    *          the commanded od.
+    *          za, theta [m]/[rad]; it may differ from the commanded
+    *          od.
     * @param qdhat the joints configuration through which the
-    *             couple (xdhat,odhat) is achieved (degrees).
+    *             couple (xdhat,odhat) is achieved [deg].
     * @return true/false on success/failure.
     */
     virtual bool askForPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od,
@@ -259,22 +259,22 @@ public:
     * Ask for inverting a given pose without actually moving there.
     * [wait for reply] 
     * @param q0 a vector of length DOF which contains the starting
-    *           joints configuration (degrees), made compatible with
-    *           the chain.
+    *           joints configuration [deg], made compatible with the
+    *           chain.
     * @param xd a 3-d vector which contains the desired 
-    *          position x,y,z (meters).
+    *          position x,y,z [m].
     * @param od a 4-d vector which contains the desired 
     *          orientation using axis-angle representation xa, ya,
-    *          za, theta (meters and radians).
+    *          za, theta [m]/[rad].
     * @param xdhat a 3-d vector which is filled with the final 
-    *          position x,y,z (meters); it may differ from the
-    *          commanded xd.
+    *          position x,y,z [m]; it may differ from the commanded
+    *          xd.
     * @param odhat a 4-d vector which is filled with the final 
     *          orientation using axis-angle representation xa, ya,
-    *          za, theta (meters and radians); it may differ from
-    *          the commanded od.
+    *          za, theta [m]/[rad]; it may differ from the commanded
+    *          od.
     * @param qdhat the joints configuration through which the
-    *             couple (xdhat,odhat) is achieved (degrees).
+    *             couple (xdhat,odhat) is achieved [deg].
     * @return true/false on success/failure.
     */
     virtual bool askForPose(const yarp::sig::Vector &q0,
@@ -286,16 +286,16 @@ public:
     * Ask for inverting a given position without actually moving 
     * there. [wait for reply] 
     * @param xd a 3-d vector which contains the desired 
-    *          position x,y,z (meters).
+    *          position x,y,z [m].
     * @param xdhat a 3-d vector which is filled with the final 
-    *          position x,y,z (meters); it may differ from the
-    *          commanded xd.
+    *          position x,y,z [m]; it may differ from the commanded
+    *          xd.
     * @param odhat a 4-d vector which is filled with the final 
     *          orientation using axis-angle representation xa, ya,
-    *          za, theta (meters and radians); it may differ from
-    *          the commanded od.
+    *          za, theta [m]/[rad]; it may differ from the commanded
+    *          od.
     * @param qdhat the joints configuration through which the
-    *             couple (xdhat,odhat) is achieved (degrees).
+    *             couple (xdhat,odhat) is achieved [deg].
     * @return true/false on success/failure.
     */
     virtual bool askForPosition(const yarp::sig::Vector &xd,
@@ -306,19 +306,19 @@ public:
     * Ask for inverting a given position without actually moving 
     * there. [wait for reply] 
     * @param q0 a vector of length DOF which contains the starting 
-    *           joints configuration (degrees), made compatible with
-    *           the chain.
+    *           joints configuration [deg], made compatible with the
+    *           chain.
     * @param xd a 3-d vector which contains the desired 
-    *          position x,y,z (meters).
+    *          position x,y,z [m].
     * @param xdhat a 3-d vector which is filled with the final 
-    *          position x,y,z (meters); it may differ from the
-    *          commanded xd.
+    *          position x,y,z [m]; it may differ from the commanded
+    *          xd.
     * @param odhat a 4-d vector which is filled with the final 
     *          orientation using axis-angle representation xa, ya,
-    *          za, theta (meters and radians); it may differ from
-    *          the commanded od.
+    *          za, theta [m]/[rad]; it may differ from the commanded
+    *          od.
     * @param qdhat the joints configuration through which the
-    *             couple (xdhat,odhat) is achieved (degrees).
+    *             couple (xdhat,odhat) is achieved [deg].
     * @return true/false on success/failure.
     */
     virtual bool askForPosition(const yarp::sig::Vector &q0,
@@ -360,7 +360,7 @@ public:
     /**
     * Get the current joints rest position. [wait for reply]
     * @param curRestPos a vector which is filled with the current 
-    *                  joints rest position components in degrees.
+    *                  joints rest position components [deg].
     * @return true/false on success/failure. 
     *  
     * @note While solving the inverse kinematic, the user may 
@@ -373,10 +373,10 @@ public:
     /**
     * Set a new joints rest position. [wait for reply] 
     * @param newRestPos a vector which contains the new joints rest
-    *                  position components in degrees.
+    *                  position components [deg].
     * @param curRestPos a vector which is filled with the current 
-    *           joints rest position components in degrees as result
-    *           from thresholding with joints bounds.
+    *           joints rest position components [deg] as result from
+    *           thresholding with joints bounds.
     * @return true/false on success/failure. 
     *  
     * @note While solving the inverse kinematic, the user may 
@@ -438,15 +438,14 @@ public:
 
     /**
     * Get the current trajectory duration. [wait for reply]
-    * @param t the memory location where the time is returned 
-    *         (seconds).
+    * @param t the memory location where the time is returned [s]. 
     * @return true/false on success/failure. 
     */
     virtual bool getTrajTime(double *t)=0;
 
     /**
     * Set the duration of the trajectory. [wait for reply]
-    * @param t time (seconds).
+    * @param t time [s].
     * @return true/false on success/failure. 
     */
     virtual bool setTrajTime(const double t)=0;
@@ -514,8 +513,8 @@ public:
 
     /** Wait until the current trajectory is terminated. [wait for
     *   reply]
-    * @param period specify the check time period (seconds). 
-    * @param timeout specify the check expiration time (seconds). If
+    * @param period specify the check time period [s]. 
+    * @param timeout specify the check expiration time [s]. If
     *         timeout<=0 (as by default) the check will be performed
     *         without time limitation.
     * @return true for success, false for failure and timeout 
