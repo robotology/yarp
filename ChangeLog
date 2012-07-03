@@ -1,3 +1,6 @@
+2012-07-03 Ugo Pattacini <ugo.pattacini@iit.it>
+    * gaze I/F's: added get/setSaccadesActivationAngle() methods.
+
 2012-06-20 Lorenzo Natale <lorenzo.natale@iit.it>
     * setting version 2.3.18 to follow interface changes
     * removed compact in class struct definition to make visual studio 8
