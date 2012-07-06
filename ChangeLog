@@ -1,5 +1,9 @@
 2012-07-06  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/carriers/bayer_carrier/BayerCarrier.cpp
+	(modifyIncomingData): fix reporting of errors on unreliable
+	connections [thanks Vadim Tikhanoff] [thanks Lorenzo Natale]
+
 	* src/idls/thrift/src/t_yarp_generator.cc (generate_service): 
 	account for length of return types [thanks Elena Ceseracciu]
 

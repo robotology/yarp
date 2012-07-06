@@ -178,7 +178,7 @@ public:
     }
 
     virtual bool isError() {
-        return local.isError()||parent->isError()||!happy;
+        return parent->isError()||!happy;
     }
 
     virtual void requestDrop() {

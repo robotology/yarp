@@ -84,7 +84,6 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     Route r;
     bool ok = in.read(reader);
     if (!ok) {
-        happy = false;
         local.reset(*this, NULL, r, 0, false);
         return local;
     }
