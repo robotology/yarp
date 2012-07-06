@@ -1,3 +1,8 @@
+2012-07-06  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/idls/thrift/src/t_yarp_generator.cc (generate_service): 
+	account for length of return types [thanks Elena Ceseracciu]
+
 2012-07-03 Lorenzo Natale <lorenzo.natale@iit.it>
     * setting version 2.3.19 to follow interface changes
 	
@@ -9,7 +14,7 @@
     * removed compact in class struct definition to make visual studio 8
       happy
 
-2012-06-20  Marco Randazzp  <marco.randazzo@iit.it>
+2012-06-20  Marco Randazzo  <marco.randazzo@iit.it>
 
     *  src/libYARP_dev/include/yarp/dev/serverInertial.h
     fixed issue related to the assignment of timestamps by the inertial driver

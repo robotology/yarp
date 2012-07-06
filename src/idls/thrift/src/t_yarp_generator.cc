@@ -1606,7 +1606,9 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       f_cpp_ << ");" << endl;
       if (!(*fn_iter)->is_oneway()) {
 	indent(f_cpp_) << "yarp::os::idl::WireWriter writer(reader);" << endl;
-	indent(f_cpp_) << "if (!writer.writeListHeader(1)) return false;" << endl;
+	indent(f_cpp_) << "if (!writer.writeListHeader(" 
+		       << flat_element_count(returntype)
+		       << ")) return false;" << endl;
 	if (!returntype->is_void()) {
 	  generate_serialize_field(f_cpp_, &returnfield, "");
 	}
