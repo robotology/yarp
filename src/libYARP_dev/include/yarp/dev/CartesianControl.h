@@ -36,7 +36,7 @@ public:
     {
         /** The signature of the event as specified by the user.
          *  \n Available events are:
-         *  - "motion-onset": beginning of motion.
+         *  - "motion-onset": beginning of motion/new target received.
          *  - "motion-done": end of motion.
          *  - "motion-ongoing": a motion check-point is attained.
          *  - "closing": the server is being shut down.
