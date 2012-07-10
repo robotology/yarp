@@ -62,6 +62,7 @@
 %feature("notabstract") Bottle;
 %feature("notabstract") Property;
 %feature("notabstract") Stamp;
+%feature("notabstract") RpcServer;
 %feature("abstract") Portable;
 %feature("abstract") PortReader;
 %feature("abstract") PortWriter;
@@ -82,6 +83,7 @@
 %ignore *::setKd(double);
 %ignore *::setScale(double);
 %ignore *::setOffset(double);
+%rename(attach_rpc_server) *::attach(yarp::os::RpcServer&);
 %rename(open_str) yarp::dev::PolyDriver::open(const char *txt);
 
 #if defined(SWIGCSHARP)
@@ -962,4 +964,3 @@ public static short[] getRawImg(Image img) {
 }
 
 #endif
-

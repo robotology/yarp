@@ -1,3 +1,8 @@
+2012-07-10  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* example/swig/yarp.i: rename RFModule::attach(RpcServer&) out
+	of harms way to attach_rpc_server [thanks Stephane Lallee]
+
 2012-07-06  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/carriers/bayer_carrier/BayerCarrier.cpp
