@@ -99,6 +99,8 @@ cd $BUILD_DIR
 	echo "export SOURCE_DIR='$SOURCE_DIR'"
 	echo "export BUNDLE_NAME='$BUNDLE_NAME'"
 	echo "export BUNDLE_FILENAME='$BUNDLE_FILENAME'"
+	echo "export TESTING=$TESTING"
+	echo "export YARP_REVISION=$YARP_REVISION"
 ) > $BUILD_DIR/settings.sh
 creation_list="$creation_list, settings.sh"
 
@@ -146,7 +148,7 @@ for platform in $PLATFORMS; do
 	    echo "PLATFORM_HARDWARE=$hardware"
 	    echo "PLATFORM_MIRROR=$PLATFORM_MIRROR"
 	    grep -q "ubuntu\.com" $PLATFORM_FILE && echo "PLATFORM_IS_UBUNTU=true"
-	    grep -q "ubuntu\.com" $PLATFORM_FILE || echo "PLATFORM_IS_DEBIAN=true"
+	    grep -q "ubuntu\.com" $PLATFORM_FILE || echo "PLATFORM_IS_DEBIAN=true"			
 	} > config_$variant.sh
 	creation_list="$creation_list, config_$variant.sh"
     

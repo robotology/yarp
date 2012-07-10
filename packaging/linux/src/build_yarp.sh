@@ -76,6 +76,16 @@ function run_in_chroot {
 # Install basic dependencies
 run_in_chroot build_chroot "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev libace-dev subversion cmake dpkg wget" || exit 1
 
+
+
+if [ "k$TESTING" = "kTRUE" ]; then
+	YARP_VERSION=$YARP_REVISION
+	echo "yarp test revision $YARP_VERSION"
+	run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co -r $YARP_REVISION http://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp-$YARP_VERSION" || exit 1
+	else
+	echo "yarp tag $YARP_VERSION"
+fi
+
 # Fetch yarp from SVN
 if [ ! -e build_chroot/tmp/yarp-$YARP_VERSION.done ]; then 
 	echo "fetching yarp from SVN"
@@ -108,7 +118,7 @@ if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
 fi
 
 # Go ahead and configure
-run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE -DCREATE_GUIS=TRUE -DCREATE_YMANAGER=TRUE -DCREATE_YMANAGER_GUI=TRUE -DCMAKE_INSTALL_PREFIX=/usr -DCREATE_SHARED_LIBRARY=TRUE -DCREATE_YARPSERVER3=TRUE -DCREATE_LIB_MATH=TRUE $CHROOT_SRC" || exit 1
+run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE -DCREATE_GUIS=TRUE -DCREATE_YMANAGER=TRUE -DCMAKE_INSTALL_PREFIX=/usr -DCREATE_SHARED_LIBRARY=TRUE -DCREATE_LIB_MATH=TRUE -DCREATE_IDLS=TRUE -DENABLE_yarpidl_thrift=TRUE -DCREATE_OPTIONAL_CARRIERS=TRUE -DENABLE_yarpcar_tcpros_carrier=TRUE -DENABLE_yarpcar_xmlrpc_carrier=TRUE -DENABLE_yarpcar_bayer_carrier=TRUE -DUSE_LIBDC1394=FALSE -DENABLE_yarpcar_priority_carrier=TRUE $CHROOT_SRC" || exit 1
 
 #run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE -DCREATE_GUIS=TRUE -DCMAKE_INSTALL_PREFIX=/usr -DCREATE_SHARED_LIBRARY=TRUE -DCREATE_YARPSERVER3=TRUE -DCREATE_LIB_MATH=TRUE $CHROOT_SRC" || exit 1
 
@@ -124,7 +134,7 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -f *.deb && make package" || 
 #   http://public.kitware.com/Bug/view.php?id=11020
 run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -rf deb *.deb" || exit 1
 #PACK="deb/yarp-${YARP_VERSION}-${PLATFORM_KEY}-${PLATFORM_HARDWARE}"
-YARP_PACKAGE_NAME="yarp-${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}+${PLATFORM_HARDWARE}.deb"
+YARP_PACKAGE_NAME="yarp-${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}_${PLATFORM_HARDWARE}.deb"
 PACK="deb/yarp-${YARP_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}+${PLATFORM_HARDWARE}"
 run_in_chroot build_chroot "cd $CHROOT_BUILD && mkdir -p $PACK/DEBIAN" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp-*-Linux/control $PACK/DEBIAN" || exit 1
