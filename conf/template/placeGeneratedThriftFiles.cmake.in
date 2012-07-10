@@ -2,11 +2,11 @@
 # Authors: Elena Ceseracciu
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-FILE(GLOB headers RELATIVE @dir@/ "@dir@/*.h")
-FILE(GLOB sources RELATIVE @dir@/ "@dir@/*.cpp")
+FILE(GLOB globbedHeaders RELATIVE @dir@/ "@dir@/*.h")
+FILE(GLOB globbedSources RELATIVE @dir@/ "@dir@/*.cpp")
 
-set(@thriftName@Headers)
-set(@thriftName@Sources)
+set(headers)
+set(sources)
 
 # check that globbed files are really the ones we need from generated listfile
 FILE(STRINGS @dir@/@thriftName@_indexALL.txt index)
@@ -16,21 +16,25 @@ make_directory("@output_dir@/src/@include_prefix@/")
 foreach(genFile ${index})
   get_filename_component(type ${genFile} EXT)
   if (${type} STREQUAL ".h")
-    list(FIND headers ${genFile} inclFound)
+    list(FIND globbedHeaders ${genFile} inclFound)
     if (${inclFound} EQUAL -1)
       message(WARNING "${genFile} not found in @thriftName@ Thrift dir!")
     else(${inclFound} EQUAL -1) 
       FILE(COPY @dir@/${genFile} DESTINATION @output_dir@/include/@include_prefix@/)
+      list(APPEND headers "include/@include_prefix@/${genFile}")
     endif(${inclFound} EQUAL -1)
   elseif(${type} STREQUAL ".cpp")
-    list(FIND sources ${genFile} srcFound)
+    list(FIND globbedSources ${genFile} srcFound)
     if (${srcFound} EQUAL -1)
       message(WARNING "${genFile} not found in @thriftName@ Thrift dir!")
     else(${srcFound} EQUAL -1) 
       FILE(COPY @dir@/${genFile} DESTINATION @output_dir@/src/@include_prefix@/)
+      list(APPEND sources "src/@include_prefix@/${genFile}")
     endif(${srcFound} EQUAL -1)
 
   else(${type} STREQUAL ".h")
 message(WARNING "Filename extension of ${genFile} is neither .h nor .cpp")
   endif(${type} STREQUAL ".h")
 endforeach(genFile)
+
+file(WRITE @output_dir@/@thrift_target_name@.cmake "set(headers ${headers})\nset(sources ${sources})")

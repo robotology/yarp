@@ -106,14 +106,34 @@ macro(yarp_idl_to_dir thrift_file output_dir)
   get_filename_component(thriftName ${thrift_file} NAME_WE)
   #set output 
   set(dir ${CMAKE_CURRENT_BINARY_DIR}/${include_prefix}/${thriftName})
+  string(REGEX REPLACE "[^a-zA-Z0-9]" "_" thrift_target_name ${thrift_file})
   option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" FALSE)
   mark_as_advanced(ALLOW_IDL_GENERATION)
   if (ALLOW_IDL_GENERATION)
     message(STATUS "Generating source files for Thrift file ${thrift_file}. Output directory: ${output_dir}.")
+    # generate during cmake configuration, so we have all the names of generated files
     find_program(YARPIDL_LOCATION yarpidl_thrift HINTS ${YARP_IDL_BINARY_HINT})
     make_directory(${dir})
     configure_file(${YARP_MODULE_PATH}/template/placeGeneratedThriftFiles.cmake.in ${dir}/place${thriftName}.cmake @ONLY)
-    execute_process(COMMAND ${YARPIDL_LOCATION} -out ${dir} --gen yarp:include_prefix -I ${CMAKE_CURRENT_SOURCE_DIR} ${thrift_file} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    execute_process(COMMAND ${YARPIDL_LOCATION} -out ${dir} --gen yarp:include_prefix -I ${CMAKE_CURRENT_SOURCE_DIR} ${thrift_file}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     execute_process(COMMAND ${CMAKE_COMMAND} -P ${dir}/place${thriftName}.cmake)
+
+    include(${output_dir}/${thrift_target_name}.cmake)
+    set(DEST_FILES)
+    foreach(generatedFile ${headers})
+      list(APPEND DEST_FILES ${output_dir}/${generatedFile})
+    endforeach()
+    foreach(generatedFile ${sources})
+      list(APPEND DEST_FILES ${output_dir}/${generatedFile})
+    endforeach()
+    
+    add_custom_command(OUTPUT ${output_dir}/${thrift_target_name}.cmake ${DEST_FILES}
+      COMMAND ${YARPIDL_LOCATION} -out ${dir} --gen yarp:include_prefix -I ${CMAKE_CURRENT_SOURCE_DIR} ${thrift_file} 
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
+      COMMAND ${CMAKE_COMMAND} -P ${dir}/place${thriftName}.cmake
+      DEPENDS ${thrift_file} ${YARPIDL_LOCATION})
+    add_custom_target(${thrift_target_name} DEPENDS ${output_dir}/${thrift_target_name}.cmake)
+
   endif()
 endmacro()
