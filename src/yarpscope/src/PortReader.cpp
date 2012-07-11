@@ -23,7 +23,7 @@
 
 namespace {
 static YarpScope::PortReader *s_instance = NULL;
-static Glib::Mutex s_mutex;
+static Glib::StaticMutex s_mutex;
 static const int s_bufSize = 2000;
 static const Glib::ustring s_carrier = "mcast";
 }

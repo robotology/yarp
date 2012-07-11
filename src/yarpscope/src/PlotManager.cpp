@@ -23,7 +23,7 @@
 
 namespace {
 static YarpScope::PlotManager *s_instance = NULL;
-static Glib::Mutex s_mutex;
+static Glib::StaticMutex s_mutex;
 }
 
 class YarpScope::PlotManager::Private
