@@ -374,7 +374,33 @@ void ApplicationWindow::setupSignals(void)
 
 //  m_TreeResView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
 //            &ApplicationWindow::onResourceTreeButtonPressed) );
+//
 
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 6)
+    for(unsigned int i=3; i<m_TreeModView.get_columns().size(); i++)
+    {
+        Gtk::CellRendererText* render = 
+            dynamic_cast<Gtk::CellRendererText*>(m_TreeModView.get_column_cell_renderer(i));
+        if(render)
+        {
+            render->signal_editing_started().connect( sigc::mem_fun(*this,
+                &ApplicationWindow::onModuleEditingStarted) );               
+            //render->signal_edited().connect( sigc::mem_fun(*this,
+            //    &ApplicationWindow::onModuleEdited) );               
+        }
+    }
+
+    for(unsigned int i=3; i<m_TreeConView.get_columns().size(); i++)
+    {
+        Gtk::CellRendererText* render = 
+            dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(i));
+        if(render)
+        {
+            render->signal_editing_started().connect( sigc::mem_fun(*this,
+                &ApplicationWindow::onConnectionEditingStarted) );
+        }
+    }
+#endif
 }
 
 void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
@@ -655,9 +681,63 @@ bool ApplicationWindow::areAllShutdown(void)
     return true;
 }
 
+
+void ApplicationWindow::onModuleEditingStarted(Gtk::CellEditable* cell_editable, 
+                                const Glib::ustring& path_string)
+{
+    Gtk::TreePath path(path_string);
+    //Get the row from the path:
+    Gtk::TreeModel::iterator iter = m_refTreeModModel->get_iter(path);
+    if(iter)
+    {
+        Gtk::TreeModel::Row row = *iter;
+        //Put the new value in the model:
+        Glib::ustring strStatus = Glib::ustring(row[m_modColumns.m_col_status]);
+        if(strStatus != Glib::ustring("stopped"))
+        {
+            //Tell the user:          
+            ostringstream msg;
+            msg<<"Editing "<<Glib::ustring(row[m_modColumns.m_col_name])<<"!";
+            Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+            dialog.set_secondary_text("Please stop the module before modifying it.");
+            dialog.run();
+        }
+    }
+}
+
+
+void ApplicationWindow::onConnectionEditingStarted(Gtk::CellEditable* cell_editable, 
+                                const Glib::ustring& path_string)
+{
+    Gtk::TreePath path(path_string);
+    //Get the row from the path:
+    Gtk::TreeModel::iterator iter = m_refTreeConModel->get_iter(path);
+    if(iter)
+    {
+        Gtk::TreeModel::Row row = *iter;
+        //Put the new value in the model:
+        Glib::ustring strStatus = Glib::ustring(row[m_conColumns.m_col_status]);
+        if(strStatus != Glib::ustring("disconnected"))
+        {
+            //Tell the user:          
+            ostringstream msg;
+            msg<<"Editing connections!";
+            Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+            dialog.set_secondary_text("Please stop the connection before modifying it.");
+            dialog.run();
+        }
+    }
+}
+
+
 void ApplicationWindow::setCellsEditable(void)
 {
-
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
+    // for the gtkmm > 2.6 we do not use SetCellEditable and 
+    // the corresponding functinality will be taken care by 
+    // signal_editing_started()
+    //  	
+#else
     bool bFlag = areAllShutdown();
 
     for(unsigned int i=3; i<m_TreeModView.get_columns().size(); i++)
@@ -687,6 +767,7 @@ void ApplicationWindow::setCellsEditable(void)
             #endif      
         }
     }
+#endif    
 }
 
 

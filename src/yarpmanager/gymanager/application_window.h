@@ -242,6 +242,14 @@ protected:
     Glib::RefPtr<Gtk::TreeSelection> m_refTreeModSelection;
     Glib::RefPtr<Gtk::TreeSelection> m_refTreeConSelection;
     Glib::RefPtr<Gtk::TreeSelection> m_refTreeResSelection;
+    
+    void onModuleEditingStarted(Gtk::CellEditable* cell_editable, 
+                                const Glib::ustring& path);
+    void onConnectionEditingStarted(Gtk::CellEditable* cell_editable, 
+                                const Glib::ustring& path);
+    
+    //void onModuleEdited(const Glib::ustring& path_string, 
+    //                    const Glib::ustring& new_text);    
 
     int dummy_h;
     int dummy_w;
