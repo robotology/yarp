@@ -130,7 +130,6 @@
 	%rename(configure_c) *::configure();
 #endif
 
-
 //////////////////////////////////////////////////////////////////////////
 // Clean up a few unimportant things that give warnings
 
@@ -346,6 +345,7 @@ MAKE_COMMS(Bottle)
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
   %template(BVector) std::vector<bool>;
+  %template(SVector) std::vector<std::string>;
   #if defined(SWIGCSHARP)
   	SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
   #endif
@@ -963,4 +963,18 @@ public static short[] getRawImg(Image img) {
 	}
 }
 
+
 #endif
+
+
+%extend yarp::os::ResourceFinder {
+  bool configure(const std::string& policyName,
+		 std::vector<std::string>& argv,
+		 bool skipFirstArgument = true) {
+    std::vector<const char *> tmp(argv.size());
+    for (size_t i=0; i<argv.size(); i++) { tmp[i] = argv[i].c_str(); }
+    return self->configure(policyName.c_str(),
+			   argv.size(),
+			   (char**)&tmp[0]);
+  }
+}
