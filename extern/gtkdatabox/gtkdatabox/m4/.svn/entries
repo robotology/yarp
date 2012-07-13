@@ -1,16 +1,0 @@
-8
-
-dir
-2
-https://gtkdatabox.svn.sourceforge.net/svnroot/gtkdatabox/trunk/m4
-https://gtkdatabox.svn.sourceforge.net/svnroot/gtkdatabox
-
-
-
-2008-06-16T18:20:27.588410Z
-2
-rbock
-
-
-svn:special svn:externals svn:needs-lock
-
