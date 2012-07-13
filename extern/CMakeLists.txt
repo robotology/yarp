@@ -8,7 +8,25 @@ else(YARP_USE_SYSTEM_TINYXML)
 endif(YARP_USE_SYSTEM_TINYXML)
 
 if(CREATE_GUIS)
-    #GtkDatabox
+
+    # Gtk2
+    option(YARP_USE_GTK2 FALSE "Use official CMake GTK2 find scripts, rather than homebrewed scripts")
+    if(YARP_USE_GTK2)
+        find_package(GTK2 2.8 COMPONENTS gtk gtkmm)
+    else(YARP_USE_GTK2)
+        find_package(GtkPlus REQUIRED)
+    endif(YARP_USE_GTK2)
+
+
+    # Gthread
+    find_package(Gthread REQUIRED)
+
+
+    # GtkMM
+    find_package(GtkMM REQUIRED)
+
+
+    # GtkDatabox
     option(YARP_USE_SYSTEM_GTKDATABOX "Use system GtkDatabox library" OFF)
 
     if(YARP_USE_SYSTEM_GTKDATABOX)
@@ -18,7 +36,7 @@ if(CREATE_GUIS)
     endif(YARP_USE_SYSTEM_GTKDATABOX)
 
 
-    #GtkDataboxMM
+    # GtkDataboxMM
     option(YARP_USE_SYSTEM_GTKDATABOXMM "Use system GtkDataboxMM library" OFF)
 
     if(YARP_USE_SYSTEM_GTKDATABOXMM)
