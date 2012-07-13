@@ -9,20 +9,9 @@ set(YarpScope_SRCS
     XmlLoader.cpp
 )
 
+include_directories(${TINYXML_INCLUDE_DIRS})
 
-# TinyXML
-set(tinyxml_SRCS
-    tinyxml/tinystr.cpp
-    tinyxml/tinyxml.cpp
-    tinyxml/tinyxmlerror.cpp
-    tinyxml/tinyxmlparser.cpp
-)
-
-set(YarpScope_SRCS
-    ${YarpScope_SRCS}
-    ${tinyxml_SRCS}
-)
-
+link_directories(${TINYXML_LIBRARY_DIRS})
 
 # GtkDatabox and GtkDataboxMM
 set(gtkdatabox_SRCS
@@ -81,6 +70,7 @@ add_executable(yarpscope ${YarpScope_SRCS})
 target_link_libraries(yarpscope
                       YARP_init YARP_OS
                       ${GTKMM_LIBRARIES}
+                      ${TINYXML_LIBRARIES}
 )
 
 if(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)

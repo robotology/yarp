@@ -11,7 +11,7 @@
 #include "PlotManager.h"
 #include "Debug.h"
 
-#include "tinyxml/tinyxml.h"
+#include <tinyxml.h>
 
 #include <glibmm/ustring.h>
 #include <stdexcept>

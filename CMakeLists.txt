@@ -39,6 +39,9 @@ enable_testing()
 # Make some custom header files containing compile settings.
 add_subdirectory(conf)
 
+# Build required 3rd party libraries
+add_subdirectory(extern)
+
 # Set up the main libraries and utilities.
 add_subdirectory(src)
 
