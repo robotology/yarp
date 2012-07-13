@@ -1,0 +1,60 @@
+## Copyright (c) 2009  Openismus GmbH  <http://www.openismus.com/>
+##
+## This file is part of mm-common.
+##
+## mm-common is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published
+## by the Free Software Foundation, either version 2 of the License,
+## or (at your option) any later version.
+##
+## mm-common is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with mm-common.  If not, see <http://www.gnu.org/licenses/>.
+
+## Parameters:  lib_LTLIBRARIES
+## Overrides:   binding_name, binding_basedir, binding_modulename
+## Files:       files_built_cc, files_built_h, files_built_ph,
+##              files_extra_cc, files_extra_h, files_extra_ph
+## Output:      binding_sources, binding_includes, binding_cppflags
+
+# The name of the binding module.  Usually identical to the name of the
+# directory where the generated sources and include files live.
+binding_name ?= $(notdir $(subdir))
+
+# The parent directory of the src/ and libmm/ directories.
+# Usually the same as the C library name.
+binding_basedir ?= $(patsubst %/,%,$(dir $(subdir)))
+
+# The library name of the binding, possibly including an API version suffix.
+# Depending on the module, the "lib" prefix may or may not be included.
+binding_modulename ?= $(patsubst lib%,$(binding_libprefix)%,$(basename $(lib_LTLIBRARIES)))
+
+# Try to work out whether the binding's module name includes a "lib" prefix.
+binding_libprefix = $(if $(filter lib%,$(binding_name)),lib)
+
+# Files to be listed in the module's _SOURCES variable.
+binding_sources = $(files_built_cc) $(files_extra_cc)
+
+# Default include directories and preprocessor flags.
+binding_includes = -I..$(if $(srcdir:.=), -I$(top_srcdir)/$(binding_basedir)) -I$(top_builddir)
+binding_cppflags = -DG_LOG_DOMAIN=\"$(binding_name)\"
+
+# Installation directories for header files.
+binding_includedir = $(includedir)/$(binding_modulename)/$(binding_name)
+binding_privatedir = $(binding_includedir)/private
+
+# List of installed header files.
+binding_include_HEADERS = $(files_built_h) $(files_extra_h)
+binding_private_HEADERS = $(files_built_ph) $(files_extra_ph)
+
+# Delete built sources on make maintainer-clean.
+binding_built_sources = $(files_built_cc) $(files_built_h) $(files_built_ph)
+MAINTAINERCLEANFILES  = $(binding_built_sources) $(addprefix $(srcdir)/,$(binding_built_sources))
+
+# Instruct GNU make to delete the targets of a rule after it failed, in
+# order to avoid the complication of handling that situation manually.
+.DELETE_ON_ERROR:

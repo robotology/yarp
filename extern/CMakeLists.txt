@@ -16,3 +16,13 @@ if(YARP_USE_SYSTEM_GTKDATABOX)
 else(YARP_USE_SYSTEM_GTKDATABOX)
     add_subdirectory(gtkdatabox)
 endif(YARP_USE_SYSTEM_GTKDATABOX)
+
+
+#GtkDataboxMM
+option(YARP_USE_SYSTEM_GTKDATABOXMM "Use system GtkDataboxMM library" OFF)
+
+if(YARP_USE_SYSTEM_GTKDATABOXMM)
+    find_package(GtkDataboxMM REQUIRED)
+else(YARP_USE_SYSTEM_GTKDATABOXMM)
+    add_subdirectory(gtkdataboxmm)
+endif(YARP_USE_SYSTEM_GTKDATABOXMM)

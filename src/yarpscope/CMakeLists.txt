@@ -7,13 +7,8 @@ if(CREATE_YARPSCOPE)
     find_package(GtkMM REQUIRED)
     include_directories (${GTKMM_INCLUDE_DIRS})
 
-    set(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM OFF CACHE BOOL "Use system GtkDataboxMM library")
-    mark_as_advanced(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
-    if(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
-        find_package(GtkDataboxMM REQUIRED)
-        include_directories(${GTKDATABOXMM_INCLUDE_DIRS})
-        link_directories(${GTKDATABOXMM_LIBRARY_DIRS})
-    endif(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
+    include_directories(${GTKDATABOXMM_INCLUDE_DIRS})
+    link_directories(${GTKDATABOXMM_LIBRARY_DIRS})
 
     add_definitions("--ansi")
 
