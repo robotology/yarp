@@ -1,0 +1,11 @@
+gtk_databox_get_type
+gtk_databox_scale_type_get_type
+gtk_databox_graph_get_type
+gtk_databox_xyc_graph_get_type
+gtk_databox_points_get_type
+gtk_databox_lines_get_type
+gtk_databox_bars_get_type
+gtk_databox_grid_get_type
+gtk_databox_cross_simple_get_type
+gtk_databox_ruler_get_type
+gtk_databox_markers_get_type

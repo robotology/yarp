@@ -1,0 +1,44 @@
+<!-- ##### SECTION Title ##### -->
+GtkDataboxLines
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT GtkDataboxLinesPrivate ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GtkDataboxLines ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gtk_databox_lines_new ##### -->
+<para>
+
+</para>
+
+@len: 
+@X: 
+@Y: 
+@color: 
+@size: 
+@Returns: 
+
+

@@ -1,0 +1,148 @@
+<!-- ##### SECTION Title ##### -->
+GtkDataboxRuler
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### MACRO GTK_DATABOX_RULER_MAX_MAX_LENGTH ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### STRUCT GtkDataboxRulerPrivate ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GtkDataboxRuler ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GtkDataboxRuler:lower ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GtkDataboxRuler:max-length ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GtkDataboxRuler:orientation ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GtkDataboxRuler:position ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GtkDataboxRuler:upper ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gtk_databox_ruler_new ##### -->
+<para>
+
+</para>
+
+@orientation: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_set_range ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@lower: 
+@upper: 
+@position: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_set_max_length ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@max_length: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_set_scale_type ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@scale_type: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_get_range ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@lower: 
+@upper: 
+@position: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_get_max_length ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_get_scale_type ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_set_orientation ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@orientation: 
+
+
+<!-- ##### FUNCTION gtk_databox_ruler_get_orientation ##### -->
+<para>
+
+</para>
+
+@ruler: 
+@Returns: 
+
+

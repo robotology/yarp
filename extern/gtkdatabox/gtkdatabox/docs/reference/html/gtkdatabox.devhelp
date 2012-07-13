@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<book xmlns="http://www.devhelp.net/book" title="GtkDatabox Reference Manual" link="index.html" author="" name="gtkdatabox">
+  <chapters>
+    <sub name="GtkDatabox" link="ch01.html">
+      <sub name="GtkDatabox" link="GtkDatabox.html"/>
+      <sub name="GtkDataboxGraph" link="GtkDataboxGraph.html"/>
+      <sub name="GtkDataboxXYCGraph" link="GtkDataboxXYCGraph.html"/>
+      <sub name="GtkDataboxPoints" link="GtkDataboxPoints.html"/>
+      <sub name="GtkDataboxLines" link="GtkDataboxLines.html"/>
+      <sub name="GtkDataboxBars" link="GtkDataboxBars.html"/>
+      <sub name="GtkDataboxGrid" link="GtkDataboxGrid.html"/>
+      <sub name="GtkDataboxCrossSimple" link="GtkDataboxCrossSimple.html"/>
+      <sub name="GtkDataboxRuler" link="GtkDataboxRuler.html"/>
+      <sub name="GtkDataboxMarkers" link="GtkDataboxMarkers.html"/>
+      <sub name="gtkdatabox_marshal" link="gtkdatabox-gtkdatabox-marshal.html"/>
+      <sub name="gtkdatabox_scale" link="gtkdatabox-gtkdatabox-scale.html"/>
+      <sub name="gtkdatabox_typedefs" link="gtkdatabox-gtkdatabox-typedefs.html"/>
+    </sub>
+  </chapters>
+  <functions>
+    <function name="GtkDataboxPrivate" link="GtkDatabox.html#GtkDataboxPrivate"/>
+    <function name="GtkDatabox" link="GtkDatabox.html#GtkDatabox-struct"/>
+    <function name="gtk_databox_new ()" link="GtkDatabox.html#gtk-databox-new"/>
+    <function name="gtk_databox_graph_add ()" link="GtkDatabox.html#gtk-databox-graph-add"/>
+    <function name="gtk_databox_graph_remove ()" link="GtkDatabox.html#gtk-databox-graph-remove"/>
+    <function name="gtk_databox_graph_remove_all ()" link="GtkDatabox.html#gtk-databox-graph-remove-all"/>
+    <function name="gtk_databox_auto_rescale ()" link="GtkDatabox.html#gtk-databox-auto-rescale"/>
+    <function name="gtk_databox_calculate_extrema ()" link="GtkDatabox.html#gtk-databox-calculate-extrema"/>
+    <function name="gtk_databox_set_total_limits ()" link="GtkDatabox.html#gtk-databox-set-total-limits"/>
+    <function name="gtk_databox_set_visible_limits ()" link="GtkDatabox.html#gtk-databox-set-visible-limits"/>
+    <function name="gtk_databox_get_total_limits ()" link="GtkDatabox.html#gtk-databox-get-total-limits"/>
+    <function name="gtk_databox_get_visible_limits ()" link="GtkDatabox.html#gtk-databox-get-visible-limits"/>
+    <function name="gtk_databox_set_adjustment_x ()" link="GtkDatabox.html#gtk-databox-set-adjustment-x"/>
+    <function name="gtk_databox_set_adjustment_y ()" link="GtkDatabox.html#gtk-databox-set-adjustment-y"/>
+    <function name="gtk_databox_get_adjustment_x ()" link="GtkDatabox.html#gtk-databox-get-adjustment-x"/>
+    <function name="gtk_databox_get_adjustment_y ()" link="GtkDatabox.html#gtk-databox-get-adjustment-y"/>
+    <function name="gtk_databox_set_ruler_x ()" link="GtkDatabox.html#gtk-databox-set-ruler-x"/>
+    <function name="gtk_databox_set_ruler_y ()" link="GtkDatabox.html#gtk-databox-set-ruler-y"/>
+    <function name="gtk_databox_get_ruler_x ()" link="GtkDatabox.html#gtk-databox-get-ruler-x"/>
+    <function name="gtk_databox_get_ruler_y ()" link="GtkDatabox.html#gtk-databox-get-ruler-y"/>
+    <function name="gtk_databox_set_scale_type_x ()" link="GtkDatabox.html#gtk-databox-set-scale-type-x"/>
+    <function name="gtk_databox_set_scale_type_y ()" link="GtkDatabox.html#gtk-databox-set-scale-type-y"/>
+    <function name="gtk_databox_get_scale_type_x ()" link="GtkDatabox.html#gtk-databox-get-scale-type-x"/>
+    <function name="gtk_databox_get_scale_type_y ()" link="GtkDatabox.html#gtk-databox-get-scale-type-y"/>
+    <function name="gtk_databox_set_enable_selection ()" link="GtkDatabox.html#gtk-databox-set-enable-selection"/>
+    <function name="gtk_databox_set_enable_zoom ()" link="GtkDatabox.html#gtk-databox-set-enable-zoom"/>
+    <function name="gtk_databox_get_enable_selection ()" link="GtkDatabox.html#gtk-databox-get-enable-selection"/>
+    <function name="gtk_databox_get_enable_zoom ()" link="GtkDatabox.html#gtk-databox-get-enable-zoom"/>
+    <function name="gtk_databox_zoom_to_selection ()" link="GtkDatabox.html#gtk-databox-zoom-to-selection"/>
+    <function name="gtk_databox_zoom_out ()" link="GtkDatabox.html#gtk-databox-zoom-out"/>
+    <function name="gtk_databox_zoom_home ()" link="GtkDatabox.html#gtk-databox-zoom-home"/>
+    <function name="gtk_databox_value_to_pixel_x ()" link="GtkDatabox.html#gtk-databox-value-to-pixel-x"/>
+    <function name="gtk_databox_value_to_pixel_y ()" link="GtkDatabox.html#gtk-databox-value-to-pixel-y"/>
+    <function name="gtk_databox_pixel_to_value_x ()" link="GtkDatabox.html#gtk-databox-pixel-to-value-x"/>
+    <function name="gtk_databox_pixel_to_value_y ()" link="GtkDatabox.html#gtk-databox-pixel-to-value-y"/>
+    <function name="gtk_databox_values_to_pixels ()" link="GtkDatabox.html#gtk-databox-values-to-pixels"/>
+    <function name="gtk_databox_create_box_with_scrollbars_and_rulers ()" link="GtkDatabox.html#gtk-databox-create-box-with-scrollbars-and-rulers"/>
+    <function name="gtk_databox_get_backing_pixmap ()" link="GtkDatabox.html#gtk-databox-get-backing-pixmap"/>
+    <function name="The &quot;adjustment-x&quot; property" link="GtkDatabox.html#GtkDatabox--adjustment-x"/>
+    <function name="The &quot;adjustment-y&quot; property" link="GtkDatabox.html#GtkDatabox--adjustment-y"/>
+    <function name="The &quot;enable-selection&quot; property" link="GtkDatabox.html#GtkDatabox--enable-selection"/>
+    <function name="The &quot;enable-zoom&quot; property" link="GtkDatabox.html#GtkDatabox--enable-zoom"/>
+    <function name="The &quot;ruler-x&quot; property" link="GtkDatabox.html#GtkDatabox--ruler-x"/>
+    <function name="The &quot;ruler-y&quot; property" link="GtkDatabox.html#GtkDatabox--ruler-y"/>
+    <function name="The &quot;scale-type-x&quot; property" link="GtkDatabox.html#GtkDatabox--scale-type-x"/>
+    <function name="The &quot;scale-type-y&quot; property" link="GtkDatabox.html#GtkDatabox--scale-type-y"/>
+    <function name="The &quot;selection-canceled&quot; signal" link="GtkDatabox.html#GtkDatabox-selection-canceled"/>
+    <function name="The &quot;selection-changed&quot; signal" link="GtkDatabox.html#GtkDatabox-selection-changed"/>
+    <function name="The &quot;selection-finalized&quot; signal" link="GtkDatabox.html#GtkDatabox-selection-finalized"/>
+    <function name="The &quot;selection-started&quot; signal" link="GtkDatabox.html#GtkDatabox-selection-started"/>
+    <function name="The &quot;zoomed&quot; signal" link="GtkDatabox.html#GtkDatabox-zoomed"/>
+    <function name="GtkDataboxGraphPrivate" link="GtkDataboxGraph.html#GtkDataboxGraphPrivate"/>
+    <function name="GtkDataboxGraph" link="GtkDataboxGraph.html#GtkDataboxGraph-struct"/>
+    <function name="gtk_databox_graph_get_gc ()" link="GtkDataboxGraph.html#gtk-databox-graph-get-gc"/>
+    <function name="gtk_databox_graph_set_gc ()" link="GtkDataboxGraph.html#gtk-databox-graph-set-gc"/>
+    <function name="gtk_databox_graph_set_hide ()" link="GtkDataboxGraph.html#gtk-databox-graph-set-hide"/>
+    <function name="gtk_databox_graph_get_hide ()" link="GtkDataboxGraph.html#gtk-databox-graph-get-hide"/>
+    <function name="gtk_databox_graph_set_color ()" link="GtkDataboxGraph.html#gtk-databox-graph-set-color"/>
+    <function name="gtk_databox_graph_get_color ()" link="GtkDataboxGraph.html#gtk-databox-graph-get-color"/>
+    <function name="gtk_databox_graph_set_size ()" link="GtkDataboxGraph.html#gtk-databox-graph-set-size"/>
+    <function name="gtk_databox_graph_get_size ()" link="GtkDataboxGraph.html#gtk-databox-graph-get-size"/>
+    <function name="gtk_databox_graph_calculate_extrema ()" link="GtkDataboxGraph.html#gtk-databox-graph-calculate-extrema"/>
+    <function name="gtk_databox_graph_draw ()" link="GtkDataboxGraph.html#gtk-databox-graph-draw"/>
+    <function name="gtk_databox_graph_create_gc ()" link="GtkDataboxGraph.html#gtk-databox-graph-create-gc"/>
+    <function name="The &quot;color&quot; property" link="GtkDataboxGraph.html#GtkDataboxGraph--color"/>
+    <function name="The &quot;hide&quot; property" link="GtkDataboxGraph.html#GtkDataboxGraph--hide"/>
+    <function name="The &quot;size&quot; property" link="GtkDataboxGraph.html#GtkDataboxGraph--size"/>
+    <function name="GtkDataboxXYCGraphPrivate" link="GtkDataboxXYCGraph.html#GtkDataboxXYCGraphPrivate"/>
+    <function name="GtkDataboxXYCGraph" link="GtkDataboxXYCGraph.html#GtkDataboxXYCGraph-struct"/>
+    <function name="gtk_databox_xyc_graph_get_length ()" link="GtkDataboxXYCGraph.html#gtk-databox-xyc-graph-get-length"/>
+    <function name="gtk_databox_xyc_graph_get_X ()" link="GtkDataboxXYCGraph.html#gtk-databox-xyc-graph-get-X"/>
+    <function name="gtk_databox_xyc_graph_get_Y ()" link="GtkDataboxXYCGraph.html#gtk-databox-xyc-graph-get-Y"/>
+    <function name="The &quot;X-Values&quot; property" link="GtkDataboxXYCGraph.html#GtkDataboxXYCGraph--X-Values"/>
+    <function name="The &quot;Y-Values&quot; property" link="GtkDataboxXYCGraph.html#GtkDataboxXYCGraph--Y-Values"/>
+    <function name="The &quot;length&quot; property" link="GtkDataboxXYCGraph.html#GtkDataboxXYCGraph--length"/>
+    <function name="GtkDataboxPointsPrivate" link="GtkDataboxPoints.html#GtkDataboxPointsPrivate"/>
+    <function name="GtkDataboxPoints" link="GtkDataboxPoints.html#GtkDataboxPoints-struct"/>
+    <function name="gtk_databox_points_new ()" link="GtkDataboxPoints.html#gtk-databox-points-new"/>
+    <function name="GtkDataboxLinesPrivate" link="GtkDataboxLines.html#GtkDataboxLinesPrivate"/>
+    <function name="GtkDataboxLines" link="GtkDataboxLines.html#GtkDataboxLines-struct"/>
+    <function name="gtk_databox_lines_new ()" link="GtkDataboxLines.html#gtk-databox-lines-new"/>
+    <function name="GtkDataboxBarsPrivate" link="GtkDataboxBars.html#GtkDataboxBarsPrivate"/>
+    <function name="GtkDataboxBars" link="GtkDataboxBars.html#GtkDataboxBars-struct"/>
+    <function name="gtk_databox_bars_new ()" link="GtkDataboxBars.html#gtk-databox-bars-new"/>
+    <function name="GtkDataboxGridPrivate" link="GtkDataboxGrid.html#GtkDataboxGridPrivate"/>
+    <function name="GtkDataboxGrid" link="GtkDataboxGrid.html#GtkDataboxGrid-struct"/>
+    <function name="gtk_databox_grid_new ()" link="GtkDataboxGrid.html#gtk-databox-grid-new"/>
+    <function name="gtk_databox_grid_array_new ()" link="GtkDataboxGrid.html#gtk-databox-grid-array-new"/>
+    <function name="gtk_databox_grid_set_hlines ()" link="GtkDataboxGrid.html#gtk-databox-grid-set-hlines"/>
+    <function name="gtk_databox_grid_get_hlines ()" link="GtkDataboxGrid.html#gtk-databox-grid-get-hlines"/>
+    <function name="gtk_databox_grid_set_vlines ()" link="GtkDataboxGrid.html#gtk-databox-grid-set-vlines"/>
+    <function name="gtk_databox_grid_get_vlines ()" link="GtkDataboxGrid.html#gtk-databox-grid-get-vlines"/>
+    <function name="The &quot;grid-hlines&quot; property" link="GtkDataboxGrid.html#GtkDataboxGrid--grid-hlines"/>
+    <function name="The &quot;grid-vlines&quot; property" link="GtkDataboxGrid.html#GtkDataboxGrid--grid-vlines"/>
+    <function name="GtkDataboxCrossSimplePrivate" link="GtkDataboxCrossSimple.html#GtkDataboxCrossSimplePrivate"/>
+    <function name="GtkDataboxCrossSimple" link="GtkDataboxCrossSimple.html#GtkDataboxCrossSimple-struct"/>
+    <function name="gtk_databox_cross_simple_new ()" link="GtkDataboxCrossSimple.html#gtk-databox-cross-simple-new"/>
+    <function name="GTK_DATABOX_RULER_MAX_MAX_LENGTH" link="GtkDataboxRuler.html#GTK-DATABOX-RULER-MAX-MAX-LENGTH:CAPS"/>
+    <function name="GtkDataboxRulerPrivate" link="GtkDataboxRuler.html#GtkDataboxRulerPrivate"/>
+    <function name="GtkDataboxRuler" link="GtkDataboxRuler.html#GtkDataboxRuler-struct"/>
+    <function name="gtk_databox_ruler_new ()" link="GtkDataboxRuler.html#gtk-databox-ruler-new"/>
+    <function name="gtk_databox_ruler_set_range ()" link="GtkDataboxRuler.html#gtk-databox-ruler-set-range"/>
+    <function name="gtk_databox_ruler_set_max_length ()" link="GtkDataboxRuler.html#gtk-databox-ruler-set-max-length"/>
+    <function name="gtk_databox_ruler_set_scale_type ()" link="GtkDataboxRuler.html#gtk-databox-ruler-set-scale-type"/>
+    <function name="gtk_databox_ruler_get_range ()" link="GtkDataboxRuler.html#gtk-databox-ruler-get-range"/>
+    <function name="gtk_databox_ruler_get_max_length ()" link="GtkDataboxRuler.html#gtk-databox-ruler-get-max-length"/>
+    <function name="gtk_databox_ruler_get_scale_type ()" link="GtkDataboxRuler.html#gtk-databox-ruler-get-scale-type"/>
+    <function name="gtk_databox_ruler_set_orientation ()" link="GtkDataboxRuler.html#gtk-databox-ruler-set-orientation"/>
+    <function name="gtk_databox_ruler_get_orientation ()" link="GtkDataboxRuler.html#gtk-databox-ruler-get-orientation"/>
+    <function name="The &quot;lower&quot; property" link="GtkDataboxRuler.html#GtkDataboxRuler--lower"/>
+    <function name="The &quot;max-length&quot; property" link="GtkDataboxRuler.html#GtkDataboxRuler--max-length"/>
+    <function name="The &quot;orientation&quot; property" link="GtkDataboxRuler.html#GtkDataboxRuler--orientation"/>
+    <function name="The &quot;position&quot; property" link="GtkDataboxRuler.html#GtkDataboxRuler--position"/>
+    <function name="The &quot;upper&quot; property" link="GtkDataboxRuler.html#GtkDataboxRuler--upper"/>
+    <function name="GtkDataboxMarkersPrivate" link="GtkDataboxMarkers.html#GtkDataboxMarkersPrivate"/>
+    <function name="enum GtkDataboxMarkersPosition" link="GtkDataboxMarkers.html#GtkDataboxMarkersPosition"/>
+    <function name="enum GtkDataboxMarkersTextPosition" link="GtkDataboxMarkers.html#GtkDataboxMarkersTextPosition"/>
+    <function name="enum GtkDataboxMarkersType" link="GtkDataboxMarkers.html#GtkDataboxMarkersType"/>
+    <function name="GtkDataboxMarkers" link="GtkDataboxMarkers.html#GtkDataboxMarkers-struct"/>
+    <function name="gtk_databox_markers_new ()" link="GtkDataboxMarkers.html#gtk-databox-markers-new"/>
+    <function name="gtk_databox_markers_set_position ()" link="GtkDataboxMarkers.html#gtk-databox-markers-set-position"/>
+    <function name="gtk_databox_markers_set_label ()" link="GtkDataboxMarkers.html#gtk-databox-markers-set-label"/>
+    <function name="The &quot;markers-type&quot; property" link="GtkDataboxMarkers.html#GtkDataboxMarkers--markers-type"/>
+    <function name="gtk_databox_marshal_VOID__VOID" link="gtkdatabox-gtkdatabox-marshal.html#gtk-databox-marshal-VOID--VOID"/>
+    <function name="gtk_databox_marshal_VOID__POINTER" link="gtkdatabox-gtkdatabox-marshal.html#gtk-databox-marshal-VOID--POINTER"/>
+    <function name="enum GtkDataboxScaleType" link="gtkdatabox-gtkdatabox-scale.html#GtkDataboxScaleType"/>
+    <function name="gtk_databox_scale_type_get_type ()" link="gtkdatabox-gtkdatabox-scale.html#gtk-databox-scale-type-get-type"/>
+    <function name="GtkDatabox" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox-struct"/>
+    <function name="GtkDataboxGraph" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDataboxGraph-struct"/>
+    <function name="The &quot;adjustment-x&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--adjustment-x"/>
+    <function name="The &quot;adjustment-y&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--adjustment-y"/>
+    <function name="The &quot;enable-selection&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--enable-selection"/>
+    <function name="The &quot;enable-zoom&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--enable-zoom"/>
+    <function name="The &quot;ruler-x&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--ruler-x"/>
+    <function name="The &quot;ruler-y&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--ruler-y"/>
+    <function name="The &quot;scale-type-x&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--scale-type-x"/>
+    <function name="The &quot;scale-type-y&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox--scale-type-y"/>
+    <function name="The &quot;color&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDataboxGraph--color"/>
+    <function name="The &quot;hide&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDataboxGraph--hide"/>
+    <function name="The &quot;size&quot; property" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDataboxGraph--size"/>
+    <function name="The &quot;selection-canceled&quot; signal" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox-selection-canceled"/>
+    <function name="The &quot;selection-changed&quot; signal" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox-selection-changed"/>
+    <function name="The &quot;selection-finalized&quot; signal" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox-selection-finalized"/>
+    <function name="The &quot;selection-started&quot; signal" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox-selection-started"/>
+    <function name="The &quot;zoomed&quot; signal" link="gtkdatabox-gtkdatabox-typedefs.html#GtkDatabox-zoomed"/>
+  </functions>
+</book>

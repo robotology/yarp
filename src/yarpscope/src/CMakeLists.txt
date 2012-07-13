@@ -9,29 +9,15 @@ set(YarpScope_SRCS
     XmlLoader.cpp
 )
 
-include_directories(${TINYXML_INCLUDE_DIRS})
-
-link_directories(${TINYXML_LIBRARY_DIRS})
-
-# GtkDatabox and GtkDataboxMM
-set(gtkdatabox_SRCS
-    gtkdatabox/gtkdatabox_bars.c
-    gtkdatabox/gtkdatabox.c
-    gtkdatabox/gtkdatabox_cross_simple.c
-    gtkdatabox/gtkdatabox_graph.c
-    gtkdatabox/gtkdatabox_grid.c
-    gtkdatabox/gtkdatabox_lines.c
-    gtkdatabox/gtkdatabox_markers.c
-    gtkdatabox/gtkdatabox_marshal.c
-    gtkdatabox/gtkdatabox_offset_bars.c
-    gtkdatabox/gtkdatabox_points.c
-    gtkdatabox/gtkdatabox_regions.c
-    gtkdatabox/gtkdatabox_ruler.c
-    gtkdatabox/gtkdatabox_scale.c
-    gtkdatabox/gtkdatabox_xyc_graph.c
-    gtkdatabox/gtkdatabox_xyyc_graph.c
+include_directories(${TINYXML_INCLUDE_DIRS}
+                    ${GTKDATABOX_INCLUDE_DIRS}
 )
 
+link_directories(${TINYXML_LIBRARY_DIRS}
+                 ${GTKDATABOX_LIBRARY_DIRS}
+)
+
+# GtkDataboxMM
 set(gtkdataboxmm_SRCS
     gtkdatabox/gtkdataboxmm/bars.cc
     gtkdatabox/gtkdataboxmm/cross_simple.cc
@@ -54,13 +40,6 @@ if(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
         ${YarpScope_SRCS}
         ${gtkdataboxmm_SRCS}
     )
-    if(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOX)
-        include_directories(gtkdatabox)
-        set(YarpScope_SRCS
-            ${YarpScope_SRCS}
-            ${gtkdatabox_SRCS}
-        )
-    endif(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOX)
 endif(NOT YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
 
 
@@ -71,14 +50,11 @@ target_link_libraries(yarpscope
                       YARP_init YARP_OS
                       ${GTKMM_LIBRARIES}
                       ${TINYXML_LIBRARIES}
+                      ${GTKDATABOX_LIBRARIES}
 )
 
 if(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
     target_link_libraries(yarpscope ${GTKDATABOXMM_LIBRARIES})
-else(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
-    if(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
-        target_link_libraries(yarpscope ${GTKDATABOX_LIBRARIES})
-    endif(YARPSCOPE_USE_SYSTEM_GTKDATABOX)
 endif(YARPSCOPE_USE_SYSTEM_GTKDATABOXMM)
 
 install(TARGETS yarpscope COMPONENT utilities DESTINATION bin)

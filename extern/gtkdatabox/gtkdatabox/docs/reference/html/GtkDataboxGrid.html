@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GtkDataboxGrid</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GtkDatabox Reference Manual">
+<link rel="up" href="ch01.html" title="GtkDatabox">
+<link rel="prev" href="GtkDataboxBars.html" title="GtkDataboxBars">
+<link rel="next" href="GtkDataboxCrossSimple.html" title="GtkDataboxCrossSimple">
+<meta name="generator" content="GTK-Doc V1.10 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="GtkDatabox">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GtkDataboxBars.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GtkDatabox Reference Manual</th>
+<td><a accesskey="n" href="GtkDataboxCrossSimple.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts"><nobr><a href="#GtkDataboxGrid.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GtkDataboxGrid.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GtkDataboxGrid.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GtkDataboxGrid.properties" class="shortcut">Properties</a></nobr></td></tr>
+</table>
+<div class="refentry" lang="en">
+<a name="GtkDataboxGrid"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GtkDataboxGrid.top_of_page"></a>GtkDataboxGrid</span></h2>
+<p>GtkDataboxGrid — A <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> used for displaying a grid (like in an oscilloscope).</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GtkDataboxGrid.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">
+
+#include &lt;gtkdatabox_grid.h&gt;
+
+                    <a class="link" href="GtkDataboxGrid.html#GtkDataboxGridPrivate" title="GtkDataboxGridPrivate">GtkDataboxGridPrivate</a>;
+                    <a class="link" href="GtkDataboxGrid.html#GtkDataboxGrid-struct" title="GtkDataboxGrid">GtkDataboxGrid</a>;
+<a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    <a class="link" href="GtkDataboxGrid.html#gtk-databox-grid-new" title="gtk_databox_grid_new ()">gtk_databox_grid_new</a>                (gint hlines,
+                                                         gint vlines,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size);
+<a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    <a class="link" href="GtkDataboxGrid.html#gtk-databox-grid-array-new" title="gtk_databox_grid_array_new ()">gtk_databox_grid_array_new</a>          (gint hlines,
+                                                         gint vlines,
+                                                         gfloat *hline_vals,
+                                                         gfloat *vline_vals,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size);
+void                <a class="link" href="GtkDataboxGrid.html#gtk-databox-grid-set-hlines" title="gtk_databox_grid_set_hlines ()">gtk_databox_grid_set_hlines</a>         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid,
+                                                         gint hlines);
+gint                <a class="link" href="GtkDataboxGrid.html#gtk-databox-grid-get-hlines" title="gtk_databox_grid_get_hlines ()">gtk_databox_grid_get_hlines</a>         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid);
+void                <a class="link" href="GtkDataboxGrid.html#gtk-databox-grid-set-vlines" title="gtk_databox_grid_set_vlines ()">gtk_databox_grid_set_vlines</a>         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid,
+                                                         gint vlines);
+gint                <a class="link" href="GtkDataboxGrid.html#gtk-databox-grid-get-vlines" title="gtk_databox_grid_get_vlines ()">gtk_databox_grid_get_vlines</a>         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid);
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxGrid.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----<a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>
+         +----GtkDataboxGrid
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxGrid.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GtkDataboxGrid.html#GtkDataboxGrid--grid-hlines" title='The "grid-hlines" property'>grid-hlines</a>"              gint                  : Read / Write
+  "<a class="link" href="GtkDataboxGrid.html#GtkDataboxGrid--grid-vlines" title='The "grid-vlines" property'>grid-vlines</a>"              gint                  : Read / Write
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxGrid.description"></a><h2>Description</h2>
+<p>
+<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> is a <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> class for displaying a grid (like in an oscilloscope). You can determine 
+the number of horizontal and vertical lines. When you zoom in, the grid is also zoomed along with the data.</p>
+<p>
+
+</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxGrid.details"></a><h2>Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGridPrivate"></a><h3>GtkDataboxGridPrivate</h3>
+<pre class="programlisting">typedef struct _GtkDataboxGridPrivate GtkDataboxGridPrivate;</pre>
+<p>
+A private data structure used by the <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a>. It shields all internal things
+from developers who are just using the object.</p>
+<p>
+
+</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGrid-struct"></a><h3>GtkDataboxGrid</h3>
+<pre class="programlisting">typedef struct _GtkDataboxGrid GtkDataboxGrid;</pre>
+<p>
+<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> is a <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> class for displaying a grid (like in an oscilloscope). You can determine 
+the number of horizontal and vertical lines. When you zoom in, the grid is also zoomed along with the data.</p>
+<p>
+
+</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-grid-new"></a><h3>gtk_databox_grid_new ()</h3>
+<pre class="programlisting"><a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    gtk_databox_grid_new                (gint hlines,
+                                                         gint vlines,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size);</pre>
+<p>
+Creates a new <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> object which can be added to a <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget as nice decoration for other graphs.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>hlines</code></em> :</span></p></td>
+<td> number of horizontal lines in the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>vlines</code></em> :</span></p></td>
+<td> number of vertical lines in the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>color</code></em> :</span></p></td>
+<td> color of the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
+<td> line width of the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> A new <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> object
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-grid-array-new"></a><h3>gtk_databox_grid_array_new ()</h3>
+<pre class="programlisting"><a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    gtk_databox_grid_array_new          (gint hlines,
+                                                         gint vlines,
+                                                         gfloat *hline_vals,
+                                                         gfloat *vline_vals,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size);</pre>
+<p>
+Creates a new <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> object which can be added to a <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget as nice decoration for other graphs.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>hlines</code></em> :</span></p></td>
+<td> number of horizontal lines in the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>vlines</code></em> :</span></p></td>
+<td> number of vertical lines in the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>hline_vals</code></em> :</span></p></td>
+<td> a pointer to an array of gfloat horizontal grid coordinate
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>vline_vals</code></em> :</span></p></td>
+<td> a pointer to an array of gfloat vertical grid coordinate
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>color</code></em> :</span></p></td>
+<td> color of the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
+<td> line width of the grid
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> A new <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> object
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-grid-set-hlines"></a><h3>gtk_databox_grid_set_hlines ()</h3>
+<pre class="programlisting">void                gtk_databox_grid_set_hlines         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid,
+                                                         gint hlines);</pre>
+<p>
+Sets the number of horizontal lines in the <em class="parameter"><code>grid</code></em>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>grid</code></em> :</span></p></td>
+<td> a <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> graph object
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>hlines</code></em> :</span></p></td>
+<td> number of vertical lines in the grid
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-grid-get-hlines"></a><h3>gtk_databox_grid_get_hlines ()</h3>
+<pre class="programlisting">gint                gtk_databox_grid_get_hlines         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid);</pre>
+<p>
+Gets the number of horizontal lines in the <em class="parameter"><code>grid</code></em>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>grid</code></em> :</span></p></td>
+<td> a <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> graph object
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> Number of horizontal lines in the <em class="parameter"><code>grid</code></em>.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-grid-set-vlines"></a><h3>gtk_databox_grid_set_vlines ()</h3>
+<pre class="programlisting">void                gtk_databox_grid_set_vlines         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid,
+                                                         gint vlines);</pre>
+<p>
+Sets the number of vertical lines in the <em class="parameter"><code>grid</code></em>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>grid</code></em> :</span></p></td>
+<td> a <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> graph object
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>vlines</code></em> :</span></p></td>
+<td> number of vertical lines in the grid
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-grid-get-vlines"></a><h3>gtk_databox_grid_get_vlines ()</h3>
+<pre class="programlisting">gint                gtk_databox_grid_get_vlines         (<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a> *grid);</pre>
+<p>
+Gets the number of vertical lines in the <em class="parameter"><code>grid</code></em>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>grid</code></em> :</span></p></td>
+<td> a <a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid"><span class="type">GtkDataboxGrid</span></a> graph object
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> Number of vertical lines in the <em class="parameter"><code>grid</code></em>.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxGrid.property-details"></a><h2>Property Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGrid--grid-hlines"></a><h3>The <code class="literal">"grid-hlines"</code> property</h3>
+<pre class="programlisting">  "grid-hlines"              gint                  : Read / Write</pre>
+<p>Number of horizontal lines.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGrid--grid-vlines"></a><h3>The <code class="literal">"grid-vlines"</code> property</h3>
+<pre class="programlisting">  "grid-vlines"              gint                  : Read / Write</pre>
+<p>Number of vertical lines.</p>
+<p>Default value: 0</p>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxGrid.see-also"></a><h2>See Also</h2>
+<a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a>, <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a>, <a class="link" href="GtkDataboxPoints.html" title="GtkDataboxPoints"><span class="type">GtkDataboxPoints</span></a>, <a class="link" href="GtkDataboxLines.html" title="GtkDataboxLines"><span class="type">GtkDataboxLines</span></a>,  <a class="link" href="GtkDataboxBars.html" title="GtkDataboxBars"><span class="type">GtkDataboxBars</span></a>, <a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.10</div>
+</body>
+</html>

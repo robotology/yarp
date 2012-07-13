@@ -1,0 +1,44 @@
+<!-- ##### SECTION Title ##### -->
+GtkDataboxPoints
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT GtkDataboxPointsPrivate ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GtkDataboxPoints ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gtk_databox_points_new ##### -->
+<para>
+
+</para>
+
+@len: 
+@X: 
+@Y: 
+@color: 
+@size: 
+@Returns: 
+
+

@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GtkDataboxLines</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GtkDatabox Reference Manual">
+<link rel="up" href="ch01.html" title="GtkDatabox">
+<link rel="prev" href="GtkDataboxPoints.html" title="GtkDataboxPoints">
+<link rel="next" href="GtkDataboxBars.html" title="GtkDataboxBars">
+<meta name="generator" content="GTK-Doc V1.10 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="GtkDatabox">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GtkDataboxPoints.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GtkDatabox Reference Manual</th>
+<td><a accesskey="n" href="GtkDataboxBars.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts"><nobr><a href="#GtkDataboxLines.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GtkDataboxLines.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GtkDataboxLines.object-hierarchy" class="shortcut">Object Hierarchy</a></nobr></td></tr>
+</table>
+<div class="refentry" lang="en">
+<a name="GtkDataboxLines"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GtkDataboxLines.top_of_page"></a>GtkDataboxLines</span></h2>
+<p>GtkDataboxLines — A <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> used for displaying xy-values series of connected lines.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GtkDataboxLines.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">
+
+#include &lt;gtkdatabox_lines.h&gt;
+
+                    <a class="link" href="GtkDataboxLines.html#GtkDataboxLinesPrivate" title="GtkDataboxLinesPrivate">GtkDataboxLinesPrivate</a>;
+                    <a class="link" href="GtkDataboxLines.html#GtkDataboxLines-struct" title="GtkDataboxLines">GtkDataboxLines</a>;
+<a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    <a class="link" href="GtkDataboxLines.html#gtk-databox-lines-new" title="gtk_databox_lines_new ()">gtk_databox_lines_new</a>               (guint len,
+                                                         gfloat *X,
+                                                         gfloat *Y,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size);
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxLines.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----<a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>
+         +----<a class="link" href="GtkDataboxXYCGraph.html" title="GtkDataboxXYCGraph">GtkDataboxXYCGraph</a>
+               +----GtkDataboxLines
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxLines.description"></a><h2>Description</h2>
+<p>
+<a class="link" href="GtkDataboxLines.html" title="GtkDataboxLines"><span class="type">GtkDataboxLines</span></a> is a <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> class for displaying xy-values as series of connected lines.</p>
+<p>
+
+</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxLines.details"></a><h2>Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxLinesPrivate"></a><h3>GtkDataboxLinesPrivate</h3>
+<pre class="programlisting">typedef struct _GtkDataboxLinesPrivate GtkDataboxLinesPrivate;</pre>
+<p>
+A private data structure used by the <a class="link" href="GtkDataboxLines.html" title="GtkDataboxLines"><span class="type">GtkDataboxLines</span></a>. It shields all internal things
+from developers who are just using the object.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxLines-struct"></a><h3>GtkDataboxLines</h3>
+<pre class="programlisting">typedef struct _GtkDataboxLines GtkDataboxLines;</pre>
+<p>
+<a class="link" href="GtkDataboxLines.html" title="GtkDataboxLines"><span class="type">GtkDataboxLines</span></a> is a <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> class for displaying xy-values as series of connected lines.</p>
+<p>
+
+</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-lines-new"></a><h3>gtk_databox_lines_new ()</h3>
+<pre class="programlisting"><a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    gtk_databox_lines_new               (guint len,
+                                                         gfloat *X,
+                                                         gfloat *Y,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size);</pre>
+<p>
+Creates a new <a class="link" href="GtkDataboxLines.html" title="GtkDataboxLines"><span class="type">GtkDataboxLines</span></a> object which can be added to a <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>len</code></em> :</span></p></td>
+<td> length of <em class="parameter"><code>X</code></em> and <em class="parameter"><code>Y</code></em>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>X</code></em> :</span></p></td>
+<td> array of horizontal position values of markers
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>Y</code></em> :</span></p></td>
+<td> array of vertical position values of markers
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>color</code></em> :</span></p></td>
+<td> color of the markers
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
+<td> marker size or line width (depending on the <em class="parameter"><code>type</code></em>)
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> A new <a class="link" href="GtkDataboxLines.html" title="GtkDataboxLines"><span class="type">GtkDataboxLines</span></a> object
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxLines.see-also"></a><h2>See Also</h2>
+<a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a>, <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a>, <a class="link" href="GtkDataboxPoints.html" title="GtkDataboxPoints"><span class="type">GtkDataboxPoints</span></a>, <a class="link" href="GtkDataboxBars.html" title="GtkDataboxBars"><span class="type">GtkDataboxBars</span></a>, <a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.10</div>
+</body>
+</html>

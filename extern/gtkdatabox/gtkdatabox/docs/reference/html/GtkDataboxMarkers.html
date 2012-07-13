@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GtkDataboxMarkers</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GtkDatabox Reference Manual">
+<link rel="up" href="ch01.html" title="GtkDatabox">
+<link rel="prev" href="GtkDataboxRuler.html" title="GtkDataboxRuler">
+<link rel="next" href="gtkdatabox-gtkdatabox-marshal.html" title="gtkdatabox_marshal">
+<meta name="generator" content="GTK-Doc V1.10 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="GtkDatabox">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GtkDataboxRuler.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GtkDatabox Reference Manual</th>
+<td><a accesskey="n" href="gtkdatabox-gtkdatabox-marshal.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts"><nobr><a href="#GtkDataboxMarkers.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GtkDataboxMarkers.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GtkDataboxMarkers.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GtkDataboxMarkers.properties" class="shortcut">Properties</a></nobr></td></tr>
+</table>
+<div class="refentry" lang="en">
+<a name="GtkDataboxMarkers"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GtkDataboxMarkers.top_of_page"></a>GtkDataboxMarkers</span></h2>
+<p>GtkDataboxMarkers — A <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> used for displaying labeled markers for xy-values.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GtkDataboxMarkers.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">
+
+#include &lt;gtkdatabox_markers.h&gt;
+
+                    <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersPrivate" title="GtkDataboxMarkersPrivate">GtkDataboxMarkersPrivate</a>;
+enum                <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersPosition" title="enum GtkDataboxMarkersPosition">GtkDataboxMarkersPosition</a>;
+enum                <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersTextPosition" title="enum GtkDataboxMarkersTextPosition">GtkDataboxMarkersTextPosition</a>;
+enum                <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersType" title="enum GtkDataboxMarkersType">GtkDataboxMarkersType</a>;
+                    <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkers-struct" title="GtkDataboxMarkers">GtkDataboxMarkers</a>;
+<a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    <a class="link" href="GtkDataboxMarkers.html#gtk-databox-markers-new" title="gtk_databox_markers_new ()">gtk_databox_markers_new</a>             (guint len,
+                                                         gfloat *X,
+                                                         gfloat *Y,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size,
+                                                         <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersType" title="enum GtkDataboxMarkersType">GtkDataboxMarkersType</a> type);
+void                <a class="link" href="GtkDataboxMarkers.html#gtk-databox-markers-set-position" title="gtk_databox_markers_set_position ()">gtk_databox_markers_set_position</a>    (<a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers">GtkDataboxMarkers</a> *markers,
+                                                         guint index,
+                                                         <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersPosition" title="enum GtkDataboxMarkersPosition">GtkDataboxMarkersPosition</a> position);
+void                <a class="link" href="GtkDataboxMarkers.html#gtk-databox-markers-set-label" title="gtk_databox_markers_set_label ()">gtk_databox_markers_set_label</a>       (<a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers">GtkDataboxMarkers</a> *markers,
+                                                         guint index,
+                                                         <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersTextPosition" title="enum GtkDataboxMarkersTextPosition">GtkDataboxMarkersTextPosition</a> label_position,
+                                                         gchar *text,
+                                                         gboolean boxed);
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxMarkers.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----<a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>
+         +----<a class="link" href="GtkDataboxXYCGraph.html" title="GtkDataboxXYCGraph">GtkDataboxXYCGraph</a>
+               +----GtkDataboxMarkers
+                     +----<a class="link" href="GtkDataboxCrossSimple.html" title="GtkDataboxCrossSimple">GtkDataboxCrossSimple</a>
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxMarkers.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkers--markers-type" title='The "markers-type" property'>markers-type</a>"             gint                  : Read / Write / Construct
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxMarkers.description"></a><h2>Description</h2>
+<p>
+<a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a> is a <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> class for displaying labeled markers (circles, triangles, lines) for xy-values.</p>
+<p>
+
+</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxMarkers.details"></a><h2>Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxMarkersPrivate"></a><h3>GtkDataboxMarkersPrivate</h3>
+<pre class="programlisting">typedef struct _GtkDataboxMarkersPrivate GtkDataboxMarkersPrivate;</pre>
+<p>
+A private data structure used by the <a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a>. It shields all internal things
+from developers who are just using the object.</p>
+<p>
+
+</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxMarkersPosition"></a><h3>enum GtkDataboxMarkersPosition</h3>
+<pre class="programlisting">   typedef enum
+   {
+      GTK_DATABOX_MARKERS_C = 0,
+      GTK_DATABOX_MARKERS_N,
+      GTK_DATABOX_MARKERS_E,
+      GTK_DATABOX_MARKERS_S,
+      GTK_DATABOX_MARKERS_W
+   }
+   GtkDataboxMarkersPosition;
+</pre>
+<p>
+Position of a marker relative to its respective X/Y value.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-C:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_C</code></span></p></td>
+<td> centered on data
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-N:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_N</code></span></p></td>
+<td> marker is positioned north of data
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-E:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_E</code></span></p></td>
+<td> marker is positioned east of data
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-S:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_S</code></span></p></td>
+<td> marker is positioned south of data
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-W:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_W</code></span></p></td>
+<td> marker is positioned west of data
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxMarkersTextPosition"></a><h3>enum GtkDataboxMarkersTextPosition</h3>
+<pre class="programlisting">   typedef enum
+   {
+      GTK_DATABOX_MARKERS_TEXT_CENTER = 0,/* text centered   on marker */
+      GTK_DATABOX_MARKERS_TEXT_N,	  /* text north      of marker */
+      GTK_DATABOX_MARKERS_TEXT_NE,	  /* text north-east of marker */
+      GTK_DATABOX_MARKERS_TEXT_E,	  /* text east       of marker */
+      GTK_DATABOX_MARKERS_TEXT_SE,	  /* text south-east of marker */
+      GTK_DATABOX_MARKERS_TEXT_S,	  /* text south      of marker */
+      GTK_DATABOX_MARKERS_TEXT_SW,	  /* text south-west of marker */
+      GTK_DATABOX_MARKERS_TEXT_W,	  /* text west       of marker */
+      GTK_DATABOX_MARKERS_TEXT_NW	  /* text north-west of marker */
+   }
+   GtkDataboxMarkersTextPosition;
+</pre>
+<p>
+Position of a label relative to its repective marker.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-CENTER:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_CENTER</code></span></p></td>
+<td>   text centered   on marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-N:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_N</code></span></p></td>
+<td>	  text north      of marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-NE:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_NE</code></span></p></td>
+<td>	  text north-east of marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-E:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_E</code></span></p></td>
+<td>	  text east       of marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-SE:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_SE</code></span></p></td>
+<td>	  text south-east of marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-S:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_S</code></span></p></td>
+<td>	  text south      of marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-SW:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_SW</code></span></p></td>
+<td>	  text south-west of marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-W:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_W</code></span></p></td>
+<td>	  text west       of marker
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TEXT-NW:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TEXT_NW</code></span></p></td>
+<td>       text north-west of marker
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxMarkersType"></a><h3>enum GtkDataboxMarkersType</h3>
+<pre class="programlisting">   typedef enum
+   {
+      GTK_DATABOX_MARKERS_NONE = 0,	/* No Marker (just text) */
+      GTK_DATABOX_MARKERS_TRIANGLE,	/* Marker is a triangle */
+      GTK_DATABOX_MARKERS_SOLID_LINE,	/* Marker is a solid line */
+      GTK_DATABOX_MARKERS_DASHED_LINE	/* Marker is a dashed line */
+   }
+   GtkDataboxMarkersType;
+</pre>
+<p>
+Type of the marker</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-NONE:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_NONE</code></span></p></td>
+<td>	No Marker (just text)
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-TRIANGLE:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_TRIANGLE</code></span></p></td>
+<td>	Marker is a triangle
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-SOLID-LINE:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_SOLID_LINE</code></span></p></td>
+<td>	Marker is a solid line
+</td>
+</tr>
+<tr>
+<td><p><a name="GTK-DATABOX-MARKERS-DASHED-LINE:CAPS"></a><span class="term"><code class="literal">GTK_DATABOX_MARKERS_DASHED_LINE</code></span></p></td>
+<td>	Marker is a dashed line
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxMarkers-struct"></a><h3>GtkDataboxMarkers</h3>
+<pre class="programlisting">typedef struct _GtkDataboxMarkers GtkDataboxMarkers;</pre>
+<p>
+<a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a> is a <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> class for displaying labeled markers (circles, triangles, lines) for xy-values.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-markers-new"></a><h3>gtk_databox_markers_new ()</h3>
+<pre class="programlisting"><a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph">GtkDataboxGraph</a>*    gtk_databox_markers_new             (guint len,
+                                                         gfloat *X,
+                                                         gfloat *Y,
+                                                         <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Colormaps-and-Colors.html#GdkColor"
+>GdkColor</a> *color,
+                                                         guint size,
+                                                         <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersType" title="enum GtkDataboxMarkersType">GtkDataboxMarkersType</a> type);</pre>
+<p>
+Creates a new <a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a> object which can be added to a <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget as nice decoration for other graphs.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>len</code></em> :</span></p></td>
+<td> length of <em class="parameter"><code>X</code></em> and <em class="parameter"><code>Y</code></em>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>X</code></em> :</span></p></td>
+<td> array of horizontal position values of markers
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>Y</code></em> :</span></p></td>
+<td> array of vertical position values of markers
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>color</code></em> :</span></p></td>
+<td> color of the markers
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
+<td> marker size or line width (depending on the <em class="parameter"><code>type</code></em>)
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
+<td> type of markers (e.g. triangle or circle)
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> A new <a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a> object
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-markers-set-position"></a><h3>gtk_databox_markers_set_position ()</h3>
+<pre class="programlisting">void                gtk_databox_markers_set_position    (<a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers">GtkDataboxMarkers</a> *markers,
+                                                         guint index,
+                                                         <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersPosition" title="enum GtkDataboxMarkersPosition">GtkDataboxMarkersPosition</a> position);</pre>
+<p>
+Sets a position for one of the markers.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>markers</code></em> :</span></p></td>
+<td> A <a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a> object
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>index</code></em> :</span></p></td>
+<td> index within the array of X/Y values
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>position</code></em> :</span></p></td>
+<td> position of the marker (e.g. circle or triangle relative to their X/Y value
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="gtk-databox-markers-set-label"></a><h3>gtk_databox_markers_set_label ()</h3>
+<pre class="programlisting">void                gtk_databox_markers_set_label       (<a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers">GtkDataboxMarkers</a> *markers,
+                                                         guint index,
+                                                         <a class="link" href="GtkDataboxMarkers.html#GtkDataboxMarkersTextPosition" title="enum GtkDataboxMarkersTextPosition">GtkDataboxMarkersTextPosition</a> label_position,
+                                                         gchar *text,
+                                                         gboolean boxed);</pre>
+<p>
+Sets a label for one of the markers.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>markers</code></em> :</span></p></td>
+<td> A <a class="link" href="GtkDataboxMarkers.html" title="GtkDataboxMarkers"><span class="type">GtkDataboxMarkers</span></a> object
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>index</code></em> :</span></p></td>
+<td> index within the array of X/Y values
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>label_position</code></em> :</span></p></td>
+<td> position of the label relative to the marker
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>text</code></em> :</span></p></td>
+<td> text to be displayed in the label
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>boxed</code></em> :</span></p></td>
+<td> Whether the label is to be enclosed in a box (true) or not (false)
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxMarkers.property-details"></a><h2>Property Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxMarkers--markers-type"></a><h3>The <code class="literal">"markers-type"</code> property</h3>
+<pre class="programlisting">  "markers-type"             gint                  : Read / Write / Construct</pre>
+<p>Type of markers for this graph, e.g. triangles or lines.</p>
+<p>Default value: 0</p>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="GtkDataboxMarkers.see-also"></a><h2>See Also</h2>
+<a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a>, <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a>, <a class="link" href="GtkDataboxPoints.html" title="GtkDataboxPoints"><span class="type">GtkDataboxPoints</span></a>, <a class="link" href="GtkDataboxLines.html" title="GtkDataboxLines"><span class="type">GtkDataboxLines</span></a>,  <a class="link" href="GtkDataboxBars.html" title="GtkDataboxBars"><span class="type">GtkDataboxBars</span></a>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.10</div>
+</body>
+</html>

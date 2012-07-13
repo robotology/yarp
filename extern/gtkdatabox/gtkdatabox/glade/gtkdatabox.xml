@@ -1,0 +1,25 @@
+<glade-catalog name="databox" library="gladedatabox" depends="gtk+,gtkdatabox">
+  <glade-widget-classes>
+    <glade-widget-class name="GtkDatabox" parent="GtkDrawingArea" generic-name="gtk_databox" title="gtk_databox"/>
+    <glade-widget-class name="GtkDataboxRuler"  generic-name="gtk_databox_ruler" title="Databox ruler">
+      <deep-post-create-function>glade_gtk_databox_ruler_deep_post_create</deep-post-create-function>
+
+      <properties>
+	<property id="upper" default="10.0"/>
+	<property id="position" default="5.0"/>
+        <property id="orientation" set-function="glade_databox_ruler_set_orientation">
+  	  <displayable-values>
+	    <value id="GTK_ORIENTATION_HORIZONTAL" name="Horizontal"></value>
+	    <value id="GTK_ORIENTATION_VERTICAL" name="Vertical"></value>
+	  </displayable-values>
+        </property>
+      </properties>
+    </glade-widget-class>
+  </glade-widget-classes>
+
+  <glade-widget-group name="GtkDatabox" title="GtkDatabox Catalog">
+    <glade-widget-class-ref name="GtkDatabox"/>
+    <glade-widget-class-ref name="GtkDataboxRuler"/>
+  </glade-widget-group>
+
+</glade-catalog>

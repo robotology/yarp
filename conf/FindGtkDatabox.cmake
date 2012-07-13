@@ -31,9 +31,9 @@ if(NOT WIN32)
     endif(PKG_CONFIG_FOUND)
 endif(NOT WIN32)
 
-set(GTKDATABOX_INCLUDE_DIRS ${PC_GTKDATABOX_INCLUDE_DIRS} CACHE PATH "GtkDatabox include directory")
-set(GTKDATABOX_LIBRARY_DIRS ${PC_GTKDATABOX_LIBRARY_DIRS} CACHE PATH "GtkDatabox library directory")
-set(GTKDATABOX_LIBRARIES ${PC_GTKDATABOX_LIBRARIES} CACHE STRING "GtkDatabox libraries")
+set(GTKDATABOX_INCLUDE_DIRS ${PC_GTKDATABOX_INCLUDE_DIRS} CACHE PATH "GtkDatabox include directory" FORCE)
+set(GTKDATABOX_LIBRARY_DIRS ${PC_GTKDATABOX_LIBRARY_DIRS} CACHE PATH "GtkDatabox library directory" FORCE)
+set(GTKDATABOX_LIBRARIES ${PC_GTKDATABOX_LIBRARIES} CACHE STRING "GtkDatabox libraries" FORCE)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GtkDatabox
