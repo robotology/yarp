@@ -7,22 +7,23 @@ else(YARP_USE_SYSTEM_TINYXML)
     add_subdirectory(tinyxml)
 endif(YARP_USE_SYSTEM_TINYXML)
 
+if(YARP_USE_GTK2)
+    #GtkDatabox
+    option(YARP_USE_SYSTEM_GTKDATABOX "Use system GtkDatabox library" OFF)
 
-#GtkDatabox
-option(YARP_USE_SYSTEM_GTKDATABOX "Use system GtkDatabox library" OFF)
-
-if(YARP_USE_SYSTEM_GTKDATABOX)
-    find_package(GtkDatabox REQUIRED)
-else(YARP_USE_SYSTEM_GTKDATABOX)
-    add_subdirectory(gtkdatabox)
-endif(YARP_USE_SYSTEM_GTKDATABOX)
+    if(YARP_USE_SYSTEM_GTKDATABOX)
+        find_package(GtkDatabox REQUIRED)
+    else(YARP_USE_SYSTEM_GTKDATABOX)
+        add_subdirectory(gtkdatabox)
+    endif(YARP_USE_SYSTEM_GTKDATABOX)
 
 
-#GtkDataboxMM
-option(YARP_USE_SYSTEM_GTKDATABOXMM "Use system GtkDataboxMM library" OFF)
+    #GtkDataboxMM
+    option(YARP_USE_SYSTEM_GTKDATABOXMM "Use system GtkDataboxMM library" OFF)
 
-if(YARP_USE_SYSTEM_GTKDATABOXMM)
-    find_package(GtkDataboxMM REQUIRED)
-else(YARP_USE_SYSTEM_GTKDATABOXMM)
-    add_subdirectory(gtkdataboxmm)
-endif(YARP_USE_SYSTEM_GTKDATABOXMM)
+    if(YARP_USE_SYSTEM_GTKDATABOXMM)
+        find_package(GtkDataboxMM REQUIRED)
+    else(YARP_USE_SYSTEM_GTKDATABOXMM)
+        add_subdirectory(gtkdataboxmm)
+    endif(YARP_USE_SYSTEM_GTKDATABOXMM)
+endif(YARP_USE_GTK2)
