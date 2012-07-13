@@ -7,7 +7,7 @@ else(YARP_USE_SYSTEM_TINYXML)
     add_subdirectory(tinyxml)
 endif(YARP_USE_SYSTEM_TINYXML)
 
-if(YARP_USE_GTK2)
+if(CREATE_GUIS)
     #GtkDatabox
     option(YARP_USE_SYSTEM_GTKDATABOX "Use system GtkDatabox library" OFF)
 
@@ -26,4 +26,4 @@ if(YARP_USE_GTK2)
     else(YARP_USE_SYSTEM_GTKDATABOXMM)
         add_subdirectory(gtkdataboxmm)
     endif(YARP_USE_SYSTEM_GTKDATABOXMM)
-endif(YARP_USE_GTK2)
+endif(CREATE_GUIS)
