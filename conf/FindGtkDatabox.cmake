@@ -4,10 +4,10 @@
 # GTKDATABOX_LIBRARY_DIRS - GtkDatabox library directory
 # GTKDATABOX_LIBRARIES - GtkDatabox libraries
 
-# Copyright (c) 2012, Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 #
-# Redistribution and use is allowed according to the terms of the BSD license.
-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
 set(GTKDATABOX_FIND_REQUIRED ${GtkDatabox_FIND_REQUIRED})
