@@ -40,6 +40,11 @@ set(gtkdatabox_HDRS
 add_library(gtkdatabox STATIC ${gtkdatabox_SRCS})
 
 set(GTKDATABOX_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk" CACHE PATH "GtkDatabox include directory" FORCE)
-set(GTKDATABOX_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTKPLUS_LIBRARY_DIRS}" CACHE PATH "GtkDatabox library directory" FORCE)
-set(GTKDATABOX_LIBRARIES "gtkdatabox;${GTKPLUS_LIBRARIES}" CACHE STRING "GtkDatabox libraries" FORCE)
+if(YARP_USE_GTK2)
+    set(GTKDATABOX_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTK2_LIBRARY_DIRS}" CACHE PATH "GtkDatabox library directory" FORCE)
+    set(GTKDATABOX_LIBRARIES "gtkdatabox;${GTK2_LIBRARIES}" CACHE STRING "GtkDatabox libraries" FORCE)
+else(YARP_USE_GTK2)
+    set(GTKDATABOX_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTKPLUS_LIBRARY_DIRS}" CACHE PATH "GtkDatabox library directory" FORCE)
+    set(GTKDATABOX_LIBRARIES "gtkdatabox;${GTKPLUS_LIBRARIES}" CACHE STRING "GtkDatabox libraries" FORCE)
+endif(YARP_USE_GTK2)
 mark_as_advanced(GTKDATABOX_INCLUDE_DIRS GTKDATABOX_LIBRARY_DIRS GTKDATABOX_LIBRARIES)
