@@ -2,6 +2,7 @@
 project(gtkdataboxmm)
 
 include_directories(${GTKMM_INCLUDE_DIRS}
+                    ${GTKDATABOX_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox/)
 
 set(gtkdataboxmm_SRCS
