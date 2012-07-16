@@ -40,6 +40,7 @@ public:
         add(m_col_wdir); 
         add(m_col_env); 
         add(m_col_color);
+        add(m_col_editable);
         }
     Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
     Gtk::TreeModelColumn<int> m_col_id;
@@ -51,6 +52,7 @@ public:
     Gtk::TreeModelColumn<Glib::ustring> m_col_wdir;
     Gtk::TreeModelColumn<Glib::ustring> m_col_env;
     Gtk::TreeModelColumn<Gdk::Color> m_col_color;
+    Gtk::TreeModelColumn<bool> m_col_editable;
 
 };
 
@@ -71,6 +73,7 @@ public:
         add(m_col_color);
         add(m_col_from_color);
         add(m_col_to_color);
+        add(m_col_editable);
         }
     Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
     Gtk::TreeModelColumn<int> m_col_id;
@@ -82,6 +85,7 @@ public:
     Gtk::TreeModelColumn<Gdk::Color> m_col_color;
     Gtk::TreeModelColumn<Gdk::Color> m_col_from_color;
     Gtk::TreeModelColumn<Gdk::Color> m_col_to_color;
+    Gtk::TreeModelColumn<bool> m_col_editable;
 };
 
 
@@ -242,12 +246,13 @@ protected:
     Glib::RefPtr<Gtk::TreeSelection> m_refTreeModSelection;
     Glib::RefPtr<Gtk::TreeSelection> m_refTreeConSelection;
     Glib::RefPtr<Gtk::TreeSelection> m_refTreeResSelection;
-    
+
+    /*
     void onModuleEditingStarted(Gtk::CellEditable* cell_editable, 
                                 const Glib::ustring& path);
     void onConnectionEditingStarted(Gtk::CellEditable* cell_editable, 
                                 const Glib::ustring& path);
-    
+    */
     //void onModuleEdited(const Glib::ustring& path_string, 
     //                    const Glib::ustring& new_text);    
 

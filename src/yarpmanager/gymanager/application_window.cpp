@@ -61,10 +61,13 @@ void ApplicationWindow::createWidgets(void)
     /* create list store */
     m_refTreeModModel = Gtk::TreeStore::create(m_modColumns);
     m_TreeModView.set_model(m_refTreeModModel);
+    m_TreeModView.set_rules_hint(true);
     m_refTreeConModel = Gtk::TreeStore::create(m_conColumns);
     m_TreeConView.set_model(m_refTreeConModel);
+    m_TreeConView.set_rules_hint(true);
     m_refTreeResModel = Gtk::TreeStore::create(m_resColumns);
     m_TreeResView.set_model(m_refTreeResModel);
+    m_TreeResView.set_rules_hint(true);
 
 
      m_refPixSuspended =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
@@ -161,21 +164,36 @@ void ApplicationWindow::createWidgets(void)
     m_TreeModView.append_column_editable("Host", m_modColumns.m_col_host);
     m_TreeModView.get_column(3)->set_sort_column(m_modColumns.m_col_host);
     m_TreeModView.get_column(3)->set_resizable(true);
+    m_TreeModView.get_column(3)->add_attribute(*m_TreeModView.get_column_cell_renderer(3),
+                                                     "editable", 
+                                                     m_modColumns.m_col_editable);
     m_TreeModView.append_column_editable("Parameters", m_modColumns.m_col_param);
     m_TreeModView.get_column(4)->set_sort_column(m_modColumns.m_col_param);
     m_TreeModView.get_column(4)->set_resizable(true);
+    m_TreeModView.get_column(4)->add_attribute(*m_TreeModView.get_column_cell_renderer(4),
+                                                     "editable", 
+                                                     m_modColumns.m_col_editable);
 
     m_TreeModView.append_column_editable("Stdio", m_modColumns.m_col_stdio);
     m_TreeModView.get_column(5)->set_sort_column(m_modColumns.m_col_stdio);
     m_TreeModView.get_column(5)->set_resizable(true);
+    m_TreeModView.get_column(5)->add_attribute(*m_TreeModView.get_column_cell_renderer(5),
+                                                     "editable", 
+                                                     m_modColumns.m_col_editable);
 
     m_TreeModView.append_column_editable("Work Dir", m_modColumns.m_col_wdir);
     m_TreeModView.get_column(6)->set_sort_column(m_modColumns.m_col_env);
     m_TreeModView.get_column(6)->set_resizable(true);
+    m_TreeModView.get_column(6)->add_attribute(*m_TreeModView.get_column_cell_renderer(6),
+                                                     "editable", 
+                                                     m_modColumns.m_col_editable);
 
     m_TreeModView.append_column_editable("Environment", m_modColumns.m_col_env);
     m_TreeModView.get_column(7)->set_sort_column(m_modColumns.m_col_env);
     m_TreeModView.get_column(7)->set_resizable(true);
+    m_TreeModView.get_column(7)->add_attribute(*m_TreeModView.get_column_cell_renderer(7),
+                                                     "editable", 
+                                                     m_modColumns.m_col_editable);
 
 
     //Add the Model’s column to the connection View’s columns:  
@@ -205,6 +223,9 @@ void ApplicationWindow::createWidgets(void)
     if(fromRenderer)
     {
         m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
+                                                     "editable", 
+                                                     m_conColumns.m_col_editable);
+        m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
                                                      "foreground-gdk", 
                                                      m_conColumns.m_col_from_color);
         m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
@@ -219,6 +240,10 @@ void ApplicationWindow::createWidgets(void)
             dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(idx));
     if(toRenderer)
     {
+        //toRenderer->property_editable() = m_conColumns.m_col_editable;
+        m_TreeConView.get_column(idx)->add_attribute(*toRenderer, 
+                                                     "editable", 
+                                                     m_conColumns.m_col_editable);
         m_TreeConView.get_column(idx)->add_attribute(*toRenderer, 
                                                      "foreground-gdk", 
                                                      m_conColumns.m_col_to_color);
@@ -230,7 +255,9 @@ void ApplicationWindow::createWidgets(void)
     }
 
     m_TreeConView.append_column_editable("Carrier", m_conColumns.m_col_carrier);
-
+    m_TreeConView.get_column(5)->add_attribute(*m_TreeConView.get_column_cell_renderer(5),
+                                                     "editable", 
+                                                     m_conColumns.m_col_editable);
 
     m_TreeConView.get_column(0)->set_sort_column(m_conColumns.m_col_type);
     m_TreeConView.get_column(0)->set_resizable(true);
@@ -376,6 +403,7 @@ void ApplicationWindow::setupSignals(void)
 //            &ApplicationWindow::onResourceTreeButtonPressed) );
 //
 
+/*
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 6)
     for(unsigned int i=3; i<m_TreeModView.get_columns().size(); i++)
     {
@@ -401,6 +429,7 @@ void ApplicationWindow::setupSignals(void)
         }
     }
 #endif
+*/
 }
 
 void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
@@ -436,6 +465,7 @@ void ApplicationWindow::updateApplicationWindow(void)
         m_modRow[m_modColumns.m_col_name] = (*moditr)->getCommand();
         m_modRow.set_value(0, m_refPixSuspended);
         m_modRow[m_modColumns.m_col_status] = "stopped";
+        m_modRow[m_modColumns.m_col_editable] = true;
         m_modRow[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
         m_modRow[m_modColumns.m_col_host] = (*moditr)->getHost();
         m_modRow[m_modColumns.m_col_param] = (*moditr)->getParam();
@@ -465,6 +495,7 @@ void ApplicationWindow::updateApplicationWindow(void)
         m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
         m_conRow[m_conColumns.m_col_carrier] = (*cnnitr).carrier();
         m_conRow[m_conColumns.m_col_status] = "disconnected";
+        m_conRow[m_conColumns.m_col_editable] = true;
         m_conRow[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
         //m_conRow[m_conColumns.m_col_from_color] = Gdk::Color("#BF0303");
     }
@@ -682,6 +713,7 @@ bool ApplicationWindow::areAllShutdown(void)
 }
 
 
+/*
 void ApplicationWindow::onModuleEditingStarted(Gtk::CellEditable* cell_editable, 
                                 const Glib::ustring& path_string)
 {
@@ -728,10 +760,11 @@ void ApplicationWindow::onConnectionEditingStarted(Gtk::CellEditable* cell_edita
         }
     }
 }
-
+*/
 
 void ApplicationWindow::setCellsEditable(void)
 {
+/*
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
     // for the gtkmm > 2.6 we do not use SetCellEditable and 
     // the corresponding functinality will be taken care by 
@@ -768,6 +801,7 @@ void ApplicationWindow::setCellsEditable(void)
         }
     }
 #endif    
+*/
 }
 
 
@@ -794,6 +828,7 @@ bool ApplicationWindow::onRun(void)
                 Glib::ustring(row[m_modColumns.m_col_env]).c_str() );
 
              row[m_modColumns.m_col_status] = "waiting";
+             row[m_modColumns.m_col_editable] = false;
              row[m_modColumns.m_col_color] = Gdk::Color("#000000");
              row.set_value(0, m_refPixWaiting);
         }
@@ -820,6 +855,7 @@ bool ApplicationWindow::onStop(void)
         if(getModRowByID(m_ModuleIDs[i], &row))
         {
             row[m_modColumns.m_col_status] = "waiting";
+            row[m_modColumns.m_col_editable] = false;
             row[m_modColumns.m_col_color] = Gdk::Color("#000000");
             row.set_value(0, m_refPixWaiting);
         }
@@ -846,6 +882,7 @@ bool ApplicationWindow::onKill(void)
         if(getModRowByID(m_ModuleIDs[i], &row))
         {
             row[m_modColumns.m_col_status] = "waiting";
+            row[m_modColumns.m_col_editable] = false;
             row[m_modColumns.m_col_color] = Gdk::Color("#000000");
             row.set_value(0, m_refPixWaiting);
         }
@@ -878,6 +915,7 @@ bool ApplicationWindow::onConnect(void)
                 Glib::ustring(row[m_conColumns.m_col_carrier]).c_str() );
 
                 row[m_conColumns.m_col_status] = "waiting";
+                row[m_conColumns.m_col_editable] = false;
                 row[m_conColumns.m_col_color] = Gdk::Color("#000000");
                 row.set_value(0, m_refPixWaiting);
         }
@@ -905,6 +943,7 @@ bool ApplicationWindow::onDisconnect(void)
         if(getConRowByID(m_ConnectionIDs[i], &row))
         {
             row[m_conColumns.m_col_status] = "waiting";
+            row[m_conColumns.m_col_editable] = false;
             row[m_conColumns.m_col_color] = Gdk::Color("#000000");
             row.set_value(0, m_refPixWaiting);
         }
@@ -938,6 +977,7 @@ bool ApplicationWindow::onRefresh(void)
         if(getModRowByID(m_ModuleIDs[i], &row))
         {
             row[m_modColumns.m_col_status] = "waiting";
+            row[m_modColumns.m_col_editable] = false;
             row[m_modColumns.m_col_color] = Gdk::Color("#000000");
             row.set_value(0, m_refPixWaiting);
         }
@@ -949,6 +989,7 @@ bool ApplicationWindow::onRefresh(void)
         if(getConRowByID(m_ConnectionIDs[i], &row))
         {
             row[m_conColumns.m_col_status] = "waiting";
+            row[m_conColumns.m_col_editable] = false;
             row[m_conColumns.m_col_color] = Gdk::Color("#000000");
             row.set_value(0, m_refPixWaiting);
         }
@@ -1025,6 +1066,7 @@ void ApplicationWindow::onPMenuLoadBalance(void)
         {
             Gtk::TreeModel::Row row = (*iter);
             row[m_modColumns.m_col_status] = "waiting";
+            row[m_modColumns.m_col_editable] = false;
             row[m_modColumns.m_col_host] = "?";
             row[m_modColumns.m_col_color] = Gdk::Color("#000000");
 
@@ -1135,6 +1177,7 @@ void ApplicationWindow::onModStart(int which)
     if(getModRowByID(which, &row))
     {
         row[m_modColumns.m_col_status] = "running";
+        row[m_modColumns.m_col_editable] = false;
         row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
         row.set_value(0, m_refPixRunning);
     }
@@ -1150,6 +1193,7 @@ void ApplicationWindow::onModStop(int which)
     if(getModRowByID(which, &row))
     {
         row[m_modColumns.m_col_status] = "stopped";
+        row[m_modColumns.m_col_editable] = true;
         row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
         row.set_value(0, m_refPixSuspended);
     }
@@ -1165,6 +1209,7 @@ void ApplicationWindow::onConConnect(int which)
     if(getConRowByID(which, &row))
     {
         row[m_conColumns.m_col_status] = "connected";
+        row[m_conColumns.m_col_editable] = false;
         row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
         row.set_value(0, m_refPixConnected);
     }
@@ -1180,6 +1225,7 @@ void ApplicationWindow::onConDisconnect(int which)
     if(getConRowByID(which, &row))
     {
         row[m_conColumns.m_col_status] = "disconnected";
+        row[m_conColumns.m_col_editable] = true;
         row[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
         row.set_value(0, m_refPixDisconnected);
     }
