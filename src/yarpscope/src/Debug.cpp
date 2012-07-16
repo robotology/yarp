@@ -19,16 +19,16 @@ void YarpScope::Debug::print_output(MsgType t, const std::ostringstream &s)
 {
     switch (t) {
         case DebugType:
-            g_debug(s.str().c_str());
+            g_debug("%s", s.str().c_str());
             break;
         case WarningType:
-            g_warning(s.str().c_str());
+            g_warning("%s", s.str().c_str());
             break;
         case ErrorType:
-            g_critical(s.str().c_str());
+            g_critical("%s", s.str().c_str());
             break;
         case FatalType:
-            g_error(s.str().c_str());
+            g_error("%s", s.str().c_str());
             exit(1);
             break;
     }
