@@ -7,6 +7,10 @@
  *
  */
 
+#include <yarp/conf/system.h>
+
+#ifdef YARP_HAS_ACE
+
 #include <yarp/os/impl/FallbackNameServer.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
@@ -177,4 +181,5 @@ Contact BootstrapServer::where() {
     return addr.toContact();
 }
 
+#endif
 

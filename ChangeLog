@@ -1,3 +1,13 @@
+2012-07-16  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/include/yarp/os/Run.h,
+	src/libYARP_name/src/BootstrapServer.cpp,
+	src/yarpserver/src/yarpserver3.cpp,
+	src/libYARP_OS/include/yarp/os/impl/PlatformMap.h,
+	src/libYARP_OS/include/yarp/os/impl/RunProcManager.h,
+	src/libYARP_sig/src/Vector.cpp: from Anne van Rossum, some fixes 
+	for YARP without ACE configuration [thanks Anne van Rossum]
+
 2012-07-12  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* example/swig/yarp.i: translate ResourceFinder::configure to

@@ -11,6 +11,7 @@
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/all.h>
+#include <string.h>
 
 namespace yarp {
   namespace os {

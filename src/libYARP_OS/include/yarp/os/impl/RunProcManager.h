@@ -14,6 +14,14 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
 
+#ifndef YARP_HAS_ACE
+#  ifndef __APPLE__
+#    include <wait.h>
+#  else
+#    include <sys/wait.h>
+#  endif
+#endif
+
 #if defined(WIN32)
     typedef DWORD PID;
     typedef HANDLE FDESC;

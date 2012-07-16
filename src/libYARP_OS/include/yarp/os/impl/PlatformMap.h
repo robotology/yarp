@@ -26,7 +26,7 @@
 #else
 #  include <map>
 #  define PLATFORM_MAP(x,y) std::map<x,y>
-#  define PLATFORM_MAP_ITERATOR(x,y,z) std::map<x,y>::iterator z;
+#  define PLATFORM_MAP_ITERATOR(x,y,z) typename std::map<x,y>::iterator z;
 #  define PLATFORM_MAP_ITERATOR_FIRST(y) (y->first)
 #  define PLATFORM_MAP_ITERATOR_SECOND(y) (y->second)
 #  define PLATFORM_MAP_SET(x,y,z) x[y] = z

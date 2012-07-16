@@ -10,11 +10,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <yarp/conf/system.h>
 #include <yarp/os/all.h>
 #include <yarp/os/Os.h>
 
 #include <yarp/name/NameServerManager.h>
+#ifdef YARP_HAS_ACE
 #include <yarp/name/BootstrapServer.h>
+#endif
 
 #include <yarp/yarpserversql/yarpserversql.h>
 
@@ -108,7 +111,9 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     Contact contact = 
         Contact::byName("...").addSocket("tcp",ip.c_str(),sock);
     
+#ifdef YARP_HAS_ACE
     BootstrapServer::configFileBootstrap(contact);
+#endif
 
     AllocatorConfig config;
     config.minPortNumber = contact.getPort()+2;
@@ -120,7 +125,9 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     ns.setSubscriber(&subscriber);
     ComposedNameService combo(subscriber,ns);
     NameServerManager name(combo);
+#ifdef YARP_HAS_ACE
     BootstrapServer fallback(name);
+#endif
 
     Port server;
     name.setPort(server);
@@ -132,15 +139,19 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     }
     printf("\n");
 
+#ifdef YARP_HAS_ACE
     fallback.start();
+#endif
 
     // Repeat registrations for the server and fallback server -
     // these registrations are more complete.
     printf("Registering name server with itself:\n");
     Network::registerContact(contact);
     subscriber.welcome(contact.getName().c_str(),1);
+#ifdef YARP_HAS_ACE
     Network::registerContact(fallback.where());
     subscriber.welcome(fallback.where().getName().c_str(),1);
+#endif
     ns.goPublic();
     printf("Name server can be browsed at http://%s:%d/\n",
            contact.getHost().c_str(), contact.getPort());
