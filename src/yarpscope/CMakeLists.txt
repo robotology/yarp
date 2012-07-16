@@ -10,7 +10,9 @@ if(CREATE_YARPSCOPE)
     include_directories(${GTKDATABOXMM_INCLUDE_DIRS})
     link_directories(${GTKDATABOXMM_LIBRARY_DIRS})
 
-    add_definitions("--ansi")
+    if(LINUX)
+        add_definitions("--ansi")
+    endif(LINUX)
 
     add_subdirectory(src)
 
