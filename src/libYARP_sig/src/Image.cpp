@@ -729,12 +729,16 @@ void Image::wrapIplImage(void *iplImage) {
     YARP_ASSERT(p->depth==IPL_DEPTH_8U);
     ConstString str = p->colorModel;
     int code = -1;
-    if (str=="rgb"||str=="RGB" || str=="bgr"||str=="BGR") {
+    if (str=="rgb"||str=="RGB"||
+        str=="bgr"||str=="BGR"||
+        str=="graygray"||str=="GRAYGRAY") {
         str = p->channelSeq;
         if (str=="rgb"||str=="RGB") {
             code = VOCAB_PIXEL_RGB;
         } else if (str=="bgr"||str=="BGR") {
             code = VOCAB_PIXEL_BGR;
+        } else if (str=="gray"||str=="GRAY") {
+            code = VOCAB_PIXEL_MONO;
         } else {
             printf("specific IPL RGB order (%s) is not yet supported\n", 
                    str.c_str());

@@ -1,5 +1,8 @@
 2012-07-16  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/libYARP_sig/src/Image.cpp: from Juxi Leitner, a fix for 
+	GRAY images [thanks Juxi Leitner]
+
 	* src/libYARP_OS/include/yarp/os/Run.h,
 	src/libYARP_name/src/BootstrapServer.cpp,
 	src/yarpserver/src/yarpserver3.cpp,
