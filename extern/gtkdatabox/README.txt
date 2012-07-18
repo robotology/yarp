@@ -26,3 +26,6 @@ License: LGPL-2.1
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Version: 0.9.1.1
+
+Patches: msvc.patch - MSVC does not have log2() method. (Already fixed
+                      in latest gtkdatabox versions)
