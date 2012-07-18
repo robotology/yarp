@@ -12,6 +12,10 @@ Suggested layout is a little verbose:
   extern/libraryname/libraryname (or similar subdirectory)
     the actual library, ideally untouched (although files may be 
     omitted).
+  extern/libraryname/CMakelists.txt
+    CMake script to build library.
+  extern/libraryname/patches (optional)
+    Patches applied to upstream source,
 
 The extra subdirectory is to give space for wrapper code/scripts
 without mixing it with the original code.
