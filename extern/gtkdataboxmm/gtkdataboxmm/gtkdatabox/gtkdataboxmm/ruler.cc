@@ -28,6 +28,8 @@
 
 #include <gtkdatabox_ruler.h>
 
+using Gtk::manage;
+
 namespace GDatabox
 {
 
@@ -41,14 +43,12 @@ namespace
 namespace Glib
 {
 
-Glib::RefPtr<GDatabox::Ruler> wrap(GtkDataboxRuler* object, bool take_copy)
+GDatabox::Ruler* wrap(GtkDataboxRuler* object, bool take_copy)
 {
-  return Glib::RefPtr<GDatabox::Ruler>( dynamic_cast<GDatabox::Ruler*> (Glib::wrap_auto ((GObject*)(object), take_copy)) );
-  //We use dynamic_cast<> in case of multiple inheritance.
+  return dynamic_cast<GDatabox::Ruler *> (Glib::wrap_auto ((GObject*)(object), take_copy));
 }
 
 } /* namespace Glib */
-
 
 namespace GDatabox
 {
@@ -87,36 +87,31 @@ void Ruler_Class::class_init_function(void* g_class, void* class_data)
 }
 
 
-Glib::ObjectBase* Ruler_Class::wrap_new(GObject* object)
+Glib::ObjectBase* Ruler_Class::wrap_new(GObject* o)
 {
-  return new Ruler((GtkDataboxRuler*)object);
+  return manage(new Ruler((GtkDataboxRuler*)(o)));
+
 }
 
 
 /* The implementation: */
 
-GtkDataboxRuler* Ruler::gobj_copy()
-{
-  reference();
-  return gobj();
-}
-
 Ruler::Ruler(const Glib::ConstructParams& construct_params)
 :
   Gtk::Widget(construct_params)
 {
-
-}
+  }
 
 Ruler::Ruler(GtkDataboxRuler* castitem)
 :
   Gtk::Widget((GtkWidget*)(castitem))
-{}
-
+{
+  }
 
 Ruler::~Ruler()
-{}
-
+{
+  destroy_();
+}
 
 Ruler::CppClassType Ruler::ruler_class_; // initialize static member
 

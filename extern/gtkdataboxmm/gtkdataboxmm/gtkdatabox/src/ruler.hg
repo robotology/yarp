@@ -28,7 +28,7 @@ namespace GDatabox
 {
 class Ruler : public Gtk::Widget
 {
-    _CLASS_GOBJECT(Ruler, GtkDataboxRuler, GTK_DATABOX_RULER, Gtk::Widget, GtkWidget)
+    _CLASS_GTKOBJECT(Ruler, GtkDataboxRuler, GTK_DATABOX_RULER, Gtk::Widget, GtkWidget)
 
 //FIXME protected?
 public:

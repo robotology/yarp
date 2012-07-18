@@ -19,6 +19,8 @@
 
 #include <gtkdatabox_ruler.h>
 
+using Gtk::manage;
+
 namespace GDatabox
 {
 

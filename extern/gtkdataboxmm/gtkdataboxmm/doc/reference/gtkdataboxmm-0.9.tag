@@ -2115,13 +2115,6 @@
       <arglist>() const </arglist>
     </member>
     <member kind="function">
-      <type>GtkDataboxRuler *</type>
-      <name>gobj_copy</name>
-      <anchorfile>classGDatabox_1_1Ruler.html</anchorfile>
-      <anchor>a6f3f1b10841baaa851ff4a3ccdd3dd31</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
       <type></type>
       <name>Ruler</name>
       <anchorfile>classGDatabox_1_1Ruler.html</anchorfile>
@@ -2129,10 +2122,10 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>Glib::RefPtr&lt; GDatabox::Ruler &gt;</type>
+      <type>GDatabox::Ruler *</type>
       <name>wrap</name>
       <anchorfile>classGDatabox_1_1Ruler.html</anchorfile>
-      <anchor>a087a1ffaae6475c0548b44753788e5bd</anchor>
+      <anchor>af67a8e24b19c3ee498136c723a33365b</anchor>
       <arglist>(GtkDataboxRuler *object, bool take_copy=false)</arglist>
     </member>
   </compound>

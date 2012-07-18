@@ -1,3 +1,9 @@
+GtkDataboxMM (2012-07-18) 0.9.2
+===============================
+
+ * Fix build on windows
+ * Ruler is now a Gtk::Object
+
 GtkDataboxMM (2012-07-11) 0.9.1
 ===============================
 

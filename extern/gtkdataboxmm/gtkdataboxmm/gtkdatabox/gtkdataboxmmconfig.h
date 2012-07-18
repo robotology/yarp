@@ -8,4 +8,4 @@
 #define GTKDATABOXMM_MINOR_VERSION 9
 
 /* Micro version number of gtkdataboxmm. */
-#define GTKDATABOXMM_MICRO_VERSION 1
+#define GTKDATABOXMM_MICRO_VERSION 2

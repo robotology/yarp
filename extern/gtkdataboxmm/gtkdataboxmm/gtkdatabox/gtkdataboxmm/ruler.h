@@ -45,19 +45,22 @@ namespace GDatabox
 
 class Ruler : public Gtk::Widget
 {
-    
+    public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-public:
   typedef Ruler CppObjectType;
   typedef Ruler_Class CppClassType;
   typedef GtkDataboxRuler BaseObjectType;
   typedef GtkDataboxRulerClass BaseClassType;
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
-private:  friend class Ruler_Class;
-  static CppClassType ruler_class_;
+  virtual ~Ruler();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 private:
+  friend class Ruler_Class;
+  static CppClassType ruler_class_;
+
   // noncopyable
   Ruler(const Ruler&);
   Ruler& operator=(const Ruler&);
@@ -69,8 +72,6 @@ protected:
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 public:
-  virtual ~Ruler();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   static GType get_type()      G_GNUC_CONST;
 
@@ -78,24 +79,12 @@ public:
   static GType get_base_type() G_GNUC_CONST;
 #endif
 
-  ///Provides access to the underlying C GObject.
+  ///Provides access to the underlying C GtkObject.
   GtkDataboxRuler*       gobj()       { return reinterpret_cast<GtkDataboxRuler*>(gobject_); }
 
-  ///Provides access to the underlying C GObject.
+  ///Provides access to the underlying C GtkObject.
   const GtkDataboxRuler* gobj() const { return reinterpret_cast<GtkDataboxRuler*>(gobject_); }
 
-  ///Provides access to the underlying C instance. The caller is responsible for unrefing it. Use when directly setting fields in structs.
-  GtkDataboxRuler* gobj_copy();
-
-private:
-
-
-//FIXME protected?
-public:
-    Ruler();
-
-
-public:
 
 public:
   //C++ methods used to invoke GTK+ virtual functions:
@@ -104,6 +93,14 @@ protected:
   //GTK+ Virtual Functions (override these to change behaviour):
 
   //Default Signal Handlers::
+
+
+private:
+
+
+//FIXME protected?
+public:
+    Ruler();
 
 
 };
@@ -121,8 +118,8 @@ namespace Glib
    *
    * @relates GDatabox::Ruler
    */
-  Glib::RefPtr<GDatabox::Ruler> wrap(GtkDataboxRuler* object, bool take_copy = false);
-}
+  GDatabox::Ruler* wrap(GtkDataboxRuler* object, bool take_copy = false);
+} //namespace Glib
 
 
 #endif /* _GTKDATABOXMM_RULER_H */

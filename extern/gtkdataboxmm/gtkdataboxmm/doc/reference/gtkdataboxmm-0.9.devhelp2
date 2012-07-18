@@ -332,9 +332,8 @@
     <keyword type="function" name="GDatabox::Ruler::~Ruler" link="classGDatabox_1_1Ruler.html#ad72469778131fe8d1085584d222bd400"/>
     <keyword type="function" name="GDatabox::Ruler::gobj" link="classGDatabox_1_1Ruler.html#a559f4fd53c42c03031d23d2009ff270c"/>
     <keyword type="function" name="GDatabox::Ruler::gobj" link="classGDatabox_1_1Ruler.html#ae18a1518ad0e1085d663a531cf513d0f"/>
-    <keyword type="function" name="GDatabox::Ruler::gobj_copy" link="classGDatabox_1_1Ruler.html#a6f3f1b10841baaa851ff4a3ccdd3dd31"/>
     <keyword type="function" name="GDatabox::Ruler::Ruler" link="classGDatabox_1_1Ruler.html#ae83ce2935286bafd402dbb3bcc39161d"/>
-    <keyword type="function" name="GDatabox::Ruler::wrap" link="classGDatabox_1_1Ruler.html#a087a1ffaae6475c0548b44753788e5bd"/>
+    <keyword type="function" name="GDatabox::Ruler::wrap" link="classGDatabox_1_1Ruler.html#af67a8e24b19c3ee498136c723a33365b"/>
     <keyword type="struct" name="GDatabox::XYCGraph" link="classGDatabox_1_1XYCGraph.html"/>
     <keyword type="function" name="GDatabox::XYCGraph::~XYCGraph" link="classGDatabox_1_1XYCGraph.html#a2d46b033dd515cc278fafb74e1090e03"/>
     <keyword type="function" name="GDatabox::XYCGraph::gobj" link="classGDatabox_1_1XYCGraph.html#a5b8534bdb9777a0173115284ab746e29"/>

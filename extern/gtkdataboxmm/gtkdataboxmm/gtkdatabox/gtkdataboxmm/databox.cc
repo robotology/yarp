@@ -30,6 +30,7 @@
 #include <gtkdataboxmm/graph.h>
 #include <gtkdataboxmm/ruler.h>
 
+using Gtk::manage;
 
 namespace GDatabox
 {
