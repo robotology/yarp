@@ -1,3 +1,12 @@
+2012-07-19  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/src/Value.cpp: fix Value::read, it wasn't
+	correctly reading the value type when packed with a list 
+	header [thanks Miguel Sarabia del Castillo]
+
+	* src/libYARP_OS/harness/ValueTest.cpp: add check for
+	Value::read [thanks Miguel Sarabia del Castillo]
+
 2012-07-19 Ugo Pattacini <ugo.pattacini@iit.it>
     * cartesian & gaze I/F's: exposed events-oriented to address swig issues.
 

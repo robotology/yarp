@@ -134,11 +134,16 @@ bool Value::read(ConnectionReader& connection) {
         proxy = 0;
     }
     int x = connection.expectInt();
-    if (x!=BOTTLE_TAG_LIST) return false;
-    x = connection.expectInt();
-    if (x==0) return true;
-    if (x!=1) return false;
-    x = connection.expectInt();
+    if ((x&0xffff) != x) return false;
+    if (!(x&BOTTLE_TAG_LIST)) return false;
+    int len = connection.expectInt();
+    if (len==0) return true;
+    if (len!=1) return false;
+    if (x==BOTTLE_TAG_LIST) {
+        x = connection.expectInt();
+    } else {
+        x &= ~BOTTLE_TAG_LIST;
+    }
     if (connection.isError()) return false;
     Storable *s = Storable::createByCode(x);
     setProxy(s);
