@@ -18,10 +18,64 @@
 
 namespace yarp {
     namespace dev {
-        class CartesianEvent;
-        class ICartesianControl;
+        struct CartesianEventParameters;
+        struct CartesianEventVariables;
+        class  CartesianEvent;
+        class  ICartesianControl;
     }
 }
+
+
+/** 
+ * @ingroup dev_iface_motor 
+ *  
+ * Structure for configuring a cartesian event.
+ */
+struct yarp::dev::CartesianEventParameters
+{
+    /** The signature of the event as specified by the user.
+     *  \n Available events are:
+     *  - "motion-onset": beginning of motion/new target received.
+     *  - "motion-done": end of motion.
+     *  - "motion-ongoing": a motion check-point is attained.
+     *  - "closing": the server is being shut down.
+     *  - "*": a tag for all-events.
+     */
+    yarp::os::ConstString type;
+
+    /**
+     * The user specifies the motion check-point that raises a 
+     * "motion-ongoing" event through this parameter which must be 
+     * in the range [0,1]. 
+     */
+    double motionOngoingCheckPoint;
+};
+
+
+/** 
+ * @ingroup dev_iface_motor 
+ *  
+ * Structure for configuring a cartesian event.
+ */
+struct yarp::dev::CartesianEventVariables
+{
+    /** The signature of the received event as filled by the event
+     *  handler.
+     */
+    yarp::os::ConstString type;
+
+    /**
+     * Contain the time instant of the source when the event took 
+     * place, as filled by the event handler. 
+     */
+    double time;
+
+    /**
+     * Contain the motion check-point that raised a "motion-ongoing"
+     * event.
+     */
+    double motionOngoingCheckPoint;
+};
 
 
 /**
@@ -32,57 +86,17 @@ namespace yarp {
 class yarp::dev::CartesianEvent
 {
 public:
-    struct CartesianEventParameters
-    {
-        /** The signature of the event as specified by the user.
-         *  \n Available events are:
-         *  - "motion-onset": beginning of motion/new target received.
-         *  - "motion-done": end of motion.
-         *  - "motion-ongoing": a motion check-point is attained.
-         *  - "closing": the server is being shut down.
-         *  - "*": a tag for all-events.
-         */
-        yarp::os::ConstString type;
-
-        /**
-         * The user specifies the motion check-point that raises a 
-         * "motion-ongoing" event through this parameter which must be 
-         * in the range [0,1]. 
-         */
-        double motionOngoingCheckPoint;
-    };
-
-    struct CartesianEventVariables
-    {
-        /** The signature of the received event as filled by the event
-         *  handler.
-         */
-        yarp::os::ConstString type;
-
-        /**
-         * Contain the time instant of the source when the event took 
-         * place, as filled by the event handler. 
-         */
-        double time;
-
-        /**
-         * Contain the motion check-point that raised a "motion-ongoing"
-         * event.
-         */
-        double motionOngoingCheckPoint;
-    };
-
     /**
      * The user fills this structure to establish the event 
      * parameters. 
      */
-    CartesianEventParameters cartesianEventParameters;
+    yarp::dev::CartesianEventParameters cartesianEventParameters;
 
     /**
      * The event handler fills this structure with useful 
      * information at run-time. 
      */
-    CartesianEventVariables cartesianEventVariables;
+    yarp::dev::CartesianEventVariables cartesianEventVariables;
 
     /**
     * Event callback to be overridden by the user. 

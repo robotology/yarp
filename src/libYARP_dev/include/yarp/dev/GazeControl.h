@@ -18,10 +18,70 @@
 
 namespace yarp {
     namespace dev {
-        class GazeEvent;
-        class IGazeControl;
+        struct GazeEventParameters;
+        struct GazeEventVariables;
+        class  GazeEvent;
+        class  IGazeControl;
     }
 }
+
+
+/** 
+ * @ingroup dev_iface_motor 
+ *  
+ * Structure for configuring a gaze event.
+ */
+struct yarp::dev::GazeEventParameters
+{
+    /** The signature of the event as specified by the user.
+     *  \n Available events are:
+     *  - "motion-onset": beginning of motion/new target received.
+     *  - "motion-done": end of motion.
+     *  - "motion-ongoing": a motion check-point is attained.
+     *  - "saccade-onset": beginning of saccade.
+     *  - "saccade-done": end of saccade.
+     *  - "closing": the server is being shut down.
+     *  - "suspended": the server has been suspeded.
+     *  - "resumed": the server has been resumed.
+     *  - "comm-timeout": the serve has been suspended because of a
+     *    communication timeout.
+     *  - "*": a tag for all-events.
+     */
+    yarp::os::ConstString type;
+
+    /**
+     * The user specifies the motion check-point that raises a 
+     * "motion-ongoing" event through this parameter which must be 
+     * in the range [0,1]. 
+     */
+    double motionOngoingCheckPoint;
+};
+
+
+/** 
+ * @ingroup dev_iface_motor 
+ *  
+ * Structure for retrieving information from a gaze event. 
+ */
+struct yarp::dev::GazeEventVariables
+{
+    /** The signature of the received event as filled by the event
+     *  handler.
+     */
+    yarp::os::ConstString type;
+
+    /**
+     * Contain the time instant of the source when the event took 
+     * place, as filled by the event handler. 
+     */
+    double time;
+
+    /**
+     * Contain the motion check-point that raised a "motion-ongoing"
+     * event.
+     */
+    double motionOngoingCheckPoint;
+};
 
 
 /**
@@ -32,63 +92,17 @@ namespace yarp {
 class yarp::dev::GazeEvent
 {
 public:
-    struct GazeEventParameters
-    {
-        /** The signature of the event as specified by the user.
-         *  \n Available events are:
-         *  - "motion-onset": beginning of motion/new target received.
-         *  - "motion-done": end of motion.
-         *  - "motion-ongoing": a motion check-point is attained.
-         *  - "saccade-onset": beginning of saccade.
-         *  - "saccade-done": end of saccade.
-         *  - "closing": the server is being shut down.
-         *  - "suspended": the server has been suspeded.
-         *  - "resumed": the server has been resumed.
-         *  - "comm-timeout": the serve has been suspended because of a
-         *    communication timeout.
-         *  - "*": a tag for all-events.
-         */
-        yarp::os::ConstString type;
-
-        /**
-         * The user specifies the motion check-point that raises a 
-         * "motion-ongoing" event through this parameter which must be 
-         * in the range [0,1]. 
-         */
-        double motionOngoingCheckPoint;
-    };
-
-    struct GazeEventVariables
-    {
-        /** The signature of the received event as filled by the event
-         *  handler.
-         */
-        yarp::os::ConstString type;
-
-        /**
-         * Contain the time instant of the source when the event took 
-         * place, as filled by the event handler. 
-         */
-        double time;
-
-        /**
-         * Contain the motion check-point that raised a "motion-ongoing"
-         * event.
-         */
-        double motionOngoingCheckPoint;
-    };
-
     /**
      * The user fills this structure to establish the event 
      * parameters. 
      */
-    GazeEventParameters gazeEventParameters;
+    yarp::dev::GazeEventParameters gazeEventParameters;
 
     /**
      * The event handler fills this structure with useful 
      * information at run-time. 
      */
-    GazeEventVariables gazeEventVariables;
+    yarp::dev::GazeEventVariables gazeEventVariables;
 
     /**
     * Event callback to be overridden by the user. 

@@ -1,3 +1,6 @@
+2012-07-19 Ugo Pattacini <ugo.pattacini@iit.it>
+    * cartesian & gaze I/F's: exposed events-oriented to address swig issues.
+
 2012-07-16  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_sig/src/Image.cpp: from Juxi Leitner, a fix for 
