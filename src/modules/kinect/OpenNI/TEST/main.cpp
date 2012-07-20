@@ -30,7 +30,7 @@ using namespace yarp::sig::draw;
 class KinectThread : public Thread, public RFModule{
 	IKinectDeviceDriver *_kinect;
 	GLWindow *_glWindow;
-	BufferedPort<ImageOf<PixelInt>> imgPort;
+	BufferedPort<ImageOf<PixelInt> > imgPort;
 public:
 	KinectThread(IKinectDeviceDriver *kinect, GLWindow *glWindow){
 		_kinect = kinect;
