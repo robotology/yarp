@@ -1,5 +1,9 @@
 2012-07-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/tests/CMakeLists.txt, src/yarpview/CMakeLists.txt,
+	src/yarpview/yarpview.cpp, ...: from Anne van Rossum, some more
+	fixes for YARP without ACE [thanks Anne van Rossum]
+
 	* extern/sqlite: move sqlite amalgamation to more standard
 	location, following Daniele's lead [thanks Daniele Domenichelli]
 

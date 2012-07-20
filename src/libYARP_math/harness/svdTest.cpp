@@ -11,6 +11,7 @@
  * \infile Tests for SVD.
  */
 
+#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/math/Math.h>

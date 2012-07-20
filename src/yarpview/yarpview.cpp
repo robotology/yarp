@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Matteo Brunettini
+ * Copyright (C) 2006, 2008 Matteo Brunettini, Lorenzo Natale
  * Lorenzo Natale, 2008. Added multithread support, cleaned code, added fps count 
  * and synchronous display. 
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -11,8 +11,7 @@
 // gCamView.cpp : Defines the entry point for the application.
 //
 
-#include <ace/config.h>
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 #include "yarpview.h"
 #include "FpsStats.h"
