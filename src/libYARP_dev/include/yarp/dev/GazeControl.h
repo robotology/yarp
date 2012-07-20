@@ -464,8 +464,9 @@ public:
     *          frame [m].
     * @return true/false on success/failure. 
     *  
-    * @note The triangulation is deeply affected by uncertainties in
-    * the cameras extrinsic parameters and cameras alignment. 
+    * @note The triangulation makes use of the <a href="http://en.wikipedia.org/wiki/Triangulation_(computer_vision)"> 
+    * mid-point method</a> and thus is deeply affected by uncertainties in the 
+    * cameras extrinsic parameters and cameras alignment. 
     */
     virtual bool triangulate3DPoint(const yarp::sig::Vector &pxl,
                                     const yarp::sig::Vector &pxr,
