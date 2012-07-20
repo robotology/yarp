@@ -112,6 +112,15 @@ public:
                 checked += " " + altConfig;
                 ok = config.fromConfigFile(altConfig.c_str(),false);
             }
+            if (!ok) {
+                altConfig = String("/usr/local/etc/") + policyName + ".ini";
+                if (verbose) {
+                    fprintf(RTARGET,"||| loading policy from %s\n", 
+                            altConfig.c_str());
+                }
+                checked += " " + altConfig;
+                ok = config.fromConfigFile(altConfig.c_str(),false);
+            }
         }
         /*
           // this would violate the spec

@@ -1,5 +1,9 @@
 2012-07-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/libYARP_OS/src/ResourceFinder.cpp: add /usr/local/etc
+	to default search path, for convenience of OSX users 
+	[thanks Francesco Nori] [thanks Lorenzo Natale]
+
 	* src/tests/CMakeLists.txt, src/yarpview/CMakeLists.txt,
 	src/yarpview/yarpview.cpp, ...: from Anne van Rossum, some more
 	fixes for YARP without ACE [thanks Anne van Rossum]
