@@ -113,8 +113,7 @@ void YarpScope::MainWindow::Private::on_action_help_about()
     authors.push_back("Daniele E. Domenichelli <daniele.domenichelli@iit.it>");
     dialog.set_authors(authors);
 
-    dialog.set_license("Copyright (C) 2012 Daniele E. Domenichelli <daniele.domenichelli@iit.it>\n"
-                       "Copyright (C) 2006 Francesco Nori <francesco.nori@iit.it>\n"
+    dialog.set_license("Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia\n"
                        "\n"
                        "This program is free software: you can redistribute it and/or modify\n"
                        "it under the terms of the GNU General Public License as published by\n"
