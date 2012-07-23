@@ -10,12 +10,6 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-set(TinyXML_FIND_REQUIRED ${TinyXML_FIND_REQUIRED})
-if(TinyXML_INCLUDE_DIR AND TinyXML_LIBRARIES)
-    set(TINYXML_FIND_QUIETLY TRUE)
-endif(TinyXML_INCLUDE_DIR AND TinyXML_LIBRARIES)
-
-
 if(NOT WIN32)
     find_package(PkgConfig)
     if(PKG_CONFIG_FOUND)

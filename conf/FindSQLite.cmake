@@ -10,12 +10,6 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-set(SQLite_FIND_REQUIRED ${SQLite_FIND_REQUIRED})
-if(SQLite_INCLUDE_DIR AND SQLite_LIBRARIES)
-    set(SQLITE_FIND_QUIETLY TRUE)
-endif(SQLite_INCLUDE_DIR AND SQLite_LIBRARIES)
-
-
 if(NOT WIN32)
     find_package(PkgConfig)
     if(PKG_CONFIG_FOUND)
