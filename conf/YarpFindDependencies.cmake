@@ -14,7 +14,7 @@ macro(checkandset_dependency package)
         set(YARP_USE_${package} FALSE CACHE BOOL "Use package ${package}")
     endif (${package}_FOUND)
 
-    set(YARP_USE_SYSTEM_${package} TRUE CACHE BOOL "" FORCE)
+    set(YARP_USE_SYSTEM_${package} TRUE CACHE INTERNAL "" FORCE)
 
     mark_as_advanced(YARP_HAS_${package} YARP_USE_${package})
 
