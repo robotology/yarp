@@ -19,13 +19,6 @@ if(CREATE_GUIS)
 
     option(YARP_USE_GTK2 FALSE "Use official CMake GTK2 find scripts, rather than homebrewed scripts")
 
-    if(YARP_USE_GTK2)
-        find_package(GTK2 2.8 COMPONENTS gtk gtkmm)
-    else(YARP_USE_GTK2)
-        find_package(GtkPlus REQUIRED)
-        find_package(GtkMM REQUIRED)
-    endif(YARP_USE_GTK2)
-
     if (CREATE_YARPSCOPE)
         # GtkDatabox
         option(YARP_USE_SYSTEM_GTKDATABOX "Use system GtkDatabox library" OFF)

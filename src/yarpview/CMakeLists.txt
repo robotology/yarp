@@ -6,10 +6,8 @@
 if(CREATE_GUIS)
 
     if(YARP_USE_GTK2)
-        find_package(GTK2 2.8 REQUIRED gtk)
         include_directories(${GTK2_INCLUDE_DIRS})
     else(YARP_USE_GTK2)
-        find_package(GtkPlus REQUIRED)
         include_directories(${GtkPlus_INCLUDE_DIRS})
     endif(YARP_USE_GTK2)
 
