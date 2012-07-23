@@ -2,7 +2,6 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
 if(CREATE_GUIS)
 

@@ -47,6 +47,8 @@ macro(checkbuildandset_dependency package)
 
 endmacro (checkbuildandset_dependency)
 
+option(CREATE_GUIS "Do you want to compile GUIs" OFF)
+
 
 message(STATUS "Detecting required libraries")
 message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
