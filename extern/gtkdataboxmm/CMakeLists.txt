@@ -6,7 +6,7 @@
 # GtkDataboxMM
 project(gtkdataboxmm)
 
-include_directories(${GTKDATABOX_INCLUDE_DIRS}
+include_directories(${GtkDatabox_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox/)
 
 if(YARP_USE_GTK2)
@@ -62,13 +62,13 @@ set(gtkdataboxmm_HDRS
 
 add_library(gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
-set(GTKDATABOXMM_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox" CACHE PATH "GtkDataboxMM include directory" FORCE)
-set(GTKDATABOXMM_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTKDATABOX_LIBRARY_DIRS};${GTKMM_LIBRARY_DIRS}" CACHE PATH "GtkDataboxMM library directory" FORCE)
+set(GtkDataboxMM_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox" CACHE PATH "GtkDataboxMM include directory" FORCE)
+set(GtkDataboxMM_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GtkDatabox_LIBRARY_DIRS};${GTKMM_LIBRARY_DIRS}" CACHE PATH "GtkDataboxMM library directory" FORCE)
 
 if(YARP_USE_GTK2)
-    set(GTKDATABOXMM_LIBRARIES "gtkdataboxmm;${GTKDATABOX_LIBRARIES};${GTK2_GTKMM_LIBRARY};${GTK2_GLIBMM_LIBRARY};${GTK2_GDKMM_LIBRARY};${GTK2_ATKMM_LIBRARY};${GTK2_SIGC++_LIBRARY}" CACHE STRING "GtkDataboxMM libraries" FORCE)
+    set(GtkDataboxMM_LIBRARIES "gtkdataboxmm;${GtkDatabox_LIBRARIES};${GTK2_GTKMM_LIBRARY};${GTK2_GLIBMM_LIBRARY};${GTK2_GDKMM_LIBRARY};${GTK2_ATKMM_LIBRARY};${GTK2_SIGC++_LIBRARY}" CACHE STRING "GtkDataboxMM libraries" FORCE)
 else(YARP_USE_GTK2)
-    set(GTKDATABOXMM_LIBRARIES "gtkdataboxmm;${GTKDATABOX_LIBRARIES};${GTKMM_LIBRARIES}" CACHE STRING "GtkDataboxMM libraries" FORCE)
+    set(GtkDataboxMM_LIBRARIES "gtkdataboxmm;${GtkDatabox_LIBRARIES};${GTKMM_LIBRARIES}" CACHE STRING "GtkDataboxMM libraries" FORCE)
 endif(YARP_USE_GTK2)
 
-mark_as_advanced(GTKDATABOXMM_INCLUDE_DIRS GTKDATABOXMM_LIBRARY_DIRS GTKDATABOXMM_LIBRARIES)
+mark_as_advanced(GtkDataboxMM_INCLUDE_DIRS GtkDataboxMM_LIBRARY_DIRS GtkDataboxMM_LIBRARIES)

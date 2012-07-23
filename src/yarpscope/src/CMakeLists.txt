@@ -15,11 +15,11 @@ set(YarpScope_SRCS
 )
 
 include_directories(${TinyXML_INCLUDE_DIRS}
-                    ${GTKDATABOXMM_INCLUDE_DIRS}
+                    ${GtkDataboxMM_INCLUDE_DIRS}
 )
 
 link_directories(${TinyXML_LIBRARY_DIRS}
-                 ${GTKDATABOXMM_LIBRARY_DIRS}
+                 ${GtkDataboxMM_LIBRARY_DIRS}
 )
 
 add_executable(yarpscope ${YarpScope_SRCS})
@@ -27,7 +27,7 @@ add_executable(yarpscope ${YarpScope_SRCS})
 target_link_libraries(yarpscope
                       YARP_init YARP_OS
                       ${TinyXML_LIBRARIES}
-                      ${GTKDATABOXMM_LIBRARIES}
+                      ${GtkDataboxMM_LIBRARIES}
 )
 
 install(TARGETS yarpscope COMPONENT utilities DESTINATION bin)

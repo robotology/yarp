@@ -112,6 +112,13 @@ if(CREATE_GUIS)
     endif(YARP_USE_GTK2)
 endif(CREATE_GUIS)
 
+if(CREATE_YARPSCOPE)
+    find_package(GtkDatabox QUIET)
+    checkbuildandset_dependency(GtkDatabox)
+    find_package(GtkDataboxMM QUIET)
+    checkbuildandset_dependency(GtkDataboxMM)
+endif(CREATE_YARPSCOPE)
+
 message(STATUS "I have found the following libraries:")
 
 print_dependency(SQLite)
@@ -124,3 +131,6 @@ else(YARP_USE_GTK2)
     print_dependency(GtkPlus)
     print_dependency(GtkMM)
 endif(YARP_USE_GTK2)
+
+print_dependency(GtkDatabox)
+print_dependency(GtkDataboxMM)

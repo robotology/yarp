@@ -13,30 +13,12 @@ if(YARP_USE_SQLite AND NOT YARP_USE_SYSTEM_SQLite)
     add_subdirectory(sqlite)
 endif(YARP_USE_SQLite AND NOT YARP_USE_SYSTEM_SQLite)
 
+# GtkDatabox
+if(YARP_USE_GtkDatabox AND NOT YARP_USE_SYSTEM_GtkDatabox)
+    add_subdirectory(gtkdatabox)
+endif(YARP_USE_GtkDatabox AND NOT YARP_USE_SYSTEM_GtkDatabox)
 
-if(CREATE_GUIS)
-    # Gtk2 and GtkMM
-
-    option(YARP_USE_GTK2 FALSE "Use official CMake GTK2 find scripts, rather than homebrewed scripts")
-
-    if (CREATE_YARPSCOPE)
-        # GtkDatabox
-        option(YARP_USE_SYSTEM_GTKDATABOX "Use system GtkDatabox library" OFF)
-
-        if(YARP_USE_SYSTEM_GTKDATABOX)
-            find_package(GtkDatabox REQUIRED)
-        else(YARP_USE_SYSTEM_GTKDATABOX)
-            add_subdirectory(gtkdatabox)
-        endif(YARP_USE_SYSTEM_GTKDATABOX)
-
-
-        # GtkDataboxMM
-        option(YARP_USE_SYSTEM_GTKDATABOXMM "Use system GtkDataboxMM library" OFF)
-
-        if(YARP_USE_SYSTEM_GTKDATABOXMM)
-            find_package(GtkDataboxMM REQUIRED)
-        else(YARP_USE_SYSTEM_GTKDATABOXMM)
-            add_subdirectory(gtkdataboxmm)
-        endif(YARP_USE_SYSTEM_GTKDATABOXMM)
-    endif (CREATE_YARPSCOPE)
-endif(CREATE_GUIS)
+# GtkDataboxMM
+if(YARP_USE_GtkDataboxMM AND NOT YARP_USE_SYSTEM_GtkDataboxMM)
+    add_subdirectory(gtkdataboxmm)
+endif(YARP_USE_GtkDataboxMM AND NOT YARP_USE_SYSTEM_GtkDataboxMM)
