@@ -1,3 +1,8 @@
+# Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
 set(YarpScope_SRCS
     main.cpp
     DataPlot.cpp
@@ -21,7 +26,6 @@ add_executable(yarpscope ${YarpScope_SRCS})
 
 target_link_libraries(yarpscope
                       YARP_init YARP_OS
-                      ${GTKMM_LIBRARIES}
                       ${TINYXML_LIBRARIES}
                       ${GTKDATABOXMM_LIBRARIES}
 )
