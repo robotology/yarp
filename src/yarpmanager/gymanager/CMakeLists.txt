@@ -6,46 +6,52 @@
 #
  
 
-GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
-#IF (APPLE)
+#if(APPLE)
+#    message(STATUS "gyarpmanager is currently available only for Windows and Linux distributions.")
+#else(APPLE)
 
-#	MESSAGE(STATUS "gyarpmanager is currently available only for Windows and Linux distributions.")
+if(YARP_USE_GTK2)
+    find_package(GTK2 2.8 COMPONENTS gtk gtkmm)
+    include_directories(${GTK2_INCLUDE_DIRS})
+else(YARP_USE_GTK2)
+    find_package(GtkMM REQUIRED)
+    add_definitions(${GtkMM_C_FLAGS})
+    include_directories(${GtkMM_INCLUDE_DIRS})
+endif(YARP_USE_GTK2)
 
-#ELSE (APPLE)
+include_directories(${YARP_TREE_INCLUDE_DIRS})
+include_directories(${ACE_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/tinyxml)
 
-	FIND_PACKAGE(GtkMM)
-	IF (NOT GtkMM_FOUND)
-		MESSAGE(SEND_ERROR "GtkMM was not found but gyarpmanager requires GtkMM.")
-	ENDIF (NOT GtkMM_FOUND)
+file(GLOB folder_source *.cpp)
+file(GLOB folder_header *.h)
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
-	FILE(GLOB folder_source *.cpp)
-    FILE(GLOB folder_header *.h)
-	source_group("Source Files" FILES ${folder_source})
-	source_group("Header Files" FILES ${folder_header})
+#pkg_check_modules(GOOCANVASMM goocanvasmm-1.0)
+# GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES 
 
-	ADD_DEFINITIONS(${GtkMM_C_FLAGS})
-		
-	INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
-	INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIRS})
-	INCLUDE_DIRECTORIES(../libymanager/include)
-	INCLUDE_DIRECTORIES(../libymanager/tinyxml)
-	INCLUDE_DIRECTORIES(${GtkMM_INCLUDE_DIRS})
+add_executable(gyarpmanager ${folder_source} ${folder_header})
+target_link_libraries(gyarpmanager YARP_init YARP_OS YARP_manager)
 
-	#PKG_CHECK_MODULES(GOOCANVASMM goocanvasmm-1.0)
-	# GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES 
+if(YARP_USE_GTK2)
+    target_link_libraries(gyarpmanager ${GTK2_GTK_LIBRARY}
+                                       ${GTK2_GDK_LIBRARY}
+                                       ${GTK2_GLIB_LIBRARY}
+                                       ${GTK2_GTKMM_LIBRARY}
+                                       ${GTK2_GLIBMM_LIBRARY}
+                                       ${GTK2_GDKMM_LIBRARY}
+                                       ${GTK2_ATKMM_LIBRARY}
+                                       ${GTK2_SIGC++_LIBRARY})
+    target_link_libraries(gyarpmanager ${Gthread_LIBRARIES})
+else(YARP_USE_GTK2)
+    target_link_libraries(gyarpmanager ${GtkMM_LIBRARIES})
+endif(YARP_USE_GTK2)
 
-	IF (WIN32 AND NOT CYGWIN)
-        ADD_EXECUTABLE(gyarpmanager ${folder_source} ${folder_header})
-		TARGET_LINK_LIBRARIES(gyarpmanager YARP_init YARP_OS YARP_manager ${GtkMM_LIBRARIES})
-	ELSE (WIN32 AND NOT CYGWIN)
-        LINK_DIRECTORIES(${GTKMM_LIBRARY_DIRS})
-		ADD_EXECUTABLE(gyarpmanager ${folder_source} ${folder_header} )
-		TARGET_LINK_LIBRARIES(gyarpmanager YARP_init YARP_OS YARP_manager ${GtkMM_LIBRARIES})
-	ENDIF (WIN32 AND NOT CYGWIN)
 	
-	INSTALL(TARGETS gyarpmanager COMPONENT utilities DESTINATION bin)
+install(TARGETS gyarpmanager COMPONENT utilities DESTINATION bin)
 
-#ENDIF (APPLE)
-
-
+#endif(APPLE)
