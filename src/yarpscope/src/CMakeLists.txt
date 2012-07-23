@@ -14,11 +14,11 @@ set(YarpScope_SRCS
     XmlLoader.cpp
 )
 
-include_directories(${TINYXML_INCLUDE_DIRS}
+include_directories(${TinyXML_INCLUDE_DIRS}
                     ${GTKDATABOXMM_INCLUDE_DIRS}
 )
 
-link_directories(${TINYXML_LIBRARY_DIRS}
+link_directories(${TinyXML_LIBRARY_DIRS}
                  ${GTKDATABOXMM_LIBRARY_DIRS}
 )
 
@@ -26,7 +26,7 @@ add_executable(yarpscope ${YarpScope_SRCS})
 
 target_link_libraries(yarpscope
                       YARP_init YARP_OS
-                      ${TINYXML_LIBRARIES}
+                      ${TinyXML_LIBRARIES}
                       ${GTKDATABOXMM_LIBRARIES}
 )
 
