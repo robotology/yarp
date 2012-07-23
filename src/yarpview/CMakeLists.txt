@@ -14,7 +14,6 @@ if(CREATE_GUIS)
         include_directories(${GtkPlus_INCLUDE_DIRS})
     endif(YARP_USE_GTK2)
 
-    find_package(Gthread REQUIRED)
     include_directories(${Gthread_INCLUDE_DIRS})
     add_definitions(${GTHREAD_C_FLAGS})
 

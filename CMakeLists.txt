@@ -33,6 +33,10 @@ include(YarpVersion)
 # See conf/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
 
+# Check YARP dependencies.
+# See conf/YarpFindDependencies.cmake.
+include(YarpFindDependencies)
+
 # Turn on testing.
 enable_testing()
 
