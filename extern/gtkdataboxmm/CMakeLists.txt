@@ -1,9 +1,14 @@
 # GtkDataboxMM
 project(gtkdataboxmm)
 
-include_directories(${GTKMM_INCLUDE_DIRS}
-                    ${GTKDATABOX_INCLUDE_DIRS}
+include_directories(${GTKDATABOX_INCLUDE_DIRS}
                     ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox/)
+
+if(YARP_USE_GTK2)
+    include_directories(${GTK2_INCLUDE_DIRS})
+else(YARP_USE_GTK2)
+    include_directories(${GTKMM_INCLUDE_DIRS})
+endif(YARP_USE_GTK2)
 
 set(gtkdataboxmm_SRCS
     gtkdataboxmm/gtkdatabox/gtkdataboxmm/points.cc
@@ -54,5 +59,11 @@ add_library(gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
 set(GTKDATABOXMM_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox" CACHE PATH "GtkDataboxMM include directory" FORCE)
 set(GTKDATABOXMM_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTKDATABOX_LIBRARY_DIRS};${GTKMM_LIBRARY_DIRS}" CACHE PATH "GtkDataboxMM library directory" FORCE)
-set(GTKDATABOXMM_LIBRARIES "gtkdataboxmm;${GTKDATABOX_LIBRARIES};${GTKMM_LIBRARIES}" CACHE STRING "GtkDataboxMM libraries" FORCE)
+
+if(YARP_USE_GTK2)
+    set(GTKDATABOXMM_LIBRARIES "gtkdataboxmm;${GTKDATABOX_LIBRARIES};${GTK2_GTKMM_LIBRARY};${GTK2_GLIBMM_LIBRARY};${GTK2_GDKMM_LIBRARY};${GTK2_ATKMM_LIBRARY};${GTK2_SIGC++_LIBRARY}" CACHE STRING "GtkDataboxMM libraries" FORCE)
+else(YARP_USE_GTK2)
+    set(GTKDATABOXMM_LIBRARIES "gtkdataboxmm;${GTKDATABOX_LIBRARIES};${GTKMM_LIBRARIES}" CACHE STRING "GtkDataboxMM libraries" FORCE)
+endif(YARP_USE_GTK2)
+
 mark_as_advanced(GTKDATABOXMM_INCLUDE_DIRS GTKDATABOXMM_LIBRARY_DIRS GTKDATABOXMM_LIBRARIES)
