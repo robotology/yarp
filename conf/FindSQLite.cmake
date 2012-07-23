@@ -43,9 +43,4 @@ find_package_handle_standard_args(SQLite
 
 set(SQLite_FOUND ${SQLITE_FOUND})
 
-message(STATUS "SQLite_FOUND = ${SQLite_FOUND}")
-message(STATUS "SQLite_INCLUDE_DIRS = ${SQLite_INCLUDE_DIRS}")
-message(STATUS "SQLite_LIBRARY_DIRS = ${SQLite_LIBRARY_DIRS}")
-message(STATUS "SQLite_LIBRARIES = ${SQLite_LIBRARIES}")
-
 mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARY_DIRS SQLite_LIBRARIES)
