@@ -29,7 +29,7 @@ include(YarpOptions)
 # Get the current YARP version.  See conf/YarpVersion.cmake.
 include(YarpVersion)
 
-# Check system types, find necessary libraries.  
+# Check system types, find necessary libraries.
 # See conf/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
 

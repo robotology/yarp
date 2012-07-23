@@ -11,14 +11,14 @@ source_group("Header Files" FILES ${folder_header})
 
 option(USE_PORT_AUTHENTICATION "Use a 3-way passphrase authentication for connections to ports" FALSE)
 if (USE_PORT_AUTHENTICATION)
-    ADD_DEFINITIONS( -DPORT_AUTH )
+    add_definitions(-DPORT_AUTH)
 endif (USE_PORT_AUTHENTICATION)
 
-IF (BUILTIN_ACE)
-    MESSAGE(STATUS "Adding ACE material in YARP_OS library")
-    FILE(GLOB_RECURSE folder_source_ace ${BUILTIN_ACE_SOURCE_DIR}/*.cpp)
-    SET(folder_source ${folder_source} ${folder_source_ace})
-ENDIF (BUILTIN_ACE)
+if(BUILTIN_ACE)
+    message(STATUS "Adding ACE material in YARP_OS library")
+    file(GLOB_RECURSE folder_source_ace ${BUILTIN_ACE_SOURCE_DIR}/*.cpp)
+    set(folder_source ${folder_source} ${folder_source_ace})
+endif(BUILTIN_ACE)
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
   ${PROJECT_SOURCE_DIR}/include

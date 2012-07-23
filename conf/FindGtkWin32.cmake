@@ -71,24 +71,24 @@ FIND_LIBRARY(GTK_gobject_LIBRARY
 
 # check only gtk include and library... lazy behavior
 IF(GTK_gtk_INCLUDE_PATH AND GTK_cairo_INCLUDE_PATH
-	AND GTK_glib_INCLUDE_PATH AND GTK_pango_INCLUDE_PATH
-	AND GTK_atk_INCLUDE_PATH AND GTK_glib-config_INCLUDE_PATH
-	AND GTK_gdk-config_INCLUDE_PATH AND GTK_gtk_LIBRARY
-	AND GTK_gdk_LIBRARY AND GTK_glib_LIBRARY
-	AND GTK_gdk-pixbuf_LIBRARY AND GTK_gobject_LIBRARY)
+    AND GTK_glib_INCLUDE_PATH AND GTK_pango_INCLUDE_PATH
+    AND GTK_atk_INCLUDE_PATH AND GTK_glib-config_INCLUDE_PATH
+    AND GTK_gdk-config_INCLUDE_PATH AND GTK_gtk_LIBRARY
+    AND GTK_gdk_LIBRARY AND GTK_glib_LIBRARY
+    AND GTK_gdk-pixbuf_LIBRARY AND GTK_gobject_LIBRARY)
     SET(GtkPlus_FOUND TRUE)
     SET(GTKPLUS_INCLUDE_DIR ${GTK_gtk_INCLUDE_PATH} 
-	  ${GTK_cairo_INCLUDE_PATH}
-	  ${GTK_glib_INCLUDE_PATH}
-	  ${GTK_pango_INCLUDE_PATH}
-	  ${GTK_atk_INCLUDE_PATH}
-	  ${GTK_glib-config_INCLUDE_PATH}
-	  ${GTK_gdk-config_INCLUDE_PATH})
+      ${GTK_cairo_INCLUDE_PATH}
+      ${GTK_glib_INCLUDE_PATH}
+      ${GTK_pango_INCLUDE_PATH}
+      ${GTK_atk_INCLUDE_PATH}
+      ${GTK_glib-config_INCLUDE_PATH}
+      ${GTK_gdk-config_INCLUDE_PATH})
     SET( GTKPLUS_LINK_FLAGS  ${GTK_gtk_LIBRARY}
-	  ${GTK_gdk_LIBRARY}
-	  ${GTK_glib_LIBRARY}
-	  ${GTK_gdk-pixbuf_LIBRARY}
-	  ${GTK_gobject_LIBRARY})
+      ${GTK_gdk_LIBRARY}
+      ${GTK_glib_LIBRARY}
+      ${GTK_gdk-pixbuf_LIBRARY}
+      ${GTK_gobject_LIBRARY})
 ENDIF()
 
 if (GTK_gdk-pixbuf_INCLUDE_PATH)
