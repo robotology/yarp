@@ -19,11 +19,11 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(${PROJECT_SOURCE_DIR}/tinyxml)
+include_directories(${TinyXML_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_manager STATIC ${folder_source} ${folder_header})
-target_link_libraries(YARP_manager YARP_sig YARP_OS)
+target_link_libraries(YARP_manager YARP_sig YARP_OS ${TinyXML_LIBRARIES})
 
 #install(TARGETS YARP_manager EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
 #set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
