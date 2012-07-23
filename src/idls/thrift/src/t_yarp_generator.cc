@@ -884,7 +884,7 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue) {
  */
 void t_yarp_generator::generate_typedef(t_typedef* ttypedef) {
   string name = ttypedef->get_name();
-  f_out_common_<< "typedef " << name << ttypedef->get_type() << ";" << endl;
+  f_out_common_<< "typedef " << print_type(ttypedef->get_type()) << name <<";" << endl;
 }
 
 /**
@@ -1397,12 +1397,14 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     auto_warn(f_cpp_);
     if (!cmake_supplies_headers_) {
+      if (need_common_)
+        f_srv_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;
+    
       if (!program_->get_objects().empty()) {
 	vector<t_struct*> objects = program_->get_objects();
 	vector<t_struct*>::iterator o_iter;
 
-        if (need_common_)
-            f_srv_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;
+        
   
         std::set<string> neededTypes;
         neededTypes.clear();
