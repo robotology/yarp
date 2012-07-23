@@ -1,9 +1,13 @@
 # GtkDatabox
 project(gtkdatabox)
 
-include_directories(${GTKPLUS_INCLUDE_DIR}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk)
+
+if(YARP_USE_GTK2)
+    include_directories(${GTK2_INCLUDE_DIRS})
+else(YARP_USE_GTK2)
+    include_directories(${GtkPlus_INCLUDE_DIRS})
+endif(YARP_USE_GTK2)
 
 set(gtkdatabox_SRCS
     gtkdatabox/gtk/gtkdatabox.c
@@ -40,11 +44,13 @@ set(gtkdatabox_HDRS
 add_library(gtkdatabox STATIC ${gtkdatabox_SRCS})
 
 set(GTKDATABOX_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk" CACHE PATH "GtkDatabox include directory" FORCE)
+
 if(YARP_USE_GTK2)
-    set(GTKDATABOX_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTK2_LIBRARY_DIRS}" CACHE PATH "GtkDatabox library directory" FORCE)
-    set(GTKDATABOX_LIBRARIES "gtkdatabox;${GTK2_LIBRARIES}" CACHE STRING "GtkDatabox libraries" FORCE)
+    set(GTKDATABOX_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "GtkDatabox library directory" FORCE)
+    set(GTKDATABOX_LIBRARIES "gtkdatabox;${GTK2_GLIB_LIBRARY};${GTK2_GOBJECT_LIBRARY};${GTK2_GDK_LIBRARY};${GTK2_GTK_LIBRARY};${GTK2_PANGO_LIBRARY};${GTK2_CAIRO_LIBRARY};" CACHE STRING "GtkDatabox libraries" FORCE)
 else(YARP_USE_GTK2)
     set(GTKDATABOX_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTKPLUS_LIBRARY_DIRS}" CACHE PATH "GtkDatabox library directory" FORCE)
     set(GTKDATABOX_LIBRARIES "gtkdatabox;${GTKPLUS_LIBRARIES}" CACHE STRING "GtkDatabox libraries" FORCE)
 endif(YARP_USE_GTK2)
+
 mark_as_advanced(GTKDATABOX_INCLUDE_DIRS GTKDATABOX_LIBRARY_DIRS GTKDATABOX_LIBRARIES)
