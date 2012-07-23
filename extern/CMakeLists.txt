@@ -4,13 +4,9 @@
 
 
 # TinyXML
-if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
-    if(YARP_USE_SYSTEM_TINYXML)
-        find_package(TinyXML REQUIRED)
-    else(YARP_USE_SYSTEM_TINYXML)
-        add_subdirectory(tinyxml)
-    endif(YARP_USE_SYSTEM_TINYXML)
-endif(CREATE_YMANAGER OR CREATE_YARPSCOPE)
+if(YARP_USE_TINYXML AND NOT YARP_USE_SYSTEM_TINYXML)
+    add_subdirectory(tinyxml)
+endif(YARP_USE_TINYXML AND NOT YARP_USE_SYSTEM_TINYXML)
 
 if(CREATE_GUIS)
     # Gtk2 and GtkMM

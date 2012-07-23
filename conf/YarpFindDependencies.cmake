@@ -60,11 +60,20 @@ message(STATUS "Detecting required libraries")
 message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 
+if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
+    find_package(TinyXML)
+endif(CREATE_YMANAGER OR CREATE_YARPSCOPE)
+
 if(CREATE_GUIS)
     find_package(Gthread)
 endif(CREATE_GUIS)
 
 message(STATUS "I have found the following libraries:")
+
+
+if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
+    checkbuildandset_dependency(TinyXML)
+endif(CREATE_YMANAGER OR CREATE_YARPSCOPE)
 
 if(CREATE_GUIS)
     checkandset_dependency(Gthread)
