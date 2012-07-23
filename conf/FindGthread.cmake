@@ -79,16 +79,14 @@ ELSE (UNIX)
 	NAMES gthread-2.0
 	PATHS ${GTK_BASEPATH}/lib)
   
-  SET(Gthread_INCLUDE_DIRS "")
+  SET(Gthread_INCLUDE_DIRS "" CACHE PATH "Gthread include directory")
   
-  IF (GTK_thread_lib)
-    SET(Gthread_FOUND TRUE)
-    SET(Gthread_LIBRARIES
-	  ${GTK_thread_lib})
-  ENDIF(GTK_thread_lib)
+  if (GTK_thread_lib)
+    set(Gthread_LIBRARIES ${GTK_thread_lib} CACHE STRING "GtkDatabox libraries")
+  endif(GTK_thread_lib)
   
-  FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES)
+  find_package_handle_standard_args(Gthread DEFAULT_MSG Gthread_LIBRARIES)
+
 ENDIF (UNIX)
 
-
-
+mark_as_advanced(Gthread_INCLUDE_DIRS Gthread_LIBRARIES)
