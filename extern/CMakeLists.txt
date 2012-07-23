@@ -4,8 +4,6 @@
 
 
 # TinyXML
-option(YARP_USE_SYSTEM_TINYXML "Use system TinyXML library" OFF)
-
 if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
     if(YARP_USE_SYSTEM_TINYXML)
         find_package(TinyXML REQUIRED)

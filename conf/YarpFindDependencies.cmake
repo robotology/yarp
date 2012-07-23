@@ -47,8 +47,14 @@ macro(checkbuildandset_dependency package)
 
 endmacro (checkbuildandset_dependency)
 
+option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" ON)
 option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
+if(CREATE_GUIS)
+    option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON)
+    option(CREATE_GYARPMANAGER "Do you want to compile gyarpmanager?" ON)
+    option(CREATE_YARPSCOPE "Do you want to create yarpscope?" OFF)
+endif(CREATE_GUIS)
 
 message(STATUS "Detecting required libraries")
 message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
