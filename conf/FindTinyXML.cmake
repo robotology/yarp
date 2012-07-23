@@ -41,4 +41,6 @@ find_package_handle_standard_args(TinyXML
                                   TinyXML_LIBRARIES
 )
 
+set(TinyXML_FOUND ${TINYXML_FOUND})
+
 mark_as_advanced(TinyXML_INCLUDE_DIRS TinyXML_LIBRARY_DIRS TinyXML_LIBRARIES)
