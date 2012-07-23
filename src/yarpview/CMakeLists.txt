@@ -4,58 +4,55 @@
 
 option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
-if (CREATE_GUIS)
+if(CREATE_GUIS)
 
-  OPTION(YARP_USE_GTK2 FALSE "Use official CMake GTK2 find scripts, rather than homebrewed scripts")
-  IF (YARP_USE_GTK2)
-    find_package(GTK2 2.8 COMPONENTS gtk gtkmm)
-    FIND_PACKAGE(Gthread REQUIRED)
-    if(GTK2_FOUND)
-      include_directories(${GTK2_INCLUDE_DIRS})
-      link_libraries(${GTK2_LIBRARIES})
-      #set up gthread
-      ADD_DEFINITIONS(${GTHREAD_C_FLAGS})
-      LINK_LIBRARIES(${Gthread_LIBRARIES})
-      INCLUDE_DIRECTORIES(${Gthread_INCLUDE_DIRS})
-    endif()
-  ELSE ()
-    FIND_PACKAGE(GtkPlus REQUIRED)
-    FIND_PACKAGE(Gthread REQUIRED)
-    # set up to use GTK+
-    #ADD_DEFINITIONS(${GTKPLUS_C_FLAGS})
-    LINK_LIBRARIES(${GtkPlus_LIBRARIES})
-    #LINK_DIRECTORIES(${GTKPLUS_LIBRARY_DIR})
-    INCLUDE_DIRECTORIES(${GtkPlus_INCLUDE_DIRS})
-    
-    #set up gthread
-    ADD_DEFINITIONS(${GTHREAD_C_FLAGS})
-    LINK_LIBRARIES(${Gthread_LIBRARIES})
-    INCLUDE_DIRECTORIES(${Gthread_INCLUDE_DIRS})
+    if(YARP_USE_GTK2)
+        find_package(GTK2 2.8 REQUIRED gtk)
+        include_directories(${GTK2_INCLUDE_DIRS})
+    else(YARP_USE_GTK2)
+        find_package(GtkPlus REQUIRED)
+        include_directories(${GtkPlus_INCLUDE_DIRS})
+    endif(YARP_USE_GTK2)
 
-  ENDIF ()
+    find_package(Gthread REQUIRED)
+    include_directories(${Gthread_INCLUDE_DIRS})
+    add_definitions(${GTHREAD_C_FLAGS})
+
+    get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+    include_directories(${YARP_TREE_INCLUDE_DIRS})
+
+    if(YARP_HAS_ACE)
+        include_directories(${ACE_INCLUDE_DIRS})
+    endif(YARP_HAS_ACE)
+
+    file(GLOB folder_source *.cpp)
+    file(GLOB folder_header *.h)
+    source_group("Source Files" FILES ${folder_source})
+    source_group("Header Files" FILES ${folder_header})
+
+    if(WIN32 AND NOT CYGWIN)
+        add_definitions(-DYARP_WIN32_NOCONSOLE)
+        add_executable(yarpview WIN32 ${folder_source} ${folder_header})
+    else(WIN32 AND NOT CYGWIN)
+        add_executable(yarpview ${folder_source} ${folder_header})
+    endif(WIN32 AND NOT CYGWIN)
+
+    target_link_libraries(yarpview YARP_sig YARP_init)
 
 
-  GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
-  INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+    if(YARP_USE_GTK2)
+        target_link_libraries(yarpview ${GTK2_GTK_LIBRARY}
+                                       ${GTK2_GLIB_LIBRARY}
+                                       ${GTK2_GDK_LIBRARY}
+                                       ${GTK2_GDK_PIXBUF_LIBRARY}
+                                       ${GTK2_GOBJECT_LIBRARY}
+        )
+    else(YARP_USE_GTK2)
+        target_link_libraries(yarpview ${GtkPlus_LIBRARIES})
+    endif(YARP_USE_GTK2)
 
-  IF (YARP_HAS_ACE)
-    INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIRS})
-  ENDIF (YARP_HAS_ACE)
+    target_link_libraries(yarpview ${Gthread_LIBRARIES})
 
-  FILE(GLOB folder_source *.cpp)
-  FILE(GLOB folder_header *.h)
-  SOURCE_GROUP("Source Files" FILES ${folder_source})
-  SOURCE_GROUP("Header Files" FILES ${folder_header})
-
-  IF (WIN32 AND NOT CYGWIN)
-    ADD_DEFINITIONS(-DYARP_WIN32_NOCONSOLE)
-    ADD_EXECUTABLE(yarpview WIN32 ${folder_source} ${folder_header})
-  ELSE (WIN32 AND NOT CYGWIN)
-    ADD_EXECUTABLE(yarpview ${folder_source} ${folder_header})
-  ENDIF (WIN32 AND NOT CYGWIN)
-
-  TARGET_LINK_LIBRARIES(yarpview YARP_sig YARP_init)
-
-  INSTALL(TARGETS yarpview COMPONENT utilities DESTINATION bin)
+    install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
 
 endif(CREATE_GUIS)
