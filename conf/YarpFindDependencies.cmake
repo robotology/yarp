@@ -13,21 +13,10 @@ macro(checkandset_dependency package)
         set(YARP_HAS_${package} FALSE CACHE BOOL "" FORCE)
         set(YARP_USE_${package} FALSE CACHE BOOL "Use package ${package}")
     endif (${package}_FOUND)
-    if(YARP_USE_${package})
-        if(${package}_FOUND)
-            message(STATUS "${package}: found")
-        else(${package}_FOUND)
-            message(STATUS "${package}: not found")
-        endif(${package}_FOUND)
-    else(YARP_USE_${package})
-        message(STATUS "${package}: disabled")
-    endif(YARP_USE_${package})
+
+    set(YARP_USE_SYSTEM_${package} TRUE CACHE BOOL "" FORCE)
 
     mark_as_advanced(YARP_HAS_${package} YARP_USE_${package})
-
-    if (NOT ${package}_FOUND AND YARP_USE_${package})
-        message("Warning: you requested to use the package ${package}, but it is unavailable (or was not found). This might lead to compile errors, we recommend you turn off the YARP_USE_${package} flag.")
-    endif (NOT ${package}_FOUND AND YARP_USE_${package})
 
     #store all dependency flags for later export
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
@@ -52,24 +41,30 @@ macro(checkbuildandset_dependency package)
         endif(NOT YARP_USE_SYSTEM_${package})
     endif (${package}_FOUND)
 
-    if(YARP_USE_${package})
-        if(NOT YARP_USE_SYSTEM_${package})
-            message(STATUS "${package}: compiling")
-        elseif(${package}_FOUND)
-            message(STATUS "${package}: found")
-        else(NOT YARP_USE_SYSTEM_${package})
-            message(STATUS "${package}: not found")
-        endif(NOT YARP_USE_SYSTEM_${package})
-    else(YARP_USE_${package})
-        message(STATUS "${package}: disabled")
-    endif(YARP_USE_${package})
-
-    mark_as_advanced(YARP_HAS_${package} YARP_USE_${package}  YARP_USE_SYSTEM_${package})
+    mark_as_advanced(YARP_HAS_${package} YARP_USE_${package} YARP_USE_SYSTEM_${package})
 
     #store all dependency flags for later export
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
 
-endmacro (checkbuildandset_dependency)
+endmacro(checkbuildandset_dependency)
+
+macro(print_dependency package)
+    if(NOT YARP_USE_${package})
+        message(STATUS "${package}: disabled")
+    elseif(NOT YARP_USE_SYSTEM_${package})
+        message(STATUS "${package}: compiling")
+    elseif(${package}_FOUND)
+        message(STATUS "${package}: found")
+    else(NOT YARP_USE_${package})
+        message(STATUS "${package}: not found")
+    endif(NOT YARP_USE_${package})
+
+    if (NOT YARP_HAS_${package} AND YARP_USE_${package})
+        message("Warning: you requested to use the package ${package}, but it is unavailable (or was not found). This might lead to compile errors, we recommend you turn off the YARP_USE_${package} flag.")
+    endif (NOT YARP_HAS_${package} AND YARP_USE_${package})
+endmacro(print_dependency)
+
+
 
 option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" ON)
 option(CREATE_GUIS "Do you want to compile GUIs" OFF)
@@ -86,19 +81,15 @@ message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
     find_package(TinyXML)
-endif(CREATE_YMANAGER OR CREATE_YARPSCOPE)
-
-if(CREATE_GUIS)
-    find_package(Gthread)
-endif(CREATE_GUIS)
-
-message(STATUS "I have found the following libraries:")
-
-
-if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
     checkbuildandset_dependency(TinyXML)
 endif(CREATE_YMANAGER OR CREATE_YARPSCOPE)
 
 if(CREATE_GUIS)
+    find_package(Gthread)
     checkandset_dependency(Gthread)
 endif(CREATE_GUIS)
+
+message(STATUS "I have found the following libraries:")
+
+print_dependency(TinyXML)
+print_dependency(Gthread)
