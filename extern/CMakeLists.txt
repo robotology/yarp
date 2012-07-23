@@ -8,6 +8,12 @@ if(YARP_USE_TinyXML AND NOT YARP_USE_SYSTEM_TinyXML)
     add_subdirectory(tinyxml)
 endif(YARP_USE_TinyXML AND NOT YARP_USE_SYSTEM_TinyXML)
 
+# Sqlite
+if(YARP_USE_SQLite AND NOT YARP_USE_SYSTEM_SQLite)
+    add_subdirectory(sqlite)
+endif(YARP_USE_SQLite AND NOT YARP_USE_SYSTEM_SQLite)
+
+
 if(CREATE_GUIS)
     # Gtk2 and GtkMM
 

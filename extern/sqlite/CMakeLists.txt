@@ -1,0 +1,25 @@
+# Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
+# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
+# SQLite
+project(sqlite)
+
+set(sqlite_SRCS
+    sqlite/shell.c
+    sqlite/sqlite3.c
+)
+
+set(sqlite_HDRS
+    sqlite/sqlite3ext.h
+    sqlite/sqlite3.h
+)
+
+add_library(sqlite STATIC ${sqlite_SRCS})
+
+
+set(SQLite_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sqlite" CACHE PATH "SQLite include directory" FORCE)
+set(SQLite_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "SQLite library directory" FORCE)
+set(SQLite_LIBRARIES "sqlite" CACHE STRING "SQLite libraries" FORCE)
+mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARY_DIRS SQLite_LIBRARIES)

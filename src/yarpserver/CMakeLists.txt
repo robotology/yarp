@@ -4,17 +4,8 @@
 
 if (YARP_USE_PERSISTENT_NAMESERVER)
 
-  option(YARP_USE_SYSTEM_SQLITE "Use system-installed Sqlite, rather than a private copy" FALSE)
-
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-  if (YARP_USE_SYSTEM_SQLITE)
-    set(SQLITE_SOURCE)
-  else ()
-    set(SQLITE_SRC ${CMAKE_SOURCE_DIR}/extern/sqlite/sqlite)
-    set(SQLITE_SOURCE ${SQLITE_SRC}/sqlite3.c ${SQLITE_SRC}/sqlite3.h)
-    include_directories(${SQLITE_SRC})
-  endif()
+  include_directories(${SQLite_INCLUDE_DIRS})
   include_directories(${ACE_INCLUDE_DIRS})
 
   set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
@@ -23,11 +14,9 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   include_directories(${YARP_TREE_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-  add_library(yarpserversql ${SQLITE_SOURCE} src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp)
+  add_library(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp)
   target_link_libraries(yarpserversql YARP_init YARP_name)
-  if (YARP_USE_SYSTEM_SQLITE)
-    target_link_libraries(yarpserversql sqlite3)
-  endif ()
+  target_link_libraries(yarpserversql ${SQLite_LIBRARIES})
   if (UNIX)
     target_link_libraries(yarpserversql dl)
   endif ()

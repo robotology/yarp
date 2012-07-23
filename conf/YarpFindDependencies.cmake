@@ -79,6 +79,9 @@ message(STATUS "Detecting required libraries")
 message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 
+find_package(SQLite)
+checkbuildandset_dependency(SQLite)
+
 if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
     find_package(TinyXML)
     checkbuildandset_dependency(TinyXML)
@@ -91,5 +94,6 @@ endif(CREATE_GUIS)
 
 message(STATUS "I have found the following libraries:")
 
+print_dependency(SQLite)
 print_dependency(TinyXML)
 print_dependency(Gthread)
