@@ -12,8 +12,12 @@
 #include "PlotManager.h"
 #include "PortReader.h"
 
-#include <glibmm/i18n.h>
 #include <glibmm/ustring.h>
+//#include <glibmm/i18n.h>
+#define _(String) (String)
+#define N_(String) String
+#define textdomain(Domain)
+#define bindtextdomain(Package, Directory)
 
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/actiongroup.h>

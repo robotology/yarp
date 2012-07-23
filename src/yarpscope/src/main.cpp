@@ -12,7 +12,12 @@
 #include <yarp/os/Network.h>
 
 #include <gtkmm/main.h>
-#include <glibmm/i18n.h>
+
+//#include <glibmm/i18n.h>
+#define _(String) (String)
+#define N_(String) String
+#define textdomain(Domain)
+#define bindtextdomain(Package, Directory)
 
 #include <gtkdataboxmm/init.h>
 
