@@ -87,6 +87,8 @@ ELSE (UNIX)
   
   find_package_handle_standard_args(Gthread DEFAULT_MSG Gthread_LIBRARIES)
 
+  set(Gthread_FOUND = ${GTHREAD_FOUND})
+
 ENDIF (UNIX)
 
 mark_as_advanced(Gthread_INCLUDE_DIRS Gthread_LIBRARIES)
