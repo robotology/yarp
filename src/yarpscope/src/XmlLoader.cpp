@@ -21,8 +21,8 @@ namespace {
     const int default_plot_gridy = -1;
     const int default_plot_hspan = 1;
     const int default_plot_vspan = 1;
-    const int default_plot_minval = -100;
-    const int default_plot_maxval = 100;
+    const float default_plot_minval = -100.;
+    const float default_plot_maxval = 100.;
     const int default_plot_size = 201;
     const bool default_plot_autorescale = false;
     const bool default_plot_realtime = false;
@@ -58,7 +58,8 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         }
 
         Glib::ustring plot_title, plot_bgcolor;
-        int plot_gridx, plot_gridy, plot_hspan, plot_vspan, plot_minval, plot_maxval, plot_size;
+        int plot_gridx, plot_gridy, plot_hspan, plot_vspan, plot_size;
+        float plot_minval, plot_maxval;
         bool plot_autorescale, plot_realtime, plot_triggermode;
         if (const char *t = plotElem->Attribute("title")) {
             plot_title = t;
@@ -75,10 +76,10 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         if (plotElem->QueryIntAttribute("vspan", &plot_vspan) != TIXML_SUCCESS || plot_vspan <= 0) {
             plot_vspan = default_plot_vspan;
         }
-        if (plotElem->QueryIntAttribute("minval", &plot_minval) != TIXML_SUCCESS) {
+        if (plotElem->QueryFloatAttribute("minval", &plot_minval) != TIXML_SUCCESS) {
             plot_minval = default_plot_minval;
         }
-        if (plotElem->QueryIntAttribute("maxval", &plot_maxval) != TIXML_SUCCESS) {
+        if (plotElem->QueryFloatAttribute("maxval", &plot_maxval) != TIXML_SUCCESS) {
             plot_maxval = default_plot_maxval;
         }
         if (plotElem->QueryIntAttribute("size", &plot_size) != TIXML_SUCCESS || plot_size <= 0) {

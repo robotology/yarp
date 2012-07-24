@@ -48,8 +48,8 @@ public:
     int gridy;
     int hspan;
     int vspan;
-    int minval;
-    int maxval;
+    float minval;
+    float maxval;
     int size;
     Gdk::Color bgcolor;
     bool autorescale;
@@ -80,11 +80,11 @@ void YarpScope::DataPlot::Private::createGrid()
 
 
 YarpScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
-                               int minval,
-                               int maxval,
-                               int size,
-                               const Glib::ustring &bgcolor,
-                               bool autorescale) :
+                              float minval,
+                              float maxval,
+                              int size,
+                              const Glib::ustring &bgcolor,
+                              bool autorescale) :
     mPriv(new Private(this))
 {
     mPriv->title = title;
@@ -95,7 +95,7 @@ YarpScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
     mPriv->autorescale = autorescale;
 
     mPriv->createGrid();
-    set_total_limits(-5., size + 5., maxval + 5, minval - 5);
+    set_total_limits(0, size, maxval, minval);
     if (autorescale) {
         auto_rescale(0.05);
     }

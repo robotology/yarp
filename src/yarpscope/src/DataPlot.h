@@ -23,8 +23,8 @@ class DataPlot : public GDatabox::Databox
 {
 public:
     DataPlot(const Glib::ustring &title,
-             int minval,
-             int maxval,
+             float minval,
+             float maxval,
              int size,
              const Glib::ustring &bgcolor,
              bool autorescale);

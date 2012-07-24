@@ -36,8 +36,8 @@ public:
                 int gridy,
                 int hspan,
                 int vspan,
-                int minval,
-                int maxval,
+                float minval,
+                float maxval,
                 int size,
                 const Glib::ustring &bgcolor,
                 bool autorescale);
