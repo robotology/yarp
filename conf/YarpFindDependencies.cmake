@@ -54,6 +54,30 @@ macro(checkbuildandset_dependency package)
 endmacro(checkbuildandset_dependency)
 
 
+# Check if a required package is installed.
+macro(check_required_dependency package)
+    if(NOT YARP_HAS_${package})
+        message(FATAL_ERROR "Required package ${package} not found. Please install it to build yarp.")
+#    else(NOT YARP_HAS_${package})
+#        message(STATUS "${package} -> OK")
+    endif(NOT YARP_HAS_${package})
+endmacro(check_required_dependency)
+
+
+# Check if an dependency required to enable an option is installed.
+macro(check_optional_dependency optionname package)
+    if(${optionname})
+        if(NOT YARP_HAS_${package})
+            message(FATAL_ERROR "Optional package ${package} not found. Please install it or disable the option \"${optionname}\" to build yarp.")
+#        else(NOT YARP_HAS_${package})
+#            message(STATUS "${package} ${optionname} -> OK")
+        endif(NOT YARP_HAS_${package})
+#    else(${optionname})
+#        message(STATUS "${package} ${optionname} -> NOT REQUIRED")
+    endif(${optionname})
+endmacro(check_optional_dependency)
+
+
 # Print status for a dependency
 macro(print_dependency package)
     if(NOT YARP_USE_${package})
@@ -129,6 +153,27 @@ if(CREATE_YARPSCOPE)
     find_package(GtkDataboxMM QUIET)
     checkbuildandset_dependency(GtkDataboxMM)
 endif(CREATE_YARPSCOPE)
+
+
+# CHECK DEPENDENCIES:
+
+check_required_dependency(SQLite)
+check_optional_dependency(CREATE_YMANAGER TinyXML)
+check_optional_dependency(CREATE_YARPSCOPE TinyXML)
+check_optional_dependency(CREATE_GUIS Gthread)
+
+if(YARP_USE_GTK2)
+    check_optional_dependency(CREATE_GUIS GTK2)
+else(YARP_USE_GTK2)
+    check_optional_dependency(CREATE_YARPVIEW GtkPlus)
+    check_optional_dependency(CREATE_GYARPMANAGER GtkPlus)
+    check_optional_dependency(CREATE_GYARPMANAGER GtkMM)
+    check_optional_dependency(CREATE_YARPSCOPE GtkPlus)
+    check_optional_dependency(CREATE_YARPSCOPE GtkMM)
+endif(YARP_USE_GTK2)
+
+check_optional_dependency(CREATE_YARPSCOPE GtkDatabox)
+check_optional_dependency(CREATE_YARPSCOPE GtkDataboxMM)
 
 
 # PRINT DEPENDENCIES STATUS:
