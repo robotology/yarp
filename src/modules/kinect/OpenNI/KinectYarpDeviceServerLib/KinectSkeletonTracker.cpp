@@ -28,10 +28,11 @@ KinectSkeletonTracker::KinectStatus *KinectSkeletonTracker::_kinectStatus;
 	return (rc);						\
 }
 
-KinectSkeletonTracker::KinectSkeletonTracker(bool userDetection, bool camerasON)
+KinectSkeletonTracker::KinectSkeletonTracker(bool userDetection, bool camerasON, bool mirrorON)
 {
 	_userDetection = userDetection;
 	_camerasON = camerasON;
+	_mirrorON = mirrorON;
 	initVars();
 	init();
 }
@@ -103,7 +104,7 @@ int KinectSkeletonTracker::init(){
 		rc = _context->FindExistingNode(XN_NODE_TYPE_IMAGE, *_imgGenerator);
 		CHECK_RC(rc, "Find image generator");
 
-		_context->SetGlobalMirror(true);
+		_context->SetGlobalMirror(_mirrorON);
 	}
 
 	//user generator setup

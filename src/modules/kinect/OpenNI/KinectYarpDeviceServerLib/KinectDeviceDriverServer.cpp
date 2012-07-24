@@ -146,6 +146,9 @@ bool yarp::dev::KinectDeviceDriverServer::open(yarp::os::Searchable& config){
 	if(config.check("noCameras")) _camerasON = false;
 	else _camerasON = true;
 
+	if(config.check("noMirror")) _mirrorON = false;
+	else _mirrorON = true;
+
 	if(config.check("userDetection")) _userDetection = true;
 	else _userDetection = false;
 
@@ -155,7 +158,7 @@ bool yarp::dev::KinectDeviceDriverServer::open(yarp::os::Searchable& config){
 		openPorts(portPrefix, _userDetection,_camerasON);
 	}else _openPorts  = false;
 
-	_skeleton = new KinectSkeletonTracker(_userDetection,_camerasON);
+	_skeleton = new KinectSkeletonTracker(_userDetection,_camerasON,_mirrorON);
 	std::cout << "Kinect Yarp Device started. Enjoy!" << endl;
 	return true;
 }

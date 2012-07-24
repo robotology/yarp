@@ -86,7 +86,7 @@ private:
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_depthMapPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_imgMapPort;
 	KinectSkeletonTracker *_skeleton;
-	bool _openPorts, _userDetection, _camerasON;
+	bool _openPorts, _userDetection, _camerasON, _mirrorON;
 	/**
 	* Opens the depth map a rgb camera image ports
 	*/

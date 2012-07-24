@@ -72,7 +72,7 @@ public:
 	/**
 	* @param userDetection indicates if user callbacks and skeleton tracking should be on
 	*/
-	KinectSkeletonTracker(bool userDetection = false, bool camerasON = true);
+	KinectSkeletonTracker(bool userDetection = false, bool camerasON = true, bool mirrorON = true);
 	~KinectSkeletonTracker(void);
 	void close();
 	/**
@@ -85,7 +85,7 @@ public:
 	static KinectStatus *getKinect();
 private:
 	static KinectStatus *_kinectStatus;
-	bool _userDetection, _camerasON;
+	bool _userDetection, _camerasON, _mirrorON;
 	// OpenNI objects
 	Context *_context;
 	UserGenerator *_userGenerator;
