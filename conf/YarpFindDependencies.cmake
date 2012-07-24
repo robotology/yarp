@@ -4,6 +4,9 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
+# USEFUL MACROS:
+
+# Check if a package is installed and set some cmake variables
 macro(checkandset_dependency package)
 
     if (${package}_FOUND)
@@ -23,6 +26,8 @@ macro(checkandset_dependency package)
 
 endmacro (checkandset_dependency)
 
+
+# Check if a package is installed or if is going to be built and set some cmake variables
 macro(checkbuildandset_dependency package)
 
     if (${package}_FOUND)
@@ -48,6 +53,8 @@ macro(checkbuildandset_dependency package)
 
 endmacro(checkbuildandset_dependency)
 
+
+# Print status for a dependency
 macro(print_dependency package)
     if(NOT YARP_USE_${package})
         message(STATUS "${package}: disabled")
@@ -66,6 +73,8 @@ endmacro(print_dependency)
 
 
 
+# OPTIONS:
+
 option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" ON)
 option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
@@ -78,6 +87,8 @@ endif(CREATE_GUIS)
 message(STATUS "Detecting required libraries")
 message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
+
+# FIND PACKAGES:
 
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)
@@ -118,6 +129,9 @@ if(CREATE_YARPSCOPE)
     find_package(GtkDataboxMM QUIET)
     checkbuildandset_dependency(GtkDataboxMM)
 endif(CREATE_YARPSCOPE)
+
+
+# PRINT DEPENDENCIES STATUS:
 
 message(STATUS "I have found the following libraries:")
 
