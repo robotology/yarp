@@ -5,28 +5,22 @@
 
 project(yarpscope)
 
-if(CREATE_GUIS)
+if(CREATE_YARPSCOPE)
+    get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+    include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-    option(CREATE_YARPSCOPE "Do you want to compile Yarp Port Scope?" OFF)
+    if(YARP_USE_GTK2)
+        include_directories(${GTK2_INCLUDE_DIRS})
+    else(YARP_USE_GTK2)
+        include_directories (${GtkMM_INCLUDE_DIRS})
+    endif(YARP_USE_GTK2)
 
-    if(CREATE_YARPSCOPE)
-        get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-        include_directories(${YARP_TREE_INCLUDE_DIRS})
+    include_directories(${GtkDataboxMM_INCLUDE_DIRS})
+    link_directories(${TKDATABOXMM_LIBRARY_DIRS})
 
-        if(YARP_USE_GTK2)
-            include_directories(${GTK2_INCLUDE_DIRS})
-        else(YARP_USE_GTK2)
-            include_directories (${GtkMM_INCLUDE_DIRS})
-        endif(YARP_USE_GTK2)
+    if(LINUX)
+        add_definitions("--ansi --pedantic")
+    endif(LINUX)
 
-        include_directories(${GtkDataboxMM_INCLUDE_DIRS})
-        link_directories(${TKDATABOXMM_LIBRARY_DIRS})
-
-        if(LINUX)
-            add_definitions("--ansi --pedantic")
-        endif(LINUX)
-
-        add_subdirectory(src)
-    endif(CREATE_YARPSCOPE)
-
-endif(CREATE_GUIS)
+    add_subdirectory(src)
+endif(CREATE_YARPSCOPE)

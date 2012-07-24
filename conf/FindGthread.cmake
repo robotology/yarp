@@ -82,7 +82,7 @@ ELSE (UNIX)
   SET(Gthread_INCLUDE_DIRS "" CACHE PATH "Gthread include directory")
   
   if (GTK_thread_lib)
-    set(Gthread_LIBRARIES ${GTK_thread_lib} CACHE STRING "GtkDatabox libraries")
+    set(Gthread_LIBRARIES ${GTK_thread_lib} CACHE STRING "Gthread libraries")
   endif(GTK_thread_lib)
   
   find_package_handle_standard_args(Gthread DEFAULT_MSG Gthread_LIBRARIES)
