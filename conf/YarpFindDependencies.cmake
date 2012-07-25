@@ -25,8 +25,8 @@
 macro(checkandset_dependency package)
 
     if (${package}_FOUND)
-        set(YARP_HAS_${package} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
         set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
+        set(YARP_HAS_${package} YARP_HAS_${package} CACHE INTERNAL "Package ${package} found" FORCE)
     else (${package}_FOUND)
         set(YARP_HAS_${package} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
         set(YARP_USE_${package} FALSE CACHE BOOL "Use package ${package}")
@@ -45,8 +45,8 @@ endmacro (checkandset_dependency)
 # Check if a package is installed or if is going to be built and set some cmake variables
 macro(checkbuildandset_dependency package)
 
-    set(YARP_HAS_${package} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
     set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
+    set(YARP_HAS_${package} YARP_HAS_${package} CACHE INTERNAL "Package ${package} found" FORCE)
     mark_as_advanced(YARP_USE_${package})
 
     if (${package}_FOUND)
@@ -98,10 +98,6 @@ macro(print_dependency package)
     else(NOT YARP_USE_${package})
         message(STATUS "${package}: not found")
     endif(NOT YARP_USE_${package})
-
-    if (NOT YARP_HAS_${package} AND YARP_USE_${package})
-        message("Warning: you requested to use the package ${package}, but it is unavailable (or was not found). This might lead to compile errors, we recommend you turn off the YARP_USE_${package} flag.")
-    endif (NOT YARP_HAS_${package} AND YARP_USE_${package})
 endmacro(print_dependency)
 
 
