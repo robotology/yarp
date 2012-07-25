@@ -2,16 +2,9 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-option(CREATE_LIB_MATH "Create math library libYARP_math?" OFF)
-
 set(YARP_HAS_MATH_LIB FALSE)
 if (CREATE_LIB_MATH)
-  find_package(GSL REQUIRED)
-  if (NOT GSL_FOUND)
-  	message(FATAL_ERROR "GSL not found, won't compile libYARP_math")
-  else (NOT GSL_FOUND)
-  	set(YARP_HAS_MATH_LIB TRUE)
-  endif (NOT GSL_FOUND)
+    set(YARP_HAS_MATH_LIB TRUE)
 endif(CREATE_LIB_MATH)
 
 if (YARP_HAS_MATH_LIB)
@@ -23,7 +16,7 @@ if (YARP_HAS_MATH_LIB)
   source_group("Source Files" FILES ${folder_source})
   source_group("Header Files" FILES ${folder_header})
 
-  set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/include)
   get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
   include_directories(${YARP_TREE_INCLUDE_DIRS})

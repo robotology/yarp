@@ -120,6 +120,7 @@ endmacro(print_dependency)
 
 # OPTIONS:
 
+option(CREATE_LIB_MATH "Create math library libYARP_math?" OFF)
 option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" ON)
 option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
@@ -141,6 +142,11 @@ message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)
+
+if(CREATE_LIB_MATH)
+    find_package(GSL QUIET)
+    checkandset_dependency(GSL)
+endif(CREATE_LIB_MATH)
 
 if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
     find_package(TinyXML QUIET)
@@ -183,6 +189,7 @@ endif(CREATE_YARPSCOPE)
 # CHECK DEPENDENCIES:
 
 check_required_dependency(SQLite)
+check_optional_dependency(CREATE_LIB_MATH GSL)
 check_optional_dependency(CREATE_YMANAGER TinyXML)
 check_optional_dependency(CREATE_YARPSCOPE TinyXML)
 check_optional_dependency(CREATE_GUIS Gthread)
@@ -206,6 +213,7 @@ check_optional_dependency(CREATE_YARPSCOPE GtkDataboxMM)
 message(STATUS "I have found the following libraries:")
 
 print_dependency(SQLite)
+print_dependency(GSL)
 print_dependency(TinyXML)
 print_dependency(Gthread)
 
