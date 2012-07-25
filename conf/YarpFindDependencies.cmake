@@ -19,7 +19,7 @@ macro(checkandset_dependency package)
 
     set(YARP_USE_SYSTEM_${package} TRUE CACHE INTERNAL "" FORCE)
 
-    mark_as_advanced(YARP_HAS_${package} YARP_USE_${package})
+    mark_as_advanced(YARP_USE_${package})
 
     #store all dependency flags for later export
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
@@ -32,7 +32,7 @@ macro(checkbuildandset_dependency package)
 
     set(YARP_HAS_${package} TRUE CACHE BOOL "Package ${package} found" FORCE)
     set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
-    mark_as_advanced(YARP_HAS_${package} YARP_USE_${package})
+    mark_as_advanced(YARP_USE_${package})
 
     if (${package}_FOUND)
         set(YARP_USE_SYSTEM_${package} TRUE CACHE BOOL "Use system-installed ${package}, rather than a private copy")
