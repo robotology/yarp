@@ -34,21 +34,7 @@ your system configuration.  If so, then you have a distribution of
 YARP tailored to your specific operating system, and the instructions
 in this file will give the fastest way to get going.
 
-We now describe two general methods for compiling YARP: "cmake" and
-"autoconf".
-
-We recommend the "cmake" method for users of Microsoft Windows.  See the
-CMAKE section below (after reading PREREQUISITES).
-
-We also recommend the "cmake" method for users of UNIX-like systems
-(including Linux, OSX, Cygwin).  See the CMAKE section below
-(after reading PREREQUISITES).
-
-Those on UNIX systems may also choose to use the "autoconf" method
-(see AUTOCONF section below).  Be aware that this method will not
-currently compile device interface support, only communication
-support.
-
+Compiling YARP requires "cmake" on every platform where YARP is supported.
 
 ===============================================================================
 
@@ -175,45 +161,6 @@ etc.
 After compilation, executables are in the "bin" directory and libraries are
 in the "lib" directory.
 
-
-===============================================================================
-
-AUTOCONF (support is partial)
---------
-
-This method requires the autoconf, automake, and libtool tools (e.g.
-debian packages libtool autoconf automake1.8).
-
-If you checked out from CVS and have a configure.ac file but would
-like to produce a configure file, try:
-
-  ./bootstrap.sh
-
-You may need to modify this to match your autotool versions.
-You should now have a configure file.
-Try:
-
-  ./configure
-
-All going well, you have some new Makefiles.  Try:
-
-  make
-  make check
-
-A man page will be generated for the "yarp" executable if the 
-"docbook-to-man" program is installed on your system at compile-time.
-
-If you do a:
-
-  make install
-
-Executables and libraries are installed on your system (use the --prefix=
-option to configure to control where).
-
-"yarp" is the main executable
-
-
-
 ===============================================================================
 
 GUIS
@@ -301,5 +248,3 @@ root of your gtk+ installation), activates the cache variable CREATE_GUIS
 files (click on configure a couple of times). If you installed gtk+ correctly
 everything should work fine, otherwise cmake will ask you to locate a few
 header files and libraries.
-
- 

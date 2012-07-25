@@ -1,7 +1,29 @@
+2012-07-25  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+
+	* conf/YarpFindDependencies.cmake: Move checks for dependencies
+	  in this file.
+
+	* README.txt: Remove references to autotools in documentation.
+
+	* CMakeLists.txt, etc: Fixes, cleanup, etc.
+
+2012-07-25  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+
+	* src/yarpscope/src/DataPlot.cpp, src/yarpscope/src/DataPlot.h,
+	  src/yarpscope/src/PlotManager.cpp,
+	  src/yarpscope/src/PlotManager.h,
+	  src/yarpscope/src/XmlLoader.cpp: Read minval and maxval as
+          float in yarpscope.
+
 2012-07-24  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/modules/kinect/OpenNI/KinectYarpDeviceServerLib: apply 
 	patch for "no mirror" option [thanks Juan G Victores]
+
+2012-07-23  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+
+	* automake.am, configure.ac: Remove autotools buildsystem no longer
+	  supported.
 
 2012-07-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
@@ -41,6 +63,11 @@
 	src/libYARP_sig/src/Vector.cpp: from Anne van Rossum, some fixes 
 	for YARP without ACE configuration [thanks Anne van Rossum]
 
+2012-07-13  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+
+	* extern/gtkdatabox, extern/gtkdataboxmm, extern/tinyxml: Move
+          GtkDatabox, GtkDataboxMM, and TinyXML in extern directory.
+
 2012-07-12  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* example/swig/yarp.i: translate ResourceFinder::configure to
@@ -66,6 +93,9 @@
 	
 2012-07-03 Ugo Pattacini <ugo.pattacini@iit.it>
     * gaze I/F's: added get/setSaccadesActivationAngle() methods.
+
+2012-07-27  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/yarpscope: Import yarpscope in YARP.
 
 2012-06-20 Lorenzo Natale <lorenzo.natale@iit.it>
     * setting version 2.3.18 to follow interface changes
