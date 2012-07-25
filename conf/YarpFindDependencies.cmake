@@ -107,13 +107,15 @@ macro(print_dependency package)
         message(STATUS "${package}: disabled")
     elseif(NOT YARP_USE_SYSTEM_${package})
         message(STATUS "${package}: compiling")
-    elseif(${package}_FOUND)
+    elseif(YARP_HAS_${package})
         message(STATUS "${package}: found")
     else(NOT YARP_USE_${package})
         message(STATUS "${package}: not found")
     endif(NOT YARP_USE_${package})
+#    message(STATUS "YARP_USE_${package} = ${YARP_USE_${package}}")
+#    message(STATUS "YARP_HAS_${package} = ${YARP_HAS_${package}}")
+#    message(STATUS "YARP_USE_SYSTEM_${package} = ${YARP_USE_SYSTEM_${package}}")
 endmacro(print_dependency)
-
 
 
 # OPTIONS:
