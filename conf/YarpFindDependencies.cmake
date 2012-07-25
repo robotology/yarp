@@ -10,10 +10,10 @@
 macro(checkandset_dependency package)
 
     if (${package}_FOUND)
-        set(YARP_HAS_${package} TRUE CACHE BOOL "Package ${package} found" FORCE)
+        set(YARP_HAS_${package} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
         set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
     else (${package}_FOUND)
-        set(YARP_HAS_${package} FALSE CACHE BOOL "" FORCE)
+        set(YARP_HAS_${package} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
         set(YARP_USE_${package} FALSE CACHE BOOL "Use package ${package}")
     endif (${package}_FOUND)
 
@@ -30,7 +30,7 @@ endmacro (checkandset_dependency)
 # Check if a package is installed or if is going to be built and set some cmake variables
 macro(checkbuildandset_dependency package)
 
-    set(YARP_HAS_${package} TRUE CACHE BOOL "Package ${package} found" FORCE)
+    set(YARP_HAS_${package} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
     set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
     mark_as_advanced(YARP_USE_${package})
 
