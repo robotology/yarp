@@ -3,8 +3,23 @@
 # Authors: Lorenzo Natale, Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+# This module checks if all the dependencies are installed and if the
+# dependencies to build some parts of Yarp are satisfied.
+# For every dependency, it creates the following variables:
+#
+# YARP_USE_${package}: Can be disabled by the user if he don't want to use that
+#                      dependency.
+# YARP_HAS_${package}: Internal flag. It should be used to check if a part of
+#                      Yarp should be built. It is on if YARP_USE_${package} is
+#                      on and either the package was found or will be built.
+# YARP_USE_SYSTEM_${package}: This flag is shown only for packages in the
+#                             extern folder that were also found on the system
+#                             (TRUE by default). If this flag is enabled, the
+#                             system installed library will be used instead of
+#                             the version shipped with Yarp.
 
 # USEFUL MACROS:
+
 
 # Check if a package is installed and set some cmake variables
 macro(checkandset_dependency package)
