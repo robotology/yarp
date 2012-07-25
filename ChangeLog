@@ -7,6 +7,20 @@
 
 	* CMakeLists.txt, etc: Fixes, cleanup, etc.
 
+	* example/matrix/CMakeLists.txt, example/matrix/basic_ops.cpp,
+	  example/motorcontrol/CMakeLists.txt,
+	  example/nvidia/progs/FP-resize.cg,
+	  example/nvidia/progs/motion.cg, example/os/ratethread.cpp,
+	  example/portaudio/CMakeLists.txt,
+	  example/portaudio/sound_loopback.cpp,
+	  example/portaudio/sound_receiver.cpp,
+	  example/portaudio/sound_sender.cpp,
+	  example/rand/CMakeLists.txt, example/rand/rand.cpp,
+	  example/stressTests/scripts/grind,
+	  example/stressTests/scripts/hammer,
+	  example/stressTests/scripts/hammer-yarp-server,
+	  example/swig/src/Example3.java: fix permissions.
+
 2012-07-25  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 
 	* src/yarpscope/src/DataPlot.cpp, src/yarpscope/src/DataPlot.h,
