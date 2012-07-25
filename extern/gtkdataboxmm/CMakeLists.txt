@@ -60,6 +60,10 @@ set(gtkdataboxmm_HDRS
     gtkdataboxmm/gtkdatabox/gtkdataboxmm/ruler.h
 )
 
+if(WIN32)
+    add_definitions(/wd4250)
+endif(WIN32)
+
 add_library(gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
 set(GtkDataboxMM_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox" CACHE PATH "GtkDataboxMM include directory" FORCE)

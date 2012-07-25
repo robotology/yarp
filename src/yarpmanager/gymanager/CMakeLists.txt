@@ -32,6 +32,10 @@ source_group("Header Files" FILES ${folder_header})
 #pkg_check_modules(GOOCANVASMM goocanvasmm-1.0)
 # GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES 
 
+if(WIN32)
+    add_definitions(/wd4099)
+endif(WIN32)
+
 add_executable(gyarpmanager ${folder_source} ${folder_header})
 target_link_libraries(gyarpmanager YARP_init YARP_OS YARP_manager)
 

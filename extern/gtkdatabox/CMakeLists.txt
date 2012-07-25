@@ -29,7 +29,6 @@ set(gtkdatabox_SRCS
     gtkdatabox/gtk/gtkdatabox_xyc_graph.c
 )
 
-
 set(gtkdatabox_HDRS
     gtkdatabox/gtk/gtkdatabox.h
     gtkdatabox/gtk/gtkdatabox_bars.h
@@ -45,6 +44,10 @@ set(gtkdatabox_HDRS
     gtkdatabox/gtk/gtkdatabox_typedefs.h
     gtkdatabox/gtk/gtkdatabox_xyc_graph.h
 )
+
+if(WIN32)
+    add_definitions(/wd4305 /wd4244)
+endif(WIN32)
 
 add_library(gtkdatabox STATIC ${gtkdatabox_SRCS})
 

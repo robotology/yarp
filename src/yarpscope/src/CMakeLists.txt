@@ -22,6 +22,10 @@ link_directories(${TinyXML_LIBRARY_DIRS}
                  ${GtkDataboxMM_LIBRARY_DIRS}
 )
 
+if(WIN32)
+    add_definitions(/wd4250)
+endif(WIN32)
+
 add_executable(yarpscope ${YarpScope_SRCS})
 
 target_link_libraries(yarpscope
