@@ -38,6 +38,8 @@ macro(checkandset_dependency package)
 
     #store all dependency flags for later export
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${package})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${package})
 
 endmacro (checkandset_dependency)
 
@@ -59,6 +61,8 @@ macro(checkbuildandset_dependency package)
 
     #store all dependency flags for later export
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${package})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${package})
 
 endmacro(checkbuildandset_dependency)
 
