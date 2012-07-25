@@ -25,14 +25,13 @@ if(NOT WIN32)
     endif(PKG_CONFIG_FOUND)
 endif(NOT WIN32)
 
-set(GtkDataboxMM_INCLUDE_DIRS ${PC_GtkDataboxMM_INCLUDE_DIRS} CACHE PATH "GtkDataboxMM include directory" FORCE)
-set(GtkDataboxMM_LIBRARY_DIRS ${PC_GtkDataboxMM_LIBRARY_DIRS} CACHE PATH "GtkDataboxMM library directory" FORCE)
-set(GtkDataboxMM_LIBRARIES ${PC_GtkDataboxMM_LIBRARIES} CACHE STRING "GtkDataboxMM libraries" FORCE)
+set(GtkDataboxMM_INCLUDE_DIRS ${PC_GTKDATABOXMM_INCLUDE_DIRS} CACHE PATH "GtkDataboxMM include directory" FORCE)
+set(GtkDataboxMM_LIBRARY_DIRS ${PC_GTKDATABOXMM_LIBRARY_DIRS} CACHE PATH "GtkDataboxMM library directory" FORCE)
+set(GtkDataboxMM_LIBRARIES ${PC_GTKDATABOXMM_LIBRARIES} CACHE STRING "GtkDataboxMM libraries" FORCE)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GtkDataboxMM
                                   DEFAULT_MSG
-                                  GtkDataboxMM_INCLUDE_DIRS
                                   GtkDataboxMM_LIBRARIES
 )
 
