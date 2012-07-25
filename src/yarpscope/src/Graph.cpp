@@ -155,7 +155,7 @@ YarpScope::Graph::Graph(const Glib::ustring &remote,
     mPriv->X_plot = new float[plotSize];
     mPriv->Y_plot = new float[plotSize];
     for (int i = 0; i < mPriv->plotSize; i++) {
-        mPriv->X_plot[i] = i;
+        mPriv->X_plot[i] = (float)i;
         mPriv->Y_plot[i] = 0;
     }
 

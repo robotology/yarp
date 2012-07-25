@@ -68,7 +68,7 @@ void YarpScope::DataPlot::Private::createGrid()
         hlines[i] = ((maxval + minval) / 2) + ((maxval - minval) / 8) * (i - 4);
     }
     for (int i = 0; i < 8; i++) {
-        vlines[i] = size / 8.0 * (i + 1);
+        vlines[i] = size / 8.0f * (i + 1);
     }
 
     grid = GDatabox::Grid::create(9, 8, hlines, vlines, Gdk::Color("Grey"));
@@ -95,9 +95,9 @@ YarpScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
     mPriv->autorescale = autorescale;
 
     mPriv->createGrid();
-    set_total_limits(0, size, maxval, minval);
+    set_total_limits(0, (float)size, maxval, minval);
     if (autorescale) {
-        auto_rescale(0.05);
+        auto_rescale(0.05f);
     }
 
     modify_bg(Gtk::STATE_NORMAL, mPriv->bgcolor);

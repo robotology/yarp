@@ -252,8 +252,8 @@ YarpScope::MainWindow::MainWindow() :
     float *Y = new float[PLOT_SIZE];
 
     for (int i = 0; i < PLOT_SIZE; i++) {
-        X[i] = i;
-        Y[i] = cos (i * 4 * G_PI / PLOT_SIZE) / 2 * 100;
+        X[i] = (float)i;
+        Y[i] = (float)(cos (i * 4 * G_PI / PLOT_SIZE)) / 2 * 100;
     }
 
     bars = GDatabox::Bars::create(PLOT_SIZE, X, Y, Gdk::Color("Orange"));

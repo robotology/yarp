@@ -227,13 +227,13 @@ bool YarpScope::PortReader::Private::onTimeout()
                 continue;
             }
 
-            ind->X[idx] = idx;
-            ind->Y[idx] = b->get(ind->index).asDouble();
+            ind->X[idx] = (float)idx;
+            ind->Y[idx] = (float)(b->get(ind->index).asDouble());
 
             if (conn->realTime && stmp.isValid()) {
-                ind->T[idx] = (stmp.getTime() - conn->initialTime);
+                ind->T[idx] = (float)(stmp.getTime() - conn->initialTime);
             } else {
-                ind->T[idx] = conn->numberAcquiredData;
+                ind->T[idx] = (float)conn->numberAcquiredData;
             }
         }
         conn->numberAcquiredData++;
