@@ -30,23 +30,17 @@ endmacro (checkandset_dependency)
 # Check if a package is installed or if is going to be built and set some cmake variables
 macro(checkbuildandset_dependency package)
 
+    set(YARP_HAS_${package} TRUE CACHE BOOL "Package ${package} found" FORCE)
+    set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
+    mark_as_advanced(YARP_HAS_${package} YARP_USE_${package})
+
     if (${package}_FOUND)
-        set(YARP_HAS_${package} TRUE CACHE BOOL "Package ${package} found" FORCE)
-        set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
         set(YARP_USE_SYSTEM_${package} TRUE CACHE BOOL "Use system-installed ${package}, rather than a private copy")
+        mark_as_advanced(YARP_USE_SYSTEM_${package})
     else (${package}_FOUND)
         # If package was not found we force it to be built
-        set(YARP_USE_SYSTEM_${package} FALSE CACHE BOOL "Use system-installed ${package}, rather than a private copy" FORCE)
-        if(NOT YARP_USE_SYSTEM_${package})
-            set(YARP_HAS_${package} TRUE CACHE BOOL "" FORCE)
-            set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
-        else(NOT YARP_USE_SYSTEM_${package})
-            set(YARP_HAS_${package} FALSE CACHE BOOL "" FORCE)
-            set(YARP_USE_${package} FALSE CACHE BOOL "Use package ${package}")
-        endif(NOT YARP_USE_SYSTEM_${package})
+        set(YARP_USE_SYSTEM_${package} FALSE CACHE INTERNAL "" FORCE)
     endif (${package}_FOUND)
-
-    mark_as_advanced(YARP_HAS_${package} YARP_USE_${package} YARP_USE_SYSTEM_${package})
 
     #store all dependency flags for later export
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
