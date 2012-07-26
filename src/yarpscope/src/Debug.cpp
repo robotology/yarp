@@ -12,7 +12,7 @@
 #include <sstream>
 
 #include <stdlib.h>
-#include <glib/gmessages.h>
+#include <glib.h>
 
 
 void YarpScope::Debug::print_output(MsgType t, const std::ostringstream &s)
