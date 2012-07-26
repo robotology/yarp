@@ -66,6 +66,10 @@ endif(WIN32)
 
 add_library(gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
+if(UNIX)
+    set_target_properties(gtkdataboxmm PROPERTIES COMPILE_FLAGS -fPIC)
+endif(UNIX)
+
 set(GtkDataboxMM_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox" CACHE PATH "GtkDataboxMM include directory" FORCE)
 set(GtkDataboxMM_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GtkDatabox_LIBRARY_DIRS};${GTKMM_LIBRARY_DIRS}" CACHE PATH "GtkDataboxMM library directory" FORCE)
 

@@ -20,6 +20,9 @@ set(tinyxml_HDRS
 
 add_library(tinyxml STATIC ${tinyxml_SRCS})
 
+if(UNIX)
+    set_target_properties(tinyxml PROPERTIES COMPILE_FLAGS -fPIC)
+endif(UNIX)
 
 set(TinyXML_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml" CACHE PATH "TinyXML include directory" FORCE)
 set(TinyXML_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "TinyXML library directory" FORCE)

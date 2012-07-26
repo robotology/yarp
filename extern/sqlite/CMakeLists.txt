@@ -18,6 +18,9 @@ set(sqlite_HDRS
 
 add_library(sqlite STATIC ${sqlite_SRCS})
 
+if(UNIX)
+    set_target_properties(sqlite PROPERTIES COMPILE_FLAGS -fPIC)
+endif(UNIX)
 
 set(SQLite_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sqlite" CACHE PATH "SQLite include directory" FORCE)
 set(SQLite_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "SQLite library directory" FORCE)

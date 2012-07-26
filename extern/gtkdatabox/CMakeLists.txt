@@ -51,6 +51,10 @@ endif(WIN32)
 
 add_library(gtkdatabox STATIC ${gtkdatabox_SRCS})
 
+if(UNIX)
+    set_target_properties(gtkdatabox PROPERTIES COMPILE_FLAGS -fPIC)
+endif(UNIX)
+
 set(GtkDatabox_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk" CACHE PATH "GtkDatabox include directory" FORCE)
 
 if(YARP_USE_GTK2)

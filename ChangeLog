@@ -1,3 +1,11 @@
+2012-07-26  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+
+	* extern/gtkdatabox/CMakeLists.txt,
+	  extern/gtkdataboxmm/CMakeLists.txt,
+	  extern/sqlite/CMakeLists.txt, extern/tinyxml/CMakeLists.txt:
+	  Compile static libraries with position indipendent code
+	  [thanks Lorenzo Natale]
+
 2012-07-25  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 
 	* conf/YarpFindDependencies.cmake: Move checks for dependencies
