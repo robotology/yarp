@@ -82,19 +82,29 @@ SET(ACE_INCLUDE_DIR_GUESS)
 SET(ACE_LIBRARY_DIR_GUESS)
 SET(ACE_LINK_FLAGS)
 
+### 
+# It looks like the output of pkg_check_modules
+# is partially overwritten by susequent calls.
+# In the hypothesis that it is so, we experimentally
+# disable it and see what happens.
+if (NOT EXPERIMENTAL_ACEFIND)
+
 INCLUDE(FindPkgConfig)
 
 if (PKG_CONFIG_FOUND)
   pkg_check_modules(ACE ACE)
-  if (ACE_FOUND)
-    set(ACE_INCLUDE_DIR_GUESS ${ACE_INCLUDE_DIRS})
-    set(ACE_LIBRARY_DIR_GUESS ${ACE_LIBRARY_DIRS})
-    set(ACE_LINK_FLAGS ${ACE_LDFLAGS})
-    set(ACE_C_FLAGS ${ACE_CFLAGS})
-  endif (ACE_FOUND)
+	if (ACE_FOUND)
+		set(ACE_INCLUDE_DIR_GUESS ${ACE_INCLUDE_DIRS})
+		set(ACE_LIBRARY_DIR_GUESS ${ACE_LIBRARY_DIRS})
+		set(ACE_LINK_FLAGS ${ACE_LDFLAGS})
+		set(ACE_C_FLAGS ${ACE_CFLAGS})
+	endif (ACE_FOUND)
 endif (PKG_CONFIG_FOUND)
 
 SET(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
+
+endif()
+
 
 ########################################################################
 ##  general find
