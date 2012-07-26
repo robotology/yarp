@@ -75,11 +75,18 @@ IF (CREATE_JAVA)
    ENDIF(APPLE)
 ENDIF (CREATE_JAVA)
 
-IF (CREATE_PYTHON)
+IF (CREATE_PYTHON)	 
    SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
    FIND_PACKAGE(PythonLibs)
    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
    LINK_LIBRARIES(${PYTHON_LIBRARY})
+   
+   ## in Windows it seems necessary to declare explictly the link_directory
+   if (WIN32)
+		get_filename_component(PYTHON_DIR ${PYTHON_LIBRARY} PATH)
+		link_directories(${PYTHON_DIR})
+   endif()
+	
    SWIG_ADD_MODULE(yarp python yarp.i)
    # uncomment if we want a debug version of the library
    #ADD_DEFINITIONS(-DPy_DEBUG)
@@ -100,6 +107,7 @@ IF (CREATE_PYTHON)
      IF (yarp_lib_location)
        SET_TARGET_PROPERTIES(_yarp PROPERTIES SUFFIX ".pyd")
      ENDIF ()
+ 
    ENDIF (WIN32)
 
 ENDIF (CREATE_PYTHON)
