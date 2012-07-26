@@ -54,14 +54,14 @@
     </module>
     <module>
         <name>dataDumper</name>
-        <parameters>--name /data/images/left --type images</parameters>
+        <parameters>--name /data/images/left --type image</parameters>
         <node>quad</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
 	<module>
         <name>dataDumper</name>
-        <parameters>--name /data/images/right --type images</parameters>
+        <parameters>--name /data/images/right --type image</parameters>
         <node>quad</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
