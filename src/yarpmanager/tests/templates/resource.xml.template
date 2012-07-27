@@ -1,5 +1,5 @@
 <resources>
-    <!-- Mutiple computer descriptions can be introduced -->
+    <!-- Multiple computer descriptions can be introduced -->
     <computer>
         <name>hostname1</name>
         <description>Template resource</description>

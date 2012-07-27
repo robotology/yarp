@@ -185,7 +185,7 @@ public: // implementing IEventSink::castEvent()
         it = transitions.find(state);
         if(it==transitions.end())
         {
-            std::cerr<<"No transition is registerd from state "<<state->getName()<<std::endl;
+            std::cerr<<"No transition is registered from state "<<state->getName()<<std::endl;
             semEvent.post();
             return;
         }
@@ -194,7 +194,7 @@ public: // implementing IEventSink::castEvent()
         std::map<Event*, StateBase*>::iterator itr2 = row.find(event); 
         if(itr2 == row.end())
         {
-            std::cerr<<"No transition is registerd for event ";
+            std::cerr<<"No transition is registered for event ";
             std::cerr<<event->getName()<<" ("<<event->getTimeStamp()<<")";
             std::cerr<<" from state "<<state->getName()<<std::endl;
             semEvent.post();

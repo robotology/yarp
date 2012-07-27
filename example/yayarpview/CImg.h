@@ -3154,7 +3154,7 @@ namespace cimg_library {
 
     //! Print informations about %CImg environement variables.
     /**
-       Printing is done on the standart error output.
+       Printing is done on the standard error output.
     **/
     inline void info() {
       std::fprintf(stderr,"\n %sCImg Library %g%s, compiled %s ( %s ) with the following flags :\n\n",
@@ -3466,7 +3466,7 @@ namespace cimg_library {
 
     //! Print the current statistics.
     /**
-       Printing is done on the standart error output.
+       Printing is done on the standard error output.
     **/
     const CImgStats& print(const char* title=NULL) const {
       if (lmin>=0 && lmax>=0)
@@ -6196,7 +6196,7 @@ namespace cimg_library {
       return *this;
     }
 
-    //! Display informations about the image on the standart output.
+    //! Display informations about the image on the standard output.
     const CImg& print(const unsigned int print_flag) const { return print(NULL,print_flag); }
   
     //@}

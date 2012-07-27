@@ -326,7 +326,7 @@ void ApplicationWindow::createWidgets(void)
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuDisconnect) );
     m_refActionGroup->add( Gtk::Action::create("PManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
-    m_refActionGroup->add( Gtk::Action::create("PManageStdout", Gtk::Stock::NETWORK, "_Attach to stdout", "Attach to standart output"),
+    m_refActionGroup->add( Gtk::Action::create("PManageStdout", Gtk::Stock::NETWORK, "_Attach to stdout", "Attach to standard output"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuAttachStdout) );        
     m_refActionGroup->add( Gtk::Action::create("PModuleSelAll", Gtk::StockID("YSELECTALL"), "Select _all modules", "Select all modules"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPModuleSelectAll) );
