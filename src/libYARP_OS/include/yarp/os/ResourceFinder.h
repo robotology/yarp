@@ -55,8 +55,8 @@ public:
      * variables that are checked, the directories that are searched,
      * and the order of search.
      *
-     * For a policy <P>, YARP looks for an environment variable of 
-     * that name.  If found, it tries to load the file <P>/<P>.ini
+     * For a policy [P], YARP looks for an environment variable of 
+     * that name.  If found, it tries to load the file [P]/[P].ini
      * and use this to configure the search policy.
      *
      * An example ini file:
@@ -67,14 +67,25 @@ public:
      * default_capability default
      * \endverbatim
      *
-     * This would make the default search path include <P>/app/default
-     * and an added context <C> would add <P>/app/<C> to the search path.
+     * This would make the default search path include [P]/app/default
+     * and an added context [C] would add [P]/app/[C] to the search path.
      *
      * Some elements of policy can be changed from the commandline.
      *
      */
     bool configure(const char *policyName, int argc, char *argv[], 
                    bool skipFirstArgument = true);
+
+    /**
+     *
+     * Variant of configure() that doesn't require a policy name
+     * to be specified.  In this case, policy will be read from
+     * an environment variable, YARP_POLICY.
+     *
+     */
+    bool configure(int argc, char *argv[]) {
+        return configure("",argc,argv,true);
+    }
     
     bool setDefaultContext(const char *contextName) {
         clearContext();

@@ -166,8 +166,21 @@ public:
         }
         name = p.check("policy",Value(name.c_str())).asString();
         if (name=="") {
+            const char *result = 
+                yarp::os::getenv("YARP_POLICY");
+            if (result!=NULL) {
+                if (verbose) {
+                    fprintf(RTARGET,"||| Read policy from YARP_POLICY\n");
+                }
+                name = result;
+            }
+        }
+        if (name=="") {
             fprintf(RTARGET,"||| no policy found\n");
             return false;
+        }
+        if (name=="none") {
+            return true;
         }
 
         config.fromString(p.toString().c_str(),false);

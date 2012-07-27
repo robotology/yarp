@@ -1,5 +1,11 @@
 2012-07-27  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/libYARP_OS/src/ResourceFinder.cpp: give
+	ResourceFinder::configure variant that doesn't require policy
+	name to be specified.  When policy name is not specified, it
+	can be provided externally with "--policy FOO_ROOT" flag, or
+	"YARP_POLICY=FOO_ROOT" environment variable.
+
 	* src/libYARP_OS/include/yarp/os/idl/WireTypes.h: stdint not
 	available on older MSVC versions [thanks Ugo Pattacini]
 

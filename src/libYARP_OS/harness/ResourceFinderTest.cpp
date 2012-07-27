@@ -59,7 +59,7 @@ public:
                                    NULL };
             int argc = 9;
 
-            rf.configure("",argc,(char **)argv);
+            rf.configure("none",argc,(char **)argv);
             ConstString alt = rf.findFile("alt");
             checkTrue(alt!="","found ini file");
 
@@ -111,7 +111,7 @@ public:
             int argc = 9;
 
             ResourceFinder rf1;
-            rf1.configure("",argc,(char **)argv);
+            rf1.configure("none",argc,(char **)argv);
             checkEqual(rf1.find("x").asInt(),14,"found x");
 
             const char *argv2[] = { "ignore", 
@@ -125,7 +125,7 @@ public:
             int argc2 = 13;
 
             ResourceFinder rf2;
-            rf2.configure("",argc2,(char **)argv2);
+            rf2.configure("none",argc2,(char **)argv2);
             checkEqual(rf2.find("y").asInt(),30,"found y");
             checkEqual(rf2.find("x").asInt(),20,"override x");
         }
@@ -143,7 +143,7 @@ public:
                                "--verbose", "0",
                                NULL };
         int argc = 9;
-        rf.configure("",argc,(char **)argv);
+        rf.configure("none",argc,(char **)argv);
         checkEqual(rf.getContext().c_str(),"zig","recovered context");
     }
 
@@ -184,7 +184,7 @@ public:
                                "--verbose", "0",
                                NULL };
         int argc = 9;
-        rf.configure("",argc,(char **)argv);
+        rf.configure("none",argc,(char **)argv);
         ResourceFinder rf1 = rf.findNestedResourceFinder("section1");
         checkEqual(rf1.findFile("fname").c_str(),fname1,"section1 ok");
         checkFalse(rf1.isNull(),"section1 not null ok");
