@@ -226,7 +226,7 @@ TinyXML can print output in several different ways that all have strengths and l
 	- used by Print() and SaveFile()
 
 - operator<<. Output to a c++ stream.
-	- Integrates with standard C++ iostreams.
+	- Integrates with standart C++ iostreams.
 	- Outputs in "network printing" mode without line breaks. Good for network transmission
 	  and moving XML between C++ objects, but hard for a human to read.
 
