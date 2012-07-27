@@ -1,3 +1,8 @@
+2012-07-27  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/include/yarp/os/idl/WireTypes.h: stdint not
+	available on older MSVC versions [thanks Ugo Pattacini]
+
 2012-07-26  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 
 	* extern/gtkdatabox/CMakeLists.txt,

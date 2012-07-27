@@ -11,7 +11,16 @@
 #ifndef _YARP2_WIRETYPES_
 #define _YARP2_WIRETYPES_
 
-#include <stdint.h>
+#if defined(_WIN32) && !defined(__MINGW32__) && (!defined(_MSC_VER) || _MSC_VER<1600)
+  typedef __int32 int32_t;
+  typedef unsigned __int32 uint32_t;
+  typedef __int64 int64_t;
+  typedef unsigned __int64 uint64_t;
+#else
+#  include <stdint.h>
+#endif
+
+ 
 #include <string>
 #include <vector>
 #include <map>
