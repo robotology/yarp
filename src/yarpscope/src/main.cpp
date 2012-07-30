@@ -121,8 +121,9 @@ int main(int argc, char *argv[])
     if (options.check("xml")) {
 // XML Mode Options
         const yarp::os::Value &xmlValue = options.find("xml");
-        debug() << "Loading file" << xmlValue.toString();
-        YarpScope::XmlLoader xmlLoader(xmlValue.toString().c_str());
+        const yarp::os::ConstString &filename = rf.findFile(xmlValue.toString().c_str());
+        debug() << "Loading file" << filename;
+        YarpScope::XmlLoader xmlLoader(filename.c_str());
     } else {
 // Command Line Mode Options
         // TODO Make a class
