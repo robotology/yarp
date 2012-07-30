@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     rf.setVerbose();
     rf.setDefaultContext("yarpscope/conf");
     rf.setDefaultConfigFile("yarpscope.ini");
-    rf.configure("ICUB_ROOT", argc, argv); // FIXME Use another policy
+    rf.configure(argc, argv);
 
     //Yarp network initialization
     yarp::os::Network yarp;
