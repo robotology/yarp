@@ -1387,6 +1387,8 @@ void t_yarp_generator::generate_service(t_service* tservice) {
   ofstream f_cpp_;
   f_cpp_.open(f_cpp_name.c_str());
   
+  t_service* extends_service = tservice->get_extends();
+  
   {
     auto_warn(f_srv_);
     f_srv_ << "#ifndef YARP_THRIFT_GENERATOR_" << svcname << endl;
@@ -1398,7 +1400,11 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     auto_warn(f_cpp_);
     if (!cmake_supplies_headers_) {
       if (need_common_)
-        f_srv_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;
+        f_srv_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;  
+    
+    if (extends_service != NULL) {
+    f_srv_ << "#include <" << get_include_prefix(*(extends_service->get_program())) << extends_service->get_name() << ".h>" << endl;
+  }
     
       if (!program_->get_objects().empty()) {
 	vector<t_struct*> objects = program_->get_objects();
@@ -1430,7 +1436,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     f_cpp_ << endl;
     
     string ns = get_namespace(program_);
-
+    
     namespace_open(f_srv_,ns,false);
     indent(f_srv_) << "class " << service_name_ << ";" << endl;
     namespace_close(f_srv_,ns,false);
@@ -1501,7 +1507,15 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       }
     }
 
-    f_srv_ << "class " << namespace_decorate(ns,service_name_) << " : public yarp::os::Wire {" << endl;
+    string extends = "";
+    if (extends_service != NULL) {
+      extends = " :  public " + print_type(extends_service);
+    }
+    else
+    {
+        extends = " : public yarp::os::Wire";
+    }
+    f_srv_ << "class " << namespace_decorate(ns,service_name_) << extends << " {" << endl;
     f_srv_ << "public:" << endl;
     indent_up();
 
