@@ -1,3 +1,7 @@
+2012-07-30  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/portscope/src/main.cpp: Switch to the new ResourceFinder
+	  policy and use ResourceFinder to locate xml files.
+
 2012-07-27  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/ResourceFinder.cpp: give
