@@ -14,21 +14,23 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   include_directories(${YARP_TREE_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-  add_library(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp)
-  target_link_libraries(yarpserversql YARP_init YARP_name)
-  target_link_libraries(yarpserversql ${SQLite_LIBRARIES})
+  add_library(YARP_serversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp)
+  target_link_libraries(YARP_serversql YARP_init YARP_name)
+  target_link_libraries(YARP_serversql ${SQLite_LIBRARIES})
   if (UNIX)
-    target_link_libraries(yarpserversql dl)
+    target_link_libraries(YARP_serversql dl)
   endif ()
 
   # preserve yarpserver3 executable for a while
   add_executable(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-  target_link_libraries(yarpserver3 yarpserversql)
+  target_link_libraries(yarpserver3 YARP_serversql)
 
   add_executable(yarpserver ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-  target_link_libraries(yarpserver yarpserversql)
+  target_link_libraries(yarpserver YARP_serversql)
 
-  INSTALL(TARGETS yarpserversql COMPONENT utilities DESTINATION lib)
+  set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
+
+  INSTALL(TARGETS YARP_serversql COMPONENT utilities DESTINATION lib)
   INSTALL(TARGETS yarpserver yarpserver3 COMPONENT utilities DESTINATION bin)
 
   ###############################################################
@@ -36,7 +38,7 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
 
   IF (TEST_BUILD)
     ADD_EXECUTABLE(server_peek src/server_peek.cpp)
-    TARGET_LINK_LIBRARIES(server_peek yarpserversql)
+    TARGET_LINK_LIBRARIES(server_peek YARP_serversql)
     ADD_EXECUTABLE(server_test src/server_test.cpp)
   ENDIF (TEST_BUILD)
 

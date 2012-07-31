@@ -1,3 +1,8 @@
+2012-07-31  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/yarpserver/CMakeLists.txt: add soversion to yarpserversql
+	library and rename to YARP_serversql [thanks Daniele Domenichelli]
+
 2012-07-30  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* src/portscope/src/main.cpp: Switch to the new ResourceFinder
 	  policy and use ResourceFinder to locate xml files.
