@@ -1,5 +1,7 @@
 2012-07-31  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* conf/YarpDoc.cmake: revive "make man" target for making man pages
+
 	* src/libYARP_OS/src/ResourceFinder.cpp: undo breakage in 
 	behavior when no policy is found [thanks Daniele Domenichelli]
 
