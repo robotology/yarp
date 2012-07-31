@@ -175,17 +175,22 @@ public:
                 name = result;
             }
         }
+        bool skip_policy = false;
         if (name=="") {
-            fprintf(RTARGET,"||| no policy found\n");
-            return false;
+            if (verbose) {
+                fprintf(RTARGET,"||| no policy found\n");
+                skip_policy = true;
+            }
         }
         if (name=="none") {
-            return true;
+            skip_policy = true;
         }
 
-        config.fromString(p.toString().c_str(),false);
-        bool result = configureFromPolicy(config,name.c_str());
-        if (!result) return result;
+        if (!skip_policy) {
+            config.fromString(p.toString().c_str(),false);
+            bool result = configureFromPolicy(config,name.c_str());
+            if (!result) return result;
+        }
 
         if (p.check("context")) {
             clearAppNames();

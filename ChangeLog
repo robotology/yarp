@@ -1,5 +1,8 @@
 2012-07-31  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/libYARP_OS/src/ResourceFinder.cpp: undo breakage in 
+	behavior when no policy is found [thanks Daniele Domenichelli]
+
 	* src/yarpserver/CMakeLists.txt: add soversion to yarpserversql
 	library and rename to YARP_serversql [thanks Daniele Domenichelli]
 
