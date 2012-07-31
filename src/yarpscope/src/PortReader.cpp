@@ -111,6 +111,7 @@ public:
                 }
             }
             usedIndices.clear();
+            delete localPort;
         }
 
         void clearData()
@@ -138,8 +139,12 @@ public:
         interval(50),
         acquire(true)
     {
+    }
+
+    ~Private()
+    {
         for (std::vector<Connection*>::iterator cit = connections.begin();
-                cit != connections.end(); cit++) {
+                    cit != connections.end(); cit++) {
             Connection *conn = *cit;
             if (conn) {
                 delete conn;
