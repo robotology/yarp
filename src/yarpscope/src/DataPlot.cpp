@@ -36,7 +36,7 @@ public:
     {
         delete [] hlines;
         delete [] vlines;
-   }
+    }
 
     void createGrid();
 

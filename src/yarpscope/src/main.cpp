@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006  Robotcub Consortium 
+ * Copyright (C) 2006  Robotcub Consortium
  * Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Francesco Nori, Daniele E. Domenichelli <daniele.domenichelli@iit.it>
  *
