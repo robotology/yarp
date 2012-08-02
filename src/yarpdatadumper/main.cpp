@@ -42,7 +42,7 @@ folder the file 'data.log' contains the information (taken from
 the envelope field of the port) line by line as follows: 
  
 \code 
-Type: [Bottle]/[Image:ppm]/[Image:ppm; Video:compressed_avi(MPEG-4)] 
+Type: [Bottle]/[Image:ppm]/[Image:ppm; Video:avi(huffyuv)]
  
 [pck id] [time stamp] [bottle content (or image_file_name)] 
    0       1.234         0 1 2 3 ...
@@ -56,7 +56,10 @@ Anyway, a selection between these two Time Stamps is available
 for the user through --rxTime option. 
  
 \section lib_sec Libraries 
-YARP libraries and OpenCV 2.0 (if found)
+- YARP libraries 
+- To record videos: OpenCV 2.0 and the <a 
+  href="http://neuron2.net/www.math.berkeley.edu/benrg/huffyuv.html">huffyuv</a>
+  codec for lossless data compression.
 
 \section parameters_sec Parameters
 --name \e portname 
@@ -71,14 +74,14 @@ YARP libraries and OpenCV 2.0 (if found)
   specified \e bottle is assumed. Note that images are stored as
   ppm files. If \e video is choosen then only the file
   'video.avi' is produced neither 'data.log' nor the single
-  images. The data type \e video is available iff OpenCV is
-  found and the codec MPEG-4 is installed.
+  images. The data type \e video is available if OpenCV is found
+  and the codec \e huffyuv is installed.
  
 --addVideo
 - In case images are acquired with this option enabled, a video 
-  called 'video.avi' is also produced at the same time (the
-  codec used is MPEG-4). This option is available iff OpenCV is
-  found.
+  called 'video.avi' is also produced at the same time. This
+  option is available if OpenCV is found and the codec \e
+  huffyuv is installed in the system.
  
 --downsample \e n 
 - With this option it is possible to reduce the storing rate by 
@@ -443,7 +446,7 @@ public:
             {
                 fout<<"Image:ppm;";
                 if (videoOn)
-                    fout<<" Video:compressed_avi(MPEG-4);";
+                    fout<<" Video:avi(huffyuv);";
             }
 
             fout<<endl;
@@ -493,15 +496,9 @@ public:
                 if (dt<=0.0)
                     fps=25; // default
                 else
-                {
-                    double _fps=sz/dt;
-                    fps=(int)_fps;
+                    fps=(int)((double)sz/dt);
 
-                    if (_fps-fps>=0.5)
-                        fps++;
-                }
-
-                videoWriter=cvCreateVideoWriter(videoFile,CV_FOURCC('D','I','V','X'),
+                videoWriter=cvCreateVideoWriter(videoFile,CV_FOURCC('H','F','Y','U'),
                                                 fps,cvSize(frameW,frameH),true);
 
                 doImgParamsExtraction=false;
