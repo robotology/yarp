@@ -1,3 +1,9 @@
+2012-08-02 Lorenzo Natale <lorenzo.natale@iit.it>
+    * conf/template/YARPConfig.cmake.in
+    * conf/YarpVersion.cmake
+
+    Added YARP_SVN_REVISION number.
+
 2012-07-31  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* conf/YarpDoc.cmake: revive "make man" target for making man pages
@@ -73,6 +79,7 @@
 	* automake.am, configure.ac: Remove autotools buildsystem no longer
 	  supported.
 
+>>>>>>> .r9391
 2012-07-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/ResourceFinder.cpp: add /usr/local/etc
