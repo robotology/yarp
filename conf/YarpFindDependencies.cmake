@@ -7,12 +7,12 @@
 # dependencies to build some parts of Yarp are satisfied.
 # For every dependency, it creates the following variables:
 #
-# YARP_USE_${package}: Can be disabled by the user if he don't want to use that
+# YARP_USE_${PACKAGE}: Can be disabled by the user if he don't want to use that
 #                      dependency.
-# YARP_HAS_${package}: Internal flag. It should be used to check if a part of
+# YARP_HAS_${PACKAGE}: Internal flag. It should be used to check if a part of
 #                      Yarp should be built. It is on if YARP_USE_${package} is
 #                      on and either the package was found or will be built.
-# YARP_USE_SYSTEM_${package}: This flag is shown only for packages in the
+# YARP_USE_SYSTEM_${PACKAGE}: This flag is shown only for packages in the
 #                             extern folder that were also found on the system
 #                             (TRUE by default). If this flag is enabled, the
 #                             system installed library will be used instead of
@@ -24,26 +24,28 @@
 # Check if a package is installed and set some cmake variables
 macro(checkandset_dependency package)
 
-    if(${package}_FOUND)
-        set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
-    else(${package}_FOUND)
-        set(YARP_USE_${package} FALSE CACHE BOOL "Use package ${package}")
-    endif(${package}_FOUND)
+    string(TOUPPER ${package} PKG)
 
-    if(YARP_USE_${package} AND ${package}_FOUND)
-        set(YARP_HAS_${package} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
-    else(YARP_USE_${package} AND ${package}_FOUND)
-        set(YARP_HAS_${package} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
-    endif(YARP_USE_${package} AND ${package}_FOUND)
+    if(${package}_FOUND OR ${PKG}_FOUND)
+        set(YARP_USE_${PKG} TRUE CACHE BOOL "Use package ${package}")
+    else(${package}_FOUND OR ${PKG}_FOUND)
+        set(YARP_USE_${PKG} FALSE CACHE BOOL "Use package ${package}")
+    endif(${package}_FOUND OR ${PKG}_FOUND)
 
-    set(YARP_USE_SYSTEM_${package} TRUE CACHE INTERNAL "" FORCE)
+    if(YARP_USE_${PKG} AND (${package}_FOUND OR ${PKG}_FOUND))
+        set(YARP_HAS_${PKG} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
+    else(YARP_USE_${PKG} AND (${package}_FOUND OR ${PKG}_FOUND))
+        set(YARP_HAS_${PKG} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
+    endif(YARP_USE_${PKG} AND (${package}_FOUND OR ${PKG}_FOUND))
+
+    set(YARP_USE_SYSTEM_${PKG} TRUE CACHE INTERNAL "" FORCE)
 
     mark_as_advanced(YARP_USE_${package})
 
     #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${package})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${package})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
 
 endmacro (checkandset_dependency)
 
@@ -51,70 +53,84 @@ endmacro (checkandset_dependency)
 # Check if a package is installed or if is going to be built and set some cmake variables
 macro(checkbuildandset_dependency package)
 
-    set(YARP_USE_${package} TRUE CACHE BOOL "Use package ${package}")
-    mark_as_advanced(YARP_USE_${package})
+    string(TOUPPER ${package} PKG)
 
-    if (${package}_FOUND)
-        set(YARP_USE_SYSTEM_${package} TRUE CACHE BOOL "Use system-installed ${package}, rather than a private copy")
-        mark_as_advanced(YARP_USE_SYSTEM_${package})
-    else (${package}_FOUND)
+    set(YARP_USE_${PKG} TRUE CACHE BOOL "Use package ${package}")
+    mark_as_advanced(YARP_USE_${PKG})
+
+    if (${package}_FOUND OR ${PKG}_FOUND)
+        set(YARP_USE_SYSTEM_${PKG} TRUE CACHE BOOL "Use system-installed ${package}, rather than a private copy")
+        mark_as_advanced(YARP_USE_SYSTEM_${PKG})
+    else (${package}_FOUND OR ${PKG}_FOUND)
         # If package was not found we force it to be built
-        set(YARP_USE_SYSTEM_${package} FALSE CACHE INTERNAL "" FORCE)
-    endif (${package}_FOUND)
+        set(YARP_USE_SYSTEM_${PKG} FALSE CACHE INTERNAL "" FORCE)
+    endif (${package}_FOUND OR ${PKG}_FOUND)
 
-    if(YARP_USE_${package})
-        set(YARP_HAS_${package} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
-    else(YARP_USE_${package})
-        set(YARP_HAS_${package} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
-    endif(YARP_USE_${package})
+    if(YARP_USE_${PKG})
+        set(YARP_HAS_${PKG} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
+    else(YARP_USE_${PKG})
+        set(YARP_HAS_${PKG} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
+    endif(YARP_USE_${PKG})
 
 
     #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${package})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${package})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${package})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
 
 endmacro(checkbuildandset_dependency)
 
 
 # Check if a required package is installed.
 macro(check_required_dependency package)
-    if(NOT YARP_HAS_${package})
+
+    string(TOUPPER ${package} PKG)
+
+    if(NOT YARP_HAS_${PKG})
         message(FATAL_ERROR "Required package ${package} not found. Please install it to build yarp.")
-#    else(NOT YARP_HAS_${package})
-#        message(STATUS "${package} -> OK")
-    endif(NOT YARP_HAS_${package})
+#    else(NOT YARP_HAS_${PKG})
+#        message(STATUS "${PKG} -> OK")
+    endif(NOT YARP_HAS_${PKG})
+
 endmacro(check_required_dependency)
 
 
 # Check if an dependency required to enable an option is installed.
 macro(check_optional_dependency optionname package)
+
+    string(TOUPPER ${package} PKG)
+
     if(${optionname})
-        if(NOT YARP_HAS_${package})
+        if(NOT YARP_HAS_${PKG})
             message(FATAL_ERROR "Optional package ${package} not found. Please install it or disable the option \"${optionname}\" to build yarp.")
-#        else(NOT YARP_HAS_${package})
-#            message(STATUS "${package} ${optionname} -> OK")
-        endif(NOT YARP_HAS_${package})
+#        else(NOT YARP_HAS_${PKG})
+#            message(STATUS "${PKG} ${optionname} -> OK")
+        endif(NOT YARP_HAS_${PKG})
 #    else(${optionname})
-#        message(STATUS "${package} ${optionname} -> NOT REQUIRED")
+#        message(STATUS "${PKG} ${optionname} -> NOT REQUIRED")
     endif(${optionname})
+
 endmacro(check_optional_dependency)
 
 
 # Print status for a dependency
 macro(print_dependency package)
-    if(NOT YARP_USE_${package})
+
+    string(TOUPPER ${package} PKG)
+
+    if(NOT YARP_USE_${PKG})
         message(STATUS "${package}: disabled")
-    elseif(NOT YARP_USE_SYSTEM_${package})
+    elseif(NOT YARP_USE_SYSTEM_${PKG})
         message(STATUS "${package}: compiling")
-    elseif(YARP_HAS_${package})
+    elseif(YARP_HAS_${PKG})
         message(STATUS "${package}: found")
-    else(NOT YARP_USE_${package})
+    else(NOT YARP_USE_${PKG})
         message(STATUS "${package}: not found")
-    endif(NOT YARP_USE_${package})
-#    message(STATUS "YARP_USE_${package} = ${YARP_USE_${package}}")
-#    message(STATUS "YARP_HAS_${package} = ${YARP_HAS_${package}}")
-#    message(STATUS "YARP_USE_SYSTEM_${package} = ${YARP_USE_SYSTEM_${package}}")
+    endif(NOT YARP_USE_${PKG})
+#    message(STATUS "YARP_USE_${PKG} = ${YARP_USE_${PKG}}")
+#    message(STATUS "YARP_HAS_${PKG} = ${YARP_HAS_${PKG}}")
+#    message(STATUS "YARP_USE_SYSTEM_${PKG} = ${YARP_USE_SYSTEM_${PKG}}")
+
 endmacro(print_dependency)
 
 
