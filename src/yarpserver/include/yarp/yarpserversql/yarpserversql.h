@@ -11,6 +11,10 @@
 #define YARP_INC_YARPSERVERSQL
 
 #include <yarp/conf/api.h>
+
+// avoid dll export until libYARP_serversql becomes dynamic again
+#define yarpserversql_API
+
 #ifndef yarpserversql_API
 #  ifdef yarpserversql_EXPORTS
 #    define yarpserversql_API YARP_EXPORT
