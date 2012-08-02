@@ -72,10 +72,8 @@ for the user through --rxTime option.
 - The parameter \e datatype selects the type of items to be 
   stored. It can be \e bottle, \e image or \e video; if not
   specified \e bottle is assumed. Note that images are stored as
-  ppm files. If \e video is choosen then only the file
-  'video.avi' is produced neither 'data.log' nor the single
-  images. The data type \e video is available if OpenCV is found
-  and the codec \e huffyuv is installed.
+  ppm files. The data type \e video is available if OpenCV is
+  found and the codec \e huffyuv is installed.
  
 --addVideo
 - In case images are acquired with this option enabled, a video 
@@ -431,30 +429,25 @@ public:
         oldTime=Time::now();
         counter=0;
 
-        if (saveData)
+        fout.open(logFile);
+        if (!fout.is_open())
         {
-            fout.open(logFile);
-            bool ret=fout.is_open();
-
-            if (!ret)
-                cout << "unable to open file" << endl;
-
-            fout<<"Type: ";
-            if (type==bottle)
-                fout<<"Bottle;";
-            else if (type==image)
-            {
-                fout<<"Image:ppm;";
-                if (videoOn)
-                    fout<<" Video:avi(huffyuv);";
-            }
-
-            fout<<endl;
-
-            return ret;
+            cout << "unable to open file" << endl;
+            return false;
         }
-        else
-            return true;
+
+        fout<<"Type: ";
+        if (type==bottle)
+            fout<<"Bottle;";
+        else if (type==image)
+        {
+            fout<<"Image:ppm;";
+            if (videoOn)
+                fout<<" Video:avi(huffyuv);";
+        }
+
+        fout<<endl;
+        return true;
     }
 
     void run()
@@ -514,13 +507,17 @@ public:
                 buf.pop_front();
                 buf.unlock();
 
+                mutex.wait();
+                fout << item.seqNumber << ' ' << fixed << item.timeStamp << ' ';
                 if (saveData)
-                {
-                    mutex.wait();
-                    fout << item.seqNumber << ' ' << fixed << item.timeStamp << ' ';
                     fout << item.obj->toFile(dirName,counter++) << endl;
-                    mutex.post();
+                else
+                {
+                    char frame[255];
+                    sprintf(frame,"frame_%.8d",counter++);
+                    fout << frame << endl;
                 }
+                mutex.post();
 
             #ifdef ADD_VIDEO
                 if (doSaveFrame)
@@ -537,8 +534,7 @@ public:
 
     void threadRelease()
     {
-        if (saveData)
-            fout.close();
+        fout.close();
 
     #ifdef ADD_VIDEO
         if (doSaveFrame)
