@@ -47,6 +47,7 @@ Using yarp:
 \li \ref tutorials
 \li \ref yarprun
 \li \ref yarpmanager
+\li \ref yarpscope
 
 Highlights:
 \li \ref note_ports

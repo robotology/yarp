@@ -31,6 +31,12 @@ namespace {
     const Glib::ustring default_graph_type = "lines";
 }
 
+// FIXME check if rows and colums are used, or if the table is resized
+//       automatically
+// FIXME check that plot_gridx and plot_gridy are >= 0.
+// FIXME set default plot bgcolor
+// FIXME set default graph color
+
 
 YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
 {
