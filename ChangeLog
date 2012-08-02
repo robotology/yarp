@@ -79,7 +79,6 @@
 	* automake.am, configure.ac: Remove autotools buildsystem no longer
 	  supported.
 
->>>>>>> .r9391
 2012-07-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/ResourceFinder.cpp: add /usr/local/etc
