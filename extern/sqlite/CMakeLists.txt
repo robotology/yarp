@@ -4,7 +4,7 @@
 
 
 # SQLite
-project(sqlite)
+project(YARP_sqlite)
 
 set(sqlite_SRCS
     sqlite/shell.c
@@ -16,13 +16,13 @@ set(sqlite_HDRS
     sqlite/sqlite3.h
 )
 
-add_library(sqlite STATIC ${sqlite_SRCS})
+add_library(YARP_sqlite STATIC ${sqlite_SRCS})
 
 if(UNIX)
-    set_target_properties(sqlite PROPERTIES COMPILE_FLAGS -fPIC)
+    set_target_properties(YARP_sqlite PROPERTIES COMPILE_FLAGS -fPIC)
 endif(UNIX)
 
 set(SQLite_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sqlite" CACHE PATH "SQLite include directory" FORCE)
 set(SQLite_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "SQLite library directory" FORCE)
-set(SQLite_LIBRARIES "sqlite" CACHE STRING "SQLite libraries" FORCE)
+set(SQLite_LIBRARIES "YARP_sqlite" CACHE STRING "SQLite libraries" FORCE)
 mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARY_DIRS SQLite_LIBRARIES)

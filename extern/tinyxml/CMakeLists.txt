@@ -4,7 +4,7 @@
 
 
 # TinyXML
-project(tinyxml)
+project(YARP_tinyxml)
 
 set(tinyxml_SRCS
     tinyxml/tinystr.cpp
@@ -18,13 +18,13 @@ set(tinyxml_HDRS
     tinyxml/tinyxml.h
 )
 
-add_library(tinyxml STATIC ${tinyxml_SRCS})
+add_library(YARP_tinyxml STATIC ${tinyxml_SRCS})
 
 if(UNIX)
-    set_target_properties(tinyxml PROPERTIES COMPILE_FLAGS -fPIC)
+    set_target_properties(YARP_tinyxml PROPERTIES COMPILE_FLAGS -fPIC)
 endif(UNIX)
 
 set(TinyXML_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml" CACHE PATH "TinyXML include directory" FORCE)
 set(TinyXML_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "TinyXML library directory" FORCE)
-set(TinyXML_LIBRARIES "tinyxml" CACHE STRING "TinyXML libraries" FORCE)
+set(TinyXML_LIBRARIES "YARP_tinyxml" CACHE STRING "TinyXML libraries" FORCE)
 mark_as_advanced(TinyXML_INCLUDE_DIRS TinyXML_LIBRARY_DIRS TinyXML_LIBRARIES)

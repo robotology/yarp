@@ -4,7 +4,7 @@
 
 
 # GtkDatabox
-project(gtkdatabox)
+project(YARP_gtkdatabox)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk)
 
@@ -49,20 +49,20 @@ if(WIN32)
     add_definitions(/wd4305 /wd4244)
 endif(WIN32)
 
-add_library(gtkdatabox STATIC ${gtkdatabox_SRCS})
+add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})
 
 if(UNIX)
-    set_target_properties(gtkdatabox PROPERTIES COMPILE_FLAGS -fPIC)
+    set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS -fPIC)
 endif(UNIX)
 
 set(GtkDatabox_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk" CACHE PATH "GtkDatabox include directory" FORCE)
 
 if(YARP_USE_GTK2)
     set(GtkDatabox_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "GtkDatabox library directory" FORCE)
-    set(GtkDatabox_LIBRARIES "gtkdatabox;${GTK2_GLIB_LIBRARY};${GTK2_GOBJECT_LIBRARY};${GTK2_GDK_LIBRARY};${GTK2_GTK_LIBRARY};${GTK2_PANGO_LIBRARY};${GTK2_CAIRO_LIBRARY};" CACHE STRING "GtkDatabox libraries" FORCE)
+    set(GtkDatabox_LIBRARIES "YARP_gtkdatabox;${GTK2_GLIB_LIBRARY};${GTK2_GOBJECT_LIBRARY};${GTK2_GDK_LIBRARY};${GTK2_GTK_LIBRARY};${GTK2_PANGO_LIBRARY};${GTK2_CAIRO_LIBRARY};" CACHE STRING "GtkDatabox libraries" FORCE)
 else(YARP_USE_GTK2)
     set(GtkDatabox_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTKPLUS_LIBRARY_DIRS}" CACHE PATH "GtkDatabox library directory" FORCE)
-    set(GtkDatabox_LIBRARIES "gtkdatabox;${GTKPLUS_LIBRARIES}" CACHE STRING "GtkDatabox libraries" FORCE)
+    set(GtkDatabox_LIBRARIES "YARP_gtkdatabox;${GTKPLUS_LIBRARIES}" CACHE STRING "GtkDatabox libraries" FORCE)
 endif(YARP_USE_GTK2)
 
 mark_as_advanced(GtkDatabox_INCLUDE_DIRS GtkDatabox_LIBRARY_DIRS GtkDatabox_LIBRARIES)
