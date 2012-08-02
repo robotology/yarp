@@ -7,7 +7,7 @@
 ## We use subversion to indentify current revision number (optional)
 # the FindSubversion.cmake module is part of the standard distribution
 find_package(Subversion)
-if (Subversion_FOUND)
+if (Subversion_FOUND AND EXISTS .svn)
     # extract working copy information for SOURCE_DIR into YARP_XXX variables
     Subversion_WC_INFO(${CMAKE_SOURCE_DIR} YARP)
     # write a file with the SVNVERSION define
