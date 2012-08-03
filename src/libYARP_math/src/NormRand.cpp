@@ -11,7 +11,7 @@
 #include <yarp/math/RandnScalar.h>
 
 using namespace yarp::math;
- 
+
 /* should be thread safe, from gsl */
 yarp::math::RandnScalar theRandnScalar;
 
@@ -52,12 +52,12 @@ yarp::sig::Matrix NormRand::matrix(int rows, int cols, double u, double sigma)
         }
     return ret;
 }
- 
+
 void NormRand::init()
 {
     theRandnScalar.init();
 }
-    
+
 void NormRand::init(int seed)
 {
     theRandnScalar.init(seed);

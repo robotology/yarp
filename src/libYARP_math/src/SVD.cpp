@@ -7,8 +7,8 @@
 */
 
 /**
- * \infile routines for Singular Value Decomposition
- */
+* \infile routines for Singular Value Decomposition
+*/
 
 #include <yarp/math/SVD.h>
 #include <gsl/gsl_linalg.h>
@@ -94,65 +94,65 @@ void yarp::math::SVDJacobi(const Matrix &in, Matrix &U, Vector &S, Matrix &V)
 */
 Matrix yarp::math::pinv(const Matrix &in, double tol)
 {
-	int m = in.rows(), n = in.cols(), k = m<n?m:n;
-	Matrix U(m,k), V(n,k);
-	Vector Sdiag(k);
+    int m = in.rows(), n = in.cols(), k = m<n?m:n;
+    Matrix U(m,k), V(n,k);
+    Vector Sdiag(k);
 
-	yarp::math::SVD(in, U, Sdiag, V);
+    yarp::math::SVD(in, U, Sdiag, V);
 
-	Matrix Spinv = zeros(k,k);
-	for (int c=0;c<k; c++)
-		if ( Sdiag(c)> tol)
-			Spinv(c,c) = 1/Sdiag(c);
-	return V*Spinv*U.transposed();
+    Matrix Spinv = zeros(k,k);
+    for (int c=0;c<k; c++)
+        if ( Sdiag(c)> tol)
+            Spinv(c,c) = 1/Sdiag(c);
+    return V*Spinv*U.transposed();
 }
 
 void yarp::math::pinv(const Matrix &in, Matrix &out, double tol)
 {
-	int m = in.rows(), n = in.cols(), k = m<n?m:n;
-	Matrix U(m,k), V(n,k);
-	Vector Sdiag(k);
+    int m = in.rows(), n = in.cols(), k = m<n?m:n;
+    Matrix U(m,k), V(n,k);
+    Vector Sdiag(k);
 
-	yarp::math::SVD(in, U, Sdiag, V);
+    yarp::math::SVD(in, U, Sdiag, V);
 
-	Matrix Spinv = zeros(k,k);
-	for (int c=0;c<k; c++)
-		if ( Sdiag(c)> tol)
-			Spinv(c,c) = 1/Sdiag(c);
-	out = V*Spinv*U.transposed();
+    Matrix Spinv = zeros(k,k);
+    for (int c=0;c<k; c++)
+        if ( Sdiag(c)> tol)
+            Spinv(c,c) = 1/Sdiag(c);
+    out = V*Spinv*U.transposed();
 }
 
 Matrix yarp::math::pinv(const Matrix &in, Vector &sv, double tol)
 {
-	int m = in.rows(), n = in.cols(), k = m<n?m:n;
-	Matrix U(m,k), V(n,k);
+    int m = in.rows(), n = in.cols(), k = m<n?m:n;
+    Matrix U(m,k), V(n,k);
     if((int)sv.size()!=k)
         sv.resize(k);
 
-	yarp::math::SVD(in, U, sv, V);
+    yarp::math::SVD(in, U, sv, V);
 
-	Matrix Spinv = zeros(k,k);
-	for (int c=0;c<k; c++)
-		if ( sv(c)> tol)
-			Spinv(c,c) = 1/sv(c);
-    
+    Matrix Spinv = zeros(k,k);
+    for (int c=0;c<k; c++)
+        if ( sv(c)> tol)
+            Spinv(c,c) = 1/sv(c);
+
     return V*Spinv*U.transposed();
 }
 
 void yarp::math::pinv(const Matrix &in, Matrix &out, Vector &sv, double tol)
 {
-	int m = in.rows(), n = in.cols(), k = m<n?m:n;
-	Matrix U(m,k), V(n,k);
+    int m = in.rows(), n = in.cols(), k = m<n?m:n;
+    Matrix U(m,k), V(n,k);
     if((int)sv.size()!=k)
         sv.resize(k);
 
-	yarp::math::SVD(in, U, sv, V);
+    yarp::math::SVD(in, U, sv, V);
 
-	Matrix Spinv = zeros(k,k);
-	for (int c=0;c<k; c++)
-		if ( sv(c)> tol)
-			Spinv(c,c) = 1/sv(c);
-    
+    Matrix Spinv = zeros(k,k);
+    for (int c=0;c<k; c++)
+        if ( sv(c)> tol)
+            Spinv(c,c) = 1/sv(c);
+
     out = V*Spinv*U.transposed();
 }
 
@@ -182,56 +182,56 @@ void yarp::math::pinvDamped(const Matrix &in, Matrix &out, double damp)
 void yarp::math::pinvDamped(const Matrix &in, Matrix &out, Vector &sv, double damp)
 {
     int m = in.rows(), n = in.cols(), k = m<n?m:n;
-	Matrix U(m,k), V(n,k);
+    Matrix U(m,k), V(n,k);
     if((int)sv.size()!=k)
         sv.resize(k);
 
-	yarp::math::SVD(in, U, sv, V);
+    yarp::math::SVD(in, U, sv, V);
 
-	Matrix Spinv = zeros(k,k);
+    Matrix Spinv = zeros(k,k);
     double damp2 = damp*damp;
-	for (int c=0;c<k; c++)
-		Spinv(c,c) = sv(c) / (sv(c)*sv(c) + damp2);
-    
+    for (int c=0;c<k; c++)
+        Spinv(c,c) = sv(c) / (sv(c)*sv(c) + damp2);
+
     out = V*Spinv*U.transposed();
 }
 
 Matrix yarp::math::projectionMatrix(const Matrix &A, double tol)
 {
-	Matrix out(A.rows(),A.rows());
+    Matrix out(A.rows(),A.rows());
     projectionMatrix(A, out, tol);
-	return out;
+    return out;
 }
 
 void yarp::math::projectionMatrix(const Matrix &A, Matrix &out, double tol)
 {
     int m = A.rows(), n = A.cols(), k = m<n?m:n;
-	Matrix U(m,k), V(n,k);
-	Vector Sdiag(k);
-	yarp::math::SVD(A, U, Sdiag, V);
+    Matrix U(m,k), V(n,k);
+    Vector Sdiag(k);
+    yarp::math::SVD(A, U, Sdiag, V);
     Matrix UT = U.transposed();
-	for(int c=0;c<m; c++)
-		if(Sdiag(c) <= tol)
-			UT.setRow(c, zeros(m));
+    for(int c=0;c<m; c++)
+        if(Sdiag(c) <= tol)
+            UT.setRow(c, zeros(m));
     out = U*UT;
 }
 
 Matrix yarp::math::nullspaceProjection(const Matrix &A, double tol)
 {
-	Matrix out(A.cols(),A.cols());
+    Matrix out(A.cols(),A.cols());
     nullspaceProjection(A, out, tol);
-	return out;
+    return out;
 }
 
 void yarp::math::nullspaceProjection(const Matrix &A, Matrix &out, double tol)
 {
     int m = A.rows(), n = A.cols(), k = m<n?m:n;
-	Matrix U(m,k), V(n,k);
-	Vector Sdiag(k);
-	yarp::math::SVD(A, U, Sdiag, V);
+    Matrix U(m,k), V(n,k);
+    Vector Sdiag(k);
+    yarp::math::SVD(A, U, Sdiag, V);
     Matrix VT = V.transposed();
-	for (int c=0;c<n; c++)
-		if ( Sdiag(c)<= tol)
-			VT.setRow(c, zeros(n));
+    for (int c=0;c<n; c++)
+        if ( Sdiag(c)<= tol)
+            VT.setRow(c, zeros(n));
     out = eye(n) - V*VT;
 }

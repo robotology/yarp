@@ -27,7 +27,7 @@ gsl_vector_view getView(const yarp::sig::Vector &v)
 gsl_vector_view getView(yarp::sig::Vector &v)
 {
     gsl_vector_view ret=gsl_vector_view_array(v.data(),
-                                             v.size());
+        v.size());
     return ret;
 }
 
@@ -76,11 +76,11 @@ Matrix yarp::math::operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix
 Matrix& yarp::math::operator+=(Matrix &a, const Matrix &b)
 {
     int n=a.cols();
-	int m=a.rows();
+    int m=a.rows();
     YARP_ASSERT(m==b.rows() && n==b.cols());
     for (int r=0; r<m;r++)
-		for (int c=0; c<n;c++)
-			a(r,c)+=b(r,c);
+        for (int c=0; c<n;c++)
+            a(r,c)+=b(r,c);
     return a;
 }
 
@@ -131,12 +131,12 @@ Matrix yarp::math::operator-(const Matrix &a, const Matrix &b)
 Matrix& yarp::math::operator-=(Matrix &a, const Matrix &b)
 {
     int n=a.cols();
-	int m=a.rows();
+    int m=a.rows();
     YARP_ASSERT(m==b.rows());
     YARP_ASSERT(n==b.cols());
     for (int r=0; r<m;r++)
-		for (int c=0; c<n;c++)
-			a(r,c)-=b(r,c);
+        for (int c=0; c<n;c++)
+            a(r,c)-=b(r,c);
     return a;
 }
 
@@ -164,9 +164,9 @@ Matrix yarp::math::operator*(const Matrix &a, const Matrix &b)
     YARP_ASSERT(a.cols()==b.rows());
     Matrix c(a.rows(), b.cols());
     cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-                   c.rows(), c.cols(), a.cols(),
-                   1.0, a.data(), a.cols(), b.data(), b.cols(), 0.0,
-                   c.data(), c.cols());
+        c.rows(), c.cols(), a.cols(),
+        1.0, a.data(), a.cols(), b.data(), b.cols(), 0.0,
+        c.data(), c.cols());
 
     return c;
 }
@@ -177,9 +177,9 @@ Matrix& yarp::math::operator*=(Matrix &a, const Matrix &b)
     Matrix a2(a);   // a copy of a
     a.resize(a.rows(), b.cols());
     cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, 
-                   a2.rows(), b.cols(), a2.cols(),
-                   1.0, a2.data(), a2.cols(), b.data(), b.cols(), 0.0,
-                   a.data(), a.cols());
+        a2.rows(), b.cols(), a2.cols(),
+        1.0, a2.data(), a2.cols(), b.data(), b.cols(), 0.0,
+        a.data(), a.cols());
     return a;
 }
 
@@ -578,7 +578,7 @@ double yarp::math::findMin(const Vector &v)
     for (size_t i=1; i<v.length(); i++)
         if (v[i]<ret)
             ret=v[i];
-	return ret;
+    return ret;
 }
 
 
@@ -588,12 +588,12 @@ double yarp::math::det(const yarp::sig::Matrix& in) {
     int sign = 0;
 
     Matrix LU(in);
-  
+
     gsl_permutation* permidx = gsl_permutation_calloc(m);
     gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
     ret = gsl_linalg_LU_det((gsl_matrix *) LU.getGslMatrix(), sign); 
     gsl_permutation_free(permidx);
-    
+
     return ret;
 }
 
@@ -617,11 +617,11 @@ Matrix yarp::math::luinv(const yarp::sig::Matrix& in) {
 
 /* depends on GSL 1.12, put back in when verified that 1.12 is standard
 Matrix yarp::math::chinv(const yarp::sig::Matrix& in) {
-    Matrix ret(in);
+Matrix ret(in);
 
-    gsl_linalg_cholesky_decomp((gsl_matrix *) ret.getGslMatrix());
-    gsl_linalg_cholesky_invert((gsl_matrix *) ret.getGslMatrix());
-        
-    return ret;
+gsl_linalg_cholesky_decomp((gsl_matrix *) ret.getGslMatrix());
+gsl_linalg_cholesky_invert((gsl_matrix *) ret.getGslMatrix());
+
+return ret;
 }
 */
