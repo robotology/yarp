@@ -24,6 +24,11 @@ _PINCLUDE(gtkmm/private/widget_p.h)
 #include <gtkmm/widget.h>
 #include <gtkmm/adjustment.h>
 
+namespace Gtk
+{
+class Table;
+}
+
 namespace GDatabox
 {
 class Graph;
@@ -34,10 +39,8 @@ class Databox : public Gtk::Widget
     _CLASS_GTKOBJECT(Databox, GtkDatabox, GTK_DATABOX, Gtk::Widget, GtkWidget)
 
 public:
-// FIXME make this constructor protected and use gtk_databox_create_box_with_scrollbars_and_rulers instead?
     _CTOR_DEFAULT
-
-// void gtk_databox_create_box_with_scrollbars_and_rulers (GtkWidget ** p_box, GtkWidget ** p_table, gboolean scrollbar_x, gboolean scrollbar_y, gboolean ruler_x, gboolean ruler_y);
+    explicit Databox(Gtk::Table **table, bool scrollbar_x = false, bool scrollbar_y = false, bool ruler_x = false, bool ruler_y = false);
 
     _WRAP_METHOD(int graph_add(const Glib::RefPtr<Graph> &graph), gtk_databox_graph_add)
     _WRAP_METHOD(int graph_remove(const Glib::RefPtr<Graph> &graph), gtk_databox_graph_remove)
@@ -60,8 +63,8 @@ public:
 
     _WRAP_METHOD(void set_ruler_x(const Ruler& ruler), gtk_databox_set_ruler_x)
     _WRAP_METHOD(void set_ruler_y(const Ruler& ruler), gtk_databox_set_ruler_y)
-    _WRAP_METHOD(const Ruler* get_ruler_x() const, gtk_databox_get_ruler_x, constversion)
-    _WRAP_METHOD(const Ruler* get_ruler_y() const, gtk_databox_get_ruler_y, constversion)
+    _WRAP_METHOD(const Ruler* get_ruler_x() const, gtk_databox_get_ruler_x)
+    _WRAP_METHOD(const Ruler* get_ruler_y() const, gtk_databox_get_ruler_y)
 
 // void gtk_databox_set_scale_type_x (GtkDatabox * box, GtkDataboxScaleType scale_type);
 //    _WRAP_METHOD(void set_scale_type_x(ScaleType scale_type), gtk_databox_set_scale_type_x)

@@ -8,6 +8,7 @@
       <sub name="GDatabox" link="namespaceGDatabox.html"/>
       <sub name="Gdk" link="namespaceGdk.html"/>
       <sub name="Glib" link="namespaceGlib.html"/>
+      <sub name="Gtk" link="namespaceGtk.html"/>
     </sub>
     <sub name="Classes" link="classes.html">
       <sub name="GDatabox" link="namespaceGDatabox.html">
@@ -25,6 +26,7 @@
       <sub name="Gdk" link="namespaceGdk.html"/>
       <sub name="Glib" link="namespaceGlib.html"/>
       <sub name="Glib::Object" link="classGlib_1_1Object.html"/>
+      <sub name="Gtk" link="namespaceGtk.html"/>
       <sub name="Gtk::Widget" link="classGtk_1_1Widget.html"/>
     </sub>
   </chapters>
@@ -62,6 +64,7 @@
     <keyword type="function" name="GDatabox::Databox::gobj" link="classGDatabox_1_1Databox.html#a12a1f4a1bfc6ea091a20b75c94c30200"/>
     <keyword type="function" name="GDatabox::Databox::gobj" link="classGDatabox_1_1Databox.html#a2f1326d2ec315336e39316f678be9224"/>
     <keyword type="function" name="GDatabox::Databox::Databox" link="classGDatabox_1_1Databox.html#af4207968134582c37ba66ebd3e33cd33"/>
+    <keyword type="function" name="GDatabox::Databox::Databox" link="classGDatabox_1_1Databox.html#a33f72254b904a645ec3e53112c297114"/>
     <keyword type="function" name="GDatabox::Databox::graph_add" link="classGDatabox_1_1Databox.html#ad4fc0c8cdb887a52b5f1f4ef3663468e"/>
     <keyword type="function" name="GDatabox::Databox::graph_remove" link="classGDatabox_1_1Databox.html#afb5056c80a8f671c13a4d4eb2363997a"/>
     <keyword type="function" name="GDatabox::Databox::graph_remove_all" link="classGDatabox_1_1Databox.html#ae82c618229e434141905ebb2f4e94442"/>

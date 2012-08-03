@@ -10,6 +10,7 @@ _EQUAL(`gfloat*',`float*')
 _CONVERSION(`float&',`gfloat*',`&($3)')
 _CONVERSION(`gfloat*',`const gfloat*',`const_cast<const gfloat*>($3)',`$3')
 _CONVERSION(`const float*',`gfloat*',`const_cast<gfloat*>($3)',`$3')
+_CONVERSION(`gfloat*',`float*',`$3')
 
 _CONVERSION(`Databox&',`GtkDatabox*',__FR2P)
 _CONVERSION(`const Databox&',`GtkDatabox*',__FCR2P))
@@ -26,7 +27,7 @@ _CONVERSION(`GtkDataboxRuler*',`Ruler*',`&Glib::wrap($3)')
 _CONVERSION(`GtkDataboxRuler*',`Ruler&',`Glib::wrap($3)')
 _CONVERSION(`const Ruler*',`const GtkDataboxRuler*',($3).gobj())
 _CONVERSION(`const Ruler&',`const GtkDataboxRuler*',($3).gobj())
-
+_CONVERSION(`GtkDataboxRuler*',`const Ruler*',`Glib::wrap($3)')
 
 _CONVERSION(`GtkDataboxGraph*',`Glib::RefPtr<Graph>',`Glib::wrap($3)')
 _CONVERSION(`const Glib::RefPtr<Graph>&',`GtkDataboxGraph*',__CONVERT_REFPTR_TO_P)

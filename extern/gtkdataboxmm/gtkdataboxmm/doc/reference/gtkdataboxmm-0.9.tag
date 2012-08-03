@@ -241,6 +241,13 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
+      <type></type>
+      <name>Databox</name>
+      <anchorfile>classGDatabox_1_1Databox.html</anchorfile>
+      <anchor>a33f72254b904a645ec3e53112c297114</anchor>
+      <arglist>(Gtk::Table **table, bool scrollbar_x=false, bool scrollbar_y=false, bool ruler_x=false, bool ruler_y=false)</arglist>
+    </member>
+    <member kind="function">
       <type>int</type>
       <name>graph_add</name>
       <anchorfile>classGDatabox_1_1Databox.html</anchorfile>
@@ -2330,6 +2337,10 @@
   <compound kind="namespace">
     <name>Glib</name>
     <filename>namespaceGlib.html</filename>
+  </compound>
+  <compound kind="namespace">
+    <name>Gtk</name>
+    <filename>namespaceGtk.html</filename>
   </compound>
   <compound kind="dir">
     <name>gtkdataboxmm/</name>

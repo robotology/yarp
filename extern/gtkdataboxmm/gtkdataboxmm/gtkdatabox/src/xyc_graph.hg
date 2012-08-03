@@ -35,8 +35,8 @@ protected:
 
 public:
     _WRAP_METHOD(unsigned int get_length() const, gtk_databox_xyc_graph_get_length)
-    _WRAP_METHOD(float* get_X() const, gtk_databox_xyc_graph_get_X, constversion)
-    _WRAP_METHOD(float* get_Y() const, gtk_databox_xyc_graph_get_Y, constversion)
+    _WRAP_METHOD(float* get_X() const, gtk_databox_xyc_graph_get_X)
+    _WRAP_METHOD(float* get_Y() const, gtk_databox_xyc_graph_get_Y)
 
     _WRAP_PROPERTY("length", unsigned int)
     _WRAP_PROPERTY("X_Values", float*);

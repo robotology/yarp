@@ -43,10 +43,10 @@ public:
     static Glib::RefPtr<Grid> create(int hlines, int vlines, float *hline_vals, float *vline_vals, const Gdk::Color &color, unsigned int size = 1);
 
     _WRAP_METHOD(void set_hlines(int hlines), gtk_databox_grid_set_hlines)
-    _WRAP_METHOD(int get_hlines() const, gtk_databox_grid_get_hlines, constversion)
+    _WRAP_METHOD(int get_hlines() const, gtk_databox_grid_get_hlines)
 
     _WRAP_METHOD(void set_vlines(int hlines), gtk_databox_grid_set_vlines)
-    _WRAP_METHOD(int get_vlines() const, gtk_databox_grid_get_vlines, constversion)
+    _WRAP_METHOD(int get_vlines() const, gtk_databox_grid_get_vlines)
 
     _WRAP_PROPERTY("grid_vlines", int)
     _WRAP_PROPERTY("grid_hlines", int)

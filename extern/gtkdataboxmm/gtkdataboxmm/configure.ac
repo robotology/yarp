@@ -16,7 +16,7 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gtkdataboxmm], [0.9.2], [https://bugzilla.gnome.org/enter_bug.cgi?product=gtkdataboxmm],
+AC_INIT([gtkdataboxmm], [0.9.3], [https://bugzilla.gnome.org/enter_bug.cgi?product=gtkdataboxmm],
         [gtkdataboxmm], [http://www.gtkmm.org/])
 AC_PREREQ([2.59])
 
@@ -34,7 +34,7 @@ MM_PREREQ([0.9])
 MM_INIT_MODULE([gtkdataboxmm-0.9])
 
 # http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-AC_SUBST([GTKDATABOXMM_SO_VERSION], [0:1:0])
+AC_SUBST([GTKDATABOXMM_SO_VERSION], [0:2:0])
 
 AC_PROG_CXX
 AC_DISABLE_STATIC

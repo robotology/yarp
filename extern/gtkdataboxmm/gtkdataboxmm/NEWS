@@ -1,3 +1,12 @@
+GtkDataboxMM (2012-08-03) 0.9.3
+===============================
+
+ * Fix methods XYCGraph::get_X() and XYCGraph::get_Y()
+ * Fix methods Grid::get_hlines() and Grid::get_vlines()
+ * Fix methods Databox::get_ruler_x() and Databox::set_ruler_y()
+ * Add basics example
+ * Wrap gtk_databox_create_box_with_scrollbars_and_rulers
+
 GtkDataboxMM (2012-07-18) 0.9.2
 ===============================
 

@@ -163,7 +163,7 @@ void Grid::set_hlines(int hlines)
 
 int Grid::get_hlines() const
 {
-  return const_cast<Grid*>(this)->get_hlines();
+  return gtk_databox_grid_get_hlines(const_cast<GtkDataboxGrid*>(gobj()));
 }
 
 void Grid::set_vlines(int hlines)
@@ -173,7 +173,7 @@ void Grid::set_vlines(int hlines)
 
 int Grid::get_vlines() const
 {
-  return const_cast<Grid*>(this)->get_vlines();
+  return gtk_databox_grid_get_vlines(const_cast<GtkDataboxGrid*>(gobj()));
 }
 
 

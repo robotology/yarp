@@ -29,11 +29,31 @@
 #include <gtkdatabox.h>
 #include <gtkdataboxmm/graph.h>
 #include <gtkdataboxmm/ruler.h>
+#include <gtkmm/table.h>
 
 using Gtk::manage;
 
+GtkWidget* DataboxHelper(Gtk::Table **table, bool scrollbar_x, bool scrollbar_y, bool ruler_x, bool ruler_y)
+{
+    GtkWidget *gbox;
+    GtkWidget *gtable;
+    gtk_databox_create_box_with_scrollbars_and_rulers(&gbox,
+                                                      &gtable,
+                                                      scrollbar_x,
+                                                      scrollbar_y,
+                                                      ruler_x,
+                                                      ruler_y);
+    *table = Glib::wrap(GTK_TABLE(gtable), true);
+    return gbox;
+}
+
 namespace GDatabox
 {
+
+Databox::Databox(Gtk::Table **table, bool scrollbar_x, bool scrollbar_y, bool ruler_x, bool ruler_y) :
+    Gtk::Widget(DataboxHelper(table, scrollbar_x, scrollbar_y, ruler_x, ruler_y))
+{
+}
 
 } // namespace GDatabox
 
@@ -328,12 +348,12 @@ void Databox::set_ruler_y(const Ruler& ruler)
 
 const Ruler* Databox::get_ruler_x() const
 {
-  return const_cast<Databox*>(this)->get_ruler_x();
+  return Glib::wrap(gtk_databox_get_ruler_x(const_cast<GtkDatabox*>(gobj())));
 }
 
 const Ruler* Databox::get_ruler_y() const
 {
-  return const_cast<Databox*>(this)->get_ruler_y();
+  return Glib::wrap(gtk_databox_get_ruler_y(const_cast<GtkDatabox*>(gobj())));
 }
 
 void Databox::set_enable_selection(bool enable)

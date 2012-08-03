@@ -149,12 +149,12 @@ unsigned int XYCGraph::get_length() const
 
 float* XYCGraph::get_X() const
 {
-  return const_cast<XYCGraph*>(this)->get_X();
+  return gtk_databox_xyc_graph_get_X(const_cast<GtkDataboxXYCGraph*>(gobj()));
 }
 
 float* XYCGraph::get_Y() const
 {
-  return const_cast<XYCGraph*>(this)->get_Y();
+  return gtk_databox_xyc_graph_get_Y(const_cast<GtkDataboxXYCGraph*>(gobj()));
 }
 
 
