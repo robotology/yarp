@@ -672,7 +672,7 @@ protected:
         return false;
     }
 
-	/**
+    /**
     * Helper method to get an array of integers from the remote peer.
     * @param v is the name of the command
     * @param val is the array of double
@@ -1489,14 +1489,16 @@ public:
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
-    * @return true if the trajectory is terminated, false otherwise
+    * @param flag: true/false if trajectory is terminated or not.
+    * @return true on success/failure.
     */
     virtual bool checkMotionDone(int j, bool *flag) {
         return get1V1I1B(VOCAB_MOTION_DONE, j, *flag);
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
-    * @return true if the trajectory is terminated, false otherwise
+    * @param flag: true/false if trajectories for all controlled joints are terminated.
+    * @return true on success/failure.
     */
     virtual bool checkMotionDone(bool *flag) { 
         return get1V1B(VOCAB_MOTION_DONES, *flag);      
@@ -1880,7 +1882,7 @@ public:
         return false;
     }
 
-	bool getImpedance(int j, double *stiffness, double *damping)
+    bool getImpedance(int j, double *stiffness, double *damping)
     { 
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1899,7 +1901,7 @@ public:
         return false;
     }
 
-	bool getImpedanceOffset(int j, double *offset)
+    bool getImpedanceOffset(int j, double *offset)
     { 
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1917,7 +1919,7 @@ public:
         return false;
     }
 
-	bool setImpedance(int j, double stiffness, double damping)
+    bool setImpedance(int j, double stiffness, double damping)
     { 
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1933,7 +1935,7 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-	bool setImpedanceOffset(int j, double offset)
+    bool setImpedanceOffset(int j, double offset)
     { 
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1948,9 +1950,9 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-	bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
-	{
-		Bottle cmd, response;
+    bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+    {
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_IMPEDANCE);
         cmd.addVocab(VOCAB_LIMITS);
@@ -1961,13 +1963,13 @@ public:
             if (&l == 0)
                 return false;
             *min_stiff    = l.get(0).asDouble();
-			*max_stiff    = l.get(1).asDouble();
-			*min_damp     = l.get(2).asDouble();
-			*max_damp     = l.get(3).asDouble();
+            *max_stiff    = l.get(1).asDouble();
+            *min_damp     = l.get(2).asDouble();
+            *max_damp     = l.get(3).asDouble();
             return true;
         }
         return false;
-	}
+    }
 
     bool getTorquePids(Pid *pids)
     {
@@ -2007,10 +2009,10 @@ public:
     bool setTorqueMode(int j)
     { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_TORQUE, j); }
 
-	bool setImpedancePositionMode(int j)
+    bool setImpedancePositionMode(int j)
     { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_POS, j); }
 
-	bool setImpedanceVelocityMode(int j)
+    bool setImpedanceVelocityMode(int j)
     { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_VEL, j); }
 
     bool setOpenLoopMode()
@@ -2022,14 +2024,14 @@ public:
     bool getControlMode(int j, int *mode)
     { 
         Bottle cmd, resp;
-		cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODE);
         cmd.addInt(j);
 
         bool ok = rpc_p.write(cmd, resp);
         if (CHECK_FAIL(ok, resp)) {
-			*mode=resp.get(2).asVocab();
+            *mode=resp.get(2).asVocab();
             return true;
         }
 
@@ -2040,7 +2042,7 @@ public:
     { 
         if (!isLive()) return false;
         Bottle cmd, resp;
-		cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
         cmd.addVocab(VOCAB_CM_CONTROL_MODES);
 
