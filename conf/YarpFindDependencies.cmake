@@ -210,7 +210,7 @@ endif(CREATE_GUIS)
 if(CREATE_YARPSCOPE)
     find_package(GtkDatabox QUIET)
     checkbuildandset_dependency(GtkDatabox)
-    find_package(GtkDataboxMM QUIET)
+    find_package(GtkDataboxMM 0.9.3 QUIET)
     checkbuildandset_dependency(GtkDataboxMM)
 endif(CREATE_YARPSCOPE)
 
