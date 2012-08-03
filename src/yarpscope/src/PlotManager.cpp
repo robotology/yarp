@@ -88,8 +88,10 @@ int YarpScope::PlotManager::addPlot(const Glib::ustring &title,
                                      bool autorescale)
 {
     debug() << "Adding plot" << title << "in position" << gridx << gridy << hspan << vspan;
-    YarpScope::DataPlot *newplot = new DataPlot(title, minval, maxval, size, bgcolor, autorescale);
-    mPriv->table.attach(*newplot, gridx, gridx + hspan, gridy, gridy + vspan);
+
+    Gtk::Table *table;
+    YarpScope::DataPlot *newplot = new DataPlot(&table, title, minval, maxval, size, bgcolor, autorescale);
+    mPriv->table.attach(*table, gridx, gridx + hspan, gridy, gridy + vspan);
     mPriv->table.show_all_children();
 
     // Lock to avoid returning the wrong index if pushing from different threads

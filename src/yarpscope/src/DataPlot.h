@@ -17,12 +17,18 @@
 #include <yarp/os/Bottle.h>
 
 
+namespace Gtk
+{
+class Table;
+}
+
 namespace YarpScope {
 
 class DataPlot : public GDatabox::Databox
 {
 public:
-    DataPlot(const Glib::ustring &title,
+    DataPlot(Gtk::Table **table,
+             const Glib::ustring &title,
              float minval,
              float maxval,
              int size,

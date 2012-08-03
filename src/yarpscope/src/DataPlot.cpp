@@ -79,12 +79,14 @@ void YarpScope::DataPlot::Private::createGrid()
 }
 
 
-YarpScope::DataPlot::DataPlot(const Glib::ustring &title, //FIXME NEEDED?
+YarpScope::DataPlot::DataPlot(Gtk::Table **table,
+                              const Glib::ustring &title, //FIXME NEEDED?
                               float minval,
                               float maxval,
                               int size,
                               const Glib::ustring &bgcolor,
                               bool autorescale) :
+    GDatabox::Databox(table, true, true, false, true),
     mPriv(new Private(this))
 {
     mPriv->title = title;
