@@ -78,15 +78,15 @@ YarpScope::PlotManager& YarpScope::PlotManager::instance()
 }
 
 int YarpScope::PlotManager::addPlot(const Glib::ustring &title,
-                                     int gridx,
-                                     int gridy,
-                                     int hspan,
-                                     int vspan,
-                                     float minval,
-                                     float maxval,
-                                     int size,
-                                     const Glib::ustring &bgcolor,
-                                     bool autorescale)
+                                    int gridx,
+                                    int gridy,
+                                    int hspan,
+                                    int vspan,
+                                    float minval,
+                                    float maxval,
+                                    int size,
+                                    const Glib::ustring &bgcolor,
+                                    bool autorescale)
 {
     debug() << "Adding plot" << title << "in position" << gridx << gridy << hspan << vspan;
 
@@ -105,12 +105,12 @@ int YarpScope::PlotManager::addPlot(const Glib::ustring &title,
 }
 
 int YarpScope::PlotManager::addGraph(int plotIndex,
-                                      const Glib::ustring &remote,
-                                      int index,
-                                      const Glib::ustring &title,
-                                      const Glib::ustring &color,
-                                      const Glib::ustring &type,
-                                      int size)
+                                     const Glib::ustring &remote,
+                                     int index,
+                                     const Glib::ustring &title,
+                                     const Glib::ustring &color,
+                                     const Glib::ustring &type,
+                                     int size)
 {
     DataPlot *plot;
     try {
