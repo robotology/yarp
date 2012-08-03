@@ -1,3 +1,9 @@
+2012-08-03  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* conf/doxygen/Doxyfile.part.template (MAN_EXTENSION): move
+	man pages to section 1 "Executable programs or shell commands"
+	[thanks Daniele Domenichelli]
+
 2012-08-03 Ugo Pattacini <ugo.pattacini@iit.it>
     * cart I/F: added set/getReferenceMode() methods
 
