@@ -43,7 +43,6 @@ public:
     // parent DataPlot
     DataPlot * const parent;
 
-    Glib::ustring title;
     int gridx;
     int gridy;
     int hspan;
@@ -80,7 +79,6 @@ void YarpScope::DataPlot::Private::createGrid()
 
 
 YarpScope::DataPlot::DataPlot(Gtk::Table **table,
-                              const Glib::ustring &title, //FIXME NEEDED?
                               float minval,
                               float maxval,
                               int size,
@@ -89,7 +87,6 @@ YarpScope::DataPlot::DataPlot(Gtk::Table **table,
     GDatabox::Databox(table, true, true, false, true),
     mPriv(new Private(this))
 {
-    mPriv->title = title;
     mPriv->minval = minval;
     mPriv->maxval = maxval;
     mPriv->size = size;

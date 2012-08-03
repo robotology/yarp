@@ -28,7 +28,6 @@ class DataPlot : public GDatabox::Databox
 {
 public:
     DataPlot(Gtk::Table **table,
-             const Glib::ustring &title,
              float minval,
              float maxval,
              int size,

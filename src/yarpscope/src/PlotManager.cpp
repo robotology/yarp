@@ -14,6 +14,7 @@
 #include <glibmm/thread.h>
 #include <gdkmm/color.h>
 #include <gtkmm/table.h>
+#include <gtkmm/label.h>
 
 #include <gtkdataboxmm/lines.h>
 #include <gtkdataboxmm/points.h>
@@ -90,7 +91,10 @@ int YarpScope::PlotManager::addPlot(const Glib::ustring &title,
     debug() << "Adding plot" << title << "in position" << gridx << gridy << hspan << vspan;
 
     Gtk::Table *table;
-    YarpScope::DataPlot *newplot = new DataPlot(&table, title, minval, maxval, size, bgcolor, autorescale);
+    YarpScope::DataPlot *newplot = new DataPlot(&table, minval, maxval, size, bgcolor, autorescale);
+
+    Gtk::Label *label = new Gtk::Label(title);
+    table->attach(*label, 0, 3, 0, 1, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK);
     mPriv->table.attach(*table, gridx, gridx + hspan, gridy, gridy + vspan);
     mPriv->table.show_all_children();
 
