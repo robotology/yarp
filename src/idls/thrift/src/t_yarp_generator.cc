@@ -662,9 +662,21 @@ void t_yarp_generator::generate_program() {
       need_common_=true;
       string fcommon_name= get_out_dir() + program_->get_name() + "_common.h";
       f_out_common_.open(fcommon_name.c_str());
-    f_out_common_ << endl << "// Constants" << endl;
-    vector<t_const*> consts = program_->get_consts();
-    generate_consts(consts);
+      f_out_common_ << "#ifndef YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << endl;
+      f_out_common_ << "#define YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << endl;
+      f_out_common_ << endl;
+      f_out_common_ << endl << "// Constants" << endl;
+      vector<t_const*> consts = program_->get_consts();
+      //check needed inclusions
+      std::set<string> neededTypes;
+      neededTypes.clear();
+      for (vector<t_const*>::iterator const_iter=consts.begin(); const_iter!=consts.end(); ++const_iter)
+        getNeededType((*const_iter)->get_type(), neededTypes);
+      for (std::set<string>::iterator inclIter=neededTypes.begin(); inclIter!=neededTypes.end(); ++inclIter){
+        f_out_common_ << "#include <" << *inclIter << ">" << endl;
+      }
+      //
+      generate_consts(consts);
   }
 
   if (!program_->get_enums().empty()) {
@@ -692,6 +704,17 @@ void t_yarp_generator::generate_program() {
     f_out_common_ << endl << "// Typedefs" << endl;
     vector<t_typedef*> typedefs = program_->get_typedefs();
     vector<t_typedef*>::iterator td_iter;
+    
+    //check needed inclusions
+    std::set<string> neededTypes;
+    neededTypes.clear();
+    for (td_iter=typedefs.begin(); td_iter!=typedefs.end(); ++td_iter)
+      getNeededType((*td_iter)->get_type(), neededTypes);
+    for (std::set<string>::iterator inclIter=neededTypes.begin(); inclIter!=neededTypes.end(); ++inclIter){
+         f_out_common_ << "#include <" << *inclIter << ">" << endl;
+    }
+    //
+    
     for (td_iter = typedefs.begin(); td_iter != typedefs.end(); ++td_iter) {
       generate_typedef(*td_iter);
     }
@@ -739,7 +762,11 @@ void t_yarp_generator::generate_program() {
   f_out_.close();
   f_out2_.close();
   f_out3_.close();
-  f_out_common_.close();
+  if(f_out_common_.is_open()){
+      f_out_common_ << "#endif" << endl; 
+      f_out_common_ << endl; 
+      f_out_common_.close();
+  }
 
   generate_index();
 }
@@ -884,7 +911,7 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue) {
  */
 void t_yarp_generator::generate_typedef(t_typedef* ttypedef) {
   string name = ttypedef->get_name();
-  f_out_common_<< "typedef " << print_type(ttypedef->get_type()) << name <<";" << endl;
+  f_out_common_<< "typedef " << print_type(ttypedef->get_type()) << " " << name <<";" << endl;
 }
 
 /**
@@ -1402,30 +1429,37 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       if (need_common_)
         f_srv_ << "#include <"<< get_include_prefix(*program_) << program_->get_name() << "_common.h>" <<endl;  
     
-    if (extends_service != NULL) {
-    f_srv_ << "#include <" << get_include_prefix(*(extends_service->get_program())) << extends_service->get_name() << ".h>" << endl;
-  }
-    
-      if (!program_->get_objects().empty()) {
-	vector<t_struct*> objects = program_->get_objects();
-	vector<t_struct*>::iterator o_iter;
-
-        
-  
-        std::set<string> neededTypes;
-        neededTypes.clear();
-        for (o_iter = objects.begin() ; o_iter != objects.end(); o_iter++) {
-            getNeededType(((t_type*)(*o_iter)), neededTypes);
-        }
-  
-        for (std::set<string>::iterator inclIter=neededTypes.begin(); inclIter!=neededTypes.end(); ++inclIter){
-            f_srv_ << "#include <" << *inclIter << ">" << endl;
-        }
+      if (extends_service != NULL) {
+        f_srv_ << "#include <" << get_include_prefix(*(extends_service->get_program())) << extends_service->get_name() << ".h>" << endl;
       }
-      f_srv_ << endl;
+    
+      vector<t_function*> functions = tservice->get_functions();
+      vector<t_function*>::iterator fn_iter;
 
-      f_cpp_ << "#include <" << get_include_prefix(*(tservice->get_program())) + svcname + ".h>" <<endl;
-      //f_cpp_ << "#include <" << program_->get_name() << "_index.h>" << endl;
+      std::set<string> neededTypes;
+      neededTypes.clear();
+      for (fn_iter = functions.begin(); fn_iter != functions.end(); fn_iter++) {
+        
+          t_type* returntype = (*fn_iter)->get_returntype();
+          if (!returntype->is_void()) {
+              getNeededType(returntype, neededTypes);
+          }
+          vector<t_field*> args = (*fn_iter)->get_arglist()->get_members();
+          vector<t_field*>::iterator arg_iter; 
+          for (arg_iter = args.begin(); arg_iter != args.end(); arg_iter++) {
+              getNeededType((*arg_iter)->get_type(), neededTypes);
+          }
+       
+       }
+  
+       for (std::set<string>::iterator inclIter=neededTypes.begin(); inclIter!=neededTypes.end(); ++inclIter){
+            f_srv_ << "#include <" << *inclIter << ">" << endl;
+       }
+      
+       f_srv_ << endl;
+
+       f_cpp_ << "#include <" << get_include_prefix(*(tservice->get_program())) + svcname + ".h>" <<endl;
+       //f_cpp_ << "#include <" << program_->get_name() << "_index.h>" << endl;
     } else {
       f_srv_ << "@HEADERS@" << endl << endl;
     }
