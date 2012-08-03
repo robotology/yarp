@@ -75,16 +75,16 @@ public:
     virtual bool relativeMoveRaw(const double *deltas)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
-	 * @param j is the axis number
-	 * @param flag is a pointer to return value
-	 * @return true/false on network communication (value you actually want
+     * @param j is the axis number
+     * @param flag is a pointer to return value
+     * @return true/false on network communication (value you actually want
         is stored in *flag)
      */
     virtual bool checkMotionDoneRaw(int j, bool *flag)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
-	 * @param flag is a pointer to return value ("and" of all joints)
-	 * @return true/false on network communication (value you actually want
+     * @param flag is a pointer to return value ("and" of all joints)
+     * @return true/false on network communication (value you actually want
         is stored in *flag)
      */
     virtual bool checkMotionDoneRaw(bool *flag)=0;
@@ -219,14 +219,14 @@ public:
     /** Check if the current trajectory is terminated. Non blocking.
      * @param j is the axis number
      * @param flag is a pointer to return value
-	 * @return true/false on network communication (value you actually want
+     * @return true/false on network communication (value you actually want
         is stored in *flag)
      */
     virtual bool checkMotionDone(int j, bool *flag)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param flag is a pointer to return value ("and" of all joints)
-	 * @return true/false on network communication (value you actually want
+     * @return true/false on network communication (value you actually want
         is stored in *flag)
      */
     virtual bool checkMotionDone(bool *flag)=0;
