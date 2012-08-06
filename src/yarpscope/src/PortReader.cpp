@@ -180,8 +180,6 @@ public:
 
 bool YarpScope::PortReader::Private::onTimeout()
 {
-    debug() << "YarpScope::PortReader::Private::onTimeout called";
-
     if (!acquire) {
         return true;
     }
