@@ -53,6 +53,8 @@ public:
     inline Debug& operator<<(unsigned int t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(signed long t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(unsigned long t) { stream->oss << t; stream->oss << ' '; return *this; }
+    inline Debug& operator<<(signed long long t) { stream->oss << t; stream->oss << ' '; return *this; }
+    inline Debug& operator<<(unsigned long long t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(float t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(double t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(const char* t) { stream->oss << t; stream->oss << ' '; return *this; }
