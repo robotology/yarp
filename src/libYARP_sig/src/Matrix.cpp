@@ -280,6 +280,36 @@ void Matrix::zero()
     memset(storage, 0, sizeof(double)*ncols*nrows);
 }
 
+Matrix Matrix::removeCol(int col) const
+{
+    Matrix ret;
+    ret.resize(nrows, ncols-1);
+
+    for(int r=0; r<nrows; r++)
+        for(int c_in=0,c_out=0;c_in<ncols; c_in++)
+            {
+				if (c_in==col) continue;
+				ret[r][c_out]=(*this)[r][c_in];
+				c_out++;
+			}
+    return ret;
+}
+
+Matrix Matrix::removeRow(int row) const
+{
+    Matrix ret;
+    ret.resize(nrows-1, ncols);
+
+	for(int c=0; c<ncols; c++)
+		for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+            {
+				if (r_in==row) continue;
+				ret[r_out][c]=(*this)[r_in][c];
+				r_out++;
+			}
+    return ret;
+}
+
 Matrix Matrix::transposed() const
 {
     Matrix ret;

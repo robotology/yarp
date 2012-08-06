@@ -1,3 +1,7 @@
+2012-06-20  Marco Randazzo  <marco.randazzo@iit.it>
+    *  src/libYARP_sig/src/Matrix.cpp
+    added new methods: removeCol(), removeRow()
+
 2012-08-03  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* conf/doxygen/Doxyfile.part.template (MAN_EXTENSION): move

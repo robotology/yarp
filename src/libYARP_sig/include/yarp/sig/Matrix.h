@@ -261,6 +261,20 @@ public:
       */
       Vector getCol(int c) const;
 
+	  /**
+      * Remove a column from a matrix.
+      * @param col the column number
+      * @return a new matrix with the specified column removed
+      */
+	  Matrix Matrix::removeCol(int col) const;
+
+	  /**
+      * Remove a row from a matrix.
+      * @param row the row number
+      * @return a new matrix with the specified row removed
+      */
+	  Matrix Matrix::removeRow(int row) const;
+
       /**
       * Get a subrow of the matrix as a vector.
       * @param r the row number
