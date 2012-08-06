@@ -92,9 +92,8 @@ void YarpScope::Graph::Private::update(bool increment)
     }
 #endif // 0
     for (int i = 0; i < plotSize; i++) {
-        Y_plot[(plotSize - 1) - i] = Y[(curr - i) % bufSize];
+        Y_plot[(plotSize - 1) - i] = Y[(bufSize + curr - i) % bufSize];
     }
-
     if (increment) {
         curr = (curr + 1) % bufSize;
     }

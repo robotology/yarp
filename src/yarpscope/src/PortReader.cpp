@@ -213,9 +213,9 @@ bool YarpScope::PortReader::Private::onTimeout()
             for (std::vector<Index*>::iterator iit = conn->usedIndices.begin();
                         iit != conn->usedIndices.end(); iit++) {
                 Index *ind = *iit;
-                ind->X[idx] = ind->X[(idx - 1) % s_bufSize];
-                ind->Y[idx] = ind->Y[(idx - 1) % s_bufSize];
-                ind->T[idx] = ind->T[(idx - 1) % s_bufSize];
+                ind->X[idx] = ind->X[idx == 0 ? s_bufSize - 1 : idx - 1];
+                ind->Y[idx] = ind->Y[idx == 0 ? s_bufSize - 1 : idx - 1];
+                ind->T[idx] = ind->T[idx == 0 ? s_bufSize - 1 : idx - 1];
             }
             continue;
         }
