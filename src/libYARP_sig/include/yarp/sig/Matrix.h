@@ -33,6 +33,8 @@ namespace yarp {
 namespace yarp {
     namespace sig {
         YARP_sig_API bool submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
+		YARP_sig_API bool removeCols(const Matrix &in, Matrix &out, int first_col, int how_many);
+		YARP_sig_API bool removeRows(const Matrix &in, Matrix &out, int first_row, int how_many);
     }
 }
 
@@ -262,18 +264,20 @@ public:
       Vector getCol(int c) const;
 
     /**
-      * Remove a column from a matrix.
-      * @param col the column number
-      * @return a new matrix with the specified column removed
+      * Modifies the matrix, removing one or more columns from it.
+      * @param first_col the number of the first column to remove
+	  * @param how_many the number of columns to remove
+      * @return the matrix with the specified columns removed
       */
-      Matrix removeCol(int col) const;
+	  Matrix removeCols(int first_col, int how_many);
 
     /**
-      * Remove a row from a matrix.
-      * @param row the row number
-      * @return a new matrix with the specified row removed
+      * Modifies the matrix, removing one or more rows from it.
+      * @param first_row the number of the first row to remove
+      * @param how_many the number of rows to remove
+      * @return the matrix with the specified rows removed
       */
-      Matrix removeRow(int row) const;
+	  Matrix removeRows(int first_row, int how_many);
 
       /**
       * Get a subrow of the matrix as a vector.

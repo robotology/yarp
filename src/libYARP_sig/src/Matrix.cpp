@@ -46,6 +46,46 @@ public:
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/begin_pack_for_net.h>
 
+bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how_many)
+{
+	int nrows = in.rows();
+	int ncols = in.cols();
+    Matrix ret(nrows, ncols-how_many);
+    for(int r=0; r<nrows; r++)
+        for(int c_in=0,c_out=0;c_in<ncols; c_in++)
+            {
+				if (c_in==first_col)
+					{
+						c_in=c_in+(how_many-1);
+						continue;
+					}
+				ret[r][c_out]=(in)[r][c_in];
+				c_out++;
+			}
+	out=ret;
+	return true;
+}
+
+bool yarp::sig::removeRows(const Matrix &in, Matrix &out, int first_row, int how_many)
+{
+	int nrows = in.rows();
+	int ncols = in.cols();
+    Matrix ret(nrows-how_many, ncols);
+	for(int c=0; c<ncols; c++)
+		for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+            {
+				if (r_in==first_row)
+					{
+						r_in=r_in+(how_many-1);
+						continue;
+					}
+				ret[r_out][c]=(in)[r_in][c];
+				r_out++;
+			}
+	out=ret;
+	return true;
+}
+
 bool yarp::sig::submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2)
 {
     double *t=out.data();
@@ -280,33 +320,55 @@ void Matrix::zero()
     memset(storage, 0, sizeof(double)*ncols*nrows);
 }
 
-Matrix Matrix::removeCol(int col) const
+Matrix Matrix::removeCols(int first_col, int how_many) 
 {
     Matrix ret;
-    ret.resize(nrows, ncols-1);
+    ret.resize(nrows, ncols-how_many);
 
     for(int r=0; r<nrows; r++)
         for(int c_in=0,c_out=0;c_in<ncols; c_in++)
             {
-				if (c_in==col) continue;
+				if (c_in==first_col)
+					{
+						c_in=c_in+(how_many-1);
+						continue;
+					}
 				ret[r][c_out]=(*this)[r][c_in];
 				c_out++;
 			}
+
+	if (storage) delete [] storage; 
+    nrows=ret.nrows;
+    ncols=ret.ncols;
+    storage=new double[ncols*nrows];
+    memcpy(storage, ret.storage, ncols*nrows*sizeof(double));
+    updatePointers();
     return ret;
 }
 
-Matrix Matrix::removeRow(int row) const
+Matrix Matrix::removeRows(int first_row, int how_many) 
 {
     Matrix ret;
-    ret.resize(nrows-1, ncols);
+    ret.resize(nrows-how_many, ncols);
 
 	for(int c=0; c<ncols; c++)
 		for(int r_in=0, r_out=0; r_in<nrows; r_in++)
             {
-				if (r_in==row) continue;
+				if (r_in==first_row)
+					{
+						r_in=r_in+(how_many-1);
+						continue;
+					}
 				ret[r_out][c]=(*this)[r_in][c];
 				r_out++;
 			}
+
+	if (storage) delete [] storage; 
+    nrows=ret.nrows;
+    ncols=ret.ncols;
+    storage=new double[ncols*nrows];
+    memcpy(storage, ret.storage, ncols*nrows*sizeof(double));
+    updatePointers();
     return ret;
 }
 
