@@ -33,7 +33,6 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
-#include <gtkdataboxmm/bars.h>
 
 
 namespace YarpScope {
@@ -166,8 +165,6 @@ void YarpScope::MainWindow::Private::on_action_actions_clear()
     PortReader::instance().clearData();
 }
 
-Glib::RefPtr<GDatabox::Bars> bars;
-
 YarpScope::MainWindow::MainWindow() :
         mPriv(new Private(this))
 {
@@ -246,17 +243,6 @@ YarpScope::MainWindow::MainWindow() :
     mPriv->intervalVBox.pack_start(mPriv->intervalLabel);
     mPriv->intervalToolItem.add(mPriv->intervalVBox);
     toolbar->prepend(mPriv->intervalToolItem);
-
-    int PLOT_SIZE=201;
-    float *X = new float[PLOT_SIZE];
-    float *Y = new float[PLOT_SIZE];
-
-    for (int i = 0; i < PLOT_SIZE; i++) {
-        X[i] = (float)i;
-        Y[i] = (float)(cos (i * 4 * G_PI / PLOT_SIZE)) / 2 * 100;
-    }
-
-    bars = GDatabox::Bars::create(PLOT_SIZE, X, Y, Gdk::Color("Orange"));
 
     mPriv->windowBox.pack_start(*PlotManager::instance().getPlotWidget());
 
