@@ -1,3 +1,17 @@
+2012-08-06  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/yarpscope/src/Graph.cpp,
+	  src/yarpscope/src/PortReader.cpp: Fix modulo operator for
+	  negative values. This should fix the random spikes that
+	  sometimes appear in the plot.
+	* src/yarpscope/src/Debug.h: Handle debug for long long types.
+	* src/yarpscope/src/PortReader.cpp: Remove annoying debug.
+	* src/yarpscope/src/PortReader.cpp: Increment acquired data even
+	  if using previous one. This could fix the plot moving in time.
+	* src/yarpscope/src/MainWindow.cpp: Remove old unused stuff.
+	  This fixes the SIGSEGV at exit on windows.
+	* src/yarpscope/examples/test_yarpscope_wbd.xml: Add test for
+	  wholeBodyDynamics [thanks Marco Randazzo]
+
 2012-06-20  Marco Randazzo  <marco.randazzo@iit.it>
     *  src/libYARP_sig/src/Matrix.cpp
     added new methods: removeCol(), removeRow()
