@@ -60,6 +60,27 @@ for the user through --rxTime option.
 - To record videos: OpenCV 2.0 and the <a 
   href="http://neuron2.net/www.math.berkeley.edu/benrg/huffyuv.html">huffyuv</a>
   codec for lossless data compression.
+ 
+\section codec_installation Codec Installation 
+- Windows: fetch the dll library from the codec website and 
+  simply install it.
+ 
+- Linux: ffmpeg must be properly installed and recognized by 
+  OpenCV. The command "sudo apt-get ffmpeg" seemed not to work.
+  This is a possible alterative procedure:
+ 
+  -# sudo apt-get install libjpeg62-dev libtiff4-dev
+     libjasper-dev libopenexr-dev libeigen2-dev yasm libfaac-dev
+     libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev
+     libvorbis-dev libxvidcore-dev
+  -# svn checkout svn://svn.ffmpeg.org/ffmpeg/trunk ffmpeg
+  -# ./configure --enable-gpl --enable-version3 --enable-nonfree
+     --enable-postproc --enable-libfaac --enable-libopencore-amrnb
+     --enable-libopencore-amrwb --enable-libtheora
+     --enable-libvorbis --enable-libxvid --enable-x11grab
+     --enable-swscale --enable-shared
+  -# sudo make install
+  -# recompile OpenCV through cmake
 
 \section parameters_sec Parameters
 --name \e portname 
@@ -125,13 +146,7 @@ None.
  
 \section tested_os_sec Tested OS
 Linux and Windows. 
-On Linux platforms, in order to have the video acquisition 
-properly working you should check that OpenCV finds the ffmpeg
-package correctly installed: the quickest way to achieve that is 
-to install the ffmpeg before OpenCV through apt-get command. 
-However, the integration with ffmpeg package seems working ok 
-only with OpenCV version 2.0 and above. 
-
+ 
 \section example_sec Example
 By launching the following command: 
  
@@ -397,7 +412,7 @@ private:
     char           videoFile[255];    
     bool           doImgParamsExtraction;
     bool           doSaveFrame;
-    CvVideoWriter *videoWriter;
+    CvVideoWriter *videoWriter;    
 #endif
 
 public:
@@ -468,13 +483,13 @@ public:
 
         // it performs the writeToDisk on command or as soon as
         // the queue size is greater than the given threshold
-        if (sz>blockSize || writeToDisk)
+        if ((sz>blockSize) || writeToDisk)
         {
             static unsigned int cumulSize=0;
 
         #ifdef ADD_VIDEO
             // extract images parameters just once
-            if (doImgParamsExtraction && sz>1)
+            if (doImgParamsExtraction && (sz>1))
             {
                 buf.lock();
                 DumpItem itemFront=buf.front();
@@ -483,13 +498,13 @@ public:
 
                 int fps;
                 int frameW=((IplImage*)itemEnd.obj->getPtr())->width;
-                int frameH=((IplImage*)itemEnd.obj->getPtr())->height;                    
+                int frameH=((IplImage*)itemEnd.obj->getPtr())->height;
 
                 double dt=itemEnd.timeStamp-itemFront.timeStamp;
                 if (dt<=0.0)
                     fps=25; // default
                 else
-                    fps=(int)((double)sz/dt);
+                    fps=int(double(sz-1)/dt);
 
                 videoWriter=cvCreateVideoWriter(videoFile,CV_FOURCC('H','F','Y','U'),
                                                 fps,cvSize(frameW,frameH),true);
@@ -739,15 +754,15 @@ int main(int argc, char *argv[])
     if (rf.check("help"))
     {
         cout << "Options:" << endl << endl;
-        cout << "\t--name    port:\tservice port name (default: /dump)"                            << endl;        
+        cout << "\t--name       port:\tservice port name (default: /dump)"                            << endl;        
     #ifdef ADD_VIDEO
-        cout << "\t--type     typ:\ttype of the data to be dumped [bottle(default), image, video]" << endl;
-        cout << "\t--addVideo    :\tproduce video as well (if image is selected)"                  << endl;
+        cout << "\t--type       type:\ttype of the data to be dumped [bottle(default), image, video]" << endl;
+        cout << "\t--addVideo       :\tproduce video as well (if image is selected)"                  << endl;
     #else
-        cout << "\t--type     typ:\ttype of the data to be dumped [bottle(default), image]"        << endl;
+        cout << "\t--type       type:\ttype of the data to be dumped [bottle(default), image]"        << endl;
     #endif
-        cout << "\t--downsample n:\tdownsample rate (default: 1 => downsample disabled)"           << endl;
-        cout << "\t--rxTime      :\tdumps the receiver time instead of the sender time"            << endl;
+        cout << "\t--downsample    n:\tdownsample rate (default: 1 => downsample disabled)"           << endl;
+        cout << "\t--rxTime         :\tdumps the receiver time instead of the sender time"            << endl;
 
         return 0;
     }
