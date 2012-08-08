@@ -1,3 +1,7 @@
+2012-08-08  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/libYARP_math/CMakeLists.txt: Do not link to both ATLAS
+	  and GSL blas libraries
+
 2012-08-06  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* src/yarpscope/src/Graph.cpp,
 	  src/yarpscope/src/PortReader.cpp: Fix modulo operator for
