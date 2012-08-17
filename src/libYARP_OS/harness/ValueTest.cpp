@@ -88,10 +88,10 @@ public:
         Bottle b;
         b.read(v);
         checkTrue(b.get(0).isDouble(),"structure ok");
-        checkEqual(b.get(0).asDouble(),4.2,"value ok");
+        checkEqualish(b.get(0).asDouble(),4.2,"value ok");
         Value v2;
         b.write(v2);
-        checkEqual(v2.asDouble(),4.2,"value reread ok");
+        checkEqualish(v2.asDouble(),4.2,"value reread ok");
     }
 
     virtual void runTests() {
