@@ -226,7 +226,7 @@ public:
                     {
                         Bottle* b = v.asList();
                         // an exitatory to this priority carrier
-                        if(sourceName == b->get(0).asString())  
+                        if(sourceName == b->get(0).asString().c_str())  
                             E += peer->getActualInput(t) * (b->get(1).asDouble()/10.0);
                     }
                 }
