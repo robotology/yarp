@@ -2890,5 +2890,19 @@ bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::Const
     return response.get(0).asString()=="running";
 }
 
+void yarp::os::Run::cmdcpy(char* &dst,const char* src)
+{
+    dst=new char[(strlen(src)/8+2)*16];
+    strcpy(dst,src);
+}
+
+void yarp::os::Run::cmdclean(char **cmd)
+{
+    while (*cmd)
+    {
+        delete [] *cmd++;
+    }
+}
+
 // end API
 

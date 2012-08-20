@@ -9,9 +9,7 @@
 #ifndef _YARP2_RUN_
 #define _YARP2_RUN_
 
-#include <yarp/os/impl/String.h>
 #include <yarp/os/all.h>
-#include <string.h>
 
 namespace yarp {
   namespace os {
@@ -183,19 +181,8 @@ protected:
 	static ConstString mPortName;
     static int mProcCNT;
 
-    static void cmdcpy(char* &dst,const char* src)
-    {
-        dst=new char[(strlen(src)/8+2)*16];
-        strcpy(dst,src);
-    }
-
-    static void cmdclean(char **cmd)
-    {
-        while (*cmd)
-        {
-            delete [] *cmd++;
-        }
-    }
+    static void cmdcpy(char* &dst,const char* src);
+    static void cmdclean(char **cmd);
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };
