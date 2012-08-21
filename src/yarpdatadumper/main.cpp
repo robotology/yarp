@@ -436,7 +436,7 @@ public:
     {
         mutex.wait();
         fout << "Source: " << sourceName << " ";
-        fout << (connected?"(connected)":"(disconnected)") << endl;
+        fout << (connected?"[connected]":"[disconnected]") << endl;
         mutex.post();
     }
 
