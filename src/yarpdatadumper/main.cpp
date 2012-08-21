@@ -432,10 +432,11 @@ public:
     #endif
     }
 
-    void writeSource(const string &sourceName)
+    void writeSource(const string &sourceName, const bool connected)
     {
         mutex.wait();
-        fout << "Source: " << sourceName << endl;
+        fout << "Source: " << sourceName << " ";
+        fout << (connected?"(connected)":"(disconnected)") << endl;
         mutex.post();
     }
 
@@ -570,8 +571,8 @@ public:
     void setThread(DumpThread *thread) { this->thread=thread; }
     void report(const PortInfo &info)
     {
-        if ((thread!=NULL) && info.created && info.incoming)
-            thread->writeSource(info.sourceName.c_str());
+        if ((thread!=NULL) && info.incoming)
+            thread->writeSource(info.sourceName.c_str(),info.created);
     }
 };
 
