@@ -402,11 +402,13 @@ private:
     char           dirName[255];
     char           logFile[255];
     unsigned int   blockSize;
+    unsigned int   cumulSize;
     unsigned int   counter;
     double         oldTime;
     
     bool           saveData;
     bool           videoOn;
+    bool           closing;
 
 #ifdef ADD_VIDEO
     char           videoFile[255];    
@@ -443,7 +445,9 @@ public:
     bool threadInit()
     {
         oldTime=Time::now();
+        cumulSize=0;
         counter=0;
+        closing=false;
 
         fout.open(logFile);
         if (!fout.is_open())
@@ -468,15 +472,14 @@ public:
 
     void run()
     {
-        bool writeToDisk=false;
-
         buf.lock();
         unsigned int sz=buf.size(); //!!! access to size must be protected: problem spotted with Linux stl
         buf.unlock();
 
         // each 10 seconds it issues a writeToDisk command straightaway
+        bool writeToDisk=false;
         double curTime=Time::now();
-        if (curTime-oldTime>10.0)
+        if ((curTime-oldTime>10.0) || closing)
         {
             writeToDisk=sz>0;
             oldTime=curTime;
@@ -486,8 +489,6 @@ public:
         // the queue size is greater than the given threshold
         if ((sz>blockSize) || writeToDisk)
         {
-            static unsigned int cumulSize=0;
-
         #ifdef ADD_VIDEO
             // extract images parameters just once
             if (doImgParamsExtraction && (sz>1))
@@ -550,6 +551,10 @@ public:
 
     void threadRelease()
     {
+        // call run() for the last time to flush the queue
+        closing=true;
+        run();
+
         fout.close();
 
     #ifdef ADD_VIDEO
