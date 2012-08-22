@@ -36,7 +36,7 @@ private:
     public:
         String name;
         RET (T::*fn)(int argc, char *argv[]);
-    
+
         Entry(const char *name, RET (T::*fn)(int argc, char *argv[])) :
             name(name),
             fn(fn)

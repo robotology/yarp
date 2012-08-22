@@ -30,7 +30,7 @@ namespace yarp {
 /**
  * A stream abstraction for shared memory / socket hybrid communication.
  */
-class yarp::os::impl::ShmemTwoWayStream : public TwoWayStream, 
+class yarp::os::impl::ShmemTwoWayStream : public TwoWayStream,
             InputStream, OutputStream {
 public:
     ShmemTwoWayStream() {
@@ -84,7 +84,7 @@ public:
     virtual bool isOk() {
         return happy;
     }
-  
+
     virtual void reset();
 
     virtual void beginPacket();

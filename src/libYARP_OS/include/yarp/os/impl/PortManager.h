@@ -73,7 +73,7 @@ public:
     virtual bool removeIO(const Route& route, bool synch = false) {
         return false;
     }
-  
+
     virtual void describe(void *id, OutputStream *os) {
         YARP_SPRINTF1(Logger::get(),
                       error,

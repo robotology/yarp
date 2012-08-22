@@ -78,17 +78,17 @@ public:
 class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ISerialDevice
 {
 private:
-	SerialDeviceDriver(const SerialDeviceDriver&);
-	void operator=(const SerialDeviceDriver&);
+    SerialDeviceDriver(const SerialDeviceDriver&);
+    void operator=(const SerialDeviceDriver&);
 
     ACE_TTY_IO _serial_dev;
     ACE_DEV_Connector _serialConnector;
     bool verbose;     // If enabled (1), the data sent/received by the serial device is print on screen
 
 public:
-	SerialDeviceDriver();
+    SerialDeviceDriver();
 
-	virtual ~SerialDeviceDriver();
+    virtual ~SerialDeviceDriver();
 
     virtual bool open(yarp::os::Searchable& config);
 
@@ -99,7 +99,7 @@ public:
      */
     bool open(SerialDeviceDriverSettings& config);
 
-	virtual bool close(void);
+    virtual bool close(void);
 
     /**
      * Sends a string of chars to the serial communications channel.
@@ -120,19 +120,19 @@ public:
      * @param chr - the received char.
      * @return - 0 if no chars are received; 1 if one char is received.
      */
-	virtual int  receiveChar(char& chr);
+    virtual int  receiveChar(char& chr);
     /**
      * Gets one line (a sequence of chars with a ending '\n' or '\r') from the receive queue. The ending '\n''\r' chars are not removed in the returned line.
      * @param line - a previously allocated buffer where the received line is stored.
      * @param MaxLineLength - the size of the 'line' parameter.
-	 * @return - the number of received characters (including the '\n''\r' chars, plus the buffer terminator '\0'). The function returns 0 if no chars are received.
+     * @return - the number of received characters (including the '\n''\r' chars, plus the buffer terminator '\0'). The function returns 0 if no chars are received.
      */
-	virtual int  receiveLine(char* line, const int MaxLineLength);
+    virtual int  receiveLine(char* line, const int MaxLineLength);
     /**
      * Flushes the internal buffer.
-	 * @return - the number of flushed characters.
+     * @return - the number of flushed characters.
      */
-	virtual int  flush();
+    virtual int  flush();
 };
 
 #endif

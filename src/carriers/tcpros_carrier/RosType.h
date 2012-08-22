@@ -35,21 +35,21 @@ public:
     class YARP_tcpros_carrier_API RosTypes {
     public:
         void *system_resource;
-        
+
         RosTypes();
-        
+
         virtual ~RosTypes();
 
         RosTypes(const RosTypes& alt);
 
         const RosTypes& operator=(const RosTypes& alt);
-        
+
         void clear();
-        
+
         void push_back(const RosType& t);
-        
+
         size_t size();
-        
+
         RosType& operator[](int i);
     };
 

@@ -31,7 +31,7 @@ public:
     virtual ~PortWriter() {}
 
     /**
-     * Write this object to a network connection.  
+     * Write this object to a network connection.
      * Override this for your particular class.
      * Be aware that
      * depending on the nature of the connections a port has, and what

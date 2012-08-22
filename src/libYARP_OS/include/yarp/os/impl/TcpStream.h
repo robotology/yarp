@@ -13,12 +13,12 @@
  * Declaration of Human Rights.
  *
  * Copyright © 2010 Anne van Rossum <anne@almende.com>
- * 
- * @author 	Anne C. van Rossum
- * @date	Feb 17, 2011
- * @project	Replicator FP7
- * @company	Almende B.V.
- * @case	
+ *
+ * @author  Anne C. van Rossum
+ * @date    Feb 17, 2011
+ * @project Replicator FP7
+ * @company Almende B.V.
+ * @case
  */
 
 
@@ -50,81 +50,81 @@ namespace yarp {
 
 class yarp::os::impl::TcpStream {
 public:
-	/**
-	 * Constructor TcpStream
-	 */
-	TcpStream();
+    /**
+     * Constructor TcpStream
+     */
+    TcpStream();
 
-	/**
-	 * Destructor ~TcpStream
-	 */
-	virtual ~TcpStream();
+    /**
+     * Destructor ~TcpStream
+     */
+    virtual ~TcpStream();
 
-	inline ssize_t recv_n (void *buf, size_t n) {
-	  return ::recv(sd, buf, n, 0);
-	}
+    inline ssize_t recv_n (void *buf, size_t n) {
+      return ::recv(sd, buf, n, 0);
+    }
 
-	inline ssize_t recv_n (void *buf, size_t n, struct timeval *tv) {
-	  setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
-	  return ::recv(sd, buf, n, 0);
-	}
+    inline ssize_t recv_n (void *buf, size_t n, struct timeval *tv) {
+      setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
+      return ::recv(sd, buf, n, 0);
+    }
 
-	inline ssize_t recv (void *buf, size_t n) {
-	  return ::recv(sd, buf, n, 0);
-	}
+    inline ssize_t recv (void *buf, size_t n) {
+      return ::recv(sd, buf, n, 0);
+    }
 
-	inline ssize_t recv (void *buf, size_t n, struct timeval *tv) {
-	  setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
-	  return ::recv(sd, buf, n, 0);
-	}
+    inline ssize_t recv (void *buf, size_t n, struct timeval *tv) {
+      setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
+      return ::recv(sd, buf, n, 0);
+    }
 
-	inline ssize_t send_n (const void *buf, size_t n) {
-		return ::send(sd, buf, n, 0);
-	}
+    inline ssize_t send_n (const void *buf, size_t n) {
+        return ::send(sd, buf, n, 0);
+    }
 
         inline ssize_t send_n (const void *buf, size_t n, struct timeval *tv) {
-	  setsockopt(sd, SOL_SOCKET, SO_SNDTIMEO, (char *)tv, sizeof (*tv));
-	  return ::send(sd, buf, n, 0);
-	}
+      setsockopt(sd, SOL_SOCKET, SO_SNDTIMEO, (char *)tv, sizeof (*tv));
+      return ::send(sd, buf, n, 0);
+    }
 
-	// No idea what this should do...
-	void flush() { ; }
+    // No idea what this should do...
+    void flush() { ; }
 
-	void close_reader() { 
-	  if (sd!=-1) {
-	    ::shutdown(sd,SHUT_RD);
-	  }
-	}
+    void close_reader() {
+      if (sd!=-1) {
+        ::shutdown(sd,SHUT_RD);
+      }
+    }
 
-	void close_writer() {
-	  if (sd!=-1) {
-	    ::shutdown(sd,SHUT_WR);
-	  }
-	}
+    void close_writer() {
+      if (sd!=-1) {
+        ::shutdown(sd,SHUT_WR);
+      }
+    }
 
-	void close() {
-	  if (sd!=-1) {
-	    ::close(sd);
-	    sd = -1;
-	  }
-	}
+    void close() {
+      if (sd!=-1) {
+        ::close(sd);
+        sd = -1;
+      }
+    }
 
-	int open();
+    int open();
 
-	int get_local_addr (sockaddr &);
+    int get_local_addr (sockaddr &);
 
-	int get_remote_addr (sockaddr &);
+    int get_remote_addr (sockaddr &);
 
-	// get stream descriptor
-	int get_handle() { return sd; }
+    // get stream descriptor
+    int get_handle() { return sd; }
 
-	// set stream descriptor
-	void set_handle(int h) { sd = h; }
+    // set stream descriptor
+    void set_handle(int h) { sd = h; }
 
 protected:
 private:
-	// stream descriptor
-	int sd;
+    // stream descriptor
+    int sd;
 
 };
 

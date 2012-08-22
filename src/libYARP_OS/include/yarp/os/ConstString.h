@@ -25,7 +25,7 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::ConstString {
 public:
-  
+
     /**
      * Constructor.  Creates an empty string.
      */
@@ -53,7 +53,7 @@ public:
      * Copy constructor.
      */
     ConstString(const ConstString& alt);
-  
+
     /**
      * Accesses the character sequence stored in this object.
      */
@@ -62,8 +62,8 @@ public:
     /**
      * Typecast operator to C-style string.
      */
-    operator const char *() const { 
-        return c_str(); 
+    operator const char *() const {
+        return c_str();
     }
 
     const ConstString& operator = (const ConstString& alt);

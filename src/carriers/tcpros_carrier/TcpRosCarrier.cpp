@@ -100,7 +100,7 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_len).c_str(),
                (int)header_len.length());
-    
+
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
     dbg_printf("Writing %s -- %d bytes\n", 
@@ -118,7 +118,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
 
     char mlen[4];
     Bytes mlen_buf(mlen,4);
-    
+
     int res = NetType::readFull(proto.is(),mlen_buf);
     if (res<4) {
         printf("Fail %s %d\n", __FILE__, __LINE__);
@@ -168,10 +168,10 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     dbg_printf("Getting ready to hand off streams...\n");
 
     proto.takeStreams(stream);
-    
+
     return proto.is().isOk();
 }
-    
+
 bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     proto.setRoute(proto.getRoute().addFromName("tcpros"));
 
@@ -318,7 +318,7 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
         fprintf(stderr,"tcpros_carrier given no data\n");
         return false;
     }
-    
+
     int len = 0;
     for (size_t i=0; i<flex_writer->length(); i++) {
         len += (int)flex_writer->length(i);
@@ -326,7 +326,7 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     dbg_printf("Prepping to write %d blocks (%d bytes)\n", 
                (int)flex_writer->length(),
                len);
-    
+
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
     RosHeader::appendInt(at,len);

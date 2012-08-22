@@ -90,7 +90,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
-    static bool disconnect(const char *src, const char *dest, 
+    static bool disconnect(const char *src, const char *dest,
                            bool quiet=true) {
         ContactStyle style;
         style.quiet = quiet;
@@ -104,7 +104,7 @@ public:
      * @param style options for network communication related to disconnection
      * @return true on success, false on failure
      */
-    static bool disconnect(const char *src, const char *dest, 
+    static bool disconnect(const char *src, const char *dest,
                            const ContactStyle& style);
 
     /**
@@ -114,7 +114,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true if there is a connection
      */
-    static bool isConnected(const char *src, const char *dest, 
+    static bool isConnected(const char *src, const char *dest,
                             bool quiet=true) {
         ContactStyle style;
         style.quiet = quiet;
@@ -128,7 +128,7 @@ public:
      * @param style options for network communication
      * @return true if there is a connection
      */
-    static bool isConnected(const char *src, const char *dest, 
+    static bool isConnected(const char *src, const char *dest,
                             const ContactStyle& style);
 
     /**
@@ -151,7 +151,7 @@ public:
      */
     static bool exists(const char *port, const ContactStyle& style);
 
-	/**
+    /**
      * Wait for a port to be ready and responsive.
      * @param port the name of a port
      * @param quiet suppress messages displayed during wait
@@ -159,7 +159,7 @@ public:
      */
     static bool sync(const char *port, bool quiet=true);
 
-	/**
+    /**
      * The standard main method for the YARP companion utility.
      * This method is not thread-safe; it initializes and shuts
      * down YARP, the effect of which varies between operating
@@ -268,7 +268,7 @@ public:
 
     /**
      * Get the name of the port associated with the nameserver (usually
-     * "/root", but this can be overwritten by the "yarp namespace" 
+     * "/root", but this can be overwritten by the "yarp namespace"
      * command).
      * @return name of the port associated with the nameserver
      */
@@ -276,7 +276,7 @@ public:
 
     /**
      * Get the contact information for the port associated with the nameserver
-     * (usually "/root", but this can be overwritten by the "yarp namespace" 
+     * (usually "/root", but this can be overwritten by the "yarp namespace"
      * command).
      * @return contact informatoin for the port associated with the nameserver
      */
@@ -285,8 +285,8 @@ public:
 
     /**
      * Set the name of the port associated with the nameserver (usually
-     * "/root", but this can be overwritten by the "yarp namespace" 
-     * command).  This method is not thread-safe.  Do not call this command 
+     * "/root", but this can be overwritten by the "yarp namespace"
+     * command).  This method is not thread-safe.  Do not call this command
      * while ports are being registered/unregistered or connections are
      * being made/broken in another thread.
      * @return true on success
@@ -340,7 +340,7 @@ public:
      *
      * @return true on success
      */
-    static bool write(const Contact& contact, 
+    static bool write(const Contact& contact,
                       PortWriter& cmd,
                       PortReader& reply,
                       bool admin = false,
@@ -355,7 +355,7 @@ public:
 
 
     /**
-     * Variant write method with options bundled into a 
+     * Variant write method with options bundled into a
      * yarp::os::ContactStyle (there was getting to be too many of
      * them).
      *
@@ -366,7 +366,7 @@ public:
      *
      * @return true on success
      */
-    static bool write(const Contact& contact, 
+    static bool write(const Contact& contact,
                       PortWriter& cmd,
                       PortReader& reply,
                       const ContactStyle& style);
@@ -403,7 +403,7 @@ public:
 
     /**
      *
-     * Check if the YARP Network is up and running.  Basically, 
+     * Check if the YARP Network is up and running.  Basically,
      * checks if a yarp name server is running and responding.
      *
      * @return true if the YARP Network is active.
@@ -428,7 +428,7 @@ public:
      *
      * Returns true if YARP has been fully initialized.
      *
-     * @return true if YARP has been initialized (by creating a 
+     * @return true if YARP has been initialized (by creating a
      * yarp::os::Network object or calling yarp::os::Network::init).
      *
      */

@@ -67,7 +67,7 @@ public:
 
     void clear() {
         target = &lst;
-		size_t i;
+        size_t i;
         for (i=0; i<lst.size(); i++) {
             delete lst[i];
         }
@@ -174,7 +174,7 @@ public:
 
     bool write(ConnectionWriter& connection) {
         stopWrite();
-		size_t i;
+        size_t i;
         for (i=0; i<header.size(); i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
             connection.appendBlock(b.get(),b.used());
@@ -188,7 +188,7 @@ public:
 
     void write(OutputStream& os) {
         stopWrite();
-		size_t i;
+        size_t i;
         for (i=0; i<header.size(); i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
             os.write(b.usedBytes());

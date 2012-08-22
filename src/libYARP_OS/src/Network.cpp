@@ -481,7 +481,7 @@ void NetworkBase::initMinimum() {
        // Broken pipes need to be dealt with through other means
        ACE_OS::signal(SIGPIPE, SIG_IGN);
 
-#ifdef YARP_HAS_ACE       
+#ifdef YARP_HAS_ACE
        ACE::init();
 #endif
        ConstString quiet = getEnvironment("YARP_QUIET");
@@ -507,7 +507,7 @@ void NetworkBase::initMinimum() {
        Logger::get().setPid();
        // make sure system is actually able to do things fast
        Time::turboBoost();
-       
+
        // prepare carriers
        Carriers::getInstance();
    }
@@ -519,7 +519,7 @@ void NetworkBase::finiMinimum() {
         Carriers::removeInstance();
         NameClient::removeNameClient();
         removeNameSpace();
-#ifdef YARP_HAS_ACE       
+#ifdef YARP_HAS_ACE
         ACE::fini();
 #endif
     }
@@ -616,7 +616,7 @@ bool NetworkBase::write(const Contact& contact,
             return false;
         }
 
-        bool ok = port.write(cmd,reply);        
+        bool ok = port.write(cmd,reply);
         /*
         DummyConnector con;
         cmd.write(con.getWriter());
@@ -653,7 +653,7 @@ bool NetworkBase::write(const Contact& contact,
         }
         return false;
     }
-    
+
     if (style.timeout>0) {
         address.setTimeout((float)style.timeout);
     }

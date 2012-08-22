@@ -31,7 +31,7 @@
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 #define YMSG(x)
-#define YTRACE(x) 
+#define YTRACE(x)
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -335,8 +335,8 @@ void PortCore::closeMain() {
         }
     }
 
-	// politely remove all outputs
-	done = false;
+    // politely remove all outputs
+    done = false;
     while (!done) {
         done = true;
         Route removeRoute;
@@ -345,17 +345,17 @@ void PortCore::closeMain() {
             PortCoreUnit *unit = units[i];
             if (unit!=NULL) {
                 if (unit->isOutput()&&!unit->isFinished()) {
-					removeRoute = unit->getRoute();
-					if (removeRoute.getFromName()==getName()) {
-						done = false;
-						break;
-					}
+                    removeRoute = unit->getRoute();
+                    if (removeRoute.getFromName()==getName()) {
+                        done = false;
+                        break;
+                    }
                 }
             }
         }
         stateMutex.post();
         if (!done) {
-			removeUnit(removeRoute,true);
+            removeUnit(removeRoute,true);
         }
     }
 
@@ -471,18 +471,18 @@ void PortCore::reapUnits() {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
             if (unit!=NULL) {
-                if (unit->isDoomed()&&!unit->isFinished()) {	
+                if (unit->isDoomed()&&!unit->isFinished()) {
                     String s = unit->getRoute().toString();
-                    YARP_DEBUG(log,String("Informing connection ") + 
+                    YARP_DEBUG(log,String("Informing connection ") +
                                s + " that it is doomed");
                     unit->close();
-                    YARP_DEBUG(log,String("Closed connection ") + 
+                    YARP_DEBUG(log,String("Closed connection ") +
                                s);
                     YARP_DEBUG(log,"closed REAPING a unit");
                     unit->join();
-                    YARP_DEBUG(log,String("Joined thread of connection ") + 
+                    YARP_DEBUG(log,String("Joined thread of connection ") +
                                s);
-                } 
+                }
             }
         }
     }
@@ -502,7 +502,7 @@ void PortCore::cleanUnits(bool blocking) {
     int updatedDataOutputCount = 0;
     YARP_DEBUG(log,"/ routine check of connections to this port begins");
     if (!finished) {
-    
+
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
             if (unit!=NULL) {
@@ -566,7 +566,7 @@ void PortCore::addInput(InputProtocol *ip) {
                                                ip,autoHandshake,false);
     YARP_ASSERT(unit!=NULL);
     unit->start();
-  
+
     units.push_back(unit);
     YMSG(("there are now %d units\n", units.size()));
     stateMutex.post();
@@ -580,9 +580,9 @@ void PortCore::addOutput(OutputProtocol *op) {
     if (!finished) {
         PortCoreUnit *unit = new PortCoreOutputUnit(*this,getNextIndex(),op);
         YARP_ASSERT(unit!=NULL);
-    
+
         unit->start();
-    
+
         units.push_back(unit);
         //YMSG(("there are now %d units\n", units.size()));
     }
@@ -614,7 +614,7 @@ bool PortCore::isUnit(const Route& route, int index) {
                         ok = ok && (route.getCarrierName()==alt.getCarrierName());
                     }
                 }
-	
+
                 if (ok) {
                     needReap = true;
                     break;
@@ -667,19 +667,19 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
                         }
                     }
                 }
-	
+
                 if (ok) {
-                    YARP_DEBUG(log, 
+                    YARP_DEBUG(log,
                                String("removing connection ") + alt.toString());
                     removals.push_back(unit->getIndex());
-					unit->setDoomed();
+                    unit->setDoomed();
                     needReap = true;
                     if (route.getToName()!="*") {
-						// not needed any more
+                        // not needed any more
                         //Companion::disconnectInput(alt.getToName().c_str(),
-                        //                         alt.getFromName().c_str(),
-                        //                       true);
-						break;
+                        //                           alt.getFromName().c_str(),
+                        //                           true);
+                        break;
                     }
                 }
             }
@@ -696,7 +696,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
             delete op;
         }
         YARP_DEBUG(log,"sent message to prod connection death");
-        
+
         if (synch) {
             YARP_DEBUG(log,"synchronizing with connection death");
             // wait until disconnection process is complete
@@ -744,7 +744,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
     Contact contact = NetworkBase::queryName(parts.getRegName().c_str());
     Address address = Address::fromContact(contact);
     if (address.isValid()) {
-        // as a courtesy, remove any existing connections between 
+        // as a courtesy, remove any existing connections between
         // source and destination
         if (onlyIfNeeded) {
             bool except = false;
@@ -799,10 +799,10 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                 if (timeout>0) {
                     op->setTimeout(timeout);
                 }
-                
+
                 bool ok = op->open(r);
                 if (!ok) {
-                    YARP_DEBUG(log,"open route error");            
+                    YARP_DEBUG(log,"open route error");
                     delete op;
                     op = NULL;
                 }
@@ -882,7 +882,7 @@ void PortCore::describe(void *id, OutputStream *os) {
 
     stateMutex.wait();
 
-    bw.appendLine(String("This is ") + address.getRegName() + " at " + 
+    bw.appendLine(String("This is ") + address.getRegName() + " at " +
                   address.toString());
 
     int oct = 0;
@@ -892,9 +892,9 @@ void PortCore::describe(void *id, OutputStream *os) {
         if (unit!=NULL) {
             if (unit->isOutput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
-                String msg = "There is an output connection from " + 
+                String msg = "There is an output connection from " +
                     route.getFromName() +
-                    " to " + route.getToName() + " using " + 
+                    " to " + route.getToName() + " using " +
                     route.getCarrierName();
                 bw.appendLine(msg);
                 oct++;
@@ -903,16 +903,16 @@ void PortCore::describe(void *id, OutputStream *os) {
     }
     if (oct<1) {
         bw.appendLine("There are no outgoing connections");
-    } 
+    }
     for (unsigned int i2=0; i2<units.size(); i2++) {
         PortCoreUnit *unit = units[i2];
         if (unit!=NULL) {
             if (unit->isInput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
                 if (route.getCarrierName()!="") {
-                    String msg = "There is an input connection from " + 
+                    String msg = "There is an input connection from " +
                         route.getFromName() +
-                        " to " + route.getToName() + " using " + 
+                        " to " + route.getToName() + " using " +
                         route.getCarrierName();
                     bw.appendLine(msg);
                     ict++;
@@ -922,7 +922,7 @@ void PortCore::describe(void *id, OutputStream *os) {
     }
     if (ict<1) {
         bw.appendLine("There are no incoming connections");
-    } 
+    }
 
     stateMutex.post();
 
@@ -944,7 +944,7 @@ void PortCore::describe(PortReport& reporter) {
     PortInfo baseInfo;
     baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
     ConstString portName = address.getRegName().c_str();
-    baseInfo.message = (String("This is ") + portName.c_str() + " at " + 
+    baseInfo.message = (String("This is ") + portName.c_str() + " at " +
                         address.toString()).c_str();
     reporter.report(baseInfo);
 
@@ -955,9 +955,9 @@ void PortCore::describe(PortReport& reporter) {
         if (unit!=NULL) {
             if (unit->isOutput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
-                String msg = "There is an output connection from " + 
+                String msg = "There is an output connection from " +
                     route.getFromName() +
-                    " to " + route.getToName() + " using " + 
+                    " to " + route.getToName() + " using " +
                     route.getCarrierName();
                 PortInfo info;
                 info.message = msg.c_str();
@@ -967,7 +967,7 @@ void PortCore::describe(PortReport& reporter) {
                 info.sourceName = route.getFromName().c_str();
                 info.targetName = route.getToName().c_str();
                 info.carrierName = route.getCarrierName().c_str();
-                reporter.report(info);                
+                reporter.report(info);
                 oct++;
             }
         }
@@ -977,15 +977,15 @@ void PortCore::describe(PortReport& reporter) {
         info.tag = yarp::os::PortInfo::PORTINFO_MISC;
         info.message = "There are no outgoing connections";
         reporter.report(info);
-    } 
+    }
     for (unsigned int i2=0; i2<units.size(); i2++) {
         PortCoreUnit *unit = units[i2];
         if (unit!=NULL) {
             if (unit->isInput()&&!unit->isFinished()) {
                 Route route = unit->getRoute();
-                String msg = "There is an input connection from " + 
+                String msg = "There is an input connection from " +
                     route.getFromName() +
-                    " to " + route.getToName() + " using " + 
+                    " to " + route.getToName() + " using " +
                     route.getCarrierName();
                 PortInfo info;
                 info.message = msg.c_str();
@@ -995,7 +995,7 @@ void PortCore::describe(PortReport& reporter) {
                 info.sourceName = route.getFromName().c_str();
                 info.targetName = route.getToName().c_str();
                 info.carrierName = route.getCarrierName().c_str();
-                reporter.report(info);                
+                reporter.report(info);
                 ict++;
             }
         }
@@ -1005,7 +1005,7 @@ void PortCore::describe(PortReport& reporter) {
         info.tag = yarp::os::PortInfo::PORTINFO_MISC;
         info.message = "There are no incoming connections";
         reporter.report(info);
-    } 
+    }
 
     stateMutex.post();
 }
@@ -1016,7 +1016,7 @@ void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
    if (reporter!=NULL) {
        eventReporter = reporter;
    }
-   stateMutex.post();     
+   stateMutex.post();
 }
 
 
@@ -1024,7 +1024,7 @@ void PortCore::report(const PortInfo& info) {
     // we are in the context of one of the input or output threads,
     // so our contact with the PortCore must be absolutely minimal.
     //
-    // it is safe to pick up the address of the reporter if this is 
+    // it is safe to pick up the address of the reporter if this is
     // kept constant over the lifetime of the input/output threads.
 
     if (eventReporter!=NULL) {
@@ -1042,7 +1042,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
     // we are in the context of one of the input threads,
     // so our contact with the PortCore must be absolutely minimal.
     //
-    // it is safe to pick up the address of the reader since this is 
+    // it is safe to pick up the address of the reader since this is
     // constant over the lifetime of the input threads.
 
     if (this->reader!=NULL) {
@@ -1053,9 +1053,9 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
         // modes give fine behavior
 
         if (logNeeded&&haveOutputs) {
-            // Normally, yarp doesn't pay attention to the content of 
+            // Normally, yarp doesn't pay attention to the content of
             // messages received by the client.  Likewise, the content
-            // of replies are not monitored.  However it may sometimes 
+            // of replies are not monitored.  However it may sometimes
             // be useful this traffic.
 
             ConnectionRecorder recorder;
@@ -1080,7 +1080,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 }
 
 
-bool PortCore::send(PortWriter& writer, PortReader *reader, 
+bool PortCore::send(PortWriter& writer, PortReader *reader,
                     PortWriter *callback) {
     if (!logNeeded) {
         return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
@@ -1093,7 +1093,7 @@ bool PortCore::send(PortWriter& writer, PortReader *reader,
     return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
 }
 
-bool PortCore::sendHelper(PortWriter& writer, 
+bool PortCore::sendHelper(PortWriter& writer,
                           int mode, PortReader *reader, PortWriter *callback) {
     if (interrupted||finishing) return false;
 
@@ -1309,25 +1309,25 @@ static bool __tcp_check(const Contact& c) {
     }
     result = addr.set(c.getPort(),"127.0.0.1");
     if (result!=0) {
-        fprintf(stderr, "ACE choked on 127.0.0.1:%d\n", 
+        fprintf(stderr, "ACE choked on 127.0.0.1:%d\n",
                 c.getPort());
     }
     result = addr.set(c.getPort(),"127.0.1.1");
     if (result!=0) {
-        fprintf(stderr, "ACE choked on 127.0.1.1:%d\n", 
+        fprintf(stderr, "ACE choked on 127.0.1.1:%d\n",
                 c.getPort());
     }
-#endif    
+#endif
     return true;
 }
 
-bool PortCore::adminBlock(ConnectionReader& reader, void *id, 
+bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                           OutputStream *os) {
     Bottle cmd, result;
     cmd.read(reader);
 
     StringOutputStream cache;
-    
+
     int vocab = cmd.get(0).asVocab();
 
     // ROS support
@@ -1499,7 +1499,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                       pub.c_str());
                         Contact c = Contact::fromString(pub.c_str());
                         if (!__pc_rpc(c,"xmlrpc",req,reply, false)) {
-                            fprintf(stderr,"Cannot connect to ROS subscriber %s\n", 
+                            fprintf(stderr,"Cannot connect to ROS subscriber %s\n",
                                     pub.c_str());
                             // show diagnosics
                             __pc_rpc(c,"xmlrpc",req,reply,true);
@@ -1524,8 +1524,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 carrier = "tcpros+role.pub+topic.";
                                 carrier += topic;
                                 YARP_SPRINTF3(log,debug,
-                                              "topic %s available at %s:%d", 
-                                              topic.c_str(), hostname.c_str(), 
+                                              "topic %s available at %s:%d",
+                                              topic.c_str(), hostname.c_str(),
                                               portnum);
                             }
                             if (portnum!=0) {
@@ -1545,7 +1545,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                 InputProtocol *ip =  &(op->getInput());
                                 PortCoreUnit *unit = new PortCoreInputUnit(*this,
                                                                            getNextIndex(),
-                                                                           
+
                                                                            ip,
                                                                            true,
                                                                            true);
@@ -1566,7 +1566,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         break;
     case VOCAB4('r','t','o','p'):
         {
-            YARP_SPRINTF1(log,debug,"requestTopic! --> %s", 
+            YARP_SPRINTF1(log,debug,"requestTopic! --> %s",
                           cmd.toString().c_str());
             //ConstString topic = cmd.get(2).asString();
             //Bottle *pubs = cmd.get(3).asList();

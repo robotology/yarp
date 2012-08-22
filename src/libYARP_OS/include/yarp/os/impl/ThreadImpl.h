@@ -47,16 +47,16 @@ public:
     virtual bool start();
 
     bool isClosing();
-    
+
     bool isRunning() {
         return active;
     }
 
     virtual void beforeStart();
     virtual void afterStart(bool success);
-	
-	virtual bool threadInit();
-	virtual void threadRelease();
+
+    virtual bool threadInit();
+    virtual void threadRelease();
 
     // call before start
     void setOptions(int stackSize = 0);
@@ -69,11 +69,11 @@ public:
     // get a unique key
     long int getKey();
 
-	//should become private, when the thread is friend
-	void notify(bool s);
-	void notifyOpened(bool s) { opened = s; }
-	void synchroWait();
-	void synchroPost();
+    //should become private, when the thread is friend
+    void notify(bool s);
+    void notifyOpened(bool s) { opened = s; }
+    void synchroWait();
+    void synchroPost();
 
     int setPriority(int priority = -1);
     int getPriority();
@@ -93,12 +93,12 @@ private:
     bool needJoin;
     Runnable *delegate;
 
-	SemaphoreImpl synchro;
-	//ACE_Auto_Event synchro;	// event for init synchro
+    SemaphoreImpl synchro;
+    //ACE_Auto_Event synchro;   // event for init synchro
 
     static int threadCount;
     static int defaultStackSize;
-	bool initWasSuccessful;
+    bool initWasSuccessful;
 
 };
 
