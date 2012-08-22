@@ -20,7 +20,7 @@ its symbols).  The set of YARP libraries is rather open-ended so,
 it is better not to try enumerating them here.  Given that, the
 recommended usage of this header within YARP is:
 //
-#include <yarp/config/api.h>
+#include <yarp/conf/api.h>
 #ifndef YARP_OS_API
 #  ifdef YARP_OS_EXPORTS
 #    define YARP_OS_API YARP_EXPORT
