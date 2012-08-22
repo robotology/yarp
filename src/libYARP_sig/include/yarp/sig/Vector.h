@@ -323,7 +323,7 @@ public:
 
     /**
     * Resize the vector, if the vector is not empty preserve old content.
-    * @param s the new size
+    * @param size the new size
     * @param def a default value used to fill the vector
     */
     void resize(size_t size, const double &def)

@@ -14,7 +14,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-/*! \file CartesianController.h define control board standard interfaces */
+/*! \file CartesianControl.h define control board standard interfaces */
 
 namespace yarp {
     namespace dev {

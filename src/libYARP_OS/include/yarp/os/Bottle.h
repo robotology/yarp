@@ -304,7 +304,7 @@ public:
     void specialize(int subCode);
     int getSpecialization();
     void setNested(bool nested);
-#endif
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
     /**
      *

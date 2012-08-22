@@ -14,7 +14,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-/*! \file GazeController.h define control board standard interfaces */
+/*! \file GazeControl.h define control board standard interfaces */
 
 namespace yarp {
     namespace dev {
