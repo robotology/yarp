@@ -35,7 +35,6 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace yarp;
 
 /*
