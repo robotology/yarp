@@ -1523,13 +1523,15 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	
 	indent(f_curr_) << "virtual bool read(yarp::os::ConnectionReader& connection) {" << endl;
 	indent_up();
-	if (!returntype->is_void()) {
+	if (!(*fn_iter)->is_oneway()) {
 	  indent(f_curr_) << "yarp::os::idl::WireReader reader(connection);" 
 			  << endl;
 	  indent(f_curr_) << "if (!reader.readListReturn(" 
 			  << ")) return false;"
 			  << endl;
-	  generate_deserialize_field(f_curr_, &returnfield, "");
+	  if (!returntype->is_void()) {
+	    generate_deserialize_field(f_curr_, &returnfield, "");
+	  }
 	}
 	indent(f_curr_) << "return true;" << endl;
 	indent_down();
@@ -2267,6 +2269,9 @@ string t_yarp_generator::render_const_value(ofstream& out, string name, t_type* 
 
 
 int t_yarp_generator::flat_element_count(t_type* type) {
+  if (type->is_void()) {
+    return 0;
+  }
   if (!type->is_struct()) {
     return 1;
   }

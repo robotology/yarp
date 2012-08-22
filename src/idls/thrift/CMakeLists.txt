@@ -72,3 +72,8 @@ if (NOT THRIFT_ROOT)
 endif ()
 
 INSTALL(TARGETS yarpidl_thrift COMPONENT utilities DESTINATION bin)
+
+option(TEST_yarpidl_thrift "Test thrift-based IDL" OFF)
+if (TEST_yarpidl_thrift)
+add_subdirectory(tests)
+endif ()

@@ -1,3 +1,8 @@
+2012-08-22  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/idls/thrift/src/t_yarp_generator.cc: fix serialization
+	of void functions, regular or oneway [thanks Elena Ceseracciu]
+
 2012-08-22  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* src/carriers/priority_carrier/PriorityCarrier.h
 	  src/yarpmanager/libymanager/include/broker.h
