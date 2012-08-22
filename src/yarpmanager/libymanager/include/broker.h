@@ -24,6 +24,7 @@ using namespace std;
 class BrokerEventSink
 {
 public:
+    virtual ~BrokerEventSink() {}
     virtual void onBrokerStdout(const char* msg) {}
     virtual void onBrokerModuleFailed(void) {}
 };

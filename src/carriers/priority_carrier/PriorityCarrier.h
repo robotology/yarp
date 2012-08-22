@@ -46,6 +46,7 @@ namespace yarp {
  */
 class yarp::os::impl::PriorityGroup : public PeerRecord {
 public:
+    virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
                                     PriorityCarrier *source);
 };

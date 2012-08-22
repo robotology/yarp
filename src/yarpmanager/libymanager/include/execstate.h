@@ -26,6 +26,7 @@ class Executable;
 class ITransition
 {
 public:
+    virtual ~ITransition() {}
     virtual void kill(void) = 0;
     virtual void moduleFailed(void) = 0;
     virtual void refresh(void) {}

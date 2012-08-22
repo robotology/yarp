@@ -1,3 +1,9 @@
+2012-08-22  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/carriers/priority_carrier/PriorityCarrier.h
+	  src/yarpmanager/libymanager/include/broker.h
+	  src/yarpmanager/libymanager/include/execstate.h: Add virtual
+	  destructors to shut up warnings on Debian 4
+
 2012-08-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/harness/ValueTest.cpp: fix checkReadWrite
