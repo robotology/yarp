@@ -15,7 +15,6 @@
 #endif
 
 #include <string.h>
-#include <signal.h>
 
 #include <yarp/os/impl/RunCheckpoints.h>
 
