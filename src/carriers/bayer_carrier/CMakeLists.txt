@@ -20,7 +20,7 @@ if (NOT SKIP_bayer_carrier)
   endif ()
 
   option(USE_LIBDC1394 "Link DC1394 externally" ${DC1394_FOUND})
-  
+
   if (USE_LIBDC1394)
     add_definitions(-DUSE_LIBDC1394)
     set(DC1394_SRC)

@@ -32,7 +32,7 @@ BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(laserHokuyo)
   add_subdirectory(kinect)
 
-  # We can include remote directories as well - we specify a 
+  # We can include remote directories as well - we specify a
   # local directory for producing binaries so there is no interference
   # with other possible builds.
   # Actually, we don't do this anymore, but if we did, here's an
@@ -52,16 +52,16 @@ BEGIN_PLUGIN_LIBRARY(yarpmod)
         if (NOT ${EXTDIR}_DIR)
           set(${EXTDIR}_DIR ${${EXTDIR}_PATH})
         endif (NOT ${EXTDIR}_DIR)
-	if (NOT ${EXTDIR}_DIR)
-	  message(FATAL_ERROR "Need ${EXTDIR}_DIR in ${EXTFILE}")
-	endif (NOT ${EXTDIR}_DIR)
+        if (NOT ${EXTDIR}_DIR)
+            message(FATAL_ERROR "Need ${EXTDIR}_DIR in ${EXTFILE}")
+        endif (NOT ${EXTDIR}_DIR)
         # make sure path is usable - could have environment variable parts
         file(TO_CMAKE_PATH ${${EXTDIR}_DIR} safe_path)
-	if (NOT EXISTS "${safe_path}/CMakeLists.txt")
-	  message(FATAL_ERROR "${EXTDIR}_DIR=${${EXTDIR}_DIR} from ${EXTFILE} does not contain a CMakeLists.txt")
-	endif (NOT EXISTS "${safe_path}/CMakeLists.txt")
+        if (NOT EXISTS "${safe_path}/CMakeLists.txt")
+            message(FATAL_ERROR "${EXTDIR}_DIR=${${EXTDIR}_DIR} from ${EXTFILE} does not contain a CMakeLists.txt")
+        endif (NOT EXISTS "${safe_path}/CMakeLists.txt")
         add_subdirectory(${safe_path}
-                       ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
+                         ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
       endforeach(EXTDIR ${EXTERNAL_MODULES})
     endif (EXISTS ${EXTFILE})
   endforeach(EXTFILE)
