@@ -33,7 +33,7 @@ bool Protocol::defaultSendIndex() {
     YARP_ASSERT(writer!=NULL);
     writeYarpInt(10);
     int len = (int)writer->length();
-    char lens[] = { len, 1, 
+    char lens[] = { (char)len, 1,
                     -1, -1, -1, -1,
                     -1, -1, -1, -1 };
     Bytes b(lens,10);
