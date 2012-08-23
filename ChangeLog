@@ -1,6 +1,8 @@
 2012-08-23  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* extern/CMakeLists.txt: Add conditionals for extern
 	  directories [thanks Paul Fitzpatrick]
+	* extern/gtkdatabox/CMakeLists.txt: Suppress
+	  "unused-but-set-variable" warnings for gtkdatabox.
 
 2012-08-22  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
