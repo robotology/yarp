@@ -12,12 +12,8 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/RunReadWrite.h>
 
-#ifndef YARP_HAS_ACE
-#ifndef __APPLE__
-#include <wait.h>
-#else
+#if !defined(WIN32)
 #include <sys/wait.h>
-#endif
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
