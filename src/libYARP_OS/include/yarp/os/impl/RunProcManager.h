@@ -13,20 +13,18 @@
 #    define WIN32_LEAN_AND_MEAN
 #  endif
 #  include <windows.h>
+#else
+#  include <sys/types.h>
+#  include <sys/wait.h>
+#  include <errno.h>
+#  include <stdlib.h>
+#  include <fcntl.h>
 #endif
 
 #include <stdio.h>
 #include <yarp/os/Run.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
-
-#ifndef YARP_HAS_ACE
-#  ifndef __APPLE__
-#    include <wait.h>
-#  else
-#    include <sys/wait.h>
-#  endif
-#endif
 
 #if defined(WIN32)
     typedef DWORD PID;
