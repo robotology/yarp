@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -10,46 +10,46 @@
 
 #include "node.h"
 
-//using namespace ymm; 
+//using namespace ymm;
 
 /**
- * class Node   
- */ 
- 
+ * class Node
+ */
+
 Node::Node(const Node &node)
 {
     bVisited = node.bVisited;
-    bSatisfied = node.bSatisfied; 
-    type = node.type;   
+    bSatisfied = node.bSatisfied;
+    type = node.type;
     label = node.label;
-    sucessors = node.sucessors; 
-} 
+    sucessors = node.sucessors;
+}
 
-bool Node::addSuc(Node* node, float weight, bool _virtual) 
+bool Node::addSuc(Node* node, float weight, bool _virtual)
 {
     __CHECK_NULLPTR(node);
 
     if(!hasSuc(node))
     {
-        Link ln(node, weight, _virtual); 
+        Link ln(node, weight, _virtual);
         sucessors.push_back(ln);
     }
-    return true; 
+    return true;
 }
 
 
-bool Node::removeSuc(Node* node) 
+bool Node::removeSuc(Node* node)
 {
     __CHECK_NULLPTR(node);
 
     LinkIterator it = findSuc(node);
-    if(it != sucessors.end()) 
+    if(it != sucessors.end())
         sucessors.erase(it);
     return true;
-} 
+}
 
 
-void Node::removeAllSuc(void) 
+void Node::removeAllSuc(void)
 {
     sucessors.clear();
 }
@@ -59,20 +59,20 @@ void Node::removeAllSuc(void)
 bool Node::hasSuc(Node* node)
 {
     LinkIterator it = findSuc(node);
-    if(it == sucessors.end()) 
+    if(it == sucessors.end())
         return false;
-    return true;    
+    return true;
 }
 
 
 
-LinkIterator Node::findSuc(Node* node) 
+LinkIterator Node::findSuc(Node* node)
 {
     LinkIterator itr;
-    for(itr=sucessors.begin(); itr<sucessors.end(); itr++) 
+    for(itr=sucessors.begin(); itr<sucessors.end(); itr++)
         if ((*itr).to() == node)
-            return itr;         
-    return sucessors.end(); 
+            return itr;
+    return sucessors.end();
 }
 
 

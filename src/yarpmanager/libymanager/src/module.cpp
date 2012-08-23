@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -52,10 +52,10 @@ void Module::swap(const Module &mod)
     strWorkDir = mod.strWorkDir;
     strStdio = mod.strStdio;
     strBroker = mod.strBroker;
-    strPrefix = mod.strPrefix; 
-    // deep copy    
+    strPrefix = mod.strPrefix;
+    // deep copy
     for(int i=0; i<mod.resourceCount(); i++)
-        addResource(mod.getResourceAt(i));   
+        addResource(mod.getResourceAt(i));
 }
 
 
@@ -65,13 +65,13 @@ Module::~Module() { }
 Node* Module::clone(void)
 {
     Module* mod = new Module(*this);
-    return mod; 
+    return mod;
 }
 
 
 bool Module::addArgument(Argument &argument)
 {
-    arguments.push_back(argument);  
+    arguments.push_back(argument);
     return true;
 }
 
@@ -79,7 +79,7 @@ bool Module::addArgument(Argument &argument)
 bool Module::removeArgument(Argument& argument)
 {
     ArgumentIterator itr = findArgument(argument);
-    if(itr == arguments.end()) 
+    if(itr == arguments.end())
         return true;
     arguments.erase(itr);
     return true;
@@ -89,7 +89,7 @@ bool Module::removeArgument(Argument& argument)
 bool Module::addOutput(OutputData& output)
 {
     //__CHECK_NULLPTR(output);
-    outputs.push_back(output);  
+    outputs.push_back(output);
     return true;
 }
 
@@ -97,9 +97,9 @@ bool Module::addOutput(OutputData& output)
 bool Module::removeOutput(OutputData& output)
 {
     //__CHECK_NULLPTR(output);
-    
+
     OutputIterator itr = findOutput(output);
-    if(itr == outputs.end()) 
+    if(itr == outputs.end())
         return true;
     outputs.erase(itr);
     return true;
@@ -109,7 +109,7 @@ bool Module::removeOutput(OutputData& output)
 bool Module::addInput(InputData& input)
 {
     //__CHECK_NULLPTR(input);
-    inputs.push_back(input);    
+    inputs.push_back(input);
     return true;
 }
 
@@ -117,9 +117,9 @@ bool Module::addInput(InputData& input)
 bool Module::removeInput(InputData& input)
 {
     //__CHECK_NULLPTR(input);
-    
+
     InputIterator itr = findInput(input);
-    if(itr == inputs.end()) 
+    if(itr == inputs.end())
         return true;
     inputs.erase(itr);
     return true;
@@ -130,7 +130,7 @@ bool Module::addResource(GenericResource& res)
 {
     GenericResource* newres = (GenericResource*) res.clone();
     newres->setOwner(this);
-    resources.push_back(newres);    
+    resources.push_back(newres);
     return true;
 }
 
@@ -138,7 +138,7 @@ bool Module::addResource(GenericResource& res)
 bool Module::removeResource(GenericResource& res)
 {
     ResourcePIterator itr = findResource(res);
-    if(itr == resources.end()) 
+    if(itr == resources.end())
         return true;
     resources.erase(itr);
     delete (*itr);
@@ -146,41 +146,41 @@ bool Module::removeResource(GenericResource& res)
 }
 
 
-ArgumentIterator Module::findArgument(Argument& argument) 
+ArgumentIterator Module::findArgument(Argument& argument)
 {
     ArgumentIterator itr;
-    for(itr=arguments.begin(); itr<arguments.end(); itr++) 
+    for(itr=arguments.begin(); itr<arguments.end(); itr++)
         if ((*itr) == argument)
             return itr;
     return arguments.end();
 }
 
 
-InputIterator Module::findInput(InputData& input) 
+InputIterator Module::findInput(InputData& input)
 {
     InputIterator itr;
-    for(itr=inputs.begin(); itr<inputs.end(); itr++) 
+    for(itr=inputs.begin(); itr<inputs.end(); itr++)
         if ((*itr) == input)
-            return itr;         
+            return itr;
     return inputs.end();
 }
 
 
-OutputIterator Module::findOutput(OutputData& output) 
+OutputIterator Module::findOutput(OutputData& output)
 {
     OutputIterator itr;
-    for(itr=outputs.begin(); itr<outputs.end(); itr++) 
+    for(itr=outputs.begin(); itr<outputs.end(); itr++)
         if ((*itr) == output)
-            return itr;         
+            return itr;
     return outputs.end();
 }
 
-ResourcePIterator Module::findResource(GenericResource& res) 
+ResourcePIterator Module::findResource(GenericResource& res)
 {
     ResourcePIterator itr;
-    for(itr=resources.begin(); itr<resources.end(); itr++) 
+    for(itr=resources.begin(); itr<resources.end(); itr++)
         if (*(*itr) == res)
-            return itr;         
+            return itr;
     return resources.end();
 }
 
@@ -203,7 +203,7 @@ void Module::clear(void)
     strBroker.clear();
     strPrefix.clear();
 
-    for(ResourcePIterator itr = resources.begin(); 
+    for(ResourcePIterator itr = resources.begin();
         itr != resources.end(); itr++)
     {
         delete (*itr);
@@ -211,5 +211,3 @@ void Module::clear(void)
     }
     resources.clear();
 }
-    
-

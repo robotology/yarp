@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -28,25 +28,25 @@
  * Class Manager
  */
 
-Manager::Manager(bool withWatchDog) : MEvent() 
+Manager::Manager(bool withWatchDog) : MEvent()
 {
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
     bRestricted = false;
-    strDefBroker = BROKER_YARPRUN;  
+    strDefBroker = BROKER_YARPRUN;
     knowledge.createFrom(NULL, NULL, NULL);
     connector.init();
 }
 
-Manager::Manager(const char* szModPath, const char* szAppPath, 
+Manager::Manager(const char* szModPath, const char* szAppPath,
                  const char* szResPath, bool withWatchDog)
 {
     logger  = ErrorLogger::Instance();
     bWithWatchDog = withWatchDog;
     bAutoDependancy = false;
     bRestricted = false;
-    strDefBroker = BROKER_YARPRUN;  
+    strDefBroker = BROKER_YARPRUN;
 
     XmlModLoader modload(szModPath, NULL);
     XmlModLoader* pModLoad = &modload;
@@ -57,7 +57,7 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
     XmlAppLoader* pAppLoad = &appload;
     if(!appload.init())
         pAppLoad = NULL;
-    
+
     XmlResLoader resload(szResPath, NULL);
     XmlResLoader* pResLoad = &resload;
     if(!resload.init())
@@ -70,9 +70,9 @@ Manager::Manager(const char* szModPath, const char* szAppPath,
 
 Manager::~Manager()
 {
-    // untopic persistent connections 
+    // untopic persistent connections
     rmconnect();
-    clearExecutables(); 
+    clearExecutables();
 }
 
 
@@ -80,7 +80,7 @@ bool Manager::addApplication(const char* szFileName)
 {
     XmlAppLoader appload(szFileName);
     if(!appload.init())
-        return false; 
+        return false;
     Application* application = appload.getNextApplication();
     if(!application)
         return false;
@@ -92,7 +92,7 @@ bool Manager::addApplications(const char* szPath)
 {
     XmlAppLoader appload(szPath, NULL);
     if(!appload.init())
-        return false; 
+        return false;
     Application* application;
     while((application = appload.getNextApplication()))
         knowledge.addApplication(application);
@@ -104,7 +104,7 @@ bool Manager::addModule(const char* szFileName)
 {
     XmlModLoader modload(szFileName);
     if(!modload.init())
-        return false; 
+        return false;
     Module* module = modload.getNextModule();
     if(!module)
         return false;
@@ -116,7 +116,7 @@ bool Manager::addModules(const char* szPath)
 {
     XmlModLoader modload(szPath, NULL);
     if(!modload.init())
-        return false; 
+        return false;
     Module* module;
     while((module = modload.getNextModule()))
         knowledge.addModule(module);
@@ -128,7 +128,7 @@ bool Manager::addResource(const char* szFileName)
 {
     XmlResLoader resload(szFileName);
     if(!resload.init())
-        return false; 
+        return false;
     GenericResource* resource;
     bool bloaded = false;
     while((resource = resload.getNextResource()))
@@ -141,7 +141,7 @@ bool Manager::addResources(const char* szPath)
 {
     XmlResLoader resload(szPath, NULL);
     if(!resload.init())
-        return false; 
+        return false;
     GenericResource* resource;
     while((resource = resload.getNextResource()))
         knowledge.addResource(resource);
@@ -152,7 +152,7 @@ bool Manager::addResources(const char* szPath)
 bool Manager::removeApplication(const char* szAppName)
 {
     //Note: use it with care. it is better we first check that no application
-    //is loaded. 
+    //is loaded.
     if(!runnables.empty())
     {
         logger->addError("Application cannot be removed if there is a loaded application");
@@ -170,7 +170,7 @@ bool Manager::removeApplication(const char* szAppName)
 bool Manager::removeModule(const char* szModName)
 {
     //Note: use it with care. it is better we first check that no application
-    //is loaded. 
+    //is loaded.
     if(!runnables.empty())
     {
         logger->addError("Module cannot be removed if there is a loaded application");
@@ -187,7 +187,7 @@ bool Manager::removeModule(const char* szModName)
 bool Manager::removeResource(const char* szResName)
 {
     //Note: use it with care. it is better we first check that no application
-    //is loaded. 
+    //is loaded.
     if(!runnables.empty())
     {
         logger->addError("Resource cannot be removed if there is a loaded application");
@@ -206,14 +206,14 @@ bool Manager::removeResource(const char* szResName)
 bool Manager::loadApplication(const char* szAppName)
 {
     __CHECK_NULLPTR(szAppName);
-    
+
     if(!allStopped())
     {
         logger->addError("Please stop current running application first.");
         return false;
     }
 
-    strAppName = szAppName;    
+    strAppName = szAppName;
 
     // set all resources as unavailable
     ResourcePContainer allresources = knowledge.getResources();
@@ -224,7 +224,7 @@ bool Manager::loadApplication(const char* szAppName)
             comp->setAvailability(false);
     }
 
-    return prepare(true);     
+    return prepare(true);
 }
 
 bool Manager::loadBalance(void)
@@ -246,13 +246,13 @@ bool Manager::prepare(bool silent)
     connections = knowledge.getSelConnection();
     modules = knowledge.getSelModules();
     resources = knowledge.getSelResources();
-    
+
     /**
      *  we need to initialize a module with a local broker if the
-     *  host property is set to "localhost". 
+     *  host property is set to "localhost".
      *
      * TODO: Resources should also be added to the relevant executable. up to now
-     *  all of them will be handled by manager. 
+     *  all of them will be handled by manager.
      */
 
     ModulePIterator itr;
@@ -260,7 +260,7 @@ bool Manager::prepare(bool silent)
     for(itr=modules.begin(); itr!=modules.end(); itr++)
     {
 
-        string strCurrentBroker;         
+        string strCurrentBroker;
         if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
             strCurrentBroker = BROKER_YARPRUN;
         else
@@ -295,13 +295,13 @@ bool Manager::prepare(bool silent)
         exe->setWorkDir((*itr)->getWorkDir());
         if(strCurrentBroker == string(BROKER_YARPRUN))
         {
-            string env = string("YARP_PORT_PREFIX=") + 
+            string env = string("YARP_PORT_PREFIX=") +
                             string((*itr)->getPrefix());
             exe->setEnv(env.c_str());
         }
-        
+
         /**
-         * Adding connections to their owners 
+         * Adding connections to their owners
          */
         CnnIterator cnn;
         for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
@@ -309,7 +309,7 @@ bool Manager::prepare(bool silent)
                 exe->addConnection(*cnn);
 
         /**
-         * Adding resources to their owners 
+         * Adding resources to their owners
          */
         for(unsigned int i=0; i<resources.size(); i++)
         {
@@ -333,13 +333,13 @@ bool Manager::updateExecutable(unsigned int id, const char* szparam,
         logger->addError("Application is not loaded.");
         return false;
     }
-    
+
     if(id>=runnables.size())
     {
         logger->addError("Module id is out of range.");
         return false;
     }
-        
+
     Executable* exe = runnables[id];
     exe->setParam(szparam);
     exe->setHost(szhost);
@@ -367,11 +367,11 @@ bool Manager::updateConnection(unsigned int id, const char* from,
         logger->addWarning(msg);
         return false;
     }
-        
+
     connections[id].setFrom(from);
     connections[id].setTo(to);
     connections[id].setCarrier(carrier);
-        
+
     return true;
 }
 
@@ -396,7 +396,7 @@ bool Manager::exist(unsigned int id)
             //broker.init();
             string strPort = res->getName();
             if(strPort[0] != '/')
-                strPort = string("/") + strPort;     
+                strPort = string("/") + strPort;
             res->setAvailability(connector.exists(strPort.c_str()));
         }
     }
@@ -409,7 +409,7 @@ bool Manager::updateResources(void)
     YarpBroker broker;
     broker.init();
 
-    // finding all available yarp ports 
+    // finding all available yarp ports
     vector<string> ports;
     broker.getAllPorts(ports);
 
@@ -419,10 +419,10 @@ bool Manager::updateResources(void)
         Computer* comp = dynamic_cast<Computer*>(allresources[i]);
         if(updateResource(comp))
         {
-             //set all as unavailable  
+            //set all as unavailable
             for(int i=0; i<comp->peripheralCount(); i++)
             {
-                ResYarpPort* res = 
+                ResYarpPort* res =
                     dynamic_cast<ResYarpPort*>(&comp->getPeripheralAt(i));
                 if(res)
                     res->setAvailability(false);
@@ -434,11 +434,11 @@ bool Manager::updateResources(void)
                 ResYarpPort resport;
                 resport.setName(ports[i].c_str());
                 resport.setPort(ports[i].c_str());
-                                         
+
                 bool bfound = false;
                 for(int i=0; i<comp->peripheralCount(); i++)
                 {
-                    ResYarpPort* res = 
+                    ResYarpPort* res =
                         dynamic_cast<ResYarpPort*>(&comp->getPeripheralAt(i));
                     if(res && (string(res->getName()) == string(resport.getName())))
                     {
@@ -450,8 +450,8 @@ bool Manager::updateResources(void)
                 if(!bfound)
                     comp->addPeripheral(resport);
             }
-        } 
-    } // end of for 
+        }
+    } // end of for
 
     return true;
 }
@@ -483,13 +483,13 @@ bool Manager::updateResource(GenericResource* resource)
         strServer = string("/") + strServer;
     if(!broker.getSystemInfo(strServer.c_str(), info))
     {
-        logger->addError(broker.error());        
+        logger->addError(broker.error());
         comp->setAvailability(false);
     }
     else
     {
-        comp->setAvailability(true);        
-        
+        comp->setAvailability(true);
+
         comp->getMemory().setTotalSpace(info.memory.totalSpace*1024);
         comp->getMemory().setFreeSpace(info.memory.freeSpace*1024);
 
@@ -499,9 +499,9 @@ bool Manager::updateResource(GenericResource* resource)
         comp->getNetwork().setIP4(info.network.ip4);
         comp->getNetwork().setIP6(info.network.ip6);
         comp->getNetwork().setMAC(info.network.mac);
-        
-         
-        comp->getProcessor().setArchitecture(info.processor.architecture);                
+
+
+        comp->getProcessor().setArchitecture(info.processor.architecture);
         comp->getProcessor().setCores(info.processor.cores);
         comp->getProcessor().setSiblings(info.processor.siblings);
         comp->getProcessor().setFrequency(info.processor.frequency);
@@ -512,7 +512,7 @@ bool Manager::updateResource(GenericResource* resource)
         load.loadAverage5 = info.load.cpuLoad5;
         load.loadAverage15 = info.load.cpuLoad15;
         comp->getProcessor().setCPULoad(load);
-        
+
         comp->getPlatform().setName(info.platform.name);
         comp->getPlatform().setDistribution(info.platform.distribution);
         comp->getPlatform().setRelease(info.platform.release);
@@ -529,7 +529,7 @@ bool Manager::existPortFrom(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
     return connector.exists(connections[id].from());
 }
@@ -543,7 +543,7 @@ bool Manager::existPortTo(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
     return connector.exists(connections[id].to());
 }
@@ -554,10 +554,10 @@ bool Manager::checkDependency(void)
     /**
      * checking for port resources availability
      * TODO:later it should change to use proper broker for resource cheking.
-     *      up to now, we use only yraprun for checking port resources      
+     *      up to now, we use only yraprun for checking port resources
      */
     bool ret = true;
-    ResourcePIterator itrRes; 
+    ResourcePIterator itrRes;
     for(itrRes=resources.begin(); itrRes!=resources.end(); itrRes++)
     {
         if(!(*itrRes)->getAvailability())
@@ -574,14 +574,14 @@ bool Manager::checkDependency(void)
 
 
 
-bool Manager::run(unsigned int id, bool async) 
+bool Manager::run(unsigned int id, bool async)
 {
     if(runnables.empty())
     {
         logger->addError("Application is not loaded.");
         return false;
     }
-    
+
     if(id>=runnables.size())
     {
         logger->addError("Module id is out of range.");
@@ -589,11 +589,11 @@ bool Manager::run(unsigned int id, bool async)
     }
 
     runnables[id]->disableAutoConnect();
-    runnables[id]->start(); 
+    runnables[id]->start();
 
     if(async)
         return true;
-    
+
     // waiting for running
     double base = yarp::os::Time::now();
     while(!timeout(base, RUN_TIMEOUT))
@@ -640,7 +640,7 @@ bool Manager::run(void)
     // waiting for running
     double base = yarp::os::Time::now();
     while(!timeout(base, RUN_TIMEOUT))
-        if(allRunning()) break; 
+        if(allRunning()) break;
 
     if(!allRunning())
     {
@@ -655,7 +655,7 @@ bool Manager::run(void)
                 msg<<", paramete: "<<(*itr)->getParam()<<")";
                 logger->addError(msg);
             }
-        
+
         if(bRestricted)
         {
             kill();
@@ -682,22 +682,22 @@ bool Manager::stop(unsigned int id, bool async)
         logger->addError("Application is not loaded.");
         return false;
     }
-    
+
     if(id>=runnables.size())
     {
         logger->addError("Module id is out of range.");
         return false;
     }
 
-    runnables[id]->stop(); 
+    runnables[id]->stop();
 
     if(async)
         return true;
-    
+
     // waiting for stop
     double base = yarp::os::Time::now();
     while(!timeout(base, STOP_TIMEOUT))
-        if(!running(id)) return true; 
+        if(!running(id)) return true;
 
     ostringstream msg;
     msg<<"Failed to stop "<<runnables[id]->getCommand();
@@ -720,13 +720,13 @@ bool Manager::stop(void)
 
     double base = yarp::os::Time::now();
     while(!timeout(base, STOP_TIMEOUT))
-        if(allStopped()) break; 
+        if(allStopped()) break;
 
     if(!allStopped())
     {
         ExecutablePIterator itr;
         for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-            if( ((*itr)->state() != SUSPENDED) && 
+            if( ((*itr)->state() != SUSPENDED) &&
                 ((*itr)->state() != DEAD))
             {
                 ostringstream msg;
@@ -738,7 +738,7 @@ bool Manager::stop(void)
             }
         return false;
     }
-    
+
     return true;
 }
 
@@ -749,21 +749,21 @@ bool Manager::kill(unsigned int id, bool async)
         logger->addError("Application is not loaded.");
         return false;
     }
-    
+
     if(id>=runnables.size())
     {
         logger->addError("Module id is out of range.");
         return false;
     }
 
-    runnables[id]->kill(); 
-    
+    runnables[id]->kill();
+
     if(async)
         return true;
-            
+
     double base = yarp::os::Time::now();
     while(!timeout(base, KILL_TIMEOUT))
-        if(!running(id)) return true; 
+        if(!running(id)) return true;
 
     ostringstream msg;
     msg<<"Failed to kill "<<runnables[id]->getCommand();
@@ -786,13 +786,13 @@ bool Manager::kill(void)
 
     double base = yarp::os::Time::now();
     while(!timeout(base, KILL_TIMEOUT))
-        if(allStopped()) break; 
+        if(allStopped()) break;
 
     if(!allStopped())
     {
         ExecutablePIterator itr;
         for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-            if( ((*itr)->state() != SUSPENDED) && 
+            if( ((*itr)->state() != SUSPENDED) &&
                 ((*itr)->state() != DEAD))
             {
                 ostringstream msg;
@@ -829,10 +829,10 @@ bool Manager::connect(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
 
-    if( !connector.connect(connections[id].from(), 
+    if( !connector.connect(connections[id].from(),
                             connections[id].to(),
                             connections[id].carrier(),
                             connections[id].isPersistent()) )
@@ -840,14 +840,14 @@ bool Manager::connect(unsigned int id)
         logger->addError(connector.error());
         //cout<<connector.error()<<endl;
         return false;
-    }   
-    
+    }
+
     return true;
 }
 
 bool Manager::connect(void)
 {
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
@@ -858,7 +858,7 @@ bool Manager::connect(void)
                 //cout<<connector.error()<<endl;
                 if(bRestricted)
                     return false;
-            }   
+            }
     return true;
 }
 
@@ -870,23 +870,23 @@ bool Manager::disconnect(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
 
-    if( !connector.disconnect(connections[id].from(), 
+    if( !connector.disconnect(connections[id].from(),
                             connections[id].to()) )
     {
         logger->addError(connector.error());
         //cout<<connector.error()<<endl;
         return false;
-    }   
-    
+    }
+
     return true;
 }
 
 bool Manager::disconnect(void)
 {
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
@@ -895,7 +895,7 @@ bool Manager::disconnect(void)
                 logger->addError(connector.error());
                 //cout<<connector.error()<<endl;
                 return false;
-            }   
+            }
     return true;
 }
 
@@ -908,13 +908,13 @@ bool Manager::rmconnect(unsigned int id)
         return false;
     }
 
-    if(!connector.rmconnect(connections[id].from(), 
+    if(!connector.rmconnect(connections[id].from(),
                             connections[id].to()) )
     {
         logger->addError(connector.error());
         return false;
-    }   
-    
+    }
+
     return true;
 }
 
@@ -927,7 +927,7 @@ bool Manager::rmconnect(void)
             {
                 logger->addError(connector.error());
                 return false;
-            }   
+            }
     return true;
 }
 
@@ -940,16 +940,16 @@ bool Manager::connected(unsigned int id)
         return false;
     }
 
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
-    return connector.connected(connections[id].from(), 
+    return connector.connected(connections[id].from(),
                             connections[id].to());
 }
 
 
 bool Manager::connected(void)
 {
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
     CnnIterator cnn;
     bool bConnected = true;
@@ -966,7 +966,7 @@ bool Manager::checkPortsAvailable(Broker* broker)
     {
         if(!(*itr).owner() )
         {
-            if(!broker->exists((*itr).to()) || 
+            if(!broker->exists((*itr).to()) ||
                 !broker->exists((*itr).from()))
                     return false;
         }
@@ -977,12 +977,12 @@ bool Manager::checkPortsAvailable(Broker* broker)
 
 bool Manager::connectExtraPorts(void)
 {
-    //YarpBroker connector; 
+    //YarpBroker connector;
     //connector.init();
-    
+
     double base = yarp::os::Time::now();
     while(!timeout(base, 5.0))
-        if(checkPortsAvailable(&connector)) 
+        if(checkPortsAvailable(&connector))
             break;
 
     CnnIterator cnn;
@@ -995,7 +995,7 @@ bool Manager::connectExtraPorts(void)
                 logger->addError(connector.error());
                 //cout<<connector.error()<<endl;
                 return false;
-            }   
+            }
         }
     return true;
 }
@@ -1008,7 +1008,7 @@ bool Manager::running(unsigned int id)
         return false;
     }
 
-    RSTATE st = runnables[id]->state(); 
+    RSTATE st = runnables[id]->state();
     if((st == RUNNING) || (st == CONNECTING) || (st == DYING))
             return true;
     return false;
@@ -1037,7 +1037,7 @@ bool Manager::suspended(unsigned int id)
         logger->addError("Module id is out of range.");
         return false;
     }
-    RSTATE st = runnables[id]->state(); 
+    RSTATE st = runnables[id]->state();
     if((st == SUSPENDED) || (st == DEAD))
             return true;
     return false;
@@ -1047,7 +1047,7 @@ bool Manager::suspended(unsigned int id)
 bool Manager::allStopped(void)
 {
     if(!runnables.size())
-        return true; 
+        return true;
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
     {
@@ -1087,7 +1087,7 @@ bool Manager::detachStdout(unsigned int id)
         logger->addError("Module id is out of range.");
         return false;
     }
-    
+
     runnables[id]->getBroker()->detachStdout();
     return true;
 }
@@ -1097,7 +1097,7 @@ bool Manager::timeout(double base, double timeout)
     yarp::os::Time::delay(1.0);
     if((yarp::os::Time::now()-base) > timeout)
         return true;
-    return false; 
+    return false;
 }
 
 
@@ -1123,13 +1123,13 @@ bool Manager::loadModule(const char* szModule, const char* szHost)
         logger->addError("Error initializing SingleAppLoader.");
         return false;
     }
-    
+
     if(!createKnowledgeBase(appLoader))
     {
         logger->addError("Cannot create knowledge base");
         return false;
     }
-    
+
     return prepare();
 
 }

@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -11,7 +11,7 @@
 #include "executable.h"
 
 
-Executable::Executable(Broker* _broker, MEvent* _event, 
+Executable::Executable(Broker* _broker, MEvent* _event,
                     bool _bWatchDog)
 {
     bAutoConnect = true;
@@ -80,7 +80,7 @@ bool Executable::start(void)
       event->onExecutableDied(this);
       return false;
     }
-        
+
     if(!startWrapper->isRunning())
     {
         startWrapper->start();
@@ -101,7 +101,7 @@ void Executable::startImplement()
 
 
 void Executable::stop(void)
-{   
+{
     if(!broker->initialized())
         initialize();
     if(!stopWrapper->isRunning())
@@ -126,7 +126,7 @@ void Executable::kill(void)
     if(!broker->initialized())
         initialize();
 
-    // Notice that kill can be called from multiple threads 
+    // Notice that kill can be called from multiple threads
     if(watchdogWrapper && watchdogWrapper->isRunning())
         watchdogWrapper->stop();
     killWrapper->start();
@@ -163,7 +163,7 @@ RSTATE Executable::state(void)
         return DEAD;
     if(compareString(strState, "DYING"))
         return DYING;
-    
+
     std::cerr<<"Unknown state!"<<endl;
     return STUNKNOWN;
 }
@@ -176,15 +176,15 @@ void Executable::onBrokerStdout(const char* msg)
 
 void Executable::watchdogImplement(void)
 {
-    
+
     if(!broker->running())
             execMachine->moduleFailed();
-    
+
     if(bAutoConnect)
     {
         CnnIterator itr;
         for(itr=connections.begin(); itr!=connections.end(); itr++)
-            if( !broker->connected((*itr).from(), (*itr).to()) ) 
+            if( !broker->connected((*itr).from(), (*itr).to()) )
                 execMachine->connectionFailed(&(*itr));
     }
 }
