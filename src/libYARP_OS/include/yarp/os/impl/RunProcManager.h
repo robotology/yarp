@@ -14,7 +14,6 @@
 #  endif
 #  include <windows.h>
 #else
-#  include <signal.h>
 #  include <sys/types.h>
 #  include <sys/wait.h>
 #  include <errno.h>
@@ -23,6 +22,7 @@
 #endif
 
 #include <stdio.h>
+#include <signal.h>
 #include <yarp/os/Run.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
