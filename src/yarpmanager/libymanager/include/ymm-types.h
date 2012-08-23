@@ -55,14 +55,14 @@ typedef enum __Carrier {
      #define __ASSERT( _cond ) assert(_cond)
      #define __CHECK_NULLPTR(_ptr) \
              assert(_ptr); \
-             if( !_ptr ) return false;
+             if( !_ptr ) return 0;
 
      #define __DEBUG_MSG(msg) std::cout<<"YMM: "<<msg<<endl;
 
 #else
      #define __ASSERT( _cond )
      #define __CHECK_NULLPTR(_ptr) \
-             if( !_ptr ) return false;
+             if( !_ptr ) return 0;
 
      #define __DEBUG_MSG(msg)
 
