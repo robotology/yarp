@@ -16,7 +16,7 @@ if(CREATE_YARPSCOPE)
     endif(YARP_USE_GTK2)
 
     include_directories(${GtkDataboxMM_INCLUDE_DIRS})
-    link_directories(${TKDATABOXMM_LIBRARY_DIRS})
+    link_directories(${GTKDATABOXMM_LIBRARY_DIRS})
 
     if(LINUX)
         add_definitions("--ansi --pedantic")
