@@ -9,9 +9,12 @@
 #ifndef _YARP2_RUN_
 #define _YARP2_RUN_
 
-#include <yarp/os/impl/String.h>
-#include <yarp/os/all.h>
 #include <string.h>
+#include <yarp/os/api.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Network.h>
 
 namespace yarp {
   namespace os {
@@ -160,10 +163,7 @@ public:
 	static YarpRunInfoVector mProcessVector;
     static YarpRunInfoVector mStdioVector;
 
-#if defined(WIN32)
-    static HANDLE  hZombieHunter;
-    static HANDLE* aHandlesVector;
-#else
+#if !defined(WIN32)
     static void CleanZombies();   
 #endif
 

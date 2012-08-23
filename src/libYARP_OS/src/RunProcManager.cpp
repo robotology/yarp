@@ -10,6 +10,11 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/impl/RunProcManager.h>
 
+#if defined(WIN32)
+#include <process.h>
+#include <signal.h>
+#endif
+
 #ifndef YARP_HAS_ACE
 #ifndef __APPLE__
 #include <wait.h>
@@ -23,6 +28,11 @@
 #endif
 
 #include <yarp/os/impl/RunCheckpoints.h>
+
+#if defined(WIN32)
+    extern HANDLE  hZombieHunter;
+    extern HANDLE* aHandlesVector;
+#endif
 
 #if defined(WIN32)
     #define SIGKILL 9
@@ -56,29 +66,29 @@
 
 	    while (true)
 	    {
-	        if (yarp::os::Run::aHandlesVector)
+	        if (aHandlesVector)
 	        {
-		        delete [] yarp::os::Run::aHandlesVector;
-		        yarp::os::Run::aHandlesVector=0;
+		        delete [] aHandlesVector;
+		        aHandlesVector=NULL;
 	        }
 	        nCount=0;
 
-	        yarp::os::Run::aHandlesVector=new HANDLE[yarp::os::Run::mProcessVector.Size()+yarp::os::Run::mStdioVector.Size()];
+	        aHandlesVector=new HANDLE[yarp::os::Run::mProcessVector.Size()+yarp::os::Run::mStdioVector.Size()];
 
-	        yarp::os::Run::mProcessVector.GetHandles(yarp::os::Run::aHandlesVector,nCount);
-	        yarp::os::Run::mStdioVector.GetHandles(yarp::os::Run::aHandlesVector,nCount);
+	        yarp::os::Run::mProcessVector.GetHandles(aHandlesVector,nCount);
+	        yarp::os::Run::mStdioVector.GetHandles(aHandlesVector,nCount);
 
 		    if (nCount)
 		    {
                 CHECKPOINT()
                 
-			    WaitForMultipleObjects(nCount,yarp::os::Run::aHandlesVector,FALSE,INFINITE);
+			    WaitForMultipleObjects(nCount,aHandlesVector,FALSE,INFINITE);
 
                 CHECKPOINT()
 		    }
 		    else
 		    {
-			    yarp::os::Run::hZombieHunter=NULL;
+			    hZombieHunter=NULL;
                 CHECK_EXIT()
 			    return 0;
 		    }
@@ -226,7 +236,7 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
 
 #if defined(WIN32)
     CHECKPOINT()
-    if (yarp::os::Run::hZombieHunter) TerminateThread(yarp::os::Run::hZombieHunter,0);
+    if (hZombieHunter) TerminateThread(hZombieHunter,0);
     CHECKPOINT()
 #endif
 
@@ -234,7 +244,7 @@ bool YarpRunInfoVector::Add(YarpRunProcInfo *process)
 
 #if defined(WIN32)
     CHECKPOINT()
-    yarp::os::Run::hZombieHunter=CreateThread(0,0,ZombieHunter,0,0,0);
+    hZombieHunter=CreateThread(0,0,ZombieHunter,0,0,0);
     CHECKPOINT()
 #endif
 

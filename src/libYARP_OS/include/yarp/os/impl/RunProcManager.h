@@ -8,8 +8,14 @@
 #ifndef __RUN_PROC_MANAGER_H__
 #define __RUN_PROC_MANAGER_H__
 
-#include <yarp/os/impl/String.h>
+#if defined(WIN32)
+#  if !defined(WIN32_LEAN_AND_MEAN)
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#endif
 
+#include <stdio.h>
 #include <yarp/os/Run.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>

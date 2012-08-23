@@ -10,10 +10,17 @@
 #include <string>
 #include <yarp/os/impl/RunReadWrite.h>
 #include <yarp/os/impl/RunProcManager.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Run.h>
 #include <yarp/os/impl/SystemInfo.h>
 #include <yarp/os/impl/SystemInfoSerializer.h>
+
+#include <yarp/os/Run.h>
+
+#if defined(WIN32)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#endif
 
 #ifndef YARP_HAS_ACE
 #ifndef __APPLE__
@@ -32,8 +39,8 @@
 #include <yarp/os/impl/RunCheckpoints.h>
 
 #if defined(WIN32)
-    HANDLE  yarp::os::Run::hZombieHunter=NULL;
-    HANDLE* yarp::os::Run::aHandlesVector=NULL;
+    HANDLE  hZombieHunter=NULL;
+    HANDLE* aHandlesVector=NULL;
 #endif
 
 #if defined(WIN32)
@@ -584,11 +591,11 @@ int yarp::os::Run::Server()
     CHECKPOINT()
     Run::mProcessVector.mutex.wait();
     CHECKPOINT()
-    if (yarp::os::Run::hZombieHunter) TerminateThread(yarp::os::Run::hZombieHunter,0);
+    if (hZombieHunter) TerminateThread(hZombieHunter,0);
     CHECKPOINT()
     Run::mProcessVector.mutex.post();
     CHECKPOINT()
-    if (yarp::os::Run::aHandlesVector) delete [] yarp::os::Run::aHandlesVector;
+    if (aHandlesVector) delete [] aHandlesVector;
     #endif
 
     CHECK_EXIT()
