@@ -32,6 +32,7 @@ public:
 };
 
 bool add_one() {
+  printf("\n*** add_one()\n");
   ClientPeek client_peek;
   Demo client;
   client.yarp().attachAsClient(client_peek);
@@ -49,6 +50,8 @@ bool add_one() {
 }
 
 bool test_void() {
+  printf("\n*** test_void()\n");
+
   ClientPeek client_peek;
   Demo client;
   client.yarp().attachAsClient(client_peek);
@@ -67,6 +70,8 @@ bool test_void() {
 }
 
 bool test_live() {
+  printf("\n*** test_live()\n");
+
   Network yarp;
   yarp.setLocalMode(true);
 
@@ -91,14 +96,61 @@ bool test_live() {
   client.test_1way(201);
   x = client.add_one(101);
   printf("Result %d\n", x);
-  
 
   return (x==102);
+}
+
+bool test_live_rpc() {
+  printf("\n*** test_live_rpc()\n");
+
+  Network yarp;
+  yarp.setLocalMode(true);
+
+  Demo client;
+  Server server;
+
+  Port client_port,server_port;
+  client_port.open("/client");
+  server_port.open("/server");
+  yarp.connect(client_port.getName(),server_port.getName());
+
+  int x = 0;
+  client.yarp().attachAsClient(client_port);
+  server.yarp().attachAsServer(server_port);
+
+  // Check regular RPC works, even with oneways
+
+  Bottle cmd, reply;
+  cmd.fromString("[add] [one] 5");
+  client_port.write(cmd,reply);
+  printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
+  if (reply.get(0).asInt()!=6) return false;
+
+  cmd.fromString("[test] [void] 5");
+  client_port.write(cmd,reply);
+  printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
+
+  cmd.fromString("[add] [one] 6");
+  client_port.write(cmd,reply);
+  printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
+  if (reply.get(0).asInt()!=7) return false;
+
+  cmd.fromString("[test] [1way] 5");
+  client_port.write(cmd,reply);
+  printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
+
+  cmd.fromString("[add] [one] 7");
+  client_port.write(cmd,reply);
+  printf("Cmd %s reply %s\n", cmd.toString().c_str(), reply.toString().c_str());
+  if (reply.get(0).asInt()!=8) return false;
+
+  return true;
 }
 
 int main(int argc, char *argv[]) {
   if (!add_one()) return 1;
   if (!test_void()) return 1;
   if (!test_live()) return 1;
+  if (!test_live_rpc()) return 1;
   return 0;
 }

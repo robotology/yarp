@@ -62,6 +62,10 @@ public:
         }
     }
 
+    bool isNull() const {
+        return writer.isNull();
+    }
+
     bool write(WirePortable& obj) {
         return obj.write(*this);
     }
@@ -181,6 +185,13 @@ public:
     }
 
     bool writeMapEnd() {
+        return true;
+    }
+
+    bool writeOnewayResponse() {
+        if (!writeListHeader(1)) return false;
+        writer.appendInt(BOTTLE_TAG_VOCAB);
+        writer.appendInt(VOCAB4('d','o','n','e'));
         return true;
     }
 };

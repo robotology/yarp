@@ -1,3 +1,9 @@
+2012-08-23  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/idls/thrift/src/t_yarp_generator.cc: make oneway functions
+	served using thrift compatible with "yarp rpc" 
+	[thanks Elena Ceseracciu]
+
 2012-08-23  Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/include/yarp/os/Run.h
 	* src/libYARP_OS/include/yarp/os/impl/RunProcManager.h

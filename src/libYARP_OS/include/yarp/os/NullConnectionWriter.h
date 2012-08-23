@@ -40,6 +40,7 @@ public:
     virtual bool isActive() { return true; }
     virtual bool isError() { return true; }
     virtual void requestDrop() { }
+    virtual bool isNull() const { return true; }
 };
 
 #endif

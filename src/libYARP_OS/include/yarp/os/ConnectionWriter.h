@@ -150,6 +150,13 @@ public:
      *
      */
     virtual void requestDrop() = 0;
+
+    /**
+     *
+     * @return true if writer goes nowhere.
+     *
+     */
+    virtual bool isNull() const { return false; }
 };
 
 #endif

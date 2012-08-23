@@ -1656,15 +1656,28 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 	}
       }
       f_cpp_ << ");" << endl;
+
+      indent(f_cpp_) << "yarp::os::idl::WireWriter writer(reader);" << endl;
+      indent(f_cpp_) << "if (!writer.isNull()) {" << endl;
+      indent_up();
       if (!(*fn_iter)->is_oneway()) {
-	indent(f_cpp_) << "yarp::os::idl::WireWriter writer(reader);" << endl;
 	indent(f_cpp_) << "if (!writer.writeListHeader(" 
 		       << flat_element_count(returntype)
 		       << ")) return false;" << endl;
 	if (!returntype->is_void()) {
 	  generate_serialize_field(f_cpp_, &returnfield, "");
 	}
-      } 
+      } else {
+	// we are a oneway function
+	// if someone is expecting a reply (e.g. yarp rpc), give one
+	// (regular thrift client won't be expecting a reply, and
+	// writer.isNull test will have succeeded and stopped us earlier)
+	indent(f_cpp_) << "if (!writer.writeOnewayResponse()) " 
+		       << "return false;" << endl;
+      }
+      indent_down();
+      indent(f_cpp_) << "}" << endl;
+    
       indent(f_cpp_) << "reader.accept();" << endl;
       indent(f_cpp_) << "return true;" << endl;
       indent_down();
