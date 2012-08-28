@@ -67,20 +67,51 @@ e.g. "-b 50m" for a target of 50 MBits/sec.
 \verbatim
  [On server, 10.0.0.26] iperf -s -u -i 1
  [On client, 10.0.0.27] iperf -c 10.0.0.26 -b 50m
-\endverbatim
+\endvef
 
-Example result:
+To test a gigabit network:
 
 \verbatim
- Sending 1470 byte datagrams
- UDP buffer size:   108 KByte (default)
- ------------------------------------------------------------
- [  3] local 10.0.0.25 port 32820 connected with 10.0.0.26 port 5001
- [  3]  0.0-10.0 sec  59.7 MBytes  50.0 Mbits/sec
- [  3] Sent 42555 datagrams
- [  3] Server Report:
- [  3]  0.0-10.0 sec    119 MBytes    100 Mbits/sec  0.030 ms    0/42554 (0%)
- [  3]  0.0-10.0 sec  1 datagrams received out-of-order
+ [On server, 10.0.0.26] iperf -s -u -i 1
+ [On client, 10.0.0.27] iperf -c 10.0.0.26 -b 1000m
+\endvef
+
+On a healthy gigabit network you should get a bandwidth of ~950 Mbits/sec.
+
+Example result on the client side:
+
+\verbatim
+------------------------------------------------------------
+Client connecting to 10.0.0.26, UDP port 5001
+Sending 1470 byte datagrams
+UDP buffer size:   122 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.221 port 52990 connected with 10.0.0.222 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0- 6.1 sec    700 MBytes    956 Mbits/sec
+[  3] Sent 499273 datagrams
+[  3] Server Report:
+[  3]  0.0- 6.1 sec    699 MBytes    955 Mbits/sec  0.014 ms  575/499272 (0.12%)
+[  3]  0.0- 6.1 sec  1 datagrams received out-of-order
+\endverbatim
+
+Result on the server side:
+\verbatim
+------------------------------------------------------------
+Server listening on UDP port 5001
+Receiving 1470 byte datagrams
+UDP buffer size:   122 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.26 port 5001 connected with 10.0.0.27 port 52990
+[ ID] Interval       Transfer     Bandwidth       Jitter   Lost/Total Datagrams
+[  3]  0.0- 1.0 sec    114 MBytes    954 Mbits/sec  0.012 ms   88/81245 (0.11%)
+[  3]  1.0- 2.0 sec    114 MBytes    955 Mbits/sec  0.011 ms   92/81263 (0.11%)
+[  3]  2.0- 3.0 sec    114 MBytes    955 Mbits/sec  0.014 ms   90/81287 (0.11%)
+[  3]  3.0- 4.0 sec    114 MBytes    955 Mbits/sec  0.012 ms   98/81273 (0.12%)
+[  3]  4.0- 5.0 sec    114 MBytes    954 Mbits/sec  0.012 ms   99/81263 (0.12%)
+[  3]  5.0- 6.0 sec    114 MBytes    955 Mbits/sec  0.012 ms   95/81288 (0.12%)
+[  3]  0.0- 6.1 sec    699 MBytes    955 Mbits/sec  0.014 ms  575/499272 (0.12%)
+[  3]  0.0- 6.1 sec  1 datagrams received out-of-order
 \endverbatim
 
 A key test for YARP is that you can send big datagrams okay. This is
@@ -88,8 +119,8 @@ necessary for efficient transmission of large images using UDP or
 MCAST. To check 63KB datagrams, do:
 
 \verbatim
- [On server, 10.0.0.26] iperf -s -u -l 63K -w 200K
- [On client, 10.0.0.27] iperf -c 10.0.0.26 -u -l 63K -w 200K
+ [On server, 10.0.0.26] iperf -s -u -l 63K -w 200K -i 1
+ [On client, 10.0.0.27] iperf -c 10.0.0.26 -u -l 63K -w 200K -b 1000m
 \endverbatim
 
 Make sure you try this in both directions! For example, we've seen an
@@ -99,6 +130,8 @@ reduce the "-l" size until things work just to understand your system
 (but if you want to send large images you'll need to tweak your system
 until large packets work).
 
+It could also be worth checking several machines since different network cards
+can have different performance.
 
 \section  yarp_cluster_mcast Checking multicast communication
 
@@ -106,8 +139,8 @@ For testing multicast, make sure you have the most recent version
 of iperf, and try this:
 
 \verbatim
- iperf -c 224.0.55.55 -u -T 32 -t 100 -i 1 -l 60k 
  iperf -s -u -B 224.0.55.55 -i 1 -T 32 -l 60k
+ iperf -c 224.0.55.55 -u -T 32 -t 100 -i 1 -l 60k -b 1000m
 \endverbatim
 
 Note the IP addresses are multicast-style, they don't correspond to
@@ -116,17 +149,41 @@ individual machines.
 On the client ("-c") side, you should see something like:
 
 \verbatim
- ------------------------------------------------------------
- Server listening on UDP port 5001
- Binding to local address 224.0.55.55
- Joining multicast group  224.0.55.55
- Receiving 61440 byte datagrams
- UDP buffer size:   108 KByte (default)
- ------------------------------------------------------------
- [  3] local 224.0.55.55 port 5001 connected with 10.0.0.25 port 32821
- [  3]  0.0- 1.0 sec    120 KBytes    983 Kbits/sec  0.003 ms    0/    2 (0%)
- [  3]  1.0- 2.0 sec    120 KBytes    983 Kbits/sec  0.030 ms    0/    2 (0%)
- [  3]  2.0- 3.0 sec    120 KBytes    983 Kbits/sec  0.052 ms    0/    2 (0%)
+------------------------------------------------------------
+Client connecting to 224.0.55.55, UDP port 5001
+Sending 61440 byte datagrams
+Setting multicast TTL to 32
+UDP buffer size:   122 KByte (default)
+------------------------------------------------------------
+[  3] local 10.0.0.221 port 60992 connected with 224.0.55.55 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0- 1.0 sec    114 MBytes    958 Mbits/sec
+[  3]  1.0- 2.0 sec    114 MBytes    956 Mbits/sec
+[  3]  2.0- 3.0 sec    114 MBytes    956 Mbits/sec
+[  3]  3.0- 4.0 sec    114 MBytes    956 Mbits/sec
+\endverbatim
+
+Server side:
+
+\verbatim
+------------------------------------------------------------
+Server listening on UDP port 5001
+Binding to local address 224.0.55.55
+Joining multicast group  224.0.55.55
+Receiving 61440 byte datagrams
+UDP buffer size:   122 KByte (default)
+------------------------------------------------------------
+[  3] local 224.0.55.55 port 5001 connected with 10.0.0.221 port 60992
+[ ID] Interval       Transfer     Bandwidth       Jitter   Lost/Total Datagrams
+[  3]  0.0- 1.0 sec    111 MBytes    931 Mbits/sec  0.380 ms   50/ 1945 (2.6%)
+[  3]  1.0- 2.0 sec    111 MBytes    934 Mbits/sec  0.442 ms   46/ 1947 (2.4%)
+[  3]  2.0- 3.0 sec    112 MBytes    941 Mbits/sec  0.280 ms   31/ 1946 (1.6%)
+[  3]  3.0- 4.0 sec    112 MBytes    935 Mbits/sec  0.362 ms   43/ 1946 (2.2%)
+[  3]  4.0- 5.0 sec    110 MBytes    920 Mbits/sec  0.459 ms   75/ 1947 (3.9%)
+[  3]  5.0- 6.0 sec    111 MBytes    934 Mbits/sec  0.418 ms   45/ 1946 (2.3%)
+[  3]  6.0- 7.0 sec    111 MBytes    933 Mbits/sec  0.380 ms   48/ 1947 (2.5%)
+[  3]  7.0- 8.0 sec    111 MBytes    933 Mbits/sec  0.365 ms   49/ 1947 (2.5%)
+[  3]  8.0- 9.0 sec    112 MBytes    936 Mbits/sec  0.319 ms   41/ 1946 (2.1%)
 \endverbatim
 
 @section yarp_cluster_suggest YARP's suggestion
