@@ -50,6 +50,8 @@ More, more, more:
 \li \ref yarp_code_examples
 \li \ref gpu_tutorial
 \li \ref using_cmake
+\li \ref thrift_tutorial_simple
+\li \ref thrift_tutorial 
 
  *
  */

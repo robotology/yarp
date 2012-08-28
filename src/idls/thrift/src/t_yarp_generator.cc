@@ -700,6 +700,9 @@ void t_yarp_generator::generate_program() {
     {
       string fcommon_name= get_out_dir() + program_->get_name() + "_common.h";
       f_out_common_.open(fcommon_name.c_str());
+      f_out_common_ << "#ifndef YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << endl;
+      f_out_common_ << "#define YARP_THRIFT_GENERATOR_COMMON_" << program_->get_name() << endl;
+      f_out_common_ << endl;
     }
     f_out_common_ << endl << "// Typedefs" << endl;
     vector<t_typedef*> typedefs = program_->get_typedefs();
