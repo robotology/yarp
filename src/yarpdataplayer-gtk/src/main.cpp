@@ -45,14 +45,10 @@ When playing it uses the timestamps provided from the time of aquisition to sync
 \section running_sec Running
 dataSetPlayer can run with or without the GUI (for server use and commands are sent via the rpc port)
 For gui run normally ./dataSetPlayer or dataSetPlayer.exe
-Without GUI run with extra parameter hidden: 
+Without GUI run with the extra parameter hidden: 
 
-  ./dataSetPlayer hidden 
+  dataSetPlayer --hidden 
   
-  or 
-  
-  dataSetPlayer.exe hidden
-
 \section file-sec dataDumper file example
 dataDumper data.log file example:
 
