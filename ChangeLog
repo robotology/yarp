@@ -1,3 +1,9 @@
+2012-08-29 Lorenzo Natale <lorenzo.natale@iit.it>
+    * conf/template/YARPConfig.cmake.in
+    * conf/YarpVersion.cmake
+
+   Renamed YARP_SVN_REVISION to YARP_VERSION_TWEAK, now manually updated.
+    
 2012-08-23  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/idls/thrift/src/t_yarp_generator.cc: make oneway functions
