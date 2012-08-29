@@ -18,7 +18,11 @@
 /**
 \defgroup dataSetPlayer dataSetPlayer
 @ingroup icub_guis
+@ingroup icub_tools
 
+\image html datasetplayer.jpg
+\image latex datasetplayer.eps "The dataSetPlayer GUI running on Windows" width=10cm
+ 
 A module that reproduces in a synchronized way, previously acquired data (using dataDumper) from the iCub or other source of input.
 
 Copyright (C) 2010 RobotCub Consortium
@@ -38,23 +42,36 @@ When playing it uses the timestamps provided from the time of aquisition to sync
 - OpenCV libraries.
 - GTKMM libraries.
 
-\section running
+\section running_sec Running
 dataSetPlayer can run with or without the GUI (for server use and commands are sent via the rpc port)
 For gui run normally ./dataSetPlayer or dataSetPlayer.exe
-Without GUI run with extra parameter hidden: ./dataSetPlayer hidden or dataSetPlayer.exe hidden
+Without GUI run with extra parameter hidden: 
 
-\section dataDumper file example
-dataDumper data.log file example:\n
+  ./dataSetPlayer hidden 
+  
+  or 
+  
+  dataSetPlayer.exe hidden
 
-  Type: Bottle; \n
-  Source: /icub/head/state:o\n
-  9566    1324373535.040288   -2.32967 0.043956 1.450549 -0.56044 1.704894 4.136408\n
-  etc...\n
+\section file-sec dataDumper file example
+dataDumper data.log file example:
+
+\verbatim
+  Type: Bottle; 
+  Source: /icub/head/state:o
+  9566    1324373535.040288   -2.32967 0.043956 1.450549 -0.56044 1.704894 4.136408
+  etc...
+\endverbatim
 
  type: is used to identify what kind of data the player is required to send
+ 
  Source: is used to initially set up the ports of the player. This can be changed using the GUI.
 
 \section parameters_sec Parameters
+
+--hidden
+- run with or without gui
+
 --name \e modName
 - The parameter \e modName identifies the stem-name of the open
   ports.
@@ -79,27 +96,27 @@ dataDumper data.log file example:\n
 - \e The ports belonging to each of the parts are dynamically created and can be changed using the GUI.
 
 \section in_files_sec Input Data Files
-The player will look, in a recursive way, into directories in order to create the parts needed and retreive the data
+The player will look, in a recursive way, into directories in order to create the parts needed and retreive the data.
+
 The data name is the default dataDumper name: data.log
 
 An example directory tree containing data (data.log) can be:
 \code
-                /head/data.log 
-                /torso/data.log 
-                /images/leftCamera/data.log 
-/experiment1/ 
-                /images/rightCamera/data.log 
-                /left_leg/data.log 
-                /right_leg/data.log 
+/experiment1/
+             /head/data.log 
+             /torso/data.log 
+             /images/leftCamera/data.log 
+ 
+             /images/rightCamera/data.log 
+             /left_leg/data.log 
+             /right_leg/data.log 
 \endcode
 
 If the directory indicated is either "experiment1" or within experiment, the player will successfully load all required data.
+
 The parts name will be taken from each subdirectory of the /experiment1 forder.
 
 \note Currently, if the directory selected is (in this example) head, torso etc, the player will not load the files as it will not be able to find subdirs.
-
-\section out_data_sec Output Data Files
-The player will send throught the ports all the data in a synchronised way.
 
 \todo
  - main slider bar selection. This needs an on-click and on-release event in order not to interfere with update and playback
