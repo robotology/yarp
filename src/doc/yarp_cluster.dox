@@ -50,6 +50,7 @@ This will run for a while and then describe your TCP throughput, for example:
  ------------------------------------------------------------
  [  3] local 10.0.0.25 port 34160 connected with 10.0.0.26 port 5001
  [  3]  0.0-10.0 sec  1.08 GBytes    924 Mbits/sec
+ ...
 \endverbatim
 
 @section yarp_cluster_udp Checking UDP communication
@@ -67,14 +68,14 @@ e.g. "-b 50m" for a target of 50 MBits/sec.
 \verbatim
  [On server, 10.0.0.26] iperf -s -u -i 1
  [On client, 10.0.0.27] iperf -c 10.0.0.26 -b 50m
-\endvef
+\endverbatim
 
 To test a gigabit network:
 
 \verbatim
  [On server, 10.0.0.26] iperf -s -u -i 1
  [On client, 10.0.0.27] iperf -c 10.0.0.26 -b 1000m
-\endvef
+\endverbatim
 
 On a healthy gigabit network you should get a bandwidth of ~950 Mbits/sec.
 
