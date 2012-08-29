@@ -56,7 +56,7 @@ Anyway, a selection between these two Time Stamps is available
 for the user through --rxTime option. 
 
 The module \ref dataSetPlayer can be used to re-play a dump generated 
-by the datadumper.
+by the \ref dataDumper.
  
 \section lib_sec Libraries 
 - YARP libraries 
