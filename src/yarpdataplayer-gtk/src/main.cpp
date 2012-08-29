@@ -28,7 +28,7 @@ This module uses gtkmm to provide the user a simple but informative user-interfa
 When playing it uses the timestamps provided from the time of aquisition to synchronize the sending of the data as if the robot was present.
 
 \image html datasetplayer.jpg
-\image latex datasetplayer.eps "The dataSetPlayer GUI running on Windows" width=10cm
+\image latex datasetplayer.eps "The dataSetPlayer GUI running on Windows" width=6cm
  
 \section lib_sec Libraries
 - YARP libraries.
