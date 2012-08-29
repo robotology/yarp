@@ -54,6 +54,9 @@ Note that if the envelope is not valid, then the Time Stamp is
 the reference time of the machine where the service is running. 
 Anyway, a selection between these two Time Stamps is available 
 for the user through --rxTime option. 
+
+The module \ref dataSetPlayer can be used to re-play a dump generated 
+by the datadumper.
  
 \section lib_sec Libraries 
 - YARP libraries 
@@ -172,6 +175,8 @@ By pressing CTRL+C the acquisition is terminated.
 So, now, have a look inside the directory ./log 
 
 \author Ugo Pattacini
+
+\Copyright 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
 */ 
 
 #include <yarp/os/Network.h>

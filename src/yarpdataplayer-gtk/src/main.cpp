@@ -20,22 +20,16 @@
 @ingroup icub_guis
 @ingroup icub_tools
 
-\image html datasetplayer.jpg
-\image latex datasetplayer.eps "The dataSetPlayer GUI running on Windows" width=10cm
- 
-A module that reproduces in a synchronized way, previously acquired data (using dataDumper) from the iCub or other source of input.
-
-Copyright (C) 2010 RobotCub Consortium
-
-Author: Vadim Tikhanoff and Ali Paikan
-
-CopyPolicy: Released under the terms of the GNU GPL v2.0.
+A module that reproduces in a synchronized way, previously acquired data (using \ref dataDumper) from the iCub or other source of input.
 
 \section intro_sec Description
 
 This module uses gtkmm to provide the user a simple but informative user-interface in order to manipulate the previously acquired data.
 When playing it uses the timestamps provided from the time of aquisition to synchronize the sending of the data as if the robot was present.
 
+\image html datasetplayer.jpg
+\image latex datasetplayer.eps "The dataSetPlayer GUI running on Windows" width=10cm
+ 
 \section lib_sec Libraries
 - YARP libraries.
 - ICUB libraries
@@ -94,7 +88,7 @@ dataDumper data.log file example:
 \section in_files_sec Input Data Files
 The player will look, in a recursive way, into directories in order to create the parts needed and retreive the data.
 
-The data name is the default dataDumper name: data.log
+The data name is the default \ref dataDumper name: data.log
 
 An example directory tree containing data (data.log) can be:
 \code
@@ -121,7 +115,14 @@ The parts name will be taken from each subdirectory of the /experiment1 forder.
 \section tested_os_sec Tested OS
 Windows, Linux
 
-\author Vadim Tikhanoff
+\sa dataDumper
+
+Copyright (C) 2010 RobotCub Consortium
+
+\Author: Vadim Tikhanoff and Ali Paikan
+
+CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 */
 
 #if defined(WIN32)
