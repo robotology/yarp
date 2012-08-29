@@ -176,7 +176,6 @@ So, now, have a look inside the directory ./log
 
 \author Ugo Pattacini
 
-\Copyright 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
 */ 
 
 #include <yarp/os/Network.h>
