@@ -122,7 +122,6 @@ Copyright (C) 2010 RobotCub Consortium
 \Author: Vadim Tikhanoff and Ali Paikan
 
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
 */
 
 #if defined(WIN32)
@@ -185,3 +184,6 @@ int main(int argc, char *argv[])
     GDK_THREADS_LEAVE();
     return 0;
 }
+
+
+

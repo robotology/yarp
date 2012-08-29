@@ -927,3 +927,6 @@ bool MainWindow::getPartPort(const char* szName, char* dest)
     return false;
 }
 /**********************************************************/
+
+
+

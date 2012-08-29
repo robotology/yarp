@@ -174,8 +174,7 @@ By pressing CTRL+C the acquisition is terminated.
  
 So, now, have a look inside the directory ./log 
 
-\author Ugo Pattacini
-
+\author Ugo Pattacini 
 */ 
 
 #include <yarp/os/Network.h>
@@ -787,5 +786,6 @@ int main(int argc, char *argv[])
     DumpModule mod;
     return mod.runModule(rf);
 }
+
 
 

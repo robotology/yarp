@@ -369,3 +369,6 @@ void UpdateGui::updateGuiRateThread()
 {
     this->run();
 }
+
+
+
