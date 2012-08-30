@@ -51,7 +51,7 @@ Inside the \e application folder in the \e gyarpmanager gui you should see an en
 Now you are ready to run the application. Hit the \e run button. Four windows should open like this:
 
 \image html datasetplayer-app1.jpg
-\image latex datasetplayer-app1.eps "Running the dataSetPlayer" width=8cm
+\image latex datasetplayer-app1.eps "Running the dataSetPlayer" width=6cm
 
 In the \e dataSetPlayer window select
 
@@ -64,7 +64,7 @@ Now you can connect the modules (notice that this cannot be done before the sequ
 You can now use the \e dataSetPlayer to play the sequence (all commands should be pretty intuitive). The output will be something like this:
 
 \image html datasetplayer-app2.jpg
-\image latex datasetplayer-app2.eps "Playing a recorded sequence with the dataSetPlayer" width=8cm
+\image latex datasetplayer-app2.eps "Playing a recorded sequence with the dataSetPlayer" width=6cm
  
 \author Lorenzo Natale and Vadim Tikhanoff
 
