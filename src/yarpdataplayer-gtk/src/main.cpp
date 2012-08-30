@@ -61,10 +61,11 @@ dataDumper data.log file example:
 
 \section parameters_sec Parameters
 
-- --hidden
-  - run with or without gui
-- --name \e modName
-  - The parameter \e modName identifies the stem-name of the open
+--hidden
+- run with or without gui
+
+--name \e modName
+- The parameter \e modName identifies the stem-name of the open
   ports.
 
 \section portsc_sec Ports Created
