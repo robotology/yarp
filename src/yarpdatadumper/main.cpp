@@ -175,6 +175,8 @@ By pressing CTRL+C the acquisition is terminated.
 So, now, have a look inside the directory ./log 
 
 \author Ugo Pattacini 
+
+\sa dataSetPlayer
 */ 
 
 #include <yarp/os/Network.h>

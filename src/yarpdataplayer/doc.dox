@@ -1,5 +1,5 @@
 /**
-\defgroup icub_dataSetPlayerReplay dataSetPlayer example application
+\defgroup dataSetPlayerExample dataSetPlayer example application
 @ingroup  icub_applications
 
 Re-play a recorded sequence from the robot 
@@ -29,7 +29,7 @@ Download example sequence. This sequence was recorded while the iCub was trackin
 
  - <a href="http://eris.liralab.it/iCub/downloads/testData_20120803_095402.zip">testData_20120803_095402.zip</a>
  
-Unpack the content of the archive in a directory of your choice, e.g. \e /home/\<user\> . You should now have a directory called \e testData_20120803_095402 in \e /home/<user>.
+Unpack the content of the archive in a directory of your choice, e.g. \e /home/\<user\> . You should now have a directory called \e testData_20120803_095402 in \e /home/\<user\>.
 
 On a console run \e yarpserver (if not already running) and an instance of \e yarprun:
 
@@ -46,22 +46,20 @@ Go the \e app directory (e.g. $ICUB_ROOT/app) and run \e gyarpmanager:
   gyarpmanager
 \endcode
 
-Inside the \e application folder in the \e gyarpmanager gui you should see an entry called \e dataSetPlayer \e example, double click on it to open.
+Inside the \e application folder in the \e gyarpmanager gui you should see an entry called \ref dataSetPlayer \e example, double click and open it.
 
 Now you are ready to run the application. Hit the \e run button. Four windows should open like this:
 
 \image html datasetplayer-app1.jpg
 \image latex datasetplayer-app1.eps "Running the dataSetPlayer" width=6cm
 
-In the \e dataSetPlayer window select
-
-  File->Open Directory
+In the \ref dataSetPlayer window select \e File->Open Directory .
   
 And browse to the directory where you unpacked the example sequence, select the directory \e testData_20120803_095402.
 
-Now you can connect the modules (notice that this cannot be done before the sequence is loaded in the \e dataSetPlayer), hit \e connect on the \e gyarpmanager gui.
+Now you can connect the modules (notice that this cannot be done before the sequence is loaded in the \ref dataSetPlayer), hit \e connect on the \e gyarpmanager gui.
 
-You can now use the \e dataSetPlayer to play the sequence (all commands should be pretty intuitive). The output will be something like this:
+You can now use the \ref dataSetPlayer to play the sequence (all commands should be pretty intuitive). The output will be something like this:
 
 \image html datasetplayer-app2.jpg
 \image latex datasetplayer-app2.eps "Playing a recorded sequence with the dataSetPlayer" width=6cm
@@ -71,6 +69,9 @@ You can now use the \e dataSetPlayer to play the sequence (all commands should b
 Copyright (C) 2012 Instituto Italiano di Tecnologia, Dep. of Robotics Brain and Cognitive Sciences and iCub Facility.
 
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+\sa dataDumper
+\sa dataSetPlayer
 
 This file can be edited at \link main/app/dataSetPlayer/doc.dox
 */

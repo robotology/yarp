@@ -118,7 +118,7 @@ The parts name will be taken from each subdirectory of the /experiment1 forder.
 Windows, Linux
 
 \sa dataDumper
-\sa icub_dataSetPlayerReplay
+\sa dataSetPlayerExample
 
 Copyright (C) 2010 RobotCub Consortium
 
