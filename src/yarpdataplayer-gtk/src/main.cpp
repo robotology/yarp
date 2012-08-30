@@ -38,11 +38,13 @@ When playing it uses the timestamps provided from the time of aquisition to sync
 
 \section running_sec Running
 dataSetPlayer can run with or without the GUI (for server use and commands are sent via the rpc port)
-For gui run normally ./dataSetPlayer or dataSetPlayer.exe
-Without GUI run with the extra parameter hidden: 
+For gui run normally \e dataSetPlayer .
+Without GUI run with the extra parameter \e hidden: 
 
+\verbatim
   dataSetPlayer --hidden 
-  
+\endverbatim
+
 \section file-sec dataDumper file example
 dataDumper data.log file example:
 
@@ -53,17 +55,16 @@ dataDumper data.log file example:
   etc...
 \endverbatim
 
- type: is used to identify what kind of data the player is required to send
+\e Type: is used to identify what kind of data the player is required to send
  
- Source: is used to initially set up the ports of the player. This can be changed using the GUI.
+\e Source: is used to initially set up the ports of the player. This can be changed using the GUI.
 
 \section parameters_sec Parameters
 
---hidden
-- run with or without gui
-
---name \e modName
-- The parameter \e modName identifies the stem-name of the open
+- --hidden
+  - run with or without gui
+- --name \e modName
+  - The parameter \e modName identifies the stem-name of the open
   ports.
 
 \section portsc_sec Ports Created
