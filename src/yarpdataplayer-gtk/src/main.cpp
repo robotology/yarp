@@ -84,7 +84,7 @@ dataDumper data.log file example:
     - [pause] : pauses the loaded files
     - [stop]  : stops the loaded files
 
-- \e The ports belonging to each of the parts are dynamically created and can be changed using the GUI.
+- The ports belonging to each of the parts are dynamically created and can be changed using the GUI.
 
 \section in_files_sec Input Data Files
 The player will look, in a recursive way, into directories in order to create the parts needed and retreive the data.
@@ -117,6 +117,7 @@ The parts name will be taken from each subdirectory of the /experiment1 forder.
 Windows, Linux
 
 \sa dataDumper
+\sa icub_dataSetPlayerReplay
 
 Copyright (C) 2010 RobotCub Consortium
 
