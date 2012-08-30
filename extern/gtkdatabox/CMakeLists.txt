@@ -52,7 +52,7 @@ endif(WIN32)
 add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})
 
 if(UNIX)
-    set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC -Wno-unused-but-set-variable")
+    set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC -Wno-unused-variable")
 endif(UNIX)
 
 set(GtkDatabox_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk" CACHE PATH "GtkDatabox include directory" FORCE)
