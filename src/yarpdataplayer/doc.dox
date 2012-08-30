@@ -46,7 +46,7 @@ Go the \e app directory (e.g. $ICUB_ROOT/app) and run \e gyarpmanager:
   gyarpmanager
 \endcode
 
-Inside the \e application folder in the \e gyarpmanager gui you should see an entry called \ref dataSetPlayer \e example, double click and open it.
+Inside the \e application folder in the \e gyarpmanager gui you should see an entry called \e dataSetPlayer_example, double click and open it.
 
 Now you are ready to run the application. Hit the \e run button. Four windows should open like this:
 
