@@ -10,42 +10,42 @@
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
-	<module>
+    <module>
         <name>dataDumper</name>
         <parameters>--name /data/inertial</parameters>
         <node>quad</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
-	<module>
+    <module>
         <name>dataDumper</name>
         <parameters>--name /data/torso</parameters>
         <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
-	<module>
+    <module>
         <name>dataDumper</name>
         <parameters>--name /data/leftArm</parameters>
         <node>quad</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
-	<module>
+    <module>
         <name>dataDumper</name>
         <parameters>--name /data/rightArm</parameters>
         <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
-	<module>
+    <module>
         <name>dataDumper</name>
         <parameters>--name /data/leftLeg</parameters>
         <node>quad</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
-	<module>
+    <module>
         <name>dataDumper</name>
         <parameters>--name /data/rightArm</parameters>
         <node>quad</node>
@@ -59,7 +59,7 @@
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
-	<module>
+    <module>
         <name>dataDumper</name>
         <parameters>--name /data/images/right --type image</parameters>
         <node>quad</node>
@@ -76,27 +76,27 @@
         <to>/data/head</to>
         <protocol>udp</protocol>
     </connection>
-	<connection>
+    <connection>
         <from>/icub/torso/state:o</from>
         <to>/data/torso</to>
         <protocol>udp</protocol>
     </connection>
-	<connection>
+    <connection>
         <from>/icub/left_arm/state:o</from>
         <to>/data/leftArm</to>
         <protocol>udp</protocol>
     </connection>
-	<connection>
+    <connection>
         <from>/icub/right_arm/state:o</from>
         <to>/data/rightArm</to>
         <protocol>udp</protocol>
     </connection>
-	<connection>
+    <connection>
         <from>/icub/left_leg/state:o</from>
         <to>/data/leftLeg</to>
         <protocol>udp</protocol>
     </connection>
-	<connection>
+    <connection>
         <from>/icub/right_leg/state:o</from>
         <to>/data/rightLeg</to>
         <protocol>udp</protocol>
@@ -107,7 +107,7 @@
         <to>/data/images/left</to>
         <protocol>udp</protocol>
     </connection>
-	<connection>
+    <connection>
         <from>/icub/camcalib/right/out</from>
         <to>/data/images/right</to>
         <protocol>udp</protocol>

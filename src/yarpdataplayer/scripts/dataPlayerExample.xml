@@ -1,12 +1,12 @@
 <application>
-<name>dataSetPlayer</name>
+<name>dataSetPlayer example</name>
 <dependencies>
-        <port>computer1</port>
+      <port>computer1</port>
 </dependencies>
     <module>
         <name>iCubGui</name>
         <node>computer1</node>
-        <parameters>--xpos    1000    --ypos    100    --width    370</parameters>
+        <parameters>--xpos 1000 --ypos 100 --width 370</parameters>
         <stdio></stdio>
         <tag>iCubGui</tag>
     </module>
@@ -19,13 +19,13 @@
     <module>
         <name>yarpview</name>
         <node>computer1</node>
-        <parameters>--name    /leftCam    --x    0    --y    0    --RefreshTime    33</parameters>
+        <parameters>--name /leftCam --x 0 --y 0 --RefreshTime 33</parameters>
         <tag>viewer</tag>
     </module>
     <module>
         <name>yarpview</name>
         <node>computer1</node>
-        <parameters>--name    /rightCam    --x    350    --y    0    --RefreshTime    33</parameters>
+        <parameters>--name /rightCam --x 350 --y 0 --RefreshTime 33</parameters>
         <tag>viewer</tag>
     </module>
     <connection>
