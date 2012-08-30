@@ -18,7 +18,7 @@ Since \ref dataSetPlayer will open ports with the same name as the real robot/si
 \section int_sec Instantiated Modules
 - \ref dataSetPlayer
 - yarpview 
-- \ref iCubGui
+- \ref icub_gui
 
 \section howto_sec How to run the Application
 
@@ -29,7 +29,7 @@ Download example sequence. This sequence was recorded while the iCub was trackin
 
  - <a href="http://eris.liralab.it/iCub/downloads/testData_20120803_095402.zip">testData_20120803_095402.zip</a>
  
-Unpack the content of the archive in a directory of your choice, e.g. \e /home/<user> . You should now have a directory called \e testData_20120803_095402 in \e /home/<user>.
+Unpack the content of the archive in a directory of your choice, e.g. \e /home/\<user\> . You should now have a directory called \e testData_20120803_095402 in \e /home/<user>.
 
 On a console run \e yarpserver (if not already running) and an instance of \e yarprun:
 
