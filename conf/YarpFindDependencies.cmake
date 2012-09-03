@@ -7,7 +7,7 @@
 # dependencies to build some parts of Yarp are satisfied.
 # For every dependency, it creates the following variables:
 #
-# YARP_USE_${PACKAGE}: Can be disabled by the user if he don't want to use that
+# YARP_USE_${PACKAGE}: Can be disabled by the user if he doesn't want to use that
 #                      dependency.
 # YARP_HAS_${PACKAGE}: Internal flag. It should be used to check if a part of
 #                      Yarp should be built. It is on if YARP_USE_${package} is
@@ -205,6 +205,17 @@ if(CREATE_GUIS)
             checkandset_dependency(GtkMM)
         endif(CREATE_YARPSCOPE OR CREATE_GYARPMANAGER)
     endif(YARP_USE_GTK2)
+    
+    ### FIXME: remove this check when stop supporting debian etch
+    if (CREATE_YARPSCOPE)
+        if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
+            if (GtkMM_VERSION_MINOR LESS 20)
+                message(STATUS "Detected version of GtkMM that does not support yarpscope, turning off CREATE_YARPSCOPE")
+                set(CREATE_YARPSCOPE FALSE CACHE BOOL "YARPSCOPE not supported" FORCE)
+            endif()
+        endif()
+    endif(CREATE_YARPSCOPE)
+    
 endif(CREATE_GUIS)
 
 if(CREATE_YARPSCOPE)
