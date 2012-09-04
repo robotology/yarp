@@ -70,10 +70,64 @@ Copyright (C) 2012 Instituto Italiano di Tecnologia, Dep. of Robotics Brain and 
 
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
+\sa dataSetPlayerRecExample
+\sa dataSetPlayer
+\sa dataDumper
+
+This file can be edited at \link main/app/dataSetPlayer/doc.dox
+*/
+
+/**
+\defgroup dataSetPlayerRecExample dataSetPlayer recording example
+@ingroup  icub_applications
+
+Record a sequence of data from all sensors of the robot.
+
+\section intro_sec Description
+
+This application demonstrates how to record a sequence from the robot using the
+module \ref dataDumper. This sequence can be later re-played using the \ref dataSetPlayer 
+(see example application \ref dataSetPlayerExample).
+
+\section dep_sec Dependencies
+
+The robot or simulator should be running. 
+
+\section int_sec Instantiated Modules
+- \ref dataDumper
+
+\section howto_sec How to run the Application
+
+Make sure you compiled all the code including guis (both in YARP and iCub software). 
+Make also sure you installed the applications, follow installation instructions on the wiki for this.
+
+On a console run \e yarpserver (if not already running) and an instance of \e yarprun:
+
+\code
+  yarprun --server /computer1
+\endcode
+
+\e /computer1 is the name that YARP will use to execute commands on your machine.
+
+Go the \e app directory (e.g. $ICUB_ROOT/app) and run \e gyarpmanager:
+
+\code
+  cd $ICUB_ROOT/app
+  gyarpmanager
+\endcode
+
+Inside the \e application folder in the \e gyarpmanager gui you should see an entry called \e dataSetPlayer_recording_example_, double click and open it.
+
+Now you are ready to run the application. Hit the \e run button. Four windows should open like this:
+ 
+\author Lorenzo Natale and Vadim Tikhanoff
+
+Copyright (C) 2012 Instituto Italiano di Tecnologia, Dep. of Robotics Brain and Cognitive Sciences and iCub Facility.
+
+CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 \sa dataDumper
 \sa dataSetPlayer
 
 This file can be edited at \link main/app/dataSetPlayer/doc.dox
 */
-
-
