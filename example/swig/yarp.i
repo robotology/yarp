@@ -15,6 +15,7 @@
 %module(directors="1") yarp
 %feature("director") yarp::os::PortReader;
 %feature("director") yarp::os::RFModule;
+%feature("autodoc", "1");
 
 // Try to translate std::string and std::vector to native equivalents
 %include "std_string.i"
@@ -62,6 +63,7 @@
 %feature("notabstract") Bottle;
 %feature("notabstract") Property;
 %feature("notabstract") Stamp;
+%feature("notabstract") RpcClient;
 %feature("notabstract") RpcServer;
 %feature("abstract") Portable;
 %feature("abstract") PortReader;
@@ -301,6 +303,7 @@ namespace yarp {
 %include <yarp/os/ContactStyle.h>
 %include <yarp/os/ResourceFinder.h>
 %include <yarp/os/RpcServer.h>
+%include <yarp/os/RpcClient.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
