@@ -1,5 +1,5 @@
 // Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores
+// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores, Marek Rucinski, Fabien Benureau
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,6 +141,7 @@
   #if !defined(SWIGCHICKEN)
     %ignore yarp::os::BufferedPort::open; // let Contactable::open show
     %ignore yarp::os::Port::open; // let Contactable::open show
+    %ignore yarp::os::RpcClient::open;
   #endif
 #endif
 // operator= does not get translated well
@@ -648,6 +649,14 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 		return self->getRefAccelerations(&data[0]);
 	}
 
+	
+	bool checkMotionDone() {
+		bool result;
+		bool ok = self->checkMotionDone(&result);
+		if(!ok) { return 1; } //In case of error tell the motion has been completed
+		return result;
+	}
+
 	bool checkMotionDone(std::vector<bool>& flag) {
 	  // complication: vector<bool> is packed in C++
 	  // and isn't a regular container.
@@ -856,6 +865,21 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 	{
 		self->operator [](j) = v;
 	}
+
+
+#ifdef SWIGPYTHON
+	void __setitem__(int key, double value) {
+		self->operator[](key) = value;
+	}
+
+	double __getitem__(int key) {
+		return self->operator[](key);
+	}
+
+	double __len__() {
+		return self->length();
+	}
+#endif
 }
 
 %extend yarp::dev::ICartesianControl {
@@ -867,6 +891,15 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 	  }
 	  return result;
 	}
+
+	bool checkMotionDone() {
+		bool flag;
+		if(self->checkMotionDone(&flag)) {
+			return flag;
+		} else {
+			return false;
+		}
+	}
 	
 	bool isMotionDone() {
 		bool data = true;
@@ -874,6 +907,49 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 		return data;
 	}
 }
+
+%extend yarp::dev::IGazeControl {
+	
+	bool getTrackingMode() {
+		bool flag;
+
+		if(self->getTrackingMode(&flag)) {
+			return flag;
+		} else {
+			return false; //Not sure what is best to assume here...
+		}
+	}
+      
+	double getNeckTrajTime() {
+      		double result;
+      	
+      		if(self->getNeckTrajTime(&result)) {
+			return result;
+		} else {
+			return -1.0; //On error return -1.0
+      	}
+	}
+	
+	double getEyesTrajTime() {
+		double result;
+		
+		if(self->getEyesTrajTime(&result)) {
+			return result;
+		} else {
+			return -1.0; //On error return -1.0
+		}
+	}
+
+	bool checkMotionDone() {
+      	bool flag;
+		if(self->checkMotionDone(&flag)) {
+			return flag;
+		} else {
+			return false;
+		}
+	}
+}
+
 
 #ifdef SWIGPYTHON
 
