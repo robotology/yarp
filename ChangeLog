@@ -1,3 +1,9 @@
+2012-09-05  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* example/swig: move this to $YARP_ROOT/bindings, people are tired
+	of the "temporary" location :-).  Left behind a CMakeLists.txt
+	that points to new location and warns of deprecation.
+
 2012-08-29 Lorenzo Natale <lorenzo.natale@iit.it>
     * conf/template/YARPConfig.cmake.in
     * conf/YarpVersion.cmake
