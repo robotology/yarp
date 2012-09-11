@@ -198,6 +198,7 @@ public:
         String tag = "";
         Bottle accum;
         Bottle total;
+        bool qualified = false;
         for (int i=0; i<argc; i++) {
             String work = argv[i];
             bool isTag = false;
@@ -205,6 +206,9 @@ public:
                 if (work[0]=='-'&&work[1]=='-') {
                     work = work.substr(2,work.length()-2);
                     isTag = true;
+                    if (YARP_STRSTR(work,"::")!=String::npos) {
+                        qualified = true;
+                    }
                 }
             }
             if (isTag) {
@@ -233,7 +237,46 @@ public:
         if (tag!="") {
             total.addList().copy(accum);
         }
-        fromBottle(total,wipe);
+        if (!qualified) {
+            fromBottle(total,wipe);
+            return;
+        }
+        if (wipe) {
+            clear();
+        }
+        Bottle *cursor = NULL;
+        for (int i=0; i<total.size(); i++) {
+            cursor = NULL;
+            Bottle *term = total.get(i).asList();
+            if (!term) continue;
+            ConstString key = term->get(0).asString();
+            ConstString base = key;
+            while (key.length()>0) {
+                int at = key.find("::");
+                base = key;
+                if (at>=0) {
+                    base = key.substr(0,at);
+                    key = key.substr(at+2);
+                } else {
+                    key = "";
+                }
+                Bottle& result = (cursor!=NULL)? (cursor->findGroup(base.c_str())) : owner.findGroup(base.c_str());
+                if (result.isNull()) {
+                    if (!cursor) {
+                        cursor = &putBottle((base).c_str());
+                    } else {
+                        cursor = &cursor->addList();
+                    }
+                    cursor->addString(base);
+                } else {
+                    cursor = &result;
+                }
+            }
+            if (cursor) {
+                cursor->copy(*term);
+                cursor->get(0) = Value(base);
+            }
+        }
     }
 
 
@@ -711,17 +754,17 @@ Value& Property::find(const char *key) {
 
 
 /*
-  Bottle& Property::putBottle(const char *key, const Bottle& val) {
-  return HELPER(implementation).putBottle(key,val);
-  }
+Bottle& Property::putBottle(const char *key, const Bottle& val) {
+    return HELPER(implementation).putBottle(key,val);
+}
 
-  Bottle& Property::putBottle(const char *key) {
-  return HELPER(implementation).putBottle(key);
-  }
+Bottle& Property::putBottle(const char *key) {
+    return HELPER(implementation).putBottle(key);
+}
 
-  Bottle *Property::getBottle(const char *key) const {
-  return HELPER(implementation).getBottle(key);
-  }
+Bottle *Property::getBottle(const char *key) const {
+    return HELPER(implementation).getBottle(key);
+}
 */
 
 void Property::clear() {

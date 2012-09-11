@@ -128,6 +128,27 @@ public:
         Property p7;
     }
 
+    void checkNestedCommandLine() {
+        report(0,"checking command line parsing");
+        const char *argv[] = { 
+            "program",
+            "--on",
+            "/server",
+            "--cmd",
+            "\"ls foo\"",
+            "--x::y::z",
+            "10"
+        };
+        int argc = 7;
+        Property p;
+        p.fromCommand(argc,argv);
+        checkEqual(p.findGroup("x").findGroup("y").find("z").asInt(),10,"x::y::z ok");
+        Property p2("(x (y (z 45) (r 92))) (winding roads)");
+        p2.fromCommand(argc,argv,true,false);
+        checkEqual(p2.findGroup("x").findGroup("y").find("z").asInt(),10,"x::y::z #2 ok");
+        checkEqual(p2.findGroup("x").findGroup("y").find("r").asInt(),92,"x::y::r ok");
+    }
+
     void checkLineBreak() {
         report(0,"checking line break");
         Property p;
@@ -452,6 +473,7 @@ check $x $y\n\
         checkLineBreak();
         checkMonitor();
         checkHex();
+        checkNestedCommandLine();
     }
 };
 

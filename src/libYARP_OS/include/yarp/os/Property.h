@@ -289,7 +289,6 @@ public:
 
     // documented in Portable
     bool write(ConnectionWriter& connection);
-
 private:
     void *implementation;
 

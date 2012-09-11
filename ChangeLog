@@ -1,4 +1,18 @@
+2012-09-11  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/src/Property.cpp: handle nested property
+	values in command line.
+
+	* src/libYARP_OS/harness/PropertyTest.cpp: test for command
+	line nesting of property values - new feature:
+	  ... --x::y value ... will set y to value in group x
+	Handy for overriding values in config files with nesting.
+
 2012-09-05  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* bindings/yarp.i: applied patch from Marek - makes Vector a
+	genuine list in python, adds various controlboard interface 
+	convenience functions [thanks Marek Rucinski]
 
 	* example/swig: move this to $YARP_ROOT/bindings, people are tired
 	of the "temporary" location :-).  Left behind a CMakeLists.txt
