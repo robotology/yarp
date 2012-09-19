@@ -16,7 +16,7 @@ the circulatory system.
 
 More specifically, YARP supports building a robot control system as a
 \ref note_ports "collection of programs" communicating in a
-peer-to-peer way, with a \ref carrier_config "family of connection types" 
+peer-to-peer way, with an extensible \ref carrier_config "family of connection types" 
 (tcp, udp, multicast, local, MPI, 
 mjpg-over-http, XML/RPC, tcpros, ...) that can be swapped in and out to
 match your needs.  
@@ -28,7 +28,8 @@ YARP is <i>not</i> an operating system for your robot.  We figure you
 already have an operating system, or perhaps several.  Nor does it do
 package management (we like the package managers we have).  We're not
 out for world domination.  It is easy to interoperate with YARP-using
-programs without yourself necessarily having to use YARP -- see the
+programs without yourself necessarily having to use YARP codebase --
+see the
 \ref yarp_without_yarp "YARP without YARP" tutorial. YARP is written
 in C++.  The <a href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a> 
 library is used for Windows builds, and to support extra
@@ -42,16 +43,21 @@ Getting set up:
 \li \ref yarp_cluster
 \li \ref yarp
 
-Using yarp:
+The basics of using YARP:
 \li \ref yarp_cmake_hello
 \li \ref tutorials
+\li \ref note_ports
+\li \ref note_devices
+
+Some helpful programs:
+\li \ref yarpdev
 \li \ref yarprun
 \li \ref yarpmanager
 \li \ref yarpscope
 
-Highlights:
-\li \ref note_ports
-\li \ref note_devices
+Interoperability:
+\li \ref yarp_without_yarp
+\li \ref yarp_with_ros
 
 More information:
 \li \ref what_is_yarp
