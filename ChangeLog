@@ -1,3 +1,8 @@
+2012-09-19  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/doc/yarp_swig.dox: consolidate documentation about building
+	swig bindings
+
 2012-09-11  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Property.cpp: handle nested property

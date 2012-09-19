@@ -58,6 +58,7 @@ Some helpful programs:
 Interoperability:
 \li \ref yarp_without_yarp
 \li \ref yarp_with_ros
+\li \ref yarp_swig
 
 More information:
 \li \ref what_is_yarp

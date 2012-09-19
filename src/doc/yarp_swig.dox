@@ -1,0 +1,192 @@
+*
+ * Copyright (C) 2012 IITRBCS
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/** 
+ * @page yarp_swig Using YARP from python, java, ruby, C#, and other languages
+
+\author Paul Fitzpatrick, Lorenzo Natale, Vadim Tikhanoff
+
+YARP is written in C++.  If you wish to use all the features of YARP in
+a program written in a different language, we recommend you use
+<a href="http://www.swig.org">SWIG</a>.  This will create an interface to YARP
+for you in the language of your choice.  At the time of writing, languages
+that have been tested with YARP and SWIG are: Java, Python, Perl,
+Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.
+If you are interested in a different language, check if it is in the list of
+<a href="http://www.swig.org/compat.html#SupportedLanguages">languages supported by SWIG</a>.  If it is, getting YARP going should be easy, so don't despair.
+Just send a quick email to the <a href="http://eris.liralab.it/wiki/Robotcub-hackers">mailing&nbsp;list</a>, or pattern match in
+the $YARP_ROOT/bindings/CMakeLists.txt file to add your language.
+
+@section yarp_swig_install Getting going with SWIG
+
+First, install SWIG.
+\li \ref yarp_swig_linux
+\li \ref yarp_swig_osx
+\li \ref yarp_swig_windows
+
+Then, install any language-specific packages needed.
+
+\li \ref yarp_swig_java
+\li \ref yarp_swig_python
+\li Other languages - on Linux: Check http://www.dabeaz.com/cgi-bin/wiki.pl?DeveloperInfo/GettingStarted
+\li Other languages - on OSX: A surprising amount of stuff comes pre-installed.
+\li Other languages - on Windows: Check http://www.swig.org/Doc2.0/Windows.html
+
+Now, check that your build of YARP is compatible with SWIG.  
+It is best if YARP is compiled as a dynamic/shared library.
+If you compiled YARP yourself, make sure that the "CREATE_SHARED_LIBRARY"
+flag was turned on.  If not, configure it with CMake and recompile.
+
+Finally configure and compile the bindings:
+\li \ref yarp_swig_configure_linux
+\li \ref yarp_swig_configure_windows
+
+@section yarp_swig_linux Installing SWIG on Linux
+
+Just about every distribution of Linux has a "swig" package.  To install
+from the command line:
+
+\verbatim
+sudo apt-get install swig
+\endverbatim
+
+Done? Now follow the language-specific steps in \ref yarp_swig_install.
+
+@section yarp_swig_osx Installing SWIG on OSX
+
+Some OSX versions have a version of SWIG pre-installed.  
+We recommend you use <a href="http://mxcl.github.com/homebrew/">homebrew</a> to manage packages on OSX.  Once you have homebrew, you may install swig as follows:
+\verbatim
+brew install swig
+\endverbatim
+
+Done? Now follow the language-specific steps in \ref yarp_swig_install.
+
+@section yarp_swig_windows Installing SWIG on Windows
+
+ - Download SWIG from the <a href="http://www.swig.org/download.html">SWIG home page</a>.  Look for "Windows users should download..."
+ - You should end up with a ZIP file that you unpack.  
+ - Remember where you unpack it! You'll need it later.
+ - We recommend you set a SWIG_DIR environment variable that points to the directory in which you have unpacked SWIG.  This is optional however.  If you don't do it, you'll need to manually tell CMake where you put SWIG.
+
+Done? Now follow the language-specific steps in \ref yarp_swig_install.
+
+
+
+@section yarp_swig_java YARP for Java
+
+On Windows: Install the Java Development Kit (JDK). 
+Its name changes from time to time. 
+At the time of writing it was called "J2SE Development Kit 5.0" - get it from http://java.sun.com/javase/downloads/index.jsp 
+
+On Linux, you have a choice of Java implementations. There is Open JDK:
+\verbatim
+sudo apt-get install openjdk-6-jdk
+\endverbatim
+(replace "6" with "7" to taste).  Or there is Sun's version (you may need to add a non-free repository to get this):
+\verbatim
+sudo apt-get install sun-java6-jdk
+\endverbatim
+
+On OSX, you may already have a JDK installed (<a href="http://stackoverflow.com/questions/1577014/how-install-a-specific-jdk-on-mac-os-x">details</a>).
+
+Done? Now follow the configuration steps in \ref yarp_swig_install.
+
+
+
+@section yarp_swig_python YARP for Python
+
+For python on linux, be sure to install python development files, 
+e.g. on Debian/Ubuntu:
+\verbatim
+sudo apt-get install python-dev
+\endverbatim
+If you have several versions of python installed, that is fine, but do check
+later during configuration that CMake finds the version you expected 
+(click the "SHOW ADVANCED VALUES" checkbox and look for PYTHON_* variables).
+
+On Windows, you can get python from http://www.python.org/getit/windows/
+
+Done? Now follow the configuration steps in \ref yarp_swig_install.
+
+
+@section yarp_swig_configure_linux Configuring YARP language bindings on Linux
+
+Here are the steps, one by one:
+\li Go to $YARP_ROOT/bindings
+\verbatim
+ cd $YARP_ROOT/bindings
+\endverbatim
+\li Create a build directory:
+\verbatim
+ mkdir build
+\endverbatim
+\li Run ccmake
+\verbatim
+ ccmake ../
+\endverbatim
+Set the following in CMake:
+\verbatim
+ CREATE_<THE LANGUAGE YOU WANT>=ON
+\endverbatim
+\li Compile and install
+\verbatim
+ make
+ make install
+\endverbatim
+
+If you run into any trouble, choose the "SHOW ADVANCED VALUES" option in
+CMake and make sure that all options related to your language are correct.
+If not correct, fix them.
+
+@section yarp_swig_configure_windows Configuring YARP language bindings on Windows
+
+Run the CMake GUI (or <tt>ccmake</tt> from the 
+command line), and set the source directory to $YARP_ROOT/bindings,
+where YARP_ROOT is the path to the YARP source code.
+Set the build directory to be anywhere you like.  When you configure, 
+you should see options to enable various languages (CREATE_JAVA,
+CREATE_PYTHON, and so on).  Turn on exactly one of those options
+(you may get conflicts between certain pairs of languages if you
+choose to build more than one in a single build directory).  Configure,
+and generate.  You should now have a project file or Makefile in the
+build directory.  Go build it and you are done!
+
+From the command line:
+\li Go to %YARP_ROOT%/bindings
+\verbatim
+ cd %YARP_ROOT%/bindings
+\endverbatim
+\li Create build directory:
+\verbatim
+ mkdir build
+\endverbatim
+Run cmake
+\verbatim
+ ccmake ../
+\endverbatim
+\li If you have trouble, click the "SHOW ADVANCED VALUES" 
+checkbox and fill in SWIG-related fields that CMake couldn't figure out.
+\li Check that SWIG_DIR points to the directory Lib inside the swig tree.
+\li Check that SWIG_EXECUTABLE points to the swig.exe, if not point to manually.
+\li Example:
+\verbatim
+ SWIG_DIR         C:/swig/swigwin-2.0.7/Lib
+ SWIG_EXECUTABLE  C:/swig/swigwin-2.0.7/swig.exe
+\endverbatim
+\li Enable variable:
+\verbatim
+ CREATE_<THE LANGUAGE YOU WANT>=ON
+\endverbatim
+\li Open solution file with Visual Studio and compile.
+\li Note: use Release build. 
+
+If you run into any trouble, choose the "SHOW ADVANCED VALUES" option in
+CMake and make sure that all options related to your language are correct.
+If not correct, fix them.
+
+ */
+
