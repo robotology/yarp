@@ -19,6 +19,20 @@ but are actually closer in spirit to
 YARP config files translate into yarp::os::Property objects 
 (see e.g. the yarp::os::Property::fromConfigFile command).
 
+ - \ref yarp_config_file_basics
+ - \ref yarp_config_file_reading
+ - \ref yarp_config_file_add_section
+ - \ref yarp_config_file_nesting
+ - \ref yarp_config_file_lists
+ - \ref yarp_config_file_includes
+ - \ref yarp_config_file_comments
+ - \ref yarp_config_file_quoting 
+ - \ref yarp_config_file_continue
+ - \ref yarp_config_list_syntax
+ - \ref yarp_config_file_environment
+ - \ref yarp_config_file_equals
+ - \ref yarp_config_command
+
 \section yarp_config_file_basics A minimal config file
 
 Here is a minimal config file, let's call it "config.ini" (the extension
@@ -188,7 +202,7 @@ Consider nesting instead
 using \ref yarp_config_file_nesting "nested configuration files".
 
 
-\section yarp_config_file_lists Combining section collections and includes
+\section yarp_config_file_includes Combining section collections and includes
 
 As of YARP 2.2.8, section collections and include file features can be 
 combined.  In other words, one can have a configuration file like this:
@@ -287,6 +301,62 @@ x = 10
 Don't forget the spaces, and don't do anything fancy beyond key/value
 pairs.
 
+\section yarp_config_command Command line configuration switches
+
+The yarp::os::ResourceFinder class bundles together some common
+ways to configure YARP programs.  An instance of this class 
+is usually passed the command line arguments:
+\code
+int main(int argc, char *argv[]) {
+  ResourceFinder prop;
+  prop.configure(argc,argv);
+  ...
+}
+\endcode
+
+The yarp::os::ResourceFinder class can be used just like
+the yarp::os::Property class mentioned in:
+\ref yarp_config_file_reading.
+If the user of the program supplies a <tt>--from config.ini</tt> argument
+that file shall be read as a configuration file.  Values
+can be overridden on the command line.  For example, if <tt>config.ini</tt>
+contains:
+\code
+width 10
+height 15
+\endcode
+And the program is called with these arguments:
+\verbatim
+--policy none --from config.ini --width 200
+\endverbatim
+The policy flag here tells YARP not to fuss too much
+ over what paths should be searched - otherwise it will complain.  
+External projects like the ICUB project like to be able to globally
+control the policy used to search for configuration files.
+You could also set a
+YARP_POLICY environment variable to "none".  In any case, we get:
+\code
+prop.find("width").asInt()   // gives the int 200
+prop.find("height").asInt()  // gives the int 15
+\endcode
+This can be handy to override one or two values in a long config file
+without needing to copy it and modify it.  One wrinkle remains -- how
+to override values that are in sections?  For example, if <tt>config.ini</tt>
+is:
+\code
+[SIZE]
+width 10
+height 15
+[APPEARANCE]
+color red
+\endcode
+Then calling the program with <tt>--width 200</tt> would simply add
+a new top-level <tt>width</tt> value without modifying the <tt>width</tt>
+in the <tt>SIZE</tt> section.  As of yarp 2.3.20, it is possible to
+use a nested notation in the command line, and call the program as:
+\verbatim
+--policy none --from config.ini --SIZE::width 200
+\endverbatim
 
  *
  */
