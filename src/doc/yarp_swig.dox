@@ -31,18 +31,39 @@ Then, install any language-specific packages needed.
 
 \li \ref yarp_swig_java
 \li \ref yarp_swig_python
+\li \ref yarp_swig_matlab
 \li Other languages - on Linux: Check http://www.dabeaz.com/cgi-bin/wiki.pl?DeveloperInfo/GettingStarted
 \li Other languages - on OSX: A surprising amount of stuff comes pre-installed.
 \li Other languages - on Windows: Check http://www.swig.org/Doc2.0/Windows.html
 
-Now, check that your build of YARP is compatible with SWIG.  
-It is best if YARP is compiled as a dynamic/shared library.
+Now, we need to get YARP ready:
+
+\li You'll need to have YARP installed or compiled on your computer.
+See \ref install for how to do that.
+
+\li Check that your build of YARP is compatible with SWIG.  
+It is best if YARP is compiled as a set of dynamic/shared libraries.
 If you compiled YARP yourself, make sure that the "CREATE_SHARED_LIBRARY"
 flag was turned on.  If not, configure it with CMake and recompile.
+Precompiled YARP builds provide dynamic/shared libraries.
 
-Finally configure and compile the bindings:
-\li \ref yarp_swig_configure_linux
-\li \ref yarp_swig_configure_windows
+\li You'll also need an up-to-date copy of the YARP source code.  This
+does <b>not</b> need to match the version of YARP you have installed (as 
+long as it isn't too old).  
+Any YARP package from version 2.3.20 on will do.  Older packages
+are also fine, but you'll need to replace "$YARP_ROOT/bindings"
+with "$YARP_ROOT/example/swig" throughout this tutorial.
+If you have subversion, you can get piping fresh YARP
+as follows:
+\verbatim
+svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2
+\endverbatim
+
+Okay, we are done installing.  Let's do this thing.
+\li \ref yarp_swig_configure
+\li \ref yarp_swig_compile
+\li \ref yarp_swig_run
+\li \ref yarp_swig_api
 
 @section yarp_swig_linux Installing SWIG on Linux
 
@@ -113,36 +134,7 @@ On Windows, you can get python from http://www.python.org/getit/windows/
 Done? Now follow the configuration steps in \ref yarp_swig_install.
 
 
-@section yarp_swig_configure_linux Configuring YARP language bindings on Linux
-
-Here are the steps, one by one:
-\li Go to $YARP_ROOT/bindings
-\verbatim
- cd $YARP_ROOT/bindings
-\endverbatim
-\li Create a build directory:
-\verbatim
- mkdir build
-\endverbatim
-\li Run ccmake
-\verbatim
- ccmake ../
-\endverbatim
-Set the following in CMake:
-\verbatim
- CREATE_<THE LANGUAGE YOU WANT>=ON
-\endverbatim
-\li Compile and install
-\verbatim
- make
- make install
-\endverbatim
-
-If you run into any trouble, choose the "SHOW ADVANCED VALUES" option in
-CMake and make sure that all options related to your language are correct.
-If not correct, fix them.
-
-@section yarp_swig_configure_windows Configuring YARP language bindings on Windows
+@section yarp_swig_configure Configuring YARP language bindings
 
 Run the CMake GUI (or <tt>ccmake</tt> from the 
 command line), and set the source directory to $YARP_ROOT/bindings,
@@ -155,38 +147,116 @@ choose to build more than one in a single build directory).  Configure,
 and generate.  You should now have a project file or Makefile in the
 build directory.  Go build it and you are done!
 
-From the command line:
-\li Go to %YARP_ROOT%/bindings
+Here are the steps, one by one.
+
+\li Create an empty build directory.  This can be anywhere you 
+like.  If you are interested in multiple languages,
+we recommend you use a separate build directory for each.
+From the command-line, you could do this (if YARP_ROOT isn't 
+set, replace it with the path to YARP's source code):
 \verbatim
- cd %YARP_ROOT%/bindings
-\endverbatim
-\li Create build directory:
-\verbatim
+ # On Linux...
+ cd $YARP_ROOT/bindings
  mkdir build
+ cd build
+
+ # On Windows...
+ cd %YARP_ROOT%/bindings
+ mkdir build
+ cd build
 \endverbatim
-Run cmake
+\li Run CMake.  If you use a GUI, set the SOURCE directory to the
+"bindings" subdirectory of the YARP source code, and the BUILD
+directory to the empty build directory you created.  If you followed
+the command-line instructions above, you can continue with:
 \verbatim
- ccmake ../
+ccmake ..
 \endverbatim
-\li If you have trouble, click the "SHOW ADVANCED VALUES" 
-checkbox and fill in SWIG-related fields that CMake couldn't figure out.
-\li Check that SWIG_DIR points to the directory Lib inside the swig tree.
-\li Check that SWIG_EXECUTABLE points to the swig.exe, if not point to manually.
-\li Example:
+\li Now, in CMake, find a CREATE_* flag that matches the language
+you care about, and turn it ON.  For example, for python, turn
+on CREATE_PYTHON.
+\verbatim
+CREATE_<LANGUAGE>=ON
+\endverbatim
+\li Finish configuring/generating in CMake, then exit it.
+\li Now you should have everything you need to compile and build.
+
+If you run into any trouble, choose the "SHOW ADVANCED VALUES" option in
+CMake and make sure that all options related to your language are correct
+(e.g. PYTHON_* variables, JAVA_* variables, etc).
+If not correct, fix them to point to valid locations on your computer.
+
+If you installed SWIG manually, for example on Windows, then:
+\li Check that SWIG_DIR in CMake points to the directory Lib inside where you unpacked SWIG.  If not, edit it and set it manually to the correct location.
+\li Check that SWIG_EXECUTABLE in CMake points to the swig.exe program. If not, edit it and set it manually to the correct location.
+\li Examples of good values:
 \verbatim
  SWIG_DIR         C:/swig/swigwin-2.0.7/Lib
  SWIG_EXECUTABLE  C:/swig/swigwin-2.0.7/swig.exe
 \endverbatim
-\li Enable variable:
-\verbatim
- CREATE_<THE LANGUAGE YOU WANT>=ON
-\endverbatim
-\li Open solution file with Visual Studio and compile.
-\li Note: use Release build. 
 
-If you run into any trouble, choose the "SHOW ADVANCED VALUES" option in
-CMake and make sure that all options related to your language are correct.
-If not correct, fix them.
+@section yarp_swig_compile Compiling YARP language bindings
+
+If you followed the command-line suggestions in \ref yarp_swig_configure,
+and are on Linux/OSX, all that remains is to do:
+\verbatim
+make
+make install   # Optional, not sane for all languages.  Good for python.
+\endverbatim
+In any case, everything you need should be sitting in the build directory.
+With Visual Studio: open the solution file in build directory, and compile 
+as usual.  Be sure to use the Release build. 
+
+@section yarp_swig_run Running programs that use the YARP language bindings
+
+There are basic examples in the "bindings" subdirectory of the YARP 
+source code for all the supported languages.  There are a few 
+important things to be aware of:
+
+\li When you compiled the bindings, a shared library (.so/.dll/.pyd/...) was 
+created.  This library needs to be in your operating system's library path.
+On Linux, if you are in the build directory, you can do something like one of:
+\verbatim
+  setenv LD_LIBRARY_PATH $PWD:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
+\endverbatim
+On Windows, you can update your PATH environment variable.
+
+\li When you compiled the bindings, one or many wrapper files may
+have been produced in your language of interest.  These files will
+need to be in whatever path is appropriate to guide your language's 
+interpreter/compiler/... to find them.
+
+@section yarp_swig_api Available classes and methods
+
+While we try to translate the YARP API in as close to its original
+form as possible, some classes and methods had to be changed because
+of issues with templates and pointers.  So in different languages the
+API is slightly different from the original.  At the moment, the three
+ways to find out about these differences are:
+
+ - Via your language's introspection features.
+ - By compiling the java or python interfaces, and then run javadoc
+or pydoc to build a browsable form of the API.
+ + By reading the <tt>bindings/yarp.i</tt> file.  This is a bit complicated, 
+   but powerful because you'll
+   learn how to fix things if you run into problems.  See http://www.swig.org
+   for documentation on the syntax of this file.
+
+
+@section yarp_swig_matlab YARP, SWIG, and Matlab
+
+The easiest way to use YARP from Matlab is via its Java bindings.
+Follow the instructions for Java: \ref yarp_swig_java.
+
+When you have the bindings built, make sure to add the path to
+the build directory in your matlab classpath.txt file.
+You can find out where this
+file is by typing in Matlab:
+\verbatim
+  which classpath.txt
+\endverbatim
+
 
  */
 
