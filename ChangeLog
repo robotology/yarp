@@ -1,3 +1,7 @@
+2012-08-23  Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/RunReadWrite.cpp
+	Semaphore deadlock on close resolved.
+
 2012-09-19  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/doc/yarp_swig.dox: consolidate documentation about building
