@@ -355,7 +355,10 @@ void RunReadWrite::close()
 {
     CHECK_ENTER("RunReadWrite::close")
 
+    if (mClosed) return;
+
 #if !defined(WIN32)
+
     mDone.wait();
     CHECKPOINT()
         
@@ -485,7 +488,7 @@ static void rwSigintHandler(int sig)
     CHECK_EXIT()
 }
 
-#if !defined(WIN32) && !defined(WIN64)
+#if !defined(WIN32)
 static void sighupHandler(int sig)
 {
     CHECK_ENTER("sighupHandler")
