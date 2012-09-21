@@ -60,9 +60,20 @@ public:
         checkEqual(helper.state,2,"helper unblocked");
     }
 
+    void checkTimed() {
+        report(0, "check timed blocking behavior...");
+        Semaphore x(0);
+        bool result = x.waitWithTimeout(0.5);
+        checkFalse(result, "wait timed out ok");
+        x.post();
+        result = x.waitWithTimeout(1000);
+        checkTrue(result, "wait succeeded");
+    }
+
     virtual void runTests() {
         checkBasic();
         checkBlock();
+        checkTimed();
     }
 };
 

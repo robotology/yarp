@@ -1,3 +1,15 @@
+2012-09-21  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/include/yarp/os/impl/ACESemaphoreImpl.h
+	* src/libYARP_OS/include/yarp/os/impl/MachSemaphoreImpl.h
+	* src/libYARP_OS/include/yarp/os/impl/POSIXSemaphoreImpl.h
+	* src/libYARP_OS/src/Semaphore.cpp: added Semaphore::waitWithTimeout
+	method [thanks Alberto Cardellino] - Mach implementation not yet
+	validated
+
+	* src/libYARP_OS/harness/SemaphoreTest.cpp: Check operation
+	of Semaphore::waitWithTimeout
+
 2012-08-23  Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/RunReadWrite.cpp
 	Semaphore deadlock on close resolved.

@@ -14,6 +14,7 @@
 #include <mach/semaphore.h>
 #include <mach/task.h>
 #include <yarp/os/impl/Logger.h>
+#include <kern/clock.h>
 
 class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
 public:
@@ -31,6 +32,20 @@ public:
     // blocking wait
     void wait() {
         semaphore_wait(sema);
+    }
+
+    // blocking wait with timeout
+    bool waitWithTimeout(double timeout) {
+        // just guessing, don't have OSX machine to test :-(
+        mach_timespec_t	ts = clock_get_system_value();
+        ts.tv_sec = ts.tv_sec + (int)timeout;
+        ts.tv_nsec = ts.tv_nsec + 
+            (long)((timeout-(int)timeout)*1000000000L+0.5);
+        if (ts.tv_nsec >= 1000000000L) {
+            ts.tv_sec++;
+            ts.tv_nsec = ts.tv_nsec - 1000000000L;
+        }
+        return semaphore_timedwait(sema,ts) == KERN_SUCCESS;
     }
 
     // polling wait

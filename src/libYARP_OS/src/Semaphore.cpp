@@ -31,6 +31,10 @@ void Semaphore::wait() {
     ((SemaphoreImpl*)implementation)->wait();
 }
 
+bool Semaphore::waitWithTimeout(double timeoutInSeconds) {
+    return ((SemaphoreImpl*)implementation)->waitWithTimeout(timeoutInSeconds);
+}
+
 bool Semaphore::check() {
     return ((SemaphoreImpl*)implementation)->check();
 }

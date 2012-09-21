@@ -44,6 +44,17 @@ public:
         }
     }
 
+    // blocking wait with timeout
+    bool waitWithTimeout(double timeout) {
+        ACE_Time_Value ts = ACE_OS::gettimeofday();
+        ACE_Time_Value add;
+        add.sec(long(timeout));
+        add.usec(long((timeout-long(timeout)) * 1.0e6));
+        ts += add;
+        int result = sema.acquire(ts);
+        return (result!=-1);
+    }
+
     // polling wait
     bool check() {
         return (sema.tryacquire()<0)?0:1;

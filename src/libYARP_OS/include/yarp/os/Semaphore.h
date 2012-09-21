@@ -51,6 +51,19 @@ public:
 
 
     /**
+     * Try to decrement the counter, even if we must wait - but don't wait
+     * forever.  This method wiill wait for at most timeoutInSeconds seconds
+     * (this can be fractional).  If the counter has not been decremented
+     * within that interval, the method will return false.
+     *
+     * @param timeoutInSeconds the maximum length of time to wait, in seconds (may be fractional).
+     * @return true if the counter was decremented, false if a timeout occurred.
+     *
+     */
+    bool waitWithTimeout(double timeoutInSeconds);
+
+
+    /**
      * Decrement the counter, unless that would require waiting.  If the counter
      * would decrement below zero, this method simply returns without doing
      * anything.
