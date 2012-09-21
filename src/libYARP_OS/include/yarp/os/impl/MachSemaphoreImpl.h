@@ -14,9 +14,6 @@
 #include <mach/semaphore.h>
 #include <mach/task.h>
 #include <yarp/os/impl/Logger.h>
-#include <mach/clock.h>
-#include <mach/mach.h>
-
 
 class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
 public:
@@ -38,19 +35,9 @@ public:
 
     // blocking wait with timeout
     bool waitWithTimeout(double timeout) {
-        // just guessing, don't have OSX machine to test :-(
-        clock_serv_t cclock;
-        mach_timespec_t	ts;
-        host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-        clock_get_time(cclock, &ts);
-        mach_port_deallocate(mach_task_self(), cclock);
+        mach_timespec_t	ts = { 0, 0 };
         ts.tv_sec = ts.tv_sec + (int)timeout;
-        ts.tv_nsec = ts.tv_nsec + 
-            (long)((timeout-(int)timeout)*1000000000L+0.5);
-        if (ts.tv_nsec >= 1000000000L) {
-            ts.tv_sec++;
-            ts.tv_nsec = ts.tv_nsec - 1000000000L;
-        }
+        ts.tv_nsec = (long)((timeout-(int)timeout)*1000000000L+0.5);
         return semaphore_timedwait(sema,ts) == KERN_SUCCESS;
     }
 
