@@ -16,6 +16,12 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformTime.h>
+
+#ifdef ACE_WIN32
+// for WIN32 MM functions
+#include <mmsystem.h>
+#endif
 
 class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
 public:
