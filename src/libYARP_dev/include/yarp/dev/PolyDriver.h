@@ -162,7 +162,7 @@ public:
      * Check if device is valid.
      * @return true iff the device was created and configured successfully
      */
-    bool isValid() {
+    bool isValid() const {
         return dd != 0 /*NULL*/;
     }
 
