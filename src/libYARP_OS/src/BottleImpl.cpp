@@ -769,6 +769,9 @@ String StoreString::toStringNested() const {
         } else if (ch=='\r') {
             result += '\\';
             result += 'r';
+        } else if (ch=='\0') {
+            result += '\\';
+            result += '0';
         } else {
             if (ch=='\\'||ch=='\"') {
                 result += '\\';
@@ -787,7 +790,6 @@ void StoreString::fromString(const String& src) {
 
 void StoreString::fromStringNested(const String& src) {
     // unquoting code: very inefficient, but portable
-    String result = "";
     x = "";
     size_t len = src.length();
     if (len>0) {
@@ -814,6 +816,8 @@ void StoreString::fromStringNested(const String& src) {
                             x += '\n';
                         } else if (ch=='r') {
                             x += '\r';
+                        } else if (ch=='0') {
+                            x += '\0';
                         } else {
                             x += ch;
                         }
@@ -832,14 +836,13 @@ bool StoreString::readRaw(ConnectionReader& reader) {
     int len = reader.expectInt();
     String buf(YARP_STRINIT(len));
     reader.expectBlock((const char *)buf.c_str(),len);
-    x = buf.c_str();
-    //x = reader.expectString(len);
+    YARP_STRSET(x,buf.c_str(),(size_t)(len-1),1);
     return true;
 }
 
 bool StoreString::writeRaw(ConnectionWriter& writer) {
     writer.appendInt((int)x.length()+1);
-    writer.appendString(x.c_str(),'\0');
+    writer.appendBlock(x.c_str(),x.length()+1); // need \0
     return true;
 }
 

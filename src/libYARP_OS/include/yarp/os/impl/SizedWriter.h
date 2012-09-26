@@ -12,6 +12,7 @@
 
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/PortReader.h>
+#include <yarp/os/PortWriter.h>
 #include <stddef.h> // defines size_t
 
 namespace yarp {
@@ -32,7 +33,7 @@ namespace yarp {
  * SizedWriter class is referenced by the library instead of
  * BufferedConnectionWriter specifically to leave that possibility open.
  */
-class YARP_OS_impl_API yarp::os::impl::SizedWriter {
+class YARP_OS_impl_API yarp::os::impl::SizedWriter : public yarp::os::PortWriter {
 public:
     virtual ~SizedWriter() {}
 
@@ -55,6 +56,13 @@ public:
         }
     }
 
+    virtual bool write(ConnectionWriter& connection) {
+        for (size_t i=0; i<length(); i++) {
+            connection.appendBlock((char*)data(i),length(i));
+        }
+        return true;
+    }
+
     virtual bool dropRequested() = 0;
 
 
@@ -71,7 +79,6 @@ public:
      *
      */
     virtual void stopWrite() = 0;
-
 };
 
 #endif

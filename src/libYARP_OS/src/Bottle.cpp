@@ -84,6 +84,10 @@ void Bottle::addString(const char *str) {
     HELPER(implementation).addString(str);
 }
 
+void Bottle::addString(const ConstString& str) {
+    HELPER(implementation).addString(str);
+}
+
 Bottle& Bottle::addList() {
     return HELPER(implementation).addList();
 }
@@ -405,16 +409,16 @@ Bottle& Searchable::findGroup(const char *key,
 }
 
 
-bool Bottle::write(PortReader& reader) {
+bool Bottle::write(PortReader& reader, bool textMode) {
     DummyConnector con;
-    con.setTextMode(false);
+    con.setTextMode(textMode);
     write(con.getWriter());
     return reader.read(con.getReader());
 }
 
-bool Bottle::read(PortWriter& writer) {
+bool Bottle::read(PortWriter& writer, bool textMode) {
     DummyConnector con;
-    con.setTextMode(false);
+    con.setTextMode(textMode);
     writer.write(con.getWriter());
     return read(con.getReader());
 }

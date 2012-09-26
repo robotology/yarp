@@ -549,6 +549,33 @@ public:
         checkEqualish(b2.get(0).asDouble(),3.14,"copy from bottle succeeded");
     }
 
+    void testStringWithNull() {
+        report(0,"test string with null");
+        char buf1[] = "hello world";
+        char buf2[] = "hello world";
+        buf2[5] = '\0';
+        ConstString str1(buf1,12);
+        ConstString str2(buf2,12);
+        checkEqual(str1.length(),12,"unmodified string length ok");
+        checkEqual(str2.length(),12,"modified string length ok");
+        ConstString str3(str2);
+        checkEqual(str3.length(),12,"copied string length ok");
+        Bottle bot;
+        bot.addString(str2);
+        checkEqual(bot.get(0).asString().length(),12,"bottled string asString() length ok");
+        checkEqual(bot.get(0).toString().length(),12,"bottled string toString() length ok");
+        Bottle bot2 = bot;
+        checkEqual(bot2.get(0).asString().length(),12,"bottled, copied string length ok");
+
+        Bottle bot3;
+        bot.write(bot3);
+        checkEqual(bot3.get(0).asString().length(),12,"bottled, serialized string length ok");
+
+        Bottle bot4;
+        bot4.fromString(bot.toString());
+        checkEqual(bot4.get(0).asString().length(),12,"bottled, text-serialized string length ok");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -579,6 +606,7 @@ public:
         testEmptyList();
         testNull();
         testSerialCopy();
+        testStringWithNull();
     }
 
     virtual String getName() {

@@ -102,6 +102,12 @@ public:
     void addString(const char *str);
 
     /**
+     * Places a string in the bottle, at the end of the list.
+     * @param str the string to add
+     */
+    void addString(const ConstString& str);
+
+    /**
      * Add a Value to the bottle, at the end of the list.
      * @param value the Value to add
      */
@@ -201,17 +207,19 @@ public:
      * Copy the bottle's value to a object that can read a serialization.
      * Must be serialized in standard Bottle-compatible format.
      * @param reader the serializable object
+     * @param textMode true if text serialization should be used
      * @return true iff the bottle was written successfully.
      */
-    bool write(PortReader& reader);
+    bool write(PortReader& reader, bool textMode = false);
 
     /**
      * Set the bottle's value based on input from a serializable object.
      * Must be serialized in standard Bottle-compatible format.
      * @param writer the serializable object
+     * @param textMode true if text serialization should be used
      * @return true iff the bottle was read successfully.
      */
-    bool read(PortWriter& writer);
+    bool read(PortWriter& writer, bool textMode = false);
 
 
     void onCommencement();

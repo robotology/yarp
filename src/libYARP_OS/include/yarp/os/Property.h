@@ -85,6 +85,14 @@ public:
     void put(const char *key, const char *value);
 
     /**
+     * Associate the given key with the given string, so that
+     * find(key).asString() will give that string.
+     * @param key the key
+     * @param value the string value
+     */
+    void put(const char *key, const ConstString& value);
+
+    /**
      * Associate the given key with the given value, so that
      * find(key).asString() will give that value.
      * @param key the key

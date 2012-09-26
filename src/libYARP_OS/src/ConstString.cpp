@@ -95,7 +95,8 @@ ConstString ConstString::operator + (const char *str) const {
 }
 
 ConstString ConstString::operator + (const ConstString& alt) const {
-    return (HELPER(implementation) + HELPER(alt.implementation)).c_str();
+    String result = HELPER(implementation) + HELPER(alt.implementation);
+    return ConstString(result.c_str(),result.length());
 }
 
 const ConstString& ConstString::operator += (char ch) {

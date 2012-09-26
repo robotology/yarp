@@ -14,6 +14,7 @@
 
 #include <string>
 #include <string.h>
+#include <stdio.h>
 
 #include <yarp/os/impl/UnitTest.h>
 

@@ -59,7 +59,8 @@ public:
     virtual int asVocab() const          { return 0; }
     virtual double asDouble() const      { return 0; }
     virtual yarp::os::ConstString asString() const { 
-        return yarp::os::ConstString(asStringFlex().c_str()); 
+        String str = asStringFlex();
+        return yarp::os::ConstString(str.c_str(),str.length()); 
     }
     virtual yarp::os::Bottle *asList() const { return NULL; }
     virtual const char *asBlob() const   { return (const char*)0; }
@@ -112,7 +113,8 @@ public:
     }
 
     virtual yarp::os::ConstString toString() const {
-        return yarp::os::ConstString(toStringFlex().c_str());
+        String str = toStringFlex();
+        return yarp::os::ConstString(str.c_str(),str.length());
     }
 
     /**
@@ -278,7 +280,12 @@ public:
     virtual int asVocab() const { return yarp::os::Vocab::encode(x.c_str()); }
     virtual bool isString() const { return true; }
     static const int code;
-    virtual void copy(const Storable& alt) { x = alt.asString().c_str(); }
+    virtual void copy(const Storable& alt) { 
+        yarp::os::ConstString y = alt.asString(); 
+        String tmp;
+        YARP_STRSET(tmp,(char*)y.c_str(),y.length(),0);
+        x = tmp;
+    }
 };
 
 /**
@@ -426,6 +433,10 @@ public:
 
     void addString(const char *text) {
         add(new StoreString(String(text)));
+    }
+
+    void addString(const yarp::os::ConstString& text) {
+        add(new StoreString(String(text.c_str(),text.length())));
     }
 
     yarp::os::Bottle& addList();
