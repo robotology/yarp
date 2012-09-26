@@ -86,6 +86,8 @@ public:
         }
     }
 
+    DriverCreator *load(const char *name);
+
     DriverCreator *find(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
@@ -94,7 +96,7 @@ public:
                 return delegates[i];
             }
         }
-        return NULL;
+        return load(name);
     }
 
     bool remove(const char *name) {
@@ -117,22 +119,24 @@ private:
     SharedLibraryClassFactory<DeviceDriver> factory;
     SharedLibraryClass<DeviceDriver> dev;
 public:
-    StubDriver(const char *dll_name, const char *fn_name) {
+    StubDriver(const char *dll_name, const char *fn_name, bool verbose = true) {
         if (!factory.open(dll_name, fn_name)) {
 
             int problem = factory.getStatus();
             switch (problem) {
             case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
-                fprintf(stderr,"cannot load shared library\n");
+                if (verbose) {
+                    fprintf(stderr,"Cannot load plugin from shared library (%s)\n", dll_name);
+                }
                 break;
             case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
-                fprintf(stderr,"cannot find YARP hook in shared library\n");
+                fprintf(stderr,"cannot find YARP hook in shared library (%s:%s)\n", dll_name, fn_name);
                 break;
             case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
-                fprintf(stderr,"YARP hook in shared library misbehaved\n");
+                fprintf(stderr,"YARP hook in shared library misbehaved (%s:%s)\n", dll_name, fn_name);
                 break;
             default:
-                fprintf(stderr,"Unknown error\n");
+                fprintf(stderr,"Unknown error (%s:%s)\n", dll_name, fn_name);
                 break;
             }
             return;
@@ -205,6 +209,54 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     bool result = poly.open(prop);
     if (!result) return NULL;
     return poly.take();
+}
+
+DriverCreator *DriversHelper::load(const char *name) {
+#ifdef YARP_HAS_ACE
+    ConstString str(name);
+    ConstString libName = name;
+    ConstString fnName = name;
+    StubDriver *result = NULL;
+    int sindex = str.find(":");
+    if (sindex>=0) {
+        libName = str.substr(0,sindex);
+        fnName = str.substr(sindex+1);
+        result = new StubDriver(libName.c_str(),fnName.c_str(),false);
+        if (!result->isValid()) {
+            delete result;
+            result = NULL;
+        }
+    }
+    if (result==NULL && sindex<0) {
+        libName = ConstString("yarp_") + name;
+        fnName = name;
+        result = new StubDriver(libName.c_str(),fnName.c_str(),false);
+        if (!result->isValid()) {
+            delete result;
+            result = NULL;
+        }
+    }
+    if (result==NULL && sindex<0) {
+        int index = str.find("_");
+        if (index>=0) {
+            libName = ConstString("yarp_") + str.substr(0,index);
+            fnName = str;
+            result = new StubDriver(libName.c_str(),fnName.c_str(),false);
+            if (!result->isValid()) {
+                delete result;
+                result = NULL;
+            }
+        }
+    }
+    if (!result) return NULL;
+    delete result;
+    printf("yarpdev: found driver file %s\n", libName.c_str());
+    DriverCreator *creator = new StubDriverCreator(fnName.c_str(), "", "", libName.c_str());
+    add(creator);
+    return creator;
+#else
+    return NULL;
+#endif
 }
 
 
