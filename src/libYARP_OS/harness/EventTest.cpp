@@ -104,8 +104,8 @@ public:
         Time::delay(0.5);
         
         // removing these checks since they could fail on loaded machine
-        // checkFalse(h1.done.check(),"first not woken too early");
-        // checkFalse(h2.done.check(),"second not woken too early");
+        checkFalse(h1.done.check(),"first not woken too early");
+        checkFalse(h2.done.check(),"second not woken too early");
         x.signal();
         int ct = 0;
         h1.done.wait();
