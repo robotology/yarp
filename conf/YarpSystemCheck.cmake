@@ -126,7 +126,7 @@ option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functio
 mark_as_advanced(SKIP_ACE)
 
 if (SKIP_ACE)
-  set(ACE_LIBRARIES pthread)
+  set(ACE_LIBRARIES pthread rt)
 else ()
   set(YARP_HAS_ACE 1)
 
