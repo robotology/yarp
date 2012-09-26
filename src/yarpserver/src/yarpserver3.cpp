@@ -25,6 +25,7 @@
 #include "NameServiceOnTriples.h"
 #include "AllocatorOnTriples.h"
 #include "SubscriberOnSql.h"
+#include "StyleNameService.h"
 #include "ComposedNameService.h"
 #include "ParseName.h"
 
@@ -50,6 +51,24 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     Property options;
     options.fromCommand(argc,argv);
 
+    if (options.check("help")) {
+        printf("Welcome to the YARP name server.\n");
+        printf("  --config filename.conf   Load options from a file.\n");
+        printf("  --portdb ports.db        Store port infomation in named database.\n");
+        printf("                           Must not be on an NFS file system.\n");
+        printf("                           Set to :memory: to store in memory (faster).\n");
+        printf("  --subdb subs.db          Store subscription infomation in named database.\n");
+        printf("                           Must not be on an NFS file system.\n");
+        printf("                           Set to :memory: to store in memory (faster).\n");
+        printf("  --ip IP.AD.DR.ESS        Set IP address of server.\n");
+        printf("  --socket NNNNN           Set port number of server.\n");
+        printf("  --web dir                Serve web resources from given directory.\n");
+        printf("  --no-web-cache           Reload pages from file for each request.\n");
+        return 0;
+    } else {
+        printf("Call with --help for information on available options\n");
+    }
+
     ConstString configFilename = options.check("config",
                                                Value("yarpserver.conf")).asString();
     if (!options.check("config")) {
@@ -71,15 +90,14 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     bool cautious = options.check("cautious");
     bool verbose = options.check("verbose");
 
-    printf("Port database: %s (change with \"--portdb newports.db\")\n", 
+    printf("Using port database: %s\n", 
            dbFilename.c_str());
-    printf("Subscription database: %s (change with \"--subdb newsubs.db\")\n", 
+    printf("Using subscription database: %s\n", 
            subdbFilename.c_str());
-    printf("*** Make sure these database files are not on a shared file system ***\n");
-    printf("To clear the name server state, simply stop it, delete these files, and restart.\n\n");
-    printf("IP address: %s (change with \"--ip N.N.N.N\")\n", 
+    printf("If you ever need to clear the name server's state, just delete those files.\n\n");
+    printf("IP address: %s\n", 
            (ip=="...")?"default":ip.c_str());
-    printf("Port number: %d (change with \"--socket NNNNN\")\n", sock);
+    printf("Port number: %d\n", sock);
     
     Network yarp;
 
@@ -123,7 +141,10 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     yarp.queryBypass(&ns);
     subscriber.setStore(ns);
     ns.setSubscriber(&subscriber);
-    ComposedNameService combo(subscriber,ns);
+    StyleNameService style;
+    style.configure(options);
+    ComposedNameService combo1(subscriber,style);
+    ComposedNameService combo(combo1,ns);
     NameServerManager name(combo);
 #ifdef YARP_HAS_ACE
     BootstrapServer fallback(name);

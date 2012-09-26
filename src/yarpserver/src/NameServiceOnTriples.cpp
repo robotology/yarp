@@ -537,8 +537,6 @@ bool NameServiceOnTriples::cmdHelp(NameTripleState& act) {
     return true;
 }
 
-
-
 bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd, 
                                  yarp::os::Bottle& reply, 
                                  yarp::os::Bottle& event,
