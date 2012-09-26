@@ -337,12 +337,17 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     prop.put("REQUEST_URI",url.c_str());
     //printf("Property %s\n",prop.toString().c_str());
 
-    String from = "<html><body bgcolor='#ffffcc'><h1>yarp port ";
-    from += proto.getRoute().getToName();
-    from += "</h1>\n";
     Contact chome = NetworkBase::getNameServerContact();
     Address home = Address::fromContact(chome);
     Address me = proto.getStreams().getLocalAddress();
+
+    String from = "<html><head><link href=\"http://";
+    from += home.getName();
+    from += ":";
+    from += NetType::toString(home.getPort());
+    from += "/web/main.css\" rel=\"stylesheet\" type=\"text/css\"/></head><body bgcolor='#ffffcc'><h1>yarp port ";
+    from += proto.getRoute().getToName();
+    from += "</h1>\n";
 
     from += "<p>(<a href=\"http://";
     from += home.getName();
@@ -437,6 +442,7 @@ bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
     }
     Bottle b;
     b.read(con.getReader());
+
 
     ConstString body = b.find("web").toString();
 
