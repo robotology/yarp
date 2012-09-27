@@ -65,7 +65,10 @@ public:
             }
         }
 
-        Time::delay(0.2);  // close will take precedence over pending connections
+        while (core.getOutputCount()>0) {
+            // close could abort connections
+            Time::delay(0.2);
+        }
         core.close();
         ct++; // close is an event
 
@@ -111,11 +114,13 @@ public:
         report(0,"sending bottle, should receive it this time");
         expectation = bot.toString();
         sender.send(bot);
-        Time::delay(0.3);
+        for (int i=0; i<1000; i++) {
+            if (receives==1) break;
+            Time::delay(0.3);
+        }
         checkEqual(receives,1,"something received");
         sender.close();
         receiver.close();
-
     }
 
 
@@ -157,7 +162,10 @@ public:
         report(0,"sending bottle, should receive it this time");
         expectation = bot.toString();
         sender.send(bot);
-        Time::delay(0.3);
+        for (int i=0; i<1000; i++) {
+            if (receives==1) break;
+            Time::delay(0.3);
+        }
         checkEqual(receives,1,"something received");
         sender.close();
         receiver.close();
