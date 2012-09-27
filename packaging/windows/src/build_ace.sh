@@ -33,6 +33,12 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 # autotools, since that method seems better maintained.  Here we figure
 # out the correct ACE project file (or makefile) to use, given the compiler 
 # options
+# Visual Studio 11 not directly supported so we use ACE_vc10. Hopefully vs 
+# will convert it automatically
+if [ "k$OPT_COMPILER" = "kv11" ] ; then
+    echo "WARNING: ACE does not yet provide visual studio 11 project files so you have to manually open and convert ACE_vc10.vcxproj"
+	pname=ACE_vc11.vcxproj
+fi
 if [ "k$OPT_COMPILER" = "kv10" ] ; then
 	pname=ACE_vc10.vcxproj
 fi
@@ -116,6 +122,9 @@ fi
 
 # Carefully run the build.  MINGW is fiddly to run from CYGWIN, so we 
 # may need to zap the PATH
+
+echo "$OPT_BUILDER $pname $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND"
+
 ACE_DIR=`cygpath --mixed "$ACE_ROOT"`
 {
 if [ ! "k$RESTRICTED_PATH" = "k" ]; then
@@ -124,6 +133,7 @@ if [ ! "k$RESTRICTED_PATH" = "k" ]; then
 	echo "ACE_ROOT set to $ACE_ROOT"
 	echo "PATH set to $PATH"
 fi
+
 $OPT_BUILDER $pname $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
 }
 
