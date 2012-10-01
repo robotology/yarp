@@ -162,7 +162,7 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
   void generate_service (t_service*  tservice);
   void generate_xception(t_struct*   txception);
 
-  void print_doc        (t_doc* tdoc);
+  std::string print_doc        (t_doc* tdoc);
   std::string print_type       (t_type* ttype);
   std::string print_const_value(t_const_value* tvalue);
 
@@ -791,24 +791,30 @@ void t_yarp_generator::generate_index() {
  * If the provided documentable object has documentation attached, this
  * will emit it to the output stream in YARP format.
  */
-void t_yarp_generator::print_doc(t_doc* tdoc) {
+std::string t_yarp_generator::print_doc(t_doc* tdoc) {
+  stringstream doxyPar;
+  doxyPar.str()="";
   if (tdoc->has_doc()) {
+      doxyPar << "/**"  << endl;
     string doc = tdoc->get_doc();
     size_t index;
     while ((index = doc.find_first_of("\r\n")) != string::npos) {
       if (index == 0) {
-  f_out_ << "<p/>" << endl;
+ // f_out_ << "<p/>" << endl;
       } else {
-  f_out_ << doc.substr(0, index) << endl;
+        doxyPar << " * " << doc.substr(0, index) << endl;
       }
       if (index + 1 < doc.size() && doc.at(index) != doc.at(index + 1) &&
     (doc.at(index + 1) == '\r' || doc.at(index + 1) == '\n')) {
-  index++;
+        index++;
       }
       doc = doc.substr(index + 1);
     }
-    f_out_ << doc << "<br/>";
+   // f_out_ << doc << "<br/>";
+   doxyPar << " */" << endl;
   }
+  
+  return doxyPar.str();
 }
 
 /**
@@ -914,6 +920,7 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue) {
  */
 void t_yarp_generator::generate_typedef(t_typedef* ttypedef) {
   string name = ttypedef->get_name();
+  f_out_common_ << print_doc(ttypedef);
   f_out_common_<< "typedef " << print_type(ttypedef->get_type()) << " " << name <<";" << endl;
 }
 
@@ -965,6 +972,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
 
   vector<t_enum_value*> constants = tenum->get_constants();
 
+  f_types_ << print_doc(tenum);
   if (!gen_pure_enums_) {
     enum_name = "type";
     f_types_ <<
@@ -1087,6 +1095,7 @@ void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
     } else {
       f << "," << endl;
     }
+    f<< print_doc((*c_iter));
     indent(f)
       << prefix << (*c_iter)->get_name() << suffix;
     if (include_values && (*c_iter)->has_value()) {
@@ -1104,13 +1113,10 @@ void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
  */
 void t_yarp_generator::generate_const(t_const* tconst) {
   string name = tconst->get_name();
+  f_out_common_ <<  print_doc(tconst);   
   f_out_common_ << "const "<< print_type(tconst->get_type())<<" " << name << " = " << print_const_value(tconst->get_value()) <<";"<<endl;
    
-//   if (tconst->has_doc()) {
-//     f_out_ << "<tr><td colspan=\"3\"><blockquote>";
-//     print_doc(tconst);
-//     f_out_ << "</blockquote></td></tr>";
-//   }
+
 }
 
 /**
@@ -1202,7 +1208,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(f_stt_) << "class " << name << ";" << endl;
   namespace_close(f_stt_,ns,false);
   f_stt_ << endl << endl;
+  //add documentation (should add a generator option for it?)
 
+  f_stt_ <<  print_doc(tstruct);
   f_stt_ << "class " << namespace_decorate(ns,name) << " : public yarp::os::idl::WirePortable {" << endl;
   f_stt_ << "public:" << endl;
   indent_up();
@@ -1211,6 +1219,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();
     string mtype = print_type((*mem_iter)->get_type());
+
+    f_stt_ << print_doc(*mem_iter);
     indent(f_stt_) << mtype << " " << mname << ";" << endl; 
   }
 
@@ -1546,6 +1556,10 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       }
     }
 
+    //add documentation (should add a generator option for it?)
+   //if(tservice->has_doc())
+    f_srv_ << print_doc(tservice);
+       // f_srv_ << "/** \class "<< svcname << f_header_name << f_header_name << endl<< print_doc(tservice)<< " */" <<endl;
     string extends = "";
     if (extends_service != NULL) {
       extends = " :  public " + print_type(extends_service);
@@ -1562,6 +1576,8 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     fn_iter = functions.begin();
     for ( ; fn_iter != functions.end(); fn_iter++) {
+      //  if((*fn_iter)->has_doc())
+          f_srv_ <<print_doc((*fn_iter));
       indent(f_srv_) << "virtual " << function_prototype(*fn_iter)
 		     << ";" << endl;
 
