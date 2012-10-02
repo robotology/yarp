@@ -52,6 +52,15 @@ int yarp::os::mkdir(const char *p)
 #endif
 }
 
+int yarp::os::rmdir(const char *p)
+{
+#ifdef YARP_HAS_ACE
+    return ACE_OS::rmdir(p);
+#else
+    return -1;
+#endif
+}
+
 int yarp::os::stat(const char *path)
 {
 	ACE_stat dummy;

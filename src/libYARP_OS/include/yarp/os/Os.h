@@ -47,6 +47,12 @@ namespace yarp {
 		*/
 		YARP_OS_API int mkdir(const char *p);
 
+        		/**
+		* Wrapper for ACE_OS::rmdir(). Remove an empty directory.
+		* @param p: name of the directory.
+		*/
+		YARP_OS_API int rmdir(const char *p);
+
 		/**
 		* Wrapper for ACE_OS::stat() function.
 		*/
