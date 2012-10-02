@@ -1,3 +1,9 @@
+2012-10-02  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* bindings/src/YarpImageHelper.java: add access to floating
+	point rgb images for matlab, a patch from Plinio
+	[thanks Plinio Moreno Lopez]
+
 2012-09-21  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/include/yarp/os/impl/ACESemaphoreImpl.h

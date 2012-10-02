@@ -9,6 +9,8 @@
 import yarp.PixelRgb;
 import yarp.ImageRgb;
 import yarp.ImageFloat;
+import yarp.PixelRgbFloat;
+import yarp.ImageRgbFloat;
 import yarp.charArray;
 
 /** 
@@ -183,6 +185,65 @@ public class YarpImageHelper
 
 		return arrFltFull;
 	}
+
+
+	/**
+     * Access a floating point YARP image by planes.
+     * Returns a 2D array which contains the red plane, this is a
+     * [HxW] array compatible with Matlab.
+     * @param img input image
+     * @return the two dimensional array which contains the red plane
+     */
+    public float [][] get2DMatrixRed(ImageRgbFloat img)
+    {
+        for(int r=0; r<img.height(); r++)
+            for(int c=0; c<img.width(); c++)
+                {
+                    PixelRgbFloat p=img.pixel(c,r);
+                    arrFltFull[r][c] = p.getR();
+                }
+
+        return arrFltFull;
+    }
+
+	/**
+     * Access a floating point YARP image by planes.
+     * Returns a 2D array which contains the green plane, this is a
+     * [HxW] array compatible with Matlab.
+     * @param img input image
+     * @return the two dimensional array which contains the green plane
+     */
+    public float [][] get2DMatrixGreen(ImageRgbFloat img)
+    {
+        for(int r=0; r<img.height(); r++)
+            for(int c=0; c<img.width(); c++)
+                {
+                    PixelRgbFloat p=img.pixel(c,r);
+                    arrFltFull[r][c] = p.getG();
+                }
+
+        return arrFltFull;
+    }
+
+
+	/**
+     * Access a floating point YARP image by planes.
+     * Returns a 2D array which contains the blue plane, this is a
+     * [HxW] array compatible with Matlab.
+     * @param img input image
+     * @return the two dimensional array which contains the blue plane
+     */
+    public float [][] get2DMatrixBlue(ImageRgbFloat img)
+    {
+        for(int r=0; r<img.height(); r++)
+            for(int c=0; c<img.width(); c++)
+                {
+                    PixelRgbFloat p=img.pixel(c,r);
+                    arrFltFull[r][c] = p.getB();
+                }
+
+        return arrFltFull;
+    }
 
     
     /**
