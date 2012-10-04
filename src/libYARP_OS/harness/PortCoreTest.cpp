@@ -65,7 +65,7 @@ public:
             }
         }
 
-        while (core.getOutputCount()>0 && core.getEventCount()<ct) {
+        while (core.getOutputCount()>0 || core.getEventCount()<ct) {
             // close could abort connections
             Time::delay(0.2);
         }
