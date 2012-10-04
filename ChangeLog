@@ -1,5 +1,12 @@
 2012-10-04  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* conf/template/YARPConfig.cmake.in: add YARP_BINDINGS variable,
+	so that a CMakeLists.txt like this is sufficient to get bindings
+	going -
+	   cmake_minimum_required(VERSION 2.8)
+	   find_package(YARP REQUIRED)
+	   add_subdirectory(${YARP_BINDINGS} bindings)
+
 	* conf/YarpBindingsSource.cmake: add yarp bindings source to
 	install, for user convenience [thanks Juan G Victores]
 
