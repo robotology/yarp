@@ -86,7 +86,7 @@ IF (CREATE_JAVA)
   IF (PREPARE_CLASS_FILES)
     ADD_CUSTOM_COMMAND(TARGET ${target_name}
       POST_BUILD
-      COMMAND javac -source 1.3 -target 1.3 ${YARP_HELPERS} "yarp/*.java"
+      COMMAND javac -source 1.3 -target 1.3 "src/*.java" "yarp/*.java"
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
   ENDIF ()
 
