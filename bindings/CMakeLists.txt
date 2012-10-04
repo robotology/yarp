@@ -9,7 +9,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #############################################################################
 ## Discourage inplace compilation
 
-if (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
+if (CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
   option(COMPILE_INPLACE "Allow inplace compilation" FALSE)
   if (NOT COMPILE_INPLACE)
     if (NOT BEND_OVER_BACKWARDS_COMPATIBLE)
@@ -65,7 +65,7 @@ IF (CREATE_JAVA)
   SET(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/yarp")
   SET(TARGET_DIR src)
   IF (NOT BINDINGS_SRC_DIR)
-    SET(BINDINGS_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+    SET(BINDINGS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
   ENDIF ()
   IF (NOT PREPARE_CLASS_FILES)
     SET(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/generated_src")
@@ -73,7 +73,7 @@ IF (CREATE_JAVA)
   ENDIF ()
   MAKE_DIRECTORY("${CMAKE_CURRENT_BINARY_DIR}/${TARGET_DIR}")
   FOREACH(src ${YARP_HELPERS})
-    SET(target ${CMAKE_BINARY_DIR}/${TARGET_DIR}/${src})
+    SET(target ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_DIR}/${src})
     CONFIGURE_FILE(${BINDINGS_SRC_DIR}/${src}
       ${target} IMMEDIATE)
     MESSAGE(STATUS "copied ${target}")
@@ -87,7 +87,7 @@ IF (CREATE_JAVA)
     ADD_CUSTOM_COMMAND(TARGET ${target_name}
       POST_BUILD
       COMMAND javac -source 1.3 -target 1.3 "src/*.java" "yarp/*.java"
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   ENDIF ()
 
   # issue on MINGW where C++ name-mangling prevents java finding methods
@@ -228,12 +228,12 @@ IF (CREATE_CSHARP)
       ADD_CUSTOM_COMMAND(TARGET ${target_name}
 	POST_BUILD
 	COMMAND IF NOT EXIST .\\generated_src mkdir generated_src
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       
       ADD_CUSTOM_COMMAND(TARGET ${target_name}
 	POST_BUILD
 	COMMAND move *.cs .\\generated_src
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     ENDIF ()
   ELSE(WIN32 AND NOT CYGWIN)
     SWIG_ADD_MODULE(yarp csharp yarp.i)
