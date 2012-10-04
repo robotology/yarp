@@ -1,3 +1,8 @@
+2012-10-04  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* conf/YarpBindingsSource.cmake: add yarp bindings source to
+	install, for user convenience [thanks Juan G Victores]
+
 2012-10-02  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* bindings/src/YarpImageHelper.java: add access to floating

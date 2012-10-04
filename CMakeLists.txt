@@ -67,6 +67,10 @@ include(YarpPackage)
 # of build.  See conf/YarpDoc.cmake
 include(YarpDoc)
 
+# Make sure yarp.i and related source files get installed, to allow
+# bindings for other languages to be compiled from the build material.
+include(YarpBindingsSource)
+
 # Set up build files for WDK, if desired.
 # This is for package maintainers, for Windows builds.
 include(YarpWdk)
