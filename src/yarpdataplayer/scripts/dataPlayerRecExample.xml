@@ -1,19 +1,18 @@
 <application>
 <name>dataSetPlayer recording example</name>
 <dependencies>
-      <port>/quad</port>
 </dependencies>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/head</parameters>
-        <node>quad</node>
+        <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/inertial</parameters>
-        <node>quad</node>
+        <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
@@ -27,7 +26,7 @@
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/leftArm</parameters>
-        <node>quad</node>
+        <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
@@ -41,28 +40,28 @@
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/leftLeg</parameters>
-        <node>quad</node>
+        <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/rightArm</parameters>
-        <node>quad</node>
+        <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/images/left --type image</parameters>
-        <node>quad</node>
+        <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/images/right --type image</parameters>
-        <node>quad</node>
+        <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
