@@ -48,7 +48,7 @@ Go the \e app directory (e.g. $ICUB_ROOT/app) and run \e gyarpmanager:
 
 Inside the \e application folder in the \e gyarpmanager gui you should see an entry called \e dataSetPlayer_example, double click and open it.
 
-Now you are ready to run the application. Hit the \e run button. Four windows should open like this:
+Now you are ready to run the application. Hit the \e run button. For windows should open like this:
 
 \image html datasetplayer-app1.jpg
 \image latex datasetplayer-app1.eps "Running the dataSetPlayer" width=6cm
@@ -66,7 +66,7 @@ You can now use the \ref dataSetPlayer to play the sequence (all commands should
  
 \author Lorenzo Natale and Vadim Tikhanoff
 
-Copyright (C) 2012 Instituto Italiano di Tecnologia, Dep. of Robotics Brain and Cognitive Sciences and iCub Facility.
+Copyright (C) 2012 Instituto Italiano di Tecnologia, Dep. of Robotics, Brain and Cognitive Sciences and iCub Facility.
 
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
@@ -118,11 +118,11 @@ Go the \e app directory (e.g. $ICUB_ROOT/app) and run \e gyarpmanager:
 
 Inside the \e application folder in the \e gyarpmanager gui you should see an entry called \e dataSetPlayer_recording_example_, double click and open it.
 
-Now you are ready to run the application. Hit the \e run button. Four windows should open like this:
+Now you are ready to run the application. Hit the \e run button. After connecting the ports, the recording should automatically start.
  
 \author Lorenzo Natale and Vadim Tikhanoff
 
-Copyright (C) 2012 Instituto Italiano di Tecnologia, Dep. of Robotics Brain and Cognitive Sciences and iCub Facility.
+Copyright (C) 2012 Instituto Italiano di Tecnologia, Dep. of Robotics, Brain and Cognitive Sciences and iCub Facility.
 
 CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
