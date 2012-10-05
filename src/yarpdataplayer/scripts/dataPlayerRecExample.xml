@@ -1,6 +1,7 @@
 <application>
 <name>dataSetPlayer recording example</name>
 <dependencies>
+      <port>/computer1</port>
 </dependencies>
     <module>
         <name>dataDumper</name>
