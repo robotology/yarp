@@ -29,8 +29,8 @@ set(robotInterface_HDRS
     drivers/debugging.h
 )
 
-add_definitions("-Wall -Wextra --ansi --pedantic")
-add_definitions("-Wno-long-long -Wno-variadic-macros -Wshadow")
+#add_definitions("-Wall -Wextra --ansi --pedantic")
+#add_definitions("-Wno-long-long -Wno-variadic-macros -Wshadow")
 
 add_executable(robot-interface ${robotInterface_SRCS})
 
