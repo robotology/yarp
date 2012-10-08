@@ -608,14 +608,36 @@ public:
     // open all the devices and return true if all the open calls were succesful
     bool openDevices();
 
+    // close all the devices and return true if all the close calls were succesful
+    bool closeDevices();
+
     // return a vector of levels that have actions in the requested phase
     std::vector<unsigned int> getLevels(ActionPhase phase) const;
 
     // return a vector of actions for that phase and that level
     std::vector<std::pair<Device, Action> > getActions(ActionPhase phase, unsigned int level) const;
 
-    bool attach(const Device &device, const ParamList &params);
+
+    // run configure action on one device
+    bool configure(const Device &device, const ParamList &params);
+
+    // run calibrate action on one device
     bool calibrate(const Device &device, const ParamList &params);
+
+    // run attach action on one device
+    bool attach(const Device &device, const ParamList &params);
+
+    // run abort action on one device
+    bool abort(const Device &device, const ParamList &params);
+
+    // run detach action on one device
+    bool detach(const Device &device, const ParamList &params);
+
+    // run park action on one device
+    bool park(const Device &device, const ParamList &params);
+
+    // run custom action on one device
+    bool custom(const Device &device, const ParamList &params);
 
     std::string name;
     ParamList params;
@@ -666,6 +688,29 @@ bool RobotInterface::Robot::Private::openDevices()
     return ret;
 }
 
+bool RobotInterface::Robot::Private::closeDevices()
+{
+    bool ret = true;
+    for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
+        RobotInterface::Device &device = *it;
+
+        debug() << device;
+
+        if (!device.close()) {
+            warning() << "Cannot close device" << device.name();
+            ret = false;
+        }
+
+    }
+    if (ret) {
+        debug() << "All devices closed.";
+    } else {
+        warning() << "There was some problem closing one or more devices. Please check the log and your configuration";
+    }
+
+    return ret;
+}
+
 std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterface::ActionPhase phase) const
 {
     std::vector<unsigned int> levels;
@@ -706,6 +751,25 @@ std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInt
         }
     }
     return actions;
+}
+
+
+bool RobotInterface::Robot::Private::configure(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+{
+    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    return true;
+}
+
+bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+{
+    yarp::dev::ICalibrator *calibrator;
+    if (!device.driver()->view(calibrator)) {
+        error() << device.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        return false;
+    }
+
+
+    return true;
 }
 
 bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
@@ -776,22 +840,32 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
     }
 
     return true;
-
 }
 
-
-bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+bool RobotInterface::Robot::Private::abort(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    yarp::dev::ICalibrator *calibrator;
-    if (!device.driver()->view(calibrator)) {
-        error() << device.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
-        return false;
-    }
-
-
+    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
     return true;
 }
 
+
+bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+{
+    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    return true;
+}
+
+bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+{
+    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    return true;
+}
+
+bool RobotInterface::Robot::Private::custom(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+{
+    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    return true;
+}
 
 RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Robot &t)
 {
@@ -884,7 +958,7 @@ const RobotInterface::Device& RobotInterface::Robot::device(const std::string& n
 
 bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 {
-    debug() << "Entering phase" << ActionPhaseToString(phase);
+    debug() << "Entering" << ActionPhaseToString(phase) << "phase";
 
     if (phase == ActionPhaseStartup) {
         mPriv->openDevices();
@@ -902,15 +976,45 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             Action &action = ait->second;
 
             switch (action.type()) {
-            case ActionTypeAttach:
-                if (!mPriv->attach(device, action.params())) {
-                    error() << "Cannot run attach action on device" << device.name();
+            case ActionTypeConfigure:
+                if(!mPriv->configure(device, action.params())) {
+                    error() << "Cannot run configure action on device" << device.name();
                     ret = false;
                 }
                 break;
             case ActionTypeCalibrate:
                 if(!mPriv->calibrate(device, action.params())) {
                     error() << "Cannot run calibrate action on device" << device.name();
+                    ret = false;
+                }
+                break;
+            case ActionTypeAttach:
+                if (!mPriv->attach(device, action.params())) {
+                    error() << "Cannot run attach action on device" << device.name();
+                    ret = false;
+                }
+                break;
+            case ActionTypeAbort:
+                if(!mPriv->abort(device, action.params())) {
+                    error() << "Cannot run abort action on device" << device.name();
+                    ret = false;
+                }
+                break;
+            case ActionTypeDetach:
+                if (!mPriv->detach(device, action.params())) {
+                    error() << "Cannot run detach action on device" << device.name();
+                    ret = false;
+                }
+                break;
+            case ActionTypePark:
+                if (!mPriv->park(device, action.params())) {
+                    error() << "Cannot run park action on device" << device.name();
+                    ret = false;
+                }
+                break;
+            case ActionTypeCustom:
+                if (!mPriv->custom(device, action.params())) {
+                    error() << "Cannot run custom action on device" << device.name();
                     ret = false;
                 }
                 break;
@@ -926,6 +1030,10 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
         debug() << "All actions for phase" << ActionPhaseToString(phase) << "executed.";
     } else {
         warning() << "There was some problem running actions for phase" << ActionPhaseToString(phase) << ". Please check the log and your configuration";
+    }
+
+    if (phase == ActionPhaseShutdown) {
+        mPriv->closeDevices();
     }
 
     return ret;
