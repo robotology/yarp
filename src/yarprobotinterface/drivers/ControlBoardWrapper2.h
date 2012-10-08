@@ -644,7 +644,7 @@ public:
     virtual bool getPid(int j, Pid *p)
     {
         // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::getPid", Logger::get().log_files.f3);
-#warning "check for max number of joints!?!?!"
+//#warning "check for max number of joints!?!?!"
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
