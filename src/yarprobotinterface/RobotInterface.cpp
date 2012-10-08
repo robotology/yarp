@@ -409,7 +409,9 @@ public:
 
     Private& operator=(const Private& other)
     {
+        (void)other; // UNUSED
         error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+        return *this;
     }
 
     ~Private()
