@@ -58,6 +58,8 @@ public:
     inline Debug& operator<<(const char* t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(const void * t) { stream->oss << t; stream->oss << ' '; return *this; }
 
+    inline Debug& operator<<(const std::string &t) { stream->oss << t; stream->oss << ' '; return *this; }
+
     inline Debug& operator<<(yarp::os::ConstString t) { stream->oss << t.c_str(); stream->oss << ' '; return *this; }
 
 private:
