@@ -27,7 +27,7 @@ YARP_DECLARE_DEVICES(icubmod)
 
 namespace {
 static bool terminated = false;
-static bool askAbort = false;
+//static bool askAbort = false;
 //yarp::os::IRobotInterface *ri = 0;
 }
 
