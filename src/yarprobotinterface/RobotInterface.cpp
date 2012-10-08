@@ -843,12 +843,12 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
     }
 
     if (!(::hasParam(params, "network") || ::hasParam(params, "networks"))) {
-        error() << "Action \"attach\" requires either \"network\" or \"networks\" parameter";
+        error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires either \"network\" or \"networks\" parameter";
         return false;
     }
 
     if (::hasParam(params, "network") && ::hasParam(params, "networks")) {
-        error() << "Action \"attach\" cannot have both \"network\" and \"networks\" parameters";
+        error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" cannot have both \"network\" and \"networks\" parameters";
         return false;
     }
 
@@ -858,7 +858,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         std::string targetNetwork = ::findParam(params, "network");
 
         if (!::hasParam(params, "device")) {
-            error() << "Action \"attach\" requires \"device\" parameter";
+            error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires \"device\" parameter";
             return false;
         }
         std::string targetDeviceName = ::findParam(params, "device");
@@ -881,7 +881,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
             std::string targetNetwork = targetNetworks.get(i).toString().c_str();
 
             if (!::hasParam(params, targetNetwork)) {
-                error() << "Action \"attach\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";
+                error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";
                 return false;
             }
             std::string targetDeviceName = ::findParam(params, targetNetwork);
@@ -897,7 +897,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
     }
 
     if (!wrapper->attachAll(drivers)) {
-        error() << "Cannot execute attach on device" << device.name();
+        error() << "Cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << device.name();
         return false;
     }
 
