@@ -869,7 +869,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     }
 
     if (ret) {
-        debug() << "All actions for phase" << ActionPhaseToString(phase) << "execute.";
+        debug() << "All actions for phase" << ActionPhaseToString(phase) << "executed.";
     } else {
         warning() << "There was some problem running actions for phase" << ActionPhaseToString(phase) << ". Please check the log and your configuration";
     }
