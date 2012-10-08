@@ -111,7 +111,7 @@ inline static std::string findParam(const RobotInterface::ParamList &list, const
             return param.value();
         }
     }
-    warning() << "Param" << name << "not found";
+    error() << "Param" << name << "not found";
     return std::string();
 }
 
@@ -439,11 +439,7 @@ public:
             const RobotInterface::Param &param = *it;
             s += " (" + param.name() + " " + param.value() + ")";
         }
-        yarp::os::Property p(s.c_str());
-
-        debug() << "   -->" << "\033[01;32m" << s << "\033[00m";
-        debug() << "   --->" << "\033[01;35m" << p.toString() << "\033[00m";
-        return p;
+        return yarp::os::Property(s.c_str());
     }
 
     std::string name;
@@ -500,7 +496,6 @@ RobotInterface::Device& RobotInterface::Device::operator=(const RobotInterface::
         mPriv->actions.clear();
         mPriv->actions = other.mPriv->actions;
 
-        error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
         *mPriv->driver = *other.mPriv->driver;
     }
     return *this;
@@ -569,6 +564,8 @@ bool RobotInterface::Device::open()
 bool RobotInterface::Device::close()
 {
     // TODO implement me
+    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    return true;
 }
 
 bool RobotInterface::Device::hasParam(const std::string& name) const
