@@ -197,7 +197,7 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readGroup(TiXmlElement
         fatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "Expected \"group\", found" << groupElem->ValueStr();
     }
 
-    Param group;
+    Param group(true);
 
     if (groupElem->QueryStringAttribute("name", &group.name()) != TIXML_SUCCESS) {
         fatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "\"group\" element should contain the \"name\" attribute";

@@ -117,11 +117,34 @@ inline static std::string findParam(const RobotInterface::ParamList &list, const
     return std::string();
 }
 
+inline static bool hasGroup(const RobotInterface::ParamList &list, const std::string& name)
+{
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+        const RobotInterface::Param &param = *it;
+        if (param.isGroup() && !name.compare(param.name())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline static std::string findGroup(const RobotInterface::ParamList &list, const std::string& name)
+{
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+        const RobotInterface::Param &param = *it;
+        if (param.isGroup() && !name.compare(param.name())) {
+            return param.value();
+        }
+    }
+    error() << "Param" << name << "not found";
+    return std::string();
+}
+
 } // namespace
 
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Param &t)
 {
-    oss << "(\"" << t.name() << "\" = \"" << t.value() << "\")";
+    oss << "(\"" << t.name() << "\"" << (t.isGroup() ? " [group]" : "") << " = \"" << t.value() << "\")";
     return oss;
 }
 
@@ -181,6 +204,7 @@ public:
 
     std::string name;
     std::string value;
+    bool isGroup;
 };
 
 RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Param &t)
@@ -191,16 +215,18 @@ RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface
     return dbg;
 }
 
-RobotInterface::Param::Param() :
+RobotInterface::Param::Param(bool isGroup) :
     mPriv(new Private(this))
 {
+    mPriv->isGroup = isGroup;
 }
 
-RobotInterface::Param::Param(const std::string &name, const std::string &value) :
+RobotInterface::Param::Param(const std::string &name, const std::string &value, bool isGroup) :
     mPriv(new Private(this))
 {
     mPriv->name = name;
     mPriv->value = value;
+    mPriv->isGroup = isGroup;
 }
 
 RobotInterface::Param::Param(const ::RobotInterface::Param& other) :
@@ -208,6 +234,7 @@ RobotInterface::Param::Param(const ::RobotInterface::Param& other) :
 {
     mPriv->name = other.mPriv->name;
     mPriv->value = other.mPriv->value;
+    mPriv->isGroup = other.mPriv->isGroup;
 }
 
 RobotInterface::Param& RobotInterface::Param::operator=(const RobotInterface::Param& other)
@@ -215,6 +242,7 @@ RobotInterface::Param& RobotInterface::Param::operator=(const RobotInterface::Pa
     if (&other != this) {
         mPriv->name = other.mPriv->name;
         mPriv->value = other.mPriv->value;
+        mPriv->isGroup = other.mPriv->isGroup;
     }
 
     return *this;
@@ -243,6 +271,11 @@ const std::string& RobotInterface::Param::name() const
 const std::string& RobotInterface::Param::value() const
 {
     return mPriv->value;
+}
+
+bool RobotInterface::Param::isGroup() const
+{
+    return mPriv->isGroup;
 }
 
 yarp::os::Property RobotInterface::Param::toProperty() const

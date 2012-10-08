@@ -24,8 +24,8 @@ class Debug;
 class Param
 {
 public:
-    explicit Param();
-    Param(const std::string &name, const std::string &value);
+    explicit Param(bool isGroup = false);
+    Param(const std::string &name, const std::string &value, bool isGroup = false);
     Param(const Param &other);
     Param& operator=(const Param& other);
 
@@ -36,6 +36,8 @@ public:
 
     const std::string& name() const;
     const std::string& value() const;
+
+    bool isGroup() const;
 
     yarp::os::Property toProperty() const;
 
