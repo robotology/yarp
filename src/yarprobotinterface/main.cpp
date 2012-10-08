@@ -6,6 +6,11 @@
  */
 
 
+#include "Debug.h"
+#include "XMLReader.h"
+
 int main(int argc, char *argv[])
 {
+
+    RobotInterface::XMLReader reader("/opt/iit/src/robotInterface/icub.xml");
 }

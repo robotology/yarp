@@ -8,13 +8,15 @@
 #ifndef ROBOTINTERFACE_XMLREADER_H
 #define ROBOTINTERFACE_XMLREADER_H
 
+#include <iosfwd>
+
 namespace RobotInterface
 {
 
 class XMLReader
 {
 public:
-    explicit XMLReader();
+    XMLReader(const std::string &filename);
     virtual ~XMLReader();
 
 private:
