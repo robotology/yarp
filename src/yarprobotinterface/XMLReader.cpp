@@ -77,7 +77,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readFile(const std::s
 RobotInterface::Robot RobotInterface::XMLReader::Private::readRobot(TiXmlElement *robotElem)
 {
     if (robotElem->ValueStr().compare("robot") != 0) {
-        fatal() << SYNTAX_ERROR(filename, robotElem->Row()) << "Root element should be \"robot\", found" << robotElem->Value();
+        fatal() << SYNTAX_ERROR(filename, robotElem->Row()) << "Root element should be \"robot\", found" << robotElem->ValueStr();
     }
 
     if (robotElem->QueryStringAttribute("name", &robot.name()) != TIXML_SUCCESS) {
@@ -103,7 +103,7 @@ RobotInterface::Robot RobotInterface::XMLReader::Private::readRobot(TiXmlElement
 RobotInterface::Device RobotInterface::XMLReader::Private::readDevice(TiXmlElement *deviceElem)
 {
     if (deviceElem->ValueStr().compare("device") != 0) {
-        fatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "Expected \"device\", found" << deviceElem->Value();
+        fatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "Expected \"device\", found" << deviceElem->ValueStr();
     }
 
     Device device;
@@ -170,7 +170,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParams(TiXmlEl
 RobotInterface::Param RobotInterface::XMLReader::Private::readParam(TiXmlElement *paramElem)
 {
     if (paramElem->ValueStr().compare("param") != 0) {
-        fatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "Expected \"param\", found" << paramElem->Value();
+        fatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "Expected \"param\", found" << paramElem->ValueStr();
     }
 
     Param param;
@@ -194,7 +194,7 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readParam(TiXmlElement
 RobotInterface::Param RobotInterface::XMLReader::Private::readGroup(TiXmlElement* groupElem)
 {
     if (groupElem->ValueStr().compare("group") != 0) {
-        fatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "Expected \"group\", found" << groupElem->Value();
+        fatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "Expected \"group\", found" << groupElem->ValueStr();
     }
 
     Param group;
@@ -232,7 +232,7 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readGroup(TiXmlElement
 RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamList(TiXmlElement* paramListElem)
 {
     if (paramListElem->ValueStr().compare("paramlist") != 0) {
-        fatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "Expected \"paramlist\", found" << paramListElem->Value();
+        fatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "Expected \"paramlist\", found" << paramListElem->ValueStr();
     }
 
     ParamList paramList;
@@ -248,7 +248,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamList(TiXm
 
     for (TiXmlElement* childElem = paramListElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("elem") != 0) {
-            fatal() << SYNTAX_ERROR(filename, childElem->Row()) << "Expected \"elem\", found" << childElem->Value();
+            fatal() << SYNTAX_ERROR(filename, childElem->Row()) << "Expected \"elem\", found" << childElem->ValueStr();
         }
 
         Param param;
@@ -284,7 +284,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamList(TiXm
 RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubDevice(TiXmlElement *subDeviceElem)
 {
     if (subDeviceElem->ValueStr().compare("subdevice") != 0) {
-        fatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "Expected \"subdevice\", found" << subDeviceElem->Value();
+        fatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "Expected \"subdevice\", found" << subDeviceElem->ValueStr();
     }
 
     ParamList subDevice;
@@ -322,9 +322,8 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubDevice(TiXm
 RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubFile(TiXmlElement* subFileElem)
 {
     if (subFileElem->ValueStr().compare("file") != 0) {
-        fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Expected \"file\", found" << subFileElem->Value();
+        fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Expected \"file\", found" << subFileElem->ValueStr();
     }
-
 
     std::string name;
     if (subFileElem->QueryStringAttribute("name", &name) != TIXML_SUCCESS) {
@@ -372,7 +371,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubFile(TiXmlE
 RobotInterface::Action RobotInterface::XMLReader::Private::readAction(TiXmlElement* actionElem)
 {
     if (actionElem->ValueStr().compare("action") != 0) {
-        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "Expected \"action\", found" << actionElem->Value();
+        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "Expected \"action\", found" << actionElem->ValueStr();
     }
 
     Action action;
