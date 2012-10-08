@@ -11,7 +11,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <stdlib.h>
+#include <yarp/os/Os.h>
 
 
 #define RED    "\033[01;31m"
@@ -34,7 +34,7 @@ void RobotInterface::Debug::print_output(MsgType t, const std::ostringstream &s)
             break;
         case FatalType:
             std::cout << RED    << "FATAL"   << CLEAR << ": " << s.str() << std::endl;
-            exit(1);
+            yarp::os::exit(-1);
             break;
     }
 }
