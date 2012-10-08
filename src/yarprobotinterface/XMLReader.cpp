@@ -332,12 +332,15 @@ RobotInterface::Action RobotInterface::XMLReader::Private::readAction(TiXmlEleme
     Action action;
 
     if (actionElem->QueryValueAttribute<ActionPhase>("phase", &action.phase()) != TIXML_SUCCESS || action.phase() == ActionPhaseUnknown) {
-        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"param\" element should contain the \"phase\" attribute [FIXME: list of accepted values]"; // FIXME
+        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"action\" element should contain the \"phase\" attribute [startup|interrupt|shutdown]";
     }
 
+
     if (actionElem->QueryValueAttribute<ActionType>("type", &action.type()) != TIXML_SUCCESS || action.type() == ActionTypeUnknown) {
-        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"param\" element should contain the \"type\" attribute [startup|shutdown]";
+        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"action\" element should contain the \"type\" attribute [FIXME: list of accepted values]"; // FIXME
     }
+
+    debug() << "        Found action [ ]";
 
 #if 0
     // BUG in TinyXML, see
@@ -354,6 +357,8 @@ RobotInterface::Action RobotInterface::XMLReader::Private::readAction(TiXmlEleme
     action.level() = (unsigned)tmp;
 #endif
 
+
+    debug() << "         " << action;
     return action;
 }
 
