@@ -664,14 +664,14 @@ bool RobotInterface::Robot::Private::openDevices()
 std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterface::ActionPhase phase) const
 {
     std::vector<unsigned int> levels;
-    for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); it++) {
-        const Device &device = *it;
+    for (DeviceList::const_iterator dit = devices.begin(); dit != devices.end(); dit++) {
+        const Device &device = *dit;
         if (device.actions().empty()) {
             continue;
         }
 
-        for (ActionList::const_iterator it = device.actions().begin(); it != device.actions().end(); it++) {
-            const Action &action = *it;
+        for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ait++) {
+            const Action &action = *ait;
             if (action.phase() == phase) {
                 levels.push_back(action.level());
             }
@@ -687,14 +687,14 @@ std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterfa
 std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInterface::Robot::Private::getActions(RobotInterface::ActionPhase phase, unsigned int level) const
 {
     std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > actions;
-    for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); it++) {
-        const Device &device = *it;
+    for (DeviceList::const_iterator dit = devices.begin(); dit != devices.end(); dit++) {
+        const Device &device = *dit;
         if (device.actions().empty()) {
             continue;
         }
 
-        for (ActionList::const_iterator it = device.actions().begin(); it != device.actions().end(); it++) {
-            const Action &action = *it;
+        for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ait++) {
+            const Action &action = *ait;
             if (action.phase() == phase && action.level() == level) {
                 actions.push_back(std::make_pair<RobotInterface::Device, RobotInterface::Action>(device, action));
             }
