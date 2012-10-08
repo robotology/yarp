@@ -175,6 +175,9 @@ public:
     bool hasParam(const std::string &name) const;
     const std::string& findParam(const std::string &name) const;
 
+
+    bool enterPhase(RobotInterface::ActionPhase phase);
+
 private:
     class Private;
     Private * const mPriv;

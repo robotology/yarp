@@ -13,6 +13,7 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
 
 #include "RobotInterface.h"
 #include "Debug.h"
@@ -777,6 +778,63 @@ const RobotInterface::Device& RobotInterface::Robot::device(const std::string& n
 {
     return mPriv->findDevice(name);
 }
+
+bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
+{
+    debug() << "Entering phase" << ActionPhaseToString(phase);
+
+    if (phase == ActionPhaseStartup) {
+        mPriv->openDevices();
+    }
+
+    std::vector<unsigned int> levels = mPriv->getLevels(phase);
+
+    for (std::vector<unsigned int>::const_iterator it = levels.begin(); it != levels.end(); it++) {
+        const unsigned int level = *it;
+        std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
+
+        for (std::vector<std::pair<Device, Action> >::iterator it = actions.begin(); it != actions.end(); it++) {
+            Device &device = it->first;
+            Action &action = it->second;
+
+            switch (action.type()) {
+            case ActionTypeAttach:
+            {
+                yarp::dev::IMultipleWrapper *wrapper;
+                if (!device.driver()->view(wrapper)) {
+                    fatal() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
+                }
+
+                if (!action.hasParam("device")) {
+                    fatal() << "Action" << ActionTypeToString(ActionTypeAttach) << "requires parameter \"device\"";
+                }
+                std::string targetName = action.findParam("device");
+                Device targetDevice = mPriv->findDevice(targetName); // TODO Check?
+
+                if (!action.hasParam("network")) {
+                    fatal() << "Action" << ActionTypeToString(ActionTypeAttach) << "requires parameter \"network\"";
+                }
+                std::string network = action.findParam("network");
+
+                yarp::dev::PolyDriverList drivers;
+
+                debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << network;
+
+                drivers.push(targetDevice.driver(), network.c_str());
+                if (!wrapper->attachAll(drivers)) {
+                    fatal() << "Cannot attach device" << device.name() << "to" << targetDevice.name();
+                }
+                break;
+            }
+            default:
+                warning() << "Unhandled action" << ActionTypeToString(action.type());
+                break;
+            }
+        }
+    }
+
+}
+
 
 bool RobotInterface::Robot::hasParam(const std::string& name) const
 {
