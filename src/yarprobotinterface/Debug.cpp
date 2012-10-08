@@ -11,21 +11,23 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <stdlib.h>
 
 #include <yarp/os/Os.h>
 
 
-#define RED    "\033[01;31m"
-#define GREEN  "\033[01;32m"
-#define YELLOW "\033[01;33m"
-#define BLUE   "\033[01;34m"
-#define CLEAR  "\033[00m"
+#define RED    (colored_output ? "\033[01;31m" : "")
+#define GREEN  (colored_output ? "\033[01;32m" : "")
+#define YELLOW (colored_output ? "\033[01;33m" : "")
+#define BLUE   (colored_output ? "\033[01;34m" : "")
+#define CLEAR  (colored_output ? "\033[00m" : "")
 
 
 std::ofstream RobotInterface::Debug::fout;
 std::ofstream RobotInterface::Debug::ferr;
 std::ofstream RobotInterface::Debug::ftrc;
 
+bool RobotInterface::Debug::colored_output(getenv("ROBOTINTERFACE_COLORED_OUTPUT"));
 
 void RobotInterface::Debug::print_output(MsgType t, const std::ostringstream &s)
 {

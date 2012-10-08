@@ -158,6 +158,8 @@ private:
     static std::ofstream ftrc; /// Used by trace()
     static std::ofstream fout; /// Used by debug()
     static std::ofstream ferr; /// Used by warning(), error() and fatal()
+
+    static bool colored_output;
 };
 
 }
