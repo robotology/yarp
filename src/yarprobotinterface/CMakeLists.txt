@@ -29,6 +29,8 @@ set(robotInterface_HDRS
     drivers/debugging.h
 )
 
+add_definitions("-Wall -Wextra --ansi --pedantic")
+
 add_executable(robot-interface ${robotInterface_SRCS})
 
 target_link_libraries(robot-interface
