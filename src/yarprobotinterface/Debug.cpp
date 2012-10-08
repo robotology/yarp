@@ -11,23 +11,40 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+
 #include <stdlib.h>
+#include <string.h>
 
 #include <yarp/os/Os.h>
 
 
-#define RED    (colored_output ? "\033[01;31m" : "")
-#define GREEN  (colored_output ? "\033[01;32m" : "")
-#define YELLOW (colored_output ? "\033[01;33m" : "")
-#define BLUE   (colored_output ? "\033[01;34m" : "")
-#define CLEAR  (colored_output ? "\033[00m" : "")
-
-
+std::ofstream RobotInterface::Debug::ftrc;
 std::ofstream RobotInterface::Debug::fout;
 std::ofstream RobotInterface::Debug::ferr;
-std::ofstream RobotInterface::Debug::ftrc;
 
-bool RobotInterface::Debug::colored_output(getenv("ROBOTINTERFACE_COLORED_OUTPUT"));
+#ifndef WIN32
+
+ #define RED    (colored_output ? "\033[01;31m" : "")
+ #define GREEN  (colored_output ? "\033[01;32m" : "")
+ #define YELLOW (colored_output ? "\033[01;33m" : "")
+ #define BLUE   (colored_output ? "\033[01;34m" : "")
+ #define CLEAR  (colored_output ? "\033[00m" : "")
+
+ bool RobotInterface::Debug::colored_output(getenv("ROBOTINTERFACE_COLORED_OUTPUT") && (strcmp(getenv("ROBOTINTERFACE_COLORED_OUTPUT"), "1") == 0));
+
+#else // WIN32
+
+ // TODO colored for WIN32
+ #define RED    ""
+ #define GREEN  ""
+ #define YELLOW ""
+ #define BLUE   ""
+ #define CLEAR  ""
+
+ bool RobotInterface::Debug::colored_output(false);
+
+#endif // WIN32
+
 
 void RobotInterface::Debug::print_output(MsgType t, const std::ostringstream &s)
 {
