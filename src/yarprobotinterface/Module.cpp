@@ -52,7 +52,7 @@ double RobotInterface::Module::getPeriod()
 bool RobotInterface::Module::open(yarp::os::Searchable& config)
 {
     RobotInterface::XMLReader reader;
-    mPriv->robot = reader.getRobot("/opt/iit/src/robotInterface/icub_torso.xml");
+    mPriv->robot = reader.getRobot("/opt/iit/src/robotInterface/iCubTest/icub.xml");
     debug() << mPriv->robot;
 
     return mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup);

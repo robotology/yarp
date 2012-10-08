@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<params>
+    <group name="CAN">
+        <subdevice name="net_headtorso" type="fakecan">
+            <param name="CanAddresses">1 2 3 5 6</param>
+            <param name="CanDeviceNum">0</param>
+            <param name="CanMyAddress">0</param>
+            <param name="CanPollingInterval">100</param>
+            <param name="CanTimeout">3000</param>
+            <param name="CanTxTimeout">500</param>
+            <param name="CanRxTimeout">500</param>
+            <param name="broadcast_pos">     1    1    1    1    1    1    1    1    1    1</param>
+            <param name="broadcast_pid">     0    0    0    0    0    0    0    0    0    0</param>
+            <param name="broadcast_fault">   1    1    1    1    1    1    1    1    1    1</param>
+            <param name="broadcast_current"> 0    0    0    0    0    0    0    0    0    0</param>
+            <param name="broadcast_overflow">1    1    1    1    1    1    1    1    1    1</param>
+            <param name="broadcast_canprint">1    1    1    1    1    1    1    1    1    1</param>
+            <param name="broadcast_vel_acc"> 0    0    0    0    0    0    0    0    0    0</param>
+            <param name="broadcast_pid_err"> 0    0    0    0    0    0    0    0    0    0</param>
+        </subdevice>
+    </group>
+
+    <group name="GENERAL">
+        <!--                       0             1             2             3             4             5             6             7             8             9 -->
+        <param name="AxisMap">     0             1             2             3             4             5             6             8             9             7    </param>
+    </group>
+</params>

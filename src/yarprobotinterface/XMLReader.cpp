@@ -38,6 +38,7 @@ public:
 
     XMLReader * const parent;
     std::string filename;
+    std::string path;
     Robot robot;
 };
 
@@ -54,6 +55,8 @@ RobotInterface::XMLReader::Private::~Private()
 RobotInterface::Robot& RobotInterface::XMLReader::Private::readFile(const std::string &fileName)
 {
     filename = fileName;
+    path = filename.substr(0, filename.rfind("/")); //FIXME Windows!!!!
+
     TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         fatal() << SYNTAX_ERROR(filename, doc->ErrorRow()) << doc->ErrorDesc();
@@ -322,12 +325,48 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubFile(TiXmlE
         fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Expected \"file\", found" << subFileElem->Value();
     }
 
+
+    std::string name;
+    if (subFileElem->QueryStringAttribute("name", &name) != TIXML_SUCCESS) {
+        fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "\"file\" element should contain the \"name\" attribute";
+    }
+
+    debug() << "        Found file [" << name << "]";
+
+    name = path + "/" + name;
+
+    TiXmlDocument *doc = new TiXmlDocument(name.c_str());
+    if (!doc->LoadFile()) {
+        fatal() << SYNTAX_ERROR(name, doc->ErrorRow()) << doc->ErrorDesc();
+    }
+
+    if (!doc->RootElement()) {
+        fatal() << SYNTAX_ERROR(name, doc->Row()) << "No root element.";
+    }
+
     ParamList paramList;
+    if (doc->RootElement()->ValueStr().compare("device") == 0) {
+        if (subFileElem->Parent()->ValueStr().compare("robot") != 0) {
+            fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Files including \"device\" can be included only inside a \"robot\" tag";
+        }
+        // We push the device directly in the robot and return an empty list of
+        // parameters
+        robot.devices().push_back(readDevice(doc->RootElement()));
 
-    warning() << "\"file\" tag not yet handled";
+    } else if (doc->RootElement()->ValueStr().compare("params") == 0) {
+        for (TiXmlElement* childElem = doc->RootElement()->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+            ParamList paramsElem = readParams(childElem);
+            for (ParamList::const_iterator it = paramsElem.begin(); it != paramsElem.end(); it++) {
+                paramList.push_back(Param(it->name(), it->value()));
+            }
+        }
+    } else {
+        fatal() << SYNTAX_ERROR(name, doc->Row()) << "Root element of included files should be either \"device\" or \"params\", found" << doc->RootElement()->ValueStr();
+    }
 
+    debug() << "         " << paramList;
+    delete doc;
     return paramList;
-
 }
 
 RobotInterface::Action RobotInterface::XMLReader::Private::readAction(TiXmlElement* actionElem)

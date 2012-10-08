@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<robot name="icub">
+    <param name="terminate_port">/icub/quit</param> <!-- TODO Needed? -->
+
+    <!-- TORSO -->
+    <file name="hardware/torso.xml" />
+    <file name="wrappers/torso.xml" />
+    <file name="calibrators/torso.xml" />
+    <!--<file name="configurators/torso.xml" />-->
+
+</robot>
