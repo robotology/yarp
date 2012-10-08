@@ -568,8 +568,16 @@ bool RobotInterface::Device::open()
 
 bool RobotInterface::Device::close()
 {
-    // TODO implement me
-    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    if (!mPriv->isValid()) {
+        error() << "Trying to close an already closed device.";
+        return false;
+    }
+
+    if (!mPriv->close()) {
+        warning() << "Cannot close device" << mPriv->name;
+        return false;
+    }
+
     return true;
 }
 
