@@ -68,13 +68,13 @@ int main(int argc, char *argv[])
 
     if( NULL == (AC_trace_file = fopen("/home/icub/trace.log", "w+")) )
     {
-        printf("Cannot open file /home/icub/trace.log, using stdout\n");
+        debug() << "Cannot open file /home/icub/trace.log, using stdout";
         AC_trace_file = stdout;
     }
 
     if( NULL == (AC_debug_file = fopen("/home/icub/debug.log", "w+")) )
     {
-        printf("Cannot open file /home/icub/debug.log, using stdout\n");
+        debug() << "Cannot open file /home/icub/debug.log, using stdout";
         AC_debug_file = stdout;
     }
 
@@ -102,40 +102,17 @@ int main(int argc, char *argv[])
     rf.setVerbose();
     rf.setDefaultConfigFile("iCubInterface.ini");
     rf.configure("ICUB_ROOT", argc, argv);
-    yarp::os::ConstString configFile = rf.findFile("config");
-    yarp::os::ConstString cartRightArm = rf.findFile("cartRightArm");
-    yarp::os::ConstString cartLeftArm = rf.findFile("cartLeftArm");
 
     RobotInterface::XMLReader reader;
     RobotInterface::Robot robot = reader.getRobot("/opt/iit/src/robotInterface/icub_torso.xml");
 
     debug() << robot;
 
-    std::vector<yarp::dev::PolyDriver*> drivers;
-    for (RobotInterface::DeviceList::const_iterator it = robot.devices().begin(); it != robot.devices().end(); it++) {
-        const RobotInterface::Device &device = *it;
+    robot.enterPhase(RobotInterface::ActionPhaseStartup);
 
-        debug() << device;
-
-        Property p = device.paramsAsProperty();
-        yarp::dev::PolyDriver *driver = new yarp::dev::PolyDriver();
-        if (driver->open(p)) {
-            drivers.push_back(driver);
-        } else {
-            warning() << "Cannot open device" << device.name();
-        }
+    while (!terminated) {
+        Time::delay(2);
     }
 
-    debug() << "Devices created";
-
-    for (std::vector<yarp::dev::PolyDriver*>::iterator it = drivers.begin(); it != drivers.end(); it++) {
-        yarp::dev::PolyDriver* driver = *it;
-        if (!driver->isValid()) {
-            warning() << "Driver is not valid";
-        }
-        if (!driver->close()) {
-            warning() << "Cannot close driver";
-        }
-        delete driver;
-    }
+    debug() << "Shutting down!";
 }
