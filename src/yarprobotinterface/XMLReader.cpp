@@ -356,7 +356,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubFile(TiXmlE
         for (TiXmlElement* childElem = doc->RootElement()->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
             ParamList paramsElem = readParams(childElem);
             for (ParamList::const_iterator it = paramsElem.begin(); it != paramsElem.end(); it++) {
-                paramList.push_back(Param(it->name(), it->value()));
+                paramList.push_back(*it);
             }
         }
     } else {
