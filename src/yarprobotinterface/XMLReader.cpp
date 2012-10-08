@@ -83,8 +83,15 @@ RobotInterface::Robot RobotInterface::XMLReader::Private::readRobot(TiXmlElement
 
     debug() << "Found robot [" << robot.name() << "]";
 
-    for (TiXmlElement* deviceElem = robotElem->FirstChildElement(); deviceElem != 0; deviceElem = deviceElem->NextSiblingElement()) {
-        robot.devices().push_back(readDevice(deviceElem));
+    for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+        if (childElem->ValueStr().compare("device") == 0) {
+            robot.devices().push_back(readDevice(childElem));
+        } else {
+            ParamList paramsElem = readParams(childElem);
+            for (ParamList::const_iterator it = paramsElem.begin(); it != paramsElem.end(); it++) {
+                robot.params().push_back(*it);
+            }
+        }
     }
 
     return robot;
@@ -357,6 +364,12 @@ RobotInterface::Action RobotInterface::XMLReader::Private::readAction(TiXmlEleme
     action.level() = (unsigned)tmp;
 #endif
 
+    for (TiXmlElement* childElem = actionElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
+        ParamList paramsElem = readParams(childElem);
+        for (ParamList::const_iterator it = paramsElem.begin(); it != paramsElem.end(); it++) {
+            action.params().push_back(*it);
+        }
+    }
 
     debug() << "         " << action;
     return action;

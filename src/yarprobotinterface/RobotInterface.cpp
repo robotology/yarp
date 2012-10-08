@@ -91,7 +91,13 @@ std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Pa
 
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Action &t)
 {
-    oss << "(\"" << ActionPhaseToString(t.phase()) << ":" << ActionTypeToString(t.type()) << ":" << t.level() << "\")";
+    oss << "(\"" << ActionPhaseToString(t.phase()) << ":" << ActionTypeToString(t.type()) << ":" << t.level() << "\"";
+    if (!t.params().empty()) {
+        oss << ", params = [";
+        oss << t.params();
+        oss << "]";
+    }
+    oss << ")";
     return oss;
 }
 
@@ -115,6 +121,11 @@ std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::De
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Robot &t)
 {
     oss << "(name = \"" << t.name() << "\"";
+    if (!t.params().empty()) {
+        oss << ", params = [";
+        oss << t.params();
+        oss << "]";
+    }
     if (!t.devices().empty()) {
         oss << ", devices = [";
         oss << t.devices();
@@ -210,7 +221,6 @@ yarp::os::Property RobotInterface::Param::toProperty() const
 
 //BEGIN Action
 
-
 class RobotInterface::Action::Private
 {
 public:
@@ -219,6 +229,7 @@ public:
     ActionPhase phase;
     ActionType type;
     unsigned int level;
+    ParamList params;
 };
 
 void operator>>(const std::stringstream &sstream, RobotInterface::ActionPhase &actionphase)
@@ -266,6 +277,7 @@ RobotInterface::Action::Action(const RobotInterface::Action& other) :
     mPriv->phase = other.mPriv->phase;
     mPriv->type = other.mPriv->type;
     mPriv->level = other.mPriv->level;
+    mPriv->params = other.mPriv->params;
 }
 
 RobotInterface::Action& RobotInterface::Action::operator=(const RobotInterface::Action& other)
@@ -274,6 +286,9 @@ RobotInterface::Action& RobotInterface::Action::operator=(const RobotInterface::
         mPriv->phase = other.mPriv->phase;
         mPriv->type = other.mPriv->type;
         mPriv->level = other.mPriv->level;
+
+        mPriv->params.clear();
+        mPriv->params = other.mPriv->params;
     }
 
     return *this;
@@ -299,6 +314,11 @@ unsigned int& RobotInterface::Action::level()
     return mPriv->level;
 }
 
+RobotInterface::ParamList& RobotInterface::Action::params()
+{
+    return mPriv->params;
+}
+
 RobotInterface::ActionPhase RobotInterface::Action::phase() const
 {
     return mPriv->phase;
@@ -312,6 +332,11 @@ RobotInterface::ActionType RobotInterface::Action::type() const
 unsigned int RobotInterface::Action::level() const
 {
     return mPriv->level;
+}
+
+const RobotInterface::ParamList& RobotInterface::Action::params() const
+{
+    return mPriv->params;
 }
 
 //END Action
@@ -454,6 +479,7 @@ public:
     Device& findDevice(const std::string &name);
 
     std::string name;
+    ParamList params;
     DeviceList devices;
 };
 
@@ -465,6 +491,7 @@ RobotInterface::Device& RobotInterface::Robot::Private::findDevice(const std::st
         }
     }
 }
+
 
 RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Robot &t)
 {
@@ -492,6 +519,7 @@ RobotInterface::Robot::Robot(const RobotInterface::Robot& other) :
 {
     mPriv->name = other.mPriv->name;
     mPriv->devices = other.mPriv->devices;
+    mPriv->params = other.mPriv->params;
 }
 
 RobotInterface::Robot& RobotInterface::Robot::operator=(const RobotInterface::Robot& other)
@@ -502,9 +530,11 @@ RobotInterface::Robot& RobotInterface::Robot::operator=(const RobotInterface::Ro
         mPriv->devices.clear();
         mPriv->devices = other.mPriv->devices;
 
+        mPriv->params.clear();
+        mPriv->params = other.mPriv->params;
     }
-    return *this;
 
+    return *this;
 }
 
 RobotInterface::Robot::~Robot()
@@ -515,6 +545,11 @@ RobotInterface::Robot::~Robot()
 std::string& RobotInterface::Robot::name()
 {
     return mPriv->name;
+}
+
+RobotInterface::ParamList& RobotInterface::Robot::params()
+{
+    return mPriv->params;
 }
 
 RobotInterface::DeviceList& RobotInterface::Robot::devices()
@@ -532,6 +567,11 @@ const std::string& RobotInterface::Robot::name() const
     return mPriv->name;
 }
 
+const RobotInterface::ParamList& RobotInterface::Robot::params() const
+{
+    return mPriv->params;
+}
+
 const RobotInterface::DeviceList& RobotInterface::Robot::devices() const
 {
     return mPriv->devices;
@@ -541,6 +581,17 @@ const RobotInterface::Device& RobotInterface::Robot::device(const std::string& n
 {
     return mPriv->findDevice(name);
 }
+
+bool RobotInterface::Robot::hasParam(const std::string& name) const
+{
+    return ::hasParam(mPriv->params, name);
+}
+
+const std::string& RobotInterface::Robot::findParam(const std::string& name) const
+{
+    return ::findParam(mPriv->params, name);
+}
+
 
 
 //END Robot

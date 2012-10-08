@@ -89,10 +89,12 @@ public:
     ActionPhase& phase();
     ActionType& type();
     unsigned int& level();
+    ParamList& params();
 
     ActionPhase phase() const;
     ActionType type() const;
     unsigned int level() const;
+    const ParamList& params() const;
 
     virtual ~Action();
 
@@ -154,10 +156,12 @@ public:
     virtual ~Robot();
 
     std::string& name();
+    ParamList& params();
     DeviceList& devices();
     Device& device(const std::string &name);
 
     const std::string& name() const;
+    const ParamList& params() const;
     const DeviceList& devices() const;
     const Device& device(const std::string &name) const;
 
