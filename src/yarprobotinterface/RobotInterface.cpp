@@ -53,6 +53,8 @@ inline static RobotInterface::ActionType StringToActionType(const std::string &t
         return RobotInterface::ActionTypeCalibrate;
     } else if (!type.compare("attach")) {
         return RobotInterface::ActionTypeAttach;
+    } else if (!type.compare("abort")) {
+        return RobotInterface::ActionTypeAbort;
     } else if (!type.compare("detach")) {
         return RobotInterface::ActionTypeDetach;
     } else if (!type.compare("park")) {
@@ -73,6 +75,8 @@ inline static std::string ActionTypeToString(RobotInterface::ActionType actionty
         return std::string("calibrate");
     case RobotInterface::ActionTypeAttach:
         return std::string("attach");
+    case RobotInterface::ActionTypeAbort:
+        return std::string("abort");
     case RobotInterface::ActionTypeDetach:
         return std::string("detach");
     case RobotInterface::ActionTypePark:

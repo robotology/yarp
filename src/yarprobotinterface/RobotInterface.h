@@ -72,6 +72,7 @@ enum ActionType
     ActionTypeConfigure,
     ActionTypeCalibrate,
     ActionTypeAttach,
+    ActionTypeAbort,
     ActionTypeDetach,
     ActionTypePark,
 
