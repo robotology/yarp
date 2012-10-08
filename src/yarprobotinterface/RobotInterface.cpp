@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/CalibratorInterfaces.h>
@@ -715,35 +716,67 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         return false;
     }
 
-    if (!::hasParam(params, "device")) {
-        error() << "Action \"attach\" requires parameter \"device\"";
+    if (!(::hasParam(params, "network") || ::hasParam(params, "networks"))) {
+        error() << "Action \"attach\" requires either \"network\" or \"networks\" parameter";
         return false;
     }
-    std::string targetName = ::findParam(params, "device");
 
-    if (!::hasParam(params, "network")) {
-        error() << "Action \"attach\" requires parameter \"network\"";
+    if (::hasParam(params, "network") && ::hasParam(params, "networks")) {
+        error() << "Action \"attach\" cannot have both \"network\" and \"networks\" parameters";
         return false;
     }
-    std::string targetNetwork = ::findParam(params, "network");
-
-    if (!hasDevice(targetName)) {
-        error() << "Target device" << targetName << "(network =" << targetNetwork << ") does not exist.";
-        return false;
-    }
-    Device &targetDevice = *findDevice(targetName);
 
     yarp::dev::PolyDriverList drivers;
 
-    debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+    if (::hasParam(params, "network")) {
+        std::string targetNetwork = ::findParam(params, "network");
 
-    drivers.push(targetDevice.driver(), targetNetwork.c_str());
+        if (!::hasParam(params, "device")) {
+            error() << "Action \"attach\" requires \"device\" parameter";
+            return false;
+        }
+        std::string targetDeviceName = ::findParam(params, "device");
+
+        if (!hasDevice(targetDeviceName)) {
+            error() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
+            return false;
+        }
+        Device &targetDevice = *findDevice(targetDeviceName);
+
+        debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+        drivers.push(targetDevice.driver(), targetNetwork.c_str());
+
+    } else {
+        yarp::os::Value v;
+        v.fromString(::findParam(params, "networks").c_str());
+        yarp::os::Bottle &targetNetworks = *(v.asList());
+
+        for (int i = 0; i < targetNetworks.size(); i++) {
+            std::string targetNetwork = targetNetworks.get(i).toString().c_str();
+
+            if (!::hasParam(params, targetNetwork)) {
+                error() << "Action \"attach\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";
+                return false;
+            }
+            std::string targetDeviceName = ::findParam(params, targetNetwork);
+            if (!hasDevice(targetDeviceName)) {
+                error() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
+                return false;
+            }
+            Device &targetDevice = *findDevice(targetDeviceName);
+
+            debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+            drivers.push(targetDevice.driver(), targetNetwork.c_str());
+        }
+    }
+
     if (!wrapper->attachAll(drivers)) {
-        error() << "Cannot attach device" << device.name() << "to" << targetDevice.name();
+        error() << "Cannot execute attach on device" << device.name();
         return false;
     }
 
     return true;
+
 }
 
 
