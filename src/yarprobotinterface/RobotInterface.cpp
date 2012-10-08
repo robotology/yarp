@@ -484,6 +484,7 @@ RobotInterface::Device::Device(const RobotInterface::Device& other) :
     mPriv->type = other.mPriv->type;
     mPriv->params = other.mPriv->params;
     mPriv->actions = other.mPriv->actions;
+    *mPriv->driver = *other.mPriv->driver;
 }
 
 RobotInterface::Device& RobotInterface::Device::operator=(const RobotInterface::Device& other)
