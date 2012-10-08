@@ -59,15 +59,15 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readFile(const std::s
 
     TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
-        fatal() << SYNTAX_ERROR(filename, doc->ErrorRow()) << doc->ErrorDesc();
+        yFatal() << SYNTAX_ERROR(filename, doc->ErrorRow()) << doc->ErrorDesc();
     }
 
     if (!doc->RootElement()) {
-        fatal() << SYNTAX_ERROR(filename, doc->Row()) << "No root element.";
+        yFatal() << SYNTAX_ERROR(filename, doc->Row()) << "No root element.";
     }
 
     robot = readRobot(doc->RootElement());
-    debug() << "  " << robot;
+    yDebug() << "  " << robot;
 
     delete doc;
     return robot;
@@ -77,14 +77,14 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readFile(const std::s
 RobotInterface::Robot RobotInterface::XMLReader::Private::readRobot(TiXmlElement *robotElem)
 {
     if (robotElem->ValueStr().compare("robot") != 0) {
-        fatal() << SYNTAX_ERROR(filename, robotElem->Row()) << "Root element should be \"robot\", found" << robotElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, robotElem->Row()) << "Root element should be \"robot\", found" << robotElem->ValueStr();
     }
 
     if (robotElem->QueryStringAttribute("name", &robot.name()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, robotElem->Row()) << "\"robot\" element should contain the \"name\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, robotElem->Row()) << "\"robot\" element should contain the \"name\" attribute";
     }
 
-    debug() << "Found robot [" << robot.name() << "]";
+    yDebug() << "Found robot [" << robot.name() << "]";
 
     for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("device") == 0) {
@@ -103,19 +103,19 @@ RobotInterface::Robot RobotInterface::XMLReader::Private::readRobot(TiXmlElement
 RobotInterface::Device RobotInterface::XMLReader::Private::readDevice(TiXmlElement *deviceElem)
 {
     if (deviceElem->ValueStr().compare("device") != 0) {
-        fatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "Expected \"device\", found" << deviceElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "Expected \"device\", found" << deviceElem->ValueStr();
     }
 
     Device device;
 
     if (deviceElem->QueryStringAttribute("name", &device.name()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "\"device\" element should contain the \"name\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "\"device\" element should contain the \"name\" attribute";
     }
 
-    debug() << "    Found device [" << device.name() << "]";
+    yDebug() << "    Found device [" << device.name() << "]";
 
     if (deviceElem->QueryStringAttribute("type", &device.type()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "\"device\" element should contain the \"type\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, deviceElem->Row()) << "\"device\" element should contain the \"type\" attribute";
     }
 
     //TODO Needed?
@@ -132,7 +132,7 @@ RobotInterface::Device RobotInterface::XMLReader::Private::readDevice(TiXmlEleme
         }
     }
 
-    debug() << "     " << device;
+    yDebug() << "     " << device;
     return device;
 }
 
@@ -161,7 +161,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParams(TiXmlEl
             params.push_back(*it);
         }
     } else {
-        fatal() << SYNTAX_ERROR(filename, paramsElem->Row()) << "\"device\" element contain an unknown tag" << valueStr;
+        yFatal() << SYNTAX_ERROR(filename, paramsElem->Row()) << "\"device\" element contain an unknown tag" << valueStr;
     }
 
     return params;
@@ -170,40 +170,40 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParams(TiXmlEl
 RobotInterface::Param RobotInterface::XMLReader::Private::readParam(TiXmlElement *paramElem)
 {
     if (paramElem->ValueStr().compare("param") != 0) {
-        fatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "Expected \"param\", found" << paramElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "Expected \"param\", found" << paramElem->ValueStr();
     }
 
     Param param;
 
     if (paramElem->QueryStringAttribute("name", &param.name()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "\"param\" element should contain the \"name\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "\"param\" element should contain the \"name\" attribute";
     }
 
-    debug() << "        Found param [" << param.name() << "]";
+    yDebug() << "        Found param [" << param.name() << "]";
 
     const char *valueText = paramElem->GetText();
     if (!valueText) {
-        fatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "\"param\" element should have a value [ \"name\" = " << param.name() << "]";
+        yFatal() << SYNTAX_ERROR(filename, paramElem->Row()) << "\"param\" element should have a value [ \"name\" = " << param.name() << "]";
     }
     param.value() = valueText;
 
-    debug() << "         " << param;
+    yDebug() << "         " << param;
     return param;
 }
 
 RobotInterface::Param RobotInterface::XMLReader::Private::readGroup(TiXmlElement* groupElem)
 {
     if (groupElem->ValueStr().compare("group") != 0) {
-        fatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "Expected \"group\", found" << groupElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "Expected \"group\", found" << groupElem->ValueStr();
     }
 
     Param group(true);
 
     if (groupElem->QueryStringAttribute("name", &group.name()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "\"group\" element should contain the \"name\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "\"group\" element should contain the \"name\" attribute";
     }
 
-    debug() << "        Found group [" << group.name() << "]";
+    yDebug() << "        Found group [" << group.name() << "]";
 
     ParamList groupParamList;
     for (TiXmlElement* childElem = groupElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
@@ -213,7 +213,7 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readGroup(TiXmlElement
         }
     }
     if (groupParamList.empty()) {
-        fatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "\"group\" cannot be empty";
+        yFatal() << SYNTAX_ERROR(filename, groupElem->Row()) << "\"group\" cannot be empty";
     }
 
     std::string groupString;
@@ -232,34 +232,34 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readGroup(TiXmlElement
 RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamList(TiXmlElement* paramListElem)
 {
     if (paramListElem->ValueStr().compare("paramlist") != 0) {
-        fatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "Expected \"paramlist\", found" << paramListElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "Expected \"paramlist\", found" << paramListElem->ValueStr();
     }
 
     ParamList paramList;
     Param mainparam;
 
     if (paramListElem->QueryStringAttribute("name", &mainparam.name()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "\"paramlist\" element should contain the \"name\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "\"paramlist\" element should contain the \"name\" attribute";
     }
 
     paramList.push_back(mainparam);
 
-    debug() << "        Found paramlist [" << paramList.at(0).name() << "]";
+    yDebug() << "        Found paramlist [" << paramList.at(0).name() << "]";
 
     for (TiXmlElement* childElem = paramListElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("elem") != 0) {
-            fatal() << SYNTAX_ERROR(filename, childElem->Row()) << "Expected \"elem\", found" << childElem->ValueStr();
+            yFatal() << SYNTAX_ERROR(filename, childElem->Row()) << "Expected \"elem\", found" << childElem->ValueStr();
         }
 
         Param param;
 
         if (childElem->QueryStringAttribute("name", &param.name()) != TIXML_SUCCESS) {
-            fatal() << SYNTAX_ERROR(filename, childElem->Row()) << "\"elem\" element should contain the \"name\" attribute";
+            yFatal() << SYNTAX_ERROR(filename, childElem->Row()) << "\"elem\" element should contain the \"name\" attribute";
         }
 
         const char *valueText = childElem->GetText();
         if (!valueText) {
-            fatal() << SYNTAX_ERROR(filename, childElem->Row()) << "\"elem\" element should have a value [ \"name\" = " << param.name() << "]";
+            yFatal() << SYNTAX_ERROR(filename, childElem->Row()) << "\"elem\" element should have a value [ \"name\" = " << param.name() << "]";
         }
         param.value() = valueText;
 
@@ -267,7 +267,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamList(TiXm
     }
 
     if (paramList.empty()) {
-        fatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "\"paramlist\" cannot be empty";
+        yFatal() << SYNTAX_ERROR(filename, paramListElem->Row()) << "\"paramlist\" cannot be empty";
     }
 
     // +1 skips the first element, that is the main param
@@ -277,14 +277,14 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamList(TiXm
     }
     paramList.at(0).value() += ")";
 
-    debug() << "         " << paramList;
+    yDebug() << "         " << paramList;
     return paramList;
 }
 
 RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubDevice(TiXmlElement *subDeviceElem)
 {
     if (subDeviceElem->ValueStr().compare("subdevice") != 0) {
-        fatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "Expected \"subdevice\", found" << subDeviceElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "Expected \"subdevice\", found" << subDeviceElem->ValueStr();
     }
 
     ParamList subDevice;
@@ -296,17 +296,17 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubDevice(TiXm
     subDeviceParam.name() = "subdevice";
 
 //FIXME    if (subDeviceElem->QueryStringAttribute("name", &featIdParam.value()) != TIXML_SUCCESS) {
-//        fatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "\"subdevice\" element should contain the \"name\" attribute";
+//        yFatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "\"subdevice\" element should contain the \"name\" attribute";
 //    }
 
     if (subDeviceElem->QueryStringAttribute("type", &subDeviceParam.value()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "\"subdevice\" element should contain the \"type\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, subDeviceElem->Row()) << "\"subdevice\" element should contain the \"type\" attribute";
     }
 
 //FIXME    subDevice.push_back(featIdParam);
     subDevice.push_back(subDeviceParam);
 
-    debug() << "        Found subdevice [" << subDevice.at(0).value() << "]";
+    yDebug() << "        Found subdevice [" << subDevice.at(0).value() << "]";
 
     for (TiXmlElement* childElem = subDeviceElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ParamList paramsElem = readParams(childElem);
@@ -315,38 +315,38 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubDevice(TiXm
         }
     }
 
-    debug() << "         " << subDevice;
+    yDebug() << "         " << subDevice;
     return subDevice;
 }
 
 RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubFile(TiXmlElement* subFileElem)
 {
     if (subFileElem->ValueStr().compare("file") != 0) {
-        fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Expected \"file\", found" << subFileElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Expected \"file\", found" << subFileElem->ValueStr();
     }
 
     std::string name;
     if (subFileElem->QueryStringAttribute("name", &name) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "\"file\" element should contain the \"name\" attribute";
+        yFatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "\"file\" element should contain the \"name\" attribute";
     }
 
-    debug() << "        Found file [" << name << "]";
+    yDebug() << "        Found file [" << name << "]";
 
     name = path + "/" + name;
 
     TiXmlDocument *doc = new TiXmlDocument(name.c_str());
     if (!doc->LoadFile()) {
-        fatal() << SYNTAX_ERROR(name, doc->ErrorRow()) << doc->ErrorDesc();
+        yFatal() << SYNTAX_ERROR(name, doc->ErrorRow()) << doc->ErrorDesc();
     }
 
     if (!doc->RootElement()) {
-        fatal() << SYNTAX_ERROR(name, doc->Row()) << "No root element.";
+        yFatal() << SYNTAX_ERROR(name, doc->Row()) << "No root element.";
     }
 
     ParamList paramList;
     if (doc->RootElement()->ValueStr().compare("device") == 0) {
         if (subFileElem->Parent()->ValueStr().compare("robot") != 0) {
-            fatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Files including \"device\" can be included only inside a \"robot\" tag";
+            yFatal() << SYNTAX_ERROR(filename, subFileElem->Row()) << "Files including \"device\" can be included only inside a \"robot\" tag";
         }
         // We push the device directly in the robot and return an empty list of
         // parameters
@@ -360,10 +360,10 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubFile(TiXmlE
             }
         }
     } else {
-        fatal() << SYNTAX_ERROR(name, doc->Row()) << "Root element of included files should be either \"device\" or \"params\", found" << doc->RootElement()->ValueStr();
+        yFatal() << SYNTAX_ERROR(name, doc->Row()) << "Root element of included files should be either \"device\" or \"params\", found" << doc->RootElement()->ValueStr();
     }
 
-    debug() << "         " << paramList;
+    yDebug() << "         " << paramList;
     delete doc;
     return paramList;
 }
@@ -371,33 +371,33 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubFile(TiXmlE
 RobotInterface::Action RobotInterface::XMLReader::Private::readAction(TiXmlElement* actionElem)
 {
     if (actionElem->ValueStr().compare("action") != 0) {
-        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "Expected \"action\", found" << actionElem->ValueStr();
+        yFatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "Expected \"action\", found" << actionElem->ValueStr();
     }
 
     Action action;
 
     if (actionElem->QueryValueAttribute<ActionPhase>("phase", &action.phase()) != TIXML_SUCCESS || action.phase() == ActionPhaseUnknown) {
-        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"action\" element should contain the \"phase\" attribute [startup|interrupt|shutdown]";
+        yFatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"action\" element should contain the \"phase\" attribute [startup|interrupt|shutdown]";
     }
 
 
     if (actionElem->QueryValueAttribute<ActionType>("type", &action.type()) != TIXML_SUCCESS || action.type() == ActionTypeUnknown) {
-        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"action\" element should contain the \"type\" attribute [FIXME: list of accepted values]"; // FIXME
+        yFatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"action\" element should contain the \"type\" attribute [FIXME: list of accepted values]"; // FIXME
     }
 
-    debug() << "        Found action [ ]";
+    yDebug() << "        Found action [ ]";
 
 #if 0
     // BUG in TinyXML, see
     // https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
     // When this bug is fixed upstream we can enable this
     if (actionElem->QueryUnsignedAttribute("level", &action.level()) != TIXML_SUCCESS) {
-        fatal() << SYNTAX_ERROR << "\"param\" element should contain the \"level\" attribute";
+        yFatal() << SYNTAX_ERROR << "\"param\" element should contain the \"level\" attribute";
     }
 #else
     int tmp;
     if (actionElem->QueryIntAttribute("level", &tmp) != TIXML_SUCCESS || tmp < 0) {
-        fatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"param\" element should contain the \"level\" attribute [unsigned int]";
+        yFatal() << SYNTAX_ERROR(filename, actionElem->Row()) << "\"param\" element should contain the \"level\" attribute [unsigned int]";
     }
     action.level() = (unsigned)tmp;
 #endif
@@ -409,7 +409,7 @@ RobotInterface::Action RobotInterface::XMLReader::Private::readAction(TiXmlEleme
         }
     }
 
-    debug() << "         " << action;
+    yDebug() << "         " << action;
     return action;
 }
 

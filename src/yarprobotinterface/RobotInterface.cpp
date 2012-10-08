@@ -113,7 +113,7 @@ inline static std::string findParam(const RobotInterface::ParamList &list, const
             return param.value();
         }
     }
-    error() << "Param" << name << "not found";
+    yError() << "Param" << name << "not found";
     return std::string();
 }
 
@@ -136,7 +136,7 @@ inline static std::string findGroup(const RobotInterface::ParamList &list, const
             return param.value();
         }
     }
-    error() << "Param" << name << "not found";
+    yError() << "Param" << name << "not found";
     return std::string();
 }
 
@@ -149,7 +149,7 @@ inline static RobotInterface::ParamList mergeDuplicateGroups(const RobotInterfac
             RobotInterface::Param &param2 = *it2;
             if (param1.name().compare(param2.name()) == 0) {
                 if (!param1.isGroup() || !param2.isGroup()) {
-                    fatal() << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
+                    yFatal() << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
                 }
                 param1.value() += std::string(" ");
                 param1.value() += param2.value();
@@ -465,7 +465,7 @@ public:
     Private& operator=(const Private& other)
     {
         (void)other; // UNUSED
-        error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+        YFIXME_NOTIMPLEMENTED
         return *this;
     }
 
@@ -474,7 +474,7 @@ public:
         if (!--driver->ref) {
             if (driver->driver->isValid()) {
                 if (!driver->driver->close()) {
-                    warning() << "Cannot close device" << name;
+                    yWarning() << "Cannot close device" << name;
                 }
             }
             delete driver;
@@ -608,12 +608,12 @@ const RobotInterface::ActionList& RobotInterface::Device::actions() const
 bool RobotInterface::Device::open()
 {
     if (mPriv->isValid()) {
-        error() << "Trying to open an already opened device.";
+        yError() << "Trying to open an already opened device.";
         return false;
     }
 
     if (!mPriv->open()) {
-        warning() << "Cannot open device" << mPriv->name;
+        yWarning() << "Cannot open device" << mPriv->name;
         return false;
     }
 
@@ -623,12 +623,12 @@ bool RobotInterface::Device::open()
 bool RobotInterface::Device::close()
 {
     if (!mPriv->isValid()) {
-        error() << "Trying to close an already closed device.";
+        yError() << "Trying to close an already closed device.";
         return false;
     }
 
     if (!mPriv->close()) {
-        warning() << "Cannot close device" << mPriv->name;
+        yWarning() << "Cannot close device" << mPriv->name;
         return false;
     }
 
@@ -723,7 +723,7 @@ RobotInterface::Device* RobotInterface::Robot::Private::findDevice(const std::st
             return &(*it);
         }
     }
-    fatal() << "Cannot find device" << name;
+    yFatal() << "Cannot find device" << name;
     return NULL;
 }
 
@@ -733,18 +733,18 @@ bool RobotInterface::Robot::Private::openDevices()
     for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
         RobotInterface::Device &device = *it;
 
-        debug() << device;
+        yDebug() << device;
 
         if (!device.open()) {
-            warning() << "Cannot open device" << device.name();
+            yWarning() << "Cannot open device" << device.name();
             ret = false;
         }
 
     }
     if (ret) {
-        debug() << "All devices opened.";
+        yDebug() << "All devices opened.";
     } else {
-        warning() << "There was some problem opening one or more devices. Please check the log and your configuration";
+        yWarning() << "There was some problem opening one or more devices. Please check the log and your configuration";
     }
 
     return ret;
@@ -756,18 +756,18 @@ bool RobotInterface::Robot::Private::closeDevices()
     for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
         RobotInterface::Device &device = *it;
 
-        debug() << device;
+        yDebug() << device;
 
         if (!device.close()) {
-            warning() << "Cannot close device" << device.name();
+            yWarning() << "Cannot close device" << device.name();
             ret = false;
         }
 
     }
     if (ret) {
-        debug() << "All devices closed.";
+        yDebug() << "All devices closed.";
     } else {
-        warning() << "There was some problem closing one or more devices. Please check the log and your configuration";
+        yWarning() << "There was some problem closing one or more devices. Please check the log and your configuration";
     }
 
     return ret;
@@ -818,7 +818,7 @@ std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInt
 
 bool RobotInterface::Robot::Private::configure(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    YFIXME_NOTIMPLEMENTED
     return true;
 }
 
@@ -826,7 +826,7 @@ bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &dev
 {
     yarp::dev::ICalibrator *calibrator;
     if (!device.driver()->view(calibrator)) {
-        error() << device.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        yError() << device.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return false;
     }
 
@@ -838,17 +838,17 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
 {
     yarp::dev::IMultipleWrapper *wrapper;
     if (!device.driver()->view(wrapper)) {
-        error() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
+        yError() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
         return false;
     }
 
     if (!(::hasParam(params, "network") || ::hasParam(params, "networks"))) {
-        error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires either \"network\" or \"networks\" parameter";
+        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires either \"network\" or \"networks\" parameter";
         return false;
     }
 
     if (::hasParam(params, "network") && ::hasParam(params, "networks")) {
-        error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" cannot have both \"network\" and \"networks\" parameters";
+        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" cannot have both \"network\" and \"networks\" parameters";
         return false;
     }
 
@@ -858,18 +858,18 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         std::string targetNetwork = ::findParam(params, "network");
 
         if (!::hasParam(params, "device")) {
-            error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires \"device\" parameter";
+            yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires \"device\" parameter";
             return false;
         }
         std::string targetDeviceName = ::findParam(params, "device");
 
         if (!hasDevice(targetDeviceName)) {
-            error() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
+            yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
             return false;
         }
         Device &targetDevice = *findDevice(targetDeviceName);
 
-        debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+        yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
         drivers.push(targetDevice.driver(), targetNetwork.c_str());
 
     } else {
@@ -881,23 +881,23 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
             std::string targetNetwork = targetNetworks.get(i).toString().c_str();
 
             if (!::hasParam(params, targetNetwork)) {
-                error() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";
+                yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";
                 return false;
             }
             std::string targetDeviceName = ::findParam(params, targetNetwork);
             if (!hasDevice(targetDeviceName)) {
-                error() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
+                yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
                 return false;
             }
             Device &targetDevice = *findDevice(targetDeviceName);
 
-            debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+            yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
             drivers.push(targetDevice.driver(), targetNetwork.c_str());
         }
     }
 
     if (!wrapper->attachAll(drivers)) {
-        error() << "Cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << device.name();
+        yError() << "Cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << device.name();
         return false;
     }
 
@@ -906,7 +906,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
 
 bool RobotInterface::Robot::Private::abort(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    YFIXME_NOTIMPLEMENTED
     return true;
 }
 
@@ -915,16 +915,16 @@ bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device
 {
     yarp::dev::IMultipleWrapper *wrapper;
     if (!device.driver()->view(wrapper)) {
-        error() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
+        yError() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
         return false;
     }
 
     if (!params.empty()) {
-        warning() << "Action \"" << ActionTypeToString(ActionTypeDetach) << "\" cannot have any parameter. Ignoring them.";
+        yWarning() << "Action \"" << ActionTypeToString(ActionTypeDetach) << "\" cannot have any parameter. Ignoring them.";
     }
 
     if (!wrapper->detachAll()) {
-        error() << "Cannot execute" << ActionTypeToString(ActionTypeDetach) << "on device" << device.name();
+        yError() << "Cannot execute" << ActionTypeToString(ActionTypeDetach) << "on device" << device.name();
         return false;
     }
 
@@ -933,13 +933,13 @@ bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device
 
 bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    YFIXME_NOTIMPLEMENTED
     return true;
 }
 
 bool RobotInterface::Robot::Private::custom(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    YFIXME_NOTIMPLEMENTED
     return true;
 }
 
@@ -1034,7 +1034,7 @@ const RobotInterface::Device& RobotInterface::Robot::device(const std::string& n
 
 bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 {
-    debug() << "Entering" << ActionPhaseToString(phase) << "phase";
+    yDebug() << "Entering" << ActionPhaseToString(phase) << "phase";
 
     if (phase == ActionPhaseStartup) {
         mPriv->openDevices();
@@ -1054,48 +1054,48 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             switch (action.type()) {
             case ActionTypeConfigure:
                 if(!mPriv->configure(device, action.params())) {
-                    error() << "Cannot run configure action on device" << device.name();
+                    yError() << "Cannot run configure action on device" << device.name();
                     ret = false;
                 }
                 break;
             case ActionTypeCalibrate:
                 if(!mPriv->calibrate(device, action.params())) {
-                    error() << "Cannot run calibrate action on device" << device.name();
+                    yError() << "Cannot run calibrate action on device" << device.name();
                     ret = false;
                 }
                 break;
             case ActionTypeAttach:
                 if (!mPriv->attach(device, action.params())) {
-                    error() << "Cannot run attach action on device" << device.name();
+                    yError() << "Cannot run attach action on device" << device.name();
                     ret = false;
                 }
                 break;
             case ActionTypeAbort:
                 if(!mPriv->abort(device, action.params())) {
-                    error() << "Cannot run abort action on device" << device.name();
+                    yError() << "Cannot run abort action on device" << device.name();
                     ret = false;
                 }
                 break;
             case ActionTypeDetach:
                 if (!mPriv->detach(device, action.params())) {
-                    error() << "Cannot run detach action on device" << device.name();
+                    yError() << "Cannot run detach action on device" << device.name();
                     ret = false;
                 }
                 break;
             case ActionTypePark:
                 if (!mPriv->park(device, action.params())) {
-                    error() << "Cannot run park action on device" << device.name();
+                    yError() << "Cannot run park action on device" << device.name();
                     ret = false;
                 }
                 break;
             case ActionTypeCustom:
                 if (!mPriv->custom(device, action.params())) {
-                    error() << "Cannot run custom action on device" << device.name();
+                    yError() << "Cannot run custom action on device" << device.name();
                     ret = false;
                 }
                 break;
             default:
-                warning() << "Unhandled action" << ActionTypeToString(action.type());
+                yWarning() << "Unhandled action" << ActionTypeToString(action.type());
                 ret = false;
                 break;
             }
@@ -1103,9 +1103,9 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     }
 
     if (ret) {
-        debug() << "All actions for phase" << ActionPhaseToString(phase) << "executed.";
+        yDebug() << "All actions for phase" << ActionPhaseToString(phase) << "executed.";
     } else {
-        warning() << "There was some problem running actions for phase" << ActionPhaseToString(phase) << ". Please check the log and your configuration";
+        yWarning() << "There was some problem running actions for phase" << ActionPhaseToString(phase) << ". Please check the log and your configuration";
     }
 
     if (phase == ActionPhaseShutdown) {

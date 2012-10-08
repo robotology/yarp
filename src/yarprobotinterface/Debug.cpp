@@ -31,10 +31,11 @@ std::ofstream RobotInterface::Debug::ferr;
  #define CLEAR  (colored_output ? "\033[00m" : "")
 
  bool RobotInterface::Debug::colored_output(getenv("ROBOTINTERFACE_COLORED_OUTPUT") && (strcmp(getenv("ROBOTINTERFACE_COLORED_OUTPUT"), "1") == 0));
+ bool RobotInterface::Debug::verbose_output(getenv("ROBOTINTERFACE_VERBOSE_OUTPUT") && (strcmp(getenv("ROBOTINTERFACE_VERBOSE_OUTPUT"), "1") == 0));
 
 #else // WIN32
 
- // TODO colored for WIN32
+ // TODO colored and verbose_output for WIN32
  #define RED    ""
  #define GREEN  ""
  #define YELLOW ""
@@ -42,44 +43,89 @@ std::ofstream RobotInterface::Debug::ferr;
  #define CLEAR  ""
 
  bool RobotInterface::Debug::colored_output(false);
+ bool RobotInterface::Debug::verbose_output(false);
 
 #endif // WIN32
 
 
-void RobotInterface::Debug::print_output(MsgType t, const std::ostringstream &s)
+void RobotInterface::Debug::print_output(MsgType t,
+                                         const std::ostringstream &s,
+                                         const char *file,
+                                         unsigned int line,
+                                         const char *func)
 {
     switch (t) {
     case TraceType:
         if (ftrc.is_open()) {
-            ftrc << s.str() << std::endl;
+            if (verbose_output) {
+                ftrc << "T: " << file << ":" << line << " " << func << ":" << s.str() << std::endl;
+            } else {
+                ftrc << "TRACE: " << s.str() << std::endl;
+            }
         } else {
-            std::cout << GREEN   << "TRACE"   << CLEAR << ": " << s.str() << std::endl;
+            if (verbose_output) {
+                std::cout << GREEN << "T" << CLEAR << ": " << file << ":" << line << " " << GREEN << func << CLEAR << ": " << s.str() << std::endl;
+            } else {
+                std::cout << GREEN << "TRACE" << CLEAR << ": " << s.str() << std::endl;
+            }
         }
         break;
     case DebugType:
         if (fout.is_open()) {
-            fout << "DEBUG: " << s.str() << std::endl;
+            if (verbose_output) {
+                ftrc << "D: " << file << ":" << line << " " << func << ":" << s.str() << std::endl;
+            } else {
+                fout << "DEBUG: " << s.str() << std::endl;
+            }
         } else {
-            std::cout << BLUE   << "DEBUG"   << CLEAR << ": " << s.str() << std::endl;
+            if (verbose_output) {
+                std::cout << BLUE << "D" << CLEAR << ": " << file << ":" << line << " " << BLUE << func << CLEAR << ": " << s.str() << std::endl;
+            } else {
+                std::cout << BLUE << "DEBUG" << CLEAR << ": " << s.str() << std::endl;
+            }
         }
         break;
     case WarningType:
         if (ferr.is_open()) {
-            ferr << "WARNING: " << s.str() << std::endl;
+            if (verbose_output) {
+                ferr << "W: " << file << ":" << line << " " << func << ":" << s.str() << std::endl;
+            } else {
+                ferr << "WARNING: " << s.str() << std::endl;
+            }
         }
-        std::cerr << YELLOW << "WARNING" << CLEAR << ": " << s.str() << std::endl;
+        if (verbose_output) {
+            std::cerr << YELLOW << "W" << CLEAR << ": " << file << ":" << line << " " << YELLOW << func << CLEAR << ": " << s.str() << std::endl;
+        } else {
+            std::cerr << YELLOW << "WARNING" << CLEAR << ": " << s.str() << std::endl;
+        }
         break;
     case ErrorType:
         if (ferr.is_open()) {
-            ferr << "ERROR: " << s.str() << std::endl;
+            if (verbose_output) {
+                ferr << "E: " << file << ":" << line << " " << func << ":" << s.str() << std::endl;
+            } else {
+                ferr << "ERROR: " << s.str() << std::endl;
+            }
         }
-        std::cerr << RED    << "ERROR"   << CLEAR << ": " << s.str() << std::endl;
+        if (verbose_output) {
+            std::cerr << RED << "E" << CLEAR << ": " << file << ":" << line << " " << RED << func << CLEAR << ": " << s.str() << std::endl;
+        } else {
+            std::cerr << RED << "ERROR" << CLEAR << ": " << s.str() << std::endl;
+        }
         break;
     case FatalType:
         if (ferr.is_open()) {
-            ferr << "FATAL: " << s.str() << std::endl;
+            if (verbose_output) {
+                ferr << "F: " << file << ":" << line << " " << func << ":" << s.str() << std::endl;
+            } else {
+                ferr << "FATAL: " << s.str() << std::endl;
+            }
         }
-        std::cerr << RED    << "FATAL"   << CLEAR << ": " << s.str() << std::endl;
+        if (verbose_output) {
+            std::cerr << RED << "F" << CLEAR << ": " << file << ":" << line << " " << RED << func << CLEAR << ": " << s.str() << std::endl;
+        } else {
+            std::cerr << RED << "FATAL" << CLEAR << ": " << s.str() << std::endl;
+        }
         yarp::os::exit(-1);
         break;
     }

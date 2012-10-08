@@ -24,14 +24,21 @@ enum MsgType { TraceType, DebugType, WarningType, ErrorType, FatalType };
 
 class Debug {
     struct Stream {
-        Stream(MsgType t) : type(t), ref(1) {}
+        Stream(MsgType t, const char *fn, unsigned int l, const char *f) : type(t), file(fn), line(l), func(f), ref(1) {}
         std::ostringstream oss;
         MsgType type;
+        const char *file;
+        unsigned int line;
+        const char *func;
         int ref;
     } *stream;
 public:
-    inline Debug(MsgType type) :
-        stream(new Stream(type))
+
+    inline Debug(MsgType type,
+                 const char *file,
+                 unsigned int line,
+                 const char *func) :
+        stream(new Stream(type, file, line, func))
     {
     }
 
@@ -41,7 +48,7 @@ public:
 
     inline ~Debug() {
         if (!--stream->ref) {
-            print_output(stream->type, stream->oss);
+            print_output(stream->type, stream->oss, stream->file, stream->line, stream->func);
             delete stream;
         }
     }
@@ -138,47 +145,48 @@ public:
     }
 
     /*!
-     * \brief Set the output file used by trace()
+     * \brief Set the output file used by yTrace()
      */
     static void setTraceFile(const std::string &filename);
 
     /*!
-     * \brief Set the output file used by debug()
+     * \brief Set the output file used by yDebug()
      */
     static void setOutputFile(const std::string &filename);
 
     /*!
-     * \brief Set the output file used by warning(), error() and fatal()
+     * \brief Set the output file used by yWarning(), yError() and yyyTrace()
      */
     static void setErrorFile(const std::string &filename);
 
 private:
-    void print_output(MsgType t, const std::ostringstream &s);
+    void print_output(MsgType t,
+                      const std::ostringstream &s,
+                      const char *file,
+                      unsigned int line,
+                      const char *func);
 
-    static std::ofstream ftrc; /// Used by trace()
-    static std::ofstream fout; /// Used by debug()
-    static std::ofstream ferr; /// Used by warning(), error() and fatal()
+    static std::ofstream ftrc; /// Used by yTrace()
+    static std::ofstream fout; /// Used by yDebug()
+    static std::ofstream ferr; /// Used by yWarning(), yError() and yyyTrace()
 
     static bool colored_output;
+    static bool verbose_output;
 };
 
 }
 
-#define trace() RobotInterface::Debug(RobotInterface::TraceType) << __PRETTY_FUNCTION__ << __FILE__ << __LINE__
+#ifdef __GNUC__
+#define __YFUNCTION__ __PRETTY_FUNCTION__
+#else // __GNUC__
+#define __YFUNCTION__ __func__
+#endif // __GNUC__
 
-inline RobotInterface::Debug debug() {
-    return RobotInterface::Debug(RobotInterface::DebugType);
-}
-inline RobotInterface::Debug warning() {
-    return RobotInterface::Debug(RobotInterface::WarningType);
-}
-inline RobotInterface::Debug error() {
-    return RobotInterface::Debug(RobotInterface::ErrorType);
-}
-inline RobotInterface::Debug fatal() {
-    return RobotInterface::Debug(RobotInterface::FatalType);
-}
-
+#define yTrace() RobotInterface::Debug(RobotInterface::TraceType, __FILE__, __LINE__, __YFUNCTION__)
+#define yDebug() RobotInterface::Debug(RobotInterface::DebugType, __FILE__, __LINE__, __YFUNCTION__)
+#define yWarning() RobotInterface::Debug(RobotInterface::WarningType, __FILE__, __LINE__, __YFUNCTION__)
+#define yError() RobotInterface::Debug(RobotInterface::ErrorType, __FILE__, __LINE__, __YFUNCTION__)
+#define yFatal() RobotInterface::Debug(RobotInterface::FatalType, __FILE__, __LINE__, __YFUNCTION__)
 
 template <typename T>
 inline std::ostringstream& operator<<(std::ostringstream &oss, const std::vector<T> &t)
@@ -189,6 +197,9 @@ inline std::ostringstream& operator<<(std::ostringstream &oss, const std::vector
     }
     return oss;
 }
+
+
+#define YFIXME_NOTIMPLEMENTED yError() << "FIXME: NOT IMPLEMENTED";
 
 
 #endif // ROBOTINTERFACE_DEBUG_H

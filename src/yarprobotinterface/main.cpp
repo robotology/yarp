@@ -33,7 +33,7 @@ static void sighandler (int) {
     static int ct = 0;
     ct++;
 
-    warning() << "Asking to shut down";
+    yWarning() << "Asking to shut down";
     terminated = true;
 
 //TODO
@@ -44,17 +44,17 @@ static void sighandler (int) {
     case 2:
         break;
     case 3:
-        warning() << "Aborting parking...";
+        yWarning() << "Aborting parking...";
 //         if(ri!=0) {
 //             ri->abort();
 //         }
         break;
     case 4:
     case 5:
-        warning() << "iCubInterface is already shutting down, this might take a while";
+        yWarning() << "iCubInterface is already shutting down, this might take a while";
     case 6:
     default:
-        warning() << "Seriously killing the application";
+        yWarning() << "Seriously killing the application";
         yarp::os::exit(-1);
     }
 }
@@ -63,25 +63,28 @@ static void sighandler (int) {
 
 int main(int argc, char *argv[])
 {
+    yTrace();
     yarp::os::Network yarp; //initialize network, this goes before everything
 
     if (!yarp.checkNetwork()) {
-        fatal() << "Sorry YARP network does not seem to be available, is the yarp server available?";
+        yFatal() << "Sorry YARP network does not seem to be available, is the yarp server available?";
     }
 
     yarp::os::Time::turboBoost();
+
+    yTrace();
 
 //BEGIN
 // TODO Move in device library
     if( NULL == (AC_trace_file = fopen("/home/icub/trace.log", "w+")) )
     {
-        debug() << "Cannot open file /home/icub/trace.log, using stdout";
+        yDebug() << "Cannot open file /home/icub/trace.log, using stdout";
         AC_trace_file = stdout;
     }
 
     if( NULL == (AC_debug_file = fopen("/home/icub/debug.log", "w+")) )
     {
-        debug() << "Cannot open file /home/icub/debug.log, using stdout";
+        yDebug() << "Cannot open file /home/icub/debug.log, using stdout";
         AC_debug_file = stdout;
     }
 

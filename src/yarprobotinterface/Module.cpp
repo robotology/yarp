@@ -53,7 +53,7 @@ bool RobotInterface::Module::open(yarp::os::Searchable& config)
 {
     RobotInterface::XMLReader reader;
     mPriv->robot = reader.getRobot("/opt/iit/src/robotInterface/iCubTest/icub.xml");
-    debug() << mPriv->robot;
+    yDebug() << mPriv->robot;
 
     return mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup);
 }
