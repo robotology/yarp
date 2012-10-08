@@ -25,7 +25,7 @@ public:
     Private(XMLReader *parent);
     ~Private();
 
-    RobotInterface::Robot& readFile(const std::string &filename);
+    RobotInterface::Robot& readFile(const std::string &fileName);
     RobotInterface::Robot readRobot(TiXmlElement *robotElem);
     RobotInterface::Device readDevice(TiXmlElement *deviceElem);
     RobotInterface::ParamList readParams(TiXmlElement *paramsElem);
@@ -42,8 +42,8 @@ public:
 };
 
 
-RobotInterface::XMLReader::Private::Private(XMLReader *parent) :
-    parent(parent)
+RobotInterface::XMLReader::Private::Private(XMLReader *p) :
+    parent(p)
 {
 }
 
@@ -51,9 +51,9 @@ RobotInterface::XMLReader::Private::~Private()
 {
 }
 
-RobotInterface::Robot& RobotInterface::XMLReader::Private::readFile(const std::string &filename)
+RobotInterface::Robot& RobotInterface::XMLReader::Private::readFile(const std::string &fileName)
 {
-    this->filename = filename;
+    filename = fileName;
     TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         fatal() << SYNTAX_ERROR(filename, doc->ErrorRow()) << doc->ErrorDesc();
