@@ -620,6 +620,7 @@ RobotInterface::Device& RobotInterface::Robot::Private::findDevice(const std::st
             return *it;
         }
     }
+    fatal() << "Cannot find device" << name;
 }
 
 bool RobotInterface::Robot::Private::openDevices()
