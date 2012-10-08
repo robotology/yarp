@@ -612,6 +612,8 @@ public:
     // return a vector of actions for that phase and that level
     std::vector<std::pair<Device, Action> > getActions(ActionPhase phase, unsigned int level) const;
 
+    bool attach(const Device &device, const ParamList &params);
+
     std::string name;
     ParamList params;
     DeviceList devices;
@@ -701,6 +703,45 @@ std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInt
         }
     }
     return actions;
+}
+
+bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+{
+    yarp::dev::IMultipleWrapper *wrapper;
+    if (!device.driver()->view(wrapper)) {
+        error() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
+        return false;
+    }
+
+    if (!::hasParam(params, "device")) {
+        error() << "Action \"attach\" requires parameter \"device\"";
+        return false;
+    }
+    std::string targetName = ::findParam(params, "device");
+
+    if (!::hasParam(params, "network")) {
+        error() << "Action \"attach\" requires parameter \"network\"";
+        return false;
+    }
+    std::string targetNetwork = ::findParam(params, "network");
+
+    if (!hasDevice(targetName)) {
+        error() << "Target device" << targetName << "(network =" << targetNetwork << ") does not exist.";
+        return false;
+    }
+    Device &targetDevice = *findDevice(targetName);
+
+    yarp::dev::PolyDriverList drivers;
+
+    debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+
+    drivers.push(targetDevice.driver(), targetNetwork.c_str());
+    if (!wrapper->attachAll(drivers)) {
+        error() << "Cannot attach device" << device.name() << "to" << targetDevice.name();
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -803,50 +844,37 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 
     std::vector<unsigned int> levels = mPriv->getLevels(phase);
 
-    for (std::vector<unsigned int>::const_iterator it = levels.begin(); it != levels.end(); it++) {
-        const unsigned int level = *it;
+    bool ret = true;
+    for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); lit++) {
+        const unsigned int level = *lit;
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
 
-        for (std::vector<std::pair<Device, Action> >::iterator it = actions.begin(); it != actions.end(); it++) {
-            Device &device = it->first;
-            Action &action = it->second;
+        for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ait++) {
+            Device &device = ait->first;
+            Action &action = ait->second;
 
             switch (action.type()) {
             case ActionTypeAttach:
-            {
-                yarp::dev::IMultipleWrapper *wrapper;
-                if (!device.driver()->view(wrapper)) {
-                    fatal() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
-                }
-
-                if (!action.hasParam("device")) {
-                    fatal() << "Action" << ActionTypeToString(ActionTypeAttach) << "requires parameter \"device\"";
-                }
-                std::string targetName = action.findParam("device");
-                Device targetDevice = mPriv->findDevice(targetName); // TODO Check?
-
-                if (!action.hasParam("network")) {
-                    fatal() << "Action" << ActionTypeToString(ActionTypeAttach) << "requires parameter \"network\"";
-                }
-                std::string network = action.findParam("network");
-
-                yarp::dev::PolyDriverList drivers;
-
-                debug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << network;
-
-                drivers.push(targetDevice.driver(), network.c_str());
-                if (!wrapper->attachAll(drivers)) {
-                    fatal() << "Cannot attach device" << device.name() << "to" << targetDevice.name();
+                if (!mPriv->attach(device, action.params())) {
+                    error() << "Cannot run attach action on device" << device.name();
+                    ret = false;
                 }
                 break;
-            }
             default:
                 warning() << "Unhandled action" << ActionTypeToString(action.type());
+                ret = false;
                 break;
             }
         }
     }
 
+    if (ret) {
+        debug() << "All actions for phase" << ActionPhaseToString(phase) << "execute.";
+    } else {
+        warning() << "There was some problem running actions for phase" << ActionPhaseToString(phase) << ". Please check the log and your configuration";
+    }
+
+    return ret;
 }
 
 
