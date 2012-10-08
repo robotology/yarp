@@ -21,14 +21,22 @@
 #include "Debug.h"
 
 
+// TODO Remove
+#include <yarp/os/Time.h>
+
+
 namespace {
 
 inline static RobotInterface::ActionPhase StringToActionPhase(const std::string &phase)
 {
     if (!phase.compare("startup")) {
         return RobotInterface::ActionPhaseStartup;
-    } else if (!phase.compare("interrupt")) {
-        return RobotInterface::ActionPhaseInterrupt;
+    } else if (!phase.compare("interrupt1")) {
+        return RobotInterface::ActionPhaseInterrupt1;
+    } else if (!phase.compare("interrupt2")) {
+        return RobotInterface::ActionPhaseInterrupt2;
+    } else if (!phase.compare("interrupt3")) {
+        return RobotInterface::ActionPhaseInterrupt3;
     } else if (!phase.compare("shutdown")) {
         return RobotInterface::ActionPhaseShutdown;
     }
@@ -40,8 +48,12 @@ inline static std::string ActionPhaseToString(RobotInterface::ActionPhase action
     switch (actionphase) {
     case RobotInterface::ActionPhaseStartup:
         return std::string("startup");
-    case RobotInterface::ActionPhaseInterrupt:
-        return std::string("interrupt");
+    case RobotInterface::ActionPhaseInterrupt1:
+        return std::string("interrupt1");
+    case RobotInterface::ActionPhaseInterrupt2:
+        return std::string("interrupt2");
+    case RobotInterface::ActionPhaseInterrupt3:
+        return std::string("interrupt3");
     case RobotInterface::ActionPhaseShutdown:
         return std::string("shutdown");
     case RobotInterface::ActionPhaseUnknown:

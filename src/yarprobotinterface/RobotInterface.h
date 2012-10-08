@@ -57,7 +57,9 @@ enum ActionPhase
 {
     ActionPhaseUnknown = 0,
     ActionPhaseStartup,
-    ActionPhaseInterrupt,
+    ActionPhaseInterrupt1,
+    ActionPhaseInterrupt2,
+    ActionPhaseInterrupt3,
     ActionPhaseShutdown,
 
     ActionPhaseReserved = 0xFF

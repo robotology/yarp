@@ -29,4 +29,10 @@
         <param name="target">torso</param>
     </action>
 
+    <action phase="interrupt1" level="1" type="park">
+        <param name="target">torso</param>
+    </action>
+
+    <action phase="interrupt3" level="1" type="abort" />
+
 </device>

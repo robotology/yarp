@@ -60,7 +60,21 @@ bool RobotInterface::Module::open(yarp::os::Searchable& config)
 
 bool RobotInterface::Module::interruptModule()
 {
-    return mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt);
+    static int ct = 0;
+    ct++;
+
+    yWarning() << "Interrupt #" << ct << "# received.";
+
+    switch (ct) {
+    case 1:
+        return mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt1);
+    case 2:
+        return mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt2);
+    case 3:
+        return mPriv->robot.enterPhase(RobotInterface::ActionPhaseInterrupt3);
+    default:
+        return false;
+    }
 }
 
 bool RobotInterface::Module::close()
