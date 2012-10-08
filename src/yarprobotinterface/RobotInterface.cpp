@@ -89,6 +89,29 @@ inline static std::string ActionTypeToString(RobotInterface::ActionType actionty
     }
 }
 
+inline static bool hasParam(const RobotInterface::ParamList &list, const std::string& name)
+{
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+        const RobotInterface::Param &param = *it;
+        if (!name.compare(param.name())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline static const std::string& findParam(const RobotInterface::ParamList &list, const std::string& name)
+{
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+        const RobotInterface::Param &param = *it;
+        if (!name.compare(param.name())) {
+            return param.value();
+        }
+    }
+    warning() << "Param" << name << "not found";
+    return std::string();
+}
+
 } // namespace
 
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Param &t)
@@ -347,6 +370,16 @@ const RobotInterface::ParamList& RobotInterface::Action::params() const
     return mPriv->params;
 }
 
+bool RobotInterface::Action::hasParam(const std::string& name) const
+{
+    return ::hasParam(mPriv->params, name);
+}
+
+const std::string& RobotInterface::Action::findParam(const std::string& name) const
+{
+    return ::findParam(mPriv->params, name);
+}
+
 //END Action
 
 
@@ -471,6 +504,16 @@ yarp::os::Property RobotInterface::Device::paramsAsProperty() const
     debug() << "   -->" << "\033[01;32m" << s << "\033[00m";
     debug() << "   --->" << "\033[01;35m" << p.toString() << "\033[00m";
     return p;
+}
+
+bool RobotInterface::Device::hasParam(const std::string& name) const
+{
+    return ::hasParam(mPriv->params, name);
+}
+
+const std::string& RobotInterface::Device::findParam(const std::string& name) const
+{
+    return ::findParam(mPriv->params, name);
 }
 
 

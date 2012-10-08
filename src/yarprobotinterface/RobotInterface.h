@@ -98,6 +98,9 @@ public:
     unsigned int level() const;
     const ParamList& params() const;
 
+    bool hasParam(const std::string &name) const;
+    const std::string& findParam(const std::string &name) const;
+
     virtual ~Action();
 
 private:
@@ -135,6 +138,8 @@ public:
     const ActionList& actions() const;
 
     yarp::os::Property paramsAsProperty() const;
+    bool hasParam(const std::string &name) const;
+    const std::string& findParam(const std::string &name) const;
 
 private:
     class Private;
@@ -166,6 +171,9 @@ public:
     const ParamList& params() const;
     const DeviceList& devices() const;
     const Device& device(const std::string &name) const;
+
+    bool hasParam(const std::string &name) const;
+    const std::string& findParam(const std::string &name) const;
 
 private:
     class Private;
