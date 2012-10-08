@@ -11,13 +11,9 @@
 #include <iosfwd>
 #include <vector>
 
-namespace yarp
-{
-namespace os
-{
-class Property;
-}
-}
+namespace yarp { namespace os { class Property; } }
+namespace yarp { namespace dev { class PolyDriver; } }
+
 
 namespace RobotInterface
 {
@@ -137,9 +133,13 @@ public:
     const ParamList& params() const;
     const ActionList& actions() const;
 
-    yarp::os::Property paramsAsProperty() const;
     bool hasParam(const std::string &name) const;
     const std::string& findParam(const std::string &name) const;
+
+    bool open();
+    bool close();
+
+    yarp::dev::PolyDriver *driver() const;
 
 private:
     class Private;

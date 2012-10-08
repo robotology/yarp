@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include <yarp/os/Property.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include "RobotInterface.h"
 #include "Debug.h"
@@ -388,12 +389,66 @@ const std::string& RobotInterface::Action::findParam(const std::string& name) co
 class RobotInterface::Device::Private
 {
 public:
-    Private(Device * /*parent*/) {}
+    struct Driver {
+        Driver(yarp::dev::PolyDriver *d) : driver(d), ref(1) {}
+        yarp::dev::PolyDriver *driver;
+        int ref;
+    };
+
+    Private(Device * /*parent*/) :
+        driver(new Driver(new yarp::dev::PolyDriver()))
+    {
+    }
+
+    Private(const Private &other) : driver(other.driver)
+    {
+        ++driver->ref;
+    }
+
+    Private& operator=(const Private& other)
+    {
+        error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    }
+
+    ~Private()
+    {
+        if (!--driver->ref) {
+            if (driver->driver->isValid()) {
+                if (!driver->driver->close()) {
+                    warning() << "Cannot close device" << name;
+                }
+            }
+            delete driver;
+            driver = NULL;
+        }
+    }
+
+    inline yarp::dev::PolyDriver* drv() const { return driver->driver; }
+
+    inline bool isValid() const { return drv()->isValid(); }
+    inline bool open() { return drv()->open(paramsAsProperty().toString()); }
+    inline bool close() { return drv()->close(); }
+
+    yarp::os::Property paramsAsProperty() const
+    {
+        std::string s;
+        s += "(device " + type + ")";
+        for (RobotInterface::ParamList::const_iterator it = params.begin(); it != params.end(); it++) {
+            const RobotInterface::Param &param = *it;
+            s += " (" + param.name() + " " + param.value() + ")";
+        }
+        yarp::os::Property p(s.c_str());
+
+        debug() << "   -->" << "\033[01;32m" << s << "\033[00m";
+        debug() << "   --->" << "\033[01;35m" << p.toString() << "\033[00m";
+        return p;
+    }
 
     std::string name;
     std::string type;
     ParamList params;
     ActionList actions;
+    Driver *driver;
 };
 
 RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Device &t)
@@ -407,7 +462,7 @@ RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface
 RobotInterface::Device::Device() :
     mPriv(new Private(this))
 {
-
+    mPriv->close();
 }
 
 RobotInterface::Device::Device(const std::string& name,
@@ -423,7 +478,7 @@ RobotInterface::Device::Device(const std::string& name,
 }
 
 RobotInterface::Device::Device(const RobotInterface::Device& other) :
-    mPriv(new Private(this))
+    mPriv(new Private(*other.mPriv))
 {
     mPriv->name = other.mPriv->name;
     mPriv->type = other.mPriv->type;
@@ -442,6 +497,9 @@ RobotInterface::Device& RobotInterface::Device::operator=(const RobotInterface::
 
         mPriv->actions.clear();
         mPriv->actions = other.mPriv->actions;
+
+        error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+        *mPriv->driver = *other.mPriv->driver;
     }
     return *this;
 }
@@ -491,19 +549,24 @@ const RobotInterface::ActionList& RobotInterface::Device::actions() const
     return mPriv->actions;
 }
 
-yarp::os::Property RobotInterface::Device::paramsAsProperty() const
+bool RobotInterface::Device::open()
 {
-    std::string s;
-    s += "(device " + mPriv->type + ")";
-    for (RobotInterface::ParamList::const_iterator it = mPriv->params.begin(); it != mPriv->params.end(); it++) {
-        const RobotInterface::Param &param = *it;
-        s += " (" + param.name() + " " + param.value() + ")";
+    if (mPriv->isValid()) {
+        error() << "Trying to create a device already opened device.";
+        return false;
     }
-    yarp::os::Property p(s.c_str());
 
-    debug() << "   -->" << "\033[01;32m" << s << "\033[00m";
-    debug() << "   --->" << "\033[01;35m" << p.toString() << "\033[00m";
-    return p;
+    if (!mPriv->open()) {
+        warning() << "Cannot open device" << mPriv->name;
+        return false;
+    }
+
+    return true;
+}
+
+bool RobotInterface::Device::close()
+{
+    // TODO implement me
 }
 
 bool RobotInterface::Device::hasParam(const std::string& name) const
@@ -514,6 +577,11 @@ bool RobotInterface::Device::hasParam(const std::string& name) const
 const std::string& RobotInterface::Device::findParam(const std::string& name) const
 {
     return ::findParam(mPriv->params, name);
+}
+
+yarp::dev::PolyDriver* RobotInterface::Device::driver() const
+{
+    return mPriv->drv();
 }
 
 
@@ -527,7 +595,11 @@ class RobotInterface::Robot::Private
 public:
     Private(Robot * /*parent*/) {}
 
+    // return the device with the given name or an invalid device if not found
     Device& findDevice(const std::string &name);
+
+    // open all the devices and return true if all the open calls were succesful
+    bool openDevices();
 
     std::string name;
     ParamList params;
@@ -541,6 +613,29 @@ RobotInterface::Device& RobotInterface::Robot::Private::findDevice(const std::st
             return *it;
         }
     }
+}
+
+bool RobotInterface::Robot::Private::openDevices()
+{
+    bool ret = true;
+    for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
+        RobotInterface::Device &device = *it;
+
+        debug() << device;
+
+        if (!device.open()) {
+            warning() << "Cannot open device" << device.name();
+            ret = false;
+        }
+
+    }
+    if (ret) {
+        debug() << "All devices opened.";
+    } else {
+        warning() << "There was some problem opening one or more devices. Please check the log and your configuration";
+    }
+
+    return ret;
 }
 
 
