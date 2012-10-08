@@ -1247,10 +1247,10 @@ public:
         return false;
     }
 
-    virtual bool setTorquePid(int j, const Pid &pid)
+    virtual bool setTorquePid(int j, const Pid &tpid)
     {
         if (torque)
-            return torque->setTorquePid(j+base, pid);
+            return torque->setTorquePid(j+base, tpid);
         return false;
     }
 
@@ -1357,10 +1357,10 @@ public:
         return ret;
     }
 
-    virtual bool getTorquePid(int j, Pid *pid)
+    virtual bool getTorquePid(int j, Pid *tpid)
     {
         if (torque)
-            return torque->getTorquePid(j+base, pid);
+            return torque->getTorquePid(j+base, tpid);
         return false;
     }
 

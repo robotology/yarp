@@ -1042,7 +1042,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
             case VOCAB_AXES:
                 {
-                    int tmp;
+                   // int tmp;
                     ok = pos->getAxes(&tmp);
                     response.addInt(tmp);
                 }

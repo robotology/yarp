@@ -1512,7 +1512,7 @@ bool CommandsHelper2::respond(const yarp::os::Bottle& cmd,
 
                         case VOCAB_AXES:
                             {
-                                int tmp;
+                             //   int tmp;
                                 ok = pos->getAxes(&tmp);
                                 response.addInt(tmp);
                             }
@@ -1934,25 +1934,25 @@ void ControlBoardWrapper2::run()
     // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::run2()", Logger::get().log_files.f3);
 
     //getEncoders for all subdevices
-    double *encoders=v.data();
+    double *vencoders=v.data();
     double timeStamp=0.0;
 
     for(unsigned int k=0;k<device.subdevices.size();k++)
         {
         // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::run3()", Logger::get().log_files.f3);
             int axes=device.subdevices[k].axes;
-            int base=device.subdevices[k].base;
+          //  int base=device.subdevices[k].base;
 
             device.subdevices[k].refreshEncoders();
 
             // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::run3.5()", Logger::get().log_files.f3);
             for(int l=0;l<axes;l++)
             {
-                encoders[l]=device.subdevices[k].encoders[l+base];
+                vencoders[l]=device.subdevices[k].encoders[l+base];
                 timeStamp+=device.subdevices[k].encodersTimes[l+base];
             }
 
-            encoders+=device.subdevices[k].axes; //jump to next group
+            vencoders+=device.subdevices[k].axes; //jump to next group
         }
 
     timeMutex.wait();
