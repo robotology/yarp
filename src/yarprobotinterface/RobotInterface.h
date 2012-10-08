@@ -95,7 +95,7 @@ public:
     const ParamList& params() const;
 
     bool hasParam(const std::string &name) const;
-    const std::string& findParam(const std::string &name) const;
+    std::string findParam(const std::string &name) const;
 
     virtual ~Action();
 
@@ -134,7 +134,7 @@ public:
     const ActionList& actions() const;
 
     bool hasParam(const std::string &name) const;
-    const std::string& findParam(const std::string &name) const;
+    std::string findParam(const std::string &name) const;
 
     bool open();
     bool close();
@@ -173,8 +173,7 @@ public:
     const Device& device(const std::string &name) const;
 
     bool hasParam(const std::string &name) const;
-    const std::string& findParam(const std::string &name) const;
-
+    std::string findParam(const std::string &name) const;
 
     bool enterPhase(RobotInterface::ActionPhase phase);
 
