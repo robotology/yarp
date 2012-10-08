@@ -293,7 +293,7 @@ RobotInterface::Action::Action(const std::string& phase, const std::string& type
     mPriv(new Private(this))
 {
     mPriv->phase = StringToActionPhase(phase);
-    mPriv->type = StringToActionType(phase);
+    mPriv->type = StringToActionType(type);
     mPriv->level = level;
 }
 
