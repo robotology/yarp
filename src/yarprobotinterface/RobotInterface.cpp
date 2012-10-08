@@ -140,6 +140,26 @@ inline static std::string findGroup(const RobotInterface::ParamList &list, const
     return std::string();
 }
 
+inline static RobotInterface::ParamList mergeDuplicateGroups(const RobotInterface::ParamList &list)
+{
+    RobotInterface::ParamList params = list;
+    for (RobotInterface::ParamList::iterator it1 = params.begin(); it1 != params.end(); it1++) {
+        RobotInterface::Param &param1 = *it1;
+        for (RobotInterface::ParamList::iterator it2 = it1 + 1; it2 != params.end(); it2++) {
+            RobotInterface::Param &param2 = *it2;
+            if (param1.name().compare(param2.name()) == 0) {
+                if (!param1.isGroup() || !param2.isGroup()) {
+                    fatal() << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
+                }
+                param1.value() += std::string(" ");
+                param1.value() += param2.value();
+                params.erase(it2);
+            }
+        }
+    }
+    return params;
+}
+
 } // namespace
 
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Param &t)
@@ -470,9 +490,10 @@ public:
 
     yarp::os::Property paramsAsProperty() const
     {
+        ParamList p = ::mergeDuplicateGroups(params);
         std::string s;
         s += "(device " + type + ")";
-        for (RobotInterface::ParamList::const_iterator it = params.begin(); it != params.end(); it++) {
+        for (RobotInterface::ParamList::const_iterator it = p.begin(); it != p.end(); it++) {
             const RobotInterface::Param &param = *it;
             s += " (" + param.name() + " " + param.value() + ")";
         }
