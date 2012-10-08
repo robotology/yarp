@@ -22,6 +22,8 @@ inline static RobotInterface::ActionPhase StringToActionPhase(const std::string 
 {
     if (!phase.compare("startup")) {
         return RobotInterface::ActionPhaseStartup;
+    } else if (!phase.compare("interrupt")) {
+        return RobotInterface::ActionPhaseInterrupt;
     } else if (!phase.compare("shutdown")) {
         return RobotInterface::ActionPhaseShutdown;
     }
@@ -33,6 +35,8 @@ inline static std::string ActionPhaseToString(RobotInterface::ActionPhase action
     switch (actionphase) {
     case RobotInterface::ActionPhaseStartup:
         return std::string("startup");
+    case RobotInterface::ActionPhaseInterrupt:
+        return std::string("interrupt");
     case RobotInterface::ActionPhaseShutdown:
         return std::string("shutdown");
     case RobotInterface::ActionPhaseUnknown:
