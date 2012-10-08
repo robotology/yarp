@@ -597,8 +597,11 @@ class RobotInterface::Robot::Private
 public:
     Private(Robot * /*parent*/) {}
 
-    // return the device with the given name or an invalid device if not found
-    Device& findDevice(const std::string &name);
+    // return true if a device with the given name exists
+    bool hasDevice(const std::string &name) const;
+
+    // return the device with the given name or <fatal error> if not found
+    Device* findDevice(const std::string &name);
 
     // open all the devices and return true if all the open calls were succesful
     bool openDevices();
@@ -614,14 +617,25 @@ public:
     DeviceList devices;
 };
 
-RobotInterface::Device& RobotInterface::Robot::Private::findDevice(const std::string &name)
+bool RobotInterface::Robot::Private::hasDevice(const std::string &name) const
+{
+    for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); it++) {
+        if (!name.compare(it->name())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+RobotInterface::Device* RobotInterface::Robot::Private::findDevice(const std::string &name)
 {
     for (DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
         if (!name.compare(it->name())) {
-            return *it;
+            return &(*it);
         }
     }
     fatal() << "Cannot find device" << name;
+    return NULL;
 }
 
 bool RobotInterface::Robot::Private::openDevices()
@@ -756,7 +770,7 @@ RobotInterface::DeviceList& RobotInterface::Robot::devices()
 
 RobotInterface::Device& RobotInterface::Robot::device(const std::string& name)
 {
-    return mPriv->findDevice(name);
+    return *mPriv->findDevice(name);
 }
 
 const std::string& RobotInterface::Robot::name() const
@@ -776,7 +790,7 @@ const RobotInterface::DeviceList& RobotInterface::Robot::devices() const
 
 const RobotInterface::Device& RobotInterface::Robot::device(const std::string& name) const
 {
-    return mPriv->findDevice(name);
+    return *mPriv->findDevice(name);
 }
 
 bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
