@@ -193,7 +193,7 @@ inline std::ostringstream& operator<<(std::ostringstream &oss, const std::vector
 {
     for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); it++) {
         const T &p = *it;
-        oss << p;
+        oss << p << ' ';
     }
     return oss;
 }
