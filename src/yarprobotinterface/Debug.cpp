@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include <yarp/os/Os.h>
 
@@ -20,21 +21,72 @@
 #define BLUE   "\033[01;34m"
 #define CLEAR  "\033[00m"
 
+
+std::ofstream RobotInterface::Debug::fout;
+std::ofstream RobotInterface::Debug::ferr;
+std::ofstream RobotInterface::Debug::ftrc;
+
+
 void RobotInterface::Debug::print_output(MsgType t, const std::ostringstream &s)
 {
     switch (t) {
+    case TraceType:
+        if (ftrc.is_open()) {
+            ftrc << s.str() << std::endl;
+        } else {
+            std::cout << GREEN   << "TRACE"   << CLEAR << ": " << s.str() << std::endl;
+        }
+        break;
     case DebugType:
-        std::cout << BLUE   << "DEBUG"   << CLEAR << ": " << s.str() << std::endl;
+        if (fout.is_open()) {
+            fout << "DEBUG: " << s.str() << std::endl;
+        } else {
+            std::cout << BLUE   << "DEBUG"   << CLEAR << ": " << s.str() << std::endl;
+        }
         break;
     case WarningType:
-        std::cout << YELLOW << "WARNING" << CLEAR << ": " << s.str() << std::endl;
+        if (ferr.is_open()) {
+            ferr << "WARNING: " << s.str() << std::endl;
+        }
+        std::cerr << YELLOW << "WARNING" << CLEAR << ": " << s.str() << std::endl;
         break;
     case ErrorType:
-        std::cout << RED    << "ERROR"   << CLEAR << ": " << s.str() << std::endl;
+        if (ferr.is_open()) {
+            ferr << "ERROR: " << s.str() << std::endl;
+        }
+        std::cerr << RED    << "ERROR"   << CLEAR << ": " << s.str() << std::endl;
         break;
     case FatalType:
-        std::cout << RED    << "FATAL"   << CLEAR << ": " << s.str() << std::endl;
+        if (ferr.is_open()) {
+            ferr << "FATAL: " << s.str() << std::endl;
+        }
+        std::cerr << RED    << "FATAL"   << CLEAR << ": " << s.str() << std::endl;
         yarp::os::exit(-1);
         break;
     }
+}
+
+void RobotInterface::Debug::setTraceFile(const std::string& filename)
+{
+    if(ftrc.is_open()) {
+        ftrc.close();
+    }
+    ftrc.open(filename.c_str());
+}
+
+
+void RobotInterface::Debug::setOutputFile(const std::string& filename)
+{
+    if(fout.is_open()) {
+        fout.close();
+    }
+    fout.open(filename.c_str());
+}
+
+void RobotInterface::Debug::setErrorFile(const std::string& filename)
+{
+    if(ferr.is_open()) {
+        ferr.close();
+    }
+    ferr.open(filename.c_str());
 }

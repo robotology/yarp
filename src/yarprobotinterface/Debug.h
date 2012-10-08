@@ -19,7 +19,7 @@
 namespace RobotInterface
 {
 
-enum MsgType { DebugType, WarningType, ErrorType, FatalType };
+enum MsgType { TraceType, DebugType, WarningType, ErrorType, FatalType };
 
 
 class Debug {
@@ -137,11 +137,32 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Set the output file used by trace()
+     */
+    static void setTraceFile(const std::string &filename);
+
+    /*!
+     * \brief Set the output file used by debug()
+     */
+    static void setOutputFile(const std::string &filename);
+
+    /*!
+     * \brief Set the output file used by warning(), error() and fatal()
+     */
+    static void setErrorFile(const std::string &filename);
+
 private:
     void print_output(MsgType t, const std::ostringstream &s);
+
+    static std::ofstream ftrc; /// Used by trace()
+    static std::ofstream fout; /// Used by debug()
+    static std::ofstream ferr; /// Used by warning(), error() and fatal()
 };
 
 }
+
+#define trace() RobotInterface::Debug(RobotInterface::TraceType) << __PRETTY_FUNCTION__ << __FILE__ << __LINE__
 
 inline RobotInterface::Debug debug() {
     return RobotInterface::Debug(RobotInterface::DebugType);
