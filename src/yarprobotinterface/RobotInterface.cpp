@@ -14,6 +14,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/dev/CalibratorInterfaces.h>
 
 #include "RobotInterface.h"
 #include "Debug.h"
@@ -613,6 +614,7 @@ public:
     std::vector<std::pair<Device, Action> > getActions(ActionPhase phase, unsigned int level) const;
 
     bool attach(const Device &device, const ParamList &params);
+    bool calibrate(const Device &device, const ParamList &params);
 
     std::string name;
     ParamList params;
@@ -745,6 +747,19 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
 }
 
 
+bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+{
+    yarp::dev::ICalibrator *calibrator;
+    if (!device.driver()->view(calibrator)) {
+        error() << device.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        return false;
+    }
+
+
+    return true;
+}
+
+
 RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Robot &t)
 {
     std::ostringstream oss;
@@ -857,6 +872,12 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             case ActionTypeAttach:
                 if (!mPriv->attach(device, action.params())) {
                     error() << "Cannot run attach action on device" << device.name();
+                    ret = false;
+                }
+                break;
+            case ActionTypeCalibrate:
+                if(!mPriv->calibrate(device, action.params())) {
+                    error() << "Cannot run calibrate action on device" << device.name();
                     ret = false;
                 }
                 break;
