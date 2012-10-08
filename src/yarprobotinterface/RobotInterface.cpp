@@ -913,7 +913,17 @@ bool RobotInterface::Robot::Private::abort(const RobotInterface::Device &device,
 
 bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    error() << "FIXME: not implemented:" << __PRETTY_FUNCTION__;
+    yarp::dev::IMultipleWrapper *wrapper;
+    if (!device.driver()->view(wrapper)) {
+        error() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
+        return false;
+    }
+
+    if (!wrapper->detachAll()) {
+        error() << "Cannot execute" << ActionTypeToString(ActionTypeDetach) << "on device" << device.name();
+        return false;
+    }
+
     return true;
 }
 
