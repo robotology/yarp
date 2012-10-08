@@ -38,6 +38,9 @@ static void sighandler (int) {
     warning() << "Asking to shut down";
     terminated = true;
 
+//TODO
+//    robot.enterPhase(RobotInterface::ActionPhaseShutdown);
+
     switch (ct) {
     case 1:
     case 2:
@@ -115,4 +118,9 @@ int main(int argc, char *argv[])
     }
 
     debug() << "Shutting down!";
+
+    robot.enterPhase(RobotInterface::ActionPhaseInterrupt); // TODO move in signal handler
+    robot.enterPhase(RobotInterface::ActionPhaseShutdown);
+
+    debug() << "Finished! Goodbye!";
 }
