@@ -11,11 +11,13 @@ include_directories(${TinyXML_INCLUDE_DIRS})
 
 set(robotInterface_SRCS
     main.cpp
+    Debug.cpp
     RobotInterface.cpp
     XMLReader.cpp
 )
 
 set(robotInterface_HDRS
+    Debug.h
     RobotInterface.h
     XMLReader.h
 )
