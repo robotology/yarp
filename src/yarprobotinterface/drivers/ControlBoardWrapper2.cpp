@@ -353,8 +353,12 @@ void CommandsHelper2::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 if (caller->verbose())
                     fprintf(stderr, "handleControlModeMsg::VOCAB_SET command\n");
                 int p=-1;
+                (void)p; // UNUSED
+
                 int axis = cmd.get(3).asInt();
                 int mode=cmd.get(2).asVocab();
+                (void)mode; // UNUSED
+
                 switch (cmd.get(2).asInt())
                 {
                     case VOCAB_CM_POSITION:
@@ -585,7 +589,7 @@ void CommandsHelper2::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 {
                     case VOCAB_AXES:
                         {
-                            int tmp;
+                            //int tmp; UNUSED (using the wrong one?
                             *ok = torque->getAxes(&tmp);
                             response.addInt(tmp);
                         }
@@ -1292,6 +1296,7 @@ bool CommandsHelper2::respond(const yarp::os::Bottle& cmd,
                     if (caller->verbose())
                         printf("get command received\n");
                     int tmp = 0;
+                    (void) tmp; // UNUSED
                     double dtmp = 0.0;
                     response.addVocab(VOCAB_IS);
                     response.add(cmd.get(1));

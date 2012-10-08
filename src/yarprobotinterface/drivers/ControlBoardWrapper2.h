@@ -43,6 +43,7 @@ const int DEBUG_PRINTF_BUFFER_LENGTH=255;
 #include <stdarg.h>
 inline void DEBUG_CW2(const char *fmt, ...)
 {
+    (void)fmt; // UNUSED
 #ifdef CONTROLBOARDWRAPPER2_DEBUG
     va_list ap;
     va_start(ap, fmt);
@@ -1789,6 +1790,7 @@ public:
         for(int l=0;l<controlledJoints;l++)
         {
             int off=device.lut[l].offset;
+            (void)off;
             int subIndex=device.lut[l].deviceEntry;
 
             SubDevice *p=device.getSubdevice(subIndex);
@@ -2745,6 +2747,7 @@ public:
 
     virtual bool getRotorPosition(int j, double *t)
     {
+        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2761,6 +2764,7 @@ public:
 
     virtual bool getRotorPositions(double *t)
     {
+        (void)t; // UNUSED
         return false;
         /*
         int off=device.lut[j].offset;
@@ -2779,6 +2783,7 @@ public:
 
     virtual bool getRotorSpeed(int j, double *t)
     {
+        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2795,11 +2800,13 @@ public:
 
     virtual bool getRotorSpeeds(double *t)
     {
+        (void)t; // UNUSED
         return false;
     }
 
     virtual bool getRotorAcceleration(int j, double *t)
     {
+        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2816,11 +2823,13 @@ public:
 
     virtual bool getRotorAccelerations(double *t)
     {
+        (void)t; // UNUSED
         return false;
     }
 
     virtual bool getJointPosition(int j, double *t)
     {
+        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2837,6 +2846,7 @@ public:
 
     virtual bool getJointPositions(double *t)
     {
+        (void)t; // UNUSED
         return false;
         /*
         int off=device.lut[j].offset;
@@ -2855,6 +2865,7 @@ public:
 
     virtual bool setDebugParameter(int j, unsigned int index, double t)
     {
+        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2871,6 +2882,7 @@ public:
 
     virtual bool setDebugReferencePosition(int j, double t)
     {
+        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 

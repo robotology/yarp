@@ -50,6 +50,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 //possible contro modes are: VOCAB_CM_TORQUE, VOCAB_CM_POSITION, VOCAB_CM_VELOCITY
                 // iControlMode->...
                 int p=-1;
+                (void)p; // UNUSED
                 int axis = cmd.get(3).asInt();
                 switch (cmd.get(2).asInt())
                     {
@@ -319,7 +320,7 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                 {
                     case VOCAB_AXES:
                         {
-                            int tmp;
+                            // int tmp; UNUSED
                             *ok = torque->getAxes(&tmp);
                             response.addInt(tmp);
                         }
