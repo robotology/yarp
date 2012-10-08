@@ -945,38 +945,3 @@ std::string RobotInterface::Robot::findParam(const std::string& name) const
 
 
 //END Robot
-
-#if 0
-class RobotInterface::RobotInterface::Private
-{
-public:
-    Private(RobotInterface *parent);
-    ~Private();
-
-    RobotInterface * const parent;
-};
-
-
-RobotInterface::RobotInterface::Private::Private(RobotInterface *parent) :
-    parent(parent)
-{
-
-}
-
-
-RobotInterface::RobotInterface::Private::~Private()
-{
-
-}
-
-RobotInterface::RobotInterface::RobotInterface() :
-    mPriv(new Private(this))
-{
-
-}
-
-RobotInterface::RobotInterface::~RobotInterface()
-{
-    delete mPriv;
-}
-#endif

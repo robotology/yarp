@@ -182,23 +182,10 @@ private:
     Private * const mPriv;
 };
 
-
 //END Robot
 
-#if 0
-class RobotInterface
-{
-public:
-    explicit RobotInterface();
-    virtual ~RobotInterface();
-
-private:
-    class Private;
-    Private * const mPriv;
-}; // class RobotInterface
-#endif
-
 } // namespace RobotInterface
+
 
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Param &t);
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Action &t);
