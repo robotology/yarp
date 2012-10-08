@@ -9,6 +9,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriver.h>
@@ -601,6 +602,12 @@ public:
     // open all the devices and return true if all the open calls were succesful
     bool openDevices();
 
+    // return a vector of levels that have actions in the requested phase
+    std::vector<unsigned int> getLevels(ActionPhase phase) const;
+
+    // return a vector of actions for that phase and that level
+    std::vector<std::pair<Device, Action> > getActions(ActionPhase phase, unsigned int level) const;
+
     std::string name;
     ParamList params;
     DeviceList devices;
@@ -636,6 +643,48 @@ bool RobotInterface::Robot::Private::openDevices()
     }
 
     return ret;
+}
+
+std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterface::ActionPhase phase) const
+{
+    std::vector<unsigned int> levels;
+    for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); it++) {
+        const Device &device = *it;
+        if (device.actions().empty()) {
+            continue;
+        }
+
+        for (ActionList::const_iterator it = device.actions().begin(); it != device.actions().end(); it++) {
+            const Action &action = *it;
+            if (action.phase() == phase) {
+                levels.push_back(action.level());
+            }
+        }
+    }
+
+    std::sort(levels.begin(), levels.end());
+
+    return levels;
+}
+
+
+std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInterface::Robot::Private::getActions(RobotInterface::ActionPhase phase, unsigned int level) const
+{
+    std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > actions;
+    for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); it++) {
+        const Device &device = *it;
+        if (device.actions().empty()) {
+            continue;
+        }
+
+        for (ActionList::const_iterator it = device.actions().begin(); it != device.actions().end(); it++) {
+            const Action &action = *it;
+            if (action.phase() == phase && action.level() == level) {
+                actions.push_back(std::make_pair<RobotInterface::Device, RobotInterface::Action>(device, action));
+            }
+        }
+    }
+    return actions;
 }
 
 
