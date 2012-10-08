@@ -30,6 +30,7 @@ set(robotInterface_HDRS
 )
 
 add_definitions("-Wall -Wextra --ansi --pedantic")
+add_definitions("-Wno-long-long -Wno-variadic-macros -Wshadow")
 
 add_executable(robot-interface ${robotInterface_SRCS})
 
