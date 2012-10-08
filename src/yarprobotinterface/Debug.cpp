@@ -23,18 +23,18 @@
 void RobotInterface::Debug::print_output(MsgType t, const std::ostringstream &s)
 {
     switch (t) {
-        case DebugType:
-            std::cout << BLUE   << "DEBUG"   << CLEAR << ": " << s.str() << std::endl;
-            break;
-        case WarningType:
-            std::cout << YELLOW << "WARNING" << CLEAR << ": " << s.str() << std::endl;
-            break;
-        case ErrorType:
-            std::cout << RED    << "ERROR"   << CLEAR << ": " << s.str() << std::endl;
-            break;
-        case FatalType:
-            std::cout << RED    << "FATAL"   << CLEAR << ": " << s.str() << std::endl;
-            yarp::os::exit(-1);
-            break;
+    case DebugType:
+        std::cout << BLUE   << "DEBUG"   << CLEAR << ": " << s.str() << std::endl;
+        break;
+    case WarningType:
+        std::cout << YELLOW << "WARNING" << CLEAR << ": " << s.str() << std::endl;
+        break;
+    case ErrorType:
+        std::cout << RED    << "ERROR"   << CLEAR << ": " << s.str() << std::endl;
+        break;
+    case FatalType:
+        std::cout << RED    << "FATAL"   << CLEAR << ": " << s.str() << std::endl;
+        yarp::os::exit(-1);
+        break;
     }
 }

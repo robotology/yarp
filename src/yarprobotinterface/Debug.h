@@ -34,7 +34,9 @@ public:
     {
     }
 
-    inline Debug(const Debug &o) : stream(o.stream) { ++stream->ref; }
+    inline Debug(const Debug &o) : stream(o.stream) {
+        ++stream->ref;
+    }
 
     inline ~Debug() {
         if (!--stream->ref) {
@@ -43,24 +45,88 @@ public:
         }
     }
 
-    inline Debug& operator<<(bool t) { stream->oss << (t ? "true" : "false"); stream->oss << ' '; return *this; }
-    inline Debug& operator<<(char t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(signed short t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(unsigned short t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(signed int t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(unsigned int t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(signed long t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(unsigned long t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(signed long long t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(unsigned long long t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(float t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(double t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(const char* t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(const void * t) { stream->oss << t; stream->oss << ' '; return *this; }
+    inline Debug& operator<<(bool t) {
+        stream->oss << (t ? "true" : "false");
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(char t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(signed short t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(unsigned short t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(signed int t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(unsigned int t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(signed long t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(unsigned long t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(signed long long t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(unsigned long long t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(float t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(double t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(const char* t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+    inline Debug& operator<<(const void * t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
 
-    inline Debug& operator<<(const std::string &t) { stream->oss << t; stream->oss << ' '; return *this; }
+    inline Debug& operator<<(const std::string &t) {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
 
-    inline Debug& operator<<(yarp::os::ConstString t) { stream->oss << t.c_str(); stream->oss << ' '; return *this; }
+    inline Debug& operator<<(yarp::os::ConstString t) {
+        stream->oss << t.c_str();
+        stream->oss << ' ';
+        return *this;
+    }
 
 private:
     void print_output(MsgType t, const std::ostringstream &s);
@@ -68,10 +134,18 @@ private:
 
 }
 
-inline RobotInterface::Debug debug() { return RobotInterface::Debug(RobotInterface::DebugType); }
-inline RobotInterface::Debug warning() { return RobotInterface::Debug(RobotInterface::WarningType); }
-inline RobotInterface::Debug error() { return RobotInterface::Debug(RobotInterface::ErrorType); }
-inline RobotInterface::Debug fatal() { return RobotInterface::Debug(RobotInterface::FatalType); }
+inline RobotInterface::Debug debug() {
+    return RobotInterface::Debug(RobotInterface::DebugType);
+}
+inline RobotInterface::Debug warning() {
+    return RobotInterface::Debug(RobotInterface::WarningType);
+}
+inline RobotInterface::Debug error() {
+    return RobotInterface::Debug(RobotInterface::ErrorType);
+}
+inline RobotInterface::Debug fatal() {
+    return RobotInterface::Debug(RobotInterface::FatalType);
+}
 
 
 #endif // ROBOTINTERFACE_DEBUG_H
