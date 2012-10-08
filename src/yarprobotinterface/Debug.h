@@ -11,6 +11,7 @@
 
 #include <iosfwd>
 #include <sstream>
+#include <vector>
 
 #include <yarp/os/ConstString.h>
 
@@ -128,6 +129,14 @@ public:
         return *this;
     }
 
+    template <typename T>
+    inline Debug& operator<<(const std::vector<T> &t)
+    {
+        stream->oss << t;
+        stream->oss << ' ';
+        return *this;
+    }
+
 private:
     void print_output(MsgType t, const std::ostringstream &s);
 };
@@ -145,6 +154,17 @@ inline RobotInterface::Debug error() {
 }
 inline RobotInterface::Debug fatal() {
     return RobotInterface::Debug(RobotInterface::FatalType);
+}
+
+
+template <typename T>
+inline std::ostringstream& operator<<(std::ostringstream &oss, const std::vector<T> &t)
+{
+    for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); it++) {
+        const T &p = *it;
+        oss << p;
+    }
+    return oss;
 }
 
 

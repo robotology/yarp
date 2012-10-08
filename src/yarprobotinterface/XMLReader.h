@@ -12,12 +12,15 @@
 
 namespace RobotInterface
 {
+class Robot;
 
 class XMLReader
 {
 public:
-    XMLReader(const std::string &filename);
+    XMLReader();
     virtual ~XMLReader();
+
+    Robot& getRobot(const std::string &filename);
 
 private:
     class Private;
