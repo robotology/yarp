@@ -554,7 +554,7 @@ const RobotInterface::ActionList& RobotInterface::Device::actions() const
 bool RobotInterface::Device::open()
 {
     if (mPriv->isValid()) {
-        error() << "Trying to create a device already opened device.";
+        error() << "Trying to open an already opened device.";
         return false;
     }
 

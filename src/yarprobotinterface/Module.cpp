@@ -27,14 +27,12 @@ public:
 RobotInterface::Module::Private::Private(Module *parent) :
     parent(parent)
 {
-
 }
-
 
 RobotInterface::Module::Private::~Private()
 {
-
 }
+
 
 RobotInterface::Module::Module() :
     mPriv(new Private(this))
