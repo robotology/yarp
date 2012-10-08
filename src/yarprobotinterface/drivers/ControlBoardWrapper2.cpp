@@ -1920,7 +1920,6 @@ bool ControlBoardWrapper2::attachAll(const PolyDriverList &polylist)
 
 void ControlBoardWrapper2::run()
 {
-    return;
     String tmp(partName.c_str());
     // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::run() - " + tmp, Logger::get().log_files.f3);
 
