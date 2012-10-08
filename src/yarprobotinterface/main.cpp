@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2008 RobotCub Consortium
  * Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
  * Authors: Daniele E. Domenichelli <daniele.domenichelli@iit.it>, Lorenzo Natale
  *
@@ -8,23 +7,22 @@
 
 
 #include "Debug.h"
-#include "RobotInterface.h"
-#include "XMLReader.h"
+#include "Module.h"
+
 
 #include "drivers/debugging.h"
 #include "drivers/ControlBoardWrapper.h"
 #include "drivers/ControlBoardWrapper2.h"
 
 #include <yarp/os/Network.h>
-#include <yarp/os/Os.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Time.h>
-#include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
 
+//BEGIN
+// TODO Move in device library
 YARP_DECLARE_DEVICES(icubmod)
+//END
 
+#if 0
 namespace {
 static bool terminated = false;
 //static bool askAbort = false;
@@ -60,6 +58,8 @@ static void sighandler (int) {
         yarp::os::exit(-1);
     }
 }
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -69,6 +69,10 @@ int main(int argc, char *argv[])
         fatal() << "Sorry YARP network does not seem to be available, is the yarp server available?";
     }
 
+    yarp::os::Time::turboBoost();
+
+//BEGIN
+// TODO Move in device library
     if( NULL == (AC_trace_file = fopen("/home/icub/trace.log", "w+")) )
     {
         debug() << "Cannot open file /home/icub/trace.log, using stdout";
@@ -93,34 +97,10 @@ int main(int argc, char *argv[])
         ("controlboardwrapper",
          "",
          "ControlBoardWrapper"));
+//END
 
-    yarp::os::signal(yarp::os::YARP_SIGINT, sighandler);
-    yarp::os::signal(yarp::os::YARP_SIGTERM, sighandler);
-
-    yarp::os::Time::turboBoost();
-
-    //for compatibility with old usage of iCubInterface, the use of the ResourceFinder
-    //here is merely functional and should NOT be taken as an example
-    yarp::os::ResourceFinder rf;
-    rf.setVerbose();
-    rf.setDefaultConfigFile("iCubInterface.ini");
-    rf.configure("ICUB_ROOT", argc, argv);
-
-    RobotInterface::XMLReader reader;
-    RobotInterface::Robot robot = reader.getRobot("/opt/iit/src/robotInterface/icub_torso.xml");
-
-    debug() << robot;
-
-    robot.enterPhase(RobotInterface::ActionPhaseStartup);
-
-    while (!terminated) {
-        Time::delay(2);
-    }
-
-    debug() << "Shutting down!";
-
-    robot.enterPhase(RobotInterface::ActionPhaseInterrupt); // TODO move in signal handler
-    robot.enterPhase(RobotInterface::ActionPhaseShutdown);
-
-    debug() << "Finished! Goodbye!";
+    // Create and run our module
+    RobotInterface::Module module;
+    module.setName("/icub");
+    return module.runModule(argc, argv);
 }

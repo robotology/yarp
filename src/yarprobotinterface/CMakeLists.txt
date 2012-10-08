@@ -14,6 +14,7 @@ include_directories(${TinyXML_INCLUDE_DIRS})
 set(robotInterface_SRCS
     main.cpp
     Debug.cpp
+    Module.cpp
     RobotInterface.cpp
     XMLReader.cpp
     drivers/ControlBoardWrapper.cpp
@@ -22,6 +23,7 @@ set(robotInterface_SRCS
 
 set(robotInterface_HDRS
     Debug.h
+    Module.h
     RobotInterface.h
     XMLReader.h
     drivers/ControlBoardWrapper.h
