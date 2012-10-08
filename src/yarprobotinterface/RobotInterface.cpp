@@ -919,6 +919,10 @@ bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device
         return false;
     }
 
+    if (!params.empty()) {
+        warning() << "Action \"" << ActionTypeToString(ActionTypeDetach) << "\" cannot have any parameter. Ignoring them.";
+    }
+
     if (!wrapper->detachAll()) {
         error() << "Cannot execute" << ActionTypeToString(ActionTypeDetach) << "on device" << device.name();
         return false;
