@@ -1,3 +1,12 @@
+2012-10-09  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/yarpserver/src/NameServiceOnTriples.cpp: give structured
+	responses to name queries when serving json.
+
+	* src/libYARP_OS/src/HttpCarrier.cpp: convert to json format
+	when format=json is appended to URL.  Support administrative
+	messages when admin=true is appended to URL.
+
 2012-10-04  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* conf/template/YARPConfig.cmake.in: add YARP_BINDINGS variable,

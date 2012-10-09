@@ -74,6 +74,9 @@ a:hover{\n\
                 if (ch == '-' || ch == '_') continue;
                 ((char*)fileName.c_str())[i] = '_';
             }
+            if (fileName == "") {
+                fileName = "index.html";
+            }
             fileName = options.find("web").asString() + "/" + fileName;
             char buf[25600];
             FILE *fin = fopen(fileName.c_str(),"rb");
@@ -93,6 +96,8 @@ a:hover{\n\
                 mime.put(uri,"text/css");
             } else if (uri.find(".png")>=0) {
                 mime.put(uri,"image/png");                
+            } else if (uri.find(".js")>=0) {
+                mime.put(uri,"text/javascript");                
             } else {
                 mime.put(uri,"text/html");
             }

@@ -564,6 +564,12 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
     reply.clear();
     NameTripleState act(cmd,reply,event,remote,mem);
 
+    if (cmd.check("format")) {
+        if (cmd.find("format")=="json") {
+            act.bottleMode = true;
+        }
+    }
+
     if (key == "NAME_SERVER") {
         cmd = cmd.tail();
         key = cmd.get(0).asString();

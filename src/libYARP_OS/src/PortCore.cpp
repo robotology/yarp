@@ -1410,7 +1410,10 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         if (unit->isInput()&&!unit->isFinished()) {
                             Route route = unit->getRoute();
                             if (target=="") {
-                                result.addString(route.getFromName().c_str());
+                                String name = route.getFromName();
+                                if (name!="") {
+                                    result.addString(name.c_str());
+                                }
                             } else if (route.getFromName()==target.c_str()) {
                                 STANZA(bfrom,"from",route.getFromName());
                                 STANZA(bto,"to",route.getToName());

@@ -28,6 +28,126 @@ static String quoteFree(const String& src) {
     return result;
 }
 
+static bool asJson(ConstString& accum, Bottle *bot, String *hint = NULL);
+
+static bool asJson(ConstString& accum, Value& v) {
+    if (v.isInt()||v.isDouble()) {
+        accum += v.toString();
+        return true;
+    }
+    if (v.isString()||v.isVocab()) {
+        ConstString x = v.toString();
+        accum += "\"";
+        for (int j=0; j<(int)x.length(); j++) {
+            char ch = x[j];
+            if (ch=='\n') {
+                accum += '\\';
+                accum += 'n';
+            } else if (ch=='\r') {
+                accum += '\\';
+                accum += 'r';
+            } else if (ch=='\0') {
+                accum += '\\';
+                accum += '0';
+            } else {
+                if (ch=='\\'||ch=='\"') {
+                    accum += '\\';
+                }
+                accum += ch;
+            }
+        }
+        accum += "\"";
+    }
+    if (v.isList()) {
+        Bottle *bot = v.asList();
+        return asJson(accum,bot);
+    }
+    return false;
+}
+
+static bool asJson(ConstString& accum, Bottle *bot, String *hint) {
+    if (bot==NULL) return false;
+    bool struc = false;
+    bool struc_set = false;
+    int offset = 0;
+    int offset2 = 0;
+    ConstString tag = bot->get(0).asString();
+    if (hint) {
+        if ((*hint)=="list") {
+            struc = false;
+            struc_set = true;
+        } else if ((*hint)=="dict") {
+            struc = true;
+            struc_set = true;
+        }
+    } 
+    if (!struc_set) {
+        if (tag=="list") {
+            struc = false;
+            offset = 1;
+        } else if (tag=="dict") {
+            struc = true;
+            offset = 1;
+        } else {
+            // auto-detect
+            struc = (bot->size()>1);
+            if (bot->size()>0) {
+                Value& v0 = bot->get(0);
+                if (!v0.isList()) {
+                    offset2 = 1;
+                    offset = 1;
+                }
+            }
+            for (int i=offset2; i<bot->size(); i++) {
+                Value& vi = bot->get(i);
+                if (!vi.isList()) {
+                    struc = false;
+                    break;
+                }
+                if (vi.asList()->size()!=2) {
+                    struc = false;
+                    break;
+                }
+            }
+        }
+    }
+    if (struc) {
+        // { ... }
+        accum += "{";
+        bool need_comma = false;
+        if (offset2) {
+            accum += "\"type\": ";
+            asJson(accum,bot->get(0));
+            need_comma = true;
+        }
+        for (int i=offset; i<bot->size(); i++) {
+            Bottle *boti = bot->get(i).asList();
+            if (boti==NULL) continue;
+            if (need_comma) {
+                accum += ", ";
+            }
+            asJson(accum,boti->get(0));
+            accum += ": ";
+            asJson(accum,boti->get(1));
+            need_comma = true;
+        }
+        accum += "}";
+        return true;
+    } 
+
+    // [ ... ]
+    accum += "[";
+    if (offset2) offset--;
+    for (int i=offset; i<bot->size(); i++) {
+        if (i>offset) {
+            accum += ", ";
+        }
+        asJson(accum,bot->get(i));
+    }
+    accum += "]";
+    return true;
+}
+
 void HttpTwoWayStream::apply(char ch) {
     if (ch=='\r') { return; }
     if (ch == '\n') {
@@ -136,6 +256,9 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
     String sData = "";
     Property& p = prop;
     //p.fromQuery(txt);
+    format = p.check("format",Value("html")).asString();
+    outer = p.check("outer",Value("auto")).asString();
+    bool admin = p.check("admin");
     if (p.check("cmd")) {
         s = p.check("cmd",Value("")).asString().c_str();
     } else if (p.check("data")) {
@@ -174,7 +297,11 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
 
         Bottle bin(sFixed.c_str());
         sData = sFixed;
-        s = String("d\n") + sFixed;
+        if (admin) {
+            s = String("a\n") + sFixed;
+        } else {
+            s = String("d\n") + sFixed;
+        }
     }
 
 
@@ -265,7 +392,11 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
 
     } else {
         chunked = true;
-        sis.add("d\n");
+        if (admin) {
+            sis.add("a\n");
+        } else {
+            sis.add("d\n");
+        }
         for (int i=0; i<(int)s.length(); i++) {
             if (s[i]=='/') {
                 s[i] = ' ';
@@ -443,11 +574,24 @@ bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
     Bottle b;
     b.read(con.getReader());
 
+    ConstString mime = b.check("mime",Value("text/html")).asString();
 
-    ConstString body = b.find("web").toString();
+    ConstString body;
+    
+    bool using_json = false;
+    if (stream!=NULL) {
+        if (stream->useJson()) {
+            mime = "text/json";
+            asJson(body,&b,stream->typeHint());
+            using_json = true;
+        }
+    }
 
-    if (b.check("stream")) {
-        ConstString mime = b.check("mime",Value("text/html")).asString();
+    if (b.check("web")&&!using_json) {
+        body = b.find("web").toString();
+    }
+
+    if (b.check("stream")&&!using_json) {
         String header("HTTP/1.1 200 OK\r\nContent-Type: ");
         header += mime;
         header += "\r\n";
@@ -484,11 +628,13 @@ bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
 
     // Could check response codes, mime types here.
 
-    if (body.length()!=0) {
+    if (body.length()!=0 || using_json) {
         ConstString mime = b.check("mime",Value("text/html")).asString();
         String header("HTTP/1.1 200 OK\nContent-Type: ");
         header += mime;
-        header += "\n\n";
+        header += "\n";
+        header += "Access-Control-Allow-Origin: *\n";
+        header += "\n";
         Bytes b2((char*)header.c_str(),header.length());
         proto.os().write(b2);
 

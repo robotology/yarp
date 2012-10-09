@@ -58,6 +58,8 @@ private:
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
+    String format;
+    String outer;
 public:
     HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
                      const char *prefix,
@@ -122,6 +124,14 @@ public:
 
     void finish() {
         sis.add("q\n");
+    }
+
+    bool useJson() {
+        return format=="json";
+    }
+
+    String *typeHint() {
+        return &outer;
     }
 };
 
