@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2012 IITRCBS
+ * Copyright (C) 2012 IITRBCS
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -96,6 +96,8 @@ a:hover{\n\
                 mime.put(uri,"text/css");
             } else if (uri.find(".png")>=0) {
                 mime.put(uri,"image/png");                
+            } else if (uri.find(".jpg")>=0) {
+                mime.put(uri,"image/jpeg");                
             } else if (uri.find(".js")>=0) {
                 mime.put(uri,"text/javascript");                
             } else {
