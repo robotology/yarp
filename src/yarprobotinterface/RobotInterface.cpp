@@ -663,6 +663,32 @@ yarp::dev::PolyDriver* RobotInterface::Device::driver() const
 //END Device
 
 
+class ParallelCalibrator: public yarp::os::Thread
+{
+public:
+    ParallelCalibrator(yarp::dev::ICalibrator *calibrator, yarp::dev::DeviceDriver *target) :
+        calibrator(calibrator),
+        target(target)
+    {
+    }
+
+    void run()
+    {
+        yDebug() << "Starting calibration";
+        if (calibrator && target) {
+            calibrator->calibrate(target);
+            yDebug() << "Calibration done";
+        } else {
+            yError() << "Skipping, calibrator or target not set";
+        }
+    }
+
+private:
+    yarp::dev::ICalibrator *calibrator;
+    yarp::dev::DeviceDriver *target;
+};
+
+
 //BEGIN Robot
 
 class RobotInterface::Robot::Private
@@ -693,7 +719,7 @@ public:
     bool configure(const Device &device, const ParamList &params);
 
     // run calibrate action on one device
-    bool calibrate(const Device &device, const ParamList &params);
+    yarp::os::Thread* calibrate(const Device &device, const ParamList &params);
 
     // run attach action on one device
     bool attach(const Device &device, const ParamList &params);
@@ -831,16 +857,35 @@ bool RobotInterface::Robot::Private::configure(const RobotInterface::Device &dev
     return true;
 }
 
-bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
+yarp::os::Thread* RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
     yarp::dev::ICalibrator *calibrator;
     if (!device.driver()->view(calibrator)) {
         yError() << device.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
-        return false;
+        return NULL;
     }
 
+    if (!::hasParam(params, "target")) {
+        yError() << "Action \"" << ActionTypeToString(ActionTypeCalibrate) << "\" requires \"target\" parameter";
+        return NULL;
+    }
+    std::string targetDeviceName = ::findParam(params, "target");
 
-    return true;
+    if (!hasDevice(targetDeviceName)) {
+        yError() << "Target device" << targetDeviceName << "does not exist.";
+        return NULL;
+    }
+    Device &targetDevice = *findDevice(targetDeviceName);
+
+    yarp::dev::IControlCalibration2 *controlCalibrator;
+    if (!targetDevice.driver()->view(controlCalibrator)) {
+        yError() << targetDevice.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        return NULL;
+    }
+
+    controlCalibrator->setCalibrator(calibrator);
+
+    return new ParallelCalibrator(calibrator, targetDevice.driver());
 }
 
 bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
@@ -1055,6 +1100,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); lit++) {
         const unsigned int level = *lit;
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
+        std::vector<yarp::os::Thread*> threads;
 
         for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ait++) {
             Device &device = ait->first;
@@ -1068,11 +1114,17 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
                 }
                 break;
             case ActionTypeCalibrate:
-                if(!mPriv->calibrate(device, action.params())) {
+            {
+                yarp::os::Thread *calibratorThread = mPriv->calibrate(device, action.params());
+                if(!calibratorThread) {
                     yError() << "Cannot run calibrate action on device" << device.name();
                     ret = false;
+                } else {
+                    threads.push_back(calibratorThread);
+                    calibratorThread->start();
                 }
                 break;
+            }
             case ActionTypeAttach:
                 if (!mPriv->attach(device, action.params())) {
                     yError() << "Cannot run attach action on device" << device.name();
@@ -1108,6 +1160,12 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
                 ret = false;
                 break;
             }
+        }
+
+        // Join parallel threads
+        for (std::vector<yarp::os::Thread*>::iterator tit = threads.begin(); tit != threads.end(); tit++) {
+            yarp::os::Thread* thread = *tit;
+            thread->stop();
         }
     }
 
