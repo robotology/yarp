@@ -1906,8 +1906,8 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        SubDevice *p=device.getSubdevice(subIndex);
-        if (p->calib2)
+        SubDevice *p = device.getSubdevice(subIndex);
+        if (p && p->calib2)
         {
             return p->calib2->calibrate2(off+base, ui,v1,v2,v3);
         }
