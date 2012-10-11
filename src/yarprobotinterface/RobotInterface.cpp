@@ -1098,11 +1098,13 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 
     bool ret = true;
     for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); lit++) {
+        // for each level
         const unsigned int level = *lit;
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
         std::vector<yarp::os::Thread*> threads;
 
         for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ait++) {
+            // for each action in that level
             Device &device = ait->first;
             Action &action = ait->second;
 
