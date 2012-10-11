@@ -1,3 +1,8 @@
+2012-10-11  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+   * src/libYARP_dev/include/yarp/dev/GazeControl.h,CartesianControl.h:
+   added a couple of new methods for low-level tweaking
+
 2012-10-09  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/yarpserver/src/NameServiceOnTriples.cpp: give structured

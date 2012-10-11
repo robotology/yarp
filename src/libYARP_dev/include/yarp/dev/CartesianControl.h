@@ -592,7 +592,7 @@ public:
     virtual bool restoreContext(const int id)=0;
 
     /**
-    * Returns useful info on the operating state of the controller. 
+    * Return useful info on the operating state of the controller. 
     * [wait for reply] 
     * @param info is a property-like bottle containing the info.
     * @return true/false on success/failure. 
@@ -615,6 +615,29 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool unregisterEvent(yarp::dev::CartesianEvent &event)=0;
+
+    /**
+    * Tweak low-level controller's parameters. [wait for reply]
+    * @param options is a property-like bottle containing new values 
+    *                for the low-level controller's configuration.
+    * @return true/false on success/failure. 
+    *  
+    * @note This method is intended for accessing low-level 
+    *       controller's configuration.
+    */
+    virtual bool tweakSet(const yarp::os::Bottle &options)=0;
+
+    /**
+    * Return low-level controller's parameters. [wait for reply]
+    * @param options is a property-like bottle containing the 
+    *                current values of the low-level controller's
+    *                configuration.
+    * @return true/false on success/failure. 
+    *  
+    * @note This method is intended for accessing low-level 
+    *       controller's configuration.
+    */
+    virtual bool tweakGet(yarp::os::Bottle &options)=0;
 };
 
 #endif

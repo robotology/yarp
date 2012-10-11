@@ -491,7 +491,7 @@ public:
     virtual bool getJointsVelocities(yarp::sig::Vector &qdot)=0;
 
     /**
-    * Returns the current options used by the stereo approach. [wait 
+    * Return the current options used by the stereo approach. [wait 
     * for reply] 
     * @param options is a property-like bottle containing the 
     *                current configuration employed by the internal
@@ -791,7 +791,7 @@ public:
     virtual bool restoreContext(const int id)=0;
 
     /**
-    * Returns useful info on the operating state of the controller. 
+    * Return useful info on the operating state of the controller. 
     * [wait for reply] 
     * @param info a property-like bottle containing the info.
     * @return true/false on success/failure. 
@@ -814,6 +814,29 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool unregisterEvent(yarp::dev::GazeEvent &event)=0;
+
+    /**
+    * Tweak low-level controller's parameters. [wait for reply]
+    * @param options is a property-like bottle containing new values 
+    *                for the low-level controller's configuration.
+    * @return true/false on success/failure. 
+    *  
+    * @note This method is intended for accessing low-level 
+    *       controller's configuration.
+    */
+    virtual bool tweakSet(const yarp::os::Bottle &options)=0;
+
+    /**
+    * Return low-level controller's parameters. [wait for reply]
+    * @param options is a property-like bottle containing the 
+    *                current values of the low-level controller's
+    *                configuration.
+    * @return true/false on success/failure. 
+    *  
+    * @note This method is intended for accessing low-level 
+    *       controller's configuration.
+    */
+    virtual bool tweakGet(yarp::os::Bottle &options)=0;
 };
 
 #endif
