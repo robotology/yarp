@@ -18,7 +18,6 @@ set(robotInterface_SRCS
     RobotInterface.cpp
     XMLReader.cpp
     drivers/ControlBoardWrapper.cpp
-    drivers/ControlBoardWrapper2.cpp
 )
 
 set(robotInterface_HDRS
@@ -27,7 +26,6 @@ set(robotInterface_HDRS
     RobotInterface.h
     XMLReader.h
     drivers/ControlBoardWrapper.h
-    drivers/ControlBoardWrapper2.cpp
     drivers/debugging.h
 )
 

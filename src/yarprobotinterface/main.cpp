@@ -10,7 +10,6 @@
 #include "Module.h"
 
 #include "drivers/ControlBoardWrapper.h"
-#include "drivers/ControlBoardWrapper2.h"
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -75,12 +74,6 @@ int main(int argc, char *argv[])
 //BEGIN
 // TODO Move in device library
     YARP_REGISTER_DEVICES(icubmod)
-
-    //add local driver to factory
-    yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<ControlBoardWrapper2>
-        ("controlboardwrapper2",
-         "",
-         "ControlBoardWrapper2"));
 
     yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<ControlBoardWrapper>
         ("controlboardwrapper",
