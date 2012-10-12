@@ -9,8 +9,6 @@
 #include "Debug.h"
 #include "Module.h"
 
-
-#include "drivers/debugging.h"
 #include "drivers/ControlBoardWrapper.h"
 #include "drivers/ControlBoardWrapper2.h"
 
@@ -76,18 +74,6 @@ int main(int argc, char *argv[])
 
 //BEGIN
 // TODO Move in device library
-    if( NULL == (AC_trace_file = fopen("/home/icub/trace.log", "w+")) )
-    {
-        yDebug() << "Cannot open file /home/icub/trace.log, using stdout";
-        AC_trace_file = stdout;
-    }
-
-    if( NULL == (AC_debug_file = fopen("/home/icub/debug.log", "w+")) )
-    {
-        yDebug() << "Cannot open file /home/icub/debug.log, using stdout";
-        AC_debug_file = stdout;
-    }
-
     YARP_REGISTER_DEVICES(icubmod)
 
     //add local driver to factory
