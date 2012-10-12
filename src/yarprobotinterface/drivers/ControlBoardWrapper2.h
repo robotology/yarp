@@ -41,7 +41,6 @@ const int DEBUG_PRINTF_BUFFER_LENGTH=255;
 #include <stdarg.h>
 inline void DEBUG_CW2(const char *fmt, ...)
 {
-    (void)fmt; // UNUSED
 #ifdef CONTROLBOARDWRAPPER2_DEBUG
     va_list ap;
     va_start(ap, fmt);
@@ -379,7 +378,6 @@ public:
     */
     virtual bool setPid(int j, const Pid &p)
     {
-        // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::setPid", Logger::get().log_files.f3);
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -400,7 +398,6 @@ public:
     */
     virtual bool setPids(const Pid *ps)
     {
-        // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::setPids", Logger::get().log_files.f3);
         bool ret=true;
 
         for(int l=0;l<controlledJoints;l++)
@@ -419,7 +416,6 @@ public:
             else
                 ret=false;
         }
-        // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::setPids - niente!", Logger::get().log_files.f3);
         return ret;
     }
 
@@ -434,7 +430,6 @@ public:
     */
     virtual bool setReference(int j, double ref)
     {
-        // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::setReference", Logger::get().log_files.f3);
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -642,8 +637,7 @@ public:
     */
     virtual bool getPid(int j, Pid *p)
     {
-        // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::getPid", Logger::get().log_files.f3);
-//#warning "check for max number of joints!?!?!"
+#warning "check for max number of joints!?!?!"
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -664,7 +658,6 @@ public:
     */
     virtual bool getPids(Pid *pids)
     {
-        // AC_YARP_INFO(Logger::get(),"ControlBoardWrapper2::getPids", Logger::get().log_files.f3);
         bool ret=true;
 
         for(int l=0;l<controlledJoints;l++)
@@ -1788,7 +1781,6 @@ public:
         for(int l=0;l<controlledJoints;l++)
         {
             int off=device.lut[l].offset;
-            (void)off;
             int subIndex=device.lut[l].deviceEntry;
 
             SubDevice *p=device.getSubdevice(subIndex);
@@ -1885,7 +1877,8 @@ public:
     * @param p is a double value that is passed to the calibration procedure.
     * @return true/false on success/failure.
     */
-    virtual bool calibrate(int j, double p) {
+    virtual bool calibrate(int j, double p)
+    {
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2745,7 +2738,6 @@ public:
 
     virtual bool getRotorPosition(int j, double *t)
     {
-        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2762,7 +2754,6 @@ public:
 
     virtual bool getRotorPositions(double *t)
     {
-        (void)t; // UNUSED
         return false;
         /*
         int off=device.lut[j].offset;
@@ -2781,7 +2772,6 @@ public:
 
     virtual bool getRotorSpeed(int j, double *t)
     {
-        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2798,13 +2788,11 @@ public:
 
     virtual bool getRotorSpeeds(double *t)
     {
-        (void)t; // UNUSED
         return false;
     }
 
     virtual bool getRotorAcceleration(int j, double *t)
     {
-        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2821,13 +2809,11 @@ public:
 
     virtual bool getRotorAccelerations(double *t)
     {
-        (void)t; // UNUSED
         return false;
     }
 
     virtual bool getJointPosition(int j, double *t)
     {
-        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2844,7 +2830,6 @@ public:
 
     virtual bool getJointPositions(double *t)
     {
-        (void)t; // UNUSED
         return false;
         /*
         int off=device.lut[j].offset;
@@ -2863,7 +2848,6 @@ public:
 
     virtual bool setDebugParameter(int j, unsigned int index, double t)
     {
-        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
@@ -2880,7 +2864,6 @@ public:
 
     virtual bool setDebugReferencePosition(int j, double t)
     {
-        (void)t; // UNUSED
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
