@@ -256,8 +256,8 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
     String sData = "";
     Property& p = prop;
     //p.fromQuery(txt);
-    format = p.check("format",Value("html")).asString();
-    outer = p.check("outer",Value("auto")).asString();
+    format = p.check("format",Value("html")).asString().c_str();
+    outer = p.check("outer",Value("auto")).asString().c_str();
     bool admin = p.check("admin");
     if (p.check("cmd")) {
         s = p.check("cmd",Value("")).asString().c_str();
