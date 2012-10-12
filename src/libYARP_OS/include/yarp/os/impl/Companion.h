@@ -195,6 +195,8 @@ public:
 
     int cmdPlugin(int argc, char *argv[]);
 
+    int cmdMerge(int argc, char *argv[]);
+
     int subscribe(const char *src, const char *dest);
 
     int unsubscribe(const char *src, const char *dest);
