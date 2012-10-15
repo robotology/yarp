@@ -10,10 +10,10 @@ find_package(TinyXML REQUIRED)
 include_directories(${YARP_INCLUDE_DIRS})
 include_directories(${iCubDev_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../src/libraries/icubmod/DebugStream)
 
 set(robotInterface_SRCS
     main.cpp
-    Debug.cpp
     Module.cpp
     RobotInterface.cpp
     XMLReader.cpp
@@ -21,7 +21,6 @@ set(robotInterface_SRCS
 )
 
 set(robotInterface_HDRS
-    Debug.h
     Module.h
     RobotInterface.h
     XMLReader.h
@@ -38,4 +37,5 @@ target_link_libraries(robot-interface
                       YARP_OS
                       YARP_init
                       icubmod
+                      DebugStream
                       ${TinyXML_LIBRARIES})

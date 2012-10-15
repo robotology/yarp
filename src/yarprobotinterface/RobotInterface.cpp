@@ -19,7 +19,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "RobotInterface.h"
-#include "Debug.h"
+#include <Debug.h>
 
 
 namespace {
@@ -236,7 +236,7 @@ public:
     bool isGroup;
 };
 
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Param &t)
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Param &t)
 {
     std::ostringstream oss;
     oss << t;
@@ -340,7 +340,7 @@ void operator>>(const std::stringstream &sstream, RobotInterface::ActionType &ac
     actiontype = StringToActionType(sstream.str());
 }
 
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Action &t)
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Action &t)
 {
     std::ostringstream oss;
     oss << t;
@@ -516,7 +516,7 @@ public:
     Driver *driver;
 };
 
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Device &t)
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Device &t)
 {
     std::ostringstream oss;
     oss << t;
@@ -997,7 +997,7 @@ bool RobotInterface::Robot::Private::custom(const RobotInterface::Device &device
     return true;
 }
 
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Robot &t)
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Robot &t)
 {
     std::ostringstream oss;
     oss << t;

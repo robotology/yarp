@@ -13,11 +13,10 @@
 
 namespace yarp { namespace os { class Property; } }
 namespace yarp { namespace dev { class PolyDriver; } }
-
+namespace DebugStream { class Debug; }
 
 namespace RobotInterface
 {
-class Debug;
 
 //BEGIN Param
 
@@ -196,10 +195,10 @@ std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Ac
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Device &t);
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Robot &t);
 
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Param &t);
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Action &t);
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Device &t);
-RobotInterface::Debug operator<<(RobotInterface::Debug dbg, const RobotInterface::Robot &t);
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Param &t);
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Action &t);
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Device &t);
+DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Robot &t);
 
 // These are required to use TiXmlElement::QueryValueAttribute<T>
 void operator>>(const std::stringstream &sstream, RobotInterface::ActionPhase &actionphase);

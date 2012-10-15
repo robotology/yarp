@@ -6,8 +6,8 @@
  */
 
 
-#include "Debug.h"
 #include "Module.h"
+#include <Debug.h>
 
 #include "drivers/ControlBoardWrapper.h"
 
