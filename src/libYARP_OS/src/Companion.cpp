@@ -2057,6 +2057,34 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
 }
 
 
+class CompanionMergeInput : public TypedReaderCallback<Bottle> {
+public:
+    Contactable *port;
+    Semaphore *sema;
+    Semaphore mutex;
+
+    Bottle value;
+    Stamp stamp;
+
+    CompanionMergeInput() : port(0),
+                            sema(0),
+                            mutex(1) {
+    }
+
+    void init(Contactable& port, Semaphore& sema) {
+        this->port = &port;
+        this->sema = &sema;
+    }
+    
+    virtual void onRead(Bottle& datum) {
+        mutex.wait();
+        value = datum;
+        port->getEnvelope(stamp);
+        mutex.post();
+        sema->post();
+    }
+};
+
 /**
 *
 
@@ -2100,7 +2128,7 @@ Linux and Windows.
 Just run:
 
 \code
-portsMerge /icub/left_arm/state:o /icub/left_arm/analog:o
+yarp merge /icub/left_arm/state:o /icub/left_arm/analog:o
 \endcode
 
 the output of the module can be logged on a file:
@@ -2114,85 +2142,81 @@ yarp read ... /portsMerge/o0 envelope &> logfile.txt
 **/
 int Companion::cmdMerge(int argc, char *argv[]) {
     BufferedPort<Bottle >   outPort;
-    BufferedPort<Bottle >*  inPort  = 0;
-    Bottle*                 inData  = 0;
-    yarp::os::Stamp*        inStamp = 0;
+    BufferedPort<Bottle >*  inPort = 0;
+    CompanionMergeInput *   inData = 0;
     yarp::os::Stamp         outStamp;
 
     int nPorts = argc;
-    if (nPorts == 0)
-    {
-        printf ("No input ports specified! \n");
+    if (nPorts == 0) {
+        printf("This is yarp merge. Please provide a list of ports to read from, e.g:\n");
+        printf("  yarp merge /port1 /port2\n");
+        printf("Alternative syntax:\n");
+        printf("  yarp merge --input /p1 /p2 --output /p3 --worker /prefix --carrier udp\n");
         return -1;
     }
 
+    Property options;
+    options.fromCommand(argc,argv,false);
+    Bottle& inputs = options.findGroup("input");
+    if (!inputs.isNull()) {
+        nPorts = inputs.size()-1;
+    }
+
     inPort  = new BufferedPort<Bottle > [nPorts];
-    inData  = new Bottle                [nPorts];
-    inStamp = new yarp::os::Stamp       [nPorts];
+    inData  = new CompanionMergeInput   [nPorts];
+
+    Semaphore product(0);
+
+    //set a callback
+    for (int i = 0; i< nPorts; i++) {
+        inData[i].init(inPort[i],product);
+        inPort[i].useCallback(inData[i]);
+    }
 
     //open the ports
     char buff[255];
-    ConstString s = "/portsMerge";
-    for (int i = 0; i< nPorts; i++)
-    {
-        sprintf(buff,"%s/i%d", s.c_str(), i);
+    ConstString s = options.check("worker",Value("/portsMerge/i")).asString();
+    for (int i = 0; i< nPorts; i++) {
+        sprintf(buff,"%s%d", s.c_str(), i);
         inPort[i].open(buff);
     }
-    sprintf(buff,"%s/o0", s.c_str());
-    outPort.open(buff);
+    s = options.check("output",Value("/portsMerge/o0")).asString();
+    outPort.open(s.c_str());
 
     //makes the connection
-    for (int i=0; i<argc; i++)
-    {
-        ConstString tmp = argv[i];
-        bool b = yarp::os::NetworkBase::connect(tmp.c_str(),inPort[i].getName().c_str(),"udp",false);     
+    for (int i=0; i<nPorts; i++) {
+        ConstString tmp;
+        if (!inputs.isNull()) {
+            tmp = inputs.get(i+1).asString();
+        } else {
+            tmp = argv[i];
+        }
+        bool b = yarp::os::NetworkBase::connect(tmp.c_str(),inPort[i].getName().c_str(),options.check("carrier",Value("udp")).asString().c_str(),false);     
         if (b == false) return -1;
     }
 
-    printf ("Module running\n");
+    printf ("Ready. Output goes to %s\n", outPort.getName().c_str());
     while(true) {
-        //read
-        int empty =0;
-        for (int i = 0; i< nPorts; i++)
-        {       
-            Bottle *b = inPort[i].read(false);
-            if (b!=0) 
-            {
-                inPort[i].getEnvelope(inStamp[i]);
-                inData[i] = *b;
-            }
-            else
-            {
-                empty++;
-            }
-        }
-        if (empty == nPorts) 
-        {
-            yarp::os::Time::delay(0.001);
-            continue;
-        }
+        product.wait();
+        while (product.check()) product.wait();
 
         //write
         outStamp.update();
-        if (outPort.getOutputCount()>0)
-        {       
+        if (outPort.getOutputCount()>0) {
             Bottle &out=outPort.prepare();
             out.clear();
-            for (int i = 0; i< nPorts; i++)
-            {
-                out.append(inData[i]);
+            for (int i = 0; i< nPorts; i++) {
+                inData[i].mutex.wait();
+                out.append(inData[i].value);
+                inData[i].mutex.post();
             }
             outPort.setEnvelope(outStamp);
             outPort.write();
         }
-        
-        //delay
-        yarp::os::Time::delay(0.001);
     }
 
     delete [] inPort  ;
     delete [] inData  ;
-    delete [] inStamp ;
     return 0;
 }
 
