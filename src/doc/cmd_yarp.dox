@@ -28,6 +28,7 @@ Here are the ways you can call yarp:
 - \ref yarp_exists
 - \ref yarp_forward
 - \ref yarp_help
+- \ref yarp_merge
 - \ref yarp_name
 - \ref name_check
 - \ref name_get
@@ -43,6 +44,7 @@ Here are the ways you can call yarp:
 - \ref yarp_rpc
 - \ref yarp_rpcserver
 - \ref yarp_run
+- \ref yarp_sample
 - \ref yarp_server
 - \ref yarp_terminate
 - \ref yarp_topic
@@ -273,6 +275,14 @@ version of what you are reading right now.
 
 
 
+@section yarp_merge yarp merge
+
+\verbatim
+  yarp merge /PORT1 /PORT2
+  yarp merge --input /PORT1 /PORT2 --output /PORT3 --worker /PORT/PREFIX --carrier udp
+\endverbatim
+
+This command merges input from several ports into a single message, sending that on from an output port.
 
 @section yarp_name yarp name
 
@@ -729,6 +739,21 @@ See \ref yarprun for documentation.
 
 
 
+@section yarp_sample yarp sample
+
+\verbatim
+  yarp sample --output /OUTPUT/PORT --period 0.1
+  yarp sample --output /OUTPUT/PORT --rate 100
+  yarp sample --input /INPUT/PORT --output /OUTPUT/PORT --period 0.1 --carrier udp
+  yarp sample --output /OUTPUT/PORT --rate 100 --show
+\endverbatim
+
+This command repeats data on the output port at the specified
+rate (in Hz) or period (in seconds).  
+If the <tt>show</tt> flag is given, the data is also printed on
+standard output.  The input can either be connected externally or
+specified with <tt>--input</tt> (and optionally <tt>--carrier</tt> to specify the
+type of connection to use).
 
 @section yarp_server yarp server
 
