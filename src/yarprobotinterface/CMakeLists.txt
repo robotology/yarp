@@ -37,5 +37,5 @@ target_link_libraries(robot-interface
                       YARP_OS
                       YARP_init
                       icubmod
-                      DebugStream
+                      debugStream
                       ${TinyXML_LIBRARIES})
