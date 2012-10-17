@@ -21,6 +21,9 @@ svn export . license_check
 
 for f in `cd license_check; find . -type f -iname "*.cpp" -or  -iname "*.c" -or  -iname "*.h" -or -iname "*.txt" -or -iname "*.cmake" | grep -v "/ace_" | grep -v "/maze.txt"`; do
     ignore=false
+    if grep -q ALLOW_IDL_GENERATION $f; then
+	ignore=true
+    fi
     if $ignore ; then
 	echo ignored $f >> license-changes.txt
     else
