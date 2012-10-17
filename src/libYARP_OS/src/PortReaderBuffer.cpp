@@ -11,6 +11,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Time.h>
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
@@ -345,8 +346,42 @@ void PortReaderBufferBase::interrupt() {
     HELPER(implementation).contentSema.post();
 }
 
-PortReader *PortReaderBufferBase::readBase() {
-    HELPER(implementation).contentSema.wait();
+PortReader *PortReaderBufferBase::readBase(bool& missed,bool cleanup) {
+    missed = false;
+    if (period<0 || cleanup) {
+        HELPER(implementation).contentSema.wait();
+    } else {
+        bool ok = false;
+        double now = Time::now();
+        double target = now+period;
+        if (last_recv>0) {
+            target = last_recv+period;
+        }
+        double diff = target-now;
+        if (diff>0) {
+            ok = HELPER(implementation).contentSema.waitWithTimeout(diff);
+        } else {
+            ok = HELPER(implementation).contentSema.check();
+            if (ok) HELPER(implementation).contentSema.wait();
+        }
+        if (!ok) {
+            missed = true;
+            if (last_recv>0) {
+                last_recv += period;
+            }
+            return NULL;
+        }
+        now = Time::now();
+        if (last_recv<0) {
+            last_recv = now;
+        } else {
+            diff = target - now;
+            if (diff>0) {
+                Time::delay(diff);
+            }
+            last_recv = target;
+        }
+    }
     HELPER(implementation).stateSema.wait();
     PortReaderPacket *readerPacket = HELPER(implementation).getContent();
     PortReader *reader = NULL;

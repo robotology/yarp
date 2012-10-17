@@ -201,6 +201,8 @@ Companion::Companion() {
         "make a test RPC server to receive and reply to Bottle-format messages");
     add("run",  &Companion::cmdRun,
         "start and stop processes");
+    add("sample", &Companion::cmdSample,
+        "drop or duplicate messages to achieve a constant frame-rate");
     add("server",     &Companion::cmdServer,
         "run yarp name server"); 
     add("terminate",  &Companion::cmdTerminate,
@@ -2217,6 +2219,62 @@ int Companion::cmdMerge(int argc, char *argv[]) {
 
     delete [] inPort  ;
     delete [] inData  ;
+    return 0;
+}
+
+
+
+int Companion::cmdSample(int argc, char *argv[]) {
+    BufferedPort<Bottle> port;
+
+    Property options;
+    options.fromCommand(argc,argv,false);
+    if (argc==0 || !((options.check("period")||options.check("rate"))&&options.check("output"))) {
+        printf("This is yarp sample. Syntax:\n");
+        printf("  yarp sample --output /port --period 0.01\n");
+        printf("  yarp sample --output /port --rate 100\n");
+        printf("  yarp sample --input /p1 --output /p2 --rate 50 --carrier udp\n");
+        printf("  yarp sample --output /port --rate 100 --show\n");
+        printf("Data is read from the input port and repeated on the output port at the\n");
+        printf("specified rate/period.  If the 'show' flag is given, the data is also printed\n");
+        printf("on standard output.\n");
+        return 1;
+    }
+    
+    if (!port.open(options.find("output").asString().c_str())) {
+        fprintf(stderr,"Failed to open output port\n");
+        return 1;
+    }
+    if (options.check("period")) {
+        port.setTargetPeriod(options.find("period").asDouble());
+    }
+    if (options.check("rate")) {
+        port.setTargetPeriod(1.0/options.find("rate").asDouble());
+    }
+    if (options.check("input")) {
+        ConstString input = options.find("input").asString();
+        ConstString carrier = options.find("carrier").asString();
+        if (carrier!="") {
+            NetworkBase::connect(input.c_str(),port.getName().c_str(),
+                                 carrier.c_str());
+        } else {
+            NetworkBase::connect(input.c_str(),port.getName().c_str());
+        }
+    }
+
+    bool show = options.check("show");
+    while (true) {
+        Bottle *bot = port.read();
+        if (!bot) continue;
+        if (show) {
+            printf("%s\n", bot->toString().c_str());
+        }
+        if (port.getOutputCount()>0) {
+            port.prepare() = *bot;
+            port.write();
+        }
+    }
+    
     return 0;
 }
 

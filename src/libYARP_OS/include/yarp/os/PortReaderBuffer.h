@@ -189,6 +189,18 @@ public:
      */
     virtual void release(void *handle) = 0;
 
+
+    /**
+     *
+     * Try to provide data periodically.  If no new data arrives
+     * in a given period, repeat the last data received (if any).
+     * Similarly, the port should not pass on data more frequently 
+     * than the given period.
+     *
+     * @param the target period in (fractional) seconds.
+     *
+     */
+    virtual void setTargetPeriod(double period) = 0;
 };
 
 
@@ -213,6 +225,8 @@ public:
         allowReuse = true;
         prune = false;
         replier = 0 /*NULL*/;
+        period = -1;
+        last_recv = -1;
     }
 
     void setCreator(PortReaderBufferBaseCreator *creator) {
@@ -248,7 +262,7 @@ public:
         allowReuse = flag;
     }
 
-    yarp::os::PortReader *readBase();
+    yarp::os::PortReader *readBase(bool& missed, bool cleanup);
 
     void interrupt();
 
@@ -272,11 +286,17 @@ public:
 
     virtual bool getEnvelope(PortReader& envelope);
 
+
+    void setTargetPeriod(double period) {
+        this->period = period;
+    }
+
     // user takes control of the current read object
     void *acquire();
 
     // user gives back an object
     void release(void *key);
+
 
 protected:
     void init();
@@ -287,6 +307,8 @@ protected:
     bool allowReuse;
     void *implementation;
     yarp::os::PortReader *replier;
+    double period;
+    double last_recv;
 };
 
 
@@ -355,6 +377,7 @@ public:
         last = 0; /*NULL*/
         setStrict(false);
         reader = 0 /*NULL*/;
+        default_value = 0 /*NULL*/;
     }
 
     /**
@@ -366,6 +389,10 @@ public:
         if (reader!=0/*NULL*/) {
             delete reader;
             reader = 0/*NULL*/;
+        }
+        if (default_value!=0/*NULL*/) {
+            delete default_value;
+            default_value = 0/*NULL*/;
         }
     }
 
@@ -398,14 +425,27 @@ public:
                 return last;
             }
         }
-        last = (T *)implementation.readBase();
+        bool missed = false;
+        T *prev = last;
+        last = (T *)implementation.readBase(missed,false);
         if (last!=0/*NULL*/) {
             if (autoDiscard) {
                 // go up to date
                 while (check()) {
                     //printf("Dropping something\n");
-                    last = (T *)implementation.readBase();
+                    bool tmp;
+                    last = (T *)implementation.readBase(tmp,true);
                 }
+            }
+        }
+        if (missed) {
+            // we've been asked to enforce a period
+            last = prev;
+            if (last==0/*NULL*/) {
+                if (default_value==0/*NULL*/) {
+                    default_value = new T;
+                }
+                last = default_value;
             }
         }
         return last;
@@ -511,11 +551,15 @@ public:
         implementation.release(handle);
     }
 
+    virtual void setTargetPeriod(double period) {
+        implementation.setTargetPeriod(period);
+    }
 
 private:
     yarp::os::impl::PortReaderBufferBase implementation;
     bool autoDiscard;
     T *last;
+    T *default_value;
     TypedReaderThread<T> *reader;
 };
 

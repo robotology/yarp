@@ -1,3 +1,12 @@
+2012-10-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/src/Companion.cpp: add "yarp sample" command
+	to sample an input at a fixed frequency.
+
+	* src/libYARP_OS/include/yarp/os/BufferedPort.h: add
+	BufferedPort::setTargetPeriod method for explicitly
+	rate-controlled input.
+
 2012-10-16  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Companion.cpp: add "yarp merge" command,

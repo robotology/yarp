@@ -286,6 +286,12 @@ public:
         reader.release(handle);
     }
 
+
+    // documented in TypedReader
+    virtual void setTargetPeriod(double period) {
+        reader.setTargetPeriod(period);
+    }
+
 private:
     // solaris preferred order - strange
     PortWriterBuffer<T> writer;
