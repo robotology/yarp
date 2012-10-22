@@ -23,7 +23,6 @@ YARP_DECLARE_DEVICES(icubmod)
 
 int main(int argc, char *argv[])
 {
-    yTrace();
     yarp::os::Network yarp; //initialize network, this goes before everything
 
     if (!yarp.checkNetwork()) {
@@ -31,8 +30,6 @@ int main(int argc, char *argv[])
     }
 
     yarp::os::Time::turboBoost();
-
-    yTrace();
 
 //BEGIN
 // TODO Move in device library
