@@ -14,14 +14,22 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../src/libraries/icubmod/)
 
 set(robotInterface_SRCS
     main.cpp
+    Action.cpp
+    Device.cpp
     Module.cpp
-    RobotInterface.cpp
+    Param.cpp
+    Robot.cpp
+    Types.cpp
     XMLReader.cpp
 )
 
 set(robotInterface_HDRS
+    Action.h
+    Device.h
     Module.h
-    RobotInterface.h
+    Param.h
+    Robot.h
+    Types.h
     XMLReader.h
 )
 

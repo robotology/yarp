@@ -6,7 +6,11 @@
  */
 
 #include "XMLReader.h"
-#include "RobotInterface.h"
+#include "Action.h"
+#include "Device.h"
+#include "Param.h"
+#include "Robot.h"
+#include "Types.h"
 
 #include <debugStream/Debug.h>
 

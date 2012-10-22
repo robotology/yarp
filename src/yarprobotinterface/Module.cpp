@@ -5,9 +5,11 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-
+#include "Action.h"
+#include "Device.h"
 #include "Module.h"
-#include "RobotInterface.h"
+#include "Param.h"
+#include "Robot.h"
 #include "XMLReader.h"
 
 #include <debugStream/Debug.h>
