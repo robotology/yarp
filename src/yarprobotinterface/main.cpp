@@ -7,12 +7,13 @@
 
 
 #include "Module.h"
-
 #include <debugStream/Debug.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+#include <yarp/dev/Drivers.h>
 
+YARP_DECLARE_DEVICES(icubmod)
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +24,8 @@ int main(int argc, char *argv[])
     }
 
     yarp::os::Time::turboBoost();
+
+    YARP_REGISTER_DEVICES(icubmod)
 
     // Create and run our module
     RobotInterface::Module module;
