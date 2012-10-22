@@ -17,15 +17,12 @@ set(robotInterface_SRCS
     Module.cpp
     RobotInterface.cpp
     XMLReader.cpp
-    drivers/ControlBoardWrapper.cpp
 )
 
 set(robotInterface_HDRS
     Module.h
     RobotInterface.h
     XMLReader.h
-    drivers/ControlBoardWrapper.h
-    drivers/debugging.h
 )
 
 #add_definitions("-Wall -Wextra --ansi --pedantic")

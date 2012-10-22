@@ -10,15 +10,8 @@
 
 #include <debugStream/Debug.h>
 
-#include "drivers/ControlBoardWrapper.h"
-
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
-
-//BEGIN
-// TODO Move in device library
-YARP_DECLARE_DEVICES(icubmod)
-//END
 
 
 int main(int argc, char *argv[])
@@ -30,16 +23,6 @@ int main(int argc, char *argv[])
     }
 
     yarp::os::Time::turboBoost();
-
-//BEGIN
-// TODO Move in device library
-    YARP_REGISTER_DEVICES(icubmod)
-
-    yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<ControlBoardWrapper>
-        ("controlboardwrapper",
-         "",
-         "ControlBoardWrapper"));
-//END
 
     // Create and run our module
     RobotInterface::Module module;
