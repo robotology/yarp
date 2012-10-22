@@ -7,7 +7,8 @@
 
 #include "XMLReader.h"
 #include "RobotInterface.h"
-#include "Debug.h"
+
+#include <debugStream/Debug.h>
 
 #include <tinyxml.h>
 #include <string>

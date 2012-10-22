@@ -6,10 +6,11 @@
  */
 
 
-#include "Debug.h"
 #include "Module.h"
 #include "RobotInterface.h"
 #include "XMLReader.h"
+
+#include <debugStream/Debug.h>
 
 #include <yarp/os/ResourceFinder.h>
 

@@ -10,7 +10,7 @@ find_package(TinyXML REQUIRED)
 include_directories(${YARP_INCLUDE_DIRS})
 include_directories(${iCubDev_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../src/libraries/icubmod/DebugStream)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../src/libraries/icubmod/)
 
 set(robotInterface_SRCS
     main.cpp

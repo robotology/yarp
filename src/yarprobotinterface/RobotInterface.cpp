@@ -19,7 +19,8 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "RobotInterface.h"
-#include <Debug.h>
+
+#include <debugStream/Debug.h>
 
 
 namespace {
