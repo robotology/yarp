@@ -20,44 +20,6 @@
 YARP_DECLARE_DEVICES(icubmod)
 //END
 
-#if 0
-namespace {
-static bool terminated = false;
-//static bool askAbort = false;
-//yarp::os::IRobotInterface *ri = 0;
-}
-
-static void sighandler (int) {
-    static int ct = 0;
-    ct++;
-
-    yWarning() << "Asking to shut down";
-    terminated = true;
-
-//TODO
-//    robot.enterPhase(RobotInterface::ActionPhaseShutdown);
-
-    switch (ct) {
-    case 1:
-    case 2:
-        break;
-    case 3:
-        yWarning() << "Aborting parking...";
-//         if(ri!=0) {
-//             ri->abort();
-//         }
-        break;
-    case 4:
-    case 5:
-        yWarning() << "iCubInterface is already shutting down, this might take a while";
-    case 6:
-    default:
-        yWarning() << "Seriously killing the application";
-        yarp::os::exit(-1);
-    }
-}
-#endif
-
 
 int main(int argc, char *argv[])
 {
