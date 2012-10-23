@@ -178,7 +178,7 @@ if(CREATE_LIB_MATH)
 endif(CREATE_LIB_MATH)
 
 if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
-    find_package(TinyXML QUIET)
+    find_package(TinyXML 2.6 QUIET)
     checkbuildandset_dependency(TinyXML)
 endif(CREATE_YMANAGER OR CREATE_YARPSCOPE)
 
