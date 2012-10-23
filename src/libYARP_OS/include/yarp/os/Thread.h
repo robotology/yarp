@@ -40,7 +40,7 @@ public:
     virtual ~Thread();
 
     /**
-     * Main body of the new thread.  
+     * Main body of the new thread.
      * Override this method to do what you want.
      * After Thread::start is called, this
      * method will start running in a separate thread.
@@ -55,8 +55,8 @@ public:
 
     /**
      * Call-back, called while halting the thread (before
-     * join). This callback is executed by the same thread 
-	 * that calls stop(). It should not be called directly.
+     * join). This callback is executed by the same thread
+     * that calls stop(). It should not be called directly.
      * Override this method to do the right thing for
      * your particular Thread::run.
      */
@@ -65,10 +65,10 @@ public:
     /**
      * Start the new thread running.
      * The new thread will call the user-defined Thread::run method.
-	 * The function starts the thread and waits until the thread executes
-	 * threadInit(). If the initialization was not successful the thread 
-	 * exits, otherwise run is executed. The return value of threadInit() 
-	 * is passed to afterStart().
+     * The function starts the thread and waits until the thread executes
+     * threadInit(). If the initialization was not successful the thread
+     * exits, otherwise run is executed. The return value of threadInit()
+     * is passed to afterStart().
      * @return true iff the new thread starts successfully
      */
     bool start();
@@ -86,40 +86,40 @@ public:
 
     /**
      * Called just before a new thread starts. This method is executed
-	 * by the same thread that calls start().
+     * by the same thread that calls start().
      */
     virtual void beforeStart();
 
     /**
-     * Called just after a new thread starts (or fails to start), this 
-	 * is executed by the same thread that calls start().
-     * @param success true iff the new thread started successfully. 
+     * Called just after a new thread starts (or fails to start), this
+     * is executed by the same thread that calls start().
+     * @param success true iff the new thread started successfully.
      */
     virtual void afterStart(bool success);
 
-	
-	/**
-     * Initialization method. The thread executes this function
-	 * when it starts and before "run". This is a good place to 
-	 * perform initialization tasks that need to be done by the 
-	 * thread itself (device drivers initialization, memory 
-	 * allocation etc). If the function returns false the thread 
-	 * quits and never calls "run". The return value of threadInit()
-	 * is notified to the class and passed as a parameter 
-	 * to afterStart(). Note that afterStart() is called by the 
-	 * same thread that is executing the "start" method.
-     */
-	virtual bool threadInit()
-	{ return true;}
 
-	/**
+    /**
+     * Initialization method. The thread executes this function
+     * when it starts and before "run". This is a good place to
+     * perform initialization tasks that need to be done by the
+     * thread itself (device drivers initialization, memory
+     * allocation etc). If the function returns false the thread
+     * quits and never calls "run". The return value of threadInit()
+     * is notified to the class and passed as a parameter
+     * to afterStart(). Note that afterStart() is called by the
+     * same thread that is executing the "start" method.
+     */
+    virtual bool threadInit()
+    { return true;}
+
+    /**
      * Release method. The thread executes this function once when
      * it exits, after the last "run". This is a good place to release
-	 * resources that were initialized in threadInit() (release memory, 
-	 * and device driver resources).
+     * resources that were initialized in threadInit() (release memory,
+     * and device driver resources).
      */
-	virtual void threadRelease()
-	{}
+    virtual void threadRelease()
+    {}
 
 
     /**
@@ -171,12 +171,9 @@ public:
 
 
     /**
-     *
      * Set the default stack size for all threads created after this
      * point.  A value of 0 will use a reasonable default.
-     *
      * @param stackSize the desired stack size in bytes.
-     *
      */
     static void setDefaultStackSize(int stackSize);
 
