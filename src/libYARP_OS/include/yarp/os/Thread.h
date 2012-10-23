@@ -177,10 +177,9 @@ public:
      */
     static void setDefaultStackSize(int stackSize);
 
-private:
     bool join(double seconds = -1);
 
-
+private:
     void *implementation;
     bool stopping;
 };
