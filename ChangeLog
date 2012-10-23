@@ -1,3 +1,7 @@
+2012-10-23  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/libYARP_OS/include/yarp/os/Thread.h: Make
+	yarp::os::Thread::join() method public.
+
 2012-10-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Companion.cpp: add "yarp sample" command
