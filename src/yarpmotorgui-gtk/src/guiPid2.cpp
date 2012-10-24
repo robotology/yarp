@@ -24,18 +24,17 @@
 
 /*
 //OLD DEFINITIONS, NOW DEPRECATED
-#define CAN_SET_DEBUG_PARAM_1		46
-#define CAN_GET_DEBUG_PARAM_1		47
-#define CAN_SET_DEBUG_PARAM_2		48
-#define CAN_GET_DEBUG_PARAM_2		49
-#define CAN_SET_DEBUG_PARAM_3		14
-#define CAN_GET_DEBUG_PARAM_3		15
-#define CAN_SET_DEBUG_PARAM_4		16
-#define CAN_GET_DEBUG_PARAM_4		17
+#define CAN_SET_DEBUG_PARAM_1        46
+#define CAN_GET_DEBUG_PARAM_1        47
+#define CAN_SET_DEBUG_PARAM_2        48
+#define CAN_GET_DEBUG_PARAM_2        49
+#define CAN_SET_DEBUG_PARAM_3        14
+#define CAN_GET_DEBUG_PARAM_3        15
+#define CAN_SET_DEBUG_PARAM_4        16
+#define CAN_GET_DEBUG_PARAM_4        17
 */
 
-//const int debug_base = 10;
-const int debug_base = 0;
+int debug_base = 0;
 
 double filt (double& v)
 {
@@ -70,35 +69,35 @@ void guiPid2::destroy_win (GtkButton *dummy1, GtkWidget *dummy2)
 // This callback is called when the notebook change pages
 void guiPid2::change_page (GtkNotebook *notebook, GtkWidget   *page,  guint page_num,  gpointer user_data)
 {
-	//color definitions
-	GdkColor color_green;
-	GdkColor color_red;
-	GdkColor color_pink;
-	color_pink.red=219*255;   //DB
-	color_pink.green=166*255; //A6
-	color_pink.blue=171*255;  //AB
-	color_red.red=255*255;     //FF
-	color_red.green=100*255;    //64
-	color_red.blue=100*255;
-	color_green.red=149*255;   //95
-	color_green.green=221*255; //DD
-	color_green.blue=186*255;  //BA
+    //color definitions
+    GdkColor color_green;
+    GdkColor color_red;
+    GdkColor color_pink;
+    color_pink.red=219*255;   //DB
+    color_pink.green=166*255; //A6
+    color_pink.blue=171*255;  //AB
+    color_red.red=255*255;     //FF
+    color_red.green=100*255;    //64
+    color_red.blue=100*255;
+    color_green.red=149*255;   //95
+    color_green.green=221*255; //DD
+    color_green.blue=186*255;  //BA
 
-	gtk_label_set_markup (GTK_LABEL (note_lbl1), g_markup_printf_escaped ("Position PID"));
+    gtk_label_set_markup (GTK_LABEL (note_lbl1), g_markup_printf_escaped ("Position PID"));
     gtk_label_set_markup (GTK_LABEL (note_lbl2), g_markup_printf_escaped ("Torque PID"));
     gtk_label_set_markup (GTK_LABEL (note_lbl3), g_markup_printf_escaped ("Stiffness params"));
 
-	if (page_num==0) gtk_label_set_markup (GTK_LABEL (note_lbl1), g_markup_printf_escaped ("<span bgcolor=\"#95DDBA\">Position PID</span>"));
+    if (page_num==0) gtk_label_set_markup (GTK_LABEL (note_lbl1), g_markup_printf_escaped ("<span bgcolor=\"#95DDBA\">Position PID</span>"));
     if (page_num==1) gtk_label_set_markup (GTK_LABEL (note_lbl2), g_markup_printf_escaped ("<span bgcolor=\"#FF6464\">Torque PID</span>"));
     if (page_num==2) gtk_label_set_markup (GTK_LABEL (note_lbl3), g_markup_printf_escaped ("<span bgcolor=\"#DBA6AB\">Stiffness params</span>"));
 
 /*
-	if (iPid)
-		iPid->getPid(*joint, &myPosPid);
-	if (iTrq)
-		iTrq->getTorquePid(*joint, &myTrqPid);
-	if (iImp)
-		iImp->getImpedance(*joint, &stiff_val, &damp_val);
+    if (iPid)
+        iPid->getPid(*joint, &myPosPid);
+    if (iTrq)
+        iTrq->getTorquePid(*joint, &myTrqPid);
+    if (iImp)
+        iImp->getImpedance(*joint, &stiff_val, &damp_val);
 */
 }
 
@@ -115,6 +114,8 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   pid->ki = atoi(gtk_entry_get_text((GtkEntry*) pos_kiDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) pos_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) pos_offsetDes));
+  pid->stiction_pos_val = atoi(gtk_entry_get_text((GtkEntry*) pos_posStictionDes));
+  pid->stiction_neg_val = atoi(gtk_entry_get_text((GtkEntry*) pos_negStictionDes));
   pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) pos_PWM_limitDes));
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) pos_INT_limitDes));
 
@@ -137,7 +138,10 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) pos_PWM_limitEntry,  buffer);
   sprintf(buffer, "%d", (int) pid->max_int);
   gtk_entry_set_text((GtkEntry*) pos_INT_limitEntry,  buffer);
-
+  sprintf(buffer, "%d", (int) pid->stiction_pos_val);
+  gtk_entry_set_text((GtkEntry*) pos_posStictionEntry,  buffer);
+  sprintf(buffer, "%d", (int) pid->stiction_neg_val);
+  gtk_entry_set_text((GtkEntry*) pos_negStictionEntry,  buffer);
 }
 
 //*********************************************************************************
@@ -152,6 +156,8 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kiDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
+  pid->stiction_pos_val = atoi(gtk_entry_get_text((GtkEntry*) trq_posStictionDes));
+  pid->stiction_neg_val = atoi(gtk_entry_get_text((GtkEntry*) trq_negStictionDes));
   pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) trq_PWM_limitDes));
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) trq_INT_limitDes));
 
@@ -174,6 +180,10 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) trq_PWM_limitEntry,  buffer);
   sprintf(buffer, "%d", (int) pid->max_int);
   gtk_entry_set_text((GtkEntry*) trq_INT_limitEntry,  buffer);
+  sprintf(buffer, "%d", (int) pid->stiction_pos_val);
+  gtk_entry_set_text((GtkEntry*) trq_posStictionEntry,  buffer);
+  sprintf(buffer, "%d", (int) pid->stiction_neg_val);
+  gtk_entry_set_text((GtkEntry*) trq_negStictionEntry,  buffer);
 }
 
 //*********************************************************************************
@@ -226,10 +236,12 @@ void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
 {
   if (iDbg==0) 
   {
-	  fprintf(stderr, "WARN: Debug interface not enabled.\n");
-	  return;
+      fprintf(stderr, "WARN: Debug interface not enabled.\n");
+      return;
   }
   char buffer[40];
+
+  debug_base=atoi(gtk_entry_get_text((GtkEntry*) dbg_debugBaseEntry));
 
   double debug_param [8];
   for (int i=0; i<8; i++) debug_param[i] =0;
@@ -288,17 +300,17 @@ void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, 
 
   if (!small)
   {
-	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
-	gtk_widget_set_size_request 	(frame, 130, 60);
-	gtk_widget_set_size_request 	(entry, 60, 20);
+    gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
+    gtk_fixed_put    (GTK_FIXED(inv), entry, posX+30, posY+30);
+    gtk_widget_set_size_request     (frame, 130, 60);
+    gtk_widget_set_size_request     (entry, 60, 20);
   }
   else
   {
-	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+10, posY+30);
-	gtk_widget_set_size_request 	(frame, 60, 60);
-	gtk_widget_set_size_request 	(entry, 40, 20);
+    gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
+    gtk_fixed_put    (GTK_FIXED(inv), entry, posX+10, posY+30);
+    gtk_widget_set_size_request     (frame, 60, 60);
+    gtk_widget_set_size_request     (entry, 40, 20);
   }
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
@@ -315,17 +327,17 @@ void guiPid2::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int pos
 
   if (!small)
   {
-	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
-	gtk_widget_set_size_request 	(frame, 130, 60);
-	gtk_widget_set_size_request 	(entry, 60, 20);
+    gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
+    gtk_fixed_put    (GTK_FIXED(inv), entry, posX+30, posY+30);
+    gtk_widget_set_size_request     (frame, 130, 60);
+    gtk_widget_set_size_request     (entry, 60, 20);
   }
   else
   {
-	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+10, posY+30);
-	gtk_widget_set_size_request 	(frame, 60, 60);
-	gtk_widget_set_size_request 	(entry, 40, 20);
+    gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
+    gtk_fixed_put    (GTK_FIXED(inv), entry, posX+10, posY+30);
+    gtk_widget_set_size_request     (frame, 60, 60);
+    gtk_widget_set_size_request     (entry, 40, 20);
   }
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
@@ -340,10 +352,10 @@ void guiPid2::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, i
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
 
-  gtk_fixed_put	(GTK_FIXED(inv), frame, posX+20, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+30);
-  gtk_widget_set_size_request 	(frame, 130, 60);
-  gtk_widget_set_size_request 	(entry, 60, 20);
+  gtk_fixed_put    (GTK_FIXED(inv), frame, posX+20, posY);
+  gtk_fixed_put    (GTK_FIXED(inv), entry, posX+50, posY+30);
+  gtk_widget_set_size_request     (frame, 130, 60);
+  gtk_widget_set_size_request     (entry, 60, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
   sprintf(buffer, "%d", k);
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
@@ -356,15 +368,56 @@ void guiPid2::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
 
-  gtk_fixed_put	(GTK_FIXED(inv), frame, posX+20, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+30);
-  gtk_widget_set_size_request 	(frame, 130, 60);
-  gtk_widget_set_size_request 	(entry, 60, 20);
+  gtk_fixed_put    (GTK_FIXED(inv), frame, posX+20, posY);
+  gtk_fixed_put    (GTK_FIXED(inv), entry, posX+50, posY+30);
+  gtk_widget_set_size_request     (frame, 130, 60);
+  gtk_widget_set_size_request     (entry, 60, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
   sprintf(buffer, "%3.3f", k);
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
   return;
 }
+//*********************************************************************************
+void guiPid2::receive_dbg_pid()
+{
+  double debug_param [8];
+  if (iDbg != 0)
+  {
+    iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
+    iDbg->getDebugParameter(*joint, debug_base+1, &debug_param[1]);
+    iDbg->getDebugParameter(*joint, debug_base+2, &debug_param[2]);
+    iDbg->getDebugParameter(*joint, debug_base+3, &debug_param[3]);
+    iDbg->getDebugParameter(*joint, debug_base+4, &debug_param[4]);
+    iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]); unfilt(debug_param[5]);
+    iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
+    iDbg->getDebugParameter(*joint, debug_base+7, &debug_param[7]);
+  }
+  char buffer [255];
+  sprintf(buffer, "%d", (int) debug_param[0]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug0Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param[1]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug1Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param[2]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug2Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param[3]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug3Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param[4]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug4Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param[5]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug5Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param[6]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug6Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param[7]);
+  gtk_entry_set_text((GtkEntry*) dbg_debug7Entry,  buffer);
+}
+
+//*********************************************************************************
+void guiPid2::dbg_debugBaseEntry_callback (GtkEntry *entry, gpointer  user_data)
+{
+  debug_base=atoi(gtk_entry_get_text((GtkEntry*) entry));
+  guiPid2::receive_dbg_pid();
+}
+
 //*********************************************************************************
 void guiPid2::guiPid2(void *button, void* data)
 {
@@ -373,13 +426,13 @@ void guiPid2::guiPid2(void *button, void* data)
 
   if (joint!=0 && (*new_joint != *joint || new_part != currentPart))
   {
-	  if (trq_winPid != NULL) destroy_win(NULL, NULL);
+      if (trq_winPid != NULL) destroy_win(NULL, NULL);
   }
 
   if (trq_winPid != NULL) 
   {
-	  gtk_window_set_keep_above    (GTK_WINDOW(trq_winPid),true);
-	  return;
+      gtk_window_set_keep_above    (GTK_WINDOW(trq_winPid),true);
+      return;
   }
 
   gtkClassData* currentClassData = (gtkClassData*) data;
@@ -424,18 +477,18 @@ void guiPid2::guiPid2(void *button, void* data)
   iImp->getImpedanceOffset(*joint, &offset_val);
   if (iDbg != 0)
   {
-	iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
-	iDbg->getDebugParameter(*joint, debug_base+1, &debug_param[1]);
-	iDbg->getDebugParameter(*joint, debug_base+2, &debug_param[2]);
-	iDbg->getDebugParameter(*joint, debug_base+3, &debug_param[3]);
-	iDbg->getDebugParameter(*joint, debug_base+4, &debug_param[4]);
-	iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]); unfilt(debug_param[5]);
-	iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
-	iDbg->getDebugParameter(*joint, debug_base+7, &debug_param[7]);
+    iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
+    iDbg->getDebugParameter(*joint, debug_base+1, &debug_param[1]);
+    iDbg->getDebugParameter(*joint, debug_base+2, &debug_param[2]);
+    iDbg->getDebugParameter(*joint, debug_base+3, &debug_param[3]);
+    iDbg->getDebugParameter(*joint, debug_base+4, &debug_param[4]);
+    iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]); unfilt(debug_param[5]);
+    iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
+    iDbg->getDebugParameter(*joint, debug_base+7, &debug_param[7]);
   }
   else
   {
-	fprintf(stderr, "WARN: Debug interface not enabled.\n");
+    fprintf(stderr, "WARN: Debug interface not enabled.\n");
   }
 
 #if 0
@@ -471,8 +524,8 @@ void guiPid2::guiPid2(void *button, void* data)
 
   if (iDbg != 0)
   {
-	  gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag4, note_lbl4);
-	  gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag5, note_lbl5);
+      gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag4, note_lbl4);
+      gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag5, note_lbl5);
   }
 
   //adding a set of display
@@ -481,6 +534,9 @@ void guiPid2::guiPid2(void *button, void* data)
   gtk_container_add (GTK_CONTAINER (trq_winPid), note_book);
 
   // ------ DEBUG CONTROL ------
+  dbg_debugBaseEntry =  gtk_entry_new();
+  changePidValue((int) debug_base, note_pag4, dbg_debugBaseEntry, 240, 0, "debug base");
+  g_signal_connect (dbg_debugBaseEntry, "activate", G_CALLBACK(dbg_debugBaseEntry_callback), NULL);
   //debug_param0
   dbg_debug0Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[0], note_pag4, dbg_debug0Entry, 0, 0, "Current Debug0");
@@ -561,19 +617,31 @@ void guiPid2::guiPid2(void *button, void* data)
   //offset desired
   pos_offsetDes   =  gtk_entry_new();
   changePidValue((int) myPosPid.offset, note_pag1, pos_offsetDes, 110, 280, "Desired Position offset");
+  //positive stiction
+  pos_posStictionEntry   =  gtk_entry_new();
+  displayPidValue((int) myPosPid.stiction_pos_val, note_pag1, pos_posStictionEntry, 0, 350, "Current Pos Stiction offset");
+  //positive stiction desired
+  pos_posStictionDes   =  gtk_entry_new();
+  changePidValue((int) myPosPid.stiction_pos_val, note_pag1, pos_posStictionDes, 110, 350, "Desired Pos Stiction offset");
+  //negative stiction
+  pos_negStictionEntry   =  gtk_entry_new();
+  displayPidValue((int) myPosPid.stiction_neg_val, note_pag1, pos_negStictionEntry, 0, 420, "Current Neg Stiction offset");
+  //negative stiction desired
+  pos_negStictionDes   =  gtk_entry_new();
+  changePidValue((int) myPosPid.stiction_neg_val, note_pag1, pos_negStictionDes, 110, 420, "Desired Neg Stiction offset");
 
   //PWM limit
   pos_PWM_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitEntry, 0, 360, "Current PWM limit");
+  displayPidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitEntry, 0, 500, "Current PWM limit");
   //PWM limit desired
   pos_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 110, 360, "Desired PWM limit");
+  changePidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 110, 500, "Desired PWM limit");
   //INTEGRAL limit
   pos_INT_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitEntry, 0, 430, "Current Integral limit");
+  displayPidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitEntry, 0, 570, "Current Integral limit");
   //INTEGRAL limit desired
   pos_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitDes, 110, 430, "Desired Integral limit");
+  changePidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitDes, 110, 570, "Desired Integral limit");
 
     // ------ TORQUE CONTROL ------
   //kp
@@ -606,19 +674,31 @@ void guiPid2::guiPid2(void *button, void* data)
   //offset desired
   trq_offsetDes   =  gtk_entry_new();
   changePidValue((int) myTrqPid.offset, note_pag2, trq_offsetDes, 110, 280, "Desired Torque offset");
+ //positive stiction
+  trq_posStictionEntry   =  gtk_entry_new();
+  displayPidValue((int) myTrqPid.stiction_pos_val, note_pag2, trq_posStictionEntry, 0, 350, "Current Pos Stiction offset");
+  //positive stiction desired
+  trq_posStictionDes   =  gtk_entry_new();
+  changePidValue((int) myTrqPid.stiction_pos_val, note_pag2, trq_posStictionDes, 110, 350, "Desired Pos Stiction offset");
+  //negative stiction
+  trq_negStictionEntry   =  gtk_entry_new();
+  displayPidValue((int) myTrqPid.stiction_neg_val, note_pag2, trq_negStictionEntry, 0, 420, "Current Neg Stiction offset");
+  //negative stiction desired
+  trq_negStictionDes   =  gtk_entry_new();
+  changePidValue((int) myTrqPid.stiction_neg_val, note_pag2, trq_negStictionDes, 110, 420, "Desired Neg Stiction offset");
 
   //PWM limit
   trq_PWM_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitEntry, 0, 360, "Current PWM limit");
+  displayPidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitEntry, 0, 500, "Current PWM limit");
   //PWM limit desired
   trq_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 110, 360, "Desired PWM limit");
+  changePidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 110, 500, "Desired PWM limit");
   //INTEGRAL limit
   trq_INT_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitEntry, 0, 430, "Current Integral limit");
+  displayPidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitEntry, 0, 570, "Current Integral limit");
   //INTEGRAL limit desired
   trq_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 110, 430, "Desired Integral limit");
+  changePidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 110, 570, "Desired Integral limit");
 
   // ------ IMPEDANCE CONTROL ------
   //stiffness
@@ -662,10 +742,10 @@ void guiPid2::guiPid2(void *button, void* data)
   button_Trq_Send = gtk_button_new_with_mnemonic ("Send");
   button_Imp_Send = gtk_button_new_with_mnemonic ("Send");
   button_Dbg_Send = gtk_button_new_with_mnemonic ("Send");
-  gtk_fixed_put	(GTK_FIXED(note_pag1), button_Pos_Send, 0, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag2), button_Trq_Send, 0, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag3), button_Imp_Send, 0, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Send, 0, 590);
+  gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Send, 0, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Send, 0, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Send, 0, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Send, 0, 650);
   g_signal_connect (button_Pos_Send, "clicked", G_CALLBACK (send_pos_pid), &myPosPid);
   g_signal_connect (button_Trq_Send, "clicked", G_CALLBACK (send_trq_pid), &myTrqPid);
   g_signal_connect (button_Imp_Send, "clicked", G_CALLBACK (send_imp_pid), NULL);
@@ -680,10 +760,10 @@ void guiPid2::guiPid2(void *button, void* data)
   button_Trq_Close = gtk_button_new_with_mnemonic ("Close");
   button_Imp_Close = gtk_button_new_with_mnemonic ("Close");
   button_Dbg_Close = gtk_button_new_with_mnemonic ("Close");
-  gtk_fixed_put	(GTK_FIXED(note_pag1), button_Pos_Close, 120, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag2), button_Trq_Close, 120, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag3), button_Imp_Close, 120, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Close, 120, 590);
+  gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Close, 120, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Close, 120, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Close, 120, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Close, 120, 650);
   g_signal_connect (button_Pos_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Trq_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Imp_Close, "clicked", G_CALLBACK (destroy_win), NULL);
@@ -706,7 +786,7 @@ void guiPid2::guiPid2(void *button, void* data)
       gtk_widget_destroy (trq_winPid);
       trq_winPid = NULL;
     }
-	
+
   gtk_window_set_keep_above    (GTK_WINDOW(trq_winPid),true);
   gtk_main ();
 
