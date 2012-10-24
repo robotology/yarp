@@ -1,7 +1,3 @@
-# Copyright: (C) RoboticsLab @ 2012 Universidad Carlos III de Madrid
-# Authors: Juan G. Victores
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 Legal
 -----
 The files "sfun_time.c" "utility.mdl" are originally part of Simulink® Real Time Execution
@@ -29,4 +25,5 @@ Have a yarp server running. Additional dependencies can be solved with the follo
 * yarpWriteDoubles: yarp read /read
 * yarpReadDoubles: yarp write /write
 * yarpRemotePosEnc: yarpdev --device test_motor
+* yarpRemoteVelEnc: yarpdev --device test_motor
 

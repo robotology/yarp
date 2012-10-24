@@ -24,7 +24,7 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "yo"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Oct 22 11:20:03 2012"
+  LastModifiedDate	  "Wed Oct 24 22:21:40 2012"
   RTWModifiedTimeStamp	  272805288
   ModelVersionFormat	  "1.%<AutoIncrement:87>"
   ConfigurationManager	  "None"
@@ -616,7 +616,7 @@ Model {
   }
   System {
     Name		    "yarpRemotePosEnc"
-    Location		    [1, 82, 639, 523]
+    Location		    [66, 82, 704, 523]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200

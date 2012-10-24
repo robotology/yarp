@@ -225,10 +225,12 @@ if isequal(enc,[])
 else
     disp '[success] robot encoder interface available';
 end
-if isequal(enc.getAxes,fAxes)
+global remoteAxes;
+remoteAxes=enc.getAxes;
+if isequal(remoteAxes,fAxes)
     fprintf('[success] robot reports %d axes as configured in block\n',fAxes);
 else
-    fprintf('[warning] block configured for %d axes but robot reports %d axes\n',fAxes,enc.getAxes);
+    fprintf('[warning] block configured for %d axes but robot reports %d axes\n',fAxes,remoteAxes);
 end
 global dUpdated;
 dUpdated = zeros(fAxes,1);
@@ -256,15 +258,16 @@ global keepAxes;
 global pos;
 global enc;
 global dUpdated;
-vEnc = yarp.DVector(keepAxes);  % create a YARP vector of doubles the size of the number of axes
+global remoteAxes;
+vEnc = yarp.DVector(remoteAxes);  % create a YARP vector of doubles the size of the number of axes
 enc.getEncoders(vEnc);
 for i=1:1:keepAxes
     dUpdated(i) = vEnc.get(i-1);
 end
-vPos = yarp.DVector;  % create a YARP vector of doubles
-for i=1:1:keepAxes
-    vPos.add(u(i));
-end
+%vPos = yarp.DVector;  % create a YARP vector of doubles
+%for i=1:1:keepAxes
+%    vPos.add(u(i));
+%end
 %pos.positionMove(vPos);
 for i=1:1:keepAxes
     pos.positionMove(i-1,u(i));
