@@ -13,7 +13,7 @@
 #include <debugStream/Debug.h>
 
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/PolyDriverList.h>
 
 #include <string>
 #include <iostream>
@@ -223,12 +223,6 @@ bool RobotInterface::Robot::Private::calibrate(const RobotInterface::Device &dev
 
 bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    yarp::dev::IMultipleWrapper *wrapper;
-    if (!device.driver()->view(wrapper)) {
-        yError() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
-        return false;
-    }
-
     if (!(RobotInterface::hasParam(params, "network") || RobotInterface::hasParam(params, "networks"))) {
         yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires either \"network\" or \"networks\" parameter";
         return false;
@@ -283,12 +277,12 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         }
     }
 
-    if (!wrapper->attachAll(drivers)) {
-        yError() << "Cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << device.name();
+    if (!drivers.size()) {
+        yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" couldn't find any device.";
         return false;
     }
 
-    return true;
+    return device.attach(drivers);
 }
 
 bool RobotInterface::Robot::Private::abort(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
@@ -300,22 +294,12 @@ bool RobotInterface::Robot::Private::abort(const RobotInterface::Device &device,
 
 bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    yarp::dev::IMultipleWrapper *wrapper;
-    if (!device.driver()->view(wrapper)) {
-        yError() << device.name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
-        return false;
-    }
 
     if (!params.empty()) {
         yWarning() << "Action \"" << ActionTypeToString(ActionTypeDetach) << "\" cannot have any parameter. Ignoring them.";
     }
 
-    if (!wrapper->detachAll()) {
-        yError() << "Cannot execute" << ActionTypeToString(ActionTypeDetach) << "on device" << device.name();
-        return false;
-    }
-
-    return true;
+    return device.detach();
 }
 
 bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, const RobotInterface::ParamList &params)

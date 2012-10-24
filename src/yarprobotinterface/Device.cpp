@@ -15,9 +15,11 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Wrapper.h>
+
 
 #include <string>
 
@@ -311,7 +313,42 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
     yarp::os::Thread *calibratorThread = new RobotInterface::CalibratorThread(calibrator, target.driver(), mPriv->thr(), mPriv->sem());;
     mPriv->sem()->post();
 
-    return calibratorThread->start();
+    if (!calibratorThread->start()) {
+        yError() << "Cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << name();
+        return false;
+    }
+
+    return true;
 }
 
+bool RobotInterface::Device::attach(const yarp::dev::PolyDriverList &drivers) const
+{
+    yarp::dev::IMultipleWrapper *wrapper;
+    if (!driver()->view(wrapper)) {
+        yError() << name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
+        return false;
+    }
 
+    if (!wrapper->attachAll(drivers)) {
+        yError() << "Cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << name();
+        return false;
+    }
+
+    return true;
+}
+
+bool RobotInterface::Device::detach() const
+{
+    yarp::dev::IMultipleWrapper *wrapper;
+    if (!driver()->view(wrapper)) {
+        yError() << name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
+        return false;
+    }
+
+    if (!wrapper->detachAll()) {
+        yError() << "Cannot execute" << ActionTypeToString(ActionTypeDetach) << "on device" << name();
+        return false;
+    }
+
+    return true;
+}

@@ -11,6 +11,7 @@
 #include "Types.h"
 
 namespace yarp { namespace dev { class PolyDriver; } }
+namespace yarp { namespace dev { class PolyDriverList; } }
 
 namespace RobotInterface
 {
@@ -49,27 +50,26 @@ public:
     bool hasRunningThreads() const;
     void joinRunningThreads() const;
 
-    // run configure action on one device
-    bool configure();
+    // configure action
+    bool configure() const;
 
-    // run calibrate action on one device
+    // calibrate one device
     bool calibrate(const Device &target) const;
 
-    // run attach action on one device
-    bool attach(const Device &device, const ParamList &params);
+    // attach a list of drivers to this wrapper
+    bool attach(const yarp::dev::PolyDriverList &drivers) const;
 
-    // run abort action on one device
-    bool abort(const Device &device, const ParamList &params);
+    // abort action
+    bool abort() const;
 
-    // run detach action on one device
-    bool detach(const Device &device, const ParamList &params);
+    // detach all drivers attached to this wrapper
+    bool detach() const;
 
-    // run park action on one device
-    bool park(const Device &device, const ParamList &params);
+    // park
+    bool park() const;
 
-    // run custom action on one device
-    bool custom(const Device &device, const ParamList &params);
-
+    // custom action
+    bool custom(const ParamList &params) const;
 
 private:
     class Private;
