@@ -401,8 +401,8 @@ void guiPid2::guiPid2(void *button, void* data)
   GtkWidget *button_Imp_Close;
   GtkWidget *button_Dbg_Send;
   GtkWidget *button_Dbg_Close;
-  Pid myPosPid(0, 0, 0, 0, 0, 0);
-  Pid myTrqPid(0, 0, 0, 0, 0, 0);
+  Pid myPosPid(0, 0, 0, 0, 0, 0, 0, 0);
+  Pid myTrqPid(0, 0, 0, 0, 0, 0, 0, 0);
   double stiff_val=0;
   double damp_val=0;
   double stiff_max=0;
