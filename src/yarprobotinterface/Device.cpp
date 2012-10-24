@@ -315,5 +315,3 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
 }
 
 
-
-//END Device
