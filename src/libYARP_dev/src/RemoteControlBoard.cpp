@@ -975,6 +975,8 @@ public:
         l.addDouble(pid.max_output);
         l.addDouble(pid.offset);
         l.addDouble(pid.scale);
+		l.addDouble(pid.stiction_pos_val);
+		l.addDouble(pid.stiction_neg_val);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -1000,6 +1002,8 @@ public:
             m.addDouble(pids[i].max_output);
             m.addDouble(pids[i].offset);
             m.addDouble(pids[i].scale);
+			m.addDouble(pids[i].stiction_pos_val);
+			m.addDouble(pids[i].stiction_neg_val);
         }
 
         bool ok = rpc_p.write(cmd, response);
@@ -1114,6 +1118,8 @@ public:
             pid->max_output = l.get(4).asDouble();
             pid->offset = l.get(5).asDouble();
             pid->scale = l.get(6).asDouble();
+			pid->stiction_pos_val = l.get(7).asDouble();
+			pid->stiction_neg_val = l.get(8).asDouble();
             return true;
         }
         return false;
@@ -1149,6 +1155,8 @@ public:
                 pids[i].max_output = m.get(4).asDouble();
                 pids[i].offset = m.get(5).asDouble();
                 pids[i].scale = m.get(6).asDouble();
+				pids[i].stiction_pos_val = m.get(7).asDouble();
+				pids[i].stiction_neg_val = m.get(8).asDouble();
             }
             return true;
         }
@@ -1812,6 +1820,8 @@ public:
         b.addDouble(pid.max_output);
         b.addDouble(pid.offset);
         b.addDouble(pid.scale);
+		b.addDouble(pid.stiction_pos_val);
+		b.addDouble(pid.stiction_neg_val);
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
@@ -1877,6 +1887,8 @@ public:
             pid->max_output = l.get(4).asDouble();
             pid->offset = l.get(5).asDouble();
             pid->scale = l.get(6).asDouble();
+			pid->stiction_pos_val = l.get(7).asDouble();
+			pid->stiction_neg_val = l.get(8).asDouble();
             return true;
         }
         return false;

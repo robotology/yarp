@@ -11,7 +11,7 @@
 using namespace yarp::dev;
 
 Pid::Pid(double p, double d, double i, 
-         double intm, double sc, double omax)
+         double intm, double sc, double omax, double st_pos, double st_neg)
 {
     kp=p;
     kd=d;
@@ -20,6 +20,8 @@ Pid::Pid(double p, double d, double i,
     max_int=intm;
     max_output=omax;
     offset=0;
+	stiction_pos_val = st_pos;
+	stiction_neg_val = st_neg;
 }
 
 Pid::~Pid()
@@ -36,6 +38,8 @@ Pid::Pid()
     max_int=0;
     max_output=0;
     offset=0;
+	stiction_pos_val=0;
+	stiction_neg_val=0;
 }
 
 void Pid::setKp(double p)
@@ -71,4 +75,10 @@ void Pid::setMaxOut(double m)
 void Pid::setOffset(double o)
 {
     offset=o;
+}
+
+void Pid::setStictionValues(double pos_value, double neg_value)
+{
+	stiction_pos_val=pos_value;
+	stiction_neg_val=neg_value;
 }

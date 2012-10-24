@@ -32,7 +32,9 @@ public:
     double max_int;  /**< saturation threshold for the integrator */
     double scale;    /**< scale for the pid output */
    	double max_output; /**< max output */
-    double offset;
+    double offset;            /**< pwm offset added to the pid output */
+	double stiction_pos_val;  /**< positive stiction offset added to the pid output */
+	double stiction_neg_val;  /**< negative stiction offset added to the pid output */
 
 public:
     /*! \brief Default Constructor */
@@ -47,9 +49,11 @@ public:
      * @param int_max  integrator max output
      * @param scale scaling factor
      * @param out_max cap on output
+	 * @param st_pos positive stiction offset 
+	 * @param st_neg negative stiction offset 
      */
     Pid(double kp, double kd, double ki, 
-        double int_max, double scale, double out_max);
+        double int_max, double scale, double out_max, double st_pos, double st_neg);
 
     /** Set proportional gain 
      * @param p new gain
@@ -85,6 +89,12 @@ public:
      * @param o new offset value
      */
     void setOffset(double o);
+
+    /** Set the two stiction values for the pid.
+     * @param pos_value the new positive value
+	 * @param pos_value the new negative value
+     */
+	void setStictionValues(double pos_value, double neg_value);
 };
 
 #endif

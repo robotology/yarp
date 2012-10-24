@@ -1,3 +1,15 @@
+2012-10-23  Marco Randazzo <marco.randazzo@iit.it>
+	* src/libYARP_dev/ControlBoardPid.cpp 
+	* src/libYARP_dev/include/yarp/dev/ControlBoardPid.h
+	stiction_pos_val and stiction_neg_val parameters have been added to the yarp::dev::Pid class.
+	
+	* src/libYARP_dev/RemoteControlBoard.cpp
+	* src/libYARP_dev/ServerControlBoard.cpp
+	all the related methods (get/set pid) have been modified accordingly.	
+	
+	* conf/YarpVersion.cmake
+    YARP_VERSION_TWEAK "9424"
+
 2012-10-23  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* src/libYARP_OS/include/yarp/os/Thread.h: Make
 	yarp::os::Thread::join() method public.
