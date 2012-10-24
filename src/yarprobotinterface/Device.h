@@ -45,7 +45,31 @@ public:
     bool close();
 
     yarp::dev::PolyDriver *driver() const;
-    ThreadList runningThreads() const;
+
+    bool hasRunningThreads() const;
+    void joinRunningThreads() const;
+
+    // run configure action on one device
+    bool configure();
+
+    // run calibrate action on one device
+    bool calibrate(const Device &target) const;
+
+    // run attach action on one device
+    bool attach(const Device &device, const ParamList &params);
+
+    // run abort action on one device
+    bool abort(const Device &device, const ParamList &params);
+
+    // run detach action on one device
+    bool detach(const Device &device, const ParamList &params);
+
+    // run park action on one device
+    bool park(const Device &device, const ParamList &params);
+
+    // run custom action on one device
+    bool custom(const Device &device, const ParamList &params);
+
 
 private:
     class Private;

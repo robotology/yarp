@@ -30,16 +30,19 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../src/libraries/icubmod/)
 set(robotInterface_SRCS
     main.cpp
     Action.cpp
+    CalibratorThread.cpp
     Device.cpp
     Module.cpp
     Param.cpp
     Robot.cpp
     Types.cpp
     XMLReader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../src/libraries/icubmod/debugStream/Debug.cpp
 )
 
 set(robotInterface_HDRS
     Action.h
+    CalibratorThread.h
     Device.h
     Module.h
     Param.h
@@ -50,6 +53,7 @@ set(robotInterface_HDRS
 
 #add_definitions("-Wall -Wextra --ansi --pedantic")
 #add_definitions("-Wno-long-long -Wno-variadic-macros -Wshadow")
+add_definitions("-DDEBUG")
 
 add_executable(robot-interface ${robotInterface_SRCS})
 
@@ -57,5 +61,5 @@ target_link_libraries(robot-interface
                       YARP_OS
                       YARP_init
                       icubmod
-                      debugStream
+                    #  debugStream
                       ${TinyXML_LIBRARIES})

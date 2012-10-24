@@ -7,22 +7,35 @@
 
 #include "Device.h"
 #include "Action.h"
+#include "CalibratorThread.h"
 #include "Param.h"
+
 
 #include <debugStream/Debug.h>
 
 #include <yarp/os/Property.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/CalibratorInterfaces.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 
 #include <string>
 
 
 class RobotInterface::Device::Private
 {
+
 public:
-    struct Driver {
-        Driver(yarp::dev::PolyDriver *d) : driver(d), ref(1) {}
+    struct Driver
+    {
+        Driver(yarp::dev::PolyDriver *d) :
+            driver(d),
+            ref(1)
+        {
+        }
         yarp::dev::PolyDriver *driver;
+        ThreadList runningThreads;
+        yarp::os::Semaphore threadListSemaphore;
         int ref;
     };
 
@@ -31,7 +44,8 @@ public:
     {
     }
 
-    Private(const Private &other) : driver(other.driver)
+    Private(const Private &other) :
+        driver(other.driver)
     {
         ++driver->ref;
     }
@@ -46,21 +60,44 @@ public:
     ~Private()
     {
         if (!--driver->ref) {
+            if (!hasRunningThreads()) {
+                joinRunningThreads();
+            }
+
             if (driver->driver->isValid()) {
                 if (!driver->driver->close()) {
                     yWarning() << "Cannot close device" << name;
                 }
             }
+
             delete driver;
             driver = NULL;
         }
     }
 
     inline yarp::dev::PolyDriver* drv() const { return driver->driver; }
+    inline RobotInterface::ThreadList* thr() const { return &driver->runningThreads; }
+    inline yarp::os::Semaphore* sem() const { return &driver->threadListSemaphore; }
 
     inline bool isValid() const { return drv()->isValid(); }
     inline bool open() { return drv()->open(paramsAsProperty().toString()); }
     inline bool close() { return drv()->close(); }
+
+
+    inline bool hasRunningThreads() const
+    {
+        sem()->wait();
+        bool ret = thr()->empty();
+        sem()->post();
+        return ret;
+    }
+
+    void joinRunningThreads() const
+    {
+        while (!hasRunningThreads()) {
+            driver->runningThreads.front()->join();
+        }
+    }
 
     yarp::os::Property paramsAsProperty() const
     {
@@ -242,6 +279,41 @@ yarp::dev::PolyDriver* RobotInterface::Device::driver() const
 {
     return mPriv->drv();
 }
+
+bool RobotInterface::Device::hasRunningThreads() const
+{
+    mPriv->hasRunningThreads();
+}
+
+void RobotInterface::Device::joinRunningThreads() const
+{
+    mPriv->joinRunningThreads();
+}
+
+
+bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) const
+{
+    yarp::dev::ICalibrator *calibrator;
+    if (!driver()->view(calibrator)) {
+        yError() << name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        return NULL;
+    }
+
+    yarp::dev::IControlCalibration2 *controlCalibrator;
+    if (!target.driver()->view(controlCalibrator)) {
+        yError() << target.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        return NULL;
+    }
+
+    controlCalibrator->setCalibrator(calibrator);
+
+    mPriv->sem()->wait();
+    yarp::os::Thread *calibratorThread = new RobotInterface::CalibratorThread(calibrator, target.driver(), mPriv->thr(), mPriv->sem());;
+    mPriv->sem()->post();
+
+    return calibratorThread->start();
+}
+
 
 
 //END Device

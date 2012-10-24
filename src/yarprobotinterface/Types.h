@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <iosfwd>
+#include <list>
 
 namespace yarp { namespace os { class Thread; } }
 namespace DebugStream { class Debug; }
@@ -20,12 +21,11 @@ class Param;
 class Action;
 class Device;
 class Robot;
-class Thread; // FIXME Remove when yarp::os::Thread::join method is public
 
 typedef std::vector<RobotInterface::Param> ParamList;
 typedef std::vector<RobotInterface::Action> ActionList;
 typedef std::vector<RobotInterface::Device> DeviceList;
-typedef std::vector<RobotInterface::Thread*> ThreadList;
+typedef std::list<yarp::os::Thread*> ThreadList;
 
 bool hasParam(const RobotInterface::ParamList &list, const std::string& name);
 std::string findParam(const RobotInterface::ParamList &list, const std::string& name);
