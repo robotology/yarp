@@ -28,13 +28,13 @@ class YARP_dev_API yarp::dev::Pid
 public:
     double kp;     /**< proportional gain */
     double kd;     /**< derivative gain */
-    double ki;	   /**< integrative gain */
-    double max_int;  /**< saturation threshold for the integrator */
-    double scale;    /**< scale for the pid output */
-   	double max_output; /**< max output */
+    double ki;     /**< integrative gain */
+    double max_int;    /**< saturation threshold for the integrator */
+    double scale;      /**< scale for the pid output */
+    double max_output; /**< max output */
     double offset;            /**< pwm offset added to the pid output */
-	double stiction_pos_val;  /**< positive stiction offset added to the pid output */
-	double stiction_neg_val;  /**< negative stiction offset added to the pid output */
+    double stiction_pos_val;  /**< positive stiction offset added to the pid output */
+    double stiction_neg_val;  /**< negative stiction offset added to the pid output */
 
 public:
     /*! \brief Default Constructor */
@@ -42,15 +42,25 @@ public:
     /*! \brief Destructor */
     ~Pid();
 
-    /** Constructor
+   /** Basic constructor
      * @param kp proportional gain
      * @param kd derivative gain
      * @param ki integrative gain
      * @param int_max  integrator max output
      * @param scale scaling factor
      * @param out_max cap on output
-	 * @param st_pos positive stiction offset 
-	 * @param st_neg negative stiction offset 
+     */
+    Pid(double p, double d, double i, double intm, double sc, double omax);
+
+    /** Advanced constructor
+     * @param kp proportional gain
+     * @param kd derivative gain
+     * @param ki integrative gain
+     * @param int_max  integrator max output
+     * @param scale scaling factor
+     * @param out_max cap on output
+     * @param st_pos positive stiction offset
+     * @param st_neg negative stiction offset
      */
     Pid(double kp, double kd, double ki, 
         double int_max, double scale, double out_max, double st_pos, double st_neg);
@@ -92,9 +102,9 @@ public:
 
     /** Set the two stiction values for the pid.
      * @param pos_value the new positive value
-	 * @param pos_value the new negative value
+     * @param neg_value the new negative value
      */
-	void setStictionValues(double pos_value, double neg_value);
+    void setStictionValues(double pos_value, double neg_value);
 };
 
 #endif

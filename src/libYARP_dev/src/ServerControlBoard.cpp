@@ -1728,8 +1728,8 @@ case VOCAB_SET:
                 p.max_output = b.get(4).asDouble();
                 p.offset = b.get(5).asDouble();
                 p.scale = b.get(6).asDouble();
-				p.stiction_pos_val = b.get(7).asDouble();
-				p.stiction_neg_val = b.get(8).asDouble();
+                p.stiction_pos_val = b.get(7).asDouble();
+                p.stiction_neg_val = b.get(8).asDouble();
                 ok = pid->setPid(j, p);
             }
             break;
@@ -1752,8 +1752,8 @@ case VOCAB_SET:
                     p[i].max_output = c.get(4).asDouble();
                     p[i].offset = c.get(5).asDouble();
                     p[i].scale = c.get(6).asDouble();
-					p[i].stiction_pos_val = c.get(7).asDouble();
-					p[i].stiction_neg_val = c.get(8).asDouble();
+                    p[i].stiction_pos_val = c.get(7).asDouble();
+                    p[i].stiction_neg_val = c.get(8).asDouble();
                 }
                 ok = pid->setPids(p);
                 delete[] p;
@@ -2049,7 +2049,7 @@ case VOCAB_TORQUE:
                 response.addDouble(dtmp);       
                 int i;
                 for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);			
+                    b.addDouble(p[i]);
                 delete[] p;
             }
             break;
@@ -2140,8 +2140,8 @@ case VOCAB_PID:
         b.addDouble(p.max_output);
         b.addDouble(p.offset);
         b.addDouble(p.scale);
-		b.addDouble(p.stiction_pos_val);
-		b.addDouble(p.stiction_neg_val);
+        b.addDouble(p.stiction_pos_val);
+        b.addDouble(p.stiction_neg_val);
     }
     break;
 
@@ -2162,8 +2162,8 @@ case VOCAB_PIDS:
             c.addDouble(p[i].max_output);
             c.addDouble(p[i].offset);
             c.addDouble(p[i].scale);
-			c.addDouble(p[i].stiction_pos_val);
-			c.addDouble(p[i].stiction_neg_val);
+            c.addDouble(p[i].stiction_pos_val);
+            c.addDouble(p[i].stiction_neg_val);
         }
         delete[] p;              
     }
