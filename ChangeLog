@@ -1,5 +1,8 @@
 2012-10-24  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/libYARP_dev/include/yarp/dev/TestMotor.h: have test_motor
+	device support IVelocityControl [thanks Juan G Victores]
+
 	* example/matlab/simulink: example of using YARP from Matlab's
 	simulink, contributed by Juan [thanks Juan G Victores]
 

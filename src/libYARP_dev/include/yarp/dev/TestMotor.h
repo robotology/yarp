@@ -31,18 +31,36 @@ namespace yarp {
  * @ingroup dev_impl_motor
  *
  * A fake motor control board for testing.
- * Implements the IPositionControl and IEncoders interfaces.
+ * Implements the IPositionControl, IEncoders and IVelocityControl interfaces.
  */
 class YARP_dev_API yarp::dev::TestMotor : public DeviceDriver, 
-            public IPositionControl, public IEncoders {
+                                          public IPositionControl, 
+                                          public IEncoders,
+                                          public IVelocityControl {
 private:
     int njoints;
-    yarp::sig::Vector pos, speed, acc;
+    yarp::sig::Vector pos, speed, vel, acc;
     double delay;
+    double last;
+    bool posMode;
+
+    void update() {
+        if (posMode) return;
+        double now = yarp::os::Time::now();
+        if (last<0) last = now;
+        double dt = now-last;
+        for (int i=0; i<njoints; i++) {
+            pos[i] += vel[i]*dt;
+        }
+        last = now;
+    }
+
 public:
     TestMotor() {
         njoints = 1;
-        delay=0;
+        delay = 0;
+        posMode = true;
+        last = -1;
     }
 
     virtual bool getAxes(int *ax) {
@@ -58,10 +76,12 @@ public:
         pos.size(njoints);
         speed.size(njoints);
         acc.size(njoints);
+        vel.size(njoints);
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
             speed[i] = 0;
             acc[i] = 0;
+            vel[i] = 0;
         }
 
         delay=config.check("delay",yarp::os::Value(0), "delay in each call for debugging purpose, in ms").asInt();
@@ -69,10 +89,12 @@ public:
     }
 
     virtual bool setPositionMode() {
+        posMode = true;
         return true;
     }
 
     virtual bool positionMove(int j, double ref) {
+        posMode = true;
         if (j<njoints) {
             pos[j] = ref;
         }
@@ -81,6 +103,7 @@ public:
 
 
     virtual bool positionMove(const double *refs) {
+        posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] = refs[i];
         }
@@ -89,6 +112,7 @@ public:
 
 
     virtual bool relativeMove(int j, double delta) {
+        posMode = true;
         if (j<njoints) {
             pos[j] += delta;
         }
@@ -97,6 +121,7 @@ public:
 
 
     virtual bool relativeMove(const double *deltas) {
+        posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] += deltas[i];
         }
@@ -204,6 +229,7 @@ public:
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
         }
+        last = yarp::os::Time::now();
         return true;
     }
 
@@ -211,6 +237,7 @@ public:
         if (j<njoints) {
             pos[j] = val;
         }
+        last = yarp::os::Time::now(); // not quite right, but ok for test
         return true;
     }
 
@@ -218,10 +245,12 @@ public:
         for (int i=0; i<njoints; i++) {
             pos[i] = vals[i];
         }
+        last = yarp::os::Time::now();
         return true;
     }
 
     virtual bool getEncoder(int j, double *v) {
+        update();
         if (j<njoints) {
             (*v) = pos[j];
         }
@@ -229,6 +258,7 @@ public:
     }
 
     virtual bool getEncoders(double *encs) {
+        update();
         for (int i=0; i<njoints; i++) {
             encs[i] = pos[i];
         }
@@ -259,6 +289,28 @@ public:
     virtual bool getEncoderAccelerations(double *accs) {
         for (int i=0; i<njoints; i++) {
             accs[i] = 0;
+        }
+        return true;
+    }
+
+    virtual bool setVelocityMode() {
+        posMode = false;
+        return false;
+    }
+
+
+    virtual bool velocityMove(int j, double sp) {
+        posMode = false;
+        if (j<njoints) {
+            vel[j] = sp;
+        }
+        return true;
+    }
+
+    virtual bool velocityMove(const double *sp) {
+        posMode = false;
+        for (int i=0; i<njoints; i++) {
+            vel[i] = sp[i];
         }
         return true;
     }
