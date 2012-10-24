@@ -3,7 +3,22 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
+
+#### Find YARP, require that YARP version is at least YARP_REQ_VERSION
+SET(YARP_REQ_VERSION_MAJOR "2")
+SET(YARP_REQ_VERSION_MINOR "3")
+SET(YARP_REQ_VERSION_PATCH "19")
+set(YARP_REQ_VERSION_TWEAK "9423")
+set(YARP_REQ_VERSION ${YARP_REQ_VERSION_MAJOR}.${YARP_REQ_VERSION_MINOR}.${YARP_REQ_VERSION_PATCH}.${YARP_REQ_VERSION_TWEAK})
 find_package(YARP REQUIRED)
+set(YARP_VERSION ${YARP_VERSION}.${YARP_VERSION_TWEAK})
+
+if (YARP_VERSION VERSION_LESS YARP_REQ_VERSION)
+    message(FATAL_ERROR "YARP version is not compatible, please update YARP")
+else()
+    message(STATUS "found compatible YARP version (${YARP_VERSION})")
+endif()
+
 find_package(ICUB REQUIRED)
 find_package(TinyXML REQUIRED)
 
