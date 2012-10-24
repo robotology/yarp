@@ -2,6 +2,9 @@
 	* src/libYARP_OS/include/yarp/os/Thread.h: Make
 	yarp::os::Thread::join() method public.
 
+	* conf/YarpFindDependencies.cmake: Require TinyXML 2.6 for
+	TiXmlElement::QueryBoolAttribute()
+
 2012-10-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Companion.cpp: add "yarp sample" command
