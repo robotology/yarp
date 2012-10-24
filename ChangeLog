@@ -1,3 +1,8 @@
+2012-10-24  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* example/matlab/simulink: example of using YARP from Matlab's
+	simulink, contributed by Juan [thanks Juan G Victores]
+
 2012-10-23  Marco Randazzo <marco.randazzo@iit.it>
 	* src/libYARP_dev/ControlBoardPid.cpp 
 	* src/libYARP_dev/include/yarp/dev/ControlBoardPid.h
