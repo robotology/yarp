@@ -50,7 +50,7 @@ public:
 private:
     class Private;
     Private * const mPriv;
-};
+}; // class Device
 
 } // RobotInterface
 

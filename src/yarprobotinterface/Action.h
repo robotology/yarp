@@ -40,7 +40,7 @@ public:
 private:
     class Private;
     Private * const mPriv;
-};
+}; // class Action
 
 } // namespace RobotInterface
 

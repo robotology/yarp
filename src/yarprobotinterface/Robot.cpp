@@ -134,7 +134,7 @@ public:
     std::string name;
     ParamList params;
     DeviceList devices;
-};
+}; // class RobotInterface::Robot::Private
 
 bool RobotInterface::Robot::Private::hasDevice(const std::string &name) const
 {
@@ -589,7 +589,3 @@ std::string RobotInterface::Robot::findParam(const std::string& name) const
 {
     return RobotInterface::findParam(mPriv->params, name);
 }
-
-
-
-//END Robot

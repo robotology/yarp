@@ -11,10 +11,8 @@
 #include <vector>
 #include <iosfwd>
 
-namespace DebugStream
-{
-class Debug;
-}
+namespace yarp { namespace os { class Thread; } }
+namespace DebugStream { class Debug; }
 
 namespace RobotInterface
 {
