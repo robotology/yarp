@@ -35,6 +35,8 @@ namespace yarp {
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 
+#include "ffmpeg_api.h"
+
 /**
  * @ingroup dev_impl_media
  *
@@ -64,6 +66,8 @@ public:
         shouldLoop = true;
         pace = 1;
         imageSync = false;
+        YARP_AVDICT_INIT(formatParamsVideo);
+        YARP_AVDICT_INIT(formatParamsAudio);
     }
   
     virtual bool open(yarp::os::Searchable & config);
@@ -93,7 +97,8 @@ public:
 protected:
     void *system_resource;
 
-    AVFormatParameters formatParamsVideo, formatParamsAudio;
+    YARP_AVDICT formatParamsVideo;
+    YARP_AVDICT formatParamsAudio;
     AVFormatContext *pFormatCtx, *pFormatCtx2, *pAudioFormatCtx;
     AVPacket packet;
     bool active;

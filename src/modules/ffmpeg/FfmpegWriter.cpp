@@ -126,7 +126,7 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     }
 
     /* open it */
-    if (avcodec_open(c, codec) < 0) {
+    if (YARP_avcodec_open(c, codec) < 0) {
         fprintf(stderr, "could not open codec\n");
         exit(1);
     }
@@ -371,7 +371,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     }
 
     /* open the codec */
-    if (avcodec_open(c, codec) < 0) {
+    if (YARP_avcodec_open(c, codec) < 0) {
         fprintf(stderr, "could not open codec\n");
         exit(1);
     }

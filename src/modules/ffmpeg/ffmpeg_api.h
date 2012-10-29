@@ -29,6 +29,12 @@ extern "C" {
 #define FACTORED_DEVICE
 #endif
 
+#if LIBAVCODEC_VERSION_INT < (53<<16)
+// stick with AVFormatParameters
+#else
+#define GENERALIZED_PARAMETERS
+#endif 
+
 #ifndef OLD_FFMPEG
 extern "C" {
 #include <swscale.h>
@@ -64,6 +70,32 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
 #  define guess_format          av_guess_format
 #  define av_alloc_format_context avformat_alloc_context
 #  define FFEPOCH3
+#endif
+
+
+#ifdef GENERALIZED_PARAMETERS
+typedef AVDictionary *YARP_AVDICT;
+#define YARP_AVDICT_INIT(x) x = NULL
+#define YARP_AVDICT_QUOTE(x) #x
+#define YARP_AVDICT_SET_STR(x,k,v) av_dict_set(&x,YARP_AVDICT_QUOTE(k),v,0)
+#define YARP_AVDICT_SET_INT(x,k,v) { char buf[256]; sprintf(buf,"%d",v); av_dict_set(&x,YARP_AVDICT_QUOTE(k),buf,0); }
+#define YARP_AVDICT_SET_FRAC(x,k1,k2,v1,v2) { char buf[256]; sprintf(buf,"%d/d",v1,v2); av_dict_set(&x,YARP_AVDICT_QUOTE(k2),buf,0); }
+#define YARP_AVDICT_DESTROY(x) if (x) { av_dict_free(&x); x = NULL; }
+#define YARP_AVDICT_CLEAN(x)
+#define YARP_AV_OPEN_INPUT_FILE(a,b,c,d) avformat_open_input(a,b,c,d)
+#include <mathematics.h>
+#define YARP_avcodec_open(x,y) avcodec_open2(x,y,NULL)
+#else
+typedef AVFormatParameters YARP_AVDICT;
+#define YARP_AVDICT_DEFINE(x) AVFormatParameters x
+#define YARP_AVDICT_INIT(x)
+#define YARP_AVDICT_SET_STR(x,k,v) x.k = strdup(v)
+#define YARP_AVDICT_SET_INT(x,k,v) x.k = v
+#define YARP_AVDICT_SET_FRAC(x,k1,k2,v1,v2) { x.k1.num = v1; x.k1.den = v2; }
+#define YARP_AVDICT_DESTROY(x) 
+#define YARP_AVDICT_CLEAN(x) memset(&x, 0, sizeof(x))
+#define YARP_AV_OPEN_INPUT_FILE(a,b,c,d) av_open_input_file(a,strdup(b),c,0,d)
+#define YARP_avcode_open(x,y) avcodec_open(x,y)
 #endif
 
 #endif

@@ -152,7 +152,7 @@ public:
         }
         
         // Open codec
-        if(avcodec_open(pCodecCtx, pCodec)<0) {
+        if(YARP_avcodec_open(pCodecCtx, pCodec)<0) {
             printf("Could not open codec\n");
             return false; // Could not open codec
         }
@@ -360,13 +360,13 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
 
 #else
 	bool audio = (ppFormatCtx==NULL);
-    AVFormatParameters& formatParams = 
+    YARP_AVDICT& formatParams = 
         *(audio?(&formatParamsAudio):(&formatParamsVideo));
 
     AVInputFormat *iformat;
     Value v;
 
-    memset(&formatParams, 0, sizeof(formatParams));
+    YARP_AVDICT_CLEAN(formatParams);
     if (!audio) {
         //formatParams.prealloced_context = 1;
         v = config.check("v4ldevice",
@@ -379,38 +379,46 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
     }
     printf("Device %s\n",v.asString().c_str());
 #ifndef FACTORED_DEVICE
-    formatParams.device = strdup(v.asString().c_str());
+    YARP_AVDICT_SET_STR(formatParams,device,v.asString().c_str());
 #endif
 
     if (audio) {
-        formatParams.sample_rate = config.check("audio_rate",
-                                                Value(44100),
-                                                "audio sample rate").asInt();
-        formatParams.channels = config.check("channels",Value(1),
-                                             "number of channels").asInt();
+        YARP_AVDICT_SET_INT(formatParams,sample_rate,
+                            config.check("audio_rate",
+                                         Value(44100),
+                                         "audio sample rate").asInt());
+        YARP_AVDICT_SET_INT(formatParams,channels,
+                            config.check("channels",Value(1),
+                                         "number of channels").asInt());
     } else {
-        formatParams.time_base.den = config.check("time_base_den",
-                                                  Value(29),
-                                                  "denominator of basic time unit").asInt();
-        formatParams.time_base.num = config.check("time_base_num",
-                                                  Value(1),
-                                                  "numerator of basic time unit").asInt();
-        formatParams.channel = config.check("channel",Value(0),
-                                            "channel identifier").asInt();
-        formatParams.standard = xstrdup(config.check("standard",
-                                                     Value("-"),
-                                                     "pal versus ntsc").asString().c_str());
-        formatParams.width = config.check("width",Value(640),"width of image").asInt();
-        formatParams.height = config.check("height",Value(480),"height of image").asInt();
+        YARP_AVDICT_SET_FRAC(formatParams,time_base,framerate,
+                             config.check("time_base_num",
+                                          Value(1),
+                                          "numerator of basic time unit").asInt(),
+                             config.check("time_base_den",
+                                          Value(29),
+                                          "denominator of basic time unit").asInt());
+        YARP_AVDICT_SET_INT(formatParams,channel,
+                            config.check("channel",Value(0),
+                                         "channel identifier").asInt());
+        YARP_AVDICT_SET_STR(formatParams,standard,
+                            config.check("standard",
+                                         Value("-"),
+                                         "pal versus ntsc").asString().c_str());
+        YARP_AVDICT_SET_INT(formatParams,width,
+                            config.check("width",Value(640),"width of image").asInt());
+        YARP_AVDICT_SET_INT(formatParams,height,
+                            config.check("height",Value(480),"height of image").asInt());
     }
 
     ConstString videoDevice = (config.check("v4l1")?"video4linux":"video4linux2");
     iformat = av_find_input_format(audio?"audio_device":videoDevice.c_str());
 
-    int result = av_open_input_file(audio?ppFormatCtx2:ppFormatCtx,
-                                    strdup(v.asString().c_str()), 
-                                    iformat, 0, 
-                                    &formatParams);
+    int result = YARP_AV_OPEN_INPUT_FILE(audio?ppFormatCtx2:ppFormatCtx,
+                                         v.asString().c_str(),
+                                         iformat, 
+                                         &formatParams);
+
     bool ok = (result==0);
     if (!ok) {
         print_error(v.asString().c_str(),result);
@@ -615,6 +623,9 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 }
   
 bool FfmpegGrabber::close() {
+    YARP_AVDICT_DESTROY(formatParamsVideo);
+    YARP_AVDICT_DESTROY(formatParamsAudio);
+
     if (!active) {
         return false;
     }
