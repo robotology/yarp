@@ -51,7 +51,7 @@ public:
     void joinRunningThreads() const;
 
     // configure action
-    bool configure() const;
+    bool configure(const Device &target, const ParamList& params) const;
 
     // calibrate one device
     bool calibrate(const Device &target) const;
