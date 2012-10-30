@@ -179,24 +179,6 @@ So, now, have a look inside the directory ./log
 \sa dataSetPlayer
 */ 
 
-#include <yarp/os/Network.h>
-#include <yarp/os/RFModule.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/os/PortReport.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/os/Stamp.h>
-#include <yarp/os/RateThread.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/sig/Image.h>
-#include <yarp/sig/ImageFile.h>
-#include <yarp/os/Os.h>
-
-#ifdef ADD_VIDEO
-    #include <cv.h>
-    #include <highgui.h>
-#endif
-
 #include <stdio.h>
 #include <cstring>
 #include <fstream>
@@ -204,6 +186,16 @@ So, now, have a look inside the directory ./log
 #include <iomanip>
 #include <string>
 #include <deque>
+
+#ifdef ADD_VIDEO
+    #include <cv.h>
+    #include <highgui.h>
+#endif
+
+#include <yarp/os/all.h>
+#include <yarp/os/Os.h>
+#include <yarp/sig/Image.h>
+#include <yarp/sig/ImageFile.h>
 
 using namespace std;
 using namespace yarp::os;
