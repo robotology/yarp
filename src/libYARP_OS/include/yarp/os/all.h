@@ -23,7 +23,6 @@
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Os.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Port.h>
