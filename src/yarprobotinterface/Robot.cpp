@@ -304,8 +304,19 @@ bool RobotInterface::Robot::Private::detach(const RobotInterface::Device &device
 
 bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    YFIXME_NOTIMPLEMENTED
-    return true;
+    if (!RobotInterface::hasParam(params, "target")) {
+        yError() << "Action \"" << ActionTypeToString(ActionTypePark) << "\" requires \"target\" parameter";
+        return NULL;
+    }
+    std::string targetDeviceName = RobotInterface::findParam(params, "target");
+
+    if (!hasDevice(targetDeviceName)) {
+        yError() << "Target device" << targetDeviceName << "does not exist.";
+        return NULL;
+    }
+    Device &targetDevice = *findDevice(targetDeviceName);
+
+    return device.park(targetDevice);
 }
 
 bool RobotInterface::Robot::Private::custom(const RobotInterface::Device &device, const RobotInterface::ParamList &params)

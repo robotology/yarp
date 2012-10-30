@@ -19,8 +19,14 @@ namespace RobotInterface {
 class CalibratorThread: public yarp::os::Thread
 {
 public:
+    enum Action {
+        ActionCalibrate,
+        ActionPark
+    };
+
     CalibratorThread(yarp::dev::ICalibrator *calibrator,
                      yarp::dev::DeviceDriver *target,
+                     RobotInterface::CalibratorThread::Action action,
                      RobotInterface::ThreadList *threadList,
                      yarp::os::Semaphore *threadListSemaphore);
     virtual ~CalibratorThread();

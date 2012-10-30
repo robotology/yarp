@@ -66,7 +66,7 @@ public:
     bool detach() const;
 
     // park
-    bool park() const;
+    bool park(const Device &target) const;
 
     // custom action
     bool custom(const ParamList &params) const;

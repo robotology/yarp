@@ -310,7 +310,11 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
     controlCalibrator->setCalibrator(calibrator);
 
     mPriv->sem()->wait();
-    yarp::os::Thread *calibratorThread = new RobotInterface::CalibratorThread(calibrator, target.driver(), mPriv->thr(), mPriv->sem());;
+    yarp::os::Thread *calibratorThread = new RobotInterface::CalibratorThread(calibrator,
+                                                                              target.driver(),
+                                                                              RobotInterface::CalibratorThread::ActionCalibrate,
+                                                                              mPriv->thr(),
+                                                                              mPriv->sem());;
     mPriv->sem()->post();
 
     if (!calibratorThread->start()) {
@@ -351,4 +355,37 @@ bool RobotInterface::Device::detach() const
     }
 
     return true;
+}
+
+bool RobotInterface::Device::park(const Device &target) const
+{
+    yarp::dev::ICalibrator *calibrator;
+    if (!driver()->view(calibrator)) {
+        yError() << name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
+        return NULL;
+    }
+
+    yarp::dev::IControlCalibration2 *controlCalibrator;
+    if (!target.driver()->view(controlCalibrator)) {
+        yError() << target.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
+        return NULL;
+    }
+
+    controlCalibrator->setCalibrator(calibrator); // TODO Check if this should be removed
+
+    mPriv->sem()->wait();
+    yarp::os::Thread *parkerThread = new RobotInterface::CalibratorThread(calibrator,
+                                                                          target.driver(),
+                                                                          RobotInterface::CalibratorThread::ActionPark,
+                                                                          mPriv->thr(),
+                                                                          mPriv->sem());;
+    mPriv->sem()->post();
+
+    if (!parkerThread->start()) {
+        yError() << "Cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << name();
+        return false;
+    }
+
+    return true;
+
 }

@@ -21,19 +21,41 @@ public:
 
     bool init()
     {
-        if (!calibrator) {
-            yError() << "Skipping calibration, calibrator not set";
-            return false;
-        }
+        switch (action)
+        {
+        case ActionCalibrate:
+            if (!calibrator) {
+                yError() << "Skipping calibration, calibrator not set";
+                return false;
+            }
 
-        if (!target) {
-            yError() << "Skipping calibration, target not set";
-            return false;
-        }
+            if (!target) {
+                yError() << "Skipping calibration, target not set";
+                return false;
+            }
 
-        if (!threadList && !threadListSemaphore) {
-            yError() << "Skipping calibration, thread list and/or semaphore not set";
-            return false;
+            if (!threadList && !threadListSemaphore) {
+                yError() << "Skipping calibration, thread list and/or semaphore not set";
+                return false;
+            }
+            break;
+
+        case ActionPark:
+            if (!calibrator) {
+                yError() << "Skipping park, calibrator not set";
+                return false;
+            }
+
+            if (!target) {
+                yError() << "Skipping park, target not set";
+                return false;
+            }
+
+            if (!threadList && !threadListSemaphore) {
+                yError() << "Skipping park, thread list and/or semaphore not set";
+                return false;
+            }
+            break;
         }
 
         return true;
@@ -45,7 +67,19 @@ public:
         threadList->push_back(parent);
         threadListSemaphore->post();
 
-        calibrator->calibrate(target);
+        switch (action)
+        {
+        case ActionCalibrate:
+            yDebug() << "Starting calibration";
+            calibrator->calibrate(target);
+            yDebug() << "Calibration finished";
+            break;
+        case ActionPark:
+            yDebug() << "Starting park";
+            calibrator->park(target);
+            yDebug() << "Park finished";
+            break;
+        }
 
         threadListSemaphore->wait();
         threadList->remove(parent);
@@ -54,13 +88,24 @@ public:
 
     void stop()
     {
-        calibrator->quitCalibrate();
+        switch (action)
+        {
+        case ActionCalibrate:
+            yDebug() << "Killing calibration";
+            calibrator->quitCalibrate();
+            break;
+        case ActionPark:
+            yDebug() << "Killing calibration";
+            calibrator->quitPark();
+            break;
+        }
     }
 
     RobotInterface::CalibratorThread * const parent;
 
     yarp::dev::ICalibrator *calibrator;
     yarp::dev::DeviceDriver *target;
+    RobotInterface::CalibratorThread::Action action;
     RobotInterface::ThreadList *threadList;
     yarp::os::Semaphore *threadListSemaphore;
 }; // class RobotInterface::CalibratorThread::Private
@@ -69,12 +114,14 @@ public:
 
 RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calibrator,
                                                    yarp::dev::DeviceDriver *target,
+                                                   RobotInterface::CalibratorThread::Action action,
                                                    RobotInterface::ThreadList *threadList,
                                                    yarp::os::Semaphore *threadListSemaphore) :
         mPriv(new Private(this))
 {
     mPriv->calibrator = calibrator;
     mPriv->target = target;
+    mPriv->action = action;
     mPriv->threadList = threadList;
     mPriv->threadListSemaphore = threadListSemaphore;
 }
@@ -92,13 +139,10 @@ bool RobotInterface::CalibratorThread::threadInit()
 
 void RobotInterface::CalibratorThread::run()
 {
-    yDebug() << "Starting calibration";
     mPriv->run();
-    yDebug() << "Calibration done";
 }
 
 void RobotInterface::CalibratorThread::onStop()
 {
-    yDebug() << "Killing calibration";
     mPriv->stop();
 }
