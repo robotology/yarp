@@ -314,7 +314,7 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
     mPriv->sem()->post();
 
     if (!calibratorThread->start()) {
-        yError() << "Cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << name();
+        yError() << "Cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << name();
         return false;
     }
 
