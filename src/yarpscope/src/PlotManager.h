@@ -52,6 +52,7 @@ public:
 
     Gtk::Widget *getPlotWidget() const;
     void redraw(bool increment = true) const;
+    void autoRescale() const;
 
 private:
 

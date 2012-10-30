@@ -150,3 +150,11 @@ void YarpScope::PlotManager::redraw(bool increment) const
     }
 }
 
+void YarpScope::PlotManager::autoRescale() const
+{
+    for (std::vector<DataPlot*>::iterator it = mPriv->plots.begin();
+                it != mPriv->plots.end(); it++) {
+        (*it)->auto_rescale(0.05);
+        (*it)->queue_draw();
+    }
+}

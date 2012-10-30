@@ -60,6 +60,7 @@ public:
     void on_action_help_about();
     void on_action_actions_stop_start();
     void on_action_actions_clear();
+    void on_action_actions_autorescale();
     void on_action_interval_value_changed();
 
     // Parse inputs
@@ -165,6 +166,11 @@ void YarpScope::MainWindow::Private::on_action_actions_clear()
     PortReader::instance().clearData();
 }
 
+void YarpScope::MainWindow::Private::on_action_actions_autorescale()
+{
+    PlotManager::instance().autoRescale();;
+}
+
 YarpScope::MainWindow::MainWindow() :
         mPriv(new Private(this))
 {
@@ -185,6 +191,8 @@ YarpScope::MainWindow::MainWindow() :
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_stop_start));
     mPriv->refActionGroup->add(Gtk::Action::create_with_icon_name("Clear", "edit-clear", _("Clear"), _("Clear plots")),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_clear));
+    mPriv->refActionGroup->add(Gtk::Action::create_with_icon_name("AutoRescale", "transform-scale", _("Auto Rescale"), _("Automatically rescale plots")),
+                sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_actions_autorescale));
     mPriv->refActionGroup->add(Gtk::Action::create("MenuHelp", _("Help")));
     mPriv->refActionGroup->add(Gtk::Action::create("About", Gtk::Stock::ABOUT),
                 sigc::mem_fun(*mPriv, &MainWindow::Private::on_action_help_about));
@@ -202,6 +210,7 @@ YarpScope::MainWindow::MainWindow() :
     "    <menu action='MenuActions'>"
     "      <menuitem action='StopStart'/>"
     "      <menuitem action='Clear'/>"
+    "      <menuitem action='AutoRescale'/>"
     "    </menu>"
     "    <menu action='MenuHelp'>"
     "      <menuitem action='About'/>"
@@ -210,6 +219,7 @@ YarpScope::MainWindow::MainWindow() :
     "  <toolbar  name='ToolBar'>"
     "    <toolitem action='StopStart'/>"
     "    <toolitem action='Clear'/>"
+    "    <toolitem action='AutoRescale'/>"
     "  </toolbar>"
     "</ui>";
 
