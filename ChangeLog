@@ -1,3 +1,9 @@
+2012-10-30  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/yarpscope/src/MainWindow.cpp
+	* src/yarpscope/src/PlotManager.cpp
+	* src/yarpscope/src/PlotManager.h: Implement auto rescale
+	  function in yarpscope
+
 2012-10-24  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_dev/include/yarp/dev/TestMotor.h: have test_motor
