@@ -129,7 +129,7 @@ yarp::os::Contact RosLookup::getRosCoreAddress() {
     }
     if (!addr.isValid()) {
         fprintf(stderr,"cannot find roscore, is ROS_MASTER_URI set?\n");
-        exit(1);
+        ::exit(1);
     }
     return addr;
 }
