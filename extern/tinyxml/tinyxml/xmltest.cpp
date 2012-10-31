@@ -1366,6 +1366,16 @@ int main()
 		}*/
 	}
 
+	#ifdef TIXML_USE_STL
+	{
+		TiXmlDocument xml;
+		xml.Parse("<foo>foo&amp;#xa+bar</foo>");
+		std::string str;
+		str << xml;
+		XmlTest( "Entity escaping", "<foo>foo&amp;#xa+bar</foo>", str.c_str() );
+	}
+	#endif
+
 	/*  1417717 experiment
 	{
 		TiXmlDocument xml;

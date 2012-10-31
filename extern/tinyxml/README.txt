@@ -31,3 +31,12 @@ License:
  distribution.
 
 Version: 2.6.2
+
+Patches:
+ * enforce-use-stl.patch: (origin debian package 2.6.2-1) TinyXml is
+   built with TIXML_USE_STL, so we have to enforce it when the library
+   is used.
+
+ * entity-encoding.patch: (origin debian package 2.6.2-1) TinyXML
+   incorrectly encodes text element containing an ampersand followed by
+   either x or #.
