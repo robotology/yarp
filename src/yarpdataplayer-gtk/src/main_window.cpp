@@ -61,8 +61,8 @@ MainWindow::MainWindow(yarp::os::ResourceFinder    &rf)
     setupSignals();
     show_all_children();
     //initialize();
-    signal(SIGINT, sighandler);
-    signal(SIGTERM, sighandler);
+    ::signal(SIGINT, sighandler);
+    ::signal(SIGTERM, sighandler);
     rpcHuman.open( ("/"+moduleName+"/rpc:i").c_str() );
     attach(rpcHuman);
 }
