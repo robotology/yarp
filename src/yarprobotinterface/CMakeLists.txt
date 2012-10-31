@@ -20,7 +20,7 @@ else()
 endif()
 
 find_package(ICUB REQUIRED)
-find_package(TinyXML REQUIRED)
+find_package(TinyXML 2.6 REQUIRED)
 
 include_directories(${YARP_INCLUDE_DIRS})
 include_directories(${iCubDev_INCLUDE_DIRS})
