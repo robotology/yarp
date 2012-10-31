@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<params>
+    <group name="GENERAL">
+        <param name="Joints">12</param> <!-- the number of joints of the robot part -->
+
+        <!--                     0             1             2             3             4             5             6             7             8             9             10           11 -->
+        <param name="Encoder">   -706.67       -978.46       -978.46       4.166667      -10.8889      -2.44444      -2.41667      -2.55556      -2.5          -2.27778      -2.49444      -2.03704</param>
+        <param name="Zeros">     90.00         -20.00        -52.00        540.00        -131.33       -98.18        -184.14       -93.91        -188.00       -94.39        -184.01       -343.64</param>
+        <param name="TorqueId">  0x0C          0             0             0             0             0             0             0             0             0             0             0</param>
+        <param name="TorqueChan">4             0             0             0             0             0             0             0             0             0             0             0</param>
+        <param name="TorqueMax"> 2             2             2             2             2             2             2             2             2             2             2             2</param>
+        <param name="Rotor">     0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00</param>
+        <param name="Gearbox">   0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00          0.00</param>
+        <param name="Verbose">0</param>
+    </group>
+
+
+
+    <group name="VELOCITY">
+        <param name="MOT_speed_estimation">1             1             1             1             1             1             1             1             1             1             1             1</param>
+        <param name="MOT_accel_estimation">1             1             1             1             1             1             1             1             1             1             1             1</param>
+        <param name="JNT_accel_estimation">5             5             5             5             5             5             5             5             5             5             5             5</param>
+        <param name="JNT_speed_estimation">5             5             5             5             5             5             5             5             5             5             5             5</param>
+        <param name="Shifts">              8             8             8             8             8             8             8             8             8             8             8             8</param>
+        <param name="Timeout">             100           100           100           100           100           100           100           100           100           100           100           100</param>
+    </group>
+
+    <group name="LIMITS">
+        <!--                      0             1             2             3             4             5             6             7             8             9             10            11-->
+        <param name="Max">        90            0             40            60            90            90            180           90            180           90            180           270</param>
+        <param name="Min">        -90           -90           -20           0             10            0             0             0             0             0             0             0</param>
+        <param name="Currents">   500           800           800           485           485           485           485           485           485           485           485           485</param>
+    </group>
+
+    <group name="PIDS">
+        <!--                 Proportional  Derivative    Integral      Integral Limit              PWM Limit     scale factor >>             offset -->
+        <param name="Pid0">  200           1000          1             1333          1333          6             0                                     </param>
+        <param name="Pid1">  100           100           2             1333          1333          6             0                                     </param>
+        <param name="Pid2">  100           100           2             1333          1333          6             0                                     </param>
+        <param name="Pid3">  -200          -200          -1            1333          1333          5             0                                     </param>
+        <param name="Pid4">  8000          32000         5             1333          1333          11            0                                     </param>
+        <param name="Pid5">  -8000         -32000        -5            1333          1333          10            0                                     </param>
+        <param name="Pid6">  8000          32000         5             1333          1333          10            0                                     </param>
+        <param name="Pid7">  -8000         -32000        -5            1333          1333          10            0                                     </param>
+        <param name="Pid8">  8000          32000         5             1333          1333          10            0                                     </param>
+        <param name="Pid9">  -8000         -32000        -5            1333          1333          10            0                                     </param>
+        <param name="Pid10"> -8000         -32000        -5            1333          1333          10            0                                     </param>
+        <param name="Pid11"> -120          -1250         0             1333          1333          4             0                                     </param>
+    </group>
+
+    <!--
+    <group name="TORQUE_PIDS">
+        <param name="TPid0"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid1"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid2"> -30 0   0   1333    1333    10  0 </param>
+        <param name="TPid3"> -30 0   0   1333    1333    10  0 </param>
+        <param name="TPid4"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid5"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid6"> -30 0   0   1333    1333    10  0 </param>
+        <param name="TPid7"> -30 0   0   1333    1333    10  0 </param>
+        <param name="TPid8"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid9"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid10">-30 0   0   1333    1333    10  0 </param>
+        <param name="TPid11">-30 0   0   1333    1333    10  0 </param>
+    </group>
+    -->
+
+</params>

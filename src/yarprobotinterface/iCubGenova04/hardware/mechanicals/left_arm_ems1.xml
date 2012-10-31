@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<params>
+    <group name="GENERAL">
+        <param name="Joints">4</param> <!-- the number of joints of the robot part -->
+
+        <!--                     0             1             2             3 -->
+        <param name="Encoder">   -11.375       -11.375       -11.375       -11.375</param>
+        <param name="Zeros">     -180.00       -315.00       -180.00       -180.00</param>
+        <param name="TorqueId">  0x0C          0x0C          0x0C          0x0C</param>
+        <param name="TorqueChan">0             1             2             3</param>
+        <param name="TorqueMax"> 8             8             8             8</param>
+        <param name="Rotor">     0.00          0.00          0.00          0.00</param>
+        <param name="Gearbox">   0.00          0.00          0.00          0.00</param>
+        <param name="Verbose">0</param>
+    </group>
+
+    <group name="VELOCITY">
+        <param name="MOT_speed_estimation">1             1             1             1</param>
+        <param name="MOT_accel_estimation">1             1             1             1</param>
+        <param name="JNT_accel_estimation">5             5             5             5</param>
+        <param name="JNT_speed_estimation">5             5             5             5</param>
+        <param name="Shifts">              8             8             8             8</param>
+        <param name="Timeout">             100           100           100           100</param>
+    </group>
+
+    <group name="LIMITS">
+        <!--                      0             1             2             3 -->
+        <param name="Max">        10            160.8         80            106</param>
+        <param name="Min">        -95.5         0             -37           15</param>
+        <param name="Currents">   7000    7000    7000    7000</param>
+    </group>
+
+    <group name="PIDS">
+        <!--                 Proportional  Derivative    Integral      Integral Limit              PWM Limit     scale factor >>             offset -->
+        <param name="Pid0">  32000         50            60            1333          1333          13            0                                     </param>
+        <param name="Pid1">  32000         50            60            1333          1333          13            0                                     </param>
+        <param name="Pid2">  10000         0             10            1333          1333          13            0                                     </param>
+        <param name="Pid3">  32000         20            60            1333          1333          13            0                                     </param>
+    </group>
+
+    <group name="TORQUE_PIDS">
+        <param name="TPid0"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid1"> -8  0   0   1333    1333    10  0 </param>
+        <param name="TPid2"> -30 0   0   1333    1333    10  0 </param>
+        <param name="TPid3"> -30 0   0   1333    1333    10  0 </param>
+    </group>
+
+</params>

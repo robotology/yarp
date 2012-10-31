@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<device name="left_arm_calibrator" type="parametricCalibrator">
+
+    <group name="GENERAL">
+        <param name="Joints">16</param> <!-- the number of joints of the robot part -->
+    </group>
+
+    <group name="HOME">
+        <!-- Joint                     0             1             2             3             4             5             6             7             8             9             10            11            12            13            14            15 -->
+        <param name="PositionHome">    -30           30            0             45            0             0             40            15            30            0             0             0             0             0             0             0  </param>
+        <param name="VelocityHome">    10            10            10            10            30            30            30            100           10            10            10            10            10            10            10            10 </param>
+    </group>
+
+    <group name="CALIBRATION">
+        <param name="Joints">16</param> <!-- the number of joints of the robot part -->
+        <!-- Joint                     0             1             2             3             4             5             6             7             8             9             10            11            12            13            14            15 -->
+        <param name="CalibrationType"> 3             3             3             3             0             2             2             3             3             4             4             4             4             4             4             4      </param>
+        <param name="Calibration1">    2388.75       3241.875      2047.5        1535.625      500           750           750           2250          1538.889      240           10            240           20            215           10            700    </param>
+        <param name="Calibration2">    10            10            10            10            20            -10           -10           100           10            10            30            10            10            10            10            10     </param>
+        <param name="Calibration3">    2047.5        511.875       2047.5        2047.5        0             0             0             0             0             6000          -6600         6000          7000          6000          -7000         -14000 </param>
+        <param name="PositionZero">    -30           30            0             45            0             0             0             15            30            0             0             0             0             0             0             0      </param>
+        <param name="VelocityZero">    10            10            10            10            30            30            30            100           100           100           100           100           100           100           100           100    </param>
+        <param name="MaxPWM">          120           120           120           120           1000          1000          1000          1000          1000          1000          1000          1000          1000          1000          1000          1000   </param>
+    </group>
+
+    <param name="CALIB_ORDER">(0 1 2 3) (4 6 7) (5) (8 9 11 13) (10 12 14 15)</param>
+
+    <action phase="startup" level="10" type="calibrate">
+        <param name="target">left_arm_wrapper</param>
+    </action>
+
+    <action phase="interrupt1" level="1" type="park">
+        <param name="target">left_arm_wrapper</param>
+    </action>
+
+    <action phase="interrupt3" level="1" type="abort" />
+
+</device>
