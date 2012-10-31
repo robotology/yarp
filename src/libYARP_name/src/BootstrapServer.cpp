@@ -38,7 +38,7 @@ public:
         fallback = new FallbackNameServer(*this);
         if (fallback==NULL) {
             fprintf(stderr,"Cannot allocate ServerAdapter\n");
-            exit(1);
+            ::exit(1);
         }
     }
 
@@ -75,7 +75,7 @@ BootstrapServer::BootstrapServer(NameService& owner) {
     implementation = new BootstrapServerAdapter(owner);
     if (implementation==NULL) {
         fprintf(stderr,"Cannot allocate ServerAdapter\n");
-        exit(1);
+        ::exit(1);
     }
 }
 
