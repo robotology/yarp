@@ -18,6 +18,8 @@ set(tinyxml_HDRS
     tinyxml/tinyxml.h
 )
 
+add_definitions("-DTIXML_USE_STL")
+
 add_library(YARP_tinyxml STATIC ${tinyxml_SRCS})
 
 if(UNIX)
