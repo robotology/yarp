@@ -652,6 +652,9 @@ int TiXmlElement::QueryUnsignedAttribute( const char* name, unsigned* value ) co
 
 	int ival = 0;
 	int result = node->QueryIntValue( &ival );
+	if (ival < 0)
+		return TIXML_WRONG_TYPE;
+
 	*value = (unsigned)ival;
 	return result;
 }

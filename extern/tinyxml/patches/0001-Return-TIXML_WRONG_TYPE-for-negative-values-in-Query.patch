@@ -1,0 +1,26 @@
+From 5eb49742f7a5d23bd1bd074ced6de7716367e42b Mon Sep 17 00:00:00 2001
+From: "Daniele E. Domenichelli" <daniele.domenichelli@gmail.com>
+Date: Fri, 14 Sep 2012 15:29:23 +0200
+Subject: [PATCH] Return TIXML_WRONG_TYPE for negative values in
+ QueryUnsignedAttribute
+
+---
+ tinyxml.cpp |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tinyxml.cpp b/tinyxml.cpp
+index 9c161df..87284c2 100755
+--- a/tinyxml.cpp
++++ b/tinyxml.cpp
+@@ -675,6 +675,8 @@ int TiXmlElement::QueryUnsignedAttribute( const char* name, unsigned* value ) co
+ 
+ 	int ival = 0;
+ 	int result = node->QueryIntValue( &ival );
++	if ( val < 0 )
++		return TIXML_WRONG_TYPE;
+ 	*value = (unsigned)ival;
+ 	return result;
+ }
+-- 
+1.7.10.4
+
