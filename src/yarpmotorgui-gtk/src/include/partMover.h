@@ -141,7 +141,7 @@ class partMover{
   GtkWidget *treeview;
   static void enable_entry_update(partMover* currentPartMover);
   static void disable_entry_update(partMover* currentPartMover);
-  partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char * labelPart, ResourceFinder *fnd, bool speed_view_ena);
+  partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char * labelPart, ResourceFinder *fnd, bool speed_view_ena, bool enable_calib_all);
   ~partMover();
   void releaseDriver();
 

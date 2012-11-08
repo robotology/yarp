@@ -184,6 +184,7 @@ int NUMBER_OF_AVAILABLE_PARTS = 0;
 int PART;
 bool debug_param_enabled = false;
 bool speedview_param_enabled =false;
+bool enable_calib_all =false;
 
 ResourceFinder *finder;
 ////////////////////////
@@ -375,7 +376,7 @@ static void myMain2(GtkButton *button,	int *position)
 						debugdd[n]=0;
 					}
 
-                    currentPartMover = new partMover(main_vbox4, partsdd[n], debugdd[n], partsName[n], finder,speedview_param_enabled);
+                    currentPartMover = new partMover(main_vbox4, partsdd[n], debugdd[n], partsName[n], finder,speedview_param_enabled, enable_calib_all);
                     if(!(currentPartMover->interfaceError)) 
                         {
                             partMoverList[NUMBER_OF_ACTIVATED_PARTS] = currentPartMover;

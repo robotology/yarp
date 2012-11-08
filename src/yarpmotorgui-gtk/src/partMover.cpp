@@ -29,7 +29,7 @@
   GtkWidget *frame2;
 
 
-partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char *partName, ResourceFinder *fnd, bool speed_view_ena)
+partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char *partName, ResourceFinder *fnd, bool speed_view_ena, bool enable_calib_all)
 {
   first_time=true;
   speed_view_enable=speed_view_ena;
@@ -394,6 +394,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       //Button11 in the panel
       GtkWidget *button11 = gtk_button_new_with_mnemonic ("CalibAll");
       //gtk_container_add (GTK_CONTAINER (panel_hbox), button0);
+      if (enable_calib_all==false) gtk_widget_set_sensitive(button11, false);
       g_signal_connect (button11, "clicked", G_CALLBACK (calib_all), this);
       gtk_fixed_put (GTK_FIXED (inv1), button11, 25+(NUMBER_OF_JOINTS%numberOfRows)*width,         80+(NUMBER_OF_JOINTS/numberOfRows)*height);
       gtk_widget_set_size_request 	(button11, 150, 30);
