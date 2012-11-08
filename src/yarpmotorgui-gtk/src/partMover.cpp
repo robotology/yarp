@@ -342,6 +342,8 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	  g_signal_connect (homeArray[k], "clicked", G_CALLBACK (home_click), myClassData1);
 	  g_signal_connect (disableArray[k], "clicked", G_CALLBACK (dis_click), myClassData1);
 	  g_signal_connect (calibrateArray[k], "clicked", G_CALLBACK (calib_click), myClassData1);
+      if (enable_calib_all==false) gtk_widget_set_sensitive(calibrateArray[k], false);
+
 	  g_signal_connect (enableArray[k], "clicked", G_CALLBACK (run_click), myClassData1);
 	  g_signal_connect (pidArray[k], "clicked", G_CALLBACK (pid_click), myClassData1);		
 	  //control mode

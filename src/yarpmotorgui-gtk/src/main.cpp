@@ -709,6 +709,17 @@ int myMain( int   argc, char *argv[] )
     finder->setDefault("name", "icub");
     finder->configure("ICUB_ROOT",argc,argv);
     //fprintf(stderr, "Retrieved finder: %p \n", finder);
+    if (finder->check("calib"))
+    {
+        printf("Calibrate buttons on\n");
+        enable_calib_all = true;
+    }
+    if (finder->check("admin"))
+    {
+        printf("Admin mode on.\n");
+        enable_calib_all = true;
+        debug_param_enabled = true;
+    }
 	if (finder->check("debug"))
 	{
 		printf("Debug interface requested.\n");
