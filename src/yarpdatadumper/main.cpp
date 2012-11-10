@@ -42,8 +42,6 @@ folder the file 'data.log' contains the information (taken from
 the envelope field of the port) line by line as follows: 
  
 \code 
-Type: [Bottle]/[Image:ppm]/[Image:ppm; Video:avi(huffyuv)]
- 
 [pck id] [time stamp] [bottle content (or image_file_name)] 
    0       1.234         0 1 2 3 ...
    1       1.235         4 5 6 7 ...
@@ -54,7 +52,18 @@ Note that if the envelope is not valid, then the Time Stamp is
 the reference time of the machine where the service is running. 
 Anyway, a selection between these two Time Stamps is available 
 for the user through --rxTime option. 
+ 
+Moreover, a further file called 'info.log' is also produced 
+containing information about the data type stored within the 
+'data.log' file as well as the name of the yarp ports connected 
+or disconnected to the dumper, as in the following:
 
+\code 
+Type: [Bottle]/[Image:ppm]/[Image:ppm; Video:avi(huffyuv)] 
+[local-timestamp] /yarp-port-name [connected] 
+[local-timestamp] /yarp-port-name [disconnected]
+\endcode 
+ 
 The module \ref dataSetPlayer can be used to re-play a dump generated 
 by the \ref dataDumper.
  
@@ -394,10 +403,11 @@ class DumpThread : public RateThread
 private:
     DumpQueue     &buf;
     DumpType       type;
-    Semaphore      mutex;
-    ofstream       fout;
+    ofstream       finfo;
+    ofstream       fdata;
     char           dirName[255];
-    char           logFile[255];
+    char           infoFile[255];
+    char           dataFile[255];
     unsigned int   blockSize;
     unsigned int   cumulSize;
     unsigned int   counter;
@@ -419,8 +429,12 @@ public:
                RateThread(50), type(_type), buf(Q), blockSize(szToWrite), saveData(_saveData), videoOn(_videoOn)
     {
         strcpy(dirName,_dirName);
-        strcpy(logFile,dirName);        
-        strcat(logFile,"/data.log");
+
+        strcpy(infoFile,dirName);
+        strcat(infoFile,"/info.log");
+
+        strcpy(dataFile,dirName);
+        strcat(dataFile,"/data.log");
 
     #ifdef ADD_VIDEO
         strcpy(videoFile,dirName);
@@ -433,10 +447,9 @@ public:
 
     void writeSource(const string &sourceName, const bool connected)
     {
-        mutex.wait();
-        fout << "Source: " << sourceName << " ";
-        fout << (connected?"[connected]":"[disconnected]") << endl;
-        mutex.post();
+        finfo << "[" << fixed << Time::now() << "] ";
+        finfo << sourceName << " ";
+        finfo << (connected?"[connected]":"[disconnected]") << endl;
     }
 
     bool threadInit()
@@ -446,24 +459,31 @@ public:
         counter=0;
         closing=false;
 
-        fout.open(logFile);
-        if (!fout.is_open())
+        finfo.open(infoFile);
+        if (!finfo.is_open())
         {
             cout << "unable to open file" << endl;
             return false;
         }
 
-        fout<<"Type: ";
-        if (type==bottle)
-            fout<<"Bottle;";
-        else if (type==image)
+        fdata.open(dataFile);
+        if (!fdata.is_open())
         {
-            fout<<"Image:ppm;";
-            if (videoOn)
-                fout<<" Video:avi(huffyuv);";
+            cout << "unable to open file" << endl;
+            return false;
         }
 
-        fout<<endl;
+        finfo<<"Type: ";
+        if (type==bottle)
+            finfo<<"Bottle;";
+        else if (type==image)
+        {
+            finfo<<"Image:ppm;";
+            if (videoOn)
+                finfo<<" Video:avi(huffyuv);";
+        }
+
+        finfo<<endl;
         return true;
     }
 
@@ -521,17 +541,15 @@ public:
                 buf.pop_front();
                 buf.unlock();
 
-                mutex.wait();
-                fout << item.seqNumber << ' ' << fixed << item.timeStamp << ' ';
+                fdata << item.seqNumber << ' ' << fixed << item.timeStamp << ' ';
                 if (saveData)
-                    fout << item.obj->toFile(dirName,counter++) << endl;
+                    fdata << item.obj->toFile(dirName,counter++) << endl;
                 else
                 {
                     char frame[255];
                     sprintf(frame,"frame_%.8d",counter++);
-                    fout << frame << endl;
+                    fdata << frame << endl;
                 }
-                mutex.post();
 
             #ifdef ADD_VIDEO
                 if (doSaveFrame)
@@ -552,7 +570,8 @@ public:
         closing=true;
         run();
 
-        fout.close();
+        finfo.close();
+        fdata.close();
 
     #ifdef ADD_VIDEO
         if (doSaveFrame)
