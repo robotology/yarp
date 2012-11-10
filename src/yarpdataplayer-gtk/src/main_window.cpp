@@ -202,10 +202,11 @@ int MainWindow::doGuiSetup(string newPath)
     subDirCnt = 0;
     partsName.clear();
     partsFullPath.clear();
+    partsInfoPath.clear();
     partsLogPath.clear();
     utilities->resetMaxTimeStamp();
 
-    subDirCnt = utilities->getRecSubDirList(newPath.c_str(), partsName, partsLogPath, partsFullPath, 1);
+    subDirCnt = utilities->getRecSubDirList(newPath.c_str(), partsName, partsInfoPath, partsLogPath, partsFullPath, 1);
     fprintf(stdout,"the size of subDirs is: %d\n", subDirCnt);
 
     //reset totalSent to 0
@@ -219,6 +220,7 @@ int MainWindow::doGuiSetup(string newPath)
     for (int x=0; x < subDirCnt; x++)
     {
         utilities->partDetails[x].name = partsName[x];
+        utilities->partDetails[x].infoFile = partsInfoPath[x];
         utilities->partDetails[x].logFile = partsLogPath[x];
         utilities->partDetails[x].path = partsFullPath[x];
         utilities->setupDataFromParts(utilities->partDetails[x]);

@@ -49,15 +49,24 @@ Without GUI run with the extra parameter \e hidden:
 dataDumper data.log file example:
 
 \verbatim
-  Type: Bottle; 
-  Source: /icub/head/state:o
   9566    1324373535.040288   -2.32967 0.043956 1.450549 -0.56044 1.704894 4.136408
   etc...
 \endverbatim
 
-\e Type: is used to identify what kind of data the player is required to send
+dataDumper info.log file example:
+
+\verbatim
+  Type: Bottle;  
+  [1324373535.040288] /icub/head/state:o [connected]  
+  etc...
+\endverbatim
+    
+\e Type: is used to identify what kind of data the player is    
+   required to send. 
  
-\e Source: is used to initially set up the ports of the player. This can be changed using the GUI.
+\e The names of the ports open up by the player are initially    
+   set up based on the content of info.log file. This can be 
+   then changed using the GUI. 
 
 \section parameters_sec Parameters
 
@@ -90,18 +99,19 @@ dataDumper data.log file example:
 \section in_files_sec Input Data Files
 The player will look, in a recursive way, into directories in order to create the parts needed and retreive the data.
 
-The data name is the default \ref dataDumper name: data.log
+The data name is the default \ref dataDumper names: data.log and    
+info.log.    
 
-An example directory tree containing data (data.log) can be:
+An example directory tree containing data (data.log+info.log)    
+can be:    
 \code
 /experiment1/
-             /head/data.log 
-             /torso/data.log 
-             /images/leftCamera/data.log 
- 
-             /images/rightCamera/data.log 
-             /left_leg/data.log 
-             /right_leg/data.log 
+             /head/data.log;info.log
+             /torso/data.log;info.log;
+             /images/leftCamera/data.log;info.log
+             /images/rightCamera/data.log;info.log
+             /left_leg/data.log;info.log
+             /right_leg/data.log;info.log
 \endcode
 
 If the directory indicated is either "experiment1" or within experiment, the player will successfully load all required data.

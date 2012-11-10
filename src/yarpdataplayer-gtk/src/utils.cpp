@@ -71,7 +71,8 @@ string Utilities::getCurrentPath()
     return currentPath;
 }
 /**********************************************************/
-int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string> &logs, vector<string> &paths, int recursive)
+int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string> &info,
+                                vector<string> &logs, vector<string> &paths, int recursive)
 {
     struct dirent *direntp = NULL;
     DIR *dirp = NULL;
@@ -119,12 +120,14 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
         {
             string recDir = full_name;
             struct stat st;
-            string fullName = string(dir + "/" + direntp->d_name + "/data.log");
+            string fullName = string(dir + "/" + direntp->d_name + "/info.log");
             const char * filename = fullName.c_str();
             if(stat(filename,&st) == 0)
             {
+                string dataFileName = string(dir + "/" + direntp->d_name + "/data.log");
+
                 //check log file validity before proceeding
-                if ( checkLogValidity( filename ) )
+                if ( checkLogValidity( filename ) && (stat(dataFileName.c_str(),&st) == 0))
                 {
                     fprintf(stdout," %s IS present adding it to the gui\n",filename);
                     
@@ -133,6 +136,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                     else
                         names.push_back( string(recursiveName + "_" + direntp->d_name) );//pass only subDir name
 
+                    info.push_back( string(dir + "/" + direntp->d_name + "/info.log") );
                     logs.push_back( string(dir + "/" + direntp->d_name + "/data.log") );
                     paths.push_back( string(dir + "/" + direntp->d_name + "/") ); //pass full path
                     dir_count++;
@@ -152,7 +156,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                 else
                     recursiveName = string( direntp->d_name );
                 
-                getRecSubDirList(recDir, names, logs, paths, 1);
+                getRecSubDirList(recDir, names, info, logs, paths, 1);
             }
             if (recursiveIterations < 2 || recursiveIterations > 2)
             {
@@ -165,6 +169,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
     (void)closedir(dirp);
     //avoid this for alphabetical order in linux
     sort(names.begin(), names.end());
+    sort(info.begin(), info.end());
     sort(logs.begin(), logs.end());
     sort(paths.begin(), paths.end());
 
@@ -198,20 +203,18 @@ bool Utilities::checkLogValidity(const char *filename)
     return check;
 }
 /**********************************************************/
-void Utilities::setupDataFromParts(partsData &part)
+bool Utilities::setupDataFromParts(partsData &part)
 {
-    //get fileName
-    if (!part.str.is_open())
-    {
-        fprintf(stdout,"opening file %s\n", part.logFile.c_str() );
-        part.str.open (part.logFile.c_str());//, ios::binary);
-    }
-    //read throughout
-    if (part.str.is_open())
+    fstream str;
+
+    // info part
+    fprintf(stdout,"opening file %s\n", part.infoFile.c_str() );
+    str.open (part.logFile.c_str());//, ios::binary);
+    if (str.is_open())
     {
         string line;
         int itr = 0;
-        while( getline( part.str, line ) )
+        while( getline( str, line ) && (itr <= 1) )
         {
             Bottle b( line.c_str() );
             if (itr == 0)
@@ -224,24 +227,39 @@ void Utilities::setupDataFromParts(partsData &part)
                 part.portName = b.get(1).toString().c_str();
                 fprintf(stdout, "the name of the port is %s\n",part.portName.c_str());
             }
-            //avoid saving blank line
-            //if (b==NULL)
-               //continue;
 
-            if (itr >= 1)
-            {
-                part.bot.addList() = b;
-                part.timestamp.push_back( b.get(1).asDouble() );
-            }
+            itr++;
+        }
+        str.close();
+    }
+    else
+        return false;
+
+    // data part
+    fprintf(stdout,"opening file %s\n", part.logFile.c_str() );
+    str.open (part.logFile.c_str());//, ios::binary);
+
+    //read throughout
+    if (str.is_open())
+    {
+        string line;
+        int itr = 0;
+        while( getline( str, line ) )
+        {
+            Bottle b( line.c_str() );
+            part.bot.addList() = b;
+            part.timestamp.push_back( b.get(1).asDouble() );
             itr++;
         }
         allTimeStamps.push_back( part.timestamp[1] );   //save all first timeStamps dumped for later ease of use
-        part.str.clear();                               //clear eof flag
-        part.str.seekg( 0, ios::beg );                  //try seeking to the beginning
         part.maxFrame= itr-1;                           //set max frame to the total iteration minus first line type;
         part.currFrame = 1;                             //initialize current frame to 0
-        part.str.close();                               //close the file
+        str.close();                                    //close the file
     }
+    else
+        return false;
+
+    return true;
 }
 /**********************************************************/
 void Utilities::getMaxTimeStamp()

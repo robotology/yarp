@@ -36,9 +36,9 @@ struct partsData
         WorkerClass             *worker;                                                        //personal rate thread
         yarp::os::Semaphore     mutex;                                                          //semaphore
         std::string             name;                                                           //string containing the name of the part
+        std::string             infoFile;                                                       //string containing the path of the infoFile
         std::string             logFile;                                                        //string containing the path of the logFile
-        std::string             path;                                                           //string containing the path of the part
-        std::fstream            str;                                                            //fstream of the part
+        std::string             path;                                                           //string containing the path of the part        
         std::string             type;                                                           //string containing the type of the data
         int                     currFrame;                                                      //integer containing the current frame
         int                     maxFrame;                                                       //integer containing the maxFrame
@@ -85,7 +85,8 @@ public:
     /**
     * function that returns a vector containing path directories - works in a recursive way
     */
-    int getRecSubDirList(std::string dir, std::vector<std::string> &names, std::vector<std::string> &logs, std::vector<std::string> &paths, int recursive);
+    int getRecSubDirList(std::string dir, std::vector<std::string> &names, std::vector<std::string> &info,
+                         std::vector<std::string> &logs, std::vector<std::string> &paths, int recursive);
     /**
     * function that checks validity of log files
     */
@@ -97,7 +98,7 @@ public:
     /**
     * function that loads and returns the data from each part
     */
-    void setupDataFromParts(partsData &part);
+    bool setupDataFromParts(partsData &part);
     /**
     * function that configures and opens all the ports required
     */

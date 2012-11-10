@@ -142,6 +142,7 @@ private:
 
     std::vector<std::string>    partsName;
     std::vector<std::string>    partsFullPath;
+    std::vector<std::string>    partsInfoPath;
     std::vector<std::string>    partsLogPath;
     int                         subDirCnt;
     std::vector<std::string>    dataType;
