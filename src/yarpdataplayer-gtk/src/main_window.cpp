@@ -106,7 +106,7 @@ bool MainWindow::execReq(const Bottle &command, Bottle &reply)
             fprintf(stdout, "CMD: %s", command.toString().c_str());
             string cmdPath = command.get(1).toString().c_str();
             for (int x=0; x < subDirCnt; x++)
-                utilities->closePorts(utilities->partDetails[x]);  
+                utilities->closePorts(utilities->partDetails[x]);
 
             clearUtilities();
             createUtilities();

@@ -209,7 +209,8 @@ bool Utilities::setupDataFromParts(partsData &part)
 
     // info part
     fprintf(stdout,"opening file %s\n", part.infoFile.c_str() );
-    str.open (part.logFile.c_str());//, ios::binary);
+
+    str.open (part.infoFile.c_str());//, ios::binary);
     if (str.is_open())
     {
         string line;

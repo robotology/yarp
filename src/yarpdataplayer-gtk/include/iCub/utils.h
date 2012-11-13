@@ -38,7 +38,7 @@ struct partsData
         std::string             name;                                                           //string containing the name of the part
         std::string             infoFile;                                                       //string containing the path of the infoFile
         std::string             logFile;                                                        //string containing the path of the logFile
-        std::string             path;                                                           //string containing the path of the part        
+        std::string             path;                                                           //string containing the path of the part
         std::string             type;                                                           //string containing the type of the data
         int                     currFrame;                                                      //integer containing the current frame
         int                     maxFrame;                                                       //integer containing the maxFrame
