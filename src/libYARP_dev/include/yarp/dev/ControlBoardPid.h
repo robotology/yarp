@@ -26,15 +26,15 @@ namespace yarp{
 class YARP_dev_API yarp::dev::Pid
 {
 public:
-    double kp;     /**< proportional gain */
-    double kd;     /**< derivative gain */
-    double ki;     /**< integrative gain */
-    double max_int;    /**< saturation threshold for the integrator */
-    double scale;      /**< scale for the pid output */
-    double max_output; /**< max output */
-    double offset;            /**< pwm offset added to the pid output */
-    double stiction_pos_val;  /**< positive stiction offset added to the pid output */
-    double stiction_neg_val;  /**< negative stiction offset added to the pid output */
+    double kp;                 /**< proportional gain */
+    double kd;                 /**< derivative gain */
+    double ki;                 /**< integrative gain */
+    double max_int;            /**< saturation threshold for the integrator */
+    double scale;              /**< scale for the pid output */
+    double max_output;         /**< max output */
+    double offset;             /**< pwm offset added to the pid output */
+    double stiction_up_val;    /**< up stiction offset added to the pid output */
+    double stiction_down_val;  /**< down stiction offset added to the pid output */
 
 public:
     /*! \brief Default Constructor */
@@ -59,11 +59,11 @@ public:
      * @param int_max  integrator max output
      * @param scale scaling factor
      * @param out_max cap on output
-     * @param st_pos positive stiction offset
-     * @param st_neg negative stiction offset
+     * @param st_up up stiction offset
+     * @param st_down down stiction offset
      */
     Pid(double kp, double kd, double ki, 
-        double int_max, double scale, double out_max, double st_pos, double st_neg);
+        double int_max, double scale, double out_max, double st_up, double st_down);
 
     /** Set proportional gain 
      * @param p new gain
@@ -101,10 +101,10 @@ public:
     void setOffset(double o);
 
     /** Set the two stiction values for the pid.
-     * @param pos_value the new positive value
-     * @param neg_value the new negative value
+     * @param up_value the new up value
+     * @param down_value the new down value
      */
-    void setStictionValues(double pos_value, double neg_value);
+    void setStictionValues(double up_value, double down_value);
 };
 
 #endif

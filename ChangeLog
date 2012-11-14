@@ -1,3 +1,8 @@
+2012-11-14  Ugo Pattacini <ugo.pattacini@iit.it>
+   * libYARP_dev/ControlBoardPid.h,.cpp,ServerControlBoard.cpp,
+     RemoteControlBoard.cpp: stiction values name changed from
+     positive/negative to up/down.
+
 2012-10-30  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* src/yarpscope/src/MainWindow.cpp
 	* src/yarpscope/src/PlotManager.cpp
