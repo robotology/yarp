@@ -114,8 +114,8 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   pid->ki = atoi(gtk_entry_get_text((GtkEntry*) pos_kiDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) pos_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) pos_offsetDes));
-  pid->stiction_pos_val = atoi(gtk_entry_get_text((GtkEntry*) pos_posStictionDes));
-  pid->stiction_neg_val = atoi(gtk_entry_get_text((GtkEntry*) pos_negStictionDes));
+  pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) pos_posStictionDes));
+  pid->stiction_down_val = atoi(gtk_entry_get_text((GtkEntry*) pos_negStictionDes));
   pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) pos_PWM_limitDes));
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) pos_INT_limitDes));
 
@@ -138,9 +138,9 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) pos_PWM_limitEntry,  buffer);
   sprintf(buffer, "%d", (int) pid->max_int);
   gtk_entry_set_text((GtkEntry*) pos_INT_limitEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->stiction_pos_val);
+  sprintf(buffer, "%d", (int) pid->stiction_up_val);
   gtk_entry_set_text((GtkEntry*) pos_posStictionEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->stiction_neg_val);
+  sprintf(buffer, "%d", (int) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) pos_negStictionEntry,  buffer);
 }
 
@@ -156,8 +156,8 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kiDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
-  pid->stiction_pos_val = atoi(gtk_entry_get_text((GtkEntry*) trq_posStictionDes));
-  pid->stiction_neg_val = atoi(gtk_entry_get_text((GtkEntry*) trq_negStictionDes));
+  pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) trq_upStictionDes));
+  pid->stiction_down_val = atoi(gtk_entry_get_text((GtkEntry*) trq_downStictionDes));
   pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) trq_PWM_limitDes));
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) trq_INT_limitDes));
 
@@ -180,10 +180,10 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) trq_PWM_limitEntry,  buffer);
   sprintf(buffer, "%d", (int) pid->max_int);
   gtk_entry_set_text((GtkEntry*) trq_INT_limitEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->stiction_pos_val);
-  gtk_entry_set_text((GtkEntry*) trq_posStictionEntry,  buffer);
-  sprintf(buffer, "%d", (int) pid->stiction_neg_val);
-  gtk_entry_set_text((GtkEntry*) trq_negStictionEntry,  buffer);
+  sprintf(buffer, "%d", (int) pid->stiction_up_val);
+  gtk_entry_set_text((GtkEntry*) trq_upStictionEntry,  buffer);
+  sprintf(buffer, "%d", (int) pid->stiction_down_val);
+  gtk_entry_set_text((GtkEntry*) trq_downStictionEntry,  buffer);
 }
 
 //*********************************************************************************
@@ -619,16 +619,16 @@ void guiPid2::guiPid2(void *button, void* data)
   changePidValue((int) myPosPid.offset, note_pag1, pos_offsetDes, 110, 280, "Desired Position offset");
   //positive stiction
   pos_posStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.stiction_pos_val, note_pag1, pos_posStictionEntry, 0, 350, "Current Pos Stiction offset");
+  displayPidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionEntry, 0, 350, "Current Pos Stiction offset");
   //positive stiction desired
   pos_posStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_pos_val, note_pag1, pos_posStictionDes, 110, 350, "Desired Pos Stiction offset");
+  changePidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionDes, 110, 350, "Desired Pos Stiction offset");
   //negative stiction
   pos_negStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.stiction_neg_val, note_pag1, pos_negStictionEntry, 0, 420, "Current Neg Stiction offset");
+  displayPidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionEntry, 0, 420, "Current Neg Stiction offset");
   //negative stiction desired
   pos_negStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_neg_val, note_pag1, pos_negStictionDes, 110, 420, "Desired Neg Stiction offset");
+  changePidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionDes, 110, 420, "Desired Neg Stiction offset");
 
   //PWM limit
   pos_PWM_limitEntry   =  gtk_entry_new();
@@ -675,17 +675,17 @@ void guiPid2::guiPid2(void *button, void* data)
   trq_offsetDes   =  gtk_entry_new();
   changePidValue((int) myTrqPid.offset, note_pag2, trq_offsetDes, 110, 280, "Desired Torque offset");
  //positive stiction
-  trq_posStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.stiction_pos_val, note_pag2, trq_posStictionEntry, 0, 350, "Current Pos Stiction offset");
+  trq_upStictionEntry   =  gtk_entry_new();
+  displayPidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionEntry, 0, 350, "Current Pos Stiction offset");
   //positive stiction desired
-  trq_posStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_pos_val, note_pag2, trq_posStictionDes, 110, 350, "Desired Pos Stiction offset");
+  trq_upStictionDes   =  gtk_entry_new();
+  changePidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionDes, 110, 350, "Desired Pos Stiction offset");
   //negative stiction
-  trq_negStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.stiction_neg_val, note_pag2, trq_negStictionEntry, 0, 420, "Current Neg Stiction offset");
+  trq_downStictionEntry   =  gtk_entry_new();
+  displayPidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionEntry, 0, 420, "Current Neg Stiction offset");
   //negative stiction desired
-  trq_negStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_neg_val, note_pag2, trq_negStictionDes, 110, 420, "Desired Neg Stiction offset");
+  trq_downStictionDes   =  gtk_entry_new();
+  changePidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionDes, 110, 420, "Desired Neg Stiction offset");
 
   //PWM limit
   trq_PWM_limitEntry   =  gtk_entry_new();

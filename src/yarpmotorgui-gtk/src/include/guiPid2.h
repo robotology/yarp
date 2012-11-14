@@ -66,8 +66,8 @@ namespace guiPid2
     static GtkWidget *trq_kiDes = NULL;
     static GtkWidget *trq_scaleDes = NULL;
     static GtkWidget *trq_offsetDes = NULL;
-    static GtkWidget *trq_posStictionDes = NULL;
-    static GtkWidget *trq_negStictionDes = NULL;
+    static GtkWidget *trq_upStictionDes = NULL;
+    static GtkWidget *trq_downStictionDes = NULL;
     static GtkWidget *trq_PWM_limitDes = NULL;
     static GtkWidget *trq_INT_limitDes = NULL;
     static GtkWidget *trq_kpEntry = NULL;
@@ -75,8 +75,8 @@ namespace guiPid2
     static GtkWidget *trq_kiEntry = NULL;
     static GtkWidget *trq_scaleEntry = NULL;
     static GtkWidget *trq_offsetEntry = NULL;
-    static GtkWidget *trq_posStictionEntry = NULL;
-    static GtkWidget *trq_negStictionEntry = NULL;
+    static GtkWidget *trq_upStictionEntry = NULL;
+    static GtkWidget *trq_downStictionEntry = NULL;
     static GtkWidget *trq_PWM_limitEntry = NULL;
     static GtkWidget *trq_INT_limitEntry = NULL;
 
