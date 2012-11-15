@@ -96,7 +96,7 @@ static AVStream *add_audio_stream(AVFormatContext *oc, CodecID codec_id)
     st = av_new_stream(oc, 1);
     if (!st) {
         fprintf(stderr, "Could not alloc stream\n");
-        exit(1);
+        ::exit(1);
     }
 
     c = st->codec;
@@ -122,13 +122,13 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     codec = avcodec_find_encoder(c->codec_id);
     if (!codec) {
         fprintf(stderr, "audio codec not found\n");
-        exit(1);
+        ::exit(1);
     }
 
     /* open it */
     if (YARP_avcodec_open(c, codec) < 0) {
         fprintf(stderr, "could not open codec\n");
-        exit(1);
+        ::exit(1);
     }
 
     /* init signal generator */
@@ -166,7 +166,7 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     printf("FRAME SIZE is %d / samples size is %d\n", 
            c->frame_size,
            samples_size);
-    exit(1);
+    ::exit(1);
 }
 
 /* prepare a 16 bit dummy audio frame of 'frame_size' samples and
@@ -206,7 +206,7 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st)
     /* write the compressed frame in the media file */
     if (av_write_frame(oc, &pkt) != 0) {
         fprintf(stderr, "Error while writing audio frame\n");
-        exit(1);
+        ::exit(1);
     } else {
         printf("Wrote some audio\n");
     }
@@ -263,7 +263,7 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
             fflush(stdout);
             if (av_write_frame(oc, &pkt) != 0) {
                 fprintf(stderr, "Error while writing audio frame\n");
-                exit(1);
+                ::exit(1);
             } else {
                 printf(".");
             }
@@ -297,7 +297,7 @@ static AVStream *add_video_stream(AVFormatContext *oc, CodecID codec_id,
     st = av_new_stream(oc, 0);
     if (!st) {
         fprintf(stderr, "Could not alloc stream\n");
-        exit(1);
+        ::exit(1);
     }
 
     c = st->codec;
@@ -367,13 +367,13 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     codec = avcodec_find_encoder(c->codec_id);
     if (!codec) {
         fprintf(stderr, "video codec not found\n");
-        exit(1);
+        ::exit(1);
     }
 
     /* open the codec */
     if (YARP_avcodec_open(c, codec) < 0) {
         fprintf(stderr, "could not open codec\n");
-        exit(1);
+        ::exit(1);
     }
 
     video_outbuf = NULL;
@@ -392,7 +392,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     picture = alloc_picture(c->pix_fmt, c->width, c->height);
     if (!picture) {
         fprintf(stderr, "Could not allocate picture\n");
-        exit(1);
+        ::exit(1);
     }
 
     /* if the output format is not YUV420P, then a temporary YUV420P
@@ -403,7 +403,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
         tmp_picture = alloc_picture(PIX_FMT_RGB24, c->width, c->height);
         if (!tmp_picture) {
             fprintf(stderr, "Could not allocate temporary picture\n");
-            exit(1);
+            ::exit(1);
         } else {
             DBG printf("Allocated PIX_FMT_RGB24 image of dimensions %dx%d\n",
                        c->width, c->height);
@@ -501,7 +501,7 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
     }
     if (ret != 0) {
         fprintf(stderr, "Error while writing video frame\n");
-        exit(1);
+        ::exit(1);
     }
     frame_count++;
 }
@@ -579,14 +579,14 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     }
     if (!fmt) {
         fprintf(stderr, "Could not find suitable output format\n");
-        exit(1);
+        ::exit(1);
     }
 
     /* allocate the output media context */
     oc = av_alloc_format_context();
     if (!oc) {
         fprintf(stderr, "Memory error\n");
-        exit(1);
+        ::exit(1);
     }
     oc->oformat = fmt;
     snprintf(oc->filename, sizeof(oc->filename), "%s", filename.c_str());
@@ -623,7 +623,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
        parameters). */
     if (av_set_parameters(oc, NULL) < 0) {
         fprintf(stderr, "Invalid output format parameters\n");
-        exit(1);
+        ::exit(1);
     }
 
     dump_format(oc, 0, filename.c_str(), 1);
@@ -641,7 +641,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     if (!(fmt->flags & AVFMT_NOFILE)) {
         if (url_fopen(&oc->pb, filename.c_str(), URL_WRONLY) < 0) {
             fprintf(stderr, "Could not open '%s'\n", filename.c_str());
-            exit(1);
+            ::exit(1);
         }
     }
 

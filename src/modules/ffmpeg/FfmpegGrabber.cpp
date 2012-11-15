@@ -307,7 +307,7 @@ public:
                           ((AVPicture*)pFrameRGB)->linesize);
             } else {
                 printf("Software scaling not working\n");
-                exit(1);
+                ::exit(1);
             }
 
 #endif
