@@ -539,6 +539,25 @@ public:
     }
 
 
+    void testExternalRepeat() {
+        report(0,"checking that setExternal can be called multiple times...");
+
+        unsigned char buf[EXT_HEIGHT*EXT_WIDTH*3];
+        unsigned char buf2[EXT_HEIGHT*2*EXT_WIDTH*2*3];
+        ImageOf<PixelRgb> img;
+
+        img.setExternal(&buf[0],EXT_WIDTH,EXT_HEIGHT);
+
+        checkEqual(img.width(),EXT_WIDTH,"width check");
+        checkEqual(img.height(),EXT_HEIGHT,"height check");
+
+        img.setExternal(&buf2[0],EXT_WIDTH*2,EXT_HEIGHT*2);
+
+        checkEqual(img.width(),EXT_WIDTH*2,"width check");
+        checkEqual(img.height(),EXT_HEIGHT*2,"height check");        
+    }
+
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);
@@ -558,6 +577,7 @@ public:
         testRgba();
         testRgbInt();
         testOrigin();
+        testExternalRepeat();
     }
 };
 
