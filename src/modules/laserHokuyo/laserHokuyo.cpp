@@ -462,7 +462,7 @@ void laserHokuyo::run()
         internal_status=STATUS_OK;
         laser_data.clear();
         for (int i=0; i<1080; i++)
-            laser_data.push_back(i);
+            laser_data.push_back(i/100.0);
         mutex.post();
         return;
     }
