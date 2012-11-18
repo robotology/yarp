@@ -1,3 +1,8 @@
+2012-11-18  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/modules/ffmpeg/ffmpeg_api.h (YARP_avcodec_open): fix
+	typo [thanks Juan G Victores]
+
 2012-11-14  Ugo Pattacini <ugo.pattacini@iit.it>
    * libYARP_dev/ControlBoardPid.h,.cpp,ServerControlBoard.cpp,
      RemoteControlBoard.cpp: stiction values name changed from

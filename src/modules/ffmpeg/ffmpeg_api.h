@@ -95,7 +95,7 @@ typedef AVFormatParameters YARP_AVDICT;
 #define YARP_AVDICT_DESTROY(x) 
 #define YARP_AVDICT_CLEAN(x) memset(&x, 0, sizeof(x))
 #define YARP_AV_OPEN_INPUT_FILE(a,b,c,d) av_open_input_file(a,strdup(b),c,0,d)
-#define YARP_avcode_open(x,y) avcodec_open(x,y)
+#define YARP_avcodec_open(x,y) avcodec_open(x,y)
 #endif
 
 #endif
