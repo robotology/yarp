@@ -391,20 +391,26 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                             config.check("channels",Value(1),
                                          "number of channels").asInt());
     } else {
-        YARP_AVDICT_SET_FRAC(formatParams,time_base,framerate,
-                             config.check("time_base_num",
-                                          Value(1),
-                                          "numerator of basic time unit").asInt(),
-                             config.check("time_base_den",
-                                          Value(29),
-                                          "denominator of basic time unit").asInt());
-        YARP_AVDICT_SET_INT(formatParams,channel,
-                            config.check("channel",Value(0),
-                                         "channel identifier").asInt());
-        YARP_AVDICT_SET_STR(formatParams,standard,
-                            config.check("standard",
-                                         Value("-"),
-                                         "pal versus ntsc").asString().c_str());
+        if (config.check("time_base_num") && config.check("time_base_den")) {
+            YARP_AVDICT_SET_FRAC(formatParams,time_base,framerate,
+                                 config.check("time_base_num",
+                                              Value(1),
+                                              "numerator of basic time unit").asInt(),
+                                 config.check("time_base_den",
+                                              Value(29),
+                                              "denominator of basic time unit").asInt());
+        }
+        if (config.check("channel")) {
+            YARP_AVDICT_SET_INT(formatParams,channel,
+                                config.check("channel",Value(0),
+                                             "channel identifier").asInt());
+        }
+        if (config.check("standard")) {
+            YARP_AVDICT_SET_STR(formatParams,standard,
+                                config.check("standard",
+                                             Value("-"),
+                                             "pal versus ntsc").asString().c_str());
+        }
         YARP_AVDICT_SET_INT(formatParams,width,
                             config.check("width",Value(640),"width of image").asInt());
         YARP_AVDICT_SET_INT(formatParams,height,
