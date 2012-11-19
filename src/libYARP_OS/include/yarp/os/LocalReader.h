@@ -15,6 +15,7 @@
 namespace yarp {
     namespace os {
         template <class T> class LocalReader;
+        class PortWriter;
     }
 }
 
