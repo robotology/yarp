@@ -10,6 +10,9 @@
 #ifndef _YARP2_WIREVOCAB_
 #define _YARP2_WIREVOCAB_
 
+#include <yarp/os/api.h>
+#include <iosfwd>
+
 namespace yarp {
     namespace os {
         namespace idl {
