@@ -7,7 +7,7 @@
  *
  */
 
-//added threadRelease/threadInit methods and synchronization -nat 
+//added threadRelease/threadInit methods and synchronization -nat
 
 #ifndef _YARP2_OS_RUNNABLE_
 #define _YARP2_OS_RUNNABLE_

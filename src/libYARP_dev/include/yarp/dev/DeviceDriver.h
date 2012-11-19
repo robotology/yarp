@@ -20,7 +20,7 @@
 
 namespace yarp {
     /**
-     * An interface for the device drivers 
+     * An interface for the device drivers
      */
     namespace dev {
         class DeviceDriver;
@@ -42,7 +42,7 @@ public:
     virtual ~DeviceDriver(){}
 
     /**
-     * Open the DeviceDriver. 
+     * Open the DeviceDriver.
      * @param config is a list of parameters for the device.
      * Which parameters are effective for your device can vary.
      * See \ref dev_examples "device invocation examples".
@@ -50,7 +50,7 @@ public:
      * you can run the "yarpdev" program with the verbose flag
      * set to probe what parameters the device is checking.
      * If that fails too,
-     * you'll need to read the source code (please nag one of the 
+     * you'll need to read the source code (please nag one of the
      * yarp developers to add documentation for your device).
      * @return true/false upon success/failure
      */
@@ -105,16 +105,16 @@ public:
     void addUsage(const yarp::os::Bottle& bot, const char *explain=0/*NULL*/);
 
     /**
-     * Respond to a message.  
+     * Respond to a message.
      * @param command the message
      * @param reply the response
      * @return true if there was no critical failure
      */
-    virtual bool respond(const yarp::os::Bottle& command, 
+    virtual bool respond(const yarp::os::Bottle& command,
                          yarp::os::Bottle& reply);
-   
+
     /**
-     * Handler for reading messages from the network, and passing 
+     * Handler for reading messages from the network, and passing
      * them on to the respond() method.
      * @param connection a network connection to a port
      * @return true if the message was read successfully
@@ -122,7 +122,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection);
 
     /**
-     * Alternative handler for reading messages from the network, and passing 
+     * Alternative handler for reading messages from the network, and passing
      * them on to the respond() method.  There can be no replies made
      * if this handler is used.
      * @param v the message

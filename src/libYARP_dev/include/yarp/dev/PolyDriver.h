@@ -168,7 +168,7 @@ public:
 
     /**
      * After a call to PolyDriver::open, you can
-     * get a list of all the options checked by the 
+     * get a list of all the options checked by the
      * device.
      * @return a list of options checked by the device
      */

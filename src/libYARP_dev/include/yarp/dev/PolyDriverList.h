@@ -26,9 +26,9 @@ public:
     PolyDriverDescriptor *operator[](int k);
 
     const PolyDriverDescriptor *operator[] (int k) const;
- 
+
     int size() const;
-    
+
     void push(PolyDriver *p, const char *k);
 
     void push(PolyDriverDescriptor &v);
@@ -44,6 +44,6 @@ private:
     void *aceVector;
 };
 
-#endif 
+#endif
 
 

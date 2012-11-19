@@ -24,7 +24,7 @@ public:
     PolyDriver *poly;
     /* descriptor */
     yarp::os::ConstString key;
-   
+
     PolyDriverDescriptor()
     {
         poly=0;

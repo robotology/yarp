@@ -42,7 +42,7 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::Logger
 #ifdef YARP_HAS_ACE
-    : public ACE_Log_Msg_Callback 
+    : public ACE_Log_Msg_Callback
 #endif
 {
 public:
@@ -151,7 +151,7 @@ private:
 };
 
 // compromise - use macros so that debugging can evaporate in optimized code.
-// also, make a printf-style adaptor since c++ is a bit of a pain to 
+// also, make a printf-style adaptor since c++ is a bit of a pain to
 // build strings in.
 #define YARP_ERROR(log,x) log.error(x)
 #define YARP_WARN(log,x)  log.warning(x)

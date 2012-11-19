@@ -14,7 +14,7 @@
 
 namespace yarp {
 	namespace os {
-		enum 
+		enum
 		{
 			YARP_SIGTERM,
 			YARP_SIGINT,
@@ -57,7 +57,7 @@ namespace yarp {
 		* Wrapper for ACE_OS::stat() function.
 		*/
 		YARP_OS_API int stat(const char *f);
-	}	     
+	}
 }
 
 #endif

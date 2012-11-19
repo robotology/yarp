@@ -46,7 +46,7 @@ public:
 
     /**
      *
-     * Change online parameters.  
+     * Change online parameters.
      * The parameters that can be changed online (in other words,
      * without closing and reopening) will vary between objects.
      *
