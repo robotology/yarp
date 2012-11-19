@@ -23,6 +23,7 @@ namespace yarp {
         namespace impl {
             class PortManager;
             class PortCoreUnit;
+            class Route;
         }
     }
 }
