@@ -33,7 +33,7 @@ public:
         struct timespec ts;
         if (clock_gettime(CLOCK_REALTIME, &ts) == -1) return false;
         ts.tv_sec = ts.tv_sec + (int)timeout;
-        ts.tv_nsec = ts.tv_nsec + 
+        ts.tv_nsec = ts.tv_nsec +
             (long)((timeout-(int)timeout)*1000000000L+0.5);
         if (ts.tv_nsec >= 1000000000L) {
             ts.tv_sec++;

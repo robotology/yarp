@@ -25,8 +25,8 @@
 
 class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
 public:
-    SemaphoreImpl(unsigned int initialCount = 1) 
-        : sema(initialCount) 
+    SemaphoreImpl(unsigned int initialCount = 1)
+        : sema(initialCount)
     {
     }
 
