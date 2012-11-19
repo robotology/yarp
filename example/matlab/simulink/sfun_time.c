@@ -28,7 +28,7 @@ static void mdlInitializeSizes(SimStruct *S)
    if (!ssSetNumInputPorts(S, 0)) return;
 
    if (!ssSetNumOutputPorts(S, 0)) return;
-   
+
    ssSetNumSampleTimes(S, 1);
    ssSetNumRWork(S, 1);
    ssSetNumIWork(S, 0);
@@ -62,10 +62,10 @@ static void mdlOutputs(SimStruct *S, int_T tid)
    real_T             t_0;
    real_T             t_previous;
    real_T             t_elapsed;
-   
+
    /* Desired Delta time */
    dt = (t_SimTime - t_previousSimTime) * (scaleFactor[0]);
-   /* Get clock time at the beginning of this step*/   
+   /* Get clock time at the beginning of this step*/
    t_previous = (real_T)clock()/CLOCKS_PER_SEC;
    t_0 = (real_T)clock()/CLOCKS_PER_SEC;
 
@@ -80,7 +80,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
         t_diff = t_current - t_0;
         t_previous = t_current;
    }
-   
+
    /* Store current time to be used in next time step*/
    ssSetRWorkValue(S, 0, t_SimTime);
 }
