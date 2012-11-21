@@ -117,7 +117,7 @@ public:
  * Interface for a gaze controller. 
  *  
  * Please read carefully the <a 
- * href="http://eris.liralab.it/iCub/main/dox/html/icub_gaze_interface.html">documentation</a>.
+ * href="http://wiki.icub.org/iCub/main/dox/html/icub_gaze_interface.html">documentation</a>.
  */
 class yarp::dev::IGazeControl
 {

@@ -12,7 +12,7 @@ if $USE_SOURCEFORGE; then
     WEB_DIR=/home/groups/y/ya/yarp0/htdocs
 else
     WEB_USER=babybot
-    WEB_SERVER=eris.liralab.it
+    WEB_SERVER=wiki.icub.org
     WEB_DIR=/var/www/html/yarp
 fi
 

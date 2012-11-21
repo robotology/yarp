@@ -33,7 +33,7 @@ svn copy https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2  https://ya
 
 * Look at this page to get the current YARP version, say 2.1.6:
 
-  http://eris.liralab.it/yarp/specs/dox/download.html
+  http://wiki.icub.org/yarp/specs/dox/download.html
 
 * For practice, run (replacing 2.1.6 with current version):
 

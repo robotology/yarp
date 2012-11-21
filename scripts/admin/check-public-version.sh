@@ -14,7 +14,7 @@ if [ ! "k$1" = "k" ]; then
     ver="$1"
 else
     rm -f junk.wget
-    wget -O junk.wget http://eris.liralab.it/yarp/specs/dox/download.html
+    wget -O junk.wget http://wiki.icub.org/yarp/specs/dox/download.html
     verp=`cat junk.wget | grep -i "for Unix" | head -n1 | sed "s/.*yarp-//" | sed "s/.tar.gz.*//"`
     if [ ! "kverp" = "k" ]; then
 	ver="$verp"
@@ -31,18 +31,18 @@ BASE=$PWD
 echo "" > report.txt
 
 if [ ! -e yarp-$ver.tar.gz ] ; then
-    wget http://eris.liralab.it/yarp/downloads/yarp/yarp-$ver.tar.gz
+    wget http://wiki.icub.org/yarp/downloads/yarp/yarp-$ver.tar.gz
     rm -rf tgz-automake
     rm -rf tgz-cmake
 fi
 
 if [ ! -e yarp-$ver.zip ] ; then
-    wget http://eris.liralab.it/yarp/downloads/yarp/yarp-$ver.zip
+    wget http://wiki.icub.org/yarp/downloads/yarp/yarp-$ver.zip
     rm -rf zip-cmake
 fi
 
 if [ ! -e yarpdoc-$ver.zip ] ; then
-    wget http://eris.liralab.it/yarp/specs/dox/yarpdoc.zip
+    wget http://wiki.icub.org/yarp/specs/dox/yarpdoc.zip
     mv yarpdoc.zip yarpdoc-$ver.zip
     rm -rf zip-doc
 fi

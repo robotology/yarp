@@ -1161,17 +1161,17 @@ void MainWindow::onMenuHelpOnlineHelp()
  #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)  
     GError *error = NULL;
     gtk_show_uri(gdk_screen_get_default(), 
-                 "http://eris.liralab.it/yarpdoc/yarpmanager.html",
+                 "http://wiki.icub.org/yarpdoc/yarpmanager.html",
                  gtk_get_current_event_time(), &error);
     if(error)
     {
         Gtk::MessageDialog dialog("Cannot open online help!", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_CLOSE);
-        dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
+        dialog.set_secondary_text("http://wiki.icub.org/yarpdoc/yarpmanager.html");
         dialog.run();
     }
 #else
     Gtk::MessageDialog dialog("Please visit the following link.", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_CLOSE);
-    dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
+    dialog.set_secondary_text("http://wiki.icub.org/yarpdoc/yarpmanager.html");
     dialog.run();
 
 #endif    
@@ -1189,7 +1189,7 @@ void MainWindow::onMenuHelpAbout()
             "2011 (C) Robotics, Brain and Cognitive Sciences\n"
             "Italian Institute of Technology (IIT)");
     dialog.set_license("Released under the terms of the LGPLv2.1 or later.");
-    dialog.set_website("http://eris.liralab.it/yarp");
+    dialog.set_website("http://wiki.icub.org/yarp");
     std::vector<Glib::ustring> authors;
     authors.push_back("Ali Paikan <ali.paikan@iit.it>");
     dialog.set_authors(authors);

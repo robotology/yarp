@@ -20,7 +20,7 @@ This is frustrating at a minimum if someone is messing with your nameserver.
 And if your application is vulnerable to corrupted data, it is a security leak.
 In particular, all iCub users running the yarprun server for the application manager
 should be aware of this issue
-(see <a href="http://eris.liralab.it/wiki/Managing_Applications#Final_considerations">iCub wiki</a>).
+(see <a href="http://wiki.icub.org/wiki/Managing_Applications#Final_considerations">iCub wiki</a>).
 
 To protect your ports, you can enable the port authentication which adds a key exchange to the initial 
 handshaking in order to authenticate any connection request. It uses a 3-way HMAC mechanism 

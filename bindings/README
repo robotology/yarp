@@ -26,7 +26,7 @@ are:
 == JAVA INTERFACE
 
 See also:
-  http://eris.liralab.it/wiki/YARP_and_Java
+  http://wiki.icub.org/wiki/YARP_and_Java
 for latest tips.
 
 To create the Java interface to YARP from linux
@@ -168,7 +168,7 @@ Matlab can run java code, so we access YARP via java.  See the
 "Java interface" section above.
 
 See also:
-  http://eris.liralab.it/wiki/Calling_yarp_from_Matlab
+  http://wiki.icub.org/wiki/Calling_yarp_from_Matlab
 for latest tips.
 
 

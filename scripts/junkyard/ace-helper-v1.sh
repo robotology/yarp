@@ -204,5 +204,5 @@ if [ ! -e $YACE.zip ]; then
 fi
 
 if [ ! -e sent-$YACE.txt ]; then
-    scp $YACE.zip $YACE.tar.gz eris.liralab.it:/var/www/html/yarp/downloads/yarp && ( echo done > sent-$YACE.txt )
+    scp $YACE.zip $YACE.tar.gz wiki.icub.org:/var/www/html/yarp/downloads/yarp && ( echo done > sent-$YACE.txt )
 fi

@@ -17,7 +17,7 @@ that have been tested with YARP and SWIG are: Java, Python, Perl,
 Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.
 If you are interested in a different language, check if it is in the list of
 <a href="http://www.swig.org/compat.html#SupportedLanguages">languages supported by SWIG</a>.  If it is, getting YARP going should be easy, so don't despair.
-Just send a quick email to the <a href="http://eris.liralab.it/wiki/Robotcub-hackers">mailing&nbsp;list</a>, or pattern match in
+Just send a quick email to the <a href="http://wiki.icub.org/wiki/Robotcub-hackers">mailing&nbsp;list</a>, or pattern match in
 the $YARP_ROOT/bindings/CMakeLists.txt file to add your language.
 
 @section yarp_swig_install Overview of steps needed

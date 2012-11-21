@@ -24,7 +24,7 @@ INSTALLATION and COMPILATION
 ----------------------------
 
 See official instructions at:
-  http://eris.liralab.it/yarp/specs/dox/user/html/install.html
+  http://wiki.icub.org/yarp/specs/dox/user/html/install.html
 What follows is a summary.
 
 There are a few different ways to compile YARP.
@@ -46,7 +46,7 @@ library.  Make sure you install ACE before following any of the steps
 below.  See:
   http://www.cs.wustl.edu/~schmidt/ACE.html
 or:
-  http://eris.liralab.it/yarp/specs/dox/user/html/install.html#install_ace
+  http://wiki.icub.org/yarp/specs/dox/user/html/install.html#install_ace
 for download and installation instructions.  Some linux distributions
 have binary packages for ACE (e.g. debian has "libace-dev").
 
@@ -101,7 +101,7 @@ or other build files for a number of operating systems and tool sets.
 
 Download cmake from www.cmake.org or install it as a package if available
 for your system.  For extra tips, see:
-  http://eris.liralab.it/yarp/specs/dox/user/html/install.html#cmake
+  http://wiki.icub.org/yarp/specs/dox/user/html/install.html#cmake
 
 In Linux, in the YARP directory, type:
 
