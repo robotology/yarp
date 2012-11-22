@@ -32,9 +32,9 @@ public:
         checkTrue(p.check("hello"), "key 1 exists");
         checkTrue(p.check("x"), "key 2 exists");
         checkTrue(!(p.check("y")), "other key should not exist");
-        checkEqual(p.find("hello").toString().c_str(),"friend", 
+        checkEqual(p.find("hello").toString().c_str(),"friend",
                    "key 1 has good value");
-        checkEqual(p.find("x").toString().c_str(),"y", 
+        checkEqual(p.find("x").toString().c_str(),"y",
                    "key 2 has good value");
         p.fromString("(hello)");
         checkTrue(p.check("hello"), "key exists");
@@ -130,7 +130,7 @@ public:
 
     void checkNestedCommandLine() {
         report(0,"checking command line parsing");
-        const char *argv[] = { 
+        const char *argv[] = {
             "program",
             "--on",
             "/server",
@@ -285,7 +285,7 @@ check $x $y\n\
         p.fromConfig("x 10\n// x 11\n");
         checkEqual(p.find("x").asInt(),10,"comment ignored ok");
         p.fromConfig("url \"http://www.robotcub.org\"\n");
-        checkEqual(p.find("url").asString().c_str(),"http://www.robotcub.org","url with // passed ok");        
+        checkEqual(p.find("url").asString().c_str(),"http://www.robotcub.org","url with // passed ok");
     }
 
     virtual void checkWipe() {
@@ -432,7 +432,7 @@ check $x $y\n\
 
     virtual void checkCommand() {
         report(0,"checking command line parsing");
-        const char *argv[] = { 
+        const char *argv[] = {
             "program",
             "--on",
             "/server",

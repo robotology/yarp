@@ -263,7 +263,8 @@ Value& Bottle::findBit(const char *key) {
 
 bool Bottle::check(const char *key) {
     Bottle& val = findGroup(key);
-    if (!val.isNull()) return true;
+    if (!val.isNull())
+        return true;
     Value& val2 = find(key);
     return !val2.isNull();
 }
@@ -271,7 +272,7 @@ bool Bottle::check(const char *key) {
 
 Value& Bottle::find(const char *key) {
     Value& val = findBit(key);
-    
+
     if (getMonitor()!=NULL) {
         SearchReport report;
         report.key = key;

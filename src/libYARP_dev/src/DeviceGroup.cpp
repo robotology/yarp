@@ -129,7 +129,7 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
         printf("Assembly of: %s\n", bot.toString().c_str());
         for (int i=0; i<bot.size(); i++) {
             ConstString name = bot.get(i).asString();
-            printf("  %s -> %s\n", name.c_str(), 
+            printf("  %s -> %s\n", name.c_str(),
                    config.findGroup(name).toString().c_str());
             bool result = HELPER(implementation).add(name,
                                                      config.findGroup(name));
@@ -144,9 +144,9 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
 }
 
 
-bool DeviceGroup::open(const char *key, PolyDriver& poly, 
+bool DeviceGroup::open(const char *key, PolyDriver& poly,
                       yarp::os::Searchable& config, const char *comment) {
-    
+
     Value *name;
     if (config.check(key,name,comment)) {
         if (name->isString()) {

@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-      
+
 /*
  * Copyright (C) 2006 Matteo Brunettini
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -17,11 +17,11 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 //=============================================================================
-// GTK Includes 
+// GTK Includes
 //=============================================================================
 #include <gtk/gtk.h>
 //=============================================================================
-// Local Includes 
+// Local Includes
 //=============================================================================
 #include "ImagePort.h"
 #include "YarpImage2Pixbuf.h"
@@ -98,11 +98,11 @@ void printHelp();
 //-------------------------------------------------
 // Global Variables
 //-------------------------------------------------
-// main window 
+// main window
 
 
 //-------------------------------------------------
-// Program Options 
+// Program Options
 //-------------------------------------------------
 struct mOptions
 {

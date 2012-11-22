@@ -141,7 +141,7 @@ public:
 
         //Look for the portname to register (--name option)
         //p.open(config.check("name", Value("/inertial")).asString());
-            
+
         if (IMU!=NULL)
             {
                 start();
@@ -174,7 +174,7 @@ public:
             {
                 int nchannels;
                 IMU->getChannels (&nchannels);
-                
+
                 yarp::sig::Vector indata(nchannels);
                 bool worked(false);
 
@@ -182,7 +182,7 @@ public:
                 if (worked)
                     {
                         bot.clear();
-                    
+
                         // Euler+accel+gyro+magn orientation values
                         for (int i = 0; i < nchannels; i++)
                             bot.addDouble (indata[i]);
@@ -232,7 +232,7 @@ public:
                             {
                                 trap++;
                             }
-                            
+
                             prev_timestamp_counter = curr_timestamp_counter;
                         }
                     }

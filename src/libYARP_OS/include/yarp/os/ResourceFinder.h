@@ -86,7 +86,7 @@ public:
     bool configure(int argc, char *argv[]) {
         return configure("",argc,argv,true);
     }
-    
+
     bool setDefaultContext(const char *contextName) {
         clearContext();
         return addContext(contextName);

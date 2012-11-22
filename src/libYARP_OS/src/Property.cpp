@@ -66,7 +66,7 @@ public:
         //YARP_ASSERT(entry!=NULL);
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
-    
+
     PropertyItem *getProp(const char *key, bool create = true) {
         String n(key);
         PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyItem,entry);
@@ -82,7 +82,7 @@ public:
         //YARP_ASSERT(entry!=NULL);
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
-    
+
     void put(const char *key, const char *val) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
@@ -117,7 +117,7 @@ public:
 
     bool check(const char *key, Value *&output) const {
         PropertyItem *p = getPropNoCreate(key);
-        
+
         return p!=NULL;
     }
 
@@ -191,7 +191,7 @@ public:
         }
         return NULL;
     }
-    
+
     void clear() {
         PLATFORM_MAP_CLEAR(data);
     }
@@ -866,7 +866,7 @@ void Property::fromQuery(const char *url, bool wipe) {
     String val = "";
     int code = 0;
     int coding = 0;
-    
+
     for (unsigned int i=0; i<str.length(); i++) {
         char ch = str[i];
         if (ch=='=') {

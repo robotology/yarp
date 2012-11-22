@@ -57,8 +57,8 @@ public:
     inline Debug& operator<<(unsigned long long t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(float t) { stream->oss << t; stream->oss << ' '; return *this; }
     inline Debug& operator<<(double t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(const char* t) { stream->oss << t; stream->oss << ' '; return *this; }
-    inline Debug& operator<<(const void * t) { stream->oss << t; stream->oss << ' '; return *this; }
+    inline Debug& operator<<(const char *t) { stream->oss << t; stream->oss << ' '; return *this; }
+    inline Debug& operator<<(const void *t) { stream->oss << t; stream->oss << ' '; return *this; }
 
     inline Debug& operator<<(yarp::os::ConstString t) { stream->oss << t.c_str(); stream->oss << ' '; return *this; }
     inline Debug& operator<<(Glib::ustring t) { stream->oss << t.c_str(); stream->oss << ' '; return *this; }

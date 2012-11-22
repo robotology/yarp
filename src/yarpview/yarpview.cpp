@@ -2,8 +2,8 @@
 
 /*
  * Copyright (C) 2006, 2008 Matteo Brunettini, Lorenzo Natale
- * Lorenzo Natale, 2008. Added multithread support, cleaned code, added fps count 
- * and synchronous display. 
+ * Lorenzo Natale, 2008. Added multithread support, cleaned code, added fps count
+ * and synchronous display.
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -16,8 +16,8 @@
 #include "yarpview.h"
 #include "FpsStats.h"
 
-#include <yarp/os/Property.h> 
-#include <yarp/os/Network.h> 
+#include <yarp/os/Property.h>
+#include <yarp/os/Network.h>
 
 #include "YarpImage2Pixbuf.h"
 #include "ImagePort.h"
@@ -95,7 +95,7 @@ inline void periodToFreq(double avT, double mT, double MT, double &avH, double &
         MH=1.0/mT;
     else
         MH=0;
-    
+
     if (MT!=0)
         mH=1.0/MT;
     else
@@ -103,7 +103,8 @@ inline void periodToFreq(double avT, double mT, double MT, double &avH, double &
 }
 
 
-void saveImageNow() {
+void saveImageNow()
+{
     if (_savingSet) {
         saveCurrentFrame();
     }
@@ -130,11 +131,11 @@ gint timeout_update_CB(gpointer data)
     portFpsData.reset();
 
     gchar *msg;
-   
+
     double avHz;
     double minHz;
     double maxHz;
- 
+
     periodToFreq(av, min, max, avHz, minHz, maxHz);
 
     gdk_threads_enter();
@@ -145,7 +146,7 @@ gint timeout_update_CB(gpointer data)
 
     displayFpsData.getStats(av, min, max);
     displayFpsData.reset();
-    
+
     periodToFreq(av, min, max, avHz, minHz, maxHz);
 
     msg=g_strdup_printf("Display: %.1f (min:%.1f max:%.1f) fps", avHz, minHz, maxHz);
@@ -168,78 +169,78 @@ gint timeout_CB (gpointer data)
 
 gboolean delete_event( GtkWidget *widget, GdkEvent *event, gpointer data )
 {
-	// If you return FALSE in the "delete_event" signal handler,
+    // If you return FALSE in the "delete_event" signal handler,
     // GTK will emit the "destroy" signal. Returning TRUE means
     // you don't want the window to be destroyed.
     // This is useful for popping up 'are you sure you want to quit?'
-    // type dialogs. 
+    // type dialogs.
 
-	cleanExit();
+    cleanExit();
 
-	return TRUE;
+    return TRUE;
 
 }
 
 gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
- 	if (mainWindow)
-        {
-            _resources.draw(widget, 
-                            event->area.x,
-                            event->area.y,
-                            event->area.width,
-                            event->area.height,
-                            true);
-        }
+    if (mainWindow)
+    {
+        _resources.draw(widget,
+                        event->area.x,
+                        event->area.y,
+                        event->area.width,
+                        event->area.height,
+                        true);
+    }
 
-	return TRUE;
+    return TRUE;
 }
 
 static gboolean
 configure_event( GtkWidget *widget, GdkEventConfigure *event )
 {
-   _resources.configure(widget, 
-        widget->allocation.width,
-        widget->allocation.height);
+    _resources.configure(widget,
+                         widget->allocation.width,
+                         widget->allocation.height);
 
   return TRUE;
 }
 gint menuFileQuit_CB(GtkWidget *widget, gpointer data)
 {
-	cleanExit();
- 
-	return TRUE;
+    cleanExit();
+
+    return TRUE;
 }
 
 gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 {
 #if GTK_CHECK_VERSION(2,6,0)
-	const gchar *authors[] = 
-        {
-            "Yarp developers",
-            NULL
-        };
-	const gchar *license =
-		"Released under the terms of the LGPLv2.1 or later, see LGPL.TXT\n"
-		"The complete license description is contained in the\n"
-		"COPYING file included in this distribution.\n"
-		"Please refer to this file for complete\n"
-		"information about the licensing of YARP.\n"
-		"\n"
-		"DISCLAIMERS: LICENSOR WARRANTS THAT THE COPYRIGHT IN AND TO THE\n"
-		"SOFTWARE IS OWNED BY THE LICENSOR OR THAT THE SOFTWARE IS\n"
-		"DISTRIBUTED BY LICENSOR UNDER A VALID CURRENT LICENSE. EXCEPT AS\n"
-		"EXPRESSLY STATED IN THE IMMEDIATELY PRECEDING SENTENCE, THE\n"
-		"SOFTWARE IS PROVIDED BY THE LICENSOR, CONTRIBUTORS AND COPYRIGHT\n"
-		"OWNERS AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED\n"
-		"INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
-		"FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO\n"
-		"EVENT SHALL THE LICENSOR, CONTRIBUTORS OR COPYRIGHT OWNERS BE\n"
-		"LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN\n"
-		"ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN\n"
-		"ONNECTION WITH THE SOFTWARE.\n";
+    const gchar *authors[] =
+    {
+        "Yarp developers",
+        NULL
+    };
+    const gchar *license =
+        "Released under the terms of the LGPLv2.1 or later, see LGPL.TXT\n"
+        "The complete license description is contained in the\n"
+        "COPYING file included in this distribution.\n"
+        "Please refer to this file for complete\n"
+        "information about the licensing of YARP.\n"
+        "\n"
+        "DISCLAIMERS: LICENSOR WARRANTS THAT THE COPYRIGHT IN AND TO THE\n"
+        "SOFTWARE IS OWNED BY THE LICENSOR OR THAT THE SOFTWARE IS\n"
+        "DISTRIBUTED BY LICENSOR UNDER A VALID CURRENT LICENSE. EXCEPT AS\n"
+        "EXPRESSLY STATED IN THE IMMEDIATELY PRECEDING SENTENCE, THE\n"
+        "SOFTWARE IS PROVIDED BY THE LICENSOR, CONTRIBUTORS AND COPYRIGHT\n"
+        "OWNERS AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED\n"
+        "INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
+        "FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO\n"
+        "EVENT SHALL THE LICENSOR, CONTRIBUTORS OR COPYRIGHT OWNERS BE\n"
+        "LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN\n"
+        "ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN\n"
+        "ONNECTION WITH THE SOFTWARE.\n";
 
-	gtk_show_about_dialog(GTK_WINDOW(mainWindow),
+    gtk_show_about_dialog(GTK_WINDOW(mainWindow),
                           "name", "yarpview",
                           "version", "1.1",
                           "license", license,
@@ -251,13 +252,13 @@ gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
     printf("Missing functionality on older GTK version, sorry\n");
 #endif
 
-	return TRUE;
+    return TRUE;
 }
 
 
 gint menuImageSize_CB(GtkWidget *widget, gpointer data)
 {
-	int targetWidth, targetHeight;
+    int targetWidth, targetHeight;
     targetWidth = _resources.imageWidth();
     targetHeight = _resources.imageHeight();
     if (targetWidth!=0&&targetHeight!=0) {
@@ -272,16 +273,16 @@ gint menuImageSize_CB(GtkWidget *widget, gpointer data)
         unsigned int newWidth=(windowW-daW)+targetWidth;
         gtk_window_resize(GTK_WINDOW(mainWindow), newWidth, newHeight);
     }
-	return TRUE;
+    return TRUE;
 }
 
 gint menuImageRatio_CB(GtkWidget *widget, gpointer data)
 {
-	double ratio;
-	int imgWidth, imgHeight;
-	int targetWidth, targetHeight;
-	imgWidth = _resources.imageWidth();
-	imgHeight = _resources.imageHeight();
+    double ratio;
+    int imgWidth, imgHeight;
+    int targetWidth, targetHeight;
+    imgWidth = _resources.imageWidth();
+    imgHeight = _resources.imageHeight();
     if (imgWidth!=0&&imgHeight!=0) {
         unsigned int windowH=mainWindow->allocation.height;
         unsigned int windowW=mainWindow->allocation.width;
@@ -291,126 +292,125 @@ gint menuImageRatio_CB(GtkWidget *widget, gpointer data)
         ratio = double(imgWidth) / double(imgHeight);
         targetWidth = int(double(daH) * ratio);
         targetHeight = daH;
- 
+
         //trick: we compute the new size of the window by difference
         unsigned int newHeight=(windowH-daH)+targetHeight;
         unsigned int newWidth=(windowW-daW)+targetWidth;
-        gtk_window_resize(GTK_WINDOW(mainWindow), newWidth, newHeight);    }
-	return TRUE;
+        gtk_window_resize(GTK_WINDOW(mainWindow), newWidth, newHeight);
+    }
+    return TRUE;
 }
 
 gint menuFileSingle_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
-        {
-            gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSetItem), FALSE);
-            gtk_widget_show_all (saveSingleDialog);
-		
-        } 
-	else 
-        {
-            gtk_widget_hide (saveSingleDialog);	
-        }
+    if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) )
+    {
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSetItem), FALSE);
+        gtk_widget_show_all (saveSingleDialog);
+    }
+    else
+    {
+        gtk_widget_hide (saveSingleDialog);
+    }
 
-	return TRUE;
+    return TRUE;
 }
 
 gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 #if GTK_CHECK_VERSION(2,6,0)
 
-	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
-        {
-            gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
-					
-            gtk_widget_show_all (saveSetDialog);
-        } 
-	else 
-        {
-            gtk_widget_hide (saveSetDialog);
-        }
+    if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) )
+    {
+        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
+        gtk_widget_show_all (saveSetDialog);
+    }
+    else
+    {
+        gtk_widget_hide (saveSetDialog);
+    }
 
 #endif
 
-	return TRUE;
+    return TRUE;
 }
 
 gint menuSynchroDisplay_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
-        {
-            setSynchroMode(); 
-            _options.synch=true;
-        } 
-    else 
-        {
-            setTimedMode(_options.refreshTime);
-            _options.synch=false;
-        }
-	return TRUE;
+    if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) )
+    {
+        setSynchroMode();
+        _options.synch=true;
+    }
+    else
+    {
+        setTimedMode(_options.refreshTime);
+        _options.synch=false;
+    }
+    return TRUE;
 }
 
 
 gint menuImageFreeze_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
-        {
-            _resources.freeze();    
-        } 
-    else 
-        {
-            _resources.unfreeze();
-        }
-	return TRUE;
+    if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) )
+    {
+        _resources.freeze();
+    }
+    else
+    {
+        _resources.unfreeze();
+    }
+    return TRUE;
 }
 
 gint saveSingleDelete_CB (GtkWidget *widget, gpointer data)
 {
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
 
-	return (TRUE);
+    return (TRUE);
 }
 
 gint saveSetDelete_CB (GtkWidget *widget, gpointer data)
 {
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSetItem), FALSE);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSetItem), FALSE);
 
-	return (TRUE);
+    return (TRUE);
 }
 
 gint saveSingleClicked_CB(GtkWidget *widget, gpointer data)
 {
-	saveCurrentFrame();
-	
-	return (TRUE);
+    saveCurrentFrame();
+
+    return (TRUE);
 }
 
 gint saveSetStartClicked_CB(GtkWidget *widget, gpointer data)
 {
-	_savingSet = true;
-		
-	return (TRUE);
+    _savingSet = true;
+
+    return (TRUE);
 }
 
 gint saveSetStopClicked_CB(GtkWidget *widget, gpointer data)
 {
-	_savingSet = false;
-		
-	return (TRUE);
+    _savingSet = false;
+
+    return (TRUE);
 }
 
 gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
 {
-	GtkWidget *dialog;
-	GtkWidget *hbox;
-	GtkWidget *stock;
+    GtkWidget *dialog;
+    GtkWidget *hbox;
+    GtkWidget *stock;
 
-	GtkWidget *label;
-	GtkWidget *spinner;
-	GtkAdjustment *spinner_adj;
-	gint response;
+    GtkWidget *label;
+    GtkWidget *spinner;
+    GtkAdjustment *spinner_adj;
+    gint response;
 
-	dialog = gtk_dialog_new_with_buttons ("New Refresh Time",
+    dialog = gtk_dialog_new_with_buttons ("New Refresh Time",
                                           GTK_WINDOW (mainWindow),
                                           GTK_DIALOG_MODAL,
                                           GTK_STOCK_OK,
@@ -419,76 +419,75 @@ gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
                                           GTK_RESPONSE_CANCEL,
                                           NULL);
 
-	hbox = gtk_hbox_new (FALSE, 8);
-	gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
-	stock = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-	gtk_box_pack_start (GTK_BOX (hbox), stock, FALSE, FALSE, 0);
-	label = gtk_label_new_with_mnemonic ("Insert new refresh time (in mSec):");
-	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-	spinner_adj = (GtkAdjustment *) gtk_adjustment_new (_options.refreshTime, 10.0, 1000.0, 1.0, 5.0, 5.0);
-	spinner = gtk_spin_button_new (spinner_adj, 1.0, 0);
-	gtk_box_pack_start (GTK_BOX (hbox), spinner, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 0);
-	
-	gtk_widget_show_all (hbox);
-    
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
+    hbox = gtk_hbox_new (FALSE, 8);
+    gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
+    stock = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+    gtk_box_pack_start (GTK_BOX (hbox), stock, FALSE, FALSE, 0);
+    label = gtk_label_new_with_mnemonic ("Insert new refresh time (in mSec):");
+    gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+    spinner_adj = (GtkAdjustment *) gtk_adjustment_new (_options.refreshTime, 10.0, 1000.0, 1.0, 5.0, 5.0);
+    spinner = gtk_spin_button_new (spinner_adj, 1.0, 0);
+    gtk_box_pack_start (GTK_BOX (hbox), spinner, FALSE, FALSE, 0);
+    gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 0);
 
-	if (response == GTK_RESPONSE_OK)
-        {
-            _options.refreshTime = (int) gtk_spin_button_get_value (GTK_SPIN_BUTTON(spinner));
-            
-            if (!_options.synch)
-                setTimedMode(_options.refreshTime);
+    gtk_widget_show_all (hbox);
 
-//            gchar *msg;
-//            msg = g_strdup_printf ("%s",_options.portName);
-//            updateStatusbar(statusbar,msg);
-//            g_free(msg);
-        }
+    response = gtk_dialog_run (GTK_DIALOG (dialog));
 
-	gtk_widget_destroy (dialog);
+    if (response == GTK_RESPONSE_OK)
+    {
+        _options.refreshTime = (int) gtk_spin_button_get_value (GTK_SPIN_BUTTON(spinner));
 
- 	return (TRUE);
+        if (!_options.synch)
+            setTimedMode(_options.refreshTime);
+
+//        gchar *msg;
+//        msg = g_strdup_printf ("%s",_options.portName);
+//        updateStatusbar(statusbar,msg);
+//        g_free(msg);
+    }
+
+    gtk_widget_destroy (dialog);
+
+    return (TRUE);
 }
 
 gint clickDA_CB (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
-	int imageX, imageY;
-	int clickX, clickY;
-	int daWidth, daHeight;
-	int imageWidth, imageHeight;
-	double ratioX, ratioY;
+    int imageX, imageY;
+    int clickX, clickY;
+    int daWidth, daHeight;
+    int imageWidth, imageHeight;
+    double ratioX, ratioY;
 
-	imageWidth = _resources.imageWidth();
-	imageHeight = _resources.imageHeight();
+    imageWidth = _resources.imageWidth();
+    imageHeight = _resources.imageHeight();
 
-	if ( (imageWidth != 0) && (imageHeight != 0) )
-        {
-            daWidth = widget->allocation.width;
-            daHeight = widget->allocation.height;
-            clickX = (int) event->x;
-            clickY = (int) event->y;
-            ratioX = double(clickX) / double(daWidth);
-            ratioY = double(clickY) / double(daHeight);
-            imageX = int(imageWidth * ratioX + 0.5);
-            imageY = int(imageHeight * ratioY + 0.5);
+    if ( (imageWidth != 0) && (imageHeight != 0) ) {
+        daWidth = widget->allocation.width;
+        daHeight = widget->allocation.height;
+        clickX = (int) event->x;
+        clickY = (int) event->y;
+        ratioX = double(clickX) / double(daWidth);
+        ratioY = double(clickY) / double(daHeight);
+        imageX = int(imageWidth * ratioX + 0.5);
+        imageY = int(imageHeight * ratioY + 0.5);
 
-            printf("Transmitting click information...\n");
-            if (_pOutPort!=NULL) {
-                yarp::os::Bottle& bot = _pOutPort->prepare();
-                bot.clear();
-                bot.addInt(imageX);
-                bot.addInt(imageY);
-                //_pOutPort->Content() = _outBottle;
-                _pOutPort->write();
-            }
-	
-        } else {
-            printf("I would send a position, but there's no image for scaling\n");
+        printf("Transmitting click information...\n");
+        if (_pOutPort!=NULL) {
+            yarp::os::Bottle& bot = _pOutPort->prepare();
+            bot.clear();
+            bot.addInt(imageX);
+            bot.addInt(imageY);
+            //_pOutPort->Content() = _outBottle;
+            _pOutPort->write();
         }
 
-	return TRUE;
+    } else {
+        printf("I would send a position, but there's no image for scaling\n");
+    }
+
+    return TRUE;
 }
 
 
@@ -515,63 +514,63 @@ void setSynchroMode()
 GtkWidget* createSaveSingleDialog(void)
 {
 
-	GtkWidget *dialog = NULL;
-	GtkWidget *button;
-	GtkWidget *hbox;
-	dialog = gtk_dialog_new ();
-	gtk_window_set_title(GTK_WINDOW(dialog), "Save Snapshot");
-	gtk_window_set_modal(GTK_WINDOW(dialog), FALSE);
-	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(mainWindow));
-	//gtk_window_resize(GTK_WINDOW(dialog), 185, 40);
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	//gtk_window_set_default_size(GTK_WINDOW(dialog), 185, 40);
-	gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
-	gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
-	hbox = gtk_hbox_new (TRUE, 8); // parameters (gboolean homogeneous_space, gint spacing);
-	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_widget_set_size_request (GTK_WIDGET(button), 150,50);
-	gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 16); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
-	gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (saveSingleClicked_CB), NULL);
-	gtk_signal_connect (GTK_OBJECT (dialog), "delete_event", GTK_SIGNAL_FUNC (saveSingleDelete_CB), NULL);
-	
-	//gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
-	
-	return dialog;
+    GtkWidget *dialog = NULL;
+    GtkWidget *button;
+    GtkWidget *hbox;
+    dialog = gtk_dialog_new ();
+    gtk_window_set_title(GTK_WINDOW(dialog), "Save Snapshot");
+    gtk_window_set_modal(GTK_WINDOW(dialog), FALSE);
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(mainWindow));
+    //gtk_window_resize(GTK_WINDOW(dialog), 185, 40);
+    gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+    //gtk_window_set_default_size(GTK_WINDOW(dialog), 185, 40);
+    gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
+    gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
+    hbox = gtk_hbox_new (TRUE, 8); // parameters (gboolean homogeneous_space, gint spacing);
+    button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+    gtk_widget_set_size_request (GTK_WIDGET(button), 150,50);
+    gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 16); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+    gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+    gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (saveSingleClicked_CB), NULL);
+    gtk_signal_connect (GTK_OBJECT (dialog), "delete_event", GTK_SIGNAL_FUNC (saveSingleDelete_CB), NULL);
+
+    //gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
+
+    return dialog;
 }
 
 GtkWidget* createSaveSetDialog(void)
 {
-	GtkWidget *dialog = NULL;
-	GtkWidget *saveButton;
-	GtkWidget *stopButton;
-	GtkWidget *hbox;
-	dialog = gtk_dialog_new ();
-	gtk_window_set_title(GTK_WINDOW(dialog), "Save Image Set");
-	gtk_window_set_modal(GTK_WINDOW(dialog), FALSE);
-	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(mainWindow));
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	//gtk_window_set_default_size(GTK_WINDOW(dialog), 190, 40);
-	gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
-	gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
+    GtkWidget *dialog = NULL;
+    GtkWidget *saveButton;
+    GtkWidget *stopButton;
+    GtkWidget *hbox;
+    dialog = gtk_dialog_new ();
+    gtk_window_set_title(GTK_WINDOW(dialog), "Save Image Set");
+    gtk_window_set_modal(GTK_WINDOW(dialog), FALSE);
+    gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(mainWindow));
+    gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+    //gtk_window_set_default_size(GTK_WINDOW(dialog), 190, 40);
+    gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
+    gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
 #if GTK_CHECK_VERSION(2,6,0)
-	saveButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_RECORD);
-	stopButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_STOP);
+    saveButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_RECORD);
+    stopButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_STOP);
 #else
     printf("Missing functionality on older GTK version, sorry\n");
 #endif
-	gtk_widget_set_size_request (GTK_WIDGET(saveButton), 80,50);
-	gtk_widget_set_size_request (GTK_WIDGET(stopButton), 80,50);
+    gtk_widget_set_size_request (GTK_WIDGET(saveButton), 80,50);
+    gtk_widget_set_size_request (GTK_WIDGET(stopButton), 80,50);
 
-	hbox = gtk_hbox_new (TRUE, 8); // parameters (gboolean homogeneous_space, gint spacing);
-	gtk_box_pack_start (GTK_BOX (hbox), saveButton, TRUE, TRUE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
-	gtk_box_pack_start (GTK_BOX (hbox), stopButton, TRUE, TRUE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
-	gtk_signal_connect (GTK_OBJECT (saveButton), "clicked", GTK_SIGNAL_FUNC (saveSetStartClicked_CB), NULL);
-	gtk_signal_connect (GTK_OBJECT (stopButton), "clicked", GTK_SIGNAL_FUNC (saveSetStopClicked_CB), NULL);
-	gtk_signal_connect (GTK_OBJECT (dialog), "delete_event", GTK_SIGNAL_FUNC (saveSetDelete_CB), NULL);
+    hbox = gtk_hbox_new (TRUE, 8); // parameters (gboolean homogeneous_space, gint spacing);
+    gtk_box_pack_start (GTK_BOX (hbox), saveButton, TRUE, TRUE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+    gtk_box_pack_start (GTK_BOX (hbox), stopButton, TRUE, TRUE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+    gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+    gtk_signal_connect (GTK_OBJECT (saveButton), "clicked", GTK_SIGNAL_FUNC (saveSetStartClicked_CB), NULL);
+    gtk_signal_connect (GTK_OBJECT (stopButton), "clicked", GTK_SIGNAL_FUNC (saveSetStopClicked_CB), NULL);
+    gtk_signal_connect (GTK_OBJECT (dialog), "delete_event", GTK_SIGNAL_FUNC (saveSetDelete_CB), NULL);
 
-	return dialog;
+    return dialog;
 }
 
 //-------------------------------------------------
@@ -581,13 +580,13 @@ GtkWidget* createMenubar(void)
 {
     GtkWidget *menubar;
 
-	menubar =  gtk_menu_bar_new ();
-	GtkWidget *menuSeparator;	
+    menubar =  gtk_menu_bar_new ();
+    GtkWidget *menuSeparator;
     // Submenus Items on menubar
     fileItem = gtk_menu_item_new_with_label ("File");
     imageItem = gtk_menu_item_new_with_label ("Image");
     helpItem = gtk_menu_item_new_with_label ("Help");
-    // Submenu: File 
+    // Submenu: File
     fileMenu = gtk_menu_new();
     fileSingleItem = gtk_check_menu_item_new_with_label ("Save single image..");
     gtk_menu_append( GTK_MENU(fileMenu), fileSingleItem);
@@ -600,7 +599,7 @@ GtkWidget* createMenubar(void)
     fileQuitItem = gtk_menu_item_new_with_label ("Quit");
     gtk_menu_append( GTK_MENU(fileMenu), fileQuitItem);
     gtk_signal_connect( GTK_OBJECT(fileQuitItem), "activate", GTK_SIGNAL_FUNC(menuFileQuit_CB), mainWindow);
-    // Submenu: Image  
+    // Submenu: Image
     imageMenu = gtk_menu_new();
     imageSizeItem = gtk_menu_item_new_with_label ("Original size");
     gtk_menu_append( GTK_MENU(imageMenu), imageSizeItem);
@@ -624,7 +623,7 @@ GtkWidget* createMenubar(void)
     gtk_menu_append( GTK_MENU(imageMenu), imageFramerateItem);
     gtk_signal_connect( GTK_OBJECT(imageFramerateItem), "activate", GTK_SIGNAL_FUNC(menuImageFramerate_CB), mainWindow);
     // Submenu: Help
-    helpMenu = gtk_menu_new();	
+    helpMenu = gtk_menu_new();
     helpAboutItem = gtk_menu_item_new_with_label ("About..");
     gtk_menu_append( GTK_MENU(helpMenu), helpAboutItem);
     gtk_signal_connect( GTK_OBJECT(helpAboutItem), "activate", GTK_SIGNAL_FUNC(menuHelpAbout_CB), mainWindow);
@@ -637,8 +636,8 @@ GtkWidget* createMenubar(void)
     gtk_menu_bar_append(GTK_MENU_BAR(menubar), imageItem);
     gtk_menu_item_set_right_justified (GTK_MENU_ITEM (helpItem), TRUE);
     gtk_menu_bar_append(GTK_MENU_BAR(menubar), helpItem);
-  
-	return menubar;
+
+    return menubar;
 }
 
 //-------------------------------------------------
@@ -648,79 +647,79 @@ void updateStatusbar(GtkWidget *statusbar, gchar *msg)
 {
     GtkStatusbar *sb=GTK_STATUSBAR (statusbar);
 
-    gtk_statusbar_pop (sb, 0); // clear any previous message, underflow is allowed 
+    gtk_statusbar_pop (sb, 0); // clear any previous message, underflow is allowed
     gtk_statusbar_push (sb, 0, msg);
 }
 
 //-------------------------------------------------
-// Main Window 
+// Main Window
 //-------------------------------------------------
 GtkWidget* createMainWindow(void)
 {
-	GtkRequisition actualSize;
-	GtkWidget* window;
-	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    GtkRequisition actualSize;
+    GtkWidget* window;
+    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (window), "YARP GTK Image Viewer");
-	gtk_window_set_default_size(GTK_WINDOW (window), _options.windWidth, _options.windHeight); 
-	gtk_window_set_resizable (GTK_WINDOW (window), TRUE);
+    gtk_window_set_default_size(GTK_WINDOW (window), _options.windWidth, _options.windHeight);
+    gtk_window_set_resizable (GTK_WINDOW (window), TRUE);
     // When the window is given the "delete_event" signal (this is given
-	// by the window manager, usually by the "close" option, or on the
-	// titlebar), we ask it to call the delete_event () function
-	// as defined above. The data passed to the callback
-	// function is NULL and is ignored in the callback function.
+    // by the window manager, usually by the "close" option, or on the
+    // titlebar), we ask it to call the delete_event () function
+    // as defined above. The data passed to the callback
+    // function is NULL and is ignored in the callback function.
     g_signal_connect (G_OBJECT (window), "delete_event", G_CALLBACK (delete_event), NULL);
     // Box for main window
-	GtkWidget *box;
-	box = gtk_vbox_new (FALSE, 0); // parameters (gboolean homogeneous_space, gint spacing);
+    GtkWidget *box;
+    box = gtk_vbox_new (FALSE, 0); // parameters (gboolean homogeneous_space, gint spacing);
     gtk_container_add (GTK_CONTAINER (window), box);
-	// MenuBar for main window
-	menubar = createMenubar();
-	gtk_box_pack_start (GTK_BOX (box), menubar, FALSE, TRUE, 0); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
-	gtk_widget_size_request(menubar, &actualSize);
+    // MenuBar for main window
+    menubar = createMenubar();
+    gtk_box_pack_start (GTK_BOX (box), menubar, FALSE, TRUE, 0); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+    gtk_widget_size_request(menubar, &actualSize);
 
-	// Drawing Area : we draw the image here
+    // Drawing Area : we draw the image here
     _resources.drawArea = gtk_drawing_area_new ();
     _resources.mainWindow=mainWindow;
     _resources.attach(&displayFpsData);
 
     g_signal_connect (GTK_OBJECT(_resources.drawArea),"configure_event",
-		      (GtkSignalFunc) configure_event, NULL);
+              (GtkSignalFunc) configure_event, NULL);
 
     g_signal_connect (GTK_OBJECT(_resources.drawArea), "expose_event", G_CALLBACK (expose_CB), NULL);
 
-	if (_options.outputEnabled == 1)
-        {
-            g_signal_connect (_resources.drawArea, "button_press_event", G_CALLBACK (clickDA_CB), NULL);
-            // Ask to receive events the drawing area doesn't normally subscribe to
-            gtk_widget_set_events (_resources.drawArea, gtk_widget_get_events (_resources.drawArea) | GDK_BUTTON_PRESS_MASK);
-        }
-	gtk_box_pack_start(GTK_BOX(box), _resources.drawArea, TRUE, TRUE, 0);
-	// StatusBar for main window
-	
+    if (_options.outputEnabled == 1)
+    {
+        g_signal_connect (_resources.drawArea, "button_press_event", G_CALLBACK (clickDA_CB), NULL);
+        // Ask to receive events the drawing area doesn't normally subscribe to
+        gtk_widget_set_events (_resources.drawArea, gtk_widget_get_events (_resources.drawArea) | GDK_BUTTON_PRESS_MASK);
+    }
+    gtk_box_pack_start(GTK_BOX(box), _resources.drawArea, TRUE, TRUE, 0);
+    // StatusBar for main window
+
     fpsStatusBar=gtk_statusbar_new();
     gtk_box_pack_start(GTK_BOX (box), fpsStatusBar, FALSE, TRUE, 0);
-	gtk_widget_size_request(fpsStatusBar, &actualSize);
+    gtk_widget_size_request(fpsStatusBar, &actualSize);
 
     fpsStatusBar2=gtk_statusbar_new();
     gtk_box_pack_start(GTK_BOX (box), fpsStatusBar2, FALSE, TRUE, 0);
-	gtk_widget_size_request(fpsStatusBar2, &actualSize);
- 
+    gtk_widget_size_request(fpsStatusBar2, &actualSize);
+
     statusbar = gtk_statusbar_new ();
-	gtk_box_pack_start (GTK_BOX (box), statusbar, FALSE, TRUE, 0);
-	gtk_widget_size_request(statusbar, &actualSize);
+    gtk_box_pack_start (GTK_BOX (box), statusbar, FALSE, TRUE, 0);
+    gtk_widget_size_request(statusbar, &actualSize);
     gchar *msg;
     msg=g_strdup_printf("%s", ptr_inputPort->getName().c_str());
     updateStatusbar(statusbar, msg);
     g_free(msg);
 
- 	// TimeOut used to refresh the screen
+    // TimeOut used to refresh the screen
     //timeout_ID = gtk_timeout_add (_options.refreshTime, timeout_CB, NULL);
     //timeout_ID=0;
 
     timeout_update_ID=gtk_timeout_add(1000, timeout_update_CB, NULL);
     //timeout_ID=0;
 
-	return window;
+    return window;
 }
 
 void setOptions(yarp::os::Searchable& options) {
@@ -774,10 +773,10 @@ void saveOptFile(char *fileName)
     FILE *optFile = NULL;
     optFile = ACE_OS::fopen(_options.fileName,"wt");
     if (optFile == NULL)
-        {
-            g_print("ERROR: Impossible to save to option file.\n");
-            return;
-        }
+    {
+        g_print("ERROR: Impossible to save to option file.\n");
+        return;
+    }
     ACE_OS::fprintf(optFile,"PortName %s\n", _options.portName);
     ACE_OS::fprintf(optFile,"NetName %s\n", _options.networkName);
     ACE_OS::fprintf(optFile,"OutPortName %s\n", _options.outPortName);
@@ -817,24 +816,24 @@ bool parseParameters(int argc, char* argv[])
 
 void setOptionsToDefault()
 {
-	// Options defaults
-	_options.refreshTime = 100;
+    // Options defaults
+    _options.refreshTime = 100;
     ACE_OS::sprintf(_options.portName, "%s","/yarpview/img:i");
-	ACE_OS::sprintf(_options.networkName, "%s", "default");
-	ACE_OS::sprintf(_options.outPortName, "%s","/yarpview/o:point");
-	ACE_OS::sprintf(_options.outNetworkName, "%s", "default");
-	_options.outputEnabled = 0;
-	_options.windWidth = 300;
-	_options.windHeight = 300;
-	_options.posX = 100;
-	_options.posY = 100;
-	ACE_OS::sprintf(_options.fileName, "%s","yarpview.conf");
-	_options.saveOnExit = 0;
+    ACE_OS::sprintf(_options.networkName, "%s", "default");
+    ACE_OS::sprintf(_options.outPortName, "%s","/yarpview/o:point");
+    ACE_OS::sprintf(_options.outNetworkName, "%s", "default");
+    _options.outputEnabled = 0;
+    _options.windWidth = 300;
+    _options.windHeight = 300;
+    _options.posX = 100;
+    _options.posY = 100;
+    ACE_OS::sprintf(_options.fileName, "%s","yarpview.conf");
+    _options.saveOnExit = 0;
 }
 
 bool openPorts()
 {
-	bool ret = false;
+    bool ret = false;
 
     ret= ptr_inputPort->open(_options.portName);
 
@@ -844,23 +843,22 @@ bool openPorts()
         return false;
     }
 
-	if (_options.outputEnabled == 1)
-        {
-		
-            _pOutPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
-            g_print("Registering port %s on network %s...\n", _options.outPortName, _options.outNetworkName);
-            bool ok = _pOutPort->open(_options.outPortName);
-            if  (ok)
-                g_print("Port registration succeed!\n");
-            else 
-                {
-                    g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
-                    return false;
-                }
-
+    if (_options.outputEnabled == 1)
+    {
+        _pOutPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+        g_print("Registering port %s on network %s...\n", _options.outPortName, _options.outNetworkName);
+        bool ok = _pOutPort->open(_options.outPortName);
+        if (ok) {
+            g_print("Port registration succeed!\n");
         }
+        else
+        {
+            g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
+            return false;
+        }
+    }
 
-	return true;
+    return true;
 }
 
 void closePorts()
@@ -868,29 +866,29 @@ void closePorts()
 
     ptr_inputPort->close();
 
-	if (_options.outputEnabled == 1)
-        {
-            _pOutPort->close();
-            bool ok = true;
-            if  (ok)
-                g_print("Port %s unregistration succeed!\n", _options.outPortName);
-            else 
-                g_print("ERROR: Port %s unregistration failed.\n", _options.outPortName);
-            delete _pOutPort;
-            _pOutPort = NULL;
-        }
+    if (_options.outputEnabled == 1)
+    {
+        _pOutPort->close();
+        bool ok = true;
+        if  (ok)
+            g_print("Port %s unregistration succeed!\n", _options.outPortName);
+        else
+            g_print("ERROR: Port %s unregistration failed.\n", _options.outPortName);
+        delete _pOutPort;
+        _pOutPort = NULL;
+    }
 }
 
 void cleanExit()
 {
-	if (timeout_ID!=0)
+    if (timeout_ID!=0)
         g_source_remove (timeout_ID);
-	timeout_ID = 0;
-    
+    timeout_ID = 0;
+
     g_source_remove(timeout_update_ID);
     timeout_update_ID=0;
 
-  	gtk_main_quit ();
+    gtk_main_quit();
 }
 
 //-------------------------------------------------
@@ -909,42 +907,41 @@ int myMain(int argc, char* argv[])
     gdk_threads_enter ();
 
 
-
     createObjects();
 
     _frameN = 0;
-	_savingSet = false;
-	timeout_ID = 0;
-	setOptionsToDefault();
-	// Parse command line parameters, do this before
-    // calling gtk_init(argc, argv) otherwise weird things 
+    _savingSet = false;
+    timeout_ID = 0;
+    setOptionsToDefault();
+    // Parse command line parameters, do this before
+    // calling gtk_init(argc, argv) otherwise weird things
     // happens
-	if (!parseParameters(argc, argv))
+    if (!parseParameters(argc, argv))
         goto exitRoutine;
-	
+
     if (!openPorts())
         goto exitRoutine;
 
-  	// This is called in all GTK applications. Arguments are parsed
-	// from the command line and are returned to the application.
+    // This is called in all GTK applications. Arguments are parsed
+    // from the command line and are returned to the application.
     gtk_init (&argc, &argv);
 
     // create a new window
     mainWindow = createMainWindow();
-	
-	// Non Modal Dialogs
+
+    // Non Modal Dialogs
 #if GTK_CHECK_VERSION(2,6,0)
-	saveSingleDialog = createSaveSingleDialog();
-	saveSetDialog = createSaveSetDialog();
+    saveSingleDialog = createSaveSingleDialog();
+    saveSetDialog = createSaveSetDialog();
 #else
     printf("Functionality omitted for older GTK version\n");
 #endif
-	// Shows all widgets in main Window
+    // Shows all widgets in main Window
     gtk_widget_show_all (mainWindow);
-	gtk_window_move(GTK_WINDOW(mainWindow), _options.posX, _options.posY);
-	// All GTK applications must have a gtk_main(). Control ends here
-	// and waits for an event to occur (like a key press or
-	// mouse event).
+    gtk_window_move(GTK_WINDOW(mainWindow), _options.posX, _options.posY);
+    // All GTK applications must have a gtk_main(). Control ends here
+    // and waits for an event to occur (like a key press or
+    // mouse event).
 
     ptr_portCallback->attach(&_resources);
     ptr_portCallback->attach(&portFpsData);
@@ -961,7 +958,7 @@ int myMain(int argc, char* argv[])
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(synchroDisplayItem), false);
     }
 
-   	gtk_main ();
+    gtk_main ();
 
 exitRoutine:
     // leave critical section here. From example
@@ -969,8 +966,8 @@ exitRoutine:
     gdk_threads_leave ();
 
     closePorts();
-	if (_options.saveOnExit != 0)
-		saveOptFile(_options.fileName);
+    if (_options.saveOnExit != 0)
+        saveOptFile(_options.fileName);
 
     deleteObjects();
 

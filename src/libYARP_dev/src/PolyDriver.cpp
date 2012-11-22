@@ -166,7 +166,7 @@ bool PolyDriver::link(PolyDriver& alt) {
     system_resource = alt.system_resource;
     YARP_ASSERT(dd!=NULL);
     YARP_ASSERT(system_resource!=NULL);
-    HELPER(system_resource).addRef();    
+    HELPER(system_resource).addRef();
     return true;
 }
 
@@ -234,7 +234,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
         Value *val;
         if (config->check("wrapped",val)&&(creator->getWrapper()!="")) {
             ConstString wrapper = creator->getWrapper();
-            DriverCreator *wrapCreator = 
+            DriverCreator *wrapCreator =
                 Drivers::factory().find(wrapper.c_str());
             if (wrapCreator!=NULL) {
                 p.fromString(config->toString());
@@ -295,7 +295,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
         dd = driver;
         return true;
     }
-    
+
     return false;
 }
 

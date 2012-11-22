@@ -107,13 +107,13 @@ public:
 * - rpc_p handling the configuration interfaces of the robot
 * - state_p streaming information about the current state of the robot
 * - control_p receiving a stream of control commands (e.g. position)
-* 
-* Missing: 
+*
+* Missing:
 *          torque control, ONLY PARTIALLY IMPLEMENTED
 *
 */
-class yarp::dev::ServerControlBoard : 
-    public DeviceDriver, 
+class yarp::dev::ServerControlBoard :
+    public DeviceDriver,
     public Thread,
     public IPidControl,
     public IPositionControl,
@@ -387,7 +387,7 @@ public:
             }
 
             // bool ok = enc->getEncoders(&v[0]);
-            // LATER: deal with the ok == false.            
+            // LATER: deal with the ok == false.
             stampMutex.wait();
             stamp.update();
             stampMutex.post();

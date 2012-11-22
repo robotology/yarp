@@ -26,7 +26,7 @@ ServerFrameGrabber::ServerFrameGrabber() {
     fgSound = NULL;
     fgAv = NULL;
     fgCtrl = NULL;
-	fgTimed = NULL;
+    fgTimed = NULL;
     spoke = false;
     canDrop = true;
     addStamp = false;
@@ -80,7 +80,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             a = str->hasAudio();
             v = str->hasVideo();
             vraw = str->hasRawVideo();
-        } 
+        }
         if (v) {
             poly.view(fgImage);
         }
@@ -105,7 +105,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
 
     /*
     double framerate=0;
-    if (config.check("framerate", name, 
+    if (config.check("framerate", name,
                      "maximum rate in Hz to read from subdevice")) {
         framerate=name->asDouble();
     }
@@ -121,7 +121,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         p2->open(config.check("name2",Value("/grabber2"),
                               "Name of second port to send data on, when audio and images sent separately").asString());
     }
-        
+
     if (fgAv!=NULL) {
         if (separatePorts) {
             if (yarp_show_info()) {
@@ -157,7 +157,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         return false;
     }
 
-    singleThreaded = 
+    singleThreaded =
         config.check("single_threaded",
                      "if present, operate in single threaded mode")!=0;
     thread.open(config.check("framerate",Value("0"),
@@ -180,34 +180,34 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
 
     DeviceResponder::makeUsage();
     addUsage("[set] [bri] $fBrightness", "set brightness");
-    addUsage("[set] [expo] $fExposure", "set exposure");    
+    addUsage("[set] [expo] $fExposure", "set exposure");
     addUsage("[set] [shar] $fSharpness", "set sharpness");
-    addUsage("[set] [whit] $fBlue $fRed", "set white balance");    
+    addUsage("[set] [whit] $fBlue $fRed", "set white balance");
     addUsage("[set] [hue] $fHue", "set hue");
-    addUsage("[set] [satu] $fSaturation", "set saturation");    
-    addUsage("[set] [gamm] $fGamma", "set gamma");        
-    addUsage("[set] [shut] $fShutter", "set shutter");        
+    addUsage("[set] [satu] $fSaturation", "set saturation");
+    addUsage("[set] [gamm] $fGamma", "set gamma");
+    addUsage("[set] [shut] $fShutter", "set shutter");
     addUsage("[set] [gain] $fGain", "set gain");
     addUsage("[set] [iris] $fIris", "set iris");
 
     addUsage("[get] [bri]",  "get brightness");
-    addUsage("[get] [expo]", "get exposure");    
+    addUsage("[get] [expo]", "get exposure");
     addUsage("[get] [shar]", "get sharpness");
-    addUsage("[get] [whit]", "get white balance");    
+    addUsage("[get] [whit]", "get white balance");
     addUsage("[get] [hue]",  "get hue");
-    addUsage("[get] [satu]", "get saturation");    
-    addUsage("[get] [gamm]", "get gamma");        
-    addUsage("[get] [shut]", "get shutter");        
+    addUsage("[get] [satu]", "get saturation");
+    addUsage("[get] [gamm]", "get gamma");
+    addUsage("[get] [shut]", "get shutter");
     addUsage("[get] [gain]", "get gain");
     addUsage("[get] [iris]", "get iris");
-    
+
     addUsage("[get] [w]", "get width of image");
     addUsage("[get] [h]", "get height of image");
 
     return true;
 }
 
-bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd, 
+bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                                  yarp::os::Bottle& response) {
     int code = cmd.get(0).asVocab();
 
@@ -215,12 +215,12 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 
     //printf("%s\n",cmd.toString().c_str());
 
-	switch (code) 
+	switch (code)
 	{
 	case VOCAB_SET:
         printf("set command received\n");
 
-        switch(cmd.get(1).asVocab()) 
+        switch(cmd.get(1).asVocab())
         {
         case VOCAB_BRIGHTNESS:
             response.addInt(int(setBrightness(cmd.get(2).asDouble())));
@@ -269,14 +269,14 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         }
 
         return DeviceResponder::respond(cmd,response);
-    
+
     case VOCAB_GET:
 		printf("get command received\n");
-		
+
 		response.addVocab(VOCAB_IS);
 		response.add(cmd.get(1));
-			
-        switch(cmd.get(1).asVocab()) 
+
+        switch(cmd.get(1).asVocab())
 		{
 		case VOCAB_BRIGHTNESS:
 			response.addDouble(getBrightness());
@@ -296,16 +296,16 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 				response.addDouble(b);
 				response.addDouble(r);
 			}
-		    return true;                
+		    return true;
 		case VOCAB_HUE:
 			response.addDouble(getHue());
 	        return true;
 		case VOCAB_SATURATION:
 			response.addDouble(getSaturation());
-			return true;   
+			return true;
 		case VOCAB_GAMMA:
 			response.addDouble(getGamma());
-			return true;   
+			return true;
 		case VOCAB_SHUTTER:
 			response.addDouble(getShutter());
 			return true;
@@ -339,7 +339,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 		// DC1394 COMMANDS
 		//////////////////
 	default:
-		if (fgCtrlDC1394) switch(code)    
+		if (fgCtrlDC1394) switch(code)
 		{
 			case VOCAB_DRHASFEA: // VOCAB_DRHASFEA 00
 				response.addInt(int(fgCtrlDC1394->hasFeatureDC1394(cmd.get(1).asInt())));
@@ -490,7 +490,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 				response.addInt(int(fgCtrlDC1394->setCaptureDC1394(cmd.get(1).asInt()!=0)));
                 return true;
 			case VOCAB_DRSETBPP: // VOCAB_DRSETCAP 39
-				response.addInt(int(fgCtrlDC1394->setBytesPerPacketDC1394(cmd.get(1).asInt())));	
+				response.addInt(int(fgCtrlDC1394->setBytesPerPacketDC1394(cmd.get(1).asInt())));
                 return true;
 			case VOCAB_DRGETBPP: // VOCAB_DRGETTXM 40
 				response.addInt(fgCtrlDC1394->getBytesPerPacketDC1394());

@@ -36,7 +36,7 @@ namespace yarp
  * @ingroup dev_impl_wrapper
  *
  * Export a microphone device
- 
+
  * streaming sound samples
  *
  * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
@@ -119,10 +119,10 @@ public:
 
         //Look for the portname to register (--name option)
         //			p.open(config.check("name", Value("/microphone")).asString());
-			
+
         if (mic!=NULL)
 			{
-				printf("\n\n----------------wrapper--------------\n\n\n\n");				
+				printf("\n\n----------------wrapper--------------\n\n\n\n");
 				start();
 				return true;
 			}
@@ -146,7 +146,7 @@ public:
 			{
 				if (mic!=NULL)
                     {
-                        yarp::sig::Sound& snd = writerSound.get(); 
+                        yarp::sig::Sound& snd = writerSound.get();
                         getSound(snd);
                         writerSound.write();
                     }
@@ -163,12 +163,12 @@ public:
         printf("Returning from command reading\n");
         return true;
     }
-	
+
     virtual bool getSound(yarp::sig::Sound& sound) {
         if (mic==NULL) { return false; }
         return mic->getSound(sound);
     }
-		
+
     virtual bool getChannels(int *nc)
     {
         if (mic == NULL) { return false; }

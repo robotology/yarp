@@ -34,7 +34,7 @@ namespace yarp {
  * A simple collection of objects that can be
  * described and transmitted in a portable way.
  * Objects are stored in a list, which you can add to and access.
- * It is handy to use until you feel the need to make your own more 
+ * It is handy to use until you feel the need to make your own more
  * efficient formats for transmission.
  *
  * Here's an example of using a Bottle:
@@ -58,7 +58,7 @@ public:
 
     /**
      * Creates a bottle from a string. The string which should contain a textual
-     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\"" 
+     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\""
      * would give a bottle with 4 elements: an integer, two floating
      * point numbers, and a string.
      * @param text the textual form of the bottle to be interpreted
@@ -130,7 +130,7 @@ public:
     Bottle& addList();
 
     /**
-     * Removes a Value v from the end of the list and returns this value. 
+     * Removes a Value v from the end of the list and returns this value.
      * @return the value popped from the end of the bottle
      */
     Value pop();
@@ -143,7 +143,7 @@ public:
      *
      * @param index the part of the list to read from
      * @return the Value v; if the index lies outside the range of elements
-     * present, then v.isNull() will be true.  
+     * present, then v.isNull() will be true.
      */
     Value& get(int index) const;
 
@@ -157,7 +157,7 @@ public:
 
     /**
      * Initializes bottle from a string, which should contain a textual
-     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\"" 
+     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\""
      * would give a bottle with 4 elements: an integer, two floating
      * point numbers, and a string.
      * @param text the textual form of the bottle to be interpreted
@@ -174,7 +174,7 @@ public:
 
     /**
      * Returns binary representation of bottle.  Lifetime is
-     * until next modification of bottle.  
+     * until next modification of bottle.
      * @param size if non-null, the referenced variable is set to the buffer size.
      * @return pointer to a buffer holding the binary representation of the
      * bottle.
@@ -183,7 +183,7 @@ public:
 
 
     /**
-     * Gives a human-readable textual representation of the bottle, suitable 
+     * Gives a human-readable textual representation of the bottle, suitable
      * for passing to Bottle::fromString (see that method for examples)
      * @return a textual representation of the bottle
      */
@@ -277,8 +277,7 @@ public:
     virtual bool operator != (const Bottle& alt) {
         return !((*this)==alt);
     }
-    
-    
+
     /**
      * Append the content of the given bottle to the current
      * list.
@@ -409,8 +408,8 @@ private:
 
     virtual bool isList() { return true; }
 
-    //virtual Bottle *asList() { 
-    //  return this; 
+    //virtual Bottle *asList() {
+    //  return this;
     //}
 
 

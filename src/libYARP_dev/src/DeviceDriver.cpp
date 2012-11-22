@@ -80,7 +80,7 @@ bool DeviceResponder::read(ConnectionReader& connection) {
             } else {
                 response.write(*writer);
             }
-            
+
             //printf("response sent: %s\n", response.toString().c_str());
         }
     } else {

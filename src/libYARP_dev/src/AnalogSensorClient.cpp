@@ -22,7 +22,7 @@
 #include <yarp/dev/PolyDriver.h>
 
 namespace yarp {
-    namespace dev { 
+    namespace dev {
         class AnalogSensorClient;
     }
 }
@@ -99,11 +99,11 @@ public:
         Stamp newStamp;
         getEnvelope(newStamp);
 
-		//initialialization (first received data)
-		if (lastStamp.isValid()==false)
-		{
-			lastStamp = newStamp;
-		}
+        //initialialization (first received data)
+        if (lastStamp.isValid()==false)
+        {
+            lastStamp = newStamp;
+        }
 
         //now compare timestamps
         if ((1000*(newStamp.getTime()-lastStamp.getTime()))<ANALOG_TIMEOUT)
@@ -111,11 +111,11 @@ public:
             state=IAnalogSensor::AS_OK;
         }
         else
-        {         
+        {
             state=IAnalogSensor::AS_TIMEOUT;
         }
         lastStamp = newStamp;
-            
+
         mutex.post();
     }
 
@@ -189,7 +189,7 @@ class yarp::dev::AnalogSensorClient: public DeviceDriver,
 {
 protected:
     InputPortProcessor inputPort;
-	Port rpcPort;
+    Port rpcPort;
     ConstString local;
     ConstString remote;
     Stamp lastTs; //used by IPreciselyTimed
@@ -199,43 +199,43 @@ public:
     bool open(Searchable& config);
     bool close();
 
-    /* IAnalogSensor methods*/    
+    /* IAnalogSensor methods*/
     int read(yarp::sig::Vector &out);
-   
+
     /* Check the state value of a given channel.
     * @param ch: channel number.
     * @return status.
     */
     int getState(int ch);
-    
+
     /* Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
     int getChannels();
 
-	/* Calibrates the whole sensor.
-	 * @return status.
+    /* Calibrates the whole sensor.
+     * @return status.
      */
-	int calibrateSensor();
+    int calibrateSensor();
 
-	/* Calibrates the whole sensor, using a vector of calibration values.
-	 * @param value: a vector of calibration values.
-	 * @return status.
+    /* Calibrates the whole sensor, using a vector of calibration values.
+     * @param value: a vector of calibration values.
+     * @return status.
      */
-	int calibrateSensor(const yarp::sig::Vector& value);
-
-    /* Calibrates one single channel.
-	 * @param ch: channel number.
-	 * @return status.
-     */
-	int calibrateChannel(int ch);
+    int calibrateSensor(const yarp::sig::Vector& value);
 
     /* Calibrates one single channel.
-	 * @param ch: channel number.
-	 * @param value: calibration value.
-	 * @return status.
+     * @param ch: channel number.
+     * @return status.
      */
-	int calibrateChannel(int ch, double value);
+    int calibrateChannel(int ch);
+
+    /* Calibrates one single channel.
+     * @param ch: channel number.
+     * @param value: calibration value.
+     * @return status.
+     */
+    int calibrateChannel(int ch, double value);
 
     /* IPreciselyTimed methods */
     /**
@@ -265,9 +265,9 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-	ConstString local_rpc = local;
+    ConstString local_rpc = local;
     local_rpc += "/rpc:o";
-	ConstString remote_rpc = remote;
+    ConstString remote_rpc = remote;
     remote_rpc += "/rpc:i";
 
     if (!inputPort.open(local.c_str()))
@@ -278,31 +278,31 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
     inputPort.useCallback();
 
     if (!rpcPort.open(local_rpc.c_str()))
-	{
+    {
         fprintf(stderr,"AnalogSensorClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
         return false;
-	}
+    }
 
-    bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());  
+    bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());
     if (!ok)
     {
         fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote.c_str());
         return false;
     }
 
-	ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
-	if (!ok)
-	{
-		fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote_rpc.c_str());
+    ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
+    if (!ok)
+    {
+        fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote_rpc.c_str());
        return false;
-	}
+    }
 
     return true;
 }
 
 bool yarp::dev::AnalogSensorClient::close()
 {
-	rpcPort.close();
+    rpcPort.close();
     inputPort.close();
     return true;
 }
@@ -325,7 +325,7 @@ int yarp::dev::AnalogSensorClient::getChannels()
 
 int yarp::dev::AnalogSensorClient::calibrateSensor()
 {
-	Bottle cmd, response;
+    Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE);
     bool ok = rpcPort.write(cmd, response);
@@ -334,10 +334,10 @@ int yarp::dev::AnalogSensorClient::calibrateSensor()
 
 int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
 {
-	Bottle cmd, response;
+    Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE);
-	Bottle& l = cmd.addList();
+    Bottle& l = cmd.addList();
     for (int i = 0; i < this->getChannels(); i++)
          l.addDouble(value[i]);
     bool ok = rpcPort.write(cmd, response);
@@ -346,21 +346,21 @@ int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& valu
 
 int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
 {
-	Bottle cmd, response;
+    Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
-	cmd.addInt(ch);
+    cmd.addInt(ch);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
 
 int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
 {
-	Bottle cmd, response;
+    Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
     cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
-	cmd.addInt(ch);
-	cmd.addDouble(value);
+    cmd.addInt(ch);
+    cmd.addDouble(value);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
 }
@@ -371,7 +371,7 @@ Stamp yarp::dev::AnalogSensorClient::getLastInputStamp()
 }
 
 yarp::dev::DriverCreator *createAnalogSensorClient() {
-    return new DriverCreatorOf<AnalogSensorClient>("analogsensorclient", 
+    return new DriverCreatorOf<AnalogSensorClient>("analogsensorclient",
         "",
         "AnalogSensorClient");
 }

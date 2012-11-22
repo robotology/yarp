@@ -58,7 +58,7 @@ private:
 
     PolyDriver source, sink;
 
-    bool open(const char *key, PolyDriver& poly, 
+    bool open(const char *key, PolyDriver& poly,
               yarp::os::Searchable& config, const char *comment);
 };
 

@@ -91,10 +91,10 @@ public:
     /**
      * Check if there exists a property of the given name
      * @param key the name to check for
-     * @param comment Human-readable explanation     
+     * @param comment Human-readable explanation
      * @return true iff a property of the given name exists, even if
      * it doesn't have a value associated with it
-     */ 
+     */
     virtual bool check(const char *key,
                        const char *comment);
 
@@ -123,7 +123,7 @@ public:
     /**
      * Gets a list corresponding to a given keyword
      * @param key The keyword to look for
-     * @param comment Human-readable explanation     
+     * @param comment Human-readable explanation
      * @return A list corresponding to a given keyword.  If there is no
      * such list, then the isNull() method called on the result will be
      * true.  Otherwise, the elements of the list can be read through
@@ -168,7 +168,7 @@ public:
      * @param fallback A default value to return if nothing found
      * @param comment Optional human-readable explanation
      * @return A value corresponding to a given keyword,
-     * or the default if nothing is found.  See the find() method for 
+     * or the default if nothing is found.  See the find() method for
      * interpreting the value found.
      */
     virtual Value check(const char *key, const Value& fallback,
@@ -183,10 +183,10 @@ public:
 
     /**
      * Return a standard text representation of the content of the
-     * object.  The representation is readable by the Bottle and 
+     * object.  The representation is readable by the Bottle and
      * Property classes.
      * @return A standard text representation of the content of the
-     * object.  
+     * object.
      */
     virtual ConstString toString() const = 0;
 

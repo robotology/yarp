@@ -58,7 +58,7 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         fatal() << "Syntax error while loading" << filename << ". Root element should be \"portscope\", found" << rootElem->Value();
     }
 
-    for (TiXmlElement* plotElem = rootElem->FirstChildElement(); plotElem != 0; plotElem = plotElem->NextSiblingElement()) {
+    for (TiXmlElement *plotElem = rootElem->FirstChildElement(); plotElem != 0; plotElem = plotElem->NextSiblingElement()) {
         if (Glib::ustring(plotElem->Value()).compare("plot") != 0) {
             fatal() << "Syntax error while loading" << filename << ". Expected \"plot\", found" << plotElem->Value();
         }

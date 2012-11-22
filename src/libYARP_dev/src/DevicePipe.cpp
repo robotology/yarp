@@ -33,7 +33,7 @@ bool DevicePipe::open(yarp::os::Searchable& config) {
 
 bool DevicePipe::open(const char *key, PolyDriver& poly, 
                       yarp::os::Searchable& config, const char *comment) {
-    
+
     Value *name;
     if (config.check(key,name,comment)) {
         if (name->isString()) {

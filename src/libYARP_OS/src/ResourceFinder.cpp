@@ -40,7 +40,7 @@ public:
         apps.addString(appName);
         return true;
     }
-    
+
     bool clearAppNames() {
         apps.clear();
         return true;
@@ -58,14 +58,14 @@ public:
         }
         return "";
     }
-    
+
     bool configureFromPolicy(Property& config, const char *policyName) {
         this->policyName = policyName;
         if (verbose) {
             fprintf(RTARGET,"||| policy set to %s\n", policyName);
         }
         String rootVar = policyName;
-        const char *result = 
+        const char *result =
             yarp::os::getenv(rootVar.c_str());
         bool needEnv = false;
 #ifdef YARP2_WINDOWS
@@ -79,7 +79,7 @@ public:
         root = config.check(policyName,Value(root)).asString().c_str();
         if (root == "") {
             if (verbose||needEnv) {
-                fprintf(RTARGET,"||| environment variable %s not set\n", 
+                fprintf(RTARGET,"||| environment variable %s not set\n",
                         rootVar.c_str());
             }
             if (needEnv) {
@@ -87,7 +87,7 @@ public:
             }
         } else {
             if (verbose) {
-                fprintf(RTARGET,"||| %s: %s\n", 
+                fprintf(RTARGET,"||| %s: %s\n",
                         rootVar.c_str(),root.c_str());
             }
         }
@@ -97,7 +97,7 @@ public:
         bool ok = false;
         if (root!="") {
             if (verbose) {
-                fprintf(RTARGET,"||| loading policy from %s\n", 
+                fprintf(RTARGET,"||| loading policy from %s\n",
                         rootConfig.c_str());
             }
             checked += " " + rootConfig;
@@ -106,7 +106,7 @@ public:
         if (!needEnv) {
             if (!ok) {
                 if (verbose) {
-                    fprintf(RTARGET,"||| loading policy from %s\n", 
+                    fprintf(RTARGET,"||| loading policy from %s\n",
                             altConfig.c_str());
                 }
                 checked += " " + altConfig;
@@ -115,7 +115,7 @@ public:
             if (!ok) {
                 altConfig = String("/usr/local/etc/") + policyName + ".ini";
                 if (verbose) {
-                    fprintf(RTARGET,"||| loading policy from %s\n", 
+                    fprintf(RTARGET,"||| loading policy from %s\n",
                             altConfig.c_str());
                 }
                 checked += " " + altConfig;
@@ -135,7 +135,7 @@ public:
         }
         */
         if (!ok) {
-            fprintf(RTARGET,"||| failed to load policy from%s\n", 
+            fprintf(RTARGET,"||| failed to load policy from%s\n",
                     checked.c_str());
             return false;
         }
@@ -149,7 +149,7 @@ public:
         return true;
     }
 
-    bool configure(Property& config, const char *policyName, int argc, 
+    bool configure(Property& config, const char *policyName, int argc,
                    char *argv[], bool skip) {
         Property p;
         p.fromCommand(argc,argv,skip);
@@ -166,7 +166,7 @@ public:
         }
         name = p.check("policy",Value(name.c_str())).asString();
         if (name=="") {
-            const char *result = 
+            const char *result =
                 yarp::os::getenv("YARP_POLICY");
             if (result!=NULL) {
                 if (verbose) {
@@ -197,7 +197,7 @@ public:
             ConstString c = p.check("context",Value("default")).asString();
             addAppName(c.c_str());
             if (verbose) {
-                fprintf(RTARGET,"||| added context %s\n", 
+                fprintf(RTARGET,"||| added context %s\n",
                         c.c_str());
             }
         }
@@ -207,7 +207,7 @@ public:
             ConstString from = config.check("from",
                                             Value("config.ini")).toString();
             if (verbose) {
-                fprintf(RTARGET,"||| default config file specified as %s\n", 
+                fprintf(RTARGET,"||| default config file specified as %s\n",
                         from.c_str());
             }
             ConstString corrected = findFile(config,from.c_str());
@@ -255,9 +255,9 @@ public:
         return false;
     }
 
-    yarp::os::ConstString getPath(const char *base1, 
-                                  const char *base2, 
-                                  const char *base3, 
+    yarp::os::ConstString getPath(const char *base1,
+                                  const char *base2,
+                                  const char *base3,
                                   const char *name) {
         ConstString s = "";
         if (base1!=NULL) {
@@ -288,13 +288,13 @@ public:
         }
 
         s = s + name;
-        
+
         return s;
     }
 
-    yarp::os::ConstString check(const char *base1, 
-                                const char *base2, 
-                                const char *base3, 
+    yarp::os::ConstString check(const char *base1,
+                                const char *base2,
+                                const char *base3,
                                 const char *name,
                                 bool isDir) {
         ConstString s = getPath(base1,base2,base3,name);
@@ -333,10 +333,10 @@ public:
         return result;
     }
 
-    yarp::os::ConstString findFileBase(Property& config, const char *name, 
+    yarp::os::ConstString findFileBase(Property& config, const char *name,
                                        bool isDir) {
 
-        ConstString cap = 
+        ConstString cap =
             config.check("capability_directory",Value("app")).asString();
         Bottle defCaps =
             config.findGroup("default_capability").tail();
@@ -384,7 +384,7 @@ public:
             // if not required to be a directory, pass anything.
             return true;
         }
-        
+
         // ACE doesn't seem to help us interpret the results of stat
         // in a portable fashion.
 
@@ -413,7 +413,7 @@ public:
     }
 
     ConstString context2path(Property& config, const ConstString& context ) {
-        ConstString cap = 
+        ConstString cap =
             config.check("capability_directory",Value("app")).asString();
         ConstString path = getPath(root,cap,context,"");
         if (path.length()>1) {
@@ -520,7 +520,7 @@ ConstString ResourceFinder::getContext() {
 }
 
 ConstString ResourceFinder::getContextPath() {
-    return HELPER(implementation).context2path(config, 
+    return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());
 }
 

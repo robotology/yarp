@@ -28,7 +28,7 @@
 
 /*
 #include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_unistd.h> 
+#include <ace/OS_NS_unistd.h>
 #include <ace/OS_NS_signal.h>
 #include <ace/Vector_T.h>
 #include <stdio.h>
@@ -156,12 +156,12 @@ public:
 
     virtual bool open(yarp::os::Searchable& config) { 
         if (!isValid()) return false;
-        return dev->open(config); 
+        return dev->open(config);
     }
 
-    virtual bool close() { 
+    virtual bool close() {
         if (!isValid()) return false;
-        return dev->close(); 
+        return dev->close();
     }
 
     virtual DeviceDriver *getTail() {
@@ -327,7 +327,7 @@ static void handler (int) {
     }
     if (terminatorKey!="") {
         if (yarp_show_info()) {
-            printf("[try %d of 3] Trying to shut down %s\n", 
+            printf("[try %d of 3] Trying to shut down %s\n",
                    ct,
                    terminatorKey.c_str());
         }
@@ -381,7 +381,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     if (!options.check("device")) {
         // no device mentioned - maybe user needs help
-        
+
         if (options.check("list")) {
             printf("Here are devices listed for your system:\n");
             printf("%s", Drivers::factory().toString().c_str());
@@ -425,7 +425,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
     if (!dd.isValid()) {
         printf("yarpdev: ***ERROR*** device not available.\n");
-        if (argc==1) { 
+        if (argc==1) {
             printf("Here are the known devices:\n");
             printf("%s", Drivers::factory().toString().c_str());
         } else {

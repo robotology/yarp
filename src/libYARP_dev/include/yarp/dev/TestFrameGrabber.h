@@ -37,9 +37,9 @@ namespace yarp {
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
  */
-class YARP_dev_API yarp::dev::TestFrameGrabber : public DeviceDriver, 
-                                                 public IFrameGrabberImage, 
-                                                 public IFrameGrabberImageRaw, 
+class YARP_dev_API yarp::dev::TestFrameGrabber : public DeviceDriver,
+                                                 public IFrameGrabberImage,
+                                                 public IFrameGrabberImageRaw,
                                                  public IFrameGrabberControls,
                                                  public IPreciselyTimed,
                                                  public IAudioVisualStream
@@ -143,7 +143,7 @@ public:
                        yarp::os::Vocab::decode(mode).c_str());
             }
         }
-       
+
 		bx = w/2;
         by = h/2;
         return true;
@@ -161,7 +161,7 @@ public:
         if (dt>0) {
             yarp::os::Time::delay(dt);
         }
-        
+
         // this is the controlled instant when we consider the
         // image as going out
         prev += period;
@@ -184,7 +184,7 @@ public:
         }
         return true;
     }
-    
+
     virtual int height() const {
         return h;
     }
@@ -202,7 +202,7 @@ public:
     }
     virtual bool setSharpness(double v) {
         return false;
-    }    
+    }
     virtual bool setWhiteBalance(double blue, double red){
 	return false;
     }
@@ -211,10 +211,10 @@ public:
     }
     virtual bool setSaturation(double v) {
         return false;
-    }    
+    }
      virtual bool setGamma(double v) {
         return false;
-    }    
+    }
     virtual bool setShutter(double v) {
         return false;
     }
@@ -239,7 +239,7 @@ public:
 	red=0.0;
 	blue=0.0;
 	return true;
-    }    
+    }
     virtual double getHue(){
         return 0.0;
     }
@@ -248,7 +248,7 @@ public:
     }
     virtual double getGamma(){
         return 0.0;
-    }        
+    }
     virtual double getShutter(){
         return 0.0;
     }
@@ -258,7 +258,7 @@ public:
     virtual double getIris(){
         return 0.0;
     }
-    
+
     virtual yarp::os::Stamp getLastInputStamp() {
         return stamp;
     }
@@ -276,7 +276,7 @@ private:
     yarp::os::Stamp stamp;
     void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
-    bool makeSimpleBayer(yarp::sig::ImageOf<yarp::sig::PixelRgb>& src, 
+    bool makeSimpleBayer(yarp::sig::ImageOf<yarp::sig::PixelRgb>& src,
                          yarp::sig::ImageOf<yarp::sig::PixelMono>& bayer);
 
 };
