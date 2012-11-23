@@ -9,12 +9,16 @@
 * Make sure that conf/YarpVersion.cmake is different to the latest
   public version, bumping up the version number if needed.
 
+  Reset "YARP_VERSION_TWEAK" to 0
+
 * Prepare licenses
 
   rm -rf license_check
   ./scripts/admin/update-license
   # check license-statement.txt for sanity
   cp license-statement.txt COPYING
+
+* Update the file ChangeLog.txt with " * tagging version x.y.x"
 
 * Commit current version:
   svn commit -m "tagging ..." 

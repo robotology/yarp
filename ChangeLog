@@ -1,3 +1,6 @@
+2012-11-23  Lorenzo Natale  <lorenzo.natale@iit.it>
+	* tagging version 2.3.20
+
 2012-11-18  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/modules/ffmpeg/ffmpeg_api.h (YARP_avcodec_open): fix

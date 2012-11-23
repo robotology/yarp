@@ -221,7 +221,7 @@ if ($report ne "skipped") {
     open(FOUT,">>license-changes.txt");
     print FOUT $txt;
     close(FOUT);
-    if ($policy =~ /Released under the terms of the LGPLv2.1 or later, see LGPL.TXT/ && !($txt =~ /Chris Morley/)) {
+    if ($policy =~ /LGPLv2(.1)?( or later)?/ && !($txt =~ /Chris Morley/)) {
 	open(FOUT,">>license-good.txt");
 	print FOUT $txt;
 	close(FOUT);
