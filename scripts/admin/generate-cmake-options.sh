@@ -14,6 +14,6 @@ esac
 
 case $3 in
 experimental)
-     CMAKE_OPTIONS="$CMAKE_OPTIONS -DCREATE_YARPSCOPE=TRUE"
+     CMAKE_OPTIONS="$CMAKE_OPTIONS"
 esac	 
 	
