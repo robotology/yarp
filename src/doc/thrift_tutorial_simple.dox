@@ -293,7 +293,7 @@ int main(int argc, char *argv[]) {
 
 A complete example of Thrift code generation and server/client creation with CMake is available in
 \code
- [YARP_SOURCE]/example/idl/thrift/thriftSimple
+ [YARP_SOURCE]/example/idl/thriftSimple
 \endcode
 
 This is what we get when we launch server and client from command line (assuming a \em yarpserver is running, and we are in the "build" directory):

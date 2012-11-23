@@ -122,8 +122,10 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
       int32_t _return;
       _return = get_answer();
       yarp::os::idl::WireWriter writer(reader);
-      if (!writer.writeListHeader(1)) return false;
-      if (!writer.writeI32(_return)) return false;
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeI32(_return)) return false;
+      }
       reader.accept();
       return true;
     }
@@ -133,8 +135,10 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
       int32_t _return;
       _return = add_one(x);
       yarp::os::idl::WireWriter writer(reader);
-      if (!writer.writeListHeader(1)) return false;
-      if (!writer.writeI32(_return)) return false;
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeI32(_return)) return false;
+      }
       reader.accept();
       return true;
     }
@@ -144,8 +148,10 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
       int32_t _return;
       _return = double_down(x);
       yarp::os::idl::WireWriter writer(reader);
-      if (!writer.writeListHeader(1)) return false;
-      if (!writer.writeI32(_return)) return false;
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.writeI32(_return)) return false;
+      }
       reader.accept();
       return true;
     }
@@ -157,8 +163,10 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
        ::yarp::test::PointD _return;
       _return = add_point(x,y);
       yarp::os::idl::WireWriter writer(reader);
-      if (!writer.writeListHeader(3)) return false;
-      if (!writer.write(_return)) return false;
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(3)) return false;
+        if (!writer.write(_return)) return false;
+      }
       reader.accept();
       return true;
     }

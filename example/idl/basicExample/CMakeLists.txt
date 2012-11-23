@@ -7,7 +7,7 @@ find_package(YARP REQUIRED)
 include_directories(${YARP_INCLUDE_DIRS})
 include(${YARP_MODULE_PATH}/YarpIDL.cmake)
 
-yarp_idl(example.thrift ${CMAKE_BINARY_DIR} Example.cpp Example.h)
+yarp_idl(example.thrift Example.cpp Example.h)
 
 include_directories(${CMAKE_BINARY_DIR})
 add_executable(example main.cpp ${CMAKE_BINARY_DIR}/Example.cpp ${CMAKE_BINARY_DIR}/Example.h)

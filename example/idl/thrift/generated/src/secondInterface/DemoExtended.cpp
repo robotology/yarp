@@ -51,8 +51,10 @@ bool DemoExtended::read(yarp::os::ConnectionReader& connection) {
       Point3D _return;
       _return = multiply_point(x,factor);
       yarp::os::idl::WireWriter writer(reader);
-      if (!writer.writeListHeader(1)) return false;
-      if (!writer.write(_return)) return false;
+      if (!writer.isNull()) {
+        if (!writer.writeListHeader(1)) return false;
+        if (!writer.write(_return)) return false;
+      }
       reader.accept();
       return true;
     }
