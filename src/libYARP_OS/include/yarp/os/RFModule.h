@@ -23,10 +23,9 @@ namespace yarp {
 
 
 /**
-* 
-* Disclaimer: this is currently under development. A new base-class 
-* for standard YARP modules.  This class is similar to a Module, but 
-* it adds support for the ResourceFinder class.
+* A base-class for standard Yarp modules that supports ResourceFinder.
+* This class is similar to a Module, but it adds support for the
+* ResourceFinder class.
 */
 class YARP_OS_API yarp::os::RFModule {
 
