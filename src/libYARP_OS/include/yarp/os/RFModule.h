@@ -47,7 +47,7 @@ public:
     * updateModule() is called by runModule().  By default, it returns
     * 1.0. Time here is in seconds.
     * @return the desired period between successive calls to updateModule()
-    * 
+    *
     */
     virtual double getPeriod() {
         return 1.0;
@@ -57,19 +57,19 @@ public:
     * Override this to do whatever your module needs to do.  When
     * your module wants to stop, return false.  The module's actual
     * work could be done during this call, or it could just check the
-    * state of a thread running in the background.  
+    * state of a thread running in the background.
     * @return true iff module should continue
-    * 
+    *
     */
     virtual bool updateModule()=0;
 
     /**
     *
-    * Calls updateModule() until that returns false. Make sure 
+    * Calls updateModule() until that returns false. Make sure
     * you first configure your module by calling the configure()
     * function. updateModule() is then called every getPeriod()
-    * seconds.  Be aware that the the respond() command could be 
-    * asycnhronously at any time, if there is input from the 
+    * seconds.  Be aware that the the respond() command could be
+    * asycnhronously at any time, if there is input from the
     * standard input or a port connected via attach().
     * @return 0 on success
     *
@@ -85,11 +85,11 @@ public:
     virtual int runModule(yarp::os::ResourceFinder &rf);
 
     /**
-    * Configure the module, pass a ResourceFinder object to the module. 
+    * Configure the module, pass a ResourceFinder object to the module.
     * @param rf a previously initialized ResourceFinder
     * @return true/false upon success/failure
     *
-    * \note attachTerminal() is no longer called automatically. You 
+    * \note attachTerminal() is no longer called automatically. You
     * can call it in the configure function.
     */
     virtual bool configure(yarp::os::ResourceFinder &rf)
@@ -139,8 +139,8 @@ public:
     * Try to halt any ongoing operations by threads managed by the module.
     * This is called anynchronously just after a quit command is received.
     * By default it does nothing - you may want to override this.
-    * If you have created any ports, and have any threads that are 
-    * might be blocked on reading data from those ports, this is a 
+    * If you have created any ports, and have any threads that are
+    * might be blocked on reading data from those ports, this is a
     * good place to add calls to BufferedPort::interrupt() or
     * Port::interrupt().
     * @return true if there was no catastrophic failure
@@ -181,12 +181,12 @@ public:
 
     /**
     * Return name of module, as set with setName(). If a string
-    * is passed to the function, it gets concatenated to the module name. 
+    * is passed to the function, it gets concatenated to the module name.
     * This function can be useful to form port names used by the module.
-    * Important: strings are concatenated "as they are", no slashes are appended 
+    * Important: strings are concatenated "as they are", no slashes are appended
     * at the beginning of the strings (note: this is different from the previous
     * implementation of getName() in the Module class). To support legacy code
-    * the function will make sure subName contains a trailing slash (this 
+    * the function will make sure subName contains a trailing slash (this
     * behavior is deprecated and will disappear).
     * @param subName get nested name with this at the end
     * @return the name of the module

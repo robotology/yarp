@@ -64,8 +64,8 @@ void yarp::os::impl::addTime(ACE_Time_Value& val, const ACE_Time_Value & add) {
     val.tv_usec += add.tv_usec;
     int over = val.tv_usec % 1000000;
     if (over != val.tv_usec) {
-    	val.tv_usec = over;
-    	val.tv_sec++;
+        val.tv_usec = over;
+        val.tv_sec++;
     }
     val.tv_sec += add.tv_sec;
 #endif
@@ -75,12 +75,12 @@ void yarp::os::impl::subtractTime(ACE_Time_Value & val, const ACE_Time_Value & s
 #ifdef YARP_HAS_ACE
     val -= subtract;
 #else
-	if (val.tv_usec > subtract.tv_usec) {
-		val.tv_usec -= subtract.tv_usec;
-		val.tv_sec -= subtract.tv_sec;
-		return;
-	}
-	int over = 1000000 + val.tv_usec - subtract.tv_usec;
+    if (val.tv_usec > subtract.tv_usec) {
+        val.tv_usec -= subtract.tv_usec;
+        val.tv_sec -= subtract.tv_sec;
+        return;
+    }
+    int over = 1000000 + val.tv_usec - subtract.tv_usec;
     val.tv_usec = over;
     val.tv_sec--;
     val.tv_sec -= subtract.tv_sec;
@@ -89,7 +89,7 @@ void yarp::os::impl::subtractTime(ACE_Time_Value & val, const ACE_Time_Value & s
 
 double yarp::os::impl::toDouble(const ACE_Time_Value &v) {
 #ifdef YARP_HAS_ACE
-    return double(v.sec()) + v.usec() * 1e-6; 
+    return double(v.sec()) + v.usec() * 1e-6;
 #else
     return double(v.tv_sec) + v.tv_usec * 1e-6;
 #endif
@@ -106,14 +106,14 @@ void yarp::os::impl::fromDouble(ACE_Time_Value &v, double x,int unit) {
 
 
 class RFModuleHelper : public yarp::os::PortReader, public Thread
-{    
+{
 private:
     RFModule& owner;
     bool attachedToPort;
     bool attachedTerminal;
 public:
      /**
-     * Handler for reading messages from the network, and passing 
+     * Handler for reading messages from the network, and passing
      * them on to the respond() method.
      * @param connection a network connection to a port
      * @return true if the message was read successfully
@@ -121,7 +121,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection);
 
     RFModuleHelper(RFModule& owner) : owner(owner), attachedToPort(false), attachedTerminal(false) {}
-    
+
     virtual void run() {
         printf("Listening to terminal (type \"quit\" to stop module)\n");
         bool isEof = false;
@@ -136,7 +136,7 @@ public:
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
                     if (reply.get(0).toString()=="help") {
                         for (int i=0; i<reply.size(); i++) {
-                            ACE_OS::printf("%s\n", 
+                            ACE_OS::printf("%s\n",
                                            reply.get(i).toString().c_str());
                         }
                     } else {
@@ -151,14 +151,14 @@ public:
         //owner.interruptModule();
     }
 
-    bool attach(yarp::os::Port& source) 
+    bool attach(yarp::os::Port& source)
     {
         attachedToPort=true;
         source.setReader(*this);
         return true;
     }
 
-    bool attach(yarp::os::RpcServer& source) 
+    bool attach(yarp::os::RpcServer& source)
     {
         attachedToPort=true;
         source.setReader(*this);
@@ -195,7 +195,7 @@ bool RFModuleHelper::read(ConnectionReader& connection) {
     Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
     printf("command received: %s\n", cmd.toString().c_str());
-    
+
     bool result = owner.safeRespond(cmd,response);
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
@@ -214,7 +214,7 @@ bool RFModuleHelper::read(ConnectionReader& connection) {
             } else {
                 response.write(*writer);
             }
-            
+
             //printf("response sent: %s\n", response.toString().c_str());
         }
     }
@@ -232,7 +232,7 @@ static void handler (int sig) {
         ACE_OS::printf("Aborting (calling exit())...\n");
         yarp::os::exit(1);
     }
-    ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
+    ACE_OS::printf("[try %d of 3] Trying to shut down\n",
                    ct);
 
     if (module!=0)
@@ -252,12 +252,12 @@ static void handler (int sig) {
 // Special case for windows. Do not return, wait for the the main thread to return.
 // In any case windows will shut down the application after a timeout of 5 seconds.
 // This wait is required otherwise windows shuts down the process after we return from
-// the signal handler. We could not find better way to handle clean remote shutdown of 
+// the signal handler. We could not find better way to handle clean remote shutdown of
 // processes in windows.
 #if defined(WIN32)
 static void handler_sigbreak(int sig)
 {
-	raise(SIGINT);
+    raise(SIGINT);
 }
 #endif
 
@@ -268,7 +268,7 @@ RFModule::RFModule() {
     //set up signal handlers for catching ctrl-c
     if (module==NULL) {
         module = this;
-    } 
+    }
     else {
         ACE_OS::printf("Module::Module() signal handling currently only good for one module\n");
     }
@@ -364,14 +364,14 @@ int RFModule::runModule() {
         ACE_OS::fprintf(stderr, "At the moment the only way to have the module quit correctly is to avoid listening to terminal");
         ACE_OS::fprintf(stderr, "(i.e. do not call attachTerminal()).\n");
         ACE_OS::fprintf(stderr, "This will also make this annoying message go away.\n");
-        
-        
-         //one day this will hopefully go away, now only way to stop 
+
+
+         //one day this will hopefully go away, now only way to stop
         // remove both:
         close();
-        ACE_OS::exit(1); 
+        ACE_OS::exit(1);
         /////////////////////////////////////////////////////////////
-        detachTerminal();    
+        detachTerminal();
     }
 
     close();
@@ -393,7 +393,7 @@ ConstString RFModule::getName(const char *subName) {
     if (subName==0) {
         return name;
     }
-    
+
     String base = name.c_str();
 
     // Support legacy behavior, check if a "/" needs to be
@@ -402,10 +402,10 @@ ConstString RFModule::getName(const char *subName) {
     {
         ACE_OS::printf("WARNING: subName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.\n");
         ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.\n", name.c_str(), subName);
-        
+
         base += "/";
     }
-    
+
     base += subName;
     return base.c_str();
 }
