@@ -47,18 +47,46 @@ RobotInterface::Module::~Module()
     delete mPriv;
 }
 
-double RobotInterface::Module::getPeriod()
+bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
 {
-    return 2;
-}
+    if (!rf.check("config")) {
+        yFatal() << "Missing \"config\" argument";
+    }
 
-bool RobotInterface::Module::open(yarp::os::Searchable& config)
-{
+    const yarp::os::ConstString &filename = rf.findFile("config");
+    yDebug() << "Reading robot config file" << filename;
+
     RobotInterface::XMLReader reader;
-    mPriv->robot = reader.getRobot("/opt/iit/src/iCub/main/src/core/robotInterface/iCubGenova04/icub.xml");
+    mPriv->robot = reader.getRobot(filename.c_str());
     yDebug() << mPriv->robot;
 
-    return mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup);
+    // User can use YARP_PORT_PREFIX environment variable to override
+    // the default name, so we don't care of handling the --name
+    // argument
+    setName(mPriv->robot.name().c_str());
+
+    return true;
+}
+
+double RobotInterface::Module::getPeriod()
+{
+    return 60;
+}
+
+bool RobotInterface::Module::updateModule()
+{
+    static int initialized = false;
+    if (!initialized) {
+        if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
+            yError() << "Error in startup phase";
+            return false;
+        }
+        initialized = true;
+    } else {
+        yDebug() << "robot-interface running happily";
+    }
+
+    return true;
 }
 
 bool RobotInterface::Module::interruptModule()

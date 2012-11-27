@@ -13,7 +13,7 @@
 namespace RobotInterface
 {
 
-class Module : public yarp::os::Module
+class Module : public yarp::os::RFModule
 {
 public:
     explicit Module();
@@ -21,9 +21,10 @@ public:
 
     virtual double getPeriod();
 
-    virtual bool open(yarp::os::Searchable &config);
+    virtual bool updateModule();
     virtual bool close();
     virtual bool interruptModule();
+    virtual bool configure(yarp::os::ResourceFinder &rf);
 
 private:
     class Private;

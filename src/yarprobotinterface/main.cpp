@@ -27,8 +27,12 @@ int main(int argc, char *argv[])
 
     YARP_REGISTER_DEVICES(icubmod)
 
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose();
+    rf.setDefaultConfigFile("robot-interface.ini");
+    rf.configure(argc, argv);
+
     // Create and run our module
     RobotInterface::Module module;
-    module.setName("/icub");
-    return module.runModule(argc, argv);
+    return module.runModule(rf);
 }
