@@ -1,3 +1,8 @@
+2012-11-27  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* bindings/yarp.i: add C# tweak for setTargetPeriod
+	[thanks Stephane Lallee]
+
 2012-11-23  Lorenzo Natale  <lorenzo.natale@iit.it>
 	* tagging version 2.3.20
 

@@ -54,6 +54,7 @@
     %csmethodmodifiers acquire "public virtual";
     %csmethodmodifiers release "public virtual";
     %csmethodmodifiers isNull "public virtual";
+    %csmethodmodifiers setTargetPeriod "public new";
 #endif
 
 // Deal with abstract base class problems, where SWIG guesses
@@ -202,8 +203,43 @@ using namespace yarp::dev;
 #ifdef SWIGPYTHON
 %{
 #include <Python.h>
-  
+
 void setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h) {
+  fprintf(stderr,"HELLO???\n");
+        Py_buffer img_buffer, img_buffer2;
+        int reply;
+		fprintf(stderr, "Welcome to setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h)!\nThe parameters you specified are: %ld, %ld, %d, %d\n", (long)img, (long)mem, w, h);
+		
+		reply =  PyObject_CheckBuffer(mem);
+		fprintf(stderr, "Does mem support buffer interface?: %d\n", reply);
+		
+        reply = PyObject_GetBuffer(mem, &img_buffer, PyBUF_SIMPLE);
+		fprintf(stderr, "Buffer acquisition result: %d\n", reply);
+        // exit if the buffer could not be read
+        if (reply != 0)
+        {
+            fprintf(stderr, "Could not read Python buffers: error %d\n", reply);
+            return;
+        }
+        reply = PyBuffer_IsContiguous(&img_buffer, 'C');
+		fprintf(stderr, "Is the buffer C-contiguous?: %d\n", reply);
+		reply = PyBuffer_IsContiguous(&img_buffer, 'A');
+		fprintf(stderr, "Is the buffer contiguous at all?: %d\n", reply);
+		// we're gonna do something dirty now...
+		PyBuffer_Release(&img_buffer);
+		//memset(&img_buffer, 0, sizeof(Py_buffer));
+		fprintf(stderr, "Re-acquiring the buffer...\n");
+		reply = PyObject_GetBuffer(mem, &img_buffer2, PyBUF_SIMPLE);
+		fprintf(stderr, "Second buffer acquisition result: %d\n", reply);
+		img->setExternal((void*)img_buffer2.buf, w, h);
+		fprintf(stderr, "img->setExternal called!\n");
+        // release the Python buffers
+        PyBuffer_Release(&img_buffer2);
+		fprintf(stderr, "Buffer released!\n");
+}  
+
+void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
+  fprintf(stderr,"HELLO!!! %x\n", PY_VERSION_HEX);
 #if PY_VERSION_HEX >= 0x03000000
         Py_buffer img_buffer;
         int reply;
@@ -841,7 +877,8 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 		return self->getLimits(axis, &min[0], &max[0]);
 	}
 }
- 	  	 
+
+/* 	  	 
 %extend yarp::sig::Image {
 	void setExternal(long int mem, int w, int h) {
 		self->setExternal((void*)mem, w, h);
@@ -853,6 +890,7 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         self->setExternal((void*)mem, w, h);
         }
 }
+*/
 
 %extend yarp::sig::Vector {
 
@@ -958,6 +996,9 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 %extend yarp::sig::Image {
     void setExternal(PyObject* mem, int w, int h) {
       ::setExternal(self,mem,w,h);
+    }
+    void setExternal2(PyObject* mem, int w, int h) {
+      ::setExternal2(self,mem,w,h);
     }
 }
 
