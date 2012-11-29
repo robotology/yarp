@@ -2,43 +2,43 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-IF (NOT YARP_FOUND)
+if(NOT YARP_FOUND)
 
-  # Give the details of YARP libraries, include path etc.
-  SET(YARP_LIBRARIES "@YARP_LIBRARIES@")
-  SET(YARP_INCLUDE_DIRS "@YARP_INCLUDE_DIRS@")
-  SET(YARP_LINK_DIRS "@YARP_LINK_DIRS@") # only needed with certain plugins
-  SET(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
-  SET(YARP_MODULE_PATH "@YARP_MODULE_PATH@")
-  SET(YARP_BINDINGS "@YARP_BINDINGS@")
+    # Give the details of YARP libraries, include path etc.
+    set(YARP_LIBRARIES "@YARP_LIBRARIES@")
+    set(YARP_INCLUDE_DIRS "@YARP_INCLUDE_DIRS@")
+    set(YARP_LINK_DIRS "@YARP_LINK_DIRS@") # only needed with certain plugins
+    set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
+    set(YARP_MODULE_PATH "@YARP_MODULE_PATH@")
+    set(YARP_BINDINGS "@YARP_BINDINGS@")
 
-  SET(YARP_VERSION_MAJOR "@YARP_VERSION_MAJOR@")
-  SET(YARP_VERSION_MINOR "@YARP_VERSION_MINOR@")
-  SET(YARP_VERSION_PATCH "@YARP_VERSION_PATCH@")
-  SET(YARP_VERSION_MODIFIER "@YARP_VERSION_MODIFIER@")
-  SET(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
-  SET(YARP_VERSION_TWEAK "@YARP_VERSION_TWEAK@")
-  SET(YARP_VERSION "${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.${YARP_VERSION_PATCH}${YARP_VERSION_MODIFIER}")
+    set(YARP_VERSION_MAJOR "@YARP_VERSION_MAJOR@")
+    set(YARP_VERSION_MINOR "@YARP_VERSION_MINOR@")
+    set(YARP_VERSION_PATCH "@YARP_VERSION_PATCH@")
+    set(YARP_VERSION_MODIFIER "@YARP_VERSION_MODIFIER@")
+    set(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
+    set(YARP_VERSION_TWEAK "@YARP_VERSION_TWEAK@")
+    set(YARP_VERSION "${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.${YARP_VERSION_PATCH}${YARP_VERSION_MODIFIER}")
 
-  # Pull in any dependencies that YARP libraries may have.
-  GET_FILENAME_COMPONENT(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)
-  INCLUDE("${YARP_CMAKE}/@YARP_DEPENDENCY_FILENAME@")
+    # Pull in any dependencies that YARP libraries may have.
+    get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)
+    include("${YARP_CMAKE}/@YARP_DEPENDENCY_FILENAME@")
 
-  # Link directories are rare, so most user scripts don't
-  # account for them.  On balance, better to pull them
-  # in automatically.  The only current use is for OpenCV.
-  LINK_DIRECTORIES(${YARP_LINK_DIRS})
+    # Link directories are rare, so most user scripts don't
+    # account for them.  On balance, better to pull them
+    # in automatically.  The only current use is for OpenCV.
+    link_directories(${YARP_LINK_DIRS})
 
-  # Pass along some compilation options that may be useful for clients
-  # to check.
-  SET(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
-  SET(YARP_HAS_NAME_LIB @YARP_HAS_NAME_LIB@)
-  SET(YARP_USE_ATLAS @YARP_USE_ATLAS@) # This is a math library option
-  SET(YARP_IS_SHARED_LIBRARY @CREATE_SHARED_LIBRARY@) 
+    # Pass along some compilation options that may be useful for clients
+    # to check.
+    set(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
+    set(YARP_HAS_NAME_LIB @YARP_HAS_NAME_LIB@)
+    set(YARP_USE_ATLAS @YARP_USE_ATLAS@) # This is a math library option
+    set(YARP_IS_SHARED_LIBRARY @CREATE_SHARED_LIBRARY@)
 
-  # Check if IDL is available
-  SET(YARP_HAS_IDL @YARP_HAS_IDL@)
-  SET(YARP_IDL_BINARY_HINT "@YARP_IDL_BINARY_HINT@")
+    # Check if IDL is available
+    set(YARP_HAS_IDL @YARP_HAS_IDL@)
+    set(YARP_IDL_BINARY_HINT "@YARP_IDL_BINARY_HINT@")
 
-  SET (YARP_FOUND TRUE)
-ENDIF (NOT YARP_FOUND)
+    set (YARP_FOUND TRUE)
+endif(NOT YARP_FOUND)
