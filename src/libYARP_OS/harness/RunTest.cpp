@@ -27,46 +27,46 @@ using namespace yarp::os;
 
 class YarpRun: public Thread
 {
-	int _argc;
-	char **_argv;
+    int _argc;
+    char **_argv;
 public:
-	YarpRun()
-	{
-		_argc=0;
-		_argv=0;
-	}
-	~YarpRun()
-	{
-		for(int a=0;a<_argc;a++)
-		{
-			delete [] _argv[a];
-		}
+    YarpRun()
+    {
+        _argc=0;
+        _argv=0;
+    }
+    ~YarpRun()
+    {
+        for(int a=0;a<_argc;a++)
+        {
+            delete [] _argv[a];
+        }
 
-		if (_argv)
-			delete [] _argv;
-		_argv=0;
-	}
+        if (_argv)
+            delete [] _argv;
+        _argv=0;
+    }
 
-	void start(int argc, char **argv)
-	{
-		_argc = argc;
-		_argv=new char *[argc];
-		for(int a=0;a<argc;a++)
-		{
-			_argv[a]=new char [strlen(argv[a])+1];
-			strcpy(_argv[a], argv[a]);
-		}
+    void start(int argc, char **argv)
+    {
+        _argc = argc;
+        _argv=new char *[argc];
+        for(int a=0;a<argc;a++)
+        {
+            _argv[a]=new char [strlen(argv[a])+1];
+            strcpy(_argv[a], argv[a]);
+        }
 
-		Thread::start();
-	}
+        Thread::start();
+    }
 
-	void stop()
-	{}
+    void stop()
+    {}
 
-	void run()
-	{
-		yarp::os::Run::main(_argc, _argv);
-	}
+    void run()
+    {
+        yarp::os::Run::main(_argc, _argv);
+    }
 };
 
 
@@ -75,53 +75,53 @@ public:
     virtual String getName() { return "RunTest"; }
 
     virtual void testRun() {
-		//this could be local or using an external nameserver, to be decided
-		Network::setLocalMode(false);
-		Network yarp;
-		YarpRun runner;
+        //this could be local or using an external nameserver, to be decided
+        Network::setLocalMode(false);
+        Network yarp;
+        YarpRun runner;
 
         report(0,"checking yarprun");
 
-		const int argc=3;
-		const char *argv[argc];
-		argv[0]="dummy-name";
-		argv[1]="--server";
-		argv[2]="/run";
+        const int argc=3;
+        const char *argv[argc];
+        argv[0]="dummy-name";
+        argv[1]="--server";
+        argv[2]="/run";
 
-     	runner.start(argc, (char**)argv);
+        runner.start(argc, (char**)argv);
 
-		Time::delay(3);
-		Property par;
-		par.put("name", "testModule");
+        Time::delay(3);
+        Property par;
+        par.put("name", "testModule");
 
-      
+
         ConstString moduleTag="test_module";
         yarp::os::Run::start("/run", par, moduleTag);
 
-    	Time::delay(1);
-	
+        Time::delay(1);
+
         bool isRunning=yarp::os::Run::isRunning("/run", moduleTag);
-		checkTrue(isRunning,"isRunning");
+        checkTrue(isRunning,"isRunning");
 
-	//	terminate("/prova");
+    //    terminate("/prova");
 
-		fprintf(stderr, "done!\n");
-		//Time::delay(10);
-		//Run
-		//NetworkBase::exists(""
-		checkTrue(false,"test ok");
+        fprintf(stderr, "done!\n");
+        //Time::delay(10);
+        //Run
+        //NetworkBase::exists(""
+        checkTrue(false,"test ok");
     }
 
-	void terminate(const std::string &server)
-	{
-		Port tmpPort;
-		tmpPort.open("...");
-		Network::connect(tmpPort.getName().c_str(), "/run");
+    void terminate(const std::string &server)
+    {
+        Port tmpPort;
+        tmpPort.open("...");
+        Network::connect(tmpPort.getName().c_str(), "/run");
 
-		Bottle msg, reply;
-		msg.fromString("(exit)");
-		tmpPort.write(msg, reply);
-	}
+        Bottle msg, reply;
+        msg.fromString("(exit)");
+        tmpPort.write(msg, reply);
+    }
 
     virtual void runTests() {
         testRun();
