@@ -33,11 +33,11 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 # autotools, since that method seems better maintained.  Here we figure
 # out the correct ACE project file (or makefile) to use, given the compiler 
 # options
-# Visual Studio 11 not directly supported so we use ACE_vc10. Hopefully vs 
-# will convert it automatically
+# Visual Studio 11 not directly supported so we use ACE_vc10. We set
 if [ "k$OPT_COMPILER" = "kv11" ] ; then
     echo "WARNING: ACE does not yet provide visual studio 11 project files so you have to manually open and convert ACE_vc10.vcxproj"
-	pname=ACE_vc11.vcxproj
+	convert=1
+	pname=ACE_vc10.sln #ACE_vc10.vcxprojfi
 fi
 if [ "k$OPT_COMPILER" = "kv10" ] ; then
 	pname=ACE_vc10.vcxproj
@@ -124,7 +124,6 @@ fi
 # may need to zap the PATH
 
 echo "$OPT_BUILDER $pname $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND"
-
 ACE_DIR=`cygpath --mixed "$ACE_ROOT"`
 {
 if [ ! "k$RESTRICTED_PATH" = "k" ]; then
@@ -132,6 +131,11 @@ if [ ! "k$RESTRICTED_PATH" = "k" ]; then
 	PATH="$RESTRICTED_PATH"
 	echo "ACE_ROOT set to $ACE_ROOT"
 	echo "PATH set to $PATH"
+fi
+
+if [ "k$convert" = "k1" ]; then
+    echo "Upgrading solution file"
+	devenv $pname /upgrade || exit 1
 fi
 
 $OPT_BUILDER $pname $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
