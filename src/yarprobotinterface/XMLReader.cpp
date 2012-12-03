@@ -60,7 +60,12 @@ RobotInterface::XMLReader::Private::~Private()
 RobotInterface::Robot& RobotInterface::XMLReader::Private::readFile(const std::string &fileName)
 {
     filename = fileName;
-    path = filename.substr(0, filename.rfind("/")); //FIXME Windows!!!!
+
+#ifdef WIN32
+    path = filename.substr(0, filename.rfind("\\"));
+#else // WIN32
+    path = filename.substr(0, filename.rfind("/"));
+#endif //WIN32
 
     TiXmlDocument *doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
