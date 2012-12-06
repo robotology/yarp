@@ -12,10 +12,12 @@
 #include <signal.h>
 #include <string.h>
 
-#define YARPRUN_OK              0
-#define YARPRUN_NORESPONSE      1
-#define YARPRUN_NOCONNECTION    2
-#define YARPRUN_UNDEF           3
+#define YARPRUN_OK                  0
+#define YARPRUN_NORESPONSE          1
+#define YARPRUN_NOCONNECTION        2
+#define YARPRUN_CONNECTION_TIMOUT   3
+#define YARPRUN_SEMAPHORE_PARAM     4
+#define YARPRUN_UNDEF               5
 
 #define CONNECTION_TIMEOUT      5.0         //seconds
 #define RUN_TIMEOUT             10.0        //seconds
@@ -28,8 +30,10 @@
 #endif 
 
 const char* yarprun_err_msg[] = { " (Ok) ", 
-                                  " (No response) ",
-                                  " (No connection) ",
+                                  " (Remote host does not respond) ",
+                                  " (Remote host does no exist) ",
+                                  " (Timeout while connecting to the remote host) ",
+                                  " (Blocked in parameter's semaphor) ",
                                   " (Undefined message) " };
 
 using namespace yarp::os;
@@ -669,7 +673,7 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
         return YARPRUN_NOCONNECTION;
 
     if(!semParam.check())
-        return YARPRUN_NOCONNECTION;
+        return YARPRUN_SEMAPHORE_PARAM;
 
     port.setTimeout(fTimeout);
     bool ret;
@@ -683,7 +687,7 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
     if(!ret)
     { 
         semParam.post();
-        return YARPRUN_NOCONNECTION;
+        return YARPRUN_CONNECTION_TIMOUT;
     }
       
     ret = port.write(msg, response);
