@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <robot name="icub">
-    <!--<param name="PC104IpAddress">10.0.1.104</param>-->
-    <param name="PC104IpAddress">10.255.72.111</param>
+    <params file="hardware/electronics/pc104.xml" />
 
     <!-- LEFT ARM -->
-    <file name="hardware/left_arm_ems1.xml" />
-    <file name="hardware/left_arm_ems2.xml" />
-    <file name="wrappers/left_arm.xml" />
-    <file name="calibrators/left_arm.xml" />
-    <!--<file name="configurators/left_arm.xml" />-->
+    <devices file="hardware/left_arm_ems1.xml" />
+    <devices file="hardware/left_arm_ems2.xml" />
+    <devices file="wrappers/left_arm.xml" />
+    <devices file="calibrators/left_arm.xml" />
+    <!--<devices file="configurators/left_arm.xml" />-->
 </robot>
