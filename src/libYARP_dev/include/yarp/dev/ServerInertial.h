@@ -209,7 +209,7 @@ public:
                         bool res = getInertial(bot);
                         if (res)
                         {
-                            yarp::os::Stamp ts;
+                            static yarp::os::Stamp ts;
                             if (iTimed)
                                 ts=iTimed->getLastInputStamp();
                             else
