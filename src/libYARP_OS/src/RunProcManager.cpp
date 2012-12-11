@@ -51,7 +51,7 @@
     {
         CHECK_ENTER("ZombieHunter")
 
-            DWORD nCount;
+        DWORD nCount;
 
         while (true)
         {
@@ -71,7 +71,7 @@
             {
                 CHECKPOINT()
 
-                    WaitForMultipleObjects(nCount,aHandlesVector,FALSE,INFINITE);
+                WaitForMultipleObjects(nCount,aHandlesVector,FALSE,INFINITE);
 
                 CHECKPOINT()
             }
