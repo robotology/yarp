@@ -324,7 +324,7 @@ string t_yarp_generator::type_to_enum(t_type* type) {
       return "BOTTLE_TAG_DOUBLE";
     }
   } else if (type->is_enum()) {
-    return "::apache::thrift::protocol::T_I32";
+    return "BOTTLE_TAG_INT";
   } else if (type->is_struct()) {
     return "BOTTLE_TAG_LIST";
   } else if (type->is_xception()) {
