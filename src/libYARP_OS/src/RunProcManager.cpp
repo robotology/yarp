@@ -47,7 +47,7 @@
     static DWORD WINAPI ZombieHunter(__in LPVOID lpParameter)
     #else
     static DWORD WINAPI ZombieHunter(LPVOID lpParameter)
-#endif
+    #endif
     {
         CHECK_ENTER("ZombieHunter")
 
