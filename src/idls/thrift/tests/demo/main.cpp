@@ -28,6 +28,13 @@ public:
     virtual void test_1way(const int32_t x) {
         printf("test oneway with %d\n", x);
     }
+
+    virtual std::vector<DemoEnum> test_enum_vector(const std::vector<DemoEnum> & x) {
+        printf("test_enum_vector\n");
+        std::vector<DemoEnum> result = x;
+        result.push_back(ENUM1);
+        return result;
+    }
 };
 
 class ClientPeek : public PortReader {
@@ -156,10 +163,36 @@ bool test_live_rpc() {
     return true;
 }
 
+bool test_enums() {
+    printf("\n*** test_enums()\n");
+
+    Network yarp;
+    yarp.setLocalMode(true);
+
+    Demo client;
+    Server server;
+
+    Port client_port,server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+    client.yarp().attachAsClient(client_port);
+    server.yarp().attachAsServer(server_port);
+
+    std::vector<DemoEnum> lst1;
+    lst1.push_back(ENUM1);
+    lst1.push_back(ENUM2);
+    std::vector<DemoEnum> lst2 = client.test_enum_vector(lst1);
+    printf("lst1 %d lst2 %d\n", lst1.size(), lst2.size());
+
+    return (lst2.size()==3 && lst1[0]==lst2[0] && lst1[1]==lst2[1]);
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
     if (!test_live()) return 1;
     if (!test_live_rpc()) return 1;
+    if (!test_enums()) return 1;
     return 0;
 }

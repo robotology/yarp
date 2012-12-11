@@ -14,7 +14,7 @@ yarp_idl_to_dir(demo.thrift ${generated_libs_dir})
 
 include_directories(${generated_libs_dir}/demo)
 include_directories(${YARP_INCLUDE_DIRS})
-add_executable(demo_test main.cpp ${generated_libs_dir}/demo/Demo.h ${generated_libs_dir}/demo/Demo.cpp)
+add_executable(demo_test main.cpp ${generated_libs_dir}/demo/Demo.h ${generated_libs_dir}/demo/Demo.cpp ${generated_libs_dir}/demo/DemoEnum.h ${generated_libs_dir}/demo/DemoEnum.cpp)
 target_link_libraries(demo_test ${YARP_LIBRARIES})
 
 add_test(demo_basic demo_test --help)
