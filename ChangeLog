@@ -1,3 +1,7 @@
+2012-12-12  Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/RunProcManager.cpp
+	WNOHANG option added to waitpid.
+
 2012-12-11  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/idls/thrift/src/t_yarp_generator.cc: fix representation

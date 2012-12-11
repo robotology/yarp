@@ -102,7 +102,7 @@
         CHECK_ENTER("SIGNAL") 
         int ret=!kill(pid,signum);
         CHECKPOINT()
-        if (wait) waitpid(pid,0,0);
+        if (wait) waitpid(pid,NULL,WNOHANG);
         CHECK_EXIT()
         return ret;
     }
@@ -621,6 +621,7 @@ void YarpRunCmdWithStdioInfo::TerminateStdio()
         CHECKPOINT()
 
         mStdioVector->Signal(mAlias,SIGTERM);
+        //mStdioVector->Signal(mAlias,SIGKILL);
     }
     else
     {
