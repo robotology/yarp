@@ -47,45 +47,45 @@
     static DWORD WINAPI ZombieHunter(__in LPVOID lpParameter)
     #else
     static DWORD WINAPI ZombieHunter(LPVOID lpParameter)
-    #endif
+#endif
     {
         CHECK_ENTER("ZombieHunter")
 
-	    DWORD nCount;
+            DWORD nCount;
 
-	    while (true)
-	    {
-	        if (aHandlesVector)
-	        {
-		        delete [] aHandlesVector;
-		        aHandlesVector=NULL;
-	        }
-	        nCount=0;
+        while (true)
+        {
+            if (aHandlesVector)
+            {
+                delete [] aHandlesVector;
+                aHandlesVector=NULL;
+            }
+            nCount=0;
 
-	        aHandlesVector=new HANDLE[yarp::os::Run::mProcessVector.Size()+yarp::os::Run::mStdioVector.Size()];
+            aHandlesVector=new HANDLE[yarp::os::Run::mProcessVector.Size()+yarp::os::Run::mStdioVector.Size()];
 
-	        yarp::os::Run::mProcessVector.GetHandles(aHandlesVector,nCount);
-	        yarp::os::Run::mStdioVector.GetHandles(aHandlesVector,nCount);
+            yarp::os::Run::mProcessVector.GetHandles(aHandlesVector,nCount);
+            yarp::os::Run::mStdioVector.GetHandles(aHandlesVector,nCount);
 
-		    if (nCount)
-		    {
+            if (nCount)
+            {
                 CHECKPOINT()
-                
-			    WaitForMultipleObjects(nCount,aHandlesVector,FALSE,INFINITE);
+
+                    WaitForMultipleObjects(nCount,aHandlesVector,FALSE,INFINITE);
 
                 CHECKPOINT()
-		    }
-		    else
-		    {
-			    hZombieHunter=NULL;
+            }
+            else
+            {
+                hZombieHunter=NULL;
                 CHECK_EXIT()
-			    return 0;
-		    }
-	    }
+                return 0;
+            }
+        }
 
         CHECK_EXIT()
 
-	    return 0;
+        return 0;
     }
 #else
     #include <unistd.h>
