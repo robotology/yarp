@@ -102,7 +102,7 @@
         CHECK_ENTER("SIGNAL") 
         int ret=!kill(pid,signum);
         CHECKPOINT()
-        if (wait) waitpid(pid,NULL,WNOHANG);
+        if (wait) waitpid(pid,NULL,0/*WNOHANG*/);
         CHECK_EXIT()
         return ret;
     }

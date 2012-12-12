@@ -1,4 +1,9 @@
 2012-12-12  Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/RunReadWrite.cpp
+	waitpid restored (no WNOHANG).
+    RunWrite termination management changed.
+
+2012-12-11  Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/RunProcManager.cpp
 	WNOHANG option added to waitpid.
 

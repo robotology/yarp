@@ -106,6 +106,13 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
 void RunWrite::close()
 {
     CHECK_ENTER("RunWrite::close")
+
+    fclose(stdin);
+
+    CHECK_EXIT()
+
+    /*
+    CHECK_ENTER("RunWrite::close")
     mWPort.interrupt();
     CHECKPOINT()
     mWPort.close();
@@ -113,6 +120,7 @@ void RunWrite::close()
     yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
     CHECK_EXIT()
     exit(0);
+    */
 }
 
 std::string RunWrite::getStdin() 
@@ -355,58 +363,63 @@ void RunReadWrite::close()
 {
     CHECK_ENTER("RunReadWrite::close")
 
-    if (mClosed) return;
+#if defined(WIN32)
 
-#if !defined(WIN32)
+    if (mClosed)
+    {
+        CHECK_EXIT()
+        return;
+    }
+    mClosed=true;
+
+#else    
 
     mDone.wait();
-    CHECKPOINT()
-        
-    if (!mClosed) 
+    if (mClosed)
     {
-        mClosed=true;
-#endif  
-
-        static const yarp::os::ConstString TOPIC("topic:/");
-        yarp::os::Network::disconnect((mUUID+"/stdout").c_str(),(TOPIC+mUUID+"/topic_i").c_str());
-        yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_i").c_str(),(mUUID+"/stdio:i").c_str());
-        yarp::os::Network::disconnect((mUUID+"/stdio:o").c_str(),(TOPIC+mUUID+"/topic_o").c_str());
-        yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_o").c_str(),(mUUID+"/stdin").c_str());
-
         CHECKPOINT()
-
-        mRPort.interrupt();
-        mRPort.close();
-        yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
-
-        CHECKPOINT()
-
-        mWPort.interrupt();
-        mWPort.close();
-        yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
-
-        CHECKPOINT()
-
-        int ret=0;
-        ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_i").c_str());
-
-        CHECKPOINT()
-
-        if (ret!=0)
-            YARP_LOG_ERROR("call to system returned error");
-
-        ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_o").c_str());
-
-        CHECKPOINT()
-
-        if (ret!=0)
-            YARP_LOG_ERROR("call to system returned error");
-
-#if !defined(WIN32)
+        mDone.post();
+        CHECK_EXIT()
+        return;
     }
-    CHECKPOINT()
+    mClosed=true;
     mDone.post();
-#endif
+
+#endif    
+
+   
+    static const yarp::os::ConstString TOPIC("topic:/");
+    yarp::os::Network::disconnect((mUUID+"/stdout").c_str(),(TOPIC+mUUID+"/topic_i").c_str());
+    yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_i").c_str(),(mUUID+"/stdio:i").c_str());
+    yarp::os::Network::disconnect((mUUID+"/stdio:o").c_str(),(TOPIC+mUUID+"/topic_o").c_str());
+    yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_o").c_str(),(mUUID+"/stdin").c_str());
+
+    CHECKPOINT()
+
+    mRPort.interrupt();
+    mRPort.close();
+    yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
+
+    CHECKPOINT()
+
+    mWPort.interrupt();
+    mWPort.close();
+    yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
+
+    CHECKPOINT()
+
+    int ret=0;
+    ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_i").c_str());
+
+    CHECKPOINT()
+
+    if (ret!=0) YARP_LOG_ERROR("call to system returned error");
+
+    ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_o").c_str());
+
+    CHECKPOINT()
+
+    if (ret!=0) YARP_LOG_ERROR("call to system returned error");
 
     CHECK_EXIT()
 

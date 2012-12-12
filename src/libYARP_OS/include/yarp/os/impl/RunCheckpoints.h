@@ -16,6 +16,8 @@
 #include <string>
 #include <list>
 
+#include <ace/ACE.h>
+
 class YarprunCheckpoints // singleton
 {
 private:
@@ -32,7 +34,7 @@ private:
         }
 
         char path[512];
-        sprintf(path,"%syarprun_log_%s.txt",temp,date);
+        sprintf(path,"%s/yarprun_log_%s.txt",temp,date);
 
         mLogFile=fopen(path,"w");
     }

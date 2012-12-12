@@ -13,6 +13,9 @@
 
 #include <yarp/os/Run.h>
 
+#include <stdio.h>
+
+
 int main(int argc, char *argv[]) 
 {
     yarp::os::Network yarp;
