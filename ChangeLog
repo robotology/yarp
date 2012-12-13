@@ -1,3 +1,12 @@
+2012-12-13  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/doc/persistent_connections.dox: show how to
+	connect two ports persistently from code without an 
+	intermediate topic.
+
+	* src/doc/yarp_plugins.dox: document how runtime plugins
+	currently work, warts and all.
+
 2012-12-12  Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/RunReadWrite.cpp
 	waitpid restored (no WNOHANG).

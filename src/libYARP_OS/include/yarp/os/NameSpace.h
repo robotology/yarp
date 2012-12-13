@@ -65,6 +65,14 @@ public:
                                          const Contact& dest,
                                          ContactStyle style) = 0;
 
+    virtual bool connectPortToPortPersistently(const Contact& src, 
+                                               const Contact& dest,
+                                               ContactStyle style) = 0;
+
+    virtual bool disconnectPortToPortPersistently(const Contact& src, 
+                                                  const Contact& dest,
+                                                  ContactStyle style) = 0;
+
     virtual bool localOnly() const = 0;
 
     virtual bool usesCentralServer() const = 0;

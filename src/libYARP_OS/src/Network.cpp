@@ -89,6 +89,27 @@ static int enactConnection(const Contact& src,
     rpc.quiet = style.quiet;
     rpc.timeout = style.timeout;
 
+    if (style.persistent) {
+        bool ok = false;
+        // we don't talk to the ports, we talk to the nameserver
+        NameSpace& ns = getNameSpace();
+        if (mode==YARP_ENACT_CONNECT) {
+            ok = ns.connectPortToPortPersistently(src,dest,style);
+        } else if (mode==YARP_ENACT_DISCONNECT) {
+            ok = ns.disconnectPortToPortPersistently(src,dest,style);
+        } else {
+            fprintf(stderr,"Failure: cannot check subscriptions yet\n");
+            return 1;
+        }
+        if (!ok) {
+            return 1;
+        }
+        if (!style.quiet) {
+            fprintf(stderr,"Success: port-to-port persistent connection added.\n");
+        }
+        return 0;
+    }
+
     if (mode==YARP_ENACT_EXISTS) {
         Bottle cmd, reply;
         cmd.addVocab(Vocab::encode("list"));
@@ -204,7 +225,7 @@ static int metaConnect(const char *csrc,
     Contact dynamicSrc = Contact::fromString(src);
     Contact dynamicDest = Contact::fromString(dest);
 
-    bool topical = false;
+    bool topical = style.persistent;
     if (dynamicSrc.getCarrier()=="topic" || 
         dynamicDest.getCarrier()=="topic") {
         topical = true;
@@ -218,11 +239,15 @@ static int metaConnect(const char *csrc,
     if (needsLookup(dynamicSrc)&&(topicalNeedsLookup||!topical)) {
         staticSrc = NetworkBase::queryName(dynamicSrc.getName());
         if (!staticSrc.isValid()) {
-            if (!style.quiet) {
-                fprintf(stderr, "Failure: could not find source port %s\n",
-                        src.c_str());
+            if (!style.persistent) {
+                if (!style.quiet) {
+                    fprintf(stderr, "Failure: could not find source port %s\n",
+                            src.c_str());
+                }
+                return 1;
+            } else {
+                staticSrc = dynamicSrc;
             }
-            return 1;
         }
     } else {
         staticSrc = dynamicSrc;
@@ -237,11 +262,15 @@ static int metaConnect(const char *csrc,
     if (needsLookup(dynamicDest)&&(topicalNeedsLookup||!topical)) {
         staticDest = NetworkBase::queryName(dynamicDest.getName());
         if (!staticDest.isValid()) {
-            if (!style.quiet) {
-                fprintf(stderr, "Failure: could not find destination port %s\n",
-                        dest.c_str());
+            if (!style.persistent) {
+                if (!style.quiet) {
+                    fprintf(stderr, "Failure: could not find destination port %s\n",
+                            dest.c_str());
+                }
+                return 1;
+            } else {
+                staticDest = dynamicDest;
             }
-            return 1;
         }
     } else {
         staticDest = dynamicDest;
@@ -378,8 +407,7 @@ static int metaConnect(const char *csrc,
     }
 
     int result = -1;
-
-    if (srcIsCompetent&&connectionIsPush) {
+    if ((srcIsCompetent&&connectionIsPush)||topical) {
         // Classic case.  
         Contact c = Contact::fromString(dest);
         if (connectionCarrier!=NULL) delete connectionCarrier;

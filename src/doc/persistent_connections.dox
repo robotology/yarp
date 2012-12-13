@@ -183,6 +183,19 @@ becoming connected to each other.  If you rely on a
 connection existing, test for it using either yarp::os::Network::isConnected
 or yarp::os::Port::getInputCount or yarp::os::Port::getOutputCount.
 
+To connect two ports persistently, without any intermediate topic
+(only possible with native YARP name service), use code like this:
+
+\code
+#include <yarp/os/Network.h>
+#include <yarp/os/ContactStyle.h>
+...
+yarp::os::Network yarp;
+yarp::os::ContactStyle style;
+style.persistent = true;
+Network::connect("/foo","/bar",style);
+\endcode
+
  *
  */
 

@@ -98,6 +98,18 @@ public:
         return connectTopic(cmd,true,src,dest,style,false);
     }
 
+    virtual bool connectPortToPortPersistently(const Contact& src, 
+                                               const Contact& dest,
+                                               ContactStyle style) {
+        return false;
+    }
+
+    virtual bool disconnectPortToPortPersistently(const Contact& src, 
+                                                  const Contact& dest,
+                                                  ContactStyle style) {
+        return false;
+    }
+
     virtual bool connectTopic(Bottle& cmd,
                               bool srcIsTopic,
                               const Contact& src, 
