@@ -1,0 +1,171 @@
+
+/**
+ * @page yarp_plugins Ways to compile YARP plugins
+
+\author Paul Fitzpatrick
+
+This documents a currently rather primitive area of YARP, runtime plugins.
+Subject to change in early 2013.
+
+For examples in this section, we assume a Linux environment.
+
+Historically, YARP plugins have been selected at compile-time, and linked
+with the YARP_init library.  At the time of writing, this remains the default.
+
+Suppose we start a fresh build of YARP, and enable the following
+CMake flags:
+ \li CREATE_DEVICE_LIBRARY_MODULES = ON
+ \li CREATE_OPTIONAL_CARRIERS = ON
+ \li CREATE_SHARED_LIBRARY = ON
+and then:
+ \li ENABLE_yarpmod_fakebot = ON
+This should give us a device called "fakebot" (that generates visual
+imagery from a simple simulated pan/tilt camera).
+
+If we then compile, and do:
+\verbatim
+ldd bin/yarpdev
+\endverbatim
+we should see a library linked in for the fakebot device, something like:
+\verbatim
+...
+libyarp_fakebot.so.1 => /home/.../lib/libyarp_fakebot.so.1 (0x00007f42d5eec000)
+...
+\endverbatim
+In fact, all YARP programs will now be linked against that library.  
+And if we do:
+\verbatim
+./bin/yarpdev --list
+\endverbatim
+we should see something like:
+\verbatim
+...
+Device "fakebot", C++ class FakeBot, has no network wrapper
+...
+\endverbatim
+And we can instantiate the device:
+\verbatim
+$ ./bin/yarpdev --device fakebot --verbose
+Error opening textures/back.ppm, check if file exists.
+Error opening textures/fore.ppm, check if file exists.
+yarp: created device <fakebot>. See C++ class FakeBot for documentation.
+===============================================================
+== Options checked by device:
+== 
+device=fakebot
+background [textures/back.ppm]
+    background image to use
+target [textures/fore.ppm]
+    target image to use
+noise [0.05]
+    pixel noise level
+sx [1.0]
+    scaling for x coordinate
+sy [1.0]
+    scaling for y coordinate
+==
+===============================================================
+yarp: Port /fakebot/quit active at tcp://127.0.0.1:10002
+yarp: device active in background...
+\endverbatim
+
+If we do not want this device linked-in, but instead to load it on
+demand, then there is an extra CMake flag to set (currently this
+may be hidden in "Advanced Mode" depending on the UI you are using):
+ \li RUNTIME_yarpmod_fakebot = ON
+
+After rebuilding, the output of <tt>ldd</tt> changes:
+\verbatim
+$ ldd bin/yarpdev | grep fakebot || echo "fakebot not linked"
+fakebot not linked
+\endverbatim
+
+However, the device is still listed by <tt>yarpdev</tt>:
+\verbatim
+$ ./bin/yarpdev --list | grep fakebot || echo "fakebot is not listed"
+Device "fakebot", C++ class FakeBot, has no network wrapper
+\endverbatim
+And we can still run it, as long as the library "libyarp_fakebot.so" can
+be found:
+\verbatim
+$ ./bin/yarpdev --device fakebot
+Error opening textures/back.ppm, check if file exists.
+Error opening textures/fore.ppm, check if file exists.
+yarp: created device <fakebot>. See C++ class FakeBot for documentation.
+yarp: Port /fakebot/quit active at tcp://127.0.0.1:10002
+yarp: device active in background...
+\endverbatim
+
+If we now delete <tt>lib/libyarp_fakebot.so</tt> then <tt>yarpdev</tt> will
+run but fail to create <tt>fakebot</tt> if we ask for it.  If you do
+delete it, please rebuild it for the next step.
+
+Now we go back and turn off compilation of fakebot entirely, with this
+CMake option:
+
+ \li ENABLE_yarpmod_fakebot = OFF
+ \li (the value of RUNTIME_yarpmod_fakebot doesn't matter in this case)
+
+Once recompiled, YARP no longer knows anything about <tt>fakebot</tt>.
+And <tt>yarpdev --list</tt> will not list it <b>[[TODO: agree a convention for scanning available libraries either by name or location]]</b>.  But, if we still have
+"libyarp_fakebot.so", we can still load that device if it is in
+the library path (either a system directory or listed by LD_LIBRARY_PATH):
+
+\verbatim
+$ LD_LIBRARY_PATH=$PWD/lib ./bin/yarpdev --device fakebot
+yarpdev: found driver file yarp_fakebot
+Error opening textures/back.ppm, check if file exists.
+Error opening textures/fore.ppm, check if file exists.
+yarp: created device <fakebot>. See C++ class FakeBot for documentation.
+yarp: Port /fakebot/quit active at tcp://127.0.0.1:10002
+yarp: device active in background...
+\endverbatim
+
+<b>[[TODO: avoid awkward rebuilding step]]</b>
+
+\section yarp_plugins_signature What YARP is looking for in plugin libraries
+
+If YARP is handed a library libfoo_bar.so, and asked to use to
+instantiate a plugin called fakebot, here is what it tries:
+
+  \li It looks for a function called exactly "fakebot" (no name-mangling).
+  \li If found, it passes that function a pointer to a block of memory
+      and calls it.  
+  \li If the first four bytes of memory (initially set
+      to zero) become the ASCII character 'Y', 'A', 'R', 'P', then
+      we proceed to interpret the block as a yarp::os::SharedLibraryClassApi
+      structure.
+  \li From the SharedLibraryClassApi structure we get callbacks for checking
+      overall version of strategy to use, ABI, and creation/destruction
+      of plugin.
+
+\section yarp_plugins_finding Finding the library for a particular device
+
+If YARP is given a device name such as "fakebot", it will try a few
+guesses at an appropriate library name.
+
+  \li Does a library "yarp_[PLUGIN]" = "yarp_fakebot" exist?  If so use it.
+      (ACE manages various library naming conventions like foo.dll,
+      libfoo.so, etc).
+  \li Is there a ":" in the plugin name?  If so split on that and
+  use the first part as the library name and the second as the device name.
+  So if we rename "libyarp_fakebot.so" as "libfoo.so", we can find it
+  by doing <tt>./bin/yarpdev --device foo:fakebot</tt>.
+  \li Is there an underscore in the plugin name?  If so, try 
+  appending yarp to the first part for the library name.  For example,
+  the two devices "ffmpeg_grabber" and "ffmpeg_writer" are currently 
+  provided by the single library "yarp_ffmpeg".
+
+
+\section yarp_plugins_carriers What about carriers?
+
+Poking around, it looks like support for runtime-loading of carriers
+is incomplete.  It should use the exact same mechanism as for devices,
+but does not yet do so - it still requires a stub registration
+(ENABLE_yarpcar_* ON, RUNTIME_yarpcar_* ON).  Will fix ASAP.
+
+The names of libraries for devices and carriers need to get systematized,
+there's been no restriction on them up to now.
+
+*
+*/
