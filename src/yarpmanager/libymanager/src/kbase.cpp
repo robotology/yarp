@@ -7,11 +7,10 @@
  *
  */
 
-
+#include <stdio.h>
 #include <cctype>
 #include <string>
 #include <string.h>
-#include <map>
 #include <algorithm>
 
 #include "kbase.h"
@@ -165,20 +164,7 @@ bool KnowledgeBase::removeApplication(Application* app)
 
 bool KnowledgeBase::removeModule(Module* mod)
 {
-    // removing inputs and resources
-    for(int i=0; i<mod->sucCount(); i++)
-        kbGraph.removeNode(mod->getLinkAt(i).to());
-
-    // removing outputs
-    for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)
-    {
-        OutputData* output = dynamic_cast<OutputData*>(*itr);
-        if(output && output->sucCount() &&
-           output->getLinkAt(0).to() == mod)
-            kbGraph.removeNode(output);
-    }
-    // removing module
-    return kbGraph.removeNode(mod);
+    return removeModuleFromGraph(kbGraph, mod);
 }
 
 bool KnowledgeBase::removeResource(GenericResource* res)
@@ -344,50 +330,11 @@ bool KnowledgeBase::makeupApplication(Application* application)
     /**
      * loading modules
      */
-    map<string, int> modList;
+    //map<string, int> modList;
     for(int i=0; i<application->imoduleCount(); i++)
     {
-        Module* module;
-        ModuleInterface mod = application->getImoduleAt(i);
-
-        if(modList.find(string(mod.getName()))==modList.end())
-            modList[mod.getName()] = 1;
-        ostringstream newname;
-        newname<<application->getLabel()<<":"<<mod.getName()<<":"<<modList[mod.getName()];
-
-        Module* repmod = dynamic_cast<Module*>(kbGraph.getNode(mod.getName()));
-        if(repmod)
-            module = replicateModule(tmpGraph, repmod, newname.str().c_str());
-        else
-        {
-            Module newmod(mod.getName());
-            newmod.setLabel(newname.str().c_str());
-            module = addModuleToGraph(tmpGraph, &newmod);
-        }
-
-        // adding application prefix to module prefix
-        if( strlen(application->getPrefix()) )
-        {
-            string strPrefix = string(application->getPrefix()) +
-                               string(mod.getPrefix());
-            mod.setPrefix(strPrefix.c_str());
-        }
-
-        //updating Module with ModuleInterface
-        updateModule(tmpGraph, module, &mod);
-        modList[mod.getName()] = modList[mod.getName()] + 1;
-
-        // adding module's resources to application resource list
-        ResourceIterator itr;
-        for(itr=mod.getResources().begin();
-            itr!=mod.getResources().end(); itr++)
-        {
-            (*itr).setOwner(module);
-            application->addResource(*itr);
-        }
-        //Adding the module as an successor to the application
-        tmpGraph.addLink(application, module, 0, false);
-
+        ModuleInterface &mod = application->getImoduleAt(i);
+        addIModuleToApplication(application, mod);
     } // end of for loop
 
 
@@ -433,6 +380,144 @@ bool KnowledgeBase::makeupApplication(Application* application)
     }
 
     return true;
+}
+
+Connection& KnowledgeBase::addConnectionToApplication(Application* application, 
+                                                      Connection &cnn)
+{    
+    
+    for(int i=0; i<application->connectionCount(); i++)
+    {
+        Connection* con = &application->getConnectionAt(i);
+        if(*con == cnn)
+        {
+            // updating con (e.g. model) with cnn
+            *con = cnn;
+            return *con;
+        }
+    }
+    
+    selconnections.push_back(cnn);
+    return application->addConnection(cnn);
+}
+
+
+bool KnowledgeBase::updateConnectionOfApplication(Application* application, 
+                                                  Connection& prev, Connection& con )
+{
+    __CHECK_NULLPTR(application);
+   
+    for(int i=0; i<application->connectionCount(); i++)
+    {
+        Connection* pcon = &application->getConnectionAt(i);
+        if(*pcon == prev)
+        {
+            *pcon = con;
+            break;
+        }
+    }
+    
+    CnnIterator citr;
+    for(citr=selconnections.begin(); citr<selconnections.end(); citr++) 
+    {
+        if((*citr) == prev)
+        {
+            (*citr) = con;
+            break;
+        }
+    }
+
+    return true;
+}
+
+
+bool KnowledgeBase::removeConnectionFromApplication(Application* application, Connection &cnn)
+{
+    __CHECK_NULLPTR(application);
+    
+    CnnIterator citr;
+    for(citr=selconnections.begin(); citr<selconnections.end(); citr++) 
+    {
+        if((*citr) == cnn)
+        {
+            selconnections.erase(citr);
+            break;
+        }
+    }
+    return application->removeConnection(cnn);
+}
+
+
+Module* KnowledgeBase::addIModuleToApplication(Application* application, 
+                                               ModuleInterface &mod, bool isNew)
+{
+    __CHECK_NULLPTR(application);
+
+    Module* module;
+
+    if(application->modList.find(string(mod.getName()))==application->modList.end())
+        application->modList[mod.getName()] = 1;
+    ostringstream newname;
+    newname<<application->getLabel()<<":"<<mod.getName()<<":"<<application->modList[mod.getName()];
+    
+    Module* repmod = dynamic_cast<Module*>(kbGraph.getNode(mod.getName()));
+    if(repmod)
+        module = replicateModule(tmpGraph, repmod, newname.str().c_str());
+    else
+    {
+        Module newmod(mod.getName());
+        newmod.setLabel(newname.str().c_str());
+        module = addModuleToGraph(tmpGraph, &newmod);
+    }
+
+    mod.setTag(newname.str().c_str());
+
+    // adding application prefix to module prefix
+    if( strlen(application->getPrefix()) )
+    {
+        string strPrefix = string(application->getPrefix()) +
+                           string(mod.getPrefix());
+        mod.setPrefix(strPrefix.c_str());
+    }
+
+    //updating Module with ModuleInterface
+    updateModule(tmpGraph, module, &mod);
+    application->modList[mod.getName()] = application->modList[mod.getName()] + 1;
+
+    // adding module's resources to application resource list
+    ResourceIterator itr;
+    for(itr=mod.getResources().begin();
+        itr!=mod.getResources().end(); itr++)
+    {
+        (*itr).setOwner(module);
+        application->addResource(*itr);
+    }
+    //Adding the module as an successor to the application
+    tmpGraph.addLink(application, module, 0, false);
+    module->setOwner(application);
+    if(isNew)
+        application->addImodule(mod);   
+    return module;
+}
+
+
+
+bool KnowledgeBase::removeIModuleFromApplication(Application* application, const char* szModTag)
+{
+    __CHECK_NULLPTR(application);
+
+    Module* module = dynamic_cast<Module*>(tmpGraph.getNode(szModTag));
+    if(module)
+        removeModuleFromGraph(tmpGraph, module);
+    for(int i=0; i<application->imoduleCount(); i++)
+    {
+        if(strcmp(application->getImoduleAt(i).getTag(), szModTag) == 0)
+        {
+            application->removeImodule(application->getImoduleAt(i));
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -717,6 +802,8 @@ bool KnowledgeBase::updateModule(Graph& graph,
     if(strlen(imod->getWorkDir()))
         module->setWorkDir(imod->getWorkDir());
 
+    module->setModelBase(imod->getModelBase());
+
     // updating port's prefix
     if(strlen(imod->getPrefix()))
     {
@@ -820,6 +907,7 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
         InputData* input = &(module->getInputAt(i));
         input->setLabel(createDataLabel(module->getLabel(),
                                         input->getPort(), ":I"));
+        input->setOwner(module);
         if((input=(InputData*)graph.addNode(input)))
             graph.addLink(module, input, 0,
                         !(input->isRequired()));
@@ -842,7 +930,7 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
         OutputData* output = &(module->getOutputAt(i));
         output->setLabel(createDataLabel(module->getLabel(),
                                         output->getPort(), ":O"));
-
+        output->setOwner(module);
         if((output=(OutputData*)graph.addNode(output)))
             graph.addLink(output, module, 0);
         else
@@ -873,6 +961,49 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
     graph.addLink(module, node, 0);
 
     return module;
+}
+
+bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application)
+{
+    //updating imodules
+    application->removeAllImodules();
+    for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
+    {
+        Module* module = dynamic_cast<Module*>(*itr);
+        if(module)
+        {
+            ModuleInterface imod(module);
+            application->addImodule(imod);
+        }        
+    }
+    
+    // updating connections modelBase with Model if exists
+    for(int i=0; i<application->connectionCount(); i++)
+    {
+        Connection* pcon = &application->getConnectionAt(i);
+        if(pcon->getModel())
+            pcon->setModelBase(*pcon->getModel());
+    }
+
+    return appSaver->save(application);
+}
+
+bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
+{
+    // removing inputs and resources
+    for(int i=0; i<mod->sucCount(); i++)
+        graph.removeNode(mod->getLinkAt(i).to());
+
+    // removing outputs
+    for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)
+    {
+        OutputData* output = dynamic_cast<OutputData*>(*itr);
+        if(output && output->sucCount() &&
+           output->getLinkAt(0).to() == mod)
+            graph.removeNode(output);
+    }
+    // removing module
+    return graph.removeNode(mod);
 }
 
 

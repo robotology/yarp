@@ -18,6 +18,11 @@
 #include "utility.h"
 #include "ymm-dir.h"
 
+
+#ifdef WITH_GEOMETRY
+#include <yarp/os/Property.h> // for parsing geometry information
+#endif
+
 using namespace std;
 
 /**
@@ -235,16 +240,12 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         {
             if(compareString(ath->Value(), "author"))
             {
-            
-                string info;
+                Author author;
                 if(ath->GetText())
-                    info = ath->GetText();
+                    author.setName(ath->GetText());
                 if(ath->Attribute("email"))
-                {
-                    info += string("/");
-                    info += string(ath->Attribute("email"));
-                }
-                app.addAuthor(info.c_str());
+                    author.setEmail(ath->Attribute("email"));
+                app.addAuthor(author);
             }
             else
             {
@@ -308,7 +309,23 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             
                 if((element = (TiXmlElement*) mod->FirstChild("rank")))
                     module.setRank(atoi(element->GetText()));
-                
+
+#ifdef WITH_GEOMETRY
+                element = (TiXmlElement*) mod->FirstChild("geometry");
+                if(element && element->GetText())
+                {
+                    yarp::os::Property prop(element->GetText());
+                    GraphicModel model; 
+                    GyPoint pt;
+                    if(prop.check("Pos"))
+                    {
+                        pt.x = prop.findGroup("Pos").find("x").asDouble();
+                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        model.points.push_back(pt);
+                        module.setModelBase(model);
+                    }
+                }
+#endif                
                 /* retrieving resources information*/
                 TiXmlElement* resources;
                 if((resources = (TiXmlElement*) mod->FirstChild("dependencies")))
@@ -435,6 +452,28 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if(cnn->Attribute("persist") && 
                         compareString(cnn->Attribute("persist"), "true"))
                     connection.setPersistent(true);    
+
+#ifdef WITH_GEOMETRY
+                TiXmlElement* geometry = (TiXmlElement*) cnn->FirstChild("geometry");
+                if(geometry && geometry->GetText())
+                {
+                    yarp::os::Property prop(geometry->GetText());
+                    GraphicModel model;                     
+                    if(prop.check("Pos"))
+                    {
+                        yarp::os::Bottle pos = prop.findGroup("Pos");
+                        for(int i=1; i<pos.size(); i++)
+                        {
+                            GyPoint pt;
+                            pt.x = pos.get(i).find("x").asDouble();
+                            pt.y = pos.get(i).find("y").asDouble();
+                            model.points.push_back(pt);
+                        }
+                        connection.setModelBase(model);
+                    }
+                }
+#endif                
+ 
                 app.addConnection(connection);
             }
             else

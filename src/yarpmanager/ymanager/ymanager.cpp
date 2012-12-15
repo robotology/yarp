@@ -915,7 +915,7 @@ void YConsoleManager::which(void)
         cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
             cout<<" ["<<(*cnnitr).carrier()<<"]";
         if((*cnnitr).owner())
-            cout<<" ["<<(*cnnitr).owner()->getName()<<"]";  
+            cout<<" ["<<((Module*)(*cnnitr).owner())->getName()<<"]";  
         cout<<ENDC<<endl;
     }       
     

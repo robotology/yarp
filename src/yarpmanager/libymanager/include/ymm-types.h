@@ -15,6 +15,7 @@
 
 //namespace ymm {
 
+#define WITH_GEOMETRY
 
 typedef enum __NodeType {
     MODULE,
@@ -33,6 +34,12 @@ typedef enum __OS {
     OTHER
 } OS;
 
+typedef struct __GyPoint {
+    double x;
+    double y;
+} GyPoint;
+
+
 /*
 typedef enum __Carrier {
     TCP,
@@ -43,6 +50,7 @@ typedef enum __Carrier {
     UNKNOWN
 } Carrier;
 */
+
 
 
 

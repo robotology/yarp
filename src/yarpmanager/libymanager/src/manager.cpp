@@ -14,7 +14,7 @@
 #include "xmlapploader.h"
 #include "xmlmodloader.h"
 #include "xmlresloader.h"
-
+#include "xmlappsaver.h"
 #include "singleapploader.h"
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds
@@ -226,6 +226,17 @@ bool Manager::loadApplication(const char* szAppName)
 
     return prepare(true);
 }
+
+
+bool Manager::saveApplication(const char* szAppName, const char* fileName)
+{
+    Application* pApp = knowledge.getApplication();
+    __CHECK_NULLPTR(pApp);
+
+    XmlAppSaver appsaver(fileName);
+    return knowledge.saveApplication(&appsaver, pApp);
+}
+
 
 bool Manager::loadBalance(void)
 {

@@ -49,6 +49,9 @@ public:
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     const char* getDescription(void) { return strDescription.c_str(); }
     
+    void setOwner(Node* owner) { modOwner = owner; }
+    Node* owner(void) { return modOwner; }
+
     bool operator==(const InputData& input) {       
         return (strName == input.strName); 
     }
@@ -62,6 +65,7 @@ private:
     string strDescription;
     bool bWithPriority;
     bool bRequired;     
+    Node*  modOwner; 
 };
 
 
@@ -86,6 +90,10 @@ public:
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     const char* getDescription(void) { return strDescription.c_str(); }
     
+    void setOwner(Node* owner) { modOwner = owner; }
+    Node* owner(void) { return modOwner; }
+
+   
     bool operator==(const OutputData& output) {     
         return (strName == output.strName); 
     }
@@ -97,6 +105,7 @@ private:
     string strPort; 
     string carrier;
     string strDescription;
+    Node*  modOwner; 
 };
  
  

@@ -9,6 +9,10 @@
 
 
 #include "module.h"
+#include <stdio.h>
+#include <string>
+using namespace std;
+#include <string.h>
 
 Module::Module(void) : Node(MODULE) { clear();}
 
@@ -53,6 +57,7 @@ void Module::swap(const Module &mod)
     strStdio = mod.strStdio;
     strBroker = mod.strBroker;
     strPrefix = mod.strPrefix;
+    modOwner = mod.modOwner;
     // deep copy
     for(int i=0; i<mod.resourceCount(); i++)
         addResource(mod.getResourceAt(i));
@@ -145,6 +150,18 @@ bool Module::removeResource(GenericResource& res)
     return true;
 }
 
+bool Module::removeAuthor(Author& author)
+{
+    AuthorIterator itr;
+    for(itr=authors.begin(); itr<authors.end(); itr++)
+        if((*itr) == author)
+        {
+            authors.erase(itr);
+            return true;
+        }    
+    return true;        
+}
+
 
 ArgumentIterator Module::findArgument(Argument& argument)
 {
@@ -186,6 +203,7 @@ ResourcePIterator Module::findResource(GenericResource& res)
 
 void Module::clear(void)
 {
+    modOwner = NULL;
     iRank = 1;
     strName.clear();
     arguments.clear();
@@ -211,3 +229,69 @@ void Module::clear(void)
     }
     resources.clear();
 }
+
+bool Module::setParam(const char* szParam)
+{ 
+    __CHECK_NULLPTR(szParam);
+
+    bool bokay = true;
+    strParam = szParam;
+    ErrorLogger* logger  = ErrorLogger::Instance();
+    ArgumentIterator itr;
+    for(itr=arguments.begin(); itr<arguments.end(); itr++)
+    {
+        const char* szVal = getParamValue((*itr).getParam(), (*itr).isSwitch());
+        if(!szVal)
+        {
+            ostringstream msg;
+            msg<<"Error in parsing parameters of "<<getName() \
+                <<". ( '"<< (*itr).getParam()<<"' is not correct. )";
+            logger->addWarning(msg);
+            printf("%s\n", msg.str().c_str());            
+            bokay = false;
+        }
+        else
+        {
+            if((*itr).isSwitch())
+                (*itr).setValue(szVal);
+            else
+            {
+                if(string(szVal) != "off")
+                    (*itr).setValue(szVal);
+            }
+        } 
+    }    
+    return bokay;
+}
+
+const char* Module::getParamValue(const char* key, bool bSwitch)
+{
+    //printf("\n\nparsing '%s' for %s (switch:%d)\n", strParam.c_str(), key, bSwitch);
+    // TODO: check whether the key should include "--" too!
+    size_t pos = strParam.find(key);
+    if(pos == string::npos)
+        return ("off");
+
+    if(bSwitch)
+        return ("on");
+
+    //printf("%s %d \n", __FILE__, __LINE__);
+    
+    pos += strlen(key); 
+    if((pos >= strParam.length()) || (strParam.at(pos) != ' '))
+        return NULL;
+
+    // skip all spaces
+    while(strParam.at(pos++) == ' ')
+    {
+        if(pos >= strParam.length())
+            return NULL;     
+    }
+    pos--;
+
+    size_t pos2 = pos;
+    while((pos2 < strParam.length()) && (strParam.at(pos2) != ' '))
+        pos2++;
+    return strParam.substr(pos, pos2-pos).c_str();
+}
+

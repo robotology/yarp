@@ -242,9 +242,25 @@ Module* XmlModLoader::parsXml(const char* szFile)
                     Argument arg(param->GetText(), 
                                  brequired,
                                  param->Attribute("desc"));
+                    arg.setDefault(param->Attribute("default"));
                     module.addArgument(arg);                 
                 }
             }
+            else
+            if(compareString(param->Value(), "switch"))
+            {           
+                if(param->GetText())
+                {   
+                    bool brequired = false;
+                    if(compareString(param->Attribute("required"), "yes"))
+                        brequired = true; 
+                    Argument arg(param->GetText(), 
+                                 brequired,
+                                 param->Attribute("desc"), true);
+                    arg.setDefault(param->Attribute("default"));
+                    module.addArgument(arg);                 
+                }
+            }                      
             else
             {
                 ostringstream war;
@@ -271,16 +287,12 @@ Module* XmlModLoader::parsXml(const char* szFile)
         {
             if(compareString(ath->Value(), "author"))
             {
-            
-                string info;
+                Author author;
                 if(ath->GetText())
-                    info = ath->GetText();
+                    author.setName(ath->GetText());
                 if(ath->Attribute("email"))
-                {
-                    info += string("/");
-                    info += string(ath->Attribute("email"));
-                }
-                module.addAuthor(info.c_str());
+                    author.setEmail(ath->Attribute("email"));
+                module.addAuthor(author);
             }
             else
             {

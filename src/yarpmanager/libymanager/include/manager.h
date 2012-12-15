@@ -48,6 +48,7 @@ public:
     bool removeResource(const char* szResName);
 
     bool loadApplication(const char* szAppName);
+    bool saveApplication(const char* szAppName, const char* fileName=NULL);
     bool updateExecutable(unsigned int id, const char* szparam,
                 const char* szhost, const char* szstdio,
                 const char* szworkdir, const char* szenv );

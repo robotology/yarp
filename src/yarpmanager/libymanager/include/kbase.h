@@ -75,12 +75,25 @@ public:
     Module* getModule(const char* szName) { 
                 return dynamic_cast<Module*>(kbGraph.getNode(szName)); 
                 }
+    Application* getApplication() { return mainApplication; } 
+
     Application* getApplication(const char* szName) { 
                 return dynamic_cast<Application*>(kbGraph.getNode(szName)); 
                 }
     GenericResource* getResource(const char* szName) { 
                 return dynamic_cast<GenericResource*>(kbGraph.getNode(szName)); 
                 }
+
+    Module* addIModuleToApplication(Application* application, 
+                                    ModuleInterface &mod, bool isNew=false);
+    bool removeIModuleFromApplication(Application* application, const char* szTag);
+    Connection& addConnectionToApplication(Application* application, Connection &cnn);
+    bool removeConnectionFromApplication(Application* application, Connection &cnn);
+    bool updateConnectionOfApplication(Application* application, 
+                                       Connection& prev, Connection& con );
+
+    void updateInterfaces(Application* application);
+    bool saveApplication(AppSaver* appSaver, Application* application);
 
     bool exportAppGraph(const char* szFileName) {
             return exportDotGraph(tmpGraph, szFileName); }
@@ -128,6 +141,8 @@ private:
                             GenericResource* res, const char* szLabel);
 
     Module* addModuleToGraph(Graph& graph, Module* module);
+    bool removeModuleFromGraph(Graph& graph, Module* mod);
+
     bool updateModule(Graph& graph, 
                      Module* module, ModuleInterface* imod );
     bool updateApplication(Graph& graph, 

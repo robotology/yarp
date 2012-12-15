@@ -1,0 +1,66 @@
+<application>
+    <name>MyTestApplication</name>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>MyTestModule</name>
+        <parameters></parameters>
+        <node></node>
+        <prefix>/MyTestApplication:MyTestModule:1</prefix>
+        <geometry>(Pos (x 415) (y 113.7))</geometry>
+    </module>
+    <module>
+        <name>velocityObserver</name>
+        <parameters>--name 1 --lenVel 2 --lenAcc 3 --thrVel 4 --thrAcc 5 --help</parameters>
+        <node>/ali</node>
+        <prefix>/ALI</prefix>
+        <stdio>/stdio</stdio>
+        <workdir>/home</workdir>
+        <geometry>(Pos (x 127) (y 113.7))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node>/ali</node>
+        <prefix>/MyTestApplication:yarpview:1</prefix>
+        <geometry>(Pos (x 690.5) (y 72.2))</geometry>
+    </module>
+    <connection>
+        <from>/ALI/vel:o</from>
+        <to>/MyTestApplication:MyTestModule:1/img/in:1</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 327) (y 131)) ((x 416) (y 131))  )</geometry>
+    </connection>
+    <connection>
+        <from>/ALI/acc:o</from>
+        <to>/MyTestApplication:MyTestModule:1/img/in:2</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 327) (y 156)) ((x 416) (y 156))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:MyTestModule:1/img/o:1</from>
+        <to>/MyTestApplication:yarpview:1/yarpview/img:i</to>
+        <protocol>UDP</protocol>
+        <geometry>(Pos ((x 583) (y 144)) ((x 643) (y 91)) ((x 691) (y 90))  )</geometry>
+    </connection>
+    <connection>
+        <from>/cam/left</from>
+        <to>/ALI/pos:i</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 97) (y 132)) ((x 128) (y 131))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:MyTestModule:1/img/o:2</from>
+        <to>Destination</to>
+        <protocol>UDP</protocol>
+        <geometry>(Pos ((x 583) (y 169)) ((x 679) (y 170)) ((x 679) (y 371)) ((x 781) (y 369))  )</geometry>
+    </connection>
+    <connection>
+        <from>/cam/left</from>
+        <to>Destination</to>
+        <protocol></protocol>
+        <geometry>(Pos ((x 97) (y 132)) ((x 175) (y 370)) ((x 781) (y 369))  )</geometry>
+    </connection>
+</application>
