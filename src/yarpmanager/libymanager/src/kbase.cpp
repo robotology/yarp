@@ -970,7 +970,7 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
     for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
     {
         Module* module = dynamic_cast<Module*>(*itr);
-        if(module)
+        if(module && (module->owner() == application))
         {
             ModuleInterface imod(module);
             application->addImodule(imod);

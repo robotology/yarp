@@ -1,58 +1,42 @@
-
 <application>
-	<!-- Generic information-->
-	<name>EyesViewer-Localhost</name>
-	<description> A fake robot eyes viewer with integrated applications running on localhost </description>
-	<version>1.0</version>
-	
-	<authors>
-		<author email="ali.paikan@iit.it"> Ali Paikan </author>
-	</authors>
-	
-	<!-- ports prefix (will be added to all modules and applications)-->
-	<!--<prefix>...</prefix> -->
-	
-	<!-- Required modules -->		
-	<module>
-		<name>yarpview</name>
-		<node>localhost</node>
-		<prefix>/RightView</prefix>
-	</module>
-
-	<module>
-		<name>yarpview</name>
-		<node>localhost</node>
-		<prefix>/LeftView</prefix>
-        <dependencies>
-            <port timeout="10">/left/eye</port>
-        </dependencies>
-	</module>
-
-
-	<!-- Required applications -->
-	<application> 
-		<name>FakeEyes</name>
-		<prefix>/left</prefix>
-	 </application>
-
-	<application> 
-		<name>FakeEyes</name>
-		<prefix>/right</prefix>
-	 </application>
-
-
-	<!-- Required connections -->
-	<connection persist="true">
-		<from>/left/eye</from>
-		<to>/LeftView/yarpview/img:i</to>
-		<protocol>udp</protocol>
-	</connection>
-
-	<connection>
-		<from>/right/eye</from>
-		<to>/RightView/yarpview/img:i</to>
-		<protocol>udp</protocol>
-	</connection>
-
+    <name>EyesViewer-Localhost</name>
+    <description>A fake robot eyes viewer with integrated applications running on localhost</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/RightView</prefix>
+        <geometry>(Pos (x 215) (y 167.6))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/LeftView</prefix>
+        <geometry>(Pos (x 216) (y 112.6))</geometry>
+    </module>
+    <application>
+        <name>FakeEyes</name>
+        <prefix>/left</prefix>
+    </application>
+    <application>
+        <name>FakeEyes</name>
+        <prefix>/right</prefix>
+    </application>
+    <connection>
+        <from>/left/eye</from>
+        <to>/LeftView/yarpview/img:i</to>
+        <protocol>UDP</protocol>
+        <geometry>(Pos ((x 108) (y 130)) ((x 217) (y 130))  )</geometry>
+    </connection>
+    <connection>
+        <from>/right/eye</from>
+        <to>/RightView/yarpview/img:i</to>
+        <protocol>UDP</protocol>
+        <geometry>(Pos ((x 113) (y 185)) ((x 216) (y 185))  )</geometry>
+    </connection>
 </application>
-

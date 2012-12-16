@@ -66,6 +66,7 @@ public:
     Glib::RefPtr<PortModel>& getDestination(void) { return destination; } 
     
     bool exist(void) { return bExist; } 
+    void showLabel(bool bShow);
 
 protected: 
     ArrowModel(ApplicationWindow* parentWnd, 

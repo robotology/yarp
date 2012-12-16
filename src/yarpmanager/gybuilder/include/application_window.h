@@ -86,6 +86,8 @@ public:
        m_snapToGrid = (snap && m_showGrid);
     }
 
+    void onViewLabel(bool label);
+
     bool onExportGraph(void);
     void onTabCloseRequest();
     void releaseApplication(void);
@@ -99,6 +101,7 @@ public:
     GooCanvasItemModel *m_Grid;
     bool m_snapToGrid;
     bool m_showGrid;
+    bool m_showLabel;
     Manager manager;
 
 protected:

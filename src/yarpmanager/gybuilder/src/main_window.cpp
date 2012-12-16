@@ -171,6 +171,8 @@ void MainWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='ViewGrid'/>"
         "      <menuitem action='ViewSnapToGrid'/>"
+        "      <separator/>"
+        "      <menuitem action='ViewLabel'/>"
         "    </menu>"
         "    <menu action='InsertMenu'>"
         "      <menuitem action='InsertSrcPort'/>"
@@ -518,6 +520,9 @@ void MainWindow::setupActions(void)
                         sigc::mem_fun(*this, &MainWindow::onMenuViewGrid) );
     m_refActionGroup->add( Gtk::ToggleAction::create("ViewSnapToGrid", Gtk::StockID("YGRIDSNAP"), "S_nap to Grid", "Snap to Grid"),
                         sigc::mem_fun(*this, &MainWindow::onMenuViewSnapToGrid) );
+    m_refActionGroup->add( Gtk::ToggleAction::create("ViewLabel", "Show _Labels", "Show Labels"),
+                        sigc::mem_fun(*this, &MainWindow::onMenuViewLabel) );
+
 
     // Insert menu:
     m_refActionGroup->add( Gtk::Action::create("InsertMenu", "Insert") );   
@@ -575,7 +580,12 @@ void MainWindow::setupActions(void)
                         m_refActionGroup->get_action("ViewGrid"));
     if(act)
         act->set_active(true);
-
+ 
+    act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
+                        m_refActionGroup->get_action("ViewLabel"));
+    if(act)
+        act->set_active(true);
+       
     act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
                         m_refActionGroup->get_action("WindowMessage"));
     if(act)
@@ -590,7 +600,6 @@ void MainWindow::setupActions(void)
                         m_refActionGroup->get_action("WindowProperty"));
     if(act)
         act->set_active(true);
-
 }
 
 
@@ -1444,6 +1453,22 @@ void MainWindow::onMenuViewSnapToGrid()
     }
 }
 
+void MainWindow::onMenuViewLabel() 
+{
+    int page_num = m_mainTab.get_current_page();
+    ApplicationWindow* appWnd = 
+            dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
+    if(appWnd)
+    {
+        Glib::RefPtr<Gtk::ToggleAction> act;
+        act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
+                m_refActionGroup->get_action("ViewLabel"));
+        if(act)
+            appWnd->onViewLabel(act->get_active());
+    }
+}
+
+
 void MainWindow::onMenuWindowItem()
 {
    Glib::RefPtr<Gtk::ToggleAction> act;
@@ -1697,7 +1722,7 @@ void MainWindow::manageApplication(const char* szName)
     m_refActionGroup->get_action("FileClose")->set_sensitive(true);
     m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
     m_refActionGroup->get_action("EditExportGraph")->set_sensitive(true);
-
+    onMenuViewLabel();
 }
 
 void MainWindow::manageResource(const char* szName)
@@ -1848,6 +1873,9 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
         m_refActionGroup->get_action("FileClose")->set_sensitive(true);
         m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
         m_refActionGroup->get_action("EditExportGraph")->set_sensitive(true);      
+        onMenuViewGrid();
+        onMenuViewSnapToGrid();
+        onMenuViewLabel();
     }
     else if(pResWnd)
     {

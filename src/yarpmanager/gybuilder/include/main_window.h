@@ -70,6 +70,7 @@ protected:
     void onMenuViewZoomReset();
     void onMenuViewGrid();
     void onMenuViewSnapToGrid();
+    void onMenuViewLabel();
     void onMenuWindowItem();
     void onMenuWindowMessage();
     void onMenuWindowProperty();

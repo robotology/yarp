@@ -451,6 +451,17 @@ void ApplicationWindow::onMenuWindowProperty(bool active)
     m_HPaned.show_all();
 }
 
+void ApplicationWindow::onViewLabel(bool label)
+{
+    m_showLabel = label;
+    for(int j=0; j<root->get_n_children(); j++)
+    {
+        Glib::RefPtr<ArrowModel> arw = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(j));
+        if(arw)
+            arw->showLabel(m_showLabel);
+    }
+}
+
 
 void ApplicationWindow::deleteSelectedArrows(void)
 {
@@ -1160,6 +1171,7 @@ void ApplicationWindow::updateApplicationWindow(void)
         //mod->property_x().set_value(100);
         //mod->property_y().set_value(100);
     }  
+     
 
     index = (index/900)*100+50;
     CnnIterator citr;
@@ -1171,7 +1183,6 @@ void ApplicationWindow::updateApplicationWindow(void)
         OutputData* output = NULL;
         Glib::RefPtr<PortModel> source, dest;
         findInputOutputData((*citr), modules, input, output);    
-        //printf("%s (%d)\n", __FILE__, __LINE__);
         if(output)
         {
             source = findModelFromOutput(output);
@@ -1194,6 +1205,7 @@ void ApplicationWindow::updateApplicationWindow(void)
             if(!bExist)   
                 source = ExternalPortModel::create(this, OUTPUTD, (*citr).from());
             root->add_child(source);
+
             if(model.points.size() > 0)
             {
                 source->set_property("x", model.points[0].x - 
@@ -1246,10 +1258,9 @@ void ApplicationWindow::updateApplicationWindow(void)
 
         Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(this, source, dest, (*citr).carrier());
         root->add_child(arrow);
-       
-        for(unsigned int i=1; i<model.points.size()-1; i++)
-            arrow->addMidPoint(model.points[i].x, 
-                               model.points[i].y, i-1);            
+        int size = model.points.size()-1;
+        for(int i=1; i<size; i++)
+            arrow->addMidPoint(model.points[i].x, model.points[i].y, i-1);            
         arrow->setSelected(false);
         //manager.getKnowledgeBase()->updateConnectionOfApplication(application, (*citr), updatedCon);
     }

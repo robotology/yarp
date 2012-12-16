@@ -98,7 +98,8 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         label = LabelModel::create(parentWindow, this, strCarrier.c_str());
     parentWindow->getRootModel()->add_child(label);
     label->raise();
-    
+
+    showLabel(parentWindow->m_showLabel);
     updatCoordiantes();
     ///updatlabelcoordiante();
  
@@ -378,6 +379,14 @@ bool ArrowModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
     //this->property_stroke_color().set_value("black");
    // printf("left\n");
     return true;
+}
+
+void ArrowModel::showLabel(bool bShow)
+{
+    if(bShow)
+        label->property_visibility().set_value(Goocanvas::ITEM_VISIBLE);
+    else
+       label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
 }
 
 void ArrowModel::setSelected(bool sel)

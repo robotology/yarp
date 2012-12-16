@@ -30,7 +30,7 @@
 		<parameters> --device test_grabber --name /right/eye</parameters>
 	</module>
 
-	<!-- Required connections -->
+	<!-- Required connections -->	
 	<connection>
 		<from>/left/eye</from>
 		<to>/LeftView/yarpview/img:i</to>
@@ -42,6 +42,5 @@
 		<to>/RightView/yarpview/img:i</to>
 		<protocol>udp</protocol>
 	</connection>
-
 </application>
 
