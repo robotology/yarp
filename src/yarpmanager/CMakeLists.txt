@@ -9,6 +9,7 @@
 
 
 option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" ON)
+option(CREATE_YBUILDER "Do you want to compile Yarp application builder?" OFF)
 
 if (CREATE_YMANAGER)
 	add_subdirectory(libymanager)
@@ -20,4 +21,9 @@ if (CREATE_YMANAGER)
 #		endif()
 	endif (CREATE_GUIS)
 endif (CREATE_YMANAGER)
+
+if (CREATE_YBUILDER)
+	add_subdirectory(gybuilder)
+endif (CREATE_YBUILDER)
+
 

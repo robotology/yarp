@@ -46,7 +46,7 @@ public:
 
 
     void setLabel(const char* label);
-    void addMidPoint(double x, double y);
+    void addMidPoint(double x, double y, int index=-1);
 
     void setSelected(bool sel);
     bool getSelected(void) { return selected; }

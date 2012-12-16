@@ -17,7 +17,11 @@
 #include "int_port_model.h"
 #include "ext_port_model.h"
 
+#include <math.h>
+
 #define ARROW_LINEWIDTH     2.0
+
+
 
 ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                        Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
@@ -242,13 +246,15 @@ int ArrowModel::addPoint(double x, double y)
     {
         points.get_coordinate(i, x1, y1);
         points.get_coordinate(i+1, x2, y2);
-        //printf("%d: (%f, %f) (%f, %f), (%f, %f)\n", i, x1, y1, x2, y2, x, y);
-        //double d = fabs((x2-x1)*(y1-y) - (x1-x)*(y2-y1)) / sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-        double d = ((x-x1)*(x2-x1) + (y-y1)*(y2-y1)) / ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-        if((d > 0.0) && (d < 1.0))
-        {
-            index = i;
-            break;
+        if((x > fmin(x1, x2)) && (x < fmax(x1, x2)) &&
+           (y > fmin(y1, y2)) && (y < fmax(y1, y2)))
+        {   
+            double d = ((x-x1)*(x2-x1) + (y-y1)*(y2-y1)) / ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+            if((d > 0.0) && (d < 1.0))
+            {
+                index = i;
+                break;
+            }
         }
     }
 
@@ -319,9 +325,13 @@ bool ArrowModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& ite
     return true;
 }
 
-void ArrowModel::addMidPoint(double x, double y)
+void ArrowModel::addMidPoint(double x, double y, int index)
 {
-    addPoint(x, y);
+    if(index >= 0)
+        addPoint(index, x, y);
+    else
+        addPoint(x, y);
+
     Glib::RefPtr<MidpointModel> mid = MidpointModel::create(parentWindow, 
                                       this, x, y);
                                       

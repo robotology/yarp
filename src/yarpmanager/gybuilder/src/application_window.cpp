@@ -1248,7 +1248,8 @@ void ApplicationWindow::updateApplicationWindow(void)
         root->add_child(arrow);
        
         for(unsigned int i=1; i<model.points.size()-1; i++)
-            arrow->addMidPoint((double)model.points[i].x, (double)model.points[i].y);            
+            arrow->addMidPoint(model.points[i].x, 
+                               model.points[i].y, i-1);            
         arrow->setSelected(false);
         //manager.getKnowledgeBase()->updateConnectionOfApplication(application, (*citr), updatedCon);
     }
