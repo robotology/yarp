@@ -73,7 +73,7 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 }
 
 
-bool KnowledgeBase::addApplication(Application* app)
+bool KnowledgeBase::addApplication(Application* app, char* szAppName_)
 {
     __CHECK_NULLPTR(app);
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -93,6 +93,9 @@ bool KnowledgeBase::addApplication(Application* app)
         app->setName(newlable.str().c_str());
         app->setLabel(newlable.str().c_str());
     }
+
+    if(szAppName_)
+        strcpy(szAppName_, app->getName());
 
     if(!kbGraph.addNode(app))
     {

@@ -67,6 +67,7 @@ public:
     
     bool exist(void) { return bExist; } 
     void showLabel(bool bShow);
+    void setConnection(Connection& con) { connection = con; }
 
 protected: 
     ArrowModel(ApplicationWindow* parentWnd, 

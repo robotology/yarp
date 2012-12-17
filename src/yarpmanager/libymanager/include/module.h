@@ -10,8 +10,8 @@
  */
 
 
-#ifndef __MODULE__
-#define __MODULE__
+#ifndef __MODULE_H_
+#define __MODULE_H_
 
 
 #include "ymm-types.h" 

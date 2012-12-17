@@ -34,6 +34,7 @@ public:
   
     void reportErrors(void);
 
+    Manager* getManager(void) {return &lazyManager;}
 
 public:
     MessagesList* m_refMessageList;

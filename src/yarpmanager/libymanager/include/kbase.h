@@ -48,7 +48,7 @@ public:
     bool createFrom(ModuleLoader* _mloader, 
                     AppLoader* _apploader, 
                     ResourceLoader* _resloader);
-    bool addApplication(Application* application);
+    bool addApplication(Application* application, char* szAppName_=NULL);
     bool addModule(Module* module);
     bool addResource(GenericResource* resource);
     bool removeApplication(Application* application);

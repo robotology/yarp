@@ -36,7 +36,7 @@
 #include "icon_res.h"
 #include "template_res.h"
 #include "xmltemploader.h"
-
+#include "application_wizard.h"
 
 using namespace std;
 
@@ -751,6 +751,11 @@ bool MainWindow::safeExit(void)
 void MainWindow::onMenuFileNewApp() 
 {
     ErrorLogger* logger  = ErrorLogger::Instance(); 
+
+   ApplicationWizard appWizard(this, "Create new Application");
+   appWizard.run();
+ 
+    /*
     if(m_config.check("external_editor"))
     { 
         Gtk::FileChooserDialog dialog("Create new Application description file");
@@ -784,17 +789,24 @@ void MainWindow::onMenuFileNewApp()
                 return;
             }
 
-            LocalBroker launcher;
-            if(launcher.init(m_config.find("external_editor").asString().c_str(),
-                             fname.c_str(), NULL, NULL, NULL, NULL))
-                if(!launcher.start() && strlen(launcher.error()))
-                {
-                    ostringstream msg;
-                    msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
-                    msg<<". "<<launcher.error();
-                    logger->addError(msg);
-                    reportErrors();
-                }           
+            char szAppName[255];
+            if(lazyManager.addApplication(fname.c_str(), szAppName))
+            {
+                syncApplicationList();
+                manageApplication(szAppName);
+            }
+            
+            //LocalBroker launcher;
+           // if(launcher.init(m_config.find("external_editor").asString().c_str(),
+           //                  fname.c_str(), NULL, NULL, NULL, NULL))
+           //     if(!launcher.start() && strlen(launcher.error()))
+           //     {
+           //         ostringstream msg;
+           //         msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
+           //         msg<<". "<<launcher.error();
+           //         logger->addError(msg);
+           //         reportErrors();
+           //     }                
         }
     }
     else
@@ -802,7 +814,7 @@ void MainWindow::onMenuFileNewApp()
         logger->addError("External editor is not set.");
         reportErrors();
     }
-
+    */
 }
 
 void MainWindow::onMenuFileNewMod() 

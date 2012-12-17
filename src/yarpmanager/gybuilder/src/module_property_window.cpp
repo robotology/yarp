@@ -17,6 +17,7 @@
 #include "ymm-dir.h"
 
 #include "main_window.h"
+#include "arrow_model.h"
 
 ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent, 
                                Manager* manager) : m_pModule(NULL)
@@ -24,7 +25,7 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     m_pParent = parent;
     m_pManager = manager;
     m_pModule = NULL;
-    m_pIModule = NULL;
+//    m_pIModule = NULL;
 
     /* Create a new scrolled window, with scrollbars only if needed */
     set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -90,8 +91,9 @@ void ModulePropertyWindow::onTabCloseRequest()
 
 void ModulePropertyWindow::update(Module* module)
 {
-    m_pIModule = NULL;
+    //m_pIModule = NULL;
     m_pModule = module;
+    /*
     Application* application = m_pManager->getKnowledgeBase()->getApplication();            
     if(application)
     {
@@ -105,6 +107,7 @@ void ModulePropertyWindow::update(Module* module)
     
     if(!m_pIModule)
         return;
+    */
 
     //Module* m_pModule = ModulePropertyWindow::m_pModule;
     m_refTreeModel->clear();
@@ -204,31 +207,31 @@ Connection* ModulePropertyWindow::findConnection( CnnContainer& connections, con
 
 void ModulePropertyWindow::updateModule(const char* item, const char* value)
 {
-    if(!m_pModule || !m_pIModule)
+    if(!m_pModule /*|| !m_pIModule*/)
         return;
 
     // updating modules
     if(strcmp(item, "Node") == 0)
     {
         m_pModule->setHost(value);
-        if(m_pIModule) m_pIModule->setHost(value);
+        //if(m_pIModule) m_pIModule->setHost(value);
     }
     else if(strcmp(item,"Stdio") == 0)
     {
         m_pModule->setStdio(value);
-        if(m_pIModule) m_pIModule->setStdio(value);
+        //if(m_pIModule) m_pIModule->setStdio(value);
 
     }
     else if(strcmp(item, "Workdir") == 0)
     {
         m_pModule->setWorkDir(value);
-        if(m_pIModule) m_pIModule->setWorkDir(value);
+        //if(m_pIModule) m_pIModule->setWorkDir(value);
 
     }
     else if(strcmp(item, "Prefix") == 0)
     {    
-        if(m_pIModule)  
-            m_pIModule->setPrefix(value);
+        //if(m_pIModule)  
+        //    m_pIModule->setPrefix(value);
 
         string strPrefix;
         Application* application = m_pManager->getKnowledgeBase()->getApplication(); 
@@ -251,6 +254,9 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                             updatedCon.setFrom(strFrom.c_str());
                             m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, 
                                                         con, updatedCon);
+                            // updating arrow's connection
+                            if(dynamic_cast<ArrowModel*>(con.getModel()))
+                                dynamic_cast<ArrowModel*>(con.getModel())->setConnection(updatedCon);
                         }
                     }
                 }
@@ -272,6 +278,9 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                             updatedCon.setTo(strTo.c_str());
                             m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, 
                                                         con, updatedCon);
+                            // updating arrow's connection
+                            if(dynamic_cast<ArrowModel*>(con.getModel()))
+                                dynamic_cast<ArrowModel*>(con.getModel())->setConnection(updatedCon);
                         }
                     }
                 }
@@ -284,14 +293,14 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
     else if(strcmp(item, "Parameters") == 0)
     {
         m_pModule->setParam(value);
-        if(m_pIModule) m_pIModule->setParam(value);
+        //if(m_pIModule) m_pIModule->setParam(value);
     }
 }
 
 void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string, 
                     const Glib::ustring& new_text)
 {
-    if(!m_pModule || !m_pIModule)
+    if(!m_pModule /*|| !m_pIModule*/ )
         return;
 
     Gtk::TreePath path(path_string);

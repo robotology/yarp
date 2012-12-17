@@ -76,7 +76,7 @@ Manager::~Manager()
 }
 
 
-bool Manager::addApplication(const char* szFileName)
+bool Manager::addApplication(const char* szFileName, char* szAppName_)
 {
     XmlAppLoader appload(szFileName);
     if(!appload.init())
@@ -84,7 +84,7 @@ bool Manager::addApplication(const char* szFileName)
     Application* application = appload.getNextApplication();
     if(!application)
         return false;
-    return knowledge.addApplication(application);
+    return knowledge.addApplication(application, szAppName_);
 }
 
 

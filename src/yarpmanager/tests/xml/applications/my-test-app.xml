@@ -8,8 +8,8 @@
         <name>MyTestModule</name>
         <parameters></parameters>
         <node></node>
-        <prefix>/MyTestApplication:MyTestModule:1</prefix>
-        <geometry>(Pos (x 387.5) (y 110.7))</geometry>
+        <prefix></prefix>
+        <geometry>(Pos (x 371) (y 108.9))</geometry>
     </module>
     <module>
         <name>velocityObserver</name>
@@ -18,43 +18,43 @@
         <prefix>/ALI</prefix>
         <stdio>/stdio</stdio>
         <workdir>/home</workdir>
-        <geometry>(Pos (x 140) (y 110.2))</geometry>
+        <geometry>(Pos (x 123.5) (y 108.4))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters></parameters>
         <node>/ali</node>
         <prefix>/MyTestApplication:yarpview:1</prefix>
-        <geometry>(Pos (x 663) (y 69.2))</geometry>
+        <geometry>(Pos (x 646.5) (y 67.4))</geometry>
     </module>
     <connection>
         <from>/ALI/vel:o</from>
-        <to>/MyTestApplication:MyTestModule:1/img/in:1</to>
+        <to>/img/in:1</to>
         <protocol>tcp</protocol>
-        <geometry>(Pos ((x 340) (y 128)) ((x 388) (y 128))  )</geometry>
+        <geometry>(Pos ((x 323) (y 126)) ((x 372) (y 127))  )</geometry>
     </connection>
     <connection>
         <from>/ALI/acc:o</from>
-        <to>/MyTestApplication:MyTestModule:1/img/in:2</to>
+        <to>/img/in:2</to>
         <protocol>tcp</protocol>
-        <geometry>(Pos ((x 340) (y 153)) ((x 388) (y 153))  )</geometry>
+        <geometry>(Pos ((x 323) (y 151)) ((x 372) (y 152))  )</geometry>
     </connection>
     <connection>
-        <from>/MyTestApplication:MyTestModule:1/img/o:1</from>
+        <from>/img/o:1</from>
         <to>/MyTestApplication:yarpview:1/yarpview/img:i</to>
         <protocol>UDP</protocol>
-        <geometry>(Pos ((x 555) (y 141)) ((x 643) (y 91)) ((x 664) (y 87))  )</geometry>
+        <geometry>(Pos ((x 539) (y 139)) ((x 643) (y 91)) ((x 647) (y 85))  )</geometry>
     </connection>
     <connection>
         <from>/cam/left</from>
         <to>/ALI/pos:i</to>
         <protocol>tcp</protocol>
-        <geometry>(Pos ((x 94) (y 128)) ((x 141) (y 128))  )</geometry>
+        <geometry>(Pos ((x 94) (y 125)) ((x 124) (y 126))  )</geometry>
     </connection>
     <connection>
-        <from>/MyTestApplication:MyTestModule:1/img/o:2</from>
+        <from>/img/o:2</from>
         <to>Destination</to>
         <protocol>UDP</protocol>
-        <geometry>(Pos ((x 555) (y 166)) ((x 607) (y 166)) ((x 607) (y 211)) ((x 767) (y 211)) ((x 767) (y 245)) ((x 506) (y 245)) ((x 506) (y 314)) ((x 788) (y 313))  )</geometry>
+        <geometry>(Pos ((x 539) (y 164)) ((x 607) (y 166)) ((x 607) (y 211)) ((x 767) (y 211)) ((x 767) (y 245)) ((x 506) (y 245)) ((x 506) (y 314)) ((x 812) (y 310))  )</geometry>
     </connection>
 </application>
