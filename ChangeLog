@@ -1,3 +1,13 @@
+2012-12-17  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/libYARP_sig/include/yarp/sig/SoundFile.h: Fix build with
+	  YARP_CLEAN_API=ON
+	* src/carriers/mjpeg_carrier/CMakeLists.txt: Enable test only
+	  if YARP_COMPILE_TESTS is enabled
+	* src/yarpscope/src/PortReader.cpp: Make connections persistent
+	* src/yarpscope/src/PortReader.cpp: Fix bug when data is not
+	  received
+	* src/yarpscope/src/PortReader.cpp: Try to read data just once
+
 2012-12-13  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/doc/persistent_connections.dox: show how to
