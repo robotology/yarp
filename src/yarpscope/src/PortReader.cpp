@@ -83,8 +83,13 @@ public:
             localPort->open(localPortName.c_str());
             localPortName = localPort->getName().c_str(); //Get the name of the port if YARP_PORT_PREFIX environment variable is set
 
+            // Setup ConnectionStyle
+            yarp::os::ContactStyle style;
+            style.persistent = true;
+            style.carrier = s_carrier.c_str();
+
             // Connect local port to remote port
-            if (!yarp::os::Network::connect(remotePortName.c_str(), localPortName.c_str(), s_carrier.c_str())) {
+            if (!yarp::os::Network::connect(remotePortName.c_str(), localPortName.c_str(), style)) {
                 warning() << "Connection from port" << localPortName <<  "to port" << remotePortName
                           << "was NOT successfull. Waiting from explicit connection from user.";
             } else {
