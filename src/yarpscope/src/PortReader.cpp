@@ -199,19 +199,8 @@ bool YarpScope::PortReader::Private::onTimeout()
         }
 
         int idx = conn->numberAcquiredData % s_bufSize;
-        int timeout = 0;
-        int maxTimeout = 2;
-
-        yarp::os::Bottle *b = NULL;
-        while ( !b && timeout < maxTimeout ) {
-            b = conn->localPort->read(false);
-            if (!b) {
-                yarp::os::Time::delay(0.0001);
-                timeout++;
-            }
-        }
-
-        if (timeout == maxTimeout || !b) {
+        yarp::os::Bottle *b = conn->localPort->read(false);
+        if (!b) {
             debug() << "No data received. Using previous values.";
             for (std::vector<Index*>::iterator iit = conn->usedIndices.begin();
                         iit != conn->usedIndices.end(); iit++) {
