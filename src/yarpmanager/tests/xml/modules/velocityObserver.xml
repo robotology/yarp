@@ -16,7 +16,7 @@
 
     <!-- <authors> can have multiple <author> tags. -->
     <authors>
-        <author email=""> Ugo Pattacini </author>
+        <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
     </authors>
 
      <!-- <data> can have multiple <input> or <output> tags. -->
