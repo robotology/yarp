@@ -219,32 +219,31 @@ bool YarpScope::PortReader::Private::onTimeout()
                 ind->X[idx] = ind->X[idx == 0 ? s_bufSize - 1 : idx - 1];
                 ind->Y[idx] = ind->Y[idx == 0 ? s_bufSize - 1 : idx - 1];
                 ind->T[idx] = ind->T[idx == 0 ? s_bufSize - 1 : idx - 1];
-                conn->numberAcquiredData++;
             }
-            continue;
-        }
+        } else {
+            yarp::os::Stamp stmp;
+            conn->localPort->getEnvelope(stmp);
 
-        yarp::os::Stamp stmp;
-        conn->localPort->getEnvelope(stmp);
+            for (std::vector<Index*>::iterator iit = conn->usedIndices.begin();
+                        iit != conn->usedIndices.end(); iit++) {
+                Index *ind = *iit;
 
-        for (std::vector<Index*>::iterator iit = conn->usedIndices.begin();
-                    iit != conn->usedIndices.end(); iit++) {
-            Index *ind = *iit;
+                if (b->size() - 1 < ind->index) {
+                    warning() << "bottle size =" << b->size() << "requested index =" << ind->index;
+                    continue;
+                }
 
-            if (b->size() - 1 < ind->index) {
-                warning() << "bottle size =" << b->size() << "requested index =" << ind->index;
-                continue;
-            }
+                ind->X[idx] = (float)idx;
+                ind->Y[idx] = (float)(b->get(ind->index).asDouble());
 
-            ind->X[idx] = (float)idx;
-            ind->Y[idx] = (float)(b->get(ind->index).asDouble());
-
-            if (conn->realTime && stmp.isValid()) {
-                ind->T[idx] = (float)(stmp.getTime() - conn->initialTime);
-            } else {
-                ind->T[idx] = (float)conn->numberAcquiredData;
+                if (conn->realTime && stmp.isValid()) {
+                    ind->T[idx] = (float)(stmp.getTime() - conn->initialTime);
+                } else {
+                    ind->T[idx] = (float)conn->numberAcquiredData;
+                }
             }
         }
+
         conn->numberAcquiredData++;
     }
 
