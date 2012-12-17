@@ -17,15 +17,6 @@
 #include <glibmm/ustring.h>
 #include <gdkmm/color.h>
 
-namespace {
-    const Gdk::Color colorRed("Red");
-    const Gdk::Color colorGreen("Green");
-    const Gdk::Color colorBlue("Blue");
-    const Gdk::Color colorCyan("Cyan");
-    const Gdk::Color colorMagenta("Magenta");
-    const Gdk::Color colorYellow("Yellow");
-}
-
 
 class YarpScope::Graph::Private
 {
