@@ -1,3 +1,8 @@
+2012-12-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_sig/src/Image.cpp: include OpenCV translations
+	of more pixel types in wrapIplImage [thanks Ilaria Gori]
+
 2012-12-17  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* src/libYARP_sig/include/yarp/sig/SoundFile.h: Fix build with
 	  YARP_CLEAN_API=ON
