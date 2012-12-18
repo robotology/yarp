@@ -44,7 +44,7 @@ void usage() {
     std::cout << std::endl;
     std::cout << "XML MODE:" << std::endl;
     std::cout << " --xml [path]           Path to the xml with the description of the scene (all the" << std::endl;
-    std::cout << "                        \"command line mode\" options are discarded)." << std::endl;
+    std::cout << "                        \"simple mode\" options are discarded)." << std::endl;
     std::cout << std::endl;
     std::cout << "SIMPLE MODE (single remote):" << std::endl;
     std::cout << " --remote [string]      Remote port to connect to." << std::endl;
@@ -60,11 +60,11 @@ void usage() {
 //    std::cout << " --triggermode          Use trigger mode." << std::endl;
 //    std::cout << " --graph_title [...]    Graph title(s) (used in legend)." << std::endl;
 //    std::cout << "                        Depending on index it mast be a [string] or an array of [string]s." << std::endl;
-    std::cout << " --color [...]          Graph color." << std::endl;
+    std::cout << " --color [...]          Graph color(s)." << std::endl;
     std::cout << "                        Depending on index it must be a [string] or an array of [string]s." << std::endl;
-    std::cout << " --type [...]           Graph type. Accepted values are \"points\", \"lines\" and \"bars\" (default = \"lines\")" << std::endl;
+    std::cout << " --type [...]           Graph type(s). Accepted values are \"points\", \"lines\" and \"bars\" (default = \"lines\")" << std::endl;
     std::cout << "                        Depending on index it must be a [string] or an array of [string]s." << std::endl;
-    std::cout << " --graph_size [...]     Graph size (thickness of the points) (default = 1)" << std::endl;
+    std::cout << " --graph_size [...]     Graph size(s) (thickness of the points) (default = 1)" << std::endl;
     std::cout << "                        Depending on index it must be a [uint] or an array of [uint]s." << std::endl;
     std::cout << std::endl;
     std::cout << "LEGACY OPTIONS (deprecated and unused):" << std::endl;
