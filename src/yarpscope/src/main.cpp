@@ -74,12 +74,6 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("yarpscope.ini");
     rf.configure(argc, argv);
 
-    //Yarp network initialization
-    yarp::os::Network yarp;
-    if (!yarp.checkNetwork()) {
-        fatal() << "Cannot connect to yarp network";
-    }
-
     // Read command line options
     yarp::os::Property options;
     options.fromString(rf.toString());
@@ -87,6 +81,12 @@ int main(int argc, char *argv[])
     if (options.check("help")) {
         usage();
         exit(0);
+    }
+
+    //Yarp network initialization
+    yarp::os::Network yarp;
+    if (!yarp.checkNetwork()) {
+        fatal() << "Cannot connect to yarp network";
     }
 
     // Init gtkmm and gtkdataboxmm
