@@ -96,20 +96,40 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
         graph_index = indexValue.asInt();
 
         if (options.check("graph_title")) {
+            if (options.find("graph_title").isList()) {
+                error() << "\"graph_title\" and \"index\" arguments should have the same number of elements";
+                *ok = false;
+                return;
+            }
             graph_title = options.find("graph_title").toString().c_str();
         }
 
         if (options.check("color")) {
+            if (options.find("color").isList()) {
+                error() << "\"color\" and \"index\" arguments should have the same number of elements";
+                *ok = false;
+                return;
+            }
             graph_color = options.find("color").toString().c_str();
         }
 
         if (options.check("type")) {
+            if (options.find("type").isList()) {
+                error() << "\"type\" and \"index\" arguments should have the same number of elements";
+                *ok = false;
+                return;
+            }
             graph_type =  options.find("type").toString().c_str();
         } else {
             graph_type = default_graph_type;
         }
 
         if (options.check("graph_size")) {
+            if (options.find("graph_size").isList()) {
+                error() << "\"graph_size\" and \"index\" arguments should have the same number of elements";
+                *ok = false;
+                return;
+            }
             graph_size =  options.find("graph_size").asInt();
         } else {
             graph_size = default_graph_size;
