@@ -71,7 +71,6 @@ public:
     {
         Connection(const Glib::ustring &remotePortName) :
             remotePortName(remotePortName),
-            localPortName("/YarpScope" + remotePortName),
             localPort(new yarp::os::BufferedPort<yarp::os::Bottle>()),
             realTime(false),
             initialTime(0.0),
@@ -80,8 +79,8 @@ public:
             usedIndices.clear(); // just to be sure that is empty
 
             // Open the local port
-            localPort->open(localPortName.c_str());
-            localPortName = localPort->getName().c_str(); //Get the name of the port if YARP_PORT_PREFIX environment variable is set
+            localPort->open();
+            localPortName = localPort->getName().c_str(); //Get the name of the port after the port is open (and therefore the name assigned)
 
             // Setup ConnectionStyle
             yarp::os::ContactStyle style;

@@ -1,3 +1,7 @@
+2012-12-18  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/yarpscope/src/PortReader.cpp: Connect using temporary
+	  ports
+
 2012-12-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_sig/src/Image.cpp: include OpenCV translations
