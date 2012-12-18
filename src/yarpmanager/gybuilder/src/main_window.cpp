@@ -752,69 +752,46 @@ void MainWindow::onMenuFileNewApp()
 {
     ErrorLogger* logger  = ErrorLogger::Instance(); 
 
-   ApplicationWizard appWizard(this, "Create new Application");
-   appWizard.run();
+    ApplicationWizard dialog(this, "Create new Application");
+    if(dialog.run() == Gtk::RESPONSE_OK)
+    {
+        string strPath = dialog.m_EntryFolderName.get_text(); 
+        if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+            strPath = strPath + string(PATH_SEPERATOR);
  
-    /*
-    if(m_config.check("external_editor"))
-    { 
-        Gtk::FileChooserDialog dialog("Create new Application description file");
-        dialog.set_transient_for(*this);
-        dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-        dialog.set_do_overwrite_confirmation(true);
-
-        //Add response buttons the the dialog:
-        dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-        dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-        //Add filters, so that only certain file types can be selected:
-        Gtk::FileFilter filter_app;
-        filter_app.set_name("Application description files (xml)");
-        filter_app.add_mime_type("text/xml");
-        dialog.add_filter(filter_app);
-        
-        if(dialog.run() == Gtk::RESPONSE_OK)
+        string fname = strPath + dialog.m_EntryFileName.get_text();
+        ofstream ser(fname.c_str());
+        if(ser.is_open())
         {
-            string fname = dialog.get_filename();
-            ofstream ser(fname.c_str());
-            if(ser.is_open())
-            {
-                ser<<str_app_template<<endl;
-                ser.close();
-            }
-            else
-            {
-                logger->addError(string("Cannot create ") + fname);
-                reportErrors();
-                return;
-            }
+            ser<<"<application>"<<endl;
+            ser<<"      <name>"<<dialog.m_EntryName.get_text()<<"</name>"<<endl;
+            ser<<"      <description>"<<dialog.m_EntryDesc.get_text()<<"</description>"<<endl;
+            ser<<"      <version>"<<dialog.m_EntryVersion.get_text()<<"</version>"<<endl;
+            ser<<"      <authors>"<<endl;
+            ser<<"          <author email=\""<<dialog.m_EntryEmail.get_text()<<"\" >"<<dialog.m_EntryAuthor.get_text()<<"</author>"<<endl;
+            ser<<"      </authors>"<<endl;
+            ser<<"</application>"<<endl;
+            ser.close();
+        }
+        else
+        {
+            logger->addError(string("Cannot create ") + fname);
+            reportErrors();
+            return;
+        }
 
-            char szAppName[255];
-            if(lazyManager.addApplication(fname.c_str(), szAppName))
-            {
-                syncApplicationList();
-                manageApplication(szAppName);
-            }
-            
-            //LocalBroker launcher;
-           // if(launcher.init(m_config.find("external_editor").asString().c_str(),
-           //                  fname.c_str(), NULL, NULL, NULL, NULL))
-           //     if(!launcher.start() && strlen(launcher.error()))
-           //     {
-           //         ostringstream msg;
-           //         msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
-           //         msg<<". "<<launcher.error();
-           //         logger->addError(msg);
-           //         reportErrors();
-           //     }                
+        char szAppName[255];
+        if(lazyManager.addApplication(fname.c_str(), szAppName))
+        {
+            syncApplicationList();
+            manageApplication(szAppName);
+        }
+        else
+        {
+            reportErrors();
         }
     }
-    else
-    {
-        logger->addError("External editor is not set.");
-        reportErrors();
-    }
-    */
 }
 
 void MainWindow::onMenuFileNewMod() 

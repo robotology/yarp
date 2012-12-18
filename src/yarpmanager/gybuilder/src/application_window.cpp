@@ -566,6 +566,7 @@ void ApplicationWindow::on_item_created(const Glib::RefPtr<Goocanvas::Item>& ite
 bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas::Item>& item, 
                                                    GdkEventButton* event)
 {
+
     // on double click, first deselect all items 
     // if it is not an "CTRL + Duble click"
     if(event->type == GDK_2BUTTON_PRESS)
@@ -615,7 +616,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             if(pMenu)
                 pMenu->popup(event->button, event->time);
         }
-
+        
         if(m_connector)
         {
             int id = root->find_child(m_connector);
@@ -624,7 +625,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             m_connector.clear();
         }
         else if(!m_selector && (event->button == 1))
-        { 
+        {
             m_selector = Goocanvas::RectModel::create(event->x, event->y, 1, 1);            
             m_selector->property_line_width().set_value(1.0);
             m_selector->set_property("antialias", Cairo::ANTIALIAS_NONE);
@@ -634,7 +635,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             g_object_set(m_selector->gobj(), "line-dash", dash, NULL);
             root->add_child(m_selector); 
         }
-        return false;
+        return true;
     }       
 
     // let external port set its position on double clicked + dragging
@@ -745,6 +746,8 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
         }
         else
             return arrow->onItemButtonPressEvent(item, event);
+
+        return true;
     }
 
     Glib::RefPtr<MidpointModel> mid = Glib::RefPtr<MidpointModel>::cast_dynamic(item->get_model());    
@@ -836,25 +839,39 @@ void ApplicationWindow::setSelected(void)
                 }
             }
         }
-
+        
         Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(model);
         if(arrow) 
         {
-            itemCount++;
-            arrow->setSelected(true);
-            if(itemCount == 1)
+            double x1 = selector->get_bounds().get_x1();
+            double y1 = selector->get_bounds().get_y1();
+            double x2 = selector->get_bounds().get_x2();
+            double y2 = selector->get_bounds().get_y2();
+
+            if(arrow->intersect(x1, y1, x2, y1) || 
+               arrow->intersect(x1, y1, x1, y2) || 
+               arrow->intersect(x2, y1, x2, y2) || 
+               arrow->intersect(x1, y2, x2, y2) ||
+               arrow->inside(x1, y1, x2, y2) )
             {
-                // switch to connection property
-                if(act && act->get_active())
+
+                itemCount++;
+                arrow->setSelected(true);
+                if(itemCount == 1)
                 {
-                    if(m_HPaned.get_child2())
-                        m_HPaned.remove(*m_HPaned.get_child2());  
-                    conPropertyWindow->update(arrow);
-                    m_HPaned.add2(*conPropertyWindow);
-                    m_HPaned.show_all();
+                    // switch to connection property
+                    if(act && act->get_active())
+                    {
+                        if(m_HPaned.get_child2())
+                            m_HPaned.remove(*m_HPaned.get_child2());  
+                        conPropertyWindow->update(arrow);
+                        m_HPaned.add2(*conPropertyWindow);
+                        m_HPaned.show_all();
+                    }
                 }
             }
         }
+        
         Glib::RefPtr<ExternalPortModel> extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(model);
         if(extPort) 
         {

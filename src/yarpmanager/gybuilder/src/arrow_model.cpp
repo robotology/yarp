@@ -381,6 +381,52 @@ bool ArrowModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
     return true;
 }
 
+bool ArrowModel::inside(double p1, double q1, double p2, double q2)
+{
+    double x1, y1;
+    double x2, y2;
+    Goocanvas::Points points = this->property_points().get_value();
+    points.get_coordinate(0, x1, y1);
+    points.get_coordinate(points.get_num_points()-1, x2, y2);
+    x1 = fmin(x1, x2);
+    x2 = fmax(x1, x2);
+    y1 = fmin(y1, y2);
+    y2 = fmax(y1, y2);
+
+    if((x1>=p1) && (x1<=p2) && (y1>=q1) && (y2<=q2))
+        return true;
+ 
+    return false;
+}
+
+bool ArrowModel::intersect(double p1, double q1, double p2, double q2)
+{
+    double x1, y1;
+    double x2, y2;
+    Goocanvas::Points points = this->property_points().get_value();
+    for(int i=0; i<points.get_num_points()-1; i++)
+    {
+        points.get_coordinate(i, x1, y1);
+        points.get_coordinate(i+1, x2, y2);
+
+        // calculte intersection 
+        float s1_x, s1_y, s2_x, s2_y;
+        s1_x = x2 - x1;     
+        s1_y = y2 - y1;
+        s2_x = p2 - p1;     
+        s2_y = q2 - q1;
+
+        float s, t;
+        s = (-s1_y * (x1 - p1) + s1_x * (y1 - q1)) / (-s2_x * s1_y + s1_x * s2_y);
+        t = ( s2_x * (y1 - q1) - s2_y * (x1 - p1)) / (-s2_x * s1_y + s1_x * s2_y);
+
+        if ((s >= 0) && (s <= 1) && (t >= 0) && (t <= 1))
+            return true;
+    }
+
+    return false;
+}
+
 void ArrowModel::showLabel(bool bShow)
 {
     if(bShow)
@@ -414,4 +460,5 @@ void ArrowModel::setSelected(bool sel)
             (*itr)->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
     }
 }
+
 

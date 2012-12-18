@@ -69,6 +69,11 @@ public:
     void showLabel(bool bShow);
     void setConnection(Connection& con) { connection = con; }
 
+    //bool preciseClicked(GdkEventButton* event);
+
+    bool intersect(double x1, double y1, double x2, double y2);
+    bool inside(double p1, double q1, double p2, double q2);
+
 protected: 
     ArrowModel(ApplicationWindow* parentWnd, 
                Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 

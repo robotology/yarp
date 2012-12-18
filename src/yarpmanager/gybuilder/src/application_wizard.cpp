@@ -18,6 +18,7 @@
 #include "main_window.h"
 
 #include "icon_res.h"
+#include "ymm-dir.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -25,7 +26,7 @@
 using namespace std;
 
 ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title) 
-: m_Table(6,3)
+: m_Table(7,3)
 {
     m_pParent = parent;
     if(title)
@@ -67,13 +68,26 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title)
 
     m_EntryName.signal_changed().connect(sigc::mem_fun(*this, &ApplicationWizard::onEntryNameInsert));
 
+    MainWindow* wnd = dynamic_cast<MainWindow*>(m_pParent);
+     
+    if(wnd->m_config.check("apppath"))
+    {
+        string strPath = wnd->m_config.find("apppath").asString().c_str();
+        if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+            strPath = strPath + string(PATH_SEPERATOR);
+        m_EntryFolderName.set_text(strPath.c_str());
+    }
+    m_EntryVersion.set_text("1.0");
+
     add_row(m_Table, 0, m_refSizeGroup, "Application Name:", m_EntryName, NULL);    
-    add_row(m_Table, 1, m_refSizeGroup, "File Name:", m_EntryFileName, &m_ButtonFile);
-    add_row(m_Table, 2, m_refSizeGroup, "Description:", m_EntryDesc, NULL);    
-    add_row(m_Table, 3, m_refSizeGroup, "Version:", m_EntryVersion, NULL);    
+    add_row(m_Table, 1, m_refSizeGroup, "File Name:", m_EntryFileName, NULL);
+    add_row(m_Table, 2, m_refSizeGroup, "Folder Name:", m_EntryFolderName, &m_ButtonFile);
+    add_row(m_Table, 3, m_refSizeGroup, "Description:", m_EntryDesc, NULL);    
+    add_row(m_Table, 4, m_refSizeGroup, "Version:", m_EntryVersion, NULL);    
     //add_row(m_Table, 4, m_refSizeGroup, "Prefix:", m_EntryPrefix, NULL);    
-    add_row(m_Table, 4, m_refSizeGroup, "Author's Name:", m_EntryAuthor, NULL);    
-    add_row(m_Table, 5, m_refSizeGroup, "Author's email:", m_EntryEmail, NULL);    
+    add_row(m_Table, 5, m_refSizeGroup, "Author's Name:", m_EntryAuthor, NULL);    
+    add_row(m_Table, 6, m_refSizeGroup, "Author's email:", m_EntryEmail, NULL);    
 
     get_vbox()->pack_start(m_HBox);
     get_vbox()->set_spacing(5);
@@ -104,46 +118,36 @@ void ApplicationWizard::add_row(Gtk::Table& table, int row,
 
 void ApplicationWizard::onEntryNameInsert()
 {
-    printf("%d\n", __LINE__);
-
     if(!m_EntryName.get_text().size())
     {
-        printf("%d\n", __LINE__);
         m_pCreateButton->set_sensitive(false);
+        m_EntryFileName.set_text("");
         return;
     }
 
     MainWindow* wnd = dynamic_cast<MainWindow*>(m_pParent);
     if(wnd)
     {
-        printf("%d\n", __LINE__);
-
         KnowledgeBase* kb = wnd->getManager()->getKnowledgeBase();
-        if(kb->getApplication(m_EntryName.get_text().c_str()))
+        if(!kb->getApplication(m_EntryName.get_text().c_str()))
         {
-            printf("%d\n", __LINE__);
-            Gdk::Color color("red");
+            Gdk::Color color("black");
             m_EntryName.modify_text(m_EntryName.get_state(), color);
             m_pCreateButton->set_sensitive(true);
+            m_EntryFileName.set_text(m_EntryName.get_text() + Glib::ustring(".xml"));
         }
         else
         {
-            printf("%d\n", __LINE__);
             Gdk::Color color("red");
             m_EntryName.modify_text(m_EntryName.get_state(), color);
             m_pCreateButton->set_sensitive(false);
+            m_EntryFileName.set_text(m_EntryName.get_text() + Glib::ustring(".xml"));
         }
     }
-
 }
 
 bool ApplicationWizard::on_delete_event(GdkEventAny* event)
 {   
-    /*
-    ApplicationWindow* wnd = dynamic_cast<ApplicationWindow*>(m_pParent);
-    if(wnd)
-        wnd->onDetachStdout();
-    */    
     return Window::on_delete_event(event);
 }
 
@@ -151,54 +155,17 @@ void ApplicationWizard::onButtonFilePressed()
 {
     Gtk::FileChooserDialog dialog("Create new Application description file");
     dialog.set_transient_for(*this);
-    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
     dialog.set_do_overwrite_confirmation(true);
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-    //Add filters, so that only certain file types can be selected:
-    Gtk::FileFilter filter_app;
-    filter_app.set_name("Application description files (xml)");
-    filter_app.add_mime_type("text/xml");
-    dialog.add_filter(filter_app);
-    
-    if(dialog.run() == Gtk::RESPONSE_OK)
-    {
-        m_EntryFileName.set_text(dialog.get_filename());
-    }
-}
-
-/*
-void ApplicationWizard::onPMenuSave()
-{    
-    Gtk::FileChooserDialog dialog("Save log to a file");
-    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-    dialog.set_do_overwrite_confirmation(true);
-
-    //Add response buttons the the dialog:
-    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-    dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-
-    //Add filters, so that only certain file types can be selected:
-    Gtk::FileFilter filter_any;
-    filter_any.set_name("Any files");
-    filter_any.add_pattern("*");
-    dialog.add_filter(filter_any);
+    dialog.add_button("Select", Gtk::RESPONSE_OK);
 
     if(dialog.run() == Gtk::RESPONSE_OK)
     {
-        string fname = dialog.get_filename();
-        ofstream ser(fname.c_str());
-        if (ser.is_open())
-        {
-            ser<<m_refTextBuff->get_text();
-            ser.close();
-        }
+        m_EntryFolderName.set_text(dialog.get_filename());
     }
-        
 }
-*/
+
 

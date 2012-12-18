@@ -42,6 +42,7 @@ public:
     std::list<Gtk::TargetEntry> dragTargets;  
     Glib::RefPtr<Gtk::UIManager> m_refUIManager;
     Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
+    yarp::os::Property m_config;
 
 protected:
 
@@ -93,7 +94,6 @@ protected:
 
 private:
     Manager lazyManager;
-    yarp::os::Property m_config;
 
     //Child widgets:
     int dummy_w;

@@ -37,19 +37,18 @@ private:
     Gtk::Frame m_FrameRight;
 
     Gtk::Table m_Table;
+    Glib::RefPtr<Gtk::SizeGroup> m_refSizeGroup;
 
+public:
     Gtk::Entry m_EntryName;
     Gtk::Entry m_EntryFileName;
+    Gtk::Entry m_EntryFolderName;
     Gtk::Entry m_EntryDesc;
     Gtk::Entry m_EntryVersion;
 //    Gtk::Entry m_EntryPrefix;
     Gtk::Entry m_EntryAuthor;
     Gtk::Entry m_EntryEmail;
 
-    Glib::RefPtr<Gtk::SizeGroup> m_refSizeGroup;
-    //Gtk::ScrolledWindow m_ScrollModView;
-    //Gtk::TextView m_textView;
-    //
 private:
     void add_row(Gtk::Table& table, int row,
                  const Glib::RefPtr<Gtk::SizeGroup>& size_group,
