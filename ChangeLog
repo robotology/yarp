@@ -5,6 +5,12 @@
 	  src/yarpscope/src/SimpleLoader.cpp
 	  src/yarpscope/src/SimpleLoader.h
 	  src/yarpscope/src/main.cpp: Add simple mode (command line)
+	* src/yarpscope/src/Graph.cpp
+	  src/yarpscope/src/PortReader.cpp
+	  src/yarpscope/src/PortReader.h
+	  src/yarpscope/src/SimpleLoader.cpp
+	  src/yarpscope/src/XmlLoader.cpp: Allow to run and wait for
+	  external connection in simple mode
 
 2012-12-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
