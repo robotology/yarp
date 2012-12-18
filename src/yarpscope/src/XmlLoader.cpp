@@ -151,3 +151,7 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
 
     portReader.toggleAcquire(true);
 }
+
+YarpScope::XmlLoader::~XmlLoader()
+{
+}

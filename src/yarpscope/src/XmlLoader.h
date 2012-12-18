@@ -15,11 +15,14 @@ class ustring;
 
 namespace YarpScope
 {
+
 class XmlLoader
 {
 public:
-    XmlLoader(const Glib::ustring &filename);
-};
+    explicit XmlLoader(const Glib::ustring &filename);
+    virtual ~XmlLoader();
+
+}; // class XmlLoader
 
 } // namespace YarpScope
 
