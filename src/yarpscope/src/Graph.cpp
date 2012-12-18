@@ -100,7 +100,7 @@ YarpScope::Graph::Graph(const Glib::ustring &remote,
                          int plotSize) :
     mPriv(new Private(this))
 {
-    g_assert(plotSize > 0);
+    g_assert(!remote.empty());
     if (remote.empty()) {
         fatal() << "Impossible to create a graph; remote is empty";
     }
@@ -115,7 +115,7 @@ YarpScope::Graph::Graph(const Glib::ustring &remote,
         fatal() << "Impossible to create a graph; size <= 0";
     }
 
-    g_assert(!remote.empty());
+    g_assert(plotSize > 0);
     if (plotSize <= 0) {
          fatal() << "Impossible to create a graph; plot size <= 0";
     }
