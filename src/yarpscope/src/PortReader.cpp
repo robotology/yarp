@@ -25,7 +25,6 @@ namespace {
 static YarpScope::PortReader *s_instance = NULL;
 static Glib::StaticMutex s_mutex;
 static const int s_bufSize = 2000;
-static const Glib::ustring s_carrier = "mcast";
 }
 
 
@@ -69,8 +68,9 @@ public:
 
     struct Connection
     {
-        Connection(const Glib::ustring &remotePortName) :
+        Connection(const Glib::ustring &remotePortName, const Glib::ustring &localPortName) :
             remotePortName(remotePortName),
+            localPortName(localPortName),
             localPort(new yarp::os::BufferedPort<yarp::os::Bottle>()),
             realTime(false),
             initialTime(0.0),
@@ -79,29 +79,14 @@ public:
             usedIndices.clear(); // just to be sure that is empty
 
             // Open the local port
-            localPort->open();
-            localPortName = localPort->getName().c_str(); //Get the name of the port after the port is open (and therefore the name assigned)
-
-            // Setup ConnectionStyle
-            yarp::os::ContactStyle style;
-            style.persistent = true;
-            style.carrier = s_carrier.c_str();
-
-            // Connect local port to remote port
-            if (!yarp::os::Network::connect(remotePortName.c_str(), localPortName.c_str(), style)) {
-                warning() << "Connection from port" << localPortName <<  "to port" << remotePortName
-                          << "was NOT successfull. Waiting from explicit connection from user.";
+            if (localPortName.empty()) {
+                localPort->open();
             } else {
-                debug() << "Listening to port" << remotePortName << "from port" << localPortName;
+                localPort->open(localPortName.c_str());
             }
 
-            yarp::os::Stamp stmp;
-            localPort->getEnvelope(stmp);
-            if (stmp.isValid()) {
-                debug() << "will use real time for port" << remotePortName;
-                realTime = true;
-                initialTime = stmp.getTime();
-            }
+            realTime = true;
+            initialTime = yarp::os::Time::now();
         }
 
         ~Connection()
@@ -116,8 +101,32 @@ public:
             }
             usedIndices.clear();
 
-            yarp::os::Network::disconnect(remotePortName.c_str(), localPortName.c_str());
+            yarp::os::Network::disconnect(remotePortName.c_str(), localPort->getName().c_str());
             delete localPort;
+        }
+
+        void doConnect(const yarp::os::ContactStyle &style) {
+            //Get the name of the port after the port is open (and therefore the real name assigned)
+            const Glib::ustring &realLocalPortName = localPort->getName().c_str();
+
+            // Connect local port to remote port
+            if (!yarp::os::Network::connect(remotePortName.c_str(), realLocalPortName.c_str(), style)) {
+                warning() << "Connection from port" << realLocalPortName <<  "to port" << remotePortName
+                          << "was NOT successfull. Waiting from explicit connection from user.";
+            } else {
+                debug() << "Listening to port" << remotePortName << "from port" << realLocalPortName;
+            }
+
+            yarp::os::Stamp stmp;
+            localPort->getEnvelope(stmp);
+            if (stmp.isValid()) {
+                debug() << "will use real time for port" << remotePortName;
+                realTime = true;
+                initialTime = stmp.getTime();
+            } else {
+                debug() << "will NOT use real time for port" << remotePortName;
+                realTime = false;
+            }
         }
 
         void clearData()
@@ -128,7 +137,7 @@ public:
                 idx->clearData();
             }
 
-                PlotManager::instance().redraw(false);
+            PlotManager::instance().redraw(false);
         }
 
         Glib::ustring remotePortName;
@@ -161,7 +170,10 @@ public:
     }
 
     bool onTimeout();
-    void acquireData(const Glib::ustring &remotePortName, int index);
+    void acquireData(const Glib::ustring &remotePortName,
+                     int index,
+                     const Glib::ustring &localPortName,
+                     const yarp::os::ContactStyle *style);
     void clearData();
 
     Connection* find(const Glib::ustring& remotePortName) const;
@@ -242,21 +254,34 @@ bool YarpScope::PortReader::Private::onTimeout()
     return true;
 }
 
-void YarpScope::PortReader::Private::acquireData(const Glib::ustring& remotePortName, int index)
+void YarpScope::PortReader::Private::acquireData(const Glib::ustring &remotePortName,
+                                                 int index,
+                                                 const Glib::ustring &localPortName,
+                                                 const yarp::os::ContactStyle *style)
 {
-    debug() << "PortReader: Acquiring data from port" << remotePortName << "index" << index;
+    debug() << "PortReader: Acquiring data from port" << remotePortName << "index" << index << "to port" << localPortName;
     Connection *curr_connection = NULL;
     for (std::vector<Connection*>::iterator cit = connections.begin();
                 cit != connections.end(); cit++) {
         Connection *conn = *cit;
         if (conn->remotePortName.compare(remotePortName) == 0) {
+            if (!conn->localPortName.compare(localPortName)) {
+                warning() << "Trying to connect the same remote port to 2 different local ports. Only the first will be used.";
+            }
             curr_connection = conn;
             break;
         }
     }
     if (!curr_connection) {
-        connections.push_back(new Connection(remotePortName));
+        connections.push_back(new Connection(remotePortName, localPortName));
         curr_connection = connections.back();
+
+        if (style) {
+            // If style is not null the ports are connected, otherwise the user will
+            // have to do it manually
+            curr_connection->doConnect(*style);
+        }
+
     }
 
 
@@ -286,6 +311,9 @@ void YarpScope::PortReader::Private::clearData()
 
 YarpScope::PortReader::Private::Connection* YarpScope::PortReader::Private::find(const Glib::ustring& remotePortName) const
 {
+    if (remotePortName.empty() && connections.size() == 1) {
+        return connections.at(0);
+    }
     for (std::vector<Connection*>::const_iterator cit = connections.begin();
                 cit != connections.end(); cit++) {
         Connection *conn = *cit;
@@ -410,9 +438,24 @@ void YarpScope::PortReader::clearData()
 }
 
 
-void YarpScope::PortReader::acquireData(const Glib::ustring& remotePortName, int index)
+void YarpScope::PortReader::acquireData(const Glib::ustring &remotePortName,
+                                        int index,
+                                        const Glib::ustring &localPortName)
 {
-    mPriv->acquireData(remotePortName, index);
+    mPriv->acquireData(remotePortName, index, localPortName, NULL);
+}
+
+void YarpScope::PortReader::acquireData(const Glib::ustring &remotePortName,
+                                        int index,
+                                        const Glib::ustring &localPortName,
+                                        const Glib::ustring &carrier,
+                                        bool persistent)
+{
+    // Setup ConnectionStyle
+    yarp::os::ContactStyle  style;
+    style.persistent = persistent;
+    style.carrier = carrier.c_str();
+    mPriv->acquireData(remotePortName, index, localPortName, &style);
 }
 
 float* YarpScope::PortReader::X(const Glib::ustring& remotePortName, int index) const

@@ -31,6 +31,8 @@ namespace {
     static const bool default_plot_triggermode = false;
     static const int default_graph_size = 1;
     static const Glib::ustring default_graph_type = "lines";
+    static const Glib::ustring default_connection_carrier = "mcast";
+    static bool default_connection_persistent = true;
 }
 
 // FIXME check if rows and colums are used, or if the table is resized
@@ -144,11 +146,13 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
                 graph_size = default_graph_size;
             }
 
-            portReader.acquireData(graph_remote, graph_index);
+            //TODO Allow to specify carrier and persistent
+            Glib::ustring connection_carrier = default_connection_carrier;
+            bool connection_persistent = default_connection_persistent;
+
+            portReader.acquireData(graph_remote, graph_index, "", connection_carrier, connection_persistent);
             plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
-
         }
-
     }
 
     portReader.toggleAcquire(true);

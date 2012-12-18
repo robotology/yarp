@@ -15,6 +15,7 @@
 #include <string.h>
 
 namespace {
+    static const Glib::ustring default_local_port = "/yarpscope";
     static const float default_plot_minval = -100.;
     static const float default_plot_maxval = 100.;
     static const int default_plot_size = 201;
@@ -28,11 +29,8 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
     YarpScope::PortReader &portReader = YarpScope::PortReader::instance();
     YarpScope::PlotManager &plotManager = YarpScope::PlotManager::instance();
 
-    // --remote argument is required
     if (!options.check("remote")) {
-        error() << "Missing required \"remote\" argument";
-        *ok = false;
-        return;
+        debug() << "Missing \"remote\" argument. Will wait for external connection";
     }
 
     const Glib::ustring graph_remote = options.find("remote").toString().c_str();
@@ -135,7 +133,7 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
             graph_size = default_graph_size;
         }
 
-        portReader.acquireData(graph_remote, graph_index);
+        portReader.acquireData(graph_remote, graph_index, default_local_port);
         plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
 
     } else {
@@ -234,7 +232,7 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
                 graph_size = default_graph_size;
             }
 
-            portReader.acquireData(graph_remote, graph_index);
+            portReader.acquireData(graph_remote, graph_index, default_local_port);
             plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
         }
     }

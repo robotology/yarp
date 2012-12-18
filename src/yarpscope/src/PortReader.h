@@ -35,7 +35,15 @@ public:
 
     void clearData();
 
-    void acquireData(const Glib::ustring &remotePortName, int index);
+    void acquireData(const Glib::ustring &remotePortName,
+                     int index,
+                     const Glib::ustring &localPortName);
+
+    void acquireData(const Glib::ustring &remotePortName,
+                     int index,
+                     const Glib::ustring &localPortName,
+                     const Glib::ustring &carrier,
+                     bool persistent);
 
     float* X(const Glib::ustring &remotePortName, int index) const;
     float* Y(const Glib::ustring &remotePortName, int index) const;
