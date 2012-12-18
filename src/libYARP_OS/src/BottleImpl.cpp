@@ -54,9 +54,10 @@ const int StoreDouble::code = BOTTLE_TAG_DOUBLE;
 const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
+const int StoreDict::code = BOTTLE_TAG_LIST|BOTTLE_TAG_DICT;
 
 #define UNIT_MASK (BOTTLE_TAG_INT|BOTTLE_TAG_VOCAB|BOTTLE_TAG_DOUBLE|BOTTLE_TAG_STRING|BOTTLE_TAG_BLOB)
-#define GROUP_MASK (BOTTLE_TAG_LIST)
+#define GROUP_MASK (BOTTLE_TAG_LIST|BOTTLE_TAG_DICT)
 
 
 yarp::os::impl::StoreNull BottleImpl::storeNull;
@@ -91,6 +92,7 @@ void BottleImpl::smartAdd(const String& str) {
     if (str.length()>0) {
         char ch = str[0];
         Storable *s = NULL;
+        StoreString *ss = NULL;
         bool numberLike = true;
         bool preamble = true;
         bool hexActive = false;
@@ -143,13 +145,25 @@ void BottleImpl::smartAdd(const String& str) {
         } else if (ch=='{') {
             s = new StoreBlob();
         } else {
-            s = new StoreString("");
+            s = ss = new StoreString("");
         }
         if (s!=NULL) {
             s->fromStringNested(str);
-            //ACE_OS::printf("*** smartAdd [%s] [%s]\n", str.c_str(), s->toString().c_str());
+            if (ss!=NULL) {
+                if (str[0]!='\"') {
+                    String val = ss->asStringFlex();
+                    if (val=="true") {
+                        delete s;
+                        s = new StoreVocab((int)'1');
+                    } else if (val=="false") {
+                        delete s;
+                        s = new StoreVocab(0);
+                    }
+                }
+            }
             add(s);
         }
+        ss = NULL;
     }
 }
 
@@ -201,10 +215,16 @@ void BottleImpl::fromString(const String& line) {
                     back = true;
                     arg += ch;
                 } else {
-                    if ((!quoted)&&(ch==' '||ch=='\t'||ch=='\n'||ch=='\r')
+                    if ((!quoted)&&(ch==','||ch==' '||ch=='\t'||ch=='\n'||ch=='\r')
                         &&(nestedAlt==0)
                         &&(nested==0)) {
-                        smartAdd(arg);
+                        if (arg=="") {
+                            if (ch==',') {
+                                add(new StoreVocab(VOCAB4('n','u','l','l')));
+                            }
+                        } else {
+                            smartAdd(arg);
+                        }
                         arg = "";
                         begun = false;
                     } else {
@@ -319,10 +339,15 @@ Storable *Storable::createByCode(int id) {
         if ((id&GROUP_MASK)!=0) {
             // typed list
             subCode = (id&UNIT_MASK);
-            storable = new StoreList();
-            YARP_ASSERT(storable!=NULL);
-            storable->asList()->specialize(subCode);
-            storable->asList()->setNested(true);
+            if (id&BOTTLE_TAG_DICT) {
+                storable = new StoreDict();
+                YARP_ASSERT(storable!=NULL);
+            } else {
+                storable = new StoreList();
+                YARP_ASSERT(storable!=NULL);
+                storable->asList()->specialize(subCode);
+                storable->asList()->setNested(true);
+            }
         }
         break;
     }
@@ -425,7 +450,6 @@ size_t BottleImpl::byteCount() {
 }
 
 void BottleImpl::onCommencement() {
-    fflush(stdout);
     synch();
 }
 
@@ -588,6 +612,7 @@ void BottleImpl::setNested(bool nested) {
     this->nested = nested;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////
 // StoreInt
 
@@ -618,6 +643,8 @@ bool StoreInt::writeRaw(ConnectionWriter& writer) {
 // StoreVocab
 
 String StoreVocab::toStringFlex() const {
+    if (x==0) return "false";
+    if (x=='1') return "true";
     return String(Vocab::decode(x).c_str());
 }
 
@@ -626,15 +653,22 @@ void StoreVocab::fromString(const String& src) {
 }
 
 String StoreVocab::toStringNested() const {
+    if (x==0) return "false";
+    if (x=='1') return "true";
     return String("[") + toStringFlex() + "]";
 }
 
 void StoreVocab::fromStringNested(const String& src) {
+    x = 0;
     if (src.length()>0) {
         if (src[0]=='[') {
             // ignore first [ and last ]
             String buf = src.substr(1,src.length()-2);
             fromString(buf.c_str());
+        } else if (src=="true") {
+            x = (int)'1';
+        } else if (src=="false") {
+            x = 0;
         }
     }
 }
@@ -755,6 +789,9 @@ String StoreString::toStringNested() const {
     if (x.length()==0) {
         needQuote = true;
     }
+    if (x=="true"||x=="false") {
+        needQuote = true;
+    }
 
     if (!needQuote) {
         return x;
@@ -858,7 +895,6 @@ String StoreBlob::toStringFlex() const {
             result += " ";
         }
         unsigned char *src = (unsigned char *)(&x[i]);
-        fflush(stdout);
         result += NetType::toString(*src);
     }
     return result;
@@ -908,9 +944,6 @@ bool StoreBlob::writeRaw(ConnectionWriter& writer) {
 
 ////////////////////////////////////////////////////////////////////////////
 // StoreList
-
-
-
 
 String StoreList::toStringFlex() const {
     return String(content.toString().c_str());
@@ -973,6 +1006,49 @@ int StoreList::subCode() const {
     Bottle *op = (Bottle*)(&content);
     return subCoder(*op);
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// StoreDict
+
+String StoreDict::toStringFlex() const {
+    return String(content.toString().c_str());
+}
+
+String StoreDict::toStringNested() const {
+    return String("(") + content.toString().c_str() + ")";
+}
+
+void StoreDict::fromString(const String& src) {
+    content.fromString(src.c_str());
+}
+
+void StoreDict::fromStringNested(const String& src) {
+    if (src.length()>0) {
+        if (src[0]=='(') {
+            // ignore first ( and last )
+            String buf = src.substr(1,src.length()-2);
+            content.fromString(buf.c_str());
+        }
+    }
+}
+
+bool StoreDict::readRaw(ConnectionReader& reader) {
+    // not using the most efficient representation
+    content.read(reader);
+    return true;
+}
+
+bool StoreDict::writeRaw(ConnectionWriter& writer) {
+    // not using the most efficient representation
+    content.write(writer);
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////
+// BottleImpl
+
 
 int BottleImpl::subCode() {
     return subCoder(*this);
@@ -1051,6 +1127,13 @@ yarp::os::Bottle *BottleImpl::getList(int index) {
 
 yarp::os::Bottle& BottleImpl::addList() {
     StoreList *lst = new StoreList();
+    add(lst);
+    return lst->internal();
+}
+
+
+yarp::os::Property& BottleImpl::addDict() {
+    StoreDict *lst = new StoreDict();
     add(lst);
     return lst->internal();
 }

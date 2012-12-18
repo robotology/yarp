@@ -19,6 +19,7 @@
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformVector.h>
 
@@ -29,11 +30,13 @@ namespace yarp {
             class Storable;
             class StoreNull;
             class StoreInt;
+            class StoreBool;
             class StoreVocab;
             class StoreDouble;
             class StoreString;
             class StoreBlob;
             class StoreList;
+            class StoreDict;
         }
     }
 }
@@ -47,14 +50,17 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::Storable : public yarp::os::Value {
 public:
+    virtual bool isBool() const    { return false; }
     virtual bool isInt() const     { return false; }
-    virtual bool isString() const { return false; }
+    virtual bool isString() const  { return false; }
     virtual bool isDouble() const  { return false; }
     virtual bool isList() const    { return false; }
+    virtual bool isDict() const    { return false; }
     virtual bool isVocab() const   { return false; }
     virtual bool isBlob() const    { return false; }
     virtual bool isNull() const    { return false; }
 
+    virtual bool asBool() const          { return false; }
     virtual int asInt() const            { return 0; }
     virtual int asVocab() const          { return 0; }
     virtual double asDouble() const      { return 0; }
@@ -62,7 +68,12 @@ public:
         String str = asStringFlex();
         return yarp::os::ConstString(str.c_str(),str.length()); 
     }
+    virtual Searchable *asSearchable() const {
+        if (isDict()) return asDict(); 
+        return asList();
+    }
     virtual yarp::os::Bottle *asList() const { return NULL; }
+    virtual yarp::os::Property *asDict() const { return NULL; }
     virtual const char *asBlob() const   { return (const char*)0; }
     virtual size_t asBlobLength() const     { return 0; }
 
@@ -247,12 +258,15 @@ public:
     virtual bool readRaw(ConnectionReader& connection);
     virtual bool writeRaw(ConnectionWriter& connection);
     virtual Storable *createStorable() const { return new StoreVocab(0); }
+    virtual bool asBool() const { return x!=0; }
     virtual int asInt() const { return x; }
     virtual int asVocab() const { return x; }
     virtual double asDouble() const { return x; }
     virtual bool isVocab() const { return true; }
+    virtual bool isBool() const { return (x==0||x=='1'); }
     static const int code;
     virtual void copy(const Storable& alt) { x = alt.asVocab(); }
+    virtual String asStringFlex() const { return toStringFlex(); }
 };
 
 /**
@@ -392,6 +406,46 @@ public:
 };
 
 
+/**
+ *
+ * Key/value pairs
+ *
+ */
+class YARP_OS_impl_API yarp::os::impl::StoreDict : public Storable {
+private:
+    yarp::os::Property content;
+public:
+    StoreDict() {}
+    yarp::os::Property& internal() {
+        return content;
+    }
+    virtual String toStringFlex() const;
+    virtual void fromString(const String& src);
+    virtual String toStringNested() const;
+    virtual void fromStringNested(const String& src);
+    virtual int getCode() const { return code; }
+    virtual bool readRaw(ConnectionReader& connection);
+    virtual bool writeRaw(ConnectionWriter& connection);
+    virtual Storable *createStorable() const { 
+        return new StoreDict(); 
+    }
+    virtual bool isDict() const { return true; }
+    virtual yarp::os::Property *asDict() const { 
+        return (yarp::os::Property*)(&content); 
+    }
+    static const int code;
+  
+    virtual yarp::os::Value& find(const char *key) {
+        return content.find(key);
+    }
+
+    virtual yarp::os::Bottle& findGroup(const char *key) {
+        return content.findGroup(key);
+    }
+    virtual void copy(const Storable& alt) { content = *(alt.asDict()); }
+};
+
+
 
 /**
  * A flexible data format for holding a bunch of numbers and strings.
@@ -440,6 +494,8 @@ public:
     }
 
     yarp::os::Bottle& addList();
+
+    yarp::os::Property& addDict();
 
     void clear();
 

@@ -20,10 +20,12 @@
 #define BOTTLE_TAG_STRING (4)
 #define BOTTLE_TAG_BLOB (4+8)
 #define BOTTLE_TAG_LIST 256
+#define BOTTLE_TAG_DICT 512
 
 namespace yarp {
     namespace os {
         class Bottle;
+        class Property;
     }
 }
 
@@ -130,7 +132,13 @@ public:
     Bottle& addList();
 
     /**
-     * Removes a Value v from the end of the list and returns this value.
+     * Places an empty key/value object in the bottle, at the end of the list.
+     * @return a reference to the newly added list
+     */
+    Property& addDict();
+
+    /**
+     * Removes a Value v from the end of the list and returns this value. 
      * @return the value popped from the end of the bottle
      */
     Value pop();
