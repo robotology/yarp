@@ -37,11 +37,8 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
 
     const Glib::ustring graph_remote = options.find("remote").toString().c_str();
 
-    // --index argument is required
     if (!options.check("index")) {
-        error() << "Missing required \"index\" argument";
-        *ok = false;
-        return;
+        warning() << "Missing \"index\" argument. Will use index = 0";
     }
     const yarp::os::Value &indexValue = options.find("index");
 
