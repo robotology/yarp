@@ -1,0 +1,55 @@
+<module>
+    <name>yarpscope</name>
+    <description> Yarp port scope</description>
+    <version>1.0</version>
+
+    <arguments>
+        <param default="Yarp Port Scope" desc="Title of the window">title</param>
+        <param default="" desc="Initial X position of the window">x</param>
+        <param default="" desc="Initial Y position of the window">y</param>
+        <param default="" desc="Initial width of the window">dx</param>
+        <param default="" desc="Initial height of the window">dy</param>
+        <param default="" desc="Path to the xml with the description of the scene (all the 'simple mode' options are discarded)">xml</param>
+        <param default="" desc="Remote port to connect to. [string]">remote</param>
+        <param default="" desc="Index(es) of the vector to plot. [uint] or array of [uint]s">index</param>
+        <param default="" desc="Plot title (default = remote). [string]">plot_title</param>
+        <param default="-100" desc="Minimum value for the X axis. [float]">min</param>
+        <param default="100" desc="Maximum value for the X axis. [float]">max</param>
+        <param default="201" desc="Plot size (Number of samples to plot). [uint]">size</param>
+        <param default="" required="on" desc="Background color. [string]">bgcolor</param>
+        <param default="" desc="Graph color(s). [string] or array of [string]s">color</param>
+        <param default="lines" desc="Graph type(s). Accepted values are 'points', 'lines' and 'bars'. [string] or array of [string]s">type</param>
+        <param default="1" desc="Graph size(s) (thickness of the points). [uint] or array of [uint]">graph_size</param>
+<!--
+        <switch desc="Rescale plot automatically">autorescale</switch>
+        <switch desc="Use real time mode">realtime</switch>
+        <switch desc="Use trigger mode">triggermode</switch>
+        <param default="" desc="Graph title(s) (used in legend). [string] or array of [string]s">graph_title</switch>
+-->
+    </arguments>
+
+    <authors>
+        <author email="daniele.domenichelli@iit.it"> Daniele E. Domenichelli </author>
+    </authors>
+
+    <data>
+        <input>
+            <type>array</type>
+	    <port carrier="mcast">/yarpscope</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+    </data>
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <development>
+        <include></include>
+        <library>YARP</library>
+    </development>
+
+</module>
