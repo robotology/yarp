@@ -11,6 +11,7 @@ set(YarpScope_SRCS
     MainWindow.cpp
     PortReader.cpp
     PlotManager.cpp
+    SimpleLoader.cpp
     XmlLoader.cpp
 )
 
