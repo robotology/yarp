@@ -115,6 +115,8 @@ public:
                 }
             }
             usedIndices.clear();
+
+            yarp::os::Network::disconnect(remotePortName.c_str(), localPortName.c_str());
             delete localPort;
         }
 
