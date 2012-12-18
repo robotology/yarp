@@ -45,7 +45,7 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     m_TreeView.append_column(*itemCol);
 
 
-
+    /*
     Gtk::CellRendererText* valueRenderer = Gtk::manage(new Gtk::CellRendererText());
     valueRenderer->property_editable() = false;
     Gtk::TreeViewColumn* valueCol = Gtk::manage(new Gtk::TreeViewColumn("Value", *valueRenderer));
@@ -53,21 +53,41 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     valueCol->add_attribute(*valueRenderer, "text", m_Columns.m_col_value);
     valueCol->set_resizable(true);
     valueRenderer->property_editable() = true;    
-    //valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);   
+    */   
 
-    //valueCol->set_cell_data_func(*valueRenderer, sigc::mem_fun(*this,
-    //    &ModulePropertyWindow::onCellData) );
+
+    Gtk::CellRendererCombo* valueRenderer = Gtk::manage(new Gtk::CellRendererCombo());
+    Gtk::TreeView::Column* valueCol = Gtk::manage(new Gtk::TreeView::Column("Value"));
+    valueCol->pack_start(*valueRenderer);
+    valueCol->add_attribute(*valueRenderer, "foreground-gdk", m_Columns.m_col_color_value);
+    //valueCol->set_resizable(true);
+    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);   
+
+  //Make this View column represent the m_col_itemchosen model column:
+#ifdef GLIBMM_PROPERTIES_ENABLED
+  valueCol->add_attribute(valueRenderer->property_text(), m_Columns.m_col_value);
+#else
+  pColumn->add_attribute(*valueRenderer, "text", m_Columns.m_col_value);
+#endif
+
+#ifdef GLIBMM_PROPERTIES_ENABLED
+    valueCol->add_attribute(valueRenderer->property_model(), m_Columns.m_col_choices);
+#else
+    valueCol->add_attribute(*valueRenderer, "model", m_Columns.m_col_choices);
+#endif 
+
+#ifdef GLIBMM_PROPERTIES_ENABLED
+    valueRenderer->property_text_column() = 0; 
+#else
+    valueRenderer->set_property("text_column", 0);
+#endif
     valueRenderer->signal_edited().connect( sigc::mem_fun(*this,
               &ModulePropertyWindow::onCellEdited) );
     m_TreeView.append_column(*valueCol);
 
-
-    //m_TreeView.append_column_editable("Value", m_Columns.m_col_value);
-    //m_TreeView.get_column(1)->set_resizable(true);
-       //Tell the view column how to render the model values:
-    //m_TreeView.set_property("enable_grid_lines", true);
     m_TreeView.set_grid_lines(Gtk::TREE_VIEW_GRID_LINES_BOTH);
     m_TreeView.set_rules_hint(true);
+
     show_all_children();
 }
 
@@ -93,69 +113,103 @@ void ModulePropertyWindow::update(Module* module)
 {
     //m_pIModule = NULL;
     m_pModule = module;
-    /*
-    Application* application = m_pManager->getKnowledgeBase()->getApplication();            
-    if(application)
-    {
-        for(int i=0; i<application->imoduleCount(); i++)
-            if(strcmp(application->getImoduleAt(i).getTag(), module->getLabel()) == 0)
-            {
-                m_pIModule = &(application->getImoduleAt(i));
-                break;
-            }
-    }
-    
-    if(!m_pIModule)
-        return;
-    */
 
     //Module* m_pModule = ModulePropertyWindow::m_pModule;
     m_refTreeModel->clear();
+    m_refModelCombos.clear();
 
     Gtk::TreeModel::Row row;
     Gtk::TreeModel::Row childrow;
     Gtk::TreeModel::Row cchildrow;
+
+    Glib::RefPtr<Gtk::ListStore> m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
+    //row = *(m_refCombo->append());
+    //row[m_ColumnsCombo.m_col_choice] = "---";
+    m_refModelCombos.push_back(m_refCombo);
+
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Name";
     row[m_Columns.m_col_value] = m_pModule->getName();
     row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
     row[m_Columns.m_col_editable] = false;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
 
+    /*
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Description";
     row[m_Columns.m_col_value] = m_pModule->getDescription();
     row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
     row[m_Columns.m_col_editable] = false;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
+    */
 
+    //node
+    m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
+    row = *(m_refCombo->append());
+    row[m_ColumnsCombo.m_col_choice] = "localhost";
+    ResourcePContainer resources = m_pManager->getKnowledgeBase()->getResources();
+    for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
+    {
+        Computer* comp = dynamic_cast<Computer*>(*itr);
+        if(comp)
+        {
+            row = *(m_refCombo->append());
+            row[m_ColumnsCombo.m_col_choice] = comp->getName();          
+        }
+    }
+ 
+    m_refModelCombos.push_back(m_refCombo);
+    
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Node";
     row[m_Columns.m_col_value] = m_pModule->getHost();
     row[m_Columns.m_col_editable] = true;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Stdio";
     row[m_Columns.m_col_value] = m_pModule->getStdio();
     row[m_Columns.m_col_editable] = true;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
+
+    m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
+    m_refModelCombos.push_back(m_refCombo);
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Workdir";
     row[m_Columns.m_col_value] = m_pModule->getWorkDir();
     row[m_Columns.m_col_editable] = true;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Prefix";
     row[m_Columns.m_col_value] = m_pModule->getPrefix();
     row[m_Columns.m_col_editable] = true;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Parameters";
     row[m_Columns.m_col_value] = m_pModule->getParam();
     row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
     row[m_Columns.m_col_editable] = false;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
 
     for(int i=0; i<m_pModule->argumentCount(); i++)
     {
+        Gtk::TreeModel::Row comboRow;
+        m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
+        comboRow = *(m_refCombo->append());
+        if(!m_pModule->getArgumentAt(i).isSwitch())
+            comboRow[m_ColumnsCombo.m_col_choice] = m_pModule->getArgumentAt(i).getDefault();
+        else
+        {
+            comboRow[m_ColumnsCombo.m_col_choice] = "on";    
+            comboRow = *(m_refCombo->append());
+            comboRow[m_ColumnsCombo.m_col_choice] = "off";
+        }
+        m_refModelCombos.push_back(m_refCombo);
+     
         childrow = *(m_refTreeModel->append(row.children()));
         childrow[m_Columns.m_col_name] = m_pModule->getArgumentAt(i).getParam();
         childrow[m_Columns.m_col_value] = m_pModule->getArgumentAt(i).getValue();
@@ -164,6 +218,7 @@ void ModulePropertyWindow::update(Module* module)
             && !strval.size())
             childrow[m_Columns.m_col_color_item] = Gdk::Color("#BF0303");
         childrow[m_Columns.m_col_editable] = true;
+        childrow[m_Columns.m_col_choices] = m_refModelCombos.back();
     }
     
     //updateParamteres();

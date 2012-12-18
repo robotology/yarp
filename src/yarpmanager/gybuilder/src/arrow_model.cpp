@@ -43,7 +43,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     source->addSourceArrow(this);
     destination->addDestinationArrow(this);
   
-    string strCarrier;
+    string strCarrier = strLabel;
     //Adding connection
     Application* application = parentWindow->manager.getKnowledgeBase()->getApplication();
     if(application)
@@ -61,7 +61,8 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
             output = intPort->getOutput();
             module = (Module*) output->owner();
             strFrom = string(module->getPrefix()) + string(intPort->getOutput()->getPort()); 
-            strCarrier = intPort->getOutput()->getCarrier();
+            if(!strCarrier.size())            
+                strCarrier = intPort->getOutput()->getCarrier();
         }
         else
         {

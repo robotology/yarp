@@ -58,7 +58,7 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
                                     yarp::os::Property* config, MainWindow* parent,
                                      bool grid, bool snap)
 {
-    //dummy_h = dummy_w = 0;
+    dummy_h = dummy_w = 0;
     m_Canvas = NULL;
     m_Grid = NULL;
     m_snapToGrid = snap;
@@ -1219,22 +1219,25 @@ void ApplicationWindow::updateApplicationWindow(void)
                     break;
                 }    
             }
-            if(!bExist)   
+            if(!bExist)
+            {
                 source = ExternalPortModel::create(this, OUTPUTD, (*citr).from());
-            root->add_child(source);
+                root->add_child(source);
 
-            if(model.points.size() > 0)
-            {
-                source->set_property("x", model.points[0].x - 
-                                    Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getWidth());
-                source->set_property("y", model.points[0].y - 
-                                    Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getHeight()/2.0); 
-            }
-            else
-            {
-                source->set_property("x", 10);
-                source->set_property("y", index+=40);
-            }
+                if(model.points.size() > 0)
+                {
+                    source->set_property("x", model.points[0].x - 
+                                        Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getWidth());
+                    source->set_property("y", model.points[0].y - 
+                                        Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getHeight()/2.0); 
+                }
+                else
+                {
+                    source->set_property("x", 10);
+                    source->set_property("y", index);
+                }
+            } 
+            index+=40;
         }
         if(input)
         {
@@ -1255,22 +1258,24 @@ void ApplicationWindow::updateApplicationWindow(void)
                     break;
                 }    
             }
-            if(!bExist)   
+            if(!bExist) 
+            {
                 dest = ExternalPortModel::create(this, INPUTD, (*citr).to());
-            root->add_child(dest);
-            size_t size = model.points.size();
-            if(size > 1)
-            {
-                dest->set_property("x", model.points[size-1].x);
-                dest->set_property("y", model.points[size-1].y - 
-                                   Glib::RefPtr<ExternalPortModel>::cast_dynamic(dest)->getHeight()/2.0); 
+                root->add_child(dest);
+                size_t size = model.points.size();
+                if(size > 1)
+                {
+                    dest->set_property("x", model.points[size-1].x);
+                    dest->set_property("y", model.points[size-1].y - 
+                                       Glib::RefPtr<ExternalPortModel>::cast_dynamic(dest)->getHeight()/2.0); 
 
-            }
-            else
-            {
-                dest->set_property("x", 400);
-                dest->set_property("y", index);
-            }
+                }
+                else
+                {
+                    dest->set_property("x", 400);
+                    dest->set_property("y", index);
+                }
+            }    
         }
 
         Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(this, source, dest, (*citr).carrier());

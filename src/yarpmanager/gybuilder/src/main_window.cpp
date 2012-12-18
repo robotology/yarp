@@ -1294,10 +1294,10 @@ void MainWindow::onMenuHelpAbout()
 {
     Gtk::AboutDialog dialog; 
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
-    dialog.set_program_name("YARP Manager");
+    dialog.set_program_name("YARP Builder");
 #endif
 
-    dialog.set_version("1.1");
+    dialog.set_version("1.0 (beta)");
     dialog.set_copyright(
             "2011 (C) Robotics, Brain and Cognitive Sciences\n"
             "Italian Institute of Technology (IIT)");

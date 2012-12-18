@@ -5,56 +5,23 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>MyTestModule</name>
+        <name>blobSelector</name>
         <parameters></parameters>
         <node></node>
-        <prefix></prefix>
-        <geometry>(Pos (x 365.5) (y 108.3))</geometry>
-    </module>
-    <module>
-        <name>velocityObserver</name>
-        <parameters>--name 1 --lenVel 2 --lenAcc 3 --thrVel 4 --thrAcc 5 --help</parameters>
-        <node>/ali</node>
-        <prefix>/ALI</prefix>
-        <stdio>/stdio</stdio>
-        <workdir>/home</workdir>
-        <geometry>(Pos (x 118) (y 107.8))</geometry>
+        <prefix>/MyTestApplication:blobSelector:1</prefix>
+        <geometry>(Pos (x 343.5) (y 223.3))</geometry>
     </module>
     <module>
         <name>yarpview</name>
-        <parameters></parameters>
-        <node>/ali</node>
+        <parameters>--x 10 --y 50 --w 320 --h 200</parameters>
+        <node></node>
         <prefix>/MyTestApplication:yarpview:1</prefix>
-        <geometry>(Pos (x 695.5) (y 73.3))</geometry>
+        <geometry>(Pos (x 759.5) (y 240.3))</geometry>
     </module>
     <connection>
-        <from>/ALI/vel:o</from>
-        <to>/img/in:1</to>
-        <protocol>tcp</protocol>
-        <geometry>(Pos ((x 318) (y 125)) ((x 366) (y 126))  )</geometry>
-    </connection>
-    <connection>
-        <from>/ALI/acc:o</from>
-        <to>/img/in:2</to>
-        <protocol>tcp</protocol>
-        <geometry>(Pos ((x 318) (y 150)) ((x 366) (y 151))  )</geometry>
-    </connection>
-    <connection>
-        <from>/img/o:1</from>
+        <from>/MyTestApplication:blobSelector:1/blobSelector/img:o</from>
         <to>/MyTestApplication:yarpview:1/yarpview/img:i</to>
-        <protocol>UDP</protocol>
-        <geometry>(Pos ((x 533) (y 138)) ((x 643) (y 91)) ((x 696) (y 91))  )</geometry>
-    </connection>
-    <connection>
-        <from>/cam/left</from>
-        <to>/ALI/pos:i</to>
-        <protocol>tcp</protocol>
-        <geometry>(Pos ((x 94) (y 124)) ((x 119) (y 125))  )</geometry>
-    </connection>
-    <connection>
-        <from>/img/o:2</from>
-        <to>Destination</to>
-        <protocol>UDP</protocol>
-        <geometry>(Pos ((x 533) (y 163)) ((x 607) (y 166)) ((x 607) (y 211)) ((x 767) (y 211)) ((x 767) (y 245)) ((x 506) (y 245)) ((x 506) (y 314)) ((x 820) (y 309))  )</geometry>
+        <protocol>mcast</protocol>
+        <geometry>(Pos ((x 511) (y 253)) ((x 760) (y 258))  )</geometry>
     </connection>
 </application>

@@ -94,7 +94,7 @@ void ApplicationPropertyWindow::update(Application* application)
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Name";
     row[m_Columns.m_col_value] = m_pApplication->getName();
-    row[m_Columns.m_col_editable] = true;
+    row[m_Columns.m_col_editable] = false;
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Description";
@@ -131,46 +131,6 @@ void ApplicationPropertyWindow::update(Application* application)
 
 void ApplicationPropertyWindow::updateApplication(const char* item, const char* value)
 {
-    /*
-    // updating applications
-    if(strcmp(item, "Node") == 0)
-    {
-        m_pApplication->setHost(value);
-        if(m_pIApplication) m_pIApplication->setHost(value);
-    }
-    else if(strcmp(item,"Stdio") == 0)
-    {
-        m_pApplication->setStdio(value);
-        if(m_pIApplication) m_pIApplication->setStdio(value);
-
-    }
-    else if(strcmp(item, "Workdir") == 0)
-    {
-        m_pApplication->setWorkDir(value);
-        if(m_pIApplication) m_pIApplication->setWorkDir(value);
-
-    }
-    else if(strcmp(item, "Prefix") == 0)
-    {    
-        if(m_pIApplication)  
-            m_pIApplication->setPrefix(value);
-
-        Application* application = m_pManager->getKnowledgeBase()->getApplication(); 
-        if(application)
-        {
-           string str_prefix = string(application->getPrefix()) + string(value); 
-           m_pApplication->setPrefix(str_prefix.c_str());
-        }
-        else
-            m_pApplication->setPrefix(value);
-
-    }
-    else if(strcmp(item, "Parameters") == 0)
-    {
-        m_pApplication->setParam(value);
-        if(m_pIApplication) m_pIApplication->setParam(value);
-    }
-    */
 }
 
 void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string, 
@@ -188,11 +148,12 @@ void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string,
     
         row[m_Columns.m_col_value] = new_text;
 
+        /*
         if(strName == "Name")
         {
             m_pApplication->setName(new_text.c_str());
         }
-
+        */
         if(strName == "Description")
         {
             m_pApplication->setDescription(new_text.c_str());

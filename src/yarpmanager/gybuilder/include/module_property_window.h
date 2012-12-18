@@ -26,6 +26,7 @@ public:
         add(m_col_color_item);
         add(m_col_color_value);
         add(m_col_editable);
+        add(m_col_choices);
     }
 
     Gtk::TreeModelColumn<Glib::ustring> m_col_name;
@@ -33,7 +34,23 @@ public:
     Gtk::TreeModelColumn<Gdk::Color> m_col_color_item;
     Gtk::TreeModelColumn<Gdk::Color> m_col_color_value;
     Gtk::TreeModelColumn<bool> m_col_editable;
+    Gtk::TreeModelColumn< Glib::RefPtr<Gtk::TreeModel> > m_col_choices;
 };
+
+
+//Tree model columns for the Combo CellRenderer in the TreeView column:
+class ModelColumnsCombo : public Gtk::TreeModel::ColumnRecord
+{
+public:
+
+    ModelColumnsCombo() { 
+        add(m_col_choice); 
+        add(m_col_description); 
+    }
+    Gtk::TreeModelColumn<Glib::ustring> m_col_choice; //The values from which the user may choose.
+    Gtk::TreeModelColumn<Glib::ustring> m_col_description; //Extra information to help the user to choose.
+};
+
 
 
 class ModulePropertyWindow: public Gtk::ScrolledWindow
@@ -54,8 +71,11 @@ protected:
                     const Glib::ustring& new_text);
 protected:
     ModulePropItemColumns m_Columns;  
+    ModelColumnsCombo m_ColumnsCombo;
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     Gtk::TreeView m_TreeView;
+
+    std::vector< Glib::RefPtr<Gtk::ListStore> > m_refModelCombos;
 
 private:
     void updateModule(const char* item, const char* value);
