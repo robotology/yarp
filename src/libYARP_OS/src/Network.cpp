@@ -818,7 +818,7 @@ void NetworkBase::unlock() {
 
 #ifdef YARP_HAS_ACE
 
-#include <yarp/os/SharedLibraryClass.h>
+#include <yarp/os/YarpPlugin.h>
 
 class ForwardingCarrier : public Carrier {
 public:
@@ -842,6 +842,7 @@ public:
 
     virtual ~ForwardingCarrier() {
         car.close();
+        if (!factory) return;
         factory->removeRef();
         if (factory->getReferenceCount()<=0) {
             delete factory;
@@ -996,33 +997,25 @@ public:
 
 
 class StubCarrier : public ForwardingCarrier {
+private:
+    YarpPluginSettings settings;
+    YarpPlugin<Carrier> plugin;
 public:
     StubCarrier(const char *dll_name, const char *fn_name) {
-        factory = new SharedLibraryClassFactory<Carrier>();
-        if (factory==NULL) return;
-        factory->addRef();
-        if (!factory->open(dll_name, fn_name)) {
-
-            int problem = factory->getStatus();
-            switch (problem) {
-            case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
-                fprintf(stderr,"cannot load shared library\n");
-                break;
-            case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
-                fprintf(stderr,"cannot find YARP hook in shared library\n");
-                break;
-            case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
-                fprintf(stderr,"YARP hook in shared library misbehaved\n");
-                break;
-            default:
-                fprintf(stderr,"Unknown error\n");
-                break;
-            }
-            return;
+        settings.dll_name = dll_name;
+        settings.fn_name = fn_name;
+        settings.fn_ext = "_carrier";
+        if (plugin.open(settings)) {
+            plugin.initialize(car);
         }
-        if (!car.open(*factory)) {
-            fprintf(stderr,"Failed to create %s from shared library %s\n",
-                    fn_name, dll_name);
+    }
+
+    StubCarrier(const char *name) {
+        settings.name = name;
+        settings.fn_ext = "_carrier";
+        plugin.open(settings);
+        if (plugin.open(settings)) {
+            plugin.initialize(car);
         }
     }
 
@@ -1031,7 +1024,7 @@ public:
     }
 
     virtual Carrier *create() {
-        ForwardingCarrier *ncar = new ForwardingCarrier(factory,this);
+        ForwardingCarrier *ncar = new ForwardingCarrier(plugin.getFactory(),this);
         if (ncar==NULL) {
             return NULL;
         }
@@ -1042,6 +1035,14 @@ public:
         }
         return ncar;
     }
+
+   ConstString getDllName() {
+        return settings.dll_name;
+    }
+
+    ConstString getFnName() {
+        return settings.fn_name;
+    }
 };
 
 #endif
@@ -1049,7 +1050,13 @@ public:
 bool NetworkBase::registerCarrier(const char *name,const char *dll) {
 #ifdef YARP_HAS_ACE
     //printf("Registering carrier %s from %s\n", name, dll);
-    StubCarrier *factory = new StubCarrier(dll,name);
+    StubCarrier *factory = NULL;
+    if (dll==NULL) {
+        factory = new StubCarrier(name);
+        if (!factory) return false;
+    } else { 
+        factory = new StubCarrier(dll,name);
+    }
     if (factory==NULL) {
         YARP_ERROR(Logger::get(),"Failed to create carrier");
         return false;

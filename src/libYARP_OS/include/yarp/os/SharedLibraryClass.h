@@ -106,6 +106,7 @@ public:
 	}
 
 	bool open(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+		status = STATUS_NONE;
 		api.startCheck = 0;
 		if (!lib.open(dll_name)) {
 			//fprintf(stderr,"Failed to open library %s\n", dll_name);
@@ -114,14 +115,12 @@ public:
 		}
 		void *fn = lib.getSymbol((fn_name!=0/*NULL*/)?fn_name:YARP_DEFAULT_FACTORY_NAME);
 		if (fn==0/*NULL*/) {
-			//fprintf(stderr,"Failed to find factory in library %s\n", dll_name);
 			lib.close();
 			status = STATUS_FACTORY_NOT_FOUND;
 			return false;
 		}
 		useFactoryFunction(fn);
 		if (!isValid()) {
-			//fprintf(stderr,"Failed to load factory in library %s\n", dll_name);
 			status = STATUS_FACTORY_NOT_FUNCTIONAL;
 			return false;
 		}
@@ -225,7 +224,7 @@ public:
         return content!=0/*NULL*/;
 	}
 
-    bool close() {
+    virtual bool close() {
         if (content!=0/*NULL*/) {
             if (deleter!=0/*NULL*/) {
                 SharedClassDeleterFunction del = 

@@ -38,7 +38,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Ping.h>
 #include <yarp/os/NetInt32.h>
-#include <yarp/os/SharedLibraryClass.h>
+#include <yarp/os/YarpPlugin.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
@@ -2032,7 +2032,11 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         fprintf(stderr,"please provide filename for shared library\n");
         return 1;
     }
-    SharedLibraryFactory lib(argv[0]);
+    SharedLibraryFactory lib;
+    YarpPluginSettings settings;
+    settings.name = argv[0];
+    settings.verbose = true;
+    settings.open(lib);
     if (!lib.isValid()) {
         int problem = lib.getStatus();
         switch (problem) {

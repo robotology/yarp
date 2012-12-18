@@ -62,7 +62,8 @@ void Carriers::clear() {
     lst.clear();
 }
 
-Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
+Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
+                                 bool load_if_needed) {
     String s;
     if (name!=NULL) {
         s = *name;
@@ -88,6 +89,15 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
         }
         if (match) {
             return c.create();
+        }
+    }
+    if (name!=NULL && load_if_needed) {
+        // ok, we didn't find a carrier, but we have a name.
+        // let's try to register it, and see if a dll is found.
+        bool reg = NetworkBase::registerCarrier(name->c_str(),NULL);
+        if (reg) {
+            // We made progress, let's try again...
+            return Carriers::chooseCarrier(name,header,false);
         }
     }
     YARP_SPRINTF1(Logger::get(),
