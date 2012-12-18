@@ -24,7 +24,7 @@
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
             <type>unk</type>
             <!-- input port which receive the data. -->
-            <port carrier="tcp">/particle:i</port>
+            <port carrier="tcp">/dmpManager/particle:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -38,14 +38,14 @@
 
         <input>
             <type>unk</type>
-            <port carrier="tcp">/point:i</port>
+            <port carrier="tcp">/dmpManager/point:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
         <input>
             <type>unk</type>
-            <port carrier="tcp">/blobs:i</port>
+            <port carrier="tcp">/dmpManager/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
@@ -54,7 +54,7 @@
 
 	<input>
             <type>Rpc</type>
-            <port carrier="tcp">/human:rpc</port>
+            <port carrier="tcp">/dmpManager/human:rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>rpc port to enable/disable options (more or less)</description>
@@ -62,39 +62,39 @@
 
 	<input>
             <type>Rpc</type>
-            <port carrier="tcp">/thrift:rpc</port>
+            <port carrier="tcp">/dmpManager/thrift:rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>rpc port to enable/disable options (more or less)</description>
         </input>
  	<output>
             <type>unk</type>
-            <port carrier="tcp">/segmentTarget:o</port>
+            <port carrier="tcp">/dmpManager/segmentTarget:o</port>
             <description></description>
         </output>
  	<output>
             <type>unk</type>
-            <port carrier="tcp">/iolState:o</port>
+            <port carrier="tcp">/dmpManager/iolState:o</port>
             <description></description>
         </output>
 	<output>
             <type>Rpc</type>
-            <port carrier="tcp">/are:rpc</port>
+            <port carrier="tcp">/dmpManager/are:rpc</port>
             <description>rpc port to enable/disable options (more or less)</description>
         </output>
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/mil:rpc</port>
+            <port carrier="tcp">/dmpManager/mil:rpc</port>
             <description>rpc port to communicate with mil classifier</description>
         </output>
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/opc:rpc</port>
+            <port carrier="tcp">/dmpManager/opc:rpc</port>
             <description>rpc port to communicate with OPC</description>
         </output>
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/dmpLearner:rpc</port>
+            <port carrier="tcp">/dmpManager/dmpLearner:rpc</port>
             <description>rpc port to communicate with dmpLearnerModule</description>
         </output>
 

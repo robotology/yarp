@@ -23,7 +23,7 @@
         
         <input>
             <type>ImageOfPixelRgb</type>
-            <port carrier="tcp">/image:i</port>
+            <port carrier="tcp">/lumaChroma/image:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -38,7 +38,7 @@
 
 	<input>
             <type>Rpc</type>
-            <port carrier="tcp">/rpc</port><!-- ATTENTION - currenty it is actually just /lumaChroma -->
+            <port carrier="tcp">/lumaChroma</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -53,32 +53,32 @@
         <!-- output datas if available -->
         <output>
             <type>ImageOfPixelMono</type>
-            <port carrier="udp">/Y/image:o</port>
+            <port carrier="udp">/lumaChroma/Y/image:o</port>
             <description>when YUV is selected</description>
         </output>
         <output>
             <type>ImageOfPixelMono</type>
-            <port carrier="udp">/UV/image:o</port>
+            <port carrier="udp">/lumaChroma/UV/image:o</port>
             <description>when YUV is selected</description>
         </output>
 	<output>
             <type>ImageOfPixelMono</type>
-            <port carrier="udp">/H/image:o</port>
+            <port carrier="udp">/lumaChroma/H/image:o</port>
             <description>when HSV is selected</description>
         </output>
 	<output>
             <type>ImageOfPixelMono</type>
-            <port carrier="udp">/S/image:o</port>
+            <port carrier="udp">/lumaChroma/S/image:o</port>
             <description>when HSV is selected</description>
         </output>
 	<output>
             <type>ImageOfPixelMono</type>
-            <port carrier="udp">/V/image:o</port>
+            <port carrier="udp">/lumaChroma/V/image:o</port>
             <description>when HSV is selected</description>
         </output>
 	<output>
             <type>ImageOfPixelMono</type>
-            <port carrier="udp">/image:o</port>
+            <port carrier="udp">/lumaChroma/image:o</port>
             <description>when HSV is selected</description>
         </output>
     </data>

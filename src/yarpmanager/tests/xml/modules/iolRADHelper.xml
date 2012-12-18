@@ -20,7 +20,7 @@ accomplishing its tasks. </description>
 
         <input>
             <type>Rpc</type>
-            <port carrier="tcp">/rpc</port>
+            <port carrier="tcp">/iolRADHelper/rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>to be accessed by RAD.</description>
@@ -30,7 +30,7 @@ accomplishing its tasks. </description>
 
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/opc</port>
+            <port carrier="tcp">/iolRADHelper/opc</port>
             <description>Used to communicate with the objects properties collector.</description>
         </output>
 

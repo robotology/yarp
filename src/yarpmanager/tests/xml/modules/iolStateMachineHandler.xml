@@ -22,7 +22,7 @@
         
         <input>
             <type>ImageFrame</type>
-            <port carrier="udp">/img:i</port>
+            <port carrier="udp">/iolStateMachineHandler/img:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -36,14 +36,14 @@
 
 	<input><!--ATTENTION! This is called blobs.rpc in main.cpp -->
 	    <type>unk</type>
-            <port carrier="tcp">/blobs:i</port>
+            <port carrier="tcp">/iolStateMachineHandler/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description>Used to forward requests to the blob detector for image segmentation.</description>
 	</input>
         <input>
             <type>Rpc</type>
-            <port carrier="tcp">/human:rpc</port>
+            <port carrier="tcp">/iolStateMachineHandler/human:rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>Receives requests for actions execution.</description>
@@ -51,7 +51,7 @@
 
 	<input>
             <type>unk</type>
-            <port carrier="tcp">/motor_stop:i</port>
+            <port carrier="tcp">/iolStateMachineHandler/motor_stop:i</port>
             <required>no</required>
             <priority>no</priority>
             <description>Receives the [icub-stop] trigger from the verbal commands interpreter.</description>
@@ -59,7 +59,7 @@
 
 	<input>
             <type>Bottle</type>
-            <port carrier="tcp">/point:i</port>
+            <port carrier="tcp">/iolStateMachineHandler/point:i</port>
             <required>no</required>
             <priority>no</priority>
             <description>Receives the latest pointed location within the image from the motion capture module.</description>
@@ -68,19 +68,19 @@
         <!-- output datas if available -->
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/img:o</port>
+            <port carrier="udp">/iolStateMachineHandler/img:o</port>
             <description>Streams out the image containing recognized object. The image is updated whenever an action is required to be executed.</description>
         </output>
 
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/imgLoc:o</port>
+            <port carrier="udp">/iolStateMachineHandler/imgLoc:o</port>
             <description>Streams out the images for real-time objects localization.</description>
         </output>
 
         <output>
             <type>unk</type>
-            <port carrier="udp">/imgClassifier:o</port>
+            <port carrier="udp">/iolStateMachineHandler/imgClassifier:o</port>
             <description>Used to pass images to the classifier.</description>
         </output>
 
@@ -92,43 +92,43 @@
 
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/classify:rpc</port>
+            <port carrier="tcp">/iolStateMachineHandler/classify:rpc</port>
             <description>Sends out requests for object classification.Used to forward requests to the blob detector for image segmentation.</description>
         </output>
 
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/get3d:rpc</port>
+            <port carrier="tcp">/iolStateMachineHandler/get3d:rpc</port>
             <description></description>
         </output>
 
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/wbd:rpc</port>
+            <port carrier="tcp">/iolStateMachineHandler/wbd:rpc</port>
             <description></description>
         </output>
 
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/motor:rpc</port>
+            <port carrier="tcp">/iolStateMachineHandler/motor:rpc</port>
             <description>Sends out motor commands.</description>
         </output>
 
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/motor_stop:rpc</port>
+            <port carrier="tcp">/iolStateMachineHandler/motor_stop:rpc</port>
             <description>Used to interrupt/restore motor capabilities.</description>
         </output>
 
         <output>
             <type>unk</type>
-            <port carrier="tcp">/speak:o</port>
+            <port carrier="tcp">/iolStateMachineHandler/speak:o</port>
             <description>Streams out the robot's sentences that need to be spoken.</description>
         </output>
 
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/memory:rpc</port>
+            <port carrier="tcp">/iolStateMachineHandler/memory:rpc</port>
             <description>Used to communicate with the objects properties collector.</description>
         </output>
 

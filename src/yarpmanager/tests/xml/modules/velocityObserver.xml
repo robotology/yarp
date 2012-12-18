@@ -6,7 +6,7 @@
 
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
-        <param desc="module name (serves as port prefix)" default="/velObs"> name </param>
+        <param desc="module name (serves as port prefix)" default="velObs"> name </param>
 	<param desc="maximum window length for buffering the input data (used for the first derivative estimation)" default="16"> lenVel </param>
 	<param desc="maximum window length for buffering the input data (used for the second derivative estimation)" default="25"> lenAcc </param>
 	<param desc="maximum deviation threshold for the algorithm (used for the first derivative estimation)" default="" required="yes"> thrVel </param>
@@ -27,7 +27,7 @@
             <type>Vector</type>
 
             <!-- input port which receive the data. -->
-            <port carrier="tcp">/pos:i</port>
+            <port carrier="tcp">/velObs/pos:i</port>
 
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -42,7 +42,7 @@
         </input>
         <input>
             <type>Vector</type>
-            <port carrier="tcp">rpc</port>
+            <port carrier="tcp">/velObs/rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>RPC port, useful to shut down the module remotely by sending to this port the 'quit'
@@ -52,12 +52,12 @@
         <!-- output datas if available -->
         <output>
             <type>Vector</type>
-            <port carrier="tcp">/vel:o</port>
+            <port carrier="tcp">/velObs/vel:o</port>
             <description>provides the estimated first derivatives</description>
         </output>
         <output>
             <type>Vector</type>
-            <port carrier="tcp">/acc:o</port>
+            <port carrier="tcp">/velObs/acc:o</port>
             <description>provides the estimated second derivatives</description>
         </output>
     </data>

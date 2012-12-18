@@ -30,7 +30,7 @@
         
         <input>
             <type>ImageFrame</type>
-            <port carrier="udp">/img:i</port>
+            <port carrier="udp">/blobExtractor/img:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -44,7 +44,7 @@
 
         <input>
             <type>Rpc</type>
-            <port carrier="tcp">/rpc</port>
+            <port carrier="tcp">/blobExtractor/rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>Receives commands from user (trai clas lock unlo forg load deta).</description>
@@ -53,13 +53,13 @@
         <!-- output datas if available -->
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/img:o</port>
+            <port carrier="udp">/blobExtractor/img:o</port>
             <description></description>
         </output>
 
         <output>
             <type>unk</type>
-            <port carrier="tcp">/blobs:o</port>
+            <port carrier="tcp">/blobExtractor/blobs:o</port>
             <description></description>
         </output>
 

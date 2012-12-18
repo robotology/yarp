@@ -32,7 +32,7 @@
             <type>Bottle</type>
 
             <!-- input port which receive the data. -->
-            <port carrier="tcp">/modify:i</port>
+            <port carrier="tcp">/objectsPropertiesCollector/modify:i</port>
 
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -51,7 +51,7 @@
             <type>Bottle</type>
 
             <!-- input port which receive the data. -->
-            <port carrier="tcp">/get:io</port>
+            <port carrier="tcp">/objectsPropertiesCollector/get:io</port>
 
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -69,7 +69,7 @@
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
             <type>Rpc</type>
 
-            <port carrier="tcp">/rpc</port>
+            <port carrier="tcp">/objectsPropertiesCollector/rpc</port>
 
             <required>no</required>
 
@@ -81,7 +81,7 @@
 
         <output>
             <type>Bottle</type>
-            <port carrier="tcp">/broadcast:o</port>
+            <port carrier="tcp">/objectsPropertiesCollector/broadcast:o</port>
             <description>Port used to broadcast the database content in synchronous and asynchronous mode.</description>
         </output>
 

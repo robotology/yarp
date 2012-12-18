@@ -43,7 +43,7 @@
             <type>ImageFrame</type>
 
             <!-- input port which receive the data. -->
-            <port carrier="udp">/img:i</port>
+            <port carrier="udp">/motionCUT/img:i</port>
 
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -58,7 +58,7 @@
         </input>
         <input>
             <type>Rpc</type>
-            <port carrier="tcp">/rpc</port>
+            <port carrier="tcp">/motionCUT/rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>The parameters winSize, recogThres, adjNodesThres, framesPersistence, numThreads, verbosity can be changed/retrieved through the commands set/get. Moreover the further switch \e inhibition can be accessed in order to enable/disable the motion detection at run-time. </description>
@@ -67,28 +67,28 @@
         <!-- output datas if available -->
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/img:o</port>
+            <port carrier="udp">/motionCUT/img:o</port>
             <description>Outputs the input images with the grid layer on top. This port propagates the time-stamp carried by the input image.</description>
         </output>
         <output>
             <type>Bottle</type>
-            <port carrier="udp">/nodes:o</port>
+            <port carrier="udp">/motionCUT/nodes:o</port>
             <description>Outputs the input x-y location of the currently active nodes in this format: (nodesStep 'val') ('n0.x' 'n0.y') ('n1.x' 'n1.y') ... . This port propagates the time-stamp carried by the input image.</description>
         </output>
 	<output>
             <type>Bottle</type>
-            <port carrier="udp">/blobs:o</port>
+            <port carrier="udp">/motionCUT/blobs:o</port>
             <description>Outputs the input x-y location of blobs centroids along with their size in this format: ('b0.cx' 'b0.cy' 'b0.size') ('b1.cx' 'b1.cy' 'b1.size') ... The output blobs list is sorted according to their size (decreasing order). . This port propagates the time-stamp carried by the input image.</description>
         </output>
 <output>
             <type>ImageFrame?</type>
-            <port carrier="udp">/crop:o</port>
+            <port carrier="udp">/motionCUT/crop:o</port>
             <description>outputs a window of fixed size obtained from
   a ROI around the center of mass of the largest blob detected.</description>
         </output>
 <output>
             <type>ImageFrameGrayscale</type>
-            <port carrier="udp">/opt:o</port>
+            <port carrier="udp">/motionCUT/opt:o</port>
             <description>Outputs monochrome images containing just the grid nodes signalling independent movements. This port propagates the time-stamp carried by the input image.</description>
         </output>
     </data>

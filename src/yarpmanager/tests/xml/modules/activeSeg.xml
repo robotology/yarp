@@ -21,7 +21,7 @@
         
         <input>
             <type>ImageFrame</type>
-            <port carrier="tcp">/image:i</port>
+            <port carrier="tcp">/activeSeg/image:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -35,7 +35,7 @@
 
         <input>
             <type>Bottle</type>
-            <port carrier="tcp">/fixPoint:i</port>
+            <port carrier="tcp">/activeSeg/fixPoint:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -49,7 +49,7 @@
 
 <input>
             <type>Rpc</type>
-            <port carrier="tcp">/rpc</port>
+            <port carrier="tcp">/activeSeg/rpc</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -64,12 +64,12 @@
         <!-- output datas if available -->
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/image:o</port>
+            <port carrier="udp">/activeSeg/image:o</port>
             <description></description>
         </output>
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/imageCrop:o</port>
+            <port carrier="udp">/activeSeg/imageCrop:o</port>
             <description></description>
         </output>
     </data>

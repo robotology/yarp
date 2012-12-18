@@ -7,9 +7,9 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
 
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
-        <param desc="Name of the module" default="lumaChroma"> name</param>
-        <param desc="specifies the configuration file" default="lumaChroma.ini"> from </param>
-        <param desc="specifies the sub-path from \c $ICUB_ROOT/icub/app to the configuration file" default="alumaChroma/conf"> context </param>	
+        <param desc="Name of the module" default="templatePFTracker"> name</param>
+        <!--param desc="specifies the configuration file" default="/templatePFTracker.ini"> from </param>
+        <param desc="specifies the sub-path from \c $ICUB_ROOT/icub/app to the configuration file" default="/templatePFTracker/conf"> context </param-->	
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -21,7 +21,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
      <data>
         <input>
             <type>ImageFrame</type>
-            <port carrier="udp">/template/image:i</port>
+            <port carrier="udp">/templatePFTracker/template/image:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -35,7 +35,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
 
         <input>
             <type>ImageFrame</type>
-            <port carrier="udp">/left/image:i</port>
+            <port carrier="udp">/templatePFTracker/left/image:i</port>
             <required>yes</required>
             <priority>no</priority>
             <description></description>
@@ -43,7 +43,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
 
         <input>
             <type>ImageFrame</type>
-            <port carrier="udp">/right/image:i</port>
+            <port carrier="udp">/templatePFTracker/right/image:i</port>
             <required>yes</required>
             <priority>no</priority>
             <description></description>
@@ -51,7 +51,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
 
 	<input>
             <type>Rpc</type>
-            <port carrier="tcp">/rpc</port><!-- ATTENTION - currenty it is actually just /<name> -->
+            <port carrier="tcp">/templatePFTracker</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -66,27 +66,27 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
         <!-- output datas if available -->
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/left/image:o</port>
+            <port carrier="udp">/templatePFTracker/left/image:o</port>
             <description></description>
         </output>
         <output>
             <type>ImageFrame</type>
-            <port carrier="udp">/right/image:o</port>
+            <port carrier="udp">/templatePFTracker/right/image:o</port>
             <description></description>
         </output>
 	<output>
             <type>ImageFrame</type>
-            <port carrier="udp">/leftblob/image:o</port>
+            <port carrier="udp">/templatePFTracker/leftblob/image:o</port>
             <description></description>
         </output>
 	<output>
             <type>ImageFrame</type>
-            <port carrier="udp">/rightblob/image:o</port>
+            <port carrier="udp">/templatePFTracker/rightblob/image:o</port>
             <description></description>
         </output>
 	<output>
             <type>unk</type>
-            <port carrier="tcp">/target:o</port>
+            <port carrier="tcp">/templatePFTracker/target:o</port>
             <description></description>
         </output>
     </data>

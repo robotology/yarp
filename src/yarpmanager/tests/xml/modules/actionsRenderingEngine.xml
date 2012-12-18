@@ -6,8 +6,7 @@
 
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
-        <param default = "" desc="path where learned actions should be saved, or OPC to write actions to OPC database"> actions </param>
-
+        <!--param default = "" desc="path where learned actions should be saved, or OPC to write actions to OPC database"> actions </param-->
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -24,7 +23,7 @@
             <type>Bottle</type>
 
             <!-- input port which receive the data. -->
-            <port carrier="tcp">/cmd:io</port>
+            <port carrier="tcp">/actionsRenderingEngine/cmd:io</port>
 
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -43,7 +42,7 @@
             <type>Bottle</type>
 
             <!-- input port which receive the data. -->
-            <port carrier="tcp">/get:io</port>
+            <port carrier="tcp">/actionsRenderingEngine/get:io</port>
 
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -61,7 +60,7 @@
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
             <type>Rpc</type>
 
-            <port carrier="tcp">/rpc</port>
+            <port carrier="tcp">/actionsRenderingEngine/rpc</port>
 
             <required>no</required>
 
@@ -74,7 +73,7 @@
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
             <type>ImageFrame</type>
 
-            <port carrier="tcp">/disparity:io</port>
+            <port carrier="tcp">/actionsRenderingEngine/disparity:io</port>
 
             <required>no</required>
 
@@ -106,56 +105,56 @@
         </input-->
 	<input>
             <type>ImageFrame</type>
-            <port carrier="tcp">/left/img:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/left/img:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
             <type>ImageFrame</type>
-            <port carrier="tcp">/right/img:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/right/img:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
             <type>unk</type>
-            <port carrier="tcp">/left/blobs:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/left/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
             <type>unk</type>
-            <port carrier="tcp">/right/blobs:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/right/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
             <type>ImageFrame</type>
-            <port carrier="tcp">/left/raw:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/left/raw:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
             <type>ImageFrame</type>
-            <port carrier="tcp">/right/raw:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/right/raw:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
             <type>unk</type>
-            <port carrier="tcp">/MIL/rec:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/MIL/rec:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
             <type>unk</type>
-            <port carrier="tcp">/tracker:i</port>
+            <port carrier="tcp">/actionsRenderingEngine/tracker:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
@@ -176,37 +175,37 @@
         </input-->
  	<output>
             <type>ImageFrame</type>
-            <port carrier="tcp">/left/img:o</port>
+            <port carrier="tcp">/actionsRenderingEngine/left/img:o</port>
             <description></description>
         </output>
         <output>
             <type>ImageFrame</type>
-            <port carrier="tcp">/right/img:o</port>
+            <port carrier="tcp">/actionsRenderingEngine/right/img:o</port>
             <description></description>
         </output>
  	<output>
             <type>unk</type>
-            <port carrier="tcp">/MIL/window:o</port>
+            <port carrier="tcp">/actionsRenderingEngine/MIL/window:o</port>
             <description></description>
         </output>
         <output>
             <type>unk</type>
-            <port carrier="tcp">/MIL/cmd:o</port>
+            <port carrier="tcp">/actionsRenderingEngine/MIL/cmd:o</port>
             <description></description>
         </output>
  	<output>
             <type>unk</type>
-            <port carrier="tcp">/MSR/cmd:o</port>
+            <port carrier="tcp">/actionsRenderingEngine/MSR/cmd:o</port>
             <description></description>
         </output>
         <output>
             <type>unk</type>
-            <port carrier="tcp">/tracker:o</port>
+            <port carrier="tcp">/actionsRenderingEngine/tracker:o</port>
             <description></description>
         </output>
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/OPC:io</port>
+            <port carrier="tcp">/actionsRenderingEngine/OPC:io</port>
             <description></description>
         </output>
 

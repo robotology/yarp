@@ -11,7 +11,7 @@
 	<param default="1.0" desc="alpha_x time constant"> alphax </param>
 	<param default="1.0" desc="alpha_z time constant"> alphaz </param>
 	<param default="1.0" desc="beta_z time constant"> betaz </param>
-	<param default="27" desc="N"> number of radial basis functions for non-linear part of DMP</param>
+	<param default="27" desc="number of radial basis functions for non-linear part of DMP"> N</param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -24,14 +24,14 @@
      <data>
 	<input>
             <type>Rpc</type>
-            <port carrier="tcp">/rpc</port>
+            <port carrier="tcp">/dmpLearner/rpc</port>
             <required>no</required>
             <priority>no</priority>
             <description>rpc port that implements the server of iCub_dmpLearner Thrift interface</description>
         </input>
         <output>
             <type>Rpc</type>
-            <port carrier="tcp">/opc:rpc</port>
+            <port carrier="tcp">/dmpLearner/opc:rpc</port>
             <description>rpc port to communicate with OPC</description>
         </output>
 
