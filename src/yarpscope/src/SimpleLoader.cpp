@@ -15,11 +15,11 @@
 #include <string.h>
 
 namespace {
-    const float default_plot_minval = -100.;
-    const float default_plot_maxval = 100.;
-    const int default_plot_size = 201;
-    const int default_graph_size = 1;
-    const Glib::ustring default_graph_type = "lines";
+    static const float default_plot_minval = -100.;
+    static const float default_plot_maxval = 100.;
+    static const int default_plot_size = 201;
+    static const int default_graph_size = 1;
+    static const Glib::ustring default_graph_type = "lines";
 }
 
 

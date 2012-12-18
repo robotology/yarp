@@ -11,24 +11,26 @@
 #include "PlotManager.h"
 #include "Debug.h"
 
+#include <yarp/os/ContactStyle.h>
+
 #include <tinyxml.h>
 
 #include <glibmm/ustring.h>
 #include <stdexcept>
 
 namespace {
-    const int default_plot_gridx = -1;
-    const int default_plot_gridy = -1;
-    const int default_plot_hspan = 1;
-    const int default_plot_vspan = 1;
-    const float default_plot_minval = -100.;
-    const float default_plot_maxval = 100.;
-    const int default_plot_size = 201;
-    const bool default_plot_autorescale = false;
-    const bool default_plot_realtime = false;
-    const bool default_plot_triggermode = false;
-    const int default_graph_size = 1;
-    const Glib::ustring default_graph_type = "lines";
+    static const int default_plot_gridx = -1;
+    static const int default_plot_gridy = -1;
+    static const int default_plot_hspan = 1;
+    static const int default_plot_vspan = 1;
+    static const float default_plot_minval = -100.;
+    static const float default_plot_maxval = 100.;
+    static const int default_plot_size = 201;
+    static const bool default_plot_autorescale = false;
+    static const bool default_plot_realtime = false;
+    static const bool default_plot_triggermode = false;
+    static const int default_graph_size = 1;
+    static const Glib::ustring default_graph_type = "lines";
 }
 
 // FIXME check if rows and colums are used, or if the table is resized
