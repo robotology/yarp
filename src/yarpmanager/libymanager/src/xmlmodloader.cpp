@@ -181,7 +181,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     
     /* retrieving root module */
     TiXmlElement *root = doc.RootElement();
-    if(!root)
+    if(!root)    
     {
         ostringstream err;
         err<<"Syntax error while loading "<<szFile<<" . ";
@@ -388,6 +388,14 @@ Module* XmlModLoader::parsXml(const char* szFile)
             } // end of input data          
 
         }
+
+    /* retrieving broker*/
+    TiXmlElement* element;
+    if((element = (TiXmlElement*) root->FirstChild("deployer")))
+    {
+        module.setBroker(element->GetText());
+        module.setNeedDeployer(true);
+    }
 
     /* retrieving dependencies*/
     if(root->FirstChild("dependencies"))

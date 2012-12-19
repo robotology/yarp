@@ -11,6 +11,7 @@
 #include "manager.h"
 #include "yarpbroker.h"
 #include "localbroker.h"
+#include "yarpdevbroker.h"
 #include "xmlapploader.h"
 #include "xmlmodloader.h"
 #include "xmlresloader.h"
@@ -21,7 +22,10 @@
 #define STOP_TIMEOUT            30      // Stop timeout in seconds
 #define KILL_TIMEOUT            10      // kill timeout in seconds
 
-#define BROKER_YARPRUN      "yarprun"
+#define BROKER_LOCAL            "local"
+#define BROKER_YARPRUN          "yarprun"
+#define BROKER_YARPDEV          "yarpdev"
+#define BROKER_ICUBMIODDEV      "icubmoddev"
 
 
 /**
@@ -270,31 +274,53 @@ bool Manager::prepare(bool silent)
     int id = 0;
     for(itr=modules.begin(); itr!=modules.end(); itr++)
     {
+        
+        Broker* broker = NULL;
 
+        /*
         string strCurrentBroker;
         if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
             strCurrentBroker = BROKER_YARPRUN;
         else
             strCurrentBroker = strDefBroker;
 
-        Broker* broker = NULL;
         if(compareString((*itr)->getHost(), "localhost"))
             broker = new LocalBroker;
         else if(strCurrentBroker == string(BROKER_YARPRUN))
             broker = new YarpBroker;
         //else if( for other brokers )
         //...
+        */
+
+        if(compareString((*itr)->getBroker(), BROKER_YARPDEV))
+        {
+            if(compareString((*itr)->getHost(), "localhost"))
+               broker = new YarpdevLocalBroker();
+            else
+               broker = new YarpdevYarprunBroker(); 
+        }
+        else if(compareString((*itr)->getBroker(), BROKER_LOCAL))
+        {
+            if(compareString((*itr)->getHost(), "localhost"))
+                broker = new LocalBroker();
+        }    
+        else if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
+                broker = new YarpBroker();
 
         /**
          * using default broker if it is still NULL
          */
         if(!broker)
         {
-            ostringstream war;
-            war<<"Broker "<<strCurrentBroker<<" does not exist! (using default broker)";
-            logger->addWarning(war);
-            broker = new YarpBroker;
-            strCurrentBroker = BROKER_YARPRUN;
+            if(compareString((*itr)->getHost(), "localhost"))
+                broker = new LocalBroker;
+            else
+                broker = new YarpBroker;
+            //ostringstream war;
+            //war<<"Deployer "<<strCurrentBroker<<" does not exist! (using default (yarprun) deployer)";
+            //logger->addWarning(war);
+            //broker = new YarpBroker;
+            //strCurrentBroker = BROKER_YARPRUN;
         }
 
         Executable* exe = new Executable(broker, (MEvent*)this, bWithWatchDog);
@@ -304,12 +330,12 @@ bool Manager::prepare(bool silent)
         exe->setHost((*itr)->getHost());
         exe->setStdio((*itr)->getStdio());
         exe->setWorkDir((*itr)->getWorkDir());
-        if(strCurrentBroker == string(BROKER_YARPRUN))
-        {
+        //if(strCurrentBroker == string(BROKER_YARPRUN))
+       // {
             string env = string("YARP_PORT_PREFIX=") +
                             string((*itr)->getPrefix());
             exe->setEnv(env.c_str());
-        }
+       // }
 
         /**
          * Adding connections to their owners

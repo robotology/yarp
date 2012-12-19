@@ -56,6 +56,7 @@ void Module::swap(const Module &mod)
     strWorkDir = mod.strWorkDir;
     strStdio = mod.strStdio;
     strBroker = mod.strBroker;
+    bNeedDeployer = mod.bNeedDeployer;
     strPrefix = mod.strPrefix;
     modOwner = mod.modOwner;
     // deep copy
@@ -211,6 +212,7 @@ void Module::clear(void)
     strDescription.clear();
     strHost.clear();
     bForced = false;
+    bNeedDeployer = false;
     authors.clear();
     outputs.clear();
     inputs.clear();

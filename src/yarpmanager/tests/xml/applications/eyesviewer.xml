@@ -1,0 +1,50 @@
+<application>
+    <name>EyesViewer</name>
+    <description>A fake robot eyes viewer running on a cluster of computer</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode ball</parameters>
+        <node>localhost</node>
+        <prefix>/Ball</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 145) (y 147.7))</geometry>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode line</parameters>
+        <node>localhost</node>
+        <prefix>/Line</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 146) (y 234.7))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/Ball</prefix>
+        <geometry>(Pos (x 516) (y 148.7))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/Line</prefix>
+        <geometry>(Pos (x 521) (y 234.7))</geometry>
+    </module>
+    <connection>
+        <from>/Ball/grabber</from>
+        <to>/Ball/yarpview/img:i</to>
+        <protocol>UDP</protocol>
+        <geometry>(Pos ((x 313) (y 165)) ((x 517) (y 166))  )</geometry>
+    </connection>
+    <connection>
+        <from>/Line/grabber</from>
+        <to>/Line/yarpview/img:i</to>
+        <protocol>UDP</protocol>
+        <geometry>(Pos ((x 314) (y 252)) ((x 522) (y 252))  )</geometry>
+    </connection>
+</application>

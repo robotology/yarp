@@ -127,7 +127,7 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             
             if(strcmp(curMod.getBroker(), ""))
             {
-                TiXmlElement *broker=new TiXmlElement("broker");
+                TiXmlElement *broker=new TiXmlElement("deployer");
                 broker->LinkEndChild(new TiXmlText(curMod.getBroker()));
                 newMod->LinkEndChild(broker);
             }

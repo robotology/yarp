@@ -80,6 +80,7 @@ protected:
 private:
     void updateModule(const char* item, const char* value);
     void updateParamteres(void);
+    bool getRowByName(const char* name, Gtk::TreeModel::Row* row);
 
     MainWindow* m_pParent;
     Module* m_pModule;

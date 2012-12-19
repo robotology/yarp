@@ -127,13 +127,15 @@ public:
     void setStdio(const char* szStdio) { if(szStdio) strStdio = szStdio; }
     void setBroker(const char* szBroker) { if(szBroker) strBroker = szBroker; }
     void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
-
+    void setNeedDeployer(bool need) { bNeedDeployer = need; }
+    
     int getRank(void) { return iRank; }
     const char* getName(void) { return strName.c_str(); }
     const char* getVersion(void) { return strVersion.c_str(); }
     const char* getDescription(void) { return strDescription.c_str(); }
     const char* getHost(void) { return strHost.c_str(); }   
     bool getForced(void) { return bForced; }
+    bool getNeedDeployer(void) { return bNeedDeployer; }
   
     const char* getParam(void) { return strParam.c_str(); } 
     const char* getXmlFile(void) { return strXmlFile.c_str(); }
@@ -203,6 +205,7 @@ private:
     string strWorkDir;
     string strStdio;
     string strBroker;
+    bool bNeedDeployer;
     string strPrefix;
 
     GraphicModel modelBase;

@@ -188,6 +188,39 @@ void ModulePropertyWindow::update(Module* module)
     row[m_Columns.m_col_editable] = true;
     row[m_Columns.m_col_choices] = m_refModelCombos.back();
 
+    //Deployer
+    m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
+    if(compareString(m_pModule->getBroker(), "yarpdev"))
+    {
+        row = *(m_refCombo->append());
+        row[m_ColumnsCombo.m_col_choice] = "yarpdev";
+    }
+    else if(compareString(m_pModule->getBroker(), "icubmoddev"))
+    {
+        row = *(m_refCombo->append());
+        row[m_ColumnsCombo.m_col_choice] = "icubmoddev";
+    }
+    else
+    {
+        row = *(m_refCombo->append());
+        row[m_ColumnsCombo.m_col_choice] = "local";
+        row = *(m_refCombo->append());
+        row[m_ColumnsCombo.m_col_choice] = "yarprun";
+    }
+    m_refModelCombos.push_back(m_refCombo);
+
+    row = *(m_refTreeModel->append());
+    row[m_Columns.m_col_name] = "Deployer";
+    row[m_Columns.m_col_value] = m_pModule->getBroker();
+    if(m_pModule->getNeedDeployer())
+    {  
+        row[m_Columns.m_col_editable] = false;
+        row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
+    }    
+    else
+        row[m_Columns.m_col_editable] = true;
+    row[m_Columns.m_col_choices] = m_refModelCombos.back();
+
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Parameters";
     row[m_Columns.m_col_value] = m_pModule->getParam();
@@ -227,14 +260,14 @@ void ModulePropertyWindow::update(Module* module)
 
 }
 
-/*
-bool ApplicationWindow::getRowByName(const char* name, Gtk::TreeModel::Row* row)
+
+bool ModulePropertyWindow::getRowByName(const char* name, Gtk::TreeModel::Row* row)
 {
     typedef Gtk::TreeModel::Children type_children;
     type_children children = m_refTreeModel->children();
     for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
     {
-        Glib::ustring strName = (*iter)[m_modColumns.m_col_name];
+        Glib::ustring strName = (*iter)[m_Columns.m_col_name];
         if( strName == name)
         {
             *row = (*iter);
@@ -243,7 +276,7 @@ bool ApplicationWindow::getRowByName(const char* name, Gtk::TreeModel::Row* row)
     }
     return false;
 }
-*/
+
 /*
 Connection* ModulePropertyWindow::findConnection( CnnContainer& connections, const char* szPort, bool from)
 {
@@ -262,32 +295,26 @@ Connection* ModulePropertyWindow::findConnection( CnnContainer& connections, con
 
 void ModulePropertyWindow::updateModule(const char* item, const char* value)
 {
-    if(!m_pModule /*|| !m_pIModule*/)
+    if(!m_pModule)
         return;
 
     // updating modules
     if(strcmp(item, "Node") == 0)
     {
         m_pModule->setHost(value);
-        //if(m_pIModule) m_pIModule->setHost(value);
     }
     else if(strcmp(item,"Stdio") == 0)
     {
         m_pModule->setStdio(value);
-        //if(m_pIModule) m_pIModule->setStdio(value);
 
     }
     else if(strcmp(item, "Workdir") == 0)
     {
         m_pModule->setWorkDir(value);
-        //if(m_pIModule) m_pIModule->setWorkDir(value);
 
     }
     else if(strcmp(item, "Prefix") == 0)
     {    
-        //if(m_pIModule)  
-        //    m_pIModule->setPrefix(value);
-
         string strPrefix;
         Application* application = m_pManager->getKnowledgeBase()->getApplication(); 
         if(application)
@@ -348,14 +375,13 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
     else if(strcmp(item, "Parameters") == 0)
     {
         m_pModule->setParam(value);
-        //if(m_pIModule) m_pIModule->setParam(value);
     }
 }
 
 void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string, 
                     const Glib::ustring& new_text)
 {
-    if(!m_pModule /*|| !m_pIModule*/ )
+    if(!m_pModule)
         return;
 
     Gtk::TreePath path(path_string);
@@ -368,11 +394,10 @@ void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
         //Put the new value in the model:
         Glib::ustring strName = Glib::ustring(row[m_Columns.m_col_name]);
 
-        if((strName != "Parameters") && 
-         (strName != "Name") && 
-         (strName != "Description"))
+        if((strName != "Parameters"))
             row[m_Columns.m_col_value] = new_text;
-       
+      
+
         updateParamteres();
         updateModule(strName.c_str(), new_text.c_str());
 

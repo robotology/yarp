@@ -302,7 +302,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if((element = (TiXmlElement*) mod->FirstChild("workdir")))
                     module.setWorkDir(element->GetText());
                 
-                if((element = (TiXmlElement*) mod->FirstChild("broker")))
+                if((element = (TiXmlElement*) mod->FirstChild("deployer")))
                     module.setBroker(element->GetText());
                 if((element = (TiXmlElement*) mod->FirstChild("prefix")))
                     module.setPrefix(element->GetText());
