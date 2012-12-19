@@ -1712,6 +1712,7 @@ void MainWindow::manageApplication(const char* szName)
     m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
     m_refActionGroup->get_action("EditExportGraph")->set_sensitive(true);
     onMenuViewLabel();
+    reportErrors();
 }
 
 void MainWindow::manageResource(const char* szName)

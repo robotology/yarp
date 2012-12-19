@@ -249,7 +249,6 @@ bool Module::setParam(const char* szParam)
             msg<<"Error in parsing parameters of "<<getName() \
                 <<". ( '"<< (*itr).getParam()<<"' is not correct. )";
             logger->addWarning(msg);
-            printf("%s\n", msg.str().c_str());            
             bokay = false;
         }
         else
@@ -268,9 +267,12 @@ bool Module::setParam(const char* szParam)
 
 const char* Module::getParamValue(const char* key, bool bSwitch)
 {
+    if(!key)
+        return NULL;
+
     //printf("\n\nparsing '%s' for %s (switch:%d)\n", strParam.c_str(), key, bSwitch);
-    // TODO: check whether the key should include "--" too!
-    size_t pos = strParam.find(key);
+    string strKey = string("--") + string(key);
+    size_t pos = strParam.find(strKey.c_str());
     if(pos == string::npos)
         return ("off");
 
@@ -279,7 +281,7 @@ const char* Module::getParamValue(const char* key, bool bSwitch)
 
     //printf("%s %d \n", __FILE__, __LINE__);
     
-    pos += strlen(key); 
+    pos += strKey.size(); 
     if((pos >= strParam.length()) || (strParam.at(pos) != ' '))
         return NULL;
 

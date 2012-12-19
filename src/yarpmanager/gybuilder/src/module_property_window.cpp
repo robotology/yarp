@@ -146,8 +146,8 @@ void ModulePropertyWindow::update(Module* module)
 
     //node
     m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
-    row = *(m_refCombo->append());
-    row[m_ColumnsCombo.m_col_choice] = "localhost";
+    //row = *(m_refCombo->append());
+    //row[m_ColumnsCombo.m_col_choice] = "localhost";
     ResourcePContainer resources = m_pManager->getKnowledgeBase()->getResources();
     for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
     {

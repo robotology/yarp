@@ -23,7 +23,7 @@
 	<data> 
 		<input>
 			<type>Image</type>
-			<port carrier="UDP">/yarpview/img:i</port>
+			<port carrier="udp">/yarpview/img:i</port>
 			<required>no</required>
 			<priority>no</priority>
 			<description></description>
