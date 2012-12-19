@@ -1,3 +1,8 @@
+2012-12-19 Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* conf/YarpFindDependencies.cmake: Fix CREATE_YARPSCOPE
+	  option on windows
+	* tagging version 2.3.20.1
+
 2012-11-23  Lorenzo Natale  <lorenzo.natale@iit.it>
 	* tagging version 2.3.20
 
