@@ -64,7 +64,7 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
     }
 
     if (options.check("size")) {
-        plot_size = (float)options.find("size").asInt();
+        plot_size = options.find("size").asInt();
     } else {
         plot_size = default_plot_size;
     }
