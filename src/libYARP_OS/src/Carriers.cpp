@@ -85,15 +85,15 @@ static bool checkForCarrier(const Bytes *header, const char *fname) {
 static bool scanForCarrier(const Bytes *header) {
     bool success = false;
     ConstString dirname = "/etc/yarp/carriers";
-    ACE_DIR *dir = opendir(dirname.c_str());
+    ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
     if (!dir) {
         YARP_SPRINTF0(Logger::get(),debug,"Could not find /etc/yarp/carriers");
         return false;
     }
-    struct ACE_DIRENT *ent = readdir(dir);
+    struct ACE_DIRENT *ent = ACE_OS::readdir(dir);
     while (ent) {
         ConstString name = ent->d_name;
-        ent = readdir(dir);
+        ent = ACE_OS::readdir(dir);
         int len = (int)name.length();
         if (len<4) continue;
         if (name.substr(len-4)!=".ini") continue;
@@ -102,7 +102,7 @@ static bool scanForCarrier(const Bytes *header) {
             break;
         }
     }
-    closedir(dir);
+    ACE_OS::closedir(dir);
     dir = NULL;
     return success;
 }

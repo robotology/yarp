@@ -4,6 +4,9 @@
 	detecting correct runtime plugin to load on receiver side of a
 	connection.
 
+	* src/libYARP_OS/src/Carriers.cpp: fix missing ACE_OS::
+	namespace on dirent functions [thanks Ugo Pattacini]
+
 2012-12-18  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Carriers.cpp: fix dynamically-loaded
