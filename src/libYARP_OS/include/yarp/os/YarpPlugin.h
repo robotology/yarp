@@ -21,7 +21,7 @@ namespace yarp {
     }
 }
 
-YARP_OS_API class yarp::os::YarpPluginSettings {
+class YARP_OS_API yarp::os::YarpPluginSettings {
 private:
     bool subopen(SharedLibraryFactory& factory, const ConstString& dll_name,
                  const ConstString& fn_name);
