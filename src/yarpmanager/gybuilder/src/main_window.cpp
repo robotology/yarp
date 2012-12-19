@@ -1018,7 +1018,12 @@ void MainWindow::onMenuFileSave()
 
      if(appWnd)
      {
-        appWnd->onSave();
+        if(appWnd->onSave())
+        {
+            lazyManager.removeApplication(appWnd->getApplicationName());
+            if(lazyManager.addApplication(appWnd->getApplication()->getXmlFile()))
+                m_Statusbar.push(string(appWnd->getApplication()->getXmlFile()) + Glib::ustring(" reopened."));
+        }
         reportErrors();            
      }       
 }
@@ -1032,32 +1037,33 @@ void MainWindow::onMenuFileSaveAs()
      //Glib::ustring pageName;
      if(appWnd)
      {
-        Gtk::FileChooserDialog dialog("Save As");
-        dialog.set_transient_for(*this);
-        dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-        dialog.set_do_overwrite_confirmation(true);
-
-        //Add response buttons the the dialog:
-        dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-        dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-        //Add filters, so that only certain file types can be selected:
-        Gtk::FileFilter filter_app;
-        filter_app.set_name("Application description files (xml)");
-        filter_app.add_mime_type("text/xml");
-        dialog.add_filter(filter_app);
-        
+        Application* application = appWnd->getApplication();
+        ApplicationWizard dialog(this, "Save as new application", application);
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
-            if(appWnd->onSave(dialog.get_filename().c_str()))
+            string strPath = dialog.m_EntryFolderName.get_text(); 
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+                (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                strPath = strPath + string(PATH_SEPERATOR);
+     
+            string fname = strPath + dialog.m_EntryFileName.get_text();
+            string oldName = application->getName();
+            string oldXmlFile = application->getXmlFile();
+            application->setName(dialog.m_EntryName.get_text().c_str());
+            if(appWnd->onSave(fname.c_str()))
             {
-                ostringstream msg;
-                msg<<"Current application: "<<dialog.get_filename();
-                m_Statusbar.push(msg.str());
+                char szAppName[255];
+                if(lazyManager.addApplication(fname.c_str(), szAppName))
+                {
+                    syncApplicationList();
+                    manageApplication(szAppName);
+                }
             }
+            application->setName(oldName.c_str());
+            application->setXmlFile(oldXmlFile.c_str());
             reportErrors();
-        }             
-     }    
+        }
+     } 
 }
 
 

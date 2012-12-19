@@ -25,9 +25,10 @@
 
 using namespace std;
 
-ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title) 
+ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, Application* app) 
 : m_Table(7,3)
 {
+    m_Application = app;
     m_pParent = parent;
     if(title)
         set_title(title);
@@ -51,7 +52,7 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title)
 
 
     m_FrameLeft.add(m_Image);
-    m_HBox.set_spacing(5);    
+    m_HBox.set_spacing(3);
     m_HBox.pack_start(m_FrameLeft);
     m_HBox.pack_start(m_FrameRight);
     m_FrameLeft.set_size_request(100, -1);
@@ -78,19 +79,22 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title)
             strPath = strPath + string(PATH_SEPERATOR);
         m_EntryFolderName.set_text(strPath.c_str());
     }
+        
     m_EntryVersion.set_text("1.0");
 
     add_row(m_Table, 0, m_refSizeGroup, "Application Name:", m_EntryName, NULL);    
     add_row(m_Table, 1, m_refSizeGroup, "File Name:", m_EntryFileName, NULL);
     add_row(m_Table, 2, m_refSizeGroup, "Folder Name:", m_EntryFolderName, &m_ButtonFile);
-    add_row(m_Table, 3, m_refSizeGroup, "Description:", m_EntryDesc, NULL);    
-    add_row(m_Table, 4, m_refSizeGroup, "Version:", m_EntryVersion, NULL);    
-    //add_row(m_Table, 4, m_refSizeGroup, "Prefix:", m_EntryPrefix, NULL);    
-    add_row(m_Table, 5, m_refSizeGroup, "Author's Name:", m_EntryAuthor, NULL);    
-    add_row(m_Table, 6, m_refSizeGroup, "Author's email:", m_EntryEmail, NULL);    
-
+    if(!m_Application)
+    {
+        add_row(m_Table, 3, m_refSizeGroup, "Description:", m_EntryDesc, NULL);    
+        add_row(m_Table, 4, m_refSizeGroup, "Version:", m_EntryVersion, NULL);    
+        //add_row(m_Table, 4, m_refSizeGroup, "Prefix:", m_EntryPrefix, NULL);    
+        add_row(m_Table, 5, m_refSizeGroup, "Author's Name:", m_EntryAuthor, NULL);    
+        add_row(m_Table, 6, m_refSizeGroup, "Author's email:", m_EntryEmail, NULL);    
+    }
     get_vbox()->pack_start(m_HBox);
-    get_vbox()->set_spacing(5);
+    get_vbox()->set_spacing(3);
 
 
     show_all_children();

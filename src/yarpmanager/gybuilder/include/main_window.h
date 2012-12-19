@@ -54,7 +54,9 @@ protected:
     void onMenuFileNewRes();
     void onMenuFileOpen();
     void onMenuFileClose();
+public:    
     void onMenuFileSave();
+protected:    
     void onMenuFileSaveAs();
     void onMenuFileImport();
     void onMenuHelpAbout();

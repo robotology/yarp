@@ -68,7 +68,7 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
     m_strAppName = szAppName;
     m_connector.clear();    
     m_selector.clear();    
-
+    m_bModified = true;  //TODO: set it in the right places
     createWidgets();
     setupSignals();
     show_all_children();
@@ -190,6 +190,23 @@ void ApplicationWindow::onTabCloseRequest()
 
 bool ApplicationWindow::onClose(void) 
 {
+    if(m_bModified)
+    {
+        ostringstream msg;
+        msg<<getApplicationName()<<" has been modified.";
+        Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_QUESTION,  Gtk::BUTTONS_NONE);
+        dialog.set_secondary_text("Do you want to save it before closing?");
+        dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+        dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_YES);
+        dialog.add_button(Gtk::Stock::NO, Gtk::RESPONSE_NO);
+
+        int response = dialog.run();
+        if(response == Gtk::RESPONSE_CANCEL)
+            return false;
+
+        if(response == Gtk::RESPONSE_YES)
+            m_pParent->onMenuFileSave();
+    }
     releaseApplication();
     return true;
 } 
@@ -197,10 +214,14 @@ bool ApplicationWindow::onClose(void)
 
 bool ApplicationWindow::onSave(const char* szFileName)
 {
-    Application* application = manager.getKnowledgeBase()->getApplication();            
+    Application* application = manager.getKnowledgeBase()->getApplication();
     if(!application)
-        return false;        
+        return false;
+
+    //m_bModified = !manager.saveApplication(application->getName(), szFileName);
+    //return !m_bModified;
     return manager.saveApplication(application->getName(), szFileName);
+
 }
 
 bool ApplicationWindow::onSelectAll(void)
@@ -220,9 +241,8 @@ bool ApplicationWindow::onSelectAll(void)
     m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(selected);
     m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(selected);
     m_pParent->m_refActionGroup->get_action("EditPaste")->set_sensitive(selected);
-
-
-   return true;
+   
+    return true;
 }
 
 bool ApplicationWindow::onExportGraph(void)
@@ -351,6 +371,7 @@ void ApplicationWindow::onDelete(void)
                 child.clear();
             }        
         }
+    m_bModified = true;
 }
 
 void ApplicationWindow::onCopy(void)
@@ -418,6 +439,8 @@ void ApplicationWindow::onPaste(void)
             offset += 20;
         }
     }
+    
+    m_bModified = true;
 }
 
 void ApplicationWindow::onMenuInsertSrcPort()
@@ -428,7 +451,7 @@ void ApplicationWindow::onMenuInsertSrcPort()
     port->set_property("x", _x);
     port->set_property("y", _y);
     port->snapToGrid();
-
+    m_bModified = true;
 }
 
 void ApplicationWindow::onMenuInsertDestPort()
@@ -439,6 +462,7 @@ void ApplicationWindow::onMenuInsertDestPort()
     port->set_property("x", _x);
     port->set_property("y", _y);
     port->snapToGrid();
+    m_bModified = true;
 }
 
 void ApplicationWindow::onMenuWindowProperty(bool active)
@@ -482,6 +506,7 @@ void ApplicationWindow::deleteSelectedArrows(void)
                 arw.clear();
             }        
         } 
+    m_bModified = true;        
 }
 
 void ApplicationWindow::releaseApplication(void)
@@ -1465,6 +1490,7 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                 mod->snapToGrid();
             }
         }
+        m_bModified = true;
     }
 }
 

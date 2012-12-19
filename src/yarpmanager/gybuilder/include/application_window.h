@@ -96,6 +96,7 @@ public:
     Glib::RefPtr<Goocanvas::ItemModel> getRootModel(void) { return root; }
 
     void onUpdateModuleProperty(Module* module);
+    void setModified(void) {m_bModified = true; }
 
 public: 
     Goocanvas::Canvas* m_Canvas ;
@@ -124,6 +125,7 @@ protected:
 private:
     MainWindow* m_pParent;
     string m_strAppName;
+    bool m_bModified;
     yarp::os::Property* m_pConfig;
     ModulePropertyWindow* modPropertyWindow;
     ApplicationPropertyWindow* appPropertyWindow;

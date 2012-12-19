@@ -11,12 +11,14 @@
 #define _APPLICATION_WIZARD_H_
 
 #include <gtkmm.h>
+#include "application.h"
 
 //class ApplicationWizard;
 class ApplicationWizard: public Gtk::Dialog
 {
 public:
-    ApplicationWizard(Gtk::Widget* parent, const char* title=NULL);
+    ApplicationWizard(Gtk::Widget* parent, const char* title=NULL, 
+                      Application* application=NULL);
     virtual ~ApplicationWizard();
 
 protected:
@@ -26,6 +28,7 @@ protected:
     void onEntryNameInsert();
 
 private:
+    Application* m_Application;
     Gtk::Widget* m_pParent;
     Gtk::VBox m_VBox;
     Gtk::HBox m_HBox;
