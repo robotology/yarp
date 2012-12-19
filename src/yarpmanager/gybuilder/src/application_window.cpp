@@ -197,7 +197,10 @@ bool ApplicationWindow::onClose(void)
 
 bool ApplicationWindow::onSave(const char* szFileName)
 {
-    return manager.saveApplication(szFileName);
+    Application* application = manager.getKnowledgeBase()->getApplication();            
+    if(!application)
+        return false;        
+    return manager.saveApplication(application->getName(), szFileName);
 }
 
 bool ApplicationWindow::onSelectAll(void)

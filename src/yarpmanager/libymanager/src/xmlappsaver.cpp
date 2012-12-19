@@ -28,7 +28,7 @@ XmlAppSaver::XmlAppSaver(const char* szFileName)
 
 bool XmlAppSaver::save(Application* application)
 {
-    if(strFileName.size() == 0)
+    if(!strFileName.size())
          return serialXml(application, application->getXmlFile());
     
     return serialXml(application, strFileName.c_str());
@@ -38,7 +38,10 @@ XmlAppSaver::~XmlAppSaver(){}
 
 bool XmlAppSaver::serialXml(Application* app, const char* szFile)
 {
-    
+   
+    // updating application xml file name
+    app->setXmlFile(szFile);
+
     ErrorLogger* logger  = ErrorLogger::Instance();
     
     TiXmlDocument doc; //(szFile);

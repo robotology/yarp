@@ -952,6 +952,8 @@ void MainWindow::closeTab(int page_num)
     {
         m_Statusbar.push("No application is loaded");
         m_refActionGroup->get_action("FileClose")->set_sensitive(false);
+        m_refActionGroup->get_action("FileSave")->set_sensitive(false);
+        m_refActionGroup->get_action("FileSaveAs")->set_sensitive(false);
         m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
         m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);
     }
@@ -1014,15 +1016,50 @@ void MainWindow::onMenuFileSave()
     ApplicationWindow* appWnd = 
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
 
+     if(appWnd)
+     {
+        appWnd->onSave();
+        reportErrors();            
+     }       
+}
+
+void MainWindow::onMenuFileSaveAs() 
+{
+    int page_num = m_mainTab.get_current_page();
+    ApplicationWindow* appWnd = 
+            dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
+
      //Glib::ustring pageName;
      if(appWnd)
-        if(!appWnd->onSave())
-            reportErrors();
-      //lazyManager.saveApplication(pageName.c_str());
+     {
+        Gtk::FileChooserDialog dialog("Save As");
+        dialog.set_transient_for(*this);
+        dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+        dialog.set_do_overwrite_confirmation(true);
+
+        //Add response buttons the the dialog:
+        dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+        dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+
+        //Add filters, so that only certain file types can be selected:
+        Gtk::FileFilter filter_app;
+        filter_app.set_name("Application description files (xml)");
+        filter_app.add_mime_type("text/xml");
+        dialog.add_filter(filter_app);
         
-    
+        if(dialog.run() == Gtk::RESPONSE_OK)
+        {
+            if(appWnd->onSave(dialog.get_filename().c_str()))
+            {
+                ostringstream msg;
+                msg<<"Current application: "<<dialog.get_filename();
+                m_Statusbar.push(msg.str());
+            }
+            reportErrors();
+        }             
+     }    
 }
-void MainWindow::onMenuFileSaveAs() { }
+
 
 void MainWindow::onMenuFileImport() 
 {
@@ -1707,7 +1744,9 @@ void MainWindow::manageApplication(const char* szName)
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }
+
     m_refActionGroup->get_action("FileSave")->set_sensitive(true);
+    m_refActionGroup->get_action("FileSaveAs")->set_sensitive(true);
     m_refActionGroup->get_action("FileClose")->set_sensitive(true);
     m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
     m_refActionGroup->get_action("EditExportGraph")->set_sensitive(true);
@@ -1856,7 +1895,8 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
     {
         pAppWnd->grab_focus();
         ostringstream msg;
-        msg<<"Current application: "<<pAppWnd->getApplicationName();
+        //msg<<"Current application: "<<pAppWnd->getApplicationName();
+        msg<<"Current application: "<<pAppWnd->getApplication()->getXmlFile();
         m_Statusbar.push(msg.str());
         
         m_refActionGroup->get_action("FileSave")->set_sensitive(true);

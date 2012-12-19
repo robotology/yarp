@@ -39,6 +39,7 @@ public:
         yarp::os::Property* config, MainWindow* parent, bool grid=true, bool snap=true);
     virtual ~ApplicationWindow();
     const char* getApplicationName(void) { return m_strAppName.c_str(); }
+    Application* getApplication(void) { return manager.getKnowledgeBase()->getApplication(); }
 
     bool onClose(void);    
     bool onRefresh(void);

@@ -9,19 +9,19 @@
         <parameters></parameters>
         <node></node>
         <prefix>/MyTestApplication:blobSelector:1</prefix>
-        <geometry>(Pos (x 338) (y 222.7))</geometry>
+        <geometry>(Pos (x 374.5) (y 223.8))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters></parameters>
         <node></node>
         <prefix>/MyTestApplication:yarpview:1</prefix>
-        <geometry>(Pos (x 786.5) (y 229.2))</geometry>
+        <geometry>(Pos (x 747) (y 236.3))</geometry>
     </module>
     <connection>
         <from>/MyTestApplication:blobSelector:1/blobSelector/img:o</from>
         <to>/MyTestApplication:yarpview:1/yarpview/img:i</to>
         <protocol>mcast</protocol>
-        <geometry>(Pos ((x 506) (y 253)) ((x 787) (y 247))  )</geometry>
+        <geometry>(Pos ((x 542) (y 254)) ((x 748) (y 254))  )</geometry>
     </connection>
 </application>
