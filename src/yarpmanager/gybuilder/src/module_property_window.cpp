@@ -146,13 +146,13 @@ void ModulePropertyWindow::update(Module* module)
 
     //node
     m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
-    //row = *(m_refCombo->append());
-    //row[m_ColumnsCombo.m_col_choice] = "localhost";
+    row = *(m_refCombo->append());
+    row[m_ColumnsCombo.m_col_choice] = "localhost";
     ResourcePContainer resources = m_pManager->getKnowledgeBase()->getResources();
     for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
     {
         Computer* comp = dynamic_cast<Computer*>(*itr);
-        if(comp)
+        if(comp && !compareString(comp->getName(), "localhost"))
         {
             row = *(m_refCombo->append());
             row[m_ColumnsCombo.m_col_choice] = comp->getName();          
@@ -211,7 +211,11 @@ void ModulePropertyWindow::update(Module* module)
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Deployer";
-    row[m_Columns.m_col_value] = m_pModule->getBroker();
+    if(strlen(m_pModule->getBroker()))
+        row[m_Columns.m_col_value] = m_pModule->getBroker();
+    else if(compareString(m_pModule->getHost(), "localhost"))
+        row[m_Columns.m_col_value] = "local";
+        
     if(m_pModule->getNeedDeployer())
     {  
         row[m_Columns.m_col_editable] = false;
@@ -376,6 +380,11 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
     {
         m_pModule->setParam(value);
     }
+
+    else if(strcmp(item, "Deployer") == 0)
+    {
+        m_pModule->setBroker(value);
+    }
 }
 
 void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string, 
@@ -384,6 +393,7 @@ void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
     if(!m_pModule)
         return;
 
+    ErrorLogger* logger = ErrorLogger::Instance();
     Gtk::TreePath path(path_string);
 
     //Get the row from the path:
@@ -394,10 +404,38 @@ void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
         //Put the new value in the model:
         Glib::ustring strName = Glib::ustring(row[m_Columns.m_col_name]);
 
-        if((strName != "Parameters"))
-            row[m_Columns.m_col_value] = new_text;
-      
+        if(strName == "Deployer")
+        {
+            if(strlen(m_pModule->getHost()) && 
+               !compareString(m_pModule->getHost(), "localhost") && 
+               (new_text == "local"))
+            {
+                logger->addWarning("local deployer cannot be used to deploy a module on the remote host.");
+                m_pParent->reportErrors();
+                return;
+            }
+        }
 
+        if(strName == "Node")
+        {
+            if(compareString(m_pModule->getBroker(), "local") &&
+               new_text.size() && (new_text != "localhost")) 
+            {    
+                ostringstream msg;
+                msg<<new_text.c_str()<<" cannot be used with local deployer!";
+                logger->addWarning(msg);
+                m_pParent->reportErrors();
+                
+                Gtk::TreeModel::Row row;
+                if(getRowByName("Deployer", &row))
+                {
+                    row[m_Columns.m_col_value] = "";
+                    updateModule("Deployer", "");
+                }
+            } 
+        }
+
+        row[m_Columns.m_col_value] = new_text;
         updateParamteres();
         updateModule(strName.c_str(), new_text.c_str());
 
