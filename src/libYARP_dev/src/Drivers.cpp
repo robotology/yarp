@@ -210,6 +210,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
 }
 
 DriverCreator *DriversHelper::load(const char *name) {
+#ifdef YARP_HAS_ACE
     StubDriver *result = new StubDriver(name,false);
     if (!result->isValid()) {
         delete result;
@@ -220,6 +221,9 @@ DriverCreator *DriversHelper::load(const char *name) {
     add(creator);
     delete result;
     return creator;
+#else
+    return NULL;
+#endif
 }
 
 
