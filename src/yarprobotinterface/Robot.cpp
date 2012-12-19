@@ -173,6 +173,8 @@ std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterfa
     }
 
     std::sort(levels.begin(), levels.end());
+    std::vector<unsigned int>::iterator it = std::unique(levels.begin(), levels.end());
+    levels.resize(it - levels.begin());
 
     return levels;
 }
