@@ -20,7 +20,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
      <!-- <data> can have multiple <input> or <output> tags. -->
      <data>
         <input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/templatePFTracker/template/image:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -34,7 +34,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
         </input>
 
         <input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/templatePFTracker/left/image:i</port>
             <required>yes</required>
             <priority>no</priority>
@@ -42,7 +42,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
         </input>
 
         <input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/templatePFTracker/right/image:i</port>
             <required>yes</required>
             <priority>no</priority>
@@ -65,22 +65,22 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
 
         <!-- output datas if available -->
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/templatePFTracker/left/image:o</port>
             <description></description>
         </output>
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/templatePFTracker/right/image:o</port>
             <description></description>
         </output>
 	<output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/templatePFTracker/leftblob/image:o</port>
             <description></description>
         </output>
 	<output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/templatePFTracker/rightblob/image:o</port>
             <description></description>
         </output>

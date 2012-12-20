@@ -38,7 +38,7 @@
         </input>
 
         <input>
-            <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
+            <!-- <type> refers to nominal type of data (e.g. Image, String). -->
             <type>Bottle</type>
 
             <!-- input port which receive the data. -->
@@ -71,7 +71,7 @@
         </input>
 	<input>
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
-            <type>ImageFrame</type>
+            <type>Image</type>
 
             <port carrier="tcp">/actionsRenderingEngine/disparity:io</port>
 
@@ -104,56 +104,56 @@
             <description></description>
         </input-->
 	<input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/left/img:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/right/img:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
-            <type>unk</type>
+            <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/left/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
-            <type>unk</type>
+            <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/right/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/left/raw:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/right/raw:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
-            <type>unk</type>
+            <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/MIL/rec:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
 	<input>
-            <type>unk</type>
+            <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/tracker:i</port>
             <required>no</required>
             <priority>no</priority>
@@ -174,12 +174,12 @@
             <description></description>
         </input-->
  	<output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/left/img:o</port>
             <description></description>
         </output>
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/right/img:o</port>
             <description></description>
         </output>
@@ -223,6 +223,10 @@
          example, if module's performance drops significantly in case of memory swapping,
          a memory resource dependency can be introduced with the required memory space. -->
     <dependencies>
+	<!--yarp_interface>
+		<name>cartesianController</name>
+		<robot>icub</robot>
+	</yarp_interface-->
         <computer>
 		<!--yarp_port>/icub/camcalib/left/out</yarp_port>
                 <yarp_port>/icub/cartesianController/left_arm/state:o</yarp_port>

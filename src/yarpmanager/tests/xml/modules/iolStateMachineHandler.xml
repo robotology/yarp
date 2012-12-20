@@ -21,7 +21,7 @@
      <data>
         
         <input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/iolStateMachineHandler/img:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -67,19 +67,19 @@
 
         <!-- output datas if available -->
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/iolStateMachineHandler/img:o</port>
             <description>Streams out the image containing recognized object. The image is updated whenever an action is required to be executed.</description>
         </output>
 
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/iolStateMachineHandler/imgLoc:o</port>
             <description>Streams out the images for real-time objects localization.</description>
         </output>
 
         <output>
-            <type>unk</type>
+            <type>Image</type>
             <port carrier="udp">/iolStateMachineHandler/imgClassifier:o</port>
             <description>Used to pass images to the classifier.</description>
         </output>
@@ -121,7 +121,7 @@
         </output>
 
         <output>
-            <type>unk</type>
+            <type>Bottle</type>
             <port carrier="tcp">/iolStateMachineHandler/speak:o</port>
             <description>Streams out the robot's sentences that need to be spoken.</description>
         </output>

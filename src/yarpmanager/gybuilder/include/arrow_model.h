@@ -91,6 +91,7 @@ private:
     bool bExist;
     std::string strLabel;
     Connection connection;
+    std::string defaultColor;
 };
 
 #endif //_ARROW_MODEL_

@@ -38,7 +38,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     this->property_line_width().set_value(ARROW_LINEWIDTH);
     this->property_arrow_width().set_value(5.0);
     this->property_end_arrow().set_value(true);
-    this->property_stroke_color().set_value("black");
+    defaultColor="black";
 
     source->addSourceArrow(this);
     destination->addDestinationArrow(this);
@@ -91,8 +91,17 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         cnn.setCorInputData(input);
         cnn.setModel(this);
         connection = parentWindow->manager.getKnowledgeBase()->addConnectionToApplication(application, cnn);
+        
+        if (input && output && strcmp(input->getName(),output->getName())) // if I have "internal" input and output
+        {
+            std::cout<< "FromPort "<< strFrom << " type " << output->getName() << ", ToPort " << strTo << " type " << input->getName()  <<endl;
+
+            defaultColor="yellow";
+        }
+   
     }
 
+    this->property_stroke_color().set_value(defaultColor.c_str());
     if(strLabel.size())
         label = LabelModel::create(parentWindow, this, strLabel.c_str());
    else
@@ -178,6 +187,24 @@ void ArrowModel::updatLabelCoordiante(void)
     label->set_property("x", (x1+x2)/2.0);
     label->set_property("y", (y1+y2)/2.0);
     label->snapToGrid();
+//     //input
+//     if (wrongInputFlag)
+//     {
+//         points.get_coordinate(0, x1, y1);
+//         points.get_coordinate(1, x2, y2);
+//         wrongInputFlag->set_property("x", x1+(x2-x1)/abs(x2-x1)*5);
+//         wrongInputFlag->set_property("y", y1+(y2-y1)/abs(y2-y1)*5);
+//         wrongInputFlag->snapToGrid();
+//     }
+//     //output
+//     if (wrongOutputFlag)
+//     {
+//         points.get_coordinate(points.get_num_points()-1, x1, y1);
+//         points.get_coordinate(points.get_num_points()-2, x2, y2);
+//         wrongOutputFlag->set_property("x", x1+(x2-x1)/abs(x2-x1)*5);
+//         wrongOutputFlag->set_property("y", y1+(y2-y1)/abs(y2-y1)*5);
+//         wrongOutputFlag->snapToGrid();
+//     }
 }
 
 Gdk::Point ArrowModel::getPoint(int index)
@@ -454,7 +481,7 @@ void ArrowModel::setSelected(bool sel)
     }
     else
     {
-        this->property_stroke_color().set_value("black");
+        this->property_stroke_color().set_value(defaultColor.c_str());
         label->setSelected(false); 
         vector<Glib::RefPtr<MidpointModel> >::iterator itr;
         for(itr=midpoints.begin(); itr!=midpoints.end(); itr++)

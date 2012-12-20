@@ -40,7 +40,7 @@
         <!-- input data if available-->
         <input>
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
-            <type>ImageFrame</type>
+            <type>Image</type>
 
             <!-- input port which receive the data. -->
             <port carrier="udp">/motionCUT/img:i</port>
@@ -66,7 +66,7 @@
 
         <!-- output datas if available -->
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/motionCUT/img:o</port>
             <description>Outputs the input images with the grid layer on top. This port propagates the time-stamp carried by the input image.</description>
         </output>
@@ -81,13 +81,13 @@
             <description>Outputs the input x-y location of blobs centroids along with their size in this format: ('b0.cx' 'b0.cy' 'b0.size') ('b1.cx' 'b1.cy' 'b1.size') ... The output blobs list is sorted according to their size (decreasing order). . This port propagates the time-stamp carried by the input image.</description>
         </output>
 <output>
-            <type>ImageFrame?</type>
+            <type>Image?</type>
             <port carrier="udp">/motionCUT/crop:o</port>
             <description>outputs a window of fixed size obtained from
   a ROI around the center of mass of the largest blob detected.</description>
         </output>
 <output>
-            <type>ImageFrameGrayscale</type>
+            <type>ImageGrayscale</type>
             <port carrier="udp">/motionCUT/opt:o</port>
             <description>Outputs monochrome images containing just the grid nodes signalling independent movements. This port propagates the time-stamp carried by the input image.</description>
         </output>

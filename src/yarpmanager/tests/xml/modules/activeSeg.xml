@@ -20,8 +20,8 @@
      <data>
         
         <input>
-            <type>ImageFrame</type>
-            <port carrier="tcp">/activeSeg/image:i</port>
+            <type>Image</type>
+            <port carrier="udp">/activeSeg/image:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
                  for a module to perform its task (e.g. control input, status
@@ -63,12 +63,12 @@
 
         <!-- output datas if available -->
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/activeSeg/image:o</port>
             <description></description>
         </output>
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/activeSeg/imageCrop:o</port>
             <description></description>
         </output>

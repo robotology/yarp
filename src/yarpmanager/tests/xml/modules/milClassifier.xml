@@ -21,7 +21,7 @@
      <data>
         
         <input>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/milClassifier/img:i</port>
             <!-- required input means the execution of module depends on
                  this input data. Notice that not all the input are required
@@ -44,7 +44,7 @@
 
         <!-- output datas if available -->
         <output>
-            <type>ImageFrame</type>
+            <type>Image</type>
             <port carrier="udp">/milClassifier/img:o</port>
             <description></description>
         </output>
