@@ -9,117 +9,117 @@
         <parameters></parameters>
         <node>localhost</node>
         <prefix>/BlobTest</prefix>
-        <geometry>(Pos (x 599) (y 393.9))</geometry>
+        <geometry>(Pos (x 593.5) (y 393.3))</geometry>
     </module>
     <module>
         <name>blobSelector</name>
         <parameters></parameters>
         <node>localhost</node>
         <prefix>/BlobTest</prefix>
-        <geometry>(Pos (x 900) (y 392.2))</geometry>
+        <geometry>(Pos (x 894.5) (y 391.6))</geometry>
     </module>
     <module>
         <name>lumaChroma</name>
         <parameters>--output Y</parameters>
         <node>localhost</node>
         <prefix>/BlobTest</prefix>
-        <geometry>(Pos (x 284.5) (y 281.4))</geometry>
+        <geometry>(Pos (x 279) (y 280.8))</geometry>
     </module>
     <module>
-        <name>test_grabber</name>
-        <parameters>--mode ball</parameters>
+        <name>opencv_grabber</name>
+        <parameters></parameters>
         <node>localhost</node>
         <prefix>/BlobTest</prefix>
         <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 28) (y 185.8))</geometry>
+        <geometry>(Pos (x 10.9) (y 214.9))</geometry>
     </module>
     <module>
         <name>yarp read /in</name>
         <parameters></parameters>
         <node>localhost</node>
         <prefix>/Blobs</prefix>
-        <geometry>(Pos (x 1155.5) (y 480.7))</geometry>
+        <geometry>(Pos (x 1150) (y 480.1))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters>--x 900 --y 100</parameters>
         <node>localhost</node>
         <prefix>/Y</prefix>
-        <geometry>(Pos (x 617.5) (y 191.5))</geometry>
+        <geometry>(Pos (x 612) (y 190.9))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters>--x 600 --y 100</parameters>
         <node>localhost</node>
         <prefix>/InputImage</prefix>
-        <geometry>(Pos (x 335) (y 76.8))</geometry>
+        <geometry>(Pos (x 333) (y 117.7))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters>--x 600 --y 500</parameters>
         <node>localhost</node>
         <prefix>/Blobs</prefix>
-        <geometry>(Pos (x 907) (y 297.9))</geometry>
+        <geometry>(Pos (x 901.5) (y 297.3))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters>--x 900 --y 500</parameters>
         <node>localhost</node>
         <prefix>/SelBlobs</prefix>
-        <geometry>(Pos (x 1163) (y 402.2))</geometry>
+        <geometry>(Pos (x 1157.5) (y 401.6))</geometry>
     </module>
-    <connection>
-        <from>/BlobTest/grabber</from>
-        <to>/InputImage/yarpview/img:i</to>
-        <protocol>udp</protocol>
-        <geometry>(Pos ((x 196) (y 203)) ((x 280) (y 97)) ((x 336) (y 94))  )</geometry>
-    </connection>
-    <connection>
-        <from>/BlobTest/grabber</from>
-        <to>/BlobTest/lumaChroma/image:i</to>
-        <protocol>udp</protocol>
-        <geometry>(Pos ((x 196) (y 203)) ((x 268) (y 351)) ((x 285) (y 349))  )</geometry>
-    </connection>
     <connection>
         <from>/BlobTest/lumaChroma/Y/image:o</from>
         <to>/Y/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 436) (y 299)) ((x 550) (y 212)) ((x 618) (y 209))  )</geometry>
+        <geometry>(Pos ((x 431) (y 298)) ((x 550) (y 212)) ((x 613) (y 209))  )</geometry>
     </connection>
     <connection>
         <from>/BlobTest/lumaChroma/Y/image:o</from>
         <to>/BlobTest/blobExtractor/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 436) (y 299)) ((x 555) (y 415)) ((x 600) (y 412))  )</geometry>
+        <geometry>(Pos ((x 431) (y 298)) ((x 555) (y 415)) ((x 594) (y 411))  )</geometry>
     </connection>
     <connection>
         <from>/BlobTest/blobExtractor/img:o</from>
         <to>/Blobs/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 775) (y 412)) ((x 862) (y 318)) ((x 908) (y 316))  )</geometry>
+        <geometry>(Pos ((x 769) (y 411)) ((x 862) (y 318)) ((x 902) (y 315))  )</geometry>
     </connection>
     <connection>
         <from>/BlobTest/blobSelector/img:o</from>
         <to>/SelBlobs/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 1068) (y 422)) ((x 1164) (y 420))  )</geometry>
+        <geometry>(Pos ((x 1062) (y 422)) ((x 1158) (y 419))  )</geometry>
     </connection>
     <connection>
         <from>/BlobTest/blobExtractor/img:o</from>
         <to>/BlobTest/blobSelector/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 775) (y 412)) ((x 901) (y 410))  )</geometry>
+        <geometry>(Pos ((x 769) (y 411)) ((x 895) (y 409))  )</geometry>
     </connection>
     <connection>
         <from>/BlobTest/blobExtractor/blobs:o</from>
         <to>/BlobTest/blobSelector/blobs:i</to>
         <protocol>tcp</protocol>
-        <geometry>(Pos ((x 775) (y 437)) ((x 901) (y 435))  )</geometry>
+        <geometry>(Pos ((x 769) (y 436)) ((x 895) (y 434))  )</geometry>
     </connection>
     <connection>
         <from>/BlobTest/blobSelector/point:o</from>
         <to>/Blobs/in</to>
         <protocol>tcp</protocol>
-        <geometry>(Pos ((x 1068) (y 447)) ((x 1156) (y 498))  )</geometry>
+        <geometry>(Pos ((x 1062) (y 447)) ((x 1151) (y 498))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/grabber</from>
+        <to>/InputImage/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 190) (y 233)) ((x 334) (y 135))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/grabber</from>
+        <to>/BlobTest/lumaChroma/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 190) (y 233)) ((x 280) (y 348))  )</geometry>
     </connection>
 </application>

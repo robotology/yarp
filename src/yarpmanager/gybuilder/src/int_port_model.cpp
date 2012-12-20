@@ -147,7 +147,7 @@ bool InternalPortModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& i
 
 void InternalPortModel::updateInputPortColor(void)
 {
-    if(type == INPUTD)
+    if((type == INPUTD) && input && (string(input->getName()) != "*"))
     {
         strColor = COLOR_NOMAL;
         if(!destinationArrows.size())
@@ -182,7 +182,8 @@ void InternalPortModel::updateOutputPortColor(void)
                 Glib::RefPtr<InternalPortModel>::cast_dynamic((*itr)->getDestination()))
             {
                 InputData* inp = Glib::RefPtr<InternalPortModel>::cast_dynamic((*itr)->getDestination())->getInput();
-                if(inp && !compareString(output->getName(), inp->getName()))
+                if(inp && (string(inp->getName()) != "*") &&
+                   !compareString(output->getName(), inp->getName()))
                 {
                     strColor = COLOR_MISMATCH;
                     break;
