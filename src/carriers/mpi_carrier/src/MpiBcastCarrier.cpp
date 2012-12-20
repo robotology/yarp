@@ -81,12 +81,12 @@ void MpiBcastCarrier::prepareDisconnect() {
  * Adopted from MCastCarrier
  * ----------------------------
  */
-ElectionOf<MpiBcastCarrier> *MpiBcastCarrier::caster = NULL;
+ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord> *MpiBcastCarrier::caster = NULL;
 
-ElectionOf<MpiBcastCarrier>& MpiBcastCarrier::getCaster() {
+ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>& MpiBcastCarrier::getCaster() {
     yarp::os::NetworkBase::lock();
     if (caster==NULL) {
-        caster = new ElectionOf<MpiBcastCarrier>;
+        caster = new ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>;
         yarp::os::NetworkBase::unlock();
         if (caster==NULL) {
             YARP_ERROR(Logger::get(), "No memory for MpiBcastCarrier::caster");

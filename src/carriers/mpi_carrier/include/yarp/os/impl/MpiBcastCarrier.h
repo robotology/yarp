@@ -36,8 +36,8 @@ namespace yarp {
  */
 class yarp::os::impl::MpiBcastCarrier : public MpiCarrier {
 private:
-    static yarp::os::impl::ElectionOf<MpiBcastCarrier>* caster;
-    static yarp::os::impl::ElectionOf<MpiBcastCarrier>& getCaster();
+    static yarp::os::impl::ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>* caster;
+    static yarp::os::impl::ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>& getCaster();
 
     bool electionMember;
 
