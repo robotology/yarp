@@ -8,10 +8,10 @@
     <module>
         <name>test_grabber</name>
         <parameters>--mode ball</parameters>
-        <node>node1</node>
+        <node>localhost</node>
         <prefix>/Ball</prefix>
         <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 117.5) (y 144.7))</geometry>
+        <geometry>(Pos (x 106.5) (y 143.5))</geometry>
     </module>
     <module>
         <name>test_grabber</name>
@@ -19,32 +19,32 @@
         <node>localhost</node>
         <prefix>/Line</prefix>
         <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 118.5) (y 231.7))</geometry>
+        <geometry>(Pos (x 107.5) (y 230.5))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters></parameters>
         <node>localhost</node>
         <prefix>/Ball</prefix>
-        <geometry>(Pos (x 488.5) (y 145.7))</geometry>
+        <geometry>(Pos (x 473.5) (y 143.5))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters></parameters>
         <node>localhost</node>
         <prefix>/Line</prefix>
-        <geometry>(Pos (x 493.5) (y 231.7))</geometry>
+        <geometry>(Pos (x 482.5) (y 230.5))</geometry>
     </module>
     <connection>
         <from>/Ball/grabber</from>
         <to>/Ball/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 285) (y 162)) ((x 489) (y 163))  )</geometry>
+        <geometry>(Pos ((x 274) (y 161)) ((x 474) (y 161))  )</geometry>
     </connection>
     <connection>
         <from>/Line/grabber</from>
         <to>/Line/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 286) (y 249)) ((x 494) (y 249))  )</geometry>
+        <geometry>(Pos ((x 275) (y 248)) ((x 483) (y 248))  )</geometry>
     </connection>
 </application>

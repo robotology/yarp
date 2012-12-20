@@ -36,6 +36,7 @@
 #include "icon_res.h"
 #include "template_res.h"
 #include "xmltemploader.h"
+#include "xmlapploader.h"
 
 using namespace std;
 
@@ -81,6 +82,23 @@ MainWindow::MainWindow( yarp::os::Property &config)
 
     syncApplicationList();
     show_all_children();
+
+    if(config.check("application"))
+    {
+        XmlAppLoader appload(config.find("application").asString().c_str());
+        if(!appload.init())
+            return;
+        Application* application = appload.getNextApplication();
+        if(!application)
+            return;
+        // add this application to the manager if does not exist    
+        if(!lazyManager.getKnowledgeBase()->getApplication(application->getName()))
+        {
+            lazyManager.getKnowledgeBase()->addApplication(application);
+            syncApplicationList();
+        }
+        manageApplication(application->getName());
+    }    
 }
 
 

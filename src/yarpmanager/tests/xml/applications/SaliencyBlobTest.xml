@@ -61,6 +61,13 @@
         <prefix>/C3</prefix>
         <geometry>(Pos (x 1192) (y 126.7))</geometry>
     </module>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node></node>
+        <prefix>/SaliencyBlobTest:yarpview:4</prefix>
+        <geometry>(Pos (x 1223) (y 409.9))</geometry>
+    </module>
     <connection>
         <from>/MyTestApplication:earlyVision:1/earlyVision/edges/edges:o</from>
         <to>/Edges/yarpview/img:i</to>
@@ -77,7 +84,7 @@
         <from>/MyTestApplication:logpolarTransform:1/logpolarTransform/image:o</from>
         <to>/Logpolar/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 457) (y 338)) ((x 502) (y 338)) ((x 502) (y 122)) ((x 850) (y 121))  )</geometry>
+        <geometry>(Pos ((x 457) (y 338)) ((x 502) (y 338)) ((x 502) (y 121)) ((x 850) (y 121))  )</geometry>
     </connection>
     <connection>
         <from>/MyTestApplication:earlyVision:1/earlyVision/edges/edges:o</from>
@@ -107,7 +114,7 @@
         <from>/MyTestApplication:logpolarTransform:1/logpolarTransform/image:o</from>
         <to>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/image:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 457) (y 338)) ((x 463) (y 87)) ((x 797) (y 87)) ((x 797) (y 323)) ((x 858) (y 321))  )</geometry>
+        <geometry>(Pos ((x 457) (y 338)) ((x 457) (y 87)) ((x 797) (y 87)) ((x 797) (y 323)) ((x 858) (y 321))  )</geometry>
     </connection>
     <connection>
         <from>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/imageC3:o</from>
@@ -126,5 +133,11 @@
         <to>/MyTestApplication:logpolarTransform:1/logpolarTransform/image:i</to>
         <protocol>udp</protocol>
         <geometry>(Pos ((x 200) (y 264)) ((x 250) (y 338))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/rg:o</from>
+        <to>/SaliencyBlobTest:yarpview:4/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 1073) (y 346)) ((x 1224) (y 428))  )</geometry>
     </connection>
 </application>

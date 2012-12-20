@@ -17,6 +17,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ConstString.h>
 #include "main_window.h"
 
@@ -55,12 +56,28 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 int main(int __argc, char *__argv[]) 
 {
+
+    // Setup resource finder
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose(false);
+    rf.setDefaultContext("");
+    rf.setDefaultConfigFile("ymanager.ini");
+    rf.configure(__argc, __argv);
+
     yarp::os::Network yarp;
     yarp.setVerbosity(-1);
 
-    yarp::os::Property cmdline;
     yarp::os::Property config;
+    config.fromString(rf.toString());
 
+    if(config.check("help"))
+    {
+        cout<<HELP_MESSAGE<<endl;
+        return 0;
+    }
+ 
+    /*
+    yarp::os::Property cmdline;
     cmdline.fromCommand(__argc, __argv);
 
     if(cmdline.check("help"))
@@ -81,6 +98,7 @@ int main(int __argc, char *__argv[])
     }
     else 
         config.fromConfigFile(DEF_CONFIG_FILE);
+    */
 
     /**
      *  preparing default options

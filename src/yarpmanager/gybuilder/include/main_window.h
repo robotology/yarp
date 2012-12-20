@@ -54,6 +54,7 @@ protected:
     void onMenuFileNewRes();
     void onMenuFileOpen();
     void onMenuFileClose();
+    void onMenuFileOpenGymanager();
 public:    
     void onMenuFileSave();
 protected:    

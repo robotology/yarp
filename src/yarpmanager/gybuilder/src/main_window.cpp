@@ -242,8 +242,9 @@ void MainWindow::createWidgets(void)
         "      <menuitem action='EditCut'/>"
         "      <menuitem action='EditCopy'/>"
         "      <menuitem action='EditPaste'/>"        
-        "      <separator/>"
         "      <menuitem action='EditSelAll'/>"
+        "      <separator/>"
+        "      <menuitem action='FileOpenGymanager'/>"
         " </popup>"
         " <popup name='PopupModuleModel'>"
         "      <menuitem action='EditDelete'/>"
@@ -486,6 +487,9 @@ void MainWindow::setupActions(void)
     m_refActionGroup->add( Gtk::Action::create("FileImport", Gtk::StockID("YIMPORT") ,"_Import Files...", "Import xml files"),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileImport) );
 
+    m_refActionGroup->add( Gtk::Action::create("FileOpenGymanager",Gtk::StockID("YRUN"), "Open with _yarpmanager...", "Open with yarpmanager..."),
+                            sigc::mem_fun(*this, &MainWindow::onMenuFileOpenGymanager) );
+
     m_refActionGroup->add(Gtk::Action::create("FileQuit", Gtk::Stock::QUIT),
           sigc::mem_fun(*this, &MainWindow::onMenuFileQuit));
     
@@ -567,7 +571,8 @@ void MainWindow::setupActions(void)
     m_refActionGroup->get_action("FileClose")->set_sensitive(false);
     m_refActionGroup->get_action("FileSave")->set_sensitive(false);
     m_refActionGroup->get_action("FileSaveAs")->set_sensitive(false);
-    
+    m_refActionGroup->get_action("FileOpenGymanager")->set_sensitive(false);
+   
     m_refActionGroup->get_action("EditUndo")->set_sensitive(false);
     m_refActionGroup->get_action("EditRedo")->set_sensitive(false);
     m_refActionGroup->get_action("EditCopy")->set_sensitive(false);
@@ -745,6 +750,37 @@ bool MainWindow::safeExit(void)
         }
     }
     return bSafe;
+}
+
+void MainWindow::onMenuFileOpenGymanager()
+{
+    onMenuFileSave();
+    ErrorLogger* logger  = ErrorLogger::Instance(); 
+
+    int page_num = m_mainTab.get_current_page();
+    ApplicationWindow* appWnd = 
+            dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
+    if(appWnd)
+    {
+        ostringstream strParam;        
+        if(m_config.check("modpath"))
+            strParam<<" --modpath "<<m_config.find("modpath").asString().c_str();
+        if(m_config.check("apppath"))
+            strParam<<" --apppath "<<m_config.find("apppath").asString().c_str();
+        if(m_config.check("respath"))
+            strParam<<" --respath "<<m_config.find("respath").asString().c_str();
+        strParam<<" --application "<<appWnd->getApplication()->getXmlFile();
+        LocalBroker launcher;
+        if(launcher.init("gyarpmanager",
+                         strParam.str().c_str(), NULL, NULL, NULL, NULL))
+            if(!launcher.start() && strlen(launcher.error()))
+            {
+                ostringstream msg;
+                msg<<"Error while launching gyarpmanager. "<<launcher.error();
+                logger->addError(msg);
+                reportErrors();
+            }           
+    }
 }
 
 
@@ -954,6 +990,7 @@ void MainWindow::closeTab(int page_num)
         m_refActionGroup->get_action("FileClose")->set_sensitive(false);
         m_refActionGroup->get_action("FileSave")->set_sensitive(false);
         m_refActionGroup->get_action("FileSaveAs")->set_sensitive(false);
+        m_refActionGroup->get_action("FileOpenGymanager")->set_sensitive(false);
         m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
         m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);
     }
@@ -1754,6 +1791,7 @@ void MainWindow::manageApplication(const char* szName)
     m_refActionGroup->get_action("FileSave")->set_sensitive(true);
     m_refActionGroup->get_action("FileSaveAs")->set_sensitive(true);
     m_refActionGroup->get_action("FileClose")->set_sensitive(true);
+    m_refActionGroup->get_action("FileOpenGymanager")->set_sensitive(true);
     m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
     m_refActionGroup->get_action("EditExportGraph")->set_sensitive(true);
     onMenuViewLabel();
@@ -1820,7 +1858,7 @@ void MainWindow::manageResource(const char* szName)
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }
     m_refActionGroup->get_action("FileSave")->set_sensitive(false);
-    m_refActionGroup->get_action("FileClose")->set_sensitive(true);
+    m_refActionGroup->get_action("FileClose")->set_sensitive(false);
     m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
     m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);
 }
