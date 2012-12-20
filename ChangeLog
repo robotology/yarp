@@ -1,3 +1,8 @@
+2012-12-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* conf/YarpPlugin.cmake: add stub for tracking configuration
+	files for each carrier plugin
+
 2012-12-19  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Carriers.cpp: prototype of method for
