@@ -118,12 +118,12 @@ void ModuleWindow::updateWidget()
         InputData in = m_pModule->getInputAt(i);
 
         childrow = *(m_refTreeModel->append(row.children()));
-        childrow[m_Columns.m_col_name] = "Type";
-        childrow[m_Columns.m_col_value] = in.getName();
+        childrow[m_Columns.m_col_name] = "Port";
+        childrow[m_Columns.m_col_value] = in.getPort();
 
         cchildrow = *(m_refTreeModel->append(childrow.children()));
-        cchildrow[m_Columns.m_col_name] = "Port";
-        cchildrow[m_Columns.m_col_value] = in.getPort();
+        cchildrow[m_Columns.m_col_name] = "Type";
+        cchildrow[m_Columns.m_col_value] = in.getName();
 
         cchildrow = *(m_refTreeModel->append(childrow.children()));
         cchildrow[m_Columns.m_col_name] = "Description";
@@ -142,12 +142,12 @@ void ModuleWindow::updateWidget()
         OutputData out = m_pModule->getOutputAt(i);
 
         childrow = *(m_refTreeModel->append(row.children()));
-        childrow[m_Columns.m_col_name] = "Type";
-        childrow[m_Columns.m_col_value] = out.getName();
+        childrow[m_Columns.m_col_name] = "Port";
+        childrow[m_Columns.m_col_value] = out.getPort();
 
         cchildrow = *(m_refTreeModel->append(childrow.children()));
-        cchildrow[m_Columns.m_col_name] = "Port";
-        cchildrow[m_Columns.m_col_value] = out.getPort();
+        cchildrow[m_Columns.m_col_name] = "Type";
+        cchildrow[m_Columns.m_col_value] = out.getName();
 
         cchildrow = *(m_refTreeModel->append(childrow.children()));
         cchildrow[m_Columns.m_col_name] = "Description";
