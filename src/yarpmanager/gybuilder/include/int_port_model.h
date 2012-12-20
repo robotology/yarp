@@ -20,9 +20,10 @@
 #include "tooltip_model.h"
 #include "port_model.h"
 
-#define PORT_SIZE       15
-#define COLOR_NOMAL     "darkgray"   
-#define COLOR_WARNING   "IndianRed1"
+#define PORT_SIZE           15
+#define COLOR_NOMAL         "darkgray"   
+#define COLOR_WARNING       "IndianRed1"
+#define COLOR_MISMATCH      "#FFC125" //"Orange"
 
 
 
@@ -55,16 +56,24 @@ public:
 protected: 
     InternalPortModel(ApplicationWindow* parentWnd, NodeType t=INPUTD, void* data=NULL);
 
+    virtual void onSourceAdded(void) {
+        updateOutputPortColor();
+    }
+    virtual void onSourceRemoved(void) {
+        updateOutputPortColor();
+    }
+
     virtual void onDestinationAdded(void) {
-        if((type==INPUTD) && input->isRequired())
-            strColor = (destinationArrows.size()) ? COLOR_NOMAL : COLOR_WARNING;
-        poly->property_fill_color().set_value(strColor.c_str());
+        updateInputPortColor();
     }
+
     virtual void onDestinationRemoved(void) {
-        if((type==INPUTD) && input->isRequired())
-            strColor = (destinationArrows.size()) ? COLOR_NOMAL : COLOR_WARNING;
-        poly->property_fill_color().set_value(strColor.c_str());
+        updateInputPortColor();        
     }
+
+private: 
+    void updateInputPortColor(void);
+    void updateOutputPortColor(void);
 
 private:
     Glib::RefPtr<Goocanvas::PolylineModel> poly;

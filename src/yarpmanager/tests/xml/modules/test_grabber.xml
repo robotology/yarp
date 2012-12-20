@@ -25,7 +25,7 @@
 			<description> a port which receives rpc command such as 'quit'.</description>
         </input>
 		<output>
-			<type>Image</type>
+			<type>ImageOfPixelRgb</type>
 			<port carrier="udp">/grabber</port>
 			<description>output image port</description>
 		</output>	

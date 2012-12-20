@@ -145,4 +145,50 @@ bool InternalPortModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& i
     return true;
 }
 
+void InternalPortModel::updateInputPortColor(void)
+{
+    if(type == INPUTD)
+    {
+        strColor = COLOR_NOMAL;
+        if(!destinationArrows.size())
+            strColor = (input->isRequired()) ? COLOR_WARNING : COLOR_NOMAL;
+        else
+        {
+            std::vector<ArrowModel*>::iterator itr;
+            for(itr=destinationArrows.begin(); itr<destinationArrows.end(); itr++)
+                if((*itr)->getSource() && 
+                   Glib::RefPtr<InternalPortModel>::cast_dynamic((*itr)->getSource()))
+                {
+                    OutputData* outp = Glib::RefPtr<InternalPortModel>::cast_dynamic((*itr)->getSource())->getOutput();
+                    if(outp && !compareString(outp->getName(), input->getName()))
+                    {
+                        strColor = COLOR_MISMATCH;
+                        break;
+                    }
+                }
+        }
+        poly->property_fill_color().set_value(strColor.c_str());
+    }    
+}
+
+void InternalPortModel::updateOutputPortColor(void)
+{
+    if(type == OUTPUTD)
+    {
+        strColor = COLOR_NOMAL;
+        std::vector<ArrowModel*>::iterator itr;
+        for(itr=sourceArrows.begin(); itr<sourceArrows.end(); itr++)
+            if((*itr)->getDestination() && 
+                Glib::RefPtr<InternalPortModel>::cast_dynamic((*itr)->getDestination()))
+            {
+                InputData* inp = Glib::RefPtr<InternalPortModel>::cast_dynamic((*itr)->getDestination())->getInput();
+                if(inp && !compareString(output->getName(), inp->getName()))
+                {
+                    strColor = COLOR_MISMATCH;
+                    break;
+                }
+            }
+        poly->property_fill_color().set_value(strColor.c_str());
+    }    
+}
 

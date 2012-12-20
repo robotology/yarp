@@ -22,7 +22,6 @@
 #define ARROW_LINEWIDTH     2.0
 
 
-
 ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                        Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
                        const char* szLabel): PolylineModel(0,0,0,0)
@@ -91,20 +90,20 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         cnn.setCorInputData(input);
         cnn.setModel(this);
         connection = parentWindow->manager.getKnowledgeBase()->addConnectionToApplication(application, cnn);
-        
+       
+        /*
         if (input && output && strcmp(input->getName(),output->getName())) // if I have "internal" input and output
         {
-            std::cout<< "FromPort "<< strFrom << " type " << output->getName() << ", ToPort " << strTo << " type " << input->getName()  <<endl;
-
-            defaultColor="yellow";
+            //std::cout<< "FromPort "<< strFrom << " type " << output->getName() << ", ToPort " << strTo << " type " << input->getName()  <<endl;
+            defaultColor = "orange";
         }
-   
+        */
     }
 
     this->property_stroke_color().set_value(defaultColor.c_str());
     if(strLabel.size())
         label = LabelModel::create(parentWindow, this, strLabel.c_str());
-   else
+    else
         label = LabelModel::create(parentWindow, this, strCarrier.c_str());
     parentWindow->getRootModel()->add_child(label);
     label->raise();
@@ -488,5 +487,4 @@ void ArrowModel::setSelected(bool sel)
             (*itr)->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
     }
 }
-
 
