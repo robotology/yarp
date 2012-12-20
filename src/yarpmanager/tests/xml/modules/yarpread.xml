@@ -1,0 +1,38 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>yarp read /in</name>
+    <description>yarp read from a default port</description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email=""> author1 </author>
+    </authors>
+
+     <data>
+        <input>            
+            <type>Bottle</type>            
+            <port carrier="tcp">/in</port>
+            <required>yes</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	</data>
+	
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library></library>
+    </development>
+
+</module>
+

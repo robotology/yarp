@@ -1,0 +1,125 @@
+<application>
+    <name>BlobTest</name>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>blobExtractor</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/BlobTest</prefix>
+        <geometry>(Pos (x 621) (y 396.3))</geometry>
+    </module>
+    <module>
+        <name>blobSelector</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/BlobTest</prefix>
+        <geometry>(Pos (x 922) (y 394.6))</geometry>
+    </module>
+    <module>
+        <name>lumaChroma</name>
+        <parameters>--output Y</parameters>
+        <node>localhost</node>
+        <prefix>/BlobTest</prefix>
+        <geometry>(Pos (x 306.5) (y 283.8))</geometry>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode ball</parameters>
+        <node>localhost</node>
+        <prefix>/BlobTest</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 50) (y 188.2))</geometry>
+    </module>
+    <module>
+        <name>yarp read /in</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/Blobs</prefix>
+        <geometry>(Pos (x 1177.5) (y 483.1))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 900 --y 100</parameters>
+        <node>localhost</node>
+        <prefix>/Y</prefix>
+        <geometry>(Pos (x 639.5) (y 193.9))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 600 --y 100</parameters>
+        <node>localhost</node>
+        <prefix>/InputImage</prefix>
+        <geometry>(Pos (x 357) (y 79.2))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 600 --y 500</parameters>
+        <node>localhost</node>
+        <prefix>/Blobs</prefix>
+        <geometry>(Pos (x 929) (y 300.3))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 900 --y 500</parameters>
+        <node>localhost</node>
+        <prefix>/SelBlobs</prefix>
+        <geometry>(Pos (x 1185) (y 404.6))</geometry>
+    </module>
+    <connection>
+        <from>/BlobTest/grabber</from>
+        <to>/InputImage/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 218) (y 206)) ((x 280) (y 97)) ((x 358) (y 97))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/grabber</from>
+        <to>/BlobTest/lumaChroma/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 218) (y 206)) ((x 268) (y 351)) ((x 307) (y 351))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/lumaChroma/Y/image:o</from>
+        <to>/Y/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 458) (y 301)) ((x 550) (y 212)) ((x 640) (y 212))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/lumaChroma/Y/image:o</from>
+        <to>/BlobTest/blobExtractor/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 458) (y 301)) ((x 555) (y 415)) ((x 622) (y 414))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/blobExtractor/img:o</from>
+        <to>/Blobs/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 797) (y 414)) ((x 862) (y 318)) ((x 930) (y 318))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/blobSelector/img:o</from>
+        <to>/SelBlobs/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 1090) (y 425)) ((x 1186) (y 422))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/blobExtractor/img:o</from>
+        <to>/BlobTest/blobSelector/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 797) (y 414)) ((x 923) (y 412))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/blobExtractor/blobs:o</from>
+        <to>/BlobTest/blobSelector/blobs:i</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 797) (y 439)) ((x 923) (y 437))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/blobSelector/point:o</from>
+        <to>/Blobs/in</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 1090) (y 450)) ((x 1178) (y 501))  )</geometry>
+    </connection>
+</application>
