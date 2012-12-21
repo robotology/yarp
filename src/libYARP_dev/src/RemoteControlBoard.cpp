@@ -874,7 +874,8 @@ public:
             ConstString s2 = local;
             s2 += "/rpc:o";
             bool ok = false;
-            ok=Network::connect(s2.c_str(), s1.c_str());
+            // ok=Network::connect(s2.c_str(), s1.c_str()); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
+            ok=rpc_p.addOutput(s1.c_str());
             if (!ok) {
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
@@ -883,7 +884,8 @@ public:
             s1 += "/command:i";
             s2 = local;
             s2 += "/command:o";
-            ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
+            //ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
+            ok = command_p.addOutput(s1.c_str());
             if (!ok) {
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
@@ -894,10 +896,10 @@ public:
             s2 = local;
             s2 += "/state:i";
 
-            ok = Network::connect(s1.c_str(), s2.c_str(), carrier);
+            ok = Network::connect(s1.c_str(), state_p.getName(), carrier);
 
             if (!ok) {
-                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
                 connectionProblem = true;
             }
         }
