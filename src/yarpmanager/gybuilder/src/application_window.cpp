@@ -342,7 +342,8 @@ void ApplicationWindow::onDelete(void)
        
     deleteSelectedArrows();
     
-    for(int j=0; j<root->get_n_children(); j++)
+    //for(int j=0; j<root->get_n_children(); j++)
+    while(countSelected())
         for(int i=0; i<root->get_n_children(); i++)
         {
             Glib::RefPtr<ExternalPortModel> extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
@@ -385,6 +386,38 @@ void ApplicationWindow::onCopy(void)
     }
     
     m_pParent->m_refActionGroup->get_action("EditPaste")->set_sensitive(copiedItems.size()>0);
+}
+
+void ApplicationWindow::onRotateRight()
+{
+    for(int i=0; i<root->get_n_children(); i++)
+    {
+        Glib::RefPtr<ModuleModel> model = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
+        if(model && model->getSelected())
+        {
+            Goocanvas::Bounds bd = m_Canvas->get_item(model)->get_bounds();
+            double xorg = (bd.get_x2()-bd.get_x1())/2.0;
+            double yorg = (bd.get_y2()-bd.get_y1())/2.0;
+            m_Canvas->get_item(model)->rotate(90, xorg, yorg);
+            model->updateArrowCoordination();
+        }
+    }
+}
+
+void ApplicationWindow::onRotateLeft()
+{
+    for(int i=0; i<root->get_n_children(); i++)
+    {
+        Glib::RefPtr<ModuleModel> model = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
+        if(model && model->getSelected())
+        {
+            Goocanvas::Bounds bd = m_Canvas->get_item(model)->get_bounds();
+            double xorg = (bd.get_x2()-bd.get_x1())/2.0;
+            double yorg = (bd.get_y2()-bd.get_y1())/2.0;
+            m_Canvas->get_item(model)->rotate(-90, xorg, yorg);
+            model->updateArrowCoordination();
+        }
+    }
 }
 
 void ApplicationWindow::onPaste(void)
@@ -433,8 +466,8 @@ void ApplicationWindow::onPaste(void)
             Glib::RefPtr<ModuleModel> mod = 
                                      ModuleModel::create(this, module);
             root->add_child(mod);
-            mod->set_property("x", _x+offset);
-            mod->set_property("y", _y+offset);
+            Goocanvas::Bounds bd = m_Canvas->get_item(mod)->get_bounds();
+            m_Canvas->get_item(mod)->translate(_x+offset - bd.get_x1(), _y+offset - bd.get_y1());
             mod->snapToGrid();
             offset += 20;
         }
@@ -1199,22 +1232,22 @@ void ApplicationWindow::updateApplicationWindow(void)
         Module* module = (*itr);
         mod = ModuleModel::create(this, module);
         root->add_child(mod);
+        Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item(mod);
+        Goocanvas::Bounds bd = item->get_bounds();
+        //printf("%s : x:%.2f, y:%.2f\n", module->getName(), bd.get_x1(), bd.get_y1());
         if(module->getModelBase().points.size()>0)
-        {             
-            mod->set_property("x", module->getModelBase().points[0].x);
-            mod->set_property("y", module->getModelBase().points[0].y);
+        { 
+            item->translate(module->getModelBase().points[0].x - bd.get_x1(), 
+                            module->getModelBase().points[0].y - bd.get_y1());
         }    
         else
         {
-            mod->set_property("x", index%900+10);
-            mod->set_property("y", (index/900)*100+10);
+            item->translate(index%900+10 - bd.get_x1(), 
+                            (index/900)*100+10 - bd.get_y1());
             index += 300;
-
         }
         mod->snapToGrid();
         //mod->set_property("antialias", 0);
-        //mod->property_x().set_value(100);
-        //mod->property_y().set_value(100);
     }  
      
 
@@ -1485,8 +1518,8 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                 Glib::RefPtr<ModuleModel> mod = 
                                          ModuleModel::create(this, module);
                 root->add_child(mod);
-                mod->set_property("x", x);
-                mod->set_property("y", y);
+                Goocanvas::Bounds bd = m_Canvas->get_item(mod)->get_bounds();
+                m_Canvas->get_item(mod)->translate(x - bd.get_x1(), y - bd.get_y1());
                 mod->snapToGrid();
             }
         }

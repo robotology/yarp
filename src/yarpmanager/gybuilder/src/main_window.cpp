@@ -174,9 +174,15 @@ void MainWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='ViewLabel'/>"
         "    </menu>"
-        "    <menu action='InsertMenu'>"
+        "    <menu action='ToolsMenu'>"
         "      <menuitem action='InsertSrcPort'/>"
         "      <menuitem action='InsertDestPort'/>"
+        "      <separator/>"
+        "      <menuitem action='FileOpenGymanager'/>"
+//        "      <menu action='Rotate'>"
+//        "        <menuitem action='RotateRight'/>"
+//        "        <menuitem action='RotateLeft'/>"
+//        "      </menu>" 
         "    </menu>"
         "    <menu action='WindowMenu'>"
         "      <menuitem action='WindowItem'/>"
@@ -528,12 +534,17 @@ void MainWindow::setupActions(void)
                         sigc::mem_fun(*this, &MainWindow::onMenuViewLabel) );
 
 
-    // Insert menu:
-    m_refActionGroup->add( Gtk::Action::create("InsertMenu", "Insert") );   
+    // Tools menu:
+    m_refActionGroup->add( Gtk::Action::create("ToolsMenu", "Tools") );   
     m_refActionGroup->add( Gtk::Action::create("InsertSrcPort", "Add Source port", "External source port"),
                             sigc::mem_fun(*this, &MainWindow::onMenuInsertSrcPort) );
     m_refActionGroup->add( Gtk::Action::create("InsertDestPort", "Add Destination port", "External destination port"),
                             sigc::mem_fun(*this, &MainWindow::onMenuInsertDestPort) );
+    m_refActionGroup->add(Gtk::Action::create("Rotate", "Rotate"));
+    m_refActionGroup->add(Gtk::Action::create("RotateRight", "_Right", "Rotate Right"),
+                          sigc::mem_fun(*this, &MainWindow::onMenuRotateRight));
+     m_refActionGroup->add(Gtk::Action::create("RotateLeft", "_Left", "Rotate Left"),
+                          sigc::mem_fun(*this, &MainWindow::onMenuRotateLeft));
 
     //Window menu:
     m_refActionGroup->add( Gtk::Action::create("WindowMenu", "Window") );
@@ -1464,6 +1475,23 @@ void MainWindow::onMenuInsertSrcPort()
         appWnd->onMenuInsertSrcPort();
 }
 
+void MainWindow::onMenuRotateRight() 
+{
+    int page_num = m_mainTab.get_current_page();
+    ApplicationWindow* appWnd = 
+            dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
+    if(appWnd)
+        appWnd->onRotateRight();
+}
+
+void MainWindow::onMenuRotateLeft() 
+{
+    int page_num = m_mainTab.get_current_page();
+    ApplicationWindow* appWnd = 
+            dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
+    if(appWnd)
+        appWnd->onRotateLeft();
+}
 
 void MainWindow::onMenuViewZoomIn() 
 {

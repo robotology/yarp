@@ -72,7 +72,7 @@
         </output>
 
         <output>
-            <type>ImageOfPixelMono</type>
+            <type>ImageOfPixelRgb</type>
             <port carrier="udp">/blobFinder/icub/left_cam/imageC3:o</port>
             <description></description>
         </output>

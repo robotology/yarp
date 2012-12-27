@@ -50,37 +50,37 @@
         </output>
 
         <output>
-            <type>ImageOfPixelRgb</type>
+            <type>ImageOfPixelMono</type>
             <port carrier="udp">/earlyVision/intensity:o</port>
             <description></description>
         </output>
         
         <output>
-            <type>ImageOfPixelRgb</type>
+            <type>ImageOfPixelMono</type>
             <port carrier="udp">/earlyVision/colorOppR+G-:o</port>
             <description></description>
         </output>
 
         <output>
-            <type>ImageOfPixelRgb</type>
+            <type>ImageOfPixelMono</type>
             <port carrier="udp">/earlyVision/colorOppG+R-:o</port>
             <description></description>
         </output>
         
         <output>
-            <type>ImageOfPixelRgb</type>
+            <type>ImageOfPixelMono</type>
             <port carrier="udp">/earlyVision/colorOppB+Y-:o</port>
             <description></description>
         </output>
                 
         <output>
-            <type>ImageOfPixelRgb</type>
+            <type>ImageOfPixelMono</type>
             <port carrier="udp">/earlyVision/chrominance:o</port>
             <description></description>
         </output> 
                        
         <output>
-            <type>ImageOfPixelRgb</type>
+            <type>ImageOfPixelMono</type>
             <port carrier="udp">/earlyVision/centSurrIntensity:o</port>
             <description></description>
         </output> 

@@ -50,6 +50,8 @@ public:
     void onPaste(void);
     void onMenuInsertSrcPort();
     void onMenuInsertDestPort();
+    void onRotateRight();
+    void onRotateLeft();
     void onMenuWindowProperty(bool active);
     
     void onZoomIn(void) {

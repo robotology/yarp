@@ -81,6 +81,8 @@ protected:
     void onMenuWindowProperty();
     void onMenuInsertSrcPort();
     void onMenuInsertDestPort();
+    void onMenuRotateRight();
+    void onMenuRotateLeft();
 
     void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
                 Gtk::TreeViewColumn* column);
