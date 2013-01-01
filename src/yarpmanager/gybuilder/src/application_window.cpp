@@ -68,7 +68,7 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
     m_strAppName = szAppName;
     m_connector.clear();    
     m_selector.clear();    
-    m_bModified = true;  //TODO: set it in the right places
+    m_bModified = false;  //TODO: set it in the right places
     createWidgets();
     setupSignals();
     show_all_children();
@@ -137,9 +137,9 @@ void ApplicationWindow::createWidgets(void)
 
 
 
-    modPropertyWindow = new ModulePropertyWindow(m_pParent, &manager);
-    appPropertyWindow = new ApplicationPropertyWindow(m_pParent, &manager);
-    conPropertyWindow = new ConnectionPropertyWindow(m_pParent, &manager);
+    modPropertyWindow = new ModulePropertyWindow(m_pParent, &manager, this);
+    appPropertyWindow = new ApplicationPropertyWindow(m_pParent, &manager, this);
+    conPropertyWindow = new ConnectionPropertyWindow(m_pParent, &manager, this);
 
     m_ScrollView.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_ScrollView.add(*m_Canvas);
@@ -218,9 +218,9 @@ bool ApplicationWindow::onSave(const char* szFileName)
     if(!application)
         return false;
 
-    //m_bModified = !manager.saveApplication(application->getName(), szFileName);
-    //return !m_bModified;
-    return manager.saveApplication(application->getName(), szFileName);
+    m_bModified = !manager.saveApplication(application->getName(), szFileName);
+    return !m_bModified;
+    //return manager.saveApplication(application->getName(), szFileName);
 
 }
 
@@ -327,6 +327,17 @@ bool ApplicationWindow::onExportGraph(void)
 
 void ApplicationWindow::onDelete(void)
 {
+    ostringstream msg;
+    msg<<getApplicationName()<<" has been modified.";
+    Gtk::MessageDialog dialog("Deleted items cannot be recovered.", false, Gtk::MESSAGE_QUESTION,  Gtk::BUTTONS_NONE);
+    dialog.set_secondary_text("Do you still want to delete them?");
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_NO);
+    dialog.add_button("Delete", Gtk::RESPONSE_YES);
+ 
+    int response = dialog.run();
+    if(response != Gtk::RESPONSE_YES)
+        return;
+
     // switch to application propoerty window 
     Glib::RefPtr<Gtk::ToggleAction> act;
     act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
@@ -741,6 +752,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
                 {
                     Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(this, sourcePort, port);
                     root->add_child(arrow);
+                    m_bModified = true;
                 }
 
                 int id = root->find_child(m_connector);

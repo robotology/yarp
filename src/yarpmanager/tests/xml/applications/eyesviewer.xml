@@ -23,17 +23,17 @@
     </module>
     <module>
         <name>yarpview</name>
-        <parameters></parameters>
+        <parameters>--x 100 </parameters>
         <node>localhost</node>
         <prefix>/Ball</prefix>
         <geometry>(Pos (x 473.5) (y 143.5))</geometry>
     </module>
     <module>
         <name>yarpview</name>
-        <parameters></parameters>
+        <parameters>--x 600 </parameters>
         <node>localhost</node>
         <prefix>/Line</prefix>
-        <geometry>(Pos (x 482.5) (y 230.5))</geometry>
+        <geometry>(Pos (x 475) (y 229.9))</geometry>
     </module>
     <connection>
         <from>/Ball/grabber</from>
@@ -45,6 +45,6 @@
         <from>/Line/grabber</from>
         <to>/Line/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 275) (y 248)) ((x 483) (y 248))  )</geometry>
+        <geometry>(Pos ((x 275) (y 248)) ((x 476) (y 248))  )</geometry>
     </connection>
 </application>

@@ -17,12 +17,14 @@
 #include "ymm-dir.h"
 
 #include "main_window.h"
+#include "application_window.h"
 
 ApplicationPropertyWindow::ApplicationPropertyWindow(MainWindow* parent, 
-                               Manager* manager) : m_pApplication(NULL)
+                               Manager* manager, ApplicationWindow* appWnd) : m_pApplication(NULL)
 {   
     m_pParent = parent;
     m_pManager = manager;
+    m_pAppWindow = appWnd;
 
     /* Create a new scrolled window, with scrollbars only if needed */
     set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -170,6 +172,8 @@ void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string,
             m_pApplication->setName(new_text.c_str());
         }
         */
+        if(m_pAppWindow) 
+            m_pAppWindow->setModified();
    }
 }
 

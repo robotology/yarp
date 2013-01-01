@@ -15,6 +15,7 @@
 #include "manager.h"
 
 class MainWindow;
+class ApplicationWindow;
 
 class ModulePropItemColumns : public Gtk::TreeModel::ColumnRecord
 {
@@ -56,7 +57,7 @@ public:
 class ModulePropertyWindow: public Gtk::ScrolledWindow
 {
 public:
-    ModulePropertyWindow(MainWindow* parent, Manager* manager);
+    ModulePropertyWindow(MainWindow* parent, Manager* manager, ApplicationWindow* appWnd=NULL);
     virtual ~ModulePropertyWindow();
 
     void onTabCloseRequest();
@@ -86,6 +87,7 @@ private:
     Module* m_pModule;
     ModuleInterface* m_pIModule;
     Manager* m_pManager;
+    ApplicationWindow* m_pAppWindow;
 };
 
 

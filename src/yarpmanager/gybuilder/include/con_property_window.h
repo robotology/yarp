@@ -16,6 +16,7 @@
 #include "arrow_model.h"
 
 class MainWindow;
+class ApplicationWindow;
 
 class ConnectionPropItemColumns : public Gtk::TreeModel::ColumnRecord
 {
@@ -38,7 +39,7 @@ public:
 class ConnectionPropertyWindow: public Gtk::ScrolledWindow
 {
 public:
-    ConnectionPropertyWindow(MainWindow* parent, Manager* manager);
+    ConnectionPropertyWindow(MainWindow* parent, Manager* manager, ApplicationWindow* appWnd=NULL);
     virtual ~ConnectionPropertyWindow();
 
     void onTabCloseRequest();
@@ -62,6 +63,7 @@ private:
     MainWindow* m_pParent;
 //    Connection* m_pConnection;
     Manager* m_pManager;
+    ApplicationWindow* m_pAppWindow;
     Glib::RefPtr<ArrowModel> m_pArrow;
 };
 

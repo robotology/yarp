@@ -18,13 +18,16 @@
 
 #include "main_window.h"
 #include "arrow_model.h"
+#include "application_window.h"
 
 ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent, 
-                               Manager* manager) : m_pModule(NULL)
+                               Manager* manager, ApplicationWindow* appWnd) : m_pModule(NULL)
 {   
     m_pParent = parent;
     m_pManager = manager;
     m_pModule = NULL;
+    m_pAppWindow = appWnd;
+
 //    m_pIModule = NULL;
 
     /* Create a new scrolled window, with scrollbars only if needed */
@@ -392,6 +395,9 @@ void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
 {
     if(!m_pModule)
         return;
+
+    if(m_pAppWindow)
+        m_pAppWindow->setModified();
 
     ErrorLogger* logger = ErrorLogger::Instance();
     Gtk::TreePath path(path_string);

@@ -18,13 +18,14 @@
 
 #include "main_window.h"
 #include "ext_port_model.h"
+#include "application_window.h"
 
 ConnectionPropertyWindow::ConnectionPropertyWindow(MainWindow* parent, 
-                               Manager* manager)
+                               Manager* manager, ApplicationWindow* appWnd)
 {   
     m_pParent = parent;
     m_pManager = manager;
-
+    m_pAppWindow = appWnd;
     m_pArrow.clear();
 
     /* Create a new scrolled window, with scrollbars only if needed */
@@ -145,6 +146,7 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
 {
     if(!m_pArrow)
         return;
+
     Connection* m_pConnection = m_pArrow->getConnection();
 
     Gtk::TreePath path(path_string);
@@ -153,6 +155,8 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
     Gtk::TreeModel::iterator iter = m_refTreeModel->get_iter(path);
     if(iter)
     {
+        if(m_pAppWindow)
+            m_pAppWindow->setModified();
         Gtk::TreeModel::Row row = *iter;
         //Put the new value in the model:
         Glib::ustring strName = Glib::ustring(row[m_Columns.m_col_name]);
