@@ -1198,7 +1198,8 @@ bool ApplicationWindow::on_key_press_event(GdkEventKey* event)
             onDelete();
             break;
     default:
-        printf("unknown key pressed!\n");
+        return true;
+        //printf("unknown key pressed!\n");
     }
     return true;
 }
@@ -1353,12 +1354,14 @@ void ApplicationWindow::updateApplicationWindow(void)
 
         Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(this, source, dest, (*citr).carrier());
         root->add_child(arrow);
-        int size = model.points.size()-1;
-        for(int i=1; i<size; i++)
-            arrow->addMidPoint(model.points[i].x, model.points[i].y, i-1);            
+        int size = model.points.size();
+        for(int i=2; i<size-1; i++)
+            arrow->addMidPoint(model.points[i].x, model.points[i].y, i-2);            
         arrow->setSelected(false);
-        //manager.getKnowledgeBase()->updateConnectionOfApplication(application, (*citr), updatedCon);
+        if(size)
+            arrow->setLabelPosition(model.points[0].x, model.points[0].y);
     }
+
     // update canvas and grid size
     double max_w = 0;
     double max_h = 0;
@@ -1503,7 +1506,7 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                             int x, int y, const Gtk::SelectionData& data, 
                             guint info, guint time)
 {
-    if((data.get_length() >= 0) && (data.get_format() == 8))
+    if((data.get_length() >= 0) && (data.get_format() == MODULE))
     {
         const guchar* name = data.get_data();
         if(name)
@@ -1536,6 +1539,39 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
             }
         }
         m_bModified = true;
+    }
+    else if((data.get_length() >= 0) && (data.get_format() == RESOURCE))
+    {
+        const guchar* name = data.get_data();
+        if(name)
+        {
+            Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item_at(x, y, true);
+            if(item)
+            {
+                Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(item->get_parent()->get_model());
+                if(mod)
+                {
+                   mod->getModule()->setHost((const char*)name);
+                   //unselect all 
+                   for(int i=0; i<root->get_n_children(); i++)
+                   {
+                        Glib::RefPtr<ModuleModel> child = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
+                        if(child) child->setSelected(false);                    
+                        Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(i));
+                        if(arrow) arrow->setSelected(false);
+                        Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
+                        if(extport) extport->setSelected(false);
+                   }
+
+                    //select current module
+                    mod->setSelected(true);
+                    m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(true);
+                    m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(true);
+                    onUpdateModuleProperty(mod->getModule());
+                    m_bModified = true;
+                }    
+            }
+        }
     }
 }
 

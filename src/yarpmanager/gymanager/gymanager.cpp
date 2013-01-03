@@ -59,9 +59,9 @@ int main(int __argc, char *__argv[])
 
     // Setup resource finder
     yarp::os::ResourceFinder rf;
-    rf.setVerbose(false);
+    rf.setVerbose();
     rf.setDefaultContext("");
-    rf.setDefaultConfigFile("ymanager.ini");
+    rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(__argc, __argv);
 
     yarp::os::Network yarp;

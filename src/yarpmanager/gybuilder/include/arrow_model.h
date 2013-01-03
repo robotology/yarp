@@ -43,7 +43,7 @@ public:
                         GdkEventCrossing* event);
     void updatCoordiantes(void);
     void updatLabelCoordiante(void);
-
+    void setLabelPosition(double x, double y);
 
     void setLabel(const char* label);
     void addMidPoint(double x, double y, int index=-1);
@@ -74,12 +74,12 @@ public:
     bool intersect(double x1, double y1, double x2, double y2);
     bool inside(double p1, double q1, double p2, double q2);
 
+    void onPointUpdated(void);
+
 protected: 
     ArrowModel(ApplicationWindow* parentWnd, 
                Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
                const char* szLabel);
-
-    void onPointUpdated(void);
 
 private:
     ApplicationWindow* parentWindow;

@@ -4,4 +4,25 @@
     <authors>
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
+    <module>
+        <name>activeSeg</name>
+        <parameters></parameters>
+        <node>node1</node>
+        <prefix>/MyTestApplication:activeSeg:1</prefix>
+        <geometry>(Pos (x 727) (y 217.9))</geometry>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters></parameters>
+        <node>node2</node>
+        <prefix>/MyTestApplication:test_grabber:1</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 22) (y 314.9))</geometry>
+    </module>
+    <connection>
+        <from>/MyTestApplication:test_grabber:1/grabber</from>
+        <to>/MyTestApplication:activeSeg:1/activeSeg/image:i</to>
+        <protocol>tcp+recv.priority+tc.5+st.10+(ex (/gaze/xd:i -20))</protocol>
+        <geometry>(Pos ((x 239.5) (y 284.5)) ((x 190) (y 333)) ((x 227) (y 333)) ((x 252) (y 236)) ((x 728) (y 236))  )</geometry>
+    </connection>
 </application>

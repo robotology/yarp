@@ -110,8 +110,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
 
     showLabel(parentWindow->m_showLabel);
     updatCoordiantes();
-    ///updatlabelcoordiante();
- 
+    updatLabelCoordiante(); 
 }
     
 void ArrowModel::setLabel(const char* szLabel)
@@ -119,19 +118,6 @@ void ArrowModel::setLabel(const char* szLabel)
     if(!szLabel)
         return;
     label->property_text() = szLabel;
-    /*
-    int id = parentWindow->getRootModel()->find_child(label);
-    if(id != -1)
-    {
-        parentWindow->getRootModel()->remove_child(id);
-        //label->clear();
-        label = LabelModel::create(parentWindow, this, szLabel);
-        parentWindow->getRootModel()->add_child(label);
-        label->raise();
-        label->setSelected(true);
-        updatCoordiantes();
-    }
-    */
 }
 
 ArrowModel::~ArrowModel(void) 
@@ -183,27 +169,19 @@ void ArrowModel::updatLabelCoordiante(void)
     int index = points.get_num_points() / 2;
     points.get_coordinate(index-1, x1, y1);
     points.get_coordinate(index, x2, y2);
-    label->set_property("x", (x1+x2)/2.0);
-    label->set_property("y", (y1+y2)/2.0);
-    label->snapToGrid();
-//     //input
-//     if (wrongInputFlag)
-//     {
-//         points.get_coordinate(0, x1, y1);
-//         points.get_coordinate(1, x2, y2);
-//         wrongInputFlag->set_property("x", x1+(x2-x1)/abs(x2-x1)*5);
-//         wrongInputFlag->set_property("y", y1+(y2-y1)/abs(y2-y1)*5);
-//         wrongInputFlag->snapToGrid();
-//     }
-//     //output
-//     if (wrongOutputFlag)
-//     {
-//         points.get_coordinate(points.get_num_points()-1, x1, y1);
-//         points.get_coordinate(points.get_num_points()-2, x2, y2);
-//         wrongOutputFlag->set_property("x", x1+(x2-x1)/abs(x2-x1)*5);
-//         wrongOutputFlag->set_property("y", y1+(y2-y1)/abs(y2-y1)*5);
-//         wrongOutputFlag->snapToGrid();
-//     }
+    setLabelPosition((x1+x2)/2.0, (y1+y2)/2.0);
+}
+
+void ArrowModel::setLabelPosition(double x, double y)
+{
+    Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
+    if(item)
+    {
+        Goocanvas::Bounds bi = item->get_bounds();
+        bi = item->get_bounds();
+        item->translate(x-bi.get_x1(), y-bi.get_y1());
+    }
+    onPointUpdated();
 }
 
 Gdk::Point ArrowModel::getPoint(int index)
@@ -319,15 +297,29 @@ bool ArrowModel::addPoint(int index, double x, double y)
 void ArrowModel::onPointUpdated(void)
 {
     GraphicModel::points.clear();
-
     double x1, y1;
+    GyPoint pt;
+
+    // Adding label position 
+    Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
+    if(item)
+    {
+        Goocanvas::Bounds bi = item->get_bounds();
+        bi = item->get_bounds();
+        pt.x = bi.get_x1();
+        pt.y = bi.get_y1();
+    }
+    else
+        pt.x = pt.y = -1;
+
+    GraphicModel::points.push_back(pt);
+
     Goocanvas::Points pts = this->property_points().get_value();
     for(int i=0; i<pts.get_num_points(); i++)
     {
         pts.get_coordinate(i, x1, y1);
-        GyPoint pt;
-        pt.x = (int) x1;
-        pt.y = (int) y1;
+        pt.x = x1;
+        pt.y = y1;
         GraphicModel::points.push_back(pt);
     }
 }

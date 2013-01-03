@@ -14,6 +14,8 @@
 #include "application.h"
 #include "ymm-dir.h"
 
+#include <yarp/os/ResourceFinder.h>
+
 using namespace yarp::os;
 
 
@@ -97,8 +99,25 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 #endif
 
     bShouldRun = false;
-    cmdline.fromCommand(argc, argv);
 
+    // Setup resource finder
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose();
+    rf.setDefaultContext("");
+    rf.setDefaultConfigFile(DEF_CONFIG_FILE);
+    rf.configure(argc, argv);
+
+    yarp::os::Property config;
+    config.fromString(rf.toString());
+
+    if(config.check("help"))
+    {
+        cout<<HELP_MESSAGE<<endl;
+        return;
+    }
+ 
+    /*
+    cmdline.fromCommand(argc, argv);
     if(cmdline.check("help"))
     {
         cout<<HELP_MESSAGE<<endl;
@@ -124,6 +143,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     else 
         config.fromConfigFile(DEF_CONFIG_FILE);
     //      cout<<WARNING<<"WARNING: "<<INFO<<DEF_CONFIG_FILE<<" cannot be loaded. configuration is set to default."<<ENDC<<endl;
+    */
 
     /**
      *  preparing default options
@@ -159,7 +179,6 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         config.put("color_theme", "light");
 
     
-
     /**
      * Set configuration
      */
@@ -188,6 +207,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     cout<<endl<<OKGREEN<<LOGO_MESSAGE<<ENDC<<endl;
     cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
 
+    /*
     if(config.check("modpath"))
         addModules(config.find("modpath").asString().c_str());
 
@@ -200,6 +220,36 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
             loadRecursiveApplications(config.find("apppath").asString().c_str());
         else
             addApplications(config.find("apppath").asString().c_str()); 
+    }
+    */
+
+    if(config.check("modpath"))
+    {
+        string strPath;
+        stringstream modPaths(config.find("modpath").asString().c_str());
+        while (getline(modPaths, strPath, ';'))
+            addModules(strPath.c_str());
+    }
+
+    if(config.check("respath"))
+    {
+        string strPath;
+        stringstream resPaths(config.find("respath").asString().c_str());
+        while (getline(resPaths, strPath, ';'))
+            addResources(strPath.c_str());
+    }
+
+    if(config.check("apppath"))
+    {
+        string strPath;
+        stringstream appPaths(config.find("apppath").asString().c_str());
+        while (getline(appPaths, strPath, ';'))
+        {
+            if(config.find("load_subfolders").asString() == "yes")
+                loadRecursiveApplications(strPath.c_str());
+            else
+                addApplications(strPath.c_str()); 
+        }
     }
 
     reportErrors(); 
@@ -231,6 +281,29 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     if (old_action.sa_handler != SIG_IGN)
         sigaction (SIGTERM, &new_action, NULL);
 #endif
+
+    if(config.check("application"))
+    {
+        XmlAppLoader appload(config.find("application").asString().c_str());
+        if(appload.init())
+        {
+            Application* application = appload.getNextApplication();
+            if(application)
+            {
+                // add this application to the manager if does not exist    
+                if(!getKnowledgeBase()->getApplication(application->getName()))
+                    getKnowledgeBase()->addApplication(application);
+
+                #ifdef WITH_READLINE
+                updateAppNames(&appnames);
+                #endif
+
+                if(loadApplication(application->getName()))
+                    which();
+            }            
+        }
+        reportErrors();
+    }
 
     YConsoleManager::myMain();  
 }

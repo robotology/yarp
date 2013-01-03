@@ -34,13 +34,8 @@ LabelModel::~LabelModel(void)
 
 void LabelModel::updateCoordiantes(void)
 {
-    /*
-    Gdk::Point pt = getContactPoint();
-    arrow->setPoint(point_x, point_y, 
-                    pt.get_x(), pt.get_y());
-    point_x = pt.get_x();
-    point_y = pt.get_y();
-    */
+    if(arrow)
+        arrow->onPointUpdated();
 }
 
 

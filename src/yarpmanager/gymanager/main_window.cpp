@@ -61,23 +61,38 @@ MainWindow::MainWindow( yarp::os::Property &config)
     setupSignals();
     
     createWidgets();
-
     if(config.check("modpath"))
-        lazyManager.addModules(config.find("modpath").asString().c_str());
+    {
+        string strPath;
+        stringstream modPaths(config.find("modpath").asString().c_str());
+        while (getline(modPaths, strPath, ';'))
+                lazyManager.addModules(strPath.c_str());
+    }
 
     if(config.check("respath"))
-        lazyManager.addResources(config.find("respath").asString().c_str());
+    {
+        string strPath;
+        stringstream resPaths(config.find("respath").asString().c_str());
+        while (getline(resPaths, strPath, ';'))
+            lazyManager.addResources(strPath.c_str());
+    }
 
     if(config.check("apppath"))
     {
-        if(config.find("load_subfolders").asString() == "yes")
+        string strPath;
+        stringstream appPaths(config.find("apppath").asString().c_str());
+        while (getline(appPaths, strPath, ';'))
         {
-            loadRecursiveApplications(config.find("apppath").asString().c_str());
-            loadRecursiveTemplates(config.find("apppath").asString().c_str());
+            if(config.find("load_subfolders").asString() == "yes")
+            {
+                loadRecursiveApplications(strPath.c_str());
+                loadRecursiveTemplates(strPath.c_str());
+            }
+            else
+                lazyManager.addApplications(strPath.c_str()); 
         }
-        else
-            lazyManager.addApplications(config.find("apppath").asString().c_str()); 
     }
+
     reportErrors();
 
     syncApplicationList();

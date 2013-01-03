@@ -66,6 +66,9 @@ public:
     void update(Module* module);
     void release(void) { m_pModule = NULL; m_pIModule = NULL; } 
     Module* getModule(void) { return m_pModule; }
+
+    void updateModule(const char* item, const char* value);
+
 protected:
     void onCellData(Gtk::CellRenderer*, const Gtk::TreeModel::iterator& iter);
     void onCellEdited(const Glib::ustring& path_string, 
@@ -79,7 +82,6 @@ protected:
     std::vector< Glib::RefPtr<Gtk::ListStore> > m_refModelCombos;
 
 private:
-    void updateModule(const char* item, const char* value);
     void updateParamteres(void);
     bool getRowByName(const char* name, Gtk::TreeModel::Row* row);
 
