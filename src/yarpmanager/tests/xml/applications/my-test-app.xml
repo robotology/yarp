@@ -23,6 +23,6 @@
         <from>/MyTestApplication:test_grabber:1/grabber</from>
         <to>/MyTestApplication:activeSeg:1/activeSeg/image:i</to>
         <protocol>tcp+recv.priority+tc.5+st.10+(ex (/gaze/xd:i -20))</protocol>
-        <geometry>(Pos ((x 239.5) (y 284.5)) ((x 190) (y 333)) ((x 227) (y 333)) ((x 252) (y 236)) ((x 728) (y 236))  )</geometry>
+        <geometry>(Pos ((x 287.5) (y 248.5)) ((x 190) (y 333)) ((x 227) (y 333)) ((x 252) (y 236)) ((x 728) (y 236))  )</geometry>
     </connection>
 </application>

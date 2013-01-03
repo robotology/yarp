@@ -329,7 +329,7 @@ void ApplicationWindow::onDelete(void)
 {
     ostringstream msg;
     msg<<getApplicationName()<<" has been modified.";
-    Gtk::MessageDialog dialog("Deleted items cannot be recovered.", false, Gtk::MESSAGE_QUESTION,  Gtk::BUTTONS_NONE);
+    Gtk::MessageDialog dialog("What's done cannot be undone!", false, Gtk::MESSAGE_QUESTION,  Gtk::BUTTONS_NONE);
     dialog.set_secondary_text("Do you still want to delete them?");
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_NO);
     dialog.add_button("Delete", Gtk::RESPONSE_YES);
