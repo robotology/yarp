@@ -36,8 +36,13 @@ if(WIN32)
     add_definitions(/wd4099)
 endif(WIN32)
 
-set_source_files_properties(${folder_source}
-                            PROPERTIES COMPILE_FLAGS "-Wno-mismatched-tags")
+## FIXME 2.4 Move the check in conf/YarpSystemCheck.cmake later
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-Wno-mismatched-tags" CXX_HAS_WNO_MISMATCHED_TAGS)
+if(CXX_HAS_WNO_MISMATCHED_TAGS)
+    set_source_files_properties(${folder_source}
+                                PROPERTIES COMPILE_FLAGS "-Wno-mismatched-tags")
+endif(CXX_HAS_WNO_MISMATCHED_TAGS)
 
 add_executable(gyarpmanager ${folder_source} ${folder_header})
 target_link_libraries(gyarpmanager YARP_init YARP_OS YARP_manager)
