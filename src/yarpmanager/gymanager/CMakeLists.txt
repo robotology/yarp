@@ -36,6 +36,9 @@ if(WIN32)
     add_definitions(/wd4099)
 endif(WIN32)
 
+set_source_files_properties(${folder_source}
+                            PROPERTIES COMPILE_FLAGS "-Wno-mismatched-tags")
+
 add_executable(gyarpmanager ${folder_source} ${folder_header})
 target_link_libraries(gyarpmanager YARP_init YARP_OS YARP_manager)
 
