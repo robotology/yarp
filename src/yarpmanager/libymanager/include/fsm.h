@@ -122,7 +122,7 @@ public:
     StateBase* currentState(void) {
         try
         {
-            typeid(*state);
+    //        typeid(*state);
             return state;
         }
         catch (std::exception& )
@@ -139,9 +139,9 @@ public:
     void addTransition(StateBase* source, Event* event, StateBase* target) {
         try
         {
-            typeid(*target);
-            typeid(*target);
-            typeid(*target);
+//             typeid(*target);
+//             typeid(*target);
+//             typeid(*target);
 
             transitions[source][event] = target;
         }
