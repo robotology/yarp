@@ -87,7 +87,7 @@ endif (USE_STL_STRING)
 #########################################################################
 # Control compilation of device tests.
 # Not really for end-user, but instead for the library developers
-set(CREATE_BUILTIN_DEVICE_TESTS FALSE CACHE BOOL "Do you want to create tests for builtin devices")
+option(CREATE_BUILTIN_DEVICE_TESTS "Do you want to create tests for builtin devices" FALSE)
 mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 
 
