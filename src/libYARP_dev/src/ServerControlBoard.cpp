@@ -1445,6 +1445,12 @@ public:
 
     /* IControlCalibration */
 
+    virtual bool calibrate() {
+        if (calib)
+            return calib->calibrate();
+        return false;
+    }
+
     /**
     * Calibrate a single joint, the calibration method accepts a parameter
     * that is used to accomplish various things internally and is implementation
