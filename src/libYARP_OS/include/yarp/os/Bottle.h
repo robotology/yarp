@@ -138,7 +138,7 @@ public:
     Property& addDict();
 
     /**
-     * Removes a Value v from the end of the list and returns this value. 
+     * Removes a Value v from the end of the list and returns this value.
      * @return the value popped from the end of the bottle
      */
     Value pop();

@@ -18,8 +18,8 @@ mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 if (MSVC)
   # See the Debug/Release subdirectories - is there a more systematic
   # way to do this?  Is this still needed?
-  LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib 
-    ${CMAKE_BINARY_DIR}/lib/Debug 
+  LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib
+    ${CMAKE_BINARY_DIR}/lib/Debug
     ${CMAKE_BINARY_DIR}/lib/Release)
 endif (MSVC)
 
@@ -28,7 +28,7 @@ endif (MSVC)
 # Encourage user to specify build type.
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING 
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
 	"Choose the type of build, recommanded options are: Debug or Release")
 endif(NOT CMAKE_BUILD_TYPE)
 # Hide variable to MSVC users, since it is not needed
@@ -69,7 +69,7 @@ endif()
 
 #########################################################################
 # Control whether yarp::os::impl::String should be std::string or opaque
-# Not an important option for end users yet.  In principle 
+# Not an important option for end users yet.  In principle
 # yarp::os::ConstString could now be set to std::string, if YARP
 # ever decides to accept STL as a dependency.
 
