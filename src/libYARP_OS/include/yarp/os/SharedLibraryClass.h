@@ -238,7 +238,7 @@ public:
         return true;
     }
 
-    ~SharedLibraryClass() {
+    virtual ~SharedLibraryClass() {
         close();
     }
 
