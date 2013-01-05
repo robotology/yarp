@@ -29,7 +29,7 @@ Usage:\n\
       gymanager [option...]\n\n\
 Options:\n\
   --help                  Show help\n\
-  --config                Configuration file name\n"
+  --from                  Configuration file name\n"
 
 #define DEF_CONFIG_FILE     "./ymanager.ini"
 
@@ -59,7 +59,7 @@ int main(int __argc, char *__argv[])
 
     // Setup resource finder
     yarp::os::ResourceFinder rf;
-    rf.setVerbose();
+    rf.setVerbose(false);
     rf.setDefaultContext("");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(__argc, __argv);
@@ -75,31 +75,7 @@ int main(int __argc, char *__argv[])
         cout<<HELP_MESSAGE<<endl;
         return 0;
     }
- 
-    /*
-    yarp::os::Property cmdline;
-    cmdline.fromCommand(__argc, __argv);
-
-    if(cmdline.check("help"))
-    {
-        cout<<HELP_MESSAGE<<endl;
-        return 0;
-    }
-        
-    if(cmdline.check("config"))
-    {
-        if(cmdline.find("config").asString() == "")
-        {
-            cout<<HELP_MESSAGE<<endl;
-            return 0;           
-        }
-        if(!config.fromConfigFile(cmdline.find("config").asString().c_str()))
-            cout<<"WARNING: "<<cmdline.find("config").asString().c_str()<<" cannot be loaded."<<endl;
-    }
-    else 
-        config.fromConfigFile(DEF_CONFIG_FILE);
-    */
-
+    
     /**
      *  preparing default options
      */

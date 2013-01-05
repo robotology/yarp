@@ -79,7 +79,7 @@ Usage:\n\
       ymanager [option...]\n\n\
 Options:\n\
   --help                  Show help\n\
-  --config                Configuration file name\n\
+  --from                  Configuration file name\n\
   --version               Show current version\n"
 
 
@@ -102,7 +102,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     // Setup resource finder
     yarp::os::ResourceFinder rf;
-    rf.setVerbose();
+    rf.setVerbose(false);
     rf.setDefaultContext("");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(argc, argv);
@@ -116,35 +116,12 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         return;
     }
  
-    /*
-    cmdline.fromCommand(argc, argv);
-    if(cmdline.check("help"))
-    {
-        cout<<HELP_MESSAGE<<endl;
-        return;
-    }
-
-    if(cmdline.check("version"))
+    if(config.check("version"))
     {
         cout<<VERSION_MESSAGE<<endl;
         return;
     }
-    
-    if(cmdline.check("config"))
-    {
-        if(cmdline.find("config").asString() == "")
-        {
-            cout<<HELP_MESSAGE<<endl;
-            return;         
-        }
-        if(!config.fromConfigFile(cmdline.find("config").asString().c_str()))
-            cout<<WARNING<<"WARNING: "<<INFO<<cmdline.find("config").asString().c_str()<<" cannot be loaded."<<ENDC<<endl;
-    }
-    else 
-        config.fromConfigFile(DEF_CONFIG_FILE);
-    //      cout<<WARNING<<"WARNING: "<<INFO<<DEF_CONFIG_FILE<<" cannot be loaded. configuration is set to default."<<ENDC<<endl;
-    */
-
+ 
     /**
      *  preparing default options
      */
