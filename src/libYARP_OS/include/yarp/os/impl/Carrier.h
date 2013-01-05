@@ -446,6 +446,20 @@ public:
     virtual bool configure(yarp::os::impl::Protocol& proto) {
         return true;
     }
+
+    /*
+     * Configure carrier from port administrative commands 
+     * @param carrier properties
+     */
+    virtual void setCarrierParams(const yarp::os::Property& params) { }
+
+    /*
+     * get carrier configuration and deliver it by port administrative commands 
+     * @param carrier properties
+     */
+    virtual void getCarrierParams(yarp::os::Property& params) { }
+
+
 };
 
 #endif

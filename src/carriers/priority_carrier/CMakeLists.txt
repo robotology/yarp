@@ -1,5 +1,5 @@
 # Copyright (C) 2012 IITRBCS
-# Authors: Paul Fitzpatrick
+# Authors: Ali Paikan and Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_PLUGIN_LIBRARY)

@@ -14,6 +14,7 @@
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
     namespace os {
@@ -63,6 +64,11 @@ public:
     virtual InputStream& getInputStream() = 0;
 
     virtual bool setTimeout(double timeout) = 0;
+
+    virtual void setOutputCarrierParams(const yarp::os::Property& params) = 0;
+    
+    virtual void getOutputCarrierParams(yarp::os::Property& params) = 0;
+
 };
 
 #endif

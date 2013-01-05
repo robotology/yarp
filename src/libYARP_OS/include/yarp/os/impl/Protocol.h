@@ -546,6 +546,26 @@ public:
         return envelope;
     }
 
+    virtual void setInputCarrierParams(const yarp::os::Property& params) {
+        if(recv_delegate)
+            recv_delegate->setCarrierParams(params);
+    }
+
+    virtual void getInputCarrierParams(yarp::os::Property& params) { 
+        if(recv_delegate)
+            recv_delegate->getCarrierParams(params);
+    }
+
+    virtual void setOutputCarrierParams(const yarp::os::Property& params) { 
+        if(delegate)
+            delegate->setCarrierParams(params);
+    }
+    
+    virtual void getOutputCarrierParams(yarp::os::Property& params) { 
+        if(delegate)
+            delegate->getCarrierParams(params); 
+    }
+
 private:
 
     bool getRecvDelegate();

@@ -124,6 +124,9 @@ public:
         return true;
     }
 
+    virtual void setCarrierParams(const yarp::os::Property& params) { }
+    virtual void getCarrierParams(yarp::os::Property& params) { }
+
 
     //virtual void close() {
     //ShiftStream::close();

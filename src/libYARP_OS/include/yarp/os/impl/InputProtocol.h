@@ -16,6 +16,7 @@
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/impl/String.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
     namespace os {
@@ -71,6 +72,10 @@ public:
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) = 0;
 
     virtual bool skipIncomingData(yarp::os::ConnectionReader& reader) = 0;
+
+    virtual void setInputCarrierParams(const yarp::os::Property& params) = 0;
+    
+    virtual void getInputCarrierParams(yarp::os::Property& params) = 0;
 };
 
 #endif

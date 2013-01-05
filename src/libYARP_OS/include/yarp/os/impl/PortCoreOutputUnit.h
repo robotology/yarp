@@ -88,6 +88,17 @@ public:
 
     virtual bool isBusy();
 
+    void setCarrierParams(const yarp::os::Property& params) {
+        if(op)
+            op->setOutputCarrierParams(params);
+    }
+
+    void getCarrierParams(yarp::os::Property& params) { 
+        if(op)
+            op->getOutputCarrierParams(params);
+    }
+
+
 private:
     OutputProtocol *op;
     bool closing, finished, running, threaded, sending;

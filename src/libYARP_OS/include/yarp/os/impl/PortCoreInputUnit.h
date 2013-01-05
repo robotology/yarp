@@ -83,6 +83,17 @@ public:
 
     virtual bool interrupt();
 
+    void setCarrierParams(const yarp::os::Property& params) {
+        if(ip)
+            ip->setInputCarrierParams(params);
+    }
+
+    void getCarrierParams(yarp::os::Property& params) { 
+        if(ip)
+            ip->getInputCarrierParams(params);
+    }
+
+
 private:
     InputProtocol *ip;
     SemaphoreImpl phase, access;
