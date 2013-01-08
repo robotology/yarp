@@ -4,6 +4,7 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(mjpeg_carrier TYPE MjpegCarrier INCLUDE MjpegCarrier.h)
+  add_carrier_fingerprint(mjpeg.ini mjpeg_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_mjpeg_carrier)
@@ -29,7 +30,9 @@ if (NOT SKIP_mjpeg_carrier)
   target_link_libraries(mjpeg_carrier wire_rep_utils)
 
 
+if(YARP_COMPILE_TESTS)
   add_executable(test_mjpeg test_mjpeg.cpp)
   target_link_libraries(test_mjpeg mjpeg_carrier YARP_init)
+endif(YARP_COMPILE_TESTS)
 
 endif (NOT SKIP_mjpeg_carrier)

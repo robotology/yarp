@@ -17,15 +17,6 @@
 #include <glibmm/ustring.h>
 #include <gdkmm/color.h>
 
-namespace {
-    const Gdk::Color colorRed("Red");
-    const Gdk::Color colorGreen("Green");
-    const Gdk::Color colorBlue("Blue");
-    const Gdk::Color colorCyan("Cyan");
-    const Gdk::Color colorMagenta("Magenta");
-    const Gdk::Color colorYellow("Yellow");
-}
-
 
 class YarpScope::Graph::Private
 {
@@ -109,11 +100,6 @@ YarpScope::Graph::Graph(const Glib::ustring &remote,
                          int plotSize) :
     mPriv(new Private(this))
 {
-    g_assert(plotSize > 0);
-    if (remote.empty()) {
-        fatal() << "Impossible to create a graph; remote is empty";
-    }
-
     g_assert(index >= 0);
     if (index < 0) {
         fatal() << "Impossible to create a graph; index < 0";
@@ -124,7 +110,7 @@ YarpScope::Graph::Graph(const Glib::ustring &remote,
         fatal() << "Impossible to create a graph; size <= 0";
     }
 
-    g_assert(!remote.empty());
+    g_assert(plotSize > 0);
     if (plotSize <= 0) {
          fatal() << "Impossible to create a graph; plot size <= 0";
     }

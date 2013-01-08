@@ -45,6 +45,7 @@ Communication protocol details:
 YARP implementation:
 \li \ref yarp_guts
 \li \ref yarp_build_structure
+\li \ref yarp_plugins
 
 More, more, more:
 \li \ref yarp_code_examples

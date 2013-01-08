@@ -22,6 +22,7 @@
 #  include <stdlib.h>
 #  include <string.h>
 #  include <unistd.h>
+#  include <dirent.h>
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  ifndef ACE_OS
@@ -29,6 +30,12 @@
 #  endif
 #  ifndef ACE_stat
 #    define ACE_stat struct stat
+#  endif
+#  ifndef ACE_DIRENT
+#    define ACE_DIRENT dirent
+#  endif
+#  ifndef ACE_DIR
+#    define ACE_DIR DIR
 #  endif
 #endif
 

@@ -1457,6 +1457,162 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             }
         }
         break;
+
+    case VOCAB3('s','e','t'):
+        switch (cmd.get(1).asVocab()) {
+        case VOCAB2('i','n'):
+            {
+                ConstString target = cmd.get(2).asString();
+                stateMutex.wait();
+                if (target=="") {
+                    result.addInt(-1);
+                    result.addString("target port is not specified.\r\n");
+                }
+                else {
+                    for (unsigned int i=0; i<units.size(); i++) {
+                        PortCoreUnit *unit = units[i];
+                        if (unit && unit->isInput() && !unit->isFinished()) {
+                            Route route = unit->getRoute();
+                            if (route.getFromName() == target.c_str()) {
+                                yarp::os::Property property;
+                                property.fromString(cmd.toString());
+                                unit->setCarrierParams(property);
+                                result.addInt(0);
+                                ConstString msg = "Configured connection from ";
+                                msg += route.getFromName().c_str();
+                                msg += "\r\n";
+                                result.addString(msg.c_str());
+                                break;
+                            }
+                        }
+                    }
+                    if(!result.size())
+                    {
+                        result.addInt(-1);
+                        ConstString msg = "Could not find an incoming connection from ";
+                        msg += target.c_str();
+                        msg += "\r\n";
+                        result.addString(msg.c_str());
+                    }
+                }
+                stateMutex.post();
+            }
+            break;
+        case VOCAB3('o','u','t'):
+        default:
+            {
+                ConstString target = cmd.get(2).asString();
+                stateMutex.wait();
+                if (target=="") {
+                    result.addInt(-1);
+                    result.addString("target port is not specified.\r\n");
+                }
+                else {
+                    for (unsigned int i=0; i<units.size(); i++) {
+                        PortCoreUnit *unit = units[i];
+                        if (unit && unit->isOutput() && !unit->isFinished()) {
+                            Route route = unit->getRoute();
+                            if (route.getToName() == target.c_str()) {
+                                yarp::os::Property property;
+                                property.fromString(cmd.toString());
+                                unit->setCarrierParams(property);
+                                result.addInt(0);
+                                ConstString msg = "Configured connection to ";
+                                msg += route.getFromName().c_str();
+                                msg += "\r\n";
+                                result.addString(msg.c_str());
+                                break;
+                            }
+                        }
+                    }
+                    if(!result.size())
+                    {
+                        result.addInt(-1);
+                        ConstString msg = "Could not find an incoming connection to ";
+                        msg += target.c_str();
+                        msg += "\r\n";
+                        result.addString(msg.c_str());
+                    }
+                }
+                stateMutex.post();
+
+            }
+        }
+        break;
+
+    case VOCAB3('g','e','t'):
+        switch (cmd.get(1).asVocab()) {
+        case VOCAB2('i','n'):
+            {
+                ConstString target = cmd.get(2).asString();
+                stateMutex.wait();
+                if (target=="") {
+                    result.addInt(-1);
+                    result.addString("target port is not specified.\r\n");
+                }
+                else {
+                    for (unsigned int i=0; i<units.size(); i++) {
+                        PortCoreUnit *unit = units[i];
+                        if (unit && unit->isInput() && !unit->isFinished()) {
+                            Route route = unit->getRoute();
+                            if (route.getFromName() == target.c_str()) {
+                                yarp::os::Property property;
+                                unit->getCarrierParams(property);
+                                result.addDict() = property;
+                                break;
+                            }
+                        }
+                    }
+                    if(!result.size())
+                    {
+                        result.addInt(-1);
+                        ConstString msg = "Could not find an incoming connection from ";
+                        msg += target.c_str();
+                        msg += "\r\n";
+                        result.addString(msg.c_str());
+                    }
+                }
+                stateMutex.post();
+            }
+            break;
+        case VOCAB3('o','u','t'):
+        default:
+            {
+                ConstString target = cmd.get(2).asString();
+                stateMutex.wait();
+                if (target=="") {
+                    result.addInt(-1);
+                    result.addString("target port is not specified.\r\n");
+                }
+                else {
+                    for (unsigned int i=0; i<units.size(); i++) {
+                        PortCoreUnit *unit = units[i];
+                        if (unit && unit->isOutput() && !unit->isFinished()) {
+                            Route route = unit->getRoute();
+                            if (route.getToName() == target.c_str()) {
+                                yarp::os::Property property;
+                                property.fromString(cmd.toString());
+                                unit->getCarrierParams(property);
+                                result.addDict() = property;
+                                break;
+                            }
+                        }
+                    }
+                    if(!result.size())
+                    {
+                        result.addInt(-1);
+                        ConstString msg = "Could not find an incoming connection to ";
+                        msg += target.c_str();
+                        msg += "\r\n";
+                        result.addString(msg.c_str());
+                    }
+                }
+                stateMutex.post();
+
+            }
+        }
+        break;
+
     case VOCAB4('r','p','u','p'):
         {
             YARP_SPRINTF1(log,debug,

@@ -162,7 +162,7 @@ public:
      * @param wipe should Property be emptied first
      */
     void fromString(const char *txt, bool wipe=true);
-    
+
     /**
      * Interprets a list of command arguments as a list of properties. 
      * Keys are named by beginning with "--".  For example, with

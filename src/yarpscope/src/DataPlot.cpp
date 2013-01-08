@@ -51,6 +51,8 @@ public:
     float maxval;
     int size;
     Gdk::Color bgcolor;
+    Gdk::Color gridcolor;
+    Gdk::Color crosscolor;
     bool autorescale;
 
     float *hlines;
@@ -70,8 +72,8 @@ void YarpScope::DataPlot::Private::createGrid()
         vlines[i] = size / 8.0f * (i + 1);
     }
 
-    grid = GDatabox::Grid::create(9, 8, hlines, vlines, Gdk::Color("Grey"));
-    cross = GDatabox::CrossSimple::create(Gdk::Color("DarkSlateGrey"));
+    grid = GDatabox::Grid::create(9, 8, hlines, vlines, gridcolor);
+    cross = GDatabox::CrossSimple::create(crosscolor);
 
     parent->graph_add(grid);
     parent->graph_add(cross);
@@ -83,6 +85,8 @@ YarpScope::DataPlot::DataPlot(Gtk::Table **table,
                               float maxval,
                               int size,
                               const Glib::ustring &bgcolor,
+                              //const Glib::ustring &gridcolor,
+                              //const Glib::ustring &crosscolor,
                               bool autorescale) :
     GDatabox::Databox(table, true, true, false, true),
     mPriv(new Private(this))
@@ -91,6 +95,8 @@ YarpScope::DataPlot::DataPlot(Gtk::Table **table,
     mPriv->maxval = maxval;
     mPriv->size = size;
     mPriv->bgcolor = (bgcolor.empty() ? Gdk::Color("LightSlateGray") : Gdk::Color(bgcolor));
+    mPriv->gridcolor = Gdk::Color("Grey");
+    mPriv->crosscolor = Gdk::Color("DarkSlateGrey");
     mPriv->autorescale = autorescale;
 
     mPriv->createGrid();

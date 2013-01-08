@@ -477,6 +477,9 @@ namespace yarp {
          */
         struct PixelRgbFloat { 
             float r,g,b; 
+            PixelRgbFloat() { r = g = b = 0; }
+            PixelRgbFloat(float n_r, float n_g, float n_b)
+            { r = n_r;  g = n_g;  b = n_b; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
         /**

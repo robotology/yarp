@@ -92,6 +92,10 @@ Bottle& Bottle::addList() {
     return HELPER(implementation).addList();
 }
 
+Property& Bottle::addDict() {
+    return HELPER(implementation).addDict();
+}
+
 Value Bottle::pop() {
     Storable* stb = HELPER(implementation).pop();
     Value val(*stb);

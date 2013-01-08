@@ -576,6 +576,40 @@ public:
         checkEqual(bot4.get(0).asString().length(),12,"bottled, text-serialized string length ok");
     }
 
+    void testBool() {
+        report(0,"test boolean values");
+        Bottle bot("1 true \"true\" false \"false\" 0 [ok]");
+        checkTrue(bot.get(1).isBool(),"true is boolean");
+        checkFalse(bot.get(2).isBool(),"quoted true is not boolean");
+        checkTrue(bot.get(3).isBool(),"false is boolean");
+        checkFalse(bot.get(4).isBool(),"quoted false is not boolean");
+        checkFalse(bot.get(6).isBool(),"not all vocabs are boolean");
+        checkTrue(bot.get(1).asBool(),"true is true");
+        checkFalse(bot.get(3).asBool(),"false is false");
+        checkEqual(bot.get(1).asString().c_str(),"true","true can spell");
+        checkEqual(bot.get(3).asString().c_str(),"false","false can spell");
+    }
+
+    void testDict() {
+        report(0,"test dictionary values");
+        Bottle bot("1");
+        Property& p = bot.addDict();
+        p.put("test","me");
+        p.put("hi","there");
+        Bottle bot2;
+        bot2 = bot;
+        checkTrue(bot2.get(1).isDict(),"dict copies ok");
+        checkEqual(bot2.get(1).asDict()->find("test").asString().c_str(),
+                   "me","dict content copies ok");
+
+        Bottle bot3;
+        bot3.fromString(bot.toString());
+        checkEqual(bot2.get(1).asSearchable()->find("test").asString().c_str(),
+                   "me","dict content serializes ok");
+        // serialization currently will convert dicts to lists,
+        // for backwards compatibility
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -607,6 +641,8 @@ public:
         testNull();
         testSerialCopy();
         testStringWithNull();
+        testBool();
+        testDict();
     }
 
     virtual String getName() {

@@ -110,7 +110,8 @@ ENDIF (CREATE_JAVA)
 
 IF (CREATE_PYTHON)	 
   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
-  FIND_PACKAGE(PythonLibs)
+  SET(CREATE_PYTHON_VERSION "" CACHE STRING "Control python version used, if you wish." )
+  FIND_PACKAGE(PythonLibs ${CREATE_PYTHON_VERSION})
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
   LINK_LIBRARIES(${PYTHON_LIBRARY})
   
@@ -125,7 +126,8 @@ IF (CREATE_PYTHON)
   #ADD_DEFINITIONS(-DPy_DEBUG)
 
   # installation path is determined reliably on most platforms using distutils
-  FIND_PACKAGE(PythonInterp)
+  FIND_PACKAGE(PythonInterp ${CREATE_PYTHON_VERSION})
+
   EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} 
     -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}'))" 
     OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )

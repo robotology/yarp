@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2012 IITRBCS
- * Authors: Paul Fitzpatrick
+ * Authors: Ali Paikan and Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -243,6 +243,27 @@ public:
 
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
 
+    virtual void setCarrierParams(const yarp::os::Property& params) { 
+        yarp::os::Property property = params;
+        timeConstant = property.check("tc", Value(timeConstant)).asDouble();
+        timeResting = property.check("tr", Value(timeResting)).asDouble();
+        stimulation = property.check("st", Value(stimulation)).asDouble();
+        baias = property.check("bs", Value(baias)).asDouble();
+        isVirtual = property.check("virtual", Value(isVirtual)).asBool();
+        if(property.check("ex"))
+            excitation = property.findGroup("ex");
+    }
+
+    virtual void getCarrierParams(yarp::os::Property& params) { 
+        params.put("tc", timeConstant);
+        params.put("tr", timeResting);
+        params.put("st", stimulation);
+        params.put("bs", baias);
+        params.put("virtual", (int)isVirtual);
+        params.put("ex", excitation.toString());
+    }
+
+
     
 public:
     double timeConstant;            // priority reset time (tc > 0) 
@@ -252,7 +273,7 @@ public:
     double timeArrival;             // arrival time of the message 
     bool isVirtual;                 // a virtual link does not carry any data
     bool isActive;                  // true if port is in active state X(t)
-    double baias;                   // baias value for excitaion
+    double baias;                   // baias value for excitation
     Bottle excitation;              // a list of exitatory signals as (name, value)
     String sourceName;
     

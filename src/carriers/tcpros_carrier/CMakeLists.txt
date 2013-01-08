@@ -5,6 +5,7 @@
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(tcpros_carrier TYPE TcpRosCarrier INCLUDE TcpRosCarrier.h)
   prepare_carrier(rossrv_carrier TYPE RosSrvCarrier INCLUDE TcpRosCarrier.h)
+  add_carrier_fingerprint(ros.ini rossrv_carrier tcpros_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_tcpros_carrier)
@@ -13,7 +14,7 @@ if (NOT SKIP_tcpros_carrier)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   get_property(WIRE_INCLUDE_DIRS TARGET wire_rep_utils PROPERTY INCLUDE_DIRS)
   include_directories(${WIRE_INCLUDE_DIRS})
-  add_library(tcpros_carrier 
+  add_library(yarp_tcpros 
     TcpRosCarrier.h TcpRosCarrier.cpp
     TcpRosStream.h TcpRosStream.cpp
     RosHeader.h RosHeader.cpp
@@ -22,9 +23,9 @@ if (NOT SKIP_tcpros_carrier)
     RosType.h RosType.cpp
     RosTypeCodeGenYarp.h RosTypeCodeGenYarp.cpp
   )
-  target_link_libraries(tcpros_carrier wire_rep_utils)
-  target_link_libraries(tcpros_carrier ${YARP_LIBRARIES})
+  target_link_libraries(yarp_tcpros wire_rep_utils)
+  target_link_libraries(yarp_tcpros ${YARP_LIBRARIES})
 
   add_executable(yarpros yarpros.cpp)
-  target_link_libraries(yarpros tcpros_carrier YARP_init ${YARP_LIBRARIES})
+  target_link_libraries(yarpros yarp_tcpros YARP_init ${YARP_LIBRARIES})
 endif (NOT SKIP_tcpros_carrier)

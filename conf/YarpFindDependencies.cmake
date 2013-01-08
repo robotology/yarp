@@ -219,17 +219,20 @@ if(CREATE_GUIS)
             checkandset_dependency(GtkMM)
         endif(CREATE_YARPSCOPE OR CREATE_GYARPMANAGER)
     endif(YARP_USE_GTK2)
-    
+
     ### FIXME: remove this check when stop supporting debian etch
-    if (CREATE_YARPSCOPE)
+    ### FIXME: FindGtkMM reports the wrong version on windows, since
+    ###        this is a problem strictly related to debian etch, for
+    ###        now we do this check only on UNIX.
+    if (UNIX AND CREATE_YARPSCOPE)
         if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
             if (GtkMM_VERSION_MINOR LESS 20)
                 message(STATUS "Detected version of GtkMM that does not support yarpscope, turning off CREATE_YARPSCOPE")
                 set(CREATE_YARPSCOPE FALSE CACHE BOOL "YARPSCOPE not supported" FORCE)
             endif()
         endif()
-    endif(CREATE_YARPSCOPE)
-    
+    endif(UNIX AND CREATE_YARPSCOPE)
+
 endif(CREATE_GUIS)
 
 if(CREATE_YARPSCOPE)

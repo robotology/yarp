@@ -26,42 +26,51 @@
 #include "XmlLoader.h"
 #include "PlotManager.h"
 #include "PortReader.h"
+#include "SimpleLoader.h"
 
 void usage() {
     std::cout << "Usage: yarpscope [OPTIONS]" << std::endl;
     std::cout << std::endl;
     std::cout << "OPTIONS:" << std::endl;
-    std::cout << " --help             Print this help and exit." << std::endl;
+    std::cout << " --help                 Print this help and exit." << std::endl;
     std::cout << std::endl;
-    std::cout << " --title [string]   Title of the window (default \"Yarp Port Scope\")" << std::endl;
-    std::cout << " --x [uint]         Initial X position of the window." << std::endl;
-    std::cout << " --y [uint]         Initial Y position of the window." << std::endl;
-    std::cout << " --dx [uint]        Initial width of the window." << std::endl;
-    std::cout << " --dy [uint]        Initial height of the window." << std::endl;
+    std::cout << " --title [string]       Title of the window (default \"Yarp Port Scope\")" << std::endl;
+    std::cout << " --x [uint]             Initial X position of the window." << std::endl;
+    std::cout << " --y [uint]             Initial Y position of the window." << std::endl;
+    std::cout << " --dx [uint]            Initial width of the window." << std::endl;
+    std::cout << " --dy [uint]            Initial height of the window." << std::endl;
     std::cout << std::endl;
-    std::cout << " --interval [int]   Initial refresh interval in milliseconds. (default = 50ms)" << std::endl;
+    std::cout << " --interval [int]       Initial refresh interval in milliseconds. (default = 50ms)" << std::endl;
     std::cout << std::endl;
     std::cout << "XML MODE:" << std::endl;
-    std::cout << " --xml [path]       Path to the xml with the description of the scene (all the" << std::endl;
-    std::cout << "                    \"command line mode\" options are discarded)." << std::endl;
+    std::cout << " --xml [path]           Path to the xml with the description of the scene (all the" << std::endl;
+    std::cout << "                        \"simple mode\" options are discarded)." << std::endl;
     std::cout << std::endl;
-    std::cout << "COMMAND LINE MODE:" << std::endl;
-    std::cout << " --remote [...]     Remote port(s) to use. It can be:" << std::endl;
-    std::cout << "                    * [string] (single plot connected to a single remote port)" << std::endl;
-    std::cout << "                    * [array of strings] (single plot connected to several" << std::endl;
-    std::cout << "                      ports)" << std::endl;
-    std::cout << "                    * [array of arrays of string] (multiple plots each connected" << std::endl;
-    std::cout << "                      to multiple ports)" << std::endl;
-    std::cout << " --index [...]      Index(es) of the vector to plot. Depending on the value of the \"--remote\"" << std::endl;
-    std::cout << "                    option it must be:" << std::endl;
-    std::cout << "                    * [array of uint]" << std::endl;
-    std::cout << "                    * [array of arrays of uint]" << std::endl;
-    std::cout << "                    * [array of arrays of arrays of uint]" << std::endl;
-    std::cout << " --rows [uint]      Number of rows. (default = number of remotes)" << std::endl;
-    std::cout << " --cols [uint]      Number of columns. (default = 1)" << std::endl;
+    std::cout << "SIMPLE MODE (single remote):" << std::endl;
+    std::cout << " --remote [string]      Remote port to connect to." << std::endl;
+    std::cout << " --index [...]          Index(es) of the vector to plot." << std::endl;
+    std::cout << "                        It can be an [uint] or an array of [uint]s" << std::endl;
+    std::cout << " --plot_title [string]  Plot title (default = remote)" << std::endl;
+    std::cout << " --min [float]          Minimum value for the X axis (default -100)" << std::endl;
+    std::cout << " --max [float]          Maximum value for the X axis (default 100)" << std::endl;
+    std::cout << " --size [uint]          Plot size (Number of samples to plot) (default 201)" << std::endl;
+    std::cout << " --bgcolor [string]     Background color." << std::endl;
+//    std::cout << " --autorescale          Rescale plot automatically." << std::endl;
+//    std::cout << " --realtime             Use real time mode." << std::endl;
+//    std::cout << " --triggermode          Use trigger mode." << std::endl;
+//    std::cout << " --graph_title [...]    Graph title(s) (used in legend)." << std::endl;
+//    std::cout << "                        Depending on index it mast be a [string] or an array of [string]s." << std::endl;
+    std::cout << " --color [...]          Graph color(s)." << std::endl;
+    std::cout << "                        Depending on index it must be a [string] or an array of [string]s." << std::endl;
+    std::cout << " --type [...]           Graph type(s). Accepted values are \"points\", \"lines\" and \"bars\" (default = \"lines\")" << std::endl;
+    std::cout << "                        Depending on index it must be a [string] or an array of [string]s." << std::endl;
+    std::cout << " --graph_size [...]     Graph size(s) (thickness of the points) (default = 1)" << std::endl;
+    std::cout << "                        Depending on index it must be a [uint] or an array of [uint]s." << std::endl;
     std::cout << std::endl;
     std::cout << "LEGACY OPTIONS (deprecated and unused):" << std::endl;
-    std::cout << " --local [string]   Use YARP_PORT_PREFIX environment variable to modify default value." << std::endl;
+    std::cout << " --local [string]       Use YARP_PORT_PREFIX environment variable to modify default value." << std::endl;
+    std::cout << " --rows [uint]          Only one plot is supported from command line. Use XML mode instead." << std::endl;
+    std::cout << " --cols [uint]          Only one plot is supported from command line. Use XML mode instead." << std::endl;
 }
 
 
@@ -74,12 +83,6 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("yarpscope.ini");
     rf.configure(argc, argv);
 
-    //Yarp network initialization
-    yarp::os::Network yarp;
-    if (!yarp.checkNetwork()) {
-        fatal() << "Cannot connect to yarp network";
-    }
-
     // Read command line options
     yarp::os::Property options;
     options.fromString(rf.toString());
@@ -87,6 +90,12 @@ int main(int argc, char *argv[])
     if (options.check("help")) {
         usage();
         exit(0);
+    }
+
+    //Yarp network initialization
+    yarp::os::Network yarp;
+    if (!yarp.checkNetwork()) {
+        fatal() << "Cannot connect to yarp network";
     }
 
     // Init gtkmm and gtkdataboxmm
@@ -117,7 +126,7 @@ int main(int argc, char *argv[])
         mainWindow.setInterval(options.find("interval").asInt());
     }
 
-
+    bool ok;
     if (options.check("xml")) {
 // XML Mode Options
         const yarp::os::Value &xmlValue = options.find("xml");
@@ -126,85 +135,9 @@ int main(int argc, char *argv[])
         YarpScope::XmlLoader xmlLoader(filename.c_str());
     } else {
 // Command Line Mode Options
-        // TODO Make a class
-        // rows and cols
-        unsigned int rows = 1;
-        unsigned int cols = 1;
-        if (options.check("rows")) {
-            rows = options.find("rows").asInt();
-        }
-        if (options.check("cols")) {
-            cols = options.find("cols").asInt();
-        }
-        if (rows <= 0 || cols <= 0) {
-            error() << "--rows and --cols should be positive integers.\n";
-            usage();
-            exit(1);
-        }
-        debug() << "Using" << rows << "rows and" << cols << "columns.";
-
-        // remote
-        const yarp::os::Value &remoteValue = options.find("remote");
-        if (remoteValue.isNull()) {
-            debug() << "Missing --remote option. Will wait for the connection...";
-        } else {
-            debug() << "Using remote port(s)" << remoteValue.toString();
-        }
-
-        // index
-        yarp::os::Value &indexValue = options.find("index");
-        if (indexValue.isNull()) {
-            debug() << "No index parameter. Plotting index \"0\"";
-            indexValue.fromString("0");
-        }
-
-        bool remoteValueOk = true;
-        bool indexValueOk = true;
-
-        for (unsigned int i = 0; i < rows * cols; i++) {
-            if (!remoteValueOk || !indexValueOk) {
-                break;
-            }
-
-            std::list<Glib::ustring> remotePortNames;
-
-            //local/remote port connection
-            if (remoteValue.isString()) {
-                remotePortNames.push_back(remoteValue.toString().c_str());
-            } else if (remoteValue.isList()) {
-                yarp::os::Bottle *remoteList = remoteValue.asList();
-                unsigned int listSize = remoteList->size();
-                if (remoteList->get(0).isString() && listSize == 1) {
-                    remotePortNames.push_back(remoteList->get(0).toString().c_str());
-                } else if (remoteList->get(i).isString() && listSize == rows * cols) {
-                    remotePortNames.push_back(remoteList->get(i).toString().c_str());
-                } else if (remoteList->get(i).isList() && listSize == rows * cols) {
-                    yarp::os::Bottle *portRemoteList = remoteList->get(i).asList();
-                    for (int j = 0; j < portRemoteList->size(); j++) {
-                        if (!portRemoteList->get(j).isString()) {
-                            remoteValueOk = false;
-                            break;
-                        }
-                        remotePortNames.push_back(portRemoteList->get(j).toString().c_str());
-                    }
-                } else {
-                    remoteValueOk = false;
-                    break;
-                }
-            } else if (!remoteValue.isNull()) {
-                remoteValueOk = false;
-                break;
-            }
-        }
-
-        if (!remoteValueOk) {
-            error() << "--remote argument should be a string or a list of rows * cols strings or lists of strings\n";
-            usage();
-            exit(1);
-        }
-
-        if (!indexValueOk) {
-            error() << "--index argument should be a integer or a list of rows * cols integer or lists of integers or lists of integers\n";
+        debug() << "Loading from command line";
+        YarpScope::SimpleLoader simpleLoader(options, &ok);
+        if (!ok) {
             usage();
             exit(1);
         }
@@ -216,6 +149,15 @@ int main(int argc, char *argv[])
         warning() << "--local option is deprecated. YarpScope now uses \"${YARP_PORT_PREFIX}/YarpScope/${REMOTE_PORT_NAME}\"";
     }
 
+    // rows
+    if (options.check("rows")) {
+        warning() << "--rows option is deprecated. Use XML mode if you need more than one plot in a single window\"";
+    }
+
+    // cols
+    if (options.check("cols")) {
+        warning() << "--cols option is deprecated. Use XML mode if you need more than one plot in a single window\"";
+    }
 
     Gtk::Main::run(mainWindow);
     return 0;

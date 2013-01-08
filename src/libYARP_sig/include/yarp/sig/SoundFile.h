@@ -27,7 +27,7 @@ namespace yarp {
              * @param src name of file (should be a WAV file)
              * @return true on success
              */
-            bool read(Sound& dest, const char *src);
+            bool YARP_sig_API read(Sound& dest, const char *src);
 
             /**
              * Write a sound to file.
@@ -35,7 +35,7 @@ namespace yarp {
              * @param dest name of file (will be a WAV file)
              * @return true on success
              */
-            bool write(const Sound& src, const char *dest);
+            bool YARP_sig_API write(const Sound& src, const char *dest);
         }
     }
 };

@@ -162,3 +162,9 @@ bool Value::write(ConnectionWriter& connection) {
     return proxy->write(connection);
 }
 
+
+Searchable *Value::asSearchable() const {
+    ok(); 
+    if (proxy->isDict()) return proxy->asDict(); 
+    return proxy->asList();
+}

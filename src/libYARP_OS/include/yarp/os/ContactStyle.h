@@ -31,6 +31,7 @@ public:
     double timeout;
     ConstString carrier;
     bool expectReply;
+    bool persistent;
 
     ContactStyle() {
         admin = false;
@@ -38,6 +39,7 @@ public:
         timeout = -1;
         carrier = "";
         expectReply = true;
+        persistent = false;
     }
 };
 

@@ -33,7 +33,7 @@ namespace yarp {
  * (see BufferedPort::read and BufferedPort::write).
  */
 template <class T>
-class yarp::os::BufferedPort : public Contactable, 
+class yarp::os::BufferedPort : public Contactable,
                         public TypedReader<T>, public TypedReaderCallback<T>
 {
 public:
@@ -122,14 +122,14 @@ public:
 
 
     /**
-     * Access the object which will be transmitted by the next call to 
+     * Access the object which will be transmitted by the next call to
      * yarp::os::BufferedPort::write.
      * The object can safely be modified by the user of this class, to
-     * prepare it.  Extra objects will be created or reused as 
+     * prepare it.  Extra objects will be created or reused as
      * necessary depending on the state of communication with the
      * output(s) of the port.  Be careful!  If prepare() gives you
      * a reused object, it is up to the user to clear the object if that is
-     * appropriate.  
+     * appropriate.
      * If you are sending yarp::os::Bottle objects, you may want to call
      * yarp::os::Bottle::clear(), for example.
      * YARP doesn't clear objects for you, since there are many
@@ -159,7 +159,7 @@ public:
      * it is now owned by the communications system.  The BufferedPort::prepare
      * method should be called again to get a fresh (or reused) object
      * guaranteed to be not in use by the communications system.
-     * @param forceStrict If this is true, wait until any previous sends 
+     * @param forceStrict If this is true, wait until any previous sends
      * are complete.  If false, the current object will not be sent on
      * connections that are currently busy.
      *
@@ -200,9 +200,9 @@ public:
         return reader.lastRead();
     }
 
-	virtual bool isClosed() {
-		return reader.isClosed();
-	}
+    virtual bool isClosed() {
+        return reader.isClosed();
+    }
 
     void setReplier(PortReader& reader) {
         this->reader.setReplier(reader);
@@ -221,7 +221,7 @@ public:
     }
 
     /**
-     * Set an object whose onRead method will be called when data is 
+     * Set an object whose onRead method will be called when data is
      * available.
      */
     void useCallback(TypedReaderCallback<T>& callback) {

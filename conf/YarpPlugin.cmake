@@ -465,6 +465,20 @@ MACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
 ENDMACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
 
+
+#########################################################################
+# ADD_CARRIER_FINGERPRINT macro gives YARP a config file that will help
+# detect that a message is in a particular protocol, even if support for
+# that protocol has not yet loaded:
+#    ADD_CARRIER_FINGERPRINT(carrier.ini carrier1 carrier2)
+#
+MACRO(ADD_CARRIER_FINGERPRINT file_name)
+  GET_FILENAME_COMPONENT(out_name ${file_name} NAME)
+  CONFIGURE_FILE(${file_name} ${CMAKE_BINARY_DIR}/etc/carriers/${out_name} COPYONLY)
+ENDMACRO(ADD_CARRIER_FINGERPRINT)
+
+
+
 ## We skipped this whole file if it was already included
 ENDIF (NOT COMMAND END_PLUGIN_LIBRARY)
 

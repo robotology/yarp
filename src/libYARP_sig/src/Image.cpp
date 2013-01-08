@@ -726,36 +726,91 @@ const void *Image::getIplImage() const {
 void Image::wrapIplImage(void *iplImage) {
     YARP_ASSERT(iplImage!=NULL);
     IplImage *p = (IplImage *)iplImage;
-    YARP_ASSERT(p->depth==IPL_DEPTH_8U);
     ConstString str = p->colorModel;
     int code = -1;
+    int color_code = -1;
     if (str=="rgb"||str=="RGB"||
         str=="bgr"||str=="BGR"||
+        str=="gray"||str=="GRAY"||
         str=="graygray"||str=="GRAYGRAY") {
         str = p->channelSeq;
         if (str=="rgb"||str=="RGB") {
-            code = VOCAB_PIXEL_RGB;
+            color_code = VOCAB_PIXEL_RGB;
         } else if (str=="bgr"||str=="BGR") {
-            code = VOCAB_PIXEL_BGR;
-        } else if (str=="gray"||str=="GRAY") {
-            code = VOCAB_PIXEL_MONO;
+            color_code = VOCAB_PIXEL_BGR;
+        } else if (str=="gray"||str=="GRAY"||
+                   str=="graygray"||str=="GRAYGRAY") {
+            color_code = VOCAB_PIXEL_MONO;
         } else {
             printf("specific IPL RGB order (%s) is not yet supported\n", 
                    str.c_str());
-            printf("Try RGB or BGR\n");
+            printf("Try RGB, BGR, or \n");
             printf("Or fix code at %s line %d\n",__FILE__,__LINE__);
             exit(1);
         }
-    } else {
-        printf("specific IPL format (%s) is not yet supported\n", 
-               str.c_str());
-        printf("Try RGB or BGR\n");
-        printf("Or fix code at %s line %d\n",__FILE__,__LINE__);
-        exit(1);
     }
+
+    // Type translation is approximate.  Patches welcome to flesh out
+    // the types available.
+    if (p->depth == (int)IPL_DEPTH_8U) {
+        code = color_code;
+    } else if (p->depth == (int)IPL_DEPTH_8S) {
+        switch (color_code) {
+        case VOCAB_PIXEL_MONO:
+            code = VOCAB_PIXEL_MONO_SIGNED;
+            break;
+        case VOCAB_PIXEL_RGB:
+            code = VOCAB_PIXEL_RGB_SIGNED;
+            break;
+        case VOCAB_PIXEL_BGR:
+            code = color_code; // nothing better available
+            break;
+        }
+    } else if (p->depth == (int)IPL_DEPTH_16U || p->depth == (int)IPL_DEPTH_16S) {
+        switch (color_code) {
+        case VOCAB_PIXEL_MONO:
+            code = VOCAB_PIXEL_MONO16;
+            break;
+        case VOCAB_PIXEL_RGB:
+        case VOCAB_PIXEL_BGR:
+            fprintf(stderr,"No translation currently available for this pixel type\n");
+            exit(1);
+            break;
+        }
+    } else if (p->depth == (int)IPL_DEPTH_32S) {
+        switch (color_code) {
+        case VOCAB_PIXEL_MONO:
+            code = VOCAB_PIXEL_INT;
+            break;
+        case VOCAB_PIXEL_RGB:
+        case VOCAB_PIXEL_BGR:
+            code = VOCAB_PIXEL_RGB_INT;
+            break;
+        }
+    } else if (p->depth == (int)IPL_DEPTH_32F) {
+        switch (color_code) {
+        case VOCAB_PIXEL_MONO:
+            code = VOCAB_PIXEL_MONO_FLOAT;
+            break;
+        case VOCAB_PIXEL_RGB:
+        case VOCAB_PIXEL_BGR:
+            code = VOCAB_PIXEL_RGB_FLOAT;
+            break;
+        }
+    }
+
+    if (code==-1) {
+        fprintf(stderr,"IPL pixel type / depth combination is not yet supported\n");
+        fprintf(stderr,"Please email a YARP developer to complain, quoting this:\n");
+        fprintf(stderr,"   %s:%d\n", __FILE__, __LINE__);
+    }
+
     if (getPixelCode()!=code && getPixelCode()!=-1) {
-        printf("your specific IPL format (%s) does not match your YARP format\n",
-               str.c_str());
+        printf("your specific IPL format (%s depth %d -> %s) does not match your YARP format (%s)\n",
+               str.c_str(),
+               p->depth,
+               Vocab::decode(code).c_str(),
+               Vocab::decode(getPixelCode()).c_str());
         printf("Making a copy instead of just wrapping...\n");
         FlexImage img;
         img.setQuantum(p->align);

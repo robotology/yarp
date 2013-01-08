@@ -179,8 +179,8 @@ public:
         if (name=="") {
             if (verbose) {
                 fprintf(RTARGET,"||| no policy found\n");
-                skip_policy = true;
             }
+            skip_policy = true;
         }
         if (name=="none") {
             skip_policy = true;

@@ -235,6 +235,22 @@ bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
     return ns->disconnectTopicFromPort(src,dest,style);
 }
 
+bool MultiNameSpace::connectPortToPortPersistently(const Contact& src, 
+                                                   const Contact& dest,
+                                                   ContactStyle style) {
+    NameSpace *ns = HELPER(this).getOne();
+    if (!ns) return false;
+    return ns->connectPortToPortPersistently(src,dest,style);
+}
+
+bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src, 
+                                                      const Contact& dest,
+                                                      ContactStyle style) {
+    NameSpace *ns = HELPER(this).getOne();
+    if (!ns) return false;
+    return ns->disconnectPortToPortPersistently(src,dest,style);
+}
+
 Contact MultiNameSpace::registerName(const char *name) {
     SpaceList lst = HELPER(this).getAll();
     Contact result;

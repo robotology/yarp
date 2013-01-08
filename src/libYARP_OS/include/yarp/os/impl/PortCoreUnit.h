@@ -117,6 +117,10 @@ public:
         this->pupString = pupString;
     }
 
+    virtual void setCarrierParams(const yarp::os::Property& params) { }
+    virtual void getCarrierParams(yarp::os::Property& params) { }
+
+
 protected:
     PortCore& getOwner() { return owner; }
 

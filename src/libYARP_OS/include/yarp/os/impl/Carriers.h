@@ -124,7 +124,8 @@ private:
   
     static Carriers *yarp_carriers_instance;
 
-    Carrier *chooseCarrier(const String * name, const Bytes * bytes);  
+    Carrier *chooseCarrier(const String * name, const Bytes * bytes,
+                           bool load_if_needed = true);  
 };
 
 

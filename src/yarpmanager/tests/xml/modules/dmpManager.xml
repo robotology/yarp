@@ -61,7 +61,7 @@
         </input>
 
 	<input>
-            <type>Rpc</type>
+            <type>iCub_dmpManager.dmpManagerInterface</type>
             <port carrier="tcp">/dmpManager/thrift:rpc</port>
             <required>no</required>
             <priority>no</priority>
@@ -93,7 +93,7 @@
             <description>rpc port to communicate with OPC</description>
         </output>
         <output>
-            <type>Rpc</type>
+            <type>iCub_dmpLearner.dmpLearnerInterface</type>
             <port carrier="tcp">/dmpManager/dmpLearner:rpc</port>
             <description>rpc port to communicate with dmpLearnerModule</description>
         </output>

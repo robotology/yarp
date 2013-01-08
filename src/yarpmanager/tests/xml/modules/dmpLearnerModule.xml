@@ -1,6 +1,6 @@
 <module>
     <!-- module's name should match its executable file's name. -->
-    <name>dmpLearnerModule</name>
+    <name>dmpLearner</name>
     <description>A module for actions' learning and generalization through DMP representation.</description>
     <version>1.0</version>
 
@@ -23,7 +23,7 @@
      <!-- <data> can have multiple <input> or <output> tags. -->
      <data>
 	<input>
-            <type>Rpc</type>
+            <type>iCub_dmpLearner.dmpLearnerInterface</type>
             <port carrier="tcp">/dmpLearner/rpc</port>
             <required>no</required>
             <priority>no</priority>

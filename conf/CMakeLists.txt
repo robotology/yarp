@@ -16,7 +16,7 @@ endforeach(conf)
 # There are several macros we traditionally make available to
 # users of YARP.
 
-foreach(conf YarpPlugin.cmake YarpIDL.cmake YarpDevice.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindBoost.cmake FindACE.cmake FindGthread.cmake FindGtkMM.cmake FindGtkMMUnix.cmake FindGtkMMWin32.cmake)
+foreach(conf YarpPlugin.cmake YarpIDL.cmake YarpDevice.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindACE.cmake FindGthread.cmake FindGtkMM.cmake FindGtkMMUnix.cmake FindGtkMMWin32.cmake)
   install(FILES ${CMAKE_SOURCE_DIR}/conf/${conf} COMPONENT scripts 
 	  DESTINATION share/yarp/cmake)
 endforeach()

@@ -27,6 +27,13 @@
 #include <string>
 #include <sstream>
 
+#if defined(__GNUG__) && defined(__GNUC__) && __GNUC__ >= 4
+# ifdef NULL
+#  undef NULL
+# endif
+# define NULL __null
+#endif
+
 using namespace yarp::os;
 
 GtkWidget *mainWindow=0;

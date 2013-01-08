@@ -26,6 +26,8 @@ namespace yarp {
         class ValueVocab;
         class ValueBlob;
         class ValueList;
+        class ValueDict;
+        class Property;
     }
 }
 
@@ -130,6 +132,12 @@ public:
     }
 
     /**
+     * Checks if value is a boolean. If so, asBool() will return that boolean.
+     * @return true iff value is a boolean
+     */
+    virtual bool isBool() const     { ok(); return proxy->isBool(); }
+
+    /**
      * Checks if value is an integer. If so, asInt() will return that integer.
      * @return true iff value is an integer
      */
@@ -154,6 +162,13 @@ public:
     virtual bool isList() const    { ok(); return proxy->isList(); }
 
     /**
+     * Checks if value is a dictionary. If so, asDict() will return that 
+     * dictionary.
+     * @return true iff value is a dictionary
+     */
+    virtual bool isDict() const    { ok(); return proxy->isDict(); }
+
+    /**
      * Checks if value is a vocabulary identifier. If so, asVocab()
      * will return it.  
      * @return true iff value is a vocabulary identifier
@@ -167,6 +182,14 @@ public:
      * @return true iff value is a binary object.
      */
     virtual bool isBlob() const    { ok(); return proxy->isBlob(); }
+
+    /**
+     * Get boolean value.
+     * @return boolean value if value is indeed a boolean.
+     * If it is another type, the appropriate cast value is returned.
+     * Otherwise returns false.
+     */
+    virtual bool asBool() const         { ok(); return proxy->asBool(); }
 
     /**
      * Get integer value.
@@ -203,6 +226,20 @@ public:
      * Otherwise returns NULL
      */
     virtual Bottle *asList() const       { ok(); return proxy->asList(); }
+
+    /**
+     * Get dictionary (hash table) value.
+     * @return pointer to dictionary if value is indeed of the right type.
+     * Otherwise returns NULL
+     */
+    virtual Property *asDict() const       { ok(); return proxy->asDict(); }
+
+    /**
+     * Get dictionary or list value
+     * @return pointer to dictionary or list value if present.
+     * Otherwise returns NULL
+     */
+    virtual Searchable *asSearchable() const;
 
     /**
      * Get binary data value.
@@ -372,53 +409,5 @@ public:
     static Value& getNullValue();
 };
 
-
-/*
-  class yarp::os::ValueInt : public Value {
-  public:
-  ValueInt(int x) {
-  setProxy(makeInt(x));
-  }
-  };
-
-  class yarp::os::ValueDouble : public Value {
-  public:
-  ValueDouble(double x) {
-  setProxy(makeDouble(x));
-  }
-  };
-
-  class yarp::os::ValueString : public Value {
-  public:
-  ValueString(const char *str) {
-  setProxy(makeString(str));
-  }
-  };
-
-  class yarp::os::ValueVocab : public Value {
-  public:
-  ValueVocab(int x) {
-  setProxy(makeVocab(x));
-  }
-
-  ValueVocab(const char *str) {
-  setProxy(makeVocab(str));
-  }
-  };
-
-  class yarp::os::ValueBlob : public Value {
-  public:
-  ValueBlob(void *data, int length) {
-  setProxy(makeBlob(data,length));
-  }
-  };
-
-  class yarp::os::ValueList : public Value {
-  public:
-  ValueList() {
-  setProxy(makeList());
-  }
-  };
-*/
 
 #endif

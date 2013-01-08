@@ -1,3 +1,65 @@
+2013-01-07  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/src/ResourceFinder.cpp: policy skip accidentally
+	tied to debug code; fixed [thanks Ali Paikan]
+
+2012-12-20  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* conf/YarpPlugin.cmake: add stub for tracking configuration
+	files for each carrier plugin
+
+2012-12-19  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/src/Carriers.cpp: prototype of method for
+	detecting correct runtime plugin to load on receiver side of a
+	connection.
+
+	* src/libYARP_OS/src/Carriers.cpp: fix missing ACE_OS::
+	namespace on dirent functions [thanks Ugo Pattacini]
+
+2012-12-18  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/src/Carriers.cpp: fix dynamically-loaded
+	plugin support for carriers.
+
+2012-12-18  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/yarpscope/src/PortReader.cpp: Connect using temporary
+	  ports
+	* src/yarpscope/src/CMakeLists.txt
+	  src/yarpscope/src/SimpleLoader.cpp
+	  src/yarpscope/src/SimpleLoader.h
+	  src/yarpscope/src/main.cpp: Add simple mode (command line)
+	* src/yarpscope/src/Graph.cpp
+	  src/yarpscope/src/PortReader.cpp
+	  src/yarpscope/src/PortReader.h
+	  src/yarpscope/src/SimpleLoader.cpp
+	  src/yarpscope/src/XmlLoader.cpp: Allow to run and wait for
+	  external connection in simple mode
+
+2012-12-17  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_sig/src/Image.cpp: include OpenCV translations
+	of more pixel types in wrapIplImage [thanks Ilaria Gori]
+
+2012-12-17  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* src/libYARP_sig/include/yarp/sig/SoundFile.h: Fix build with
+	  YARP_CLEAN_API=ON
+	* src/carriers/mjpeg_carrier/CMakeLists.txt: Enable test only
+	  if YARP_COMPILE_TESTS is enabled
+	* src/yarpscope/src/PortReader.cpp: Make connections persistent
+	* src/yarpscope/src/PortReader.cpp: Fix bug when data is not
+	  received
+	* src/yarpscope/src/PortReader.cpp: Try to read data just once
+
+2012-12-13  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/doc/persistent_connections.dox: show how to
+	connect two ports persistently from code without an 
+	intermediate topic.
+
+	* src/doc/yarp_plugins.dox: document how runtime plugins
+	currently work, warts and all.
+
 2012-12-12  Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/RunReadWrite.cpp
 	waitpid restored (no WNOHANG).

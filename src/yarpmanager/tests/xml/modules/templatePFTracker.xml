@@ -85,8 +85,18 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
             <description></description>
         </output>
 	<output>
-            <type>unk</type>
+            <type>Vector</type>
             <port carrier="tcp">/templatePFTracker/target:o</port>
+            <description></description>
+        </output>
+	<output>
+            <type>unk</type>
+            <port carrier="tcp">/templatePFTracker/target3d:o</port>
+            <description></description>
+        </output>
+	<output>
+            <type>unk</type>
+            <port carrier="tcp">/templatePFTracker/triangulation:io</port>
             <description></description>
         </output>
     </data>

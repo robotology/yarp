@@ -24,6 +24,8 @@
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/HttpCarrier.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -31,6 +33,79 @@ using namespace yarp::os;
 static Logger carriersLog("Carriers", Logger::get());
 
 Carriers *Carriers::yarp_carriers_instance = NULL;
+
+static bool matchCarrier(const Bytes *header, Bottle& code) {
+    int at = 0;
+    bool success = true;
+    bool done = false;
+    for (int i=0; i<code.size() && !done; i++) {
+        Value& v = code.get(i);
+        if (v.isString()) {
+            ConstString str = v.asString();
+            for (int j=0; j<(int)str.length(); j++) {
+                if ((int)header->length()<=at) {
+                    success = false;
+                    done = true;
+                    break;
+                }
+                if (str[j] != header->get()[at]) {
+                    success = false;
+                    done = true;
+                    break;
+                }
+                at++;
+            }
+        } else {
+            at++;
+        }
+    }
+    return success;
+}
+
+static bool checkForCarrier(const Bytes *header, const char *fname) {
+    Property config;
+    config.fromConfigFile(fname);
+    Bottle plugins = config.findGroup("plugin").tail();
+    for (int i=0; i<plugins.size(); i++) {
+        ConstString name = plugins.get(i).asString();
+        Bottle group = config.findGroup(name);
+        Bottle code = group.findGroup("code").tail();
+        if (matchCarrier(header,code)) {
+            ConstString dll_name = group.find("library").asString();
+            ConstString fn_name = group.find("part").asString();
+            if (NetworkBase::registerCarrier(fn_name.c_str(),
+                                             dll_name.c_str())) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static bool scanForCarrier(const Bytes *header) {
+    bool success = false;
+    ConstString dirname = "/etc/yarp/carriers";
+    ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
+    if (!dir) {
+        YARP_SPRINTF0(Logger::get(),debug,"Could not find /etc/yarp/carriers");
+        return false;
+    }
+    struct ACE_DIRENT *ent = ACE_OS::readdir(dir);
+    while (ent) {
+        ConstString name = ent->d_name;
+        ent = ACE_OS::readdir(dir);
+        int len = (int)name.length();
+        if (len<4) continue;
+        if (name.substr(len-4)!=".ini") continue;
+        if (checkForCarrier(header,(dirname + "/" + name).c_str())) {
+            success = true;
+            break;
+        }
+    }
+    ACE_OS::closedir(dir);
+    dir = NULL;
+    return success;
+}
 
 Carriers::Carriers() {
     delegates.push_back(new HttpCarrier());
@@ -62,7 +137,8 @@ void Carriers::clear() {
     lst.clear();
 }
 
-Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
+Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
+                                 bool load_if_needed) {
     String s;
     if (name!=NULL) {
         s = *name;
@@ -88,6 +164,21 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
         }
         if (match) {
             return c.create();
+        }
+    }
+    if (load_if_needed) {
+        if (name!=NULL) {
+            // ok, we didn't find a carrier, but we have a name.
+            // let's try to register it, and see if a dll is found.
+            if (NetworkBase::registerCarrier(name->c_str(),NULL)) {
+                // We made progress, let's try again...
+                return Carriers::chooseCarrier(name,header,false);
+            }
+        } else {
+            if (scanForCarrier(header)) {
+                // We made progress, let's try again...
+                return Carriers::chooseCarrier(name,header,true);
+            }
         }
     }
     YARP_SPRINTF1(Logger::get(),
