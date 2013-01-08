@@ -32,7 +32,7 @@ Options:\n\
   --help                  Show help\n\
   --from                Configuration file name\n"
 
-#define DEF_CONFIG_FILE     "./ymanager.ini"
+#define DEF_CONFIG_FILE     "ymanager.ini"
 
 
 void onSignal(int signum);
@@ -81,6 +81,22 @@ int main(int __argc, char *__argv[])
     /**
      *  preparing default options
      */
+    
+    std::string inifile=rf.findFile("from").c_str();
+    std::string inipath="";
+    size_t lastSlash=inifile.rfind("/");
+    if (lastSlash!=std::string::npos)
+        inipath=inifile.substr(0, lastSlash+1);
+    else
+    {
+        lastSlash=inifile.rfind("\\");
+        if (lastSlash!=std::string::npos)
+            inipath=inifile.substr(0, lastSlash+1);
+    }
+    
+    if(!config.check("ymanagerini_dir"))
+        config.put("ymanagerini_dir", inipath.c_str());
+    
     if(!config.check("apppath"))
         config.put("apppath", "./");
 

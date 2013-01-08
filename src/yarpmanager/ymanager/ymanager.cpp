@@ -61,7 +61,7 @@ using namespace yarp::os;
     vector<string> appnames;    
 #endif
 
-#define DEF_CONFIG_FILE     "./ymanager.ini"
+#define DEF_CONFIG_FILE     "ymanager.ini"
 
 #define LOGO_MESSAGE "\
 __   __\n\
@@ -86,6 +86,19 @@ Options:\n\
 #if defined(WIN32)
 static Manager* __pManager = NULL;
 #endif
+
+ bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
+        if (path[0]=='/'||path[0]=='\\') {
+            return true;
+        }
+        std::string str(path);
+        if (str.length()>1) {
+            if (str[1]==':') {
+                return true;
+            }
+        }
+        return false;
+    }
 
 /**
  * Class YConsoleManager
@@ -125,6 +138,22 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     /**
      *  preparing default options
      */
+    
+    std::string inifile=rf.findFile("from").c_str();
+    std::string inipath="";
+    size_t lastSlash=inifile.rfind("/");
+    if (lastSlash!=std::string::npos)
+        inipath=inifile.substr(0, lastSlash+1);
+    else
+    {
+        lastSlash=inifile.rfind("\\");
+        if (lastSlash!=std::string::npos)
+            inipath=inifile.substr(0, lastSlash+1);
+    }
+    
+//     if(!config.check("ymanagerini_dir"))   
+//         config.put("ymanagerini_dir", inipath.c_str());
+    
     if(!config.check("apppath"))
         config.put("apppath", "./");
 
@@ -205,7 +234,11 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         string strPath;
         stringstream modPaths(config.find("modpath").asString().c_str());
         while (getline(modPaths, strPath, ';'))
+        {
+            if (!isAbsolute(strPath.c_str()))
+                strPath=inipath+strPath;
             addModules(strPath.c_str());
+        }
     }
 
     if(config.check("respath"))
@@ -213,7 +246,11 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         string strPath;
         stringstream resPaths(config.find("respath").asString().c_str());
         while (getline(resPaths, strPath, ';'))
+        {
+            if (!isAbsolute(strPath.c_str()))
+                strPath=inipath+strPath;
             addResources(strPath.c_str());
+        }
     }
 
     if(config.check("apppath"))
@@ -222,6 +259,8 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         stringstream appPaths(config.find("apppath").asString().c_str());
         while (getline(appPaths, strPath, ';'))
         {
+            if (!isAbsolute(strPath.c_str()))
+                strPath=inipath+strPath;
             if(config.find("load_subfolders").asString() == "yes")
                 loadRecursiveApplications(strPath.c_str());
             else

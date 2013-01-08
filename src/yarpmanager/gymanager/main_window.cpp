@@ -43,6 +43,18 @@ using namespace std;
 #define WND_DEF_HEIGHT      600
 #define WND_DEF_WIDTH       800
 
+ bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
+        if (path[0]=='/'||path[0]=='\\') {
+            return true;
+        }
+        std::string str(path);
+        if (str.length()>1) {
+            if (str[1]==':') {
+                return true;
+            }
+        }
+        return false;
+    }
 
 MainWindow::MainWindow( yarp::os::Property &config)
 {
@@ -61,12 +73,19 @@ MainWindow::MainWindow( yarp::os::Property &config)
     setupSignals();
     
     createWidgets();
+    
+    std::string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
+
     if(config.check("modpath"))
     {
         string strPath;
         stringstream modPaths(config.find("modpath").asString().c_str());
         while (getline(modPaths, strPath, ';'))
-                lazyManager.addModules(strPath.c_str());
+        {
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+            lazyManager.addModules(strPath.c_str());
+        }
     }
 
     if(config.check("respath"))
@@ -74,7 +93,11 @@ MainWindow::MainWindow( yarp::os::Property &config)
         string strPath;
         stringstream resPaths(config.find("respath").asString().c_str());
         while (getline(resPaths, strPath, ';'))
+        {
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
             lazyManager.addResources(strPath.c_str());
+        }
     }
 
     if(config.check("apppath"))
@@ -83,6 +106,8 @@ MainWindow::MainWindow( yarp::os::Property &config)
         stringstream appPaths(config.find("apppath").asString().c_str());
         while (getline(appPaths, strPath, ';'))
         {
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
             if(config.find("load_subfolders").asString() == "yes")
             {
                 loadRecursiveApplications(strPath.c_str());
