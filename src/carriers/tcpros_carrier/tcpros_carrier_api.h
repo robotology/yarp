@@ -12,7 +12,7 @@
 
 #include <yarp/conf/api.h>
 #ifndef YARP_tcpros_carrier_API
-#  ifdef tcpros_carrier_EXPORTS
+#  ifdef yarp_tcpros_EXPORTS
 #    define YARP_tcpros_carrier_API YARP_EXPORT
 #  else
 #     define YARP_tcpros_carrier_API YARP_IMPORT
