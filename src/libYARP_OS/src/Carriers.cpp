@@ -90,7 +90,7 @@ static bool scanForCarrier(const Bytes *header) {
         YARP_SPRINTF0(Logger::get(),debug,"Could not find /etc/yarp/carriers");
         return false;
     }
-    struct ACE_DIRENT *ent = ACE_OS::readdir(dir);
+    struct YARP_DIRENT *ent = YARP_readdir(dir);
     while (ent) {
         ConstString name = ent->d_name;
         ent = ACE_OS::readdir(dir);
@@ -102,7 +102,7 @@ static bool scanForCarrier(const Bytes *header) {
             break;
         }
     }
-    ACE_OS::closedir(dir);
+    YARP_closedir(dir);
     dir = NULL;
     return success;
 }

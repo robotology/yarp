@@ -39,4 +39,15 @@
 #  endif
 #endif
 
+// ACE wrappers are glitching on Debian 4; use workaround
+#ifdef __linux__
+#define YARP_DIRENT dirent
+#define YARP_readdir ::readdir
+#define YARP_closedir ::closedir
+#else
+#define YARP_DIRENT ACE_DIRENT
+#define YARP_readdir ACE_OS::readdir
+#define YARP_closedir ACE_OS::closedir
+#endif
+
 #endif
