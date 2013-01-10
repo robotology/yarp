@@ -69,6 +69,12 @@ endif()
 
 
 #########################################################################
+# Show warnings for deprecated declarations
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS}")
+
+
+#########################################################################
 # Control whether deprecated methods are built
 
 option(YARP_NO_DEPRECATED "Filter out deprecated declarations from API" FALSE)
