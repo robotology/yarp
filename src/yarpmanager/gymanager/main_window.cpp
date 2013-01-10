@@ -82,6 +82,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
         stringstream modPaths(config.find("modpath").asString().c_str());
         while (getline(modPaths, strPath, ';'))
         {
+            trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
             lazyManager.addModules(strPath.c_str());
@@ -94,24 +95,30 @@ MainWindow::MainWindow( yarp::os::Property &config)
         stringstream resPaths(config.find("respath").asString().c_str());
         while (getline(resPaths, strPath, ';'))
         {
+            trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
             lazyManager.addResources(strPath.c_str());
         }
     }
 
+    ErrorLogger* logger  = ErrorLogger::Instance(); 
+
     if(config.check("apppath"))
     {
         string strPath;
         stringstream appPaths(config.find("apppath").asString().c_str());
         while (getline(appPaths, strPath, ';'))
-        {
+        {            
+            trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
             if(config.find("load_subfolders").asString() == "yes")
             {
-                loadRecursiveApplications(strPath.c_str());
-                loadRecursiveTemplates(strPath.c_str());
+                if(!loadRecursiveApplications(strPath.c_str()))
+                    logger->addError("Cannot load the applications from  " + strPath);
+                if(!loadRecursiveTemplates(strPath.c_str()))
+                     logger->addError("Cannot load the templates from  " + strPath);                   
             }
             else
                 lazyManager.addApplications(strPath.c_str()); 

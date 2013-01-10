@@ -235,6 +235,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         stringstream modPaths(config.find("modpath").asString().c_str());
         while (getline(modPaths, strPath, ';'))
         {
+            trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=inipath+strPath;
             addModules(strPath.c_str());
@@ -247,22 +248,28 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         stringstream resPaths(config.find("respath").asString().c_str());
         while (getline(resPaths, strPath, ';'))
         {
+            trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=inipath+strPath;
             addResources(strPath.c_str());
         }
     }
 
+    ErrorLogger* logger  = ErrorLogger::Instance(); 
     if(config.check("apppath"))
     {
         string strPath;
         stringstream appPaths(config.find("apppath").asString().c_str());
         while (getline(appPaths, strPath, ';'))
         {
+            trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=inipath+strPath;
             if(config.find("load_subfolders").asString() == "yes")
-                loadRecursiveApplications(strPath.c_str());
+            {
+                if(!loadRecursiveApplications(strPath.c_str()))
+                    logger->addError("Cannot load the applications from  " + strPath);
+            }        
             else
                 addApplications(strPath.c_str()); 
         }

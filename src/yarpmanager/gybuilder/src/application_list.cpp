@@ -65,36 +65,36 @@ ApplicationList::ApplicationList(MainWindow* parent)
     m_appRow = *(m_refTreeModel->append());
     m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_appRow[m_appColumns.m_col_name] = "Applications";
-    m_appRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+    m_appRow.set_value(0, Gdk::Pixbuf::create_from_data(folderapp_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
-                                            folder_ico.width,
-                                            folder_ico.height,
-                                            folder_ico.bytes_per_pixel*folder_ico.width));
+                                            folderapp_ico.width,
+                                            folderapp_ico.height,
+                                            folderapp_ico.bytes_per_pixel*folderapp_ico.width));
                                                                
     m_modRow = *(m_refTreeModel->append());
     m_modRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_modRow[m_appColumns.m_col_name] = "Modules";
-    m_modRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+    m_modRow.set_value(0, Gdk::Pixbuf::create_from_data(foldermod_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
-                                            folder_ico.width,
-                                            folder_ico.height,
-                                            folder_ico.bytes_per_pixel*folder_ico.width));
+                                            foldermod_ico.width,
+                                            foldermod_ico.height,
+                                            foldermod_ico.bytes_per_pixel*foldermod_ico.width));
 
     
     m_resRow = *(m_refTreeModel->append());
     m_resRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_resRow[m_appColumns.m_col_name] = "Resources";
-    m_resRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+    m_resRow.set_value(0, Gdk::Pixbuf::create_from_data(folderres_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
-                                            folder_ico.width,
-                                            folder_ico.height,
-                                            folder_ico.bytes_per_pixel*folder_ico.width));
+                                            folderres_ico.width,
+                                            folderres_ico.height,
+                                            folderres_ico.bytes_per_pixel*folderres_ico.width));
 
     /*
     m_tempRow = *(m_refTreeModel->append());

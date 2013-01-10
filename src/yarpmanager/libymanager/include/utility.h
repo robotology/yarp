@@ -26,9 +26,10 @@ using namespace std;
 class Graph;
 
 bool compareString(const char* szFirst, const char* szSecond);
+void trimString(string& str);
+
 OS strToOS(const char* szOS);
 bool exportDotGraph(Graph& graph, const char* szFileName);
-
 
 /**
  * Singleton class ErrorLogger
