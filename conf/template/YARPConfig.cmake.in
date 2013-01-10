@@ -40,5 +40,11 @@ if(NOT YARP_FOUND)
     set(YARP_HAS_IDL @YARP_HAS_IDL@)
     set(YARP_IDL_BINARY_HINT "@YARP_IDL_BINARY_HINT@")
 
+    # Check if deprecated methods are built
+    set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
+    if(YARP_NO_DEPRECATED)
+        add_definitions("-DYARP_NO_DEPRECATED")
+    endif(YARP_NO_DEPRECATED)
+
     set (YARP_FOUND TRUE)
 endif(NOT YARP_FOUND)

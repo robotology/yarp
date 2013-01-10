@@ -67,6 +67,17 @@ if (CREATE_SHARED_LIBRARY)
   set(YARP_DLL ON)
 endif()
 
+
+#########################################################################
+# Control whether deprecated methods are built
+
+option(YARP_NO_DEPRECATED "Filter out deprecated declarations from API" FALSE)
+mark_as_advanced(YARP_NO_DEPRECATED)
+if(YARP_NO_DEPRECATED)
+    add_definitions("-DYARP_NO_DEPRECATED")
+endif(YARP_NO_DEPRECATED)
+
+
 #########################################################################
 # Control whether yarp::os::impl::String should be std::string or opaque
 # Not an important option for end users yet.  In principle
