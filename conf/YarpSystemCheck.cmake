@@ -253,6 +253,20 @@ else(WIN32)
         set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-znow")
     endif(CXX_HAS_WL__ZNOW)
 
+
+    ## C++11 flags
+
+    check_cxx_compiler_flag("-std=c++11" CXX_HAS_STD_CXX11)
+    if(CXX_HAS_STD_CXX11)
+        set(CXX11_FLAGS "-std=c++11")
+        check_cxx_compiler_flag("-Wc++11-compat" CXX_HAS_CXX11_COMPAT)
+        if(CXX_HAS_CXX11_COMPAT)
+            set(CXX11_FLAGS "${CXX11_FLAGS} -Wc++11-compat")
+        endif(CXX_HAS_CXX11_COMPAT)
+    else(CXX_HAS_STD_CXX11)
+        set(CXX11_FLAGS)
+    endif(CXX_HAS_STD_CXX11)
+
 endif(WIN32)
 
 
