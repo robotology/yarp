@@ -1506,6 +1506,8 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                             int x, int y, const Gtk::SelectionData& data, 
                             guint info, guint time)
 {
+    x+=m_ScrollView.get_hadjustment()->get_value();
+    y+=m_ScrollView.get_vadjustment()->get_value();
     if((data.get_length() >= 0) && (data.get_format() == MODULE))
     {
         const guchar* name = data.get_data();
@@ -1535,6 +1537,7 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                 root->add_child(mod);
                 Goocanvas::Bounds bd = m_Canvas->get_item(mod)->get_bounds();
                 m_Canvas->get_item(mod)->translate(x - bd.get_x1(), y - bd.get_y1());
+                
                 mod->snapToGrid();
             }
         }

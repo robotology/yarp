@@ -226,9 +226,9 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
     bool ok=doc.SaveFile(app->getXmlFile());
     if (!ok && doc.Error())
     {
-        char str[1000];
-        snprintf( str,1000, "tinyXml error at line %d, column %d: %s", doc.ErrorRow(), doc.ErrorCol(), doc.ErrorDesc());
-        logger->addError( str);
+        ostringstream err;
+        err<<"tinyXml error for file " << app->getXmlFile() <<" at line " << doc.ErrorRow() << ", column " << doc.ErrorCol() << ": " << doc.ErrorDesc();
+        logger->addError(err);
         return false;
     }
     else return true;
