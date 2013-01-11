@@ -15,7 +15,7 @@
 #include "main_window.h"
 #include "application_window.h"
 #include "application_wizard.h"
-#include "main_window.h"
+//#include "main_window.h"
 
 #include "icon_res.h"
 #include "ymm-dir.h"
@@ -25,8 +25,21 @@
 
 using namespace std;
 
+inline bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
+        if (path[0]=='/'||path[0]=='\\') {
+            return true;
+        }
+        std::string str(path);
+        if (str.length()>1) {
+            if (str[1]==':') {
+                return true;
+            }
+        }
+        return false;
+    };
+
 ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, Application* app) 
-: m_Table(7,3)
+: m_Table(7,3), m_EntryFolderName(true)
 {
     m_Application = app;
     m_pParent = parent;
@@ -73,11 +86,21 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
      
     if(wnd->m_config.check("apppath"))
     {
-        string strPath = wnd->m_config.find("apppath").asString().c_str();
-        if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-            strPath = strPath + string(PATH_SEPERATOR);
-        m_EntryFolderName.set_text(strPath.c_str());
+        std::string basepath=wnd->m_config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
+        stringstream appPaths(wnd->m_config.find("apppath").asString().c_str());
+        string strPath;
+        while (getline(appPaths, strPath, ';'))
+        {
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+            
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+                    (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                strPath = strPath + string(PATH_SEPERATOR);
+            m_EntryFolderName.append(Glib::ustring(strPath));
+        }
+        //m_EntryFolderName.set_text(strPath.c_str());
     }
         
     m_EntryVersion.set_text("1.0");
@@ -108,7 +131,7 @@ ApplicationWizard::~ApplicationWizard()
 void ApplicationWizard::add_row(Gtk::Table& table, int row,
                                 const Glib::RefPtr<Gtk::SizeGroup>& size_group,
                                 const Glib::ustring& label_text,
-                                Gtk::Entry& entry, Gtk::Button* btn)
+                                Gtk::Widget& entry, Gtk::Button* btn)
 {
     Gtk::Label* pLabel = Gtk::manage(new Gtk::Label(label_text, true));
     pLabel->set_alignment(Gtk::ALIGN_LEFT, Gtk::ALIGN_BOTTOM);
@@ -168,7 +191,7 @@ void ApplicationWizard::onButtonFilePressed()
 
     if(dialog.run() == Gtk::RESPONSE_OK)
     {
-        m_EntryFolderName.set_text(dialog.get_filename());
+        m_EntryFolderName.get_entry()->set_text(dialog.get_filename());
     }
 }
 

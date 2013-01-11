@@ -341,6 +341,8 @@ bool ArrowModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& ite
     // right click on selected line 
     if((event->button == 3) && selected)
         addMidPoint(event->x, event->y);
+    
+    parentWindow->setModified();
 
     return true;
 }

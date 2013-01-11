@@ -111,6 +111,7 @@ bool MidpointModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>&
 {
     if(item && _dragging && item == _dragging)
     {
+        parentWindow->setModified();
         double new_x = event->x ;
         double new_y = event->y ;   
         item->translate(new_x - _drag_x, new_y - _drag_y);

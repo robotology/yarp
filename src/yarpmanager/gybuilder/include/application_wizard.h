@@ -45,7 +45,7 @@ private:
 public:
     Gtk::Entry m_EntryName;
     Gtk::Entry m_EntryFileName;
-    Gtk::Entry m_EntryFolderName;
+    Gtk::ComboBoxText m_EntryFolderName;
     Gtk::Entry m_EntryDesc;
     Gtk::Entry m_EntryVersion;
 //    Gtk::Entry m_EntryPrefix;
@@ -55,7 +55,7 @@ public:
 private:
     void add_row(Gtk::Table& table, int row,
                  const Glib::RefPtr<Gtk::SizeGroup>& size_group,
-                 const Glib::ustring& label_text, Gtk::Entry& entry, Gtk::Button* btn);
+                 const Glib::ustring& label_text, Gtk::Widget& entry, Gtk::Button* btn);
 
 };
 

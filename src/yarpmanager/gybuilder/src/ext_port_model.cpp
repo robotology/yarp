@@ -214,6 +214,7 @@ bool ExternalPortModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::It
 {
     if(item && _dragging && item == _dragging)
     {
+        parentWindow->setModified();
         double new_x = event->x ;
         double new_y = event->y ;   
         item->get_parent()->translate(new_x - _drag_x, new_y - _drag_y);

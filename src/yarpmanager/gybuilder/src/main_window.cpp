@@ -43,7 +43,7 @@ using namespace std;
 #define WND_DEF_HEIGHT      600
 #define WND_DEF_WIDTH       800
 
- bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
+inline bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
         if (path[0]=='/'||path[0]=='\\') {
             return true;
         }
@@ -54,7 +54,7 @@ using namespace std;
             }
         }
         return false;
-    }
+    };
 
 MainWindow::MainWindow( yarp::os::Property &config)
 {
@@ -848,7 +848,7 @@ void MainWindow::onMenuFileNewApp()
     ApplicationWizard dialog(this, "Create new Application");
     if(dialog.run() == Gtk::RESPONSE_OK)
     {
-        string strPath = dialog.m_EntryFolderName.get_text(); 
+        string strPath = dialog.m_EntryFolderName.get_entry_text(); //check if need to get_active_text if entry is not present
         if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
@@ -1135,7 +1135,7 @@ void MainWindow::onMenuFileSaveAs()
         ApplicationWizard dialog(this, "Save as new application", application);
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
-            string strPath = dialog.m_EntryFolderName.get_text(); 
+            string strPath = dialog.m_EntryFolderName.get_entry_text(); 
             if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
                 (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
                 strPath = strPath + string(PATH_SEPERATOR);

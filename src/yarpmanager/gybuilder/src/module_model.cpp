@@ -162,6 +162,7 @@ bool ModuleModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& it
         _dragging = item ;
         _drag_x = (int) event->x ;
         _drag_y = (int) event->y ;
+        return false;
     }
     else
     if(event->button == 3)
@@ -194,7 +195,8 @@ bool ModuleModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& i
 {
     if(item && _dragging && (item == _dragging))
     {
-
+        parentWindow->setModified();
+        
         double new_x = event->x ;
         double new_y = event->y ;   
         item->get_parent()->translate(new_x - _drag_x, new_y - _drag_y);
