@@ -96,33 +96,44 @@ add_definitions(-D_REENTRANT)
 set_property(GLOBAL PROPERTY YARP_DEFS -D_REENTRANT)
 
 # on windows, we have to tell ace how it was compiled
-if (WIN32 AND NOT CYGWIN)
-  add_definitions(-DWIN32 -D_WINDOWS)
-else (WIN32 AND NOT CYGWIN)
-  add_definitions(-Wall)
-  option(YARP_EXTRA_WARNINGS "-Wall not enough? Turn on -Wextra for extra warnings." FALSE)
-  if (YARP_EXTRA_WARNINGS)
-    add_definitions(-Wextra -Wno-unused-parameter -Werror)
-  endif()
-endif (WIN32 AND NOT CYGWIN)
+if(WIN32)
+    ## check if we are using the CYGWIN compiler
+    if(NOT CYGWIN)
+        add_definitions(-DWIN32 -D_WINDOWS)
+    else(NOT CYGWIN)
+        add_definitions(-DCYGWIN)
+    endif(NOT CYGWIN)
 
-## check if we are on cygwin
-if(WIN32 AND CYGWIN)
-  add_definitions(-DCYGWIN)
-endif(WIN32 AND CYGWIN)
+    ## check if we are using the MINGW compiler
+    if(MINGW)
+        add_definitions(-D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-Wpointer-arith" "-pipe")
+        # "-fno-exceptions" can be useful too... unless you need exceptions :-)
+        if(MSYS)
+            add_definitions(-D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
+        else(MSYS)
+            add_definitions("-fvisibility=hidden" "-fvisibility-inlines-hidden" "-Wno-attributes")
+        endif(MSYS)
+    endif(MINGW)
 
-## check if we are using the MINGW compiler
-if(MINGW)
-  add_definitions(-D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-Wpointer-arith" "-pipe")
-  # "-fno-exceptions" can be useful too... unless you need exceptions :-)
-  if (MSYS)
-    add_definitions(-D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
-  else (MSYS)
-    add_definitions("-fvisibility=hidden" "-fvisibility-inlines-hidden" "-Wno-attributes")
-  endif (MSYS)
-endif(MINGW)
+    ## check if we are using the MSVC compiler
+    if(MSVC)
+        # ACE uses a bunch of functions MSVC warns about.
+        # The warnings make sense in general, but not in this case.
+        # this gets rids of deprecated unsafe crt functions
+        add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+        # this gets rid of warning about deprecated POSIX names
+        add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
 
-option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality" FALSE)
+        # disable: warning C4355: 'this' : used ...
+        ## this never worked, giving up.
+        #add_definitions(/wd4355)
+
+        # Traditionally, we add "d" postfix to debug libraries
+        set(CMAKE_DEBUG_POSTFIX "d")
+    endif(MSVC)
+
+endif(WIN32)
+
 mark_as_advanced(SKIP_ACE)
 
 if (SKIP_ACE)
@@ -164,21 +175,6 @@ else ()
 
 endif ()
 
-if (MSVC)
-  # ACE uses a bunch of functions MSVC warns about.
-  # The warnings make sense in general, but not in this case.
-  # this gets rids of deprecated unsafe crt functions
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-  # this gets rid of warning about deprecated POSIX names
-  add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-  
-  # disable: warning C4355: 'this' : used ...
-  ## this never worked, giving up.
-  #add_definitions(/wd4355)
-	
-  # Traditionally, we add "d" postfix to debug libraries
-  set(CMAKE_DEBUG_POSTFIX "d")
-endif (MSVC)
 
 include(CheckCXXCompilerFlag)
 
