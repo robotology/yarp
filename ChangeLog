@@ -1,3 +1,34 @@
+2013-01-11  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* conf/YarpOptions.cmake, conf/YarpSystemCheck.cmake: Always
+	  enable warnings on linux. Add YARP_ABORT_ON_WARNING and
+	  YARP_FATAL_ERRORS options to replace deprecated YARP_ADMIN
+	  environment variable
+	* CMakeLists.txt, conf/YarpAceCheck.cmake,
+	  conf/YarpSystemCheck.cmake: Split YarpSystemCheck and.
+	  YarpAceCheck. This will allow to move find_package(ACE) in
+	  YarpFindDependencies later.
+	* CMakeLists.txt: Run system checks before checking options.
+	* conf/YarpOptions.cmake: Kill COMPILING_ALL_YARP defunct
+	  option.
+	* conf/YarpOptions.cmake, conf/YarpSystemCheck.cmake: Add
+	  YARP_EXPERIMENTAL_HARDENING option.
+	* conf/YarpOptions.cmake, conf/YarpSystemCheck.cmake: Add
+	  YARP_EXPERIMENTAL_CXX11 option.
+	* conf/YarpOptions.cmake, conf/YarpSystemCheck.cmake: Several
+	  other small fixes and cleanup.
+
+2013-01-10  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+	* conf/template/yarp_config_api.h.in: Add YARP_DEPRECATED macro.
+	* conf/YarpOptions.cmake, conf/template/YARPConfig.cmake.in: Add
+	  cmake option to skip building deprecated methods.
+	* conf/YarpOptions.cmake, conf/YarpSystemCheck.cmake: Show
+	  warnings for deprecated declarations.
+	* conf/YarpOptions.cmake, conf/YarpSystemCheck.cmake: Better
+	  handling of visibility=hidden flag:
+	   - Check if compiler supports the required flags.
+	   - Use -fvisibility-inlines-hidden flag if supported.
+	   - Move YARP_CLEAN_API option in YarpOptions.cmake.
+
 2013-01-07  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/ResourceFinder.cpp: policy skip accidentally
