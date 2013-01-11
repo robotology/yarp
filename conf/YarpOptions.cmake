@@ -67,6 +67,16 @@ if (CREATE_SHARED_LIBRARY)
   set(YARP_DLL ON)
 endif()
 
+#########################################################################
+# Enable these messages for debugging flags
+
+#message(STATUS "WANTED_WARNING_FLAGS = ${WANTED_WARNING_FLAGS}")
+#message(STATUS "UNWANTED_WARNING_FLAGS = ${UNWANTED_WARNING_FLAGS}")
+#message(STATUS "VISIBILITY_HIDDEN_FLAGS = ${VISIBILITY_HIDDEN_FLAGS}")
+#message(STATUS "DEPRECATED_DECLARATIONS_FLAGS = ${DEPRECATED_DECLARATIONS_FLAGS}")
+#message(STATUS "HARDENING_FLAGS = ${HARDENING_FLAGS}")
+#message(STATUS "CXX11_FLAGS = ${CXX11_FLAGS}")
+
 
 #########################################################################
 # Enable/disable wanted and unwanted warnings
