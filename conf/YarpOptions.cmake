@@ -28,11 +28,11 @@ endif (MSVC)
 # Encourage user to specify build type.
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
-	"Choose the type of build, recommanded options are: Debug or Release")
+   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+       "Choose the type of build, recommanded options are: Debug or Release")
 endif(NOT CMAKE_BUILD_TYPE)
 # Hide variable to MSVC users, since it is not needed
-if (MSVC)
+if(MSVC)
   mark_as_advanced(CMAKE_BUILD_TYPE)
 endif(MSVC)
 
@@ -43,15 +43,15 @@ endif(MSVC)
 # "static_libs" in the build directory, and place any libraries
 # (such as libstdc++.a) that should be linked statically there.
 
-set (STATLIB "${CMAKE_BINARY_DIR}/static_libs")
-if (EXISTS ${STATLIB})
-    MESSAGE(STATUS "static_libs directory present: ${STATLIB}")
-    LINK_DIRECTORIES(${STATLIB})
-    ADD_DEFINITIONS(-static-libgcc)
-    SET(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc")
-    FILE(GLOB statlibs ${STATLIB}/*.a)
-    LINK_LIBRARIES(${statlibs})
-endif (EXISTS ${STATLIB})
+set(STATLIB "${CMAKE_BINARY_DIR}/static_libs")
+if(EXISTS ${STATLIB})
+    message(STATUS "static_libs directory present: ${STATLIB}")
+    link_directories(${STATLIB})
+    add_definitions(-static-libgcc)
+    set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc")
+    file(GLOB statlibs ${STATLIB}/*.a)
+    link_libraries(${statlibs})
+endif(EXISTS ${STATLIB})
 
 
 #########################################################################
@@ -110,7 +110,7 @@ mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 
 #########################################################################
 # Control submission of reports
-option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://my.cdash.org/index.php?project=YARP" OFF)
+option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://dashboard.icub.org/index.php?project=YARP" OFF)
 if (ENABLE_DASHBOARD_SUBMIT)
   include(Dart)
 endif (ENABLE_DASHBOARD_SUBMIT)
