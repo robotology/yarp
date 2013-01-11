@@ -134,11 +134,11 @@ endif(YARP_EXPERIMENTAL_HARDENING)
 # Control whether to build YARP using hardening options
 
 option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 standard" FALSE)
-mark_as_advanced(YARP_EXPERIMENTAL_HARDENING)
-if(YARP_EXPERIMENTAL_HARDENING)
+mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
+if(YARP_EXPERIMENTAL_CXX11)
    add_definitions("-DYARP_CXX11")
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
-endif(YARP_EXPERIMENTAL_HARDENING)
+endif(YARP_EXPERIMENTAL_CXX11)
 
 
 #########################################################################
