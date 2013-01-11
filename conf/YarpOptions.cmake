@@ -90,7 +90,7 @@ endif(YARP_CLEAN_API)
 #########################################################################
 # Show warnings for deprecated declarations
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS_FLAGS}")
 
 
 #########################################################################
