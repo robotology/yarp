@@ -14,8 +14,8 @@ if [ ! "k$1" = "k" ]; then
     ver="$1"
 else
     rm -f junk.wget
-    wget -O junk.wget http://wiki.icub.org/yarp/specs/dox/download.html
-    verp=`cat junk.wget | grep -i "for Unix" | head -n1 | sed "s/.*yarp-//" | sed "s/.tar.gz.*//"`
+    wget -O junk.wget http://wiki.icub.org/yarpdoc/download.html
+    verp=`cat junk.wget | grep -i "for Linux" | head -n1 | sed "s/.*yarp-//" | sed "s/.tar.gz.*//"`
     if [ ! "kverp" = "k" ]; then
 	ver="$verp"
     fi
