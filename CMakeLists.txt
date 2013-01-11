@@ -29,13 +29,17 @@ include(YarpOptions)
 # Get the current YARP version.  See conf/YarpVersion.cmake.
 include(YarpVersion)
 
-# Check system types, find necessary libraries.
+# Check system configuration.
 # See conf/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
 
-# Check YARP dependencies.
+# Check YARP dependencies, find necessary libraries.
 # See conf/YarpFindDependencies.cmake.
 include(YarpFindDependencies)
+
+# Check ACE installation.
+# See conf/YarpAceCheck.cmake.
+include(YarpAceCheck)
 
 # Turn on testing.
 enable_testing()

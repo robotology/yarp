@@ -1,5 +1,5 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo, Daniele E. Domenichelli
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 #########################################################################
@@ -8,9 +8,9 @@
 include(TestBigEndian)
 test_big_endian(IS_BIG_ENDIAN)
 if(${IS_BIG_ENDIAN})
-  set(YARP_BIG_ENDIAN 1)
+    set(YARP_BIG_ENDIAN 1)
 else(${IS_BIG_ENDIAN})
-  set(YARP_LITTLE_ENDIAN 1)
+    set(YARP_LITTLE_ENDIAN 1)
 endif(${IS_BIG_ENDIAN})
 
 #########################################################################
@@ -27,67 +27,60 @@ check_type_size("short" SIZEOF_SHORT)
 check_type_size("int" SIZEOF_INT)
 check_type_size("long" SIZEOF_LONG)
 if(SIZEOF_INT EQUAL 4)
-  set(YARP_INT32 "int")
+    set(YARP_INT32 "int")
 else(SIZEOF_INT EQUAL 4)
-  if(SIZEOF_SHORT EQUAL 4)
-    set(YARP_INT32 "short")
-  else(SIZEOF_SHORT EQUAL 4)
-    if(SIZEOF_LONG EQUAL 4)
-      set(YARP_INT32 "long")
-    endif(SIZEOF_LONG EQUAL 4)
-  endif(SIZEOF_SHORT EQUAL 4)
+    if(SIZEOF_SHORT EQUAL 4)
+        set(YARP_INT32 "short")
+    else(SIZEOF_SHORT EQUAL 4)
+        if(SIZEOF_LONG EQUAL 4)
+            set(YARP_INT32 "long")
+        endif(SIZEOF_LONG EQUAL 4)
+    endif(SIZEOF_SHORT EQUAL 4)
 endif(SIZEOF_INT EQUAL 4)
 
 if(SIZEOF_SHORT EQUAL 2)
-  set(YARP_INT16 "short")
+    set(YARP_INT16 "short")
 else(SIZEOF_SHORT EQUAL 2)
-  # Hmm - there's no other native type to get 16 bits
-  # We will continue since most people using YARP do not need one.
-  message(STATUS "Warning: cannot find a 16 bit type on your system")
-  message(STATUS "Continuing...")
+    # Hmm - there's no other native type to get 16 bits
+    # We will continue since most people using YARP do not need one.
+    message(STATUS "Warning: cannot find a 16 bit type on your system")
+    message(STATUS "Continuing...")
 endif(SIZEOF_SHORT EQUAL 2)
 
 check_type_size("float" SIZEOF_FLOAT)
 check_type_size("double" SIZEOF_DOUBLE)
 if(SIZEOF_DOUBLE EQUAL 8)
-  set(YARP_FLOAT64 "double")
+    set(YARP_FLOAT64 "double")
 else(SIZEOF_DOUBLE EQUAL 8)
-  if(SIZEOF_FLOAT EQUAL 8)
-    set(YARP_FLOAT64 "float")
-  endif(SIZEOF_FLOAT EQUAL 8)
+    if(SIZEOF_FLOAT EQUAL 8)
+        set(YARP_FLOAT64 "float")
+    endif(SIZEOF_FLOAT EQUAL 8)
 endif(SIZEOF_DOUBLE EQUAL 8)
 
 if(SIZEOF_DOUBLE EQUAL 4)
-  set(YARP_FLOAT32 "double")
-else()
-  if(SIZEOF_FLOAT EQUAL 4)
-    set(YARP_FLOAT32 "float")
-  endif()
-endif()
+    set(YARP_FLOAT32 "double")
+else(SIZEOF_DOUBLE EQUAL 4)
+    if(SIZEOF_FLOAT EQUAL 4)
+        set(YARP_FLOAT32 "float")
+    endif(SIZEOF_FLOAT EQUAL 4)
+endif(SIZEOF_DOUBLE EQUAL 4)
 
-if (SIZEOF_LONG EQUAL 8)
-  set(YARP_INT64 "long")
-else ()
-  check_type_size("long long" SIZEOF_LONGLONG)
-  if (SIZEOF_LONGLONG EQUAL 8)
-    set(YARP_INT64 "long long")
-  else ()
-    check_type_size("__int64" SIZEOF___INT64)
-    if (SIZEOF___INT64 EQUAL 8)
-      set(YARP_INT64 "__int64")
-    endif ()
-  endif ()
-endif ()
+if(SIZEOF_LONG EQUAL 8)
+    set(YARP_INT64 "long")
+else(SIZEOF_LONG EQUAL 8)
+    check_type_size("long long" SIZEOF_LONGLONG)
+    if(SIZEOF_LONGLONG EQUAL 8)
+        set(YARP_INT64 "long long")
+    else(SIZEOF_LONGLONG EQUAL 8)
+        check_type_size("__int64" SIZEOF___INT64)
+        if(SIZEOF___INT64 EQUAL 8)
+            set(YARP_INT64 "__int64")
+        endif(SIZEOF___INT64 EQUAL 8)
+    endif(SIZEOF_LONGLONG EQUAL 8)
+endif(SIZEOF_LONG EQUAL 8)
 
 #########################################################################
-# Set up compile flags, and configure ACE
-
-set(YARP_ADMIN "$ENV{YARP_ADMIN}")
-
-if (YARP_ADMIN)
-  # be very serious about warnings if in admin mode
-  add_definitions(-Werror -Wfatal-errors)
-endif (YARP_ADMIN)
+# Set up compile flags
 
 add_definitions(-DYARP_PRESENT)
 add_definitions(-D_REENTRANT)
@@ -194,48 +187,6 @@ else(WIN32)
 
 endif(WIN32)
 
-
-# TODO Should be an option?
-mark_as_advanced(SKIP_ACE)
-
-if (SKIP_ACE)
-  set(ACE_LIBRARIES pthread rt)
-else ()
-  set(YARP_HAS_ACE 1)
-
-  find_package(ACE REQUIRED)
-
-  include(YarpCheckTypeSize) # regular script does not do C++ types
-  set(CMAKE_EXTRA_INCLUDE_FILES ace/config.h ace/String_Base_Const.h)
-  set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
-  set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
-  yarp_check_type_size(ACE_String_Base_Const::size_type SIZE_TYPE)
-  set(CMAKE_EXTRA_INCLUDE_FILES) 
-  set(CMAKE_REQUIRED_INCLUDES)
-  set(CMAKE_REQUIRED_LIBRARIES)
-  set(YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE ${HAVE_SIZE_TYPE})
-
-  include(YarpCheckStructHasMember)
-  set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
-  set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
-  yarp_check_struct_has_member("ACE_INET_Addr" is_loopback ace/INET_Addr.h YARP_ACE_ADDR_HAS_LOOPBACK_METHOD) 
-  set(CMAKE_EXTRA_INCLUDE_FILES) 
-  set(CMAKE_REQUIRED_LIBRARIES)
-
-  # From YARP 6.0.2 on, __ACE_INLINE__ is needed
-  INCLUDE (CheckCXXSourceCompiles)
-  set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
-  set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
-  file(READ ${CMAKE_SOURCE_DIR}/conf/ace_test.cpp YARP_ACE_NEEDS_INLINE_CPP)
-  CHECK_CXX_SOURCE_COMPILES("${YARP_ACE_NEEDS_INLINE_CPP}" YARP_ACE_COMPILES_WITHOUT_INLINE)
-  set(CMAKE_EXTRA_INCLUDE_FILES) 
-  set(CMAKE_REQUIRED_LIBRARIES)
-
-  if (NOT YARP_ACE_COMPILES_WITHOUT_INLINE)
-    ADD_DEFINITIONS(-D__ACE_INLINE__)
-  endif ()
-
-endif ()
 
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in
