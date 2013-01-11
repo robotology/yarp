@@ -184,6 +184,7 @@ YARP versioning is as follows:
 \li YARP_VERSION_MAJOR - has only changed once or twice, ever.
 \li YARP_VERSION_MINOR - changes perhaps once every year or two.
 \li YARP_VERSION_PATCH - changes with every release.
+\li YARP_VERSION_TWEAK - rarely used, changes with very small fixes.
 \li YARP_VERSION_MODIFIER - rarely used, other than to signal unofficial release candidates.
 
 @section yarp_build_structure_system_check conf/YarpSystemCheck.cmake
