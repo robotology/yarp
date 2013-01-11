@@ -110,6 +110,17 @@ endif(YARP_NO_DEPRECATED)
 
 
 #########################################################################
+# Control whether to build YARP using hardening options
+
+option(YARP_EXPERIMENTAL_HARDENING "Build YARP using hardening flags" FALSE)
+mark_as_advanced(YARP_EXPERIMENTAL_HARDENING)
+if(YARP_EXPERIMENTAL_HARDENING)
+    add_definitions("-D_FORTIFY_SOURCE=2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${HARDENING_FLAGS}")
+endif(YARP_EXPERIMENTAL_HARDENING)
+
+
+#########################################################################
 # Control whether yarp::os::impl::String should be std::string or opaque
 # Not an important option for end users yet.  In principle
 # yarp::os::ConstString could now be set to std::string, if YARP

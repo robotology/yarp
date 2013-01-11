@@ -142,15 +142,6 @@ else(WIN32)
         set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wpointer-arith")
     endif(CXX_HAS_WPOINTER_ARITH)
 
-    check_cxx_compiler_flag("-Wformat" CXX_HAS_WFORMAT)
-    if(CXX_HAS_WFORMAT)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat")
-        check_cxx_compiler_flag("-Wformat-security" CXX_HAS_WFORMAT_SECURITY)
-        if(CXX_HAS_WFORMAT_SECURITY)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat-security")
-        endif(CXX_HAS_WFORMAT_SECURITY)
-    endif(CXX_HAS_WFORMAT)
-
     check_cxx_compiler_flag("-Winit-self" CXX_HAS_WINIT_SELF)
     if(CXX_HAS_WINIT_SELF)
         set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Winit-self")
@@ -216,6 +207,51 @@ else(WIN32)
     else(CXX_HAS_WDEPRECATED_DECLARATIONS)
         set(DEPRECATED_DECLARATIONS_FLAGS)
     endif(CXX_HAS_WDEPRECATED_DECLARATIONS)
+
+
+
+    ## Hardening flags ##
+
+    check_cxx_compiler_flag("-Wformat" CXX_HAS_WFORMAT)
+    if(CXX_HAS_WFORMAT)
+        set(HARDENING_FLAGS "-Wformat")
+        check_cxx_compiler_flag("-Wformat-security -Werror=format-security" CXX_HAS_WFORMAT_SECURITY)
+        if(CXX_HAS_WFORMAT_SECURITY)
+            set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-security -Werror=format-security")
+        endif(CXX_HAS_WFORMAT_SECURITY)
+
+        check_cxx_compiler_flag("-Wformat-y2k" CXX_HAS_WFORMAT_Y2K)
+        if(CXX_HAS_WFORMAT_Y2K)
+            set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-y2k")
+        endif(CXX_HAS_WFORMAT_Y2K)
+
+        check_cxx_compiler_flag("-Wformat-nonliteral" CXX_HAS_WFORMAT_NONLITERAL)
+        if(CXX_HAS_WFORMAT_NONLITERAL)
+            set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-nonliteral")
+        endif(CXX_HAS_WFORMAT_NONLITERAL)
+
+        check_cxx_compiler_flag("-fPIE -pie" CXX_HAS_FPIE)
+        if(CXX_HAS_FPIE)
+            set(HARDENING_FLAGS "${HARDENING_FLAGS} -fPIE -pie")
+        endif(CXX_HAS_FPIE)
+    else(CXX_HAS_WFORMAT)
+        set(HARDENING_FLAGS)
+    endif(CXX_HAS_WFORMAT)
+
+    check_cxx_compiler_flag("-fstack-protector --param ssp-buffer-size=4" CXX_HAS_STACK_PROTECTOR)
+    if(CXX_HAS_STACK_PROTECTOR)
+        set(HARDENING_FLAGS "${HARDENING_FLAGS} -fstack-protector --param ssp-buffer-size=4")
+    endif(CXX_HAS_STACK_PROTECTOR)
+
+    check_cxx_compiler_flag("-Wl,-zrelro" CXX_HAS_WL__ZRELRO)
+    if(CXX_HAS_WL__ZRELRO)
+        set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-zrelro")
+    endif(CXX_HAS_WL__ZRELRO)
+
+    check_cxx_compiler_flag("-Wl,-znow" CXX_HAS_WL__ZNOW)
+    if(CXX_HAS_WL__ZNOW)
+        set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-znow")
+    endif(CXX_HAS_WL__ZNOW)
 
 endif(WIN32)
 
