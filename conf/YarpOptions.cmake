@@ -179,11 +179,3 @@ if(CXX_HAS_WFATAL_ERROR)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
     endif(YARP_FATAL_ERRORS)
 endif(CXX_HAS_WFATAL_ERROR)
-
-
-#########################################################################
-# Defunct options to be removed
-
-# set a flag so sub-directories know that are being compiled
-# en masse as opposed to as individuals
-set(COMPILING_ALL_YARP TRUE)

@@ -176,9 +176,6 @@ as "advanced" options.
  verbose turned on.
 \li The ENABLE_DASHBOARD_SUBMIT flag - if enabled, builds and tests can
  be submitted to the YARP online dashboard.
-\li The COMPILING_ALL_YARP flag - this is always true, and is there so
- that any YARP plugin can determine that it is currently being compiled as 
- part of YARP.
 
 @section yarp_build_structure_version conf/YarpVersion.cmake
 
