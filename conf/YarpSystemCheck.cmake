@@ -128,16 +128,18 @@ else(WIN32)
 
     include(CheckCXXCompilerFlag)
 
+    ## Wanted warnings flags ##
+
     set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 
     check_cxx_compiler_flag("-Wsign-compare" CXX_HAS_WSIGN_COMPARE)
     if(CXX_HAS_WSIGN_COMPARE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsign-compare")
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wsign-compare")
     endif (CXX_HAS_WSIGN_COMPARE)
 
     check_cxx_compiler_flag("-Wpointer-arith" CXX_HAS_WPOINTER_ARITH)
     if(CXX_HAS_WPOINTER_ARITH)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpointer-arith")
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wpointer-arith")
     endif(CXX_HAS_WPOINTER_ARITH)
 
     check_cxx_compiler_flag("-Wformat" CXX_HAS_WFORMAT)
@@ -151,20 +153,46 @@ else(WIN32)
 
     check_cxx_compiler_flag("-Winit-self" CXX_HAS_WINIT_SELF)
     if(CXX_HAS_WINIT_SELF)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Winit-self")
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Winit-self")
     endif(CXX_HAS_WINIT_SELF)
 
     check_cxx_compiler_flag("-Wnon-virtual-dtor" CXX_HAS_WNON_VIRTUAL_DTOR)
     if(CXX_HAS_WNON_VIRTUAL_DTOR)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnon-virtual-dtor")
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wnon-virtual-dtor")
     endif(CXX_HAS_WNON_VIRTUAL_DTOR)
+
+    check_cxx_compiler_flag("-Wcast-align" CXX_HAS_WCAST_ALIGN)
+    if(CXX_HAS_WCAST_ALIGN)
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wcast-align")
+    endif(CXX_HAS_WCAST_ALIGN)
+
+#    check_cxx_compiler_flag("-Wundef" CXX_HAS_WUNDEF)
+#    if(CXX_HAS_WUNDEF)
+#        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wundef")
+#    endif(CXX_HAS_WUNDEF)
+
+    check_cxx_compiler_flag("-Woverloaded-virtual" CXX_HAS_WOVERLOADED_VIRTUAL)
+    if(CXX_HAS_WOVERLOADED_VIRTUAL)
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Woverloaded-virtual")
+    endif(CXX_HAS_WOVERLOADED_VIRTUAL)
+
+
+
+    ## Unwanted warning flags ##
 
     check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
     if(CXX_HAS_WNO_UNUSED_PARAMETER)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
+        set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-unused-parameter")
     endif(CXX_HAS_WNO_UNUSED_PARAMETER)
 
-    #-Wno-missing-field-initializers
+    check_cxx_compiler_flag("-Wno-long-long" CXX_HAS_WNO_LONG_LONG)
+    if(CXX_HAS_WNO_LONG_LONG)
+       set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
+    endif(CXX_HAS_WNO_LONG_LONG)
+
+
+
+    ## Visibility hidden flags ##
 
     check_cxx_compiler_flag("-fvisibility=hidden" CXX_HAS_FVISIBILITY_HIDDEN)
     if(CXX_HAS_FVISIBILITY_HIDDEN)
@@ -177,6 +205,10 @@ else(WIN32)
     if(CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
         set(VISIBILITY_HIDDEN_FLAGS "${VISIBILITY_HIDDEN_FLAGS} -fvisibility-inlines-hidden")
     endif(CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
+
+
+
+    ## Deprcated declarations flags ##
 
     check_cxx_compiler_flag("-Wdeprecated-declarations" CXX_HAS_WDEPRECATED_DECLARATIONS)
     if(CXX_HAS_WDEPRECATED_DECLARATIONS)
