@@ -69,6 +69,25 @@ endif()
 
 
 #########################################################################
+# Control whether non-public symbols are filtered out
+
+option(YARP_CLEAN_API "Filter out non-public symbols" FALSE)
+mark_as_advanced(YARP_CLEAN_API)
+if(YARP_CLEAN_API)
+    if(YARP_COMPILE_TESTS)
+        if(WIN32)
+            message(FATAL_ERROR "On Windows, we cannot compile tests when building dlls. Turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
+        else(WIN32)
+            message(STATUS "Since tests access non-public classes, we'll need to leave all symbols in the shared libraries. If this is undesired, turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
+        endif(WIN32)
+    else(YARP_COMPILE_TESTS)
+        set(YARP_FILTER_API TRUE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISIBILITY_HIDDEN_FLAGS}")
+    endif(YARP_COMPILE_TESTS)
+endif(YARP_CLEAN_API)
+
+
+#########################################################################
 # Show warnings for deprecated declarations
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS}")
