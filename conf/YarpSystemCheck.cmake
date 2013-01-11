@@ -131,9 +131,71 @@ if(WIN32)
         # Traditionally, we add "d" postfix to debug libraries
         set(CMAKE_DEBUG_POSTFIX "d")
     endif(MSVC)
+else(WIN32)
+
+    include(CheckCXXCompilerFlag)
+
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+
+    check_cxx_compiler_flag("-Wsign-compare" CXX_HAS_WSIGN_COMPARE)
+    if(CXX_HAS_WSIGN_COMPARE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wsign-compare")
+    endif (CXX_HAS_WSIGN_COMPARE)
+
+    check_cxx_compiler_flag("-Wpointer-arith" CXX_HAS_WPOINTER_ARITH)
+    if(CXX_HAS_WPOINTER_ARITH)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpointer-arith")
+    endif(CXX_HAS_WPOINTER_ARITH)
+
+    check_cxx_compiler_flag("-Wformat" CXX_HAS_WFORMAT)
+    if(CXX_HAS_WFORMAT)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat")
+        check_cxx_compiler_flag("-Wformat-security" CXX_HAS_WFORMAT_SECURITY)
+        if(CXX_HAS_WFORMAT_SECURITY)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat-security")
+        endif(CXX_HAS_WFORMAT_SECURITY)
+    endif(CXX_HAS_WFORMAT)
+
+    check_cxx_compiler_flag("-Winit-self" CXX_HAS_WINIT_SELF)
+    if(CXX_HAS_WINIT_SELF)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Winit-self")
+    endif(CXX_HAS_WINIT_SELF)
+
+    check_cxx_compiler_flag("-Wnon-virtual-dtor" CXX_HAS_WNON_VIRTUAL_DTOR)
+    if(CXX_HAS_WNON_VIRTUAL_DTOR)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wnon-virtual-dtor")
+    endif(CXX_HAS_WNON_VIRTUAL_DTOR)
+
+    check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
+    if(CXX_HAS_WNO_UNUSED_PARAMETER)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
+    endif(CXX_HAS_WNO_UNUSED_PARAMETER)
+
+    #-Wno-missing-field-initializers
+
+    check_cxx_compiler_flag("-fvisibility=hidden" CXX_HAS_FVISIBILITY_HIDDEN)
+    if(CXX_HAS_FVISIBILITY_HIDDEN)
+        set(VISIBILITY_HIDDEN_FLAGS "-fvisibility=hidden")
+    else(CXX_HAS_FVISIBILITY_HIDDEN)
+        set(VISIBILITY_HIDDEN_FLAGS)
+    endif(CXX_HAS_FVISIBILITY_HIDDEN)
+
+    check_cxx_compiler_flag("-fvisibility-inlines-hidden" CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
+    if(CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
+        set(VISIBILITY_HIDDEN_FLAGS "${VISIBILITY_HIDDEN_FLAGS} -fvisibility-inlines-hidden")
+    endif(CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
+
+    check_cxx_compiler_flag("-Wdeprecated-declarations" CXX_HAS_WDEPRECATED_DECLARATIONS)
+    if(CXX_HAS_WDEPRECATED_DECLARATIONS)
+        set(DEPRECATED_DECLARATIONS_FLAGS "-Wdeprecated-declarations")
+    else(CXX_HAS_WDEPRECATED_DECLARATIONS)
+        set(DEPRECATED_DECLARATIONS_FLAGS)
+    endif(CXX_HAS_WDEPRECATED_DECLARATIONS)
 
 endif(WIN32)
 
+
+# TODO Should be an option?
 mark_as_advanced(SKIP_ACE)
 
 if (SKIP_ACE)
@@ -174,29 +236,6 @@ else ()
   endif ()
 
 endif ()
-
-
-include(CheckCXXCompilerFlag)
-
-
-check_cxx_compiler_flag("-fvisibility=hidden" CXX_HAS_FVISIBILITY_HIDDEN)
-if(CXX_HAS_FVISIBILITY_HIDDEN)
-    set(VISIBILITY_HIDDEN_FLAGS "-fvisibility=hidden")
-else(CXX_HAS_FVISIBILITY_HIDDEN)
-    set(VISIBILITY_HIDDEN_FLAGS)
-endif(CXX_HAS_FVISIBILITY_HIDDEN)
-
-check_cxx_compiler_flag("-fvisibility-inlines-hidden" CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
-if(CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
-    set(VISIBILITY_HIDDEN_FLAGS "${VISIBILITY_HIDDEN_FLAGS} -fvisibility-inlines-hidden")
-endif(CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
-
-check_cxx_compiler_flag("-Wdeprecated-declarations" CXX_HAS_WDEPRECATED_DECLARATIONS)
-if(CXX_HAS_WDEPRECATED_DECLARATIONS)
-    set(DEPRECATED_DECLARATIONS_FLAGS "-Wdeprecated-declarations")
-else(CXX_HAS_WDEPRECATED_DECLARATIONS)
-    set(DEPRECATED_DECLARATIONS_FLAGS)
-endif(CXX_HAS_WDEPRECATED_DECLARATIONS)
 
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in

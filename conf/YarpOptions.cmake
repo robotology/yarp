@@ -148,13 +148,42 @@ if (INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif ()
 
+
+#########################################################################
+# Control whether build should be aborted on warnings and errors
+
+
+# TODO Remove this later
+set(YARP_ADMIN "$ENV{YARP_ADMIN}")
+
+if(YARP_ADMIN)
+    message("YARP_ADMIN environment variable is deprecated. Consider setting YARP_ABORT_ON_WARNING and/or YARP_FATAL_ERRORS instead")
+endif(YARP_ADMIN)
+
+
+### -Werror
+if(CXX_HAS_WERROR)
+    option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." TRUE)
+    mark_as_advanced(YARP_ABORT_ON_WARNING)
+    if(YARP_EXTRA_WARNINGS)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+    endif(YARP_EXTRA_WARNINGS)
+endif(CXX_HAS_WERROR)
+
+
+### -Wfatal-errors
+if(CXX_HAS_WFATAL_ERROR)
+    option(YARP_FATAL_ERRORS "Abort compilation on the first error rather than trying to keep going and printing further error messages (-Wfatal-errors)" FALSE)
+    mark_as_advanced(YARP_FATAL_ERRORS)
+    if(YARP_FATAL_ERRORS)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
+    endif(YARP_FATAL_ERRORS)
+endif(CXX_HAS_WFATAL_ERROR)
+
+
 #########################################################################
 # Defunct options to be removed
 
 # set a flag so sub-directories know that are being compiled
 # en masse as opposed to as individuals
 set(COMPILING_ALL_YARP TRUE)
-
-
-
-
