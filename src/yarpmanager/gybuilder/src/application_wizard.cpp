@@ -39,7 +39,10 @@ inline bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder
     };
 
 ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, Application* app) 
-: m_Table(7,3), m_EntryFolderName(true)
+: m_Table(7,3)
+    #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 24)
+, m_EntryFolderName(true)
+#endif
 {
     m_Application = app;
     m_pParent = parent;
@@ -98,9 +101,13 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
             if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
                     (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
                 strPath = strPath + string(PATH_SEPERATOR);
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 24)
+            m_EntryFolderName.append_text(Glib::ustring(strPath));
+#else
             m_EntryFolderName.append(Glib::ustring(strPath));
+#endif            
         }
-        //m_EntryFolderName.set_text(strPath.c_str());
+        m_EntryFolderName.set_active(0);
     }
         
     m_EntryVersion.set_text("1.0");
@@ -184,6 +191,8 @@ void ApplicationWizard::onButtonFilePressed()
     dialog.set_transient_for(*this);
     dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
     dialog.set_do_overwrite_confirmation(true);
+    dialog.set_current_folder(m_EntryFolderName.get_entry()->get_text());
+    
 
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);

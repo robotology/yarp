@@ -45,7 +45,11 @@ private:
 public:
     Gtk::Entry m_EntryName;
     Gtk::Entry m_EntryFileName;
+    #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 24)
+    Gtk::ComboBoxEntryText m_EntryFolderName;
+#else
     Gtk::ComboBoxText m_EntryFolderName;
+#endif
     Gtk::Entry m_EntryDesc;
     Gtk::Entry m_EntryVersion;
 //    Gtk::Entry m_EntryPrefix;

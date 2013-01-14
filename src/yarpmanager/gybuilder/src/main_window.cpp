@@ -848,7 +848,7 @@ void MainWindow::onMenuFileNewApp()
     ApplicationWizard dialog(this, "Create new Application");
     if(dialog.run() == Gtk::RESPONSE_OK)
     {
-        string strPath = dialog.m_EntryFolderName.get_entry_text(); //check if need to get_active_text if entry is not present
+        string strPath = dialog.m_EntryFolderName.get_entry()->get_text();
         if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
@@ -1135,7 +1135,7 @@ void MainWindow::onMenuFileSaveAs()
         ApplicationWizard dialog(this, "Save as new application", application);
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
-            string strPath = dialog.m_EntryFolderName.get_entry_text(); 
+            string strPath = dialog.m_EntryFolderName.get_entry()->get_text();
             if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
                 (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
                 strPath = strPath + string(PATH_SEPERATOR);
