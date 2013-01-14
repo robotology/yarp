@@ -263,13 +263,13 @@ public:
 
     // documented in Searchable
     virtual bool check(const char *key) {
-        ok(); 
+        ok();
         return proxy->check(key);
     }
 
     // documented in Searchable
     virtual Value& find(const char *key) {
-        ok(); 
+        ok();
         return proxy->find(key);
     }
 
