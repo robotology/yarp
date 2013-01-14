@@ -95,13 +95,13 @@ fi
 	
 if [ ! -e $fname ]; then
 	if [ "k$BUNDLE_YARP_VERSION" = "ktrunk" ]; then
-		svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 $fname || {
+			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 $fname || {
 			echo "Cannot fetch YARP"
 			exit 1
 		}
 	else
 		if [ "k$BUNDLE_YARP_REVISION" = "k" ]; then
-			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$fname $fname || {
+				svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$fname $fname || {
 				echo "Cannot fetch YARP"
 				exit 1
 			}

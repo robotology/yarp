@@ -397,6 +397,17 @@ if [ -e "$OPT_VC_REDIST_CRT" ] ; then
 		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "$OPT_VC_REDIST_CRT"
 	done
 fi
+# 03 jan 2013 by Matteo Brunettini :
+# Add Visual Studio redistributable material to NSIS - Fix missign GTKMM MVSC100 DLLs
+# NOTE: the path VS10/VC/redist/$OPT_VARIANT/Microsoft.VC100.CRT must be copied to VS10/VC/redist/$OPT_VARIANT/ 
+if [ "$OPT_VCNNN" == "VC110" ]
+then
+	echo "**** Fixing missing msvc100 DLLs in gtkmm from $REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
+	cd "$REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT" || exit 1
+	for f in `ls *.dll *.manifest`; do
+		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "$REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
+	done
+fi
 
 # Add debug material to NSIS
 DBG_HIDE="-"
@@ -430,6 +441,7 @@ fi
 # Run NSIS
 cd $OUT_DIR
 cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
+
 $NSIS_BIN -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DGTKMM_SUB=$GTKMM_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
 
 # Generate zip files
