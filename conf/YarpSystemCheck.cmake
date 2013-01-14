@@ -157,16 +157,35 @@ else(WIN32)
         set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wcast-align")
     endif(CXX_HAS_WCAST_ALIGN)
 
-#    check_cxx_compiler_flag("-Wundef" CXX_HAS_WUNDEF)
-#    if(CXX_HAS_WUNDEF)
-#        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wundef")
-#    endif(CXX_HAS_WUNDEF)
+
+    ## Experimental warning flags ##
+
+    set(EXPERIMENTAL_WARNING_FLAGS)
+
+    check_cxx_compiler_flag("-Wundef" CXX_HAS_WUNDEF)
+    if(CXX_HAS_WUNDEF)
+        set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wundef")
+    endif(CXX_HAS_WUNDEF)
 
     check_cxx_compiler_flag("-Woverloaded-virtual" CXX_HAS_WOVERLOADED_VIRTUAL)
     if(CXX_HAS_WOVERLOADED_VIRTUAL)
-        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Woverloaded-virtual")
+        set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Woverloaded-virtual")
     endif(CXX_HAS_WOVERLOADED_VIRTUAL)
 
+    check_cxx_compiler_flag("-Wconversion" CXX_HAS_WCONVERSION)
+    if(CXX_HAS_WCONVERSION)
+        set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wconversion")
+    endif(CXX_HAS_WCONVERSION)
+
+    check_cxx_compiler_flag("-Wsign-conversion" CXX_HAS_WSIGN_CONVERSION)
+    if(CXX_HAS_WSIGN_CONVERSION)
+        set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wsign-conversion")
+    endif(CXX_HAS_WSIGN_CONVERSION)
+
+    check_cxx_compiler_flag("-Wold-style-cast" CXX_HAS_WOLD_STYLE_CAST)
+    if(CXX_HAS_WOLD_STYLE_CAST)
+        set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wold-style-cast")
+    endif(CXX_HAS_WOLD_STYLE_CAST)
 
 
     ## Unwanted warning flags ##

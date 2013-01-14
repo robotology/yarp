@@ -71,6 +71,7 @@ endif()
 # Enable these messages for debugging flags
 
 #message(STATUS "WANTED_WARNING_FLAGS = ${WANTED_WARNING_FLAGS}")
+#message(STATUS "EXPERIMENTAL_WARNING_FLAGS = ${EXPERIMENTAL_WARNING_FLAGS}")
 #message(STATUS "UNWANTED_WARNING_FLAGS = ${UNWANTED_WARNING_FLAGS}")
 #message(STATUS "VISIBILITY_HIDDEN_FLAGS = ${VISIBILITY_HIDDEN_FLAGS}")
 #message(STATUS "DEPRECATED_DECLARATIONS_FLAGS = ${DEPRECATED_DECLARATIONS_FLAGS}")
@@ -79,8 +80,14 @@ endif()
 
 
 #########################################################################
-# Enable/disable wanted and unwanted warnings
+# Enable/disable wanted, experimental, and unwanted warnings
 
+# FIXME We should fix those warnings and move them to wanted
+option(YARP_EXPERIMENTAL_WARNINGS "Enable some more checks that at the moment produce a lot of warnings" FALSE)
+mark_as_advanced(YARP_EXPERIMENTAL_WARNINGS)
+if(YARP_EXPERIMENTAL_WARNINGS)
+    set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} ${EXPERIMENTAL_WARNING_FLAGS}")
+endif(YARP_EXPERIMENTAL_WARNINGS)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNING_FLAGS} ${UNWANTED_WARNING_FLAGS}")
 
 
