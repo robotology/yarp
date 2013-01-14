@@ -45,7 +45,9 @@ recommended usage of this header within YARP is:
 #  define YARP_HELPER_DLL_LOCAL
 #  define YARP_HELPER_DLL_IMPORT_EXTERN extern
 #  define YARP_HELPER_DLL_EXPORT_EXTERN
-#  define YARP_HELPER_DLL_DEPRECATED __declspec(deprecated)
+#  ifndef YARP_NO_DEPRECATED_WARNINGS
+#    define YARP_HELPER_DLL_DEPRECATED __declspec(deprecated)
+#  endif
 #else
 #  if __GNUC__ >= 4
 #    define YARP_HELPER_DLL_IMPORT __attribute__ ((visibility("default")))
@@ -61,10 +63,13 @@ recommended usage of this header within YARP is:
 #     define YARP_HELPER_DLL_EXPORT_EXTERN
 #  endif
 #  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
-#    define YARP_HELPER_DLL_DEPRECATED __attribute__ ((__deprecated__))
-#  else
-#    define YARP_HELPER_DLL_DEPRECATED
+#    ifndef YARP_NO_DEPRECATED_WARNINGS
+#      define YARP_HELPER_DLL_DEPRECATED __attribute__ ((__deprecated__))
+#    endif
 #  endif
+#endif
+#ifndef YARP_HELPER_DLL_DEPRECATED
+#  define YARP_HELPER_DLL_DEPRECATED
 #endif
 
 #if defined YARP_DLL && defined YARP_FILTER_API
@@ -83,4 +88,4 @@ recommended usage of this header within YARP is:
 #  define YARP_DEPRECATED
 #endif
 
-#endif
+#endif /* _YARP2_API_ */

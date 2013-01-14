@@ -110,7 +110,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS_FLAGS}")
 
 
 #########################################################################
-# Control whether deprecated methods are built
+# Control whether deprecated methods are built and whether they should
+# print warnings
 
 option(YARP_NO_DEPRECATED "Filter out deprecated declarations from API" FALSE)
 mark_as_advanced(YARP_NO_DEPRECATED)
@@ -118,6 +119,14 @@ if(YARP_NO_DEPRECATED)
     add_definitions("-DYARP_NO_DEPRECATED")
 endif(YARP_NO_DEPRECATED)
 
+include(CMakeDependentOption)
+cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
+                       "Filter out deprecated declarations from API" FALSE
+                       "NOT YARP_NO_DEPRECATED" FALSE)
+mark_as_advanced(YARP_NO_DEPRECATED_WARNINGS)
+if(YARP_NO_DEPRECATED_WARNINGS)
+    add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
+endif(YARP_NO_DEPRECATED_WARNINGS)
 
 #########################################################################
 # Control whether to build YARP using hardening options
