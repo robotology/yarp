@@ -212,9 +212,9 @@ endif(YARP_ADMIN)
 if(CXX_HAS_WERROR)
     option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." TRUE)
     mark_as_advanced(YARP_ABORT_ON_WARNING)
-    if(YARP_EXTRA_WARNINGS)
+    if(YARP_ABORT_ON_WARNING)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-    endif(YARP_EXTRA_WARNINGS)
+     endif(YARP_ABORT_ON_WARNING)
 endif(CXX_HAS_WERROR)
 
 
