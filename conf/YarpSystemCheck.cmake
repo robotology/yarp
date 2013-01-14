@@ -157,8 +157,42 @@ else(WIN32)
         set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wcast-align")
     endif(CXX_HAS_WCAST_ALIGN)
 
+    check_cxx_compiler_flag("-Wunused" CXX_HAS_UNUSED)
+    if(CXX_HAS_WUNUSED)
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused")
+    endif(CXX_HAS_WUNUSED)
+
+    check_cxx_compiler_flag("-Winline" CXX_HAS_WINLINE)
+    if(CXX_HAS_WINLINE)
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Winline")
+    endif(CXX_HAS_WINLINE)
+
+    check_cxx_compiler_flag("-Wvla" CXX_HAS_WVLA)
+    if(CXX_HAS_WVLA)
+        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wvla")
+    endif(CXX_HAS_WVLA)
+
+
+
+    ## Unwanted warning flags ##
+
+    set(UNWANTED_WARNING_FLAGS)
+
+    # FIXME this warning should be enabled later.
+    check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
+    if(CXX_HAS_WNO_UNUSED_PARAMETER)
+        set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-unused-parameter")
+    endif(CXX_HAS_WNO_UNUSED_PARAMETER)
+
+    check_cxx_compiler_flag("-Wno-long-long" CXX_HAS_WNO_LONG_LONG)
+    if(CXX_HAS_WNO_LONG_LONG)
+       set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
+    endif(CXX_HAS_WNO_LONG_LONG)
+
+
 
     ## Experimental warning flags ##
+    # FIXME Those warnings should be enabled later
 
     set(EXPERIMENTAL_WARNING_FLAGS)
 
@@ -187,30 +221,20 @@ else(WIN32)
         set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wold-style-cast")
     endif(CXX_HAS_WOLD_STYLE_CAST)
 
-
-    ## Unwanted warning flags ##
-
-    set(UNWANTED_WARNING_FLAGS)
-
-    check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
-    if(CXX_HAS_WNO_UNUSED_PARAMETER)
-        set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-unused-parameter")
-    endif(CXX_HAS_WNO_UNUSED_PARAMETER)
-
-    check_cxx_compiler_flag("-Wno-long-long" CXX_HAS_WNO_LONG_LONG)
-    if(CXX_HAS_WNO_LONG_LONG)
-       set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
-    endif(CXX_HAS_WNO_LONG_LONG)
+    check_cxx_compiler_flag("-Wredundant-decls" CXX_HAS_WREDUNDANT_DECLS)
+    if(CXX_HAS_WREDUNDANT_DECLS)
+        set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wredundant-decls")
+    endif(CXX_HAS_WREDUNDANT_DECLS)
 
 
 
     ## Visibility hidden flags ##
 
+    set(VISIBILITY_HIDDEN_FLAGS)
+
     check_cxx_compiler_flag("-fvisibility=hidden" CXX_HAS_FVISIBILITY_HIDDEN)
     if(CXX_HAS_FVISIBILITY_HIDDEN)
         set(VISIBILITY_HIDDEN_FLAGS "-fvisibility=hidden")
-    else(CXX_HAS_FVISIBILITY_HIDDEN)
-        set(VISIBILITY_HIDDEN_FLAGS)
     endif(CXX_HAS_FVISIBILITY_HIDDEN)
 
     check_cxx_compiler_flag("-fvisibility-inlines-hidden" CXX_HAS_FVISIBILITY_INLINES_HIDDEN)
@@ -222,20 +246,29 @@ else(WIN32)
 
     ## Deprcated declarations flags ##
 
+    set(DEPRECATED_DECLARATIONS_FLAGS)
+
     check_cxx_compiler_flag("-Wdeprecated-declarations" CXX_HAS_WDEPRECATED_DECLARATIONS)
     if(CXX_HAS_WDEPRECATED_DECLARATIONS)
         set(DEPRECATED_DECLARATIONS_FLAGS "-Wdeprecated-declarations")
-    else(CXX_HAS_WDEPRECATED_DECLARATIONS)
-        set(DEPRECATED_DECLARATIONS_FLAGS)
     endif(CXX_HAS_WDEPRECATED_DECLARATIONS)
 
 
 
     ## Hardening flags ##
 
+    set(HARDENING_FLAGS)
+
     check_cxx_compiler_flag("-Wformat" CXX_HAS_WFORMAT)
     if(CXX_HAS_WFORMAT)
-        set(HARDENING_FLAGS "-Wformat")
+
+        check_cxx_compiler_flag("-Wformat=2" CXX_HAS_WFORMAT_2)
+        if(CXX_HAS_WFORMAT_2)
+            set(HARDENING_FLAGS "-Wformat=2")
+        else(CXX_HAS_WFORMAT_2)
+            set(HARDENING_FLAGS "-Wformat")
+        endif(CXX_HAS_WFORMAT_2)
+
         check_cxx_compiler_flag("-Wformat-security -Werror=format-security" CXX_HAS_WFORMAT_SECURITY)
         if(CXX_HAS_WFORMAT_SECURITY)
             set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-security -Werror=format-security")
@@ -251,22 +284,16 @@ else(WIN32)
             set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wformat-nonliteral")
         endif(CXX_HAS_WFORMAT_NONLITERAL)
 
-        check_cxx_compiler_flag("-fPIE -pie" CXX_HAS_FPIE)
-        if(CXX_HAS_FPIE)
-            set(HARDENING_FLAGS "${HARDENING_FLAGS} -fPIE -pie")
-        endif(CXX_HAS_FPIE)
-    else(CXX_HAS_WFORMAT)
-        set(HARDENING_FLAGS)
     endif(CXX_HAS_WFORMAT)
 
-    check_cxx_compiler_flag("-fstack-protector --param ssp-buffer-size=4" CXX_HAS_STACK_PROTECTOR)
+    check_cxx_compiler_flag("-fstack-protector --param=ssp-buffer-size=4" CXX_HAS_STACK_PROTECTOR)
     if(CXX_HAS_STACK_PROTECTOR)
-        set(HARDENING_FLAGS "${HARDENING_FLAGS} -fstack-protector --param ssp-buffer-size=4")
+        set(HARDENING_FLAGS "${HARDENING_FLAGS} -fstack-protector --param=ssp-buffer-size=4")
     endif(CXX_HAS_STACK_PROTECTOR)
 
     check_cxx_compiler_flag("-Wl,-zrelro" CXX_HAS_WL__ZRELRO)
     if(CXX_HAS_WL__ZRELRO)
-        set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-zrelro")
+       set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-zrelro")
     endif(CXX_HAS_WL__ZRELRO)
 
     check_cxx_compiler_flag("-Wl,-znow" CXX_HAS_WL__ZNOW)
@@ -274,6 +301,10 @@ else(WIN32)
         set(HARDENING_FLAGS "${HARDENING_FLAGS} -Wl,-znow")
     endif(CXX_HAS_WL__ZNOW)
 
+    check_cxx_compiler_flag("-fPIE -pie" CXX_HAS_FPIE)
+    if(CXX_HAS_FPIE)
+        set(HARDENING_FLAGS "${HARDENING_FLAGS} -fPIE -pie")
+    endif(CXX_HAS_FPIE)
 
     ## C++11 flags
 
