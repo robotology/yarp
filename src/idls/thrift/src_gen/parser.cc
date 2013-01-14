@@ -2186,7 +2186,7 @@ yyreduce:
       (yyval.tconstv) = new t_const_value();
       (yyval.tconstv)->set_integer((yyvsp[(1) - (1)].iconst));
       if (!g_allow_64bit_consts && ((yyvsp[(1) - (1)].iconst) < INT32_MIN || (yyvsp[(1) - (1)].iconst) > INT32_MAX)) {
-        pwarning(1, "64-bit constant \"%"PRIi64"\" may not work in all languages.\n", (yyvsp[(1) - (1)].iconst));
+        pwarning(1, "64-bit constant \"%" PRIi64"\" may not work in all languages.\n", (yyvsp[(1) - (1)].iconst));
       }
     ;}
     break;
