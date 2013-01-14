@@ -46,5 +46,17 @@ if(NOT YARP_FOUND)
         add_definitions("-DYARP_NO_DEPRECATED")
     endif(YARP_NO_DEPRECATED)
 
+    # Export variables for available targets
+    set(YARP_OS_LIBRARY YARP_OS)
+    set(YARP_SIG_LIBRARY YARP_sig)
+    if(YARP_HAS_MATH_LIBRARY)
+        set(YARP_MATH_LIBRARY YARP_math)
+    endif(YARP_HAS_MATH_LIBRARY)
+    set(YARP_DEV_LIBRARY YARP_dev)
+    if(YARP_HAS_NAME_LIBRARY)
+        set(YARP_NAME_LIBRARY YARP_name)
+    endif(YARP_HAS_NAME_LIBRARY)
+    set(YARP_INIT_LIBRARY YARP_init)
+
     set (YARP_FOUND TRUE)
 endif(NOT YARP_FOUND)
