@@ -130,7 +130,7 @@ else(WIN32)
 
     ## Wanted warnings flags ##
 
-    set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+    set(WANTED_WARNING_FLAGS "-Wall -Wextra")
 
     check_cxx_compiler_flag("-Wsign-compare" CXX_HAS_WSIGN_COMPARE)
     if(CXX_HAS_WSIGN_COMPARE)
@@ -170,6 +170,8 @@ else(WIN32)
 
 
     ## Unwanted warning flags ##
+
+    set(UNWANTED_WARNING_FLAGS)
 
     check_cxx_compiler_flag("-Wno-unused-parameter" CXX_HAS_WNO_UNUSED_PARAMETER)
     if(CXX_HAS_WNO_UNUSED_PARAMETER)
