@@ -81,7 +81,7 @@ endif()
 #########################################################################
 # Enable/disable wanted and unwanted warnings
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNINGS_FLAGS} ${UNWANTED_WARNING_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNING_FLAGS} ${UNWANTED_WARNING_FLAGS}")
 
 
 #########################################################################
