@@ -91,6 +91,7 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
         "gdkmm"
         "pangomm"
         "cairomm/cairomm"
+        "cairommconfig"
         "atkmm"
         "libxml++config"
         "libxml++/libxml++"
