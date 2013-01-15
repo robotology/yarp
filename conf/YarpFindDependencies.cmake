@@ -160,16 +160,20 @@ if(CREATE_GUIS)
     option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON)
     option(CREATE_GYARPMANAGER "Do you want to compile gyarpmanager?" ON)
     option(CREATE_YARPSCOPE "Do you want to create yarpscope?" ON)
+    option(CREATE_YBUILDER "Do you want to compile Yarp application builder?" OFF)
+
 else(CREATE_GUIS)
     # FIXME Remove when dropping support for cmake 2.6.0)
     if (CMAKE_MAJOR_VERSION EQUAL 2 AND CMAKE_MINOR_VERSION EQUAL 6 AND CMAKE_PATCH_VERSION LESS 3)
         set(CREATE_YARPVIEW)
         set(CREATE_GYARPMANAGER)
         set(CREATE_YARPSCOPE)
+        set(CREATE_YBUILDER)
     else()
         unset(CREATE_YARPVIEW CACHE)
         unset(CREATE_GYARPMANAGER CACHE)
         unset(CREATE_YARPSCOPE CACHE)
+        unset(CREATE_YBUILDER CACHE)
     endif()
 endif(CREATE_GUIS)
 
@@ -242,6 +246,13 @@ if(CREATE_YARPSCOPE)
     checkbuildandset_dependency(GtkDataboxMM)
 endif(CREATE_YARPSCOPE)
 
+if(CREATE_YBUILDER)
+    find_package(GooCanvas QUIET)
+    checkbuildandset_dependency(GooCanvas)
+    find_package(GooCanvasMM QUIET)
+    checkbuildandset_dependency(GooCanvasMM)
+endif(CREATE_YBUILDER)
+
 
 # CHECK DEPENDENCIES:
 
@@ -265,6 +276,8 @@ endif(YARP_USE_GTK2)
 check_optional_dependency(CREATE_YARPSCOPE GtkDatabox)
 check_optional_dependency(CREATE_YARPSCOPE GtkDataboxMM)
 
+check_optional_dependency(CREATE_YBUILDER GooCanvas)
+check_optional_dependency(CREATE_YBUILDER GooCanvasMM)
 
 # PRINT DEPENDENCIES STATUS:
 
@@ -285,3 +298,5 @@ endif(YARP_USE_GTK2)
 
 print_dependency(GtkDatabox)
 print_dependency(GtkDataboxMM)
+print_dependency(GooCanvas)
+print_dependency(GooCanvasMM)

@@ -21,8 +21,8 @@ endif(YARP_USE_GTK2)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
+include_directories(${TinyXML_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/tinyxml)
 
 file(GLOB folder_source *.cpp)
 file(GLOB folder_header *.h)

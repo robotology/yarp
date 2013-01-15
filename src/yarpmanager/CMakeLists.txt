@@ -7,10 +7,6 @@
 
 # yarpmanager 
 
-
-option(CREATE_YMANAGER "Do you want to compile Yarp module manager?" ON)
-option(CREATE_YBUILDER "Do you want to compile Yarp application builder?" OFF)
-
 if (CREATE_YMANAGER)
 	add_subdirectory(libymanager)
 	add_subdirectory(ymanager)	
