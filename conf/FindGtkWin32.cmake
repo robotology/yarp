@@ -42,6 +42,7 @@ FIND_PATH(GTK_atk_INCLUDE_PATH atk/atk.h ${GTK_BASEPATH}/include/atk-1.0/)
 FIND_PATH(GTK_glib_config_INCLUDE_PATH glibconfig.h ${GTK_BASEPATH}/lib/glib-2.0/include)
 FIND_PATH(GTK_gdk_config_INCLUDE_PATH gdkconfig.h ${GTK_BASEPATH}/lib/gtk-2.0/include)
 FIND_PATH(GTK_gdk_pixbuf_INCLUDE_PATH gdk-pixbuf/gdk-pixbuf.h ${GTK_BASEPATH}/include/gdk-pixbuf-2.0)
+FIND_PATH(GTK_intl_INCLUDE_PATH libintl.h ${GTK_BASEPATH}/include/)
 
 # libraries
 FIND_LIBRARY( GTK_gtk_LIBRARY
@@ -72,8 +73,16 @@ FIND_LIBRARY(GTK_pango_LIBRARY
   NAMES pango-1.0
   PATHS ${GTK_BASEPATH}/lib)
 
+FIND_LIBRARY(GTK_pangocairo_LIBRARY
+  NAMES pangocairo-1.0
+  PATHS ${GTK_BASEPATH}/lib)
+
 FIND_LIBRARY(GTK_atk_LIBRARY
   NAMES atk-1.0
+  PATHS ${GTK_BASEPATH}/lib)
+
+FIND_LIBRARY( GTK_intl_LIBRARY
+  NAMES  intl
   PATHS ${GTK_BASEPATH}/lib)
 
 # GTK_INCLUDE_DIR   - Directories to include to use GTK
@@ -87,8 +96,9 @@ IF(GTK_gtk_INCLUDE_PATH AND GTK_gtk_LIBRARY
     AND GTK_gdk_config_INCLUDE_PATH AND GTK_gdk_LIBRARY
     AND GTK_gdk_pixbuf_INCLUDE_PATH AND GTK_gdk_pixbuf_LIBRARY
     AND GTK_cairo_INCLUDE_PATH AND GTK_cairo_LIBRARY
-    AND GTK_pango_INCLUDE_PATH AND GTK_pango_LIBRARY
-    AND GTK_atk_INCLUDE_PATH AND GTK_atk_LIBRARY)
+    AND GTK_pango_INCLUDE_PATH AND GTK_pango_LIBRARY AND GTK_pangocairo_LIBRARY
+    AND GTK_atk_INCLUDE_PATH AND GTK_atk_LIBRARY
+    AND GTK_intl_INCLUDE_PATH AND GTK_intl_LIBRARY)
     SET(GTK_FOUND TRUE)
     SET(GTKPLUS_INCLUDE_DIR ${GTK_gtk_INCLUDE_PATH}
                             ${GTK_glib_INCLUDE_PATH}
@@ -97,7 +107,8 @@ IF(GTK_gtk_INCLUDE_PATH AND GTK_gtk_LIBRARY
                             ${GTK_gdk_pixbuf_INCLUDE_PATH}
                             ${GTK_cairo_INCLUDE_PATH}
                             ${GTK_pango_INCLUDE_PATH}
-                            ${GTK_atk_INCLUDE_PATH})
+                            ${GTK_atk_INCLUDE_PATH}
+                            ${GTK_intl_INCLUDE_PATH})
     SET( GTKPLUS_LINK_FLAGS  ${GTK_gtk_LIBRARY}
                              ${GTK_glib_LIBRARY}
                              ${GTK_gobject_LIBRARY}
@@ -105,7 +116,9 @@ IF(GTK_gtk_INCLUDE_PATH AND GTK_gtk_LIBRARY
                              ${GTK_gdk_pixbuf_LIBRARY}
                              ${GTK_cairo_LIBRARY}
                              ${GTK_pango_LIBRARY}
-                             ${GTK_atk_LIBRARY})
+                             ${GTK_pangocairo_LIBRARY}
+                             ${GTK_atk_LIBRARY}
+                             ${GTK_intl_LIBRARY})
 ENDIF()
 
 if (GTK_gdk_pixbuf_INCLUDE_PATH)
