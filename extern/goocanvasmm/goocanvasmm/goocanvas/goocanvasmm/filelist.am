@@ -1,0 +1,8 @@
+## This file is part of goocanvasmm.
+
+files_built_cc = $(files_hg:.hg=.cc) wrap_init.cc
+files_built_h  = $(files_hg:.hg=.h)
+files_built_ph = $(patsubst %.hg,private/%_p.h,$(files_hg))
+files_extra_cc = init.cc
+files_extra_h  = wrap_init.h init.h types.h
+files_extra_ph =

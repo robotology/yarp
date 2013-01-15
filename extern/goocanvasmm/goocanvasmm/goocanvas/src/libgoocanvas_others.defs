@@ -1,0 +1,47 @@
+; This file is written by hand because we can't instantiate interfaces:
+
+(define-property can-focus
+  (of-object "GooCanvasItem")
+  (prop-type "GParamBoolean")
+  (docs "If the item can take the keyboard focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property visibility
+  (of-object "GooCanvasItem")
+  (prop-type "GParamEnum")
+  (docs "When the canvas item is visible")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property description
+  (of-object "GooCanvasItem")
+  (prop-type "GParamString")
+  (docs "A description of the item for use by assistive technologies")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property visibility-threshold
+  (of-object "GooCanvasItem")
+  (prop-type "GParamDouble")
+  (docs "The scale threshold at which the item becomes visible")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property pointer-events
+  (of-object "GooCanvasItem")
+  (prop-type "GParamFlags")
+  (docs "Specifies when the item receives pointer events")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+

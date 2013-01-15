@@ -1,0 +1,63 @@
+;; From /home/murrayc/checkouts/gnome224/goocanvas/src/goocanvasitem.h
+
+(define-enum-extended CanvasAnimateType
+  (in-module "Goo")
+  (c-name "GooCanvasAnimateType")
+  (values
+    '("freeze" "GOO_CANVAS_ANIMATE_FREEZE" "0")
+    '("reset" "GOO_CANVAS_ANIMATE_RESET" "1")
+    '("restart" "GOO_CANVAS_ANIMATE_RESTART" "2")
+    '("bounce" "GOO_CANVAS_ANIMATE_BOUNCE" "3")
+  )
+)
+
+;; From /home/murrayc/checkouts/gnome224/goocanvas/src/goocanvasutils.h
+
+(define-flags-extended CanvasPointerEvents
+  (in-module "Goo")
+  (c-name "GooCanvasPointerEvents")
+  (values
+    '("visible-mask" "GOO_CANVAS_EVENTS_VISIBLE_MASK" "1 << 0")
+    '("painted-mask" "GOO_CANVAS_EVENTS_PAINTED_MASK" "1 << 1")
+    '("fill-mask" "GOO_CANVAS_EVENTS_FILL_MASK" "1 << 2")
+    '("stroke-mask" "GOO_CANVAS_EVENTS_STROKE_MASK" "1 << 3")
+    '("none" "GOO_CANVAS_EVENTS_NONE" "0")
+    '("visible-painted" "GOO_CANVAS_EVENTS_VISIBLE_PAINTED" "0x1")
+    '("visible-fill" "GOO_CANVAS_EVENTS_VISIBLE_FILL" "0x1")
+    '("visible-stroke" "GOO_CANVAS_EVENTS_VISIBLE_STROKE" "0x1")
+    '("visible" "GOO_CANVAS_EVENTS_VISIBLE" "0x1")
+    '("painted" "GOO_CANVAS_EVENTS_PAINTED" "0x2")
+    '("fill" "GOO_CANVAS_EVENTS_FILL" "0x4")
+    '("stroke" "GOO_CANVAS_EVENTS_STROKE" "0x8")
+    '("all" "GOO_CANVAS_EVENTS_ALL" "0x4")
+  )
+)
+
+(define-enum-extended CanvasItemVisibility
+  (in-module "Goo")
+  (c-name "GooCanvasItemVisibility")
+  (values
+    '("hidden" "GOO_CANVAS_ITEM_HIDDEN" "0")
+    '("invisible" "GOO_CANVAS_ITEM_INVISIBLE" "1")
+    '("visible" "GOO_CANVAS_ITEM_VISIBLE" "2")
+    '("visible-above-threshold" "GOO_CANVAS_ITEM_VISIBLE_ABOVE_THRESHOLD" "3")
+  )
+)
+
+(define-enum-extended CanvasPathCommandType
+  (in-module "Goo")
+  (c-name "GooCanvasPathCommandType")
+  (values
+    '("move-to" "GOO_CANVAS_PATH_MOVE_TO" "0")
+    '("close-path" "GOO_CANVAS_PATH_CLOSE_PATH" "1")
+    '("line-to" "GOO_CANVAS_PATH_LINE_TO" "2")
+    '("horizontal-line-to" "GOO_CANVAS_PATH_HORIZONTAL_LINE_TO" "3")
+    '("vertical-line-to" "GOO_CANVAS_PATH_VERTICAL_LINE_TO" "4")
+    '("curve-to" "GOO_CANVAS_PATH_CURVE_TO" "5")
+    '("smooth-curve-to" "GOO_CANVAS_PATH_SMOOTH_CURVE_TO" "6")
+    '("quadratic-curve-to" "GOO_CANVAS_PATH_QUADRATIC_CURVE_TO" "7")
+    '("smooth-quadratic-curve-to" "GOO_CANVAS_PATH_SMOOTH_QUADRATIC_CURVE_TO" "8")
+    '("elliptical-arc" "GOO_CANVAS_PATH_ELLIPTICAL_ARC" "9")
+  )
+)
+

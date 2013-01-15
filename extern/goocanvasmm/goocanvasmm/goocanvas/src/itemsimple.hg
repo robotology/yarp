@@ -1,0 +1,106 @@
+/* Copyright (C) 1998-2006 The gtkmm Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include <gdkmm/pixbuf.h>
+#include <goocanvasmm/item.h>
+#include <goocanvasmm/linedash.h>
+#include <goocanvasmm/style.h>
+#include <glibmm/object.h>
+#include <cairomm/cairomm.h>
+
+_DEFS(goocanvasmm,libgoocanvas)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Goocanvas
+{
+
+class ItemSimple :
+  public Glib::Object,
+  public Goocanvas::Item
+{
+  _CLASS_GOBJECT(ItemSimple,GooCanvasItemSimple,GOO_CANVAS_ITEM_SIMPLE,Glib::Object,GObject)
+  _IMPLEMENTS_INTERFACE(Item)
+
+protected:
+  _CTOR_DEFAULT
+
+public:
+  _WRAP_METHOD(void set_model(const Glib::RefPtr<ItemModel>& model), goo_canvas_item_simple_set_model)
+
+  _WRAP_METHOD(void get_path_bounds(const Cairo::RefPtr<Cairo::Context>& context, Bounds& bounds) const, goo_canvas_item_simple_get_path_bounds)
+  _WRAP_METHOD(void user_bounds_to_device(const Cairo::RefPtr<Cairo::Context>& context, Bounds& bounds), goo_canvas_item_simple_user_bounds_to_device)
+  _WRAP_METHOD(void user_bounds_to_parent(const Cairo::RefPtr<Cairo::Context>& context, Bounds& bounds), goo_canvas_item_simple_user_bounds_to_parent)
+  _WRAP_METHOD(bool check_in_path(double x, double y, const Cairo::RefPtr<Cairo::Context>& cr, PointerEvents pointer_events) const, goo_canvas_item_simple_check_in_path)
+  _WRAP_METHOD(void paint_path(const Cairo::RefPtr<Cairo::Context>& cr), goo_canvas_item_simple_paint_path)
+  _WRAP_METHOD(void changed(bool recompute_bounds), goo_canvas_item_simple_changed)
+  _WRAP_METHOD(void check_style(), goo_canvas_item_simple_check_style)
+  _WRAP_METHOD(double get_line_width() const, goo_canvas_item_simple_get_line_width)
+
+  _WRAP_PROPERTY("title", Glib::ustring)
+  _WRAP_PROPERTY("visibility-threshold", double)
+  _WRAP_PROPERTY("visibility", ItemVisibility)
+  _WRAP_PROPERTY("description", Glib::ustring)
+  _WRAP_PROPERTY("pointer-events", PointerEvents)
+  _WRAP_PROPERTY("transform", Cairo::Matrix*)
+
+  _WRAP_PROPERTY("stroke-pattern", Cairo::RefPtr<Cairo::Pattern>)
+  _WRAP_PROPERTY("fill-pattern", Cairo::RefPtr<Cairo::Pattern>)
+  _WRAP_PROPERTY("fill-rule", Cairo::FillRule)
+  _WRAP_PROPERTY("operator", Cairo::Operator)
+  _WRAP_PROPERTY("antialias", Cairo::Antialias)
+
+  _WRAP_PROPERTY("font", Glib::ustring)
+  _WRAP_PROPERTY("font-desc", Pango::FontDescription)
+  _WRAP_PROPERTY("hint-metrics", Cairo::HintMetrics)
+
+  _WRAP_PROPERTY("line-width", double)
+  _WRAP_PROPERTY("line-cap", Cairo::LineCap)
+  _WRAP_PROPERTY("line-join", Cairo::LineJoin)
+  _WRAP_PROPERTY("line-join-miter-limit", double)
+  _WRAP_PROPERTY("line-dash", LineDash)
+
+  _WRAP_PROPERTY("stroke-color", Glib::ustring)
+  _WRAP_PROPERTY("stroke-color-rgba", guint)
+  _WRAP_PROPERTY("stroke-pixbuf", Gdk::Pixbuf)
+  _WRAP_PROPERTY("fill-color", Glib::ustring)
+  _WRAP_PROPERTY("fill-color-rgba", guint)
+  _WRAP_PROPERTY("fill-pixbuf", Gdk::Pixbuf)
+
+  _WRAP_PROPERTY("parent", Glib::RefPtr<Item>)
+  _WRAP_PROPERTY("can-focus", bool)
+  _WRAP_PROPERTY("clip-path", Glib::ustring)
+  _WRAP_PROPERTY("clip-fill-rule", Cairo::FillRule)
+
+#m4 _CONVERSION(`Bounds',`GooCanvasBounds',*($3).gobj())
+#m4 _CONVERSION(`GooCanvasBounds',`Bounds',`Glib::wrap(&$3)')
+  _MEMBER_GET(bounds, bounds, Bounds, GooCanvasBounds);
+  _MEMBER_SET(bounds, bounds, Bounds, GooCanvasBounds);
+
+protected:
+#m4 _CONVERSION(`cairo_t*',`const Cairo::RefPtr<Cairo::Context>&',`Cairo::RefPtr<Cairo::Context>(new Cairo::Context($3, false /* has reference */))')
+#m4 _CONVERSION(`const GooCanvasBounds*',`const Bounds&',`Glib::wrap($3)')
+  _WRAP_VFUNC(void simple_create_path(const Cairo::RefPtr<Cairo::Context>& cr), simple_create_path)
+  _WRAP_VFUNC(void simple_update(const Cairo::RefPtr<Cairo::Context>& cr), simple_update)
+  _WRAP_VFUNC(void simple_paint(const Cairo::RefPtr<Cairo::Context>& cr, const Bounds& bounds), simple_paint)
+  _WRAP_VFUNC(bool simple_is_item_at(double x, double y, const Cairo::RefPtr<Cairo::Context>& cr, bool is_pointer_event), "simple_is_item_at")
+  _MEMBER_GET(need_update, need_update, bool, guint);
+  _MEMBER_SET(need_update, need_update, bool, guint);
+  _MEMBER_GET(need_entire_subtree_update, need_entire_subtree_update, bool, guint);
+  _MEMBER_SET(need_entire_subtree_update, need_entire_subtree_update, bool, guint);
+};
+
+} //namespace Goocanvas

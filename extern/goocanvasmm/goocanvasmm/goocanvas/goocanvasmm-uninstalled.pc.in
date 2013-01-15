@@ -1,0 +1,11 @@
+doxytagfile=${pc_top_builddir}/doc/reference/@GOOCANVAS_MODULE_NAME@.tag
+htmlrefpub=http://library.gnome.org/@PACKAGE_TARNAME@/unstable/
+
+Name: goocanvasmm
+Description: C++ binding for goocanvas, not installed
+Version: @GOOCANVAS_VERSION@
+URL: http://www.gtkmm.org/
+Requires: @GOOCANVAS_MODULES@
+Libs: ${pc_top_builddir}/${pcfiledir}/goocanvasmm/libgoocanvasmm-@GOOCANVAS_API_VERSION@.la
+Cflags: -I${pc_top_builddir}/${pcfiledir} -I${pc_top_builddir}/${pcfiledir}/@srcdir@
+

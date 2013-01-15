@@ -1,0 +1,466 @@
+
+; GooCanvas
+
+(define-vfunc create_item
+	(of-object "GooCanvas")
+	(parameters
+		'("GooCanvasItemModel*" "model")
+	)
+	(return-type "GooCanvasItem*")
+)
+
+; GooCanvasModel
+
+(define-vfunc get_root_item
+	(of-object "GooCanvasModel")
+	(return-type "GooCanvasItem*")
+)
+
+; GooCanvasItem
+
+
+(define-vfunc get_canvas
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvas*")
+)
+
+(define-vfunc set_canvas
+	(of-object "GooCanvasItem")
+	(parameters
+		'("GooCanvas*" "canvas")
+	)
+	(return-type "void")
+)
+
+(define-vfunc get_n_children
+	(of-object "GooCanavsItem")
+	(return-type "gint")
+)
+
+(define-vfunc get_child
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItem*")
+	(parameters
+		'("gint" "child_num")
+	)
+)
+
+(define-vfunc request_update
+	(of-object "GooCanvasItem")
+	(return-type "void")
+)
+
+(define-vfunc add_child
+	(of-object "GooCanvasItem")
+	(parameters
+		'("GooCanvasItem*" "item")
+		'("gint" "position")
+	)
+	(return-type "void")
+)
+
+(define-vfunc move_child
+	(of-object "GooCanvasItem")
+	(parameters
+		'("gint" "old_position")
+		'("gint" "new_position")
+	)
+	(return-type "void")
+)
+
+(define-vfunc remove_child
+	(of-object "GooCanvasItem")
+	(parameters
+		'("gint" "position")
+	)
+	(return-type "void")
+)
+
+(define-vfunc get_child_property
+	(of-object "GooCanvasItem")
+	(parameters
+		'("GooCanvasItem*" "child")
+		'("guint" "property_id")
+		'("GValue*" "value")
+		'("GParamSpec*" "pspec")
+	)
+)
+
+(define-vfunc set_child_property
+	(of-object "GooCanvasItem")
+	(parameters
+		'("GooCanvasItem*" "child")
+		'("guint" "property_id")
+		'("const-GValue*" "value")
+		'("GParamSpec*" "pspec")
+	)
+)
+
+
+(define-vfunc get_transform_for_child
+	(of-object "GooCanvasItem")
+	(parameters
+		'("GooCanvasItem*" "item")
+		'("cairo_matrix_t*" "transform")
+	)
+	(return-type "gboolean")
+)
+
+
+(define-vfunc get_parent
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItem*")
+)
+
+(define-vfunc set_parent
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("GooCanvasItem*" "parent")
+	)
+)
+
+(define-vfunc get_bounds
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("GooCanvasBounds*" "bounds")
+	)
+)
+
+(define-vfunc get_items_at
+	(of-object "GooCanvasItem")
+	(return-type "GList*")
+	(parameters
+		'("gdouble" "x")
+		'("gdouble" "y")
+		'("cairo_t*" "cr")
+		'("gboolean" "is_pointer_event")
+		'("gboolean" "parent_is_visible")
+		'("GList*" "found_items")
+	)
+)
+
+
+(define-vfunc get_transform
+	(of-object "GooCanvasItem")
+	(return-type "gboolean")
+        (parameters
+		'("cairo_matrix_t*" "transform")
+	)
+
+)
+
+(define-vfunc set_transform
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("const-cairo_matrix_t*" "matrix")
+	)
+)
+
+(define-vfunc get_style
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasStyle*")
+)
+
+(define-vfunc set_style
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("GooCanvasStyle*" "style")
+	)
+)
+
+(define-vfunc is_visible
+	(of-object "GooCanvasItem")
+	(return-type "gboolean")
+)
+
+(define-vfunc get_requested_height
+	(of-object "GooCanvasItem")
+	(return-type "gdouble")
+	(parameters
+		'("cairo_t*" "cr")
+		'("gdouble" "width")
+	)
+)
+
+(define-vfunc create_view
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItem*")
+	(parameters
+		'("GooCanvasView*" "canvas_view")
+		'("GooCanvasItem*" "parent_view")
+	)
+)
+
+(define-vfunc get_canvas_view
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasView*")
+)
+
+(define-vfunc get_n_children
+	(of-object "GooCanvasItem")
+	(return-type "gint")
+)
+
+(define-vfunc get_child
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItem*")
+	(parameters
+		'("gint" "child_num")
+	)
+)
+
+
+(define-vfunc get_parent_view
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItem*")
+)
+
+(define-vfunc set_parent_view
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("GooCanvasItem*" "parent_view")
+	)
+)
+
+(define-vfunc get_item
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItem*")
+)
+
+
+
+(define-vfunc get_item_view_at
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItem*")
+	(parameters
+		'("gdouble" "x")
+		'("gdouble" "y")
+		'("cairo_t*" "cr")
+		'("gboolean" "is_pointer_event")
+		'("gboolean" "parent_is_visible")
+	)
+)
+
+(define-vfunc update
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("gboolean" "entire_tree")
+		'("cairo_t*" "cr")
+		'("GooCanvasBounds*" "bounds")
+	)
+)
+
+(define-vfunc paint
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("cairo_t*" "cr")
+		'("const-GooCanvasBounds*" "bounds")
+		'("gdouble" "scale")
+	)
+)
+
+(define-vfunc get_requested_area
+	(of-object "GooCanvasItem")
+	(return-type "gboolean")
+	(parameters
+		'("cairo_t*" "cr")
+		'("GooCanvasBounds*" "requested_area")
+	)
+)
+
+(define-vfunc allocate_area
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("cairo_t*" "cr")
+		'("const-GooCanvasBounds*" "requested_area")
+		'("const-GooCanvasBounds*" "allocated_area")
+		'("gdouble" "x_offset")
+		'("gdouble" "y_offset")
+	)
+)
+
+(define-vfunc get_model
+	(of-object "GooCanvasItem")
+	(return-type "GooCanvasItemModel*")
+)
+
+(define-vfunc set_model
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("GooCanvasItemModel*" "model")
+	)
+)
+
+(define-vfunc get_is_static
+	(of-object "GooCanvasItem")
+	(return-type "gboolean")
+)
+
+(define-vfunc set_is_static
+	(of-object "GooCanvasItem")
+	(return-type "void")
+	(parameters
+		'("gboolean" "is_static")
+        )
+)
+
+; GooCanvasItemModel
+
+(define-vfunc get_n_children
+	(of-object "GooCanvasItemModel")
+	(return-type "gint")
+)
+
+(define-vfunc get_child
+	(of-object "GooCanvasItemModel")
+	(return-type "GooCanvasItemModel*")
+	(parameters
+		'("gint" "child_num")
+	)
+)
+
+(define-vfunc add_child
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("GooCanvasItemModel*" "model")
+		'("gint" "position")
+		
+	)
+)
+
+(define-vfunc move_child
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("gint" "old_position")
+		'("gint" "new_position")
+	)
+)
+
+(define-vfunc remove_child
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("gint" "child_num")
+	)
+)
+
+(define-vfunc get_child_property
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("GooCanvasItemModel*" "child")
+		'("guint" "property_id")
+		'("GValue*" "value")
+		'("GParamSpec*" "pspec")
+	)
+)
+
+(define-vfunc set_child_property
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("GooCanvasItemModel*" "child")
+		'("guint" "property_id")
+		'("const-GValue*" "value")
+		'("GParamSpec*" "pspec")
+	)
+)
+
+(define-vfunc get_parent
+	(of-object "GooCanvasItemModel")
+	(return-type "GooCanvasItemModel*")
+)
+
+(define-vfunc set_parent
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("GooCanvasItemModel*" "parent")
+	)
+)
+
+(define-vfunc create_item
+	(of-object "GooCanvasItemModel")
+	(return-type "GooCanvasItem*")
+	(parameters
+		'("GooCanvas*" "canvas")
+	)
+)
+
+(define-vfunc get_transform
+	(of-object "GooCanvasItemModel")
+	(return-type "gboolean")
+	(parameters
+		'("cairo_matrix_t*" "transform")
+	)
+)
+
+(define-vfunc set_transform
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("const-cairo_matrix_t*" "transform")
+	)
+)
+
+(define-vfunc get_style
+	(of-object "GooCanvasItemModel")
+	(return-type "GooCanvasStyle*")
+)
+
+(define-vfunc set_style
+	(of-object "GooCanvasItemModel")
+	(return-type "void")
+	(parameters
+		'("GooCanvasStyle*" "style")
+	)
+)
+
+; GooCanvasItemSimple
+
+(define-vfunc simple_create_path
+ (of-object "GooCanvasItemSimple")
+ (return-type "void")
+ (parameters
+  '("cairo_t*" "cr")
+ )
+)
+
+(define-vfunc simple_update
+ (of-object "GooCanvasItemSimple")
+ (return-type "void")
+ (parameters
+  '("cairo_t*" "cr")
+ )
+)
+
+(define-vfunc simple_paint
+    (of-object "GooCanvasItemSimple")
+    (return-type "void")
+    (parameters
+        '("cairo_t*" "cr")
+        '("const-GooCanvasBounds*" "bounds")
+    )
+)
+
+(define-vfunc simple_is_item_at
+    (of-object "GooCanvasItemSimple")
+    (return-type "gboolean")
+    (parameters
+        '("gdouble" "x")
+        '("gdouble" "y")
+        '("cairo_t*" "cr")
+        '("gboolean" "is_pointer_event")
+    )
+)

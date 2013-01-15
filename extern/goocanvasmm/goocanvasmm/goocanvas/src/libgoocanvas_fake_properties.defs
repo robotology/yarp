@@ -1,0 +1,81 @@
+;; These are hand-coded to make gmmproc think that GooCanvasItem has 
+;; properties which are actually implemented in all derived GooCanvasItem 
+;; classes individually. That is a design error, but the patch to fix it has 
+;; not yet been accepted: http://bugzilla.gnome.org/show_bug.cgi?id=555097 
+
+;; GooCanvasItem
+
+(define-property x
+  (of-object "GooCanvasItem")
+  (prop-type "GParamDouble")
+  (docs "The x coordinate of the left side of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property y
+  (of-object "GooCanvasItem")
+  (prop-type "GParamDouble")
+  (docs "The y coordinate of the top of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property width
+  (of-object "GooCanvasItem")
+  (prop-type "GParamDouble")
+  (docs "The width of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property height
+  (of-object "GooCanvasItem")
+  (prop-type "GParamDouble")
+  (docs "The height of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; GooCanvasItemModel
+
+(define-property x
+  (of-object "GooCanvasItemModel")
+  (prop-type "GParamDouble")
+  (docs "The x coordinate of the left side of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property y
+  (of-object "GooCanvasItemModel")
+  (prop-type "GParamDouble")
+  (docs "The y coordinate of the top of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property width
+  (of-object "GooCanvasItemModel")
+  (prop-type "GParamDouble")
+  (docs "The width of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property height
+  (of-object "GooCanvasItemModel")
+  (prop-type "GParamDouble")
+  (docs "The height of the item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+

@@ -1,0 +1,1269 @@
+0.15.4:
+
+2010-10-18  Murray Cumming  <murrayc@murrayc.com>
+
+	Use non-deprecated Gtk::ALIGN_* for default parameters.
+
+	* goocanvas/src/table.hg:
+	* goocanvas/src/tablemodel.hg: Replace ALIGN_LEFT/TOP with ALIGN_START.
+
+2010-10-18  Murray Cumming  <murrayc@murrayc.com>
+
+	Fix the build with fatal warnings with gtkmm 2.22.
+
+	* goocanvas/src/bounds.hg:
+	* goocanvas/src/canvas.hg:
+	* goocanvas/src/item.[hg|ccg]:
+	* goocanvas/src/itemmodel.[hg|ccg]:
+	* goocanvas/src/itemsimple.hg:
+	* goocanvas/src/style.hg: Rearranged the includes to fix the build with
+  the awkard gdkmm deprecations.
+
+2010-09-02  Murray Cumming  <murrayc@murrayc.com>
+
+	Fix the build with the latest cairomm.
+
+	* goocanvas/src/enums.[hg|ccg]: Remove the (unused) Value<Cairo::Pattern>
+  specialization. Pattern should always (and is always) used via RefPtr
+  anyway.
+
+0.15.3:
+
+2010-05-04  Murray Cumming  <murrayc@murrayc.com>
+
+	Documentation improvements.
+
+	* goocanvas/goocanvasmm.h: Slight improvements to main page text, adding a
+	link to the Canvas widget class.
+	* goocanvas/src/canvas.hg: Added a class description.
+	* doc/reference/Doxyfile.in: Make more like gtkmm's. In particular, show
+	undocumented classes (they should be documented though).
+
+2010-04-23  David King  <davidk@openismus.com>
+
+	Add main page to Doxygen documentation
+
+	* doc/Makefile.am: Parse goocanvas/goocanvasmm.h for documentation.
+	* goocanvas/goocanvasmm.h: Add main page to Doxygen documentation.
+
+0.15.2:
+
+2009-09-18  Daniel Elstner  <danielk@openismus.com>
+
+	Add missing tag files and update Doxygen config
+
+	* configure.ac (MM_ARG_WITH_TAGFILE_DOC): Reference the installed
+	Doxygen tag files of cairomm, pangomm and gtkmm.
+	* doc/reference/Doxyfile.in: Update configuration for Doxygen 1.6.1.
+	(SORT_MEMBERS_CTORS_1ST): Set to YES.
+	(EXCLUDE_SYMBOLS): Remove bogus Skeleton* symbols from the list.
+	(EXAMPLE_*): Correct the accidentally substituted variable names.
+	(EXAMPLE_PATH): Point to the examples/ source directory.
+	(EXAMPLE_RECURSIVE): Set to YES.
+	(PREDEFINED): Define GTKMM_ATKMM_ENABLED, just in case.
+
+2009-09-18  Daniel Elstner  <danielk@openismus.com>
+
+	Insert missing comma to separate M4 macro args
+
+	* configure.ac (GOOCANVASMM_WXXFLAGS): Insert missing comma to
+	separate the fourth macro argument from the third.  This means
+	the deprecation macros are now defined again in fatal warnings
+	mode.
+
+2009-09-18  Murray Cumming  <murrayc@murrayc.com>
+
+	goocanvasmmconfig.h: Make this work.
+
+	* goocanvas/goocanvasmmconfig.h.in: Use actual GOOCANVASMM values,
+	instead of being a copy of the file from libgdamm. Noticed by
+	Daniel Elstner.
+
+2009-09-17  Murray Cumming  <murrayc@murrayc.com>
+
+	Do not put a generated ChangeLog in the tarball.
+
+	* Makefile.am: Remove the include of dist-changelog.am becaise I do not
+	want some crappy generated ChangeLog based on random vague commit
+	messages that can't be corrected later. I fight entropy. murrayc.
+
+0.15.1:
+
+2009-09-14  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/goocanvasmm/init.cc:
+	* goocanvas/src/linedash.hg: Fix some warnings found during distcheck.
+
+2009-08-24  Murray Cumming  <murrayc@murrayc.com>
+
+	Fix the install.
+
+	* goocanvas/goocanvasmm/Makefile.am: Do not mention wrap_init.h here,
+	to avoid an error about a duplicate mention during install.
+
+0.15:
+
+2009-07-07  Murray Cumming  <murrayc@murrayc.com>
+
+	Image: Added the scale-to-fit property.
+
+	* goocanvas/src/libgda_signals.defs: Regenerated.
+	* goocanvas/src/image.hg, imagemodel.hg: Add the scale-to-fit property.
+
+2009-07-05  Murray Cumming  <murrayc@murrayc.com>
+
+	Fix the build with the normal API again, and fix some whitespace.
+
+2009-07-05  Murray Cumming  <murrayc@murrayc.com>
+
+	Fix the build with disabled
+	exceptions and disabled properties API. It is not pretty.
+
+	* examples/coordinates/window.cc:
+	* examples/custom_item/examplewindow.cc:
+	* examples/demo/primitives.cc:
+	* examples/drag_to_canvas/examplewindow.cc:
+	* examples/moving_shapes/window.cc:
+	* examples/simple/examplewindow.cc:
+	* examples/table/examplewindow.cc:
+	* examples/tablemodel/examplewindow.cc:
+	* examples/text/window.cc:
+	* goocanvas/src/polyline.ccg:
+	* goocanvas/src/polylinemodel.ccg: Added ifdefs.
+
+2009-05-18  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/item.ccg: Item_Class::get_items_at_vfunc_callback():
+	Added a return 0 to avoid a compiler warning. Bug #582996 (Vincent Untz)
+
+0.14.0:
+
+2009-03-25  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/Makefile.am:
+	* goocanvas/src/libgoocanvas.defs:
+	* goocanvas/src/libgoocanvas_fake_properties.defs: Added this file,
+	written by hand.
+	* goocanvas/src/item.hg:
+	* goocanvas/src/itemmodel.hg: Add fake x, y, width, and height
+	properties in these base classes.
+	These properties are not really in GooCanvasItemModel, but they are
+	actually implemented in all derived GooCanvasItemModel classes
+	individually. That is a GooCanvas design error, but the patch to fix it
+	has not yet been accepted. See bug #555097
+
+	* goocanvas/src/ellipse.hg:
+	* goocanvas/src/grid.hg:
+	* goocanvas/src/gridmodel.hg:
+	* goocanvas/src/group.hg:
+	* goocanvas/src/image.hg:
+	* goocanvas/src/imagemodel.hg:
+	* goocanvas/src/path.hg:
+	* goocanvas/src/polyline.hg:
+	* goocanvas/src/rect.hg:
+	* goocanvas/src/rectmodel.hg:
+	* goocanvas/src/table.hg:
+	* goocanvas/src/tablemodel.hg:
+	* goocanvas/src/text.hg:
+	* goocanvas/src/widget.hg: Removed the x, y, width, and height
+	properties from the derived classes.
+
+2009-03-25  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/group.hg: Wrapped the new x, y, width,
+	and height properties here too.
+
+2009-03-25  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/ellipse.hg:
+	* goocanvas/src/path.hg:
+	* goocanvas/src/polyline.hg:
+	* goocanvas/src/table.hg:
+	* goocanvas/src/text.hg: Wrapped the (sometimes) new x, y, width,
+	and height properties.
+
+2009-03-25  Murray Cumming  <murrayc@murrayc.com>
+
+	* configure.in: Depend on the latest goocanvasmm.
+	* goocanvas/src/libgoocanvas_enums.defs:
+	* goocanvas/src/libgoocanvas_methods.defs:
+	* goocanvas/src/libgoocanvas_signals.defs: Regenerated.
+	* goocanvas/src/item.hg: Added signal_scroll_event.
+
+2009-01-24  Deng Xiyue  <manphiz@gmail.com>
+
+	* Change license header to mention Lesser General Public License
+	version 2.1 instead of Library General Public License, to be
+	consistent with COPYING.
+
+2008-12-15  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/ellipsemodel.hg:
+	* goocanvas/src/text.hg: Remove extra ;s to avoid compiler warnings.
+
+2008-12-10  Hubert Figuiere  <hub@figuiere.net>
+
+	* examples/moving_shapes/window.cc:
+	* examples/demo/primitives.cc: fix warnings. (Bug #562903)
+
+0.13.0:
+
+2008-12-01  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/canvas.hg: Added get_static_root_item() and
+	get_static_root_item_model().
+	* goocanvas/src/libgoocanvas_vfuncs.defs:
+	* goocanvas/src/item.hg: Added set/get_is_static() and the vfuncs.
+	Added animation_finished signal.
+	* goocanvas/src/itemmodel.hg: Added animation_finished signal.
+
+2008-11-18  Jonathon Jongsma  <jonathon@quotidian.org>
+
+	* examples/demo/primitives.cc: use cairo_matrix_t directly since that's
+	actually the type that we need for the g_object_set() call.  This fixes the
+	build when using cairomm 1.7+ (Bug #560074)
+
+2008-11-13  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/Makefile_list_of_hg.am_fragment:
+	* goocanvas/src/gridmodel.ccg:
+	* goocanvas/src/gridmodel.hg: Added GridModel.
+
+2008-11-13  Murray Cumming  <murrayc@murrayc.com>
+
+	* tools/extra_defs_gen/generate_defs_goocanvas.cc: Added the new grid
+	item.
+	* goocanvas/src/libgoocanvas_methods.defs:
+	* goocanvas/src/libgoocanvas_signals.defs: Regenerated.
+
+	* goocanvas/goocanvasmm.h:
+	* goocanvas/src/Makefile_list_of_hg.am_fragment:
+	* goocanvas/src/grid.ccg:
+	* goocanvas/src/grid.hg: Added Grid, wrapping GooCanvasGrid.
+
+2008-11-07  José Alburquerque  <jaalburqu@svn.gnome.org>
+
+	* goocanvas/src/enums.hg:
+	* goocanvas/src/itemmodel.hg:
+	* goocanvas/src/path.hg: Modify enums so that CANVAS_* is removed.
+	Bug #557990 (Louis-Francis Ratté-Boulianne)
+
+2008-11-05  Armin Burgmeier  <armin@openismus.com>
+
+	* goocanvas/src/item.hg:
+	* goocanvas/src/item.ccg: Remove the const qualifier for the
+	get_items_at_vfunc, because otherwise the item itself cannot be added
+	to the returned list of items.
+	Bug #559374 (Louis-Francis Ratté-Boulianne)
+
+2008-10-30  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/item.hg: Correct ensure_upated() to
+	ensure_updated().
+	Bug #558489 (Louis-Francis Ratté-Boulianne)
+
+0.12.0:
+
+2008-10-13  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/item.hg: Renamed set/get_child_property() to
+	set/get_child_property_value() and added templated set/get_child_property()
+	methods that do not use Glib::Value in their API.
+	* tests/child_properties/main.cc: Adjusted.
+
+2008-10-08  Murray Cumming  <murrayc@murrayc.com>
+
+	* Makefile.am:
+	* configure.in:
+	* tests/Makefile.am:
+	* tests/child_properties/: Added a test
+	for get_child_property().
+
+0.11.0:
+
+2008-09-13  Murray Cumming  <murrayc@murrayc.com>
+
+	* examples/custom_item/exampleitem.cc:
+	* examples/custom_item/examplewindow.cc:
+	* examples/custom_item/main.cc:
+	* examples/demo/main.cc:
+	* examples/demo/window.cc:
+	* examples/demo/window.h:
+	* examples/drag_to_canvas/examplewindow.cc:
+	* examples/drag_to_canvas/main.cc:
+	* examples/moving_shapes/main.cc:
+	* examples/moving_shapes/window.cc:
+	* examples/simple/examplewindow.cc:
+	* examples/simple/main.cc:
+	* examples/table/examplewindow.cc:
+	* examples/table/main.cc:
+	* examples/tablemodel/examplewindow.cc:
+	* examples/tablemodel/main.cc: Added missing copyright
+	comment blocks.
+
+2008-07-27  Murray Cumming  <murrayc@murrayc.com>
+
+	* examples/coordinates/window.h:
+	* examples/custom_item/Makefile.am:
+	* examples/custom_item/exampleitem.cc:
+	* examples/custom_item/exampleitem.h:
+	* examples/custom_item/examplewindow.cc:
+	* examples/custom_item/examplewindow.h:
+	* examples/drag_to_canvas/examplewindow.h:
+	* examples/moving_shapes/window.h:
+	* examples/simple/examplewindow.h:
+	* examples/table/examplewindow.h:
+	* examples/tablemodel/examplewindow.h:
+	* examples/text/window.h: Added header guards.
+
+	* configure.in:
+	* examples/Makefile.am:
+	* examples/custom_item/: New unfinished unworking
+	example of a custom item doing its own drawing.
+
+0.10.0: Skipped.
+
+0.9.0:
+
+2008-07-27  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/libgoocanvas_docs.xml: Regenerated.
+	* goocanvas/src/libgoocanvas_enums.defs: Regenerated.
+	* goocanvas/src/libgoocanvas_signals.defs: Corrected the Event signals by
+	hand.
+	* goocanvas/src/libgoocanvas_signals.defs.patch: Created this patch
+	to do the same in future.
+
+2008-07-27  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/libgoocanvas_signals.defs: Regenerated.
+
+2007-07-20  Armin Burgmeier  <armin@openismus.com>
+
+	* configure.in: Added detection of Win32 platform, and added the
+	AC_LIBTOOL_WIN32_DLL macro to produce a DLL on Windows.
+
+	* build_shared/Makefile_build.am_fragment: Add -no-undefined to the
+	ldflags on Windows because DLLs are not allowed to contain undefined
+	references.
+
+2008-06-23  Hubert Figuiere  <hub@figuiere.net>
+
+	* configure.in: require goocanvas 0.10. Bug #539600
+
+	* goocanvas/src/item.hg: Remove spurious ';'.
+
+0.6.0:
+
+2008-05-06  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/item.hg:
+	* goocanvas/src/itemmodel.hg: Added get_simple_transform().
+	* goocanvas/src/table.ccg:
+	* goocanvas/src/table.hg: Added documentation for attach().
+
+	* goocanvas/src/itemmodelsimple.hg:
+	* goocanvas/src/libgoocanvas_methods.defs:
+	* goocanvas/src/rectmodel.hg:
+	* goocanvas/src/tablemodel.ccg:
+	* goocanvas/src/tablemodel.hg: Use double instead of gdouble in the API,
+	for consistency with gtkmm.
+
+2008-05-05  Armin Burgmeier  <armin@openismus.com>
+
+	* examples/tablemodel/main.cc: Added missing main.cc file.
+
+2008-04-11  Armin Burgmeier  <armin@openismus.com>
+
+	* examples/tablemodel/examplewindow.h:
+	* examples/tablemodel/examplewindow.cc:
+	* examples/tablemodel/Makefile.am: Added a new example showing two
+	canvases that display the same underlying model.
+
+	* examples/Makefile.am:
+	* configure.in: Build the new example.
+
+2008-04-10  Armin Burgmeier  <armin@openismus.com>
+
+	* goocanvas/src/table.hg:
+	* goocanvas/src/tablemodel.hg: Added x-border-spacing,
+	y-border-spacing, vert-grid-line-width, horz-grid-line-width
+	properties.
+
+	* goocanvas/src/libgoocanvas_signals.defs: Regenerated.
+
+2008-03-17  Armin Burgmeier  <armin@openismus.com>
+
+	* goocanvas/src/table.hg:
+	* goocanvas/src/table.ccg:
+	* examples/table/examplewindow.h:
+	* examples/table/examplewindow.cc: Added attach() convenience API.
+
+	* goocanvas/src/tablemodel.hg:
+	* goocanvas/src/tablemodel.ccg:
+	* goocanvas/src/Makefile_list_of_hg.am_fragment:
+	* goocanvas/goocanvasmm.h: Wrapped GooCanvasTableModel.
+
+	* goocanvas/src/style.hg:
+	* goocanvas/src/style.ccg:
+	* goocanvas/src/enums.ccg: Wrapped goo_canvas_style_get/set_property()
+	via a similar approach to Glib::ObjectBase::get/set_property(). This
+	requires Glib::Value<> to work with some non-GObject-based cairo
+	types (that goocanvas already wraps for GObject).
+
+	* goocanvas/src/libgoocanvas_methods.defs: Regenerated.
+
+	* goocanvas/src/libgoocanvas_vfuncs.defs: Added missing vfuncs.
+
+	* tools/m4/convert_libgoocanvasmm.m4: Added more required conversions.
+
+	* goocanvas/src/itemsimple.hg:
+	* goocanvas/src/itemmodel.ccg:
+	* goocanvas/src/canvas.hg:
+	* goocanvas/src/widget.hg:
+	* goocanvas/src/enums.hg:
+	* goocanvas/src/item.hg:
+	* goocanvas/src/itemmodel.hg:
+	* goocanvas/src/text.hg:
+	* goocanvas/src/item.ccg: Wrapped remaining properties, signals,
+	methods and vfuncs.
+
+0.5.0:
+
+2008-02-24  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* goocanvas/src/libgoocanvas_methods.defs: re-generate
+	* goocanvas/src/item.hg: wrap get/set_child_property()
+	* goocanvas/src/itemmodel.hg: wrap get/set_child_property()
+	* goocanvas/src/itemsimple.hg: wrap get_line_width()
+
+2008-02-24  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* goocanvas/src/Makefile_list_of_hg.am_fragment:
+	* goocanvas/src/enums.ccg:
+	* goocanvas/src/enums.hg: move PointerEvents and ItemVisiblity enums to a
+	separate enums file so that they can be used from both Item and ItemModel
+	* goocanvas/src/item.hg: move enums from here
+	* goocanvas/src/itemmodel.hg: wrap some additional properties and signals of
+	the ItemModel class
+	* goocanvas/src/libgoocanvas_signals.defs: re-generate signals / properties
+	* goocanvas/goocanvasmm.h: add new enums header
+
+2008-02-21  Gennaro Bellizio  <genbell@tiscali.it>
+
+	* goocanvas/src/textmodel.hg: Use the C++ type for the alignment
+	property. Bug #517817.
+
+2008-02-20  Gennaro Bellizio  <genbell@tiscali.it>
+
+	* goocanvas/src/textmodel.ccg: Constructor: Correct the property name
+	from string to text to fix the instantiation.
+
+2008-02-16  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* goocanvas/src/item.hg: modify get_items_at() to take a non-const
+	listhandle for found_items since the convention for C functions that
+	implement this function is to add any found items onto this list and then
+	pass it down to the child item which adds their found items.
+	Also wrapped a few more vfuncs
+	* goocanvas/src/itemsimple.hg: wrap vfuncs, add getters and setters for some
+	public data members
+	* goocanvas/src/libgoocanvas_vfuncs.defs: update get_items_at()
+	* tools/m4/convert_libgoocanvasmm.m4: minor changes to support the changes
+	above
+
+2008-02-07  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* examples/simple/examplewindow.cc: hook up the button-press signal on the
+	simple example
+
+2008-02-07  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* goocanvas/src/libgoocanvas_vfuncs.defs: added vfunc definitions for
+	ItemSimple
+	* goocanvas/src/itemsimple.hg: added _MEMBER_GET/SET for bounds, attempted
+	to wrap the vfuncs, but there seems to be a ref-counting issue -- needs
+	investigation.
+
+2008-02-06  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* goocanvas/src/libgoocanvas_docs.xml: re-generated docs
+
+2007-11-30  Johannes Schmid <johannes.schmid@openismus.com>
+
+	* configure.in: Bumped glibmm dependency to 2.14.2 (#500690)
+
+2007-11-19  Murray Cumming  <murrayc@murrayc.com>
+
+	* examples/drag_to_canvas/examplewindow.cc: Handle drag-motion
+	again to show the problem.
+
+2007-11-19  Murray Cumming  <murrayc@murrayc.com>
+
+	* examples/drag_to_canvas/examplewindow.cc:
+	* examples/drag_to_canvas/examplewindow.h: Make this work
+	for drops, but without using drag_motion to show a preview.
+
+2007-11-19  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/ellipse.hg: Add default values to the
+	constructor parameters.
+	* goocanvas/src/rect.hg: Remove the default constructor,
+	because we already have a constructor with all default
+	parameter values.
+
+	* configure.in:
+	* examples/Makefile.am:
+	* examples/drag_to_canvas/examplewindow.cc:
+	* examples/drag_to_canvas/examplewindow.h:
+	* examples/drag_to_canvas/main.cc: Added an example of
+	dragging items from a toolbar to a canvas, though this
+	does not work yet.
+
+2007-11-09  Murray Cumming  <murrayc@murrayc.com>
+
+	* configure.in: Removed cairomm and glibmm checks.
+	gtkmm should be enough.
+
+2007-11-09  Murray Cumming  <murrayc@murrayc.com>
+
+	* tools/m4/Makefile.am: Correct the install location
+	of the .m4 files.
+	* goocanvas/goocanvasmm-1.0.pc.in: Mention the include
+	directory of the architecture-specific headers.
+	Bug #489865 (Yaakov Selkovitz)
+
+0.4.0:
+
+2007-10-30  Murray Cumming  <murrayc@murrayc.com>
+
+	* configure.in:
+	* goocanvas/goocanvasmm.h:
+	* goocanvas/src/Makefile_list_of_hg.am_fragment:
+	* goocanvas/src/table.ccg:
+	* goocanvas/src/table.hg: Wrapped GooCanvasTable,
+	though we need some API for the child properties.
+	* examples/Makefile.am:
+	* examples/simple/: Cleaned up the synax a little.
+	* examples/table/: New example.
+
+2007-10-28  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/canvas.hg:
+	* goocanvas/src/item.hg: Make the properties public,
+	not protected.
+
+2007-10-25  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/canvas.ccg:
+	* goocanvas/src/canvas.hg: Added get_bounds(Bounds&)
+	method overload.
+
+0.3.0:
+
+2007-10-23  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/canvas.hg: Wrapped the properties.
+
+2007-10-22  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/image.hg: Added a create() method to
+	match the new constructor added inthe last commit.
+
+2007-10-22  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/image.hg: Added default values for the
+	constructors and made them explicit.
+
+2007-10-22  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/ellipsemodel.hg:
+	* goocanvas/src/image.hg:
+	* goocanvas/src/imagemodel.hg:
+	* goocanvas/src/rectmodel.hg:
+	* goocanvas/src/textmodel.hg: Fixed some more minor
+	whitespace syntax that was annoying me.
+
+2007-10-19  Murray Cumming  <murrayc@murrayc.com>
+
+	* goocanvas/src/canvas.hg:
+	* goocanvas/src/item.hg: Added refreturn to get_style().
+	* tools/m4/convert_libgoocanvasmm.m4:
+	Moved signal-specific conversions to the .hg files to
+	avoid accidental use for non-signals.
+
+2007-10-17  Murray Cumming  <murrayc@murrayc.com>
+
+	* configure.in:
+	* examples/Makefile.am:
+	* examples/text/window.cc:
+	* examples/text/window.h: A new example to show
+	the behaviour of text items.
+	* goocanvas/src/itemsimple.hg: Added some properties.
+	* goocanvas/src/text.hg: Removed the font and
+	font-desc properties that are in ItemSimple instead.
+	Added the wrap property.
+
+0.2.0:
+
+2007-10-16  Murray Cumming  <murrayc@murrayc.com>
+
+	* examples/: Renamed .hh files to .h, for consistency
+	with other *mm libraries.
+
+2007-10-16  Murray Cumming  <murrayc@murrayc.com>
+
+	* Renamed the directories (and installed
+	header locations) to goocanvasmm from libgoocanvasmm,
+	to be consisten with other *mm libraries.
+
+2007-10-16  Murray Cumming  <murrayc@murrayc.com>
+
+	* configure.in:
+	* libgoocanvas/Makefile.am:
+	* libgoocanvas/goocanvasmm-1.0.pc.in:
+	* libgoocanvas/libgoocanvasmm-1.0.pc.in:
+	Change the package name from libgoocanvasmm to
+	goocanvasmm, and the pkg-config name from
+	libgoocanvasmm-1.0 to goocanvasmm-1.0, to be
+	consistent with other *mm libraries.
+	* examples/demo/Makefile.am:
+	* examples/moving_shapes/Makefile.am:
+	* examples/simple/Makefile.am: Dist the headers,
+	to fix distcheck.
+
+2007-10-15  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/polyline.ccg:
+	* libgoocanvas/src/polyline.hg:
+	* libgoocanvas/src/polylinemodel.ccg:
+	* libgoocanvas/src/polylinemodel.hg:
+	* libgoocanvas/src/text.ccg:
+	* libgoocanvas/src/text.hg: Correct the constructors,
+	to only use real properties.
+	* examples/demo/primitives.cc: Fixed a crash
+	caused by adding items to themselves, caused by
+	me.
+
+2007-10-15  Murray Cumming  <murrayc@murrayc.com>
+
+	* most files: Changed the whitespace to match
+	gtkmm and friends.
+
+2007-10-15  Murray Cumming  <murrayc@murrayc.com>
+
+	* examples/coordinates/window.cc:
+	* examples/demo/primitives.cc:
+	* examples/moving_shapes/window.cc:
+	* examples/simple/window.cc:
+	* libgoocanvas/src/ellipse.ccg:
+	* libgoocanvas/src/ellipse.hg:
+	* libgoocanvas/src/ellipsemodel.ccg:
+	* libgoocanvas/src/ellipsemodel.hg:
+	* libgoocanvas/src/group.ccg:
+	* libgoocanvas/src/group.hg:
+	* libgoocanvas/src/groupmodel.ccg:
+	* libgoocanvas/src/groupmodel.hg:
+	* libgoocanvas/src/image.ccg:
+	* libgoocanvas/src/image.hg:
+	* libgoocanvas/src/imagemodel.ccg:
+	* libgoocanvas/src/imagemodel.hg:
+	* libgoocanvas/src/itemmodel.ccg:
+	* libgoocanvas/src/itemmodel.hg:
+	* libgoocanvas/src/path.ccg:
+	* libgoocanvas/src/path.hg:
+	* libgoocanvas/src/pathmodel.ccg:
+	* libgoocanvas/src/pathmodel.hg:
+	* libgoocanvas/src/polyline.ccg:
+	* libgoocanvas/src/polyline.hg:
+	* libgoocanvas/src/polylinemodel.ccg:
+	* libgoocanvas/src/polylinemodel.hg:
+	* libgoocanvas/src/rect.ccg:
+	* libgoocanvas/src/rect.hg:
+	* libgoocanvas/src/rectmodel.ccg:
+	* libgoocanvas/src/rectmodel.hg:
+	* libgoocanvas/src/text.ccg:
+	* libgoocanvas/src/text.hg:
+	* libgoocanvas/src/textmodel.ccg:
+	* libgoocanvas/src/textmodel.hg:
+	* libgoocanvas/src/widget.ccg:
+	* libgoocanvas/src/widget.hg: Remove all parent paramters from
+	constructors and create() methods. The reference counting of these
+	parameters is strange in the C API, so I would like to avoid confusion.
+	You should use add_child() instead.
+
+2007-10-11  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/text.hg: Constructors: Added -1 default value
+	for the width, which means enough width.
+
+2007-10-10  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/item.hg: Made is_visible() const.
+	* libgoocanvas/src/text.ccg:
+	* libgoocanvas/src/text.hg: Added a constructor without a parent
+	parameter.
+
+2007-10-09  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/item.ccg:
+	* libgoocanvas/src/item.hg: get_bounds(): Now returns instead of
+	using an ouput parameter.
+	* libgoocanvas/src/libgoocanvas_signals.defs: Regenerated.
+	* libgoocanvas/src/libgoocanvas_others.defs: Added some (not all)
+	vfuncs.
+	* libgoocanvas/src/points.ccg:
+	* libgoocanvas/src/points.hg: Added a constructor that takes just
+	the number of points.
+	* examples/coordinates/window.cc: Updated for get_bounds() change.
+
+2007-10-08  Murray Cumming  <murrayc@murrayc.com>
+
+	* configure.in:
+	* examples/Makefile.am:
+	* examples/coordinates/Makefile.am:
+	* examples/coordinates/main.cc:
+	* examples/coordinates/window.cc:
+	* examples/coordinates/window.h: Added an example that shows (me)
+	the strange at first (to me) effect of some operations, to help people
+	understand.
+
+2007-10-05  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/Makefile.am:
+	* libgoocanvas/src/libgoocanvas_vfuncs.defs:
+	* libgoocanvas/src/item.hg: Wrapped some vfuncs, not very well,
+	and not very many of them. Wrapped get_items_at().
+
+2007-10-05  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/item.ccg:
+	* libgoocanvas/src/item.hg: Added add_child() that takes no
+	position parameter.
+	* libgoocanvas/src/rect.ccg:
+	* libgoocanvas/src/rect.hg: Added default constructor.
+
+2007-10-04  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/canvas.ccg:
+	* libgoocanvas/src/canvas.hg: Added a render() overload that
+	does not take the bounds parameter.
+
+2007-10-04  Murray Cumming  <murrayc@murrayc.com>
+
+	* examples/moving_shapes/window.cc:
+	* examples/moving_shapes/window.hh: Renamed the signal handlers to
+	avoid overriding the parent class's default signal handlers.
+	* libgoocanvas/src/canvas.ccg:
+	* libgoocanvas/src/canvas.hg: pointer_grab: Use C++ types, and
+	add a method overload that does not take a cursor.
+	* libgoocanvas/src/item.ccg:
+	* libgoocanvas/src/item.hg: Add method overloads of raise() and
+	lower() without a parameter.
+
+2007-10-04  Murray Cumming  <murrayc@murrayc.com>
+
+	* configure.in:
+	* libgoocanvas/Makefile.am:
+	* libgoocanvas/libgoocanvasmm-0.1.pc.in: Rename to:
+	* libgoocanvas/libgoocanvasmm-1.0.pc.in:
+	This will avoid an unnecessary source code change when the API
+	becomes stable and is consistent with other libraries.
+	Also corrected the .pc.in file to depend on gtkmm.
+
+2007-05-22  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/ellipse.ccg:
+	* libgoocanvas/src/ellipsemodel.ccg:
+	* libgoocanvas/src/group.ccg:
+	* libgoocanvas/src/group.hg:
+	* libgoocanvas/src/groupmodel.ccg:
+	* libgoocanvas/src/groupmodel.hg:
+	* libgoocanvas/src/image.ccg:
+	* libgoocanvas/src/image.hg:
+	* libgoocanvas/src/imagemodel.ccg:
+	* libgoocanvas/src/itemmodelsimple.hg:
+	* libgoocanvas/src/path.ccg:
+	* libgoocanvas/src/path.hg:
+	* libgoocanvas/src/pathmodel.ccg:
+	* libgoocanvas/src/pathmodel.hg:
+	* libgoocanvas/src/polyline.ccg:
+	* libgoocanvas/src/polyline.hg:
+	* libgoocanvas/src/polylinemodel.ccg:
+	* libgoocanvas/src/polylinemodel.hg:
+	* libgoocanvas/src/rect.ccg:
+	* libgoocanvas/src/rectmodel.ccg:
+	* libgoocanvas/src/rectmodel.hg:
+	* libgoocanvas/src/text.ccg:
+	* libgoocanvas/src/text.hg:
+	* libgoocanvas/src/textmodel.ccg:
+	* libgoocanvas/src/textmodel.hg: Use the _CONSTRUCT()
+	macro instead of using the *_new() functions, so we can use
+	our derived GTypes.
+	Do not do an extra reference, because that is unnecessary now
+	that we are no longer using the *_new() functions that do an
+	unreference().
+	Partially reimplement the *_new() functions, calling
+	goo_canvas_item_add_child() and goo_canvas_item_model_add_child().
+
+	However, there is much more still to reimplement.
+	This will probably cause lots of warnings about use of invalid
+	properties. That is a goocanvas bug.
+
+	* tools/m4/convert_libgoocanvasmm.m4:
+	* examples/demo/primitives.cc:
+	* examples/demo/primitives.hh:
+	* examples/simple/window.cc:
+	Use Gtk::AnchorType everywhere instead of GtkAnchorType.
+	* libgoocanvas/src/points.ccg:
+	* libgoocanvas/src/points.hg: Do not derive from Glib::Object,
+	because this is a boxed type. Do not use it via RefPtr.
+
+2007-05-22 Paul Davis <pjdavis@engineering.uiowa.edu>
+
+	* libgoocanvas/src/group.ccg
+	* libgoocanvas/src/groupmodel.ccg: We don't ref when creating
+	a group with no parent.
+
+	* libgoocanvas/src/points.hg
+	* libgoocanvas/src/points.ccg
+	* libgoocanvas/src/polyline.hg
+	* libgoocanvas/src/polyline.ccg
+	* examples/demo/primitives.cc: Trying to get a polyline ctor
+	to work with a points object.
+
+2007-05-21 Paul Davis <pjdavis@engineering.uiowa.edu>
+
+	* TODO: Added notes to the TODO file as per Murray's request.
+
+	* examples/demo/primitives.cc
+	* examples/Makefile.am: Make the build system build the demo
+	program automatically.
+
+2007-05-21 Paul Davis <pjdavis@engineering.uiowa.edu>
+
+	* tools/m4/convert_libgoocanvasmm.m4: Attempted to add some
+	conversions to make the RefPtr properties work correctly.
+
+	* libgoocanvas/src/text.ccg
+	* libgoocanvas/src/widget.hg
+	* libgoocanvas/src/group.ccg
+	* libgoocanvas/src/rect.ccg
+	* libgoocanvas/src/path.hg
+	* libgoocanvas/src/rect.hg
+	* libgoocanvas/src/item.hg
+	* libgoocanvas/src/pathmodel.ccg
+	* libgoocanvas/src/rectmodel.ccg
+	* libgoocanvas/src/points.hg
+	* libgoocanvas/src/polylinemodel.hg
+	* libgoocanvas/src/pathmodel.hg
+	* libgoocanvas/src/ellipsemodel.hg
+	* libgoocanvas/src/image.hg
+	* libgoocanvas/src/text.hg
+	* libgoocanvas/src/polyline.ccg
+	* libgoocanvas/src/path.ccg
+	* libgoocanvas/src/polyline.hg
+	* libgoocanvas/src/ellipse.ccg
+	* libgoocanvas/src/group.hg
+	* libgoocanvas/src/ellipse.hg
+	* libgoocanvas/src/imagemodel.ccg
+	* libgoocanvas/src/imagemodel.hg
+	* libgoocanvas/src/textmodel.ccg
+	* libgoocanvas/src/textmodel.hg
+	* libgoocanvas/src/points.ccg
+	* libgoocanvas/src/polylinemodel.ccg
+	* libgoocanvas/src/canvas.hg
+	* libgoocanvas/src/groupmodel.ccg
+	* libgoocanvas/src/ellipsemodel.ccg
+	* libgoocanvas/src/groupmodel.hg
+	* libgoocanvas/src/rectmodel.hg
+	* libgoocanvas/src/image.ccg: Wrapped more api. Changed hand-coded
+	create methods to hand-coded constructs. Still having a problem with
+	GooCanvas*Model objects printing errors durring construction.
+
+	* examples/moving_shapes/window.hh
+	* examples/moving_shapes/window.cc: Fixed this example to compile and run.
+
+	* examples/demo
+	* examples/demo/primitives.cc
+	* examples/demo/window.hh
+	* examples/demo/primitives.hh
+	* examples/demo/page.hh
+	* examples/demo/window.cc: Working through porting the impressive goocanvas
+	demo so that it runs. This is a big project. I'm still on the first page, but
+	its been very helpful in finding parts of the api that aren't wrapped.
+
+	* examples/simple/window.hh
+	* examples/simple/window.cc: Fixed this example to compile and run.
+
+
+2007-05-20  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/canvas.hg:
+	* libgoocanvas/src/item.hg:
+	* libgoocanvas/src/itemmodel.hg:
+	* libgoocanvas/src/itemsimple.hg: Use refreturn on some more get*() functions.
+	Made some more get* functions consts, adding const overloads where necessary.
+
+2007-05-19 Paul Davis <pjdavis@engineering.uiowa.edu>
+
+	* libgoocanvas/src/itemmodelsimple.hg: Fixed permissions for properties.
+
+	* libgoocanvas/libgoocanvasmm.h: Added new header files to main include header.
+
+	* examples/moving_shapes/window.hh
+	* examples/moving_shapes/window.cc: Attempting to make this example work. I keep
+	getting a segfault after the first button_press_event. Segfault happens in
+	goo_canvas_get_items_at().
+
+
+2007-05-19 Paul Davis <pjdavis@engineering.uiowa.edu>
+
+	* README: Removed the note about needing a patched goocanvas.
+
+	* libgoocanvas/src/rect.hg
+	* libgoocanvas/src/pathmodel.ccg
+	* libgoocanvas/src/polylinemodel.hg
+	* libgoocanvas/src/points.hg
+	* libgoocanvas/src/rectmodel.ccg
+	* libgoocanvas/src/pathmodel.hg
+	* libgoocanvas/src/ellipsemodel.hg
+	* libgoocanvas/src/itemmodel.hg
+	* libgoocanvas/src/itemmodelsimple.hg
+	* libgoocanvas/src/polyline.hg
+	* libgoocanvas/src/Makefile_list_of_hg.am_fragment
+	* libgoocanvas/src/imagemodel.ccg
+	* libgoocanvas/src/imagemodel.hg
+	* libgoocanvas/src/textmodel.ccg
+	* libgoocanvas/src/textmodel.hg
+	* libgoocanvas/src/points.ccg
+	* libgoocanvas/src/polylinemodel.ccg
+	* libgoocanvas/src/groupmodel.ccg
+	* libgoocanvas/src/ellipsemodel.ccg
+	* libgoocanvas/src/groupmodel.hg
+	* libgoocanvas/src/rectmodel.hg: Wrapped more of the api. Most objects
+	should have their classes wrapped in C++ but there are missing properties
+	and functions. Noticably absent is GooCanvasTable because it looked complicated
+	and I wanted to ask Murray some questions before working on it.
+
+	* examples/moving_shapes: Fixed the svn:ignore property.
+
+	* examples/moving_shapes/window.hh
+	* examples/moving_shapes/window.cc: Commented out some sections that weren't
+	compiling.
+
+	* examples/simple/window.hh
+	* examples/simple/window.cc: Updated the simple example to work. There is
+	still an issue with the root item.
+
+2007-05-16  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/bounds.ccg:
+	* libgoocanvas/src/bounds.hg:
+	* libgoocanvas/src/canvas.hg:
+	* libgoocanvas/src/ellipse.ccg:
+	* libgoocanvas/src/ellipse.hg:
+	* libgoocanvas/src/group.ccg:
+	* libgoocanvas/src/group.hg:
+	* libgoocanvas/src/image.hg:
+	* libgoocanvas/src/item.hg:
+	* libgoocanvas/src/itemmodel.hg:
+	* libgoocanvas/src/itemmodelsimple.hg:
+	* libgoocanvas/src/itemsimple.hg:
+	* libgoocanvas/src/path.ccg:
+	* libgoocanvas/src/path.hg:
+	* libgoocanvas/src/polyline.ccg:
+	* libgoocanvas/src/polyline.hg:
+	* libgoocanvas/src/rect.ccg:
+	* libgoocanvas/src/rect.hg:
+	* libgoocanvas/src/style.hg:
+	* libgoocanvas/src/text.ccg:
+	* libgoocanvas/src/text.hg:
+	* libgoocanvas/src/widget.hg: Make the whitespace formatting consistent with gtkmm.
+
+2007-05-11  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/linedash.hg: This is a boxed type, not a GObject.
+	This fixes the crash in the simple example. valgrind is helpful.
+
+2007-04-23	Paul Davis	<pjdavis@engineering.uiowa.edu>
+
+	* tools/extra_defs_gen/generate_defs_goocanvas.cc : Fixed the signal defs
+	generating program.
+
+	* libgoocanvas/src/libgoocanvas_signals.defs : Regenerated the defs file.
+	Somehow it got reverted to the old version.
+
+	* tools/m4/convert_libgoocanvasmm.m4 : Added a new conversion macro for
+	a new signal for Goocanvas::Canvas
+
+	* libgoocanvas/src/canvas.hg : Added wrapping of the signals for Goocanvas.
+
+	* libgoocanvas/libgoocanvasmm.h : Added new headers to the main include.
+
+	* examples/simple/window.hh
+	* examples/simple/window.cc : Got the simple demo to compiled. But now its
+	segfaulting at runtime.
+
+2007-04-23	Paul Davis	<pjdavis@engineering.uiowa.edu>
+
+	* configure.in: Added cairomm >= 1.2.2 to PKG_CHECK_MODULES
+
+	* tools/m4/convert_libgoocanvasmm.m4: Cleaned up the conversion macros.
+	Removed some conversions that were unecessary and rearanged a bit to make
+	things a bit more clear.
+
+	* libgoocanvas/src/itemviewsimple.ccg
+	* libgoocanvas/src/itemviewsimple.hg: Removed garbage files.
+
+	* libgoocanvas/src/linedash.hg
+	* libgoocanvas/src/linedash.ccg: Added wrappers for GooCanvasLineDash. This
+	class is still not completely wrapped.
+
+	* libgoocanvas/src/Makefile_list_of_hg.am_fragment: Added new .hg files.
+
+	* libgoocanvas/src/canvas.hg
+	* libgoocanvas/src/group.hg
+	* libgoocanvas/src/group.ccg
+	* libgoocanvas/src/item.hg
+	* libgoocanvas/src/itemmodel.hg
+	* libgoocanvas/src/itemmodelsimple.ccg
+	* libgoocanvas/src/itemmodelsimple.hg
+	* libgoocanvas/src/itemsimple.hg
+	* libgoocanvas/src/itemsimple.ccg
+	* libgoocanvas/src/widget.hg
+	* libgoocanvas/src/widget.ccg: Working on adding more API coverage.
+
+	* libgoocanvas/libgoocanvasmm/
+	* libgoocanvas/libgoocanvasmm/private/: Changed the svn:ignore property to
+	ignore *.h and *.cc instead of each file by name.
+
+2007-04-21  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/bounds.ccg:
+	* libgoocanvas/src/bounds.hg: Use _CLASS_BOXEDTYPE_STATIC() instead of
+	_CLASS_GENERIC(), because it generates more code from us, and is what is used
+	by GdkRectangle, which GooCanvasBounds most resembles. Requires latest goocanvas,
+	because I had to patch goocanvas to add type registration for GooCanvasBounds.
+
+	* libgoocanvas/src/canvas.hg:
+	* libgoocanvas/src/ellipse.hg:
+	* libgoocanvas/src/group.hg:
+	* libgoocanvas/src/image.ccg:
+	* libgoocanvas/src/image.hg:
+	* libgoocanvas/src/itemsimple.ccg:
+	* libgoocanvas/src/itemsimple.hg:
+	* libgoocanvas/src/itemviewsimple.ccg:
+	* libgoocanvas/src/itemviewsimple.hg:
+	* libgoocanvas/src/path.hg:
+	* libgoocanvas/src/polyline.hg:
+	* libgoocanvas/src/rect.hg:
+	* libgoocanvas/src/text.hg: Remove (very silly) empty (implemented in headers)
+	constructors. Generally removed unnecessary hard-coded constructor and destructor
+	declarations.
+
+	There are probably still a few wrong. Just use _WRAP_CTOR unless you really need
+	to create a custom-written ctor, and if you do create a custom-written ctor then use
+	the _CONSTRUCT() macro, as in gtk/src/action.ccg.
+	For a GObject (not a GtkWidget) use a _WRAP_CREATE() for each _WRAP_CTOR and make sure
+	that ctors are protected, and the create*()s are public.
+
+2007-04-21  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/item.hg:
+	* libgoocanvas/src/itemmodel.ccg:
+	* libgoocanvas/src/itemmodel.hg:
+	* tools/m4/convert_libgoocanvasmm.m4: Fixed build by using types via RefPtr
+	where necessary and generally use more sane conversions. Also included
+	necessary headers instead of unnecessarily using predeclarations.
+
+2007-04-20	Paul Davis	<pjdavis@engineering.uiowa.edU>
+
+	Currently, the build is broken because I can't decide if Goocanvas::Canvas
+	should be accessed via raw pointer or Glib::RefPtr. I'm starting to lean
+	toward Glib::RefPtr cause it looks like some code was autogenerated using
+	this, and I don't think it inherits from GtkWidget* which is when I would
+	normally think we would use raw pointers.
+
+	* configure.in: Updated goocanvas dependancy to 0.8
+
+	* tools/m4/convert_libgoocanvasmm.m4: Added some new conversion routines.
+	Someone with more experience should take a look at these cause I'm unsure
+	what should go in and what should go as an explicity M4 macro in the source.
+
+	* libgoocanvas/src/bounds.hg
+	* libgoocanvas/src/bounds.ccg: Added a _CLASS_GENERIC wrapping of
+	GooCanvasBounds so we can wrap more of the API.  I'm not at all convinced
+	this is right, but the closest example I could find was the wrapping of
+	PangoAttrIterator. As near as I can tell, GooCanvasBounds has none of the
+	expected goo_canvas_bounds_get_type() or goo_canvas_bounds_copy() type of
+	methods which confuses me greatly.
+
+	* libgoocanvas/src/item.hg
+	* libgoocanvas/src/item.ccg: Hand coded signals Murray had marked as TODO.
+	I'm having	a few issues with the child-changed, child-movied, et al.
+	signals. Wrapped the rest of the API. Added _IGNORE for
+	set_child_properties, cause these seemed rather un-C++. Especially the
+	valist methods.
+
+	* libgoocanvas/src/libgoocanvas_enums.defs
+	* libgoocanvas/src/libgoocanvas_methods.defs: Updated some of the defs
+	files. I think I did this correctly.
+
+	* libgoocanvas/src/libgoocanvas_signals.defs: Added hand-coded definitions
+	for signals not automatically generated for GooCanvasItem.
+
+	* libgoocanvas/src/itemmodel.hg
+	* libgoocanvas/src/itemmodel.ccg: Wrapped GooCanvasItemModel. Need this to
+	finish out GooCanvasItem's API.
+
+	* libgoocanvas/src/canvas.ccg
+	* libgoocanvas/src/canvas.hg: Wrapped GooCanvas. I think most of it is
+	wrapped.
+
+	* libgoocanvas/src/Makefile_list_of_hg.am_fragment: Added new .hg files.
+
+2007-02-25  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* update svn:ignore properties
+
+2007-02-25  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* docs/reference/Doxyfile.in: mark Glib optional API symbols as defined so
+	that they're included in the reference documentation
+
+2007-02-25  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* libgoocanvasmm: re-arranged respository to remove the patched goocanvas
+	directory and move things from trunk/libgoocanvasmm/* to trunk/*
+
+2007-02-24  Jonathon Jongsma  <jjongsma@gnome.org>
+
+	* libgoocanvas/libgoocanvasmm/types.h: fix namespace GooCanvas that was
+	missed in the namespace renaming from previous commit
+
+2007-02-11  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/libgoocanvasmm.h:
+	* libgoocanvas/libgoocanvasmm/Makefile.am:
+	* libgoocanvas/libgoocanvasmm/init.cc:
+	* libgoocanvas/libgoocanvasmm/init.h:
+	* libgoocanvas/libgoocanvasmm/wrap_init.h:
+	* libgoocanvas/src/Makefile.am:
+	* tools/extra_defs_gen/generate_defs_goocanvas.cc: Mention the
+	current types in the new API.
+	* libgoocanvas/src/*.defs: Updated
+	* libgoocanvas/src/Makefile_list_of_hg.am_fragment:
+	* libgoocanvas/src/*.[hg|ccg]: Remove the view*.[hg|ccg] files.
+	Update the other files enough that they build with the latest goocanvas API.
+	Change the namespace from GooCanvas too Goocanvas, because there is
+	now a GooCanvas struct in goocanvas, and it clashes with the namespace.
+	I am open to better suggestions for the namespace name.
+	I have not wrapped the *Model objects yet.
+	* examples/demo/main.cc:
+	* examples/demo/primitives.cc:
+	* examples/demo/window.hh:
+	* examples/moving_shapes/main.cc:
+	* examples/moving_shapes/window.cc:
+	* examples/moving_shapes/window.hh:
+	* examples/simple/simple.cc:
+	* examples/simple/window.cc:
+	* examples/simple/window.hh: Search/Replace the namespace. But I
+	have not updated these. They do not yet build.
+
+2006-10-03  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/ellipseview.ccg:
+	* libgoocanvas/src/ellipseview.hg:
+	* libgoocanvas/src/groupview.ccg:
+	* libgoocanvas/src/groupview.hg:
+	* libgoocanvas/src/imageview.ccg:
+	* libgoocanvas/src/imageview.hg:
+	* libgoocanvas/src/itemview.hg:
+	* libgoocanvas/src/pathview.ccg:
+	* libgoocanvas/src/pathview.hg:
+	* libgoocanvas/src/polylineview.ccg:
+	* libgoocanvas/src/polylineview.hg:
+	* libgoocanvas/src/rectview.ccg:
+	* libgoocanvas/src/rectview.hg:
+	* libgoocanvas/src/textview.ccg:
+	* libgoocanvas/src/textview.hg:
+	* tools/m4/convert_libgoocanvasmm.m4: Pass View by
+	reference to make it clear that a NULL value is not
+	allowed.
+	* libgoocanvas/src/view.hg:  convert_to_pixels(),
+	convert_from_pixels(), convert_to_item_space(),
+	convert_from_item_space(): Pass output parameters by
+	reference instead of pointer to ensure that they can
+	not be NULL, and to make it clearer that they are
+	single doubles, not the start of an array.
+
+2006-10-03  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/ellipse.ccg:
+	* libgoocanvas/src/ellipse.hg:
+	* libgoocanvas/src/image.ccg:
+	* libgoocanvas/src/image.hg:
+	* libgoocanvas/src/itemsimple.hg:
+	* libgoocanvas/src/itemview.hg:
+	* libgoocanvas/src/polyline.ccg:
+	* libgoocanvas/src/polyline.hg:
+	* libgoocanvas/src/rect.ccg:
+	* libgoocanvas/src/rect.hg:
+	* libgoocanvas/src/text.ccg:
+	* libgoocanvas/src/text.hg:
+	* libgoocanvas/src/view.hg: Change gdouble to double,
+	to be consistent with gtkmm.
+	* libgoocanvas/src/path.ccg:
+	* libgoocanvas/src/path.hg: Change gchar* data
+	parameter to const char*.
+
+2006-10-03  Murray Cumming  <murrayc@murrayc.com>
+
+	* docs/Makefile.am: Change LIBGDAMM_FALSE to
+	LIBGOOCANVASMM_FALSE, to match configure.in,
+	though I am not sure if this is really needed
+	anyway with newer autotools.
+	* libgoocanvas/src/ellipse.ccg: Remove
+	default parameter values to fix the build. They
+	should just be in the .h files.
+
+2006-09-28  Murray Cumming  <murrayc@murrayc.com>
+
+	* libgoocanvas/src/ellipse.hg:
+	* libgoocanvas/src/ellipseview.hg:
+	* libgoocanvas/src/group.hg:
+	* libgoocanvas/src/groupview.hg:
+	* libgoocanvas/src/image.hg:
+	* libgoocanvas/src/imageview.hg:
+	* libgoocanvas/src/item.hg:
+	* libgoocanvas/src/itemsimple.hg:
+	* libgoocanvas/src/itemview.hg:
+	* libgoocanvas/src/model.hg:
+	* libgoocanvas/src/path.hg:
+	* libgoocanvas/src/pathview.hg:
+	* libgoocanvas/src/polyline.hg:
+	* libgoocanvas/src/polylineview.hg:
+	* libgoocanvas/src/rectview.hg:
+	* libgoocanvas/src/text.ccg:
+	* libgoocanvas/src/text.hg:
+	* libgoocanvas/src/textview.hg:
+	* libgoocanvas/src/view.hg:
+	* tools/m4/convert_libgoocanvasmm.m4: Use Cairo::Context instead of
+	cairo_t. Pass ustring by const reference. Make const methods return
+	const objects. Do not refreturn newly-created objects. Use int
+	instead of gint.
+
+2006-09-28  Jonathon Jongsma  <jonathon.jongsma@gmail.com>
+
+	* Makefile.in:
+	* aclocal.m4:
+	* docs/Makefile.in:
+	* docs/reference/Makefile.in:
+	* libgoocanvas/Makefile.in:
+	* scripts/Makefile.in:
+	* tools/Makefile.in:
+	* tools/extra_defs_gen/Makefile.in:
+	* tools/m4/Makefile.in:
+	Removed a bunch of autotools-generated files from the repository and added a
+	bunch of files to svn:ignore so that svn status is more useful again.

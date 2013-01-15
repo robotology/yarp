@@ -1,0 +1,42 @@
+/* Copyright (C) 1998-2006 The gtkmm Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include <goocanvasenumtypes.h>
+
+namespace Glib
+{
+
+// Make the cairo enums and structures work with Glib::Value using the
+// GTypes goocanvas defines for them in goocanvasutil.h
+
+// We can't simply derive from Glib::ValueBoxed<> because these have no
+// gobj() function to return the underlying boxed C object.
+GType Value<Cairo::Matrix*>::value_type() { return goo_cairo_matrix_get_type(); }
+
+// Normally, _WRAP_ENUM does generate this code for us, but we can't use
+// _WRAP_ENUM here because the enums are already wrapped in cairomm. However,
+// goocanvas defines GTypes for them so they can be used with GValue. We need
+// this since we want to use these enums in Glib::Value<>s, for example to
+// pass them to properties via the property_*() functions.
+GType Value<Cairo::FillRule>::value_type() { return goo_cairo_fill_rule_get_type(); }
+GType Value<Cairo::Operator>::value_type() { return goo_cairo_operator_get_type(); }
+GType Value<Cairo::Antialias>::value_type() { return goo_cairo_antialias_get_type(); }
+GType Value<Cairo::LineCap>::value_type() { return goo_cairo_line_cap_get_type(); }
+GType Value<Cairo::LineJoin>::value_type() { return goo_cairo_line_join_get_type(); }
+GType Value<Cairo::HintMetrics>::value_type() { return goo_cairo_hint_metrics_get_type(); }
+
+}
