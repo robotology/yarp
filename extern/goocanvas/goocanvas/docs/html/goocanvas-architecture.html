@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Underlying Architecture</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GooCanvas Reference Manual">
+<link rel="up" href="ch01.html" title="Introduction">
+<link rel="prev" href="goocanvas-model-view-canvas.html" title="Model/View Canvas Example">
+<link rel="next" href="goocanvas-coordinates.html" title="Coordinate Spaces and Limits">
+<meta name="generator" content="GTK-Doc V1.9 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="Introduction">
+<link rel="chapter" href="ch02.html" title="Core Objects">
+<link rel="chapter" href="ch03.html" title="Standard Canvas Items">
+<link rel="chapter" href="ch04.html" title="Standard Canvas Item Models">
+<link rel="chapter" href="ch05.html" title="Miscellaneous">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2"><tr valign="middle">
+<td><a accesskey="p" href="goocanvas-model-view-canvas.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GooCanvas Reference Manual</th>
+<td><a accesskey="n" href="goocanvas-coordinates.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry" lang="en">
+<a name="goocanvas-architecture"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle">Underlying Architecture</span></h2>
+<p>Underlying Architecture &#8212; how the canvas fits together.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1" lang="en">
+<a name="architecture"></a><h2>Underlying Architecture</h2>
+<div class="refsect2" lang="en">
+<a name="widget"></a><h3>The GooCanvas Widget</h3>
+<p>
+	<a class="link" href="GooCanvas.html" title="GooCanvas"><span class="type">GooCanvas</span></a> is a <a
+href="/usr/share/gtk-doc/html/gtk/GtkWidget.html"
+><span class="type">GtkWidget</span></a> (it is actually a subclass of
+	<a
+href="/usr/share/gtk-doc/html/gtk/GtkContainer.html"
+><span class="type">GtkContainer</span></a>), and so can be placed in an interface just like
+	any normal widget. Usually a <a class="link" href="GooCanvas.html" title="GooCanvas"><span class="type">GooCanvas</span></a> widget would be placed inside
+	a <a
+href="/usr/share/gtk-doc/html/gtk/GtkScrolledWindow.html"
+><span class="type">GtkScrolledWindow</span></a> in order to enable scrolling of the canvas.
+      </p>
+<p>
+	The size of the canvas can be set explicitly using
+	<a class="link" href="GooCanvas.html#goo-canvas-set-bounds"><code class="function">goo_canvas_set_bounds()</code></a>, or if the <a class="link" href="GooCanvas.html#GooCanvas--automatic-bounds"><span class="type">"automatic-bounds"</span></a>
+	property is set to <a
+href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"
+><code class="literal">TRUE</code></a> the bounds will be automatically calculated
+	to include all of the canvas items. The units used in the canvas can
+	be set with the <a class="link" href="GooCanvas.html#GooCanvas--units"><span class="type">"units"</span></a> property. The canvas units can be
+	pixels, points, inches or millimeters and apply to the canvas and
+	all items.
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="simple-structure"></a><h3>The Structure of the Simple Canvas</h3>
+<p>
+	The simple canvas consists of a hierarchy of canvas items.
+	The root item is automatically created by the canvas and can be
+	accessed using <a class="link" href="GooCanvas.html#goo-canvas-get-root-item"><code class="function">goo_canvas_get_root_item()</code></a>. New items and groups can
+	then be created and added to the root item.
+      </p>
+<p>
+	Each item in the canvas keeps a <a class="link" href="goocanvas-GooCanvas-Types.html#GooCanvasBounds"><span class="type">GooCanvasBounds</span></a> structure which
+	stores the bounding rectangle of the item and all of its descendants.
+	This makes it easy to find out which items in the canvas need repainting
+	or which item the mouse is over. (The bounds are stored in the canvas
+	coordinate space, which is the coordinate space of the entire canvas,
+	after any item transformation matrices have been applied.)
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="model-view-structure"></a><h3>The Structure of the Model/View Canvas</h3>
+<p>
+	The model/view canvas consists of a hierarchy of item models, and an
+	identical hierarchy of canvas items, with each canvas item
+	corresponding to one item model.
+      </p>
+<p>
+	The hierarchy of item models can be used in several <a class="link" href="GooCanvas.html" title="GooCanvas"><span class="type">GooCanvas</span></a>
+	widgets, to allow multiple views of the same model.
+	Though different canvas items will be used in each <a class="link" href="GooCanvas.html" title="GooCanvas"><span class="type">GooCanvas</span></a>.
+      </p>
+<p>
+	The root item model is set with <a class="link" href="GooCanvas.html#goo-canvas-set-root-item-model"><code class="function">goo_canvas_set_root_item_model()</code></a>.
+	The canvas will automatically create canvas items to display
+	the hierarchy of item models, and will automatically add and
+	remove canvas items as the item model hierarchy is changed.
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="updates"></a><h3>The Update Procedure</h3>
+<p>
+	When items are added to the canvas or their properties are changed
+	they may need to recalculate their bounds. To do this they set an
+	internal flag such as <em class="parameter"><code>need_update</code></em>, and make a call to
+	<a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-request-update"><code class="function">goo_canvas_item_request_update()</code></a>.
+      </p>
+<p>
+	<a class="link" href="GooCanvas.html" title="GooCanvas"><span class="type">GooCanvas</span></a> handles all the update requests at once, to avoids multiple
+	redraws of the same parts of the canvas. To do this it installs
+	an idle handler, <code class="function">goo_canvas_idle_handler()</code>, which is called as soon
+	as the application is idle (and before any part of the canvas is
+	redrawn). 
+      </p>
+<p>
+	The idle handler calls <a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-update"><code class="function">goo_canvas_item_update()</code></a> on the root item,
+	which recursively calls <a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-update"><code class="function">goo_canvas_item_update()</code></a> on any items as
+	necessary, recalculating their bounds and requesting redraws as
+	appropriate.
+      </p>
+<p>
+	If a container item (e.g. <a class="link" href="GooCanvasGroup.html" title="GooCanvasGroup"><span class="type">GooCanvasGroup</span></a>) is changed it needs to
+	ensure that all descendants recalculate their bounds so it
+	calls <a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-update"><code class="function">goo_canvas_item_update()</code></a> for all of its children with the
+	<em class="parameter"><code>entire_tree</code></em> argument set to <a
+href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"
+><code class="literal">TRUE</code></a>.
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="simple-updates"></a><h3>How Changes to Items are Handled</h3>
+<p>
+	When an item is changed (e.g. if the <a class="link" href="GooCanvasRect.html#GooCanvasRect--x"><span class="type">"x"</span></a> property of
+	a <a class="link" href="GooCanvasRect.html" title="GooCanvasRect"><span class="type">GooCanvasRect</span></a> is changed), the item calls
+	<a class="link" href="GooCanvasItemSimple.html#goo-canvas-item-simple-changed"><code class="function">goo_canvas_item_simple_changed()</code></a> with a flag indicating if the
+	bounds of the item need	to be recalculated.
+      </p>
+<p>
+	If the bounds don't need to be recalculated, then
+	<a class="link" href="GooCanvas.html#goo-canvas-request-redraw"><code class="function">goo_canvas_request_redraw()</code></a> is called to simply request that the
+	item is redrawn. This results in a call to <a
+href="/usr/share/gtk-doc/html/gdk/gdk-Windows.html#gdk-window-invalidate-rect"
+><code class="function">gdk_window_invalidate_rect()</code></a>
+	and the redraw proceeds just like a normal <a
+href="/usr/share/gtk-doc/html/gtk/GtkWidget.html"
+><span class="type">GtkWidget</span></a>.
+      </p>
+<p>
+	However, if the bounds do need to be recalculated then
+	<a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-request-update"><code class="function">goo_canvas_item_request_update()</code></a> is called to request that the item
+	be updated the next time the canvas performs an update.
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="model-view-updates"></a><h3>How Changes are Handled in the Model/View Canvas</h3>
+<p>
+	In the Model/View canvas it is the underlying item models which are
+	initially changed. The item models emit "changed" signals which the
+	items respond to. For the standard canvas items the
+	<code class="function">goo_canvas_item_model_simple_changed()</code> signal handler is called,
+	which calls <a class="link" href="GooCanvasItemSimple.html#goo-canvas-item-simple-changed"><code class="function">goo_canvas_item_simple_changed()</code></a> and the
+	procedure continues as in the simple canvas case above.
+      </p>
+</div>
+</div>
+</div>
+</body>
+</html>

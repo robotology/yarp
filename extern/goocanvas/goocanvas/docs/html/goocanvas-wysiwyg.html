@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>WYSIWYG Printing</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GooCanvas Reference Manual">
+<link rel="up" href="ch01.html" title="Introduction">
+<link rel="prev" href="goocanvas-creating-items.html" title="Creating New Items">
+<link rel="next" href="ch02.html" title="Core Objects">
+<meta name="generator" content="GTK-Doc V1.9 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="Introduction">
+<link rel="chapter" href="ch02.html" title="Core Objects">
+<link rel="chapter" href="ch03.html" title="Standard Canvas Items">
+<link rel="chapter" href="ch04.html" title="Standard Canvas Item Models">
+<link rel="chapter" href="ch05.html" title="Miscellaneous">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2"><tr valign="middle">
+<td><a accesskey="p" href="goocanvas-creating-items.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GooCanvas Reference Manual</th>
+<td><a accesskey="n" href="ch02.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry" lang="en">
+<a name="goocanvas-wysiwyg"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle">WYSIWYG Printing</span></h2>
+<p>WYSIWYG Printing &#8212; how to use the canvas to create accurate printed output.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1" lang="en">
+<a name="wysiwyg"></a><h2>WYSIWYG Printing</h2>
+<div class="refsect2" lang="en">
+<a name="resolution"></a><h3>Screen Resolution</h3>
+<p>
+    The GooCanvas <a class="link" href="GooCanvas.html#GooCanvas--resolution-x"><span class="type">"resolution-x"</span></a> and <a class="link" href="GooCanvas.html#GooCanvas--resolution-y"><span class="type">"resolution-y"</span></a>
+    properties must be set correctly. They both default to 96dpi, which
+    corresponds to a typical monitor. To get a more accurate figure you
+    might be able to use <a
+href="/usr/share/gtk-doc/html/gdk/GdkScreen.html#gdk-screen-get-resolution"
+><code class="function">gdk_screen_get_resolution()</code></a>, but this isn't always
+    guaranteed to be correct. If accuracy is very important a method should
+    be provided for the user to calibrate the screen.
+    </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="units"></a><h3>Units</h3>
+<p>
+    The GooCanvas <a class="link" href="GooCanvas.html#GooCanvas--units"><span class="type">"units"</span></a> property must be set to one of <code class="literal">GTK_UNIT_MM</code>,
+    <code class="literal">GTK_UNIT_POINTS</code> or <code class="literal">GTK_UNIT_INCH</code> (it defaults to <code class="literal">GTK_UNIT_PIXEL</code>).
+    All values used within the canvas are assumed to be in the specified
+    units, including font sizes.
+    </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="fonts"></a><h3>Font Sizes</h3>
+<p>
+    Absolute font sizes must be used (to prevent the fonts being mistakenly
+    scaled by Pango as well as by GooCanvas). To specify absolute font sizes
+    add "px" after the font size, e.g. instead of "Sans 9" use "Sans 9px".
+    </p>
+<p>
+    Font sizes must be converted to the units used by the canvas.
+    For example, if a 9 point "Sans" font is desired but <a class="link" href="GooCanvas.html#GooCanvas--units"><span class="type">"units"</span></a>
+    is set to <code class="literal">GTK_UNIT_MM</code>, then the size must first be converted into
+    millimeters: (9 / 72) * 25.4 = 3.175mm.
+    So the font used would be "Sans 3.175px".
+    </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="example"></a><h3>Example Code</h3>
+<p>
+    The units-demo application that comes with the GooCanvas source code
+    demonstrates the use of different units and absolute font sizes.
+    </p>
+</div>
+</div>
+</div>
+</body>
+</html>
