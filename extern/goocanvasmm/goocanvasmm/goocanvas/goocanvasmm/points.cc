@@ -55,7 +55,7 @@ Points::get_num_points() const
 }
 
 void
-Points::Points::set_coordinate( int index, double x, double y )
+Points::set_coordinate( int index, double x, double y )
 {
   gobj()->coords[2*index] = x ;
   gobj()->coords[2*index+1] = y ;

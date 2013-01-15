@@ -312,7 +312,7 @@ void Canvas_Class::item_created_callback(GooCanvas* self, GooCanvasItem* p0, Goo
 
 Glib::ObjectBase* Canvas_Class::wrap_new(GObject* o)
 {
-  return manage(new Canvas((GooCanvas*)(o)));
+  return Gtk::manage(new Canvas((GooCanvas*)(o)));
 
 }
 

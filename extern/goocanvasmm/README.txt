@@ -30,3 +30,6 @@ Version: 0.15.4
 
 Note: To import a newer version it is necessary to run ./configure and
  import the file goocanvasmmconfig.h as well.
+
+Patches:
+ * fix-build.patch: Fix build on WIN32
