@@ -62,6 +62,10 @@ set(goocanvas_HDRS
 
 add_library(YARP_goocanvas STATIC ${goocanvas_SRCS})
 
+if(WIN32)
+    add_definitions(-D_USE_MATH_DEFINES /wd4018 /wd4244)
+endif(WIN32)
+
 if(UNIX)
     set_target_properties(YARP_goocanvas PROPERTIES COMPILE_FLAGS "-fPIC")
 
