@@ -45,11 +45,11 @@ set(gtkdatabox_HDRS
     gtkdatabox/gtk/gtkdatabox_xyc_graph.h
 )
 
+add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})
+
 if(WIN32)
     add_definitions(/wd4305 /wd4244)
 endif(WIN32)
-
-add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})
 
 if(UNIX)
     set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC")

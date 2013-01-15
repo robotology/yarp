@@ -60,11 +60,11 @@ set(gtkdataboxmm_HDRS
     gtkdataboxmm/gtkdatabox/gtkdataboxmm/ruler.h
 )
 
+add_library(YARP_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
+
 if(WIN32)
     add_definitions(/wd4250)
 endif(WIN32)
-
-add_library(YARP_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
 if(UNIX)
     set_target_properties(YARP_gtkdataboxmm PROPERTIES COMPILE_FLAGS -fPIC)
