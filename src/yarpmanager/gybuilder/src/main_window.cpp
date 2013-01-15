@@ -2,14 +2,14 @@
  *  Yarp Modules Manager
  *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
 
 
 #if defined(WIN32)
-    #pragma warning (disable : 4250) 
+    #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
 #else
     #include <unistd.h>
@@ -68,15 +68,15 @@ MainWindow::MainWindow( yarp::os::Property &config)
 
     m_refMessageList = new MessagesList(this);
     m_refMessageList->enableTimeStamp();
-    
+
     m_refApplicationList = new ApplicationList(this);
-    
+
     setupStocks();
     setupActions();
     setupSignals();
-    
+
     createWidgets();
-    
+
     std::string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
 
     if(config.check("modpath"))
@@ -105,7 +105,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
         }
     }
 
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     if(config.check("apppath"))
     {
         string strPath;
@@ -115,7 +115,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
-            
+
             if(config.find("load_subfolders").asString() == "yes")
             {
                 if(!loadRecursiveApplications(strPath.c_str()))
@@ -151,7 +151,7 @@ void MainWindow::on_size_allocate(Gtk::Allocation& allocation)
         dummy_h = allocation.get_height();
         m_VPaned.set_position((int)(allocation.get_height()-200));
     }
-    
+
     if(m_VPaned.get_position()<50)
         m_VPaned.set_position(50);
 
@@ -185,7 +185,7 @@ void MainWindow::createWidgets(void)
         "      <menu action='FileNew'>"
         "        <menuitem action='FileNewApp'/>"
         "        <menuitem action='FileNewMod'/>"
-        "        <menuitem action='FileNewRes'/>"      
+        "        <menuitem action='FileNewRes'/>"
         "      </menu>"
         "      <menuitem action='FileOpen'/>"
         "      <menuitem action='FileClose'/>"
@@ -268,19 +268,19 @@ void MainWindow::createWidgets(void)
         "      <menuitem action='PEditFile'/>"
         " </popup>"
         " <popup name='PopupApplication'>"
-        "      <menuitem action='PAppLoad'/>"   
+        "      <menuitem action='PAppLoad'/>"
         "      <separator/>"
         "      <menuitem action='PAppReopen'/>"
         "      <menuitem action='PAppRemove'/>"
         " </popup>"
         " <popup name='PopupModule'>"
-        "      <menuitem action='PModLoad'/>"   
+        "      <menuitem action='PModLoad'/>"
         "      <separator/>"
         "      <menuitem action='PAppReopen'/>"
         "      <menuitem action='PAppRemove'/>"
         " </popup>"
         " <popup name='PopupResource'>"
-        "      <menuitem action='PResLoad'/>"   
+        "      <menuitem action='PResLoad'/>"
         "      <separator/>"
         "      <menuitem action='PAppReopen'/>"
         "      <menuitem action='PAppRemove'/>"
@@ -293,7 +293,7 @@ void MainWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='EditCut'/>"
         "      <menuitem action='EditCopy'/>"
-        "      <menuitem action='EditPaste'/>"        
+        "      <menuitem action='EditPaste'/>"
         "      <menuitem action='EditSelAll'/>"
         "      <separator/>"
         "      <menuitem action='FileOpenGymanager'/>"
@@ -329,7 +329,7 @@ void MainWindow::createWidgets(void)
     if(ex.get())
     {
         std::cerr << "building menus failed: " << ex->what();
-    }   
+    }
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 
     Gtk::Widget* pMenubar = m_refUIManager->get_widget("/MenuBar");
@@ -340,7 +340,7 @@ void MainWindow::createWidgets(void)
     {
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
         ((Gtk::Toolbar*)pToolbar)->set_icon_size(Gtk::IconSize(Gtk::ICON_SIZE_SMALL_TOOLBAR));
-#endif        
+#endif
         m_VBox.pack_start(*pToolbar, Gtk::PACK_SHRINK);
     }
 
@@ -362,41 +362,41 @@ void MainWindow::createWidgets(void)
     m_mainTab.set_border_width(0);
     m_mainTab.set_show_border(false);
     m_mainTab.set_scrollable(true);
-    m_refApplicationList->set_border_width(3);  
+    m_refApplicationList->set_border_width(3);
     m_HPaned.add1(*m_refApplicationList);
     m_HPaned.add2(m_mainTab);
     m_HPaned.set_position(WND_DEF_WIDTH/3);
-    
+
     m_VPaned.add1(m_HPaned);
     m_VPaned.add2(m_bottomTab);
     m_VPaned.set_position(WND_DEF_HEIGHT - WND_DEF_HEIGHT/3);
     m_VPaned.set_size_request(-1, 300);
     m_VBox.pack_start(m_VPaned);
     m_VBox.pack_start(m_Statusbar, Gtk::PACK_SHRINK);
-    
+
 
 }
 
 void MainWindow::setupSignals(void)
 {
     //Connect signal:
-    
+
     m_refApplicationList->getTreeView()->signal_row_activated().connect(sigc::mem_fun(*this,
                         &MainWindow::onAppListRowActivated) );
-    
+
     m_refApplicationList->getTreeView()->signal_button_press_event().connect_notify(sigc::mem_fun(*this,
             &MainWindow::onAppListButtonPressed) );
 
     m_mainTab.signal_switch_page().connect(sigc::mem_fun(*this,
             &MainWindow::onNotebookSwitchPage) );
 
-    signal_delete_event().connect(sigc::mem_fun(*this, 
+    signal_delete_event().connect(sigc::mem_fun(*this,
             &MainWindow::onDeleteEvent));
 
-    
-    
+
+
 //  signal_expose_event().connect(sigc::mem_fun(*this,
-//            &MainWindow::onExposeEvent) );    
+//            &MainWindow::onExposeEvent) );
 }
 
 void MainWindow::setupStocks(void)
@@ -431,7 +431,7 @@ void MainWindow::setupStocks(void)
     Gtk::Stock::add(gridViewStock);
     Gtk::Stock::add(gridSnapStock);
 
-    Gtk::IconSet killIcon(Gdk::Pixbuf::create_from_data(kill_ico.pixel_data, 
+    Gtk::IconSet killIcon(Gdk::Pixbuf::create_from_data(kill_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -439,7 +439,7 @@ void MainWindow::setupStocks(void)
                         kill_ico.height,
                         kill_ico.bytes_per_pixel*kill_ico.width));
 
-    Gtk::IconSet stopIcon(Gdk::Pixbuf::create_from_data(stop_ico.pixel_data, 
+    Gtk::IconSet stopIcon(Gdk::Pixbuf::create_from_data(stop_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -447,7 +447,7 @@ void MainWindow::setupStocks(void)
                         stop_ico.height,
                         stop_ico.bytes_per_pixel*stop_ico.width));
 
-    Gtk::IconSet runIcon(Gdk::Pixbuf::create_from_data(run_ico.pixel_data, 
+    Gtk::IconSet runIcon(Gdk::Pixbuf::create_from_data(run_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -455,7 +455,7 @@ void MainWindow::setupStocks(void)
                         run_ico.height,
                         run_ico.bytes_per_pixel*run_ico.width));
 
-    Gtk::IconSet procIcon(Gdk::Pixbuf::create_from_data(processor_ico.pixel_data, 
+    Gtk::IconSet procIcon(Gdk::Pixbuf::create_from_data(processor_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -463,7 +463,7 @@ void MainWindow::setupStocks(void)
                         processor_ico.height,
                         processor_ico.bytes_per_pixel*processor_ico.width));
 
-    Gtk::IconSet importIcon(Gdk::Pixbuf::create_from_data(import_ico.pixel_data, 
+    Gtk::IconSet importIcon(Gdk::Pixbuf::create_from_data(import_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -471,7 +471,7 @@ void MainWindow::setupStocks(void)
                         import_ico.height,
                         import_ico.bytes_per_pixel*import_ico.width));
 
-    Gtk::IconSet selallIcon(Gdk::Pixbuf::create_from_data(selectall_ico.pixel_data, 
+    Gtk::IconSet selallIcon(Gdk::Pixbuf::create_from_data(selectall_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -479,7 +479,7 @@ void MainWindow::setupStocks(void)
                         selectall_ico.height,
                         selectall_ico.bytes_per_pixel*selectall_ico.width));
 
-    Gtk::IconSet gridViewIcon(Gdk::Pixbuf::create_from_data(gridview_ico.pixel_data, 
+    Gtk::IconSet gridViewIcon(Gdk::Pixbuf::create_from_data(gridview_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -487,7 +487,7 @@ void MainWindow::setupStocks(void)
                         gridview_ico.height,
                         gridview_ico.bytes_per_pixel*gridview_ico.width));
 
-    Gtk::IconSet gridSnapIcon(Gdk::Pixbuf::create_from_data(gridsnap_ico.pixel_data, 
+    Gtk::IconSet gridSnapIcon(Gdk::Pixbuf::create_from_data(gridsnap_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -526,7 +526,7 @@ void MainWindow::setupActions(void)
     m_refActionGroup->add(Gtk::Action::create("FileNewRes",
                 Gtk::Stock::NEW, "New _Resource", "Create a new Resource"),
                 sigc::mem_fun(*this, &MainWindow::onMenuFileNewRes));
-               
+
     m_refActionGroup->add( Gtk::Action::create("FileOpen", Gtk::Stock::OPEN  ,"_Open File", "Open xml file"),
                         sigc::mem_fun(*this, &MainWindow::onMenuFileOpen) );
     m_refActionGroup->add( Gtk::Action::create("FileClose", Gtk::Stock::CLOSE),
@@ -544,7 +544,7 @@ void MainWindow::setupActions(void)
 
     m_refActionGroup->add(Gtk::Action::create("FileQuit", Gtk::Stock::QUIT),
           sigc::mem_fun(*this, &MainWindow::onMenuFileQuit));
-    
+
     //Edit menu:
     m_refActionGroup->add( Gtk::Action::create("EditMenu", "Edit") );
     m_refActionGroup->add( Gtk::Action::create("EditUndo", Gtk::Stock::UNDO),
@@ -581,7 +581,7 @@ void MainWindow::setupActions(void)
 
 
     // Tools menu:
-    m_refActionGroup->add( Gtk::Action::create("ToolsMenu", "Tools") );   
+    m_refActionGroup->add( Gtk::Action::create("ToolsMenu", "Tools") );
     m_refActionGroup->add( Gtk::Action::create("InsertSrcPort", "Add Source port", "External source port"),
                             sigc::mem_fun(*this, &MainWindow::onMenuInsertSrcPort) );
     m_refActionGroup->add( Gtk::Action::create("InsertDestPort", "Add Destination port", "External destination port"),
@@ -613,7 +613,7 @@ void MainWindow::setupActions(void)
                             sigc::mem_fun(*this, &MainWindow::onPAppMenuRemove) );
     m_refActionGroup->add( Gtk::Action::create("PAppReopen", Gtk::Stock::REFRESH, "R_eopen", "Reopen"),
                             sigc::mem_fun(*this, &MainWindow::onPAppMenuReopen) );
-                           
+
     m_refActionGroup->add( Gtk::Action::create("PAppLoad", Gtk::Stock::APPLY, "_Load Application", "Load Application"),
                             sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
     m_refActionGroup->add( Gtk::Action::create("PModLoad", Gtk::Stock::APPLY, "_Load Module", "Load Module"),
@@ -629,7 +629,7 @@ void MainWindow::setupActions(void)
     m_refActionGroup->get_action("FileSave")->set_sensitive(false);
     m_refActionGroup->get_action("FileSaveAs")->set_sensitive(false);
     m_refActionGroup->get_action("FileOpenGymanager")->set_sensitive(false);
-   
+
     m_refActionGroup->get_action("EditUndo")->set_sensitive(false);
     m_refActionGroup->get_action("EditRedo")->set_sensitive(false);
     m_refActionGroup->get_action("EditCopy")->set_sensitive(false);
@@ -642,12 +642,12 @@ void MainWindow::setupActions(void)
                         m_refActionGroup->get_action("ViewGrid"));
     if(act)
         act->set_active(true);
- 
+
     act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
                         m_refActionGroup->get_action("ViewLabel"));
     if(act)
         act->set_active(true);
-       
+
     act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
                         m_refActionGroup->get_action("WindowMessage"));
     if(act)
@@ -676,13 +676,13 @@ void MainWindow::reportErrors(void)
 
         while((err=logger->getLastWarning()))
             m_refMessageList->addWarning(err);
-    }   
+    }
 }
 
 bool MainWindow::loadRecursiveTemplates(const char* szPath)
-{       
+{
     string strPath = szPath;
-    if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+    if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
 
@@ -702,7 +702,7 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
 
     while((entry = readdir(dir)))
     {
-        if((string(entry->d_name) != string(".")) 
+        if((string(entry->d_name) != string("."))
         && (string(entry->d_name) != string("..")))
         {
 
@@ -711,7 +711,7 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
         }
     }
     closedir(dir);
-    
+
     return true;
 }
 
@@ -720,7 +720,7 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
     string strPath = szPath;
-    if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+    if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
 
@@ -733,7 +733,7 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
 
     while((entry = readdir(dir)))
     {
-        if((string(entry->d_name) != string(".")) 
+        if((string(entry->d_name) != string("."))
         && (string(entry->d_name) != string("..")))
         {
             string name = strPath + string(entry->d_name);
@@ -749,14 +749,14 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
 void MainWindow::syncApplicationList(void)
 {
     KnowledgeBase* kb = lazyManager.getKnowledgeBase();
-    ApplicaitonPContainer apps =  kb->getApplications();    
+    ApplicaitonPContainer apps =  kb->getApplications();
     unsigned int cnt = 0;
     for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
     {
         cnt++;
         m_refApplicationList->addApplication((*itr));
     }
-    
+
     ResourcePContainer resources = kb->getResources();
     for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
     {
@@ -764,7 +764,7 @@ void MainWindow::syncApplicationList(void)
         if(comp)
             m_refApplicationList->addComputer(comp);
     }
- 
+
     ModulePContainer modules = kb->getModules();
     for(ModulePIterator itr=modules.begin(); itr!=modules.end(); itr++)
            m_refApplicationList->addModule(*itr);
@@ -794,10 +794,10 @@ void MainWindow::onMenuFileQuit()
 
 bool MainWindow::safeExit(void)
 {
-    bool bSafe = true;  
+    bool bSafe = true;
     for(int i=0; i<m_mainTab.get_n_pages(); i++)
     {
-        ApplicationWindow* appWnd = 
+        ApplicationWindow* appWnd =
                 dynamic_cast<ApplicationWindow*>( m_mainTab.get_nth_page(i));
         if(appWnd)
         {
@@ -812,14 +812,14 @@ bool MainWindow::safeExit(void)
 void MainWindow::onMenuFileOpenGymanager()
 {
     onMenuFileSave();
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
 
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
     {
-        ostringstream strParam;        
+        ostringstream strParam;
         if(m_config.check("modpath"))
             strParam<<" --modpath "<<m_config.find("modpath").asString().c_str();
         if(m_config.check("apppath"))
@@ -836,23 +836,23 @@ void MainWindow::onMenuFileOpenGymanager()
                 msg<<"Error while launching gyarpmanager. "<<launcher.error();
                 logger->addError(msg);
                 reportErrors();
-            }           
+            }
     }
 }
 
 
-void MainWindow::onMenuFileNewApp() 
+void MainWindow::onMenuFileNewApp()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
 
     ApplicationWizard dialog(this, "Create new Application");
     if(dialog.run() == Gtk::RESPONSE_OK)
     {
         string strPath = dialog.m_EntryFolderName.get_entry()->get_text();
-        if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+        if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
- 
+
         string fname = strPath + dialog.m_EntryFileName.get_text();
         ofstream ser(fname.c_str());
         if(ser.is_open())
@@ -887,11 +887,11 @@ void MainWindow::onMenuFileNewApp()
     }
 }
 
-void MainWindow::onMenuFileNewMod() 
+void MainWindow::onMenuFileNewMod()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     if(m_config.check("external_editor"))
-    { 
+    {
         Gtk::FileChooserDialog dialog("Create new Module description file");
         dialog.set_transient_for(*this);
         dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
@@ -906,7 +906,7 @@ void MainWindow::onMenuFileNewMod()
         filter_app.set_name("Module description files (xml)");
         filter_app.add_mime_type("text/xml");
         dialog.add_filter(filter_app);
-        
+
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
             string fname = dialog.get_filename();
@@ -933,7 +933,7 @@ void MainWindow::onMenuFileNewMod()
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
                     reportErrors();
-                }           
+                }
         }
     }
     else
@@ -944,11 +944,11 @@ void MainWindow::onMenuFileNewMod()
 }
 
 
-void MainWindow::onMenuFileNewRes() 
+void MainWindow::onMenuFileNewRes()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     if(m_config.check("external_editor"))
-    { 
+    {
         Gtk::FileChooserDialog dialog("Create new Resource description file");
         dialog.set_transient_for(*this);
         dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
@@ -963,7 +963,7 @@ void MainWindow::onMenuFileNewRes()
         filter_app.set_name("Resource description files (xml)");
         filter_app.add_mime_type("text/xml");
         dialog.add_filter(filter_app);
-        
+
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
             string fname = dialog.get_filename();
@@ -990,7 +990,7 @@ void MainWindow::onMenuFileNewRes()
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
                     reportErrors();
-                }           
+                }
         }
     }
     else
@@ -1015,11 +1015,11 @@ void MainWindow::onMenuFileClose()
 
 void MainWindow::closeTab(int page_num)
 {
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
-    ResourceWindow* resWnd = 
+    ResourceWindow* resWnd =
             dynamic_cast<ResourceWindow*>(m_mainTab.get_nth_page(page_num));
-    ModuleWindow* modWnd = 
+    ModuleWindow* modWnd =
             dynamic_cast<ModuleWindow*>(m_mainTab.get_nth_page(page_num));
 
     if(appWnd)
@@ -1053,7 +1053,7 @@ void MainWindow::closeTab(int page_num)
     }
 }
 
-void MainWindow::onMenuFileOpen() 
+void MainWindow::onMenuFileOpen()
 {
     Gtk::FileChooserDialog dialog("Please choose a folder");
     dialog.set_transient_for(*this);
@@ -1104,10 +1104,10 @@ void MainWindow::onMenuFileOpen()
 
 }
 
-void MainWindow::onMenuFileSave() 
+void MainWindow::onMenuFileSave()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
 
      if(appWnd)
@@ -1118,14 +1118,14 @@ void MainWindow::onMenuFileSave()
             if(lazyManager.addApplication(appWnd->getApplication()->getXmlFile()))
                 m_Statusbar.push(string(appWnd->getApplication()->getXmlFile()) + Glib::ustring(" reopened."));
         }
-        reportErrors();            
-     }       
+        reportErrors();
+     }
 }
 
-void MainWindow::onMenuFileSaveAs() 
+void MainWindow::onMenuFileSaveAs()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
 
      //Glib::ustring pageName;
@@ -1136,10 +1136,10 @@ void MainWindow::onMenuFileSaveAs()
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
             string strPath = dialog.m_EntryFolderName.get_entry()->get_text();
-            if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
                 (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
                 strPath = strPath + string(PATH_SEPERATOR);
-     
+
             string fname = strPath + dialog.m_EntryFileName.get_text();
             string oldName = application->getName();
             string oldXmlFile = application->getXmlFile();
@@ -1157,7 +1157,7 @@ void MainWindow::onMenuFileSaveAs()
             application->setXmlFile(oldXmlFile.c_str());
             reportErrors();
         }
-     } 
+     }
 }
 
 
@@ -1173,7 +1173,7 @@ void MainWindow::onMenuFileImport()
     if(dialog.run() == Gtk::RESPONSE_OK)
     {
         string fname = dialog.get_filename();
-        
+
         if(m_config.find("load_subfolders").asString() == "yes")
         {
             if(loadRecursiveApplications(fname.c_str()))
@@ -1198,7 +1198,7 @@ void MainWindow::onMenuFileImport()
 
 void MainWindow::onPAppMenuLoad()
 {
-    Gtk::TreeModel::iterator iter = 
+    Gtk::TreeModel::iterator iter =
         m_refApplicationList->getTreeView()->get_selection()->get_selected();
     if(iter) //If anything is selected
     {
@@ -1222,10 +1222,10 @@ void MainWindow::onPAppMenuLoad()
         else if(row[m_refApplicationList->m_appColumns.m_col_type] == NODE_FILENAME)
         {
             Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_filename];
-            ErrorLogger* logger  = ErrorLogger::Instance(); 
+            ErrorLogger* logger  = ErrorLogger::Instance();
             if(m_config.check("external_editor"))
             {
-                 
+
                 LocalBroker launcher;
                 if(launcher.init(m_config.find("external_editor").asString().c_str(),
                                  name.c_str(), NULL, NULL, NULL, NULL))
@@ -1257,7 +1257,7 @@ void MainWindow::onPAppMenuRemove()
     if(dialog.run() != Gtk::RESPONSE_YES)
         return;
 
-    Gtk::TreeModel::iterator iter = 
+    Gtk::TreeModel::iterator iter =
         m_refApplicationList->getTreeView()->get_selection()->get_selected();
     if(iter) //If anything is selected
     {
@@ -1276,10 +1276,10 @@ void MainWindow::onPAppMenuRemove()
             for(int i=0; i<m_mainTab.get_n_pages(); i++)
             {
                 Glib::ustring pageName;
-                ModuleWindow* pModWnd = 
+                ModuleWindow* pModWnd =
                         dynamic_cast<ModuleWindow*>(m_mainTab.get_nth_page(i));
                 if(pModWnd)
-                    pageName = pModWnd->getModuleName();           
+                    pageName = pModWnd->getModuleName();
                 if(pageName == strName)
                 {
                     page_num = i;
@@ -1299,10 +1299,10 @@ void MainWindow::onPAppMenuRemove()
             for(int i=0; i<m_mainTab.get_n_pages(); i++)
             {
                 Glib::ustring pageName;
-                ResourceWindow* pResWnd = 
+                ResourceWindow* pResWnd =
                         dynamic_cast<ResourceWindow*>(m_mainTab.get_nth_page(i));
                 if(pResWnd)
-                    pageName = pResWnd->getResourceName();           
+                    pageName = pResWnd->getResourceName();
                 if(pageName == strName)
                 {
                     page_num = i;
@@ -1310,7 +1310,7 @@ void MainWindow::onPAppMenuRemove()
                 }
             }
 
-            if(page_num>=0)         
+            if(page_num>=0)
                 closeTab(page_num);
 
             if(lazyManager.removeResource(strName.c_str()))
@@ -1322,7 +1322,7 @@ void MainWindow::onPAppMenuRemove()
 
 void MainWindow::onPAppMenuReopen()
 {
-    Gtk::TreeModel::iterator iter = 
+    Gtk::TreeModel::iterator iter =
         m_refApplicationList->getTreeView()->get_selection()->get_selected();
     if(iter) //If anything is selected
     {
@@ -1344,10 +1344,10 @@ void MainWindow::onPAppMenuReopen()
             for(int i=0; i<m_mainTab.get_n_pages(); i++)
             {
                 Glib::ustring pageName;
-                ModuleWindow* pModWnd = 
+                ModuleWindow* pModWnd =
                         dynamic_cast<ModuleWindow*>(m_mainTab.get_nth_page(i));
                 if(pModWnd)
-                    pageName = pModWnd->getModuleName();           
+                    pageName = pModWnd->getModuleName();
                 if(pageName == strName)
                 {
                     page_num = i;
@@ -1362,7 +1362,7 @@ void MainWindow::onPAppMenuReopen()
             lazyManager.removeModule(strName.c_str());
             if(lazyManager.addModule(strFileName.c_str()))
             {
-                if(page_num>=0)  
+                if(page_num>=0)
                     manageModule(strName.c_str());
                 m_Statusbar.push(strFileName + Glib::ustring(" reopened."));
             }
@@ -1375,10 +1375,10 @@ void MainWindow::onPAppMenuReopen()
             for(int i=0; i<m_mainTab.get_n_pages(); i++)
             {
                 Glib::ustring pageName;
-                ResourceWindow* pResWnd = 
+                ResourceWindow* pResWnd =
                         dynamic_cast<ResourceWindow*>(m_mainTab.get_nth_page(i));
                 if(pResWnd)
-                    pageName = pResWnd->getResourceName();           
+                    pageName = pResWnd->getResourceName();
                 if(pageName == strName)
                 {
                     page_num = i;
@@ -1386,14 +1386,14 @@ void MainWindow::onPAppMenuReopen()
                 }
             }
 
-            if(page_num>=0)         
+            if(page_num>=0)
                 closeTab(page_num);
 
             Glib::ustring strFileName = row[m_refApplicationList->m_appColumns.m_col_filename];
-            lazyManager.removeResource(strName.c_str());            
+            lazyManager.removeResource(strName.c_str());
             if(lazyManager.addResource(strFileName.c_str()))
             {
-                if(page_num>=0)  
+                if(page_num>=0)
                     manageResource(strName.c_str());
                 m_Statusbar.push(strFileName + Glib::ustring(" reopened."));
             }
@@ -1406,11 +1406,11 @@ void MainWindow::onPAppMenuReopen()
 
 
 
-void MainWindow::onMenuHelpOnlineHelp() 
+void MainWindow::onMenuHelpOnlineHelp()
 {
  #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)  
     GError *error = NULL;
-    gtk_show_uri(gdk_screen_get_default(), 
+    gtk_show_uri(gdk_screen_get_default(),
                  "http://eris.liralab.it/yarpdoc/yarpmanager.html",
                  gtk_get_current_event_time(), &error);
     if(error)
@@ -1424,7 +1424,7 @@ void MainWindow::onMenuHelpOnlineHelp()
     dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
     dialog.run();
 
-#endif    
+#endif
 }
 
 void MainWindow::onMenuHelpAbout()
@@ -1443,7 +1443,7 @@ void MainWindow::onMenuHelpAbout()
     std::vector<Glib::ustring> authors;
     authors.push_back("Ali Paikan <ali.paikan@iit.it>");
     dialog.set_authors(authors);
-    dialog.set_logo(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data, 
+    dialog.set_logo(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -1455,28 +1455,28 @@ void MainWindow::onMenuHelpAbout()
 }
 
 
-void MainWindow::onMenuEditSellAll() 
+void MainWindow::onMenuEditSellAll()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onSelectAll();
 }
 
-void MainWindow::onMenuEditExportGraph() 
-{   
+void MainWindow::onMenuEditExportGraph()
+{
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onExportGraph();
 }
 
-void MainWindow::onMenuEditDelete() 
+void MainWindow::onMenuEditDelete()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onDelete();
@@ -1484,92 +1484,92 @@ void MainWindow::onMenuEditDelete()
 void MainWindow::onMenuEditUndo() { }
 void MainWindow::onMenuEditRedo() { }
 void MainWindow::onMenuEditCut() { }
-void MainWindow::onMenuEditCopy() 
+void MainWindow::onMenuEditCopy()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onCopy();
 }
 
-void MainWindow::onMenuEditPaste() 
+void MainWindow::onMenuEditPaste()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onPaste();
 }
 
-void MainWindow::onMenuInsertDestPort() 
+void MainWindow::onMenuInsertDestPort()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onMenuInsertDestPort();
 }
 
 
-void MainWindow::onMenuInsertSrcPort() 
+void MainWindow::onMenuInsertSrcPort()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onMenuInsertSrcPort();
 }
 
-void MainWindow::onMenuRotateRight() 
+void MainWindow::onMenuRotateRight()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onRotateRight();
 }
 
-void MainWindow::onMenuRotateLeft() 
+void MainWindow::onMenuRotateLeft()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onRotateLeft();
 }
 
-void MainWindow::onMenuViewZoomIn() 
+void MainWindow::onMenuViewZoomIn()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onZoomIn();
 }
 
-void MainWindow::onMenuViewZoomOut() 
+void MainWindow::onMenuViewZoomOut()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onZoomOut();
 }
 
-void MainWindow::onMenuViewZoomReset() 
+void MainWindow::onMenuViewZoomReset()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onZoomReset();
 }
 
-void MainWindow::onMenuViewGrid() 
+void MainWindow::onMenuViewGrid()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
     {
@@ -1581,10 +1581,10 @@ void MainWindow::onMenuViewGrid()
     }
 }
 
-void MainWindow::onMenuViewSnapToGrid() 
+void MainWindow::onMenuViewSnapToGrid()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
     {
@@ -1596,10 +1596,10 @@ void MainWindow::onMenuViewSnapToGrid()
     }
 }
 
-void MainWindow::onMenuViewLabel() 
+void MainWindow::onMenuViewLabel()
 {
     int page_num = m_mainTab.get_current_page();
-    ApplicationWindow* appWnd = 
+    ApplicationWindow* appWnd =
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
     {
@@ -1618,7 +1618,7 @@ void MainWindow::onMenuWindowItem()
     act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
             m_refActionGroup->get_action("WindowItem"));
     if(act)
-    { 
+    {
         if(!act->get_active())
             m_HPaned.remove(*m_HPaned.get_child1());
         else
@@ -1649,7 +1649,7 @@ void MainWindow::onMenuWindowProperty()
     {
         for(int i=0; i<m_mainTab.get_n_pages(); i++)
         {
-            ApplicationWindow* appWnd = 
+            ApplicationWindow* appWnd =
                     dynamic_cast<ApplicationWindow*>( m_mainTab.get_nth_page(i));
             if(appWnd)
                 appWnd->onMenuWindowProperty(act->get_active());
@@ -1659,13 +1659,13 @@ void MainWindow::onMenuWindowProperty()
 
 void MainWindow::onAppListButtonPressed(GdkEventButton* event)
 {
-    //if it's a mouse click 
+    //if it's a mouse click
     if(event->type == GDK_BUTTON_PRESS)
     {
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
         bool bOnItem = m_refApplicationList->getTreeView()->get_path_at_pos(
-                                                    (int)event->x, 
+                                                    (int)event->x,
                                                     (int)event->y, path);
         bool bOnAppItem = false;
         bool bOnModItem = false;
@@ -1674,7 +1674,7 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
         bool bOnFolderItem = false;
         if(path)
         {
-            Gtk::TreeModel::iterator iter = 
+            Gtk::TreeModel::iterator iter =
                     m_refApplicationList->m_refTreeModel->get_iter(path);
             if((*iter)[m_refApplicationList->m_appColumns.m_col_type] == APPLICATION)
                 bOnAppItem = true;
@@ -1683,15 +1683,15 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
             if((*iter)[m_refApplicationList->m_appColumns.m_col_type] == RESOURCE)
                 bOnResItem = true;
              if((*iter)[m_refApplicationList->m_appColumns.m_col_type] == NODE_FILENAME)
-                bOnFileItem = true;             
+                bOnFileItem = true;
              if((*iter)[m_refApplicationList->m_appColumns.m_col_type] == NODE_OTHER)
                 bOnFolderItem = true;
        }
             //Do something with the row.
-            
+
         // if it's not a free click
         if(bOnItem && bOnAppItem && (event->button == 3))
-        {   
+        {
             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
                         m_refUIManager->get_widget("/PopupApplication"));
             if(pMenu)
@@ -1711,22 +1711,22 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
             if(pMenu)
                 pMenu->popup(event->button, event->time);
         }
-        else if(bOnItem && bOnFolderItem && (event->button == 3))        
+        else if(bOnItem && bOnFolderItem && (event->button == 3))
         {
             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
                         m_refUIManager->get_widget("/PopupFolders"));
             if(pMenu)
                 pMenu->popup(event->button, event->time);
-        }        
+        }
         else if(bOnItem && bOnFileItem && (event->button == 3))
         {
              Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
                         m_refUIManager->get_widget("/PopupFile"));
             if(pMenu)
-                pMenu->popup(event->button, event->time);          
-        }       
-#else  
-        // if it's a right click 
+                pMenu->popup(event->button, event->time);
+        }
+#else
+        // if it's a right click
         if(event->button == 3)
         {
             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
@@ -1734,15 +1734,15 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
             if(pMenu)
                 pMenu->popup(event->button, event->time);
         }
-#endif        
+#endif
     }
 }
 
-void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path, 
+void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
             Gtk::TreeViewColumn* column)
 {
     Gtk::TreeModel::iterator iter = m_refApplicationList->m_refTreeModel->get_iter(path);
-    if(iter && ((*iter)[m_refApplicationList->m_appColumns.m_col_type] == APPLICATION)) 
+    if(iter && ((*iter)[m_refApplicationList->m_appColumns.m_col_type] == APPLICATION))
     {
         Gtk::TreeModel::Row row = *iter;
         Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_name];
@@ -1765,10 +1765,10 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
     {
         Gtk::TreeModel::Row row = *iter;
         Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_filename];
-        ErrorLogger* logger  = ErrorLogger::Instance(); 
+        ErrorLogger* logger  = ErrorLogger::Instance();
         if(m_config.check("external_editor"))
         {
-             
+
             LocalBroker launcher;
             if(launcher.init(m_config.find("external_editor").asString().c_str(),
                              name.c_str(), NULL, NULL, NULL, NULL))
@@ -1787,7 +1787,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
             reportErrors();
         }
     }
-    
+
 }
 
 
@@ -1799,10 +1799,10 @@ void MainWindow::manageApplication(const char* szName)
     for(int i=0; i<m_mainTab.get_n_pages(); i++)
     {
         Glib::ustring pageName;
-        ApplicationWindow* pAppWnd = 
+        ApplicationWindow* pAppWnd =
                 dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(i));
         if(pAppWnd)
-            pageName = pAppWnd->getApplicationName();           
+            pageName = pAppWnd->getApplicationName();
         if(pageName == name)
         {
             page_num = i;
@@ -1826,7 +1826,7 @@ void MainWindow::manageApplication(const char* szName)
         if(act)
             snap = act->get_active();
 
-        ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(), 
+        ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(),
                                         &lazyManager, &m_config, this, grid, snap);
 //          m_mainTab.append_page(*pAppWnd, name);
         Gtk::HBox* hb = Gtk::manage( new Gtk::HBox());
@@ -1836,7 +1836,7 @@ void MainWindow::manageApplication(const char* szName)
         //ev->add(*lb);
         hb->pack_start(*lb);
         Gtk::Button* bt = Gtk::manage(new Gtk::Button());
-        Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data, 
+        Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data,
                     Gdk::COLORSPACE_RGB,
                     true,
                     8,
@@ -1846,7 +1846,7 @@ void MainWindow::manageApplication(const char* szName)
         bt->add(*ico);
         bt->set_size_request(24,24);
         bt->set_relief(Gtk::RELIEF_NONE);
-        bt->signal_clicked().connect(sigc::mem_fun(*pAppWnd, 
+        bt->signal_clicked().connect(sigc::mem_fun(*pAppWnd,
                                     &ApplicationWindow::onTabCloseRequest));
         hb->set_spacing(1);
         hb->set_border_width(0);
@@ -1857,7 +1857,7 @@ void MainWindow::manageApplication(const char* szName)
         hb->show_all_children();
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 10)
         m_mainTab.set_tab_reorderable(*pAppWnd);
-#endif        
+#endif
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }
@@ -1879,10 +1879,10 @@ void MainWindow::manageResource(const char* szName)
     for(int i=0; i<m_mainTab.get_n_pages(); i++)
     {
         Glib::ustring pageName;
-        ResourceWindow* pResWnd = 
+        ResourceWindow* pResWnd =
                 dynamic_cast<ResourceWindow*>(m_mainTab.get_nth_page(i));
         if(pResWnd)
-            pageName = pResWnd->getResourceName();           
+            pageName = pResWnd->getResourceName();
         if(pageName == name)
         {
             page_num = i;
@@ -1894,7 +1894,7 @@ void MainWindow::manageResource(const char* szName)
         m_mainTab.set_current_page(page_num);
     else
     {
-        Computer* comp = 
+        Computer* comp =
             dynamic_cast<Computer*>(lazyManager.getKnowledgeBase()->getResource(name.c_str()));
         if(!comp)
             return;
@@ -1905,7 +1905,7 @@ void MainWindow::manageResource(const char* szName)
         lb->set_text(name);
         hb->pack_start(*lb);
         Gtk::Button* bt = Gtk::manage(new Gtk::Button());
-        Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data, 
+        Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data,
                     Gdk::COLORSPACE_RGB,
                     true,
                     8,
@@ -1915,9 +1915,9 @@ void MainWindow::manageResource(const char* szName)
         bt->add(*ico);
         bt->set_size_request(24,24);
         bt->set_relief(Gtk::RELIEF_NONE);
-        
-        bt->signal_clicked().connect(sigc::mem_fun(*pResWnd, 
-                                     &ResourceWindow::onTabCloseRequest));       
+
+        bt->signal_clicked().connect(sigc::mem_fun(*pResWnd,
+                                     &ResourceWindow::onTabCloseRequest));
         hb->set_spacing(1);
         hb->set_border_width(0);
         hb->pack_start(*bt, Gtk::PACK_SHRINK);
@@ -1927,7 +1927,7 @@ void MainWindow::manageResource(const char* szName)
         hb->show_all_children();
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 10)
         m_mainTab.set_tab_reorderable(*pResWnd);
-#endif        
+#endif
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }
@@ -1944,7 +1944,7 @@ void MainWindow::manageModule(const char* szName)
     for(int i=0; i<m_mainTab.get_n_pages(); i++)
     {
         Glib::ustring pageName;
-        ModuleWindow* pModWnd = 
+        ModuleWindow* pModWnd =
                 dynamic_cast<ModuleWindow*>(m_mainTab.get_nth_page(i));
         if(pModWnd)
             pageName = pModWnd->getModuleName();
@@ -1958,7 +1958,7 @@ void MainWindow::manageModule(const char* szName)
         m_mainTab.set_current_page(page_num);
     else
     {
-        Module* module = 
+        Module* module =
             dynamic_cast<Module*>(lazyManager.getKnowledgeBase()->getModule(name.c_str()));
         if(!module)
             return;
@@ -1969,7 +1969,7 @@ void MainWindow::manageModule(const char* szName)
         lb->set_text(name);
         hb->pack_start(*lb);
         Gtk::Button* bt = Gtk::manage(new Gtk::Button());
-        Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data, 
+        Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data,
                     Gdk::COLORSPACE_RGB,
                     true,
                     8,
@@ -1979,9 +1979,9 @@ void MainWindow::manageModule(const char* szName)
         bt->add(*ico);
         bt->set_size_request(24,24);
         bt->set_relief(Gtk::RELIEF_NONE);
-        
-        bt->signal_clicked().connect(sigc::mem_fun(*pModWnd, 
-                                     &ModuleWindow::onTabCloseRequest));       
+
+        bt->signal_clicked().connect(sigc::mem_fun(*pModWnd,
+                                     &ModuleWindow::onTabCloseRequest));
         hb->set_spacing(1);
         hb->set_border_width(0);
         hb->pack_start(*bt, Gtk::PACK_SHRINK);
@@ -1991,7 +1991,7 @@ void MainWindow::manageModule(const char* szName)
         hb->show_all_children();
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 10)
         m_mainTab.set_tab_reorderable(*pModWnd);
-#endif        
+#endif
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }
@@ -2008,7 +2008,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
     ApplicationWindow* pAppWnd = dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     ResourceWindow* pResWnd = dynamic_cast<ResourceWindow*>(m_mainTab.get_nth_page(page_num));
     ModuleWindow* pModWnd = dynamic_cast<ModuleWindow*>(m_mainTab.get_nth_page(page_num));
-   
+
     if(pAppWnd)
     {
         pAppWnd->grab_focus();
@@ -2016,11 +2016,11 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
         //msg<<"Current application: "<<pAppWnd->getApplicationName();
         msg<<"Current application: "<<pAppWnd->getApplication()->getXmlFile();
         m_Statusbar.push(msg.str());
-        
+
         m_refActionGroup->get_action("FileSave")->set_sensitive(true);
         m_refActionGroup->get_action("FileClose")->set_sensitive(true);
         m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
-        m_refActionGroup->get_action("EditExportGraph")->set_sensitive(true);      
+        m_refActionGroup->get_action("EditExportGraph")->set_sensitive(true);
         onMenuViewGrid();
         onMenuViewSnapToGrid();
         onMenuViewLabel();
@@ -2034,7 +2034,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
         m_refActionGroup->get_action("FileSave")->set_sensitive(false);
         m_refActionGroup->get_action("FileClose")->set_sensitive(true);
         m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
-        m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);      
+        m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);
     }
     else if(pModWnd)
     {
@@ -2045,7 +2045,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
         m_refActionGroup->get_action("FileSave")->set_sensitive(false);
         m_refActionGroup->get_action("FileClose")->set_sensitive(true);
         m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
-        m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);      
+        m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);
     }
 }
 
@@ -2055,8 +2055,5 @@ bool MainWindow::onExposeEvent( GdkEventExpose* event)
 //  cout<<get_height()<<endl;
     m_VPaned.set_position(get_height() - get_height()/3);
 
-    return Gtk::Window::on_expose_event(event); 
+    return Gtk::Window::on_expose_event(event);
 }
-
-
-
