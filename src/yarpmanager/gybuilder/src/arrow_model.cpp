@@ -18,6 +18,10 @@
 #include "ext_port_model.h"
 
 #include <math.h>
+#if defined(_WIN32) || defined(_WIN64)
+# define fmax max
+# define fmin min
+#endif
 
 #define ARROW_LINEWIDTH     2.0
 
