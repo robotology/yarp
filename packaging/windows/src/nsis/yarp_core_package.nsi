@@ -130,6 +130,7 @@ SectionGroup "YARP core" SecYarp
     !insertmacro AddKey "Software\${VENDOR}\YARP\Common" "LastInstallVersion" ${YARP_SUB}
 
     !insertmacro AddEnv "PATH" "$INSTDIR\${YARP_SUB}\bin"
+	!insertmacro AddEnv "PATH" "$INSTDIR\${YARP_SUB}\lib"
     !insertmacro AddEnv "LIB" "$INSTDIR\${YARP_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${YARP_SUB}\include"
 
