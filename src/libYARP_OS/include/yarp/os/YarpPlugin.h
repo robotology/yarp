@@ -12,14 +12,24 @@
 
 #include <yarp/os/api.h>
 #include <yarp/os/SharedLibraryClass.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     namespace os {
+        class YarpPluginSelector;
         class YarpPluginSettings;
         class YarpPluginHelper;
         template <class T> class YarpPlugin;
     }
 }
+
+class YARP_OS_API yarp::os::YarpPluginSelector {
+public:
+    virtual ~YarpPluginSelector() {}
+    virtual bool select(Searchable& options) { return true; }
+
+    Bottle listPlugins();
+};
 
 class YARP_OS_API yarp::os::YarpPluginSettings {
 private:

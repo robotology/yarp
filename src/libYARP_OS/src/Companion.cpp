@@ -2029,7 +2029,21 @@ String Companion::version() {
 int Companion::cmdPlugin(int argc, char *argv[]) {
 #ifdef YARP_HAS_ACE
     if (argc!=1) {
-        fprintf(stderr,"please provide filename for shared library\n");
+        printf("List of plugins:\n");
+        YarpPluginSelector selector;
+        Bottle lst = selector.listPlugins();
+        if (lst.size()==0) {
+            printf("None found.\n");
+        }
+        for (int i=0; i<lst.size(); i++) {
+            Value& options = lst.get(i);
+            ConstString name = options.check("name",Value("untitled")).asString();
+            ConstString kind = options.check("type",Value("unknown type")).asString();
+            printf("\n");
+            printf("%s %s\n", kind.c_str(), name.c_str());
+            printf("  %s\n", options.toString().c_str());
+        }
+
         return 1;
     }
     SharedLibraryFactory lib;
