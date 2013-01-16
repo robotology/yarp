@@ -50,6 +50,8 @@ private:
 
 
 public:
+    using Searchable::check;
+    using Searchable::findGroup;
 
     /**
      * Construct a list Value
