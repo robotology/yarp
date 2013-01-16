@@ -323,10 +323,10 @@ for f in `ls -1 *.$LIBEXT | grep YARP_math`; do
 	nsis_add yarp_math_libraries $f ${YARP_SUB}/lib/$f
 done
 for f in `ls -1 *.dll | grep -v YARP_math`; do
-	nsis_add yarp_dlls $f ${YARP_SUB}/bin/$f
+	nsis_add yarp_dlls $f ${YARP_SUB}/lib/$f
 done
 for f in `ls -1 *.dll | grep YARP_math`; do
-	nsis_add yarp_math_dlls $f ${YARP_SUB}/bin/$f
+	nsis_add yarp_math_dlls $f ${YARP_SUB}/lib/$f
 done
 cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.exe | grep -v yarpview`; do
@@ -418,7 +418,7 @@ if $add_debug; then
 	done
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
 	for f in `ls -1 *.dll`; do
-		nsis_add yarp_dlls $f ${YARP_SUB}/bin/$f
+		nsis_add yarp_dlls $f ${YARP_SUB}/lib/$f
 	done
 	cd $ACE_DIR_DBG || exit 1
 	cd lib || exit 1
