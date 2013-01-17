@@ -287,6 +287,38 @@ public:
         }
     }
 
+    bool readDir(const  char *dirname,ACE_DIR *&dir, String& result) {
+        bool ok = true;
+        struct YARP_DIRENT *ent = YARP_readdir(dir);
+        while (ent) {
+            ConstString name = ent->d_name;
+            ent = ACE_OS::readdir(dir);
+            int len = (int)name.length();
+            if (len<4) continue;
+            if (name.substr(len-4)!=".ini") continue;
+            ConstString fname = ConstString(dirname) + "/" + name;
+            ok = ok && readFile(fname,result,false);
+        }
+        YARP_closedir(dir);
+        dir = NULL;
+        return ok;
+    }
+
+    bool readFile(const char *fname, String& result, bool allowDir) {
+        if (allowDir) {
+            ACE_DIR *dir = ACE_OS::opendir(fname);
+            if (dir) return readDir(fname,dir,result);
+        }
+        FILE *fin = fopen(fname,"r");
+        if (fin==NULL) return false;
+        char buf[25600];
+        while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+            result += buf;
+        }
+        fclose(fin);
+        fin = NULL;
+        return true;
+    }
 
     bool fromConfigFile(const char *fname,Searchable& env, bool wipe=true) {
         String searchPath = 
@@ -299,9 +331,11 @@ public:
                    searchPath);
 
         String pathPrefix("");
+        String txt;
 
-        FILE *fin = fopen(fname,"r");
-        if (fin==NULL) {
+        bool ok = true;
+        if (!readFile(fname,txt,true)) {
+            ok = false;
             SplitString ss(searchPath.c_str(),';');
             for (int i=0; i<ss.size(); i++) {
                 String trial = ss.get(i);
@@ -312,8 +346,9 @@ public:
                            String("looking for ") + fname + " as " +
                            trial.c_str());
 
-                fin = fopen(trial.c_str(),"r");
-                if (fin!=NULL) {
+                txt = "";
+                if (readFile(trial.c_str(),txt,true)) {
+                    ok = true;
                     pathPrefix = ss.get(i);
                     pathPrefix += '/';
                     break; 
@@ -331,8 +366,7 @@ public:
             path = sfname.substr(0,index);
         }
 
-        String txt;
-        if (fin==NULL) {
+        if (!ok) {
             YARP_ERROR(Logger::get(),String("cannot read from ") +
                        fname);
             return false;
@@ -349,12 +383,6 @@ public:
             envExtended.put("CONFIG_PATH",searchPath.c_str());
         }
 
-        char buf[25600];
-        while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
-            txt += buf;
-        }
-        fclose(fin);
-        fin = NULL;
         fromConfig(txt.c_str(),envExtended,wipe);
         return true;
     }

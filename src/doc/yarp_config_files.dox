@@ -167,6 +167,11 @@ y 10
 we end up with top-level groups of x, y, and setup (alpha and tweaks
 are nested within setup).
 
+As of YARP 2.3.21, it is possible to include a whole directory.  In
+this case, all files with the extension ".ini" from that directory
+will be merged together.  An example is given in \ref
+yarp_config_file_dir_includes.
+
 \section yarp_config_file_lists Section collections
 
 Occasionally a config file needs a list of sections containing
@@ -197,11 +202,6 @@ So we have a handy "camera" list accessible
 as prop.findGroup("camera").tail() that gives us the names of the 
 camera-related groups.
 
-This syntax is limited, though.  
-Consider nesting instead 
-using \ref yarp_config_file_nesting "nested configuration files".
-
-
 \section yarp_config_file_includes Combining section collections and includes
 
 As of YARP 2.2.8, section collections and include file features can be 
@@ -218,6 +218,39 @@ equivalent to the following line:
 camera left right
 \endcode
 
+\section yarp_config_file_dir_includes Combining section collections and directory includes
+
+As of YARP 2.3.21, it is possible to include a whole directory in place
+of a file.  That gives new possibilities for section collections.
+Suppose we have a file cam/left.ini containing:
+\code
+[camera left]
+geom 0.7 0.3
+color_correct 0.01 0.0 -0.1
+\endcode
+And a file cam/right.ini containing:
+\code
+[camera right]
+geom -0.7 0.3
+color_correct 0.0 0.0 0.0
+\endcode
+And a file all.ini containing:
+\code
+[include "cam"]
+\endcode
+
+Loading all.ini is equivalent to loading:
+\code
+camera left right
+[left]
+geom 0.7 0.3
+color_correct 0.01 0.0 -0.1
+[right]
+geom -0.7 0.3
+color_correct 0.0 0.0 0.0
+\endcode
+
+Note the ordering of files read may not be defined.
 
 \section yarp_config_file_comments Comments in config files
 

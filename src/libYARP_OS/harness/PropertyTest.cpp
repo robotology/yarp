@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/Property.h>
+#include <yarp/os/Os.h>
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
@@ -452,6 +453,35 @@ check $x $y\n\
         }
     }
 
+    virtual void checkDirectory() {
+        report(0,"checking directory scanning");
+        // change directory name if test files removed
+        ConstString dirname = "__test_dir_1";
+        ACE_stat sb;
+        if (ACE_OS::stat(dirname.c_str(),&sb)<0) {
+            yarp::os::mkdir(dirname.c_str());
+        }
+        checkTrue(ACE_OS::stat(dirname.c_str(),&sb)>=0,"test directory present");
+        {
+            FILE *fout = fopen((dirname + "/t1.ini").c_str(),"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"x 3\n");
+            fclose(fout);
+            fout = NULL;
+        }
+        {
+            FILE *fout = fopen((dirname + "/t2.ini").c_str(),"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"y 4\n");
+            fclose(fout);
+            fout = NULL;
+        }
+        Property p;
+        p.fromConfigFile(dirname.c_str());
+        checkEqual(p.find("x").asInt(),3,"t1 read");
+        checkEqual(p.find("y").asInt(),4,"t2 read");
+    }
+
     virtual void checkMonitor() {
         report(0,"checking monitoring");
     }
@@ -474,6 +504,7 @@ check $x $y\n\
         checkMonitor();
         checkHex();
         checkNestedCommandLine();
+        checkDirectory();
     }
 };
 
