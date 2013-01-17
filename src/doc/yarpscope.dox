@@ -136,6 +136,10 @@ Here is an example of portscope description file in XML format:
 </portscope>
 \endcode
 
+This xml will produce a GUI similar to this:
+
+\image html yarpscope.png ""
+
 Details:
 
 \code
