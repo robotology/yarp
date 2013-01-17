@@ -122,71 +122,16 @@ void YarpPluginSettings::reportFailure() const {
 
 Bottle YarpPluginSelector::listPlugins() {
     Bottle result;
-    ConstString suffix = "/etc/yarp/plugins";
-    ConstString dirname = suffix;
-    ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
-    if (!dir) {
-        YARP_SPRINTF1(Logger::get(),debug,"Could not find %s", dirname.c_str());
-
-#ifdef YARP_HAS_ACE
-        char buf[4192] = "";
-        // as a placeholder, we use the path to libYARP_OS.so as a 
-        // reference.  Requires LD_LIBRARY_PATH or equivalent to be
-        // set.  This will be evaporating.
-        ACE::ldfind("YARP_OS",buf,sizeof(buf));
-        printf("FOUND %s\n", buf);
-        if (buf[0]!='\0') {
-            String s(buf);
-            YARP_STRING_INDEX n = s.rfind('/');
-            if (n == String::npos) {
-                n = s.rfind('\\');
-            }
-            if (n != String::npos) {
-                s[n] = '\0';
-            }
-            ConstString prefix(s.c_str());
-            dirname = prefix + "/" + suffix;
-            dir = ACE_OS::opendir(dirname.c_str());
-            if (!dir) {
-                dirname = prefix + "/.." + suffix;
-                dir = ACE_OS::opendir(dirname.c_str());
-                if (!dir) {
-                    dirname = prefix + "/../.." + suffix;
-                    dir = ACE_OS::opendir(dirname.c_str());
-                }
-            }
-            if (!dir) {
-                YARP_SPRINTF2(Logger::get(),debug,"Could not find %s/.../%s", buf, dirname.c_str());
-                return result;
-            }
-        } else {
-            return result;
-        }
-#else
-        return result;
-#endif
-    }
-    struct YARP_DIRENT *ent = YARP_readdir(dir);
-    while (ent) {
-        ConstString name = ent->d_name;
-        ent = ACE_OS::readdir(dir);
-        int len = (int)name.length();
-        if (len<4) continue;
-        if (name.substr(len-4)!=".ini") continue;
-        ConstString fname = dirname + "/" + name;
-        Property config;
-        config.fromConfigFile(fname);
-        Bottle plugins = config.findGroup("plugin").tail();
-        for (int i=0; i<plugins.size(); i++) {
-            ConstString plugin_name = plugins.get(i).asString();
-            Bottle group = config.findGroup(plugin_name);
-            if (select(group)) {
-                result.addList() = group;
-            }
+    Property config;
+    config.fromConfigFile("etc/yarp/plugins");
+    Bottle plugins = config.findGroup("plugin").tail();
+    for (int i=0; i<plugins.size(); i++) {
+        ConstString plugin_name = plugins.get(i).asString();
+        Bottle group = config.findGroup(plugin_name);
+        if (select(group)) {
+            result.addList() = group;
         }
     }
-    YARP_closedir(dir);
-    dir = NULL;
     return result;
 }
 
