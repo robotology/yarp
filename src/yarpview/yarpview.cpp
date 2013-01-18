@@ -909,7 +909,12 @@ int myMain(int argc, char* argv[])
 
     //initialize threads in gtk, copied almost verbatim from
     // http://library.gnome.org/devel/gdk/unstable/gdk-Threads.htm
+
+#if !GLIB_CHECK_VERSION(2, 32, 0)
+    // since Glib 2.32 g_thread_init is deprecated
     g_thread_init (NULL);
+#endif
+
     gdk_threads_init ();
     gdk_threads_enter ();
 
