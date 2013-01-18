@@ -185,7 +185,6 @@ void ApplicationModel::updateChildItems(void)
                     source->set_property("y", index);
                 }
                 
-                /*
                 double end_x, end_y;
                 Goocanvas::Points points = poly->property_points().get_value();
                 points.get_coordinate(4, end_x, end_y);
@@ -214,7 +213,6 @@ void ApplicationModel::updateChildItems(void)
                 points3.set_coordinate(1, width, height);
                 points3.set_coordinate(2, minx, height);
                 shadow->property_points().set_value(points3);
-                */
             } 
             index+=40;
         }
@@ -255,7 +253,7 @@ void ApplicationModel::updateChildItems(void)
                     y = index;
                     dest->set_property("x", x);
                     dest->set_property("y", y);
-                }                
+                }                               
                 double end_x, end_y;
                 Goocanvas::Points points = poly->property_points().get_value();
                 points.get_coordinate(4, end_x, end_y);
@@ -268,13 +266,14 @@ void ApplicationModel::updateChildItems(void)
 
                 points.set_coordinate(3, width, text_h+TEXT_MARGINE);
                 points.set_coordinate(4, width, height);
-                points.set_coordinate(5, 0, height);            
+                points.get_coordinate(5, end_x, end_y);
+                points.set_coordinate(5, end_x, height);            
                 poly->property_points().set_value(points);
                 Goocanvas::Points points3(3);
                 points3.set_coordinate(0, width, text_h+TEXT_MARGINE);
                 points3.set_coordinate(1, width, height);
-                points3.set_coordinate(2, 0, height);
-                shadow->property_points().set_value(points3);                
+                points3.set_coordinate(2, end_x, height);
+                shadow->property_points().set_value(points3);                    
             }    
         }
         
