@@ -7,21 +7,23 @@
  *
  */
 
-#ifndef _MODULE_MODEL__
-#define _MODULE_MODEL__
+#ifndef _APPLICATION_MODEL__
+#define _APPLICATION_MODEL__
 
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "module.h"
+#include "application.h"
+#include "port_model.h"
+#include "ext_port_model.h"
 
 class ApplicationWindow;
 
-class ModuleModel : public Goocanvas::GroupModel, public GraphicModel
+class ApplicationModel : public Goocanvas::GroupModel, public GraphicModel
 {
 public:
-    virtual ~ModuleModel();
+    virtual ~ApplicationModel();
 
-    static Glib::RefPtr<ModuleModel> create(ApplicationWindow* parentWnd, Module* mod, bool nested=false);
+    static Glib::RefPtr<ApplicationModel> create(ApplicationWindow* parentWnd, Application* app);
 
     bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -34,25 +36,27 @@ public:
     bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventCrossing* event);
     void snapToGrid(void);
-    void updateArrowCoordination(void);
+    void updateCoordination(void);
+    void updateChildItems(void);
+
     void setSelected(bool sel);
     bool getSelected(void) { return selected; }
     void setArrowsSelected(bool sel);
-    Module* getModule(void) { return module; }
+    Application* getApplication(void) { return application; }
 
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
 
 
 protected: 
-    ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested);
-    //void onItemCreated(const Glib::RefPtr<Goocanvas::Item>& item, 
-    //                    const Glib::RefPtr<Goocanvas::ItemModel>& model) ;
+    ApplicationModel(ApplicationWindow* parentWnd, Application* app);
+
 private:
-    Module* module;
+    Application* application;
     ApplicationWindow* parentWindow;
-    Glib::RefPtr<Goocanvas::RectModel> mainRect;
-    Glib::RefPtr<Goocanvas::RectModel> shadowRect;
+    Glib::RefPtr<Goocanvas::PolylineModel> poly;
+    Glib::RefPtr<Goocanvas::TextModel> text;
+    Glib::RefPtr<Goocanvas::PolylineModel> shadow;
 
     Glib::RefPtr<GroupModel> group; 
     Glib::RefPtr< Goocanvas::Item > _dragging ;
@@ -61,8 +65,19 @@ private:
     bool selected;
     double width;
     double height;
-    bool bNested;
+    int text_w;
+    int text_h;
+    Goocanvas::Bounds bounds;
+
+private: 
+    void updateBounds(void);
+    void getApplicationBounds(Goocanvas::Bounds& bound);
+    void findInputOutputData(Connection& cnn,  ModulePContainer &modules,
+                                            InputData* &input_, OutputData* &output_);
+    Glib::RefPtr<PortModel> findModelFromOutput(OutputData* output);
+    Glib::RefPtr<PortModel> findModelFromInput(InputData* input);
+ 
 };
 
-#endif //_MODULE_MODEL_
+#endif //_APPLICATION_MODEL_
 

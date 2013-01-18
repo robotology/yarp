@@ -11,7 +11,6 @@
 #include <cctype>
 #include <string>
 #include <string.h>
-#include <algorithm>
 
 #include "kbase.h"
 #include "utility.h"
@@ -34,6 +33,7 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
     tmpGraph.clear();
     selconnections.clear();
     selmodules.clear();
+    selapplications.clear();
     selresources.clear();
 
     /*
@@ -176,34 +176,75 @@ bool KnowledgeBase::removeResource(GenericResource* res)
 }
 
 
-const ApplicaitonPContainer& KnowledgeBase::getApplications(void)
+const ApplicaitonPContainer& KnowledgeBase::getApplications(Application* parent)
 {
     dummyApplications.clear();
-    for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)
+    if(parent)
     {
-        Application* app = dynamic_cast<Application*>(*itr);
-        if(app)
-            dummyApplications.push_back(app);
+        for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
+        {
+            Application* app = dynamic_cast<Application*>(*itr);
+            if(app && (app->owner() == parent))
+                    dummyApplications.push_back(app);
+        }
     }
+    else
+    {
+        for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)
+        {
+            Application* app = dynamic_cast<Application*>(*itr);
+            if(app)
+                    dummyApplications.push_back(app);
+        }
+    }
+
     sort(dummyApplications.begin(), dummyApplications.end(), sortApplication());
     return dummyApplications;
 }
 
 
-const ModulePContainer& KnowledgeBase::getModules(void)
+const ModulePContainer& KnowledgeBase::getModules(Application* parent)
 {
     dummyModules.clear();
-    for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)
+    if(parent)
     {
-        Module* mod = dynamic_cast<Module*>(*itr);
-        if(mod)
-            dummyModules.push_back(mod);
+        for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
+        {
+            Module* mod = dynamic_cast<Module*>(*itr);
+            if(mod && (mod->owner() == parent))
+                dummyModules.push_back(mod);
+        }
     }
+    else
+    {
+        for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)
+        {
+            Module* mod = dynamic_cast<Module*>(*itr);
+            if(mod)
+                dummyModules.push_back(mod);
+        }
+    }        
     sort(dummyModules.begin(), dummyModules.end(), sortModules());
     return dummyModules;
 }
 
-const ResourcePContainer& KnowledgeBase::getResources(void)
+//TODO: dummyConnections should be changed to return connections from all 
+// nested applications recursively 
+const CnnContainer& KnowledgeBase::getConnections(Application* parent)
+{
+    dummyConnections.clear();
+    if(parent)
+    {
+        for(int i=0; i<parent->connectionCount(); i++)
+            dummyConnections.push_back(parent->getConnectionAt(i));
+    }
+    else
+        dummyConnections = selconnections; 
+    //sort(dummyConnections.begin(), dummyConnections.end(), sortConnections());
+    return dummyConnections;
+}
+
+const ResourcePContainer& KnowledgeBase::getResources(Application* parent)
 {
     dummyResources.clear();
     for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)
@@ -275,11 +316,9 @@ bool KnowledgeBase::makeupApplication(Application* application)
     ErrorLogger* logger  = ErrorLogger::Instance();
     if(!application)
         return false;
-
     /**
      * we need to load all child  applications first
      */
-    map<string, int> appList;
     for(int i=0; i<application->iapplicationCount(); i++)
     {
         ApplicationInterface interfaceApp = application->getIapplicationAt(i);
@@ -322,7 +361,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
 
                 //Adding child application as an successor to the application
                 tmpGraph.addLink(application, repapp, 0, false);
-
+                repapp->setOwner(application);
                 // recursive call to make up child application
                 makeupApplication(repapp);
             }
@@ -343,10 +382,12 @@ bool KnowledgeBase::makeupApplication(Application* application)
 
     /*
      * updating extera connections with application prefix
+     * and connections owner
      */
     for(int i=0; i<application->connectionCount(); i++)
     {
         Connection* cnn = &application->getConnectionAt(i);
+        cnn->setOwner(application);
         if(!cnn->isExternalFrom())
         {
             string strPort = string(application->getPrefix()) + string(cnn->from());
@@ -388,14 +429,14 @@ bool KnowledgeBase::makeupApplication(Application* application)
 Connection& KnowledgeBase::addConnectionToApplication(Application* application, 
                                                       Connection &cnn)
 {    
-    
+    cnn.setOwner(application);
     for(int i=0; i<application->connectionCount(); i++)
     {
         Connection* con = &application->getConnectionAt(i);
         if(*con == cnn)
         {
             // updating con (e.g. model) with cnn
-            *con = cnn;
+            *con = cnn;            
             return *con;
         }
     }
@@ -448,6 +489,61 @@ bool KnowledgeBase::removeConnectionFromApplication(Application* application, Co
         }
     }
     return application->removeConnection(cnn);
+}
+
+Application* KnowledgeBase::addIApplicationToApplication(Application* application, 
+                                    ApplicationInterface &interfaceApp, bool isNew)
+{
+    __CHECK_NULLPTR(application);
+
+    Application* repapp = NULL;
+
+    ErrorLogger* logger  = ErrorLogger::Instance();
+    if(string(interfaceApp.getName()) == string(application->getName()))
+    {
+        ostringstream msg;
+        msg<<"Application "<<interfaceApp.getName()<<" cannot be called from itself.";
+        logger->addWarning(msg);
+    }
+    else
+    {
+        repapp = dynamic_cast<Application*>(kbGraph.getNode(interfaceApp.getName()));
+        if(!repapp)
+        {
+            ostringstream msg;
+            msg<<"Application "<<interfaceApp.getName()<<" not found.";
+            logger->addWarning(msg);
+        }
+        else
+        {
+            if(appList.find(string(interfaceApp.getName()))==appList.end())
+                appList[interfaceApp.getName()] = 1;
+            ostringstream newname;
+            newname<<application->getName()<<":";
+            newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];
+            repapp = replicateApplication(tmpGraph, repapp,
+                                         newname.str().c_str());
+
+            // adding applicattion prefix to child application
+            if( strlen(application->getPrefix()) )
+            {
+                string strPrefix = string(application->getPrefix()) +
+                                   string(interfaceApp.getPrefix());
+                interfaceApp.setPrefix(strPrefix.c_str());
+            }
+
+            // updating Application with ApplicationInterface
+            updateApplication(tmpGraph, repapp, &interfaceApp);
+            appList[interfaceApp.getName()] = appList[interfaceApp.getName()] + 1;
+
+            //Adding child application as an successor to the application
+            tmpGraph.addLink(application, repapp, 0, false);
+            repapp->setOwner(application);
+            // recursive call to make up child application
+            makeupApplication(repapp);
+        }
+    }
+    return repapp;
 }
 
 
@@ -522,6 +618,50 @@ bool KnowledgeBase::removeIModuleFromApplication(Application* application, const
     }
     return false;
 }
+
+//TODO: check if we should free application memory  
+//
+bool KnowledgeBase::removeIApplicationFromApplication(Application* application, const char* szAppTag)
+{
+    __CHECK_NULLPTR(application);
+
+    Application* app = dynamic_cast<Application*>(tmpGraph.getNode(szAppTag));
+    if(!app)
+        return false;
+
+    // removing all nested applications recursively
+    for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
+    {
+        Application* nestedApp = dynamic_cast<Application*>(*itr);
+        if(nestedApp && (nestedApp->owner() == app))
+            removeIApplicationFromApplication(app, nestedApp->getLabel());
+    }
+
+    for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
+    {
+        Module* mod = dynamic_cast<Module*>(*itr);
+        if(mod && (mod->owner() == app))
+            removeModuleFromGraph(tmpGraph, mod);
+        else
+        {
+            MultiResource* res = dynamic_cast<MultiResource*>(*itr);
+            if(res && (res->owner() == app))
+                tmpGraph.removeNode(res);
+        }
+    }
+
+    for(int i=0; i<application->iapplicationCount(); i++)
+    {
+        if(strcmp(application->getIapplicationAt(i).getName(), szAppTag) == 0)
+        {
+            application->removeIapplication(application->getIapplicationAt(i));
+            break;
+        }
+    }
+    tmpGraph.removeNode(app);
+    return true;
+}
+
 
 
 GenericResource* KnowledgeBase::findResByName(Graph& graph, const char* szName)
@@ -603,6 +743,8 @@ bool KnowledgeBase::reasolveDependency(Application* app,
                                             app,
                                             app->getLabel());
 
+    //internaly used by makeup application and addIApplicationToApplication
+    appList.clear(); 
     // extend application to its child applications and modules
     if(!makeupApplication(mainApplication))
     {
@@ -627,15 +769,17 @@ bool KnowledgeBase::reasolveDependency(Application* app,
 
     ResourcePContainer resources;
     ModulePContainer modules;
+    ApplicaitonPContainer applications;
     CnnContainer connections;
     tmpGraph.setSatisfied(false);
     bool ret = reason(&tmpGraph, mainApplication,
-                      modules, resources, connections,
+                      applications, modules, resources, connections,
                       bAutoDependancy, bSilent);
 
     // removing double nodes
     selconnections.clear();
     selmodules.clear();
+    selapplications.clear();
     selresources.clear();
 
     for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
@@ -680,6 +824,14 @@ bool KnowledgeBase::reasolveDependency(Application* app,
           == selmodules.end())
             selmodules.push_back((*itr));
     }
+
+    for(ApplicationPIterator itr=applications.begin(); itr!=applications.end(); itr++)
+    {
+       if(find(selapplications.begin(), selapplications.end(), (*itr))
+          == selapplications.end())
+            selapplications.push_back((*itr));
+    }
+
 
     selconnections = connections;
 
@@ -779,6 +931,7 @@ bool KnowledgeBase::updateApplication(Graph& graph, Application* app,
 
     if(strlen(iapp->getPrefix()))
         app->setPrefix(iapp->getPrefix());
+    app->setModelBase(iapp->getModelBase());
     return true;
 }
 
@@ -968,6 +1121,23 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
 
 bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application)
 {
+    // updating iApplication
+    application->removeAllIapplications();
+    for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
+    {
+        Application* embApp = dynamic_cast<Application*>(*itr);
+        if(embApp && (embApp != application) && (embApp->owner() == application))
+        {
+            ApplicationInterface iapp(embApp->getName());           
+            iapp.setPrefix(embApp->getPrefix());
+            if(embApp->getModel())
+                iapp.setModelBase(*embApp->getModel());
+            else
+                iapp.setModelBase(embApp->getModelBase());
+            application->addIapplication(iapp);
+        }        
+    }
+ 
     //updating imodules
     application->removeAllImodules();
     for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
@@ -1311,8 +1481,9 @@ bool KnowledgeBase::constrainSatisfied(Node* node, bool bAutoDependancy)
 
 
 bool KnowledgeBase::reason(Graph* graph, Node* initial,
+                                 ApplicaitonPContainer &applications,
                                  ModulePContainer &modules,
-                                 ResourcePContainer& resources,
+                                 ResourcePContainer &resources,
                                  CnnContainer &connections,
                                  bool bAutoDependancy, bool bSilent)
 {
@@ -1334,9 +1505,11 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
         // adding connections
         Application* application = dynamic_cast<Application*>(initial);
         if(application)
+        {
+            applications.push_back(application);
             for(int i=0; i<application->connectionCount(); i++)
                 connections.push_back(application->getConnectionAt(i));
-
+        }
         initial->setSatisfied(true);
         initial->setVisited(false);
         return true;
@@ -1360,10 +1533,11 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
         if(!l.isVirtual() && !current->isVisited())
         {
             ModulePContainer subModules;
+            ApplicaitonPContainer subApplications;
             ResourcePContainer subResources;
             CnnContainer subConnections;
             bool ret = reason(graph, current,
-                              subModules, subResources, subConnections,
+                              subApplications, subModules, subResources, subConnections,
                               bAutoDependancy, bSilent);
             if(ret)
                 bPathFound = true;
@@ -1377,6 +1551,7 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
             if (dynamic_cast<Application*>(initial) ||
                 dynamic_cast<Module*>(initial))
             {
+                applications.insert(applications.end(), subApplications.begin(), subApplications.end());
                 modules.insert(modules.end(), subModules.begin(), subModules.end());
                 resources.insert(resources.end(), subResources.begin(), subResources.end());
                 connections.insert(connections.end(), subConnections.begin(), subConnections.end());
@@ -1388,6 +1563,7 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
                 weight = l.weight();
                 candidateLink = &initial->getLinkAt(i);
                 modules = subModules;
+                applications = subApplications;
                 resources = subResources;
                 connections = subConnections;
             }
@@ -1426,9 +1602,11 @@ bool KnowledgeBase::reason(Graph* graph, Node* initial,
     /* we should add all the connections */
     Application* application = dynamic_cast<Application*>(initial);
     if(application)
+    {
+        applications.push_back(dynamic_cast<Application*>(initial));
         for(int i=0; i<application->connectionCount(); i++)
             connections.push_back(application->getConnectionAt(i));
-
+    }
     initial->setSatisfied(bPathFound);
     initial->setVisited(false);
     return bPathFound;

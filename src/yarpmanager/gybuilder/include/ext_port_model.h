@@ -26,7 +26,7 @@ class ExternalPortModel : public PortModel
 public:
     virtual ~ExternalPortModel();
 
-    static Glib::RefPtr<ExternalPortModel> create(ApplicationWindow* parentWnd, NodeType t, const char* szExternalPort);
+    static Glib::RefPtr<ExternalPortModel> create(ApplicationWindow* parentWnd, NodeType t, const char* szExternalPort, bool nested=false);
 
     virtual bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -55,7 +55,7 @@ public:
     double getHeight(void) { return height; }
 
 protected: 
-    ExternalPortModel(ApplicationWindow* parentWnd, NodeType t, const char* szExternalPort);
+    ExternalPortModel(ApplicationWindow* parentWnd, NodeType t, const char* szExternalPort, bool nested=false);
 
 private:
     ApplicationWindow* parentWindow;
@@ -69,6 +69,7 @@ private:
     int _drag_y ;
     double width;
     double height;
+    bool bNested;
 };
 
 #endif //_EXTPORT_MODEL_

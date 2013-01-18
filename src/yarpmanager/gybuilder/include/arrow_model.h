@@ -21,6 +21,7 @@ class ApplicationWindow;
 class PortModel;
 class MidpointModel;
 class LabelModel;
+class ApplicationModel;
 
 class ArrowModel : public Goocanvas::PolylineModel, public GraphicModel
 {
@@ -29,7 +30,7 @@ public:
 
     static Glib::RefPtr<ArrowModel> create(ApplicationWindow* parentWnd,
                                            Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
-                                           const char* szLabel=NULL);
+                                           const char* szLabel=NULL, ApplicationModel* appModel=NULL);
 
     bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -79,7 +80,7 @@ public:
 protected: 
     ArrowModel(ApplicationWindow* parentWnd, 
                Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
-               const char* szLabel);
+               const char* szLabel, ApplicationModel* appModel=NULL);
 
 private:
     ApplicationWindow* parentWindow;
@@ -89,9 +90,12 @@ private:
     std::vector< Glib::RefPtr<MidpointModel> > midpoints; 
     bool selected;
     bool bExist;
+    bool bNested;
     std::string strLabel;
     Connection connection;
     std::string defaultColor;
+    ApplicationModel* applicationModel;
+    Application* application;
 };
 
 #endif //_ARROW_MODEL_

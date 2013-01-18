@@ -16,6 +16,7 @@
 #include "label_model.h"
 #include "int_port_model.h"
 #include "ext_port_model.h"
+#include "application_model.h"
 
 #include <math.h>
 #if defined(_WIN32) || defined(_WIN64)
@@ -28,27 +29,39 @@
 
 ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                        Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
-                       const char* szLabel): PolylineModel(0,0,0,0)
+                       const char* szLabel, ApplicationModel* appModel): PolylineModel(0,0,0,0)
 {
     parentWindow = parentWnd;
     source = src;
     destination = dest;
     selected = false;
     bExist = false;
+    applicationModel = appModel; 
+    bNested = (applicationModel != NULL);
+    if(appModel)
+        application = appModel->getApplication();
+    else        
+        application = parentWindow->manager.getKnowledgeBase()->getApplication();
     if(szLabel)
         strLabel = szLabel;
     this->property_close_path().set_value(false);
     this->property_line_width().set_value(ARROW_LINEWIDTH);
     this->property_arrow_width().set_value(5.0);
     this->property_end_arrow().set_value(true);
-    defaultColor="black";
+    if(bNested)
+    {
+        defaultColor = "#555555";
+        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
+        g_object_set(this->gobj(), "line-dash", dash, NULL);
+    }
+    else
+        defaultColor = "black";
 
     source->addSourceArrow(this);
     destination->addDestinationArrow(this);
   
     string strCarrier = strLabel;
-    //Adding connection
-    Application* application = parentWindow->manager.getKnowledgeBase()->getApplication();
+    //Adding connection 
     if(application)
     {
         string strFrom, strTo;
@@ -94,14 +107,6 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         cnn.setCorInputData(input);
         cnn.setModel(this);
         connection = parentWindow->manager.getKnowledgeBase()->addConnectionToApplication(application, cnn);
-       
-        /*
-        if (input && output && strcmp(input->getName(),output->getName())) // if I have "internal" input and output
-        {
-            //std::cout<< "FromPort "<< strFrom << " type " << output->getName() << ", ToPort " << strTo << " type " << input->getName()  <<endl;
-            defaultColor = "orange";
-        }
-        */
     }
 
     this->property_stroke_color().set_value(defaultColor.c_str());
@@ -109,12 +114,24 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         label = LabelModel::create(parentWindow, this, strLabel.c_str());
     else
         label = LabelModel::create(parentWindow, this, strCarrier.c_str());
-    parentWindow->getRootModel()->add_child(label);
+
+    if(bNested)
+    {
+        applicationModel->add_child(label);
+        label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
+    }
+    else
+        parentWindow->getRootModel()->add_child(label);
     label->raise();
 
     showLabel(parentWindow->m_showLabel);
-    updatCoordiantes();
-    updatLabelCoordiante(); 
+
+    Gdk::Point pt1 = source->getContactPoint();
+    Gdk::Point pt2 = destination->getContactPoint();
+    setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
+    Goocanvas::Points points = this->property_points().get_value();
+    setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
+    updatLabelCoordiante();
 }
     
 void ArrowModel::setLabel(const char* szLabel)
@@ -148,21 +165,23 @@ ArrowModel::~ArrowModel(void)
         source->removeSourceArrow(this);
     if(destination)    
         destination->removeDestinationArrow(this);   
-
-    Application* application = parentWindow->manager.getKnowledgeBase()->getApplication();            
-    if(application)
-      parentWindow->manager.getKnowledgeBase()->removeConnectionFromApplication(application,
+ 
+      if(application)
+        parentWindow->manager.getKnowledgeBase()->removeConnectionFromApplication(application,
                                 connection);
 }
 
 void ArrowModel::updatCoordiantes(void)
 {
-    Gdk::Point pt1 = source->getContactPoint();
-    Gdk::Point pt2 = destination->getContactPoint();
-    setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
-    Goocanvas::Points points = this->property_points().get_value();
-    setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
-    updatLabelCoordiante();
+    if(!bNested)
+    {
+        Gdk::Point pt1 = source->getContactPoint();
+        Gdk::Point pt2 = destination->getContactPoint();
+        setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
+        Goocanvas::Points points = this->property_points().get_value();
+        setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
+        updatLabelCoordiante();
+    }        
 }
 
 
@@ -330,9 +349,9 @@ void ArrowModel::onPointUpdated(void)
 
 Glib::RefPtr<ArrowModel> ArrowModel::create(ApplicationWindow* parentWnd,
                                     Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
-                                    const char* szLabel)
+                                    const char* szLabel, ApplicationModel* appModel)
 {
-    return Glib::RefPtr<ArrowModel>(new ArrowModel(parentWnd, src, dest, szLabel));
+    return Glib::RefPtr<ArrowModel>(new ArrowModel(parentWnd, src, dest, szLabel, appModel));
 }
 
 
@@ -358,14 +377,16 @@ void ArrowModel::addMidPoint(double x, double y, int index)
     else
         addPoint(x, y);
 
-    Glib::RefPtr<MidpointModel> mid = MidpointModel::create(parentWindow, 
-                                      this, x, y);
-                                      
-    parentWindow->getRootModel()->add_child(mid);
-    mid->set_property("x", x-POINT_SIZE/2.0);
-    mid->set_property("y", y-POINT_SIZE/2.0);
-    mid->snapToGrid();
-    midpoints.push_back(mid);
+    if(!bNested)
+    {
+        Glib::RefPtr<MidpointModel> mid = MidpointModel::create(parentWindow, 
+                                          this, x, y);
+        parentWindow->getRootModel()->add_child(mid);        
+        mid->set_property("x", x-POINT_SIZE/2.0);
+        mid->set_property("y", y-POINT_SIZE/2.0);
+        mid->snapToGrid();
+        midpoints.push_back(mid);
+    }        
 }
 
 bool ArrowModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
@@ -454,7 +475,7 @@ bool ArrowModel::intersect(double p1, double q1, double p2, double q2)
 
 void ArrowModel::showLabel(bool bShow)
 {
-    if(bShow)
+    if(bShow && !bNested)
         label->property_visibility().set_value(Goocanvas::ITEM_VISIBLE);
     else
        label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
@@ -462,6 +483,9 @@ void ArrowModel::showLabel(bool bShow)
 
 void ArrowModel::setSelected(bool sel)
 {
+    if(bNested)
+        return;
+
     selected = sel;
     if(selected)
     {

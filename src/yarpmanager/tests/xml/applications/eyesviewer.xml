@@ -6,45 +6,43 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>test_grabber</name>
-        <parameters>--mode ball</parameters>
-        <node>localhost</node>
-        <prefix>/Ball</prefix>
-        <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 106.5) (y 143.5))</geometry>
+        <name>activeSeg</name>
+        <parameters></parameters>
+        <node></node>
+        <prefix>/EyesViewer:activeSeg:1</prefix>
+        <geometry>(Pos (x 800) (y 593.9))</geometry>
     </module>
     <module>
         <name>test_grabber</name>
-        <parameters>--mode line</parameters>
-        <node>localhost</node>
-        <prefix>/Line</prefix>
+        <parameters></parameters>
+        <node></node>
+        <prefix>/EyesViewer:test_grabber:1</prefix>
         <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 107.5) (y 230.5))</geometry>
+        <geometry>(Pos (x 1069) (y 617.9))</geometry>
     </module>
     <module>
         <name>yarpview</name>
-        <parameters>--x 100</parameters>
-        <node>localhost</node>
-        <prefix>/Ball</prefix>
-        <geometry>(Pos (x 473.5) (y 143.5))</geometry>
-    </module>
-    <module>
-        <name>yarpview</name>
-        <parameters>--x 600</parameters>
-        <node>localhost</node>
-        <prefix>/Line</prefix>
-        <geometry>(Pos (x 475) (y 229.9))</geometry>
+        <parameters></parameters>
+        <node></node>
+        <prefix>/EyesViewer:yarpview:1</prefix>
+        <geometry>(Pos (x 1183) (y 698.9))</geometry>
     </module>
     <connection>
-        <from>/Ball/grabber</from>
-        <to>/Ball/yarpview/img:i</to>
+        <from>/EyesViewer:activeSeg:1/activeSeg/imageCrop:o</from>
+        <to>/EyesViewer:yarpview:1/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 374) (y 161)) ((x 274) (y 161)) ((x 474) (y 161))  )</geometry>
+        <geometry>(Pos ((x 1064) (y 683)) ((x 944) (y 649)) ((x 1184) (y 717))  )</geometry>
     </connection>
     <connection>
-        <from>/Line/grabber</from>
-        <to>/Line/yarpview/img:i</to>
+        <from>/EyesViewer:activeSeg:1/activeSeg/image:o</from>
+        <to>/EyesViewer:test_grabber:1/test_grabber/quit</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 375.5) (y 248)) ((x 275) (y 248)) ((x 476) (y 248))  )</geometry>
+        <geometry>(Pos ((x 1007) (y 630)) ((x 944) (y 624)) ((x 1070) (y 636))  )</geometry>
+    </connection>
+    <connection>
+        <from>Source</from>
+        <to>Destination</to>
+        <protocol></protocol>
+        <geometry>(Pos ((x 920.5) (y 543.5)) ((x 774) (y 538)) ((x 1067) (y 549))  )</geometry>
     </connection>
 </application>

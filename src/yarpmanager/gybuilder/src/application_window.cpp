@@ -16,6 +16,7 @@
 #include "main_window.h"
 #include "icon_res.h"
 #include "module_model.h"
+#include "application_model.h"
 #include "port_model.h"
 #include "midpoint_model.h"
 #include "label_model.h"
@@ -231,6 +232,8 @@ bool ApplicationWindow::onSelectAll(void)
         for(int i=0; i<root->get_n_children(); i++)
         {
             selected = true;
+            Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+            if(app) app->setSelected(true);
             Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
             if(mod) mod->setSelected(true);
             Glib::RefPtr<ArrowModel> arw = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(i));
@@ -353,7 +356,6 @@ void ApplicationWindow::onDelete(void)
        
     deleteSelectedArrows();
     
-    //for(int j=0; j<root->get_n_children(); j++)
     while(countSelected())
         for(int i=0; i<root->get_n_children(); i++)
         {
@@ -381,6 +383,20 @@ void ApplicationWindow::onDelete(void)
                 // removing all connected arrows
                 deleteSelectedArrows();
                 child.clear();
+            } 
+
+            Glib::RefPtr<ApplicationModel> childApp = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+            if(childApp && childApp->getSelected()) 
+            {
+                int id = root->find_child(childApp);
+                if(id != -1)               
+                    root->remove_child(id); 
+                if(appPropertyWindow->getApplication() == childApp->getApplication())
+                    appPropertyWindow->release();
+                childApp->setArrowsSelected(true);
+                // removing all connected arrows
+                deleteSelectedArrows(); 
+                childApp.clear();
             }        
         }
     m_bModified = true;
@@ -660,6 +676,8 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
         {
            for(int i=0; i<root->get_n_children(); i++)
            {
+                Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+                if(app) app->setSelected(false);                    
                 Glib::RefPtr<ModuleModel> child = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
                 if(child) child->setSelected(false);                    
                 Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(i));
@@ -780,6 +798,31 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             return mod->onItemButtonPressEvent(item, event);
          }
 
+         Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(parent->get_model());
+         if(app)
+         {
+            if(event->type == GDK_2BUTTON_PRESS)
+            {
+                app->setSelected(true);
+                m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(true);
+                m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(true);
+                // switch to application property
+                Glib::RefPtr<Gtk::ToggleAction> act;
+                act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
+                            m_pParent->m_refActionGroup->get_action("WindowProperty"));            
+                if(act && act->get_active())
+                {
+                    if(m_HPaned.get_child2())
+                        m_HPaned.remove(*m_HPaned.get_child2());  
+                    appPropertyWindow->update(app->getApplication());
+                    m_HPaned.add2(*appPropertyWindow);
+                    m_HPaned.show_all();
+                }    
+            }
+            return app->onItemButtonPressEvent(item, event);
+         }
+
+
         Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(parent->get_model());
         if(extport) 
         {
@@ -850,6 +893,9 @@ int ApplicationWindow::countSelected(void)
     int num = 0;
     for(int i=0; i<root->get_n_children(); i++)
     {
+        Glib::RefPtr<ApplicationModel> childApp = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+        if(childApp && childApp->getSelected())
+            num++;
         Glib::RefPtr<ExternalPortModel> extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
         if(extPort && extPort->getSelected())
             num++;
@@ -876,6 +922,8 @@ void ApplicationWindow::setSelected(void)
     //deselect all items
     for(int i=0; i<root->get_n_children(); i++)
     {
+        Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+        if(app) app->setSelected(false);                    
         Glib::RefPtr<ModuleModel> child = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
         if(child) child->setSelected(false);                    
         Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(i));
@@ -894,6 +942,26 @@ void ApplicationWindow::setSelected(void)
     for(itr=items.begin(); itr != items.end(); itr++)
     {
         Glib::RefPtr<Goocanvas::ItemModel> model = (*itr)->get_model();
+
+        Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(model);
+        if(app) 
+        {
+            itemCount++;
+            app->setSelected(true);  
+            if(itemCount == 1)
+            {
+                // switch to application property
+                if(act && act->get_active())
+                {
+                    if(m_HPaned.get_child2())
+                        m_HPaned.remove(*m_HPaned.get_child2());  
+                    appPropertyWindow->update(app->getApplication());
+                    m_HPaned.add2(*appPropertyWindow);
+                    m_HPaned.show_all();
+                }    
+            }
+        }
+ 
         Glib::RefPtr<ModuleModel> child = Glib::RefPtr<ModuleModel>::cast_dynamic(model);
         if(child) 
         {
@@ -996,6 +1064,12 @@ bool ApplicationWindow::on_item_button_release_event(const Glib::RefPtr<Goocanva
         Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(parent->get_model());
         if(mod)
             return mod->onItemButtonReleaseEvent(item, event);
+
+        Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(parent->get_model());
+        if(app)
+            return app->onItemButtonReleaseEvent(item, event);
+
+
         Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(parent->get_model());
         if(extport) 
             return extport->onItemButtonReleaseEvent(item, event);
@@ -1066,6 +1140,9 @@ bool ApplicationWindow::on_item_motion_notify_event(const Glib::RefPtr<Goocanvas
          Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(parent->get_model());
          if(mod)
             return mod->onItemMotionNotifyEvent(item, event);
+         Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(parent->get_model());
+         if(app)
+            return app->onItemMotionNotifyEvent(item, event);
         Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(parent->get_model());
         if(extport) 
             return extport->onItemMotionNotifyEvent(item, event);
@@ -1100,6 +1177,9 @@ bool ApplicationWindow::on_item_enter_notify_event(const Glib::RefPtr<Goocanvas:
          Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(parent->get_model());
          if(mod)
             return mod->onItemEnterNotify(item, event);
+         Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(parent->get_model());
+         if(app)
+            return app->onItemEnterNotify(item, event);
          Glib::RefPtr<PortModel> port = Glib::RefPtr<PortModel>::cast_dynamic(parent->get_model());
          if(port)
             return port->onItemEnterNotify(item, event);
@@ -1132,6 +1212,9 @@ bool ApplicationWindow::on_item_leave_notify_event(const Glib::RefPtr<Goocanvas:
          Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(parent->get_model());
          if(mod)
             return mod->onItemLeaveNotify(item, event);
+         Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(parent->get_model());
+         if(app)
+            return app->onItemLeaveNotify(item, event);
          Glib::RefPtr<PortModel> port = Glib::RefPtr<PortModel>::cast_dynamic(parent->get_model());
          if(port)
             return port->onItemLeaveNotify(item, event);
@@ -1233,12 +1316,40 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy,
 
 void ApplicationWindow::updateApplicationWindow(void)
 {
-    ModulePContainer modules = manager.getKnowledgeBase()->getSelModules();    
-    CnnContainer connections = manager.getKnowledgeBase()->getSelConnection();
-    //Application* application = manager.getKnowledgeBase()->getApplication();
+    Application* mainApplication = manager.getKnowledgeBase()->getApplication();
+    ModulePContainer modules = manager.getKnowledgeBase()->getModules(mainApplication);    
+    CnnContainer connections = manager.getKnowledgeBase()->getConnections(mainApplication);
+    ApplicaitonPContainer applications = manager.getKnowledgeBase()->getApplications(mainApplication);
 
-    ModulePIterator itr;
     int index = 0;
+    ApplicationPIterator appItr;
+    Glib::RefPtr<ApplicationModel> app;
+    for(appItr=applications.begin(); appItr!=applications.end(); appItr++)    
+    { 
+        Application* application = (*appItr);
+        app = ApplicationModel::create(this, application);
+        root->add_child(app);
+        Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item(app);
+        item->translate(0,0);
+        app->snapToGrid();
+        app->updateChildItems();
+        //Goocanvas::Bounds bd = item->get_bounds();
+        //printf("%s : x:%.2f, y:%.2f\n", module->getName(), bd.get_x1(), bd.get_y1());
+        if(application->getModelBase().points.size()>0)
+        { 
+            item->translate(application->getModelBase().points[0].x, 
+                            application->getModelBase().points[0].y);
+        }    
+        else
+        {
+            item->translate(index%900+10, 
+                            (index/900)*100+10);
+            index += 300;
+        }
+        app->snapToGrid();               
+    }  
+ 
+    ModulePIterator itr;
     Glib::RefPtr<ModuleModel> mod;
     for(itr=modules.begin(); itr!=modules.end(); itr++)    
     { 
@@ -1260,12 +1371,11 @@ void ApplicationWindow::updateApplicationWindow(void)
             index += 300;
         }
         mod->snapToGrid();
-        //mod->set_property("antialias", 0);
     }  
-     
-
+    
     index = (index/900)*100+50;
     CnnIterator citr;
+    ModulePContainer allModules = manager.getKnowledgeBase()->getSelModules();
     for(citr=connections.begin(); citr<connections.end(); citr++) 
     {
         Connection baseCon = *citr;
@@ -1273,12 +1383,9 @@ void ApplicationWindow::updateApplicationWindow(void)
         InputData* input = NULL;
         OutputData* output = NULL;
         Glib::RefPtr<PortModel> source, dest;
-        findInputOutputData((*citr), modules, input, output);    
+        findInputOutputData((*citr), allModules, input, output);    
         if(output)
-        {
             source = findModelFromOutput(output);
-            //updatedCon.setCorOutputData(output);
-        }    
         else
         {
             Glib::RefPtr<ExternalPortModel> extPort;
@@ -1298,12 +1405,10 @@ void ApplicationWindow::updateApplicationWindow(void)
                 source = ExternalPortModel::create(this, OUTPUTD, (*citr).from());
                 root->add_child(source);
 
-                if(model.points.size() > 0)
+                if(model.points.size() > 1)
                 {
-                    source->set_property("x", model.points[0].x - 
-                                        Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getWidth());
-                    source->set_property("y", model.points[0].y - 
-                                        Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getHeight()/2.0); 
+                    source->set_property("x", model.points[1].x - Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getWidth());
+                    source->set_property("y", model.points[1].y - Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getHeight()/2.0); 
                 }
                 else
                 {
@@ -1314,10 +1419,7 @@ void ApplicationWindow::updateApplicationWindow(void)
             index+=40;
         }
         if(input)
-        {
            dest = findModelFromInput(input);       
-           //updatedCon.setCorInputData(input);
-        }           
         else
         {
             Glib::RefPtr<ExternalPortModel> extPort;
@@ -1337,7 +1439,7 @@ void ApplicationWindow::updateApplicationWindow(void)
                 dest = ExternalPortModel::create(this, INPUTD, (*citr).to());
                 root->add_child(dest);
                 size_t size = model.points.size();
-                if(size > 1)
+                if(size > 2)
                 {
                     dest->set_property("x", model.points[size-1].x);
                     dest->set_property("y", model.points[size-1].y - 
@@ -1361,7 +1463,7 @@ void ApplicationWindow::updateApplicationWindow(void)
         if(size)
             arrow->setLabelPosition(model.points[0].x, model.points[0].y);
     }
-
+    
     // update canvas and grid size
     double max_w = 0;
     double max_h = 0;
@@ -1387,23 +1489,52 @@ void ApplicationWindow::updateApplicationWindow(void)
     if(act && act->get_active())
         m_HPaned.add2(*appPropertyWindow);
     appPropertyWindow->update(manager.getKnowledgeBase()->getApplication());
+
+
+    /*
+    // TESTING 
+    Application* subApp =  manager.getKnowledgeBase()->getApplication("EyesViewer");
+    if(subApp)
+    {
+        Glib::RefPtr<ApplicationModel> app = ApplicationModel::create(this, subApp);
+        root->add_child(app);
+        Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item(app);
+        Goocanvas::Bounds bd = item->get_bounds();
+        item->translate(10 - bd.get_x1(), 10 - bd.get_y1());
+    }
+    */
 } 
 
-/*
- *
- * YOU SHOULD TYPECAST THE MODULE MODEL FIRST AND LOOKS FOR ITS CHILDS TO
- * GET ACCESS TO INTERNAL-PORT-MODELS
- */
 Glib::RefPtr<PortModel> ApplicationWindow::findModelFromOutput(OutputData* output)
 {
     for(int i=0; i<root->get_n_children(); i++)
     {
+        // if is an application model
+        Glib::RefPtr<ApplicationModel> application = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+        if(application)
+        {
+            for(int k=0; k<application->get_n_children(); k++)
+            {
+                Glib::RefPtr<ModuleModel> module = Glib::RefPtr<ModuleModel>::cast_dynamic(application->get_child(k));
+                if(module)
+                {
+                    for(int j=0; j<module->get_n_children(); j++)
+                    {
+                        Glib::RefPtr<InternalPortModel> intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(module->get_child(j));
+                        if(intPort && (intPort->getOutput() == output))
+                            return intPort;
+                    }
+                }
+            }
+        }
+
+        // if is an module model
         Glib::RefPtr<ModuleModel> module = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
         if(module)
         {
-            for(int j=0; j<root->get_child(i)->get_n_children(); j++)
+            for(int j=0; j<module->get_n_children(); j++)
             {
-                Glib::RefPtr<InternalPortModel> intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(root->get_child(i)->get_child(j));
+                Glib::RefPtr<InternalPortModel> intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(module->get_child(j));
                 if(intPort && (intPort->getOutput() == output))
                     return intPort;
             }
@@ -1417,6 +1548,25 @@ Glib::RefPtr<PortModel> ApplicationWindow::findModelFromInput(InputData* input)
 {
     for(int i=0; i<root->get_n_children(); i++)
     {
+        // if is an application model
+        Glib::RefPtr<ApplicationModel> application = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+        if(application)
+        {
+            for(int k=0; k<application->get_n_children(); k++)
+            {
+                Glib::RefPtr<ModuleModel> module = Glib::RefPtr<ModuleModel>::cast_dynamic(application->get_child(k));
+                if(module)
+                {
+                    for(int j=0; j<module->get_n_children(); j++)
+                    {
+                        Glib::RefPtr<InternalPortModel> intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(module->get_child(j));
+                        if(intPort && (intPort->getInput() == input))
+                            return intPort;
+                    }
+                }
+            }
+        }
+
         Glib::RefPtr<ModuleModel> module = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
         if(module)
         {
@@ -1542,6 +1692,30 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
             }
         }
         m_bModified = true;
+    }
+    else if((data.get_length() >= 0) && (data.get_format() == APPLICATION))
+    {
+        const guchar* name = data.get_data();
+        if(name)
+        {
+            ApplicationInterface iapp((const char*)name);
+            Application* mainApplication = manager.getKnowledgeBase()->getApplication();            
+            if(!mainApplication)
+                return;
+            Application* application  = manager.getKnowledgeBase()->addIApplicationToApplication(mainApplication, iapp);
+            if(application)
+            {
+                Glib::RefPtr<ApplicationModel> app = ApplicationModel::create(this, application);
+                root->add_child(app);
+                Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item(app);
+                item->translate(0,0);
+                app->snapToGrid();
+                app->updateChildItems();
+                Goocanvas::Bounds bd = m_Canvas->get_item(app)->get_bounds();
+                m_Canvas->get_item(app)->translate(x - bd.get_x1(), y - bd.get_y1());
+                app->snapToGrid();
+           }
+        } 
     }
     else if((data.get_length() >= 0) && (data.get_format() == RESOURCE))
     {

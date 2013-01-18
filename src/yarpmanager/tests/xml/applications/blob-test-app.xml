@@ -70,12 +70,6 @@
         <geometry>(Pos (x 1156) (y 403.9))</geometry>
     </module>
     <connection>
-        <from>/BlobTest/lumaChroma/Y/image:o</from>
-        <to>/Y/yarpview/img:i</to>
-        <protocol>udp</protocol>
-        <geometry>(Pos ((x 538.5) (y 252.5)) ((x 420) (y 297)) ((x 657) (y 208))  )</geometry>
-    </connection>
-    <connection>
         <from>/BlobTest/blobExtractor/img:o</from>
         <to>/Blobs/yarpview/img:i</to>
         <protocol>udp</protocol>
@@ -122,5 +116,11 @@
         <to>/BlobTest/blobExtractor/img:i</to>
         <protocol>udp</protocol>
         <geometry>(Pos ((x 501.5) (y 354.5)) ((x 420) (y 297)) ((x 583) (y 412))  )</geometry>
+    </connection>
+    <connection>
+        <from>/BlobTest/lumaChroma/Y/image:o</from>
+        <to>/Y/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 489.5) (y 252.5)) ((x 420) (y 297)) ((x 559) (y 208)) ((x 657) (y 208))  )</geometry>
     </connection>
 </application>

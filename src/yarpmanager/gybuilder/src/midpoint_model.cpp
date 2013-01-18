@@ -178,7 +178,6 @@ bool MidpointModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
 
 void MidpointModel::setSelected(bool sel)
 {
-
     selected = sel;
     if(selected)
     {

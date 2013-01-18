@@ -25,9 +25,10 @@
 
 
 ExternalPortModel::ExternalPortModel(ApplicationWindow* parentWnd, 
-                        NodeType t, const char* port) : PortModel(t)
+                        NodeType t, const char* port, bool nested) : PortModel(t)
 {
     parentWindow = parentWnd;
+    bNested = nested;
     if(port) strPort = port;
 
     text = Goocanvas::TextModel::create(port);
@@ -155,26 +156,32 @@ Gdk::Point ExternalPortModel::getContactPoint(void)
     if(model && canvas)
     {
         GooCanvasItem* item = goo_canvas_get_item(canvas, model); 
-        GooCanvasBounds bi;
-        goo_canvas_item_get_bounds(item, &bi);
-        if(type == INPUTD)
-            return Gdk::Point(bi.x1+PORT_DEPTH, bi.y2-((bi.y2-bi.y1)/2.0));
-        return Gdk::Point(bi.x2, bi.y2-((bi.y2-bi.y1)/2.0));
+        if(item)
+        {
+            GooCanvasBounds bi;
+            goo_canvas_item_get_bounds(item, &bi);
+            if(type == INPUTD)
+                return Gdk::Point(bi.x1+PORT_DEPTH, bi.y2-((bi.y2-bi.y1)/2.0));
+            return Gdk::Point(bi.x2, bi.y2-((bi.y2-bi.y1)/2.0));
+        }            
     }    
     return Gdk::Point(-1, -1);
 }
 
 
 
-Glib::RefPtr<ExternalPortModel> ExternalPortModel::create(ApplicationWindow* parentWnd, NodeType t, const char* port)
+Glib::RefPtr<ExternalPortModel> ExternalPortModel::create(ApplicationWindow* parentWnd, NodeType t, const char* port, bool nested)
 {
-    return Glib::RefPtr<ExternalPortModel>(new ExternalPortModel(parentWnd, t, port));
+    return Glib::RefPtr<ExternalPortModel>(new ExternalPortModel(parentWnd, t, port, nested));
 }
 
 
 bool ExternalPortModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventButton* event)
 {
+    if(bNested)
+        return true;
+
     if(event->button == 1)
     {
         _dragging = item ;
@@ -201,6 +208,9 @@ bool ExternalPortModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Ite
 bool ExternalPortModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventButton* event)
 {
+    if(bNested)
+        return true;
+
     if(event->button == 1)
     {    
         snapToGrid();
@@ -212,6 +222,9 @@ bool ExternalPortModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::I
 bool ExternalPortModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventMotion* event)
 {
+    if(bNested)
+        return true;
+
     if(item && _dragging && item == _dragging)
     {
         parentWindow->setModified();
@@ -260,7 +273,6 @@ bool ExternalPortModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& i
                     GdkEventCrossing* event)
 {
     parentWindow->get_window()->set_cursor(Gdk::Cursor(Gdk::HAND1));
-    //this->property_stroke_color().set_value("DodgerBlue3");
     poly->property_fill_color().set_value("LightSteelBlue");
     return true;
 }

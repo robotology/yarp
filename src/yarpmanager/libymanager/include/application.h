@@ -67,7 +67,7 @@ public:
         if(szTo) strTo = szTo;
         if(szCr) strCarrier = szCr;
         bWithPriority = false;
-        modOwner = NULL;
+        appOwner = NULL;
         bExternalFrom = false;
         bExternalTo = false;
         bPersist = false;
@@ -89,8 +89,8 @@ public:
     bool isPersistent(void) { return bPersist; }
     const char* carrier(void) { return strCarrier.c_str(); }
     
-    void setOwner(Node* owner){ modOwner = owner; }
-    Node* owner(void) { return modOwner; }
+    void setOwner(Node* owner){ appOwner = owner; }
+    Node* owner(void) { return appOwner; }
 
     void setCorInputData(InputData* in) { input = in;}
     InputData* getCorInputData(void) { return input;}
@@ -123,7 +123,7 @@ private:
     bool bExternalFrom; 
     string strCarrier;
     bool bPersist; 
-    Node* modOwner;
+    Node* appOwner;
     bool bWithPriority; 
     InputData* input;
     OutputData* output;
@@ -233,12 +233,20 @@ public:
     bool operator==(const ApplicationInterface& alt) {      
         return (strName == alt.strName); 
     }
-    
+
+    // modelBased is used to keep the graphic and geometric 
+    // information which is directly loaded from application 
+    // description file. 
+    GraphicModel& getModelBase(void) { return modelBase;}
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }; 
+
+
 protected:
 
 private:
     string strName;
     string strPrefix;
+    GraphicModel modelBase;
 };
 
 
@@ -282,6 +290,7 @@ public:
     ApplicationInterface& getIapplicationAt(int index){ return Iapplications[index]; }
     bool addIapplication(ApplicationInterface &iapp);
     bool removeIapplication(ApplicationInterface& iapp);
+    void removeAllIapplications(void) { Iapplications.clear(); }
     
     int resourcesCount(void) { return resources.size(); }
     ResYarpPort& getResourceAt(int index){ return resources[index]; }
@@ -300,6 +309,10 @@ public:
     bool removeConnection(Connection& cnn);
     //void updateConnectionPrefix(void);
 
+    void setOwner(Node* owner){ appOwner = owner; }
+    Node* owner(void) { return appOwner; }
+
+
     bool operator==(const Application& app) {       
         return (strName == app.strName); 
     }
@@ -317,6 +330,9 @@ public:
         resources.clear();
     }
 
+    GraphicModel& getModelBase(void) { return modelBase;}
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }; 
+
     map<string, int> modList;
 
 protected:
@@ -332,7 +348,9 @@ private:
     CnnContainer connections;
     string strPrefix;   
     string strXmlFile;
+    Node* appOwner;
 
+    GraphicModel modelBase;
     
     IModuleIterator findImodule(ModuleInterface& imod);
     IApplicationIterator findIapplication(ApplicationInterface& iapp);

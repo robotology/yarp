@@ -394,6 +394,22 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 ApplicationInterface IApp(name->GetText());                 
                 if((prefix=(TiXmlElement*) embApp->FirstChild("prefix")))
                     IApp.setPrefix(prefix->GetText());
+#ifdef WITH_GEOMETRY
+                TiXmlElement* element = (TiXmlElement*) embApp->FirstChild("geometry");
+                if(element && element->GetText())
+                {
+                    yarp::os::Property prop(element->GetText());
+                    GraphicModel model; 
+                    GyPoint pt;
+                    if(prop.check("Pos"))
+                    {
+                        pt.x = prop.findGroup("Pos").find("x").asDouble();
+                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        model.points.push_back(pt);
+                        IApp.setModelBase(model);
+                    }
+                }
+#endif           
                 app.addIapplication(IApp);  
             }
             else

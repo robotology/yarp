@@ -26,10 +26,11 @@
 
 #define MODULE_COLOR        "White" //"WhiteSmoke"
 
-ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod) : GroupModel()
+ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested) : GroupModel()
 {
     parentWindow = parentWnd;
     module = mod;
+    bNested = nested;
     mod->setModel(this);
 
     // adding module name
@@ -71,7 +72,8 @@ ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod) : GroupModel
     mainRect->property_stroke_color().set_value("DodgerBlue3");
     mainRect->property_fill_color().set_value(MODULE_COLOR);
     
-    if(module->owner() != parentWindow->manager.getKnowledgeBase()->getApplication())
+    //if(module->owner() != parentWindow->manager.getKnowledgeBase()->getApplication())
+    if(bNested)
     {
         GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 3.0);
         g_object_set(mainRect->gobj(), "line-dash", dash, NULL);
@@ -123,6 +125,8 @@ ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod) : GroupModel
         this->add_child(text);
     }
     
+    width  = w;
+    height = h;
 }
 
 
@@ -139,15 +143,18 @@ ModuleModel::~ModuleModel(void)
 }
 
 
-Glib::RefPtr<ModuleModel> ModuleModel::create(ApplicationWindow* parentWnd, Module* mod)
+Glib::RefPtr<ModuleModel> ModuleModel::create(ApplicationWindow* parentWnd, Module* mod, bool nested)
 {    
-    return Glib::RefPtr<ModuleModel>(new ModuleModel(parentWnd, mod));
+    return Glib::RefPtr<ModuleModel>(new ModuleModel(parentWnd, mod, nested));
 }
 
 
 bool ModuleModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventButton* event)
 {
+    if(bNested)
+        return true;
+
     if(item && Glib::RefPtr<InternalPortModel>::cast_dynamic(item->get_model()))
         return Glib::RefPtr<InternalPortModel>::cast_dynamic(item->get_model())->onItemButtonPressEvent(item, event);
     
@@ -182,6 +189,9 @@ bool ModuleModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& it
 bool ModuleModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventButton* event)
 {
+  if(bNested)
+        return true;
+
   if(event->button == 1)
   {    
         snapToGrid();
@@ -193,6 +203,12 @@ bool ModuleModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& 
 bool ModuleModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventMotion* event)
 {
+    if(bNested)
+    {
+        updateArrowCoordination();
+        return true;
+    }
+
     if(item && _dragging && (item == _dragging))
     {
         parentWindow->setModified();
@@ -267,6 +283,9 @@ bool ModuleModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
 
 void ModuleModel::setSelected(bool sel)
 {
+    if(bNested)
+        return;
+
     selected = sel;
     if(selected)
     {
@@ -321,6 +340,9 @@ void ModuleModel::setArrowsSelected(bool sel)
 
 void ModuleModel::snapToGrid(void)
 {
+    if(bNested)
+        return;
+
     GooCanvasItemModel* model = (GooCanvasItemModel*) this->gobj();    
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
     if(model && canvas)

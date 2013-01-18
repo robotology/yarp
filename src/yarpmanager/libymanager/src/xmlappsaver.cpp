@@ -175,6 +175,17 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             TiXmlElement *prefix=new TiXmlElement("prefix");
             prefix->LinkEndChild(new TiXmlText(curApp.getPrefix()));
             newApp->LinkEndChild(prefix);
+
+            GraphicModel model = curApp.getModelBase();
+            ostringstream txt;
+            if(model.points.size()>0)
+            {
+                txt<<"(Pos (x "<<model.points[0].x<<") "<<"(y "<<model.points[0].y<<"))"; 
+                TiXmlElement *geometry=new TiXmlElement("geometry");
+                geometry->LinkEndChild(new TiXmlText(txt.str().c_str()));
+                newApp->LinkEndChild(geometry);
+            }                    
+
         }
     }
     

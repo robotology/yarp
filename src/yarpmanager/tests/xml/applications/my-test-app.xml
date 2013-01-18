@@ -9,7 +9,7 @@
         <parameters></parameters>
         <node>node1</node>
         <prefix>/MyTestApplication:activeSeg:1</prefix>
-        <geometry>(Pos (x 727) (y 217.9))</geometry>
+        <geometry>(Pos (x 743) (y 559.9))</geometry>
     </module>
     <module>
         <name>test_grabber</name>
@@ -17,12 +17,23 @@
         <node>node2</node>
         <prefix>/MyTestApplication:test_grabber:1</prefix>
         <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 22) (y 314.9))</geometry>
+        <geometry>(Pos (x 52) (y 557.9))</geometry>
     </module>
+    <application>
+        <name>DMP</name>
+        <prefix></prefix>
+        <geometry>(Pos (x 619.05) (y 750.648))</geometry>
+    </application>
     <connection>
         <from>/MyTestApplication:test_grabber:1/grabber</from>
         <to>/MyTestApplication:activeSeg:1/activeSeg/image:i</to>
-        <protocol>tcp+recv.priority+tc.5+st.10+(ex (/gaze/xd:i -20))</protocol>
-        <geometry>(Pos ((x 287.5) (y 248.5)) ((x 190) (y 333)) ((x 227) (y 333)) ((x 252) (y 236)) ((x 728) (y 236))  )</geometry>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 482) (y 577)) ((x 220) (y 576)) ((x 744) (y 578))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:activeSeg:1/activeSeg/image:o</from>
+        <to>/templatePFT/templatePFTracker/template/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 1280.5) (y 723.5)) ((x 887) (y 590)) ((x 1674) (y 857))  )</geometry>
     </connection>
 </application>

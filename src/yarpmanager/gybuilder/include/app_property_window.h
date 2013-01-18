@@ -46,7 +46,9 @@ public:
     void onRefresh();
 
     void update(Application* application);
-    
+    Application* getApplication(void) { return m_pApplication; }
+    void release(void) { m_pApplication = NULL; } 
+
 protected:
     void onCellData(Gtk::CellRenderer*, const Gtk::TreeModel::iterator& iter);
     void onCellEdited(const Glib::ustring& path_string, 

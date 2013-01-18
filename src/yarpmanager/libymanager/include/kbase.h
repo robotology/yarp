@@ -20,6 +20,7 @@
 #include "logicresource.h"
 #include "primresource.h"
 #include <string.h>
+#include <algorithm>
 
 using namespace std; 
 
@@ -64,10 +65,13 @@ public:
     const ModulePContainer& getSelModules(void) { return selmodules; }
     const CnnContainer& getSelConnection(void) { return selconnections; }
     const ResourcePContainer& getSelResources(void) { return selresources; }
+    const ApplicaitonPContainer& getSelApplications(void) { return selapplications; }
 
-    const ApplicaitonPContainer& getApplications(void);
-    const ModulePContainer& getModules(void);
-    const ResourcePContainer& getResources(void);
+    const ApplicaitonPContainer& getApplications(Application* parent=NULL);
+    const ModulePContainer& getModules(Application* parent=NULL);
+    const ResourcePContainer& getResources(Application* parent=NULL);
+    const CnnContainer& getConnections(Application* parent=NULL);
+
                
     const InputContainer& getInputCandidates(OutputData* output);
     const OutputContainer& getOutputCandidates(InputData* input);
@@ -91,6 +95,9 @@ public:
     bool removeConnectionFromApplication(Application* application, Connection &cnn);
     bool updateConnectionOfApplication(Application* application, 
                                        Connection& prev, Connection& con );
+    Application* addIApplicationToApplication(Application* application, 
+                                    ApplicationInterface &app, bool isNew=false);
+    bool removeIApplicationFromApplication(Application* application, const char* szTag);
 
     void updateInterfaces(Application* application);
     bool saveApplication(AppSaver* appSaver, Application* application);
@@ -113,13 +120,17 @@ private:
     ResourceLoader* resloader;
     Application* mainApplication; 
 
-    ApplicaitonPContainer dummyApplications;
+    ApplicaitonPContainer dummyApplications;    
     ModulePContainer dummyModules;
     ResourcePContainer dummyResources;  
+    CnnContainer dummyConnections;
 
+    ApplicaitonPContainer selapplications;
     ModulePContainer selmodules;
     CnnContainer selconnections;
     ResourcePContainer selresources; 
+
+    map<string, int> appList;
 
     bool moduleCompleteness(Module* module);
     void updateNodesLink(Graph& graph, int level);
@@ -148,6 +159,7 @@ private:
     bool updateApplication(Graph& graph, 
                           Application* app, ApplicationInterface* iapp);
     bool reason(Graph* graph, Node* initial,
+                         ApplicaitonPContainer &applications,
                          ModulePContainer &modules,
                          ResourcePContainer& resources, 
                          CnnContainer &connections,

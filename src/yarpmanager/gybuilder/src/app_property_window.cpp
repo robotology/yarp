@@ -101,19 +101,36 @@ void ApplicationPropertyWindow::update(Application* application)
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Description";
     row[m_Columns.m_col_value] = m_pApplication->getDescription();
-    row[m_Columns.m_col_editable] = true;
+    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)   
+         row[m_Columns.m_col_editable] = true;    
+    else
+    {
+        row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
+        row[m_Columns.m_col_editable] = false;
+    }
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Version";
     row[m_Columns.m_col_value] = m_pApplication->getVersion();
-    row[m_Columns.m_col_editable] = true;
+    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)   
+         row[m_Columns.m_col_editable] = true;    
+    else
+    {
+        row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
+        row[m_Columns.m_col_editable] = false;
+    }
 
     
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Prefix";
     row[m_Columns.m_col_value] = m_pApplication->getPrefix();
-    row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
-    row[m_Columns.m_col_editable] = false;
+    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)
+    {
+        row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
+        row[m_Columns.m_col_editable] = false;
+    }
+    else
+         row[m_Columns.m_col_editable] = true;
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Authors";
@@ -124,7 +141,13 @@ void ApplicationPropertyWindow::update(Application* application)
         childrow = *(m_refTreeModel->append(row.children()));
         childrow[m_Columns.m_col_name] = m_pApplication->getAuthorAt(i).getName();
         childrow[m_Columns.m_col_value] = m_pApplication->getAuthorAt(i).getEmail();
-        childrow[m_Columns.m_col_editable] = true;
+        if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)
+             childrow[m_Columns.m_col_editable] = true;
+        else
+        {
+            childrow[m_Columns.m_col_color_value] = Gdk::Color("#888888");
+            childrow[m_Columns.m_col_editable] = false;
+        }
     }
 
     m_TreeView.expand_all();
@@ -165,13 +188,12 @@ void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         {
             m_pApplication->setVersion(new_text.c_str());
         }
-
-        /*
+        
         if(strName == "Prefix")
         {
-            m_pApplication->setName(new_text.c_str());
+            m_pApplication->setPrefix(new_text.c_str());
         }
-        */
+       
         if(m_pAppWindow) 
             m_pAppWindow->setModified();
    }

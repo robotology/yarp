@@ -57,19 +57,23 @@ InternalPortModel::~InternalPortModel(void)
 }
 
 Gdk::Point InternalPortModel::getContactPoint(void)
-{
+{   
+    
     GooCanvasItemModel* model = (GooCanvasItemModel*) poly->gobj();    
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
     if(model && canvas)
     {
         GooCanvasItem* item = goo_canvas_get_item(canvas, model); 
-        GooCanvasBounds bi;
-        goo_canvas_item_get_bounds(item, &bi);
-        if(type == INPUTD)
-            return Gdk::Point(bi.x1+1, bi.y2-PORT_SIZE/2.0);
-        return Gdk::Point(bi.x2-1, bi.y2-PORT_SIZE/2.0);
-    }    
-    return Gdk::Point(-1, -1);
+        if(item)
+        {
+            GooCanvasBounds bi;
+            goo_canvas_item_get_bounds(item, &bi);
+            if(type == INPUTD)
+                return Gdk::Point(bi.x1+1, bi.y2-PORT_SIZE/2.0);
+            return Gdk::Point(bi.x2-1, bi.y2-PORT_SIZE/2.0);
+        }
+    }     
+    return Gdk::Point(-1, -1);       
 }
 
 

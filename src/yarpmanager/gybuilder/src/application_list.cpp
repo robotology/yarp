@@ -383,8 +383,18 @@ void ApplicationList::onDragBegin(const Glib::RefPtr<Gdk::DragContext>& context)
                                                 computer_ico.bytes_per_pixel*computer_ico.width),
                                                 computer_ico.width, computer_ico.height);
     }        
-    else
-        context->set_icon(render_icon(Gtk::Stock::STOP, Gtk::ICON_SIZE_DND,"stop"), 0, 0);         
+    else if(iter && 
+      ((*iter)[m_appColumns.m_col_type] == APPLICATION))
+    {
+        context->set_icon(Gdk::Pixbuf::create_from_data(application_ico.pixel_data, 
+                                                Gdk::COLORSPACE_RGB,
+                                                true,
+                                                8,
+                                                application_ico.width,
+                                                application_ico.height,
+                                                application_ico.bytes_per_pixel*application_ico.width),
+                                                application_ico.width, application_ico.height);
+    }
 }
 
 
@@ -407,8 +417,12 @@ void ApplicationList::onDragDataGet(const Glib::RefPtr<Gdk::DragContext>& contex
         data.set(data.get_target(), RESOURCE,
                 (const guchar*)name.c_str(), name.size()+1);  
     }
-
-    //data.set(gdk_atom_intern("STRING", TRUE), 8, target_string.c_str(), target_string.size());
+    else if(iter && ((*iter)[m_appColumns.m_col_type] == APPLICATION))
+    {
+        Glib::ustring name = (*iter)[m_appColumns.m_col_name];
+        data.set(data.get_target(), APPLICATION,
+                (const guchar*)name.c_str(), name.size()+1);  
+    }
 }
 
 
