@@ -93,7 +93,10 @@ public:
         }
         String checked = "";
         String rootConfig = String(root.c_str()) + "/" + policyName + ".ini";
-        String altConfig = String("/etc/") + policyName + ".ini";
+        String altConfig = String("/etc/yarp/policies/") + policyName + ".ini";
+#ifndef YARP_NO_DEPRECATED
+        String deprecatedConfig = String("/etc/") + policyName + ".ini"; // FIXME Deprecated
+#endif // YARP_NO_DEPRECATED
         bool ok = false;
         if (root!="") {
             if (verbose) {
@@ -112,6 +115,20 @@ public:
                 checked += " " + altConfig;
                 ok = config.fromConfigFile(altConfig.c_str(),false);
             }
+#ifndef YARP_NO_DEPRECATED
+            if (!ok) {
+                if (verbose) {
+                    fprintf(RTARGET,"||| loading policy from %s\n",
+                            deprecatedConfig.c_str());
+                }
+                checked += " " + deprecatedConfig;
+                ok = config.fromConfigFile(deprecatedConfig.c_str(),false);
+                if (ok) {
+                    fprintf(RTARGET, "||| WARNING: Loading policies from /etc/ is deprecated,\n"
+                                     "|||          you should move them in /etc/yarp/policies/ .\n");
+                }
+            }
+#endif // YARP_NO_DEPRECATED
             if (!ok) {
                 altConfig = String("/usr/local/etc/") + policyName + ".ini";
                 if (verbose) {
