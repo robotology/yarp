@@ -10,6 +10,6 @@ if (NOT SKIP_priority_carrier)
 
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
-  add_library(priority_carrier PriorityCarrier.h PriorityCarrier.cpp)
+  yarp_add_plugin(priority_carrier PriorityCarrier.h PriorityCarrier.cpp)
   target_link_libraries(priority_carrier ${YARP_LIBRARIES})
 endif ()

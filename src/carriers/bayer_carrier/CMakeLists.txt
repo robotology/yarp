@@ -28,7 +28,7 @@ if (NOT SKIP_bayer_carrier)
 
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
-  add_library(bayer_carrier BayerCarrier.h BayerCarrier.cpp ${DC1394_SRC})
+  yarp_add_plugin(bayer_carrier BayerCarrier.h BayerCarrier.cpp ${DC1394_SRC})
   if (MSVC AND DC1394_SRC)
     set_source_files_properties(${DC1394_SRC} PROPERTIES LANGUAGE CXX)
   endif ()

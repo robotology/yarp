@@ -22,10 +22,10 @@ if (NOT SKIP_mjpeg_carrier)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   get_property(WIRE_INCLUDE_DIRS TARGET wire_rep_utils PROPERTY INCLUDE_DIRS)
   include_directories(${WIRE_INCLUDE_DIRS})
-  add_library(mjpeg_carrier MjpegCarrier.h MjpegCarrier.cpp
-			    MjpegStream.h MjpegStream.cpp 
-			    MjpegDecompression.h MjpegDecompression.cpp
-			    ${JPEG_SOURCES})
+  yarp_add_plugin(mjpeg_carrier MjpegCarrier.h MjpegCarrier.cpp
+                  MjpegStream.h MjpegStream.cpp
+                  MjpegDecompression.h MjpegDecompression.cpp
+                  ${JPEG_SOURCES})
   target_link_libraries(mjpeg_carrier ${YARP_LIBRARIES} ${JPEG_LIBRARY})
   target_link_libraries(mjpeg_carrier wire_rep_utils)
 

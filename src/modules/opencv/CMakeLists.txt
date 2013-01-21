@@ -18,6 +18,6 @@ INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 LINK_LIBRARIES(${OpenCV_LIBRARIES})
 LINK_LIBRARIES(${ACE_LIBRARIES})
 LINK_LIBRARIES(${YARP_LIBRARIES})
-ADD_LIBRARY(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
+yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
 
 ENDIF (NOT SKIP_opencv_grabber)

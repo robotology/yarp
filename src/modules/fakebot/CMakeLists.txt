@@ -12,7 +12,7 @@ IF (NOT SKIP_fakebot)
   FIND_PACKAGE(YARP REQUIRED)
   INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-  ADD_LIBRARY(yarp_fakebot FakeBot.cpp FakeBot.h)
+  yarp_add_plugin(yarp_fakebot FakeBot.cpp FakeBot.h)
   TARGET_LINK_LIBRARIES(yarp_fakebot ${YARP_LIBRARIES})
 ENDIF (NOT SKIP_fakebot)
 
