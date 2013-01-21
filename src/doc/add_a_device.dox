@@ -72,13 +72,13 @@ So you want to add a device to YARP?
 \li One more thing: YARP needs to keep track of a global list of devices, their names, and other details.  To do this, add in some code like this at the very beginning of your CMakeLists.txt
 \verbatim
   IF (COMPILE_DEVICE_LIBRARY)
-    PREPARE_DEVICE(foo TYPE FooDriver INCLUDE FooDriver.h)
+    YARP_PREPARE_DEVICE(foo TYPE FooDriver INCLUDE FooDriver.h)
   ENDIF (COMPILE_DEVICE_LIBRARY)
 \endverbatim
 \li It is good to add this before searching for any libraries or files, so that you can suppress such searches if the device is not needed by the eventual user.  In that case, the SKIP_foo variable will be set, so you can do:
 \verbatim
   IF (COMPILE_DEVICE_LIBRARY)
-    PREPARE_DEVICE(foo TYPE FooDriver INCLUDE FooDriver.h)
+    YARP_PREPARE_DEVICE(foo TYPE FooDriver INCLUDE FooDriver.h)
   ENDIF (COMPILE_DEVICE_LIBRARY)
   IF (NOT SKIP_foo)
     FIND_PACKAGE(YARP REQUIRED)

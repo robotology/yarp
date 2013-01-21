@@ -422,11 +422,11 @@ handled using a set of macros defined in
 allow us to create a library (in this case "yarpmod")
 containing a lot of optional components using code like this:
 \verbatim
-BEGIN_PLUGIN_LIBRARY(yarpmod)
+YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(cuda)
   add_subdirectory(fakebot)
   ...
-END_PLUGIN_LIBRARY(yarpmod)
+YARP_END_PLUGIN_LIBRARY(yarpmod)
 \endverbatim
 The key thing to know is that the "yarpmod" library is a regular
 CMake library target, containing some automatically generated code
@@ -477,23 +477,23 @@ Here we define macros for creating a "plugin" library that links
 to many optional components.
 
 Here are the "user-facing" macros:
-\li BEGIN_PLUGIN_LIBRARY(lib_name): this sets a flag called YARP_PLUGIN_MODE
+\li YARP_BEGIN_PLUGIN_LIBRARY(lib_name): this sets a flag called YARP_PLUGIN_MODE
 to true, which activates a change of behavior of calls to ADD_LIBRARY and
 FIND_PACKAGE (see below).
-\li END_PLUGIN_LIBRARY(lib_name): this turns off YARP_PLUGIN_MODE,
+\li YARP_END_PLUGIN_LIBRARY(lib_name): this turns off YARP_PLUGIN_MODE,
 and sets up a library target called lib_name that links to all libraries
-created after the corresponding call to BEGIN_PLUGIN_LIBRARY.  This
+created after the corresponding call to YARP_BEGIN_PLUGIN_LIBRARY.  This
 target contains a small piece of generated code to activate all
 plugins configured to compile.
 \li ADD_PLUGIN_LIBRARY_EXECUTABLE(exec_name lib_name): this creates a
 simple test program called exec_name for the plugin library lib_name.
-\li PREPARE_DEVICE(dev_name TYPE DeviceClass INCLUDE DeviceClass.h WRAPPER wrapper_name): this generates a CMake flag to select compilation of a
+\li YARP_PREPARE_DEVICE(dev_name TYPE DeviceClass INCLUDE DeviceClass.h WRAPPER wrapper_name): this generates a CMake flag to select compilation of a
 device called "dev_name".  If that CMake flag is turned on, then
 this macro generates some code to initialize the named device.  That
 code will be included in the next library created (see the ADD_LIBRARY
 override below).
-\li PREPARE_CARRIER(carrier_name TYPE CarrierClass INCLUDE CarrierClass.h):
-this works exactly like PREPARE_DEVICE, except the template for the
+\li YARP_PREPARE_CARRIER(carrier_name TYPE CarrierClass INCLUDE CarrierClass.h):
+this works exactly like YARP_PREPARE_DEVICE, except the template for the
 generated code is different.
 
 For implementation we also override the following CMake macros:
@@ -505,7 +505,7 @@ import operations (which continue unchanged), then we add the name of
 the target to a global list, and call the regular ADD_LIBRARY implementation
 with any extra generated code appended to the list of 
 source code.  Generated code will be present if calls to 
-PREPARE_DEVICE/PREPARE_CARRIER have been made.  If compiling YARP,
+YARP_PREPARE_DEVICE/YARP_PREPARE_CARRIER have been made.  If compiling YARP,
 we set up installation of the library target.
 
 Here is a list of small code templates used by YarpPlugin.cmake:
