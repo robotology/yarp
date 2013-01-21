@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 IF (COMPILE_PLUGIN_LIBRARY)
-  PREPARE_CARRIER(human_carrier TYPE HumanCarrier INCLUDE HumanCarrier.h)
+  YARP_PREPARE_CARRIER(human_carrier TYPE HumanCarrier INCLUDE HumanCarrier.h)
 ENDIF (COMPILE_PLUGIN_LIBRARY)
 
 IF (NOT SKIP_human_carrier)

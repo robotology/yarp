@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 if (COMPILE_PLUGIN_LIBRARY)
-  prepare_carrier(mjpeg_carrier TYPE MjpegCarrier INCLUDE MjpegCarrier.h)
+  yarp_prepare_carrier(mjpeg_carrier TYPE MjpegCarrier INCLUDE MjpegCarrier.h)
   yarp_add_carrier_fingerprint(mjpeg.ini mjpeg_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 

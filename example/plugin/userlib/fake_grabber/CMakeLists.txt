@@ -9,7 +9,7 @@
     # up a CMake option for selecting the device, and prepares
     # some initialization boilerplate code if needed.
     # If the device is not selected, "SKIP_foo" will be defined.
-    PREPARE_PLUGIN(fake_grabber CATEGORY device TYPE FakeFrameGrabber INCLUDE FakeFrameGrabber.h WRAPPER grabber)
+    YARP_PREPARE_PLUGIN(fake_grabber CATEGORY device TYPE FakeFrameGrabber INCLUDE FakeFrameGrabber.h WRAPPER grabber)
   endif (COMPILE_PLUGIN_LIBRARY)
   if (NOT SKIP_fake_grabber)
     # Find any libraries needed - just YARP for this example

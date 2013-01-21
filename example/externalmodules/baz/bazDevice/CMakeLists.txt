@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 2.6.4)
 
 IF (COMPILE_DEVICE_LIBRARY)
-  PREPARE_DEVICE(bazdevice TYPE bazdevice INCLUDE "bazdevice.h")
+  YARP_PREPARE_DEVICE(bazdevice TYPE bazdevice INCLUDE "bazdevice.h")
 ENDIF (COMPILE_DEVICE_LIBRARY)
  
 IF (NOT SKIP_bazdevice)

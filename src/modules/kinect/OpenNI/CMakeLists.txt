@@ -3,8 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-	PREPARE_DEVICE(KinectDeviceLocal TYPE KinectDeviceDriverServer INCLUDE KinectYarpDeviceServerLib/KinectDeviceDriverServer.h)
-	PREPARE_DEVICE(KinectDeviceClient TYPE KinectDeviceDriverClient INCLUDE KinectYarpDeviceClientLib/KinectDeviceDriverClient.h)
+	YARP_PREPARE_DEVICE(KinectDeviceLocal TYPE KinectDeviceDriverServer INCLUDE KinectYarpDeviceServerLib/KinectDeviceDriverServer.h)
+	YARP_PREPARE_DEVICE(KinectDeviceClient TYPE KinectDeviceDriverClient INCLUDE KinectYarpDeviceClientLib/KinectDeviceDriverClient.h)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (ENABLE_KinectDeviceLocal OR ENABLE_KinectDeviceClient)

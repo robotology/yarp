@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  PREPARE_DEVICE(opencv_grabber TYPE OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
+  YARP_PREPARE_DEVICE(opencv_grabber TYPE OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_opencv_grabber)

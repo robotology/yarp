@@ -284,7 +284,7 @@ endmacro(YARP_PREPARE_DEVICE)
 #    YARP_PREPARE_CARRIER(foo TYPE FooCarrier INCLUDE FooCarrier.h)
 #
 macro(YARP_PREPARE_CARRIER)
-    prepare_plugin(${ARGN} CATEGORY carrier)
+    yarp_prepare_plugin(${ARGN} CATEGORY carrier)
 endmacro(YARP_PREPARE_CARRIER)
 
 
@@ -498,4 +498,4 @@ endmacro(END_PLUGIN_LIBRARY)
 
 
 ## We skipped this whole file if it was already included
-endif(NOT COMMAND END_PLUGIN_LIBRARY)
+endif(NOT COMMAND YARP_END_PLUGIN_LIBRARY)

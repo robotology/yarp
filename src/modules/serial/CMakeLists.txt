@@ -3,9 +3,9 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  PREPARE_DEVICE(serial TYPE ServerSerial INCLUDE yarp/dev/ServerSerial.h
+  YARP_PREPARE_DEVICE(serial TYPE ServerSerial INCLUDE yarp/dev/ServerSerial.h
 			  WRAPPER serial)
-  PREPARE_DEVICE(serialport TYPE SerialDeviceDriver INCLUDE SerialDeviceDriver.h WRAPPER serial)
+  YARP_PREPARE_DEVICE(serialport TYPE SerialDeviceDriver INCLUDE SerialDeviceDriver.h WRAPPER serial)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (SKIP_serial AND SKIP_serialport)

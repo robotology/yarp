@@ -3,8 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  PREPARE_DEVICE(ffmpeg_grabber TYPE FfmpegGrabber INCLUDE FfmpegGrabber.h WRAPPER grabber)
-  PREPARE_DEVICE(ffmpeg_writer TYPE FfmpegWriter INCLUDE FfmpegWriter.h)
+  YARP_PREPARE_DEVICE(ffmpeg_grabber TYPE FfmpegGrabber INCLUDE FfmpegGrabber.h WRAPPER grabber)
+  YARP_PREPARE_DEVICE(ffmpeg_writer TYPE FfmpegWriter INCLUDE FfmpegWriter.h)
   YARP_ADD_DEVICE_FINGERPRINT(ffmpeg.ini ffmpeg_grabber ffmpeg_writer)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 

@@ -11,7 +11,7 @@ project(YarpModules)
 include(YarpPlugin)
 
 # Prepare a plugin library called "yarpmod".
-BEGIN_PLUGIN_LIBRARY(yarpmod)
+YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(cuda)
   add_subdirectory(fakebot)
   add_subdirectory(nvidia)
@@ -66,7 +66,7 @@ BEGIN_PLUGIN_LIBRARY(yarpmod)
     endif (EXISTS ${EXTFILE})
   endforeach(EXTFILE)
 
-END_PLUGIN_LIBRARY(yarpmod)
+YARP_END_PLUGIN_LIBRARY(yarpmod)
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpmod ${yarpmod_LIBRARIES})
 install(TARGETS yarpmod EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
 

@@ -5,7 +5,7 @@
 IF (UNIX)
 
   IF (COMPILE_DEVICE_LIBRARY)
-    PREPARE_DEVICE(firewirecamera TYPE FirewireCamera INCLUDE FirewireCamera.h WRAPPER grabber)
+    YARP_PREPARE_DEVICE(firewirecamera TYPE FirewireCamera INCLUDE FirewireCamera.h WRAPPER grabber)
   ENDIF (COMPILE_DEVICE_LIBRARY)
 
   FIND_PACKAGE(YARP REQUIRED)

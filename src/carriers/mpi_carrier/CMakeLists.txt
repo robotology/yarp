@@ -3,8 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 IF (COMPILE_PLUGIN_LIBRARY)
-  PREPARE_CARRIER(mpi_carrier TYPE MpiP2PCarrier INCLUDE include/yarp/os/impl/MpiP2PCarrier.h)
-  PREPARE_CARRIER(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/impl/MpiBcastCarrier.h)
+  YARP_PREPARE_CARRIER(mpi_carrier TYPE MpiP2PCarrier INCLUDE include/yarp/os/impl/MpiP2PCarrier.h)
+  YARP_PREPARE_CARRIER(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/impl/MpiBcastCarrier.h)
   YARP_ADD_CARRIER_FINGERPRINT(mpi.ini mpi_carrier mpibcast_carrier)
 ENDIF (COMPILE_PLUGIN_LIBRARY)
 

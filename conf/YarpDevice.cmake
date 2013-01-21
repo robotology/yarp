@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 ## Skip this whole file if it has already been included
-IF (NOT COMMAND END_PLUGIN_LIBRARY)
+IF (NOT COMMAND YARP_END_PLUGIN_LIBRARY)
 
 # "Device" libraries have been replaced with "Plugin" libraries
 INCLUDE(YarpPlugin)
@@ -22,7 +22,7 @@ MACRO(TARGET_IMPORT_DEVICES target hdr)
 ENDMACRO(TARGET_IMPORT_DEVICES target hdr)
 
 MACRO(END_DEVICE_LIBRARY bundle_name)
-  END_PLUGIN_LIBRARY(${bundle_name})
+  YARP_END_PLUGIN_LIBRARY(${bundle_name})
   ADD_PLUGIN_LIBRARY_EXECUTABLE(${bundle_name}dev ${bundle_name})
   IF (MSVC)
     SET_TARGET_PROPERTIES(${bundle_name} PROPERTIES DEBUG_POSTFIX "d")
@@ -37,5 +37,5 @@ MACRO(IMPORT_DEVICES hdr bundle_name)
     ${CMAKE_BINARY_DIR}/${bundle_name}Config.cmake @ONLY IMMEDIATE)
 ENDMACRO(IMPORT_DEVICES)
 
-ENDIF (NOT COMMAND END_PLUGIN_LIBRARY)
+ENDIF (NOT COMMAND YARP_END_PLUGIN_LIBRARY)
 

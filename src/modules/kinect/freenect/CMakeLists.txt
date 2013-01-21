@@ -5,8 +5,8 @@
 cmake_minimum_required(VERSION 2.6.4)
 
 IF (COMPILE_DEVICE_LIBRARY)
-  PREPARE_DEVICE(primesensecamera TYPE ServerKinect INCLUDE "ServerKinect.h" WRAPPER primesensecamera)
-  PREPARE_DEVICE(kinect TYPE KinectDeviceDriver INCLUDE "KinectDeviceDriver.h" WRAPPER primesensecamera)
+  YARP_PREPARE_DEVICE(primesensecamera TYPE ServerKinect INCLUDE "ServerKinect.h" WRAPPER primesensecamera)
+  YARP_PREPARE_DEVICE(kinect TYPE KinectDeviceDriver INCLUDE "KinectDeviceDriver.h" WRAPPER primesensecamera)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (SKIP_primesensecamera AND SKIP_kinect)

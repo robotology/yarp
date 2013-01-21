@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
-  PREPARE_DEVICE(meiMotionControl TYPE MEIMotionControl INCLUDE MEIMotionControl.h WRAPPER controlboard)
+  YARP_PREPARE_DEVICE(meiMotionControl TYPE MEIMotionControl INCLUDE MEIMotionControl.h WRAPPER controlboard)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_meiMotionControl)
