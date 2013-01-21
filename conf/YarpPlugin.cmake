@@ -433,29 +433,29 @@ ENDMACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
 
 #########################################################################
-# ADD_CARRIER_FINGERPRINT macro gives YARP a config file that will help
+# YARP_ADD_CARRIER_FINGERPRINT macro gives YARP a config file that will help
 # detect that a message is in a particular protocol, even if support for
 # that protocol has not yet loaded:
-#    ADD_CARRIER_FINGERPRINT(carrier.ini carrier1 carrier2)
+#    YARP_ADD_CARRIER_FINGERPRINT(carrier.ini carrier1 carrier2)
 #
-MACRO(ADD_CARRIER_FINGERPRINT file_name)
+macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
   GET_FILENAME_COMPONENT(out_name ${file_name} NAME)
   CONFIGURE_FILE(${file_name} ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name} COPYONLY)
   if (YARP_TREE_INCLUDE_DIRS)
     install(FILES ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name} COMPONENT runtime DESTINATION etc/yarp/plugins)
   endif (YARP_TREE_INCLUDE_DIRS)
-ENDMACRO(ADD_CARRIER_FINGERPRINT)
+endmacro(YARP_ADD_CARRIER_FINGERPRINT)
 
 
 #########################################################################
-# ADD_DEVICE_FINGERPRINT macro gives YARP a config file that will help
+# YARP_ADD_DEVICE_FINGERPRINT macro gives YARP a config file that will help
 # give information about a device that has not yet loaded
-#    ADD_DEVICE_FINGERPRINT(device.ini device1 device2)
+#    YARP_ADD_DEVICE_FINGERPRINT(device.ini device1 device2)
 #
-MACRO(ADD_DEVICE_FINGERPRINT)
+macro(YARP_ADD_DEVICE_FINGERPRINT)
   # no difference between fingerprint macros
-  ADD_CARRIER_FINGERPRINT(${ARGN})
-ENDMACRO(ADD_DEVICE_FINGERPRINT)
+  YARP_ADD_CARRIER_FINGERPRINT(${ARGN})
+endmacro(YARP_ADD_DEVICE_FINGERPRINT)
 
 
 

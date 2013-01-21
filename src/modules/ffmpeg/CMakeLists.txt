@@ -5,7 +5,7 @@
 IF (COMPILE_DEVICE_LIBRARY)
   PREPARE_DEVICE(ffmpeg_grabber TYPE FfmpegGrabber INCLUDE FfmpegGrabber.h WRAPPER grabber)
   PREPARE_DEVICE(ffmpeg_writer TYPE FfmpegWriter INCLUDE FfmpegWriter.h)
-  ADD_DEVICE_FINGERPRINT(ffmpeg.ini ffmpeg_grabber ffmpeg_writer)
+  YARP_ADD_DEVICE_FINGERPRINT(ffmpeg.ini ffmpeg_grabber ffmpeg_writer)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (SKIP_ffmpeg_grabber AND SKIP_ffmpeg_writer)

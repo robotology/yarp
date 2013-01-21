@@ -5,7 +5,7 @@
 IF (COMPILE_PLUGIN_LIBRARY)
   PREPARE_CARRIER(mpi_carrier TYPE MpiP2PCarrier INCLUDE include/yarp/os/impl/MpiP2PCarrier.h)
   PREPARE_CARRIER(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/impl/MpiBcastCarrier.h)
-  ADD_CARRIER_FINGERPRINT(mpi.ini mpi_carrier mpibcast_carrier)
+  YARP_ADD_CARRIER_FINGERPRINT(mpi.ini mpi_carrier mpibcast_carrier)
 ENDIF (COMPILE_PLUGIN_LIBRARY)
 
 IF (NOT SKIP_mpi_carrier)

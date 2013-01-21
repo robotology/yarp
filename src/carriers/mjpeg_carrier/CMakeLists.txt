@@ -4,7 +4,7 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(mjpeg_carrier TYPE MjpegCarrier INCLUDE MjpegCarrier.h)
-  add_carrier_fingerprint(mjpeg.ini mjpeg_carrier)
+  yarp_add_carrier_fingerprint(mjpeg.ini mjpeg_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_mjpeg_carrier)

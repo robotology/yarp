@@ -5,7 +5,7 @@
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(tcpros_carrier TYPE TcpRosCarrier INCLUDE TcpRosCarrier.h)
   prepare_carrier(rossrv_carrier TYPE RosSrvCarrier INCLUDE TcpRosCarrier.h)
-  add_carrier_fingerprint(ros.ini rossrv_carrier tcpros_carrier)
+  yarp_add_carrier_fingerprint(ros.ini rossrv_carrier tcpros_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_tcpros_carrier)

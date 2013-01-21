@@ -4,7 +4,7 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(xmlrpc_carrier TYPE XmlRpcCarrier INCLUDE XmlRpcCarrier.h)
-  add_carrier_fingerprint(xmlrpc.ini xmlrpc_carrier)
+  yarp_add_carrier_fingerprint(xmlrpc.ini xmlrpc_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_xmlrpc_carrier)
