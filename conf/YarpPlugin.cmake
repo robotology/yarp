@@ -465,32 +465,32 @@ endmacro(YARP_ADD_DEVICE_FINGERPRINT)
 # Deprecated macros
 #
 macro(BEGIN_PLUGIN_LIBRARY)
-    message("BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")
+    message(WARNING "BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")
     yarp_begin_plugin_library(${ARGN})
 endmacro(BEGIN_PLUGIN_LIBRARY)
 
 macro(ADD_PLUGIN_NORMALIZED)
-    message("ADD_PLUGIN_NORMALIZED is deprecated. Use YARP_ADD_PLUGIN_NORMALIZED instead.")
+    message(WARNING "ADD_PLUGIN_NORMALIZED is deprecated. Use YARP_ADD_PLUGIN_NORMALIZED instead.")
     yarp_add_plugin_normalized(${ARGN})
 endmacro(ADD_PLUGIN_NORMALIZED)
 
 macro(PREPARE_PLUGIN)
-    message("PREPARE_PLUGIN is deprecated. Use YARP_PREPARE_PLUGIN instead.")
+    message(WARNING "PREPARE_PLUGIN is deprecated. Use YARP_PREPARE_PLUGIN instead.")
     yarp_prepare_plugin(${ARGN})
 endmacro(PREPARE_PLUGIN)
 
 macro(PREPARE_DEVICE)
-    message("PREPARE_DEVICE is deprecated. Use YARP_PREPARE_DEVICE instead.")
+    message(WARNING "PREPARE_DEVICE is deprecated. Use YARP_PREPARE_DEVICE instead.")
     yarp_prepare_device(${ARGN})
 endmacro(PREPARE_DEVICE)
 
 macro(PREPARE_CARRIER)
-    message("PREPARE_CARRIER is deprecated. Use YARP_PREPARE_CARRIER instead.")
+    message(WARNING "PREPARE_CARRIER is deprecated. Use YARP_PREPARE_CARRIER instead.")
     yarp_prepare_carrier(${ARGN})
 endmacro(PREPARE_CARRIER)
 
 macro(END_PLUGIN_LIBRARY)
-    message("END_PLUGIN_LIBRARY is deprecated. Use YARP_END_PLUGIN_LIBRARY instead.")
+    message(WARNING "END_PLUGIN_LIBRARY is deprecated. Use YARP_END_PLUGIN_LIBRARY instead.")
     yarp_end_plugin_library(${ARGN})
 endmacro(END_PLUGIN_LIBRARY)
 
