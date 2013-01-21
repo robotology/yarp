@@ -14,13 +14,13 @@
 ##  YARP_END_PLUGIN_LIBRARY(libname)
 ##  YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE(libnamedev libname)
 ##
-## This sample would create two CMake targets, "libname" (a library) 
+## This sample would create two CMake targets, "libname" (a library)
 ## and libnamedev (an executable).  It also defines a list:
 ##   ${libname_LIBRARIES}
 ## which contains a list of all library targets created within
 ## the plugin directories plugin1, plugin2, ...
 ##
-## The "libname" library links with every library in the subdirectories 
+## The "libname" library links with every library in the subdirectories
 ## (which can be made individually optional using CMake options),
 ## and provides a method to initialize them all.
 ##
@@ -28,7 +28,7 @@
 ## the "libname" library, making the plugins accessible.
 ##
 ## Plugins come in two types, carriers and devices.
-## To let YARP know how to initialize them, add lines like 
+## To let YARP know how to initialize them, add lines like
 ## this in the CMakeLists.txt files the plugin subdirectories:
 ##
 ##   YARP_PREPARE_DEVICE(microphone TYPE MicrophoneDeviceDriver
@@ -40,7 +40,7 @@
 
 
 ## Skip this whole file if it has already been included
-IF (NOT COMMAND END_PLUGIN_LIBRARY)
+if(NOT COMMAND YARP_END_PLUGIN_LIBRARY)
 
 
 #########################################################################
@@ -53,69 +53,69 @@ IF (NOT COMMAND END_PLUGIN_LIBRARY)
 #
 macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
 
-  IF (YARP_PLUGIN_MODE)
+    if(YARP_PLUGIN_MODE)
 
-    # If we are nested inside a larger plugin block, we don't
-    # have to do anything.
-    MESSAGE(STATUS "nested library ${bundle_name}")
+        # If we are nested inside a larger plugin block, we don't
+        # have to do anything.
+        message(STATUS "nested library ${bundle_name}")
 
-  ELSE (YARP_PLUGIN_MODE)
+    else(YARP_PLUGIN_MODE)
 
-    # If we are the outermost plugin block, then we need to set up 
-    # everything for tracking the plugins within that block.
+        # If we are the outermost plugin block, then we need to set up
+        # everything for tracking the plugins within that block.
 
-    # Make a record of the fact that we are now within a plugin
-    SET(YARP_PLUGIN_MODE TRUE)
+        # Make a record of the fact that we are now within a plugin
+        set(YARP_PLUGIN_MODE TRUE)
 
-    # Declare that we are starting to compile the given plugin library
-    MESSAGE(STATUS "starting plugin library: ${bundle_name}")
+        # Declare that we are starting to compile the given plugin library
+        message(STATUS "starting plugin library: ${bundle_name}")
 
-    # Prepare a directory for automatically generated boilerplate code.
-    SET(YARP_PLUGIN_GEN ${CMAKE_BINARY_DIR}/generated_code)
-    IF (NOT EXISTS ${YARP_PLUGIN_GEN})
-      FILE(MAKE_DIRECTORY ${YARP_PLUGIN_GEN})
-    ENDIF (NOT EXISTS ${YARP_PLUGIN_GEN})
+        # Prepare a directory for automatically generated boilerplate code.
+        set(YARP_PLUGIN_GEN ${CMAKE_BINARY_DIR}/generated_code)
+        if(NOT EXISTS ${YARP_PLUGIN_GEN})
+            file(MAKE_DIRECTORY ${YARP_PLUGIN_GEN})
+        endif(NOT EXISTS ${YARP_PLUGIN_GEN})
 
-    # Choose a prefix for CMake options related to this library
-    SET(YARP_PLUGIN_PREFIX "${bundle_name}_")
+        # Choose a prefix for CMake options related to this library
+        set(YARP_PLUGIN_PREFIX "${bundle_name}_")
 
-    # Set a flag to let individual modules know that they are being
-    # compiled as part of a bundle, and not standalone.  Developers
-    # use this flag to inhibit compilation of test programs and 
-    # the like.
-    SET(COMPILE_PLUGIN_LIBRARY TRUE)
-    SET(COMPILE_DEVICE_LIBRARY TRUE) # an old name for the flag
+        # Set a flag to let individual modules know that they are being
+        # compiled as part of a bundle, and not standalone.  Developers
+        # use this flag to inhibit compilation of test programs and
+        # the like.
+        set(COMPILE_PLUGIN_LIBRARY TRUE)
+        set(COMPILE_DEVICE_LIBRARY TRUE) # an old name for the flag
 
-    # Record the name of the plugin library name
-    SET(YARP_PLUGIN_MASTER ${bundle_name})
+        # Record the name of the plugin library name
+        set(YARP_PLUGIN_MASTER ${bundle_name})
 
-    # Set some properties to an empty state
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_STUBS)   # list of stubs
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE) # initializers
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)   # owner library
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LINKS)   # list of link directories
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME) # is library lazy?
+        # Set some properties to an empty state
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_STUBS)   # list of stubs
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE) # initializers
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)   # owner library
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_LINKS)   # list of link directories
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME) # is library lazy?
 
-    # One glitch is that if plugins are used within YARP, rather
-    # than in an external library, then "find_package(YARP)" will
-    # not work correctly yet.  We simulate the operation of 
-    # find_package(YARP) here if needed, using properties
-    # maintained during the YARP build.
-    get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-    if (YARP_TREE_INCLUDE_DIRS)
-      # Simulate the operation of find_package(YARP)
-      set (YARP_FOUND TRUE)
-      get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-      get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
-      get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
-    else (YARP_TREE_INCLUDE_DIRS)
-      find_package(YARP REQUIRED)
-    endif (YARP_TREE_INCLUDE_DIRS)
+        # One glitch is that if plugins are used within YARP, rather
+        # than in an external library, then "find_package(YARP)" will
+        # not work correctly yet.  We simulate the operation of
+        # find_package(YARP) here if needed, using properties
+        # maintained during the YARP build.
+        get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+        if(YARP_TREE_INCLUDE_DIRS)
+            # Simulate the operation of find_package(YARP)
+            set(YARP_FOUND TRUE)
+            get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+            get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+            get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
+        else(YARP_TREE_INCLUDE_DIRS)
+            find_package(YARP REQUIRED)
+        endif(YARP_TREE_INCLUDE_DIRS)
 
-  ENDIF (YARP_PLUGIN_MODE)
+    endif(YARP_PLUGIN_MODE)
 
 endmacro(YARP_BEGIN_PLUGIN_LIBRARY)
 
@@ -130,80 +130,80 @@ endmacro(YARP_BEGIN_PLUGIN_LIBRARY)
 #
 macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
 
-  # Append the current source directory to the set of include paths.
-  # Developers seem to expect #include "foo.h" to work if foo.h is
-  # in their module directory.
-  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+    # Append the current source directory to the set of include paths.
+    # Developers seem to expect #include "foo.h" to work if foo.h is
+    # in their module directory.
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-  # Figure out a decent filename for the code we are about to 
-  # generate.  If all else fails, the code will get dumped in
-  # the current binary directory.
-  SET(fdir ${YARP_PLUGIN_GEN})
-  IF(NOT fdir)
-    SET(fdir ${CMAKE_CURRENT_BINARY_DIR})
-  ENDIF(NOT fdir)
+    # Figure out a decent filename for the code we are about to
+    # generate.  If all else fails, the code will get dumped in
+    # the current binary directory.
+    set(fdir ${YARP_PLUGIN_GEN})
+    if(NOT fdir)
+        set(fdir ${CMAKE_CURRENT_BINARY_DIR})
+    endif(NOT fdir)
 
-  # We'll be expanding the code in template/yarp_plugin_*.cpp.in using 
-  # the following variables:
+    # We'll be expanding the code in template/yarp_plugin_*.cpp.in using
+    # the following variables:
 
-  SET(YARPDEV_NAME "${plugin_name}")
-  SET(YARPDEV_TYPE "${type}")
-  SET(YARPDEV_INCLUDE "${include}")
-  SET(YARPDEV_WRAPPER "${wrapper}")
-  SET(YARPDEV_CATEGORY "${category}")
-  #SET(ENABLE_YARPDEV_NAME "1")
+    set(YARPDEV_NAME "${plugin_name}")
+    set(YARPDEV_TYPE "${type}")
+    set(YARPDEV_INCLUDE "${include}")
+    set(YARPDEV_WRAPPER "${wrapper}")
+    set(YARPDEV_CATEGORY "${category}")
+    #set(ENABLE_YARPDEV_NAME "1")
 
-  # Set up a flag to enable/disable compilation of this plugin.
-  SET(MYNAME "${YARP_PLUGIN_PREFIX}${plugin_name}")
-  IF (NOT COMPILE_BY_DEFAULT)
-    SET (COMPILE_BY_DEFAULT FALSE)
-  ENDIF (NOT COMPILE_BY_DEFAULT)
-  SET(ENABLE_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${MYNAME}")
-  IF (ENABLE_${MYNAME})
-    SET(RUNTIME_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable loading of ${MYNAME} at runtime upon need")
-    # MARK_AS_ADVANCED(CLEAR RUNTIME_${MYNAME}) # don't advertise, for now
-    MARK_AS_ADVANCED(FORCE RUNTIME_${MYNAME})
-  ELSE (ENABLE_${MYNAME})
-    MARK_AS_ADVANCED(FORCE RUNTIME_${MYNAME})
-  ENDIF (ENABLE_${MYNAME})
+    # Set up a flag to enable/disable compilation of this plugin.
+    set(MYNAME "${YARP_PLUGIN_PREFIX}${plugin_name}")
+    if(NOT COMPILE_BY_DEFAULT)
+        set(COMPILE_BY_DEFAULT FALSE)
+    endif(NOT COMPILE_BY_DEFAULT)
+    set(ENABLE_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${MYNAME}")
+    if(ENABLE_${MYNAME})
+        set(RUNTIME_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable loading of ${MYNAME} at runtime upon need")
+        # mark_as_advanced(CLEAR RUNTIME_${MYNAME}) # don't advertise, for now
+        mark_as_advanced(FORCE RUNTIME_${MYNAME})
+    else(ENABLE_${MYNAME})
+        mark_as_advanced(FORCE RUNTIME_${MYNAME})
+    endif(ENABLE_${MYNAME})
 
-  # Set some convenience variables based on whether the plugin
-  # is enabled or disabled.
-  SET(ENABLE_${plugin_name} ${ENABLE_${MYNAME}})
-  IF (ENABLE_${plugin_name})
-    SET(SKIP_${plugin_name} FALSE)
-    SET(SKIP_${MYNAME} FALSE)
-  ELSE (ENABLE_${plugin_name})
-    SET(SKIP_${plugin_name} TRUE)
-    SET(SKIP_${MYNAME} TRUE)
-  ENDIF (ENABLE_${plugin_name})
+    # Set some convenience variables based on whether the plugin
+    # is enabled or disabled.
+    set(ENABLE_${plugin_name} ${ENABLE_${MYNAME}})
+    if(ENABLE_${plugin_name})
+        set(SKIP_${plugin_name} FALSE)
+        set(SKIP_${MYNAME} FALSE)
+    else(ENABLE_${plugin_name})
+        set(SKIP_${plugin_name} TRUE)
+        set(SKIP_${MYNAME} TRUE)
+    endif(ENABLE_${plugin_name})
 
-  # If the plugin is enabled, add the appropriate source code into
-  # the library source list.
-  IF (ENABLE_${MYNAME})
-    # Go ahead and prepare some code to wrap this plugin.
-    SET(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
-    SET(fname_stub ${fdir}/yarpdev_stub_${plugin_name}.cpp)
-    SET(RUNTIME_YARPDEV ${RUNTIME_${MYNAME}})
-    CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
-      ${fname} @ONLY  IMMEDIATE)
- 
-    IF (RUNTIME_${MYNAME})
-      set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME TRUE)
-      CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_stub_${category}.cpp.in
-	${fname_stub} @ONLY IMMEDIATE)
-      set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUBS ${plugin_name})
-      set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUB_CODE ${fname_stub})
-    ENDIF (RUNTIME_${MYNAME})
-    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
-    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
-    SET(YARP_PLUGIN_ACTIVE TRUE)
-    MESSAGE(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
-  ELSE (ENABLE_${MYNAME})
-    MESSAGE(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
-  ENDIF (ENABLE_${MYNAME})
+    # If the plugin is enabled, add the appropriate source code into
+    # the library source list.
+    if(ENABLE_${MYNAME})
+        # Go ahead and prepare some code to wrap this plugin.
+        set(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
+        set(fname_stub ${fdir}/yarpdev_stub_${plugin_name}.cpp)
+        set(RUNTIME_YARPDEV ${RUNTIME_${MYNAME}})
+        configure_file(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
+                       ${fname} @ONLY  IMMEDIATE)
 
-  # We are done!
+        if(RUNTIME_${MYNAME})
+            set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME TRUE)
+            configure_file(${YARP_MODULE_PATH}/template/yarp_stub_${category}.cpp.in
+                           ${fname_stub} @ONLY IMMEDIATE)
+            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUBS ${plugin_name})
+            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUB_CODE ${fname_stub})
+        endif(RUNTIME_${MYNAME})
+        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
+        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
+        set(YARP_PLUGIN_ACTIVE TRUE)
+        message(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
+    else(ENABLE_${MYNAME})
+        message(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
+    endif(ENABLE_${MYNAME})
+
+    # We are done!
 
 endmacro(YARP_ADD_PLUGIN_NORMALIZED)
 
@@ -219,50 +219,50 @@ endmacro(YARP_ADD_PLUGIN_NORMALIZED)
 # do the actual work.
 #
 macro(YARP_PREPARE_PLUGIN plugin_name)
-  SET(EXPECT_TYPE FALSE)
-  SET(EXPECT_INCLUDE FALSE)
-  SET(THE_TYPE "")
-  SET(THE_INCLUDE "")
-  SET(THE_WRAPPER "")
-  FOREACH(arg ${ARGN})
-    IF(EXPECT_TYPE)
-      SET(THE_TYPE ${arg})
-      SET(EXPECT_TYPE FALSE)
-    ENDIF(EXPECT_TYPE)
-    IF(EXPECT_INCLUDE)
-      SET(THE_INCLUDE ${arg})
-      SET(EXPECT_INCLUDE FALSE)
-    ENDIF(EXPECT_INCLUDE)
-    IF(EXPECT_WRAPPER)
-      SET(THE_WRAPPER ${arg})
-      SET(EXPECT_WRAPPER FALSE)
-    ENDIF(EXPECT_WRAPPER)
-    IF(EXPECT_CATEGORY)
-      SET(THE_CATEGORY ${arg})
-      SET(EXPECT_CATEGORY FALSE)
-    ENDIF(EXPECT_CATEGORY)
-    IF(arg STREQUAL "TYPE")
-      SET(EXPECT_TYPE TRUE)
-    ENDIF(arg STREQUAL "TYPE")
-    IF(arg STREQUAL "INCLUDE")
-      SET(EXPECT_INCLUDE TRUE)
-    ENDIF(arg STREQUAL "INCLUDE")
-    IF(arg STREQUAL "WRAPPER")
-      SET(EXPECT_WRAPPER TRUE)
-    ENDIF(arg STREQUAL "WRAPPER")
-    IF(arg STREQUAL "CATEGORY")
-      SET(EXPECT_CATEGORY TRUE)
-    ENDIF(arg STREQUAL "CATEGORY")
-  ENDFOREACH(arg ${ARGN})
-  IF(THE_TYPE AND THE_INCLUDE)
-    yarp_add_plugin_normalized(${plugin_name} ${THE_TYPE} ${THE_INCLUDE} "${THE_WRAPPER}" "${THE_CATEGORY}")
-  ELSE(THE_TYPE AND THE_INCLUDE)
-    MESSAGE(STATUS "Not enough information to create ${plugin_name}")
-    MESSAGE(STATUS "  type:    ${THE_TYPE}")
-    MESSAGE(STATUS "  include: ${THE_INCLUDE}")
-    MESSAGE(STATUS "  wrapper: ${THE_WRAPPER}")
-    MESSAGE(STATUS "  category: ${THE_CATEGORY}")
-  ENDIF(THE_TYPE AND THE_INCLUDE)
+    set(EXPECT_TYPE FALSE)
+    set(EXPECT_INCLUDE FALSE)
+    set(THE_TYPE "")
+    set(THE_INCLUDE "")
+    set(THE_WRAPPER "")
+    foreach(arg ${ARGN})
+        if(EXPECT_TYPE)
+            set(THE_TYPE ${arg})
+            set(EXPECT_TYPE FALSE)
+        endif(EXPECT_TYPE)
+        if(EXPECT_INCLUDE)
+            set(THE_INCLUDE ${arg})
+            set(EXPECT_INCLUDE FALSE)
+        endif(EXPECT_INCLUDE)
+        if(EXPECT_WRAPPER)
+            set(THE_WRAPPER ${arg})
+            set(EXPECT_WRAPPER FALSE)
+        endif(EXPECT_WRAPPER)
+        if(EXPECT_CATEGORY)
+            set(THE_CATEGORY ${arg})
+            set(EXPECT_CATEGORY FALSE)
+        endif(EXPECT_CATEGORY)
+        if(arg STREQUAL "TYPE")
+            set(EXPECT_TYPE TRUE)
+        endif(arg STREQUAL "TYPE")
+        if(arg STREQUAL "INCLUDE")
+            set(EXPECT_INCLUDE TRUE)
+        endif(arg STREQUAL "INCLUDE")
+        if(arg STREQUAL "WRAPPER")
+            set(EXPECT_WRAPPER TRUE)
+        endif(arg STREQUAL "WRAPPER")
+        if(arg STREQUAL "CATEGORY")
+            set(EXPECT_CATEGORY TRUE)
+        endif(arg STREQUAL "CATEGORY")
+    endforeach(arg)
+    if(THE_TYPE AND THE_INCLUDE)
+        yarp_add_plugin_normalized(${plugin_name} ${THE_TYPE} ${THE_INCLUDE} "${THE_WRAPPER}" "${THE_CATEGORY}")
+    else(THE_TYPE AND THE_INCLUDE)
+        message(STATUS "Not enough information to create ${plugin_name}")
+        message(STATUS "  type:    ${THE_TYPE}")
+        message(STATUS "  include: ${THE_INCLUDE}")
+        message(STATUS "  wrapper: ${THE_WRAPPER}")
+        message(STATUS "  category: ${THE_CATEGORY}")
+    endif(THE_TYPE AND THE_INCLUDE)
 endmacro(YARP_PREPARE_PLUGIN plugin_name)
 
 
@@ -293,44 +293,46 @@ endmacro(YARP_PREPARE_CARRIER)
 # Lightly redefine ADD_LIBRARY to track plugin libraries.  We want to
 # be later able to link against them all as a group.
 #
-MACRO(ADD_LIBRARY LIBNAME)
-  IF (NOT YARP_PLUGIN_MODE)
-    # when not compiling a plugin library, revert to normal operation
-    _ADD_LIBRARY(${LIBNAME} ${ARGN})
-  ELSE (NOT YARP_PLUGIN_MODE)
-    # we check to see if the ADD_LIBRARY call is an import, and ignore
-    # if so - we don't need to do anything about imports.
-    set(IS_IMPORTED FALSE)
-    foreach(arg ${ARGN})
-      if ("${arg}" STREQUAL "IMPORTED")
-        set(IS_IMPORTED TRUE)
-      endif()
-    endforeach()
-    if (NOT IS_IMPORTED)
-      # The user is adding a bone-fide plugin library.  We add it,
-      # while inserting any generated source code needed for initialization.
-      get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
-      foreach(s ${srcs})
-	set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
-      endforeach()
-      _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
-      # Reset the list of generated source code to empty.
-      get_property(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
-      if (NOT YARP_BUNDLE_RUNTIME)
-	# Add the library to the list of plugin libraries.
-	set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
-      endif()
-      set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-      set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
-      if (YARP_TREE_INCLUDE_DIRS)
-        # If compiling YARP, we go ahead and set up installing this
-        # target.  It isn't safe to do this outside of YARP though.
-        install(TARGETS ${LIBNAME} EXPORT YARP COMPONENT runtime 
-                DESTINATION lib)
-      endif (YARP_TREE_INCLUDE_DIRS)
-    endif (NOT IS_IMPORTED)
-  ENDIF (NOT YARP_PLUGIN_MODE)
-ENDMACRO(ADD_LIBRARY LIBNAME)
+macro(ADD_LIBRARY LIBNAME)
+    if(NOT YARP_PLUGIN_MODE)
+        # when not compiling a plugin library, revert to normal operation
+        _ADD_LIBRARY(${LIBNAME} ${ARGN})
+    else(NOT YARP_PLUGIN_MODE)
+        # we check to see if the ADD_LIBRARY call is an import, and ignore
+        # if so - we don't need to do anything about imports.
+        set(IS_IMPORTED FALSE)
+        foreach(arg ${ARGN})
+            if("${arg}" STREQUAL "IMPORTED")
+                set(IS_IMPORTED TRUE)
+            endif("${arg}" STREQUAL "IMPORTED")
+        endforeach(arg)
+        if(NOT IS_IMPORTED)
+            # The user is adding a bone-fide plugin library.  We add it,
+            # while inserting any generated source code needed for initialization.
+            get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
+            foreach(s ${srcs})
+                set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
+            endforeach(s)
+            _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
+            # Reset the list of generated source code to empty.
+            get_property(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
+            if(NOT YARP_BUNDLE_RUNTIME)
+                # Add the library to the list of plugin libraries.
+                set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
+            endif(NOT YARP_BUNDLE_RUNTIME)
+            set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
+            set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
+            if(YARP_TREE_INCLUDE_DIRS)
+                # If compiling YARP, we go ahead and set up installing this
+                # target.  It isn't safe to do this outside of YARP though.
+                install(TARGETS ${LIBNAME}
+                        EXPORT YARP
+                        COMPONENT runtime
+                        DESTINATION lib)
+            endif(YARP_TREE_INCLUDE_DIRS)
+        endif(NOT IS_IMPORTED)
+    endif(NOT YARP_PLUGIN_MODE)
+endmacro(ADD_LIBRARY LIBNAME)
 
 
 
@@ -338,14 +340,14 @@ ENDMACRO(ADD_LIBRARY LIBNAME)
 # Lightly redefine LINK_DIRECTORIES to track link path changes.  Rarely
 # needed.
 #
-MACRO(LINK_DIRECTORIES)
-  _LINK_DIRECTORIES(${ARGN})
-  IF (YARP_PLUGIN_MODE)
-    # Add to the list of linked directories.
-    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LINKS ${ARGN})
-    set_property(GLOBAL APPEND PROPERTY YARP_TREE_LINK_DIRS ${ARGN})
-  ENDIF (YARP_PLUGIN_MODE)
-ENDMACRO(LINK_DIRECTORIES)
+macro(LINK_DIRECTORIES)
+    _LINK_DIRECTORIES(${ARGN})
+    if(YARP_PLUGIN_MODE)
+        # Add to the list of linked directories.
+        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LINKS ${ARGN})
+        set_property(GLOBAL APPEND PROPERTY YARP_TREE_LINK_DIRS ${ARGN})
+    endif(YARP_PLUGIN_MODE)
+endmacro(LINK_DIRECTORIES)
 
 
 
@@ -355,18 +357,16 @@ ENDMACRO(LINK_DIRECTORIES)
 # And if we are compiling YARP, the use of FIND_PACKAGE(YARP) will lead
 # to problems.
 #
-MACRO(FIND_PACKAGE LIBNAME)
-  IF (NOT YARP_PLUGIN_MODE)
-    # pass on call without looking at it
-    _FIND_PACKAGE(${LIBNAME} ${ARGN})
-  ELSE (NOT YARP_PLUGIN_MODE)
-  ENDIF (NOT YARP_PLUGIN_MODE)
-    IF ("${LIBNAME}" STREQUAL "YARP")
-      # Skipping requests for YARP, we already have it
-    ELSE ("${LIBNAME}" STREQUAL "YARP")
-      _FIND_PACKAGE(${LIBNAME} ${ARGN})
-    ENDIF ("${LIBNAME}" STREQUAL "YARP")
-ENDMACRO(FIND_PACKAGE LIBNAME)
+macro(FIND_PACKAGE LIBNAME)
+    if(NOT YARP_PLUGIN_MODE)
+        # pass on call without looking at it
+        _FIND_PACKAGE(${LIBNAME} ${ARGN})
+    endif(NOT YARP_PLUGIN_MODE)
+    if(NOT "${LIBNAME}" STREQUAL "YARP")
+        # Skipping requests for YARP, we already have it
+        _FIND_PACKAGE(${LIBNAME} ${ARGN})
+    endif(NOT "${LIBNAME}" STREQUAL "YARP")
+endmacro(FIND_PACKAGE LIBNAME)
 
 
 
@@ -377,44 +377,44 @@ ENDMACRO(FIND_PACKAGE LIBNAME)
 # it.
 #
 macro(YARP_END_PLUGIN_LIBRARY bundle_name)
-  message(STATUS "ending plugin library: ${bundle_name}")
-  # make sure we are the outermost plugin library, if nesting is present.
-  if ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
-    # generate code to call all plugin initializers
-    set(YARP_LIB_NAME ${YARP_PLUGIN_MASTER})
-    get_property(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
-    get_property(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
-    set(YARP_CODE_PRE)
-    set(YARP_CODE_POST)
-    foreach(dev ${devs})
-      if(NOT owners)
-	    message(SEND_ERROR "Empty list (owner), this is likely due to a previous error, check the output of CMake above.")
-	  endif()
-	  list(GET owners 0 owner)
-      list(REMOVE_AT owners 0)
-      set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern YARP_PLUGIN_IMPORT void add_owned_${dev}(const char *str);")
-      set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_owned_${dev}(\"${owner}\");")
-    endforeach()
-    configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in
-      ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp @ONLY IMMEDIATE)
-    configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
-      ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
-    get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
-    get_property(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
-    include_directories(${YARP_INCLUDE_DIRS})
-    get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
-    get_property(links GLOBAL PROPERTY YARP_BUNDLE_LINKS)
-    if (links)
-      _link_directories(${links})
-    endif ()
-    # add the library initializer code
-    _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${code_stub} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
-    target_link_libraries(${YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
-    target_link_libraries(${YARP_PLUGIN_MASTER} ${libs})
-    # give user access to a list of all the plugin libraries
-    set(${YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
-    set(YARP_PLUGIN_MODE FALSE) # neutralize redefined methods 
-  endif ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
+    message(STATUS "ending plugin library: ${bundle_name}")
+    # make sure we are the outermost plugin library, if nesting is present.
+    if("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
+        # generate code to call all plugin initializers
+        set(YARP_LIB_NAME ${YARP_PLUGIN_MASTER})
+        get_property(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
+        get_property(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
+        set(YARP_CODE_PRE)
+        set(YARP_CODE_POST)
+        foreach(dev ${devs})
+            if(NOT owners)
+                message(SEND_ERROR "Empty list (owner), this is likely due to a previous error, check the output of CMake above.")
+            endif(NOT owners)
+            list(GET owners 0 owner)
+            list(REMOVE_AT owners 0)
+            set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern YARP_PLUGIN_IMPORT void add_owned_${dev}(const char *str);")
+            set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_owned_${dev}(\"${owner}\");")
+        endforeach(dev)
+        configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in
+                       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp @ONLY IMMEDIATE)
+        configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
+                       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
+        get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
+        get_property(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
+        include_directories(${YARP_INCLUDE_DIRS})
+        get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
+        get_property(links GLOBAL PROPERTY YARP_BUNDLE_LINKS)
+        if(links)
+            _link_directories(${links})
+        endif(links)
+        # add the library initializer code
+        _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${code_stub} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
+        target_link_libraries(${YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
+        target_link_libraries(${YARP_PLUGIN_MASTER} ${libs})
+        # give user access to a list of all the plugin libraries
+        set(${YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
+        set(YARP_PLUGIN_MODE FALSE) # neutralize redefined methods
+    endif("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
 endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
 
@@ -424,10 +424,10 @@ endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
 # for a named device library.
 #
 macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib_main.cpp.in
-    ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY  IMMEDIATE)
-    ADD_EXECUTABLE(${exename} ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
-    TARGET_LINK_LIBRARIES(${exename} ${bundle_name})
+    configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib_main.cpp.in
+                   ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY  IMMEDIATE)
+    add_executable(${exename} ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
+    target_link_libraries(${exename} ${bundle_name})
 endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
 
@@ -439,11 +439,13 @@ endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
 #    YARP_ADD_CARRIER_FINGERPRINT(carrier.ini carrier1 carrier2)
 #
 macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
-  GET_FILENAME_COMPONENT(out_name ${file_name} NAME)
-  CONFIGURE_FILE(${file_name} ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name} COPYONLY)
-  if (YARP_TREE_INCLUDE_DIRS)
-    install(FILES ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name} COMPONENT runtime DESTINATION etc/yarp/plugins)
-  endif (YARP_TREE_INCLUDE_DIRS)
+    get_filename_component(out_name ${file_name} NAME)
+    configure_file(${file_name} ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name} COPYONLY)
+    if(YARP_TREE_INCLUDE_DIRS)
+        install(FILES ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name}
+                COMPONENT runtime
+                DESTINATION etc/yarp/plugins)
+    endif(YARP_TREE_INCLUDE_DIRS)
 endmacro(YARP_ADD_CARRIER_FINGERPRINT)
 
 
@@ -453,8 +455,8 @@ endmacro(YARP_ADD_CARRIER_FINGERPRINT)
 #    YARP_ADD_DEVICE_FINGERPRINT(device.ini device1 device2)
 #
 macro(YARP_ADD_DEVICE_FINGERPRINT)
-  # no difference between fingerprint macros
-  YARP_ADD_CARRIER_FINGERPRINT(${ARGN})
+    # no difference between fingerprint macros
+    YARP_ADD_CARRIER_FINGERPRINT(${ARGN})
 endmacro(YARP_ADD_DEVICE_FINGERPRINT)
 
 
@@ -497,4 +499,3 @@ endmacro(END_PLUGIN_LIBRARY)
 
 ## We skipped this whole file if it was already included
 endif(NOT COMMAND END_PLUGIN_LIBRARY)
-
