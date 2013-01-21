@@ -477,10 +477,10 @@ Here we define macros for creating a "plugin" library that links
 to many optional components.
 
 Here are the "user-facing" macros:
-\li YARP_BEGIN_PLUGIN_LIBRARY(lib_name): this sets a flag called YARP_PLUGIN_MODE
+\li YARP_BEGIN_PLUGIN_LIBRARY(lib_name): this sets a flag called X_YARP_PLUGIN_MODE
 to true, which activates a change of behavior of calls to ADD_LIBRARY and
 FIND_PACKAGE (see below).
-\li YARP_END_PLUGIN_LIBRARY(lib_name): this turns off YARP_PLUGIN_MODE,
+\li YARP_END_PLUGIN_LIBRARY(lib_name): this turns off X_YARP_PLUGIN_MODE,
 and sets up a library target called lib_name that links to all libraries
 created after the corresponding call to YARP_BEGIN_PLUGIN_LIBRARY.  This
 target contains a small piece of generated code to activate all
