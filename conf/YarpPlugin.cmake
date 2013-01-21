@@ -290,49 +290,44 @@ endmacro(YARP_PREPARE_CARRIER)
 
 
 #########################################################################
-# Lightly redefine ADD_LIBRARY to track plugin libraries.  We want to
+# YARP_ADD_PLUGIN macro tracks plugin libraries.  We want to
 # be later able to link against them all as a group.
 #
-macro(ADD_LIBRARY LIBNAME)
-    if(NOT YARP_PLUGIN_MODE)
-        # when not compiling a plugin library, revert to normal operation
-        _ADD_LIBRARY(${LIBNAME} ${ARGN})
-    else(NOT YARP_PLUGIN_MODE)
-        # we check to see if the ADD_LIBRARY call is an import, and ignore
-        # if so - we don't need to do anything about imports.
-        set(IS_IMPORTED FALSE)
-        foreach(arg ${ARGN})
-            if("${arg}" STREQUAL "IMPORTED")
-                set(IS_IMPORTED TRUE)
-            endif("${arg}" STREQUAL "IMPORTED")
-        endforeach(arg)
-        if(NOT IS_IMPORTED)
-            # The user is adding a bone-fide plugin library.  We add it,
-            # while inserting any generated source code needed for initialization.
-            get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
-            foreach(s ${srcs})
-                set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
-            endforeach(s)
-            _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
-            # Reset the list of generated source code to empty.
-            get_property(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
-            if(NOT YARP_BUNDLE_RUNTIME)
-                # Add the library to the list of plugin libraries.
-                set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
-            endif(NOT YARP_BUNDLE_RUNTIME)
-            set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-            set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
-            if(YARP_TREE_INCLUDE_DIRS)
-                # If compiling YARP, we go ahead and set up installing this
-                # target.  It isn't safe to do this outside of YARP though.
-                install(TARGETS ${LIBNAME}
-                        EXPORT YARP
-                        COMPONENT runtime
-                        DESTINATION lib)
-            endif(YARP_TREE_INCLUDE_DIRS)
-        endif(NOT IS_IMPORTED)
-    endif(NOT YARP_PLUGIN_MODE)
-endmacro(ADD_LIBRARY LIBNAME)
+macro(YARP_ADD_PLUGIN LIBNAME)
+    # we check to see if the ADD_LIBRARY call is an import, and ignore
+    # if so - we don't need to do anything about imports.
+    set(IS_IMPORTED FALSE)
+    foreach(arg ${ARGN})
+        if("${arg}" STREQUAL "IMPORTED")
+            set(IS_IMPORTED TRUE)
+        endif("${arg}" STREQUAL "IMPORTED")
+    endforeach(arg)
+    if(NOT IS_IMPORTED)
+        # The user is adding a bone-fide plugin library.  We add it,
+        # while inserting any generated source code needed for initialization.
+        get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
+        foreach(s ${srcs})
+            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
+        endforeach(s)
+        _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
+        # Reset the list of generated source code to empty.
+        get_property(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
+        if(NOT YARP_BUNDLE_RUNTIME)
+            # Add the library to the list of plugin libraries.
+            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
+        endif(NOT YARP_BUNDLE_RUNTIME)
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
+        set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
+        if(YARP_TREE_INCLUDE_DIRS)
+            # If compiling YARP, we go ahead and set up installing this
+            # target.  It isn't safe to do this outside of YARP though.
+            install(TARGETS ${LIBNAME}
+                    EXPORT YARP
+                    COMPONENT runtime
+                    DESTINATION lib)
+        endif(YARP_TREE_INCLUDE_DIRS)
+    endif(NOT IS_IMPORTED)
+endmacro(YARP_ADD_PLUGIN)
 
 
 
@@ -496,6 +491,16 @@ macro(END_PLUGIN_LIBRARY)
     yarp_end_plugin_library(${ARGN})
 endmacro(END_PLUGIN_LIBRARY)
 
+macro(ADD_LIBRARY)
+    if(NOT YARP_PLUGIN_MODE)
+        # when not compiling a plugin library, revert to normal operation
+        _ADD_LIBRARY(${ARGN})
+    else(NOT YARP_PLUGIN_MODE)
+    message(WARNING "Calling ADD_LIBRARY inside a YARP PLUGIN_LIBRARY block is deprecated. Use YARP_ADD_PLUGIN instead."
+                    "(If you are trying to add a real library you can safely ignore this warning).")
+        yarp_add_plugin(${ARGN})
+    endif(NOT YARP_PLUGIN_MODE)
+endmacro(ADD_LIBRARY LIBNAME)
 
 endif(NOT YARP_NO_DEPRECATED)
 
