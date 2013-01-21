@@ -415,7 +415,7 @@ endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
 
 #########################################################################
-# ADD_PLUGIN_LIBRARY_EXECUTABLE macro expands a simple test program
+# YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE macro expands a simple test program
 # for a named device library.
 #
 macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
@@ -490,6 +490,11 @@ macro(END_PLUGIN_LIBRARY)
     message(WARNING "END_PLUGIN_LIBRARY is deprecated. Use YARP_END_PLUGIN_LIBRARY instead.")
     yarp_end_plugin_library(${ARGN})
 endmacro(END_PLUGIN_LIBRARY)
+
+macro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
+    message(WARNING "ADD_PLUGIN_LIBRARY_EXECUTABLE is deprecated. Use YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE instead.")
+    yarp_add_plugin_library_executable(${ARGN})
+endmacro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
 macro(ADD_LIBRARY)
     if(NOT YARP_PLUGIN_MODE)
