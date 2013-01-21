@@ -43,40 +43,6 @@
 IF (NOT COMMAND END_PLUGIN_LIBRARY)
 
 
-
-#########################################################################
-# get_property_fix: this is a small workaround for a bug in 
-# the get_property macro in cmake 2.6.0.  It makes sure that reading
-# an empty list from a property works correctly.
-#
-MACRO(get_property_fix localname _global _property varname)
-  set(_exists_chk)
-  get_property(_exists_chk GLOBAL PROPERTY ${varname})
-  if (_exists_chk)
-    set(${localname} ${_exists_chk})
-  else (_exists_chk)
-    set(${localname})
-  endif (_exists_chk)
-ENDMACRO(get_property_fix)
-
-
-
-#########################################################################
-# set_property_fix: this is a small workaround for a bug in 
-# the set_property macro in cmake 2.6.0.  It makes sure that appending
-# to an empty list works correctly.
-#
-MACRO(set_property_fix _global _property _append varname)
-  get_property(_append_chk GLOBAL PROPERTY ${varname})
-  if (_append_chk)
-    set_property(GLOBAL APPEND PROPERTY ${varname} ${ARGN})
-  else (_append_chk)
-    set_property(GLOBAL PROPERTY ${varname} ${ARGN})
-  endif (_append_chk)
-ENDMACRO(set_property_fix)
-
-
-
 #########################################################################
 # BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
 # needed for creating a plugin library are in place.  Between
@@ -142,9 +108,9 @@ MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
     if (YARP_TREE_INCLUDE_DIRS)
       # Simulate the operation of find_package(YARP)
       set (YARP_FOUND TRUE)
-      get_property_fix(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-      get_property_fix(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
-      get_property_fix(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
+      get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+      get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+      get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
     else (YARP_TREE_INCLUDE_DIRS)
       find_package(YARP REQUIRED)
     endif (YARP_TREE_INCLUDE_DIRS)
@@ -226,11 +192,11 @@ MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
       set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME TRUE)
       CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_stub_${category}.cpp.in
 	${fname_stub} @ONLY IMMEDIATE)
-      set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUBS ${plugin_name})
-      set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUB_CODE ${fname_stub})
+      set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUBS ${plugin_name})
+      set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUB_CODE ${fname_stub})
     ENDIF (RUNTIME_${MYNAME})
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
     SET(YARP_PLUGIN_ACTIVE TRUE)
     MESSAGE(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
   ELSE (ENABLE_${MYNAME})
@@ -343,16 +309,16 @@ MACRO(ADD_LIBRARY LIBNAME)
     if (NOT IS_IMPORTED)
       # The user is adding a bone-fide plugin library.  We add it,
       # while inserting any generated source code needed for initialization.
-      get_property_fix(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
+      get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
       foreach(s ${srcs})
-	set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
+	set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
       endforeach()
       _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
       # Reset the list of generated source code to empty.
-      get_property_fix(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
+      get_property(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
       if (NOT YARP_BUNDLE_RUNTIME)
 	# Add the library to the list of plugin libraries.
-	set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
+	set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
       endif()
       set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
       set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
@@ -376,8 +342,8 @@ MACRO(LINK_DIRECTORIES)
   _LINK_DIRECTORIES(${ARGN})
   IF (YARP_PLUGIN_MODE)
     # Add to the list of linked directories.
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_LINKS ${ARGN})
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_TREE_LINK_DIRS ${ARGN})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LINKS ${ARGN})
+    set_property(GLOBAL APPEND PROPERTY YARP_TREE_LINK_DIRS ${ARGN})
   ENDIF (YARP_PLUGIN_MODE)
 ENDMACRO(LINK_DIRECTORIES)
 
@@ -416,8 +382,8 @@ macro(END_PLUGIN_LIBRARY bundle_name)
   if ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
     # generate code to call all plugin initializers
     set(YARP_LIB_NAME ${YARP_PLUGIN_MASTER})
-    get_property_fix(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
-    get_property_fix(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
+    get_property(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
+    get_property(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
     set(YARP_CODE_PRE)
     set(YARP_CODE_POST)
     foreach(dev ${devs})
@@ -433,11 +399,11 @@ macro(END_PLUGIN_LIBRARY bundle_name)
       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp @ONLY IMMEDIATE)
     configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
-    get_property_fix(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
-    get_property_fix(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
+    get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
+    get_property(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
     include_directories(${YARP_INCLUDE_DIRS})
-    get_property_fix(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
-    get_property_fix(links GLOBAL PROPERTY YARP_BUNDLE_LINKS)
+    get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
+    get_property(links GLOBAL PROPERTY YARP_BUNDLE_LINKS)
     if (links)
       _link_directories(${links})
     endif ()

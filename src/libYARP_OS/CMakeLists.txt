@@ -33,9 +33,7 @@ endif ()
 add_library(YARP_OS ${folder_source} ${folder_header})
 target_link_libraries(YARP_OS ${ACE_LIBRARIES})
 install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
-# Cannot APPEND here due to CMake 2.6.0 bug
-#set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
-set_property(GLOBAL PROPERTY YARP_LIBS YARP_OS)
+set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
 install(DIRECTORY include/yarp/os COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
