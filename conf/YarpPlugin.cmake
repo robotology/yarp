@@ -7,12 +7,12 @@
 ## This file provides a set of macros for building bundles of plugins.
 ## Sample use:
 ##
-##  BEGIN_PLUGIN_LIBRARY(libname)
+##  YARP_BEGIN_PLUGIN_LIBRARY(libname)
 ##    ADD_SUBDIRECTORY(plugin1)
 ##    ADD_SUBDIRECTORY(plugin2)
 ##    ...
-##  END_PLUGIN_LIBRARY(libname)
-##  ADD_PLUGIN_LIBRARY_EXECUTABLE(libnamedev libname)
+##  YARP_END_PLUGIN_LIBRARY(libname)
+##  YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE(libnamedev libname)
 ##
 ## This sample would create two CMake targets, "libname" (a library) 
 ## and libnamedev (an executable).  It also defines a list:
@@ -31,10 +31,10 @@
 ## To let YARP know how to initialize them, add lines like 
 ## this in the CMakeLists.txt files the plugin subdirectories:
 ##
-##   PREPARE_DEVICE(microphone TYPE MicrophoneDeviceDriver 
+##   YARP_PREPARE_DEVICE(microphone TYPE MicrophoneDeviceDriver
 ##                  INCLUDE MicrophoneDeviceDriver.h WRAPPER grabber)
 ## (the WRAPPER is optional), or:
-##   PREPARE_CARRIER(new_carrier TYPE TheCarrier INCLUDE ...)
+##   YARP_PREPARE_CARRIER(new_carrier TYPE TheCarrier INCLUDE ...)
 ##
 #########################################################################
 
@@ -44,14 +44,14 @@ IF (NOT COMMAND END_PLUGIN_LIBRARY)
 
 
 #########################################################################
-# BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
+# YARP_BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
 # needed for creating a plugin library are in place.  Between
 # this call, and a subsequent call to END_PLUGIN_LIBRARY, the
 # YARP_PLUGIN_MODE variable is set.  While this mode is set,
 # any library targets created are tracked in a global list.
 # Calls to this macro may be nested.
 #
-MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
+macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
 
   IF (YARP_PLUGIN_MODE)
 
@@ -117,18 +117,18 @@ MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
 
   ENDIF (YARP_PLUGIN_MODE)
 
-ENDMACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
+endmacro(YARP_BEGIN_PLUGIN_LIBRARY)
 
 
 #########################################################################
-# ADD_PLUGIN_NORMALIZED macro is an internal command to convert a 
+# YARP_ADD_PLUGIN_NORMALIZED macro is an internal command to convert a
 # plugin declaration to code, and to set up CMake flags for controlling
-# compilation of that device.  This macro is called by PREPARE_PLUGIN
-# which is the user-facing macro.  PREPARE_PLUGIN parses
-# a flexible set of arguments, then passes them to ADD_PLUGIN_NORMALIZED
+# compilation of that device.  This macro is called by YARP_PREPARE_PLUGIN
+# which is the user-facing macro.  YARP_PREPARE_PLUGIN parses
+# a flexible set of arguments, then passes them to YARP_ADD_PLUGIN_NORMALIZED
 # in a clean canonical order.
 #
-MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
+macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
 
   # Append the current source directory to the set of include paths.
   # Developers seem to expect #include "foo.h" to work if foo.h is
@@ -205,20 +205,20 @@ MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
 
   # We are done!
 
-ENDMACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper)
+endmacro(YARP_ADD_PLUGIN_NORMALIZED)
 
 
 
 #########################################################################
-# PREPARE_PLUGIN macro lets a developer declare a plugin using a 
+# YARP_PREPARE_PLUGIN macro lets a developer declare a plugin using a
 # statement like:
-#    PREPARE_PLUGIN(foo CATEGORY device TYPE FooDriver INCLUDE FooDriver.h)
+#    YARP_PREPARE_PLUGIN(foo CATEGORY device TYPE FooDriver INCLUDE FooDriver.h)
 # or
-#    PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
-# This macro is just a simple parser and calls ADD_PLUGIN_NORMALIZED to
+#    YARP_PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
+# This macro is just a simple parser and calls YARP_ADD_PLUGIN_NORMALIZED to
 # do the actual work.
 #
-MACRO(PREPARE_PLUGIN plugin_name)
+macro(YARP_PREPARE_PLUGIN plugin_name)
   SET(EXPECT_TYPE FALSE)
   SET(EXPECT_INCLUDE FALSE)
   SET(THE_TYPE "")
@@ -255,7 +255,7 @@ MACRO(PREPARE_PLUGIN plugin_name)
     ENDIF(arg STREQUAL "CATEGORY")
   ENDFOREACH(arg ${ARGN})
   IF(THE_TYPE AND THE_INCLUDE)
-    ADD_PLUGIN_NORMALIZED(${plugin_name} ${THE_TYPE} ${THE_INCLUDE} "${THE_WRAPPER}" "${THE_CATEGORY}")
+    yarp_add_plugin_normalized(${plugin_name} ${THE_TYPE} ${THE_INCLUDE} "${THE_WRAPPER}" "${THE_CATEGORY}")
   ELSE(THE_TYPE AND THE_INCLUDE)
     MESSAGE(STATUS "Not enough information to create ${plugin_name}")
     MESSAGE(STATUS "  type:    ${THE_TYPE}")
@@ -263,29 +263,29 @@ MACRO(PREPARE_PLUGIN plugin_name)
     MESSAGE(STATUS "  wrapper: ${THE_WRAPPER}")
     MESSAGE(STATUS "  category: ${THE_CATEGORY}")
   ENDIF(THE_TYPE AND THE_INCLUDE)
-ENDMACRO(PREPARE_PLUGIN plugin_name)
+endmacro(YARP_PREPARE_PLUGIN plugin_name)
 
 
 
 #########################################################################
-# PREPARE_DEVICE macro lets a developer declare a device plugin using a 
+# YARP_PREPARE_DEVICE macro lets a developer declare a device plugin using a
 # statement like:
-#    PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
+#    YARP_PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
 #
-MACRO(PREPARE_DEVICE)
-  PREPARE_PLUGIN(${ARGN} CATEGORY device)
-ENDMACRO(PREPARE_DEVICE)
+macro(YARP_PREPARE_DEVICE)
+    yarp_prepare_plugin(${ARGN} CATEGORY device)
+endmacro(YARP_PREPARE_DEVICE)
 
 
 
 #########################################################################
-# PREPARE_CARRIER macro lets a developer declare a carrier plugin using a 
+# YARP_PREPARE_CARRIER macro lets a developer declare a carrier plugin using a
 # statement like:
-#    PREPARE_CARRIER(foo TYPE FooCarrier INCLUDE FooCarrier.h)
+#    YARP_PREPARE_CARRIER(foo TYPE FooCarrier INCLUDE FooCarrier.h)
 #
-MACRO(PREPARE_CARRIER)
-  PREPARE_PLUGIN(${ARGN} CATEGORY carrier)
-ENDMACRO(PREPARE_CARRIER)
+macro(YARP_PREPARE_CARRIER)
+    prepare_plugin(${ARGN} CATEGORY carrier)
+endmacro(YARP_PREPARE_CARRIER)
 
 
 
@@ -371,12 +371,12 @@ ENDMACRO(FIND_PACKAGE LIBNAME)
 
 
 #########################################################################
-# END_PLUGIN_LIBRARY macro finalizes a plugin library if this is
+# YARP_END_PLUGIN_LIBRARY macro finalizes a plugin library if this is
 # the outermost plugin library block, otherwise it propagates
 # all collected information to the plugin library block that wraps
 # it.
 #
-macro(END_PLUGIN_LIBRARY bundle_name)
+macro(YARP_END_PLUGIN_LIBRARY bundle_name)
   message(STATUS "ending plugin library: ${bundle_name}")
   # make sure we are the outermost plugin library, if nesting is present.
   if ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
@@ -415,7 +415,7 @@ macro(END_PLUGIN_LIBRARY bundle_name)
     set(${YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
     set(YARP_PLUGIN_MODE FALSE) # neutralize redefined methods 
   endif ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
-endmacro(END_PLUGIN_LIBRARY bundle_name)
+endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
 
 
 
@@ -423,12 +423,12 @@ endmacro(END_PLUGIN_LIBRARY bundle_name)
 # ADD_PLUGIN_LIBRARY_EXECUTABLE macro expands a simple test program
 # for a named device library.
 #
-MACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
+macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib_main.cpp.in
     ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY  IMMEDIATE)
     ADD_EXECUTABLE(${exename} ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
     TARGET_LINK_LIBRARIES(${exename} ${bundle_name})
-ENDMACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE)
+endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
 
 
@@ -459,7 +459,42 @@ endmacro(YARP_ADD_DEVICE_FINGERPRINT)
 
 
 
-## We skipped this whole file if it was already included
-ENDIF (NOT COMMAND END_PLUGIN_LIBRARY)
+#########################################################################
+# Deprecated macros
+#
+macro(BEGIN_PLUGIN_LIBRARY)
+    message("BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")
+    yarp_begin_plugin_library(${ARGN})
+endmacro(BEGIN_PLUGIN_LIBRARY)
 
+macro(ADD_PLUGIN_NORMALIZED)
+    message("ADD_PLUGIN_NORMALIZED is deprecated. Use YARP_ADD_PLUGIN_NORMALIZED instead.")
+    yarp_add_plugin_normalized(${ARGN})
+endmacro(ADD_PLUGIN_NORMALIZED)
+
+macro(PREPARE_PLUGIN)
+    message("PREPARE_PLUGIN is deprecated. Use YARP_PREPARE_PLUGIN instead.")
+    yarp_prepare_plugin(${ARGN})
+endmacro(PREPARE_PLUGIN)
+
+macro(PREPARE_DEVICE)
+    message("PREPARE_DEVICE is deprecated. Use YARP_PREPARE_DEVICE instead.")
+    yarp_prepare_device(${ARGN})
+endmacro(PREPARE_DEVICE)
+
+macro(PREPARE_CARRIER)
+    message("PREPARE_CARRIER is deprecated. Use YARP_PREPARE_CARRIER instead.")
+    yarp_prepare_carrier(${ARGN})
+endmacro(PREPARE_CARRIER)
+
+macro(END_PLUGIN_LIBRARY)
+    message("END_PLUGIN_LIBRARY is deprecated. Use YARP_END_PLUGIN_LIBRARY instead.")
+    yarp_end_plugin_library(${ARGN})
+endmacro(END_PLUGIN_LIBRARY)
+
+
+
+
+## We skipped this whole file if it was already included
+endif(NOT COMMAND END_PLUGIN_LIBRARY)
 
