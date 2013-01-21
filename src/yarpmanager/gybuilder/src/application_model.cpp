@@ -86,6 +86,7 @@ ApplicationModel::ApplicationModel(ApplicationWindow* parentWnd, Application* ap
     this->add_child(poly);
     this->add_child(text);
 
+    
     ModulePContainer modules = parentWindow->manager.getKnowledgeBase()->getModules(application);    
     CnnContainer connections = parentWindow->manager.getKnowledgeBase()->getConnections(application);
     ApplicaitonPContainer applications = parentWindow->manager.getKnowledgeBase()->getApplications(application);
@@ -126,12 +127,14 @@ ApplicationModel::ApplicationModel(ApplicationWindow* parentWnd, Application* ap
         points3.set_coordinate(1, width, height);
         points3.set_coordinate(2, 0, height);
         shadow->property_points().set_value(points3);            
-    }      
+    } 
+    
 }
 
 
 void ApplicationModel::updateChildItems(void)
 {
+
     ModulePContainer modules = parentWindow->manager.getKnowledgeBase()->getModules(application);    
     CnnContainer connections = parentWindow->manager.getKnowledgeBase()->getConnections(application);
     ApplicaitonPContainer applications = parentWindow->manager.getKnowledgeBase()->getApplications(application);
@@ -186,8 +189,10 @@ void ApplicationModel::updateChildItems(void)
                 }
                 
                 double end_x, end_y;
+                double start_x;
                 Goocanvas::Points points = poly->property_points().get_value();
                 points.get_coordinate(4, end_x, end_y);
+                points.get_coordinate(5, start_x, end_y);
                 double port_w = Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getWidth();
                 double port_h = Glib::RefPtr<ExternalPortModel>::cast_dynamic(source)->getHeight();
                 if((x + port_w + ITEMS_MARGIE) >= end_x)
@@ -195,11 +200,11 @@ void ApplicationModel::updateChildItems(void)
                 if((y + port_h + ITEMS_MARGIE) >= end_y)
                     height = y + port_h + ITEMS_MARGIE;
 
-                double minx = 0;
-                if(x < 0)
+                double minx = start_x;
+                if(x < start_x)
                 {
                     minx = x - ITEMS_MARGIE;
-                    text->translate(minx, 0);
+                    text->translate(-abs(start_x-x)-ITEMS_MARGIE, 0);
                 }
                 points.set_coordinate(0, minx, 0);
                 points.set_coordinate(1, text_w+TEXT_MARGINE*2+minx, 0);
@@ -471,9 +476,28 @@ ApplicationModel::~ApplicationModel(void)
         return; 
 
     if(application)
-       parentWindow->manager.getKnowledgeBase()->removeIApplicationFromApplication(application,
+       parentWindow->manager.getKnowledgeBase()->removeIApplicationFromApplication(
+                                    parentWindow->manager.getKnowledgeBase()->getApplication(),
                                     application->getLabel());
     application = NULL;                                    
+}
+
+
+void ApplicationModel::releaseApplication(void)
+{
+    //First, delteing all arrows  
+    for(int k=0; k<this->get_n_children(); k++)
+        for(int j=0; j<this->get_n_children(); j++)
+        {
+            Glib::RefPtr<ArrowModel> arw = Glib::RefPtr<ArrowModel>::cast_dynamic(this->get_child(j));
+            if(arw) 
+            {
+                int id = this->find_child(arw);
+                if(id != -1)
+                    this->remove_child(id);
+                 arw.clear();
+            }        
+        }
 }
 
 

@@ -6,11 +6,11 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>activeSeg</name>
+        <name>lumaChroma</name>
         <parameters></parameters>
         <node></node>
-        <prefix>/EyesViewer:activeSeg:1</prefix>
-        <geometry>(Pos (x 800) (y 593.9))</geometry>
+        <prefix>/EyesViewer:lumaChroma:1</prefix>
+        <geometry>(Pos (x 687) (y 141.9))</geometry>
     </module>
     <module>
         <name>test_grabber</name>
@@ -18,31 +18,25 @@
         <node></node>
         <prefix>/EyesViewer:test_grabber:1</prefix>
         <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 1069) (y 617.9))</geometry>
+        <geometry>(Pos (x 459) (y 192.9))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters></parameters>
         <node></node>
         <prefix>/EyesViewer:yarpview:1</prefix>
-        <geometry>(Pos (x 1183) (y 698.9))</geometry>
+        <geometry>(Pos (x 936) (y 141.9))</geometry>
     </module>
     <connection>
-        <from>/EyesViewer:activeSeg:1/activeSeg/imageCrop:o</from>
+        <from>/EyesViewer:test_grabber:1/grabber</from>
+        <to>/EyesViewer:lumaChroma:1/lumaChroma/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 657.5) (y 210.5)) ((x 627) (y 211)) ((x 688) (y 210))  )</geometry>
+    </connection>
+    <connection>
+        <from>/EyesViewer:lumaChroma:1/lumaChroma/Y/image:o</from>
         <to>/EyesViewer:yarpview:1/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 1064) (y 683)) ((x 944) (y 649)) ((x 1184) (y 717))  )</geometry>
-    </connection>
-    <connection>
-        <from>/EyesViewer:activeSeg:1/activeSeg/image:o</from>
-        <to>/EyesViewer:test_grabber:1/test_grabber/quit</to>
-        <protocol>udp</protocol>
-        <geometry>(Pos ((x 1007) (y 630)) ((x 944) (y 624)) ((x 1070) (y 636))  )</geometry>
-    </connection>
-    <connection>
-        <from>Source</from>
-        <to>Destination</to>
-        <protocol></protocol>
-        <geometry>(Pos ((x 920.5) (y 543.5)) ((x 774) (y 538)) ((x 1067) (y 549))  )</geometry>
+        <geometry>(Pos ((x 888) (y 160)) ((x 839) (y 160)) ((x 937) (y 160))  )</geometry>
     </connection>
 </application>

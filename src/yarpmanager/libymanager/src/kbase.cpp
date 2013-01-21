@@ -379,7 +379,6 @@ bool KnowledgeBase::makeupApplication(Application* application)
         addIModuleToApplication(application, mod);
     } // end of for loop
 
-
     /*
      * updating extera connections with application prefix
      * and connections owner
@@ -524,7 +523,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             repapp = replicateApplication(tmpGraph, repapp,
                                          newname.str().c_str());
 
-            // adding applicattion prefix to child application
+            // adding application prefix to child application
             if( strlen(application->getPrefix()) )
             {
                 string strPrefix = string(application->getPrefix()) +
@@ -558,7 +557,7 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
         application->modList[mod.getName()] = 1;
     ostringstream newname;
     newname<<application->getLabel()<<":"<<mod.getName()<<":"<<application->modList[mod.getName()];
-    
+
     Module* repmod = dynamic_cast<Module*>(kbGraph.getNode(mod.getName()));
     if(repmod)
         module = replicateModule(tmpGraph, repmod, newname.str().c_str());
@@ -591,9 +590,11 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
         (*itr).setOwner(module);
         application->addResource(*itr);
     }
+
     //Adding the module as an successor to the application
     tmpGraph.addLink(application, module, 0, false);
     module->setOwner(application);
+
     if(isNew)
         application->addImodule(mod);   
     return module;
@@ -624,7 +625,6 @@ bool KnowledgeBase::removeIModuleFromApplication(Application* application, const
 bool KnowledgeBase::removeIApplicationFromApplication(Application* application, const char* szAppTag)
 {
     __CHECK_NULLPTR(application);
-
     Application* app = dynamic_cast<Application*>(tmpGraph.getNode(szAppTag));
     if(!app)
         return false;
@@ -646,7 +646,10 @@ bool KnowledgeBase::removeIApplicationFromApplication(Application* application, 
         {
             MultiResource* res = dynamic_cast<MultiResource*>(*itr);
             if(res && (res->owner() == app))
+            {
+                tmpGraph.removeLink(app, res);
                 tmpGraph.removeNode(res);
+            }                
         }
     }
 
@@ -658,6 +661,8 @@ bool KnowledgeBase::removeIApplicationFromApplication(Application* application, 
             break;
         }
     }
+
+    tmpGraph.removeLink(application, app);
     tmpGraph.removeNode(app);
     return true;
 }
@@ -1163,18 +1168,34 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
 
 bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
 {
-    // removing inputs and resources
-    for(int i=0; i<mod->sucCount(); i++)
-        graph.removeNode(mod->getLinkAt(i).to());
-
-    // removing outputs
-    for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)
+   
+    // removing inputs and outputs and resource
+    for(GraphIterator jtr=graph.begin(); jtr!=graph.end(); jtr++)
     {
-        OutputData* output = dynamic_cast<OutputData*>(*itr);
-        if(output && output->sucCount() &&
-           output->getLinkAt(0).to() == mod)
-            graph.removeNode(output);
+        for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)
+        {
+            InputData* input = dynamic_cast<InputData*>(*itr);
+            if(input && (input->owner() == mod))
+            {
+                graph.removeNode(input);
+            }
+            else
+            {
+                OutputData* output = dynamic_cast<OutputData*>(*itr);
+                if(output && (output->owner() == mod))
+                {
+                    graph.removeNode(output);
+                }                
+                else
+                {
+                    MultiResource* res = dynamic_cast<MultiResource*>(*itr);
+                    if(res && (res->owner() == mod))
+                         graph.removeNode(res);
+                }
+            }
+        }    
     }
+
     // removing module
     return graph.removeNode(mod);
 }

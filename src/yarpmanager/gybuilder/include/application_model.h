@@ -46,7 +46,8 @@ public:
 
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
-
+    
+    void releaseApplication(void);
 
 protected: 
     ApplicationModel(ApplicationWindow* parentWnd, Application* app);

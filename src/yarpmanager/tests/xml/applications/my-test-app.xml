@@ -9,31 +9,30 @@
         <parameters></parameters>
         <node>node1</node>
         <prefix>/MyTestApplication:activeSeg:1</prefix>
-        <geometry>(Pos (x 743) (y 559.9))</geometry>
+        <geometry>(Pos (x 575) (y 407.9))</geometry>
     </module>
     <module>
-        <name>test_grabber</name>
+        <name>yarpview</name>
         <parameters></parameters>
-        <node>node2</node>
-        <prefix>/MyTestApplication:test_grabber:1</prefix>
-        <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 52) (y 557.9))</geometry>
+        <node></node>
+        <prefix>/MyTestApplication:yarpview:1</prefix>
+        <geometry>(Pos (x 807) (y 419.9))</geometry>
     </module>
     <application>
-        <name>DMP</name>
+        <name>EyesViewer</name>
         <prefix></prefix>
-        <geometry>(Pos (x 619.05) (y 750.648))</geometry>
+        <geometry>(Pos (x 68.2968) (y 131.296))</geometry>
     </application>
     <connection>
-        <from>/MyTestApplication:test_grabber:1/grabber</from>
-        <to>/MyTestApplication:activeSeg:1/activeSeg/image:i</to>
+        <from>/MyTestApplication:activeSeg:1/activeSeg/image:o</from>
+        <to>/MyTestApplication:yarpview:1/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 482) (y 577)) ((x 220) (y 576)) ((x 744) (y 578))  )</geometry>
+        <geometry>(Pos ((x 763.5) (y 438)) ((x 719) (y 438)) ((x 808) (y 438))  )</geometry>
     </connection>
     <connection>
-        <from>/MyTestApplication:activeSeg:1/activeSeg/image:o</from>
-        <to>/templatePFT/templatePFTracker/template/image:i</to>
+        <from>/EyesViewer:lumaChroma:1/lumaChroma/image:o</from>
+        <to>/MyTestApplication:activeSeg:1/activeSeg/image:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 1280.5) (y 723.5)) ((x 887) (y 590)) ((x 1674) (y 857))  )</geometry>
+        <geometry>(Pos ((x 510) (y 373)) ((x 463) (y 319)) ((x 510) (y 320)) ((x 510) (y 426)) ((x 576) (y 426))  )</geometry>
     </connection>
 </application>

@@ -396,6 +396,7 @@ void ApplicationWindow::onDelete(void)
                 childApp->setArrowsSelected(true);
                 // removing all connected arrows
                 deleteSelectedArrows(); 
+                childApp->releaseApplication();
                 childApp.clear();
             }        
         }
@@ -583,6 +584,10 @@ void ApplicationWindow::releaseApplication(void)
                     root->remove_child(id);
                  arw.clear();
             }        
+            
+            Glib::RefPtr<ApplicationModel> childApp = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(j));
+            if(childApp)
+                childApp->releaseApplication();
         }
 }
 
@@ -737,7 +742,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
         if(extPort)
         {
             // we propaget only double click event 
-            if(event->type == GDK_2BUTTON_PRESS)
+            if((event->type == GDK_2BUTTON_PRESS) && (extPort->isNested()==false))
             {
                 extPort->setSelected(true);
                 m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(true);
@@ -826,7 +831,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
         Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(parent->get_model());
         if(extport) 
         {
-            if(event->type == GDK_2BUTTON_PRESS)
+            if((event->type == GDK_2BUTTON_PRESS) && (extport->isNested()==false))
             {
                 m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(true);
                 //m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(true);
@@ -1702,6 +1707,7 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
             Application* mainApplication = manager.getKnowledgeBase()->getApplication();            
             if(!mainApplication)
                 return;
+           
             Application* application  = manager.getKnowledgeBase()->addIApplicationToApplication(mainApplication, iapp);
             if(application)
             {

@@ -53,6 +53,7 @@ public:
 
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
+    double isNested(void) { return bNested; }
 
 protected: 
     ExternalPortModel(ApplicationWindow* parentWnd, NodeType t, const char* szExternalPort, bool nested=false);
