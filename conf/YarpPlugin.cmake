@@ -464,6 +464,8 @@ endmacro(YARP_ADD_DEVICE_FINGERPRINT)
 #########################################################################
 # Deprecated macros
 #
+if(NOT YARP_NO_DEPRECATED)
+
 macro(BEGIN_PLUGIN_LIBRARY)
     message(WARNING "BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")
     yarp_begin_plugin_library(${ARGN})
@@ -495,6 +497,7 @@ macro(END_PLUGIN_LIBRARY)
 endmacro(END_PLUGIN_LIBRARY)
 
 
+endif(NOT YARP_NO_DEPRECATED)
 
 
 ## We skipped this whole file if it was already included
