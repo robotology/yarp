@@ -23,8 +23,15 @@ if (NOT SKIP_tcpros_carrier)
                   RosType.h RosType.cpp
                   RosTypeCodeGenYarp.h RosTypeCodeGenYarp.cpp)
   target_link_libraries(yarp_tcpros YARP_wire_rep_utils)
-  target_link_libraries(yarp_tcpros ${YARP_LIBRARIES})
+  target_link_libraries(yarp_tcpros YARP_OS YARP_sig)
+  target_link_libraries(yarp_tcpros ${ACE_LIBRARIES})
 
-  add_executable(yarpros yarpros.cpp)
-  target_link_libraries(yarpros yarp_tcpros YARP_init ${YARP_LIBRARIES})
+  add_executable(yarpros yarpros.cpp
+                         TcpRosStream.cpp
+                         RosLookup.cpp
+                         RosType.cpp
+                         RosTypeCodeGenYarp.cpp)
+  target_link_libraries(yarpros YARP_wire_rep_utils)
+  target_link_libraries(yarpros YARP_OS YARP_init)
+  target_link_libraries(yarpros ${ACE_LIBRARIES})
 endif (NOT SKIP_tcpros_carrier)

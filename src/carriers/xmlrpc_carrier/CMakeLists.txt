@@ -22,5 +22,6 @@ if (NOT SKIP_xmlrpc_carrier)
                   xmlrpc/XmlRpcSource.cpp
                   xmlrpc/XmlRpcUtil.cpp
                   xmlrpc/XmlRpcValue.cpp)
-  target_link_libraries(yarp_xmlrpc ${YARP_LIBRARIES})
+  target_link_libraries(yarp_xmlrpc YARP_OS YARP_sig)
+  target_link_libraries(yarp_xmlrpc ${ACE_LIBRARIES})
 endif (NOT SKIP_xmlrpc_carrier)

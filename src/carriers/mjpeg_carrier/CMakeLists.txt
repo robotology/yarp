@@ -26,13 +26,18 @@ if (NOT SKIP_mjpeg_carrier)
                   MjpegStream.h MjpegStream.cpp
                   MjpegDecompression.h MjpegDecompression.cpp
                   ${JPEG_SOURCES})
-  target_link_libraries(mjpeg_carrier ${YARP_LIBRARIES} ${JPEG_LIBRARY})
-  target_link_libraries(mjpeg_carrier YARP_wire_rep_utils)
+               target_link_libraries(mjpeg_carrier YARP_wire_rep_utils)
+  target_link_libraries(mjpeg_carrier YARP_OS YARP_sig)
+  target_link_libraries(mjpeg_carrier ${ACE_LIBRARIES})
+  target_link_libraries(mjpeg_carrier ${JPEG_LIBRARY})
 
 
 if(YARP_COMPILE_TESTS)
-  add_executable(test_mjpeg test_mjpeg.cpp)
-  target_link_libraries(test_mjpeg mjpeg_carrier YARP_init)
+  add_executable(test_mjpeg test_mjpeg.cpp
+                            MjpegDecompression.cpp)
+  target_link_libraries(test_mjpeg YARP_OS YARP_sig YARP_init)
+  target_link_libraries(test_mjpeg ${ACE_LIBRARIES})
+  target_link_libraries(test_mjpeg ${JPEG_LIBRARY})
 endif(YARP_COMPILE_TESTS)
 
 endif (NOT SKIP_mjpeg_carrier)

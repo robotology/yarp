@@ -31,7 +31,9 @@ IF (NOT SKIP_mpi_carrier)
     include/yarp/os/impl/MpiStream.h include/yarp/os/impl/MpiP2PStream.h
     include/yarp/os/impl/MpiComm.h
   )
-  TARGET_LINK_LIBRARIES(yarp_mpi ${MPI_LIBRARIES} ${YARP_LIBRARIES})
+  target_link_libraries(yarp_mpi YARP_OS YARP_sig)
+  target_link_libraries(yarp_mpi ${ACE_LIBRARIES})
+  target_link_libraries(yarp_mpi ${MPI_LIBRARIES})
 
 ENDIF (NOT SKIP_mpi_carrier)
 
@@ -58,6 +60,8 @@ IF (NOT SKIP_mpibcast_carrier)
     include/yarp/os/impl/MpiStream.h include/yarp/os/impl/MpiBcastStream.h
     include/yarp/os/impl/MpiComm.h
   )
-  TARGET_LINK_LIBRARIES(yarp_mpibcast ${MPI_LIBRARIES} ${YARP_LIBRARIES})
+  target_link_libraries(yarp_mpibcast YARP_OS YARP_sig)
+  target_link_libraries(yarp_mpibcast ${ACE_LIBRARIES})
+  target_link_libraries(yarp_mpibcast ${MPI_LIBRARIES})
 
 ENDIF (NOT SKIP_mpibcast_carrier)
