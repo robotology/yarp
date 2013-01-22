@@ -12,9 +12,9 @@ if (NOT SKIP_tcpros_carrier)
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-  get_property(WIRE_INCLUDE_DIRS TARGET wire_rep_utils PROPERTY INCLUDE_DIRS)
+  get_property(WIRE_INCLUDE_DIRS TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS)
   include_directories(${WIRE_INCLUDE_DIRS})
- yarp_add_plugin(yarp_tcpros
+  yarp_add_plugin(yarp_tcpros
                   TcpRosCarrier.h TcpRosCarrier.cpp
                   TcpRosStream.h TcpRosStream.cpp
                   RosHeader.h RosHeader.cpp
@@ -22,7 +22,7 @@ if (NOT SKIP_tcpros_carrier)
                   RosLookup.h RosLookup.cpp
                   RosType.h RosType.cpp
                   RosTypeCodeGenYarp.h RosTypeCodeGenYarp.cpp)
-  target_link_libraries(yarp_tcpros wire_rep_utils)
+  target_link_libraries(yarp_tcpros YARP_wire_rep_utils)
   target_link_libraries(yarp_tcpros ${YARP_LIBRARIES})
 
   add_executable(yarpros yarpros.cpp)

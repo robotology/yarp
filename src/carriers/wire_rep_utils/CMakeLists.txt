@@ -4,16 +4,30 @@
 
 # compile if needed - used by tcpros_carrier, mjpeg_carrier
 
-if (ENABLE_yarpcar_mjpeg_carrier OR ENABLE_yarpcar_tcpros_carrier)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-  find_package(YARP REQUIRED)
-  include_directories(${YARP_INCLUDE_DIRS})
-  yarp_add_plugin(wire_rep_utils WireImage.cpp WireImage.h WireBottle.cpp
-                  WireBottle.h WireTwiddler.cpp WireTwiddler.h)
-  target_link_libraries(wire_rep_utils ${YARP_LIBRARIES})
-  set_property(TARGET wire_rep_utils PROPERTY INCLUDE_DIRS 
-    ${CMAKE_CURRENT_SOURCE_DIR})
+if(ENABLE_yarpcar_mjpeg_carrier OR ENABLE_yarpcar_tcpros_carrier)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+    get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+    include_directories(${YARP_INCLUDE_DIRS})
+    add_library(YARP_wire_rep_utils STATIC WireImage.cpp
+                                           WireImage.h
+                                           WireBottle.cpp
+                                           WireBottle.h
+                                           WireTwiddler.cpp
+                                           WireTwiddler.h)
+    target_link_libraries(YARP_wire_rep_utils ${YARP_LIBRARIES})
+    if(UNIX)
+        set_target_properties(YARP_wire_rep_utils PROPERTIES COMPILE_FLAGS -fPIC)
+    endif(UNIX)
 
-  add_executable(wire_rep_test test.cpp)
-  target_link_libraries(wire_rep_test wire_rep_utils)
-endif ()
+    set_property(TARGET YARP_wire_rep_utils PROPERTY INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
+    set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_wire_rep_utils)
+    install(TARGETS YARP_wire_rep_utils EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
+
+    if(YARP_COMPILE_TESTS)
+        add_executable(wire_rep_test test.cpp)
+        target_link_libraries(wire_rep_test YARP_wire_rep_utils)
+        target_link_libraries(wire_rep_test YARP_OS YARP_sig)
+        target_link_libraries(wire_rep_test ${ACE_LIBRARIES})
+   endif(YARP_COMPILE_TESTS)
+
+endif(ENABLE_yarpcar_mjpeg_carrier OR ENABLE_yarpcar_tcpros_carrier)

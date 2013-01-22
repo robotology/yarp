@@ -4,10 +4,10 @@
 
 option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
 if (CREATE_OPTIONAL_CARRIERS)
+  add_subdirectory(wire_rep_utils)
   include(YarpPlugin)
   include_directories(${ACE_INCLUDE_DIRS})
   YARP_BEGIN_PLUGIN_LIBRARY(yarpcar)
-    add_subdirectory(wire_rep_utils)
     add_subdirectory(human_carrier)
     add_subdirectory(mpi_carrier)
     add_subdirectory(xmlrpc_carrier)
