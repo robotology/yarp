@@ -14,6 +14,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/NameStore.h>
+#include <yarp/os/ResourceFinder.h>
 
 namespace yarp {
     namespace os {
@@ -237,6 +238,16 @@ public:
         return mode.c_str();
     }
 
+    /**
+     *
+     * Make a singleton resource finder available to YARP,
+     * for finding configuration files.
+     *
+     */
+    ResourceFinder& getResourceFinder() {
+        return resourceFinder;
+    }
+
 private:
     NameClient();
 
@@ -259,6 +270,7 @@ private:
     bool reportSaveScan;
     bool isSetup;
     NameStore *altStore;
+    ResourceFinder resourceFinder;
 
     static NameClient *instance;
 

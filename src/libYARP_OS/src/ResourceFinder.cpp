@@ -15,8 +15,8 @@
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/String.h>
-
 #include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Os.h>
 
 using namespace yarp::os;
@@ -449,6 +449,7 @@ ResourceFinder::ResourceFinder() {
     YARP_ASSERT(implementation!=NULL);
     owned = true;
     nullConfig = false;
+    isConfiguredFlag = false;
 }
 
 ResourceFinder::ResourceFinder(Searchable& data, void *implementation) {
@@ -458,6 +459,7 @@ ResourceFinder::ResourceFinder(Searchable& data, void *implementation) {
     }
     nullConfig = data.isNull();
     owned = false;
+    isConfiguredFlag = true;
 }
 
 ResourceFinder::~ResourceFinder() {
@@ -472,6 +474,7 @@ ResourceFinder::~ResourceFinder() {
 
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
                                bool skipFirstArgument) {
+    isConfiguredFlag = true;
     return HELPER(implementation).configure(config,policyName,argc,argv,
                                             skipFirstArgument);
 }
@@ -551,3 +554,6 @@ ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key) {
 }
 
 
+ResourceFinder& ResourceFinder::getResourceFinderSingleton() {
+    return NameClient::getNameClient().getResourceFinder();
+}

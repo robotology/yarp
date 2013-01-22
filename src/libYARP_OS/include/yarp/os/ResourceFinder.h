@@ -188,6 +188,21 @@ public:
      */
     virtual ResourceFinder findNestedResourceFinder(const char *key);
 
+
+    bool isConfigured() const {
+        return isConfiguredFlag;
+    }
+
+    /**
+     *
+     * Access a ResourceFinder singleton whose lifetime will match that of
+     * the YARP library.
+     * 
+     * @return the ResourceFinder singleton
+     *
+     */
+    static ResourceFinder& getResourceFinderSingleton();
+
     using Searchable::check;
     using Searchable::findGroup;
 private:
@@ -201,6 +216,7 @@ private:
     void *implementation;
     bool owned;
     bool nullConfig;
+    bool isConfiguredFlag;
     yarp::os::Property config;
 
     ResourceFinder(Searchable& data, void *implementation);

@@ -236,8 +236,10 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
 
 
 int Companion::main(int argc, char *argv[]) {
-    //Network yarp;
-    //ACE::init();
+    ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
+    if (!rf.isConfigured()) {
+        rf.configure(argc,argv);
+    }
 
     // eliminate 0th arg, the program name
     argc--;
@@ -289,17 +291,6 @@ int Companion::main(int argc, char *argv[]) {
     argv++;
     instance.adminMode = adminMode;
     return instance.dispatch(cmd,argc,argv);
-    
-    /*
-    } catch (IOException e) {
-        YARP_ERROR(Logger::get(),
-                   String("exception: ") + e.toString());
-        ACE::fini();
-        return 1;
-    }
-    */
-
-    //ACE::fini();
 }
 
 
