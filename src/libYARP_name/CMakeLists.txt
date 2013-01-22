@@ -18,8 +18,7 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   include_directories(${ACE_INCLUDE_DIRS})
 
   add_library(YARP_name ${folder_source} ${folder_header})
-  target_link_libraries(YARP_name LINK_PRIVATE YARP_OS)
-  target_link_libraries(YARP_name LINK_PRIVATE ${ACE_LIBRARIES})
+  target_link_libraries(YARP_name YARP_OS)
   install(TARGETS YARP_name EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_name)
 

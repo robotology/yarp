@@ -16,9 +16,7 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_dev ${folder_source} ${folder_header})
-target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
-target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
-target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
+target_link_libraries(YARP_dev YARP_sig YARP_OS)
 install(TARGETS YARP_dev EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
 

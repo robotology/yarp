@@ -15,13 +15,11 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   add_library(YARP_serversql STATIC src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/StyleNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/StyleNameService.cpp)
-  target_link_libraries(YARP_serversql LINK_PRIVATE YARP_OS)
-  target_link_libraries(YARP_serversql LINK_PRIVATE YARP_init)
-  target_link_libraries(YARP_serversql LINK_PRIVATE YARP_name)
-  target_link_libraries(YARP_serversql LINK_PRIVATE ${SQLite_LIBRARIES})
+  target_link_libraries(YARP_serversql YARP_init YARP_name)
+  target_link_libraries(YARP_serversql ${SQLite_LIBRARIES})
   if (UNIX)
     set_target_properties(YARP_serversql PROPERTIES COMPILE_FLAGS -fPIC)
-    target_link_libraries(YARP_serversql LINK_PRIVATE dl)
+    target_link_libraries(YARP_serversql dl)
   endif ()
 
   # preserve yarpserver3 executable for a while
