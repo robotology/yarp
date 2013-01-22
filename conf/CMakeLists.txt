@@ -19,16 +19,21 @@ foreach(conf YarpPlugin.cmake
              YarpIDL.cmake
              YarpDevice.cmake
              FindACE.cmake
+             FindAtlas.cmake
              FindFFMPEG.cmake
              FindGSL.cmake
              FindGthread.cmake
+             FindGtkDatabox.cmake
+             FindGtkDataboxMM.cmake
              FindGtkMM.cmake
              FindGtkMMUnix.cmake
              FindGtkMMWin32.cmake
              FindGtkPlus.cmake
              FindGtkWin32.cmake
              FindOpenCV.cmake
-             FindPortAudio.cmake)
+             FindPortAudio.cmake
+             FindSQLite.cmake
+             FindTinyXML.cmake)
     install(FILES ${CMAKE_SOURCE_DIR}/conf/${conf}
             COMPONENT scripts
             DESTINATION share/yarp/cmake)
