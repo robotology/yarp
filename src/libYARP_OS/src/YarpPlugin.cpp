@@ -14,6 +14,7 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -120,10 +121,33 @@ void YarpPluginSettings::reportFailure() const {
 }
 
 
+/*
+
+  Config files give mapping between names or byte sequences and libraries - but where should they be, if not installed?
+  Could try relative to user's binary.  YARP_STUFF: "/" "/etc/yarp/plugins" "/etc/yarp"
+
+ */
 Bottle YarpPluginSelector::listPlugins() {
     Bottle result;
+    ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
+    if (!rf.isConfigured()) {
+        rf.configure(0,NULL);
+    }
     Property config;
-    config.fromConfigFile("etc/yarp/plugins");
+    ConstString target = "etc/yarp/plugins";
+    ConstString found = rf.findFile(target);
+    if (found=="") {
+        target = "yarp/plugins";
+        found = rf.findFile(target);
+        if (found == "") {
+            target = "plugins";
+            found = rf.findFile(target);
+        }
+    }
+    if (found!="") {
+        target = found;
+    }
+    config.fromConfigFile(target);
     Bottle plugins = config.findGroup("plugin").tail();
     for (int i=0; i<plugins.size(); i++) {
         ConstString plugin_name = plugins.get(i).asString();
