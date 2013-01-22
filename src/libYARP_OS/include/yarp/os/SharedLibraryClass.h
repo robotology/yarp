@@ -52,11 +52,7 @@ extern "C" {
 }
 #include <yarp/os/end_pack_for_net.h>
 
-#ifdef _WIN32
-#define YARP_SHARED_CLASS_FN extern "C" __declspec(dllexport)
-#else
-#define YARP_SHARED_CLASS_FN extern "C"
-#endif
+#define YARP_SHARED_CLASS_FN extern "C" YARP_EXPORT
 
 #define YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,basename)       \
     YARP_SHARED_CLASS_FN void *factoryname ## _create () { return (basename *)new classname; } \
