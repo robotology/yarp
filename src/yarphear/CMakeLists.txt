@@ -9,6 +9,7 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
   include_directories(${ACE_INCLUDE_DIRS})
   add_executable(yarphear yarphear.cpp)
   target_link_libraries(yarphear yarpmod YARP_init)
+  target_link_libraries(yarphear ${ACE_LIBRARIES})
 
   install(TARGETS yarphear COMPONENT utilities DESTINATION bin)
 

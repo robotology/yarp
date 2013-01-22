@@ -34,6 +34,7 @@ if (YARP_COMPILE_TESTS)
     string(TOLOWER ${EXE} EXE)
     add_executable(${EXE} ${harness_code})
     target_link_libraries(${EXE} YARP_init YARP_${test_family})
+    target_link_libraries(${EXE} ${ACE_LIBRARIES})
     # added by Lorenzo, to fix windows problem. I assume we test RELEASE 
     # builds.
     GET_TARGET_PROPERTY(EXELOC ${EXE} LOCATION_RELEASE)

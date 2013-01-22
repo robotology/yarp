@@ -31,7 +31,7 @@ if (NOT SKIP_ACE)
 endif ()
 
 add_library(YARP_OS ${folder_source} ${folder_header})
-target_link_libraries(YARP_OS ${ACE_LIBRARIES})
+target_link_libraries(YARP_OS LINK_PRIVATE ${ACE_LIBRARIES})
 install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
