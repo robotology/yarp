@@ -2,39 +2,39 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-MACRO(WDK_SETUP WDK_BUILD WDK_TEMPLATE)
-  set(WDK_SOURCE_LIST_RAW)
-  set(WDK_INCLUDE_LIST_RAW)
-  foreach (src ${ARGN})
-    #MESSAGE(STATUS "src is ${src}")
-    file(GLOB src2 RELATIVE ${CMAKE_SOURCE_DIR} ${src})
-	get_filename_component(ext ${src2} EXT)
-	if (ext STREQUAL ".cpp")
-	  string(REPLACE "/" "_" src3 ${src2})
-      configure_file(${src} ${WDK_BUILD}/${src3} COPYONLY IMMEDIATE)
-      list(APPEND WDK_SOURCE_LIST_RAW ${src3})
-	endif ()
-  endforeach ()
-  set(WDK_SOURCE_LIST "${WDK_SOURCE_LIST_RAW}")
-  string(REPLACE ";" " " WDK_SOURCE_LIST "${WDK_SOURCE_LIST}")
-  get_property(WDK_INCLUDE_LIST0 GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-  set(WDK_INCLUDE_LIST0 ${WDK_INCLUDE_LIST0} ${ACE_INCLUDE_DIRS})
-  file(TO_NATIVE_PATH "${WDK_INCLUDE_LIST0}" WDK_INCLUDE_LIST)
-  configure_file(${WDK_TEMPLATE} ${WDK_BUILD}/sources @ONLY IMMEDIATE)
-ENDMACRO()
+macro(WDK_SETUP WDK_BUILD WDK_TEMPLATE)
+    set(WDK_SOURCE_LIST_RAW)
+    set(WDK_INCLUDE_LIST_RAW)
+    foreach(src ${ARGN})
+        #message(STATUS "src is ${src}")
+        file(GLOB src2 RELATIVE ${CMAKE_SOURCE_DIR} ${src})
+        get_filename_component(ext ${src2} EXT)
+        if(ext STREQUAL ".cpp")
+            string(REPLACE "/" "_" src3 ${src2})
+            configure_file(${src} ${WDK_BUILD}/${src3} COPYONLY IMMEDIATE)
+            list(APPEND WDK_SOURCE_LIST_RAW ${src3})
+        endif(ext STREQUAL ".cpp")
+    endforeach(src)
+    set(WDK_SOURCE_LIST "${WDK_SOURCE_LIST_RAW}")
+    string(REPLACE ";" " " WDK_SOURCE_LIST "${WDK_SOURCE_LIST}")
+    get_property(WDK_INCLUDE_LIST0 GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+    set(WDK_INCLUDE_LIST0 ${WDK_INCLUDE_LIST0} ${ACE_INCLUDE_DIRS})
+    file(TO_NATIVE_PATH "${WDK_INCLUDE_LIST0}" WDK_INCLUDE_LIST)
+    configure_file(${WDK_TEMPLATE} ${WDK_BUILD}/sources @ONLY IMMEDIATE)
+endmacro(WDK_SETUP)
 
-OPTION(CREATE_WDK_BUILD "Create files for a WDK build" FALSE)
+option(CREATE_WDK_BUILD "Create files for a WDK build" FALSE)
 
-IF (CREATE_WDK_BUILD)
+if(CREATE_WDK_BUILD)
 
-  SET(WDK_BASE_BUILD ${CMAKE_BINARY_DIR}/wdk)
+  set(WDK_BASE_BUILD ${CMAKE_BINARY_DIR}/wdk)
 
-  MESSAGE(STATUS "WDK build: setting up yarpos")
+  message(STATUS "WDK build: setting up yarpos")
 
-  SET(WDK_BUILD ${WDK_BASE_BUILD}/yarpos)
+  set(WDK_BUILD ${WDK_BASE_BUILD}/yarpos)
 
-  # We will copy in source files, since WDK won't accept 
-  # source files lying outside of build root, and links 
+  # We will copy in source files, since WDK won't accept
+  # source files lying outside of build root, and links
   # are dicey in windows.
 
   get_property(os_src TARGET YARP_OS PROPERTY SOURCES)
@@ -43,13 +43,13 @@ IF (CREATE_WDK_BUILD)
   get_property(init_src TARGET YARP_init PROPERTY SOURCES)
   #get_property(yarp_src TARGET yarp PROPERTY SOURCES)
   set(YARP_COPY_SRC ${gen_src} ${os_src} ${sig_src} ${dev_src} ${init_src}) # ${yarp_src})
-  WDK_SETUP(${WDK_BUILD} ${CMAKE_SOURCE_DIR}/conf/wdk/sources_yarp_os.in ${YARP_COPY_SRC})
+  wdk_setup(${WDK_BUILD} ${CMAKE_SOURCE_DIR}/conf/wdk/sources_yarp_os.in ${YARP_COPY_SRC})
 
   configure_file(${CMAKE_SOURCE_DIR}/conf/wdk/yarpos.def.in ${WDK_BUILD}/yarpos.def COPYONLY IMMEDIATE)
 
-  MESSAGE(STATUS "WDK build: setting up yarp executable")
-  SET(WDK_BUILD ${WDK_BASE_BUILD}/yarp)
+  message(STATUS "WDK build: setting up yarp executable")
+  set(WDK_BUILD ${WDK_BASE_BUILD}/yarp)
   get_property(yarp_src TARGET yarp PROPERTY SOURCES)
-  WDK_SETUP(${WDK_BUILD} ${CMAKE_SOURCE_DIR}/conf/wdk/sources_yarp.in ${yarp_src})
+  wdk_setup(${WDK_BUILD} ${CMAKE_SOURCE_DIR}/conf/wdk/sources_yarp.in ${yarp_src})
 
-ENDIF()
+endif(CREATE_WDK_BUILD)

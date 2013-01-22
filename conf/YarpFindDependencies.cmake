@@ -273,3 +273,16 @@ endif(YARP_USE_GTK2)
 
 print_dependency(GtkDatabox)
 print_dependency(GtkDataboxMM)
+
+
+#########################################################################
+# Print information for user (CDash)
+if (CREATE_LIB_MATH)
+    message(STATUS "YARP_math selected for compilation")
+endif()
+if (CREATE_GUIS)
+    message(STATUS "GUIs selected for compilation")
+endif()
+if (CREATE_YMANAGER)
+    message(STATUS "yarp manager selected for compilation")
+endif()

@@ -2,13 +2,13 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# Let's see what we built, and record it to facilitate in-tree 
+# Let's see what we built, and record it to facilitate in-tree
 # ("uninstalled") use of YARP.
 get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_LINK_DIRS GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
 get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
 # Oops, cannot use YARP_DEFINES name, conflicts with an old variable
-# that might be lurking in CMakeCache.txt as people upgrade.  Insert 
+# that might be lurking in CMakeCache.txt as people upgrade.  Insert
 # an "_ALL_" for now.
 get_property(YARP_ALL_DEFINES GLOBAL PROPERTY YARP_DEFS)
 get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
@@ -16,12 +16,12 @@ message(STATUS "In-tree includes: ${YARP_INCLUDE_DIRS}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
 set(YARP_HAS_IDL FALSE)
-if(ENABLE_yarpidl_thrift) 
-  set(YARP_HAS_IDL TRUE)
-  set(YARP_IDL_BINARY_HINT ${CMAKE_BINARY_DIR}/bin)
-  if (MSVC)
-    set(YARP_IDL_BINARY_HINT "${YARP_IDL_BINARY_HINT};${YARP_IDL_BINARY_HINT}/Debug;${YARP_IDL_BINARY_HINT}/Release") 
-  endif(MSVC)
+if(ENABLE_yarpidl_thrift)
+    set(YARP_HAS_IDL TRUE)
+    set(YARP_IDL_BINARY_HINT ${CMAKE_BINARY_DIR}/bin)
+    if (MSVC)
+        set(YARP_IDL_BINARY_HINT "${YARP_IDL_BINARY_HINT};${YARP_IDL_BINARY_HINT}/Debug;${YARP_IDL_BINARY_HINT}/Release")
+    endif(MSVC)
 endif(ENABLE_yarpidl_thrift)
 
 set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
@@ -49,17 +49,6 @@ install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuratio
 install(EXPORT YARP COMPONENT configuration DESTINATION ${VERSIONED_LIB})
 
 foreach(lib ${YARP_LIBRARIES})
-  set_target_properties(${lib} PROPERTIES VERSION ${YARP_GENERIC_VERSION}
-	SOVERSION ${YARP_GENERIC_SOVERSION})
-endforeach()
-
-# Print information for user (CDash)
-if (CREATE_LIB_MATH)
-   message(STATUS "YARP_math selected for compilation")
-endif()
-if (CREATE_GUIS)
-   message(STATUS "GUIs selected for compilation")
-endif()
-if (CREATE_YMANAGER)
-   message(STATUS "yarp manager selected for compilation")
-endif()
+    set_target_properties(${lib} PROPERTIES VERSION ${YARP_GENERIC_VERSION}
+                                            SOVERSION ${YARP_GENERIC_SOVERSION})
+endforeach(lib)

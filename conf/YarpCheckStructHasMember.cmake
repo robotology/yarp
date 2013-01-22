@@ -1,5 +1,3 @@
-# Ported to C++
-
 # - Check if the given struct or class has the specified member variable
 # CHECK_STRUCT_HAS_MEMBER (STRUCT MEMBER HEADER VARIABLE)
 #
@@ -16,28 +14,30 @@
 #  CMAKE_REQUIRED_INCLUDES = list of include directories
 #
 # Example: CHECK_STRUCT_HAS_MEMBER("struct timeval" tv_sec sys/select.h HAVE_TIMEVAL_TV_SEC)
+#
+# Original file: <cmake>/Modules/CheckStructHasMember.cmake
+# Ported to C++
 
 # Copyright: 2007-2009 Kitware, Inc.
 # CopyPolicy: BSD
 
-INCLUDE(CheckCXXSourceCompiles)
+include(CheckCXXSourceCompiles)
 
-MACRO (YARP_CHECK_STRUCT_HAS_MEMBER _STRUCT _MEMBER _HEADER _RESULT)
-   SET(_INCLUDE_FILES)
-   FOREACH (it ${_HEADER})
-      SET(_INCLUDE_FILES "${_INCLUDE_FILES}#include <${it}>\n")
-   ENDFOREACH (it)
+macro(YARP_CHECK_STRUCT_HAS_MEMBER _STRUCT _MEMBER _HEADER _RESULT)
+    set(_INCLUDE_FILES)
+    foreach(it ${_HEADER})
+        set(_INCLUDE_FILES "${_INCLUDE_FILES}#include <${it}>\n")
+    endforeach(it)
 
-   SET(_CHECK_STRUCT_MEMBER_SOURCE_CODE "
+    set(_CHECK_STRUCT_MEMBER_SOURCE_CODE "
 ${_INCLUDE_FILES}
 int main()
 {
-   ${_STRUCT}* tmp;
-   tmp->${_MEMBER}();
-  return 0;
+    ${_STRUCT}* tmp;
+    tmp->${_MEMBER}();
+    return 0;
 }
 ")
-   CHECK_CXX_SOURCE_COMPILES("${_CHECK_STRUCT_MEMBER_SOURCE_CODE}" ${_RESULT})
+    check_cxx_source_compiles("${_CHECK_STRUCT_MEMBER_SOURCE_CODE}" ${_RESULT})
 
-ENDMACRO (YARP_CHECK_STRUCT_HAS_MEMBER)
-
+endmacro(YARP_CHECK_STRUCT_HAS_MEMBER)

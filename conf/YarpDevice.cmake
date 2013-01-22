@@ -3,39 +3,38 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 ## Skip this whole file if it has already been included
-IF (NOT COMMAND YARP_END_PLUGIN_LIBRARY)
+if(NOT COMMAND YARP_END_PLUGIN_LIBRARY)
 
 # "Device" libraries have been replaced with "Plugin" libraries
-INCLUDE(YarpPlugin)
+include(YarpPlugin)
 
 #########################################################################
 ## Deprecated functions
 
-MACRO(TARGET_IMPORT_DEVICES target hdr)
-  MESSAGE(STATUS "[TARGET_]IMPORT_DEVICES macro has been deprecated")
-  MESSAGE(STATUS "Instead just link against the device library, and in code do:")
-  MESSAGE(STATUS "#include <yarp/os/all.h>")
-  MESSAGE(STATUS "YARP_DECLARE_PLUGINS(${target});")
-  MESSAGE(STATUS "...")
-  MESSAGE(STATUS "   Network yarp;")
-  MESSAGE(STATUS "   YARP_REGISTER_PLUGINS(${target});")
-ENDMACRO(TARGET_IMPORT_DEVICES target hdr)
+macro(TARGET_IMPORT_DEVICES target hdr)
+    message(STATUS "[TARGET_]IMPORT_DEVICES macro has been deprecated")
+    message(STATUS "Instead just link against the device library, and in code do:")
+    message(STATUS "#include <yarp/os/all.h>")
+    message(STATUS "YARP_DECLARE_PLUGINS(${target});")
+    message(STATUS "...")
+    message(STATUS "   Network yarp;")
+    message(STATUS "   YARP_REGISTER_PLUGINS(${target});")
+endmacro(TARGET_IMPORT_DEVICES target hdr)
 
-MACRO(END_DEVICE_LIBRARY bundle_name)
-  YARP_END_PLUGIN_LIBRARY(${bundle_name})
-  ADD_PLUGIN_LIBRARY_EXECUTABLE(${bundle_name}dev ${bundle_name})
-  IF (MSVC)
-    SET_TARGET_PROPERTIES(${bundle_name} PROPERTIES DEBUG_POSTFIX "d")
-  ENDIF (MSVC)
-ENDMACRO(END_DEVICE_LIBRARY)
+macro(END_DEVICE_LIBRARY bundle_name)
+    yarp_end_plugin_library(${bundle_name})
+    add_plugin_library_executable(${bundle_name}dev ${bundle_name})
+    if(MSVC)
+        set_target_properties(${bundle_name} PROPERTIES DEBUG_POSTFIX "d")
+    endif(MSVC)
+endmacro(END_DEVICE_LIBRARY)
 
-MACRO(IMPORT_DEVICES hdr bundle_name)
-  SET(libname ${bundle_name})
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.h
-    ${hdr} @ONLY IMMEDIATE)
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.cmake
-    ${CMAKE_BINARY_DIR}/${bundle_name}Config.cmake @ONLY IMMEDIATE)
-ENDMACRO(IMPORT_DEVICES)
+macro(IMPORT_DEVICES hdr bundle_name)
+    set(libname ${bundle_name})
+    configure_file(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.h
+                   ${hdr} @ONLY IMMEDIATE)
+    configure_file(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.cmake
+                   ${CMAKE_BINARY_DIR}/${bundle_name}Config.cmake @ONLY IMMEDIATE)
+endmacro(IMPORT_DEVICES)
 
-ENDIF (NOT COMMAND YARP_END_PLUGIN_LIBRARY)
-
+endif(NOT COMMAND YARP_END_PLUGIN_LIBRARY)

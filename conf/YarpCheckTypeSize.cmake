@@ -1,20 +1,14 @@
-
-# Copyright: 2007-2009 Kitware, Inc.
-# CopyPolicy: BSD
-
-# Forked to deal with C++
-
 # - Check sizeof a type
 #  CHECK_TYPE_SIZE(TYPE VARIABLE [BUILTIN_TYPES_ONLY])
 # Check if the type exists and determine size of type.  if the type
 # exists, the size will be stored to the variable. This also
 # calls check_include_file for sys/types.h stdint.h
-# and stddef.h, setting HAVE_SYS_TYPES_H, HAVE_STDINT_H, 
+# and stddef.h, setting HAVE_SYS_TYPES_H, HAVE_STDINT_H,
 # and HAVE_STDDEF_H.  This is because many types are stored
-# in these include files.  
+# in these include files.
 #  VARIABLE - variable to store size if the type exists.
 #  HAVE_${VARIABLE} - does the variable exists or not
-#  BUILTIN_TYPES_ONLY - The third argument is optional and if 
+#  BUILTIN_TYPES_ONLY - The third argument is optional and if
 #                       it is set to the string BUILTIN_TYPES_ONLY
 #                       this macro will not check for any header files.
 # The following variables may be set before calling this macro to
@@ -24,8 +18,16 @@
 #  CMAKE_REQUIRED_DEFINITIONS = list of macros to define (-DFOO=bar)
 #  CMAKE_REQUIRED_INCLUDES = list of include directories
 #  CMAKE_REQUIRED_LIBRARIES = list of libraries to link
+#
+# Original file: <cmake>/Modules/CheckTypeSize.cmake
+# Forked to deal with C++
 
-# These variables are referenced in CheckTypeSizeC.c so we have 
+# Copyright: 2007-2009 Kitware, Inc.
+# CopyPolicy: BSD
+
+
+
+# These variables are referenced in CheckTypeSizeC.c so we have
 # to check for them.
 
 include(CheckIncludeFile)
@@ -36,7 +38,7 @@ MACRO(YARP_CHECK_TYPE_SIZE TYPE VARIABLE)
     check_include_file(stdint.h HAVE_STDINT_H)
     check_include_file(stddef.h HAVE_STDDEF_H)
   ENDIF(NOT "${ARGV2}" STREQUAL "BUILTIN_TYPES_ONLY")
-    
+
   IF("HAVE_${VARIABLE}" MATCHES "^HAVE_${VARIABLE}$")
     MESSAGE(STATUS "Check size of ${TYPE}")
     SET(CHECK_TYPE_SIZE_TYPE "${TYPE}")
