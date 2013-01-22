@@ -15,7 +15,8 @@ if(ENABLE_yarpcar_mjpeg_carrier OR ENABLE_yarpcar_tcpros_carrier)
                                            WireBottle.h
                                            WireTwiddler.cpp
                                            WireTwiddler.h)
-    target_link_libraries(YARP_wire_rep_utils ${YARP_LIBRARIES})
+    target_link_libraries(YARP_wire_rep_utils LINK_PRIVATE YARP_OS YARP_sig)
+    target_link_libraries(YARP_wire_rep_utils LINK_PRIVATE ${ACE_LIBRARIES})
     if(UNIX)
         set_target_properties(YARP_wire_rep_utils PROPERTIES COMPILE_FLAGS -fPIC)
     endif(UNIX)

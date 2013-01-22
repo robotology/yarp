@@ -33,7 +33,7 @@ if(CREATE_GUIS)
         add_executable(yarpview ${folder_source} ${folder_header})
     endif(WIN32 AND NOT CYGWIN)
 
-    target_link_libraries(yarpview YARP_sig YARP_init)
+    target_link_libraries(yarpview YARP_OS YARP_sig YARP_init)
     target_link_libraries(yarpview ${ACE_LIBRARIES})
 
     if(YARP_USE_GTK2)
