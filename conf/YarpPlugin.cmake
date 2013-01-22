@@ -404,8 +404,8 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         endif(links)
         # add the library initializer code
         _ADD_LIBRARY(${X_YARP_PLUGIN_MASTER} ${code} ${code_stub} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
-        target_link_libraries(${X_YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
-        target_link_libraries(${X_YARP_PLUGIN_MASTER} ${libs})
+        target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE YARP_OS)
+        target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE ${libs})
         # give user access to a list of all the plugin libraries
         set(${X_YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
         set(X_YARP_PLUGIN_MODE FALSE) # neutralize redefined methods

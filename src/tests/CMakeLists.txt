@@ -26,6 +26,7 @@ if (YARP_COMPILE_TESTS)
     file(GLOB harness_code ../libYARP_${test_family}/harness/*.cpp ../libYARP_${test_family}/harness/*.h)
     get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family} 
                  PROPERTY INCLUDE_DIRS)
+    get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
     include_directories(${YARP_TREE_INCLUDE_DIRS})
     if (YARP_HAS_ACE)
       include_directories(${ACE_INCLUDE_DIRS})
@@ -33,7 +34,7 @@ if (YARP_COMPILE_TESTS)
     set(EXE harness_${test_family})
     string(TOLOWER ${EXE} EXE)
     add_executable(${EXE} ${harness_code})
-    target_link_libraries(${EXE} YARP_init YARP_${test_family})
+    target_link_libraries(${EXE} ${YARP_LIBRARIES})
     target_link_libraries(${EXE} ${ACE_LIBRARIES})
     # added by Lorenzo, to fix windows problem. I assume we test RELEASE 
     # builds.
