@@ -228,6 +228,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         subRosType.push_back(sub);
     } while (result!=NULL);
     fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
+    fclose(fin);
 
     isValid = ok;
     return isValid;

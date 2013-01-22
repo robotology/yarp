@@ -2212,7 +2212,11 @@ int Companion::cmdMerge(int argc, char *argv[]) {
             tmp = argv[i];
         }
         bool b = yarp::os::NetworkBase::connect(tmp.c_str(),inPort[i].getName().c_str(),options.check("carrier",Value("udp")).asString().c_str(),false);     
-        if (b == false) return -1;
+        if (!b) {
+            delete [] inPort;
+            delete [] inData;
+		    return -1;
+        }
     }
 
     printf ("Ready. Output goes to %s\n", outPort.getName().c_str());

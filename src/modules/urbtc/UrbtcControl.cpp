@@ -1079,6 +1079,7 @@ void yarp::dev::UrbtcControl::run() {
         }
 
     }
+    delete [] oldPos;
 }
 
 short yarp::dev::UrbtcControl::getUrbtcEncoderValue(int axis){

@@ -83,6 +83,7 @@ bool yarp::sig::file::read(Sound& dest, const char *src) {
     int bits = header.pcm.pcmBitsPerSample;
     if (bits!=16) {
         printf("sorry, lousy wav read code only does 16-bit ints\n");
+        fclose(fp);
         return false;
     }
     int samples = (expect/2)/channels;
