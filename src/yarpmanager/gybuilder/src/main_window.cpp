@@ -557,13 +557,12 @@ void MainWindow::setupActions(void)
                         sigc::mem_fun(*this, &MainWindow::onMenuEditCopy) );
     m_refActionGroup->add( Gtk::Action::create("EditPaste", Gtk::Stock::PASTE),
                         sigc::mem_fun(*this, &MainWindow::onMenuEditPaste) );
-// FIXME WIN32 doesn't seem to like the Gtk::Stock::DELETE therefore for now
-//       I'm just setting another random icon
-#ifndef WIN32
+// WIN32 defines a DELETE, and Gtk::Stock::DELETE does not compile
+// therefore we #undef it here
+#ifdef DELETE
+#undef DELETE
+#endif // DELETE
     m_refActionGroup->add( Gtk::Action::create("EditDelete", Gtk::Stock::DELETE),
-#else
-    m_refActionGroup->add( Gtk::Action::create("EditDelete", Gtk::Stock::UNDELETE),
-#endif
                         sigc::mem_fun(*this, &MainWindow::onMenuEditDelete) );
     m_refActionGroup->add( Gtk::Action::create("EditSelAll", Gtk::StockID("YSELECTALL"), "Select All", "Select all"),
                         sigc::mem_fun(*this, &MainWindow::onMenuEditSellAll) );
