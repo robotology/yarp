@@ -227,10 +227,16 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     if((ver = (TiXmlElement*) root->FirstChild("version")))
         app.setVersion(ver->GetText());
 
-    /* retrieving application prefix */
+    /*
+     * TODO: setting prefix of the main application is inactivated. 
+     * Check this should be supported in future or not! 
+     */
+    /*
+    //retrieving application prefix 
     TiXmlElement* pref;
     if((pref = (TiXmlElement*) root->FirstChild("prefix")))
         app.setPrefix(pref->GetText());
+    */
 
     /* retrieving authors information*/
     TiXmlElement* authors;
@@ -449,12 +455,28 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                                     strCarrier.c_str());
                 if(from->Attribute("external") && 
                     compareString(from->Attribute("external"), "true"))
+                {                    
                     connection.setFromExternal(true);
+                    if(from->GetText())
+                    {
+                        ResYarpPort resource(from->GetText());
+                        resource.setPort(from->GetText());
+                        app.addResource(resource);
+                    }                        
+                }                    
                 if(to->Attribute("external") && 
                     compareString(to->Attribute("external"), "true"))
-                    connection.setToExternal(true);
+                {   
+                    if(to->GetText())
+                    {
+                        connection.setToExternal(true);
+                        ResYarpPort resource(to->GetText());
+                        resource.setPort(to->GetText());
+                        app.addResource(resource);
+                    }                        
+                }
 
-                //Connections wich have the same port name in Port Resources 
+                //Connections which have the same port name in Port Resources 
                 // should also be set as external
                 for(int i=0; i<app.resourcesCount(); i++)
                 {

@@ -5,34 +5,35 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>activeSeg</name>
-        <parameters></parameters>
-        <node>node1</node>
-        <prefix>/MyTestApplication:activeSeg:1</prefix>
-        <geometry>(Pos (x 575) (y 407.9))</geometry>
-    </module>
-    <module>
-        <name>yarpview</name>
+        <name>blobExtractor</name>
         <parameters></parameters>
         <node></node>
-        <prefix>/MyTestApplication:yarpview:1</prefix>
-        <geometry>(Pos (x 807) (y 419.9))</geometry>
+        <prefix>/MyTestApplication:blobExtractor:1</prefix>
+        <geometry>(Pos (x 267) (y 296.9))</geometry>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters></parameters>
+        <node></node>
+        <prefix>/MyTestApplication:test_grabber:1</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 37) (y 211.9))</geometry>
     </module>
     <application>
         <name>EyesViewer</name>
-        <prefix></prefix>
-        <geometry>(Pos (x 68.2968) (y 131.296))</geometry>
+        <prefix>/MyTestApplication:EyesViewer:1</prefix>
+        <geometry>(Pos (x 618.898) (y 161.898))</geometry>
     </application>
     <connection>
-        <from>/MyTestApplication:activeSeg:1/activeSeg/image:o</from>
-        <to>/MyTestApplication:yarpview:1/yarpview/img:i</to>
+        <from>/MyTestApplication:test_grabber:1/grabber</from>
+        <to>/MyTestApplication:blobExtractor:1/blobExtractor/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 763.5) (y 438)) ((x 719) (y 438)) ((x 808) (y 438))  )</geometry>
+        <geometry>(Pos ((x 236) (y 272.5)) ((x 205) (y 230)) ((x 236) (y 230)) ((x 236) (y 315)) ((x 268) (y 315))  )</geometry>
     </connection>
     <connection>
-        <from>/EyesViewer:lumaChroma:1/lumaChroma/image:o</from>
-        <to>/MyTestApplication:activeSeg:1/activeSeg/image:i</to>
+        <from>/MyTestApplication:blobExtractor:1/blobExtractor/img:o</from>
+        <to>/MyTestApplication:EyesViewer:1/activeSeg/image:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 510) (y 373)) ((x 463) (y 319)) ((x 510) (y 320)) ((x 510) (y 426)) ((x 576) (y 426))  )</geometry>
+        <geometry>(Pos ((x 525) (y 271)) ((x 443) (y 315)) ((x 525) (y 315)) ((x 525) (y 227)) ((x 635) (y 227))  )</geometry>
     </connection>
 </application>

@@ -6,37 +6,36 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>lumaChroma</name>
+        <name>activeSeg</name>
         <parameters></parameters>
         <node></node>
-        <prefix>/EyesViewer:lumaChroma:1</prefix>
-        <geometry>(Pos (x 687) (y 141.9))</geometry>
+        <prefix></prefix>
+        <geometry>(Pos (x 235) (y 322.9))</geometry>
     </module>
     <module>
-        <name>test_grabber</name>
+        <name>yarpscope</name>
         <parameters></parameters>
         <node></node>
-        <prefix>/EyesViewer:test_grabber:1</prefix>
-        <deployer>yarpdev</deployer>
-        <geometry>(Pos (x 459) (y 192.9))</geometry>
+        <prefix>/EyesViewer:yarpscope:1</prefix>
+        <geometry>(Pos (x 601) (y 426.9))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters></parameters>
         <node></node>
-        <prefix>/EyesViewer:yarpview:1</prefix>
-        <geometry>(Pos (x 936) (y 141.9))</geometry>
+        <prefix>/EyesViewer:yarpview:2</prefix>
+        <geometry>(Pos (x 597) (y 334.9))</geometry>
     </module>
     <connection>
-        <from>/EyesViewer:test_grabber:1/grabber</from>
-        <to>/EyesViewer:lumaChroma:1/lumaChroma/image:i</to>
+        <from>/activeSeg/image:o</from>
+        <to>/EyesViewer:yarpview:2/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 657.5) (y 210.5)) ((x 627) (y 211)) ((x 688) (y 210))  )</geometry>
+        <geometry>(Pos ((x 488.5) (y 353)) ((x 379) (y 353)) ((x 598) (y 353))  )</geometry>
     </connection>
     <connection>
-        <from>/EyesViewer:lumaChroma:1/lumaChroma/Y/image:o</from>
-        <to>/EyesViewer:yarpview:1/yarpview/img:i</to>
+        <from>/activeSeg/imageCrop:o</from>
+        <to>/EyesViewer:yarpscope:1/yarpscope</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 888) (y 160)) ((x 839) (y 160)) ((x 937) (y 160))  )</geometry>
+        <geometry>(Pos ((x 512) (y 411.5)) ((x 379) (y 378)) ((x 512) (y 378)) ((x 512) (y 445)) ((x 602) (y 445))  )</geometry>
     </connection>
 </application>

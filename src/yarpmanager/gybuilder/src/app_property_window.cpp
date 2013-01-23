@@ -121,16 +121,13 @@ void ApplicationPropertyWindow::update(Application* application)
     }
 
     
-    row = *(m_refTreeModel->append());
-    row[m_Columns.m_col_name] = "Prefix";
-    row[m_Columns.m_col_value] = m_pApplication->getPrefix();
-    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)
+    if(m_pAppWindow && m_pAppWindow->getApplication() != m_pApplication)   
     {
-        row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
-        row[m_Columns.m_col_editable] = false;
+        row = *(m_refTreeModel->append());
+        row[m_Columns.m_col_name] = "Prefix";
+        row[m_Columns.m_col_value] = m_pApplication->getBasePrefix();
+        row[m_Columns.m_col_editable] = true;      
     }
-    else
-         row[m_Columns.m_col_editable] = true;
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Authors";
@@ -156,6 +153,60 @@ void ApplicationPropertyWindow::update(Application* application)
 
 void ApplicationPropertyWindow::updateApplication(const char* item, const char* value)
 {
+    if(strcmp(item, "Prefix") == 0)
+    {
+        m_pManager->getKnowledgeBase()->setApplicationPrefix(m_pApplication, value);
+
+        Application* mainApplication = m_pManager->getKnowledgeBase()->getApplication();
+        for(int i=0; i<m_pApplication->sucCount(); i++)
+        {
+             Module* module = dynamic_cast<Module*>(m_pApplication->getLinkAt(i).to());
+             if(module)
+             { 
+                for(int j=0; j<module->outputCount(); j++)
+                {
+                    OutputData *output = &module->getOutputAt(j);
+
+                    for(int i=0; i<mainApplication->connectionCount(); i++)
+                    {
+                        Connection con = mainApplication->getConnectionAt(i);
+                        Connection updatedCon = con;
+                        if(con.getCorOutputData() && (con.getCorOutputData() == output))
+                        {
+                            string strFrom = string(module->getPrefix()) + string(output->getPort());
+                            updatedCon.setFrom(strFrom.c_str());
+                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication, 
+                                                        con, updatedCon);
+                            // updating arrow's connection
+                            if(dynamic_cast<ArrowModel*>(con.getModel()))
+                                dynamic_cast<ArrowModel*>(con.getModel())->setConnection(updatedCon);
+                        }
+                    }
+                }
+
+                for(int j=0; j<module->inputCount(); j++)
+                {
+                    InputData *input = &module->getInputAt(j);
+
+                    for(int i=0; i<mainApplication->connectionCount(); i++)
+                    {
+                        Connection con = mainApplication->getConnectionAt(i);
+                        Connection updatedCon = con;
+                        if(con.getCorInputData() && (con.getCorInputData() == input))
+                        {
+                            string strTo = string(module->getPrefix()) + string(input->getPort());
+                            updatedCon.setTo(strTo.c_str());
+                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication, 
+                                                        con, updatedCon);
+                            // updating arrow's connection
+                            if(dynamic_cast<ArrowModel*>(con.getModel()))
+                                dynamic_cast<ArrowModel*>(con.getModel())->setConnection(updatedCon);
+                        }
+                    }
+                }
+            } // end of if(module)
+        } // end of for
+    }
 }
 
 void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string, 
@@ -190,9 +241,7 @@ void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         }
         
         if(strName == "Prefix")
-        {
-            m_pApplication->setPrefix(new_text.c_str());
-        }
+            updateApplication(strName.c_str(), new_text.c_str());
        
         if(m_pAppWindow) 
             m_pAppWindow->setModified();

@@ -28,7 +28,6 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     m_pModule = NULL;
     m_pAppWindow = appWnd;
 
-//    m_pIModule = NULL;
 
     /* Create a new scrolled window, with scrollbars only if needed */
     set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -46,17 +45,6 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     itemCol->add_attribute(*itemRenderer, "text", m_Columns.m_col_name);
     itemCol->set_resizable(true);
     m_TreeView.append_column(*itemCol);
-
-
-    /*
-    Gtk::CellRendererText* valueRenderer = Gtk::manage(new Gtk::CellRendererText());
-    valueRenderer->property_editable() = false;
-    Gtk::TreeViewColumn* valueCol = Gtk::manage(new Gtk::TreeViewColumn("Value", *valueRenderer));
-    valueCol->add_attribute(*valueRenderer, "foreground-gdk", m_Columns.m_col_color_value);
-    valueCol->add_attribute(*valueRenderer, "text", m_Columns.m_col_value);
-    valueCol->set_resizable(true);
-    valueRenderer->property_editable() = true;    
-    */   
 
 
     Gtk::CellRendererCombo* valueRenderer = Gtk::manage(new Gtk::CellRendererCombo());
@@ -114,10 +102,7 @@ void ModulePropertyWindow::onTabCloseRequest()
 
 void ModulePropertyWindow::update(Module* module)
 {
-    //m_pIModule = NULL;
     m_pModule = module;
-
-    //Module* m_pModule = ModulePropertyWindow::m_pModule;
     m_refTreeModel->clear();
     m_refModelCombos.clear();
 
@@ -187,7 +172,7 @@ void ModulePropertyWindow::update(Module* module)
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Prefix";
-    row[m_Columns.m_col_value] = m_pModule->getPrefix();
+    row[m_Columns.m_col_value] = m_pModule->getBasePrefix();
     row[m_Columns.m_col_editable] = true;
     row[m_Columns.m_col_choices] = m_refModelCombos.back();
 
@@ -322,6 +307,7 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
     }
     else if(strcmp(item, "Prefix") == 0)
     {    
+        m_pModule->setBasePrefix(value);
         string strPrefix;
         Application* application = m_pManager->getKnowledgeBase()->getApplication(); 
         if(application)
@@ -374,10 +360,9 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                     }
                 }
             }             
-        }
-        else
-            strPrefix = value;
-        m_pModule->setPrefix(strPrefix.c_str());
+            // updating module prefix.
+            m_pManager->getKnowledgeBase()->setModulePrefix(m_pModule, strPrefix.c_str(), false);
+        }        
     }
     else if(strcmp(item, "Parameters") == 0)
     {

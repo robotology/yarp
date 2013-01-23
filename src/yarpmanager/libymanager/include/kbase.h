@@ -99,8 +99,11 @@ public:
                                     ApplicationInterface &app, bool isNew=false);
     bool removeIApplicationFromApplication(Application* application, const char* szTag);
 
-    void updateInterfaces(Application* application);
+    bool setModulePrefix(Module* module, const char* szPrefix, bool updateBasePrefix=true);
+    bool setApplicationPrefix(Application* app, const char* szPrefix, bool updateBasePref=true);
     bool saveApplication(AppSaver* appSaver, Application* application);
+
+    const char* getUniqueAppID(Application* parent, const char* szAppName);
 
     bool exportAppGraph(const char* szFileName) {
             return exportDotGraph(tmpGraph, szFileName); }
@@ -138,7 +141,7 @@ private:
     void updateResourceWeight(Graph& graph, 
                               GenericResource* resource, float weight);
 
-    void updateExtraLink(Graph& graph, CnnContainer* connections);
+    //void updateExtraLink(Graph& graph, CnnContainer* connections);
     void linkToOutputs(Graph& graph, InputData* input);
     int getProducerRank(Graph& graph, OutputData* output);
     const char* createDataLabel(const char* modlabel, const char* port,
@@ -154,10 +157,8 @@ private:
     Module* addModuleToGraph(Graph& graph, Module* module);
     bool removeModuleFromGraph(Graph& graph, Module* mod);
 
-    bool updateModule(Graph& graph, 
-                     Module* module, ModuleInterface* imod );
-    bool updateApplication(Graph& graph, 
-                          Application* app, ApplicationInterface* iapp);
+    bool updateModule(Module* module, ModuleInterface* imod);
+    bool updateApplication(Application* app, ApplicationInterface* iapp);
     bool reason(Graph* graph, Node* initial,
                          ApplicaitonPContainer &applications,
                          ModulePContainer &modules,

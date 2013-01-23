@@ -70,6 +70,8 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         Module* module;
         InputData* input = NULL;
         OutputData* output = NULL;
+        bool bExternFrom = false;
+        bool bExternTo = false;
         // source 
         intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(source);
         if(intPort)
@@ -84,6 +86,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         {
             extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(source);
             strFrom = extPort->getPort();
+            bExternFrom = true;
         }
       
         // destination
@@ -100,9 +103,12 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         {
             extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(destination);
             strTo = extPort->getPort();
+            bExternTo = true;
         }
 
         Connection cnn(strFrom.c_str(), strTo.c_str(), strCarrier.c_str());
+        cnn.setFromExternal(bExternFrom);
+        cnn.setToExternal(bExternTo);
         cnn.setCorOutputData(output);
         cnn.setCorInputData(input);
         cnn.setModel(this);

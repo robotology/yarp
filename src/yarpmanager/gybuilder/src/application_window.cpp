@@ -1677,16 +1677,10 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
             Module* module = manager.getKnowledgeBase()->addIModuleToApplication(application, imod, true);
             if(module)
             {
-                ModuleInterface* pIModule = NULL;
-                // updating prefix of imoduld and module
-                for(int i=0; i<application->imoduleCount(); i++)
-                    if(strcmp(application->getImoduleAt(i).getTag(), module->getLabel()) == 0)
-                    {
-                        pIModule = &(application->getImoduleAt(i));
-                        pIModule->setPrefix(string(string("/")+module->getLabel()).c_str());
-                        break;
-                    }                    
-                module->setPrefix(string(string("/")+module->getLabel()).c_str());
+                string strPrefix = string("/") + module->getLabel();
+                module->setBasePrefix(strPrefix.c_str());
+                string strAppPrefix = manager.getKnowledgeBase()->getApplication()->getBasePrefix();
+                manager.getKnowledgeBase()->setModulePrefix(module, (strAppPrefix+module->getBasePrefix()).c_str(), false);
                 Glib::RefPtr<ModuleModel> mod = 
                                          ModuleModel::create(this, module);
                 root->add_child(mod);
@@ -1707,7 +1701,10 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
             Application* mainApplication = manager.getKnowledgeBase()->getApplication();            
             if(!mainApplication)
                 return;
-           
+            
+            string strPrefix = "/";
+            strPrefix += string(manager.getKnowledgeBase()->getUniqueAppID(mainApplication, (const char*)name));
+            iapp.setPrefix(strPrefix.c_str());            
             Application* application  = manager.getKnowledgeBase()->addIApplicationToApplication(mainApplication, iapp);
             if(application)
             {

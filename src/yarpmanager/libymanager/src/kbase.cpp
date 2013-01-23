@@ -339,13 +339,17 @@ bool KnowledgeBase::makeupApplication(Application* application)
             }
             else
             {
+                
                 if(appList.find(string(interfaceApp.getName()))==appList.end())
                     appList[interfaceApp.getName()] = 1;
                 ostringstream newname;
                 newname<<application->getName()<<":";
                 newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];
-                repapp = replicateApplication(tmpGraph, repapp,
-                                             newname.str().c_str());
+                
+                repapp = replicateApplication(tmpGraph, repapp, newname.str().c_str());
+                
+                // seting application base prefix
+                repapp->setBasePrefix(interfaceApp.getPrefix());
 
                 // adding applicattion prefix to child application
                 if( strlen(application->getPrefix()) )
@@ -356,7 +360,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
                 }
 
                 // updating Application with ApplicationInterface
-                updateApplication(tmpGraph, repapp, &interfaceApp);
+                updateApplication(repapp, &interfaceApp);
                 appList[interfaceApp.getName()] = appList[interfaceApp.getName()] + 1;
 
                 //Adding child application as an successor to the application
@@ -379,10 +383,11 @@ bool KnowledgeBase::makeupApplication(Application* application)
         addIModuleToApplication(application, mod);
     } // end of for loop
 
+
     /*
      * updating extera connections with application prefix
      * and connections owner
-     */
+     */    
     for(int i=0; i<application->connectionCount(); i++)
     {
         Connection* cnn = &application->getConnectionAt(i);
@@ -398,7 +403,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
             string strPort = string(application->getPrefix()) + string(cnn->to());
             cnn->setTo(strPort.c_str());
         }
-    }
+    }    
 
     /**
      * Some users tend to introduce YARP port dependencies inside application
@@ -422,6 +427,99 @@ bool KnowledgeBase::makeupApplication(Application* application)
         tmpGraph.addLink(application, node, 0);
     }
 
+    return true;
+}
+
+bool KnowledgeBase::setModulePrefix(Module* module, const char* szPrefix, bool updateBasePrefix)
+{
+    __CHECK_NULLPTR(module);
+    __CHECK_NULLPTR(szPrefix);
+
+    module->setPrefix(szPrefix);
+    if(updateBasePrefix)
+        module->setBasePrefix(szPrefix);        
+
+    // updating port's prefix
+    // TODO: check if this is required anymore
+    /*
+    for(int i=0; i<module->sucCount(); i++)
+    {
+        InputData* input = dynamic_cast<InputData*>(module->getLinkAt(i).to());
+        if(input)
+        {
+            string strPort = string(szPrefix) + string(input->getPort());
+            input->setPort(strPort.c_str());
+        }
+    }
+
+    for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
+    {
+        if((*itr)->getType() == OUTPUTD)
+        {
+            OutputData* output = (OutputData*)(*itr);
+            Module* producer = dynamic_cast<Module*>(output->getLinkAt(0).to());
+            if(producer == module)
+            {
+                string strPort = string(szPrefix) + string(output->getPort());
+                output->setPort(strPort.c_str());
+            }
+        }
+    }
+    */
+    return true;
+}
+
+bool KnowledgeBase::setApplicationPrefix(Application* application, const char* szPrefix, bool updateBasePrefix)
+{
+    __CHECK_NULLPTR(application);
+    __CHECK_NULLPTR(szPrefix);
+
+    application->setPrefix(szPrefix);
+    if(updateBasePrefix)
+        application->setBasePrefix(szPrefix);        
+
+    /**
+     * updating nested application's and module's prefixs
+     */
+    for(int i=0; i<application->sucCount(); i++)
+    {
+        Application* nestedApp = dynamic_cast<Application*>(application->getLinkAt(i).to());
+        if(nestedApp)
+        {
+            string strPrefix = string(szPrefix) + string(nestedApp->getBasePrefix());
+            setApplicationPrefix(nestedApp, strPrefix.c_str(), false);
+        }
+        else
+        {
+             Module* module = dynamic_cast<Module*>(application->getLinkAt(i).to());
+             if(module)
+             {
+                string strPrefix = string(szPrefix) + string(module->getBasePrefix());
+                setModulePrefix(module, strPrefix.c_str(), false);
+             }
+        }
+    }
+
+    /**
+     * updating connections with application prefix
+     */
+    /*
+    for(int i=0; i<application->connectionCount(); i++)
+    {
+        Connection* cnn = &application->getConnectionAt(i);
+        if(!cnn->isExternalFrom())
+        {
+            string strPort = string(szPrefix) + string(cnn->from());
+            cnn->setFrom(strPort.c_str());
+        }
+
+        if(!cnn->isExternalTo())
+        {
+            string strPort = string(szPrefix) + string(cnn->to());
+            cnn->setTo(strPort.c_str());
+        }
+    }
+    */
     return true;
 }
 
@@ -490,6 +588,16 @@ bool KnowledgeBase::removeConnectionFromApplication(Application* application, Co
     return application->removeConnection(cnn);
 }
 
+const char* KnowledgeBase::getUniqueAppID(Application* parent, const char* szAppName)
+{
+    if(appList.find(string(szAppName)) == appList.end())
+        appList[szAppName] = 1;
+    ostringstream newname;
+    newname<<parent->getName()<<":";
+    newname<<szAppName<<":"<<appList[szAppName];
+    return newname.str().c_str();
+}
+
 Application* KnowledgeBase::addIApplicationToApplication(Application* application, 
                                     ApplicationInterface &interfaceApp, bool isNew)
 {
@@ -514,14 +622,15 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             logger->addWarning(msg);
         }
         else
-        {
+        {            
             if(appList.find(string(interfaceApp.getName()))==appList.end())
                 appList[interfaceApp.getName()] = 1;
             ostringstream newname;
             newname<<application->getName()<<":";
-            newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];
-            repapp = replicateApplication(tmpGraph, repapp,
-                                         newname.str().c_str());
+            newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];            
+            repapp = replicateApplication(tmpGraph, repapp, newname.str().c_str());
+            // seting application base prefix
+            repapp->setBasePrefix(interfaceApp.getPrefix());
 
             // adding application prefix to child application
             if( strlen(application->getPrefix()) )
@@ -532,7 +641,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             }
 
             // updating Application with ApplicationInterface
-            updateApplication(tmpGraph, repapp, &interfaceApp);
+            updateApplication(repapp, &interfaceApp);
             appList[interfaceApp.getName()] = appList[interfaceApp.getName()] + 1;
 
             //Adding child application as an successor to the application
@@ -570,6 +679,9 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
 
     mod.setTag(newname.str().c_str());
 
+    // setting module base prefix
+    module->setBasePrefix(mod.getPrefix());
+
     // adding application prefix to module prefix
     if( strlen(application->getPrefix()) )
     {
@@ -579,7 +691,7 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
     }
 
     //updating Module with ModuleInterface
-    updateModule(tmpGraph, module, &mod);
+    updateModule(module, &mod);
     application->modList[mod.getName()] = application->modList[mod.getName()] + 1;
 
     // adding module's resources to application resource list
@@ -928,7 +1040,7 @@ bool KnowledgeBase::reasolveDependency(Application* app,
 }
 
 
-bool KnowledgeBase::updateApplication(Graph& graph, Application* app,
+bool KnowledgeBase::updateApplication(Application* app,
                             ApplicationInterface* iapp )
 {
     __CHECK_NULLPTR(app);
@@ -940,8 +1052,7 @@ bool KnowledgeBase::updateApplication(Graph& graph, Application* app,
     return true;
 }
 
-bool KnowledgeBase::updateModule(Graph& graph,
-                    Module* module, ModuleInterface* imod )
+bool KnowledgeBase::updateModule(Module* module, ModuleInterface* imod )
 {
     __CHECK_NULLPTR(module);
     __CHECK_NULLPTR(imod);
@@ -965,34 +1076,10 @@ bool KnowledgeBase::updateModule(Graph& graph,
 
     module->setModelBase(imod->getModelBase());
 
-    // updating port's prefix
+   
+    // updating module prefix
     if(strlen(imod->getPrefix()))
-    {
-        module->setPrefix(imod->getPrefix());
-        for(int i=0; i<module->sucCount(); i++)
-        {
-            InputData* input = dynamic_cast<InputData*>(module->getLinkAt(i).to());
-            if(input)
-            {
-                string strPort = string(imod->getPrefix()) + string(input->getPort());
-                input->setPort(strPort.c_str());
-            }
-        }
-
-        for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)
-            if((*itr)->getType() == OUTPUTD)
-            {
-                OutputData* output = (OutputData*)(*itr);
-                Module* producer = dynamic_cast<Module*>(output->getLinkAt(0).to());
-                if(producer == module)
-                {
-                    string strPort = string(imod->getPrefix())
-                                     + string(output->getPort());
-                    output->setPort(strPort.c_str());
-                }
-            }
-    }
-
+        setModulePrefix(module, imod->getPrefix(), false);
     return true;
 }
 
@@ -1005,6 +1092,7 @@ Module* KnowledgeBase::replicateModule(Graph& graph,
     __CHECK_NULLPTR(module);
     Module* newmod = (Module*) module->clone();
     newmod->setLabel(szLabel);
+    newmod->setBasePrefix(module->getPrefix());
     newmod->removeAllSuc();
     if(!addModuleToGraph(graph, newmod))
     {
@@ -1026,6 +1114,7 @@ Application* KnowledgeBase::replicateApplication(Graph& graph,
     __CHECK_NULLPTR(app);
     Application* newapp = (Application*) app->clone();
     newapp->setLabel(szLabel);
+    newapp->setBasePrefix(app->getPrefix());
     newapp->removeAllSuc();
     /*Adding new application to the graph */
     Application* application = (Application*)graph.addNode(newapp);
@@ -1134,7 +1223,7 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
         if(embApp && (embApp != application) && (embApp->owner() == application))
         {
             ApplicationInterface iapp(embApp->getName());           
-            iapp.setPrefix(embApp->getPrefix());
+            iapp.setPrefix(embApp->getBasePrefix());
             if(embApp->getModel())
                 iapp.setModelBase(*embApp->getModel());
             else
@@ -1151,6 +1240,7 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
         if(module && (module->owner() == application))
         {
             ModuleInterface imod(module);
+            imod.setPrefix(module->getBasePrefix());
             application->addImodule(imod);
         }        
     }
@@ -1256,6 +1346,7 @@ Module* KnowledgeBase::findOwner(Graph& graph, InputData* input)
 }
 
 
+/*
 void KnowledgeBase::updateExtraLink(Graph& graph, CnnContainer* connections)
 {
     // update graph with external connection
@@ -1280,6 +1371,7 @@ void KnowledgeBase::updateExtraLink(Graph& graph, CnnContainer* connections)
         }
     }
 }
+*/
 
 void KnowledgeBase::updateNodesLink(Graph& graph, int level)
 {

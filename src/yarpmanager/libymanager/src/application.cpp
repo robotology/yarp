@@ -90,6 +90,7 @@ Application::Application(const Application &app) : Node(app)
     resources = app.resources;
     strXmlFile = app.strXmlFile;
     strPrefix = app.strPrefix;
+    strBasePrefix = app.strBasePrefix;
 }
 
 

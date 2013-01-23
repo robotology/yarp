@@ -1,19 +1,15 @@
-
 <application>
-	<!-- Generic information-->
-	<name>FakeEyes</name>
-	<description> A fake robot eye creator based on test_grabber </description>
-	<version>1.0</version>
-	
-	<authors>
-		<author email="ali.paikan@iit.it"> Ali Paikan </author>
-	</authors>
-		
-	<!-- Required modules -->	
-	<module>
-		<name>yarpdev</name>
-		<parameters> --device test_grabber --name /eye</parameters>
-		<node>localhost</node>
-	</module>
-
+    <name>FakeEyes</name>
+    <description>A fake robot eye creator based on test_grabber</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>yarpdev</name>
+        <parameters>--device test_grabber --name /eye</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+        <geometry>(Pos (x 10) (y 10))</geometry>
+    </module>
 </application>

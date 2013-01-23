@@ -127,6 +127,7 @@ public:
     void setStdio(const char* szStdio) { if(szStdio) strStdio = szStdio; }
     void setBroker(const char* szBroker) { if(szBroker) strBroker = szBroker; }
     void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
+    void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; }
     void setNeedDeployer(bool need) { bNeedDeployer = need; }
     
     int getRank(void) { return iRank; }
@@ -143,6 +144,7 @@ public:
     const char* getStdio(void) { return strStdio.c_str(); }
     const char* getBroker(void) { return strBroker.c_str(); }   
     const char* getPrefix(void) { return strPrefix.c_str(); }   
+    const char* getBasePrefix(void) { return strBasePrefix.c_str(); }   
 
     int argumentCount(void) { return arguments.size(); }
     Argument& getArgumentAt(int index){ return arguments[index]; }
@@ -207,6 +209,7 @@ private:
     string strBroker;
     bool bNeedDeployer;
     string strPrefix;
+    string strBasePrefix;
 
     GraphicModel modelBase;
 

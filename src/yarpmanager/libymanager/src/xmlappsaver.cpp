@@ -67,6 +67,11 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
         
     }
     
+    /*
+     * TODO: setting prefix of the main application is inactivated. 
+     * Check this should be supported in future or not! 
+     */
+    /*
     if(strcmp (app->getPrefix(), ""))
         {
         TiXmlElement * prefix= new TiXmlElement( "prefix");
@@ -74,7 +79,8 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
         root->LinkEndChild(prefix);
         
     }
-    
+    */
+
     if(app->authorCount()>0)
     {
         TiXmlElement *auths=new TiXmlElement("authors");

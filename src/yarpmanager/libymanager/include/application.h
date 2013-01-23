@@ -299,6 +299,9 @@ public:
 
     void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; } 
     const char* getPrefix(void) { return strPrefix.c_str(); }
+    void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; } 
+    const char* getBasePrefix(void) { return strBasePrefix.c_str(); }
+
 
     void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
     const char* getXmlFile(void) { return strXmlFile.c_str(); }
@@ -322,6 +325,7 @@ public:
         strVersion.clear();
         strDescription.clear();
         strPrefix.clear();
+        strBasePrefix.clear();
         authors.clear();
         Imodules.clear();
         connections.clear();
@@ -346,7 +350,8 @@ private:
     IApplicationContainer Iapplications;
     ResourceContainer resources;
     CnnContainer connections;
-    string strPrefix;   
+    string strPrefix;  
+    string strBasePrefix;
     string strXmlFile;
     Node* appOwner;
 

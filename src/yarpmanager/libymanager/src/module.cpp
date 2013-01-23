@@ -58,6 +58,7 @@ void Module::swap(const Module &mod)
     strBroker = mod.strBroker;
     bNeedDeployer = mod.bNeedDeployer;
     strPrefix = mod.strPrefix;
+    strBasePrefix = mod.strBasePrefix;
     modOwner = mod.modOwner;
     // deep copy
     for(int i=0; i<mod.resourceCount(); i++)
@@ -222,7 +223,7 @@ void Module::clear(void)
     strStdio.clear();
     strBroker.clear();
     strPrefix.clear();
-
+    strBasePrefix.clear();
     for(ResourcePIterator itr = resources.begin();
         itr != resources.end(); itr++)
     {
