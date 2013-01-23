@@ -459,30 +459,13 @@ void ApplicationWindow::onPaste(void)
     for(itr=copiedItems.begin(); itr<copiedItems.end(); itr++)
     {
         ModuleInterface imod((*itr)->getModule());
-        ModuleInterface* pIMod = NULL;
-        for(int i=0; i<application->imoduleCount(); i++)
-            if(strcmp(application->getImoduleAt(i).getTag(), (*itr)->getModule()->getLabel()) == 0)
-            {
-                pIMod = &(application->getImoduleAt(i));
-                break;
-            }
-        if(pIMod)
-            imod.setParam(pIMod->getParam());
-
         Module* module = manager.getKnowledgeBase()->addIModuleToApplication(application, imod, true);
         if(module)
         {
-            ModuleInterface* pIModule = NULL;
-            // updating prefix of imoduld and module
-            for(int i=0; i<application->imoduleCount(); i++)
-                if(strcmp(application->getImoduleAt(i).getTag(), module->getLabel()) == 0)
-                {
-                    pIModule = &(application->getImoduleAt(i));
-                    pIModule->setPrefix(string(string("/")+module->getLabel()).c_str());
-                    break;
-                }                    
-            module->setPrefix(string(string("/")+module->getLabel()).c_str());
-
+            string strPrefix = string("/") + module->getLabel();
+            module->setBasePrefix(strPrefix.c_str());
+            string strAppPrefix = application->getBasePrefix();
+            manager.getKnowledgeBase()->setModulePrefix(module, (strAppPrefix+module->getBasePrefix()).c_str(), false);
             // copying arguments
             for(int i=0; i<(*itr)->getModule()->argumentCount(); i++)
             {
