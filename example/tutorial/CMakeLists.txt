@@ -16,8 +16,8 @@ PROJECT(run_fakebot)
 SET(ENABLE_fakebot TRUE CACHE BOOLEAN "we want to use fakebot")
 
 # Search for source code.
-FILE(GLOB_RECURSE folder_source *.cpp *.cc *.c)
-FILE(GLOB_RECURSE folder_header *.h)
+SET(folder_source fakebot/FakeBot.cpp adder.cpp add_fakebot.cpp yarpdev.cpp)
+SET(folder_header fakebot/FakeBot.h adder.h)
 SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 

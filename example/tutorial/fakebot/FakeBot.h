@@ -342,5 +342,11 @@ public:
         *st = 0;
         return true;
     }
+
+    virtual bool getAmpStatus(int k, int *v) {
+        *v=0;
+        return true;
+    }
+
 };
 
