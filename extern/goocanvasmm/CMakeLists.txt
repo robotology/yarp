@@ -118,9 +118,9 @@ set(goocanvasmm_HDRS
 
 add_library(YARP_goocanvasmm STATIC ${goocanvasmm_SRCS})
 
-if(WIN32)
+if(MSVC)
     add_definitions(/wd4099 /wd4250 /wd4520 /wd4805)
-endif(WIN32)
+endif(MSVC)
 
 if(UNIX)
     set_target_properties(YARP_goocanvasmm PROPERTIES COMPILE_FLAGS -fPIC)

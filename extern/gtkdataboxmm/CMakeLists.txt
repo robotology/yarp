@@ -62,9 +62,9 @@ set(gtkdataboxmm_HDRS
 
 add_library(YARP_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
-if(WIN32)
+if(MSVC)
     add_definitions(/wd4250)
-endif(WIN32)
+endif(MSVC)
 
 if(UNIX)
     set_target_properties(YARP_gtkdataboxmm PROPERTIES COMPILE_FLAGS -fPIC)

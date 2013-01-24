@@ -47,9 +47,9 @@ set(gtkdatabox_HDRS
 
 add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})
 
-if(WIN32)
+if(MSVC)
     add_definitions(/wd4305 /wd4244)
-endif(WIN32)
+endif(MSVC)
 
 if(UNIX)
     set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC")
