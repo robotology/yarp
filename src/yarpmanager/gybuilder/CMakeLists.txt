@@ -8,12 +8,6 @@
 
 GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
-FIND_PACKAGE(GtkMM)
-IF (NOT GtkMM_FOUND)
-    MESSAGE(SEND_ERROR "GtkMM was not found but gyarpbuilder requires GtkMM.")
-ENDIF (NOT GtkMM_FOUND)
-
-
 FILE(GLOB folder_source src/*.cpp)
 FILE(GLOB folder_header include/*.h)
 source_group("Source Files" FILES ${folder_source})
@@ -31,14 +25,27 @@ INCLUDE_DIRECTORIES(../libymanager/include)
 
 # GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES
 
-IF (WIN32 AND NOT CYGWIN)
-    ADD_EXECUTABLE(gyarpbuilder ${folder_source} ${folder_header})
-    TARGET_LINK_LIBRARIES(gyarpbuilder YARP_init YARP_OS YARP_manager ${GtkMM_LIBRARIES} ${GooCanvasMM_LIBRARIES})
-ELSE (WIN32 AND NOT CYGWIN)
-    LINK_DIRECTORIES(${GTKMM_LIBRARY_DIRS})
-    ADD_EXECUTABLE(gyarpbuilder ${folder_source} ${folder_header})
-    TARGET_LINK_LIBRARIES(gyarpbuilder YARP_init YARP_OS YARP_manager ${GtkMM_LIBRARIES} ${GooCanvasMM_LIBRARIES})
-ENDIF (WIN32 AND NOT CYGWIN)
+ADD_EXECUTABLE(gyarpbuilder ${folder_source} ${folder_header})
+if(YARP_USE_GTK2)
+    target_link_libraries(gyarpbuilder YARP_init
+                                       YARP_OS
+                                       YARP_manager
+                                       ${GTK2_GTK_LIBRARY}
+                                       ${GTK2_GDK_LIBRARY}
+                                       ${GTK2_GLIB_LIBRARY}
+                                       ${GTK2_GTKMM_LIBRARY}
+                                       ${GTK2_GLIBMM_LIBRARY}
+                                       ${GTK2_GDKMM_LIBRARY}
+                                       ${GTK2_ATKMM_LIBRARY}
+                                       ${GTK2_SIGC++_LIBRARY}
+                                       ${GooCanvasMM_LIBRARIES})
+else(YARP_USE_GTK2)
+    target_link_libraries(gyarpbuilder YARP_init
+                                       YARP_OS
+                                       YARP_manager
+                                       ${GtkMM_LIBRARIES}
+                                       ${GooCanvasMM_LIBRARIES})
+endif(YARP_USE_GTK2)
 
 INSTALL(TARGETS gyarpbuilder COMPONENT utilities DESTINATION bin)
 
