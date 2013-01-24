@@ -40,7 +40,7 @@ public:
         terminate = true;}
     bool threadInit();
     void run() {
-        while (!terminate) {sleep(1);}
+        while (!terminate) {Time::delay(1);}
     }
     void threadRelease();
 };
