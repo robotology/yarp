@@ -1,7 +1,7 @@
 2013-01-22  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Companion.cpp, src/carriers/tcpros_carrier/RosType.cpp, src/libYARP_sig/src/SoundFile.cpp, src/modules/urbtc/UrbtcControl.cpp:
-	fixes from DonChunior for some resource leaks [thanks DonChunior]
+	fixes from DonChunior for some resource leaks [thanks Domenic Laritz]
 
 2013-01-11  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 	* conf/YarpOptions.cmake, conf/YarpSystemCheck.cmake: Always
