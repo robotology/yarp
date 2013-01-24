@@ -23,7 +23,7 @@ IF (ACE_FOUND)
   LINK_LIBRARIES(${YARP_LIBRARIES} ${ACE_LIBRARIES})
   ADD_DEFINITIONS(${YARP_DEFINITIONS})
 
-  ADD_LIBRARY(yarp_serial SerialDeviceDriver.cpp SerialDeviceDriver.h)
+  YARP_ADD_PLUGIN(yarp_serial SerialDeviceDriver.cpp SerialDeviceDriver.h)
 
 ELSE (ACE_FOUND)
 

@@ -14,7 +14,7 @@ IF (WIN32)
 
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})
 
-  ADD_LIBRARY(jrkerr JrkerrMotionControl.cpp nmccom.cpp picservo.cpp sio_util.cpp JrkerrMotionControl.h nmccom.h picservo.h sio_util.h)
+  YARP_ADD_PLUGIN(jrkerr JrkerrMotionControl.cpp nmccom.cpp picservo.cpp sio_util.cpp JrkerrMotionControl.h nmccom.h picservo.h sio_util.h)
   TARGET_LINK_LIBRARIES(jrkerr ${YARP_LIBRARIES})
 
 ELSE (WIN32)

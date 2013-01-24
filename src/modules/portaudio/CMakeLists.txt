@@ -20,7 +20,7 @@ IF (PortAudio_FOUND)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${PortAudio_INCLUDE_DIR})
   LINK_LIBRARIES(${PortAudio_LIBRARIES})
 
-  ADD_LIBRARY(yarp_portaudio PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
+  YARP_ADD_PLUGIN(yarp_portaudio PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
 
 ELSE (PortAudio_FOUND)
 

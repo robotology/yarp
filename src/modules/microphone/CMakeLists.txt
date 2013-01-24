@@ -22,7 +22,7 @@ IF (UNIX OR WIN32)
   INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
   LINK_LIBRARIES(${YARP_LIBRARIES})
 
-  ADD_LIBRARY(yarp_microphone ${SYS}MicrophoneDeviceDriver.cpp MicrophoneDeviceDriver.h)
+  YARP_ADD_PLUGIN(yarp_microphone ${SYS}MicrophoneDeviceDriver.cpp MicrophoneDeviceDriver.h)
 
 ELSE (UNIX OR WIN32)
 

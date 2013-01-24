@@ -28,7 +28,7 @@ IF (NOT SKIP_ffmpeg)
       LINK_LIBRARIES(ws2_32)
     ENDIF (MINGW)
 
-    ADD_LIBRARY(yarp_ffmpeg FfmpegGrabber.cpp FfmpegWriter.cpp FfmpegGrabber.h FfmpegWriter.h ffmpeg_api.h ffmpeg_api.cpp)
+    YARP_ADD_PLUGIN(yarp_ffmpeg FfmpegGrabber.cpp FfmpegWriter.cpp FfmpegGrabber.h FfmpegWriter.h ffmpeg_api.h ffmpeg_api.cpp)
 
   ELSE (FFMPEG_FOUND)
 
