@@ -24,7 +24,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-#if YARP_USE_STL_STRING
+#ifdef YARP_USE_STL_STRING
 //#define YARP_STRSTR(haystack,needle) haystack.find(needle)
 #define YARP_STRINIT(len) ((size_t) len),0
 #else

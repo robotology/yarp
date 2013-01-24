@@ -20,7 +20,7 @@
 #  define YARP_USE_STL_STRING 1
 #endif
 
-#if YARP_USE_STL_STRING
+#ifdef YARP_USE_STL_STRING
 
 #include <string>
 namespace yarp {
