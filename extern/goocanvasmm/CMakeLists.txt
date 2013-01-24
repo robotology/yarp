@@ -119,7 +119,7 @@ set(goocanvasmm_HDRS
 add_library(YARP_goocanvasmm STATIC ${goocanvasmm_SRCS})
 
 if(MSVC)
-    add_definitions(/wd4099 /wd4250 /wd4520 /wd4805)
+    add_definitions(/wd4099 /wd4250 /wd4520 /wd4805 /vd2)
 endif(MSVC)
 
 if(UNIX)
