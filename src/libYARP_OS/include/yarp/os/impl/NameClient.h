@@ -15,6 +15,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/NameStore.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
     namespace os {
@@ -248,6 +249,10 @@ public:
         return resourceFinder;
     }
 
+    Property& getPluginState() {
+        return pluginState;
+    }
+
 private:
     NameClient();
 
@@ -270,7 +275,8 @@ private:
     bool reportSaveScan;
     bool isSetup;
     NameStore *altStore;
-    ResourceFinder resourceFinder;
+    yarp::os::ResourceFinder resourceFinder;
+    yarp::os::Property pluginState;
 
     static NameClient *instance;
 
