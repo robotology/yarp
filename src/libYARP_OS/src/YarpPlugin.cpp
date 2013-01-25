@@ -13,8 +13,11 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/String.h>
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -46,7 +49,7 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
                   dll_name.c_str(),fn_name.c_str());
     bool ok = factory.open(dll_name.c_str(),fn_name.c_str());
     if (verbose) {
-        fprintf(stderr,"Trying to find: [lib]%s.so/dll/... containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok?"found":"not found");
+        fprintf(stderr,"Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok?"found":"not found");
     }
     if (ok) {
         YARP_SPRINTF2(impl::Logger::get(),debug,
@@ -61,6 +64,20 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
 bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
     YARP_SPRINTF3(impl::Logger::get(),debug,"Plugin [name: %s] [dll: %s] [fn: %s]",
                   name.c_str(),dll_name.c_str(),fn_name.c_str());
+    if (selector!=NULL && name != "") {
+        // we may have a YARP-specific search path available,
+        // and a proper name for the DLL
+        Bottle paths = selector->getSearchPath();
+        for (int i=0; i<paths.size(); i++) {
+            Searchable& options = paths.get(i);
+            ConstString path = options.find("path").asString();
+            ConstString ext = options.find("extension").asString();
+            ConstString prefix = options.find("prefix").asString();
+            ConstString full = path + "/" + prefix + name + ext;
+            bool ok = subopen(factory,full,(fn_name=="")?name:fn_name);
+            if (ok) return true;
+        }
+    }
     if (dll_name!=""||fn_name!="") {
         return open(factory,dll_name, fn_name);
     }
@@ -121,41 +138,68 @@ void YarpPluginSettings::reportFailure() const {
 }
 
 
-/*
-
-  Config files give mapping between names or byte sequences and libraries - but where should they be, if not installed?
-  Could try relative to user's binary.  YARP_STUFF: "/" "/etc/yarp/plugins" "/etc/yarp"
-
- */
-Bottle YarpPluginSelector::listPlugins() {
-    Bottle result;
-    ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
-    if (!rf.isConfigured()) {
-        rf.configure(0,NULL);
-    }
-    Property config;
-    ConstString target = "etc/yarp/plugins";
-    ConstString found = rf.findFile(target);
-    if (found=="") {
-        target = "yarp/plugins";
-        found = rf.findFile(target);
-        if (found == "") {
-            target = "plugins";
-            found = rf.findFile(target);
+void YarpPluginSelector::scan() {
+    YARP_SPRINTF0(Logger::get(),
+                  debug,
+                  "Scanning. I'm scanning. I hope you like scanning too.");
+    config.clear();
+    plugins.clear();
+    search_path.clear();
+    NetworkBase::lock();
+    Property& state = NameClient::getNameClient().getPluginState();
+    config = state;
+    NetworkBase::unlock();
+    bool need_scan = true;
+    if (config.check("last_update_time")) {
+        if (Time::now()-config.find("last_update_time").asDouble()<5) {
+            need_scan = false;
         }
     }
-    if (found!="") {
-        target = found;
+    if (need_scan) {
+        NetworkBase::lock();
+        ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
+        if (!rf.isConfigured()) {
+            rf.configure(0,NULL);
+        }
+        rf.setQuiet(true);
+        ConstString target = "etc/yarp/plugins";
+        ConstString found = rf.findFile(target);
+        if (found=="") {
+            target = "yarp/plugins";
+            found = rf.findFile(target);
+            if (found == "") {
+                target = "plugins";
+                found = rf.findFile(target);
+            }
+        }
+        if (found!="") {
+            target = found;
+
+            YARP_SPRINTF0(Logger::get(),
+                          debug,
+                          "Loading configuration files related to plugins.");
+            config.fromConfigFile(target);
+        } else {
+            YARP_SPRINTF0(Logger::get(),
+                          debug,
+                          "Plugin directory not found");
+        }
+        config.put("last_update_time",Time::now());
+        state = config;
+        NetworkBase::unlock();
     }
-    config.fromConfigFile(target);
-    Bottle plugins = config.findGroup("plugin").tail();
-    for (int i=0; i<plugins.size(); i++) {
-        ConstString plugin_name = plugins.get(i).asString();
+    Bottle lst = config.findGroup("plugin").tail();
+    for (int i=0; i<lst.size(); i++) {
+        ConstString plugin_name = lst.get(i).asString();
         Bottle group = config.findGroup(plugin_name);
         if (select(group)) {
-            result.addList() = group;
+            plugins.addList() = group;
         }
     }
-    return result;
+    lst = config.findGroup("search").tail();
+    for (int i=0; i<lst.size(); i++) {
+        ConstString search_name = lst.get(i).asString();
+        Bottle group = config.findGroup(search_name);
+        search_path.addList() = group;
+    }
 }
-

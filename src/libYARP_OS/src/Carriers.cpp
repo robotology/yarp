@@ -25,7 +25,7 @@
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/YarpPlugin.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -62,49 +62,32 @@ static bool matchCarrier(const Bytes *header, Bottle& code) {
     return success;
 }
 
-static bool checkForCarrier(const Bytes *header, const char *fname) {
-    Property config;
-    config.fromConfigFile(fname);
-    Bottle plugins = config.findGroup("plugin").tail();
-    for (int i=0; i<plugins.size(); i++) {
-        ConstString name = plugins.get(i).asString();
-        Bottle group = config.findGroup(name);
-        Bottle code = group.findGroup("code").tail();
-        if (matchCarrier(header,code)) {
-            ConstString dll_name = group.find("library").asString();
-            ConstString fn_name = group.find("part").asString();
-            if (NetworkBase::registerCarrier(fn_name.c_str(),
-                                             dll_name.c_str())) {
-                return true;
-            }
+static bool checkForCarrier(const Bytes *header, Searchable& group) {
+    Bottle code = group.findGroup("code").tail();
+    if (matchCarrier(header,code)) {
+        ConstString dll_name = group.find("library").asString();
+        ConstString fn_name = group.find("part").asString();
+        if (NetworkBase::registerCarrier(fn_name.c_str(),
+                                         dll_name.c_str())) {
+            return true;
         }
     }
     return false;
 }
 
 static bool scanForCarrier(const Bytes *header) {
-    bool success = false;
-    ConstString dirname = "/etc/yarp/carriers";
-    ACE_DIR *dir = ACE_OS::opendir(dirname.c_str());
-    if (!dir) {
-        YARP_SPRINTF0(Logger::get(),debug,"Could not find /etc/yarp/carriers");
-        return false;
-    }
-    struct YARP_DIRENT *ent = YARP_readdir(dir);
-    while (ent) {
-        ConstString name = ent->d_name;
-        ent = ACE_OS::readdir(dir);
-        int len = (int)name.length();
-        if (len<4) continue;
-        if (name.substr(len-4)!=".ini") continue;
-        if (checkForCarrier(header,(dirname + "/" + name).c_str())) {
-            success = true;
-            break;
+    YARP_SPRINTF0(Logger::get(),
+                  debug,
+                  "Scanning for a carrier by header.");
+    YarpPluginSelector selector;
+    selector.scan();
+    Bottle lst = selector.getSelectedPlugins();
+    for (int i=0; i<lst.size(); i++) {
+        if (checkForCarrier(header,lst.get(i))) {
+            return true;
         }
     }
-    YARP_closedir(dir);
-    dir = NULL;
-    return success;
+    return false;
 }
 
 Carriers::Carriers() {
@@ -181,10 +164,22 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
             }
         }
     }
-    YARP_SPRINTF1(Logger::get(),
-                  error,
-                  "Could not find carrier \"%s\"", 
-                  (name!=NULL)?name->c_str():"[bytes]");;
+    if (name==NULL) {
+        String txt;
+        for (int i=0; i<(int)header->length(); i++) {
+            txt += NetType::toString(header->get()[i]);
+            txt += " ";
+        }
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "Could not find carrier with header: %s", 
+                      txt.c_str());
+    } else {
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "Could not find carrier \"%s\"", 
+                      (name!=NULL)?name->c_str():"[bytes]");;
+    }
     //throw IOException("Could not find carrier");
     return NULL;
 }

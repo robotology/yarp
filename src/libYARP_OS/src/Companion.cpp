@@ -2020,9 +2020,10 @@ String Companion::version() {
 int Companion::cmdPlugin(int argc, char *argv[]) {
 #ifdef YARP_HAS_ACE
     if (argc!=1) {
-        printf("List of plugins:\n");
+        printf("List of runtime plugins:\n");
         YarpPluginSelector selector;
-        Bottle lst = selector.listPlugins();
+        selector.scan();
+        Bottle lst = selector.getSelectedPlugins();
         if (lst.size()==0) {
             printf("None found.\n");
         }
@@ -2030,9 +2031,16 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
             Value& options = lst.get(i);
             ConstString name = options.check("name",Value("untitled")).asString();
             ConstString kind = options.check("type",Value("unknown type")).asString();
-            printf("\n");
-            printf("%s %s\n", kind.c_str(), name.c_str());
-            printf("  %s\n", options.toString().c_str());
+            SharedLibraryFactory lib;
+            YarpPluginSettings settings(selector,options,name);
+            settings.open(lib);
+            ConstString location = lib.getName().c_str();
+            if (lib.isValid()) {
+                printf("\n");
+                printf("%s %s\n", kind.c_str(), name.c_str());
+                printf("  %s\n", options.toString().c_str());
+                printf("  found by linking to %s\n", lib.getName().c_str());
+            }
         }
 
         return 1;

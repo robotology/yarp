@@ -19,21 +19,13 @@
 
 #include <yarp/dev/Drivers.h>
 
-//#include <ace/OS.h>
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/Logger.h>
 
-/*
-#include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_unistd.h>
-#include <ace/OS_NS_signal.h>
-#include <ace/Vector_T.h>
-#include <stdio.h>
-#include <stdlib.h>
-*/
+#include <yarp/os/YarpPlugin.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -41,7 +33,7 @@ using namespace std;
 
 Drivers Drivers::instance;
 
-class DriversHelper {
+class DriversHelper : public YarpPluginSelector {
 public:
     PlatformVector<DriverCreator *> delegates;
 
@@ -53,11 +45,17 @@ public:
         delegates.clear();
     }
 
+    virtual bool select(Searchable& options) {
+        return options.check("type",Value("none")).asString() == "device";
+    }
+
     ConstString toString() {
         ConstString s;
+        Property done;
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
             ConstString name = delegates[i]->getName();
+            done.put(name,1);
             ConstString wrapper = delegates[i]->getWrapper();
             s += "Device \"";
             s += delegates[i]->getName();
@@ -77,6 +75,48 @@ public:
             }
             s += "\n";
         }
+
+        scan();
+        Bottle lst = getSelectedPlugins();
+        for (int i=0; i<lst.size(); i++) {
+            Value& prop = lst.get(i);
+            ConstString name = prop.check("name",Value("untitled")).asString();
+            if (done.check(name)) continue;
+
+            SharedLibraryFactory lib;
+            YarpPluginSettings settings(*this,prop,name);
+            settings.open(lib);
+            ConstString location = lib.getName().c_str();
+            if (location=="") continue;
+
+            ConstString cxx = prop.check("cxx",Value("unknown")).asString();
+            ConstString wrapper = prop.check("wrapper",Value("unknown")).asString();
+            s += "Device \"";
+            s += name;
+            s += "\"";
+            s += ",";
+            s += " available on request (found in ";
+            s += location;
+            s += " library)";
+            if (cxx!="unknown") {
+                s += ", C++ class ";
+                s += cxx;
+                s += "  ";
+            }
+            if (wrapper=="") {
+                s += "no network wrapper known";
+            } else if (wrapper=="unknown") {
+                //s += "network wrapper unknown";
+            } else if (wrapper!=name) {
+                s += "wrapped by \"";
+                s += delegates[i]->getWrapper();
+                s += "\"";
+            } else {
+                s += "is a network wrapper.";
+            }
+            s += "\n";            
+        }
+
         return s;
     }
 
@@ -124,20 +164,30 @@ public:
         settings.dll_name = dll_name;
         settings.fn_name = fn_name;
         settings.verbose = verbose;
-        if (plugin.open(settings)) {
-            plugin.initialize(dev);
-        }
+        init();
     }
 
     StubDriver(const char *name, bool verbose = true) {
         settings.name = name;
         settings.verbose = verbose;
-        if (plugin.open(settings)) {
-            plugin.initialize(dev);
-        }
+        init();
     }
 
     virtual ~StubDriver() {
+    }
+
+    void init() {
+        YarpPluginSelector selector;
+        selector.scan();
+        settings.selector = &selector;
+        ConstString name = settings.name;
+        if (name != "") {
+            settings.readFromSelector(name.c_str());
+        }
+        if (plugin.open(settings)) {
+            plugin.initialize(dev);
+            settings.dll_name = plugin.getFactory()->getName();
+        }
     }
 
     bool isValid() {

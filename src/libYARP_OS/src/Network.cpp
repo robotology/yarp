@@ -1004,18 +1004,26 @@ public:
     StubCarrier(const char *dll_name, const char *fn_name) {
         settings.dll_name = dll_name;
         settings.fn_name = fn_name;
-        settings.fn_ext = "_carrier";
-        if (plugin.open(settings)) {
-            plugin.initialize(car);
-        }
+        init();
     }
 
     StubCarrier(const char *name) {
         settings.name = name;
+        init();
+    }
+
+    void init() {
         settings.fn_ext = "_carrier";
-        plugin.open(settings);
+        YarpPluginSelector selector;
+        selector.scan();
+        settings.selector = &selector;
+        ConstString name = settings.name;
+        if (name != "") {
+            settings.readFromSelector(name.c_str());
+        }
         if (plugin.open(settings)) {
             plugin.initialize(car);
+            settings.dll_name = plugin.getFactory()->getName();
         }
     }
 
