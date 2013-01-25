@@ -1,3 +1,9 @@
+2013-01-25  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/libYARP_OS/src/ResourceFinder.cpp: add ~/.yarp/POLICY.ini to
+	ResourceFinder's default policy search path, when POLICY
+	environment flag not set.
+
 2013-01-22  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* src/libYARP_OS/src/Companion.cpp, src/carriers/tcpros_carrier/RosType.cpp, src/libYARP_sig/src/SoundFile.cpp, src/modules/urbtc/UrbtcControl.cpp:

@@ -18,11 +18,33 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
 #define RTARGET stderr
+
+
+static ConstString expandUserFileName(const char *fname) {
+    ConstString root = NetworkBase::getEnvironment("YARP_CONF");
+    ConstString home = NetworkBase::getEnvironment("HOME");
+    ConstString homepath = NetworkBase::getEnvironment("HOMEPATH");
+    ConstString conf = "";
+    if (root!="") {
+        conf = root + "/" + fname;
+    } else if (homepath!="") {
+        conf = NetworkBase::getEnvironment("HOMEDRIVE") + homepath + "\\yarp\\" + fname;
+    } else if (home!="") {
+        conf = home + "/.yarp/" + fname;
+    } else {
+        YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
+        ACE_OS::exit(1);
+    }
+    YARP_DEBUG(Logger::get(),(ConstString("Configuration file: ") + conf).c_str());
+    return conf;
+}
+
 
 class ResourceFinderHelper {
 private:
@@ -92,21 +114,32 @@ public:
             }
         }
         String checked = "";
+        String userConfig = expandUserFileName(ConstString(policyName) + ".ini").c_str();
         String rootConfig = String(root.c_str()) + "/" + policyName + ".ini";
         String altConfig = String("/etc/yarp/policies/") + policyName + ".ini";
 #ifndef YARP_NO_DEPRECATED
         String deprecatedConfig = String("/etc/") + policyName + ".ini"; // FIXME Deprecated
 #endif // YARP_NO_DEPRECATED
         bool ok = false;
-        if (root!="") {
-            if (verbose) {
-                fprintf(RTARGET,"||| loading policy from %s\n",
-                        rootConfig.c_str());
+        if (!ok) {
+            if (root!="") {
+                if (verbose) {
+                    fprintf(RTARGET,"||| loading policy from %s\n",
+                            rootConfig.c_str());
+                }
+                checked += " " + rootConfig;
+                ok = config.fromConfigFile(rootConfig.c_str(),false);
             }
-            checked += " " + rootConfig;
-            ok = config.fromConfigFile(rootConfig.c_str(),false);
         }
         if (!needEnv) {
+            if (!ok) {
+                if (verbose) {
+                    fprintf(RTARGET,"||| loading policy from %s\n",
+                            userConfig.c_str());
+                }
+                checked += " " + userConfig;
+                ok = config.fromConfigFile(userConfig.c_str(),false);
+            }
             if (!ok) {
                 if (verbose) {
                     fprintf(RTARGET,"||| loading policy from %s\n",
