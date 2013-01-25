@@ -23,7 +23,7 @@ IF (NOT SKIP_mpi_carrier)
   FIND_PACKAGE(YARP REQUIRED)
   INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
-  ADD_LIBRARY(yarp_mpi
+  YARP_ADD_PLUGIN(yarp_mpi
     src/MpiCarrier.cpp
     src/MpiComm.cpp
     src/MpiStream.cpp src/MpiP2PStream.cpp
@@ -52,7 +52,7 @@ IF (NOT SKIP_mpibcast_carrier)
   FIND_PACKAGE(YARP REQUIRED)
   INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
-  ADD_LIBRARY(yarp_mpibcast
+  YARP_ADD_PLUGIN(yarp_mpibcast
     src/MpiCarrier.cpp src/MpiBcastCarrier.cpp
     src/MpiComm.cpp
     src/MpiStream.cpp src/MpiBcastStream.cpp
