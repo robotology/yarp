@@ -42,6 +42,23 @@
 ## Skip this whole file if it has already been included
 if(NOT COMMAND YARP_END_PLUGIN_LIBRARY)
 
+## Prepare path information for the benefit of clients
+get_target_property(YARP_LIBRARY_PATH YARP_OS LOCATION)
+get_target_property(YARP_LIBRARY_TYPE YARP_OS TYPE)
+string(REPLACE "STATIC_LIBRARY" "static" YARP_LIBRARY_TYPE ${YARP_LIBRARY_TYPE})
+string(REPLACE "SHARED_LIBRARY" "shared" YARP_LIBRARY_TYPE ${YARP_LIBRARY_TYPE})
+get_filename_component(YARP_LIBRARY_EXTENSION ${YARP_LIBRARY_PATH} EXT)
+get_filename_component(YARP_LIBRARY_PREFIX ${YARP_LIBRARY_PATH} NAME_WE)
+string(REPLACE "YARP_OS" "" YARP_LIBRARY_PREFIX ${YARP_LIBRARY_PREFIX})
+get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} ABSOLUTE)
+get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
+configure_file(${CMAKE_SOURCE_DIR}/conf/template/YarpPluginPath.cmake
+               ${CMAKE_BINARY_DIR}/etc/yarp/plugins/path.ini @ONLY IMMEDIATE)
+set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+configure_file(${CMAKE_SOURCE_DIR}/conf/template/YarpPluginPath.cmake
+               ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY IMMEDIATE)
+install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION etc/yarp/plugins)
+
 
 #########################################################################
 # YARP_BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
