@@ -49,6 +49,19 @@ public:
 
     /**
      *
+     * Request that information be suppressed from the console.  By
+     * default ResourceFinder will print messages if it fails to find
+     * files, for example.
+     *
+     * @param quiet suppress printing of information
+     *
+     * @return true iff information will be suppressed
+     *
+     */
+    bool setQuiet(bool quiet = true);
+
+    /**
+     *
      * Sets up the finder.  The policyName is used to find
      * a file containing the default policy for searching
      * for resource files.  Policy can affect the environment

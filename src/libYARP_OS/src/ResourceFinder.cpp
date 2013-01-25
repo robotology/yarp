@@ -53,9 +53,11 @@ private:
     yarp::os::ConstString configFilePath;
     yarp::os::ConstString policyName;
     bool verbose;
+    bool quiet;
 public:
     ResourceFinderHelper() {
         verbose = false;
+        quiet = false;
     }
 
     bool addAppName(const char *appName) {
@@ -185,14 +187,18 @@ public:
         }
         */
         if (!ok) {
-            fprintf(RTARGET,"||| failed to load policy from%s\n",
-                    checked.c_str());
+            if (!quiet) {
+                fprintf(RTARGET,"||| failed to load policy from%s\n",
+                        checked.c_str());
+            }
             return false;
         }
 
         // currently only support "capability" style configuration
         if (config.check("style",Value("")).asString()!="capability") {
-            fprintf(RTARGET,"||| policy \"style\" can currently only be \"capability\"\n");
+            if (!quiet) {
+                fprintf(RTARGET,"||| policy \"style\" can currently only be \"capability\"\n");
+            }
             return false;
         }
 
@@ -415,13 +421,20 @@ public:
             if (str!="") return str;
         }
 
-        fprintf(RTARGET,"||| did not find %s\n", name);
+        if (!quiet) {
+            fprintf(RTARGET,"||| did not find %s\n", name);
+        }
         return "";
     }
 
     bool setVerbose(bool verbose) {
         this->verbose = verbose;
         return this->verbose;
+    }
+
+    bool setQuiet(bool quiet) {
+        this->quiet = quiet;
+        return this->quiet;
     }
 
     bool exists(const char *fname, bool isDir) {
@@ -540,6 +553,10 @@ yarp::os::ConstString ResourceFinder::findPath() {
 
 bool ResourceFinder::setVerbose(bool verbose) {
     return HELPER(implementation).setVerbose(verbose);
+}
+
+bool ResourceFinder::setQuiet(bool quiet) {
+    return HELPER(implementation).setQuiet(quiet);
 }
 
 
