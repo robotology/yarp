@@ -17,7 +17,6 @@
 #include "localbroker.h"
 
 #include <string>
-#include <sstream>
 
 class YarpdevLocalBroker: public LocalBroker
 {
@@ -29,7 +28,7 @@ public:
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv ) {
 
-            ostringstream strDevParam;
+            OSTRINGSTREAM strDevParam;
             std::string strParam;
             std::string strCmd;
             if(szcmd) strCmd = szcmd;
@@ -51,7 +50,7 @@ public:
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv ) {
 
-            ostringstream strDevParam;
+            OSTRINGSTREAM strDevParam;
             std::string strParam;
             std::string strCmd;
             if(szcmd) strCmd = szcmd;

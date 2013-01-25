@@ -60,7 +60,7 @@ bool Executable::initialize(void)
     semInitialize.post();
     if(!ret)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"cannot initialize broker. : ";
         if(broker->error())
             msg<<broker->error();

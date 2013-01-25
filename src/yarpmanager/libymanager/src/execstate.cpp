@@ -171,7 +171,7 @@ void Ready::startModule(void)
 
         if(timeout(base, maxTimeout))
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"cannot run "<<executable->getCommand()<<" on "<<executable->getHost();
             msg<<" : Timeout while waiting for some resources.";
             logger->addError(msg);
@@ -184,7 +184,7 @@ void Ready::startModule(void)
 
     if(!executable->getBroker()->start())
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"cannot run "<<executable->getCommand()<<" on "<<executable->getHost();
         if(executable->getBroker()->error())
             msg<<" : "<<executable->getBroker()->error();
@@ -259,7 +259,7 @@ void Connecting::connectAllPorts(void)
             if( !executable->getBroker()->connect((*itr).from(), (*itr).to(), 
                                                  (*itr).carrier()) )
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"cannot connect "<<(*itr).from() <<" to "<<(*itr).to();
                 if(executable->getBroker()->error())
                     msg<<" : "<<executable->getBroker()->error();
@@ -370,7 +370,7 @@ void Dying::stopModule(void)
     ErrorLogger* logger = ErrorLogger::Instance();
     if(!executable->getBroker()->stop())
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"cannot stop "<<executable->getCommand()<<" on "<<executable->getHost();
         if(executable->getBroker()->error())
             msg<<" : "<<executable->getBroker()->error();
@@ -390,7 +390,7 @@ void Dying::killModule(void)
     ErrorLogger* logger = ErrorLogger::Instance();
     if(!executable->getBroker()->kill())
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"cannot kill "<<executable->getCommand()<<" on "<<executable->getHost();
         if(executable->getBroker()->error())
             msg<<" : "<<executable->getBroker()->error();
@@ -417,7 +417,7 @@ void Dying::disconnectAllPorts(void)
         {
             if( !executable->getBroker()->disconnect((*itr).from(), (*itr).to()) )
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"cannot disconnect "<<(*itr).from() <<" to "<<(*itr).to();
                 if(executable->getBroker()->error())
                     msg<<" : "<<executable->getBroker()->error();

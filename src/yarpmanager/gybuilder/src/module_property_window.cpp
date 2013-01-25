@@ -412,7 +412,7 @@ void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
             if(compareString(m_pModule->getBroker(), "local") &&
                new_text.size() && (new_text != "localhost")) 
             {    
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<new_text.c_str()<<" cannot be used with local deployer!";
                 logger->addWarning(msg);
                 m_pParent->reportErrors();
@@ -438,7 +438,7 @@ void ModulePropertyWindow::updateParamteres()
     // updating parameters
     typedef Gtk::TreeModel::Children type_children;
     type_children children = m_refTreeModel->children();
-    ostringstream strParams;
+    OSTRINGSTREAM strParams;
     Glib::ustring strName;
     for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
     {

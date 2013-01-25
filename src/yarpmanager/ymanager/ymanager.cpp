@@ -14,6 +14,13 @@
 #include "application.h"
 #include "ymm-dir.h"
 
+/*
+ * TODO: using stringstream should be avoided to keep 
+ *  the compatibility with GUI
+ */
+#include <sstream>
+
+
 #include <yarp/os/ResourceFinder.h>
 
 using namespace yarp::os;
@@ -212,22 +219,6 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     cout<<endl<<OKGREEN<<LOGO_MESSAGE<<ENDC<<endl;
     cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
-
-    /*
-    if(config.check("modpath"))
-        addModules(config.find("modpath").asString().c_str());
-
-    if(config.check("respath"))
-        addResources(config.find("respath").asString().c_str());
-
-    if(config.check("apppath"))
-    {
-        if(config.find("load_subfolders").asString() == "yes")
-            loadRecursiveApplications(config.find("apppath").asString().c_str());
-        else
-            addApplications(config.find("apppath").asString().c_str()); 
-    }
-    */
 
     if(config.check("modpath"))
     {
@@ -1010,8 +1001,6 @@ void YConsoleManager::which(void)
         cout<<INFO<<"("<<id++<<") ";
         cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
             cout<<" ["<<(*cnnitr).carrier()<<"]";
-        if((*cnnitr).owner())
-            cout<<" ["<<((Module*)(*cnnitr).owner())->getName()<<"]";  
         cout<<ENDC<<endl;
     }       
     

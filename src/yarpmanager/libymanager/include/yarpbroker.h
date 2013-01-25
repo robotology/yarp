@@ -14,7 +14,6 @@
 #define __YARPBROKER__
 
 #include <string>
-#include <sstream>
 #include <iostream>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>

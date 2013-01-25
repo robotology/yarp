@@ -86,7 +86,7 @@ bool XmlAppLoader::init(void)
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
     {       
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
@@ -107,7 +107,7 @@ bool XmlAppLoader::init(void)
 /*  
     if(fileNames.empty())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"No xml application file found in "<<strPath;
         logger->addWarning(err);
         //return false;
@@ -169,7 +169,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     TiXmlDocument doc(szFile);
     if(!doc.LoadFile()) 
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
@@ -181,7 +181,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     TiXmlElement *root = doc.RootElement();
     if(!root)
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
@@ -190,7 +190,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     
     if(!compareString(root->Value(), "application"))
     {
-        //ostringstream err;
+        //OSTRINGSTREAM err;
         //err<<"File "<<szFile<<" has no tag <application>.";
         //logger->addError(err);
         return NULL;
@@ -200,7 +200,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Module from "<<szFile<<" has no name.";
         logger->addError(err);      
         //return NULL;
@@ -255,7 +255,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<ath->Row()<<".";
                 logger->addWarning(war);                                
@@ -279,7 +279,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<res->Row()<<".";
                 logger->addWarning(war);                                
@@ -352,7 +352,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         }
                         else
                         {
-                            ostringstream war;
+                            OSTRINGSTREAM war;
                             war<<"Unrecognized tag from "<<szFile<<" at line "\
                                <<res->Row()<<".";
                             logger->addWarning(war);                                
@@ -378,7 +378,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Module from "<<szFile<<" at line "\
                    <<mod->Row()<<" has not name tag.";
                 logger->addWarning(war);                                
@@ -420,7 +420,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Incomplete application tag from "<<szFile<<" at line "\
                    <<embApp->Row()<<". (no name)";
                 logger->addWarning(war);                                
@@ -516,7 +516,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Incomplete connection tag from "<<szFile<<" at line "\
                    <<cnn->Row()<<".";
                 logger->addWarning(war);                                

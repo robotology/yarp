@@ -78,7 +78,7 @@ bool XmlTempLoader::init(void)
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
     {       
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
@@ -152,7 +152,7 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
     TiXmlDocument doc(szFile);
     if(!doc.LoadFile()) 
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
@@ -164,7 +164,7 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
     TiXmlElement *root = doc.RootElement();
     if(!root)
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
@@ -182,7 +182,7 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
     TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Application from "<<szFile<<" has no name.";
         logger->addError(err);      
         //return NULL;

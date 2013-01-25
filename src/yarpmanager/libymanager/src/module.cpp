@@ -246,7 +246,7 @@ bool Module::setParam(const char* szParam)
         const char* szVal = getParamValue((*itr).getParam(), (*itr).isSwitch());
         if(!szVal)
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Error in parsing parameters of "<<getName() \
                 <<". ( '"<< (*itr).getParam()<<"' is not correct. )";
             logger->addWarning(msg);

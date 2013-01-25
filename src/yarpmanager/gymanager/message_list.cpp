@@ -16,7 +16,6 @@
 
 #include "main_window.h"
 #include "message_list.h"
-#include <sstream>
 #include <iostream>
 #include <fstream>
 
@@ -98,7 +97,7 @@ MessagesList::~MessagesList()
 
 void MessagesList::addWarning( const char* warning)
 {
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"[WAR]:   "<<warning;
     Gtk::TreeModel::Row row = *(m_refListStore->append());
     row.set_value(0, Glib::ustring(msg.str()));
@@ -108,7 +107,7 @@ void MessagesList::addWarning( const char* warning)
 
 void MessagesList::addError(const char* error)
 {
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"[ERR]:   "<<error;
     Gtk::TreeModel::Row row = *(m_refListStore->append());
     row.set_value(0, Glib::ustring(msg.str()));
@@ -118,7 +117,7 @@ void MessagesList::addError(const char* error)
 
 void MessagesList::addMessage(const char* text)
 {
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<text;
     Gtk::TreeModel::Row row = *(m_refListStore->append());
     row.set_value(0, Glib::ustring(msg.str()));

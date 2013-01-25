@@ -316,7 +316,7 @@ bool Manager::prepare(bool silent)
                 broker = new LocalBroker;
             else
                 broker = new YarpBroker;
-            //ostringstream war;
+            //OSTRINGSTREAM war;
             //war<<"Deployer "<<strCurrentBroker<<" does not exist! (using default (yarprun) deployer)";
             //logger->addWarning(war);
             //broker = new YarpBroker;
@@ -398,7 +398,7 @@ bool Manager::updateConnection(unsigned int id, const char* from,
 
     if(connections[id].owner())
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Connection ["<<connections[id].from()<<" -> ";
         msg<<connections[id].to()<<"] cannot be updated.";
         logger->addWarning(msg);
@@ -600,7 +600,7 @@ bool Manager::checkDependency(void)
         if(!(*itrRes)->getAvailability())
         {
             ret = false;
-            ostringstream err;
+            OSTRINGSTREAM err;
             err<<"Resource "<<(*itrRes)->getName()<<" is not available!";
             logger->addError(err);
         }
@@ -636,7 +636,7 @@ bool Manager::run(unsigned int id, bool async)
     while(!timeout(base, RUN_TIMEOUT))
         if(running(id)) return true;
 
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"Failed to run "<<runnables[id]->getCommand();
     msg<<" on "<<runnables[id]->getHost();
     msg<<". (State: "<<runnables[id]->state();
@@ -685,7 +685,7 @@ bool Manager::run(void)
         for(itr=runnables.begin(); itr!=runnables.end(); itr++)
             if((*itr)->state() != RUNNING)
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Failed to run "<<(*itr)->getCommand();
                 msg<<" on "<<(*itr)->getHost();
                 msg<<". (State: "<<(*itr)->state();
@@ -736,7 +736,7 @@ bool Manager::stop(unsigned int id, bool async)
     while(!timeout(base, STOP_TIMEOUT))
         if(!running(id)) return true;
 
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"Failed to stop "<<runnables[id]->getCommand();
     msg<<" on "<<runnables[id]->getHost();
     msg<<". (State: "<<runnables[id]->state();
@@ -766,7 +766,7 @@ bool Manager::stop(void)
             if( ((*itr)->state() != SUSPENDED) &&
                 ((*itr)->state() != DEAD))
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Failed to stop "<<(*itr)->getCommand();
                 msg<<" on "<<(*itr)->getHost();
                 msg<<". (State: "<<(*itr)->state();
@@ -802,7 +802,7 @@ bool Manager::kill(unsigned int id, bool async)
     while(!timeout(base, KILL_TIMEOUT))
         if(!running(id)) return true;
 
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"Failed to kill "<<runnables[id]->getCommand();
     msg<<" on "<<runnables[id]->getHost();
     msg<<". (State: "<<runnables[id]->state();
@@ -832,7 +832,7 @@ bool Manager::kill(void)
             if( ((*itr)->state() != SUSPENDED) &&
                 ((*itr)->state() != DEAD))
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Failed to kill "<<(*itr)->getCommand();
                 msg<<" on "<<(*itr)->getHost();
                 msg<<". (State: "<<(*itr)->state();
@@ -1105,7 +1105,7 @@ bool Manager::attachStdout(unsigned int id)
 
     if(!runnables[id]->getBroker()->attachStdout())
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Cannot attach to stdout of "<<runnables[id]->getCommand();
         msg<<" on "<<runnables[id]->getHost();
         msg<<". (State: "<<runnables[id]->state();

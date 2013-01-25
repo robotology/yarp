@@ -13,6 +13,147 @@
 #include "module.h"
 #include "application.h"
 #include "resource.h"
+#include <stdio.h>
+
+//#if defined(_MSC_VER) && (_MSC_VER == 1600)
+
+StrStream::StrStream(void) { }
+
+StrStream::StrStream(const std::string str) { 
+    dummyStr = str; 
+}
+
+StrStream::~StrStream() { }
+
+std::string StrStream::str(void) { 
+    return dummyStr; 
+} 
+
+StrStream& StrStream::operator<<(StrStream &oss) {
+    dummyStr += oss.str();
+    return *this;
+}
+
+StrStream& StrStream::operator<<(const std::string &str) {
+    dummyStr += str;
+    return *this;
+}
+
+StrStream& StrStream::operator<<(int n) {
+    char buff[64];
+    sprintf(buff, "%d", n);
+    dummyStr += std::string(buff);
+    return *this;
+}
+
+
+StrStream& StrStream::operator = (const char* sz) {
+    dummyStr = std::string(sz);
+    return *this;
+}
+
+StrStream& StrStream::operator = (char* sz) {
+    dummyStr = std::string(sz);
+    return *this;
+}
+
+StrStream& StrStream::operator = (const std::string &str) {
+    dummyStr = str;
+    return *this;
+}
+
+StrStream& StrStream::operator = (StrStream &oss) {
+    dummyStr = oss.str();
+    return *this;
+}
+
+StrStream& StrStream::operator = (int n) {
+    char buff[64];
+    sprintf(buff, "%d", n);
+    dummyStr = std::string(buff);
+    return *this;
+}
+
+std::ostream& operator << (std::ostream &os , StrStream& sstr)
+{
+    std::cout<<sstr.str();
+    return os;
+}
+
+//#endif
+
+
+/**
+ * Singleton class ErrorLogger
+ */  
+
+// Global static pointer used to ensure a single instance of the class.
+ErrorLogger* ErrorLogger::pInstance = NULL;  
+ 
+ErrorLogger* ErrorLogger::Instance(void)
+{
+    if (!pInstance)
+      pInstance = new ErrorLogger;
+    return pInstance;
+} 
+
+void ErrorLogger::addWarning(const char* szWarning) { 
+    if(szWarning) 
+        warnings.push_back(string(szWarning));
+}
+
+void ErrorLogger::addWarning(const string &str) { 
+    warnings.push_back(str);
+}
+
+void ErrorLogger::addWarning(OSTRINGSTREAM &stream) { 
+    addWarning(stream.str());   
+}
+
+void ErrorLogger::addError(const char* szError) {
+    if(szError) 
+        errors.push_back(string(szError));
+}
+
+void ErrorLogger::addError(const string &str) {
+    errors.push_back(str);
+}
+
+void ErrorLogger::addError(OSTRINGSTREAM &stream) {
+    addError(stream.str());
+}
+
+const char* ErrorLogger::getLastError(void) { 
+    if(errors.empty())
+        return NULL;
+    static string msg;
+    msg = errors.back();
+    errors.pop_back();
+    return msg.c_str();         
+}
+
+const char* ErrorLogger::getLastWarning(void) {
+    if(warnings.empty())
+        return NULL;
+    static string msg;
+    msg = warnings.back();
+    warnings.pop_back();
+    return msg.c_str(); 
+}
+
+void ErrorLogger::clear(void) { 
+    errors.clear(); warnings.clear(); 
+}
+
+int ErrorLogger::errorCount(void) {
+    return errors.size();
+}
+
+int ErrorLogger::warningCount(void) {
+
+    return warnings.size();
+}
+
 
 const string GRAPH_LEGEND =
 "{"
@@ -87,17 +228,6 @@ const string GRAPH_LEGEND =
 "    </TABLE>"
 "   >];"
 "}";
-
-
-// Global static pointer used to ensure a single instance of the class.
-ErrorLogger* ErrorLogger::pInstance = NULL;  
- 
-ErrorLogger* ErrorLogger::Instance(void)
-{
-    if (!pInstance)
-      pInstance = new ErrorLogger;
-    return pInstance;
-} 
 
 
 /*

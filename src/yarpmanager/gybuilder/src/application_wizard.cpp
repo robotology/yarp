@@ -15,11 +15,9 @@
 #include "main_window.h"
 #include "application_window.h"
 #include "application_wizard.h"
-//#include "main_window.h"
 
 #include "icon_res.h"
 #include "ymm-dir.h"
-#include <sstream>
 #include <iostream>
 #include <fstream>
 

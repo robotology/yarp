@@ -77,7 +77,7 @@ bool XmlResLoader::init(void)
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
     {       
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
@@ -99,7 +99,7 @@ bool XmlResLoader::init(void)
     /*
     if(fileNames.empty())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"No xml resource file found in "<<strPath;
         logger->addWarning(err);
         //return true;
@@ -180,7 +180,7 @@ bool XmlResLoader::parsXml(const char* szFile)
     TiXmlDocument doc(szFile);
     if(!doc.LoadFile()) 
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
@@ -191,7 +191,7 @@ bool XmlResLoader::parsXml(const char* szFile)
     TiXmlElement *root = doc.RootElement();
     if(!root)
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
@@ -201,7 +201,7 @@ bool XmlResLoader::parsXml(const char* szFile)
     if(!compareString(root->Value(), "resources"))
     {
         /*
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<szFile<<" is not a resource descriptor file.";
         logger->addWarning(msg);
         */
@@ -245,7 +245,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         os.setName(element->GetText());
                     else
                     {
-                        ostringstream war;
+                        OSTRINGSTREAM war;
                         war<<"Platform from "<<szFile<<" at line "\
                            <<comptag->Row()<<" has no name.";
                         logger->addWarning(war);                

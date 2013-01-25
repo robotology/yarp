@@ -93,7 +93,7 @@ ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested)
         port->set_property("y", top +i*PORT_SIZE + i*PORT_GAP);
         this->add_child(port);
         // adding module name
-        ostringstream str;
+        OSTRINGSTREAM str;
         str<<"I"<<i+1;
         Glib::RefPtr<Goocanvas::TextModel> text = Goocanvas::TextModel::create(str.str().c_str());
 #ifdef GLIBMM_PROPERTIES_ENABLED
@@ -113,7 +113,7 @@ ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested)
         port->set_property("x", w-3);
         port->set_property("y", top +i*PORT_SIZE + i*PORT_GAP);
         this->add_child(port);
-        ostringstream str;
+        OSTRINGSTREAM str;
         str<<"O"<<i+1;
         Glib::RefPtr<Goocanvas::TextModel> text = Goocanvas::TextModel::create(str.str().c_str());
 #ifdef GLIBMM_PROPERTIES_ENABLED

@@ -152,7 +152,7 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             */
 
             GraphicModel model = curMod.getModelBase();
-            ostringstream txt;
+            OSTRINGSTREAM txt;
             if(model.points.size()>0)
             {
                 txt<<"(Pos (x "<<model.points[0].x<<") "<<"(y "<<model.points[0].y<<"))"; 
@@ -183,7 +183,7 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             newApp->LinkEndChild(prefix);
 
             GraphicModel model = curApp.getModelBase();
-            ostringstream txt;
+            OSTRINGSTREAM txt;
             if(model.points.size()>0)
             {
                 txt<<"(Pos (x "<<model.points[0].x<<") "<<"(y "<<model.points[0].y<<"))"; 
@@ -223,7 +223,7 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             newConn->LinkEndChild(protocol);
             
             GraphicModel model = curConn.getModelBase();
-            ostringstream txt;
+            OSTRINGSTREAM txt;
             if(model.points.size()>0)
             {
                 txt<<"(Pos ";
@@ -243,7 +243,7 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
     bool ok=doc.SaveFile(app->getXmlFile());
     if (!ok && doc.Error())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"tinyXml error for file " << app->getXmlFile() <<" at line " << doc.ErrorRow() << ", column " << doc.ErrorCol() << ": " << doc.ErrorDesc();
         logger->addError(err);
         return false;

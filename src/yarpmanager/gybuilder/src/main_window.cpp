@@ -796,7 +796,7 @@ void MainWindow::syncApplicationList(void)
 
     if(cnt)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<cnt<<" "<<"applications are loaded successfully.";
         m_Statusbar.push(msg.str().c_str());
     }
@@ -844,7 +844,7 @@ void MainWindow::onMenuFileOpenGymanager()
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
     {
-        ostringstream strParam;
+        OSTRINGSTREAM strParam;
         if(m_config.check("modpath"))
             strParam<<" --modpath "<<m_config.find("modpath").asString().c_str();
         if(m_config.check("apppath"))
@@ -857,7 +857,7 @@ void MainWindow::onMenuFileOpenGymanager()
                          strParam.str().c_str(), NULL, NULL, NULL, NULL))
             if(!launcher.start() && strlen(launcher.error()))
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Error while launching gyarpmanager. "<<launcher.error();
                 logger->addError(msg);
                 reportErrors();
@@ -953,7 +953,7 @@ void MainWindow::onMenuFileNewMod()
                              fname.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
-                    ostringstream msg;
+                    OSTRINGSTREAM msg;
                     msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
@@ -1010,7 +1010,7 @@ void MainWindow::onMenuFileNewRes()
                              fname.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
-                    ostringstream msg;
+                    OSTRINGSTREAM msg;
                     msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
@@ -1256,7 +1256,7 @@ void MainWindow::onPAppMenuLoad()
                                  name.c_str(), NULL, NULL, NULL, NULL))
                     if(!launcher.start() && strlen(launcher.error()))
                     {
-                        ostringstream msg;
+                        OSTRINGSTREAM msg;
                         msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                         msg<<". "<<launcher.error();
                         logger->addError(msg);
@@ -1276,7 +1276,7 @@ void MainWindow::onPAppMenuLoad()
 
 void MainWindow::onPAppMenuRemove()
 {
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     Gtk::MessageDialog dialog("Removing!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
     dialog.set_secondary_text("Are you sure to remove this item?");
     if(dialog.run() != Gtk::RESPONSE_YES)
@@ -1799,7 +1799,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
                              name.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
-                    ostringstream msg;
+                    OSTRINGSTREAM msg;
                     msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
@@ -2037,7 +2037,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
     if(pAppWnd)
     {
         pAppWnd->grab_focus();
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         //msg<<"Current application: "<<pAppWnd->getApplicationName();
         msg<<"Current application: "<<pAppWnd->getApplication()->getXmlFile();
         m_Statusbar.push(msg.str());
@@ -2052,7 +2052,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
     }
     else if(pResWnd)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Current Resource: "<<pResWnd->getResourceName();
         m_Statusbar.push(msg.str());
 
@@ -2063,7 +2063,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
     }
     else if(pModWnd)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Current Module: "<<pModWnd->getModuleName();
         m_Statusbar.push(msg.str());
 

@@ -17,7 +17,6 @@
 #include "main_window.h"
 #include "application_window.h"
 #include "stdout_window.h"
-#include <sstream>
 #include <iostream>
 #include <fstream>
 

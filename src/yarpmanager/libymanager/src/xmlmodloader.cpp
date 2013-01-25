@@ -83,7 +83,7 @@ bool XmlModLoader::init(void)
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
     {       
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
@@ -105,7 +105,7 @@ bool XmlModLoader::init(void)
     /*
     if(fileNames.empty())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"No xml module file found in "<<strPath;
         logger->addWarning(err);
         //return true;
@@ -171,7 +171,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     TiXmlDocument doc(szFile);
     if(!doc.LoadFile()) 
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
@@ -183,7 +183,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     TiXmlElement *root = doc.RootElement();
     if(!root)    
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
@@ -193,7 +193,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     if(!compareString(root->Value(), "module"))
     {
         /*
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<szFile<<" is not a module descriptor file.";
         logger->addWarning(msg);
         */
@@ -204,7 +204,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
     TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Module from "<<szFile<<" has no name.";
         logger->addError(err);      
         //return NULL;
@@ -263,7 +263,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
             }                      
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<param->Row()<<".";
                 logger->addWarning(war);                                
@@ -296,7 +296,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<ath->Row()<<".";
                 logger->addWarning(war);                                
@@ -319,7 +319,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                     output.setName(element->GetText());
                 else
                 {
-                    ostringstream war;
+                    OSTRINGSTREAM war;
                     war<<"Output data from "<<szFile<<" at line "\
                        <<data->Row()<<" has no type.";
                     logger->addWarning(war);                
@@ -332,7 +332,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 }
                 else
                 {
-                    ostringstream war;
+                    OSTRINGSTREAM war;
                     war<<"Output data from "<<szFile<<" at line "\
                        <<data->Row()<<" has no port.";
                     logger->addWarning(war);                
@@ -354,7 +354,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                     input.setName(element->GetText());
                 else
                 {
-                    ostringstream war;
+                    OSTRINGSTREAM war;
                     war<<"Input data from "<<szFile<<" at line "\
                        <<data->Row()<<" has no type.";
                     logger->addWarning(war);                
@@ -367,7 +367,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                 }
                 else
                 {
-                    ostringstream war;
+                    OSTRINGSTREAM war;
                     war<<"Input data from "<<szFile<<" at line "\
                        <<data->Row()<<" has no port.";
                     logger->addWarning(war);                
@@ -528,7 +528,7 @@ Module* XmlModLoader::parsXml(const char* szFile)
                         }
                         else
                         {
-                            ostringstream war;
+                            OSTRINGSTREAM war;
                             war<<"yarp_port from "<<szFile<<" at line " <<comptag->Row()<<" has no name.";
                             logger->addWarning(war);
                         }                            

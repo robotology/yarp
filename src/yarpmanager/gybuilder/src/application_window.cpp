@@ -24,7 +24,6 @@
 #include "ext_port_model.h"
 #include "int_port_model.h"
 
-#include <sstream>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #define GRID_PATTERN_SIZE       15
@@ -193,7 +192,7 @@ bool ApplicationWindow::onClose(void)
 {
     if(m_bModified)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<getApplicationName()<<" has been modified.";
         Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_QUESTION,  Gtk::BUTTONS_NONE);
         dialog.set_secondary_text("Do you want to save it before closing?");
@@ -330,7 +329,7 @@ bool ApplicationWindow::onExportGraph(void)
 
 void ApplicationWindow::onDelete(void)
 {
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<getApplicationName()<<" has been modified.";
     Gtk::MessageDialog dialog("What's done cannot be undone!", false, Gtk::MESSAGE_QUESTION,  Gtk::BUTTONS_NONE);
     dialog.set_secondary_text("Do you still want to delete them?");
@@ -592,14 +591,14 @@ void ApplicationWindow::reportErrors(void)
         const char* err;
         while((err=logger->getLastError()))
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"("<<getApplicationName()<<") "<<err; 
             m_pParent->m_refMessageList->addError(msg.str().c_str());
         }
 
         while((err=logger->getLastWarning()))
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"("<<getApplicationName()<<") "<<err; 
             m_pParent->m_refMessageList->addWarning(msg.str().c_str());
         }

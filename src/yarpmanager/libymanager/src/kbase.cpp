@@ -85,9 +85,9 @@ bool KnowledgeBase::addApplication(Application* app, char* szAppName_)
             mapId[app->getName()] = 1;
         else
             mapId[app->getName()] = mapId[app->getName()] + 1;
-        ostringstream newlable;
+        OSTRINGSTREAM newlable;
         newlable<<app->getLabel()<<"("<<mapId[app->getName()]<<")";
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<app->getName()<<" from "<<app->getXmlFile()<<" already exists.";
         logger->addWarning(msg);
         app->setName(newlable.str().c_str());
@@ -99,7 +99,7 @@ bool KnowledgeBase::addApplication(Application* app, char* szAppName_)
 
     if(!kbGraph.addNode(app))
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Application "<<app->getName()<<" cannot be added to the graph.";
         logger->addError(msg);
         return false;
@@ -116,14 +116,14 @@ bool KnowledgeBase::addModule(Module* mod)
     mod->setLabel(mod->getName());
     if(kbGraph.hasNode(mod))
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Module "<<mod->getName()<<" already exists.";
         logger->addWarning(msg);
         return false;
     }
     if(!addModuleToGraph(kbGraph, mod))
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Module "<<mod->getName()<<" cannot be added to the graph.";
         logger->addError(msg);
         return false;
@@ -144,14 +144,14 @@ bool KnowledgeBase::addResource(GenericResource* res)
     res->setLabel(res->getName());
     if(kbGraph.hasNode(res))
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Resource "<<res->getName()<<" already exists.";
         logger->addWarning(msg);
         return false;
     }
     if(!kbGraph.addNode(res))
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Resource "<<res->getName()<<" cannot be added to the graph.";
         logger->addError(msg);
         return false;
@@ -324,7 +324,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
         ApplicationInterface interfaceApp = application->getIapplicationAt(i);
         if(string(interfaceApp.getName()) == string(application->getName()))
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Application "<<interfaceApp.getName()<<" cannot be called from itself.";
             logger->addWarning(msg);
         }
@@ -333,7 +333,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
             Application* repapp = dynamic_cast<Application*>(kbGraph.getNode(interfaceApp.getName()));
             if(!repapp)
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Application "<<interfaceApp.getName()<<" not found.";
                 logger->addWarning(msg);
             }
@@ -342,7 +342,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
                 
                 if(appList.find(string(interfaceApp.getName()))==appList.end())
                     appList[interfaceApp.getName()] = 1;
-                ostringstream newname;
+                OSTRINGSTREAM newname;
                 newname<<application->getName()<<":";
                 newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];
                 
@@ -416,7 +416,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
     if(application->resourcesCount())
     {
         MultiResource mres;
-        ostringstream strLabel;
+        OSTRINGSTREAM strLabel;
         strLabel<<application->getLabel()<<":MultipleResource";
         mres.setLabel(strLabel.str().c_str());
         mres.setName("MultipleResource");
@@ -592,7 +592,7 @@ const char* KnowledgeBase::getUniqueAppID(Application* parent, const char* szApp
 {
     if(appList.find(string(szAppName)) == appList.end())
         appList[szAppName] = 1;
-    ostringstream newname;
+    OSTRINGSTREAM newname;
     newname<<parent->getName()<<":";
     newname<<szAppName<<":"<<appList[szAppName];
     return newname.str().c_str();
@@ -608,7 +608,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
     ErrorLogger* logger  = ErrorLogger::Instance();
     if(string(interfaceApp.getName()) == string(application->getName()))
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Application "<<interfaceApp.getName()<<" cannot be called from itself.";
         logger->addWarning(msg);
     }
@@ -617,7 +617,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
         repapp = dynamic_cast<Application*>(kbGraph.getNode(interfaceApp.getName()));
         if(!repapp)
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Application "<<interfaceApp.getName()<<" not found.";
             logger->addWarning(msg);
         }
@@ -625,7 +625,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
         {            
             if(appList.find(string(interfaceApp.getName()))==appList.end())
                 appList[interfaceApp.getName()] = 1;
-            ostringstream newname;
+            OSTRINGSTREAM newname;
             newname<<application->getName()<<":";
             newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];            
             repapp = replicateApplication(tmpGraph, repapp, newname.str().c_str());
@@ -664,7 +664,7 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
 
     if(application->modList.find(string(mod.getName()))==application->modList.end())
         application->modList[mod.getName()] = 1;
-    ostringstream newname;
+    OSTRINGSTREAM newname;
     newname<<application->getLabel()<<":"<<mod.getName()<<":"<<application->modList[mod.getName()];
 
     Module* repmod = dynamic_cast<Module*>(kbGraph.getNode(mod.getName()));
@@ -830,7 +830,7 @@ bool KnowledgeBase::reasolveDependency(const char* szAppName,
     Application* app = dynamic_cast<Application*>(kbGraph.getNode(szAppName));
     if(!app)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Application "<<string(szAppName)<<" not found.";
         logger->addError(msg.str().c_str());
         mainApplication = NULL;
@@ -847,7 +847,7 @@ bool KnowledgeBase::reasolveDependency(Application* app,
 
     if(!kbGraph.hasNode(app))
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Application "<<app->getName()<<" not found.";
         logger->addError(msg.str().c_str());
         mainApplication = NULL;
@@ -1165,7 +1165,7 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
         {
             input = &(module->getInputAt(i));
             module->removeInput(*input);
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Input ";
             msg<<createDataLabel(module->getLabel(),
                                 input->getPort(), ":I");
@@ -1187,7 +1187,7 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
         {
             output = &(module->getOutputAt(i));
             module->removeOutput(*output);
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Output ";
             msg<<createDataLabel(module->getLabel(),
                                 output->getPort(), ":O");
@@ -1200,7 +1200,7 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
      * all multiple resources will be add as single MultiResource entity
      */
     MultiResource mres;
-    ostringstream strLabel;
+    OSTRINGSTREAM strLabel;
     strLabel<<module->getLabel()<<":MultipleResource";
     mres.setLabel(strLabel.str().c_str());
     mres.setName("MultipleResource");
@@ -1562,7 +1562,7 @@ bool KnowledgeBase::constrainSatisfied(Node* node,
     {
         if(!bSilent)
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Some resource dependencies of ";
             msg<<dynamic_cast<Module*>(resource->owner())->getName();
             msg<<" are not satisfied.";
@@ -1583,7 +1583,7 @@ bool KnowledgeBase::constrainSatisfied(Node* node, bool bAutoDependancy)
         case INPUTD: {
             if( ((InputData*)node)->isRequired() && node->isLeaf() )
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Unsatisfied constrain. ";
                 msg<<node->getLabel()<<" has no output candidate!";
                 logger->addWarning(msg);
