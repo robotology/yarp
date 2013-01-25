@@ -81,6 +81,7 @@ private:
 	int status;
     SharedLibraryClassApi api;
     int rct;
+    ConstString name;
 public:
 	enum {
 		STATUS_NONE,
@@ -102,6 +103,7 @@ public:
 	}
 
 	bool open(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+        name = "";
 		status = STATUS_NONE;
 		api.startCheck = 0;
 		if (!lib.open(dll_name)) {
@@ -121,6 +123,7 @@ public:
 			return false;
 		}
 		status = STATUS_OK;
+        name = dll_name;
 		return true;
     }
 
@@ -164,6 +167,10 @@ public:
     int removeRef() {
         rct--;
         return rct;
+    }
+
+    ConstString getName() const {
+        return name;
     }
 };
 
