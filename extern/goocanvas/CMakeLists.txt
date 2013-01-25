@@ -60,7 +60,7 @@ set(goocanvas_HDRS
     goocanvas/src/goocanvasrect.h
 )
 
-add_library(YARP_goocanvas STATIC ${goocanvas_SRCS})
+add_library(YARP_goocanvas STATIC ${goocanvas_SRCS} ${goocanvas_HDRS})
 
 if(MSVC)
     add_definitions(/D_USE_MATH_DEFINES /wd4018 /wd4244)

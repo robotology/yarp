@@ -116,7 +116,7 @@ set(goocanvasmm_HDRS
     goocanvasmm/goocanvas/goocanvasmm/ellipse.h
 )
 
-add_library(YARP_goocanvasmm STATIC ${goocanvasmm_SRCS})
+add_library(YARP_goocanvasmm STATIC ${goocanvasmm_SRCS} ${goocanvasmm_HDRS})
 
 if(MSVC)
     add_definitions(/wd4099 /wd4250 /wd4520 /wd4805 /vd2)

@@ -23,7 +23,7 @@
 
 #include <gtkmm/stock.h>
 
-#include <iostream>
+//#include <iostream>
 #include <fstream>
 #include <string>
 #include "ymm-dir.h"
@@ -82,49 +82,69 @@ MainWindow::MainWindow( yarp::os::Property &config)
     if(config.check("modpath"))
     {
         string strPath;
-        stringstream modPaths(config.find("modpath").asString().c_str());
-        while (getline(modPaths, strPath, ';'))
+        string modPaths(config.find("modpath").asString().c_str());
+		do
         {
+			string::size_type pos=modPaths.find(";");
+			strPath=modPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
             lazyManager.addModules(strPath.c_str());
+			if (pos==string::npos)
+				break;
+			modPaths=modPaths.substr(pos+1);
         }
+		while (modPaths!="");
     }
 
     if(config.check("respath"))
     {
         string strPath;
-        stringstream resPaths(config.find("respath").asString().c_str());
-        while (getline(resPaths, strPath, ';'))
+        string resPaths(config.find("respath").asString().c_str());
+		do
         {
+			string::size_type pos=resPaths.find(";");
+			strPath=resPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
             lazyManager.addResources(strPath.c_str());
+			if (pos==string::npos)
+				break;
+			resPaths=resPaths.substr(pos+1);
         }
+		while (resPaths!="");
     }
 
     ErrorLogger* logger  = ErrorLogger::Instance();
     if(config.check("apppath"))
     {
         string strPath;
-        stringstream appPaths(config.find("apppath").asString().c_str());
-        while (getline(appPaths, strPath, ';'))
+        string appPaths(config.find("apppath").asString().c_str());
+		do
         {
+			string::size_type pos=appPaths.find(";");
+			strPath=appPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
 
-            if(config.find("load_subfolders").asString() == "yes")
+			if(config.find("load_subfolders").asString() == "yes")
             {
                 if(!loadRecursiveApplications(strPath.c_str()))
                     logger->addError("Cannot load the applications from  " + strPath);
                 loadRecursiveTemplates(strPath.c_str());
             }
             else
-                lazyManager.addApplications(strPath.c_str()); 
+				lazyManager.addApplications(strPath.c_str());
+			if (pos==string::npos)
+				break;
+			appPaths=appPaths.substr(pos+1);
         }
+		while (appPaths!="");
+
+
     }
 
     reportErrors();

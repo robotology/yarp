@@ -15,6 +15,11 @@ source_group("Header Files" FILES ${folder_header})
 
 ADD_DEFINITIONS(${GtkMM_C_FLAGS})
 
+
+if(MSVC)
+    add_definitions(/vd2)
+endif(MSVC)
+
 INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${TinyXML_INCLUDE_DIRS})
