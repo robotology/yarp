@@ -298,6 +298,7 @@ public:
             if (name.substr(len-4)!=".ini") continue;
             ConstString fname = ConstString(dirname) + "/" + name;
             ok = ok && readFile(fname,result,false);
+            result += "\n[]\n";  // reset any nested sections
         }
         YARP_closedir(dir);
         dir = NULL;

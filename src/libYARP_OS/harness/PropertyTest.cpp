@@ -466,6 +466,8 @@ check $x $y\n\
             FILE *fout = fopen((dirname + "/t1.ini").c_str(),"w");
             YARP_ASSERT(fout!=NULL);
             fprintf(fout,"x 3\n");
+            fprintf(fout,"[nesttest]\n");
+            fprintf(fout,"z 14\n");
             fclose(fout);
             fout = NULL;
         }
