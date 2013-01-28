@@ -4,168 +4,160 @@
 
 \author Paul Fitzpatrick
 
-This documents a currently rather primitive area of YARP, runtime plugins.
-Subject to change in early 2013.
+This documents an area of YARP that is in flux: runtime plugins.
+Subject to change during early 2013.
 
 For examples in this section, we assume a Linux environment.
 
 Historically, YARP plugins have been selected at compile-time, and linked
 with the YARP_init library.  At the time of writing, this remains the default.
+However, it is now also possible to load YARP plugins at runtime.
 
-Suppose we start a fresh build of YARP, and enable the following
-CMake flags:
+\section yarp_plugins_warning Warning to YARP users
+
+If you are a USER of YARP, rather than a PACKAGER of YARP
+then consider sticking with the default operation of plugins
+rather than runtime loading.  Runtime loading adds extra
+ways for things to go wrong, and more paths to keep track of.
+
+\section yarp_plugins_basics The basics
+
+For runtime loading of plugins, it is important to enable
+the following CMake flag when compiling those plugins:
+ \li CREATE_SHARED_LIBRARY = ON
+
+Only shared libraries (.so/.dll/.dylib) can be loaded at runtime.
+To compile YARP device and carrier plugins respectively, select:
+
  \li CREATE_DEVICE_LIBRARY_MODULES = ON
  \li CREATE_OPTIONAL_CARRIERS = ON
- \li CREATE_SHARED_LIBRARY = ON
-and then:
+
+This will bring up a list of possible devices and carriers to choose
+from, for example:
  \li ENABLE_yarpmod_fakebot = ON
-This should give us a device called "fakebot" (that generates visual
-imagery from a simple simulated pan/tilt camera).
+ \li ENABLE_yarpcar_human_carrier = ON
 
-If we then compile, and do:
-\verbatim
-ldd bin/yarpdev
-\endverbatim
-we should see a library linked in for the fakebot device, something like:
-\verbatim
-...
-libyarp_fakebot.so.1 => /home/.../lib/libyarp_fakebot.so.1 (0x00007f42d5eec000)
-...
-\endverbatim
-In fact, all YARP programs will now be linked against that library.  
-And if we do:
-\verbatim
-./bin/yarpdev --list
-\endverbatim
-we should see something like:
-\verbatim
-...
-Device "fakebot", C++ class FakeBot, has no network wrapper
-...
-\endverbatim
-And we can instantiate the device:
-\verbatim
-$ ./bin/yarpdev --device fakebot --verbose
-Error opening textures/back.ppm, check if file exists.
-Error opening textures/fore.ppm, check if file exists.
-yarp: created device <fakebot>. See C++ class FakeBot for documentation.
-===============================================================
-== Options checked by device:
-== 
-device=fakebot
-background [textures/back.ppm]
-    background image to use
-target [textures/fore.ppm]
-    target image to use
-noise [0.05]
-    pixel noise level
-sx [1.0]
-    scaling for x coordinate
-sy [1.0]
-    scaling for y coordinate
-==
-===============================================================
-yarp: Port /fakebot/quit active at tcp://127.0.0.1:10002
-yarp: device active in background...
-\endverbatim
+This would give us a device called "fakebot" (that generates visual
+imagery from a simple simulated pan/tilt camera) and a carrier called
+"human" (a test carrier that actually requires a human agent to pass on
+messages from one port to another).
 
-If we do not want this device linked-in, but instead to load it on
-demand, then there is an extra CMake flag to set (currently this
-may be hidden in "Advanced Mode" depending on the UI you are using):
- \li RUNTIME_yarpmod_fakebot = ON
+\section yarp_plugins_listing Listing plugins available at runtime
 
-After rebuilding, the output of <tt>ldd</tt> changes:
-\verbatim
-$ ldd bin/yarpdev | grep fakebot || echo "fakebot not linked"
-fakebot not linked
-\endverbatim
-
-However, the device is still listed by <tt>yarpdev</tt>:
-\verbatim
-$ ./bin/yarpdev --list | grep fakebot || echo "fakebot is not listed"
-Device "fakebot", C++ class FakeBot, has no network wrapper
-\endverbatim
-And we can still run it, as long as the library "libyarp_fakebot.so" can
-be found:
-\verbatim
-$ ./bin/yarpdev --device fakebot
-Error opening textures/back.ppm, check if file exists.
-Error opening textures/fore.ppm, check if file exists.
-yarp: created device <fakebot>. See C++ class FakeBot for documentation.
-yarp: Port /fakebot/quit active at tcp://127.0.0.1:10002
-yarp: device active in background...
-\endverbatim
-
-If we now delete <tt>lib/libyarp_fakebot.so</tt> then <tt>yarpdev</tt> will
-run but fail to create <tt>fakebot</tt> if we ask for it.  If you do
-delete it, please rebuild it for the next step.
-
-Now we go back and turn off compilation of fakebot entirely, with this
-CMake option:
-
- \li ENABLE_yarpmod_fakebot = OFF
- \li (the value of RUNTIME_yarpmod_fakebot doesn't matter in this case)
-
-Once recompiled, YARP no longer knows anything about <tt>fakebot</tt>.
-And <tt>yarpdev --list</tt> will not list it <b>[[TODO: agree a convention for scanning available libraries either by name or location]]</b>.  But, if we still have
-"libyarp_fakebot.so", we can still load that device if it is in
-the library path (either a system directory or listed by LD_LIBRARY_PATH):
+To list all plugins available at runtime, use "yarp plugin".  Once
+YARP is compiled with the settings given in
+\ref yarp_plugins_basics, the list should include a carrier
+called "human" and a device called "fakebot":
 
 \verbatim
-$ LD_LIBRARY_PATH=$PWD/lib ./bin/yarpdev --device fakebot
-yarpdev: found driver file yarp_fakebot
-Error opening textures/back.ppm, check if file exists.
-Error opening textures/fore.ppm, check if file exists.
-yarp: created device <fakebot>. See C++ class FakeBot for documentation.
-yarp: Port /fakebot/quit active at tcp://127.0.0.1:10002
-yarp: device active in background...
+$ ./bin/yarp plugin
+List of runtime plugins:
+
+carrier human
+  human (type carrier) (name human) (library yarp_human) (part human_carrier) (code HUMANITY)
+  found by linking to /.../yarp2/build/lib/libyarp_human.so
+
+device fakebot
+  fakebot (type device) (name fakebot) (library yarp_fakebot) (part fakebot)
+  found by linking to /.../yarp2/build/lib/libyarp_fakebot.so
 \endverbatim
 
-<b>[[TODO: avoid awkward rebuilding step]]</b>
+In fact, those plugins are also "compiled in" to YARP, as normal.
 
-\section yarp_plugins_signature What YARP is looking for in plugin libraries
-
-If YARP is handed a library libfoo_bar.so, and asked to use to
-instantiate a plugin called fakebot, here is what it tries:
-
-  \li It looks for a function called exactly "fakebot" (no name-mangling).
-  \li If found, it passes that function a pointer to a block of memory
-      and calls it.  
-  \li If the first four bytes of memory (initially set
-      to zero) become the ASCII character 'Y', 'A', 'R', 'P', then
-      we proceed to interpret the block as a yarp::os::SharedLibraryClassApi
-      structure.
-  \li From the SharedLibraryClassApi structure we get callbacks for checking
-      overall version of strategy to use, ABI, and creation/destruction
-      of plugin.
-
-\section yarp_plugins_finding Finding the library for a particular device
-
-If YARP is given a device name such as "fakebot", it will try a few
-guesses at an appropriate library name.
-
-  \li Does a library "yarp_[PLUGIN]" = "yarp_fakebot" exist?  If so use it.
-      (ACE manages various library naming conventions like foo.dll,
-      libfoo.so, etc).
-  \li Is there a ":" in the plugin name?  If so split on that and
-  use the first part as the library name and the second as the device name.
-  So if we rename "libyarp_fakebot.so" as "libfoo.so", we can find it
-  by doing <tt>./bin/yarpdev --device foo:fakebot</tt>.
-  \li Is there an underscore in the plugin name?  If so, try 
-  appending yarp to the first part for the library name.  For example,
-  the two devices "ffmpeg_grabber" and "ffmpeg_writer" are currently 
-  provided by the single library "yarp_ffmpeg".
+If we now recompile yarp with ENABLE_yarpmod_fakebot and 
+ENABLE_yarpcar_human_carrier turned OFF, these plugins 
+are no longer compiled into YARP.  But unless we have actually
+removed the library files we already built (libyarp_fakebot.so and
+libyarp_human.so), YARP will still be able to find them and load 
+them at runtime.  Running <tt>./bin/yarp plugin</tt> should give the same 
+results as before.
 
 
-\section yarp_plugins_carriers What about carriers?
+\section yarp_plugins_config Plugin configuration files
 
-Poking around, it looks like support for runtime-loading of carriers
-is incomplete.  It should use the exact same mechanism as for devices,
-but does not yet do so - it still requires a stub registration
-(ENABLE_yarpcar_* ON, RUNTIME_yarpcar_* ON).  Will fix ASAP.
+To load a plugin, YARP needs to know three things:
 
-The names of libraries for devices and carriers need to get systematized,
-there's been no restriction on them up to now.
+  \li the name of the library that implements the plugin
+  \li the location of that library
+  \li the name of a C function within that library that it can query for information about the plugin in a standard way.
+
+However, at the point where a plugin is needed, YARP will know just one of the following:
+  \li the name of the device that the plugin corresponds to, which should
+  match whatever was given in a CMake <tt>YARP_PREPARE_DEVICE(devicename ...)</tt> call, OR
+  \li the name of the carrier that the plugin corresponds to, as determined in the carrier's implementation of Carrier::getName, OR
+  \li the first 8 bytes sniffed on an incoming TCP connection.
+
+To get from this point to activating the right plugin, YARP uses a
+set of "fingerprint" files.  For a carrier they look like this:
+\code
+[plugin human]      # "human" here is an arbitrary unique identifier
+type carrier        # is the plugin a "carrier" or a "device"?
+name human          # the name of the plugin, as far as users are concerned
+library yarp_human  # the name of the library containing the plugin
+                    # (omitting OS-specific prefixes and suffixes)
+part human_carrier  # function name: match yarp_add_plugin(THIS_NAME ...)
+code "HUMANITY"     # the first 8 bytes on this kind of connection
+\endcode
+
+The <tt>code</tt> line can have single byte wildcards with the following
+slightly odd syntax (subject to revision):
+\code
+code (any) (any) "\0\0" (any) (any) "\0\0"
+\endcode
+That would represent <tt>/..\0\0..\0\0/</tt> in regular expression syntax.
+
+For a device, the fingerprint files are similar, but don't need the code
+line:
+\code
+[plugin fakebot]     # "fakebot" here is an arbitrary unique identifier
+type device          # is the plugin a "carrier" or a "device"?
+name fakebot         # the name of the plugin, as far as users are concerned
+library yarp_fakebot # the name of the library containing the plugin
+                     # (omitting OS-specific prefixes and suffixes)
+part fakebot         # function name: match yarp_add_plugin(THIS_NAME ...)
+\endcode
+
+It is fine for a fingerprint file to contain more than one plugin
+section.  The name of the fingerprint is arbitrary, but the extension
+should be <tt>.ini</tt>.  Examples can be found in the YARP source
+code, in subdirectories of the <tt>src/modules</tt> and
+<tt>src/carriers</tt> directories.
+
+YARP is configured to aggregate <tt>plugin.ini</tt> files in a directory
+called <tt>etc/yarp/plugins</tt>.  The <tt>ini</tt> files are collected
+in this directory irrespective of whether the corresponding plugins
+are compiled or not.  To add plugins not included with YARP, an <tt>ini</tt>
+file may be placed in <tt>etc/yarp/plugins</tt>.
+
+YARP looks for <tt>etc/yarp/plugins</tt> using 
+a yarp::os::ResourceFinder.  If you don't already use configuration 
+files with YARP, one way to get going would be to create a file 
+in your home directory called <tt>.yarp/plugins.ini</tt> (or <tt>yarp\plugins.ini</tt> on Windows) containing:
+\code
+style capability
+default_capability /path/to/your/yarp/build
+\endcode
+and then set a <tt>YARP_POLICY</tt> environment variable to 
+<tt>plugins</tt> (matching the name of the ini file you placed in the <tt>.yarp</tt>/<tt>yarp</tt> directory).
+
+\section yarp_plugins_library Finding library files
+
+Each operating system has a convention for finding library files which
+YARP will also use (<tt>LD_LIBRARY_PATH</tt> etc), with one addition.
+Once the configuration files in <tt>etc/yarp/plugins</tt> can be
+found, YARP will also use any "search" blocks it finds there.
+They look like this:
+\code
+[search basic]   # basic is an arbirary identifier
+path "/path/to/directory/to/try"  # possible path to library
+extension ".so"  # extension the libraries use
+prefix "lib"     # prefix the libraries use
+type "shared"    # type of library (should always be "shared")
+\endcode
+
+By default, YARP will add a search block in a file called <tt>path.ini</tt>
+which gives the path to where YARP libraries have been placed
+after compilation (or installation).
 
 *
 */
