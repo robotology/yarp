@@ -121,7 +121,7 @@ void ApplicationWindow::createWidgets(void)
     pixH = gdk_pixbuf_new(GDK_COLORSPACE_RGB, true, 8, GRID_PATTERN_SIZE, 1);
     for(int i=0; i<GRID_PATTERN_SIZE; i++)
     {
-        if((i<1) || (i>GRID_PATTERN_SIZE))
+        if((i<1) || (i>GRID_PATTERN_SIZE-2))
         {
             put_pixel(pixV, 0, i, 200, 200, 200, 255);
             put_pixel(pixH, i, 0, 200, 200, 200, 255);
