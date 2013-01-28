@@ -121,7 +121,7 @@ void ApplicationWindow::createWidgets(void)
     pixH = gdk_pixbuf_new(GDK_COLORSPACE_RGB, true, 8, GRID_PATTERN_SIZE, 1);
     for(int i=0; i<GRID_PATTERN_SIZE; i++)
     {
-        if((i<1) || (i>GRID_PATTERN_SIZE-2))
+        if((i<1) || (i>GRID_PATTERN_SIZE))
         {
             put_pixel(pixV, 0, i, 200, 200, 200, 255);
             put_pixel(pixH, i, 0, 200, 200, 200, 255);
@@ -1377,7 +1377,7 @@ void ApplicationWindow::updateApplicationWindow(void)
         {
             Glib::RefPtr<ExternalPortModel> extPort;
             bool bExist = false;
-            for(int i=0; i<root->get_n_children(); i++)
+            for(int i=0; (i<root->get_n_children()) && !bExist; i++)
             {
                 extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
                 if(extPort && compareString(extPort->getPort(), baseCon.from()))
@@ -1385,6 +1385,20 @@ void ApplicationWindow::updateApplicationWindow(void)
                     source = extPort;
                     bExist = true;
                     break;
+                }    
+                Glib::RefPtr<ApplicationModel> appModel = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+                if(appModel)
+                {
+                    for(int j=0; j<appModel->get_n_children(); j++)
+                    {
+                        extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(appModel->get_child(j));
+                        if(extPort && compareString(extPort->getPort(), baseCon.from()))
+                        {
+                            source = extPort;
+                            bExist = true;
+                            break;
+                        }
+                    }        
                 }    
             }
             if(!bExist)
@@ -1411,7 +1425,7 @@ void ApplicationWindow::updateApplicationWindow(void)
         {
             Glib::RefPtr<ExternalPortModel> extPort;
             bool bExist = false;
-            for(int i=0; i<root->get_n_children(); i++)
+            for(int i=0; (i<root->get_n_children() && !bExist); i++)
             {
                 extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
                 if(extPort && compareString(extPort->getPort(), baseCon.to()))
@@ -1420,6 +1434,21 @@ void ApplicationWindow::updateApplicationWindow(void)
                     bExist = true;
                     break;
                 }    
+                Glib::RefPtr<ApplicationModel> appModel = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+                if(appModel)
+                {
+                    for(int j=0; j<appModel->get_n_children(); j++)
+                    {
+                        extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(appModel->get_child(j));
+                        if(extPort && compareString(extPort->getPort(), baseCon.to()))
+                        {
+                            dest = extPort;
+                            bExist = true;
+                            break;
+                        }
+                    }        
+                }    
+
             }
             if(!bExist) 
             {

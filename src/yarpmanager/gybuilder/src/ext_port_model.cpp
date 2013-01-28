@@ -108,7 +108,9 @@ void ExternalPortModel::setPort(const char* szPort)
 {
     if(!szPort)
         return;
-    
+   
+    strPort = szPort;
+
     PangoLayout *layout = gtk_widget_create_pango_layout((GtkWidget*)parentWindow->gobj(), 
                             szPort);
     int text_w, text_h;
@@ -146,6 +148,32 @@ void ExternalPortModel::setPort(const char* szPort)
     text->property_x().set_value(PORT_DEPTH+H_MARGINE/2.0);
     text->property_y().set_value(height/2.0 - text_h/2.0);
     updateArrowCoordination();
+    
+    // updating all connections from/to this port 
+    Application* application = parentWindow->manager.getKnowledgeBase()->getApplication();
+    std::vector<ArrowModel*>::iterator itr;   
+    if(type == OUTPUTD)
+    {
+        for(itr = sourceArrows.begin(); itr!= sourceArrows.end(); itr++)
+        {
+            Connection* pConnection = (*itr)->getConnection();
+            Connection con = *pConnection;
+            con.setFrom(szPort);
+            parentWindow->manager.getKnowledgeBase()->updateConnectionOfApplication(application, *pConnection, con);
+            pConnection->setFrom(szPort);
+        }            
+    }
+    else
+    {
+        for(itr = destinationArrows.begin(); itr!= destinationArrows.end(); itr++)
+        {
+            Connection* pConnection = (*itr)->getConnection();
+            Connection con = *pConnection;
+            con.setTo(szPort);
+            parentWindow->manager.getKnowledgeBase()->updateConnectionOfApplication(application, *pConnection, con);
+            pConnection->setTo(szPort);
+        }            
+    }
 }
 
 
@@ -281,6 +309,13 @@ bool ExternalPortModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& i
                     GdkEventCrossing* event)
 {
     parentWindow->get_window()->set_cursor();
+    if(bNested)
+    {
+        poly->property_stroke_color().set_value("black");
+        poly->property_fill_color().set_value("WhiteSmoke");
+        return true;
+    }
+
     if(!selected)
     {
         poly->property_stroke_color().set_value("black");

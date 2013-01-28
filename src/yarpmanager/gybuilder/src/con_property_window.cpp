@@ -108,7 +108,9 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "From";
     row[m_Columns.m_col_value] = m_pConnection->from();
-    if(m_pConnection->getCorOutputData())
+    Glib::RefPtr<ExternalPortModel> port = Glib::RefPtr<ExternalPortModel>::cast_dynamic(m_pArrow->getSource());
+    bool bNested = port && (port->get_parent() != m_pAppWindow->getRootModel());
+    if(m_pConnection->getCorOutputData() || bNested)
     {
         row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
         row[m_Columns.m_col_editable] = false;
@@ -116,11 +118,12 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
     else
         row[m_Columns.m_col_editable] = true;
 
-
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "To";
     row[m_Columns.m_col_value] = m_pConnection->to();
-    if(m_pConnection->getCorInputData())
+    port = Glib::RefPtr<ExternalPortModel>::cast_dynamic(m_pArrow->getDestination());
+    bNested = port && (port->get_parent() != m_pAppWindow->getRootModel());
+    if(m_pConnection->getCorInputData() || bNested)
     {
         row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
         row[m_Columns.m_col_editable] = false;
@@ -166,31 +169,18 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         Application* application = m_pManager->getKnowledgeBase()->getApplication();
         if(strName == "From")
         {
-            Connection con = *m_pConnection;
-            con.setFrom(new_text.c_str());
-            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, *m_pConnection, con);
-            m_pConnection->setFrom(new_text.c_str());
-   
             // updating source port name in model
             Glib::RefPtr<ExternalPortModel> port = Glib::RefPtr<ExternalPortModel>::cast_dynamic(m_pArrow->getSource());
             if(port)
-            {
                 port->setPort(new_text.c_str());
-            }
         }
         else
         if(strName == "To")
         {
-            Connection con = *m_pConnection;
-            con.setTo(new_text.c_str());
-            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, *m_pConnection, con);
-            m_pConnection->setTo(new_text.c_str());
             // updating source port name in model
             Glib::RefPtr<ExternalPortModel> port = Glib::RefPtr<ExternalPortModel>::cast_dynamic(m_pArrow->getDestination());
             if(port)
-            {
                 port->setPort(new_text.c_str());
-            }
         }
         else
         if(strName == "Carrier")
