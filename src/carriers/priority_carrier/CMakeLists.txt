@@ -4,13 +4,14 @@
 
 if (COMPILE_PLUGIN_LIBRARY)
   yarp_prepare_carrier(priority_carrier TYPE PriorityCarrier INCLUDE PriorityCarrier.h)
+  yarp_add_carrier_fingerprint(priority.ini priority_carrier)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_priority_carrier)
 
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
-  yarp_add_plugin(priority_carrier PriorityCarrier.h PriorityCarrier.cpp)
-  target_link_libraries(priority_carrier YARP_OS YARP_sig)
-  target_link_libraries(priority_carrier ${ACE_LIBRARIES})
+  yarp_add_plugin(yarp_priority PriorityCarrier.h PriorityCarrier.cpp)
+  target_link_libraries(yarp_priority YARP_OS YARP_sig)
+  target_link_libraries(yarp_priority ${ACE_LIBRARIES})
 endif ()

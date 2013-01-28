@@ -82,10 +82,12 @@ public:
 
     bool readFromSearchable(Searchable& options, const char *name) { 
         ConstString iname = options.find("library").toString().c_str();
+        ConstString pname = options.find("part").toString().c_str();
         if (iname=="") iname = name;
+        if (pname=="") pname = name;
         this->name = iname.c_str();
         this->dll_name = iname;
-        this->fn_name = name;
+        this->fn_name = pname;
         verbose = false;
         return true;
     }

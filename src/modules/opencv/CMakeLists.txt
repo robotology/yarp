@@ -4,6 +4,7 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(opencv_grabber TYPE OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
+  YARP_ADD_DEVICE_FINGERPRINT(opencv.ini opencv_grabber)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_opencv_grabber)

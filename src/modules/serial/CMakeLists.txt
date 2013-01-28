@@ -6,6 +6,7 @@ IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(serial TYPE ServerSerial INCLUDE yarp/dev/ServerSerial.h
 			  WRAPPER serial)
   YARP_PREPARE_DEVICE(serialport TYPE SerialDeviceDriver INCLUDE SerialDeviceDriver.h WRAPPER serial)
+  YARP_ADD_DEVICE_FINGERPRINT(serial.ini serial serialport)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (SKIP_serial AND SKIP_serialport)

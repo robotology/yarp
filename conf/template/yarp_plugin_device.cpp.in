@@ -25,10 +25,8 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-#ifdef RUNTIME_YARPDEV
 #include <yarp/os/SharedLibraryClass.h>
 YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,DeviceDriver)
-#endif
 
 YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     DriverCreator *factory = 

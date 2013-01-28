@@ -4,6 +4,7 @@
 
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(portaudio TYPE PortAudioDeviceDriver INCLUDE PortAudioDeviceDriver.h WRAPPER grabber)
+  YARP_ADD_DEVICE_FINGERPRINT(portaudio.ini portaudio)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_portaudio)

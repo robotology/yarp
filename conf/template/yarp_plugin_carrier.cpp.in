@@ -23,10 +23,8 @@ using namespace yarp::os::impl;
 
 #include <@YARPDEV_INCLUDE@>
 
-#ifdef RUNTIME_YARPDEV
 #include <yarp/os/SharedLibraryClass.h>
 YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,Carrier)
-#endif
 
 YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     Carriers::addCarrierPrototype(new @YARPDEV_TYPE@);

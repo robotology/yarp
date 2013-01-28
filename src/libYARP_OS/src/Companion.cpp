@@ -2019,7 +2019,9 @@ String Companion::version() {
 
 int Companion::cmdPlugin(int argc, char *argv[]) {
 #ifdef YARP_HAS_ACE
-    if (argc!=1) {
+    if (argc<1) {
+        printf("To test a specific plugin, do:\n");
+        printf("  yarp plugin <pluginname> /path/to/plugin/lib<libraryname>.so\n");
         printf("List of runtime plugins:\n");
         YarpPluginSelector selector;
         selector.scan();
@@ -2046,9 +2048,15 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         return 1;
     }
     SharedLibraryFactory lib;
+    Property p;
     YarpPluginSettings settings;
-    settings.name = argv[0];
     settings.verbose = true;
+    if (argc>=2) {
+        settings.fn_name = argv[0];
+        settings.dll_name = argv[1];
+    } else {
+        settings.name = argv[0];
+    }
     settings.open(lib);
     if (!lib.isValid()) {
         int problem = lib.getStatus();
