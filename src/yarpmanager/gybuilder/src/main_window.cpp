@@ -921,7 +921,22 @@ void MainWindow::onMenuFileNewMod()
         dialog.set_transient_for(*this);
         dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
         dialog.set_do_overwrite_confirmation(true);
+        
+        if(m_config.check("modpath"))
+        {
+            std::string basepath=m_config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
 
+            string strPath;
+            string modPaths(m_config.find("modpath").asString().c_str());
+            string::size_type pos=modPaths.find(";");
+            strPath=modPaths.substr(0, pos);
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+    
+            dialog.set_current_folder(strPath.c_str()); 
+        }
+        
         //Add response buttons the the dialog:
         dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
         dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
