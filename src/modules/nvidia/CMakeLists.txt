@@ -4,6 +4,7 @@
 
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(nvidia TYPE NVIDIAGPU INCLUDE "NVIDIADeviceDriver.h")
+  YARP_ADD_DEVICE_FINGERPRINT(nvidia.ini nvidia)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_nvidia)
@@ -38,11 +39,11 @@ IF (NOT SKIP_nvidia)
     LINK_LIBRARIES(GLEW)
   ENDIF (NOT WINDOWS)	
 
-  ADD_LIBRARY(nvidia NVIDIADeviceDriver.cpp NVIDIADeviceDriver.h FBO_Filter.h)
+  YARP_ADD_PLUGIN(yarp_nvidia NVIDIADeviceDriver.cpp NVIDIADeviceDriver.h FBO_Filter.h)
 
  ELSE (OK)
 
-  MESSAGE(STATUS "could not find all libraries needed by nvidia driver")
+  MESSAGE(FATAL_ERROR "could not find all libraries needed by nvidia driver")
 
  ENDIF (OK)
 

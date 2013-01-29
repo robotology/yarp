@@ -5,6 +5,7 @@
 IF (COMPILE_DEVICE_LIBRARY)
 	YARP_PREPARE_DEVICE(KinectDeviceLocal TYPE KinectDeviceDriverServer INCLUDE KinectYarpDeviceServerLib/KinectDeviceDriverServer.h)
 	YARP_PREPARE_DEVICE(KinectDeviceClient TYPE KinectDeviceDriverClient INCLUDE KinectYarpDeviceClientLib/KinectDeviceDriverClient.h)
+	YARP_ADD_DEVICE_FINGERPRINT(kinect.ini KinectDeviceLocal KinectDeviceClient)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (ENABLE_KinectDeviceLocal OR ENABLE_KinectDeviceClient)

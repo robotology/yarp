@@ -4,6 +4,7 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(stage TYPE StageControl INCLUDE StageControl.h)
+  YARP_ADD_DEVICE_FINGERPRINT(stage.ini stage)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_stage)
@@ -20,7 +21,7 @@ IF (NOT SKIP_stage)
   INCLUDE_DIRECTORIES(${STAGE_INCLUDE_DIR})
   LINK_LIBRARIES(${STAGE_LIBRARY})
 
-  ADD_LIBRARY(stage StageControl.cpp StageControl.h)
+  YARP_ADD_PLUGIN(yarp_stage StageControl.cpp StageControl.h)
 
   ELSE (Stage_FOUND)
 

@@ -16,12 +16,12 @@ IF (WIN32)
 
   LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/blob)
   LINK_LIBRARIES(U2CCommon I2cBrdg)
-  ADD_LIBRARY(dimax_u2c DimaxU2C.cpp I2c.cpp Servo.cpp DimaxU2C.h Servo.h i2cbridge.h I2c.h u2c_common_func.h)
+  YARP_ADD_PLUGIN(yarp_dimax_u2c DimaxU2C.cpp I2c.cpp Servo.cpp DimaxU2C.h Servo.h i2cbridge.h I2c.h u2c_common_func.h)
 
 
 ELSE (WIN32)
 
-  MESSAGE(STATUS "not a system we know how to build dimax on yet")
+  MESSAGE(FATAL_ERROR "not a system we know how to build dimax on yet")
 
 ENDIF (WIN32)
 

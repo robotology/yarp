@@ -4,6 +4,7 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
+  YARP_ADD_DEVICE_FINGERPRINT(cuda.ini cuda)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_cuda)
@@ -32,11 +33,11 @@ IF (NOT SKIP_cuda)
 
     ADD_DEFINITIONS(-DCUDA_NUMTHREADS=${CUDA_NUMTHREADS} -DCUDA_NUMTHREADBLOCKS=${CUDA_NUMTHREADBLOCKS})
 
-    ADD_LIBRARY(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
+    YARP_ADD_PLUGIN(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
 
   ELSE (OK)
 
-    MESSAGE(STATUS "could not find all libraries needed by cuda driver")
+    MESSAGE(FATAL_ERROR "could not find all libraries needed by cuda driver")
 
   ENDIF (OK)
 

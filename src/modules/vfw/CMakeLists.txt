@@ -8,6 +8,7 @@
 # Our devices can optionally be declared to have a network wrapper.
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(vfw_grabber TYPE VfwGrabber INCLUDE VfwGrabber.h WRAPPER grabber)
+  YARP_ADD_DEVICE_FINGERPRINT(vfw.ini vfw_grabber)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_vfw_grabber)
@@ -29,7 +30,7 @@ IF (NOT SKIP_vfw_grabber)
     ENDIF (MINGW)
 
     # Create a library of our device code.
-    ADD_LIBRARY(vfw_grabber VfwGrabber.cpp VfwGrabber.h)
+    YARP_ADD_PLUGIN(vfw_grabber VfwGrabber.cpp VfwGrabber.h)
 
     # If not being compiled as part of a library, try making a test program.
     IF (NOT COMPILE_DEVICE_LIBRARY)
@@ -39,10 +40,9 @@ IF (NOT SKIP_vfw_grabber)
 
   ELSE (vfw_library)
 
-    # If we cannot build, we should proceed gracefully - it is not an error.
-    MESSAGE(STATUS "cannot find video for windows")
-
+    MESSAGE(FATAL_ERROR "cannot find video for windows")
+    
   ENDIF (vfw_library)
-
+  
 ENDIF (NOT SKIP_vfw_grabber)
 

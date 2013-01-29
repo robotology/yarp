@@ -3,6 +3,7 @@
  
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(dynamixelAX12Ftdi TYPE DynamixelAX12FtdiDriver INCLUDE "DynamixelAX12FtdiDriver.h" WRAPPER controlboard)
+  YARP_ADD_DEVICE_FINGERPRINT(dynamixelAX12Ftdi.ini dynamixelAX12Ftdi)
 ENDIF (COMPILE_DEVICE_LIBRARY)
 
 IF (NOT SKIP_dynamixelAX12Ftdi)
@@ -14,7 +15,7 @@ IF (NOT SKIP_dynamixelAX12Ftdi)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
   INCLUDE_DIRECTORIES(${FTDI_INCLUDE_DIR})
 
-  ADD_LIBRARY(dynamixelAX12FtdiDriver DynamixelAX12FtdiDriver.cpp DynamixelAX12FtdiDriver.h)
+  YARP_ADD_PLUGIN(dynamixelAX12FtdiDriver DynamixelAX12FtdiDriver.cpp DynamixelAX12FtdiDriver.h)
   #TARGET_LINK_LIBRARIES(dynamixelAX12FtdiDriver ${YARP_LIBRARIES} ftdi)
   TARGET_LINK_LIBRARIES(dynamixelAX12FtdiDriver ${YARP_LIBRARIES} ${FTDI_LIBRARY})
 ENDIF (NOT SKIP_dynamixelAX12Ftdi)

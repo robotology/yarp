@@ -13,5 +13,5 @@ FOREACH(header_file ${folder_header})
   GET_FILENAME_COMPONENT(p ${header_file} PATH)
 ENDFOREACH(header_file ${folder_header})
 
-ADD_LIBRARY (KinectYarpDeviceClientLib ${folder_source} ${folder_header})
+YARP_ADD_PLUGIN (KinectYarpDeviceClientLib ${folder_source} ${folder_header})
 TARGET_LINK_LIBRARIES(KinectYarpDeviceClientLib ${YARP_LIBRARIES})
