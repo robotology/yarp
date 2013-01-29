@@ -1,0 +1,110 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>lumaChroma</name>
+    <description>Receives an rgb image, depending on the image type the user wants to work on (YUV or HSV) the module extracts the Y, U and V or H, S, and V planes and performs centre-surround processing with a construction of uniqueness maps (intensity saliency, colour, hue, saturation and value ) via a difference-of-Gaussian pyramid filter bank. </description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+        <param desc="Name of the module" default="lumaChroma"> name</param>
+        <param desc="specifies the configuration file" default="lumaChroma.ini"> from </param>
+        <param desc="specifies the sub-path from \c $ICUB_ROOT/icub/app to the configuration file" default="alumaChroma/conf"> context </param>
+	<param desc="specifies the type of the module to work on (yuv or hsv)  " default="yuv"> image</param>
+	<param desc="Y, UV, H, S, V specifies the output on the default port  (y, uv, h, s, v)" default="Y for yuv image type, S for hsv image type"> output </param>	
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email="vadim.tikhanoff@iit.it"> Vadim Tikhanoff </author>
+    </authors>
+
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>
+        
+        <input>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="tcp">/lumaChroma/image:i</port>
+            <!-- required input means the execution of module depends on
+                 this input data. Notice that not all the input are required
+                 for a module to perform its task (e.g. control input, status
+                 request input). -->
+            <required>yes</required>
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+
+	<input>
+            <type>Rpc</type>
+            <port carrier="tcp">/lumaChroma</port>
+            <!-- required input means the execution of module depends on
+                 this input data. Notice that not all the input are required
+                 for a module to perform its task (e.g. control input, status
+                 request input). -->
+            <required>no</required>
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+        <!-- output datas if available -->
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/lumaChroma/Y/image:o</port>
+            <description>when YUV is selected</description>
+        </output>
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/lumaChroma/UV/image:o</port>
+            <description>when YUV is selected</description>
+        </output>
+	<output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/lumaChroma/H/image:o</port>
+            <description>when HSV is selected</description>
+        </output>
+	<output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/lumaChroma/S/image:o</port>
+            <description>when HSV is selected</description>
+        </output>
+	<output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/lumaChroma/V/image:o</port>
+            <description>when HSV is selected</description>
+        </output>
+	<output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/lumaChroma/image:o</port>
+            <description>when HSV is selected</description>
+        </output>
+    </data>
+
+    <!-- physical and logical resource dependencies can be introduced in this
+         section. Dependencies must follow resource conceptional models. Currently
+         available resource models are 'memory', 'processor', 'storage', 'network',
+         'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced
+         inside <computer></computer> tags. While resources described inside <computer>
+         tags represent conjunctional dependency, resources from different <computer>
+         tags can be seen as disjunctions. Meaning that If a module depend on either
+         resource R1 or R2 they can be introduced inside two different <computer> tags.
+         Resource dependencies should be introduced if they are really required. For
+         example, if module's performance drops significantly in case of memory swapping,
+         a memory resource dependency can be introduced with the required memory space. -->
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library>YARP</library>
+	<library>OpenCV  (version >= 2.0) </library>
+    </development>
+
+</module>
+

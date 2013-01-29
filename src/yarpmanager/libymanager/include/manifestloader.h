@@ -39,6 +39,19 @@ private:
 
 };
 
+class AppSaver
+{
+public:
+    AppSaver() {} 
+    virtual ~AppSaver() {}
+    virtual bool save(Application* application) = 0;
+    
+protected:
+
+private:
+};
+
+
 
 /**
  * Abstract Class ModuleLoader  

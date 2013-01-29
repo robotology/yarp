@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="GooCanvasGrid">
+<refmeta>
+<refentrytitle role="top_of_page">GooCanvasGrid</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>GOOCANVAS Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>GooCanvasGrid</refname>
+<refpurpose>a grid item.</refpurpose>
+<!--[<xref linkend="desc" endterm="desc.title"/>]-->
+</refnamediv>
+
+<refsynopsisdiv role="synopsis">
+<title role="synopsis.title">Synopsis</title>
+
+<synopsis>
+
+
+
+                    <link linkend="GooCanvasGrid-struct">GooCanvasGrid</link>;
+<link linkend="GooCanvasItem">GooCanvasItem</link>*      <link linkend="goo-canvas-grid-new">goo_canvas_grid_new</link>                 (<link linkend="GooCanvasItem">GooCanvasItem</link> *parent,
+                                                         <link linkend="gdouble">gdouble</link> x,
+                                                         <link linkend="gdouble">gdouble</link> y,
+                                                         <link linkend="gdouble">gdouble</link> width,
+                                                         <link linkend="gdouble">gdouble</link> height,
+                                                         <link linkend="gdouble">gdouble</link> x_step,
+                                                         <link linkend="gdouble">gdouble</link> y_step,
+                                                         <link linkend="gdouble">gdouble</link> x_offset,
+                                                         <link linkend="gdouble">gdouble</link> y_offset,
+                                                         ...);
+
+
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1 role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<synopsis>
+
+  <link linkend="GObject">GObject</link>
+   +----<link linkend="GooCanvasItemSimple">GooCanvasItemSimple</link>
+         +----GooCanvasGrid
+</synopsis>
+
+</refsect1>
+
+
+
+<refsect1 role="impl_interfaces">
+<title role="impl_interfaces.title">Implemented Interfaces</title>
+<para>
+GooCanvasGrid implements
+ <link linkend="GooCanvasItem">GooCanvasItem</link>.</para>
+
+</refsect1>
+
+
+<refsect1 role="properties">
+<title role="properties.title">Properties</title>
+<synopsis>
+
+  &quot;<link linkend="GooCanvasGrid--border-color">border-color</link>&quot;             <link linkend="gchararray">gchararray</link>            : Write
+  &quot;<link linkend="GooCanvasGrid--border-color-rgba">border-color-rgba</link>&quot;        <link linkend="guint">guint</link>                 : Read / Write
+  &quot;<link linkend="GooCanvasGrid--border-pattern">border-pattern</link>&quot;           <link linkend="GooCairoPattern">GooCairoPattern</link>       : Read / Write
+  &quot;<link linkend="GooCanvasGrid--border-pixbuf">border-pixbuf</link>&quot;            <link linkend="GdkPixbuf">GdkPixbuf</link>             : Write
+  &quot;<link linkend="GooCanvasGrid--border-width">border-width</link>&quot;             <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--height">height</link>&quot;                   <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--horz-grid-line-color">horz-grid-line-color</link>&quot;     <link linkend="gchararray">gchararray</link>            : Write
+  &quot;<link linkend="GooCanvasGrid--horz-grid-line-color-rgba">horz-grid-line-color-rgba</link>&quot; <link linkend="guint">guint</link>                 : Read / Write
+  &quot;<link linkend="GooCanvasGrid--horz-grid-line-pattern">horz-grid-line-pattern</link>&quot;   <link linkend="GooCairoPattern">GooCairoPattern</link>       : Read / Write
+  &quot;<link linkend="GooCanvasGrid--horz-grid-line-pixbuf">horz-grid-line-pixbuf</link>&quot;    <link linkend="GdkPixbuf">GdkPixbuf</link>             : Write
+  &quot;<link linkend="GooCanvasGrid--horz-grid-line-width">horz-grid-line-width</link>&quot;     <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--show-horz-grid-lines">show-horz-grid-lines</link>&quot;     <link linkend="gboolean">gboolean</link>              : Read / Write
+  &quot;<link linkend="GooCanvasGrid--show-vert-grid-lines">show-vert-grid-lines</link>&quot;     <link linkend="gboolean">gboolean</link>              : Read / Write
+  &quot;<link linkend="GooCanvasGrid--vert-grid-line-color">vert-grid-line-color</link>&quot;     <link linkend="gchararray">gchararray</link>            : Write
+  &quot;<link linkend="GooCanvasGrid--vert-grid-line-color-rgba">vert-grid-line-color-rgba</link>&quot; <link linkend="guint">guint</link>                 : Read / Write
+  &quot;<link linkend="GooCanvasGrid--vert-grid-line-pattern">vert-grid-line-pattern</link>&quot;   <link linkend="GooCairoPattern">GooCairoPattern</link>       : Read / Write
+  &quot;<link linkend="GooCanvasGrid--vert-grid-line-pixbuf">vert-grid-line-pixbuf</link>&quot;    <link linkend="GdkPixbuf">GdkPixbuf</link>             : Write
+  &quot;<link linkend="GooCanvasGrid--vert-grid-line-width">vert-grid-line-width</link>&quot;     <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--vert-grid-lines-on-top">vert-grid-lines-on-top</link>&quot;   <link linkend="gboolean">gboolean</link>              : Read / Write
+  &quot;<link linkend="GooCanvasGrid--width">width</link>&quot;                    <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--x">x</link>&quot;                        <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--x-offset">x-offset</link>&quot;                 <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--x-step">x-step</link>&quot;                   <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--y">y</link>&quot;                        <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--y-offset">y-offset</link>&quot;                 <link linkend="gdouble">gdouble</link>               : Read / Write
+  &quot;<link linkend="GooCanvasGrid--y-step">y-step</link>&quot;                   <link linkend="gdouble">gdouble</link>               : Read / Write
+</synopsis>
+</refsect1>
+
+
+
+<refsect1 role="desc">
+<title role="desc.title">Description</title>
+<para>
+GooCanvasGrid represents a grid item.
+A grid consists of a number of equally-spaced horizontal and vertical
+grid lines, plus an optional border.
+</para>
+<para>
+It is a subclass of <link linkend="GooCanvasItemSimple"><type>GooCanvasItemSimple</type></link> and so inherits all of the style
+properties such as "stroke-color", "fill-color" and "line-width".
+</para>
+<para>
+It also implements the <link linkend="GooCanvasItem"><type>GooCanvasItem</type></link> interface, so you can use the
+<link linkend="GooCanvasItem"><type>GooCanvasItem</type></link> functions such as <link linkend="goo-canvas-item-raise"><function>goo_canvas_item_raise()</function></link> and
+<link linkend="goo-canvas-item-rotate"><function>goo_canvas_item_rotate()</function></link>.
+</para>
+<para>
+To create a <link linkend="GooCanvasGrid"><type>GooCanvasGrid</type></link> use <link linkend="goo-canvas-grid-new"><function>goo_canvas_grid_new()</function></link>.
+</para>
+<para>
+To get or set the properties of an existing <link linkend="GooCanvasGrid"><type>GooCanvasGrid</type></link>, use
+<link linkend="g-object-get"><function>g_object_get()</function></link> and <link linkend="g-object-set"><function>g_object_set()</function></link>.
+</para>
+<para>
+The grid's position and size is specified with the <link linkend="GooCanvasGrid--x"><type>"x"</type></link>,
+<link linkend="GooCanvasGrid--y"><type>"y"</type></link>, <link linkend="GooCanvasGrid--width"><type>"width"</type></link> and <link linkend="GooCanvasGrid--height"><type>"height"</type></link> properties.
+</para>
+<para>
+The <link linkend="GooCanvasGrid--x-step"><type>"x-step"</type></link> and <link linkend="GooCanvasGrid--y-step"><type>"y-step"</type></link> properties specify the 
+distance between grid lines. The  <link linkend="GooCanvasGrid--x-offset"><type>"x-offset"</type></link> and
+<link linkend="GooCanvasGrid--y-offset"><type>"y-offset"</type></link> properties specify the distance before the first
+grid lines.
+</para>
+<para>
+The horizontal or vertical grid lines can be hidden using the
+<link linkend="GooCanvasGrid--show-horz-grid-lines"><type>"show-horz-grid-lines"</type></link> and <link linkend="GooCanvasGrid--show-vert-grid-lines"><type>"show-vert-grid-lines"</type></link>
+properties.
+</para>
+<para>
+The width of the border can be set using the <link linkend="GooCanvasGrid--border-width"><type>"border-width"</type></link>
+property. The border is drawn outside the area specified with the
+<link linkend="GooCanvasGrid--x"><type>"x"</type></link>, <link linkend="GooCanvasGrid--y"><type>"y"</type></link>, <link linkend="GooCanvasGrid--width"><type>"width"</type></link> and
+<link linkend="GooCanvasGrid--height"><type>"height"</type></link> properties.
+</para>
+<para>
+Other properties allow the colors and widths of the grid lines to be set.
+The grid line color and width properties override the standard
+<link linkend="GooCanvasItemSimple--stroke-color"><type>"stroke-color"</type></link> and <link linkend="GooCanvasItemSimple--line-width"><type>"line-width"</type></link>
+properties, enabling different styles for horizontal and vertical grid lines.</para>
+<para>
+
+</para>
+</refsect1>
+
+<refsect1 role="details">
+<title role="details.title">Details</title>
+<refsect2>
+<title><anchor id="GooCanvasGrid-struct" role="struct"/>GooCanvasGrid</title>
+<indexterm><primary>GooCanvasGrid</primary></indexterm><programlisting>typedef struct _GooCanvasGrid GooCanvasGrid;</programlisting>
+<para>
+The <link linkend="GooCanvasGrid-struct"><type>GooCanvasGrid</type></link> struct contains private data only.</para>
+<para>
+
+</para></refsect2>
+<refsect2>
+<title><anchor id="goo-canvas-grid-new" role="function"/>goo_canvas_grid_new ()</title>
+<indexterm><primary>goo_canvas_grid_new</primary></indexterm><programlisting><link linkend="GooCanvasItem">GooCanvasItem</link>*      goo_canvas_grid_new                 (<link linkend="GooCanvasItem">GooCanvasItem</link> *parent,
+                                                         <link linkend="gdouble">gdouble</link> x,
+                                                         <link linkend="gdouble">gdouble</link> y,
+                                                         <link linkend="gdouble">gdouble</link> width,
+                                                         <link linkend="gdouble">gdouble</link> height,
+                                                         <link linkend="gdouble">gdouble</link> x_step,
+                                                         <link linkend="gdouble">gdouble</link> y_step,
+                                                         <link linkend="gdouble">gdouble</link> x_offset,
+                                                         <link linkend="gdouble">gdouble</link> y_offset,
+                                                         ...);</programlisting>
+<para>
+Creates a new grid item.
+</para>
+<variablelist role="params">
+<varlistentry><term><parameter>parent</parameter>&nbsp;:</term>
+<listitem><simpara> the parent item, or <link linkend="NULL:CAPS"><literal>NULL</literal></link>. If a parent is specified, it will assume
+ ownership of the item, and the item will automatically be freed when it is
+ removed from the parent. Otherwise call <link linkend="g-object-unref"><function>g_object_unref()</function></link> to free it.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>x</parameter>&nbsp;:</term>
+<listitem><simpara> the x coordinate of the left of the grid.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>y</parameter>&nbsp;:</term>
+<listitem><simpara> the y coordinate of the top of the grid.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>width</parameter>&nbsp;:</term>
+<listitem><simpara> the width of the grid.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>height</parameter>&nbsp;:</term>
+<listitem><simpara> the height of the grid.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>x_step</parameter>&nbsp;:</term>
+<listitem><simpara> the distance between the vertical grid lines.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>y_step</parameter>&nbsp;:</term>
+<listitem><simpara> the distance between the horizontal grid lines.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>x_offset</parameter>&nbsp;:</term>
+<listitem><simpara> the distance before the first vertical grid line.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>y_offset</parameter>&nbsp;:</term>
+<listitem><simpara> the distance before the first horizontal grid line.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>...</parameter>&nbsp;:</term>
+<listitem><simpara> optional pairs of property names and values, and a terminating <link linkend="NULL:CAPS"><literal>NULL</literal></link>.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> a new grid item.
+</simpara></listitem></varlistentry>
+</variablelist>
+<para>
+Here's an example showing how to create a grid:
+</para>
+<para>
+<informalexample><programlisting>
+ GooCanvasItem *grid = goo_canvas_grid_new (mygroup, 100.0, 100.0, 400.0, 200.0,
+                                            20.0, 20.0, 10.0, 10.0,
+                                            "horz-grid-line-width", 4.0,
+                                            "horz-grid-line-color", "yellow",
+                                            "vert-grid-line-width", 2.0,
+                                            "vert-grid-line-color", "red",
+                                            "border-width", 3.0,
+                                            "border-color", "white",
+                                            "fill-color", "blue",
+                                            NULL);
+</programlisting></informalexample></para>
+<para>
+
+</para></refsect2>
+
+</refsect1>
+<refsect1 role="property_details">
+<title role="property_details.title">Property Details</title>
+<refsect2><title><anchor id="GooCanvasGrid--border-color"/>The <literal>&quot;border-color&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:border-color</primary></indexterm><programlisting>  &quot;border-color&quot;             <link linkend="gchararray">gchararray</link>            : Write</programlisting>
+<para>The color to use for the border.</para><para>Default value: NULL</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--border-color-rgba"/>The <literal>&quot;border-color-rgba&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:border-color-rgba</primary></indexterm><programlisting>  &quot;border-color-rgba&quot;        <link linkend="guint">guint</link>                 : Read / Write</programlisting>
+<para>The color to use for the border, specified as a 32-bit integer value.</para><para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--border-pattern"/>The <literal>&quot;border-pattern&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:border-pattern</primary></indexterm><programlisting>  &quot;border-pattern&quot;           <link linkend="GooCairoPattern">GooCairoPattern</link>       : Read / Write</programlisting>
+<para>The cairo pattern to paint the border with.</para></refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--border-pixbuf"/>The <literal>&quot;border-pixbuf&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:border-pixbuf</primary></indexterm><programlisting>  &quot;border-pixbuf&quot;            <link linkend="GdkPixbuf">GdkPixbuf</link>             : Write</programlisting>
+<para>The pixbuf to use to draw the border.</para></refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--border-width"/>The <literal>&quot;border-width&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:border-width</primary></indexterm><programlisting>  &quot;border-width&quot;             <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The width of the border around the grid.</para><para>Default value: -1</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--height"/>The <literal>&quot;height&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:height</primary></indexterm><programlisting>  &quot;height&quot;                   <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The height of the grid.</para><para>Allowed values: &gt;= 0</para>
+<para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--horz-grid-line-color"/>The <literal>&quot;horz-grid-line-color&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:horz-grid-line-color</primary></indexterm><programlisting>  &quot;horz-grid-line-color&quot;     <link linkend="gchararray">gchararray</link>            : Write</programlisting>
+<para>The color to use for the horizontal grid lines.</para><para>Default value: NULL</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--horz-grid-line-color-rgba"/>The <literal>&quot;horz-grid-line-color-rgba&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:horz-grid-line-color-rgba</primary></indexterm><programlisting>  &quot;horz-grid-line-color-rgba&quot; <link linkend="guint">guint</link>                 : Read / Write</programlisting>
+<para>The color to use for the horizontal grid lines, specified as a 32-bit integer value.</para><para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--horz-grid-line-pattern"/>The <literal>&quot;horz-grid-line-pattern&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:horz-grid-line-pattern</primary></indexterm><programlisting>  &quot;horz-grid-line-pattern&quot;   <link linkend="GooCairoPattern">GooCairoPattern</link>       : Read / Write</programlisting>
+<para>The cairo pattern to paint the horizontal grid lines with.</para></refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--horz-grid-line-pixbuf"/>The <literal>&quot;horz-grid-line-pixbuf&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:horz-grid-line-pixbuf</primary></indexterm><programlisting>  &quot;horz-grid-line-pixbuf&quot;    <link linkend="GdkPixbuf">GdkPixbuf</link>             : Write</programlisting>
+<para>The pixbuf to use to draw the horizontal grid lines.</para></refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--horz-grid-line-width"/>The <literal>&quot;horz-grid-line-width&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:horz-grid-line-width</primary></indexterm><programlisting>  &quot;horz-grid-line-width&quot;     <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The width of the horizontal grid lines.</para><para>Default value: -1</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--show-horz-grid-lines"/>The <literal>&quot;show-horz-grid-lines&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:show-horz-grid-lines</primary></indexterm><programlisting>  &quot;show-horz-grid-lines&quot;     <link linkend="gboolean">gboolean</link>              : Read / Write</programlisting>
+<para>If the horizontal grid lines are shown.</para><para>Default value: TRUE</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--show-vert-grid-lines"/>The <literal>&quot;show-vert-grid-lines&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:show-vert-grid-lines</primary></indexterm><programlisting>  &quot;show-vert-grid-lines&quot;     <link linkend="gboolean">gboolean</link>              : Read / Write</programlisting>
+<para>If the vertical grid lines are shown.</para><para>Default value: TRUE</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--vert-grid-line-color"/>The <literal>&quot;vert-grid-line-color&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:vert-grid-line-color</primary></indexterm><programlisting>  &quot;vert-grid-line-color&quot;     <link linkend="gchararray">gchararray</link>            : Write</programlisting>
+<para>The color to use for the vertical grid lines.</para><para>Default value: NULL</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--vert-grid-line-color-rgba"/>The <literal>&quot;vert-grid-line-color-rgba&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:vert-grid-line-color-rgba</primary></indexterm><programlisting>  &quot;vert-grid-line-color-rgba&quot; <link linkend="guint">guint</link>                 : Read / Write</programlisting>
+<para>The color to use for the vertical grid lines, specified as a 32-bit integer value.</para><para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--vert-grid-line-pattern"/>The <literal>&quot;vert-grid-line-pattern&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:vert-grid-line-pattern</primary></indexterm><programlisting>  &quot;vert-grid-line-pattern&quot;   <link linkend="GooCairoPattern">GooCairoPattern</link>       : Read / Write</programlisting>
+<para>The cairo pattern to paint the vertical grid lines with.</para></refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--vert-grid-line-pixbuf"/>The <literal>&quot;vert-grid-line-pixbuf&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:vert-grid-line-pixbuf</primary></indexterm><programlisting>  &quot;vert-grid-line-pixbuf&quot;    <link linkend="GdkPixbuf">GdkPixbuf</link>             : Write</programlisting>
+<para>The pixbuf to use to draw the vertical grid lines.</para></refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--vert-grid-line-width"/>The <literal>&quot;vert-grid-line-width&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:vert-grid-line-width</primary></indexterm><programlisting>  &quot;vert-grid-line-width&quot;     <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The width of the vertical grid lines.</para><para>Default value: -1</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--vert-grid-lines-on-top"/>The <literal>&quot;vert-grid-lines-on-top&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:vert-grid-lines-on-top</primary></indexterm><programlisting>  &quot;vert-grid-lines-on-top&quot;   <link linkend="gboolean">gboolean</link>              : Read / Write</programlisting>
+<para>If the vertical grid lines are painted above the horizontal grid lines.</para><para>Default value: FALSE</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--width"/>The <literal>&quot;width&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:width</primary></indexterm><programlisting>  &quot;width&quot;                    <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The width of the grid.</para><para>Allowed values: &gt;= 0</para>
+<para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--x"/>The <literal>&quot;x&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:x</primary></indexterm><programlisting>  &quot;x&quot;                        <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The x coordinate of the grid.</para><para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--x-offset"/>The <literal>&quot;x-offset&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:x-offset</primary></indexterm><programlisting>  &quot;x-offset&quot;                 <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The distance before the first vertical grid line.</para><para>Allowed values: &gt;= 0</para>
+<para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--x-step"/>The <literal>&quot;x-step&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:x-step</primary></indexterm><programlisting>  &quot;x-step&quot;                   <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The distance between the vertical grid lines.</para><para>Allowed values: &gt;= 0</para>
+<para>Default value: 10</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--y"/>The <literal>&quot;y&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:y</primary></indexterm><programlisting>  &quot;y&quot;                        <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The y coordinate of the grid.</para><para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--y-offset"/>The <literal>&quot;y-offset&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:y-offset</primary></indexterm><programlisting>  &quot;y-offset&quot;                 <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The distance before the first horizontal grid line.</para><para>Allowed values: &gt;= 0</para>
+<para>Default value: 0</para>
+</refsect2>
+<refsect2><title><anchor id="GooCanvasGrid--y-step"/>The <literal>&quot;y-step&quot;</literal> property</title>
+<indexterm><primary>GooCanvasGrid:y-step</primary></indexterm><programlisting>  &quot;y-step&quot;                   <link linkend="gdouble">gdouble</link>               : Read / Write</programlisting>
+<para>The distance between the horizontal grid lines.</para><para>Allowed values: &gt;= 0</para>
+<para>Default value: 10</para>
+</refsect2>
+
+</refsect1>
+
+
+
+
+
+<refsect1><refsect2 /><refsect2 /></refsect1>
+</refentry>

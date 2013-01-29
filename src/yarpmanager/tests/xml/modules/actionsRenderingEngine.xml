@@ -1,0 +1,246 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>actionsRenderingEngine</name>
+    <description>A module combining multiple libraries and modules from the iCub repository that allows to execute some basic and complex actions on objects placed on a table in front of the robot.</description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+        <!--param default = "" desc="path where learned actions should be saved, or OPC to write actions to OPC database"> actions </param-->
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email="carlo.ciliberto@iit.it"> Carlo Ciliberto </author>
+        <author email="vadim.tikhanoff@iit.it"> Vadim Tikhanoff </author>
+    </authors>
+
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>
+        <!-- input data if available-->
+        <input>
+            <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
+            <type>Bottle</type>
+
+            <!-- input port which receive the data. -->
+            <port carrier="tcp">/actionsRenderingEngine/cmd:io</port>
+
+            <!-- required input means the execution of module depends on
+                 this input data. Notice that not all the input are required
+                 for a module to perform its task (e.g. control input, status
+                 request input). -->
+            <required>no</required>
+
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description>Receives a bottle containing commands (see documentation). The port replies as soon as the current action has been completed.</description>
+        </input>
+
+        <input>
+            <!-- <type> refers to nominal type of data (e.g. Image, String). -->
+            <type>Bottle</type>
+
+            <!-- input port which receive the data. -->
+            <port carrier="tcp">/actionsRenderingEngine/get:io</port>
+
+            <!-- required input means the execution of module depends on
+                 this input data. Notice that not all the input are required
+                 for a module to perform its task (e.g. control input, status
+                 request input). -->
+            <required>no</required>
+
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description>Port to query the module about targets and current state.</description>
+        </input>
+
+        <input>
+            <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
+            <type>Rpc</type>
+
+            <port carrier="tcp">/actionsRenderingEngine/rpc</port>
+
+            <required>no</required>
+
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description>rpc port to enable/disable options (more or less)</description>
+        </input>
+	<input>
+            <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
+            <type>Image</type>
+
+            <port carrier="tcp">/actionsRenderingEngine/disparity:io</port>
+
+            <required>no</required>
+
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description>disparity port, communicates with stereoDisparity module</description>
+        </input>
+       	<!--input>
+            <type>unk</type>
+            <port carrier="tcp">/head</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input-->
+	<!--input>
+            <type>unk</type>
+            <port carrier="tcp">/left_arm</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input-->
+	<!--input>
+            <type>unk</type>
+            <port carrier="tcp">/right_arm</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input-->
+	<input>
+            <type>Image</type>
+            <port carrier="tcp">/actionsRenderingEngine/left/img:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<input>
+            <type>Image</type>
+            <port carrier="tcp">/actionsRenderingEngine/right/img:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<input>
+            <type>Bottle</type>
+            <port carrier="tcp">/actionsRenderingEngine/left/blobs:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<input>
+            <type>Bottle</type>
+            <port carrier="tcp">/actionsRenderingEngine/right/blobs:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<input>
+            <type>Image</type>
+            <port carrier="tcp">/actionsRenderingEngine/left/raw:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<input>
+            <type>Image</type>
+            <port carrier="tcp">/actionsRenderingEngine/right/raw:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<input>
+            <type>Bottle</type>
+            <port carrier="tcp">/actionsRenderingEngine/MIL/rec:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<input>
+            <type>Bottle</type>
+            <port carrier="tcp">/actionsRenderingEngine/tracker:i</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+	<!--input>
+            <type>unk</type>
+            <port carrier="tcp">/torso</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input-->
+	<!--input>
+            <type>unk</type>
+            <port carrier="tcp">/gaze</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input-->
+ 	<output>
+            <type>Image</type>
+            <port carrier="tcp">/actionsRenderingEngine/left/img:o</port>
+            <description></description>
+        </output>
+        <output>
+            <type>Image</type>
+            <port carrier="tcp">/actionsRenderingEngine/right/img:o</port>
+            <description></description>
+        </output>
+ 	<output>
+            <type>unk</type>
+            <port carrier="tcp">/actionsRenderingEngine/MIL/window:o</port>
+            <description></description>
+        </output>
+        <output>
+            <type>unk</type>
+            <port carrier="tcp">/actionsRenderingEngine/MIL/cmd:o</port>
+            <description></description>
+        </output>
+ 	<output>
+            <type>unk</type>
+            <port carrier="tcp">/actionsRenderingEngine/MSR/cmd:o</port>
+            <description></description>
+        </output>
+        <output>
+            <type>unk</type>
+            <port carrier="tcp">/actionsRenderingEngine/tracker:o</port>
+            <description></description>
+        </output>
+        <output>
+            <type>Rpc</type>
+            <port carrier="tcp">/actionsRenderingEngine/OPC:io</port>
+            <description></description>
+        </output>
+
+    </data>
+
+    <!-- physical and logical resource dependencies can be introduced in this
+         section. Dependencies must follow resource conceptional models. Currently
+         available resource models are 'memory', 'processor', 'storage', 'network',
+         'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced
+         inside <computer></computer> tags. While resources described inside <computer>
+         tags represent conjunctional dependency, resources from different <computer>
+         tags can be seen as disjunctions. Meaning that If a module depend on either
+         resource R1 or R2 they can be introduced inside two different <computer> tags.
+         Resource dependencies should be introduced if they are really required. For
+         example, if module's performance drops significantly in case of memory swapping,
+         a memory resource dependency can be introduced with the required memory space. -->
+    <dependencies>
+	<!--yarp_interface>
+		<name>cartesianController</name>
+		<robot>icub</robot>
+	</yarp_interface-->
+        <computer>
+		<!--yarp_port>/icub/camcalib/left/out</yarp_port>
+                <yarp_port>/icub/cartesianController/left_arm/state:o</yarp_port>
+                <yarp_port>/icub/cartesianController/right_arm/state:o</yarp_port>
+                <yarp_port>/wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o</yarp_port>
+                <yarp_port>/wholeBodyDynamics/right_arm/cartesianEndEffectorWrench:o</yarp_port-->
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library>actionPrimitives</library>
+    </development>
+
+</module>
+

@@ -10,7 +10,7 @@ GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 project(YARP_manager)
 
 file(GLOB folder_source src/*.cpp tinyxml/*.cpp)
-file(GLOB_RECURSE folder_header include/*.h tinyxml/*.h)
+file(GLOB_RECURSE folder_header include/*.h)
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 

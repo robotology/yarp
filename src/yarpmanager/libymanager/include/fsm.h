@@ -4,7 +4,7 @@
  *  Yarp Modules Manager
  *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -45,8 +45,8 @@ public:
     double getTimeStamp(void) { return timeStamp; }
     const char* getName(void) { return strName.c_str(); }
 
-    inline bool operator==(const Event& alt) const {        
-        return ((strName == alt.strName)); } 
+    inline bool operator==(const Event& alt) const {
+        return ((strName == alt.strName)); }
 
 private:
     std::string strName;
@@ -80,7 +80,7 @@ private:
 /**
  * Class StateBase
  */
-class FSM::StateBase 
+class FSM::StateBase
 {
 public:
     StateBase(IEventSink* pEventSink, const char* szName=NULL) {
@@ -90,7 +90,7 @@ public:
 
     virtual ~StateBase() {}
 
-    const char* getName(void) { 
+    const char* getName(void) {
         return strName.c_str(); }
 
 protected:
@@ -111,13 +111,13 @@ typedef std::map<FSM::StateBase*, std::map<FSM::Event*, FSM::StateBase*> >::iter
  * Class StateMachineBase
  */
 class FSM::StateMachineBase : public IEventSink
-{ 
+{
 public:
-    StateMachineBase() { 
-        state = NULL; 
+    StateMachineBase() {
+        state = NULL;
         currentTimeStamp = 0.0;
-    } 
-    virtual ~StateMachineBase() {} 
+    }
+    virtual ~StateMachineBase() {}
 
     StateBase* currentState(void) {
         try
@@ -128,11 +128,11 @@ public:
         catch (std::exception& )
         {
             std::cerr<<"Exception in currentState(): Initial state is not set!"<<std::endl;
-            std::terminate();   
+            std::terminate();
         }
     }
 
-    void setInitState(StateBase* pState) { 
+    void setInitState(StateBase* pState) {
         if(!state) state = pState;
     }
 
@@ -140,29 +140,26 @@ public:
         try
         {
 //             typeid(*target);
-//             typeid(*target);
-//             typeid(*target);
-
             transitions[source][event] = target;
         }
         catch (std::exception& typevar)
         {
             std::cerr<<"Exception in addTransition(): "<<typevar.what()<<std::endl;
-            std::terminate();   
+            std::terminate();
         }
     }
-    
+
 protected:
 
     /**
-     * Callback onTransition represents the change in the states 
-     */ 
-    virtual void onTransition(StateBase* previous, Event* event, StateBase* current) {} 
+     * Callback onTransition represents the change in the states
+     */
+    virtual void onTransition(StateBase* previous, Event* event, StateBase* current) {}
     virtual void onEventMissed(StateBase* state, Event* event) {}
 
 public: // implementing IEventSink::castEvent()
 
-    virtual void castEvent(Event* event) 
+    virtual void castEvent(Event* event)
     {
         semEvent.wait();
         if(!state)
@@ -178,10 +175,10 @@ public: // implementing IEventSink::castEvent()
             semEvent.post();
             return;
         }
-        
+
         currentTimeStamp = event->getTimeStamp();
 
-        MyStateItr it; 
+        MyStateItr it;
         it = transitions.find(state);
         if(it==transitions.end())
         {
@@ -191,7 +188,7 @@ public: // implementing IEventSink::castEvent()
         }
 
         std::map<Event*, StateBase*> row = transitions[state];
-        std::map<Event*, StateBase*>::iterator itr2 = row.find(event); 
+        std::map<Event*, StateBase*>::iterator itr2 = row.find(event);
         if(itr2 == row.end())
         {
             std::cerr<<"No transition is registered for event ";
@@ -199,7 +196,7 @@ public: // implementing IEventSink::castEvent()
             std::cerr<<" from state "<<state->getName()<<std::endl;
             semEvent.post();
             return;
-        }       
+        }
 
         StateBase* previous = state;
         state = row[event];
@@ -210,7 +207,7 @@ public: // implementing IEventSink::castEvent()
     }
 
 private:
-    StateBase* state; 
+    StateBase* state;
     MyStateMap transitions;
     yarp::os::Semaphore semEvent;
     double currentTimeStamp;

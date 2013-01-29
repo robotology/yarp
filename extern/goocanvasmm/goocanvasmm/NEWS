@@ -1,0 +1,157 @@
+0.15.4 (unstable):
+
+Fix the build with gtkmm 2.22, with deprecations disabled.
+
+0.15.3 (unstable):
+
+Documentation:
+- Added main page text with doxygen.
+(David King, Murray Cumming)
+- Improve API documentation slightly.
+(Murray Cumming)
+
+0.15.2 (unstable):
+
+Build improvements for documentation.
+(Daniel Elstner)
+
+0.15.1 (unstable):
+
+Use the latest mm-common build system, to produce API documentation that is
+ready for library.gnome.org.
+
+0.15.0 (unstable):
+
+Build:
+* Image, ImageModel: Added scale_to_fit property.
+* Fix the build with alternative glibmm API (without properties or exceptions).
+  (Murray Cumming)
+* Avoid a compiler warning. Bug #582996 (Vincent Untz)
+
+0.14.0 (unstable):
+
+* Item and ItemModel: Added x, y, height, width properties. Removed them from
+  derived classes, which now get them from their base Item/ItemModel instead.
+* Item: Added signal_scroll_event.
+  (Murray Cumming)
+* Build: Fixed warnings. (Hubert Figuiere) Bug #562903
+
+0.13.0 (unstable):
+
+* Canvas: Added get_static_root_item() and get_static_root_item_model().
+* Added Grid item.
+* Item:
+  - Added set/get_is_static() and the vfuncs.
+  - Added animation_finished signal.
+  (Murray Cumming)
+  - Remove const from get_items_at_vfunc().
+    (Armin Burgmeier)
+    Bug #559374 (Louis-Francis Ratté-Boulianne)
+  - Correct ensure_upated() to ensure_updated().
+    Bug #558489 (Louis-Francis Ratté-Boulianne)
+* ItemModel: Added animation_finished signal.
+  (Murray Cumming)
+* Remove the CANVAS_ prefix from enum values because they are already
+  namespaced.
+  (José Alburquerque)
+  Bug #557990 (Louis-Francis Ratté-Boulianne)
+* Build: Fixed build with cairomm 1.7.
+  (Jonathon Jongsma) Bug #560074)
+
+0.12.0 (unstable):
+
+* Item: get/set_child_property() is now a templated method.
+  The new get/set_child_property_value() still uses Glib::Value.
+  (Murray Cumming)
+
+0.11.0 (unstable):
+
+* examples: Added missing copyright comment blocks.
+
+0.10.0 was skipped.
+
+0.9.0 (unstable):
+
+* Depend on goocanvas-0.10.
+  (Hubert Figuiere)
+* Increased version to match the goocanvas version more.
+  (Murray Cumming)
+* Item: remove spurious ';' in the public header.
+  (Hubert Figuiere)
+* Fixed the Windows build.
+  (Armin Burgmeier)
+
+0.6.0 (unstable):
+
+* Item, ItemModel: Added get_simple_transform(). (Murray Cumming)
+* Table:
+  - Added attach() convenience method.
+  - Added x-border-spacing, y-border-spacing, vert-grid-line-width,
+    horz-grid-line-width properties.
+* Added TableModel.
+* Added properties and vfuncs (there should be almost none left now).
+  (Armin Burgmeier, Openismus)
+* Documentation:
+  - Added tablemodel example, showing two canvases that display the same
+  underlying model.
+  (Armin Burgmeier, Openismus)
+
+0.5.0 (unstable):
+
+* Ellipse:
+  Constructor: Added default parameter values.
+  (Murray Cumming)
+* Item:
+  - modify get_items_at(): Corrected the constness of the parameters.
+  - Added get/set_child_property().
+  (Jonathon Jongsma)
+* ItemModel:
+  - Added properties and signals.
+  - Added get/set_child_property().
+  (Jonathon Jongsma)
+* ItemSimple:
+  - Added get/set_bounds(), and get_line_width().
+  - Added vfuncs.
+  (Jonathon Jongsma)
+* TextModel:
+  - Correct a bug in the constructor.
+  - alignment property: Use a C++ type.
+  (Gennaro Bellizio. Bug #517817)
+
+* Build:
+  Correct installation of .m4 gmmproc files,
+  and correct the .pc file.
+  (Murray Cumming) (Bug #489865. Yaakov Selkovitz)
+
+0.4.0 (unstable):
+
+* Canvas:
+  - Make the properties public.
+  - Added get_bounds(Bounds&) method overload.
+* Item: Make the properties public.
+* Added Table, with an example.
+  (Murray Cumming)
+
+0.3.0 (unstable):
+
+* Canvas: Wrapped the properties.
+* Image: Added default values for the constructors.
+* Item: get_style(): refcount correction.
+
+0.2.0 (unstable):
+
+* The pkg-config file is now called goocanvas-1.0 instead of libgoocanvas.
+* The files should now be included as, for instance,
+  <libgoocanvas/canvas.h>
+  instead of
+  <libgoocanvasmm/canvas.h>
+* Several constructors were corrected to properly initialize the underlying
+  C objects.
+* The parent parameter was removed from all item constructors,
+  to avoid confusion with the unusual memory management used in the C API.
+  Use add_child() instead.
+* Various methods were added or improved.
+
+0.1.0 (unstable):
+
+Initial version.

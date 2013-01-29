@@ -1,0 +1,130 @@
+<application>
+    <name>SaliencyBlobTest</name>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>earlyVision</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/MyTestApplication:earlyVision:1</prefix>
+        <geometry>(Pos (x 518) (y 155.9))</geometry>
+    </module>
+    <module>
+        <name>logpolarTransform</name>
+        <parameters>--direction CARTESIAN2LOGPOLAR</parameters>
+        <node>localhost</node>
+        <prefix>/MyTestApplication:logpolarTransform:1</prefix>
+        <geometry>(Pos (x 233) (y 318.1))</geometry>
+    </module>
+    <module>
+        <name>logpolarTransform</name>
+        <parameters>--direction LOGPOLAR2CARTESIAN</parameters>
+        <node>localhost</node>
+        <prefix>/MyTestApplication:logpolarTransform:2</prefix>
+        <geometry>(Pos (x 1112) (y 312.9))</geometry>
+    </module>
+    <module>
+        <name>opencv_grabber</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/SaliencyBlobTest:opencv_grabber:1</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 2.9) (y 317.9))</geometry>
+    </module>
+    <module>
+        <name>saliencyBlobFinder</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/MyTestApplication:saliencyBlobFinder:1</prefix>
+        <geometry>(Pos (x 848) (y 287.9))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 550</parameters>
+        <node>localhost</node>
+        <prefix>/Edges</prefix>
+        <geometry>(Pos (x 878) (y 178.9))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 100</parameters>
+        <node>localhost</node>
+        <prefix>/Logpolar</prefix>
+        <geometry>(Pos (x 871) (y 101.9))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 1100</parameters>
+        <node>localhost</node>
+        <prefix>/C3</prefix>
+        <geometry>(Pos (x 1390) (y 311.9))</geometry>
+    </module>
+    <connection>
+        <from>/MyTestApplication:earlyVision:1/earlyVision/edges/edges:o</from>
+        <to>/Edges/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 778.5) (y 198)) ((x 678) (y 199)) ((x 879) (y 197))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:logpolarTransform:1/logpolarTransform/image:o</from>
+        <to>/MyTestApplication:earlyVision:1/earlyVision/imageRGB:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 441) (y 336)) ((x 441) (y 336)) ((x 519) (y 336))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:logpolarTransform:1/logpolarTransform/image:o</from>
+        <to>/Logpolar/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 441) (y 228)) ((x 441) (y 336)) ((x 441) (y 120)) ((x 872) (y 120))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:earlyVision:1/earlyVision/edges/edges:o</from>
+        <to>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/edges:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 755.5) (y 277)) ((x 678) (y 199)) ((x 833) (y 355)) ((x 849) (y 356))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:earlyVision:1/earlyVision/colorOppR+G-:o</from>
+        <to>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/rg:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 763.5) (y 315)) ((x 678) (y 249)) ((x 849) (y 381))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:earlyVision:1/earlyVision/colorOppG+R-:o</from>
+        <to>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/gr:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 763.5) (y 340)) ((x 678) (y 274)) ((x 849) (y 406))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:earlyVision:1/earlyVision/colorOppB+Y-:o</from>
+        <to>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/by:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 763.5) (y 365)) ((x 678) (y 299)) ((x 849) (y 431))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:logpolarTransform:1/logpolarTransform/image:o</from>
+        <to>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 632) (y 87)) ((x 441) (y 336)) ((x 441) (y 87)) ((x 823) (y 87)) ((x 823) (y 331)) ((x 849) (y 331))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:saliencyBlobFinder:1/blobFinder/icub/left_cam/imageC3:o</from>
+        <to>/MyTestApplication:logpolarTransform:2/logpolarTransform/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 1088.5) (y 331)) ((x 1064) (y 331)) ((x 1113) (y 331))  )</geometry>
+    </connection>
+    <connection>
+        <from>/SaliencyBlobTest:opencv_grabber:1/grabber</from>
+        <to>/MyTestApplication:logpolarTransform:1/logpolarTransform/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 182) (y 336)) ((x 182) (y 336)) ((x 234) (y 336))  )</geometry>
+    </connection>
+    <connection>
+        <from>/MyTestApplication:logpolarTransform:2/logpolarTransform/image:o</from>
+        <to>/C3/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 1355.5) (y 330.5)) ((x 1320) (y 331)) ((x 1391) (y 330))  )</geometry>
+    </connection>
+</application>

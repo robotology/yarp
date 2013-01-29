@@ -17,12 +17,14 @@ InputData::InputData(void) : Node(INPUTD)
 {
     bRequired = false;
     bWithPriority = false;
+    modOwner = NULL;
 }
 
 InputData::InputData(const char* szName) : Node(INPUTD) 
 {
     bRequired = false;
     bWithPriority = false;
+    modOwner = NULL;
     setName(szName);
 }
 
@@ -34,6 +36,7 @@ InputData::InputData(const InputData &input) : Node(input)
     bWithPriority = input.bWithPriority;    
     bRequired = input.bRequired;
     strDescription = input.strDescription;
+    modOwner = input.modOwner;
 }
 
 
@@ -52,11 +55,15 @@ Node* InputData::clone(void)
 /**
  * Class OutputData
  */
-OutputData::OutputData(void) : Node(OUTPUTD) {}
+OutputData::OutputData(void) : Node(OUTPUTD) 
+{
+    modOwner = NULL;
+}
 
 
 OutputData::OutputData(const char* szName) : Node(OUTPUTD) 
 {
+    modOwner = NULL;
     setName(szName);
 }
 
@@ -67,6 +74,7 @@ OutputData::OutputData(const OutputData &output) : Node(output)
     strPort = output.strPort; 
     carrier = output.carrier;
     strDescription = output.strDescription;
+    modOwner = output.modOwner;
 }
 
 

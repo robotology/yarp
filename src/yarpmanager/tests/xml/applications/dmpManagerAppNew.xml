@@ -1,0 +1,327 @@
+<application>
+    <name>DMP</name>
+    <version>2.0</version>
+    <module>
+        <name>actionsRenderingEngine</name>
+        <parameters>--actions OPC</parameters>
+        <node>node6</node>
+        <prefix>/actRendEng</prefix>
+        <geometry>(Pos (x 1296.06) (y 576.493))</geometry>
+    </module>
+    <module>
+        <name>activeSeg</name>
+        <parameters></parameters>
+        <node>node1</node>
+        <prefix>/activeSegTarget</prefix>
+        <geometry>(Pos (x 666) (y 177.582))</geometry>
+    </module>
+    <module>
+        <name>dmpLearnerModule</name>
+        <parameters></parameters>
+        <node>node6</node>
+        <prefix>/DMP(2):dmpLearnerModule:1</prefix>
+        <geometry>(Pos (x 976.455) (y 421.873))</geometry>
+    </module>
+    <module>
+        <name>dmpManager</name>
+        <parameters></parameters>
+        <node>node1</node>
+        <prefix>/dmpManager</prefix>
+        <geometry>(Pos (x 470.103) (y 321.024))</geometry>
+    </module>
+    <module>
+        <name>iSpeak</name>
+        <parameters></parameters>
+        <node>node8</node>
+        <prefix>/iSpeak</prefix>
+        <geometry>(Pos (x 783.182) (y 850.764))</geometry>
+    </module>
+    <module>
+        <name>iolRADHelper</name>
+        <parameters></parameters>
+        <node>node0</node>
+        <prefix>/RADHelper</prefix>
+        <geometry>(Pos (x 1339.36) (y 70.0364))</geometry>
+    </module>
+    <module>
+        <name>iolStateMachineHandler</name>
+        <parameters></parameters>
+        <node>node7</node>
+        <prefix>/iolSMH</prefix>
+        <geometry>(Pos (x 500.679) (y 553.448))</geometry>
+    </module>
+    <module>
+        <name>milClassifier</name>
+        <parameters></parameters>
+        <node>node4</node>
+        <prefix>/milClass</prefix>
+        <geometry>(Pos (x 1036) (y 245.945))</geometry>
+    </module>
+    <module>
+        <name>motionCUT</name>
+        <parameters>--recogThres 0.6</parameters>
+        <node>node3</node>
+        <prefix>/motionCUT</prefix>
+        <geometry>(Pos (x 221.637) (y 86.5818))</geometry>
+    </module>
+    <module>
+        <name>objectsPropertiesCollector</name>
+        <parameters>--db actionsLearned.ini</parameters>
+        <node>icub-b6</node>
+        <prefix>/memory</prefix>
+        <geometry>(Pos (x 1537.55) (y 224.855))</geometry>
+    </module>
+    <module>
+        <name>speechRecognizer</name>
+        <parameters></parameters>
+        <node>node9</node>
+        <prefix>/speechRecog</prefix>
+        <geometry>(Pos (x 34.2) (y 809.9))</geometry>
+    </module>
+    <module>
+        <name>templatePFTracker</name>
+        <parameters></parameters>
+        <node>node2</node>
+        <prefix>/templatePFT</prefix>
+        <geometry>(Pos (x 1067.27) (y 1.54545))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 640 --y 0 --RefreshTime 50</parameters>
+        <node>node0</node>
+        <prefix>/iolViewer/mil</prefix>
+        <geometry>(Pos (x 1297.86) (y 170.536))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 960 --y 0 --RefreshTime 50</parameters>
+        <node>node0</node>
+        <prefix>/iolViewer/manager</prefix>
+        <geometry>(Pos (x 839.979) (y 544.235))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 1280 --y 350 --RefreshTime 50</parameters>
+        <node>node0</node>
+        <prefix>/iolViewer/manager/localizer</prefix>
+        <geometry>(Pos (x 827.968) (y 595.172))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /seg/yarpview/img:i --x 0 --y 350 --RefreshTime 33</parameters>
+        <node>node0</node>
+        <prefix>/seg</prefix>
+        <geometry>(Pos (x 945) (y 140.127))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 640 --y 350 --out /desiredTrack --RefreshTime 33</parameters>
+        <node>node0</node>
+        <prefix>/tracker</prefix>
+        <geometry>(Pos (x 1383.82) (y -2.87273))</geometry>
+    </module>
+    <connection>
+        <from>/icub/camcalib/left/out</from>
+        <to>/iolSMH/iolStateMachineHandler/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 199) (y 297)) ((x 199) (y 296)) ((x 501) (y 634))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/imgClassifier:o</from>
+        <to>/milClass/milClassifier/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 749) (y 621)) ((x 749) (y 621)) ((x 1037) (y 276))  )</geometry>
+    </connection>
+    <connection>
+        <from>/icub/camcalib/left/out</from>
+        <to>/motionCUT/motionCUT/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 199) (y 297)) ((x 199) (y 296)) ((x 222) (y 142))  )</geometry>
+    </connection>
+    <connection>
+        <from>/motionCUT/motionCUT/blobs:o</from>
+        <to>/actRendEng/actionsRenderingEngine/left/blobs:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 365) (y 154)) ((x 365) (y 154)) ((x 1297) (y 744))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/classify:rpc</from>
+        <to>/milClass/milClassifier/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 749) (y 646)) ((x 749) (y 646)) ((x 1037) (y 301))  )</geometry>
+    </connection>
+    <connection>
+        <from>/milClass/milClassifier/img:o</from>
+        <to>/iolViewer/mil/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 1212) (y 264)) ((x 1212) (y 264)) ((x 1298) (y 188))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/img:o</from>
+        <to>/iolViewer/manager/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 749) (y 571)) ((x 749) (y 571)) ((x 840) (y 562))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/imgLoc:o</from>
+        <to>/iolViewer/manager/localizer/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 749) (y 596)) ((x 749) (y 596)) ((x 828) (y 613))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/speak:o</from>
+        <to>/iSpeak/iSpeak</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 749) (y 771)) ((x 749) (y 771)) ((x 784) (y 868))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/motor:rpc</from>
+        <to>/actRendEng/actionsRenderingEngine/cmd:io</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 749) (y 721)) ((x 749) (y 721)) ((x 1297) (y 594))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/wbd:rpc</from>
+        <to>/wholeBodyDynamics/rpc:i</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 749) (y 696)) ((x 749) (y 696)) ((x 1053) (y 793))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/motor_stop:rpc</from>
+        <to>/actRendEng/actionsRenderingEngine/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 749) (y 746)) ((x 749) (y 746)) ((x 1297) (y 644))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/get3d:rpc</from>
+        <to>/actRendEng/actionsRenderingEngine/get:io</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 749) (y 671)) ((x 749) (y 671)) ((x 1297) (y 619))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iolSMH/iolStateMachineHandler/memory:rpc</from>
+        <to>/memory/objectsPropertiesCollector/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 749) (y 796)) ((x 749) (y 796)) ((x 1538) (y 292))  )</geometry>
+    </connection>
+    <connection>
+        <from>/actRendEng/actionsRenderingEngine/OPC:io</from>
+        <to>/memory/objectsPropertiesCollector/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 1544) (y 807)) ((x 1544) (y 807)) ((x 1538) (y 292))  )</geometry>
+    </connection>
+    <connection>
+        <from>/milClass/milClassifier/OPC:io</from>
+        <to>/memory/objectsPropertiesCollector/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 1212) (y 314)) ((x 1212) (y 314)) ((x 1538) (y 292))  )</geometry>
+    </connection>
+    <connection>
+        <from>/RADHelper/iolRADHelper/opc</from>
+        <to>/memory/objectsPropertiesCollector/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 1507) (y 88)) ((x 1507) (y 88)) ((x 1538) (y 292))  )</geometry>
+    </connection>
+    <connection>
+        <from>/speechRecog/speechRecognizer/recog/continuous:o</from>
+        <to>/iolSMH/iolStateMachineHandler/motor_stop:i</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 234) (y 853)) ((x 234) (y 853)) ((x 501) (y 709))  )</geometry>
+    </connection>
+    <connection>
+        <from>/iSpeak/iSpeak/emotions:o</from>
+        <to>/icub/face/emotions/in</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 903) (y 881)) ((x 903) (y 881)) ((x 1047) (y 909))  )</geometry>
+    </connection>
+    <connection>
+        <from>/icub/camcalib/left/out</from>
+        <to>/activeSegTarget/activeSeg/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 199) (y 297)) ((x 199) (y 296)) ((x 667) (y 195))  )</geometry>
+    </connection>
+    <connection>
+        <from>/activeSegTarget/activeSeg/image:o</from>
+        <to>/seg/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 810) (y 208)) ((x 810) (y 208)) ((x 946) (y 158))  )</geometry>
+    </connection>
+    <connection>
+        <from>/activeSegTarget/activeSeg/imageCrop:o</from>
+        <to>/templatePFT/templatePFTracker/template/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 810) (y 233)) ((x 810) (y 233)) ((x 1068) (y 57))  )</geometry>
+    </connection>
+    <connection>
+        <from>/templatePFT/templatePFTracker/left/image:o</from>
+        <to>/tracker/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 1275) (y 19)) ((x 1275) (y 19)) ((x 1384) (y 15))  )</geometry>
+    </connection>
+    <connection>
+        <from>/templatePFT/templatePFTracker/target:o</from>
+        <to>/dmpManager/dmpManager/particle:i</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 1275) (y 119)) ((x 1275) (y 119)) ((x 1321) (y 147)) ((x 864) (y 302)) ((x 443) (y 306)) ((x 443) (y 352)) ((x 471) (y 351))  )</geometry>
+    </connection>
+    <connection>
+        <from>/dmpManager/dmpManager/segmentTarget:o</from>
+        <to>/activeSegTarget/activeSeg/fixPoint:i</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 622) (y 339)) ((x 622) (y 339)) ((x 667) (y 220))  )</geometry>
+    </connection>
+    <connection>
+        <from>/dmpManager/dmpManager/are:rpc</from>
+        <to>/actRendEng/actionsRenderingEngine/cmd:io</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 622) (y 389)) ((x 622) (y 389)) ((x 1297) (y 594))  )</geometry>
+    </connection>
+    <connection>
+        <from>/dmpManager/dmpManager/iolState:o</from>
+        <to>/iolSMH/iolStateMachineHandler/human:rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 622) (y 364)) ((x 622) (y 364)) ((x 690) (y 509)) ((x 489) (y 509)) ((x 489) (y 685)) ((x 501) (y 684))  )</geometry>
+    </connection>
+    <connection>
+        <from>/icub/camcalib/left/out</from>
+        <to>/templatePFT/templatePFTracker/left/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 199) (y 297)) ((x 199) (y 296)) ((x 1068) (y 82))  )</geometry>
+    </connection>
+    <connection>
+        <from>/icub/camcalib/right/out</from>
+        <to>/templatePFT/templatePFTracker/right/image:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 212) (y 54)) ((x 212) (y 53)) ((x 1068) (y 107))  )</geometry>
+    </connection>
+    <connection>
+        <from>/templatePFT/templatePFTracker/target:o</from>
+        <to>/actRendEng/actionsRenderingEngine/tracker:i</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 1275) (y 119)) ((x 1275) (y 119)) ((x 1297) (y 869))  )</geometry>
+    </connection>
+    <connection>
+        <from>/dmpManager/dmpManager/mil:rpc</from>
+        <to>/milClass/milClassifier/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 622) (y 414)) ((x 622) (y 414)) ((x 1037) (y 301))  )</geometry>
+    </connection>
+    <connection>
+        <from>/speechRecog/speechRecognizer/tts/iSpeak:o</from>
+        <to>/iSpeak/iSpeak</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 426.5) (y 836.5)) ((x 234) (y 828)) ((x 442) (y 873)) ((x 784) (y 868))  )</geometry>
+    </connection>
+    <connection>
+        <from>/dmpManager/dmpManager/dmpLearner:rpc</from>
+        <to>/DMP(2):dmpLearnerModule:1/dmpLearner/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 622) (y 464)) ((x 622) (y 464)) ((x 993) (y 437))  )</geometry>
+    </connection>
+    <connection>
+        <from>/DMP(2):dmpLearnerModule:1/dmpLearner/opc:rpc</from>
+        <to>/memory/objectsPropertiesCollector/rpc</to>
+        <protocol>tcp</protocol>
+        <geometry>(Pos ((x 1176) (y 439)) ((x 1176) (y 438)) ((x 1538) (y 292))  )</geometry>
+    </connection>
+</application>

@@ -16,8 +16,6 @@
 #include "main_window.h"
 #include "icon_res.h"
 
-#include <sstream>
-
 using namespace std;
 
 ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy, 
@@ -728,7 +726,7 @@ void ApplicationWindow::onModuleEditingStarted(Gtk::CellEditable* cell_editable,
         if(strStatus != Glib::ustring("stopped"))
         {
             //Tell the user:          
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Editing "<<Glib::ustring(row[m_modColumns.m_col_name])<<"!";
             Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
             dialog.set_secondary_text("Please stop the module before modifying it.");
@@ -752,7 +750,7 @@ void ApplicationWindow::onConnectionEditingStarted(Gtk::CellEditable* cell_edita
         if(strStatus != Glib::ustring("disconnected"))
         {
             //Tell the user:          
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"Editing connections!";
             Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
             dialog.set_secondary_text("Please stop the connection before modifying it.");
@@ -1031,9 +1029,12 @@ bool ApplicationWindow::onAttachStdout()
         if(itr == m_MapstdWnds.end())
         {
             Gtk::TreeModel::Row row;
-            ostringstream strTitle;
+            OSTRINGSTREAM strTitle;
             if(getModRowByID(id, &row))
-                strTitle<<getApplicationName()<<":"<<row[m_modColumns.m_col_name]<<":"<<id;
+            {
+                string name = Glib::ustring(row[m_modColumns.m_col_name]).c_str();
+                strTitle<<getApplicationName()<<":"<<name<<":"<<id;
+            }                
             m_MapstdWnds[id] = new StdoutWindow(this, id, strTitle.str().c_str());
         }
         m_MapstdWnds[id]->show();
@@ -1113,7 +1114,7 @@ bool ApplicationWindow::onClose(void)
         return true;
     }
 
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"Closing "<<getApplicationName()<<"!";
     Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
     dialog.set_secondary_text("You have some running module. After closing the application window you might not be able to recover them. Are you sure?");
@@ -1363,14 +1364,14 @@ void ApplicationWindow::reportErrors(void)
         const char* err;
         while((err=logger->getLastError()))
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"("<<getApplicationName()<<") "<<err; 
             m_pParent->m_refMessageList->addError(msg.str().c_str());
         }
 
         while((err=logger->getLastWarning()))
         {
-            ostringstream msg;
+            OSTRINGSTREAM msg;
             msg<<"("<<getApplicationName()<<") "<<err; 
             m_pParent->m_refMessageList->addWarning(msg.str().c_str());
         }

@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="goocanvas-architecture">
+  <refmeta>
+    <refentrytitle>Underlying Architecture</refentrytitle>
+    <manvolnum>3</manvolnum>
+    <refmiscinfo>GOOCANVAS Library</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>Underlying Architecture</refname>
+    <refpurpose>how the canvas fits together.</refpurpose>
+  </refnamediv>
+
+  <refsect1 id="architecture">
+    <title>Underlying Architecture</title>
+
+    <refsect2 id="widget">
+      <title>The GooCanvas Widget</title>
+      <para>
+	#GooCanvas is a #GtkWidget (it is actually a subclass of
+	#GtkContainer), and so can be placed in an interface just like
+	any normal widget. Usually a #GooCanvas widget would be placed inside
+	a #GtkScrolledWindow in order to enable scrolling of the canvas.
+      </para>
+      <para>
+	The size of the canvas can be set explicitly using
+	goo_canvas_set_bounds(), or if the #GooCanvas:automatic-bounds
+	property is set to %TRUE the bounds will be automatically calculated
+	to include all of the canvas items. The units used in the canvas can
+	be set with the #GooCanvas:units property. The canvas units can be
+	pixels, points, inches or millimeters and apply to the canvas and
+	all items.
+      </para>
+    </refsect2>
+
+    <refsect2 id="simple-structure">
+      <title>The Structure of the Simple Canvas</title>
+      <para>
+	The simple canvas consists of a hierarchy of canvas items.
+	The root item is automatically created by the canvas and can be
+	accessed using goo_canvas_get_root_item(). New items and groups can
+	then be created and added to the root item.
+      </para>
+      <para>
+	Each item in the canvas keeps a #GooCanvasBounds structure which
+	stores the bounding rectangle of the item and all of its descendants.
+	This makes it easy to find out which items in the canvas need repainting
+	or which item the mouse is over. (The bounds are stored in the canvas
+	coordinate space, which is the coordinate space of the entire canvas,
+	after any item transformation matrices have been applied.)
+      </para>
+    </refsect2>
+
+    <refsect2 id="model-view-structure">
+      <title>The Structure of the Model/View Canvas</title>
+      <para>
+	The model/view canvas consists of a hierarchy of item models, and an
+	identical hierarchy of canvas items, with each canvas item
+	corresponding to one item model.
+      </para>
+      <para>
+	The hierarchy of item models can be used in several #GooCanvas
+	widgets, to allow multiple views of the same model.
+	Though different canvas items will be used in each #GooCanvas.
+      </para>
+      <para>
+	The root item model is set with goo_canvas_set_root_item_model().
+	The canvas will automatically create canvas items to display
+	the hierarchy of item models, and will automatically add and
+	remove canvas items as the item model hierarchy is changed.
+      </para>
+    </refsect2>
+
+    <refsect2 id="updates">
+      <title>The Update Procedure</title>
+      <para>
+	When items are added to the canvas or their properties are changed
+	they may need to recalculate their bounds. To do this they set an
+	internal flag such as @need_update, and make a call to
+	goo_canvas_item_request_update().
+      </para>
+      <para>
+	#GooCanvas handles all the update requests at once, to avoids multiple
+	redraws of the same parts of the canvas. To do this it installs
+	an idle handler, goo_canvas_idle_handler(), which is called as soon
+	as the application is idle (and before any part of the canvas is
+	redrawn). 
+      </para>
+      <para>
+	The idle handler calls goo_canvas_item_update() on the root item,
+	which recursively calls goo_canvas_item_update() on any items as
+	necessary, recalculating their bounds and requesting redraws as
+	appropriate.
+      </para>
+      <para>
+	If a container item (e.g. #GooCanvasGroup) is changed it needs to
+	ensure that all descendants recalculate their bounds so it
+	calls goo_canvas_item_update() for all of its children with the
+	@entire_tree argument set to %TRUE.
+      </para>
+    </refsect2>
+
+    <refsect2 id="simple-updates">
+      <title>How Changes to Items are Handled</title>
+      <para>
+	When an item is changed (e.g. if the #GooCanvasRect:x property of
+	a #GooCanvasRect is changed), the item calls
+	goo_canvas_item_simple_changed() with a flag indicating if the
+	bounds of the item need	to be recalculated.
+      </para>
+      <para>
+	If the bounds don't need to be recalculated, then
+	goo_canvas_request_redraw() is called to simply request that the
+	item is redrawn. This results in a call to gdk_window_invalidate_rect()
+	and the redraw proceeds just like a normal #GtkWidget.
+      </para>
+      <para>
+	However, if the bounds do need to be recalculated then
+	goo_canvas_item_request_update() is called to request that the item
+	be updated the next time the canvas performs an update.
+      </para>
+    </refsect2>
+
+    <refsect2 id="model-view-updates">
+      <title>How Changes are Handled in the Model/View Canvas</title>
+      <para>
+	In the Model/View canvas it is the underlying item models which are
+	initially changed. The item models emit "changed" signals which the
+	items respond to. For the standard canvas items the
+	goo_canvas_item_model_simple_changed() signal handler is called,
+	which calls goo_canvas_item_simple_changed() and the
+	procedure continues as in the simple canvas case above.
+      </para>
+    </refsect2>
+
+  </refsect1>
+</refentry>

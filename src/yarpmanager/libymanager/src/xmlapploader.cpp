@@ -18,6 +18,11 @@
 #include "utility.h"
 #include "ymm-dir.h"
 
+
+#ifdef WITH_GEOMETRY
+#include <yarp/os/Property.h> // for parsing geometry information
+#endif
+
 using namespace std;
 
 /**
@@ -81,7 +86,7 @@ bool XmlAppLoader::init(void)
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
     {       
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
@@ -102,7 +107,7 @@ bool XmlAppLoader::init(void)
 /*  
     if(fileNames.empty())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"No xml application file found in "<<strPath;
         logger->addWarning(err);
         //return false;
@@ -164,7 +169,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     TiXmlDocument doc(szFile);
     if(!doc.LoadFile()) 
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
            <<doc.ErrorRow()<<": ";
         err<<doc.ErrorDesc();
@@ -176,7 +181,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     TiXmlElement *root = doc.RootElement();
     if(!root)
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" . ";
         err<<"No root element.";
         logger->addError(err);
@@ -185,7 +190,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     
     if(!compareString(root->Value(), "application"))
     {
-        //ostringstream err;
+        //OSTRINGSTREAM err;
         //err<<"File "<<szFile<<" has no tag <application>.";
         //logger->addError(err);
         return NULL;
@@ -195,7 +200,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
-        ostringstream err;
+        OSTRINGSTREAM err;
         err<<"Module from "<<szFile<<" has no name.";
         logger->addError(err);      
         //return NULL;
@@ -222,10 +227,16 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     if((ver = (TiXmlElement*) root->FirstChild("version")))
         app.setVersion(ver->GetText());
 
-    /* retrieving application prefix */
+    /*
+     * TODO: setting prefix of the main application is inactivated. 
+     * Check this should be supported in future or not! 
+     */
+    /*
+    //retrieving application prefix 
     TiXmlElement* pref;
     if((pref = (TiXmlElement*) root->FirstChild("prefix")))
         app.setPrefix(pref->GetText());
+    */
 
     /* retrieving authors information*/
     TiXmlElement* authors;
@@ -235,20 +246,16 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         {
             if(compareString(ath->Value(), "author"))
             {
-            
-                string info;
+                Author author;
                 if(ath->GetText())
-                    info = ath->GetText();
+                    author.setName(ath->GetText());
                 if(ath->Attribute("email"))
-                {
-                    info += string("/");
-                    info += string(ath->Attribute("email"));
-                }
-                app.addAuthor(info.c_str());
+                    author.setEmail(ath->Attribute("email"));
+                app.addAuthor(author);
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<ath->Row()<<".";
                 logger->addWarning(war);                                
@@ -272,7 +279,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<res->Row()<<".";
                 logger->addWarning(war);                                
@@ -301,14 +308,30 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if((element = (TiXmlElement*) mod->FirstChild("workdir")))
                     module.setWorkDir(element->GetText());
                 
-                if((element = (TiXmlElement*) mod->FirstChild("broker")))
+                if((element = (TiXmlElement*) mod->FirstChild("deployer")))
                     module.setBroker(element->GetText());
                 if((element = (TiXmlElement*) mod->FirstChild("prefix")))
                     module.setPrefix(element->GetText());
             
                 if((element = (TiXmlElement*) mod->FirstChild("rank")))
                     module.setRank(atoi(element->GetText()));
-                
+
+#ifdef WITH_GEOMETRY
+                element = (TiXmlElement*) mod->FirstChild("geometry");
+                if(element && element->GetText())
+                {
+                    yarp::os::Property prop(element->GetText());
+                    GraphicModel model; 
+                    GyPoint pt;
+                    if(prop.check("Pos"))
+                    {
+                        pt.x = prop.findGroup("Pos").find("x").asDouble();
+                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        model.points.push_back(pt);
+                        module.setModelBase(model);
+                    }
+                }
+#endif                
                 /* retrieving resources information*/
                 TiXmlElement* resources;
                 if((resources = (TiXmlElement*) mod->FirstChild("dependencies")))
@@ -329,7 +352,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         }
                         else
                         {
-                            ostringstream war;
+                            OSTRINGSTREAM war;
                             war<<"Unrecognized tag from "<<szFile<<" at line "\
                                <<res->Row()<<".";
                             logger->addWarning(war);                                
@@ -355,7 +378,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Module from "<<szFile<<" at line "\
                    <<mod->Row()<<" has not name tag.";
                 logger->addWarning(war);                                
@@ -377,11 +400,27 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 ApplicationInterface IApp(name->GetText());                 
                 if((prefix=(TiXmlElement*) embApp->FirstChild("prefix")))
                     IApp.setPrefix(prefix->GetText());
+#ifdef WITH_GEOMETRY
+                TiXmlElement* element = (TiXmlElement*) embApp->FirstChild("geometry");
+                if(element && element->GetText())
+                {
+                    yarp::os::Property prop(element->GetText());
+                    GraphicModel model; 
+                    GyPoint pt;
+                    if(prop.check("Pos"))
+                    {
+                        pt.x = prop.findGroup("Pos").find("x").asDouble();
+                        pt.y = prop.findGroup("Pos").find("y").asDouble();
+                        model.points.push_back(pt);
+                        IApp.setModelBase(model);
+                    }
+                }
+#endif           
                 app.addIapplication(IApp);  
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Incomplete application tag from "<<szFile<<" at line "\
                    <<embApp->Row()<<". (no name)";
                 logger->addWarning(war);                                
@@ -416,12 +455,28 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                                     strCarrier.c_str());
                 if(from->Attribute("external") && 
                     compareString(from->Attribute("external"), "true"))
+                {                    
                     connection.setFromExternal(true);
+                    if(from->GetText())
+                    {
+                        ResYarpPort resource(from->GetText());
+                        resource.setPort(from->GetText());
+                        app.addResource(resource);
+                    }                        
+                }                    
                 if(to->Attribute("external") && 
                     compareString(to->Attribute("external"), "true"))
-                    connection.setToExternal(true);
+                {   
+                    if(to->GetText())
+                    {
+                        connection.setToExternal(true);
+                        ResYarpPort resource(to->GetText());
+                        resource.setPort(to->GetText());
+                        app.addResource(resource);
+                    }                        
+                }
 
-                //Connections wich have the same port name in Port Resources 
+                //Connections which have the same port name in Port Resources 
                 // should also be set as external
                 for(int i=0; i<app.resourcesCount(); i++)
                 {
@@ -435,11 +490,33 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if(cnn->Attribute("persist") && 
                         compareString(cnn->Attribute("persist"), "true"))
                     connection.setPersistent(true);    
+
+#ifdef WITH_GEOMETRY
+                TiXmlElement* geometry = (TiXmlElement*) cnn->FirstChild("geometry");
+                if(geometry && geometry->GetText())
+                {
+                    yarp::os::Property prop(geometry->GetText());
+                    GraphicModel model;                     
+                    if(prop.check("Pos"))
+                    {
+                        yarp::os::Bottle pos = prop.findGroup("Pos");
+                        for(int i=1; i<pos.size(); i++)
+                        {
+                            GyPoint pt;
+                            pt.x = pos.get(i).find("x").asDouble();
+                            pt.y = pos.get(i).find("y").asDouble();
+                            model.points.push_back(pt);
+                        }
+                        connection.setModelBase(model);
+                    }
+                }
+#endif                
+ 
                 app.addConnection(connection);
             }
             else
             {
-                ostringstream war;
+                OSTRINGSTREAM war;
                 war<<"Incomplete connection tag from "<<szFile<<" at line "\
                    <<cnn->Row()<<".";
                 logger->addWarning(war);                                

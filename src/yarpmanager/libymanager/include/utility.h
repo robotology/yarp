@@ -17,17 +17,42 @@
 #include <cctype>
 #include <string>
 #include <vector>
-#include <sstream>
+#include <string.h>
+#include <iostream>
 
 using namespace std;
 
 #include "ymm-types.h" 
 
-class Graph;
 
-bool compareString(const char* szFirst, const char* szSecond);
-OS strToOS(const char* szOS);
-bool exportDotGraph(Graph& graph, const char* szFileName);
+class StrStream 
+{
+public:
+    StrStream(void);
+    StrStream(const std::string str);
+    ~StrStream();
+    std::string str(void);
+    StrStream& operator<<(StrStream &oss);
+    StrStream& operator<<(const std::string &str);
+    StrStream& operator<<(int n);
+    StrStream& operator = (const char* sz);
+    StrStream& operator = (char* sz);
+    StrStream& operator = (const std::string &str);
+    StrStream& operator = (StrStream &oss);
+    StrStream& operator = (int n);
+    friend std::ostream& operator << (std::ostream &os , StrStream& sstr);
+
+private:
+    std::string dummyStr;
+};
+
+
+#if defined(_MSC_VER) && (_MSC_VER == 1600)
+    typedef StrStream OSTRINGSTREAM;
+#else
+    #include <sstream>
+    typedef std::stringstream OSTRINGSTREAM;
+#endif
 
 
 /**
@@ -38,66 +63,33 @@ class ErrorLogger
 public:
     static ErrorLogger* Instance(void);
     
-    void addWarning(const char* szWarning) { 
-        if(szWarning) 
-            warnings.push_back(string(szWarning));
-    }
-    
-    void addWarning(const string &str) { 
-        warnings.push_back(str);
-    }
-    
-    void addWarning(const ostringstream &stream) { 
-        addWarning(stream.str());   
-    }
-
-    void addError(const char* szError) {
-        if(szError) 
-            errors.push_back(string(szError));
-    }
-
-    void addError(const string &str) {
-        errors.push_back(str);
-    }
-
-    void addError(const ostringstream &stream) {
-        addError(stream.str());
-    }
-    
-    const char* getLastError(void) { 
-        if(errors.empty())
-            return NULL;
-        static string msg;
-        msg = errors.back();
-        errors.pop_back();
-        return msg.c_str();         
-    }
-    
-    const char* getLastWarning(void) {
-        if(warnings.empty())
-            return NULL;
-        static string msg;
-        msg = warnings.back();
-        warnings.pop_back();
-        return msg.c_str(); 
-    }
-    void clear(void) { errors.clear(); warnings.clear(); }
-    int errorCount(void){ return errors.size();}
-    int warningCount(void){ return warnings.size();}
+    void addWarning(const char* szWarning);    
+    void addWarning(const string &str);    
+    void addWarning(OSTRINGSTREAM &stream);
+    void addError(const char* szError);
+    void addError(const string &str);
+    void addError(OSTRINGSTREAM &stream);   
+    const char* getLastError(void);  
+    const char* getLastWarning(void);
+    void clear(void);
+    int errorCount(void);
+    int warningCount(void);
  
 private:
     ErrorLogger(){};  
     ErrorLogger(ErrorLogger const&){};
-    //ErrorLogger& operator=(ErrorLogger const&){};
     static ErrorLogger* pInstance;
     vector<string> errors;
     vector<string> warnings;
 };
  
- 
- 
- 
 
+bool compareString(const char* szFirst, const char* szSecond);
+void trimString(string& str);
+OS strToOS(const char* szOS);
+
+class Graph;
+bool exportDotGraph(Graph& graph, const char* szFileName);
 //}
 
 

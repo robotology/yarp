@@ -28,6 +28,15 @@ class Link;
 typedef vector<Link> LinkContainer;
 typedef vector<Link>::iterator LinkIterator;
 
+class GraphicModel {
+
+public: 
+    GraphicModel(void) {}
+    virtual ~GraphicModel() {}    
+    vector<GyPoint> points;
+};
+
+
 
 /**
  * Link holding all the links of a node  
@@ -45,7 +54,7 @@ public:
     void setWeight(float w) { fWeight = w; }
     float weight(void) { return fWeight; }
     void setVirtual(bool virtualLink) { bVirtual = virtualLink;}
-    bool isVirtual(void){ return bVirtual; }
+    bool isVirtual(void){ return bVirtual; }    
 protected:
 
 private:
@@ -66,15 +75,17 @@ public:
         type = _type; 
         bSatisfied = false;
         bVisited = false;
+        model = NULL;
     }
     Node(NodeType _type, const char* szLabel ){ 
         type = _type; 
         bSatisfied = false;
         bVisited = false;
+        model = NULL;
         if(szLabel) label = szLabel;
     }   
     Node(const Node &node);
-    virtual ~Node() {}
+    virtual ~Node() { model = NULL; }
     
     void setSatisfied(bool sat) { bSatisfied = sat; }
     bool isSatisfied(void) { return bSatisfied; }
@@ -96,6 +107,11 @@ public:
     void removeAllSuc(void);
     bool hasSuc(Node* node);
     virtual Node* clone() = 0;
+    
+    GraphicModel* getModel(void) { return model;}
+    void setModel(GraphicModel* mdl) { model = mdl; }; 
+
+   
 protected:
 
 private:
@@ -105,6 +121,7 @@ private:
     bool bVisited; 
     NodeType type;  
     string label;
+    GraphicModel* model;
 };
 
 typedef vector<Node*> NodePVector;

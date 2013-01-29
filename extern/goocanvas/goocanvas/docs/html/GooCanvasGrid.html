@@ -1,0 +1,636 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>GooCanvasGrid</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GooCanvas Reference Manual">
+<link rel="up" href="ch03.html" title="Standard Canvas Items">
+<link rel="prev" href="GooCanvasEllipse.html" title="GooCanvasEllipse">
+<link rel="next" href="GooCanvasImage.html" title="GooCanvasImage">
+<meta name="generator" content="GTK-Doc V1.9 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="Introduction">
+<link rel="chapter" href="ch02.html" title="Core Objects">
+<link rel="chapter" href="ch03.html" title="Standard Canvas Items">
+<link rel="chapter" href="ch04.html" title="Standard Canvas Item Models">
+<link rel="chapter" href="ch05.html" title="Miscellaneous">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GooCanvasEllipse.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch03.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GooCanvas Reference Manual</th>
+<td><a accesskey="n" href="GooCanvasImage.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts"><nobr><a href="#id3051544" class="shortcut">Top</a>
+                  &#160;|&#160;
+                  <a href="#id3122683" class="shortcut">Description</a>
+                  &#160;|&#160;
+                  <a href="#id3123325" class="shortcut">Object Hierarchy</a>
+                  &#160;|&#160;
+                  <a href="#id3123355" class="shortcut">Implemented Interfaces</a>
+                  &#160;|&#160;
+                  <a href="#id3123376" class="shortcut">Properties</a></nobr></td></tr>
+</table>
+<div class="refentry" lang="en">
+<a name="GooCanvasGrid"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2>
+<a name="id3051544"></a><span class="refentrytitle">GooCanvasGrid</span>
+</h2>
+<p>GooCanvasGrid &#8212; a grid item.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<pre class="synopsis">
+
+
+
+                    <a class="link" href="GooCanvasGrid.html#GooCanvasGrid-struct">GooCanvasGrid</a>;
+<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem">GooCanvasItem</a>*      <a class="link" href="GooCanvasGrid.html#goo-canvas-grid-new">goo_canvas_grid_new</a>                 (<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem">GooCanvasItem</a> *parent,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> x,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> y,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> width,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> height,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> x_step,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> y_step,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> x_offset,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> y_offset,
+                                                         ...);
+
+
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id3123325"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+
+  <a
+href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
+>GObject</a>
+   +----<a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple">GooCanvasItemSimple</a>
+         +----GooCanvasGrid
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id3123355"></a><h2>Implemented Interfaces</h2>
+<p>
+GooCanvasGrid implements
+ <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem">GooCanvasItem</a>.</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id3123376"></a><h2>Properties</h2>
+<pre class="synopsis">
+
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--border-color">border-color</a>"             <a
+href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"
+>gchararray</a>            : Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--border-color-rgba">border-color-rgba</a>"        <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a>                 : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--border-pattern">border-pattern</a>"           <a class="link" href="goocanvas-GooCanvas-Types.html#GooCairoPattern">GooCairoPattern</a>       : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--border-pixbuf">border-pixbuf</a>"            <a
+href="/usr/share/gtk-doc/html/gdk-pixbuf/gdk-pixbuf-gdk-pixbuf.html#GdkPixbuf"
+>GdkPixbuf</a>             : Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--border-width">border-width</a>"             <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--height">height</a>"                   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--horz-grid-line-color">horz-grid-line-color</a>"     <a
+href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"
+>gchararray</a>            : Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--horz-grid-line-color-rgba">horz-grid-line-color-rgba</a>" <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a>                 : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--horz-grid-line-pattern">horz-grid-line-pattern</a>"   <a class="link" href="goocanvas-GooCanvas-Types.html#GooCairoPattern">GooCairoPattern</a>       : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--horz-grid-line-pixbuf">horz-grid-line-pixbuf</a>"    <a
+href="/usr/share/gtk-doc/html/gdk-pixbuf/gdk-pixbuf-gdk-pixbuf.html#GdkPixbuf"
+>GdkPixbuf</a>             : Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--horz-grid-line-width">horz-grid-line-width</a>"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--show-horz-grid-lines">show-horz-grid-lines</a>"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>              : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--show-vert-grid-lines">show-vert-grid-lines</a>"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>              : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--vert-grid-line-color">vert-grid-line-color</a>"     <a
+href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"
+>gchararray</a>            : Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--vert-grid-line-color-rgba">vert-grid-line-color-rgba</a>" <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a>                 : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--vert-grid-line-pattern">vert-grid-line-pattern</a>"   <a class="link" href="goocanvas-GooCanvas-Types.html#GooCairoPattern">GooCairoPattern</a>       : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--vert-grid-line-pixbuf">vert-grid-line-pixbuf</a>"    <a
+href="/usr/share/gtk-doc/html/gdk-pixbuf/gdk-pixbuf-gdk-pixbuf.html#GdkPixbuf"
+>GdkPixbuf</a>             : Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--vert-grid-line-width">vert-grid-line-width</a>"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--vert-grid-lines-on-top">vert-grid-lines-on-top</a>"   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>              : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--width">width</a>"                    <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--x">x</a>"                        <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--x-offset">x-offset</a>"                 <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--x-step">x-step</a>"                   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--y">y</a>"                        <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--y-offset">y-offset</a>"                 <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+  "<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--y-step">y-step</a>"                   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="id3122683"></a><h2>Description</h2>
+<p>
+GooCanvasGrid represents a grid item.
+A grid consists of a number of equally-spaced horizontal and vertical
+grid lines, plus an optional border.
+</p>
+<p>
+It is a subclass of <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a> and so inherits all of the style
+properties such as "stroke-color", "fill-color" and "line-width".
+</p>
+<p>
+It also implements the <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem"><span class="type">GooCanvasItem</span></a> interface, so you can use the
+<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem"><span class="type">GooCanvasItem</span></a> functions such as <a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-raise"><code class="function">goo_canvas_item_raise()</code></a> and
+<a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-rotate"><code class="function">goo_canvas_item_rotate()</code></a>.
+</p>
+<p>
+To create a <a class="link" href="GooCanvasGrid.html" title="GooCanvasGrid"><span class="type">GooCanvasGrid</span></a> use <a class="link" href="GooCanvasGrid.html#goo-canvas-grid-new"><code class="function">goo_canvas_grid_new()</code></a>.
+</p>
+<p>
+To get or set the properties of an existing <a class="link" href="GooCanvasGrid.html" title="GooCanvasGrid"><span class="type">GooCanvasGrid</span></a>, use
+<a
+href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-get"
+><code class="function">g_object_get()</code></a> and <a
+href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-set"
+><code class="function">g_object_set()</code></a>.
+</p>
+<p>
+The grid's position and size is specified with the <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--x"><span class="type">"x"</span></a>,
+<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--y"><span class="type">"y"</span></a>, <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--width"><span class="type">"width"</span></a> and <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--height"><span class="type">"height"</span></a> properties.
+</p>
+<p>
+The <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--x-step"><span class="type">"x-step"</span></a> and <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--y-step"><span class="type">"y-step"</span></a> properties specify the 
+distance between grid lines. The  <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--x-offset"><span class="type">"x-offset"</span></a> and
+<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--y-offset"><span class="type">"y-offset"</span></a> properties specify the distance before the first
+grid lines.
+</p>
+<p>
+The horizontal or vertical grid lines can be hidden using the
+<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--show-horz-grid-lines"><span class="type">"show-horz-grid-lines"</span></a> and <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--show-vert-grid-lines"><span class="type">"show-vert-grid-lines"</span></a>
+properties.
+</p>
+<p>
+The width of the border can be set using the <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--border-width"><span class="type">"border-width"</span></a>
+property. The border is drawn outside the area specified with the
+<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--x"><span class="type">"x"</span></a>, <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--y"><span class="type">"y"</span></a>, <a class="link" href="GooCanvasGrid.html#GooCanvasGrid--width"><span class="type">"width"</span></a> and
+<a class="link" href="GooCanvasGrid.html#GooCanvasGrid--height"><span class="type">"height"</span></a> properties.
+</p>
+<p>
+Other properties allow the colors and widths of the grid lines to be set.
+The grid line color and width properties override the standard
+<a class="link" href="GooCanvasItemSimple.html#GooCanvasItemSimple--stroke-color"><span class="type">"stroke-color"</span></a> and <a class="link" href="GooCanvasItemSimple.html#GooCanvasItemSimple--line-width"><span class="type">"line-width"</span></a>
+properties, enabling different styles for horizontal and vertical grid lines.</p>
+<p>
+
+</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="id3125751"></a><h2>Details</h2>
+<div class="refsect2" lang="en">
+<a name="id3125762"></a><h3>
+<a name="GooCanvasGrid-struct"></a>GooCanvasGrid</h3>
+<a class="indexterm" name="id3125773"></a><pre class="programlisting">typedef struct _GooCanvasGrid GooCanvasGrid;</pre>
+<p>
+The <a class="link" href="GooCanvasGrid.html#GooCanvasGrid-struct"><span class="type">GooCanvasGrid</span></a> struct contains private data only.</p>
+<p>
+
+</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3125801"></a><h3>
+<a name="goo-canvas-grid-new"></a>goo_canvas_grid_new ()</h3>
+<a class="indexterm" name="id3125813"></a><pre class="programlisting"><a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem">GooCanvasItem</a>*      goo_canvas_grid_new                 (<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem">GooCanvasItem</a> *parent,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> x,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> y,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> width,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> height,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> x_step,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> y_step,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> x_offset,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a> y_offset,
+                                                         ...);</pre>
+<p>
+Creates a new grid item.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>parent</code></em>&#160;:</span></p></td>
+<td> the parent item, or <a
+href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"
+><code class="literal">NULL</code></a>. If a parent is specified, it will assume
+ ownership of the item, and the item will automatically be freed when it is
+ removed from the parent. Otherwise call <a
+href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-unref"
+><code class="function">g_object_unref()</code></a> to free it.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>x</code></em>&#160;:</span></p></td>
+<td> the x coordinate of the left of the grid.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>y</code></em>&#160;:</span></p></td>
+<td> the y coordinate of the top of the grid.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em>&#160;:</span></p></td>
+<td> the width of the grid.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em>&#160;:</span></p></td>
+<td> the height of the grid.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>x_step</code></em>&#160;:</span></p></td>
+<td> the distance between the vertical grid lines.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>y_step</code></em>&#160;:</span></p></td>
+<td> the distance between the horizontal grid lines.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>x_offset</code></em>&#160;:</span></p></td>
+<td> the distance before the first vertical grid line.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>y_offset</code></em>&#160;:</span></p></td>
+<td> the distance before the first horizontal grid line.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>...</code></em>&#160;:</span></p></td>
+<td> optional pairs of property names and values, and a terminating <a
+href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"
+><code class="literal">NULL</code></a>.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span>&#160;:</span></p></td>
+<td> a new grid item.
+</td>
+</tr>
+</tbody>
+</table></div>
+<p>
+Here's an example showing how to create a grid:
+</p>
+<p>
+</p>
+<div class="informalexample"><pre class="programlisting">
+ GooCanvasItem *grid = goo_canvas_grid_new (mygroup, 100.0, 100.0, 400.0, 200.0,
+                                            20.0, 20.0, 10.0, 10.0,
+                                            "horz-grid-line-width", 4.0,
+                                            "horz-grid-line-color", "yellow",
+                                            "vert-grid-line-width", 2.0,
+                                            "vert-grid-line-color", "red",
+                                            "border-width", 3.0,
+                                            "border-color", "white",
+                                            "fill-color", "blue",
+                                            NULL);
+</pre></div>
+<p>
+
+</p>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="id3126120"></a><h2>Property Details</h2>
+<div class="refsect2" lang="en">
+<a name="id3126131"></a><h3>
+<a name="GooCanvasGrid--border-color"></a>The <code class="literal">"border-color"</code> property</h3>
+<a class="indexterm" name="id3126145"></a><pre class="programlisting">  "border-color"             <a
+href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"
+>gchararray</a>            : Write</pre>
+<p>The color to use for the border.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126171"></a><h3>
+<a name="GooCanvasGrid--border-color-rgba"></a>The <code class="literal">"border-color-rgba"</code> property</h3>
+<a class="indexterm" name="id3126187"></a><pre class="programlisting">  "border-color-rgba"        <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a>                 : Read / Write</pre>
+<p>The color to use for the border, specified as a 32-bit integer value.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126214"></a><h3>
+<a name="GooCanvasGrid--border-pattern"></a>The <code class="literal">"border-pattern"</code> property</h3>
+<a class="indexterm" name="id3126230"></a><pre class="programlisting">  "border-pattern"           <a class="link" href="goocanvas-GooCanvas-Types.html#GooCairoPattern">GooCairoPattern</a>       : Read / Write</pre>
+<p>The cairo pattern to paint the border with.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126252"></a><h3>
+<a name="GooCanvasGrid--border-pixbuf"></a>The <code class="literal">"border-pixbuf"</code> property</h3>
+<a class="indexterm" name="id3126268"></a><pre class="programlisting">  "border-pixbuf"            <a
+href="/usr/share/gtk-doc/html/gdk-pixbuf/gdk-pixbuf-gdk-pixbuf.html#GdkPixbuf"
+>GdkPixbuf</a>             : Write</pre>
+<p>The pixbuf to use to draw the border.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126288"></a><h3>
+<a name="GooCanvasGrid--border-width"></a>The <code class="literal">"border-width"</code> property</h3>
+<a class="indexterm" name="id3126302"></a><pre class="programlisting">  "border-width"             <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The width of the border around the grid.</p>
+<p>Default value: -1</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126328"></a><h3>
+<a name="GooCanvasGrid--height"></a>The <code class="literal">"height"</code> property</h3>
+<a class="indexterm" name="id3126342"></a><pre class="programlisting">  "height"                   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The height of the grid.</p>
+<p>Allowed values: &gt;= 0</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126371"></a><h3>
+<a name="GooCanvasGrid--horz-grid-line-color"></a>The <code class="literal">"horz-grid-line-color"</code> property</h3>
+<a class="indexterm" name="id3126387"></a><pre class="programlisting">  "horz-grid-line-color"     <a
+href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"
+>gchararray</a>            : Write</pre>
+<p>The color to use for the horizontal grid lines.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126413"></a><h3>
+<a name="GooCanvasGrid--horz-grid-line-color-rgba"></a>The <code class="literal">"horz-grid-line-color-rgba"</code> property</h3>
+<a class="indexterm" name="id3126427"></a><pre class="programlisting">  "horz-grid-line-color-rgba" <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a>                 : Read / Write</pre>
+<p>The color to use for the horizontal grid lines, specified as a 32-bit integer value.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126454"></a><h3>
+<a name="GooCanvasGrid--horz-grid-line-pattern"></a>The <code class="literal">"horz-grid-line-pattern"</code> property</h3>
+<a class="indexterm" name="id3126469"></a><pre class="programlisting">  "horz-grid-line-pattern"   <a class="link" href="goocanvas-GooCanvas-Types.html#GooCairoPattern">GooCairoPattern</a>       : Read / Write</pre>
+<p>The cairo pattern to paint the horizontal grid lines with.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126492"></a><h3>
+<a name="GooCanvasGrid--horz-grid-line-pixbuf"></a>The <code class="literal">"horz-grid-line-pixbuf"</code> property</h3>
+<a class="indexterm" name="id3126508"></a><pre class="programlisting">  "horz-grid-line-pixbuf"    <a
+href="/usr/share/gtk-doc/html/gdk-pixbuf/gdk-pixbuf-gdk-pixbuf.html#GdkPixbuf"
+>GdkPixbuf</a>             : Write</pre>
+<p>The pixbuf to use to draw the horizontal grid lines.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126531"></a><h3>
+<a name="GooCanvasGrid--horz-grid-line-width"></a>The <code class="literal">"horz-grid-line-width"</code> property</h3>
+<a class="indexterm" name="id3126546"></a><pre class="programlisting">  "horz-grid-line-width"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The width of the horizontal grid lines.</p>
+<p>Default value: -1</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126572"></a><h3>
+<a name="GooCanvasGrid--show-horz-grid-lines"></a>The <code class="literal">"show-horz-grid-lines"</code> property</h3>
+<a class="indexterm" name="id3126588"></a><pre class="programlisting">  "show-horz-grid-lines"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>              : Read / Write</pre>
+<p>If the horizontal grid lines are shown.</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126614"></a><h3>
+<a name="GooCanvasGrid--show-vert-grid-lines"></a>The <code class="literal">"show-vert-grid-lines"</code> property</h3>
+<a class="indexterm" name="id3126630"></a><pre class="programlisting">  "show-vert-grid-lines"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>              : Read / Write</pre>
+<p>If the vertical grid lines are shown.</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126656"></a><h3>
+<a name="GooCanvasGrid--vert-grid-line-color"></a>The <code class="literal">"vert-grid-line-color"</code> property</h3>
+<a class="indexterm" name="id3126672"></a><pre class="programlisting">  "vert-grid-line-color"     <a
+href="/usr/share/gtk-doc/html/gobject/gobject-Standard-Parameter-and-Value-Types.html#gchararray"
+>gchararray</a>            : Write</pre>
+<p>The color to use for the vertical grid lines.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126698"></a><h3>
+<a name="GooCanvasGrid--vert-grid-line-color-rgba"></a>The <code class="literal">"vert-grid-line-color-rgba"</code> property</h3>
+<a class="indexterm" name="id3126714"></a><pre class="programlisting">  "vert-grid-line-color-rgba" <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a>                 : Read / Write</pre>
+<p>The color to use for the vertical grid lines, specified as a 32-bit integer value.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126741"></a><h3>
+<a name="GooCanvasGrid--vert-grid-line-pattern"></a>The <code class="literal">"vert-grid-line-pattern"</code> property</h3>
+<a class="indexterm" name="id3126757"></a><pre class="programlisting">  "vert-grid-line-pattern"   <a class="link" href="goocanvas-GooCanvas-Types.html#GooCairoPattern">GooCairoPattern</a>       : Read / Write</pre>
+<p>The cairo pattern to paint the vertical grid lines with.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126780"></a><h3>
+<a name="GooCanvasGrid--vert-grid-line-pixbuf"></a>The <code class="literal">"vert-grid-line-pixbuf"</code> property</h3>
+<a class="indexterm" name="id3126796"></a><pre class="programlisting">  "vert-grid-line-pixbuf"    <a
+href="/usr/share/gtk-doc/html/gdk-pixbuf/gdk-pixbuf-gdk-pixbuf.html#GdkPixbuf"
+>GdkPixbuf</a>             : Write</pre>
+<p>The pixbuf to use to draw the vertical grid lines.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126819"></a><h3>
+<a name="GooCanvasGrid--vert-grid-line-width"></a>The <code class="literal">"vert-grid-line-width"</code> property</h3>
+<a class="indexterm" name="id3126834"></a><pre class="programlisting">  "vert-grid-line-width"     <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The width of the vertical grid lines.</p>
+<p>Default value: -1</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126860"></a><h3>
+<a name="GooCanvasGrid--vert-grid-lines-on-top"></a>The <code class="literal">"vert-grid-lines-on-top"</code> property</h3>
+<a class="indexterm" name="id3126876"></a><pre class="programlisting">  "vert-grid-lines-on-top"   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>              : Read / Write</pre>
+<p>If the vertical grid lines are painted above the horizontal grid lines.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126903"></a><h3>
+<a name="GooCanvasGrid--width"></a>The <code class="literal">"width"</code> property</h3>
+<a class="indexterm" name="id3126917"></a><pre class="programlisting">  "width"                    <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The width of the grid.</p>
+<p>Allowed values: &gt;= 0</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126946"></a><h3>
+<a name="GooCanvasGrid--x"></a>The <code class="literal">"x"</code> property</h3>
+<a class="indexterm" name="id3126961"></a><pre class="programlisting">  "x"                        <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The x coordinate of the grid.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3126988"></a><h3>
+<a name="GooCanvasGrid--x-offset"></a>The <code class="literal">"x-offset"</code> property</h3>
+<a class="indexterm" name="id3127002"></a><pre class="programlisting">  "x-offset"                 <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The distance before the first vertical grid line.</p>
+<p>Allowed values: &gt;= 0</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3127032"></a><h3>
+<a name="GooCanvasGrid--x-step"></a>The <code class="literal">"x-step"</code> property</h3>
+<a class="indexterm" name="id3127046"></a><pre class="programlisting">  "x-step"                   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The distance between the vertical grid lines.</p>
+<p>Allowed values: &gt;= 0</p>
+<p>Default value: 10</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3127076"></a><h3>
+<a name="GooCanvasGrid--y"></a>The <code class="literal">"y"</code> property</h3>
+<a class="indexterm" name="id3127091"></a><pre class="programlisting">  "y"                        <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The y coordinate of the grid.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3127117"></a><h3>
+<a name="GooCanvasGrid--y-offset"></a>The <code class="literal">"y-offset"</code> property</h3>
+<a class="indexterm" name="id3127131"></a><pre class="programlisting">  "y-offset"                 <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The distance before the first horizontal grid line.</p>
+<p>Allowed values: &gt;= 0</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="id3127161"></a><h3>
+<a name="GooCanvasGrid--y-step"></a>The <code class="literal">"y-step"</code> property</h3>
+<a class="indexterm" name="id3127175"></a><pre class="programlisting">  "y-step"                   <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"
+>gdouble</a>               : Read / Write</pre>
+<p>The distance between the horizontal grid lines.</p>
+<p>Allowed values: &gt;= 0</p>
+<p>Default value: 10</p>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="id3127206"></a><div class="refsect2" lang="en"><a name="id3127208"></a></div>
+<hr>
+<div class="refsect2" lang="en"><a name="id3127209"></a></div>
+</div>
+</div>
+</body>
+</html>

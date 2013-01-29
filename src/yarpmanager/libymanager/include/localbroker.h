@@ -15,7 +15,6 @@
 
 #include <stdio.h>
 #include <string>
-#include <sstream>
 #include <iostream>
 
 #include <yarp/os/Time.h>

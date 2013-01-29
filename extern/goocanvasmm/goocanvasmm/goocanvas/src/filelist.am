@@ -1,0 +1,46 @@
+# This file is part of goocanvasmm.
+
+files_defs =			\
+	libgoocanvas.defs		\
+	libgoocanvas_enums.defs	\
+	libgoocanvas_vfuncs.defs	\
+	libgoocanvas_methods.defs	\
+	libgoocanvas_signals.defs	\
+	libgoocanvas_others.defs	\
+	libgoocanvas_fake_properties.defs \
+	libgoocanvas_docs.xml	\
+	libgoocanvas_docs_override.xml
+
+
+files_hg = \
+canvas.hg \
+bounds.hg \
+ellipse.hg \
+ellipsemodel.hg \
+grid.hg \
+gridmodel.hg \
+group.hg \
+groupmodel.hg \
+image.hg \
+imagemodel.hg \
+item.hg \
+itemmodel.hg \
+itemmodelsimple.hg \
+itemsimple.hg \
+linedash.hg \
+points.hg \
+polyline.hg \
+polylinemodel.hg \
+path.hg \
+pathmodel.hg \
+rect.hg \
+rectmodel.hg \
+style.hg \
+table.hg \
+tablemodel.hg \
+text.hg \
+textmodel.hg \
+widget.hg \
+enums.hg
+
+files_ccg = $(files_hg:.hg=.ccg)

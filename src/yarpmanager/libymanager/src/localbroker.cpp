@@ -139,7 +139,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
         strEnv = szenv;
     
     /*
-    ostringstream sstrID;
+    OSTRINGSTREAM sstrID;
     sstrID<<ID;
     strTag = strHost + strCmd + sstrID.str();
 

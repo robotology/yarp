@@ -17,12 +17,13 @@
  */
 
 Node::Node(const Node &node)
-{
+{    
     bVisited = node.bVisited;
     bSatisfied = node.bSatisfied;
     type = node.type;
     label = node.label;
     sucessors = node.sucessors;
+    model = node.model;
 }
 
 bool Node::addSuc(Node* node, float weight, bool _virtual)

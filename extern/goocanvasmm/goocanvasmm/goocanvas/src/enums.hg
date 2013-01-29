@@ -1,0 +1,96 @@
+/* Copyright (C) 1998-2006 The gtkmm Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include <goocanvasutils.h>
+
+#include <cairomm/enums.h>
+#include <cairomm/pattern.h>
+#include <cairomm/context.h> // For Cairo::Matrix
+
+_DEFS(goocanvasmm,libgoocanvas)
+
+namespace Goocanvas
+{
+
+_WRAP_ENUM(PointerEvents,GooCanvasPointerEvents, s#^CANVAS_##)
+_WRAP_ENUM(ItemVisibility,GooCanvasItemVisibility, s#^CANVAS_##)
+_WRAP_ENUM(PathCommandType,GooCanvasPathCommandType, s#^CANVAS_##)
+
+} //namespace Goocanvas
+
+namespace Glib
+{
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+// Make the cairo enums and structures work with Glib::Value using the
+// GTypes goocanvas defines for them in goocanvasutil.h
+
+template<>
+class Value<Cairo::Matrix*> : public Glib::ValueBase_Boxed
+{
+public:
+  static GType value_type() G_GNUC_CONST;
+
+  void set(const Cairo::Matrix* data) { set_boxed(data); }
+  Cairo::Matrix* get() const { return static_cast<Cairo::Matrix*>(get_boxed()); }
+};
+
+template<>
+class Value<Cairo::FillRule> : public Glib::Value_Enum<Cairo::FillRule>
+{
+public:
+  static GType value_type() G_GNUC_CONST;
+};
+
+template<>
+class Value<Cairo::Operator> : public Glib::Value_Enum<Cairo::Operator>
+{
+public:
+  static GType value_type() G_GNUC_CONST;
+};
+
+template<>
+class Value<Cairo::Antialias> : public Glib::Value_Enum<Cairo::Antialias>
+{
+public:
+  static GType value_type() G_GNUC_CONST;
+};
+
+template<>
+class Value<Cairo::LineCap> : public Glib::Value_Enum<Cairo::LineCap>
+{
+public:
+  static GType value_type() G_GNUC_CONST;
+};
+
+template<>
+class Value<Cairo::LineJoin> : public Glib::Value_Enum<Cairo::LineJoin>
+{
+public:
+  static GType value_type() G_GNUC_CONST;
+};
+
+template<>
+class Value<Cairo::HintMetrics> : public Glib::Value_Enum<Cairo::HintMetrics>
+{
+public:
+  static GType value_type() G_GNUC_CONST;
+};
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
+}

@@ -1,0 +1,189 @@
+/* Copyright (C) 1998-2006 The gtkmm Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+
+#include <goocanvasmm/canvas.h>
+#include <goocanvasutils.h>
+#include <goocanvasenumtypes.h>
+
+
+namespace Goocanvas
+{
+
+Bounds Item::get_bounds() const
+{
+  Goocanvas::Bounds result;
+  goo_canvas_item_get_bounds(const_cast<GooCanvasItem*>(gobj()), result.gobj());
+  return result;
+}
+
+void Item::raise()
+{
+  goo_canvas_item_raise(gobj(), NULL);
+}
+
+void Item::lower()
+{
+  goo_canvas_item_lower(gobj(), NULL);
+}
+
+void Item::add_child(const Glib::RefPtr<Item>& child)
+{
+  goo_canvas_item_add_child(gobj(), Glib::unwrap(child), -1);
+}
+
+// We need to hand-code this vfunc to write the result back into the
+// bounds variable. The C++ wrapper cannot ref the existing variable, but only
+// make a copy.
+void Item_Class::get_bounds_vfunc_callback(GooCanvasItem* item, GooCanvasBounds* bounds)
+{
+  CppObjectType *const obj = dynamic_cast<CppObjectType*>(
+      Glib::ObjectBase::_get_current_wrapper((GObject*)item));
+
+  // Non-gtkmmproc-generated custom classes implicitly call the default
+  // Glib::ObjectBase constructor, which sets is_derived_. But gtkmmproc-
+  // generated classes can use this optimisation, which avoids the unnecessary
+  // parameter conversions if there is no possibility of the virtual function
+  // being overridden:
+  if(obj && obj->is_derived_())
+  {
+    #ifdef GLIBMM_EXCEPTIONS_ENABLED
+    try // Trap C++ exceptions which would normally be lost because this is a C callback.
+    {
+    #endif //GLIBMM_EXCEPTIONS_ENABLED
+      // Call the virtual member method, which derived classes might override.
+      Bounds cpp_bounds;
+      obj->get_bounds_vfunc(cpp_bounds);
+      *bounds = *cpp_bounds.gobj();
+    #ifdef GLIBMM_EXCEPTIONS_ENABLED
+    }
+    catch(...)
+    {
+      Glib::exception_handlers_invoke();
+    }
+    #endif //GLIBMM_EXCEPTIONS_ENABLED
+  }
+  else
+  {
+    BaseClassType *const base = static_cast<BaseClassType*>(
+        g_type_interface_peek_parent( // Get the parent interface of the interface (The original underlying C interface).
+g_type_interface_peek(G_OBJECT_GET_CLASS(item), CppObjectType::get_type()) // Get the interface.
+)    );
+
+    // Call the original underlying C function:
+    if(base && base->get_bounds)
+      return (*base->get_bounds)(item, bounds);
+  }
+}
+
+void Item::get_bounds_vfunc(Bounds& bounds) const
+{
+  //Call the default C implementation:
+
+  BaseClassType *const base = static_cast<BaseClassType*>(
+    g_type_interface_peek_parent( // Get the parent interface of the interface (The original underlying C interface).
+      g_type_interface_peek(G_OBJECT_GET_CLASS(gobject_), CppObjectType::get_type()) // Get the interface.
+    )
+  );
+
+  if(base && base->get_bounds)
+    (*base->get_bounds)(const_cast<GooCanvasItem*>(gobj()), bounds.gobj());
+}
+
+// We need to hand-code this vfunc because of the semantics of the GList
+// parameter and return value. In C, this function is supposed to prepend
+// new entries to the given list and return the new list head. In C++, we
+// cannot emulate this behaviour since it is not possible to prepend items to
+// a Glib::ListHandle<>. Thus, we always create a new list to return, and
+// free the one passed in.
+GList* Item_Class::get_items_at_vfunc_callback(GooCanvasItem* self, gdouble x, gdouble y, cairo_t* cr, gboolean is_pointer_event, gboolean parent_is_visible, GList* found_items)
+{
+  CppObjectType *const obj = dynamic_cast<CppObjectType*>(
+      Glib::ObjectBase::_get_current_wrapper((GObject*)self));
+
+  // Non-gtkmmproc-generated custom classes implicitly call the default
+  // Glib::ObjectBase constructor, which sets is_derived_. But gtkmmproc-
+  // generated classes can use this optimisation, which avoids the unnecessary
+  // parameter conversions if there is no possibility of the virtual function
+  // being overridden:
+  if(obj && obj->is_derived_())
+  {
+    #ifdef GLIBMM_EXCEPTIONS_ENABLED
+    try // Trap C++ exceptions which would normally be lost because this is a C callback.
+    {
+    #endif //GLIBMM_EXCEPTIONS_ENABLED
+      // Call the virtual member method, which derived classes might override.
+      Bounds cpp_bounds;
+      Glib::ListHandle<Glib::RefPtr<Item> > retval(obj->get_items_at_vfunc(x, y, Cairo::RefPtr<Cairo::Context>(new Cairo::Context(cr, false /* has_reference */)), is_pointer_event == TRUE, parent_is_visible == TRUE, Glib::ListHandle<Glib::RefPtr<Item> >(found_items, Glib::OWNERSHIP_NONE)));
+      // retval will free the list on destruction, and we can't change the
+      // ownership here, so we have to copy the list.
+      return g_list_copy(retval.data());
+    #ifdef GLIBMM_EXCEPTIONS_ENABLED
+    }
+    catch(...)
+    {
+      Glib::exception_handlers_invoke();
+    }
+    #endif //GLIBMM_EXCEPTIONS_ENABLED
+  }
+  else
+  {
+    BaseClassType *const base = static_cast<BaseClassType*>(
+        g_type_interface_peek_parent( // Get the parent interface of the interface (The original underlying C interface).
+g_type_interface_peek(G_OBJECT_GET_CLASS(self), CppObjectType::get_type()) // Get the interface.
+)    );
+
+    // Call the original underlying C function:
+    if(base && base->get_items_at)
+      return (*base->get_items_at)(self, x, y, cr, is_pointer_event, parent_is_visible, found_items);
+  }
+
+  return 0;
+}
+
+Glib::ListHandle<Glib::RefPtr<Item> > Item::get_items_at_vfunc(double x, double y, const Cairo::RefPtr<Cairo::Context>& context, bool is_pointer_event, bool is_parent_visible, const Glib::ListHandle<Glib::RefPtr<Item> >& found_items)
+{
+  //Call the default C implementation:
+
+  BaseClassType *const base = static_cast<BaseClassType*>(
+    g_type_interface_peek_parent( // Get the parent interface of the interface (The original underlying C interface).
+      g_type_interface_peek(G_OBJECT_GET_CLASS(gobject_), CppObjectType::get_type()) // Get the interface.
+    )
+  );
+
+  // We rely on found_items having ownership NONE here, otherwise we would have
+  // to do an extra copy. Note that we cannot return a OWNERSHIP_NONE list
+  // since overriders of the C++ vfunc might return a vector or list or
+  // something which, when converting to ListHandle, has always shallow
+  // ownership.
+  if(base && base->get_items_at)
+    return Glib::ListHandle<Glib::RefPtr<Item> >((*base->get_items_at)(const_cast<GooCanvasItem*>(gobj()), x, y, context->cobj(), static_cast<int>(is_pointer_event), static_cast<int>(is_parent_visible), found_items.data()), Glib::OWNERSHIP_SHALLOW);
+
+  return Glib::ListHandle<Glib::RefPtr<Item> >(NULL, Glib::OWNERSHIP_SHALLOW);
+}
+
+Glib::ListHandle< Glib::RefPtr<Item> > Item::get_items_at(double x, double y, const Cairo::RefPtr<Cairo::Context>& context, bool is_pointer_event, bool parent_is_visible)
+{
+  return Glib::ListHandle< Glib::RefPtr<Item> >(goo_canvas_item_get_items_at(gobj(), x, y, (context)->cobj(), static_cast<int>(is_pointer_event), static_cast<int>(parent_is_visible), NULL), Glib::OWNERSHIP_SHALLOW);
+}
+
+Glib::ListHandle< Glib::RefPtr<const Item> > Item::get_items_at(double x, double y, const Cairo::RefPtr<Cairo::Context>& context, bool is_pointer_event, bool parent_is_visible) const
+{
+  return Glib::ListHandle< Glib::RefPtr<const Item> >(goo_canvas_item_get_items_at(const_cast<GooCanvasItem*>(gobj()), x, y, (context)->cobj(), static_cast<int>(is_pointer_event), static_cast<int>(parent_is_visible), NULL), Glib::OWNERSHIP_SHALLOW);
+}
+
+} //namespace Goocanvas

@@ -1,0 +1,53 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>logpolarTransform</name>
+    <description>Perform a log-polar transform on an input image and generate a transformed output image.</description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+        <param desc="specifies the configuration file"> from </param>
+		<param desc="specifies the sub-path from $ICUB_ROOT/app to the configuration file"> context </param>        
+		<param default="CARTESIAN2LOGPOLAR" desc="specifies the direction of the tranform; the alternative direction is LOGPOLAR2CARTESIAN">direction</param>
+		<param default="252" desc="specifies the number of receptive fields per ring (i.e. the number of samples in the theta/angular dimension); required for CARTESIAN2LOGPOLAR transform direction">angles</param>		
+		<param default="152" desc="specifies the number of rings (i.e. the number of samples in the r dimension); required for CARTESIAN2LOGPOLAR transform direction">rings</param>		
+		<param default="320" desc="specifies the number of samples in the X dimension; required for LOGPOLAR2CARTESIAN transform direction">xsize </param>		
+		<param default="240" desc="specifies the number of samples in the Y dimension; required for LOGPOLAR2CARTESIAN transform direction">ysize</param>		
+		<param default="1.0" desc="specifies the relative overlap of each receptive field">overlap</param>		
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email="david@vernon.eu">David Vernon</author>
+    </authors>
+
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>
+        <input>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/logpolarTransform/image:i</port>
+            <required>yes</required>
+            <priority>no</priority>
+            <description>imageInputPort</description>
+        </input>
+
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/logpolarTransform/image:o</port>
+            <description>imageOutputPort</description>
+        </output>
+    </data>
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library></library>
+    </development>
+
+</module>
+

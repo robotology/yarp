@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>GooCanvas Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GooCanvas Reference Manual">
+<link rel="next" href="ch01.html" title="Introduction">
+<meta name="generator" content="GTK-Doc V1.9 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="Introduction">
+<link rel="chapter" href="ch02.html" title="Core Objects">
+<link rel="chapter" href="ch03.html" title="Standard Canvas Items">
+<link rel="chapter" href="ch04.html" title="Standard Canvas Item Models">
+<link rel="chapter" href="ch05.html" title="Miscellaneous">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" lang="en">
+<div class="titlepage">
+<div><div><table class="navigation" id="top" width="100%" cellpadding="2" cellspacing="0"><tr><th valign="middle"><p class="title">GooCanvas Reference Manual</p></th></tr></table></div></div>
+<hr>
+</div>
+<div class="toc"><dl>
+<dt><span class="chapter"><a href="ch01.html">Introduction</a></span></dt>
+<dd><dl>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-overview.html">Overview</a></span><span class="refpurpose"> &#8212; a quick tour of GooCanvas.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-simple-canvas.html">Simple Canvas Example</a></span><span class="refpurpose"> &#8212; how to create a simple canvas.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-model-view-canvas.html">Model/View Canvas Example</a></span><span class="refpurpose"> &#8212; how to create a model/view canvas.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-architecture.html">Underlying Architecture</a></span><span class="refpurpose"> &#8212; how the canvas fits together.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-coordinates.html">Coordinate Spaces and Limits</a></span><span class="refpurpose"> &#8212; how coordinates are used.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-creating-items.html">Creating New Items</a></span><span class="refpurpose"> &#8212; how to create new canvas items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-wysiwyg.html">WYSIWYG Printing</a></span><span class="refpurpose"> &#8212; how to use the canvas to create accurate printed output.</span>
+</dt>
+</dl></dd>
+<dt><span class="chapter"><a href="ch02.html">Core Objects</a></span></dt>
+<dd><dl>
+<dt>
+<span class="refentrytitle"><a href="GooCanvas.html">GooCanvas</a></span><span class="refpurpose"> &#8212; the main canvas widget.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-goocanvasitem.html">GooCanvasItem</a></span><span class="refpurpose"> &#8212; the interface for canvas items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="goocanvas-goocanvasitemmodel.html">GooCanvasItemModel</a></span><span class="refpurpose"> &#8212; the interface for canvas item models.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasItemSimple.html">GooCanvasItemSimple</a></span><span class="refpurpose"> &#8212; the base class for the standard canvas items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasItemModelSimple.html">GooCanvasItemModelSimple</a></span><span class="refpurpose"> &#8212; the base class for the standard canvas item models.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasStyle.html">GooCanvasStyle</a></span><span class="refpurpose"> &#8212; support for cascading style properties for canvas items.</span>
+</dt>
+</dl></dd>
+<dt><span class="chapter"><a href="ch03.html">Standard Canvas Items</a></span></dt>
+<dd><dl>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasGroup.html">GooCanvasGroup</a></span><span class="refpurpose"> &#8212; a group of items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasEllipse.html">GooCanvasEllipse</a></span><span class="refpurpose"> &#8212; an ellipse item.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasGrid.html">GooCanvasGrid</a></span><span class="refpurpose"> &#8212; a grid item.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasImage.html">GooCanvasImage</a></span><span class="refpurpose"> &#8212; an image item.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasPath.html">GooCanvasPath</a></span><span class="refpurpose"> &#8212; a path item (a series of lines and curves).</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasPolyline.html">GooCanvasPolyline</a></span><span class="refpurpose"> &#8212; a polyline item (a series of lines with optional arrows).</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasRect.html">GooCanvasRect</a></span><span class="refpurpose"> &#8212; a rectangle item.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasText.html">GooCanvasText</a></span><span class="refpurpose"> &#8212; a text item.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasWidget.html">GooCanvasWidget</a></span><span class="refpurpose"> &#8212; an embedded widget item.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasTable.html">GooCanvasTable</a></span><span class="refpurpose"> &#8212; a table container to layout items.</span>
+</dt>
+</dl></dd>
+<dt><span class="chapter"><a href="ch04.html">Standard Canvas Item Models</a></span></dt>
+<dd><dl>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasGroupModel.html">GooCanvasGroupModel</a></span><span class="refpurpose"> &#8212; a model for a group of items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasEllipseModel.html">GooCanvasEllipseModel</a></span><span class="refpurpose"> &#8212; a model for ellipse items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasGridModel.html">GooCanvasGridModel</a></span><span class="refpurpose"> &#8212; a model for grid items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasImageModel.html">GooCanvasImageModel</a></span><span class="refpurpose"> &#8212; a model for image items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasPathModel.html">GooCanvasPathModel</a></span><span class="refpurpose"> &#8212; a model for path items (a series of lines and curves).</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasPolylineModel.html">GooCanvasPolylineModel</a></span><span class="refpurpose"> &#8212; a model for polyline items (a series of lines with
+ optional arrows).</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasRectModel.html">GooCanvasRectModel</a></span><span class="refpurpose"> &#8212; a model for rectangle items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasTextModel.html">GooCanvasTextModel</a></span><span class="refpurpose"> &#8212; a model for text items.</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GooCanvasTableModel.html">GooCanvasTableModel</a></span><span class="refpurpose"> &#8212; a model for a table container to layout items.</span>
+</dt>
+</dl></dd>
+<dt><span class="chapter"><a href="ch05.html">Miscellaneous</a></span></dt>
+<dd><dl><dt>
+<span class="refentrytitle"><a href="goocanvas-GooCanvas-Types.html">GooCanvas Types</a></span><span class="refpurpose"> &#8212; types used in GooCanvas.</span>
+</dt></dl></dd>
+</dl></div>
+</div></body>
+</html>

@@ -1,0 +1,19 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@
+
+docdir=${datarootdir}/doc/@GOOCANVASMM_MODULE_NAME@
+doxytagfile=${docdir}/reference/@GOOCANVASMM_MODULE_NAME@.tag
+htmlrefdir=${docdir}/reference/html
+htmlrefpub=http://library.gnome.org/@PACKAGE_TARNAME@/unstable/
+
+Name: goocanvasmm
+Description: C++ binding for goocanvas
+Version: @GOOCANVASMM_VERSION@
+URL: http://www.gtkmm.org/
+Requires: @GOOCANVASMM_MODULES@
+Libs: -L${libdir} -lgoocanvasmm-@GOOCANVASMM_API_VERSION@
+Cflags: -I${includedir}/@GOOCANVASMM_MODULE_NAME@ -I${libdir}/@GOOCANVASMM_MODULE_NAME@/include

@@ -1,0 +1,50 @@
+/* Copyright (C) 1998-2006 The gtkmm Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include <goocanvas.h>
+#include <goocanvasmm/bounds.h>
+
+namespace Goocanvas
+{
+
+Gdk::GrabStatus Canvas::pointer_grab(const Glib::RefPtr<Item>& item, Gdk::EventMask mask, guint32 time)
+{
+  return (Gdk::GrabStatus)goo_canvas_pointer_grab(gobj(), Glib::unwrap(item), ((GdkEventMask)(mask)), NULL, time);
+}
+
+void Canvas::render(const Cairo::RefPtr<Cairo::Context>& context, double scale)
+{
+  goo_canvas_render(gobj(), (context)->cobj(), NULL, scale); 
+}
+
+void Canvas::get_bounds(Bounds& bounds) const
+{
+  double x1 = 0;
+  double y1 = 0;
+  double x2 = 0;
+  double y2 = 0;
+  get_bounds(x1, y1, x2, y2);
+  bounds = Bounds(x1, y1, x2, y2);
+}
+
+void Canvas::set_bounds(const Bounds& bounds)
+{
+  set_bounds(bounds.get_x1(), bounds.get_y1(), bounds.get_x2(), bounds.get_y2());
+}
+
+} //namespace Goocanvas
+

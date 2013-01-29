@@ -12,6 +12,29 @@
 /**
  * Class  ModuleInterface
  */
+
+ModuleInterface::ModuleInterface(Module* module)
+{
+    if(!module)
+        return;
+
+    strName = module->strName;
+    strHost = module->strHost;
+    strParam = module->strParam;
+    strWorkDir = module->strWorkDir;
+    strStdio = module->strStdio;
+    strBroker = module->strBroker;
+    strPrefix = module->strPrefix;
+    iRank = module->iRank;
+    strTag = module->getLabel();
+    if(module->getModel())
+        modelBase = *module->getModel();
+    else
+        modelBase = module->getModelBase();
+
+   //TODO: resources should be added too
+}
+
 bool ModuleInterface::addPortmap(Portmap &portmap)
 {
     portmaps.push_back(portmap);    
@@ -37,7 +60,6 @@ PortmapIterator ModuleInterface::findPortmap(Portmap& portmap)
             return itr;
     return portmaps.end();
 }
-
 
 
 /**
@@ -68,6 +90,7 @@ Application::Application(const Application &app) : Node(app)
     resources = app.resources;
     strXmlFile = app.strXmlFile;
     strPrefix = app.strPrefix;
+    strBasePrefix = app.strBasePrefix;
 }
 
 
@@ -98,14 +121,15 @@ bool Application::removeImodule(ModuleInterface& imod)
 }
 
 
-bool Application::addConnection(Connection &cnn)
+Connection& Application::addConnection(Connection &cnn)
 {
     connections.push_back(cnn);
-    return true;
+    CnnIterator itr = findConnection(cnn);
+    return (*itr);
 }
 
 
-bool Application::removeConnecrion(Connection& cnn)
+bool Application::removeConnection(Connection& cnn)
 {
     CnnIterator itr = findConnection(cnn);
     if(itr == connections.end()) 
@@ -167,6 +191,18 @@ bool Application::removeResource(ResYarpPort& res)
         return true;
     resources.erase(itr);
     return true;
+}
+
+bool Application::removeAuthor(Author& author)
+{
+    AuthorIterator itr;
+    for(itr=authors.begin(); itr<authors.end(); itr++)
+        if((*itr) == author)
+        {
+            authors.erase(itr);
+            return true;
+        }    
+    return true;        
 }
 
 

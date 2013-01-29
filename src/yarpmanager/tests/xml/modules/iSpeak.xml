@@ -1,0 +1,72 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>iSpeak</name>
+    <description>Acquire sentences over a yarp port and then let the robot utter them, also controlling the facial expressions.  </description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+	<param desc="Name of the module" default="iSpeak"> name </param>
+	<param desc="Robot to connect to" default="icub"> robot </param>
+	<param desc="The period given in [ms] for controlling the mouth." default=""> period </param>
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+	  <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
+    </authors>
+
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>
+
+        <input>
+            <type>Bottle</type>
+            <port carrier="tcp">/iSpeak</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description>This port receives the string for speech synthesis. In case a double is received in place of a string, then the mouth will be controlled without actually uttering any word; that double accounts for the uttering time. Optionally, as second parameter, an integer can be provided that overrides the default period used to control the mouth, expressed in [ms].</description>
+        </input>
+        <input>
+            <type>Rpc</type>
+            <port carrier="tcp">/iSpeak/rpc</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description>A remote procedure call port useful to query whether the robot is still speaking or not: the query command is the vocab [stat], whereas the response will be a string: either "speaking" or "quiet".</description>
+        </input>
+
+        <!-- output datas if available -->
+
+        <output>
+            <type>unk</type>
+            <port carrier="tcp">/iSpeak/emotions:o</port>
+            <description>This port serves to command the facial expressions.</description>
+        </output>
+
+    </data>
+
+    <!-- physical and logical resource dependencies can be introduced in this
+         section. Dependencies must follow resource conceptional models. Currently
+         available resource models are 'memory', 'processor', 'storage', 'network',
+         'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced
+         inside <computer></computer> tags. While resources described inside <computer>
+         tags represent conjunctional dependency, resources from different <computer>
+         tags can be seen as disjunctions. Meaning that If a module depend on either
+         resource R1 or R2 they can be introduced inside two different <computer> tags.
+         Resource dependencies should be introduced if they are really required. For
+         example, if module's performance drops significantly in case of memory swapping,
+         a memory resource dependency can be introduced with the required memory space. -->
+    <dependencies>
+        <computer>
+	<platform>Linux</platform>
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library>YARP</library>
+	<library>festival</library>
+    </development>
+
+</module>
+

@@ -1,0 +1,4 @@
+2007-05-21 Paul Davis <pjdavis@engineering.uiowa.edu>
+
+	* Work on getting the demo program ported.
+	* Wrap GooCanvasTable

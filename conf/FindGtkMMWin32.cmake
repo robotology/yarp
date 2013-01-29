@@ -33,12 +33,12 @@ IF (NOT GtkPlus_FOUND)
 ENDIF (NOT GtkPlus_FOUND)
 
 IF (GTKPLUS_C_FLAG)
-	LIST(APPEND GTKMM_C_FLAGS ${GTKPLUS_C_FLAGS})
+    LIST(APPEND GTKMM_C_FLAGS ${GTKPLUS_C_FLAGS})
 ENDIF (GTKPLUS_C_FLAG)
 
 FIND_PACKAGE(PkgConfig)
 
-IF(PKG_CONFIG_FOUND AND NOT WIN32)
+if(PKG_CONFIG_FOUND AND NOT WIN32)
     PKG_CHECK_MODULES(GtkMM gtkmm-2.4)
     IF (GtkMM_FOUND)
         MESSAGE(STATUS " pkg-config found gtkmm")
@@ -47,13 +47,13 @@ IF(PKG_CONFIG_FOUND AND NOT WIN32)
     ENDIF (GtkMM_FOUND)
 
 else(PKG_CONFIG_FOUND AND NOT WIN32)
-	# first check GTKMM64
-	set(GTKMM_DIR  $ENV{GTKMM64_BASEPATH})
-	# if that failed check GTKMM_BASEPATH
-	if (NOT GTKMM_DIR )
-		set(GTKMM_DIR  $ENV{GTKMM_BASEPATH})
-	endif()
-	
+    # first check GTKMM64
+    set(GTKMM_DIR  $ENV{GTKMM64_BASEPATH})
+    # if that failed check GTKMM_BASEPATH
+    if (NOT GTKMM_DIR )
+        set(GTKMM_DIR  $ENV{GTKMM_BASEPATH})
+    endif()
+
     # new vs. old style libraries detection (sort of fuzzy, temporary).
     # still uses a strict "find" which tests for a list of header files to 
     # be present and available. We might be able to relax this and just
@@ -91,6 +91,7 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
         "gdkmm"
         "pangomm"
         "cairomm/cairomm"
+        "cairommconfig"
         "atkmm"
         "libxml++config"
         "libxml++/libxml++"
@@ -105,7 +106,7 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
             "pangommconfig"
             "freetype/config/ftheader"
     )
-                   
+
     # only new
     IF (GTKMMVER EQUAL "2.14.3")
         SET(HEADERTOSEARCH ${HEADERTOSEARCH} "giomm")
@@ -143,34 +144,30 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
             LIST(APPEND GTKMM_INCLUDE_DIRS ${GTKMM_TMP})
         ENDIF (GTKMM_TMP)
     ENDFOREACH (i)
-    
+
     LIST(APPEND GTKMM_INCLUDE_DIRS ${GTKPLUS_INCLUDE_DIR})
-    
-    IF (MSVC_VERSION EQUAL 1400)
-        SET(REGEX_GTKMM "[-](vc80[-])?")
-    ELSE (MSVC_VERSION EQUAL 1400)
-        IF (MSVC_VERSION EQUAL 1500)
-            SET(REGEX_GTKMM "[-](vc90[-])?")
-        ELSE (MSVC_VERSION EQUAL 1500)
-		    IF (MSVC_VERSION EQUAL 1600)
-			    SET(REGEX_GTKMM "[-](vc100[-])?")
-	        ELSE(MSVC_VERSION EQUAL 1600)
-				IF (MSVC_VERSION EQUAL 1700)
-					MESSAGE("Warning, using VS10 libraray for Visual Studio 11")
-					SET(REGEX_GTKMM "[-](vc100[-])?")
-				ELSE (MSVC_VERSION EQUAL 1700)
-					MESSAGE("Sorry, this version of FindGtkMMWin32.cmake does not yet support your version of Visual Studio")
-					SET(GtkMM_FOUND FALSE)
-				ENDIF (MSVC_VERSION EQUAL 1700)
-            ENDIF (MSVC_VERSION EQUAL 1600)
-		ENDIF (MSVC_VERSION EQUAL 1500)
-    ENDIF (MSVC_VERSION EQUAL 1400)
+
+    if(MSVC)
+        if(MSVC_VERSION EQUAL 1400)
+            set(REGEX_GTKMM "[-](vc80[-])?")
+        elseif(MSVC_VERSION EQUAL 1500)
+            set(REGEX_GTKMM "[-](vc90[-])?")
+        elseif(MSVC_VERSION EQUAL 1600)
+            set(REGEX_GTKMM "[-](vc100[-])?")
+        elseif(MSVC_VERSION EQUAL 1700)
+            message("Warning, using VS10 libraray for Visual Studio 11")
+            set(REGEX_GTKMM "[-](vc100[-])?")
+        else(MSVC_VERSION EQUAL 1400)
+            message("Sorry, this version of FindGtkMMWin32.cmake does not yet support your version of Visual Studio")
+            set(GtkMM_FOUND FALSE)
+        endif(MSVC_VERSION EQUAL 1400)
+    endif(MSVC)
 
     # I'd like to search for an unspecified version and pattern of library name (new format vs. old format)
     FILE(GLOB ALL_GTK_LIBS ${GTKMM_DIR}/lib/*.lib)
 
     #### MM specific libraries, all here except gthread, see later
-    SET(LIBTOSEARCH 
+    SET(LIBTOSEARCH
         "xml++"
         "atkmm"
         "glademm"
@@ -189,21 +186,21 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
     FOREACH (i ${LIBTOSEARCH})
         SET (GTKMM_TMP_REL GTKMM_TMP-NOTFOUND CACHE INTERNAL "")
         SET (GTKMM_TMP_DBG GTKMM_TMP-NOTFOUND CACHE INTERNAL "")
-        
+
         STRING(REPLACE "++" "[+][+]" j ${i})
         STRING(REGEX MATCHALL "${j}${REGEX_GTKMM}([0-9]([_]|[.])[0-9])+" LINK_LIBRARIES_WITH_PREFIX "${ALL_GTK_LIBS}")
         STRING(REGEX MATCHALL "(${j}${REGEX_GTKMM}([d][-])+([0-9]([_]|[.])[0-9])+)|(${j}([0-9]([_]|[.])[0-9])+([d])+)" LINK_LIBRARIES_WITH_PREFIX_DEBUG1 "${ALL_GTK_LIBS}")
         STRING(REGEX MATCHALL "${j}${REGEX_GTKMM}([0-9]([_]|[.])[0-9][d])+" LINK_LIBRARIES_WITH_PREFIX_DEBUG2 "${ALL_GTK_LIBS}")
         SET(LINK_LIBRARIES_WITH_PREFIX_DEBUG ${LINK_LIBRARIES_WITH_PREFIX_DEBUG1} ${LINK_LIBRARIES_WITH_PREFIX_DEBUG2})
-        
+
         FIND_LIBRARY(GTKMM_TMP_REL NAMES ${LINK_LIBRARIES_WITH_PREFIX} PATHS ${GTKMM_DIR}/lib)
         IF (GTKMM_TMP_REL)
-			LIST(APPEND GTKMM_LIBRARIES optimized ${GTKMM_TMP_REL})
+            LIST(APPEND GTKMM_LIBRARIES optimized ${GTKMM_TMP_REL})
         ELSE (GTKMM_TMP_REL)
             SET(GtkMM_FOUND FALSE)
             MESSAGE("Library ${i} optimized version not found, GtkMM doesn't seem to be available")
         ENDIF (GTKMM_TMP_REL)
-    	
+
         FIND_LIBRARY(GTKMM_TMP_DBG NAMES ${LINK_LIBRARIES_WITH_PREFIX_DEBUG} PATHS ${GTKMM_DIR}/lib)
         IF (GTKMM_TMP_DBG)
             LIST(APPEND GTKMM_LIBRARIES debug ${GTKMM_TMP_DBG})
@@ -218,8 +215,8 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
     SET (GTKMM_TMP_REL GTKMM_TMP-NOTFOUND CACHE INTERNAL "")
     FIND_LIBRARY(GTKMM_TMP_REL NAMES gthread-2.0 PATHS ${GTKMM_DIR}/lib)
     IF (GTKMM_TMP_REL)
-		LIST(APPEND GTKMM_LIBRARIES optimized ${GTKMM_TMP_REL})
-		LIST(APPEND GTKMM_LIBRARIES debug ${GTKMM_TMP_REL})
+        LIST(APPEND GTKMM_LIBRARIES optimized ${GTKMM_TMP_REL})
+        LIST(APPEND GTKMM_LIBRARIES debug ${GTKMM_TMP_REL})
     ELSE (GTKMM_TMP_REL)
         SET(GtkMM_FOUND FALSE)
         MESSAGE("Library gthread not found, GtkMM doesn't seem to be available")
@@ -231,9 +228,9 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
     SET (GTKMM_TMP_DBG GTKMM_TMP_REL-NOTFOUND CACHE INTERNAL "")
     SET (GTKMM_TMP_REL GTKMM_TMP_DBG-NOTFOUND CACHE INTERNAL "")
     SET (GTKMM_TMP GTKMM_TMP-NOTFOUND CACHE INTERNAL "")
-	
-    set(GTKMM_C_FLAGS /wd4250 /wd4520)
-	
+
+    set(GTKMM_C_FLAGS /wd4099 /wd4250 /wd4520)
+
     set(GtkMM_LIBRARIES ${GTKMM_LIBRARIES} CACHE STRING "Libraries for GtkMM")
     set(GtkMM_INCLUDE_DIRS ${GTKMM_INCLUDE_DIRS} CACHE STRING "Include directories for GtkMM")
     set(GtkMM_C_FLAGS ${GTKMM_C_FLAGS} CACHE STRING "C flags for GtkMM")
@@ -242,7 +239,7 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
     # can be done by checking gtkmmconfig.h, which defines 
     # GTKMM_MAJOR_VERSION and GTK_MINOR_VERSION
     set(GtkMM_VERSION ${GTKMMVER})
-    
+
     ## split into major and minor
     string(REPLACE "." ";" GTKMM_VERSION_LIST ${GtkMM_VERSION})
 

@@ -101,13 +101,11 @@ void ModuleWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Authors";
     row[m_Columns.m_col_value] = "";
-    char buff[64];    
     for(int i=0; i<m_pModule->authorCount(); i++)
     {
         childrow = *(m_refTreeModel->append(row.children()));
-        sprintf(buff, "%d", i+1);
-        childrow[m_Columns.m_col_name] = Glib::ustring(buff);
-        childrow[m_Columns.m_col_value] = m_pModule->getAuthorAt(i);
+        childrow[m_Columns.m_col_name] = m_pModule->getAuthorAt(i).getName();
+        childrow[m_Columns.m_col_value] = m_pModule->getAuthorAt(i).getEmail();
     }
 
     row = *(m_refTreeModel->append());

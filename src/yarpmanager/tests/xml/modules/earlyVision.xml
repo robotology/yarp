@@ -1,0 +1,137 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>earlyVision</name>
+    <description>Applies various bio-inspired (early visual feature cues) transformations on the input image.</description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+        <param desc="specifies the configuration file"> from </param>
+		<param desc="specifies the sub-path from $ICUB_ROOT/app to the configuration file"> context </param>    
+        <param default="2.0" desc="specifies the value for the weight in the combination of orientation">whorizontal</param>
+        <param default="2.0" desc="specifies the value for the weight in the combination of orientation">wvertical</param>
+        <param default="2.0" desc="specifies the value for the weight in the combination of orientation">w45degrees</param>
+        <param default="2.0" desc="specifies the value for the weight in the combination of orientation">wM45degrees</param>        
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email="">Rea Francesco</author>
+    </authors>
+
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>        
+        <input>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/imageRGB:i</port>
+            <required>yes</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+        
+        <input>
+            <type>Rpc</type>
+            <port carrier="tcp">/earlyVision</port>
+            <required>no</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/imageRGB:o</port>
+            <description></description>
+        </output>
+
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/earlyVision/edges/edges:o</port>
+            <description></description>
+        </output>
+
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/earlyVision/intensity:o</port>
+            <description></description>
+        </output>
+        
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/earlyVision/colorOppR+G-:o</port>
+            <description></description>
+        </output>
+
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/earlyVision/colorOppG+R-:o</port>
+            <description></description>
+        </output>
+        
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/earlyVision/colorOppB+Y-:o</port>
+            <description></description>
+        </output>
+                
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/earlyVision/chrominance:o</port>
+            <description></description>
+        </output> 
+                       
+        <output>
+            <type>ImageOfPixelMono</type>
+            <port carrier="udp">/earlyVision/centSurrIntensity:o</port>
+            <description></description>
+        </output> 
+               
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/chrome/orient0:o</port>
+            <description></description>
+        </output> 
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/chrome/orient45:o</port>
+            <description></description>
+        </output> 
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/chrome/orient90:o</port>
+            <description></description>
+        </output> 
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/chrome/orientM45:o</port>
+            <description></description>
+        </output>         
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/chrome/sumOrientations:o</port>
+            <description></description>
+        </output>         
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/earlyVision/chrome/sumOrientationsInCart:o</port>
+            <description></description>
+        </output>                                
+        <output>
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp"> /earlyVision/edges/debug:o</port>
+            <description></description>
+        </output>                                                               
+    </data>
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library></library>
+    </development>
+
+</module>
+

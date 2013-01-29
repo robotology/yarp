@@ -14,6 +14,15 @@
 #include "application.h"
 #include "ymm-dir.h"
 
+/*
+ * TODO: using stringstream should be avoided to keep 
+ *  the compatibility with GUI
+ */
+#include <sstream>
+
+
+#include <yarp/os/ResourceFinder.h>
+
 using namespace yarp::os;
 
 
@@ -59,7 +68,7 @@ using namespace yarp::os;
     vector<string> appnames;    
 #endif
 
-#define DEF_CONFIG_FILE     "./ymanager.ini"
+#define DEF_CONFIG_FILE     "ymanager.ini"
 
 #define LOGO_MESSAGE "\
 __   __\n\
@@ -77,13 +86,26 @@ Usage:\n\
       ymanager [option...]\n\n\
 Options:\n\
   --help                  Show help\n\
-  --config                Configuration file name\n\
+  --from                  Configuration file name\n\
   --version               Show current version\n"
 
 
 #if defined(WIN32)
 static Manager* __pManager = NULL;
 #endif
+
+ bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
+        if (path[0]=='/'||path[0]=='\\') {
+            return true;
+        }
+        std::string str(path);
+        if (str.length()>1) {
+            if (str[1]==':') {
+                return true;
+            }
+        }
+        return false;
+    }
 
 /**
  * Class YConsoleManager
@@ -97,37 +119,48 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 #endif
 
     bShouldRun = false;
-    cmdline.fromCommand(argc, argv);
 
-    if(cmdline.check("help"))
+    // Setup resource finder
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose(false);
+    rf.setDefaultContext("");
+    rf.setDefaultConfigFile(DEF_CONFIG_FILE);
+    rf.configure(argc, argv);
+
+    yarp::os::Property config;
+    config.fromString(rf.toString());
+
+    if(config.check("help"))
     {
         cout<<HELP_MESSAGE<<endl;
         return;
     }
-
-    if(cmdline.check("version"))
+ 
+    if(config.check("version"))
     {
         cout<<VERSION_MESSAGE<<endl;
         return;
     }
-    
-    if(cmdline.check("config"))
-    {
-        if(cmdline.find("config").asString() == "")
-        {
-            cout<<HELP_MESSAGE<<endl;
-            return;         
-        }
-        if(!config.fromConfigFile(cmdline.find("config").asString().c_str()))
-            cout<<WARNING<<"WARNING: "<<INFO<<cmdline.find("config").asString().c_str()<<" cannot be loaded."<<ENDC<<endl;
-    }
-    else 
-        config.fromConfigFile(DEF_CONFIG_FILE);
-    //      cout<<WARNING<<"WARNING: "<<INFO<<DEF_CONFIG_FILE<<" cannot be loaded. configuration is set to default."<<ENDC<<endl;
-
+ 
     /**
      *  preparing default options
      */
+    
+    std::string inifile=rf.findFile("from").c_str();
+    std::string inipath="";
+    size_t lastSlash=inifile.rfind("/");
+    if (lastSlash!=std::string::npos)
+        inipath=inifile.substr(0, lastSlash+1);
+    else
+    {
+        lastSlash=inifile.rfind("\\");
+        if (lastSlash!=std::string::npos)
+            inipath=inifile.substr(0, lastSlash+1);
+    }
+    
+//     if(!config.check("ymanagerini_dir"))   
+//         config.put("ymanagerini_dir", inipath.c_str());
+    
     if(!config.check("apppath"))
         config.put("apppath", "./");
 
@@ -159,7 +192,6 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         config.put("color_theme", "light");
 
     
-
     /**
      * Set configuration
      */
@@ -189,17 +221,49 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
 
     if(config.check("modpath"))
-        addModules(config.find("modpath").asString().c_str());
+    {
+        string strPath;
+        stringstream modPaths(config.find("modpath").asString().c_str());
+        while (getline(modPaths, strPath, ';'))
+        {
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=inipath+strPath;
+            addModules(strPath.c_str());
+        }
+    }
 
     if(config.check("respath"))
-        addResources(config.find("respath").asString().c_str());
+    {
+        string strPath;
+        stringstream resPaths(config.find("respath").asString().c_str());
+        while (getline(resPaths, strPath, ';'))
+        {
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=inipath+strPath;
+            addResources(strPath.c_str());
+        }
+    }
 
+    ErrorLogger* logger  = ErrorLogger::Instance(); 
     if(config.check("apppath"))
     {
-        if(config.find("load_subfolders").asString() == "yes")
-            loadRecursiveApplications(config.find("apppath").asString().c_str());
-        else
-            addApplications(config.find("apppath").asString().c_str()); 
+        string strPath;
+        stringstream appPaths(config.find("apppath").asString().c_str());
+        while (getline(appPaths, strPath, ';'))
+        {
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=inipath+strPath;
+            if(config.find("load_subfolders").asString() == "yes")
+            {
+                if(!loadRecursiveApplications(strPath.c_str()))
+                    logger->addError("Cannot load the applications from  " + strPath);
+            }        
+            else
+                addApplications(strPath.c_str()); 
+        }
     }
 
     reportErrors(); 
@@ -231,6 +295,29 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     if (old_action.sa_handler != SIG_IGN)
         sigaction (SIGTERM, &new_action, NULL);
 #endif
+
+    if(config.check("application"))
+    {
+        XmlAppLoader appload(config.find("application").asString().c_str());
+        if(appload.init())
+        {
+            Application* application = appload.getNextApplication();
+            if(application)
+            {
+                // add this application to the manager if does not exist    
+                if(!getKnowledgeBase()->getApplication(application->getName()))
+                    getKnowledgeBase()->addApplication(application);
+
+                #ifdef WITH_READLINE
+                updateAppNames(&appnames);
+                #endif
+
+                if(loadApplication(application->getName()))
+                    which();
+            }            
+        }
+        reportErrors();
+    }
 
     YConsoleManager::myMain();  
 }
@@ -914,8 +1001,6 @@ void YConsoleManager::which(void)
         cout<<INFO<<"("<<id++<<") ";
         cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
             cout<<" ["<<(*cnnitr).carrier()<<"]";
-        if((*cnnitr).owner())
-            cout<<" ["<<(*cnnitr).owner()->getName()<<"]";  
         cout<<ENDC<<endl;
     }       
     

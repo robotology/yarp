@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Coordinate Spaces and Limits</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GooCanvas Reference Manual">
+<link rel="up" href="ch01.html" title="Introduction">
+<link rel="prev" href="goocanvas-architecture.html" title="Underlying Architecture">
+<link rel="next" href="goocanvas-creating-items.html" title="Creating New Items">
+<meta name="generator" content="GTK-Doc V1.9 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="Introduction">
+<link rel="chapter" href="ch02.html" title="Core Objects">
+<link rel="chapter" href="ch03.html" title="Standard Canvas Items">
+<link rel="chapter" href="ch04.html" title="Standard Canvas Item Models">
+<link rel="chapter" href="ch05.html" title="Miscellaneous">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2"><tr valign="middle">
+<td><a accesskey="p" href="goocanvas-architecture.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GooCanvas Reference Manual</th>
+<td><a accesskey="n" href="goocanvas-creating-items.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry" lang="en">
+<a name="goocanvas-coordinates"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle">Coordinate Spaces and Limits</span></h2>
+<p>Coordinate Spaces and Limits &#8212; how coordinates are used.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1" lang="en">
+<a name="coordinates"></a><h2>Coordinate Spaces</h2>
+<p>
+      Items in the canvas typically have a number of properties specifying
+      their location and size. For example the <a class="link" href="GooCanvasRect.html" title="GooCanvasRect"><span class="type">GooCanvasRect</span></a> item has
+      <a class="link" href="GooCanvasRect.html#GooCanvasRect--x"><span class="type">"x"</span></a>, <a class="link" href="GooCanvasRect.html#GooCanvasRect--y"><span class="type">"y"</span></a>, <a class="link" href="GooCanvasRect.html#GooCanvasRect--width"><span class="type">"width"</span></a> and
+      <a class="link" href="GooCanvasRect.html#GooCanvasRect--height"><span class="type">"height"</span></a> properties.
+    </p>
+<p>
+      However, items can also have a transformation matrix (e.g. the
+      <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--transform"><span class="type">"transform"</span></a> property).
+      Transformation matrices modify the item's coordinate space in some
+      way. Modifications include translation (moving the origin), rotation,
+      scaling, and skewing, or combinations of these. Thus the final
+      position of the item on the canvas can be altered dramatically.
+    </p>
+<p>
+      The simple animation features in <a class="link" href="GooCanvas.html" title="GooCanvas"><span class="type">GooCanvas</span></a> are accomplished by
+      modifying the item's transformation matrix over time.
+      (See <a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-animate"><code class="function">goo_canvas_item_animate()</code></a>.)
+    </p>
+<p>
+      Since items are in a hierarchy it is possible to move or rotate an
+      entire group of items by simply changing the transformation matrix
+      of the group containing them.
+    </p>
+<p>
+      The coordinate space used within the item itself (e.g. where the
+      <a class="link" href="GooCanvasRect.html#GooCanvasRect--x"><span class="type">"x"</span></a> and <a class="link" href="GooCanvasRect.html#GooCanvasRect--y"><span class="type">"y"</span></a> properties of a <a class="link" href="GooCanvasRect.html" title="GooCanvasRect"><span class="type">GooCanvasRect</span></a>
+      are specified)
+      is referred to as "Item Space". The coordinate space used by
+      the entire canvas is referred to as "Canvas Space" (or "Device Space").
+      "Item Space" and "Canvas Space" may or may not be the same, depending
+      on whether
+      the item or any of its ancestors have a transformation matrix set.
+      (Note that the entire canvas may also be scrolled and/or zoomed,
+      which means that there may be additional transformations above
+      "Canvas Space".)
+    </p>
+<p>
+      Functions are provided to convert between coordinate spaces,
+      e.g. <a class="link" href="GooCanvas.html#goo-canvas-convert-to-item-space"><code class="function">goo_canvas_convert_to_item_space()</code></a> and
+      <a class="link" href="GooCanvas.html#goo-canvas-convert-from-item-space"><code class="function">goo_canvas_convert_from_item_space()</code></a> convert canvas space coordinates
+      to item space and vice versa.
+    </p>
+<div class="refsect2" lang="en">
+<a name="coordinate-limits"></a><h3>Coordinate Limits</h3>
+<p>
+	GooCanvas uses the Cairo graphics library to render canvas items.
+	For performance reasons Cairo uses 32-bit fixed point integers
+	internally when rendering graphics, with 24 bits used for the integer
+	part of values and 8 bits used for the fractional part.
+	This means that values are limited to roughly +/- 8,388,608.
+	(Prior to Cairo 1.6 16 bits were used for the integer part and 16 bits
+	for the	fractional part, meaning values were limited to +/- 32,768.)
+      </p>
+<p>
+	GooCanvas includes code to work around the Cairo limits to some extent.
+	Subclasses of GooCanvasItemSimple (including all builtin items) can
+	use any desired translation using a transformation matrix.
+	But item space coordinates (modified by any scale, rotation or skew)
+	must be within the Cairo limits.
+      </p>
+<p>
+	It is possible to create new canvas items that avoid the Cairo
+	limits completely. For an example of this see the "Large Items" page
+	in the GooCanvas demo application, and the corresponding code.
+      </p>
+</div>
+</div>
+</div>
+</body>
+</html>

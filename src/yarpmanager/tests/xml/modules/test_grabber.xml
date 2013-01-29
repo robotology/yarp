@@ -1,0 +1,46 @@
+<module>
+	<name>test_grabber</name>
+	<description> A frame grabber test device (start up a fake image source)</description>
+	<version>1.0</version>
+	
+	<arguments>
+		<!-- <param default="/yarpview/img:i" required="no" desc="input port name">name</param> -->
+	<param default="128" required="no" desc="desired width of test image">width</param>
+		<param default="128" required="no" desc="desired height of test image">height</param>						
+		<param default="0.033" required="no" desc="period of test images in second">period</param>
+		<param default="30" required="no" desc="rate of test images in Hz">freq</param>
+		<param default="line" required="no" desc="bouncy [ball], scrolly [line], grid [grid], random [rand]">mode</param>
+	</arguments>
+			
+	<authors>
+		<author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
+	</authors>
+	
+	<data>     
+        <input>
+            <type>Rpc</type>
+            <port>/test_grabber/quit</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description> a port which receives rpc command such as 'quit'.</description>
+        </input>
+		<output>
+			<type>ImageOfPixelRgb</type>
+			<port carrier="udp">/grabber</port>
+			<description>output image port</description>
+		</output>	
+	</data>	
+
+    <deployer>yarpdev</deployer> 
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+	<development>
+		<include></include>
+		<library>YARP</library>
+	</development>
+	
+</module>

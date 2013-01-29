@@ -21,8 +21,8 @@ endif(YARP_USE_GTK2)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
+include_directories(${TinyXML_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/tinyxml)
 
 file(GLOB folder_source *.cpp)
 file(GLOB folder_header *.h)
@@ -32,9 +32,9 @@ source_group("Header Files" FILES ${folder_header})
 #pkg_check_modules(GOOCANVASMM goocanvasmm-1.0)
 # GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES 
 
-if(WIN32)
+if(MSVC)
     add_definitions(/wd4099)
-endif(WIN32)
+endif(MSVC)
 
 ## FIXME 2.4 Move the check in conf/YarpSystemCheck.cmake later
 include(CheckCXXCompilerFlag)

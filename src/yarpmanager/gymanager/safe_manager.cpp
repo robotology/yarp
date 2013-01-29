@@ -357,7 +357,7 @@ void SafeManager::onExecutableFailed(void* which)
     {
         if(m_pConfig->find("module_failure").asString() == "prompt")
         {
-            ostringstream err;
+            OSTRINGSTREAM err;
             err<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! [id:"<<exe->getID()<<"]";
             logger->addError(err);
             if(eventReceiver && exe)
@@ -366,7 +366,7 @@ void SafeManager::onExecutableFailed(void* which)
 
         if(m_pConfig->find("module_failure").asString() == "recover")
         {
-            ostringstream err;
+            OSTRINGSTREAM err;
             err<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! [id:"<<exe->getID()<<"] (restarting...)";
             logger->addError(err);
             exe->start();
@@ -374,7 +374,7 @@ void SafeManager::onExecutableFailed(void* which)
 
         if(m_pConfig->find("module_failure").asString() == "terminate")
         {
-            ostringstream err;
+            OSTRINGSTREAM err;
             err<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! [id:"<<exe->getID()<<"] (terminating...)";
             logger->addError(err);
             Manager::stop();
@@ -400,14 +400,14 @@ void SafeManager::onCnnFailed(void* which)
     {
         if( m_pConfig->find("connection_failure").asString() == "prompt")
         {
-            ostringstream err;
+            OSTRINGSTREAM err;
             err<<"connection failed between "<<cnn->from()<<" and "<<cnn->to();
             logger->addError(err);
         }
 
         if(m_pConfig->find("connection_failure").asString() == "terminate")
         {
-            ostringstream err;
+            OSTRINGSTREAM err;
             err<<"connection failed between "<<cnn->from()<<" and "<<cnn->to()<<" (terminating...)";
             logger->addError(err);
             Manager::stop();

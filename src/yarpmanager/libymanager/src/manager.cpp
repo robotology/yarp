@@ -11,17 +11,21 @@
 #include "manager.h"
 #include "yarpbroker.h"
 #include "localbroker.h"
+#include "yarpdevbroker.h"
 #include "xmlapploader.h"
 #include "xmlmodloader.h"
 #include "xmlresloader.h"
-
+#include "xmlappsaver.h"
 #include "singleapploader.h"
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds
 #define STOP_TIMEOUT            30      // Stop timeout in seconds
 #define KILL_TIMEOUT            10      // kill timeout in seconds
 
-#define BROKER_YARPRUN      "yarprun"
+#define BROKER_LOCAL            "local"
+#define BROKER_YARPRUN          "yarprun"
+#define BROKER_YARPDEV          "yarpdev"
+#define BROKER_ICUBMIODDEV      "icubmoddev"
 
 
 /**
@@ -76,7 +80,7 @@ Manager::~Manager()
 }
 
 
-bool Manager::addApplication(const char* szFileName)
+bool Manager::addApplication(const char* szFileName, char* szAppName_)
 {
     XmlAppLoader appload(szFileName);
     if(!appload.init())
@@ -84,7 +88,7 @@ bool Manager::addApplication(const char* szFileName)
     Application* application = appload.getNextApplication();
     if(!application)
         return false;
-    return knowledge.addApplication(application);
+    return knowledge.addApplication(application, szAppName_);
 }
 
 
@@ -227,6 +231,17 @@ bool Manager::loadApplication(const char* szAppName)
     return prepare(true);
 }
 
+
+bool Manager::saveApplication(const char* szAppName, const char* fileName)
+{
+    Application* pApp = knowledge.getApplication();
+    __CHECK_NULLPTR(pApp);
+
+    XmlAppSaver appsaver(fileName);
+    return knowledge.saveApplication(&appsaver, pApp);
+}
+
+
 bool Manager::loadBalance(void)
 {
     updateResources();
@@ -259,31 +274,53 @@ bool Manager::prepare(bool silent)
     int id = 0;
     for(itr=modules.begin(); itr!=modules.end(); itr++)
     {
+        
+        Broker* broker = NULL;
 
+        /*
         string strCurrentBroker;
         if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
             strCurrentBroker = BROKER_YARPRUN;
         else
             strCurrentBroker = strDefBroker;
 
-        Broker* broker = NULL;
         if(compareString((*itr)->getHost(), "localhost"))
             broker = new LocalBroker;
         else if(strCurrentBroker == string(BROKER_YARPRUN))
             broker = new YarpBroker;
         //else if( for other brokers )
         //...
+        */
+
+        if(compareString((*itr)->getBroker(), BROKER_YARPDEV))
+        {
+            if(compareString((*itr)->getHost(), "localhost"))
+               broker = new YarpdevLocalBroker();
+            else
+               broker = new YarpdevYarprunBroker(); 
+        }
+        else if(compareString((*itr)->getBroker(), BROKER_LOCAL))
+        {
+            if(compareString((*itr)->getHost(), "localhost"))
+                broker = new LocalBroker();
+        }    
+        else if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
+                broker = new YarpBroker();
 
         /**
          * using default broker if it is still NULL
          */
         if(!broker)
         {
-            ostringstream war;
-            war<<"Broker "<<strCurrentBroker<<" does not exist! (using default broker)";
-            logger->addWarning(war);
-            broker = new YarpBroker;
-            strCurrentBroker = BROKER_YARPRUN;
+            if(compareString((*itr)->getHost(), "localhost"))
+                broker = new LocalBroker;
+            else
+                broker = new YarpBroker;
+            //OSTRINGSTREAM war;
+            //war<<"Deployer "<<strCurrentBroker<<" does not exist! (using default (yarprun) deployer)";
+            //logger->addWarning(war);
+            //broker = new YarpBroker;
+            //strCurrentBroker = BROKER_YARPRUN;
         }
 
         Executable* exe = new Executable(broker, (MEvent*)this, bWithWatchDog);
@@ -293,12 +330,12 @@ bool Manager::prepare(bool silent)
         exe->setHost((*itr)->getHost());
         exe->setStdio((*itr)->getStdio());
         exe->setWorkDir((*itr)->getWorkDir());
-        if(strCurrentBroker == string(BROKER_YARPRUN))
-        {
+        //if(strCurrentBroker == string(BROKER_YARPRUN))
+       // {
             string env = string("YARP_PORT_PREFIX=") +
                             string((*itr)->getPrefix());
             exe->setEnv(env.c_str());
-        }
+       // }
 
         /**
          * Adding connections to their owners
@@ -361,7 +398,7 @@ bool Manager::updateConnection(unsigned int id, const char* from,
 
     if(connections[id].owner())
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Connection ["<<connections[id].from()<<" -> ";
         msg<<connections[id].to()<<"] cannot be updated.";
         logger->addWarning(msg);
@@ -563,7 +600,7 @@ bool Manager::checkDependency(void)
         if(!(*itrRes)->getAvailability())
         {
             ret = false;
-            ostringstream err;
+            OSTRINGSTREAM err;
             err<<"Resource "<<(*itrRes)->getName()<<" is not available!";
             logger->addError(err);
         }
@@ -599,7 +636,7 @@ bool Manager::run(unsigned int id, bool async)
     while(!timeout(base, RUN_TIMEOUT))
         if(running(id)) return true;
 
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"Failed to run "<<runnables[id]->getCommand();
     msg<<" on "<<runnables[id]->getHost();
     msg<<". (State: "<<runnables[id]->state();
@@ -648,7 +685,7 @@ bool Manager::run(void)
         for(itr=runnables.begin(); itr!=runnables.end(); itr++)
             if((*itr)->state() != RUNNING)
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Failed to run "<<(*itr)->getCommand();
                 msg<<" on "<<(*itr)->getHost();
                 msg<<". (State: "<<(*itr)->state();
@@ -699,7 +736,7 @@ bool Manager::stop(unsigned int id, bool async)
     while(!timeout(base, STOP_TIMEOUT))
         if(!running(id)) return true;
 
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"Failed to stop "<<runnables[id]->getCommand();
     msg<<" on "<<runnables[id]->getHost();
     msg<<". (State: "<<runnables[id]->state();
@@ -729,7 +766,7 @@ bool Manager::stop(void)
             if( ((*itr)->state() != SUSPENDED) &&
                 ((*itr)->state() != DEAD))
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Failed to stop "<<(*itr)->getCommand();
                 msg<<" on "<<(*itr)->getHost();
                 msg<<". (State: "<<(*itr)->state();
@@ -765,7 +802,7 @@ bool Manager::kill(unsigned int id, bool async)
     while(!timeout(base, KILL_TIMEOUT))
         if(!running(id)) return true;
 
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     msg<<"Failed to kill "<<runnables[id]->getCommand();
     msg<<" on "<<runnables[id]->getHost();
     msg<<". (State: "<<runnables[id]->state();
@@ -795,7 +832,7 @@ bool Manager::kill(void)
             if( ((*itr)->state() != SUSPENDED) &&
                 ((*itr)->state() != DEAD))
             {
-                ostringstream msg;
+                OSTRINGSTREAM msg;
                 msg<<"Failed to kill "<<(*itr)->getCommand();
                 msg<<" on "<<(*itr)->getHost();
                 msg<<". (State: "<<(*itr)->state();
@@ -1068,7 +1105,7 @@ bool Manager::attachStdout(unsigned int id)
 
     if(!runnables[id]->getBroker()->attachStdout())
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Cannot attach to stdout of "<<runnables[id]->getCommand();
         msg<<" on "<<runnables[id]->getHost();
         msg<<". (State: "<<runnables[id]->state();

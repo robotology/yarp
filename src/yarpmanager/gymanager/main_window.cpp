@@ -36,12 +36,25 @@
 #include "icon_res.h"
 #include "template_res.h"
 #include "xmltemploader.h"
+#include "xmlapploader.h"
 
 using namespace std;
 
 #define WND_DEF_HEIGHT      600
 #define WND_DEF_WIDTH       800
 
+ bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
+        if (path[0]=='/'||path[0]=='\\') {
+            return true;
+        }
+        std::string str(path);
+        if (str.length()>1) {
+            if (str[1]==':') {
+                return true;
+            }
+        }
+        return false;
+    }
 
 MainWindow::MainWindow( yarp::os::Property &config)
 {
@@ -60,27 +73,79 @@ MainWindow::MainWindow( yarp::os::Property &config)
     setupSignals();
     
     createWidgets();
+    
+    std::string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
 
     if(config.check("modpath"))
-        lazyManager.addModules(config.find("modpath").asString().c_str());
+    {
+        string strPath;
+        stringstream modPaths(config.find("modpath").asString().c_str());
+        while (getline(modPaths, strPath, ';'))
+        {
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+            lazyManager.addModules(strPath.c_str());
+        }
+    }
 
     if(config.check("respath"))
-        lazyManager.addResources(config.find("respath").asString().c_str());
+    {
+        string strPath;
+        stringstream resPaths(config.find("respath").asString().c_str());
+        while (getline(resPaths, strPath, ';'))
+        {
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+            lazyManager.addResources(strPath.c_str());
+        }
+    }
+
+    ErrorLogger* logger  = ErrorLogger::Instance(); 
 
     if(config.check("apppath"))
     {
-        if(config.find("load_subfolders").asString() == "yes")
-        {
-            loadRecursiveApplications(config.find("apppath").asString().c_str());
-            loadRecursiveTemplates(config.find("apppath").asString().c_str());
+        string strPath;
+        stringstream appPaths(config.find("apppath").asString().c_str());
+        while (getline(appPaths, strPath, ';'))
+        {            
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+            if(config.find("load_subfolders").asString() == "yes")
+            {
+                if(!loadRecursiveApplications(strPath.c_str()))
+                    logger->addError("Cannot load the applications from  " + strPath);
+                if(!loadRecursiveTemplates(strPath.c_str()))
+                     logger->addError("Cannot load the templates from  " + strPath);                   
+            }
+            else
+                lazyManager.addApplications(strPath.c_str()); 
         }
-        else
-            lazyManager.addApplications(config.find("apppath").asString().c_str()); 
     }
+
     reportErrors();
 
     syncApplicationList();
     show_all_children();
+
+    if(config.check("application"))
+    {
+        XmlAppLoader appload(config.find("application").asString().c_str());
+        if(!appload.init())
+            return;
+        Application* application = appload.getNextApplication();
+        if(!application)
+            return;
+        // add this application to the manager if does not exist    
+        if(!lazyManager.getKnowledgeBase()->getApplication(application->getName()))
+        {
+            lazyManager.getKnowledgeBase()->addApplication(application);
+            syncApplicationList();
+        }
+        manageApplication(application->getName());
+    }    
 }
 
 
@@ -592,7 +657,7 @@ void MainWindow::syncApplicationList(void)
 
     if(cnt)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<cnt<<" "<<"applications are loaded successfully.";
         m_Statusbar.push(msg.str().c_str());
     }
@@ -672,7 +737,7 @@ void MainWindow::onMenuFileNewApp()
                              fname.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
-                    ostringstream msg;
+                    OSTRINGSTREAM msg;
                     msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
@@ -729,7 +794,7 @@ void MainWindow::onMenuFileNewMod()
                              fname.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
-                    ostringstream msg;
+                    OSTRINGSTREAM msg;
                     msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
@@ -786,7 +851,7 @@ void MainWindow::onMenuFileNewRes()
                              fname.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
-                    ostringstream msg;
+                    OSTRINGSTREAM msg;
                     msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
@@ -981,7 +1046,7 @@ void MainWindow::onPAppMenuLoad()
                                  name.c_str(), NULL, NULL, NULL, NULL))
                     if(!launcher.start() && strlen(launcher.error()))
                     {
-                        ostringstream msg;
+                        OSTRINGSTREAM msg;
                         msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                         msg<<". "<<launcher.error();
                         logger->addError(msg);
@@ -1001,7 +1066,7 @@ void MainWindow::onPAppMenuLoad()
 
 void MainWindow::onPAppMenuRemove()
 {
-    ostringstream msg;
+    OSTRINGSTREAM msg;
     Gtk::MessageDialog dialog("Removing!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
     dialog.set_secondary_text("Are you sure to remove this item?");
     if(dialog.run() != Gtk::RESPONSE_YES)
@@ -1411,7 +1476,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
                              name.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
-                    ostringstream msg;
+                    OSTRINGSTREAM msg;
                     msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
@@ -1647,7 +1712,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
    
     if(pAppWnd)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Current application: "<<pAppWnd->getApplicationName();
         m_Statusbar.push(msg.str());
 
@@ -1663,7 +1728,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
     }
     else if(pResWnd)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Current Resource: "<<pResWnd->getResourceName();
         m_Statusbar.push(msg.str());
 
@@ -1679,7 +1744,7 @@ void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
     }
     else if(pModWnd)
     {
-        ostringstream msg;
+        OSTRINGSTREAM msg;
         msg<<"Current Module: "<<pModWnd->getModuleName();
         m_Statusbar.push(msg.str());
 

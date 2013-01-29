@@ -1,0 +1,3 @@
+## This file is part of goocanvasmm.
+
+files_codegen_m4 = convert.m4 convert_libgoocanvasmm.m4

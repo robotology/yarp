@@ -36,7 +36,7 @@ public:
             const char* szResPath, bool withWatchDog=false);
     virtual ~Manager();
 
-    bool addApplication(const char* szFileName);
+    bool addApplication(const char* szFileName, char* szAppName_=NULL);
     bool addApplications(const char* szPath);
     bool addModule(const char* szFileName);
     bool addModules(const char* szPath); 
@@ -48,6 +48,7 @@ public:
     bool removeResource(const char* szResName);
 
     bool loadApplication(const char* szAppName);
+    bool saveApplication(const char* szAppName, const char* fileName=NULL);
     bool updateExecutable(unsigned int id, const char* szparam,
                 const char* szhost, const char* szstdio,
                 const char* szworkdir, const char* szenv );

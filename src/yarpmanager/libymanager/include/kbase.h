@@ -20,6 +20,7 @@
 #include "logicresource.h"
 #include "primresource.h"
 #include <string.h>
+#include <algorithm>
 
 using namespace std; 
 
@@ -48,7 +49,7 @@ public:
     bool createFrom(ModuleLoader* _mloader, 
                     AppLoader* _apploader, 
                     ResourceLoader* _resloader);
-    bool addApplication(Application* application);
+    bool addApplication(Application* application, char* szAppName_=NULL);
     bool addModule(Module* module);
     bool addResource(GenericResource* resource);
     bool removeApplication(Application* application);
@@ -64,10 +65,13 @@ public:
     const ModulePContainer& getSelModules(void) { return selmodules; }
     const CnnContainer& getSelConnection(void) { return selconnections; }
     const ResourcePContainer& getSelResources(void) { return selresources; }
+    const ApplicaitonPContainer& getSelApplications(void) { return selapplications; }
 
-    const ApplicaitonPContainer& getApplications(void);
-    const ModulePContainer& getModules(void);
-    const ResourcePContainer& getResources(void);
+    const ApplicaitonPContainer& getApplications(Application* parent=NULL);
+    const ModulePContainer& getModules(Application* parent=NULL);
+    const ResourcePContainer& getResources(Application* parent=NULL);
+    const CnnContainer& getConnections(Application* parent=NULL);
+
                
     const InputContainer& getInputCandidates(OutputData* output);
     const OutputContainer& getOutputCandidates(InputData* input);
@@ -75,12 +79,31 @@ public:
     Module* getModule(const char* szName) { 
                 return dynamic_cast<Module*>(kbGraph.getNode(szName)); 
                 }
+    Application* getApplication() { return mainApplication; } 
+
     Application* getApplication(const char* szName) { 
                 return dynamic_cast<Application*>(kbGraph.getNode(szName)); 
                 }
     GenericResource* getResource(const char* szName) { 
                 return dynamic_cast<GenericResource*>(kbGraph.getNode(szName)); 
                 }
+
+    Module* addIModuleToApplication(Application* application, 
+                                    ModuleInterface &mod, bool isNew=false);
+    bool removeIModuleFromApplication(Application* application, const char* szTag);
+    Connection& addConnectionToApplication(Application* application, Connection &cnn);
+    bool removeConnectionFromApplication(Application* application, Connection &cnn);
+    bool updateConnectionOfApplication(Application* application, 
+                                       Connection& prev, Connection& con );
+    Application* addIApplicationToApplication(Application* application, 
+                                    ApplicationInterface &app, bool isNew=false);
+    bool removeIApplicationFromApplication(Application* application, const char* szTag);
+
+    bool setModulePrefix(Module* module, const char* szPrefix, bool updateBasePrefix=true);
+    bool setApplicationPrefix(Application* app, const char* szPrefix, bool updateBasePref=true);
+    bool saveApplication(AppSaver* appSaver, Application* application);
+
+    const char* getUniqueAppID(Application* parent, const char* szAppName);
 
     bool exportAppGraph(const char* szFileName) {
             return exportDotGraph(tmpGraph, szFileName); }
@@ -100,13 +123,17 @@ private:
     ResourceLoader* resloader;
     Application* mainApplication; 
 
-    ApplicaitonPContainer dummyApplications;
+    ApplicaitonPContainer dummyApplications;    
     ModulePContainer dummyModules;
     ResourcePContainer dummyResources;  
+    CnnContainer dummyConnections;
 
+    ApplicaitonPContainer selapplications;
     ModulePContainer selmodules;
     CnnContainer selconnections;
     ResourcePContainer selresources; 
+
+    map<string, int> appList;
 
     bool moduleCompleteness(Module* module);
     void updateNodesLink(Graph& graph, int level);
@@ -114,7 +141,7 @@ private:
     void updateResourceWeight(Graph& graph, 
                               GenericResource* resource, float weight);
 
-    void updateExtraLink(Graph& graph, CnnContainer* connections);
+    //void updateExtraLink(Graph& graph, CnnContainer* connections);
     void linkToOutputs(Graph& graph, InputData* input);
     int getProducerRank(Graph& graph, OutputData* output);
     const char* createDataLabel(const char* modlabel, const char* port,
@@ -128,11 +155,12 @@ private:
                             GenericResource* res, const char* szLabel);
 
     Module* addModuleToGraph(Graph& graph, Module* module);
-    bool updateModule(Graph& graph, 
-                     Module* module, ModuleInterface* imod );
-    bool updateApplication(Graph& graph, 
-                          Application* app, ApplicationInterface* iapp);
+    bool removeModuleFromGraph(Graph& graph, Module* mod);
+
+    bool updateModule(Module* module, ModuleInterface* imod);
+    bool updateApplication(Application* app, ApplicationInterface* iapp);
     bool reason(Graph* graph, Node* initial,
+                         ApplicaitonPContainer &applications,
                          ModulePContainer &modules,
                          ResourcePContainer& resources, 
                          CnnContainer &connections,

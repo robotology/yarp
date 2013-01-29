@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Creating New Items</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GooCanvas Reference Manual">
+<link rel="up" href="ch01.html" title="Introduction">
+<link rel="prev" href="goocanvas-coordinates.html" title="Coordinate Spaces and Limits">
+<link rel="next" href="goocanvas-wysiwyg.html" title="WYSIWYG Printing">
+<meta name="generator" content="GTK-Doc V1.9 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="Introduction">
+<link rel="chapter" href="ch02.html" title="Core Objects">
+<link rel="chapter" href="ch03.html" title="Standard Canvas Items">
+<link rel="chapter" href="ch04.html" title="Standard Canvas Item Models">
+<link rel="chapter" href="ch05.html" title="Miscellaneous">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2"><tr valign="middle">
+<td><a accesskey="p" href="goocanvas-coordinates.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GooCanvas Reference Manual</th>
+<td><a accesskey="n" href="goocanvas-wysiwyg.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry" lang="en">
+<a name="goocanvas-creating-items"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle">Creating New Items</span></h2>
+<p>Creating New Items &#8212; how to create new canvas items.</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1" lang="en">
+<a name="id3050146"></a><h2>How to Create New Canvas Items</h2>
+<p>
+    There are 3 ways to create new canvas items, listed here in increasing
+    order of complexity:
+    </p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>
+	<a class="link" href="goocanvas-creating-items.html#creating-simple-subclass" title="Creating a Simple Subclass of GooCanvasItemSimple">
+	Creating a simple subclass of GooCanvasItemSimple.</a>
+    </p></li>
+<li><p>
+	<a class="link" href="goocanvas-creating-items.html#creating-regular-subclass" title="Creating a Regular Subclass of GooCanvasItemSimple">
+	Creating a regular subclass of GooCanvasItemSimple.</a>
+    </p></li>
+<li><p>
+	<a class="link" href="goocanvas-creating-items.html#implementing-interface" title="Implementing the GooCanvasItem Interface">
+	Implementing the GooCanvasItem interface.</a>
+    </p></li>
+</ul></div>
+<p>
+    These will be discussed in turn below. (It is also possible to create
+    new container items by subclassing <a class="link" href="GooCanvasGroup.html" title="GooCanvasGroup"><span class="type">GooCanvasGroup</span></a>, but that is not
+    covered here.)
+    </p>
+<p>
+      The final part of this section covers
+      creating item models.
+    </p>
+<div class="refsect2" lang="en">
+<a name="creating-simple-subclass"></a><h3>Creating a Simple Subclass of GooCanvasItemSimple</h3>
+<p>
+	For items that consist of a simple graphic element such
+	as a line, rectangle or circle, it is possible to create a subclass
+	of <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a> and override just one method,
+	<code class="function">simple_create_path()</code>. (This method is used for the <a class="link" href="GooCanvasEllipse.html" title="GooCanvasEllipse"><span class="type">GooCanvasEllipse</span></a>
+	and <a class="link" href="GooCanvasPath.html" title="GooCanvasPath"><span class="type">GooCanvasPath</span></a> items.)
+      </p>
+<p>
+	The <code class="function">simple_create_path()</code> method should create a path using the given
+	cairo context. The path will be drawn using the stroke, fill and
+	other painting properties from <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a>.
+      </p>
+<p>
+	This example shows the <code class="function">simple_create_path()</code> method for a simple
+	rectangular item, MyItem:
+	</p>
+<div class="informalexample"><pre class="programlisting">
+  static void
+  my_item_simple_create_path (GooCanvasItemSimple *simple,
+                              cairo_t             *cr)
+  {
+    MyItem *item = (MyItem*) simple;
+
+    cairo_rectangle (cr, item-&gt;x, item-&gt;y, item-&gt;width, item-&gt;height);
+  }
+	</pre></div>
+<p>
+      </p>
+<p>
+	Whenever the item is changed in some way it should call
+	<a class="link" href="GooCanvasItemSimple.html#goo-canvas-item-simple-changed"><code class="function">goo_canvas_item_simple_changed()</code></a>, passing a boolean value indicating
+	whether the item's bounds need to be recalculated or if it only needs
+	to be repainted. The <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a> code will take care of
+	updating the item and repainting the appropriate parts of the canvas.
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="creating-regular-subclass"></a><h3>Creating a Regular Subclass of GooCanvasItemSimple</h3>
+<p>
+	Most items will need more than a simple line or rectangle, so they
+	will need to create a subclass of <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a> and override
+	three methods, <code class="function">simple_update()</code>, <code class="function">simple_paint()</code> and <code class="function">simple_is_item_at()</code>.
+      </p>
+<p>
+	The <code class="function">simple_update()</code> method should compute the bounds of the item, in the
+	item's coordinate space, and place them in the bounds member of
+	<a class="link" href="GooCanvasItemSimple.html#GooCanvasItemSimple-struct"><span class="type">GooCanvasItemSimple</span></a>. Note that the cairo context passed to
+	this function may have transformations applied to it, so
+	<a
+href="/usr/share/gtk-doc/html/cairo/cairo-Transformations.html#cairo-identity-matrix"
+><code class="function">cairo_identity_matrix()</code></a> should be called before using it.
+      </p>
+<p>
+	The <code class="function">simple_paint()</code> method should paint the item using the given cairo
+	context. To use the stroke and fill properties from <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a>
+	to paint parts of the item call <a class="link" href="GooCanvasStyle.html#goo-canvas-style-set-stroke-options"><code class="function">goo_canvas_style_set_stroke_options()</code></a>
+	and <a class="link" href="GooCanvasStyle.html#goo-canvas-style-set-fill-options"><code class="function">goo_canvas_style_set_fill_options()</code></a> before calling <a
+href="/usr/share/gtk-doc/html/cairo/cairo-cairo-t.html#cairo-stroke"
+><code class="function">cairo_stroke()</code></a>
+	and <a
+href="/usr/share/gtk-doc/html/cairo/cairo-cairo-t.html#cairo-fill"
+><code class="function">cairo_fill()</code></a>. (The item's style can be found in
+	GOO_CANVAS_ITEM_SIMPLE (item)-&gt;simple_data-&gt;style).
+      </p>
+<p>
+	The <code class="function">simple_is_item_at()</code> method should return <a
+href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"
+><code class="literal">TRUE</code></a> if the
+	given coordinate (in the item's coordinate space) is inside the item.
+	(The is_pointer_event argument can be ignored for most purposes since
+	the <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a> code will take care of it.)
+      </p>
+<p>
+	This example code shows the <code class="function">simple_update()</code>, <code class="function">simple_paint()</code> and
+	<code class="function">simple_is_item_at()</code> methods for a rectangular item (the complete
+	item's source code can be found in the GooCanvas demo directory, in
+	demo-item.h and demo-item.c):
+	</p>
+<div class="informalexample"><pre class="programlisting">
+  static void
+  goo_demo_item_update  (GooCanvasItemSimple *simple,
+                         cairo_t             *cr)
+  {
+    GooDemoItem *demo_item = (GooDemoItem*) simple;
+  
+    /* Compute the new bounds. */
+    simple-&gt;bounds.x1 = demo_item-&gt;x;
+    simple-&gt;bounds.y1 = demo_item-&gt;y;
+    simple-&gt;bounds.x2 = demo_item-&gt;x + demo_item-&gt;width;
+    simple-&gt;bounds.y2 = demo_item-&gt;y + demo_item-&gt;height;
+  }
+  
+  
+  static void
+  goo_demo_item_paint (GooCanvasItemSimple   *simple,
+                       cairo_t               *cr,
+                       const GooCanvasBounds *bounds)
+  {
+    GooDemoItem *demo_item = (GooDemoItem*) simple;
+  
+    cairo_move_to (cr, demo_item-&gt;x, demo_item-&gt;y);
+    cairo_line_to (cr, demo_item-&gt;x, demo_item-&gt;y + demo_item-&gt;height);
+    cairo_line_to (cr, demo_item-&gt;x + demo_item-&gt;width,
+                   demo_item-&gt;y + demo_item-&gt;height);
+    cairo_line_to (cr, demo_item-&gt;x + demo_item-&gt;width, demo_item-&gt;y);
+    cairo_close_path (cr);
+    goo_canvas_style_set_fill_options (simple-&gt;simple_data-&gt;style, cr);
+    cairo_fill (cr);
+  }
+  
+  
+  static gboolean
+  goo_demo_item_is_item_at (GooCanvasItemSimple *simple,
+                            gdouble              x,
+                            gdouble              y,
+                            cairo_t             *cr,
+                            gboolean             is_pointer_event)
+  {
+    GooDemoItem *demo_item = (GooDemoItem*) simple;
+  
+    if (x &lt; demo_item-&gt;x || (x &gt; demo_item-&gt;x + demo_item-&gt;width)
+        || y &lt; demo_item-&gt;y || (y &gt; demo_item-&gt;y + demo_item-&gt;height))
+      return FALSE;
+  
+    return TRUE;
+  }
+	</pre></div>
+<p>
+      </p>
+<p>
+	As with the simple <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a> subclass, the item should
+	call <a class="link" href="GooCanvasItemSimple.html#goo-canvas-item-simple-changed"><code class="function">goo_canvas_item_simple_changed()</code></a> whenever it is changed, to
+	ensure that the item's bounds are recomputed and it is repainted
+	if necessary.
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="implementing-interface"></a><h3>Implementing the GooCanvasItem Interface</h3>
+<p>
+	The most complicated way to create new canvas items is to implement
+	the <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem"><span class="type">GooCanvasItem</span></a> interface directly. This should not be needed in
+	most cases, but may be desired if the developer wants to avoid the
+	memory and processor overheads associated with the <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a>
+	class, or if the developer wants to turn an existing application object
+	into a canvas item.
+      </p>
+<p>
+	At a minimum the canvas item must implement these 6 methods:
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>
+	      <code class="function">get_parent()</code> - the item's parent should be returned.
+	  </p></li>
+<li><p>
+	      <code class="function">set_parent()</code> - the item's parent should be stored (though it
+	      should not add a reference to the parent).
+	  </p></li>
+<li><p>
+	      <code class="function">get_bounds()</code> - returns the bounds of the item, in canvas space.
+	      The item should ensure that the bounds are up-to-date before
+	      returning them, calling <a class="link" href="goocanvas-goocanvasitem.html#goo-canvas-item-ensure-updated"><code class="function">goo_canvas_item_ensure_updated()</code></a> if
+	      necessary.
+	  </p></li>
+<li><p>
+	      <code class="function">update()</code> - if the item has been changed since the last update,
+	      or if the entire_tree flag is <a
+href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"
+><code class="literal">TRUE</code></a>, the item's bounds should
+	      be recomputed (in canvas space). It should also request a redraw
+	      of the old bounds and the new bounds, so the display is updated
+	      appropriately. The new bounds should be returned in the bounds
+	      argument.
+	  </p></li>
+<li><p>
+	      <code class="function">paint()</code> - if the item's bounds intersect the given bounds then
+	      the item should be painted on the given cairo context.
+	      The scale parameter is only used to check if the item should be
+	      visible, according to the item's <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--visibility"><span class="type">"visibility"</span></a> and
+	      <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--visibility-threshold"><span class="type">"visibility-threshold"</span></a> property settings.
+	  </p></li>
+<li><p>
+	      <code class="function">get_items_at()</code> - if the given point is inside the item then
+	      a pointer to the item should be added to the start of the list
+	      of found items. The list is then returned.
+	  </p></li>
+</ul></div>
+<p>
+      </p>
+<p>
+	The canvas item must also implement the
+	<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--parent"><span class="type">"parent"</span></a>, <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--title"><span class="type">"title"</span></a>,
+	<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--description"><span class="type">"description"</span></a>,
+	<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--visibility"><span class="type">"visibility"</span></a>, <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--visibility-threshold"><span class="type">"visibility-threshold"</span></a>,
+	<a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--transform"><span class="type">"transform"</span></a> and <a class="link" href="goocanvas-goocanvasitem.html#GooCanvasItem--pointer-events"><span class="type">"pointer-events"</span></a> properties.
+	(The last 4 properties can simply be ignored if the application
+	doesn't intend to use them.)
+      </p>
+<p>
+	If the canvas item will be used within a container that does item
+	layout, such as <a class="link" href="GooCanvasTable.html" title="GooCanvasTable"><span class="type">GooCanvasTable</span></a>, it must implement the first two
+	methods here at least:
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>
+	      <code class="function">get_requested_area()</code> - returns the requested area of the item,
+	      in the parent's coordinate space.
+	  </p></li>
+<li><p>
+	      <code class="function">allocate_area()</code> - allocates the item's area, in the parent's
+	      coordinate space.
+	  </p></li>
+<li><p>
+	      <code class="function">get_requested_height()</code> - returns the requested height of the
+	      item, given a particular allocated width, in the parent's
+	      coordinate space. (This only needed for items that change height
+	      as their width is changed, such as text items.)
+	  </p></li>
+</ul></div>
+<p>
+      </p>
+<p>
+	If the canvas item supports a transformation matrix it must implement:
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>
+	      <code class="function">get_transform()</code> - returns the item's transformation matrix.
+	  </p></li>
+<li><p>
+	      <code class="function">set_transform()</code> - sets the item's transformation matrix.
+	  </p></li>
+</ul></div>
+<p>
+      </p>
+<p>
+	If the canvas item supports a <a class="link" href="GooCanvasStyle.html" title="GooCanvasStyle"><span class="type">GooCanvasStyle</span></a> setting, it must
+	implement:
+	</p>
+<div class="itemizedlist"><ul type="disc">
+<li><p>
+	      <code class="function">get_style()</code> - returns the item's style.
+	  </p></li>
+<li><p>
+	      <code class="function">set_style()</code> - sets the item's style.
+	  </p></li>
+</ul></div>
+<p>
+      </p>
+<p>
+	Since <a class="link" href="GooCanvasItemSimple.html" title="GooCanvasItemSimple"><span class="type">GooCanvasItemSimple</span></a> implements most of the above methods and
+	properties its source code is a good place to look for help.
+      </p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="creating-item-models"></a><h3>Creating Item Models</h3>
+<p>
+	As with creating canvas items, to create item models it
+	is possible to subclass <a class="link" href="GooCanvasItemModelSimple.html" title="GooCanvasItemModelSimple"><span class="type">GooCanvasItemModelSimple</span></a> or to
+	implement the <a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel"><span class="type">GooCanvasItemModel</span></a> interface directly.
+      </p>
+<p>
+	Subclassing <a class="link" href="GooCanvasItemModelSimple.html" title="GooCanvasItemModelSimple"><span class="type">GooCanvasItemModelSimple</span></a> is very easy, since only one
+	method from the <a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel"><span class="type">GooCanvasItemModel</span></a> interface must be implemented -
+	<code class="function">create_item()</code>. This should return a new canvas item for viewing the
+	item model in a canvas. (It may be called multiple times if multiple
+	canvases are viewing the same canvas model.)
+      </p>
+<p>
+	The <a class="link" href="GooCanvasItemModelSimple.html" title="GooCanvasItemModelSimple"><span class="type">GooCanvasItemModelSimple</span></a> subclass should emit the "changed"
+	signal whenever it has changed, with a boolean flag indicating if
+	the bounds need to be recomputed. The canvas items will connect to
+	this signal and request an update or a redraw as appropriate.
+      </p>
+<p>
+	To implement the <a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel"><span class="type">GooCanvasItemModel</span></a> interface directly, the class
+	must implement the <code class="function">get_parent()</code>, <code class="function">set_parent()</code> and <code class="function">create_item()</code>
+	methods. It may also implement <code class="function">get_transform()</code>, <code class="function">set_transform()</code>,
+	<code class="function">get_style()</code> and <code class="function">set_style()</code> methods if desired.
+      </p>
+<p>
+	The class must also implement the
+	<a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--parent"><span class="type">"parent"</span></a>, <a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--title"><span class="type">"title"</span></a>,
+	<a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--description"><span class="type">"description"</span></a>, <a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--can-focus"><span class="type">"can-focus"</span></a>,
+	<a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--visibility"><span class="type">"visibility"</span></a>,
+	<a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--visibility-threshold"><span class="type">"visibility-threshold"</span></a>,
+	<a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--transform"><span class="type">"transform"</span></a> and <a class="link" href="goocanvas-goocanvasitemmodel.html#GooCanvasItemModel--pointer-events"><span class="type">"pointer-events"</span></a>
+	properties.
+	(The last 4 properties can simply be ignored if the application
+	doesn't intend to use them.)
+      </p>
+</div>
+</div>
+</div>
+</body>
+</html>

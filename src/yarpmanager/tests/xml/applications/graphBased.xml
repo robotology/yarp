@@ -1,0 +1,42 @@
+<application>
+    <name>Efficient_graph-based_segmentation</name>
+    <module>
+        <name>graphBasedSegmentation</name>
+        <parameters>--name GBSeg</parameters>
+        <node>node1</node>
+        <prefix>GBseg</prefix>
+        <geometry>(Pos (x 122.5) (y 98.3))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /segView --x 0 --y 0 --RefreshTime 33</parameters>
+        <node>node2</node>
+        <prefix>segView</prefix>
+        <geometry>(Pos (x 429.5) (y 103.3))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--name /original --x 330 --y 0 --out /desiredTrack --RefreshTime 33</parameters>
+        <node>node2</node>
+        <prefix>original</prefix>
+        <geometry>(Pos (x 4.5) (y 9.4))</geometry>
+    </module>
+    <connection>
+        <from>/icub/camcalib/left/out</from>
+        <to>/GBSeg/rawImg:i</to>
+        <protocol></protocol>
+        <geometry>(Pos ((x 201) (y 61)) ((x 408) (y 101))  )</geometry>
+    </connection>
+    <connection>
+        <from>/GBSeg/viewImg:o</from>
+        <to>/segView</to>
+        <protocol></protocol>
+        <geometry>(Pos ((x 152) (y 101)) ((x 408) (y 141))  )</geometry>
+    </connection>
+    <connection>
+        <from>/icub/camcalib/left/out</from>
+        <to>/original</to>
+        <protocol></protocol>
+        <geometry>(Pos ((x 201) (y 61)) ((x 408) (y 181))  )</geometry>
+    </connection>
+</application>

@@ -17,6 +17,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ConstString.h>
 #include "main_window.h"
 
@@ -28,9 +29,9 @@ Usage:\n\
       gymanager [option...]\n\n\
 Options:\n\
   --help                  Show help\n\
-  --config                Configuration file name\n"
+  --from                  Configuration file name\n"
 
-#define DEF_CONFIG_FILE     "./ymanager.ini"
+#define DEF_CONFIG_FILE     "ymanager.ini"
 
 
 void onSignal(int signum);
@@ -55,36 +56,45 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 int main(int __argc, char *__argv[]) 
 {
+
+    // Setup resource finder
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose(false);
+    rf.setDefaultContext("");
+    rf.setDefaultConfigFile(DEF_CONFIG_FILE);
+    rf.configure(__argc, __argv);
+
     yarp::os::Network yarp;
     yarp.setVerbosity(-1);
 
-    yarp::os::Property cmdline;
     yarp::os::Property config;
+    config.fromString(rf.toString());
 
-    cmdline.fromCommand(__argc, __argv);
-
-    if(cmdline.check("help"))
+    if(config.check("help"))
     {
         cout<<HELP_MESSAGE<<endl;
         return 0;
     }
-        
-    if(cmdline.check("config"))
-    {
-        if(cmdline.find("config").asString() == "")
-        {
-            cout<<HELP_MESSAGE<<endl;
-            return 0;           
-        }
-        if(!config.fromConfigFile(cmdline.find("config").asString().c_str()))
-            cout<<"WARNING: "<<cmdline.find("config").asString().c_str()<<" cannot be loaded."<<endl;
-    }
-    else 
-        config.fromConfigFile(DEF_CONFIG_FILE);
-
+    
     /**
      *  preparing default options
      */
+    
+    std::string inifile=rf.findFile("from").c_str();
+    std::string inipath="";
+    size_t lastSlash=inifile.rfind("/");
+    if (lastSlash!=std::string::npos)
+        inipath=inifile.substr(0, lastSlash+1);
+    else
+    {
+        lastSlash=inifile.rfind("\\");
+        if (lastSlash!=std::string::npos)
+            inipath=inifile.substr(0, lastSlash+1);
+    }
+    
+    if(!config.check("ymanagerini_dir"))
+        config.put("ymanagerini_dir", inipath.c_str());
+    
     if(!config.check("apppath"))
         config.put("apppath", "./");
 

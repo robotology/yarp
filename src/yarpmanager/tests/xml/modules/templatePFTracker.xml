@@ -1,0 +1,128 @@
+<module>
+    <!-- module's name should match its executable file's name. -->
+    <name>templatePFTracker</name>
+    <description>This module expects a template from the following port /templatePFTracker/template/image:i in order to commence tracking. This is a simple single-object tracker that uses a color histogram-based observation model. 
+Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The particle filtering algorithm maintains a probability distribution over the state of the system it is monitoring, in this case, the state -- location, scale, etc. -- of the object being tracked. Particle filtering represents the distribution as a set of weighted samples, or particles. Each particle describes one possible location of the object being tracked. The set of particles contains more weight at locations where the object being tracked is more likely to be. The most probable state of the object is determined by finding the location in the particle filtering distribution with the highest weight. </description>
+    <version>1.0</version>
+
+    <!-- <arguments> can have multiple <param> tags-->
+    <arguments>
+        <param desc="Name of the module" default="templatePFTracker"> name</param>
+        <!--param desc="specifies the configuration file" default="/templatePFTracker.ini"> from </param>
+        <param desc="specifies the sub-path from \c $ICUB_ROOT/icub/app to the configuration file" default="/templatePFTracker/conf"> context </param-->	
+    </arguments>
+
+    <!-- <authors> can have multiple <author> tags. -->
+    <authors>
+        <author email="vadim.tikhanoff@iit.it"> Vadim Tikhanoff </author>
+    </authors>
+
+     <!-- <data> can have multiple <input> or <output> tags. -->
+     <data>
+        <input>
+            <type>Image</type>
+            <port carrier="udp">/templatePFTracker/template/image:i</port>
+            <!-- required input means the execution of module depends on
+                 this input data. Notice that not all the input are required
+                 for a module to perform its task (e.g. control input, status
+                 request input). -->
+            <required>yes</required>
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+        <input>
+            <type>Image</type>
+            <port carrier="udp">/templatePFTracker/left/image:i</port>
+            <required>yes</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+        <input>
+            <type>Image</type>
+            <port carrier="udp">/templatePFTracker/right/image:i</port>
+            <required>yes</required>
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+	<input>
+            <type>Rpc</type>
+            <port carrier="tcp">/templatePFTracker</port>
+            <!-- required input means the execution of module depends on
+                 this input data. Notice that not all the input are required
+                 for a module to perform its task (e.g. control input, status
+                 request input). -->
+            <required>no</required>
+            <!-- priority forces the execution of module to be delayed
+                 until the required data becomes available on the port -->
+            <priority>no</priority>
+            <description></description>
+        </input>
+
+        <!-- output datas if available -->
+        <output>
+            <type>Image</type>
+            <port carrier="udp">/templatePFTracker/left/image:o</port>
+            <description></description>
+        </output>
+        <output>
+            <type>Image</type>
+            <port carrier="udp">/templatePFTracker/right/image:o</port>
+            <description></description>
+        </output>
+	<output>
+            <type>Image</type>
+            <port carrier="udp">/templatePFTracker/leftblob/image:o</port>
+            <description></description>
+        </output>
+	<output>
+            <type>Image</type>
+            <port carrier="udp">/templatePFTracker/rightblob/image:o</port>
+            <description></description>
+        </output>
+	<output>
+            <type>Vector</type>
+            <port carrier="tcp">/templatePFTracker/target:o</port>
+            <description></description>
+        </output>
+	<output>
+            <type>unk</type>
+            <port carrier="tcp">/templatePFTracker/target3d:o</port>
+            <description></description>
+        </output>
+	<output>
+            <type>unk</type>
+            <port carrier="tcp">/templatePFTracker/triangulation:io</port>
+            <description></description>
+        </output>
+    </data>
+
+    <!-- physical and logical resource dependencies can be introduced in this
+         section. Dependencies must follow resource conceptional models. Currently
+         available resource models are 'memory', 'processor', 'storage', 'network',
+         'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced
+         inside <computer></computer> tags. While resources described inside <computer>
+         tags represent conjunctional dependency, resources from different <computer>
+         tags can be seen as disjunctions. Meaning that If a module depend on either
+         resource R1 or R2 they can be introduced inside two different <computer> tags.
+         Resource dependencies should be introduced if they are really required. For
+         example, if module's performance drops significantly in case of memory swapping,
+         a memory resource dependency can be introduced with the required memory space. -->
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+    <!-- specific libraries or header files which are used for development -->
+    <development>
+        <header></header>
+        <library>YARP</library>
+	<library>OpenCV</library>
+    </development>
+
+</module>
+
