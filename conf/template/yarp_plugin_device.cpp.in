@@ -26,7 +26,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 #include <yarp/os/SharedLibraryClass.h>
-YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,DeviceDriver)
 
 YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     DriverCreator *factory = 
@@ -39,3 +38,5 @@ YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
 YARP_PLUGIN_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }
+
+YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,DeviceDriver)

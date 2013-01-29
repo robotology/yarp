@@ -24,7 +24,6 @@ using namespace yarp::os::impl;
 #include <@YARPDEV_INCLUDE@>
 
 #include <yarp/os/SharedLibraryClass.h>
-YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,Carrier)
 
 YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
     Carriers::addCarrierPrototype(new @YARPDEV_TYPE@);
@@ -34,3 +33,5 @@ YARP_PLUGIN_EXPORT void add_owned_@YARPDEV_NAME@(const char *owner) {
 YARP_PLUGIN_EXPORT void add_@YARPDEV_NAME@() {
     add_owned_@YARPDEV_NAME@(NULL);
 }
+
+YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,Carrier)
