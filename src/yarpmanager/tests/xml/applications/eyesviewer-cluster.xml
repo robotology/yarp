@@ -1,0 +1,50 @@
+<application>
+    <name>EyesViewer-Cluster</name>
+    <description>A fake robot eyes viewer running on a cluster of computer</description>
+    <version>1.0</version>
+    <authors>
+        <author email="ali.paikan@iit.it">Ali Paikan</author>
+    </authors>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode line </parameters>
+        <node></node>
+        <prefix>/Left</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 75) (y 105.9))</geometry>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode line </parameters>
+        <node></node>
+        <prefix>/Right</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 75) (y 180.9))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 100 </parameters>
+        <node></node>
+        <prefix>/LeftView</prefix>
+        <geometry>(Pos (x 390) (y 105.9))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 500 </parameters>
+        <node></node>
+        <prefix>/RightView</prefix>
+        <geometry>(Pos (x 390) (y 180.9))</geometry>
+    </module>
+    <connection>
+        <from>/Left/grabber</from>
+        <to>/LeftView/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 317) (y 124)) ((x 243) (y 124)) ((x 391) (y 124))  )</geometry>
+    </connection>
+    <connection>
+        <from>/Right/grabber</from>
+        <to>/RightView/yarpview/img:i</to>
+        <protocol>udp</protocol>
+        <geometry>(Pos ((x 317) (y 199)) ((x 243) (y 199)) ((x 391) (y 199))  )</geometry>
+    </connection>
+</application>

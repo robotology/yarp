@@ -6,10 +6,11 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>yarpdev</name>
-        <parameters>--device test_grabber --name /eye</parameters>
+        <name>test_grabber</name>
+        <parameters>--mode line </parameters>
         <node>localhost</node>
         <prefix></prefix>
-        <geometry>(Pos (x 10) (y 10))</geometry>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 25) (y 47.9))</geometry>
     </module>
 </application>
