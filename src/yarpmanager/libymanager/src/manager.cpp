@@ -339,11 +339,13 @@ bool Manager::prepare(bool silent)
 
         /**
          * Adding connections to their owners
+         * TODO: check whether this is still needed or not
          */
-        CnnIterator cnn;
-        for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-            if((*cnn).owner() == (*itr))
-                exe->addConnection(*cnn);
+
+        //CnnIterator cnn;
+        //for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+        //    if((*cnn).owner() == (*itr))
+        //        exe->addConnection(*cnn);
 
         /**
          * Adding resources to their owners
@@ -396,6 +398,7 @@ bool Manager::updateConnection(unsigned int id, const char* from,
         return false;
     }
 
+    /*
     if(connections[id].owner())
     {
         OSTRINGSTREAM msg;
@@ -404,6 +407,7 @@ bool Manager::updateConnection(unsigned int id, const char* from,
         logger->addWarning(msg);
         return false;
     }
+    */ 
 
     connections[id].setFrom(from);
     connections[id].setTo(to);
@@ -1001,12 +1005,12 @@ bool Manager::checkPortsAvailable(Broker* broker)
     CnnIterator itr;
     for(itr=connections.begin(); itr!=connections.end(); itr++)
     {
-        if(!(*itr).owner() )
-        {
+       //if(!(*itr).owner() )
+       // {
             if(!broker->exists((*itr).to()) ||
                 !broker->exists((*itr).from()))
                     return false;
-        }
+       // }
     }
     return true;
 }
@@ -1024,8 +1028,9 @@ bool Manager::connectExtraPorts(void)
 
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-        if(!(*cnn).owner() )
-        {
+    {
+        //if(!(*cnn).owner() )
+        //{
             if( !connector.connect((*cnn).from(), (*cnn).to(),
                                    (*cnn).carrier()) )
             {
@@ -1033,7 +1038,8 @@ bool Manager::connectExtraPorts(void)
                 //cout<<connector.error()<<endl;
                 return false;
             }
-        }
+       //}
+    }
     return true;
 }
 
