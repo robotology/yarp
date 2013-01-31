@@ -581,11 +581,12 @@ bool ApplicationModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Ite
         this->points.push_back(pt);
 
         for(int i=0; i<get_n_children(); i++)
+        {
             if(Glib::RefPtr<ModuleModel>::cast_dynamic(get_child(i)))
                 Glib::RefPtr<ModuleModel>::cast_dynamic(get_child(i))->updateArrowCoordination();
-
-        // updating arrows coordination
-        //updateArrowCoordination();
+            if(Glib::RefPtr<ExternalPortModel>::cast_dynamic(get_child(i)))
+                Glib::RefPtr<ExternalPortModel>::cast_dynamic(get_child(i))->updateArrowCoordination(); 
+        }
 
         // updating canvas boundries 
         bool needUpdate = false;
