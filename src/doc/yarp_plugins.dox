@@ -95,7 +95,7 @@ type carrier        # is the plugin a "carrier" or a "device"?
 name human          # the name of the plugin, as far as users are concerned
 library yarp_human  # the name of the library containing the plugin
                     # (omitting OS-specific prefixes and suffixes)
-part human_carrier  # function name: match yarp_add_plugin(THIS_NAME ...)
+part human_carrier  # function name: match yarp_prepare_carrier(THIS_NAME ...)
 code "HUMANITY"     # the first 8 bytes on this kind of connection
 \endcode
 
@@ -114,7 +114,7 @@ type device          # is the plugin a "carrier" or a "device"?
 name fakebot         # the name of the plugin, as far as users are concerned
 library yarp_fakebot # the name of the library containing the plugin
                      # (omitting OS-specific prefixes and suffixes)
-part fakebot         # function name: match yarp_add_plugin(THIS_NAME ...)
+part fakebot         # function name: match yarp_prepare_device(THIS_NAME ...)
 \endcode
 
 It is fine for a fingerprint file to contain more than one plugin
