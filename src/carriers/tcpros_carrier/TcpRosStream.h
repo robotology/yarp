@@ -51,15 +51,20 @@ private:
     yarp::os::ConstString kind;
     WireTwiddlerReader twiddlerReader;
 public:
-    TcpRosStream(TwoWayStream *delegate, bool sender,
-                 bool service, int raw, const char *kind) : 
-        sender(sender), raw(raw), kind(kind),
-        twiddlerReader(delegate->getInputStream(),twiddler)
+    TcpRosStream(TwoWayStream *delegate,
+                 bool sender,
+                 bool service,
+                 int raw,
+                 const char *kind) :
+            delegate(delegate),
+            sender(sender),
+            raw(raw),
+            firstRound(true),
+            phase(0),
+            expectTwiddle(service && sender),
+            kind(kind),
+            twiddlerReader(delegate->getInputStream(), twiddler)
     {
-        this->delegate = delegate;
-        firstRound = true;
-        phase = 0;
-        expectTwiddle = service&&sender;
         updateKind(kind);
     }
 

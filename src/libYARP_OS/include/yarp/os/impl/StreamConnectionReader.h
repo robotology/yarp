@@ -40,20 +40,21 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::StreamConnectionReader : public ConnectionReader {
 public:
-    StreamConnectionReader() {
-        in = NULL;
-        str = NULL;
-        messageLen = 0;
-        textMode = false;
-        writer = NULL;
-        writePending = false;
-        valid = false;
-        ref = NULL;
-        err = false;
-        protocol = NULL;
-        shouldDrop = false;
-        convertedTextMode = false;
-        pushedIntFlag = false;
+    StreamConnectionReader() :
+        ConnectionReader(),
+        writer(NULL),
+        in(NULL),
+        str(NULL),
+        protocol(NULL),
+        messageLen(0),
+        textMode(false),
+        valid(false),
+        err(false),
+        shouldDrop(false),
+        writePending(false),
+        ref(NULL),
+        convertedTextMode(false),
+        pushedIntFlag(false) {
     }
 
     virtual ~StreamConnectionReader();

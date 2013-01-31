@@ -50,12 +50,12 @@ public:
      * @param port Port number for socket communication.
      */
     Address(String name,
-            int port) {
-        this->name = name;
-        this->port = port;
-        this->carrier = "tcp";
-        this->regName = "";
-        this->timeout = -1;
+            int port) :
+        name(name),
+        port(port),
+        carrier("tcp"),
+        regName(""),
+        timeout(-1) {
     }
 
     /**
@@ -67,12 +67,12 @@ public:
      */
     Address(String name,
             int port,
-            String carrier) {
-        this->name = name;
-        this->port = port;
-        this->carrier = carrier;
-        this->regName = "";
-        this->timeout = -1;
+            String carrier) :
+        name(name),
+        port(port),
+        carrier(carrier),
+        regName(""),
+        timeout(-1) {
     }
 
     /**
@@ -86,12 +86,12 @@ public:
     Address(String name,
             int port,
             String carrier,
-            String regName) {
-        this->name = name;
-        this->port = port;
-        this->carrier = carrier;
-        this->regName = regName;
-        this->timeout = -1;
+            String regName) :
+        name(name),
+        port(port),
+        carrier(carrier),
+        regName(regName),
+        timeout(-1) {
     }
 
     /**
@@ -99,12 +99,12 @@ public:
      *
      * @param alt The Address to copy.
      */
-    Address(const Address& alt) {
-        name = alt.name;
-        port = alt.port;
-        carrier = alt.carrier;
-        regName = alt.regName;
-        this->timeout = -1;
+    Address(const Address& alt) :
+        name(alt.name),
+        port(alt.port),
+        carrier(alt.carrier),
+        regName(alt.regName),
+        timeout(-1) {
     }
 
     const Address& operator=(const Address& alt) {
@@ -119,9 +119,12 @@ public:
     /**
      * Default constructor.  Creates an invalid Address.
      */
-    Address() {
-        port = -1;
-        timeout = -1;
+    Address() :
+        name(""),
+        port(-1),
+        carrier(""),
+        regName(""),
+        timeout(-1) {
     }
 
     /**
