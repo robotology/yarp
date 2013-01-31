@@ -114,11 +114,14 @@ public:
      * @return A reference to this Address.
      */
     const Address& operator=(const Address& alt) {
-        name = alt.name;
-        port = alt.port;
-        carrier = alt.carrier;
-        regName = alt.regName;
-        timeout = alt.timeout;
+        if (&alt != this) {
+            name = alt.name;
+            port = alt.port;
+            carrier = alt.carrier;
+            regName = alt.regName;
+            timeout = alt.timeout;
+        }
+
         return *this;
     }
 
