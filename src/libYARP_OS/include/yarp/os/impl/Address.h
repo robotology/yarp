@@ -107,6 +107,12 @@ public:
         timeout(-1) {
     }
 
+    /**
+     * Assignment operator
+     *
+     * @param alt The Address to copy.
+     * @return A reference to this Address.
+     */
     const Address& operator=(const Address& alt) {
         name = alt.name;
         port = alt.port;
@@ -253,14 +259,29 @@ public:
         return carrier != "";
     }
 
+    /**
+     * Check if this Address has a timeout.
+     *
+     * @return true iff this Address has a timeout.
+     */
     bool hasTimeout() const {
         return timeout >= 0;
     }
 
+    /**
+     * Set timeout for this Address.
+     *
+     * @param timeout The timeout to set.
+     */
     void setTimeout(float timeout) {
         this->timeout = timeout;
     }
 
+    /**
+     * Get timeout for this Address.
+     *
+     * @return The timeout for this Address
+     */
     float getTimeout() const {
         return timeout;
     }
