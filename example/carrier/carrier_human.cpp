@@ -233,7 +233,7 @@ public:
         getHeader(header.bytes());
         proto.os().write(header.bytes());
         if (!proto.os().isOk()) return false;
-        
+
         // Now we can do whatever we want, as long as somehow
         // we also send the name of the originating port
 
@@ -313,7 +313,7 @@ public:
     virtual bool sendAck(Protocol& proto) {
         String prefix = "computers rule!\r\n";
         Bytes b2((char*)prefix.c_str(),prefix.length());
-        proto.os().write(b2);        
+        proto.os().write(b2);
         return true;
     }
 
@@ -341,7 +341,7 @@ int main(int argc, char *argv[]) {
     }
 
     string mode = argv[1];
-    
+
     if (mode == "--server") {
         Port out;
         out.open("/test/out");

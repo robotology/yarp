@@ -56,15 +56,15 @@ public:
 #ifdef WITH_RIORITY_DEBUG
 class yarp::os::impl::PriorityDebugThread : public yarp::os::RateThread {
 public:
-	PriorityDebugThread(PriorityCarrier* carrier);	
-    virtual ~PriorityDebugThread();	
-	void run();
+    PriorityDebugThread(PriorityCarrier* carrier);
+    virtual ~PriorityDebugThread();
+    void run();
     bool threadInit();
-	void threadRelease();
+    void threadRelease();
 
 public:
     int count;
-    PriorityCarrier* pcarrier; 
+    PriorityCarrier* pcarrier;
     String debugPortName;
     BufferedPort<yarp::sig::Vector> debugPort;
 };
@@ -87,8 +87,8 @@ class yarp::os::impl::PriorityCarrier : public yarp::os::impl::ModifyingCarrier 
 public:
     PriorityCarrier()
 #ifdef WITH_RIORITY_DEBUG
-    : debugger(this) 
-#endif //WITH_RIORITY_DEBUG   
+    : debugger(this)
+#endif //WITH_RIORITY_DEBUG
     {
         group = 0/*NULL*/;
         timeConstant = timeArrival = 0;
@@ -117,9 +117,9 @@ public:
     virtual String toString() {
         return "priority_carrier";
     }
-  
-    bool isResting(double priority){    
-        return ((timeResting > 0) && 
+
+    bool isResting(double priority){
+        return ((timeResting > 0) &&
                 ((priority < 0) || (priority >= STIMUL_THRESHOLD)));
     }
 
@@ -127,7 +127,7 @@ public:
     void stimulate(double t) {
 
         temporalStimulation = getActualStimulation(t);
-        // if it is in active sate, stimulates.  
+        // if it is in active sate, stimulates.
         if(!isResting(temporalStimulation))
         {
             temporalStimulation += stimulation;
@@ -137,18 +137,18 @@ public:
                 temporalStimulation = STIMUL_THRESHOLD;
                 isActive = true;
             }
-            // updating arrival time 
+            // updating arrival time
             timeArrival = t;
         }
     }
 
-    // 
+    //
     // +P|   ---___
     //   |   |     -__
     //   |   |        -_
     //  0|------------------>  (Active state)
-    //       Ta        Tc 
-    //  
+    //       Ta        Tc
+    //
     //       Ta        Tr
     //  0|-------------_---->  (Resting state && P<0)
     //   |   |      __-
@@ -161,65 +161,65 @@ public:
     // Tc: reset time, Ta: arrival time
     //
     double getActualStimulation(double t) {
-           
-        // we do not consider ports which has not seen any message 
-        // from them yet. 
+
+        // we do not consider ports which has not seen any message
+        // from them yet.
         //if(timeArrival == 0)
         //    return 0;
- 
+
         double dt = t - timeArrival;
-        // Temporal priority is inverted if this is a neuron model and the temporal 
-        // stimulation has already reached to STIMUL_THRESHOLD and waited for Tc. 
+        // Temporal priority is inverted if this is a neuron model and the temporal
+        // stimulation has already reached to STIMUL_THRESHOLD and waited for Tc.
         if((timeResting > 0)
            && (dt >= fabs(timeConstant))
-           && (temporalStimulation >= STIMUL_THRESHOLD)) 
-           temporalStimulation = -temporalStimulation; 
+           && (temporalStimulation >= STIMUL_THRESHOLD))
+           temporalStimulation = -temporalStimulation;
 
-        double actualStimulation;      
+        double actualStimulation;
         if(!isResting(temporalStimulation)) // behavior is in stimulation state
         {
-            // After a gap bigger than Tc, the 
-            // priority is set to zero to avoid redundant calculation. 
+            // After a gap bigger than Tc, the
+            // priority is set to zero to avoid redundant calculation.
             if(dt > fabs(timeConstant))
                 actualStimulation = 0;
             else
-                actualStimulation = temporalStimulation * 
+                actualStimulation = temporalStimulation *
                     (1.0 - exp((dt-timeConstant)/timeConstant*5.0) + exp(-5.0));
         }
-        else // behavior is in resting state 
+        else // behavior is in resting state
         {
             // it is in waiting state for Tc
             if(temporalStimulation > 0)
                 actualStimulation = temporalStimulation;
-            else   
+            else
             {
                 dt -= fabs(timeConstant);
-                // After a gap bigger than Tr, the 
-                // priority is set to zero to avoid redundant calculation. 
+                // After a gap bigger than Tr, the
+                // priority is set to zero to avoid redundant calculation.
                 if(dt > fabs(timeResting))
                     actualStimulation = 0;
                 else
-                    actualStimulation = temporalStimulation * 
-                        (1.0 - exp((dt-timeResting)/timeResting*5.0) + exp(-5.0)); 
+                    actualStimulation = temporalStimulation *
+                        (1.0 - exp((dt-timeResting)/timeResting*5.0) + exp(-5.0));
             }
         }
-        
+
         if(actualStimulation <= 0)
             isActive = false;
         return actualStimulation;
     }
 
     double getActualInput(double t) {       //I(t)
-        // calculating E(t) = Sum(e.I(t)) + b 
+        // calculating E(t) = Sum(e.I(t)) + b
         if(!isActive)
             return 0.0;
 
         double E = 0;
-        for (PeerRecord::iterator it = group->peerSet.begin(); it!=group->peerSet.end(); it++) 
+        for (PeerRecord::iterator it = group->peerSet.begin(); it!=group->peerSet.end(); it++)
         {
             PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
             if(peer != this)
-            {                
+            {
                 for(int i=0; i<peer->excitation.size(); i++)
                 {
                     Value v = peer->excitation.get(i);
@@ -227,7 +227,7 @@ public:
                     {
                         Bottle* b = v.asList();
                         // an exitatory to this priority carrier
-                        if(sourceName == b->get(0).asString().c_str())  
+                        if(sourceName == b->get(0).asString().c_str())
                             E += peer->getActualInput(t) * (b->get(1).asDouble()/10.0);
                     }
                 }
@@ -235,7 +235,7 @@ public:
             }
         }
         E += baias;
-        double I = E * getActualStimulation(t);        
+        double I = E * getActualStimulation(t);
         return ((I<0) ? 0 : I);     //I'(t)
     }
 
@@ -243,7 +243,7 @@ public:
 
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
 
-    virtual void setCarrierParams(const yarp::os::Property& params) { 
+    virtual void setCarrierParams(const yarp::os::Property& params) {
         yarp::os::Property property = params;
         timeConstant = property.check("tc", Value(timeConstant)).asDouble();
         timeResting = property.check("tr", Value(timeResting)).asDouble();
@@ -254,7 +254,7 @@ public:
             excitation = property.findGroup("ex");
     }
 
-    virtual void getCarrierParams(yarp::os::Property& params) { 
+    virtual void getCarrierParams(yarp::os::Property& params) {
         params.put("tc", timeConstant);
         params.put("tr", timeResting);
         params.put("st", stimulation);
@@ -264,19 +264,19 @@ public:
     }
 
 
-    
+
 public:
-    double timeConstant;            // priority reset time (tc > 0) 
+    double timeConstant;            // priority reset time (tc > 0)
     double timeResting;             // priority resting time (tr > 0)
     double stimulation;             // stimulation value of the message (s > 0)
     double temporalStimulation;     // current priority of the message S(t)
-    double timeArrival;             // arrival time of the message 
+    double timeArrival;             // arrival time of the message
     bool isVirtual;                 // a virtual link does not carry any data
     bool isActive;                  // true if port is in active state X(t)
     double baias;                   // baias value for excitation
     Bottle excitation;              // a list of exitatory signals as (name, value)
     String sourceName;
-    
+
 private:
     String portName;
     PriorityGroup *group;
@@ -286,8 +286,8 @@ private:
     static ElectionOf<PriorityCarrier,PriorityGroup>& getPeers();
 
 #ifdef WITH_RIORITY_DEBUG
-private: 
-    PriorityDebugThread debugger; 
+private:
+    PriorityDebugThread debugger;
 #endif //WITH_RIORITY_DEBUG
 };
 

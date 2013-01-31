@@ -15,10 +15,10 @@ bool HumanCarrier::sendHeader(Protocol& proto) {
     getHeader(header.bytes());
     proto.os().write(header.bytes());
     if (!proto.os().isOk()) return false;
-    
+
     // Now we can do whatever we want, as long as somehow
     // we also send the name of the originating port
-    
+
     // let's just send the port name in plain text terminated with a
     // carriage-return / line-feed
     String from = proto.getRoute().getFromName();

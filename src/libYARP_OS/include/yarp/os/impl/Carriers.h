@@ -28,35 +28,32 @@ namespace yarp {
 }
 
 /**
- * Collection of carriers, a singleton. 
+ * Collection of carriers, a singleton.
+ *
  * This is the starting point for creating connections
  * between ports.
  */
-class YARP_OS_impl_API yarp::os::impl::Carriers {
+class YARP_OS_impl_API yarp::os::impl::Carriers
+{
 public:
 
     /**
-     *
      * Select a carrier by name.
      *
      * @param name the name of the desired carrier.
      * @return the desired carrier, or NULL if not found.
-     *
      */
     static Carrier *chooseCarrier(const String& name);
 
     /**
-     *
      * Select a carrier by 8-byte header.
      *
      * @param bytes the 8-byte header describing the desired carrier.
      * @return the desired carrier, or NULL if not found.
-     *
      */
     static Carrier *chooseCarrier(const Bytes& bytes);
 
     /**
-     *
      * Create a "proto-carrier" interface object that waits for
      * incoming connections prior to a carrier being selected via
      * handshaking.
@@ -67,49 +64,38 @@ public:
      * here.
      *
      * @param address the address (including initial carrier type) to
-     * listen to.
-     *
+     *                listen to.
      * @return the interface object.
-     *
      */
     static Face *listen(const Address& address);
 
     /**
-     *
      * Initiate a connection to an address.
      *
      * @param address the address (including desired carrier type) to
-     * connect to.
-     *
+     *                connect to.
      * @return the protocol object.
-     *
      */
     static OutputProtocol *connect(const Address& address);
 
     /**
-     *
      * Destructor.
-     *
      */
     virtual ~Carriers();
 
 
     /**
-     *
      * Remove all carriers.
-     *
      */
     void clear();
 
     /**
-     *
      * Add a new connection type.
      *
      * @param carrier a prototype of the desired connection type.
-     * The YARP library will be responsible for destroying it on shutdown.
-     *
+     *                The YARP library will be responsible for
+     *                destroying it on shutdown.
      * @return true on success.
-     *
      */
     static bool addCarrierPrototype(Carrier *carrier);
 
@@ -121,11 +107,11 @@ private:
     PlatformVector<Carrier *> delegates;
 
     Carriers();
-  
+
     static Carriers *yarp_carriers_instance;
 
     Carrier *chooseCarrier(const String * name, const Bytes * bytes,
-                           bool load_if_needed = true);  
+                           bool load_if_needed = true);
 };
 
 

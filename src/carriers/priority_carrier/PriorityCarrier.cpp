@@ -50,9 +50,9 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
     timeConstant = fabs(options.check("tc",Value(0.0)).asDouble());
     timeResting = fabs(options.check("tr",Value(0.0)).asDouble());
     stimulation = fabs(options.check("st",Value(STIMUL_THRESHOLD*10)).asDouble());
-    // Zero stimulation is undefined and will be interpreted as S=Thresould. 
+    // Zero stimulation is undefined and will be interpreted as S=Thresould.
     if(stimulation == 0)
-        stimulation = STIMUL_THRESHOLD*10;    
+        stimulation = STIMUL_THRESHOLD*10;
     stimulation /= 10.0;
 
     baias = options.check("bs",Value(STIMUL_THRESHOLD*10)).asDouble();
@@ -76,13 +76,13 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
             if(v.isList() && (v.asList()->size()>=2))
             {
                 Bottle* b = v.asList();
-                fprintf(stdout, "(%s, %.2f) ", 
+                fprintf(stdout, "(%s, %.2f) ",
                                 b->get(0).asString().c_str(),
                                 b->get(1).asDouble()/10.0 );
             }
         }
         fprintf(stdout, "\n");
-        fprintf(stdout, "   virtual: %s\n", 
+        fprintf(stdout, "   virtual: %s\n",
                             (isVirtual)?"yes":"no");
         int rate = options.check("rate", Value(10)).asInt();
         fprintf(stdout, "   db.rate: %dms\n", rate);
@@ -97,19 +97,19 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
 // Decide whether data should be accepted, for real.
 bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
                                        PriorityCarrier *source) {
-     
-    // updates message's arrival time 
+
+    // updates message's arrival time
     double tNow = yarp::os::Time::now();
 
     // stimulate
     source->stimulate(tNow);
-   
+
     // first checks whether actual input signal is positive or not
     double actualInput = source->getActualInput(tNow);
     bool accept = (actualInput > 0);
     if(accept)
     {
-        for (PeerRecord::iterator it = peerSet.begin(); it!=peerSet.end(); it++) 
+        for (PeerRecord::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
         {
             PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
             if(peer != source)
@@ -123,11 +123,11 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
         }
     }
 
-    // a virtual message will never be delivered. It will be only  
+    // a virtual message will never be delivered. It will be only
     // used for the coordination
     if(source->isVirtual)
-        return false; 
-    
+        return false;
+
     return accept;
 }
 
@@ -140,16 +140,16 @@ PriorityDebugThread::PriorityDebugThread(PriorityCarrier* carrier) : RateThread(
     count = 0;
 }
 
-PriorityDebugThread::~PriorityDebugThread() 
-{ 
-    if(isRunning()) stop(); 
+PriorityDebugThread::~PriorityDebugThread()
+{
+    if(isRunning()) stop();
 }
- 
-void PriorityDebugThread::run() 
-{ 
+
+void PriorityDebugThread::run()
+{
     yarp::sig::Vector& v = debugPort.prepare();
     v.resize(4);
-    // a vector of [t, S(t), S'(t), I'(t)] 
+    // a vector of [t, S(t), S'(t), I'(t)]
     double t = yarp::os::Time::now();
     v[0] = t;
     v[1] = pcarrier->getActualStimulation(t);
@@ -158,7 +158,7 @@ void PriorityDebugThread::run()
     debugPort.write();
 }
 
-bool PriorityDebugThread::threadInit() 
+bool PriorityDebugThread::threadInit()
 {
     debugPortName = pcarrier->portName + pcarrier->sourceName + String(":debug");
     return debugPort.open(debugPortName.c_str());
@@ -166,7 +166,7 @@ bool PriorityDebugThread::threadInit()
 
 void PriorityDebugThread::threadRelease()
 {
-    debugPort.close();   
+    debugPort.close();
 }
 
 #endif //WITH_RIORITY_DEBUG

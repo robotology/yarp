@@ -4,7 +4,7 @@
  *
  */
 
-/** 
+/**
  * @page yarp The main YARP command-line interface
 
 The command-line utility "yarp" performs a set of useful operations
@@ -159,7 +159,7 @@ characters replaced by "_", and ".conf" appended.
 With the "--clean" option, the configuration file will be set to a
 blank, empty state.
 
-If an ip address and socket port number for the name server are supplied, 
+If an ip address and socket port number for the name server are supplied,
 the configuration file will be rewritten to contain that information.
 
 
@@ -172,7 +172,7 @@ yarp connect OUTPUT_PORT INPUT_PORT
 yarp connect OUTPUT_PORT INPUT_PORT CARRIER
 \endverbatim
 
-This will request the specified output port to send its output in 
+This will request the specified output port to send its output in
 future to the specified input port.
 Optionally, the carrier to be used can be added as an extra argument
 (e.g. tcp, udp, mcast, ...).
@@ -238,9 +238,9 @@ yarp exists /SOURCE_PORT /TARGET_PORT
 yarp forward LOCAL_PORT REMOTE_PORT
 \endverbatim
 
-This was a tool for monitoring RPC connections.  It is now 
+This was a tool for monitoring RPC connections.  It is now
 DEPRECATED, because there is a better way to achieve the
-same result using carrier modifiers (just do 
+same result using carrier modifiers (just do
 "yarp connect /rpc_port tcp+log.in://debug_port"
 to get a log of incoming messages and replies).
 
@@ -269,8 +269,8 @@ yarp connect /controller /middle
 
 @section yarp_help yarp help
 
-This lists a human-readable summary of the 
-ways the utility can be used.  It is a short 
+This lists a human-readable summary of the
+ways the utility can be used.  It is a short
 version of what you are reading right now.
 
 
@@ -291,7 +291,7 @@ yarp name COMMAND ARG_1 ARG_2 ...
 \endverbatim
 
 This will send the given command and arguments to the YARP name server
-and report the results.  
+and report the results.
 \if MAN_PAGE_COND
 \else
 Here are the possible commands:
@@ -383,7 +383,7 @@ Here are some ways to use the name server:
 yarp name query PORT
 \endverbatim
 
-Requests registration information for the named port.  Response is of 
+Requests registration information for the named port.  Response is of
 the following form:
 \verbatim
 registration name PORT ip ADDRESS port NUMBER type CARRIER
@@ -414,7 +414,7 @@ yarp name register PORT CARRIER IP
 yarp name register PORT CARRIER IP NUMBER
 \endverbatim
 
-Requests creation of registration information for the named port.  
+Requests creation of registration information for the named port.
 Response is of the following form:
 \verbatim
 registration name PORT ip ADDRESS port NUMBER type CARRIER
@@ -426,9 +426,9 @@ registration name /write ip 5.255.112.227 port 10001 type tcp
 *** end of message
 \endverbatim
 
-Optionally, the user can take responsibility for more fields, 
+Optionally, the user can take responsibility for more fields,
 such as the carrier, ip, and socket port number.
-Any value (including the port name) can be replaced by ``...'' to leave it 
+Any value (including the port name) can be replaced by ``...'' to leave it
 up to the name-server to choose it.  For example:
 \verbatim
 yarp name register ... tcp 127.0.0.1 8080
@@ -438,14 +438,14 @@ Gives something of the form:
 registration name /tmp/port/1 ip 127.0.0.1 port 8080 type tcp
 *** end of message
 \endverbatim
-If you choose to set the ip yourself, be careful -- there is the 
+If you choose to set the ip yourself, be careful -- there is the
 possibility of problems with multiple ways to identify the same
 machine.  It is best to let the name server choose a name,
 which it should do in a consistent way.  If a machine has
-multiple ip addresses on multiple networks, that can be 
-handled -- see the 
+multiple ip addresses on multiple networks, that can be
+handled -- see the
 discussion of the ips property in the section on "yarp name set".
-That is important for the purposes of controlling which 
+That is important for the purposes of controlling which
 network is used for connections from one port to another.
 
 
@@ -455,7 +455,7 @@ network is used for connections from one port to another.
 yarp name unregister PORT
 \endverbatim
 
-Removes registration information for the named port.  
+Removes registration information for the named port.
 Response is of the following form:
 \verbatim
 *** end of message
@@ -510,7 +510,7 @@ lists carriers that an input port can support.
 yarp name get PORT PROPERTY
 \endverbatim
 
-Gets the values of a stored property. For example, 
+Gets the values of a stored property. For example,
 after the set command example shown earlier, the command:
 \verbatim
 yarp name get /write offers
@@ -528,7 +528,7 @@ port /write property offers = tcp udp mcast
 yarp name check PORT PROPERTY VALUE
 \endverbatim
 
-Checks if a stored property can take the given value. For example, 
+Checks if a stored property can take the given value. For example,
 after the set command example shown earlier, the command:
 \verbatim
 yarp name check /write offers tcp
@@ -572,11 +572,11 @@ THIS COMMAND IS DEPRECATED, use \ref yarp_clean instead.
 yarp name gc
 \endverbatim
 
-This requests that the server "garbage collect" any 
+This requests that the server "garbage collect" any
 registered ports that are no longer responding.
 This is useful for cleaning up registrations corresponding
-to programs that have crashed or been terminated 
-abruptly.  THIS COMMAND IS DEPRECATED, use \ref yarp_clean 
+to programs that have crashed or been terminated
+abruptly.  THIS COMMAND IS DEPRECATED, use \ref yarp_clean
 instead.
 
 
@@ -631,7 +631,7 @@ yarp read INPUT_PORT [envelope] OUTPUT_PORT
 \endverbatim
 
 This will create an input port of the specified name.  It will
-then loop, 
+then loop,
 reading ``yarp bottles'' (a simple serialized list) and printing their content
 to standard output.  This simple utility is intended for use in testing, and
 getting familiar with using YARP.
@@ -652,7 +652,7 @@ or may not be present, and is ignored if you do not specify this tag.
 @section yarp_regression yarp regression
 
 \verbatim
-  yarp regression 
+  yarp regression
   yarp regression <ClassName>Test
 \endverbatim
 
@@ -661,7 +661,7 @@ linked.  Normally, there are separate programs called "harness_os",
 "harness_sig", etc that have groups of YARP tests linked.  So running:
 
 \verbatim
-  harness_os regression 
+  harness_os regression
 \endverbatim
 
 will run all tests related to libYARP_OS.  The main
@@ -749,7 +749,7 @@ See \ref yarprun for documentation.
 \endverbatim
 
 This command repeats data on the output port at the specified
-rate (in Hz) or period (in seconds).  
+rate (in Hz) or period (in seconds).
 If the <tt>show</tt> flag is given, the data is also printed on
 standard output.  The input can either be connected externally or
 specified with <tt>--input</tt> (and optionally <tt>--carrier</tt> to specify the
@@ -776,7 +776,7 @@ The address of the name server can be determined using
 file - see \ref yarp_conf.
 
 If possible, a fallback multi-cast server will be started with IP
-224.2.1.1 and port number 10001.  The purpose of this server is 
+224.2.1.1 and port number 10001.  The purpose of this server is
 to allow yarp processes to find the yarp name server in the absence
 of correct configuration.
 
@@ -806,9 +806,9 @@ yarp topc --list
 
 Activates a topic name.  If the latest yarp name server, yarpserver3,
 is in use, then that topic name will act as a virtual repeater port.
-If a persistent connection exists between ports /A, /B and /C and /TOPIC, 
+If a persistent connection exists between ports /A, /B and /C and /TOPIC,
 and from
-/TOPIC to /X, /Y, and /Z, then ports /X, /Y, and /Z will each receive input 
+/TOPIC to /X, /Y, and /Z, then ports /X, /Y, and /Z will each receive input
 from all of /A, /B, and /C.  See \ref persistent_connections.
 
 
@@ -854,7 +854,7 @@ Waits for the named port to come into existence.  Terminates when
 
 @section yarp_where yarp where
 
-This will report where the name server is believed to be running; for 
+This will report where the name server is believed to be running; for
 example:
 
 \verbatim
