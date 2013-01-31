@@ -71,9 +71,9 @@ extern "C" {
     YARP_SHARED_CLASS_FN int factoryname ## _getBaseClassName (char *name, int len) { char cname[] = # basename; strncpy(name,cname,len); return strlen(cname)+1; } \
     YARP_SHARED_CLASS_FN int factoryname(void *api,int len) { \
     struct yarp::os::SharedLibraryClassApi *sapi = (struct yarp::os::SharedLibraryClassApi *) api; \
-    if (len<(int)sizeof(SharedLibraryClassApi)) return -1;            \
+    if (len<(int)sizeof(yarp::os::SharedLibraryClassApi)) return -1;    \
     sapi->startCheck = VOCAB4('Y','A','R','P'); \
-    sapi->structureSize = sizeof(SharedLibraryClassApi); \
+    sapi->structureSize = sizeof(yarp::os::SharedLibraryClassApi);  \
     sapi->systemVersion = 2; \
     sapi->create = factoryname ## _create; \
     sapi->destroy = factoryname ## _destroy; \
