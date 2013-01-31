@@ -43,10 +43,10 @@ public:
      */
     Route(const String& fromKey,
           const String& toKey,
-          const String& carrier) {
-        this->fromKey = fromKey;
-        this->toKey = toKey;
-        this->carrier = carrier;
+          const String& carrier) :
+            fromKey(fromKey),
+            toKey(toKey),
+            carrier(carrier) {
     }
 
     /**
@@ -54,10 +54,10 @@ public:
      *
      * @param alt Route to copy.
      */
-    Route(const Route& alt) {
-        fromKey = alt.fromKey;
-        toKey = alt.toKey;
-        carrier = alt.carrier;
+    Route(const Route& alt) :
+            fromKey(alt.fromKey),
+            toKey(alt.toKey),
+            carrier(alt.carrier) {
     }
 
     /**
