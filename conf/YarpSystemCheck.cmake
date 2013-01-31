@@ -79,6 +79,8 @@ else(SIZEOF_LONG EQUAL 8)
     endif(SIZEOF_LONGLONG EQUAL 8)
 endif(SIZEOF_LONG EQUAL 8)
 
+check_type_size("void *" YARP_POINTER_SIZE)
+
 #########################################################################
 # Set up compile flags
 
