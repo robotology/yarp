@@ -152,6 +152,16 @@ public:
     SharedLibraryClassFactory<T> *getFactory() { 
         return factory;
     }
+
+    T *create() {
+        if (!factory) return 0/*NULL*/;
+        return factory->create();
+    }
+
+    void destroy(T *obj) {
+        if (!factory) return;
+        factory->destroy(obj);
+    }
 };
 
 #endif

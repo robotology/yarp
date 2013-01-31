@@ -64,11 +64,10 @@ static bool matchCarrier(const Bytes *header, Bottle& code) {
 
 static bool checkForCarrier(const Bytes *header, Searchable& group) {
     Bottle code = group.findGroup("code").tail();
+    if (code.size()==0) return false;
     if (matchCarrier(header,code)) {
-        ConstString dll_name = group.find("library").asString();
-        ConstString fn_name = group.find("part").asString();
-        if (NetworkBase::registerCarrier(fn_name.c_str(),
-                                         dll_name.c_str())) {
+        ConstString name = group.find("name").asString();
+        if (NetworkBase::registerCarrier(name.c_str(),NULL)) {
             return true;
         }
     }
@@ -170,9 +169,20 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
             txt += NetType::toString(header->get()[i]);
             txt += " ";
         }
+        txt += "[";
+        for (int i=0; i<(int)header->length(); i++) {
+            char ch = header->get()[i];
+            if (ch>=32) {
+                txt += ch;
+            } else {
+                txt += '.';
+            }
+        }
+        txt += "]";
+        
         YARP_SPRINTF1(Logger::get(),
                       error,
-                      "Could not find carrier with header: %s", 
+                      "Could not find carrier for a connection starting with: %s", 
                       txt.c_str());
     } else {
         YARP_SPRINTF1(Logger::get(),

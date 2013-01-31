@@ -139,9 +139,6 @@ void YarpPluginSettings::reportFailure() const {
 
 
 void YarpPluginSelector::scan() {
-    YARP_SPRINTF0(Logger::get(),
-                  debug,
-                  "Scanning. I'm scanning. I hope you like scanning too.");
     config.clear();
     plugins.clear();
     search_path.clear();
@@ -156,6 +153,9 @@ void YarpPluginSelector::scan() {
         }
     }
     if (need_scan) {
+        YARP_SPRINTF0(Logger::get(),
+                      debug,
+                      "Scanning. I'm scanning. I hope you like scanning too.");
         NetworkBase::lock();
         ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
         if (!rf.isConfigured()) {

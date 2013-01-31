@@ -11,6 +11,9 @@
 #define _YARP2_SHAREDLIBRARYCLASS_
 
 #include <yarp/os/SharedLibrary.h>
+#include <yarp/conf/system.h>
+
+#include <string.h>
 
 namespace yarp {
     namespace os {
@@ -25,7 +28,7 @@ namespace yarp {
         struct SharedLibraryClassApi;
 
         extern "C" {
-            typedef void (*SharedClassFactoryFunction)(void *ptr);
+            typedef int (*SharedClassFactoryFunction)(void *ptr,int len);
             typedef void (*SharedClassDeleterFunction)(void *ptr);
         }
   }
@@ -37,17 +40,22 @@ namespace yarp {
 // need an exact or very close match between compilers used
 // to compile those DLLs and your own code.
 
+#define YARP_SHAREDLIBRARYCLASSAPI_PADDING (30-2*(YARP_POINTER_SIZE/4))
 #include <yarp/os/begin_pack_for_net.h>
 extern "C" {
     struct yarp::os::SharedLibraryClassApi {
     public:
         NetInt32 startCheck; // should be 'Y' 'A' 'R' 'P'
+        NetInt32 structureSize;
+        NetInt32 systemVersion;
         void *(*create)();
         void (*destroy)(void *obj);
         int (*getVersion)(char *ver, int len);
         int (*getAbi)(char *abi, int len);
-        NetInt32 roomToGrow[32];
-        NetInt32 endCheck;   // should be 'P' 'R' 'A' 'Y'
+        int (*getClassName)(char *name, int len);
+        int (*getBaseClassName)(char *name, int len);
+        NetInt32 roomToGrow[YARP_SHAREDLIBRARYCLASSAPI_PADDING];
+        NetInt32 endCheck;   // should be 'P' 'L' 'U' 'G'
     };
 }
 #include <yarp/os/end_pack_for_net.h>
@@ -59,15 +67,23 @@ extern "C" {
     YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete (classname *)obj; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; }   \
     YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; }       \
-    YARP_SHARED_CLASS_FN void factoryname(void *api) { \
+    YARP_SHARED_CLASS_FN int factoryname ## _getClassName (char *name, int len) { char cname[] = # classname; strncpy(name,cname,len); return strlen(cname)+1; } \
+    YARP_SHARED_CLASS_FN int factoryname ## _getBaseClassName (char *name, int len) { char cname[] = # basename; strncpy(name,cname,len); return strlen(cname)+1; } \
+    YARP_SHARED_CLASS_FN int factoryname(void *api,int len) { \
     struct yarp::os::SharedLibraryClassApi *sapi = (struct yarp::os::SharedLibraryClassApi *) api; \
+    if (len<(int)sizeof(SharedLibraryClassApi)) return -1;            \
     sapi->startCheck = VOCAB4('Y','A','R','P'); \
+    sapi->structureSize = sizeof(SharedLibraryClassApi); \
+    sapi->systemVersion = 2; \
     sapi->create = factoryname ## _create; \
     sapi->destroy = factoryname ## _destroy; \
     sapi->getVersion = factoryname ## _getVersion; \
     sapi->getAbi = factoryname ## _getAbi; \
-    for (int i=0; i<32; i++) { sapi->roomToGrow[i] = 0; }    \
-    sapi->endCheck = VOCAB4('P','R','A','Y'); \
+    sapi->getClassName = factoryname ## _getClassName; \
+    sapi->getBaseClassName = factoryname ## _getBaseClassName; \
+    for (int i=0; i<YARP_SHAREDLIBRARYCLASSAPI_PADDING; i++) { sapi->roomToGrow[i] = 0; } \
+    sapi->endCheck = VOCAB4('P','L','U','G');        \
+    return sapi->startCheck;                    \
     }
 
 #define YARP_DEFAULT_FACTORY_NAME "yarp_default_factory"
@@ -80,6 +96,7 @@ private:
     SharedLibrary lib;
     int status;
     SharedLibraryClassApi api;
+    int returnValue;
     int rct;
     ConstString name;
 public:
@@ -95,14 +112,17 @@ public:
         api.startCheck = 0;
         status = STATUS_NONE;
         rct = 0;
-    }
+        returnValue = 0;
+	}
 
     SharedLibraryFactory(const char *dll_name, const char *fn_name = 0/*NULL*/) {
         rct = 0;
-        open(dll_name,fn_name);
-    }
+        returnValue = 0;
+		open(dll_name,fn_name);
+	}
 
     bool open(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+        returnValue = 0;
         name = "";
         status = STATUS_NONE;
         api.startCheck = 0;
@@ -132,13 +152,16 @@ public:
         if (factory==0/*NULL*/) return false;
         SharedClassFactoryFunction fn = (SharedClassFactoryFunction)factory;
         isValid();
-        fn(&api);
+        returnValue = fn(&api,sizeof(SharedLibraryClassApi));
         return isValid();
     }
 
-    bool isValid() {
-        if (api.startCheck!=VOCAB4('Y','A','R','P')) return false;
-        if (api.endCheck!=VOCAB4('P','R','A','Y')) return false;
+	bool isValid() {
+        if (returnValue!=VOCAB4('Y','A','R','P')) return false;
+	    if (api.startCheck!=VOCAB4('Y','A','R','P')) return false;
+	    if (api.structureSize!=sizeof(SharedLibraryClassApi)) return false;
+	    if (api.systemVersion!=2) return false;
+        if (api.endCheck!=VOCAB4('P','L','U','G')) return false;
         return true;
     }
 

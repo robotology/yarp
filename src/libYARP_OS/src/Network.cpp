@@ -1057,7 +1057,6 @@ public:
 
 bool NetworkBase::registerCarrier(const char *name,const char *dll) {
 #ifdef YARP_HAS_ACE
-    //printf("Registering carrier %s from %s\n", name, dll);
     StubCarrier *factory = NULL;
     if (dll==NULL) {
         factory = new StubCarrier(name);
@@ -1066,11 +1065,11 @@ bool NetworkBase::registerCarrier(const char *name,const char *dll) {
         factory = new StubCarrier(dll,name);
     }
     if (factory==NULL) {
-        YARP_ERROR(Logger::get(),"Failed to create carrier");
+        YARP_ERROR(Logger::get(),"Failed to register carrier");
         return false;
     }
     if (!factory->isValid()) {
-        YARP_ERROR(Logger::get(),"Failed to create valid carrier");
+        YARP_SPRINTF2(Logger::get(),error,"Failed to find library %s with carrier %s", dll, name);
         delete factory;
         factory = NULL;
         return false;

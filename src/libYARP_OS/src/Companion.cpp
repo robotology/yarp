@@ -2076,7 +2076,15 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         }
         return 1;
     }
-    printf("Yes, this is a YARP plugin/carrier\n");
+    printf("Yes, this is a YARP plugin\n");
+    const SharedLibraryClassApi& api = lib.getApi();
+    char className[256] = "unknown";
+    api.getClassName(className,sizeof(className));
+    char baseClassName[256] = "unknown";
+    api.getBaseClassName(baseClassName,sizeof(baseClassName));
+    printf("  * system version %d\n",api.systemVersion);
+    printf("  * class name '%s'\n",className);
+    printf("  * base class '%s'\n",baseClassName);
     return 0;
 #endif
     fprintf(stderr,"Command not available without ACE\n");
