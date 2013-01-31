@@ -160,11 +160,6 @@ else(WIN32)
         set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wunused")
     endif(CXX_HAS_WUNUSED)
 
-    check_cxx_compiler_flag("-Winline" CXX_HAS_WINLINE)
-    if(CXX_HAS_WINLINE)
-        set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Winline")
-    endif(CXX_HAS_WINLINE)
-
     check_cxx_compiler_flag("-Wvla" CXX_HAS_WVLA)
     if(CXX_HAS_WVLA)
         set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} -Wvla")
@@ -223,6 +218,11 @@ else(WIN32)
     if(CXX_HAS_WREDUNDANT_DECLS)
         set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Wredundant-decls")
     endif(CXX_HAS_WREDUNDANT_DECLS)
+
+    check_cxx_compiler_flag("-Winline" CXX_HAS_WINLINE)
+    if(CXX_HAS_WINLINE)
+        set(EXPERIMENTAL_WARNING_FLAGS "${EXPERIMENTAL_WARNING_FLAGS} -Winline")
+    endif(CXX_HAS_WINLINE)
 
 
 
