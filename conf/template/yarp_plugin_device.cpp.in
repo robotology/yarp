@@ -6,8 +6,6 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#cmakedefine RUNTIME_YARPDEV
-
 #include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
 

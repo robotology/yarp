@@ -118,7 +118,6 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
         set_property(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
         set_property(GLOBAL PROPERTY YARP_BUNDLE_LINKS)   # list of link directories
         set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
-        set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME) # is library lazy?
 
         # One glitch is that if plugins are used within YARP, rather
         # than in an external library, then "find_package(YARP)" will
@@ -180,13 +179,6 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
         set(COMPILE_BY_DEFAULT FALSE)
     endif(NOT COMPILE_BY_DEFAULT)
     set(ENABLE_${X_MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${X_MYNAME}")
-    if(ENABLE_${X_MYNAME})
-        set(RUNTIME_${X_MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable loading of ${X_MYNAME} at runtime upon need")
-        # mark_as_advanced(CLEAR RUNTIME_${X_MYNAME}) # don't advertise, for now
-        mark_as_advanced(FORCE RUNTIME_${X_MYNAME})
-    else(ENABLE_${X_MYNAME})
-        mark_as_advanced(FORCE RUNTIME_${X_MYNAME})
-    endif(ENABLE_${X_MYNAME})
 
     # Set some convenience variables based on whether the plugin
     # is enabled or disabled.
@@ -205,17 +197,9 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
         # Go ahead and prepare some code to wrap this plugin.
         set(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
         set(fname_stub ${fdir}/yarpdev_stub_${plugin_name}.cpp)
-        set(RUNTIME_YARPDEV ${RUNTIME_${X_MYNAME}})
         configure_file(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
                        ${fname} @ONLY  IMMEDIATE)
 
-        if(RUNTIME_${X_MYNAME})
-            set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME TRUE)
-            configure_file(${YARP_MODULE_PATH}/template/yarp_stub_${category}.cpp.in
-                           ${fname_stub} @ONLY IMMEDIATE)
-            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUBS ${plugin_name})
-            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUB_CODE ${fname_stub})
-        endif(RUNTIME_${X_MYNAME})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
         set(YARP_PLUGIN_ACTIVE TRUE)
@@ -331,14 +315,10 @@ macro(YARP_ADD_PLUGIN LIBNAME)
             set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
         endforeach(s)
         _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
+        # Add the library to the list of plugin libraries.
+        set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
         # Reset the list of generated source code to empty.
-        get_property(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
-        if(NOT YARP_BUNDLE_RUNTIME)
-            # Add the library to the list of plugin libraries.
-            set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
-        endif(NOT YARP_BUNDLE_RUNTIME)
         set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-        set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
         if(YARP_TREE_INCLUDE_DIRS)
             # If compiling YARP, we go ahead and set up installing this
             # target.  It isn't safe to do this outside of YARP though.
