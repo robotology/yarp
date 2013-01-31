@@ -29,7 +29,7 @@ namespace yarp {
  * Most useful for connections to YARP ports from browsers.
  * No support for connections in the opposite direction.
  * This carrier is recruited when a port sees a TCP stream that
- * begins with "GET /".  
+ * begins with "GET /".
  *
  * For "GET /", the URL following the "/" is
  * currently translated to text as follows:
@@ -214,7 +214,7 @@ public:
             for (int i=0; i<8; i++) {
                 header.get()[i] = target[i];
             }
-        }   
+        }
     }
 
     virtual Carrier *create() {

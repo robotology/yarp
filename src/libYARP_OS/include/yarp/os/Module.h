@@ -26,7 +26,7 @@ namespace yarp {
 }
 
 /**
- * 
+ *
  * A base-class for standard Yarp modules.  If you're building a large
  * system and want to regularize how parts of your system are
  * configured and run, this class may be helpful to you.  Modules are
@@ -61,7 +61,7 @@ public:
      * updateModule() is called by runModule().  By default, it returns
      * 0 (no delay).
      * @return the desired period between successive calls to updateModule()
-     * 
+     *
      */
     virtual double getPeriod() {
         return 0.0;
@@ -72,9 +72,9 @@ public:
      * Override this to do whatever your module needs to do.  When
      * your module wants to stop, return false.  The module's actual
      * work could be done during this call, or it could just check the
-     * state of a thread running in the background.  
+     * state of a thread running in the background.
      * @return true iff module should continue
-     * 
+     *
      */
     virtual bool updateModule() {
         // insert a delay so, if user accidentally doesn't override this
@@ -87,8 +87,8 @@ public:
      *
      * Try to halt any ongoing operations by threads managed by the module.
      * By default it does nothing - you may want to override this.
-     * If you have created any ports, and have any threads that are 
-     * might be blocked on reading data from those ports, this is a 
+     * If you have created any ports, and have any threads that are
+     * might be blocked on reading data from those ports, this is a
      * good place to add calls to BufferedPort::interrupt() or
      * Port::interrupt().  Don't assume this method will always be
      * called on shutdown, or if called will complete before shutdown.
@@ -104,8 +104,8 @@ public:
      *
      * Calls updateModule() until that returns false.
      * updateModule() is called every getPeriod()
-     * seconds.  Be aware that the the respond() command could be 
-     * asycnhronously at any time, if there is input from the 
+     * seconds.  Be aware that the the respond() command could be
+     * asycnhronously at any time, if there is input from the
      * standard input or a port connected via attach().
      * @return true on success
      *
@@ -130,7 +130,7 @@ public:
      * (which is the right thing to do for arguments passed to main())
      * @return 0 upon success, non-zero upon failure
      */
-    virtual int runModule(int argc, char *argv[], 
+    virtual int runModule(int argc, char *argv[],
                            bool skipFirst = true);
 
 
@@ -148,7 +148,7 @@ public:
      * (which is the right thing to do for arguments passed to main())
      * @return true/false upon success/failure
      */
-    virtual bool openFromCommand(int argc, char *argv[], 
+    virtual bool openFromCommand(int argc, char *argv[],
                                  bool skipFirst = true);
 
 
@@ -173,7 +173,7 @@ public:
     virtual bool attach(Port& port);
 
     /**
-     * Make any input from a BufferedPort or PortReaderBuffer object go to 
+     * Make any input from a BufferedPort or PortReaderBuffer object go to
      * the respond() method.
      * @param port the port or buffer to attach
      * @param handleStream control whether streaming messages (messages that

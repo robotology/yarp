@@ -6,8 +6,8 @@
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
-// added threadRelease/threadInit methods, synchronization and 
-// init failure notification -nat 
+// added threadRelease/threadInit methods, synchronization and
+// init failure notification -nat
 
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
@@ -54,7 +54,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     thread->notify(success);
     thread->notifyOpened(success);
     thread->synchroPost();
-    
+
     if (success)
         {
             thread->setPriority();
@@ -161,24 +161,24 @@ void ThreadImpl::afterStart(bool success) {
 
 bool ThreadImpl::threadInit()
 {
-	if (delegate!=NULL){
-		return delegate->threadInit();
-	}
-	else
-		return true;
+    if (delegate!=NULL){
+        return delegate->threadInit();
+    }
+    else
+        return true;
 }
 
 void ThreadImpl::threadRelease()
 {
-	if (delegate!=NULL){
-		delegate->threadRelease();
-	}
+    if (delegate!=NULL){
+        delegate->threadRelease();
+    }
 }
 
 bool ThreadImpl::start() {
-	//YARP_DEBUG(Logger::get(),"Calling ThreadImpl::start()");
+    //YARP_DEBUG(Logger::get(),"Calling ThreadImpl::start()");
 
-	closing = false;
+    closing = false;
     beforeStart();
 #ifdef YARP_HAS_ACE
     size_t s = stackSize;
@@ -197,65 +197,65 @@ bool ThreadImpl::start() {
     pthread_attr_t attr;
     int s = pthread_attr_init(&attr);
     if (s != 0)
-    	perror("pthread_attr_init");
+        perror("pthread_attr_init");
 
     if (stackSize > 0) {
-    	s = pthread_attr_setstacksize(&attr, stackSize);
-    	if (s != 0)
-    		perror("pthread_attr_setstacksize");
+        s = pthread_attr_setstacksize(&attr, stackSize);
+        if (s != 0)
+            perror("pthread_attr_setstacksize");
     }
 
     int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
 #endif
 
-	if (result==0)
-	{
+    if (result==0)
+    {
         // we must, at some point in the future, join the thread
         needJoin = true;
 
-		// the thread started correctly, wait for the initialization
-		YARP_DEBUG(Logger::get(), "Child thread initializing");
-		synchroWait();
-		if (opened)
-		{
-			ThreadImpl::changeCount(1);
-			YARP_DEBUG(Logger::get(),"Child thread initialized ok");
-			afterStart(true);
-			return true;
-		}
-		else
-		{
-			YARP_DEBUG(Logger::get(),"Child thread did not initialize ok");
-			//wait for the thread to really exit
-			ThreadImpl::join(-1);
-		}
-	}
-	//the thread did not start, call afterStart() to warn the user
+        // the thread started correctly, wait for the initialization
+        YARP_DEBUG(Logger::get(), "Child thread initializing");
+        synchroWait();
+        if (opened)
+        {
+            ThreadImpl::changeCount(1);
+            YARP_DEBUG(Logger::get(),"Child thread initialized ok");
+            afterStart(true);
+            return true;
+        }
+        else
+        {
+            YARP_DEBUG(Logger::get(),"Child thread did not initialize ok");
+            //wait for the thread to really exit
+            ThreadImpl::join(-1);
+        }
+    }
+    //the thread did not start, call afterStart() to warn the user
 #ifdef YARP_HAS_ACE
-	YARP_ERROR(Logger::get(),
+    YARP_ERROR(Logger::get(),
                String("Child thread did not start: ")
                + ACE_OS::strerror(ACE_OS::last_error()));
 #else
-	YARP_ERROR(Logger::get(),
+    YARP_ERROR(Logger::get(),
                String("Child thread did not start."));
 #endif
-	afterStart(false);
-	return false;
+    afterStart(false);
+    return false;
 }
 
 void ThreadImpl::synchroWait()
 {
-	synchro.wait();
+    synchro.wait();
 }
 
 void ThreadImpl::synchroPost()
 {
-	synchro.post();
+    synchro.post();
 }
 
 void ThreadImpl::notify(bool s)
 {
-	active=s;
+    active=s;
 }
 
 bool ThreadImpl::isClosing() {
@@ -301,7 +301,7 @@ int ThreadImpl::getPriority() {
         YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
 #endif
     }
-	return prio;
+    return prio;
 }
 
 void ThreadImpl::setDefaultStackSize(int stackSize) {

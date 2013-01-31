@@ -100,7 +100,7 @@ public:
         YARP_ASSERT(stream!=NULL);
 
         proto.takeStreams(NULL); // free up port from tcp
-        bool ok = 
+        bool ok =
             stream->open(Address(myName,myPort),Address(altName,altPort));
         if (!ok) {
             delete stream;
@@ -113,4 +113,3 @@ public:
 };
 
 #endif
-

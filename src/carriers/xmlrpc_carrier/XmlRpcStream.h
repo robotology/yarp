@@ -27,7 +27,7 @@ namespace yarp {
     }
 }
 
-class yarp::os::impl::XmlRpcStream : public TwoWayStream, 
+class yarp::os::impl::XmlRpcStream : public TwoWayStream,
                                      public InputStream,
                                      public OutputStream
 {
@@ -41,8 +41,8 @@ private:
     bool firstRound;
     bool interpretRos;
 public:
-    XmlRpcStream(TwoWayStream *delegate, bool sender, bool interpretRos) : 
-        client("notset",0), 
+    XmlRpcStream(TwoWayStream *delegate, bool sender, bool interpretRos) :
+        client("notset",0),
         server(0,0/*NULL*/),
         sender(sender),
         interpretRos(interpretRos) {
@@ -98,7 +98,7 @@ public:
     //  return delegate->getInputStream().read(b);
     //}
 
-    virtual void interrupt() { 
+    virtual void interrupt() {
         delegate->getInputStream().interrupt();
     }
 

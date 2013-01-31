@@ -61,7 +61,7 @@ public:
     void reset(InputStream& in, TwoWayStream *str, const Route& route,
                size_t len, bool textMode) {
         this->in = &in;
-        this->str = str;    
+        this->str = str;
         this->route = route;
         this->messageLen = len;
         this->textMode = textMode;
@@ -77,14 +77,14 @@ public:
     }
 
     virtual bool expectBlock(const yarp::os::Bytes& b) {
-        if (!isGood()) { 
-            //throw IOException("read from invalid stream"); 
+        if (!isGood()) {
+            //throw IOException("read from invalid stream");
             return false;
         }
         YARP_ASSERT(in!=NULL);
         size_t len = b.length();
         if (len==0) return true;
-        //if (len<0) len = messageLen; 
+        //if (len<0) len = messageLen;
         if (len>0) {
             ssize_t rlen = NetType::readFull(*in,b);
             if (rlen>=0) {

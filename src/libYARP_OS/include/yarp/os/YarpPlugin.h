@@ -59,20 +59,20 @@ public:
     ConstString fn_ext;
     YarpPluginSelector *selector;
     bool verbose;
-    
+
     YarpPluginSettings() {
         verbose = false;
         selector = 0 /*NULL*/;
     }
 
-    YarpPluginSettings(YarpPluginSelector& selector, 
+    YarpPluginSettings(YarpPluginSelector& selector,
                        Searchable& options,
-                       const ConstString& xname) { 
+                       const ConstString& xname) {
         this->selector = &selector;
         readFromSearchable(options,xname);
     }
 
-    bool readFromSelector(const char *name) { 
+    bool readFromSelector(const char *name) {
         if (!selector) return false;
         Bottle plugins = selector->getSelectedPlugins();
         Bottle group = plugins.findGroup(name).tail();
@@ -80,7 +80,7 @@ public:
         return true;
     }
 
-    bool readFromSearchable(Searchable& options, const char *name) { 
+    bool readFromSearchable(Searchable& options, const char *name) {
         ConstString iname = options.find("library").toString().c_str();
         ConstString pname = options.find("part").toString().c_str();
         if (iname=="") iname = name;

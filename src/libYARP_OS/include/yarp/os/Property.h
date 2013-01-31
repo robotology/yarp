@@ -24,8 +24,8 @@ namespace yarp {
  * \ingroup key_class
  *
  *
- * A class for storing options and configuration information.  
- * Use put() to add keyword/value pairs, and get() or check() 
+ * A class for storing options and configuration information.
+ * Use put() to add keyword/value pairs, and get() or check()
  * to look them up afterwards.
  * It can
  * read from configuration files using the fromConfigFile() method,
@@ -164,7 +164,7 @@ public:
     void fromString(const char *txt, bool wipe=true);
 
     /**
-     * Interprets a list of command arguments as a list of properties. 
+     * Interprets a list of command arguments as a list of properties.
      * Keys are named by beginning with "--".  For example, with
      * argv = "program_name --width 10 --height 15", the Property object
      * will be the mapping {width => 10, height => 15}.  So:
@@ -187,7 +187,7 @@ public:
     }
 
     /**
-     * Interprets a file as a list of properties. 
+     * Interprets a file as a list of properties.
      * For example, for a file containing:
      * \code
      *   width 10
@@ -208,7 +208,7 @@ public:
      *   [APPEARANCE]
      *   color red
      * \endcode
-     * the structure of the Property object will be 
+     * the structure of the Property object will be
      * "(SIZE (width 10) (height 15)) (APPEARANCE (color red))".
      * In other words:
      * \code
@@ -217,7 +217,7 @@ public:
      * \endcode
      *
      * It is possible to nest configuration files.  To include
-     * the configuration file "preamble.ini" inside another one, 
+     * the configuration file "preamble.ini" inside another one,
      * do:
      * \code
      *   [include "preamble.ini"]

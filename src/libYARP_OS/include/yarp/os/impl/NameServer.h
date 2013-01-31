@@ -54,7 +54,7 @@ public:
 class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub {
 public:
 
-    NameServer() : 
+    NameServer() :
 #ifdef YARP_HAS_ACE
         nameMap(17), hostMap(17),
 #endif
@@ -66,12 +66,12 @@ public:
 
     // address may be partial - partial information gets filled in
     // (not YARP2 compliant yet, won't do fill-in)
-    Address registerName(const String& name, 
+    Address registerName(const String& name,
                          const Address& address) {
         return registerName(name,address,"...");
     }
 
-    Address registerName(const String& name, 
+    Address registerName(const String& name,
                          const Address& address,
                          const String& remote);
 
@@ -89,7 +89,7 @@ public:
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
                const Address& remote);
-    
+
     String apply(const String& txt) {
         return apply(txt,Address());
     }
@@ -227,7 +227,7 @@ private:
             int v1 = x%255;
             int v2 = x/255;
             YARP_ASSERT(v2<255);
-            return String("224.1.") + NetType::toString(v2+1) + "." + 
+            return String("224.1.") + NetType::toString(v2+1) + "." +
                 NetType::toString(v1+1);
         }
 
@@ -257,7 +257,7 @@ private:
     public:
         PropertyRecord() {
         }
-    
+
         void clear() {
             prop.clear();
         }
@@ -307,7 +307,7 @@ private:
         PLATFORM_MAP(YARP_KEYED_STRING,PropertyRecord) propMap;
         Address address;
     public:
-        NameRecord() : 
+        NameRecord() :
 #ifdef YARP_HAS_ACE
             propMap(5),
 #endif
@@ -317,7 +317,7 @@ private:
             reusablePort = false;
         }
 
-        NameRecord(const NameRecord& alt) : 
+        NameRecord(const NameRecord& alt) :
 #ifdef YARP_HAS_ACE
             propMap(5),
 #endif
@@ -342,7 +342,7 @@ private:
             reusablePort = false;
         }
 
-        void setAddress(const Address& address, 
+        void setAddress(const Address& address,
                         bool reusablePort=false,
                         bool reusableIp=false) {
             this->address = address;
@@ -405,7 +405,7 @@ private:
     };
 
 
-  
+
 
 
 
@@ -440,10 +440,10 @@ private:
 
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;
-  
+
     NameRecord *getNameRecord(const String& name, bool create);
 
-    NameRecord& getNameRecord(const String& name) {
+    NameRecord &getNameRecord(const String& name) {
         NameRecord *result = getNameRecord(name,true);
         YARP_ASSERT(result!=NULL);
         return *result;
@@ -451,7 +451,7 @@ private:
 
     HostRecord *getHostRecord(const String& name, bool create);
 
-    HostRecord& getHostRecord(const String& name) {
+    HostRecord &getHostRecord(const String& name) {
         HostRecord *result = getHostRecord(name,true);
         YARP_ASSERT(result!=NULL);
         return *result;
@@ -471,4 +471,3 @@ private:
 };
 
 #endif
-

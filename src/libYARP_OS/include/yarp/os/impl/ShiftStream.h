@@ -23,8 +23,8 @@ namespace yarp {
 
 /**
  * A container for a stream, allowing the stream implementation to
- * be replaced when needed.  This is important in YARP since 
- * connections "bootstrap" from an initial stream type to 
+ * be replaced when needed.  This is important in YARP since
+ * connections "bootstrap" from an initial stream type to
  * an optimized stream type with user-preferred properties and
  * trade-offs.
  */
@@ -91,8 +91,8 @@ public:
     }
 
     /**
-     * Removes the wrapped stream and returns it.  
-     * The caller will be responsible for closing the stream.  
+     * Removes the wrapped stream and returns it.
+     * The caller will be responsible for closing the stream.
      * @return the wrapped stream (which after this call will be the
      * caller's responsibility).
      */
@@ -136,7 +136,7 @@ public:
         }
     }
 
-    virtual void endPacket() { 
+    virtual void endPacket() {
         if (stream!=NULL) {
             stream->endPacket();
         }

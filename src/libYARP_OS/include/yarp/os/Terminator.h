@@ -31,17 +31,17 @@ namespace yarp {
  * socket port created using the Terminee class to ask to start
  * a graceful quit procedure. The receiving process must
  * collaborate and take appropriate action after receiving the
- * message. The Terminator/Terminee class pair starts a tcp socket on the 
- * server side listening for incoming connections and the magic word "quit" 
+ * message. The Terminator/Terminee class pair starts a tcp socket on the
+ * server side listening for incoming connections and the magic word "quit"
  * (all lowercase). The ip-port pair is registered with a symbolic name
- * on the Yarp name server and can be queried by the client to send the 
+ * on the Yarp name server and can be queried by the client to send the
  * termination message.
  */
 class YARP_OS_API yarp::os::Terminator {
 public:
-    /** 
+    /**
      * Send a quit message to a specific socket port.
-     * @param name is the name of the socket port (as registered in 
+     * @param name is the name of the socket port (as registered in
      * the name server).
      * @return true/false on success/failure.
      */
@@ -49,9 +49,9 @@ public:
 };
 
 /**
- * A class that can be polled to see whether the process has been 
+ * A class that can be polled to see whether the process has been
  * asked to quit gracefully.
- */ 
+ */
 class YARP_OS_API yarp::os::Terminee : public yarp::os::Thread {
 protected:
     void *implementation;
@@ -60,7 +60,7 @@ protected:
 
 public:
     /**
-     * Constructor. 
+     * Constructor.
      * @param name is the nickname to register on the name server.
      */
     Terminee(const char *name);
@@ -88,7 +88,7 @@ public:
      * been received.
      * @return true is a quit has been received, false otherwise.
      */
-    bool mustQuit() const 
+    bool mustQuit() const
     { return quit; }
 
     /**

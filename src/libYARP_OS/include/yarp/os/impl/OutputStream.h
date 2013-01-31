@@ -34,10 +34,10 @@ public:
      *
      */
     virtual ~OutputStream() { }
-    
+
     /**
      *
-     * Write a single byte to the stream.  By default, this 
+     * Write a single byte to the stream.  By default, this
      * calls write(const Bytes& b) to do its work.
      *
      * @param ch the byte to write
@@ -49,7 +49,7 @@ public:
 
     /**
      *
-     * Write a block of bytes to the stream.  By default, this 
+     * Write a block of bytes to the stream.  By default, this
      * calls write(const Bytes& b) to do its work.
      *
      * @param b the bytes to write
@@ -109,7 +109,7 @@ public:
     virtual bool isOk() = 0;
 
     /**
-     * 
+     *
      * Set activity timeout.  Support for this is optional. 0 = wait forever.
      * @return true iff timeout is supported.
      *

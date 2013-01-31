@@ -432,11 +432,11 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         YARP_ASSERT(reader->getReader()!=NULL);
         ok = reader->getReader()->read(connection);
         reader->setEnvelope(connection.readEnvelope());
-	} else {
-		// this is a disconnection
-		// don't talk to this port ever again
-		HELPER(implementation).port = NULL;
-	}
+    } else {
+        // this is a disconnection
+        // don't talk to this port ever again
+        HELPER(implementation).port = NULL;
+    }
     if (ok) {
         HELPER(implementation).stateSema.wait();
         bool pruned = false;
@@ -494,7 +494,7 @@ ConstString PortReaderBufferBase::getName() const {
 /////////////////////
 ///
 /// Careful!  merge with ::read -- very similar code
-/// Unil merge, don't change one without looking at other :-(
+/// Until merge, don't change one without looking at other :-(
 
 bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
                                             yarp::os::PortWriter *wrapper) {

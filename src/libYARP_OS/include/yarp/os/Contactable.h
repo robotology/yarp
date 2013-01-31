@@ -40,7 +40,7 @@ public:
     virtual ~Contactable() {}
 
     /**
-     * Start port operation, with automatically-chosen network parameters. 
+     * Start port operation, with automatically-chosen network parameters.
      * The port is assigned an arbitrary name, and allocated
      * network resources,
      * by communicating with the YARP name server.
@@ -157,7 +157,7 @@ public:
      * If a port has received a message with such information, you can
      * extract that envelope with this method.
      *
-     * You must be sure to match the type of your envelope for 
+     * You must be sure to match the type of your envelope for
      * getEnvelope with whatever is being sent using setEnvelope.
      * The Bottle class can read any kind of envelope (but is
      * not specialized to be efficient).

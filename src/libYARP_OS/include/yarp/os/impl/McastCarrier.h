@@ -86,7 +86,7 @@ public:
         Address addr;
 
         Address alt = proto.getStreams().getLocalAddress();
-        String altKey = 
+        String altKey =
             proto.getRoute().getFromName() +
             "/net=" + alt.getName();
         //printf("Key should be %s\n", altKey.c_str());
@@ -96,11 +96,11 @@ public:
             addr = elect->mcastAddress;
             mcastName = elect->mcastName;
         } else {
-        
+
             // fetch an mcast address
             Address target("...",0,"mcast","...");
             addr = Address::fromContact(NetworkBase::registerContact(target.toContact()));
-                                    
+
             mcastName = addr.getRegName();
             if (addr.isValid()) {
                 // mark owner of mcast address
@@ -110,7 +110,7 @@ public:
                 // nic.send(String("NAME_SERVER set ") + proto.getRoute().getFromName() + " owns " + mcastName);
             }
         }
-         
+
         int ip[] = { 224, 3, 1, 1 };
         int port = 11000;
         if (addr.isValid()) {
@@ -210,7 +210,7 @@ public:
                        String("multicast key: ") + key);
             addSender(key);
         }
-        
+
         bool ok = true;
         if (isElect()||!sender) {
             if (test) {
@@ -219,7 +219,7 @@ public:
                 ok = stream->join(mcastAddress,sender);
             }
         }
-      
+
         if (!ok) {
             delete stream;
             return false;
@@ -240,11 +240,11 @@ public:
     void addSender(const String& key) {
         getCaster().add(key,this);
     }
-  
+
     void addRemove(const String& key) {
         getCaster().remove(key,this);
     }
-  
+
     bool isElect() {
         void *elect = getCaster().getElect(key);
         //void *elect = caster.getElect(mcastAddress.toString());
@@ -262,5 +262,3 @@ public:
 };
 
 #endif
-
-

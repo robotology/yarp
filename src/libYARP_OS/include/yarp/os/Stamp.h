@@ -77,7 +77,7 @@ public:
      * if the sequence number exceeds Stamp::getMaxCount)
      */
     void update();
- 
+
     /**
      * This method set the timestamp to a given time,
      * and increments the sequence number (wrapping to 0

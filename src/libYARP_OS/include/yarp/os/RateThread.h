@@ -7,7 +7,7 @@
  *
  */
 
-//added threadRelease/threadInit methods and synchronization -nat 
+//added threadRelease/threadInit methods and synchronization -nat
 
 #ifndef _YARP2_RATETHREAD_
 #define _YARP2_RATETHREAD_
@@ -41,48 +41,48 @@ public:
 
     virtual ~RateThread();
 
-	/**
+    /**
      * Initialization method. The thread executes this function
-	 * when it starts and before "run". This is a good place to 
-	 * perform initialization tasks that need to be done by the 
-	 * thread itself (device drivers initialization, memory 
-	 * allocation etc). If the function returns false the thread 
-	 * quits and never calls "run". The return value of threadInit()
-	 * is notified to the class and passed as a parameter 
-	 * to afterStart(). Note that afterStart() is called by the 
-	 * same thread that is executing the "start" method.
+     * when it starts and before "run". This is a good place to
+     * perform initialization tasks that need to be done by the
+     * thread itself (device drivers initialization, memory
+     * allocation etc). If the function returns false the thread
+     * quits and never calls "run". The return value of threadInit()
+     * is notified to the class and passed as a parameter
+     * to afterStart(). Note that afterStart() is called by the
+     * same thread that is executing the "start" method.
      */
     virtual bool threadInit();
-    
-  	/**
+
+    /**
      * Release method. The thread executes this function once when
      * it exits, after the last "run". This is a good place to release
-	 * resources that were initialized in threadInit() (release memory, 
-	 * and device driver resources).
+     * resources that were initialized in threadInit() (release memory,
+     * and device driver resources).
      */
-	 virtual void threadRelease();
+     virtual void threadRelease();
 
     /**
      * Loop function. This is the thread itself.
      */
-    virtual void run()=0;
+    virtual void run() = 0;
 
-    /** 
+    /**
      * Call this to start the thread. Blocks until initThread()
      * is executed.
      */
     bool start();
- 
-    /** 
+
+    /**
      * Call this to "step" the thread rather than
      * starting it.  This will execute at most one call
      * to doLoop before returning.
      */
     bool step();
- 
-    /** 
-     * Call this to stop the thread, this call blocks until the 
-     * thread is terminated (and releaseThread() called). Actually 
+
+    /**
+     * Call this to stop the thread, this call blocks until the
+     * thread is terminated (and releaseThread() called). Actually
      * calls join. This will deadlock if called from run(), use
      * askToStop() instead.
      */
@@ -136,7 +136,7 @@ public:
     /**
      * Return estimated period since last reset.
      */
-	double getEstPeriod();
+    double getEstPeriod();
 
     /**
      * Return estimated period since last reset.
@@ -151,7 +151,7 @@ public:
     unsigned int getIterations();
 
     /**
-     * Return the estimated duration of the run() function since 
+     * Return the estimated duration of the run() function since
      * last reset.
      */
     double getEstUsed();
@@ -165,14 +165,14 @@ public:
 
     /**
      * Called just before a new thread starts. This method is executed
-	 * by the same thread that calls start().
+     * by the same thread that calls start().
      */
     virtual void beforeStart();
 
     /**
-     * Called just after a new thread starts (or fails to start), this 
-	 * is executed by the same thread that calls start().
-     * @param success true iff the new thread started successfully. 
+     * Called just after a new thread starts (or fails to start), this
+     * is executed by the same thread that calls start().
+     * @param success true iff the new thread started successfully.
      */
     virtual void afterStart(bool success);
 
@@ -210,7 +210,7 @@ public:
         this->helper = &helper;
         owned = false;
     }
-    
+
     virtual ~RateThreadWrapper() {
         detach();
     }
@@ -224,14 +224,14 @@ public:
         helper = 0/*NULL*/;
         owned = false;
     }
-  
+
     virtual bool attach(Runnable& helper) {
         detach();
         this->helper = &helper;
         owned = false;
         return true;
     }
-    
+
     virtual bool attach(Runnable *helper) {
         detach();
         this->helper = helper;
@@ -241,13 +241,13 @@ public:
 
     bool open(double framerate = -1, bool polling = false);
 
-	void close() {
-		RateThread::stop();
+    void close() {
+        RateThread::stop();
     }
 
-	void stop() {
-		RateThread::stop();
-	}
+    void stop() {
+        RateThread::stop();
+    }
 
     virtual void run() {
         if (helper!=0/*NULL*/) {
@@ -255,35 +255,35 @@ public:
         }
     }
 
-	virtual bool threadInit()
-	{
-		if (helper!=0) {
-			return helper->threadInit();
-		}
-		else
-			return true;
-	}
+    virtual bool threadInit()
+    {
+        if (helper!=0) {
+            return helper->threadInit();
+        }
+        else
+            return true;
+    }
 
-	virtual void threadRelease()
-	{
-		if (helper!=0) {
-			helper->threadRelease();
-		}
-	}
+    virtual void threadRelease()
+    {
+        if (helper!=0) {
+            helper->threadRelease();
+        }
+    }
 
-	virtual void afterStart(bool success)
-	{
-		if (helper!=0) {
-			helper->afterStart(success);
-		}
-	}
+    virtual void afterStart(bool success)
+    {
+        if (helper!=0) {
+            helper->afterStart(success);
+        }
+    }
 
-	virtual void beforeStart()
-	{
-		if (helper!=0) {
-			helper->beforeStart();
-		}
-	}
+    virtual void beforeStart()
+    {
+        if (helper!=0) {
+            helper->beforeStart();
+        }
+    }
 
     Runnable *getAttachment() const {
         return helper;
@@ -291,4 +291,3 @@ public:
 };
 
 #endif
-

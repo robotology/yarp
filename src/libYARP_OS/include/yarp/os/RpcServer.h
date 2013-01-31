@@ -122,7 +122,7 @@ public:
 
    /**
      * Send an object as a reply to an object read from the port.
-     * Only call this method if you set the willReply flag to 
+     * Only call this method if you set the willReply flag to
      * true when you called Port::read.
      * @param writer any object that knows how to write itself to a
      * network connection - see for example Bottle
@@ -187,7 +187,7 @@ public:
     virtual bool isWriting() {
         return port.isWriting();
     }
-    
+
 private:
     // an RpcServer may be implemented with a regular port
     // (this is not decided yet)

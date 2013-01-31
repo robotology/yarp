@@ -134,7 +134,7 @@ private:
     yarp::os::ManagedBytes readBuffer, writeBuffer;
     yarp::os::Semaphore mutex;
     ssize_t readAt, readAvail, writeAvail;
-	int pct;
+    int pct;
     bool happy;
     bool bufferAlertNeeded;
     bool bufferAlerted;

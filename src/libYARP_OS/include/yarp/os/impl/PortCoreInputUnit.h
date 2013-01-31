@@ -31,8 +31,8 @@ class yarp::os::impl::PortCoreInputUnit : public PortCoreUnit {
 public:
     // specifically for managing input connections
 
-    PortCoreInputUnit(PortCore& owner, int index, InputProtocol *ip, 
-                      bool autoHandshake, bool reversed) : 
+    PortCoreInputUnit(PortCore& owner, int index, InputProtocol *ip,
+                      bool autoHandshake, bool reversed) :
         PortCoreUnit(owner,index), ip(ip), phase(1), access(1),
         autoHandshake(autoHandshake), reversed(reversed) {
 
@@ -108,4 +108,3 @@ private:
 };
 
 #endif
-

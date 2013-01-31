@@ -127,7 +127,7 @@ public:
      * Destructor
      */
     virtual ~Value() {
-        if (proxy!=0 /*NULL*/) { 
+        if (proxy!=0 /*NULL*/) {
             delete proxy;
             proxy = 0 /*NULL*/;
         }
@@ -164,7 +164,7 @@ public:
     virtual bool isList() const    { ok(); return proxy->isList(); }
 
     /**
-     * Checks if value is a dictionary. If so, asDict() will return that 
+     * Checks if value is a dictionary. If so, asDict() will return that
      * dictionary.
      * @return true iff value is a dictionary
      */
@@ -172,14 +172,14 @@ public:
 
     /**
      * Checks if value is a vocabulary identifier. If so, asVocab()
-     * will return it.  
+     * will return it.
      * @return true iff value is a vocabulary identifier
      */
     virtual bool isVocab() const   { ok(); return proxy->isVocab(); }
 
 
     /**
-     * Checks if value is a binary object. If so, asBlob() and asBlobLength() 
+     * Checks if value is a binary object. If so, asBlob() and asBlobLength()
      * will return it.
      * @return true iff value is a binary object.
      */
@@ -287,8 +287,8 @@ public:
      * @param alt the value to compare against
      * @result true iff the values are equal
      */
-    virtual bool operator == (const Value& alt) const { 
-        ok(); return (*proxy)==alt; 
+    virtual bool operator == (const Value& alt) const {
+        ok(); return (*proxy)==alt;
     }
 
     /**
@@ -296,7 +296,7 @@ public:
      * @param alt the value to compare against
      * @result true iff the values are not equal
      */
-    virtual bool operator != (const Value& alt) const { 
+    virtual bool operator != (const Value& alt) const {
         return !((*this)==alt);
     }
 
@@ -326,7 +326,7 @@ public:
      * Create a copy of the value
      * @return the new value, which will equal this.
      */
-    virtual Value *clone() const  { ok(); return proxy->clone(); } 
+    virtual Value *clone() const  { ok(); return proxy->clone(); }
 
     /**
      * Get standard type code of value.

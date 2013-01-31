@@ -44,7 +44,7 @@ namespace yarp {
 
 /**
  *
- * A single item in a Bottle.  This extends the public yarp::os::Value 
+ * A single item in a Bottle.  This extends the public yarp::os::Value
  * interface with some implementation-specific details.
  *
  */
@@ -64,12 +64,12 @@ public:
     virtual int asInt() const            { return 0; }
     virtual int asVocab() const          { return 0; }
     virtual double asDouble() const      { return 0; }
-    virtual yarp::os::ConstString asString() const { 
+    virtual yarp::os::ConstString asString() const {
         String str = asStringFlex();
-        return yarp::os::ConstString(str.c_str(),str.length()); 
+        return yarp::os::ConstString(str.c_str(),str.length());
     }
     virtual Searchable *asSearchable() const {
-        if (isDict()) return asDict(); 
+        if (isDict()) return asDict();
         return asList();
     }
     virtual yarp::os::Bottle *asList() const { return NULL; }
@@ -287,15 +287,15 @@ public:
     virtual int getCode() const { return code; }
     virtual bool readRaw(ConnectionReader& connection);
     virtual bool writeRaw(ConnectionWriter& connection);
-    virtual Storable *createStorable() const { 
-        return new StoreString(String("")); 
+    virtual Storable *createStorable() const {
+        return new StoreString(String(""));
     }
     virtual String asStringFlex() const { return x; }
     virtual int asVocab() const { return yarp::os::Vocab::encode(x.c_str()); }
     virtual bool isString() const { return true; }
     static const int code;
-    virtual void copy(const Storable& alt) { 
-        yarp::os::ConstString y = alt.asString(); 
+    virtual void copy(const Storable& alt) {
+        yarp::os::ConstString y = alt.asString();
         String tmp;
         YARP_STRSET(tmp,(char*)y.c_str(),y.length(),0);
         x = tmp;
@@ -320,14 +320,14 @@ public:
     virtual int getCode() const { return code; }
     virtual bool readRaw(ConnectionReader& connection);
     virtual bool writeRaw(ConnectionWriter& connection);
-    virtual Storable *createStorable() const { 
-        return new StoreBlob(String("")); 
+    virtual Storable *createStorable() const {
+        return new StoreBlob(String(""));
     }
     virtual bool isBlob() const { return true; }
     virtual const char *asBlob() const         { return x.c_str(); }
     virtual size_t asBlobLength() const     { return x.length(); }
     static const int code;
-    virtual void copy(const Storable& alt) { 
+    virtual void copy(const Storable& alt) {
         if (alt.isBlob()) {
             String tmp;
             YARP_STRSET(tmp,(char*)alt.asBlob(),alt.asBlobLength(),0);
@@ -354,8 +354,8 @@ public:
     virtual int getCode() const { return code; }
     virtual bool readRaw(ConnectionReader& connection);
     virtual bool writeRaw(ConnectionWriter& connection);
-    virtual Storable *createStorable() const { 
-        return new StoreDouble(0); 
+    virtual Storable *createStorable() const {
+        return new StoreDouble(0);
     }
     virtual int asInt() const { return (int)x; }
     virtual double asDouble() const { return x; }
@@ -385,12 +385,12 @@ public:
     virtual int getCode() const { return code+subCode(); }
     virtual bool readRaw(ConnectionReader& connection);
     virtual bool writeRaw(ConnectionWriter& connection);
-    virtual Storable *createStorable() const { 
-        return new StoreList(); 
+    virtual Storable *createStorable() const {
+        return new StoreList();
     }
     virtual bool isList() const { return true; }
-    virtual yarp::os::Bottle *asList() const { 
-        return (yarp::os::Bottle*)(&content); 
+    virtual yarp::os::Bottle *asList() const {
+        return (yarp::os::Bottle*)(&content);
     }
     static const int code;
     virtual int subCode() const;
@@ -426,12 +426,12 @@ public:
     virtual int getCode() const { return code; }
     virtual bool readRaw(ConnectionReader& connection);
     virtual bool writeRaw(ConnectionWriter& connection);
-    virtual Storable *createStorable() const { 
-        return new StoreDict(); 
+    virtual Storable *createStorable() const {
+        return new StoreDict();
     }
     virtual bool isDict() const { return true; }
-    virtual yarp::os::Property *asDict() const { 
-        return (yarp::os::Property*)(&content); 
+    virtual yarp::os::Property *asDict() const {
+        return (yarp::os::Property*)(&content);
     }
     static const int code;
   
@@ -449,7 +449,7 @@ public:
 
 /**
  * A flexible data format for holding a bunch of numbers and strings.
- * Handy to use until you work out how to make your own more 
+ * Handy to use until you work out how to make your own more
  * efficient formats for transmission.
  */
 class YARP_OS_impl_API yarp::os::impl::BottleImpl : public yarp::os::Portable {

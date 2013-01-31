@@ -62,7 +62,7 @@ public:
 
     /**
      *
-     * Start port without making it accessible from the network.  
+     * Start port without making it accessible from the network.
      * The port is unusable for many purposes, other than sending
      * out data to specific outputs added with addOutput().
      *
@@ -115,11 +115,11 @@ public:
      * network connection - see for example Bottle
      * @param reader any object that knows how to read itself from a
      * network connection - see for example Bottle
-     * @param callback object on which to call onCompletion() after write 
+     * @param callback object on which to call onCompletion() after write
      * is done (otherwise writer.onCompletion() is called)
      * @return true iff an object is successfully written and read
      */
-    bool write(PortWriter& writer, PortReader& reader, 
+    bool write(PortWriter& writer, PortReader& reader,
                PortWriter *callback = 0 /*NULL*/) const;
 
     /**
@@ -133,7 +133,7 @@ public:
 
     /**
      * Send an object as a reply to an object read from the port.
-     * Only call this method if you set the willReply flag to 
+     * Only call this method if you set the willReply flag to
      * true when you called Port::read.
      * @param writer any object that knows how to write itself to a
      * network connection - see for example Bottle
@@ -167,7 +167,7 @@ public:
 
     /**
      * control whether writing from this port is done in the background.
-     * @param backgroundFlag if true, calls to Port::write should return 
+     * @param backgroundFlag if true, calls to Port::write should return
      * immediately
      */
     void enableBackgroundWrite(bool backgroundFlag);
@@ -240,7 +240,7 @@ public:
      *
      * Set a timeout on network operations.  Use a negative number
      * to wait forever (this is the default behavior).  Call this
-     * method early, since it won't affect connections that have 
+     * method early, since it won't affect connections that have
      * already been made.
      *
      * @param timeout number of seconds to wait for individual network

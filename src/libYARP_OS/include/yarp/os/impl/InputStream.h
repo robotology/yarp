@@ -34,7 +34,7 @@ public:
      */
     InputStream() {
     }
-  
+
     /**
      *
      * Destructor
@@ -71,7 +71,7 @@ public:
     /**
      *
      * Read a block of data from the stream.  Should block and wait
-     * for data. By default, this calls read(const Bytes& b) to do 
+     * for data. By default, this calls read(const Bytes& b) to do
      * its work.
      *
      * @param b the block of data to read to
@@ -132,7 +132,7 @@ public:
     virtual bool isOk() = 0;
 
     /**
-     * 
+     *
      * Set activity timeout.  Support for this is optional. 0 = wait forever.
      * @return true iff timeout is supported.
      *

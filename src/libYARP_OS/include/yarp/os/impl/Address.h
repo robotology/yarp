@@ -30,20 +30,22 @@ namespace yarp {
  * to that location from a peer.  This is currently
  * just a hostname, a port number, and the network protocol.
  * This may need to be extended for other systems, e.g. QNX.
- *
  */
 class YARP_OS_impl_API yarp::os::impl::Address {
 private:
-    String name, carrier, regName;
+    String name;
     int port;
+    String carrier;
+    String regName;
     float timeout;
 public:
 
 
     /**
-     * Simplest constructor.  The simplest type of address is just a 
+     * Simplest constructor.  The simplest type of Address is just a
      * machine name and a port, and an assumed protocol of tcp used
      * to communicate with that port.
+     *
      * @param name Machine name - could be a hostname or ip address.
      * @param port Port number for socket communication.
      */
@@ -58,6 +60,7 @@ public:
 
     /**
      * Constructor with explicit protocol.
+     *
      * @param name Machine name - could be a hostname or ip address.
      * @param port Port number for socket communication.
      * @param carrier The raw protocol used for communication.
@@ -74,10 +77,11 @@ public:
 
     /**
      * Constructor with explicit protocol and registered name.
+     *
      * @param name Machine name - could be a hostname or ip address.
      * @param port Port number for socket communication.
      * @param carrier The raw protocol used for communication.
-     * @param regName A name associated with this address in the global name server.
+     * @param regName A name associated with this Address in the global name server.
      */
     Address(String name,
             int port,
@@ -92,7 +96,8 @@ public:
 
     /**
      * Copy constructor.
-     * @param alt The address to copy.
+     *
+     * @param alt The Address to copy.
      */
     Address(const Address& alt) {
         name = alt.name;
@@ -102,7 +107,7 @@ public:
         this->timeout = -1;
     }
 
-    const Address& operator = (const Address& alt) {
+    const Address& operator=(const Address& alt) {
         name = alt.name;
         port = alt.port;
         carrier = alt.carrier;
@@ -112,7 +117,7 @@ public:
     }
 
     /**
-     * Default constructor.  Creates an invalid address.
+     * Default constructor.  Creates an invalid Address.
      */
     Address() {
         port = -1;
@@ -121,6 +126,7 @@ public:
 
     /**
      * Get machine name.
+     *
      * @return Machine name - could be a hostname or ip address.
      */
     const String& getName() const {
@@ -130,6 +136,7 @@ public:
 
     /**
      * Get port number.
+     *
      * @return Port number for socket communication.
      */
     int getPort() const {
@@ -138,6 +145,7 @@ public:
 
     /**
      * Get protocol.
+     *
      * @return The raw protocol used for communication.
      */
     const String& getCarrierName() const {
@@ -146,93 +154,97 @@ public:
 
     /**
      * Get registered name.
-     * @return The name associated with this address in the global name server.
+     *
+     * @return The name associated with this Address in the global name server.
      */
     const String& getRegName() const {
         return regName;
     }
 
     /**
-     * Render address textually, e.g. as something like udp://127.0.0.1:10001
+     * Render this Address textually, e.g. as something like udp://127.0.0.1:10001
      * (host 127.0.0.1, port 10001, protocol udp)
-     * @return Textual representation of address.
+     *
+     * @return Textual representation of this Address.
      */
     String toString() const {
         char buf[100];
 #ifdef YARP_HAS_ACE
-        ACE_OS::itoa(port,buf,10);
+        ACE_OS::itoa(port, buf, 10);
 #else
-        snprintf(buf,sizeof(buf),"%d",port);
+        snprintf(buf, sizeof(buf), "%d", port);
         buf[sizeof(buf)-1] = '\0';
 #endif
         return carrier + "://" + name + ":" + buf;
     }
 
     /**
-     * Check if address is valid - in other words, that it contains some 
+     * Check if this Address is valid - in other words, that it contains some
      * information.
-     * @return True if address is valid.
+     *
+     * @return true iff this Address is valid.
      */
     bool isValid() const {
         return port>=0;
     }
 
     /**
-     * Add a registered name to an address.
+     * Add a registered name to this Address.
+     *
      * @param regName The registered name to add.
-     * @return A new address that is a copy of this, with the registered name set.
+     * @return A new Address that is a copy of this, with the registered name set.
      */
     Address addRegName(const String& regName) const {
-        return Address(name,port,carrier,regName);
+        return Address(name, port, carrier, regName);
     }
 
     /**
-     * Add a machine name to an address.
+     * Add a machine name to this Address.
+     *
      * @param name The machine name to add.
-     * @return A new address with the desired field added.
+     * @return A new Address with the desired field added.
      */
     Address addName(const String& name) const {
-        return Address(name,port,carrier,regName);
+        return Address(name, port, carrier, regName);
     }
 
     /**
-     * Add a carrier name to an address.
+     * Add a carrier name to this Address.
+     *
      * @param carrier The carrier name to add.
-     * @return A new address with the desired field added.
+     * @return A new Address with the desired field added.
      */
     Address addCarrier(const String& carrier) const {
-        return Address(name,port,carrier,regName);
+        return Address(name, port, carrier, regName);
     }
 
     /**
-     * Add socket information to an address.
+     * Add socket information to this Address.
+     *
      * @param carrier The carrier name to add.
      * @param name The machine name to add.
      * @param port The port number to add.
-     * @return A new address with the desired fields added.
+     * @return A new Address with the desired fields added.
      */
-    Address addSocket(const String& carrier, const String& name,
+    Address addSocket(const String& carrier,
+                      const String& name,
                       int port) const {
-        return Address(name,port,carrier,regName);
+        return Address(name, port, carrier, regName);
     }
 
     /**
+     * Check if this Address contains a registered port name.
      *
-     * Check if address contains a registered port name.
-     *
-     * @return true iff address contains a registered port name.
-     *
+     * @return true iff this Address contains a registered port name.
      */
     bool hasRegName() const {
         return regName != "";
     }
 
     /**
+     * Check if this Address contains a carrier name.
      *
-     * Check if address contains a carrier name.
-     *
-     * @return true iff address contains a carrier name.
-     *
+     * @return true iff this Address contains a carrier name.
      */
     bool hasCarrierName() const {
         return carrier != "";
@@ -251,26 +263,19 @@ public:
     }
 
     /**
+     * Convert this Address to Contact, a simple wrapper
      *
-     * Convert address to Contact, a simple wrapper
-     *
-     * @return the address expressed as a contact
-     *
+     * @return the Address expressed as a contact
      */
     yarp::os::Contact toContact() const;
 
     /**
-     *
-     *
      * Convert Contact to an Address
      *
      * @param contact the Contact to convert
-     *
      * @return the Contact expressed as a Address
-     *
      */
     static Address fromContact(const yarp::os::Contact& contact);
 };
 
 #endif
-

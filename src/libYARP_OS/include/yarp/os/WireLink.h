@@ -41,7 +41,7 @@ private:
     }
 
     void reset() {
-        reader = 0/*NULL*/; port = 0/*NULL*/; 
+        reader = 0/*NULL*/; port = 0/*NULL*/;
         replies = true;
     }
 
@@ -88,7 +88,7 @@ public:
     /**
      *
      * Tag this WireLink as a client, sending data via the specified reader.
-     * 
+     *
      * @param reader the reader to use when sending data.
      * @return true on success
      *
@@ -120,7 +120,7 @@ public:
      * @return true on success
      *
      */
-    bool setStreamingMode(bool streaming) { 
+    bool setStreamingMode(bool streaming) {
         replies = !streaming;
         return true;
     }
@@ -141,7 +141,7 @@ public:
         if (!isValid()) return false;
         return port->write(writer);
     }
-    
+
     /**
      *
      * Write a message to the associated port or reader, and read a reply.

@@ -33,8 +33,9 @@ namespace yarp {
 /**
  * \ingroup key_class
  *
- * A simple collection of objects that can be
- * described and transmitted in a portable way.
+ * A simple collection of objects that can be described and transmitted
+ * in a portable way.
+ *
  * Objects are stored in a list, which you can add to and access.
  * It is handy to use until you feel the need to make your own more
  * efficient formats for transmission.
@@ -59,17 +60,21 @@ public:
     Bottle();
 
     /**
-     * Creates a bottle from a string. The string which should contain a textual
-     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\""
-     * would give a bottle with 4 elements: an integer, two floating
-     * point numbers, and a string.
-     * @param text the textual form of the bottle to be interpreted
+     * Creates a bottle from a string.
+     *
+     * The string which should contain a textual form of the bottle,
+     * e.g. text = "10 -5.3 1.0 \"hello there\"" would give a bottle
+     * with 4 elements: an integer, two floating point numbers, and a
+     * string.
+     *
+     * @param text the textual form of the bottle to be interpreted.
      */
     Bottle(const char *text);
 
     /**
      * Copy constructor.
-     * @param bottle The object to copy
+     *
+     * @param bottle The object to copy.
      */
     Bottle(const Bottle& bottle);
 
@@ -81,124 +86,154 @@ public:
 
     /**
      * Places an integer in the bottle, at the end of the list.
-     * @param x the integer to add
+     *
+     * @param x the integer to add.
      */
     void addInt(int x);
 
     /**
      * Places a vocabulary item in the bottle, at the end of the list.
-     * @param x the item to add
+     *
+     * @param x the item to add.
      */
     void addVocab(int x);
 
     /**
-     * Places a floating point number in the bottle, at the end of the list.
-     * @param x the number to add
+     * Places a floating point number in the bottle, at the end of the
+     * list.
+     *
+     * @param x the number to add.
      */
     void addDouble(double x);
 
     /**
      * Places a string in the bottle, at the end of the list.
-     * @param str the string to add
+     *
+     * @param str the string to add.
      */
     void addString(const char *str);
 
     /**
      * Places a string in the bottle, at the end of the list.
-     * @param str the string to add
+     *
+     * @param str the string to add.
      */
     void addString(const ConstString& str);
 
     /**
      * Add a Value to the bottle, at the end of the list.
-     * @param value the Value to add
+     *
+     * @param value the Value to add.
      */
     void add(const Value& value);
 
     /**
      * Add a Value to the bottle, at the end of the list.
+     *
      * The object passed will be placed directly into the list, without
      * copying.  The Bottle will be responsible for deallocating it
      * when appropriate.
-     * @param value the Value to add
+     *
+     * @param value the Value to add.
      */
     void add(Value *value);
 
     /**
-     * Places an empty nested list in the bottle, at the end of the list.
+     * Places an empty nested list in the bottle, at the end of the
+     * list.
+     *
      * The list itself is represented as a bottle.
-     * @return a reference to the newly added list
+     *
+     * @return a reference to the newly added list.
      */
     Bottle& addList();
 
     /**
-     * Places an empty key/value object in the bottle, at the end of the list.
-     * @return a reference to the newly added list
+     * Places an empty key/value object in the bottle, at the end of the
+     * list.
+     *
+     * @return a reference to the newly added property.
      */
     Property& addDict();
 
     /**
-     * Removes a Value v from the end of the list and returns this value.
-     * @return the value popped from the end of the bottle
+     * Removes a Value v from the end of the list and returns this
+     * value.
+     *
+     * @return the value popped from the end of the bottle.
      */
     Value pop();
 
     /**
-     * Reads a Value v from a certain part of the list.  Methods like
-     * v.isInt() or v.isString() can be used to check the type of the
-     * result.  Methods like v.asInt() or v.asString() can be used to
-     * access the result as a particular type.
+     * Reads a Value v from a certain part of the list.
      *
-     * @param index the part of the list to read from
-     * @return the Value v; if the index lies outside the range of elements
-     * present, then v.isNull() will be true.
+     * Methods like v.isInt() or v.isString() can be used to check the
+     * type of the result.
+     * Methods like v.asInt() or v.asString() can be used to access the
+     * result as a particular type.
+     *
+     * @param index the part of the list to read from.
+     * @return the Value v; if the index lies outside the range of
+     *         elements present, then v.isNull() will be true.
      */
     Value& get(int index) const;
 
     /**
-     * Gets the number of elements in the bottle
-     * @return number of elements in the bottle
+     * Gets the number of elements in the bottle.
+     *
+     * @return number of elements in the bottle.
      */
     int size() const;
 
 
 
     /**
-     * Initializes bottle from a string, which should contain a textual
-     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\""
-     * would give a bottle with 4 elements: an integer, two floating
-     * point numbers, and a string.
-     * @param text the textual form of the bottle to be interpreted
+     * Initializes bottle from a string.
+     *
+     * The string should contain a textual form of the bottle,
+     * e.g. text = "10 -5.3 1.0 \"hello there\"" would give a bottle
+     * with 4 elements: an integer, two floating point numbers, and a
+     * string.
+     *
+     * @param text the textual form of the bottle to be interpreted.
      */
     void fromString(const char *text);
 
     /**
      * Initializes bottle from a binary representation.
-     * @param buf the binary form of the bottle to be interpreted
-     * @param len the length of the binary form
+     *
+     * @param buf the binary form of the bottle to be interpreted.
+     * @param len the length of the binary form.
      */
     void fromBinary(const char *buf, int len);
 
 
     /**
-     * Returns binary representation of bottle.  Lifetime is
-     * until next modification of bottle.
-     * @param size if non-null, the referenced variable is set to the buffer size.
-     * @return pointer to a buffer holding the binary representation of the
-     * bottle.
+     * Returns binary representation of bottle.
+     *
+     * Lifetime is until next modification of bottle.
+     *
+     * @param size if non-null, the referenced variable is set to the
+     *             buffer size.
+     * @return pointer to a buffer holding the binary representation of
+     *         the bottle.
      */
     const char *toBinary(size_t *size = 0/*NULL*/);
 
 
     /**
-     * Gives a human-readable textual representation of the bottle, suitable
-     * for passing to Bottle::fromString (see that method for examples)
-     * @return a textual representation of the bottle
+     * Gives a human-readable textual representation of the bottle.
+     *
+     * This representation is suitable for passing to Bottle::fromString
+     * (see that method for examples).
+     *
+     * @return a textual representation of the bottle.
      */
     ConstString toString() const;
 
     /**
      * Output a representation of the bottle to a network connection.
+     *
      * @param writer the interface to the network connection for writing
      * @result true iff the representation was written successfully.
      */
@@ -206,25 +241,31 @@ public:
 
     /**
      * Set the bottle's value based on input from a network connection.
+     *
      * @param reader the interface to the network connection for reading
      * @return true iff the bottle was read successfully.
      */
     bool read(ConnectionReader& reader);
 
     /**
-     * Copy the bottle's value to a object that can read a serialization.
+     * Copy the bottle's value to a object that can read a
+     * serialization.
+     *
      * Must be serialized in standard Bottle-compatible format.
-     * @param reader the serializable object
-     * @param textMode true if text serialization should be used
+     *
+     * @param reader the serializable object.
+     * @param textMode true if text serialization should be used.
      * @return true iff the bottle was written successfully.
      */
     bool write(PortReader& reader, bool textMode = false);
 
     /**
      * Set the bottle's value based on input from a serializable object.
+     *
      * Must be serialized in standard Bottle-compatible format.
-     * @param writer the serializable object
-     * @param textMode true if text serialization should be used
+     *
+     * @param writer the serializable object.
+     * @param textMode true if text serialization should be used.
      * @return true iff the bottle was read successfully.
      */
     bool read(PortWriter& writer, bool textMode = false);
@@ -242,8 +283,9 @@ public:
 
     /**
      * Assignment operator.
-     * @param bottle The object to copy
-     * @return the Bottle itself
+     *
+     * @param bottle The object to copy.
+     * @return the Bottle itself.
      */
     const Bottle& operator = (const Bottle& bottle);
 
@@ -256,15 +298,17 @@ public:
 
 
     /**
-     * Copy all or part of another Bottle
-     * @param alt The object to copy
-     * @param first The index of the first element to copy
-     * @param len The number of elements to copy (-1 for all)
+     * Copy all or part of another Bottle.
+     *
+     * @param alt The object to copy.
+     * @param first The index of the first element to copy.
+     * @param len The number of elements to copy (-1 for all).
      */
     void copy(const Bottle& alt, int first = 0, int len = -1);
 
     /**
-     * A special Bottle with no content
+     * A special Bottle with no content.
+     *
      * @return the special invalid "null" Bottle.
      */
     static Bottle& getNullBottle();
@@ -272,15 +316,17 @@ public:
 
     /**
      * Equality test.
-     * @param alt the value to compare against
-     * @result true iff the values are equal
+     *
+     * @param alt the value to compare against.
+     * @result true iff the values are equal.
      */
     virtual bool operator == (const Bottle& alt);
 
     /**
      * Inequality test.
-     * @param alt the value to compare against
-     * @result true iff the values are not equal
+     *
+     * @param alt the value to compare against.
+     * @result true iff the values are not equal.
      */
     virtual bool operator != (const Bottle& alt) {
         return !((*this)==alt);
@@ -289,7 +335,8 @@ public:
     /**
      * Append the content of the given bottle to the current
      * list.
-     * @param alt the content to add
+     *
+     * @param alt the content to add.
      */
     void append(const Bottle& alt) {
         for (int i=0; i<alt.size(); i++) {
@@ -299,6 +346,7 @@ public:
 
     /**
      * Get all but the first element of a bottle.
+     *
      * @return a bottle containing all but the first element of the
      * current bottle.
      */
@@ -322,11 +370,11 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
     /**
+     * Declare that the content of the Bottle has been changed.
      *
-     * Declare that the content of the Bottle has been changed.  It is
-     * important to call this if you modify an individual element of the
-     * Bottle through assignment, so that serialization happens correctly.
-     *
+     * It is important to call this if you modify an individual element
+     * of the Bottle through assignment, so that serialization happens
+     * correctly.
      */
     void hasChanged();
 

@@ -107,7 +107,7 @@ public:
 
     virtual ssize_t read(const Bytes& b);
 
-    virtual void interrupt() { 
+    virtual void interrupt() {
         delegate->getInputStream().interrupt();
     }
 

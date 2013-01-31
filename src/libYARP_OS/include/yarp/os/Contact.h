@@ -22,7 +22,7 @@ namespace yarp {
 /**
  * Represents how to reach a part of a YARP network.
  * May contain complete or partial information about network parameters.
- * Use the factory  methods (Contact::byName, Contact::bySocket etc.) 
+ * Use the factory  methods (Contact::byName, Contact::bySocket etc.)
  * to create Contact objects.
  */
 class YARP_OS_API yarp::os::Contact {
@@ -47,7 +47,7 @@ public:
      * @return a named contact
      */
     static Contact byName(const char *name);
-  
+
     /**
      * Constructor.  Returns an unnamed contact, with information about
      * which carrier/protocol to use to reach that contact.
@@ -59,8 +59,8 @@ public:
 
     /**
      * Constructor.  Returns a contact configured from the information
-     * in config.  
-     * @param config a Property, Bottle, or other Searchable containing the 
+     * in config.
+     * @param config a Property, Bottle, or other Searchable containing the
      * contact configuration.  Key names include "name", "ip", "port_number",
      * "carrier"
      * @return the new contact
@@ -76,16 +76,16 @@ public:
     Contact addCarrier(const char *carrier) const;
 
     /**
-     * Constructor for a socket contact.  
+     * Constructor for a socket contact.
      * Creates an unnamed contact, with information about
      * how to reach it using socket communication.
      * @param carrier the carrier (network protocol) to use
-     * @param host the name of the host machine (usually expressed as an 
+     * @param host the name of the host machine (usually expressed as an
      *             IP address)
      * @param portNumber the number of the socket port to use
      * @return an unnamed contact with socket communication parameters
      */
-    static Contact bySocket(const char *carrier, 
+    static Contact bySocket(const char *carrier,
                             const char *host,
                             int portNumber);
 
@@ -94,12 +94,12 @@ public:
      * Add information to a contact about
      * how to reach it using socket communication.
      * @param carrier the carrier (network protocol) to use
-     * @param host the name of the host machine (usually expressed as an 
+     * @param host the name of the host machine (usually expressed as an
      *             IP address)
      * @param portNumber the number of the socket port to use
      * @return the new contact with socket communication parameters
      */
-    Contact addSocket(const char *carrier, 
+    Contact addSocket(const char *carrier,
                       const char *host,
                       int portNumber) const;
 
@@ -182,7 +182,7 @@ public:
 
     /**
      * Checks if a contact is tagged as valid.
-     * @return true iff contact is tagged as valid.  All contact objects 
+     * @return true iff contact is tagged as valid.  All contact objects
      * are valid except the one created by Contact::invalid.
      */
     bool isValid() const;

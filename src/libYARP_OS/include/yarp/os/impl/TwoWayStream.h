@@ -89,8 +89,8 @@ public:
     virtual void close() = 0;
 
     /**
-     * 
-     * Mark the beginning of a logical packet.  This is a unit that 
+     *
+     * Mark the beginning of a logical packet.  This is a unit that
      * should be treated in an atomic fashion by YARP.  If any part
      * is corrupted, the whole should be dropped.
      *
@@ -98,7 +98,7 @@ public:
     virtual void beginPacket() = 0;
 
     /**
-     * 
+     *
      * Mark the end of a logical packet (see beginPacket).
      *
      */
@@ -130,7 +130,7 @@ public:
     virtual void close() {}
 
     // These should be called at the beginning and end of logical packets.
-    // Streams are encouraged to handle errors and atomicity at the level of 
+    // Streams are encouraged to handle errors and atomicity at the level of
     // logical packets
     virtual void beginPacket() {}
     virtual void endPacket()   {}
@@ -141,4 +141,3 @@ public:
 };
 
 #endif
-

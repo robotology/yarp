@@ -26,7 +26,7 @@ namespace yarp {
 #define YARP_CONFIG_NAMESPACE_FILENAME "yarp_namespace.conf"
 
 /**
- * Small helper class to help deal with legacy YARP configuration files. 
+ * Small helper class to help deal with legacy YARP configuration files.
  *
  */
 class YARP_OS_impl_API yarp::os::impl::NameConfig {
@@ -83,4 +83,3 @@ private:
 };
 
 #endif
-

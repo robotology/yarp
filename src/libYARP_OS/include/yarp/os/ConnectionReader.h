@@ -73,7 +73,7 @@ public:
     /**
      * Check if the connection is text mode.  If it is, you are
      * encouraged (but by no means required) to use a human-readable
-     * representation of your data structure.  
+     * representation of your data structure.
      * @return true if the connection is text mode (as opposed to binary)
      */
     virtual bool isTextMode() = 0;
@@ -157,14 +157,11 @@ public:
     virtual bool isError() = 0;
 
     /**
-     *
      * Tag the connection to be dropped after the current message.
-     *
      */
     virtual void requestDrop() = 0;
 
     /**
-     *
      * Access modifiers associated with the connection, if any.
      *
      * @return connection configuration object

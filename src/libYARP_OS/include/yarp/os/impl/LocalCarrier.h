@@ -196,7 +196,7 @@ public:
             for (int i=0; i<8; i++) {
                 header.get()[i] = target[i];
             }
-        }   
+        }
     }
 
     virtual void setParameters(const Bytes& header) {
@@ -223,7 +223,7 @@ public:
         // switch over to some local structure to communicate
         peerMutex.wait();
         peer = manager.getSender(this);
-        //printf("receiver %ld (%s) sees sender %ld (%s)\n", 
+        //printf("receiver %ld (%s) sees sender %ld (%s)\n",
         //       (long int) this, portName.c_str(),
         //       (long int) peer, peer->portName.c_str());
         proto.setRoute(proto.getRoute().addFromName(peer->portName));
@@ -308,4 +308,3 @@ public:
 };
 
 #endif
-

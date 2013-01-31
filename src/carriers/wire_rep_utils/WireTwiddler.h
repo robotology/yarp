@@ -125,7 +125,7 @@ private:
     int pending_string_data;
     yarp::os::ManagedBytes dump;
 public:
-    WireTwiddlerReader(yarp::os::impl::InputStream& is, 
+    WireTwiddlerReader(yarp::os::impl::InputStream& is,
                        WireTwiddler& twiddler) : is(is),
                                                  twiddler(twiddler) {
         reset();
@@ -194,26 +194,26 @@ public:
 
     virtual ~WireTwiddlerWriter() {}
 
-    virtual size_t length() { 
-        return srcs.size(); 
+    virtual size_t length() {
+        return srcs.size();
     }
 
     virtual size_t headerLength() {
         return 0;
     }
 
-    virtual size_t length(size_t index)  { 
-        return srcs[index].length(); 
+    virtual size_t length(size_t index)  {
+        return srcs[index].length();
     }
 
     virtual const char *data(size_t index) {
-        return srcs[index].get(); 
+        return srcs[index].get();
     }
 
     virtual yarp::os::PortReader *getReplyHandler() {
         return parent->getReplyHandler();
     }
-    
+
     virtual yarp::os::Portable *getReference() {
         return parent->getReference();
     }

@@ -23,8 +23,8 @@ namespace yarp {
 }
 
 /**
- * Communicating between two ports via a variant plain-text protocol 
- * originally designed for the yarp name server.  For backwards 
+ * Communicating between two ports via a variant plain-text protocol
+ * originally designed for the yarp name server.  For backwards
  * compatibility
  */
 class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream {
@@ -33,7 +33,7 @@ private:
     String pendingRead;
     String swallowRead;
 public:
-    NameserTwoWayStream(TwoWayStream *delegate) : 
+    NameserTwoWayStream(TwoWayStream *delegate) :
         delegate(delegate) {
         pendingRead = "";
         swallowRead = "VER ";
@@ -108,8 +108,8 @@ public:
 
 
 /**
- * Communicating between two ports via a variant plain-text protocol 
- * originally designed for the yarp name server.  For backwards 
+ * Communicating between two ports via a variant plain-text protocol
+ * originally designed for the yarp name server.  For backwards
  * compatibility
  */
 class yarp::os::impl::NameserCarrier : public TcpCarrier {
@@ -147,7 +147,7 @@ public:
             for (int i=0; i<8; i++) {
                 header.get()[i] = target[i];
             }
-        }   
+        }
     }
 
     virtual Carrier *create() {
@@ -197,7 +197,7 @@ public:
 
     virtual bool respondToHeader(Protocol& proto) {
         // I am the receiver
-        NameserTwoWayStream *stream = 
+        NameserTwoWayStream *stream =
             new NameserTwoWayStream(proto.giveStreams());
         proto.takeStreams(stream);
         return true;

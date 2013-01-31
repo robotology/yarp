@@ -51,7 +51,7 @@ public:
      * There is no really reliable, portable way to stop
      * a thread cleanly unless that thread cooperates.
      */
-    virtual void run()=0;
+    virtual void run() = 0;
 
     /**
      * Call-back, called while halting the thread (before
@@ -192,4 +192,3 @@ private:
 };
 
 #endif
-

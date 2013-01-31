@@ -31,7 +31,7 @@ class yarp::os::impl::PortCoreOutputUnit : public PortCoreUnit {
 public:
     // specifically for managing input connections
 
-    PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) : 
+    PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
         PortCoreUnit(owner,index), op(op), phase(1), activate(0), trackerMutex(1) {
 
         YARP_ASSERT(op!=NULL);
@@ -75,7 +75,7 @@ public:
 
     virtual Route getRoute();
 
-    virtual void *send(yarp::os::PortWriter& writer, 
+    virtual void *send(yarp::os::PortWriter& writer,
                        yarp::os::PortReader *reader,
                        yarp::os::PortWriter *callback,
                        void *tracker,
@@ -118,4 +118,3 @@ private:
 };
 
 #endif
-

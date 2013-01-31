@@ -72,7 +72,7 @@ public:
     /**
      * Send a block of data to the network connection, without making a copy.
      * If you are not confident that the block of data will remain valid
-     * throughout transmission, 
+     * throughout transmission,
      * then call ConnectionWriter::appendBlock instead.
      * @param data the start of the data block
      * @param len  the length of the data block
@@ -82,14 +82,14 @@ public:
     /**
      * Check if the connection is text mode.  If it is, you are
      * encouraged (but by no means required) to use a human-readable
-     * representation of your data structure.  
+     * representation of your data structure.
      * @return true if the connection is text mode (as opposed to binary)
      */
     virtual bool isTextMode() = 0;
 
     /**
-     * If you can easily determine how many blocks there are in a message, 
-     * call this first, before anything else.  
+     * If you can easily determine how many blocks there are in a message,
+     * call this first, before anything else.
      * This may improve efficiency in some situations.
      * @param argc Number of blocks
      * @param argv An array of integers, giving the length of each block
@@ -106,12 +106,12 @@ public:
 
     /**
      * Stores a direct pointer to the object being sent.
-     * This is useful for local communication, to bypass 
+     * This is useful for local communication, to bypass
      * serialization.
      */
     virtual void setReference(Portable *obj) = 0;
 
- 
+
     /**
      * Converts a standard description in binary into a textual
      * description, if the connection is in text-mode.  Useful if you

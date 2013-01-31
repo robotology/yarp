@@ -31,13 +31,13 @@ class YARP_OS_API YarpRunInfoVector;
 
 /*
  * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.
- * If a yarprun server is running on each machine, distributed applications can be remotely launched, 
+ * If a yarprun server is running on each machine, distributed applications can be remotely launched,
  * monitored and terminated by yarprun commands.
- * 
- * - To run a yarprun server on a machine:             
+ *
+ * - To run a yarprun server on a machine:
  *      $ yarprun --server /SERVERPORT
- * 
- * /SERVERPORT must be unique and identifies the remote machine. 
+ *
+ * /SERVERPORT must be unique and identifies the remote machine.
  *
  * - The basic command to run a command/application on a remote machine is:
  *      $ yarprun --on /SERVERPORT --as TAG --cmd COMMAND [ARGLIST]
@@ -45,16 +45,16 @@ class YARP_OS_API YarpRunInfoVector;
  * /SERVERPORT is the name of the server that actually runs the command
  * TAG identifies the application process set, and must be unique
  * COMMAND is the application that has to be executed, followed by the optional argument list
- * 
+ *
  * Some options can be added to the basic format of yarprun:
  *      $ yarprun --on /SERVERPORT1 --as TAG --cmd COMMAND [ARGLIST] --stdio /SERVERPORT2
  *
  * opens a remote shell window where the stdin, stdout and stderr of the application will be redirected.
  * /SERVERPORT2 specifies the machine where the IO shell will be executed, and can be either a remote machine or
  * be equal to /SERVERPORT1 itself.
- * 
+ *
  * If --stdio is specified, there are two useful sub-options (linux only):
- * - --hold keep the stdio window open even if the command is terminated or aborted. 
+ * - --hold keep the stdio window open even if the command is terminated or aborted.
  * - --geometry WxH+X+Y set the stdio window size and position. Example: --geometry 320x240+80+20
  *
  * Other yarprun commands:
@@ -81,20 +81,20 @@ class YARP_OS_API YarpRunInfoVector;
 
 /**
  * \class yarp::os::Run
- * \brief yarprun provides the APIs to a client-server environment that is able to run, 
+ * \brief yarprun provides the APIs to a client-server environment that is able to run,
  * kill and monitor applications commands on a remote machin in Windows and Linux.
  */
-class YARP_OS_API yarp::os::Run 
+class YARP_OS_API yarp::os::Run
 {
 public:
-	// API
-    
+    // API
+
     /**
      * Launch a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param command is the command to be executed by the remote server. It can include
      * an argument list and different options, in the standard yarp Property key/value mode:
-     * - name COMMAND_NAME 
+     * - name COMMAND_NAME
      * - parameters ARGUMENT_LIST (optional)
      * - stdio /SERVERPORT (optional)
      * - geometry WxH+X+Y (optional)
@@ -102,20 +102,20 @@ public:
      * @param keyv is the tag that will identify the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-	static int start(const ConstString &node, Property &command, ConstString &keyv);
+    static int start(const ConstString &node, Property &command, ConstString &keyv);
     /**
      * Terminate an application running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-	static int sigterm(const ConstString &node, const ConstString &keyv);
+    static int sigterm(const ConstString &node, const ConstString &keyv);
     /**
      * Terminate all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-	static int sigterm(const ConstString &node);
+    static int sigterm(const ConstString &node);
     /**
      * Send a SIGNAL to an application running on a yarprun server (Linux only).
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -123,7 +123,7 @@ public:
      * @param s is the SIGNAL number.
      * @return 0=success -1=failed.
      */
-	static int kill(const ConstString &node, const ConstString &keyv,int s);
+    static int kill(const ConstString &node, const ConstString &keyv,int s);
     /**
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -132,14 +132,14 @@ public:
      * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */
-   // static int ps(const ConstString &node,ConstString** &processes,int &num_processes);
+    // static int ps(const ConstString &node,ConstString** &processes,int &num_processes);
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the application. It must be unique in the network.
      * @return true=running false=terminated.
      */
-	static bool isRunning(const ConstString &node, ConstString &keyv);
+    static bool isRunning(const ConstString &node, ConstString &keyv);
 
     // end API
 
@@ -154,33 +154,33 @@ public:
      * @return 0 on success, -1 on failure
      *
      */
-	static int sendToServer(Property& config);
+    static int sendToServer(Property& config);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
     static int main(int argc, char *argv[]);
-	static Port *pServerPort;
-	static YarpRunInfoVector mProcessVector;
+    static Port *pServerPort;
+    static YarpRunInfoVector mProcessVector;
     static YarpRunInfoVector mStdioVector;
 
 #if !defined(WIN32)
-    static void CleanZombies();   
+    static void CleanZombies();
 #endif
 
 protected:
-	static void Help(const char* msg="");
-	static int Server();
-	static Bottle SendMsg(Bottle& msg,ConstString target);
-	static Bottle ExecuteCmdAndStdio(Bottle& msg);
-	static Bottle ExecuteCmd(Bottle& msg);
+    static void Help(const char* msg="");
+    static int Server();
+    static Bottle SendMsg(Bottle& msg,ConstString target);
+    static Bottle ExecuteCmdAndStdio(Bottle& msg);
+    static Bottle ExecuteCmd(Bottle& msg);
     static int UserStdio(Bottle& msg,Bottle& result,yarp::os::ConstString& stdioUUID);
 
-	static inline bool IS_PARENT_OF(int pid){ return pid>0; }
-	static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
-	static inline bool IS_INVALID(int pid){ return pid<0; }
+    static inline bool IS_PARENT_OF(int pid){ return pid>0; }
+    static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
+    static inline bool IS_INVALID(int pid){ return pid<0; }
 
     static yarp::os::Semaphore serializer;
-	static ConstString mPortName;
+    static ConstString mPortName;
     static int mProcCNT;
 
     static void cmdcpy(char* &dst,const char* src)

@@ -41,46 +41,45 @@ namespace yarp {
 
 class yarp::os::impl::ShmemOutputStreamImpl {
 public:
-	ShmemOutputStreamImpl()
-	{
-		m_bOpen=false;
+    ShmemOutputStreamImpl()
+    {
+        m_bOpen=false;
 
-		m_pAccessMutex=m_pWaitDataMutex=0;
-		m_pMap=0;
-		m_pData=0;
-		m_pHeader=0;
-		m_ResizeNum=0;
-		m_Port=0;
-	}
+        m_pAccessMutex=m_pWaitDataMutex=0;
+        m_pMap=0;
+        m_pData=0;
+        m_pHeader=0;
+        m_ResizeNum=0;
+        m_Port=0;
+    }
 
-	~ShmemOutputStreamImpl()
-	{
-		close();
-	}
+    ~ShmemOutputStreamImpl()
+    {
+        close();
+    }
 
-	bool isOk() { return m_bOpen; }
-	bool open(int port,int size=SHMEM_DEFAULT_SIZE);
-	bool write(const Bytes& b);
-	void close();
-	
+    bool isOk() { return m_bOpen; }
+    bool open(int port,int size=SHMEM_DEFAULT_SIZE);
+    bool write(const Bytes& b);
+    void close();
+
 protected:
-	bool Resize(int newsize);
+    bool Resize(int newsize);
 
-	bool m_bOpen;
+    bool m_bOpen;
 
-	int m_ResizeNum;
-	int m_Port;
+    int m_ResizeNum;
+    int m_Port;
 
 #if defined(_ACE_USE_SV_SEM)
-	ACE_Mutex
+    ACE_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
 #else
-	ACE_Process_Mutex 
+    ACE_Process_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
 #endif
-		*m_pAccessMutex,*m_pWaitDataMutex;
 
-	ACE_Shared_Memory *m_pMap;
-	char *m_pData;
-	ShmemHeader_t *m_pHeader;
+    ACE_Shared_Memory *m_pMap;
+    char *m_pData;
+    ShmemHeader_t *m_pHeader;
 };
 
 #endif

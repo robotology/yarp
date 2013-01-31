@@ -64,11 +64,11 @@ public:
         doomed = flag;
     }
 
-    virtual void *send(yarp::os::PortWriter& writer, 
+    virtual void *send(yarp::os::PortWriter& writer,
                        yarp::os::PortReader *reader,
                        yarp::os::PortWriter *callback,
                        void *tracker,
-                       const String& envelope,                       
+                       const String& envelope,
                        bool waitAfter = true,
                        bool waitBefore = true,
                        bool *gotReply = NULL) {
@@ -92,7 +92,7 @@ public:
         Name name(getRoute().getCarrierName() + String("://test"));
         mode = name.getCarrierModifier("log",&hasMode);
     }
-    
+
     int getIndex() {
         return index;
     }

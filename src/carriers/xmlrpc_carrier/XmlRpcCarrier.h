@@ -30,12 +30,12 @@ namespace yarp {
  *
  * Example: at the time of writing, there is a public XML/RPC server at
  *   http://phpxmlrpc.sourceforge.net/server.php
- * which has several methods. One is called "examples.addtwo" and expects 
+ * which has several methods. One is called "examples.addtwo" and expects
  * two integers and returns an integer.  So we can do:
  *
  *   yarp name register /webserve xmlrpc+path.server.php phpxmlrpc.sourceforge.net 80
  *
- * The "80" corresponds to the usual http port number.  
+ * The "80" corresponds to the usual http port number.
  * The "xmlrpc+path.server.php" means "use xmlrpc carrier, and use a request
  * path of server.php".  Often this path can be omitted, but is important
  * for this particular server.

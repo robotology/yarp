@@ -16,7 +16,7 @@ namespace yarp {
     namespace os {
         namespace idl {
             class WireState;
-	}
+        }
     }
 }
 
@@ -39,8 +39,8 @@ public:
         parent = 0 /*NULL*/;
     }
 
-    bool isValid() const { 
-        return len>=0; 
+    bool isValid() const {
+        return len>=0;
     }
 };
 

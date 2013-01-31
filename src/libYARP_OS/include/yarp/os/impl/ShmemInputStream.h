@@ -42,49 +42,48 @@ namespace yarp {
 
 class yarp::os::impl::ShmemInputStreamImpl {
 public:
-	ShmemInputStreamImpl()
-	{
-		m_bOpen=false;
+    ShmemInputStreamImpl()
+    {
+        m_bOpen=false;
 
-		m_pAccessMutex=m_pWaitDataMutex=0;
-		m_pMap=0;
-		m_pData=0;
-		m_pHeader=0;
-		m_ResizeNum=0;
-	}
+        m_pAccessMutex=m_pWaitDataMutex=0;
+        m_pMap=0;
+        m_pData=0;
+        m_pHeader=0;
+        m_ResizeNum=0;
+    }
 
-	~ShmemInputStreamImpl()
-	{
-		close();
-	}
+    ~ShmemInputStreamImpl()
+    {
+        close();
+    }
 
-	bool isOk() { return m_bOpen; }
-	bool open(int port,ACE_SOCK_Stream *pSock,int size=SHMEM_DEFAULT_SIZE);
-	ssize_t read(const Bytes& b);
-	void close();
+    bool isOk() { return m_bOpen; }
+    bool open(int port,ACE_SOCK_Stream *pSock,int size=SHMEM_DEFAULT_SIZE);
+    ssize_t read(const Bytes& b);
+    void close();
 
 protected:
-	int read(char *data,int len);
-	bool Resize();
-	bool m_bOpen;
+    int read(char *data,int len);
+    bool Resize();
+    bool m_bOpen;
 
-	int m_ResizeNum;
-	int m_Port;
+    int m_ResizeNum;
+    int m_Port;
 
 #if defined(_ACE_USE_SV_SEM)
-	ACE_Mutex
+    ACE_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
 #else
-	ACE_Process_Mutex 
+    ACE_Process_Mutex *m_pAccessMutex,*m_pWaitDataMutex;
 #endif
-		*m_pAccessMutex,*m_pWaitDataMutex;
-	
-	yarp::os::Semaphore m_ReadSerializerMutex;
 
-	ACE_Shared_Memory *m_pMap;
-	char *m_pData;
-	ShmemHeader_t *m_pHeader;
+    yarp::os::Semaphore m_ReadSerializerMutex;
 
-	ACE_SOCK_Stream *m_pSock;
+    ACE_Shared_Memory *m_pMap;
+    char *m_pData;
+    ShmemHeader_t *m_pHeader;
+
+    ACE_SOCK_Stream *m_pSock;
 };
 
 #endif

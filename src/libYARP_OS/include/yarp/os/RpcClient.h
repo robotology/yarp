@@ -150,7 +150,7 @@ public:
     void setReader(PortReader& reader) {
         port.setReader(reader);
     }
-    
+
 private:
     // an RpcClient may be implemented with a regular port
     // (this is not decided yet)

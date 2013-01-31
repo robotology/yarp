@@ -43,7 +43,7 @@ namespace yarp {
 /**
  * A stream abstraction for socket communication.  It supports TCP.
  */
-class yarp::os::impl::SocketTwoWayStream : public TwoWayStream, 
+class yarp::os::impl::SocketTwoWayStream : public TwoWayStream,
             InputStream, OutputStream {
 public:
     SocketTwoWayStream() {
@@ -159,24 +159,24 @@ public:
 
     virtual void endPacket() { }
 
-    virtual bool setWriteTimeout(double timeout) { 
-        if (timeout<1e-12) { 
-            haveWriteTimeout = false; 
+    virtual bool setWriteTimeout(double timeout) {
+        if (timeout<1e-12) {
+            haveWriteTimeout = false;
         } else {
             PLATFORM_TIME_SET(writeTimeout,timeout);
-            haveWriteTimeout = true; 
+            haveWriteTimeout = true;
         }
-        return true; 
+        return true;
     }
 
-    virtual bool setReadTimeout(double timeout) { 
-        if (timeout<1e-12) { 
-            haveReadTimeout = false; 
+    virtual bool setReadTimeout(double timeout) {
+        if (timeout<1e-12) {
+            haveReadTimeout = false;
         } else {
             PLATFORM_TIME_SET(readTimeout,timeout);
-            haveReadTimeout = true; 
+            haveReadTimeout = true;
         }
-        return true; 
+        return true;
     }
 
 private:
@@ -191,4 +191,3 @@ private:
 };
 
 #endif
-

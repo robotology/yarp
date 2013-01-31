@@ -35,95 +35,94 @@ namespace yarp {
 class yarp::os::impl::ShmemHybridStream : public TwoWayStream, InputStream, OutputStream
 {
 public:
-	ShmemHybridStream(){ m_bLinked=false; }
-	virtual ~ShmemHybridStream(){ close(); }
-	int open(const Address& yarp_address,bool sender); 
-	int accept();
+    ShmemHybridStream() { m_bLinked=false; }
+    virtual ~ShmemHybridStream() { close(); }
+    int open(const Address& yarp_address, bool sender);
+    int accept();
 
-	virtual void close()
-	{
-		m_bLinked=false;
-		in.close();
-		out.close();
-	}
+    virtual void close()
+    {
+        m_bLinked=false;
+        in.close();
+        out.close();
+    }
 
-	virtual void interrupt()
-	{
-		//printf("INTERRUPT\n");
-		//fflush(stdout);
-		close(); 
-	}
+    virtual void interrupt()
+    {
+        //printf("INTERRUPT\n");
+        //fflush(stdout);
+        close();
+    }
 
-	virtual void write(const Bytes& b)
-	{
-		if (!out.write(b)) close();
-	}
+    virtual void write(const Bytes& b)
+    {
+        if (!out.write(b)) close();
+    }
 
-	virtual ssize_t read(const Bytes& b)
-	{
-		ssize_t ret=in.read(b);
-		if (ret==-1) close();
-		return ret;
-	}
+    virtual ssize_t read(const Bytes& b)
+    {
+        ssize_t ret=in.read(b);
+        if (ret==-1) close();
+        return ret;
+    }
 
-	// TwoWayStrem implementation
-	virtual InputStream& getInputStream(){ return *this; }
-	virtual OutputStream& getOutputStream(){ return *this; }
-	virtual bool isOk(){ return m_bLinked && in.isOk() && out.isOk(); }
+    // TwoWayStrem implementation
+    virtual InputStream& getInputStream() { return *this; }
+    virtual OutputStream& getOutputStream() { return *this; }
+    virtual bool isOk() { return m_bLinked && in.isOk() && out.isOk(); }
 
-	virtual void reset()
-	{
-		//printf("RECEIVED RESET COMMAND\n");
-		//fflush(stdout);
-		close();
-	}
+    virtual void reset()
+    {
+        //printf("RECEIVED RESET COMMAND\n");
+        //fflush(stdout);
+        close();
+    }
 
-	virtual void beginPacket(){}
-	virtual void endPacket(){}
+    virtual void beginPacket() {}
+    virtual void endPacket() {}
 
-	virtual const Address& getLocalAddress(){ return m_LocalAddress; }
-	virtual const Address& getRemoteAddress(){ return m_RemoteAddress; }
+    virtual const Address& getLocalAddress() { return m_LocalAddress; }
+    virtual const Address& getRemoteAddress() { return m_RemoteAddress; }
 
 protected:
-	enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF,RESIZE};
-	
-	// DATA
-	
-	bool m_bLinked;
+    enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF,RESIZE};
 
-	Address m_LocalAddress,m_RemoteAddress;
-	ACE_SOCK_Stream m_SockStream;
-	ACE_SOCK_Acceptor m_Acceptor;
+    // DATA
 
-	ShmemInputStreamImpl in;
-	ShmemOutputStreamImpl out;
+    bool m_bLinked;
 
-	// FUNCTIONS
-	int connect(const ACE_INET_Addr &address);
+    Address m_LocalAddress,m_RemoteAddress;
+    ACE_SOCK_Stream m_SockStream;
+    ACE_SOCK_Acceptor m_Acceptor;
+
+    ShmemInputStreamImpl in;
+    ShmemOutputStreamImpl out;
+
+    // FUNCTIONS
+    int connect(const ACE_INET_Addr &address);
 };
 
 #endif
 
-	/*
-	virtual void endPacket()
-	{
-		m_SendSerializerMutex.wait();
+    /*
+    virtual void endPacket()
+    {
+        m_SendSerializerMutex.wait();
 
-		ShmemPacket_t write_data;
-		write_data.command=WRITE;
-		write_data.size=m_PacketDataSent;
-		m_PacketDataSent=0;
-		int ret=m_SockStream.send_n(&write_data,sizeof write_data);
+        ShmemPacket_t write_data;
+        write_data.command=WRITE;
+        write_data.size=m_PacketDataSent;
+        m_PacketDataSent=0;
+        int ret=m_SockStream.send_n(&write_data,sizeof write_data);
 
-		if (ret<=0)
-		{
-			YARP_ERROR(Logger::get(),
-                   String("ShmemHybridStream socket writing error ")
-                   +NetType::toString(ret));
-			Close();
-		}
+        if (ret<=0)
+        {
+            YARP_ERROR(Logger::get(),
+                       String("ShmemHybridStream socket writing error ")
+                       +NetType::toString(ret));
+            Close();
+        }
 
-		m_SendSerializerMutex.post();
-	}
-	*/
-	
+        m_SendSerializerMutex.post();
+    }
+    */

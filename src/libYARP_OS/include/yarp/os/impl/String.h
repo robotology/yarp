@@ -42,7 +42,7 @@ public:
     unsigned long int hash() const {
         unsigned long int h = 5381;
         for (unsigned int i=0; i<length(); i++) {
-            h = ((h << 5) + h) + (*this)[i]; 
+            h = ((h << 5) + h) + (*this)[i];
         }
         return h;
     }
@@ -88,4 +88,3 @@ typedef ssize_t YARP_STRING_INDEX;
 //#undef main //undef ace floating defines
 
 #endif
-

@@ -35,7 +35,7 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::NameClient {
 public:
-  
+
     /**
      * Get an instance of the name client.  This is a global singleton,
      * created on demand.
@@ -48,9 +48,9 @@ public:
         return *instance;
     }
 
-    /** 
+    /**
      * Remove and delete the current global name client.
-     * 
+     *
      */
     static void removeNameClient() {
         if (instance!=NULL) {
@@ -109,12 +109,12 @@ public:
      */
     Address unregisterName(const String& name);
 
-    /** 
+    /**
      * Send a message to the name server, and interpret the result as
      * an address.
-     * 
+     *
      * @param cmd the message to send (in text form)
-     * 
+     *
      * @return the address extracted from the reply, all errors result
      * in a non-valid address.
      */
@@ -123,104 +123,104 @@ public:
         return extractAddress(result);
     }
 
-    /** 
+    /**
      * Extract an address from its text representation.
-     * 
+     *
      * @param txt the text representation of an address
-     * 
+     *
      * @return the address corresponding to the text representation
      */
     static Address extractAddress(const String& txt);
 
     static Address extractAddress(const Bottle& bot);
 
-    /** 
+    /**
      * Send a text message to the nameserver, and return the result.
-     * 
+     *
      * @param cmd the message to send.
      * @param multi whether to expect a multi-line response.
-     * 
+     *
      * @return the reply from the name server.
      */
     String send(const String& cmd, bool multi = true);
 
-    /** 
-     * Send a message to the nameserver in Bottle format, and return the 
-     * result.  
-     * 
+    /**
+     * Send a message to the nameserver in Bottle format, and return the
+     * result.
+     *
      * @param cmd the message to send.
-     * 
+     *
      * @return the reply from the name server.
      */
     bool send(yarp::os::Bottle& cmd,
               yarp::os::Bottle& reply);
 
-    /** 
+    /**
      * For testing, the nameclient can be set to use a "fake" name server
      * rather than communicating with an external name server.
-     * 
+     *
      * @param fake whether to use a fake name server
      */
     void setFakeMode(bool fake = true) {
         this->fake = fake;
     }
 
-    /** 
+    /**
      * Check whether a fake name server is being used.
-     * 
-     * 
+     *
+     *
      * @return true iff a fake name server is being used.
      */
     bool isFakeMode() {
         return fake;
     }
 
-    /** 
+    /**
      * Control whether the name client should scan for the name server
      * if the cached connection information for it is inaccurate
-     * 
+     *
      * @param allow true if the name client may scan for the name server.
      */
     void setScan(bool allow = true) {
         allowScan = allow;
     }
 
-    /** 
+    /**
      * Control whether the name client can save the address of the name
      * server in a cache file
-     * 
+     *
      * @param allow true if the name client may save the name server address.
      */
     void setSave(bool allow = true) {
         allowSaveScan = allow;
     }
 
-    /** 
+    /**
      * Check whether the name client scanned for the address of the name
      * server.
-     * 
-     * @return true iff the name client scanned for the name server. 
+     *
+     * @return true iff the name client scanned for the name server.
      */
     bool didScan() {
         return reportScan;
     }
 
-    /** 
+    /**
      * Check whether the name client saved the address of the name
      * server.
-     * 
-     * @return true iff the name client saved the address of the name server. 
+     *
+     * @return true iff the name client saved the address of the name server.
      */
     bool didSave() {
         return reportSaveScan;
     }
 
-    /** 
-     * Force the name client to reread the cached location of the 
+    /**
+     * Force the name client to reread the cached location of the
      * name server.
-     * 
+     *
      * @return true if the address for the name server was found.
-     */    
+     */
     bool updateAddress();
 
     bool setContact(const yarp::os::Contact& contact);
@@ -240,7 +240,6 @@ public:
     }
 
     /**
-     *
      * Make a singleton resource finder available to YARP,
      * for finding configuration files.
      *

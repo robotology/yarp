@@ -188,7 +188,7 @@ public:
 
 /*
  *
- * Set up an explicit service carrier, so that we know the 
+ * Set up an explicit service carrier, so that we know the
  * direction of data flow as early as possible.  Its name
  * is "rossrv" (see TcpRosCarrier::getName)
  *

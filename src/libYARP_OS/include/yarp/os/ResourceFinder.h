@@ -68,7 +68,7 @@ public:
      * variables that are checked, the directories that are searched,
      * and the order of search.
      *
-     * For a policy [P], YARP looks for an environment variable of 
+     * For a policy [P], YARP looks for an environment variable of
      * that name.  If found, it tries to load the file [P]/[P].ini
      * and use this to configure the search policy.
      *
@@ -86,7 +86,7 @@ public:
      * Some elements of policy can be changed from the commandline.
      *
      */
-    bool configure(const char *policyName, int argc, char *argv[], 
+    bool configure(const char *policyName, int argc, char *argv[],
                    bool skipFirstArgument = true);
 
     /**
@@ -178,7 +178,7 @@ public:
     /**
      *
      * Return the full stack of contexts used in searching
-     * for configuration files.  
+     * for configuration files.
      *
      */
     yarp::os::Bottle getContexts();
@@ -210,7 +210,7 @@ public:
      *
      * Access a ResourceFinder singleton whose lifetime will match that of
      * the YARP library.
-     * 
+     *
      * @return the ResourceFinder singleton
      *
      */

@@ -61,7 +61,7 @@ public:
     * @return true iff module should continue
     *
     */
-    virtual bool updateModule()=0;
+    virtual bool updateModule() = 0;
 
     /**
     *

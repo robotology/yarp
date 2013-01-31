@@ -33,7 +33,7 @@ namespace yarp {
     }
 }
 
-class yarp::os::impl::MjpegStream : public TwoWayStream, 
+class yarp::os::impl::MjpegStream : public TwoWayStream,
                                     public InputStream,
                                     public OutputStream
 {
@@ -54,7 +54,7 @@ private:
     bool autocompress;
 public:
     MjpegStream(TwoWayStream *delegate, bool sender,
-                bool autocompress) : sender(sender), 
+                bool autocompress) : sender(sender),
                                      autocompress(autocompress) {
         this->delegate = delegate;
         firstRound = true;
@@ -106,7 +106,7 @@ public:
 
     virtual ssize_t read(const Bytes& b);
 
-    virtual void interrupt() { 
+    virtual void interrupt() {
         delegate->getInputStream().interrupt();
     }
 

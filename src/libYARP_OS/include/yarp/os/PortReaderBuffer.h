@@ -46,7 +46,7 @@ YARP_OS_API void typedReaderMissingCallback();
  * or PortReaderBuffer::useCallback(callback)
  *
  */
-template <class T> 
+template <class T>
 class yarp::os::TypedReaderCallback {
 public:
     /**
@@ -64,7 +64,7 @@ public:
 
     /**
      * Callback method.  Passes along source of callback.
-     * By default, this calls the version of onRead that just takes a 
+     * By default, this calls the version of onRead that just takes a
      * datum.
      * @param datum data read from a port
      * @param reader the original port (or delegate object)
@@ -79,10 +79,10 @@ template class YARP_OS_API yarp::os::TypedReaderCallback<yarp::os::Bottle>;
 #endif
 
 /**
- * A base class for sources of typed data.  This could be a 
+ * A base class for sources of typed data.  This could be a
  * BufferedPort or a PortReaderBuffer.
  */
-template <class T> 
+template <class T>
 class yarp::os::TypedReader {
 public:
     /**
@@ -100,7 +100,7 @@ public:
      * @return A pointer to an object read from the port, or NULL if none
      * is available and waiting was not requested.  This object is owned
      * by the communication system and should not be deleted by the user.
-     * The object is available to the user until the next call to 
+     * The object is available to the user until the next call to
      * one of the read methods, after which it should not be accessed again.
      */
     virtual T *read(bool shouldWait = true) = 0;
@@ -117,14 +117,14 @@ public:
      */
     virtual T *lastRead() = 0;
 
-	/**
-	 * @return true if Port associated with this
-	 * reader has been closed
-	 */
-	virtual bool isClosed() = 0;
+    /**
+     * @return true if Port associated with this
+     * reader has been closed
+     */
+    virtual bool isClosed() = 0;
 
     /**
-     * Set an object whose onRead method will be called when data is 
+     * Set an object whose onRead method will be called when data is
      * available.
      * @param callback the object whose onRead method will be called with data
      */
@@ -163,10 +163,10 @@ public:
 
 
     /**
-     * 
+     *
      * Take control of the last object read.
-     * YARP will not reuse that object until it is explicitly released 
-     * by the user.  Be careful - if you acquire objects without 
+     * YARP will not reuse that object until it is explicitly released
+     * by the user.  Be careful - if you acquire objects without
      * releasing, YARP will keep making new ones to store incoming
      * messages.  So you need to release all objects you acquire
      * eventually to avoid running out of memory.
@@ -194,7 +194,7 @@ public:
      *
      * Try to provide data periodically.  If no new data arrives
      * in a given period, repeat the last data received (if any).
-     * Similarly, the port should not pass on data more frequently 
+     * Similarly, the port should not pass on data more frequently
      * than the given period.
      *
      * @param the target period in (fractional) seconds.
@@ -218,7 +218,7 @@ public:
 class YARP_OS_API yarp::os::impl::PortReaderBufferBase : public yarp::os::PortReader
 {
 public:
-    PortReaderBufferBase(unsigned int maxBuffer) : 
+    PortReaderBufferBase(unsigned int maxBuffer) :
         maxBuffer(maxBuffer) {
         creator = 0; /*NULL*/
         init();
@@ -270,9 +270,9 @@ public:
         return maxBuffer;
     }
 
-	void attachBase(yarp::os::Port& port);
+    void attachBase(yarp::os::Port& port);
 
-	bool isClosed();
+    bool isClosed();
 
     yarp::os::ConstString getName() const;
 
@@ -361,7 +361,7 @@ public:
  * class, such as Bottle.
  */
 template <class T>
-class yarp::os::PortReaderBuffer : 
+class yarp::os::PortReaderBuffer :
     public yarp::os::TypedReader<T>,
             public yarp::os::LocalReader<T>,
             public yarp::os::impl::PortReaderBufferBaseCreator {
@@ -371,7 +371,7 @@ public:
      * Constructor.
      * @param maxBuffer Maximum number of buffers permitted (0 = no limit)
      */
-    PortReaderBuffer(unsigned int maxBuffer = 0) : 
+    PortReaderBuffer(unsigned int maxBuffer = 0) :
         implementation(maxBuffer) {
         implementation.setCreator(this);
         last = 0; /*NULL*/
@@ -450,7 +450,7 @@ public:
         }
         return last;
     }
-    
+
     // documented in TypedReader
     void interrupt() {
         implementation.interrupt();
@@ -468,7 +468,7 @@ public:
      */
     void attach(Port& port) {
         //port.setReader(*this);
-		implementation.attachBase(port);
+        implementation.attachBase(port);
     }
 
     void useCallback(TypedReaderCallback<T>& callback) {
@@ -523,9 +523,9 @@ public:
         return implementation.getEnvelope(envelope);
     }
 
-	bool isClosed() {
-		return implementation.isClosed();
-	}
+    bool isClosed() {
+        return implementation.isClosed();
+    }
 
     virtual ConstString getName() const {
         return implementation.getName();

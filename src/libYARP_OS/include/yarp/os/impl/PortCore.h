@@ -195,7 +195,7 @@ public:
      * @param reader where to direct replies
      * @param callback who to call onCompletion() on when message sent.
      */
-    bool send(yarp::os::PortWriter& writer, 
+    bool send(yarp::os::PortWriter& writer,
               yarp::os::PortReader *reader = NULL,
               yarp::os::PortWriter *callback = NULL);
 
@@ -205,7 +205,7 @@ public:
      * @param reader where to direct replies
      * @param callback who to call onCompletion() on when message sent.
      */
-    bool sendHelper(yarp::os::PortWriter& writer, 
+    bool sendHelper(yarp::os::PortWriter& writer,
                     int mode,
                     yarp::os::PortReader *reader = NULL,
                     yarp::os::PortWriter *callback = NULL);
@@ -297,7 +297,7 @@ public:
     /**
      * Process an administrative message.
      */
-    bool adminBlock(yarp::os::ConnectionReader& reader, void *id, 
+    bool adminBlock(yarp::os::ConnectionReader& reader, void *id,
                     OutputStream *os);
 
 
@@ -372,7 +372,7 @@ private:
     // only called in "running" phase
     void addInput(InputProtocol *ip);
 
-    bool removeUnit(const Route& route, bool synch = false, 
+    bool removeUnit(const Route& route, bool synch = false,
                     bool *except = NULL);
 
     int getNextIndex() {
@@ -385,7 +385,9 @@ private:
 private:
 
     // main internal PortCore state and operations
-    SemaphoreImpl stateMutex, packetMutex, connectionChange;
+    SemaphoreImpl stateMutex;
+    SemaphoreImpl packetMutex;
+    SemaphoreImpl connectionChange;
     Logger log;
     Face *face;
     String name;

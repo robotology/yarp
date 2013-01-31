@@ -104,7 +104,7 @@ public:
         }
         return false;
     }
-    
+
     void stopPool() {
         pool = NULL;
         poolIndex = 0;
@@ -196,7 +196,7 @@ public:
         for (i=0; i<lst.size(); i++) {
             yarp::os::ManagedBytes& b = *(lst[i]);
             os.write(b.usedBytes());
-        }    
+        }
     }
 
     virtual size_t length() {
@@ -334,7 +334,7 @@ private:
 /**
  * A helper for recording entire message/reply transactions
  */
-class yarp::os::impl::ConnectionRecorder : public ConnectionReader, 
+class yarp::os::impl::ConnectionRecorder : public ConnectionReader,
             public ConnectionWriter, public yarp::os::PortWriter {
 private:
     ConnectionReader *reader;
@@ -541,4 +541,3 @@ public:
 
 
 #endif
-

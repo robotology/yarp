@@ -45,14 +45,12 @@ public:
     virtual bool close() { return true; }
 
     /**
-     *
      * Change online parameters.
      * The parameters that can be changed online (in other words,
      * without closing and reopening) will vary between objects.
      *
      * @param config A list of parameters for the object.
      * @return true/false on success/failure.
-     *
      */
     virtual bool configure(Searchable& config) {
         return false;
