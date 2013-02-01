@@ -15,6 +15,13 @@ source_group("Header Files" FILES ${folder_header})
 
 ADD_DEFINITIONS(${GtkMM_C_FLAGS})
 
+if(UNIX)
+    if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
+        if (GtkMM_VERSION_MINOR LESS 22)
+            add_definitions(-DGTKMM_LESS_2_22)
+         endif()
+    endif()
+endif(UNIX)
 
 if(MSVC)
     add_definitions(/vd2)
