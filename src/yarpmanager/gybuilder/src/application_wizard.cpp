@@ -88,10 +88,13 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
     if(wnd->m_config.check("apppath"))
     {
         std::string basepath=wnd->m_config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
-        stringstream appPaths(wnd->m_config.find("apppath").asString().c_str());
+        string appPaths(wnd->m_config.find("apppath").asString().c_str());
         string strPath;
-        while (getline(appPaths, strPath, ';'))
+		
+	do
         {
+	    string::size_type pos=appPaths.find(";");
+	    strPath=appPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
@@ -103,8 +106,13 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
             m_EntryFolderName.append_text(Glib::ustring(strPath));
 #else
             m_EntryFolderName.append(Glib::ustring(strPath));
-#endif            
+#endif          
+            if (pos==string::npos)
+                break;
+            appPaths=appPaths.substr(pos+1);
         }
+	while (appPaths!="");
+
         m_EntryFolderName.set_active(0);
     }
         

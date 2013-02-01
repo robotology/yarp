@@ -11,6 +11,8 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
+    #define NOMINMAX 
+    #include <windows.h>
 #else
     #include <unistd.h>
     #include <sys/types.h>
@@ -536,15 +538,15 @@ void MainWindow::setupActions(void)
 
     //File|New sub menu:
     m_refActionGroup->add(Gtk::Action::create("FileMenu", "File"));
-    m_refActionGroup->add(Gtk::Action::create("FileNew", Gtk::Stock::NEW));
+    m_refActionGroup->add(Gtk::Action::create("FileNew", Gtk::Stock::NEW, "New"), Gtk::AccelKey());
     m_refActionGroup->add(Gtk::Action::create("FileNewApp",
-                Gtk::Stock::NEW, "New _Application", "Create a new Application"),
+                Gtk::Stock::NEW, "New _Application", "Create a new Application"), 
                 sigc::mem_fun(*this, &MainWindow::onMenuFileNewApp));
     m_refActionGroup->add(Gtk::Action::create("FileNewMod",
-                Gtk::Stock::NEW, "New _Module", "Create a new Module"),
+                Gtk::Stock::NEW, "New _Module", "Create a new Module"), Gtk::AccelKey("<control>m"),
                 sigc::mem_fun(*this, &MainWindow::onMenuFileNewMod));
     m_refActionGroup->add(Gtk::Action::create("FileNewRes",
-                Gtk::Stock::NEW, "New _Resource", "Create a new Resource"),
+                Gtk::Stock::NEW, "New _Resource", "Create a new Resource"), Gtk::AccelKey("<control>r"),
                 sigc::mem_fun(*this, &MainWindow::onMenuFileNewRes));
 
     m_refActionGroup->add( Gtk::Action::create("FileOpen", Gtk::Stock::OPEN  ,"_Open File", "Open xml file"),
@@ -1448,22 +1450,32 @@ void MainWindow::onPAppMenuReopen()
 
 void MainWindow::onMenuHelpOnlineHelp()
 {
- #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)  
+    string helpPage="http://eris.liralab.it/yarpdoc/yarpmanager.html";
+#ifdef WIN32
+    if (!(int(ShellExecute(NULL, "open", helpPage.c_str(), NULL, NULL, SW_SHOWNORMAL)) > 32)) 
+    {
+        Gtk::MessageDialog dialog("Cannot open online help!", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_CLOSE);
+        dialog.set_secondary_text(helpPage);
+        dialog.run();
+    }
+#else
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)  
     GError *error = NULL;
     gtk_show_uri(gdk_screen_get_default(),
-                 "http://eris.liralab.it/yarpdoc/yarpmanager.html",
+                 helpPage.c_str(),
                  gtk_get_current_event_time(), &error);
     if(error)
     {
         Gtk::MessageDialog dialog("Cannot open online help!", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_CLOSE);
-        dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
+        dialog.set_secondary_text(helpPage);
         dialog.run();
     }
 #else
     Gtk::MessageDialog dialog("Please visit the following link.", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_CLOSE);
-    dialog.set_secondary_text("http://eris.liralab.it/yarpdoc/yarpmanager.html");
+    dialog.set_secondary_text(helpPage);
     dialog.run();
 
+#endif
 #endif
 }
 

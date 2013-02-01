@@ -155,12 +155,12 @@ if(CREATE_GUIS)
     option(CREATE_YARPVIEW "Do you want to compile yarpview?" ON)
     option(CREATE_GYARPMANAGER "Do you want to compile gyarpmanager?" ON)
     option(CREATE_YARPSCOPE "Do you want to create yarpscope?" ON)
-    option(CREATE_YBUILDER "Do you want to compile Yarp application builder?" OFF)
+    option(CREATE_GYARPBUILDER "Do you want to compile Yarp application builder?" OFF)
 else(CREATE_GUIS)
     unset(CREATE_YARPVIEW CACHE)
     unset(CREATE_GYARPMANAGER CACHE)
     unset(CREATE_YARPSCOPE CACHE)
-    unset(CREATE_YBUILDER CACHE)
+    unset(CREATE_GYARPBUILDER CACHE)
 endif(CREATE_GUIS)
 
 message(STATUS "Detecting required libraries")
@@ -232,12 +232,12 @@ if(CREATE_YARPSCOPE)
     checkbuildandset_dependency(GtkDataboxMM)
 endif(CREATE_YARPSCOPE)
 
-if(CREATE_YBUILDER)
+if(CREATE_GYARPBUILDER)
     find_package(GooCanvas QUIET)
     checkbuildandset_dependency(GooCanvas)
     find_package(GooCanvasMM QUIET)
     checkbuildandset_dependency(GooCanvasMM)
-endif(CREATE_YBUILDER)
+endif(CREATE_GYARPBUILDER)
 
 
 # CHECK DEPENDENCIES:
@@ -257,14 +257,14 @@ else(YARP_USE_GTK2)
     check_optional_dependency(CREATE_GYARPMANAGER GtkMM)
     check_optional_dependency(CREATE_YARPSCOPE GtkPlus)
     check_optional_dependency(CREATE_YARPSCOPE GtkMM)
-    check_optional_dependency(CREATE_YBUILDER GtkPlus)
-    check_optional_dependency(CREATE_YBUILDER GtkMM)
+    check_optional_dependency(CREATE_GYARPBUILDER GtkPlus)
+    check_optional_dependency(CREATE_GYARPBUILDER GtkMM)
 endif(YARP_USE_GTK2)
 
 check_optional_dependency(CREATE_YARPSCOPE GtkDatabox)
 check_optional_dependency(CREATE_YARPSCOPE GtkDataboxMM)
-check_optional_dependency(CREATE_YBUILDER GooCanvas)
-check_optional_dependency(CREATE_YBUILDER GooCanvasMM)
+check_optional_dependency(CREATE_GYARPBUILDER GooCanvas)
+check_optional_dependency(CREATE_GYARPBUILDER GooCanvasMM)
 
 
 # PRINT DEPENDENCIES STATUS:
