@@ -189,8 +189,8 @@ Gdk::Point ExternalPortModel::getContactPoint(void)
             GooCanvasBounds bi;
             goo_canvas_item_get_bounds(item, &bi);
             if(type == INPUTD)
-                return Gdk::Point(bi.x1+PORT_DEPTH, bi.y2-((bi.y2-bi.y1)/2.0));
-            return Gdk::Point(bi.x2, bi.y2-((bi.y2-bi.y1)/2.0));
+                return Gdk::Point((int)(bi.x1+PORT_DEPTH), (int)(bi.y2-((bi.y2-bi.y1)/2.0)));
+            return Gdk::Point((int)(bi.x2), (int)(bi.y2-((bi.y2-bi.y1)/2.0)));
         }            
     }    
     return Gdk::Point(-1, -1);

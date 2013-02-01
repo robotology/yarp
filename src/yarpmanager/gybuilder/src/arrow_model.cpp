@@ -24,7 +24,7 @@
 # define fmin min
 #endif
 
-#define ARROW_LINEWIDTH     2.0
+#define ARROW_LINEWIDTH     2
 
 
 ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
@@ -220,7 +220,7 @@ Gdk::Point ArrowModel::getPoint(int index)
         return Gdk::Point(-1,-1);
     double x, y;
     points.get_coordinate(index, x, y);
-    return Gdk::Point(x,y);
+    return Gdk::Point((int)x,(int)y);
 }
 
 int ArrowModel::getIndex(double x, double y)
@@ -462,13 +462,13 @@ bool ArrowModel::intersect(double p1, double q1, double p2, double q2)
         points.get_coordinate(i+1, x2, y2);
 
         // calculte intersection 
-        float s1_x, s1_y, s2_x, s2_y;
+        double s1_x, s1_y, s2_x, s2_y;
         s1_x = x2 - x1;     
         s1_y = y2 - y1;
         s2_x = p2 - p1;     
         s2_y = q2 - q1;
 
-        float s, t;
+        double s, t;
         s = (-s1_y * (x1 - p1) + s1_x * (y1 - q1)) / (-s2_x * s1_y + s1_x * s2_y);
         t = ( s2_x * (y1 - q1) - s2_y * (x1 - p1)) / (-s2_x * s1_y + s1_x * s2_y);
 
