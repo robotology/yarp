@@ -16,6 +16,7 @@ else(YARP_USE_GTK2)
     include_directories(${GTKMM_INCLUDE_DIRS})
 endif(YARP_USE_GTK2)
 
+
 set(goocanvasmm_SRCS
     goocanvasmm/goocanvas/goocanvasmm/itemmodel.cc
     goocanvasmm/goocanvas/goocanvasmm/tablemodel.cc
@@ -124,6 +125,11 @@ endif(MSVC)
 
 if(UNIX)
     set_target_properties(YARP_goocanvasmm PROPERTIES COMPILE_FLAGS -fPIC)
+    if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
+        if (GtkMM_VERSION_MINOR LESS 22)
+            add_definitions(-DGTKMM_LESS_2_22)
+         endif()
+    endif()
 endif(UNIX)
 
 set(GooCanvasMM_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas;${GooCanvas_INCLUDE_DIRS}" CACHE PATH "GooCanvasMM include directory" FORCE)

@@ -99,7 +99,11 @@ public:
   void attach(const Glib::RefPtr<ItemModel>& item, guint left_attach, guint right_attach, guint top_attach, guint bottom_attach, Gtk::AttachOptions xoptions = Gtk::FILL | Gtk::EXPAND, Gtk::AttachOptions yoptions = Gtk::FILL | Gtk::EXPAND, double left_padding = 0.0, double right_padding = 0.0, double top_padding = 0.0, double bottom_padding = 0.0);
 
   void set_align(const Glib::RefPtr<ItemModel>& child, double xalign = 0.0, double yalign = 0.0);
+#ifdef GTKMM_LESS_2_22
+  void set_align(const Glib::RefPtr<ItemModel>& child, Gtk::AlignmentEnum xalign = Gtk::ALIGN_LEFT, Gtk::AlignmentEnum yalign = Gtk::ALIGN_LEFT);
+#else
   void set_align(const Glib::RefPtr<ItemModel>& child, Gtk::AlignmentEnum xalign = Gtk::ALIGN_START, Gtk::AlignmentEnum yalign = Gtk::ALIGN_START);
+#endif
 
   //We put these in item.hg instead.
   //See the comment there.
