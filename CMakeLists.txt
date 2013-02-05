@@ -76,10 +76,6 @@ include(YarpDoc)
 # bindings for other languages to be compiled from the build material.
 include(YarpBindingsSource)
 
-# Set up build files for WDK, if desired.
-# This is for package maintainers, for Windows builds.
-include(YarpWdk)
-
 # Modify this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun
 # for everybody.
