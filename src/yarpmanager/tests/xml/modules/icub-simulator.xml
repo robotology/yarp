@@ -1,0 +1,124 @@
+<module>
+	<name>iCub_SIM</name>
+	<description> iCub simulator </description>
+	<version>1.0</version>
+	
+	<arguments>
+		<!-- <param default="/yarpview/img:i" required="no" desc="input port name">name</param> -->
+	</arguments>
+			
+	<authors>
+        <author email="vadim.tikhanoff@iit.it"> Vadim Tikhanoff </author>
+		<author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
+	</authors>
+	
+	<data> 
+		<output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/cam/left</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Left eye</description>
+		</output>
+
+		<output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/cam/right</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Right eye</description>
+		</output>	
+
+        <output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/left_arm/state:o</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Left arm encoders</description>
+		</output>	
+        
+        <output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/right_arm/state:o</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Right arm encoders</description>
+		</output>
+
+        <output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/head/state:o</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Head encoders</description>
+		</output>	
+        
+        <output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/torso/state:o</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Torso encoders</description>
+		</output>	
+        
+         <output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/left_leg/state:o</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Left leg encoders</description>
+		</output>	
+
+        <output>
+			<type>*</type>
+			<port carrier="udp">/icubSim/right_leg/state:o</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Right leg encoders</description>
+		</output>	
+
+        <input>
+			<type>*</type>
+			<port carrier="udp">/icubSim/left_arm/rpc:i</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Left arm rpc</description>
+		</input>	
+        
+        <input>
+			<type>*</type>
+			<port carrier="udp">/icubSim/right_arm/rpc:i</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Right arm rpc</description>
+		</input>	
+
+        <input>
+			<type>*</type>
+			<port carrier="udp">/icubSim/head/rpc:i</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Head rpc</description>
+		</input>	
+        
+        <input>
+			<type>*</type>
+			<port carrier="udp">/icubSim/torso/rpc:i</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description>Torso rpc</description>
+		</input>	
+   
+	</data>		
+
+    <dependencies>
+        <computer>
+        </computer>
+    </dependencies>
+
+	<development>
+		<include></include>
+		<library>YARP</library>
+	</development>
+	
+</module>

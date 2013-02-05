@@ -70,7 +70,7 @@ Gdk::Point MidpointModel::getContactPoint(void)
         GooCanvasBounds bi;
         goo_canvas_item_get_bounds(item, &bi);
         goo_canvas_item_get_bounds(item, &bi);
-        return Gdk::Point(bi.x2-POINT_SIZE/2.0, bi.y2-POINT_SIZE/2.0);
+        return Gdk::Point((int)(bi.x2-POINT_SIZE/2.0), (int)(bi.y2-POINT_SIZE/2.0));
     }    
     return Gdk::Point(-1, -1);
 }

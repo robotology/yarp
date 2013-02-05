@@ -65,6 +65,73 @@ BOOL CALLBACK LocalTerminateAppEnum(HWND hwnd, LPARAM lParam)
     }
     return TRUE ;
 }
+
+volatile LONG uniquePipeNumber = 0;
+
+/*
+*  TODO: check deeply for asyn PIPE 
+*/
+BOOL CreatePipeAsync(
+    OUT LPHANDLE lpReadPipe,
+    OUT LPHANDLE lpWritePipe,
+    IN LPSECURITY_ATTRIBUTES lpPipeAttributes,
+    IN DWORD nSize)
+{
+    HANDLE ReadPipeHandle, WritePipeHandle;
+    DWORD dwError;
+    char PipeNameBuffer[MAX_PATH];
+    nSize = (nSize ==0) ? 100*8096: nSize; 
+
+#if defined(_WIN64) 
+    InterlockedIncrement64(&uniquePipeNumber);
+#else
+    InterlockedIncrement(&uniquePipeNumber);
+#endif
+
+    sprintf( PipeNameBuffer,
+             "\\\\.\\Pipe\\RemoteExeAnon.%08x.%08x",
+             GetCurrentProcessId(),
+             uniquePipeNumber
+           );
+
+    ReadPipeHandle = CreateNamedPipeA(
+                         (LPSTR)PipeNameBuffer,
+                         PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED,
+                         PIPE_TYPE_BYTE | PIPE_WAIT, //PIPE_NOWAIT,
+                         1,             // Number of pipes
+                         nSize,         // Out buffer size
+                         nSize,         // In buffer size
+                         120 * 1000,    // Timeout in ms
+                         lpPipeAttributes
+                         );
+
+    if (! ReadPipeHandle) {
+        return FALSE;
+    }
+
+    WritePipeHandle = CreateFileA(
+                        (LPSTR)PipeNameBuffer,
+                        GENERIC_WRITE,
+                        0,                         // No sharing
+                        lpPipeAttributes,
+                        OPEN_EXISTING,
+                        FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED,
+                        NULL                       // Template file
+                      );
+
+    if (INVALID_HANDLE_VALUE == WritePipeHandle) 
+    {
+        dwError = GetLastError();
+        CloseHandle( ReadPipeHandle );
+        SetLastError(dwError);
+        return FALSE;
+    }
+
+    *lpReadPipe = ReadPipeHandle;
+    *lpWritePipe = WritePipeHandle;
+    return( TRUE );
+}
+
 #endif 
 
 LocalBroker::LocalBroker()
@@ -503,6 +570,7 @@ void LocalBroker::stopStdout(void)
     Thread::stop();
 }
 
+
 int LocalBroker::ExecuteCmd(void)
 {
     string strCmdLine = strCmd + string(" ") + strParam; 
@@ -512,7 +580,7 @@ int LocalBroker::ExecuteCmd(void)
     pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES); 
     pipe_sec_attr.bInheritHandle = TRUE; 
     pipe_sec_attr.lpSecurityDescriptor = NULL;
-    CreatePipe(&read_from_pipe_cmd_to_stdout, 
+    CreatePipeAsync(&read_from_pipe_cmd_to_stdout, 
                &write_to_pipe_cmd_to_stdout, 
                &pipe_sec_attr, 0);
 
