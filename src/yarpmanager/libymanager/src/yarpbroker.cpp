@@ -135,7 +135,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
         strEnv = szenv;
     
     OSTRINGSTREAM sstrID;
-    sstrID<<ID;
+    sstrID<<(int)ID;
     strTag = strHost + strCmd + strParam + strEnv + sstrID.str();
     string::iterator itr;
     for(itr=strTag.begin(); itr!=strTag.end(); itr++)

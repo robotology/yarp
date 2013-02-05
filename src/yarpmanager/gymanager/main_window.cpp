@@ -658,7 +658,7 @@ void MainWindow::syncApplicationList(void)
     if(cnt)
     {
         OSTRINGSTREAM msg;
-        msg<<cnt<<" "<<"applications are loaded successfully.";
+        msg<< (int) cnt<<" "<<"applications are loaded successfully.";
         m_Statusbar.push(msg.str().c_str());
     }
     else

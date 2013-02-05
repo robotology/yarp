@@ -46,6 +46,13 @@ StrStream& StrStream::operator<<(int n) {
     return *this;
 }
 
+StrStream& StrStream::operator<<(double n) {
+    char buff[64];
+    sprintf(buff, "%.2f", n);
+    dummyStr += std::string(buff);
+    return *this;
+}
+
 
 StrStream& StrStream::operator = (const char* sz) {
     dummyStr = std::string(sz);

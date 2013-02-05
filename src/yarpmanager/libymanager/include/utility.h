@@ -35,6 +35,7 @@ public:
     StrStream& operator<<(StrStream &oss);
     StrStream& operator<<(const std::string &str);
     StrStream& operator<<(int n);
+	StrStream& operator<<(double n);
     StrStream& operator = (const char* sz);
     StrStream& operator = (char* sz);
     StrStream& operator = (const std::string &str);
