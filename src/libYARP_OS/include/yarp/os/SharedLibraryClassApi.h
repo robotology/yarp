@@ -27,25 +27,53 @@ namespace yarp {
 #define YARP_SHAREDLIBRARYCLASSAPI_PADDING (30-2*(YARP_POINTER_SIZE/4))
 #include <yarp/os/begin_pack_for_net.h>
 extern "C" {
+
+    /**
+     *
+     * Collection of hooks for creating/destroying a plugin.
+     * Be careful to check carefully for compatibility before 
+     * using create() or destroy().
+     *
+     */
     struct yarp::os::SharedLibraryClassApi {
     public:
-        NetInt32 startCheck; // should be 'Y' 'A' 'R' 'P'
-        NetInt32 structureSize;
-        NetInt32 systemVersion;
-        void *(*create)();
-        void (*destroy)(void *obj);
-        int (*getVersion)(char *ver, int len);
-        int (*getAbi)(char *abi, int len);
-        int (*getClassName)(char *name, int len);
-        int (*getBaseClassName)(char *name, int len);
-        NetInt32 roomToGrow[YARP_SHAREDLIBRARYCLASSAPI_PADDING];
-        NetInt32 endCheck;   // should be 'P' 'L' 'U' 'G'
+        NetInt32 startCheck;    // Constant: this should be 'Y' 'A' 'R' 'P'.
+                                // Don't touch anything further if it isn't.
+        NetInt32 structureSize; // size of the SharedLibraryClassApi.
+                                // If this doesn't match what you expect,
+                                // Don't touch anything further if it isn't.
+        NetInt32 systemVersion; // Overall version of plugin system.
+                                // This does *not* cover compiler version etc.
+        void *(*create)();      // Instantiate a plugin object.
+        void (*destroy)(void *obj);               // Destroy a plugin object.
+        int (*getVersion)(char *ver, int len);    // Plugin-related version.
+        int (*getAbi)(char *abi, int len);        // Compiler-related version.
+        int (*getClassName)(char *name, int len); // Name of plugin (subclass).
+        int (*getBaseClassName)(char *name, int len);  // Name superclass.
+        NetInt32 roomToGrow[YARP_SHAREDLIBRARYCLASSAPI_PADDING]; // Padding.
+        NetInt32 endCheck;      // Constant: should be 'P' 'L' 'U' 'G'.
     };
 }
 #include <yarp/os/end_pack_for_net.h>
 
 #define YARP_SHARED_CLASS_FN extern "C" YARP_EXPORT
 
+/**
+ *
+ * Macro to create a bunch of functions with undecorated names that can
+ * be found within a plugin library to handle creation/deletion of that
+ * plugin.  Use with care.
+ * 
+ * @param factoryname the name of the "hook" function to make.  A collection
+ * of other helper functions with names composed of the factoryname with
+ * _create/_destroy/... appended.
+ *
+ * @param classname the class that the hook will be able to instantiate.
+ *
+ * @param basename the superclass that the user of the plugin should be
+ * working with.
+ *
+ */
 #define YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,basename)       \
     YARP_SHARED_CLASS_FN void *factoryname ## _create () { return (basename *)new classname; } \
     YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete (classname *)obj; } \

@@ -20,8 +20,8 @@ namespace yarp {
 
 /**
  *
- * Wrapper for loading shared libraries (DLLs).  Implementation is
- * currently based on ACE_DLL.
+ * Low-level wrapper for loading shared libraries (DLLs) and accessing
+ * symbols within it.
  *
  */
 class YARP_OS_API yarp::os::SharedLibrary {
@@ -80,6 +80,11 @@ public:
      */
     void *getSymbol(const char *symbolName);
 
+    /**
+     *
+     * @return true iff a valid library has been loaded.
+     *
+     */
     bool isValid() const {
         return implementation != 0/*NULL*/;
     }

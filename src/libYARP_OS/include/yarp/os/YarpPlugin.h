@@ -19,6 +19,11 @@ namespace yarp {
     }
 }
 
+/**
+ *
+ * Type-safe access to a plugin.
+ *
+ */
 template <class T>
 class yarp::os::YarpPlugin {
 private:
