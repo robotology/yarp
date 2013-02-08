@@ -25,15 +25,26 @@ namespace yarp {
     }
 }
 
+/**
+ *
+ * A wrapper for a named factory method in a named shared library.
+ * This wrapper will do some basic checks that the named method does 
+ * indeed behave like a YARP plugin hook before offering access to it.
+ * This is to avoid accidents, it is not a security mechanism.
+ *
+ */
 class YARP_OS_API yarp::os::SharedLibraryFactory {
-private:
-    SharedLibrary lib;
-    int status;
-    SharedLibraryClassApi api;
-    int returnValue;
-    int rct;
-    ConstString name;
 public:
+    /**
+     *
+     * The status of a factory can be:
+     *   STATUS_NONE: Not configured yet
+     *   STATUS_OK: Present and sane
+     *   STATUS_LIBRARY_NOT_LOADED: Named shared library failed to load
+     *   STATUS_FACTORY_NOT_FOUND: Named method wasn't present in library
+     *   STATUS_FACTORY_NOT_FUNCTIONAL: Named method is not working right
+     *
+     */
     enum {
         STATUS_NONE,
         STATUS_OK = VOCAB2('o','k'),
@@ -42,19 +53,43 @@ public:
         STATUS_FACTORY_NOT_FUNCTIONAL = VOCAB3('r','u','n'),
     };
 
+    /**
+     *
+     * Constructor for unconfigured factory.
+     *
+     */
     SharedLibraryFactory() {
         api.startCheck = 0;
         status = STATUS_NONE;
         rct = 0;
         returnValue = 0;
 	}
-
-    SharedLibraryFactory(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+ 
+    /**
+     *
+     * Constructor.
+     *
+     * @param dll_name name/path of shared library
+     * @param fn_name name of factory method, a symbol within the shared library
+     *
+     */
+    SharedLibraryFactory(const char *dll_name, 
+                         const char *fn_name = 0/*NULL*/) {
         rct = 0;
         returnValue = 0;
 		open(dll_name,fn_name);
 	}
 
+    /**
+     *
+     * Configure the factory.
+     *
+     * @param dll_name name/path of shared library
+     * @param fn_name name of factory method, a symbol within the shared library
+     *
+     * @return true on success
+     *
+     */
     bool open(const char *dll_name, const char *fn_name = 0/*NULL*/) {
         returnValue = 0;
         name = "";
@@ -81,16 +116,14 @@ public:
         return true;
     }
 
-    bool useFactoryFunction(void *factory) {
-        api.startCheck = 0;
-        if (factory==0/*NULL*/) return false;
-        SharedClassFactoryFunction fn = (SharedClassFactoryFunction)factory;
-        isValid();
-        returnValue = fn(&api,sizeof(SharedLibraryClassApi));
-        return isValid();
-    }
-
-	bool isValid() {
+    /**
+     *
+     * Check if factory is configured and present.
+     *
+     * @return true iff factory is good to go
+     *
+     */
+	bool isValid() const {
         if (returnValue!=VOCAB4('Y','A','R','P')) return false;
 	    if (api.startCheck!=VOCAB4('Y','A','R','P')) return false;
 	    if (api.structureSize!=sizeof(SharedLibraryClassApi)) return false;
@@ -99,35 +132,85 @@ public:
         return true;
     }
 
-    int getStatus() {
+    /**
+     *
+     * Get the status of the factory.
+     *
+     * @return one of the SharedLibraryFactory::STATUS_* codes
+     *
+     */
+    int getStatus() const {
         return status;
     }
 
-    void *getDestroyFn() {
-        if (!isValid()) return 0/*NULL*/;
-        return (void *)api.destroy;
-    }
-
+    /**
+     *
+     * Get the factory API, which has creation/deletion methods.
+     *
+     * @return the factory API
+     *
+     */
     const SharedLibraryClassApi& getApi() const {
         return api;
     }
 
+    /**
+     *
+     * @return the current reference count of this factory.
+     *
+     */
     int getReferenceCount() const {
         return rct;
     }
 
+    /**
+     *
+     * Increment the reference count of this factory.
+     *
+     * @return the current reference count of this factory, after increment
+     *
+     */
     int addRef() {
         rct++;
         return rct;
     }
 
+    /**
+     *
+     * Decrement the reference count of this factory.
+     *
+     * @return the current reference count of this factory, after decrement
+     *
+     */
     int removeRef() {
         rct--;
         return rct;
     }
 
+    /**
+     *
+     * @return the name associated with this factory
+     *
+     */
     ConstString getName() const {
         return name;
+    }
+
+private:
+    SharedLibrary lib;
+    int status;
+    SharedLibraryClassApi api;
+    int returnValue;
+    int rct;
+    ConstString name;
+
+    bool useFactoryFunction(void *factory) {
+        api.startCheck = 0;
+        if (factory==0/*NULL*/) return false;
+        SharedClassFactoryFunction fn = (SharedClassFactoryFunction)factory;
+        isValid();
+        returnValue = fn(&api,sizeof(SharedLibraryClassApi));
+        return isValid();
     }
 };
 

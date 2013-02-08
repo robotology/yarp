@@ -19,6 +19,15 @@ namespace yarp {
     }
 }
 
+
+/**
+ *
+ * A type-safe wrapper for SharedLibraryFactory, committing to
+ * creation/destruction of instances of a particular super-class.
+ * Note that we take on faith that the named factory method in the 
+ * named shared library does in fact create the named type.
+ *
+ */
 template <class T>
 class yarp::os::SharedLibraryClassFactory : public SharedLibraryFactory {
 public:
