@@ -2034,7 +2034,9 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
             ConstString name = options.check("name",Value("untitled")).asString();
             ConstString kind = options.check("type",Value("unknown type")).asString();
             SharedLibraryFactory lib;
-            YarpPluginSettings settings(selector,options,name);
+            YarpPluginSettings settings;
+            settings.setSelector(selector);
+            settings.readFromSearchable(options,name);
             settings.open(lib);
             ConstString location = lib.getName().c_str();
             if (lib.isValid()) {
@@ -2050,12 +2052,11 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     SharedLibraryFactory lib;
     Property p;
     YarpPluginSettings settings;
-    settings.verbose = true;
+    settings.setVerboseMode(true);
     if (argc>=2) {
-        settings.fn_name = argv[0];
-        settings.dll_name = argv[1];
+        settings.setLibraryMethodName(argv[0],argv[1]);
     } else {
-        settings.name = argv[0];
+        settings.setPluginName(argv[0]);
     }
     settings.open(lib);
     if (!lib.isValid()) {

@@ -1002,28 +1002,23 @@ private:
     YarpPlugin<Carrier> plugin;
 public:
     StubCarrier(const char *dll_name, const char *fn_name) {
-        settings.dll_name = dll_name;
-        settings.fn_name = fn_name;
+        settings.setLibraryMethodName(dll_name,fn_name);
         init();
     }
 
     StubCarrier(const char *name) {
-        settings.name = name;
+        settings.setPluginName(name);
         init();
     }
 
     void init() {
-        settings.fn_ext = "_carrier";
         YarpPluginSelector selector;
         selector.scan();
-        settings.selector = &selector;
-        ConstString name = settings.name;
-        if (name != "") {
-            settings.readFromSelector(name.c_str());
-        }
+        settings.setSelector(selector);
         if (plugin.open(settings)) {
-            plugin.initialize(car);
-            settings.dll_name = plugin.getFactory()->getName();
+            car.open(*plugin.getFactory());
+            settings.setLibraryMethodName(plugin.getFactory()->getName(),
+                                          settings.getMethodName());
         }
     }
 
@@ -1044,12 +1039,12 @@ public:
         return ncar;
     }
 
-   ConstString getDllName() {
-        return settings.dll_name;
+    ConstString getDllName() const {
+       return settings.getLibraryName();
     }
 
-    ConstString getFnName() {
-        return settings.fn_name;
+    ConstString getFnName() const {
+        return settings.getMethodName();
     }
 };
 

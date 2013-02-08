@@ -16,8 +16,7 @@ using namespace yarp::os;
 
 int main() {
     YarpPluginSettings settings;
-    settings.dll_name = "hoopy";
-    settings.fn_name = "hoopy";
+    settings.setLibraryMethodName("hoopy","hoopy");
     YarpPlugin<Handler> handler;
     if (!handler.open(settings)) {
         settings.reportFailure();

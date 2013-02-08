@@ -32,10 +32,34 @@ private:
     YarpPluginSettings settings;
 
 public:
+    /**
+     *
+     * Constructor.
+     *
+     */
     YarpPlugin() {
         factory = 0/*NULL*/;
     }
 
+    /**
+     *
+     * Destructor.
+     *
+     */
+    virtual ~YarpPlugin() {
+        close();
+    }
+
+    /**
+     *
+     * Load a library and prepare an object factory, based on the
+     * hints supplied.
+     * 
+     * @param settings the hints to use in finding the library
+     *
+     * @return true on success
+     *
+     */
     bool open(YarpPluginSettings& settings) {
         close();
         factory = new SharedLibraryClassFactory<T>();
@@ -50,14 +74,13 @@ public:
         return true;
     }
 
-    bool initialize(SharedLibraryClass<T>& content) {
-        if (!factory) return false;
-        if (!content.open(*factory)) {
-            settings.reportFailure();
-        }
-        return true;
-    }
-
+    /**
+     *
+     * End this use of the plugin.
+     *
+     * @return true on success
+     *
+     */
     bool close() {
         if (!factory) return true;
         factory->removeRef();
@@ -68,26 +91,46 @@ public:
         return true;
     }
 
-    virtual ~YarpPlugin() {
-        close();
-    }
-
-    bool isValid() {
+    /**
+     *
+     * @return true if the plugin is correctly loaded
+     *
+     */
+    bool isValid() const {
         return (factory!=0/*NULL*/);
     }
 
-    SharedLibraryClassFactory<T> *getFactory() { 
-        return factory;
-    }
-
+    /**
+     *
+     * Create an object using the plugin.
+     *
+     * @return an object of the type the plugin creates (NULL on failure)
+     *
+     */
     T *create() {
         if (!factory) return 0/*NULL*/;
         return factory->create();
     }
 
+    /**
+     *
+     * Destroy an object previously created using the plugin.
+     *
+     * @param obj the object to destroy
+     *
+     */
     void destroy(T *obj) {
         if (!factory) return;
         factory->destroy(obj);
+    }
+
+    /**
+     *
+     * @return the factory object associated with the plugin
+     *
+     */
+    SharedLibraryClassFactory<T> *getFactory() const { 
+        return factory;
     }
 };
 

@@ -17,11 +17,6 @@
 namespace yarp {
     namespace os {
         class SharedLibraryFactory;
-
-        extern "C" {
-            typedef int (*SharedClassFactoryFunction)(void *ptr,int len);
-            typedef void (*SharedClassDeleterFunction)(void *ptr);
-        }
     }
 }
 
@@ -207,9 +202,9 @@ private:
     bool useFactoryFunction(void *factory) {
         api.startCheck = 0;
         if (factory==0/*NULL*/) return false;
-        SharedClassFactoryFunction fn = (SharedClassFactoryFunction)factory;
         isValid();
-        returnValue = fn(&api,sizeof(SharedLibraryClassApi));
+        returnValue = 
+            ((int (*)(void *ptr,int len)) factory)(&api,sizeof(SharedLibraryClassApi));
         return isValid();
     }
 };

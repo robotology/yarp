@@ -84,7 +84,9 @@ public:
             if (done.check(name)) continue;
 
             SharedLibraryFactory lib;
-            YarpPluginSettings settings(*this,prop,name);
+            YarpPluginSettings settings;
+            settings.setSelector(*this);
+            settings.readFromSearchable(prop,name);
             settings.open(lib);
             ConstString location = lib.getName().c_str();
             if (location=="") continue;
@@ -161,15 +163,14 @@ private:
     SharedLibraryClass<DeviceDriver> dev;
 public:
     StubDriver(const char *dll_name, const char *fn_name, bool verbose = true) {
-        settings.dll_name = dll_name;
-        settings.fn_name = fn_name;
-        settings.verbose = verbose;
+        settings.setLibraryMethodName(dll_name,fn_name);
+        settings.setVerboseMode(verbose);
         init();
     }
 
     StubDriver(const char *name, bool verbose = true) {
-        settings.name = name;
-        settings.verbose = verbose;
+        settings.setPluginName(name);
+        settings.setVerboseMode(verbose);
         init();
     }
 
@@ -179,14 +180,11 @@ public:
     void init() {
         YarpPluginSelector selector;
         selector.scan();
-        settings.selector = &selector;
-        ConstString name = settings.name;
-        if (name != "") {
-            settings.readFromSelector(name.c_str());
-        }
+        settings.setSelector(selector);
         if (plugin.open(settings)) {
-            plugin.initialize(dev);
-            settings.dll_name = plugin.getFactory()->getName();
+            dev.open(*plugin.getFactory());
+            settings.setLibraryMethodName(plugin.getFactory()->getName(),
+                                          settings.getMethodName());
         }
     }
 
@@ -209,11 +207,11 @@ public:
     }
 
     ConstString getDllName() {
-        return settings.dll_name;
+        return settings.getLibraryName();
     }
 
     ConstString getFnName() {
-        return settings.fn_name;
+        return settings.getMethodName();
     }
 };
 #endif
