@@ -609,9 +609,11 @@ details on how to use namespaces.
 
 \verbatim
 yarp ping /PORT
+yarp ping --time /PORT
+yarp pint --rate /PORT
 \endverbatim
 
-Get information about the specified port.  Result will be something
+Get information about the specified port (optionally: timing and rate).  Result will be something
 like:
 
 \verbatim
@@ -620,8 +622,9 @@ There is an output connection from "/write" to "/read" using tcp
 There is an input connection from "<ping>" to "/write" using text_ack
 \endverbatim
 
+The option --time reports timing measure about communication with the port.
 
-
+The option --rate reports the rate at which information arrives from the port.
 
 @section yarp_read yarp read
 
