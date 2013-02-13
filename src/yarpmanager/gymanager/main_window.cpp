@@ -1286,7 +1286,7 @@ void MainWindow::onMenuHelpAbout()
     dialog.set_program_name("YARP Manager");
 #endif
 
-    dialog.set_version("1.1");
+    dialog.set_version("1.2");
     dialog.set_copyright(
             "2011 (C) Robotics, Brain and Cognitive Sciences\n"
             "Italian Institute of Technology (IIT)");
