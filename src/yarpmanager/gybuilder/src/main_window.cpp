@@ -1141,7 +1141,21 @@ void MainWindow::onMenuFileOpen()
         {
             syncApplicationList();
         }
+        
         reportErrors();
+        //also update manager for open applications
+        for(int i=0; i<m_mainTab.get_n_pages(); i++)
+        {
+            ApplicationWindow* appWnd =
+                    dynamic_cast<ApplicationWindow*>( m_mainTab.get_nth_page(i));
+            if(appWnd)
+            {
+                appWnd->manager.addApplication(fname.c_str());
+                appWnd->manager.addResource(fname.c_str());
+                appWnd->manager.addModule(fname.c_str());
+            }
+        }
+        
     }
 
 }
@@ -1234,6 +1248,18 @@ void MainWindow::onMenuFileImport()
             syncApplicationList();
 
         reportErrors();
+        //also update manager for open applications
+        for(int i=0; i<m_mainTab.get_n_pages(); i++)
+        {
+            ApplicationWindow* appWnd =
+                    dynamic_cast<ApplicationWindow*>( m_mainTab.get_nth_page(i));
+            if(appWnd)
+            {
+                appWnd->manager.addApplications(fname.c_str());
+                appWnd->manager.addResources(fname.c_str());
+                appWnd->manager.addModules(fname.c_str());
+            }
+        }
     }
 
 }

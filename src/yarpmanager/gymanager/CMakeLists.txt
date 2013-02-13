@@ -44,6 +44,8 @@ if(CXX_HAS_WNO_MISMATCHED_TAGS)
                                 PROPERTIES COMPILE_FLAGS "-Wno-mismatched-tags")
 endif(CXX_HAS_WNO_MISMATCHED_TAGS)
 
+add_definitions(-Wno-trigraphs)
+
 add_executable(gyarpmanager ${folder_source} ${folder_header})
 target_link_libraries(gyarpmanager YARP_init YARP_OS YARP_manager)
 
