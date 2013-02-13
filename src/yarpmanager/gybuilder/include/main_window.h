@@ -21,6 +21,8 @@
 
 #include "message_list.h"
 #include "application_list.h"
+#include "module_preview_window.h"
+
 
 class MainWindow : public Gtk::Window
 {
@@ -39,6 +41,8 @@ public:
 public:
     MessagesList* m_refMessageList;
     ApplicationList* m_refApplicationList;
+    ModulePreviewWindow* m_refModPreview;
+
     std::list<Gtk::TargetEntry> dragTargets;  
     Glib::RefPtr<Gtk::UIManager> m_refUIManager;
     Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
@@ -87,6 +91,7 @@ protected:
     void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
                 Gtk::TreeViewColumn* column);
     void onAppListButtonPressed(GdkEventButton* event);
+    void onAppListCursorChanged();
 
     void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);   
     bool onDeleteEvent(GdkEventAny* event);

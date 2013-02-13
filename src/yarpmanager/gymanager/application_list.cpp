@@ -57,7 +57,7 @@ ApplicationList::ApplicationList()
     m_appRow = *(m_refTreeModel->append());
     m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_appRow[m_appColumns.m_col_name] = "Applications";
-    m_appRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+    m_appRow.set_value(0, Gdk::Pixbuf::create_from_data(folderapp_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -68,7 +68,7 @@ ApplicationList::ApplicationList()
     m_modRow = *(m_refTreeModel->append());
     m_modRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_modRow[m_appColumns.m_col_name] = "Modules";
-    m_modRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+    m_modRow.set_value(0, Gdk::Pixbuf::create_from_data(foldermod_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -79,7 +79,7 @@ ApplicationList::ApplicationList()
     m_resRow = *(m_refTreeModel->append());
     m_resRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_resRow[m_appColumns.m_col_name] = "Resources";
-    m_resRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+    m_resRow.set_value(0, Gdk::Pixbuf::create_from_data(folderres_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,

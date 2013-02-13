@@ -100,7 +100,8 @@ private:
     int requestServer(yarp::os::Property& config);
     int SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target, 
                 yarp::os::Bottle& resp, float fTimeout=5.0);
-
+    
+    string __trace_message;
 };
  
 //}

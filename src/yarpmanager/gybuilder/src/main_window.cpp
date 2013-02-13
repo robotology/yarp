@@ -68,8 +68,9 @@ MainWindow::MainWindow( yarp::os::Property &config)
     //set_border_width(3);
     set_default_size(WND_DEF_WIDTH, WND_DEF_HEIGHT);
 
-    m_refMessageList = new MessagesList(this);
+    m_refMessageList = new MessagesList(this);   
     m_refMessageList->enableTimeStamp();
+    m_refModPreview = new ModulePreviewWindow(this);
 
     m_refApplicationList = new ApplicationList(this);
 
@@ -160,6 +161,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
 MainWindow::~MainWindow()
 {
     delete m_refMessageList;
+    delete m_refModPreview;
     delete m_refApplicationList;
 #if (GLIBMM_MAJOR_VERSION == 2 && GLIBMM_MINOR_VERSION >= 16)
     m_factory.reset();
@@ -371,10 +373,12 @@ void MainWindow::createWidgets(void)
 //    m_refCommandBuffer->set_text("<<Yellow notes>>\n");
 //    m_commandView.set_buffer(m_refCommandBuffer);
 
-    //m_bottomTab.set_tab_pos(Gtk::POS_BOTTOM);
-    m_bottomTab.set_show_tabs(false);
+    m_bottomTab.set_tab_pos(Gtk::POS_BOTTOM);
+    //m_bottomTab.set_show_tabs(true);
     m_bottomTab.set_border_width(0);
+    //m_bottomTab.append_page(*m_refModPreview, "Module Preview");
     m_bottomTab.append_page(*m_refMessageList, "Messages");
+
 //    m_bottomTab.append_page(m_commandView, "Notes");
 
     //m_Notebook.signal_switch_page().connect(sigc::mem_fun(*this,
@@ -408,6 +412,9 @@ void MainWindow::setupSignals(void)
 
     m_refApplicationList->getTreeView()->signal_button_press_event().connect_notify(sigc::mem_fun(*this,
             &MainWindow::onAppListButtonPressed) );
+
+    m_refApplicationList->getTreeView()->signal_cursor_changed().connect_notify(sigc::mem_fun(*this,
+            &MainWindow::onAppListCursorChanged) );
 
     m_mainTab.signal_switch_page().connect(sigc::mem_fun(*this,
             &MainWindow::onNotebookSwitchPage) );
@@ -1520,7 +1527,13 @@ void MainWindow::onMenuHelpAbout()
     dialog.set_website("http://eris.liralab.it/yarp");
     std::vector<Glib::ustring> authors;
     authors.push_back("Ali Paikan <ali.paikan@iit.it>");
+    authors.push_back("Elena Ceseracciu <elena.ceseracciu@iit.it>");
     dialog.set_authors(authors);
+
+    std::vector<Glib::ustring> artists;
+    artists.push_back("Alessandro Roncone <Alessandro.Roncone@iit.it>");
+    dialog.set_artists(artists);
+
     dialog.set_logo(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
@@ -1869,6 +1882,10 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 }
 
 
+void MainWindow::onAppListCursorChanged()
+{
+}
+
 void MainWindow::manageApplication(const char* szName)
 {
     Glib::ustring name = szName;
@@ -1952,6 +1969,7 @@ void MainWindow::manageApplication(const char* szName)
 
 void MainWindow::manageResource(const char* szName)
 {
+    
     Glib::ustring name = szName;
     int page_num = -1;
     for(int i=0; i<m_mainTab.get_n_pages(); i++)

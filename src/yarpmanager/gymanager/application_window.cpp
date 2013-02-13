@@ -124,6 +124,14 @@ void ApplicationWindow::createWidgets(void)
                                 nores_ico.height,
                                 nores_ico.bytes_per_pixel*nores_ico.width);
 
+    m_refPixUnknown = Gdk::Pixbuf::create_from_data(res_comp_unknown_ico.pixel_data, 
+                                Gdk::COLORSPACE_RGB,
+                                true,
+                                8,
+                                res_comp_unknown_ico.width,
+                                res_comp_unknown_ico.height,
+                                res_comp_unknown_ico.bytes_per_pixel*res_comp_unknown_ico.width);
+
     m_refPixComputer = Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
                                 Gdk::COLORSPACE_RGB,
                                 true,
@@ -131,6 +139,37 @@ void ApplicationWindow::createWidgets(void)
                                 computer_ico.width,
                                 computer_ico.height,
                                 computer_ico.bytes_per_pixel*computer_ico.width);
+
+    m_refPixPort = Gdk::Pixbuf::create_from_data(port_ico.pixel_data, 
+                                Gdk::COLORSPACE_RGB,
+                                true,
+                                8,
+                                port_ico.width,
+                                port_ico.height,
+                                port_ico.bytes_per_pixel*port_ico.width);
+
+    m_refPixPortAvaibable = Gdk::Pixbuf::create_from_data(port_avail_ico.pixel_data, 
+                                Gdk::COLORSPACE_RGB,
+                                true,
+                                8,
+                                port_avail_ico.width,
+                                port_avail_ico.height,
+                                port_avail_ico.bytes_per_pixel*port_avail_ico.width);
+
+    m_refPixPortUnAvailable = Gdk::Pixbuf::create_from_data(port_unavail_ico.pixel_data, 
+                                Gdk::COLORSPACE_RGB,
+                                true,
+                                8,
+                                port_unavail_ico.width,
+                                port_unavail_ico.height,
+                                port_unavail_ico.bytes_per_pixel*port_unavail_ico.width);
+    m_refPixPortUnknown = Gdk::Pixbuf::create_from_data(port_unknown_ico.pixel_data, 
+                                Gdk::COLORSPACE_RGB,
+                                true,
+                                8,
+                                port_unknown_ico.width,
+                                port_unknown_ico.height,
+                                port_unknown_ico.bytes_per_pixel*port_unknown_ico.width);
 
     //Add the Model’s column to the Module View’s columns:  
     Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Module"));
@@ -504,7 +543,16 @@ void ApplicationWindow::updateApplicationWindow(void)
     {
         m_resRow = *(m_refTreeResModel->append());
         m_resRow[m_resColumns.m_col_id] = id++;
-        m_resRow.set_value(0, m_refPixUnAvailable);
+        if(dynamic_cast<Computer*>(*itrS))
+        {
+            m_resRow.set_value(0, m_refPixUnknown);
+            m_resRow[m_resColumns.m_col_type] = "computer";
+        }            
+        else if(dynamic_cast<ResYarpPort*>(*itrS))
+        {
+            m_resRow.set_value(0, m_refPixPortUnknown);
+            m_resRow[m_resColumns.m_col_type] = "port";
+        }            
         m_resRow[m_resColumns.m_col_res] = (*itrS)->getName();
         m_resRow[m_resColumns.m_col_status] = "unknown";
         m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
@@ -834,6 +882,7 @@ bool ApplicationWindow::onRun(void)
     setCellsEditable(); 
     manager.safeRun(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
+    m_refTreeModSelection->unselect_all();
     return true;    
 }
 
@@ -860,6 +909,7 @@ bool ApplicationWindow::onStop(void)
     }
     manager.safeStop(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
+    m_refTreeModSelection->unselect_all();
     return true;    
 }
 
@@ -887,6 +937,7 @@ bool ApplicationWindow::onKill(void)
     }
     manager.safeKill(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
+    m_refTreeModSelection->unselect_all();
     return true;    
 }
 
@@ -922,6 +973,7 @@ bool ApplicationWindow::onConnect(void)
     setCellsEditable();
     manager.safeConnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
+    m_refTreeConSelection->unselect_all();
     return true;    
 }
 
@@ -948,6 +1000,7 @@ bool ApplicationWindow::onDisconnect(void)
     }
     manager.safeDisconnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
+    m_refTreeConSelection->unselect_all();
     return true;    
 }
 
@@ -1008,6 +1061,11 @@ bool ApplicationWindow::onRefresh(void)
                         m_ConnectionIDs, 
                         m_ResourceIDs);
     yarp::os::Time::delay(0.1);
+
+    m_refTreeModSelection->unselect_all();
+    m_refTreeConSelection->unselect_all();
+    m_refTreeResSelection->unselect_all();
+
     return true;    
 
 }
@@ -1284,7 +1342,10 @@ void ApplicationWindow::onResAvailable(int which)
     {
         row[m_resColumns.m_col_status] = "available";
         row[m_resColumns.m_col_color] = Gdk::Color("#008C00");
-        row.set_value(0, m_refPixAvailable);
+        if(row[m_resColumns.m_col_type] == Glib::ustring("computer"))
+            row.set_value(0, m_refPixAvailable);
+        else
+            row.set_value(0, m_refPixPortAvaibable);
     }
     setCellsEditable();
     reportErrors();
@@ -1299,7 +1360,10 @@ void ApplicationWindow::onResUnAvailable(int which)
     {
         row[m_resColumns.m_col_status] = "unavailable";
         row[m_resColumns.m_col_color] = Gdk::Color("#BF0303");
-        row.set_value(0, m_refPixUnAvailable);
+        if(row[m_resColumns.m_col_type] == Glib::ustring("computer"))
+            row.set_value(0, m_refPixUnAvailable);
+        else
+            row.set_value(0, m_refPixPortUnAvailable);
     }
     setCellsEditable();
     reportErrors();

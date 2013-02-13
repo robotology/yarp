@@ -381,6 +381,9 @@ void MainWindow::setupStocks(void)
     Gtk::StockID procID = Gtk::StockID("YPROCESSOR");
     Gtk::StockID importID = Gtk::StockID("YIMPORT");
     Gtk::StockID selallID = Gtk::StockID("YSELECTALL");
+    Gtk::StockID connectID = Gtk::StockID("YCONNECT");
+    Gtk::StockID disconnectID = Gtk::StockID("YDISCONNECT");
+    Gtk::StockID refreshID = Gtk::StockID("YREFRESH");
 
     Gtk::StockItem killStock(killID, "YKILL");
     Gtk::StockItem stopStock(killID, "YSTOP");
@@ -388,6 +391,9 @@ void MainWindow::setupStocks(void)
     Gtk::StockItem procStock(procID, "YPROCESSOR");
     Gtk::StockItem importStock(importID, "YIMPORT");
     Gtk::StockItem selallStock(selallID, "YSELECTALL");
+    Gtk::StockItem connectStock(connectID, "YCONNECT");
+    Gtk::StockItem disconnectStock(disconnectID, "YDISCONNECT");
+    Gtk::StockItem refreshStock(refreshID, "YREFRESH");
 
     Gtk::Stock::add(killStock);
     Gtk::Stock::add(stopStock);
@@ -395,6 +401,9 @@ void MainWindow::setupStocks(void)
     Gtk::Stock::add(procStock);
     Gtk::Stock::add(importStock);
     Gtk::Stock::add(selallStock);
+    Gtk::Stock::add(connectStock);
+    Gtk::Stock::add(disconnectStock);
+    Gtk::Stock::add(refreshStock);
 
     Gtk::IconSet killIcon(Gdk::Pixbuf::create_from_data(kill_ico.pixel_data, 
                         Gdk::COLORSPACE_RGB,
@@ -420,13 +429,13 @@ void MainWindow::setupStocks(void)
                         run_ico.height,
                         run_ico.bytes_per_pixel*run_ico.width));
 
-    Gtk::IconSet procIcon(Gdk::Pixbuf::create_from_data(processor_ico.pixel_data, 
+    Gtk::IconSet procIcon(Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data, 
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
-                        processor_ico.width,
-                        processor_ico.height,
-                        processor_ico.bytes_per_pixel*processor_ico.width));
+                        yesres_ico.width,
+                        yesres_ico.height,
+                        yesres_ico.bytes_per_pixel*yesres_ico.width));
 
     Gtk::IconSet importIcon(Gdk::Pixbuf::create_from_data(import_ico.pixel_data, 
                         Gdk::COLORSPACE_RGB,
@@ -444,12 +453,40 @@ void MainWindow::setupStocks(void)
                         selectall_ico.height,
                         selectall_ico.bytes_per_pixel*selectall_ico.width));
 
+    Gtk::IconSet connectIcon(Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
+                        Gdk::COLORSPACE_RGB,
+                        true,
+                        8,
+                        connected_ico.width,
+                        connected_ico.height,
+                        connected_ico.bytes_per_pixel*connected_ico.width));
+
+    Gtk::IconSet disconnectIcon(Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
+                        Gdk::COLORSPACE_RGB,
+                        true,
+                        8,
+                        disconnected_ico.width,
+                        disconnected_ico.height,
+                        disconnected_ico.bytes_per_pixel*disconnected_ico.width));
+
+    Gtk::IconSet refreshIcon(Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
+                        Gdk::COLORSPACE_RGB,
+                        true,
+                        8,
+                        progress_ico.width,
+                        progress_ico.height,
+                        progress_ico.bytes_per_pixel*progress_ico.width));
+
+
     m_factory->add(killID, killIcon);
     m_factory->add(stopID, stopIcon);
     m_factory->add(runID, runIcon);
     m_factory->add(procID, procIcon);
     m_factory->add(importID, importIcon);
     m_factory->add(selallID, selallIcon);
+    m_factory->add(connectID, connectIcon);
+    m_factory->add(disconnectID, disconnectIcon);
+    m_factory->add(refreshID, refreshIcon);
 
 }
 
@@ -504,11 +541,11 @@ void MainWindow::setupActions(void)
                             sigc::mem_fun(*this, &MainWindow::onMenuManageStop) );
     m_refActionGroup->add( Gtk::Action::create("ManageKill", Gtk::StockID("YKILL"),"_Kill", "Kill Application"),
                             sigc::mem_fun(*this, &MainWindow::onMenuManageKill) );
-    m_refActionGroup->add( Gtk::Action::create("ManageConnect", Gtk::Stock::CONNECT, "_Connect", "Connect links"),
+    m_refActionGroup->add( Gtk::Action::create("ManageConnect", Gtk::StockID("YCONNECT"), "_Connect", "Connect links"),
                             sigc::mem_fun(*this, &MainWindow::onMenuManageConnect) );
-    m_refActionGroup->add( Gtk::Action::create("ManageDisconnect", Gtk::Stock::DISCONNECT, "_Disconnect", "Disconnect links"),
+    m_refActionGroup->add( Gtk::Action::create("ManageDisconnect", Gtk::StockID("YDISCONNECT"), "_Disconnect", "Disconnect links"),
                             sigc::mem_fun(*this, &MainWindow::onMenuManageDisconnect) );
-    m_refActionGroup->add( Gtk::Action::create("ManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Status"),
+    m_refActionGroup->add( Gtk::Action::create("ManageRefresh", Gtk::StockID("YREFRESH"), "Re_fresh Status", "Refresh Status"),
                             sigc::mem_fun(*this, &MainWindow::onMenuManageRefresh) );
 
     //Help menu:
@@ -1257,7 +1294,14 @@ void MainWindow::onMenuHelpAbout()
     dialog.set_website("http://wiki.icub.org/yarp");
     std::vector<Glib::ustring> authors;
     authors.push_back("Ali Paikan <ali.paikan@iit.it>");
+    authors.push_back("Elena Ceseracciu <elena.ceseracciu@iit.it>");
     dialog.set_authors(authors);
+
+    std::vector<Glib::ustring> artists;
+    artists.push_back("Alessandro Roncone <Alessandro.Roncone@iit.it>");
+    dialog.set_artists(artists);
+
+
     dialog.set_logo(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data, 
                         Gdk::COLORSPACE_RGB,
                         true,

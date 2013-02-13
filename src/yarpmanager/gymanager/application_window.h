@@ -99,6 +99,7 @@ public:
         add(m_col_id); 
         add(m_col_status);
         add(m_col_color);
+        add(m_col_type);
     }
 
     Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
@@ -106,6 +107,7 @@ public:
     Gtk::TreeModelColumn<Glib::ustring> m_col_res;
     Gtk::TreeModelColumn<Glib::ustring> m_col_status;
     Gtk::TreeModelColumn<Gdk::Color> m_col_color;
+    Gtk::TreeModelColumn<Glib::ustring> m_col_type;
 };
 
 
@@ -289,6 +291,11 @@ private:
     Glib::RefPtr<Gdk::Pixbuf> m_refPixAvailable;
     Glib::RefPtr<Gdk::Pixbuf> m_refPixUnAvailable;
     Glib::RefPtr<Gdk::Pixbuf> m_refPixComputer;
+    Glib::RefPtr<Gdk::Pixbuf> m_refPixUnknown;
+    Glib::RefPtr<Gdk::Pixbuf> m_refPixPort;
+    Glib::RefPtr<Gdk::Pixbuf> m_refPixPortAvaibable;
+    Glib::RefPtr<Gdk::Pixbuf> m_refPixPortUnAvailable;
+    Glib::RefPtr<Gdk::Pixbuf> m_refPixPortUnknown;
 
     std::map<int, StdoutWindow*> m_MapstdWnds;
 

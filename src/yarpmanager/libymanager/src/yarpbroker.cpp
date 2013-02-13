@@ -33,7 +33,7 @@ const char* yarprun_err_msg[] = { " (Ok) ",
                                   " (Remote host does not respond) ",
                                   " (Remote host does no exist) ",
                                   " (Timeout while connecting to the remote host) ",
-                                  " (Blocked in parameter's semaphor) ",
+                                  " (Blocked in broker semaphor) ",
                                   " (Undefined message) " };
 
 using namespace yarp::os;
@@ -74,8 +74,10 @@ bool YarpBroker::init(void)
     bOnlyConnector = true;
 
     semParam.wait();
+    __trace_message = "(init) opening port ...";
     port.setTimeout(CONNECTION_TIMEOUT);
     port.open("...");
+    __trace_message.clear();
     semParam.post();
 
     return true;
@@ -142,23 +144,28 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
         if(((*itr) == ' ') || ((*itr) == '/') ) 
             (*itr) = ':';
 
+   __trace_message = "(init) cheking yarp network"; 
     if(!NetworkBase::checkNetwork(5.0))
     {
         strError = "Yarp network server is not up.";
+        __trace_message.clear();
         semParam.post();
         return false;
     }
-    
+    __trace_message = string("(init) checking existence of ") + strHost;
     if(!exists(strHost.c_str()))
     {
         strError = szhost;
         strError += " does not exist. check yarprun is running as server.";
+        __trace_message.clear();
         semParam.post();
         return false;       
     }
 
     port.setTimeout(CONNECTION_TIMEOUT);
+    __trace_message = "(init) opening port ...";
     port.open("...");
+    __trace_message.clear();
 
     bInitialized = true;
     semParam.post();
@@ -180,6 +187,8 @@ bool YarpBroker::start()
         strError += " to run ";
         strError += strCmd;
         strError += yarprun_err_msg[ret];
+        if(ret == YARPRUN_SEMAPHORE_PARAM)
+            strError += string(" due to " + __trace_message);
         return false;
     }
 
@@ -229,6 +238,8 @@ bool YarpBroker::stop()
         strError += " to stop ";
         strError += strCmd;
         strError += yarprun_err_msg[ret];
+        if(ret == YARPRUN_SEMAPHORE_PARAM)
+            strError += string(" due to " + __trace_message);
         return false;
     }
 
@@ -275,6 +286,8 @@ bool YarpBroker::kill()
         strError += " to kill ";
         strError += strCmd;
         strError += yarprun_err_msg[ret];
+        if(ret == YARPRUN_SEMAPHORE_PARAM)
+            strError += string(" due to " + __trace_message);
         return false;
     }
 
@@ -323,6 +336,8 @@ int YarpBroker::running(void)
         strError += " to check for status of ";
         strError += strCmd;
         strError += yarprun_err_msg[ret];
+        if(ret == YARPRUN_SEMAPHORE_PARAM)
+            strError += string(" due to " + __trace_message);
         return -1;
     }
     return ((response.get(0).asString() == "running")?1:0);
@@ -503,24 +518,29 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
     grp.addString("sysinfo");
     msg.addList() = grp;
 
+    __trace_message = "(getSystemInfo) connecting to " + string(port.getName().c_str());
     bool connected = yarp::os::NetworkBase::connect(port.getName(), server);
     if(!connected)
     {
         strError = string("Cannot connect to ") + string(server);
+        __trace_message.clear();
         semParam.post();
         return false;
     }
 
+    __trace_message = "(getSystemInfo) writing to " + string(port.getName().c_str());
     bool ret = port.write(msg, info);
+    __trace_message = "(getSystemInfo) disconnecting from " + string(port.getName().c_str());
     NetworkBase::disconnect(port.getName().c_str(), server);
 
     if(!ret)
     {
         strError = string(server) + string(" does not respond");
+        __trace_message.clear();
         semParam.post();
         return false;
     }
-    
+    __trace_message.clear();
     semParam.post();
     return true;
 }
@@ -594,6 +614,8 @@ bool YarpBroker::getAllProcesses(const char* server,
     strError += server;
     strError += " to give the list of running processes.";
     strError += yarprun_err_msg[ret];
+    if(ret == YARPRUN_SEMAPHORE_PARAM)
+        strError += string(" due to " + __trace_message);
     return false;
 }
 
@@ -677,6 +699,7 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
 
     port.setTimeout(fTimeout);
     bool ret;
+    __trace_message = "(SendMsg) connecting to " + string(target.c_str());
     for(int i=0; i<10; i++)
     {
         ret = NetworkBase::connect(port.getName().c_str(), target.c_str());
@@ -686,12 +709,16 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
 
     if(!ret)
     { 
+        __trace_message.clear();
         semParam.post();
         return YARPRUN_CONNECTION_TIMOUT;
     }
-      
+    
+    __trace_message = "(SendMsg) writing to " + string(target.c_str());
     ret = port.write(msg, response);
+    __trace_message = "(SendMsg) disconnecting from " + string(target.c_str());
     NetworkBase::disconnect(port.getName().c_str(),target.c_str());
+    __trace_message.clear();
     semParam.post();
 
     if(!response.size() || !ret)    
