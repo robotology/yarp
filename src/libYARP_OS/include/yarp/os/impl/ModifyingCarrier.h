@@ -33,32 +33,12 @@ public:
 
     virtual String getName() = 0;
 
-    virtual bool checkHeader(const yarp::os::Bytes& header) {
-        return false;
-    }
-
-    virtual void getHeader(const yarp::os::Bytes& header) {
-        if (header.length()==8) {
-            String target = "ohbehave";
-            for (int i=0; i<8; i++) {
-                header.get()[i] = target[i];
-            }
-        }
-    }
-
-    virtual bool respondToHeader(Protocol& proto) {
-        return false;
-    }
-
-    virtual bool modifiesIncomingData() {
-        return true;
-    }
-
-    virtual void setCarrierParams(const yarp::os::Property& params) {
-    }
-
-    virtual void getCarrierParams(yarp::os::Property& params) {
-    }
+    virtual bool checkHeader(const yarp::os::Bytes &header);
+    virtual void getHeader(const yarp::os::Bytes &header);
+    virtual bool respondToHeader(Protocol& proto);
+    virtual bool modifiesIncomingData();
+    virtual void setCarrierParams(const yarp::os::Property& params);
+    virtual void getCarrierParams(yarp::os::Property& params);
 
     // only remains to implement modifyIncomingData()
 };

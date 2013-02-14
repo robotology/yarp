@@ -25,6 +25,7 @@
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/YarpPlugin.h>
 
 using namespace yarp::os::impl;
@@ -179,15 +180,15 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
             }
         }
         txt += "]";
-        
+
         YARP_SPRINTF1(Logger::get(),
                       error,
-                      "Could not find carrier for a connection starting with: %s", 
+                      "Could not find carrier for a connection starting with: %s",
                       txt.c_str());
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,
-                      "Could not find carrier \"%s\"", 
+                      "Could not find carrier \"%s\"",
                       (name!=NULL)?name->c_str():"[bytes]");;
     }
     //throw IOException("Could not find carrier");
@@ -205,7 +206,7 @@ Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
 
 
 Face *Carriers::listen(const Address& address) {
-    // for now, only TcpFace exists - otherwise would need to manage 
+    // for now, only TcpFace exists - otherwise would need to manage
     // multiple possibilities
     //YARP_DEBUG(carriersLog,"listen called");
     Face *face = NULL;

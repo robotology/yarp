@@ -26,60 +26,21 @@ namespace yarp {
 class yarp::os::impl::TcpCarrier : public AbstractCarrier {
 public:
 
-    TcpCarrier(bool requireAckFlag = true) {
-        this->requireAckFlag = requireAckFlag;
-    }
+    TcpCarrier(bool requireAckFlag = true);
 
-    virtual Carrier *create() {
-        return new TcpCarrier(requireAckFlag);
-    }
+    virtual Carrier *create();
 
-    virtual String getName() {
-        return requireAckFlag?"tcp":"fast_tcp";
-    }
+    virtual String getName();
 
-    int getSpecifierCode() {
-        return 3;
-    }
+    virtual int getSpecifierCode();
 
-    virtual bool checkHeader(const yarp::os::Bytes& header) {
-        int spec = getSpecifier(header);
-        if (spec%16 == getSpecifierCode()) {
-            if (((spec&128)!=0) == requireAckFlag) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    virtual void getHeader(const yarp::os::Bytes& header) {
-        createStandardHeader(getSpecifierCode()+(requireAckFlag?128:0), header);
-    }
-
-    virtual void setParameters(const yarp::os::Bytes& header) {
-        //int specifier = getSpecifier(header);
-        //requireAckFlag = (specifier&128)!=0;
-        // Now prefilter by ack flag
-    }
-
-    virtual bool requireAck() {
-        return requireAckFlag;
-    }
-
-    virtual bool isConnectionless() {
-        return false;
-    }
-
-    virtual bool respondToHeader(Protocol& proto) {
-        int cport = proto.getStreams().getLocalAddress().getPort();
-        proto.writeYarpInt(cport);
-        return proto.checkStreams();
-    }
-
-    virtual bool expectReplyToHeader(Protocol& proto) {
-        proto.readYarpInt(); // ignore result
-        return proto.checkStreams();
-    }
+    virtual bool checkHeader(const yarp::os::Bytes& header);
+    virtual void getHeader(const yarp::os::Bytes& header);
+    virtual void setParameters(const yarp::os::Bytes& header);
+    virtual bool requireAck();
+    virtual bool isConnectionless();
+    virtual bool respondToHeader(Protocol& proto);
+    virtual bool expectReplyToHeader(Protocol& proto);
 
 private:
     bool requireAckFlag;

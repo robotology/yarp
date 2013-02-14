@@ -8,15 +8,15 @@
  */
 
 #include <yarp/os/impl/HttpCarrier.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/DummyConnector.h>
 
-using namespace yarp::os::impl;
-using namespace yarp::os;
 
-static String quoteFree(const String& src) {
-    String result = "";
+static yarp::os::impl::String quoteFree(const yarp::os::impl::String &src) {
+    yarp::os::impl::String result = "";
     for (unsigned int i=0; i<src.length(); i++) {
         char ch = src[i];
         if (ch=='"') {
@@ -28,15 +28,18 @@ static String quoteFree(const String& src) {
     return result;
 }
 
-static bool asJson(ConstString& accum, Bottle *bot, String *hint = NULL);
+static bool asJson(yarp::os::ConstString  &accum,
+                   yarp::os::Bottle *bot,
+                   yarp::os::impl::String *hint = NULL);
 
-static bool asJson(ConstString& accum, Value& v) {
+static bool asJson(yarp::os::ConstString &accum,
+                   yarp::os::Value &v) {
     if (v.isInt()||v.isDouble()) {
         accum += v.toString();
         return true;
     }
     if (v.isString()||v.isVocab()) {
-        ConstString x = v.toString();
+        yarp::os::ConstString x = v.toString();
         accum += "\"";
         for (int j=0; j<(int)x.length(); j++) {
             char ch = x[j];
@@ -59,19 +62,21 @@ static bool asJson(ConstString& accum, Value& v) {
         accum += "\"";
     }
     if (v.isList()) {
-        Bottle *bot = v.asList();
+        yarp::os::Bottle *bot = v.asList();
         return asJson(accum,bot);
     }
     return false;
 }
 
-static bool asJson(ConstString& accum, Bottle *bot, String *hint) {
+static bool asJson(yarp::os::ConstString& accum,
+                   yarp::os::Bottle *bot,
+                   yarp::os::impl::String *hint) {
     if (bot==NULL) return false;
     bool struc = false;
     bool struc_set = false;
     int offset = 0;
     int offset2 = 0;
-    ConstString tag = bot->get(0).asString();
+    yarp::os::ConstString tag = bot->get(0).asString();
     if (hint) {
         if ((*hint)=="list") {
             struc = false;
@@ -80,7 +85,7 @@ static bool asJson(ConstString& accum, Bottle *bot, String *hint) {
             struc = true;
             struc_set = true;
         }
-    } 
+    }
     if (!struc_set) {
         if (tag=="list") {
             struc = false;
@@ -92,14 +97,14 @@ static bool asJson(ConstString& accum, Bottle *bot, String *hint) {
             // auto-detect
             struc = (bot->size()>1);
             if (bot->size()>0) {
-                Value& v0 = bot->get(0);
+                yarp::os::Value& v0 = bot->get(0);
                 if (!v0.isList()) {
                     offset2 = 1;
                     offset = 1;
                 }
             }
             for (int i=offset2; i<bot->size(); i++) {
-                Value& vi = bot->get(i);
+                yarp::os::Value& vi = bot->get(i);
                 if (!vi.isList()) {
                     struc = false;
                     break;
@@ -121,7 +126,7 @@ static bool asJson(ConstString& accum, Bottle *bot, String *hint) {
             need_comma = true;
         }
         for (int i=offset; i<bot->size(); i++) {
-            Bottle *boti = bot->get(i).asList();
+            yarp::os::Bottle *boti = bot->get(i).asList();
             if (boti==NULL) continue;
             if (need_comma) {
                 accum += ", ";
@@ -133,7 +138,7 @@ static bool asJson(ConstString& accum, Bottle *bot, String *hint) {
         }
         accum += "}";
         return true;
-    } 
+    }
 
     // [ ... ]
     accum += "[";
@@ -148,106 +153,11 @@ static bool asJson(ConstString& accum, Bottle *bot, String *hint) {
     return true;
 }
 
-void HttpTwoWayStream::apply(char ch) {
-    if (ch=='\r') { return; }
-    if (ch == '\n') {
-        proc = "";
-        Address addr = NameClient::extractAddress(part);
-        if (addr.isValid()) {
-            if (addr.getCarrierName()=="tcp"&&
-                (YARP_STRSTR(addr.getRegName(),"/quit")==String::npos)) {
-                proc += "<a href=\"http://";
-                proc += addr.getName();
-                proc += ":";
-                proc += NetType::toString(addr.getPort());
-                proc += "\">";
-                proc += addr.getRegName();
-                proc += "</A> "; 
-                size_t len = addr.getRegName().length();
-                size_t target = 30;
-                if (len<target) {
-                    for (size_t i=0; i<target-len; i++) {
-                        proc += " ";
-                    }
-                }
-                proc += "(";
-                proc += addr.toString().c_str();
-                proc += ")";
-                proc += "\n";
-            } else {
-                // Don't show non tcp connections
-                //proc += part;
-                //proc += "\n";
-            }
-        } else {
-            if ((part[0]=='\"'&&part[1]=='[')||(part[0]=='+')) {
-                // translate this to a form
-                if (part[0]=='+') { part[0] = ' '; }
-                String org = part;
-                part = "<p><form method=post action='/form'>";
-				size_t i=0;
-                for (i=0; i<org.length(); i++) {
-                    if (org[i]=='"') {
-                        org[i] = ' ';
-                    }
-                }
-                part += "<input type=hidden name=data value=\"";
-                part += org;
-                part += "\">";
-                part += org;
-                org += " ";
-                bool arg = false;
-                String var = "";
-                for (i=0; i<org.length(); i++) {
-                    char ch = org[i];
-                    if (arg) {
-                        if ((ch>='A'&&ch<='Z')||
-                            (ch>='a'&&ch<='z')||
-                            (ch>='0'&&ch<='9')||
-                            (ch=='_')) {
-                            var += ch;
-                        } else {
-                            arg = false;
-                            part += "\n    ";
-                            part += var;
-                            part += " ";
-                            part += "<input type=text name=";
-                            part += var;
-                            part += " size=5 value=\"\">";
-                            var = "";
-                        }
-                    }
-                    if (ch=='$') {
-                        arg = true;
-                    }
-                }
-                part += "<input type=submit value=\"go\">";
-                part += "</form></p>";
-            }
-            proc += part;
-            proc += "\n";
-        }
-        if (data||!filterData) {
-            Bytes tmp((char*)proc.c_str(),proc.length());
-            delegate->getOutputStream().write(tmp);
-            delegate->getOutputStream().flush();
-        }
-        data = false;
-        if (proc[0] == 'd' || proc[0] == 'D') {
-            data = true;
-        }
-        part = "";
-    } else {
-        part += ch;
-    }
-}
 
-
-
-HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
+yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
                                    const char *prefix,
                                    yarp::os::Property& prop) :
-    delegate(delegate) {
+        delegate(delegate) {
 
     data = false;
     filterData = false;
@@ -309,7 +219,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
     from += "<input type=text name=data value=\"";
     from += quoteFree(sData.c_str());
 
-    from += "\"><input type=submit value=\"send data\"></form></p>\n"; 
+    from += "\"><input type=submit value=\"send data\"></form></p>\n";
     from += "<pre>\n";
 
     bool classic = false;
@@ -413,9 +323,275 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
     }
 }
 
+yarp::os::impl::HttpTwoWayStream::~HttpTwoWayStream() {
+    if (delegate!=NULL) {
+        delete delegate;
+        delegate = NULL;
+    }
+}
+
+yarp::os::impl::InputStream& yarp::os::impl::HttpTwoWayStream::getInputStream() {
+    return sis;
+}
+
+yarp::os::impl::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
+    return *this;
+}
+
+const yarp::os::impl::Address& yarp::os::impl::HttpTwoWayStream::getLocalAddress() {
+    return delegate->getLocalAddress();
+}
+
+const yarp::os::impl::Address& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
+    return delegate->getRemoteAddress();
+}
+
+bool yarp::os::impl::HttpTwoWayStream::isOk() {
+    return delegate->isOk();
+}
+
+void yarp::os::impl::HttpTwoWayStream::reset() {
+    delegate->reset();
+}
+
+void yarp::os::impl::HttpTwoWayStream::write(const yarp::os::Bytes& b) { // throws
+    if (chunked) {
+        delegate->getOutputStream().write(b);
+    } else {
+        for (size_t i=0; i<b.length(); i++) {
+            apply(b.get()[i]);
+        }
+    }
+}
+
+void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
+    if (ch=='\r') { return; }
+    if (ch == '\n') {
+        proc = "";
+        Address addr = yarp::os::impl::NameClient::extractAddress(part);
+        if (addr.isValid()) {
+            if (addr.getCarrierName()=="tcp"&&
+                (YARP_STRSTR(addr.getRegName(),"/quit")==String::npos)) {
+                proc += "<a href=\"http://";
+                proc += addr.getName();
+                proc += ":";
+                proc += NetType::toString(addr.getPort());
+                proc += "\">";
+                proc += addr.getRegName();
+                proc += "</A> ";
+                size_t len = addr.getRegName().length();
+                size_t target = 30;
+                if (len<target) {
+                    for (size_t i=0; i<target-len; i++) {
+                        proc += " ";
+                    }
+                }
+                proc += "(";
+                proc += addr.toString().c_str();
+                proc += ")";
+                proc += "\n";
+            } else {
+                // Don't show non tcp connections
+                //proc += part;
+                //proc += "\n";
+            }
+        } else {
+            if ((part[0]=='\"'&&part[1]=='[')||(part[0]=='+')) {
+                // translate this to a form
+                if (part[0]=='+') { part[0] = ' '; }
+                String org = part;
+                part = "<p><form method=post action='/form'>";
+                size_t i=0;
+                for (i=0; i<org.length(); i++) {
+                    if (org[i]=='"') {
+                        org[i] = ' ';
+                    }
+                }
+                part += "<input type=hidden name=data value=\"";
+                part += org;
+                part += "\">";
+                part += org;
+                org += " ";
+                bool arg = false;
+                String var = "";
+                for (i=0; i<org.length(); i++) {
+                    char ch = org[i];
+                    if (arg) {
+                        if ((ch>='A'&&ch<='Z')||
+                            (ch>='a'&&ch<='z')||
+                            (ch>='0'&&ch<='9')||
+                            (ch=='_')) {
+                            var += ch;
+                        } else {
+                            arg = false;
+                            part += "\n    ";
+                            part += var;
+                            part += " ";
+                            part += "<input type=text name=";
+                            part += var;
+                            part += " size=5 value=\"\">";
+                            var = "";
+                        }
+                    }
+                    if (ch=='$') {
+                        arg = true;
+                    }
+                }
+                part += "<input type=submit value=\"go\">";
+                part += "</form></p>";
+            }
+            proc += part;
+            proc += "\n";
+        }
+        if (data||!filterData) {
+            Bytes tmp((char*)proc.c_str(),proc.length());
+            delegate->getOutputStream().write(tmp);
+            delegate->getOutputStream().flush();
+        }
+        data = false;
+        if (proc[0] == 'd' || proc[0] == 'D') {
+            data = true;
+        }
+        part = "";
+    } else {
+        part += ch;
+    }
+}
+
+void yarp::os::impl::HttpTwoWayStream::close() {
+    apply('\n');
+    apply('\n');
+    delegate->close();
+}
+
+void yarp::os::impl::HttpTwoWayStream::beginPacket() {
+    delegate->beginPacket();
+}
+
+void yarp::os::impl::HttpTwoWayStream::endPacket() {
+    delegate->endPacket();
+}
+
+void yarp::os::impl::HttpTwoWayStream::flip() {
+    sis.add("r\n");
+}
+
+void yarp::os::impl::HttpTwoWayStream::finish() {
+    sis.add("q\n");
+}
+
+bool yarp::os::impl::HttpTwoWayStream::useJson() {
+    return format=="json";
+}
+
+yarp::os::impl::String *yarp::os::impl::HttpTwoWayStream::typeHint() {
+    return &outer;
+}
 
 
-bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
+
+
+
+
+
+
+
+
+yarp::os::impl::HttpCarrier::HttpCarrier() :
+        url(""),
+        input(""),
+        urlDone(false),
+        expectPost(false),
+        contentLength(0),
+        stream(0) /*NULL*/ {
+}
+
+yarp::os::impl::Carrier *yarp::os::impl::HttpCarrier::create() {
+    return new HttpCarrier();
+}
+
+yarp::os::impl::String yarp::os::impl::HttpCarrier::getName() {
+    return "http";
+}
+
+bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header, const char *prefix) {
+    if (header.length()==8) {
+        String target = prefix;
+        for (unsigned int i=0; i<target.length(); i++) {
+            if (!(target[i]==header.get()[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header) {
+    bool ok = checkHeader(header,"GET /");
+    if (!ok) {
+        // http carrier accepts POST /form but not general posts
+        // (leave that to xmlrpc carrier)
+        ok = checkHeader(header,"POST /fo");
+    } else {
+        // make sure it isn't a MJPEG stream get
+        ok = !checkHeader(header,"GET /?ac");
+    }
+    return ok;
+}
+
+void yarp::os::impl::HttpCarrier::setParameters(const Bytes& header) {
+    if (header.length()==8) {
+        bool adding = false;
+        for (unsigned int j=0; j<8; j++) {
+            char ch = header.get()[j];
+            if (adding) {
+                if (ch!=' ') {
+                    url += ch;
+                } else {
+                    urlDone = true;
+                    break;
+                }
+            }
+            if (ch=='/') {
+                adding = true;
+            }
+        }
+    }
+}
+
+void yarp::os::impl::HttpCarrier::getHeader(const Bytes& header) {
+    if (header.length()==8) {
+        String target = "GET / HT";
+        for (int i=0; i<8; i++) {
+            header.get()[i] = target[i];
+        }
+    }
+}
+
+bool yarp::os::impl::HttpCarrier::requireAck() {
+    return false;
+}
+
+bool yarp::os::impl::HttpCarrier::isTextMode() {
+    return true;
+}
+
+
+bool yarp::os::impl::HttpCarrier::supportReply() {
+    return false;
+}
+
+bool yarp::os::impl::HttpCarrier::sendHeader(Protocol& proto) {
+    printf("not yet meant to work\n");
+    String target = "GET / HTTP/1.1";
+    Bytes b((char*)target.c_str(),8);
+    proto.os().write(b);
+    return true;
+
+}
+
+bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     proto.setRoute(proto.getRoute().addFromName("web"));
     String remainder = NetType::readLine(proto.is());
     if (!urlDone) {
@@ -504,8 +680,8 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += NetType::toString(me.getPort());
     from += "/r\">read</a>)&nbsp;&nbsp;\n";
 
-    from += "</p>\n"; 
-    from += "<p>\n"; 
+    from += "</p>\n";
+    from += "<p>\n";
     from += "<form method=\"post\" action=\"http://";
     from += me.getName();
     from += ":";
@@ -523,8 +699,43 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     return proto.os().isOk();
 }
 
+bool yarp::os::impl::HttpCarrier::expectReplyToHeader(Protocol& proto) {
+    // expect and ignore CONTENT lines
+    String result = NetType::readLine(proto.is());
+    return true;
+}
 
-bool HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
+
+bool yarp::os::impl::HttpCarrier::sendIndex(Protocol& proto) {
+    // no index
+    return true;
+}
+
+bool yarp::os::impl::HttpCarrier::expectIndex(Protocol& proto) {
+    // no index
+    return true;
+}
+
+bool yarp::os::impl::HttpCarrier::sendAck(Protocol& proto) {
+    // no acknowledgement
+    return true;
+}
+
+bool yarp::os::impl::HttpCarrier::expectAck(Protocol& proto) {
+    // no acknowledgement
+    return true;
+}
+
+bool yarp::os::impl::HttpCarrier::respondToHeader(Protocol& proto) {
+    stream = new HttpTwoWayStream(proto.giveStreams(),
+                                    input.c_str(),
+                                    prefix.c_str(),
+                                    prop);
+    proto.takeStreams(stream);
+    return true;
+}
+
+bool yarp::os::impl::HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {
@@ -564,8 +775,7 @@ bool HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
     return proto.os().isOk();
 }
 
-
-bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {
@@ -577,7 +787,7 @@ bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
     ConstString mime = b.check("mime",Value("text/html")).asString();
 
     ConstString body;
-    
+
     bool using_json = false;
     if (stream!=NULL) {
         if (stream->useJson()) {
@@ -603,7 +813,7 @@ bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
 
         Bytes b2((char*)header.c_str(),header.length());
         proto.os().write(b2);
-        
+
         // chrome etc won't render until enough chars are received.
         for (int i=0; i<N; i++) {
             proto.os().write(' ');
@@ -647,4 +857,3 @@ bool HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
     proto.os().flush();
     return proto.os().isOk();
 }
-
