@@ -33,6 +33,7 @@ namespace yarp {
 class YARP_dev_API yarp::dev::IVirtualAnalogSensor
 {
 public:
+    /*
     enum
     {
         AS_OK=0,
@@ -40,16 +41,16 @@ public:
         AS_OVF=2,
         AS_TIMEOUT=3
     };
-
+    */
     virtual ~IVirtualAnalogSensor(){}
 
     /* Set a vector of torque values for virtual sensor
      * @param vals a vector containing the sensor's last readings.
      * @return AS_OK or return code. 
      **/
-    virtual int configure(yarp::sig::Vector &vals)=0;
-    virtual int setTorque(yarp::sig::Vector &vals)=0;
-    virtual int getChannels(yarp::sig::Vector &vals)=0;
+    //virtual int configure(yarp::os::Searchable &config)=0;
+    virtual bool setTorque(yarp::sig::Vector &torques)=0;
+    //virtual int getChannels()=0;
 };
 
 #endif
