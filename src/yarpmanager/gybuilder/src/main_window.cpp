@@ -2035,6 +2035,7 @@ void MainWindow::manageResource(const char* szName)
 
 void MainWindow::manageModule(const char* szName)
 {
+    /*
     Glib::ustring name = szName;
     int page_num = -1;
     for(int i=0; i<m_mainTab.get_n_pages(); i++)
@@ -2096,6 +2097,7 @@ void MainWindow::manageModule(const char* szName)
     m_refActionGroup->get_action("FileClose")->set_sensitive(true);
     m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
     m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);
+    */
 }
 
 

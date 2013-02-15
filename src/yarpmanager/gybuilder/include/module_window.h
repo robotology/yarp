@@ -24,11 +24,13 @@ public:
         add(m_col_refPix); 
         add(m_col_name); 
         add(m_col_value);
+        add(m_col_width);
     }
 
     Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
     Gtk::TreeModelColumn<Glib::ustring> m_col_name;
     Gtk::TreeModelColumn<Glib::ustring> m_col_value;
+    Gtk::TreeModelColumn<int> m_col_width;
 };
 
 

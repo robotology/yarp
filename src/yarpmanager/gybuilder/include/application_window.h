@@ -98,6 +98,9 @@ public:
     Glib::RefPtr<Goocanvas::ItemModel> getRootModel(void) { return root; }
 
     void onUpdateModuleProperty(Module* module);
+    void onUpdateApplicationProperty(Application* application);
+    void onUpdateConnectionProperty(Glib::RefPtr<ArrowModel> &arrow);
+
     void setModified(void) {m_bModified = true; }
 
 public: 
@@ -115,6 +118,7 @@ protected:
 
     Gtk::VBox m_VBox;
     Gtk::HPaned m_HPaned;
+    Gtk::Notebook m_RightTab;    
 
     Gtk::ScrolledWindow m_ScrollView; 
     Glib::RefPtr<Goocanvas::ItemModel> root;

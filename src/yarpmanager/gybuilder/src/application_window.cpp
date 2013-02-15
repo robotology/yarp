@@ -13,6 +13,7 @@
 #endif
 
 #include "application_window.h"
+#include "module_window.h"
 #include "main_window.h"
 #include "icon_res.h"
 #include "module_model.h"
@@ -143,8 +144,13 @@ void ApplicationWindow::createWidgets(void)
 
     m_ScrollView.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_ScrollView.add(*m_Canvas);
-    
+   
+    m_RightTab.set_border_width(0);
+    m_RightTab.set_show_border(true);
+    m_RightTab.set_scrollable(false);
+
     m_HPaned.add1(m_ScrollView);
+    m_HPaned.add2(m_RightTab);
 
     //m_VPaned.set_position(WND_DEF_HEIGHT - WND_DEF_HEIGHT/3);
     m_HPaned.set_size_request(-1, 300);
@@ -340,19 +346,9 @@ void ApplicationWindow::onDelete(void)
     if(response != Gtk::RESPONSE_YES)
         return;
 
-    // switch to application propoerty window 
-    Glib::RefPtr<Gtk::ToggleAction> act;
-    act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
-            m_pParent->m_refActionGroup->get_action("WindowProperty"));            
-    if(act && act->get_active())
-    {
-        if(m_HPaned.get_child2())
-            m_HPaned.remove(*m_HPaned.get_child2());  
-        appPropertyWindow->update(manager.getKnowledgeBase()->getApplication());
-        m_HPaned.add2(*appPropertyWindow);
-        m_HPaned.show_all();
-    }
-       
+    // switch to application propoerty window    
+    onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
+
     deleteSelectedArrows();
     
     while(countSelected())
@@ -516,9 +512,9 @@ void ApplicationWindow::onMenuWindowProperty(bool active)
             m_HPaned.remove(*m_HPaned.get_child2());
    }     
    else   
-        m_HPaned.add2(*appPropertyWindow);
-
-    m_HPaned.show_all();
+        m_HPaned.add2(m_RightTab);
+   //onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
+   m_HPaned.show_all();
 }
 
 void ApplicationWindow::onViewLabel(bool label)
@@ -647,18 +643,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
     if(event->type == GDK_2BUTTON_PRESS)
     {
         // switch to application propoerty window 
-        Glib::RefPtr<Gtk::ToggleAction> act;
-        act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
-                m_pParent->m_refActionGroup->get_action("WindowProperty"));            
-        if(act && act->get_active())
-        {
-            if(m_HPaned.get_child2())
-                m_HPaned.remove(*m_HPaned.get_child2());  
-            appPropertyWindow->update(manager.getKnowledgeBase()->getApplication());
-            m_HPaned.add2(*appPropertyWindow);
-            m_HPaned.show_all();
-        }
-
+        onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
         if(!(event->state  & GDK_CONTROL_MASK))
         {
            for(int i=0; i<root->get_n_children(); i++)
@@ -794,17 +779,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
                 m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(true);
                 m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(true);
                 // switch to application property
-                Glib::RefPtr<Gtk::ToggleAction> act;
-                act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
-                            m_pParent->m_refActionGroup->get_action("WindowProperty"));            
-                if(act && act->get_active())
-                {
-                    if(m_HPaned.get_child2())
-                        m_HPaned.remove(*m_HPaned.get_child2());  
-                    appPropertyWindow->update(app->getApplication());
-                    m_HPaned.add2(*appPropertyWindow);
-                    m_HPaned.show_all();
-                }    
+                onUpdateApplicationProperty(app->getApplication());
             }
             return app->onItemButtonPressEvent(item, event);
          }
@@ -835,17 +810,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             //m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(true);
 
             // switch to connection propoerty window 
-            Glib::RefPtr<Gtk::ToggleAction> act;
-            act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
-                    m_pParent->m_refActionGroup->get_action("WindowProperty"));            
-            if(act && act->get_active())
-            {
-                if(m_HPaned.get_child2())
-                    m_HPaned.remove(*m_HPaned.get_child2());  
-                conPropertyWindow->update(arrow);
-                m_HPaned.add2(*conPropertyWindow);
-                m_HPaned.show_all();
-            }
+            onUpdateConnectionProperty(arrow);
         }
         else
             return arrow->onItemButtonPressEvent(item, event);
@@ -902,10 +867,6 @@ void ApplicationWindow::setSelected(void)
     if(!m_selector)
         return;
 
-    Glib::RefPtr<Gtk::ToggleAction> act;
-    act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
-            m_pParent->m_refActionGroup->get_action("WindowProperty"));            
-
     //deselect all items
     for(int i=0; i<root->get_n_children(); i++)
     {
@@ -938,14 +899,7 @@ void ApplicationWindow::setSelected(void)
             if(itemCount == 1)
             {
                 // switch to application property
-                if(act && act->get_active())
-                {
-                    if(m_HPaned.get_child2())
-                        m_HPaned.remove(*m_HPaned.get_child2());  
-                    appPropertyWindow->update(app->getApplication());
-                    m_HPaned.add2(*appPropertyWindow);
-                    m_HPaned.show_all();
-                }    
+                onUpdateApplicationProperty(app->getApplication());
             }
         }
  
@@ -957,14 +911,7 @@ void ApplicationWindow::setSelected(void)
             if(itemCount == 1)
             {
                 // switch to module property
-                if(act && act->get_active())
-                {
-                    if(m_HPaned.get_child2())
-                        m_HPaned.remove(*m_HPaned.get_child2());  
-                    modPropertyWindow->update(child->getModule());
-                    m_HPaned.add2(*modPropertyWindow);
-                    m_HPaned.show_all();
-                }
+                onUpdateModuleProperty(child->getModule());
             }
         }
         
@@ -988,14 +935,7 @@ void ApplicationWindow::setSelected(void)
                 if(itemCount == 1)
                 {
                     // switch to connection property
-                    if(act && act->get_active())
-                    {
-                        if(m_HPaned.get_child2())
-                            m_HPaned.remove(*m_HPaned.get_child2());  
-                        conPropertyWindow->update(arrow);
-                        m_HPaned.add2(*conPropertyWindow);
-                        m_HPaned.show_all();
-                    }
+                    onUpdateConnectionProperty(arrow);
                 }
             }
         }
@@ -1012,14 +952,7 @@ void ApplicationWindow::setSelected(void)
     if(itemCount != 1)
     {
         // switch to application property
-        if(act && act->get_active())
-        {
-            if(m_HPaned.get_child2())
-                m_HPaned.remove(*m_HPaned.get_child2());  
-            appPropertyWindow->update(manager.getKnowledgeBase()->getApplication());
-            m_HPaned.add2(*appPropertyWindow);
-            m_HPaned.show_all();
-        }    
+        onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
     }
 
     m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(countSelected()>0);
@@ -1499,14 +1432,7 @@ void ApplicationWindow::updateApplicationWindow(void)
     g_object_set(m_Grid, "height", max_h, NULL);
 
     // switch to application property window
-    Glib::RefPtr<Gtk::ToggleAction> act;
-    act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
-            m_pParent->m_refActionGroup->get_action("WindowProperty"));            
-    if(act && act->get_active())
-        m_HPaned.add2(*appPropertyWindow);
-    appPropertyWindow->update(manager.getKnowledgeBase()->getApplication());
-
-
+    onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
     /*
     // TESTING 
     Application* subApp =  manager.getKnowledgeBase()->getApplication("EyesViewer");
@@ -1781,18 +1707,52 @@ bool ApplicationWindow::onDragMotion(const Glib::RefPtr<Gdk::DragContext>& drag_
 
 void ApplicationWindow::onUpdateModuleProperty(Module* module)
 {
-   
-    if(m_HPaned.get_child2())
-        m_HPaned.remove(*m_HPaned.get_child2());  
-    modPropertyWindow->update(module);  
-    m_HPaned.add2(*modPropertyWindow);
-    m_HPaned.show_all();
-   
-    Glib::RefPtr<Gtk::ToggleAction> act;
-    act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
-            m_pParent->m_refActionGroup->get_action("WindowProperty"));
-    if(act)
-        act->set_active(true);
+    //Glib::RefPtr<Gtk::ToggleAction> act;
+    //act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
+    //        m_pParent->m_refActionGroup->get_action("WindowProperty"));            
+ 
+    // removes two pages if exist
+    ModuleWindow* modWnd =
+        dynamic_cast<ModuleWindow*>(m_RightTab.get_nth_page(1));
+    m_RightTab.remove_page(-1);
+    m_RightTab.remove_page(-1);
+    if(modWnd)
+        delete modWnd;
 
+    modPropertyWindow->update(module);  
+    m_RightTab.append_page(*modPropertyWindow, "Property");
+    ModuleWindow* pModWnd = new ModuleWindow(module,  m_pParent, &manager);
+    m_RightTab.append_page(*pModWnd, "Description");
+    m_HPaned.show_all();
+}
+
+void ApplicationWindow::onUpdateApplicationProperty(Application* application)
+{
+   // removes two pages if exist 
+    ModuleWindow* modWnd =
+        dynamic_cast<ModuleWindow*>(m_RightTab.get_nth_page(1));
+    m_RightTab.remove_page(-1);
+    m_RightTab.remove_page(-1);
+    if(modWnd)
+        delete modWnd;
+
+    appPropertyWindow->update(application);
+    m_RightTab.append_page(*appPropertyWindow, "Property");
+    m_HPaned.show_all();
+}
+
+void ApplicationWindow::onUpdateConnectionProperty(Glib::RefPtr<ArrowModel> &arrow)
+{
+    // removes two pages if exist
+    ModuleWindow* modWnd =
+        dynamic_cast<ModuleWindow*>(m_RightTab.get_nth_page(1));
+    m_RightTab.remove_page(-1);
+    m_RightTab.remove_page(-1);
+    if(modWnd)
+        delete modWnd;
+
+    conPropertyWindow->update(arrow);
+    m_RightTab.append_page(*conPropertyWindow, "Property");
+    m_HPaned.show_all();
 }
 
