@@ -82,9 +82,9 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
     /* Check validity of directory */
     if (!path)
         return errno;
-    /* Get lenght of the directory */
+    /* Get length of the directory */
     path_len = strlen(path);
-    /* Check lenght of the directory */
+    /* Check length of the directory */
     if (!path || !path_len || (path_len > FILENAME_MAX))
         return errno;
     /* Check if file is opened */
