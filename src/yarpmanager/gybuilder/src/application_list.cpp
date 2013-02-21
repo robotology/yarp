@@ -95,7 +95,7 @@ ApplicationList::ApplicationList(MainWindow* parent)
                                             folderres_ico.height,
                                             folderres_ico.bytes_per_pixel*folderres_ico.width));
 
-    /*
+    
     m_tempRow = *(m_refTreeModel->append());
     m_tempRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_tempRow[m_appColumns.m_col_name] = "Templates";
@@ -105,9 +105,7 @@ ApplicationList::ApplicationList(MainWindow* parent)
                                             8,
                                             folder_ico.width,
                                             folder_ico.height,
-                                            folder_ico.bytes_per_pixel*folder_ico.width));
-
-    */
+                                            folder_ico.bytes_per_pixel*folder_ico.width));    
     show_all_children();
 }
 
@@ -341,16 +339,16 @@ bool ApplicationList::addAppTemplate(AppTemplate* temp)
     typedef Gtk::TreeModel::Children type_children;
     string fname = temp->name + string(" (") + temp->tmpFileName + string(")"); 
     Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(m_tempRow.children()));
-    descrow[m_appColumns.m_col_type] = NODE_FILENAME;
+    descrow[m_appColumns.m_col_type] = NODE_APPTEMPLATE;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = temp->tmpFileName;
-    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data, 
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(apptemplate_ico.pixel_data, 
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
-                                            document_ico.width,
-                                            document_ico.height,
-                                            document_ico.bytes_per_pixel*document_ico.width));   
+                                            apptemplate_ico.width,
+                                            apptemplate_ico.height,
+                                            apptemplate_ico.bytes_per_pixel*apptemplate_ico.width));   
     return true;
 }
 

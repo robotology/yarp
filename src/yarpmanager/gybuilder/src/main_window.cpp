@@ -38,6 +38,8 @@
 #include "icon_res.h"
 #include "template_res.h"
 #include "xmltemploader.h"
+#include "xmlapploader.h"
+#include "xmlappsaver.h"
 #include "application_wizard.h"
 
 using namespace std;
@@ -290,6 +292,10 @@ void MainWindow::createWidgets(void)
         " </popup>"
         " <popup name='PopupFile'>"
         "      <menuitem action='PEditFile'/>"
+        " </popup>"
+        " <popup name='PopupAppTemplate'>"
+        "      <menuitem action='PEditFile'/>"
+        "      <menuitem action='PCreateAppFromTemp'/>"
         " </popup>"
         " <popup name='PopupApplication'>"
         "      <menuitem action='PAppLoad'/>"
@@ -655,6 +661,9 @@ void MainWindow::setupActions(void)
     m_refActionGroup->add( Gtk::Action::create("PResLoad", Gtk::Stock::APPLY, "_Load Resource", "Load Resource"),
                             sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
     m_refActionGroup->add( Gtk::Action::create("PEditFile", Gtk::Stock::EDIT , "_Edit File", "Edit xml file"),
+                        sigc::mem_fun(*this, &MainWindow::onEditFile) );
+   
+   m_refActionGroup->add( Gtk::Action::create("PCreateAppFromTemp", Gtk::Stock::NEW , "_Create Application ...", "Create application ..."),
                         sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
 
     // initial sensitivity
@@ -1271,6 +1280,39 @@ void MainWindow::onMenuFileImport()
 
 }
 
+
+void MainWindow::onEditFile()
+{
+     Gtk::TreeModel::iterator iter =
+        m_refApplicationList->getTreeView()->get_selection()->get_selected();
+    if(iter) //If anything is selected
+    {
+        Gtk::TreeModel::Row row = *iter;
+        Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_filename];
+        ErrorLogger* logger  = ErrorLogger::Instance();
+        if(m_config.check("external_editor"))
+        {
+
+            LocalBroker launcher;
+            if(launcher.init(m_config.find("external_editor").asString().c_str(),
+                             name.c_str(), NULL, NULL, NULL, NULL))
+                if(!launcher.start() && strlen(launcher.error()))
+                {
+                    OSTRINGSTREAM msg;
+                    msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
+                    msg<<". "<<launcher.error();
+                    logger->addError(msg);
+                    reportErrors();
+                }
+        }
+        else
+        {
+            logger->addError("External editor is not set.");
+            reportErrors();
+        }
+    }
+}
+
 void MainWindow::onPAppMenuLoad()
 {
     Gtk::TreeModel::iterator iter =
@@ -1294,32 +1336,13 @@ void MainWindow::onPAppMenuLoad()
             Glib::ustring strName = row[m_refApplicationList->m_appColumns.m_col_name];
             manageResource(strName.c_str());
         }
-        else if(row[m_refApplicationList->m_appColumns.m_col_type] == NODE_FILENAME)
+        else if(row[m_refApplicationList->m_appColumns.m_col_type] == NODE_APPTEMPLATE)
         {
-            Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_filename];
-            ErrorLogger* logger  = ErrorLogger::Instance();
-            if(m_config.check("external_editor"))
-            {
-
-                LocalBroker launcher;
-                if(launcher.init(m_config.find("external_editor").asString().c_str(),
-                                 name.c_str(), NULL, NULL, NULL, NULL))
-                    if(!launcher.start() && strlen(launcher.error()))
-                    {
-                        OSTRINGSTREAM msg;
-                        msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
-                        msg<<". "<<launcher.error();
-                        logger->addError(msg);
-                        reportErrors();
-                    }
-            }
-            else
-            {
-                logger->addError("External editor is not set.");
-                reportErrors();
-            }
+            Glib::ustring strName = row[m_refApplicationList->m_appColumns.m_col_filename];
+            manageTemplate(strName.c_str());
         }
-
+        else if(row[m_refApplicationList->m_appColumns.m_col_type] == NODE_FILENAME)
+            onEditFile();
     }
 }
 
@@ -1763,6 +1786,7 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
         bool bOnResItem = false;
         bool bOnFileItem = false;
         bool bOnFolderItem = false;
+        bool bOnAppTemplateItem = false;
         if(path)
         {
             Gtk::TreeModel::iterator iter =
@@ -1775,6 +1799,8 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
                 bOnResItem = true;
              if((*iter)[m_refApplicationList->m_appColumns.m_col_type] == NODE_FILENAME)
                 bOnFileItem = true;
+             if((*iter)[m_refApplicationList->m_appColumns.m_col_type] == NODE_APPTEMPLATE)
+                bOnAppTemplateItem = true;
              if((*iter)[m_refApplicationList->m_appColumns.m_col_type] == NODE_OTHER)
                 bOnFolderItem = true;
        }
@@ -1816,6 +1842,14 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
             if(pMenu)
                 pMenu->popup(event->button, event->time);
         }
+        else if(bOnItem && bOnAppTemplateItem && (event->button == 3))
+        {
+             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+                        m_refUIManager->get_widget("/PopupAppTemplate"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);
+        }
+
 #else
         // if it's a right click
         if(event->button == 3)
@@ -1851,7 +1885,12 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
         Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_name];
         manageModule(name.c_str());
     }
-
+    else if(iter && ((*iter)[m_refApplicationList->m_appColumns.m_col_type] == NODE_APPTEMPLATE ))
+    {
+        Gtk::TreeModel::Row row = *iter;
+        Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_filename];
+        manageTemplate(name.c_str());
+    }
     else if(iter && ((*iter)[m_refApplicationList->m_appColumns.m_col_type] == NODE_FILENAME ))
     {
         Gtk::TreeModel::Row row = *iter;
@@ -2031,6 +2070,44 @@ void MainWindow::manageResource(const char* szName)
     m_refActionGroup->get_action("FileClose")->set_sensitive(false);
     m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
     m_refActionGroup->get_action("EditExportGraph")->set_sensitive(false);
+}
+
+void MainWindow::manageTemplate(const char* szName)
+{
+    XmlAppLoader appload(szName);
+    if(!appload.init())
+    {
+        reportErrors();
+        return;
+    }
+    Application* application = appload.getNextApplication();
+    if(!application)
+    {
+        reportErrors();
+        return;
+    }
+    ApplicationWizard dialog(this, "Create new application from template", application);
+    if(dialog.run() == Gtk::RESPONSE_OK)
+    {
+        string strPath = dialog.m_EntryFolderName.get_entry()->get_text();
+        if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+            strPath = strPath + string(PATH_SEPERATOR);
+
+        string fname = strPath + dialog.m_EntryFileName.get_text();
+        application->setName(dialog.m_EntryName.get_text().c_str());                
+        XmlAppSaver appSaver(fname.c_str());                
+        if(appSaver.save(application))
+        {
+            char szAppName[255];
+            if(lazyManager.addApplication(fname.c_str(), szAppName))
+            {
+                syncApplicationList();
+                manageApplication(szAppName);
+            }
+        }
+        reportErrors();
+    }
 }
 
 void MainWindow::manageModule(const char* szName)

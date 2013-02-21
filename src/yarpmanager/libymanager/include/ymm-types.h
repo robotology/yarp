@@ -24,6 +24,7 @@ typedef enum __NodeType {
     APPLICATION,
     RESOURCE,
     NODE_FILENAME,
+    NODE_APPTEMPLATE,
     NODE_OTHER
 } NodeType;
 

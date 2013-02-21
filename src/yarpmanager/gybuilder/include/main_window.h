@@ -99,6 +99,7 @@ protected:
     void onPAppMenuLoad();
     void onPAppMenuRemove();
     void onPAppMenuReopen();
+    void onEditFile();
 
     void on_size_allocate(Gtk::Allocation& allocation);
 
@@ -122,6 +123,7 @@ private:
     void manageApplication(const char* szName);
     void manageResource(const char* szName);
     void manageModule(const char* szName);
+    void manageTemplate(const char* szName);
 
     bool safeExit(void);
     void closeTab(int page_num);

@@ -84,7 +84,22 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
     m_EntryName.signal_changed().connect(sigc::mem_fun(*this, &ApplicationWizard::onEntryNameInsert));
 
     MainWindow* wnd = dynamic_cast<MainWindow*>(m_pParent);
-     
+
+    if(m_Application)
+    {
+        string filename = m_Application->getXmlFile();
+        const size_t last_slash_idx = filename.rfind(PATH_SEPERATOR);
+        if (std::string::npos != last_slash_idx)
+        {
+            string directory = filename.substr(0, last_slash_idx);
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 24)
+            m_EntryFolderName.append_text(Glib::ustring(directory.c_str()));
+#else
+            m_EntryFolderName.append(Glib::ustring(directory.c_str()));
+#endif          
+        }            
+    }
+
     if(wnd->m_config.check("apppath"))
     {
         std::string basepath=wnd->m_config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
@@ -118,6 +133,8 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
         
     m_EntryVersion.set_text("1.0");
 
+    if(m_Application)
+        m_EntryName.set_text(m_Application->getName());
     add_row(m_Table, 0, m_refSizeGroup, "Application Name:", m_EntryName, NULL);    
     add_row(m_Table, 1, m_refSizeGroup, "File Name:", m_EntryFileName, NULL);
     add_row(m_Table, 2, m_refSizeGroup, "Folder Name:", m_EntryFolderName, &m_ButtonFile);
