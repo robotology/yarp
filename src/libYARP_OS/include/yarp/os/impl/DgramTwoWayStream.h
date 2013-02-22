@@ -15,8 +15,10 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Semaphore.h>
 
+#ifdef YARP_HAS_ACE
 #include <ace/SOCK_Dgram.h>
 #include <ace/SOCK_Dgram_Mcast.h>
+#endif
 
 namespace yarp {
     namespace os {
@@ -59,10 +61,12 @@ public:
     virtual bool openMcast(const Address& group,
                            const Address& ipLocal);
 
+#ifdef YARP_HAS_ACE
     virtual int restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
                               const Address& group,
                               const Address& ipLocal,
                               bool add);
+#endif
 
     virtual bool join(const Address& group, bool sender,
                       const Address& ipLocal);
@@ -127,9 +131,15 @@ public:
 private:
     yarp::os::ManagedBytes monitor;
     bool closed, interrupting, reader, writer;
+#ifdef YARP_HAS_ACE
     ACE_SOCK_Dgram *dgram;
     ACE_SOCK_Dgram_Mcast *mgram;
     ACE_INET_Addr localHandle, remoteHandle;
+#else
+    void *dgram;
+    void *mgram;
+    int localHandle, remoteHandle;
+#endif
     Address localAddress, remoteAddress, restrictInterfaceIp;
     yarp::os::ManagedBytes readBuffer, writeBuffer;
     yarp::os::Semaphore mutex;

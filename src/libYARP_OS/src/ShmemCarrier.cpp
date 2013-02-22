@@ -11,8 +11,10 @@
 // removing old shmem version
 // #include <yarp/os/impl/ShmemTwoWayStream.h>
 
+#ifdef YARP_HAS_ACE
 // new shmem implementation from Alessandro
 #include <yarp/os/impl/ShmemHybridStream.h>
+#endif
 
 yarp::os::impl::ShmemCarrier::ShmemCarrier(int version) {
     this->version = version;
@@ -119,6 +121,9 @@ void yarp::os::impl::ShmemCarrier::becomeShmemVersionTwoWayStream(Protocol& prot
 */
 
 bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& proto, bool sender) {
+#ifndef YARP_HAS_ACE
+    return false;
+#else
     ShmemHybridStream *stream = new ShmemHybridStream();
     YARP_ASSERT(stream!=NULL);
     Address base;
@@ -155,6 +160,7 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& prot
     }
 
     return true;
+#endif
 }
 
 bool yarp::os::impl::ShmemCarrier::becomeShmem(Protocol& proto, bool sender) {

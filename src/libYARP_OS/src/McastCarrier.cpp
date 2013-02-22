@@ -8,10 +8,8 @@
  */
 
 #include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
-
-#include <stdlib.h>
 #include <yarp/os/impl/McastCarrier.h>
+#include <stdlib.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/Network.h>
@@ -35,13 +33,6 @@ ElectionOf<McastCarrier,PeerRecord>& McastCarrier::getCaster() {
     }
     return *caster;
 }
-
-
-#else
-
-int McastCarrierDummySymbol = 42;
-
-#endif
 
 
 yarp::os::impl::McastCarrier::McastCarrier() {
@@ -175,6 +166,9 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(Protocol& proto) {
 
 
 bool yarp::os::impl::McastCarrier::becomeMcast(Protocol& proto, bool sender) {
+#ifndef YARP_HAS_ACE
+    return false;
+#else
     ACE_UNUSED_ARG(sender);
     DgramTwoWayStream *stream = new DgramTwoWayStream();
     YARP_ASSERT(stream!=NULL);
@@ -226,6 +220,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(Protocol& proto, bool sender) {
     }
     proto.takeStreams(stream);
     return true;
+#endif
 }
 
 bool yarp::os::impl::McastCarrier::respondToHeader(Protocol& proto) {
