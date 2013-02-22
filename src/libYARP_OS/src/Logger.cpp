@@ -9,10 +9,10 @@
 
 
 #include <yarp/os/impl/Logger.h>
-
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformThread.h>
+#include <yarp/conf/system.h>
 
 using namespace yarp::os::impl;
 
@@ -22,7 +22,7 @@ Logger& Logger::get() {
     return root;
 }
 
-#ifdef __linux__
+#ifdef YARP_HAS_EXECINFO
 #include <execinfo.h>
 void yarp_print_trace(FILE *out, const char *file, int line) {
     const size_t max_depth = 100;

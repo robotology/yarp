@@ -322,6 +322,10 @@ else(WIN32)
         set(CXX11_FLAGS)
     endif(CXX_HAS_STD_CXX11)
 
+
+    include (CheckIncludeFiles)
+    check_include_files (execinfo.h YARP_HAS_EXECINFO)
+
 endif(WIN32)
 
 
