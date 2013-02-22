@@ -152,6 +152,22 @@ public:
 
     /**
      *
+     * WARNING: This is a stub, not implemented yet.
+     *
+     * Expand a partial path to a list of paths.
+     * Like findPath(key), but continues on to find all
+     * instances of the path.
+     * 
+     * so findPaths("app") would return ["/foo/app","/bar/app",...]
+     * depending on the search path in effect.
+     * The first path is the list comes from the highest-priority
+     * location, and would be the path returned by findPath("app")
+     *
+     */
+    yarp::os::Bottle findPaths(const char *key);
+
+    /**
+     *
      * Find the first existing directory in the search path.
      *
      */

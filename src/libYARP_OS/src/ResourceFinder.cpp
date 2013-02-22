@@ -373,6 +373,14 @@ public:
         return result;
     }
 
+    yarp::os::Bottle findPaths(Property& config, const char *name) {
+        ConstString fname = config.check(name,Value(name)).asString();
+        ConstString result = findFileBase(config,fname,true);
+        Bottle paths;
+        if (result!="") paths.addString(result);
+        return paths;
+    }
+
     yarp::os::ConstString findPath(Property& config) {
         ConstString result = findFileBase(config,"",true);
 		if (result=="") result = ".";
@@ -380,11 +388,7 @@ public:
     }
 
     yarp::os::ConstString findFile(Property& config, const char *name) {
-        // name is now a key
-        //printf("Status %s\n", config.toString().c_str());
-        //printf("name %s\n", name);
         ConstString fname = config.check(name,Value(name)).asString();
-        //printf("fname %s\n", fname.c_str());
         ConstString result = findFileBase(config,fname,false);
         return result;
     }
@@ -544,6 +548,10 @@ yarp::os::ConstString ResourceFinder::findFile(const char *name) {
 
 yarp::os::ConstString ResourceFinder::findPath(const char *name) {
     return HELPER(implementation).findPath(config,name);
+}
+
+yarp::os::Bottle ResourceFinder::findPaths(const char *name) {
+    return HELPER(implementation).findPaths(config,name);
 }
 
 yarp::os::ConstString ResourceFinder::findPath() {
