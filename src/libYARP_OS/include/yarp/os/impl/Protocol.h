@@ -160,7 +160,6 @@ public:
 
     int readYarpInt() {
         ssize_t len = NetType::readFull(is(),header.bytes());
-        ACE_UNUSED_ARG(len);
         if ((size_t)len!=header.length()) {
             throw_IOException("data stream died");
             return -1;
@@ -580,7 +579,6 @@ private:
 
     bool expectProtocolSpecifier() {
         ssize_t len = NetType::readFull(is(),header.bytes());
-        ACE_UNUSED_ARG(len);
         //ACE_OS::printf("len is %d but header is %d\n", len, header.length());
         if (len==-1) {
             throw_IOException("no connection");

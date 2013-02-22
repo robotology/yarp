@@ -111,7 +111,7 @@ void yarp::os::impl::AbstractCarrier::createStandardHeader(int specifier,const y
 
 bool yarp::os::impl::AbstractCarrier::write(yarp::os::impl::Protocol& proto, yarp::os::impl::SizedWriter& writer) {
     // default behavior upon a write request
-    ACE_UNUSED_ARG(writer);
+    //ACE_UNUSED_ARG(writer);
     bool ok = proto.sendIndex();
     if (!ok) return false;
     ok = proto.sendContent();
