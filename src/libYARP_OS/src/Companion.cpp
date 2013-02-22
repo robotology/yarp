@@ -1332,6 +1332,7 @@ int Companion::cmdResource(int argc, char *argv[]) {
         printf("   yarp resource --policy ICUB_ROOT --from config.ini --find icub\n");
         printf("   yarp resource --policy ICUB_ROOT --find icub.ini --verbose 1\n");
         printf("   yarp resource --policy ICUB_ROOT --ICUB_ROOT /path/to/icub --find icub.ini\n");
+        printf("   yarp resource --policy ICUB_ROOT --find config.ini --all\n");
         printf("If a policy file is required, be sure to specify --strict\n");
         printf("To show what a config file loads as, specify --show\n");
         return 0;
@@ -1339,31 +1340,36 @@ int Companion::cmdResource(int argc, char *argv[]) {
     ResourceFinder rf;
     rf.setVerbose();
     bool ok = rf.configure("",argc,argv,false);
-    String result = "";
+    Bottle result;
     Property p;
     p.fromCommand(argc,argv,false);
     bool dir = p.check("dir");
+    bool all = p.check("all");
     if (!p.check("find")) {
         fprintf(stderr,"Please specify a file to find, e.g. --find icub.ini\n");
         return 1;
     }
     if (ok) {
-        if (dir) {
-            result = String(rf.findPath(p.check("find",Value("config")).asString().c_str()));
+        if (all) {
+            result = rf.findPaths(p.check("find",Value("test.ini")).asString());
         } else {
-            result = String(rf.findFile(p.check("find",Value("icub.ini")).asString().c_str()));
+            if (dir) {
+                result.addString(rf.findPath(p.check("find",Value("config")).asString()));
+            } else {
+                result.addString(rf.findFile(p.check("find",Value("icub.ini")).asString()));;
+            }
         }
     } else {
         if (p.check("strict")) {
             return 1;
         }
         fprintf(stderr,"No policy, continuing without search (specify --strict to avoid this)...\n");
-        result = p.check("find",Value("config.ini")).asString().c_str();
+        result.addString(p.check("find",Value("config.ini")).asString());;
     }
-    printf("%s\n",result.c_str());
+    printf("%s\n",result.toString().c_str());
     if (p.check("show")) {
         Property p2;
-        p2.fromConfigFile(result.c_str());
+        p2.fromConfigFile(result.get(0).asString().c_str());
         printf(">>> %s\n", p2.toString().c_str());
     }
     return (result!="")?0:1;

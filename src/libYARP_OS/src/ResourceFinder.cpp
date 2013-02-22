@@ -395,6 +395,14 @@ public:
 
     yarp::os::ConstString findFileBase(Property& config, const char *name,
                                        bool isDir) {
+        Bottle output;
+        findFileBase(config,name,isDir,output,true);
+        return output.get(0).asString();
+    }
+
+    void findFileBase(Property& config, const char *name,
+                      bool isDir, 
+                      Bottle& output, bool justTop) {
 
         ConstString cap =
             config.check("capability_directory",Value("app")).asString();
@@ -402,33 +410,49 @@ public:
             config.findGroup("default_capability").tail();
 
         // check current directory
-		if (ConstString(name)==""&&isDir) return ".";
+		if (ConstString(name)==""&&isDir) {
+            output.addString(".");
+            if (justTop) return;
+        }
         ConstString str = check("","","",name,isDir);
-        if (str!="") return str;
+        if (str!="") {
+            output.addString(str);
+            if (justTop) return;
+        }
 
         if (configFilePath!="") {
             ConstString str = check(configFilePath.c_str(),"","",name,isDir);
-            if (str!="") return str;
+            if (str!="") {
+                output.addString(str);
+                if (justTop) return;
+            }
         }
 
         // check app dirs
         for (int i=0; i<apps.size(); i++) {
             str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
                         name,isDir);
-            if (str!="") return str;
+            if (str!="") {
+                output.addString(str);
+                if (justTop) return;
+            }
         }
 
         // check ROOT/app/default/
         for (int i=0; i<defCaps.size(); i++) {
             str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
                         name,isDir);
-            if (str!="") return str;
+            if (str!="") {
+                output.addString(str);
+                if (justTop) return;
+            }
         }
 
-        if (!quiet) {
-            fprintf(RTARGET,"||| did not find %s\n", name);
+        if (justTop) {
+            if (!quiet) {
+                fprintf(RTARGET,"||| did not find %s\n", name);
+            }
         }
-        return "";
     }
 
     bool setVerbose(bool verbose) {
