@@ -450,20 +450,52 @@ static int metaConnect(const char *csrc,
     return 1;
 }
 
-
 bool NetworkBase::connect(const char *src, const char *dest,
+                          const char *carrier,
+                          bool quiet) {
+    ContactStyle style;
+    style.quiet = quiet;
+    if (carrier!=NULL) {
+        style.carrier = carrier;
+    }
+    return connect(src,dest,style);
+}
+
+bool NetworkBase::connect(const char *src,
+                          const char *dest,
                           const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_CONNECT);
     return result == 0;
 }
 
+bool NetworkBase::disconnect(const char *src,
+                             const char *dest,
+                             bool quiet) {
+    ContactStyle style;
+    style.quiet = quiet;
+    return disconnect(src,dest,style);
+}
 
-bool NetworkBase::disconnect(const char *src, const char *dest,
+bool NetworkBase::disconnect(const char *src,
+                             const char *dest,
                              const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_DISCONNECT);
     return result == 0;
 }
 
+bool NetworkBase::isConnected(const char *src,
+                              const char *dest,
+                              bool quiet) {
+    ContactStyle style;
+    style.quiet = quiet;
+    return isConnected(src,dest,style);
+}
+
+bool NetworkBase::exists(const char *port, bool quiet) {
+    ContactStyle style;
+    style.quiet = quiet;
+    return exists(port,style);
+}
 
 bool NetworkBase::exists(const char *port, const ContactStyle& style) {
     int result = Companion::exists(port,style);
@@ -623,6 +655,19 @@ ConstString NetworkBase::readString(bool *eof) {
 }
 
 bool NetworkBase::write(const Contact& contact,
+                       PortWriter& cmd,
+                       PortReader& reply,
+                       bool admin,
+                       bool quiet,
+                       double timeout) {
+    ContactStyle style;
+    style.admin = admin;
+    style.quiet = quiet;
+    style.timeout = timeout;
+    return write(contact,cmd,reply,style);
+}
+
+bool NetworkBase::write(const Contact& contact,
                         PortWriter& cmd,
                         PortReader& reply,
                         const ContactStyle& style) {
@@ -734,6 +779,11 @@ bool NetworkBase::write(const Contact& contact,
     return true;
 }
 
+bool NetworkBase::write(const char *port_name,
+                               PortWriter& cmd,
+                               PortReader& reply) {
+    return write(Contact::byName(port_name),cmd,reply);
+}
 
 bool NetworkBase::isConnected(const char *src, const char *dest,
                               const ContactStyle& style) {
@@ -1105,3 +1155,11 @@ ConstString NetworkBase::getConfigFile(const char *fname) {
 }
 
 
+
+Network::Network() {
+    Network::init();
+}
+
+Network::~Network() {
+    Network::fini();
+}

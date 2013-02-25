@@ -63,15 +63,8 @@ public:
      * @return true on success, false on failure
      */
     static bool connect(const char *src, const char *dest,
-                        const char *carrier = 0 /*NULL*/,
-                        bool quiet=true) {
-        ContactStyle style;
-        style.quiet = quiet;
-        if (carrier!=NULL) {
-            style.carrier = carrier;
-        }
-        return connect(src,dest,style);
-    }
+                        const char *carrier = NULL,
+                        bool quiet = true);
 
     /**
      * Request that an output port connect to an input port.
@@ -91,11 +84,7 @@ public:
      * @return true on success, false on failure
      */
     static bool disconnect(const char *src, const char *dest,
-                           bool quiet = true) {
-        ContactStyle style;
-        style.quiet = quiet;
-        return disconnect(src,dest,style);
-    }
+                           bool quiet = true);
 
     /**
      * Request that an output port disconnect from an input port.
@@ -115,11 +104,7 @@ public:
      * @return true if there is a connection
      */
     static bool isConnected(const char *src, const char *dest,
-                            bool quiet = true) {
-        ContactStyle style;
-        style.quiet = quiet;
-        return isConnected(src,dest,style);
-    }
+                            bool quiet = true);
 
     /**
      * Check if a connection exists between two ports.
@@ -137,11 +122,7 @@ public:
      * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
-    static bool exists(const char *port, bool quiet = true) {
-        ContactStyle style;
-        style.quiet = quiet;
-        return exists(port,style);
-    }
+    static bool exists(const char *port, bool quiet = true);
 
     /**
      * Check for a port to be ready and responsive.
@@ -345,14 +326,7 @@ public:
                       PortReader& reply,
                       bool admin = false,
                       bool quiet = false,
-                      double timeout = -1) {
-        ContactStyle style;
-        style.admin = admin;
-        style.quiet = quiet;
-        style.timeout = timeout;
-        return write(contact,cmd,reply,style);
-    }
-
+                      double timeout = -1);
 
     /**
      * Variant write method with options bundled into a
@@ -396,9 +370,7 @@ public:
      */
     static bool write(const char *port_name,
                       PortWriter& cmd,
-                      PortReader& reply) {
-        return write(Contact::byName(port_name),cmd,reply);
-    }
+                      PortReader& reply);
 
 
     /**
@@ -534,16 +506,12 @@ public:
      * directly, since it will clean things up with a call to
      * Network::fini() automatically.
      */
-    Network() {
-        Network::init();
-    }
+    Network();
 
     /**
      * Destructor.  Disconnects from the YARP network.
      */
-    virtual ~Network() {
-        Network::fini();
-    }
+    virtual ~Network();
 
     /**
      * Initialization.  On some operating systems, there are certain
