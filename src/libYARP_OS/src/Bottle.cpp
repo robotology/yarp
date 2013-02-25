@@ -357,3 +357,33 @@ bool Bottle::read(PortWriter& writer, bool textMode) {
     writer.write(con.getWriter());
     return read(con.getReader());
 }
+
+bool Bottle::isNull() const {
+    return invalid;
+}
+
+bool Bottle::operator!=(const Bottle& alt) {
+    return !((*this)==alt);
+}
+
+void Bottle::append(const Bottle& alt) {
+    for (int i=0; i<alt.size(); i++) {
+        add(alt.get(i));
+    }
+}
+
+Bottle Bottle::tail() const {
+    Bottle b;
+    if (!isNull()) {
+        b.copy(*this,1,size()-1);
+    }
+    return b;
+}
+
+Bottle *Bottle::create() {
+    return new Bottle();
+}
+
+bool Bottle::isList() {
+    return true;
+}

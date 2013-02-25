@@ -279,7 +279,7 @@ public:
 
     Bottle& findGroup(const char *key);
 
-    virtual bool isNull() const  { return invalid; }
+    virtual bool isNull() const;
 
     /**
      * Assignment operator.
@@ -328,9 +328,7 @@ public:
      * @param alt the value to compare against.
      * @result true iff the values are not equal.
      */
-    virtual bool operator != (const Bottle& alt) {
-        return !((*this)==alt);
-    }
+    virtual bool operator != (const Bottle& alt);
 
     /**
      * Append the content of the given bottle to the current
@@ -338,11 +336,7 @@ public:
      *
      * @param alt the content to add.
      */
-    void append(const Bottle& alt) {
-        for (int i=0; i<alt.size(); i++) {
-            add(alt.get(i));
-        }
-    }
+    void append(const Bottle& alt);
 
     /**
      * Get all but the first element of a bottle.
@@ -350,13 +344,7 @@ public:
      * @return a bottle containing all but the first element of the
      * current bottle.
      */
-    Bottle tail() const {
-        Bottle b;
-        if (!isNull()) {
-            b.copy(*this,1,size()-1);
-        }
-        return b;
-    }
+    Bottle tail() const;
 
 
 
@@ -384,9 +372,7 @@ private:
     Value& findGroupBit(const char *key);
     Value& findBit(const char *key);
 
-    virtual Bottle *create() {
-        return new Bottle();
-    }
+    virtual Bottle *create();
 
     virtual Bottle *clone();
 
@@ -462,7 +448,7 @@ private:
     bool isList(int index);
 
 
-    virtual bool isList() { return true; }
+    virtual bool isList();
 
     //virtual Bottle *asList() {
     //  return this;
