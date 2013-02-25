@@ -14,6 +14,10 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+
+NameSpace::~NameSpace() {
+}
+
 bool NameSpace::checkNetwork() {
     Contact c = queryName(getNameServerName());
     if (!c.isValid()) return false;
@@ -46,4 +50,8 @@ bool NameSpace::checkNetwork(double timeout) {
     out = NULL;
 
     return true;
+}
+
+ConstString NameSpace::getNameServerName() const {
+    return getNameServerContact().getName();
 }

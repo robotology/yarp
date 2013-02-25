@@ -22,7 +22,7 @@ namespace yarp {
 
 class yarp::os::NameSpace {
 public:
-    virtual ~NameSpace() {}
+    virtual ~NameSpace();
 
     virtual bool checkNetwork();
 
@@ -30,9 +30,7 @@ public:
 
     virtual Contact getNameServerContact() const = 0;
 
-    virtual ConstString getNameServerName() const {
-        return getNameServerContact().getName();
-    }
+    virtual ConstString getNameServerName() const;
 
     virtual Contact queryName(const char *name) = 0;
 
