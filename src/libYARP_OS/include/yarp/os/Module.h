@@ -63,9 +63,7 @@ public:
      * @return the desired period between successive calls to updateModule()
      *
      */
-    virtual double getPeriod() {
-        return 0.0;
-    }
+    virtual double getPeriod();
 
     /**
      *
@@ -76,12 +74,7 @@ public:
      * @return true iff module should continue
      *
      */
-    virtual bool updateModule() {
-        // insert a delay so, if user accidentally doesn't override this
-        // method, the thread won't kill the processor
-        yarp::os::Time::delay(0.5);
-        return true;
-    }
+    virtual bool updateModule();
 
     /**
      *
@@ -95,10 +88,7 @@ public:
      * @return true if there was no catastrophic failure
      *
      */
-    virtual bool interruptModule() {
-        return false;
-    }
-
+    virtual bool interruptModule();
 
     /**
      *
@@ -161,9 +151,7 @@ public:
      * @param reply the response you wish to make
      * @return true if there was no critical failure
      */
-    virtual bool respond(const Bottle& command, Bottle& reply) {
-        return basicRespond(command,reply);
-    }
+    virtual bool respond(const Bottle& command, Bottle& reply);
 
     /**
      * Make any input from a Port object go to the respond() method.
@@ -194,7 +182,7 @@ public:
      * Check if the module is shutting down.
      * @return true if the module is shutting down.
      */
-    bool isStopping() { return stopFlag; }
+    bool isStopping();
 
 
     /**
@@ -202,15 +190,13 @@ public:
      * @param subName get nested name with this at the end
      * @return the name of the module
      */
-    ConstString getName(const char *subName = 0/*NULL*/);
+    ConstString getName(const char *subName = NULL);
 
     /**
      * Set the name of the module.
      * @param name the desired name of the module
      */
-    void setName(const char *name) {
-        this->name = name;
-    }
+    void setName(const char *name);
 
     /**
      * Wrapper around respond() that is guaranteed to process system messages.

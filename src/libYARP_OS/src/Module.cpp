@@ -247,6 +247,33 @@ Module::~Module() {
     }
 }
 
+double Module::getPeriod() {
+    return 0.0;
+}
+
+bool Module::updateModule() {
+    // insert a delay so, if user accidentally doesn't override this
+    // method, the thread won't kill the processor
+    yarp::os::Time::delay(0.5);
+    return true;
+}
+
+bool Module::interruptModule() {
+    return false;
+}
+
+bool Module::respond(const Bottle& command, Bottle& reply) {
+    return basicRespond(command,reply);
+}
+
+bool Module::isStopping() {
+    return stopFlag;
+}
+
+void Module::setName(const char *name) {
+    this->name = name;
+}
+
 bool Module::basicRespond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
     case VOCAB3('s','e','t'):
