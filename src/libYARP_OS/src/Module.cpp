@@ -20,6 +20,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

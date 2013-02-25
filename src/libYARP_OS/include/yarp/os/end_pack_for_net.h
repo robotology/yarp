@@ -18,8 +18,6 @@
  * @see yarp/os/begin_pack_for_net.h
  */
 
-#include <yarp/os/NetInt32.h>
-
 #ifdef YARP2_CYGWIN
 #pragma pack()
 #define YARP_UNPACKING_CONSIDERED

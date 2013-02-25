@@ -10,7 +10,6 @@
 
 #include <yarp/os/impl/UnitTest.h>
 
-#include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 
 #include "TestList.h"

@@ -12,7 +12,6 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/NetInt32.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/PlatformStdlib.h>

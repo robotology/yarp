@@ -37,7 +37,6 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Ping.h>
-#include <yarp/os/NetInt32.h>
 #include <yarp/os/YarpPlugin.h>
 
 #include <yarp/os/impl/PlatformStdio.h>

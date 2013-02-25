@@ -21,8 +21,6 @@
  * @see end_pack_for_net.h
  */
 
-#include <yarp/os/NetInt32.h>
-
 #ifdef CYGWIN
 #ifndef YARP2_CYGWIN
 #define YARP2_CYGWIN

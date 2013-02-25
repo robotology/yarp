@@ -29,7 +29,6 @@
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/NetInt32.h>
 
 #include <yarp/os/impl/TcpStream.h>
 

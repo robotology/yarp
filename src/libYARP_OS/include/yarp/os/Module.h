@@ -16,7 +16,6 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/all.h>
 
 
 namespace yarp {
