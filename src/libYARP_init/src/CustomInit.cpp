@@ -36,7 +36,13 @@ extern "C" int __yarp_is_initialized;
 extern "C" void yarpCustomFini() {
 }
 
+yarp::os::Network::Network() {
+    Network::init();
+}
 
+yarp::os::Network::~Network() {
+    Network::fini();
+}
 
 void yarp::os::Network::init() {
     if (__custom_yarp_is_initialized==0) {

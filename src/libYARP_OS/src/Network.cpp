@@ -1153,13 +1153,3 @@ bool NetworkBase::writeToNameServer(PortWriter& cmd,
 ConstString NetworkBase::getConfigFile(const char *fname) {
     return NameConfig::expandFilename(fname).c_str();
 }
-
-
-
-Network::Network() {
-    Network::init();
-}
-
-Network::~Network() {
-    Network::fini();
-}
