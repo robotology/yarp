@@ -29,39 +29,28 @@ public:
     /**
      * Constructor.  No data present.
      */
-    ManagedBytes() {
-        b = Bytes(0/*NULL*/,0);
-        owned = false;
-        use = 0;
-        use_set = false;
-    }
+    explicit ManagedBytes();
+
+    /**
+     * Constructor. Makes a data block of the specified length that will
+     * be deleted if this object is destroyed.
+     * @param len length of data block
+     */
+    explicit ManagedBytes(size_t len);
 
     /**
      * Constructor. Represent external data.
      * @param ext address and length of data
      * @param owned true if data should be deleted if this object is destroyed
      */
-    ManagedBytes(const Bytes& ext, bool owned = false) {
-        b = ext;
-        this->owned = owned;
-        use = 0;
-        use_set = false;
-    }
+    ManagedBytes(const Bytes& ext, bool owned = false);
 
     /**
      * Copy constructor.
      * @param alt the data to copy.  If it is "owned" an independent copy
      * is made.
      */
-    ManagedBytes(const ManagedBytes& alt) : Portable() {
-        b = alt.b;
-        use = alt.use;
-        use_set = alt.use_set;
-        owned = false;
-        if (alt.owned) {
-            copy();
-        }
-    }
+    ManagedBytes(const ManagedBytes& alt);
 
     /**
      * Assignment operator.
@@ -69,46 +58,19 @@ public:
      * is made.
      * @return this object
      */
-    const ManagedBytes& operator = (const ManagedBytes& alt) {
-        clear();
-        b = alt.b;
-        use = alt.use;
-        use_set = alt.use_set;
-        owned = false;
-        if (alt.owned) {
-            copy();
-        }
-        return *this;
-    }
-
+    const ManagedBytes& operator = (const ManagedBytes& alt);
 
     /**
-     * Constructor. Makes a data block of the specified length that will
-     * be deleted if this object is destroyed.
-     * @param len length of data block
+     * Destructor.
      */
-    ManagedBytes(size_t len) {
-        char *buf = new char[len];
-        NetworkBase::assertion(buf!=0/*NULL*/);
-        b = Bytes(buf,len);
-        owned = true;
-        use = 0;
-        use_set = false;
-    }
+    virtual ~ManagedBytes();
 
     /**
      * Makes a data block of the specified length that will
      * be deleted if this object is destroyed.
      * @param len length of data block
      */
-    void allocate(size_t len) {
-        clear();
-        char *buf = new char[len];
-        b = Bytes(buf,len);
-        owned = true;
-        use = 0;
-        use_set = false;
-    }
+    void allocate(size_t len);
 
     bool allocateOnNeed(size_t neededLen, size_t allocateLen);
 
@@ -120,62 +82,35 @@ public:
     /**
      * @return length of data block
      */
-    size_t length() const {
-        return b.length();
-    }
+    size_t length() const;
 
     /**
      * @return length of used portion of data block - by default, this
      * is the same as length(), unless setUsed() is called
      */
-    size_t used() const {
-        return use_set?use:length();
-    }
+    size_t used() const;
 
     /**
      * @return address of data block
      */
-    char *get() const {
-        return b.get();
-    }
-
-    /**
-     * Destructor.
-     */
-    virtual ~ManagedBytes() {
-        clear();
-    }
+    char *get() const;
 
     /**
      * Disassociate object with any data block (deleting block if appropriate).
      */
-    void clear() {
-        if (owned) {
-            if (get()!=0) {
-                delete[] get();
-            }
-            owned = 0;
-        }
-        b = Bytes(0/*NULL*/,0);
-        use = 0;
-        use_set = false;
-    }
+    void clear();
 
     /**
      * @return description of data block associated with this object
      */
-    const Bytes& bytes() {
-        return b;
-    }
+    const Bytes& bytes();
 
 
     /**
      * @return description of used portion of data block associated
      * with this object
      */
-    Bytes usedBytes() {
-        return Bytes(get(),used());
-    }
+    Bytes usedBytes();
 
 
     /**
@@ -187,17 +122,9 @@ public:
      * @return a confirmation of the number of bytes declared to be in use.
      *
      */
-    size_t setUsed(size_t used) {
-        use_set = true;
-        use = used;
-        return this->used();
-    }
+    size_t setUsed(size_t used);
 
-    size_t resetUsed() {
-        use = 0;
-        use_set = false;
-        return this->used();
-    }
+    size_t resetUsed();
 
     bool read(ConnectionReader& reader);
 
