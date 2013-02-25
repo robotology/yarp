@@ -62,9 +62,7 @@ public:
     /**
      * Typecast operator to C-style string.
      */
-    operator const char *() const {
-        return c_str();
-    }
+    operator const char *() const;
 
     const ConstString& operator = (const ConstString& alt);
 

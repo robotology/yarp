@@ -65,6 +65,10 @@ const char *ConstString::c_str() const {
     return HELPER(implementation).c_str();
 }
 
+ConstString::operator const char *() const {
+    return c_str();
+}
+
 bool ConstString::operator ==(const ConstString& alt) const {
     return HELPER(implementation) == HELPER(alt.implementation);
 }
