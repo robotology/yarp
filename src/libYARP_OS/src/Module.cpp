@@ -29,7 +29,7 @@ class ModuleHelper : public yarp::os::PortReader,
                      public yarp::os::TypedReaderCallback<yarp::os::Bottle>,
                      public Thread,
                      public SearchMonitor {
-    
+
 private:
     Module& owner;
 
@@ -37,7 +37,7 @@ public:
     ModuleHelper(Module& owner) : owner(owner) {}
 
     /**
-     * Handler for reading messages from the network, and passing 
+     * Handler for reading messages from the network, and passing
      * them on to the respond() method.
      * @param connection a network connection to a port
      * @return true if the message was read successfully
@@ -45,7 +45,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection);
 
     /**
-     * Alternative handler for reading messages from the network, and passing 
+     * Alternative handler for reading messages from the network, and passing
      * them on to the respond() method.  There can be no replies made
      * if this handler is used.
      * @param v the message
@@ -90,7 +90,7 @@ public:
                     //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
                     if (reply.get(0).toString()=="help") {
                         for (int i=0; i<reply.size(); i++) {
-                            ACE_OS::printf("%s\n", 
+                            ACE_OS::printf("%s\n",
                                            reply.get(i).toString().c_str());
                         }
                     } else {
@@ -162,7 +162,7 @@ public:
                     if (hasDefault) {
                         defString += " ";
                         defString += "(default ";
-                        String theDefault = 
+                        String theDefault =
                             fallback.find(key.c_str()).toString().c_str();
                         if (theDefault=="") {
                             defString += "is blank";
@@ -222,7 +222,7 @@ bool ModuleHelper::read(ConnectionReader& connection) {
             } else {
                 response.write(*writer);
             }
-            
+
             //printf("response sent: %s\n", response.toString().c_str());
         }
     }
@@ -291,7 +291,7 @@ static void handler (int) {
         ACE_OS::printf("Aborting...\n");
         ACE_OS::exit(1);
     }
-    ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
+    ACE_OS::printf("[try %d of 3] Trying to shut down\n",
                    ct);
     terminated = true;
     if (module!=NULL) {

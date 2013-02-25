@@ -20,9 +20,7 @@ namespace yarp {
 
 
 /**
- *
  * Abstract interface for a database of port names.
- *
  */
 class YARP_OS_API yarp::os::NameStore {
 public:

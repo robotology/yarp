@@ -151,7 +151,7 @@ public:
     virtual bool isOk() {
         return happy;
     }
-  
+
     virtual void reset() {
     }
 

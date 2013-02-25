@@ -192,7 +192,7 @@ static int enactConnection(const Contact& src,
 
 /*
 
-   Connect two ports, bearing in mind that one of them may not be 
+   Connect two ports, bearing in mind that one of them may not be
    a regular YARP port.
 
    Normally, YARP sends a request to the source port asking it to
@@ -205,7 +205,7 @@ static int enactConnection(const Contact& src,
    entirely virtual.  In that case, we just need to tell the name
    server, and it will take care of the details.
 
-  */
+*/
 
 static int metaConnect(const char *csrc,
                        const char *cdest,
@@ -226,13 +226,13 @@ static int metaConnect(const char *csrc,
     Contact dynamicDest = Contact::fromString(dest);
 
     bool topical = style.persistent;
-    if (dynamicSrc.getCarrier()=="topic" || 
+    if (dynamicSrc.getCarrier()=="topic" ||
         dynamicDest.getCarrier()=="topic") {
         topical = true;
     }
 
     bool topicalNeedsLookup = !getNameSpace().connectionHasNameOfEndpoints();
-    
+
     // fetch completed contacts from name server, if needed
     Contact staticSrc;
     Contact staticDest;
@@ -276,7 +276,7 @@ static int metaConnect(const char *csrc,
         staticDest = dynamicDest;
     }
 
-    if (staticSrc.getCarrier()=="xmlrpc" && 
+    if (staticSrc.getCarrier()=="xmlrpc" &&
         staticDest.getCarrier()=="xmlrpc"&&
         mode==YARP_ENACT_CONNECT) {
         // Unconnectable in general
@@ -408,7 +408,7 @@ static int metaConnect(const char *csrc,
 
     int result = -1;
     if ((srcIsCompetent&&connectionIsPush)||topical) {
-        // Classic case.  
+        // Classic case.
         Contact c = Contact::fromString(dest);
         if (connectionCarrier!=NULL) delete connectionCarrier;
         return enactConnection(staticSrc,c,style,mode,false);
@@ -451,14 +451,14 @@ static int metaConnect(const char *csrc,
 }
 
 
-bool NetworkBase::connect(const char *src, const char *dest, 
+bool NetworkBase::connect(const char *src, const char *dest,
                           const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_CONNECT);
     return result == 0;
 }
 
 
-bool NetworkBase::disconnect(const char *src, const char *dest, 
+bool NetworkBase::disconnect(const char *src, const char *dest,
                              const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_DISCONNECT);
     return result == 0;
@@ -505,41 +505,41 @@ int NetworkBase::runNameServer(int argc, char *argv[]) {
 
 
 void NetworkBase::initMinimum() {
-   if (__yarp_is_initialized==0) {
-       // Broken pipes need to be dealt with through other means
-       ACE_OS::signal(SIGPIPE, SIG_IGN);
+    if (__yarp_is_initialized==0) {
+        // Broken pipes need to be dealt with through other means
+        ACE_OS::signal(SIGPIPE, SIG_IGN);
 
 #ifdef YARP_HAS_ACE
-       ACE::init();
+        ACE::init();
 #endif
-       ConstString quiet = getEnvironment("YARP_QUIET");
-       Bottle b2(quiet.c_str());
-       if (b2.get(0).asInt()>0) {
-           Logger::get().setVerbosity(-b2.get(0).asInt());
-       } else {
-           ConstString verbose = getEnvironment("YARP_VERBOSE");
-           Bottle b(verbose.c_str());
-           if (b.get(0).asInt()>0) {
-               YARP_INFO(Logger::get(), 
-                         "YARP_VERBOSE environment variable is set");
-               Logger::get().setVerbosity(b.get(0).asInt());
-           }
-       }
-       ConstString stack = getEnvironment("YARP_STACK_SIZE");
-       if (stack!="") {
-           int sz = atoi(stack.c_str());
-           Thread::setDefaultStackSize(sz);
-           YARP_SPRINTF1(Logger::get(), info,
-                         "YARP_STACK_SIZE set to %d", sz);
-       }
-       Logger::get().setPid();
-       // make sure system is actually able to do things fast
-       Time::turboBoost();
+        ConstString quiet = getEnvironment("YARP_QUIET");
+        Bottle b2(quiet.c_str());
+        if (b2.get(0).asInt()>0) {
+            Logger::get().setVerbosity(-b2.get(0).asInt());
+        } else {
+            ConstString verbose = getEnvironment("YARP_VERBOSE");
+            Bottle b(verbose.c_str());
+            if (b.get(0).asInt()>0) {
+                YARP_INFO(Logger::get(),
+                          "YARP_VERBOSE environment variable is set");
+                Logger::get().setVerbosity(b.get(0).asInt());
+            }
+        }
+        ConstString stack = getEnvironment("YARP_STACK_SIZE");
+        if (stack!="") {
+            int sz = atoi(stack.c_str());
+            Thread::setDefaultStackSize(sz);
+            YARP_SPRINTF1(Logger::get(), info,
+                          "YARP_STACK_SIZE set to %d", sz);
+        }
+        Logger::get().setPid();
+        // make sure system is actually able to do things fast
+        Time::turboBoost();
 
-       // prepare carriers
-       Carriers::getInstance();
-   }
-   __yarp_is_initialized++;
+        // prepare carriers
+        Carriers::getInstance();
+    }
+    __yarp_is_initialized++;
 }
 
 void NetworkBase::finiMinimum() {
@@ -612,7 +612,7 @@ bool NetworkBase::getLocalMode() {
 }
 
 void NetworkBase::assertion(bool shouldBeTrue) {
-    // could replace with ACE assertions, except should not 
+    // could replace with ACE assertions, except should not
     // evaporate in release mode
     YARP_ASSERT(shouldBeTrue);
 }
@@ -622,7 +622,7 @@ ConstString NetworkBase::readString(bool *eof) {
     return ConstString(Companion::readString(eof).c_str());
 }
 
-bool NetworkBase::write(const Contact& contact, 
+bool NetworkBase::write(const Contact& contact,
                         PortWriter& cmd,
                         PortReader& reply,
                         const ContactStyle& style) {
@@ -656,7 +656,7 @@ bool NetworkBase::write(const Contact& contact,
 
         YARP_SPRINTF3(Logger::get(),
                       debug,
-                      "NETWORK WROTE: %s: [%s] -> [%s]", 
+                      "NETWORK WROTE: %s: [%s] -> [%s]",
                       ec.toString().c_str(),
                       in.toString().c_str(),
                       out.toString().c_str());
@@ -735,7 +735,7 @@ bool NetworkBase::write(const Contact& contact,
 }
 
 
-bool NetworkBase::isConnected(const char *src, const char *dest, 
+bool NetworkBase::isConnected(const char *src, const char *dest,
                               const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_EXISTS);
     if (result!=0) {
@@ -982,7 +982,7 @@ public:
         return getContent().close();
     }
 
-    virtual String getBootstrapCarrierName() { 
+    virtual String getBootstrapCarrierName() {
         return getContent().getBootstrapCarrierName();
     }
 
@@ -1056,7 +1056,7 @@ bool NetworkBase::registerCarrier(const char *name,const char *dll) {
     if (dll==NULL) {
         factory = new StubCarrier(name);
         if (!factory) return false;
-    } else { 
+    } else {
         factory = new StubCarrier(dll,name);
     }
     if (factory==NULL) {

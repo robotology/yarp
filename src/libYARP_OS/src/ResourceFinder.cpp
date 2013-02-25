@@ -400,7 +400,7 @@ public:
     }
 
     void findFileBase(Property& config, const char *name,
-                      bool isDir, 
+                      bool isDir,
                       Bottle& output, bool justTop) {
 
         ConstString cap =

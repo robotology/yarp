@@ -36,7 +36,7 @@ namespace yarp {
  * This is a compromise to allow the creation of messages that
  * can be parsed very efficiently by machine but nevertheless are
  * human readable and writable.
- * When switching on a Vocab code, we suggest you use the 
+ * When switching on a Vocab code, we suggest you use the
  * VOCABn macro defined in yarp/os/Vocab.h.
  * \code
  *   switch(code) {

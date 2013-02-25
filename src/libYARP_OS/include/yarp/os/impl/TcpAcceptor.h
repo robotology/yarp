@@ -1,10 +1,10 @@
 /**
  * @file TcpAcceptor.h
- * @brief 
+ * @brief
  *
- * This file is created at Almende B.V. It is open-source software and part of the Common 
- * Hybrid Agent Platform (CHAP). A toolbox with a lot of open-source tools, ranging from 
- * thread pools and TCP/IP components to control architectures and learning algorithms. 
+ * This file is created at Almende B.V. It is open-source software and part of the Common
+ * Hybrid Agent Platform (CHAP). A toolbox with a lot of open-source tools, ranging from
+ * thread pools and TCP/IP components to control architectures and learning algorithms.
  * This software is published under the GNU Lesser General Public license (LGPL).
  *
  * It is not possible to add usage restrictions to an open-source license. Nevertheless,
@@ -18,7 +18,7 @@
  * @date	Feb 15, 2011
  * @project	Replicator FP7
  * @company	Almende B.V.
- * @case	
+ * @case
  */
 
 

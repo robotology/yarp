@@ -56,7 +56,7 @@
 #endif
 
 #ifdef __QNX6__
-///#pragma align 0 
+///#pragma align 0
 #pragma pack()
 #define YARP_UNPACKING_CONSIDERED
 #endif

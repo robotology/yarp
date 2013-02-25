@@ -13,7 +13,7 @@
 //   -- paulfitz
 
 
-#if 0 
+#if 0
 
 #include <yarp/os/impl/ydr.h>
 
@@ -189,7 +189,7 @@ public:
                 }
             }
             return false;
-        }    
+        }
     }
 
     size_t getpos() {

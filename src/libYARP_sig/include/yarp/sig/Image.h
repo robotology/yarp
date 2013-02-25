@@ -30,8 +30,8 @@ namespace yarp {
          * @return the number of extra bytes to add at the end of the image row
          */
         inline int PAD_BYTES (int len, int pad) {
-	        const int rem = len % pad;
-	        return (rem != 0) ? (pad - rem) : rem;
+            const int rem = len % pad;
+            return (rem != 0) ? (pad - rem) : rem;
         }
     }
 }
@@ -51,13 +51,13 @@ class YARP_sig_API yarp::sig::Image : public yarp::os::Portable {
 public:
 
     /**
-     * Default constructor.  
+     * Default constructor.
      * Creates an empty image.
      */
     Image();
 
     /**
-     * Copy constructor.  
+     * Copy constructor.
      * Clones the content of another image.
      * @param alt the image to clone
      */
@@ -138,10 +138,10 @@ public:
      * Returns the number of padding bytes.
      * @return number of bytes of the row padding.
      */
-    inline int getPadding() const 
+    inline int getPadding() const
     {
         const int ret=imgRowSize-imgWidth*imgPixelSize;
-       	return ret; 
+        return ret;
     }
 
     /**
@@ -250,10 +250,10 @@ public:
     /**
      * Act as a wrapper around an IPL/OpenCV image.  The wrapped
      * image needs to exist for the rest of the lifetime of
-     * this oboject.  Be careful if you use this method on objects 
+     * this oboject.  Be careful if you use this method on objects
      * read from or written to a BufferedPort, since the lifetime
      * of such objects can be longer than you expect (see the
-     * documentation for yarp::os::BufferedPort::read, 
+     * documentation for yarp::os::BufferedPort::read,
      * yarp::os::BufferedPort::prepare, and yarp::os::BufferedPort::write).
      *
      * @param iplImage pointer to an IplImage structure
@@ -287,7 +287,7 @@ public:
 
     /**
      * control whether image has origin at top left (default) or bottom
-     * left.  
+     * left.
      *
      * @param flag true if image has origin at top left (default),
      * false if image has origin at bottom left.
@@ -324,7 +324,7 @@ private:
     void synchronize();
     void initialize();
 
-    void copyPixels(const unsigned char *src, int id1, 
+    void copyPixels(const unsigned char *src, int id1,
                     unsigned char *dest, int id2, int w, int h,
                     int imageSize, int quantum1, int quantum2,
                     bool topIsLow1, bool topIsLow2);
@@ -358,7 +358,7 @@ private:
 // the image types partially reflect the IPL image types.
 // There must be a pixel type for every ImageType entry.
 enum YarpVocabPixelTypesEnum
-    {	 
+    {
         VOCAB_PIXEL_INVALID = 0,
         VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
         VOCAB_PIXEL_MONO16 = VOCAB4('m','o','1','6'),
@@ -403,56 +403,56 @@ namespace yarp {
          * Packed RGB pixel type.
          */
         struct PixelRgb
-        { 
-            unsigned char r,g,b; 
-      
+        {
+            unsigned char r,g,b;
+
             PixelRgb() { r = g = b = 0; }
             PixelRgb(unsigned char n_r, unsigned char n_g, unsigned char n_b)
             { r = n_r;  g = n_g;  b = n_b; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
-    
+
         /**
          * Packed RGBA pixel type.
          */
         struct PixelRgba
-        { 
-            unsigned char r,g,b,a; 
-      
+        {
+            unsigned char r,g,b,a;
+
             PixelRgba() { r = g = b = a = 0; }
-            PixelRgba(unsigned char n_r, unsigned char n_g, 
+            PixelRgba(unsigned char n_r, unsigned char n_g,
                       unsigned char n_b, unsigned char n_a)
             { r = n_r;  g = n_g;  b = n_b; a = n_a; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
-    
+
         /**
          * Packed BGRA pixel type.
          */
         struct PixelBgra
-        { 
-            unsigned char b,g,r,a; 
-      
+        {
+            unsigned char b,g,r,a;
+
             PixelBgra() { r = g = b = a = 0; }
-            PixelBgra(unsigned char n_r, unsigned char n_g, 
+            PixelBgra(unsigned char n_r, unsigned char n_g,
                       unsigned char n_b, unsigned char n_a)
             { r = n_r;  g = n_g;  b = n_b; a = n_a; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
-    
+
         /**
          * Packed RGB pixel type, with pixels stored in reverse order.
          */
         struct PixelBgr
-        { 
-            unsigned char b,g,r; 
+        {
+            unsigned char b,g,r;
             PixelBgr() { b = g = r = 0; }
             PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b)
             { r = n_r;  g = n_g;  b = n_b; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
-    
+
         /**
          * Packed HSV (hue/saturation/value pixel type.
          */
-        struct PixelHsv { 
-            unsigned char h,s,v; 
+        struct PixelHsv {
+            unsigned char h,s,v;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
         /**
@@ -463,8 +463,8 @@ namespace yarp {
         /**
          * Signed, packed RGB pixel type.
          */
-        struct PixelRgbSigned { 
-            char r,g,b; 
+        struct PixelRgbSigned {
+            char r,g,b;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
         /**
@@ -475,8 +475,8 @@ namespace yarp {
         /**
          * Floating point RGB pixel type.
          */
-        struct PixelRgbFloat { 
-            float r,g,b; 
+        struct PixelRgbFloat {
+            float r,g,b;
             PixelRgbFloat() { r = g = b = 0; }
             PixelRgbFloat(float n_r, float n_g, float n_b)
             { r = n_r;  g = n_g;  b = n_b; }
@@ -485,8 +485,8 @@ namespace yarp {
         /**
          * Integer RGB pixel type.
          */
-        struct PixelRgbInt { 
-            yarp::os::NetInt32 r,g,b; 
+        struct PixelRgbInt {
+            yarp::os::NetInt32 r,g,b;
             PixelRgbInt() { r = g = b = 0; }
             PixelRgbInt(int n_r, int n_g, int n_b) {
                 r = n_r; g = n_g; b = n_b;
@@ -496,8 +496,8 @@ namespace yarp {
         /**
          * Floating point HSV pixel type.
          */
-        struct PixelHsvFloat { 
-            float h,s,v; 
+        struct PixelHsvFloat {
+            float h,s,v;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
 #include <yarp/os/end_pack_for_net.h>
@@ -510,9 +510,9 @@ namespace yarp {
  * Typed image class.
  *
  * This is a wrapper over YARPGenericImage providing type security for
- * pixel access.  "T" can be any of sig::PixelMono, sig::PixelMono16, 
- * sig::PixelRgb, sig::PixelHsv, sig::PixelBgr, sig::PixelMonoSigned, 
- * sig::PixelRgbSigned, sig::PixelFloat, sig::PixelRgbFloat, 
+ * pixel access.  "T" can be any of sig::PixelMono, sig::PixelMono16,
+ * sig::PixelRgb, sig::PixelHsv, sig::PixelBgr, sig::PixelMonoSigned,
+ * sig::PixelRgbSigned, sig::PixelFloat, sig::PixelRgbFloat,
  * sig::PixelHsvFloat, sig::PixelInt.
  * If ImageOf::copy is called for two such images, a reasonable casting
  * operation will occur if the pixel types are different.
@@ -536,7 +536,7 @@ public:
     inline T& pixel(int x, int y) {
         return *((T *)(getPixelAddress(x,y)));
     }
-  
+
     inline T& pixel(int x, int y) const {
         return *((T *)(getPixelAddress(x,y)));
     }

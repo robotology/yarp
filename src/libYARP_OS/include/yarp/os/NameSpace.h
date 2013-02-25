@@ -25,9 +25,9 @@ public:
     virtual ~NameSpace() {}
 
     virtual bool checkNetwork();
-    
+
     virtual bool checkNetwork(double timeout);
-    
+
     virtual Contact getNameServerContact() const = 0;
 
     virtual ConstString getNameServerName() const {
@@ -44,32 +44,32 @@ public:
 
     virtual Contact unregisterContact(const Contact& contact) = 0;
 
-    virtual bool setProperty(const char *name, const char *key, 
+    virtual bool setProperty(const char *name, const char *key,
                              const Value& value) = 0;
 
     virtual Value *getProperty(const char *name, const char *key) = 0;
 
-    virtual bool connectPortToTopic(const Contact& src, 
+    virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) = 0;
 
-    virtual bool connectTopicToPort(const Contact& src, 
+    virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) = 0;
 
-    virtual bool disconnectPortFromTopic(const Contact& src, 
+    virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) = 0;
 
-    virtual bool disconnectTopicFromPort(const Contact& src, 
+    virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) = 0;
 
-    virtual bool connectPortToPortPersistently(const Contact& src, 
+    virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
                                                ContactStyle style) = 0;
 
-    virtual bool disconnectPortToPortPersistently(const Contact& src, 
+    virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
                                                   ContactStyle style) = 0;
 

@@ -110,8 +110,8 @@ public:
         use_set = false;
     }
 
-	bool allocateOnNeed(size_t neededLen, size_t allocateLen);
-	
+    bool allocateOnNeed(size_t neededLen, size_t allocateLen);
+
     /**
      * Makes sure data block is owned, making a copy if necessary.
      */
@@ -168,9 +168,9 @@ public:
         return b;
     }
 
-    
+
     /**
-     * @return description of used portion of data block associated 
+     * @return description of used portion of data block associated
      * with this object
      */
     Bytes usedBytes() {

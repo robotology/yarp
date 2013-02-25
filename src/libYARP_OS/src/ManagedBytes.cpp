@@ -26,19 +26,19 @@ void ManagedBytes::copy() {
 }
 
 bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
-	if (length()<neededLen && allocateLen>=neededLen) {
-		char *buf = new char[allocateLen];
-		yarp::os::NetworkBase::assertion(buf!=NULL);
-		ACE_OS::memcpy(buf,get(),length());
-		if (owned) {
-			delete[] get();
-			owned = false;
-		}
-		b = Bytes(buf,allocateLen);
+    if (length()<neededLen && allocateLen>=neededLen) {
+        char *buf = new char[allocateLen];
+        yarp::os::NetworkBase::assertion(buf!=NULL);
+        ACE_OS::memcpy(buf,get(),length());
+        if (owned) {
+            delete[] get();
+            owned = false;
+        }
+        b = Bytes(buf,allocateLen);
         owned = true;
-		return true;
-	}
-	return false;
+        return true;
+    }
+    return false;
 }
 
 

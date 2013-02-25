@@ -90,7 +90,7 @@ public:
             //printf("NAMESPACE %s\n", n.c_str());
             NameConfig conf2;
             if (!conf2.fromFile(n.c_str())) {
-                fprintf(stderr, "Could not find namespace %s\n", 
+                fprintf(stderr, "Could not find namespace %s\n",
                         n.c_str());
                 continue;
             }
@@ -121,7 +121,7 @@ public:
         }
         return Contact();
     }
-    
+
     Contact queryName(const char *name) {
         activate();
         for (int i=0; i<(int)spaces.size(); i++) {
@@ -175,7 +175,7 @@ bool MultiNameSpace::localOnly() const {
     HELPER(this).activate();
     return HELPER(this)._localOnly;
 }
-    
+
 bool MultiNameSpace::usesCentralServer() const {
     HELPER(this).activate();
     return HELPER(this)._usesCentralServer;
@@ -198,12 +198,12 @@ bool MultiNameSpace::activate(bool force) {
 Contact MultiNameSpace::getNameServerContact() const {
     return ((MultiNameSpaceHelper*)system_resource)->getNameServerContact();
 }
-    
+
 Contact MultiNameSpace::queryName(const char *name) {
     return HELPER(this).queryName(name);
 }
 
-bool MultiNameSpace::connectPortToTopic(const Contact& src, 
+bool MultiNameSpace::connectPortToTopic(const Contact& src,
                                         const Contact& dest,
                                         ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
@@ -211,7 +211,7 @@ bool MultiNameSpace::connectPortToTopic(const Contact& src,
     return ns->connectPortToTopic(src,dest,style);
 }
 
-bool MultiNameSpace::connectTopicToPort(const Contact& src, 
+bool MultiNameSpace::connectTopicToPort(const Contact& src,
                                         const Contact& dest,
                                         ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
@@ -219,7 +219,7 @@ bool MultiNameSpace::connectTopicToPort(const Contact& src,
     return ns->connectTopicToPort(src,dest,style);
 }
 
-bool MultiNameSpace::disconnectPortFromTopic(const Contact& src, 
+bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
                                              const Contact& dest,
                                              ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
@@ -227,7 +227,7 @@ bool MultiNameSpace::disconnectPortFromTopic(const Contact& src,
     return ns->disconnectPortFromTopic(src,dest,style);
 }
 
-bool MultiNameSpace::disconnectTopicFromPort(const Contact& src, 
+bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
                                              const Contact& dest,
                                              ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
@@ -235,7 +235,7 @@ bool MultiNameSpace::disconnectTopicFromPort(const Contact& src,
     return ns->disconnectTopicFromPort(src,dest,style);
 }
 
-bool MultiNameSpace::connectPortToPortPersistently(const Contact& src, 
+bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
                                                    const Contact& dest,
                                                    ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
@@ -243,7 +243,7 @@ bool MultiNameSpace::connectPortToPortPersistently(const Contact& src,
     return ns->connectPortToPortPersistently(src,dest,style);
 }
 
-bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src, 
+bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
                                                       const Contact& dest,
                                                       ContactStyle style) {
     NameSpace *ns = HELPER(this).getOne();
@@ -298,7 +298,7 @@ Contact MultiNameSpace::unregisterContact(const Contact& contact) {
     return result;
 }
 
-bool MultiNameSpace::setProperty(const char *name, const char *key, 
+bool MultiNameSpace::setProperty(const char *name, const char *key,
                                 const Value& value) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;

@@ -91,7 +91,7 @@ public:
      * @return true on success, false on failure
      */
     static bool disconnect(const char *src, const char *dest,
-                           bool quiet=true) {
+                           bool quiet = true) {
         ContactStyle style;
         style.quiet = quiet;
         return disconnect(src,dest,style);
@@ -115,7 +115,7 @@ public:
      * @return true if there is a connection
      */
     static bool isConnected(const char *src, const char *dest,
-                            bool quiet=true) {
+                            bool quiet = true) {
         ContactStyle style;
         style.quiet = quiet;
         return isConnected(src,dest,style);
@@ -137,7 +137,7 @@ public:
      * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
-    static bool exists(const char *port, bool quiet=true) {
+    static bool exists(const char *port, bool quiet = true) {
         ContactStyle style;
         style.quiet = quiet;
         return exists(port,style);
@@ -157,7 +157,7 @@ public:
      * @param quiet suppress messages displayed during wait
      * @return true on success, false on failure
      */
-    static bool sync(const char *port, bool quiet=true);
+    static bool sync(const char *port, bool quiet = true);
 
     /**
      * The standard main method for the YARP companion utility.
@@ -303,11 +303,11 @@ public:
      */
     static bool setLocalMode(bool flag);
 
-	 /**
+     /**
      * Get current value of flag "localMode", see setLocalMode function.
      * @return state of the flag.
      */
-	static bool getLocalMode();
+    static bool getLocalMode();
 
     /**
      * Read a line of arbitrary length from standard input.

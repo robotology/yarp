@@ -131,7 +131,7 @@ public:
      * @return 0 upon success, non-zero upon failure
      */
     virtual int runModule(int argc, char *argv[],
-                           bool skipFirst = true);
+                          bool skipFirst = true);
 
 
     /**

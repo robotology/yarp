@@ -46,7 +46,7 @@ namespace yarp {
 
         typedef YARP_FLOAT32 NetFloat32;
 
-#else
+#else // YARP_LITTLE_ENDIAN
 
         typedef YARP_FLOAT32 RawNetFloat32;
         union UnionNetFloat32 {
@@ -105,7 +105,7 @@ namespace yarp {
             }
         };
 
-#endif
+#endif // YARP_LITTLE_ENDIAN
 
     }
 }

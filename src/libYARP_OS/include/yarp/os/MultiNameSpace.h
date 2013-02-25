@@ -30,7 +30,7 @@ public:
     bool activate(bool force = false);
 
     virtual Contact getNameServerContact() const;
-    
+
     virtual Contact queryName(const char *name);
 
     virtual Contact registerName(const char *name);
@@ -41,37 +41,37 @@ public:
 
     virtual Contact unregisterContact(const Contact& contact);
 
-    virtual bool setProperty(const char *name, const char *key, 
+    virtual bool setProperty(const char *name, const char *key,
                              const Value& value);
-    
+
     virtual Value *getProperty(const char *name, const char *key);
 
-    virtual bool connectPortToTopic(const Contact& src, 
+    virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style);
 
-    virtual bool connectTopicToPort(const Contact& src, 
+    virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style);
 
-    virtual bool disconnectPortFromTopic(const Contact& src, 
+    virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style);
 
-    virtual bool disconnectTopicFromPort(const Contact& src, 
+    virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style);
 
-    virtual bool connectPortToPortPersistently(const Contact& src, 
+    virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
                                                ContactStyle style);
 
-    virtual bool disconnectPortToPortPersistently(const Contact& src, 
+    virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
                                                   ContactStyle style);
 
     virtual bool localOnly() const;
-    
+
     virtual bool usesCentralServer() const;
 
     virtual bool serverAllocatesPortNumbers() const;

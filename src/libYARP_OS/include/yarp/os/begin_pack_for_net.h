@@ -16,7 +16,7 @@
  * \file begin_pack_for_net.h Starts 1 byte packing for structs/classes.
  * Instructs the compiler that the following structure/class has to be
  * packed with 1 byte boundary.  This is conditionally generated depending
- * on the compiler and architecture. It assures interoperability of network 
+ * on the compiler and architecture. It assures interoperability of network
  * communication between compilers.
  * @see end_pack_for_net.h
  */

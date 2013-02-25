@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
         if (verbosity>0) {
             Network::setVerbosity(verbosity);
         }
-    
+
         if (ConstString(argv[1])=="regression") {
             done = true;
             UnitTest::startTestSystem();
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
             }
             UnitTest::stopTestSystem();
         }
-    } 
+    }
     if (!done) {
         Network::main(argc,argv);
     }
