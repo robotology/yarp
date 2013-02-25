@@ -375,9 +375,8 @@ public:
 
     yarp::os::Bottle findPaths(Property& config, const char *name) {
         ConstString fname = config.check(name,Value(name)).asString();
-        ConstString result = findFileBase(config,fname,true);
         Bottle paths;
-        if (result!="") paths.addString(result);
+        findFileBase(config,fname,true,paths,false);
         return paths;
     }
 
@@ -445,6 +444,30 @@ public:
             if (str!="") {
                 output.addString(str);
                 if (justTop) return;
+            }
+        }
+
+        // check /etc/yarp/yarp.d/*
+        // this directory is expected to contain *.ini files of the format:
+        //   [search BUNDLE_NAME]
+        //   path /PATH1 /PATH2
+        // for example:
+        //   [search icub]
+        //   path /usr/share/iCub
+        Property yarpd;
+        yarpd.fromConfigFile("/etc/yarp/yarp.d"); // should this be XDG_*?
+        Bottle sections = yarpd.findGroup("search").tail();
+        for (int i=0; i<sections.size(); i++) {
+            ConstString search_name = sections.get(i).asString();
+            Bottle group = yarpd.findGroup(search_name);
+            Bottle paths = group.findGroup("path").tail();
+            for (int j=0; j<paths.size(); j++) {
+                ConstString str = check(paths.get(j).asString().c_str(),"","",
+                                        name,isDir);
+                if (str!="") {
+                    output.addString(str);
+                    if (justTop) return;
+                }
             }
         }
 
