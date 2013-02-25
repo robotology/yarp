@@ -78,13 +78,9 @@ public:
 
     virtual bool connectionHasNameOfEndpoints() const;
 
-    virtual void queryBypass(NameStore *store) {
-        altStore = store;
-    }
+    virtual void queryBypass(NameStore *store);
 
-    virtual NameStore *getQueryBypass() {
-        return altStore;
-    }
+    virtual NameStore *getQueryBypass();
 
     virtual Contact detectNameServer(bool useDetectedServer,
                                      bool& scanNeeded,

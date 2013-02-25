@@ -186,6 +186,14 @@ bool MultiNameSpace::connectionHasNameOfEndpoints() const {
     return HELPER(this)._connectionHasNameOfEndpoints;
 }
 
+void MultiNameSpace::queryBypass(NameStore *store) {
+    altStore = store;
+}
+
+NameStore *MultiNameSpace::getQueryBypass() {
+    return altStore;
+}
+
 bool MultiNameSpace::serverAllocatesPortNumbers() const {
     HELPER(this).activate();
     return HELPER(this)._serverAllocatesPortNumbers;
