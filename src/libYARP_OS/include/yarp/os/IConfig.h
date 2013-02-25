@@ -31,18 +31,23 @@ class YARP_OS_API yarp::os::IConfig {
 public:
 
     /**
+     * Destructor.
+     */
+    virtual ~IConfig();
+
+    /**
      * Initialize the object.  You should override this.
      * @param config is a list of parameters for the object.
      * Which parameters are effective for your object can vary.
      * @return true/false upon success/failure
      */
-    virtual bool open(Searchable& config) { return true; }
+    virtual bool open(Searchable& config);
 
     /**
      * Shut the object down.  You should override this.
      * @return true/false on success/failure.
      */
-    virtual bool close() { return true; }
+    virtual bool close();
 
     /**
      * Change online parameters.
@@ -52,14 +57,7 @@ public:
      * @param config A list of parameters for the object.
      * @return true/false on success/failure.
      */
-    virtual bool configure(Searchable& config) {
-        return false;
-    }
-
-    /**
-     * Destructor.
-     */
-    virtual ~IConfig() {}
+    virtual bool configure(Searchable& config);
 };
 
 #endif

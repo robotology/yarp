@@ -10,10 +10,24 @@
 
 #include <yarp/os/IConfig.h>
 
-using namespace yarp::os;
+
+yarp::os::IConfig::~IConfig() {
+}
+
+bool yarp::os::IConfig::open(yarp::os::Searchable& config) {
+    return true;
+}
+
+bool yarp::os::IConfig::close() {
+    return true;
+}
+
+bool yarp::os::IConfig::configure(Searchable& config) {
+    return false;
+}
+
 
 // just to keep linkers from complaining about empty archive
 bool dummyIConfigMethod() {
     return false;
 }
-
