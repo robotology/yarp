@@ -21,6 +21,7 @@ include(CheckTypeSize)
 set(YARP_INT16)
 set(YARP_INT32)
 set(YARP_INT64)
+set(YARP_FLOAT32)
 set(YARP_FLOAT64)
 
 check_type_size("short" SIZEOF_SHORT)

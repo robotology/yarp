@@ -12,6 +12,7 @@
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/NetUint16.h>
 #include <yarp/sig/api.h>
 
 namespace yarp {

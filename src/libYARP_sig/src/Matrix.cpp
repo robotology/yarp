@@ -12,6 +12,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/NetInt32.h>
 
 #include <yarp/gsl_compatibility.h>
 

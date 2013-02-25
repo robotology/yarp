@@ -4,13 +4,13 @@
  * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef _YARP2_NETFLOAT32_
 #define _YARP2_NETFLOAT32_
 
-#include <yarp/os/NetInt32.h>
+#include <yarp/conf/system.h>
+#include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -26,9 +26,6 @@
 
 
 ////////////////////////////////////////////////////////////////////////
-//
-// If we are compiling with CMake, we should have all the information
-// we need.
 //   YARP_FLOAT32 should be a 32-bit float
 //   YARP_BIG_ENDIAN should be defined if we are big endian
 //   YARP_LITTLE_ENDIAN should be defined if we are little endian
@@ -56,53 +53,21 @@ namespace yarp {
         class YARP_OS_API NetFloat32 {
         private:
             double raw_value;
-            double swap(double x) const {
-                UnionNetFloat32 in, out;
-                in.d = x;
-                for (int i=0; i<4; i++) {
-                    out.c[i] = in.c[3-i];
-                }
-                return out.d;
-            }
-            RawNetFloat32 get() const {
-                return (double)swap((double)raw_value);
-            }
-            void set(RawNetFloat32 v) {
-                raw_value = (double)swap((double)v);
-            }
+            double swap(double x) const;
+            RawNetFloat32 get() const;
+            void set(RawNetFloat32 v);
         public:
-            NetFloat32() {
-            }
-            NetFloat32(RawNetFloat32 val) {
-                set(val);
-            }
-            operator RawNetFloat32() const {
-                return get();
-            }
-            RawNetFloat32 operator+(RawNetFloat32 v) const {
-                return get()+v;
-            }
-            RawNetFloat32 operator-(RawNetFloat32 v) const {
-                return get()-v;
-            }
-            RawNetFloat32 operator*(RawNetFloat32 v) const {
-                return get()*v;
-            }
-            RawNetFloat32 operator/(RawNetFloat32 v) const {
-                return get()/v;
-            }
-            void operator+=(RawNetFloat32 v) {
-                set(get()+v);
-            }
-            void operator-=(RawNetFloat32 v) {
-                set(get()-v);
-            }
-            void operator*=(RawNetFloat32 v) {
-                set(get()*v);
-            }
-            void operator/=(RawNetFloat32 v) {
-                set(get()/v);
-            }
+            NetFloat32();
+            NetFloat32(RawNetFloat32 val);
+            operator RawNetFloat32() const;
+            RawNetFloat32 operator+(RawNetFloat32 v) const;
+            RawNetFloat32 operator-(RawNetFloat32 v) const;
+            RawNetFloat32 operator*(RawNetFloat32 v) const;
+            RawNetFloat32 operator/(RawNetFloat32 v) const;
+            void operator+=(RawNetFloat32 v);
+            void operator-=(RawNetFloat32 v);
+            void operator*=(RawNetFloat32 v);
+            void operator/=(RawNetFloat32 v);
         };
 
 #endif // YARP_LITTLE_ENDIAN
@@ -110,11 +75,10 @@ namespace yarp {
     }
 }
 
+#else // YARP_FLOAT32
+
+#error "NetFloat32 not defined"
 
 #endif  // YARP_FLOAT32
 
-
 #endif /* _YARP2_NETFLOAT32_ */
-
-
-

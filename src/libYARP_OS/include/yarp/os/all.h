@@ -13,7 +13,13 @@
 #ifndef __YARP2_OS_ALL__
 #define __YARP2_OS_ALL__
 
+#include <yarp/os/NetFloat32.h>
+#include <yarp/os/NetFloat64.h>
+#include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
+#include <yarp/os/NetInt64.h>
+#include <yarp/os/NetUint16.h>
+#include <yarp/os/NetUint32.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>

@@ -11,6 +11,7 @@
 #define BLOBHEADER_INC
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetInt32.h>
 
 // translate to blobs for now; better translation requires type system
 #include <yarp/os/begin_pack_for_net.h>

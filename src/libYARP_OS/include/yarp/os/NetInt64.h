@@ -4,13 +4,13 @@
  * Copyright (C) 2006, 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
  * Authors: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 #ifndef _YARP2_NETINT64_
 #define _YARP2_NETINT64_
 
-#include <yarp/os/NetInt32.h>
+#include <yarp/conf/system.h>
+#include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -26,9 +26,6 @@
 
 
 ////////////////////////////////////////////////////////////////////////
-//
-// If we are compiling with CMake, we should have all the information
-// we need.
 //   YARP_INT64 should be a 64-bit integer
 //   YARP_BIG_ENDIAN should be defined if we are big endian
 //   YARP_LITTLE_ENDIAN should be defined if we are little endian
@@ -56,56 +53,24 @@ namespace yarp {
         class YARP_OS_API NetInt64 {
         private:
             YARP_INT64 raw_value;
-            YARP_INT64 swap(YARP_INT64 x) const {
-                UnionNetInt64 in, out;
-                in.d = x;
-                for (int i=0; i<8; i++) {
-                    out.c[i] = in.c[7-i];
-                }
-                return out.d;
-            }
-            RawNetInt64 get() const {
-                return (RawNetInt64)swap((RawNetInt64)raw_value);
-            }
-            void set(RawNetInt64 v) {
-                raw_value = (RawNetInt64)swap((RawNetInt64)v);
-            }
+            YARP_INT64 swap(YARP_INT64 x) const;
+            RawNetInt64 get() const;
+            void set(RawNetInt64 v);
         public:
-            NetInt64() {
-            }
-            NetInt64(RawNetInt64 val) {
-                set(val);
-            }
-            operator RawNetInt64() const {
-                return get();
-            }
-            RawNetInt64 operator+(RawNetInt64 v) const {
-                return get()+v;
-            }
-            RawNetInt64 operator-(RawNetInt64 v) const {
-                return get()-v;
-            }
-            RawNetInt64 operator*(RawNetInt64 v) const {
-                return get()*v;
-            }
-            RawNetInt64 operator/(RawNetInt64 v) const {
-                return get()/v;
-            }
-            void operator+=(RawNetInt64 v) {
-                set(get()+v);
-            }
-            void operator-=(RawNetInt64 v) {
-                set(get()-v);
-            }
-            void operator*=(RawNetInt64 v) {
-                set(get()*v);
-            }
-            void operator/=(RawNetInt64 v) {
-                set(get()/v);
-            }
+            NetInt64();
+            NetInt64(RawNetInt64 val);
+            operator RawNetInt64() const;
+            RawNetInt64 operator+(RawNetInt64 v) const;
+            RawNetInt64 operator-(RawNetInt64 v) const;
+            RawNetInt64 operator*(RawNetInt64 v) const;
+            RawNetInt64 operator/(RawNetInt64 v) const;
+            void operator+=(RawNetInt64 v);
+            void operator-=(RawNetInt64 v);
+            void operator*=(RawNetInt64 v);
+            void operator/=(RawNetInt64 v);
         };
 
-#endif
+#endif // YARP_LITTLE_ENDIAN
 
     }
 }
@@ -116,8 +81,4 @@ namespace yarp {
 
 #endif  // YARP_INT32
 
-
 #endif /* _YARP2_NETINT64_ */
-
-
-

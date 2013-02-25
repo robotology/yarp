@@ -9,6 +9,7 @@
 
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+#include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Vocab.h>
