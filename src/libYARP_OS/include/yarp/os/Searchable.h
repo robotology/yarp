@@ -10,6 +10,7 @@
 #ifndef _YARP2_SEARCHABLE_
 #define _YARP2_SEARCHABLE_
 
+#include <cstddef>
 #include <yarp/os/ConstString.h>
 
 namespace yarp {
@@ -33,19 +34,12 @@ public:
     bool isComment;
     bool isDefault;
 
-    SearchReport() {
-        key = "?";
-        value = "";
-        isFound = false;
-        isGroup = false;
-        isComment = false;
-        isDefault = false;
-    }
+    explicit SearchReport();
 };
 
 class YARP_OS_API yarp::os::SearchMonitor {
 public:
-    virtual ~SearchMonitor() {}
+    virtual ~SearchMonitor();
     virtual void report(const SearchReport& report, const char *context) = 0;
 };
 
@@ -70,9 +64,7 @@ public:
     /**
      * Default constructor.
      */
-    Searchable() {
-        monitor = 0/*NULL*/;
-    }
+    explicit Searchable();
 
     /**
      * Destructor.
@@ -84,7 +76,7 @@ public:
      * @param key the name to check for
      * @return true iff a property of the given name exists, even if
      * it doesn't have a value associated with it
-     */ 
+     */
     virtual bool check(const char *key) = 0;
 
 
@@ -159,7 +151,7 @@ public:
      * value found.
      */
     virtual bool check(const char *key, Value *& result,
-                       const char *comment = 0 /*NULL*/);
+                       const char *comment = NULL);
 
 
     /**
@@ -172,14 +164,14 @@ public:
      * interpreting the value found.
      */
     virtual Value check(const char *key, const Value& fallback,
-                        const char *comment = 0 /*NULL*/);
+                        const char *comment = NULL);
 
 
     /**
      * Checks if the object is invalid.
      * @return True if the object is invalid or "null".
      */
-    virtual bool isNull() const  { return false; }
+    virtual bool isNull() const;
 
     /**
      * Return a standard text representation of the content of the
@@ -191,24 +183,10 @@ public:
     virtual ConstString toString() const = 0;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    virtual void setMonitor(SearchMonitor *monitor, const char *context="") {
-        this->monitor = monitor;
-        this->monitorContext = context;
-    }
-
-    virtual SearchMonitor *getMonitor() {
-        return monitor;
-    }
-
-    virtual ConstString getContext() {
-        return monitorContext;
-    }
-
-    virtual void reportToMonitor(const SearchReport& report) {
-        if (monitor!=0/*NULL*/) {
-            monitor->report(report,monitorContext);
-        }
-    }
+    virtual void setMonitor(SearchMonitor *monitor, const char *context="");
+    virtual SearchMonitor *getMonitor();
+    virtual ConstString getContext();
+    virtual void reportToMonitor(const SearchReport& report);
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 

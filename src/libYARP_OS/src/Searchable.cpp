@@ -9,8 +9,25 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 
-#include <cstddef>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+yarp::os::SearchReport::SearchReport() :
+        key("?"),
+        value(""),
+        isFound(false),
+        isGroup(false),
+        isComment(false),
+        isDefault(false) {
+}
+
+yarp::os::SearchMonitor::~SearchMonitor() {
+}
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+
+yarp::os::Searchable::Searchable() :
+        monitor(NULL) {
+}
 
 bool yarp::os::Searchable::check(const char *txt,
                                  yarp::os::Value *& result,
@@ -78,3 +95,30 @@ yarp::os::Bottle& yarp::os::Searchable::findGroup(const char *key,
     }
     return findGroup(key);
 }
+
+bool yarp::os::Searchable::isNull() const {
+    return false;
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+void yarp::os::Searchable::setMonitor(yarp::os::SearchMonitor *monitor, const char *context) {
+    this->monitor = monitor;
+    this->monitorContext = context;
+}
+
+yarp::os::SearchMonitor *yarp::os::Searchable::getMonitor() {
+    return monitor;
+}
+
+yarp::os::ConstString yarp::os::Searchable::getContext() {
+    return monitorContext;
+}
+
+void yarp::os::Searchable::reportToMonitor(const yarp::os::SearchReport& report) {
+    if (monitor!=NULL) {
+        monitor->report(report,monitorContext);
+    }
+}
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
