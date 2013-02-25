@@ -33,14 +33,7 @@ public:
     bool expectReply;
     bool persistent;
 
-    ContactStyle() {
-        admin = false;
-        quiet = false;
-        timeout = -1;
-        carrier = "";
-        expectReply = true;
-        persistent = false;
-    }
+    explicit ContactStyle();
 };
 
 #endif
