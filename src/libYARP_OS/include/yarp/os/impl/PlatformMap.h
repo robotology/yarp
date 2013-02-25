@@ -16,6 +16,7 @@
 #  include <ace/Null_Mutex.h>
 #  define PLATFORM_MAP(x,y) ACE_Hash_Map_Manager<x,y,ACE_Null_Mutex>
 #  define PLATFORM_MAP_ITERATOR(x,y,z) ACE_Hash_Map_Entry<x,y> *z = 0/*NULL*/
+#  define PLATFORM_MAP_ITERATOR_IN_TEMPLATE(x,y,z) PLATFORM_MAP_ITERATOR(x,y,z)
 #  define PLATFORM_MAP_ITERATOR_FIRST(y) ((*y).ext_id_)
 #  define PLATFORM_MAP_ITERATOR_SECOND(y) ((*y).int_id_)
 #  define PLATFORM_MAP_SET(x,y,z) x.bind(y,z)
@@ -26,7 +27,8 @@
 #else
 #  include <map>
 #  define PLATFORM_MAP(x,y) std::map<x,y>
-#  define PLATFORM_MAP_ITERATOR(x,y,z) typename std::map<x,y>::iterator z;
+#  define PLATFORM_MAP_ITERATOR(x,y,z) std::map<x,y>::iterator z;
+#  define PLATFORM_MAP_ITERATOR_IN_TEMPLATE(x,y,z) typename PLATFORM_MAP_ITERATOR(x,y,z)
 #  define PLATFORM_MAP_ITERATOR_FIRST(y) (y->first)
 #  define PLATFORM_MAP_ITERATOR_SECOND(y) (y->second)
 #  define PLATFORM_MAP_SET(x,y,z) x[y] = z

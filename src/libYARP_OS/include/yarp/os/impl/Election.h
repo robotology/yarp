@@ -73,7 +73,7 @@ private:
     long ct;
 
     PR *getRecordRaw(const String& key, bool create = false) {
-        PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PR,entry);
+        PLATFORM_MAP_ITERATOR_IN_TEMPLATE(YARP_KEYED_STRING,PR,entry);
         int result = PLATFORM_MAP_FIND(nameMap,key,entry);
         if (result==-1 && create) {
             PLATFORM_MAP_SET(nameMap,key,PR());
