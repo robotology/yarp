@@ -30,34 +30,24 @@ public:
     /**
      * Default constructor.  No data present.
      */
-    Bytes() {
-        data = 0;
-        len = 0;
-    }
+    explicit Bytes();
 
     /**
      * Constructor.
      * @param data address of data block
      * @param len length of data block
      */
-    Bytes(char *data, size_t len) {
-        this->data = data;
-        this->len = len;
-    }
+    Bytes(char *data, size_t len);
 
     /**
      * @return length of data block
      */
-    size_t length() const {
-        return len;
-    }
+    size_t length() const;
 
     /**
      * @return address of data block
      */
-    char *get() const {
-        return data;
-    }
+    char *get() const;
 
 private:
     char *data;
