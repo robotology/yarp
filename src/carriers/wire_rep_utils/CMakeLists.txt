@@ -27,7 +27,7 @@ if(ENABLE_yarpcar_mjpeg_carrier OR ENABLE_yarpcar_tcpros_carrier)
     if(YARP_COMPILE_TESTS)
         add_executable(wire_rep_test test.cpp)
         target_link_libraries(wire_rep_test YARP_wire_rep_utils)
-        target_link_libraries(wire_rep_test YARP_OS YARP_sig)
+        target_link_libraries(wire_rep_test YARP_OS YARP_sig YARP_init)
         target_link_libraries(wire_rep_test ${ACE_LIBRARIES})
    endif(YARP_COMPILE_TESTS)
 
