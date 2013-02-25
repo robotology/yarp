@@ -24,7 +24,7 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::NameStore {
 public:
-    virtual ~NameStore() {}
+    virtual ~NameStore();
     virtual Contact query(const char *name) = 0;
     virtual bool announce(const char *name, int activity) = 0;
 };
