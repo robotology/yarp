@@ -34,7 +34,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~ConnectionWriter() {}
+    virtual ~ConnectionWriter();
 
     /**
      * Send a block of data to the network connection.
@@ -156,7 +156,7 @@ public:
      * @return true if writer goes nowhere.
      *
      */
-    virtual bool isNull() const { return false; }
+    virtual bool isNull() const;
 };
 
 #endif
