@@ -39,8 +39,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~ConnectionReader() {
-    }
+    virtual ~ConnectionReader();
 
     /**
      * Read a block of data from the network connection.
@@ -106,8 +105,7 @@ public:
      * Read a message envelope, if available.
      *
      */
-    virtual Bytes readEnvelope() { return Bytes(0,0); }
-
+    virtual Bytes readEnvelope();
 
     /**
      * Get a direct pointer to the object being sent, if possible.
