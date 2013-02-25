@@ -37,7 +37,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Contactable() {}
+    virtual ~Contactable();
 
     /**
      * Start port operation, with automatically-chosen network parameters.
@@ -47,9 +47,7 @@ public:
      * @return true iff the port started operation successfully and is now
      * visible on the YARP network
      */
-    bool open() {
-        return open("...");
-    }
+    bool open();
 
     /**
      * Start port operation, with a specific name, with
@@ -128,9 +126,7 @@ public:
      * Get name of port.
      * @return name of port
      */
-    virtual ConstString getName() const {
-        return where().getName();
-    }
+    virtual ConstString getName() const;
 
 
     /**
