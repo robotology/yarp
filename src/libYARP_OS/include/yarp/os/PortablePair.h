@@ -15,7 +15,7 @@
 
 namespace yarp {
     namespace os {
-		class PortablePairBase;
+        class PortablePairBase;
         template <class HEAD, class BODY> class PortablePair;
     }
 }
@@ -49,7 +49,7 @@ public:
     }
 
     /**
-     * Writes an object pair to a network connection.  
+     * Writes an object pair to a network connection.
      * @param connection an interface to the network connection for writing
      * @param head the first object
      * @param body the second object
@@ -99,10 +99,10 @@ public:
      */
     virtual bool read(ConnectionReader& connection) {
         return readPair(connection,head,body);
-    }  
+    }
 
     /**
-     * Writes this object pair to a network connection.  
+     * Writes this object pair to a network connection.
      * @param connection an interface to the network connection for writing
      * @return true iff the object pair was successfully written
      */
@@ -121,5 +121,3 @@ public:
 };
 
 #endif
-
-
