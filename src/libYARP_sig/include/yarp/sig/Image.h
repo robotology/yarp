@@ -403,7 +403,7 @@ namespace yarp {
         /**
          * Packed RGB pixel type.
          */
-        struct PixelRgb
+        struct YARP_sig_API PixelRgb
         {
             unsigned char r,g,b;
 
@@ -415,7 +415,7 @@ namespace yarp {
         /**
          * Packed RGBA pixel type.
          */
-        struct PixelRgba
+        struct YARP_sig_API PixelRgba
         {
             unsigned char r,g,b,a;
 
@@ -428,7 +428,7 @@ namespace yarp {
         /**
          * Packed BGRA pixel type.
          */
-        struct PixelBgra
+        struct YARP_sig_API PixelBgra
         {
             unsigned char b,g,r,a;
 
@@ -441,7 +441,7 @@ namespace yarp {
         /**
          * Packed RGB pixel type, with pixels stored in reverse order.
          */
-        struct PixelBgr
+        struct YARP_sig_API PixelBgr
         {
             unsigned char b,g,r;
             PixelBgr() { b = g = r = 0; }
@@ -452,7 +452,7 @@ namespace yarp {
         /**
          * Packed HSV (hue/saturation/value pixel type.
          */
-        struct PixelHsv {
+        struct YARP_sig_API PixelHsv {
             unsigned char h,s,v;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
@@ -464,7 +464,7 @@ namespace yarp {
         /**
          * Signed, packed RGB pixel type.
          */
-        struct PixelRgbSigned {
+        struct YARP_sig_API PixelRgbSigned {
             char r,g,b;
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
@@ -476,7 +476,7 @@ namespace yarp {
         /**
          * Floating point RGB pixel type.
          */
-        struct PixelRgbFloat {
+        struct YARP_sig_API PixelRgbFloat {
             float r,g,b;
             PixelRgbFloat() { r = g = b = 0; }
             PixelRgbFloat(float n_r, float n_g, float n_b)
@@ -486,7 +486,7 @@ namespace yarp {
         /**
          * Integer RGB pixel type.
          */
-        struct PixelRgbInt {
+        struct YARP_sig_API PixelRgbInt {
             yarp::os::NetInt32 r,g,b;
             PixelRgbInt() { r = g = b = 0; }
             PixelRgbInt(int n_r, int n_g, int n_b) {
@@ -531,7 +531,7 @@ public:
     }
 
     virtual int getPixelCode() const {
-        return -sizeof(T);
+        return -((int) sizeof(T));
     }
 
     inline T& pixel(int x, int y) {
@@ -566,7 +566,7 @@ namespace yarp {
 
 #define __YARPIMAGE_ASSOCIATE_TAG(tag,T) \
 template<> \
-class ImageOf<T> : public Image \
+class YARP_sig_API ImageOf<T> : public Image \
 { \
 private: \
   T nullPixel; \
@@ -608,7 +608,7 @@ public: \
 };
 
 
-        __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO,PixelMono)
+           __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO,PixelMono)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO16,PixelMono16)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB,PixelRgb)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGBA,PixelRgba)
@@ -633,5 +633,9 @@ public: \
 #define YARP_IMAGE_HEADER_CONTROL
 #endif
 
+#ifdef _MSC_VER
+   // template class YARP_sig_API yarp::sig::ImageOf<yarp::sig::PixelRgb>;
+   //  template class YARP_sig_API yarp::sig::ImageOf<yarp::sig::PixelMono>;
+#endif
 
 #endif
