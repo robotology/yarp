@@ -34,70 +34,42 @@ public:
     /**
      * Constructor.
      */
-    RpcClient() {
-        // should configure port object to let it know it will be used
-        // as an RPC client - TODO.
-    }
+    RpcClient();
 
     /**
      * Destructor.
      */
-    virtual ~RpcClient() {
-        port.close();
-    }
+    virtual ~RpcClient();
 
     // documentation provided in Contactable
-    virtual bool open(const char *name) {
-        port.setInputMode(false);
-        port.setOutputMode(true);
-        port.setRpcMode(true);
-        return port.open(name);
-    }
+    virtual bool open(const char *name);
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) {
-        return port.open(contact,registerName);
-    }
+    virtual bool open(const Contact& contact, bool registerName = true);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const char *name) {
-        return port.addOutput(name);
-    }
+    virtual bool addOutput(const char *name);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const char *name, const char *carrier) {
-        return port.addOutput(name,carrier);
-    }
+    virtual bool addOutput(const char *name, const char *carrier);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const Contact& contact){
-        return port.addOutput(contact);
-    }
+    virtual bool addOutput(const Contact& contact);
 
     // documentation provided in Contactable
-    virtual void close() {
-        port.close();
-    }
+    virtual void close();
 
     // documentation provided in Contactable
-    virtual void interrupt() {
-        port.interrupt();
-    }
+    virtual void interrupt();
 
     // documentation provided in Contactable
-    virtual void resume() {
-        port.resume();
-    }
+    virtual void resume();
 
     // documentation provided in Contactable
-    virtual Contact where() const {
-        return port.where();
-    }
+    virtual Contact where() const;
 
     // documentation provided in Contactable
-    virtual ConstString getName() const {
-        return where().getName();
-    }
+    virtual ConstString getName() const;
 
     /**
      * Write an object to the port, then expect one back.
@@ -107,63 +79,41 @@ public:
      * network connection - see for example Bottle
      * @return true iff an object is successfully written and read
      */
-    bool write(PortWriter& writer, PortReader& reader) const {
-        return port.write(writer,reader);
-    }
+    bool write(PortWriter& writer, PortReader& reader) const;
 
     // documented in Contactable
-    virtual bool setEnvelope(PortWriter& envelope) {
-        return port.setEnvelope(envelope);
-    }
+    virtual bool setEnvelope(PortWriter& envelope);
 
     // documented in Contactable
-    virtual bool getEnvelope(PortReader& envelope) {
-        return port.getEnvelope(envelope);
-    }
+    virtual bool getEnvelope(PortReader& envelope);
 
     // documented in Contactable
-    virtual int getInputCount() {
-        return port.getInputCount();
-    }
+    virtual int getInputCount();
 
     // documented in Contactable
-    virtual int getOutputCount() {
-        return port.getOutputCount();
-    }
+    virtual int getOutputCount();
 
     // documented in Contactable
-    virtual void getReport(PortReport& reporter) {
-        port.getReport(reporter);
-    }
+    virtual void getReport(PortReport& reporter);
 
     // documented in Contactable
-    virtual void setReporter(PortReport& reporter) {
-        port.setReporter(reporter);
-    }
+    virtual void setReporter(PortReport& reporter);
 
     // documented in Contactable
-    virtual bool isWriting() {
-        return port.isWriting();
-    }
+    virtual bool isWriting();
 
     // documented in Contactable
-    void setReader(PortReader& reader) {
-        port.setReader(reader);
-    }
+    void setReader(PortReader& reader);
 
 private:
     // an RpcClient may be implemented with a regular port
     // (this is not decided yet)
     Port port;
 
-    // forbid copy constructor by making it private
-    RpcClient(const RpcClient& alt) : Contactable() {
-    }
-
-    // forbid assignment operator by making it private
-    const RpcClient& operator = (const RpcClient& alt) {
-        return *this;
-    }
+    // forbid copy constructor and assignment operator by making them private
+    // and not implementing them
+    RpcClient(const RpcClient& alt);
+    const RpcClient& operator = (const RpcClient& alt);
 };
 
 #endif
