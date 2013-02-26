@@ -446,19 +446,19 @@ public:
             }
         }
 
-        // check /etc/yarp/yarp.d/*
+        // check /etc/yarp/path.d/*
         // this directory is expected to contain *.ini files of the format:
         //   [search BUNDLE_NAME]
         //   path /PATH1 /PATH2
         // for example:
         //   [search icub]
         //   path /usr/share/iCub
-        Property yarpd;
-        yarpd.fromConfigFile("/etc/yarp/yarp.d"); // should this be XDG_*?
-        Bottle sections = yarpd.findGroup("search").tail();
+        Property pathd;
+        pathd.fromConfigFile("/etc/yarp/path.d"); // should this be XDG_*?
+        Bottle sections = pathd.findGroup("search").tail();
         for (int i=0; i<sections.size(); i++) {
             ConstString search_name = sections.get(i).asString();
-            Bottle group = yarpd.findGroup(search_name);
+            Bottle group = pathd.findGroup(search_name);
             Bottle paths = group.findGroup("path").tail();
             for (int j=0; j<paths.size(); j++) {
                 ConstString str = check(paths.get(j).asString().c_str(),"","",
