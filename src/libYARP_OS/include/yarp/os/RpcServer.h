@@ -36,70 +36,42 @@ public:
     /**
      * Constructor.
      */
-    RpcServer() {
-        // should configure port object to let it know it will be used
-        // as an RPC server - TODO.
-    }
+    RpcServer();
 
     /**
      * Destructor.
      */
-    virtual ~RpcServer() {
-        port.close();
-    }
+    virtual ~RpcServer();
 
     // documentation provided in Contactable
-    virtual bool open(const char *name) {
-        port.setInputMode(true);
-        port.setOutputMode(false);
-        port.setRpcMode(true);
-        return port.open(name);
-    }
+    virtual bool open(const char *name);
 
     // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true) {
-        return port.open(contact,registerName);
-    }
+    virtual bool open(const Contact& contact, bool registerName = true);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const char *name) {
-        return false;
-    }
+    virtual bool addOutput(const char *name);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const char *name, const char *carrier) {
-        return false;
-    }
+    virtual bool addOutput(const char *name, const char *carrier);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const Contact& contact){
-        return false;
-    }
+    virtual bool addOutput(const Contact& contact);
 
     // documentation provided in Contactable
-    virtual void close() {
-        port.close();
-    }
+    virtual void close();
 
     // documentation provided in Contactable
-    virtual void interrupt() {
-        port.interrupt();
-    }
+    virtual void interrupt();
 
     // documentation provided in Contactable
-    virtual void resume() {
-        port.resume();
-    }
+    virtual void resume();
 
     // documentation provided in Contactable
-    virtual Contact where() const {
-        return port.where();
-    }
+    virtual Contact where() const;
 
     // documentation provided in Contactable
-    virtual ConstString getName() const {
-        return where().getName();
-    }
+    virtual ConstString getName() const;
 
     /**
      * Read an object from the port.
@@ -112,13 +84,7 @@ public:
      * for yarp::os::Port
      * @return true iff the object is successfully read
      */
-    bool read(PortReader& reader, bool willReply) {
-        if (!willReply) {
-            // this is an error for RpcServer
-            return false;
-        }
-        return port.read(reader,true);
-    }
+    bool read(PortReader& reader, bool willReply);
 
    /**
      * Send an object as a reply to an object read from the port.
@@ -128,18 +94,14 @@ public:
      * network connection - see for example Bottle
      * @return true iff the object is successfully written
      */
-    bool reply(PortWriter& writer) {
-        return port.reply(writer);
-    }
+    bool reply(PortWriter& writer);
 
     /**
      * Set an external reader for port data.
      * The reader will be able to reply by calling connection.getWriter().
      * @param reader the external reader to use
      */
-    void setReader(PortReader& reader) {
-        port.setReader(reader);
-    }
+    void setReader(PortReader& reader);
 
     /**
      * Set a creator for readers for port data.
@@ -149,58 +111,38 @@ public:
      *
      * @param creator the "factory" for creating PortReader object
      */
-    void setReaderCreator(PortReaderCreator& creator) {
-        port.setReaderCreator(creator);
-    }
+    void setReaderCreator(PortReaderCreator& creator);
 
     // documented in Contactable
-    virtual bool setEnvelope(PortWriter& envelope) {
-        return port.setEnvelope(envelope);
-    }
+    virtual bool setEnvelope(PortWriter& envelope);
 
     // documented in Contactable
-    virtual bool getEnvelope(PortReader& envelope) {
-        return port.getEnvelope(envelope);
-    }
+    virtual bool getEnvelope(PortReader& envelope);
 
     // documented in Contactable
-    virtual int getInputCount() {
-        return port.getInputCount();
-    }
+    virtual int getInputCount();
 
     // documented in Contactable
-    virtual int getOutputCount() {
-        return port.getOutputCount();
-    }
+    virtual int getOutputCount();
 
     // documented in Contactable
-    virtual void getReport(PortReport& reporter) {
-        port.getReport(reporter);
-    }
+    virtual void getReport(PortReport& reporter);
 
     // documented in Contactable
-    virtual void setReporter(PortReport& reporter) {
-        port.setReporter(reporter);
-    }
+    virtual void setReporter(PortReport& reporter);
 
     // documented in Contactable
-    virtual bool isWriting() {
-        return port.isWriting();
-    }
+    virtual bool isWriting();
 
 private:
     // an RpcServer may be implemented with a regular port
     // (this is not decided yet)
     Port port;
 
-    // forbid copy constructor by making it private
-    RpcServer(const RpcServer& alt) : Contactable() {
-    }
-
-    // forbid assignment operator by making it private
-    const RpcServer& operator = (const RpcServer& alt) {
-        return *this;
-    }
+    // forbid copy constructor and assignment operator by making them private
+    // and not implementing them
+    RpcServer(const RpcServer& alt);
+    const RpcServer& operator = (const RpcServer& alt);
 };
 
 #endif
