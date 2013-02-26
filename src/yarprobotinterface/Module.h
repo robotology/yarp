@@ -8,7 +8,7 @@
 #ifndef ROBOTINTERFACE_MODULE_H
 #define ROBOTINTERFACE_MODULE_H
 
-#include <yarp/os/Module.h>
+#include <yarp/os/RFModule.h>
 
 namespace RobotInterface
 {
