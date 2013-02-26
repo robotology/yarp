@@ -58,5 +58,9 @@ if(NOT YARP_FOUND)
     endif(YARP_HAS_NAME_LIBRARY)
     set(YARP_INIT_LIBRARY YARP_init)
 
+    # Disable deprecated warnings
+    # FIXME 2.4 re-enable these warnings before releasing YARP 2.4
+    set (YARP_NO_DEPRECATED_WARNINGS TRUE)
+
     set (YARP_FOUND TRUE)
 endif(NOT YARP_FOUND)
