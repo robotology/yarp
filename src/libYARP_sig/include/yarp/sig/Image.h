@@ -633,9 +633,4 @@ public: \
 #define YARP_IMAGE_HEADER_CONTROL
 #endif
 
-#ifdef _MSC_VER
-   // template class YARP_sig_API yarp::sig::ImageOf<yarp::sig::PixelRgb>;
-   //  template class YARP_sig_API yarp::sig::ImageOf<yarp::sig::PixelMono>;
-#endif
-
 #endif

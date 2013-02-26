@@ -230,37 +230,37 @@ void ImageStorage::_free_data (void)
 
 void ImageStorage::_free_complete()
 {
-	_free();
-	_free_data();
-	_free_ipl_header();
+    _free();
+    _free_data();
+    _free_ipl_header();
 }
 
 
 void ImageStorage::_free_ipl_header()
 {
-	if (pImage!=NULL)
+    if (pImage!=NULL)
         {
             iplDeallocate (pImage, IPL_IMAGE_HEADER);
         }
-	pImage = NULL;
+    pImage = NULL;
 }
 
 
 void ImageStorage::_alloc_complete(int x, int y, int pixel_type, int quantum,
                                    bool topIsLow)
 {
-	_make_independent();
-	_free_complete();
-	_set_ipl_header(x, y, pixel_type, quantum, topIsLow);
-	_alloc ();
-	_alloc_data ();
+    _make_independent();
+    _free_complete();
+    _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
+    _alloc ();
+    _alloc_data ();
 }
 
 
 
 void ImageStorage::_make_independent()
 {
-	// actually I think this isn't really needed -paulfitz
+    // actually I think this isn't really needed -paulfitz
 }
 
 
@@ -272,8 +272,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
     }
     int origin = topIsLow?IPL_ORIGIN_TL:IPL_ORIGIN_BL;
     int implemented_yet = 1;
-	// used to allocate the ipl header.
-	switch (pixel_type)
+    // used to allocate the ipl header.
+    switch (pixel_type)
         {
         case VOCAB_PIXEL_MONO:
             pImage = iplCreateImageHeader(
@@ -507,7 +507,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             printf ("*** Trying to allocate an invalid pixel type image\n");
             exit(1);
             break;
-	  
+  
         case -2:
             pImage = iplCreateImageHeader(
                                           1,
@@ -550,8 +550,8 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             break;
         }
 
-	type_id = pixel_type;
-	this->quantum = quantum;
+    type_id = pixel_type;
+    this->quantum = quantum;
     this->topIsLow = topIsLow;
 }
 
@@ -563,13 +563,13 @@ void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_typ
     this->quantum = quantum;
     this->topIsLow = topIsLow;
 
-	_make_independent();
-	_free_complete();
-	_set_ipl_header(x, y, pixel_type, quantum, topIsLow);
-	Data = NULL;
-	_alloc_extern (buf);
-	_alloc_data ();
-	is_owner = 0;
+    _make_independent();
+    _free_complete();
+    _set_ipl_header(x, y, pixel_type, quantum, topIsLow);
+    Data = NULL;
+    _alloc_extern (buf);
+    _alloc_data ();
+    is_owner = 0;
 }
 
 
@@ -1032,10 +1032,10 @@ bool Image::copy(const Image& alt, int w, int h) {
     w = alt.width();
     h = alt.height();
 
-	float di = ((float)h)/nh;
-	float dj = ((float)w)/nw;
+    float di = ((float)h)/nh;
+    float dj = ((float)w)/nw;
 
-	for (int i=0; i<nh; i++)
+    for (int i=0; i<nh; i++)
         {
             int i0 = (int)(di*i);
             for (int j=0; j<nw; j++)
