@@ -221,6 +221,8 @@ public:
 
 class PortTest : public UnitTest {
 public:
+    int safePort() { return Network::getDefaultPortRange()+100; }
+
     virtual String getName() { return "PortTest"; }
 
     void testOpen() {
@@ -228,7 +230,7 @@ public:
         Port out, in;
 
         in.open("/in");
-        out.open(Contact::bySocket("tcp","",9999));
+        out.open(Contact::bySocket("tcp","",safePort()));
 
         Contact conIn = in.where();
         Contact conOut = out.where();

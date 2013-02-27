@@ -47,7 +47,6 @@ static ConstString STR_HELP(const char *txt) {
 }
 #define STR(x) STR_HELP(x).c_str()
 
-
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 //
@@ -243,7 +242,7 @@ NameServer::HostRecord *NameServer::getHostRecord(const String& name,
 
 void NameServer::setup() {
 
-    basePort = 10002; // this gets replaced
+    basePort = NetworkBase::getDefaultPortRange()+2;
 
     dispatcher.add("register", &NameServer::cmdRegister);
     dispatcher.add("unregister", &NameServer::cmdUnregister);
@@ -928,7 +927,7 @@ int NameServer::main(int argc, char *argv[]) {
     
     // still something not set?
     if (suggest.getPort()==0) {
-        suggest = Address(suggest.getName(),10000);
+        suggest = Address(suggest.getName(),NetworkBase::getDefaultPortRange());
     }
     if (suggest.getName()=="...") {
         // should get my IP

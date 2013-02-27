@@ -150,7 +150,7 @@ String NameClient::send(const String& cmd, bool multi) {
 
         if (isFakeMode()) {
             //YARP_DEBUG(Logger::get(),"fake mode nameserver");
-            return getServer().apply(cmd,Address("127.0.0.1",10000,"tcp")) + "\n";
+            return getServer().apply(cmd,Address("127.0.0.1",NetworkBase::getDefaultPortRange(),"tcp")) + "\n";
         }
         
         TcpFace face;
@@ -234,7 +234,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(),"fake mode nameserver");
         return getServer().apply(cmd,reply,
-                                 Address("127.0.0.1",10000,"tcp"));
+                                 Address("127.0.0.1",NetworkBase::getDefaultPortRange(),"tcp"));
     } else {
         Contact server = getAddress().toContact();
         ContactStyle style;

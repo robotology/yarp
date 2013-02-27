@@ -86,7 +86,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     ConstString subdbFilename = options.check("subdb",
                                               Value("subs.db")).asString();
     ConstString ip = options.check("ip",Value("...")).asString();
-    int sock = options.check("socket",Value(10000)).asInt();
+    int sock = options.check("socket",Value(Network::getDefaultPortRange())).asInt();
     bool cautious = options.check("cautious");
     bool verbose = options.check("verbose");
 

@@ -490,6 +490,18 @@ public:
      *
      */
     static ConstString getConfigFile(const char *fname);
+
+    /**
+     *
+     * Under normal operation, YARP has a name server that manages a pool 
+     * of (socket) ports starting at a point specified by the YARP_PORT_RANGE 
+     * environment variable (or 10000 if that is not set).
+     *
+     * @return the beginning of YARP's port range, as specified by
+     * the environment variable YARP_PORT_RANGE (or 10000 if not set)
+     *
+     */
+    static int getDefaultPortRange();
 };
 
 /**

@@ -20,11 +20,15 @@ using namespace yarp::os;
 
 class NameServerTest : public UnitTest {
 public:
+    int safePort() {
+        return Network::getDefaultPortRange()+100;
+    }
+
     virtual String getName() { return "NameServerTest"; }
 
     void checkRegister() {
         report(0,"checking register...");
-        Address address("127.0.0.1",9999,"tcp");
+        Address address("127.0.0.1",safePort(),"tcp");
         NameServer ns;
         ns.registerName("/foo",address);
         Address a1 = ns.queryName("/foo");
@@ -37,7 +41,7 @@ public:
     void checkClientInterface() {
         report(0,"checking client intrface...");
         NetworkBase::setLocalMode(true);
-        Contact address = Contact::bySocket("tcp","127.0.0.1",9999);
+        Contact address = Contact::bySocket("tcp","127.0.0.1",safePort());
         address = address.addName("/foo2");
         NetworkBase::registerContact(address);
         Contact a1 = NetworkBase::queryName("/foo2");
@@ -51,7 +55,7 @@ public:
     void checkCompanion(bool fake) {
         report(0,"checking dud connections don't affect memory...");
         NetworkBase::setLocalMode(fake);
-        Contact address = Contact::bySocket("tcp","127.0.0.1",9999);
+        Contact address = Contact::bySocket("tcp","127.0.0.1",safePort());
         address = address.addName("/foo2");
         NetworkBase::registerContact(address);
         NetworkBase::connect("/junk","/junk2",NULL,true);

@@ -19,8 +19,11 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-const Address FallbackNameServer::mcastLastResort("224.2.1.1",10001,
-                                                  "mcast","fallback");
+Address FallbackNameServer::getAddress() {
+    Address mcastLastResort("224.2.1.1",NetworkBase::getDefaultPortRange(),
+                            "mcast","fallback");
+    return mcastLastResort;
+}
 
 
 void FallbackNameServer::run() {

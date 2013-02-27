@@ -22,6 +22,8 @@ using namespace yarp::os;
 
 class PortCoreTest : public UnitTest, public PortReader {
 public:
+    int safePort() { return Network::getDefaultPortRange()+100; }
+
     virtual String getName() { return "PortCoreTest"; }
 
     String expectation;
@@ -43,9 +45,9 @@ public:
     }
 
     void testStartStop() {
-        report(0,"checking start/stop works (requires free port 9999)...");
+        report(0,"checking start/stop works...");
 
-        Address address("127.0.0.1",9999,"tcp","/port");
+        Address address("127.0.0.1",safePort(),"tcp","/port");
         PortCore core;
         core.listen(address);
         core.start();
@@ -80,14 +82,14 @@ public:
 
 
     void testBottle() {
-        report(0,"simple bottle transmission check (needs ports 9997, 9998, 9999)...");
+        report(0,"simple bottle transmission check...");
 
         expectation = "";
         receives = 0;
 
-        Contact write = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9999).addName("/write"));
-        Contact read = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9998).addName("/read"));
-        Contact fake = Contact::bySocket("tcp","127.0.0.1",9997);
+        Contact write = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",safePort()).addName("/write"));
+        Contact read = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",safePort()+1).addName("/read"));
+        Contact fake = Contact::bySocket("tcp","127.0.0.1",safePort()+2);
 
         checkEqual(NetworkBase::queryName("/write").isValid(),true,"name server sanity");
         checkEqual(NetworkBase::queryName("/read").isValid(),true,"name server sanity");
@@ -125,14 +127,14 @@ public:
 
 
     void testBackground() {
-        report(0,"background transmission check (needs ports 9997, 9998, 9999)...");
+        report(0,"background transmission check...");
 
         expectation = "";
         receives = 0;
 
-        Contact write = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9999).addName("/write"));
-        Contact read = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9998).addName("/read"));
-        Contact fake = Contact::bySocket("tcp","127.0.0.1",9997);
+        Contact write = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",safePort()).addName("/write"));
+        Contact read = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",safePort()+1).addName("/read"));
+        Contact fake = Contact::bySocket("tcp","127.0.0.1",safePort()+2);
 
         checkEqual(NetworkBase::queryName("/write").isValid(),true,"name server sanity");
         checkEqual(NetworkBase::queryName("/read").isValid(),true,"name server sanity");

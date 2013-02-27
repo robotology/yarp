@@ -1153,3 +1153,13 @@ bool NetworkBase::writeToNameServer(PortWriter& cmd,
 ConstString NetworkBase::getConfigFile(const char *fname) {
     return NameConfig::expandFilename(fname).c_str();
 }
+
+
+int NetworkBase::getDefaultPortRange() {
+    ConstString range = NetworkBase::getEnvironment("YARP_PORT_RANGE");
+    if (range!="") {
+        int irange = NetType::toInt(range.c_str());
+        if (irange != 0) return irange;
+    }
+    return 10000;
+}

@@ -36,13 +36,10 @@ public:
     virtual void run();
     virtual void close();
 
-    static const Address& getAddress() {
-        return mcastLastResort;
-    }
+    static Address getAddress();
 
 private:
     NameServerStub& owner;
-    static const Address mcastLastResort;
     DgramTwoWayStream listen;
     bool closed;
 };
