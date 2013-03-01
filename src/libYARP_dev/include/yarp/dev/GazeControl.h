@@ -667,6 +667,19 @@ public:
     */
     virtual bool blockNeckYaw()=0;
 
+    /** Block the eyes to look always straight ahead with a
+    *   specified vergence angle. [wait for reply]
+    * @param ver the vergence angle (in degree). 
+    * @return true/false on success/failure. 
+    */
+    virtual bool blockEyes(const double ver)=0;
+
+    /** Block the eyes to look always straight ahead with the
+    *   current vergence angle. [wait for reply]
+    * @return true/false on success/failure. 
+    */
+    virtual bool blockEyes()=0;
+
     /** Return the current neck pitch range. [wait for reply]
     * @param min the location where to store the minimum of the 
     *            range [deg].
@@ -694,6 +707,16 @@ public:
     */
     virtual bool getNeckYawRange(double *min, double *max)=0;
 
+    /** Return the current vergence angle used to block the eyes.
+    *   [wait for reply]
+    * @param ver the vergence angle [deg].
+    * @return true/false on success/failure. 
+    *  
+    * @note negative values of returned vergence correspond to 
+    *       unblocked eyes.
+    */
+    virtual bool getBlockedVergence(double *ver)=0;
+
     /** Unblock the neck pitch. [wait for reply]
     * @return true/false on success/failure. 
     */
@@ -708,6 +731,11 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool clearNeckYaw()=0;
+
+    /** Unblock the eyes. [wait for reply]
+    * @return true/false on success/failure. 
+    */
+    virtual bool clearEyes()=0;
 
     /** Return the current tolerance defined by the user to gaze at
     *   the target with the neck, meaning that the neck will turn to
