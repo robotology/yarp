@@ -27,18 +27,29 @@ if [ "k$BUNDLE_GTKMM_VERSION" = "k" ]; then
 	exit 1
 fi
 
-fname=gtkmm-$BUNDLE_GTKMM_VERSION
-
+GTKMM_PLATFORM=""
 ext=exe
-if [ ! "k$BUNDLE_GTKMM_ZIP" = "k" ] ; then
-  ext=zip
+if [ "$OPT_VARIANT" == "x86" ] ; then
+	GTKMM_PLATFORM="win32"
+	if [ "$BUNDLE_GTKMM_32_ZIP" != "" ] ; then
+		ext=zip
+	fi
+elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+	GTKMM_PLATFORM="win64"
+	if [ "$BUNDLE_GTKMM_64_ZIP" != "" ] ; then
+		ext=zip
+	fi
+else
+	echo "Unsupported GTKMM platform $OPT_VARIANT"
+	exit 1
 fi
+fname=gtkmm-${GTKMM_PLATFORM}-devel-$BUNDLE_GTKMM_VERSION
 
 if [ "$ext" = "exe" ]; then
 
   if [ ! -e $fname.exe ]; then
 	GTKMM_DIR=`echo $BUNDLE_GTKMM_VERSION | sed "s/\.[-0-9]*$//"`
-	wget -O $fname.exe http://ftp.gnome.org/pub/GNOME/binaries/win32/gtkmm/$GTKMM_DIR/gtkmm-win32-devel-$BUNDLE_GTKMM_VERSION.exe || (
+	wget -O $fname.exe http://ftp.gnome.org/pub/GNOME/binaries/${GTKMM_PLATFORM}/gtkmm/$GTKMM_DIR/${fname}.exe || (
 		echo "Cannot fetch GTKMM"
 		rm -f $fname.exe
 		exit 1
@@ -75,28 +86,42 @@ if [ "$ext" = "exe" ]; then
   fi
 fi
 
+GTKMM_PATH=""
 
 if [ "$ext" = "zip" ]; then
 
   if [ ! -e $fname.zip ]; then
-	wget -O $fname.zip $BUNDLE_GTKMM_ZIP || {
-		echo "Cannot fetch GTKMM"
-		rm -f $fname.zip
+    if [ "$OPT_VARIANT" == "x86" ] ; then
+		wget -O $fname.zip $BUNDLE_GTKMM_32_ZIP || {
+			echo "Cannot fetch GTKMM"
+			rm -f $fname.zip
+			exit 1
+		}
+		GTKMM_PATH="gtkmm"
+	elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+		wget -O $fname.zip $BUNDLE_GTKMM_64_ZIP || {
+			echo "Cannot fetch GTKMM"
+			rm -f $fname.zip
+			exit 1
+		}
+		GTKMM_PATH="gtkmm64"
+	else
+		echo "Unsupported GTKMM platform $OPT_VARIANT"
 		exit 1
-	}
+	fi
   fi
 
   if [ ! -d $fname ] ; then
-    if [ ! -e gtkmm ] ; then
+    if [ ! -e "$GTKMM_PATH" ] ; then
       unzip $fname.zip || {
 	  	echo "Cannot unpack GTKMM"
 		cd $BUILD_DIR
-		rm -rf gtkmm
+		rm -rf $GTKMM_PATH
 		exit 1
 	  }
 	  
 	  ## we follow instructions in gtkmm/redist/README
-	  cd gtkmm
+	  cd $GTKMM_PATH
 	  mv bin bin-backup
 	  mkdir bin
 	  cp redist/*.dll bin/
@@ -112,7 +137,8 @@ if [ "$ext" = "zip" ]; then
 	fi
 	#mv $fname.zip store-$fname.zip
 	#mv $fname.exe store-$fname.exe
-	mv gtkmm $fname || exit 1
+	sleep 3
+	mv $GTKMM_PATH $fname || exit 1
 	#mv store-$fname.zip $fname.zip
 	#mv store-$fname.exe $fname.exe
   fi

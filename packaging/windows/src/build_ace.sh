@@ -34,25 +34,42 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 # out the correct ACE project file (or makefile) to use, given the compiler 
 # options
 # Visual Studio 11 not directly supported so we use ACE_vc10. We set
-if [ "k$OPT_COMPILER" = "kv11" ] ; then
+###
+if [ "$OPT_COMPILER" == "v11" ] ; then
     echo "WARNING: ACE does not yet provide visual studio 11 project files so you have to manually open and convert ACE_vc10.vcxproj"
 	convert=1
 	pname=ACE_vc10.sln #ACE_vc10.vcxprojfi
+	if [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+		OPT_PLATFORM_COMMAND="/p:Platform=x64"
+	elif [ "$OPT_VARIANT" == "x86" ] ; then
+		OPT_PLATFORM_COMMAND="/p:Platform=Win32"
+	fi
 fi
-if [ "k$OPT_COMPILER" = "kv10" ] ; then
+if [ "$OPT_COMPILER" == "v10" ] ; then
 	pname=ACE_vc10.vcxproj
+	if [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+		OPT_PLATFORM_COMMAND="/p:Platform=x64"
+	elif [ "$OPT_VARIANT" == "x86" ] ; then
+		OPT_PLATFORM_COMMAND="/p:Platform=Win32"
+	fi
 fi
-if [ "k$OPT_COMPILER" = "kv9" ] ; then
+if [ "$OPT_COMPILER" == "v9" ] ; then
 	pname=ACE_vc9.vcproj
 	OPT_BUILDER=$OPT_BUILDER_VCBUILD
 	OPT_PLATFORM_COMMAND=$OPT_PLATFORM_COMMAND_VCBUILD
-	OPT_CONFIGURATION_COMMAND=$OPT_CONFIGURATION_COMMAND_VCBUILD
+	if [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+		OPT_PLATFORM_COMMAND="/platform=x64"
+	elif [ "$OPT_VARIANT" == "x86" ] ; then
+		OPT_PLATFORM_COMMAND="/platform=Win32"
+	fi
+	OPT_CONFIGURATION_COMMAND="${OPT_CONFIGURATION_COMMAND_VCBUILD}"
 fi
+###
 if [ "k$OPT_COMPILER" = "kv8" ] ; then
 	pname=ACE_vc8.vcproj
 	OPT_BUILDER=$OPT_BUILDER_VCBUILD
 	OPT_PLATFORM_COMMAND=$OPT_PLATFORM_COMMAND_VCBUILD
-	OPT_CONFIGURATION_COMMAND=$OPT_CONFIGURATION_COMMAND_VCBUILD
+	OPT_CONFIGURATION_COMMAND="${OPT_CONFIGURATION_COMMAND_VCBUILD}"
 fi
 LIBPRE=""
 if $OPT_GCCLIKE; then

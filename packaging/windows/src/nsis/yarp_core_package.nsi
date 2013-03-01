@@ -2,6 +2,7 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "EnvVarUpdate.nsh"
+!include "x64.nsh"
 
 !define UninstLog "uninstall_YARP.log"
 Var UninstLog
@@ -403,7 +404,22 @@ Section "Uninstall"
 SectionEnd
 
 Function .onInit
-  !insertmacro MULTIUSER_INIT
+	!insertmacro MULTIUSER_INIT
+	${If} ${YARP_PLATFORM} == "x64"
+	${OrIf} ${YARP_PLATFORM} == "amd64"
+	${OrIf} ${YARP_PLATFORM} == "x86_amd64"
+		${If} ${RUNNINGX64}
+			StrCpy $instdir "$PROGRAMFILES64\${VENDOR}"
+			SetRegView 64
+		${Else}
+			MessageBox MB_OK "Sorry, but this version runs only on x64 machines"
+			Abort
+		${EndIf}
+	${Else}
+		${If} ${RUNNINGX64}
+			StrCpy $instdir "$PROGRAMFILES32\${VENDOR}"
+		${EndIf}
+	${EndIf}
 FunctionEnd
 
 Function un.onInit

@@ -130,23 +130,29 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 	OPT_CONFIGURATION_COMMAND="/p:Configuration=$OPT_BUILD"
 
 	OPT_GENERATOR=""
-	if [ "k$OPT_COMPILER" = "kv11" ] ; then
-		if [ "k$OPT_VARIANT" = "kx86" ] ; then
+	if [ "$OPT_COMPILER" == "v11" ] ; then
+		if [ "$OPT_VARIANT" == "x86" ] ; then
 			OPT_GENERATOR="Visual Studio 11"
-		fi
+		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+			OPT_GENERATOR="Visual Studio 11 Win64"
+		fi		
 	fi
-	if [ "k$OPT_COMPILER" = "kv10" ] ; then
-		if [ "k$OPT_VARIANT" = "kx86" ] ; then
+	if [ "$OPT_COMPILER" == "v10" ] ; then
+		if [ "$OPT_VARIANT" == "x86" ] ; then
 			OPT_GENERATOR="Visual Studio 10"
+		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+			OPT_GENERATOR="Visual Studio 10 Win64"
 		fi
 	fi
-	if [ "k$OPT_COMPILER" = "kv9" ] ; then
-		if [ "k$OPT_VARIANT" = "kx86" ] ; then
+	if [ "$OPT_COMPILER" == "v9" ] ; then
+		if [ "$OPT_VARIANT" == "x86" ] ; then
 			OPT_GENERATOR="Visual Studio 9 2008"
+		elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+			OPT_GENERATOR="Visual Studio 9 2008 Win64"
 		fi
 	fi
-	if [ "k$OPT_COMPILER" = "kv8" ] ; then
-		if [ "k$OPT_VARIANT" = "kx86" ] ; then
+	if [ "$OPT_COMPILER" == "v8" ] ; then
+		if [ "$OPT_VARIANT" == "x86" ] || [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
 			OPT_GENERATOR="Visual Studio 8 2005"
 		fi
 	fi

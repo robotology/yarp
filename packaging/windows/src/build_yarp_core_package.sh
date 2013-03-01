@@ -287,7 +287,7 @@ for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 		cp $YARP_DIR_DBG_UNIX/install/lib/$d/YARP-*.cmake $d
 	fi
 	sed -i '/SET.YARP_LIBRARIES/ i \
-  get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)' YARPConfig.cmake
+	get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)' YARPConfig.cmake
 	sed -i "s|[^\"]*YARP.cmake|\${YARP_CMAKE}/../lib/${d}/YARP.cmake|" YARPConfig.cmake
 	sed -i 's|[^"]*/install|${YARP_CMAKE}/..|g' YARPConfig.cmake
 	for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
@@ -403,9 +403,14 @@ fi
 if [ "$OPT_VCNNN" == "VC110" ]
 then
 	echo "**** Fixing missing msvc100 DLLs in gtkmm from $REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
-	cd "$REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT" || exit 1
+	VC_PLAT="$OPT_VARIANT"
+	if [ "$VC_PLAT" == "amd64" ] || [ "$VC_PLAT" == "x86_amd64" ]
+	then
+		VC_PLAT="x64"
+	fi
+	cd "${REDIST_PATH}/${VC_PLAT}/Microsoft.VC100.CRT" || exit 1
 	for f in `ls *.dll *.manifest`; do
-		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "$REDIST_PATH/$OPT_VARIANT/Microsoft.VC100.CRT"
+		nsis_add yarp_vc_dlls $f ${YARP_SUB}/bin/$f "${REDIST_PATH/}${VC_PLAT}/Microsoft.VC100.CRT"
 	done
 fi
 
@@ -442,7 +447,7 @@ fi
 cd $OUT_DIR
 cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
 
-$NSIS_BIN -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DGTKMM_SUB=$GTKMM_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+$NSIS_BIN -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DGTKMM_SUB=$GTKMM_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
 
 # Generate zip files
 if [ "k$SKIP_ZIP" = "k" ] ; then
