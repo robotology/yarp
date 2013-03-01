@@ -24,6 +24,7 @@
 #include "yarp/os/Stamp.h"
 #include "iCub/worker.h"
 #include "iCub/main_window.h"
+
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace cv;
@@ -169,7 +170,7 @@ bool MasterThread::threadInit()
      //if (!stepfromCmd)
      {
         for (int i =0; i < numPart; i++)
-            utilities->partDetails[i].currFrame = 1;
+            utilities->partDetails[i].currFrame = 0;
 
         virtualTime = utilities->partDetails[0].timestamp[ utilities->partDetails[0].currFrame ];
      }
@@ -201,7 +202,7 @@ void MasterThread::stepFromCmd()
 
     for (int i=0; i < numPart; i++)
         utilities->partDetails[i].sent = 0;
-    //fprintf( stdout, "ok sent all once\n");
+    
     utilities->totalSent = 0;
     utilities->pauseThread();
 }
@@ -216,12 +217,12 @@ void MasterThread::runNormally()
             if ( virtualTime >= utilities->partDetails[i].timestamp[ utilities->partDetails[i].currFrame ] )
             {
                 utilities->partDetails[i].worker->sendData(utilities->partDetails[i].currFrame, isActive, virtualTime );
-                utilities->partDetails[i].currFrame++;
                 if ( initTime > 300)
                 {
                     guiUpdate->updateGuiRateThread();
                     initTime = 0;
                 }
+                utilities->partDetails[i].currFrame++;
             }
         }
         else
@@ -246,6 +247,7 @@ void MasterThread::runNormally()
 
                     if (stopAll == numPart)
                     {
+                        //guiUpdate->updateGuiRateThread();
                         fprintf(stdout, "All parts have Finished!\n");
                         utilities->stopAtEnd();
                     }
@@ -255,6 +257,7 @@ void MasterThread::runNormally()
     }
     this->setRate( (int) (2 / utilities->speed) );
     virtualTime += 0.002; // increase by two millisecond
+    //fprintf(stdout, "virtualTime: %lf \n", virtualTime);
     initTime++;
 }
 /**********************************************************/
@@ -349,7 +352,7 @@ void UpdateGui::run()
             }
             else
             {
-                if (utilities->partDetails[i].currFrame < utilities->partDetails[i].maxFrame)
+                if (utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame)
                 {
                     int rate = (int)utilities->partDetails[i].worker->getFrameRate();
                     wnd->setFrameRate(utilities->partDetails[i].name.c_str(),rate);
@@ -358,6 +361,8 @@ void UpdateGui::run()
             percentage = 0;
             percentage = ( utilities->partDetails[i].currFrame *100 ) / utilities->partDetails[i].maxFrame;
             wnd->setPartProgress( utilities->partDetails[i].name.c_str(), percentage );
+
+            //fprintf(stdout, "part %d is at frame %d of %d therefore %d\n",i, utilities->partDetails[i].currFrame, utilities->partDetails[i].maxFrame, percentage);
         }
         if(i == 0)
             wnd->setPlayProgress(percentage);

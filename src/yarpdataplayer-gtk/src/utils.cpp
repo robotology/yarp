@@ -240,7 +240,7 @@ bool Utilities::setupDataFromParts(partsData &part)
     fprintf(stdout,"opening file %s\n", part.logFile.c_str() );
     str.open (part.logFile.c_str());//, ios::binary);
 
-    //read throughout
+    //read throughout  
     if (str.is_open())
     {
         string line;
@@ -252,9 +252,9 @@ bool Utilities::setupDataFromParts(partsData &part)
             part.timestamp.push_back( b.get(1).asDouble() );
             itr++;
         }
-        allTimeStamps.push_back( part.timestamp[1] );   //save all first timeStamps dumped for later ease of use
+        allTimeStamps.push_back( part.timestamp[0] );   //save all first timeStamps dumped for later ease of use 
         part.maxFrame= itr-1;                           //set max frame to the total iteration minus first line type;
-        part.currFrame = 1;                             //initialize current frame to 0
+        part.currFrame = 0;                             //initialize current frame to 0
         str.close();                                    //close the file
     }
     else
@@ -274,6 +274,7 @@ void Utilities::getMaxTimeStamp()
             maxTimeStamp = allTimeStamps[i];
             index = i;
         }
+        
     }
     fprintf(stdout,"the biggest timestamp is: index %d with value %lf\n",index, allTimeStamps[index] );
 }

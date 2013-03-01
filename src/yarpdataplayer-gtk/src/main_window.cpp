@@ -275,8 +275,8 @@ bool MainWindow::updateFrameNumber(const char* part, int frameNum)
     if (subDirCnt > 0)
     {
         fprintf(stdout,"setting initial frame to %d\n",frameNum);
-        if (frameNum == 0)
-            frameNum = 1;
+        //if (frameNum == 0)
+            //frameNum = 1;
 
         for (std::map<const char*,int>::iterator itr=partMap.begin(); itr != partMap.end(); itr++)
         {
