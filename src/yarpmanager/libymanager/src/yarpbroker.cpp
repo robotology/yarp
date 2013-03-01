@@ -518,8 +518,14 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
     grp.addString("sysinfo");
     msg.addList() = grp;
 
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
+    //style.carrier = carrier;
+
+
     __trace_message = "(getSystemInfo) connecting to " + string(port.getName().c_str());
-    bool connected = yarp::os::NetworkBase::connect(port.getName(), server);
+    bool connected = yarp::os::NetworkBase::connect(port.getName(), server, style);
     if(!connected)
     {
         strError = string("Cannot connect to ") + string(server);
@@ -658,9 +664,12 @@ bool YarpBroker::threadInit()
     stdioPort.open("...");
 
 	double base = Time::now();
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
     while(!timeout(base, 5.0))
     {
-        if(NetworkBase::connect(strStdioPort.c_str(), stdioPort.getName())) 
+        if(NetworkBase::connect(strStdioPort.c_str(), stdioPort.getName(), style)) 
             return true;
     }
 
@@ -698,11 +707,16 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
         return YARPRUN_SEMAPHORE_PARAM;
 
     port.setTimeout(fTimeout);
+
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
+
     bool ret;
     __trace_message = "(SendMsg) connecting to " + string(target.c_str());
     for(int i=0; i<10; i++)
     {
-        ret = NetworkBase::connect(port.getName().c_str(), target.c_str());
+        ret = NetworkBase::connect(port.getName().c_str(), target.c_str(), style);
         if(ret) break;
         Time::delay(1.0);
     }
