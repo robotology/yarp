@@ -81,20 +81,16 @@ InputProtocol *TcpFace::read() {
     }
 
     if (stream!=NULL) {
-#ifdef YARP_HAS_ACE
         stream->setReadTimeout(2.0);
         stream->setWriteTimeout(2.0);
-#endif
 
         bool success = auth.authSource(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
             YARP_ERROR(tcpFaceLog,"authentication failed");
             return NULL;
         }
-#ifdef YARP_HAS_ACE
         stream->setReadTimeout(0.);
         stream->setWriteTimeout(0.);
-#endif
 
         return new Protocol(stream);
     }
@@ -113,20 +109,16 @@ OutputProtocol *TcpFace::write(const Address& address) {
     }
 
     if (stream!=NULL) {
-#ifdef YARP_HAS_ACE
         stream->setReadTimeout(2.0);
         stream->setWriteTimeout(2.0);
-#endif
 
         bool success = auth.authDest(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
             YARP_ERROR(tcpFaceLog,"authentication failed");
             return NULL;
         }
-#ifdef YARP_HAS_ACE
         stream->setReadTimeout(0.);
         stream->setWriteTimeout(0.);
-#endif
 
         return new Protocol(stream);
     }
