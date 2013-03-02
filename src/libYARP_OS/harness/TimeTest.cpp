@@ -23,17 +23,17 @@ public:
 
     void testDelay() {
         report(0,"testing delay (there will be a short pause)...");
-        double target = 0.75;
+        double target = 3.0;
         double t1 = Time::now();
         Time::delay(target);
         double t2 = Time::now();
         double dt = t2-t1-target;
-        double limit = 0.3; // don't be too picky, there is a lot of undefined slop
+        double limit = 2.0; // don't be too picky, there is a lot of undefined slop
         bool inLimits = (-limit<dt)&&(dt<limit);
         report(0,String("delay was late(+) or early(-) by ") +
                NetType::toString((int)(dt*1000)) +
                " ms");
-        checkEqual(true,inLimits,"delay for 0.75 seconds");
+        checkEqual(true,inLimits,"delay for 3.0 seconds");
     }
 
     virtual void runTests() {
