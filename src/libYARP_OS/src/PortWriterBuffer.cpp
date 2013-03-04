@@ -154,6 +154,11 @@ private:
     int outCt;
 };
 
+
+PortWriterBufferManager::~PortWriterBufferManager() {
+}
+
+
 #define HELPER(x) (*((PortWriterBufferBaseHelper*)(x)))
 
 
