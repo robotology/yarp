@@ -30,7 +30,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PortReader() {}
+    virtual ~PortReader();
 
     /**
      * Read this object from a network connection.
