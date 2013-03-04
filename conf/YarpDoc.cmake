@@ -20,7 +20,7 @@ if(DOXYGEN_FOUND)
     set(DOX_GENERATE_MAN NO)
     configure_file(${CMAKE_SOURCE_DIR}/conf/doxygen/${DOX_FILE}.template
                    ${CMAKE_BINARY_DIR}/dox/${DOX_FILE} IMMEDIATE)
-    add_custom_target(dox COMMAND ${DOXYGEN_EXE} ${CMAKE_BINARY_DIR}/dox/${DOX_FILE})
+    add_custom_target(dox COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/dox/${DOX_FILE})
 
     set(DOX_GENERATE_HTML NO)
     set(DOX_GENERATE_MAN YES)
@@ -28,6 +28,6 @@ if(DOXYGEN_FOUND)
     set(DOX_PATTERNS "cmd_*.dox")
     configure_file(${CMAKE_SOURCE_DIR}/conf/doxygen/${DOX_FILE}.template
                    ${CMAKE_BINARY_DIR}/dox/${DOX_FILE}.man IMMEDIATE)
-    add_custom_target(man COMMAND ${DOXYGEN_EXE} ${CMAKE_BINARY_DIR}/dox/${DOX_FILE}.man)
+    add_custom_target(man COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/dox/${DOX_FILE}.man)
 
 endif(DOXYGEN_FOUND)
