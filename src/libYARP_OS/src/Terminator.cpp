@@ -17,6 +17,7 @@
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Vocab.h>
 
 
 using namespace yarp::os::impl;

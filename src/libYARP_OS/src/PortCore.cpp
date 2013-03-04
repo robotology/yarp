@@ -20,6 +20,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/PortInfo.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 #ifdef YARP_HAS_ACE

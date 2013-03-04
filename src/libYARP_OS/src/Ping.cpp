@@ -15,6 +15,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Vocab.h>
 
 using namespace yarp::os;
 

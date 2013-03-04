@@ -13,6 +13,7 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/Vocab.h>
 
 //#include <ace/OS.h>
 #include <yarp/os/impl/PlatformStdio.h>

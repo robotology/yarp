@@ -12,6 +12,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortReport.h>
+#include <yarp/os/PortInfo.h>
 #include <yarp/os/impl/PortCoreOutputUnit.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/Logger.h>

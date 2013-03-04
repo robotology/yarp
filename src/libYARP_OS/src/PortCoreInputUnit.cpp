@@ -16,6 +16,7 @@
 #include <yarp/os/impl/Name.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/PortReport.h>
+#include <yarp/os/PortInfo.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
