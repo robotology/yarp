@@ -39,7 +39,7 @@ private:
     PortReaderCreator *recReadCreator;
     int recWaitAfterSend;
 public:
-    PortCoreAdapter(Port& owner) : 
+    PortCoreAdapter(Port& owner) :
         owner(owner), stateMutex(1), readDelegate(NULL), writeDelegate(NULL),
         readResult(false),
         readActive(false),
@@ -100,7 +100,7 @@ public:
             produce.post();
             readBlock.post();
             return false;
-        } 
+        }
 
         // wait for happy consumer - don't want to miss a packet
         if (!readBackground) {
@@ -204,7 +204,7 @@ public:
     }
 
     /*
-      Configuration of a port that should be remembered 
+      Configuration of a port that should be remembered
       between opens and closes
     */
 
@@ -275,7 +275,7 @@ bool Port::open(const Contact& contact, bool registerName) {
     return open(contact,registerName,NULL);
 }
 
-bool Port::open(const Contact& contact, bool registerName, 
+bool Port::open(const Contact& contact, bool registerName,
                 const char *fakeName) {
     Contact contact2 = contact;
 
@@ -410,7 +410,7 @@ void Port::close() {
     core.join();
 
     // In fact, open flag means "ever opened", so don't reset it
-    // core.setOpened(false); 
+    // core.setOpened(false);
 }
 
 void Port::interrupt() {
@@ -478,7 +478,7 @@ bool Port::write(PortWriter& writer, PortWriter *callback) {
 /**
  * write something to the port
  */
-bool Port::write(PortWriter& writer, PortReader& reader, 
+bool Port::write(PortWriter& writer, PortReader& reader,
                  PortWriter *callback) const {
     PortCoreAdapter& core = HELPER(implementation);
     if (core.isInterrupted()) return false;

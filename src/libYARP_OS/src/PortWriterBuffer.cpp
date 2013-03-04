@@ -22,7 +22,7 @@ using namespace yarp::os;
 
 class PortWriterBufferBaseHelper : public PortWriterBufferManager {
 public:
-    PortWriterBufferBaseHelper(PortWriterBufferBase& owner) : 
+    PortWriterBufferBaseHelper(PortWriterBufferBase& owner) :
         owner(owner), stateSema(1), completionSema(0) {
         current = NULL;
         callback = NULL;
@@ -75,7 +75,7 @@ public:
         if (packet->getContent()==NULL) {
             YARP_DEBUG(Logger::get(), "creating a writer buffer");
             //packet->setContent(owner.create(*this,packet),true);
-            yarp::os::PortWriterWrapper *wrapper = 
+            yarp::os::PortWriterWrapper *wrapper =
                 owner.create(*this,packet);
             //packet->setContent(wrapper,true);
             packet->setContent(wrapper->getInternal(), false,
@@ -139,7 +139,7 @@ public:
             outCt++;
             stateSema.post();
             port->write(*active,cback);
-        } 
+        }
     }
 
 private:

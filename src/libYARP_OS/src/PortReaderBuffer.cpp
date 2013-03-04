@@ -179,24 +179,24 @@ public:
     PortReaderPool pool;
 
     int ct;
-	Port *port;
+    Port *port;
     SemaphoreImpl contentSema;
     SemaphoreImpl consumeSema;
     SemaphoreImpl stateSema;
 
-    PortReaderBufferBaseHelper(PortReaderBufferBase& owner) : 
+    PortReaderBufferBaseHelper(PortReaderBufferBase& owner) :
         owner(owner), contentSema(0), consumeSema(0), stateSema(1) {
         prev = NULL;
-		port = NULL;
+        port = NULL;
         ct = 0;
     }
 
     virtual ~PortReaderBufferBaseHelper() {
         Port *closePort = NULL;
         stateSema.wait();
-		if (port!=NULL) {
-			closePort = port;
-		}
+        if (port!=NULL) {
+            closePort = port;
+        }
         stateSema.post();
         if (closePort!=NULL) {
             closePort->close();
@@ -288,10 +288,10 @@ public:
         return drop;
     }
 
-	void attach(Port& port) {
-		this->port = &port;
-		port.setReader(owner);
-	}
+    void attach(Port& port) {
+        this->port = &port;
+        port.setReader(owner);
+    }
 
     void *acquire() {
         if (prev!=NULL) {
@@ -441,7 +441,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         HELPER(implementation).stateSema.wait();
         bool pruned = false;
         if (HELPER(implementation).ct>0&&prune) {
-            PortReaderPacket *readerPacket = 
+            PortReaderPacket *readerPacket =
                 HELPER(implementation).dropContent();
             pruned = (readerPacket!=NULL);
         }
@@ -518,7 +518,7 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
         HELPER(implementation).stateSema.wait();
         bool pruned = false;
         if (HELPER(implementation).ct>0&&prune) {
-            PortReaderPacket *readerPacket = 
+            PortReaderPacket *readerPacket =
                 HELPER(implementation).dropContent();
             //PortReader *reader = NULL;
             pruned = (readerPacket!=NULL);
@@ -543,7 +543,7 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
         YARP_DEBUG(Logger::get(), "giving PortReaderBuffer chance to close");
         HELPER(implementation).contentSema.post();
     }
-    
+
     return true;
 }
 

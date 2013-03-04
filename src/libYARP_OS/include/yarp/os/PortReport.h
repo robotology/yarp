@@ -81,7 +81,6 @@ public:
  *
  * A base class for objects that want information about port status
  * changes.
- *
  */
 class yarp::os::PortReport {
 public:
@@ -92,11 +91,12 @@ public:
 
     /**
      * Callback for port event/state information.  This callback
-     * must be careful about performing any operation on the port 
+     * must be careful about performing any operation on the port
      * it is receiving information about, since that port is
      * locked until this callback completes.  To avoid
      * deadlocks, take action based on port reports in a separate
      * thread.
+     *
      * @param info Port event/state information
      */
     virtual void report(const PortInfo& info) = 0;

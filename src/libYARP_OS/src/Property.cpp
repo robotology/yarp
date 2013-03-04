@@ -49,7 +49,7 @@ public:
     PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem) data;
     Property& owner;
 
-    PropertyHelper(Property& owner, int hash_size) : 
+    PropertyHelper(Property& owner, int hash_size) :
 #ifdef YARP_HAS_ACE
         data((hash_size==0)?ACE_DEFAULT_MAP_SIZE:hash_size),
 #endif
@@ -322,7 +322,7 @@ public:
     }
 
     bool fromConfigFile(const char *fname,Searchable& env, bool wipe=true) {
-        String searchPath = 
+        String searchPath =
             env.check("CONFIG_PATH",
                       Value(""),
                       "path to search for config files").toString().c_str();
@@ -352,7 +352,7 @@ public:
                     ok = true;
                     pathPrefix = ss.get(i);
                     pathPrefix += '/';
-                    break; 
+                    break;
                 }
             }
         }
@@ -469,7 +469,7 @@ public:
                                             key = bot.get(1).toString();
                                             subName = bot.get(2).toString();
                                             fname = bot.get(3).toString();
-                                            Bottle *target = 
+                                            Bottle *target =
                                                 getBottle(key.c_str());
                                             if (target==NULL) {
                                                 Bottle init;
@@ -492,7 +492,7 @@ public:
                                             p.fromString(getBottle(subName)->tail().toString());
                                             //printf(">>> prior p %s\n",
                                             //     p.toString().c_str());
-                                        } 
+                                        }
                                         p.fromConfigFile(fname.c_str(),
                                                          env, false);
                                         accum.fromString(p.toString());
@@ -511,10 +511,10 @@ public:
                                                                 b);
                                             }
                                             tag = "";
-                                        }                                
+                                        }
                                     } else {
                                         tag = "";
-                                        ConstString fname = 
+                                        ConstString fname =
                                             bot.get(1).toString();
                                         //printf("Including %s\n", fname.c_str());
                                         fromConfigFile(fname.c_str(),
@@ -930,7 +930,7 @@ void Property::fromQuery(const char *url, bool wipe) {
                     if (coding == 0) {
                         ch = code;
                     }
-                } 
+                }
             }
             if (coding==0) {
                 buf += ch;

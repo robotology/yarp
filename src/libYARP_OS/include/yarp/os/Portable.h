@@ -22,7 +22,7 @@ namespace yarp {
 /**
  * \ingroup comm_class
  *
- * This is a base class for objects that can be both read from 
+ * This is a base class for objects that can be both read from
  * and be written to the YARP network.  It is a simple union of
  * PortReader and PortWriter.
  */
@@ -35,4 +35,3 @@ public:
 };
 
 #endif
-

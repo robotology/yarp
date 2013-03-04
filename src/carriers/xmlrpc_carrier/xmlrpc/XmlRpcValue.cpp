@@ -50,7 +50,7 @@ namespace XmlRpc {
   static const char STRUCT_ETAG[]   = "</struct>";
 
 
-      
+
   // Format strings
   std::string XmlRpcValue::_doubleFormat("%f");
 
@@ -71,7 +71,7 @@ namespace XmlRpc {
     _value.asBinary = 0;
   }
 
-  
+
   // Type checking
   void XmlRpcValue::assertTypeOrInvalid(Type t)
   {
@@ -172,7 +172,7 @@ namespace XmlRpc {
         {
           if (_value.asStruct->size() != other._value.asStruct->size())
             return false;
-          
+
           ValueStruct::const_iterator it1=_value.asStruct->begin();
           ValueStruct::const_iterator it2=other._value.asStruct->begin();
           while (it1 != _value.asStruct->end()) {
@@ -612,9 +612,9 @@ namespace XmlRpc {
           os << ']';
           break;
         }
-      
+
     }
-    
+
     return os;
   }
 
@@ -628,4 +628,3 @@ std::ostream& operator<<(std::ostream& os, XmlRpc::XmlRpcValue& v)
   //return os << v.toXml(); 
   return v.write(os);
 }
-

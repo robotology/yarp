@@ -45,7 +45,7 @@ public:
     void *tracker;
 
     PortWriterBufferAdaptor(PortWriterBufferManager& creator,
-                            void *tracker) : 
+                            void *tracker) :
         creator(creator), tracker(tracker) {}
 
     virtual bool write(ConnectionWriter& connection) {
@@ -116,10 +116,10 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
     /**
-     * Access the object which will be transmitted by the next call to 
+     * Access the object which will be transmitted by the next call to
      * PortWriterBuffer::write.
      * The object can safely be modified by the user of this class, to
-     * prepare it.  Extra objects will be created or reused as 
+     * prepare it.  Extra objects will be created or reused as
      * necessary depending on the state of communication with the
      * output(s) of the port.
      * @return the next object that will be written
@@ -149,7 +149,7 @@ public:
     }
 
     /**
-     * Check the number of buffers currently in use for communication.  
+     * Check the number of buffers currently in use for communication.
      * This may increase
      * as PortWriterBuffer::read is called.  It can decrease at any
      * time as buffers are successfully transmitted and made available
@@ -176,8 +176,6 @@ public:
     }
 
 };
-
-
 
 
 #endif
