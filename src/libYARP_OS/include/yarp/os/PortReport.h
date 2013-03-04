@@ -30,7 +30,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PortReport() {}
+    virtual ~PortReport();
 
     /**
      * Callback for port event/state information.  This callback
