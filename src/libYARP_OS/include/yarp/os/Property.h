@@ -115,9 +115,7 @@ public:
      * @param key the key
      * @param v the integer value
      */
-    void put(const char *key, int v) {
-        put(key,Value::makeInt(v));
-    }
+    void put(const char *key, int v);
 
     /**
      * Associate the given key with the given floating point number, so that
@@ -125,9 +123,7 @@ public:
      * @param key the key
      * @param v the floating point value
      */
-    void put(const char *key, double v) {
-        put(key,Value::makeDouble(v));
-    }
+    void put(const char *key, double v);
 
     /**
      * Remove the association from the given key to a value, if present.
@@ -182,9 +178,7 @@ public:
                      bool wipe=true);
 
     void fromCommand(int argc, const char *argv[], bool skipFirst=true,
-                     bool wipe=true) {
-        fromCommand(argc,(char **)argv,skipFirst,wipe);
-    }
+                     bool wipe=true);
 
     /**
      * Interprets a file as a list of properties.
@@ -233,11 +227,7 @@ public:
      * @param wipe should Property be emptied first
      * @return true if file exists and can be read
      */
-    bool fromConfigFile(const char *fname,bool wipe=true) {
-        Property p;
-        return fromConfigFile(fname,p,wipe);
-    }
-
+    bool fromConfigFile(const char *fname, bool wipe=true);
 
     /**
      * Variant of fromConfigFile(fname,wipe) that includes extra
@@ -259,10 +249,7 @@ public:
      * @param txt the configuration text
      * @param wipe should Property be emptied first
      */
-    void fromConfig(const char *txt,bool wipe=true) {
-        Property p;
-        fromConfig(txt,p,wipe);
-    }
+    void fromConfig(const char *txt, bool wipe=true);
 
 
     /**

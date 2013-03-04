@@ -767,6 +767,13 @@ void Property::put(const char *key, Value *value) {
     HELPER(implementation).put(key,value);
 }
 
+void Property::put(const char *key, int v) {
+    put(key,Value::makeInt(v));
+}
+
+void Property::put(const char *key, double v) {
+    put(key,Value::makeDouble(v));
+}
 
 /*
   bool Property::check(const char *key, Value *&output) {
@@ -831,10 +838,24 @@ void Property::fromCommand(int argc, char *argv[], bool skipFirst,
     HELPER(implementation).fromCommand(argc,argv,wipe);
 }
 
+void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wipe) {
+    fromCommand(argc,(char **)argv,skipFirst,wipe);
+}
+
+bool Property::fromConfigFile(const char *fname, bool wipe) {
+    Property p;
+    return fromConfigFile(fname,p,wipe);
+}
+
+
 bool Property::fromConfigFile(const char *fname,Searchable& env,bool wipe) {
     return HELPER(implementation).fromConfigFile(fname,env,wipe);
 }
 
+void Property::fromConfig(const char *txt, bool wipe) {
+    Property p;
+    fromConfig(txt,p,wipe);
+}
 
 void Property::fromConfig(const char *txt,Searchable& env,bool wipe) {
     HELPER(implementation).fromConfig(txt,env,wipe);
