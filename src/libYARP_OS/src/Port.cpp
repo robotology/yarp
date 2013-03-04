@@ -401,6 +401,13 @@ bool Port::open(const Contact& contact, bool registerName,
     return success;
 }
 
+bool Port::addOutput(const char *name) {
+    return addOutput(Contact::byName(name));
+}
+
+bool Port::addOutput(const char *name, const char *carrier) {
+    return addOutput(Contact::byName(name).addCarrier(carrier));
+}
 
 void Port::close() {
     PortCoreAdapter& core = HELPER(implementation);

@@ -74,14 +74,10 @@ public:
     bool openFake(const char *name);
 
     // documentation provided in Contactable
-    bool addOutput(const char *name) {
-        return addOutput(Contact::byName(name));
-    }
+    bool addOutput(const char *name);
 
     // documentation provided in Contactable
-    bool addOutput(const char *name, const char *carrier) {
-        return addOutput(Contact::byName(name).addCarrier(carrier));
-    }
+    bool addOutput(const char *name, const char *carrier);
 
     // documentation provided in Contactable
     bool addOutput(const Contact& contact);
