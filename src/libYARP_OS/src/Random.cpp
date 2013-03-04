@@ -13,6 +13,10 @@ double Random::uniform() {
     return double (ACE_OS::rand ()) / double (RAND_MAX);
 }
 
+double Random::normal() {
+    return normal(0.0, 1.0);
+}
+
 
 //
 // normal distribution random number generator.

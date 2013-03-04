@@ -55,9 +55,7 @@ public:
      * @return a random number normally distributed with 0 mean and
      * unitary standard deviation.
      */
-    static double normal() {
-        return normal(0.0, 1.0);
-    }
+    static double normal();
 
     /**
      * A random number in a specified range.
