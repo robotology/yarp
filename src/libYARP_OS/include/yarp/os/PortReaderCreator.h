@@ -38,7 +38,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PortReaderCreator() {}
+    virtual ~PortReaderCreator();
 
     /**
      * Factory for PortReader objects
