@@ -28,6 +28,7 @@
 // Test that these compile - no functional tests yet
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
+#include <yarp/os/PortInfo.h>
 
 //#include "TestList.h"
 
