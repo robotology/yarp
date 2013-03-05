@@ -72,6 +72,9 @@ public:
 
 private:
     void *implementation;
+
+    SharedLibrary(const SharedLibrary&); // Not implemented
+    SharedLibrary& operator=(const SharedLibrary&); // Not implemented
 };
 
 #endif
