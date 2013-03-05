@@ -582,7 +582,7 @@ public:
 
     /** Restore the controller context previously stored. [wait for
     *   reply]
-    * @param id specify the context id to be restored
+    * @param id specify the context id to be restored.
     * @return true/false on success/failure. 
     *  
     * @note The context comprises the values of internal controller
@@ -590,6 +590,12 @@ public:
     *       the trajectory time and so on.
     */
     virtual bool restoreContext(const int id)=0;
+
+    /** Delete a specified controller context. [wait for reply]
+    * @param id specify the context id to be removed.
+    * @return true/false on success/failure. 
+    */
+    virtual bool deleteContext(const int id)=0;
 
     /**
     * Return useful info on the operating state of the controller. 

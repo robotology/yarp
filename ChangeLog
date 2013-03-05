@@ -1,4 +1,7 @@
-2013-03-01  Ugo Pattacini <ugo.pattacini@iit.it>
+2013-05-01 Ugo Pattacini <ugo.pattacini@iit.it>
+    * GazeControl.h,CartesianControl: method deleteContext() added
+
+2013-03-01 Ugo Pattacini <ugo.pattacini@iit.it>
     * src/libYARP_dev/include/yarp/dev/GazeControl.h: added possibility to block eyes too
 
 2013-02-15  Alessandro Scalzo <alessandro.scalzo@iit.it>
