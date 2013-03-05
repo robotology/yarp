@@ -310,23 +310,12 @@ public:
 };
 
 
-
-PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator()
-{
-}
-
 // implementation is a list
 #define HELPER(x) (*((PortReaderBufferBaseHelper*)(x)))
 
-PortReaderBufferBase::PortReaderBufferBase(unsigned int maxBuffer) :
-    creator(NULL),
-    maxBuffer(maxBuffer),
-    prune(false),
-    allowReuse(true),
-    implementation(NULL),
-    replier(NULL),
-    period(-1),
-    last_recv(-1) {
+void PortReaderBufferBase::init() {
+    implementation = new PortReaderBufferBaseHelper(*this);
+    YARP_ASSERT(implementation!=NULL);
 }
 
 PortReaderBufferBase::~PortReaderBufferBase() {
@@ -334,18 +323,6 @@ PortReaderBufferBase::~PortReaderBufferBase() {
         delete &HELPER(implementation);
         implementation = NULL;
     }
-}
-
-void PortReaderBufferBase::init() {
-    implementation = new PortReaderBufferBaseHelper(*this);
-    YARP_ASSERT(implementation!=NULL);
-}
-
-yarp::os::PortReader *PortReaderBufferBase::create() {
-    if (creator!=NULL) {
-        return creator->create();
-    }
-    return NULL;
 }
 
 void PortReaderBufferBase::release(PortReader *completed) {
@@ -491,43 +468,6 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
 
 
 
-void PortReaderBufferBase::setCreator(PortReaderBufferBaseCreator *creator) {
-    this->creator = creator;
-}
-
-void PortReaderBufferBase::setReplier(yarp::os::PortReader& reader) {
-    replier = &reader;
-}
-
-void PortReaderBufferBase::setPrune(bool flag) {
-    prune = flag;
-}
-
-void PortReaderBufferBase::setAllowReuse(bool flag) {
-    allowReuse = flag;
-}
-
-void PortReaderBufferBase::setTargetPeriod(double period) {
-    this->period = period;
-}
-
-ConstString PortReaderBufferBase::getName() const {
-    return HELPER(implementation).getName();
-}
-
-unsigned int PortReaderBufferBase::getMaxBuffer() {
-    return maxBuffer;
-}
-
-bool PortReaderBufferBase::isClosed() {
-    return HELPER(implementation).port==NULL;
-}
-
-void PortReaderBufferBase::attachBase(Port& port) {
-    HELPER(implementation).attach(port);
-}
-
-#ifndef YARP_OS_NO_DEPRECATED
 void PortReaderBufferBase::setAutoRelease(bool flag) {
     //HELPER(implementation).stateSema.wait();
     //HELPER(implementation).setAutoRelease(flag);
@@ -535,8 +475,20 @@ void PortReaderBufferBase::setAutoRelease(bool flag) {
     printf("setAutoRelease not implemented anymore; not needed\n");
     exit(1);
 }
-#endif
 
+void PortReaderBufferBase::attachBase(Port& port) {
+    HELPER(implementation).attach(port);
+}
+
+
+bool PortReaderBufferBase::isClosed() {
+    return HELPER(implementation).port==NULL;
+}
+
+
+ConstString PortReaderBufferBase::getName() const {
+    return HELPER(implementation).getName();
+}
 
 
 /////////////////////
