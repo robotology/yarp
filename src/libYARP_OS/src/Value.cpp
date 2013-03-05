@@ -78,7 +78,7 @@ Value& Value::getNullValue() {
 
 
 void Value::setProxy(Value *proxy) {
-    if (this->proxy!=NULL) { 
+    if (this->proxy!=NULL) {
         delete this->proxy;
         this->proxy = NULL;
     }
