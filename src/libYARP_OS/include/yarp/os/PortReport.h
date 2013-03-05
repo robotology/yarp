@@ -10,6 +10,7 @@
 #ifndef _YARP2_PORTREPORT_
 #define _YARP2_PORTREPORT_
 
+#include <yarp/os/api.h>
 
 namespace yarp {
     namespace os {
@@ -25,7 +26,7 @@ namespace yarp {
  * A base class for objects that want information about port status
  * changes.
  */
-class yarp::os::PortReport {
+class YARP_OS_API yarp::os::PortReport {
 public:
     /**
      * Destructor.
