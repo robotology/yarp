@@ -348,7 +348,6 @@ public:
     }
 };
 
-
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
@@ -564,5 +563,4 @@ private:
 };
 
 
-
-#endif
+#endif // _YARP2_PORTREADERBUFFER_
