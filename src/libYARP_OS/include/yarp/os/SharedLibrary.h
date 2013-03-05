@@ -27,26 +27,19 @@ public:
     /**
      * Initialize, without opening a shared library yet.
      */
-    SharedLibrary() {
-        implementation = 0/*NULL*/;
-    }
+    SharedLibrary();
 
     /**
      * Load the named shared library / DLL.
      *
      * @param filename name of file (see open method)
      */
-    SharedLibrary(const char *filename) {
-        implementation = 0/*NULL*/;
-        open(filename);
-    }
+    SharedLibrary(const char *filename);
 
     /**
      * Destructor.  Will close() if needed.
      */
-    virtual ~SharedLibrary() {
-        close();
-    }
+    virtual ~SharedLibrary();
 
     /**
      * Load the named shared library / DLL.  The library is found
@@ -75,9 +68,7 @@ public:
      *
      * @return true iff a valid library has been loaded.
      */
-    bool isValid() const {
-        return implementation != 0/*NULL*/;
-    }
+    bool isValid() const;
 
 private:
     void *implementation;
