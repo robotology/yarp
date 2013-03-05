@@ -210,7 +210,7 @@ public:
 
 class YARP_OS_API yarp::os::impl::PortReaderBufferBaseCreator {
 public:
-    virtual ~PortReaderBufferBaseCreator() {}
+    virtual ~PortReaderBufferBaseCreator();
 
     virtual yarp::os::PortReader *create() = 0;
 };
@@ -218,33 +218,26 @@ public:
 class YARP_OS_API yarp::os::impl::PortReaderBufferBase : public yarp::os::PortReader
 {
 public:
-    PortReaderBufferBase(unsigned int maxBuffer) :
-        maxBuffer(maxBuffer) {
-        creator = 0; /*NULL*/
-        init();
-        allowReuse = true;
-        prune = false;
-        replier = 0 /*NULL*/;
-        period = -1;
-        last_recv = -1;
-    }
-
-    void setCreator(PortReaderBufferBaseCreator *creator) {
-        this->creator = creator;
-    }
-
-    void setReplier(yarp::os::PortReader& reader) {
-        replier = &reader;
-    }
-
+    PortReaderBufferBase(unsigned int maxBuffer);
     virtual ~PortReaderBufferBase();
 
-    virtual yarp::os::PortReader *create() {
-        if (creator!=0 /*NULL*/) {
-            return creator->create();
-        }
-        return 0 /*NULL*/;
-    }
+    void setCreator(PortReaderBufferBaseCreator *creator);
+
+    void setReplier(yarp::os::PortReader& reader);
+
+    void setPrune(bool flag = true);
+
+    void setAllowReuse(bool flag = true);
+
+    void setTargetPeriod(double period);
+
+    yarp::os::ConstString getName() const;
+
+    unsigned int getMaxBuffer();
+
+    bool isClosed();
+
+    virtual yarp::os::PortReader *create();
 
     void release(yarp::os::PortReader *completed);
 
@@ -252,29 +245,11 @@ public:
 
     virtual bool read(yarp::os::ConnectionReader& connection);
 
-    void setAutoRelease(bool flag = true);
-
-    void setPrune(bool flag = true) {
-        prune = flag;
-    }
-
-    void setAllowReuse(bool flag = true) {
-        allowReuse = flag;
-    }
-
     yarp::os::PortReader *readBase(bool& missed, bool cleanup);
 
     void interrupt();
 
-    unsigned int getMaxBuffer() {
-        return maxBuffer;
-    }
-
     void attachBase(yarp::os::Port& port);
-
-    bool isClosed();
-
-    yarp::os::ConstString getName() const;
 
     // direct writer-buffer to reader-buffer pointer sharing methods
 
@@ -286,17 +261,15 @@ public:
 
     virtual bool getEnvelope(PortReader& envelope);
 
-
-    void setTargetPeriod(double period) {
-        this->period = period;
-    }
-
     // user takes control of the current read object
     void *acquire();
 
     // user gives back an object
     void release(void *key);
 
+#ifndef YARP_NO_DEPRECATED
+    YARP_DEPRECATED void setAutoRelease(bool flag = true);
+#endif // YARP_NO_DEPRECATED
 
 protected:
     void init();
