@@ -60,10 +60,6 @@ class YARP_OS_API yarp::os::Searchable {
 private:
     SearchMonitor *monitor;
     ConstString monitorContext;
-
-    Searchable(const Searchable&); // Not implemented
-    Searchable& operator=(const Searchable&); // Not implemented
-
 public:
     /**
      * Default constructor.

@@ -249,9 +249,6 @@ private:
     yarp::os::Property config;
 
     ResourceFinder(Searchable& data, void *implementation);
-
-    ResourceFinder(const ResourceFinder&); // Not implemented
-    ResourceFinder& operator=(const ResourceFinder&); // Not implemented
 };
 
 
