@@ -319,14 +319,15 @@ PortReaderBufferBaseCreator::~PortReaderBufferBaseCreator()
 #define HELPER(x) (*((PortReaderBufferBaseHelper*)(x)))
 
 PortReaderBufferBase::PortReaderBufferBase(unsigned int maxBuffer) :
-    creator(NULL),
-    maxBuffer(maxBuffer),
-    prune(false),
-    allowReuse(true),
-    implementation(NULL),
-    replier(NULL),
-    period(-1),
-    last_recv(-1) {
+        creator(NULL),
+        maxBuffer(maxBuffer),
+        prune(false),
+        allowReuse(true),
+        implementation(NULL),
+        replier(NULL),
+        period(-1),
+        last_recv(-1) {
+    init();
 }
 
 PortReaderBufferBase::~PortReaderBufferBase() {
@@ -527,7 +528,7 @@ void PortReaderBufferBase::attachBase(Port& port) {
     HELPER(implementation).attach(port);
 }
 
-#ifndef YARP_OS_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED
 void PortReaderBufferBase::setAutoRelease(bool flag) {
     //HELPER(implementation).stateSema.wait();
     //HELPER(implementation).setAutoRelease(flag);
@@ -535,7 +536,7 @@ void PortReaderBufferBase::setAutoRelease(bool flag) {
     printf("setAutoRelease not implemented anymore; not needed\n");
     exit(1);
 }
-#endif
+#endif // YARP_NO_DEPRECATED
 
 
 

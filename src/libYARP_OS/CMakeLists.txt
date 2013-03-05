@@ -14,12 +14,6 @@ if (USE_PORT_AUTHENTICATION)
     add_definitions(-DPORT_AUTH)
 endif (USE_PORT_AUTHENTICATION)
 
-if(BUILTIN_ACE)
-    message(STATUS "Adding ACE material in YARP_OS library")
-    file(GLOB_RECURSE folder_source_ace ${BUILTIN_ACE_SOURCE_DIR}/*.cpp)
-    set(folder_source ${folder_source} ${folder_source_ace})
-endif(BUILTIN_ACE)
-
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
   ${PROJECT_SOURCE_DIR}/include
 )

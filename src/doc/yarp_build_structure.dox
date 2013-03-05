@@ -327,11 +327,6 @@ This sets up the YARP_OS target, which is the core YARP library.
 Source code is in the src subdirectory, header files are in the
 include subdirectory.
 
-If the "BUILTIN_ACE" flag is set, we expect to find source for ACE
-in the directory specified by BUILTIN_ACE_SOURCE_DIR.  We add this
-source on to YARP source files and compile it as part of the YARP_OS
-target.
-
 Our include directory is appended to the YARP_TREE_INCLUDE_DIRS
 global property for reference by later targets.
 

@@ -15,6 +15,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NetInt32.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
