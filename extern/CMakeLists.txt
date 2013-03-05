@@ -2,6 +2,11 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+# Do not build extern stuff with experimental warnings
+if(YARP_EXPERIMENTAL_WARNINGS)
+    string(REPLACE "${EXPERIMENTAL_WARNING_FLAGS} " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+endif(YARP_EXPERIMENTAL_WARNINGS)
+
 if(CREATE_YARPSCOPE OR CREATE_GYARPMANAGER OR CREATE_YMANAGER)
     # TinyXML
     if(YARP_USE_TINYXML AND NOT YARP_USE_SYSTEM_TINYXML)

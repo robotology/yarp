@@ -21,6 +21,19 @@ using namespace yarp::os;
 
 #define HELPER(x) (*((ACE_DLL *)implementation))
 
+SharedLibrary::SharedLibrary() :
+    implementation(NULL) {
+}
+
+SharedLibrary::SharedLibrary(const char *filename) :
+    implementation(NULL) {
+    open(filename);
+}
+
+SharedLibrary::~SharedLibrary() {
+    close();
+}
+
 bool SharedLibrary::open(const char *filename) {
 #ifdef YARP_HAS_ACE
     close();
@@ -56,4 +69,6 @@ void *SharedLibrary::getSymbol(const char *symbolName) {
 #endif
 }
 
-
+bool SharedLibrary::isValid() const {
+    return implementation != NULL;
+}

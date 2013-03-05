@@ -38,6 +38,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/PortWriter.h>
+#include <yarp/os/PortInfo.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Random.h>
 #include <yarp/os/Searchable.h>

@@ -39,33 +39,37 @@ endif(MSVC)
 
 #########################################################################
 # DebugFull builds options
-set(CMAKE_C_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
-set(CMAKE_CXX_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
-set(CMAKE_EXE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
-set(CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
-set(CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
 
-mark_as_advanced(CMAKE_C_FLAGS_DEBUGFULL
-                 CMAKE_CXX_FLAGS_DEBUGFULL
-                 CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
-                 CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
-                 CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_C_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
+    set(CMAKE_CXX_FLAGS_DEBUGFULL "-O0 -g3 -ggdb -fno-inline -DDEBUG" CACHE STRING "Flags used by the compiler during debugfull builds.")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
+    set(CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
+    set(CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
 
+    mark_as_advanced(CMAKE_C_FLAGS_DEBUGFULL
+                     CMAKE_CXX_FLAGS_DEBUGFULL
+                     CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
+                     CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
+                     CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL)
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 #########################################################################
 # Profile builds options
-set(CMAKE_C_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
-set(CMAKE_CXX_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
-set(CMAKE_EXE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
-set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
-set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
 
-mark_as_advanced(CMAKE_C_FLAGS_PROFILE
-                 CMAKE_CXX_FLAGS_PROFILE
-                 CMAKE_EXE_LINKER_FLAGS_PROFILE
-                 CMAKE_MODULE_LINKER_FLAGS_PROFILE
-                 CMAKE_SHARED_LINKER_FLAGS_PROFILE)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_C_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
+    set(CMAKE_CXX_FLAGS_PROFILE "-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" CACHE STRING "Flags used by the compiler during profile builds.")
+    set(CMAKE_EXE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
+    set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
+    set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
 
+    mark_as_advanced(CMAKE_C_FLAGS_PROFILE
+                     CMAKE_CXX_FLAGS_PROFILE
+                     CMAKE_EXE_LINKER_FLAGS_PROFILE
+                     CMAKE_MODULE_LINKER_FLAGS_PROFILE
+                     CMAKE_SHARED_LINKER_FLAGS_PROFILE)
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
 #########################################################################
 # Simplify compilation of portable binaries.

@@ -19,51 +19,36 @@ namespace yarp {
 }
 
 /**
- *
  * Low-level wrapper for loading shared libraries (DLLs) and accessing
  * symbols within it.
- *
  */
 class YARP_OS_API yarp::os::SharedLibrary {
 public:
     /**
-     *
      * Initialize, without opening a shared library yet.
-     *
      */
-    SharedLibrary() {
-        implementation = 0/*NULL*/;
-    }
+    SharedLibrary();
 
     /**
-     *
      * Load the named shared library / DLL.
+     *
      * @param filename name of file (see open method)
-     *
      */
-    SharedLibrary(const char *filename) {
-        implementation = 0/*NULL*/;
-        open(filename);
-    }
+    SharedLibrary(const char *filename);
 
     /**
-     *
      * Destructor.  Will close() if needed.
-     *
      */
-    virtual ~SharedLibrary() {
-        close();
-    }
+    virtual ~SharedLibrary();
 
     /**
-     *
      * Load the named shared library / DLL.  The library is found
      * using the algoithm of ACE::ldfind.  Operating-system-specific
      * extensions will be tried, and the relevant path for shared
      * libraries.
+     *
      * @param filename name of file.
      * @return true on success
-     *
      */
     bool open(const char *filename);
 
@@ -74,23 +59,22 @@ public:
     bool close();
 
     /**
-     *
      * Look up a symbol in the shared library.
-     *
      */
     void *getSymbol(const char *symbolName);
 
     /**
+     * Check if the shared library is valid
      *
      * @return true iff a valid library has been loaded.
-     *
      */
-    bool isValid() const {
-        return implementation != 0/*NULL*/;
-    }
+    bool isValid() const;
 
 private:
     void *implementation;
+
+    SharedLibrary(const SharedLibrary&); // Not implemented
+    SharedLibrary& operator=(const SharedLibrary&); // Not implemented
 };
 
 #endif
