@@ -28,7 +28,9 @@ namespace yarp {
  */
 class yarp::os::impl::FakeTwoWayStream : public TwoWayStream {
 public:
-    FakeTwoWayStream(StringInputStream *target = NULL) : out(this) {
+    FakeTwoWayStream(StringInputStream *target = NULL) :
+            TwoWayStream() {
+        this->out.owner = this;
         this->target = target;
     }
 
@@ -94,15 +96,17 @@ private:
 
     class ActiveStringOutputStream : public StringOutputStream {
     public:
-        ActiveStringOutputStream(FakeTwoWayStream *who) : owner(*who) {
+        ActiveStringOutputStream() : owner(NULL) {
         }
 
         virtual void write(const Bytes& b) {
             StringOutputStream::write(b);
-            owner.apply(b);
+            if (owner) {
+                owner->apply(b);
+            }
         }
-    private:
-        FakeTwoWayStream& owner;
+
+        FakeTwoWayStream *owner;
     };
 
     StringInputStream in;
