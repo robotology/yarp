@@ -1622,12 +1622,13 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                                          ModuleModel::create(this, module);
                 root->add_child(mod);
                 Goocanvas::Bounds bd = m_Canvas->get_item(mod)->get_bounds();
-                m_Canvas->get_item(mod)->translate(x - bd.get_x1(), y - bd.get_y1());
+                m_Canvas->get_item(mod)->translate(x/m_Canvas->get_scale() - bd.get_x1(), y/m_Canvas->get_scale() - bd.get_y1());
                 
                 mod->snapToGrid();
             }
         }
         m_bModified = true;
+        updateApplicationWindow();
     }
     else if((data.get_length() >= 0) && (data.get_format() == APPLICATION))
     {
@@ -1652,17 +1653,19 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                 app->snapToGrid();
                 app->updateChildItems();
                 Goocanvas::Bounds bd = m_Canvas->get_item(app)->get_bounds();
-                m_Canvas->get_item(app)->translate(x - bd.get_x1(), y - bd.get_y1());
+                m_Canvas->get_item(app)->translate(x/m_Canvas->get_scale() - bd.get_x1(), y/m_Canvas->get_scale() - bd.get_y1());
                 app->snapToGrid();
            }
         } 
+        m_bModified = true;
+        updateApplicationWindow();
     }
     else if((data.get_length() >= 0) && (data.get_format() == RESOURCE))
     {
         const guchar* name = data.get_data();
         if(name)
         {
-            Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item_at(x, y, true);
+            Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item_at(x/m_Canvas->get_scale(), y/m_Canvas->get_scale(), true);
             if(item)
             {
                 Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(item->get_parent()->get_model());
