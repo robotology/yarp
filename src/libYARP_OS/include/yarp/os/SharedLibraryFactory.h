@@ -10,13 +10,16 @@
 #ifndef _YARP2_YARPSHAREDLIBRARYFACTORY_
 #define _YARP2_YARPSHAREDLIBRARYFACTORY_
 
+#include <yarp/os/api.h>
+#include <yarp/os/Vocab.h>
 #include <yarp/os/SharedLibrary.h>
 #include <yarp/os/SharedLibraryClassApi.h>
-#include <yarp/os/ConstString.h>
+
 
 namespace yarp {
     namespace os {
         class SharedLibraryFactory;
+        class ConstString;
     }
 }
 
@@ -47,12 +50,7 @@ public:
     /**
      * Constructor for unconfigured factory.
      */
-    SharedLibraryFactory() {
-        api.startCheck = 0;
-        status = STATUS_NONE;
-        rct = 0;
-        returnValue = 0;
-    }
+    explicit SharedLibraryFactory();
 
     /**
      * Constructor.
@@ -61,11 +59,12 @@ public:
      * @param fn_name name of factory method, a symbol within the shared library.
      */
     SharedLibraryFactory(const char *dll_name,
-                         const char *fn_name = 0/*NULL*/) {
-        rct = 0;
-        returnValue = 0;
-        open(dll_name,fn_name);
-    }
+                         const char *fn_name = NULL);
+
+    /**
+     * Destructor
+     */
+    virtual ~SharedLibraryFactory();
 
     /**
      * Configure the factory.
@@ -74,101 +73,56 @@ public:
      * @param fn_name name of factory method, a symbol within the shared library.
      * @return true on success.
      */
-    bool open(const char *dll_name, const char *fn_name = 0/*NULL*/) {
-        returnValue = 0;
-        name = "";
-        status = STATUS_NONE;
-        api.startCheck = 0;
-        if (!lib.open(dll_name)) {
-            //fprintf(stderr,"Failed to open library %s\n", dll_name);
-            status = STATUS_LIBRARY_NOT_LOADED;
-            return false;
-        }
-        void *fn = lib.getSymbol((fn_name!=0/*NULL*/)?fn_name:YARP_DEFAULT_FACTORY_NAME);
-        if (fn==0/*NULL*/) {
-            lib.close();
-            status = STATUS_FACTORY_NOT_FOUND;
-            return false;
-        }
-        useFactoryFunction(fn);
-        if (!isValid()) {
-            status = STATUS_FACTORY_NOT_FUNCTIONAL;
-            return false;
-        }
-        status = STATUS_OK;
-        name = dll_name;
-        return true;
-    }
+    bool open(const char *dll_name, const char *fn_name = NULL);
 
     /**
      * Check if factory is configured and present.
      *
      * @return true iff factory is good to go.
      */
-    bool isValid() const {
-        if (returnValue!=VOCAB4('Y','A','R','P')) return false;
-        if (api.startCheck!=VOCAB4('Y','A','R','P')) return false;
-        if (api.structureSize!=sizeof(SharedLibraryClassApi)) return false;
-        if (api.systemVersion!=2) return false;
-        if (api.endCheck!=VOCAB4('P','L','U','G')) return false;
-        return true;
-    }
+    bool isValid() const;
 
     /**
      * Get the status of the factory.
      *
      * @return one of the SharedLibraryFactory::STATUS_* codes.
      */
-    int getStatus() const {
-        return status;
-    }
+    int getStatus() const;
 
     /**
      * Get the factory API, which has creation/deletion methods.
      *
      * @return the factory API
      */
-    const SharedLibraryClassApi& getApi() const {
-        return api;
-    }
+    const SharedLibraryClassApi& getApi() const;
 
     /**
      * Get the current reference count of this factory.
      *
      * @return the current reference count of this factory.
      */
-    int getReferenceCount() const {
-        return rct;
-    }
+    int getReferenceCount() const;
 
     /**
      * Increment the reference count of this factory.
      *
      * @return the current reference count of this factory, after increment.
      */
-    int addRef() {
-        rct++;
-        return rct;
-    }
+    int addRef();
 
     /**
      * Decrement the reference count of this factory.
      *
      * @return the current reference count of this factory, after decrement.
      */
-    int removeRef() {
-        rct--;
-        return rct;
-    }
+    int removeRef();
 
     /**
      * Get the name associated with this factory.
      *
      * @return the name associated with this factory.
      */
-    ConstString getName() const {
-        return name;
-    }
+    ConstString getName() const;
 
 private:
     SharedLibrary lib;
@@ -178,14 +132,7 @@ private:
     int rct;
     ConstString name;
 
-    bool useFactoryFunction(void *factory) {
-        api.startCheck = 0;
-        if (factory==0/*NULL*/) return false;
-        isValid();
-        returnValue =
-            ((int (*)(void *ptr,int len)) factory)(&api,sizeof(SharedLibraryClassApi));
-        return isValid();
-    }
+    bool useFactoryFunction(void *factory);
 };
 
 
