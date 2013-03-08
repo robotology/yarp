@@ -195,27 +195,16 @@ protected:
     static Bottle ExecuteCmd(Bottle& msg);
     static int UserStdio(Bottle& msg,Bottle& result,yarp::os::ConstString& stdioUUID);
 
-    static inline bool IS_PARENT_OF(int pid){ return pid>0; }
-    static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
-    static inline bool IS_INVALID(int pid){ return pid<0; }
+    static bool IS_PARENT_OF(int pid);
+    static bool IS_NEW_PROCESS(int pid);
+    static bool IS_INVALID(int pid);
 
     static yarp::os::Semaphore serializer;
     static ConstString mPortName;
     static int mProcCNT;
 
-    static void cmdcpy(char* &dst,const char* src)
-    {
-        dst=new char[(strlen(src)/8+2)*16];
-        strcpy(dst,src);
-    }
-
-    static void cmdclean(char **cmd)
-    {
-        while (*cmd)
-        {
-            delete [] *cmd++;
-        }
-    }
+    static void cmdcpy(char* &dst,const char* src);
+    static void cmdclean(char **cmd);
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };

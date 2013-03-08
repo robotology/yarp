@@ -1593,7 +1593,7 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 #define WRITE_TO_PIPE  1
 #define REDIRECT_TO(from,to) dup2(to,from)
 
-int CountArgs(char *str)
+static int CountArgs(char *str)
 {
     int nargs=0;
 
@@ -1619,7 +1619,7 @@ int CountArgs(char *str)
     return nargs;
 }
 
-void ParseCmd(char* cmd_str,char** arg_str)
+static void ParseCmd(char* cmd_str,char** arg_str)
 {
     int nargs=0;
 
@@ -2657,6 +2657,31 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 }
 
 #endif
+
+
+bool yarp::os::Run::IS_PARENT_OF(int pid) {
+    return pid>0;
+}
+
+bool yarp::os::Run::IS_NEW_PROCESS(int pid) {
+    return !pid;
+}
+
+bool yarp::os::Run::IS_INVALID(int pid) {
+    return pid<0;
+}
+
+void yarp::os::Run::cmdcpy(char* &dst,const char* src) {
+    dst=new char[(strlen(src)/8+2)*16];
+    strcpy(dst,src);
+}
+
+void yarp::os::Run::cmdclean(char **cmd) {
+    while (*cmd) {
+        delete [] *cmd++;
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////
 // API
