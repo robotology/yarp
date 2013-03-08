@@ -21,24 +21,20 @@ namespace yarp {
 }
 
 /**
- *
  * A wrapper for a named factory method in a named shared library.
- * This wrapper will do some basic checks that the named method does 
+ * This wrapper will do some basic checks that the named method does
  * indeed behave like a YARP plugin hook before offering access to it.
  * This is to avoid accidents, it is not a security mechanism.
- *
  */
 class YARP_OS_API yarp::os::SharedLibraryFactory {
 public:
     /**
-     *
      * The status of a factory can be:
      *   STATUS_NONE: Not configured yet
      *   STATUS_OK: Present and sane
      *   STATUS_LIBRARY_NOT_LOADED: Named shared library failed to load
      *   STATUS_FACTORY_NOT_FOUND: Named method wasn't present in library
      *   STATUS_FACTORY_NOT_FUNCTIONAL: Named method is not working right
-     *
      */
     enum {
         STATUS_NONE,
@@ -49,41 +45,34 @@ public:
     };
 
     /**
-     *
      * Constructor for unconfigured factory.
-     *
      */
     SharedLibraryFactory() {
         api.startCheck = 0;
         status = STATUS_NONE;
         rct = 0;
         returnValue = 0;
-	}
- 
+    }
+
     /**
-     *
      * Constructor.
      *
-     * @param dll_name name/path of shared library
-     * @param fn_name name of factory method, a symbol within the shared library
-     *
+     * @param dll_name name/path of shared library.
+     * @param fn_name name of factory method, a symbol within the shared library.
      */
-    SharedLibraryFactory(const char *dll_name, 
+    SharedLibraryFactory(const char *dll_name,
                          const char *fn_name = 0/*NULL*/) {
         rct = 0;
         returnValue = 0;
-		open(dll_name,fn_name);
-	}
+        open(dll_name,fn_name);
+    }
 
     /**
-     *
      * Configure the factory.
      *
-     * @param dll_name name/path of shared library
-     * @param fn_name name of factory method, a symbol within the shared library
-     *
-     * @return true on success
-     *
+     * @param dll_name name/path of shared library.
+     * @param fn_name name of factory method, a symbol within the shared library.
+     * @return true on success.
      */
     bool open(const char *dll_name, const char *fn_name = 0/*NULL*/) {
         returnValue = 0;
@@ -112,58 +101,50 @@ public:
     }
 
     /**
-     *
      * Check if factory is configured and present.
      *
-     * @return true iff factory is good to go
-     *
+     * @return true iff factory is good to go.
      */
-	bool isValid() const {
+    bool isValid() const {
         if (returnValue!=VOCAB4('Y','A','R','P')) return false;
-	    if (api.startCheck!=VOCAB4('Y','A','R','P')) return false;
-	    if (api.structureSize!=sizeof(SharedLibraryClassApi)) return false;
-	    if (api.systemVersion!=2) return false;
+        if (api.startCheck!=VOCAB4('Y','A','R','P')) return false;
+        if (api.structureSize!=sizeof(SharedLibraryClassApi)) return false;
+        if (api.systemVersion!=2) return false;
         if (api.endCheck!=VOCAB4('P','L','U','G')) return false;
         return true;
     }
 
     /**
-     *
      * Get the status of the factory.
      *
-     * @return one of the SharedLibraryFactory::STATUS_* codes
-     *
+     * @return one of the SharedLibraryFactory::STATUS_* codes.
      */
     int getStatus() const {
         return status;
     }
 
     /**
-     *
      * Get the factory API, which has creation/deletion methods.
      *
      * @return the factory API
-     *
      */
     const SharedLibraryClassApi& getApi() const {
         return api;
     }
 
     /**
+     * Get the current reference count of this factory.
      *
      * @return the current reference count of this factory.
-     *
      */
     int getReferenceCount() const {
         return rct;
     }
 
     /**
-     *
      * Increment the reference count of this factory.
      *
-     * @return the current reference count of this factory, after increment
-     *
+     * @return the current reference count of this factory, after increment.
      */
     int addRef() {
         rct++;
@@ -171,11 +152,9 @@ public:
     }
 
     /**
-     *
      * Decrement the reference count of this factory.
      *
-     * @return the current reference count of this factory, after decrement
-     *
+     * @return the current reference count of this factory, after decrement.
      */
     int removeRef() {
         rct--;
@@ -183,9 +162,9 @@ public:
     }
 
     /**
+     * Get the name associated with this factory.
      *
-     * @return the name associated with this factory
-     *
+     * @return the name associated with this factory.
      */
     ConstString getName() const {
         return name;
@@ -203,7 +182,7 @@ private:
         api.startCheck = 0;
         if (factory==0/*NULL*/) return false;
         isValid();
-        returnValue = 
+        returnValue =
             ((int (*)(void *ptr,int len)) factory)(&api,sizeof(SharedLibraryClassApi));
         return isValid();
     }

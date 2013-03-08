@@ -22,15 +22,23 @@ using namespace yarp::os::impl;
 bool Stamp::read(ConnectionReader& connection) {
     connection.convertTextMode();
     int header = connection.expectInt();
-    if (header!=BOTTLE_TAG_LIST) { return false; }
+    if (header!=BOTTLE_TAG_LIST) {
+        return false;
+    }
     int len = connection.expectInt();
-    if (len!=2) { return false; }
+    if (len!=2) {
+        return false;
+    }
     int code;
     code = connection.expectInt();
-    if (code!=BOTTLE_TAG_INT) { return false; }
+    if (code!=BOTTLE_TAG_INT) {
+        return false;
+    }
     sequenceNumber = connection.expectInt();
     code = connection.expectInt();
-    if (code!=BOTTLE_TAG_DOUBLE) { return false; }
+    if (code!=BOTTLE_TAG_DOUBLE) {
+        return false;
+    }
     timeStamp = connection.expectDouble();
     if (connection.isError()) {
         sequenceNumber = -1;

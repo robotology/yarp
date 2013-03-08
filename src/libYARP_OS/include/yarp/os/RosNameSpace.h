@@ -40,7 +40,7 @@ public:
 
     virtual Contact unregisterContact(const Contact& contact);
 
-    virtual bool setProperty(const char *name, const char *key, 
+    virtual bool setProperty(const char *name, const char *key,
                              const Value& value) {
         return false;
     }
@@ -50,7 +50,7 @@ public:
     }
 
 
-    virtual bool connectPortToTopic(const Contact& src, 
+    virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) {
         Bottle cmd;
@@ -63,7 +63,7 @@ public:
         return connectTopic(cmd,false,src,dest,style,false);
     }
 
-    virtual bool connectTopicToPort(const Contact& src, 
+    virtual bool connectTopicToPort(const Contact& src,
                                     const Contact& dest,
                                     ContactStyle style) {
         Bottle cmd;
@@ -76,7 +76,7 @@ public:
         return connectTopic(cmd,true,src,dest,style,true);
     }
 
-    virtual bool disconnectPortFromTopic(const Contact& src, 
+    virtual bool disconnectPortFromTopic(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) {
         Bottle cmd;
@@ -87,7 +87,7 @@ public:
         return connectTopic(cmd,false,src,dest,style,false);
     }
 
-    virtual bool disconnectTopicFromPort(const Contact& src, 
+    virtual bool disconnectTopicFromPort(const Contact& src,
                                          const Contact& dest,
                                          ContactStyle style) {
         Bottle cmd;
@@ -98,13 +98,13 @@ public:
         return connectTopic(cmd,true,src,dest,style,false);
     }
 
-    virtual bool connectPortToPortPersistently(const Contact& src, 
+    virtual bool connectPortToPortPersistently(const Contact& src,
                                                const Contact& dest,
                                                ContactStyle style) {
         return false;
     }
 
-    virtual bool disconnectPortToPortPersistently(const Contact& src, 
+    virtual bool disconnectPortToPortPersistently(const Contact& src,
                                                   const Contact& dest,
                                                   ContactStyle style) {
         return false;
@@ -112,7 +112,7 @@ public:
 
     virtual bool connectTopic(Bottle& cmd,
                               bool srcIsTopic,
-                              const Contact& src, 
+                              const Contact& src,
                               const Contact& dest,
                               ContactStyle style,
                               bool activeRegistration) {
@@ -177,12 +177,10 @@ public:
 
 
     /**
-     *
      * Possible ROS names are a subset of YARP names.
      * For nodes, in practice there isn't much restriction, except
      * ":" is definitely ruled out.  Since plenty of valid
      * YARP ports have a ":" in them, we need to quote this.
-     *
      */
     static ConstString toRosName(const ConstString& name);
 

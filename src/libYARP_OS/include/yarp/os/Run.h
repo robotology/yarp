@@ -80,9 +80,9 @@ class YARP_OS_API YarpRunInfoVector;
  */
 
 /**
- * \class yarp::os::Run
- * \brief yarprun provides the APIs to a client-server environment that is able to run,
- * kill and monitor applications commands on a remote machin in Windows and Linux.
+ * yarprun provides the APIs to a client-server environment that is able to run,
+ * kill and monitor applications commands on a remote machin in Windows and
+ * Linux.
  */
 class YARP_OS_API yarp::os::Run
 {
@@ -91,52 +91,75 @@ public:
 
     /**
      * Launch a yarprun server.
-     * @param node is the yarprun server port name. It must be unique in the network.
-     * @param command is the command to be executed by the remote server. It can include
-     * an argument list and different options, in the standard yarp Property key/value mode:
-     * - name COMMAND_NAME
-     * - parameters ARGUMENT_LIST (optional)
-     * - stdio /SERVERPORT (optional)
-     * - geometry WxH+X+Y (optional)
-     * - hold (optional)
-     * @param keyv is the tag that will identify the running application. It must be unique in the network.
+     *
+     * @param node is the yarprun server port name. It must be unique in the
+     *             network.
+     * @param command is the command to be executed by the remote server. It can
+     *                include an argument list and different options, in the
+     *                standard yarp Property key/value mode:
+     *                 - name COMMAND_NAME
+     *                 - parameters ARGUMENT_LIST (optional)
+     *                 - stdio /SERVERPORT (optional)
+     *                 - geometry WxH+X+Y (optional)
+     *                 - hold (optional)
+     * @param keyv is the tag that will identify the running application. It
+     *             must be unique in the network.
      * @return 0=success -1=failed.
      */
     static int start(const ConstString &node, Property &command, ConstString &keyv);
+
     /**
      * Terminate an application running on a yarprun server.
-     * @param node is the yarprun server port name. It must be unique in the network.
-     * @param keyv is the tag that identifies the running application. It must be unique in the network.
+     *
+     * @param node is the yarprun server port name. It must be unique in the
+     *             network.
+     * @param keyv is the tag that identifies the running application. It must
+     *             be unique in the network.
      * @return 0=success -1=failed.
      */
     static int sigterm(const ConstString &node, const ConstString &keyv);
+
     /**
      * Terminate all applications running on a yarprun server.
-     * @param node is the yarprun server port name. It must be unique in the network.
+     *
+     * @param node is the yarprun server port name. It must be unique in the
+     *             network.
      * @return 0=success -1=failed.
      */
     static int sigterm(const ConstString &node);
+
     /**
      * Send a SIGNAL to an application running on a yarprun server (Linux only).
-     * @param node is the yarprun server port name. It must be unique in the network.
-     * @param keyv is the tag that identifies the running application. It must be unique in the network.
+     *
+     * @param node is the yarprun server port name. It must be unique in the
+     *             network.
+     * @param keyv is the tag that identifies the running application. It must
+     *             be unique in the network.
      * @param s is the SIGNAL number.
      * @return 0=success -1=failed.
      */
     static int kill(const ConstString &node, const ConstString &keyv,int s);
+
     /**
      * Get a report of all applications running on a yarprun server.
-     * @param node is the yarprun server port name. It must be unique in the network.
-     * @param processes is a list of applications running on the remote yarprun server. It must not be allocated
-     * and it is responsability of the caller to delete it.
+     *
+     * @param node is the yarprun server port name. It must be unique in the
+     *             network.
+     * @param processes is a list of applications running on the remote yarprun
+     *                  server. It must not be allocated and it is
+     *                  responsability of the caller to delete it.
      * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */
     // static int ps(const ConstString &node,ConstString** &processes,int &num_processes);
+
     /**
      * Report if an application is still running on a yarprun server.
-     * @param node is the yarprun server port name. It must be unique in the network.
-     * @param keyv is the tag that identifies the application. It must be unique in the network.
+     *
+     * @param node is the yarprun server port name. It must be unique in the
+     *             network.
+     * @param keyv is the tag that identifies the application. It must be unique
+     *             in the network.
      * @return true=running false=terminated.
      */
     static bool isRunning(const ConstString &node, ConstString &keyv);
@@ -144,15 +167,12 @@ public:
     // end API
 
     /**
-     *
-     * Send a property object to a run server, bundling up all the
-     * settings usually specified on the command line.  See the
-     * documentation for the "yarprun" command.
+     * Send a property object to a run server, bundling up all the settings
+     * usually specified on the command line. See the documentation for the
+     * "yarprun" command.
      *
      * @param config the property object to send.
-     *
      * @return 0 on success, -1 on failure
-     *
      */
     static int sendToServer(Property& config);
 

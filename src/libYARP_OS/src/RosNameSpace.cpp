@@ -46,12 +46,11 @@ Contact RosNameSpace::queryName(const char *name) {
     return contact;
 }
 
-
 Contact RosNameSpace::registerName(const char *name) {
     fprintf(stderr,"ROS name server does not do 'raw' registrations.\n");
     fprintf(stderr,"Use [Buffered]Port::open to get complete registrations.\n");
     exit(1);
-    
+
     return Contact();
 }
 
@@ -118,7 +117,7 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
     // up" pub/subs for YARP ports, and when reregistering,
     // we capture and reaffirm those old pub/subs (otherwise
     // roscore deletes them)
-    
+
     Bottle cmd, reply, state;
     cmd.addString("getSystemState");
     cmd.addString(contact.getName().c_str());
@@ -128,8 +127,8 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
         return Contact();
     }
     YARP_SPRINTF2(Logger::get(),debug,
-                  "ROS registration: sent %s, got %s", 
-                  cmd.toString().c_str(), 
+                  "ROS registration: sent %s, got %s",
+                  cmd.toString().c_str(),
                   state.toString().c_str());
     // for ROS, we fake port name registrations by
     // registering them as nodes that publish to an arbitrary
@@ -146,8 +145,8 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
                             cmd, reply);
     if (!ok) return Contact();
     YARP_SPRINTF2(Logger::get(),debug,
-                  "ROS registration: sent %s, got %s", 
-                  cmd.toString().c_str(), 
+                  "ROS registration: sent %s, got %s",
+                  cmd.toString().c_str(),
                   reply.toString().c_str());
 
     // recover pubs/subs
@@ -157,10 +156,10 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
         Bottle *subs = lst->get(1).asList();
         if (pubs!=NULL && subs!=NULL) {
             YARP_SPRINTF1(Logger::get(),debug,
-                          "  pubs: %s", 
+                          "  pubs: %s",
                           pubs->toString().c_str());
             YARP_SPRINTF1(Logger::get(),debug,
-                          "  subs: %s", 
+                          "  subs: %s",
                           subs->toString().c_str());
             for (int i=0; i<pubs->size();i++) {
                 Bottle *pub = pubs->get(i).asList();
@@ -172,7 +171,7 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
                 for (int j=0; j<item->size(); j++) {
                     if (item->get(j).asString()==contact.getName()) {
                         YARP_SPRINTF1(Logger::get(),debug,
-                                      "  pub match: %s", 
+                                      "  pub match: %s",
                                       key.c_str());
                         NetworkBase::connect(contact.getName(),ConstString("topic:/") + key);
                     }
@@ -188,7 +187,7 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
                 for (int j=0; j<item->size(); j++) {
                     if (item->get(j).asString()==contact.getName()) {
                         YARP_SPRINTF1(Logger::get(),debug,
-                                      "  sub match: %s", 
+                                      "  sub match: %s",
                                       key.c_str());
                         NetworkBase::connect(ConstString("topic:/") + key,contact.getName());
                     }
@@ -266,7 +265,6 @@ Contact RosNameSpace::unregisterContact(const Contact& contact) {
     return Contact();
 }
 
-
 Contact RosNameSpace::detectNameServer(bool useDetectedServer,
                                        bool& scanNeeded,
                                        bool& serverUsed) {
@@ -294,7 +292,6 @@ Contact RosNameSpace::detectNameServer(bool useDetectedServer,
     return c;
 }
 
-
 bool RosNameSpace::writeToNameServer(PortWriter& cmd,
                                      PortReader& reply,
                                      const ContactStyle& style) {
@@ -304,7 +301,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     in.read(con0.getReader());
     ConstString key = in.get(0).asString();
     ConstString arg1 = in.get(1).asString();
-    
+
     Bottle cmd2;
     if (key=="query") {
         Contact c = queryName(arg1.c_str()).addName("");
@@ -329,7 +326,6 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     return ok;
 
 }
-
 
 ConstString RosNameSpace::toRosName(const ConstString& name) {
     if (name.find(":")==ConstString::npos) return name;
@@ -365,4 +361,3 @@ ConstString RosNameSpace::fromRosName(const ConstString& name) {
     if (ct) result += '_';
     return result;
 }
-

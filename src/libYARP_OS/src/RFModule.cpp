@@ -152,44 +152,35 @@ public:
         //owner.interruptModule();
     }
 
-    bool attach(yarp::os::Port& source)
-    {
+    bool attach(yarp::os::Port& source) {
         attachedToPort=true;
         source.setReader(*this);
         return true;
     }
 
-    bool attach(yarp::os::RpcServer& source)
-    {
+    bool attach(yarp::os::RpcServer& source) {
         attachedToPort=true;
         source.setReader(*this);
         return true;
     }
 
-    bool attachTerminal()
-    {
+    bool attachTerminal() {
         attachedTerminal=true;
 
         Thread::start();
         return true;
     }
 
-    bool isTerminalAttached()
-    {
+    bool isTerminalAttached() {
         return attachedTerminal;
     }
 
-    bool detachTerminal()
-    {
+    bool detachTerminal() {
         fprintf(stderr, "Critial: stopping thread, this might hang\n");
         Thread::stop();
         fprintf(stderr, "done!\n");
         return true;
     }
-
-private:
-public:
-
 };
 
 bool RFModuleHelper::read(ConnectionReader& connection) {
@@ -226,6 +217,7 @@ bool RFModuleHelper::read(ConnectionReader& connection) {
 #define HELPER(x) (*((RFModuleHelper*)(x)))
 
 static RFModule *module = 0;
+
 static void handler (int sig) {
     static int ct = 0;
     ct++;
@@ -256,8 +248,7 @@ static void handler (int sig) {
 // the signal handler. We could not find better way to handle clean remote shutdown of
 // processes in windows.
 #if defined(WIN32)
-static void handler_sigbreak(int sig)
-{
+static void handler_sigbreak(int sig) {
     raise(SIGINT);
 }
 #endif
@@ -346,7 +337,7 @@ int RFModule::runModule() {
         if (isStopping())
             loop=false;
 
-        fromDouble(sleepPeriodTV,getPeriod());
+        fromDouble(sleepPeriodTV, getPeriod());
         addTime(sleepPeriodTV, currentRunTV);
         subtractTime(sleepPeriodTV, elapsedTV);
         sleepThread(sleepPeriodTV);
@@ -399,8 +390,7 @@ ConstString RFModule::getName(const char *subName) {
 
     // Support legacy behavior, check if a "/" needs to be
     // appended before subName.
-    if (subName[0]!='/')
-    {
+    if (subName[0]!='/') {
         ACE_OS::printf("WARNING: subName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.\n");
         ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.\n", name.c_str(), subName);
 
