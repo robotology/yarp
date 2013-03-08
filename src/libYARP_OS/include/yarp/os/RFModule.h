@@ -49,9 +49,7 @@ public:
      *
      * @return the desired period between successive calls to updateModule()
      */
-    virtual double getPeriod() {
-        return 1.0;
-    }
+    virtual double getPeriod();
 
     /**
      * Override this to do whatever your module needs to do.
@@ -96,8 +94,7 @@ public:
      * \note attachTerminal() is no longer called automatically. You
      * can call it in the configure function.
      */
-    virtual bool configure(yarp::os::ResourceFinder &rf)
-    { return true; }
+    virtual bool configure(yarp::os::ResourceFinder &rf);
 
     /**
      * Respond to a message.
@@ -110,9 +107,7 @@ public:
      * @param reply the response you wish to make
      * @return true if there was no critical failure
      */
-    virtual bool respond(const Bottle& command, Bottle& reply) {
-        return basicRespond(command,reply);
-    }
+    virtual bool respond(const Bottle& command, Bottle& reply);
 
     /**
      * Make any input from a Port object go to the respond() method.
@@ -157,9 +152,7 @@ public:
      *
      * @return true if there was no catastrophic failure
      */
-    virtual bool interruptModule() {
-        return true;
-    }
+    virtual bool interruptModule();
 
     /**
      * Close function.
@@ -170,9 +163,7 @@ public:
      *
      * @return true/false on success failure.
      */
-    virtual bool close()
-    { return true; }
-
+    virtual bool close();
 
     /**
      * Ask the module to stop.
@@ -180,20 +171,14 @@ public:
      * @param wait: specifies if stop should block and wait termination. This is
      * not implemented yet.
      */
-    void stopModule(bool wait=false)
-    {
-        stopFlag=true;
-        if (!interruptModule())
-            fprintf(stderr, "interruptModule() returned an error there could be problems shutting down the module\n");
-    }
+    void stopModule(bool wait = false);
 
     /**
      * Check if the module should stop.
      *
      * @return true/false if the module should stop or not.
      */
-    bool isStopping()
-    { return stopFlag; }
+    bool isStopping();
 
     /**
      * Return name of module, as set with setName().
@@ -217,9 +202,7 @@ public:
      *
      * @param name the desired name of the module
      */
-    void setName(const char *name) {
-        this->name = name;
-    }
+    void setName(const char *name);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     /**

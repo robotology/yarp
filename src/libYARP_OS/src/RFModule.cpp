@@ -43,8 +43,7 @@ void yarp::os::impl::getTime(ACE_Time_Value& now) {
 #endif
 }
 
-void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period)
-{
+void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period) {
 #ifdef YARP_HAS_ACE
     if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
         sleep_period.set(0,0);
@@ -281,44 +280,8 @@ RFModule::~RFModule() {
     }
 }
 
- /**
-* Attach this object to a source of messages.
-* @param source a BufferedPort or PortReaderBuffer that
-* receives data.
-*/
-bool RFModule::attach(yarp::os::Port &source) {
-    HELPER(implementation).attach(source);
-    return true;
-}
-
-bool RFModule::attach(yarp::os::RpcServer &source) {
-    HELPER(implementation).attach(source);
-    return true;
-}
-
-bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
-    switch (command.get(0).asVocab()) {
-    case VOCAB4('q','u','i','t'):
-    case VOCAB4('e','x','i','t'):
-    case VOCAB3('b','y','e'):
-        reply.addVocab(Vocab::encode("bye"));
-        stopModule(false); //calls interruptModule()
-   //     interruptModule();
-        return true;
-    default:
-        reply.add("command not recognized");
-        return false;
-    }
-    return false;
-}
-
-bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
-    bool ok = respond(command,reply);
-    if (!ok) {
-        // just in case derived classes don't correctly pass on messages
-        ok = basicRespond(command,reply);
-    }
-    return ok;
+double RFModule::getPeriod() {
+    return 1.0;
 }
 
 int RFModule::runModule() {
@@ -381,6 +344,57 @@ int RFModule::runModule(yarp::os::ResourceFinder &rf) {
     return ok?0:1;
 }
 
+bool RFModule::configure(yarp::os::ResourceFinder &rf) {
+    return true;
+}
+
+bool RFModule::respond(const Bottle& command, Bottle& reply) {
+    return basicRespond(command,reply);
+}
+
+ /**
+* Attach this object to a source of messages.
+* @param source a BufferedPort or PortReaderBuffer that
+* receives data.
+*/
+bool RFModule::attach(yarp::os::Port &source) {
+    HELPER(implementation).attach(source);
+    return true;
+}
+
+bool RFModule::attach(yarp::os::RpcServer &source) {
+    HELPER(implementation).attach(source);
+    return true;
+}
+
+bool RFModule::attachTerminal() {
+    HELPER(implementation).attachTerminal();
+    return true;
+}
+
+bool RFModule::detachTerminal()
+{
+    HELPER(implementation).detachTerminal();
+    return true;
+}
+
+bool RFModule::interruptModule() {
+    return true;
+}
+bool RFModule::close() {
+    return true;
+}
+
+void RFModule::stopModule(bool wait) {
+    stopFlag=true;
+    if (!interruptModule()) {
+        fprintf(stderr, "interruptModule() returned an error there could be problems shutting down the module\n");
+    }
+}
+bool RFModule::isStopping() {
+    return stopFlag;
+}
+
 ConstString RFModule::getName(const char *subName) {
     if (subName==0) {
         return name;
@@ -401,14 +415,31 @@ ConstString RFModule::getName(const char *subName) {
     return base.c_str();
 }
 
-bool RFModule::attachTerminal() {
-    HELPER(implementation).attachTerminal();
-    return true;
+void RFModule::setName(const char *name) {
+    this->name = name;
 }
 
-bool RFModule::detachTerminal()
-{
-    HELPER(implementation).detachTerminal();
-    return true;
+bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
+    bool ok = respond(command, reply);
+    if (!ok) {
+        // just in case derived classes don't correctly pass on messages
+        ok = basicRespond(command, reply);
+    }
+    return ok;
 }
 
+bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
+    switch (command.get(0).asVocab()) {
+    case VOCAB4('q','u','i','t'):
+    case VOCAB4('e','x','i','t'):
+    case VOCAB3('b','y','e'):
+        reply.addVocab(Vocab::encode("bye"));
+        stopModule(false); //calls interruptModule()
+   //     interruptModule();
+        return true;
+    default:
+        reply.add("command not recognized");
+        return false;
+    }
+    return false;
+}
