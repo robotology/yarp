@@ -25,6 +25,9 @@ namespace yarp {
  */
 class YARP_OS_API yarp::os::Runnable {
 public:
+    /**
+     * Destructor
+     */
     virtual ~Runnable() {}
 
     /**

@@ -4,30 +4,33 @@
  *
  */
 
-/** 
+/**
  * @page download Download YARP
 
 <h2>Getting YARP</h2>
 
 Here is the most recent source code package for YARP:
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.tar.gz">yarp-2.3.20.1.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.zip">yarp-2.3.20.1.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.tar.gz">yarp-2.3.20.1.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.zip">yarp-2.3.20.1.zip</a> stable release for Windows.</li>
 </ul>
 
-<a href=http://www.cmake.org>CMake</a> is recommended for building these
-packages, and is required for compiling full device support.
+<a href=http://www.cmake.org>CMake</a> version 2.6.4 or newer
+is required for building these packages, and is required for
+compiling full device support.<br />
 The only difference between the UNIX download and the Windows
 download are line endings on files.
-<P>
 
-You can also install YARP from SVN:
-
-<PRE>  svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
-</PRE>
 
 <p>
-To check if YARP trunk is passing its regression tests on your OS, 
+You can also install YARP from SVN:
+
+<pre>  svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
+</pre>
+</p>
+
+<p>
+To check if YARP trunk is passing its regression tests on your OS,
 see our <a href="http://dashboard.icub.org/index.php?project=YARP">Dashboard</a>.
 </p>
 
@@ -47,181 +50,181 @@ called eBottle.
 
 Older, stable versions of YARP:
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.tar.gz">yarp-2.3.20.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.zip">yarp-2.3.20.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.tar.gz">yarp-2.3.20.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.zip">yarp-2.3.20.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.19.tar.gz">yarp-2.3.19.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.19.zip">yarp-2.3.19.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.19.tar.gz">yarp-2.3.19.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.19.zip">yarp-2.3.19.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.15.tar.gz">yarp-2.3.15.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.15.zip">yarp-2.3.15.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.15.tar.gz">yarp-2.3.15.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.15.zip">yarp-2.3.15.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.14.tar.gz">yarp-2.3.14.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.14.zip">yarp-2.3.14.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.14.tar.gz">yarp-2.3.14.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.14.zip">yarp-2.3.14.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.9.tar.gz">yarp-2.3.9.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.9.zip">yarp-2.3.9.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.9.tar.gz">yarp-2.3.9.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.9.zip">yarp-2.3.9.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.8.tar.gz">yarp-2.3.8.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.8.zip">yarp-2.3.8.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.8.tar.gz">yarp-2.3.8.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.8.zip">yarp-2.3.8.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.7.tar.gz">yarp-2.3.7.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.7.zip">yarp-2.3.7.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.7.tar.gz">yarp-2.3.7.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.7.zip">yarp-2.3.7.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.6.tar.gz">yarp-2.3.6.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.6.zip">yarp-2.3.6.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.6.tar.gz">yarp-2.3.6.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.6.zip">yarp-2.3.6.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.5.tar.gz">yarp-2.3.5.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.5.zip">yarp-2.3.5.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.5.tar.gz">yarp-2.3.5.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.5.zip">yarp-2.3.5.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.4.tar.gz">yarp-2.3.4.tar.gz</A> stable release for Linux, Mac OSX, etc.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.4.zip">yarp-2.3.4.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.4.tar.gz">yarp-2.3.4.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.4.zip">yarp-2.3.4.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.3.tar.gz">yarp-2.3.3.tar.gz</A>  stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.3.zip">yarp-2.3.3.zip</A>  stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.3.tar.gz">yarp-2.3.3.tar.gz</a>  stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.3.zip">yarp-2.3.3.zip</a>  stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.1.tar.gz">yarp-2.3.1.tar.gz</A>  stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.1.zip">yarp-2.3.1.zip</A>  stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.1.tar.gz">yarp-2.3.1.tar.gz</a>  stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.1.zip">yarp-2.3.1.zip</a>  stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.0.tar.gz">yarp-2.3.0.tar.gz</A>  stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.3.0.zip">yarp-2.3.0.zip</A>  stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.0.tar.gz">yarp-2.3.0.tar.gz</a>  stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.0.zip">yarp-2.3.0.zip</a>  stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.7.tar.gz">yarp-2.2.7.tar.gz</A> stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.7.zip">yarp-2.2.7.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.7.tar.gz">yarp-2.2.7.tar.gz</a> stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.7.zip">yarp-2.2.7.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.6.tar.gz">yarp-2.2.6.tar.gz</A> stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.6.zip">yarp-2.2.6.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.6.tar.gz">yarp-2.2.6.tar.gz</a> stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.6.zip">yarp-2.2.6.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.5.tar.gz">yarp-2.2.5.tar.gz</A> stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.5.zip">yarp-2.2.5.zip</A> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.5.tar.gz">yarp-2.2.5.tar.gz</a> stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.5.zip">yarp-2.2.5.zip</a> stable release for Windows.</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.4.tar.gz">yarp-2.2.4.tar.gz</A> stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.4.zip">yarp-2.2.4.zip</A> stable release for Windows.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.4.zip">yarpdoc-2.2.4.zip</A>, documentation</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.4.tar.gz">yarp-2.2.4.tar.gz</a> stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.4.zip">yarp-2.2.4.zip</a> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.4.zip">yarpdoc-2.2.4.zip</a>, documentation</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.3.tar.gz">yarp-2.2.3.tar.gz</A> stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.3.zip">yarp-2.2.3.zip</A> stable release for Windows.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.3.zip">yarpdoc-2.2.3.zip</A>, documentation</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.3.tar.gz">yarp-2.2.3.tar.gz</a> stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.3.zip">yarp-2.2.3.zip</a> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.3.zip">yarpdoc-2.2.3.zip</a>, documentation</li>
 </ul>
 
 <ul>
-<li><A HREF="http://wiki.icub.org/download/yarp/yarp-2.2.3rc1.tar.gz">yarp-2.2.3rc1.tar.gz</A> release candidate.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.2.tar.gz">yarp-2.2.2.tar.gz</A> stable release for UNIX.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.2.zip">yarp-2.2.2.zip</A> stable release for Windows.</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.2.zip">yarpdoc-2.2.2.zip</A>, documentation</li>
+<li><a href="http://wiki.icub.org/download/yarp/yarp-2.2.3rc1.tar.gz">yarp-2.2.3rc1.tar.gz</a> release candidate.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.2.tar.gz">yarp-2.2.2.tar.gz</a> stable release for UNIX.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.2.zip">yarp-2.2.2.zip</a> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.2.zip">yarpdoc-2.2.2.zip</a>, documentation</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.1.tar.gz">yarp-2.2.1.tar.gz</A> for UNIX</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.1.zip">yarp-2.2.1.zip</A> for Windows</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.1.zip">yarpdoc-2.2.1.zip</A>, documentation</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.1.tar.gz">yarp-2.2.1.tar.gz</a> for UNIX</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.1.zip">yarp-2.2.1.zip</a> for Windows</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarpdoc-2.2.1.zip">yarpdoc-2.2.1.zip</a>, documentation</li>
 </ul>
 
 <ul>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.0.tar.gz">yarp-2.2.0.tar.gz</A> for UNIX</li>
-<li><A HREF="http://downloads.sourceforge.net/yarp0/yarp-2.2.0.zip">yarp-2.2.0.zip</A> for Windows</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.0.tar.gz">yarp-2.2.0.tar.gz</a> for UNIX</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.2.0.zip">yarp-2.2.0.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.9.tar.gz>yarp-2.1.9.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.9.zip>yarp-2.1.9.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.9.tar.gz>yarp-2.1.9.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.9.zip>yarp-2.1.9.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.8.tar.gz>yarp-2.1.8.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.8.zip>yarp-2.1.8.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.8.tar.gz>yarp-2.1.8.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.8.zip>yarp-2.1.8.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.7.tar.gz>yarp-2.1.7.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.7.zip>yarp-2.1.7.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.7.tar.gz>yarp-2.1.7.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.7.zip>yarp-2.1.7.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.6.tar.gz>yarp-2.1.6.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.6.zip>yarp-2.1.6.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.6.tar.gz>yarp-2.1.6.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.6.zip>yarp-2.1.6.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.5.tar.gz>yarp-2.1.5.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.5.zip>yarp-2.1.5.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.5.tar.gz>yarp-2.1.5.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.5.zip>yarp-2.1.5.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.4.tar.gz>yarp-2.1.4.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.4.zip>yarp-2.1.4.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.4.tar.gz>yarp-2.1.4.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.4.zip>yarp-2.1.4.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.3.tar.gz>yarp-2.1.3.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.3.zip>yarp-2.1.3.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.3.tar.gz>yarp-2.1.3.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.3.zip>yarp-2.1.3.zip</a> for Windows</li>
 </ul>
 
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.2.tar.gz>yarp-2.1.2.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.2.zip>yarp-2.1.2.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.2.tar.gz>yarp-2.1.2.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.2.zip>yarp-2.1.2.zip</a> for Windows</li>
 </ul>
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.1.tar.gz>yarp-2.1.1.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.1.zip>yarp-2.1.1.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.1.tar.gz>yarp-2.1.1.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.1.zip>yarp-2.1.1.zip</a> for Windows</li>
 </ul>
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.0.tar.gz>yarp-2.1.0.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.0.zip>yarp-2.1.0.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.0.tar.gz>yarp-2.1.0.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.1.0.zip>yarp-2.1.0.zip</a> for Windows</li>
 </ul>
 <ul>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.0.9.tar.gz>yarp-2.0.9.tar.gz</A> for UNIX</li>
-<li><A HREF=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.0.9.zip>yarp-2.0.9.zip</A> for Windows</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.0.9.tar.gz>yarp-2.0.9.tar.gz</a> for UNIX</li>
+<li><a href=http://wiki.icub.org/yarp/downloads/yarp/yarp-2.0.9.zip>yarp-2.0.9.zip</a> for Windows</li>
 </ul>
 <ul>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.8.tar.gz>yarp-2.0.8.tar.gz</A> for UNIX</li>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.8.zip>yarp-2.0.8.zip</A> for Windows</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.8.tar.gz>yarp-2.0.8.tar.gz</a> for UNIX</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.8.zip>yarp-2.0.8.zip</a> for Windows</li>
 </ul>
 <ul>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.7.tar.gz>yarp-2.0.7.tar.gz</A> for UNIX</li>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.7.zip>yarp-2.0.7.zip</A> for Windows</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.7.tar.gz>yarp-2.0.7.tar.gz</a> for UNIX</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.7.zip>yarp-2.0.7.zip</a> for Windows</li>
 </ul>
 <ul>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.6.tar.gz>yarp-2.0.6.tar.gz</A> for UNIX</li>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.6.zip>yarp-2.0.6.zip</A> for Windows</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.6.tar.gz>yarp-2.0.6.tar.gz</a> for UNIX</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.6.zip>yarp-2.0.6.zip</a> for Windows</li>
 </ul>
 <ul>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.5.tar.gz>yarp-2.0.5.tar.gz</A> for UNIX</li>
-<li><A HREF=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.5.zip>yarp-2.0.5.zip</A> for Windows</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.5.tar.gz>yarp-2.0.5.tar.gz</a> for UNIX</li>
+<li><a href=http://yarp0.sourceforge.net/downloads/yarp/yarp-2.0.5.zip>yarp-2.0.5.zip</a> for Windows</li>
 </ul>
 
 
