@@ -32,7 +32,7 @@ public:
     /**
      * Constuct an invalid Stamp.
      */
-    Stamp();
+    explicit Stamp();
 
     /**
      * Constuct a Stamp with a given sequence number and time.
@@ -48,27 +48,21 @@ public:
      *
      * @return the sequence number.
      */
-    int getCount() {
-        return sequenceNumber;
-    }
+    int getCount();
 
     /**
      * Get the time stamp.
      *
      * @return the time stamp
      */
-    double getTime() {
-        return timeStamp;
-    }
+    double getTime();
 
     /**
      * Check if this Stamp is valid.
      *
      * @return true if this is a valid Stamp
      */
-    bool isValid() {
-        return sequenceNumber>=0;
-    }
+    bool isValid();
 
     /**
      * Get the maximum sequence number, after which an incrementing sequence
@@ -106,7 +100,7 @@ public:
     /**
      * Destructor
      */
-    virtual ~Stamped() {}
+    virtual ~Stamped();
 
     /**
      * @return the Stamp associated with this object (time stamp,

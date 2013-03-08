@@ -16,10 +16,30 @@
 
 #include <yarp/os/impl/IOException.h>
 
-using namespace yarp::os;
-using namespace yarp::os::impl;
 
-bool Stamp::read(ConnectionReader& connection) {
+yarp::os::Stamp::Stamp(int count, double time) {
+    sequenceNumber = count;
+    timeStamp = time;
+}
+
+yarp::os::Stamp::Stamp() {
+    sequenceNumber = -1;
+    timeStamp = 0;
+}
+
+int yarp::os::Stamp::getCount() {
+    return sequenceNumber;
+}
+
+double yarp::os::Stamp::getTime() {
+    return timeStamp;
+}
+
+bool yarp::os::Stamp::isValid() {
+    return sequenceNumber>=0;
+}
+
+bool yarp::os::Stamp::read(ConnectionReader& connection) {
     connection.convertTextMode();
     int header = connection.expectInt();
     if (header!=BOTTLE_TAG_LIST) {
@@ -48,7 +68,7 @@ bool Stamp::read(ConnectionReader& connection) {
     return true;
 }
 
-bool Stamp::write(ConnectionWriter& connection) {
+bool yarp::os::Stamp::write(ConnectionWriter& connection) {
     connection.appendInt(BOTTLE_TAG_LIST); // nested structure
     connection.appendInt(2);               // with two elements
     connection.appendInt(BOTTLE_TAG_INT);
@@ -59,15 +79,12 @@ bool Stamp::write(ConnectionWriter& connection) {
     return !connection.isError();
 }
 
-
-
-int Stamp::getMaxCount() {
+int yarp::os::Stamp::getMaxCount() {
     // a very conservative maximum
     return 32767;
 }
 
-
-void Stamp::update() {
+void yarp::os::Stamp::update() {
     double now = Time::now();
 
     sequenceNumber++;
@@ -77,8 +94,7 @@ void Stamp::update() {
     timeStamp = now;
 }
 
-void Stamp::update(double time) {
-
+void yarp::os::Stamp::update(double time) {
     sequenceNumber++;
     if (sequenceNumber>getMaxCount()||sequenceNumber<0) {
         sequenceNumber = 0;
@@ -86,15 +102,7 @@ void Stamp::update(double time) {
     timeStamp = time;
 }
 
-Stamp::Stamp(int count, double time)
-{
-    sequenceNumber = count;
-    timeStamp = time;
-}
 
-Stamp::Stamp()
-{
-    sequenceNumber = -1;
-    timeStamp = 0;
+yarp::os::Stamped::~Stamped() {
 }
 
