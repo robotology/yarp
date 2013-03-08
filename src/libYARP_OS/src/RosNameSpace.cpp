@@ -265,6 +265,141 @@ Contact RosNameSpace::unregisterContact(const Contact& contact) {
     return Contact();
 }
 
+bool RosNameSpace::setProperty(const char *name,
+                               const char *key,
+                               const Value& value) {
+    return false;
+}
+
+Value *RosNameSpace::getProperty(const char *name, const char *key) {
+        return NULL;
+}
+
+bool RosNameSpace::connectPortToTopic(const Contact& src,
+                                      const Contact& dest,
+                                      ContactStyle style) {
+    Bottle cmd;
+    cmd.addString("registerPublisher");
+    cmd.addString(toRosNodeName(src.getName()));
+    cmd.addString(dest.getName());
+    cmd.addString("*");
+    cmd.addString(rosify(src).toString());
+
+    return connectTopic(cmd,false,src,dest,style,false);
+}
+
+bool RosNameSpace::connectTopicToPort(const Contact& src,
+                                      const Contact& dest,
+                                      ContactStyle style) {
+    Bottle cmd;
+    cmd.addString("registerSubscriber");
+    cmd.addString(toRosNodeName(dest.getName()));
+    cmd.addString(src.getName());
+    cmd.addString("*");
+    cmd.addString(rosify(dest).toString());
+
+    return connectTopic(cmd,true,src,dest,style,true);
+}
+
+bool RosNameSpace::disconnectPortFromTopic(const Contact& src,
+                                           const Contact& dest,
+                                           ContactStyle style) {
+    Bottle cmd;
+    cmd.addString("unregisterPublisher");
+    cmd.addString(toRosNodeName(src.getName()));
+    cmd.addString(dest.getName());
+    cmd.addString(rosify(src).toString());
+    return connectTopic(cmd,false,src,dest,style,false);
+}
+
+bool RosNameSpace::disconnectTopicFromPort(const Contact& src,
+                                           const Contact& dest,
+                                           ContactStyle style) {
+    Bottle cmd;
+    cmd.addString("unregisterSubscriber");
+    cmd.addString(toRosNodeName(dest.getName()));
+    cmd.addString(src.getName());
+    cmd.addString(rosify(dest).toString());
+    return connectTopic(cmd,true,src,dest,style,false);
+}
+
+bool RosNameSpace::connectPortToPortPersistently(const Contact& src,
+                                                 const Contact& dest,
+                                                 ContactStyle style) {
+    return false;
+}
+
+bool RosNameSpace::disconnectPortToPortPersistently(const Contact& src,
+                                                    const Contact& dest,
+                                                    ContactStyle style) {
+    return false;
+}
+
+bool RosNameSpace::connectTopic(Bottle& cmd,
+                                bool srcIsTopic,
+                                const Contact& src,
+                                const Contact& dest,
+                                ContactStyle style,
+                                bool activeRegistration) {
+    Bottle reply;
+    Contact dynamicSrc = src;
+    Contact dynamicDest = dest;
+    if (style.carrier!="") {
+        if (srcIsTopic) {
+            dynamicDest = dynamicDest.addCarrier(style.carrier);
+        } else {
+            dynamicSrc = dynamicSrc.addCarrier(style.carrier);
+        }
+    }
+    Contact base = getNameServerContact();
+    bool ok = NetworkBase::write(base,
+                                    cmd,
+                                    reply);
+    bool fail = (reply.check("faultCode",Value(0)).asInt()!=0)||!ok;
+    if (fail) {
+        if (!style.quiet) {
+            fprintf(stderr,"Failure: name server did not accept connection to topic.\n");
+            if (reply.check("faultString")) {
+                fprintf(stderr,"Cause: %s\n", reply.check("faultString",Value("")).asString().c_str());
+            }
+        }
+    }
+    if (!fail) {
+        if (activeRegistration) {
+            Bottle *lst = reply.get(2).asList();
+            Bottle cmd2;
+            if (lst!=NULL) {
+                cmd2.addString("publisherUpdate");
+                cmd2.addString("/yarp");
+                cmd2.addString(dynamicSrc.getName());
+                cmd2.addList() = *lst;
+                //printf("ACTIVE REGISTRATION: %s\n", cmd2.toString().c_str());
+                NetworkBase::write(dynamicDest,
+                                    cmd2,
+                                    reply,
+                                    true);
+            }
+        }
+    }
+    return !fail;
+}
+
+bool RosNameSpace::localOnly() const {
+    return false;
+}
+
+bool RosNameSpace::usesCentralServer() const {
+    return true;
+}
+
+bool RosNameSpace::serverAllocatesPortNumbers() const {
+    return false;
+}
+
+bool RosNameSpace::connectionHasNameOfEndpoints() const {
+    return false;
+}
+
 Contact RosNameSpace::detectNameServer(bool useDetectedServer,
                                        bool& scanNeeded,
                                        bool& serverUsed) {
@@ -327,6 +462,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
 
 }
 
+
 ConstString RosNameSpace::toRosName(const ConstString& name) {
     if (name.find(":")==ConstString::npos) return name;
     ConstString result;
@@ -360,4 +496,17 @@ ConstString RosNameSpace::fromRosName(const ConstString& name) {
     }
     if (ct) result += '_';
     return result;
+}
+
+ConstString RosNameSpace::toRosNodeName(const ConstString& name) {
+    return toRosName(name);
+}
+
+ConstString RosNameSpace::fromRosNodeName(const ConstString& name) {
+    return fromRosName(name);
+}
+
+Contact RosNameSpace::rosify(const Contact& contact) {
+    return Contact::bySocket("http",contact.getHost().c_str(),
+                             contact.getPort());
 }
