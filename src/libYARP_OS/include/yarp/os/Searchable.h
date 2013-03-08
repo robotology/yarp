@@ -69,7 +69,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Searchable() {}
+    virtual ~Searchable();
 
     /**
      * Check if there exists a property of the given name
