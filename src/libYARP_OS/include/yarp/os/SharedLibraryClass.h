@@ -36,9 +36,9 @@ public:
     /**
      * Constructor for empty instance.
      */
-    SharedLibraryClass() {
-        content = 0/*NULL*/;
-        pfactory = 0/*NULL*/;
+    SharedLibraryClass() :
+            content(NULL),
+            pfactory(NULL) {
     }
 
     /**
@@ -47,8 +47,9 @@ public:
      * @param factory the factory to use to construct (and eventually
      * destroy) the instance.
      */
-    SharedLibraryClass(SharedLibraryClassFactory<T>& factory) {
-        content = 0/*NULL*/;
+    SharedLibraryClass(SharedLibraryClassFactory<T>& factory) :
+            content(NULL),
+            pfactory(NULL) {
         open(factory);
     }
 
