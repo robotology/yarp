@@ -28,30 +28,30 @@ public:
     /**
      * Destructor
      */
-    virtual ~Runnable() {}
+    virtual ~Runnable();
 
     /**
      * Body to run - could be periodic or continuous
      */
-    virtual void run() {}
+    virtual void run();
 
     /**
      * User-defined procedure for stopping execution.  There is no
      * general-purpose way to achieve that.
      */
-    virtual void close() {}
+    virtual void close();
 
     /**
      * Should be called from the creator *before* the thread exists
      * and before a call that requested the thread returns
      */
-    virtual void beforeStart() {}
+    virtual void beforeStart();
 
     /**
      * Should be called from the creator *after* the thread exists
      * and before a call that requested the thread returns
      */
-    virtual void afterStart(bool success) {}
+    virtual void afterStart(bool success);
 
     /**
      * Initialization method. The thread executes this function
@@ -64,8 +64,7 @@ public:
      * to afterStart(). Note that afterStart() is called by the
      * same thread that is executing the start method.
      */
-    virtual bool threadInit()
-    { return true;}
+    virtual bool threadInit();
 
     /**
      * Release method. The thread executes this function once when
@@ -73,7 +72,7 @@ public:
      * resources that were initialized in threadInit() (release memory,
      * and device driver resources).
      */
-    virtual void threadRelease() {}
+    virtual void threadRelease();
 };
 
 #endif
