@@ -196,98 +196,27 @@ public:
     /**
      * Default constructor.
      */
-    RateThreadWrapper(): RateThread(0) {
-        helper = 0/*NULL*/;
-        owned = false;
-    }
+    RateThreadWrapper();
+    RateThreadWrapper(Runnable *helper);
+    RateThreadWrapper(Runnable& helper);
 
-    RateThreadWrapper(Runnable *helper): RateThread(0) {
-        this->helper = helper;
-        owned = true;
-    }
+    virtual ~RateThreadWrapper();
 
-    RateThreadWrapper(Runnable& helper): RateThread(0) {
-        this->helper = &helper;
-        owned = false;
-    }
-
-    virtual ~RateThreadWrapper() {
-        detach();
-    }
-
-    void detach() {
-        if (owned) {
-            if (helper!=0/*NULL*/) {
-                delete helper;
-            }
-        }
-        helper = 0/*NULL*/;
-        owned = false;
-    }
-
-    virtual bool attach(Runnable& helper) {
-        detach();
-        this->helper = &helper;
-        owned = false;
-        return true;
-    }
-
-    virtual bool attach(Runnable *helper) {
-        detach();
-        this->helper = helper;
-        owned = true;
-        return true;
-    }
+    void detach();
+    virtual bool attach(Runnable& helper);
+    virtual bool attach(Runnable *helper);
 
     bool open(double framerate = -1, bool polling = false);
+    void close();
+    void stop();
 
-    void close() {
-        RateThread::stop();
-    }
+    virtual void run();
+    virtual bool threadInit();
+    virtual void threadRelease();
+    virtual void afterStart(bool success);
+    virtual void beforeStart();
 
-    void stop() {
-        RateThread::stop();
-    }
-
-    virtual void run() {
-        if (helper!=0/*NULL*/) {
-            helper->run();
-        }
-    }
-
-    virtual bool threadInit()
-    {
-        if (helper!=0) {
-            return helper->threadInit();
-        }
-        else
-            return true;
-    }
-
-    virtual void threadRelease()
-    {
-        if (helper!=0) {
-            helper->threadRelease();
-        }
-    }
-
-    virtual void afterStart(bool success)
-    {
-        if (helper!=0) {
-            helper->afterStart(success);
-        }
-    }
-
-    virtual void beforeStart()
-    {
-        if (helper!=0) {
-            helper->beforeStart();
-        }
-    }
-
-    Runnable *getAttachment() const {
-        return helper;
-    }
+    Runnable *getAttachment() const;
 };
 
 #endif

@@ -183,18 +183,18 @@ public:
         sleepThread(sleepPeriodTV);
     }
 
-    virtual void run() {
+    void run() {
         adaptedPeriod=period;
         while(!isClosing()) {
             singleStep();
         }
     }
 
-    virtual bool threadInit() {
+    bool threadInit() {
         return owner.threadInit();
     }
 
-    virtual void threadRelease() {
+    void threadRelease() {
         owner.threadRelease();
     }
 
@@ -220,11 +220,11 @@ public:
         suspended=false;
     }
 
-    virtual void afterStart(bool s) {
+    void afterStart(bool s) {
         owner.afterStart(s);
     }
 
-    virtual void beforeStart() {
+    void beforeStart() {
         owner.beforeStart();
     }
 
@@ -235,7 +235,9 @@ public:
     void unlock() {
         mutex.post();
     }
-};
+}; // class RateThreadCallbackAdapter
+
+
 
 RateThread::RateThread(int p)
 {
@@ -352,8 +354,51 @@ void RateThread::beforeStart()
 void RateThread::afterStart(bool s)
 {}
 
-bool RateThreadWrapper::open(double framerate, bool polling)
-{
+RateThreadWrapper::RateThreadWrapper(): RateThread(0) {
+    helper = NULL;
+    owned = false;
+}
+
+
+RateThreadWrapper::RateThreadWrapper(Runnable *helper): RateThread(0) {
+    this->helper = helper;
+    owned = true;
+}
+
+RateThreadWrapper::RateThreadWrapper(Runnable& helper): RateThread(0) {
+    this->helper = &helper;
+    owned = false;
+}
+
+RateThreadWrapper::~RateThreadWrapper() {
+    detach();
+}
+
+void RateThreadWrapper::detach() {
+    if (owned) {
+        if (helper!=NULL) {
+            delete helper;
+        }
+    }
+    helper = NULL;
+    owned = false;
+}
+
+bool RateThreadWrapper::attach(Runnable& helper) {
+    detach();
+    this->helper = &helper;
+    owned = false;
+    return true;
+}
+
+bool RateThreadWrapper::attach(Runnable *helper) {
+    detach();
+    this->helper = helper;
+    owned = true;
+    return true;
+}
+
+bool RateThreadWrapper::open(double framerate, bool polling) {
     int period = 0;
     if (framerate>0) {
         period=(int) (0.5+1000.0/framerate);
@@ -370,4 +415,48 @@ bool RateThreadWrapper::open(double framerate, bool polling)
         start();
     }
     return true;
+}
+
+void RateThreadWrapper::close() {
+    RateThread::stop();
+}
+
+void RateThreadWrapper::stop() {
+    RateThread::stop();
+}
+
+void RateThreadWrapper::run() {
+    if (helper!=NULL) {
+        helper->run();
+    }
+}
+
+bool RateThreadWrapper::threadInit() {
+    if (helper!=0) {
+        return helper->threadInit();
+    }
+    else
+        return true;
+}
+
+void RateThreadWrapper::threadRelease() {
+    if (helper!=0) {
+        helper->threadRelease();
+    }
+}
+
+void RateThreadWrapper::afterStart(bool success) {
+    if (helper!=0) {
+        helper->afterStart(success);
+    }
+}
+
+void RateThreadWrapper::beforeStart() {
+    if (helper!=0) {
+        helper->beforeStart();
+    }
+}
+
+Runnable *RateThreadWrapper::getAttachment() const {
+    return helper;
 }
