@@ -1624,11 +1624,25 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                 Goocanvas::Bounds bd = m_Canvas->get_item(mod)->get_bounds();
                 m_Canvas->get_item(mod)->translate(x/m_Canvas->get_scale() - bd.get_x1(), y/m_Canvas->get_scale() - bd.get_y1());
                 
+                Goocanvas::Bounds bc;
+                m_Canvas->get_bounds(bc);
+                if (bc.get_x2() < x/m_Canvas->get_scale()+bd.get_x2()-bd.get_x1())
+                {
+                    bc.set_x2(x/m_Canvas->get_scale()+bd.get_x2()-bd.get_x1());
+                }
+                
+                if (bc.get_y2() < y/m_Canvas->get_scale()+bd.get_y2()-bd.get_y1())
+                {
+                    bc.set_y2(y/m_Canvas->get_scale()+bd.get_y2()-bd.get_y1());
+                }
                 mod->snapToGrid();
+                m_Canvas->set_bounds(bc); 
+                g_object_set(m_Grid, "width", bc.get_x2()-bc.get_x1(), NULL);
+                g_object_set(m_Grid, "height", bc.get_y2()-bc.get_y1(), NULL);
+                
             }
         }
         m_bModified = true;
-        updateApplicationWindow();
     }
     else if((data.get_length() >= 0) && (data.get_format() == APPLICATION))
     {
@@ -1658,7 +1672,6 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
            }
         } 
         m_bModified = true;
-        updateApplicationWindow();
     }
     else if((data.get_length() >= 0) && (data.get_format() == RESOURCE))
     {
@@ -1758,4 +1771,94 @@ void ApplicationWindow::onUpdateConnectionProperty(Glib::RefPtr<ArrowModel> &arr
     m_RightTab.append_page(*conPropertyWindow, "Property");
     m_HPaned.show_all();
 }
+void  ApplicationWindow::shrinkCanvas()
+{
+    double scale = m_Canvas->get_scale();
+    double hor_page_size= m_ScrollView.get_hadjustment()->get_page_size();
+    double ver_page_size= m_ScrollView.get_vadjustment()->get_page_size();
 
+    Goocanvas::Bounds bc;
+    m_Canvas->get_bounds(bc);
+    int w = (bc.get_x2() - bc.get_x1());
+    int h = (bc.get_y2() - bc.get_y1());    
+    if (w * scale > hor_page_size || h *scale > ver_page_size)
+    {
+        g_object_set(m_Grid, "visibility", GOO_CANVAS_ITEM_HIDDEN, NULL);
+        Goocanvas::Bounds minBounds=getMinimumBoundingBox();
+        double new_w= max(hor_page_size/scale, minBounds.get_x2());
+        double new_h= max(ver_page_size/scale, minBounds.get_y2());
+        m_Canvas->set_bounds(0, 0, new_w + GRID_PATTERN_SIZE, new_h + GRID_PATTERN_SIZE);
+        g_object_set(m_Grid, "visibility", GOO_CANVAS_ITEM_VISIBLE, NULL);
+        g_object_set(m_Grid, "width", new_w + GRID_PATTERN_SIZE, NULL);
+        g_object_set(m_Grid, "height", new_h + GRID_PATTERN_SIZE, NULL);
+    }
+}
+
+void  ApplicationWindow::onZoomIn(void) {
+    double scale = m_Canvas->get_scale();
+    scale = (scale>=1.6) ? scale: scale+0.15;
+    m_Canvas->set_scale(scale);
+   
+    shrinkCanvas();
+}
+
+void ApplicationWindow::widenCanvas()
+{
+    double scale = m_Canvas->get_scale();    
+    double hor_page_size= m_ScrollView.get_hadjustment()->get_page_size();
+    double ver_page_size= m_ScrollView.get_vadjustment()->get_page_size();
+    
+    Goocanvas::Bounds bc;
+    m_Canvas->get_bounds(bc);
+    int w = (bc.get_x2() - bc.get_x1()) * scale;
+    int h = (bc.get_y2() - bc.get_y1()) * scale;        
+    if (w < hor_page_size || h < ver_page_size)
+    {
+          m_Canvas->set_bounds(0, 0, hor_page_size/scale, ver_page_size/scale);  
+          g_object_set(m_Grid, "width", hor_page_size/scale, NULL);
+          g_object_set(m_Grid, "height", ver_page_size/scale, NULL);
+    }
+    
+}
+
+void  ApplicationWindow::onZoomOut(void) { 
+    double scale = m_Canvas->get_scale();
+    scale = (scale<=0.4) ? scale: scale-0.15;
+    m_Canvas->set_scale(scale);
+
+    widenCanvas();
+}
+
+void  ApplicationWindow::onZoomReset(void) { 
+    double oldScale=m_Canvas->get_scale();
+    m_Canvas->set_scale(1.0);
+    
+    if (oldScale > 1.0)
+        widenCanvas();
+    else shrinkCanvas();
+}
+
+Goocanvas::Bounds ApplicationWindow::getMinimumBoundingBox()
+{
+    Goocanvas::Bounds bc(-1,-1,-1,-1);
+    for(int i=0; i<root->get_n_children(); i++)
+    {
+        Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item(root->get_child(i));
+        if(item && (item->property_visibility().get_value() != Goocanvas::ITEM_HIDDEN))
+        {
+            Goocanvas::Bounds bi = item->get_bounds();
+            if((bc.get_x1()<0) || (bc.get_x1()>bi.get_x1()))
+                bc.set_x1(bi.get_x1());
+    
+            if((bc.get_x2()<0) || (bc.get_x2()<bi.get_x2()))
+                bc.set_x2(bi.get_x2());
+
+            if((bc.get_y1()<0) || (bc.get_y1()>bi.get_y1()))
+                bc.set_y1(bi.get_y1());
+
+            if((bc.get_y2()<0) || (bc.get_y2()<bi.get_y2()))
+                bc.set_y2(bi.get_y2());
+        }
+    }        
+    return bc;
+}

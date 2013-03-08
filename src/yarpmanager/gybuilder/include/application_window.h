@@ -54,28 +54,9 @@ public:
     void onRotateLeft();
     void onMenuWindowProperty(bool active);
     
-    void onZoomIn(void) {
-        double scale = m_Canvas->get_scale();
-        scale = (scale>=1.6) ? scale: scale+0.15;
-        m_Canvas->set_scale(scale);
-    }
-    void onZoomOut(void) { 
-        double scale = m_Canvas->get_scale();
-        scale = (scale<=0.4) ? scale: scale-0.15;
-        /*
-        Goocanvas::Bounds bc;
-        m_Canvas->get_bounds(bc);
-        int w = (bc.get_x2() - bc.get_x1()) * scale;
-        int h = (bc.get_y2() - bc.get_y1()) * scale;        
-        if((w>get_width()) && (h>get_height()))
-        */
-        m_Canvas->set_scale(scale);
-    }
-
-    void onZoomReset(void) { 
-        m_Canvas->set_scale(1.0);
-    }
-
+    void onZoomIn(void);
+    void onZoomOut(void);
+    void onZoomReset(void); 
     void onGrid(bool grid) {
         m_showGrid = grid;
         if(!m_showGrid)        
@@ -178,6 +159,9 @@ private:
     Glib::RefPtr<PortModel> findModelFromInput(InputData* input);
     void findInputOutputData(Connection& cnn,  ModulePContainer &modules,
                                             InputData* &input_, OutputData* &output_);
+    Goocanvas::Bounds getMinimumBoundingBox();
+    void widenCanvas();
+    void shrinkCanvas();
 
 };
 
