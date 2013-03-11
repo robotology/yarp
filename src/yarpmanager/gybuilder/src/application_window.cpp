@@ -1779,8 +1779,8 @@ void  ApplicationWindow::shrinkCanvas()
 
     Goocanvas::Bounds bc;
     m_Canvas->get_bounds(bc);
-    int w = (bc.get_x2() - bc.get_x1());
-    int h = (bc.get_y2() - bc.get_y1());    
+    int w = (int)(bc.get_x2() - bc.get_x1());
+    int h = (int)(bc.get_y2() - bc.get_y1());
     if (w * scale > hor_page_size || h *scale > ver_page_size)
     {
         g_object_set(m_Grid, "visibility", GOO_CANVAS_ITEM_HIDDEN, NULL);
@@ -1810,8 +1810,8 @@ void ApplicationWindow::widenCanvas()
     
     Goocanvas::Bounds bc;
     m_Canvas->get_bounds(bc);
-    int w = (bc.get_x2() - bc.get_x1()) * scale;
-    int h = (bc.get_y2() - bc.get_y1()) * scale;        
+    int w = (int)((bc.get_x2() - bc.get_x1()) * scale);
+    int h = (int)((bc.get_y2() - bc.get_y1()) * scale);
     if (w < hor_page_size || h < ver_page_size)
     {
           m_Canvas->set_bounds(0, 0, hor_page_size/scale, ver_page_size/scale);  
