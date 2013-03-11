@@ -67,7 +67,7 @@ RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterf
     RobotInterface::ParamList params = list;
     for (RobotInterface::ParamList::iterator it1 = params.begin(); it1 != params.end(); it1++) {
         RobotInterface::Param &param1 = *it1;
-        for (RobotInterface::ParamList::iterator it2 = it1 + 1; it2 != params.end(); it2++) {
+        for (RobotInterface::ParamList::iterator it2 = it1 + 1; it2 != params.end(); ) {
             RobotInterface::Param &param2 = *it2;
             if (param1.name().compare(param2.name()) == 0) {
                 if (!param1.isGroup() || !param2.isGroup()) {
@@ -77,6 +77,7 @@ RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterf
                 param1.value() += param2.value();
                 params.erase(it2);
             }
+            else it2++;
         }
     }
     return params;
