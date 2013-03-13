@@ -34,8 +34,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~TwoWayStream() {
-    }
+    virtual ~TwoWayStream();
 
     /**
      * Get an InputStream to read from.
@@ -114,30 +113,28 @@ class yarp::os::impl::NullStream : public TwoWayStream,
 private:
     Address address;
 public:
-    virtual ~NullStream() {
-    }
+    virtual ~NullStream();
 
-    virtual InputStream& getInputStream()   { return *this; }
-    virtual OutputStream& getOutputStream() { return * this; }
+    virtual InputStream& getInputStream();
+    virtual OutputStream& getOutputStream();
 
-    virtual const Address& getLocalAddress()  { return address; }
-    virtual const Address& getRemoteAddress() { return address; }
+    virtual const Address& getLocalAddress();
+    virtual const Address& getRemoteAddress();
 
-    virtual bool isOk() { return false; }
+    virtual bool isOk();
 
-    virtual void reset() {}
+    virtual void reset();
 
-    virtual void close() {}
+    virtual void close();
 
     // These should be called at the beginning and end of logical packets.
     // Streams are encouraged to handle errors and atomicity at the level of
     // logical packets
-    virtual void beginPacket() {}
-    virtual void endPacket()   {}
+    virtual void beginPacket();
+    virtual void endPacket();
 
-    virtual ssize_t read(const Bytes& b)  { return -1; }
-    virtual void write(const Bytes& b) { }
-
+    virtual ssize_t read(const Bytes& b);
+    virtual void write(const Bytes& b);
 };
 
 #endif
