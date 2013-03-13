@@ -60,6 +60,8 @@ private:
     bool exit(void);
     void reportErrors(void);
     void which(void);
+    void checkStates(void);
+    void checkConnections(void);
     bool loadRecursiveApplications(const char* szPath);
     void updateAppNames(vector<string>* apps);
     void setColorTheme(ColorTheme theme);
