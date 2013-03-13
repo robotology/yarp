@@ -154,9 +154,11 @@ public:
     virtual void reset() {
     }
 
-    virtual void beginPacket() { }
+    virtual void beginPacket() {
+    }
 
-    virtual void endPacket() { }
+    virtual void endPacket() {
+    }
 
     virtual bool setWriteTimeout(double timeout) {
         if (timeout<1e-12) {
