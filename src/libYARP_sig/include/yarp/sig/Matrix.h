@@ -222,7 +222,7 @@ public:
        *
        * @param m matrix containing the values to set
        * @param r start row
-       * @param c start columbn
+       * @param c start column
        * @return true if the operation succeeded, false otherwise
        */
       bool setSubmatrix(const Matrix &m, int r, int c);

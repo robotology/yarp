@@ -218,8 +218,7 @@ bool ModuleModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& i
         item->get_parent()->translate(new_x - _drag_x, new_y - _drag_y);
         
         Goocanvas::Bounds bi = item->get_parent()->get_bounds();
-        bi = item->get_parent()->get_bounds();
-
+      //  bi = item->get_parent()->get_bounds();
         if(bi.get_x1() < 0)
             item->get_parent()->translate(-bi.get_x1(), 0);
         if(bi.get_y1() < 0)
