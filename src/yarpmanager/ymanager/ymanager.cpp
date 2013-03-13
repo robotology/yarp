@@ -332,7 +332,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
                     if(!config.check("silent"))
                         which();
 
-                    if(config.check("assign_hossts"))
+                    if(config.check("assign_hosts"))
                         loadBalance();
 
                     if(config.check("run"))
