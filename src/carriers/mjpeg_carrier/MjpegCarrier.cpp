@@ -61,12 +61,12 @@ void send_net_data(JOCTET *data, int len, void *client) {
     dbg_printf("Send %d bytes\n", len);
     Protocol *p = (Protocol *)client;
     char hdr[1000];
-	sprintf(hdr,"\n");
-	const char *brk = "\n";
-	if (hdr[1]=='\0') {
-		brk = "\r\n";
-	}
-	dbg_printf("Using terminator %s\n",(hdr[1]=='\0')?"\\r\\n":"\\n");
+    sprintf(hdr,"\n");
+    const char *brk = "\n";
+    if (hdr[1]=='\0') {
+        brk = "\r\n";
+    }
+    dbg_printf("Using terminator %s\n",(hdr[1]=='\0')?"\\r\\n":"\\n");
     sprintf(hdr,"Content-Type: image/jpeg%s\
 Content-Length: %d%s%s", brk, len, brk, brk);
     Bytes hbuf(hdr,strlen(hdr));
@@ -123,7 +123,7 @@ void jpeg_net_dest(j_compress_ptr cinfo) {
     /* The destination object is made permanent so that multiple JPEG images
      * can be written to the same buffer without re-executing jpeg_net_dest.
      */
-    if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
+    if (cinfo->dest == NULL) {    /* first time for this JPEG object? */
         cinfo->dest = (struct jpeg_destination_mgr *)
             (*cinfo->mem->alloc_large) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                                         sizeof(net_destination_mgr));
@@ -145,7 +145,7 @@ bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
     int row_stride = img->getRowSize();
     JOCTET *data = (JOCTET*)img->getRawImage();
 
-	JSAMPROW row_pointer[1];
+    JSAMPROW row_pointer[1];
 
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -157,11 +157,11 @@ bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
     cinfo.image_height = h;
     cinfo.input_components = 3;
     cinfo.in_color_space = JCS_RGB;
-    jpeg_set_defaults(&cinfo); 
+    jpeg_set_defaults(&cinfo);
     //jpeg_set_quality(&cinfo, 85, TRUE);
-	dbg_printf("Starting to compress...\n");
+    dbg_printf("Starting to compress...\n");
     jpeg_start_compress(&cinfo, TRUE);
-	dbg_printf("Done compressing (height %d)\n", cinfo.image_height);
+    dbg_printf("Done compressing (height %d)\n", cinfo.image_height);
     while (cinfo.next_scanline < cinfo.image_height) {
         dbg_printf("Writing row %d...\n", cinfo.next_scanline);
         row_pointer[0] = data + cinfo.next_scanline * row_stride;

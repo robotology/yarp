@@ -113,9 +113,13 @@ bool yarp::os::impl::AbstractCarrier::write(yarp::os::impl::Protocol& proto, yar
     // default behavior upon a write request
     //ACE_UNUSED_ARG(writer);
     bool ok = proto.sendIndex();
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
     ok = proto.sendContent();
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
     // proto.expectAck(); //MOVE ack to after reply, if present
     return true;
 }

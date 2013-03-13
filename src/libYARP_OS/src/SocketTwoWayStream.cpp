@@ -37,8 +37,8 @@ int SocketTwoWayStream::open(const Address& address) {
     }
     int result = connector.connect(stream,addr,timeout,ACE_Addr::sap_any,1);
 #else
-	TcpConnector connector;
-	int result = connector.connect(stream, address);
+    TcpConnector connector;
+    int result = connector.connect(stream, address);
 #endif
     if (result>=0) {
         happy = true;
@@ -84,12 +84,12 @@ void SocketTwoWayStream::updateAddresses() {
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
     if (local.sa_family == AF_INET) {
-    	struct sockaddr_in *ipv4local = (struct sockaddr_in *) &local;
-    	struct sockaddr_in *ipv4remote = (struct sockaddr_in *) &remote;
+        struct sockaddr_in *ipv4local = (struct sockaddr_in *) &local;
+        struct sockaddr_in *ipv4remote = (struct sockaddr_in *) &remote;
         localAddress = Address(inet_ntoa(ipv4local->sin_addr),ipv4local->sin_port);
         remoteAddress = Address(inet_ntoa(ipv4remote->sin_addr),ipv4remote->sin_port);
     } else {
-    	YARP_ERROR(Logger::get(),"ipv6 address type not propagated without ACE");
+        YARP_ERROR(Logger::get(),"ipv6 address type not propagated without ACE");
     }
 #endif
 }

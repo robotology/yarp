@@ -24,7 +24,7 @@ using namespace std;
 
 
 ssize_t MjpegStream::read(const Bytes& b) {
-	bool debug = false;
+    bool debug = false;
     if (remaining==0) {
         if (phase==1) {
             phase = 2;
@@ -42,28 +42,42 @@ ssize_t MjpegStream::read(const Bytes& b) {
         String s = "";
         do {
             s = NetType::readLine(delegate->getInputStream());
-            if (debug) printf("Read %s\n", s.c_str());
+            if (debug) {
+                printf("Read %s\n", s.c_str());
+            }
         } while (s[0]!='-' && delegate->getInputStream().isOk());
         s = NetType::readLine(delegate->getInputStream());
         if (s!="Content-Type: image/jpeg") {
-            if (!delegate->getInputStream().isOk()) break;
+            if (!delegate->getInputStream().isOk()) {
+                break;
+            }
             printf("Unknown content type - %s\n", s.c_str());
             continue;
         }
-        if (debug) printf("Read content type - %s\n", s.c_str());
+        if (debug) {
+            printf("Read content type - %s\n", s.c_str());
+        }
         s = NetType::readLine(delegate->getInputStream());
-        if (debug) printf("Read content length - %s\n", s.c_str());
+        if (debug) {
+            printf("Read content length - %s\n", s.c_str());
+        }
         Bottle b(s.c_str());
         if (b.get(0).asString()!="Content-Length:") {
-            if (!delegate->getInputStream().isOk()) break;
+            if (!delegate->getInputStream().isOk()) {
+                break;
+            }
             printf("Expected Content-Length: got - %s\n", b.get(0).asString().c_str());
             continue;
         }
         int len = b.get(1).asInt();
-        if (debug) printf("Length is %d\n", len);
+        if (debug) {
+            printf("Length is %d\n", len);
+        }
         do {
             s = NetType::readLine(delegate->getInputStream());
-            if (debug) printf("Read %s\n", s.c_str());
+            if (debug) {
+                printf("Read %s\n", s.c_str());
+            }
         } while (s[0]!='\0');
         if (autocompress) {
             cimg.allocate(len);
@@ -75,7 +89,7 @@ ssize_t MjpegStream::read(const Bytes& b) {
                                "Skipping a problematic JPEG frame");
                 }
             }
-            
+
             imgHeader.setFromImage(img);
             phase = 1;
             cursor = (char*)(&imgHeader);
