@@ -1022,7 +1022,7 @@ bool Manager::connectExtraPorts(void)
     //connector.init();
 
     double base = yarp::os::Time::now();
-    while(!timeout(base, 5.0))
+    while(!timeout(base, 10.0))
         if(checkPortsAvailable(&connector))
             break;
 

@@ -313,8 +313,17 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
                 #endif
 
                 if(loadApplication(application->getName()))
+                {
                     which();
-            }            
+                    if(config.check("run"))
+                    {
+                         bShouldRun = run();
+                         reportErrors();
+                    }
+                }
+                    
+            }
+
         }
         reportErrors();
     }
