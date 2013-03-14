@@ -70,14 +70,14 @@ public:
         switch (action)
         {
         case ActionCalibrate:
-            yDebug() << "Starting calibration";
+            yDebug() << calibratorName << "starting calibration of device" << targetName;
             calibrator->calibrate(target);
-            yDebug() << "Calibration finished";
+            yDebug() << calibratorName << "finished calibration of device" << targetName;
             break;
         case ActionPark:
-            yDebug() << "Starting park";
+            yDebug() << calibratorName << "starting park device" << targetName;
             calibrator->park(target);
-            yDebug() << "Park finished";
+            yDebug() << calibratorName << "finished park device" << targetName;
             break;
         }
 
@@ -91,11 +91,11 @@ public:
         switch (action)
         {
         case ActionCalibrate:
-            yDebug() << "Killing calibration";
+            yDebug() << calibratorName << "killing calibration of device" << targetName;
             calibrator->quitCalibrate();
             break;
         case ActionPark:
-            yDebug() << "Killing calibration";
+            yDebug() << calibratorName << "killing park of device" << targetName;
             calibrator->quitPark();
             break;
         }
@@ -108,6 +108,8 @@ public:
     RobotInterface::CalibratorThread::Action action;
     RobotInterface::ThreadList *threadList;
     yarp::os::Semaphore *threadListSemaphore;
+    std::string calibratorName;
+    std::string targetName;
 }; // class RobotInterface::CalibratorThread::Private
 
 
@@ -116,7 +118,9 @@ RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calib
                                                    yarp::dev::DeviceDriver *target,
                                                    RobotInterface::CalibratorThread::Action action,
                                                    RobotInterface::ThreadList *threadList,
-                                                   yarp::os::Semaphore *threadListSemaphore) :
+                                                   yarp::os::Semaphore *threadListSemaphore,
+                                                   const std::string &calibratorName,
+                                                   const std::string &targetName) :
         mPriv(new Private(this))
 {
     mPriv->calibrator = calibrator;
@@ -124,6 +128,8 @@ RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calib
     mPriv->action = action;
     mPriv->threadList = threadList;
     mPriv->threadListSemaphore = threadListSemaphore;
+    mPriv->calibratorName = calibratorName;
+    mPriv->targetName = targetName;
 }
 
 RobotInterface::CalibratorThread::~CalibratorThread()

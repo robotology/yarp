@@ -314,7 +314,9 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
                                                                               target.driver(),
                                                                               RobotInterface::CalibratorThread::ActionCalibrate,
                                                                               mPriv->thr(),
-                                                                              mPriv->sem());;
+                                                                              mPriv->sem(),
+                                                                              name(),
+                                                                              target.name());
     mPriv->sem()->post();
 
     if (!calibratorThread->start()) {
@@ -378,7 +380,9 @@ bool RobotInterface::Device::park(const Device &target) const
                                                                           target.driver(),
                                                                           RobotInterface::CalibratorThread::ActionPark,
                                                                           mPriv->thr(),
-                                                                          mPriv->sem());;
+                                                                          mPriv->sem(),
+                                                                          name(),
+                                                                          target.name());
     mPriv->sem()->post();
 
     if (!parkerThread->start()) {

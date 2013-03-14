@@ -28,7 +28,9 @@ public:
                      yarp::dev::DeviceDriver *target,
                      RobotInterface::CalibratorThread::Action action,
                      RobotInterface::ThreadList *threadList,
-                     yarp::os::Semaphore *threadListSemaphore);
+                     yarp::os::Semaphore *threadListSemaphore,
+                     const std::string &calibratorName,
+                     const std::string &targetName);
     virtual ~CalibratorThread();
 
     virtual bool threadInit();
