@@ -65,6 +65,12 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     // argument
     setName(mPriv->robot.name().c_str());
 
+    // Enter startup phase
+    if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
+        yError() << "Error in startup phase";
+        return false;
+    }
+
     return true;
 }
 
@@ -75,17 +81,7 @@ double RobotInterface::Module::getPeriod()
 
 bool RobotInterface::Module::updateModule()
 {
-    static int initialized = false;
-    if (!initialized) {
-        if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
-            yError() << "Error in startup phase";
-            return false;
-        }
-        initialized = true;
-    } else {
-        yDebug() << "robot-interface running happily";
-    }
-
+    yDebug() << "robot-interface running happily";
     return true;
 }
 
