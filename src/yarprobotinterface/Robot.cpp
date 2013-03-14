@@ -430,6 +430,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); lit++) {
         // for each level
         const unsigned int level = *lit;
+        yDebug() << "Entering action level" << level;
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
 
         for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ait++) {
@@ -487,6 +488,8 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             }
         }
 
+        yDebug() << "All actions for action level" << level << "started. Waiting for unfinished actions.";
+
         // Join parallel threads
         for (DeviceList::const_iterator dit = devices().begin(); dit != devices().end(); dit++) {
             const Device &device = *dit;
@@ -494,6 +497,8 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
                 device.joinRunningThreads();
             }
         }
+
+        yDebug() << "All actions for action level" << level << "finished.";
     }
 
     if (ret) {
