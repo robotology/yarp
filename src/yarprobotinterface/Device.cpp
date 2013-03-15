@@ -62,9 +62,7 @@ public:
     ~Private()
     {
         if (!--driver->ref) {
-            if (!hasThreads()) {
-                joinThreads();
-            }
+            joinThreads();
 
             if (driver->driver->isValid()) {
                 if (!driver->driver->close()) {
@@ -96,14 +94,9 @@ public:
         delete thread;
     }
 
-    inline bool hasThreads() const
+    inline void joinThreads()
     {
-        return !thr()->empty();
-    }
-
-    void joinThreads()
-    {
-        while (!hasThreads()) {
+        while (!thr()->empty()) {
             driver->runningThreads.front()->join();
             unregisterThread(driver->runningThreads.front());
         }
@@ -289,20 +282,6 @@ yarp::dev::PolyDriver* RobotInterface::Device::driver() const
     return mPriv->drv();
 }
 
-bool RobotInterface::Device::hasThreads() const
-{
-    mPriv->sem()->wait();
-    mPriv->hasThreads();
-    mPriv->sem()->post();
-}
-
-void RobotInterface::Device::joinThreads()
-{
-    mPriv->sem()->wait();
-    mPriv->joinThreads();
-    mPriv->sem()->post();
-}
-
 void RobotInterface::Device::registerThread(yarp::os::Thread *thread)
 {
     mPriv->sem()->wait();
@@ -314,6 +293,13 @@ void RobotInterface::Device::unregisterThread(yarp::os::Thread *thread)
 {
     mPriv->sem()->wait();
     mPriv->unregisterThread(thread);
+    mPriv->sem()->post();
+}
+
+void RobotInterface::Device::joinThreads()
+{
+    mPriv->sem()->wait();
+    mPriv->joinThreads();
     mPriv->sem()->post();
 }
 

@@ -496,11 +496,8 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
         // Join parallel threads
         for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); dit++) {
             Device &device = *dit;
-            if (device.hasThreads()) {
-                yWarning() << "Device" << device.name() << "has running threads. Joining them";
-                device.joinThreads();
-                yWarning() << "Device" << device.name() << "all running threads finished";
-            }
+            device.joinThreads();
+            yDebug() << "Device" << device.name() << "All actions for device" << device.name << "at level()" << level << "finished";
         }
 
         yDebug() << "All actions for action level" << level << "finished.";

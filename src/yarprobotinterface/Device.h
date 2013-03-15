@@ -50,7 +50,6 @@ public:
     // thread handling methods
     void registerThread(yarp::os::Thread *thread);
     void unregisterThread(yarp::os::Thread *thread);
-    bool hasThreads() const;
     void joinThreads();
 
     // configure action
