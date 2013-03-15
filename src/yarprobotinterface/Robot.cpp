@@ -421,7 +421,10 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     yDebug() << "Entering" << ActionPhaseToString(phase) << "phase";
 
     if (phase == ActionPhaseStartup) {
-        mPriv->openDevices();
+        if (!mPriv->openDevices()) {
+            yError() << "One or more devices failed opening";
+            return false;
+        }
     }
 
     std::vector<unsigned int> levels = mPriv->getLevels(phase);
@@ -510,7 +513,10 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     }
 
     if (phase == ActionPhaseShutdown) {
-        mPriv->closeDevices();
+        if (!mPriv->closeDevices()) {
+            yError() << "One or more devices failed closing";
+            return false;
+        }
     }
 
     return ret;
