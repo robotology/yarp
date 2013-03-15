@@ -48,9 +48,9 @@ public:
     yarp::dev::PolyDriver *driver() const;
 
     // thread handling methods
-    void registerThread(yarp::os::Thread *thread);
-    void unregisterThread(yarp::os::Thread *thread);
-    void joinThreads();
+    void registerThread(yarp::os::Thread *thread) const;
+    void unregisterThread(yarp::os::Thread *thread) const;
+    void joinThreads() const;
 
     // configure action
     bool configure(const Device &target, const ParamList& params) const;

@@ -83,18 +83,18 @@ public:
     inline bool open() { return drv()->open(paramsAsProperty().toString()); }
     inline bool close() { return drv()->close(); }
 
-    inline void registerThread(yarp::os::Thread *thread)
+    inline void registerThread(yarp::os::Thread *thread) const
     {
         thr()->push_back(thread);
     }
 
-    inline void unregisterThread(yarp::os::Thread *thread)
+    inline void unregisterThread(yarp::os::Thread *thread) const
     {
         thr()->remove(thread);
         delete thread;
     }
 
-    inline void joinThreads()
+    inline void joinThreads() const
     {
         while (!thr()->empty()) {
             driver->runningThreads.front()->join();
@@ -282,21 +282,21 @@ yarp::dev::PolyDriver* RobotInterface::Device::driver() const
     return mPriv->drv();
 }
 
-void RobotInterface::Device::registerThread(yarp::os::Thread *thread)
+void RobotInterface::Device::registerThread(yarp::os::Thread *thread) const
 {
     mPriv->sem()->wait();
     mPriv->registerThread(thread);
     mPriv->sem()->post();
 }
 
-void RobotInterface::Device::unregisterThread(yarp::os::Thread *thread)
+void RobotInterface::Device::unregisterThread(yarp::os::Thread *thread) const
 {
     mPriv->sem()->wait();
     mPriv->unregisterThread(thread);
     mPriv->sem()->post();
 }
 
-void RobotInterface::Device::joinThreads()
+void RobotInterface::Device::joinThreads() const
 {
     mPriv->sem()->wait();
     mPriv->joinThreads();
@@ -324,6 +324,7 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
                                                                               target.driver(),
                                                                               target.name(),
                                                                               RobotInterface::CalibratorThread::ActionCalibrate);
+    registerThread(calibratorThread);
 
     if (!calibratorThread->start()) {
         yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << name();
@@ -386,6 +387,7 @@ bool RobotInterface::Device::park(const Device &target) const
                                                                           target.driver(),
                                                                           target.name(),
                                                                           RobotInterface::CalibratorThread::ActionPark);
+    registerThread(parkerThread);
 
     if (!parkerThread->start()) {
         yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << name();
