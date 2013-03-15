@@ -497,7 +497,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
         for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); dit++) {
             Device &device = *dit;
             device.joinThreads();
-            yDebug() << "Device" << device.name() << "All actions for device" << device.name << "at level()" << level << "finished";
+            yDebug() << "All actions for device" << device.name() << "at level()" << level << "finished";
         }
 
         yDebug() << "All actions for action level" << level << "finished.";
