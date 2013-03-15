@@ -89,7 +89,7 @@ public:
     inline bool hasRunningThreads() const
     {
         sem()->wait();
-        bool ret = thr()->empty();
+        bool ret = !thr()->empty();
         sem()->post();
         return ret;
     }
