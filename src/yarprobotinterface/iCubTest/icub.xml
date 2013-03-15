@@ -8,4 +8,9 @@
     <devices file="calibrators/torso.xml" />
     <!--<devices file="configurators/torso.xml" />-->
 
+    <!-- RIGHT_ARM -->
+    <devices file="hardware/right_arm.xml" />
+    <devices file="wrappers/right_arm.xml" />
+
+    <devices file="cartesian_right.xml" />
 </robot>
