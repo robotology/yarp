@@ -83,11 +83,23 @@ __   __\n\
 
 #define HELP_MESSAGE        "\
 Usage:\n\
-      ymanager [option...]\n\n\
+      yarpmanager [option...]\n\n\
 Options:\n\
-  --help                  Show help\n\
-  --from                  Configuration file name\n\
-  --version               Show current version\n"
+  --application <app>     Load a specific application identified by its xml file\n\
+  --run                   Run the current application (should be used with --application)\n\
+  --stop                  Stop the current application (should be used with --application)\n\
+  --kill                  Kill the current application (should be used with --application)\n\
+  --connect               Connect all connections from the current application (should be used with --application)\n\
+  --disconnect            Disconnect all connections from the current application (should be used with --application)\n\
+  --assign_hosts          Automatically assign modules to proper nodes using load balancer. (should be used with --application)\n\
+  --check_dep             Check for all resource dependencies of the current application (should be used with --application)\n\
+  --check_state           Check for running state of modules of the current application (should be used with --application) \n\
+  --check_con             Check the connections states of the of the current application (should be used with --application)\n\
+  --silent                Do not print the status messages (should be used with --application)\n\
+  --exit                  Immediately exit after executing the commands (should be used with --application)\n\
+  --from <conf>           Configuration file name\n\
+  --version               Show current version\n\
+  --help                  Show help\n"
 
 
 #if defined(WIN32)
@@ -216,9 +228,12 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         enableAutoConnect();
     else
         disableAutoConnect();
-
-    cout<<endl<<OKGREEN<<LOGO_MESSAGE<<ENDC<<endl;
-    cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
+    
+    if(!config.check("silent"))
+    {
+        cout<<endl<<OKGREEN<<LOGO_MESSAGE<<ENDC<<endl;
+        cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
+    }
 
     if(config.check("modpath"))
     {
@@ -314,21 +329,63 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
                 if(loadApplication(application->getName()))
                 {
-                    which();
+                    if(!config.check("silent"))
+                        which();
+
+                    if(config.check("assign_hosts"))
+                        loadBalance();
+
                     if(config.check("run"))
                     {
+                        if(config.check("connect"))
+                            enableAutoConnect();
                          bShouldRun = run();
-                         reportErrors();
                     }
+                    else if(config.check("connect"))
+                            connect();
+
+                    if(config.check("disconnect"))
+                         disconnect();
+
+                    if(config.check("stop"))
+                    {
+                        ExecutablePContainer modules = getExecutables();
+                        ExecutablePIterator moditr;
+                        unsigned int id = 0;
+                        bShouldRun = false;
+                        for(moditr=modules.begin(); moditr<modules.end(); moditr++)
+                        {
+                            if(running(id))
+                                stop(id);
+                            id++;
+                        } 
+                        bShouldRun = !suspended();
+                    }          
+
+                    if(config.check("kill"))
+                    {
+                         bShouldRun = false;
+                         kill();
+                    }                    
+
+                    if(config.check("check_con"))
+                        checkConnections();
+
+                    if(config.check("check_state"))
+                        checkStates();
+
+                    if(config.check("check_dep"))
+                        if(checkDependency())
+                            cout<<INFO<<"All of resource dependencies are satisfied."<<ENDC<<endl;
                 }
-                    
             }
-
         }
-        reportErrors();
+        if(!config.check("silent"))
+            reportErrors();
     }
-
-    YConsoleManager::myMain();  
+    
+    if(!config.check("exit"))
+        YConsoleManager::myMain();         
 }
 
 YConsoleManager::~YConsoleManager()
@@ -682,26 +739,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     if((cmdList.size() == 2) && 
         (cmdList[0] == "check") && (cmdList[1] == "state"))
     {
-
-        ExecutablePContainer modules = getExecutables();
-        ExecutablePIterator moditr;
-        unsigned int id = 0;
-        bShouldRun = false;
-        for(moditr=modules.begin(); moditr<modules.end(); moditr++)
-        {
-            if(running(id))
-            {
-                bShouldRun = true;
-                cout<<OKGREEN<<"<RUNNING> ";
-            }
-            else
-                cout<<FAIL<<"<STOPPED> ";
-            cout<<INFO<<"("<<id<<") ";
-            cout<<(*moditr)->getCommand();
-            cout<<" ["<<(*moditr)->getHost()<<"]"<<ENDC<<endl;
-            id++;
-        }
-
+        checkStates();
         reportErrors();
         return true;
     }
@@ -736,21 +774,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     if((cmdList.size() == 2) && 
         (cmdList[0] == "check") && (cmdList[1] == "con"))
     {
-        CnnContainer connections  = getConnections();
-        CnnIterator cnnitr;
-        int id = 0;
-        for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
-        {
-            if(connected(id))
-                cout<<OKGREEN<<"<CONNECTED> ";
-            else
-                cout<<FAIL<<"<DISCONNECTED> ";
-
-            cout<<INFO<<"("<<id<<") ";
-            cout<<(*cnnitr).from()<<" - "<<(*cnnitr).to();
-                cout<<" ["<<(*cnnitr).carrier()<<"]"<<ENDC<<endl;
-            id++;
-        }
+        checkConnections();
         return true;
     }
 
@@ -1024,6 +1048,46 @@ void YConsoleManager::which(void)
     cout<<endl;
 }
 
+void YConsoleManager::checkStates(void) 
+{
+    ExecutablePContainer modules = getExecutables();
+    ExecutablePIterator moditr;
+    unsigned int id = 0;
+    bShouldRun = false;
+    for(moditr=modules.begin(); moditr<modules.end(); moditr++)
+    {
+        if(running(id))
+        {
+            bShouldRun = true;
+            cout<<OKGREEN<<"<RUNNING> ";
+        }
+        else
+            cout<<FAIL<<"<STOPPED> ";
+        cout<<INFO<<"("<<id<<") ";
+        cout<<(*moditr)->getCommand();
+        cout<<" ["<<(*moditr)->getHost()<<"]"<<ENDC<<endl;
+        id++;
+    }
+}
+
+void YConsoleManager::checkConnections(void)
+{
+    CnnContainer connections  = getConnections();
+    CnnIterator cnnitr;
+    int id = 0;
+    for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
+    {
+        if(connected(id))
+            cout<<OKGREEN<<"<CONNECTED> ";
+        else
+            cout<<FAIL<<"<DISCONNECTED> ";
+
+        cout<<INFO<<"("<<id<<") ";
+        cout<<(*cnnitr).from()<<" - "<<(*cnnitr).to();
+            cout<<" ["<<(*cnnitr).carrier()<<"]"<<ENDC<<endl;
+        id++;
+    }
+}
 
 void YConsoleManager::reportErrors(void)
 {

@@ -676,6 +676,7 @@ bool Manager::run(void)
         else
             (*itr)->disableAutoConnect();
         (*itr)->start();
+        yarp::os::Time::delay(0.2);
     }
 
     // waiting for running
@@ -757,7 +758,10 @@ bool Manager::stop(void)
 
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+    {        
         (*itr)->stop();
+        yarp::os::Time::delay(0.2);
+    }
 
     double base = yarp::os::Time::now();
     while(!timeout(base, STOP_TIMEOUT))
@@ -823,7 +827,10 @@ bool Manager::kill(void)
 
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+    {
         (*itr)->kill();
+        yarp::os::Time::delay(0.2);
+    }
 
     double base = yarp::os::Time::now();
     while(!timeout(base, KILL_TIMEOUT))
