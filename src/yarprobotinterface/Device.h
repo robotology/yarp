@@ -47,8 +47,11 @@ public:
 
     yarp::dev::PolyDriver *driver() const;
 
-    bool hasRunningThreads() const;
-    void joinRunningThreads() const;
+    // thread handling methods
+    void registerThread(yarp::os::Thread *thread);
+    void unregisterThread(yarp::os::Thread *thread);
+    bool hasThreads() const;
+    void joinThreads();
 
     // configure action
     bool configure(const Device &target, const ParamList& params) const;
@@ -70,6 +73,7 @@ public:
 
     // custom action
     bool custom(const ParamList &params) const;
+
 
 private:
     class Private;

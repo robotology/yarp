@@ -25,17 +25,15 @@ public:
     };
 
     CalibratorThread(yarp::dev::ICalibrator *calibrator,
-                     yarp::dev::DeviceDriver *target,
-                     RobotInterface::CalibratorThread::Action action,
-                     RobotInterface::ThreadList *threadList,
-                     yarp::os::Semaphore *threadListSemaphore,
                      const std::string &calibratorName,
-                     const std::string &targetName);
+                     yarp::dev::DeviceDriver *target,
+                     const std::string &targetName,
+                     RobotInterface::CalibratorThread::Action action);
     virtual ~CalibratorThread();
 
-    virtual bool threadInit();
     virtual void run();
     virtual void onStop();
+    virtual void threadRelease();
 
 private:
     class Private;

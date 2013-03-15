@@ -491,10 +491,12 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
         yDebug() << "All actions for action level" << level << "started. Waiting for unfinished actions.";
 
         // Join parallel threads
-        for (DeviceList::const_iterator dit = devices().begin(); dit != devices().end(); dit++) {
-            const Device &device = *dit;
-            if (device.hasRunningThreads()) {
-                device.joinRunningThreads();
+        for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); dit++) {
+            Device &device = *dit;
+            if (device.hasThreads()) {
+                yWarning() << "Device" << device.name() << "has running threads. Joining them";
+                device.joinThreads();
+                yWarning() << "Device" << device.name() << "all running threads finished";
             }
         }
 

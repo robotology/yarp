@@ -10,6 +10,7 @@
 
 #include <debugStream/Debug.h>
 
+#include <yarp/os/Log.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -19,54 +20,8 @@ class RobotInterface::CalibratorThread::Private
 public:
     Private(CalibratorThread *parent) : parent(parent) {}
 
-    bool init()
-    {
-        switch (action)
-        {
-        case ActionCalibrate:
-            if (!calibrator) {
-                yError() << "Skipping calibration, calibrator not set";
-                return false;
-            }
-
-            if (!target) {
-                yError() << "Skipping calibration, target not set";
-                return false;
-            }
-
-            if (!threadList && !threadListSemaphore) {
-                yError() << "Skipping calibration, thread list and/or semaphore not set";
-                return false;
-            }
-            break;
-
-        case ActionPark:
-            if (!calibrator) {
-                yError() << "Skipping park, calibrator not set";
-                return false;
-            }
-
-            if (!target) {
-                yError() << "Skipping park, target not set";
-                return false;
-            }
-
-            if (!threadList && !threadListSemaphore) {
-                yError() << "Skipping park, thread list and/or semaphore not set";
-                return false;
-            }
-            break;
-        }
-
-        return true;
-    }
-
     void run()
     {
-        threadListSemaphore->wait();
-        threadList->push_back(parent);
-        threadListSemaphore->post();
-
         switch (action)
         {
         case ActionCalibrate:
@@ -80,10 +35,6 @@ public:
             yDebug() << calibratorName << "finished park device" << targetName;
             break;
         }
-
-        threadListSemaphore->wait();
-        threadList->remove(parent);
-        threadListSemaphore->post();
     }
 
     void stop()
@@ -101,46 +52,42 @@ public:
         }
     }
 
+    void release()
+    {
+    }
+
     RobotInterface::CalibratorThread * const parent;
 
     yarp::dev::ICalibrator *calibrator;
-    yarp::dev::DeviceDriver *target;
-    RobotInterface::CalibratorThread::Action action;
-    RobotInterface::ThreadList *threadList;
-    yarp::os::Semaphore *threadListSemaphore;
     std::string calibratorName;
+    yarp::dev::DeviceDriver *target;
     std::string targetName;
+    RobotInterface::CalibratorThread::Action action;
 }; // class RobotInterface::CalibratorThread::Private
 
 
 
 RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calibrator,
-                                                   yarp::dev::DeviceDriver *target,
-                                                   RobotInterface::CalibratorThread::Action action,
-                                                   RobotInterface::ThreadList *threadList,
-                                                   yarp::os::Semaphore *threadListSemaphore,
                                                    const std::string &calibratorName,
-                                                   const std::string &targetName) :
+                                                   yarp::dev::DeviceDriver *target,
+                                                   const std::string &targetName,
+                                                   RobotInterface::CalibratorThread::Action action) :
         mPriv(new Private(this))
 {
+    YARP_ASSERT(calibrator);
+    YARP_ASSERT(target);
+    YARP_ASSERT(action == ActionCalibrate || action == ActionPark);
+
     mPriv->calibrator = calibrator;
-    mPriv->target = target;
-    mPriv->action = action;
-    mPriv->threadList = threadList;
-    mPriv->threadListSemaphore = threadListSemaphore;
     mPriv->calibratorName = calibratorName;
+    mPriv->target = target;
     mPriv->targetName = targetName;
+    mPriv->action = action;
 }
 
 RobotInterface::CalibratorThread::~CalibratorThread()
 {
     delete mPriv;
-}
-
-
-bool RobotInterface::CalibratorThread::threadInit()
-{
-    return mPriv->init();
 }
 
 void RobotInterface::CalibratorThread::run()
@@ -151,4 +98,9 @@ void RobotInterface::CalibratorThread::run()
 void RobotInterface::CalibratorThread::onStop()
 {
     mPriv->stop();
+}
+
+void RobotInterface::CalibratorThread::threadRelease()
+{
+    mPriv->release();
 }
