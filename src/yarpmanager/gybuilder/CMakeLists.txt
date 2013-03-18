@@ -40,6 +40,14 @@ INCLUDE_DIRECTORIES(../libymanager/include)
 
 # GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES
 
+## FIXME 2.4 Move the check in conf/YarpSystemCheck.cmake later
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-Wno-mismatched-tags" CXX_HAS_WNO_MISMATCHED_TAGS)
+if(CXX_HAS_WNO_MISMATCHED_TAGS)
+   set_source_files_properties(${folder_source}
+                               PROPERTIES COMPILE_FLAGS "-Wno-mismatched-tags")
+endif(CXX_HAS_WNO_MISMATCHED_TAGS)
+
 ADD_EXECUTABLE(gyarpbuilder ${folder_source} ${folder_header})
 if(YARP_USE_GTK2)
     target_link_libraries(gyarpbuilder YARP_init
