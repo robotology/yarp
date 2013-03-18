@@ -29,6 +29,14 @@
 #include "con_property_window.h"
 
 
+#if defined(__GNUG__) && defined(__GNUC__) && __GNUC__ >= 4
+# ifdef NULL
+#  undef NULL
+# endif
+# define NULL __null
+#endif
+
+
 class MainWindow;
 
 

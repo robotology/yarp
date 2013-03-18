@@ -97,7 +97,7 @@ void ResourceWindow::updateWidget()
 
     Gtk::TreeModel::Row row;
     Gtk::TreeModel::Row childrow;
-    Gtk::TreeModel::Row cchildrow;
+//    Gtk::TreeModel::Row cchildrow;
 
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Name";

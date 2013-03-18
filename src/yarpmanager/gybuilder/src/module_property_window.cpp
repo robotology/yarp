@@ -108,7 +108,7 @@ void ModulePropertyWindow::update(Module* module)
 
     Gtk::TreeModel::Row row;
     Gtk::TreeModel::Row childrow;
-    Gtk::TreeModel::Row cchildrow;
+//    Gtk::TreeModel::Row cchildrow;
 
     Glib::RefPtr<Gtk::ListStore> m_refCombo = Gtk::ListStore::create(m_ColumnsCombo);
     //row = *(m_refCombo->append());

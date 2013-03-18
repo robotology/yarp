@@ -182,8 +182,14 @@ else(WIN32)
 
     check_cxx_compiler_flag("-Wno-long-long" CXX_HAS_WNO_LONG_LONG)
     if(CXX_HAS_WNO_LONG_LONG)
-       set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
+        set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
     endif(CXX_HAS_WNO_LONG_LONG)
+
+    # FIXME this warning should be enabled later.
+    check_cxx_compiler_flag("-Wno-cast-align" CXX_HAS_WNO_CAST_ALIGN)
+    if(CXX_HAS_WNO_CAST_ALIGN)
+        set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-cast-align")
+    endif(CXX_HAS_WNO_CAST_ALIGN)
 
 
 
