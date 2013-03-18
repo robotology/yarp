@@ -182,7 +182,7 @@ else(WIN32)
 
     check_cxx_compiler_flag("-Wno-long-long" CXX_HAS_WNO_LONG_LONG)
     if(CXX_HAS_WNO_LONG_LONG)
-       set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
+        set(UNWANTED_WARNING_FLAGS "${UNWANTED_WARNING_FLAGS} -Wno-long-long")
     endif(CXX_HAS_WNO_LONG_LONG)
 
 
