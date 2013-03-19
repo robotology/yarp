@@ -363,7 +363,6 @@ int RFModule::runModule() {
                 break;
             }
         } while (!isStopping());
-        getTime(currentRunTV);
     }
 
     ACE_OS::printf("Module closing\n");
