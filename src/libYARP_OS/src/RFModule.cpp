@@ -356,7 +356,7 @@ int RFModule::runModule() {
             fromDouble(sleepPeriodTV,getPeriod());
             addTime(sleepPeriodTV, currentRunTV);
             subtractTime(sleepPeriodTV, elapsedTV);
-            if (sleepPeriodTV.get_msec() > 1000) {
+            if (sleepPeriodTV.msec() > 1000) {
                 sleepThread(oneSecTV);
             } else {
                 sleepThread(sleepPeriodTV);
