@@ -286,24 +286,38 @@ double RFModule::getPeriod() {
 
 int RFModule::runModule() {
     //setting up main loop
-    bool loop=true;
 
     ACE_Time_Value currentRunTV;
     ACE_Time_Value elapsedTV;
     ACE_Time_Value sleepPeriodTV;
+    ACE_Time_Value oneSecTV;
 
-    while (loop) {
+    fromDouble(oneSecTV, 1.0);
+
+    while (!isStopping()) {
         getTime(currentRunTV);
-        loop=updateModule();
-        getTime(elapsedTV);
 
-        if (isStopping())
-            loop=false;
+        // If updateModule() returns false we exit the main loop.
+        if(!updateModule()) {
+            break;
+        }
 
-        fromDouble(sleepPeriodTV, getPeriod());
-        addTime(sleepPeriodTV, currentRunTV);
-        subtractTime(sleepPeriodTV, elapsedTV);
-        sleepThread(sleepPeriodTV);
+        // The module is stopped for getPeriod() seconds.
+        // If getPeriod() returns a time > 1 second, we check every second if
+        // the module stopping, and eventually we exit the main loop.
+        do {
+            getTime(elapsedTV);
+            fromDouble(sleepPeriodTV,getPeriod());
+            addTime(sleepPeriodTV, currentRunTV);
+            subtractTime(sleepPeriodTV, elapsedTV);
+            if (sleepPeriodTV.msec() > 1000) {
+                sleepThread(oneSecTV);
+            } else {
+                sleepThread(sleepPeriodTV);
+                break;
+            }
+        } while (!isStopping());
+        getTime(currentRunTV);
     }
 
     ACE_OS::printf("Module closing\n");
