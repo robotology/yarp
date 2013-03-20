@@ -14,10 +14,10 @@
  *
  * Copyright © 2010 Anne van Rossum <anne@almende.com>
  *
- * @author 	Anne C. van Rossum
- * @date	Feb 15, 2011
- * @project	Replicator FP7
- * @company	Almende B.V.
+ * @author  Anne C. van Rossum
+ * @date    Feb 15, 2011
+ * @project Replicator FP7
+ * @company Almende B.V.
  * @case
  */
 
@@ -57,30 +57,30 @@ namespace yarp {
 class yarp::os::impl::TcpAcceptor {
 public:
 
-	TcpAcceptor();
+    TcpAcceptor();
 
-	virtual ~TcpAcceptor() {};
+    virtual ~TcpAcceptor() {};
 
-	int open(const Address& address);
+    int open(const Address& address);
 
-	int connect(const Address& address);
+    int connect(const Address& address);
 
-	int close();
+    int close();
 
-	int accept(TcpStream &new_stream);
+    int accept(TcpStream &new_stream);
 
-//	const Address& getLocalAddress();
+//    const Address& getLocalAddress();
 
-//	const Address& getRemoteAddress();
+//    const Address& getRemoteAddress();
 protected:
-	int shared_open(const Address& address);
+    int shared_open(const Address& address);
 
-	int get_handle() { return ad; }
+    int get_handle() { return ad; }
 
-	void set_handle(int h) { ad = h; }
+    void set_handle(int h) { ad = h; }
 private:
-	// acceptor descriptor
-	int ad;
+    // acceptor descriptor
+    int ad;
 };
 
 #endif /* TCPACCEPTOR_H_ */
