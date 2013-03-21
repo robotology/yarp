@@ -13,6 +13,7 @@
 //  + use of templates
 
 %module(directors="1") yarp
+%import "yarp/conf/api.h"
 %feature("director") yarp::os::PortReader;
 %feature("director") yarp::os::RFModule;
 %feature("autodoc", "1");
