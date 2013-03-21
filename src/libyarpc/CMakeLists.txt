@@ -35,6 +35,7 @@ if (CREATE_YARPC)
   include_directories(${PROJECT_SOURCE_DIR})
 
   add_library(yarpc yarp.h yarp.cpp yarpnetwork.cpp yarpport.cpp yarpcontact.cpp yarpreader.cpp yarpwriter.cpp yarpportable.cpp yarpstring.cpp yarpsemaphore.cpp yarpthread.cpp yarptime.cpp yarpbottle.cpp yarpimpl.h ${YARP_COPY_SRC})
+  target_link_libraries(yarpc ${ACE_LIBRARIES})
   if (NOT CREATE_YARPC_STANDALONE)
     target_link_libraries(yarpc YARP_init)
   else (NOT CREATE_YARPC_STANDALONE)
