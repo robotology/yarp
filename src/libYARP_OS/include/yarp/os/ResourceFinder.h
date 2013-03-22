@@ -234,6 +234,33 @@ public:
 
     using Searchable::check;
     using Searchable::findGroup;
+
+
+    /* YARP 2.4 changes begin */
+
+    /**
+     *
+     * Location where user data files are stored.
+     * If $YARP_DATA_HOME is set, that is returned.
+     * Otherwise:
+     *   If $XDG_DATA_HOME is set, "yarp" is appended to it after the 
+     *   OS-appropriate directory separator, and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %APPDATA%\yarp is returned.
+     *     On Linux and all others:
+     *       $HOME/.local/share is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static ConstString getDataHome();
+
+    // ConstString getConfigHome() const;
+    // Bottle getDataDirs() const;
+    // Bottle getConfigDirs() const;
+
+    /* YARP 2.4 changes end */
+
 private:
 
     // this might be useful, but is not in spec

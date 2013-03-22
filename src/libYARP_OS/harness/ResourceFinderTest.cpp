@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
@@ -195,11 +196,35 @@ public:
         checkTrue(rf3.isNull(),"section3 null ok");
     }
 
+    void testGetDataHome() {
+        report(0,"test getDataHome");
+        saveEnvironment("YARP_DATA_HOME");
+        saveEnvironment("XDG_DATA_HOME");
+        saveEnvironment("HOME");
+        Network::setEnvironment("YARP_DATA_HOME","/foo");
+        checkEqual(ResourceFinder::getDataHome().c_str(),"/foo","YARP_DATA_HOME noticed");
+        Network::unsetEnvironment("YARP_DATA_HOME");
+        Network::setEnvironment("XDG_DATA_HOME","/foo");
+        ConstString slash = Network::getDirectorySeparator();
+        checkEqual(ResourceFinder::getDataHome().c_str(),
+                   (ConstString("/foo") + slash + "yarp").c_str(),
+                   "XDG_DATA_HOME noticed");
+        Network::unsetEnvironment("XDG_DATA_HOME");
+#ifdef __linux__
+        Network::setEnvironment("HOME","/foo");
+        checkEqual(ResourceFinder::getDataHome().c_str(),
+                   "/foo/.local/share/yarp",
+                   "HOME noticed");
+#endif
+        restoreEnvironment();
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
         testContext();
         testSubGroup();
+        testGetDataHome();
     }
 };
 

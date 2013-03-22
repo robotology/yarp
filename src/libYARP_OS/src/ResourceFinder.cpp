@@ -24,7 +24,6 @@ using namespace yarp::os::impl;
 
 #define RTARGET stderr
 
-
 static ConstString expandUserFileName(const char *fname) {
     ConstString root = NetworkBase::getEnvironment("YARP_CONF");
     ConstString home = NetworkBase::getEnvironment("HOME");
@@ -661,3 +660,31 @@ ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key) {
 ResourceFinder& ResourceFinder::getResourceFinderSingleton() {
     return NameClient::getNameClient().getResourceFinder();
 }
+
+
+ConstString ResourceFinder::getDataHome() {
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME");
+    if (yarp_version != "") return yarp_version;
+    ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME");
+    if (xdg_version != "") {
+        return xdg_version + slash + "yarp";
+    }
+#ifdef _WIN32
+    ConstString app_version = NetworkBase::getEnvironment("APPDATA");
+    if (app_version != "") {
+        return app_version + slash + "yarp";
+    }
+#endif
+    ConstString home_version = NetworkBase::getEnvironment("HOME");
+    if (home_version != "") {
+        return home_version
+            + slash + ".local"
+            + slash + "share"
+            + slash + "yarp";
+    }
+    YARP_ERROR(Logger::get(),"Cannot determine YARP_DATA_HOME - please set YARP_DATA_HOME or HOME");
+    ACE_OS::exit(1);
+    return "";
+}
+

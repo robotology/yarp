@@ -857,6 +857,22 @@ ConstString NetworkBase::getEnvironment(const char *key,
     return result;
 }
 
+void NetworkBase::setEnvironment(const char *key, const char *val) {
+    ACE_OS::setenv(key,val,1);
+}
+
+void NetworkBase::unsetEnvironment(const char *key) {
+    ACE_OS::unsetenv(key);
+}
+
+ConstString NetworkBase::getDirectorySeparator() {
+#ifdef _WIN32
+    return "\\";
+#else
+    return "/";
+#endif
+}
+
 void NetworkBase::lock() {
     ThreadImpl::threadMutex.wait();
 }
