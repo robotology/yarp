@@ -283,13 +283,13 @@ public:
      *     On Windows
      *       %YARP_DIR%\share\yarp
      *     On Linux and all others:
-     *       /usr/local/share:/usr/share is returned.
+     *       /usr/local/share/yarp:/usr/share/yarp is returned.
      *     (an OSX-specific case remains to be defined)
      *
      */
     static Bottle getDataDirs();
 
-    // Bottle getConfigDirs() const;
+    //static Bottle getConfigDirs();
 
     /* YARP 2.4 changes end */
 

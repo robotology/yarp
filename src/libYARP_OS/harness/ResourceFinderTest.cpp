@@ -273,8 +273,8 @@ public:
 #ifdef __linux__
         dirs = ResourceFinder::getDataDirs();
         checkEqual(dirs.size(),2,"DATA_DIRS default length 2");
-        checkEqual(dirs.get(0).asString().c_str(),"/local/share/yarp","DATA_DIRS default element 0 is ok");
-        checkEqual(dirs.get(1).asString().c_str(),"/share/yarp","DATA_DIRS default element 1 is ok");
+        checkEqual(dirs.get(0).asString().c_str(),"/usr/local/share/yarp","DATA_DIRS default element 0 is ok");
+        checkEqual(dirs.get(1).asString().c_str(),"/usr/share/yarp","DATA_DIRS default element 1 is ok");
 #endif
 
         restoreEnvironment();

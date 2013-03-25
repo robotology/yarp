@@ -762,8 +762,8 @@ Bottle ResourceFinder::getDataDirs() {
     }
 #endif
     Bottle result;
-    result.addString("/local/share/yarp");
-    result.addString("/share/yarp");
+    result.addString("/usr/local/share/yarp");
+    result.addString("/usr/share/yarp");
     return result;
 }
 
