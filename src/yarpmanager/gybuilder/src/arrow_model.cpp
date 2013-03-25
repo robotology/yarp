@@ -61,6 +61,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     destination->addDestinationArrow(this);
   
     string strCarrier = strLabel;
+    string dummyLabel;
     //Adding connection 
     if(application)
     {
@@ -79,6 +80,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
             output = intPort->getOutput();
             module = (Module*) output->owner();
             strFrom = string(module->getPrefix()) + string(intPort->getOutput()->getPort()); 
+            dummyLabel = string(intPort->getOutput()->getPort());
             if(!strCarrier.size())            
                 strCarrier = intPort->getOutput()->getCarrier();
         }
@@ -86,6 +88,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         {
             extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(source);
             strFrom = extPort->getPort();
+            dummyLabel = string(extPort->getPort());
             bExternFrom = true;
         }
       
@@ -96,6 +99,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
             input = intPort->getInput();
             module = (Module*) input->owner();
             strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort()); 
+            dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" "); 
             if(!strCarrier.size())            
                 strCarrier = intPort->getInput()->getCarrier();
         }
@@ -103,6 +107,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         {
             extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(destination);
             strTo = extPort->getPort();
+            dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" "); 
             bExternTo = true;
         }
 
@@ -113,6 +118,8 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         cnn.setCorInputData(input);
         cnn.setModel(this);
         connection = parentWindow->manager.getKnowledgeBase()->addConnectionToApplication(application, cnn);
+
+        tool = TooltipModel::create(parentWindow, dummyLabel.c_str());
     }
 
     this->property_stroke_color().set_value(defaultColor.c_str());
@@ -138,6 +145,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     Goocanvas::Points points = this->property_points().get_value();
     setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
     updatLabelCoordiante();
+    
 }
     
 void ArrowModel::setLabel(const char* szLabel)
@@ -175,6 +183,9 @@ ArrowModel::~ArrowModel(void)
       if(application)
         parentWindow->manager.getKnowledgeBase()->removeConnectionFromApplication(application,
                                 connection);
+    if(tool)
+        tool.clear();
+
 }
 
 void ArrowModel::updatCoordiantes(void)
@@ -418,6 +429,11 @@ bool ArrowModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& it
 bool ArrowModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventCrossing* event)
 {
+    parentWindow->getRootModel()->add_child(tool);
+    tool->set_property("x", event->x);
+    tool->set_property("y", event->y);
+    tool->raise();
+
     //parentWindow->get_window()->set_cursor(Gdk::Cursor(Gdk::HAND1));
     //this->property_stroke_color().set_value("red");
    // printf("entered\n");
@@ -427,6 +443,10 @@ bool ArrowModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
 bool ArrowModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventCrossing* event)
 {
+    int id = parentWindow->getRootModel()->find_child(tool);
+    if(id != -1)
+        parentWindow->getRootModel()->remove_child(id);
+
     //parentWindow->get_window()->set_cursor();
     //this->property_stroke_color().set_value("black");
    // printf("left\n");
