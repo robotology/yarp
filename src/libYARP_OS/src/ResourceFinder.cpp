@@ -664,12 +664,13 @@ ResourceFinder& ResourceFinder::getResourceFinderSingleton() {
 
 ConstString ResourceFinder::getDataHome() {
     ConstString slash = NetworkBase::getDirectorySeparator();
-    ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME");
+    bool found = false;
+    ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
+                                                           &found);
     if (yarp_version != "") return yarp_version;
-    ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME");
-    if (xdg_version != "") {
-        return xdg_version + slash + "yarp";
-    }
+    ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
+                                                          &found);
+    if (found) return xdg_version + slash + "yarp";
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
@@ -691,12 +692,13 @@ ConstString ResourceFinder::getDataHome() {
 
 ConstString ResourceFinder::getConfigHome() {
     ConstString slash = NetworkBase::getDirectorySeparator();
-    ConstString yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME");
-    if (yarp_version != "") return yarp_version;
-    ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME");
-    if (xdg_version != "") {
-        return xdg_version + slash + "yarp";
-    }
+    bool found = false;
+    ConstString yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
+                                                           &found);
+    if (found) return yarp_version;
+    ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
+                                                          &found);
+    if (found) return xdg_version + slash + "yarp";
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
@@ -712,5 +714,56 @@ ConstString ResourceFinder::getConfigHome() {
     YARP_ERROR(Logger::get(),"Cannot determine YARP_CONFIG_HOME - please set YARP_CONFIG_HOME or HOME");
     ACE_OS::exit(1);
     return "";
+}
+
+
+static Bottle parsePaths(const ConstString& txt) {
+    char sep = NetworkBase::getPathSeparator()[0];
+    Bottle result;
+    const char *at = txt.c_str();
+    int len = 0;
+    for (int i=0; i<txt.length(); i++) {
+        char ch = txt[i];
+        if (ch==sep) {
+            result.addString(ConstString(at,len));
+            at += len+1;
+            len = 0;
+            continue;
+        }
+        len++;
+    }
+    if (len>0) {
+        result.addString(ConstString(at,len));
+    }
+    return result;
+}
+
+Bottle ResourceFinder::getDataDirs() {
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    bool found = false;
+    Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_DATA_DIRS",
+                                                                 &found));
+    if (found) return yarp_version;
+    Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_DATA_DIRS",
+                                                                &found));
+    if (found) {
+        for (int i=0; i<xdg_version.size(); i++) {
+            xdg_version.get(i) = Value(xdg_version.get(i).asString() +
+                                       slash + "yarp");
+        }
+        return xdg_version;
+    }
+#ifdef _WIN32
+    ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
+    if (app_version != "") {
+        Bottle result;
+        result.addString(app_version + slash + "share" + slash + "yarp");
+        return result;
+    }
+#endif
+    Bottle result;
+    result.addString("/local/share/yarp");
+    result.addString("/share/yarp");
+    return result;
 }
 

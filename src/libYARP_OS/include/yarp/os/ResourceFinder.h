@@ -272,7 +272,23 @@ public:
      */
     static ConstString getConfigHome();
 
-    // Bottle getDataDirs() const;
+    /**
+     *
+     * Locations where packaged data and config files are stored.
+     * If $YARP_DATA_DIRS is set, that is returned.
+     * Otherwise:
+     *   If $XDG_DATA_DIRS is set, "/yarp" or "\yarp" as appropriate
+     *   is appended to each path and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %YARP_DIR%\share\yarp
+     *     On Linux and all others:
+     *       /usr/local/share:/usr/share is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static Bottle getDataDirs();
+
     // Bottle getConfigDirs() const;
 
     /* YARP 2.4 changes end */

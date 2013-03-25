@@ -242,6 +242,44 @@ public:
         restoreEnvironment();
     }
 
+    void testGetDataDirs() {
+        report(0,"test getDataDirs");
+        saveEnvironment("YARP_DATA_DIRS");
+        saveEnvironment("XDG_DATA_DIRS");
+        ConstString slash = Network::getDirectorySeparator();
+        ConstString colon = Network::getPathSeparator();
+        ConstString foobar = ConstString("/foo") + colon + "/bar";
+        ConstString yfoo = ConstString("/foo") + slash + "yarp";
+        ConstString ybar = ConstString("/bar") + slash + "yarp";
+        Network::setEnvironment("YARP_DATA_DIRS",foobar);
+        Bottle dirs;
+        dirs = ResourceFinder::getDataDirs();
+        checkEqual(dirs.size(),2,"YARP_DATA_DIRS parsed as two directories");
+        checkEqual(dirs.get(0).asString().c_str(),"/foo","YARP_DATA_DIRS first dir ok");
+        checkEqual(dirs.get(1).asString().c_str(),"/bar","YARP_DATA_DIRS second dir ok");
+
+        Network::setEnvironment("YARP_DATA_DIRS","/foo");
+        dirs = ResourceFinder::getDataDirs();
+        checkEqual(dirs.size(),1,"YARP_DATA_DIRS parsed as one directory");
+
+        Network::unsetEnvironment("YARP_DATA_DIRS");
+        Network::setEnvironment("XDG_DATA_DIRS",foobar);
+        dirs = ResourceFinder::getDataDirs();
+        checkEqual(dirs.size(),2,"XDG_DATA_DIRS gives two directories");
+        checkEqual(dirs.get(0).asString().c_str(),yfoo.c_str(),"XDG_DATA_DIRS first dir ok");
+        checkEqual(dirs.get(1).asString().c_str(),ybar.c_str(),"XDG_DATA_DIRS second dir ok");
+
+        Network::unsetEnvironment("XDG_DATA_DIRS");
+#ifdef __linux__
+        dirs = ResourceFinder::getDataDirs();
+        checkEqual(dirs.size(),2,"DATA_DIRS default length 2");
+        checkEqual(dirs.get(0).asString().c_str(),"/local/share/yarp","DATA_DIRS default element 0 is ok");
+        checkEqual(dirs.get(1).asString().c_str(),"/share/yarp","DATA_DIRS default element 1 is ok");
+#endif
+
+        restoreEnvironment();
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
@@ -249,6 +287,7 @@ public:
         testSubGroup();
         testGetDataHome();
         testGetConfigHome();
+        testGetDataDirs();
     }
 };
 

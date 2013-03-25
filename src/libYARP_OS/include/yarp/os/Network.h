@@ -456,10 +456,17 @@ public:
 
     /**
      *
-     * Get an OS-appropriate directory separator.
+     * Get an OS-appropriate directory separator (e.g. "/" on linux)
      *
      */
     static ConstString getDirectorySeparator();
+
+    /**
+     *
+     * Get an OS-appropriate path separator (e.g. ":" on linux)
+     *
+     */
+    static ConstString getPathSeparator();
 
     /**
      *

@@ -867,9 +867,21 @@ void NetworkBase::unsetEnvironment(const char *key) {
 
 ConstString NetworkBase::getDirectorySeparator() {
 #ifdef _WIN32
+    // note this may be wrong under cygwin
+    // should be ok for mingw
     return "\\";
 #else
     return "/";
+#endif
+}
+
+ConstString NetworkBase::getPathSeparator() {
+#ifdef _WIN32
+    // note this may be wrong under cygwin
+    // should be ok for mingw
+    return ";";
+#else
+    return ":";
 #endif
 }
 
