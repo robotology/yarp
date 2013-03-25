@@ -6,16 +6,9 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>actionsRenderingEngine</name>
-        <parameters></parameters>
-        <node></node>
-        <prefix>/EyesViewer-Localhost:actionsRenderingEngine:1</prefix>
-        <geometry>(Pos (x 450) (y 349.9))</geometry>
-    </module>
-    <module>
         <name>yarpview</name>
-        <parameters>--x 100</parameters>
-        <node>node1</node>
+        <parameters>--x 100 </parameters>
+        <node>localhost</node>
         <prefix>/LeftView</prefix>
         <geometry>(Pos (x 412) (y 103.9))</geometry>
     </module>
@@ -29,29 +22,23 @@
     <application>
         <name>FakeEyes</name>
         <prefix>/Left</prefix>
-        <geometry>(Pos (x 103.49) (y 58.492))</geometry>
+        <geometry>(Pos (x 102.888) (y 57.8904))</geometry>
     </application>
     <application>
         <name>FakeEyes</name>
         <prefix>/Right</prefix>
-        <geometry>(Pos (x 103.49) (y 178.49))</geometry>
+        <geometry>(Pos (x 102.888) (y 177.888))</geometry>
     </application>
     <connection>
         <from>/Left/grabber</from>
         <to>/LeftView/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 349.5) (y 121.5)) ((x 286) (y 121)) ((x 413) (y 122))  )</geometry>
+        <geometry>(Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))  )</geometry>
     </connection>
     <connection>
         <from>/Right/grabber</from>
         <to>/RightView/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 350.5) (y 241)) ((x 286) (y 241)) ((x 415) (y 241))  )</geometry>
-    </connection>
-    <connection>
-        <from>/Right/grabber</from>
-        <to>/EyesViewer-Localhost:actionsRenderingEngine:1/actionsRenderingEngine/disparity:io</to>
-        <protocol>udp</protocol>
-        <geometry>(Pos ((x 376) (y 342)) ((x 286) (y 241)) ((x 376) (y 241)) ((x 376) (y 443)) ((x 451) (y 443))  )</geometry>
+        <geometry>(Pos ((x 350.5) (y 241.5)) ((x 286) (y 242)) ((x 415) (y 241))  )</geometry>
     </connection>
 </application>
