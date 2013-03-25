@@ -289,7 +289,22 @@ public:
      */
     static Bottle getDataDirs();
 
-    //static Bottle getConfigDirs();
+    /**
+     *
+     * Locations where system administrator data and config files are stored.
+     * If $YARP_CONFIG_DIRS is set, that is returned.
+     * Otherwise:
+     *   If $XDG_CONFIG_DIRS is set, "/yarp" or "\yarp" as appropriate
+     *   is appended to each path and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %ALLUSERSPROFILE%\yarp
+     *     On Linux and all others:
+     *       /etc/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static Bottle getConfigDirs();
 
     /* YARP 2.4 changes end */
 

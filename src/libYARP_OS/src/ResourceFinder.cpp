@@ -767,3 +767,32 @@ Bottle ResourceFinder::getDataDirs() {
     return result;
 }
 
+
+Bottle ResourceFinder::getConfigDirs() {
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    bool found = false;
+    Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_CONFIG_DIRS",
+                                                                 &found));
+    if (found) return yarp_version;
+    Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_CONFIG_DIRS",
+                                                                &found));
+    if (found) {
+        for (int i=0; i<xdg_version.size(); i++) {
+            xdg_version.get(i) = Value(xdg_version.get(i).asString() +
+                                       slash + "yarp");
+        }
+        return xdg_version;
+    }
+#ifdef _WIN32
+    ConstString app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
+    if (app_version != "") {
+        Bottle result;
+        result.addString(app_version + slash + "yarp");
+        return result;
+    }
+#endif
+    Bottle result;
+    result.addString("/etc/yarp");
+    return result;
+}
+

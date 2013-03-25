@@ -280,6 +280,39 @@ public:
         restoreEnvironment();
     }
 
+    void testGetConfigDirs() {
+        report(0,"test getConfigDirs");
+        saveEnvironment("YARP_CONFIG_DIRS");
+        saveEnvironment("XDG_CONFIG_DIRS");
+        ConstString slash = Network::getDirectorySeparator();
+        ConstString colon = Network::getPathSeparator();
+        ConstString foobar = ConstString("/foo") + colon + "/bar";
+        ConstString yfoo = ConstString("/foo") + slash + "yarp";
+        ConstString ybar = ConstString("/bar") + slash + "yarp";
+        Network::setEnvironment("YARP_CONFIG_DIRS",foobar);
+        Bottle dirs;
+        dirs = ResourceFinder::getConfigDirs();
+        checkEqual(dirs.size(),2,"YARP_CONFIG_DIRS parsed as two directories");
+        checkEqual(dirs.get(0).asString().c_str(),"/foo","YARP_CONFIG_DIRS first dir ok");
+        checkEqual(dirs.get(1).asString().c_str(),"/bar","YARP_CONFIG_DIRS second dir ok");
+
+        Network::unsetEnvironment("YARP_CONFIG_DIRS");
+        Network::setEnvironment("XDG_CONFIG_DIRS",foobar);
+        dirs = ResourceFinder::getConfigDirs();
+        checkEqual(dirs.size(),2,"XDG_CONFIG_DIRS gives two directories");
+        checkEqual(dirs.get(0).asString().c_str(),yfoo.c_str(),"XDG_CONFIG_DIRS first dir ok");
+        checkEqual(dirs.get(1).asString().c_str(),ybar.c_str(),"XDG_CONFIG_DIRS second dir ok");
+
+        Network::unsetEnvironment("XDG_CONFIG_DIRS");
+#ifdef __linux__
+        dirs = ResourceFinder::getConfigDirs();
+        checkEqual(dirs.size(),1,"CONFIG_DIRS default length 1");
+        checkEqual(dirs.get(0).asString().c_str(),"/etc/yarp","CONFIG_DIRS default is ok");
+#endif
+
+        restoreEnvironment();
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
@@ -288,6 +321,7 @@ public:
         testGetDataHome();
         testGetConfigHome();
         testGetDataDirs();
+        testGetConfigDirs();
     }
 };
 
