@@ -255,7 +255,23 @@ public:
      */
     static ConstString getDataHome();
 
-    // ConstString getConfigHome() const;
+    /**
+     *
+     * Location where user config files are stored.
+     * If $YARP_CONFIG_HOME is set, that is returned.
+     * Otherwise:
+     *   If $XDG_CONFIG_HOME is set, "yarp" is appended to it after the 
+     *   OS-appropriate directory separator, and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %APPDATA%\yarp\config is returned.
+     *     On Linux and all others:
+     *       $HOME/.config/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static ConstString getConfigHome();
+
     // Bottle getDataDirs() const;
     // Bottle getConfigDirs() const;
 

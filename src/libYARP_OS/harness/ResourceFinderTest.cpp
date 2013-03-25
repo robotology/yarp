@@ -219,12 +219,36 @@ public:
         restoreEnvironment();
     }
 
+    void testGetConfigHome() {
+        report(0,"test getConfigHome");
+        saveEnvironment("YARP_CONFIG_HOME");
+        saveEnvironment("XDG_CONFIG_HOME");
+        saveEnvironment("HOME");
+        Network::setEnvironment("YARP_CONFIG_HOME","/foo");
+        checkEqual(ResourceFinder::getConfigHome().c_str(),"/foo","YARP_CONFIG_HOME noticed");
+        Network::unsetEnvironment("YARP_CONFIG_HOME");
+        Network::setEnvironment("XDG_CONFIG_HOME","/foo");
+        ConstString slash = Network::getDirectorySeparator();
+        checkEqual(ResourceFinder::getConfigHome().c_str(),
+                   (ConstString("/foo") + slash + "yarp").c_str(),
+                   "XDG_CONFIG_HOME noticed");
+        Network::unsetEnvironment("XDG_CONFIG_HOME");
+#ifdef __linux__
+        Network::setEnvironment("HOME","/foo");
+        checkEqual(ResourceFinder::getConfigHome().c_str(),
+                   "/foo/.config/yarp",
+                   "HOME noticed");
+#endif
+        restoreEnvironment();
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
         testContext();
         testSubGroup();
         testGetDataHome();
+        testGetConfigHome();
     }
 };
 
