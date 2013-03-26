@@ -152,8 +152,6 @@ public:
 
     /**
      *
-     * WARNING: This is a stub, not implemented yet.
-     *
      * Expand a partial path to a list of paths.
      * Like findPath(key), but continues on to find all
      * instances of the path.
@@ -305,6 +303,15 @@ public:
      *
      */
     static Bottle getConfigDirs();
+
+
+    /**
+     *
+     * Discover third party directories listed...
+     *
+     */
+    static Bottle getThirdPartyDirs();
+
 
     /* YARP 2.4 changes end */
 

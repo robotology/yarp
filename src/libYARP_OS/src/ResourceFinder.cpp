@@ -44,6 +44,18 @@ static ConstString expandUserFileName(const char *fname) {
 }
 
 
+class ResourceFinderOptions {
+public:
+    bool justTop;
+    bool usePathd;
+
+    ResourceFinderOptions() {
+        justTop = true;
+        usePathd = true;
+    }
+};
+
+
 class ResourceFinderHelper {
 private:
     yarp::os::Bottle apps;
@@ -374,7 +386,9 @@ public:
     yarp::os::Bottle findPaths(Property& config, const char *name) {
         ConstString fname = config.check(name,Value(name)).asString();
         Bottle paths;
-        findFileBase(config,fname,true,paths,false);
+        ResourceFinderOptions opts;
+        opts.justTop = false;
+        findFileBase(config,fname,true,paths,opts);
         return paths;
     }
 
@@ -393,13 +407,14 @@ public:
     yarp::os::ConstString findFileBase(Property& config, const char *name,
                                        bool isDir) {
         Bottle output;
-        findFileBase(config,name,isDir,output,true);
+        ResourceFinderOptions opts;
+        findFileBase(config,name,isDir,output,opts);
         return output.get(0).asString();
     }
 
     void findFileBase(Property& config, const char *name,
                       bool isDir,
-                      Bottle& output, bool justTop) {
+                      Bottle& output, const ResourceFinderOptions& opts) {
 
         ConstString cap =
             config.check("capability_directory",Value("app")).asString();
@@ -409,19 +424,19 @@ public:
         // check current directory
 		if (ConstString(name)==""&&isDir) {
             output.addString(".");
-            if (justTop) return;
+            if (opts.justTop) return;
         }
         ConstString str = check("","","",name,isDir);
         if (str!="") {
             output.addString(str);
-            if (justTop) return;
+            if (opts.justTop) return;
         }
 
         if (configFilePath!="") {
             ConstString str = check(configFilePath.c_str(),"","",name,isDir);
             if (str!="") {
                 output.addString(str);
-                if (justTop) return;
+                if (opts.justTop) return;
             }
         }
 
@@ -431,7 +446,7 @@ public:
                         name,isDir);
             if (str!="") {
                 output.addString(str);
-                if (justTop) return;
+                if (opts.justTop) return;
             }
         }
 
@@ -441,35 +456,67 @@ public:
                         name,isDir);
             if (str!="") {
                 output.addString(str);
-                if (justTop) return;
+                if (opts.justTop) return;
             }
         }
 
-        // check /etc/yarp/path.d/*
-        // this directory is expected to contain *.ini files of the format:
-        //   [search BUNDLE_NAME]
-        //   path /PATH1 /PATH2
-        // for example:
-        //   [search icub]
-        //   path /usr/share/iCub
-        Property pathd;
-        pathd.fromConfigFile("/etc/yarp/path.d"); // should this be XDG_*?
-        Bottle sections = pathd.findGroup("search").tail();
-        for (int i=0; i<sections.size(); i++) {
-            ConstString search_name = sections.get(i).asString();
-            Bottle group = pathd.findGroup(search_name);
-            Bottle paths = group.findGroup("path").tail();
-            for (int j=0; j<paths.size(); j++) {
-                ConstString str = check(paths.get(j).asString().c_str(),"","",
-                                        name,isDir);
-                if (str!="") {
-                    output.addString(str);
-                    if (justTop) return;
+        // check YARP_CONFIG_HOME
+        ConstString configHome = ResourceFinder::getConfigHome();
+        if (configHome!="") {
+            ConstString str = check(configHome.c_str(),"","",name,isDir);
+            if (str!="") {
+                output.addString(str);
+                if (opts.justTop) return;
+            }
+        }
+
+        // check YARP_CONFIG_DIRS
+        Bottle configDirs = ResourceFinder::getConfigDirs();
+        for (int i=0; i<configDirs.size(); i++) {
+            ConstString str = check(configDirs.get(i).asString().c_str(),
+                                    "","",name,isDir);
+            if (str!="") {
+                output.addString(str);
+                if (opts.justTop) return;
+            }
+        }
+
+        if (opts.usePathd) {
+            // Nested search to locate path.d directories
+            Bottle pathds;
+            ResourceFinderOptions opts2;
+            opts2.justTop = false;
+            opts2.usePathd = false;
+            findFileBase(config,"path.d",true,pathds,opts2);
+
+            for (int i=0; i<pathds.size(); i++) {
+                // check /.../path.d/*
+                // this directory is expected to contain *.ini files like this:
+                //   [search BUNDLE_NAME]
+                //   path /PATH1 /PATH2
+                // for example:
+                //   [search icub]
+                //   path /usr/share/iCub
+                Property pathd;
+                pathd.fromConfigFile(pathds.get(i).asString());
+                Bottle sections = pathd.findGroup("search").tail();
+                for (int i=0; i<sections.size(); i++) {
+                    ConstString search_name = sections.get(i).asString();
+                    Bottle group = pathd.findGroup(search_name);
+                    Bottle paths = group.findGroup("path").tail();
+                    for (int j=0; j<paths.size(); j++) {
+                        ConstString str = check(paths.get(j).asString().c_str(),"","",
+                                                name,isDir);
+                        if (str!="") {
+                            output.addString(str);
+                            if (opts.justTop) return;
+                        }
+                    }
                 }
             }
         }
 
-        if (justTop) {
+        if (opts.justTop) {
             if (!quiet) {
                 fprintf(RTARGET,"||| did not find %s\n", name);
             }
@@ -684,8 +731,6 @@ ConstString ResourceFinder::getDataHome() {
             + slash + "share"
             + slash + "yarp";
     }
-    YARP_ERROR(Logger::get(),"Cannot determine YARP_DATA_HOME - please set YARP_DATA_HOME or HOME");
-    ACE_OS::exit(1);
     return "";
 }
 
@@ -711,8 +756,6 @@ ConstString ResourceFinder::getConfigHome() {
             + slash + ".config"
             + slash + "yarp";
     }
-    YARP_ERROR(Logger::get(),"Cannot determine YARP_CONFIG_HOME - please set YARP_CONFIG_HOME or HOME");
-    ACE_OS::exit(1);
     return "";
 }
 
