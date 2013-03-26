@@ -15,6 +15,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinderOptions.h>
 
 namespace yarp {
     namespace os {
@@ -304,14 +305,8 @@ public:
      */
     static Bottle getConfigDirs();
 
-
-    /**
-     *
-     * Discover third party directories listed...
-     *
-     */
-    static Bottle getThirdPartyDirs();
-
+    yarp::os::Bottle findPaths(const char *key,
+                               const ResourceFinderOptions& options);
 
     /* YARP 2.4 changes end */
 
