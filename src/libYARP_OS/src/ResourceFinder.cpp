@@ -44,6 +44,46 @@ static ConstString expandUserFileName(const char *fname) {
 }
 
 
+static Bottle parsePaths(const ConstString& txt) {
+    char sep = NetworkBase::getPathSeparator()[0];
+    Bottle result;
+    const char *at = txt.c_str();
+    int len = 0;
+    for (int i=0; i<txt.length(); i++) {
+        char ch = txt[i];
+        if (ch==sep) {
+            result.addString(ConstString(at,len));
+            at += len+1;
+            len = 0;
+            continue;
+        }
+        len++;
+    }
+    if (len>0) {
+        result.addString(ConstString(at,len));
+    }
+    return result;
+}
+
+
+static void appendResourceType(ConstString& path,
+                               const ConstString& resourceType) {
+    if (resourceType=="") return;
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    path += NetworkBase::getDirectorySeparator();
+    path += resourceType;
+}
+
+static void appendResourceType(Bottle& paths,
+                               const ConstString& resourceType) {
+    if (resourceType=="") return;
+    for (int i=0; i<paths.size(); i++) {
+        ConstString txt = paths.get(i).asString();
+        appendResourceType(txt,resourceType);
+        paths.get(i) = Value(txt);
+    }
+}
+
 
 class ResourceFinderHelper {
 private:
@@ -410,6 +450,8 @@ public:
                       bool isDir,
                       Bottle& output, const ResourceFinderOptions& opts) {
         ResourceFinderOptions::SearchLocations locs = opts.searchLocations;
+        ResourceFinderOptions::SearchFlavor flavor = opts.searchFlavor;
+        ConstString resourceType = opts.resourceType;
 
         ConstString cap =
             config.check("capability_directory",Value("app")).asString();
@@ -419,7 +461,7 @@ public:
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
 
         // check current directory
-        if (locs && ResourceFinderOptions::Directory) {
+        if (locs & ResourceFinderOptions::Directory) {
             if (ConstString(name)==""&&isDir) {
                 output.addString(".");
                 if (justTop) return;
@@ -439,7 +481,7 @@ public:
             }
         }
 
-        if (locs && ResourceFinderOptions::Context) {
+        if (locs & ResourceFinderOptions::Context) {
             // check app dirs
             for (int i=0; i<apps.size(); i++) {
                 ConstString str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
@@ -462,34 +504,62 @@ public:
         }
 
         // check YARP_CONFIG_HOME
-        ConstString configHome = ResourceFinder::getConfigHome();
-        if (configHome!="") {
-            ConstString str = check(configHome.c_str(),"","",name,isDir);
-            if (str!="") {
-                output.addString(str);
-                if (justTop) return;
+        if ((locs & ResourceFinderOptions::User) &&
+            (flavor & ResourceFinderOptions::ConfigLike)) {
+            ConstString home = ResourceFinder::getConfigHome();
+            if (home!="") {
+                appendResourceType(home,resourceType);
+                ConstString str = check(home.c_str(),"","",name,isDir);
+                if (str!="") {
+                    output.addString(str);
+                    if (justTop) return;
+                }
             }
         }
 
-        if (locs && ResourceFinderOptions::User) {
+        // check YARP_DATA_HOME
+        if ((locs & ResourceFinderOptions::User) &&
+            (flavor & ResourceFinderOptions::DataLike)) {
+            ConstString home = ResourceFinder::getDataHome();
+            if (home!="") {
+                appendResourceType(home,resourceType);
+                ConstString str = check(home.c_str(),"","",name,isDir);
+                if (str!="") {
+                    output.addString(str);
+                    if (justTop) return;
+                }
+            }
         }
-
-        if (locs && ResourceFinderOptions::Sysadmin) {
-        }
-
 
         // check YARP_CONFIG_DIRS
-        Bottle configDirs = ResourceFinder::getConfigDirs();
-        for (int i=0; i<configDirs.size(); i++) {
-            ConstString str = check(configDirs.get(i).asString().c_str(),
-                                    "","",name,isDir);
-            if (str!="") {
-                output.addString(str);
-                if (justTop) return;
+        if (locs & ResourceFinderOptions::Sysadmin) {
+            Bottle dirs = ResourceFinder::getConfigDirs();
+            appendResourceType(dirs,resourceType);
+            for (int i=0; i<dirs.size(); i++) {
+                ConstString str = check(dirs.get(i).asString().c_str(),
+                                        "","",name,isDir);
+                if (str!="") {
+                    output.addString(str);
+                    if (justTop) return;
+                }
             }
         }
 
-        if (locs && ResourceFinderOptions::Installed) {
+        // check YARP_DATA_DIRS
+        if (locs & ResourceFinderOptions::Installed) {
+            Bottle dirs = ResourceFinder::getDataDirs();
+            appendResourceType(dirs,resourceType);
+            for (int i=0; i<dirs.size(); i++) {
+                ConstString str = check(dirs.get(i).asString().c_str(),
+                                        "","",name,isDir);
+                if (str!="") {
+                    output.addString(str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        if (locs & ResourceFinderOptions::Installed) {
             // Nested search to locate path.d directories
             Bottle pathds;
             ResourceFinderOptions opts2;
@@ -511,6 +581,7 @@ public:
                     ConstString search_name = sections.get(i).asString();
                     Bottle group = pathd.findGroup(search_name);
                     Bottle paths = group.findGroup("path").tail();
+                    appendResourceType(paths,resourceType);
                     for (int j=0; j<paths.size(); j++) {
                         ConstString str = check(paths.get(j).asString().c_str(),"","",
                                                 name,isDir);
@@ -771,27 +842,6 @@ ConstString ResourceFinder::getConfigHome() {
     return "";
 }
 
-
-static Bottle parsePaths(const ConstString& txt) {
-    char sep = NetworkBase::getPathSeparator()[0];
-    Bottle result;
-    const char *at = txt.c_str();
-    int len = 0;
-    for (int i=0; i<txt.length(); i++) {
-        char ch = txt[i];
-        if (ch==sep) {
-            result.addString(ConstString(at,len));
-            at += len+1;
-            len = 0;
-            continue;
-        }
-        len++;
-    }
-    if (len>0) {
-        result.addString(ConstString(at,len));
-    }
-    return result;
-}
 
 Bottle ResourceFinder::getDataDirs() {
     ConstString slash = NetworkBase::getDirectorySeparator();

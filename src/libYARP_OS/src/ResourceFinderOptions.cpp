@@ -12,7 +12,11 @@
 using namespace yarp::os;
 
 ResourceFinderOptions::ResourceFinderOptions(SearchLocations searchLocations,
-                                             DuplicateFilesPolicy duplicateFilesPolicy) {
+                                             DuplicateFilesPolicy duplicateFilesPolicy,
+                                             SearchFlavor searchFlavor,
+                                             const ConstString& resourceType) {
     this->searchLocations = searchLocations;
     this->duplicateFilesPolicy = duplicateFilesPolicy;
+    this->searchFlavor = searchFlavor;
+    this->resourceType = resourceType;
 }
