@@ -9,84 +9,31 @@
 #ifndef __YARPRUN_RUN_CHECKPOINTS__
 #define __YARPRUN_RUN_CHECKPOINTS__
 
-//#define YARPRUN_LOG
-
-#ifdef YARPRUN_LOG
-
 #include <string>
 #include <list>
-
-#include <ace/ACE.h>
 
 class YarprunCheckpoints // singleton
 {
 private:
-    YarprunCheckpoints()
-    {
-        char temp[512];
-        ACE::get_temp_dir(temp,512);
-
-        char date[256];        
-        ACE::timestamp(date,256);
-        for (int t=0; t<256 && date[t]; ++t)
-        {
-            if (date[t]==' ' || date[t]==':') date[t]='_';
-        }
-
-        char path[512];
-        sprintf(path,"%s/yarprun_log_%s.txt",temp,date);
-
-        mLogFile=fopen(path,"w");
-    }
+    YarprunCheckpoints();
 
 public:
-    ~YarprunCheckpoints()
-    {
-        if (mLogFile) fclose(mLogFile);
-    }
+    ~YarprunCheckpoints();
 
-    static YarprunCheckpoints& instance()
-    {
-        static YarprunCheckpoints singleton;
+    static YarprunCheckpoints& instance();
 
-        return singleton;
-    }
+    void push(const char* label,const char* sFile,int line);
 
-    void push(const char* label,const char* sFile,int line)
-    {
-        mLabels.push_back(std::string(label));
+    void checkpoint(const char* sFile,int line);
 
-        if (mLogFile)
-        {
-            fprintf(mLogFile,"%s: ENTER section %s line %d\n",sFile,label,line); 
-            fflush(mLogFile);
-        }
-    }
-
-    void checkpoint(const char* sFile,int line)
-    {
-        if (mLogFile)
-        {
-            fprintf(mLogFile,"%s:       section %s line %d\n",sFile,mLabels.back().c_str(),line); 
-            fflush(mLogFile);
-        }    
-    }
-
-    void pop(const char* sFile,int line)
-    {
-        if (mLogFile)
-        {
-            fprintf(mLogFile,"%s: EXIT  section %s line %d\n",sFile,mLabels.back().c_str(),line); 
-            fflush(mLogFile);
-        }
-
-        mLabels.pop_back(); 
-    }
+    void pop(const char* sFile,int line);
 
 private:
     FILE* mLogFile;
     std::list<std::string> mLabels;
 };
+
+#ifdef YARPRUN_LOG
 
 #define CHECK_ENTER(label) YarprunCheckpoints::instance().push(label,__FILE__,__LINE__);
 #define CHECKPOINT() YarprunCheckpoints::instance().checkpoint(__FILE__,__LINE__);
