@@ -17,6 +17,8 @@
 #include <string.h>
 #include "application.h"
 
+#include "tooltip_model.h"
+
 class ApplicationWindow;
 class PortModel;
 class MidpointModel;
@@ -96,6 +98,7 @@ private:
     std::string defaultColor;
     ApplicationModel* applicationModel;
     Application* application;
+    Glib::RefPtr<TooltipModel> tool;
 };
 
 #endif //_ARROW_MODEL_

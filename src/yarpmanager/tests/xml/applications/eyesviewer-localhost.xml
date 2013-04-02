@@ -7,38 +7,38 @@
     </authors>
     <module>
         <name>yarpview</name>
-        <parameters>--x 100</parameters>
+        <parameters>--x 100 </parameters>
         <node>localhost</node>
         <prefix>/LeftView</prefix>
-        <geometry>(Pos (x 420) (y 105.9))</geometry>
+        <geometry>(Pos (x 412) (y 103.9))</geometry>
     </module>
     <module>
         <name>yarpview</name>
         <parameters>--x 500</parameters>
         <node>localhost</node>
         <prefix>/RightView</prefix>
-        <geometry>(Pos (x 420) (y 225.9))</geometry>
+        <geometry>(Pos (x 414) (y 222.9))</geometry>
     </module>
     <application>
         <name>FakeEyes</name>
         <prefix>/Left</prefix>
-        <geometry>(Pos (x 105.898) (y 60.8984))</geometry>
+        <geometry>(Pos (x 102.888) (y 57.8904))</geometry>
     </application>
     <application>
         <name>FakeEyes</name>
         <prefix>/Right</prefix>
-        <geometry>(Pos (x 105.898) (y 180.898))</geometry>
+        <geometry>(Pos (x 102.888) (y 177.888))</geometry>
     </application>
     <connection>
         <from>/Left/grabber</from>
         <to>/LeftView/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 355) (y 124)) ((x 289) (y 124)) ((x 421) (y 124))  )</geometry>
+        <geometry>(Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))  )</geometry>
     </connection>
     <connection>
         <from>/Right/grabber</from>
         <to>/RightView/yarpview/img:i</to>
         <protocol>udp</protocol>
-        <geometry>(Pos ((x 355) (y 244)) ((x 289) (y 244)) ((x 421) (y 244))  )</geometry>
+        <geometry>(Pos ((x 350.5) (y 241.5)) ((x 286) (y 242)) ((x 415) (y 241))  )</geometry>
     </connection>
 </application>

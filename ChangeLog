@@ -1,3 +1,10 @@
+2013-03-28  Alessandro Scalzo <alessandro.scalzo@iit.it>
+    * src/libYARP_OS/include/yarp/os/impl/RunCheckPoints.h
+    * src/libYARP_OS/src/RunCheckPoints.cpp
+    * src/libYARP_OS/CMakeLists.txt
+
+    Added ENABLE_YARPRUN_LOG option to cmake configuration options.
+
 2013-05-01 Ugo Pattacini <ugo.pattacini@iit.it>
     * GazeControl.h,CartesianControl: method deleteContext() added
 

@@ -14,6 +14,11 @@ if (USE_PORT_AUTHENTICATION)
     add_definitions(-DPORT_AUTH)
 endif (USE_PORT_AUTHENTICATION)
 
+option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
+if (ENABLE_YARPRUN_LOG) 
+    add_definitions(-DYARPRUN_LOG)
+endif(ENABLE_YARPRUN_LOG) 
+
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
   ${PROJECT_SOURCE_DIR}/include
 )
