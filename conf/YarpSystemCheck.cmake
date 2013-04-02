@@ -335,6 +335,10 @@ else(WIN32)
 
 endif(WIN32)
 
+if (UNIX)
+  include(CheckLibraryExists)
+  check_library_exists(dl dlopen "Check for dl library" YARP_HAS_LIBDL)
+endif ()
 
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in
