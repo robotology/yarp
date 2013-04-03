@@ -335,6 +335,14 @@ else(WIN32)
 
 endif(WIN32)
 
+if (UNIX)
+  # On *BSD and perhaps other flavors of unix, functions like dlopen,
+  # dlclose etc are included in libc.  On Linux and other flavors,
+  # they are placed in a separate libdl library.  We check for that
+  # library here.
+  include(CheckLibraryExists)
+  check_library_exists(dl dlopen "Check for dl library" YARP_HAS_LIBDL)
+endif ()
 
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in

@@ -1,3 +1,9 @@
+2013-04-02  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* src/yarpserver/CMakeLists.txt, conf/YarpSystemCheck.cmake: don't
+	link against dl on unix flavors that don't have it
+	[thanks Arnaud Degroote]
+
 2013-03-28  Alessandro Scalzo <alessandro.scalzo@iit.it>
     * src/libYARP_OS/include/yarp/os/impl/RunCheckPoints.h
     * src/libYARP_OS/src/RunCheckPoints.cpp
