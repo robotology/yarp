@@ -1,5 +1,8 @@
 2013-04-02  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
+	* src/yarpserver/CMakeLists.txt, conf/YarpSystemCheck.cmake: Arnaud
+	noted existence of CMAKE_DL_LIBS, even better [thanks Arnaud Degroote]
+
 	* src/yarpserver/CMakeLists.txt, conf/YarpSystemCheck.cmake: don't
 	link against dl on unix flavors that don't have it
 	[thanks Arnaud Degroote]
