@@ -391,11 +391,12 @@ public:
                                 const char *base2,
                                 const char *base3,
                                 const char *name,
-                                bool isDir) {
+                                bool isDir,
+                                const char *doc) {
         ConstString s = getPath(base1,base2,base3,name);
 
         if (verbose) {
-            fprintf(RTARGET,"||| checking %s\n", s.c_str());
+            fprintf(RTARGET,"||| checking %s (reason: %s)\n", s.c_str(), doc);
         }
         if (exists(s.c_str(),isDir)) {
             if (verbose) {
@@ -453,11 +454,6 @@ public:
         ResourceFinderOptions::SearchFlavor flavor = opts.searchFlavor;
         ConstString resourceType = opts.resourceType;
 
-        ConstString cap =
-            config.check("capability_directory",Value("app")).asString();
-        Bottle defCaps =
-            config.findGroup("default_capability").tail();
-
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
 
         // check current directory
@@ -466,7 +462,7 @@ public:
                 output.addString(".");
                 if (justTop) return;
             }
-            ConstString str = check("","","",name,isDir);
+            ConstString str = check("","","",name,isDir,"current directory");
             if (str!="") {
                 output.addString(str);
                 if (justTop) return;
@@ -474,7 +470,7 @@ public:
         }
 
         if (configFilePath!="") {
-            ConstString str = check(configFilePath.c_str(),"","",name,isDir);
+            ConstString str = check(configFilePath.c_str(),"","",name,isDir,"'from' path");
             if (str!="") {
                 output.addString(str);
                 if (justTop) return;
@@ -482,10 +478,15 @@ public:
         }
 
         if (locs & ResourceFinderOptions::Context) {
+            ConstString cap =
+                config.check("capability_directory",Value("app")).asString();
+            Bottle defCaps =
+                config.findGroup("default_capability").tail();
+
             // check app dirs
             for (int i=0; i<apps.size(); i++) {
                 ConstString str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
-                            name,isDir);
+                                        name,isDir,"old-style context for backwards compatibility");
                 if (str!="") {
                     output.addString(str);
                     if (justTop) return;
@@ -495,7 +496,7 @@ public:
             // check ROOT/app/default/
             for (int i=0; i<defCaps.size(); i++) {
                 ConstString str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
-                            name,isDir);
+                                        name,isDir, "old-style default context for backwards compatibility");
                 if (str!="") {
                     output.addString(str);
                     if (justTop) return;
@@ -509,7 +510,8 @@ public:
             ConstString home = ResourceFinder::getConfigHome();
             if (home!="") {
                 appendResourceType(home,resourceType);
-                ConstString str = check(home.c_str(),"","",name,isDir);
+                ConstString str = check(home.c_str(),"","",name,isDir,
+                                        "YARP_CONFIG_HOME");
                 if (str!="") {
                     output.addString(str);
                     if (justTop) return;
@@ -523,7 +525,8 @@ public:
             ConstString home = ResourceFinder::getDataHome();
             if (home!="") {
                 appendResourceType(home,resourceType);
-                ConstString str = check(home.c_str(),"","",name,isDir);
+                ConstString str = check(home.c_str(),"","",name,isDir,
+                                        "YARP_DATA_HOME");
                 if (str!="") {
                     output.addString(str);
                     if (justTop) return;
@@ -537,7 +540,8 @@ public:
             appendResourceType(dirs,resourceType);
             for (int i=0; i<dirs.size(); i++) {
                 ConstString str = check(dirs.get(i).asString().c_str(),
-                                        "","",name,isDir);
+                                        "","",name,isDir,
+                                        "YARP_CONFIG_DIRS");
                 if (str!="") {
                     output.addString(str);
                     if (justTop) return;
@@ -551,7 +555,8 @@ public:
             appendResourceType(dirs,resourceType);
             for (int i=0; i<dirs.size(); i++) {
                 ConstString str = check(dirs.get(i).asString().c_str(),
-                                        "","",name,isDir);
+                                        "","",name,isDir,
+                                        "YARP_DATA_DIRS");
                 if (str!="") {
                     output.addString(str);
                     if (justTop) return;
@@ -584,7 +589,7 @@ public:
                     appendResourceType(paths,resourceType);
                     for (int j=0; j<paths.size(); j++) {
                         ConstString str = check(paths.get(j).asString().c_str(),"","",
-                                                name,isDir);
+                                                name,isDir,"yarp.d");
                         if (str!="") {
                             output.addString(str);
                             if (justTop) return;
