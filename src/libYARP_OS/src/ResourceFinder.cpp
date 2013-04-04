@@ -477,7 +477,7 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Context) {
+        if (locs & ResourceFinderOptions::ClassicContext) {
             ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
             Bottle defCaps =
@@ -500,6 +500,27 @@ public:
                 if (str!="") {
                     output.addString(str);
                     if (justTop) return;
+                }
+            }
+        }
+
+        if (locs & ResourceFinderOptions::Context) {
+            for (int i=0; i<apps.size(); i++) {
+                ConstString app = apps.get(i).asString();
+
+                // Nested search to locate context directories
+                Bottle paths;
+                ResourceFinderOptions opts2;
+                opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~ResourceFinderOptions::Context);
+                findFileBase(config,app.c_str(),true,paths,opts2);
+                appendResourceType(paths,resourceType);
+                for (int j=0; j<paths.size(); j++) {
+                    ConstString str = check(paths.get(j).asString().c_str(),"","",
+                                            name,isDir,"context");
+                    if (str!="") {
+                        output.addString(str);
+                        if (justTop) return;
+                    }
                 }
             }
         }
@@ -568,7 +589,7 @@ public:
             // Nested search to locate path.d directories
             Bottle pathds;
             ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts2.searchLocations & ~ResourceFinderOptions::Installed);
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Installed | ResourceFinderOptions::Context));
             findFileBase(config,"path.d",true,pathds,opts2);
 
             for (int i=0; i<pathds.size(); i++) {

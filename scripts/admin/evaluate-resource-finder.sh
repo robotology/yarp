@@ -56,10 +56,12 @@ path $base/usr/share/steampunk
 EOF
 } > $YARP_CONFIG_DIR0/path.d/steampunk.ini
 
+mkdir -p $base/usr/share/steampunk/flight
+
 
 echo "Using $yarp"
 
 echo "Trying a search for a non-existent file, probe.ini"
-$yarp resource --policy none --find probe.ini
+$yarp resource --policy none --context flight --find probe.ini
 
 

@@ -33,15 +33,16 @@ class YARP_OS_API yarp::os::ResourceFinderOptions {
 public:
    
     enum SearchLocations {
-        NoLocation  = 0x0000,
-        Directory   = 0x0001, // Search current directory
-        Context     = 0x0002, // Search current context directory
-        Robot       = 0x0004, // Search current robot directory
-        User        = 0x0008, // Search user directory
-        Sysadmin    = 0x0010, // Search system config directories
-        Installed   = 0x0020, // Search system data directories + path.d
+        NoLocation     = 0x0000,
+        Directory      = 0x0001, // Search current directory
+        Context        = 0x0002, // Search current context directory
+        Robot          = 0x0004, // Search current robot directory
+        User           = 0x0008, // Search user directory
+        Sysadmin       = 0x0010, // Search system config directories
+        Installed      = 0x0020, // Search system data directories + path.d
+        ClassicContext = 0x1000, // Search old-style context directories
         Default = User | Sysadmin | Installed,
-        ModuleDefault = Default | Robot | Context | Directory
+        ModuleDefault = Default | Robot | Context | Directory | ClassicContext
     };
 
     enum DuplicateFilesPolicy {
