@@ -1349,13 +1349,24 @@ int Companion::cmdResource(int argc, char *argv[]) {
         return 1;
     }
     if (ok) {
+        ResourceFinderOptions opts;
         if (all) {
-            result = rf.findPaths(p.check("find",Value("test.ini")).asString());
+            opts.duplicateFilesPolicy = ResourceFinderOptions::All;
+        }
+        if (p.check("type")) {
+            opts.resourceType = p.find("type").asString();
+        }
+        if (all) {
+            result = rf.findPaths(p.check("find",Value("test.ini")).asString(),
+                                  opts);
         } else {
             if (dir) {
-                result.addString(rf.findPath(p.check("find",Value("config")).asString()));
+                result.addString(rf.findPath(p.check("find",
+                                                     Value("config")).asString(),
+                                             opts));
             } else {
-                result.addString(rf.findFile(p.check("find",Value("icub.ini")).asString()));;
+                result.addString(rf.findFile(p.check("find",Value("icub.ini")).asString(),
+                                             opts));
             }
         }
     } else {

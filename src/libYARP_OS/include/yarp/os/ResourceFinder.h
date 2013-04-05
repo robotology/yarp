@@ -308,6 +308,12 @@ public:
     yarp::os::Bottle findPaths(const char *key,
                                const ResourceFinderOptions& options);
 
+    yarp::os::ConstString findPath(const char *key,
+                                   const ResourceFinderOptions& options);
+
+    yarp::os::ConstString findFile(const char *key,
+                                   const ResourceFinderOptions& options);
+
     /* YARP 2.4 changes end */
 
 private:
