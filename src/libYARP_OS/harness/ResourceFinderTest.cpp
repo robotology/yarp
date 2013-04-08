@@ -354,6 +354,10 @@ public:
     }
     
     void setUpTestArea() {
+        ConstString colon = Network::getPathSeparator();
+        ConstString slash = Network::getDirectorySeparator();
+        FILE *fout;
+
         ConstString base = "__test_dir_rf_1";
         Bottle yarp_data_home;
         yarp_data_home.addString(base);
@@ -393,13 +397,52 @@ public:
         yarp_config_dir0.addString("yarp");
         mkdir(yarp_config_dir0);
 
+        Bottle pathd = yarp_config_dir0;
+        pathd.addString("config");
+        pathd.addString("path.d");
+        mkdir(pathd);
+
+        Bottle project1;
+        project1.addString(base);
+        project1.addString("usr");
+        project1.addString("share");
+        project1.addString("project1");
+        mkdir(project1);
+
+        Bottle project2;
+        project2.addString(base);
+        project2.addString("usr");
+        project2.addString("share");
+        project2.addString("project2");
+        mkdir(project2);
+
+        Bottle path_project1;
+        path_project1.addString("path");
+        path_project1.addString(pathify(project1));
+
+        Bottle path_project2;
+        path_project2.addString("path");
+        path_project2.addString(pathify(project2));
+
+        fout = fopen((pathify(pathd)+slash+"project1.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"[search project1]\n");
+        fprintf(fout,"%s\n", path_project1.toString().c_str());
+        fclose(fout);
+        fout = NULL;
+
+        fout = fopen((pathify(pathd)+slash+"project2.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"[search project2]\n");
+        fprintf(fout,"%s\n", path_project2.toString().c_str());
+        fclose(fout);
+        fout = NULL;
+
         saveEnvironment("YARP_DATA_HOME");
         saveEnvironment("YARP_CONFIG_HOME");
         saveEnvironment("YARP_DATA_DIRS");
         saveEnvironment("YARP_CONFIG_DIRS");
 
-        ConstString colon = Network::getPathSeparator();
-        ConstString slash = Network::getDirectorySeparator();
         Network::setEnvironment("YARP_DATA_HOME",pathify(yarp_data_home));
         Network::setEnvironment("YARP_CONFIG_HOME",pathify(yarp_config_home));
         Network::setEnvironment("YARP_DATA_DIRS",
@@ -409,7 +452,7 @@ public:
         Network::setEnvironment("YARP_CONFIG_DIRS",pathify(yarp_config_dir0));
 
 
-        FILE *fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(),"w");
+        fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(),"w");
         YARP_ASSERT(fout!=NULL);
         fprintf(fout,"magic_number = 42\n");
         fprintf(fout,"[data_home]\n");
@@ -421,6 +464,14 @@ public:
         YARP_ASSERT(fout!=NULL);
         fprintf(fout,"magic_number = 22\n");
         fprintf(fout,"[data_dir0]\n");
+        fprintf(fout,"x = 3\n");
+        fclose(fout);
+        fout = NULL;
+
+        fout = fopen((pathify(project1)+slash+"data.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"magic_number = 101\n");
+        fprintf(fout,"[project1]\n");
         fprintf(fout,"x = 3\n");
         fclose(fout);
         fout = NULL;
@@ -443,12 +494,14 @@ public:
         checkEqual(p.find("magic_number").asInt(),42,"right version found");
         checkTrue(p.check("data_home"),"data_home found");
         checkFalse(p.check("data_dir0"),"data_dirs not found");
+        checkFalse(p.check("project1"),"project1 not found");
         p.clear();
         rf.readConfig(p,"data.ini",
                       ResourceFinderOptions::findAllMatch());
         checkEqual(p.find("magic_number").asInt(),42,"right priority");
         checkTrue(p.check("data_home"),"data_home found");
         checkTrue(p.check("data_dir0"),"data_dirs found");
+        checkTrue(p.check("project1"),"project1 found");
 
         breakDownTestArea();
     }
