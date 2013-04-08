@@ -65,6 +65,14 @@ public:
                           DuplicateFilesPolicy duplicateFilesPolicy = First,
                           SearchFlavor searchFlavor = ConfigAndDataLike,
                           const ConstString& resourceType = "");
+
+    static ResourceFinderOptions findFirstMatch() {
+        return ResourceFinderOptions();
+    }
+
+    static ResourceFinderOptions findAllMatch() {
+        return ResourceFinderOptions(ModuleDefault,All);
+    }
 };
 
 #endif

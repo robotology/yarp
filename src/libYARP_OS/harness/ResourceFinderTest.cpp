@@ -12,6 +12,7 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/Os.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -313,6 +314,145 @@ public:
         restoreEnvironment();
     }
 
+
+    void mkdir(const ConstString& dirname) {
+        ACE_stat sb;
+        if (ACE_OS::stat(dirname.c_str(),&sb)<0) {
+            yarp::os::mkdir(dirname.c_str());
+        }
+        int r = ACE_OS::stat(dirname.c_str(),&sb);
+        if (r<0) {
+            // show problem
+            checkTrue(r>=0,"test directory present");
+        }
+    }
+
+    ConstString pathify(const Bottle& dirs) {
+        char buf[1000];
+        char *result = getcwd(buf,sizeof(buf));
+        if (!result) {
+            checkTrue(result!=NULL,"cwd/pwd not too long");
+            yarp::os::exit(1);
+        }
+        ConstString slash = Network::getDirectorySeparator();
+        ConstString dir = buf;
+        for (int i=0; i<dirs.size(); i++) {
+            dir += slash;
+            dir = dir + dirs.get(i).asString();
+        }
+        return dir;
+    }
+
+    void mkdir(const Bottle& dirs) {
+        ConstString slash = Network::getDirectorySeparator();
+        ConstString dir = "";
+        for (int i=0; i<dirs.size(); i++) {
+            if (i>0) dir += slash;
+            dir = dir + dirs.get(i).asString();
+            mkdir(dir);
+        }
+    }
+    
+    void setUpTestArea() {
+        ConstString base = "__test_dir_rf_1";
+        Bottle yarp_data_home;
+        yarp_data_home.addString(base);
+        yarp_data_home.addString("home");
+        yarp_data_home.addString("yarper");
+        yarp_data_home.addString(".local");
+        yarp_data_home.addString("share");
+        yarp_data_home.addString("yarp");
+        mkdir(yarp_data_home);
+
+        Bottle yarp_config_home;
+        yarp_config_home.addString(base);
+        yarp_config_home.addString("home");
+        yarp_config_home.addString("yarper");
+        yarp_config_home.addString(".config");
+        yarp_config_home.addString("yarp");
+        mkdir(yarp_config_home);
+
+        Bottle yarp_data_dir0;
+        yarp_data_dir0.addString(base);
+        yarp_data_dir0.addString("usr");
+        yarp_data_dir0.addString("share");
+        yarp_data_dir0.addString("yarp");
+        mkdir(yarp_data_dir0);
+
+        Bottle yarp_data_dir1;
+        yarp_data_dir1.addString(base);
+        yarp_data_dir1.addString("usr");
+        yarp_data_dir1.addString("local");
+        yarp_data_dir1.addString("share");
+        yarp_data_dir1.addString("yarp");
+        // do not make this
+
+        Bottle yarp_config_dir0;
+        yarp_config_dir0.addString(base);
+        yarp_config_dir0.addString("etc");
+        yarp_config_dir0.addString("yarp");
+        mkdir(yarp_config_dir0);
+
+        saveEnvironment("YARP_DATA_HOME");
+        saveEnvironment("YARP_CONFIG_HOME");
+        saveEnvironment("YARP_DATA_DIRS");
+        saveEnvironment("YARP_CONFIG_DIRS");
+
+        ConstString colon = Network::getPathSeparator();
+        ConstString slash = Network::getDirectorySeparator();
+        Network::setEnvironment("YARP_DATA_HOME",pathify(yarp_data_home));
+        Network::setEnvironment("YARP_CONFIG_HOME",pathify(yarp_config_home));
+        Network::setEnvironment("YARP_DATA_DIRS",
+                                pathify(yarp_data_dir0) +
+                                colon +
+                                pathify(yarp_data_dir1));
+        Network::setEnvironment("YARP_CONFIG_DIRS",pathify(yarp_config_dir0));
+
+
+        FILE *fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"magic_number = 42\n");
+        fprintf(fout,"[data_home]\n");
+        fprintf(fout,"x = 2\n");
+        fclose(fout);
+        fout = NULL;
+
+        fout = fopen((pathify(yarp_data_dir0)+slash+"data.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"magic_number = 22\n");
+        fprintf(fout,"[data_dir0]\n");
+        fprintf(fout,"x = 3\n");
+        fclose(fout);
+        fout = NULL;
+    }
+
+    void breakDownTestArea() {
+        restoreEnvironment();
+    }
+
+    void testReadConfig() {
+        report(0,"test readConfig");
+        setUpTestArea();
+
+        ResourceFinder rf;
+        //rf.setVerbose(true);
+        Property p;
+        bool ok = rf.readConfig(p,"data.ini",
+                                ResourceFinderOptions::findFirstMatch());
+        checkTrue(ok,"read a data.ini");
+        checkEqual(p.find("magic_number").asInt(),42,"right version found");
+        checkTrue(p.check("data_home"),"data_home found");
+        checkFalse(p.check("data_dir0"),"data_dirs not found");
+        p.clear();
+        rf.readConfig(p,"data.ini",
+                      ResourceFinderOptions::findAllMatch());
+        checkEqual(p.find("magic_number").asInt(),42,"right priority");
+        checkTrue(p.check("data_home"),"data_home found");
+        checkTrue(p.check("data_dir0"),"data_dirs found");
+
+        breakDownTestArea();
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
@@ -322,6 +462,7 @@ public:
         testGetConfigHome();
         testGetDataDirs();
         testGetConfigDirs();
+        testReadConfig();
     }
 };
 

@@ -488,7 +488,9 @@ public:
                       bool isDir,
                       Bottle& output, const ResourceFinderOptions& opts) {
         Bottle doc;
+        int prelen = output.size();
         findFileBaseInner(config,name,isDir,output,opts,doc,NULL);
+        if (output.size()!=prelen) return;
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
         if (justTop) {
             if (!quiet) {
@@ -1020,3 +1022,17 @@ Bottle ResourceFinder::getConfigDirs() {
     return result;
 }
 
+
+
+bool ResourceFinder::readConfig(Property& config,
+                                const char *key,
+                                const ResourceFinderOptions& options) {
+    Bottle bot = HELPER(implementation).findPaths(config,key,&options);
+
+    for (int i=bot.size()-1; i>=0; i--) {
+        ConstString fname = bot.get(i).asString();
+        config.fromConfigFile(fname,false);
+    }
+
+    return bot.size()>=1;
+}

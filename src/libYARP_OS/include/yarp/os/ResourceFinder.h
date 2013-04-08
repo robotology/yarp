@@ -314,6 +314,10 @@ public:
     yarp::os::ConstString findFile(const char *key,
                                    const ResourceFinderOptions& options);
 
+    bool readConfig(Property& config,
+                    const char *key,
+                    const ResourceFinderOptions& options);
+
     /* YARP 2.4 changes end */
 
 private:
