@@ -50,21 +50,21 @@ echo "= Running with resource type set to $RESOURCE_TYPE"
 echo ""
 
 # Add some packaged directories using path.d mechanism
-mkdir -p $YARP_CONFIG_DIR0/path.d
+mkdir -p $YARP_CONFIG_DIR0/config/path.d
 {
 cat<<EOF
 [search icub]
 path $base/usr/share/iCub
 EOF
-} > $YARP_CONFIG_DIR0/path.d/icub.ini
+} > $YARP_CONFIG_DIR0/config/path.d/icub.ini
 {
 cat<<EOF
 [search steampunk]
 path $base/usr/share/steampunk
 EOF
-} > $YARP_CONFIG_DIR0/path.d/steampunk.ini
+} > $YARP_CONFIG_DIR0/config/path.d/steampunk.ini
 
-mkdir -p $base/usr/share/steampunk/$CONTEXT
+mkdir -p $base/usr/share/steampunk/app/$CONTEXT
 mkdir -p $base/usr/share/iCub/robots/$YARP_ROBOT_NAME
 
 

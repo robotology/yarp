@@ -76,6 +76,13 @@ static void appendResourceType(ConstString& path,
     path += resourceType;
 }
 
+static void prependResourceType(ConstString& path,
+                                const ConstString& resourceType) {
+    if (resourceType=="") return;
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    path = resourceType + NetworkBase::getDirectorySeparator() + path;
+}
+
 static void appendResourceType(Bottle& paths,
                                const ConstString& resourceType) {
     if (resourceType=="") return;
@@ -584,9 +591,14 @@ public:
             for (int i=0; i<apps.size(); i++) {
                 ConstString app = apps.get(i).asString();
 
+                // New context still apparently applies only to "applications"
+                // which means we need to restrict our attention to "app"
+                // directories.  
+
                 // Nested search to locate context directory
                 Bottle paths;
                 ResourceFinderOptions opts2;
+                prependResourceType(app,"app");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext));
                 findFileBaseInner(config,app.c_str(),true,paths,opts2,doc,"context");
                 appendResourceType(paths,resourceType);
@@ -666,6 +678,7 @@ public:
             Bottle pathds;
             ResourceFinderOptions opts2;
             opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Installed | ResourceFinderOptions::Context));
+            opts2.resourceType = "config";
             findFileBaseInner(config,"path.d",true,pathds,opts2,doc,"path.d");
 
             for (int i=0; i<pathds.size(); i++) {
