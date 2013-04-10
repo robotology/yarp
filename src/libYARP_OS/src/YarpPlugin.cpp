@@ -162,16 +162,8 @@ void YarpPluginSelector::scan() {
             rf.configure(0,NULL);
         }
         rf.setQuiet(true);
-        ConstString target = "etc/yarp/plugins";
+        ConstString target = "plugins";
         ConstString found = rf.findFile(target);
-        if (found=="") {
-            target = "yarp/plugins";
-            found = rf.findFile(target);
-            if (found == "") {
-                target = "plugins";
-                found = rf.findFile(target);
-            }
-        }
         if (found!="") {
             target = found;
 

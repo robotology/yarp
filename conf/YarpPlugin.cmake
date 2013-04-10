@@ -57,11 +57,11 @@ if(YARP_TREE_BUILD)
   get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} ABSOLUTE)
   get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
   configure_file(${CMAKE_SOURCE_DIR}/conf/template/YarpPluginPath.cmake
-    ${CMAKE_BINARY_DIR}/etc/yarp/plugins/path.ini @ONLY IMMEDIATE)
+    ${CMAKE_BINARY_DIR}/plugins/path.ini @ONLY IMMEDIATE)
   set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
   configure_file(${CMAKE_SOURCE_DIR}/conf/template/YarpPluginPath.cmake
     ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY IMMEDIATE)
-  install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION etc/yarp/plugins)
+  install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION share/yarp/plugins)
 endif(YARP_TREE_BUILD)
 
 #########################################################################
@@ -436,11 +436,11 @@ endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
 #
 macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
     get_filename_component(out_name ${file_name} NAME)
-    configure_file(${file_name} ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name} COPYONLY)
+    configure_file(${file_name} ${CMAKE_BINARY_DIR}/plugins/${out_name} COPYONLY)
     if(YARP_TREE_INCLUDE_DIRS)
-        install(FILES ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name}
+        install(FILES ${CMAKE_BINARY_DIR}/plugins/${out_name}
                 COMPONENT runtime
-                DESTINATION etc/yarp/plugins)
+                DESTINATION share/yarp/plugins)
     endif(YARP_TREE_INCLUDE_DIRS)
 endmacro(YARP_ADD_CARRIER_FINGERPRINT)
 
