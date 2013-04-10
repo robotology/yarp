@@ -47,22 +47,26 @@ static ConstString expandUserFileName(const char *fname) {
 
 
 static Bottle parsePaths(const ConstString& txt) {
+    char slash = NetworkBase::getDirectorySeparator()[0];
     char sep = NetworkBase::getPathSeparator()[0];
     Bottle result;
     const char *at = txt.c_str();
+    int slash_tweak = 0;
     int len = 0;
     for (int i=0; i<txt.length(); i++) {
         char ch = txt[i];
         if (ch==sep) {
-            result.addString(ConstString(at,len));
+            result.addString(ConstString(at,len-slash_tweak));
             at += len+1;
             len = 0;
+            slash_tweak = 0;
             continue;
         }
+        slash_tweak = (ch==slash && len>0)?1:0;
         len++;
     }
     if (len>0) {
-        result.addString(ConstString(at,len));
+        result.addString(ConstString(at,len-slash_tweak));
     }
     return result;
 }
@@ -72,7 +76,11 @@ static void appendResourceType(ConstString& path,
                                const ConstString& resourceType) {
     if (resourceType=="") return;
     ConstString slash = NetworkBase::getDirectorySeparator();
-    path += NetworkBase::getDirectorySeparator();
+    if (path.length()>0) {
+        if (path[path.length()-1] != slash[0]) {
+            path += NetworkBase::getDirectorySeparator();
+        }
+    }
     path += resourceType;
 }
 
@@ -366,9 +374,11 @@ public:
                                   const char *name) {
         ConstString s = "";
         if (base1!=NULL) {
-            s = base1;
-            if (ConstString(base1)!="") {
-                s = s + "/";
+            if (base1[0]!='\0') {
+                s = base1;
+                if (ConstString(base1)!="") {
+                    s = s + "/";
+                }
             }
         }
         if (base2!=NULL) {
@@ -973,17 +983,15 @@ Bottle ResourceFinder::getDataDirs() {
     Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_DATA_DIRS",
                                                                 &found));
     if (found) {
-        for (int i=0; i<xdg_version.size(); i++) {
-            xdg_version.get(i) = Value(xdg_version.get(i).asString() +
-                                       slash + "yarp");
-        }
+        appendResourceType(xdg_version,"yarp");
         return xdg_version;
     }
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
     if (app_version != "") {
+        appendResourceType(app_version,"yarp");
         Bottle result;
-        result.addString(app_version + slash + "share" + slash + "yarp");
+        result.addString(app_version);
         return result;
     }
 #endif
@@ -1003,17 +1011,15 @@ Bottle ResourceFinder::getConfigDirs() {
     Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_CONFIG_DIRS",
                                                                 &found));
     if (found) {
-        for (int i=0; i<xdg_version.size(); i++) {
-            xdg_version.get(i) = Value(xdg_version.get(i).asString() +
-                                       slash + "yarp");
-        }
+        appendResourceType(xdg_version,"yarp");
         return xdg_version;
     }
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
     if (app_version != "") {
+        appendResourceType(app_version,"yarp");
         Bottle result;
-        result.addString(app_version + slash + "yarp");
+        result.addString(app_version);
         return result;
     }
 #endif
