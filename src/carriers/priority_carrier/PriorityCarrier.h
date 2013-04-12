@@ -10,6 +10,7 @@
 #ifndef PRIORITYCARRIER_INC
 #define PRIORITYCARRIER_INC
 
+#include <math.h>
 #include <yarp/os/impl/ModifyingCarrier.h>
 #include <yarp/os/impl/Election.h>
 #include <yarp/os/NullConnectionReader.h>
@@ -17,10 +18,9 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/os/BufferedPort.h>
+
 #include <yarp/sig/Vector.h>
-
-#include <math.h>
-
+#include <yarp/sig/Matrix.h>
 
 #define STIMUL_THRESHOLD        1.0
 #define WITH_RIORITY_DEBUG
@@ -49,6 +49,11 @@ public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
                                     PriorityCarrier *source);
+private:
+    yarp::sig::Matrix InvA;         // the inverse of matrix (I-A) in the equation y(t) = [(I-A)^(-1) * B] .*x(t) 
+    yarp::sig::Matrix B;            // matrix of biases B in the equation y(t) = [(I-A)^(-1) * B] .*x(t)
+    yarp::sig::Matrix Y;            // matrix y(t) 
+    yarp::sig::Matrix X;            // matrix x(t) 
 };
 
 
@@ -206,6 +211,7 @@ public:
 
         if(actualStimulation <= 0)
             isActive = false;
+
         return actualStimulation;
     }
 
@@ -236,7 +242,7 @@ public:
         }
         E += baias;
         double I = E * getActualStimulation(t);
-        return ((I<0) ? 0 : I);     //I'(t)
+        return ((I<0) ? 0 : I);     //I'(t)                
     }
 
     virtual bool configure(yarp::os::impl::Protocol& proto);
