@@ -98,13 +98,14 @@ endmacro(YARP_IDL)
 macro(YARP_IDL_TO_DIR thrift_file output_dir)
     set(output_dir ${output_dir})
     #extract relevant folders / names
-    string(FIND ${thrift_file} "/" lastSlash REVERSE)
-
-    if(lastSlash GREATER 0)
-        string(SUBSTRING ${thrift_file} 0 ${lastSlash} include_prefix)
-    else(lastSlash GREATER 0)
-        set(include_prefix "")
-    endif(lastSlash GREATER 0)
+#    string(FIND ${thrift_file} "/" lastSlash REVERSE)
+#
+#    if(lastSlash GREATER 0)
+#        string(SUBSTRING ${thrift_file} 0 ${lastSlash} include_prefix)
+#    else(lastSlash GREATER 0)
+#        set(include_prefix "")
+#    endif(lastSlash GREATER 0)
+    get_filename_component(include_prefix  ${thrift_file} PATH)
     get_filename_component(thriftName ${thrift_file} NAME_WE)
     #set output
     set(dir ${CMAKE_CURRENT_BINARY_DIR}/${include_prefix}/${thriftName})

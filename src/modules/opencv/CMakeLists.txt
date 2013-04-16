@@ -21,4 +21,10 @@ LINK_LIBRARIES(${ACE_LIBRARIES})
 LINK_LIBRARIES(${YARP_LIBRARIES})
 yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
 
+configure_file(opencv_grabber.xml ${CMAKE_BINARY_DIR}/modules/opencv_grabber.xml COPYONLY)
+if(YARP_TREE_INCLUDE_DIRS)
+install(FILES ${CMAKE_BINARY_DIR}/modules/opencv_grabber.xml
+        DESTINATION share/yarp/modules)
+endif(YARP_TREE_INCLUDE_DIRS)
+
 ENDIF (NOT SKIP_opencv_grabber)

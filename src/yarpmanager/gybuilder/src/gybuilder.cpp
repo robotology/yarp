@@ -97,14 +97,44 @@ int main(int __argc, char *__argv[])
     if(!config.check("ymanagerini_dir"))
         config.put("ymanagerini_dir", inipath.c_str());
     
+    
+    yarp::os::Bottle appPaths;
     if(!config.check("apppath"))
-        config.put("apppath", "./");
+    {
+       appPaths= rf.findPaths("app");
+       std::cout << "app path : " << appPaths.toString()<< std::endl;
+       string appPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+           appPathsStr += (appPaths.get(ind).asString() + ";").c_str() ;
+       config.put("apppath", appPathsStr.c_str());
+    }
+        //config.put("apppath", "./");
 
     if(!config.check("modpath"))
-        config.put("modpath", "./");
-    
+    {
+       string modPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+       {
+           string appPath=appPaths.get(ind).asString().c_str();
+           modPathsStr += (appPath.substr(0, appPath.rfind("app")) + "modules;").c_str();
+       }
+       config.put("modpath", modPathsStr.c_str());
+        
+       // config.put("modpath", "./");
+    }
     if(!config.check("respath"))
-        config.put("respath", "./");
+    {
+       string resPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+       {
+           string appPath=appPaths.get(ind).asString().c_str();
+           resPathsStr += (appPath.substr(0, appPath.rfind("app")) + "resources;").c_str();
+       }
+       config.put("respath", resPathsStr.c_str());
+        
+        
+    }
+       // config.put("respath", "./");
 
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");

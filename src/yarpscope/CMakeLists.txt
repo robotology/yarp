@@ -23,4 +23,10 @@ if(CREATE_YARPSCOPE)
     endif(LINUX)
 
     add_subdirectory(src)
+    
+    configure_file(yarpscope.xml ${CMAKE_BINARY_DIR}/modules/yarpscope.xml COPYONLY)
+    if(YARP_TREE_INCLUDE_DIRS)
+        install(FILES ${CMAKE_BINARY_DIR}/modules/yarpscope.xml
+                DESTINATION share/yarp/modules)
+    endif(YARP_TREE_INCLUDE_DIRS)
 endif(CREATE_YARPSCOPE)

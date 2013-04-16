@@ -51,4 +51,11 @@ if(CREATE_GUIS)
 
     install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
 
+    configure_file(yarpview.xml ${CMAKE_BINARY_DIR}/modules/yarpview.xml COPYONLY)
+    if(YARP_TREE_INCLUDE_DIRS)
+        install(FILES ${CMAKE_BINARY_DIR}/modules/yarpview.xml
+                DESTINATION share/yarp/modules)
+    endif(YARP_TREE_INCLUDE_DIRS)
+
+
 endif(CREATE_GUIS)
