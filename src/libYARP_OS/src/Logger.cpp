@@ -12,9 +12,11 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformThread.h>
+#include <yarp/os/Network.h>
 #include <yarp/conf/system.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 Logger Logger::root("yarp");
 
@@ -53,17 +55,23 @@ void Logger::show(int level, const String& txt) {
     if (verbose<0) {
         level = -10000;
     }
+    if (stream == NULL) {
+        stream = stderr;
+        if (NetworkBase::getEnvironment("YARP_LOGGER_STREAM") == "stdout") {
+            stream = stdout;
+        }
+    }
     if (parent == NULL) {
         if (level>=low) {
             if (inLevel<=LM_DEBUG) {
-                ACE_OS::fprintf(stderr,"%s(%04x): %s\n",
+                ACE_OS::fprintf(stream,"%s(%04x): %s\n",
                                 prefix.c_str(),
                                 (int)(long int)(PLATFORM_THREAD_SELF()),
                                 txt.c_str());
             } else {
-                ACE_OS::fprintf(stderr,"%s: %s\n",prefix.c_str(),txt.c_str());
+                ACE_OS::fprintf(stream,"%s: %s\n",prefix.c_str(),txt.c_str());
             }
-            ACE_OS::fflush(stderr);
+            ACE_OS::fflush(stream);
         }
     } else {
         String more(prefix);

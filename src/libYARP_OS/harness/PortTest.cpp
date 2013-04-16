@@ -43,15 +43,11 @@ public:
 
     virtual bool read(ConnectionReader& connection) {
         Bottle receive;
-        //printf("service provider reading data\n");
         receive.read(connection);
-        //printf("service provider read data\n");
         receive.addInt(5);
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=NULL) {
-            //printf("service provider replying\n");
             receive.write(*writer);
-            //printf("service provider replied\n");
         }
         return true;
     }
@@ -67,17 +63,13 @@ public:
 
     virtual bool write(ConnectionWriter& connection) {
         ct = 0;
-        //printf("service tester writing data\n");
         send.write(connection);
-        //printf("service tester wrote data\n");
         connection.setReplyHandler(*this);
         return true;
     }
 
     virtual bool read(ConnectionReader& connection) {
-        //printf("service tester getting reply\n");
         receive.read(connection);
-        //printf("service tester got reply\n");
         ct++;
         return true;
     }
@@ -161,12 +153,6 @@ public:
     }
 
     virtual void report(const PortInfo& info) {
-        /*
-        printf("GOT REPORT %s (%s,%s,%s)\n", info.message.c_str(),
-               (info.tag==PortInfo::PORTINFO_CONNECTION)?"conn":"misc",
-               (info.incoming?"incoming":"outgoing"),
-               (info.created?"created":"destroyed"));
-        */
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             if (info.incoming == false) {
                 oct++;

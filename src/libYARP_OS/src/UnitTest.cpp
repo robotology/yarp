@@ -38,13 +38,6 @@ public:
 
 UnitTest::UnitTest() {
     parent = &UnitTest::getRoot();
-    /*
-    // turn automation off, so order of test cases can be chosen
-    // by user
-    if (parent!=NULL) {
-    parent->add(*this);
-    }
-    */
     hasProblem = false;
 }
 
@@ -73,7 +66,8 @@ void UnitTest::report(int severity, const String& problem) {
     if (parent!=NULL) {
         parent->report(severity, getName() + ": " + problem);
     } else {
-        ACE_OS::printf("%d | %s\n", severity, problem.c_str());
+        YARP_SPRINTF2(Logger::get(),info,
+                      "%d | %s", severity, problem.c_str());
     }
     count(severity);
 }
@@ -87,15 +81,8 @@ void UnitTest::count(int severity) {
 
 
 void UnitTest::runSubTests(int argc, char *argv[]) {
-    //char buf[256];
-    //sprintf(buf,"size is %d", subTests.size());
-    //report(0,buf);
     for (unsigned int i=0; i<subTests.size(); i++) {
-        //try {
         subTests[i]->run(argc,argv);
-        //} catch (IOException e) {
-        //report(1,String("exception thrown ") + e.toString());
-        //}
     }
 }
 
@@ -107,8 +94,6 @@ int UnitTest::run() {
 
 
 int UnitTest::run(int argc, char *argv[]) {
-    //try {
-    //report(0,String("starting tests for " + getName()));
     bool ran = false;
     if (argc==0) {
         runTests();
@@ -128,7 +113,6 @@ int UnitTest::run(int argc, char *argv[]) {
         }
     }
     runSubTests(argc,argv);
-    //report(0,String("ending tests for " + getName()));
     if (hasProblem) {
         report(0,"A PROBLEM WAS ENCOUNTERED");
     } 
@@ -137,9 +121,6 @@ int UnitTest::run(int argc, char *argv[]) {
             report(0,"no problems reported");
         }
     }
-    //    } catch (IOException e) {
-    //report(1,String("exception thrown ") + e.toString());
-    //}
     return hasProblem;
 }
 
