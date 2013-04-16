@@ -35,7 +35,7 @@ typedef int PID;
 typedef int FDESC;
 typedef void* HANDLE;
 int CLOSE(int h);
-int SIGNAL(int pid,int signum,bool wait);
+int SIGNAL(int pid,int signum);
 void sigchild_handler(int sig);
 #endif
 
@@ -50,14 +50,7 @@ public:
 
     virtual bool Signal(int signum);
 
-    virtual void Clean(){ mPidCmd=0; }
-
-#if !defined(WIN32)
-    virtual bool waitPid()
-    {
-        return waitpid(mPidCmd,0,WNOHANG)==mPidCmd;
-    }
-#endif
+    virtual bool Clean();
 
     virtual bool IsActive();
 
@@ -67,7 +60,9 @@ public:
 protected:
     yarp::os::ConstString mAlias;
     yarp::os::ConstString mOn;
+
     PID mPidCmd;
+
     HANDLE mHandleCmd; // only windows
     bool mHold;        // only linux
 
@@ -128,17 +123,18 @@ public:
 
     virtual ~YarpRunCmdWithStdioInfo(){}
 
-    virtual void Clean();
-
-#if !defined(WIN32)
-    virtual bool waitPid();
-#endif
+    virtual bool Clean();
 
     void TerminateStdio();
 
 protected:
     PID mPidStdin;
     PID mPidStdout;
+
+    bool mKillingCmd;
+    bool mKillingStdio;
+    bool mKillingStdin;
+    bool mKillingStdout;
 
     yarp::os::ConstString mStdio;
     yarp::os::ConstString mStdioUUID;

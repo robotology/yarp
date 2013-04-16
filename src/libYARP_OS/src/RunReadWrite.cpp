@@ -66,24 +66,17 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
 
     CHECKPOINT()
 
-    while (!feof(stdin)) 
+    char txt[2048];
+    
+    while (ACE_OS::fgets(txt,2048,stdin) && !feof(stdin))
     {
-        std::string txt=getStdin();
-
-        if (!feof(stdin)) 
-        {
-            if (txt[0]>=32 || txt[0]=='\n' || txt[0]=='\r' || txt[0]=='\t' || txt[0]=='\0') 
-            {
-                yarp::os::Bottle bot;
-                bot.addString(txt.c_str());
-                //bot.fromString(txt.c_str());
-                mWPort.write(bot);
-            }
-            else
-            {
-                break;
-            }
-        }
+        if (txt[0]<32 && txt[0]!='\n' && txt[0]!='\r' && txt[0]!='\t' && txt[0]!='\0') break; 
+       
+        yarp::os::Bottle bot;
+        bot.addString(txt);
+        CHECKPOINT()
+        mWPort.write(bot);
+        CHECKPOINT()
     }
 
     CHECKPOINT()
@@ -110,33 +103,6 @@ void RunWrite::close()
     fclose(stdin);
 
     CHECK_EXIT()
-
-    /*
-    CHECK_ENTER("RunWrite::close")
-    mWPort.interrupt();
-    CHECKPOINT()
-    mWPort.close();
-    CHECKPOINT()
-    yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
-    CHECK_EXIT()
-    exit(0);
-    */
-}
-
-std::string RunWrite::getStdin() 
-{
-    CHECK_ENTER("RunWrite::getStdin")
-
-    std::string txt="";
-    char buf[2048];
-
-    char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
-    if (result!=NULL) 
-        txt+=buf;
-
-    CHECK_EXIT()
-    
-    return txt;
 }
 
 yarp::os::Port RunWrite::mWPort;
@@ -144,6 +110,7 @@ yarp::os::ConstString RunWrite::mWPortName;
 
 static void wSigintHandler(int sig)
 {
+    //fprintf(stderr,"signal %d to write process %d\n",sig,getpid());
     CHECK_ENTER("wSigintHandler")
     RunWrite::close();
     CHECK_EXIT()
@@ -244,27 +211,13 @@ bool RunRead::read(yarp::os::ConnectionReader& reader)
     return false;
 }
 
-std::string RunRead::getStdin() 
-{
-    CHECK_ENTER("RunRead::getStdin")
-
-    std::string txt="";
-    char buf[2048];
-
-    char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
-    if (result!=NULL) 
-          txt+=buf;
-
-    CHECK_EXIT()
-    return txt;
-}
-
 yarp::os::Semaphore RunRead::mDone(0);
 yarp::os::Port RunRead::mRPort;
 yarp::os::ConstString RunRead::mRPortName;
 
 static void rSigintHandler(int sig)
 {
+    //fprintf(stderr,"signal %d to read process %d\n",sig,getpid());
     CHECK_ENTER("rSigintHandler")
     RunRead::close();
     CHECK_EXIT()
@@ -328,26 +281,17 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
 
     CHECKPOINT()
 
-    while (!feof(stdin)) 
+    char txt[2048];
+    
+    while (ACE_OS::fgets(txt,2048,stdin) && !feof(stdin))
     {
-        std::string txt=getStdin();
-
-        if (!feof(stdin)) 
-        {
-            if (txt[0]>=32 || txt[0]=='\n' || txt[0]=='\r' || txt[0]=='\0' || txt[0]=='\t') 
-            {
-                yarp::os::Bottle bot;
-                //bot.fromString(txt.c_str());
-                bot.addString(txt.c_str());
-                CHECKPOINT()
-                mWPort.write(bot);
-                CHECKPOINT()
-            }
-            else
-            {
-                break;
-            }
-        }
+        if (txt[0]<32 && txt[0]!='\n' && txt[0]!='\r' && txt[0]!='\t' && txt[0]!='\0') break; 
+       
+        yarp::os::Bottle bot;
+        bot.addString(txt);
+        CHECKPOINT()
+        mWPort.write(bot);
+        CHECKPOINT()
     }
 
     CHECKPOINT()
@@ -470,22 +414,6 @@ bool RunReadWrite::read(yarp::os::ConnectionReader& reader)
     return false;
 }
 
-std::string RunReadWrite::getStdin() 
-{
-    CHECK_ENTER("RunReadWrite::getStdin")
-
-    std::string txt="";
-    char buf[2048];
-
-    char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
-    if (result!=NULL) 
-        txt+=buf;
-
-    CHECK_EXIT()
-
-    return txt;
-}
-
 bool RunReadWrite::mClosed=false;
 yarp::os::Semaphore RunReadWrite::mDone(1);
 yarp::os::Port RunReadWrite::mRPort;
@@ -496,6 +424,7 @@ yarp::os::ConstString RunReadWrite::mUUID;
 
 static void rwSigintHandler(int sig)
 {
+    //fprintf(stderr,"signal %d to readwrite process %d\n",sig,getpid());
     CHECK_ENTER("rwSigintHandler")
     RunReadWrite::close();
     CHECK_EXIT()
@@ -504,6 +433,7 @@ static void rwSigintHandler(int sig)
 #if !defined(WIN32)
 static void sighupHandler(int sig)
 {
+    //fprintf(stderr,"signal %d to readwrite process %d\n",sig,getpid());
     CHECK_ENTER("sighupHandler")
     RunReadWrite::close();
     CHECK_EXIT()

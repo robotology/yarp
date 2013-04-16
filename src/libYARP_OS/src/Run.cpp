@@ -365,7 +365,7 @@ int yarp::os::Run::Server()
 
         CHECKPOINT()
         
-        fprintf(stderr,"%s\n",msg.toString().c_str());
+        printf("%s\n",msg.toString().c_str());
         fflush(stdout);
 
         if (!pServerPort)
@@ -1828,7 +1828,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
             
             CHECKPOINT()
 
-            SIGNAL(pid_stdout,SIGTERM,true);
+            SIGNAL(pid_stdout,SIGTERM);
             fprintf(stderr,"TERMINATING stdout (%d)\n",pid_stdout);
             fflush(stderr);
 
@@ -1937,9 +1937,9 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 
                 CHECKPOINT()
 
-                SIGNAL(pid_stdout,SIGTERM,true);
+                SIGNAL(pid_stdout,SIGTERM);
                 fprintf(stderr,"TERMINATING stdout (%d)\n",pid_stdout);
-                SIGNAL(pid_stdin,SIGTERM,true);
+                SIGNAL(pid_stdin,SIGTERM);
                 fprintf(stderr,"TERMINATING stdin (%d)\n",pid_stdin);
                 fflush(stderr);
                 
