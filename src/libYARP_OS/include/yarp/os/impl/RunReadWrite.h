@@ -26,8 +26,6 @@ public:
     static void close();
 
 protected:
-    std::string getStdin();
-
     static yarp::os::Port mWPort;
     static yarp::os::ConstString mWPortName;
 };
@@ -45,8 +43,6 @@ public:
     virtual bool read(yarp::os::ConnectionReader& reader);
 
 protected:
-    std::string getStdin();
-
     static yarp::os::Semaphore mDone;
     static yarp::os::Port mRPort;
     static yarp::os::ConstString mRPortName;
@@ -65,8 +61,6 @@ public:
     virtual bool read(yarp::os::ConnectionReader& reader);
 
 protected:
-    std::string getStdin();
-
     static bool mClosed;
     static yarp::os::Semaphore mDone;
     static yarp::os::Port mRPort;

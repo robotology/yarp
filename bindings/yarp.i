@@ -61,6 +61,7 @@
 // Deal with abstract base class problems, where SWIG guesses
 // incorrectly at whether a class can be instantiated or not
 %feature("notabstract") Port;
+%feature("notabstract") Value;
 %feature("notabstract") BufferedPort;
 %feature("notabstract") Bottle;
 %feature("notabstract") Property;
@@ -446,6 +447,12 @@ typedef yarp::os::TypedReaderCallback<ImageMono> TypedReaderCallbackImageMono;
 typedef yarp::os::BufferedPort<ImageMono> BufferedPortImageMono;
 %}
 
+%{
+typedef yarp::os::TypedReader<Sound> TypedReaderSound;
+typedef yarp::os::TypedReaderCallback<Sound> TypedReaderCallbackSound;
+typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
+%}
+
 %feature("notabstract") ImageRgb;
 %feature("notabstract") yarp::os::BufferedPort<ImageRgb>;
 %feature("notabstract") BufferedPortImageRgb;
@@ -457,6 +464,10 @@ typedef yarp::os::BufferedPort<ImageMono> BufferedPortImageMono;
 %feature("notabstract") ImageMono;
 %feature("notabstract") yarp::os::BufferedPort<ImageMono>;
 %feature("notabstract") BufferedPortImageMono;
+
+%feature("notabstract") Sound;
+%feature("notabstract") yarp::os::BufferedPort<Sound>;
+%feature("notabstract") BufferedPortSound;
 
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
 %template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
@@ -472,6 +483,10 @@ typedef yarp::os::BufferedPort<ImageMono> BufferedPortImageMono;
 %template(TypedReaderImageMono) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
 %template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
 %template(BufferedPortImageMono) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
+
+%template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
+%template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
+%template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {

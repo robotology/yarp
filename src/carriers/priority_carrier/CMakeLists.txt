@@ -11,7 +11,16 @@ if (NOT SKIP_priority_carrier)
 
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
+
   yarp_add_plugin(yarp_priority PriorityCarrier.h PriorityCarrier.cpp)
-  target_link_libraries(yarp_priority YARP_OS YARP_sig)
+
+  if(CREATE_LIB_MATH)
+    ADD_DEFINITIONS( -DWITH_YARPMATH )
+    target_link_libraries(yarp_priority YARP_OS YARP_sig YARP_math)
+  else(CREATE_LIB_MATH)
+     target_link_libraries(yarp_priority YARP_OS YARP_sig)
+  endif(CREATE_LIB_MATH)
+
   target_link_libraries(yarp_priority ${ACE_LIBRARIES})
+
 endif ()
