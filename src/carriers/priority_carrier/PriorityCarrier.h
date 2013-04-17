@@ -49,11 +49,15 @@ public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
                                     PriorityCarrier *source);
-private:
+    bool recalculate(double t); 
+
+public:
     yarp::sig::Matrix InvA;         // the inverse of matrix (I-A) in the equation y(t) = [(I-A)^(-1) * B] .*x(t) 
     yarp::sig::Matrix B;            // matrix of biases B in the equation y(t) = [(I-A)^(-1) * B] .*x(t)
     yarp::sig::Matrix Y;            // matrix y(t) 
-    yarp::sig::Matrix X;            // matrix x(t) 
+    yarp::sig::Matrix X;            // matrix x(t)
+    //yarp::os::Semaphore semDebug;   // this semaphor is used only when debug mode is active
+                                    // to control the access to matrices from debug thread
 };
 
 
@@ -102,6 +106,7 @@ public:
         isVirtual = false;
         isActive = false;
         baias = 0;
+        yi = 0;     // used in debug
     }
 
     virtual ~PriorityCarrier() {
@@ -147,103 +152,9 @@ public:
         }
     }
 
-    //
-    // +P|   ---___
-    //   |   |     -__
-    //   |   |        -_
-    //  0|------------------>  (Active state)
-    //       Ta        Tc
-    //
-    //       Ta        Tr
-    //  0|-------------_---->  (Resting state && P<0)
-    //   |   |      __-
-    //   |   |  ___-
-    // -P|   ---
-    //
-    //
-    // P(t) = Pi * (1-exp((t-Tc-Ta)/Tc*5) + exp(-5))
-    // t:time, Pi: temporal Priority level
-    // Tc: reset time, Ta: arrival time
-    //
-    double getActualStimulation(double t) {
+    double getActualStimulation(double t);
 
-        // we do not consider ports which has not seen any message
-        // from them yet.
-        //if(timeArrival == 0)
-        //    return 0;
-
-        double dt = t - timeArrival;
-        // Temporal priority is inverted if this is a neuron model and the temporal
-        // stimulation has already reached to STIMUL_THRESHOLD and waited for Tc.
-        if((timeResting > 0)
-           && (dt >= fabs(timeConstant))
-           && (temporalStimulation >= STIMUL_THRESHOLD))
-           temporalStimulation = -temporalStimulation;
-
-        double actualStimulation;
-        if(!isResting(temporalStimulation)) // behavior is in stimulation state
-        {
-            // After a gap bigger than Tc, the
-            // priority is set to zero to avoid redundant calculation.
-            if(dt > fabs(timeConstant))
-                actualStimulation = 0;
-            else
-                actualStimulation = temporalStimulation *
-                    (1.0 - exp((dt-timeConstant)/timeConstant*5.0) + exp(-5.0));
-        }
-        else // behavior is in resting state
-        {
-            // it is in waiting state for Tc
-            if(temporalStimulation > 0)
-                actualStimulation = temporalStimulation;
-            else
-            {
-                dt -= fabs(timeConstant);
-                // After a gap bigger than Tr, the
-                // priority is set to zero to avoid redundant calculation.
-                if(dt > fabs(timeResting))
-                    actualStimulation = 0;
-                else
-                    actualStimulation = temporalStimulation *
-                        (1.0 - exp((dt-timeResting)/timeResting*5.0) + exp(-5.0));
-            }
-        }
-
-        if(actualStimulation <= 0)
-            isActive = false;
-
-        return actualStimulation;
-    }
-
-    double getActualInput(double t) {       //I(t)
-        // calculating E(t) = Sum(e.I(t)) + b
-        if(!isActive)
-            return 0.0;
-
-        double E = 0;
-        for (PeerRecord::iterator it = group->peerSet.begin(); it!=group->peerSet.end(); it++)
-        {
-            PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
-            if(peer != this)
-            {
-                for(int i=0; i<peer->excitation.size(); i++)
-                {
-                    Value v = peer->excitation.get(i);
-                    if(v.isList() && (v.asList()->size()>=2))
-                    {
-                        Bottle* b = v.asList();
-                        // an exitatory to this priority carrier
-                        if(sourceName == b->get(0).asString().c_str())
-                            E += peer->getActualInput(t) * (b->get(1).asDouble()/10.0);
-                    }
-                }
-
-            }
-        }
-        E += baias;
-        double I = E * getActualStimulation(t);
-        return ((I<0) ? 0 : I);     //I'(t)                
-    }
+    double getActualInput(double t);
 
     virtual bool configure(yarp::os::impl::Protocol& proto);
 
@@ -282,6 +193,8 @@ public:
     double baias;                   // baias value for excitation
     Bottle excitation;              // a list of exitatory signals as (name, value)
     String sourceName;
+
+    double yi;                      // this is set in the recalculate() for the debug purpose
 
 private:
     String portName;

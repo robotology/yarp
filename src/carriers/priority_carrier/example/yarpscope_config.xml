@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<portscope rows="3" columns="1">
+    <plot gridx="0"
+          gridy="0"
+          hspan="1"
+          vspan="1"
+          title="/Ball/grabber"
+          size="300"
+          minval="-2"
+          maxval="2"
+          bgcolor="White">
+        <graph remote="/ViewGrabbers/ViewGrabbers/yarpview/img:i/Ball/grabber:debug"
+               index="1"
+               color="Green"
+               title="Graph 0"
+               type="lines"
+               size="1" />
+        <graph remote="/ViewGrabbers/ViewGrabbers/yarpview/img:i/Ball/grabber:debug"
+               index="2"
+               color="Red"
+               title="Graph 0"
+               type="lines"
+               size="2" />
+    </plot>
+    <plot gridx="0"
+          gridy="1"
+          hspan="1"
+          vspan="1"
+          title="/Line/grabber"
+          size="300"
+          minval="-2"
+          maxval="2"
+          bgcolor="White">
+        <graph remote="/ViewGrabbers/ViewGrabbers/yarpview/img:i/Line/grabber:debug"
+               index="1"
+               color="Green"
+               title="Graph 0"
+               type="lines"
+               size="1" />
+        <graph remote="/ViewGrabbers/ViewGrabbers/yarpview/img:i/Line/grabber:debug"
+               index="2"
+               color="Red"
+               title="Graph 0"
+               type="lines"
+               size="2" />
+    </plot>
+
+    <plot gridx="0"
+          gridy="2"
+          hspan="1"
+          vspan="1"
+          title="/Selector/grabber"
+          size="300"
+          minval="-2"
+          maxval="2"
+          bgcolor="White">
+        <graph remote="/ViewGrabbers/ViewGrabbers/yarpview/img:i/Selector/grabber:debug"
+               index="1"
+               color="Green"
+               title="Graph 0"
+               type="lines"
+               size="1" />
+        <graph remote="/ViewGrabbers/ViewGrabbers/yarpview/img:i/Selector/grabber:debug"
+               index="2"
+               color="Red"
+               title="Graph 0"
+               type="lines"
+               size="2" />
+    </plot>
+
+</portscope>
+
