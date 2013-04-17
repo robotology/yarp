@@ -112,11 +112,13 @@ int main(int __argc, char *__argv[])
 
     if(!config.check("modpath"))
     {
+       appPaths=rf.findPaths("modules");
+       std::cout << "mod path : " << appPaths.toString()<< std::endl;
        string modPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind)
        {
-           string appPath=appPaths.get(ind).asString().c_str();
-           modPathsStr += (appPath.substr(0, appPath.rfind("app")) + "modules;").c_str();
+          // string appPath=appPaths.get(ind).asString().c_str();
+           modPathsStr += (appPaths.get(ind).asString() + ";").c_str();
        }
        config.put("modpath", modPathsStr.c_str());
         
@@ -124,11 +126,12 @@ int main(int __argc, char *__argv[])
     }
     if(!config.check("respath"))
     {
+       appPaths=rf.findPaths("resources");
        string resPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind)
        {
-           string appPath=appPaths.get(ind).asString().c_str();
-           resPathsStr += (appPath.substr(0, appPath.rfind("app")) + "resources;").c_str();
+           //tring appPath=appPaths.get(ind).asString().c_str();
+           resPathsStr += (appPaths.get(ind).asString() + ";").c_str();
        }
        config.put("respath", resPathsStr.c_str());
         
