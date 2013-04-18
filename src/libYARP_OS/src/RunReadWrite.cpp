@@ -68,8 +68,12 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
 
     char txt[2048];
     
-    while (ACE_OS::fgets(txt,2048,stdin) && !feof(stdin))
+    while (ACE_OS::fgets(txt,2048,stdin))
     {
+        if (ferror(stdin)) break;
+
+        if (feof(stdin)) break;
+
         if (txt[0]<32 && txt[0]!='\n' && txt[0]!='\r' && txt[0]!='\t' && txt[0]!='\0') break; 
        
         yarp::os::Bottle bot;
@@ -100,9 +104,18 @@ void RunWrite::close()
 {
     CHECK_ENTER("RunWrite::close")
 
-    fclose(stdin);
-
+#if defined(WIN32)
+    mWPort.interrupt();
+    CHECKPOINT()
+    mWPort.close();
+    CHECKPOINT()
+    yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
     CHECK_EXIT()
+    exit(0);
+#else
+    fclose(stdin);
+    CHECK_EXIT()
+#endif
 }
 
 yarp::os::Port RunWrite::mWPort;
@@ -110,7 +123,6 @@ yarp::os::ConstString RunWrite::mWPortName;
 
 static void wSigintHandler(int sig)
 {
-    //fprintf(stderr,"signal %d to write process %d\n",sig,getpid());
     CHECK_ENTER("wSigintHandler")
     RunWrite::close();
     CHECK_EXIT()
@@ -217,7 +229,6 @@ yarp::os::ConstString RunRead::mRPortName;
 
 static void rSigintHandler(int sig)
 {
-    //fprintf(stderr,"signal %d to read process %d\n",sig,getpid());
     CHECK_ENTER("rSigintHandler")
     RunRead::close();
     CHECK_EXIT()
@@ -283,8 +294,12 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
 
     char txt[2048];
     
-    while (ACE_OS::fgets(txt,2048,stdin) && !feof(stdin))
+    while (ACE_OS::fgets(txt,2048,stdin))
     {
+        if (ferror(stdin)) break;
+
+        if (feof(stdin)) break;
+
         if (txt[0]<32 && txt[0]!='\n' && txt[0]!='\r' && txt[0]!='\t' && txt[0]!='\0') break; 
        
         yarp::os::Bottle bot;
@@ -424,7 +439,6 @@ yarp::os::ConstString RunReadWrite::mUUID;
 
 static void rwSigintHandler(int sig)
 {
-    //fprintf(stderr,"signal %d to readwrite process %d\n",sig,getpid());
     CHECK_ENTER("rwSigintHandler")
     RunReadWrite::close();
     CHECK_EXIT()
@@ -433,7 +447,6 @@ static void rwSigintHandler(int sig)
 #if !defined(WIN32)
 static void sighupHandler(int sig)
 {
-    //fprintf(stderr,"signal %d to readwrite process %d\n",sig,getpid());
     CHECK_ENTER("sighupHandler")
     RunReadWrite::close();
     CHECK_EXIT()

@@ -10,6 +10,7 @@
 #ifndef _YARP2_LOGGER_
 #define _YARP2_LOGGER_
 
+#include <stdio.h>
 #include <yarp/os/impl/String.h>
 
 #ifdef YARP_HAS_ACE
@@ -56,6 +57,7 @@ public:
         this->parent = parent;
         verbose = 0;
         low = DEFAULT_WARN;
+        stream = NULL;
 #ifdef YARP_HAS_ACE
         if (this==&root) {
             ACE_Log_Msg *acer = ACE_Log_Msg::instance();
@@ -148,6 +150,7 @@ private:
     int verbose;
     int low;
     long int pid;
+    FILE *stream;
 };
 
 // compromise - use macros so that debugging can evaporate in optimized code.

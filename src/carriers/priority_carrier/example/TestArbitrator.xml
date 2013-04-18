@@ -1,0 +1,70 @@
+<application>
+    <name>TestArbitrator</name>
+    <version>1.0</version>
+    <authors>
+        <author email=""></author>
+    </authors>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode ball</parameters>
+        <node>localhost</node>
+        <prefix>/Ball</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 135) (y 105.9))</geometry>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode line</parameters>
+        <node>localhost</node>
+        <prefix>/Line</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 135) (y 255.9))</geometry>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--width 1 --height 1 --freq 0.3 --mode line</parameters>
+        <node>localhost</node>
+        <prefix>/Selector</prefix>
+        <deployer>yarpdev</deployer>
+        <geometry>(Pos (x 135) (y 420.9))</geometry>
+    </module>
+    <module>
+        <name>yarpscope</name>
+        <parameters>--xml yarpscope_config.xml</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+        <geometry>(Pos (x 135) (y 30.9))</geometry>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/ViewGrabbers</prefix>
+        <geometry>(Pos (x 631) (y 189.9))</geometry>
+    </module>
+    <connection id="C1">
+        <from>/Ball/grabber</from>
+        <to>/ViewGrabbers/yarpview/img:i</to>
+        <protocol>udp+recv.priority+st.10+tc.1+debug+bs.0</protocol>
+        <geometry>(Pos ((x 389.5) (y 162.5)) ((x 303) (y 124)) ((x 370) (y 180)) ((x 569) (y 180))  )</geometry>
+    </connection>
+    <connection id="C2">
+        <from>/Line/grabber</from>
+        <to>/ViewGrabbers/yarpview/img:i</to>
+        <protocol>udp+recv.priority+st.10+tc.1+debug+bs.10</protocol>
+        <geometry>(Pos ((x 389.5) (y 190.5)) ((x 303) (y 274)) ((x 370) (y 207)) ((x 569) (y 207))  )</geometry>
+    </connection>
+    <connection id="C3">
+        <from>/Selector/grabber</from>
+        <to>/ViewGrabbers/yarpview/img:i</to>
+        <protocol>udp+recv.priority+st.10+tc.2+virtual+debug+(ex (/Line/grabber -10) (/Ball/grabber 10))</protocol>
+        <geometry>(Pos ((x 343.5) (y 419.5)) ((x 303) (y 439)) ((x 524) (y 439)) ((x 524) (y 234)) ((x 569) (y 234))  )</geometry>
+    </connection>
+    <arbitrator>
+        <port>/ViewGrabbers/yarpview/img:i</port>
+        <rule connection="C1">C3</rule>
+        <rule connection="C2">~C3</rule>
+        <rule connection="C3"></rule>
+        <geometry>(Pos ((x 569) (y 163.5))  )</geometry>
+    </arbitrator>
+</application>
