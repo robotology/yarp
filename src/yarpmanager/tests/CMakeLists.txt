@@ -13,13 +13,21 @@ if(YARP_TREE_INCLUDE_DIRS)
             DESTINATION share/yarp/templates)
 endif(YARP_TREE_INCLUDE_DIRS)
 
-set(app_examples eyesviewer-cluster.xml eyesviewer-localhost.xml fakeye-localhost.xml)
+#application template (cluster must be configured)
+configure_file(xml/applications/eyesviewer-cluster.xml  ${CMAKE_BINARY_DIR}/templates/app/eyesviewer-cluster.xml.template COPYONLY)
+if(YARP_TREE_INCLUDE_DIRS)
+    install(FILES ${CMAKE_BINARY_DIR}/templates/app/eyesviewer-cluster.xml.template 
+            DESTINATION share/yarp/templates/app)
+endif(YARP_TREE_INCLUDE_DIRS)
+
+
+set(app_examples eyesviewer-localhost.xml fakeye-localhost.xml)
 
 foreach(appname ${app_examples})
-    configure_file(xml/applications/${appname} ${CMAKE_BINARY_DIR}/templates/app/${appname}.template COPYONLY)
+    configure_file(xml/applications/${appname} ${CMAKE_BINARY_DIR}/app/${appname} COPYONLY)
 if(YARP_TREE_INCLUDE_DIRS)
-    install(FILES ${CMAKE_BINARY_DIR}/templates/app/${appname}.template 
-            DESTINATION share/yarp/templates/app)
+    install(FILES ${CMAKE_BINARY_DIR}/app/${appname}
+            DESTINATION share/yarp/app)
 endif(YARP_TREE_INCLUDE_DIRS)
 
 endforeach()
