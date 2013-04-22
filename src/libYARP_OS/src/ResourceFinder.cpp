@@ -127,6 +127,10 @@ public:
         return true;
     }
 
+    bool isVerbose() const {
+        return verbose;
+    }
+
     static ConstString extractPath(const char *fname) {
         String s = fname;
         YARP_STRING_INDEX n = s.rfind('/');
@@ -299,10 +303,10 @@ public:
             skip_policy = true;
         }
 
+        bool configured_normally = true;
         if (!skip_policy) {
             config.fromString(p.toString().c_str(),false);
-            bool result = configureFromPolicy(config,name.c_str());
-            if (!result) return result;
+            configured_normally = configureFromPolicy(config,name.c_str());
         }
 
         if (p.check("context")) {
@@ -332,7 +336,7 @@ public:
             config.fromConfigFile(from,false);
             config.fromCommand(argc,argv,skip,false);
         }
-        return true;
+        return configured_normally;
     }
 
     bool setDefault(Property& config, const char *key, const char *val) {
@@ -429,7 +433,7 @@ public:
 
         if (verbose) {
             ConstString base = doc.toString();
-            fprintf(RTARGET,"||| checking %s (%s%s%s)\n", s.c_str(), 
+            fprintf(RTARGET,"||| checking [%s] (%s%s%s)\n", s.c_str(), 
                     base.c_str(),
                     (base.length()==0) ? "" : " ",
                     doc2);
@@ -540,7 +544,7 @@ public:
         }
 
         if (configFilePath!="") {
-            ConstString str = check(configFilePath.c_str(),"","",name,isDir,doc,"'from' path");
+            ConstString str = check(configFilePath.c_str(),"","",name,isDir,doc,"defaultConfigFile path");
             if (str!="") {
                 output.addString(str);
                 if (justTop) return;
@@ -816,15 +820,24 @@ ResourceFinder::~ResourceFinder() {
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
                                bool skipFirstArgument) {
     isConfiguredFlag = true;
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| configuring\n");
+    }
     return HELPER(implementation).configure(config,policyName,argc,argv,
                                             skipFirstArgument);
 }
 
 bool ResourceFinder::addContext(const char *appName) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| adding context [%s]\n", appName);
+    }
     return HELPER(implementation).addAppName(appName);
 }
 
 bool ResourceFinder::clearContext() {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| clearing context\n");
+    }
     return HELPER(implementation).clearAppNames();
 }
 
@@ -834,33 +847,54 @@ bool ResourceFinder::setDefault(const char *key, const char *val) {
 
 
 yarp::os::ConstString ResourceFinder::findFile(const char *name) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding file [%s]\n", name);
+    }
     return HELPER(implementation).findFile(config,name,NULL);
 }
 
 yarp::os::ConstString ResourceFinder::findFile(const char *name,
                                                const ResourceFinderOptions& options) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding file [%s]\n", name);
+    }
     return HELPER(implementation).findFile(config,name,&options);
 }
 
 yarp::os::ConstString ResourceFinder::findPath(const char *name) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding path [%s]\n", name);
+    }
     return HELPER(implementation).findPath(config,name,NULL);
 }
 
 yarp::os::ConstString ResourceFinder::findPath(const char *name,
                                                const ResourceFinderOptions& options) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding path [%s]\n", name);
+    }
     return HELPER(implementation).findPath(config,name,&options);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const char *name) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding paths [%s]\n", name);
+    }
     return HELPER(implementation).findPaths(config,name,NULL);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const char *name,
                                            const ResourceFinderOptions& options) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding paths [%s]\n", name);
+    }
     return HELPER(implementation).findPaths(config,name,&options);
 }
 
 yarp::os::ConstString ResourceFinder::findPath() {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding path\n");
+    }
     return HELPER(implementation).findPath(config);
 }
 

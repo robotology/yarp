@@ -384,6 +384,15 @@ public:
         yarp_data_dir0.addString("yarp");
         mkdir(yarp_data_dir0);
 
+        Bottle yarp_context_dir;
+        yarp_context_dir.addString(base);
+        yarp_context_dir.addString("usr");
+        yarp_context_dir.addString("share");
+        yarp_context_dir.addString("yarp");
+        yarp_context_dir.addString("app");
+        yarp_context_dir.addString("my_app");
+        mkdir(yarp_context_dir);
+
         Bottle yarp_data_dir1;
         yarp_data_dir1.addString(base);
         yarp_data_dir1.addString("usr");
@@ -476,6 +485,12 @@ public:
         fprintf(fout,"x = 3\n");
         fclose(fout);
         fout = NULL;
+
+        fout = fopen((pathify(yarp_context_dir)+slash+"my_app.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"magic_number = 1000\n");
+        fclose(fout);
+        fout = NULL;
     }
 
     void breakDownTestArea() {
@@ -507,6 +522,32 @@ public:
         breakDownTestArea();
     }
 
+    void testContextVer2() {
+        report(0,"test context version 2");
+        setUpTestArea();
+
+        {
+            ResourceFinder rf;
+            rf.setDefaultContext("my_app");
+            Property p;
+            bool ok = rf.readConfig(p,"my_app.ini",
+                                    ResourceFinderOptions::findFirstMatch());
+            checkTrue(ok,"read a my_app.ini");
+            checkEqual(p.find("magic_number").asInt(),1000,"right version found");
+        }
+
+        {
+            ResourceFinder rf;
+            rf.setVerbose(true);
+            rf.setDefaultContext("my_app");
+            rf.setDefaultConfigFile("my_app.ini");
+            rf.configure(NULL,0,NULL);
+            checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+        }
+
+        breakDownTestArea();
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
@@ -517,6 +558,7 @@ public:
         testGetDataDirs();
         testGetConfigDirs();
         testReadConfig();
+        testContextVer2();
     }
 };
 
