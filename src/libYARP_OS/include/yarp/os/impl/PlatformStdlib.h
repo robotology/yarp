@@ -51,7 +51,7 @@
 #define YARP_readdir ACE_OS::readdir
 #define YARP_closedir ACE_OS::closedir
 #define YARP_scandir ACE_OS::scandir
-#define YARP_alphasort ACE_OS::alphasort
+#define YARP_alphasort (ACE_SCANDIR_COMPARATOR)ACE_OS::alphasort
 #endif
 
 #endif
