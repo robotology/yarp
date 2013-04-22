@@ -13,6 +13,7 @@
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
