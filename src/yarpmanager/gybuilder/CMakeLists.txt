@@ -38,6 +38,8 @@ INCLUDE_DIRECTORIES(${GooCanvasMM_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(include)
 INCLUDE_DIRECTORIES(../libymanager/include)
 
+link_directories(${GooCanvas_LIBRARY_DIRS})
+
 # GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES
 
 ## FIXME 2.4 Move the check in conf/YarpSystemCheck.cmake later
