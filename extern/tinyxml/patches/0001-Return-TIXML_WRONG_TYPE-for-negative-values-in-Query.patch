@@ -16,7 +16,7 @@ index 9c161df..87284c2 100755
  
  	int ival = 0;
  	int result = node->QueryIntValue( &ival );
-+	if ( val < 0 )
++	if ( ival < 0 )
 +		return TIXML_WRONG_TYPE;
  	*value = (unsigned)ival;
  	return result;
