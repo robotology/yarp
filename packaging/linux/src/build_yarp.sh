@@ -81,7 +81,7 @@ run_in_chroot build_chroot "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev l
 if [ "k$TESTING" = "kTRUE" ]; then
 	YARP_VERSION=$YARP_REVISION
 	echo "yarp test revision $YARP_VERSION"
-	run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co -r $YARP_REVISION http://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp-$YARP_VERSION" || exit 1
+	run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co -r $YARP_REVISION https://github.com/robotology/yarp/trunk yarp-$YARP_VERSION" || exit 1
 	else
 	echo "yarp tag $YARP_VERSION"
 fi
@@ -89,8 +89,8 @@ fi
 # Fetch yarp from SVN
 if [ ! -e build_chroot/tmp/yarp-$YARP_VERSION.done ]; then 
 	echo "fetching yarp from SVN"
-	# run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co http://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2" || exit 1
-	run_in_chroot build_chroot "cd /tmp; test -e yarp-$YARP_VERSION  || svn co http://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-$YARP_VERSION yarp-$YARP_VERSION" || exit 1
+	# run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co https://github.com/robotology/yarp/trunk/yarp2 yarp2" || exit 1
+	run_in_chroot build_chroot "cd /tmp; test -e yarp-$YARP_VERSION  || svn co https://github.com/robotology/yarp/tags/v${YARP_VERSION} yarp-$YARP_VERSION" || exit 1
 	run_in_chroot build_chroot "touch /tmp/yarp-$YARP_VERSION.done"
 else
 	echo "yarp already got!!"

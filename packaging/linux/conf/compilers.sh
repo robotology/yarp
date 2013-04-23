@@ -1,5 +1,6 @@
 
-PLATFORMS="etch lenny squeeze lucid maverick natty oneiric precise"
+#PLATFORMS="etch lenny squeeze wheezy lucid natty oneiric precise quantal "
+PLATFORMS="quantal"
 
 HARDWARE="i386 amd64"
 
@@ -8,11 +9,9 @@ HARDWARE="i386 amd64"
 SKIP_etch_i386=1
 SKIP_etch_amd64=1
 
-#etch_MIRROR="http://archive.debian.org/debian/"
-
 etch_MIRROR="http://archive.debian.org/debian/"
 lenny_MIRROR="http://archive.debian.org/debian/"
-squeeze_MIRROR="ftp://geo.humanoids.iit.it/debian"
+squeeze_MIRROR="http://mirror3.mirror.garr.it/mirrors/debian/"
 
 TESTING=
 YARP_REVISION=9025
