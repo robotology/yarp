@@ -87,26 +87,24 @@ source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 
 # Go ahead and download YARP
 echo "BUNDLE_YARP_VERSION: $BUNDLE_YARP_VERSION"
-if [ "$BUNDLE_YARP_VERSION" ]; then 
-	fname=yarp-$BUNDLE_YARP_VERSION
-else
-	fname=yarp
-fi
-	
-if [ ! -e $fname ]; then
-	if [ "k$BUNDLE_YARP_VERSION" = "ktrunk" ]; then
-			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 $fname || {
-			echo "Cannot fetch YARP"
-			exit 1
-		}
-	else
-		if [ "k$BUNDLE_YARP_REVISION" = "k" ]; then
-				svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$fname $fname || {
+fname="yarp"
+
+if [ ! -e "$fname" ]; then
+	if [ "$BUNDLE_YARP_VERSION" == "trunk" ]; then
+			svn co https://github.com/robotology/yarp/trunk $fname || {
 				echo "Cannot fetch YARP"
 				exit 1
+		}
+	else
+		if [ "$BUNDLE_YARP_REVISION" == "" ]; then
+				fname="${fname}-${BUNDLE_YARP_VERSION}"
+				svn co https://github.com/robotology/yarp/tags/v${BUNDLE_YARP_VERSION} $fname || {
+					echo "Cannot fetch YARP"
+					exit 1
 			}
 		else
-			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 -r $BUNDLE_YARP_REVISION $fname || {
+			FNAME="${fname}-r${BUNDLE_YARP_REVISION}"
+			svn co https://github.com/robotology/yarp/trunk -r $BUNDLE_YARP_REVISION $fname || {
 				echo "Cannot fetch YARP"
 				exit 1
 			}
@@ -115,12 +113,12 @@ if [ ! -e $fname ]; then
 fi
 
 # Make and enter build directory
-fname2=$fname-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
+fname2=${fname}-${OPT_COMPILER}-${OPT_VARIANT}-${OPT_BUILD}
 mkdir -p $fname2
 cd $fname2 || exit 1
 
 YARP_DIR=`cygpath --mixed "$PWD"`
-YARP_ROOT=`cygpath --mixed "$PWD/../$fname"`
+YARP_ROOT=`cygpath --mixed "$PWD/../${fname}"`
 
 echo "Using ACE from $ACE_ROOT"
 echo "Using GSL from $GSL_DIR"
