@@ -18,9 +18,13 @@ endforeach(conf)
 foreach(conf YarpPlugin.cmake
              YarpIDL.cmake
              YarpDevice.cmake
+             MacroExtractVersion.cmake
+             MacroStandardFindModule.cmake
              FindACE.cmake
              FindAtlas.cmake
              FindFFMPEG.cmake
+             FindGooCanvas.cmake
+             FindGooCanvasMM.cmake
              FindGSL.cmake
              FindGthread.cmake
              FindGtkDatabox.cmake
