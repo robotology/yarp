@@ -13,8 +13,9 @@
 #include <string>
 #include <fstream>
 
+#include <tinyxml.h>
+
 #include "xmlapploader.h"
-#include "tinyxml.h"
 #include "utility.h"
 #include "ymm-dir.h"
 

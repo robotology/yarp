@@ -13,7 +13,8 @@
 #include <string>
 #include <fstream>
 
-#include "tinyxml.h"
+#include <tinyxml.h>
+
 #include "utility.h"
 #include "ymm-dir.h"
 #include "xmlresloader.h"
