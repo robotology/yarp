@@ -65,8 +65,11 @@ BOOL CALLBACK LocalTerminateAppEnum(HWND hwnd, LPARAM lParam)
     }
     return TRUE ;
 }
-
+#if defined(_WIN64) 
+volatile LONGLONG uniquePipeNumber = 0;
+#else
 volatile LONG uniquePipeNumber = 0;
+#endif
 
 /*
 *  TODO: check deeply for asyn PIPE 
