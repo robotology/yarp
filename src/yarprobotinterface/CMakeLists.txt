@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6.4)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-
+if ( NOT ICUB_ICUBINTERFACE_EXPERIMENTAL ) 
 #### Find YARP, require that YARP version is at least YARP_REQ_VERSION
 set(YARP_REQ_VERSION_MAJOR "2")
 set(YARP_REQ_VERSION_MINOR "3")
@@ -20,7 +20,18 @@ else()
 endif()
 
 find_package(ICUB REQUIRED)
-find_package(TinyXML 2.6 REQUIRED)
+
+endif()
+
+find_package(TinyXML 2.6)
+
+if(NOT TinyXML_FOUND )
+        message(INFO " compiling my own tinyxml")            
+	add_subdirectory(extern)
+else()
+        message(INFO " found system tinyxml")
+endif()
+
 
 include_directories(${YARP_INCLUDE_DIRS})
 include_directories(${iCubDev_INCLUDE_DIRS})
