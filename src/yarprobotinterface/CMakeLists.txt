@@ -23,13 +23,10 @@ find_package(ICUB REQUIRED)
 
 endif()
 
-find_package(TinyXML 2.6)
+find_package(TinyXML 2.6 QUIET)
 
 if(NOT TinyXML_FOUND )
-        message(INFO " compiling my own tinyxml")            
 	add_subdirectory(extern)
-else()
-        message(INFO " found system tinyxml")
 endif()
 
 
