@@ -8,7 +8,7 @@
 #ifndef ROBOTINTERFACE_XMLREADER_H
 #define ROBOTINTERFACE_XMLREADER_H
 
-#include <iosfwd>
+#include <string>
 
 namespace RobotInterface
 {
