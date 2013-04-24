@@ -53,6 +53,8 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+// encoders should arrive at least every 0.5s to be considered valide
+// getEncoders will return false otherwise. 
 const double TIMEOUT=0.5;
 
 class StateInputPort:public BufferedPort<yarp::sig::Vector>
@@ -1304,9 +1306,13 @@ public:
     }
 
     /**
-    * Read the position of all axes.
+    * Read the position of all axes. This object receives encoders periodically 
+    * from a YARP port. You should check the return value of the function to 
+    * make sure that encoders have been received at least once and with the expected
+    * rate.
     * @param encs pointer to the array that will contain the output
-    * @return true/false on success/failure
+    * @return true/false on success/failure. Failure means encoders have not been received
+    * from the server or that they are not being streamed with the expected rate.
     */
     virtual bool getEncoders(double *encs) {
         if (!isLive()) return false;
