@@ -192,7 +192,22 @@ std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInt
         for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ait++) {
             const Action &action = *ait;
             if (action.phase() == phase && action.level() == level) {
-                actions.push_back(std::make_pair<RobotInterface::Device, RobotInterface::Action>(device, action));
+// FIXME std::make_pair syntax is slightly changed in C++11
+//       C++97 used to make a copy of the object, so it doesn't make any
+//       difference if the passed objects are const.
+//       C++11 uses rvalue references and move semantics, so the passed
+//       objects are modified, and therefore the objects must be copied
+//       explicitly.
+//       The C++11 version works also for C++97, but it causes an extra
+//       copy of the object, and for now I want to avoid this.
+//       This fix is necessary because MSVC 2012 enables C++11 by
+//       default.
+#if (__cplusplus <= 199711)
+                actions.push_back(std::make_pair(device, action));
+#else
+                actions.push_back(std::make_pair(RobotInterface::Device(device),
+                                                 RobotInterface::Action(action)));
+#endif
             }
         }
     }
