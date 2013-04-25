@@ -29,6 +29,11 @@ public:
         printf("test oneway with %d\n", x);
     }
 
+    virtual bool test_defaults(const int32_t x) {
+        printf("test defaults with %d\n", x);
+        return (x==42);
+    }
+
     virtual std::vector<DemoEnum> test_enum_vector(const std::vector<DemoEnum> & x) {
         printf("test_enum_vector\n");
         std::vector<DemoEnum> result = x;
@@ -188,11 +193,36 @@ bool test_enums() {
     return (lst2.size()==3 && lst1[0]==lst2[0] && lst1[1]==lst2[1]);
 }
 
+bool test_defaults() {
+    printf("\n*** test_defaults()\n");
+
+
+    Network yarp;
+    yarp.setLocalMode(true);
+
+    Demo client;
+    Server server;
+
+    Port client_port,server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+    client.yarp().attachAsClient(client_port);
+    server.yarp().attachAsServer(server_port);
+
+    bool ok1 = client.test_defaults();
+    bool ok2 = client.test_defaults(14);
+    printf("42 %d 14 %d\n", ok1?1:0, ok2?1:0);
+
+    return ok1 && !ok2;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
     if (!test_live()) return 1;
     if (!test_live_rpc()) return 1;
     if (!test_enums()) return 1;
+    if (!test_defaults()) return 1;
     return 0;
 }

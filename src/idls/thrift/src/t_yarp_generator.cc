@@ -166,7 +166,8 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
   std::string print_type       (t_type* ttype);
   std::string print_const_value(t_const_value* tvalue);
 
-  std::string function_prototype(t_function *tfn, const char *prefix=NULL);
+  std::string function_prototype(t_function *tfn, bool include_defaults,
+				 const char *prefix=NULL);
 
   std::string declare_field(t_field* tfield, bool init=false, bool pointer=false, bool is_constant=false, bool reference=false);
 
@@ -1385,6 +1386,7 @@ void t_yarp_generator::generate_xception(t_struct* txception) {
 
 
 std::string t_yarp_generator::function_prototype(t_function *tfn,
+						 bool include_defaults,
 						 const char *prefix) {
   string result = "";
   t_function **fn_iter = &tfn;
@@ -1408,9 +1410,11 @@ std::string t_yarp_generator::function_prototype(t_function *tfn,
       first = false;
       result += type_name((*arg_iter)->get_type(),false,true);
       result += string(" ") + (*arg_iter)->get_name();
-      if ((*arg_iter)->get_value() != NULL) {
-	result += " = ";
-        result += print_const_value((*arg_iter)->get_value());
+      if (include_defaults) {
+	if ((*arg_iter)->get_value() != NULL) {
+	  result += " = ";
+	  result += print_const_value((*arg_iter)->get_value());
+	}
       }
     }
   }
@@ -1577,12 +1581,12 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     fn_iter = functions.begin();
     for ( ; fn_iter != functions.end(); fn_iter++) {
       //  if((*fn_iter)->has_doc())
-          f_srv_ <<print_doc((*fn_iter));
-      indent(f_srv_) << "virtual " << function_prototype(*fn_iter)
+      f_srv_ <<print_doc((*fn_iter));
+      indent(f_srv_) << "virtual " << function_prototype(*fn_iter,true)
 		     << ";" << endl;
 
       indent_down();
-      indent(f_cpp_) << function_prototype(*fn_iter,service_name_.c_str()) 
+      indent(f_cpp_) << function_prototype(*fn_iter,false,service_name_.c_str()) 
 		     << " {" << endl;
       indent_up();
 

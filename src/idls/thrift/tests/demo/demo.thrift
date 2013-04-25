@@ -19,4 +19,6 @@ service Demo {
 
   DemoEnum test_enums(1:DemoEnum x);
   list<DemoEnum> test_enum_vector(1:list<DemoEnum> x);
+
+  bool test_defaults(1:i32 x = 42);
 }
