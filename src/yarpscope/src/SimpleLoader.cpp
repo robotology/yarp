@@ -15,7 +15,7 @@
 #include <string.h>
 
 namespace {
-    static const Glib::ustring default_local_port = "/yarpscope";
+    static const Glib::ustring default_local_port = "/yarpscope"; // FIXME Use "..."
     static const float default_plot_minval = -100.;
     static const float default_plot_maxval = 100.;
     static const int default_plot_size = 201;
