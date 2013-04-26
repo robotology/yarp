@@ -62,6 +62,18 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         fatal() << "Syntax error while loading" << filename << ". Root element should be \"portscope\", found" << rootElem->Value();
     }
 
+    Glib::ustring connection_carrier;
+    bool connection_persistent;
+
+    if (const char *t = rootElem->Attribute("carrier")) {
+        connection_carrier = t;
+    } else {
+        connection_carrier = default_connection_carrier;
+    }
+
+    // TODO read from command line whether connections should be persistent or not
+    connection_persistent = default_connection_persistent;
+
     for (TiXmlElement *plotElem = rootElem->FirstChildElement(); plotElem != 0; plotElem = plotElem->NextSiblingElement()) {
         if (Glib::ustring(plotElem->Value()).compare("plot") != 0) {
             fatal() << "Syntax error while loading" << filename << ". Expected \"plot\", found" << plotElem->Value();
@@ -145,10 +157,6 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
             if (graphElem->QueryIntAttribute("size", &graph_size) != TIXML_SUCCESS || graph_size <= 0) {
                 graph_size = default_graph_size;
             }
-
-            //TODO Allow to specify carrier and persistent
-            Glib::ustring connection_carrier = default_connection_carrier;
-            bool connection_persistent = default_connection_persistent;
 
             portReader.acquireData(graph_remote, graph_index, "", connection_carrier, connection_persistent);
             plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
