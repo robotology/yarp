@@ -31,7 +31,7 @@ ENDIF (GTKPLUS_C_FLAG)
 if(PKG_CONFIG_FOUND)
   
   PKG_CHECK_MODULES(GTKMM gtkmm-2.4>=2.8.8)
-  PKG_CHECK_MODULES(GLADE libglademm-2.4)
+  # PKG_CHECK_MODULES(GLADE libglademm-2.4)
 
 # Removed: can't see the difference with respect to prev. line
 # if you need gthread: use FindGthread.cmake instead.

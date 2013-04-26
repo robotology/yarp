@@ -18,6 +18,8 @@
 #include <yarp/os/idl/WirePortable.h>
 #include <yarp/os/idl/WireVocab.h>
 
+#include <yarp/os/impl/Logger.h>
+
 namespace yarp {
     namespace os {
         namespace idl {
@@ -98,7 +100,6 @@ public:
         b.write(getWriter());
     }
 
-
     bool read(WirePortable& obj) {
         return obj.read(*this);
     }
@@ -116,12 +117,13 @@ public:
     }
 
     bool readI32(int32_t& x) {
-        size_t pending = reader.getSize();
         int tag = state->code;
         if (tag<0) {
+            if (noMore()) return false;
             tag = reader.expectInt();
         }
         if (tag!=BOTTLE_TAG_INT) return false;
+        if (noMore()) return false;
         int v = reader.expectInt();
         x = (int32_t) v;
         state->len--;
@@ -130,9 +132,11 @@ public:
 
     bool readBool(bool& x) {
         if (state->code<0) {
+            if (noMore()) return false;
             int tag = reader.expectInt();
             if (tag!=BOTTLE_TAG_INT&&tag!=BOTTLE_TAG_VOCAB) return false;
         }
+        if (noMore()) return false;
         int v = reader.expectInt();
         x = (v!=0) && (v!=VOCAB4('f','a','i','l'));
         state->len--;
@@ -142,9 +146,11 @@ public:
     bool readVocab(int32_t& x) {
         int tag = state->code;
         if (tag<0) {
+            if (noMore()) return false;
             tag = reader.expectInt();
         }
         if (tag!=BOTTLE_TAG_VOCAB) return false;
+        if (noMore()) return false;
         int v = reader.expectInt();
         x = (int32_t) v;
         state->len--;
@@ -154,15 +160,18 @@ public:
     bool readDouble(double& x) {
         int tag = state->code;
         if (tag<0) {
+            if (noMore()) return false;
             tag = reader.expectInt();
         }
         if (tag==BOTTLE_TAG_INT) {
+            if (noMore()) return false;
             int v = reader.expectInt();
             x = v;
             state->len--;
             return !reader.isError();
         }
         if (tag!=BOTTLE_TAG_DOUBLE) return false;
+        if (noMore()) return false;
         x = reader.expectDouble();
         state->len--;
         return !reader.isError();
@@ -172,21 +181,25 @@ public:
         if (state->len<=0) return false;
         int tag = state->code;
         if (state->code<0) {
+            if (noMore()) return false;
             tag = reader.expectInt();
             if (tag!=BOTTLE_TAG_STRING&&tag!=BOTTLE_TAG_VOCAB) return false;
         }
         state->len--;
         if (tag==BOTTLE_TAG_VOCAB) {
             if (is_vocab) *is_vocab = true;
+            if (noMore()) return false;
             NetInt32 v = reader.expectInt();
             if (reader.isError()) return false;
             str = Vocab::decode(v);
             return true;
         }
         if (is_vocab) *is_vocab = false;
+        if (noMore()) return false;
         int len = reader.expectInt();
         if (reader.isError()) return false;
         if (len<1) return false;
+        if (noMore()) return false;
         str.resize(len);
         reader.expectBlock((const char *)str.c_str(),len);
         str.resize(len-1);
@@ -196,18 +209,22 @@ public:
     bool readEnum(int32_t& x, WireVocab& converter) {
         int tag = state->code;
         if (tag<0) {
+            if (noMore()) return false;
             tag = reader.expectInt();
         }
         if (tag==BOTTLE_TAG_INT) {
+            if (noMore()) return false;
             int v = reader.expectInt();
             x = (int32_t) v;
             state->len--;
             return !reader.isError();
         }
         if (tag==BOTTLE_TAG_STRING) {
+            if (noMore()) return false;
             int len = reader.expectInt();
             if (reader.isError()) return false;
             if (len<1) return false;
+            if (noMore()) return false;
             std::string str;
             str.resize(len);
             reader.expectBlock((const char *)str.c_str(),len);
@@ -222,8 +239,10 @@ public:
 
     bool readListHeader() {
         int x1 = 0, x2 = 0;
+        if (noMore()) return false;
         x1 = reader.expectInt();
         if (!(x1&BOTTLE_TAG_LIST)) return false;
+        if (noMore()) return false;
         x2 = reader.expectInt();
         int code = x1&(~BOTTLE_TAG_LIST);
         state->len = x2;
@@ -281,6 +300,7 @@ public:
             if (state->code>=0) {
                 is_vocab = (state->code==BOTTLE_TAG_VOCAB);
             } else {
+                if (noMore()) return "";
                 int x = reader.expectInt();
                 reader.pushInt(x);
                 is_vocab = (x==BOTTLE_TAG_VOCAB);
@@ -323,6 +343,13 @@ public:
     void readMapEnd() {
         state = state->parent;
     }
+
+    bool noMore() {
+        if (!flush_if_needed) return false;
+        size_t pending = reader.getSize();
+        return pending==0;
+    }
+
 private:
     void scanString(std::string& str, bool is_vocab) {
         if (!support_get_mode) return;
