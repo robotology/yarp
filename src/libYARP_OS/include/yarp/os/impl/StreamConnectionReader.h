@@ -178,7 +178,7 @@ public:
     virtual bool convertTextMode();
 
     virtual size_t getSize() {
-        return messageLen;
+        return messageLen + (pushedIntFlag?sizeof(yarp::os::NetInt32):0);
     }
 
     /*

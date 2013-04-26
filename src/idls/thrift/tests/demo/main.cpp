@@ -21,6 +21,11 @@ public:
         return x+1;
     }
 
+    virtual int32_t add_pair(const int32_t x, const int32_t y) {
+        printf("adding %d and %d\n", x, y);
+        return x+y;
+    }
+
     virtual void test_void(const int32_t x) {
         printf("test void with %d\n", x);
     }
@@ -39,6 +44,13 @@ public:
         std::vector<DemoEnum> result = x;
         result.push_back(ENUM1);
         return result;
+    }
+
+    virtual int32_t test_partial(const int32_t x, 
+                                 const std::vector<int32_t> & lst,
+                                 const int32_t y) {
+        printf("test_partial with %d and %d\n", x, y);
+        return x+y;
     }
 };
 
@@ -67,7 +79,18 @@ bool add_one() {
     bot.read(con.getReader());
     printf("Result is %s\n", bot.toString().c_str());
 
-    return bot.get(0).asInt() == 15;
+    if (bot.get(0).asInt() != 15) return false;
+
+    bot.fromString("[add] [one] 15");
+    DummyConnector con2;
+    bot.write(con2.getWriter());
+    server.read(con2.getReader());
+    bot.read(con2.getReader());
+    printf("Result is %s\n", bot.toString().c_str());
+
+    if (bot.get(0).asInt() != 16) return false;
+
+    return true;
 }
 
 bool test_void() {
@@ -85,7 +108,7 @@ bool test_void() {
     bot.write(con.getWriter());
     server.read(con.getReader());
     bot.read(con.getReader());
-    printf("Result is %s\n", bot.toString().c_str());
+    printf("Result is %s (should be blank)\n", bot.toString().c_str());
 
     return bot.size()==0 && !bot.isNull();
 }
@@ -217,6 +240,71 @@ bool test_defaults() {
     return ok1 && !ok2;
 }
 
+bool test_partial() {
+    printf("\n*** test_partial()\n");
+
+
+    Network yarp;
+    yarp.setLocalMode(true);
+
+    Server server;
+
+    Port client_port,server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+    server.yarp().attachAsServer(server_port);
+
+    Bottle msg, reply;
+    msg.fromString("add pair 4 3");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 7) return false;
+
+    msg.fromString("add pair 4");
+    client_port.write(msg,reply);
+    printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+
+    msg.fromString("add pair");
+    reply.fromString("0");
+    client_port.write(msg,reply);
+    printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+
+    msg.fromString("add");
+    reply.fromString("0");
+    client_port.write(msg,reply);
+    printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+
+    msg.fromString("");
+    reply.fromString("0");
+    client_port.write(msg,reply);
+    printf("(incomplete) %s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+
+    msg.fromString("add pair 10 20");
+    reply.fromString("0");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 30) return false;
+
+    msg.fromString("test partial 10 (40 50 60) 5");
+    reply.fromString("0");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 15) return false;
+
+    msg.fromString("test partial 10 (40 50)");
+    reply.fromString("0");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -224,5 +312,6 @@ int main(int argc, char *argv[]) {
     if (!test_live_rpc()) return 1;
     if (!test_enums()) return 1;
     if (!test_defaults()) return 1;
+    if (!test_partial()) return 1;
     return 0;
 }

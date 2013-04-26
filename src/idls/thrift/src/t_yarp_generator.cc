@@ -1637,11 +1637,13 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent_up();
     indent(f_cpp_) << "yarp::os::idl::WireReader reader(connection);" << endl;
     indent(f_cpp_) << "reader.expectAccept();" << endl;
-    indent(f_cpp_) << "if (!reader.readListHeader()) return false;"
+    indent(f_cpp_) << "if (!reader.readListHeader()) { reader.fail(); return false; }"
 		   << endl;
     indent(f_cpp_) << "yarp::os::ConstString tag = reader.readTag();" << endl;
-    indent(f_cpp_) << "while (!reader.isError()) {";
+    indent(f_cpp_) << "while (!reader.isError()) {" << endl;
     indent_up();
+    indent(f_cpp_) << "if (reader.noMore()) { reader.fail(); return false; }"
+		   << endl;
     indent(f_cpp_) << "// TODO: use quick lookup, this is just a test" << endl;
     //indent_up();
     fn_iter = functions.begin();
@@ -1946,7 +1948,7 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
   if (type->is_struct() || type->is_xception()) {
     indent(out) << "if (!reader.";
     generate_deserialize_struct(out, (t_struct*)type, name, force_nested);
-    out << ") return false;" << endl;
+    out << ") { reader.fail(); return false; }" << endl;
   } else if (type->is_container()) {
     generate_deserialize_container(out, type, name);
   } else if (type->is_base_type()) {
@@ -1985,14 +1987,14 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
     default:
       throw "compiler error: no C++ reader for base type " + t_base_type::t_base_name(tbase) + name;
     }
-    out << ") return false;" << endl;
+    out << ") { reader.fail(); return false; }" << endl;
   } else if (type->is_enum()) {
     string t = tmp("ecast");
     string t2 = tmp("cvrt");
     out <<
       indent() << "int32_t " << t << ";" << endl <<
       indent() << type_name(type) << "Vocab " << t2 << ";" << endl <<
-      indent() << "if (!reader.readEnum(" << t << "," << t2 << ")) return false;" << endl <<
+      indent() << "if (!reader.readEnum(" << t << "," << t2 << ")) { reader.fail(); return false; }" << endl <<
       indent() << name << " = (" << type_name(type) << ")" << t << ";" << endl;
   } else {
     printf("DO NOT KNOW HOW TO DESERIALIZE FIELD '%s' TYPE '%s'\n",
