@@ -37,6 +37,7 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
     set(_${_name}_FIND_QUIETLY ${${_name}_FIND_QUIETLY})
     find_package(${_name} QUIET NO_MODULE)
     set(${_name}_FIND_QUIETLY ${_${_name}_FIND_QUIETLY})
+    mark_as_advanced(${_name}_DIR)
 
     if (${_name}_FOUND)
         find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_CONFIG)
