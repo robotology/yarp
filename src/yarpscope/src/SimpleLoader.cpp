@@ -15,12 +15,14 @@
 #include <string.h>
 
 namespace {
-    static const Glib::ustring default_local_port = "/yarpscope";
+    static const Glib::ustring default_local_port = "/yarpscope"; // FIXME Use "..."
     static const float default_plot_minval = -100.;
     static const float default_plot_maxval = 100.;
     static const int default_plot_size = 201;
     static const int default_graph_size = 1;
     static const Glib::ustring default_graph_type = "lines";
+    static const Glib::ustring default_connection_carrier = "mcast";
+    static bool default_connection_persistent = true;
 }
 
 
@@ -29,11 +31,26 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
     YarpScope::PortReader &portReader = YarpScope::PortReader::instance();
     YarpScope::PlotManager &plotManager = YarpScope::PlotManager::instance();
 
+    Glib::ustring graph_remote, local_port, connection_carrier;
+    bool connection_persistent;
+
     if (!options.check("remote")) {
         debug() << "Missing \"remote\" argument. Will wait for external connection";
+    } else {
+        graph_remote = options.find("remote").toString().c_str();
     }
 
-    const Glib::ustring graph_remote = options.find("remote").toString().c_str();
+    local_port = default_local_port;
+
+    if (options.check("carrier")) {
+        connection_carrier = options.find("carrier").asString().c_str();
+    } else {
+        connection_carrier = default_connection_carrier;
+    }
+
+    // TODO read from command line whether connections should be persistent or not
+    connection_persistent = default_connection_persistent;
+
 
     if (!options.check("index")) {
         warning() << "Missing \"index\" argument. Will use index = 0";
@@ -133,7 +150,7 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
             graph_size = default_graph_size;
         }
 
-        portReader.acquireData(graph_remote, graph_index, default_local_port);
+        portReader.acquireData(graph_remote, graph_index, local_port, connection_carrier, connection_persistent);
         plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
 
     } else {
@@ -232,7 +249,7 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
                 graph_size = default_graph_size;
             }
 
-            portReader.acquireData(graph_remote, graph_index, default_local_port);
+            portReader.acquireData(graph_remote, graph_index, local_port, connection_carrier, connection_persistent);
             plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
         }
     }

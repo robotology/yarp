@@ -37,10 +37,6 @@ public:
 
     void acquireData(const Glib::ustring &remotePortName,
                      int index,
-                     const Glib::ustring &localPortName);
-
-    void acquireData(const Glib::ustring &remotePortName,
-                     int index,
                      const Glib::ustring &localPortName,
                      const Glib::ustring &carrier,
                      bool persistent);
