@@ -7,13 +7,15 @@
  *
  */
 
-
-#include "PriorityCarrier.h"
+#include <yarp/os/Log.h>
+#include <yarp/os/ConstString.h>
 
 #ifdef WITH_YARPMATH 
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
 #endif 
+
+#include "PriorityCarrier.h"
 
 using namespace yarp::math;
 
@@ -75,28 +77,41 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
 #ifdef WITH_RIORITY_DEBUG
     if(options.check("debug"))
     {
-        fprintf(stdout, "\n%s:\n", sourceName.c_str());
-        fprintf(stdout, "   stimulation: %.2f\n", stimulation);
-        fprintf(stdout, "   bias: %.2f\n", baias);
-        fprintf(stdout, "   tc: %.2fs\n", timeConstant);
-        fprintf(stdout, "   tr: %.2fs\n", timeResting);
-        fprintf(stdout, "   ex: ");
+        yarp::os::ConstString msg;
+        char dummy[1024];
+        snprintf(dummy, 1024, "\n%s:\n", sourceName.c_str());
+        msg+= dummy;
+        snprintf(dummy, 1024, "   stimulation: %.2f\n", stimulation);
+        msg+= dummy;
+        snprintf(dummy, 1024, "   bias: %.2f\n", baias);
+        msg+= dummy;
+        snprintf(dummy, 1024, "   tc: %.2fs\n", timeConstant);
+        msg+= dummy;
+        snprintf(dummy, 1024, "   tr: %.2fs\n", timeResting);
+        msg+= dummy;
+        snprintf(dummy, 1024, "   ex: ");
+        msg+= dummy;
         for(int i=0; i<excitation.size(); i++)
         {
             Value v = excitation.get(i);
             if(v.isList() && (v.asList()->size()>=2))
             {
                 Bottle* b = v.asList();
-                fprintf(stdout, "(%s, %.2f) ",
+                snprintf(dummy, 1024, "(%s, %.2f) ",
                                 b->get(0).asString().c_str(),
                                 b->get(1).asDouble()/10.0 );
+                msg+= dummy;
             }
         }
-        fprintf(stdout, "\n");
-        fprintf(stdout, "   virtual: %s\n",
+        //snprintf(dummy, 1024, "\n");
+        msg+= "\n";
+        snprintf(dummy, 1024, "   virtual: %s\n",
                             (isVirtual)?"yes":"no");
+        msg+= dummy;
         int rate = options.check("rate", Value(10)).asInt();
-        fprintf(stdout, "   db.rate: %dms\n", rate);
+        snprintf(dummy, 1024, "   db.rate: %dms\n", rate);
+        msg+= dummy;
+        YARP_LOG_INFO(msg.c_str());
         debugger.stop();
         debugger.setRate(rate);
         debugger.start();
@@ -261,8 +276,7 @@ bool PriorityGroup::recalculate(double t)
     double determinant = yarp::math::det(InvA);
     if(determinant == 0)
     {
-        //TODO: set an error flag or prompt correctly
-        fprintf(stdout, "determinant of the weight matrix is zero!\n");
+        YARP_LOG_ERROR("Inconsistent regulation! non-invertible weight matrix");
         return false;
     }
 
@@ -286,8 +300,6 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     bool accept;
     // updates message's arrival time
     double tNow = yarp::os::Time::now();
-
-    // stimulate
     source->stimulate(tNow);
 
 #ifdef WITH_YARPMATH   
