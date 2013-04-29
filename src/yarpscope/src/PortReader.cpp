@@ -437,14 +437,6 @@ void YarpScope::PortReader::clearData()
     mPriv->clearData();
 }
 
-
-void YarpScope::PortReader::acquireData(const Glib::ustring &remotePortName,
-                                        int index,
-                                        const Glib::ustring &localPortName)
-{
-    mPriv->acquireData(remotePortName, index, localPortName, NULL);
-}
-
 void YarpScope::PortReader::acquireData(const Glib::ustring &remotePortName,
                                         int index,
                                         const Glib::ustring &localPortName,
