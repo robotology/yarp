@@ -166,7 +166,6 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                         strCarrier = "udp";
             }
             
-            printf("Persist: %d\n", connection.isPersistent());
             connection.setFrom(strFrom.c_str());
             connection.setTo(strTo.c_str());
             connection.setCarrier(strCarrier.c_str());
