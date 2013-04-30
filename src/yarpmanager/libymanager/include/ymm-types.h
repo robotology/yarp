@@ -23,6 +23,7 @@ typedef enum __NodeType {
     OUTPUTD,
     APPLICATION,
     RESOURCE,
+    INOUTD,
     NODE_FILENAME,
     NODE_APPTEMPLATE,
     NODE_OTHER

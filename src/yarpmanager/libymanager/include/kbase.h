@@ -71,7 +71,7 @@ public:
     const ModulePContainer& getModules(Application* parent=NULL);
     const ResourcePContainer& getResources(Application* parent=NULL);
     const CnnContainer& getConnections(Application* parent=NULL);
-
+    const ArbContainer& getArbitrators(Application* parent=NULL);
                
     const InputContainer& getInputCandidates(OutputData* output);
     const OutputContainer& getOutputCandidates(InputData* input);
@@ -98,6 +98,9 @@ public:
     Application* addIApplicationToApplication(Application* application, 
                                     ApplicationInterface &app, bool isNew=false);
     bool removeIApplicationFromApplication(Application* application, const char* szTag);
+
+    Arbitrator& addArbitratorToApplication(Application* application, Arbitrator &arb);
+    bool removeArbitratorFromApplication(Application* application, Arbitrator &arb);
 
     bool setModulePrefix(Module* module, const char* szPrefix, bool updateBasePrefix=true);
     bool setApplicationPrefix(Application* app, const char* szPrefix, bool updateBasePref=true);
@@ -127,6 +130,7 @@ private:
     ModulePContainer dummyModules;
     ResourcePContainer dummyResources;  
     CnnContainer dummyConnections;
+    ArbContainer dummyArbitrators;
 
     ApplicaitonPContainer selapplications;
     ModulePContainer selmodules;

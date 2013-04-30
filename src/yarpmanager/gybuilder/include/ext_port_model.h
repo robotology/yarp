@@ -39,14 +39,17 @@ public:
     virtual bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventCrossing* event);
 
-    virtual Gdk::Point getContactPoint(void);
+    virtual Gdk::Point getContactPoint(ArrowModel* arrow=NULL);
 
     void snapToGrid(void);
     virtual void updateArrowCoordination(void);
     void setArrowsSelected(bool sel);
 
-    void setSelected(bool sel);
-    bool getSelected(void) { return selected; }  
+    virtual void setSelected(bool sel);
+    virtual bool getSelected(void) { 
+        return selected; 
+    }  
+
     const char* getPort() { return strPort.c_str(); }
     void setPort(const char* szPort);
     
@@ -65,7 +68,7 @@ private:
     Glib::RefPtr<Goocanvas::PolylineModel> poly;
     Glib::RefPtr<Goocanvas::TextModel> text;
     Glib::RefPtr<Goocanvas::PolylineModel> shadow;
-    Glib::RefPtr< Goocanvas::Item > _dragging ;
+    Glib::RefPtr< Goocanvas::Item > _dragging;
     int _drag_x ;
     int _drag_y ;
     double width;

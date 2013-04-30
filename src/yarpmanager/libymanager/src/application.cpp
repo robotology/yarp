@@ -85,7 +85,8 @@ Application::Application(const Application &app) : Node(app)
     strDescription = app.strDescription;
     authors = app.authors;
     Imodules = app.Imodules;
-    connections = app.connections;  
+    connections = app.connections;
+    arbitrators = app.arbitrators;
     Iapplications = app.Iapplications;
     resources = app.resources;
     strXmlFile = app.strXmlFile;
@@ -138,6 +139,23 @@ bool Application::removeConnection(Connection& cnn)
     return true;    
     
 }
+
+Arbitrator& Application::addArbitrator(Arbitrator &arb)
+{
+    arbitrators.push_back(arb);
+    ArbIterator itr = findArbitrator(arb);
+    return(*itr);
+}
+
+bool Application::removeArbitrator(Arbitrator& arb)
+{
+    ArbIterator itr = findArbitrator(arb);
+    if(itr == arbitrators.end()) 
+        return true;
+    arbitrators.erase(itr);
+    return true;     
+}
+
 
 /*
 void Application::updateConnectionPrefix(void)
@@ -224,6 +242,16 @@ CnnIterator Application::findConnection(Connection& cnn)
             return itr;
     return connections.end();   
 }
+
+ArbIterator Application::findArbitrator(Arbitrator& arb)
+{
+    ArbIterator itr;
+    for(itr=arbitrators.begin(); itr<arbitrators.end(); itr++) 
+        if ((*itr) == arb)
+            return itr;
+    return arbitrators.end();   
+}
+
 
 IApplicationIterator Application::findIapplication(ApplicationInterface& iapp) 
 {

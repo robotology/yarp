@@ -13,9 +13,8 @@
 #include <string>
 #include <fstream>
 
-#include <tinyxml.h>
-
 #include "xmlapploader.h"
+#include "tinyxml.h"
 #include "utility.h"
 #include "ymm-dir.h"
 
@@ -430,12 +429,65 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     }       
 
 
+    /* retrieving arbitrator information*/
+    for(TiXmlElement* arb = root->FirstChildElement(); arb;
+            arb = arb->NextSiblingElement())
+    {
+        if(compareString(arb->Value(), "arbitrator"))
+        {
+            TiXmlElement* port = (TiXmlElement*) arb->FirstChild("port");
+            if(port && port->GetText())
+            {
+                Arbitrator arbitrator(port->GetText());
+                
+                // retrieving rules
+                for(TiXmlElement* rule = arb->FirstChildElement(); rule;
+                    rule = rule->NextSiblingElement())
+                {
+                    if(compareString(rule->Value(), "rule"))
+                    {
+                        if(rule->Attribute("connection"))
+                            arbitrator.addRule(rule->Attribute("connection"), rule->GetText());
+                    }    
+                }   
+#ifdef WITH_GEOMETRY
+                TiXmlElement* geometry = (TiXmlElement*) arb->FirstChild("geometry");
+                if(geometry && geometry->GetText())
+                {
+                    yarp::os::Property prop(geometry->GetText());
+                    GraphicModel model;                     
+                    if(prop.check("Pos"))
+                    {
+                        yarp::os::Bottle pos = prop.findGroup("Pos");
+                        for(int i=1; i<pos.size(); i++)
+                        {
+                            GyPoint pt;
+                            pt.x = pos.get(i).find("x").asDouble();
+                            pt.y = pos.get(i).find("y").asDouble();
+                            model.points.push_back(pt);
+                        }
+                        arbitrator.setModelBase(model);
+                    }
+                }
+#endif
+                app.addArbitrator(arbitrator);
+            }
+            else
+            {
+                OSTRINGSTREAM war;
+                war<<"Incomplete arbitrator tag from "<<szFile<<" at line "\
+                   <<arb->Row()<<".";
+                logger->addWarning(war);        
+            }
+        }
+    }
+
     /* retrieving connections information*/
     for(TiXmlElement* cnn = root->FirstChildElement(); cnn;
             cnn = cnn->NextSiblingElement())
     {
         if(compareString(cnn->Value(), "connection"))
-        {
+        {              
             TiXmlElement* from = (TiXmlElement*) cnn->FirstChild("from");
             TiXmlElement* to = (TiXmlElement*) cnn->FirstChild("to");
             
@@ -487,6 +539,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(compareString(res.getPort(), connection.to()))
                         connection.setToExternal(true);
                 }
+
+                if(cnn->Attribute("id"))
+                    connection.setId(cnn->Attribute("id"));
 
                 if(cnn->Attribute("persist") && 
                         compareString(cnn->Attribute("persist"), "true"))

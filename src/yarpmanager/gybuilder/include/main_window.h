@@ -85,6 +85,7 @@ protected:
     void onMenuWindowProperty();
     void onMenuInsertSrcPort();
     void onMenuInsertDestPort();
+    void onMenuInsertPortArbitrator();
     void onMenuRotateRight();
     void onMenuRotateLeft();
 

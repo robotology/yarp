@@ -48,7 +48,7 @@ public:
     virtual bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventCrossing* event);
 
-    virtual Gdk::Point getContactPoint(void);
+    virtual Gdk::Point getContactPoint(ArrowModel* arrow=NULL);
 
     InputData* getInput(void) { return input; }
     OutputData* getOutput(void) { return output; }

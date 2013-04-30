@@ -340,8 +340,20 @@ void MainWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='EditCut'/>"
         "      <menuitem action='EditCopy'/>"
-        "      <separator/>"
         " </popup>"
+        " <popup name='PopupExtInputPortModel'>"
+        "      <menuitem action='EditDelete'/>"
+        "      <separator/>"
+        "      <menuitem action='EditCut'/>"
+        "      <menuitem action='EditCopy'/>"
+        "      <separator/>"
+        "      <menuitem action='InsertPortArbitrator'/>"
+        " </popup>"
+
+        " <popup name='PopupIntPortModel'>"
+        "      <menuitem action='InsertPortArbitrator'/>"
+        " </popup>"
+
         "</ui>";
 
 #ifdef GLIBMM_EXCEPTIONS_ENABLED
@@ -626,6 +638,8 @@ void MainWindow::setupActions(void)
                             sigc::mem_fun(*this, &MainWindow::onMenuInsertSrcPort) );
     m_refActionGroup->add( Gtk::Action::create("InsertDestPort", "Add Destination port", "External destination port"),
                             sigc::mem_fun(*this, &MainWindow::onMenuInsertDestPort) );
+    m_refActionGroup->add( Gtk::Action::create("InsertPortArbitrator", "Add port arbitrator", "port arbitrator"),
+                            sigc::mem_fun(*this, &MainWindow::onMenuInsertPortArbitrator) );
     m_refActionGroup->add(Gtk::Action::create("Rotate", "Rotate"));
     m_refActionGroup->add(Gtk::Action::create("RotateRight", "_Right", "Rotate Right"),
                           sigc::mem_fun(*this, &MainWindow::onMenuRotateRight));
@@ -1633,6 +1647,15 @@ void MainWindow::onMenuInsertSrcPort()
             dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
     if(appWnd)
         appWnd->onMenuInsertSrcPort();
+}
+
+void MainWindow::onMenuInsertPortArbitrator()
+{
+    int page_num = m_mainTab.get_current_page();
+    ApplicationWindow* appWnd =
+            dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
+    if(appWnd)
+        appWnd->onMenuInsertPortArbitrator();
 }
 
 void MainWindow::onMenuRotateRight()

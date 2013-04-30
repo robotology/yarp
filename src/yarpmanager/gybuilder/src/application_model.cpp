@@ -284,7 +284,7 @@ void ApplicationModel::updateChildItems(void)
         
         if(source && dest)
         {
-            Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(parentWindow, source, dest, (*citr).carrier(), this);
+            Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(parentWindow, source, dest, &baseCon, this);
             add_child(arrow);
             int size = model.points.size();
             for(int i=2; i<size-1; i++)

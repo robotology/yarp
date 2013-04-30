@@ -24,6 +24,7 @@
 #include "tooltip_model.h"
 #include "ext_port_model.h"
 #include "int_port_model.h"
+#include "port_abitrator_model.h"
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -66,6 +67,7 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
     m_showGrid = grid;
     m_pConfig = config;
     m_pParent = parent;
+    m_currentPortModel.reset();
     m_strAppName = szAppName;
     m_connector.clear();    
     m_selector.clear();    
@@ -86,6 +88,7 @@ ApplicationWindow::~ApplicationWindow()
     delete modPropertyWindow;
     delete appPropertyWindow;
     delete conPropertyWindow;
+    delete arbPropertyWindow;
 }
 
 void ApplicationWindow::createWidgets(void)
@@ -141,6 +144,7 @@ void ApplicationWindow::createWidgets(void)
     modPropertyWindow = new ModulePropertyWindow(m_pParent, &manager, this);
     appPropertyWindow = new ApplicationPropertyWindow(m_pParent, &manager, this);
     conPropertyWindow = new ConnectionPropertyWindow(m_pParent, &manager, this);
+    arbPropertyWindow = new ArbitratorPropertyWindow(m_pParent, &manager, this);
 
     m_ScrollView.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_ScrollView.add(*m_Canvas);
@@ -253,6 +257,28 @@ bool ApplicationWindow::onSelectAll(void)
     return true;
 }
 
+void ApplicationWindow::deSelectAll(void)
+{
+    for(int j=0; j<root->get_n_children(); j++)
+        for(int i=0; i<root->get_n_children(); i++)
+        {
+            Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
+            if(app) app->setSelected(false);
+            Glib::RefPtr<ModuleModel> mod = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
+            if(mod) mod->setSelected(false);
+            Glib::RefPtr<ArrowModel> arw = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(i));
+            if(arw) arw->setSelected(false);
+            Glib::RefPtr<ExternalPortModel> extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
+            if(extPort) extPort->setSelected(false);
+            Glib::RefPtr<PortArbitratorModel> arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(root->get_child(i));
+            if(arbPort) arbPort->setSelected(false);
+           
+        }
+    m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(false);
+    m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(false);
+    m_pParent->m_refActionGroup->get_action("EditPaste")->set_sensitive(false);
+}
+
 bool ApplicationWindow::onExportGraph(void)
 {
     Gtk::FileChooserDialog dialog("Export graph");
@@ -350,47 +376,76 @@ void ApplicationWindow::onDelete(void)
     onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
 
     deleteSelectedArrows();
-    
     while(countSelected())
         for(int i=0; i<root->get_n_children(); i++)
         {
             Glib::RefPtr<ExternalPortModel> extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
             if(extPort && extPort->getSelected()) 
             {
-                int id = root->find_child(extPort);
-                if(id != -1)
-                    root->remove_child(id);
+                if(extPort->hasArbitrator())
+                {
+                    Glib::RefPtr<PortArbitratorModel> arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(extPort->getArbitrator()); 
+                    arbPort->setArrowsSelected(true);
+                    // removing all connected arrows
+                    deleteSelectedArrows(true);                
+                    int id = root->find_child(arbPort);
+                    if(id != -1)
+                        root->remove_child(id);
+                    arbPort.clear();
+                }       
                 extPort->setArrowsSelected(true);
                 // removing all connected arrows
                 deleteSelectedArrows();
+                int id = root->find_child(extPort);
+                if(id != -1)
+                    root->remove_child(id);
                 extPort.clear();
             }        
 
             Glib::RefPtr<ModuleModel> child = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
             if(child && child->getSelected()) 
             {
+                if(modPropertyWindow->getModule() == child->getModule())
+                    modPropertyWindow->release();
+
+                //deleting arbitrators
+                for(int i=0; i<child->get_n_children(); i++)
+                {
+                    Glib::RefPtr<InternalPortModel> port = 
+                        Glib::RefPtr<InternalPortModel>::cast_dynamic(child->get_child(i));
+                    if(port && port->hasArbitrator())
+                    {
+                        Glib::RefPtr<PortArbitratorModel> arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(port->getArbitrator()); 
+                        arbPort->setArrowsSelected(true);
+                        // removing all connected arrows
+                        deleteSelectedArrows(true);                
+                        int id = root->find_child(arbPort);
+                        if(id != -1)
+                            root->remove_child(id);
+                        arbPort.clear();
+                    }
+                }
+
+                child->setArrowsSelected(true);
+                // removing all connected arrows
+                deleteSelectedArrows(true);
                 int id = root->find_child(child);
                 if(id != -1)               
                     root->remove_child(id); 
-                if(modPropertyWindow->getModule() == child->getModule())
-                    modPropertyWindow->release();
-                child->setArrowsSelected(true);
-                // removing all connected arrows
-                deleteSelectedArrows();
                 child.clear();
             } 
 
             Glib::RefPtr<ApplicationModel> childApp = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
             if(childApp && childApp->getSelected()) 
             {
-                int id = root->find_child(childApp);
-                if(id != -1)               
-                    root->remove_child(id); 
                 if(appPropertyWindow->getApplication() == childApp->getApplication())
                     appPropertyWindow->release();
                 childApp->setArrowsSelected(true);
                 // removing all connected arrows
-                deleteSelectedArrows(); 
+                deleteSelectedArrows(true); 
+                int id = root->find_child(childApp);
+                if(id != -1)               
+                    root->remove_child(id); 
                 childApp->releaseApplication();
                 childApp.clear();
             }        
@@ -504,6 +559,40 @@ void ApplicationWindow::onMenuInsertDestPort()
     m_bModified = true;
 }
 
+void ApplicationWindow::onMenuInsertPortArbitrator() 
+{
+    if(m_currentPortModel && !m_currentPortModel->hasArbitrator())
+    {
+        Application* mainApplication = manager.getKnowledgeBase()->getApplication();
+        // finding the port name
+        Glib::RefPtr<InternalPortModel> intPort;
+        Glib::RefPtr<ExternalPortModel> extPort;
+        intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(m_currentPortModel);
+        extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(m_currentPortModel);
+
+        Arbitrator arb;
+        if(intPort)
+        {
+            Module* module = (Module*) intPort->getInput()->owner();
+            string strPort = string(module->getPrefix()) + string(intPort->getInput()->getPort());
+            arb.setPort(strPort.c_str()); 
+        }
+        else
+            arb.setPort(extPort->getPort());
+
+        Arbitrator & newArb = manager.getKnowledgeBase()->addArbitratorToApplication(mainApplication, arb);
+        Glib::RefPtr<PortArbitratorModel> arbitrator = PortArbitratorModel::create(this, m_currentPortModel, &newArb);
+        root->add_child(arbitrator);       
+        arbitrator->set_property("x", m_currentPortModel->getContactPoint().get_x()-50);
+        arbitrator->set_property("y", m_currentPortModel->getContactPoint().get_y()-arbitrator->getHeight()/2.0);
+        arbitrator->snapToGrid();        
+        Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(this, arbitrator, m_currentPortModel, NULL, NULL, true);
+        root->add_child(arrow);
+        m_bModified = true;        
+        m_currentPortModel.reset();
+    }        
+}
+
 void ApplicationWindow::onMenuWindowProperty(bool active)
 {
    if(!active)
@@ -528,8 +617,7 @@ void ApplicationWindow::onViewLabel(bool label)
     }
 }
 
-
-void ApplicationWindow::deleteSelectedArrows(void)
+void ApplicationWindow::deleteSelectedArrows(bool delNullArrows)
 {
     for(int k=0; k<root->get_n_children(); k++)
         for(int j=0; j<root->get_n_children(); j++)
@@ -537,12 +625,27 @@ void ApplicationWindow::deleteSelectedArrows(void)
             Glib::RefPtr<ArrowModel> arw = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(j));
             if(arw && arw->getSelected()) 
             {
-                int id = root->find_child(arw);
-                if(id != -1)               
-                    root->remove_child(id);
-                if(conPropertyWindow->getArrow() == arw)    
-                    conPropertyWindow->release();
-                arw.clear();
+                if(arw->isNullArrow())
+                {
+                    if(delNullArrows)
+                    {
+                        int id = root->find_child(arw);
+                        if(id != -1)               
+                            root->remove_child(id);
+                        arw.clear();
+                    }
+                    else
+                        arw->setSelected(false);
+                }
+                else
+                {
+                    int id = root->find_child(arw);
+                    if(id != -1)               
+                        root->remove_child(id);
+                    if(conPropertyWindow->getArrow() == arw)    
+                        conPropertyWindow->release();
+                    arw.clear();
+                }                    
             }        
         } 
     m_bModified = true;        
@@ -604,8 +707,7 @@ void ApplicationWindow::reportErrors(void)
 
 void ApplicationWindow::on_item_created(const Glib::RefPtr<Goocanvas::Item>& item, 
                                         const Glib::RefPtr<Goocanvas::ItemModel>& model)
-{
- 
+{ 
     Glib::RefPtr<Goocanvas::Group> group = Glib::RefPtr<Goocanvas::Group>::cast_dynamic(item) ;
     if(group) return;
 
@@ -615,22 +717,6 @@ void ApplicationWindow::on_item_created(const Glib::RefPtr<Goocanvas::Item>& ite
 
     item->signal_enter_notify_event().connect(sigc::mem_fun(*this, &ApplicationWindow::on_item_enter_notify_event));
     item->signal_leave_notify_event().connect(sigc::mem_fun(*this, &ApplicationWindow::on_item_leave_notify_event));
-
-    /*
-    // We need only mouse over event on PortModels or ArrowModels 
-    if((Glib::RefPtr<ArrowModel>::cast_dynamic(item->get_model())) ||
-      (Glib::RefPtr<MidpointModel>::cast_dynamic(item->get_model())) || 
-      (Glib::RefPtr<LabelModel>::cast_dynamic(item->get_model())) )
-    {  
-        item->signal_enter_notify_event().connect(sigc::mem_fun(*this, &ApplicationWindow::on_item_enter_notify_event));
-        item->signal_leave_notify_event().connect(sigc::mem_fun(*this, &ApplicationWindow::on_item_leave_notify_event));
-    }
-
-    if(Glib::RefPtr<Goocanvas::PolylineModel>::cast_dynamic(item->get_model()) )
-    {
-        printf("%d\n", __LINE__);
-    }
-    */
 }
 
 
@@ -646,17 +732,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
         onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
         if(!(event->state  & GDK_CONTROL_MASK))
         {
-           for(int i=0; i<root->get_n_children(); i++)
-           {
-                Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
-                if(app) app->setSelected(false);                    
-                Glib::RefPtr<ModuleModel> child = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
-                if(child) child->setSelected(false);                    
-                Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(i));
-                if(arrow) arrow->setSelected(false);
-                Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
-                if(extport) extport->setSelected(false);
-           }
+           deSelectAll(); 
            m_pParent->m_refActionGroup->get_action("EditDelete")->set_sensitive(countSelected()>0);
            m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(countSelected()>0);
            m_pParent->m_refActionGroup->get_action("EditPaste")->set_sensitive(copiedItems.size()>0);
@@ -717,6 +793,20 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
                 return extPort->onItemButtonPressEvent(item, event);
             }
         }
+        
+        // port Arbitrator doubleclick event
+        Glib::RefPtr<PortArbitratorModel> arb = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(exParent->get_model());
+        if(arb)
+        {
+            // we propaget only double click event 
+            if((event->type == GDK_2BUTTON_PRESS) && (arb->isNested()==false))
+            {
+                arb->setSelected(true);
+                onUpdateArbitratorProperty(arb);
+                return arb->onItemButtonPressEvent(item, event);
+            }                
+        } 
+        
     }
 
     // we handle connecting ports
@@ -738,7 +828,8 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             }
             else
             {
-                if(m_connector && (port->getType() == INPUTD))
+                if(m_connector && 
+                   ((port->getType() == INPUTD) || (port->getType() == INOUTD)))
                 {
                     Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(this, sourcePort, port);
                     root->add_child(arrow);
@@ -752,6 +843,7 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
 
             }
          }
+         port->onItemButtonPressEvent(item, event);
     }
 
     // let module set its position on dragging
@@ -798,6 +890,10 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             else
                 return extport->onItemButtonPressEvent(item, event);
         }
+
+        Glib::RefPtr<PortArbitratorModel> arb = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(parent->get_model());
+        if(arb) 
+            return arb->onItemButtonPressEvent(item, event);
     }
     
     Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(item->get_model());    
@@ -810,7 +906,8 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
             //m_pParent->m_refActionGroup->get_action("EditCopy")->set_sensitive(true);
 
             // switch to connection propoerty window 
-            onUpdateConnectionProperty(arrow);
+            if(!arrow->isNullArrow())
+                onUpdateConnectionProperty(arrow);
         }
         else
             return arrow->onItemButtonPressEvent(item, event);
@@ -820,21 +917,11 @@ bool ApplicationWindow::on_item_button_press_event(const Glib::RefPtr<Goocanvas:
 
     Glib::RefPtr<MidpointModel> mid = Glib::RefPtr<MidpointModel>::cast_dynamic(item->get_model());    
     if(mid)
-    {
-        //if(event->type == GDK_2BUTTON_PRESS)
-        //    mid->setSelected(true);
-        //else
         return mid->onItemButtonPressEvent(item, event);
-    }
 
     Glib::RefPtr<LabelModel> lab = Glib::RefPtr<LabelModel>::cast_dynamic(item->get_model());    
     if(lab)
-    {
-        //if(event->type == GDK_2BUTTON_PRESS)
-        //    lab->setSelected(true);
-        //else
         return lab->onItemButtonPressEvent(item, event);
-    }
 
     return true;
 }
@@ -867,20 +954,7 @@ void ApplicationWindow::setSelected(void)
     if(!m_selector)
         return;
 
-    //deselect all items
-    for(int i=0; i<root->get_n_children(); i++)
-    {
-        Glib::RefPtr<ApplicationModel> app = Glib::RefPtr<ApplicationModel>::cast_dynamic(root->get_child(i));
-        if(app) app->setSelected(false);                    
-        Glib::RefPtr<ModuleModel> child = Glib::RefPtr<ModuleModel>::cast_dynamic(root->get_child(i));
-        if(child) child->setSelected(false);                    
-        Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(root->get_child(i));
-        if(arrow) arrow->setSelected(false);
-        Glib::RefPtr<ExternalPortModel> extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(root->get_child(i));
-        if(extPort) extPort->setSelected(false);
-
-    }
-
+    deSelectAll();
     // select items within area 
     Glib::RefPtr<Goocanvas::Item> selector = m_Canvas->get_item(m_selector);
     std::vector<Glib::RefPtr<Goocanvas::Item> > items = 
@@ -935,17 +1009,31 @@ void ApplicationWindow::setSelected(void)
                 if(itemCount == 1)
                 {
                     // switch to connection property
-                    onUpdateConnectionProperty(arrow);
+                    if(!arrow->isNullArrow())
+                        onUpdateConnectionProperty(arrow);
                 }
             }
         }
-        
+
+        Glib::RefPtr<PortArbitratorModel> arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(model);
+        if(arbPort) 
+        {
+            itemCount++;
+            arbPort->setSelected(true);
+            if(itemCount == 1)
+            {
+                // switch to arbitrator property
+                onUpdateArbitratorProperty(arbPort);
+            }           
+        }
+
         Glib::RefPtr<ExternalPortModel> extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(model);
         if(extPort) 
         {
             itemCount+=2;
             extPort->setSelected(true);
         }
+
     }
     
     // more than one or no item is selected
@@ -993,6 +1081,10 @@ bool ApplicationWindow::on_item_button_release_event(const Glib::RefPtr<Goocanva
         Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(parent->get_model());
         if(extport) 
             return extport->onItemButtonReleaseEvent(item, event);
+
+        Glib::RefPtr<PortArbitratorModel> arb = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(parent->get_model());
+        if(arb) 
+            return arb->onItemButtonReleaseEvent(item, event);
     }
 
     Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(item->get_model());    
@@ -1066,13 +1158,15 @@ bool ApplicationWindow::on_item_motion_notify_event(const Glib::RefPtr<Goocanvas
         Glib::RefPtr<ExternalPortModel> extport = Glib::RefPtr<ExternalPortModel>::cast_dynamic(parent->get_model());
         if(extport) 
             return extport->onItemMotionNotifyEvent(item, event);
+         Glib::RefPtr<PortArbitratorModel> arb = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(parent->get_model());
+        if(arb) 
+            return arb->onItemMotionNotifyEvent(item, event);
+           
     }
 
     Glib::RefPtr<ArrowModel> arrow = Glib::RefPtr<ArrowModel>::cast_dynamic(item->get_model());    
     if(arrow)
-    {
         arrow->onItemMotionNotifyEvent(item, event);
-    }
 
     Glib::RefPtr<MidpointModel> mid = Glib::RefPtr<MidpointModel>::cast_dynamic(item->get_model());    
     if(mid)
@@ -1240,6 +1334,7 @@ void ApplicationWindow::updateApplicationWindow(void)
     ModulePContainer modules = manager.getKnowledgeBase()->getModules(mainApplication);    
     CnnContainer connections = manager.getKnowledgeBase()->getConnections(mainApplication);
     ApplicaitonPContainer applications = manager.getKnowledgeBase()->getApplications(mainApplication);
+    ArbContainer arbitrators =  manager.getKnowledgeBase()->getArbitrators(mainApplication);
 
     int index = 0;
     ApplicationPIterator appItr;
@@ -1294,6 +1389,7 @@ void ApplicationWindow::updateApplicationWindow(void)
     }  
     
     index = (index/900)*100+50;
+
     CnnIterator citr;
     ModulePContainer allModules = manager.getKnowledgeBase()->getSelModules();
     for(citr=connections.begin(); citr<connections.end(); citr++) 
@@ -1352,6 +1448,7 @@ void ApplicationWindow::updateApplicationWindow(void)
             } 
             index+=40;
         }
+
         if(input)
            dest = findModelFromInput(input);       
         else
@@ -1403,16 +1500,77 @@ void ApplicationWindow::updateApplicationWindow(void)
             }    
         }
 
-        Glib::RefPtr<ArrowModel> arrow = ArrowModel::create(this, source, dest, (*citr).carrier());
-        root->add_child(arrow);
-        int size = model.points.size();
-        for(int i=2; i<size-1; i++)
-            arrow->addMidPoint(model.points[i].x, model.points[i].y, i-2);            
-        arrow->setSelected(false);
-        if(size)
-            arrow->setLabelPosition(model.points[0].x, model.points[0].y);
+        Glib::RefPtr<ArrowModel> arrow; 
+        // check for arbitrators
+        string strCarrier = baseCon.carrier();
+        if((strCarrier.find("recv.priority") != std::string::npos))
+        {           
+            Glib::RefPtr<PortArbitratorModel> arbPort;
+            if(!dest->hasArbitrator())
+            {
+                ArbIterator aitr;
+                Arbitrator arb;
+                bool bFound = false;
+                for(aitr=arbitrators.begin(); aitr<arbitrators.end(); aitr++)
+                {
+                    if(compareString((*aitr).getPort(), baseCon.to()))
+                    {
+                        arb = *aitr;
+                        bFound = true;
+                        break;
+                    }                        
+                }
+                if(!bFound)
+                {
+                    arb.setPort(baseCon.to());
+                    arb = manager.getKnowledgeBase()->addArbitratorToApplication(mainApplication, arb);
+                }
+                arbPort = PortArbitratorModel::create(this, dest, &arb);
+                root->add_child(arbPort);       
+
+                Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item(arbPort);
+                Goocanvas::Bounds bd = item->get_bounds();
+                if(arb.getModelBase().points.size()>0)
+                { 
+                    item->translate(arb.getModelBase().points[0].x - bd.get_x1(), 
+                                    arb.getModelBase().points[0].y - bd.get_y1());
+                }    
+                else
+                {
+                    arbPort->set_property("x", dest->getContactPoint().get_x()-arbPort->getWidth()-50);
+                    arbPort->set_property("y", dest->getContactPoint().get_y()-arbPort->getHeight()/2.0);
+                }
+                arbPort->snapToGrid();
+                Glib::RefPtr<ArrowModel> nullArw = ArrowModel::create(this, arbPort, dest, NULL, NULL, true);
+                root->add_child(nullArw);
+            }
+            else
+               arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(dest->getArbitrator()); 
+
+            arrow = ArrowModel::create(this, source, arbPort, &baseCon);
+            root->add_child(arrow);
+            int size = model.points.size();
+            for(int i=2; i<size-1; i++)
+                arrow->addMidPoint(model.points[i].x, model.points[i].y, i-2);            
+            arrow->setSelected(false);
+            if(size)
+                arrow->setLabelPosition(model.points[0].x, model.points[0].y);
+            arbPort->updateArrowCoordination();
+        }
+        else
+        {
+            arrow = ArrowModel::create(this, source, dest, &baseCon);            
+            root->add_child(arrow);
+            int size = model.points.size();
+            for(int i=2; i<size-1; i++)
+                arrow->addMidPoint(model.points[i].x, model.points[i].y, i-2);            
+            arrow->setSelected(false);
+            if(size)
+                arrow->setLabelPosition(model.points[0].x, model.points[0].y);
+        }                
     }
-    
+   
+ 
     // update canvas and grid size
     double max_w = 0;
     double max_h = 0;
@@ -1433,20 +1591,8 @@ void ApplicationWindow::updateApplicationWindow(void)
 
     // switch to application property window
     onUpdateApplicationProperty(manager.getKnowledgeBase()->getApplication());
-    /*
-    // TESTING 
-    Application* subApp =  manager.getKnowledgeBase()->getApplication("EyesViewer");
-    if(subApp)
-    {
-        Glib::RefPtr<ApplicationModel> app = ApplicationModel::create(this, subApp);
-        root->add_child(app);
-        Glib::RefPtr<Goocanvas::Item> item = m_Canvas->get_item(app);
-        Goocanvas::Bounds bd = item->get_bounds();
-        item->translate(10 - bd.get_x1(), 10 - bd.get_y1());
-    }
-    */
 } 
-
+        
 Glib::RefPtr<PortModel> ApplicationWindow::findModelFromOutput(OutputData* output)
 {
     for(int i=0; i<root->get_n_children(); i++)
@@ -1618,8 +1764,7 @@ void ApplicationWindow::onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>&
                 module->setBasePrefix(strPrefix.c_str());
                 string strAppPrefix = manager.getKnowledgeBase()->getApplication()->getBasePrefix();
                 manager.getKnowledgeBase()->setModulePrefix(module, (strAppPrefix+module->getBasePrefix()).c_str(), false);
-                Glib::RefPtr<ModuleModel> mod = 
-                                         ModuleModel::create(this, module);
+                Glib::RefPtr<ModuleModel> mod = ModuleModel::create(this, module);
                 root->add_child(mod);
                 Goocanvas::Bounds bd = m_Canvas->get_item(mod)->get_bounds();
                 m_Canvas->get_item(mod)->translate(x/m_Canvas->get_scale() - bd.get_x1(), y/m_Canvas->get_scale() - bd.get_y1());
@@ -1736,7 +1881,7 @@ void ApplicationWindow::onUpdateModuleProperty(Module* module)
         delete modWnd;
 
     modPropertyWindow->update(module);  
-    m_RightTab.append_page(*modPropertyWindow, "Property");
+    m_RightTab.append_page(*modPropertyWindow, "Module Property");
     ModuleWindow* pModWnd = new ModuleWindow(module,  m_pParent, &manager);
     m_RightTab.append_page(*pModWnd, "Description");
     m_HPaned.show_all();
@@ -1753,7 +1898,7 @@ void ApplicationWindow::onUpdateApplicationProperty(Application* application)
         delete modWnd;
 
     appPropertyWindow->update(application);
-    m_RightTab.append_page(*appPropertyWindow, "Property");
+    m_RightTab.append_page(*appPropertyWindow, "Application Property");
     m_HPaned.show_all();
 }
 
@@ -1768,9 +1913,25 @@ void ApplicationWindow::onUpdateConnectionProperty(Glib::RefPtr<ArrowModel> &arr
         delete modWnd;
 
     conPropertyWindow->update(arrow);
-    m_RightTab.append_page(*conPropertyWindow, "Property");
+    m_RightTab.append_page(*conPropertyWindow, "Connection Property");
     m_HPaned.show_all();
 }
+
+void ApplicationWindow::onUpdateArbitratorProperty(Glib::RefPtr<PortArbitratorModel> &arbPort)
+{
+    // removes two pages if exist
+    ModuleWindow* modWnd =
+        dynamic_cast<ModuleWindow*>(m_RightTab.get_nth_page(1));
+    m_RightTab.remove_page(-1);
+    m_RightTab.remove_page(-1);
+    if(modWnd)
+        delete modWnd;
+
+    arbPropertyWindow->update(arbPort);
+    m_RightTab.append_page(*arbPropertyWindow, "Arbitrator Property");
+    m_HPaned.show_all();
+}
+
 void  ApplicationWindow::shrinkCanvas()
 {
     double scale = m_Canvas->get_scale();

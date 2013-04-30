@@ -21,6 +21,7 @@
 #include "utility.h"
 #include "logicresource.h"
 #include "primresource.h"
+#include "arbitrator.h"
 
 using namespace std; 
 
@@ -55,6 +56,7 @@ typedef vector<Portmap> PortmapContainer;
 typedef vector<Portmap>::iterator PortmapIterator;
 
 
+
 /**
  * Class Connection  
  */
@@ -65,7 +67,7 @@ public:
     Connection(const char* szFrom, const char* szTo, const char* szCr=NULL) {
         if(szFrom) strFrom = szFrom;
         if(szTo) strTo = szTo;
-        if(szCr) strCarrier = szCr;
+        if(szCr) strCarrier = szCr;        
         bWithPriority = false;
         appOwner = NULL;
         bExternalFrom = false;
@@ -88,7 +90,10 @@ public:
     bool isExternalTo(void) { return bExternalTo; }
     bool isPersistent(void) { return bPersist; }
     const char* carrier(void) { return strCarrier.c_str(); }
-    
+   
+    void setId(const char* id) { if(id) strId = id; }
+    const char* getId(void) { return strId.c_str(); }
+
     void setOwner(Node* owner){ appOwner = owner; }
     Node* owner(void) { return appOwner; }
 
@@ -119,6 +124,7 @@ protected:
 private:
     string strFrom;
     string strTo;
+    string strId;
     bool bExternalTo;
     bool bExternalFrom; 
     string strCarrier;
@@ -311,6 +317,11 @@ public:
     Connection& addConnection(Connection &cnn);
     bool removeConnection(Connection& cnn);
     //void updateConnectionPrefix(void);
+    
+    int arbitratorCount(void) { return arbitrators.size(); }
+    Arbitrator& getArbitratorAt(int index){ return arbitrators[index]; }
+    Arbitrator& addArbitrator(Arbitrator &arb);
+    bool removeArbitrator(Arbitrator& arb);
 
     void setOwner(Node* owner){ appOwner = owner; }
     Node* owner(void) { return appOwner; }
@@ -350,6 +361,7 @@ private:
     IApplicationContainer Iapplications;
     ResourceContainer resources;
     CnnContainer connections;
+    ArbContainer arbitrators;
     string strPrefix;  
     string strBasePrefix;
     string strXmlFile;
@@ -361,6 +373,8 @@ private:
     IApplicationIterator findIapplication(ApplicationInterface& iapp);
     ResourceIterator findResource(ResYarpPort& res);
     CnnIterator findConnection(Connection& cnn);
+    ArbIterator findArbitrator(Arbitrator& arb);
+
 };
  
 typedef vector<Application*> ApplicaitonPContainer;
