@@ -18,6 +18,7 @@ using namespace std;
 //using namespace yarp::sig;
 
 #ifdef WITH_YARPMATH        
+#include <gsl/gsl_version.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
 #endif
@@ -131,6 +132,8 @@ bool Arbitrator::validate(void)
         return false;
 
 #ifdef WITH_YARPMATH        
+#if (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14)
+
     int n = alphas.size();
     if(n == 0)
         return true;
@@ -182,10 +185,15 @@ bool Arbitrator::validate(void)
     gsl_matrix_complex_free(evec);
     return bStable;
 
-#else
+#else //GSL_VERSION
+    logger->addWarning("The version of GNU Scientific Library (GSL) used in libYarpMath is insufficient (GSL_VERSION < 1.14). Your compact logical expression might result an unstable arbitration system!");
+    return true;
+#endif //GSL_VERSION
+
+#else //WITH_YARPMATH
     logger->addWarning("Yarpmanager is compiled without libYarpMath. Your compact logical expression might result an unstable arbitration system!");
     return true;
-#endif
+#endif //WITH_YARPMATH
 
 }
 
