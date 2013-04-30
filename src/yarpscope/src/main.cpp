@@ -48,6 +48,8 @@ void usage() {
     std::cout << std::endl;
     std::cout << "SIMPLE MODE (single remote):" << std::endl;
     std::cout << " --remote [string]      Remote port to connect to." << std::endl;
+    std::cout << " --carrier [string]     YARP Carrier used for connections (default \"mcast\")" << std::endl;
+//     std::cout << " --no-persistent        Do not make persistent connections" << std::endl;
     std::cout << " --index [...]          Index(es) of the vector to plot." << std::endl;
     std::cout << "                        It can be an [uint] or an array of [uint]s" << std::endl;
     std::cout << " --plot_title [string]  Plot title (default = remote)" << std::endl;
