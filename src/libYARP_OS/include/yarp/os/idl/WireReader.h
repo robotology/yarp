@@ -18,8 +18,6 @@
 #include <yarp/os/idl/WirePortable.h>
 #include <yarp/os/idl/WireVocab.h>
 
-#include <yarp/os/impl/Logger.h>
-
 namespace yarp {
     namespace os {
         namespace idl {
