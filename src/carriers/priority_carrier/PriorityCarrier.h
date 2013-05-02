@@ -23,16 +23,16 @@
 #include <yarp/sig/Matrix.h>
 
 #define STIMUL_THRESHOLD        1.0
-#define WITH_RIORITY_DEBUG
+#define WITH_PRIORITY_DEBUG
 
 namespace yarp {
     namespace os {
         namespace impl {
             class PriorityGroup;
             class PriorityCarrier;
-#ifdef WITH_RIORITY_DEBUG
+#ifdef WITH_PRIORITY_DEBUG
             class PriorityDebugThread;
-#endif //WITH_RIORITY_DEBUG
+#endif //WITH_PRIORITY_DEBUG
         }
     }
 }
@@ -62,7 +62,7 @@ public:
 
 
 
-#ifdef WITH_RIORITY_DEBUG
+#ifdef WITH_PRIORITY_DEBUG
 class yarp::os::impl::PriorityDebugThread : public yarp::os::RateThread {
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
@@ -77,7 +77,7 @@ public:
     String debugPortName;
     BufferedPort<yarp::sig::Vector> debugPort;
 };
-#endif //WITH_RIORITY_DEBUG
+#endif //WITH_PRIORITY_DEBUG
 
 
 /**
@@ -89,15 +89,15 @@ public:
  */
 class yarp::os::impl::PriorityCarrier : public yarp::os::impl::ModifyingCarrier {
 
-#ifdef WITH_RIORITY_DEBUG
+#ifdef WITH_PRIORITY_DEBUG
     friend class PriorityDebugThread;
-#endif //WITH_RIORITY_DEBUG
+#endif //WITH_PRIORITY_DEBUG
 
 public:
     PriorityCarrier()
-#ifdef WITH_RIORITY_DEBUG
+#ifdef WITH_PRIORITY_DEBUG
     : debugger(this)
-#endif //WITH_RIORITY_DEBUG
+#endif //WITH_PRIORITY_DEBUG
     {
         group = 0/*NULL*/;
         timeConstant = timeArrival = 0;
@@ -204,10 +204,10 @@ private:
 
     static ElectionOf<PriorityCarrier,PriorityGroup>& getPeers();
 
-#ifdef WITH_RIORITY_DEBUG
+#ifdef WITH_PRIORITY_DEBUG
 private:
     PriorityDebugThread debugger;
-#endif //WITH_RIORITY_DEBUG
+#endif //WITH_PRIORITY_DEBUG
 };
 
 

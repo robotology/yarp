@@ -22,6 +22,13 @@ using namespace yarp::math;
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+#ifdef _MSC_VER
+#define safe_printf sprintf_s
+#else
+#define safe_printf snprintf
+#endif 
+
+
 /**
  * Class PriorityCarrier
  */
@@ -74,29 +81,22 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
     excitation = options.findGroup("ex");
     isVirtual = options.check("virtual");
 
-#ifdef WITH_RIORITY_DEBUG
-
-#if defined(WIN32)
-#define SNPRINTF	_snprintf 
-#else
-#define SNPRINTF	snprintf 
-#endif
-
+#ifdef WITH_PRIORITY_DEBUG
     if(options.check("debug"))
     {
         yarp::os::ConstString msg;
         char dummy[1024];
-        SNPRINTF(dummy, 1024, "\n%s:\n", sourceName.c_str());
+        safe_printf(dummy, 1024, "\n%s:\n", sourceName.c_str());
         msg+= dummy;
-        SNPRINTF(dummy, 1024, "   stimulation: %.2f\n", stimulation);
+        safe_printf(dummy, 1024, "   stimulation: %.2f\n", stimulation);
         msg+= dummy;
-        SNPRINTF(dummy, 1024, "   bias: %.2f\n", baias);
+        safe_printf(dummy, 1024, "   bias: %.2f\n", baias);
         msg+= dummy;
-        SNPRINTF(dummy, 1024, "   tc: %.2fs\n", timeConstant);
+        safe_printf(dummy, 1024, "   tc: %.2fs\n", timeConstant);
         msg+= dummy;
-        SNPRINTF(dummy, 1024, "   tr: %.2fs\n", timeResting);
+        safe_printf(dummy, 1024, "   tr: %.2fs\n", timeResting);
         msg+= dummy;
-        SNPRINTF(dummy, 1024, "   ex: ");
+        safe_printf(dummy, 1024, "   ex: ");
         msg+= dummy;
         for(int i=0; i<excitation.size(); i++)
         {
@@ -104,19 +104,19 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
             if(v.isList() && (v.asList()->size()>=2))
             {
                 Bottle* b = v.asList();
-                SNPRINTF(dummy, 1024, "(%s, %.2f) ",
+                safe_printf(dummy, 1024, "(%s, %.2f) ",
                                 b->get(0).asString().c_str(),
                                 b->get(1).asDouble()/10.0 );
                 msg+= dummy;
             }
         }
-        //SNPRINTF(dummy, 1024, "\n");
+        //safe_printf(dummy, 1024, "\n");
         msg+= "\n";
-        SNPRINTF(dummy, 1024, "   virtual: %s\n",
+        safe_printf(dummy, 1024, "   virtual: %s\n",
                             (isVirtual)?"yes":"no");
         msg+= dummy;
         int rate = options.check("rate", Value(10)).asInt();
-        SNPRINTF(dummy, 1024, "   db.rate: %dms\n", rate);
+        safe_printf(dummy, 1024, "   db.rate: %dms\n", rate);
         msg+= dummy;
         YARP_LOG_INFO(msg.c_str());
         debugger.stop();
@@ -368,7 +368,7 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
  * Class PriorityDebugThread
  */
 
-#ifdef WITH_RIORITY_DEBUG
+#ifdef WITH_PRIORITY_DEBUG
 PriorityDebugThread::PriorityDebugThread(PriorityCarrier* carrier) : RateThread(10)
 {
     pcarrier = carrier;
@@ -407,7 +407,7 @@ void PriorityDebugThread::threadRelease()
     debugPort.close();
 }
 
-#endif //WITH_RIORITY_DEBUG
+#endif //WITH_PRIORITY_DEBUG
 
 
 
