@@ -1,3 +1,9 @@
+GtkDataboxMM (2013-05-02) 0.9.4
+===============================
+
+ * Header file changes to catch up with gtkmm-2.24.3
+ * Fix bugtracker and homepage URLs
+
 GtkDataboxMM (2012-08-03) 0.9.3
 ===============================
 

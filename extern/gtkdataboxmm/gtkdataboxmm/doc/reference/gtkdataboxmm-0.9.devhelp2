@@ -7,7 +7,6 @@
     <sub name="Namespaces" link="namespaces.html">
       <sub name="GDatabox" link="namespaceGDatabox.html"/>
       <sub name="Gdk" link="namespaceGdk.html"/>
-      <sub name="Glib" link="namespaceGlib.html"/>
       <sub name="Gtk" link="namespaceGtk.html"/>
     </sub>
     <sub name="Classes" link="classes.html">
@@ -24,15 +23,14 @@
         <sub name="XYCGraph" link="classGDatabox_1_1XYCGraph.html"/>
       </sub>
       <sub name="Gdk" link="namespaceGdk.html"/>
-      <sub name="Glib" link="namespaceGlib.html"/>
-      <sub name="Glib::Object" link="classGlib_1_1Object.html"/>
       <sub name="Gtk" link="namespaceGtk.html"/>
       <sub name="Gtk::Widget" link="classGtk_1_1Widget.html"/>
+      <sub name="sigc::trackable" link="classsigc_1_1trackable.html"/>
     </sub>
   </chapters>
   <functions>
-    <keyword type="struct" name="Glib::Object" link="classGlib_1_1Object.html"/>
     <keyword type="struct" name="Gtk::Widget" link="classGtk_1_1Widget.html"/>
+    <keyword type="struct" name="sigc::trackable" link="classsigc_1_1trackable.html"/>
     <keyword type="enum" name="GDatabox::MarkersPosition" link="namespaceGDatabox.html#acd889e7a7dd3d569140d593d97c1b94f"/>
     <keyword type="macro" name="GDatabox::DATABOX_MARKERS_C" link="namespaceGDatabox.html#acd889e7a7dd3d569140d593d97c1b94fa959dd1e5baeb6ced6714b91f94451f0a"/>
     <keyword type="macro" name="GDatabox::DATABOX_MARKERS_N" link="namespaceGDatabox.html#acd889e7a7dd3d569140d593d97c1b94fa0e5cdba682d94a1632e4159294740208"/>

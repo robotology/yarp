@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtkmm/main.h>
+#include <gtkmm.h>
 #include <gtkdataboxmmconfig.h>
 #include <gtkdataboxmm/wrap_init.h>
 
