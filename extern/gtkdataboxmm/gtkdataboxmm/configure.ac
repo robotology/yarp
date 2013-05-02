@@ -16,8 +16,8 @@
 ## You should have received a copy of the GNU Lesser General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gtkdataboxmm], [0.9.3], [https://bugzilla.gnome.org/enter_bug.cgi?product=gtkdataboxmm],
-        [gtkdataboxmm], [http://www.gtkmm.org/])
+AC_INIT([gtkdataboxmm], [0.9.4], [https://sourceforge.net/p/gtkdataboxmm/tickets/],
+        [gtkdataboxmm], [https/sourceforge.net/projects/gtkdataboxmm/])
 AC_PREREQ([2.59])
 
 AC_CONFIG_SRCDIR([gtkdatabox/gtkdataboxmm.h])

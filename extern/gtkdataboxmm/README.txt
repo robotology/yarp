@@ -27,7 +27,7 @@ License: LGPL-2.1
  You should have received a copy of the GNU Lesser General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Version: 0.9.3
+Version: 0.9.4
 
 Note: To import a newer version it is necessary to run ./configure and
  import the file gtkdataboxmmconfig.h as well.

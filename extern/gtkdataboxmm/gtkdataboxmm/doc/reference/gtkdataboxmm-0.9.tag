@@ -30,12 +30,12 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>Glib::Object</name>
-    <filename>classGlib_1_1Object.html</filename>
-  </compound>
-  <compound kind="class">
     <name>Gtk::Widget</name>
     <filename>classGtk_1_1Widget.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>sigc::trackable</name>
+    <filename>classsigc_1_1trackable.html</filename>
   </compound>
   <compound kind="namespace">
     <name>GDatabox</name>
@@ -2335,16 +2335,12 @@
     <filename>namespaceGdk.html</filename>
   </compound>
   <compound kind="namespace">
-    <name>Glib</name>
-    <filename>namespaceGlib.html</filename>
-  </compound>
-  <compound kind="namespace">
     <name>Gtk</name>
     <filename>namespaceGtk.html</filename>
   </compound>
   <compound kind="dir">
     <name>gtkdataboxmm/</name>
-    <path>/opt/iit/src/gtkdataboxmm/gtkdatabox/gtkdataboxmm/</path>
+    <path>/opt/iit/src/_dependencies/gtkdataboxmm/gtkdatabox/gtkdataboxmm/</path>
     <filename>dir_fe087f722d0f3000319e920ae24ca6bf.html</filename>
     <file>bars.h</file>
     <file>cross_simple.h</file>
