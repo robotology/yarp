@@ -75,21 +75,28 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
     isVirtual = options.check("virtual");
 
 #ifdef WITH_RIORITY_DEBUG
+
+#if defined(WIN32)
+#define SNPRINTF	_snprintf 
+#else
+#define SNPRINTF	snprintf 
+#endif
+
     if(options.check("debug"))
     {
         yarp::os::ConstString msg;
         char dummy[1024];
-        snprintf(dummy, 1024, "\n%s:\n", sourceName.c_str());
+        SNPRINTF(dummy, 1024, "\n%s:\n", sourceName.c_str());
         msg+= dummy;
-        snprintf(dummy, 1024, "   stimulation: %.2f\n", stimulation);
+        SNPRINTF(dummy, 1024, "   stimulation: %.2f\n", stimulation);
         msg+= dummy;
-        snprintf(dummy, 1024, "   bias: %.2f\n", baias);
+        SNPRINTF(dummy, 1024, "   bias: %.2f\n", baias);
         msg+= dummy;
-        snprintf(dummy, 1024, "   tc: %.2fs\n", timeConstant);
+        SNPRINTF(dummy, 1024, "   tc: %.2fs\n", timeConstant);
         msg+= dummy;
-        snprintf(dummy, 1024, "   tr: %.2fs\n", timeResting);
+        SNPRINTF(dummy, 1024, "   tr: %.2fs\n", timeResting);
         msg+= dummy;
-        snprintf(dummy, 1024, "   ex: ");
+        SNPRINTF(dummy, 1024, "   ex: ");
         msg+= dummy;
         for(int i=0; i<excitation.size(); i++)
         {
@@ -97,19 +104,19 @@ bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
             if(v.isList() && (v.asList()->size()>=2))
             {
                 Bottle* b = v.asList();
-                snprintf(dummy, 1024, "(%s, %.2f) ",
+                SNPRINTF(dummy, 1024, "(%s, %.2f) ",
                                 b->get(0).asString().c_str(),
                                 b->get(1).asDouble()/10.0 );
                 msg+= dummy;
             }
         }
-        //snprintf(dummy, 1024, "\n");
+        //SNPRINTF(dummy, 1024, "\n");
         msg+= "\n";
-        snprintf(dummy, 1024, "   virtual: %s\n",
+        SNPRINTF(dummy, 1024, "   virtual: %s\n",
                             (isVirtual)?"yes":"no");
         msg+= dummy;
         int rate = options.check("rate", Value(10)).asInt();
-        snprintf(dummy, 1024, "   db.rate: %dms\n", rate);
+        SNPRINTF(dummy, 1024, "   db.rate: %dms\n", rate);
         msg+= dummy;
         YARP_LOG_INFO(msg.c_str());
         debugger.stop();
