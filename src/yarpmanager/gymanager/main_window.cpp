@@ -21,7 +21,7 @@
 #endif
 
 
-#include <gtkmm/stock.h>
+#include <gtkmm.h>
 
 #include <iostream>
 #include <fstream>

@@ -13,7 +13,7 @@
 #endif
 
 #include <iostream>
-#include <gtkmm/main.h>
+#include <gtkmm.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
