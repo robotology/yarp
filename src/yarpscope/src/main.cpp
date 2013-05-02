@@ -11,7 +11,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
 
-#include <gtkmm/main.h>
+#include <gtkmm.h>
 
 //#include <glibmm/i18n.h>
 #define _(String) (String)
