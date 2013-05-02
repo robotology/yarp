@@ -164,7 +164,8 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
 
   std::string print_doc        (t_doc* tdoc);
   std::string print_type       (t_type* ttype);
-  std::string print_const_value(t_const_value* tvalue);
+  std::string print_const_value(t_const_value* tvalue,
+				t_type* ttype = NULL);
 
   std::string function_prototype(t_function *tfn, bool include_defaults,
 				 const char *prefix=NULL);
@@ -859,7 +860,8 @@ string t_yarp_generator::print_type(t_type* ttype) {
 /**
  * Prints out an YARP representation of the provided constant value
  */
-string t_yarp_generator::print_const_value(t_const_value* tvalue) {
+string t_yarp_generator::print_const_value(t_const_value* tvalue,
+					   t_type* ttype) {
   string result;
   bool first = true;
   char buf[10000];
@@ -908,7 +910,18 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue) {
     }
     break;
   default:
-    result += "UNKNOWN";
+    {
+      bool done = false;
+      if (ttype!=NULL) {
+	if (ttype->is_enum()) {
+	  result += tvalue->get_identifier_name();
+	  done = true;
+	}
+      }
+      if (!done) {
+	result += "UNKNOWN";
+      }
+    }
     break;
   }
   return result;
@@ -1413,7 +1426,8 @@ std::string t_yarp_generator::function_prototype(t_function *tfn,
       if (include_defaults) {
 	if ((*arg_iter)->get_value() != NULL) {
 	  result += " = ";
-	  result += print_const_value((*arg_iter)->get_value());
+	  result += print_const_value((*arg_iter)->get_value(),
+				      (*arg_iter)->get_type());
 	}
       }
     }
