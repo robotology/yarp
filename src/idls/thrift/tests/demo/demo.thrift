@@ -24,5 +24,7 @@ service Demo {
   i32 add_pair(1:i32 x,2:i32 y);
   i32 test_partial(1:i32 x, 2:list<i32> lst, 3:i32 y);
 
-  void test_enums_with_default(1:DemoEnum x = DemoEnum.ENUM1);
+  i32 test_tail_defaults(1:DemoEnum x = DemoEnum.ENUM1);
+
+  i32 test_longer_tail_defaults(1: i32 ignore, 2:DemoEnum _enum = DemoEnum.ENUM2, 3:i32 _int = 42, 4:string _string = "Space Monkey from the Planet: Space");
 }
