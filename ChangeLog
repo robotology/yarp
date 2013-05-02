@@ -1,3 +1,11 @@
+2013-05-02 Lorenzo Natale <lorenzo.natale@iit.it>
+    * src/libYARP_sig/harness/MatrixTest.cpp
+    * src/libYARP_sig/include/yarp/sig/Matrix.h
+    * src/libYARP_sig/src/Matrix.cpp
+    
+    fixed bug on Matrix::resize(), added regression tests.
+    Clean up: tabs->spaces [thanks Juan G Victores].
+
 2013-04-16 Alessandro Scalzo <alessandro.scalzo@iit.it>
     * src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
     * src/libYARP_OS/include/yarp/os/impl/RunReadWrite.h
