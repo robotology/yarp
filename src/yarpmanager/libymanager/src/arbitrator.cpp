@@ -12,15 +12,17 @@
 #include "binexparser.h"
 
 #include <yarp/sig/Matrix.h>
-//#include <yarp/sig/Vector.h>
+#include <yarp/sig/Vector.h>
 
 using namespace std;
-//using namespace yarp::sig;
+using namespace yarp::sig;
 
-#ifdef WITH_YARPMATH        
-#include <gsl/gsl_version.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_eigen.h>
+#ifdef WITH_YARPMATH       
+#include <math.h>
+#include <yarp/math/Math.h>
+//#include <gsl/gsl_version.h>
+//#include <gsl/gsl_math.h>
+//#include <gsl/gsl_eigen.h>
 #endif
 
 
@@ -132,8 +134,7 @@ bool Arbitrator::validate(void)
         return false;
 
 #ifdef WITH_YARPMATH        
-#if (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14)
-
+//#if (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14)
     int n = alphas.size();
     if(n == 0)
         return true;
@@ -159,7 +160,23 @@ bool Arbitrator::validate(void)
         row++; 
     }
     //printf("%s\n\n", A.toString(1).c_str());
+    
+    yarp::sig::Vector real;
+    yarp::sig::Vector img;
+    yarp::math::eingenValues(A, real, img);
+    bool bStable = true;
+    for(size_t i=0; i<real.size(); i++)
+    {
+        if((float)fabs(real[i]) >= 1.0)
+        {
+            bStable = false;
+            logger->addError("Inconsistency in logical expressions. This will result an unstable arbitration system!");
+            break;
+        }
+    }
+    return bStable;
 
+    /*
     gsl_vector_complex *eval = gsl_vector_complex_alloc(n);
     gsl_matrix_complex *evec = gsl_matrix_complex_alloc(n, n);
     gsl_eigen_nonsymmv_workspace * w = gsl_eigen_nonsymmv_alloc(n);    
@@ -182,13 +199,14 @@ bool Arbitrator::validate(void)
 
     gsl_eigen_nonsymmv_free(w);
     gsl_vector_complex_free(eval);
-    gsl_matrix_complex_free(evec);
+    gsl_matrix_complex_free(evec);        
     return bStable;
+    */
 
-#else //GSL_VERSION
-    logger->addWarning("The version of GNU Scientific Library (GSL) used in libYarpMath is insufficient (GSL_VERSION < 1.14). Your compact logical expression might result an unstable arbitration system!");
-    return true;
-#endif //GSL_VERSION
+//#else //GSL_VERSION
+//    logger->addWarning("The version of GNU Scientific Library (GSL) used in libYarpMath is insufficient (GSL_VERSION < 1.14). Your compact logical expression might result an unstable arbitration system!");
+//    return true;
+//#endif //GSL_VERSION
 
 #else //WITH_YARPMATH
     logger->addWarning("Yarpmanager is compiled without libYarpMath. Your compact logical expression might result an unstable arbitration system!");

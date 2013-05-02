@@ -18,6 +18,9 @@
 
 #include <gsl/gsl_linalg.h>
 
+#include <gsl/gsl_version.h>
+#include <gsl/gsl_eigen.h>
+
 gsl_vector_view getView(const yarp::sig::Vector &v)
 {
     gsl_vector_view ret=gsl_vector_view_array(const_cast<double *>(v.data()), v.size());
@@ -613,6 +616,37 @@ Matrix yarp::math::luinv(const yarp::sig::Matrix& in) {
         (gsl_matrix *) ret.getGslMatrix());
     gsl_permutation_free(permidx);
     return ret;
+}
+
+bool yarp::math::eingenValues(const yarp::sig::Matrix& in, yarp::sig::Vector &real, yarp::sig::Vector &img) {
+
+    // return error for non-square matrix
+    if(in.cols() != in.rows())
+        return false;
+
+    real.clear();
+    img.clear();
+
+#if (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14)
+    size_t n = in.rows();
+    gsl_vector_complex *eval = gsl_vector_complex_alloc(n);
+    gsl_matrix_complex *evec = gsl_matrix_complex_alloc(n, n);
+    gsl_eigen_nonsymmv_workspace * w = gsl_eigen_nonsymmv_alloc(n);    
+    gsl_eigen_nonsymmv ((gsl_matrix *)in.getGslMatrix(), eval, evec, w);
+    for(size_t i=0; i<n; i++)
+    {
+        gsl_complex eval_i = gsl_vector_complex_get(eval, i);
+        real.push_back(GSL_REAL(eval_i));
+        img.push_back(GSL_IMAG(eval_i));
+    }
+    gsl_eigen_nonsymmv_free(w);
+    gsl_vector_complex_free(eval);
+    gsl_matrix_complex_free(evec);
+    return true;
+
+#else
+    return false;
+#endif
 }
 
 /* depends on GSL 1.12, put back in when verified that 1.12 is standard
