@@ -26,9 +26,9 @@ Glib::RefPtr<PortModel> PortModel::create(NodeType t)
     return Glib::RefPtr<PortModel>(new PortModel(t));
 }
 
-Gdk::Point PortModel::getContactPoint(void)
+Gdk::Point PortModel::getContactPoint(ArrowModel* arrow)
 {
-    return Gdk::Point(-1, -1);    
+    return Gdk::Point(-1, -1);
 }
 
 
@@ -62,9 +62,18 @@ bool PortModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
     return true;
 }
 
+void PortModel::setSelected(bool sel) 
+{ 
+}
+
+bool PortModel::getSelected(void) 
+{
+    return false;
+}
+
 bool PortModel::addSourceArrow(ArrowModel* arrow)
 {
-    if(type != OUTPUTD)
+    if(type == INPUTD)
         return false;
     sourceArrows.push_back(arrow); 
     onSourceAdded();
@@ -73,7 +82,7 @@ bool PortModel::addSourceArrow(ArrowModel* arrow)
 
 bool PortModel::addDestinationArrow(ArrowModel* arrow)
 {
-    if(type != INPUTD)
+    if(type == OUTPUTD)
         return false;
     destinationArrows.push_back(arrow); 
     onDestinationAdded();

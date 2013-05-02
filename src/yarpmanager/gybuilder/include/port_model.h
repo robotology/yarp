@@ -38,18 +38,38 @@ public:
     virtual bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventCrossing* event);
 
-    virtual Gdk::Point getContactPoint(void);
+    virtual Gdk::Point getContactPoint(ArrowModel* arrow=NULL);
     virtual void updateArrowCoordination(void) { };
 
     NodeType getType(void) { return type;}
 
-    bool addSourceArrow(ArrowModel* arrow);
-    bool addDestinationArrow(ArrowModel* arrow);
-    bool removeSourceArrow(ArrowModel* arrow);
-    bool removeDestinationArrow(ArrowModel* arrow);
+    virtual void setSelected(bool sel);
+    virtual bool getSelected(void);
+    virtual bool addSourceArrow(ArrowModel* arrow);
+    virtual bool addDestinationArrow(ArrowModel* arrow);
+    virtual bool removeSourceArrow(ArrowModel* arrow);
+    virtual bool removeDestinationArrow(ArrowModel* arrow);
    
     std::vector<ArrowModel*>& getSourceArrows(void) { return sourceArrows; }
     std::vector<ArrowModel*>& getDestinationArrows(void) { return destinationArrows; }
+
+    bool hasArbitrator(void) {
+        std::vector<ArrowModel*>::iterator itr;
+        for(itr=destinationArrows.begin(); itr!=destinationArrows.end(); itr++)
+            if((*itr)->isNullArrow())
+                return true;
+        return false;
+    }
+    
+    Glib::RefPtr<PortModel> getArbitrator(void) {
+        std::vector<ArrowModel*>::iterator itr;
+        for(itr=destinationArrows.begin(); itr!=destinationArrows.end(); itr++)
+        {
+            if((*itr)->isNullArrow())
+                return (*itr)->getSource();
+        }
+        return Glib::RefPtr<PortModel>(NULL);
+    }
 
 protected: 
     PortModel(NodeType t=INPUTD);

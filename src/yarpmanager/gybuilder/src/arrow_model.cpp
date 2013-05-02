@@ -24,151 +24,348 @@
 # define fmin min
 #endif
 
+#include <yarp/os/Property.h>
+#include <yarp/os/Bottle.h>
+
+using namespace yarp::os;
+
 #define ARROW_LINEWIDTH     2
 
 
 ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                        Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
-                       const char* szLabel, ApplicationModel* appModel): PolylineModel(0,0,0,0)
+                       Connection* con, ApplicationModel* appModel, bool nullArw): PolylineModel(0,0,0,0), connection(NULL, NULL) 
 {
     parentWindow = parentWnd;
     source = src;
     destination = dest;
     selected = false;
     bExist = false;
+    bNullArrow = nullArw;
     applicationModel = appModel; 
     bNested = (applicationModel != NULL);
     if(appModel)
         application = appModel->getApplication();
     else        
         application = parentWindow->manager.getKnowledgeBase()->getApplication();
-    if(szLabel)
-        strLabel = szLabel;
+
+    if(con)
+    {
+        strLabel = con->carrier();
+        connection = *con;
+    }
+        
     this->property_close_path().set_value(false);
     this->property_line_width().set_value(ARROW_LINEWIDTH);
     this->property_arrow_width().set_value(5.0);
-    this->property_end_arrow().set_value(true);
+    if(!bNullArrow)
+        this->property_end_arrow().set_value(true);
     if(bNested)
     {
         defaultColor = "#555555";
-        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
-        g_object_set(this->gobj(), "line-dash", dash, NULL);
+        //GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
+        //g_object_set(this->gobj(), "line-dash", dash, NULL);
     }
     else
         defaultColor = "black";
 
     source->addSourceArrow(this);
     destination->addDestinationArrow(this);
-  
-    string strCarrier = strLabel;
-    string dummyLabel;
-    //Adding connection 
-    if(application)
+    if(!bNullArrow)
     {
-        string strFrom, strTo;
-        Glib::RefPtr<InternalPortModel> intPort;
-        Glib::RefPtr<ExternalPortModel> extPort;
-        Module* module;
-        InputData* input = NULL;
-        OutputData* output = NULL;
-        bool bExternFrom = false;
-        bool bExternTo = false;
-        // source 
-        intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(source);
-        if(intPort)
+        string strCarrier = strLabel;
+        string dummyLabel;
+        //Adding connection 
+        if(application)
         {
-            output = intPort->getOutput();
-            module = (Module*) output->owner();
-            strFrom = string(module->getPrefix()) + string(intPort->getOutput()->getPort()); 
-            dummyLabel = string(intPort->getOutput()->getPort());
-            if(!strCarrier.size())            
-                strCarrier = intPort->getOutput()->getCarrier();
+            string strFrom, strTo;
+            Glib::RefPtr<InternalPortModel> intPort;
+            Glib::RefPtr<ExternalPortModel> extPort;
+            Glib::RefPtr<PortArbitratorModel> arbPort;
+            Module* module;
+            InputData* input = NULL;
+            OutputData* output = NULL;
+            bool bExternFrom = false;
+            bool bExternTo = false;
+
+            // port arbitrator at the destination
+            arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(destination);
+
+            // source 
+            intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(source);
+            if(intPort)
+            {
+                output = intPort->getOutput();
+                module = (Module*) output->owner();
+                strFrom = string(module->getPrefix()) + string(intPort->getOutput()->getPort()); 
+                dummyLabel = string(intPort->getOutput()->getPort());
+                if(!strCarrier.size())
+                {
+                    strCarrier = intPort->getOutput()->getCarrier();
+                    if(arbPort)
+                        strCarrier += "+recv.priority";
+                }                    
+            }
+            else
+            {
+                extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(source);
+                strFrom = extPort->getPort();
+                dummyLabel = string(extPort->getPort());
+                if(!strCarrier.size() && arbPort)
+                    strCarrier = "udp+recv.priority";
+                bExternFrom = true;
+            }
+          
+            // destination
+            intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(destination);
+            if(intPort)
+            {
+                input = intPort->getInput();
+                module = (Module*) input->owner();
+                strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort()); 
+                dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" "); 
+                if(!strCarrier.size())   
+                {
+                    strCarrier = intPort->getInput()->getCarrier();
+                    if(arbPort)
+                        strCarrier += "+recv.priority";
+                }                    
+            }
+            else if(arbPort)
+            {
+                intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(arbPort->getPortModel());
+                extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(arbPort->getPortModel());
+                if(intPort)
+                {
+                    input = intPort->getInput();
+                    module = (Module*) input->owner();
+                    strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort()); 
+                    dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" "); 
+                    if(!strCarrier.size())
+                    {
+                        strCarrier = intPort->getInput()->getCarrier();
+                        strCarrier += "+recv.priority";
+                    }                        
+                }
+                else
+                {
+                    strTo = extPort->getPort();
+                    dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" "); 
+                    bExternTo = true;
+                    if(!strCarrier.size())
+                        strCarrier = "udp+recv.priority";
+                }
+            }
+            else
+            {
+                extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(destination);
+                strTo = extPort->getPort();
+                dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" "); 
+                bExternTo = true;
+                if(!strCarrier.size())
+                        strCarrier = "udp";
+            }
+            
+            connection.setFrom(strFrom.c_str());
+            connection.setTo(strTo.c_str());
+            connection.setCarrier(strCarrier.c_str());
+            connection.setFromExternal(bExternFrom);
+            connection.setToExternal(bExternTo);
+            connection.setCorOutputData(output);
+            connection.setCorInputData(input);
+            connection.setModel(this);
+            connection = parentWindow->manager.getKnowledgeBase()->addConnectionToApplication(application, connection);
+            tool = TooltipModel::create(parentWindow, dummyLabel.c_str());
+        }
+
+        strLabel = strCarrier;
+        this->property_stroke_color().set_value(defaultColor.c_str());
+        if(strLabel.size())
+            label = LabelModel::create(parentWindow, this, strLabel.c_str());
+        else
+            label = LabelModel::create(parentWindow, this, strCarrier.c_str());
+
+        // if it is an auxilary connections
+        /*
+        if((strLabel.find("virtual") != std::string::npos) || 
+           (strLabel.find("auxiliary") != std::string::npos) )
+        {
+            GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
+            g_object_set(this->gobj(), "line-dash", dash, NULL);      
+        }
+        */
+
+        if(bNested)
+        {
+            applicationModel->add_child(label);
+            label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
         }
         else
-        {
-            extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(source);
-            strFrom = extPort->getPort();
-            dummyLabel = string(extPort->getPort());
-            bExternFrom = true;
-        }
-      
-        // destination
-        intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(destination);
-        if(intPort)
-        {
-            input = intPort->getInput();
-            module = (Module*) input->owner();
-            strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort()); 
-            dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" "); 
-            if(!strCarrier.size())            
-                strCarrier = intPort->getInput()->getCarrier();
-        }
-        else
-        {
-            extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(destination);
-            strTo = extPort->getPort();
-            dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" "); 
-            bExternTo = true;
-        }
+            parentWindow->getRootModel()->add_child(label);
+        label->raise();
 
-        Connection cnn(strFrom.c_str(), strTo.c_str(), strCarrier.c_str());
-        cnn.setFromExternal(bExternFrom);
-        cnn.setToExternal(bExternTo);
-        cnn.setCorOutputData(output);
-        cnn.setCorInputData(input);
-        cnn.setModel(this);
-        connection = parentWindow->manager.getKnowledgeBase()->addConnectionToApplication(application, cnn);
-
-        tool = TooltipModel::create(parentWindow, dummyLabel.c_str());
+        showLabel(parentWindow->m_showLabel);
     }
 
-    this->property_stroke_color().set_value(defaultColor.c_str());
-    if(strLabel.size())
-        label = LabelModel::create(parentWindow, this, strLabel.c_str());
-    else
-        label = LabelModel::create(parentWindow, this, strCarrier.c_str());
-
-    if(bNested)
-    {
-        applicationModel->add_child(label);
-        label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
-    }
-    else
-        parentWindow->getRootModel()->add_child(label);
-    label->raise();
-
-    showLabel(parentWindow->m_showLabel);
-
-    Gdk::Point pt1 = source->getContactPoint();
-    Gdk::Point pt2 = destination->getContactPoint();
+    
+    Gdk::Point pt1 = source->getContactPoint(this);
+    Gdk::Point pt2 = destination->getContactPoint(this);
     setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
     Goocanvas::Points points = this->property_points().get_value();
     setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
+    setLabel(strLabel.c_str());
     updatLabelCoordiante();
-    
+    //printf("%s : %d\n", __FILE__, __LINE__); 
 }
     
 void ArrowModel::setLabel(const char* szLabel)
-{
+{    
+    if(bNullArrow)
+        return;
     if(!szLabel)
         return;
-    label->property_text() = szLabel;
+ 
+     string dummy = szLabel;
+    if((dummy.find("virtual") != std::string::npos) || 
+       (dummy.find("auxiliary") != std::string::npos) )
+    {
+        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
+        g_object_set(this->gobj(), "line-dash", dash, NULL);      
+    }
+    else
+    {
+        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 0);
+        g_object_set(this->gobj(), "line-dash", dash, NULL);      
+    }
+
+    if(dummy.find("recv.priority") != std::string::npos)
+        strLabel = dummy.substr(0, dummy.find("recv.priority")+strlen("recv.priority")) + "+...";
+    else
+        strLabel = szLabel;
+
+    label->property_text() = strLabel.c_str();        
+    updatLabelCoordiante();
+}
+
+void ArrowModel::removeExcitation(const char* szName)
+{
+    Connection con = connection;
+    string carrier = con.carrier();    
+    string excitation;
+    size_t start = carrier.find("+(ex");
+    if(start != std::string::npos)
+    {
+        size_t end = carrier.find("+", start+1);
+        if(end == std::string::npos)
+            end = carrier.length();
+        excitation = carrier.substr(start+1, end-start);
+        carrier.erase(start, end-start);        
+    }
+
+    Property options;
+    options.fromString(excitation.c_str()); 
+    Bottle exc = options.findGroup("ex");
+    string strLink = "+(ex";
+    bool bEmpty = true;
+    for(int i=0; i<exc.size(); i++)
+    {
+        Value v = exc.get(i);
+        if(v.isList() && (v.asList()->size()>=2))
+        {
+            Bottle* b = v.asList();
+            if(!compareString(b->get(0).asString().c_str(), szName))
+            {
+                strLink += string(" (") + b->get(0).asString().c_str();
+                char dummy[64];
+                sprintf(dummy, " %d)", (int)b->get(1).asDouble());
+                strLink += dummy; 
+                bEmpty = false;
+            }
+        }
+    }
+
+    strLink += ")";
+    if(!bEmpty)    
+        carrier += strLink;
+
+    con.setCarrier(carrier.c_str());
+    parentWindow->manager.getKnowledgeBase()->updateConnectionOfApplication(application, connection, con);
+    connection.setCarrier(carrier.c_str());
+    setLabel(carrier.c_str());
+}
+
+void ArrowModel::renameExcitation(const char* szOld, const char* szNew)
+{
+    Connection con = connection;
+    string carrier = con.carrier();    
+    string excitation;
+    size_t start = carrier.find("+(ex");
+    if(start != std::string::npos)
+    {
+        size_t end = carrier.find("+", start+1);
+        if(end == std::string::npos)
+            end = carrier.length();
+        excitation = carrier.substr(start+1, end-start);
+        carrier.erase(start, end-start);        
+    }
+
+    Property options;
+    options.fromString(excitation.c_str()); 
+    Bottle exc = options.findGroup("ex");
+    string strLink = "+(ex";
+    bool bEmpty = true;
+    for(int i=0; i<exc.size(); i++)
+    {
+        Value v = exc.get(i);
+        if(v.isList() && (v.asList()->size()>=2))
+        {
+            Bottle* b = v.asList();
+            if(compareString(b->get(0).asString().c_str(), szOld))
+            {
+                strLink += string(" (") + szNew;
+                char dummy[64];
+                sprintf(dummy, " %d)", (int)b->get(1).asDouble());
+                strLink += dummy; 
+                bEmpty = false;
+
+            }
+            else
+            {
+                strLink += string(" (") + b->get(0).asString().c_str();
+                char dummy[64];
+                sprintf(dummy, " %d)", (int)b->get(1).asDouble());
+                strLink += dummy; 
+                bEmpty = false;
+            }
+        }
+    }
+
+    strLink += ")";
+    if(!bEmpty)    
+        carrier += strLink;
+
+    con.setCarrier(carrier.c_str());
+    parentWindow->manager.getKnowledgeBase()->updateConnectionOfApplication(application, connection, con);
+    connection.setCarrier(carrier.c_str());
+    setLabel(carrier.c_str());
 }
 
 ArrowModel::~ArrowModel(void) 
 {
-    //printf("%s\n",__PRETTY_FUNCTION__ );
-    
-    // removing label 
-    int id = parentWindow->getRootModel()->find_child(label);
-    if(id != -1)
-        parentWindow->getRootModel()->remove_child(id);
+    //printf("[%d] %s\n",__LINE__, __PRETTY_FUNCTION__ );
+    if(!bNullArrow)
+    {
+        // removing label 
+        int id = parentWindow->getRootModel()->find_child(label);
+        if(id != -1)
+            parentWindow->getRootModel()->remove_child(id);
+    }
 
     // removing midpoints
     vector<Glib::RefPtr<MidpointModel> >::iterator itr;
     for(itr=midpoints.begin(); itr!=midpoints.end(); itr++)
     {
-        id = parentWindow->getRootModel()->find_child((*itr));
+        int id = parentWindow->getRootModel()->find_child((*itr));
         if(id != -1)
             parentWindow->getRootModel()->remove_child(id);
     }
@@ -180,20 +377,22 @@ ArrowModel::~ArrowModel(void)
     if(destination)    
         destination->removeDestinationArrow(this);   
  
-      if(application)
-        parentWindow->manager.getKnowledgeBase()->removeConnectionFromApplication(application,
-                                connection);
-    if(tool)
-        tool.clear();
-
+    if(!bNullArrow)
+    {
+        if(application)
+            parentWindow->manager.getKnowledgeBase()->removeConnectionFromApplication(application,
+                                    connection);
+        if(tool)
+            tool.clear();
+    }
 }
 
 void ArrowModel::updatCoordiantes(void)
 {
     if(!bNested)
-    {
-        Gdk::Point pt1 = source->getContactPoint();
-        Gdk::Point pt2 = destination->getContactPoint();
+    {        
+        Gdk::Point pt1 = source->getContactPoint(this);
+        Gdk::Point pt2 = destination->getContactPoint(this);
         setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
         Goocanvas::Points points = this->property_points().get_value();
         setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
@@ -204,24 +403,43 @@ void ArrowModel::updatCoordiantes(void)
 
 void ArrowModel::updatLabelCoordiante(void)
 {
-    double x1, y1, x2, y2;
-    Goocanvas::Points points = this->property_points().get_value();
-    int index = points.get_num_points() / 2;
-    points.get_coordinate(index-1, x1, y1);
-    points.get_coordinate(index, x2, y2);
-    setLabelPosition((x1+x2)/2.0, (y1+y2)/2.0);
+    
+    if(!bNullArrow)
+    {
+        Goocanvas::Points points = this->property_points().get_value();
+        if(points.get_num_points() < 3)
+        {
+            double x1, y1, x2, y2;
+            Goocanvas::Points points = this->property_points().get_value();
+            int index = points.get_num_points() / 2;
+            points.get_coordinate(index-1, x1, y1);
+            points.get_coordinate(index, x2, y2);
+            
+            int text_w, text_h;
+            PangoLayout *layout = gtk_widget_create_pango_layout((GtkWidget*)parentWindow->gobj(), strLabel.c_str());
+            PangoFontDescription *fontdesc = pango_font_description_from_string("Monospace 9");
+            pango_layout_set_font_description (layout, fontdesc);
+            pango_layout_get_pixel_size (layout, &text_w, &text_h);
+
+            setLabelPosition((x1+x2)/2.0 - text_w/2.0, (y1+y2)/2.0);
+        }            
+    }       
 }
 
 void ArrowModel::setLabelPosition(double x, double y)
 {
-    Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
-    if(item)
+    if(!bNullArrow)
     {
-        Goocanvas::Bounds bi = item->get_bounds();
-        bi = item->get_bounds();
-        item->translate(x-bi.get_x1(), y-bi.get_y1());
-    }
-    onPointUpdated();
+
+        Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
+        if(item)
+        {
+            Goocanvas::Bounds bi = item->get_bounds();
+            bi = item->get_bounds();
+            item->translate(x-bi.get_x1(), y-bi.get_y1());
+        }
+        onPointUpdated();
+    }        
 }
 
 Gdk::Point ArrowModel::getPoint(int index)
@@ -340,17 +558,20 @@ void ArrowModel::onPointUpdated(void)
     double x1, y1;
     GyPoint pt;
 
-    // Adding label position 
-    Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
-    if(item)
+    if(!bNullArrow)
     {
-        Goocanvas::Bounds bi = item->get_bounds();
-        bi = item->get_bounds();
-        pt.x = bi.get_x1();
-        pt.y = bi.get_y1();
+        // Adding label position 
+        Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
+        if(item)
+        {
+            Goocanvas::Bounds bi = item->get_bounds();
+            bi = item->get_bounds();
+            pt.x = bi.get_x1();
+            pt.y = bi.get_y1();
+        }
+        else
+            pt.x = pt.y = -1;
     }
-    else
-        pt.x = pt.y = -1;
 
     GraphicModel::points.push_back(pt);
 
@@ -366,9 +587,9 @@ void ArrowModel::onPointUpdated(void)
 
 Glib::RefPtr<ArrowModel> ArrowModel::create(ApplicationWindow* parentWnd,
                                     Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
-                                    const char* szLabel, ApplicationModel* appModel)
+                                    Connection* con, ApplicationModel* appModel, bool nullArw)
 {
-    return Glib::RefPtr<ArrowModel>(new ArrowModel(parentWnd, src, dest, szLabel, appModel));
+    return Glib::RefPtr<ArrowModel>(new ArrowModel(parentWnd, src, dest, con, appModel, nullArw));
 }
 
 
@@ -379,7 +600,7 @@ bool ArrowModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& ite
         return false;
 
     // right click on selected line 
-    if((event->button == 3) && selected)
+    if((event->button == 3) && selected && !bNullArrow)
         addMidPoint(event->x, event->y);
     
     parentWindow->setModified();
@@ -429,11 +650,13 @@ bool ArrowModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& it
 bool ArrowModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventCrossing* event)
 {
-    parentWindow->getRootModel()->add_child(tool);
-    tool->set_property("x", event->x);
-    tool->set_property("y", event->y);
-    tool->raise();
-
+    if(!bNullArrow)
+    {
+        parentWindow->getRootModel()->add_child(tool);
+        tool->set_property("x", event->x);
+        tool->set_property("y", event->y);
+        tool->raise();
+    }
     //parentWindow->get_window()->set_cursor(Gdk::Cursor(Gdk::HAND1));
     //this->property_stroke_color().set_value("red");
    // printf("entered\n");
@@ -443,13 +666,16 @@ bool ArrowModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
 bool ArrowModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventCrossing* event)
 {
-    int id = parentWindow->getRootModel()->find_child(tool);
-    if(id != -1)
-        parentWindow->getRootModel()->remove_child(id);
+    if(!bNullArrow)
+    {
+        int id = parentWindow->getRootModel()->find_child(tool);
+        if(id != -1)
+            parentWindow->getRootModel()->remove_child(id);
 
-    //parentWindow->get_window()->set_cursor();
-    //this->property_stroke_color().set_value("black");
-   // printf("left\n");
+        //parentWindow->get_window()->set_cursor();
+        //this->property_stroke_color().set_value("black");
+       // printf("left\n");
+    }       
     return true;
 }
 
@@ -501,10 +727,13 @@ bool ArrowModel::intersect(double p1, double q1, double p2, double q2)
 
 void ArrowModel::showLabel(bool bShow)
 {
-    if(bShow && !bNested)
-        label->property_visibility().set_value(Goocanvas::ITEM_VISIBLE);
-    else
-       label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
+    if(!bNullArrow)
+    {
+        if(bShow && !bNested)
+            label->property_visibility().set_value(Goocanvas::ITEM_VISIBLE);
+        else
+           label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
+    }           
 }
 
 void ArrowModel::setSelected(bool sel)
@@ -515,9 +744,13 @@ void ArrowModel::setSelected(bool sel)
     selected = sel;
     if(selected)
     {
-        this->property_stroke_color().set_value("DodgerBlue3");
-        this->raise();
-        label->setSelected(true);        
+        if(!bNullArrow)
+        {
+            this->property_stroke_color().set_value("DodgerBlue3");
+            this->raise();
+            label->setSelected(true);        
+        }
+
         vector<Glib::RefPtr<MidpointModel> >::iterator itr;
         for(itr=midpoints.begin(); itr!=midpoints.end(); itr++)
         {
@@ -528,8 +761,11 @@ void ArrowModel::setSelected(bool sel)
     }
     else
     {
-        this->property_stroke_color().set_value(defaultColor.c_str());
-        label->setSelected(false); 
+        if(!bNullArrow)
+        {
+            this->property_stroke_color().set_value(defaultColor.c_str());
+            label->setSelected(false); 
+        }            
         vector<Glib::RefPtr<MidpointModel> >::iterator itr;
         for(itr=midpoints.begin(); itr!=midpoints.end(); itr++)
             (*itr)->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);

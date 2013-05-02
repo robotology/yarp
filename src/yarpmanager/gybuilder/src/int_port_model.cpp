@@ -56,9 +56,8 @@ InternalPortModel::~InternalPortModel(void)
         tool.clear();
 }
 
-Gdk::Point InternalPortModel::getContactPoint(void)
-{   
-    
+Gdk::Point InternalPortModel::getContactPoint(ArrowModel* arrow)
+{       
     GooCanvasItemModel* model = (GooCanvasItemModel*) poly->gobj();    
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
     if(model && canvas)
@@ -87,8 +86,15 @@ Glib::RefPtr<InternalPortModel> InternalPortModel::create(ApplicationWindow* par
 bool InternalPortModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                     GdkEventButton* event)
 {
-    if(event->button == 3)
+    if((event->button == 3) && (getType() == INPUTD))
     {
+        MainWindow* wnd = parentWindow->getMainWindow();
+        parentWindow->m_currentPortModel = Glib::RefPtr<PortModel>::cast_dynamic(item->get_parent()->get_model());
+        wnd->m_refActionGroup->get_action("InsertPortArbitrator")->set_sensitive(true);
+        Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+        wnd->m_refUIManager->get_widget("/PopupIntPortModel"));
+        if(pMenu)
+            pMenu->popup(event->button, event->time);
     }
     return true;
 }

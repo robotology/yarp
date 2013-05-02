@@ -177,7 +177,7 @@ void ExternalPortModel::setPort(const char* szPort)
 }
 
 
-Gdk::Point ExternalPortModel::getContactPoint(void)
+Gdk::Point ExternalPortModel::getContactPoint(ArrowModel* arrow)
 {
     GooCanvasItemModel* model = (GooCanvasItemModel*) poly->gobj();    
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
@@ -221,14 +221,24 @@ bool ExternalPortModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Ite
     {
         MainWindow* wnd = parentWindow->getMainWindow();
         wnd->m_refActionGroup->get_action("EditDelete")->set_sensitive(selected);
-        //wnd->m_refActionGroup->get_action("EditCut")->set_sensitive(selected);
-        //wnd->m_refActionGroup->get_action("EditCopy")->set_sensitive(selected);
-        Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
-        wnd->m_refUIManager->get_widget("/PopupExtPortModel"));
-        if(pMenu)
-            pMenu->popup(event->button, event->time);
-    }
+        if(getType() == INPUTD)
+        {
+            parentWindow->m_currentPortModel = Glib::RefPtr<PortModel>::cast_dynamic(item->get_parent()->get_model());
+            wnd->m_refActionGroup->get_action("InsertPortArbitrator")->set_sensitive(true);
+            Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+            wnd->m_refUIManager->get_widget("/PopupExtInputPortModel"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);
 
+        }
+        else
+        {
+            Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+            wnd->m_refUIManager->get_widget("/PopupExtPortModel"));
+            if(pMenu)
+                pMenu->popup(event->button, event->time);
+        }                
+    }
 
     return true;
 }
@@ -362,11 +372,11 @@ void ExternalPortModel::setSelected(bool sel)
     {
         poly->property_fill_color().set_value("LightSteelBlue");
         this->raise();
+        std::vector<ArrowModel*>::iterator itr;
     }
     else
         poly->property_fill_color().set_value("WhiteSmoke");
 }
-
 
 
 void ExternalPortModel::snapToGrid(void)

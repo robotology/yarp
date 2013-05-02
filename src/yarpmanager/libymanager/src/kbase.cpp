@@ -284,6 +284,16 @@ const ResourcePContainer& KnowledgeBase::getResources(Application* parent)
     return dummyResources;
 }
 
+const ArbContainer& KnowledgeBase::getArbitrators(Application* parent)
+{
+    dummyArbitrators.clear();
+    if(parent)
+    {
+        for(int i=0; i<parent->arbitratorCount(); i++)
+            dummyArbitrators.push_back(parent->getArbitratorAt(i));
+    }
+    return dummyArbitrators;
+}
 
 
 const InputContainer& KnowledgeBase::getInputCandidates(OutputData* output)
@@ -532,8 +542,7 @@ Connection& KnowledgeBase::addConnectionToApplication(Application* application,
         Connection* con = &application->getConnectionAt(i);
         if(*con == cnn)
         {
-            // updating con (e.g. model) with cnn
-            *con = cnn;            
+            *con = cnn;
             return *con;
         }
     }
@@ -541,6 +550,23 @@ Connection& KnowledgeBase::addConnectionToApplication(Application* application,
     selconnections.push_back(cnn);
     return application->addConnection(cnn);
 }
+
+Arbitrator& KnowledgeBase::addArbitratorToApplication(Application* application, 
+                                                      Arbitrator &arb)
+{    
+    arb.setOwner(application);
+    for(int i=0; i<application->arbitratorCount(); i++)
+    {
+        Arbitrator* parb = &application->getArbitratorAt(i);
+        if(*parb == arb)
+        {
+            *parb = arb;
+            return *parb;
+        }
+    }
+    return application->addArbitrator(arb);
+}
+
 
 
 bool KnowledgeBase::updateConnectionOfApplication(Application* application, 
@@ -569,6 +595,13 @@ bool KnowledgeBase::updateConnectionOfApplication(Application* application,
     }
 
     return true;
+}
+
+bool KnowledgeBase::removeArbitratorFromApplication(Application* application, Arbitrator &arb)
+{
+    //printf("[%d] %s\n",__LINE__, __PRETTY_FUNCTION__ );
+    __CHECK_NULLPTR(application);    
+    return application->removeArbitrator(arb);
 }
 
 
@@ -1251,6 +1284,14 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
         Connection* pcon = &application->getConnectionAt(i);
         if(pcon->getModel())
             pcon->setModelBase(*pcon->getModel());
+    }
+
+    // updating arbitrators modelBase with Model if exists
+    for(int i=0; i<application->arbitratorCount(); i++)
+    {
+        Arbitrator* parb = &application->getArbitratorAt(i);
+        if(parb->getModel())
+            parb->setModelBase(*parb->getModel());
     }
 
     return appSaver->save(application);

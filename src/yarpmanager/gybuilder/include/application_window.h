@@ -27,7 +27,8 @@
 #include "module_property_window.h"
 #include "app_property_window.h"
 #include "con_property_window.h"
-
+#include "port_abitrator_model.h"
+#include "arb_property_window.h"
 
 #if defined(__GNUG__) && defined(__GNUC__) && __GNUC__ >= 4
 # ifdef NULL
@@ -58,6 +59,7 @@ public:
     void onPaste(void);
     void onMenuInsertSrcPort();
     void onMenuInsertDestPort();
+    void onMenuInsertPortArbitrator();
     void onRotateRight();
     void onRotateLeft();
     void onMenuWindowProperty(bool active);
@@ -89,12 +91,15 @@ public:
     void onUpdateModuleProperty(Module* module);
     void onUpdateApplicationProperty(Application* application);
     void onUpdateConnectionProperty(Glib::RefPtr<ArrowModel> &arrow);
+    void onUpdateArbitratorProperty(Glib::RefPtr<PortArbitratorModel> &portArb);
 
     void setModified(void) {m_bModified = true; }
+    void deSelectAll(void);
 
 public: 
-    Goocanvas::Canvas* m_Canvas ;
+    Goocanvas::Canvas* m_Canvas;
     GooCanvasItemModel *m_Grid;
+    Glib::RefPtr<PortModel> m_currentPortModel;
     bool m_snapToGrid;
     bool m_showGrid;
     bool m_showLabel;
@@ -125,13 +130,13 @@ private:
     ModulePropertyWindow* modPropertyWindow;
     ApplicationPropertyWindow* appPropertyWindow;
     ConnectionPropertyWindow* conPropertyWindow;
+    ArbitratorPropertyWindow* arbPropertyWindow;
 
     Glib::RefPtr<Goocanvas::PolylineModel> m_connector;
     Glib::RefPtr<Goocanvas::RectModel> m_selector;
     Glib::RefPtr<PortModel> sourcePort;
 
     std::vector<ModuleModel*> copiedItems;
-
     GdkPixbuf* pixV;
     GdkPixbuf* pixH;
     double _x;
@@ -142,7 +147,8 @@ private:
     void updateApplicationWindow(void);
     void prepareManagerFrom(Manager* lazy, const char* szAppName);
     void reportErrors(void);
-    void deleteSelectedArrows(void);
+    void deleteSelectedArrows(bool delNullArrows=false);
+
     void setSelected(void);
     int countSelected(void);
     void on_item_created(const Glib::RefPtr<Goocanvas::Item>& item, const Glib::RefPtr<Goocanvas::ItemModel>& model) ;

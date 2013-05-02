@@ -320,6 +320,7 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                 for(int i=0; i<application->connectionCount(); i++)
                 {
                     Connection con = application->getConnectionAt(i);
+                    string strOldFrom = con.from();
                     Connection updatedCon = con;
                     if(con.getCorOutputData())
                     {
@@ -330,8 +331,15 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                             m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, 
                                                         con, updatedCon);
                             // updating arrow's connection
-                            if(dynamic_cast<ArrowModel*>(con.getModel()))
-                                dynamic_cast<ArrowModel*>(con.getModel())->setConnection(updatedCon);
+                            ArrowModel* arrow = dynamic_cast<ArrowModel*>(con.getModel());
+                            if(arrow)
+                            {
+                                arrow->setConnection(updatedCon);
+                                // updating excitatory links from other connections 
+                                Glib::RefPtr<PortArbitratorModel> arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(arrow->getDestination());
+                                if(arbPort)
+                                    arbPort->updateExcitation(arrow, strOldFrom.c_str(), strFrom.c_str());
+                            }
                         }
                     }
                 }

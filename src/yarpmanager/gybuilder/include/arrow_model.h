@@ -32,7 +32,7 @@ public:
 
     static Glib::RefPtr<ArrowModel> create(ApplicationWindow* parentWnd,
                                            Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
-                                           const char* szLabel=NULL, ApplicationModel* appModel=NULL);
+                                           Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
 
     bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -64,6 +64,9 @@ public:
     void deletePoint(double x, double y);
     bool deletePoint(int index);
     
+    void removeExcitation(const char* szName);
+    void renameExcitation(const char* szOld, const char* szNew);
+
     Connection* getConnection(void) { return &connection; }
     Glib::RefPtr<PortModel>& getSource(void) { return source; }
     Glib::RefPtr<PortModel>& getDestination(void) { return destination; } 
@@ -79,10 +82,14 @@ public:
 
     void onPointUpdated(void);
 
+    bool isNullArrow(void) { return bNullArrow; }
+    const char* getId(void) { return connection.getId(); }
+    void setId(const char* id) { connection.setId(id); }
+
 protected: 
     ArrowModel(ApplicationWindow* parentWnd, 
                Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
-               const char* szLabel, ApplicationModel* appModel=NULL);
+               Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
 
 private:
     ApplicationWindow* parentWindow;
@@ -93,6 +100,7 @@ private:
     bool selected;
     bool bExist;
     bool bNested;
+    bool bNullArrow;
     std::string strLabel;
     Connection connection;
     std::string defaultColor;

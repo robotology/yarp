@@ -13,9 +13,8 @@
 #include <string>
 #include <fstream>
 
-#include <tinyxml.h>
-
 #include "xmlappsaver.h"
+#include "tinyxml.h"
 #include "utility.h"
 #include "ymm-dir.h"
 
@@ -203,7 +202,10 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
         {
             TiXmlElement *newConn=new TiXmlElement("connection");
             Connection curConn=app->getConnectionAt(connCt);
-            
+           
+            if(strlen(curConn.getId()))
+                newConn->SetAttribute("id", curConn.getId());
+
             if(curConn.isPersistent())
                 newConn->SetAttribute("persist", "true");
             
@@ -240,7 +242,42 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
         }
         
     }
-    
+
+    // iterate over arbitrators
+        for(int i=0; i<app->arbitratorCount(); i++)
+        {
+            Arbitrator& arb = app->getArbitratorAt(i);
+            TiXmlElement *newArb = new TiXmlElement("arbitrator");
+
+            TiXmlElement *port = new TiXmlElement("port");
+            port->LinkEndChild(new TiXmlText(arb.getPort()));
+            newArb->LinkEndChild(port);
+
+            std::map<string, string> &rules = arb.getRuleMap();
+            for(std::map<string, string>::iterator it=rules.begin(); it!=rules.end(); ++it)
+            {
+                TiXmlElement *rule = new TiXmlElement("rule");
+                rule->SetAttribute("connection", it->first.c_str());
+                rule->LinkEndChild(new TiXmlText(it->second.c_str()));
+                newArb->LinkEndChild(rule); 
+            }                
+
+            GraphicModel model = arb.getModelBase();
+            OSTRINGSTREAM txt;
+            if(model.points.size()>0)
+            {
+                txt<<"(Pos ";
+                for(unsigned int i=0; i<model.points.size(); i++)
+                    txt<<"((x "<<model.points[i].x<<") "<<"(y "<<model.points[i].y<<")) "; 
+                txt<<" )"; 
+                TiXmlElement *geometry=new TiXmlElement("geometry");
+                geometry->LinkEndChild(new TiXmlText(txt.str().c_str()));
+                newArb->LinkEndChild(geometry);
+            }               
+            root->LinkEndChild(newArb);
+        }
+     
+        
     bool ok=doc.SaveFile(app->getXmlFile());
     if (!ok && doc.Error())
     {
