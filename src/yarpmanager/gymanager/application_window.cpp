@@ -923,7 +923,18 @@ bool ApplicationWindow::onKill(void)
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
         sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
-    
+
+    if(m_ModuleIDs.size() > 1)
+    {
+        Gtk::MessageDialog dialog("Force closing some modules!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
+        dialog.set_secondary_text("Are you sure?");
+        if(dialog.run() != Gtk::RESPONSE_YES)
+        {        
+            m_refTreeModSelection->unselect_all();
+            return false;
+        }
+    }   
+
     for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
     {
         Gtk::TreeModel::Row row;
@@ -935,6 +946,8 @@ bool ApplicationWindow::onKill(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
+
+    // kill selected modules
     manager.safeKill(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
     m_refTreeModSelection->unselect_all();
