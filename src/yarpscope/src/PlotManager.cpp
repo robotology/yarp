@@ -112,7 +112,7 @@ int YarpScope::PlotManager::addGraph(int plotIndex,
                                      const Glib::ustring &type,
                                      int size)
 {
-    DataPlot *plot;
+    DataPlot *plot = NULL;
     try {
         plot = mPriv->plots.at(plotIndex);
     } catch (std::out_of_range) {
