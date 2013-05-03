@@ -22,7 +22,7 @@
 #endif
 
 #include <signal.h>
-#include <gtkmm/stock.h>
+#include <gtkmm.h>
 #include <iostream>
 #include <string>
 #include "iCub/main_window.h"

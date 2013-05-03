@@ -144,7 +144,7 @@ CopyPolicy: Released under the terms of the GNU GPL v2.0.
 #endif
 
 #include <iostream>
-#include <gtkmm/main.h>
+#include <gtkmm.h>
 #include "iCub/main_window.h"
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
