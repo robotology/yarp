@@ -156,7 +156,7 @@ public:
 
 
 #ifdef YARP_HAS_ACE
-class StubDriver : public ChainedDriver {
+class StubDriver : public DeviceDriver {
 private:
     YarpPluginSettings settings;
     YarpPlugin<DeviceDriver> plugin;
@@ -202,7 +202,7 @@ public:
         return dev.getContent().close();
     }
 
-    virtual DeviceDriver *getTail() {
+    DeviceDriver *getImplementation() {
         return &dev.getContent();
     }
 
