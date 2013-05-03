@@ -9,23 +9,26 @@
 
 YARP is available from http://yarp0.sourceforge.net
 
-For OSX users, try homebrew:
+For Debian and Ubuntu users, here's a quick summary:
 \verbatim
-  brew install yarp
-\endverbatim
-For Ubuntu users, here's a quick summary:
-\verbatim
-  sudo apt-get install cmake libace-dev subversion
-  svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2
-  cd yarp2 && mkdir build && cd build && cmake .. && make
-  sudo make install  # Optional. 
+  sudo apt-get install cmake libace-dev git
+  git clone git clone git://github.com/robotology/yarp.git
+  cd yarp && mkdir build && cd build && cmake .. && make
+  sudo make install  # Optional.
   # Alternative: set environment variable YARP_DIR to .../yarp2/build
   #              and add .../yarp2/build/bin to PATH
   yarp check
 \endverbatim
+
 For Microsoft Windows users, there are compiled releases of YARP
 available at http://sourceforge.net/projects/yarp0/files/yarp2/ - you'll 
 need to select the right one for your compiler.
+
+For OSX users, try homebrew:
+\verbatim
+  brew install yarp
+\endverbatim
+
 
 Here are the more general steps needed to install YARP:
   \li \ref install_cmake "Install CMake"
@@ -166,17 +169,7 @@ Don't panic! The instructions cover a lot of operating systems and compilers. Ju
           \li UNIX/gcc instructions are here: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional
           \li OSX/gcc users, follow the UNIX instructions. 
 
-ACE will take a while to compile, but if you can do it you'll be able to deal with anything we throw at you.  If you run into trouble building ACE, it is also possible to compile the parts of it needed by YARP with CMake, as follows:
-\verbatim
-  sudo apt-get install cmake subversion
-  svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2
-  cd yarp2; mkdir build; cd build
-  ../scripts/fetch-ace.sh
-  cmake ..
-  make
-\endverbatim
-This will compile YARP and ACE together.  This will work on Windows too,
-you'll just need to translate the commands.
+ACE will take a while to compile, but if you can do it you'll be able to deal with anything we throw at you.
 
 @subsection ace_unix Compiling ACE on UNIX
 
@@ -283,14 +276,14 @@ YARP can be downloaded from:
 
 - http://yarp0.sourceforge.net/
 
-or installed from SVN by following the instructions at:
+or installed from GIT by following the instructions at:
 
-- http://sourceforge.net/svn/?group_id=62418
+- https://github.com/robotology/yarp
 
-with modulename "yarp2" to get the code.  You can compile it with CMake.  
+You can compile it with CMake.
 Documentation is built periodically on the website.
 
-See yarp2/README for compilation tips.
+See README.md file for compilation tips.
 
 
  */
