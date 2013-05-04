@@ -61,6 +61,45 @@ public:
      * @return true/false on success/failure.
      */
     virtual bool close(){ return true; }
+
+
+    /**
+     * Get an interface to the device driver.
+
+     * @param x A pointer of type T which will be set to point to this
+     * object if that is possible.
+
+     * @return true iff the desired interface is implemented by
+     * the device driver.
+     */
+    template <class T>
+    bool view(T *&x) {
+        x = 0 /*NULL*/;
+
+        // This is not super-portable; and it requires RTTI compiled
+        // in.  For systems on which this is a problem, suggest:
+        // either replace it with a regular cast (and warn user) or
+        // implement own method for checking interface support.
+        T *v = dynamic_cast<T *>(getImplementation());
+
+        if (v!=0 /*NULL*/) {
+            x = v;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Some drivers are bureaucrats, pointing at others.  Such drivers override
+     * this method.
+     *
+     * @return "real" device driver
+     *
+     */
+    virtual DeviceDriver *getImplementation() {
+        return this;
+    }
 };
 
 

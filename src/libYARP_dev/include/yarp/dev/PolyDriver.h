@@ -15,14 +15,8 @@
 namespace yarp {
     namespace dev {
         class PolyDriver;
-        class ChainedDriver;
     }
 }
-
-class YARP_dev_API yarp::dev::ChainedDriver : public DeviceDriver {
-public:
-    virtual DeviceDriver *getTail() = 0;
-};
 
 
 /**
@@ -120,45 +114,6 @@ public:
     }
 
     /**
-     * Get an interface to the device driver.
-
-     * @param x A pointer of type T which will be set to point to this
-     * object if that is possible.
-
-     * @return true iff the desired interface is implemented by
-     * the device driver.
-     */
-    template <class T>
-    bool view(T *&x) {
-        bool result = false;
-        x = 0 /*NULL*/;
-
-        // This is not super-portable; and it requires RTTI compiled
-        // in.  For systems on which this is a problem, suggest:
-        // either replace it with a regular cast (and warn user) or
-        // implement own method for checking interface support.
-        T *v = dynamic_cast<T *>(dd);
-
-        if (v!=0 /*NULL*/) {
-            x = v;
-            result = true;
-        }
-
-        if (v==0) {
-            ChainedDriver *v0 = dynamic_cast<ChainedDriver *>(dd);
-            if (v0!=0) {
-                v = dynamic_cast<T *>(v0->getTail());
-                if (v!=0 /*NULL*/) {
-                    x = v;
-                    result = true;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Check if device is valid.
      * @return true iff the device was created and configured successfully
      */
@@ -197,6 +152,10 @@ public:
      * @return the value found for the option, if any.
      */
     yarp::os::Value getValue(const char *option);
+
+    DeviceDriver *getImplementation() {
+        return dd;
+    }
 
 private:
     bool closeMain();
