@@ -62,11 +62,13 @@ ssize_t TcpRosStream::read(const Bytes& b) {
         int len = NetType::netInt(mlen_buf);
         dbg_printf("Unit length %d\n", len);
 
-        if (raw==-1) {
+        // inhibit type scanning for now, it is unreliable
+        if (raw==-1) raw = 2;
+        if (raw==-2) {
             scan.allocate(len);
             int res = NetType::readFull(delegate->getInputStream(),
                                         scan.bytes());
-            dbg_printf("Read %d bytes with raw==-1\n", res);
+            dbg_printf("Read %d bytes with raw==-2\n", res);
             if (res<0) {
                 dbg_printf("tcpros_carrier failed, %s %d\n", __FILE__, __LINE__);
                 phase = -1;

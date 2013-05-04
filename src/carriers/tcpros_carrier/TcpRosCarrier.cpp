@@ -314,11 +314,6 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
         return false;
     }
 
-    if (flex_writer->length()<1) {
-        fprintf(stderr,"tcpros_carrier given no data\n");
-        return false;
-    }
-
     int len = 0;
     for (size_t i=0; i<flex_writer->length(); i++) {
         len += (int)flex_writer->length(i);
@@ -333,25 +328,6 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
     flex_writer->write(proto.os());
-
-    /*
-    dbg_printf("sending length %d\n", remaining);
-
-    NetInt32 len_out = remaining;
-    Bytes blen_out((char*)&len_out,sizeof(len_out));
-    proto.os().write(blen_out);
-
-    for (int i=payload_index; i<writer.length(); i++) {
-        const char *data = writer.data(i);
-        int len = writer.length(i);
-        if (len>payload_offset) {
-            dbg_printf("sending %d bytes\n", len-payload_offset);
-            Bytes b((char*)data+payload_offset,len-payload_offset);
-            proto.os().write(b);
-        }
-        payload_offset = 0;
-    }
-    */
 
     dbg_printf("done sending\n");
 
