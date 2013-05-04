@@ -277,7 +277,7 @@ static int metaConnect(const char *csrc,
     }
 
     if (staticSrc.getCarrier()=="xmlrpc" &&
-        staticDest.getCarrier()=="xmlrpc"&&
+        (staticDest.getCarrier()=="xmlrpc"||(staticDest.getCarrier().find("rossrv")==0))&&
         mode==YARP_ENACT_CONNECT) {
         // Unconnectable in general
         // Let's assume the first part is a YARP port, and use "tcp" instead

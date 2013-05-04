@@ -28,11 +28,19 @@ Contact RosNameSpace::getNameServerContact() const {
 }
 
 Contact RosNameSpace::queryName(const char *name) {
+    ConstString full = name;
+    ConstString node = full;
+    ConstString srv = "";
+    int srv_idx = full.find("#");
+    if (srv_idx!=ConstString::npos) {
+        node = full.substr(0,srv_idx);
+        srv = full.substr(srv_idx+1,full.length());
+    }
+
     Bottle cmd,reply;
     cmd.addString("lookupNode");
     cmd.addString("dummy_id");
-    cmd.addString(toRosNodeName(name));
-    //printf("Writing to %s\n",getNameServerContact().toString().c_str());
+    cmd.addString(toRosNodeName(node));
     NetworkBase::write(getNameServerContact(),
                        cmd, reply);
     //printf("query: sent %s, got %s\n", cmd.toString().c_str(), reply.toString().c_str());
@@ -43,6 +51,42 @@ Contact RosNameSpace::queryName(const char *name) {
     contact = Contact::fromString(reply.get(2).asString());
     contact = contact.addCarrier("xmlrpc");
     contact = contact.addName(name);
+
+    if (srv == "") return contact;
+
+    // we need to go a step further and find a service
+
+    contact = contact.addName("");
+    printf("Working with %s\n", contact.toString().c_str());
+    Bottle req;
+    req.addString("requestTopic");
+    req.addString("dummy_id");
+    req.addString(srv);
+    Bottle& lst = req.addList();
+    Bottle& sublst = lst.addList();
+    sublst.addString("TCPROS");
+    if (!NetworkBase::write(contact,req,reply,false,true)) {
+        fprintf(stderr,"Failure looking up service %s: %s\n", srv.c_str(), reply.toString().c_str());
+        return Contact();
+    }
+    Bottle *pref = reply.get(2).asList();
+    if (pref==NULL) {
+        fprintf(stderr,"Failure looking up service %s: expected list of protocols\n", srv.c_str());
+        return Contact();
+    }
+    if (pref->get(0).asString()!="TCPROS") {
+        fprintf(stderr,"Failure looking up service %s: unsupported protocol %s\n", srv.c_str(),
+                pref->get(0).asString().c_str());
+        return Contact();
+    }
+    Value hostname2 = pref->get(1);
+    Value portnum2 = pref->get(2);
+    contact = contact.addSocket((ConstString("rossrv+service.")+srv + "+raw.2").c_str(),
+                                hostname2.asString().c_str(),
+                                portnum2.asInt());
+
+    printf("GOT %s\n", contact.toString().c_str());
+
     return contact;
 }
 
