@@ -334,25 +334,59 @@ public:
     void checkResize()
     {
         Matrix ones;
+        Matrix eye;
+        Matrix resized;
         ones.resize(10, 10);
         ones=1.1; //set all values to 1.1
 
-        ones.resize(12, 15);
+        resized=ones;
+        resized.resize(12, 15);
 
         bool ok=true;
         for(unsigned int r=0; r<10; r++)
             for(unsigned int c=0; c<10; c++)
-                ok=ok&&(ones[r][c]==1.1);
+                ok=ok&&(resized[r][c]==1.1);
 
-        checkTrue(ok,"resize(int r, int c) keeps old values");
+        checkTrue(ok,"resize(int r, int c) keeps old values [1]");
 
-        ones.resize(3, 5);
+        eye.resize(5, 5);
+        eye=0.0;
+        
+        for (unsigned int r=0; r<5; r++)
+        {
+            eye(r,r)=1.0;
+        }
+
+        resized=eye;
+
+        resized.resize(6, 5);
+
+        ok=true;
+        for(unsigned int r=0; r<5; r++)
+            for(unsigned int c=0; c<5; c++)
+                ok=ok&&(resized[r][c]==eye[r][c]);
+
+        checkTrue(ok,"resize(int r, int c) keeps old values [2]");
+
+        resized=ones;
+        resized.resize(3, 5);
         ok=true;
         for(unsigned int r=0; r<3; r++)
             for(unsigned int c=0; c<5; c++)
-                ok=ok&&(ones[r][c]==1.1);
+                ok=ok&&(resized[r][c]==ones[r][c]);
 
-        checkTrue(ok,"resizing to smaller size keeps old values");
+        checkTrue(ok,"resizing to smaller size keeps old values [1]");
+
+        resized=eye;
+        resized.resize(3,5);
+
+        ok=true;
+        for(unsigned int r=0; r<3; r++)
+            for(unsigned int c=0; c<5; c++)
+                ok=ok&&(resized[r][c]==eye[r][c]);
+
+        checkTrue(ok,"resizing to smaller size keeps old values [2]");
+
     }
 
     void makeTestMatrix(Matrix& m, unsigned int rr, unsigned int cc) {

@@ -9,7 +9,7 @@
 #ifndef YARPSCOPE_GRAPH_H
 #define YARPSCOPE_GRAPH_H
 
-#include <glibmm/refptr.h>
+#include <glibmm.h>
 
 
 namespace Glib

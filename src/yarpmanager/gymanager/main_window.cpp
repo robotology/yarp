@@ -21,7 +21,7 @@
 #endif
 
 
-#include <gtkmm/stock.h>
+#include <gtkmm.h>
 
 #include <iostream>
 #include <fstream>
@@ -238,10 +238,10 @@ void MainWindow::createWidgets(void)
         "    <toolitem action='ManageRefresh'/>"
         "    <separator/>"
         "    <toolitem action='ManageRun'/>"
-        "    <toolitem action='ManageStop'/>"
-        "    <toolitem action='ManageKill'/>"
         "    <toolitem action='ManageConnect'/>"
         "    <toolitem action='ManageDisconnect'/>"
+        "    <toolitem action='ManageStop'/>"
+        "    <toolitem action='ManageKill'/>"
         "    <separator/>"
         "    <toolitem action='HelpOnline'/>"
         " </toolbar>"

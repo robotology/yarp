@@ -49,42 +49,42 @@ public:
 
 bool yarp::sig::removeCols(const Matrix &in, Matrix &out, int first_col, int how_many)
 {
-	int nrows = in.rows();
-	int ncols = in.cols();
+    int nrows = in.rows();
+    int ncols = in.cols();
     Matrix ret(nrows, ncols-how_many);
     for(int r=0; r<nrows; r++)
         for(int c_in=0,c_out=0;c_in<ncols; c_in++)
+        {
+            if (c_in==first_col)
             {
-				if (c_in==first_col)
-					{
-						c_in=c_in+(how_many-1);
-						continue;
-					}
-				ret[r][c_out]=(in)[r][c_in];
-				c_out++;
-			}
-	out=ret;
-	return true;
+                c_in=c_in+(how_many-1);
+                continue;
+            }
+            ret[r][c_out]=(in)[r][c_in];
+            c_out++;
+        }
+    out=ret;
+    return true;
 }
 
 bool yarp::sig::removeRows(const Matrix &in, Matrix &out, int first_row, int how_many)
 {
-	int nrows = in.rows();
-	int ncols = in.cols();
+    int nrows = in.rows();
+    int ncols = in.cols();
     Matrix ret(nrows-how_many, ncols);
-	for(int c=0; c<ncols; c++)
-		for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+    for(int c=0; c<ncols; c++)
+        for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+        {
+            if (r_in==first_row)
             {
-				if (r_in==first_row)
-					{
-						r_in=r_in+(how_many-1);
-						continue;
-					}
-				ret[r_out][c]=(in)[r_in][c];
-				r_out++;
-			}
-	out=ret;
-	return true;
+                r_in=r_in+(how_many-1);
+                continue;
+            }
+            ret[r_out][c]=(in)[r_in][c];
+            r_out++;
+        }
+     out=ret;
+     return true;
 }
 
 bool yarp::sig::submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2)
@@ -120,7 +120,7 @@ bool Matrix::read(yarp::os::ConnectionReader& connection) {
         {
             resize(header.rows, header.cols);
         }
-            
+
         int l=0;
         double *tmp=data();
         for(l=0;l<header.listLen;l++)
@@ -221,7 +221,7 @@ const Matrix &Matrix::operator=(const Matrix &r)
     {
         if (storage)
             delete [] storage;
-    
+
         nrows=r.nrows;
         ncols=r.ncols;
 
@@ -235,7 +235,7 @@ const Matrix &Matrix::operator=(const Matrix &r)
             storage=new double[ncols*nrows];
         memcpy(storage, r.storage, ncols*nrows*sizeof(double));
     }
-    
+
     return *this;
 }
 
@@ -269,14 +269,14 @@ void Matrix::resize(int new_r, int new_c)
     const int copy_r=(new_r<nrows) ? new_r:nrows;
     const int copy_c=(new_c<ncols) ? new_c:ncols;
     //copy_r = (new_r<nrows) ? new_r:nrows;
-        
+
     if (storage!=0)
     {
         double *tmp_new=new_storage;
         double *tmp_current=storage;
         // copy content
-        
-// favor performance for small matrices
+
+        // favor performance for small matrices
 #if 0
         const int stepN=(new_c-copy_c);
         const int stepC=(ncols-copy_c);
@@ -290,12 +290,12 @@ void Matrix::resize(int new_r, int new_c)
         }
 #endif
 
-// favor performance with large matrices
+        // favor performance with large matrices
         for(int r=0; r<copy_r;r++)
         {
+            tmp_current=matrix[r];
             memcpy(tmp_new, tmp_current, sizeof(double)*copy_c);
             tmp_new+=new_c;
-            tmp_current=matrix[r];
         }
 
 
@@ -328,17 +328,19 @@ Matrix Matrix::removeCols(int first_col, int how_many)
 
     for(int r=0; r<nrows; r++)
         for(int c_in=0,c_out=0;c_in<ncols; c_in++)
+        {
+            if (c_in==first_col)
             {
-				if (c_in==first_col)
-					{
-						c_in=c_in+(how_many-1);
-						continue;
-					}
-				ret[r][c_out]=(*this)[r][c_in];
-				c_out++;
-			}
+                c_in=c_in+(how_many-1);
+                continue;
+            }
+            ret[r][c_out]=(*this)[r][c_in];
+            c_out++;
+        }
 
-	if (storage) delete [] storage; 
+    if (storage) 
+      delete [] storage; 
+    
     nrows=ret.nrows;
     ncols=ret.ncols;
     storage=new double[ncols*nrows];
@@ -352,19 +354,21 @@ Matrix Matrix::removeRows(int first_row, int how_many)
     Matrix ret;
     ret.resize(nrows-how_many, ncols);
 
-	for(int c=0; c<ncols; c++)
-		for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+    for(int c=0; c<ncols; c++)
+        for(int r_in=0, r_out=0; r_in<nrows; r_in++)
+        {
+            if (r_in==first_row)
             {
-				if (r_in==first_row)
-					{
-						r_in=r_in+(how_many-1);
-						continue;
-					}
-				ret[r_out][c]=(*this)[r_in][c];
-				r_out++;
-			}
+                r_in=r_in+(how_many-1);
+                continue;
+            }
+            ret[r_out][c]=(*this)[r_in][c];
+            r_out++;
+        }
 
-	if (storage) delete [] storage; 
+    if (storage) 
+        delete [] storage; 
+    
     nrows=ret.nrows;
     ncols=ret.ncols;
     storage=new double[ncols*nrows];
@@ -485,7 +489,7 @@ void Matrix::allocGslData()
 {
     gsl_matrix *mat=new gsl_matrix;
     gsl_block *bl=new gsl_block;
-    
+
     mat->block=bl;
 
     //this is constant (at least for now)
@@ -522,7 +526,7 @@ void Matrix::updateGslData()
 bool Matrix::setRow(int row, const Vector &r)
 {
     if((row<0) || (row>=nrows) || (r.length() != (size_t)ncols))
-		 return false;
+        return false;
 
     for(int c=0;c<ncols;c++)
         (*this)[row][c]=r[c];
@@ -532,8 +536,8 @@ bool Matrix::setRow(int row, const Vector &r)
 
 bool Matrix::setCol(int col, const Vector &c)
 {
-	if((col<0) || (col>=ncols) || (c.length() != (size_t)nrows))
-		 return false; 
+    if((col<0) || (col>=ncols) || (c.length() != (size_t)nrows))
+        return false; 
 
     for(int r=0;r<nrows;r++)
         (*this)[r][col]=c[r];
@@ -544,7 +548,7 @@ bool Matrix::setCol(int col, const Vector &c)
 bool Matrix::setSubmatrix(const yarp::sig::Matrix &m, int r, int c)
 {
     if((c<0) || (c+m.cols()>ncols) || (r<0) || (r+m.rows()>nrows))
-		 return false;
+        return false;
 
     for(int i=0;i<m.rows();i++)
         for(int j=0;j<m.cols();j++)
@@ -575,24 +579,24 @@ bool Matrix::setSubcol(const Vector &v, int r, int c)
 }
 
 Matrix::Matrix(int r, int c):
-	storage(0),
+    storage(0),
     matrix(0),
     nrows(r),
     ncols(c)
 {
-	storage=new double [r*c];
+    storage=new double [r*c];
     memset(storage, 0, r*c*sizeof(double));
     allocGslData();
     updatePointers();
 }
 
 Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
-          storage(0),
-          matrix(0)
+    storage(0),
+    matrix(0)
 {
-	nrows=m.nrows;
+    nrows=m.nrows;
     ncols=m.ncols;
-          
+
     allocGslData();
 
     if (m.storage!=0) 
@@ -604,4 +608,4 @@ Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
     }
 }
 
-	 
+

@@ -467,6 +467,15 @@ namespace yarp
         YARP_math_API yarp::sig::Matrix luinv(const yarp::sig::Matrix& in);
 
         /**
+        * Computes eigenvalues of the n-by-n real nonsymmetric matrix 
+        * @param in nonsymmetric n-by-n matrix
+        * @param real the real part of eingen values
+        * @param img the imaginary part of eingen values
+        * @return the real and imaginary part of the eingen values in seperate matrices
+        */
+        YARP_math_API bool eingenValues(const yarp::sig::Matrix& in, yarp::sig::Vector &real, yarp::sig::Vector &img);
+
+        /**
         * Invert a symmetric and positive definite matrix using Cholesky 
         * decomposition. 
         * @param in symmetric and positive definite matrix

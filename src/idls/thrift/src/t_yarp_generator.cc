@@ -164,7 +164,8 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
 
   std::string print_doc        (t_doc* tdoc);
   std::string print_type       (t_type* ttype);
-  std::string print_const_value(t_const_value* tvalue);
+  std::string print_const_value(t_const_value* tvalue,
+				t_type* ttype = NULL);
 
   std::string function_prototype(t_function *tfn, bool include_defaults,
 				 const char *prefix=NULL);
@@ -224,6 +225,9 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
                                           string iface,
                                           string arg_prefix);
 
+
+  void generate_deserialize_field_fallback(ofstream& out,
+					   t_field* tfield);
 
 
   void generate_deserialize_field        (std::ofstream& out,
@@ -859,7 +863,8 @@ string t_yarp_generator::print_type(t_type* ttype) {
 /**
  * Prints out an YARP representation of the provided constant value
  */
-string t_yarp_generator::print_const_value(t_const_value* tvalue) {
+string t_yarp_generator::print_const_value(t_const_value* tvalue,
+					   t_type* ttype) {
   string result;
   bool first = true;
   char buf[10000];
@@ -908,7 +913,18 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue) {
     }
     break;
   default:
-    result += "UNKNOWN";
+    {
+      bool done = false;
+      if (ttype!=NULL) {
+	if (ttype->is_enum()) {
+	  result += tvalue->get_identifier_name();
+	  done = true;
+	}
+      }
+      if (!done) {
+	result += "UNKNOWN";
+      }
+    }
     break;
   }
   return result;
@@ -1413,7 +1429,8 @@ std::string t_yarp_generator::function_prototype(t_function *tfn,
       if (include_defaults) {
 	if ((*arg_iter)->get_value() != NULL) {
 	  result += " = ";
-	  result += print_const_value((*arg_iter)->get_value());
+	  result += print_const_value((*arg_iter)->get_value(),
+				      (*arg_iter)->get_type());
 	}
       }
     }
@@ -1642,8 +1659,6 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent(f_cpp_) << "yarp::os::ConstString tag = reader.readTag();" << endl;
     indent(f_cpp_) << "while (!reader.isError()) {" << endl;
     indent_up();
-    indent(f_cpp_) << "if (reader.noMore()) { reader.fail(); return false; }"
-		   << endl;
     indent(f_cpp_) << "// TODO: use quick lookup, this is just a test" << endl;
     //indent_up();
     fn_iter = functions.begin();
@@ -1711,6 +1726,8 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent(f_cpp_) << "yarp::os::ConstString next_tag = reader.readTag();" << endl;
     indent(f_cpp_) << "if (next_tag==\"\") break;" << endl;
     indent(f_cpp_) << "tag = tag + \"_\" + next_tag;" << endl;
+    indent(f_cpp_) << "if (reader.noMore()) { reader.fail(); return false; }"
+		   << endl;
     indent_down();
     indent(f_cpp_) << "}" << endl;
     indent(f_cpp_) << "return false;" << endl;
@@ -1930,6 +1947,22 @@ void t_yarp_generator::generate_serialize_list_element(ofstream& out,
 
 
 
+void t_yarp_generator::generate_deserialize_field_fallback(ofstream& out,
+							   t_field* tfield) {
+  out << "{" << endl;
+  indent_up();
+  if (tfield->get_value()!=NULL) {
+    indent(out) << tfield->get_name() <<
+      " = " <<
+      print_const_value(tfield->get_value(),tfield->get_type()) <<
+      ";" << endl;
+  } else {
+    indent(out) << "reader.fail();" << endl;
+    indent(out) << "return false;" << endl;
+  }
+  indent_down();
+  indent(out) << "}";
+}
 
 void t_yarp_generator::generate_deserialize_field(ofstream& out,
 						  t_field* tfield,
@@ -1948,7 +1981,9 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
   if (type->is_struct() || type->is_xception()) {
     indent(out) << "if (!reader.";
     generate_deserialize_struct(out, (t_struct*)type, name, force_nested);
-    out << ") { reader.fail(); return false; }" << endl;
+    out << ") " ;
+    generate_deserialize_field_fallback(out,tfield);
+    out << endl;
   } else if (type->is_container()) {
     generate_deserialize_container(out, type, name);
   } else if (type->is_base_type()) {
@@ -1987,15 +2022,22 @@ void t_yarp_generator::generate_deserialize_field(ofstream& out,
     default:
       throw "compiler error: no C++ reader for base type " + t_base_type::t_base_name(tbase) + name;
     }
-    out << ") { reader.fail(); return false; }" << endl;
+    out << ") ";
+    generate_deserialize_field_fallback(out,tfield);
+    out << endl;
   } else if (type->is_enum()) {
     string t = tmp("ecast");
     string t2 = tmp("cvrt");
     out <<
       indent() << "int32_t " << t << ";" << endl <<
       indent() << type_name(type) << "Vocab " << t2 << ";" << endl <<
-      indent() << "if (!reader.readEnum(" << t << "," << t2 << ")) { reader.fail(); return false; }" << endl <<
-      indent() << name << " = (" << type_name(type) << ")" << t << ";" << endl;
+      indent() << "if (!reader.readEnum(" << t << "," << t2 << ")) ";
+    generate_deserialize_field_fallback(out,tfield);
+    out << " else {" << endl;
+    indent_up();
+    out << indent() << name << " = (" << type_name(type) << ")" << t << ";" << endl;
+    indent_down();
+    indent(out) << "}" << endl;
   } else {
     printf("DO NOT KNOW HOW TO DESERIALIZE FIELD '%s' TYPE '%s'\n",
            tfield->get_name().c_str(), type_name(type).c_str());

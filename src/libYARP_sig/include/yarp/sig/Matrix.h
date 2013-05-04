@@ -33,8 +33,8 @@ namespace yarp {
 namespace yarp {
     namespace sig {
         YARP_sig_API bool submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
-		YARP_sig_API bool removeCols(const Matrix &in, Matrix &out, int first_col, int how_many);
-		YARP_sig_API bool removeRows(const Matrix &in, Matrix &out, int first_row, int how_many);
+        YARP_sig_API bool removeCols(const Matrix &in, Matrix &out, int first_col, int how_many);
+        YARP_sig_API bool removeRows(const Matrix &in, Matrix &out, int first_row, int how_many);
     }
 }
 
@@ -70,7 +70,7 @@ private:
 
 public:
     Matrix():
-          storage(0),
+      storage(0),
           matrix(0),
           nrows(0),
           ncols(0)
@@ -79,7 +79,7 @@ public:
       }
 
       Matrix(int r, int c);
-      
+
       /**
       * Copy constructor.
       */
@@ -115,7 +115,7 @@ public:
       { return ncols; }
 
       /**
-      * Resize the matrix, if matrix in not empty preserve old content.
+      * Resize the matrix, if matrix is not empty preserve old content.
       * @param r number of rows
       * @param c number of columns
       */
@@ -170,7 +170,7 @@ public:
       */
       bool setRow(int row, const Vector &r);
 
-	  /**
+      /**
       * Set a column of the matrix copying the values from a vector: the vector lenght must be equal to the number of rows of the matrix.
       * @param col the column number
       * @param c a vector which contains the desired values for the column
@@ -216,37 +216,37 @@ public:
       }
 
       /**
-       * Set a portion of this matrix with the values of the specified matrix m.
-       * The portion to be set is from row r to row r+m.rows()-1 and from column c 
-       * to column c+m.cols()-1.
-       *
-       * @param m matrix containing the values to set
-       * @param r start row
-       * @param c start column
-       * @return true if the operation succeeded, false otherwise
-       */
+      * Set a portion of this matrix with the values of the specified matrix m.
+      * The portion to be set is from row r to row r+m.rows()-1 and from column c 
+      * to column c+m.cols()-1.
+      *
+      * @param m matrix containing the values to set
+      * @param r start row
+      * @param c start column
+      * @return true if the operation succeeded, false otherwise
+      */
       bool setSubmatrix(const Matrix &m, int r, int c);
 
       /**
-       * Set a portion of a row of this matrix with the values of the specified vector v.
-       * The portion to be set is from column c to column c+v.size()-1.
-       *
-       * @param v vector containing the values to set
-       * @param r index of the row to set
-       * @param c start column
-       * @return true if the operation succeeded, false otherwise
-       */
+      * Set a portion of a row of this matrix with the values of the specified vector v.
+      * The portion to be set is from column c to column c+v.size()-1.
+      *
+      * @param v vector containing the values to set
+      * @param r index of the row to set
+      * @param c start column
+      * @return true if the operation succeeded, false otherwise
+      */
       bool setSubrow(const Vector &v, int r, int c);
 
       /**
-       * Set a portion of a column of this matrix with the values of the specified vector v.
-       * The portion to be set is from row r to row r+v.size()-1.
-       *
-       * @param v vector containing the values to set
-       * @param r start row index
-       * @param c index of the column to set
-       * @return true if the operation succeeded, false otherwise
-       */
+      * Set a portion of a column of this matrix with the values of the specified vector v.
+      * The portion to be set is from row r to row r+v.size()-1.
+      *
+      * @param v vector containing the values to set
+      * @param r start row index
+      * @param c index of the column to set
+      * @return true if the operation succeeded, false otherwise
+      */
       bool setSubcol(const Vector &v, int r, int c);
 
       /**
@@ -263,21 +263,21 @@ public:
       */
       Vector getCol(int c) const;
 
-    /**
+      /**
       * Modifies the matrix, removing one or more columns from it.
       * @param first_col the number of the first column to remove
-	  * @param how_many the number of columns to remove
+      * @param how_many the number of columns to remove
       * @return the matrix with the specified columns removed
       */
-	  Matrix removeCols(int first_col, int how_many);
+      Matrix removeCols(int first_col, int how_many);
 
-    /**
+      /**
       * Modifies the matrix, removing one or more rows from it.
       * @param first_row the number of the first row to remove
       * @param how_many the number of rows to remove
       * @return the matrix with the specified rows removed
       */
-	  Matrix removeRows(int first_row, int how_many);
+      Matrix removeRows(int first_row, int how_many);
 
       /**
       * Get a subrow of the matrix as a vector.

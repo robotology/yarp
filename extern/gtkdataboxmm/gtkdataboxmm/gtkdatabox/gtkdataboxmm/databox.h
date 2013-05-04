@@ -111,15 +111,8 @@ private:
 
 
 public:
-// FIXME make this constructor protected and use gtk_databox_create_box_with_scrollbars_and_rulers instead?
     Databox();
     explicit Databox(Gtk::Table **table, bool scrollbar_x = false, bool scrollbar_y = false, bool ruler_x = false, bool ruler_y = false);
-
-//    _WRAP_CREATE(Gtk::Table **table, bool scrollbar_x = false, bool scrollbar_y = false, bool ruler_x = false, bool ruler_y = false)
-
-
-// void gtk_databox_create_box_with_scrollbars_and_rulers (GtkWidget ** p_box, GtkWidget ** p_table, gboolean scrollbar_x, gboolean scrollbar_y, gboolean ruler_x, gboolean ruler_y);
-//    explicit Databox(Gtk::Table **table, bool scrollbar_x, bool scrollbar_y, bool ruler_x, bool ruler_y);
 
     
   /** Adds the @a graph to the @a box. The next time the @a box is re-drawn, the graph will be shown.

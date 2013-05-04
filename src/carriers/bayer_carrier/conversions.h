@@ -104,32 +104,32 @@ enum {
 typedef struct __dc1394_video_frame
 {
   unsigned char          * image;                 /* the image. May contain padding data too (vendor specific). Read/write allowed. Free NOT allowed if
-                                           returned by dc1394_capture_dequeue() */
+                                                     returned by dc1394_capture_dequeue() */
   uint32_t                 size[2];               /* the image size [width, height] */
   uint32_t                 position[2];           /* the WOI/ROI position [horizontal, vertical] == [0,0] for full frame */
   dc1394color_coding_t     color_coding;          /* the color coding used. This field is valid for all video modes. */
   dc1394color_filter_t     color_filter;          /* the color filter used. This field is valid only for RAW modes and IIDC 1.31 */
   uint32_t                 yuv_byte_order;        /* the order of the fields for 422 formats: YUYV or UYVY */
   uint32_t                 data_depth;            /* the number of bits per pixel. The number of grayscale levels is 2^(this_number).
-						     This is independent from the colour coding */
+                                                     This is independent from the colour coding */
   uint32_t                 stride;                /* the number of bytes per image line */
   dc1394video_mode_t       video_mode;            /* the video mode used for capturing this frame */
   uint64_t                 total_bytes;           /* the total size of the frame buffer in bytes. May include packet-
-						     multiple padding and intentional padding (vendor specific) */
+                                                     multiple padding and intentional padding (vendor specific) */
   uint32_t                 image_bytes;           /* the number of bytes used for the image (image data only, no padding) */
   uint32_t                 padding_bytes;         /* the number of extra bytes, i.e. total_bytes-image_bytes.  */
   uint32_t                 packet_size;           /* the size of a packet in bytes. (IIDC data) */
   uint32_t                 packets_per_frame;     /* the number of packets per frame. (IIDC data) */
   uint64_t                 timestamp;             /* the unix time [microseconds] at which the frame was captured in
-						     the video1394 ringbuffer */
+                                                     the video1394 ringbuffer */
   uint32_t                 frames_behind;         /* the number of frames in the ring buffer that are yet to be accessed by the user */
   dc1394camera_t           *camera;               /* the parent camera of this frame */
   uint32_t                 id;                    /* the frame position in the ring buffer */
   uint64_t                 allocated_image_bytes; /* amount of memory allocated in for the *image field. */
   dc1394bool_t             little_endian;         /* DC1394_TRUE if little endian (16bpp modes only),
-						     DC1394_FALSE otherwise */
+                                                     DC1394_FALSE otherwise */
   dc1394bool_t             data_in_padding;       /* DC1394_TRUE if data is present in the padding bytes in IIDC 1.32 format,
-						     DC1394_FALSE otherwise */
+                                                     DC1394_FALSE otherwise */
 } dc1394video_frame_t;
 
 

@@ -52,6 +52,20 @@ public:
         printf("test_partial with %d and %d\n", x, y);
         return x+y;
     }
+
+    virtual int32_t test_tail_defaults(const DemoEnum x) {
+        if (x==ENUM1) {
+            return 42;
+        }
+        return 999;
+    }
+
+    virtual int32_t test_longer_tail_defaults(const int32_t ignore, const DemoEnum _enum, const int32_t _int, const std::string& _string) {
+        if (_enum==ENUM2 && _int==42 && _string=="Space Monkey from the Planet: Space") {
+            return 999;
+        }
+        return _int;
+    }
 };
 
 class ClientPeek : public PortReader {
@@ -305,6 +319,50 @@ bool test_partial() {
     return true;
 }
 
+bool test_defaults_with_rpc() {
+    printf("\n*** test_defaults_with_rpc()\n");
+
+
+    Network yarp;
+    yarp.setLocalMode(true);
+
+    Server server;
+
+    Port client_port,server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+    server.yarp().attachAsServer(server_port);
+
+    Bottle msg, reply;
+    msg.fromString("test_tail_defaults");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 42) return false;
+
+    msg.fromString("test_tail_defaults 55");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 999) return false;
+
+    msg.fromString("test longer tail defaults");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asVocab() != VOCAB4('f','a','i','l')) return false;
+
+    msg.fromString("test longer tail defaults 888");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 999) return false;
+
+    msg.fromString("test longer tail defaults 888 ENUM2 47");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 47) return false;
+
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -313,5 +371,6 @@ int main(int argc, char *argv[]) {
     if (!test_enums()) return 1;
     if (!test_defaults()) return 1;
     if (!test_partial()) return 1;
+    if (!test_defaults_with_rpc()) return 1;
     return 0;
 }
