@@ -25,7 +25,9 @@ public:
   PointDLists(const std::string& name,const std::vector<PointD> & firstList,const std::vector<PointD> & secondList) : name(name), firstList(firstList), secondList(secondList) {
   }
   bool read(yarp::os::idl::WireReader& reader) {
-    if (!reader.readString(name)) return false;
+    if (!reader.readString(name)) {
+      name = "pointLists";
+    }
     {
       firstList.clear();
       uint32_t _size0;
@@ -35,7 +37,10 @@ public:
       uint32_t _i4;
       for (_i4 = 0; _i4 < _size0; ++_i4)
       {
-        if (!reader.readNested(firstList[_i4])) return false;
+        if (!reader.readNested(firstList[_i4])) {
+          reader.fail();
+          return false;
+        }
       }
       reader.readListEnd();
     }
@@ -48,7 +53,10 @@ public:
       uint32_t _i9;
       for (_i9 = 0; _i9 < _size5; ++_i9)
       {
-        if (!reader.readNested(secondList[_i9])) return false;
+        if (!reader.readNested(secondList[_i9])) {
+          reader.fail();
+          return false;
+        }
       }
       reader.readListEnd();
     }

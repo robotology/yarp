@@ -24,7 +24,7 @@ public:
       std::cout<<"Server:get_answer called" <<std::endl;
       return ANSWER;
   }
-  virtual int32_t add_one(const int32_t x)
+  virtual int32_t add_one(const int32_t x = 0)
   {
      std::cout<<"Server::add_one called with "<< x <<std::endl;
       return x+1;
