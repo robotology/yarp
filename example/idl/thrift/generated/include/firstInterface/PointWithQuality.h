@@ -27,11 +27,17 @@ public:
   PointWithQuality(const PointD& point,const PointQuality quality) : point(point), quality(quality) {
   }
   bool read(yarp::os::idl::WireReader& reader) {
-    if (!reader.read(point)) return false;
+    if (!reader.read(point)) {
+      reader.fail();
+      return false;
+    }
     int32_t ecast12;
     PointQualityVocab cvrt13;
-    if (!reader.readEnum(ecast12,cvrt13)) return false;
-    quality = (PointQuality)ecast12;
+    if (!reader.readEnum(ecast12,cvrt13)) {
+      quality = UNKNOWN;
+    } else {
+      quality = (PointQuality)ecast12;
+    }
     return !reader.isError();
   }
   bool read(yarp::os::ConnectionReader& connection) {

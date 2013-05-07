@@ -23,7 +23,10 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) return false;
-    if (!reader.read(_return)) return false;
+    if (!reader.read(_return)) {
+      reader.fail();
+      return false;
+    }
     return true;
   }
 };
@@ -40,14 +43,21 @@ Point3D DemoExtended::multiply_point(const Point3D& x, const double factor) {
 bool DemoExtended::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   reader.expectAccept();
-  if (!reader.readListHeader()) return false;
+  if (!reader.readListHeader()) { reader.fail(); return false; }
   yarp::os::ConstString tag = reader.readTag();
-  while (!reader.isError()) {    // TODO: use quick lookup, this is just a test
+  while (!reader.isError()) {
+    // TODO: use quick lookup, this is just a test
     if (tag == "multiply_point") {
       Point3D x;
       double factor;
-      if (!reader.read(x)) return false;
-      if (!reader.readDouble(factor)) return false;
+      if (!reader.read(x)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.readDouble(factor)) {
+        reader.fail();
+        return false;
+      }
       Point3D _return;
       _return = multiply_point(x,factor);
       yarp::os::idl::WireWriter writer(reader);
@@ -58,6 +68,7 @@ bool DemoExtended::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (reader.noMore()) { reader.fail(); return false; }
     yarp::os::ConstString next_tag = reader.readTag();
     if (next_tag=="") break;
     tag = tag + "_" + next_tag;

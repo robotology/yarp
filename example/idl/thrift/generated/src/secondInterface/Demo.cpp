@@ -19,7 +19,10 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) return false;
-    if (!reader.readI32(_return)) return false;
+    if (!reader.readI32(_return)) {
+      reader.fail();
+      return false;
+    }
     return true;
   }
 };
@@ -38,7 +41,10 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) return false;
-    if (!reader.readI32(_return)) return false;
+    if (!reader.readI32(_return)) {
+      reader.fail();
+      return false;
+    }
     return true;
   }
 };
@@ -57,7 +63,10 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) return false;
-    if (!reader.readI32(_return)) return false;
+    if (!reader.readI32(_return)) {
+      reader.fail();
+      return false;
+    }
     return true;
   }
 };
@@ -78,7 +87,10 @@ public:
   virtual bool read(yarp::os::ConnectionReader& connection) {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) return false;
-    if (!reader.read(_return)) return false;
+    if (!reader.read(_return)) {
+      reader.fail();
+      return false;
+    }
     return true;
   }
 };
@@ -115,9 +127,10 @@ int32_t Demo::double_down(const int32_t x) {
 bool Demo::read(yarp::os::ConnectionReader& connection) {
   yarp::os::idl::WireReader reader(connection);
   reader.expectAccept();
-  if (!reader.readListHeader()) return false;
+  if (!reader.readListHeader()) { reader.fail(); return false; }
   yarp::os::ConstString tag = reader.readTag();
-  while (!reader.isError()) {    // TODO: use quick lookup, this is just a test
+  while (!reader.isError()) {
+    // TODO: use quick lookup, this is just a test
     if (tag == "get_answer") {
       int32_t _return;
       _return = get_answer();
@@ -131,7 +144,9 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
     }
     if (tag == "add_one") {
       int32_t x;
-      if (!reader.readI32(x)) return false;
+      if (!reader.readI32(x)) {
+        x = 0;
+      }
       int32_t _return;
       _return = add_one(x);
       yarp::os::idl::WireWriter writer(reader);
@@ -144,7 +159,10 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
     }
     if (tag == "double_down") {
       int32_t x;
-      if (!reader.readI32(x)) return false;
+      if (!reader.readI32(x)) {
+        reader.fail();
+        return false;
+      }
       int32_t _return;
       _return = double_down(x);
       yarp::os::idl::WireWriter writer(reader);
@@ -158,8 +176,14 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
     if (tag == "add_point") {
        ::yarp::test::PointD x;
        ::yarp::test::PointD y;
-      if (!reader.read(x)) return false;
-      if (!reader.read(y)) return false;
+      if (!reader.read(x)) {
+        reader.fail();
+        return false;
+      }
+      if (!reader.read(y)) {
+        reader.fail();
+        return false;
+      }
        ::yarp::test::PointD _return;
       _return = add_point(x,y);
       yarp::os::idl::WireWriter writer(reader);
@@ -170,6 +194,7 @@ bool Demo::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (reader.noMore()) { reader.fail(); return false; }
     yarp::os::ConstString next_tag = reader.readTag();
     if (next_tag=="") break;
     tag = tag + "_" + next_tag;
