@@ -8,7 +8,7 @@ const i32 ANSWER = 42
 
 service Demo {
   i32 get_answer();
-  i32 add_one(1:i32 x);
+  i32 add_one(1:i32 x = 0);
   i32 double_down(1: i32 x);
   PointD.PointD add_point(1: PointD.PointD x, 2: PointD.PointD y);
 }

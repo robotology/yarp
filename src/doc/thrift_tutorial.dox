@@ -10,12 +10,12 @@
 
 This tutorial shows how to use the Apache Thrift Interface Definition Language to serialize data sent over YARP ports and define interfaces for RPC-based services in YARP Modules.
 
-\section sec_intro Introduction
+\section thrift_tutorial_sec_intro Introduction
 
 Apache Thrift allows to define data types and service interfaces in a simple definition file. Taking that file as input, a compiler generates source code which can be used by different client modules and a server.
 <b>In order to use IDLs, YARP must be built setting the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
 
-\section sec_language Language Reference
+\section thrift_tutorial_sec_language Language Reference
 
 The following is a summary of the Thrift language reference, with corresponding mapping to YARP (C++) code.
 Most of it was adapted from\n
@@ -23,7 +23,7 @@ http://thrift.apache.org/ \n
 http://diwakergupta.github.com/thrift-missing-guide/
 
 The <b>Thrift type system</b> consists of pre-defined base types, user-defined structs, container types, and service definitions.
-\subsection subs_basetypes Base Types
+\subsection thrift_tutorial_subs_basetypes Base Types
 
 \arg \c bool: A boolean value (true or false), one byte; mapped to \c bool
 \arg \c byte: A signed byte; mapped to \c int8_t
@@ -35,14 +35,14 @@ The <b>Thrift type system</b> consists of pre-defined base types, user-defined s
 
 Note that Thrift does not support unsigned integers. 
 
-\subsection subs_containers Containers
+\subsection thrift_tutorial_subs_containers Containers
 \arg \c list<t1>: An ordered list of elements of type t1. May contain duplicates. Mapped to \c std::vector.
 \arg \c set<t1>: An unordered set of unique elements of type t1. Mapped to \c  std::set<t1>.
 \arg \c map<t1,t2>: A map of strictly unique keys of type t1 to values of type t2. Mapped to \c std::map<T1, T2>.
 
 Types used in containers many be any valid Thrift type excluding services.
 
-\subsection subs_structs Structs
+\subsection thrift_tutorial_subs_structs Structs
 Structs are the basic building blocks in a Thrift IDL.  A struct is composed of fields; each field has a unique, positive integer identifier, a type, a name and an optional default value.
 Example:
 \code
@@ -73,7 +73,7 @@ struct Vector {
 )
 \endcode
 
-\subsection subs_typedef Typedefs
+\subsection thrift_tutorial_subs_typedef Typedefs
 Thrift supports C/C++ style typedefs.
 
 \code
@@ -81,10 +81,10 @@ typedef PointD Point3D
 \endcode
 
 Note that there is no trailing semi-colon, and that not only base types but also structs can be used in typedefs.
-If any typedef or constant value (see \ref subs_const) is defined, a <thriftFileName>_common.h file is generated, which contains all typedefs and constants; this file is automatically included by all the other generated files.
+If any typedef or constant value (see \ref thrift_tutorial_subs_const) is defined, a <thriftFileName>_common.h file is generated, which contains all typedefs and constants; this file is automatically included by all the other generated files.
 
 
-\subsection subs_const Constants
+\subsection thrift_tutorial_subs_const Constants
 Thrift lets you define constants for use across languages. Complex types and structs are specified using JSON notation.
 
 \code
@@ -92,9 +92,9 @@ const i32 ANSWER = 42
 \endcode
 
 Note that semi-colon is optional; hex values are valid here. 
-If any typedef (see \ref subs_typedef) or constant value is defined, a <thriftFileName>_common.h file is generated, which contains all typedefs and constants; this file is automatically included by all other generated files.
+If any typedef (see \ref thrift_tutorial_subs_typedef) or constant value is defined, a <thriftFileName>_common.h file is generated, which contains all typedefs and constants; this file is automatically included by all other generated files.
 
-\subsection subs_enums Enums
+\subsection thrift_tutorial_subs_enums Enums
 Enums are specified C-style. Compiler assigns default values starting at 0, but specific integral values (in the range of postive 32-bit integers) can be specified for constants. Hex values are also acceptable.
 
 \code
@@ -113,7 +113,7 @@ struct PointWithQuality{
 Note that there is no trailing semi-colon, and that the fully qualified name of the constant must be used when assigning default values. 
 For each enum, a .h and a .cpp file are created, which contain the definition of the enum and a helper class that handles number/string conversion for the enum elements.
 
-\subsection subs_namespace Namespaces
+\subsection thrift_tutorial_subs_namespace Namespaces
 Namespaces in Thrift are akin to namespaces in C++ or packages in Java  -  they offer a convenient way of organizing (or isolating) your code. Namespaces may also be used to prevent name clashes between type definitions. Thrift allows you to customize the namespace behavior on a per-language basis. 
 YARP example:
 \code
@@ -127,17 +127,17 @@ namespace yarp { namespace test {
 }}
 \endcode
 
-\subsection subs_include Includes
+\subsection thrift_tutorial_subs_include Includes
 
-It is often useful to split up Thrift definitions in separate files to ease maintainance, enable reuse and improve modularity/organization. Thrift allows files to include other Thrift files. Included files are looked up in the current directory and by searching relative to the path from which the \c yarp_idl_to_dir macro is executed (see \ref sec_codegen ). 
+It is often useful to split up Thrift definitions in separate files to ease maintainance, enable reuse and improve modularity/organization. Thrift allows files to include other Thrift files. Included files are looked up in the current directory and by searching relative to the path from which the \c yarp_idl_to_dir macro is executed (see \ref thrift_tutorial_sec_codegen ). 
 \code
 include "firstInterface/PointD.thrift"
 \endcode
 
-Included objects are accessed using the name of the Thrift file as a prefix (see example in \ref subs_services ).
+Included objects are accessed using the name of the Thrift file as a prefix (see example in \ref thrift_tutorial_subs_services ).
 In generated files, the needed header files generated from the PointD.thrift file will be included with the same inclusion prefix (in this case, "firstInterface").
 
-\subsection subs_services Services
+\subsection thrift_tutorial_subs_services Services
 
 Service definitions are semantically equivalent to defining an interface (or a pure virtual abstract class) in object-oriented programming. The Thrift compiler generates fully functional client and server stubs that implement the communication routine for the interface.
 Services contain a collection of method definitions.
@@ -147,14 +147,14 @@ include "firstInterface/PointD.thrift"
 ...
 service Demo {
   i32 get_answer();
-  i32 add_one(1:i32 x);
+  i32 add_one(1:i32 x = 0);
   i32 double_down(1: i32 x);
   PointD.PointD add_point(1: PointD.PointD x, 2: PointD.PointD y);
 }
 
 \endcode
 
-A method definition has a return type and arguments, like C code. Note that argument lists are specified using the exact same syntax as field lists in structs. Return types can be primitive types or structs; the  \c oneway modifier can precede a \c void return type to indicate that the client only requests that the server execute the function, but does not wait for an acknowlegment that the execution has completed (asynchronous processing). 
+A method definition has a return type and arguments, like C code. Note that argument lists are specified using the exact same syntax as field lists in structs. Return types can be primitive types or structs; the  \c oneway modifier can precede a \c void return type to indicate that the client only requests that the server execute the function, but does not wait for an acknowlegment that the execution has completed (asynchronous processing). Default values can be provided for tail arguments; clients can avoid providing values for those parameters, which is especially useful when sending RPC calls via command line, as will be shown in section \ref thrift_tutorial_sec_completex. 
 
 Services support inheritance: a service may optionally inherit from another service using the \c extends keyword.
 
@@ -164,10 +164,10 @@ service DemoExtended extends Demo {
 }
 \endcode
 
-For each service, a .h and a .cpp file are created, which contain the definition of the interface as a class derived from yarp::os::Wire. The implementation of the \c read method to receive commands over a YARP port is provided, as well as the implementation of the command transmission over YARP for function calls performed by a client. The description of how to use this generated code to create server and client modules is provided in sections \ref sec_server and \ref sec_client respectively.
+For each service, a .h and a .cpp file are created, which contain the definition of the interface as a class derived from yarp::os::Wire. The implementation of the \c read method to receive commands over a YARP port is provided, as well as the implementation of the command transmission over YARP for function calls performed by a client. The description of how to use this generated code to create server and client modules is provided in sections \ref thrift_tutorial_sec_server and \ref thrift_tutorial_sec_client respectively.
 
 
-\subsection subs_comments Comments
+\subsection thrift_tutorial_subs_comments Comments
 
 Thrift supports shell-style, C-style multi-line as well as single-line Java/C++ style comments.
 \verbatim
@@ -182,7 +182,7 @@ Thrift supports shell-style, C-style multi-line as well as single-line Java/C++ 
 \endverbatim
 
 
-\section sec_codegen Code generation
+\section thrift_tutorial_sec_codegen Code generation
 
 Generation of code for a Thrift definition file PointD.thrift in the "firstInterface" directory can be automatically performed by CMake calling the \c yarp_idl_to_dir macro defined in the YARP configuration file "YarpIDL.cmake":
 \code
@@ -195,8 +195,8 @@ The macro defines a CMake "advanced" option, ALLOW_IDL_GENERATION, which is by d
 Upon execution of the macro, the code is generated by the yarp-thrift compiler and copied into the <desired_output_dir>. In particular, .h files get copied in the \c include subdirectory, while .cpp files go into the \c src subdirectory. The directory structure inside these subdirectories replicates the one of the definition file: since PointD.thrift is in the firstInterface directory, .h files will go to the <desired_output_dir>/include/firstInterface/ folder, and .cpp files will go to <desired_output_dir>/src/firstInterface/ folder.
 Furthermore, a firstInterface_PointD_thrift.cmake file will be created in the <desired_output_dir>. The name reflects the first argument to the yarp_idl_to_dir macro, where all non-alphanumerical characters are replaced with underscores. This file can be included in the CMake configuration files of a project that uses the generated code to retrieve a list of all generated file names, relative to the <desired_output_dir> path. In particular, a \em headers and a \em sources CMake variables are set that contain respectively a list of all .h header files, and a list of all .cpp source files.
 
-\section sec_server Server implementation
-The purpose of a server is to listen for commands on a YARP port, execute the method that each command refers to, and send back the reply. With Thrift, a server is created from a \c service interface class (generated as in section \ref subs_services), creating an object that implementats the methods of that interface, and attaching it to a YARP port.
+\section thrift_tutorial_sec_server Server implementation
+The purpose of a server is to listen for commands on a YARP port, execute the method that each command refers to, and send back the reply. With Thrift, a server is created from a \c service interface class (generated as in section \ref thrift_tutorial_subs_services), creating an object that implementats the methods of that interface, and attaching it to a YARP port.
 
 \code
 #include <iostream>
@@ -211,7 +211,7 @@ public:
       std::cout<<"Server:get_answer called" <<std::endl;
       return ANSWER;
   }
-  virtual int32_t add_one(const int32_t x)
+  virtual int32_t add_one(const int32_t x = 0)
   {
      std::cout<<"Server::add_one called with "<< x <<std::endl;
       return x+1;
@@ -322,7 +322,7 @@ int main(int argc, char *argv[]) {
 }
 \endcode 
 
-\section sec_client Client use
+\section thrift_tutorial_sec_client Client use
 
 Clients can invoke a remote procedure on the server by simply declaring the interface and attaching it to a YARP port connected to the server. 
 
@@ -382,7 +382,7 @@ int main(int argc, char *argv[]) {
 }
 \endcode
 
-\section sec_completex Complete example
+\section thrift_tutorial_sec_completex Complete example
 
 A complete example of Thrift code generation and server/client creation with CMake is available in
 \code
@@ -431,6 +431,8 @@ double down 43
 Response: 86
 add point 1 2 3 4 5 6
 Response: 5 7 9
+add one
+1
 \endverbatim
 
 
