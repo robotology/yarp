@@ -18,6 +18,7 @@ endforeach(conf)
 foreach(conf YarpPlugin.cmake
              YarpIDL.cmake
              YarpDevice.cmake
+             YarpDeprecatedWarning.cmake
              FindACE.cmake
              FindAtlas.cmake
              FindFFMPEG.cmake
