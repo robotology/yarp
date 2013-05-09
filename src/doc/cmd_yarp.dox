@@ -170,14 +170,29 @@ the configuration file will be rewritten to contain that information.
 \verbatim
 yarp connect OUTPUT_PORT INPUT_PORT
 yarp connect OUTPUT_PORT INPUT_PORT CARRIER
+yarp connect --persist OUTPUT_PORT INPUT_PORT
+yarp connect --persist OUTPUT_PORT INPUT_PORT CARRIER
+yarp connect --persist TOPIC INPUT_PORT
+yarp connect --persist OUTPUT_PORT TOPIC
+yarp connect --persist PORT
+yarp connect --persist
 \endverbatim
 
 This will request the specified output port to send its output in
 future to the specified input port.
 Optionally, the carrier to be used can be added as an extra argument
 (e.g. tcp, udp, mcast, ...).
-
-
+Ordinarily, ports must already exist in order to be connected,
+and connections last until one of the ports is removed (or the
+connection is removed with \ref yarp_disconnect).
+If "--persist" is specified, the ports do not need to already
+exist, they will be connected whenever they are both present.
+A list of all persistent connections involving a port
+can be retrieved by providing the name of that port alone.
+A list of all persistent connections can be retrieved by
+omitting port names completely.
+Persistent connections can be made to bundles of ports called
+"topics", see \ref yarp_topic.
 
 
 
@@ -807,7 +822,7 @@ yarp topic --remove /TOPIC_NAME
 yarp topc --list
 \endverbatim
 
-Activates a topic name.  If the latest yarp name server, yarpserver3,
+Activates a topic name.  If a sufficiently recent yarp name server
 is in use, then that topic name will act as a virtual repeater port.
 If a persistent connection exists between ports /A, /B and /C and /TOPIC,
 and from
