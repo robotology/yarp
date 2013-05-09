@@ -10,6 +10,23 @@
 #ifndef _YARP2_SEMAPHOREIMPL_
 #define _YARP2_SEMAPHOREIMPL_
 
+#include <yarp/os/api.h>
+//Decide which implementation to use
+#include <yarp/conf/system.h>
+
+#if defined(__linux__)
+// There is a problem with YARP+ACE semaphores on some Linux distributions,
+// where semaphores fail to work correctly.  Workaround.
+#  include <semaphore.h>
+#elif defined(__APPLE__)
+// On Mac, POSIX semaphores are just too burdensome
+#  include <mach/semaphore.h>
+#elif defined(YARP_HAS_ACE)
+// For everything else, there's ACE
+#  include <ace/Synch.h>
+#else
+#  error Cannot implement semaphores
+#endif
 
 // Pre-declare semaphore
 namespace yarp {
@@ -20,26 +37,36 @@ namespace yarp {
     }
 }
 
-//Decide which implementation to use
-#include <yarp/conf/system.h>
 
-#ifdef __linux__
-// There is a problem with YARP+ACE semaphores on some Linux distributions,
-// where semaphores fail to work correctly.  Workaround.
-#  include <yarp/os/impl/POSIXSemaphoreImpl.h>
-#else
-// On Mac, POSIX semaphores are just too burdensome
-#  ifdef __APPLE__
-#    include <yarp/os/impl/MachSemaphoreImpl.h>
-#  else
-//   For everything else, there's ACE
-#    ifdef YARP_HAS_ACE
-#      include <yarp/os/impl/ACESemaphoreImpl.h>
-#    else
-#      error Cannot implement semaphores
-#    endif
-#  endif
-#endif 
+
+class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
+public:
+    SemaphoreImpl(unsigned int initialCount = 1);
+    virtual ~SemaphoreImpl();
+
+    // blocking wait
+    void wait();
+
+    // blocking wait with timeout
+    bool waitWithTimeout(double timeout);
+
+    // polling wait
+    bool check();
+
+    // increment
+    void post();
+
+private:
+
+#if defined(__linux__)
+    sem_t sema;
+#elif defined(__APPLE__)
+    semaphore_t sema;
+#elif defined(YARP_HAS_ACE)
+    ACE_Semaphore sema;
+#endif
+
+};
 
 #endif
 
