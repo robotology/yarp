@@ -8,10 +8,16 @@
 
 #include <yarp/os/impl/RunCheckpoints.h>
 
+#ifdef YARP_HAS_ACE
 #include <ace/ACE.h>
+#else
+#include <stdio.h>
+#endif
 
 YarprunCheckpoints::YarprunCheckpoints()
 {
+    char path[512];
+#ifdef YARP_HAS_ACE
     char temp[512];
     ACE::get_temp_dir(temp,512);
 
@@ -22,9 +28,10 @@ YarprunCheckpoints::YarprunCheckpoints()
         if (date[t]==' ' || date[t]==':') date[t]='_';
     }
 
-    char path[512];
     sprintf(path,"%s/yarprun_log_%s.txt","C:/Users/user/Documents/temp",date);
-
+#else
+    sprintf(path,"%s/yarprun_log.txt","/temp");
+#endif
     mLogFile=fopen(path,"w");
 }
 
