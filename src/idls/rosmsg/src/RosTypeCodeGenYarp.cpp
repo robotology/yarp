@@ -20,12 +20,25 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     len = state.getFreeVariable("len");
     len2 = state.getFreeVariable("len2");
     string safe_tname = tname;
+    if (safe_tname.find(".")!=string::npos) {
+        safe_tname = safe_tname.substr(0,safe_tname.find("."));
+    }
     for (int i=0; i<(int)safe_tname.length(); i++) {
         if (safe_tname[i]=='/') {
             safe_tname[i] = '_';
         }
     }
     string fname = safe_tname + ".h";
+    if (target!="") {
+        string iname = target + "/" + safe_tname + "_indexALL.txt";
+        FILE *index = fopen(iname.c_str(),"w");
+        if (index!=NULL) {
+            fprintf(index,"%s\n",fname.c_str());
+            fclose(index);
+            index = NULL;
+        }
+        fname = target + "/" + fname;
+    }
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
@@ -54,7 +67,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"class %s : public yarp::os::Portable {\n", safe_tname.c_str());
     fprintf(out,"public:\n");
     fprintf(out,"  yarp::os::ConstString getTypeName() const {\n");
-    fprintf(out,"    return \"%s\";\n", tname.c_str());
+    fprintf(out,"    return \"%s\";\n", safe_tname.c_str());
     fprintf(out,"  }\n\n");
     return true;
 }

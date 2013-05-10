@@ -13,8 +13,6 @@
 #include <RosType.h>
 #include <stdio.h>
 
-#include <tcpros_carrier_api.h>
-
 class RosYarpType {
 public:
     std::string rosType;
@@ -28,7 +26,10 @@ public:
     }
 };
 
-class YARP_tcpros_carrier_API RosTypeCodeGenYarp : public RosTypeCodeGen {
+class RosTypeCodeGenYarp : public RosTypeCodeGen {
+private:
+    std::string target;
+
 public:
     std::string counter;
     std::string len;
@@ -59,6 +60,14 @@ public:
 
     virtual bool hasNativeTimeClass() const {
         return false;
+    }
+
+    void setTargetDirectory(const char *tname) {
+        target = tname;
+    }
+
+    std::string getTargetDirectory() {
+        return target;
     }
 };
 
