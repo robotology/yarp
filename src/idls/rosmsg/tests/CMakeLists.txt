@@ -2,12 +2,12 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-get_target_property(yarpidl_thrift yarpidl_thrift LOCATION)
+get_target_property(yarpidl_rosmsg yarpidl_rosmsg LOCATION)
 set(tests ${CMAKE_CURRENT_SOURCE_DIR})
 set(outs ${CMAKE_CURRENT_BINARY_DIR})
 
 macro(add_gen_test name)
-  add_test(${name} ${yarpidl_thrift} -out ${outs} --gen yarp ${ARGN})
+  add_test(${name} ${yarpidl_rosmsg} ${ARGN} --out ${outs} --gen yarp)
 endmacro()
 
 macro(add_config_test name dir)
@@ -30,11 +30,10 @@ macro(add_test_test name dir)
 endmacro()
 
 
-add_gen_test(idl_thrift_demo_base ${tests}/demo/demo.thrift)
-# set_property(TEST idl_demo PROPERTIES DEPENDS idl_demo_base)
+add_gen_test(idl_rosmsg_demo_base ${tests}/demo/Demo.msg)
 
-add_config_test(idl_thrift_demo_config demo) 
+add_config_test(idl_rosmsg_demo_config demo) 
 
-add_make_test(idl_thrift_demo_make demo) 
+add_make_test(idl_rosmsg_demo_make demo) 
 
-add_test_test(idl_thrift_demo_test demo) 
+add_test_test(idl_rosmsg_demo_test demo) 

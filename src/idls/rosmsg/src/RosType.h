@@ -14,12 +14,8 @@
 #include <vector>
 #include <map>
 
-#include <tcpros_carrier_api.h>
-
-class YARP_tcpros_carrier_API RosTypeSearch {
+class RosTypeSearch {
 public:
-    void addDirectory(const char *physical, const char *logical);
-
     std::string findFile(const char *tname);
 };
 
@@ -27,12 +23,12 @@ class RosTypeCodeGen;
 class RosTypeCodeGenState;
 
 
-class YARP_tcpros_carrier_API RosType {
+class RosType {
 public:
 
     // std::vector<RosType> subRosType; is awkward to export in a MSVC DLL
     // so we work around it
-    class YARP_tcpros_carrier_API RosTypes {
+    class RosTypes {
     public:
         void *system_resource;
 
@@ -100,7 +96,7 @@ public:
     }
 };
 
-class YARP_tcpros_carrier_API RosTypeCodeGen {
+class RosTypeCodeGen {
 public:
     virtual ~RosTypeCodeGen() {}
 
@@ -126,7 +122,7 @@ public:
     }
 };
 
-class YARP_tcpros_carrier_API RosTypeCodeGenTest : public RosTypeCodeGen {
+class RosTypeCodeGenTest : public RosTypeCodeGen {
 public:
     virtual bool beginType(const std::string& tname, 
                            RosTypeCodeGenState& state);
