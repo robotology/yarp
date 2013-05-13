@@ -20,6 +20,7 @@
 #include <yarp/os/NetInt64.h>
 #include <yarp/os/NetUint16.h>
 #include <yarp/os/NetUint32.h>
+#include <yarp/os/NetUint64.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>

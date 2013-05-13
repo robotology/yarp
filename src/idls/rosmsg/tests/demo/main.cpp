@@ -9,12 +9,30 @@
 
 #include <stdio.h>
 
-#include <yarp/os/all.h>
 #include <Demo.h>
+#include <yarp/os/all.h>
 
 using namespace yarp::os;
 
+bool test_signs() {
+    printf("\n*** test_signs()\n");
+    Demo demo;
+    demo.an_unsigned_byte = 254;
+    if (demo.an_unsigned_byte<0) {
+        printf("Oops, an_unsigned_byte is signed\n");
+        return false;
+    }
+    demo.a_signed_byte = -1;
+    if (demo.a_signed_byte>0) {
+        printf("Oops, a_signed_byte is unsigned\n");
+        return false;
+    }
+    return true;
+}
+
 int main(int argc, char *argv[]) {
+    if (!test_signs()) return 1;
+
     // no tests other than compilability yet.
     return 0;
 }
