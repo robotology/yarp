@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Philipp Robbel
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8.7)
 
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(primesensecamera TYPE ServerKinect INCLUDE "ServerKinect.h" WRAPPER primesensecamera)
