@@ -43,7 +43,7 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
         find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_CONFIG)
     else()
     # No CMake Config file was found. Try using PkgConfig
-        find_package(PkgConfig)
+        find_package(PkgConfig QUIET)
         if(PKG_CONFIG_FOUND)
 
             if(${_name}_FIND_VERSION)
