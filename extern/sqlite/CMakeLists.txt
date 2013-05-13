@@ -20,6 +20,7 @@ add_library(YARP_sqlite STATIC ${sqlite_SRCS})
 
 if(UNIX)
     set_target_properties(YARP_sqlite PROPERTIES COMPILE_FLAGS -fPIC)
+    target_link_libraries(pthread)
 endif(UNIX)
 
 set(SQLite_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sqlite" CACHE PATH "SQLite include directory" FORCE)
