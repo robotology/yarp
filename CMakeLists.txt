@@ -19,15 +19,15 @@ set_property(GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
+# Get the current YARP version.  See conf/YarpVersion.cmake.
+include(YarpVersion)
+
 # Check system configuration.
 # See conf/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
 
 # Set up some compilation options.  See conf/YarpOptions.cmake.
 include(YarpOptions)
-
-# Get the current YARP version.  See conf/YarpVersion.cmake.
-include(YarpVersion)
 
 # Check YARP dependencies, find necessary libraries.
 # See conf/YarpFindDependencies.cmake.
