@@ -16,7 +16,9 @@
 
 #include <sys/stat.h>
 
-#include <yarp/conf/system.h>
+#ifdef YARP_PRESENT
+#  include <yarp/conf/system.h>
+#endif
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_unistd.h>
 #  include <ace/OS_NS_sys_wait.h>
@@ -144,7 +146,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         rosType = base;
     }
 
-    if (base[0]>='a'&&base[0]<='z'&&base.find("/")==string::npos) {
+    if (base[0]>='a'&&base[0]<='z'&&base.find("/")==string::npos&&base.find(".")==string::npos) {
         if (base=="time") {
             if (gen.hasNativeTimeClass()) {
                 isPrimitive = true;
@@ -334,14 +336,20 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
 
 std::string RosTypeSearch::findFile(const char *tname) {
+    struct stat dummy;
+	if (stat(tname, &dummy)==0) {
+        return tname;
+    }
     //fprintf(stderr, "[type] Looking for definition of %s\n", tname);
-    string target = string(tname) + ".msg";
+    string target = string(tname);
+    if (target.find(".")!=string::npos) {
+        return tname;
+    }
     for (int i=0; i<(int)target.length(); i++) {
         if (target[i]=='/') {
             target[i] = '_';
         }
     }
-    struct stat dummy;
 	if (stat(target.c_str(), &dummy)==0) {
         return target;
     }
