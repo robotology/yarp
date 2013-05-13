@@ -15,7 +15,17 @@
 #include <map>
 
 class RosTypeSearch {
+private:
+    bool find_service;
 public:
+    RosTypeSearch() {
+        find_service = false;
+    }
+
+    void lookForService(bool flag) {
+        find_service = flag;
+    }
+
     std::string findFile(const char *tname);
 };
 
@@ -57,12 +67,29 @@ public:
     std::string rosName;
     RosTypes subRosType;
     std::string txt;
+    RosType *reply;
 
     RosType() {
+        reply = 0 /*NULL*/;
+        clear();
+    }
+
+    void clear() {
         isValid = false;
         isArray = false;
         isPrimitive = false;
         txt = "";
+        rosType = "";
+        rosName = "";
+        subRosType.clear();
+        if (reply) {
+            delete reply;
+            reply = 0 /*NULL*/;
+        }
+    }
+
+    virtual ~RosType() {
+        clear();
     }
 
     bool read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,

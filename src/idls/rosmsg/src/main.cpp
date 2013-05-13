@@ -17,6 +17,7 @@
 #include <yarp/os/all.h>
 
 using namespace yarp::os;
+using namespace std;
 
 void show_usage() {
     printf("Usage:\n");
@@ -26,6 +27,9 @@ void show_usage() {
     printf("    Calls 'rosmsg' to find type Foo, then makes a .h file for it\n");
     printf("\n  yarpidl_rosmsg --out <dir> <Foo>.msg\n");
     printf("    Generates .h file in the specified directory\n");
+    printf("\n  yarpidl_rosmsg <Foo>.srv\n");
+    printf("    Translates a ROS-format .srv file to a pair of YARP-compatible .h files\n");
+    printf("    The classes generated for Foo.srv are Foo and FooReply.\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -38,10 +42,19 @@ int main(int argc, char *argv[]) {
         return 0;        
     }
 
+    bool is_service = false;
+
     Property p;
-    ConstString fname;
+    string fname;
     p.fromCommand(argc-1,argv);
     fname = argv[argc-1];
+
+    if (fname.rfind(".")!=string::npos) {
+        string ext = fname.substr(fname.rfind("."),fname.length());
+        if (ext==".srv" || ext==".SRV") {
+            is_service = true;
+        }
+    }
  
     RosTypeSearch env;
     RosType t;
@@ -50,8 +63,9 @@ int main(int argc, char *argv[]) {
     if (p.check("out")) {
         gen.setTargetDirectory(p.find("out").toString().c_str());
     }
+    env.lookForService(is_service);
 
-    if (t.read(fname,env,gen)) {
+    if (t.read(fname.c_str(),env,gen)) {
         RosTypeCodeGenState state;
         t.emitType(gen,state);
     }

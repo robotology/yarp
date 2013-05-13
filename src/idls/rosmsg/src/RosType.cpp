@@ -122,12 +122,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         indent += "  ";
     }
     //printf("Checking %s\n", tname);
-    isValid = false;
-    isArray = false;
-    isPrimitive = false;
-    rosType = "";
-    rosName = "";
-    subRosType.clear();
+    clear();
     
     string base = tname;
     rosType = base;
@@ -172,6 +167,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         isValid = true;
         return true;
     }
+    if (rosType.find(".")!=string::npos) {
+        rosType = rosType.substr(0,rosType.rfind("."));
+    }
 
     bool ok = true;
     string path = env.findFile(base.c_str());
@@ -185,6 +183,8 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
     char *result = NULL;
     txt = "";
+
+    RosType *cursor = this;
     do {
         char buf[2048];
         result = fgets(buf,sizeof(buf),fin);
@@ -200,6 +200,15 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         string row = result;
         vector<string> msg = normalizedMessage(row);
         if (msg.size()==0) { continue; }
+        if (msg[0] == "---") {
+            printf("--- reply ---\n");
+            cursor->isValid = ok;
+            ok = true;
+            cursor->reply = new RosType();
+            cursor = cursor->reply;
+            cursor->rosType = rosType + "Reply";
+            continue;
+        }
         if (msg.size()>2) {
             if (msg[2]=="=") {
                 printf("Not worrying about: %s\n", row.c_str());
@@ -227,12 +236,12 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             ok = false;
         }
         sub.rosName = n;
-        subRosType.push_back(sub);
+        cursor->subRosType.push_back(sub);
     } while (result!=NULL);
     fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
     fclose(fin);
 
-    isValid = ok;
+    cursor->isValid = ok;
     return isValid;
 }
 
@@ -301,6 +310,11 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         }
     }
 
+    if (reply!=NULL) {
+        if (!reply->emitType(gen,state)) return false;
+    }
+    
+
     state.usedVariables.clear();
     state.txt = txt;
     for (int i=0; i<(int)subRosType.size(); i++) {
@@ -331,6 +345,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
     state.generated[rosType] = true;
     state.dependencies.push_back(rosType);
+
     return true;
 }
 
@@ -353,7 +368,7 @@ std::string RosTypeSearch::findFile(const char *tname) {
 	if (stat(target.c_str(), &dummy)==0) {
         return target;
     }
-    string cmd = string("rosmsg show -r ")+tname+" > " + target + " || rm -f " + target;
+    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+tname+" > " + target + " || rm -f " + target;
     fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     pid_t p = ACE_OS::fork();
     if (p==0) {

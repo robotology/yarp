@@ -21,7 +21,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     len2 = state.getFreeVariable("len2");
     string safe_tname = tname;
     if (safe_tname.find(".")!=string::npos) {
-        safe_tname = safe_tname.substr(0,safe_tname.find("."));
+        safe_tname = safe_tname.substr(0,safe_tname.rfind("."));
     }
     for (int i=0; i<(int)safe_tname.length(); i++) {
         if (safe_tname[i]=='/') {

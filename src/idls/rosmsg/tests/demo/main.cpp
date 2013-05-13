@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 #include <Demo.h>
+#include <Tennis.h>
 #include <yarp/os/all.h>
 
 using namespace yarp::os;
@@ -33,6 +34,5 @@ bool test_signs() {
 int main(int argc, char *argv[]) {
     if (!test_signs()) return 1;
 
-    // no tests other than compilability yet.
     return 0;
 }
