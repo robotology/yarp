@@ -28,7 +28,7 @@ set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 set(YARP_DEPENDENCY_FILENAME YARPDependencies.cmake)
 set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
 
-set(YARP_DATA_INSTALL_DIR ) #not sure if we need this
+set(YARP_DATA_INSTALL_DIR ${CMAKE_BINARY_DIR}) #not sure if we need this
 set(YARP_PLUGIN_MANIFESTS_INSTALL_DIR ${CMAKE_BINARY_DIR}/plugins/) #could be moved to YarpPlugin.cmake?
 set(YARP_MODULES_INSTALL_DIR ${CMAKE_BINARY_DIR}/modules)
 set(YARP_APPLICATIONS_INSTALL_DIR ${CMAKE_BINARY_DIR}/app)
