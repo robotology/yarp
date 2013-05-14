@@ -828,6 +828,7 @@ bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
 }
 
 bool ResourceFinder::addContext(const char *appName) {
+    if (appName[0]=='\0') return true;
     if (HELPER(implementation).isVerbose()) {
         fprintf(RTARGET,"||| adding context [%s]\n", appName);
     }
