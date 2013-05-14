@@ -19,18 +19,14 @@ if (NOT SKIP_tcpros_carrier)
                   TcpRosStream.h TcpRosStream.cpp
                   RosHeader.h RosHeader.cpp
                   RosSlave.h
-                  RosLookup.h RosLookup.cpp
-                  RosType.h RosType.cpp
-                  RosTypeCodeGenYarp.h RosTypeCodeGenYarp.cpp)
+                  RosLookup.h RosLookup.cpp)
   target_link_libraries(yarp_tcpros YARP_wire_rep_utils)
   target_link_libraries(yarp_tcpros YARP_OS YARP_sig)
   target_link_libraries(yarp_tcpros ${ACE_LIBRARIES})
 
   add_executable(yarpros yarpros.cpp
                          TcpRosStream.cpp
-                         RosLookup.cpp
-                         RosType.cpp
-                         RosTypeCodeGenYarp.cpp)
+                         RosLookup.cpp)
   target_link_libraries(yarpros YARP_wire_rep_utils)
   target_link_libraries(yarpros YARP_OS YARP_init)
   target_link_libraries(yarpros ${ACE_LIBRARIES})

@@ -924,16 +924,16 @@ bool ApplicationWindow::onKill(void)
     m_refTreeModSelection->selected_foreach_iter(
         sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
 
-    if(m_ModuleIDs.size() > 1)
-    {
-        Gtk::MessageDialog dialog("Force closing some modules!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
+    //if(m_ModuleIDs.size() > 1)
+    //{
+        Gtk::MessageDialog dialog("Killing modules!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
         dialog.set_secondary_text("Are you sure?");
         if(dialog.run() != Gtk::RESPONSE_YES)
         {        
             m_refTreeModSelection->unselect_all();
             return false;
         }
-    }   
+   // }   
 
     for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
     {

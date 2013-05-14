@@ -2099,7 +2099,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     api.getClassName(className,sizeof(className));
     char baseClassName[256] = "unknown";
     api.getBaseClassName(baseClassName,sizeof(baseClassName));
-    printf("  * system version %d\n",api.systemVersion);
+    printf("  * system version %d\n",(int)api.systemVersion);
     printf("  * class name '%s'\n",className);
     printf("  * base class '%s'\n",baseClassName);
     return 0;

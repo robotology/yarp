@@ -14,11 +14,17 @@
 #include <vector>
 #include <map>
 
-#include <tcpros_carrier_api.h>
-
-class YARP_tcpros_carrier_API RosTypeSearch {
+class RosTypeSearch {
+private:
+    bool find_service;
 public:
-    void addDirectory(const char *physical, const char *logical);
+    RosTypeSearch() {
+        find_service = false;
+    }
+
+    void lookForService(bool flag) {
+        find_service = flag;
+    }
 
     std::string findFile(const char *tname);
 };
@@ -27,12 +33,12 @@ class RosTypeCodeGen;
 class RosTypeCodeGenState;
 
 
-class YARP_tcpros_carrier_API RosType {
+class RosType {
 public:
 
     // std::vector<RosType> subRosType; is awkward to export in a MSVC DLL
     // so we work around it
-    class YARP_tcpros_carrier_API RosTypes {
+    class RosTypes {
     public:
         void *system_resource;
 
@@ -61,12 +67,29 @@ public:
     std::string rosName;
     RosTypes subRosType;
     std::string txt;
+    RosType *reply;
 
     RosType() {
+        reply = 0 /*NULL*/;
+        clear();
+    }
+
+    void clear() {
         isValid = false;
         isArray = false;
         isPrimitive = false;
         txt = "";
+        rosType = "";
+        rosName = "";
+        subRosType.clear();
+        if (reply) {
+            delete reply;
+            reply = 0 /*NULL*/;
+        }
+    }
+
+    virtual ~RosType() {
+        clear();
     }
 
     bool read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
@@ -100,7 +123,7 @@ public:
     }
 };
 
-class YARP_tcpros_carrier_API RosTypeCodeGen {
+class RosTypeCodeGen {
 public:
     virtual ~RosTypeCodeGen() {}
 
@@ -126,7 +149,7 @@ public:
     }
 };
 
-class YARP_tcpros_carrier_API RosTypeCodeGenTest : public RosTypeCodeGen {
+class RosTypeCodeGenTest : public RosTypeCodeGen {
 public:
     virtual bool beginType(const std::string& tname, 
                            RosTypeCodeGenState& state);

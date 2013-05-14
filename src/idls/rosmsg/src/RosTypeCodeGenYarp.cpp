@@ -20,12 +20,25 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     len = state.getFreeVariable("len");
     len2 = state.getFreeVariable("len2");
     string safe_tname = tname;
+    if (safe_tname.find(".")!=string::npos) {
+        safe_tname = safe_tname.substr(0,safe_tname.rfind("."));
+    }
     for (int i=0; i<(int)safe_tname.length(); i++) {
         if (safe_tname[i]=='/') {
             safe_tname[i] = '_';
         }
     }
     string fname = safe_tname + ".h";
+    if (target!="") {
+        string iname = target + "/" + safe_tname + "_indexALL.txt";
+        FILE *index = fopen(iname.c_str(),"w");
+        if (index!=NULL) {
+            fprintf(index,"%s\n",fname.c_str());
+            fclose(index);
+            index = NULL;
+        }
+        fname = target + "/" + fname;
+    }
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
@@ -43,8 +56,12 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"#include <vector>\n");
     fprintf(out,"#include <yarp/os/Portable.h>\n");
     fprintf(out,"#include <yarp/os/ConstString.h>\n");
+    fprintf(out,"#include <yarp/os/NetInt16.h>\n");
+    fprintf(out,"#include <yarp/os/NetUint16.h>\n");
     fprintf(out,"#include <yarp/os/NetInt32.h>\n");
+    fprintf(out,"#include <yarp/os/NetUint32.h>\n");
     fprintf(out,"#include <yarp/os/NetInt64.h>\n");
+    fprintf(out,"#include <yarp/os/NetUint64.h>\n");
     fprintf(out,"#include <yarp/os/NetFloat32.h>\n");
     fprintf(out,"#include <yarp/os/NetFloat64.h>\n");
     for (int i=0; i<(int)state.dependencies.size(); i++) {
@@ -54,7 +71,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"class %s : public yarp::os::Portable {\n", safe_tname.c_str());
     fprintf(out,"public:\n");
     fprintf(out,"  yarp::os::ConstString getTypeName() const {\n");
-    fprintf(out,"    return \"%s\";\n", tname.c_str());
+    fprintf(out,"    return \"%s\";\n", safe_tname.c_str());
     fprintf(out,"  }\n\n");
     return true;
 }
@@ -303,8 +320,13 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
         return ry;
     }
     string name = field.rosType;
-    if (name=="int8"||name=="uint8"||(name=="bool"&&field.isArray)) {
+    if (name=="int8"||(name=="bool"&&field.isArray)) {
         ry.yarpType = "char";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 1;
+    } else if (name=="uint8") {
+        ry.yarpType = "unsigned char";
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
         ry.len = 1;
@@ -313,17 +335,31 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
         ry.len = 1;
-    } else if (name=="int16"||name=="uint16") {
+    } else if (name=="int16") {
         ry.yarpType = "yarp::os::NetInt16";
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
         ry.len = 2;
-    } else if (name=="int32"||name=="uint32") {
+    } else if (name=="uint16") {
+        ry.yarpType = "yarp::os::NetUint16";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 2;
+    } else if (name=="int32") {
         ry.yarpType = "yarp::os::NetInt32";
         ry.writer = "appendInt";
         ry.reader = "expectInt";
-    } else if (name=="int64"||name=="uint64") {
+    } else if (name=="uint32") {
+        ry.yarpType = "yarp::os::NetUint32";
+        ry.writer = "appendInt";
+        ry.reader = "expectInt";
+    } else if (name=="int64") {
         ry.yarpType = "yarp::os::NetInt64";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 8;
+    } else if (name=="uint64") {
+        ry.yarpType = "yarp::os::NetUint64";
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
         ry.len = 8;

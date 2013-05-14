@@ -13,11 +13,11 @@
 #ifdef WITH_YARPMATH 
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
+using namespace yarp::math;
 #endif 
 
 #include "PriorityCarrier.h"
 
-using namespace yarp::math;
 
 using namespace yarp::os;
 using namespace yarp::os::impl;

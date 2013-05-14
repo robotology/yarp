@@ -20,6 +20,7 @@ foreach(conf YarpPlugin.cmake
              YarpDevice.cmake
              MacroExtractVersion.cmake
              MacroStandardFindModule.cmake
+             YarpDeprecatedWarning.cmake
              FindACE.cmake
              FindAtlas.cmake
              FindFFMPEG.cmake
@@ -49,7 +50,7 @@ foreach(templ yarp_plugin_carrier.cpp.in
               yarpdev_lib.h.in
               yarpdev_lib_main.cpp.in
               YarpTweakIDL.cmake.in
-              placeGeneratedThriftFiles.cmake.in)
+              placeGeneratedYarpIdlFiles.cmake.in)
     install(FILES ${CMAKE_SOURCE_DIR}/conf/template/${templ}
             COMPONENT scripts
             DESTINATION share/yarp/cmake/template)

@@ -11,8 +11,8 @@
 #include <yarp/os/all.h>
 #include "RosSlave.h"
 #include "RosLookup.h"
-#include "RosType.h"
-#include "RosTypeCodeGenYarp.h"
+//#include "RosType.h"
+//#include "RosTypeCodeGenYarp.h"
 #include "TcpRosStream.h"
 
 #include <string>
@@ -172,7 +172,14 @@ void usage(const char *action,
 }
 
 void show_usage() {
-    printf("Welcome to yarpros.\n");
+    printf("Welcome to yarpros.  Here are the most useful commands available:\n");
+    usage("sniff out <port>","suggest .msg for output from <port> ","sniff out /grabber");
+    usage("sniff in <port>","suggest .msg for input to <port> ","sniff in /grabber");
+    usage("type <name>","(MOVED to yarpidl_rosmsg) generate YARP header files from <name>.msg","type PointCloud2");
+    usage("help","show this help",NULL);
+
+    printf("\nYARP clients can use the ROS name server. If you'd prefer to stick\n");
+    printf("with the native YARP name server, the following commands are useful:\n");
     usage("roscore","register port /roscore to refer to ROS_MASTER_URI","roscore");
     usage("roscore <hostname> <port number>","manually register port /roscore to point to the ros master","roscore 192.168.0.1 11311");
     usage("pub[lisher] <node> <topic>","register a ROS publisher <node>/<topic> pair as a port called <node><topic>","publisher /talker /chatter","this registers a port called /talker/chatter");
@@ -181,11 +188,8 @@ void show_usage() {
     usage("sub[scriber] <yarp> <node> <topic>","register a ROS subscriber <node>/<topic> pair as a port called <port>","subscriber /listener /listener /chatter");
     usage("service <yarp> <node> <service>","register a ROS service <node>/<service> pair as a port called <port>","service /adder /add_two_ints_server /add_two_ints");
     usage("node <name>","register a ROS node name with YARP","node /talker");
-    usage("type <name>","generate YARP header files from <name>.msg","type PointCloud2");
-    usage("sniff out <port>","suggest .msg for output from <port> ","sniff out /grabber");
-    usage("sniff in <port>","suggest .msg for input to <port> ","sniff in /grabber");
 
-    printf("Here are some general options:\n");
+    printf("\nHere are some general options:\n");
     usage("--verbose","give verbose output for debugging",NULL);
 }
 
@@ -226,6 +230,11 @@ int main(int argc, char *argv[]) {
     if (argc<=1) {
         show_usage();
         return 0;
+    }
+    if (ConstString(argv[1])=="help" || 
+        ConstString(argv[1])=="--help") {
+        show_usage();
+        return 0;        
     }
 
     Network yarp;
@@ -363,25 +372,8 @@ int main(int argc, char *argv[]) {
         printf("%s\n", reply.toString().c_str());
         return ok?0:1;
     } else if (tag=="type") {
-        RosTypeSearch env;
-        RosType t;
-        if (cmd.size()!=2) {
-            printf("This command reads a ROS .msg file, and outputs .h files for reading/writing.\n");
-            printf("Alternatively: Bottles can be translated to/from the following formats:\n");
-            map<string,string> kinds = TcpRosStream::rosToKind();
-            for (map<string,string>::iterator it = kinds.begin();
-                 it != kinds.end(); it++) {
-                printf("  %s\n", it->first.c_str());
-            }
-            return 1;
-        }
-        ConstString tname = cmd.get(1).asString();
-        RosTypeCodeGenYarp gen;
-        if (t.read(tname,env,gen)) {
-            //t.show();
-            RosTypeCodeGenState state;
-            t.emitType(gen,state);
-        }
+        fprintf(stderr, "MOVED: 'yarpros type' is now 'yarpidl_rosmsg'\n");
+        return 1;
     } else if (tag=="sniff") {
         if (cmd.size()<2) {
             fprintf(stderr,"Show the format of a YARP bottle-compatible message in ROS syntax.\n");

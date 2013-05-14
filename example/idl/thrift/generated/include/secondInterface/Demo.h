@@ -20,7 +20,7 @@ class yarp::test::Demo : public yarp::os::Wire {
 public:
   Demo() { yarp().setOwner(*this); }
   virtual int32_t get_answer();
-  virtual int32_t add_one(const int32_t x);
+  virtual int32_t add_one(const int32_t x = 0);
   virtual int32_t double_down(const int32_t x);
   virtual  ::yarp::test::PointD add_point(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y);
   virtual bool read(yarp::os::ConnectionReader& connection);

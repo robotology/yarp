@@ -24,9 +24,18 @@ public:
   PointD(const int32_t x,const int32_t y,const int32_t z) : x(x), y(y), z(z) {
   }
   bool read(yarp::os::idl::WireReader& reader) {
-    if (!reader.readI32(x)) return false;
-    if (!reader.readI32(y)) return false;
-    if (!reader.readI32(z)) return false;
+    if (!reader.readI32(x)) {
+      reader.fail();
+      return false;
+    }
+    if (!reader.readI32(y)) {
+      reader.fail();
+      return false;
+    }
+    if (!reader.readI32(z)) {
+      reader.fail();
+      return false;
+    }
     return !reader.isError();
   }
   bool read(yarp::os::ConnectionReader& connection) {

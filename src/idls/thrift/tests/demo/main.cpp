@@ -16,6 +16,10 @@ using namespace yarp::os;
 
 class Server : public Demo {
 public:
+    virtual int32_t get_answer() {
+        return 42;
+    }
+
     virtual int32_t add_one(const int32_t x) {
         printf("adding 1 to %d\n", x);
         return x+1;
@@ -363,6 +367,45 @@ bool test_defaults_with_rpc() {
     return true;
 }
 
+
+bool test_names_with_spaces() {
+    printf("\n*** test_names_with_spaces()\n");
+
+    Network yarp;
+    yarp.setLocalMode(true);
+
+    Server server;
+
+    Port client_port,server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+    server.yarp().attachAsServer(server_port);
+
+    Bottle msg, reply;
+    msg.fromString("add_one 42");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 43) return false;
+
+    msg.fromString("add one 52");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 53) return false;
+
+    msg.fromString("get_answer");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 42) return false;
+
+    msg.fromString("get answer");
+    client_port.write(msg,reply);
+    printf("%s -> %s\n", msg.toString().c_str(), reply.toString().c_str());
+    if (reply.get(0).asInt() != 42) return false;
+
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -372,5 +415,6 @@ int main(int argc, char *argv[]) {
     if (!test_defaults()) return 1;
     if (!test_partial()) return 1;
     if (!test_defaults_with_rpc()) return 1;
+    if (!test_names_with_spaces()) return 1;
     return 0;
 }
