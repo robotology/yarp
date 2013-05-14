@@ -101,11 +101,12 @@ public:
             }
             usedIndices.clear();
 
-            yarp::os::Network::disconnect(remotePortName.c_str(), localPort->getName().c_str());
+            yarp::os::Network::disconnect(remotePortName.c_str(), localPort->getName().c_str(), style);
             delete localPort;
         }
 
         void doConnect(const yarp::os::ContactStyle &style) {
+
             //Get the name of the port after the port is open (and therefore the real name assigned)
             const Glib::ustring &realLocalPortName = localPort->getName().c_str();
 
@@ -115,6 +116,8 @@ public:
                           << "was NOT successfull. Waiting from explicit connection from user.";
             } else {
                 debug() << "Listening to port" << remotePortName << "from port" << realLocalPortName;
+                // Connection was successfull. Save the ContactStyle in order to reuse it for disconnecting;
+                this->style = style;
             }
 
             yarp::os::Stamp stmp;
@@ -147,6 +150,7 @@ public:
         bool realTime;
         double initialTime;
         long long int numberAcquiredData;
+        yarp::os::ContactStyle style;
     };
 
     Private(PortReader *p) :
