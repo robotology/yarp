@@ -17,3 +17,9 @@
 
 include(MacroStandardFindModule)
 macro_standard_find_module(GtkDataboxMM gtkdataboxmm-0.9)
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(GtkDataboxMM PROPERTIES DESCRIPTION "A GtkMM wrapper for GtkDatabox"
+                                                   URL "http://sourceforge.net/projects/gtkdataboxmm/")
+endif()

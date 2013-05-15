@@ -16,3 +16,9 @@
 
 include(MacroStandardFindModule)
 macro_standard_find_module(TinyXML tinyxml)
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(TinyXML PROPERTIES DESCRIPTION "A small, simple XML parser for the C++ language"
+                                              URL "http://www.grinninglizard.com/tinyxml/index.html")
+endif()

@@ -97,3 +97,8 @@ endif(UNIX)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GtkPlus DEFAULT_MSG GtkPlus_LIBRARIES GtkPlus_INCLUDE_DIRS)
 
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(GtkPlus PROPERTIES DESCRIPTION "GTK+ graphical user interface library"
+                                              URL "http://www.gtk.org/")
+endif()

@@ -58,3 +58,9 @@ mark_as_advanced(ATLAS_INCLUDE_DIR
                  ATLAS_LAPACK_ATLAS_LIBRARY)
 
 set(Atlas_FOUND ${ATLAS_FOUND})
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(Atlas PROPERTIES DESCRIPTION "Automatically Tuned Linear Algebra Software"
+                                            URL "http://math-atlas.sourceforge.net/")
+endif(COMMAND set_package_properties)
