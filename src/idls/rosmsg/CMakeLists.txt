@@ -4,6 +4,9 @@
 
 get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
+if (NOT SKIP_ACE)
+  include_directories(${ACE_INCLUDE_DIRS})
+endif ()
 
 include_directories(src)
 add_executable(yarpidl_rosmsg src/main.cpp src/RosType.cpp src/RosTypeCodeGenYarp.cpp src/RosType.h src/RosTypeCodeGenYarp.h)
