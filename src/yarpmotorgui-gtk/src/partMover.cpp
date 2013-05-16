@@ -211,6 +211,23 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       height = 200;
       width = 200;
 
+      for (k = 0; k<MAX_NUMBER_OF_JOINTS; k++)
+      {
+          sliderVelArray[k]=0;
+          sliderArray[k]=0;
+          currPosArray[k]=0;
+          currTrqArray[k]=0;
+          currSpeedArray[k]=0;
+          currPosArrayLbl[k]=0;
+          currTrqArrayLbl[k]=0;
+          currSpeedArrayLbl[k]=0;
+          inPosArray[k]=0;
+          frameColorBack[k]=0;
+          frame_slider1[k]=0;
+          frame_slider2[k]=0;
+          framesArray[k]=0;
+      }
+
       for (k = 0; k<NUMBER_OF_JOINTS; k++)
 	{
 	  

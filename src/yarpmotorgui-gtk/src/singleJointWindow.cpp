@@ -287,9 +287,19 @@ bool partMover::entry_update(partMover *currentPart)
 
   if (NUMBER_OF_JOINTS == 0)
   {
-	  fprintf(stderr,"Lost connection with iCubInterface. You should save and restart.\n" );
-	  Time::delay(0.1);
-	  return true;
+      fprintf(stderr,"Lost connection with iCubInterface. You should save and restart.\n" );
+      Time::delay(0.1);
+      pColor=&color_grey;
+      strcpy(frame_title,"DISCONNECTED");
+      for (k = 0; k < MAX_NUMBER_OF_JOINTS; k++)
+      {   
+          if (currentPart->framesArray[k]!=0)
+          {
+              gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+              gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+          }
+      }
+      return true;
   }
 
   for (k = 0; k < NUMBER_OF_JOINTS; k++) 
