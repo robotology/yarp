@@ -20,6 +20,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
+#include <errno.h>
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
@@ -43,6 +45,28 @@ static ConstString expandUserFileName(const char *fname) {
     }
     YARP_DEBUG(Logger::get(),(ConstString("Configuration file: ") + conf).c_str());
     return conf;
+}
+
+
+static ConstString getPwd() {
+    ConstString result;
+    int len = 5;
+    char *buf = NULL;
+    while (true) {
+        if (buf!=NULL) delete[] buf;
+        buf = new char[len];
+        if (!buf) break;
+        char *dir = ACE_OS::getcwd(buf,len);
+        if (dir) {
+            result = dir;
+            break;
+        }
+        if (errno!=ERANGE) break;
+        len *= 2;
+    }
+    if (buf!=NULL) delete[] buf;
+    buf = NULL;
+    return result;
 }
 
 
@@ -518,6 +542,13 @@ public:
         }
     }
 
+    void addString(Bottle& output, const ConstString& txt) {
+        for (int i=0; i<output.size(); i++) {
+            if (txt == output.get(i).asString()) return;
+        }
+        output.addString(txt);
+    }
+
     void findFileBaseInner(Property& config, const char *name,
                            bool isDir,
                            Bottle& output, const ResourceFinderOptions& opts,
@@ -538,12 +569,12 @@ public:
         // check current directory
         if (locs & ResourceFinderOptions::Directory) {
             if (ConstString(name)==""&&isDir) {
-                output.addString(".");
+                addString(output,getPwd());
                 if (justTop) return;
             }
-            ConstString str = check(resourceType,"","",name,isDir,doc,"pwd");
+            ConstString str = check(getPwd(),resourceType,"",name,isDir,doc,"pwd");
             if (str!="") {
-                output.addString(str);
+                addString(output,str);
                 if (justTop) return;
             }
         }
@@ -551,7 +582,7 @@ public:
         if (configFilePath!="") {
             ConstString str = check(configFilePath.c_str(),"","",name,isDir,doc,"defaultConfigFile path");
             if (str!="") {
-                output.addString(str);
+                addString(output,str);
                 if (justTop) return;
             }
         }
@@ -567,7 +598,7 @@ public:
                 ConstString str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
                                         name,isDir,doc,"deprecated-old-style-context");
                 if (str!="") {
-                    output.addString(str);
+                    addString(output,str);
                     if (justTop) return;
                 }
             }
@@ -577,7 +608,7 @@ public:
                 ConstString str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
                                         name,isDir,doc,"deprecated-old-style-context");
                 if (str!="") {
-                    output.addString(str);
+                    addString(output,str);
                     if (justTop) return;
                 }
             }
@@ -602,7 +633,7 @@ public:
                                         "","",
                                         name,isDir,doc,"robot");
                 if (str!="") {
-                    output.addString(str);
+                    addString(output,str);
                     if (justTop) return;
                 }
             }
@@ -627,7 +658,7 @@ public:
                     ConstString str = check(paths.get(j).asString().c_str(),"","",
                                             name,isDir,doc,"context");
                     if (str!="") {
-                        output.addString(str);
+                        addString(output,str);
                         if (justTop) return;
                     }
                 }
@@ -643,7 +674,7 @@ public:
                 ConstString str = check(home.c_str(),"","",name,isDir,
                                         doc,"YARP_CONFIG_HOME");
                 if (str!="") {
-                    output.addString(str);
+                    addString(output,str);
                     if (justTop) return;
                 }
             }
@@ -658,7 +689,7 @@ public:
                 ConstString str = check(home.c_str(),"","",name,isDir,
                                         doc,"YARP_DATA_HOME");
                 if (str!="") {
-                    output.addString(str);
+                    addString(output,str);
                     if (justTop) return;
                 }
             }
@@ -673,7 +704,7 @@ public:
                                         "","",name,isDir,
                                         doc,"YARP_CONFIG_DIRS");
                 if (str!="") {
-                    output.addString(str);
+                    addString(output,str);
                     if (justTop) return;
                 }
             }
@@ -688,7 +719,7 @@ public:
                                         "","",name,isDir,
                                         doc,"YARP_DATA_DIRS");
                 if (str!="") {
-                    output.addString(str);
+                    addString(output,str);
                     if (justTop) return;
                 }
             }
@@ -722,7 +753,7 @@ public:
                         ConstString str = check(paths.get(j).asString().c_str(),"","",
                                                 name,isDir,doc,"yarp.d");
                         if (str!="") {
-                            output.addString(str);
+                            addString(output,str);
                             if (justTop) return;
                         }
                     }
