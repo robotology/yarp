@@ -466,12 +466,17 @@ public:
         ConstString fname = config.check(name,Value(name)).asString();
         Bottle paths;
         if (externalOptions) {
-            findFileBase(config,fname,true,paths,*externalOptions);
-        } else {
-            ResourceFinderOptions opts;
-            opts.duplicateFilesPolicy = ResourceFinderOptions::All;
-            findFileBase(config,fname,true,paths,opts);
+            if (externalOptions->duplicateFilesPolicy == ResourceFinderOptions::All) {
+                findFileBase(config,fname,true,paths,*externalOptions);
+                return paths;
+            }
         }
+        ResourceFinderOptions opts;
+        if (externalOptions) {
+            opts = *externalOptions;
+        }
+        opts.duplicateFilesPolicy = ResourceFinderOptions::All;
+        findFileBase(config,fname,true,paths,opts);
         return paths;
     }
 
