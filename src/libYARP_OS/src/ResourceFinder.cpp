@@ -486,7 +486,8 @@ public:
     }
 
     yarp::os::Bottle findPaths(Property& config, const char *name,
-                               const ResourceFinderOptions *externalOptions) {
+                               const ResourceFinderOptions *externalOptions,
+                               bool enforcePlural = true) {
         ConstString fname = config.check(name,Value(name)).asString();
         Bottle paths;
         if (externalOptions) {
@@ -499,7 +500,9 @@ public:
         if (externalOptions) {
             opts = *externalOptions;
         }
-        opts.duplicateFilesPolicy = ResourceFinderOptions::All;
+        if (enforcePlural) {
+            opts.duplicateFilesPolicy = ResourceFinderOptions::All;
+        }
         findFileBase(config,fname,true,paths,opts);
         return paths;
     }
@@ -532,7 +535,7 @@ public:
                       Bottle& output, const ResourceFinderOptions& opts) {
         Bottle doc;
         int prelen = output.size();
-        findFileBaseInner(config,name,isDir,output,opts,doc,NULL);
+        findFileBaseInner(config,name,isDir,true,output,opts,doc,NULL);
         if (output.size()!=prelen) return;
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
         if (justTop) {
@@ -550,7 +553,7 @@ public:
     }
 
     void findFileBaseInner(Property& config, const char *name,
-                           bool isDir,
+                           bool isDir, bool allowPathd,
                            Bottle& output, const ResourceFinderOptions& opts,
                            const Bottle& predoc, const char *reason) {
         Bottle doc;
@@ -626,7 +629,7 @@ public:
             ResourceFinderOptions opts2;
             opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext));
             opts2.resourceType = "robots";
-            findFileBaseInner(config,robot.c_str(),true,paths,opts2,doc,"robot");
+            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
             appendResourceType(paths,resourceType);
             for (int j=0; j<paths.size(); j++) {
                 ConstString str = check(paths.get(j).asString().c_str(),
@@ -652,7 +655,7 @@ public:
                 ResourceFinderOptions opts2;
                 prependResourceType(app,"app");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext));
-                findFileBaseInner(config,app.c_str(),true,paths,opts2,doc,"context");
+                findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
                 appendResourceType(paths,resourceType);
                 for (int j=0; j<paths.size(); j++) {
                     ConstString str = check(paths.get(j).asString().c_str(),"","",
@@ -725,13 +728,13 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Installed) {
+        if (allowPathd && (locs & ResourceFinderOptions::Installed)) {
             // Nested search to locate path.d directories
             Bottle pathds;
             ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Installed | ResourceFinderOptions::Context));
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context));
             opts2.resourceType = "config";
-            findFileBaseInner(config,"path.d",true,pathds,opts2,doc,"path.d");
+            findFileBaseInner(config,"path.d",true,false,pathds,opts2,doc,"path.d");
 
             for (int i=0; i<pathds.size(); i++) {
                 // check /.../path.d/*
@@ -1104,7 +1107,7 @@ Bottle ResourceFinder::getConfigDirs() {
 bool ResourceFinder::readConfig(Property& config,
                                 const char *key,
                                 const ResourceFinderOptions& options) {
-    Bottle bot = HELPER(implementation).findPaths(config,key,&options);
+    Bottle bot = HELPER(implementation).findPaths(config,key,&options,false);
 
     for (int i=bot.size()-1; i>=0; i--) {
         ConstString fname = bot.get(i).asString();
