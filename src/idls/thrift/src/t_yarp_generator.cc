@@ -1371,7 +1371,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(f_cpp_) << "yarp::os::idl::WireReader reader(connection);" 
 		 << endl;
   indent(f_cpp_) << "if (!reader.readListHeader(" 
-		 << members.size()
+		 << flat_element_count(tstruct)
 		 << ")) return false;"
 		 << endl;
   indent(f_cpp_) << "return read(reader);"  << endl;
