@@ -13,7 +13,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-#define VOCAB_IANALOG VOCAB4('i','a','n','a')
+#define VOCAB_IVIRTUAL_ANALOG VOCAB4('i','v','a','n')
 #define VOCAB_CALIBRATE_CHANNEL VOCAB4('c','a','l','c')
 
 /*! \file IVirtualAnalogSensor.h virtual analog sensor interface */
@@ -33,24 +33,34 @@ namespace yarp {
 class YARP_dev_API yarp::dev::IVirtualAnalogSensor
 {
 public:
-    /*
-    enum
+    enum VAS_status
     {
-        AS_OK=0,
-        AS_ERROR=1,
-        AS_OVF=2,
-        AS_TIMEOUT=3
+        VAS_OK=0,
+        VAS_ERROR=1,      // generic error
+        VAS_OVF=2,        // overflow
+        VAS_TIMEOUT=3
     };
-    */
+
     virtual ~IVirtualAnalogSensor(){}
 
+    /* Check the status of a given channel.
+    * @param ch: channel number.
+    * @return VAS_status type.
+    */
+    virtual int getState(int ch)=0;
+
+    /* Get the number of channels of the sensor.
+     * @return number of channels (0 in case of errors).
+     */
+    virtual int getChannels()=0;
+    
     /* Set a vector of torque values for virtual sensor
      * @param vals a vector containing the sensor's last readings.
-     * @return AS_OK or return code. 
+     * @return true if ok, false otherwise.
      **/
-    //virtual int configure(yarp::os::Searchable &config)=0;
-    virtual bool setTorque(yarp::sig::Vector &torques)=0;
-    //virtual int getChannels()=0;
+    virtual bool updateMeasure(yarp::sig::Vector &measure)=0;
+    virtual bool updateMeasure(int ch, double &measure)=0;
+
 };
 
 #endif
