@@ -742,8 +742,10 @@ void t_yarp_generator::generate_program() {
 	f_out_ << "#include \"" << (*o_iter)->get_name() << ".h\"" << endl;
 	f_out2_ << (*o_iter)->get_name() << ".h" << endl;
         if ((*o_iter)->annotations_.find("yarp.includefile") == (*o_iter)->annotations_.end())
+        {
           f_out3_ << (*o_iter)->get_name() << ".h" << endl;
           f_out3_ << (*o_iter)->get_name() << ".cpp" << endl;
+        }
       }
     }
   }
