@@ -809,18 +809,46 @@ int Companion::cmdConnect(int argc, char *argv[]) {
     //int argc_org = argc;
     //char **argv_org = argv;
     bool persist = false;
+    const char *mode = NULL;
     if (argc>0) {
-        if (ConstString(argv[0])=="--persist") {
+        ConstString arg = argv[0];
+        if (arg=="--persist") {
             persist = true;
+        } else if (arg=="--persist-from") {
+            persist = true;
+            mode = "from";
+        } else if (arg=="--persist-to") {
+            persist = true;
+            mode = "to";
+        } else if (arg=="--help") {
+            printf("USAGE:\n\n");
+            printf("yarp connect OUTPUT_PORT INPUT_PORT\n");
+            printf("yarp connect OUTPUT_PORT INPUT_PORT CARRIER\n");
+            printf("  Make a connection between two ports, which must both exist at the time the\n");
+            printf("  connection is requested.  The connection will be terminated when either\n");
+            printf("  port is closed.\n");
+            printf("\n");
+            printf("yarp connect --persist OUTPUT_PORT INPUT_PORT\n");
+            printf("yarp connect --persist OUTPUT_PORT INPUT_PORT CARRIER\n");
+            printf("  Ask the name server to make connections whenever the named ports are available.\n");
+            printf("\n");
+            printf("yarp connect --persist-from OUTPUT_PORT INPUT_PORT\n");
+            printf("  Ask the name server to connect the OUTPUT_PORT, which must\n");
+            printf("  exist at the time the connection is requested, and the INPUT_PORT\n");
+            printf("  whenever it is available. The request expires when OUTPUT_PORT is closed.\n");
+            printf("\n");
+            printf("yarp connect --persist-to OUTPUT_PORT INPUT_PORT\n");
+            printf("  Ask the name server to connect the OUTPUT_PORT whenever available to the\n");
+            printf("  INPUT_PORT which exists at the time the connection is requested.  The \n");
+            printf("  request expires when INPUT_PORT is closed.\n");
+            return 0;
+        }
+        if (persist) {
             argv++;
             argc--;
         }
-        /*else if (ConstString(argv[0])=="--meta") {
-            argv++;
-            argc--;
-            return metaConnect(argc,argv,false);
-        }
-        */
+    } else {
+        fprintf(stderr,"[get help with 'yarp connect --help']\n");
     }
     if (argc<2||argc>3) {
         if (persist&&argc<2) {
@@ -851,7 +879,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
     }
 
     if (persist) {
-        return subscribe(src,dest.c_str());
+        return subscribe(src,dest.c_str(),mode);
     }
 
     return connect(src,dest.c_str(),false);
@@ -1523,11 +1551,12 @@ int Companion::cmdDetect(int argc, char *argv[]) {
     return 0;
 }
 
-int Companion::subscribe(const char *src, const char *dest) {
+int Companion::subscribe(const char *src, const char *dest, const char *mode) {
     Bottle cmd, reply;
     cmd.add("subscribe");
     if (src!=NULL) { cmd.add(src); }
     if (dest!=NULL) { cmd.add(dest); }
+    if (mode!=NULL) { cmd.add(mode); }
     bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
                                  cmd,
                                  reply);
@@ -1551,6 +1580,10 @@ int Companion::subscribe(const char *src, const char *dest) {
                        srcTopic,
                        b->check("dest",Value("?")).asString().c_str(),
                        destTopic);
+                ConstString mode = b->check("mode",Value("")).asString();
+                if (mode!="") {
+                    printf(" [%s]", mode.c_str());
+                }
                 ConstString carrier = b->check("carrier",Value("")).asString();
                 if (carrier!="") {
                     printf(" (%s)", carrier.c_str());
