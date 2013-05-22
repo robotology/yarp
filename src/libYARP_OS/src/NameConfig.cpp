@@ -289,7 +289,7 @@ String NameConfig::getHostName() {
                 }
             }
             if (take) {
-                result = ip;
+                result = ip.c_str();
                 loopback = false;
                 if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
                 		ip == "127.0.1.1") {
