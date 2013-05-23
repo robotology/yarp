@@ -101,6 +101,18 @@ public:
         }
         cmd.add(dynamicSrc.toString().c_str());
         cmd.add(dynamicDest.toString().c_str());
+        if (style.persistent) {
+            switch (style.persistenceType) {
+            case ContactStyle::END_WITH_FROM_PORT:
+                cmd.add("from");
+                break;
+            case ContactStyle::END_WITH_TO_PORT:
+                cmd.add("to");
+                break;
+            default:
+                break;
+            }
+        }
         bool ok = NetworkBase::write(getNameServerContact(),
                                      cmd,
                                      reply);
