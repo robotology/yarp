@@ -258,7 +258,7 @@ String NameConfig::getHostName() {
 
     int family, s;
     char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
-    std::string ip;
+    ConstString ip;
     struct ifaddrs *ifaddr, *ifa;
     if (getifaddrs(&ifaddr) == -1) {
     	perror("getifaddrs in getIps");
