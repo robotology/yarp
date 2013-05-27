@@ -45,8 +45,9 @@ There's a comprehensive list of tutorials here:
 License
 -------
 
-Material included in YARP is copyright its authors.  YARP is released
-under the terms of the LGPL v2.1 or later.  See COPYING for details.
+Material included in YARP is Copyright of Istituto Italiano di Tecnologia and
+RobotCub Consortium. YARP is released under the terms of the LGPL v2.1 or
+later. See the file COPYING for details.
 
 Certain optional parts of YARP have dependencies that have more 
 requirements than the LGPL:
