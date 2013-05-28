@@ -23,6 +23,7 @@
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IPositionControl2.h>
 #include <yarp/dev/IOpenLoopControl.h>
 
 namespace yarp {
