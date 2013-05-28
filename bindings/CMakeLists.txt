@@ -33,6 +33,7 @@ SET(CREATE_CSHARP FALSE CACHE BOOL "Do you want to create the CSharp interface")
 SET(CREATE_ALLEGRO FALSE CACHE BOOL "Do you want to create the Allegro Common Lisp interface")
 SET(CREATE_TCL FALSE CACHE BOOL "Do you want to create the TCL interface")
 SET(CREATE_RUBY FALSE CACHE BOOL "Do you want to create the Ruby interface")
+SET(CREATE_LUA FALSE CACHE BOOL "Do you want to create the Lua interface")
 
 
 
@@ -254,4 +255,24 @@ IF (CREATE_RUBY)
   SWIG_ADD_MODULE(yarp ruby yarp.i)
   SWIG_LINK_LIBRARIES(yarp ${RUBY_LIBRARY})
 ENDIF (CREATE_RUBY)
+
+
+
+
+#############################################################################
+## Create Lua bindings
+
+IF (CREATE_LUA)
+  SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  find_package(Lua51 REQUIRED) 
+  INCLUDE_DIRECTORIES(${LUA_INCLUDE_DIR})
+  SWIG_ADD_MODULE(yarp lua yarp.i)
+  IF (UNIX)
+    ADD_CUSTOM_COMMAND(TARGET yarp
+    POST_BUILD
+    COMMAND ln -s libyarp.so yarp.so 
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  ENDIF (UNIX)
+ENDIF (CREATE_LUA)
+
 
