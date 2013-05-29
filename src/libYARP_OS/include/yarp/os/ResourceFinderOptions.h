@@ -40,9 +40,11 @@ public:
         User           = 0x0008, // Search user directory
         Sysadmin       = 0x0010, // Search system config directories
         Installed      = 0x0020, // Search system data directories + path.d
+        NearMainConfig = 0x0040, // Search directory of main config file
+                                 // (if one is used, e.g. with --from)
         ClassicContext = 0x1000, // Search old-style context directories
         Default = User | Sysadmin | Installed,
-        ModuleDefault = Default | Robot | Context | Directory | ClassicContext
+        ModuleDefault = Default | Robot | Context | Directory | ClassicContext | NearMainConfig
     };
 
     enum DuplicateFilesPolicy {

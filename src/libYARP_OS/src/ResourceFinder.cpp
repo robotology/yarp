@@ -582,11 +582,13 @@ public:
             }
         }
 
-        if (configFilePath!="") {
-            ConstString str = check(configFilePath.c_str(),"","",name,isDir,doc,"defaultConfigFile path");
-            if (str!="") {
-                addString(output,str);
-                if (justTop) return;
+        if (locs & ResourceFinderOptions::NearMainConfig) {
+            if (configFilePath!="") {
+                ConstString str = check(configFilePath.c_str(),resourceType,"",name,isDir,doc,"defaultConfigFile path");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
             }
         }
 
@@ -627,7 +629,7 @@ public:
             // Nested search to locate robot directory
             Bottle paths;
             ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext));
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
             opts2.resourceType = "robots";
             findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
             appendResourceType(paths,resourceType);
@@ -654,7 +656,7 @@ public:
                 Bottle paths;
                 ResourceFinderOptions opts2;
                 prependResourceType(app,"app");
-                opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext));
+                opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
                 findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
                 appendResourceType(paths,resourceType);
                 for (int j=0; j<paths.size(); j++) {
@@ -732,7 +734,7 @@ public:
             // Nested search to locate path.d directories
             Bottle pathds;
             ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context));
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::NearMainConfig));
             opts2.resourceType = "config";
             findFileBaseInner(config,"path.d",true,false,pathds,opts2,doc,"path.d");
 
