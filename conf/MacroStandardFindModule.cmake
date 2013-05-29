@@ -42,7 +42,7 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
     if (${_name}_FOUND)
         find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_CONFIG)
     else()
-    # No CMake Config file was found. Try using PkgConfig
+        # No CMake Config file was found. Try using PkgConfig
         find_package(PkgConfig QUIET)
         if(PKG_CONFIG_FOUND)
 
@@ -79,7 +79,6 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
 
         endif(PKG_CONFIG_FOUND)
 
-        set(_REQUIRED_LIBS )
         find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_LIBRARIES)
 
     endif()
