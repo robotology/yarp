@@ -19,6 +19,8 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
 
+#include <errno.h>
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
@@ -42,6 +44,28 @@ static ConstString expandUserFileName(const char *fname) {
     }
     YARP_DEBUG(Logger::get(),(ConstString("Configuration file: ") + conf).c_str());
     return conf;
+}
+
+
+static ConstString getPwd() {
+    ConstString result;
+    int len = 5;
+    char *buf = NULL;
+    while (true) {
+        if (buf!=NULL) delete[] buf;
+        buf = new char[len];
+        if (!buf) break;
+        char *dir = ACE_OS::getcwd(buf,len);
+        if (dir) {
+            result = dir;
+            break;
+        }
+        if (errno!=ERANGE) break;
+        len *= 2;
+    }
+    if (buf!=NULL) delete[] buf;
+    buf = NULL;
+    return result;
 }
 
 
@@ -381,7 +405,7 @@ public:
 
     yarp::os::ConstString findPath(Property& config) {
         ConstString result = findFileBase(config,"",true);
-		if (result=="") result = ".";
+		if (result=="") result = getPwd();
         return result;
     }
 
@@ -409,10 +433,10 @@ public:
 
         // check current directory
 		if (ConstString(name)==""&&isDir) {
-            output.addString(".");
+            output.addString(getPwd());
             if (justTop) return;
         }
-        ConstString str = check("","","",name,isDir);
+        ConstString str = check(getPwd(),"","",name,isDir);
         if (str!="") {
             output.addString(str);
             if (justTop) return;
