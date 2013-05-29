@@ -544,6 +544,37 @@ public:
     */
     virtual bool setTaskVelocities(const yarp::sig::Vector &xdot, const yarp::sig::Vector &odot)=0;
 
+    /**
+    * Attach a tip frame to the end-effector. 
+    * @param x a 3-d vector describing the position of the tip frame
+    *          wrt the end-effector (meters).
+    * @param o a 4-d vector describing the orientation of the tip 
+    *          frame wrt the end-effector (axis-angle notation).
+    * @return true/false if successful/failed. 
+    *  
+    * @note By attaching a tip to the end-effector, the specified 
+    *       tip will be the new end-effector for the controller.
+    */
+    virtual bool attachTipFrame(const yarp::sig::Vector &x, const yarp::sig::Vector &o)=0;
+
+    /**
+    * Retrieve the tip frame currently attached to the end-effector.
+    * @param x a 3-d vector containing the position of the tip frame
+    *          wrt the end-effector (meters).
+    * @param o a 4-d vector containing the orientation of the tip 
+    *          frame wrt the end-effector (axis-angle notation).
+    * @return true/false if successful/failed.
+    */
+    virtual bool getTipFrame(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+
+    /**
+    * Remove the tip frame currently attached to the end-effector.  
+    * @return true/false if successful/failed. 
+    *  
+    * @note The actual end-effector is again under control.
+    */
+    virtual bool removeTipFrame()=0;
+
     /** Check once if the current trajectory is terminated. [wait for
     *   reply]
     * @param f where the result is returned.

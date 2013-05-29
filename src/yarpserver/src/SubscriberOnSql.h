@@ -37,7 +37,8 @@ public:
     bool close();
 
     virtual bool addSubscription(const char *src,
-                                 const char *dest);
+                                 const char *dest,
+                                 const char *mode);
 
     virtual bool removeSubscription(const char *src,
                                     const char *dest);
@@ -61,11 +62,13 @@ public:
                            const char *srcFull, const char *destFull);
 
     bool checkSubscription(const char *src, const char *dest,
-                           const char *srcFull, const char *destFull);
+                           const char *srcFull, const char *destFull,
+                           const char *mode);
 
     bool breakSubscription(const char *dropper,
                            const char *src, const char *dest,
-                           const char *srcFull, const char *destFull);
+                           const char *srcFull, const char *destFull,
+                           const char *mode);
 
     virtual bool setType(const char *family,
                          const char *structure,

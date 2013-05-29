@@ -11,6 +11,7 @@
 
 #include <yarp/os/all.h>
 #include <Demo.h>
+#include <SurfaceMeshWithBoundingBox.h>
 
 using namespace yarp::os;
 
@@ -406,6 +407,41 @@ bool test_names_with_spaces() {
     return true;
 }
 
+bool test_surface_mesh() {
+    printf("\n*** test_surface_mesh()\n");
+    SurfaceMesh mesh;
+    Box3D bb;
+    mesh.meshName = "testing";
+    bb.corners.push_back(PointXYZ(1,2,3));
+    SurfaceMeshWithBoundingBox obj(mesh,bb);
+
+    Bottle bot;
+    bot.read(obj);
+
+    SurfaceMeshWithBoundingBox obj2;
+    bot.write(obj2);
+    Bottle bot2;
+    bot2.read(obj2);
+
+    printf("mesh copy: %s -> %s\n", bot.toString().c_str(),
+           bot2.toString().c_str());
+
+    if (obj2.mesh.meshName!=obj.mesh.meshName) {
+        printf("mesh name not copied correctly\n");
+        return false;
+    }
+    if (obj2.boundingBox.corners.size()!=obj.boundingBox.corners.size()) {
+        printf("corners not copied correctly\n");
+        return false;
+    }
+    if (bot!=bot2) {
+        printf("not copied correctly\n");
+        return false;
+    }
+
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -416,5 +452,6 @@ int main(int argc, char *argv[]) {
     if (!test_partial()) return 1;
     if (!test_defaults_with_rpc()) return 1;
     if (!test_names_with_spaces()) return 1;
+    if (!test_surface_mesh()) return 1;
     return 0;
 }

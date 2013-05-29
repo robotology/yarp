@@ -58,13 +58,40 @@ bool SubscriberOnSql::open(const char *filename, bool fresh) {
 	src TEXT,\n\
 	dest TEXT,\n\
 	srcFull TEXT,\n\
-	destFull TEXT);";
+	destFull TEXT,\n\
+    mode TEXT);";
 
     result = sqlite3_exec(db, create_subscribe_table, NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up subscriptions table\n");
         exit(1);
+    }
+
+    const char *check_subscriptions_size = "PRAGMA table_info(subscriptions)";
+
+    sqlite3_stmt *statement = NULL;
+    result = sqlite3_prepare_v2(db, check_subscriptions_size, -1, 
+                                &statement, NULL);
+    if (result!=SQLITE_OK) {
+        fprintf(stderr,"Failed to set up subscriptions table\n");
+        exit(1);
+    }
+    
+    int count = 0;
+    while (sqlite3_step(statement) == SQLITE_ROW) {
+        count++;
+    }
+    sqlite3_finalize(statement);
+    
+    if (count==5) {
+        const char *add_structure = "ALTER TABLE subscriptions ADD COLUMN mode";
+        result = sqlite3_exec(db, add_structure, NULL, NULL, NULL);
+        if (result!=SQLITE_OK) {
+            sqlite3_close(db);
+            fprintf(stderr,"Failed to set up subscriptions table\n");
+            exit(1);
+        }
     }
 
     const char *create_topic_table = "CREATE TABLE IF NOT EXISTS topics (\n\
@@ -81,7 +108,7 @@ bool SubscriberOnSql::open(const char *filename, bool fresh) {
 
     const char *check_topic_size = "PRAGMA table_info(topics)";
 
-    sqlite3_stmt *statement = NULL;
+    statement = NULL;
     result = sqlite3_prepare_v2(db, check_topic_size, -1, 
                                 &statement, NULL);
     if (result!=SQLITE_OK) {
@@ -89,7 +116,7 @@ bool SubscriberOnSql::open(const char *filename, bool fresh) {
         exit(1);
     }
     
-    int count = 0;
+    count = 0;
     while (sqlite3_step(statement) == SQLITE_ROW) {
         //sqlite3_column_text(statement,1);
         count++;
@@ -144,7 +171,8 @@ bool SubscriberOnSql::close() {
 }
 
 bool SubscriberOnSql::addSubscription(const char *src,
-                                      const char *dest) {
+                                      const char *dest,
+                                      const char *mode) {
     removeSubscription(src,dest);
     ParseName psrc, pdest;
     psrc.apply(src);
@@ -156,11 +184,14 @@ bool SubscriberOnSql::addSubscription(const char *src,
         setTopic(pdest.getPortName().c_str(),NULL,true);
     }
     char *msg = NULL;
-    char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull) VALUES(%Q,%Q,%Q,%Q)", 
+    const char *zmode = mode;
+    if (mode[0] == '\0') zmode = NULL;
+    char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull,mode) VALUES(%Q,%Q,%Q,%Q,%Q)", 
                                   psrc.getPortName().c_str(),
                                   pdest.getPortName().c_str(),
                                   src,
-                                  dest);
+                                  dest,
+                                  zmode);
     if (verbose) {
         printf("Query: %s\n", query);
     }
@@ -180,7 +211,8 @@ bool SubscriberOnSql::addSubscription(const char *src,
                 checkSubscription(psrc.getPortName().c_str(),
                                   pdest.getPortName().c_str(),
                                   src,
-                                  dest);
+                                  dest,
+                                  zmode);
             } else {
                 hookup(psrc.getPortName().c_str());
             }
@@ -280,7 +312,8 @@ bool SubscriberOnSql::hookup(const char *port) {
         char *dest = (char *)sqlite3_column_text(statement,1);
         char *srcFull = (char *)sqlite3_column_text(statement,2);
         char *destFull = (char *)sqlite3_column_text(statement,3);
-        checkSubscription(src,dest,srcFull,destFull);
+        char *mode = (char *)sqlite3_column_text(statement,4);
+        checkSubscription(src,dest,srcFull,destFull,mode);
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
@@ -294,7 +327,8 @@ bool SubscriberOnSql::breakdown(const char *port) {
     mutex.wait();
     sqlite3_stmt *statement = NULL;
     char *query = NULL;
-    query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull FROM subscriptions WHERE ((src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=dest)) OR (dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=src))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port, port, port, port);
+    // query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull,mode FROM subscriptions WHERE ((src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=dest)) OR (dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=src))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull, NULL FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port, port, port, port);
+    query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull,mode FROM subscriptions WHERE ((src = %Q AND (mode IS NOT NULL OR EXISTS (SELECT NULL FROM live WHERE name=dest))) OR (dest = %Q AND (mode IS NOT NULL OR EXISTS (SELECT NULL FROM live WHERE name=src)))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull, NULL FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port, port, port, port);
     if (verbose) {
         printf("Query: %s\n", query);
     }
@@ -311,7 +345,8 @@ bool SubscriberOnSql::breakdown(const char *port) {
         char *dest = (char *)sqlite3_column_text(statement,1);
         char *srcFull = (char *)sqlite3_column_text(statement,2);
         char *destFull = (char *)sqlite3_column_text(statement,3);
-        breakSubscription(port,src,dest,srcFull,destFull);
+        char *mode = (char *)sqlite3_column_text(statement,4);
+        breakSubscription(port,src,dest,srcFull,destFull,mode);
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
@@ -323,7 +358,8 @@ bool SubscriberOnSql::breakdown(const char *port) {
 
 bool SubscriberOnSql::checkSubscription(const char *src,const char *dest,
                                         const char *srcFull,
-                                        const char *destFull) {
+                                        const char *destFull,
+                                        const char *mode) {
     if (verbose) {
         printf("+++ Checking %s %s / %s %s\n",
                src, dest, srcFull, destFull);
@@ -341,6 +377,18 @@ bool SubscriberOnSql::checkSubscription(const char *src,const char *dest,
                 connect(srcFull,destFull);
             }
         }
+        if (mode!=NULL) {
+            ConstString mode_name = mode;
+            if (mode_name=="from") {
+                if (!csrc.isValid()) {
+                    removeSubscription(src,dest);
+                }
+            } else if (mode_name=="to") {
+                if (!cdest.isValid()) {
+                    removeSubscription(src,dest);
+                }
+            }
+        }
     }
     return false;
 }
@@ -349,7 +397,8 @@ bool SubscriberOnSql::checkSubscription(const char *src,const char *dest,
 bool SubscriberOnSql::breakSubscription(const char *dropper,
                                         const char *src, const char *dest,
                                         const char *srcFull, 
-                                        const char *destFull) {
+                                        const char *destFull,
+                                        const char *mode) {
     if (verbose) {
         printf("--- Checking %s %s / %s %s\n",
                src, dest, srcFull, destFull);
@@ -368,6 +417,18 @@ bool SubscriberOnSql::breakSubscription(const char *dropper,
                    srcFull, destFull);
             disconnect(srcFull,destFull,srcDrop);
         }
+        if (mode!=NULL) {
+            ConstString mode_name = mode;
+            if (mode_name=="from") {
+                if (srcDrop) {
+                    removeSubscription(src,dest);
+                }
+            } else if (mode_name=="to") {
+                if (!srcDrop) {
+                    removeSubscription(src,dest);
+                }
+            }
+        }
     }
     return false;
 }
@@ -379,9 +440,9 @@ bool SubscriberOnSql::listSubscriptions(const char *port,
     sqlite3_stmt *statement = NULL;
     char *query = NULL;
     if (ConstString(port)!="") {
-        query = sqlite3_mprintf("SELECT s.srcFull, s.DestFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest) FROM subscriptions s WHERE s.src = %Q OR s.dest= %Q ORDER BY s.src, s.dest",port,port);
+        query = sqlite3_mprintf("SELECT s.srcFull, s.DestFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest), s.mode FROM subscriptions s WHERE s.src = %Q OR s.dest= %Q ORDER BY s.src, s.dest",port,port);
     } else {
-        query = sqlite3_mprintf("SELECT s.srcFull, s.destFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest) FROM subscriptions s ORDER BY s.src, s.dest");
+        query = sqlite3_mprintf("SELECT s.srcFull, s.destFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest), s.mode FROM subscriptions s ORDER BY s.src, s.dest");
     }
     if (verbose) {
         printf("Query: %s\n", query);
@@ -400,6 +461,7 @@ bool SubscriberOnSql::listSubscriptions(const char *port,
         char *dest = (char *)sqlite3_column_text(statement,1);
         int srcTopic = sqlite3_column_int(statement,2);
         int destTopic = sqlite3_column_int(statement,3);
+        char *mode = (char *)sqlite3_column_text(statement,4);
         Bottle& b = reply.addList();
         b.addString("subscription");
         Bottle bsrc;
@@ -410,6 +472,14 @@ bool SubscriberOnSql::listSubscriptions(const char *port,
         bdest.addString(dest);
         b.addList() = bsrc;
         b.addList() = bdest;
+        if (mode!=NULL) {
+            if (mode[0]!='\0') {
+                Bottle bmode;
+                bmode.addString("mode");
+                bmode.addString(mode);
+                b.addList() = bmode;
+            }
+        }
         if (srcTopic||destTopic) {
             Bottle btopic;
             btopic.addString("topic");
@@ -510,7 +580,8 @@ bool SubscriberOnSql::setTopic(const char *port, const char *structure,
         char *dest = (char *)sqlite3_column_text(statement,1);
         char *srcFull = (char *)sqlite3_column_text(statement,2);
         char *destFull = (char *)sqlite3_column_text(statement,3);
-        checkSubscription(src,dest,srcFull,destFull);
+        char *mode = (char *)sqlite3_column_text(statement,4);
+        checkSubscription(src,dest,srcFull,destFull,mode);
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);

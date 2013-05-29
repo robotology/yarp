@@ -11,10 +11,14 @@ include(${YARP_MODULE_PATH}/YarpIDL.cmake)
 
 set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
 yarp_idl_to_dir(demo.thrift ${generated_libs_dir})
+yarp_idl_to_dir(namespaced.thrift ${generated_libs_dir})
+yarp_idl_to_dir(objects3D.thrift ${generated_libs_dir})
 
 include_directories(${generated_libs_dir}/demo)
+include_directories(${generated_libs_dir}/namespaced)
+include_directories(${generated_libs_dir}/objects3d)
 include_directories(${YARP_INCLUDE_DIRS})
-add_executable(demo_test main.cpp ${generated_libs_dir}/demo/Demo.h ${generated_libs_dir}/demo/Demo.cpp ${generated_libs_dir}/demo/DemoEnum.h ${generated_libs_dir}/demo/DemoEnum.cpp)
+add_executable(demo_test main.cpp ${generated_libs_dir}/demo/Demo.h ${generated_libs_dir}/demo/Demo.cpp ${generated_libs_dir}/demo/DemoEnum.h ${generated_libs_dir}/demo/DemoEnum.cpp ${generated_libs_dir}/demo/DemoStruct.cpp ${generated_libs_dir}/demo/DemoStruct.h   ${generated_libs_dir}/namespaced/NSDemo.h ${generated_libs_dir}/namespaced/NSDemo.cpp ${generated_libs_dir}/namespaced/NSDemoEnum.h ${generated_libs_dir}/namespaced/NSDemoEnum.cpp ${generated_libs_dir}/namespaced/NSDemoStruct.cpp ${generated_libs_dir}/namespaced/NSDemoStruct.h ${generated_libs_dir}/objects3d/Box3D.h ${generated_libs_dir}/objects3d/Box3D.cpp ${generated_libs_dir}/objects3d/PointXYZ.h ${generated_libs_dir}/objects3d/PointXYZ.cpp ${generated_libs_dir}/objects3d/Polygon.h ${generated_libs_dir}/objects3d/Polygon.cpp ${generated_libs_dir}/objects3d/RGBA.h ${generated_libs_dir}/objects3d/RGBA.cpp ${generated_libs_dir}/objects3d/SurfaceMesh.h ${generated_libs_dir}/objects3d/SurfaceMesh.cpp ${generated_libs_dir}/objects3d/SurfaceMeshWithBoundingBox.h ${generated_libs_dir}/objects3d/SurfaceMeshWithBoundingBox.cpp)
 target_link_libraries(demo_test ${YARP_LIBRARIES})
 
 add_test(demo_basic demo_test --help)

@@ -6,6 +6,11 @@ enum DemoEnum {
   ENUM3 = 3
 }
 
+struct DemoStruct {
+  1: i32 x = 0,
+  2: i32 y
+}
+
 service Demo {
   i32 get_answer();
   bool set_answer(1:i32 rightAnswer)

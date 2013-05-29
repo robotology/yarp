@@ -1,3 +1,7 @@
+2013-05-27 Lorenzo Natale <lorenzo.natale@iit.it>
+    * src/libYARP_dev/include/yarp/dev/CartesianControl.h:
+    added methods to deal with tip frame.
+
 2013-05-02 Lorenzo Natale <lorenzo.natale@iit.it>
     * src/libYARP_sig/harness/MatrixTest.cpp
     * src/libYARP_sig/include/yarp/sig/Matrix.h

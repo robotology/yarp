@@ -9,5 +9,5 @@ export BUNDLE_GTKMM_VERSION=2.22.0-2
 export BUNDLE_TWEAK=3
 
 # override GTKMM package with Lorenzo's ZIP file
-export BUNDLE_GTKMM_32_ZIP=http://eris.liralab.it/iCub/downloads/packages/windows/common/gtkmm-2.22-0-2.zip
-export BUNDLE_GTKMM_64_ZIP=http://eris.liralab.it/iCub/downloads/packages/windows/common/gtkmm-2.22-win64.zip
+export BUNDLE_GTKMM_32_ZIP=http://www.icub.org/download/software/windows/common/gtkmm-2.22-0-2.zip
+export BUNDLE_GTKMM_64_ZIP=http://www.icub.org/download/software/windows/common/gtkmm-2.22-win64.zip

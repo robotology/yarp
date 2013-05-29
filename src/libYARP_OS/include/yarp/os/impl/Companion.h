@@ -199,7 +199,8 @@ public:
 
     int cmdSample(int argc, char *argv[]);
 
-    int subscribe(const char *src, const char *dest);
+    int subscribe(const char *src, const char *dest, 
+                  const char *mode = 0/*NULL*/);
 
     int unsubscribe(const char *src, const char *dest);
 

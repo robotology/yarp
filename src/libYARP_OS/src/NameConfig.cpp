@@ -225,22 +225,22 @@ bool NameConfig::writeConfig(const String& fileName, const String& text) {
 String NameConfig::getHostName() {
     // try to pick a good host identifier
 
-    String result = "127.0.0.1";
+    ConstString result = "127.0.0.1";
     bool loopback = true;
 
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = NULL;
     size_t count = 0;
-    // Pick an IP address.
+    // Pick an IPv4 address.
     // Prefer non-local addresses, then shorter addresses.
-    // Avoid ::1 and the like.
+    // Avoid IPv6.
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
-            String ip = ips[i].get_host_addr();
+            ConstString ip = ips[i].get_host_addr();
             YARP_DEBUG(Logger::get(), String("scanning network interface ") +
-                       ip);
+                       ip.c_str());
             bool take = false;
-            if (ip[0]!=':') {
+            if (ip.find(":")==ConstString::npos) {
                 if (result=="localhost") {
                     take = true; // can't be worse
                 }
@@ -269,7 +269,7 @@ String NameConfig::getHostName() {
 
     int family, s;
     char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
-    std::string ip;
+    ConstString ip;
     struct ifaddrs *ifaddr, *ifa;
     if (getifaddrs(&ifaddr) == -1) {
     	perror("getifaddrs in getIps");
@@ -287,7 +287,7 @@ String NameConfig::getHostName() {
     			printf("getnameinfo() failed: %s\n", gai_strerror(s));
     			exit(EXIT_FAILURE);
     		}
-    		ip = String(hostname);
+    		ip = ConstString(hostname);
             bool take = false;
             if (ip[0]!=':') {
                 if (result=="localhost") {
@@ -300,7 +300,7 @@ String NameConfig::getHostName() {
                 }
             }
             if (take) {
-                result = ip;
+                result = ip.c_str();
                 loopback = false;
                 if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
                 		ip == "127.0.1.1") {
@@ -312,7 +312,7 @@ String NameConfig::getHostName() {
 
 #endif
 
-    return result;
+    return result.c_str();
 }
 
 

@@ -51,7 +51,8 @@ public:
     }
 
     virtual bool addSubscription(const char *src,
-                                 const char *dest) = 0;
+                                 const char *dest,
+                                 const char *mode) = 0;
 
     virtual bool removeSubscription(const char *src,
                                     const char *dest) = 0;
@@ -86,9 +87,11 @@ public:
         if (tag=="subscribe") {
             yarp::os::ConstString src = cmd.get(1).asString();
             yarp::os::ConstString dest = cmd.get(2).asString();
+            yarp::os::ConstString mode = cmd.get(3).asString();
             if (dest!="") {
                 ok = addSubscription(src,
-                                     dest);
+                                     dest,
+                                     mode);
                 reply.clear();
                 reply.addVocab(ok?VOCAB2('o','k'):VOCAB4('f','a','i','l'));
                 return ok;

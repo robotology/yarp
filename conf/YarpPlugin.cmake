@@ -461,7 +461,7 @@ endmacro(YARP_ADD_DEVICE_FINGERPRINT)
 # Deprecated macros
 #
 if(NOT YARP_NO_DEPRECATED)
-include(YarpDeprecatedWarning)
+include(${YARP_MODULE_PATH}/YarpDeprecatedWarning.cmake)
 
 macro(BEGIN_PLUGIN_LIBRARY)
     yarp_deprecated_warning("BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")

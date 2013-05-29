@@ -458,6 +458,7 @@ string t_yarp_generator::base_type_name(t_base_type::t_base tbase) {
 
 
 string t_yarp_generator::namespace_decorate(string ns, string str) {
+  if (ns=="") return str;
   string prefix = namespace_prefix(ns);
   if (prefix.find(" ::")==0) {
     prefix = prefix.substr(3,prefix.length());
@@ -741,7 +742,10 @@ void t_yarp_generator::generate_program() {
 	f_out_ << "#include \"" << (*o_iter)->get_name() << ".h\"" << endl;
 	f_out2_ << (*o_iter)->get_name() << ".h" << endl;
         if ((*o_iter)->annotations_.find("yarp.includefile") == (*o_iter)->annotations_.end())
+        {
           f_out3_ << (*o_iter)->get_name() << ".h" << endl;
+          f_out3_ << (*o_iter)->get_name() << ".cpp" << endl;
+        }
       }
     }
   }
@@ -1181,7 +1185,6 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   f_cpp_.open(f_cpp_name.c_str());
 
   auto_warn(f_cpp_);
-  f_cpp_ << "// In fact this file is blank, it isn't needed yet" << endl;
 
   string name = tstruct->get_name();
   vector<t_field*> members = tstruct->get_members();
@@ -1218,8 +1221,6 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
 
   string ns = get_namespace(program_);
-  namespace_open(f_cpp_,ns);
-  f_cpp_ << endl << endl;
 
   namespace_open(f_stt_,ns,false);
   indent(f_stt_) << "class " << name << ";" << endl;
@@ -1317,83 +1318,96 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   scope_down(out);
 
 
-  indent(f_stt_) << "bool read(yarp::os::idl::WireReader& reader) {" 
+  indent(f_stt_) << "bool read(yarp::os::idl::WireReader& reader);" 
 		 << endl;
-  indent_up();
-  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
-    string mname = (*mem_iter)->get_name();
-    string mtype = print_type((*mem_iter)->get_type());
-    generate_deserialize_field(f_stt_, *mem_iter, "");
-  }
-  indent(f_stt_) << "return !reader.isError();" 
-		 << endl;
-  indent_down();
-  indent(f_stt_) << "}" << endl;
 
-  indent(f_stt_) << "bool read(yarp::os::ConnectionReader& connection) {" 
+  indent(f_stt_) << "bool read(yarp::os::ConnectionReader& connection);" 
 		 << endl;
-  indent_up();
-  indent(f_stt_) << "yarp::os::idl::WireReader reader(connection);" 
-		 << endl;
-  indent(f_stt_) << "if (!reader.readListHeader(" 
-		 << members.size()
-		 << ")) return false;"
-		 << endl;
-  indent(f_stt_) << "return read(reader);"  << endl;
-  scope_down(f_stt_);
 
 
-
-  indent(f_stt_) << "bool write(yarp::os::idl::WireWriter& writer) {" 
+  indent(f_stt_) << "bool write(yarp::os::idl::WireWriter& writer);" 
 		 << endl;
-  indent_up();
-  for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
-    string mname = (*mem_iter)->get_name();
-    string mtype = print_type((*mem_iter)->get_type());
-    generate_serialize_field(f_stt_, *mem_iter, "");
-  }
-  indent(f_stt_) << "return !writer.isError();" 
+  indent(f_stt_) << "bool write(yarp::os::ConnectionWriter& connection);" 
 		 << endl;
-  scope_down(f_stt_);
-
-  /*
-  indent(f_stt_) << "int count(yarp::os::idl::WireWriter& writer) {" 
-		 << endl;
-  indent_up();
-  indent(f_stt_) << "int ct = 0;" 
-		 << endl;
-  for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
-    string mname = (*mem_iter)->get_name();
-    string mtype = print_type((*mem_iter)->get_type());
-    generate_count_field(f_stt_, *mem_iter, "");
-  }
-  indent(f_stt_) << "return ct;" 
-		 << endl;
-  scope_down(f_stt_);
-  */
-
-  indent(f_stt_) << "bool write(yarp::os::ConnectionWriter& connection) {" 
-		 << endl;
-  indent_up();
-  indent(f_stt_) << "yarp::os::idl::WireWriter writer(connection);" 
-		 << endl;
-  indent(f_stt_) << "if (!writer.writeListHeader(" 
-		 << flat_element_count(tstruct)
-		 << ")) return false;"
-		 << endl;
-  indent(f_stt_) << "return write(writer);" << endl;
-  scope_down(f_stt_);
 
   indent_down();
   f_stt_ << "};" << endl;
 
   f_stt_ << endl;
 
-  namespace_close(f_cpp_,get_namespace(program_));
-  f_cpp_ << endl;
-
   f_stt_ << "#endif" << endl;
   f_stt_ << endl;
+
+
+  // header done - now generate source
+
+  if (cmake_supplies_headers_) {
+    f_cpp_ << "@HEADERS@" << endl;
+  }
+  else
+  {
+    f_cpp_ <<  "#include <" << get_include_prefix(*program_) + name + ".h>" << endl;
+  }
+  indent(f_cpp_) << endl;
+
+  namespace_open(f_cpp_,ns);
+
+  indent(f_cpp_) << "bool " << name
+		 << "::read(yarp::os::idl::WireReader& reader) {" 
+		 << endl;
+  indent_up();
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    string mtype = print_type((*mem_iter)->get_type());
+    generate_deserialize_field(f_cpp_, *mem_iter, "");
+  }
+  indent(f_cpp_) << "return !reader.isError();" 
+		 << endl;
+  scope_down(f_cpp_);
+  indent(f_cpp_) << endl;
+
+  indent(f_cpp_) << "bool " << name
+		 << "::read(yarp::os::ConnectionReader& connection) {" 
+		 << endl;
+  indent_up();
+  indent(f_cpp_) << "yarp::os::idl::WireReader reader(connection);" 
+		 << endl;
+  indent(f_cpp_) << "if (!reader.readListHeader(" 
+		 << flat_element_count(tstruct)
+		 << ")) return false;"
+		 << endl;
+  indent(f_cpp_) << "return read(reader);"  << endl;
+  scope_down(f_cpp_);
+  indent(f_cpp_) << endl;
+
+  indent(f_cpp_) << "bool " << name
+		 << "::write(yarp::os::idl::WireWriter& writer) {" 
+		 << endl;
+  indent_up();
+  for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    string mtype = print_type((*mem_iter)->get_type());
+    generate_serialize_field(f_cpp_, *mem_iter, "");
+  }
+  indent(f_cpp_) << "return !writer.isError();" 
+		 << endl;
+  scope_down(f_cpp_);
+  indent(f_cpp_) << endl;
+
+  indent(f_cpp_) << "bool " << name
+		 << "::write(yarp::os::ConnectionWriter& connection) {" 
+		 << endl;
+  indent_up();
+  indent(f_cpp_) << "yarp::os::idl::WireWriter writer(connection);" 
+		 << endl;
+  indent(f_cpp_) << "if (!writer.writeListHeader(" 
+		 << flat_element_count(tstruct)
+		 << ")) return false;"
+		 << endl;
+  indent(f_cpp_) << "return write(writer);" << endl;
+  scope_down(f_cpp_);
+
+  namespace_close(f_cpp_,get_namespace(program_));
 }
 
 void t_yarp_generator::generate_xception(t_struct* txception) {
