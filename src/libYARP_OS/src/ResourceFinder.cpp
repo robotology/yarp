@@ -22,6 +22,8 @@
 
 #include <errno.h>
 
+#include <errno.h>
+
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
@@ -509,7 +511,7 @@ public:
 
     yarp::os::ConstString findPath(Property& config) {
         ConstString result = findFileBase(config,"",true,NULL);
-		if (result=="") result = ".";
+		if (result=="") result = getPwd();
         return result;
     }
 
