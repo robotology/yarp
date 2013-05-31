@@ -40,9 +40,27 @@ namespace yarp {
  * sending commands to a eterogeneous group of axis.
  */
 
-class yarp::dev::IPositionControl2Raw : public IPositionControlRaw
+class yarp::dev::IPositionControl2Raw: public yarp::dev::IPositionControlRaw
 {
 public:
+    //     IPositionControlRaw interface
+    using IPositionControlRaw::getAxes;
+    using IPositionControlRaw::setPositionModeRaw;
+    using IPositionControlRaw::positionMoveRaw;
+    using IPositionControlRaw::relativeMoveRaw;
+    using IPositionControlRaw::checkMotionDoneRaw;
+    using IPositionControlRaw::setRefSpeedRaw;
+    using IPositionControlRaw::setRefSpeedsRaw;
+    using IPositionControlRaw::setRefAccelerationRaw;
+    using IPositionControlRaw::setRefAccelerationsRaw;
+    using IPositionControlRaw::getRefSpeedRaw;
+    using IPositionControlRaw::getRefSpeedsRaw;
+    using IPositionControlRaw::getRefAccelerationRaw;
+    using IPositionControlRaw::getRefAccelerationsRaw;
+    using IPositionControlRaw::stopRaw;
+    using IPositionControlRaw::stopRaw;
+
+
     /**
      * Destructor.
      */
@@ -125,6 +143,24 @@ public:
 class YARP_dev_API yarp::dev::IPositionControl2 : public IPositionControl
 {
 public:
+
+	//     IPositionControl interface
+	using IPositionControl::getAxes;
+	using IPositionControl::setPositionMode;
+	using IPositionControl::positionMove;
+	using IPositionControl::relativeMove;
+	using IPositionControl::checkMotionDone;
+	using IPositionControl::setRefSpeed;
+	using IPositionControl::setRefSpeeds;
+	using IPositionControl::setRefAcceleration;
+	using IPositionControl::setRefAccelerations;
+	using IPositionControl::getRefSpeed;
+	using IPositionControl::getRefSpeeds;
+	using IPositionControl::getRefAcceleration;
+	using IPositionControl::getRefAccelerations;
+	using IPositionControl::stop;
+	using IPositionControl::stop;
+
     /**
      * Destructor.
      */

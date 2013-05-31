@@ -33,20 +33,23 @@ ImplementPositionControl2::~ImplementPositionControl2()
 
 bool ImplementPositionControl2::setPositionMode()
 {
-    if (helper==0) return false;
+    if(helper==0) return false;
+
     iPosition2->setPositionModeRaw();
     return true;
 }
 
 bool ImplementPositionControl2::setPositionMode(const int n_joint, const int *joints)
 {
-	int j;
-	for(int idx=0; idx<n_joint; idx++)
-	{
-		j = joints[idx];
-		temp_int[idx] = castToMapper(helper)->toHw(j);
-	}
-	return iPosition2->setPositionModeRaw(n_joint, temp_int);
+    int j;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        temp_int[idx] = castToMapper(helper)->toHw(j);
+    }
+
+    return iPosition2->setPositionModeRaw(n_joint, temp_int);
 }
 
 bool ImplementPositionControl2::positionMove(int j, double ang)
@@ -59,15 +62,17 @@ bool ImplementPositionControl2::positionMove(int j, double ang)
 
 bool ImplementPositionControl2::positionMove(const int n_joint, const int *joints, const double *refs)
 {
-	int j;
-	double ang;
-	for(int idx=0; idx<n_joint; idx++)
-	{
-		j = joints[idx];
-		ang = refs[idx];
-		castToMapper(helper)->posA2E(ang, j, &temp_double[idx], &temp_int[idx]);
-	}
-	return iPosition2->setPositionMoveRaw(n_joint, temp_int, temp_double);
+    int j;
+    double ang;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        ang = refs[idx];
+        castToMapper(helper)->posA2E(ang, j, temp_double[idx], temp_int[idx]);
+    }
+
+    return iPosition2->positionMoveRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementPositionControl2::positionMove(const double *refs)
@@ -88,15 +93,16 @@ bool ImplementPositionControl2::relativeMove(int j, double delta)
 
 bool ImplementPositionControl2::relativeMove(const int n_joint, const int *joints, const double *deltas)
 {
-	int j;
-	double vel;
-	for(int idx=0; idx<n_joint; idx++)
-	{
-		j = joints[idx];
-		vel = refs[idx];
-		castToMapper(helper)->velA2E(vel, j, &temp_double[idx], &temp_int[idx]);
-	}
-	return iPosition2->setRelativeMoveRaw(n_joint, temp_int, temp_double);
+    int j;
+    double vel;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        vel = deltas[idx];
+        castToMapper(helper)->velA2E(vel, j, temp_double[idx], temp_int[idx]);
+    }
+    return iPosition2->relativeMoveRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementPositionControl2::relativeMove(const double *deltas)
@@ -115,13 +121,15 @@ bool ImplementPositionControl2::checkMotionDone(int j, bool *flag)
 
 bool ImplementPositionControl2::checkMotionDone(const int n_joint, const int *joints, bool *flags)
 {
-	int j;
-	for(int j=0; j<n_joint; j++)
-	{
-		j = joints[idx];
-		temp_int[idx] = castToMapper(helper)->toHw(j);
-	}
-	return iPosition2->checkMotionDoneRaw(n_joint, temp_int, flags);
+    int j;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        temp_int[idx] = castToMapper(helper)->toHw(j);
+    }
+
+    return iPosition2->checkMotionDoneRaw(n_joint, temp_int, flags);
 }
 
 bool ImplementPositionControl2::checkMotionDone(bool *flag)
@@ -139,15 +147,17 @@ bool ImplementPositionControl2::setRefSpeed(int j, double sp)
 
 bool ImplementPositionControl2::setRefSpeeds(const int n_joint, const int *joints, const double *spds)
 {
-	int j;
-	double sp;
-	for(int j=0; j<n_joint; j++)
-	{
-		j = joints[idx];
-		sp = spds[idx];
-		castToMapper(helper)->velA2E_abs(sp, j, &temp_double[idx], &temp_int[idx]);
-	}
-	iPosition2->setRefSpeedRaw(n_joints, temp_int, temp_double);
+    int j;
+    double sp;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        sp = spds[idx];
+        castToMapper(helper)->velA2E_abs(sp, j, temp_double[idx], temp_int[idx]);
+    }
+
+    return iPosition2->setRefSpeedsRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementPositionControl2::setRefSpeeds(const double *spds)
@@ -168,15 +178,17 @@ bool ImplementPositionControl2::setRefAcceleration(int j, double acc)
 
 bool ImplementPositionControl2::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
-	int j;
-	double acc;
-	for(int j=0; j<n_joint; j++)
-	{
-		j = joints[idx];
-		acc = accs[idx];
-		castToMapper(helper)->accA2E_abs(acc, j, &temp_double[idx], &temp_int[idx]);
-	}
-	iPosition2->setRefAccelerationsRaw(n_joints, temp_int, temp_double);
+    int j;
+    double acc;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        acc = accs[idx];
+        castToMapper(helper)->accA2E_abs(acc, j, temp_double[idx], temp_int[idx]);
+    }
+
+    return iPosition2->setRefAccelerationsRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementPositionControl2::setRefAccelerations(const double *accs)
@@ -201,15 +213,17 @@ bool ImplementPositionControl2::getRefSpeed(int j, double *ref)
 
 bool ImplementPositionControl2::getRefSpeeds(const int n_joint, const int *joints, double *spds)
 {
-	int j;
-	double sp;
-	for(int j=0; j<n_joint; j++)
-	{
-		j = joints[idx];
-		sp = spds[idx];
-		castToMapper(helper)->velE2A_abs(sp, j, &temp_double[idx], &temp_int[idx]);
-	}
-	iPosition2->getRefSpeedsRaw(n_joints, temp_int, temp_double);
+    int j;
+    double sp;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        sp = spds[idx];
+        castToMapper(helper)->velE2A_abs(sp, j, temp_double[idx], temp_int[idx]);
+    }
+
+    return iPosition2->getRefSpeedsRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementPositionControl2::getRefSpeeds(double *spds)
@@ -228,15 +242,17 @@ bool ImplementPositionControl2::getRefAccelerations(double *accs)
 
 bool ImplementPositionControl2::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
-	int j;
-	double acc;
-	for(int j=0; j<n_joint; j++)
-	{
-		j = joints[idx];
-		acc = accs[idx];
-		castToMapper(helper)->accE2A_abs(acc, j, &temp_double[idx], &temp_int[idx]);
-	}
-	iPosition2->getRefAccelerationsRaw(n_joints, temp_int, temp_double);
+    int j;
+    double acc;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        acc = accs[idx];
+        castToMapper(helper)->accE2A_abs(acc, j, temp_double[idx], temp_int[idx]);
+    }
+
+    return iPosition2->getRefAccelerationsRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementPositionControl2::getRefAcceleration(int j, double *acc)
@@ -261,13 +277,15 @@ bool ImplementPositionControl2::stop(int j)
 
 bool ImplementPositionControl2::stop(const int n_joint, const int *joints)
 {
-	int j;
-	for(int j=0; j<n_joint; j++)
-	{
-		j = joints[idx];
-		temp_int[idx] = castToMapper(helper)->toHw(j);
-	}
-	iPosition2->stopRaw(n_joints, temp_int);
+    int j;
+
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        j = joints[idx];
+        temp_int[idx] = castToMapper(helper)->toHw(j);
+    }
+
+    return iPosition2->stopRaw(n_joint, temp_int);
 }
 
 bool ImplementPositionControl2::stop()
@@ -284,16 +302,16 @@ bool ImplementPositionControl2::getAxes(int *axis)
 
 bool ImplementPositionControl2::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper!=0)
+    if(helper!=0)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT (helper != 0);
+    _YARP_ASSERT(helper != 0);
     temp_double=new double [size];
-    _YARP_ASSERT (temp_double != 0);
+    _YARP_ASSERT(temp_double != 0);
 
-    temp_int=new double [size];
-    _YARP_ASSERT (temp_int != 0);
+    temp_int=new int [size];
+    _YARP_ASSERT(temp_int != 0);
     return true;
 }
 
@@ -303,11 +321,12 @@ bool ImplementPositionControl2::initialize(int size, const int *amap, const doub
 */
 bool ImplementPositionControl2::uninitialize()
 {
-    if (helper!=0)
+    if(helper!=0)
     {
         delete castToMapper(helper);
         helper=0;
     }
+
     checkAndDestroy(temp_double);
     checkAndDestroy(temp_int);
 
