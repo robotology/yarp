@@ -42,7 +42,7 @@ Using CMake, generation of code for our demo.thrift file can be performed automa
 
 \code
 #CMakeList.txt
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.7)
 
 #find YARP
 find_package(YARP REQUIRED)
