@@ -5,7 +5,7 @@
 SET(PROJECTNAME collatzServer)
 PROJECT(${PROJECTNAME})
 
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8.7)
 
 # Add Yarp to the "packages" used by this project.
 FIND_PACKAGE(YARP REQUIRED)

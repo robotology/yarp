@@ -1,20 +1,18 @@
-# Copyright: (C) 2010 Jan Woetzel
-# Small modifications by Lorenzo Natale and Francesco Nori
-# CopyPolicy: Use under LGPL or BSD license at your choice
-
-# 
 # Try to find GSL library
-# Once run this will define: 
-# 
+# Once run this will define:
+#
 # GSL_FOUND
 # GSL_INCLUDE_DIR and GSL_INCLUDE_DIRS
 # GSL_LIBRARIES
 # GSL_LINK_DIRECTORIES
 # GSLCBLAS_LIBRARY
 # GSL_LIBRARY
-##
 
-# 
+# Copyright: (C) 2010 Jan Woetzel
+# Small modifications by Lorenzo Natale and Francesco Nori
+# CopyPolicy: Use under LGPL or BSD license at your choice
+
+#
 # 2004/05 Jan Woetzel, Friso, Daniel Grest 
 # 2006 complete rewrite by Jan Woetzel
 ##
@@ -29,104 +27,96 @@
 # 08/11/2011, Lorenzo Natale: added <prefix>/Release to library search path
 
 ##### check GSL_ROOT
-IF (EXISTS "$ENV{GSL_ROOT}")
-  SET(GSL_POSSIBLE_INCDIRS
-	"$ENV{GSL_ROOT}/include"
-	"$ENV{GSL_ROOT}")
-  
-  SET(GSL_POSSIBLE_LIBRARY_PATHS
-	"$ENV{GSL_ROOT}/Release"
-	"$ENV{GSL_ROOT}/lib")
-	
-ENDIF (EXISTS "$ENV{GSL_ROOT}")
+if(EXISTS "$ENV{GSL_ROOT}")
+    set(GSL_POSSIBLE_INCDIRS
+        "$ENV{GSL_ROOT}/include"
+        "$ENV{GSL_ROOT}")
+
+    set(GSL_POSSIBLE_LIBRARY_PATHS
+        "$ENV{GSL_ROOT}/Release"
+        "$ENV{GSL_ROOT}/lib")
+endif(EXISTS "$ENV{GSL_ROOT}")
 
 ##### check GSL_DIR
-IF (EXISTS "$ENV{GSL_DIR}")
-  SET(GSL_POSSIBLE_INCDIRS
-	"$ENV{GSL_DIR}/include"
-	"$ENV{GSL_DIR}")
-  
-  SET(GSL_POSSIBLE_LIBRARY_PATHS
-	"$ENV{GSL_DIR}/lib"
-	"$ENV{GSL_DIR}/Release")
-ENDIF (EXISTS "$ENV{GSL_DIR}")
+if(EXISTS "$ENV{GSL_DIR}")
+    set(GSL_POSSIBLE_INCDIRS
+        "$ENV{GSL_DIR}/include"
+        "$ENV{GSL_DIR}")
 
-IF (GSL_DIR)
-  SET(GSL_POSSIBLE_INCDIRS
-	"${GSL_DIR}/include"
-	"${GSL_DIR}")
-  
-  SET(GSL_POSSIBLE_LIBRARY_PATHS
-	"${GSL_DIR}/lib"
-	"${GSL_DIR}/Release")
-ENDIF (GSL_DIR)
+    set(GSL_POSSIBLE_LIBRARY_PATHS
+        "$ENV{GSL_DIR}/lib"
+        "$ENV{GSL_DIR}/Release")
+endif(EXISTS "$ENV{GSL_DIR}")
 
-FIND_PATH(GSL_BLAS_HEADER gsl/gsl_blas.h  
-	${GSL_POSSIBLE_INCDIRS} 
-	/usr/include
-	/usr/local/include
-	)
+if(GSL_DIR)
+    set(GSL_POSSIBLE_INCDIRS
+        "${GSL_DIR}/include"
+        "${GSL_DIR}")
 
-FIND_LIBRARY(GSL_LIBRARY
-  NAMES libgsl libgsl.lib gsl
-  PATHS ${GSL_POSSIBLE_LIBRARY_PATHS}
-	/usr/lib
-	/usr/local/lib
-  DOC "Location of the gsl lib")
+    set(GSL_POSSIBLE_LIBRARY_PATHS
+        "${GSL_DIR}/lib"
+        "${GSL_DIR}/Release")
+endif(GSL_DIR)
 
-FIND_LIBRARY(GSLCBLAS_LIBRARY
-  NAMES libgslcblas libgslcblas.lib gslcblas
-  PATHS ${GSL_POSSIBLE_LIBRARY_PATHS}
-	/usr/lib
-	/usr/local/lib
-  DOC "Location of the gsl lib")
+find_path(GSL_BLAS_HEADER gsl/gsl_blas.h
+          ${GSL_POSSIBLE_INCDIRS}
+          /usr/include
+          /usr/local/include)
 
-IF (GSLCBLAS_LIBRARY AND GSL_LIBRARY AND GSL_BLAS_HEADER)
-  SET(GSL_INCLUDE_DIR "${GSL_BLAS_HEADER}")
-  SET(GSL_INCLUDE_DIRS "${GSL_BLAS_HEADER}")
-  SET(GSL_LINK_DIRECTORIES "$ENV{GSL_ROOT}/lib")
-  SET(GSL_LIBRARIES "${GSL_LIBRARY}")
-  SET(GSL_LIBRARIES "${GSL_LIBRARIES}" "${GSLCBLAS_LIBRARY}")
-  SET(GSL_FOUND ON)
-  SET(GSL_DIR "$ENV{GSL_ROOT}")
-ENDIF (GSLCBLAS_LIBRARY AND GSL_LIBRARY AND GSL_BLAS_HEADER)
+find_library(GSL_LIBRARY
+             NAMES libgsl libgsl.lib gsl
+             PATHS ${GSL_POSSIBLE_LIBRARY_PATHS}
+                   /usr/lib
+                   /usr/local/lib
+             DOC "Location of the gsl lib")
 
-SET (GSL_MARK)
+find_library(GSLCBLAS_LIBRARY
+             NAMES libgslcblas libgslcblas.lib gslcblas
+             PATHS ${GSL_POSSIBLE_LIBRARY_PATHS}
+                   /usr/lib
+                   /usr/local/lib
+             DOC "Location of the gsl lib")
 
-IF (GSL_FOUND)
-  # nothing to say
-  IF (NOT GSL_DIR)
-	MARK_AS_ADVANCED(GSL_DIR)
-  ENDIF (NOT GSL_DIR)
-ELSE (GSL_FOUND)
-  SET (GSL_DIR "" CACHE PATH "Location of GSL")
-  IF (GSL_FIND_REQUIRED OR GSL_DIR)
-    SET (GSL_MARK CLEAR)
-    MARK_AS_ADVANCED(
-      ${GSL_MARK}
-      GSL_INCLUDE_DIR
-      GSL_LINK_DIRECTORIES
-      GSL_LIBRARIES
-      GSLCBLAS_LIBRARIES
-      GSLCBLAS_LIBRARY
-      GSL_BLAS_HEADER
-      GSL_LIBRARY
-    )
-    MESSAGE(FATAL_ERROR "GSL library or headers not found. "
-            "Please search manually or set env. variable GSL_DIR to guide search." )
-  ENDIF (GSL_FIND_REQUIRED OR GSL_DIR)  
-ENDIF (GSL_FOUND)
-
-
-MARK_AS_ADVANCED(
-  ${GSL_MARK}
-  GSL_INCLUDE_DIR
-  GSL_INCLUDE_DIRS
-  GSL_LINK_DIRECTORIES
-  GSL_LIBRARIES
-  GSLCBLAS_LIBRARIES
-  GSLCBLAS_LIBRARY
-  GSL_BLAS_HEADER
-  GSL_LIBRARY
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(GSL
+                                  DEFAULT_MSG
+                                  GSL_LIBRARY
+                                  GSLCBLAS_LIBRARY
+                                  GSL_BLAS_HEADER
 )
 
+if(GSL_FOUND)
+    set(GSL_INCLUDE_DIR "${GSL_BLAS_HEADER}")
+    set(GSL_INCLUDE_DIRS "${GSL_BLAS_HEADER}")
+    set(GSL_LINK_DIRECTORIES "$ENV{GSL_ROOT}/lib")
+    set(GSL_LIBRARIES "${GSL_LIBRARY}")
+    set(GSL_LIBRARIES "${GSL_LIBRARIES}" "${GSLCBLAS_LIBRARY}")
+    set(GSL_FOUND ON)
+    set(GSL_DIR "$ENV{GSL_ROOT}")
+endif()
+
+set(GSL_MARK)
+
+
+if(GSL_FOUND)
+    # nothing to say
+    if(NOT GSL_DIR)
+        mark_as_advanced(GSL_DIR)
+    endif(NOT GSL_DIR)
+else(GSL_FOUND)
+    set(GSL_DIR "" CACHE PATH "Location of GSL")
+    if(GSL_FIND_REQUIRED OR GSL_DIR)
+        set(GSL_MARK CLEAR)
+        message(FATAL_ERROR "GSL library or headers not found. Please search manually or set env. variable GSL_DIR to guide search." )
+    endif(GSL_FIND_REQUIRED OR GSL_DIR)
+endif(GSL_FOUND)
+
+mark_as_advanced(${GSL_MARK}
+                 GSL_INCLUDE_DIR
+                 GSL_INCLUDE_DIRS
+                 GSL_LINK_DIRECTORIES
+                 GSL_LIBRARIES
+                 GSLCBLAS_LIBRARIES
+                 GSLCBLAS_LIBRARY
+                 GSL_BLAS_HEADER
+                 GSL_LIBRARY)
