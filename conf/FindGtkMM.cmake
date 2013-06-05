@@ -2,10 +2,8 @@
 # Authors: Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-IF(UNIX)
-    INCLUDE(FindGtkMMUnix)
-ELSE(UNIX)
-    IF(WIN32 AND NOT CYGWIN)
-        INCLUDE(FindGtkMMWin32)
-    ENDIF(WIN32 AND NOT CYGWIN)
-ENDIF(UNIX)
+if(UNIX)
+    include(FindGtkMMUnix)
+elseif(WIN32 AND NOT CYGWIN)
+    include(FindGtkMMWin32)
+endif(UNIX)

@@ -2,12 +2,7 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.6.4)
-
-if(POLICY CMP0011)
-    cmake_policy(SET CMP0011 NEW)
-endif(POLICY CMP0011)
-
+cmake_minimum_required(VERSION 2.8.7)
 project(YARP)
 
 # Pick up our CMake scripts - they are all in the conf subdirectory.
@@ -24,15 +19,15 @@ set_property(GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
+# Get the current YARP version.  See conf/YarpVersion.cmake.
+include(YarpVersion)
+
 # Check system configuration.
 # See conf/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
 
 # Set up some compilation options.  See conf/YarpOptions.cmake.
 include(YarpOptions)
-
-# Get the current YARP version.  See conf/YarpVersion.cmake.
-include(YarpVersion)
 
 # Check YARP dependencies, find necessary libraries.
 # See conf/YarpFindDependencies.cmake.

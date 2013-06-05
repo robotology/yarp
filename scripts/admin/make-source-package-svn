@@ -42,7 +42,7 @@ if [ "k$1" = "k" ] ; then
   cp $ORG/conf/YarpVersion.cmake .
   (
   cat <<EOF
-  cmake_minimum_required(VERSION 2.6)
+  cmake_minimum_required(VERSION 2.8.7)
   PROJECT(test)
   SET(CMAKE_MODULE_PATH \${PROJECT_SOURCE_DIR})
   INCLUDE(YarpVersion)
