@@ -16,8 +16,8 @@
 * Public License for more details
 */
 
-#ifndef IMPLEMENTPOSITIONCONTROL2_H_
-#define IMPLEMENTPOSITIONCONTROL2_H_
+#ifndef IMPLEMENTPOSITIONCONTROL_V2_H_
+#define IMPLEMENTPOSITIONCONTROL_V2_H_
 
 
 #include <yarp/dev/IPositionControl2.h>
@@ -39,9 +39,9 @@ class yarp::dev::ImplementPositionControl2 : public IPositionControl2
 {
 protected:
     IPositionControl2Raw *iPosition2;
-    void *helper;
-    int    *temp_int;
-    double *temp_double;
+    void    *helper;
+    int     *temp_int;
+    double  *temp_double;
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
