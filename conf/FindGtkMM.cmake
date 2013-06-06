@@ -7,3 +7,9 @@ if(UNIX)
 elseif(WIN32 AND NOT CYGWIN)
     include(FindGtkMMWin32)
 endif(UNIX)
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(GtkMM PROPERTIES DESCRIPTION "C++ interface for the GTK+ GUI library"
+                                            URL "http://www.gtkmm.org/")
+endif()

@@ -17,3 +17,9 @@
 
 include(MacroStandardFindModule)
 macro_standard_find_module(GtkDatabox gtkdatabox)
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(GtkDatabox PROPERTIES DESCRIPTION "A GTK+ widget for live display of large amounts of fluctuating numerical data"
+                                                 URL "http://sourceforge.net/projects/gtkdatabox/")
+endif()

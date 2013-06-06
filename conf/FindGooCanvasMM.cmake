@@ -18,3 +18,8 @@
 include(MacroStandardFindModule)
 macro_standard_find_module(GooCanvasMM goocanvasmm-1.0)
 
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(GooCanvasMM PROPERTIES DESCRIPTION "A GtkMM wrapper for GooCanvas"
+                                                  URL "http://live.gnome.org/GooCanvas")
+endif()
