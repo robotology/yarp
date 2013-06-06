@@ -107,3 +107,10 @@ if(NOT ACE_FOUND)
     include(FindPackageHandleStandardArgs)
     find_package_handle_standard_args(ACE DEFAULT_MSG ACE_LIBRARIES ACE_INCLUDE_DIRS)
 endif()
+
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(ACE PROPERTIES DESCRIPTION "The ADAPTIVE Communication Environment"
+                                          URL "http://www.cs.wustl.edu/~schmidt/ACE.html")
+endif()

@@ -18,3 +18,8 @@
 include(MacroStandardFindModule)
 macro_standard_find_module(GooCanvas goocanvas)
 
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(GooCanvas PROPERTIES DESCRIPTION "A canvas widget for GTK+ that uses the cairo 2D library for drawing"
+                                                URL "https://live.gnome.org/GooCanvas")
+endif()

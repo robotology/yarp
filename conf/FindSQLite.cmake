@@ -17,3 +17,9 @@
 
 include(MacroStandardFindModule)
 macro_standard_find_module(SQLite sqlite3)
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(SQLite PROPERTIES DESCRIPTION "Self-contained, serverless, zero-configuration, transactional SQL database engine"
+                                             URL "http://sqlite.org/")
+endif()
