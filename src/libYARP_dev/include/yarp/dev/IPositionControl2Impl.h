@@ -110,7 +110,7 @@ public:
 
 
 /**
- * Stub implementation of IPositionControlRaw interface.
+ * Stub implementation of IPositionControl2Raw interface.
  * Inherit from this class if you want a stub implementation
  * of methods in IPositionControlRaw. This class allows to
  * gradually implement an interface; you just have to implement
