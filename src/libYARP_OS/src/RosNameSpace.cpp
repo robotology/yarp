@@ -43,13 +43,23 @@ Contact RosNameSpace::queryName(const char *name) {
     cmd.addString(toRosNodeName(node));
     NetworkBase::write(getNameServerContact(),
                        cmd, reply);
-    //printf("query: sent %s, got %s\n", cmd.toString().c_str(), reply.toString().c_str());
     Contact contact;
     if (reply.get(0).asInt()!=1) {
-        return contact;
+        cmd.clear();
+        reply.clear();
+        cmd.addString("lookupService");
+        cmd.addString("dummy_id");
+        cmd.addString(toRosNodeName(node));
+        NetworkBase::write(getNameServerContact(),
+                           cmd, reply);
     }
     contact = Contact::fromString(reply.get(2).asString());
-    contact = contact.addCarrier("xmlrpc");
+    // unfortunate differences in labeling carriers
+    if (contact.getCarrier()=="rosrpc") {
+        contact = contact.addCarrier(ConstString("rossrv+service.") + name + "+raw.2");
+    } else {
+        contact = contact.addCarrier("xmlrpc");
+    }
     contact = contact.addName(name);
 
     if (srv == "") return contact;
@@ -57,8 +67,9 @@ Contact RosNameSpace::queryName(const char *name) {
     // we need to go a step further and find a service
 
     contact = contact.addName("");
-    printf("Working with %s\n", contact.toString().c_str());
+    //printf("Working with %s\n", contact.toString().c_str());
     Bottle req;
+    reply.clear();
     req.addString("requestTopic");
     req.addString("dummy_id");
     req.addString(srv);
@@ -75,8 +86,13 @@ Contact RosNameSpace::queryName(const char *name) {
         return Contact();
     }
     if (pref->get(0).asString()!="TCPROS") {
-        fprintf(stderr,"Failure looking up service %s: unsupported protocol %s\n", srv.c_str(),
-                pref->get(0).asString().c_str());
+        if (pref->get(0).asString() == "faultString") {
+            fprintf(stderr,"Failure looking up service %s: %s\n", srv.c_str(),
+                    pref->toString().c_str());
+        } else {
+            fprintf(stderr,"Failure looking up service %s: unsupported protocol %s\n", srv.c_str(),
+                    pref->get(0).asString().c_str());
+        }
         return Contact();
     }
     Value hostname2 = pref->get(1);
@@ -84,8 +100,6 @@ Contact RosNameSpace::queryName(const char *name) {
     contact = contact.addSocket((ConstString("rossrv+service.")+srv + "+raw.2").c_str(),
                                 hostname2.asString().c_str(),
                                 portnum2.asInt());
-
-    printf("GOT %s\n", contact.toString().c_str());
 
     return contact;
 }

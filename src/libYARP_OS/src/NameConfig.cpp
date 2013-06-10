@@ -211,51 +211,22 @@ bool NameConfig::writeConfig(const String& fileName, const String& text) {
 
 
 
-String NameConfig::getHostName() {
+String NameConfig::getHostName(bool prefer_loopback) {
     // try to pick a good host identifier
 
     ConstString result = "127.0.0.1";
     bool loopback = true;
 
-#ifdef YARP_HAS_ACE
-    ACE_INET_Addr *ips = NULL;
-    size_t count = 0;
     // Pick an IPv4 address.
     // Prefer non-local addresses, then shorter addresses.
     // Avoid IPv6.
+#ifdef YARP_HAS_ACE
+    ACE_INET_Addr *ips = NULL;
+    size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
             ConstString ip = ips[i].get_host_addr();
-            YARP_DEBUG(Logger::get(), String("scanning network interface ") +
-                       ip.c_str());
-            bool take = false;
-            if (ip.find(":")==ConstString::npos) {
-                if (result=="localhost") {
-                    take = true; // can't be worse
-                }
-                if (loopback) {
-                    take = true; // can't be worse
-                } else if (ip.length()<result.length()) {
-                    take = true;
-                }
-            }
-            if (take) {
-                result = ip;
-#ifdef YARP_ACE_ADDR_HAS_LOOPBACK_METHOD
-                loopback = ips[i].is_loopback();
 #else
-                loopback = false;
-                if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
-                    ip == "127.0.1.1") {
-                    loopback = true;
-                }
-#endif
-            }
-        }
-        delete[] ips;
-    }
-#else
-
     int family, s;
     char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
     ConstString ip;
@@ -277,8 +248,13 @@ String NameConfig::getHostName() {
     			exit(EXIT_FAILURE);
     		}
     		ip = ConstString(hostname);
-            bool take = false;
-            if (ip[0]!=':') {
+#endif
+
+            YARP_DEBUG(Logger::get(), String("scanning network interface ") +
+                       ip.c_str());
+            bool take = prefer_loopback;
+            if (ip.find(":")!=ConstString::npos) continue;
+            if (!take) {
                 if (result=="localhost") {
                     take = true; // can't be worse
                 }
@@ -289,17 +265,27 @@ String NameConfig::getHostName() {
                 }
             }
             if (take) {
-                result = ip.c_str();
+                if (!prefer_loopback) result = ip;
                 loopback = false;
                 if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
-                		ip == "127.0.1.1") {
-                	loopback = true;
+                    ip == "127.0.1.1") {
+                    loopback = true;
+                }
+#ifdef YARP_HAS_ACE
+#ifdef YARP_ACE_ADDR_HAS_LOOPBACK_METHOD
+                loopback = ips[i].is_loopback();
+#endif
+#endif
+
+                if (prefer_loopback && loopback) {
+                    result = ip;
                 }
             }
-    	}
-    }
-
+        }
+#ifdef YARP_HAS_ACE
+        delete[] ips;
 #endif
+    }
 
     return result.c_str();
 }

@@ -9,6 +9,7 @@
 
 
 #include <yarp/os/impl/SocketTwoWayStream.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
@@ -26,9 +27,15 @@ int SocketTwoWayStream::open(const Address& address) {
     if (address.getPort()==-1) {
         return -1;
     }
+    String host = address.getName();
 #ifdef YARP_HAS_ACE
     ACE_SOCK_Connector connector;
-    ACE_INET_Addr addr(address.getPort(),address.getName().c_str());
+    if (address.getName() == "localhost") {
+        // ACE does not like localhost.  At all.
+        NameConfig config;
+        host = config.getHostName(true);
+    }
+    ACE_INET_Addr addr(address.getPort(),host.c_str());
     ACE_Time_Value openTimeout;
     ACE_Time_Value *timeout = NULL;
     if (address.hasTimeout()) {
@@ -46,7 +53,7 @@ int SocketTwoWayStream::open(const Address& address) {
         YARP_SPRINTF2(Logger::get(),
                       debug,
                       "TCP connection to tcp://%s:%d failed to open",
-                      address.getName().c_str(),
+                      host.c_str(),
                       address.getPort());
     }
     updateAddresses();
