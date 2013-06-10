@@ -17,7 +17,6 @@ CMAKE_OPTIONS="\
 -DENABLE_yarpcar_priority_carrier=TRUE \
 -DCREATE_IDLS=TRUE \
 -DENABLE_yarpidl_thrift=TRUE \
--DEXPERIMENTAL_ACEFIND=TRUE \
 "
 
 case $2 in
