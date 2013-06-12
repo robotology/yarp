@@ -307,13 +307,13 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
 {
     yarp::dev::ICalibrator *calibrator;
     if (!driver()->view(calibrator)) {
-        yError() << name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        yError() << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return NULL;
     }
 
     yarp::dev::IControlCalibration2 *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
-        yError() << target.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+        yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return NULL;
     }
 
@@ -370,13 +370,13 @@ bool RobotInterface::Device::park(const Device &target) const
 {
     yarp::dev::ICalibrator *calibrator;
     if (!driver()->view(calibrator)) {
-        yError() << name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
+        yError() << name() << "is not a yarp::dev::ICalibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return NULL;
     }
 
     yarp::dev::IControlCalibration2 *controlCalibrator;
     if (!target.driver()->view(controlCalibrator)) {
-        yError() << target.name() << "is not a calibrator, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
+        yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return NULL;
     }
 
