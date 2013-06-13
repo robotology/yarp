@@ -72,6 +72,7 @@ public:
         this->prefix = prefix;
         this->parent = &parent;
         verbose = 0;
+        stream = NULL;
         low = DEFAULT_WARN;
     }
 
