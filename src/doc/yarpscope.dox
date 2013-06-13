@@ -30,7 +30,7 @@ Here is an example of portscope description file in XML format:
 
 \code
 <?xml version="1.0" encoding="UTF-8" ?>
-<portscope rows="1" columns="2" carrier="mcast">
+<portscope rows="3" columns="3" carrier="mcast">
     <plot gridx="0"
           gridy="0"
           hspan="1"
@@ -143,7 +143,7 @@ This xml will produce a GUI similar to this:
 Details:
 
 \code
-<portscope rows="1" columns="2" carrier="mcast">
+<portscope rows="3" columns="3" carrier="mcast">
 \endcode
 
 - \a rows and \a columns is the size of the main table.
