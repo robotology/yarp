@@ -109,6 +109,21 @@ int main(int argc, char *argv[])
     // Create main window
     YarpScope::MainWindow mainWindow;
 
+// Deprecated options
+    // local
+    if (options.check("local")) {
+        warning() << "--local option is deprecated. YarpScope now uses \"${YARP_PORT_PREFIX}/YarpScope/${REMOTE_PORT_NAME}\"";
+    }
+
+    // rows
+    if (options.check("rows")) {
+        warning() << "--rows option is deprecated. Use XML mode if you need more than one plot in a single window\"";
+    }
+
+    // cols
+    if (options.check("cols")) {
+        warning() << "--cols option is deprecated. Use XML mode if you need more than one plot in a single window\"";
+    }
 
 // Generic options
     // title
@@ -143,22 +158,6 @@ int main(int argc, char *argv[])
             usage();
             exit(1);
         }
-    }
-
-// Deprecated options
-    // local
-    if (options.check("local")) {
-        warning() << "--local option is deprecated. YarpScope now uses \"${YARP_PORT_PREFIX}/YarpScope/${REMOTE_PORT_NAME}\"";
-    }
-
-    // rows
-    if (options.check("rows")) {
-        warning() << "--rows option is deprecated. Use XML mode if you need more than one plot in a single window\"";
-    }
-
-    // cols
-    if (options.check("cols")) {
-        warning() << "--cols option is deprecated. Use XML mode if you need more than one plot in a single window\"";
     }
 
     Gtk::Main::run(mainWindow);
