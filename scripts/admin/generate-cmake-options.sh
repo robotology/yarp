@@ -20,7 +20,7 @@ CMAKE_OPTIONS="\
 "
 
 case $2 in
-    macos)
+    MACOSX)
         CMAKE_OPTIONS="${CMAKE_OPTIONS} -DYARP_USE_GTK2=TRUE"
         ;;
 esac
