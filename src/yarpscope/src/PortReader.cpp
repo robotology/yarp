@@ -450,6 +450,7 @@ void YarpScope::PortReader::acquireData(const Glib::ustring &remotePortName,
     // Setup ConnectionStyle
     yarp::os::ContactStyle  style;
     style.persistent = persistent;
+    style.persistenceType = yarp::os::ContactStyle::END_WITH_TO_PORT;
     style.carrier = carrier.c_str();
     mPriv->acquireData(remotePortName, index, localPortName, &style);
 }
