@@ -49,7 +49,8 @@ void usage() {
     std::cout << "SIMPLE MODE (single remote):" << std::endl;
     std::cout << " --remote [string]      Remote port to connect to." << std::endl;
     std::cout << " --carrier [string]     YARP Carrier used for connections (default \"mcast\")" << std::endl;
-//     std::cout << " --no-persistent        Do not make persistent connections" << std::endl;
+    std::cout << " --persistent,          Make normal or persistent connections (default persistent)" << std::endl;
+    std::cout << "   --no-persistent" << std::endl;
     std::cout << " --index [...]          Index(es) of the vector to plot." << std::endl;
     std::cout << "                        It can be an [uint] or an array of [uint]s" << std::endl;
     std::cout << " --plot_title [string]  Plot title (default = remote)" << std::endl;
@@ -69,6 +70,9 @@ void usage() {
     std::cout << " --graph_size [...]     Graph size(s) (thickness of the points) (default = 1)" << std::endl;
     std::cout << "                        Depending on index it must be a [uint] or an array of [uint]s." << std::endl;
     std::cout << std::endl;
+
+// These options are here to give a hint to the user about how these
+// options from the old qt3 portscope are supposed to be replaced.
     std::cout << "LEGACY OPTIONS (deprecated and unused):" << std::endl;
     std::cout << " --local [string]       Use YARP_PORT_PREFIX environment variable to modify default value." << std::endl;
     std::cout << " --rows [uint]          Only one plot is supported from command line. Use XML mode instead." << std::endl;
@@ -81,7 +85,7 @@ int main(int argc, char *argv[])
     // Setup resource finder
     yarp::os::ResourceFinder rf;
     rf.setVerbose();
-    rf.setDefaultContext("yarpscope/conf");
+    // TODO Read default values from yarpscope.ini
     rf.setDefaultConfigFile("yarpscope.ini");
     rf.configure(argc, argv);
 
@@ -109,6 +113,21 @@ int main(int argc, char *argv[])
     // Create main window
     YarpScope::MainWindow mainWindow;
 
+// Deprecated options
+    // local
+    if (options.check("local")) {
+        warning() << "--local option is deprecated. YarpScope now uses \"${YARP_PORT_PREFIX}/YarpScope/${REMOTE_PORT_NAME}\"";
+    }
+
+    // rows
+    if (options.check("rows")) {
+        warning() << "--rows option is deprecated. Use XML mode if you need more than one plot in a single window\"";
+    }
+
+    // cols
+    if (options.check("cols")) {
+        warning() << "--cols option is deprecated. Use XML mode if you need more than one plot in a single window\"";
+    }
 
 // Generic options
     // title
@@ -143,22 +162,6 @@ int main(int argc, char *argv[])
             usage();
             exit(1);
         }
-    }
-
-// Deprecated options
-    // local
-    if (options.check("local")) {
-        warning() << "--local option is deprecated. YarpScope now uses \"${YARP_PORT_PREFIX}/YarpScope/${REMOTE_PORT_NAME}\"";
-    }
-
-    // rows
-    if (options.check("rows")) {
-        warning() << "--rows option is deprecated. Use XML mode if you need more than one plot in a single window\"";
-    }
-
-    // cols
-    if (options.check("cols")) {
-        warning() << "--cols option is deprecated. Use XML mode if you need more than one plot in a single window\"";
     }
 
     Gtk::Main::run(mainWindow);

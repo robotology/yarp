@@ -34,7 +34,6 @@ private:
     bool readResult, readActive, readBackground, willReply, closed, opened;
     bool replyDue;
     bool dropDue;
-    bool autoSet;
     SemaphoreImpl produce, consume, readBlock;
     PortReaderCreator *recReadCreator;
     int recWaitAfterSend;

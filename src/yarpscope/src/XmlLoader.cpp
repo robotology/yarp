@@ -19,6 +19,10 @@
 #include <stdexcept>
 
 namespace {
+    static const int default_portscope_rows = 1;
+    static const int default_portscope_columns = 1;
+    static const Glib::ustring default_portscope_carrier = "mcast";
+    static bool default_portscope_persistent = true;
     static const int default_plot_gridx = -1;
     static const int default_plot_gridy = -1;
     static const int default_plot_hspan = 1;
@@ -31,13 +35,10 @@ namespace {
     static const bool default_plot_triggermode = false;
     static const int default_graph_size = 1;
     static const Glib::ustring default_graph_type = "lines";
-    static const Glib::ustring default_connection_carrier = "mcast";
-    static bool default_connection_persistent = true;
 }
 
-// FIXME check if rows and colums are used, or if the table is resized
+// FIXME check if rows and columns are used, or if the table is resized
 //       automatically
-// FIXME check that plot_gridx and plot_gridy are >= 0.
 // FIXME set default plot bgcolor
 // FIXME set default graph color
 
@@ -62,17 +63,32 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         fatal() << "Syntax error while loading" << filename << ". Root element should be \"portscope\", found" << rootElem->Value();
     }
 
-    Glib::ustring connection_carrier;
-    bool connection_persistent;
+    int portscope_rows, portscope_columns;
+    Glib::ustring portscope_carrier;
+    bool portscope_persistent;
 
-    if (const char *t = rootElem->Attribute("carrier")) {
-        connection_carrier = t;
-    } else {
-        connection_carrier = default_connection_carrier;
+    if (rootElem->QueryIntAttribute("rows", &portscope_rows) != TIXML_SUCCESS || portscope_rows < 1) {
+        portscope_rows = default_portscope_rows;
     }
 
-    // TODO read from command line whether connections should be persistent or not
-    connection_persistent = default_connection_persistent;
+    if (rootElem->QueryIntAttribute("columns", &portscope_columns) != TIXML_SUCCESS || portscope_columns < 1) {
+        portscope_columns = default_portscope_columns;
+    }
+
+    if (portscope_rows != 1 || portscope_columns != 1) {
+        plotManager.setupTable(portscope_rows, portscope_columns);
+    }
+
+
+    if (const char *t = rootElem->Attribute("carrier")) {
+        portscope_carrier = t;
+    } else {
+        portscope_carrier = default_portscope_carrier;
+    }
+
+    if (rootElem->QueryBoolAttribute("persistent", &portscope_persistent) != TIXML_SUCCESS) {
+        portscope_persistent = default_portscope_persistent;
+    }
 
     for (TiXmlElement *plotElem = rootElem->FirstChildElement(); plotElem != 0; plotElem = plotElem->NextSiblingElement()) {
         if (Glib::ustring(plotElem->Value()).compare("plot") != 0) {
@@ -158,7 +174,7 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
                 graph_size = default_graph_size;
             }
 
-            portReader.acquireData(graph_remote, graph_index, "", connection_carrier, connection_persistent);
+            portReader.acquireData(graph_remote, graph_index, "", portscope_carrier, portscope_persistent);
             plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
         }
     }

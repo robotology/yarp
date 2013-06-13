@@ -20,13 +20,14 @@ CMAKE_OPTIONS="\
 "
 
 case $2 in
-    macos)
+    MacOSX)
         CMAKE_OPTIONS="${CMAKE_OPTIONS} -DYARP_USE_GTK2=TRUE"
         ;;
 esac
 
 case $3 in
     experimental)
-        CMAKE_OPTIONS="$CMAKE_OPTIONS -DCREATE_GYARPBUILDER:BOOL=TRUE"
+       # YARP_USE_GTK2 may end up included twice, but that is ok
+        CMAKE_OPTIONS="$CMAKE_OPTIONS -DYARP_USE_GTK2=TRUE -DCREATE_GYARPBUILDER:BOOL=TRUE"
         ;;
 esac

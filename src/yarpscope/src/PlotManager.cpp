@@ -31,9 +31,9 @@ class YarpScope::PlotManager::Private
 {
 public:
     Private(PlotManager *p) :
-        parent(p)
+        parent(p),
+        table(1, 1, true)
     {
-        table.set_homogeneous(true);
         table.set_col_spacings(4);
         table.set_row_spacings(4);
     }
@@ -75,6 +75,11 @@ YarpScope::PlotManager& YarpScope::PlotManager::instance()
     }
 
     return *s_instance;
+}
+
+void YarpScope::PlotManager::setupTable(int rows, int columns)
+{
+    mPriv->table.resize(rows, columns);
 }
 
 int YarpScope::PlotManager::addPlot(const Glib::ustring &title,

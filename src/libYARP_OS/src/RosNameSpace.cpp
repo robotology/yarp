@@ -12,6 +12,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/Vocab.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -43,13 +44,23 @@ Contact RosNameSpace::queryName(const char *name) {
     cmd.addString(toRosNodeName(node));
     NetworkBase::write(getNameServerContact(),
                        cmd, reply);
-    //printf("query: sent %s, got %s\n", cmd.toString().c_str(), reply.toString().c_str());
     Contact contact;
     if (reply.get(0).asInt()!=1) {
-        return contact;
+        cmd.clear();
+        reply.clear();
+        cmd.addString("lookupService");
+        cmd.addString("dummy_id");
+        cmd.addString(toRosNodeName(node));
+        NetworkBase::write(getNameServerContact(),
+                           cmd, reply);
     }
     contact = Contact::fromString(reply.get(2).asString());
-    contact = contact.addCarrier("xmlrpc");
+    // unfortunate differences in labeling carriers
+    if (contact.getCarrier()=="rosrpc") {
+        contact = contact.addCarrier(ConstString("rossrv+service.") + name + "+raw.2");
+    } else {
+        contact = contact.addCarrier("xmlrpc");
+    }
     contact = contact.addName(name);
 
     if (srv == "") return contact;
@@ -57,8 +68,9 @@ Contact RosNameSpace::queryName(const char *name) {
     // we need to go a step further and find a service
 
     contact = contact.addName("");
-    printf("Working with %s\n", contact.toString().c_str());
+    //printf("Working with %s\n", contact.toString().c_str());
     Bottle req;
+    reply.clear();
     req.addString("requestTopic");
     req.addString("dummy_id");
     req.addString(srv);
@@ -75,8 +87,13 @@ Contact RosNameSpace::queryName(const char *name) {
         return Contact();
     }
     if (pref->get(0).asString()!="TCPROS") {
-        fprintf(stderr,"Failure looking up service %s: unsupported protocol %s\n", srv.c_str(),
-                pref->get(0).asString().c_str());
+        if (pref->get(0).asString() == "faultString") {
+            fprintf(stderr,"Failure looking up service %s: %s\n", srv.c_str(),
+                    pref->toString().c_str());
+        } else {
+            fprintf(stderr,"Failure looking up service %s: unsupported protocol %s\n", srv.c_str(),
+                    pref->get(0).asString().c_str());
+        }
         return Contact();
     }
     Value hostname2 = pref->get(1);
@@ -84,8 +101,6 @@ Contact RosNameSpace::queryName(const char *name) {
     contact = contact.addSocket((ConstString("rossrv+service.")+srv + "+raw.2").c_str(),
                                 hostname2.asString().c_str(),
                                 portnum2.asInt());
-
-    printf("GOT %s\n", contact.toString().c_str());
 
     return contact;
 }
@@ -481,7 +496,8 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     ConstString key = in.get(0).asString();
     ConstString arg1 = in.get(1).asString();
 
-    Bottle cmd2;
+    Bottle cmd2, cache;
+    bool use_cache = false;
     if (key=="query") {
         Contact c = queryName(arg1.c_str()).addName("");
         Bottle reply2;
@@ -494,14 +510,64 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
     } else if (key=="list") {
         cmd2.addString("getSystemState");
         cmd2.addString("dummy_id");
+        use_cache = true;
     } else {
         return false;
     }
     bool ok = NetworkBase::write(getNameServerContact(),
                                  cmd2,
-                                 reply,
+                                 *(use_cache?&cache:&reply),
                                  style);
-    printf("ok? %d\n", ok);
+    if (!ok) {
+        fprintf(stderr,"Failed to contact ROS server\n");
+        return false;
+    }
+
+    if (key=="list") {
+        Bottle out;
+        out.addVocab(Vocab::encode("many"));
+        Bottle *parts = cache.get(2).asList();
+        Property nodes;
+        Property topics;
+        Property services;
+        if (parts) {
+            for (int i=0; i<3; i++) {
+                Bottle *part = parts->get(i).asList();
+                if (!part) continue;
+                for (int j=0; j<part->size(); j++) {
+                    Bottle *unit = part->get(j).asList();
+                    if (!unit) continue;
+                    ConstString stem = unit->get(0).asString();
+                    Bottle *links = unit->get(1).asList();
+                    if (!links) continue;
+                    if (i<2) {
+                        topics.put(stem,1);
+                    } else {
+                        services.put(stem,1);
+                    }
+                    for (int j=0; j<links->size(); j++) {
+                        nodes.put(links->get(j).asString(),1);
+                    }
+                }
+            }
+            Property *props[3] = {&nodes, &topics, &services};
+            const char *title[3] = {"node", "topic", "service"};
+            for (int p=0; p<3; p++) {
+                Bottle blist;
+                blist.read(*props[p]);
+                for (int i=0; i<blist.size(); i++) {
+                    ConstString name = blist.get(i).asList()->get(0).asString();
+                    Bottle& info = out.addList();
+                    info.addString(title[p]);
+                    info.addString(name);
+                }
+            }
+        }
+        //if (parts) out.append(*parts);
+        out.write(reply);
+    }
+
+
     return ok;
 
 }

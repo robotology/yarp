@@ -49,7 +49,7 @@ public:
 
     void setAddress(const Address& address);
 
-    static String getHostName();
+    static String getHostName(bool prefer_loopback = false);
 
     static String getIps();
 

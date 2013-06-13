@@ -31,6 +31,8 @@ public:
 
     static PlotManager& instance();
 
+    void setupTable(int rows, int columns);
+
     int addPlot(const Glib::ustring &title,
                 int gridx,
                 int gridy,
