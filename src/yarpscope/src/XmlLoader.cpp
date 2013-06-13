@@ -68,11 +68,11 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
     Glib::ustring portscope_carrier;
     bool portscope_persistent;
 
-    if (rootElem->QueryIntAttribute("rows", &portscope_rows) != TIXML_SUCCESS || portscope_rows < 0) {
+    if (rootElem->QueryIntAttribute("rows", &portscope_rows) != TIXML_SUCCESS || portscope_rows < 1) {
         portscope_rows = default_portscope_rows;
     }
 
-    if (rootElem->QueryIntAttribute("colums", &portscope_columns) != TIXML_SUCCESS || portscope_columns < 0) {
+    if (rootElem->QueryIntAttribute("columns", &portscope_columns) != TIXML_SUCCESS || portscope_columns < 1) {
         portscope_columns = default_portscope_columns;
     }
 
