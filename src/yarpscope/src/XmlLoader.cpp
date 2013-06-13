@@ -76,6 +76,11 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         portscope_columns = default_portscope_columns;
     }
 
+    if (portscope_rows != 1 || portscope_columns != 1) {
+        plotManager.setupTable(portscope_rows, portscope_columns);
+    }
+
+
     if (const char *t = rootElem->Attribute("carrier")) {
         portscope_carrier = t;
     } else {
