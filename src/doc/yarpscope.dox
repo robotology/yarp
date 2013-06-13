@@ -147,9 +147,10 @@ Details:
 \endcode
 
 - \a rows and \a columns is the size of the main table.
-(Note: rows * columns does not necessarily correspond to the number of plots,
-since for each plot you can set \a hspan and \a vspan) [optional]
-- \a "carrier" is the carrier that will be used for connections (default = mcast) [optional]
+(Note: rows * columns does not necessarily corresponds to the number of plots,
+since for each plot you can set \a hspan and \a vspan). Also if your grid is
+bigger than what you declare here, it is resized automatically [optional].
+- \a "carrier" is the carrier that will be used for connections (default = mcast) [optional].
 
 
 Now declare a plot:
@@ -167,7 +168,9 @@ Now declare a plot:
 \endcode
 
 - \a gridx and \a gridy are the position in the main table of the portscope.
-(0,0) is the top-left plot [mandatory].
+\a gridx corresponds to the column (the first colums
+index is 0), and \a gridy is corresponds to the row. Columns and rows are
+indexed from zero, therefore (0,0) is the top-left plot [mandatory].
 - \a hspan and \a vspan are the number of cells in the main table that the plot will
 take [optional, default = (1,1)].
 - \a title is the title of the plot [optional, currently unused].
