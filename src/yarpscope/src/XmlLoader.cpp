@@ -19,6 +19,8 @@
 #include <stdexcept>
 
 namespace {
+    static const int default_portscope_rows = 1;
+    static const int default_portscope_columns = 1;
     static const int default_plot_gridx = -1;
     static const int default_plot_gridy = -1;
     static const int default_plot_hspan = 1;
@@ -62,8 +64,17 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         fatal() << "Syntax error while loading" << filename << ". Root element should be \"portscope\", found" << rootElem->Value();
     }
 
+    int portscope_rows, portscope_columns;
     Glib::ustring connection_carrier;
     bool connection_persistent;
+
+    if (rootElem->QueryIntAttribute("rows", &portscope_rows) != TIXML_SUCCESS || portscope_rows < 0) {
+        portscope_rows = default_portscope_rows;
+    }
+
+    if (rootElem->QueryIntAttribute("colums", &portscope_columns) != TIXML_SUCCESS || portscope_columns < 0) {
+        portscope_columns = default_portscope_columns;
+    }
 
     if (const char *t = rootElem->Attribute("carrier")) {
         connection_carrier = t;
