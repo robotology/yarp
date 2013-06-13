@@ -70,6 +70,9 @@ void usage() {
     std::cout << " --graph_size [...]     Graph size(s) (thickness of the points) (default = 1)" << std::endl;
     std::cout << "                        Depending on index it must be a [uint] or an array of [uint]s." << std::endl;
     std::cout << std::endl;
+
+// These options are here to give a hint to the user about how these
+// options from the old qt3 portscope are supposed to be replaced.
     std::cout << "LEGACY OPTIONS (deprecated and unused):" << std::endl;
     std::cout << " --local [string]       Use YARP_PORT_PREFIX environment variable to modify default value." << std::endl;
     std::cout << " --rows [uint]          Only one plot is supported from command line. Use XML mode instead." << std::endl;

@@ -48,7 +48,6 @@ YarpScope::SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property &opti
         portscope_carrier = default_portscope_carrier;
     }
 
-    // TODO read from command line whether connections should be persistent or not
     if (options.check("no-persistent")) {
         portscope_persistent = false;
     } else if (options.check("persistent")) {
