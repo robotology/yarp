@@ -82,8 +82,9 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
         connection_carrier = default_connection_carrier;
     }
 
-    // TODO read from command line whether connections should be persistent or not
-    connection_persistent = default_connection_persistent;
+    if (rootElem->QueryBoolAttribute("persistent", &connection_persistent) != TIXML_SUCCESS) {
+        connection_persistent = default_connection_persistent;
+    }
 
     for (TiXmlElement *plotElem = rootElem->FirstChildElement(); plotElem != 0; plotElem = plotElem->NextSiblingElement()) {
         if (Glib::ustring(plotElem->Value()).compare("plot") != 0) {
