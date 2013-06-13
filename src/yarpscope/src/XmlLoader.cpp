@@ -21,6 +21,8 @@
 namespace {
     static const int default_portscope_rows = 1;
     static const int default_portscope_columns = 1;
+    static const Glib::ustring default_portscope_carrier = "mcast";
+    static bool default_portscope_persistent = true;
     static const int default_plot_gridx = -1;
     static const int default_plot_gridy = -1;
     static const int default_plot_hspan = 1;
@@ -33,8 +35,6 @@ namespace {
     static const bool default_plot_triggermode = false;
     static const int default_graph_size = 1;
     static const Glib::ustring default_graph_type = "lines";
-    static const Glib::ustring default_connection_carrier = "mcast";
-    static bool default_connection_persistent = true;
 }
 
 // FIXME check if rows and colums are used, or if the table is resized
@@ -65,8 +65,8 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
     }
 
     int portscope_rows, portscope_columns;
-    Glib::ustring connection_carrier;
-    bool connection_persistent;
+    Glib::ustring portscope_carrier;
+    bool portscope_persistent;
 
     if (rootElem->QueryIntAttribute("rows", &portscope_rows) != TIXML_SUCCESS || portscope_rows < 0) {
         portscope_rows = default_portscope_rows;
@@ -77,13 +77,13 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
     }
 
     if (const char *t = rootElem->Attribute("carrier")) {
-        connection_carrier = t;
+        portscope_carrier = t;
     } else {
-        connection_carrier = default_connection_carrier;
+        portscope_carrier = default_portscope_carrier;
     }
 
-    if (rootElem->QueryBoolAttribute("persistent", &connection_persistent) != TIXML_SUCCESS) {
-        connection_persistent = default_connection_persistent;
+    if (rootElem->QueryBoolAttribute("persistent", &portscope_persistent) != TIXML_SUCCESS) {
+        portscope_persistent = default_portscope_persistent;
     }
 
     for (TiXmlElement *plotElem = rootElem->FirstChildElement(); plotElem != 0; plotElem = plotElem->NextSiblingElement()) {
@@ -170,7 +170,7 @@ YarpScope::XmlLoader::XmlLoader(const Glib::ustring& filename)
                 graph_size = default_graph_size;
             }
 
-            portReader.acquireData(graph_remote, graph_index, "", connection_carrier, connection_persistent);
+            portReader.acquireData(graph_remote, graph_index, "", portscope_carrier, portscope_persistent);
             plotManager.addGraph(plotIndex, graph_remote, graph_index, graph_title, graph_color, graph_type, graph_size);
         }
     }
