@@ -30,7 +30,9 @@ if (YARP_HAS_MATH_LIB)
   include_directories(${GSL_INCLUDE_DIRS})
 
   add_library(YARP_math ${folder_source} ${folder_header})
-  target_link_libraries(YARP_math YARP_sig YARP_OS ${MATH_LIB_EXTRAS})
+  target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
+  target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
+  target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
   install(TARGETS YARP_math EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_math)
 
