@@ -73,7 +73,7 @@ macro(YARP_IDL thrift)
         get_filename_component(thrift_base ${thrift} NAME_WE)
         set(SRC_INDEX ${thrift_base}_index.txt)
         set(SRC_NAME ${thrift_base})
-        configure_file(${YARP_MODULE_PATH}/template/YarpTweakIDL.cmake.in ${dir}/tweak.cmake @ONLY)
+        configure_file(${YARP_MODULE_DIR}/template/YarpTweakIDL.cmake.in ${dir}/tweak.cmake @ONLY)
 
         get_filename_component(path_trift ${thrift} ABSOLUTE)
         if(NOT path_thrift)
@@ -130,7 +130,7 @@ macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
         # generate during cmake configuration, so we have all the names of generated files
         find_program(YARPIDL_${family}_LOCATION yarpidl_${family} HINTS ${YARP_IDL_BINARY_HINT})
         make_directory(${dir})
-        configure_file(${YARP_MODULE_PATH}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
+        configure_file(${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
         execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
         execute_process(COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake)
