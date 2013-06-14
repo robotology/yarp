@@ -16,10 +16,10 @@ FIND_PACKAGE(OpenCV REQUIRED)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/common)
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-LINK_LIBRARIES(${OpenCV_LIBRARIES})
-LINK_LIBRARIES(${ACE_LIBRARIES})
-LINK_LIBRARIES(${YARP_LIBRARIES})
 yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
+target_link_libraries(yarp_opencv LINK_PRIVATE ${YARP_LIBRARIES})
+target_link_libraries(yarp_opencv LINK_PRIVATE ${ACE_LIBRARIES})
+target_link_libraries(yarp_opencv LINK_PRIVATE ${OpenCV_LIBRARIES})
 
 configure_file(opencv_grabber.xml ${CMAKE_BINARY_DIR}/modules/opencv_grabber.xml COPYONLY)
 if(YARP_TREE_INCLUDE_DIRS)

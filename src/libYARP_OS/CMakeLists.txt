@@ -30,7 +30,7 @@ if (NOT SKIP_ACE)
 endif ()
 
 add_library(YARP_OS ${folder_source} ${folder_header})
-target_link_libraries(YARP_OS ${ACE_LIBRARIES})
+target_link_libraries(YARP_OS LINK_PRIVATE ${ACE_LIBRARIES})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(YARP_OS pthread)
