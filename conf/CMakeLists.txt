@@ -39,7 +39,7 @@ install(FILES ${YARP_CMAKE_FILES}
        COMPONENT scripts
        DESTINATION share/yarp/cmake)
 
-if(${CMAKE_VERSION} VERSION_LESS 2.8.11.2)
+if(CMAKE_VERSION VERSION_LESS 2.8.11.2)
     set(YARP_CMAKE_2_8_11_2_FILES cmake-2.8.11.2/Modules/FindGTK2.cmake
                                   cmake-2.8.11.2/Modules/FindPackageHandleStandardArgs.cmake
                                   cmake-2.8.11.2/Modules/FindPackageMessage.cmake
