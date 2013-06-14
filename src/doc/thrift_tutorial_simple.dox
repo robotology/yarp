@@ -49,7 +49,6 @@ find_package(YARP REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${YARP_MODULE_PATH})
 include(YarpIDL)
 
-
 #compile definition file to generate source code into the desired directory
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
 yarp_idl_to_dir(demo.thrift ${generated_libs_dir})

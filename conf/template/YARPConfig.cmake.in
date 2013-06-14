@@ -69,7 +69,7 @@ if(NOT YARP_FOUND)
 
     # Disable deprecated warnings
     # FIXME 2.4 re-enable these warnings before releasing YARP 2.4
-    set (YARP_NO_DEPRECATED_WARNINGS TRUE)
+    set(YARP_NO_DEPRECATED_WARNINGS TRUE)
 
-    set (YARP_FOUND TRUE)
+    set(YARP_FOUND TRUE)
 endif(NOT YARP_FOUND)
