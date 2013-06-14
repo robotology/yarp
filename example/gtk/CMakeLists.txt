@@ -7,10 +7,10 @@ cmake_minimum_required(VERSION 2.8.7)
 project(gtkdemo)
 
 find_package(YARP REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 link_libraries(${YARP_LIBRARIES})
 include_directories(${YARP_INCLUDE_DIRS})
 
-set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 find_package(GtkPlus REQUIRED)
 add_definitions(${GTKPLUS_C_FLAGS})
 link_libraries(${GTKPLUS_LINK_FLAGS})
