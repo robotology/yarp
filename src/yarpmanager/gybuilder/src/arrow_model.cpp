@@ -213,8 +213,9 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
     Goocanvas::Points points = this->property_points().get_value();
     setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
+	updatCoordiantes();
     setLabel(strLabel.c_str());
-    updatLabelCoordiante();
+    updatLabelCoordiante();	
     //printf("%s : %d\n", __FILE__, __LINE__); 
 }
     
