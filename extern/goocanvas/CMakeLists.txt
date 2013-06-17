@@ -6,14 +6,41 @@
 # GooCanvas
 project(YARP_goocanvas)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/goocanvas
-                    ${CMAKE_CURRENT_SOURCE_DIR}/goocanvas/src)
 
 if(YARP_USE_GTK2)
-    include_directories(${GTK2_INCLUDE_DIRS})
+    set(GooCanvas_GTK2_INCLUDE_DIRS ${GTK2_ATK_INCLUDE_DIR}
+                                    ${GTK2_CAIRO_INCLUDE_DIR}
+                                    ${GTK2_FONTCONFIG_INCLUDE_DIR}
+                                    ${GTK2_GDKCONFIG_INCLUDE_DIR}
+                                    ${GTK2_GDK_INCLUDE_DIR}
+                                    ${GTK2_GDK_PIXBUF_INCLUDE_DIR}
+                                    ${GTK2_GLIBCONFIG_INCLUDE_DIR}
+                                    ${GTK2_GLIB_INCLUDE_DIR}
+                                    ${GTK2_GOBJECT_INCLUDE_DIR}
+                                    ${GTK2_GTK_INCLUDE_DIR}
+                                    ${GTK2_PANGO_INCLUDE_DIR}
+                                    ${FREETYPE_INCLUDE_DIR_freetype2}
+                                    ${FREETYPE_INCLUDE_DIR_ft2build})
+    set(GooCanvas_GTK2_LIBRARIES ${GTK2_ATK_LIBRARY}
+                                 ${GTK2_CAIRO_LIBRARY}
+                                 ${GTK2_GDK_LIBRARY}
+                                 ${GTK2_GDK_PIXBUF_LIBRARY}
+                                 ${GTK2_GLIB_LIBRARY}
+                                 ${GTK2_GOBJECT_LIBRARY}
+                                 ${GTK2_GTK_LIBRARY}
+                                 ${GTK2_PANGO_LIBRARY}
+                                 ${GTK2_PANGOCAIRO_LIBRARY})
+
 else(YARP_USE_GTK2)
-    include_directories(${GtkPlus_INCLUDE_DIRS})
+   set(GooCanvas_GTK2_INCLUDE_DIRS ${GtkPlus_INCLUDE_DIRS})
+   set(GooCanvas_GTK2_LIBRARIES ${GtkPlus_LIBRARIES})
 endif(YARP_USE_GTK2)
+
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/goocanvas
+                    ${CMAKE_CURRENT_SOURCE_DIR}/goocanvas/src
+                    ${GooCanvas_GTK2_INCLUDE_DIRS})
+
 
 set(goocanvas_SRCS
     goocanvas/src/goocanvas.c
@@ -34,8 +61,7 @@ set(goocanvas_SRCS
     goocanvas/src/goocanvastext.c
     goocanvas/src/goocanvasgrid.c
     goocanvas/src/goocanvasrect.c
-    goocanvas/src/goocanvaspolyline.c
-)
+    goocanvas/src/goocanvaspolyline.c)
 
 set(goocanvas_HDRS
     goocanvas/src/goocanvasgroup.h
@@ -57,10 +83,11 @@ set(goocanvas_HDRS
     goocanvas/src/goocanvaspolyline.h
     goocanvas/src/goocanvasmarshal.h
     goocanvas/src/goocanvasitem.h
-    goocanvas/src/goocanvasrect.h
-)
+    goocanvas/src/goocanvasrect.h)
 
 add_library(YARP_goocanvas STATIC ${goocanvas_SRCS} ${goocanvas_HDRS})
+
+target_link_libraries(YARP_goocanvas LINK_PRIVATE ${GooCanvas_GTK2_LIBRARIES})
 
 if(MSVC)
     add_definitions(/D_USE_MATH_DEFINES /wd4018 /wd4244)
@@ -80,14 +107,10 @@ if(UNIX)
     endif(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
 endif(UNIX)
 
-set(GooCanvas_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/goocanvas/src" CACHE PATH "GooCanvas include directory" FORCE)
+set(GooCanvas_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/goocanvas/src
+                           ${GooCanvas_GTK2_INCLUDE_DIRS}
+                           CACHE PATH "GooCanvas include directory" FORCE)
+set(GooCanvas_LIBRARIES YARP_goocanvas CACHE STRING "GooCanvas libraries" FORCE)
+set(GooCanvas_DEFINITIONS "" CACHE STRING "Additional compiler flags for GooCanvas" FORCE)
 
-if(YARP_USE_GTK2)
-    set(GooCanvas_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "GooCanvas library directory" FORCE)
-    set(GooCanvas_LIBRARIES "YARP_goocanvas;${GTK2_GLIB_LIBRARY};${GTK2_GOBJECT_LIBRARY};${GTK2_GDK_LIBRARY};${GTK2_GTK_LIBRARY};${GTK2_PANGO_LIBRARY};${GTK2_CAIRO_LIBRARY};" CACHE STRING "GooCanvas libraries" FORCE)
-else(YARP_USE_GTK2)
-    set(GooCanvas_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib;${GTKPLUS_LIBRARY_DIRS}" CACHE PATH "GooCanvas library directory" FORCE)
-    set(GooCanvas_LIBRARIES "YARP_goocanvas;${GTKPLUS_LIBRARIES}" CACHE STRING "GooCanvas libraries" FORCE)
-endif(YARP_USE_GTK2)
-
-mark_as_advanced(GooCanvas_INCLUDE_DIRS GooCanvas_LIBRARY_DIRS GooCanvas_LIBRARIES)
+mark_as_advanced(GooCanvas_INCLUDE_DIRS GooCanvas_LIBRARIES GooCanvas_DEFINITIONS)
