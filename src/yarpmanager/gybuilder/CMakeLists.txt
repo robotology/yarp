@@ -58,6 +58,7 @@ if(YARP_USE_GTK2)
                                        ${GTK2_GTK_LIBRARY}
                                        ${GTK2_GDK_LIBRARY}
                                        ${GTK2_GLIB_LIBRARY}
+                                       ${GTK2_PANGOCAIRO_LIBRARY}
                                        ${GTK2_GTKMM_LIBRARY}
                                        ${GTK2_GLIBMM_LIBRARY}
                                        ${GTK2_GDKMM_LIBRARY}
