@@ -33,8 +33,9 @@ else(YARP_USE_GTK2)
 endif(YARP_USE_GTK2)
 
 
-include_directories(${GtkDatabox_INCLUDE_DIRS}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox/
+                    ${GtkDatabox_INCLUDE_DIRS}
+                    ${GtkDataboxMM_GTK2_INCLUDE_DIRS})
 
 
 set(gtkdataboxmm_SRCS
@@ -84,7 +85,8 @@ set(gtkdataboxmm_HDRS
 
 add_library(YARP_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
-target_link_libraries(YARP_gtkdataboxmm LINK_PRIVATE ${GtkDataboxMM_GTK2_LIBRARIES})
+target_link_libraries(YARP_gtkdataboxmm LINK_PRIVATE ${GtkDatabox_LIBRARIES}
+                                                     ${GtkDataboxMM_GTK2_LIBRARIES})
 
 if(MSVC)
     add_definitions(/wd4250)
