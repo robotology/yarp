@@ -12,6 +12,8 @@ if(YARP_USE_GTK2)
                                        ${GTK2_CAIROMM_INCLUDE_DIR}
                                        ${GTK2_GDKMMCONFIG_INCLUDE_DIR}
                                        ${GTK2_GDKMM_INCLUDE_DIR}
+                                       ${GTK2_GIOMMCONFIG_INCLUDE_DIR}
+                                       ${GTK2_GIOMM_INCLUDE_DIR}
                                        ${GTK2_GLIBMMCONFIG_INCLUDE_DIR}
                                        ${GTK2_GLIBMM_INCLUDE_DIR}
                                        ${GTK2_GTKMMCONFIG_INCLUDE_DIR}
