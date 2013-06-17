@@ -20,10 +20,11 @@ add_library(YARP_sqlite STATIC ${sqlite_SRCS})
 
 if(UNIX)
     set_target_properties(YARP_sqlite PROPERTIES COMPILE_FLAGS -fPIC)
-    target_link_libraries(YARP_sqlite pthread)
+    target_link_libraries(YARP_sqlite LINK_PRIVATE pthread)
 endif(UNIX)
 
-set(SQLite_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/sqlite" CACHE PATH "SQLite include directory" FORCE)
-set(SQLite_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "SQLite library directory" FORCE)
-set(SQLite_LIBRARIES "YARP_sqlite" CACHE STRING "SQLite libraries" FORCE)
-mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARY_DIRS SQLite_LIBRARIES)
+set(SQLite_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite CACHE PATH "SQLite include directory" FORCE)
+set(SQLite_LIBRARIES YARP_sqlite CACHE STRING "SQLite libraries" FORCE)
+set(SQLite_DEFINITIONS "" CACHE STRING "Additional compiler flags for SQLite" FORCE)
+
+mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARIES SQLite_DEFINITIONS)

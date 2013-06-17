@@ -26,7 +26,8 @@ if(UNIX)
     set_target_properties(YARP_tinyxml PROPERTIES COMPILE_FLAGS -fPIC)
 endif(UNIX)
 
-set(TinyXML_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tinyxml" CACHE PATH "TinyXML include directory" FORCE)
-set(TinyXML_LIBRARY_DIRS "${CMAKE_BINARY_DIR}/lib" CACHE PATH "TinyXML library directory" FORCE)
+set(TinyXML_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/tinyxml CACHE PATH "TinyXML include directory" FORCE)
 set(TinyXML_LIBRARIES "YARP_tinyxml" CACHE STRING "TinyXML libraries" FORCE)
-mark_as_advanced(TinyXML_INCLUDE_DIRS TinyXML_LIBRARY_DIRS TinyXML_LIBRARIES)
+set(TinyXML_DEFINITIONS "-DTIXML_USE_STL" CACHE STRING "Additional compiler flags for TinyXML" FORCE)
+
+mark_as_advanced(TinyXML_INCLUDE_DIRS TinyXML_LIBRARIES TinyXML_DEFINITIONS)
