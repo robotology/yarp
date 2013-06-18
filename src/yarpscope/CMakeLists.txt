@@ -22,9 +22,7 @@ if(CREATE_YARPSCOPE)
 
     add_subdirectory(src)
     
-    configure_file(yarpscope.xml ${CMAKE_BINARY_DIR}/modules/yarpscope.xml COPYONLY)
-    if(YARP_TREE_INCLUDE_DIRS)
-        install(FILES ${CMAKE_BINARY_DIR}/modules/yarpscope.xml
-                DESTINATION share/yarp/modules)
-    endif(YARP_TREE_INCLUDE_DIRS)
+    yarp_install(FILES yarpscope.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
+    yarp_install(FILES examples/test_yarpscope_wbd.xml DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/yarpscope)
+
 endif(CREATE_YARPSCOPE)

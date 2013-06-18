@@ -21,10 +21,6 @@ target_link_libraries(yarp_opencv LINK_PRIVATE ${YARP_LIBRARIES})
 target_link_libraries(yarp_opencv LINK_PRIVATE ${ACE_LIBRARIES})
 target_link_libraries(yarp_opencv LINK_PRIVATE ${OpenCV_LIBRARIES})
 
-configure_file(opencv_grabber.xml ${CMAKE_BINARY_DIR}/modules/opencv_grabber.xml COPYONLY)
-if(YARP_TREE_INCLUDE_DIRS)
-install(FILES ${CMAKE_BINARY_DIR}/modules/opencv_grabber.xml
-        DESTINATION share/yarp/modules)
-endif(YARP_TREE_INCLUDE_DIRS)
+yarp_install(FILES opencv_grabber.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
 
 ENDIF (NOT SKIP_opencv_grabber)
