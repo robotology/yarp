@@ -621,30 +621,6 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Robot) {
-            ConstString slash = NetworkBase::getDirectorySeparator();
-            bool found = false;
-            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
-                                                            &found);
-            if (!found) robot = "default";
-
-            // Nested search to locate robot directory
-            Bottle paths;
-            ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
-            opts2.resourceType = "robots";
-            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
-            appendResourceType(paths,resourceType);
-            for (int j=0; j<paths.size(); j++) {
-                ConstString str = check(paths.get(j).asString().c_str(),
-                                        "","",
-                                        name,isDir,doc,"robot");
-                if (str!="") {
-                    addString(output,str);
-                    if (justTop) return;
-                }
-            }
-        }
 
         if (locs & ResourceFinderOptions::Context) {
             for (int i=0; i<apps.size(); i++) {
@@ -657,7 +633,7 @@ public:
                 // Nested search to locate context directory
                 Bottle paths;
                 ResourceFinderOptions opts2;
-                prependResourceType(app,"app");
+                prependResourceType(app,"contexts");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
                 findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
                 appendResourceType(paths,resourceType);
@@ -764,6 +740,31 @@ public:
                             if (justTop) return;
                         }
                     }
+                }
+            }
+        }
+        
+        if (locs & ResourceFinderOptions::Robot) {
+            ConstString slash = NetworkBase::getDirectorySeparator();
+            bool found = false;
+            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+                                                            &found);
+            if (!found) robot = "default";
+
+            // Nested search to locate robot directory
+            Bottle paths;
+            ResourceFinderOptions opts2;
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
+            opts2.resourceType = "robots";
+            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
+            appendResourceType(paths,resourceType);
+            for (int j=0; j<paths.size(); j++) {
+                ConstString str = check(paths.get(j).asString().c_str(),
+                                        "","",
+                                        name,isDir,doc,"robot");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
                 }
             }
         }
