@@ -13,7 +13,7 @@
 #include <yarp/os/api.h>
 #include <yarp/conf/system.h>
 
-#ifndef YARP_HAS_ACE
+#ifdef YARP_USE_STL
 #  ifdef YARP_USE_STL_STRING
 #    undef YARP_USE_STL_STRING
 #  endif

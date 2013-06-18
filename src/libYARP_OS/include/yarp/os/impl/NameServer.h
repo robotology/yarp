@@ -55,7 +55,7 @@ class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub {
 public:
 
     NameServer() :
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
         nameMap(17), hostMap(17),
 #endif
         mutex(1) {
@@ -308,7 +308,7 @@ private:
         Address address;
     public:
         NameRecord() :
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
             propMap(5),
 #endif
             address()
@@ -318,7 +318,7 @@ private:
         }
 
         NameRecord(const NameRecord& alt) :
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
             propMap(5),
 #endif
             address()

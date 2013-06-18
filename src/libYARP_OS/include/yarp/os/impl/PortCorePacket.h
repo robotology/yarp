@@ -15,6 +15,10 @@
 #include <yarp/os/impl/NetType.h>
 
 #include <yarp/os/impl/PlatformList.h>
+#ifdef YARP_HAS_ACE
+#include <ace/config.h>
+#include <ace/String_Base.h>
+#endif
 
 #include <stdio.h>
 
