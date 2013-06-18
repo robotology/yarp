@@ -804,9 +804,9 @@ void MainWindow::onPlayPositionSlided(Gtk::ScrollType scroll)
 /**********************************************************/
 void MainWindow::onPlayPositionChanged()
 {
-    double value = m_hPlayScale.get_value();
+    //double value = m_hPlayScale.get_value();
     //figure out which frame it is:
-    int selectedFrame = (int)( (utilities->partDetails[0].maxFrame * value) /100 );
+    //int selectedFrame = (int)( (utilities->partDetails[0].maxFrame * value) /100 );
     
     /*
      * this is currently commented as, a click on the bar creates events that are taken as a change in other functions
