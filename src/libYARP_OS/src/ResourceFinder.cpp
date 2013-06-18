@@ -1018,6 +1018,14 @@ ConstString ResourceFinder::getDataHome() {
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
+#ifdef __APPLE__
+    if (home_version != "") {
+        return home_version
+            + slash + "Library"
+            + slash + "Application Support"
+            + slash + "yarp";
+    }
+#endif
     if (home_version != "") {
         return home_version
             + slash + ".local"
@@ -1043,7 +1051,16 @@ ConstString ResourceFinder::getConfigHome() {
         return app_version + slash + "yarp" + slash + "config";
     }
 #endif
+
     ConstString home_version = NetworkBase::getEnvironment("HOME");
+#ifdef __APPLE__
+if (home_version != "") {
+        return home_version
+            + slash + "Library"
+            + slash + "Preferences"
+            + slash + "yarp";
+    }
+#endif
     if (home_version != "") {
         return home_version
             + slash + ".config"
@@ -1102,7 +1119,11 @@ Bottle ResourceFinder::getConfigDirs() {
         return result;
     }
 #endif
+
     Bottle result;
+#ifdef __APPLE__
+    result.addString("/Library/Preferences/yarp");
+#endif
     result.addString("/etc/yarp");
     return result;
 }
