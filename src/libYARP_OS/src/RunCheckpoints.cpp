@@ -6,32 +6,26 @@
  * author Alessandro Scalzo alessandro.scalzo@iit.it
  */
 
+#include <time.h>
 #include <yarp/os/impl/RunCheckpoints.h>
 
-#ifdef YARP_HAS_ACE
-#include <ace/ACE.h>
-#else
-#include <stdio.h>
-#endif
-
 YarprunCheckpoints::YarprunCheckpoints()
-{
-    char path[512];
-#ifdef YARP_HAS_ACE
-    char temp[512];
-    ACE::get_temp_dir(temp,512);
+{     
+    char path[256];
+    time_t now;
+    time(&now);
 
-    char date[256];        
-    ACE::timestamp(date,256);
-    for (int t=0; t<256 && date[t]; ++t)
+    #if defined(WIN32)
+    sprintf(path,"C:/Windows/Temp/yarprun_log_%s.txt",ctime(&now));
+    #else
+    sprintf(path,"/tmp/yarprun_log_%s.txt",ctime(&now));
+    #endif
+
+    for (int t=0; t<256 && path[t]; ++t)
     {
-        if (date[t]==' ' || date[t]==':') date[t]='_';
+        if (path[t]==' ' || path[t]==':') path[t]='_';
     }
 
-    sprintf(path,"%s/yarprun_log_%s.txt","C:/Users/user/Documents/temp",date);
-#else
-    sprintf(path,"%s/yarprun_log.txt","/temp");
-#endif
     mLogFile=fopen(path,"w");
 }
 

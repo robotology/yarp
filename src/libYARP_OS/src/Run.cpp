@@ -337,6 +337,16 @@ int yarp::os::Run::Server()
 
     CHECKPOINT()
 
+    #if !defined(WIN32)
+    
+    mProcessVector.start();
+    mStdioVector.start();
+        
+    signal(SIGCHLD,sigchild_handler); 
+    #endif
+
+    CHECKPOINT()
+
     signal(SIGINT,sigint_handler);
 
     CHECKPOINT()
@@ -584,6 +594,9 @@ int yarp::os::Run::Server()
     Run::mProcessVector.mutex.post();
     CHECKPOINT()
     if (aHandlesVector) delete [] aHandlesVector;
+    #else
+    mProcessVector.stop();
+    mStdioVector.stop();
     #endif
 
     CHECK_EXIT()

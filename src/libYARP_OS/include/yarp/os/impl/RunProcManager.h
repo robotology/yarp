@@ -31,6 +31,7 @@
 typedef DWORD PID;
 typedef HANDLE FDESC;
 #else
+#include <yarp/os/Thread.h>
 typedef int PID;
 typedef int FDESC;
 typedef void* HANDLE;
@@ -73,6 +74,9 @@ protected:
 };
 
 class YarpRunInfoVector
+#if !defined(WIN32)
+    : public yarp::os::Thread
+#endif
 {
 public:
     YarpRunInfoVector();
@@ -86,7 +90,31 @@ public:
 #if defined(WIN32)
     void GetHandles(HANDLE* &lpHandles,DWORD &nCount);
 #else
-    void CleanZombies();
+
+protected:
+    int pipe_sigchld_handler_to_zombie_hunter[2];
+
+    void beforeStart()
+    {
+        pipe(pipe_sigchld_handler_to_zombie_hunter);
+    }
+
+    void onStop()
+    {
+        close(pipe_sigchld_handler_to_zombie_hunter[0]);
+        close(pipe_sigchld_handler_to_zombie_hunter[1]);
+    }
+
+    void run(); // zombie hunter
+
+public:
+    void CleanZombies()
+    {
+        char dummy=0;
+
+        write(pipe_sigchld_handler_to_zombie_hunter[1],&dummy,1);
+    }
+
 #endif
 
     yarp::os::Bottle PS();
