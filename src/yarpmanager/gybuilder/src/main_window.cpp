@@ -989,7 +989,13 @@ void MainWindow::onMenuFileNewMod()
         dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
         dialog.set_do_overwrite_confirmation(true);
         
-        if(m_config.check("modpath"))
+        if (m_config.check("yarpdatahome"))
+        {
+            Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
+            homePath +=  string(PATH_SEPERATOR) + string("modules") + string(PATH_SEPERATOR);
+            dialog.set_current_folder(homePath.c_str());
+        }
+        else if(m_config.check("modpath"))
         {
             std::string basepath=m_config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
 
@@ -1060,6 +1066,15 @@ void MainWindow::onMenuFileNewRes()
         dialog.set_transient_for(*this);
         dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
         dialog.set_do_overwrite_confirmation(true);
+        
+        if (m_config.check("yarpdatahome"))
+        {
+            Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
+            homePath +=  string(PATH_SEPERATOR) + string("resources") + string(PATH_SEPERATOR);
+            
+            dialog.set_current_folder(homePath.c_str());
+
+        }
 
         //Add response buttons the the dialog:
         dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);

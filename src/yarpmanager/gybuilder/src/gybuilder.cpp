@@ -10,6 +10,9 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
+    #define PATH_SEPERATOR      "\\"
+#else
+    #define PATH_SEPERATOR      "/"
 #endif
 
 #include <iostream>
@@ -19,8 +22,10 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Os.h>
 
 #include "main_window.h"
+#include "ymm-dir.h"
 
 
 using namespace std;
@@ -96,6 +101,41 @@ int main(int __argc, char *__argv[])
     if(!config.check("ymanagerini_dir"))
         config.put("ymanagerini_dir", inipath.c_str());
     
+    config.put("yarpdatahome", rf.getDataHome());
+    
+    //if it doesn't exist (first time use) prepare user home with appropriate folders and files
+    DIR *dir;
+    if ((dir = opendir(rf.getDataHome().c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir(rf.getDataHome().c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "applications").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "applications").c_str());
+
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "modules").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "modules").c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "resources").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "resources").c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "templates").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "templates").c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "templates" + PATH_SEPERATOR + "applications").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "templates" + PATH_SEPERATOR + "applications").c_str());
+        
+        
     
     yarp::os::Bottle appPaths;
     if(!config.check("apppath"))
