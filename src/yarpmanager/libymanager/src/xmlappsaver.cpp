@@ -279,11 +279,15 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
      
         
     bool ok=doc.SaveFile(app->getXmlFile());
-    if (!ok && doc.Error())
+    if (!ok)
     {
+        
         OSTRINGSTREAM err;
-        err<<"tinyXml error for file " << app->getXmlFile() <<" at line " << doc.ErrorRow() << ", column " << doc.ErrorCol() << ": " << doc.ErrorDesc();
+        err<<"tinyXml error for file " << app->getXmlFile();
+        if (doc.Error())
+            err <<" at line " << doc.ErrorRow() << ", column " << doc.ErrorCol() << ": " << doc.ErrorDesc();
         logger->addError(err);
+        err <<"\n";
         return false;
     }
     else return true;
