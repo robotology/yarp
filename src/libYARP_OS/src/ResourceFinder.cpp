@@ -1085,6 +1085,7 @@ Bottle ResourceFinder::getDataDirs() {
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
     if (app_version != "") {
+        appendResourceType(app_version,"share");
         appendResourceType(app_version,"yarp");
         Bottle result;
         result.addString(app_version);
