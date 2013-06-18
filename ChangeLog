@@ -1,3 +1,11 @@
+2013-06-18 Alessandro Scalzo <alessandro.scalzo@iit.it>
+    * src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
+    * src/libYARP_OS/src/RunProcManager.cpp
+    * src/libYARP_OS/src/RunCheckpoints.cpp
+    * src/libYARP_OS/src/Run.cpp
+
+    Zombie hunter function has now its own thread.
+
 2013-05-27 Lorenzo Natale <lorenzo.natale@iit.it>
     * src/libYARP_dev/include/yarp/dev/CartesianControl.h:
     added methods to deal with tip frame.

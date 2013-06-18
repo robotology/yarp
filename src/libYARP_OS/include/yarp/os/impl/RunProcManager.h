@@ -19,6 +19,7 @@
 #  include <errno.h>
 #  include <stdlib.h>
 #  include <fcntl.h>
+#  include <unistd.h>
 #endif
 
 #include <stdio.h>

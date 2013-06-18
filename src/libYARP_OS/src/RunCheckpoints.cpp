@@ -7,6 +7,7 @@
  */
 
 #include <time.h>
+#include <stdio.h>
 #include <yarp/os/impl/RunCheckpoints.h>
 
 YarprunCheckpoints::YarprunCheckpoints()
