@@ -28,8 +28,8 @@ if(YARP_USE_GTK2)
                                     ${GTK2_GTKMM_LIBRARY}
                                     ${GTK2_SIGC++_LIBRARY})
 else(YARP_USE_GTK2)
-    set(GtkDataboxMM_GTK2_INCLUDE_DIRS ${GTKMM_INCLUDE_DIRS})
-    set(GtkDataboxMM_GTK2_LIBRARIES ${GTKMM_LIBRARIES})
+    set(GtkDataboxMM_GTK2_INCLUDE_DIRS ${GtkMM_INCLUDE_DIRS})
+    set(GtkDataboxMM_GTK2_LIBRARIES ${GtkMM_LIBRARIES})
 endif(YARP_USE_GTK2)
 
 
