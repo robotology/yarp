@@ -100,43 +100,48 @@ int main(int __argc, char *__argv[])
     yarp::os::Bottle appPaths;
     if(!config.check("apppath"))
     {
-       appPaths= rf.findPaths("app");
-       std::cout << "app path : " << appPaths.toString()<< std::endl;
+      
+       appPaths= rf.findPaths("applications");
+       //std::cout << "app path : " << appPaths.toString()<< std::endl;
        string appPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind)
            appPathsStr += (appPaths.get(ind).asString() + ";").c_str() ;
        config.put("apppath", appPathsStr.c_str());
     }
-        //config.put("apppath", "./");
 
     if(!config.check("modpath"))
     {
        appPaths=rf.findPaths("modules");
-       std::cout << "mod path : " << appPaths.toString()<< std::endl;
+       //std::cout << "mod path : " << appPaths.toString()<< std::endl;
        string modPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind)
-       {
-          // string appPath=appPaths.get(ind).asString().c_str();
            modPathsStr += (appPaths.get(ind).asString() + ";").c_str();
-       }
+
        config.put("modpath", modPathsStr.c_str());
         
-       // config.put("modpath", "./");
     }
     if(!config.check("respath"))
     {
        appPaths=rf.findPaths("resources");
+       //std::cout << "res path : " << appPaths.toString()<< std::endl;
        string resPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind)
-       {
-           //tring appPath=appPaths.get(ind).asString().c_str();
-           resPathsStr += (appPaths.get(ind).asString() + ";").c_str();
-       }
+           resPathsStr += (appPaths.get(ind).asString() + ";");
+       
        config.put("respath", resPathsStr.c_str());
         
-        
     }
-       // config.put("respath", "./");
+    if(!config.check("templpath"))
+    {
+       appPaths=rf.findPaths("templates/applications");
+      // std::cout << "templ path : " << appPaths.toString()<< std::endl;
+       string templPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+            templPathsStr += (appPaths.get(ind).asString() + ";");
+       
+       config.put("templpath", templPathsStr.c_str());
+
+    }
 
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");
@@ -156,7 +161,7 @@ int main(int __argc, char *__argv[])
     if(!config.check("auto_dependency"))
         config.put("auto_dependency", "no");
 
-
+/*
 #if defined(WIN32)
     //setup signal handler for windows
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) onSignal);
@@ -179,7 +184,7 @@ int main(int __argc, char *__argv[])
     if (old_action.sa_handler != SIG_IGN)
         sigaction (SIGTERM, &new_action, NULL);
 #endif
-
+*/
     if(!Glib::thread_supported())
         Glib::thread_init();
     gdk_threads_init();

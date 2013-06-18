@@ -88,38 +88,49 @@ MainWindow::MainWindow( yarp::os::Property &config)
     {
         string strPath;
         string modPaths(config.find("modpath").asString().c_str());
-		do
+        while (modPaths!="")
         {
-			string::size_type pos=modPaths.find(";");
-			strPath=modPaths.substr(0, pos);
+            string::size_type pos=modPaths.find(";");
+            strPath=modPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
+            
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                strPath = strPath + string(PATH_SEPERATOR);
+
+            
             lazyManager.addModules(strPath.c_str());
-			if (pos==string::npos)
-				break;
-			modPaths=modPaths.substr(pos+1);
+            if (pos==string::npos || pos==0)
+                break;
+            modPaths=modPaths.substr(pos+1);
         }
-		while (modPaths!="");
+        
     }
 
     if(config.check("respath"))
     {
         string strPath;
         string resPaths(config.find("respath").asString().c_str());
-		do
+        while (resPaths!="")
         {
-			string::size_type pos=resPaths.find(";");
-			strPath=resPaths.substr(0, pos);
+            string::size_type pos=resPaths.find(";");
+            strPath=resPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
+            
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                strPath = strPath + string(PATH_SEPERATOR);
+         
             lazyManager.addResources(strPath.c_str());
-			if (pos==string::npos)
-				break;
-			resPaths=resPaths.substr(pos+1);
+            if (pos==string::npos)
+                break;
+            resPaths=resPaths.substr(pos+1);
         }
-		while (resPaths!="");
+        
     }
 
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -127,29 +138,54 @@ MainWindow::MainWindow( yarp::os::Property &config)
     {
         string strPath;
         string appPaths(config.find("apppath").asString().c_str());
-		do
+        while (appPaths!="")
         {
-			string::size_type pos=appPaths.find(";");
-			strPath=appPaths.substr(0, pos);
+            string::size_type pos=appPaths.find(";");
+            strPath=appPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
+            
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
+                (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                    strPath = strPath + string(PATH_SEPERATOR);
 
-			if(config.find("load_subfolders").asString() == "yes")
+            if(config.find("load_subfolders").asString() == "yes")
             {
                 if(!loadRecursiveApplications(strPath.c_str()))
                     logger->addError("Cannot load the applications from  " + strPath);
                 loadRecursiveTemplates(strPath.c_str());
             }
             else
-				lazyManager.addApplications(strPath.c_str());
-			if (pos==string::npos)
-				break;
-			appPaths=appPaths.substr(pos+1);
+                lazyManager.addApplications(strPath.c_str());
+                
+            if (pos==string::npos)
+                break;
+            appPaths=appPaths.substr(pos+1);
         }
-		while (appPaths!="");
+        
 
 
+    }
+    if (config.check("templpath"))
+    {
+        string strPath;
+        string templPaths(config.find("templpath").asString().c_str());
+        while (templPaths!="")
+        {
+            string::size_type pos=templPaths.find(";");
+            strPath=templPaths.substr(0, pos);
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+
+            if(!loadRecursiveTemplates(strPath.c_str()))
+                    logger->addError("Cannot load the templates from  " + strPath);
+            
+            if (pos==string::npos)
+                break;
+            templPaths=templPaths.substr(pos+1);
+        }
     }
 
     reportErrors();
@@ -772,10 +808,9 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
     return true;
 }
 
-
-
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
+    //TODO check for name file (that contains dir nickname
     string strPath = szPath;
     if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
@@ -886,7 +921,7 @@ void MainWindow::onMenuFileOpenGymanager()
         strParam<<" --application "<<appWnd->getApplication()->getXmlFile();
         LocalBroker launcher;
         if(launcher.init("gyarpmanager",
-                         strParam.str().c_str(), NULL, NULL, NULL, NULL))
+                         (string("\"") + strParam.str() + string("\"")).c_str(), NULL, NULL, NULL, NULL))
             if(!launcher.start() && strlen(launcher.error()))
             {
                 OSTRINGSTREAM msg;
