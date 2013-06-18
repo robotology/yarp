@@ -21,6 +21,7 @@ foreach(conf YarpPlugin.cmake
              MacroExtractVersion.cmake
              MacroStandardFindModule.cmake
              YarpDeprecatedWarning.cmake
+             YarpInstallationHelpers.cmake
              FindACE.cmake
              FindAtlas.cmake
              FindFFMPEG.cmake
