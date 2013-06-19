@@ -101,7 +101,7 @@
 
     int SIGNAL(int pid,int signum)
     {
-        CHECK_ENTER("SIGNAL") 
+        CHECK_ENTER("SIGNAL")
         int ret=!kill(pid,signum);
         CHECK_EXIT()
         return ret;
@@ -217,19 +217,25 @@ YarpRunInfoVector::YarpRunInfoVector()
     {
         m_apList[i]=0;
     }
+
     CHECK_EXIT()
 }
 
 YarpRunInfoVector::~YarpRunInfoVector()
 {
     CHECK_ENTER("YarpRunInfoVector::~YarpRunInfoVector")
+    mutex.wait();
+    
     for (int i=0; i<MAX_PROCESSES; ++i)
     {
         if (m_apList[i])
         {
             delete m_apList[i];
+            m_apList[i]=NULL;
         }
     }
+
+    mutex.post();
     CHECK_EXIT()
 }
 
@@ -376,29 +382,47 @@ void YarpRunInfoVector::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
     CHECK_EXIT()
 }
 #else
-void YarpRunInfoVector::CleanZombies()
-{    
-    CHECK_ENTER("YarpRunInfoVector::CleanZombies")
-    mutex.wait();
-    CHECKPOINT()
+void YarpRunInfoVector::run() // zombie hunter
+{
+    CHECK_ENTER("YarpRunInfoVector::run // CleanZombies")
 
-    for (int i=0; i<m_nProcesses; ++i)
+    char dummy;
+
+    while(!isStopping())
     {
-        if (m_apList[i] && m_apList[i]->Clean())
+        CHECKPOINT()
+
+        if (read(pipe_sigchld_handler_to_zombie_hunter[0],&dummy,1)!=1)
         {
-            delete m_apList[i];
-            m_apList[i]=NULL;                
+            CHECK_EXIT()
+            return;
         }
+
+        CHECKPOINT()
+        mutex.wait();
+        CHECKPOINT()
+
+        for (int i=0; i<m_nProcesses; ++i)
+        {
+            if (m_apList[i] && m_apList[i]->Clean())
+            {
+                delete m_apList[i];
+                m_apList[i]=NULL;
+            }
+        }
+
+        CHECKPOINT()
+    
+        Pack();
+
+        CHECKPOINT()
+        mutex.post();
+        CHECKPOINT()
     }
 
-    CHECKPOINT()
-    
-    Pack();
-
-    CHECKPOINT()
-    mutex.post();
     CHECK_EXIT()
 }
+
 #endif
 
 yarp::os::Bottle YarpRunInfoVector::PS()

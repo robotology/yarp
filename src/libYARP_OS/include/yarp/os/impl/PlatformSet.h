@@ -11,7 +11,7 @@
 #define _YARP2_PLATFORMSET_
 
 #include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
 #include <ace/Containers_T.h>
 #define PlatformMultiSet ACE_Ordered_MultiSet
 #define PLATFORM_MULTISET_ITERATOR(x) ACE_Ordered_MultiSet_Iterator<x >

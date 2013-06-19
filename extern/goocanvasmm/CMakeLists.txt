@@ -12,6 +12,8 @@ if(YARP_USE_GTK2)
                                       ${GTK2_CAIROMM_INCLUDE_DIR}
                                       ${GTK2_GDKMMCONFIG_INCLUDE_DIR}
                                       ${GTK2_GDKMM_INCLUDE_DIR}
+                                      ${GTK2_GIOMMCONFIG_INCLUDE_DIR}
+                                      ${GTK2_GIOMM_INCLUDE_DIR}
                                       ${GTK2_GLIBMMCONFIG_INCLUDE_DIR}
                                       ${GTK2_GLIBMM_INCLUDE_DIR}
                                       ${GTK2_GTKMMCONFIG_INCLUDE_DIR}
@@ -28,8 +30,8 @@ if(YARP_USE_GTK2)
                                    ${GTK2_PANGOMM_LIBRARY}
                                    ${GTK2_SIGC++_LIBRARY})
 else(YARP_USE_GTK2)
-    set(GooCanvasMM_GTK2_INCLUDE_DIRS ${GTKMM_INCLUDE_DIRS})
-    set(GooCanvasMM_GTK2_LIBRARIES ${GTKMM_LIBRARIES})
+    set(GooCanvasMM_GTK2_INCLUDE_DIRS ${GtkMM_INCLUDE_DIRS})
+    set(GooCanvasMM_GTK2_LIBRARIES ${GtkMM_LIBRARIES})
 endif(YARP_USE_GTK2)
 
 

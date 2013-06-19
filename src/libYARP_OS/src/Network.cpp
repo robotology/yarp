@@ -36,6 +36,11 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
 
+#ifdef YARP_HAS_ACE
+#include <ace/config.h>
+#include <ace/String_Base.h>
+#endif
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 

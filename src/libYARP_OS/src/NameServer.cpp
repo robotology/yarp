@@ -518,7 +518,7 @@ String NameServer::cmdList(int argc, char *argv[]) {
     }
 
     // return result in alphabetical order
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
     PLATFORM_MULTISET_ITERATOR(String) iter(lines);
     iter.first();
     while (!iter.done()) {
