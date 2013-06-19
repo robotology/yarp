@@ -29,8 +29,15 @@ set(YARP_DEPENDENCY_FILENAME YARPDependencies.cmake)
 set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
 configure_file(${YARP_MODULE_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
-configure_file(${YARP_MODULE_DIR}/template/YARPConfigVersion.cmake.in
-               ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake @ONLY IMMEDIATE)
+if (${CMAKE_VERSION} VERSION_LESS 2.8.8) # -> version is 2.8.7 (oldest supported)
+  include(WriteBasicConfigVersionFile )
+  write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
+                                     VERSION ${YARP_GENERIC_VERSION}
+                                     COMPATIBILITY AnyNewerVersion )
+else()
+  include(CMakePackageConfigHelpers)
+  WRITE_BASIC_PACKAGE_VERSION_FILE(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake VERSION ${YARP_GENERIC_VERSION} COMPATIBILITY AnyNewerVersion )
+endif()
 export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
 set(VERSIONED_LIB lib${LIB_SUFFIX}/YARP-${YARP_GENERIC_VERSION})
