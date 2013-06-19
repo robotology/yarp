@@ -70,13 +70,13 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& prot
         bool ok = stream->open(base,sender)==0;
         if (ok) {
             int myPort = stream->getLocalAddress().getPort();
-            proto.writeYarpInt(myPort);
+            writeYarpInt(myPort,proto);
             stream->accept();
             proto.takeStreams(NULL);
             proto.takeStreams(stream);
         }
     } else {
-        int altPort = proto.readYarpInt();
+        int altPort = readYarpInt(proto);
         String myName = proto.getStreams().getLocalAddress().getName();
         proto.takeStreams(NULL);
         base = Address(myName,altPort);

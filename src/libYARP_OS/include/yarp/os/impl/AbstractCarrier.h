@@ -11,6 +11,7 @@
 #define _YARP2_ABSTRACTCARRIER_
 
 #include <yarp/os/impl/Carrier.h>
+#include <yarp/os/impl/NetType.h>
 
 namespace yarp {
     namespace os {
@@ -71,6 +72,13 @@ public:
     // certain YARP carriers
 
     bool defaultSendHeader(Protocol& proto);
+    bool defaultExpectIndex(Protocol& proto);
+    bool defaultSendIndex(Protocol& proto);
+    bool defaultExpectAck(Protocol& proto);
+    bool defaultSendAck(Protocol& proto);
+
+    int readYarpInt(Protocol& proto);
+    void writeYarpInt(int n, Protocol& proto);
 
 protected:
     int getSpecifier(const Bytes& b);
@@ -78,6 +86,33 @@ protected:
     virtual bool write(Protocol& proto, SizedWriter& writer);
     bool sendProtocolSpecifier(Protocol& proto);
     bool sendSenderSpecifier(Protocol& proto);
+
+    static int interpretYarpNumber(const yarp::os::Bytes& b) {
+        if (b.length()==8) {
+            char *base = b.get();
+            if (base[0]=='Y' && base[1]=='A' &&
+                base[6]=='R' && base[7]=='P') {
+                yarp::os::Bytes b2(b.get()+2,4);
+                int x = NetType::netInt(b2);
+                return x;
+            }
+        }
+        return -1;
+    }
+
+    static void createYarpNumber(int x,const yarp::os::Bytes& header) {
+        if (header.length()!=8) {
+            ACE_OS::printf("wrong header length");
+            ACE_OS::exit(1);
+        }
+        char *base = header.get();
+        base[0] = 'Y';
+        base[1] = 'A';
+        base[6] = 'R';
+        base[7] = 'P';
+        yarp::os::Bytes code(base+2,4);
+        NetType::netInt(x,code);
+    }
 };
 
 #endif

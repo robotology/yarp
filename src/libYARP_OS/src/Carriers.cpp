@@ -237,7 +237,8 @@ bool Carriers::addCarrierPrototype(Carrier *carrier) {
 
 
 bool Carrier::reply(Protocol& proto, SizedWriter& writer) {
-    return proto.defaultReply(writer);
+    writer.write(proto.os());
+    return proto.os().isOk();
 }
 
 Carriers& Carriers::getInstance() {

@@ -59,7 +59,6 @@ public:
     // direct access
     virtual OutputStream& getOutputStream() = 0;
     virtual InputStream& getInputStream() = 0;
-    virtual const Address& getRemoteAddress() = 0;
 
     virtual void setEnvelope(const String& str) = 0;
 

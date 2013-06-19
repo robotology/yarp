@@ -46,6 +46,7 @@ public:
     virtual bool supportReply() = 0;
     virtual bool isLocal() = 0;
     virtual bool isPush() = 0;
+    virtual bool requireAck() = 0;
     virtual void prepareDisconnect() = 0;
 
     virtual bool checkStreams() = 0;

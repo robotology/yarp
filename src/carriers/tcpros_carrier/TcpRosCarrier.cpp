@@ -336,7 +336,8 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
 
 bool TcpRosCarrier::reply(Protocol& proto, SizedWriter& writer) {
     // don't need to do anything special for now.
-    return proto.defaultReply(writer);
+    writer.write(proto.os());
+    return proto.os().isOk();
 }
 
 

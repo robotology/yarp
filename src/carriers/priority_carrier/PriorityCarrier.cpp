@@ -296,6 +296,8 @@ bool PriorityGroup::recalculate(double t)
     //fprintf(stdout, "Y:\n %s\n", Y.toString(1).c_str());
     
     return true;
+#else
+    return false;
 #endif
 
 }
