@@ -11,7 +11,6 @@
 #define _YARP2_DGRAMTWOWAYSTREAM_
 
 #include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Semaphore.h>
 

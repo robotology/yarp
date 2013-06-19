@@ -44,7 +44,6 @@ bool TcpFace::open(const Address& address) {
     int result = peerAcceptor.open(address);
 #endif
     if (result==-1) {
-        //throw IOException("cannot listen on specified tcp address");
         return false;
     }
 

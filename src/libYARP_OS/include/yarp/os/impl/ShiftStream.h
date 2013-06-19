@@ -11,7 +11,6 @@
 #define _YARP2_SHIFTSTREAM_
 
 #include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/IOException.h>
 
 namespace yarp {
     namespace os {

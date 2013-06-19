@@ -13,7 +13,6 @@
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
 

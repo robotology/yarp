@@ -56,7 +56,7 @@ bool yarp::os::impl::AbstractCarrier::prepareSend(Protocol& proto) {
 }
 
 bool yarp::os::impl::AbstractCarrier::sendHeader(Protocol& proto) {
-    return proto.defaultSendHeader();
+    return defaultSendHeader(proto);
 }
 
 bool yarp::os::impl::AbstractCarrier::expectReplyToHeader(Protocol& proto) {
@@ -76,7 +76,29 @@ bool yarp::os::impl::AbstractCarrier::expectIndex(Protocol& proto) {
 }
 
 bool yarp::os::impl::AbstractCarrier::expectSenderSpecifier(Protocol& proto) {
-    return proto.defaultExpectSenderSpecifier();
+    NetInt32 numberSrc;
+    yarp::os::Bytes number((char*)&numberSrc,sizeof(NetInt32));
+    int len = 0;
+    ssize_t r = NetType::readFull(proto.is(),number);
+    if ((size_t)r!=number.length()) {
+        YARP_DEBUG(Logger::get(),"did not get sender name length");
+        return false;
+    }
+    len = NetType::netInt(number);
+    if (len>1000) len = 1000;
+    if (len<1) len = 1;
+    // expect a string -- these days null terminated, but not in YARP1
+    yarp::os::ManagedBytes b(len+1);
+    r = NetType::readFull(proto.is(),yarp::os::Bytes(b.get(),len));
+    if ((int)r!=len) {
+        YARP_DEBUG(Logger::get(),"did not get sender name");
+        return false;
+    }
+    // add null termination for YARP1
+    b.get()[len] = '\0';
+    String s = b.get();
+    proto.setRoute(proto.getRoute().addFromName(s));
+    return true;
 }
 
 bool yarp::os::impl::AbstractCarrier::sendAck(Protocol& proto) {
@@ -123,3 +145,34 @@ bool yarp::os::impl::AbstractCarrier::write(yarp::os::impl::Protocol& proto, yar
     // proto.expectAck(); //MOVE ack to after reply, if present
     return true;
 }
+
+bool yarp::os::impl::AbstractCarrier::defaultSendHeader(Protocol& proto) {
+    bool ok = sendProtocolSpecifier(proto);
+    if (!ok) return false;
+    return sendSenderSpecifier(proto);
+}
+
+bool yarp::os::impl::AbstractCarrier::sendProtocolSpecifier(Protocol& proto) {
+    char buf[8];
+    yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
+    OutputStream& os = proto.os();
+    proto.getHeader(header);
+    os.write(header);
+    os.flush();
+    return os.isOk();
+}
+
+bool yarp::os::impl::AbstractCarrier::sendSenderSpecifier(Protocol& proto) {
+    NetInt32 numberSrc;
+    yarp::os::Bytes number((char*)&numberSrc,sizeof(NetInt32));
+    const String senderName = proto.getSenderSpecifier();
+    //const String& senderName = getRoute().getFromName();
+    NetType::netInt((int)senderName.length()+1,number);
+    OutputStream& os = proto.os();
+    os.write(number);
+    yarp::os::Bytes b((char*)senderName.c_str(),senderName.length()+1);
+    os.write(b);
+    os.flush();
+    return os.isOk();
+}
+

@@ -77,30 +77,6 @@ public:
         checkEqual(str2,String(expect2),"bottle representation");
     }
 
-    /*
-      void test2() {
-      try {
-	
-      // now we get funky
-      ACE_OS::printf("Structured replies are possible\n");
-      p2.write(writer);
-      show(fake1,fake2);
-
-      ConnectionReader& reader2 = p1.beginRead();
-      String str0 = reader2.expectLine(); // deal with welcome line
-      str1 = reader2.expectLine();
-      str2 = reader2.expectLine();
-      p1.endRead();
-      ACE_OS::printf("strings are [%s] [%s]\n", str1.c_str(), str2.c_str());
-      assertion(str1,String("d"));
-      assertion(str2,String("0 \"Hello\""));
-
-      } catch (IOException e) {
-      report(1, e.toString() + " <<< exception thrown");
-      }
-      }
-    */
-
     virtual void runTests() {
         testBottle();
     }

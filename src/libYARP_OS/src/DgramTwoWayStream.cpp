@@ -413,10 +413,6 @@ void DgramTwoWayStream::interrupt() {
                 }
             }
             YARP_DEBUG(Logger::get(),"dgram interrupt done");
-            //} catch (IOException e) {
-            //YARP_DEBUG(Logger::get(),e.toString() + " <<< closer dgram exception");
-            //}
-            //YARP_DEBUG(Logger::get(),"finished dgram interrupt");
         } 
         mutex.wait();
         interrupting = false;
@@ -565,10 +561,7 @@ ssize_t DgramTwoWayStream::read(const Bytes& b) {
                             errCount = 0;
                         }
                     }
-                    //readAt = 0;
-                    //readAvail = 0;
                     reset();
-                    //throw IOException("CRC failure");
                     return -1;
                 } else {
                     readAt += CRC_SIZE;
@@ -576,7 +569,6 @@ ssize_t DgramTwoWayStream::read(const Bytes& b) {
                 }
                 done = true;
             } else {
-                // this is just a housekeeping message, ignore it
                 readAvail = 0;
             }
         }

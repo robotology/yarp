@@ -9,7 +9,6 @@
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/IOException.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>

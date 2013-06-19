@@ -11,7 +11,6 @@
 #define _YARP2_SHMEMTWOWAYSTREAM_
 
 #include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <ace/config.h>

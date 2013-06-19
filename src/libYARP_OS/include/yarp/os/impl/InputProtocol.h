@@ -34,8 +34,6 @@ class YARP_OS_impl_API yarp::os::impl::InputProtocol {
 public:
     virtual ~InputProtocol() {}
 
-    // all may throw IOException
-
     virtual bool open(const String& name) = 0;
     virtual void close() = 0;
     virtual void interrupt() = 0;

@@ -14,8 +14,6 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/os/impl/IOException.h>
-
 using namespace yarp::os;
 using namespace yarp::os::impl;
 

@@ -25,8 +25,6 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformSize.h>
 
-#define throw_IOException(e) YARP_DEBUG(Logger::get(),e)
-
 namespace yarp {
     namespace os {
         namespace impl {
@@ -41,8 +39,6 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::Protocol : public OutputProtocol, public InputProtocol {
 public:
-
-    // everything could throw IOException
 
     /**
      * This becomes owner of shiftstream
@@ -64,14 +60,6 @@ public:
     }
 
     virtual ~Protocol() {
-        /*
-          if (delegate!=NULL) {
-          delegate->close();
-          delete delegate;
-          delegate = NULL;
-          }
-          shift.close();
-        */
         closeHelper();
     }
 
@@ -98,39 +86,9 @@ public:
         }
     }
 
-    bool defaultExpectSenderSpecifier() {
-        int len = 0;
-        ssize_t r = NetType::readFull(is(),number.bytes());
-        if ((size_t)r!=number.length()) {
-            throw_IOException("did not get sender name length");
-            return false;
-        }
-        len = NetType::netInt(number.bytes());
-        if (len>1000) len = 1000;
-        if (len<1) len = 1;
-        // expect a string -- these days null terminated, but not in YARP1
-        yarp::os::ManagedBytes b(len+1);
-        r = NetType::readFull(is(),yarp::os::Bytes(b.get(),len));
-        if ((int)r!=len) {
-            throw_IOException("did not get sender name");
-            return false;
-        }
-        // add null termination for YARP1
-        b.get()[len] = '\0';
-        String s = b.get();
-        setRoute(getRoute().addFromName(s));
-        return true;
-    }
-
     bool sendHeader() {
         YARP_ASSERT(delegate!=NULL);
         return delegate->sendHeader(*this);
-    }
-
-    bool defaultSendHeader() {
-        bool ok = sendProtocolSpecifier();
-        if (!ok) return false;
-        return sendSenderSpecifier();
     }
 
     bool expectHeader() {
@@ -161,7 +119,7 @@ public:
     int readYarpInt() {
         ssize_t len = NetType::readFull(is(),header.bytes());
         if ((size_t)len!=header.length()) {
-            throw_IOException("data stream died");
+            YARP_DEBUG(log,"data stream died");
             return -1;
         }
         return interpretYarpNumber(header.bytes());
@@ -255,17 +213,17 @@ public:
         if (delegate->requireAck()) {
             ssize_t hdr = NetType::readFull(is(),header.bytes());
             if ((size_t)hdr!=header.length()) {
-                throw_IOException("did not get acknowledgement header");
+                YARP_DEBUG(log,"did not get acknowledgement header");
                 return false;
             }
             int len = interpretYarpNumber(header.bytes());
             if (len<0) {
-                throw_IOException("acknowledgement header is bad");
+                YARP_DEBUG(log,"acknowledgement header is bad");
                 return false;
             }
             size_t len2 = NetType::readDiscard(is(),len);
             if ((size_t)len!=len2) {
-                throw_IOException("did not get an acknowledgement of the promised length");
+                YARP_DEBUG(log,"did not get an acknowledgement of the promised length");
                 return false;
             }
         }
@@ -293,10 +251,6 @@ public:
             shift.getInputStream().interrupt();
             active = false;
         }
-        //} catch (IOException e) {
-        //  YARP_DEBUG(Logger::get(),
-        //             String("Protocol::interrupt exception: ") +
-        //             e.toString());
     }
 
     void close() {
@@ -304,14 +258,9 @@ public:
     }
 
     void closeHelper() {
-        //YARP_DEBUG(Logger::get(),"Protocol object closing");
         active = false;
-        try {
-            if (pendingAck) {
-                sendAck();
-            }
-        } catch (IOException e) {
-            // ok, comms shutting down
+        if (pendingAck) {
+            sendAck();
         }
         shift.close();
         if (delegate!=NULL) {
@@ -362,7 +311,6 @@ public:
         YARP_SPRINTF0(Logger::get(),
                       error,
                       "Protocol::getRemoteAddress not yet implemented");
-        //throw IOException("getRemoteAddress failed");
         return nullAddress;
     }
 
@@ -565,27 +513,24 @@ public:
             delegate->getCarrierParams(params);
     }
 
+    void getHeader(yarp::os::Bytes& header) {
+        YARP_ASSERT(delegate!=NULL);
+        delegate->getHeader(header);
+    }
+
 private:
 
     bool getRecvDelegate();
-
-    bool sendProtocolSpecifier() {
-        YARP_ASSERT(delegate!=NULL);
-        delegate->getHeader(header.bytes());
-        os().write(header.bytes());
-        os().flush();
-        return os().isOk();
-    }
 
     bool expectProtocolSpecifier() {
         ssize_t len = NetType::readFull(is(),header.bytes());
         //ACE_OS::printf("len is %d but header is %d\n", len, header.length());
         if (len==-1) {
-            throw_IOException("no connection");
+            YARP_DEBUG(log,"no connection");
             return false;
         }
         if((size_t)len!=header.length()) {
-            throw_IOException("data stream died");
+            YARP_DEBUG(log,"data stream died");
             return false;
         }
         bool already = false;
@@ -595,9 +540,7 @@ private:
             }
         }
         if (!already) {
-            //try {
             delegate = Carriers::chooseCarrier(header.bytes());
-            //} catch (IOException e) {
             if (delegate==NULL) {
                 // carrier not found; send a message
                 String msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
@@ -607,7 +550,7 @@ private:
             }
         }
         if (delegate==NULL) {
-            throw_IOException("unrecognized protocol");
+            YARP_DEBUG(log,"unrecognized protocol");
             return false;
         }
         setRoute(getRoute().addCarrierName(delegate->getName()));
@@ -615,17 +558,6 @@ private:
         return true;
     }
 
-
-    bool sendSenderSpecifier() {
-        const String senderName = getSenderSpecifier();
-        //const String& senderName = getRoute().getFromName();
-        NetType::netInt((int)senderName.length()+1,number.bytes());
-        os().write(number.bytes());
-        yarp::os::Bytes b((char*)senderName.c_str(),senderName.length()+1);
-        os().write(b);
-        os().flush();
-        return os().isOk();
-    }
 
     bool expectSenderSpecifier() {
         YARP_ASSERT(delegate!=NULL);

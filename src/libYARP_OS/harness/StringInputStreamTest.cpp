@@ -37,14 +37,6 @@ public:
         checkEqual(len,2,"len of second read");
         buf[len] = '\0';
         checkEqual("my",buf,"second read");
-        /*
-          try {
-          len = sis.read(b,0,100);
-          assertion(String("should have thrown an exception"),String(""));
-          } catch (IOException e) {
-          ACE_OS::printf("Got an exception, good: %s\n", e.toString().c_str());
-          }
-        */
     }
 
     virtual void runTests() {

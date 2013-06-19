@@ -167,7 +167,7 @@ bool yarp::os::impl::LocalCarrier::sendHeader(Protocol& proto) {
 
     manager.setSender(this);
 
-    proto.defaultSendHeader();
+    defaultSendHeader(proto);
     // now switch over to some local structure to communicate
     peerMutex.wait();
     peer = manager.getReceiver();

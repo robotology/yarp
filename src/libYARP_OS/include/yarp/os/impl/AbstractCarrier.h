@@ -67,15 +67,17 @@ public:
     virtual void setCarrierParams(const yarp::os::Property& params);
     virtual void getCarrierParams(yarp::os::Property& params);
 
+    // some default implementations of protocol phases used by
+    // certain YARP carriers
 
-    //virtual void close() {
-    //ShiftStream::close();
-    //}
+    bool defaultSendHeader(Protocol& proto);
 
 protected:
     int getSpecifier(const Bytes& b);
     void createStandardHeader(int specifier,const yarp::os::Bytes& header);
     virtual bool write(Protocol& proto, SizedWriter& writer);
+    bool sendProtocolSpecifier(Protocol& proto);
+    bool sendSenderSpecifier(Protocol& proto);
 };
 
 #endif

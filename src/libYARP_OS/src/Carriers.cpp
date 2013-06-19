@@ -191,7 +191,6 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
                       "Could not find carrier \"%s\"",
                       (name!=NULL)?name->c_str():"[bytes]");;
     }
-    //throw IOException("Could not find carrier");
     return NULL;
 }
 

@@ -57,22 +57,22 @@ bool Protocol::defaultExpectIndex() {
     // expect index header
     ssize_t r = NetType::readFull(is(),header.bytes());
     if ((size_t)r!=header.length()) {
-        throw_IOException("broken index");
+        YARP_DEBUG(log,"broken index");
         return false;
     }
     int len = interpretYarpNumber(header.bytes());
     if (len<0) {
-        throw_IOException("broken index - header is not a number");
+        YARP_DEBUG(log,"broken index - header is not a number");
         return false;
     }
     if (len!=10) {
-        throw_IOException("broken index - header is wrong length");
+        YARP_DEBUG(log,"broken index - header is wrong length");
         return false;
     }
     YARP_DEBUG(Logger::get(),"index coming in happily...");
     r = NetType::readFull(is(),indexHeader.bytes());
     if ((size_t)r!=indexHeader.length()) {
-        throw_IOException("broken index, secondary header");
+        YARP_DEBUG(log,"broken index, secondary header");
         return false;
     }
     YARP_DEBUG(Logger::get(),"secondary header came in happily...");
@@ -85,7 +85,7 @@ bool Protocol::defaultExpectIndex() {
     for (int i=0; i<inLen; i++) {
         ssize_t l = NetType::readFull(is(),number.bytes());
         if ((size_t)l!=number.length()) {
-            throw_IOException("bad input block length");
+            YARP_DEBUG(log,"bad input block length");
             return false;
         }
         int x = NetType::netInt(number.bytes());
@@ -94,7 +94,7 @@ bool Protocol::defaultExpectIndex() {
     for (int i2=0; i2<outLen; i2++) {
         ssize_t l = NetType::readFull(is(),number.bytes());
         if ((size_t)l!=number.length()) {
-            throw_IOException("bad output block length");
+            YARP_DEBUG(log,"bad output block length");
             return false;
         }
         int x = NetType::netInt(number.bytes());

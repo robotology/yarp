@@ -107,7 +107,6 @@ public:
         }
 
         if (closed) {
-            //throw IOException("Port::read shutting down");
             YARP_DEBUG(Logger::get(),"Port::read shutting down");
             readBlock.post();
             return false;
@@ -138,7 +137,6 @@ public:
                 YARP_DEBUG(Logger::get(),"Port::read shutting down");
                 readBlock.post();
                 return false;
-                //throw IOException("Port::read shutting down");
             }
             if (writeDelegate!=NULL) {
                 stateMutex.wait();
