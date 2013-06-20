@@ -37,10 +37,12 @@ namespace yarp {
 class yarp::dev::ImplementControlLimits2: yarp::dev::IControlLimits2
 {
 protected:
-    IControlLimits2 *iLimit2;
+    IControlLimits2Raw *iLimits2;
     void    *helper;
+    // those data are used as a support, DO NOT RELY on them!
     int     *temp_int;
-    double  *temp_double;
+    double  *temp_max;
+    double  *temp_min;
 
     /**
      * Initialize the internal data and alloc memory.
@@ -73,17 +75,9 @@ public:
      */
     virtual ~ImplementControlLimits2();
     virtual bool setLimits(int axis, double min, double max)=0;
-    virtual bool setLimits(int n_axis, int *axes, double *min, double *max)=0;
-    virtual bool setLimits(double *min, double *max)=0;
     virtual bool getLimits(int axis, double *min, double *max)=0;
-    virtual bool getLimits(int n_axis, int *axes, double *min, double *max)=0;
-    virtual bool getLimits(double *min, double *max)=0;
-    virtual bool setVelLimits(int axis, double *min, double *max)=0;
-    virtual bool setVelLimits(int n_axis, int *axes, double *min, double *max)=0;
-    virtual bool setVelLimits(double *min, double *max)=0;
+    virtual bool setVelLimits(int axis, double min, double max)=0;
     virtual bool getVelLimits(int axis, double *min, double *max)=0;
-    virtual bool getVelLimits(int n_axis, int *axes, double *min, double *max)=0;
-    virtual bool getVelLimits(double *min, double *max)=0;
 };
 
 
@@ -129,64 +123,24 @@ public:
 
     virtual bool setLimitsRaw(int axis, double min, double max)
     {
-        NOT_YET_IMPLEMENTED("setLimitsRaw");
-    }
-
-    virtual bool setLimitsRaw(int n_axis, int *axes, double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("setLimitsRaw");
-    }
-
-    virtual bool setLimitsRaw(double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("setLimitsRaw");
+        return NOT_YET_IMPLEMENTED("setLimitsRaw");
     }
 
     virtual bool getLimitsRaw(int axis, double *min, double *max)
     {
-        NOT_YET_IMPLEMENTED("getLimitsRaw");
+        return NOT_YET_IMPLEMENTED("getLimitsRaw");
     }
 
-    virtual bool getLimitsRaw(int n_axis, int *axes, double *min, double *max)
+    virtual bool setVelLimitsRaw(int axis, double min, double max)
     {
-        NOT_YET_IMPLEMENTED("getLimitsRaw");
-    }
-
-    virtual bool getLimitsRaw(double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("getLimitsRaw");
-    }
-
-    virtual bool setVelLimitsRaw(int axis, double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("setVelLimitsRaw");
-    }
-
-    virtual bool setVelLimitsRaw(int n_axis, int *axes, double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("setVelLimitsRaw");
-    }
-
-
-    virtual bool setVelLimitsRaw(double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("setVelLimitsRaw");
+        return NOT_YET_IMPLEMENTED("setVelLimitsRaw");
     }
 
     virtual bool getVelLimitsRaw(int axis, double *min, double *max)
     {
-        NOT_YET_IMPLEMENTED("getVelLimitsRaw");
+        return NOT_YET_IMPLEMENTED("getVelLimitsRaw");
     }
 
-    virtual bool getVelLimitsRaw(int n_axis, int *axes, double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("getVelLimitsRaw");
-    }
-
-    virtual bool getVelLimitsRaw(double *min, double *max)
-    {
-        NOT_YET_IMPLEMENTED("getVelLimitsRaw");
-    }
 };
 
 #endif /* ICONTROL_LIMIT2_IMPL_H_ */

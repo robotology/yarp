@@ -99,7 +99,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setVelLimits(int axis, double *min, double *max)=0;
+    virtual bool setVelLimits(int axis, double min, double max)=0;
 
     /* Set the software speed limits for a particular set of axes, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
@@ -168,24 +168,6 @@ public:
      */
     virtual bool setLimitsRaw(int axis, double min, double max)=0;
 
-    /* Set the software position limits for a particular set of axes, the behavior of the
-     * control card when these limits are exceeded, depends on the implementation.
-     * @param n_axis length of axes vector
-     * @param axis vector containing the joint numbers
-     * @param min vector of lower limit values.
-     * @param max vector of upper limit values
-     * @return true or false on success or failure
-     */
-    virtual bool setLimitsRaw(int n_axis, int *axes, double *min, double *max)=0;
-
-    /* Set the software position limits for all axes, the behavior of the
-     * control card when these limits are exceeded, depends on the implementation.
-     * @param min vector of lower limit values.
-     * @param max vector of upper limit values
-     * @return true or false on success or failure
-     */
-    virtual bool setLimitsRaw(double *min, double *max)=0;
-
     /* Get the software position limits for a particular axis.
      * @param axis joint number
      * @param pointer to store the value of the lower limit
@@ -194,22 +176,6 @@ public:
      */
     virtual bool getLimitsRaw(int axis, double *min, double *max)=0;
 
-    /* Get the software position limits for a set of axes.
-     * @param n_axis length of axes vector
-     * @param axis vector containing the joint numbers
-     * @param pointer to a vector to store the value of the lower limits
-     * @param pointer to a vector to store the value of the upper limits
-     * @return true if everything goes fine, false otherwise.
-     */
-    virtual bool getLimitsRaw(int n_axis, int *axes, double *min, double *max)=0;
-
-    /* Get the software position limits for all axes particular axis.
-     * @param pointer to a vector to store the value of the lower limits
-     * @param pointer to a vector to store the value of the upper limits
-     * @return true if everything goes fine, false otherwise.
-     */
-    virtual bool getLimitsRaw(double *min, double *max)=0;
-
     /* Set the software speed limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number
@@ -217,25 +183,7 @@ public:
      * @param max the value of the upper limit
      * @return true or false on success or failure
      */
-    virtual bool setVelLimitsRaw(int axis, double *min, double *max)=0;
-
-    /* Set the software speed limits for a particular set of axes, the behavior of the
-     * control card when these limits are exceeded, depends on the implementation.
-     * @param n_axis length of axes vector
-     * @param axis vector containing the joint numbers
-     * @param min the value of the lower limit
-     * @param max the value of the upper limit
-     * @return true or false on success or failure
-     */
-    virtual bool setVelLimitsRaw(int n_axis, int *axes, double *min, double *max)=0;
-
-    /* Set the software speed limits for all axes, the behavior of the
-     * control card when these limits are exceeded, depends on the implementation.
-     * @param min the value of the lower limit
-     * @param max the value of the upper limit
-     * @return true or false on success or failure
-     */
-    virtual bool setVelLimitsRaw(double *min, double *max)=0;
+    virtual bool setVelLimitsRaw(int axis, double min, double max)=0;
 
     /* Get the software speed limits for a particular axis.
      * @param axis joint number
@@ -245,20 +193,7 @@ public:
      */
     virtual bool getVelLimitsRaw(int axis, double *min, double *max)=0;
 
-    /* Get the software speed limits for a particular axis.
-     * @param n_axis length of axes vector
-     * @param axis vector containing the joint numbers
-     * @param pointer to store the value of the lower limit
-     * @param pointer to store the value of the upper limit
-     * @return true if everything goes fine, false otherwise.
-     */
-    virtual bool getVelLimitsRaw(int n_axis, int *axes, double *min, double *max)=0;
-
-    /* Get the software speed limits for all axes.
-     * @param pointer to store the value of the lower limit
-     * @param pointer to store the value of the upper limit
-     * @return true if everything goes fine, false otherwise.
-     */
-    virtual bool getVelLimitsRaw(double *min, double *max)=0;
 };
+
+#define VOCAB_VEL_LIMITS VOCAB4('v','l','i','m')
 #endif /* ICONTROL_LIMIT_V2_H_ */

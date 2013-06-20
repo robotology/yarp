@@ -288,6 +288,10 @@ public:
     virtual bool getVelErrorsRaw(double *errs)=0;
 };
 
+// interface IVelocityControl2 sets
+#define VOCAB_VELOCITY_MODE_GROUP VOCAB4('v','e','l','g')
+#define VOCAB_VELOCITY_MOVE_GROUP VOCAB4('v','m','o','g')
+#define VOCAB_VELOCITY_MOVES VOCAB4('v','m','o','s')
 #endif
 
 

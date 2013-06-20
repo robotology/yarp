@@ -25,7 +25,6 @@
 #include <yarp/dev/IPositionControl.h>
 #include <yarp/dev/IPositionControl2.h>
 #include <yarp/dev/IOpenLoopControl.h>
-//#include <yarp/dev/IControlLimits2.h>
 
 namespace yarp {
     namespace dev {
