@@ -9,10 +9,9 @@ if(CREATE_YARPVIEW)
         include_directories(${GTK2_INCLUDE_DIRS})
     else(YARP_USE_GTK2)
         include_directories(${GtkPlus_INCLUDE_DIRS})
+        include_directories(${Gthread_INCLUDE_DIRS})
+        add_definitions(${GTHREAD_C_FLAGS})
     endif(YARP_USE_GTK2)
-
-    include_directories(${Gthread_INCLUDE_DIRS})
-    add_definitions(${GTHREAD_C_FLAGS})
 
     get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
     include_directories(${YARP_TREE_INCLUDE_DIRS})
@@ -45,9 +44,8 @@ if(CREATE_YARPVIEW)
         )
     else(YARP_USE_GTK2)
         target_link_libraries(yarpview ${GtkPlus_LIBRARIES})
+        target_link_libraries(yarpview ${Gthread_LIBRARIES})
     endif(YARP_USE_GTK2)
-
-    target_link_libraries(yarpview ${Gthread_LIBRARIES})
 
     install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
 
