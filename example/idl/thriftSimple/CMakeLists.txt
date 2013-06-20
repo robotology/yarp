@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 2.8.7)
 
 #find YARP
 find_package(YARP REQUIRED)
-include(${YARP_MODULE_PATH}/YarpIDL.cmake)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include(YarpIDL)
 
 #compile definition file to generate source code into the desired directory
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")

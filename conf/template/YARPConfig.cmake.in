@@ -9,7 +9,12 @@ if(NOT YARP_FOUND)
     set(YARP_INCLUDE_DIRS "@YARP_INCLUDE_DIRS@")
     set(YARP_LINK_DIRS "@YARP_LINK_DIRS@") # only needed with certain plugins
     set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
-    set(YARP_MODULE_PATH "@YARP_MODULE_PATH@")
+    set(YARP_MODULE_DIR "@YARP_MODULE_DIR@")
+    set(YARP_MODULE_PATH "@YARP_MODULE_DIR@")
+# FIXME 2.4 Enable this
+#    if(${CMAKE_VERSION} VERSION_LESS 2.8.11.2)
+#        list(APPEND YARP_MODULE_PATH "@YARP_MODULE_PATH@/cmake-2.8.11.2/Modules")
+#    endif()
     set(YARP_BINDINGS "@YARP_BINDINGS@")
 
     set(YARP_VERSION_MAJOR "@YARP_VERSION_MAJOR@")
@@ -65,7 +70,7 @@ if(NOT YARP_FOUND)
 
     # Disable deprecated warnings
     # FIXME 2.4 re-enable these warnings before releasing YARP 2.4
-    set (YARP_NO_DEPRECATED_WARNINGS TRUE)
+    set(YARP_NO_DEPRECATED_WARNINGS TRUE)
 
-    set (YARP_FOUND TRUE)
+    set(YARP_FOUND TRUE)
 endif(NOT YARP_FOUND)
