@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-if(CREATE_GUIS)
+if(CREATE_YARPVIEW)
 
     if(YARP_USE_GTK2)
         include_directories(${GTK2_INCLUDE_DIRS})
@@ -51,4 +51,4 @@ if(CREATE_GUIS)
 
     install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
 
-endif(CREATE_GUIS)
+endif(CREATE_YARPVIEW)
