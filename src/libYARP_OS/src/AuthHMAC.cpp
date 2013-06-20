@@ -14,6 +14,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/impl/String.h>
 
 #ifdef DEBUG_HMAC
   void show_hmac_debug(unsigned char* hex, unsigned int length, std::string context) {
