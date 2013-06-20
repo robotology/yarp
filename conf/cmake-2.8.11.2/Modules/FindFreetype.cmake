@@ -61,7 +61,7 @@ find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
     /usr/local/X11R6
     /usr/local/X11
     /usr/freeware
-  PATH_SUFFIXES include/freetype2 include
+  PATH_SUFFIXES include/freetype2 include freetype2
 )
 
 find_library(FREETYPE_LIBRARY

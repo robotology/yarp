@@ -30,6 +30,7 @@
 #endif
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 AuthHMAC::AuthHMAC() {
 #ifdef PORT_AUTH
