@@ -11,9 +11,10 @@ if(NOT YARP_FOUND)
     set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
     set(YARP_MODULE_DIR "@YARP_MODULE_DIR@")
     set(YARP_MODULE_PATH "@YARP_MODULE_DIR@")
-    if(${CMAKE_VERSION} VERSION_LESS 2.8.11.2)
-        list(APPEND YARP_MODULE_PATH "@YARP_MODULE_PATH@/cmake-2.8.11.2/Modules")
-    endif()
+# FIXME 2.4 Enable this
+#    if(${CMAKE_VERSION} VERSION_LESS 2.8.11.2)
+#        list(APPEND YARP_MODULE_PATH "@YARP_MODULE_PATH@/cmake-2.8.11.2/Modules")
+#    endif()
     set(YARP_BINDINGS "@YARP_BINDINGS@")
 
     set(YARP_VERSION_MAJOR "@YARP_VERSION_MAJOR@")
