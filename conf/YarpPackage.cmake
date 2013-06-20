@@ -18,7 +18,7 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME
 
 
 #if you are making debian packages, this is useful, but not otherwise
-#configure_file(${CMAKE_SOURCE_DIR}/conf/template/control.in
+#configure_file(${YARP_MODULE_DIR}/template/control.in
 #               ${CMAKE_BINARY_DIR}/DEBIAN/control @ONLY IMMEDIATE)
 #install_files(/doc/DEBIAN FILES ${CMAKE_BINARY_DIR}/DEBIAN/control)
 
