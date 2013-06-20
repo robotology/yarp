@@ -108,7 +108,7 @@ void PortCoreInputUnit::run() {
                 " using " +
                 route.getCarrierName();
             if (Name(route.getFromName()).isRooted()) {
-                if (reversed||ip->isPush()) {
+                if (reversed||ip->getConnection().isPush()) {
                     YARP_INFO(Logger::get(),msg);
                     posted = true;
                 } else {
@@ -144,7 +144,7 @@ void PortCoreInputUnit::run() {
     }
 
     if (!reversed) {
-        if (!ip->isPush()) {
+        if (!ip->getConnection().isPush()) {
             /* IP=OP */
             OutputProtocol *op = &(ip->getOutput());
             Route r = op->getRoute();
@@ -185,7 +185,7 @@ void PortCoreInputUnit::run() {
             continue;
         }
             
-        if (autoHandshake&&(ip->canEscape())) {
+        if (autoHandshake&&(ip->getConnection().canEscape())) {
             bool ok = cmd.read(br);
             if (!br.isActive()) { done = true; break; }
             if (!ok) continue;

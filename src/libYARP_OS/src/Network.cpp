@@ -752,9 +752,9 @@ bool NetworkBase::write(const Contact& contact,
     out->open(r);
 
     PortCommand pc(0,style.admin?"a":"d");
-    BufferedConnectionWriter bw(out->isTextMode());
+    BufferedConnectionWriter bw(out->getConnection().isTextMode());
     bool ok = true;
-    if (out->canEscape()) {
+    if (out->getConnection().canEscape()) {
         ok = pc.write(bw);
     }
     if (!ok) {

@@ -16,6 +16,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/Connection.h>
 
 #define YARP_ENACT_CONNECT 1
 #define YARP_ENACT_DISCONNECT 2
@@ -46,7 +47,7 @@ namespace yarp {
  * To understand the protocol phases involved, see see
  * \ref yarp_protocol.
  */
-class YARP_OS_impl_API yarp::os::impl::Carrier {
+class YARP_OS_impl_API yarp::os::impl::Carrier : public yarp::os::Connection {
 public:
 
 

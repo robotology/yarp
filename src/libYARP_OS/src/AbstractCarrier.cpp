@@ -197,7 +197,7 @@ bool yarp::os::impl::AbstractCarrier::defaultSendIndex(Protocol& proto) {
 
 
 bool yarp::os::impl::AbstractCarrier::defaultExpectAck(Protocol& proto) {
-    if (proto.requireAck()) {
+    if (proto.getConnection().requireAck()) {
         char buf[8];
         yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
         ssize_t hdr = NetType::readFull(proto.is(),header);
@@ -292,7 +292,7 @@ bool yarp::os::impl::AbstractCarrier::defaultExpectIndex(Protocol& proto) {
 
 bool yarp::os::impl::AbstractCarrier::defaultSendAck(Protocol& proto) {
     YARP_DEBUG(Logger::get(),"sending an acknowledgment");
-    if (proto.requireAck()) {
+    if (proto.getConnection().requireAck()) {
         writeYarpInt(0,proto);
     }
     return true;

@@ -17,6 +17,7 @@
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Connection.h>
 
 namespace yarp {
     namespace os {
@@ -43,14 +44,9 @@ public:
     virtual yarp::os::ConnectionReader& beginRead() = 0;
     virtual void endRead() = 0;
 
-    // can metadata (port-level comms) be inserted?  if not,there is only data.
-    virtual bool canEscape() = 0;
-
-    virtual bool isPush() = 0;
+    virtual Connection& getConnection() = 0;
 
     virtual bool checkStreams() = 0;
-
-    virtual void resetStreams() = 0;
 
     // some connections are capable of ping-ponging
     virtual OutputProtocol& getOutput() = 0;

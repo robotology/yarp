@@ -15,6 +15,7 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/impl/SizedWriter.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Connection.h>
 
 namespace yarp {
     namespace os {
@@ -37,16 +38,11 @@ public:
     virtual void close() = 0;
 
     virtual const Route& getRoute() = 0;
-    virtual bool isActive() = 0;
+
     virtual bool isOk() = 0;
-    virtual bool isTextMode() = 0;
-    virtual bool isConnectionless() = 0;
-    virtual bool isBroadcast() = 0;
-    virtual bool canEscape() = 0;
-    virtual bool supportReply() = 0;
-    virtual bool isLocal() = 0;
-    virtual bool isPush() = 0;
-    virtual bool requireAck() = 0;
+
+    virtual Connection& getConnection() = 0;
+
     virtual void prepareDisconnect() = 0;
 
     virtual bool checkStreams() = 0;

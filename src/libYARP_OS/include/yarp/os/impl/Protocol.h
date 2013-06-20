@@ -157,38 +157,8 @@ public:
         return true;
     }
 
-    virtual bool isActive() {
-        YARP_ASSERT(delegate!=NULL);
-        return delegate->isActive();
-    }
-
     virtual bool isOk() {
         return checkStreams();
-    }
-
-    virtual bool isTextMode() {
-        YARP_ASSERT(delegate!=NULL);
-        return delegate->isTextMode();
-    }
-
-    virtual bool supportReply() {
-        YARP_ASSERT(delegate!=NULL);
-        return delegate->supportReply();
-    }
-
-    virtual bool isConnectionless() {
-        YARP_ASSERT(delegate!=NULL);
-        return delegate->isConnectionless();
-    }
-
-    virtual bool isBroadcast() {
-        YARP_ASSERT(delegate!=NULL);
-        return delegate->isBroadcast();
-    }
-
-    virtual bool requireAck() {
-        YARP_ASSERT(delegate!=NULL);
-        return delegate->requireAck();
     }
 
     virtual void prepareDisconnect() {
@@ -201,7 +171,7 @@ public:
         bool replied = false;
         writer.stopWrite();
         this->writer = &writer;
-        if (isActive()) {
+        if (getConnection().isActive()) {
             YARP_ASSERT(delegate!=NULL);
             getStreams().beginPacket();
             delegate->write(*this,writer);
@@ -282,11 +252,6 @@ public:
         return shift.isOk();
     }
 
-    virtual void resetStreams() {
-        shift.reset();
-    }
-
-
     void setReference(yarp::os::Portable *ref) {
         this->ref = ref;
     }
@@ -340,6 +305,13 @@ public:
         messageLen = len;
     }
 
+    Connection& getConnection() {
+        if (delegate==NULL) {
+            return nullConnection;
+        }
+        return *delegate;
+    }
+
 private:
 
     bool getRecvDelegate();
@@ -385,22 +357,6 @@ private:
     bool expectSenderSpecifier() {
         YARP_ASSERT(delegate!=NULL);
         return delegate->expectSenderSpecifier(*this);
-        //ACE_DEBUG((LM_DEBUG,"Sender name is %s",getRoute().getFromName().c_str()));
-    }
-
-    bool canEscape() {
-        if (delegate==NULL) { return true; }
-        return delegate->canEscape();
-    }
-
-    bool isLocal() {
-        if (delegate==NULL) { return false; }
-        return delegate->isLocal();
-    }
-
-    bool isPush() {
-        if (delegate==NULL) { return true; }
-        return delegate->isPush();
     }
 
     bool expectHeader() {
@@ -524,6 +480,7 @@ private:
     StreamConnectionReader reader;
     yarp::os::Portable *ref;
     String envelope;
+    NullConnection nullConnection;
 };
 
 #endif
