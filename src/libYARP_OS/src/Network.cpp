@@ -988,9 +988,9 @@ public:
         return getContent().expectReplyToHeader(proto);
     }
 
-    virtual bool sendIndex(Protocol& proto) {
-        return getContent().sendIndex(proto);
-    }
+    //virtual bool sendIndex(Protocol& proto,SizedWriter& writer) {
+    //return getContent().sendIndex(proto,writer);
+    //}
 
     virtual bool write(Protocol& proto, SizedWriter& writer) {
         return getContent().write(proto,writer);

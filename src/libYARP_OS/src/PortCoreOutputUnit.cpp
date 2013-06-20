@@ -134,7 +134,7 @@ void PortCoreOutputUnit::runSimulation() {
 void PortCoreOutputUnit::closeBasic() {
     bool waitForOther = false;
     if (op!=NULL) {
-	op->prepareDisconnect();
+        op->getConnection().prepareDisconnect();
         Route route = op->getRoute();
         if (op->getConnection().isConnectionless()||
             op->getConnection().isBroadcast()) {

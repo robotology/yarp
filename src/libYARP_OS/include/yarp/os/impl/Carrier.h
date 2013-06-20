@@ -228,14 +228,6 @@ public:
     virtual bool expectReplyToHeader(Protocol& proto) = 0;
 
     /**
-     * Send a message header, if one is needed for this carrier.
-     *
-     * @param proto the protocol object, which tracks connection state
-     * @return true on success, false on failure
-     */
-    virtual bool sendIndex(Protocol& proto) = 0;
-
-    /**
      * Write a message.
      *
      * @param proto the protocol object, which tracks connection state

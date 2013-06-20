@@ -110,17 +110,3 @@ bool Protocol::getRecvDelegate() {
     }
     return recv_delegate->configure(*this);
 }
-
-bool Protocol::skipIncomingData(yarp::os::ConnectionReader& reader) {
-    size_t pending = reader.getSize();
-    if (pending>0) {
-        while (pending>0) {
-            char buf[10000];
-            size_t next = (pending<sizeof(buf))?pending:sizeof(buf);
-            reader.expectBlock(&buf[0],next);
-            pending -= next;
-        }
-        return true;
-    }
-    return false;
-}

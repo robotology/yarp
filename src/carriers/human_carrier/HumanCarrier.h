@@ -128,13 +128,13 @@ public:
     // Payload time!
 
     virtual bool write(Protocol& proto, SizedWriter& writer) {
-        bool ok = sendIndex(proto);
+        bool ok = sendIndex(proto,writer);
         if (!ok) return false;
         writer.write(proto.os());
         return proto.os().isOk();
     }
 
-    virtual bool sendIndex(Protocol& proto) {
+    virtual bool sendIndex(Protocol& proto,SizedWriter& writer) {
         String prefix = "human says ";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);

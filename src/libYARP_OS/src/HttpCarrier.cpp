@@ -706,7 +706,7 @@ bool yarp::os::impl::HttpCarrier::expectReplyToHeader(Protocol& proto) {
 }
 
 
-bool yarp::os::impl::HttpCarrier::sendIndex(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::sendIndex(Protocol& proto, SizedWriter& writer) {
     // no index
     return true;
 }

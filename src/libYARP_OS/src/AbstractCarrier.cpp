@@ -63,8 +63,9 @@ bool yarp::os::impl::AbstractCarrier::expectReplyToHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::AbstractCarrier::sendIndex(Protocol& proto) {
-    return defaultSendIndex(proto);
+bool yarp::os::impl::AbstractCarrier::sendIndex(Protocol& proto,
+                                                SizedWriter& writer) {
+    return defaultSendIndex(proto,writer);
 }
 
 bool yarp::os::impl::AbstractCarrier::expectExtraHeader(Protocol& proto) {
@@ -132,15 +133,13 @@ void yarp::os::impl::AbstractCarrier::createStandardHeader(int specifier,const y
 }
 
 bool yarp::os::impl::AbstractCarrier::write(yarp::os::impl::Protocol& proto, yarp::os::impl::SizedWriter& writer) {
-    bool ok = proto.sendIndex();
+    bool ok = sendIndex(proto,writer);
     if (!ok) {
         return false;
     }
-    ok = proto.sendContent();
-    if (!ok) {
-        return false;
-    }
-    return true;
+    writer.write(proto.os());
+    proto.os().flush();
+    return proto.os().isOk();
 }
 
 bool yarp::os::impl::AbstractCarrier::defaultSendHeader(Protocol& proto) {
@@ -153,7 +152,7 @@ bool yarp::os::impl::AbstractCarrier::sendProtocolSpecifier(Protocol& proto) {
     char buf[8];
     yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
     OutputStream& os = proto.os();
-    proto.getHeader(header);
+    proto.getConnection().getHeader(header);
     os.write(header);
     os.flush();
     return os.isOk();
@@ -173,11 +172,10 @@ bool yarp::os::impl::AbstractCarrier::sendSenderSpecifier(Protocol& proto) {
     return os.isOk();
 }
 
-bool yarp::os::impl::AbstractCarrier::defaultSendIndex(Protocol& proto) {
-    SizedWriter *writer = proto.getContent();
-    YARP_ASSERT(writer!=NULL);
+bool yarp::os::impl::AbstractCarrier::defaultSendIndex(Protocol& proto,
+                                                       SizedWriter& writer) {
     writeYarpInt(10,proto);
-    int len = (int)writer->length();
+    int len = (int)writer.length();
     char lens[] = { (char)len, 1,
                     -1, -1, -1, -1,
                     -1, -1, -1, -1 };
@@ -187,7 +185,7 @@ bool yarp::os::impl::AbstractCarrier::defaultSendIndex(Protocol& proto) {
     NetInt32 numberSrc;
     yarp::os::Bytes number((char*)&numberSrc,sizeof(NetInt32));
     for (int i=0; i<len; i++) {
-        NetType::netInt((int)writer->length(i),number);
+        NetType::netInt((int)writer.length(i),number);
         os.write(number);
     }
     NetType::netInt(0,number);

@@ -45,6 +45,7 @@ public:
     virtual void endRead() = 0;
 
     virtual Connection& getConnection() = 0;
+    virtual Connection& getReceiver() = 0;
 
     virtual bool checkStreams() = 0;
 
@@ -59,16 +60,6 @@ public:
     virtual void setEnvelope(const String& str) = 0;
 
     virtual bool setTimeout(double timeout) = 0;
-
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) = 0;
-
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) = 0;
-
-    virtual bool skipIncomingData(yarp::os::ConnectionReader& reader) = 0;
-
-    virtual void setInputCarrierParams(const yarp::os::Property& params) = 0;
-    
-    virtual void getInputCarrierParams(yarp::os::Property& params) = 0;
 };
 
 #endif

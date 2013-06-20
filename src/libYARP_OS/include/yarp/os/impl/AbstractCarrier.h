@@ -53,7 +53,8 @@ public:
     virtual bool prepareSend(Protocol& proto);
     virtual bool sendHeader(Protocol& proto);
     virtual bool expectReplyToHeader(Protocol& proto);
-    virtual bool sendIndex(Protocol& proto);
+
+    virtual bool sendIndex(Protocol& proto, SizedWriter& writer);
 
     // receiver
     virtual bool expectExtraHeader(Protocol& proto);
@@ -73,7 +74,7 @@ public:
 
     bool defaultSendHeader(Protocol& proto);
     bool defaultExpectIndex(Protocol& proto);
-    bool defaultSendIndex(Protocol& proto);
+    bool defaultSendIndex(Protocol& proto, SizedWriter& writer);
     bool defaultExpectAck(Protocol& proto);
     bool defaultSendAck(Protocol& proto);
 

@@ -167,7 +167,7 @@ public:
 
     virtual bool reply(Protocol& proto, SizedWriter& writer);
 
-    virtual bool sendIndex(Protocol& proto) {
+    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
         return true;
     }
 

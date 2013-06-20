@@ -15,7 +15,6 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NetType.h>
@@ -66,23 +65,6 @@ public:
 
     const Route& getRoute() {
         return route;
-    }
-
-    SizedWriter *getContent() {
-        return writer;
-    }
-
-    bool sendIndex() {
-        YARP_DEBUG(Logger::get(), String("Sending a message on connection ") + getRoute().toString());;
-        YARP_ASSERT(delegate!=NULL);
-        return delegate->sendIndex(*this);
-    }
-
-    bool sendContent() {
-        YARP_ASSERT(writer!=NULL);
-        writer->write(os());
-        os().flush();
-        return os().isOk();
     }
 
     void interrupt() {
@@ -161,12 +143,6 @@ public:
         return checkStreams();
     }
 
-    virtual void prepareDisconnect() {
-        YARP_ASSERT(delegate!=NULL);
-        delegate->prepareDisconnect();
-    }
-
-
     virtual bool write(SizedWriter& writer) {
         bool replied = false;
         writer.stopWrite();
@@ -223,22 +199,6 @@ public:
         return reader;
     }
 
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) {
-        if (recv_delegate) {
-            return recv_delegate->modifyIncomingData(reader);
-        }
-        return reader;
-    }
-
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
-        if (recv_delegate) {
-            return recv_delegate->acceptIncomingData(reader);
-        }
-        return true;
-    }
-
-    virtual bool skipIncomingData(yarp::os::ConnectionReader& reader);
-
     virtual void suppressReply() {
         reader.suppressReply();
     }
@@ -272,31 +232,6 @@ public:
         return envelope;
     }
 
-    virtual void setInputCarrierParams(const yarp::os::Property& params) {
-        if(recv_delegate)
-            recv_delegate->setCarrierParams(params);
-    }
-
-    virtual void getInputCarrierParams(yarp::os::Property& params) { 
-        if(recv_delegate)
-            recv_delegate->getCarrierParams(params);
-    }
-
-    virtual void setOutputCarrierParams(const yarp::os::Property& params) {
-        if(delegate)
-            delegate->setCarrierParams(params);
-    }
-    
-    virtual void getOutputCarrierParams(yarp::os::Property& params) { 
-        if(delegate)
-            delegate->getCarrierParams(params);
-    }
-
-    void getHeader(yarp::os::Bytes& header) {
-        YARP_ASSERT(delegate!=NULL);
-        delegate->getHeader(header);
-    }
-
     Logger& getLog() {
         return log;
     }
@@ -310,6 +245,14 @@ public:
             return nullConnection;
         }
         return *delegate;
+    }
+
+    // transitional hook, should go away when we have real chaining
+    Connection& getReceiver() {
+        if (recv_delegate==NULL) {
+            return nullConnection;
+        }
+        return *recv_delegate;
     }
 
 private:
@@ -465,7 +408,6 @@ private:
             delete recv_delegate;
             recv_delegate = NULL;
         }
-        //YARP_DEBUG(Logger::get(),"Protocol object closed");
     }
 
     int messageLen;

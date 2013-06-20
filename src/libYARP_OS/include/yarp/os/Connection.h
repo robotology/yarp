@@ -28,7 +28,17 @@ public:
     virtual ~Connection() {
     }
 
-   /**
+    /**
+     *
+     * Check if this object is really a connection, or just
+     * an empty placeholder
+     *
+     * @return true if a valid connection
+     *
+     */
+    virtual bool isValid() { return true; }
+
+    /**
      * Check if carrier is textual in nature
      *
      * @return true if carrier is text-based
@@ -115,11 +125,71 @@ public:
      * @return true if carrier is active.
      */
     virtual bool isActive() = 0;
+
+    /**
+     * Check if this carrier modifies incoming data through the
+     * Carrier::modifyIncomingData method.
+     *
+     * @return true if carrier wants Carrier::modifyIncomingData called.
+     */
+    virtual bool modifiesIncomingData() = 0;
+
+    /**
+     * Modify incoming payload data, if appropriate.
+     *
+     * Doesn't need to be done immediately, it is fine to hold onto a
+     * reference to the incoming data reader and use it on demand.
+     * This can be handy in order to avoid unnecessary copies.
+     *
+     * @param reader for incoming data.
+     * @return reader for modified version of incoming data.
+     */
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) = 0;
+
+    /**
+     * Determine whether incoming data should be accepted.
+     *
+     * @param reader for incoming data.
+     * @return true if data should be accepted, false if it should be
+     *         discarded.
+     */
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) = 0;
+
+    /**
+     * Configure carrier from port administrative commands.
+     *
+     * @param carrier properties
+     */
+    virtual void setCarrierParams(const yarp::os::Property& params) = 0;
+
+    /**
+     * Get carrier configuration and deliver it by port administrative
+     * commands.
+     *
+     * @param carrier properties
+     */
+    virtual void getCarrierParams(yarp::os::Property& params) = 0;
+
+    /**
+     * Provide 8 bytes describing this connection sufficiently to
+     * allow the other side of a connection to select it.
+     *
+     * @param header a buffer to hold the first 8 bytes to send on a
+     *               connection
+     */
+    virtual void getHeader(const yarp::os::Bytes& header) = 0;
+
+    /**
+     * Do cleanup and preparation for the coming disconnect, if
+     * necessary.
+     */
+    virtual void prepareDisconnect() = 0;
 };
 
 
 class YARP_OS_API yarp::os::NullConnection : public Connection {
 public:
+    virtual bool isValid() { return false; }
     virtual bool isTextMode() { return true; }
     virtual bool canEscape() { return true; }
     virtual bool requireAck() { return false; }
@@ -129,6 +199,30 @@ public:
     virtual bool isConnectionless() { return false; }
     virtual bool isBroadcast() { return false; }
     virtual bool isActive() { return false; }
+
+    virtual bool modifiesIncomingData() { return false; }
+
+    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) {
+        return reader;
+    }
+
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
+        return true;
+    }
+
+    virtual void setCarrierParams(const yarp::os::Property& params) {
+    }
+
+    virtual void getCarrierParams(yarp::os::Property& params) {
+    }
+
+    virtual void getHeader(const yarp::os::Bytes& header) {
+        for (size_t i=0; i<header.length(); i++) {
+            header.get()[i] = '\0';
+        }
+    }
+
+    virtual void prepareDisconnect() {}
 };
 
 #endif

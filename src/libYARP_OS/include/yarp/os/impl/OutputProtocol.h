@@ -43,8 +43,6 @@ public:
 
     virtual Connection& getConnection() = 0;
 
-    virtual void prepareDisconnect() = 0;
-
     virtual bool checkStreams() = 0;
 
     virtual bool write(SizedWriter& writer) = 0;
@@ -59,11 +57,6 @@ public:
     virtual InputStream& getInputStream() = 0;
 
     virtual bool setTimeout(double timeout) = 0;
-
-    virtual void setOutputCarrierParams(const yarp::os::Property& params) = 0;
-    
-    virtual void getOutputCarrierParams(yarp::os::Property& params) = 0;
-
 };
 
 #endif
