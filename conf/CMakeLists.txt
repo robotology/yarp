@@ -34,11 +34,25 @@ foreach(conf YarpPlugin.cmake
              FindOpenCV.cmake
              FindPortAudio.cmake
              FindSQLite.cmake
-             FindTinyXML.cmake)
+             FindTinyXML.cmake
+         )
     install(FILES ${CMAKE_SOURCE_DIR}/conf/${conf}
             COMPONENT scripts
             DESTINATION share/yarp/cmake)
 endforeach(conf)
+
+if(${CMAKE_VERSION} VERSION_LESS 2.8.11.2)
+  foreach(conf cmake-2.8.11.2/Modules/FindGTK2.cmake
+               cmake-2.8.11.2/Modules/FindPackageHandleStandardArgs.cmake
+               cmake-2.8.11.2/Modules/FindPackageMessage.cmake
+               cmake-2.8.11.2/Modules/CMakeParseArguments.cmake
+               cmake-2.8.11.2/Modules/FindFreetype.cmake
+         )
+      install(FILES ${CMAKE_SOURCE_DIR}/conf/${conf}
+              COMPONENT scripts
+              DESTINATION share/yarp/cmake/cmake-2.8.11.2/Modules)
+  endforeach(conf)
+endif()
 
 foreach(templ yarp_plugin_carrier.cpp.in
               yarp_plugin_device.cpp.in

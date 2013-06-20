@@ -7,6 +7,10 @@ project(YARP)
 
 # Pick up our CMake scripts - they are all in the conf subdirectory.
 set(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
+if(${CMAKE_VERSION} VERSION_LESS 2.8.11.2)
+  cmake_policy(SET CMP0017 OLD) #this is so that the modules in the following dir get picked up over CMake default modules
+  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-2.8.11.2/Modules)
+endif()
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # The YARP build is fairly flexible, so we need to accumulate some
