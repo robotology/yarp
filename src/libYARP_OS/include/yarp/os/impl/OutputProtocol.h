@@ -30,8 +30,6 @@ namespace yarp {
  */
 class YARP_OS_impl_API yarp::os::impl::OutputProtocol {
 public:
-    // all can throw IOException
-
     virtual ~OutputProtocol() {}
 
     virtual bool open(const Route& route) = 0;
@@ -48,6 +46,7 @@ public:
     virtual bool supportReply() = 0;
     virtual bool isLocal() = 0;
     virtual bool isPush() = 0;
+    virtual bool requireAck() = 0;
     virtual void prepareDisconnect() = 0;
 
     virtual bool checkStreams() = 0;

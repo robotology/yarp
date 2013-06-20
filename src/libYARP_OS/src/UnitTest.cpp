@@ -10,7 +10,6 @@
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/IOException.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/Network.h>

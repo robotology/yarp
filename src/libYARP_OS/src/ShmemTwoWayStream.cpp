@@ -16,7 +16,6 @@
 
 #include <yarp/os/impl/ShmemTwoWayStream.h>
 #include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/Time.h>
 
 #include <ace/INET_Addr.h>
@@ -129,8 +128,8 @@ int ShmemTwoWayStream::read(const Bytes& b) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket read");
             total = -1;
-            throw IOException("shmem read failed");
-            break;
+            YARP_ERROR(Logger::get(),"shmem read failed");
+            return -1;
         }
         remaining -= len;
         base += len;
@@ -154,8 +153,8 @@ void ShmemTwoWayStream::write(const Bytes& b) {
         if (result<0) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket write");
-            throw IOException("shmem write failed");
-            break;
+            YARP_ERROR(Logger::get(),"shmem write failed");
+            return;
         }
         remaining -= len;
         base += len;

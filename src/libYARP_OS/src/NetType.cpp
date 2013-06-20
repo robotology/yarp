@@ -51,7 +51,6 @@ String NetType::readLine(InputStream& is, int terminal, bool *success) {
             }
         }
         if (v<0) { 
-            //throw IOException("readLine failed");
             if (success!=NULL) *success = false;
             return "";
         }

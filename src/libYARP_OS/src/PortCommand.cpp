@@ -33,14 +33,11 @@ bool PortCommand::read(ConnectionReader& reader) {
                 }
             }
         } else {
-            //throw IOException("bad header in PortCommand::readBlock");
             return false;
         }
     } else {
-        //ACE_OS::printf("PortCommand::readBlock pre read\n");
         str = reader.expectText().c_str();
         if (reader.isError()) return false;
-        //ACE_OS::printf("PortCommand::readBlock post read\n");
         if (str.length()>0) {
             ch = str[0];
         }

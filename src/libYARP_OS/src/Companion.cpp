@@ -1211,6 +1211,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("");
     f.add("# Find YARP.  Point the YARP_DIR environment variable at your build.");
     f.add("find_package(YARP REQUIRED)");
+    f.add("list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})");
     f.add("");
     f.add("# Search for source code.");
     f.add("file(GLOB folder_source *.cpp *.cc *.c)");

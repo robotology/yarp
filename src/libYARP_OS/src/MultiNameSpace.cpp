@@ -28,6 +28,10 @@ public:
     bool _serverAllocatesPortNumbers;
     bool _connectionHasNameOfEndpoints;
 
+    MultiNameSpaceHelper() {
+        clear();
+    }
+
     ~MultiNameSpaceHelper() {
         clear();
     }

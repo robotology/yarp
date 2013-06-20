@@ -13,7 +13,6 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/impl/PlatformStdlib.h>

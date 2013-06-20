@@ -18,7 +18,7 @@ if(DOXYGEN_FOUND)
     set(DOX_EXTRA_DIR src conf doc/spec)
     set(DOX_PATTERNS "*.h *.dox *.cpp")
     set(DOX_GENERATE_MAN NO)
-    configure_file(${CMAKE_SOURCE_DIR}/conf/doxygen/${DOX_FILE}.template
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/doxygen/${DOX_FILE}.template
                    ${CMAKE_BINARY_DIR}/dox/${DOX_FILE} IMMEDIATE)
     add_custom_target(dox COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/dox/${DOX_FILE})
 
@@ -26,7 +26,7 @@ if(DOXYGEN_FOUND)
     set(DOX_GENERATE_MAN YES)
     set(DOX_GENERATE_XML NO)
     set(DOX_PATTERNS "cmd_*.dox")
-    configure_file(${CMAKE_SOURCE_DIR}/conf/doxygen/${DOX_FILE}.template
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/doxygen/${DOX_FILE}.template
                    ${CMAKE_BINARY_DIR}/dox/${DOX_FILE}.man IMMEDIATE)
     add_custom_target(man COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/dox/${DOX_FILE}.man)
 

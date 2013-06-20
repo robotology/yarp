@@ -11,7 +11,7 @@
 #define _YARP2_STRINGINPUTSTREAM_
 
 #include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/IOException.h>
+#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {
@@ -68,12 +68,6 @@ public:
                 ct++;
             }
         }
-        /*
-          else {
-          throw IOException("end of stream");
-          break;
-          }
-        */
         return ct;
     }
 

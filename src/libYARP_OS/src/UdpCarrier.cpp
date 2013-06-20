@@ -60,7 +60,7 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(Protocol& proto) {
     }
 
     int myPort = stream->getLocalAddress().getPort();
-    proto.writeYarpInt(myPort);
+    writeYarpInt(myPort,proto);
     proto.takeStreams(stream);
 
     return true;
@@ -72,7 +72,7 @@ bool yarp::os::impl::UdpCarrier::expectReplyToHeader(Protocol& proto) {
     String myName = proto.getStreams().getLocalAddress().getName();
     String altName = proto.getStreams().getRemoteAddress().getName();
 
-    int altPort = proto.readYarpInt();
+    int altPort = readYarpInt(proto);
 
     if (altPort==-1) {
         return false;

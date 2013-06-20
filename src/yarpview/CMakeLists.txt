@@ -3,16 +3,15 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-if(CREATE_GUIS)
+if(CREATE_YARPVIEW)
 
     if(YARP_USE_GTK2)
         include_directories(${GTK2_INCLUDE_DIRS})
     else(YARP_USE_GTK2)
         include_directories(${GtkPlus_INCLUDE_DIRS})
+        include_directories(${Gthread_INCLUDE_DIRS})
+        add_definitions(${GTHREAD_C_FLAGS})
     endif(YARP_USE_GTK2)
-
-    include_directories(${Gthread_INCLUDE_DIRS})
-    add_definitions(${GTHREAD_C_FLAGS})
 
     get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
     include_directories(${YARP_TREE_INCLUDE_DIRS})
@@ -45,9 +44,8 @@ if(CREATE_GUIS)
         )
     else(YARP_USE_GTK2)
         target_link_libraries(yarpview ${GtkPlus_LIBRARIES})
+        target_link_libraries(yarpview ${Gthread_LIBRARIES})
     endif(YARP_USE_GTK2)
-
-    target_link_libraries(yarpview ${Gthread_LIBRARIES})
 
     install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
 
@@ -57,5 +55,4 @@ if(CREATE_GUIS)
                 DESTINATION share/yarp/modules)
     endif(YARP_TREE_INCLUDE_DIRS)
 
-
-endif(CREATE_GUIS)
+endif(CREATE_YARPVIEW)

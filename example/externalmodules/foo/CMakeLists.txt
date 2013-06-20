@@ -4,14 +4,13 @@
 
 cmake_minimum_required(VERSION 2.8.7)
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
-SET(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-INCLUDE(YarpDevice)
+find_package(YARP REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include_directories(${YARP_INCLUDE_DIRS})
+link_libraries(${YARP_LIBRARIES})
+include(YarpDevice)
 
-BEGIN_DEVICE_LIBRARY(foo)
-ADD_SUBDIRECTORY(fooBot)
-ADD_SUBDIRECTORY(fooDevice)
-END_DEVICE_LIBRARY(foo)
-
+begin_device_library(foo)
+add_subdirectory(fooBot)
+add_subdirectory(fooDevice)
+end_device_library(foo)

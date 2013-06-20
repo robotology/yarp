@@ -34,8 +34,6 @@ class YARP_OS_impl_API yarp::os::impl::InputProtocol {
 public:
     virtual ~InputProtocol() {}
 
-    // all may throw IOException
-
     virtual bool open(const String& name) = 0;
     virtual void close() = 0;
     virtual void interrupt() = 0;
@@ -61,7 +59,6 @@ public:
     // direct access
     virtual OutputStream& getOutputStream() = 0;
     virtual InputStream& getInputStream() = 0;
-    virtual const Address& getRemoteAddress() = 0;
 
     virtual void setEnvelope(const String& str) = 0;
 

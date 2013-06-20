@@ -57,11 +57,11 @@ bool yarp::os::impl::TcpCarrier::isConnectionless() {
 
 bool yarp::os::impl::TcpCarrier::respondToHeader(Protocol& proto) {
     int cport = proto.getStreams().getLocalAddress().getPort();
-    proto.writeYarpInt(cport);
+    writeYarpInt(cport,proto);
     return proto.checkStreams();
 }
 
 bool yarp::os::impl::TcpCarrier::expectReplyToHeader(Protocol& proto) {
-    proto.readYarpInt(); // ignore result
+    readYarpInt(proto); // ignore result
     return proto.checkStreams();
 }

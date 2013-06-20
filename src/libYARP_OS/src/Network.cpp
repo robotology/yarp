@@ -26,7 +26,6 @@
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputProtocol.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/Route.h>

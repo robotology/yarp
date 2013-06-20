@@ -56,10 +56,10 @@ if(YARP_TREE_BUILD)
   string(REPLACE "YARP_OS" "" YARP_LIBRARY_PREFIX ${YARP_LIBRARY_PREFIX})
   get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} ABSOLUTE)
   get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
-  configure_file(${CMAKE_SOURCE_DIR}/conf/template/YarpPluginPath.cmake
+  configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
     ${CMAKE_BINARY_DIR}/plugins/path.ini @ONLY IMMEDIATE)
   set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
-  configure_file(${CMAKE_SOURCE_DIR}/conf/template/YarpPluginPath.cmake
+  configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
     ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY IMMEDIATE)
   install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION share/yarp/plugins)
 endif(YARP_TREE_BUILD)
@@ -197,7 +197,7 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
         # Go ahead and prepare some code to wrap this plugin.
         set(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
         set(fname_stub ${fdir}/yarpdev_stub_${plugin_name}.cpp)
-        configure_file(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
+        configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${category}.cpp.in
                        ${fname} @ONLY  IMMEDIATE)
 
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
@@ -391,9 +391,9 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
             set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern YARP_PLUGIN_IMPORT void add_owned_${dev}(const char *str);")
             set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_owned_${dev}(\"${owner}\");")
         endforeach(dev)
-        configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in
+        configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.cpp.in
                        ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY IMMEDIATE)
-        configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
+        configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.h.in
                        ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
         get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
         get_property(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
@@ -420,7 +420,7 @@ endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
 # for a named device library.
 #
 macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
-    configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib_main.cpp.in
+    configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib_main.cpp.in
                    ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY  IMMEDIATE)
     add_executable(${exename} ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
     target_link_libraries(${exename} ${bundle_name})
@@ -461,7 +461,7 @@ endmacro(YARP_ADD_DEVICE_FINGERPRINT)
 # Deprecated macros
 #
 if(NOT YARP_NO_DEPRECATED)
-include(${YARP_MODULE_PATH}/YarpDeprecatedWarning.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/YarpDeprecatedWarning.cmake)
 
 macro(BEGIN_PLUGIN_LIBRARY)
     yarp_deprecated_warning("BEGIN_PLUGIN_LIBRARY is deprecated. Use YARP_BEGIN_PLUGIN_LIBRARY instead.")
