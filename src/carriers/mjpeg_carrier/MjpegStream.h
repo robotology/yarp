@@ -11,7 +11,7 @@
 #define MJPEGSTREAM_INC
 
 #include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/impl/StringOutputStream.h>
@@ -35,7 +35,7 @@ namespace yarp {
 
 class yarp::os::impl::MjpegStream : public TwoWayStream,
                                     public InputStream,
-                                    public OutputStream
+                                    public yarp::os::OutputStream
 {
 private:
     TwoWayStream *delegate;
@@ -71,7 +71,7 @@ public:
     }
 
     virtual InputStream& getInputStream() { return *this; }
-    virtual OutputStream& getOutputStream() { return *this; }
+    virtual yarp::os::OutputStream& getOutputStream() { return *this; }
 
 
     virtual const Address& getLocalAddress() {

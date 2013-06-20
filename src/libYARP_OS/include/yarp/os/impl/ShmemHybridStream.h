@@ -11,7 +11,7 @@
 #define __SHMEM_HYBRID_STREAM__
 
 #include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
@@ -31,7 +31,8 @@ namespace yarp {
 /**
  * A stream abstraction for shared memory communication.
  */
-class yarp::os::impl::ShmemHybridStream : public TwoWayStream, InputStream, OutputStream
+class yarp::os::impl::ShmemHybridStream : public TwoWayStream, InputStream, 
+           yarp::os::OutputStream
 {
 public:
     ShmemHybridStream() { m_bLinked=false; }
@@ -67,7 +68,7 @@ public:
 
     // TwoWayStrem implementation
     virtual InputStream& getInputStream() { return *this; }
-    virtual OutputStream& getOutputStream() { return *this; }
+    virtual yarp::os::OutputStream& getOutputStream() { return *this; }
     virtual bool isOk() { return m_bLinked && in.isOk() && out.isOk(); }
 
     virtual void reset()

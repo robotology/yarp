@@ -11,7 +11,7 @@
 #define _YARP2_PORTMANAGER_
 
 #include <yarp/os/impl/String.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/impl/Logger.h>
@@ -45,7 +45,8 @@ public:
         this->name = name;
     }
 
-    virtual bool addOutput(const String& dest, void *id, OutputStream *os,
+    virtual bool addOutput(const String& dest, void *id, 
+                           yarp::os::OutputStream *os,
                            bool onlyIfNeeded = false) {
         YARP_SPRINTF2(Logger::get(),
                       error,
@@ -55,7 +56,8 @@ public:
         return false;
     }
 
-    virtual void removeInput(const String& src, void *id, OutputStream *os) {
+    virtual void removeInput(const String& src, void *id, 
+                             yarp::os::OutputStream *os) {
         YARP_SPRINTF2(Logger::get(),
                       error,
                       "PortManager for [%s] asked to removeInput [%s]\n",
@@ -63,7 +65,8 @@ public:
                       src.c_str());
     }
 
-    virtual void removeOutput(const String& dest, void *id, OutputStream *os) {
+    virtual void removeOutput(const String& dest, void *id, 
+                              yarp::os::OutputStream *os) {
         YARP_SPRINTF2(Logger::get(),
                       error,
                       "PortManager for [%s] asked to removeOutput [%s]\n",
@@ -75,14 +78,15 @@ public:
         return false;
     }
 
-    virtual void describe(void *id, OutputStream *os) {
+    virtual void describe(void *id, yarp::os::OutputStream *os) {
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "PortManager for [%s] asked to describe itself\n",
                       getName().c_str());
     }
 
-    virtual bool readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
+    virtual bool readBlock(ConnectionReader& reader, void *id, 
+                           yarp::os::OutputStream *os) {
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "PortManager for [%s] asked to deal with data\n",
@@ -90,7 +94,8 @@ public:
         return false;
     }
 
-    virtual bool adminBlock(ConnectionReader& reader, void *id, OutputStream *os) {
+    virtual bool adminBlock(ConnectionReader& reader, void *id, 
+                            yarp::os::OutputStream *os) {
         YARP_SPRINTF1(Logger::get(),
                       error,
                       "PortManager for [%s] asked to deal with admin\n",
@@ -113,13 +118,13 @@ protected:
         return os!=NULL;
     }
 
-    OutputStream& getOutputStream() {
+    yarp::os::OutputStream& getOutputStream() {
         YARP_ASSERT(os!=NULL);
         return *os;
     }
 
 private:
-    OutputStream *os;
+    yarp::os::OutputStream *os;
     String name;
 };
 

@@ -19,7 +19,7 @@ yarp::os::impl::InputStream& yarp::os::impl::NullStream::getInputStream() {
     return *this;
 }
 
-yarp::os::impl::OutputStream& yarp::os::impl::NullStream::getOutputStream() {
+yarp::os::OutputStream& yarp::os::impl::NullStream::getOutputStream() {
     return * this;
 }
 

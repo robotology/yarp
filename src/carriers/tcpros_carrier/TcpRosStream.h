@@ -11,7 +11,7 @@
 #define TCPROSSTREAM_INC
 
 #include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/ConstString.h>
@@ -34,7 +34,7 @@ namespace yarp {
 
 class YARP_tcpros_carrier_API yarp::os::impl::TcpRosStream : public TwoWayStream, 
                                                              public InputStream,
-                                                             public OutputStream
+                                                             public yarp::os::OutputStream
 {
 private:
     TwoWayStream *delegate;
@@ -76,7 +76,7 @@ public:
     }
 
     virtual InputStream& getInputStream() { return *this; }
-    virtual OutputStream& getOutputStream() { return *this; }
+    virtual yarp::os::OutputStream& getOutputStream() { return *this; }
 
 
     virtual const Address& getLocalAddress() {

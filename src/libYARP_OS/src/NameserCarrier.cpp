@@ -31,7 +31,7 @@ yarp::os::impl::InputStream& yarp::os::impl::NameserTwoWayStream::getInputStream
     return *this;
 }
 
-yarp::os::impl::OutputStream& yarp::os::impl::NameserTwoWayStream::getOutputStream() {
+yarp::os::OutputStream& yarp::os::impl::NameserTwoWayStream::getOutputStream() {
     return delegate->getOutputStream();
 }
 

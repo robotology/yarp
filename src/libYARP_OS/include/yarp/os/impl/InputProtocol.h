@@ -14,7 +14,7 @@
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Connection.h>
@@ -53,7 +53,7 @@ public:
     virtual void suppressReply() = 0;
   
     // direct access
-    virtual OutputStream& getOutputStream() = 0;
+    virtual yarp::os::OutputStream& getOutputStream() = 0;
     virtual InputStream& getInputStream() = 0;
 
     virtual void setEnvelope(const String& str) = 0;

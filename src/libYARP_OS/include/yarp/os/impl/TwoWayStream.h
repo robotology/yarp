@@ -12,7 +12,7 @@
 
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 
 namespace yarp {
     namespace os {
@@ -48,7 +48,7 @@ public:
      *
      * @return the InputStream associated with this object.
      */
-    virtual OutputStream& getOutputStream() = 0;
+    virtual yarp::os::OutputStream& getOutputStream() = 0;
 
     /**
      * Get the address of the local side of the stream.
@@ -109,15 +109,16 @@ public:
  * A "null" stream, always invalid.
  */
 class yarp::os::impl::NullStream : public TwoWayStream,
-            public InputStream, public OutputStream {
+                                   public InputStream, 
+                                   public yarp::os::OutputStream {
 private:
     Address address;
 public:
     virtual ~NullStream();
 
     virtual InputStream& getInputStream();
-    virtual OutputStream& getOutputStream();
-
+    virtual yarp::os::OutputStream& getOutputStream();
+    
     virtual const Address& getLocalAddress();
     virtual const Address& getRemoteAddress();
 

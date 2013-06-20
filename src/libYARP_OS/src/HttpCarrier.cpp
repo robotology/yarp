@@ -334,7 +334,7 @@ yarp::os::impl::InputStream& yarp::os::impl::HttpTwoWayStream::getInputStream() 
     return sis;
 }
 
-yarp::os::impl::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
+yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
     return *this;
 }
 

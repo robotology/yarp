@@ -10,7 +10,7 @@
 #ifndef _YARP2_SIZEDWRITER_
 #define _YARP2_SIZEDWRITER_
 
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 #include <stddef.h> // defines size_t
@@ -49,7 +49,7 @@ public:
     
     virtual yarp::os::Portable *getReference() = 0;
 
-    virtual void write(OutputStream& os) {
+    virtual void write(yarp::os::OutputStream& os) {
         for (size_t i=0; i<length(); i++) {
             Bytes b((char*)data(i),length(i));
             os.write(b);
