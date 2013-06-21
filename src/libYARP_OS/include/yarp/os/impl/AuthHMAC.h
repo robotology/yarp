@@ -9,7 +9,7 @@
 #ifndef _YARP2_AUTHHMAC_
 #define _YARP2_AUTHHMAC_
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 
 #include <yarp/os/impl/hmac/hmac_sha2.h>
@@ -45,13 +45,13 @@ public:
      */
     virtual ~AuthHMAC() {}
 
-    bool authSource(yarp::os::impl::InputStream *streamIn, yarp::os::OutputStream *streamOut);
-    bool authDest(yarp::os::impl::InputStream *streamIn, yarp::os::OutputStream *streamOut);
+    bool authSource(yarp::os::InputStream *streamIn, yarp::os::OutputStream *streamOut);
+    bool authDest(yarp::os::InputStream *streamIn, yarp::os::OutputStream *streamOut);
 
 private:
 
     bool send_hmac(yarp::os::OutputStream * stream, unsigned char* nonce, unsigned char* mac);
-    bool receive_hmac(yarp::os::impl::InputStream * stream, unsigned char * nonce, unsigned char * mac);
+    bool receive_hmac(yarp::os::InputStream * stream, unsigned char * nonce, unsigned char * mac);
     bool check_hmac(unsigned char * mac, unsigned char * mac_check);
     void fill_nonce(unsigned char* nonce);
 

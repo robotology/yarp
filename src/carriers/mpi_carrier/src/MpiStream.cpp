@@ -13,6 +13,7 @@
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 
 /* --------------------------------------- */

@@ -23,7 +23,7 @@
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/MultiNameSpace.h>
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/impl/OutputProtocol.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>

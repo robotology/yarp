@@ -10,7 +10,7 @@
 #ifndef _YARP2_STREAMBLOCKREADER_
 #define _YARP2_STREAMBLOCKREADER_
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/ConnectionReader.h>
@@ -58,7 +58,7 @@ public:
 
     virtual ~StreamConnectionReader();
 
-    void reset(InputStream& in, TwoWayStream *str, const Route& route,
+    void reset(yarp::os::InputStream& in, TwoWayStream *str, const Route& route,
                size_t len, bool textMode) {
         this->in = &in;
         this->str = str;
@@ -277,7 +277,7 @@ private:
 
     BufferedConnectionWriter *writer;
     StringInputStream altStream;
-    InputStream *in;
+    yarp::os::InputStream *in;
     TwoWayStream *str;
     Protocol *protocol;
     size_t messageLen;

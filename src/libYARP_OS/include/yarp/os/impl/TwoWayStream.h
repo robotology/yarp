@@ -11,7 +11,7 @@
 #define _YARP2_TWOWAYSTREAM_
 
 #include <yarp/os/impl/Address.h>
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 
 namespace yarp {
@@ -41,7 +41,7 @@ public:
      *
      * @return the InputStream associated with this object.
      */
-    virtual InputStream& getInputStream() = 0;
+    virtual yarp::os::InputStream& getInputStream() = 0;
 
     /**
      * Get an OutputStream to write to.

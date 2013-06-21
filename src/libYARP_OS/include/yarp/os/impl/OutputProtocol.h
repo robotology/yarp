@@ -11,7 +11,7 @@
 #define _YARP2_OUTPUTPROTOCOL_
 
 #include <yarp/os/impl/Route.h>
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/impl/SizedWriter.h>
 #include <yarp/os/Property.h>
@@ -53,8 +53,8 @@ public:
     virtual InputProtocol& getInput() = 0;
 
     // direct access
-    virtual OutputStream& getOutputStream() = 0;
-    virtual InputStream& getInputStream() = 0;
+    virtual yarp::os::OutputStream& getOutputStream() = 0;
+    virtual yarp::os::InputStream& getInputStream() = 0;
 
     virtual bool setTimeout(double timeout) = 0;
 };

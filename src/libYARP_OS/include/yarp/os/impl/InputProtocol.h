@@ -13,7 +13,7 @@
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Property.h>
@@ -55,7 +55,7 @@ public:
   
     // direct access
     virtual yarp::os::OutputStream& getOutputStream() = 0;
-    virtual InputStream& getInputStream() = 0;
+    virtual yarp::os::InputStream& getInputStream() = 0;
 
     virtual void setEnvelope(const String& str) = 0;
 

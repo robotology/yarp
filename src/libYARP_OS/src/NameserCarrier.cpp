@@ -27,7 +27,7 @@ yarp::os::impl::NameserTwoWayStream::~NameserTwoWayStream() {
     }
 }
 
-yarp::os::impl::InputStream& yarp::os::impl::NameserTwoWayStream::getInputStream() {
+yarp::os::InputStream& yarp::os::impl::NameserTwoWayStream::getInputStream() {
     return *this;
 }
 

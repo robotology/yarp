@@ -10,9 +10,11 @@
 #ifndef _YARP2_PLATFORMSIZE_
 #define _YARP2_PLATFORMSIZE_
 
-// We will use ssize_t in YARP internals (not public API)
+// We may use ssize_t in YARP internals, not in public API.
+// In public API, YARP_SSIZE_T is now available via yarp/conf/numeric.h
 
 #include <yarp/conf/system.h>
+
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_unistd.h>
 #else

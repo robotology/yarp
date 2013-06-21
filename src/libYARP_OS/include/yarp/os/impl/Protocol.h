@@ -16,13 +16,11 @@
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/ShiftStream.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformStdlib.h>
-#include <yarp/os/impl/PlatformSize.h>
 
 namespace yarp {
     namespace os {

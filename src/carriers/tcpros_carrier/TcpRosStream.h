@@ -10,7 +10,7 @@
 #ifndef TCPROSSTREAM_INC
 #define TCPROSSTREAM_INC
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
@@ -33,7 +33,7 @@ namespace yarp {
 
 
 class YARP_tcpros_carrier_API yarp::os::impl::TcpRosStream : public TwoWayStream, 
-                                                             public InputStream,
+                                                             public yarp::os::InputStream,
                                                              public yarp::os::OutputStream
 {
 private:
@@ -75,7 +75,7 @@ public:
         }
     }
 
-    virtual InputStream& getInputStream() { return *this; }
+    virtual yarp::os::InputStream& getInputStream() { return *this; }
     virtual yarp::os::OutputStream& getOutputStream() { return *this; }
 
 

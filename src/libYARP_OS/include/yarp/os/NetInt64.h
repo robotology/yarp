@@ -9,7 +9,7 @@
 #ifndef _YARP2_NETINT64_
 #define _YARP2_NETINT64_
 
-#include <yarp/conf/system.h>
+#include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////

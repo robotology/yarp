@@ -10,7 +10,7 @@
 #ifndef XMLRPCSTREAM_INC
 #define XMLRPCSTREAM_INC
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/StringInputStream.h>
@@ -28,7 +28,7 @@ namespace yarp {
 }
 
 class yarp::os::impl::XmlRpcStream : public TwoWayStream,
-                                     public InputStream,
+                                     public yarp::os::InputStream,
                                      public yarp::os::OutputStream
 {
 private:
@@ -59,7 +59,7 @@ public:
         }
     }
 
-    virtual InputStream& getInputStream() { return *this; }
+    virtual yarp::os::InputStream& getInputStream() { return *this; }
     virtual yarp::os::OutputStream& getOutputStream() { return *this; }
 
 
@@ -94,9 +94,6 @@ public:
     virtual void write(const Bytes& b);
 
     virtual ssize_t read(const Bytes& b);
-    //{
-    //  return delegate->getInputStream().read(b);
-    //}
 
     virtual void interrupt() {
         delegate->getInputStream().interrupt();

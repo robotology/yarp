@@ -8,6 +8,7 @@
 
 #include <yarp/os/impl/AbstractCarrier.h>
 #include <yarp/os/impl/Protocol.h>
+#include <yarp/os/ManagedBytes.h>
 
 
 void yarp::os::impl::AbstractCarrier::setParameters(const yarp::os::Bytes& header) {

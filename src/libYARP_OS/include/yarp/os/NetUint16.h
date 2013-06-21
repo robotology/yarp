@@ -9,7 +9,7 @@
 #ifndef _YARP2_NETUINT16_
 #define _YARP2_NETUINT16_
 
-#include <yarp/conf/system.h>
+#include <yarp/conf/numeric.h>
 #include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
