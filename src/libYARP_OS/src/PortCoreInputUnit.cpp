@@ -108,7 +108,7 @@ void PortCoreInputUnit::run() {
                 " using " +
                 route.getCarrierName();
             if (Name(route.getFromName()).isRooted()) {
-                if (reversed||ip->isPush()) {
+                if (reversed||ip->getConnection().isPush()) {
                     YARP_INFO(Logger::get(),msg);
                     posted = true;
                 } else {
@@ -144,7 +144,7 @@ void PortCoreInputUnit::run() {
     }
 
     if (!reversed) {
-        if (!ip->isPush()) {
+        if (!ip->getConnection().isPush()) {
             /* IP=OP */
             OutputProtocol *op = &(ip->getOutput());
             Route r = op->getRoute();
@@ -185,7 +185,7 @@ void PortCoreInputUnit::run() {
             continue;
         }
             
-        if (autoHandshake&&(ip->canEscape())) {
+        if (autoHandshake&&(ip->getConnection().canEscape())) {
             bool ok = cmd.read(br);
             if (!br.isActive()) { done = true; break; }
             if (!ok) continue;
@@ -272,10 +272,10 @@ void PortCoreInputUnit::run() {
                     localReader->read(br);
                     if (!br.isActive()) { done = true; break; }
                 } else {
-                    if (ip->acceptIncomingData(br)) {
-                        man.readBlock(ip->modifyIncomingData(br),id,os);
+                    if (ip->getReceiver().acceptIncomingData(br)) {
+                        man.readBlock(ip->getReceiver().modifyIncomingData(br),id,os);
                     } else {
-                        ip->skipIncomingData(br);
+                        skipIncomingData(br);
                     }
                     if (!br.isActive()) { done = true; break; }
                 }
@@ -480,12 +480,20 @@ void PortCoreInputUnit::closeMain() {
 
 Route PortCoreInputUnit::getRoute() {
     return officialRoute;
-    /*
-    if (ip!=NULL) {
-        return ip->getRoute();
-    }
-    return PortCoreUnit::getRoute();
-    */
 }
 
+
+bool PortCoreInputUnit::skipIncomingData(yarp::os::ConnectionReader& reader) {
+    size_t pending = reader.getSize();
+    if (pending>0) {
+        while (pending>0) {
+            char buf[10000];
+            size_t next = (pending<sizeof(buf))?pending:sizeof(buf);
+            reader.expectBlock(&buf[0],next);
+            pending -= next;
+        }
+        return true;
+    }
+    return false;
+}
 

@@ -37,7 +37,7 @@ namespace yarp {
  */
 class yarp::os::impl::BayerCarrier : public yarp::os::impl::ModifyingCarrier,
                                      public yarp::os::ConnectionReader,
-                                     public yarp::os::impl::InputStream {
+                                     public yarp::os::InputStream {
 private:
     yarp::sig::ImageOf<yarp::sig::PixelMono> in;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> out;

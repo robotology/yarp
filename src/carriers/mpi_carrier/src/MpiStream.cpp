@@ -13,6 +13,7 @@
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 
 /* --------------------------------------- */
@@ -55,7 +56,7 @@ bool MpiStream::isOk() {
 InputStream& MpiStream::getInputStream() {
     return *this;
 }
-OutputStream& MpiStream::getOutputStream() {
+yarp::os::OutputStream& MpiStream::getOutputStream() {
     return *this;
 }
 const Address& MpiStream::getLocalAddress() {

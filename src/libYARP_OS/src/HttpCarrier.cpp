@@ -13,6 +13,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/ManagedBytes.h>
 
 
 static yarp::os::impl::String quoteFree(const yarp::os::impl::String &src) {
@@ -330,11 +331,11 @@ yarp::os::impl::HttpTwoWayStream::~HttpTwoWayStream() {
     }
 }
 
-yarp::os::impl::InputStream& yarp::os::impl::HttpTwoWayStream::getInputStream() {
+yarp::os::InputStream& yarp::os::impl::HttpTwoWayStream::getInputStream() {
     return sis;
 }
 
-yarp::os::impl::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
+yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
     return *this;
 }
 
@@ -706,7 +707,7 @@ bool yarp::os::impl::HttpCarrier::expectReplyToHeader(Protocol& proto) {
 }
 
 
-bool yarp::os::impl::HttpCarrier::sendIndex(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::sendIndex(Protocol& proto, SizedWriter& writer) {
     // no index
     return true;
 }

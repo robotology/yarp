@@ -66,6 +66,7 @@ if(YARP_USE_GTK2)
                                        ${GTK2_GDKMM_LIBRARY}
                                        ${GTK2_ATKMM_LIBRARY}
                                        ${GTK2_SIGC++_LIBRARY}
+                                       ${GTK2_GTHREAD_LIBRARY}
                                        ${GooCanvasMM_LIBRARIES})
 else(YARP_USE_GTK2)
     target_link_libraries(gyarpbuilder YARP_init

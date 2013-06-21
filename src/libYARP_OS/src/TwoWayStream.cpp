@@ -15,11 +15,11 @@ yarp::os::impl::TwoWayStream::~TwoWayStream() {
 yarp::os::impl::NullStream::~NullStream() {
 }
 
-yarp::os::impl::InputStream& yarp::os::impl::NullStream::getInputStream() {
+yarp::os::InputStream& yarp::os::impl::NullStream::getInputStream() {
     return *this;
 }
 
-yarp::os::impl::OutputStream& yarp::os::impl::NullStream::getOutputStream() {
+yarp::os::OutputStream& yarp::os::impl::NullStream::getOutputStream() {
     return * this;
 }
 

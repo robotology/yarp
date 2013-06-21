@@ -90,12 +90,12 @@ public:
 
     void setCarrierParams(const yarp::os::Property& params) {
         if(op)
-            op->setOutputCarrierParams(params);
+            op->getConnection().setCarrierParams(params);
     }
 
     void getCarrierParams(yarp::os::Property& params) { 
         if(op)
-            op->getOutputCarrierParams(params);
+            op->getConnection().getCarrierParams(params);
     }
 
 

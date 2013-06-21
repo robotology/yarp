@@ -11,10 +11,11 @@
 #define _YARP2_OUTPUTPROTOCOL_
 
 #include <yarp/os/impl/Route.h>
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/impl/SizedWriter.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Connection.h>
 
 namespace yarp {
     namespace os {
@@ -37,17 +38,10 @@ public:
     virtual void close() = 0;
 
     virtual const Route& getRoute() = 0;
-    virtual bool isActive() = 0;
+
     virtual bool isOk() = 0;
-    virtual bool isTextMode() = 0;
-    virtual bool isConnectionless() = 0;
-    virtual bool isBroadcast() = 0;
-    virtual bool canEscape() = 0;
-    virtual bool supportReply() = 0;
-    virtual bool isLocal() = 0;
-    virtual bool isPush() = 0;
-    virtual bool requireAck() = 0;
-    virtual void prepareDisconnect() = 0;
+
+    virtual Connection& getConnection() = 0;
 
     virtual bool checkStreams() = 0;
 
@@ -59,15 +53,10 @@ public:
     virtual InputProtocol& getInput() = 0;
 
     // direct access
-    virtual OutputStream& getOutputStream() = 0;
-    virtual InputStream& getInputStream() = 0;
+    virtual yarp::os::OutputStream& getOutputStream() = 0;
+    virtual yarp::os::InputStream& getInputStream() = 0;
 
     virtual bool setTimeout(double timeout) = 0;
-
-    virtual void setOutputCarrierParams(const yarp::os::Property& params) = 0;
-    
-    virtual void getOutputCarrierParams(yarp::os::Property& params) = 0;
-
 };
 
 #endif

@@ -9,11 +9,9 @@
 
 #include <yarp/os/impl/FakeTwoWayStream.h>
 #include <yarp/os/impl/Protocol.h>
-
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/PlatformStdio.h>
-
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
 using namespace yarp::os::impl;
 

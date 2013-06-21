@@ -41,6 +41,7 @@ if(CREATE_YARPVIEW)
                                        ${GTK2_GDK_LIBRARY}
                                        ${GTK2_GDK_PIXBUF_LIBRARY}
                                        ${GTK2_GOBJECT_LIBRARY}
+                                       ${GTK2_GTHREAD_LIBRARY}
         )
     else(YARP_USE_GTK2)
         target_link_libraries(yarpview ${GtkPlus_LIBRARIES})

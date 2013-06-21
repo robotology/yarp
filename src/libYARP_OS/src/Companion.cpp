@@ -382,7 +382,7 @@ int Companion::ping(const char *port, bool quiet) {
         StreamConnectionReader reader;
 
         PortCommand pc(0,"*");
-        BufferedConnectionWriter bw(out->isTextMode());
+        BufferedConnectionWriter bw(out->getConnection().isTextMode());
         pc.write(bw);
         bw.write(os);
         Bottle resp;
@@ -776,11 +776,7 @@ int Companion::sendMessage(const String& port, PortWriter& writable,
         return 1;
     }
 
-    //printf("Route %s TEXT mode %d\n", out->getRoute().toString().c_str(),
-    // out->isTextMode());
-    BufferedConnectionWriter bw(out->isTextMode());
-    //bw.appendLine(msg);
-    //writable.writeBlock(bw);
+    BufferedConnectionWriter bw(out->getConnection().isTextMode());
     PortCommand disconnect('\0',"q");
     bool wok = writable.write(bw);
     if (!wok) {

@@ -11,13 +11,10 @@
 #define _YARP2_OUTPUTSTREAM_
 
 #include <yarp/os/Bytes.h>
-#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class OutputStream;
-        }
+        class OutputStream;
     }
 }
 
@@ -25,7 +22,7 @@ namespace yarp {
  * Simple specification of the minimum functions needed from output streams.
  * The streams could be TCP, UDP, MCAST, ...
  */
-class YARP_OS_impl_API yarp::os::impl::OutputStream {
+class YARP_OS_API yarp::os::OutputStream {
 public:
 
     /**
@@ -93,8 +90,8 @@ public:
      * @param data the text to write
      *
      */
-    virtual void writeLine(const String& data) {
-        yarp::os::Bytes b((char*)(data.c_str()),data.length());
+    virtual void writeLine(const char *data, int len) {
+        yarp::os::Bytes b((char*)data,len);
         write(b);
         write('\n');
     }

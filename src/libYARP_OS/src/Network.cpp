@@ -23,7 +23,7 @@
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/MultiNameSpace.h>
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/impl/OutputProtocol.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -752,9 +752,9 @@ bool NetworkBase::write(const Contact& contact,
     out->open(r);
 
     PortCommand pc(0,style.admin?"a":"d");
-    BufferedConnectionWriter bw(out->isTextMode());
+    BufferedConnectionWriter bw(out->getConnection().isTextMode());
     bool ok = true;
-    if (out->canEscape()) {
+    if (out->getConnection().canEscape()) {
         ok = pc.write(bw);
     }
     if (!ok) {
@@ -1016,9 +1016,9 @@ public:
         return getContent().expectReplyToHeader(proto);
     }
 
-    virtual bool sendIndex(Protocol& proto) {
-        return getContent().sendIndex(proto);
-    }
+    //virtual bool sendIndex(Protocol& proto,SizedWriter& writer) {
+    //return getContent().sendIndex(proto,writer);
+    //}
 
     virtual bool write(Protocol& proto, SizedWriter& writer) {
         return getContent().write(proto,writer);

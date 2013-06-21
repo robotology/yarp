@@ -94,7 +94,7 @@ bool yarp::os::impl::TextCarrier::expectSenderSpecifier(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::TextCarrier::sendIndex(Protocol& proto) {
+bool yarp::os::impl::TextCarrier::sendIndex(Protocol& proto, SizedWriter& writer) {
     return true;
 }
 

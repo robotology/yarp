@@ -118,7 +118,7 @@ public:
     virtual bool sendHeader(Protocol& proto);
     virtual bool expectSenderSpecifier(Protocol& proto);
     virtual bool expectReplyToHeader(Protocol& proto);
-    virtual bool sendIndex(Protocol& proto);
+    virtual bool sendIndex(Protocol& proto,SizedWriter& writer);
     virtual bool expectIndex(Protocol& proto);
     virtual bool sendAck(Protocol& proto);
     virtual bool expectAck(Protocol& proto);

@@ -4,7 +4,7 @@
 
 set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/generated_include)
 
-foreach(conf version system options api)
+foreach(conf version system options api numeric)
     set(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
     configure_file(${YARP_MODULE_DIR}/template/yarp_config_${conf}.h.in
                    ${outconf} IMMEDIATE)

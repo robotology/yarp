@@ -46,7 +46,7 @@ void FallbackNameServer::run() {
                 String result = owner.apply(msg,addr);
                 //Bytes b((char*)(result.c_str()),result.length());
                 send.beginPacket();
-                send.writeLine(result);
+                send.writeLine(result.c_str(),(int)result.length());
                 send.flush();
                 send.endPacket();
             }

@@ -134,9 +134,10 @@ void PortCoreOutputUnit::runSimulation() {
 void PortCoreOutputUnit::closeBasic() {
     bool waitForOther = false;
     if (op!=NULL) {
-	op->prepareDisconnect();
+        op->getConnection().prepareDisconnect();
         Route route = op->getRoute();
-        if (op->isConnectionless()||op->isBroadcast()) {
+        if (op->getConnection().isConnectionless()||
+            op->getConnection().isBroadcast()) {
             YARP_SPRINTF1(Logger::get(),
                          debug,
                          "output for route %s asking other side to close by out-of-band means",
@@ -144,8 +145,8 @@ void PortCoreOutputUnit::closeBasic() {
             Companion::disconnectInput(route.getToName().c_str(),
                                        route.getFromName().c_str(),true);
         } else {
-            if (op->canEscape()) {
-                BufferedConnectionWriter buf(op->isTextMode());
+            if (op->getConnection().canEscape()) {
+                BufferedConnectionWriter buf(op->getConnection().isTextMode());
                 PortCommand pc('\0',String("q"));
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
@@ -181,10 +182,9 @@ void PortCoreOutputUnit::closeBasic() {
     if (op!=NULL) {
         if (waitForOther) {
             // quit is only acknowledged in certain conditions
-            if (op->isTextMode()&&op->supportReply()) {
+            if (op->getConnection().isTextMode()&&
+                op->getConnection().supportReply()) {
                 InputStream& is = op->getInputStream();
-                //printf("Waiting for %s to close...\n",
-                //     op->getRoute().toString().c_str());
                 ManagedBytes dummy(1);
                 is.read(dummy.bytes());
             }
@@ -236,19 +236,15 @@ bool PortCoreOutputUnit::sendHelper() {
     bool done = false;
     if (op!=NULL) {
 
-        BufferedConnectionWriter buf(op->isTextMode());
+        BufferedConnectionWriter buf(op->getConnection().isTextMode());
         if (cachedReader!=NULL) {
             buf.setReplyHandler(*cachedReader);
         }
 
 
-        if (op->isLocal()) {
-            //buf.setReference((yarp::os::Portable *)cachedWriter);
+        if (op->getConnection().isLocal()) {
             buf.setReference(dynamic_cast<yarp::os::Portable *>
                              (cachedWriter));
-
-            //printf("REF %ld\n", (long int)buf.getReference());
-            //op->write(buf); // done later
         } else {
 
 
@@ -260,7 +256,7 @@ bool PortCoreOutputUnit::sendHelper() {
 
             bool suppressReply = (buf.getReplyHandler()==NULL);
 
-            if (op->canEscape()&&!done) {
+            if (op->getConnection().canEscape()&&!done) {
                 buf.addToHeader();
 
                 if (cachedEnvelope!="") {
@@ -301,7 +297,7 @@ bool PortCoreOutputUnit::sendHelper() {
         }
 
         if (!done) {
-            if (op->isActive()) {
+            if (op->getConnection().isActive()) {
                 replied = op->write(buf);
             }
             if (!op->isOk()) {
@@ -314,7 +310,6 @@ bool PortCoreOutputUnit::sendHelper() {
         }
     }
     if (done) {
-        //YARP_DEBUG(Logger::get(), e.toString() + " <<< output exception");
         closeBasic();
         finished = true;
         closing = true;

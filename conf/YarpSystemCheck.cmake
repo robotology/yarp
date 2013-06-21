@@ -82,6 +82,33 @@ endif(SIZEOF_LONG EQUAL 8)
 
 check_type_size("void *" YARP_POINTER_SIZE)
 
+
+set(YARP_SSIZE_T int)
+check_type_size(ssize_t YARP_SSIZE_T_LOWER)
+if (HAVE_YARP_SSIZE_T_LOWER)
+  set(YARP_SSIZE_T ssize_t)
+else()
+  check_type_size(SSIZE_T YARP_SSIZE_T_HIGHER)
+  if (HAVE_YARP_SSIZE_T_HIGHER)
+    set(YARP_SSIZE_T SSIZE_T)
+  else ()
+    check_type_size(size_t YARP_SIZE_T)
+    if (YARP_SIZE_T EQUAL 8)
+      set (YARP_SSIZE_T ${YARP_INT64})
+    endif()
+    if (YARP_SIZE_T EQUAL 4)
+      set (YARP_SSIZE_T ${YARP_INT32})
+    endif()
+    if (YARP_SIZE_T EQUAL 2)
+      set (YARP_SSIZE_T ${YARP_INT16})
+    endif()
+  endif()
+endif()
+
+set(YARP_HAVE_SYS_TYPES_H ${HAVE_SYS_TYPES_H})
+set(YARP_HAVE_STDINT_H ${HAVE_STDINT_H})
+set(YARP_HAVE_STDDEF_H ${HAVE_STDDEF_H})
+
 #########################################################################
 # Set up compile flags
 
