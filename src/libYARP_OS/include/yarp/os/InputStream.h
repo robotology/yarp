@@ -79,7 +79,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual YARP_SSIZE_T read(const Bytes& b, size_t offset, ssize_t len) {
+    virtual YARP_SSIZE_T read(const Bytes& b, size_t offset, YARP_SSIZE_T len) {
         return read(yarp::os::Bytes(b.get()+offset,len));
     }
 
