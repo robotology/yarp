@@ -59,7 +59,7 @@ public:
      */
     virtual int read() {
         unsigned char result;
-        ssize_t ct = read(yarp::os::Bytes((char*)&result,1));
+        YARP_SSIZE_T ct = read(yarp::os::Bytes((char*)&result,1));
         if (ct<1) {
             return -1;
         }
