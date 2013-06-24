@@ -616,6 +616,7 @@ public:
         out.write(src);
         callback.produce.wait();
         checkEqual(callback.saved.size(),3,"object came through");
+        reader.disableCallback();
         out.close();
         in.close();
     }
