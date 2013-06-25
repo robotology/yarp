@@ -1052,15 +1052,14 @@ ConstString ResourceFinder::getConfigHome() {
     }
 #endif
 
-    ConstString home_version = NetworkBase::getEnvironment("HOME");
 #ifdef __APPLE__
-if (home_version != "") {
+    ConstString home_version= getDataHome();
+    if (home_version != "") {
         return home_version
-            + slash + "Library"
-            + slash + "Preferences"
-            + slash + "yarp";
+            + slash + "config";
     }
 #endif
+    ConstString home_version = NetworkBase::getEnvironment("HOME");
     if (home_version != "") {
         return home_version
             + slash + ".config"
