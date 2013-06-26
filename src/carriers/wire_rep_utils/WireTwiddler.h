@@ -15,6 +15,7 @@
 #include <yarp/os/NetInt32.h>
 
 #include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/impl/PlatformSize.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/Bytes.h>
 
