@@ -14,6 +14,9 @@ _get_yarprun_tags() {
     echo $(yarp run --on $1 --ps 2>&1 | grep "^(pid" | sed  's/(//g;s/)//g' | awk '{print $4 }' )
 }
 
+_get_yarp_help(){
+echo $(yarp help | awk 'NR>=4 {print $1}' )
+}
 
 _yarp() 
 {
@@ -25,7 +28,8 @@ _yarp()
         local pprev="${COMP_WORDS[COMP_CWORD-2]}"
     fi
     local command="${COMP_WORDS[1]}"
-    local cmds="check clean conf connect detect disconnect exists help name namespace ping read rpc rpcserver run server terminate version wait where write"
+    local cmds=$(_get_yarp_help)
+    #local cmds="check clean conf connect detect disconnect exists help name namespace ping read rpc rpcserver run server terminate version wait where write"
     local carrier="tcp mpi"
 
     completion=""
