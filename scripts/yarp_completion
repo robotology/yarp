@@ -137,7 +137,63 @@ _yarprun() {
 
     return 0
 }
- 
+
+_get_all_contexts() {
+
+    for x in `yarp-context --list | grep "^[^\*]" | sort | uniq`;
+       do echo ${x} ;
+    done
+}
+
+_get_user_contexts() {
+
+    for x in `yarp-context --list --user| grep "^[^\*]" | sort | uniq`;
+       do echo ${x} ;
+    done
+}
+
+_get_installed_contexts() {
+
+    for x in `yarp-context --list --installed| grep "^[^\*]" | sort | uniq`;
+       do echo ${x} ;
+    done
+}
+
+_yarpcontext() {
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
+    local command="${COMP_WORDS[1]}"
+    local opts="--where --import --remove --diff --merge --list --help --import-all"
+
+    completion=""
+    if [ $COMP_CWORD -eq 1 ]; then
+        ### first options
+        completion=$opts
+    else
+        case "$prev" in
+            "--where")
+                completion=$(_get_all_contexts)
+                ;;
+            "--import")
+                completion=$(_get_installed_contexts)
+                ;;
+            "--remove"|"--diff"|"--merge")
+                completion=$(_get_user_contexts)
+                ;;
+            "--list")
+                completion="--user --sysadm --installed"
+                ;;
+            *)
+            ;;
+        esac
+    fi
+    COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
+
+    return 0
+}
+
+complete -F _yarpcontext yarp-context
 complete -F _yarp yarp
 complete -F _yarprun yarprun
 

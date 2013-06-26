@@ -15,7 +15,6 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <stdio.h>
-#include "ace/OS_NS_fcntl.h"
 #include <errno.h>
 
 #if defined(WIN32)
@@ -53,7 +52,7 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
         {
             ConstString srcPath=srcDirName + PATH_SEPERATOR + name;
             ACE_stat statbuf;
-            if( ACE_OS::stat(srcPath.c_str(), &statbuf) ==-1)
+            if( YARP_stat(srcPath.c_str(), &statbuf) ==-1)
                 printf("Error in checking properties for %s\n", srcPath.c_str());
             if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
                 recursiveCopy(srcPath, destDirName + PATH_SEPERATOR + name);
@@ -103,7 +102,7 @@ int recursiveRemove(ConstString dirName)
     if (n<0)
     {
         printf("Could not read from  directory %s\n", dirName.c_str());
-        return ACE_OS::rmdir(dirName.c_str()); // TODO check if this is useful...
+        return yarp::os::rmdir(dirName.c_str()); // TODO check if this is useful...
     }
     
     for (int i=0; i<n; i++)
@@ -113,20 +112,20 @@ int recursiveRemove(ConstString dirName)
         if( name != "." && name != "..")
         {
             ACE_stat statbuf;
-            if (ACE_OS::stat(path.c_str(), &statbuf) == -1)
+            if (YARP_stat(path.c_str(), &statbuf) == -1)
                 printf("Error in checking properties for %s\n", path.c_str());
-            if ((statbuf.st_mode & S_IFMT)== S_IFDIR) //TODO: use stat() instead?
+            if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
                 recursiveRemove(path);
             if ((statbuf.st_mode & S_IFMT)== S_IFREG)
             {
-               ACE_OS::unlink(path);
+               YARP_unlink(path);
             }
         }
         free(namelist[i]);
     }
     free(namelist);
     
-    return ACE_OS::rmdir(dirName.c_str());
+    return yarp::os::rmdir(dirName.c_str());
     
 };
 
@@ -144,7 +143,7 @@ void printContentDirs(ConstString curPath)
         {
             ACE_stat statbuf;
             ConstString path=curPath + PATH_SEPERATOR + name;
-            if (ACE_OS::stat(path.c_str(), &statbuf) == -1)
+            if (YARP_stat(path.c_str(), &statbuf) == -1)
                 printf("Error in checking properties for %s\n", path.c_str());
 
             if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
@@ -155,21 +154,59 @@ void printContentDirs(ConstString curPath)
     free(namelist);
 };
 
+
+void printUserContexts(ResourceFinder &rf)
+{
+    ResourceFinderOptions opts;
+    opts.searchLocations=ResourceFinderOptions::User;
+    yarp::os::Bottle contextPaths=rf.findPaths("contexts", opts);
+    printf("**LOCAL USER DATA:\n");
+    for (int curPathId=0; curPathId<contextPaths.size(); ++curPathId)
+    {
+        printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
+        printContentDirs(contextPaths.get(curPathId).asString());
+    }
+}
+
+void printSysadmContexts(ResourceFinder &rf)
+{
+    ResourceFinderOptions opts;
+    opts.searchLocations=ResourceFinderOptions::Sysadmin;
+    yarp::os::Bottle contextPaths=rf.findPaths("contexts", opts);
+    printf("**SYSADMIN DATA:\n");
+    for (int curPathId=0; curPathId<contextPaths.size(); ++curPathId)
+    {
+        printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
+        printContentDirs(contextPaths.get(curPathId).asString());
+    }
+}
+
+void printInstalledContexts(ResourceFinder &rf)
+{
+    ResourceFinderOptions opts;
+    opts.searchLocations=ResourceFinderOptions::Installed;
+    yarp::os::Bottle contextPaths=rf.findPaths("contexts", opts);
+    printf("**INSTALLED DATA:\n");
+    for (int curPathId=0; curPathId<contextPaths.size(); ++curPathId)
+    {
+        printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
+        printContentDirs(contextPaths.get(curPathId).asString());
+    }
+}
+
 void prepareHomeFolder(ResourceFinder &rf)
 {
 
-    ACE_DIR* dir= ACE_OS::opendir((rf.getDataHome()).c_str()); //TODO: wrap in yarp
+    ACE_DIR* dir= YARP_opendir((rf.getDataHome()).c_str());
     if (dir!=NULL)
-        //ACE_OS::closedir(dir);
         YARP_closedir(dir);
     else
     {
         yarp::os::mkdir((rf.getDataHome()).c_str());
     }
 
-    dir= ACE_OS::opendir((rf.getDataHome() + PATH_SEPERATOR + "contexts").c_str()); //TODO: wrap in yarp
+    dir= YARP_opendir((rf.getDataHome() + PATH_SEPERATOR + "contexts").c_str());
     if (dir!=NULL)
-        //ACE_OS::closedir(dir);
         YARP_closedir(dir);
     else
     {
@@ -182,7 +219,7 @@ void show_help() {
     printf("Usage: yarp-context [OPTION]\n\n");
     printf("Known values for OPTION are:\n\n");
     printf("  --help       display this help and exit\n");
-    printf("  --list  list contexts that are available\n");
+    printf("  --list  list contexts that are available; add optional '--user', '--sysadm' or '--installed' parameters to limit the search locations\n");
     printf("  --import <context_name>  import specified context to home directory\n");
     printf("  --import-all import all contexts to home directory\n");
     printf("  --remove  <context_name>  remove specified context from home directory\n");
@@ -205,26 +242,21 @@ int main(int argc, char *argv[]) {
         yarp::os::ResourceFinder rf;
         if (options.check("verbose"))
             rf.setVerbose(true);
-        
-        ResourceFinderOptions opts;
-        opts.searchLocations=ResourceFinderOptions::User;
-        yarp::os::Bottle contextPaths=rf.findPaths("contexts", opts); // separate "User" from "Installed" ?
-        printf("**LOCAL USER DATA:\n");
-        for (int curPathId=0; curPathId<contextPaths.size(); ++curPathId)
+        if(options.check("user") || options.check("sysadm") || options.check("installed"))
         {
-            printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
-            printContentDirs(contextPaths.get(curPathId).asString());
+            if (options.check("user"))
+                printUserContexts(rf);
+            if (options.check("sysadm"))
+                printSysadmContexts(rf);
+            if (options.check("installed"))
+                printInstalledContexts(rf);
         }
-        
-        opts.searchLocations=ResourceFinderOptions::Installed;
-        contextPaths=rf.findPaths("contexts", opts); // separate "User" from "Installed" ?
-        printf("**INSTALLED DATA:\n");
-        for (int curPathId=0; curPathId<contextPaths.size(); ++curPathId)
+        else
         {
-            printf("* Directory : %s\n", contextPaths.get(curPathId).asString().c_str());
-            printContentDirs(contextPaths.get(curPathId).asString());
+            printUserContexts(rf);
+            printSysadmContexts(rf);
+            printInstalledContexts(rf);
         }
-        
         return 0;
     }
     
@@ -288,7 +320,7 @@ int main(int argc, char *argv[]) {
                 {
                     ACE_stat statbuf;
                     ConstString originalpath=curPath + PATH_SEPERATOR + name;
-                    ACE_OS::stat(originalpath.c_str(), &statbuf);
+                    YARP_stat(originalpath.c_str(), &statbuf);
                     if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
                     {
                         ConstString destDirname=rf.getDataHome() + PATH_SEPERATOR + "contexts" + PATH_SEPERATOR + name;
