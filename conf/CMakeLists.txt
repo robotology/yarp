@@ -21,6 +21,7 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      MacroExtractVersion.cmake
                      MacroStandardFindModule.cmake
                      YarpDeprecatedWarning.cmake
+                     YarpInstallationHelpers.cmake
                      FindACE.cmake
                      FindAtlas.cmake
                      FindFFMPEG.cmake

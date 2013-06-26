@@ -621,30 +621,6 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Robot) {
-            ConstString slash = NetworkBase::getDirectorySeparator();
-            bool found = false;
-            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
-                                                            &found);
-            if (!found) robot = "default";
-
-            // Nested search to locate robot directory
-            Bottle paths;
-            ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
-            opts2.resourceType = "robots";
-            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
-            appendResourceType(paths,resourceType);
-            for (int j=0; j<paths.size(); j++) {
-                ConstString str = check(paths.get(j).asString().c_str(),
-                                        "","",
-                                        name,isDir,doc,"robot");
-                if (str!="") {
-                    addString(output,str);
-                    if (justTop) return;
-                }
-            }
-        }
 
         if (locs & ResourceFinderOptions::Context) {
             for (int i=0; i<apps.size(); i++) {
@@ -657,7 +633,7 @@ public:
                 // Nested search to locate context directory
                 Bottle paths;
                 ResourceFinderOptions opts2;
-                prependResourceType(app,"app");
+                prependResourceType(app,"contexts");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
                 findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
                 appendResourceType(paths,resourceType);
@@ -764,6 +740,31 @@ public:
                             if (justTop) return;
                         }
                     }
+                }
+            }
+        }
+        
+        if (locs & ResourceFinderOptions::Robot) {
+            ConstString slash = NetworkBase::getDirectorySeparator();
+            bool found = false;
+            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+                                                            &found);
+            if (!found) robot = "default";
+
+            // Nested search to locate robot directory
+            Bottle paths;
+            ResourceFinderOptions opts2;
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
+            opts2.resourceType = "robots";
+            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
+            appendResourceType(paths,resourceType);
+            for (int j=0; j<paths.size(); j++) {
+                ConstString str = check(paths.get(j).asString().c_str(),
+                                        "","",
+                                        name,isDir,doc,"robot");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
                 }
             }
         }
@@ -1017,6 +1018,14 @@ ConstString ResourceFinder::getDataHome() {
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
+#ifdef __APPLE__
+    if (home_version != "") {
+        return home_version
+            + slash + "Library"
+            + slash + "Application Support"
+            + slash + "yarp";
+    }
+#endif
     if (home_version != "") {
         return home_version
             + slash + ".local"
@@ -1040,6 +1049,14 @@ ConstString ResourceFinder::getConfigHome() {
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
         return app_version + slash + "yarp" + slash + "config";
+    }
+#endif
+
+#ifdef __APPLE__
+    ConstString home_version= getDataHome();
+    if (home_version != "") {
+        return home_version
+            + slash + "config";
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
@@ -1067,6 +1084,7 @@ Bottle ResourceFinder::getDataDirs() {
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
     if (app_version != "") {
+        appendResourceType(app_version,"share");
         appendResourceType(app_version,"yarp");
         Bottle result;
         result.addString(app_version);
@@ -1101,7 +1119,11 @@ Bottle ResourceFinder::getConfigDirs() {
         return result;
     }
 #endif
+
     Bottle result;
+#ifdef __APPLE__
+    result.addString("/Library/Preferences/yarp");
+#endif
     result.addString("/etc/yarp");
     return result;
 }

@@ -2,32 +2,10 @@
 # Authors: Elena Ceseracciu
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+yarp_install(FILES xml/applications/eyesviewer-cluster.xml.template DESTINATION ${YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR})
 
-configure_file(templates/application.xml.template ${CMAKE_BINARY_DIR}/templates/application.xml.template COPYONLY)
-configure_file(templates/module.xml.template ${CMAKE_BINARY_DIR}/templates/module.xml.template COPYONLY)
-configure_file(templates/resource.xml.template ${CMAKE_BINARY_DIR}/templates/resource.xml.template COPYONLY)
+set(app_examples xml/applications/eyesviewer-localhost.xml xml/applications/fakeye-localhost.xml)
+yarp_install(FILES ${app_examples} DESTINATION ${YARP_APPLICATIONS_INSTALL_DIR})
 
-if(YARP_TREE_INCLUDE_DIRS)
-    install(FILES ${CMAKE_BINARY_DIR}/templates/application.xml.template ${CMAKE_BINARY_DIR}/templates/module.xml.template ${CMAKE_BINARY_DIR}/templates/resource.xml.template
-            DESTINATION share/yarp/templates)
-endif(YARP_TREE_INCLUDE_DIRS)
+yarp_install(FILES xml/modules/test_grabber.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
 
-#application template (cluster must be configured)
-configure_file(xml/applications/eyesviewer-cluster.xml  ${CMAKE_BINARY_DIR}/templates/app/eyesviewer-cluster.xml.template COPYONLY)
-if(YARP_TREE_INCLUDE_DIRS)
-    install(FILES ${CMAKE_BINARY_DIR}/templates/app/eyesviewer-cluster.xml.template 
-            DESTINATION share/yarp/templates/app)
-endif(YARP_TREE_INCLUDE_DIRS)
-
-
-set(app_examples eyesviewer-localhost.xml fakeye-localhost.xml)
-
-foreach(appname ${app_examples})
-    configure_file(xml/applications/${appname} ${CMAKE_BINARY_DIR}/app/${appname} COPYONLY)
-if(YARP_TREE_INCLUDE_DIRS)
-    install(FILES ${CMAKE_BINARY_DIR}/app/${appname}
-            DESTINATION share/yarp/app)
-endif(YARP_TREE_INCLUDE_DIRS)
-
-endforeach()

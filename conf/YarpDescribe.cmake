@@ -28,19 +28,19 @@ set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 set(YARP_DEPENDENCY_FILENAME YARPDependencies.cmake)
 set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
 
-set(YARP_DATA_INSTALL_DIR ${CMAKE_BINARY_DIR}) #not sure if we need this
-set(YARP_PLUGIN_MANIFESTS_INSTALL_DIR ${CMAKE_BINARY_DIR}/plugins/) #could be moved to YarpPlugin.cmake?
-set(YARP_MODULES_INSTALL_DIR ${CMAKE_BINARY_DIR}/modules)
-set(YARP_APPLICATIONS_INSTALL_DIR ${CMAKE_BINARY_DIR}/app)
-set(YARP_TEMPLATES_INSTALL_DIR ${CMAKE_BINARY_DIR}/templates)
-set(YARP_TEMPLATES_INSTALL_DIR ${CMAKE_BINARY_DIR}/templates)
-set(YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR ${CMAKE_BINARY_DIR}/templates/app)
-set(YARP_MODULE_TEMPLATES_INSTALL_DIR ${CMAKE_BINARY_DIR}/templates/modules)
-
-configure_file(${YARP_MODULE_DIR}/template/YARPConfig.cmake.in
+configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
-configure_file(${YARP_MODULE_DIR}/template/YARPConfigVersion.cmake.in
-               ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake @ONLY IMMEDIATE)
+#configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfigVersion.cmake.in
+#               ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake @ONLY IMMEDIATE)
+if (${CMAKE_VERSION} VERSION_LESS 2.8.8) # -> version is 2.8.7 (oldest supported)
+  include(WriteBasicConfigVersionFile )
+  write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
+                                     VERSION ${YARP_GENERIC_VERSION}
+                                     COMPATIBILITY AnyNewerVersion )
+else()
+  include(CMakePackageConfigHelpers)
+  WRITE_BASIC_PACKAGE_VERSION_FILE(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake VERSION ${YARP_GENERIC_VERSION} COMPATIBILITY AnyNewerVersion )
+endif()
 export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
 set(VERSIONED_LIB lib${LIB_SUFFIX}/YARP-${YARP_GENERIC_VERSION})
@@ -53,13 +53,7 @@ set(YARP_MODULE_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
 set(YARP_IDL_BINARY_HINT ${CMAKE_INSTALL_PREFIX}/bin)
 set(YARP_BINDINGS ${CMAKE_INSTALL_PREFIX}/share/yarp/bindings)
 
-set(YARP_DATA_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp)
-set(YARP_PLUGIN_MANIFESTS_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/plugins)
-set(YARP_MODULES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/modules)
-set(YARP_APPLICATIONS_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/app)
-set(YARP_TEMPLATES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/templates)
-set(YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/templates/app)
-set(YARP_MODULE_TEMPLATES_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/templates/modules)
+set(YARP_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
