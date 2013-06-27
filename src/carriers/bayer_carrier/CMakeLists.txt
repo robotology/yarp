@@ -25,6 +25,7 @@ if (NOT SKIP_bayer_carrier)
   if (USE_LIBDC1394)
     add_definitions(-DUSE_LIBDC1394)
     set(DC1394_SRC)
+  else ()
     include_directories(${CMAKE_SOURCE_DIR}/extern/libdc1394_bayer/)
   endif ()
 
