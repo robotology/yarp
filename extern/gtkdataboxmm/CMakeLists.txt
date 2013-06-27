@@ -12,7 +12,6 @@ if(YARP_USE_GTK2)
                                        ${GTK2_CAIROMM_INCLUDE_DIR}
                                        ${GTK2_GDKMMCONFIG_INCLUDE_DIR}
                                        ${GTK2_GDKMM_INCLUDE_DIR}
-                                       ${GTK2_GIOMMCONFIG_INCLUDE_DIR}
                                        ${GTK2_GIOMM_INCLUDE_DIR}
                                        ${GTK2_GLIBMMCONFIG_INCLUDE_DIR}
                                        ${GTK2_GLIBMM_INCLUDE_DIR}
@@ -22,6 +21,9 @@ if(YARP_USE_GTK2)
                                        ${GTK2_PANGOMM_INCLUDE_DIR}
                                        ${GTK2_SIGC++CONFIG_INCLUDE_DIR}
                                        ${GTK2_SIGC++_INCLUDE_DIR})
+    if(GTK2_GIOMMCONFIG_INCLUDE_DIR)
+       list(APPEND GtkDataboxMM_GTK2_INCLUDE_DIRS ${GTK2_GIOMMCONFIG_INCLUDE_DIR})
+    endif()
     set(GtkDataboxMM_GTK2_LIBRARIES ${GTK2_ATKMM_LIBRARY}
                                     ${GTK2_GDKMM_LIBRARY}
                                     ${GTK2_GLIBMM_LIBRARY}
