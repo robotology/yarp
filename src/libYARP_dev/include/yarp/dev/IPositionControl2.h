@@ -58,7 +58,6 @@ public:
     using IPositionControlRaw::getRefAccelerationRaw;
     using IPositionControlRaw::getRefAccelerationsRaw;
     using IPositionControlRaw::stopRaw;
-    using IPositionControlRaw::stopRaw;
 
 
     /**
@@ -158,7 +157,6 @@ public:
 	using IPositionControl::getRefSpeeds;
 	using IPositionControl::getRefAcceleration;
 	using IPositionControl::getRefAccelerations;
-	using IPositionControl::stop;
 	using IPositionControl::stop;
 
     /**
