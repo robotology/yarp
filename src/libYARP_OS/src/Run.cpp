@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <string>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/RunReadWrite.h>
 #include <yarp/os/impl/RunProcManager.h>
 #include <yarp/os/impl/SystemInfo.h>
@@ -59,6 +60,7 @@ yarp::os::ConstString yarp::os::Run::mPortName;
 yarp::os::Port* yarp::os::Run::pServerPort=0;
 int yarp::os::Run::mProcCNT=0;
 yarp::os::Semaphore yarp::os::Run::serializer(1);
+bool yarp::os::Run::mStresstest=false;
 
 int yarp::os::Run::main(int argc, char *argv[]) 
 {
@@ -101,6 +103,80 @@ int yarp::os::Run::main(int argc, char *argv[])
             {
                 fprintf(stderr,"%s\n",line);
                 fflush(stderr);
+            }
+        }
+
+        CHECK_EXIT()        
+
+        return 0;
+    }
+
+    if (config.check("stresstest"))
+    {
+        CHECKPOINT()
+
+        if (!config.check("on"))
+        {
+            Help();
+            CHECK_EXIT()
+            return 0;
+        }
+
+        fprintf(stderr,"Yarprun stress test started.\n");
+        fflush(stderr);
+        
+        int t=0;
+        int u=0;
+
+        char cmd[64];
+        char tag[16];
+
+        mStresstest=true;
+
+        while (mStresstest)
+        {
+            yarp::os::Time::delay(0.001*(rand()%2000));
+
+            for (int i=0; i<4; ++i)
+            {
+                sprintf(cmd,"yarpview --name /viewer%d",t);
+                sprintf(tag,"stress%d",t);
+
+                Bottle viewer;
+                viewer.addString("cmd");
+                viewer.addString(cmd);
+
+                Bottle as;
+                as.addString("as");
+                as.addString(tag);
+
+                Bottle stress;
+                stress.addList()=config.findGroup("on");
+                stress.addList()=viewer;
+                stress.addList()=as;
+
+                SendMsg(stress,stress.findGroup("on").get(1).asString());
+
+                ++t;
+            }
+
+            int r=t-(rand()%8);
+
+            for (int i=u; i<r; ++i)
+            {
+                sprintf(tag,"stress%d",i);
+
+                Bottle as;
+                as.addString("sigterm");
+                as.addString(tag);
+
+                Bottle stress;
+                stress.addList()=config.findGroup("on");
+                stress.addList()=as;
+
+                SendMsg(stress,stress.findGroup("on").get(1).asString());
+
+                ++u;
             }
         }
 
@@ -309,6 +385,8 @@ yarp::os::Bottle yarp::os::Run::SendMsg(Bottle& msg,yarp::os::ConstString target
 void sigint_handler(int sig)
 {
     CHECK_ENTER("sigint_handler")
+
+        yarp::os::Run::mStresstest=false;
 
     if (yarp::os::Run::pServerPort)
     {
