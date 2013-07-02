@@ -71,42 +71,6 @@ bool ImplementControlLimits2::setLimits(int axis, double min, double max)
     return iLimits2->setLimitsRaw(k, minEnc, maxEnc);
 }
 
-/*
-bool ImplementControlLimits2::setLimits(int n_axis, int *axes, double *min, double *max)
-{
-    for(int idx=0; idx<n_axis; idx++)
-    {
-        castToMapper(helper)->posA2E(min[idx], axes[idx], temp_min[idx], temp_int[idx]);
-        castToMapper(helper)->posA2E(max[idx], axes[idx], temp_max[idx], temp_int[idx]);
-        if( (max[idx] > min[idx]) && (temp_min[idx] > temp_max[idx])) //angle to encoder conversion factor is negative
-        {
-            double temp;   // exchange max and min limits
-            temp = temp_min[idx];
-            temp_min[idx] = temp_max[idx];
-            temp_max[idx] = temp;
-        }
-    }
-    return iLimits2->setLimitsRaw(n_axis, temp_int, temp_min, temp_max);
-}
-
-bool ImplementControlLimits2::setLimits(double *min, double *max)
-{
-    castToMapper(helper)->posA2E(min, temp_min);
-    castToMapper(helper)->posA2E(max, temp_max);
-
-    for(int idx=0; idx<castToMapper(helper)->nj; idx++)
-    {
-        if( (max > min) && (temp_min[idx] > temp_max[idx])) //angle to encoder conversion factor is negative
-        {
-            double temp;   // exchange max and min limits
-            temp = temp_min[idx];
-            temp_min[idx] = temp_max[idx];
-            temp_max[idx] = temp;
-        }
-    }
-    return iLimits2->setLimitsRaw(temp_min, temp_max);
-}
-*/
 
 bool ImplementControlLimits2::getLimits(int axis, double *min, double *max)
 {
@@ -129,60 +93,6 @@ bool ImplementControlLimits2::getLimits(int axis, double *min, double *max)
     return ret;
 }
 
-/*
-bool ImplementControlLimits2::getLimits(int n_axis, int *axes, double *min, double *max)
-{
-    double minEnc=0;
-    double maxEnc=0;
-    bool ret = true;
-
-    for(int idx=0; idx<n_axis; idx++)
-    {
-        temp_int[idx] = castToMapper(helper)->toHw(axes[idx]);
-    }
-
-    ret = ret && iLimits2->getLimitsRaw(n_axis, temp_int, temp_min, temp_max);
-
-    for(int idx=0; idx<n_axis; idx++)
-    {
-        min[idx] = castToMapper(helper)->posE2A(temp_min[idx], temp_int[idx]);
-        max[idx] = castToMapper(helper)->posE2A(temp_max[idx], temp_int[idx]);
-
-        if( (temp_max[idx] < temp_min[idx]) && (minEnc < maxEnc)) //angle to encoder conversion factor is negative
-        {
-            double temp;   // exchange max and min limits
-            temp = temp_min[idx];
-            temp_min[idx] = temp_max[idx];
-            temp_max[idx] = temp;
-        }
-    }
-    return ret;
-}
-
-bool ImplementControlLimits2::getLimits(double *min, double *max)
-{
-    bool ret = iLimits2->getLimitsRaw(temp_min, temp_max);
-    if(ret)
-    {
-        castToMapper(helper)->posE2A(temp_min, min);
-        castToMapper(helper)->posE2A(temp_max, max);
-
-        for(int idx=0; idx<castToMapper(helper)->nj; idx++)
-        {
-            if( (temp_max[idx] < temp_min[idx]) && (min[idx] < max[idx])) //angle to encoder conversion factor is negative
-            {
-                double temp;   // exchange max and min limits
-                temp = temp_min[idx];
-                temp_min[idx] = temp_max[idx];
-                temp_max[idx] = temp;
-            }
-        }
-    }
-    return ret;
-}
-*/
-
-
 bool ImplementControlLimits2::setVelLimits(int axis, double min, double max)
 {
     double minEnc=0;
@@ -202,43 +112,6 @@ bool ImplementControlLimits2::setVelLimits(int axis, double min, double max)
 
     return iLimits2->setVelLimitsRaw(k, minEnc, maxEnc);
 }
-
-/*
-bool ImplementControlLimits2::setVelLimits(int n_axis, int *axes, double *min, double *max)
-{
-    for(int idx=0; idx<n_axis; idx++)
-    {
-        castToMapper(helper)->velA2E(min[idx], axes[idx], temp_min[idx], temp_int[idx]);
-        castToMapper(helper)->velA2E(max[idx], axes[idx], temp_max[idx], temp_int[idx]);
-        if( (max[idx] > min[idx]) && (temp_min[idx] > temp_max[idx])) //angle to encoder conversion factor is negative
-        {
-            double temp;   // exchange max and min limits
-            temp = temp_min[idx];
-            temp_min[idx] = temp_max[idx];
-            temp_max[idx] = temp;
-        }
-    }
-    return iLimits2->setVelLimitsRaw(n_axis, temp_int, temp_min, temp_max);
-}
-
-bool ImplementControlLimits2::setVelLimits(double *min, double *max)
-{
-    castToMapper(helper)->velA2E(min, temp_min);
-    castToMapper(helper)->velA2E(max, temp_max);
-
-    for(int idx=0; idx<castToMapper(helper)->nj; idx++)
-    {
-        if( (max[idx] > min[idx]) && (temp_min[idx] > temp_max[idx])) //angle to encoder conversion factor is negative
-        {
-            double temp;   // exchange max and min limits
-            temp = temp_min[idx];
-            temp_min[idx] = temp_max[idx];
-            temp_max[idx] = temp;
-        }
-    }
-    return iLimits2->setVelLimitsRaw(temp_min, temp_max);
-}
-*/
 
 bool ImplementControlLimits2::getVelLimits(int axis, double *min, double *max)
 {
@@ -260,54 +133,3 @@ bool ImplementControlLimits2::getVelLimits(int axis, double *min, double *max)
     }
     return ret;
 }
-
-/*
-bool ImplementControlLimits2::getVelLimits(int n_axis, int *axes, double *min, double *max)
-{
-    bool ret = true;
-
-    for(int idx=0; idx<n_axis; idx++)
-    {
-        temp_int[idx] = castToMapper(helper)->toHw(axes[idx]);
-    }
-
-    ret = ret && iLimits2->getVelLimitsRaw(n_axis, temp_int, temp_min, temp_max);
-
-    for(int idx=0; idx<n_axis; idx++)
-    {
-        min[idx] = castToMapper(helper)->velE2A(temp_min[idx], temp_int[idx]);
-        max[idx] = castToMapper(helper)->velE2A(temp_max[idx], temp_int[idx]);
-
-        if( (temp_max[idx] < temp_min[idx]) && (min[idx] < max[idx])) //angle to encoder conversion factor is negative
-        {
-            double temp;   // exchange max and min limits
-            temp = temp_min[idx];
-            temp_min[idx] = temp_max[idx];
-            temp_max[idx] = temp;
-        }
-    }
-    return ret;
-}
-
-bool ImplementControlLimits2::getVelLimits(double *min, double *max)
-{
-    bool ret = iLimits2->getVelLimitsRaw(temp_min, temp_max);
-    if(ret)
-    {
-        castToMapper(helper)->velE2A(temp_min, min);
-        castToMapper(helper)->velE2A(temp_max, max);
-
-        for(int idx=0; idx<castToMapper(helper)->nj; idx++)
-        {
-            if( (temp_max[idx] < temp_min[idx]) && (min[idx] < max[idx])) //angle to encoder conversion factor is negative
-            {
-                double temp;   // exchange max and min limits
-                temp = temp_min[idx];
-                temp_min[idx] = temp_max[idx];
-                temp_max[idx] = temp;
-            }
-        }
-    }
-    return ret;
-}
-*/

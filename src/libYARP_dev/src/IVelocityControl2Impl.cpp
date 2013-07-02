@@ -71,18 +71,6 @@ bool ImplementVelocityControl2::setVelocityMode()
   return iVelocity2->setVelocityModeRaw();
 }
 
-bool ImplementVelocityControl2::setVelocityMode(const int n_joint, const int *joints)
-{
-  int j;
-  for(int idx=0; idx<n_joint; idx++)
-  {
-      j = joints[idx];
-      temp_int[idx] = castToMapper(helper)->toHw(j);
-  }
-  return iVelocity2->setVelocityModeRaw(n_joint, temp_int);
-}
-
-
 bool ImplementVelocityControl2::velocityMove(int j, double sp)
 {
   int k;
@@ -196,17 +184,6 @@ bool ImplementVelocityControl2::setVelPid(int j, const Pid &pid)
 }
 
 
-bool ImplementVelocityControl2::setVelPids(const int n_joint, const int *joints, const Pid *pids)
-{
-    for(int idx=0; idx<n_joint; idx++)
-    {
-      temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
-//      tempPids[idx]=pids[temp_int[idx]]; no need to changes here
-    }
-    return iVelocity2->setVelPidsRaw(n_joint, temp_int, tempPids);
-}
-
-
 bool ImplementVelocityControl2::setVelPids(const Pid *pids)
 {
   int tmp=0;
@@ -231,18 +208,6 @@ bool ImplementVelocityControl2::getVelPid(int j, Pid *pid)
 }
 
 
-bool ImplementVelocityControl2::getVelPids(const int n_joint, const int *joints, Pid *pids)
-{
-    for(int idx=0; idx<n_joint; idx++)
-    {
-        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
-    }
-
-    bool ret = iVelocity2->getVelPidsRaw(n_joint, temp_int, pids);
-    return ret;
-}
-
-
 bool ImplementVelocityControl2::getVelPids(Pid *pids)
 {
     bool ret=iVelocity2->getVelPidsRaw(tempPids);
@@ -253,45 +218,3 @@ bool ImplementVelocityControl2::getVelPids(Pid *pids)
 
     return ret;
 }
-
-
-bool ImplementVelocityControl2::getVelError(int j, double *err)
-{
-    int k;
-    double enc;
-    k=castToMapper(helper)->toHw(j);
-
-    bool ret=iVelocity2->getVelErrorRaw(k, &enc);
-
-    *err=castToMapper(helper)->velE2A(enc, k);
-
-    return ret;
-}
-
-bool ImplementVelocityControl2::getVelErrors(const int n_joint, const int *joints, double *errs)
-{
-    for(int idx=0; idx<n_joint; idx++)
-    {
-        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
-    }
-
-    bool ret = iVelocity2->getVelErrorsRaw(n_joint, temp_int, temp_double);
-
-    for(int idx=0; idx<n_joint; idx++)
-    {
-        errs[idx]=castToMapper(helper)->velE2A(temp_double[idx], temp_int[idx]);
-    }
-    return ret;
-}
-
-bool ImplementVelocityControl2::getVelErrors(double *errs)
-{
-    bool ret;
-    ret=iVelocity2->getVelErrorsRaw(temp_double);
-
-    castToMapper(helper)->velE2A(temp_double, errs);
-
-    return ret;
-}
-
-

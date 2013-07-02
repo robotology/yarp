@@ -65,15 +65,6 @@ public:
      */
     virtual ~IPositionControl2Raw() {}
 
-    /** Set position mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @param joints pointer to the array of joints to change into PositionMode
-     * return true/false on success failure
-     */
-    virtual bool setPositionModeRaw(const int n_joint, const int *joints)=0;
-
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifies the new reference points
@@ -164,15 +155,6 @@ public:
      */
     virtual ~IPositionControl2() {}
 
-    /** Set position mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @param joints pointer to the array of joints to change into PositionMode
-     * return true/false on success failure
-     */
-    virtual bool setPositionMode(const int n_joint, const int *joints)=0;
-
     /** Set new reference point for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param refs   pointer to the array specifing the new reference points
@@ -233,6 +215,11 @@ public:
     virtual bool stop(const int n_joint, const int *joints)=0;
 };
 
+#define VOCAB_POSITION_MOVE_GROUP    VOCAB4('p','o','s','g')
+#define VOCAB_RELATIVE_MOVE_GROUP    VOCAB4('r','e','l','g')
+#define VOCAB_REF_SPEED_GROUP        VOCAB4('v','e','l','g')
+#define VOCAB_REF_ACCELERATION_GROUP VOCAB4('a','c','c','g')
+#define VOCAB_STOP_GROUP             VOCAB4('s','t','o','g')
 #endif
 
 

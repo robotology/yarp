@@ -55,16 +55,6 @@ public:
     using IVelocityControl::stop;
 
     /**
-     * Set Velocity mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @param joints pointer to the array of joint numbers to change into VelocityMode
-     * @return true/false on success failure
-     */
-    virtual bool setVelocityMode(const int n_joint, const int *joints)=0;
-
-    /**
      * Start motion at a given speed for a subset of joints.
      * @param joints pointer to the array of joint numbers
      * @param sps    pointer to the array containing the new speed values
@@ -107,14 +97,6 @@ public:
      */
     virtual bool setVelPids(const Pid *pids)=0;
 
-    /** Set new velocity pid value on a subset of joints
-     * @param n_joints: number of joints handled by this call
-     * @param joints pointer to the array of joint numbers
-     * @param pids pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
-    virtual bool setVelPids(const int n_joint, const int *joints, const Pid *pids)=0;
-
     /** Get current velocity pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
@@ -128,35 +110,7 @@ public:
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
-    virtual bool getVelPids(const int n_joint, const int *joints, Pid *pids)=0;
-
-    /** Get current velocity pid value for a specific subset of joints.
-     * @param n_joints: number of joints handled by this call
-     * @param joints pointer to the array of joint numbers
-     * @param pids vector that will store the values of the pids.
-     * @return success/failure
-     */
     virtual bool getVelPids(Pid *pids)=0;
-
-    /** Get the current error for a joint.
-     * @param j joint number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getVelError(int j, double *err)=0;
-
-    /** Get the current error for a subset of joints.
-     * @param n_joints: number of joints handled by this call
-     * @param joints pointer to the array of joint numbers
-     * @param errs pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getVelErrors(const int n_joint, const int *joints, double *errs)=0;
-
-    /** Get the error of all joints.
-     * @param errs pointer to the vector that will store the errors
-     */
-    virtual bool getVelErrors(double *errs)=0;
 };
 
 
@@ -183,16 +137,6 @@ public:
     using IVelocityControlRaw::getRefAccelerationRaw;
     using IVelocityControlRaw::getRefAccelerationsRaw;
     using IVelocityControlRaw::stopRaw;
-
-    /**
-     * Set Velocity mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * @param joints pointer to the array of joints change into VelocityMode
-     * @return true/false on success failure
-     */
-    virtual bool setVelocityModeRaw(const int n_joint, const int *joints)=0;
 
     /**
      * Start motion at a given speed for a subset of joints.
@@ -231,13 +175,6 @@ public:
      */
     virtual bool setVelPidRaw(int j, const Pid &pid)=0;
 
-    /** Set new velocity pid value on a subset of joints
-     * @param joints pointer to the array of joint numbers
-     * @param pids pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
-    virtual bool setVelPidsRaw(const int n_joint, const int *joints, const Pid *pids)=0;
-
     /** Set new velocity pid value on multiple joints
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
@@ -257,41 +194,12 @@ public:
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
-    virtual bool getVelPidsRaw(const int n_joint, const int *joints, Pid *pids)=0;
-
-    /** Get current velocity pid value for a specific subset of joints.
-     * @param n_joints: number of joints handled by this call
-     * @param joints pointer to the array of joint numbers
-     * @param pids vector that will store the values of the pids.
-     * @return success/failure
-     */
     virtual bool getVelPidsRaw(Pid *pids)=0;
-
-    /** Get the current error for a joint.
-     * @param j joint number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getVelErrorRaw(const int j, double *err)=0;
-
-    /** Get the current error for a subset of joints.
-     * @param n_joints: number of joints handled by this call
-     * @param joints pointer to the array of joint numbers
-     * @param errs pointer to the storage for the return value
-     * @return true/false on success failure
-     */
-    virtual bool getVelErrorsRaw(const int n_joint, const int *joints, double *errs)=0;
-
-    /** Get the error of all joints.
-     * @param errs pointer to the vector that will store the errors
-     */
-    virtual bool getVelErrorsRaw(double *errs)=0;
 };
 
-// interface IVelocityControl2 sets
-#define VOCAB_VELOCITY_MODE_GROUP VOCAB4('v','e','l','g')
 #define VOCAB_VELOCITY_MOVE_GROUP VOCAB4('v','m','o','g')
-#define VOCAB_VELOCITY_MOVES VOCAB4('v','m','o','s')
+#define VOCAB_VEL_PID  VOCAB3('v','p','d')
+#define VOCAB_VEL_PIDS VOCAB4('v','p','d','s')
 #endif
 
 

@@ -71,45 +71,26 @@ class yarp::dev::ImplementVelocityControl2 : public IVelocityControl2
     virtual ~ImplementVelocityControl2();
 
     virtual bool getAxes(int *axes);
-
     virtual bool setVelocityMode();
-
     virtual bool velocityMove(int j, double sp);
-
     virtual bool velocityMove(const double *sp);
-
     virtual bool setRefAcceleration(int j, double acc);
-
     virtual bool setRefAccelerations(const double *accs);
-
     virtual bool getRefAcceleration(int j, double *acc);
-
-
     virtual bool getRefAccelerations(double *accs);
-
-
     virtual bool stop(int j);
-
-
     virtual bool stop();
 
 
-
     // specific of IVelocityControl2
-    virtual bool setVelocityMode(const int n_joint, const  int *joints);
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds);
     virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs);
     virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs);
     virtual bool stop(const int n_joint, const int *joints);
     virtual bool setVelPid(int j, const Pid &pid);
     virtual bool setVelPids(const Pid *pids);
-    virtual bool setVelPids(const int n_joint, const int *joints, const Pid *pids);
     virtual bool getVelPid(int j, Pid *pid);
     virtual bool getVelPids(Pid *pids);
-    virtual bool getVelPids(const int n_joint, const int *joints, Pid *pids);
-    virtual bool getVelError(int j, double *err);
-    virtual bool getVelErrors(const int n_joint, const int *joints, double *errs);
-    virtual bool getVelErrors(double *errs);
 };
 
 #endif /* IVELOCITYCONTROLIMPL_V2_H_ */

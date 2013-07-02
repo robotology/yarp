@@ -63,15 +63,6 @@ bool ImplementPositionControl2::uninitialize()
     return true;
 }
 
-bool ImplementPositionControl2::setPositionMode(const int n_joint, const int *joints)
-{
-    for(int idx=0; idx<n_joint; idx++)
-    {
-        temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
-    }
-    return iPosition2->setPositionModeRaw(n_joint, temp_int);
-}
-
 bool ImplementPositionControl2::setPositionMode()
 {
     return iPosition2->setPositionModeRaw();

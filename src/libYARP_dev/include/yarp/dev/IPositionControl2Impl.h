@@ -81,7 +81,6 @@ public:
     virtual bool getAxes(int *axis);
 
     virtual bool setPositionMode();
-    virtual bool setPositionMode(const int n_joint, const int *joints);
     virtual bool positionMove(int j, double ref);
     virtual bool positionMove(const int n_joint, const int *joints, const double *refs);
     virtual bool positionMove(const double *refs);
@@ -139,9 +138,6 @@ public:
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
     virtual bool setPositionModeRaw()
-    {return NOT_YET_IMPLEMENTED("setPositionModeRaw");}
-
-    virtual bool setPositionModeRaw(const int n_joint, const int *joints)
     {return NOT_YET_IMPLEMENTED("setPositionModeRaw");}
 
     virtual bool positionMoveRaw(int j, double ref)
