@@ -35,6 +35,7 @@ public:
     double offset;             /**< pwm offset added to the pid output */
     double stiction_up_val;    /**< up stiction offset added to the pid output */
     double stiction_down_val;  /**< down stiction offset added to the pid output */
+    double kff;                /**< feedforward gain */
 
 public:
     /*! \brief Default Constructor */
@@ -61,9 +62,10 @@ public:
      * @param out_max cap on output
      * @param st_up up stiction offset
      * @param st_down down stiction offset
+     * @param kff feedforward gain
      */
     Pid(double kp, double kd, double ki, 
-        double int_max, double scale, double out_max, double st_up, double st_down);
+        double int_max, double scale, double out_max, double st_up, double st_down, double kff);
 
     /** Set proportional gain 
      * @param p new gain
@@ -105,6 +107,11 @@ public:
      * @param down_value the new down value
      */
     void setStictionValues(double up_value, double down_value);
+
+    /** Set the feedforward gain for the pid.
+     * @param Kff new gain
+     */
+    void setKff(double ff);
 };
 
 #endif
