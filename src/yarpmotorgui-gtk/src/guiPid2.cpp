@@ -154,6 +154,8 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   //fprintf(stderr, "kp changed to: %d \n", (int) pid->kp);
   pid->kd = atoi(gtk_entry_get_text((GtkEntry*) trq_kdDes));
   pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kiDes));
+  //pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kffDes));
+  //pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
   pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) trq_upStictionDes));
@@ -168,20 +170,34 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
 
   sprintf(buffer, "%d", (int) pid->kp);
   gtk_entry_set_text((GtkEntry*) trq_kpEntry,  buffer);
+
   sprintf(buffer, "%d", (int) pid->kd);
   gtk_entry_set_text((GtkEntry*) trq_kdEntry,  buffer);
+  
   sprintf(buffer, "%d", (int) pid->ki);
   gtk_entry_set_text((GtkEntry*) trq_kiEntry,  buffer);
+  
   sprintf(buffer, "%d", (int) pid->scale);
   gtk_entry_set_text((GtkEntry*) trq_scaleEntry,  buffer);
+  
+  //sprintf(buffer, "%d", (int) pid->ki);
+  //gtk_entry_set_text((GtkEntry*) trq_kbemfEntry,  buffer);
+  
+  //sprintf(buffer, "%d", (int) pid->ki);
+  //gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
+  
   sprintf(buffer, "%d", (int) pid->offset);
   gtk_entry_set_text((GtkEntry*) trq_offsetEntry,  buffer);
+  
   sprintf(buffer, "%d", (int) pid->max_output);
   gtk_entry_set_text((GtkEntry*) trq_PWM_limitEntry,  buffer);
+  
   sprintf(buffer, "%d", (int) pid->max_int);
   gtk_entry_set_text((GtkEntry*) trq_INT_limitEntry,  buffer);
+  
   sprintf(buffer, "%d", (int) pid->stiction_up_val);
   gtk_entry_set_text((GtkEntry*) trq_upStictionEntry,  buffer);
+  
   sprintf(buffer, "%d", (int) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) trq_downStictionEntry,  buffer);
 }
@@ -454,8 +470,8 @@ void guiPid2::guiPid2(void *button, void* data)
   GtkWidget *button_Imp_Close;
   GtkWidget *button_Dbg_Send;
   GtkWidget *button_Dbg_Close;
-  Pid myPosPid(0, 0, 0, 0, 0, 0, 0, 0);
-  Pid myTrqPid(0, 0, 0, 0, 0, 0, 0, 0);
+  Pid myPosPid(0,0,0,0,0,0);
+  Pid myTrqPid(0,0,0,0,0,0);
   double stiff_val=0;
   double damp_val=0;
   double stiff_max=0;
@@ -589,116 +605,130 @@ void guiPid2::guiPid2(void *button, void* data)
   // ------ POSITION CONTROL ------
   //kp
   pos_kpEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.kp, note_pag1, pos_kpEntry, 0, 0, "Current Position Kp");
+  displayPidValue((int) myPosPid.kp, note_pag1, pos_kpEntry, 0, 0, "Current Pos Kp");
   //kp desired
   pos_kpDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.kp, note_pag1, pos_kpDes, 110, 0, "Desired Position Kp");
+  changePidValue((int) myPosPid.kp, note_pag1, pos_kpDes, 110, 0, "Desired Pos Kp");
   //kd
   pos_kdEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.kd, note_pag1, pos_kdEntry, 0, 70, "Current Position Kd");
+  displayPidValue((int) myPosPid.kd, note_pag1, pos_kdEntry, 0, 70, "Current Pos Kd");
   //kd desired
   pos_kdDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.kd, note_pag1, pos_kdDes, 110, 70, "Desired Position Kd");
+  changePidValue((int) myPosPid.kd, note_pag1, pos_kdDes, 110, 70, "Desired Pos Kd");
   //ki
   pos_kiEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.ki, note_pag1, pos_kiEntry, 0, 140, "Current Position Ki");
+  displayPidValue((int) myPosPid.ki, note_pag1, pos_kiEntry, 0, 140, "Current Pos Ki");
   //ki desired
   pos_kiDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.ki, note_pag1, pos_kiDes, 110, 140, "Desired Position Ki");
+  changePidValue((int) myPosPid.ki, note_pag1, pos_kiDes, 110, 140, "Desired Pos Ki");
   //scale
   pos_scaleEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.scale, note_pag1, pos_scaleEntry, 0, 210, "Current Position shift");
+  displayPidValue((int) myPosPid.scale, note_pag1, pos_scaleEntry, 0, 210, "Current Pos shift");
   //scale desired
   pos_scaleDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.scale, note_pag1, pos_scaleDes, 110, 210, "Desired Position shift");
+  changePidValue((int) myPosPid.scale, note_pag1, pos_scaleDes, 110, 210, "Desired Pos shift");
   //offset
   pos_offsetEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.offset, note_pag1, pos_offsetEntry, 0, 280, "Current Position offset");
+  displayPidValue((int) myPosPid.offset, note_pag1, pos_offsetEntry, 0, 280, "Current Pos offset");
   //offset desired
   pos_offsetDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.offset, note_pag1, pos_offsetDes, 110, 280, "Desired Position offset");
+  changePidValue((int) myPosPid.offset, note_pag1, pos_offsetDes, 110, 280, "Desired Pos offset");
   //positive stiction
   pos_posStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionEntry, 0, 350, "Current Pos Stiction offset");
+  displayPidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionEntry, 280, 280, "Current Pos Stiction offset");
   //positive stiction desired
   pos_posStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionDes, 110, 350, "Desired Pos Stiction offset");
+  changePidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionDes, 390, 280, "Desired Pos Stiction offset");
   //negative stiction
   pos_negStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionEntry, 0, 420, "Current Neg Stiction offset");
+  displayPidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionEntry, 280, 350, "Current Neg Stiction offset");
   //negative stiction desired
   pos_negStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionDes, 110, 420, "Desired Neg Stiction offset");
+  changePidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionDes, 390, 350, "Desired Neg Stiction offset");
 
   //PWM limit
   pos_PWM_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitEntry, 0, 500, "Current PWM limit");
+  displayPidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitEntry, 0, 350, "Current PWM limit");
   //PWM limit desired
   pos_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 110, 500, "Desired PWM limit");
+  changePidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 110, 350, "Desired PWM limit");
   //INTEGRAL limit
   pos_INT_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitEntry, 0, 570, "Current Integral limit");
+  displayPidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitEntry, 0, 420, "Current Integral limit");
   //INTEGRAL limit desired
   pos_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitDes, 110, 570, "Desired Integral limit");
+  changePidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitDes, 110, 420, "Desired Integral limit");
 
     // ------ TORQUE CONTROL ------
   //kp
   trq_kpEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.kp, note_pag2, trq_kpEntry, 0, 0, "Current Torque Kp");
+  displayPidValue((int) myTrqPid.kp, note_pag2, trq_kpEntry, 0, 0, "Current Trq Kp");
   //kp desired
   trq_kpDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kp, note_pag2, trq_kpDes, 110, 0, "Desired Torque Kp");
+  changePidValue((int) myTrqPid.kp, note_pag2, trq_kpDes, 110, 0, "Desired Trq Kp");
   //kd
   trq_kdEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.kd, note_pag2, trq_kdEntry, 0, 70, "Current Torque Kd");
+  displayPidValue((int) myTrqPid.kd, note_pag2, trq_kdEntry, 0, 70, "Current Trq Kd");
   //kd desired
   trq_kdDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kd, note_pag2, trq_kdDes, 110, 70, "Desired Torque Kd");
+  changePidValue((int) myTrqPid.kd, note_pag2, trq_kdDes, 110, 70, "Desired Trq Kd");
   //ki
   trq_kiEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.ki, note_pag2, trq_kiEntry, 0, 140, "Current Torque Ki");
+  displayPidValue((int) myTrqPid.ki, note_pag2, trq_kiEntry, 0, 140, "Current Trq Ki");
   //ki desired
   trq_kiDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.ki, note_pag2, trq_kiDes, 110, 140, "Desired Torque Ki");
+  changePidValue((int) myTrqPid.ki, note_pag2, trq_kiDes, 110, 140, "Desired Trq Ki");
+  
+  //kff
+  trq_kffEntry   =  gtk_entry_new();
+  displayPidValue((int) 0, note_pag2, trq_kffEntry, 280, 0, "Current Trq Kff");
+  //kff desired
+  trq_kffDes   =  gtk_entry_new();
+  changePidValue((int) 0, note_pag2, trq_kffDes, 390, 0, "Desired Trq Kff");
+  //kbemf
+  trq_kbemfEntry   =  gtk_entry_new();
+  displayPidValue((int) 0, note_pag2, trq_kbemfEntry, 280, 70, "Current Trq Kbemf");
+  //kbemf desired
+  trq_kbemfDes   =  gtk_entry_new();
+  changePidValue((int) 0, note_pag2, trq_kbemfDes, 390, 70, "Desired Trq Kbemf");
+
   //scale
   trq_scaleEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.scale, note_pag2, trq_scaleEntry, 0, 210, "Current Torque shift");
+  displayPidValue((int) myTrqPid.scale, note_pag2, trq_scaleEntry, 0, 210, "Current Trq shift");
   //scale desired
   trq_scaleDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.scale, note_pag2, trq_scaleDes, 110, 210, "Desired Torque shift");
+  changePidValue((int) myTrqPid.scale, note_pag2, trq_scaleDes, 110, 210, "Desired Trq shift");
   //offset
   trq_offsetEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.offset, note_pag2, trq_offsetEntry, 0, 280, "Current Torque offset");
+  displayPidValue((int) myTrqPid.offset, note_pag2, trq_offsetEntry, 0, 280, "Current Trq offset");
   //offset desired
   trq_offsetDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.offset, note_pag2, trq_offsetDes, 110, 280, "Desired Torque offset");
+  changePidValue((int) myTrqPid.offset, note_pag2, trq_offsetDes, 110, 280, "Desired Trq offset");
  //positive stiction
   trq_upStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionEntry, 0, 350, "Current Pos Stiction offset");
+  displayPidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionEntry, 280, 280, "Current Pos Stiction offset");
   //positive stiction desired
   trq_upStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionDes, 110, 350, "Desired Pos Stiction offset");
+  changePidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionDes, 390, 280, "Desired Pos Stiction offset");
   //negative stiction
   trq_downStictionEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionEntry, 0, 420, "Current Neg Stiction offset");
+  displayPidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionEntry, 280, 350, "Current Neg Stiction offset");
   //negative stiction desired
   trq_downStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionDes, 110, 420, "Desired Neg Stiction offset");
+  changePidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionDes, 390, 350, "Desired Neg Stiction offset");
 
   //PWM limit
   trq_PWM_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitEntry, 0, 500, "Current PWM limit");
+  displayPidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitEntry, 0, 350, "Current PWM limit");
   //PWM limit desired
   trq_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 110, 500, "Desired PWM limit");
+  changePidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 110, 350, "Desired PWM limit");
   //INTEGRAL limit
   trq_INT_limitEntry   =  gtk_entry_new();
-  displayPidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitEntry, 0, 570, "Current Integral limit");
+  displayPidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitEntry, 0, 420, "Current Integral limit");
   //INTEGRAL limit desired
   trq_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 110, 570, "Desired Integral limit");
+  changePidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 110, 420, "Desired Integral limit");
 
   // ------ IMPEDANCE CONTROL ------
   //stiffness
@@ -742,10 +772,10 @@ void guiPid2::guiPid2(void *button, void* data)
   button_Trq_Send = gtk_button_new_with_mnemonic ("Send");
   button_Imp_Send = gtk_button_new_with_mnemonic ("Send");
   button_Dbg_Send = gtk_button_new_with_mnemonic ("Send");
-  gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Send, 0, 650);
-  gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Send, 0, 650);
-  gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Send, 0, 650);
-  gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Send, 0, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Send, 0, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Send, 0, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Send, 0, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Send, 0, 490+30);
   g_signal_connect (button_Pos_Send, "clicked", G_CALLBACK (send_pos_pid), &myPosPid);
   g_signal_connect (button_Trq_Send, "clicked", G_CALLBACK (send_trq_pid), &myTrqPid);
   g_signal_connect (button_Imp_Send, "clicked", G_CALLBACK (send_imp_pid), NULL);
@@ -760,10 +790,10 @@ void guiPid2::guiPid2(void *button, void* data)
   button_Trq_Close = gtk_button_new_with_mnemonic ("Close");
   button_Imp_Close = gtk_button_new_with_mnemonic ("Close");
   button_Dbg_Close = gtk_button_new_with_mnemonic ("Close");
-  gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Close, 120, 650);
-  gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Close, 120, 650);
-  gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Close, 120, 650);
-  gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Close, 120, 650);
+  gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Close, 120, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Close, 120, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Close, 120, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Close, 120, 490+30);
   g_signal_connect (button_Pos_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Trq_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Imp_Close, "clicked", G_CALLBACK (destroy_win), NULL);
