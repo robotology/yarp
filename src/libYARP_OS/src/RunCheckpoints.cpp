@@ -6,25 +6,31 @@
  * author Alessandro Scalzo alessandro.scalzo@iit.it
  */
 
+#if defined(WIN32)
 #include <time.h>
+#else
+#include <sys/time.h>
+#endif
 #include <stdio.h>
 #include <yarp/os/impl/RunCheckpoints.h>
 
 YarprunCheckpoints::YarprunCheckpoints()
 {     
     char path[256];
-    time_t now;
-    time(&now);
-
-    #if defined(WIN32)
-    sprintf(path,"C:/Windows/Temp/yarprun_log_%s.txt",ctime(&now));
-    #else
-    sprintf(path,"/tmp/yarprun_log_%s.txt",ctime(&now));
-    #endif
+  
+#if defined(WIN32)
+    time_t now=time(NULL);
+    srand((unsigned)now);
+    sprintf(path,"C:/Users/user/yarprun_log_%s_%u.txt",ctime(&now),(unsigned)rand());
+#else
+    timeval now;
+    gettimeofday(&now,NULL);
+    sprintf(path,"/tmp/yarprun_log_%s_%06d.txt",ctime(&(now.tv_sec)),(int)now.tv_usec);
+#endif
 
     for (int t=0; t<256 && path[t]; ++t)
     {
-        if (path[t]==' ' || path[t]==':') path[t]='_';
+        if (path[t]==' ' || path[t]==':' || path[t]=='?') path[t]='_';
     }
 
     mLogFile=fopen(path,"w");
@@ -42,34 +48,12 @@ YarprunCheckpoints& YarprunCheckpoints::instance()
     return singleton;
 }
 
-void YarprunCheckpoints::push(const char* label,const char* sFile,int line)
+void YarprunCheckpoints::checkpoint(const char *prefix,const char* label,const char* sFile,int line)
 {
-    mLabels.push_back(std::string(label));
+    if (!mLogFile) return;
 
-    if (mLogFile)
-    {
-        fprintf(mLogFile,"%s: ENTER section %s line %d\n",sFile,label,line); 
-        fflush(mLogFile);
-    }
+    fprintf(mLogFile,"%s: %s section %s line %d\n",prefix,sFile,label,line);
+    fflush(mLogFile);         
 }
 
-void YarprunCheckpoints::checkpoint(const char* sFile,int line)
-{
-    if (mLogFile)
-    {
-        fprintf(mLogFile,"%s:       section %s line %d\n",sFile,mLabels.back().c_str(),line); 
-        fflush(mLogFile);
-    }    
-}
-
-void YarprunCheckpoints::pop(const char* sFile,int line)
-{
-    if (mLogFile)
-    {
-        fprintf(mLogFile,"%s: EXIT  section %s line %d\n",sFile,mLabels.back().c_str(),line); 
-        fflush(mLogFile);
-    }
-
-    mLabels.pop_back(); 
-}
 
