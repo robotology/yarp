@@ -21,9 +21,9 @@ using namespace yarp::dev;
 ImplementControlLimits2::ImplementControlLimits2(yarp::dev::IControlLimits2Raw *y) :
     iLimits2(y),
     helper(NULL),
-    temp_min(NULL),
+    temp_int(NULL),
     temp_max(NULL),
-    temp_int(NULL)
+    temp_min(NULL)
 {
 
 }
@@ -34,6 +34,23 @@ ImplementControlLimits2::~ImplementControlLimits2()
     uninitialize();
 }
 
+/**
+ * Clean up internal data and memory.
+ * @return true if uninitialization is executed, false otherwise.
+ */
+bool ImplementControlLimits2::uninitialize()
+{
+    if(helper != NULL)
+    {
+        delete castToMapper(helper);
+        helper = NULL;
+    }
+    checkAndDestroy(temp_int);
+    checkAndDestroy(temp_min);
+    checkAndDestroy(temp_max);
+
+    return true;
+}
 
 bool ImplementControlLimits2::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
