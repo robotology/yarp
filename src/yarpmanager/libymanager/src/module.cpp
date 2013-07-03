@@ -243,8 +243,9 @@ bool Module::setParam(const char* szParam)
     ArgumentIterator itr;
     for(itr=arguments.begin(); itr<arguments.end(); itr++)
     {
-        const char* szVal = getParamValue((*itr).getParam(), (*itr).isSwitch());
-        if(!szVal)
+        std::string strVal;
+        bool ret = getParamValue((*itr).getParam(), (*itr).isSwitch(), strVal);
+        if(!ret)
         {
             OSTRINGSTREAM msg;
             msg<<"Error in parsing parameters of "<<getName() \
@@ -255,48 +256,54 @@ bool Module::setParam(const char* szParam)
         else
         {
             if((*itr).isSwitch())
-                (*itr).setValue(szVal);
+                (*itr).setValue(strVal.c_str());
             else
             {
-                if(string(szVal) != "off")
-                    (*itr).setValue(szVal);
+                if(strVal != "off")
+                    (*itr).setValue(strVal.c_str());
             }
-        } 
+        }
     }    
     return bokay;
 }
 
-const char* Module::getParamValue(const char* key, bool bSwitch)
+bool Module::getParamValue(const char* key, bool bSwitch, std::string &param)
 {
     if(!key)
-        return NULL;
+        return false;
 
     //printf("\n\nparsing '%s' for %s (switch:%d)\n", strParam.c_str(), key, bSwitch);
     string strKey = string("--") + string(key);
     size_t pos = strParam.find(strKey.c_str());
     if(pos == string::npos)
-        return ("off");
+    {
+        param = "off";
+        return true;
+    }
 
     if(bSwitch)
-        return ("on");
-
+    {
+       param = "on";
+       return true;
+    }
     //printf("%s %d \n", __FILE__, __LINE__);
     
     pos += strKey.size(); 
     if((pos >= strParam.length()) || (strParam.at(pos) != ' '))
-        return NULL;
+        return false;
 
     // skip all spaces
     while(strParam.at(pos++) == ' ')
     {
         if(pos >= strParam.length())
-            return NULL;     
+            return false;     
     }
     pos--;
 
     size_t pos2 = pos;
     while((pos2 < strParam.length()) && (strParam.at(pos2) != ' '))
         pos2++;
-    return strParam.substr(pos, pos2-pos).c_str();
+    param = strParam.substr(pos, pos2-pos).c_str();
+    return true;
 }
 

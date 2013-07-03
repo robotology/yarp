@@ -218,8 +218,7 @@ private:
     OutputIterator findOutput(OutputData& output); 
     ResourcePIterator findResource(GenericResource& output); 
     void swap(const Module &mod);
-    const char* getParamValue(const char* key, bool bSwitch);
-
+    bool getParamValue(const char* key, bool bSwitch, std::string &param);
 };
 
 typedef vector<Module*> ModulePContainer;
