@@ -8,8 +8,8 @@ project(YARP)
 # Pick up our CMake scripts - they are all in the conf subdirectory.
 set(YARP_MODULE_DIR ${PROJECT_SOURCE_DIR}/conf)
 set(YARP_MODULE_PATH ${YARP_MODULE_DIR})
-if(CMAKE_VERSION VERSION_LESS 2.8.11.2)
-  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-2.8.11.2/Modules)
+if(CMAKE_VERSION VERSION_LESS 2.8.12)
+  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-2.8.12/Modules)
 endif()
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
