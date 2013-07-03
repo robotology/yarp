@@ -71,7 +71,7 @@ protected:
     yarp::os::ConstString mCmd;
     yarp::os::ConstString mEnv;
 
-    friend class YarpRunInfoVector; 
+    friend class YarpRunInfoVector;
 };
 
 class YarpRunInfoVector

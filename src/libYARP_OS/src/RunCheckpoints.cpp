@@ -15,9 +15,9 @@
 #include <yarp/os/impl/RunCheckpoints.h>
 
 YarprunCheckpoints::YarprunCheckpoints()
-{     
+{
     char path[256];
-  
+
 #if defined(WIN32)
     time_t now=time(NULL);
     srand((unsigned)now);
@@ -53,7 +53,7 @@ void YarprunCheckpoints::checkpoint(const char *prefix,const char* label,const c
     if (!mLogFile) return;
 
     fprintf(mLogFile,"%s: %s section %s line %d\n",prefix,sFile,label,line);
-    fflush(mLogFile);         
+    fflush(mLogFile);
 }
 
 

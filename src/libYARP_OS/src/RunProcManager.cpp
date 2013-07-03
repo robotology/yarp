@@ -28,7 +28,7 @@
     static bool KILL(HANDLE handle)
     {
         _BEGIN
- 
+
         BOOL bRet=TerminateProcess(handle,0);
 
         _CHECKPOINT
@@ -36,10 +36,10 @@
         CloseHandle(handle);
         fprintf(stdout,"brutally terminated by TerminateProcess\n");
         fflush(stdout);
-        
+
         _RETURN(bRet?true:false)
     }
-    static bool TERMINATE(PID pid); 
+    static bool TERMINATE(PID pid);
     #define CLOSE(h) CloseHandle(h)
     #ifndef __GNUC__
     static DWORD WINAPI ZombieHunter(__in LPVOID lpParameter)
@@ -76,7 +76,7 @@
             else
             {
                 hZombieHunter=NULL;
-                
+
                 _RETURN(0)
             }
         }
@@ -88,7 +88,7 @@
     #include <fcntl.h>
 
     int CLOSE(int h)
-    { 
+    {
         _BEGIN
         int ret=(close(h)==0);
         _RETURN(ret)
@@ -103,7 +103,7 @@
 
     void sigchild_handler(int sig)
     {
-        _BEGIN   
+        _BEGIN
         yarp::os::Run::CleanZombies();
         _RETURN_VOID
     }
@@ -123,7 +123,7 @@ YarpRunProcInfo::YarpRunProcInfo(yarp::os::ConstString& alias,yarp::os::ConstStr
 
 bool YarpRunProcInfo::Signal(int signum)
 {
-    _BEGIN   
+    _BEGIN
 #if defined(WIN32)
     if (signum==SIGKILL)
     {
@@ -138,7 +138,7 @@ bool YarpRunProcInfo::Signal(int signum)
     {
         if (mPidCmd)
         {
-            _CHECKPOINT 
+            _CHECKPOINT
             bool ret=TERMINATE(mPidCmd);
             _RETURN(ret)
         }
@@ -151,7 +151,7 @@ bool YarpRunProcInfo::Signal(int signum)
         _RETURN(ret)
     }
 #endif
-    
+
     _RETURN(true)
 }
 
@@ -179,10 +179,10 @@ bool YarpRunProcInfo::Clean()
 #if !defined(WIN32)
     if (mPidCmd && waitpid(mPidCmd,NULL,WNOHANG)==mPidCmd)
     {
-        _CHECKPOINT 
+        _CHECKPOINT
         fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
         mPidCmd=0;
-    } 
+    }
 
     if (mPidCmd)
     {
@@ -198,7 +198,7 @@ YarpRunInfoVector::YarpRunInfoVector()
     _BEGIN
 
     m_nProcesses=0;
-    
+
     for (int i=0; i<MAX_PROCESSES; ++i)
     {
         m_apList[i]=0;
@@ -211,7 +211,7 @@ YarpRunInfoVector::~YarpRunInfoVector()
 {
     _BEGIN
     mutex.wait();
-    
+
     for (int i=0; i<MAX_PROCESSES; ++i)
     {
         if (m_apList[i])
@@ -265,17 +265,17 @@ int YarpRunInfoVector::Signal(yarp::os::ConstString& alias,int signum)
     _CHECKPOINT
 
     YarpRunProcInfo **aKill=new YarpRunProcInfo*[m_nProcesses];
-    int nKill=0;    
+    int nKill=0;
 
     _CHECKPOINT
     for (int i=0; i<m_nProcesses; ++i)
     {
         if (m_apList[i] && m_apList[i]->Match(alias) && m_apList[i]->IsActive())
         {
-            aKill[nKill++]=m_apList[i]; 
+            aKill[nKill++]=m_apList[i];
         }
     }
-    
+
     _CHECKPOINT
     mutex.post();
     _CHECKPOINT
@@ -298,13 +298,13 @@ int YarpRunInfoVector::Killall(int signum)
     _CHECKPOINT
 
     YarpRunProcInfo **aKill=new YarpRunProcInfo*[m_nProcesses];
-    int nKill=0;        
+    int nKill=0;
 
     for (int i=0; i<m_nProcesses; ++i)
-    {    
+    {
         if (m_apList[i] && m_apList[i]->IsActive())
         {
-            aKill[nKill++]=m_apList[i]; 
+            aKill[nKill++]=m_apList[i];
         }
     }
 
@@ -323,7 +323,7 @@ int YarpRunInfoVector::Killall(int signum)
     _RETURN(nKill)
 }
 
-#if defined(WIN32) 
+#if defined(WIN32)
 void YarpRunInfoVector::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
 {
     _BEGIN
@@ -390,7 +390,7 @@ void YarpRunInfoVector::run() // zombie hunter
         }
 
         _CHECKPOINT
-    
+
         Pack();
 
         _CHECKPOINT
@@ -423,7 +423,7 @@ yarp::os::Bottle YarpRunInfoVector::PS()
         line.addList()=grp;
 
         grp.clear();
-        grp.addString("tag"); 
+        grp.addString("tag");
         grp.addString(m_apList[i]->mAlias.c_str());
         line.addList()=grp;
 
@@ -433,12 +433,12 @@ yarp::os::Bottle YarpRunInfoVector::PS()
         line.addList()=grp;
 
         grp.clear();
-        grp.addString("cmd"); 
+        grp.addString("cmd");
         grp.addString(m_apList[i]->mCmd.c_str());
         line.addList()=grp;
 
         grp.clear();
-        grp.addString("env"); 
+        grp.addString("env");
         grp.addString(m_apList[i]->mEnv.c_str());
         line.addList()=grp;
 
@@ -480,7 +480,7 @@ bool YarpRunInfoVector::IsRunning(yarp::os::ConstString &alias)
     }
 
     _CHECKPOINT
-    
+
     mutex.post();
 
     _RETURN(false)
@@ -524,7 +524,7 @@ YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
                                                  FDESC writeToPipeCmdToStdout,
                                                  HANDLE handleCmd,
                                                  bool hold)
-                                                 : 
+                                                 :
 YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
 {
     _BEGIN
@@ -540,7 +540,7 @@ YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
     mWriteToPipeStdinToCmd=writeToPipeStdinToCmd;
     mReadFromPipeCmdToStdout=readFromPipeCmdToStdout;
     mWriteToPipeCmdToStdout=writeToPipeCmdToStdout;
-    
+
     mKillingCmd=false;
     mKillingStdio=false;
     mKillingStdin=false;
@@ -557,9 +557,9 @@ bool YarpRunCmdWithStdioInfo::Clean()
     if (mPidCmd)
     {
         mPidCmd=0;
-     
+
         _CHECKPOINT
-   
+
         if (mWriteToPipeStdinToCmd)   CLOSE(mWriteToPipeStdinToCmd);
         if (mReadFromPipeStdinToCmd)  CLOSE(mReadFromPipeStdinToCmd);
         if (mWriteToPipeCmdToStdout)  CLOSE(mWriteToPipeCmdToStdout);
@@ -579,7 +579,7 @@ bool YarpRunCmdWithStdioInfo::Clean()
         TERMINATE(mPidStdout);
 
         _CHECKPOINT
-        
+
         TerminateStdio();
     }
 
@@ -591,19 +591,19 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
     if (mPidCmd && waitpid(mPidCmd,NULL,WNOHANG)==mPidCmd)
     {
-        _CHECKPOINT 
+        _CHECKPOINT
         fprintf(stderr,"CLEANUP cmd %d\n",mPidCmd);
         mPidCmd=0;
-    } 
+    }
 
     _CHECKPOINT
-    
+
     if (mPidStdin && waitpid(mPidStdin,NULL,WNOHANG)==mPidStdin)
     {
-        _CHECKPOINT 
+        _CHECKPOINT
         fprintf(stderr,"CLEANUP stdin %d\n",mPidStdin);
         mPidStdin=0;
-    }    
+    }
 
     _CHECKPOINT
 
@@ -612,7 +612,7 @@ bool YarpRunCmdWithStdioInfo::Clean()
         _CHECKPOINT
         fprintf(stderr,"CLEANUP stdout %d\n",mPidStdout);
         mPidStdout=0;
-    } 
+    }
 
     if (mPidCmd && mPidStdin && mPidStdout)
     {
@@ -624,7 +624,7 @@ bool YarpRunCmdWithStdioInfo::Clean()
         _CHECKPOINT
 
         mKillingStdio=true;
-        
+
         if (mWriteToPipeStdinToCmd)   CLOSE(mWriteToPipeStdinToCmd);
         if (mReadFromPipeStdinToCmd)  CLOSE(mReadFromPipeStdinToCmd);
         if (mWriteToPipeCmdToStdout)  CLOSE(mWriteToPipeCmdToStdout);
@@ -634,14 +634,14 @@ bool YarpRunCmdWithStdioInfo::Clean()
         mReadFromPipeStdinToCmd=0;
         mWriteToPipeCmdToStdout=0;
         mReadFromPipeCmdToStdout=0;
-        
+
         _CHECKPOINT
         TerminateStdio();
         _CHECKPOINT
     }
 
     _CHECKPOINT
-    
+
     if (mPidCmd && !mKillingCmd)
     {
         kill(mPidCmd,SIGTERM);
@@ -651,7 +651,7 @@ bool YarpRunCmdWithStdioInfo::Clean()
     }
 
     if (mPidStdin && !mKillingStdin)
-    { 
+    {
         kill(mPidStdin,SIGTERM);
         mKillingStdin=true;
 
@@ -665,12 +665,12 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
         _CHECKPOINT
     }
-        
+
     if (mPidCmd || mPidStdin || mPidStdout)
     {
         _RETURN(false)
     }
-    
+
     _RETURN(true)
 #endif
 }
@@ -767,8 +767,8 @@ Shut down a 32-Bit Process
 Parameters:
 dwPID
 Process ID of the process to shut down.
-----------------------------------------------------------------*/ 
-bool TERMINATE(PID dwPID) 
+----------------------------------------------------------------*/
+bool TERMINATE(PID dwPID)
 {
     _BEGIN
 
@@ -806,7 +806,7 @@ bool TERMINATE(PID dwPID)
         _CHECKPOINT
         //GenerateConsoleCtrlEvent(CTRL_C_EVENT,dwPID);
         //GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
-        fprintf(stdout,"%d terminated by CTRL_C_EVENT/CTRL_BREAK_EVENT\n",dwPID);    
+        fprintf(stdout,"%d terminated by CTRL_C_EVENT/CTRL_BREAK_EVENT\n",dwPID);
     }
 
     GenerateConsoleCtrlEvent(CTRL_C_EVENT,dwPID);
