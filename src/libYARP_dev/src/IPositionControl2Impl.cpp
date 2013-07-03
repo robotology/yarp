@@ -20,8 +20,8 @@ using namespace yarp::dev;
 ImplementPositionControl2::ImplementPositionControl2(IPositionControl2Raw *y) :
     iPosition2(y),
     helper(NULL),
-    temp_double(NULL),
-    temp_int(NULL)
+    temp_int(NULL),
+    temp_double(NULL)
 {
 
 }
