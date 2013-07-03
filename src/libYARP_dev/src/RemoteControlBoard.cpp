@@ -246,7 +246,8 @@ class yarp::dev::RemoteControlBoard :
     public IImpedanceControl,
     public IControlMode,
     public IOpenLoopControl,
-    public DeviceDriver 
+    public DeviceDriver,
+    public IPositionDirect
 {
 protected:
     Port rpc_p;
@@ -1468,19 +1469,20 @@ public:
     * @return true/false on success/failure
     */
     virtual bool positionMove(const double *refs) { 
-        if (!isLive()) return false;
-        CommandMessage& c = command_buffer.get();
-        c.head.clear();
-        c.head.addVocab(VOCAB_POSITION_MOVES);
+        return set1VDA(VOCAB_POSITION_MOVES, refs);
 
-        c.body.size(nj);
-
-        memcpy(&(c.body[0]), refs, sizeof(double)*nj);
-
-        command_buffer.write();
-
-        return true;
-
+//         if (!isLive()) return false;
+//         CommandMessage& c = command_buffer.get();
+//         c.head.clear();
+//         c.head.addVocab(VOCAB_POSITION_MOVES);
+// 
+//         c.body.size(nj);
+// 
+//         memcpy(&(c.body[0]), refs, sizeof(double)*nj);
+// 
+//         command_buffer.write();
+// 
+//         return true;
     }
 
 
@@ -2086,7 +2088,7 @@ public:
 
         return ok;
     }
-  
+
     bool setOutput(int j, double v)
     { return set1V1I1D(VOCAB_OUTPUT, j, v); }
 
@@ -2104,6 +2106,35 @@ public:
         command_buffer.write();
 
         return true;
+
+    }
+
+    bool setPosition(int j, double ref)
+    {
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_DIRECT_POSITION);
+        c.body.size(nj);
+        memcpy(&(c.body[0]), v, sizeof(double)*nj);
+        command_buffer.write();
+        return true;
+    }
+
+    bool setPositions(const int n_joint, const int *joints, double *refs)
+    {
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_DIRECT_POSITION);
+        c.body.size(nj);
+        memcpy(&(c.body[0]), v, sizeof(double)*nj);
+        command_buffer.write();
+        return true;
+    }
+
+    bool setPositions(const double *refs)
+    {
 
     }
 };
