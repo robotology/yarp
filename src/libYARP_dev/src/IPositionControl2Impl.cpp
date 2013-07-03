@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
-* Author:  Alberto Cardellino
-* email:   alberto.cardellino@iit.it
-* website: www.robotcub.org
-* Released under the terms the GNU General Public License, version 2 or any
-* later version published by the Free Software Foundation.
-*/
+ * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Author:  Alberto Cardellino
+ * email:   alberto.cardellino@iit.it
+ * website: www.robotcub.org
+ * Released under the terms the GNU General Public License, version 2 or any
+ * later version published by the Free Software Foundation.
+ */
 
 
 #include <stdio.h>
@@ -17,12 +17,13 @@
 
 using namespace yarp::dev;
 
-ImplementPositionControl2::ImplementPositionControl2(IPositionControl2Raw *y)
+ImplementPositionControl2::ImplementPositionControl2(IPositionControl2Raw *y) :
+    iPosition2(y),
+    helper(NULL),
+    temp_double(NULL),
+    temp_int(NULL)
 {
-    iPosition2 = y;
-    helper = 0;
-    temp_double = 0;
-    temp_int = 0;
+
 }
 
 
@@ -33,29 +34,29 @@ ImplementPositionControl2::~ImplementPositionControl2()
 
 bool ImplementPositionControl2::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if(helper!=0)
+    if(helper != NULL)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT(helper != 0);
+    _YARP_ASSERT(helper != NULL);
     temp_double=new double [size];
-    _YARP_ASSERT(temp_double != 0);
+    _YARP_ASSERT(temp_double != NULL);
 
     temp_int=new int [size];
-    _YARP_ASSERT(temp_int != 0);
+    _YARP_ASSERT(temp_int != NULL);
     return true;
 }
 
 /**
-* Clean up internal data and memory.
-* @return true if uninitialization is executed, false otherwise.
-*/
+ * Clean up internal data and memory.
+ * @return true if uninitialization is executed, false otherwise.
+ */
 bool ImplementPositionControl2::uninitialize()
 {
-    if(helper!=0)
+    if(helper != NULL)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper = NULL;
     }
     checkAndDestroy(temp_double);
     checkAndDestroy(temp_int);
@@ -70,19 +71,19 @@ bool ImplementPositionControl2::setPositionMode()
 
 bool ImplementPositionControl2::positionMove(int j, double ang)
 {
-  int k;
-  double enc;
-  castToMapper(helper)->posA2E(ang, j, enc, k);
-  return iPosition2->positionMoveRaw(k, enc);
+    int k;
+    double enc;
+    castToMapper(helper)->posA2E(ang, j, enc, k);
+    return iPosition2->positionMoveRaw(k, enc);
 }
 
 bool ImplementPositionControl2::positionMove(const int n_joint, const int *joints, const double *refs)
 {
-  for(int idx=0; idx<n_joint; idx++)
-  {
-    castToMapper(helper)->posA2E(refs[idx], joints[idx], temp_double[idx], temp_int[idx]);
-  }
-  return iPosition2->positionMoveRaw(n_joint, temp_int, temp_double);
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        castToMapper(helper)->posA2E(refs[idx], joints[idx], temp_double[idx], temp_int[idx]);
+    }
+    return iPosition2->positionMoveRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementPositionControl2::positionMove(const double *refs)

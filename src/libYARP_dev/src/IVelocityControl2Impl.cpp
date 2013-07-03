@@ -15,12 +15,14 @@
 
 using namespace yarp::dev;
 
-ImplementVelocityControl2::ImplementVelocityControl2(IVelocityControl2Raw *y)
+ImplementVelocityControl2::ImplementVelocityControl2(IVelocityControl2Raw *y) :
+    iVelocity2(y),
+    helper(NULL),
+    temp_int(NULL),
+    temp_double(NULL),
+    tempPids()
 {
-    iVelocity2 = y;
-    helper = 0;
-    temp_double = 0;
-    temp_int = 0;
+
 }
 
 ImplementVelocityControl2::~ImplementVelocityControl2()
@@ -30,27 +32,27 @@ ImplementVelocityControl2::~ImplementVelocityControl2()
 
 bool ImplementVelocityControl2::initialize(int size, const int *axis_map, const double *enc, const double *zeros)
 {
-  if (helper!=0)
-    return false;
+    if (helper != NULL)
+        return false;
 
-  helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros,0));
-  _YARP_ASSERT (helper != 0);
-  temp_double = new double [size];
-  _YARP_ASSERT (temp_double != 0);
-  temp_int = new int [size];
-  _YARP_ASSERT (temp_int != 0);
-  tempPids = new Pid [size];
-  _YARP_ASSERT (tempPids != 0);
+    helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros,0));
+    _YARP_ASSERT (helper != NULL);
+    temp_double = new double [size];
+    _YARP_ASSERT (temp_double != NULL);
+    temp_int = new int [size];
+    _YARP_ASSERT (temp_int != NULL);
+    tempPids = new Pid [size];
+    _YARP_ASSERT (tempPids != NULL);
 
-  return true;
+    return true;
 }
 
 bool ImplementVelocityControl2::uninitialize()
 {
-    if(helper!=0)
+    if(helper != NULL)
     {
         delete castToMapper(helper);
-        helper=0;
+        helper = NULL;
     }
     checkAndDestroy(temp_double);
     checkAndDestroy(temp_int);
@@ -61,70 +63,70 @@ bool ImplementVelocityControl2::uninitialize()
 
 bool ImplementVelocityControl2::getAxes(int *ax)
 {
-  (*ax)=castToMapper(helper)->axes();
-  return true;
+    (*ax)=castToMapper(helper)->axes();
+    return true;
 }
 
 
 bool ImplementVelocityControl2::setVelocityMode()
 {
-  return iVelocity2->setVelocityModeRaw();
+    return iVelocity2->setVelocityModeRaw();
 }
 
 bool ImplementVelocityControl2::velocityMove(int j, double sp)
 {
-  int k;
-  double enc;
-  castToMapper(helper)->velA2E(sp, j, enc, k);
-  return iVelocity2->velocityMoveRaw(k, enc);
+    int k;
+    double enc;
+    castToMapper(helper)->velA2E(sp, j, enc, k);
+    return iVelocity2->velocityMoveRaw(k, enc);
 }
 
 bool ImplementVelocityControl2::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
-  for(int idx=0; idx<n_joint; idx++)
-  {
-      castToMapper(helper)->velA2E(spds[idx], joints[idx], temp_double[idx], temp_int[idx]);
-  }
-  return iVelocity2->velocityMoveRaw(n_joint, temp_int, temp_double);
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        castToMapper(helper)->velA2E(spds[idx], joints[idx], temp_double[idx], temp_int[idx]);
+    }
+    return iVelocity2->velocityMoveRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementVelocityControl2::velocityMove(const double *sp)
 {
-  castToMapper(helper)->velA2E(sp, temp_double);
-  return iVelocity2->velocityMoveRaw(temp_double);
+    castToMapper(helper)->velA2E(sp, temp_double);
+    return iVelocity2->velocityMoveRaw(temp_double);
 }
 
 bool ImplementVelocityControl2::setRefAcceleration(int j, double acc)
 {
-  int k;
-  double enc;
-  castToMapper(helper)->accA2E_abs(acc, j, enc, k);
-  return iVelocity2->setRefAccelerationRaw(k, enc);
+    int k;
+    double enc;
+    castToMapper(helper)->accA2E_abs(acc, j, enc, k);
+    return iVelocity2->setRefAccelerationRaw(k, enc);
 }
 
 bool ImplementVelocityControl2::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
-  for(int idx=0; idx<n_joint; idx++)
-  {
-      castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], temp_double[idx], temp_int[idx]);
-  }
-  return iVelocity2->setRefAccelerationsRaw(n_joint, temp_int, temp_double);
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        castToMapper(helper)->accA2E_abs(accs[idx], joints[idx], temp_double[idx], temp_int[idx]);
+    }
+    return iVelocity2->setRefAccelerationsRaw(n_joint, temp_int, temp_double);
 }
 
 bool ImplementVelocityControl2::setRefAccelerations(const double *accs)
 {
-  castToMapper(helper)->accA2E_abs(accs, temp_double);
-  return iVelocity2->setRefAccelerationsRaw(temp_double);
+    castToMapper(helper)->accA2E_abs(accs, temp_double);
+    return iVelocity2->setRefAccelerationsRaw(temp_double);
 }
 
 bool ImplementVelocityControl2::getRefAcceleration(int j, double *acc)
 {
-  int k;
-  double enc;
-  k=castToMapper(helper)->toHw(j);
-  bool ret = iVelocity2->getRefAccelerationRaw(k, &enc);
-  *acc=castToMapper(helper)->accE2A_abs(enc, k);
-  return ret;
+    int k;
+    double enc;
+    k=castToMapper(helper)->toHw(j);
+    bool ret = iVelocity2->getRefAccelerationRaw(k, &enc);
+    *acc=castToMapper(helper)->accE2A_abs(enc, k);
+    return ret;
 }
 
 
@@ -147,55 +149,55 @@ bool ImplementVelocityControl2::getRefAccelerations(const int n_joint, const int
 
 bool ImplementVelocityControl2::getRefAccelerations(double *accs)
 {
-  bool ret=iVelocity2->getRefAccelerationsRaw(temp_double);
-  castToMapper(helper)->accE2A_abs(temp_double, accs);
-  return ret;
+    bool ret=iVelocity2->getRefAccelerationsRaw(temp_double);
+    castToMapper(helper)->accE2A_abs(temp_double, accs);
+    return ret;
 }
 
 
 bool ImplementVelocityControl2::stop(int j)
 {
-  int k;
-  k=castToMapper(helper)->toHw(j);
-  return iVelocity2->stopRaw(k);
+    int k;
+    k=castToMapper(helper)->toHw(j);
+    return iVelocity2->stopRaw(k);
 }
 
 
 bool ImplementVelocityControl2::stop(const int n_joint, const int *joints)
 {
-  for(int idx=0; idx<n_joint; idx++)
-  {
-      temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
-  }
-  return iVelocity2->stopRaw(n_joint, temp_int);
+    for(int idx=0; idx<n_joint; idx++)
+    {
+        temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
+    }
+    return iVelocity2->stopRaw(n_joint, temp_int);
 }
 
 
 bool ImplementVelocityControl2::stop()
 {
-  return iVelocity2->stopRaw();
+    return iVelocity2->stopRaw();
 }
 
 
 bool ImplementVelocityControl2::setVelPid(int j, const Pid &pid)
 {
-  int k=castToMapper(helper)->toHw(j);
-  return iVelocity2->setVelPidRaw(k,pid);
+    int k=castToMapper(helper)->toHw(j);
+    return iVelocity2->setVelPidRaw(k,pid);
 }
 
 
 bool ImplementVelocityControl2::setVelPids(const Pid *pids)
 {
-  int tmp=0;
-  int nj=castToMapper(helper)->axes();
+    int tmp=0;
+    int nj=castToMapper(helper)->axes();
 
-  for(int j=0;j<nj;j++)
-  {
-      tmp=castToMapper(helper)->toHw(j);
-      tempPids[tmp]=pids[j];     // here the conversion consists into reordering the Pids array
-  }
+    for(int j=0;j<nj;j++)
+    {
+        tmp=castToMapper(helper)->toHw(j);
+        tempPids[tmp]=pids[j];     // here the conversion consists into reordering the Pids array
+    }
 
-  return iVelocity2->setVelPidsRaw(tempPids);
+    return iVelocity2->setVelPidsRaw(tempPids);
 }
 
 

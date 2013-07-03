@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
-* Author:  Alberto Cardellino
-* email:   alberto.cardellino@iit.it
-* website: www.robotcub.org
-* Released under the terms the GNU General Public License, version 2 or any
-* later version published by the Free Software Foundation.
-*/
+ * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Author:  Alberto Cardellino
+ * email:   alberto.cardellino@iit.it
+ * website: www.robotcub.org
+ * Released under the terms the GNU General Public License, version 2 or any
+ * later version published by the Free Software Foundation.
+ */
 
 
 #include <stdio.h>
@@ -18,13 +18,14 @@
 using namespace yarp::dev;
 
 
-ImplementControlLimits2::ImplementControlLimits2(yarp::dev::IControlLimits2Raw *y)
+ImplementControlLimits2::ImplementControlLimits2(yarp::dev::IControlLimits2Raw *y) :
+    iLimits2(y),
+    helper(NULL),
+    temp_min(NULL),
+    temp_max(NULL),
+    temp_int(NULL)
 {
-    iLimits2 = y;
-    helper = 0;
-    temp_min = 0;
-    temp_max = 0;
-    temp_int = 0;
+
 }
 
 
@@ -36,17 +37,17 @@ ImplementControlLimits2::~ImplementControlLimits2()
 
 bool ImplementControlLimits2::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if(helper!=0)
+    if(helper != NULL)
         return false;
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
-    _YARP_ASSERT(helper != 0);
+    _YARP_ASSERT(helper != NULL);
     temp_max=new double [size];
-    _YARP_ASSERT(temp_max != 0);
+    _YARP_ASSERT(temp_max != NULL);
     temp_min=new double [size];
-    _YARP_ASSERT(temp_min != 0);
+    _YARP_ASSERT(temp_min != NULL);
     temp_int=new int [size];
-    _YARP_ASSERT(temp_int != 0);
+    _YARP_ASSERT(temp_int != NULL);
     return true;
 }
 

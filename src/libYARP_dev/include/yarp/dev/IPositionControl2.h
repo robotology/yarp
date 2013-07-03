@@ -1,22 +1,22 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
-* Author:  Alberto Cardellino
-* email:   alberto.cardellino@iit.it
-* website: www.robotcub.org
-* Permission is granted to copy, distribute, and/or modify this program
-* under the terms of the GNU General Public License, version 2 or any
-* later version published by the Free Software Foundation.
-*
-* A copy of the license can be found at
-* http://www.robotcub.org/icub/license/gpl.txt
-*
-* This program is distributed in the hope that it will be useful, but
-* WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-* Public License for more details
-*/
+ * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Author:  Alberto Cardellino
+ * email:   alberto.cardellino@iit.it
+ * website: www.robotcub.org
+ * Permission is granted to copy, distribute, and/or modify this program
+ * under the terms of the GNU General Public License, version 2 or any
+ * later version published by the Free Software Foundation.
+ *
+ * A copy of the license can be found at
+ * http://www.robotcub.org/icub/license/gpl.txt
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details
+ */
 
 #ifndef __YARPPOSITIONCONTROLINTERFACE_V2__
 #define __YARPPOSITIONCONTROLINTERFACE_V2__
@@ -40,7 +40,7 @@ namespace yarp {
  * sending commands to a eterogeneous group of axis.
  */
 
-class yarp::dev::IPositionControl2Raw: public yarp::dev::IPositionControlRaw
+class yarp::dev::IPositionControl2Raw: public IPositionControlRaw
 {
 public:
     //     IPositionControlRaw interface
@@ -134,21 +134,21 @@ class YARP_dev_API yarp::dev::IPositionControl2 : public IPositionControl
 {
 public:
 
-	//     IPositionControl interface
-	using IPositionControl::getAxes;
-	using IPositionControl::setPositionMode;
-	using IPositionControl::positionMove;
-	using IPositionControl::relativeMove;
-	using IPositionControl::checkMotionDone;
-	using IPositionControl::setRefSpeed;
-	using IPositionControl::setRefSpeeds;
-	using IPositionControl::setRefAcceleration;
-	using IPositionControl::setRefAccelerations;
-	using IPositionControl::getRefSpeed;
-	using IPositionControl::getRefSpeeds;
-	using IPositionControl::getRefAcceleration;
-	using IPositionControl::getRefAccelerations;
-	using IPositionControl::stop;
+    //     IPositionControl interface
+    using IPositionControl::getAxes;
+    using IPositionControl::setPositionMode;
+    using IPositionControl::positionMove;
+    using IPositionControl::relativeMove;
+    using IPositionControl::checkMotionDone;
+    using IPositionControl::setRefSpeed;
+    using IPositionControl::setRefSpeeds;
+    using IPositionControl::setRefAcceleration;
+    using IPositionControl::setRefAccelerations;
+    using IPositionControl::getRefSpeed;
+    using IPositionControl::getRefSpeeds;
+    using IPositionControl::getRefAcceleration;
+    using IPositionControl::getRefAccelerations;
+    using IPositionControl::stop;
 
     /**
      * Destructor.
