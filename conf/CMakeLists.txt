@@ -19,6 +19,7 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
                      YarpDevice.cmake
                      YarpDeprecatedWarning.cmake
+                     YarpCMakeWorkarounds.cmake
                      FindACE.cmake
                      FindAtlas.cmake
                      FindFFMPEG.cmake
