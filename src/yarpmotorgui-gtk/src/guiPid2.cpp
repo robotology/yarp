@@ -91,14 +91,6 @@ void guiPid2::change_page (GtkNotebook *notebook, GtkWidget   *page,  guint page
     if (page_num==1) gtk_label_set_markup (GTK_LABEL (note_lbl2), g_markup_printf_escaped ("<span bgcolor=\"#FF6464\">Torque PID</span>"));
     if (page_num==2) gtk_label_set_markup (GTK_LABEL (note_lbl3), g_markup_printf_escaped ("<span bgcolor=\"#DBA6AB\">Stiffness params</span>"));
 
-/*
-    if (iPid)
-        iPid->getPid(*joint, &myPosPid);
-    if (iTrq)
-        iTrq->getTorquePid(*joint, &myTrqPid);
-    if (iImp)
-        iImp->getImpedance(*joint, &stiff_val, &damp_val);
-*/
 }
 
 
@@ -119,9 +111,7 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) pos_PWM_limitDes));
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) pos_INT_limitDes));
 
-  //fprintf(stderr, "Trying to send pid...");
   iPid->setPid(*joint, *pid);
-  //fprintf(stderr, "...got it! ");
   iPid->getPid(*joint, pid);
 
   sprintf(buffer, "%d", (int) pid->kp);
@@ -148,14 +138,15 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
 void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
 {
   char buffer[40];
+  double bemfGain = 0;
 
   //fprintf(stderr, "%s \n", gtk_entry_get_text((GtkEntry*) kpDes));
   pid->kp = atoi(gtk_entry_get_text((GtkEntry*) trq_kpDes));
   //fprintf(stderr, "kp changed to: %d \n", (int) pid->kp);
   pid->kd = atoi(gtk_entry_get_text((GtkEntry*) trq_kdDes));
   pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kiDes));
-  //pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kffDes));
-  //pid->ki = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfDes));
+  pid->kff = atoi(gtk_entry_get_text((GtkEntry*) trq_kffDes));
+  bemfGain = atoi(gtk_entry_get_text((GtkEntry*) trq_kbemfDes));
   pid->scale = atoi(gtk_entry_get_text((GtkEntry*) trq_scaleDes));
   pid->offset = atoi(gtk_entry_get_text((GtkEntry*) trq_offsetDes));
   pid->stiction_up_val = atoi(gtk_entry_get_text((GtkEntry*) trq_upStictionDes));
@@ -163,10 +154,10 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   pid->max_output = atoi(gtk_entry_get_text((GtkEntry*) trq_PWM_limitDes));
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) trq_INT_limitDes));
 
-  //fprintf(stderr, "Trying to send pid...");
   iTrq->setTorquePid(*joint, *pid);
-  //fprintf(stderr, "...got it! ");
+  iTrq->setBemfParam(*joint, bemfGain);
   iTrq->getTorquePid(*joint, pid);
+  iTrq->getBemfParam(*joint, (double*)&bemfGain);
 
   sprintf(buffer, "%d", (int) pid->kp);
   gtk_entry_set_text((GtkEntry*) trq_kpEntry,  buffer);
@@ -180,11 +171,11 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
   sprintf(buffer, "%d", (int) pid->scale);
   gtk_entry_set_text((GtkEntry*) trq_scaleEntry,  buffer);
   
-  //sprintf(buffer, "%d", (int) pid->ki);
-  //gtk_entry_set_text((GtkEntry*) trq_kbemfEntry,  buffer);
+  sprintf(buffer, "%d", (int) bemfGain);
+  gtk_entry_set_text((GtkEntry*) trq_kbemfEntry,  buffer);
   
-  //sprintf(buffer, "%d", (int) pid->ki);
-  //gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
+  sprintf(buffer, "%d", (int) pid->kff);
+  gtk_entry_set_text((GtkEntry*) trq_kffEntry,  buffer);
   
   sprintf(buffer, "%d", (int) pid->offset);
   gtk_entry_set_text((GtkEntry*) trq_offsetEntry,  buffer);
@@ -472,6 +463,7 @@ void guiPid2::guiPid2(void *button, void* data)
   GtkWidget *button_Dbg_Close;
   Pid myPosPid(0,0,0,0,0,0);
   Pid myTrqPid(0,0,0,0,0,0);
+  double bemfGain=0;
   double stiff_val=0;
   double damp_val=0;
   double stiff_max=0;
@@ -489,6 +481,7 @@ void guiPid2::guiPid2(void *button, void* data)
 
   iPid->getPid(*joint, &myPosPid);
   iTrq->getTorquePid(*joint, &myTrqPid);
+  iTrq->getBemfParam(*joint, &bemfGain);
   iImp->getImpedance(*joint, &stiff_val, &damp_val);
   iImp->getImpedanceOffset(*joint, &offset_val);
   if (iDbg != 0)
@@ -681,16 +674,16 @@ void guiPid2::guiPid2(void *button, void* data)
   
   //kff
   trq_kffEntry   =  gtk_entry_new();
-  displayPidValue((int) 0, note_pag2, trq_kffEntry, 280, 0, "Current Trq Kff");
+  displayPidValue((int) myTrqPid.kff, note_pag2, trq_kffEntry, 280, 0, "Current Trq Kff");
   //kff desired
   trq_kffDes   =  gtk_entry_new();
-  changePidValue((int) 0, note_pag2, trq_kffDes, 390, 0, "Desired Trq Kff");
+  changePidValue((int) myTrqPid.kff, note_pag2, trq_kffDes, 390, 0, "Desired Trq Kff");
   //kbemf
   trq_kbemfEntry   =  gtk_entry_new();
-  displayPidValue((int) 0, note_pag2, trq_kbemfEntry, 280, 70, "Current Trq Kbemf");
+  displayPidValue((int) bemfGain, note_pag2, trq_kbemfEntry, 280, 70, "Current Trq Kbemf");
   //kbemf desired
   trq_kbemfDes   =  gtk_entry_new();
-  changePidValue((int) 0, note_pag2, trq_kbemfDes, 390, 70, "Desired Trq Kbemf");
+  changePidValue((int) bemfGain, note_pag2, trq_kbemfDes, 390, 70, "Desired Trq Kbemf");
 
   //scale
   trq_scaleEntry   =  gtk_entry_new();
