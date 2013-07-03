@@ -192,9 +192,9 @@ if(CREATE_GUIS)
 
     # Use YARP_USE_GTK2 by default everywhere but MSVC.
     if(MSVC)
-      set(YARP_USE_GTK2_DEFAULT FALSE)
+        set(YARP_USE_GTK2_DEFAULT FALSE)
     else()
-      set(YARP_USE_GTK2_DEFAULT TRUE)
+        set(YARP_USE_GTK2_DEFAULT TRUE)
     endif()
     set(YARP_USE_GTK2 ${YARP_USE_GTK2_DEFAULT} CACHE BOOL "Use package GTK2")
 
