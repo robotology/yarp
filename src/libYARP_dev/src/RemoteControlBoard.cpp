@@ -1812,6 +1812,12 @@ public:
     bool setRefTorque(int j, double v)
     { return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v); }
 
+    bool getBemfParam(int j, double *t)
+    { return get2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, t); }
+
+    bool setBemfParam(int j, double v)
+    { return set2V1I1D(VOCAB_TORQUE, VOCAB_BEMF, j, v); }
+
     bool setTorquePid(int j, const Pid &pid)
     {
         Bottle cmd, response;

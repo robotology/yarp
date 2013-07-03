@@ -740,6 +740,7 @@ public:
 #define VOCAB_RESET VOCAB3('r','e','s')
 #define VOCAB_DISABLE VOCAB3('d','i','s')
 #define VOCAB_ENABLE VOCAB3('e','n','a')
+#define VOCAB_BEMF VOCAB3('b','m','f')
 
 // interface IPidControl gets.
 #define VOCAB_ERR VOCAB3('e','r','r')

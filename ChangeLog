@@ -1,3 +1,13 @@
+2013-07-03 Marco Randazzo <marco.randazzo@iit.it>
+    * src/libYARP_dev/src/TorqueControlImpl.cpp
+    * src/libYARP_dev/src/ServerControlBoard.cpp
+    * src/libYARP_dev/src/RemoteControlBoard.cpp
+    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
+    * src/libYARP_dev/include/yarp/dev/ITorqueControl.h
+    * src/libYARP_dev/include/yarp/dev/ImplementTorqueControl.h
+    
+    added getBemfParam() setBemfParam() methods to iTorqueControl Interface 
+    
 2013-07-01 Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/include/yarp/dev/ControlBoardPid.h
     * src/libYARP_dev/src/ControlBoardPid.cpp
