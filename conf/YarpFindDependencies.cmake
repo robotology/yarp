@@ -190,13 +190,7 @@ if(CREATE_GUIS)
     find_package(Gthread QUIET)
     checkandset_dependency(Gthread)
 
-    # Use YARP_USE_GTK2 by default everywhere but MSVC.
-    if(MSVC)
-        set(YARP_USE_GTK2_DEFAULT FALSE)
-    else()
-        set(YARP_USE_GTK2_DEFAULT TRUE)
-    endif()
-    set(YARP_USE_GTK2 ${YARP_USE_GTK2_DEFAULT} CACHE BOOL "Use package GTK2")
+    set(YARP_USE_GTK2 TRUE CACHE BOOL "Use package GTK2")
 
     if(YARP_USE_GTK2)
         if(CREATE_YARPSCOPE)
