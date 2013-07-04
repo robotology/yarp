@@ -20,6 +20,7 @@
 #include <yarp/dev/IPositionControl2Impl.h>
 #include <yarp/dev/IVelocityControl2Impl.h>
 #include <yarp/dev/IControlLimits2Impl.h>
+#include <yarp/dev/IPositionDirectImpl.h>
 
 // old interface implementation file
 #include <yarp/dev/ImplementControlBoardInterfaces.h>
