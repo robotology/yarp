@@ -3,13 +3,14 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.8.7)
+
 project(YARP)
 
 # Pick up our CMake scripts - they are all in the conf subdirectory.
 set(YARP_MODULE_DIR ${PROJECT_SOURCE_DIR}/conf)
 set(YARP_MODULE_PATH ${YARP_MODULE_DIR})
-if(CMAKE_VERSION VERSION_LESS 2.8.11.2)
-  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-2.8.11.2/Modules)
+if(CMAKE_VERSION VERSION_LESS 2.8.12)
+  list(APPEND YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf/cmake-2.8.12/Modules)
 endif()
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
@@ -29,6 +30,9 @@ include(YarpVersion)
 # Check system configuration.
 # See conf/YarpSystemCheck.cmake.
 include(YarpSystemCheck)
+
+# Include some workarounds for older cmake versions
+include(YarpCMakeWorkarounds)
 
 # Set up some compilation options.  See conf/YarpOptions.cmake.
 include(YarpOptions)

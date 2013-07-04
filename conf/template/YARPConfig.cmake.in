@@ -12,8 +12,8 @@ if(NOT YARP_FOUND)
     set(YARP_MODULE_DIR "@YARP_MODULE_DIR@")
     set(YARP_MODULE_PATH "@YARP_MODULE_DIR@")
 # FIXME 2.4 Enable this
-#    if(${CMAKE_VERSION} VERSION_LESS 2.8.11.2)
-#        list(APPEND YARP_MODULE_PATH "@YARP_MODULE_PATH@/cmake-2.8.11.2/Modules")
+#    if(${CMAKE_VERSION} VERSION_LESS 2.8.12)
+#        list(APPEND YARP_MODULE_PATH "@YARP_MODULE_PATH@/cmake-2.8.12/Modules")
 #    endif()
     set(YARP_BINDINGS "@YARP_BINDINGS@")
 

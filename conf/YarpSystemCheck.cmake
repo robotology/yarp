@@ -106,7 +106,6 @@ else()
 endif()
 
 set(YARP_HAVE_SYS_TYPES_H ${HAVE_SYS_TYPES_H})
-set(YARP_HAVE_STDINT_H ${HAVE_STDINT_H})
 set(YARP_HAVE_STDDEF_H ${HAVE_STDDEF_H})
 
 #########################################################################

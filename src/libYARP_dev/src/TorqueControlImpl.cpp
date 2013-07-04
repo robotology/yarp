@@ -79,6 +79,24 @@ bool ImplementTorqueControl::getRefTorque(int j, double *r)
     return ret;
 }
 
+bool ImplementTorqueControl::getBemfParam(int j, double *bemf)
+{
+    int k;
+    bool ret;
+    k=castToMapper(helper)->toHw(j);
+    ret = iTorqueRaw->getBemfParamRaw(k, bemf);
+    return ret;
+}
+
+bool ImplementTorqueControl::setBemfParam(int j, double bemf)
+{
+    int k;
+    bool ret;
+    k=castToMapper(helper)->toHw(j);
+    ret = iTorqueRaw->setBemfParamRaw(k, bemf);
+    return ret;
+}
+
 bool ImplementTorqueControl::getRefTorques(double *t)
 {
     bool ret;

@@ -22,28 +22,27 @@ public:
 
     static YarprunCheckpoints& instance();
 
-    void push(const char* label,const char* sFile,int line);
-
-    void checkpoint(const char* sFile,int line);
-
-    void pop(const char* sFile,int line);
+    void checkpoint(const char* prefix,const char* label,const char* sFile,int line);
 
 private:
     FILE* mLogFile;
-    std::list<std::string> mLabels;
 };
 
 #ifdef YARPRUN_LOG
 
-#define CHECK_ENTER(label) YarprunCheckpoints::instance().push(label,__FILE__,__LINE__);
-#define CHECKPOINT() YarprunCheckpoints::instance().checkpoint(__FILE__,__LINE__);
-#define CHECK_EXIT() YarprunCheckpoints::instance().pop(__FILE__,__LINE__);
+#define _BEGIN         YarprunCheckpoints::instance().checkpoint("BEGIN",__FUNCTION__,__FILE__,__LINE__);
+#define _CHECKPOINT    YarprunCheckpoints::instance().checkpoint("     ",__FUNCTION__,__FILE__,__LINE__);
+#define _RETURN(val) { YarprunCheckpoints::instance().checkpoint("END  ",__FUNCTION__,__FILE__,__LINE__); return val; }
+#define _RETURN_VOID { YarprunCheckpoints::instance().checkpoint("END  ",__FUNCTION__,__FILE__,__LINE__); return; }
+#define _EXIT(val)   { YarprunCheckpoints::instance().checkpoint("END  ",__FUNCTION__,__FILE__,__LINE__); exit(val); }
 
 #else
 
-#define CHECK_ENTER(dummy)
-#define CHECKPOINT()
-#define CHECK_EXIT()
+#define _BEGIN
+#define _CHECKPOINT
+#define _RETURN(val) return val;
+#define _RETURN_VOID return;
+#define _EXIT(val)   exit(val);
 
 #endif
 

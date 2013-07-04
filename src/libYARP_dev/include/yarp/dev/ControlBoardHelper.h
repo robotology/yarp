@@ -51,13 +51,13 @@ public:
         axisMap(0),
         invAxisMap(0),
         angleToEncoders(0),
-		newtonsToSensors(0)
+        newtonsToSensors(0)
     {
         nj=n;
         alloc(n);
-        
+
         memcpy(axisMap, aMap, sizeof(int)*nj);
-        
+
         if (zs!=0)
             memcpy(zeros, zs, sizeof(double)*nj);
         else
@@ -68,26 +68,26 @@ public:
         else
             memset(angleToEncoders, 0, sizeof(double)*nj);
 
-		if (nw!=0)
+        if (nw!=0)
             memcpy(newtonsToSensors, nw, sizeof(double)*nj);
         else
             memset(newtonsToSensors, 0, sizeof(double)*nj);
 
         // invert the axis map
-   		memset (invAxisMap, 0, sizeof(int) * nj);
-		int i;
+        memset (invAxisMap, 0, sizeof(int) * nj);
+        int i;
         for (i = 0; i < nj; i++)
-		{
-			int j;
-			for (j = 0; j < nj; j++)
-			{
-				if (axisMap[j] == i)
-				{
-					invAxisMap[i] = j;
-					break;
-				}
-			}
-		}
+        {
+            int j;
+            for (j = 0; j < nj; j++)
+            {
+                if (axisMap[j] == i)
+                {
+                    invAxisMap[i] = j;
+                    break;
+                }
+            }
+        }
 
     } 
 
@@ -110,7 +110,7 @@ public:
         axisMap=new int [nj];
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
-		newtonsToSensors=new double [nj];
+        newtonsToSensors=new double [nj];
         _YARP_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
 
         return true;
@@ -123,13 +123,13 @@ public:
         checkAndDestroy<int> (axisMap);
         checkAndDestroy<int> (invAxisMap);
         checkAndDestroy<double> (angleToEncoders);
-		checkAndDestroy<double> (newtonsToSensors);
+        checkAndDestroy<double> (newtonsToSensors);
         return true;
     }
 
     inline int toHw(int axis)
     { return axisMap[axis]; }
-    
+
     inline int toUser(int axis)
     { return invAxisMap[axis]; }
 
@@ -182,11 +182,11 @@ public:
     inline double posE2A(double enc, int j)
     {
         int k=toUser(j);
-        
+
         return (enc/angleToEncoders[k])-zeros[k];
     }
 
-	inline void impN2S(double newtons, int j, double &sens, int &k)
+    inline void impN2S(double newtons, int j, double &sens, int &k)
     {
         sens=newtons*newtonsToSensors[j]/angleToEncoders[j];
         k=toHw(j);
@@ -206,7 +206,7 @@ public:
             impN2S(newtons[j], j, tmp, index);
             sens[index]=tmp;
         }
-	}
+    }
 
     inline void trqN2S(double newtons, int j, double &sens, int &k)
     {
@@ -219,7 +219,7 @@ public:
         return newtons*newtonsToSensors[j];
     }
 
-	//map a vector, convert from newtons to sensors
+    //map a vector, convert from newtons to sensors
     inline void trqN2S(const double *newtons, double *sens)
     {
         double tmp;
@@ -231,7 +231,7 @@ public:
         }
     }
 
-	//map a vector, convert from sensor to newtons
+    //map a vector, convert from sensor to newtons
     inline void trqS2N(const double *sens, double *newtons)
     {
         double tmp;
@@ -243,7 +243,7 @@ public:
         }
     }
 
-	inline void trqS2N(double sens, int j, double &newton, int &k)
+    inline void trqS2N(double sens, int j, double &newton, int &k)
     {
         k=toUser(j);
 
@@ -253,11 +253,11 @@ public:
     inline double trqS2N(double sens, int j)
     {
         int k=toUser(j);
-        
+
         return (sens/newtonsToSensors[k]);
     }
 
-	inline void impS2N(const double *sens, double *newtons)
+    inline void impS2N(const double *sens, double *newtons)
     {
         double tmp;
         int index;
@@ -268,7 +268,7 @@ public:
         }
     }
 
-	inline void impS2N(double sens, int j, double &newton, int &k)
+    inline void impS2N(double sens, int j, double &newton, int &k)
     {
         k=toUser(j);
 
@@ -278,7 +278,7 @@ public:
     inline double impS2N(double sens, int j)
     {
         int k=toUser(j);
-        
+
         return (sens/newtonsToSensors[k]*angleToEncoders[k]);
     }
 
@@ -288,7 +288,7 @@ public:
         enc=ang*angleToEncoders[j];
     }
 
-	inline void velA2E_abs(double ang, int j, double &enc, int &k)
+    inline void velA2E_abs(double ang, int j, double &enc, int &k)
     {
         k=toHw(j);
         enc=ang*fabs(angleToEncoders[j]);
@@ -300,7 +300,7 @@ public:
         ang=enc/angleToEncoders[k];
     }
 
-	inline void velE2A_abs(double enc, int j, double &ang, int &k)
+    inline void velE2A_abs(double enc, int j, double &ang, int &k)
     {
         k=toUser(j);
         ang=enc/fabs(angleToEncoders[k]);
@@ -310,8 +310,8 @@ public:
     {
         velA2E(ang, j, enc, k);
     }
-	
-	inline void accA2E_abs(double ang, int j, double &enc, int &k)
+
+    inline void accA2E_abs(double ang, int j, double &enc, int &k)
     {
         velA2E_abs(ang, j, enc, k);
     }
@@ -321,7 +321,7 @@ public:
         velE2A(enc, j, ang, k);
     }
 
-	inline void accE2A_abs(double enc, int j, double &ang, int &k)
+    inline void accE2A_abs(double enc, int j, double &ang, int &k)
     {
         velE2A_abs(enc, j, ang, k);
     }
@@ -332,7 +332,7 @@ public:
         return enc/angleToEncoders[k];
     }
 
-	inline double velE2A_abs(double enc, int j)
+    inline double velE2A_abs(double enc, int j)
     {
         int k=toUser(j);
         return enc/fabs(angleToEncoders[k]);
@@ -344,7 +344,7 @@ public:
         return velE2A(enc, j);
     }
 
-	inline double accE2A_abs(double enc, int j)
+    inline double accE2A_abs(double enc, int j)
     {
         return velE2A_abs(enc, j);
     }
@@ -384,7 +384,7 @@ public:
         }
     }
 
-	inline void velA2E_abs(const double *ang, double *enc)
+    inline void velA2E_abs(const double *ang, double *enc)
     {
         double tmp;
         int index;
@@ -406,7 +406,7 @@ public:
         }
     }
 
-	inline void velE2A_abs(const double *enc, double *ang)
+    inline void velE2A_abs(const double *enc, double *ang)
     {
         double tmp;
         int index;
@@ -428,7 +428,7 @@ public:
         }
     }
 
-	inline void accA2E_abs(const double *ang, double *enc)
+    inline void accA2E_abs(const double *ang, double *enc)
     {
         double tmp;
         int index;
@@ -450,7 +450,7 @@ public:
         }
     }
 
-	inline void accE2A_abs(const double *enc, double *ang)
+    inline void accE2A_abs(const double *enc, double *ang)
     {
         double tmp;
         int index;
@@ -463,15 +463,15 @@ public:
 
     inline int axes()
     { return nj; }
-        
- 	int nj;
 
-	double *zeros;
-	double *signs;
-	int *axisMap;
-	int *invAxisMap;
-	double *angleToEncoders;
-	double *newtonsToSensors;
+    int nj;
+
+    double *zeros;
+    double *signs;
+    int *axisMap;
+    int *invAxisMap;
+    double *angleToEncoders;
+    double *newtonsToSensors;
 };
 inline ControlBoardHelper *castToMapper(void *p)
 { return static_cast<ControlBoardHelper *>(p); }

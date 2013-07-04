@@ -11,7 +11,18 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
 
+#ifdef _MSC_VER
+// Disable some useless warning when including gtkmm.h on MSVC
+# pragma warning(push)
+# pragma warning(disable : 4099)
+# pragma warning(disable : 4250)
+#endif // _MSC_VER
+
 #include <gtkmm.h>
+
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif // _MSC_VER
 
 //#include <glibmm/i18n.h>
 #define _(String) (String)

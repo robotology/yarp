@@ -17,7 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef _MSC_VER
+// Disable some useless warning when including gtkmm.h on MSVC
+# pragma warning(push)
+# pragma warning(disable : 4099)
+#endif // _MSC_VER
+
 #include <gtkmm.h>
+
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif // _MSC_VER
+
 #include <gtkdataboxmmconfig.h>
 #include <gtkdataboxmm/wrap_init.h>
 

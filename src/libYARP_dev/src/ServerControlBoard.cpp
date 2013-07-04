@@ -1187,6 +1187,28 @@ public:
         return false;
     }
 
+    /** Set the back-efm compensation gain for a given joint.
+     * @param j joint number
+     * @param bemf the returned bemf gain of joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getBemfParam(int j, double *bemf)
+    {
+        // @@@ NOT YET IMPLEMENTED
+        return false;
+    }
+
+    /** Set the back-efm compensation gain for a given joint.
+     * @param j joint number
+     * @param bemf new value
+     * @return true/false on success/failure
+     */
+    virtual bool setBemfParam(int j, double bemf)
+    {
+        // @@@ NOT YET IMPLEMENTED
+        return false;
+    }
+
      /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value

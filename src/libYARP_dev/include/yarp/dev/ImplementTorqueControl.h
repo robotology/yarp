@@ -64,6 +64,8 @@ public:
     virtual bool setRefTorque(int j, double t);
     virtual bool getTorques(double *t);
     virtual bool getTorque(int j, double *t);
+    virtual bool getBemfParam(int j, double *bemf);
+    virtual bool setBemfParam(int j, double bemf);
     virtual bool getTorqueRange(int j, double *min, double *max);
     virtual bool getTorqueRanges(double *min, double *max);
     virtual bool setTorquePid(int j, const Pid &pid);

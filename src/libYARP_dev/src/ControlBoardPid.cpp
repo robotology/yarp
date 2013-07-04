@@ -25,7 +25,7 @@ Pid::Pid(double p, double d, double i,
 }
 
 Pid::Pid(double p, double d, double i, 
-         double intm, double sc, double omax, double st_up, double st_down)
+         double intm, double sc, double omax, double st_up, double st_down, double ff)
 {
     kp=p;
     kd=d;
@@ -36,6 +36,7 @@ Pid::Pid(double p, double d, double i,
     offset=0;
     stiction_up_val = st_up;
     stiction_down_val = st_down;
+    kff=ff;
 }
 
 Pid::~Pid()
@@ -54,6 +55,7 @@ Pid::Pid()
     offset=0;
     stiction_up_val=0;
     stiction_down_val=0;
+    kff=0;
 }
 
 void Pid::setKp(double p)
@@ -95,5 +97,10 @@ void Pid::setStictionValues(double up_value, double down_value)
 {
     stiction_up_val=up_value;
     stiction_down_val=down_value;
+}
+
+void Pid::setKff(double ff)
+{
+    kff=ff;
 }
 

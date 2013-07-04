@@ -18,6 +18,7 @@
 #   GTK2_FOUND - Were all of your specified components found?
 #   GTK2_INCLUDE_DIRS - All include directories
 #   GTK2_LIBRARIES - All libraries
+#   GTK2_DEFINITIONS - Additional compiler flags
 #
 #   GTK2_VERSION - The version of GTK2 found (x.y.z)
 #   GTK2_MAJOR_VERSION - The major version of GTK2
@@ -267,7 +268,10 @@ function(_GTK2_FIND_LIBRARY _var _lib _expand_vc _append_version)
             set(_library   ${_library}-vc80)
         elseif(MSVC90)
             set(_library   ${_library}-vc90)
-        elseif(MSVC10 OR (MSVC_VERSION GREATER 1600))
+        elseif(MSVC10)
+            set(_library ${_library}-vc100)
+        elseif(MSVC11)
+            # Up to gtkmm-win 2.22.0-2 there are no vc110 libraries but vc100 can be used
             set(_library ${_library}-vc100)
         endif()
         set(_library_d ${_library}-d)
@@ -321,7 +325,7 @@ function(_GTK2_FIND_LIBRARY _var _lib _expand_vc _append_version)
                        "While searching for ${_var}, our proposed library list is ${_lib_list}")
     endif()
 
-    find_library(${_var}
+    find_library(${_var}_RELEASE
         NAMES ${_lib_list}
         PATHS
             /opt/gnome/lib
@@ -346,23 +350,42 @@ function(_GTK2_FIND_LIBRARY _var _lib _expand_vc _append_version)
             [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]/lib
         )
 
-        if(${_var} AND ${_var}_DEBUG)
-            if(NOT GTK2_SKIP_MARK_AS_ADVANCED)
-                mark_as_advanced(${_var}_DEBUG)
-            endif()
-            set(GTK2_LIBRARIES ${GTK2_LIBRARIES} optimized ${${_var}} debug ${${_var}_DEBUG})
-            set(GTK2_LIBRARIES ${GTK2_LIBRARIES} PARENT_SCOPE)
+        if(${_var}_RELEASE AND ${_var}_DEBUG)
+            set(${_var} optimized ${${_var}_RELEASE} debug ${${_var}_DEBUG})
+        elseif(${_var}_RELEASE)
+            set(${_var}_DEBUG ${_var}_DEBUG-NOTFOUND)
+            set(${_var} ${${_var}_RELEASE})
+        elseif(${_var}_DEBUG)
+            set(${_var}_RELEASE ${_var}_RELEASE-NOTFOUND)
+            set(${_var} ${${_var}_DEBUG})
         endif()
     else()
-        if(NOT GTK2_SKIP_MARK_AS_ADVANCED)
-            mark_as_advanced(${_var})
-        endif()
-        set(GTK2_LIBRARIES ${GTK2_LIBRARIES} ${${_var}})
-        set(GTK2_LIBRARIES ${GTK2_LIBRARIES} PARENT_SCOPE)
-        # Set debug to release
-        set(${_var}_DEBUG ${${_var}})
-        set(${_var}_DEBUG ${${_var}} PARENT_SCOPE)
+        set(${_var} ${${_var}_RELEASE})
+        # Set debug to not found
+        set(${_var}_DEBUG ${_var}_DEBUG-NOTFOUND)
     endif()
+
+    if(NOT GTK2_SKIP_MARK_AS_ADVANCED)
+        mark_as_advanced(${_var}_RELEASE)
+        mark_as_advanced(${_var}_DEBUG)
+    endif()
+
+    set(${_var}_DEBUG ${${_var}_DEBUG} PARENT_SCOPE)
+    set(${_var}_DEBUG ${${_var}_RELEASE} PARENT_SCOPE)
+    set(${_var} ${${_var}} PARENT_SCOPE)
+
+    set(GTK2_LIBRARIES ${GTK2_LIBRARIES} ${${_var}})
+    set(GTK2_LIBRARIES ${GTK2_LIBRARIES} PARENT_SCOPE)
+
+    if(GTK2_DEBUG)
+        message(STATUS "[FindGTK2.cmake:${CMAKE_CURRENT_LIST_LINE}]     "
+                       "${_var}_RELEASE = \"${${_var}_RELEASE}\"")
+        message(STATUS "[FindGTK2.cmake:${CMAKE_CURRENT_LIST_LINE}]     "
+                       "${_var}_DEBUG   = \"${${_var}_DEBUG}\"")
+        message(STATUS "[FindGTK2.cmake:${CMAKE_CURRENT_LIST_LINE}]     "
+                       "${_var}         = \"${${_var}}\"")
+    endif()
+
 endfunction()
 
 #=============================================================
@@ -374,6 +397,7 @@ endfunction()
 set(GTK2_FOUND)
 set(GTK2_INCLUDE_DIRS)
 set(GTK2_LIBRARIES)
+set(GTK2_DEFINITIONS)
 
 if(NOT GTK2_FIND_COMPONENTS)
     # Assume they only want GTK
@@ -542,6 +566,20 @@ if(NOT GTK2_FIND_VERSION AND GTK2_GTK_INCLUDE_DIR)
 endif()
 
 #
+# On MSVC, according to https://wiki.gnome.org/gtkmm/MSWindows, the /vd2 flag needs to be
+# passed to the compiler in order to use gtkmm
+#
+if(MSVC)
+    foreach(_GTK2_component ${GTK2_FIND_COMPONENTS})
+        if(_GTK2_component STREQUAL "gtkmm")
+            set(GTK2_DEFINITIONS "/vd2")
+        elseif(_GTK2_component STREQUAL "glademm")
+            set(GTK2_DEFINITIONS "/vd2")
+        endif()
+    endforeach()
+endif()
+
+#
 # Try to enforce components
 #
 
@@ -609,6 +647,7 @@ else()
     set(GTK2_VERSION_PATCH)
     set(GTK2_INCLUDE_DIRS)
     set(GTK2_LIBRARIES)
+    set(GTK2_DEFINITIONS)
 endif()
 
 if(GTK2_INCLUDE_DIRS)

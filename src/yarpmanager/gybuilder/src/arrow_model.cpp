@@ -225,16 +225,17 @@ void ArrowModel::setLabel(const char* szLabel)
     if(!szLabel)
         return;
  
-     string dummy = szLabel;
+    
+    string dummy = szLabel;
     if((dummy.find("virtual") != std::string::npos) || 
        (dummy.find("auxiliary") != std::string::npos) )
     {
-        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
+        GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 3.0);
         g_object_set(this->gobj(), "line-dash", dash, NULL);      
     }
     else
     {
-        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 0);
+        GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 1.0, 0.0);
         g_object_set(this->gobj(), "line-dash", dash, NULL);      
     }
 

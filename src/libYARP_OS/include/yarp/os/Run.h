@@ -182,6 +182,7 @@ public:
     static Port *pServerPort;
     static YarpRunInfoVector mProcessVector;
     static YarpRunInfoVector mStdioVector;
+    static bool mStresstest;
 
 #if !defined(WIN32)
     static void CleanZombies();
