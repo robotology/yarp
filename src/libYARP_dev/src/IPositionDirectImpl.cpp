@@ -17,12 +17,12 @@
 
 using namespace yarp::dev;
 
-ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y)
+ImplementPositionDirect::ImplementPositionDirect(IPositionDirectRaw *y) :
+    iPDirect(y),
+    helper(NULL),
+    temp_int(NULL),
+    temp_double(NULL)
 {
-    iPDirect = y;
-    helper = 0;
-    temp_double = 0;
-    temp_int = 0;
 }
 
 ImplementPositionDirect::~ImplementPositionDirect()
