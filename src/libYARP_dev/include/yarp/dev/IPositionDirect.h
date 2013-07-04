@@ -108,8 +108,8 @@ public:
     virtual bool setPositionsRaw(const double *refs)=0;
 };
 
-#define VOCAB_DIRECT_POSITION_          VOCAB4('d','p','o')
-#define VOCAB_DIRECT_POSITIONS          VOCAB4('d','p','o','s')
-#define VOCAB_DIRECT_POSITION_GROUP     VOCAB4('d','p','o','g')
+#define VOCAB_POSITION_DIRECT           VOCAB3('d','p','o')
+#define VOCAB_POSITION_DIRECTS          VOCAB4('d','p','o','s')
+#define VOCAB_POSITION_DIRECT_GROUP     VOCAB4('d','p','o','g')
 
 #endif

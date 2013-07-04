@@ -521,6 +521,22 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
+    bool set1V1I1IA1DA(int v, const int len, const int *val1, const double *val2) {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(v);
+        int i;
+        Bottle& l1 = cmd.addList();
+        for (i = 0; i < len; i++)
+            l1.addInt(val1[i]);
+        Bottle& l2 = cmd.addList();
+        for (i = 0; i < len; i++)
+            l2.addDouble(val2[i]);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
     bool set2V1I1D(int v1, int v2, int axis, double val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1464,6 +1480,16 @@ public:
     }
 
     /** 
+    * Set new reference point for a group of axis.
+    * @param j joint number
+    * @param ref specifies the new ref point
+    * @return true/false on success/failure
+    */
+    virtual bool positionMove(const int n_joint, const int *joints, const double *refs) {
+        return set1V1I1IA1DA(VOCAB_POSITION_MOVE_GROUP, n_joint, joints, refs);
+    }
+
+    /**
     * Set new reference point for all axes.
     * @param refs array, new reference points
     * @return true/false on success/failure
@@ -2114,9 +2140,10 @@ public:
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
         c.head.clear();
-        c.head.addVocab(VOCAB_DIRECT_POSITION);
-        c.body.size(nj);
-        memcpy(&(c.body[0]), v, sizeof(double)*nj);
+        c.head.addVocab(VOCAB_POSITION_DIRECT);
+        c.head.addInt(j);
+        c.body.size(1);
+        memcpy(&(c.body[0]), &ref, sizeof(double));
         command_buffer.write();
         return true;
     }
@@ -2126,16 +2153,27 @@ public:
         if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
         c.head.clear();
-        c.head.addVocab(VOCAB_DIRECT_POSITION);
+        c.head.addVocab(VOCAB_POSITION_DIRECT_GROUP);
+        c.head.addInt(n_joint);
+        Bottle &jointList = c.head.addList();
+        for (int i = 0; i < n_joint; i++)
+            jointList.addInt(joints[i]);
         c.body.size(nj);
-        memcpy(&(c.body[0]), v, sizeof(double)*nj);
+        memcpy(&(c.body[0]), refs, sizeof(double)*nj);
         command_buffer.write();
         return true;
     }
 
     bool setPositions(const double *refs)
     {
-
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_POSITION_DIRECTS);
+        c.body.size(nj);
+        memcpy(&(c.body[0]), refs, sizeof(double)*nj);
+        command_buffer.write();
+        return true;
     }
 };
 
