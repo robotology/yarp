@@ -182,7 +182,7 @@ public:
     /** Enable the pid computation for a joint*/
     virtual bool enablePidRaw(int j)=0;
 
-	/** Set offset value for a given pid*/
+    /** Set offset value for a given pid*/
     virtual bool setOffsetRaw(int j, double v)=0;
 };
 
@@ -323,7 +323,7 @@ public:
     /** Enable the pid computation for a joint*/
     virtual bool enablePid(int j)=0;
 
-	/** Set offset value for a given controller*/
+    /** Set offset value for a given controller*/
     virtual bool setOffset(int j, double v)=0;
 };
 
