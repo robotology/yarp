@@ -37,4 +37,4 @@ message(WARNING "Filename extension of ${genFile} is neither .h nor .cpp")
   endif(${type} STREQUAL ".h")
 endforeach(genFile)
 
-file(WRITE @output_dir@/@yarpidl_target_name@.cmake "set(headers ${headers})\nset(sources ${sources})\n")
+file(WRITE @output_dir@/@yarpidl_target_name@.cmake "## This is an automatically-generated file.\n## It could get re-generated if the ALLOW_IDL_GENERATION flag is on\n\nset(headers ${headers})\nset(sources ${sources})\n")
