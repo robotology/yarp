@@ -13,8 +13,8 @@
 namespace yarp {
     namespace dev {
         class DriverCollection;
-    }                          
-}                              
+    }
+}
 
 YARP_DECLARE_DEVICES(@libname@);
 
