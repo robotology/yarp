@@ -9,11 +9,11 @@
 function prune {
     cd $1
     for f in scripts/debian scripts/junkyard src/modules/dimax_u2c/blob; do
-	echo "Removing $f"
-	rm -rf $f
+        echo "Removing $f"
+        rm -rf $f
     done
     (
-	cat src/modules/CMakeLists.txt | grep -v dimax
+        cat src/modules/CMakeLists.txt | grep -v dimax
     ) > /tmp/CMakeLists.txt
     cp /tmp/CMakeLists.txt src/modules
     cd ..
@@ -67,24 +67,24 @@ cd unix
 echo "Working in $PWD, making $PACKAGE"
 
 if [ ! -e $PACKAGE ]; then
-	rm -rf $SVN_NAME
-	svn export $URL || exit 1
-	if [ ! "k$SVN_NAME" = "k$PACKAGE" ]; then
-	  if [ -f $SVN_NAME ]; then
-	    mkdir $PACKAGE || exit 1
-	  fi
-	  mv $SVN_NAME $PACKAGE || exit 1
+        rm -rf $SVN_NAME
+        git archive HEAD | tar -x -C ./xxxxx || exit 1
+        if [ ! "k$SVN_NAME" = "k$PACKAGE" ]; then
+            if [ -f $SVN_NAME ]; then
+                mkdir $PACKAGE || exit 1
+            fi
+            mv $SVN_NAME $PACKAGE || exit 1
         fi
-	prune $PACKAGE || exit 1
-	rm -f *.tar.gz
+        prune $PACKAGE || exit 1
+        rm -f *.tar.gz
 else
-	echo "Unix checkout exists"
+    echo "Unix checkout exists"
 fi
 if [ ! -e $PACKAGE.tar.gz ]; then
-	echo "Making $PACKAGE.tar.gz"
-	tar cvzf $PACKAGE.tar.gz $PACKAGE || exit 1
+    echo "Making $PACKAGE.tar.gz"
+    tar cvzf $PACKAGE.tar.gz $PACKAGE || exit 1
 else
-	echo "Unix tarball exists"
+    echo "Unix tarball exists"
 fi
 
 cd $BASE
@@ -92,25 +92,25 @@ mkdir -p windows
 cd windows
 echo "Working in $PWD"
 if [ ! -e $PACKAGE ]; then
-	rm -rf $SVN_NAME
-	svn export $URL --native-eol CRLF || exit 1
-	if [ ! "k$SVN_NAME" = "k$PACKAGE" ]; then
-	  if [ -f $SVN_NAME ]; then
-	      mkdir $PACKAGE || exit 1
-	  fi
-	  mv $SVN_NAME $PACKAGE || exit 1
+    rm -rf $SVN_NAME
+    svn export $URL --native-eol CRLF || exit 1
+    if [ ! "k$SVN_NAME" = "k$PACKAGE" ]; then
+        if [ -f $SVN_NAME ]; then
+            mkdir $PACKAGE || exit 1
         fi
-	prune $PACKAGE || exit 1
-	rm -f *.zip
+        mv $SVN_NAME $PACKAGE || exit 1
+    fi
+    prune $PACKAGE || exit 1
+    rm -f *.zip
 else
-	echo "Windows checkout exists"
+    echo "Windows checkout exists"
 fi
 
 if [ ! -e $PACKAGE.zip ]; then
-	echo "Making $PACKAGE.zip"
-	zip -r $PACKAGE.zip $PACKAGE || exit 1
+    echo "Making $PACKAGE.zip"
+    zip -r $PACKAGE.zip $PACKAGE || exit 1
 else
-	echo "Windows zip exists"
+    echo "Windows zip exists"
 fi
 
 cd $BASE
