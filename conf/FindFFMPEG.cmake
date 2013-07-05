@@ -1,6 +1,6 @@
 # Originally from VTK project
 # Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
-# CopyPolicy: BSD
+# CopyPolicy: 3-clause BSD
 
 #
 # Find the native FFMPEG includes and library

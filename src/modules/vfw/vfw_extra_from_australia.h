@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
- * CopyPolicy: Released under the terms of the GNU GPL v2. or later
- *
+ * CopyPolicy: GPL2 or later, or 4-clause BSD at your choice
  */
 
 /**
