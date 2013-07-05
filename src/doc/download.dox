@@ -11,8 +11,8 @@
 
 Here is the most recent source code package for YARP:
 <ul>
-<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.tar.gz">yarp-2.3.20.1.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
-<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.zip">yarp-2.3.20.1.zip</a> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.21.tar.gz">yarp-2.3.21.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.21.zip">yarp-2.3.21.zip</a> stable release for Windows.</li>
 </ul>
 
 <a href="http://www.cmake.org">CMake</a> is required for building these
@@ -59,6 +59,11 @@ called eBottle.
 <h2>Older versions</h2>
 
 Older, stable versions of YARP:
+<ul>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.tar.gz">yarp-2.3.20.1.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.1.zip">yarp-2.3.20.1.zip</a> stable release for Windows.</li>
+</ul>
+
 <ul>
 <li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.tar.gz">yarp-2.3.20.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
 <li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.20.zip">yarp-2.3.20.zip</a> stable release for Windows.</li>
