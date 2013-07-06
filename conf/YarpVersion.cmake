@@ -14,12 +14,12 @@
 
 set(YARP_VERSION_MAJOR "2")
 set(YARP_VERSION_MINOR "3")
-set(YARP_VERSION_PATCH "21")
+set(YARP_VERSION_PATCH "20")
 set(YARP_VERSION_MODIFIER "")
 
 ## manually increase tweak number when required. Set to zero when
 # bumping VERSION_PATCH
-set(YARP_VERSION_TWEAK "")
+set(YARP_VERSION_TWEAK "6")
 set(YARP_VERSION_ABI "1")
 
 set(CPACK_PACKAGE_VERSION_MAJOR "${YARP_VERSION_MAJOR}")
