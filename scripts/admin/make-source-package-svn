@@ -46,7 +46,7 @@ if [ "k$1" = "k" ] ; then
   PROJECT(test)
   SET(CMAKE_MODULE_PATH \${PROJECT_SOURCE_DIR})
   INCLUDE(YarpVersion)
-  MESSAGE(STATUS "Version is \${YARP_VERSION_MAJOR}.\${YARP_VERSION_MINOR}.\${YARP_VERSION_PATCH}\${YARP_VERSION_MODIFIER}")
+  MESSAGE(STATUS "Version is \${YARP_VERSION}")
 EOF
   ) > CMakeLists.txt
   YARP_VERSION=`cmake . | grep "Version is " | sed "s/.*Version is //"`
