@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2007 the Wine project
- * CopyPolicy: Released under the terms of the GNU GPL v2.1. or later
+ * CopyPolicy: Released under the terms of the GNU LGPL v2.1. or later
  *
  */
 

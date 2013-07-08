@@ -1,6 +1,6 @@
 === Steps for building a release ==
 
-* Look at this page to get the current YARP version, say 2.3.14:
+* Look at this page to get the current YARP version, say 2.3.21:
 
   http://wiki.icub.org/yarpdoc/download.html
 
@@ -20,25 +20,20 @@
 
 * Update the file ChangeLog.txt with " * tagging version x.y.x"
 
-* Commit current version:
-  svn commit -m "tagging ..." 
+* Update src/doc/download.dox
 
-* Write down revision svn revision number (REVISION)
+* Commit and push current version:
+  git commit -m "YARP 2.3.21"
+  git push origin master
 
 * Tag:
-  svn copy -r REVISION  https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2  https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-2.3.14 -m "yarp release 2.X.X"
+  git tag -a -m "yarp release 2.3.21" v2.3.21
+  git push origin v2.3.21
 
 * Build source packages:
-  ./scripts/admin/make-source-package-svn yarp-2.3.14
+  ./scripts/admin/make-source-package-svn yarp-2.3.21
 
 * Upload to sourceforge:
 
   cd source-package
-  rsync --recursive yarp-2.3.14 YOUR_USERNAME,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2
-
-* Update src/doc/download.dox
-
-  
-
-
-
+  rsync --recursive yarp-2.3.21 YOUR_USERNAME,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2

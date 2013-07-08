@@ -23,37 +23,10 @@ public:
   }
   PointD(const int32_t x,const int32_t y,const int32_t z) : x(x), y(y), z(z) {
   }
-  bool read(yarp::os::idl::WireReader& reader) {
-    if (!reader.readI32(x)) {
-      reader.fail();
-      return false;
-    }
-    if (!reader.readI32(y)) {
-      reader.fail();
-      return false;
-    }
-    if (!reader.readI32(z)) {
-      reader.fail();
-      return false;
-    }
-    return !reader.isError();
-  }
-  bool read(yarp::os::ConnectionReader& connection) {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(3)) return false;
-    return read(reader);
-  }
-  bool write(yarp::os::idl::WireWriter& writer) {
-    if (!writer.writeI32(x)) return false;
-    if (!writer.writeI32(y)) return false;
-    if (!writer.writeI32(z)) return false;
-    return !writer.isError();
-  }
-  bool write(yarp::os::ConnectionWriter& connection) {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(3)) return false;
-    return write(writer);
-  }
+  bool read(yarp::os::idl::WireReader& reader);
+  bool read(yarp::os::ConnectionReader& connection);
+  bool write(yarp::os::idl::WireWriter& writer);
+  bool write(yarp::os::ConnectionWriter& connection);
 };
 
 #endif

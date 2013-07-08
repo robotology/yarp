@@ -23,7 +23,7 @@
 # Forked to deal with C++
 
 # Copyright: 2007-2009 Kitware, Inc.
-# CopyPolicy: BSD
+# CopyPolicy: 3-clause BSD
 
 
 

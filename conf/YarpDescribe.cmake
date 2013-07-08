@@ -30,8 +30,6 @@ set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
-#configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfigVersion.cmake.in
-#               ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake @ONLY IMMEDIATE)
 if (${CMAKE_VERSION} VERSION_LESS 2.8.8) # -> version is 2.8.7 (oldest supported)
   include(WriteBasicConfigVersionFile )
   write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
@@ -43,7 +41,7 @@ else()
 endif()
 export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
-set(VERSIONED_LIB lib${LIB_SUFFIX}/YARP-${YARP_GENERIC_VERSION})
+set(VERSIONED_LIB lib${LIB_SUFFIX}/YARP-${YARP_VERSION})
 
 # Set up a configuration file for installed use of YARP
 set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/${VERSIONED_LIB}/YARP.cmake)
@@ -62,6 +60,6 @@ install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuratio
 install(EXPORT YARP COMPONENT configuration DESTINATION ${VERSIONED_LIB})
 
 foreach(lib ${YARP_LIBRARIES})
-    set_target_properties(${lib} PROPERTIES VERSION ${YARP_GENERIC_VERSION}
+    set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION}
                                             SOVERSION ${YARP_GENERIC_SOVERSION})
 endforeach(lib)

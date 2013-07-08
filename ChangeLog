@@ -1,3 +1,6 @@
+2013-07-05  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+    * Tagging 2.3.21
+
 2013-07-03 Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/src/TorqueControlImpl.cpp
     * src/libYARP_dev/src/ServerControlBoard.cpp

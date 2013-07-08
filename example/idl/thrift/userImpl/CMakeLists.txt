@@ -1,6 +1,6 @@
 # Copyright: (C) 2012 Robotics Brain and Cognitive Sciences, Istituto Italiano di Tecnologia
 # Authors: Elena Ceseracciu
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 SET(PROJECTNAME Demo)
 PROJECT(${PROJECTNAME})
