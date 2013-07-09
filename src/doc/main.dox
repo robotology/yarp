@@ -64,8 +64,7 @@ More information:
 \li \ref what_is_yarp
 
 YARP resources:
-\li <a href="http://wiki.icub.org/yarp">Home&nbsp;Page</a>
-\li <a href="http://wiki.icub.org/yarpdoc/download.html">Downloads</a>
+\li \ref download
 \li <a href="http://wiki.icub.org/wiki/YARP">Wiki</a>
 \li <a href="http://wiki.icub.org/wiki/Robotcub-hackers">Mailing&nbsp;list</a>
 
@@ -76,7 +75,11 @@ Related links:
 \li <a href="http://www.ros.org">ROS</a>
 \li <a href="http://gostai.com/products/urbi/">Urbi</a>
 
+Papers:
+
 [1] Towards Long-Lived Robot Genes.  Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale.  Robotics and Autonomous Systems, 56(1):29-45. Online at http://wiki.icub.org/yarp/media/humantech07towards.pdf
+
+[2] YARP: Yet Another Robot Platform. Giorgio Metta, Paul Fitzpatrick, and Lorenzo Natale. International Journal of Advanced Robotic Systems, 3(1):43-48. Online at http://wiki.icub.org/yarp/media/humanoids06long.pdf
 
 (*) Certain optional plugin devices, carriers, or libraries are under the GPL.
 
