@@ -389,7 +389,7 @@ public:
         yarp_context_dir.addString("usr");
         yarp_context_dir.addString("share");
         yarp_context_dir.addString("yarp");
-        yarp_context_dir.addString("app");
+        yarp_context_dir.addString("contexts");
         yarp_context_dir.addString("my_app");
         mkdir(yarp_context_dir);
 
