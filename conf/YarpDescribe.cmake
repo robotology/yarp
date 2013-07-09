@@ -33,11 +33,11 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
 if (${CMAKE_VERSION} VERSION_LESS 2.8.8) # -> version is 2.8.7 (oldest supported)
   include(WriteBasicConfigVersionFile )
   write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
-                                     VERSION ${YARP_GENERIC_VERSION}
+                                     VERSION ${YARP_VERSION}
                                      COMPATIBILITY AnyNewerVersion )
 else()
   include(CMakePackageConfigHelpers)
-  WRITE_BASIC_PACKAGE_VERSION_FILE(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake VERSION ${YARP_GENERIC_VERSION} COMPATIBILITY AnyNewerVersion )
+  WRITE_BASIC_PACKAGE_VERSION_FILE(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake VERSION ${YARP_VERSION} COMPATIBILITY AnyNewerVersion )
 endif()
 export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
