@@ -12,8 +12,7 @@ add_library(YARP_init ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp)
 target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
 
 if(NOT CREATE_DEVICE_LIBRARY_MODULES)
-    set_target_properties(YARP_init PROPERTIES LINK_FLAGS -nostdlib)
-    target_link_libraries(YARP_init LINK_PRIVATE c)
+    set_target_properties(YARP_init PROPERTIES LINK_FLAGS -nostdlib LINKER_LANGUAGE C)
 endif(NOT CREATE_DEVICE_LIBRARY_MODULES)
 
 if (CREATE_OPTIONAL_CARRIERS)
