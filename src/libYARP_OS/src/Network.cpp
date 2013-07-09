@@ -40,6 +40,8 @@
 #include <ace/String_Base.h>
 #endif
 
+#include <stdlib.h>
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
@@ -862,11 +864,19 @@ ConstString NetworkBase::getEnvironment(const char *key,
 }
 
 void NetworkBase::setEnvironment(const char *key, const char *val) {
+#if defined(WIN32)
+    _putenv_s(key,val);
+#else
     ACE_OS::setenv(key,val,1);
+#endif
 }
 
 void NetworkBase::unsetEnvironment(const char *key) {
+#if defined(WIN32)
+    _putenv_s(key,"");
+#else
     ACE_OS::unsetenv(key);
+#endif
 }
 
 ConstString NetworkBase::getDirectorySeparator() {
