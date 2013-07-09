@@ -1913,8 +1913,6 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 
             CLOSE(pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 
-            CHECKPOINT()
-
             _CHECKPOINT
 
             if (ret==YARPRUN_ERROR)
