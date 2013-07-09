@@ -402,6 +402,16 @@ public:
                                   const char *base2,
                                   const char *base3,
                                   const char *name) {
+        if (name[0]=='/') {
+            return name;
+        }
+#ifdef WIN32
+        if (name[0]!='\0') {
+            if (name[1]==':') {
+                return name;
+            }
+        }
+#endif
         ConstString s = "";
         if (base1!=NULL) {
             if (base1[0]!='\0') {
