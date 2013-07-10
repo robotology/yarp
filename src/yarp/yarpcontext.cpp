@@ -45,9 +45,9 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
     }
     for (int i=0; i<n; i++)
     {
-            
+
         ConstString name = namelist[i]->d_name;
-        
+
         if( name != "." && name != "..")
         {
             ConstString srcPath=srcDirName + PATH_SEPERATOR + name;
@@ -79,7 +79,7 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
                 // clean and more secure
                 // feof(FILE* stream) returns non-zero if the end of file indicator for stream is set
 
-                while ((size = fread(buf, 1, BUFSIZ, source))) 
+                while ((size = fread(buf, 1, BUFSIZ, source)))
                 {
                     fwrite(buf, 1, size, dest);
                 }
@@ -91,7 +91,7 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
         free(namelist[i]);
     }
     free(namelist);
-    
+
     return (ok==true ? 0 :-1);
 }
 
@@ -104,7 +104,7 @@ int recursiveRemove(ConstString dirName)
         printf("Could not read from  directory %s\n", dirName.c_str());
         return yarp::os::rmdir(dirName.c_str()); // TODO check if this is useful...
     }
-    
+
     for (int i=0; i<n; i++)
     {
         ConstString name = namelist[i]->d_name;
@@ -124,9 +124,8 @@ int recursiveRemove(ConstString dirName)
         free(namelist[i]);
     }
     free(namelist);
-    
+
     return yarp::os::rmdir(dirName.c_str());
-    
 };
 
 void printContentDirs(ConstString curPath)
@@ -137,7 +136,7 @@ void printContentDirs(ConstString curPath)
         return;
     }
     for (int i=0; i<n; i++) {
-        
+
         ConstString name = namelist[i]->d_name;
         if( name != "." && name != "..")
         {
@@ -259,7 +258,7 @@ int main(int argc, char *argv[]) {
         }
         return 0;
     }
-    
+
     if(options.check("import"))
     {
         ConstString contextName=options.find("import").asString().c_str();
@@ -290,7 +289,7 @@ int main(int argc, char *argv[]) {
         }
         return result;
     }
-    
+
     if(options.check("import-all"))
     {
 
@@ -304,7 +303,7 @@ int main(int argc, char *argv[]) {
         yarp::os::Bottle contextPaths=rf.findPaths("contexts", opts);
         for (int curPathId=0; curPathId<contextPaths.size(); ++curPathId)
         {
-            
+
             ConstString curPath= contextPaths.get(curPathId).toString();
 
             struct YARP_DIRENT **namelist;
@@ -313,9 +312,9 @@ int main(int argc, char *argv[]) {
                continue;
             }
             for (int i=0; i<n; i++) {
-                
+
                 ConstString name = namelist[i]->d_name;
-                
+
                 if( name != "." && name != "..")
                 {
                     ACE_stat statbuf;
@@ -336,10 +335,10 @@ int main(int argc, char *argv[]) {
         printContentDirs(rf.getDataHome() + PATH_SEPERATOR + "contexts");
         return 0;
     }
-    
+
     if(options.check("remove"))
     {
-        
+
         ConstString contextName=options.find("remove").asString().c_str();
         if (contextName=="")
         {
@@ -378,7 +377,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    
+
     if(options.check("where"))
     {
         ConstString contextName=options.find("where").asString().c_str();
