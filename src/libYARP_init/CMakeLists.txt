@@ -8,23 +8,24 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_TREE_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp PROPERTIES LANGUAGE C)
-add_library(YARP_init ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp)
+set(YARP_init_SRCS src/CustomInit.cpp)
+set_source_files_properties(src/CustomInit.cpp PROPERTIES LANGUAGE C)
+add_library(YARP_init ${YARP_init_SRCS})
 target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
 
 if (CREATE_OPTIONAL_CARRIERS)
-  set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp 
-    APPEND PROPERTY COMPILE_DEFINITIONS 
-    PLUGIN_INIT_FUNCTION=add_yarpcar_devices)
-  target_link_libraries(YARP_init LINK_PRIVATE yarpcar)
+    set_property(SOURCE src/CustomInit.cpp
+                 APPEND PROPERTY COMPILE_DEFINITIONS
+                     PLUGIN_INIT_FUNCTION=add_yarpcar_devices)
+    target_link_libraries(YARP_init LINK_PRIVATE yarpcar)
 endif (CREATE_OPTIONAL_CARRIERS)
 
 if (CREATE_DEVICE_LIBRARY_MODULES)
-  set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp 
-    APPEND PROPERTY COMPILE_DEFINITIONS 
-    PLUGIN_INIT_FUNCTION2=add_yarpmod_devices)
-  target_link_libraries(YARP_init LINK_PRIVATE yarpmod)
-  target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
+    set_property(SOURCE src/CustomInit.cpp
+                 APPEND PROPERTY COMPILE_DEFINITIONS
+                     PLUGIN_INIT_FUNCTION2=add_yarpmod_devices)
+    target_link_libraries(YARP_init LINK_PRIVATE yarpmod)
+    target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
 endif (CREATE_DEVICE_LIBRARY_MODULES)
 
 install(TARGETS YARP_init EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
