@@ -8,12 +8,9 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_TREE_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 
+set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp PROPERTIES LANGUAGE C)
 add_library(YARP_init ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp)
 target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
-
-if(NOT CREATE_DEVICE_LIBRARY_MODULES)
-    set_target_properties(YARP_init PROPERTIES LINK_FLAGS -nostdlib LINKER_LANGUAGE C)
-endif(NOT CREATE_DEVICE_LIBRARY_MODULES)
 
 if (CREATE_OPTIONAL_CARRIERS)
   set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp 
