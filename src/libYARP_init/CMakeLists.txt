@@ -9,7 +9,6 @@ get_property(YARP_TREE_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 
 set(YARP_init_SRCS src/CustomInit.cpp)
-set_source_files_properties(src/CustomInit.cpp PROPERTIES LANGUAGE C)
 add_library(YARP_init ${YARP_init_SRCS})
 target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
 
