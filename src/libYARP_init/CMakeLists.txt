@@ -8,8 +8,13 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_TREE_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 
+set(YARP_init_HDRS)
 set(YARP_init_SRCS src/CustomInit.cpp)
-add_library(YARP_init ${YARP_init_SRCS})
+
+source_group("Source Files" FILES ${YARP_init_SRCS})
+source_group("Header Files" FILES ${YARP_init_HDRS})
+
+add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
 target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
 
 if (CREATE_OPTIONAL_CARRIERS)
