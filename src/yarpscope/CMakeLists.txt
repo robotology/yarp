@@ -16,12 +16,9 @@ if(CREATE_YARPSCOPE)
     endif(YARP_USE_GTK2)
 
     include_directories(${GtkDataboxMM_INCLUDE_DIRS})
-    if(LINUX)
-        add_definitions("--ansi --pedantic")
-    endif(LINUX)
 
     add_subdirectory(src)
-    
+
     yarp_install(FILES yarpscope.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
     yarp_install(FILES examples/test_yarpscope_wbd.xml DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/yarpscope)
 
