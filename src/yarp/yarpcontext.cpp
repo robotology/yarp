@@ -79,7 +79,7 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
                 // clean and more secure
                 // feof(FILE* stream) returns non-zero if the end of file indicator for stream is set
 
-                while (size = fread(buf, 1, BUFSIZ, source)) 
+                while ((size = fread(buf, 1, BUFSIZ, source))) 
                 {
                     fwrite(buf, 1, size, dest);
                 }
