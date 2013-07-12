@@ -21,15 +21,6 @@
 #define KINECT_IMG_WIDTH 640
 #define KINECT_IMG_HEIGHT 480
 
-//typedef enum
-//{
-//    NO_USER,
-//	USER_LOST,
-//	USER_DETECTED,
-//	CALIBRATING,
-//	SKELETON_TRACKING
-//} SKELETON_STATE;
-
 /**
 * A full list of available joints.
 */

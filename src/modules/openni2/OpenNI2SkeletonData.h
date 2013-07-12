@@ -78,7 +78,7 @@ public:
 	* Get a users orientation confidence array
 	*
 	* @param userID  detected user id
-	* @return doubles array with confidence values per each orientation matrix
+	* @return doubles array with confidence values per each orientation quartenion
 	*/
 	double* getOrientationConf(int userID);
 	/**
@@ -115,6 +115,7 @@ private:
 		double skeletonPosConf[TOTAL_JOINTS];
 		double skeletonOriConf[TOTAL_JOINTS];
         bool visible;
+        int uID;
 	}UserSkeleton;
 	UserSkeleton *userSkeleton;
 	ImageOf<PixelMono16> depthFrame;
