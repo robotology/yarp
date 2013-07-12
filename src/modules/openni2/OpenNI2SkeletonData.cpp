@@ -33,6 +33,7 @@ void OpenNI2SkeletonData::initUserSkeletons(){
 			tuserSkeleton->skeletonPosConf[j] = -1;
 			tuserSkeleton->skeletonOriConf[j] = -1;
 			tuserSkeleton->skeletonState = nite::SKELETON_NONE;
+            tuserSkeleton->uID = 0;
 		}
 	}
 }
@@ -51,18 +52,20 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
 	UserSkeleton *tuserSkeleton;
 	if(b.get(0).isString()){
 		userID = b.get(1).asInt();
+        userSkeleton[userID].uID = userID;
 		string vocab = b.get(0).asString().c_str();
-		if(vocab.compare(USER_CALIBRATING_MSG) == 0){
+		if(vocab.compare("CALIBRATING FOR USER") == 0){
 			userSkeleton[userID].skeletonState = nite::SKELETON_CALIBRATING;
         }
-//		else if(vocab.compare(USER_DETECTED_MSG) == 0){
-//			userSkeleton[userID].skeletonState = USER_DETECTED;}
-		else if(vocab.compare(USER_LOST_MSG) == 0){
+        else if(vocab.compare("CALIBRATION ERROR FOR USER") == 0){
+            userSkeleton[userID].skeletonState = nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE;}
+		else if(vocab.compare("LOST SKELETON FOR USER") == 0){
 			userSkeleton[userID].skeletonState = nite::SKELETON_NONE;
 		}
 	}else if(b.get(0).isList()){
 		list = b.get(0).asList();
 		userID = list->get(1).asInt();
+        userSkeleton[userID].uID = userID;
 		userSkeleton[userID].skeletonState = nite::SKELETON_TRACKED;//USER STATUS
 		tuserSkeleton = &(userSkeleton[userID]);
 		for(int i = 1; i < b.size(); i+=6){

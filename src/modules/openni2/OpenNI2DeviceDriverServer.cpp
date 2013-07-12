@@ -62,16 +62,19 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
 	}
 
 	// sending skeleton data
+    
+    // if skeleton is tracked
 	if(userTracking)
 		for(int i = 0; i < MAX_USERS; i++){
 			if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED){
 				Bottle &botSkeleton = skeletonPort->prepare();
 				botSkeleton.clear();
 				skeletonPort->setEnvelope(timestamp);
+                
 				// user ID number
 				Bottle &userBot = botSkeleton.addList();
 				userBot.addVocab(USER_VOCAB);
-				userBot.addInt(i);
+				userBot.addInt(userSkeleton[i].uID);
 				for(int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++){
 					// position
 					botSkeleton.addVocab(POSITION_VOCAB);
@@ -93,29 +96,42 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
 				}
 				skeletonPort->write();
             }
-//			else if(userSkeleton[i].skeletonState == USER_DETECTED){
-//				Bottle &botDetected = skeletonPort->prepare();
-//				botDetected.clear();
-//				skeletonPort->setEnvelope(timestamp);
-//				botDetected.addString(USER_DETECTED_MSG);
-//				botDetected.addInt(i);
-//				skeletonPort->write();}
+            
+            // if skeleton calibrating
 			else if(userSkeleton[i].skeletonState == nite::SKELETON_CALIBRATING) {
 				Bottle &botCalib = skeletonPort->prepare();
 				botCalib.clear();
 				skeletonPort->setEnvelope(timestamp);
 				botCalib.addString("CALIBRATING FOR USER");
-				botCalib.addInt(i);
-				skeletonPort->write();
-			}else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
-				//userSkeleton[i].skeletonState = NO_USER;
-				Bottle &botCalib = skeletonPort->prepare();
-				botCalib.clear();
-				skeletonPort->setEnvelope(timestamp);
-				botCalib.addString(USER_LOST_MSG);
-				botCalib.addInt(i);
+				botCalib.addInt(userSkeleton[i].uID);
 				skeletonPort->write();
 			}
+            
+            // if no skeleton found
+            else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
+                Bottle &botCalib = skeletonPort->prepare();
+				botCalib.clear();
+				skeletonPort->setEnvelope(timestamp);
+                
+                if(userSkeleton[i].uID == 0){
+                    //do nothing
+                }
+                else {
+                    botCalib.addString("LOST SKELETON FOR USER");
+                    botCalib.addInt(userSkeleton[i].uID);
+                    skeletonPort->write();
+                }
+			}
+            
+            // else, there is a calibration error
+            else {
+                Bottle &botErrCalib = skeletonPort->prepare();
+				botErrCalib.clear();
+				skeletonPort->setEnvelope(timestamp);
+				botErrCalib.addString("CALIBRATION ERROR FOR USER");
+				botErrCalib.addInt(userSkeleton[i].uID);
+				skeletonPort->write();
+            }
 		}
 }
 

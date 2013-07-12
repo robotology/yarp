@@ -19,7 +19,6 @@
 #include <NiTE.h>
 
 #include <yarp/sig/Vector.h>
-#include <yarp/sig/Matrix.h>
 #include <yarp/sig/Image.h>
 
 //included so that the enumeration can be accessed
@@ -49,6 +48,7 @@ public:
 		Vector skeletonPointsOri[TOTAL_JOINTS];
 		float skeletonOriConfidence[TOTAL_JOINTS];
         bool visible;
+        int uID;
 	}UserSkeleton;
 	/**
 	* Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
