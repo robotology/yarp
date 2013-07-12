@@ -31,6 +31,7 @@ YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(laserHokuyo)
   add_subdirectory(kinect)
+  add_subdirectory(openni2)
 
   # We can include remote directories as well - we specify a
   # local directory for producing binaries so there is no interference
