@@ -32,7 +32,7 @@ void OpenNI2SkeletonData::initUserSkeletons(){
 			tuserSkeleton->skeletonPointsPos[j].zero();
 			tuserSkeleton->skeletonPosConf[j] = -1;
 			tuserSkeleton->skeletonOriConf[j] = -1;
-			//tuserSkeleton->skeletonState = NO_USER;
+			tuserSkeleton->skeletonState = nite::SKELETON_NONE;
 		}
 	}
 }
@@ -67,12 +67,12 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
 		tuserSkeleton = &(userSkeleton[userID]);
 		for(int i = 1; i < b.size(); i+=6){
 			int jointIndex = (i-1)/6;
-			list = b.get(i+1).asList();//position elements
+			list = b.get(i+1).asList();// position elements
 			tuserSkeleton->skeletonPointsPos[jointIndex][0] = list->get(0).asDouble();
 			tuserSkeleton->skeletonPointsPos[jointIndex][1] = list->get(1).asDouble();
 			tuserSkeleton->skeletonPointsPos[jointIndex][2] = list->get(2).asDouble();
 			tuserSkeleton->skeletonPosConf[jointIndex] = b.get(i+2).asDouble();
-			list = b.get(i+4).asList();//orientation elements
+			list = b.get(i+4).asList();// orientation elements
 			tuserSkeleton->skeletonPointsOri[jointIndex][0] = list->get(0).asDouble();
 			tuserSkeleton->skeletonPointsOri[jointIndex][1] = list->get(1).asDouble();
 			tuserSkeleton->skeletonPointsOri[jointIndex][2] = list->get(2).asDouble();
@@ -80,7 +80,6 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
 			tuserSkeleton->skeletonOriConf[jointIndex] = b.get(i+5).asDouble();
 		}
 	}
-	//std::cout<<"onRead(Bottle)"<<std::endl;
 }
 
 Vector* OpenNI2SkeletonData::getOrientation(int userID){

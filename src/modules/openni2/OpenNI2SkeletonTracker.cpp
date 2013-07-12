@@ -171,19 +171,19 @@ void OpenNI2SkeletonTracker::initVars(){
     
 }
 
-//returns the sensor data struct (where all the data is)
+// returns the sensor data struct (where all the data is)
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::getSensor(){
 	return sensorStatus;
 }
 
 void OpenNI2SkeletonTracker::updateSensor(bool wait){
-	//get camera image
+	// get camera image
     if(camerasON && imageStream.isValid()){
        imageStream.readFrame(&imageFrameRef);
         if (imageFrameRef.isValid()){
             getSensor()->imageFrame.setQuantum(1);
             
-            //put image in Yarp format
+            // put image in Yarp format
             void* tmpImage = (void*)imageFrameRef.getData();
             getSensor()->imageFrame.setExternal(tmpImage, imageMode.getResolutionX(), imageMode.getResolutionY());
         }
@@ -195,12 +195,12 @@ void OpenNI2SkeletonTracker::updateSensor(bool wait){
             if (depthFrameRef.isValid()){
                 getSensor()->depthFrame.setQuantum(1);
                 
-                //put image in Yarp format
+                // put image in Yarp format
                 void* tmpDepth = (void*)depthFrameRef.getData();
                 getSensor()->depthFrame.setExternal(tmpDepth, depthMode.getResolutionX(), depthMode.getResolutionY());
             }
         }
-	//user skeleton tracking data
+	// user skeleton tracking data
     if(userTracking && userTracker.isValid()){
         nite::Status niteRc = userTracker.readFrame(&userTrackerFrameRef);
         if (niteRc != nite::STATUS_OK)
@@ -251,7 +251,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     
     if (user.getSkeleton().getJoint(joint).getPositionConfidence() > 0.6) {
     
-    //position
+    // position
     double x = user.getSkeleton().getJoint(joint).getPosition().x;
     userSkeleton->skeletonPointsPos[jIndex][0]= x;
 double y = user.getSkeleton().getJoint(joint).getPosition().y;
@@ -262,14 +262,14 @@ double z = user.getSkeleton().getJoint(joint).getPosition().x;
     
     if (user.getSkeleton().getJoint(joint).getOrientationConfidence() > 0.6){
         
-    //orientation
+    // orientation
     userSkeleton->skeletonPointsOri[jIndex][0] = user.getSkeleton().getJoint(joint).getOrientation().w;
     userSkeleton->skeletonPointsOri[jIndex][1] = user.getSkeleton().getJoint(joint).getOrientation().x;
     userSkeleton->skeletonPointsOri[jIndex][2] = user.getSkeleton().getJoint(joint).getOrientation().y;
     userSkeleton->skeletonPointsOri[jIndex][3] = user.getSkeleton().getJoint(joint).getOrientation().z;
     }
     
-    //update confidences
+    // update confidences
     userSkeleton->skeletonPosConfidence[jIndex] = user.getSkeleton().getJoint(joint).getPositionConfidence();
     userSkeleton->skeletonOriConfidence[jIndex] = user.getSkeleton().getJoint(joint).getOrientationConfidence();
     
@@ -288,7 +288,7 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
         USER_MESSAGE("Out of Scene")
     else if (user.isLost())
         USER_MESSAGE("Lost")
-        //set user lost
+        // set user lost
                     
     getSensor()->userSkeleton[user.getId()].visible = user.isVisible();
    	if (getSensor()->userSkeleton[user.getId()].skeletonState != user.getSkeleton().getState())
