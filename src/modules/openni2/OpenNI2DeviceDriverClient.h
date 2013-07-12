@@ -48,14 +48,14 @@ class yarp::dev::OpenNI2DeviceDriverClient : /*public GenericYarpDriver,*/ publi
 									  public yarp::dev::DeviceDriver {
 public:
 	OpenNI2DeviceDriverClient();
-	//DeviceDriver
+	// DeviceDriver
 	virtual bool open(yarp::os::Searchable& config);
 	virtual bool close();
-	//TypedReaderCallback
+	// TypedReaderCallback
 	virtual void onRead(Bottle& b);
 	virtual void onRead(ImageOf<PixelRgb>& img);
 	virtual void onRead(ImageOf<PixelMono16>& img);
-	//IKinectDeviceDriver
+	// IKinectDeviceDriver
 	virtual bool getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID);
 	virtual bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
 	virtual int *getSkeletonState();

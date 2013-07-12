@@ -26,7 +26,6 @@
 #include <yarp/dev/IOpenNI2DeviceDriver.h>
 
 using namespace std;
-//using namespace nite;
 
 using namespace yarp::sig;
 

@@ -22,9 +22,7 @@
 #include <yarp/os/Stamp.h>
 #include "OpenNI2SkeletonTracker.h"
 
-//class OpenNI2SkeletonTracker;
-
-//The interface is taken from the client
+// The interface is taken from the client
 #include <yarp/dev/IOpenNI2DeviceDriver.h>
 
 #define PORTNAME_SKELETON "/userSkeleton"
@@ -64,16 +62,16 @@ class yarp::dev::OpenNI2DeviceDriverServer: public IService, public yarp::dev::I
 public:
     OpenNI2DeviceDriverServer(void);
 	~OpenNI2DeviceDriverServer(void);
-	//GenericYarpDriver
+	// GenericYarpDriver
 	virtual bool updateInterface(bool wait);
-	//DeviceDriver
+	// DeviceDriver
 	virtual bool open(yarp::os::Searchable& config);
 	virtual bool close();
-	//IService
+	// IService
 	virtual bool startService();
 	virtual bool updateService();
 	virtual bool stopService();
-	//IKinectDeviceDriver
+	// IKinectDeviceDriver
 	virtual bool getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID);
 	virtual bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
 	virtual int *getSkeletonState();

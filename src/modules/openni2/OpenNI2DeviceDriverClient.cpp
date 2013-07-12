@@ -14,10 +14,8 @@
 yarp::dev::OpenNI2DeviceDriverClient::OpenNI2DeviceDriverClient(){}
 
 /*******************************************************************************************
-********************************************************************************************
 ***GenericYarp****GenericYarp****GenericYarp****GenericYarp****GenericYarp****GenericYarp***
-********************************************************************************************
-*******************************************************************************************/
+********************************************************************************************/
 
 bool yarp::dev::OpenNI2DeviceDriverClient::open(yarp::os::Searchable& config){
 	string localPortPrefix,remotePortPrefix;
@@ -71,7 +69,7 @@ bool yarp::dev::OpenNI2DeviceDriverClient::connectPorts(string remotePortPrefix,
 
 	bool portsOK = true;
 
-	//this ports were added later but work in the same way
+	// these ports were added later but work in the same way
 	inImageFramePort = new BufferedPort<ImageOf<PixelRgb> >();
 	portsOK = portsOK && inImageFramePort->open(tinImageFramePort.c_str());
 	inDepthFramePort = new BufferedPort<ImageOf<PixelMono16> >();
@@ -97,13 +95,11 @@ void yarp::dev::OpenNI2DeviceDriverClient::onRead(Bottle& b){skeletonData->store
 void yarp::dev::OpenNI2DeviceDriverClient::onRead(ImageOf<PixelRgb>& img){skeletonData->storeData(img);}
 void yarp::dev::OpenNI2DeviceDriverClient::onRead(ImageOf<PixelMono16>& img){skeletonData->storeData(img);}
 
-/*************************************************************************************************************
-**************************************************************************************************************
+/*****************************************************************************************************
 **IOpenNI2DeviceDriverClient****
-**************************************************************************************************************
-*************************************************************************************************************/
+*****************************************************************************************************/
 
-//returns false if the user skeleton is not being tracked
+// returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID){
 	if(skeletonData->getSkeletonState(userID) != nite::SKELETON_TRACKED)
 		return false;
@@ -116,7 +112,7 @@ bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonOrientation(Vector *vector
 	return true;
 }
 
-//returns false if the user skeleton is not being tracked
+// returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID){
 	if(skeletonData->getSkeletonState(userID) != nite::SKELETON_TRACKED)
 		return false;

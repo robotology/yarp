@@ -47,33 +47,33 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
 	double *joint;
 	int index = 0;
 
-	//Creating a Stamp with the current system time in seconds.milliseconds
+	// creating a timestamp with the current system time in seconds.milliseconds
 	Stamp timestamp(index,Time::now());
-	//cameras data
+	// cameras data
 	if(camerasON){
-		//image frame data
+		// image frame data
 		imageFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->imageFrame;
 		imageFramePort->setEnvelope(timestamp);
 		imageFramePort->write();
-		//depth frame data
+		// depth frame data
 		depthFramePort->prepare() = OpenNI2SkeletonTracker::getSensor()->depthFrame;
 		depthFramePort->setEnvelope(timestamp);
 		depthFramePort->write();
 	}
 
-	//skeleton data
+	// sending skeleton data
 	if(userTracking)
 		for(int i = 0; i < MAX_USERS; i++){
 			if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED){
 				Bottle &botSkeleton = skeletonPort->prepare();
 				botSkeleton.clear();
 				skeletonPort->setEnvelope(timestamp);
-				//user number
+				// user ID number
 				Bottle &userBot = botSkeleton.addList();
 				userBot.addVocab(USER_VOCAB);
 				userBot.addInt(i);
 				for(int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++){
-					//position
+					// position
 					botSkeleton.addVocab(POSITION_VOCAB);
 					joint = userSkeleton[i].skeletonPointsPos[jointIndex].data();
 					Bottle &botList = botSkeleton.addList();
@@ -81,7 +81,7 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
 					botList.addDouble(joint[1]);
 					botList.addDouble(joint[2]);
 					botSkeleton.addDouble(userSkeleton[i].skeletonPosConfidence[jointIndex]);
-					//orientation
+					// orientation
 					joint = userSkeleton[i].skeletonPointsOri[jointIndex].data();
 					botSkeleton.addVocab(ORIENTATION_VOCAB);
 					Bottle &botList2 = botSkeleton.addList();
@@ -120,9 +120,10 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
 }
 
 
-//device driver stuff
+// device driver stuff
 bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
-	//this function is used in case of the Yarp Device being used as local
+    
+	// this function is used in case of the Yarp Device being used as server
 	std::cout << "Starting OpenNI2 YARP Device please wait..." << endl;
 	string portPrefix;
 
@@ -171,10 +172,11 @@ bool yarp::dev::OpenNI2DeviceDriverServer::close(){
 }
 
 bool yarp::dev::OpenNI2DeviceDriverServer::updateInterface(bool wait){
-	//std::cout << "updateInterface()" << endl;
-	//update sensor data
+	
+	// update sensor data
 	skeleton->updateSensor(wait);
-	//send sensor data to ports
+	
+    // send sensor data to ports
 	if(withOpenPorts){
         sendSensorData();
     }
@@ -183,24 +185,22 @@ bool yarp::dev::OpenNI2DeviceDriverServer::updateInterface(bool wait){
 
 
 bool yarp::dev::OpenNI2DeviceDriverServer::startService(){
-	//std::cout << "startService()" << endl;
-	//returns false so that the updateService is started
+	
+	// returns false so that the updateService is started
 	return false;
 }
 
 bool yarp::dev::OpenNI2DeviceDriverServer::updateService(){
-	//std::cout << "updateService()" << endl;
 	updateInterface(true);
 	return true;
 }
 
 bool yarp::dev::OpenNI2DeviceDriverServer::stopService(){
-	//std::cout << "stopService()" << endl;
 	return close();
 }
 
 
-//returns false if the user skeleton is not being tracked
+// returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID){
 	updateInterface(false);
 	if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
@@ -214,7 +214,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vector
 	return true;
 }
 
-//returns false if the user skeleton is not being tracked
+// returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID){
 	updateInterface(false);
 	if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
