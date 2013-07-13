@@ -2,12 +2,10 @@
 
 /*
  * Copyright (C) 2011 Duarte Aragao
- * Author: Duarte Aragao
+ * Copyright (C) 2013 Konstantinos Theofilis, University of Hertfordshire, k.theofilis@herts.ac.uk
+ * Authors: Duarte Aragao, Konstantinos Theofilis
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- * Copyright
- * Author: Konstantinos Theofilis, University of Hertfordshire, 2013
  */
-
 
 #pragma once
 
