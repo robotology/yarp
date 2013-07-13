@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2011 Duarte Aragao
-* Author: Duarte Aragao
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-* Copyright
-* Author: Konstantinos Theofilis, University of Hertfordshire, 2013
-*/
+ * Copyright (C) 2011 Duarte Aragao
+ * Author: Duarte Aragao
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright
+ * Author: Konstantinos Theofilis, University of Hertfordshire, 2013
+ */
 
 
 #pragma once
@@ -40,86 +40,86 @@ using namespace yarp::sig;
 class OpenNI2SkeletonData
 {
 public:
-	OpenNI2SkeletonData();
-	~OpenNI2SkeletonData();
-	/**
-	* This should be called each time the user skeleton data is updated
-	*
-	* @param b Bottle with the user/skeleton data
-	*/
-	void storeData(Bottle& b);
-	/**
-	* This should be called each time the kinect rgb camera data is updated
-	*
-	* @param img rgb camera image
-	*/
-	void storeData(ImageOf<PixelRgb>& img);
-	/**
-	* This should be called each time the kinect depth camera data is updated
-	*
-	* @param img depth camera image (in millimeters)
-	*/
-	void storeData(ImageOf<PixelMono16>& img);
-	/**
-	* Get a users orientation matrices array
-	*
-	* @param userID  detected user id
-	* @return matrices array with the orientation matrices (3x3)
-	*/
-	Vector* getOrientation(int userID);
-	/**
-	* Get a users position vector array
-	*
-	* @param userID  detected user id
-	* @return vectors array with the 3D position (in millimeters)
-	*/
-	Vector* getPosition(int userID);
-	/**
-	* Get a users orientation confidence array
-	*
-	* @param userID  detected user id
-	* @return doubles array with confidence values per each orientation quartenion
-	*/
-	double* getOrientationConf(int userID);
-	/**
-	* Get a users position confidence array
-	*
-	* @param userID  detected user id
-	* @return doubles array with confidence values per each 3D position vector
-	*/
-	double* getPositionConf(int userID);
-	/**
-	* Get a single user status
-	*
-	* @param userID  detected user id
-	* @return int of status
-	*/
-	int getSkeletonState(int userID);
-	/**
-	* Get depth frame
-	*
-	* @return image with the depth values in (millimeters)
-	*/
-	ImageOf<PixelMono16> getDepthFrame();
-	/**
-	* Get rgb frame
-	*
-	* @return image with the rgb values
-	*/
-	ImageOf<PixelRgb> getImageFrame();
+    OpenNI2SkeletonData();
+    ~OpenNI2SkeletonData();
+    /**
+     * This should be called each time the user skeleton data is updated
+     *
+     * @param b Bottle with the user/skeleton data
+     */
+    void storeData(Bottle& b);
+    /**
+     * This should be called each time the kinect rgb camera data is updated
+     *
+     * @param img rgb camera image
+     */
+    void storeData(ImageOf<PixelRgb>& img);
+    /**
+     * This should be called each time the kinect depth camera data is updated
+     *
+     * @param img depth camera image (in millimeters)
+     */
+    void storeData(ImageOf<PixelMono16>& img);
+    /**
+     * Get a users orientation matrices array
+     *
+     * @param userID  detected user id
+     * @return matrices array with the orientation matrices (3x3)
+     */
+    Vector* getOrientation(int userID);
+    /**
+     * Get a users position vector array
+     *
+     * @param userID  detected user id
+     * @return vectors array with the 3D position (in millimeters)
+     */
+    Vector* getPosition(int userID);
+    /**
+     * Get a users orientation confidence array
+     *
+     * @param userID  detected user id
+     * @return doubles array with confidence values per each orientation quartenion
+     */
+    double* getOrientationConf(int userID);
+    /**
+     * Get a users position confidence array
+     *
+     * @param userID  detected user id
+     * @return doubles array with confidence values per each 3D position vector
+     */
+    double* getPositionConf(int userID);
+    /**
+     * Get a single user status
+     *
+     * @param userID  detected user id
+     * @return int of status
+     */
+    int getSkeletonState(int userID);
+    /**
+     * Get depth frame
+     *
+     * @return image with the depth values in (millimeters)
+     */
+    ImageOf<PixelMono16> getDepthFrame();
+    /**
+     * Get rgb frame
+     *
+     * @return image with the rgb values
+     */
+    ImageOf<PixelRgb> getImageFrame();
 private:
-	typedef struct USER_SKELETON {
+    typedef struct USER_SKELETON {
         nite::SkeletonState skeletonState;
-		Vector skeletonPointsPos[TOTAL_JOINTS];
-		Vector skeletonPointsOri[TOTAL_JOINTS];
-		double skeletonPosConf[TOTAL_JOINTS];
-		double skeletonOriConf[TOTAL_JOINTS];
+        Vector skeletonPointsPos[TOTAL_JOINTS];
+        Vector skeletonPointsOri[TOTAL_JOINTS];
+        double skeletonPosConf[TOTAL_JOINTS];
+        double skeletonOriConf[TOTAL_JOINTS];
         bool visible;
         int uID;
-	}UserSkeleton;
-	UserSkeleton *userSkeleton;
-	ImageOf<PixelMono16> depthFrame;
-	ImageOf<PixelRgb> imageFrame;
-	void initUserSkeletons();
+    }UserSkeleton;
+    UserSkeleton *userSkeleton;
+    ImageOf<PixelMono16> depthFrame;
+    ImageOf<PixelRgb> imageFrame;
+    void initUserSkeletons();
 };
 
