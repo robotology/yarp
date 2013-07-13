@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2011 Duarte Aragao
-* Author: Duarte Aragao
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-* Copyright
-* Author: Konstantinos Theofilis, University of Hertfordshire, 2013
-*/
+ * Copyright (C) 2011 Duarte Aragao
+ * Author: Duarte Aragao
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ * Copyright
+ * Author: Konstantinos Theofilis, University of Hertfordshire, 2013
+ */
 
 
 #pragma once
@@ -32,64 +32,64 @@ using namespace yarp::sig;
 #define TOTAL_JOINTS 15
 
 /**
-* Class used by the OpenNI2DeviceDriverServer to interface with the sensor.
-* To compile the OpenNI/NITE frameworks are needed.
-*/
+ * Class used by the OpenNI2DeviceDriverServer to interface with the sensor.
+ * To compile the OpenNI/NITE frameworks are needed.
+ */
 class OpenNI2SkeletonTracker
 {
 public:
-	/**
-	* Struct with the data from a single user skeleton.
-	*/
-	typedef struct USER_SKELETON {
+    /**
+     * Struct with the data from a single user skeleton.
+     */
+    typedef struct USER_SKELETON {
         nite::SkeletonState skeletonState;
-		Vector skeletonPointsPos[TOTAL_JOINTS];
-		float skeletonPosConfidence[TOTAL_JOINTS];
-		Vector skeletonPointsOri[TOTAL_JOINTS];
-		float skeletonOriConfidence[TOTAL_JOINTS];
+        Vector skeletonPointsPos[TOTAL_JOINTS];
+        float skeletonPosConfidence[TOTAL_JOINTS];
+        Vector skeletonPointsOri[TOTAL_JOINTS];
+        float skeletonOriConfidence[TOTAL_JOINTS];
         bool visible;
         int uID;
-	}UserSkeleton;
-	/**
-	* Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
-	*/
-	typedef struct SENSOR_STATUS {
-		ImageOf<yarp::sig::PixelMono16> depthFrame;
-		ImageOf<yarp::sig::PixelRgb> imageFrame;
-		UserSkeleton userSkeleton[MAX_USERS];
-	}SensorStatus;
-	/**
-	* @param userDetection indicates if user callbacks and skeleton tracking should be on
-	*/
-	OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true);
-	~OpenNI2SkeletonTracker(void);
-	void close();
-	/**
-	* Sensor data update function. This function updates the data structs with the latest sensor data.
-	*/
-	void updateSensor(bool wait);
+    }UserSkeleton;
+    /**
+     * Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
+     */
+    typedef struct SENSOR_STATUS {
+        ImageOf<yarp::sig::PixelMono16> depthFrame;
+        ImageOf<yarp::sig::PixelRgb> imageFrame;
+        UserSkeleton userSkeleton[MAX_USERS];
+    }SensorStatus;
+    /**
+     * @param userDetection indicates if user callbacks and skeleton tracking should be on
+     */
+    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true);
+    ~OpenNI2SkeletonTracker(void);
+    void close();
+    /**
+     * Sensor data update function. This function updates the data structs with the latest sensor data.
+     */
+    void updateSensor(bool wait);
     void updateUserState(const nite::UserData& user, unsigned long long ts);
     void updateJointInformation(const nite::UserData& user, nite::JointType joint, int jIndex);
-
-	/**
-	* get the static SensorStatus object
-	*/
-	static SensorStatus *getSensor();
-private:
-	static SensorStatus *sensorStatus;
-	bool userTracking, camerasON, mirrorON;
     
-	// OpenNI2 and NiTE objects
-	openni::Device device;
+    /**
+     * get the static SensorStatus object
+     */
+    static SensorStatus *getSensor();
+private:
+    static SensorStatus *sensorStatus;
+    bool userTracking, camerasON, mirrorON;
+    
+    // OpenNI2 and NiTE objects
+    openni::Device device;
     nite::UserTracker userTracker;
-	openni::VideoStream depthStream;
+    openni::VideoStream depthStream;
     openni::VideoStream imageStream;
     openni::VideoMode depthMode;
     openni::VideoMode imageMode;
     openni::VideoFrameRef depthFrameRef;
     openni::VideoFrameRef imageFrameRef;
     nite::UserTrackerFrameRef userTrackerFrameRef;
-	int init();
-	void initVars();
+    int init();
+    void initVars();
 };
 
