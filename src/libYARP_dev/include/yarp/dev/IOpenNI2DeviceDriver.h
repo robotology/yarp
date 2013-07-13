@@ -1,16 +1,15 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2011 Duarte Aragao
-* Author: Duarte Aragao
-* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-*
-*/
+ * Copyright (C) 2011 Duarte Aragao
+ * Copyright (C) 2013 Konstantinos Theofilis, University of Hertfordshire, k.theofilis@herts.ac.uk
+ * Authors: Duarte Aragao, Konstantinos Theofilis
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 
 #pragma once
 
-#include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
 #include <NiTE.h>
