@@ -2,42 +2,38 @@
 # Author: Konstantinos Theofilis
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-IF (COMPILE_DEVICE_LIBRARY)
-    YARP_PREPARE_DEVICE(OpenNI2DeviceServer TYPE OpenNI2DeviceDriverServer INCLUDE OpenNI2DeviceDriverServer.h)
-    YARP_PREPARE_DEVICE(OpenNI2DeviceClient TYPE OpenNI2DeviceDriverClient INCLUDE OpenNI2DeviceDriverClient.h)
-    YARP_ADD_DEVICE_FINGERPRINT(openni2.ini OpenNI2DeviceServer OpenNI2DeviceClient)
-ENDIF (COMPILE_DEVICE_LIBRARY)
+if (COMPILE_DEVICE_LIBRARY)
+    yarp_prepare_device(OpenNI2DeviceServer TYPE OpenNI2DeviceDriverServer INCLUDE OpenNI2DeviceDriverServer.h)
+    yarp_prepare_device(OpenNI2DeviceClient TYPE OpenNI2DeviceDriverClient INCLUDE OpenNI2DeviceDriverClient.h)
+    yarp_add_device_fingerprint(openni2.ini OpenNI2DeviceServer OpenNI2DeviceClient)
+endif()
 
-IF (SKIP_OpenNI2DeviceServer AND SKIP_OpenNI2DeviceClient)
-    SET(SKIP_OpenNI2Device TRUE)
-ENDIF (SKIP_OpenNI2DeviceServer AND SKIP_OpenNI2DeviceClient)
+if (SKIP_OpenNI2DeviceServer AND SKIP_OpenNI2DeviceClient)
+    set(SKIP_OpenNI2Device TRUE)
+endif()
 
-IF (NOT SKIP_OpenNI2Device)
+if (NOT SKIP_OpenNI2Device)
 
-    FIND_PACKAGE(YARP REQUIRED)
+    find_package(YARP required)
 
-    FIND_PATH(OPENNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OPENNI2_INCLUDE})
-    FIND_LIBRARY(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2.dylib libOpenNI2 HINTS $ENV{OPENNI2_REDIST})
-    FIND_PATH(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
-    FIND_LIBRARY(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
-
-
-    INCLUDE_DIRECTORIES(${OPENNI2_INCLUDE_LOCAL} ${NITE2_INCLUDE_LOCAL})
-    INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-    LINK_LIBRARIES(${OPENNI2_LIBRARY} ${NITE2_LIBRARY} ${YARP_LIBRARIES})
+    find_path(OPENNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OPENNI2_INCLUDE})
+    find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2.dylib libOpenNI2 HINTS $ENV{OPENNI2_REDIST})
+    find_path(NITE2_INCLUDE_LOCAL NAMES NiTE.h HINTS $ENV{NITE2_INCLUDE})
+    find_library(NITE2_LIBRARY NAMES NiTE2 HINTS $ENV{NITE2_REDIST64})
 
 
-    INCLUDE_DIRECTORIES(${OPENNI2_INCLUDE_LOCAL} ${NITE2_INCLUDE_LOCAL} ${YARP_INCLUDE_DIRS})
+    include_directories(${OPENNI2_INCLUDE_LOCAL} ${NITE2_INCLUDE_LOCAL} ${YARP_INCLUDE_DIRS})
+    link_libraries(${OPENNI2_LIBRARY} ${NITE2_LIBRARY} ${YARP_LIBRARIES})
+
     # Search for source code.
-    FILE(GLOB folder_source *.cpp *.cc *.c)
-    FILE(GLOB folder_header *.h)
-    SOURCE_GROUP("Source Files" FILES ${folder_source})
-    SOURCE_GROUP("Header Files" FILES ${folder_header})
+    file(GLOB folder_source *.cpp *.cc *.c)
+    file(GLOB folder_header *.h)
+    source_group("Source Files" FILES ${folder_source})
+    source_group("Header Files" FILES ${folder_header})
 
-    YARP_ADD_PLUGIN (yarp_OpenNI2Device ${folder_source} ${folder_header})
-    TARGET_LINK_LIBRARIES(yarp_OpenNI2Device ${YARP_LIBRARIES} ${LINK_LIBRARIES})
-ENDIF (NOT SKIP_OpenNI2Device)
-
+    yarp_add_plugin(yarp_OpenNI2Device ${folder_source} ${folder_header})
+    target_link_libraries(yarp_OpenNI2Device ${YARP_LIBRARIES} ${LINK_LIBRARIES})
+endif()
 
 
 
