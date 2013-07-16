@@ -7,7 +7,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#pragma once
+#ifndef OPENNI2_SERVER_H
+#define OPENNI2_SERVER_H
 
 #include <iostream>
 #include <string>
@@ -101,4 +102,4 @@ private:
  Local OpenNI2 device interface implementation
  
  */
-
+#endif

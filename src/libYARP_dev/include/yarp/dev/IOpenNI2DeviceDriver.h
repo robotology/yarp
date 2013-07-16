@@ -8,7 +8,8 @@
  */
 
 
-#pragma once
+#ifndef IOPENNI2_DRIVER_H
+#define IOPENNI2_DRIVER_H
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
@@ -107,4 +108,4 @@ public:
      */
     virtual yarp::sig::ImageOf<yarp::sig::PixelMono16> getDepthFrame() = 0;
 };
-
+#endif
