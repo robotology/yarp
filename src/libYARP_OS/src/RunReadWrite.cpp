@@ -24,9 +24,9 @@
 #if defined(WIN32)
 static void sigbreakHandler(int sig)
 {
-    CHECK_ENTER("sigbreakHandler")
+    _BEGIN
     raise(SIGINT);
-    CHECK_EXIT()
+    _RETURN_VOID
 }
 #endif
 
@@ -36,7 +36,7 @@ static void wSigintHandler(int sig);
 
 int RunWrite::loop(yarp::os::ConstString& uuid)
 {
-    CHECK_ENTER("RunWrite::loop")
+    _BEGIN
 
     yarp::os::impl::Logger::get().setVerbosity(-1);
 
@@ -49,7 +49,7 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
     signal(SIGHUP,SIG_IGN);
 #endif
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     mWPortName=uuid+"/stdout";
 
@@ -57,14 +57,13 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
     {
         YARP_ERROR(yarp::os::impl::Logger::get(),"RunWrite: could not open output port\n");
 
-        CHECK_EXIT()
-        return 1;
+        _RETURN(1)
     }
 
     static const yarp::os::ConstString TOPIC("topic:/");
     yarp::os::Network::connect(mWPortName.c_str(),(TOPIC+uuid+"/topic_i").c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     char txt[2048];
     
@@ -78,43 +77,40 @@ int RunWrite::loop(yarp::os::ConstString& uuid)
        
         yarp::os::Bottle bot;
         bot.addString(txt);
-        CHECKPOINT()
+        _CHECKPOINT
         mWPort.write(bot);
-        CHECKPOINT()
+        _CHECKPOINT
     }
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     mWPort.interrupt();
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     mWPort.close();
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
 
-    CHECK_EXIT()
-
-    return 0;
+    _RETURN(0)
 }
 
 void RunWrite::close()
 {
-    CHECK_ENTER("RunWrite::close")
+    _BEGIN
 
 #if defined(WIN32)
     mWPort.interrupt();
-    CHECKPOINT()
+    _CHECKPOINT
     mWPort.close();
-    CHECKPOINT()
+    _CHECKPOINT
     yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
-    CHECK_EXIT()
-    exit(0);
+    _EXIT(0)
 #else
     fclose(stdin);
-    CHECK_EXIT()
+    _RETURN_VOID
 #endif
 }
 
@@ -123,9 +119,9 @@ yarp::os::ConstString RunWrite::mWPortName;
 
 static void wSigintHandler(int sig)
 {
-    CHECK_ENTER("wSigintHandler")
+    _BEGIN
     RunWrite::close();
-    CHECK_EXIT()
+    _RETURN_VOID
 }
 
 ///////////////////////////////////////////
@@ -134,7 +130,7 @@ static void rSigintHandler(int sig);
 
 int RunRead::loop(yarp::os::ConstString& uuid)
 {
-    CHECK_ENTER("RunRead::loop")
+    _BEGIN
 
     yarp::os::impl::Logger::get().setVerbosity(-1);
 
@@ -147,7 +143,7 @@ int RunRead::loop(yarp::os::ConstString& uuid)
     signal(SIGHUP,SIG_IGN);
 #endif
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     mRPortName=uuid+"/stdin";
     mRPort.setReader(*this);
@@ -155,38 +151,38 @@ int RunRead::loop(yarp::os::ConstString& uuid)
     if (!mRPort.open(mRPortName.c_str()))
     {
         YARP_ERROR(yarp::os::impl::Logger::get(),"RunRead: could not open input port\n");
-        CHECK_EXIT()
-        return 1;
+        
+        _RETURN(1)
     }
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     static const yarp::os::ConstString TOPIC("topic:/");
     yarp::os::Network::connect((TOPIC+uuid+"/topic_o").c_str(),mRPortName.c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
     mDone.wait();
-    CHECKPOINT()
+    _CHECKPOINT
 
     mRPort.interrupt();
-    CHECKPOINT()
+    _CHECKPOINT
     mRPort.close();
-    CHECKPOINT()
+    _CHECKPOINT
     yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
-    CHECK_EXIT()
-
-    return 0;
+    
+    _RETURN(0)
 }
 
 bool RunRead::read(yarp::os::ConnectionReader& reader) 
 {
-    CHECK_ENTER("RunRead::read")
+    _BEGIN
+    
     if (!reader.isValid())
     {
-        CHECK_EXIT()
-        return false;
+        _RETURN(false)
     }
-    CHECKPOINT()
+
+    _CHECKPOINT
 
     yarp::os::Bottle bot;
 
@@ -196,8 +192,8 @@ bool RunRead::read(yarp::os::ConnectionReader& reader)
         {
             ACE_OS::printf("%s",bot.get(0).asString().c_str());
             ACE_OS::fflush(stdout);
-            CHECK_EXIT()
-            return true;
+            
+            _RETURN(true)
         }
 
         if (bot.size()==2 && bot.get(0).isInt() && bot.get(1).isString()) 
@@ -215,12 +211,10 @@ bool RunRead::read(yarp::os::ConnectionReader& reader)
             ACE_OS::fflush(stdout);
         }
 
-        CHECK_EXIT()
-        return true;
+        _RETURN(true)
     }
 
-    CHECK_EXIT()
-    return false;
+    _RETURN(false)
 }
 
 yarp::os::Semaphore RunRead::mDone(0);
@@ -229,9 +223,9 @@ yarp::os::ConstString RunRead::mRPortName;
 
 static void rSigintHandler(int sig)
 {
-    CHECK_ENTER("rSigintHandler")
+    _BEGIN
     RunRead::close();
-    CHECK_EXIT()
+    _RETURN_VOID
 }
 
 ///////////////////////////////////////////
@@ -244,7 +238,7 @@ static void sighupHandler(int sig);
 
 int RunReadWrite::loop(yarp::os::ConstString &uuid)
 {
-    CHECK_ENTER("RunReadWrite::loop")
+    _BEGIN
 
     yarp::os::impl::Logger::get().setVerbosity(-1);
 
@@ -257,7 +251,7 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
     signal(SIGHUP,sighupHandler);
 #endif
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     mUUID=uuid;
     mWPortName=uuid+"/stdio:o";
@@ -268,29 +262,28 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
     if (!mRPort.open(mRPortName.c_str()))
     {
         YARP_ERROR(yarp::os::impl::Logger::get(),"RunReadWrite: could not open input port\n");
-        CHECK_EXIT()
-        return 1;
+        
+        _RETURN(1)
     }
 
     if (!mWPort.open(mWPortName.c_str()))
     {
-        CHECKPOINT()
+        _CHECKPOINT
         YARP_ERROR(yarp::os::impl::Logger::get(),"RunReadWrite: could not open output port\n");
-        CHECKPOINT()
+        _CHECKPOINT
         mRPort.close();
-        CHECKPOINT()
+        _CHECKPOINT
         yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
-        CHECK_EXIT()
-        return 1;
+        _RETURN(1)
     }
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     static const yarp::os::ConstString TOPIC("topic:/");
     yarp::os::Network::connect(mWPortName.c_str(),(TOPIC+uuid+"/topic_o").c_str());
     yarp::os::Network::connect((TOPIC+uuid+"/topic_i").c_str(),mRPortName.c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     char txt[2048];
     
@@ -304,31 +297,29 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
        
         yarp::os::Bottle bot;
         bot.addString(txt);
-        CHECKPOINT()
+        _CHECKPOINT
         mWPort.write(bot);
-        CHECKPOINT()
+        _CHECKPOINT
     }
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     close();
 
-    CHECK_EXIT()
-
-    return 0;
+    _RETURN(0)
 }
 
 void RunReadWrite::close()
 {
-    CHECK_ENTER("RunReadWrite::close")
+    _BEGIN
 
 #if defined(WIN32)
 
     if (mClosed)
     {
-        CHECK_EXIT()
-        return;
+        _RETURN_VOID
     }
+
     mClosed=true;
 
 #else    
@@ -336,63 +327,59 @@ void RunReadWrite::close()
     mDone.wait();
     if (mClosed)
     {
-        CHECKPOINT()
+        _CHECKPOINT
         mDone.post();
-        CHECK_EXIT()
-        return;
+        _RETURN_VOID
     }
+
     mClosed=true;
     mDone.post();
 
 #endif    
 
-   
     static const yarp::os::ConstString TOPIC("topic:/");
     yarp::os::Network::disconnect((mUUID+"/stdout").c_str(),(TOPIC+mUUID+"/topic_i").c_str());
     yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_i").c_str(),(mUUID+"/stdio:i").c_str());
     yarp::os::Network::disconnect((mUUID+"/stdio:o").c_str(),(TOPIC+mUUID+"/topic_o").c_str());
     yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_o").c_str(),(mUUID+"/stdin").c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     mRPort.interrupt();
     mRPort.close();
     yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     mWPort.interrupt();
     mWPort.close();
     yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     int ret=0;
     ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_i").c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     if (ret!=0) YARP_LOG_ERROR("call to system returned error");
 
     ret=system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_o").c_str());
 
-    CHECKPOINT()
+    _CHECKPOINT
 
     if (ret!=0) YARP_LOG_ERROR("call to system returned error");
 
-    CHECK_EXIT()
-
-    exit(0);
+    _EXIT(0)
 }
 
 bool RunReadWrite::read(yarp::os::ConnectionReader& reader) 
 {
-    CHECK_ENTER("RunReadWrite::read")
+    _BEGIN
     
     if (!reader.isValid())
     { 
-        CHECK_EXIT()
-        return false;
+        _RETURN(false)
     }
 
     yarp::os::Bottle bot;
@@ -403,17 +390,17 @@ bool RunReadWrite::read(yarp::os::ConnectionReader& reader)
         {
             ACE_OS::printf("%s",bot.get(0).asString().c_str());
             ACE_OS::fflush(stdout);
-            CHECK_EXIT()
-            return true;
+ 
+            _RETURN(true)
         }
 
         if (bot.size()==2 && bot.get(0).isInt() && bot.get(1).isString()) 
         {
             if (bot.get(0).asInt()!=1) 
-                {
-                    ACE_OS::printf("%s",bot.get(1).asString().c_str());
-                    ACE_OS::fflush(stdout);
-                }
+            {
+                ACE_OS::printf("%s",bot.get(1).asString().c_str());
+                ACE_OS::fflush(stdout);
+            }
         }
         else
         {
@@ -421,12 +408,10 @@ bool RunReadWrite::read(yarp::os::ConnectionReader& reader)
             ACE_OS::fflush(stdout);
         }
 
-        CHECK_EXIT()
-        return true;
+        _RETURN(true)
     }
 
-    CHECK_EXIT()
-    return false;
+    _RETURN(false)
 }
 
 bool RunReadWrite::mClosed=false;
@@ -439,16 +424,16 @@ yarp::os::ConstString RunReadWrite::mUUID;
 
 static void rwSigintHandler(int sig)
 {
-    CHECK_ENTER("rwSigintHandler")
+    _BEGIN
     RunReadWrite::close();
-    CHECK_EXIT()
+    _RETURN_VOID
 }
 
 #if !defined(WIN32)
 static void sighupHandler(int sig)
 {
-    CHECK_ENTER("sighupHandler")
+    _BEGIN
     RunReadWrite::close();
-    CHECK_EXIT()
+    _RETURN_VOID
 }
 #endif

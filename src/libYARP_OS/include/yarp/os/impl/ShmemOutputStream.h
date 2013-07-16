@@ -27,7 +27,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 
 #include <yarp/os/impl/ShmemTypes.h>
 

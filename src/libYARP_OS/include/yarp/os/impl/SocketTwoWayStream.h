@@ -11,7 +11,6 @@
 #define _YARP2_SOCKETTWOWAYSTREAM_
 
 #include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/conf/system.h>
 
@@ -135,11 +134,9 @@ public:
         } else {
             result = stream.send_n(b.get(),b.length());
         }
-        //ACE_OS::printf("socket write %d\n", result);
         if (result<0) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket write");
-            //throw IOException("output socket died");
         }
     }
 

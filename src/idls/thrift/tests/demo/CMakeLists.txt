@@ -7,7 +7,8 @@ cmake_minimum_required(VERSION 2.8.7)
 enable_testing()
 
 find_package(YARP REQUIRED)
-include(${YARP_MODULE_PATH}/YarpIDL.cmake)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include(YarpIDL)
 
 set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
 yarp_idl_to_dir(demo.thrift ${generated_libs_dir})

@@ -10,7 +10,7 @@
 #ifndef _YARP2_STRINGOUTPUTSTREAM_
 #define _YARP2_STRINGOUTPUTSTREAM_
 
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/String.h>
 
 namespace yarp {
@@ -24,9 +24,9 @@ namespace yarp {
 /**
  * An OutputStream that produces a String.  For testing purposes.
  */
-class yarp::os::impl::StringOutputStream : public OutputStream {
+class yarp::os::impl::StringOutputStream : public yarp::os::OutputStream {
 public:
-    using OutputStream::write;
+    using yarp::os::OutputStream::write;
 
     StringOutputStream() { }
 

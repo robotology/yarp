@@ -15,7 +15,8 @@
 #include <yarp/os/NetInt32.h>
 
 #include <yarp/os/impl/SizedWriter.h>
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/PlatformSize.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/Bytes.h>
 
 #include <wire_rep_utils_api.h>
@@ -108,9 +109,9 @@ public:
 
  */
 
-class YARP_wire_rep_utils_API WireTwiddlerReader : public yarp::os::impl::InputStream {
+class YARP_wire_rep_utils_API WireTwiddlerReader : public yarp::os::InputStream {
 private:
-    yarp::os::impl::InputStream& is;
+    yarp::os::InputStream& is;
     WireTwiddler& twiddler;
     char *cursor;
     int sent;
@@ -125,7 +126,7 @@ private:
     int pending_string_data;
     yarp::os::ManagedBytes dump;
 public:
-    WireTwiddlerReader(yarp::os::impl::InputStream& is,
+    WireTwiddlerReader(yarp::os::InputStream& is,
                        WireTwiddler& twiddler) : is(is),
                                                  twiddler(twiddler) {
         reset();

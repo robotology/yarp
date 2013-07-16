@@ -190,6 +190,8 @@ if(CREATE_GUIS)
     find_package(Gthread QUIET)
     checkandset_dependency(Gthread)
 
+    set(YARP_USE_GTK2 TRUE CACHE BOOL "Use package GTK2")
+
     if(YARP_USE_GTK2)
         if(CREATE_YARPSCOPE)
             find_package(GTK2 2.20 COMPONENTS gtk gtkmm QUIET)

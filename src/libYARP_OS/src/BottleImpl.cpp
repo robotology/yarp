@@ -368,7 +368,6 @@ bool BottleImpl::fromBytes(ConnectionReader& reader) {
     Storable *storable = Storable::createByCode(id);
     if (storable==NULL) {
         YARP_SPRINTF1(Logger::get(),error,"BottleImpl reader failed, unrecognized object code %d",id);
-        //throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
         return false;
     }
     storable->readRaw(reader);
@@ -424,9 +423,6 @@ bool BottleImpl::fromBytes(const Bytes& data) {
         bool ok = fromBytes(reader);
         if (!ok) return false;
     }
-    //} catch (IOException e) {
-    //  YARP_DEBUG(Logger::get(), e.toString() + " -- bottle reader stopped");
-    //  return false;
 
     return true;
 }
@@ -535,10 +531,6 @@ bool BottleImpl::read(ConnectionReader& reader) {
             }
         }
         
-        //ManagedBytes b(bct);
-        //reader.expectBlock(b.get(),b.length());
-        //result = fromBytes(b.bytes());
-        
         result = true;
         clear();
         dirty = true; // for clarity
@@ -552,12 +544,6 @@ bool BottleImpl::read(ConnectionReader& reader) {
             bool ok = fromBytes(reader);
             if (!ok) return false;
         }
-        //    } catch (IOException e) {
-        //  YARP_DEBUG(Logger::get(), e.toString() + 
-        //             " -- bottle reader stopped at " +
-        //             NetType::toString(i) + " of " +
-        //             NetType::toString(len));
-        //  result = false;;
     }
     return result;
 }

@@ -44,7 +44,7 @@ YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   # We can also suck in other device libraries built the same way.
   # We seek an ExternalModules.cmake file either in the conf directory
   # or in our build directory
-  set(EXTFILES "${YARP_MODULE_PATH}/ExternalModules.cmake"
+  set(EXTFILES "${YARP_MODULE_DIR}/ExternalModules.cmake"
     "${CMAKE_BINARY_DIR}/ExternalModules.cmake")
   foreach(EXTFILE ${EXTFILES})
     if (EXISTS ${EXTFILE})

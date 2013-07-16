@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  * 
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -213,8 +213,9 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
     Goocanvas::Points points = this->property_points().get_value();
     setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
+	updatCoordiantes();
     setLabel(strLabel.c_str());
-    updatLabelCoordiante();
+    updatLabelCoordiante();	
     //printf("%s : %d\n", __FILE__, __LINE__); 
 }
     
@@ -225,16 +226,17 @@ void ArrowModel::setLabel(const char* szLabel)
     if(!szLabel)
         return;
  
-     string dummy = szLabel;
+    
+    string dummy = szLabel;
     if((dummy.find("virtual") != std::string::npos) || 
        (dummy.find("auxiliary") != std::string::npos) )
     {
-        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
+        GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 3.0);
         g_object_set(this->gobj(), "line-dash", dash, NULL);      
     }
     else
     {
-        GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 0);
+        GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 1.0, 0.0);
         g_object_set(this->gobj(), "line-dash", dash, NULL);      
     }
 

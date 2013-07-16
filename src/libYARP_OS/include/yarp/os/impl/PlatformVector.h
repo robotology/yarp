@@ -11,7 +11,7 @@
 #define _YARP2_PLATFORMVECTOR_
 
 #include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
 #  include <ace/Vector_T.h>
 #  define PlatformVector ACE_Vector
 #  define PLATFORM_VECTOR_ITERATOR(x) ACE_Vector_Iterator<x >

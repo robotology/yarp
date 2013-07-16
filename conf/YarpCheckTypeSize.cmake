@@ -23,7 +23,7 @@
 # Forked to deal with C++
 
 # Copyright: 2007-2009 Kitware, Inc.
-# CopyPolicy: BSD
+# CopyPolicy: 3-clause BSD
 
 
 
@@ -67,7 +67,7 @@ MACRO(YARP_CHECK_TYPE_SIZE TYPE VARIABLE)
         "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_REQUIRED_INCLUDES}")
     ENDIF(CMAKE_REQUIRED_INCLUDES)
 
-    CONFIGURE_FILE("${YARP_MODULE_PATH}/template/YarpCheckTypeSize.cxx.in"
+    CONFIGURE_FILE("${YARP_MODULE_DIR}/template/YarpCheckTypeSize.cxx.in"
       "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CheckTypeSize.cxx" IMMEDIATE @ONLY)
     FILE(READ "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CheckTypeSize.cxx"
       CHECK_TYPE_SIZE_FILE_CONTENT)

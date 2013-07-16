@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: 2012 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2012 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Elena Ceseracciu, Ali Paikan <ali.paikan@iit.it>
  * 
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -279,11 +279,15 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
      
         
     bool ok=doc.SaveFile(app->getXmlFile());
-    if (!ok && doc.Error())
+    if (!ok)
     {
+        
         OSTRINGSTREAM err;
-        err<<"tinyXml error for file " << app->getXmlFile() <<" at line " << doc.ErrorRow() << ", column " << doc.ErrorCol() << ": " << doc.ErrorDesc();
+        err<<"tinyXml error for file " << app->getXmlFile();
+        if (doc.Error())
+            err <<" at line " << doc.ErrorRow() << ", column " << doc.ErrorCol() << ": " << doc.ErrorDesc();
         logger->addError(err);
+        err <<"\n";
         return false;
     }
     else return true;

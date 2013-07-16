@@ -85,12 +85,12 @@ public:
 
     void setCarrierParams(const yarp::os::Property& params) {
         if(ip)
-            ip->setInputCarrierParams(params);
+            ip->getReceiver().setCarrierParams(params);
     }
 
     void getCarrierParams(yarp::os::Property& params) { 
         if(ip)
-            ip->getInputCarrierParams(params);
+            ip->getReceiver().getCarrierParams(params);
     }
 
 
@@ -105,6 +105,8 @@ private:
     bool reversed;
 
     void closeMain();
+
+    bool skipIncomingData(yarp::os::ConnectionReader& reader);
 };
 
 #endif

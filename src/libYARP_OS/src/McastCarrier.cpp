@@ -69,7 +69,7 @@ int yarp::os::impl::McastCarrier::getSpecifierCode() {
 
 bool yarp::os::impl::McastCarrier::sendHeader(Protocol& proto) {
     // need to do more than the default
-    bool ok = proto.defaultSendHeader();
+    bool ok = defaultSendHeader(proto);
     if (!ok) return false;
 
     YARP_DEBUG(Logger::get(),"Adding extra mcast header");
@@ -139,7 +139,6 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(Protocol& proto) {
     ManagedBytes block(6);
     ssize_t len = NetType::readFull(proto.is(),block.bytes());
     if ((size_t)len!=block.length()) {
-        //throw new IOException("problem with MCAST header");
         YARP_ERROR(Logger::get(),"problem with MCAST header");
         return false;
     }

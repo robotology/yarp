@@ -180,7 +180,12 @@ bool ThreadImpl::start() {
 
     closing = false;
     beforeStart();
-#ifdef YARP_HAS_ACE
+#ifdef YARP_HAS_CXX11
+    hid = std::thread(theExecutiveBranch,(void*)this);
+    id = 0;
+    int result = hid.joinable()?0:1;
+#else
+#  ifdef YARP_HAS_ACE
     size_t s = stackSize;
     if (s==0) {
         s = (size_t)defaultStackSize;
@@ -193,7 +198,7 @@ bool ThreadImpl::start() {
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
                                    s);
-#else
+#  else
     pthread_attr_t attr;
     int s = pthread_attr_init(&attr);
     if (s != 0)
@@ -206,6 +211,7 @@ bool ThreadImpl::start() {
     }
 
     int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
+#  endif
 #endif
 
     if (result==0)
@@ -283,10 +289,14 @@ int ThreadImpl::setPriority(int priority) {
         defaultPriority = priority;
     }
     if (active && priority!=-1) {
-#ifdef YARP_HAS_ACE
-        return ACE_Thread::setprio(hid, priority);
+#ifdef YARP_HAS_CXX11
+        YARP_ERROR(Logger::get(),"Cannot set priority with C++11");
 #else
+  #ifdef YARP_HAS_ACE
+        return ACE_Thread::setprio(hid, priority);
+  #else
         YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+  #endif
 #endif
     }
     return -1;
@@ -295,10 +305,14 @@ int ThreadImpl::setPriority(int priority) {
 int ThreadImpl::getPriority() {
     int prio = -1;
     if (active) {
-#ifdef YARP_HAS_ACE
-        ACE_Thread::getprio(hid, prio);
+#ifdef YARP_HAS_CXX11
+        YARP_ERROR(Logger::get(),"Cannot get priority with C++11");
 #else
+  #ifdef YARP_HAS_ACE
+        ACE_Thread::getprio(hid, prio);
+  #else
         YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
+  #endif
 #endif
     }
     return prio;

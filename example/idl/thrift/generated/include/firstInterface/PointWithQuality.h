@@ -26,35 +26,10 @@ public:
   }
   PointWithQuality(const PointD& point,const PointQuality quality) : point(point), quality(quality) {
   }
-  bool read(yarp::os::idl::WireReader& reader) {
-    if (!reader.read(point)) {
-      reader.fail();
-      return false;
-    }
-    int32_t ecast12;
-    PointQualityVocab cvrt13;
-    if (!reader.readEnum(ecast12,cvrt13)) {
-      quality = UNKNOWN;
-    } else {
-      quality = (PointQuality)ecast12;
-    }
-    return !reader.isError();
-  }
-  bool read(yarp::os::ConnectionReader& connection) {
-    yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(2)) return false;
-    return read(reader);
-  }
-  bool write(yarp::os::idl::WireWriter& writer) {
-    if (!writer.write(point)) return false;
-    if (!writer.writeI32((int32_t)quality)) return false;
-    return !writer.isError();
-  }
-  bool write(yarp::os::ConnectionWriter& connection) {
-    yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(4)) return false;
-    return write(writer);
-  }
+  bool read(yarp::os::idl::WireReader& reader);
+  bool read(yarp::os::ConnectionReader& connection);
+  bool write(yarp::os::idl::WireWriter& writer);
+  bool write(yarp::os::ConnectionWriter& connection);
 };
 
 #endif

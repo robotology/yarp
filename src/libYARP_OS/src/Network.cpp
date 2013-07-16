@@ -23,10 +23,9 @@
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/MultiNameSpace.h>
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/impl/OutputProtocol.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/Route.h>
@@ -35,6 +34,11 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
+
+#ifdef YARP_HAS_ACE
+#include <ace/config.h>
+#include <ace/String_Base.h>
+#endif
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -748,9 +752,9 @@ bool NetworkBase::write(const Contact& contact,
     out->open(r);
 
     PortCommand pc(0,style.admin?"a":"d");
-    BufferedConnectionWriter bw(out->isTextMode());
+    BufferedConnectionWriter bw(out->getConnection().isTextMode());
     bool ok = true;
-    if (out->canEscape()) {
+    if (out->getConnection().canEscape()) {
         ok = pc.write(bw);
     }
     if (!ok) {
@@ -984,9 +988,9 @@ public:
         return getContent().expectReplyToHeader(proto);
     }
 
-    virtual bool sendIndex(Protocol& proto) {
-        return getContent().sendIndex(proto);
-    }
+    //virtual bool sendIndex(Protocol& proto,SizedWriter& writer) {
+    //return getContent().sendIndex(proto,writer);
+    //}
 
     virtual bool write(Protocol& proto, SizedWriter& writer) {
         return getContent().write(proto,writer);

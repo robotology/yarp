@@ -338,6 +338,16 @@ public:
                                   const char *base2,
                                   const char *base3,
                                   const char *name) {
+        if (name[0]=='/') {
+            return name;
+        }
+#ifdef WIN32
+        if (name[0]!='\0') {
+            if (name[1]==':') {
+                return name;
+            }
+        }
+#endif
         ConstString s = "";
         if (base1!=NULL) {
             s = base1;
@@ -467,30 +477,6 @@ public:
             if (str!="") {
                 output.addString(str);
                 if (justTop) return;
-            }
-        }
-
-        // check /etc/yarp/path.d/*
-        // this directory is expected to contain *.ini files of the format:
-        //   [search BUNDLE_NAME]
-        //   path /PATH1 /PATH2
-        // for example:
-        //   [search icub]
-        //   path /usr/share/iCub
-        Property pathd;
-        pathd.fromConfigFile("/etc/yarp/path.d"); // should this be XDG_*?
-        Bottle sections = pathd.findGroup("search").tail();
-        for (int i=0; i<sections.size(); i++) {
-            ConstString search_name = sections.get(i).asString();
-            Bottle group = pathd.findGroup(search_name);
-            Bottle paths = group.findGroup("path").tail();
-            for (int j=0; j<paths.size(); j++) {
-                ConstString str = check(paths.get(j).asString().c_str(),"","",
-                                        name,isDir);
-                if (str!="") {
-                    output.addString(str);
-                    if (justTop) return;
-                }
             }
         }
 

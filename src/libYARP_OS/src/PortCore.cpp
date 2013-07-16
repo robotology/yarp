@@ -808,7 +808,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                 }
             }
             if (op!=NULL) {
-                if (op->isPush()) {
+                if (op->getConnection().isPush()) {
                     addOutput(op);
                 } else {
                     /* IP=OP */

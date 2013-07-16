@@ -23,7 +23,9 @@
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/IPositionControl.h>
+#include <yarp/dev/IPositionControl2.h>
 #include <yarp/dev/IOpenLoopControl.h>
+#include <yarp/dev/IPositionDirect.h>
 
 namespace yarp {
     namespace dev {
@@ -180,7 +182,7 @@ public:
     /** Enable the pid computation for a joint*/
     virtual bool enablePidRaw(int j)=0;
 
-	/** Set offset value for a given pid*/
+    /** Set offset value for a given pid*/
     virtual bool setOffsetRaw(int j, double v)=0;
 };
 
@@ -321,7 +323,7 @@ public:
     /** Enable the pid computation for a joint*/
     virtual bool enablePid(int j)=0;
 
-	/** Set offset value for a given controller*/
+    /** Set offset value for a given controller*/
     virtual bool setOffset(int j, double v)=0;
 };
 
@@ -739,6 +741,7 @@ public:
 #define VOCAB_RESET VOCAB3('r','e','s')
 #define VOCAB_DISABLE VOCAB3('d','i','s')
 #define VOCAB_ENABLE VOCAB3('e','n','a')
+#define VOCAB_BEMF VOCAB3('b','m','f')
 
 // interface IPidControl gets.
 #define VOCAB_ERR VOCAB3('e','r','r')
@@ -758,6 +761,7 @@ public:
 #define VOCAB_POSITION_MOVE VOCAB3('p','o','s')
 #define VOCAB_POSITION_MOVES VOCAB4('p','o','s','s')
 #define VOCAB_RELATIVE_MOVE VOCAB3('r','e','l')
+
 #define VOCAB_RELATIVE_MOVES VOCAB4('r','e','l','s')
 #define VOCAB_REF_SPEED VOCAB3('v','e','l')
 #define VOCAB_REF_SPEEDS VOCAB4('v','e','l','s')

@@ -10,11 +10,10 @@
 #ifndef _YARP2_STREAMBLOCKREADER_
 #define _YARP2_STREAMBLOCKREADER_
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Logger.h>
@@ -59,7 +58,7 @@ public:
 
     virtual ~StreamConnectionReader();
 
-    void reset(InputStream& in, TwoWayStream *str, const Route& route,
+    void reset(yarp::os::InputStream& in, TwoWayStream *str, const Route& route,
                size_t len, bool textMode) {
         this->in = &in;
         this->str = str;
@@ -79,7 +78,6 @@ public:
 
     virtual bool expectBlock(const yarp::os::Bytes& b) {
         if (!isGood()) {
-            //throw IOException("read from invalid stream");
             return false;
         }
         YARP_ASSERT(in!=NULL);
@@ -109,7 +107,6 @@ public:
             pushedIntFlag = false;
             return pushedInt;
         }
-        //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return 0; }
         NetType::NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
@@ -124,7 +121,6 @@ public:
     }
 
     virtual double expectDouble() {
-        //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return 0; }
         NetType::NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
@@ -139,7 +135,6 @@ public:
     }
 
     virtual String expectString(int len) {
-        //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return ""; }
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
@@ -157,7 +152,6 @@ public:
     }
 
     virtual String expectLine() {
-        //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
         bool success = false;
@@ -225,7 +219,6 @@ public:
     }
 
     virtual ::yarp::os::ConstString expectText(int terminatingChar) {
-        //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
         bool lsuccess = false;
@@ -284,7 +277,7 @@ private:
 
     BufferedConnectionWriter *writer;
     StringInputStream altStream;
-    InputStream *in;
+    yarp::os::InputStream *in;
     TwoWayStream *str;
     Protocol *protocol;
     size_t messageLen;

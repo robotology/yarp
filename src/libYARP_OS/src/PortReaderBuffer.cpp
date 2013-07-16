@@ -20,6 +20,7 @@
 
 #include <yarp/os/impl/PlatformVector.h>
 #include <yarp/os/impl/PlatformList.h>
+#include <yarp/os/impl/PortCorePacket.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

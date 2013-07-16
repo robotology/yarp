@@ -10,8 +10,8 @@
 #ifndef _YARP2_STRINGINPUTSTREAM_
 #define _YARP2_STRINGINPUTSTREAM_
 
-#include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/IOException.h>
+#include <yarp/os/InputStream.h>
+#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {
@@ -24,9 +24,9 @@ namespace yarp {
 /**
  * An InputStream that reads from String.  For testing purposes.
  */
-class yarp::os::impl::StringInputStream : public InputStream {
+class yarp::os::impl::StringInputStream : public yarp::os::InputStream {
 public:
-    using InputStream::read;
+    using yarp::os::InputStream::read;
 
     StringInputStream() {
         at = 0;
@@ -68,12 +68,6 @@ public:
                 ct++;
             }
         }
-        /*
-          else {
-          throw IOException("end of stream");
-          break;
-          }
-        */
         return ct;
     }
 

@@ -69,8 +69,8 @@ You should skim the documentation of the following classes:
 
  \li yarp::os::impl::Carrier
  \li yarp::os::impl::Carriers
- \li yarp::os::impl::InputStream
- \li yarp::os::impl::OutputStream
+ \li yarp::os::InputStream
+ \li yarp::os::OutputStream
  \li yarp::os::impl::TwoWayStream
  \li yarp::os::impl::Address
 
@@ -79,8 +79,8 @@ You'll be able to include them in your code as follows:
 \code
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/InputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/Address.h>
 using namespace yarp::os::impl;
@@ -369,8 +369,8 @@ This is also the moment to optionally drop the current input/output
 streams associated with the connection (probably TCP) and create
 an entirely different set (e.g. MCAST, UDP, SHMEM, or whatever kind
 of communication you are going to use).  The easiest way to 
-do that is to create suitable yarp::os::impl::InputStream and
-yarp::os::impl::OutputStream implementations, and then substitute 
+do that is to create suitable yarp::os::InputStream and
+yarp::os::OutputStream implementations, and then substitute 
 them in by calling proto.takeStreams (see 
 yarp::os::impl::Protocol::takeStreams).  Look at UdpCarrier.h
 or McastCarrier.h for examples.

@@ -11,7 +11,7 @@
 #define _YARP2_PLATFORMMAP_
 
 #include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
 #  include <ace/Hash_Map_Manager.h>
 #  include <ace/Null_Mutex.h>
 #  define PLATFORM_MAP(x,y) ACE_Hash_Map_Manager<x,y,ACE_Null_Mutex>

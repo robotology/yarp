@@ -20,6 +20,7 @@
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/sig/Matrix.h>
 
 #endif
 

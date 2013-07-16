@@ -11,7 +11,7 @@
 #define _YARP2_PLATFORMLIST_
 
 #include <yarp/conf/system.h>
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
 #  include <ace/Containers_T.h>
 #  define PLATFORM_LIST(x) ACE_Double_Linked_List<x>
 #  define PLATFORM_LIST_EMPTY(x) x.is_empty()

@@ -75,7 +75,7 @@ public:
         return proto.os().isOk();
     }
 
-    virtual bool sendIndex(Protocol& proto) {
+    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
         return true; }
     virtual bool expectIndex(Protocol& proto) {
         return true; }

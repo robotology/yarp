@@ -1,5 +1,5 @@
 #  Yarp Application Builder
-#  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+#  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
 #  Authors: Ali Paikan <ali.paikan@iit.it>
 # 
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -13,7 +13,6 @@ FILE(GLOB folder_header include/*.h)
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 
-ADD_DEFINITIONS(${GtkMM_C_FLAGS})
 
 if(UNIX)
     if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
@@ -33,7 +32,12 @@ endif(MSVC)
 INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${TinyXML_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${GtkMM_INCLUDE_DIRS})
+if(YARP_USE_GTK2)
+  INCLUDE_DIRECTORIES(${GTK2_INCLUDE_DIRS})
+else()
+  ADD_DEFINITIONS(${GtkMM_C_FLAGS})
+  INCLUDE_DIRECTORIES(${GtkMM_INCLUDE_DIRS})
+endif()
 INCLUDE_DIRECTORIES(${GooCanvasMM_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(include)
 INCLUDE_DIRECTORIES(../libymanager/include)
@@ -58,11 +62,13 @@ if(YARP_USE_GTK2)
                                        ${GTK2_GTK_LIBRARY}
                                        ${GTK2_GDK_LIBRARY}
                                        ${GTK2_GLIB_LIBRARY}
+                                       ${GTK2_PANGOCAIRO_LIBRARY}
                                        ${GTK2_GTKMM_LIBRARY}
                                        ${GTK2_GLIBMM_LIBRARY}
                                        ${GTK2_GDKMM_LIBRARY}
                                        ${GTK2_ATKMM_LIBRARY}
                                        ${GTK2_SIGC++_LIBRARY}
+                                       ${GTK2_GTHREAD_LIBRARY}
                                        ${GooCanvasMM_LIBRARIES})
 else(YARP_USE_GTK2)
     target_link_libraries(gyarpbuilder YARP_init

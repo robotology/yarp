@@ -43,10 +43,10 @@ public:
 
     virtual ~TcpFace();
 
-    virtual bool open(const Address& address); // throws IOException
-    virtual void close(); // throws IOException
-    virtual InputProtocol *read(); // throws IOException
-    virtual OutputProtocol *write(const Address& address); // throws IOException
+    virtual bool open(const Address& address);
+    virtual void close();
+    virtual InputProtocol *read();
+    virtual OutputProtocol *write(const Address& address);
 
     virtual Address getLocalAddress();
 

@@ -9,49 +9,27 @@
 #ifndef YARP_CONFIG_SYSTEM_H
 #define YARP_CONFIG_SYSTEM_H
 
+#include <yarp/conf/numeric.h>
+
 #define YARP_CMAKE_CONFIG
-
-#ifdef YARP_INT16
-#undef YARP_INT16
-#endif
-
-#ifdef YARP_INT32
-#undef YARP_INT32
-#endif
-
-#ifdef YARP_INT64
-#undef YARP_INT64
-#endif
-
-#ifdef YARP_FLOAT32
-#undef YARP_FLOAT32
-#endif
-
-#ifdef YARP_FLOAT64
-#undef YARP_FLOAT64
-#endif
-
-#ifdef YARP_BIG_ENDIAN
-#undef YARP_BIG_ENDIAN
-#endif
-
-#ifdef YARP_LITTLE_ENDIAN
-#undef YARP_LITTLE_ENDIAN
-#endif
-
-#define YARP_INT16 ${YARP_INT16}
-#define YARP_INT32 ${YARP_INT32}
-#define YARP_INT64 ${YARP_INT64}
-#define YARP_FLOAT32 ${YARP_FLOAT32}
-#define YARP_FLOAT64 ${YARP_FLOAT64}
-
-#cmakedefine YARP_BIG_ENDIAN
-#cmakedefine YARP_LITTLE_ENDIAN
 
 #cmakedefine YARP_USE_STL_STRING
 #cmakedefine YARP_USE_ACE_STRING
 
 #cmakedefine YARP_HAS_ACE
+
+#cmakedefine YARP_HAS_CXX11
+
+// Use STL if C++11 is active, or if ACE is not available
+#ifdef YARP_HAS_CXX11
+#  define YARP_USE_STL 1
+#endif
+
+#ifndef YARP_HAS_ACE
+#  ifndef YARP_USE_STL
+#    define YARP_USE_STL 1
+#  endif
+#endif
 
 #cmakedefine YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE
 #cmakedefine YARP_ACE_ADDR_HAS_LOOPBACK_METHOD

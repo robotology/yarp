@@ -2,7 +2,7 @@
 
 /*
  *  Yarp Modules Manager
- *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  * 
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -218,8 +218,7 @@ private:
     OutputIterator findOutput(OutputData& output); 
     ResourcePIterator findResource(GenericResource& output); 
     void swap(const Module &mod);
-    const char* getParamValue(const char* key, bool bSwitch);
-
+    bool getParamValue(const char* key, bool bSwitch, std::string &param);
 };
 
 typedef vector<Module*> ModulePContainer;

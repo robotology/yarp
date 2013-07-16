@@ -1,5 +1,5 @@
 /*
- * Copyright: 2012 (C) Robotics, Brain and Cognitive Sciences - Istituto Italiano di Tecnologia (IIT)
+ * Copyright: (C) 2012 Robotics, Brain and Cognitive Sciences - Istituto Italiano di Tecnologia (IIT)
  * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -186,7 +186,8 @@ Thrift supports shell-style, C-style multi-line as well as single-line Java/C++ 
 
 Generation of code for a Thrift definition file PointD.thrift in the "firstInterface" directory can be automatically performed by CMake calling the \c yarp_idl_to_dir macro defined in the YARP configuration file "YarpIDL.cmake":
 \code
-include(${YARP_MODULE_PATH}/YarpIDL.cmake)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include(YarpIDL)
 
 yarp_idl_to_dir(firstInterface/PointD.thrift <desired_output_dir>)
 \endcode

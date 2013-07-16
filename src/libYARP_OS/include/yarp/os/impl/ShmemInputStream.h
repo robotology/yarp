@@ -28,7 +28,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/impl/ShmemTypes.h>
 #include <yarp/os/impl/PlatformSize.h>
 

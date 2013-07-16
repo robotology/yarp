@@ -13,10 +13,11 @@
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/InputStream.h>
+#include <yarp/os/OutputStream.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Connection.h>
 
 namespace yarp {
     namespace os {
@@ -34,8 +35,6 @@ class YARP_OS_impl_API yarp::os::impl::InputProtocol {
 public:
     virtual ~InputProtocol() {}
 
-    // all may throw IOException
-
     virtual bool open(const String& name) = 0;
     virtual void close() = 0;
     virtual void interrupt() = 0;
@@ -45,37 +44,22 @@ public:
     virtual yarp::os::ConnectionReader& beginRead() = 0;
     virtual void endRead() = 0;
 
-    // can metadata (port-level comms) be inserted?  if not,there is only data.
-    virtual bool canEscape() = 0;
-
-    virtual bool isPush() = 0;
+    virtual Connection& getConnection() = 0;
+    virtual Connection& getReceiver() = 0;
 
     virtual bool checkStreams() = 0;
-
-    virtual void resetStreams() = 0;
 
     // some connections are capable of ping-ponging
     virtual OutputProtocol& getOutput() = 0;
     virtual void suppressReply() = 0;
   
     // direct access
-    virtual OutputStream& getOutputStream() = 0;
-    virtual InputStream& getInputStream() = 0;
-    virtual const Address& getRemoteAddress() = 0;
+    virtual yarp::os::OutputStream& getOutputStream() = 0;
+    virtual yarp::os::InputStream& getInputStream() = 0;
 
     virtual void setEnvelope(const String& str) = 0;
 
     virtual bool setTimeout(double timeout) = 0;
-
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) = 0;
-
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) = 0;
-
-    virtual bool skipIncomingData(yarp::os::ConnectionReader& reader) = 0;
-
-    virtual void setInputCarrierParams(const yarp::os::Property& params) = 0;
-    
-    virtual void getInputCarrierParams(yarp::os::Property& params) = 0;
 };
 
 #endif

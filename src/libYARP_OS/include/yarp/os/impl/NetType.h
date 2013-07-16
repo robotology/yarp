@@ -12,8 +12,7 @@
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
-#include <yarp/os/impl/InputStream.h>
-#include <yarp/os/impl/IOException.h>
+#include <yarp/os/InputStream.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -58,12 +57,12 @@ public:
         return true;
     }
 
-    static String readLine(InputStream& is, int terminal = '\n',
+    static String readLine(yarp::os::InputStream& is, int terminal = '\n',
                            bool *success = NULL);
 
-    static ssize_t readFull(InputStream& is, const yarp::os::Bytes& b);
+    static ssize_t readFull(yarp::os::InputStream& is, const yarp::os::Bytes& b);
 
-    static ssize_t readDiscard(InputStream& is, size_t len);
+    static ssize_t readDiscard(yarp::os::InputStream& is, size_t len);
 
     static String toHexString(int x);
 

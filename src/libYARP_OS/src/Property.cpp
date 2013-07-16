@@ -50,7 +50,7 @@ public:
     Property& owner;
 
     PropertyHelper(Property& owner, int hash_size) :
-#ifdef YARP_HAS_ACE
+#ifndef YARP_USE_STL
         data((hash_size==0)?ACE_DEFAULT_MAP_SIZE:hash_size),
 #endif
         owner(owner) {}

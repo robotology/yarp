@@ -10,14 +10,12 @@
 #ifndef _YARP2_INPUTSTREAM_
 #define _YARP2_INPUTSTREAM_
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Bytes.h>
-#include <yarp/os/impl/PlatformSize.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class InputStream;
-        }
+        class InputStream;
     }
 }
 
@@ -25,7 +23,7 @@ namespace yarp {
  * Simple specification of the minimum functions needed from input streams.
  * The streams could be TCP, UDP, MCAST, ...
  */
-class YARP_OS_impl_API yarp::os::impl::InputStream {
+class YARP_OS_API yarp::os::InputStream {
 public:
     /**
      *
@@ -61,7 +59,7 @@ public:
      */
     virtual int read() {
         unsigned char result;
-        ssize_t ct = read(yarp::os::Bytes((char*)&result,1));
+        YARP_SSIZE_T ct = read(yarp::os::Bytes((char*)&result,1));
         if (ct<1) {
             return -1;
         }
@@ -81,7 +79,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual ssize_t read(const Bytes& b, size_t offset, ssize_t len) { // throws
+    virtual YARP_SSIZE_T read(const Bytes& b, size_t offset, YARP_SSIZE_T len) {
         return read(yarp::os::Bytes(b.get()+offset,len));
     }
 
@@ -95,7 +93,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual ssize_t read(const yarp::os::Bytes& b) = 0;
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b) = 0;
 
 
     /**
@@ -103,7 +101,7 @@ public:
      * Like read, but solicit partial responses.
      *
      */
-    virtual ssize_t partialRead(const yarp::os::Bytes& b) {
+    virtual YARP_SSIZE_T partialRead(const yarp::os::Bytes& b) {
         return read(b);
     }
 

@@ -33,7 +33,7 @@ void FallbackNameClient::run() {
     }
     String msg = String("NAME_SERVER query ") + nc.getNamespace();
     send.beginPacket();
-    send.writeLine(msg);
+    send.writeLine(msg.c_str(),(int)msg.length());
     send.flush();
     send.endPacket();
     for (int i=0; i<5; i++) {

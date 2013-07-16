@@ -382,7 +382,7 @@ int Companion::ping(const char *port, bool quiet) {
         StreamConnectionReader reader;
 
         PortCommand pc(0,"*");
-        BufferedConnectionWriter bw(out->isTextMode());
+        BufferedConnectionWriter bw(out->getConnection().isTextMode());
         pc.write(bw);
         bw.write(os);
         Bottle resp;
@@ -776,11 +776,7 @@ int Companion::sendMessage(const String& port, PortWriter& writable,
         return 1;
     }
 
-    //printf("Route %s TEXT mode %d\n", out->getRoute().toString().c_str(),
-    // out->isTextMode());
-    BufferedConnectionWriter bw(out->isTextMode());
-    //bw.appendLine(msg);
-    //writable.writeBlock(bw);
+    BufferedConnectionWriter bw(out->getConnection().isTextMode());
     PortCommand disconnect('\0',"q");
     bool wok = writable.write(bw);
     if (!wok) {
@@ -1211,6 +1207,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("");
     f.add("# Find YARP.  Point the YARP_DIR environment variable at your build.");
     f.add("find_package(YARP REQUIRED)");
+    f.add("list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})");
     f.add("");
     f.add("# Search for source code.");
     f.add("file(GLOB folder_source *.cpp *.cc *.c)");
