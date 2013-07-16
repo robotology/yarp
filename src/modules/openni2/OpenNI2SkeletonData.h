@@ -7,7 +7,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#pragma once
+#ifndef OPENNI2_SKELETON_DATA_H
+#define OPENNI2_SKELETON_DATA_H
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
@@ -120,4 +121,4 @@ private:
     ImageOf<PixelRgb> imageFrame;
     void initUserSkeletons();
 };
-
+#endif

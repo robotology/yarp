@@ -7,7 +7,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#pragma once
+#ifndef OPENNI2_CLIENT_H
+#define OPENNI2_CLIENT_H
 
 #define PORTNAME_SKELETON "/userSkeleton"
 #define PORTNAME_DEPTHFRAME "/depthFrame"
@@ -83,3 +84,4 @@ private:
  Client OpenNI2 device interface implementation
  
  */
+#endif

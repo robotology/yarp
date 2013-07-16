@@ -7,7 +7,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#pragma once
+#ifndef OPENNI2_SKELETON_TRACKER_H
+#define OPENNI2_SKELETON_TRACKER_H
 
 #include <string>
 #include <time.h>
@@ -90,4 +91,4 @@ private:
     int init();
     void initVars();
 };
-
+#endif
