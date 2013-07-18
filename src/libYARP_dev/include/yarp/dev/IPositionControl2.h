@@ -119,7 +119,7 @@ public:
  *
  * Interface for a generic control board device implementing position control.
  */
-class YARP_dev_API yarp::dev::IPositionControl2 : public IPositionControl
+class yarp::dev::IPositionControl2 : public IPositionControl
 {
 public:
 
@@ -160,7 +160,7 @@ public:
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @param joints pointer to the array of joint numbers
-     * @param flags  pointer to the array that will store the actual value of the checkMotionDone
+     * @param flags  pointer to return value (logical "and" of all set of joints)
      * @return true/false if network communication went well.
      */
     virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flags)=0;
@@ -206,6 +206,7 @@ public:
 
 #define VOCAB_POSITION_MOVE_GROUP    VOCAB4('p','o','s','g')
 #define VOCAB_RELATIVE_MOVE_GROUP    VOCAB4('r','e','l','g')
+#define VOCAB_MOTION_DONE_GROUP      VOCAB4('d','o','n','g')
 #define VOCAB_REF_SPEED_GROUP        VOCAB4('v','e','l','g')
 #define VOCAB_REF_ACCELERATION_GROUP VOCAB4('a','c','c','g')
 #define VOCAB_STOP_GROUP             VOCAB4('s','t','o','g')
