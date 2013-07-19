@@ -8,6 +8,7 @@
  */
 
 #include <yarp/conf/system.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/os/impl/Logger.h>
@@ -18,9 +19,7 @@
 using namespace yarp::os::impl;
 
 int main(int argc, char *argv[]) {
-#ifdef YARP_HAS_ACE
-    ACE::init();
-#endif
+    yarp::os::Network yarp;
 
     bool done = false;
     int result = 0;
@@ -51,9 +50,6 @@ int main(int argc, char *argv[]) {
     if (!done) {
         Companion::main(argc,argv);
     }
-#ifdef YARP_HAS_ACE
-    ACE::fini();
-#endif
 
     return result;
 }

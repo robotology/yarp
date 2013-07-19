@@ -22,8 +22,6 @@
 
 #include <errno.h>
 
-#include <errno.h>
-
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
@@ -623,7 +621,6 @@ public:
                 }
             }
         }
-
 
         if (locs & ResourceFinderOptions::Context) {
             for (int i=0; i<apps.size(); i++) {

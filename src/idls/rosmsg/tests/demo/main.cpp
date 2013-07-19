@@ -28,6 +28,7 @@ bool test_signs() {
         printf("Oops, a_signed_byte is unsigned\n");
         return false;
     }
+    printf("\n*** ok!\n");
     return true;
 }
 

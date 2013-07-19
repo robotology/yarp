@@ -75,8 +75,13 @@ function run_in_chroot {
 
 # Install basic dependencies
 run_in_chroot build_chroot "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev libace-dev subversion cmake dpkg wget" || exit 1
-
-
+case "$platform" in
+squeeze_i386|squeeze_amd64)
+  run_in_chroot build_chroot "apt-get install -y libgoocanvasmm-dev"
+  run_in_chroot build_chroot "echo 'deb http://backports.debian.org/debian-backports/ squeeze-backports main' >> /etc/apt/sources.list"
+  run_in_chroot build_chroot "apt-get update && apt-get install -y -t squeeze-backports cmake"
+  ;;
+esac
 
 if [ "k$TESTING" = "kTRUE" ]; then
 	YARP_VERSION=$YARP_REVISION
@@ -127,7 +132,13 @@ run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE
 run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
 
 # Go ahead and generate .deb
-run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_PACKAGE_VERSION=${YARP_VERSION}-${YARP_DEB_REVISION} -DCPACK_PACKAGE_CONTACT='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)' ." || exit 1
+PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
+case "$platform" in
+squeeze_i386|squeeze_amd64)
+  PACKAGE_DEPENDENCIES="$PACKAGE_DEPENDENCIES, libgoocanvasmm-dev"
+  ;;
+esac
+run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_PACKAGE_VERSION=${YARP_VERSION}-${YARP_DEB_REVISION} -DCPACK_PACKAGE_CONTACT='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='$PACKAGE_DEPENDENCIES' ." || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -f *.deb && make package" || exit 1
 
 # Rebuild .deb, because cmake 2.8.2 is broken, sigh

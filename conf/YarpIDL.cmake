@@ -126,7 +126,11 @@ macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
         make_directory(${dir})
         configure_file(${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
         execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+			RESULT_VARIABLE res)
+	if (NOT "${res}" STREQUAL "0")
+	  message(FATAL_ERROR "yarpidl_${family} failed, aborting.")
+	endif()
         execute_process(COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake)
 
         include(${output_dir}/${yarpidl_target_name}.cmake)
