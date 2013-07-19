@@ -173,11 +173,15 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
 
     bool ok = true;
     string path = env.findFile(base.c_str());
-  
-    FILE *fin = fopen(path.c_str(),"r");
+    rosPath = path;
+ 
+    FILE *fin = fopen((env.getTargetDirectory() + "/" + path).c_str(),"r");
+    if (!fin) {
+        fin = fopen(path.c_str(),"r");
+    }
     if (!fin) {
         fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
-        return false;
+        exit(1);
     }
 
     fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
@@ -345,6 +349,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
     state.generated[rosType] = true;
     state.dependencies.push_back(rosType);
+    state.dependenciesAsPaths.push_back((rosPath=="")?rosType:rosPath);
 
     return true;
 }
@@ -365,14 +370,20 @@ std::string RosTypeSearch::findFile(const char *tname) {
             target[i] = '_';
         }
     }
-	if (stat(target.c_str(), &dummy)==0) {
+    string target_full = target_dir + "/" + target;
+	if (stat(target_full.c_str(), &dummy)==0) {
         return target;
     }
-    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+tname+" > " + target + " || rm -f " + target;
+    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+tname+" > " + target_full + " || rm -f " + target_full;
     fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     pid_t p = ACE_OS::fork();
     if (p==0) {
-        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char*)NULL);
+#ifdef __linux__
+        // This was ACE_OS::execlp, but that fails
+        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#else
+        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#endif
         exit(0);
     } else {
         ACE_OS::wait(NULL);
