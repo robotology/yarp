@@ -12,10 +12,6 @@ function prune {
         echo "Removing $f"
         rm -rf $f
     done
-    (
-        cat src/modules/CMakeLists.txt | grep -v dimax
-    ) > /tmp/CMakeLists.txt
-    cp /tmp/CMakeLists.txt src/modules
     cd ..
 }
 
@@ -25,7 +21,7 @@ mkdir -p $BASE
 cd $BASE
 
 if [ "k$1" = "k" ] ; then
-  URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
+  URL=https://github.com/robotology/yarp/trunk
   NAME=yarp
   #REV=$(svn info $URL|grep "^Last Changed Rev:"|sed -e 's|.*:\s*||')
   SVN_NAME=$(basename $URL)
@@ -55,7 +51,7 @@ EOF
 
 else
 
-  URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$1
+  URL=https://github.com/robotology/yarp/tags/$1
   PACKAGE="$1"
   SVN_NAME="$1"
 
@@ -68,7 +64,7 @@ echo "Working in $PWD, making $PACKAGE"
 
 if [ ! -e $PACKAGE ]; then
         rm -rf $SVN_NAME
-        git archive HEAD | tar -x -C ./xxxxx || exit 1
+        svn export $URL || exit 1
         if [ ! "k$SVN_NAME" = "k$PACKAGE" ]; then
             if [ -f $SVN_NAME ]; then
                 mkdir $PACKAGE || exit 1
