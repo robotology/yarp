@@ -27,10 +27,15 @@ YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(firewirecamera)
   add_subdirectory(jrkerr)
   add_subdirectory(urbtc)
-  add_subdirectory(dimax_u2c)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(laserHokuyo)
   add_subdirectory(kinect)
+
+  # The dimax_u2c/blob is not exported in the tarball, therefore we
+  # disable the build if the folder does not exist
+  if(EXISTS ${CMAKE_CURRENT_DIRECTORY}/dimax_u2c/blob)
+      add_subdirectory(dimax_u2c)
+  endif()
 
   # We can include remote directories as well - we specify a
   # local directory for producing binaries so there is no interference

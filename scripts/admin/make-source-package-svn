@@ -12,10 +12,6 @@ function prune {
         echo "Removing $f"
         rm -rf $f
     done
-    (
-        cat src/modules/CMakeLists.txt | grep -v dimax
-    ) > /tmp/CMakeLists.txt
-    cp /tmp/CMakeLists.txt src/modules
     cd ..
 }
 
