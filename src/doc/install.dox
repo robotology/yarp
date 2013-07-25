@@ -12,7 +12,7 @@ YARP is available from http://yarp0.sourceforge.net
 For Debian and Ubuntu users, here's a quick summary:
 \verbatim
   sudo apt-get install cmake libace-dev git
-  git clone git clone git://github.com/robotology/yarp.git
+  git clone git://github.com/robotology/yarp.git
   cd yarp && mkdir build && cd build && cmake .. && make
   sudo make install  # Optional.
   # Alternative: set environment variable YARP_DIR to .../yarp2/build
