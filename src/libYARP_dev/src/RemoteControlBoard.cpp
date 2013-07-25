@@ -1593,6 +1593,15 @@ public:
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
+     * @param joints pointer to the array of joint numbers
+     * @param flag  pointer to the array that will store the actual value of the checkMotionDone
+     * @return true/false if network communication went well.
+     */
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flag) {
+        return get1V1I1IA1B(VOCAB_MOTION_DONE_GROUP, n_joint, joints, *flag);
+    }
+
+    /** Check if the current trajectory is terminated. Non blocking.
      * @param flag: true/false if trajectories for all controlled joints are terminated.
      * @return true on success/failure.
      */
@@ -1701,6 +1710,16 @@ public:
      */
     virtual bool getRefAcceleration(int j, double *acc) {
         return get1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
+    }
+
+    /** Get reference acceleration for a joint. Returns the acceleration used to
+     * generate the trajectory profile.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array that will store the acceleration values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs){
+        return get1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
     }
 
     /**
