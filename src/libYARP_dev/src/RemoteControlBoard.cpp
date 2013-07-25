@@ -2269,8 +2269,8 @@ public:
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
             jointList.addInt(joints[i]);
-        c.body.size(nj);
-        memcpy(&(c.body[0]), refs, sizeof(double)*nj);
+        c.body.size(n_joint);
+        memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
         command_buffer.write();
         return true;
     }
