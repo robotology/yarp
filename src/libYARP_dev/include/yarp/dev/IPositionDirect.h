@@ -88,7 +88,7 @@ public:
      * @param ref specifies the new ref point
      * @return true/false on success/failure
      */
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, const double *refs)=0;
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)=0;
 
     /** Set new reference point for all axes.
      * @param refs array, new reference points.

@@ -27,6 +27,22 @@ ImplementPositionDirect::~ImplementPositionDirect()
     uninitialize();
 }
 
+bool ImplementPositionDirect::initialize(int size, const int *amap, const double *enc, const double *zos)
+{
+    if(helper != NULL)
+        return false;
+
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
+    _YARP_ASSERT(helper != NULL);
+
+    temp_double=new double [size];
+    _YARP_ASSERT(temp_double != NULL);
+
+    temp_int=new int [size];
+    _YARP_ASSERT(temp_int != NULL);
+    return true;
+}
+
 bool ImplementPositionDirect::uninitialize()
 {
     if(helper!=0)
