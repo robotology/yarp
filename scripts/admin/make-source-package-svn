@@ -25,7 +25,7 @@ mkdir -p $BASE
 cd $BASE
 
 if [ "k$1" = "k" ] ; then
-  URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
+  URL=https://github.com/robotology/yarp/trunk
   NAME=yarp
   #REV=$(svn info $URL|grep "^Last Changed Rev:"|sed -e 's|.*:\s*||')
   SVN_NAME=$(basename $URL)
@@ -55,7 +55,7 @@ EOF
 
 else
 
-  URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$1
+  URL=https://github.com/robotology/yarp/tags/$1
   PACKAGE="$1"
   SVN_NAME="$1"
 
