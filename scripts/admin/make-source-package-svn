@@ -121,7 +121,6 @@ cp windows/$PACKAGE.zip $PACKAGE
 cp unix/$PACKAGE.tar.gz $PACKAGE
 
 echo "You can now sync $BASE/$PACKAGE to sourceforge:"
-echo "cd $BASE"
-echo "rsync --recursive $PACKAGE YOUR_USERNAME,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2"
+echo "(cd $BASE && echo rsync --recursive $PACKAGE YOUR_USERNAME,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2)"
 
 
