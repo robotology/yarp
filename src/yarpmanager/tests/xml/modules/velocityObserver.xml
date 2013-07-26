@@ -7,11 +7,11 @@
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
         <param desc="module name (serves as port prefix)" default="velObs"> name </param>
-	<param desc="maximum window length for buffering the input data (used for the first derivative estimation)" default="16"> lenVel </param>
-	<param desc="maximum window length for buffering the input data (used for the second derivative estimation)" default="25"> lenAcc </param>
-	<param desc="maximum deviation threshold for the algorithm (used for the first derivative estimation)" default="" required="yes"> thrVel </param>
-	<param desc="maximum deviation threshold for the algorithm (used for the second derivative estimation)" default="1.0"> thrAcc </param>
-	<switch desc="display list of possible parameters"> help </switch>
+        <param desc="maximum window length for buffering the input data (used for the first derivative estimation)" default="16"> lenVel </param>
+        <param desc="maximum window length for buffering the input data (used for the second derivative estimation)" default="25"> lenAcc </param>
+        <param desc="maximum deviation threshold for the algorithm (used for the first derivative estimation)" default="" required="yes"> thrVel </param>
+        <param desc="maximum deviation threshold for the algorithm (used for the second derivative estimation)" default="1.0"> thrAcc </param>
+        <switch desc="display list of possible parameters"> help </switch>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -82,8 +82,7 @@
     <development>
         <header></header>
         <library>YARP</library>
-	<library>ctrlLib</library>
+        <library>ctrlLib</library>
     </development>
 
 </module>
-
