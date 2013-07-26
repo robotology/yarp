@@ -50,10 +50,10 @@ EOF
   PACKAGE="yarp-$YARP_VERSION"
 
 else
-
-  URL=https://github.com/robotology/yarp/tags/$1
+  TAG=`echo $1 | sed "s/yarp-/v/"`
+  URL=https://github.com/robotology/yarp/tags/$TAG
   PACKAGE="$1"
-  SVN_NAME="$1"
+  SVN_NAME="$TAG"
 
 fi
 
@@ -122,6 +122,6 @@ cp unix/$PACKAGE.tar.gz $PACKAGE
 
 echo "You can now sync $BASE/$PACKAGE to sourceforge:"
 echo "cd $BASE"
-echo "rsync --recursive yarp-2.3.14 YOUR_USERNATE,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2"
+echo "rsync --recursive $PACKAGE YOUR_USERNAME,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2"
 
 
