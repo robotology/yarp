@@ -286,7 +286,7 @@ for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 	if $add_debug; then
 		cp $YARP_DIR_DBG_UNIX/install/lib/$d/YARP-*.cmake $d
 	fi
-	sed -i '/SET.YARP_LIBRARIES/ i \
+	sed -i '/set.YARP_LIBRARIES/ i \
 	get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)' YARPConfig.cmake
 	sed -i "s|[^\"]*YARP.cmake|\${YARP_CMAKE}/../lib/${d}/YARP.cmake|" YARPConfig.cmake
 	sed -i 's|[^"]*/install|${YARP_CMAKE}/..|g' YARPConfig.cmake
