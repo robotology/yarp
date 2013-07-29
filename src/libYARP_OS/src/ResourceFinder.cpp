@@ -1053,9 +1053,9 @@ ConstString ResourceFinder::getConfigHome() {
 #endif
 
 #ifdef __APPLE__
-    ConstString home_version= getDataHome();
-    if (home_version != "") {
-        return home_version
+    ConstString home_mac_version= getDataHome();
+    if (home_mac_version != "") {
+        return home_mac_version
             + slash + "config";
     }
 #endif
