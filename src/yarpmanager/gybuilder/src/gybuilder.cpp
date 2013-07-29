@@ -22,6 +22,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/ResourceFinderOptions.h>
 #include <yarp/os/Os.h>
 
 #include "main_window.h"
@@ -140,13 +141,18 @@ int main(int __argc, char *__argv[])
     yarp::os::Bottle appPaths;
     if(!config.check("apppath"))
     {
-      
-       appPaths= rf.findPaths("applications");
+        appPaths= rf.findPaths("applications");
+        yarp::os::ResourceFinderOptions findRobotScripts;
+        findRobotScripts.searchLocations=yarp::os::ResourceFinderOptions::Robot;
+        yarp::os::Bottle appPaths2=rf.findPaths("scripts", findRobotScripts);
+//        yarp::os::Bottle appPaths2=rf.findPaths("scripts");
        //std::cout << "app path : " << appPaths.toString()<< std::endl;
-       string appPathsStr="";
-       for (int ind=0; ind < appPaths.size(); ++ind)
-           appPathsStr += (appPaths.get(ind).asString() + ";").c_str() ;
-       config.put("apppath", appPathsStr.c_str());
+        string appPathsStr="";
+        for (int ind=0; ind < appPaths.size(); ++ind)
+            appPathsStr += (appPaths.get(ind).asString() + ";").c_str() ;
+        for (int ind=0; ind < appPaths2.size(); ++ind)
+            appPathsStr += (appPaths2.get(ind).asString() + ";").c_str() ;
+        config.put("apppath", appPathsStr.c_str());
     }
 
     if(!config.check("modpath"))

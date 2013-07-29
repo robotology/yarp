@@ -109,7 +109,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
         string strPath;
         stringstream appPaths(config.find("apppath").asString().c_str());
         while (getline(appPaths, strPath, ';'))
-        {            
+        {
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
@@ -122,6 +122,22 @@ MainWindow::MainWindow( yarp::os::Property &config)
             }
             else
                 lazyManager.addApplications(strPath.c_str()); 
+        }
+    }
+
+    if (config.check("templpath"))
+    {
+        string strPath;
+        stringstream appPaths(config.find("templpath").asString().c_str());
+        while (getline(appPaths, strPath, ';'))
+        {
+            trimString(strPath);
+            if (!isAbsolute(strPath.c_str()))
+                strPath=basepath+strPath;
+
+            if(!loadRecursiveTemplates(strPath.c_str()))
+                    logger->addError("Cannot load the templates from  " + strPath);                   
+
         }
     }
 
