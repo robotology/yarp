@@ -61,15 +61,18 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 #########################################################################
 # Encourage user to specify build type.
 
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "Setting build type to 'Release' as none was specified.")
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+if(NOT CMAKE_CONFIGURATION_TYPES)
+    if(NOT CMAKE_BUILD_TYPE)
+        message(STATUS "Setting build type to 'Release' as none was specified.")
+        set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+    endif()
+    set(YARP_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    if (CMAKE_COMPILER_IS_GNUCXX)
+        list(APPEND YARP_BUILD_TYPES "DebugFull" "Profile")
+    endif()
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_BUILD_TYPES})
 endif()
-set(YARP_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-if (CMAKE_COMPILER_IS_GNUCXX)
-    list(APPEND YARP_BUILD_TYPES "DebugFull" "Profile")
-endif()
-set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_BUILD_TYPES})
+
 
 #########################################################################
 # Simplify compilation of portable binaries.
