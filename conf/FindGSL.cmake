@@ -120,3 +120,9 @@ mark_as_advanced(${GSL_MARK}
                  GSLCBLAS_LIBRARY
                  GSL_BLAS_HEADER
                  GSL_LIBRARY)
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(GSL PROPERTIES DESCRIPTION "GNU Scientific Library, a numerical library for C and C++ programmers"
+                                          URL "https://www.gnu.org/software/gsl/")
+endif()

@@ -18,11 +18,16 @@ endforeach(conf)
 set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpIDL.cmake
                      YarpDevice.cmake
+                     MacroExtractVersion.cmake
+                     MacroStandardFindModule.cmake
                      YarpDeprecatedWarning.cmake
+                     YarpInstallationHelpers.cmake
                      YarpCMakeWorkarounds.cmake
                      FindACE.cmake
                      FindAtlas.cmake
                      FindFFMPEG.cmake
+                     FindGooCanvas.cmake
+                     FindGooCanvasMM.cmake
                      FindGSL.cmake
                      FindGthread.cmake
                      FindGtkDatabox.cmake

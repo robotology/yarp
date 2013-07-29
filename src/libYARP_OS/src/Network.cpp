@@ -40,6 +40,8 @@
 #include <ace/String_Base.h>
 #endif
 
+#include <stdlib.h>
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
@@ -859,6 +861,42 @@ ConstString NetworkBase::getEnvironment(const char *key,
         return "";
     }
     return result;
+}
+
+void NetworkBase::setEnvironment(const char *key, const char *val) {
+#if defined(WIN32)
+    _putenv_s(key,val);
+#else
+    ACE_OS::setenv(key,val,1);
+#endif
+}
+
+void NetworkBase::unsetEnvironment(const char *key) {
+#if defined(WIN32)
+    _putenv_s(key,"");
+#else
+    ACE_OS::unsetenv(key);
+#endif
+}
+
+ConstString NetworkBase::getDirectorySeparator() {
+#ifdef _WIN32
+    // note this may be wrong under cygwin
+    // should be ok for mingw
+    return "\\";
+#else
+    return "/";
+#endif
+}
+
+ConstString NetworkBase::getPathSeparator() {
+#ifdef _WIN32
+    // note this may be wrong under cygwin
+    // should be ok for mingw
+    return ";";
+#else
+    return ":";
+#endif
 }
 
 void NetworkBase::lock() {

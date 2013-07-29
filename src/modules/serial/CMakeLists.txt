@@ -21,10 +21,11 @@ FIND_PACKAGE(ACE)
 
 IF (ACE_FOUND)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS} ${ACE_INCLUDE_DIRS})
-  LINK_LIBRARIES(${YARP_LIBRARIES} ${ACE_LIBRARIES})
   ADD_DEFINITIONS(${YARP_DEFINITIONS})
 
   YARP_ADD_PLUGIN(yarp_serial SerialDeviceDriver.cpp SerialDeviceDriver.h)
+  target_link_libraries(yarp_serial YARP_OS YARP_dev)
+  target_link_libraries(yarp_serial ${ACE_LIBRARIES})
 
 ELSE (ACE_FOUND)
 

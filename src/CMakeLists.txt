@@ -3,7 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 option(YARP_USE_PERSISTENT_NAMESERVER "Do you want a nameserver that stores its database in sqlite?" TRUE)
-
+include(YarpInstallationHelpers)
+yarp_configure_external_installation(yarp)
 # libraries
 add_subdirectory(libYARP_OS)
 add_subdirectory(libYARP_sig)

@@ -29,6 +29,9 @@ yarp::os::Searchable::Searchable() :
         monitor(NULL) {
 }
 
+yarp::os::Searchable::~Searchable() {
+}
+
 bool yarp::os::Searchable::check(const char *txt,
                                  yarp::os::Value *& result,
                                  const char *comment) {

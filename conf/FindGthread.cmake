@@ -100,3 +100,10 @@ if (NOT Gthread_FOUND)
     mark_as_advanced(Gthread_INCLUDE_DIRS Gthread_LIBRARIES)
 
 endif (NOT Gthread_FOUND)
+
+
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(Gthread PROPERTIES DESCRIPTION "Glib thread library"
+                                              URL "http://developer.gnome.org/glib/")
+endif()

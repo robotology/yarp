@@ -434,6 +434,39 @@ public:
     static ConstString getEnvironment(const char *key,
                                       bool *found = 0/*NULL*/);
 
+    /**
+     *
+     * Set or change an environment variable.
+     *
+     * @param key the variable to set or change
+     * @param val the target value
+     *
+     */
+    static void setEnvironment(const char *key,const char *val);
+
+    /**
+     *
+     * Remove an environment variable.
+     *
+     * @param key the variable to remove
+     *
+     */
+    static void unsetEnvironment(const char *key);
+
+
+    /**
+     *
+     * Get an OS-appropriate directory separator (e.g. "/" on linux)
+     *
+     */
+    static ConstString getDirectorySeparator();
+
+    /**
+     *
+     * Get an OS-appropriate path separator (e.g. ":" on linux)
+     *
+     */
+    static ConstString getPathSeparator();
 
     /**
      *

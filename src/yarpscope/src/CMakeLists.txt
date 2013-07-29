@@ -19,10 +19,6 @@ include_directories(${TinyXML_INCLUDE_DIRS}
                     ${GtkDataboxMM_INCLUDE_DIRS}
 )
 
-link_directories(${TinyXML_LIBRARY_DIRS}
-                 ${GtkDataboxMM_LIBRARY_DIRS}
-)
-
 if(WIN32)
     add_definitions(/wd4250)
 endif(WIN32)

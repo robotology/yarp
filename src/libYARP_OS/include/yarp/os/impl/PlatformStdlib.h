@@ -43,11 +43,21 @@
 #ifdef __linux__
 #define YARP_DIRENT dirent
 #define YARP_readdir ::readdir
+#define YARP_scandir ::scandir
 #define YARP_closedir ::closedir
+#define YARP_alphasort ::alphasort
+#define YARP_unlink ::unlink
+#define YARP_opendir ::opendir
+#define YARP_stat ::stat
 #else
 #define YARP_DIRENT ACE_DIRENT
 #define YARP_readdir ACE_OS::readdir
 #define YARP_closedir ACE_OS::closedir
+#define YARP_scandir ACE_OS::scandir
+#define YARP_alphasort (ACE_SCANDIR_COMPARATOR)ACE_OS::alphasort
+#define YARP_unlink ACE_OS::unlink
+#define YARP_opendir ACE_OS::opendir
+#define YARP_stat ACE_OS::stat
 #endif
 
 #endif

@@ -60,7 +60,7 @@ int main(int __argc, char *__argv[])
     // Setup resource finder
     yarp::os::ResourceFinder rf;
     rf.setVerbose(false);
-    rf.setDefaultContext("");
+//    rf.setDefaultContext("");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(__argc, __argv);
 

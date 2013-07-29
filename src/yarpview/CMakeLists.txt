@@ -32,7 +32,7 @@ if(CREATE_YARPVIEW)
         add_executable(yarpview ${folder_source} ${folder_header})
     endif(WIN32 AND NOT CYGWIN)
 
-    target_link_libraries(yarpview YARP_sig YARP_init)
+    target_link_libraries(yarpview YARP_OS YARP_sig YARP_init)
     target_link_libraries(yarpview ${ACE_LIBRARIES})
 
     if(YARP_USE_GTK2)
@@ -49,5 +49,12 @@ if(CREATE_YARPVIEW)
     endif(YARP_USE_GTK2)
 
     install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
+
+    yarp_install(FILES yarpview.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
+    #configure_file(yarpview.xml ${CMAKE_BINARY_DIR}/modules/yarpview.xml COPYONLY)
+    #if(YARP_TREE_INCLUDE_DIRS)
+    #    install(FILES ${CMAKE_BINARY_DIR}/modules/yarpview.xml
+    #            DESTINATION share/yarp/modules)
+    #endif(YARP_TREE_INCLUDE_DIRS)
 
 endif(CREATE_YARPVIEW)

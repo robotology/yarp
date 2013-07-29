@@ -18,6 +18,7 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Time.h>
 
 #include <errno.h>
 
@@ -25,7 +26,7 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 #define RTARGET stderr
-
+#define RESOURCE_FINDER_CACHE_TIME 10
 
 static ConstString expandUserFileName(const char *fname) {
     ConstString root = NetworkBase::getEnvironment("YARP_CONF");
@@ -69,12 +70,69 @@ static ConstString getPwd() {
 }
 
 
+static Bottle parsePaths(const ConstString& txt) {
+    char slash = NetworkBase::getDirectorySeparator()[0];
+    char sep = NetworkBase::getPathSeparator()[0];
+    Bottle result;
+    const char *at = txt.c_str();
+    int slash_tweak = 0;
+    int len = 0;
+    for (int i=0; i<txt.length(); i++) {
+        char ch = txt[i];
+        if (ch==sep) {
+            result.addString(ConstString(at,len-slash_tweak));
+            at += len+1;
+            len = 0;
+            slash_tweak = 0;
+            continue;
+        }
+        slash_tweak = (ch==slash && len>0)?1:0;
+        len++;
+    }
+    if (len>0) {
+        result.addString(ConstString(at,len-slash_tweak));
+    }
+    return result;
+}
+
+
+static void appendResourceType(ConstString& path,
+                               const ConstString& resourceType) {
+    if (resourceType=="") return;
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    if (path.length()>0) {
+        if (path[path.length()-1] != slash[0]) {
+            path += NetworkBase::getDirectorySeparator();
+        }
+    }
+    path += resourceType;
+}
+
+static void prependResourceType(ConstString& path,
+                                const ConstString& resourceType) {
+    if (resourceType=="") return;
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    path = resourceType + NetworkBase::getDirectorySeparator() + path;
+}
+
+static void appendResourceType(Bottle& paths,
+                               const ConstString& resourceType) {
+    if (resourceType=="") return;
+    for (int i=0; i<paths.size(); i++) {
+        ConstString txt = paths.get(i).asString();
+        appendResourceType(txt,resourceType);
+        paths.get(i) = Value(txt);
+    }
+}
+
+
 class ResourceFinderHelper {
 private:
     yarp::os::Bottle apps;
     yarp::os::ConstString root;
     yarp::os::ConstString configFilePath;
     yarp::os::ConstString policyName;
+    yarp::os::Property cache;
     bool verbose;
     bool quiet;
 public:
@@ -91,6 +149,10 @@ public:
     bool clearAppNames() {
         apps.clear();
         return true;
+    }
+
+    bool isVerbose() const {
+        return verbose;
     }
 
     static ConstString extractPath(const char *fname) {
@@ -265,10 +327,10 @@ public:
             skip_policy = true;
         }
 
+        bool configured_normally = true;
         if (!skip_policy) {
             config.fromString(p.toString().c_str(),false);
-            bool result = configureFromPolicy(config,name.c_str());
-            if (!result) return result;
+            configured_normally = configureFromPolicy(config,name.c_str());
         }
 
         if (p.check("context")) {
@@ -289,7 +351,7 @@ public:
                 fprintf(RTARGET,"||| default config file specified as %s\n",
                         from.c_str());
             }
-            ConstString corrected = findFile(config,from.c_str());
+            ConstString corrected = findFile(config,from.c_str(),NULL);
             if (corrected!="") {
                 from = corrected;
             }
@@ -298,7 +360,7 @@ public:
             config.fromConfigFile(from,false);
             config.fromCommand(argc,argv,skip,false);
         }
-        return true;
+        return configured_normally;
     }
 
     bool setDefault(Property& config, const char *key, const char *val) {
@@ -338,21 +400,16 @@ public:
                                   const char *base2,
                                   const char *base3,
                                   const char *name) {
-        if (name[0]=='/') {
+        if (isAbsolute(name)) {
             return name;
         }
-#ifdef WIN32
-        if (name[0]!='\0') {
-            if (name[1]==':') {
-                return name;
-            }
-        }
-#endif
         ConstString s = "";
         if (base1!=NULL) {
-            s = base1;
-            if (ConstString(base1)!="") {
-                s = s + "/";
+            if (base1[0]!='\0') {
+                s = base1;
+                if (ConstString(base1)!="") {
+                    s = s + "/";
+                }
             }
         }
         if (base2!=NULL) {
@@ -385,104 +442,330 @@ public:
                                 const char *base2,
                                 const char *base3,
                                 const char *name,
-                                bool isDir) {
+                                bool isDir,
+                                const Bottle& doc,
+                                const char *doc2) {
         ConstString s = getPath(base1,base2,base3,name);
 
-        if (verbose) {
-            fprintf(RTARGET,"||| checking %s\n", s.c_str());
+        // check cache first
+        Bottle *prev = cache.find(s).asList();
+        if (prev!=NULL) {
+            double t = prev->get(0).asDouble();
+            int flag = prev->get(1).asInt();
+            if (Time::now()-t<RESOURCE_FINDER_CACHE_TIME) {
+                if (flag) return s;
+                return "";
+            }
         }
-        if (exists(s.c_str(),isDir)) {
+
+        if (verbose) {
+            ConstString base = doc.toString();
+            fprintf(RTARGET,"||| checking [%s] (%s%s%s)\n", s.c_str(), 
+                    base.c_str(),
+                    (base.length()==0) ? "" : " ",
+                    doc2);
+        }
+        bool ok = exists(s.c_str(),isDir);
+        Value status;
+        YARP_ASSERT(status.asList());
+        status.asList()->addDouble(Time::now());
+        status.asList()->addInt(ok?1:0);
+        cache.put(s,status);
+        if (ok) {
             if (verbose) {
                 fprintf(RTARGET,"||| found %s\n", s.c_str());
             }
-            return s.c_str();
+            return s;
         }
         return "";
     }
 
-    yarp::os::ConstString findPath(Property& config, const char *name) {
+    yarp::os::ConstString findPath(Property& config, const char *name,
+                                   const ResourceFinderOptions *externalOptions) {
+
         ConstString fname = config.check(name,Value(name)).asString();
-        ConstString result = findFileBase(config,fname,true);
+        ConstString result = findFileBase(config,fname,true,externalOptions);
         return result;
     }
 
-    yarp::os::Bottle findPaths(Property& config, const char *name) {
+    yarp::os::Bottle findPaths(Property& config, const char *name,
+                               const ResourceFinderOptions *externalOptions,
+                               bool enforcePlural = true) {
         ConstString fname = config.check(name,Value(name)).asString();
         Bottle paths;
-        findFileBase(config,fname,true,paths,false);
+        if (externalOptions) {
+            if (externalOptions->duplicateFilesPolicy == ResourceFinderOptions::All) {
+                findFileBase(config,fname,true,paths,*externalOptions);
+                return paths;
+            }
+        }
+        ResourceFinderOptions opts;
+        if (externalOptions) {
+            opts = *externalOptions;
+        }
+        if (enforcePlural) {
+            opts.duplicateFilesPolicy = ResourceFinderOptions::All;
+        }
+        findFileBase(config,fname,true,paths,opts);
         return paths;
     }
 
     yarp::os::ConstString findPath(Property& config) {
-        ConstString result = findFileBase(config,"",true);
+        ConstString result = findFileBase(config,"",true,NULL);
 		if (result=="") result = getPwd();
         return result;
     }
 
-    yarp::os::ConstString findFile(Property& config, const char *name) {
+    yarp::os::ConstString findFile(Property& config, const char *name,
+                                   const ResourceFinderOptions *externalOptions) {
         ConstString fname = config.check(name,Value(name)).asString();
-        ConstString result = findFileBase(config,fname,false);
+        ConstString result = findFileBase(config,fname,false,externalOptions);
         return result;
     }
 
     yarp::os::ConstString findFileBase(Property& config, const char *name,
-                                       bool isDir) {
+                                       bool isDir, 
+                                       const ResourceFinderOptions *externalOptions) {
         Bottle output;
-        findFileBase(config,name,isDir,output,true);
+        ResourceFinderOptions opts;
+        if (externalOptions==NULL) externalOptions = &opts;
+        findFileBase(config,name,isDir,output,*externalOptions);
         return output.get(0).asString();
     }
 
     void findFileBase(Property& config, const char *name,
                       bool isDir,
-                      Bottle& output, bool justTop) {
-
-        ConstString cap =
-            config.check("capability_directory",Value("app")).asString();
-        Bottle defCaps =
-            config.findGroup("default_capability").tail();
-
-        // check current directory
-		if (ConstString(name)==""&&isDir) {
-            output.addString(getPwd());
-            if (justTop) return;
-        }
-        ConstString str = check(getPwd(),"","",name,isDir);
-        if (str!="") {
-            output.addString(str);
-            if (justTop) return;
-        }
-
-        if (configFilePath!="") {
-            ConstString str = check(configFilePath.c_str(),"","",name,isDir);
-            if (str!="") {
-                output.addString(str);
-                if (justTop) return;
-            }
-        }
-
-        // check app dirs
-        for (int i=0; i<apps.size(); i++) {
-            str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
-                        name,isDir);
-            if (str!="") {
-                output.addString(str);
-                if (justTop) return;
-            }
-        }
-
-        // check ROOT/app/default/
-        for (int i=0; i<defCaps.size(); i++) {
-            str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
-                        name,isDir);
-            if (str!="") {
-                output.addString(str);
-                if (justTop) return;
-            }
-        }
-
+                      Bottle& output, const ResourceFinderOptions& opts) {
+        Bottle doc;
+        int prelen = output.size();
+        findFileBaseInner(config,name,isDir,true,output,opts,doc,NULL);
+        if (output.size()!=prelen) return;
+        bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
         if (justTop) {
             if (!quiet) {
                 fprintf(RTARGET,"||| did not find %s\n", name);
+            }
+        }
+    }
+
+    void addString(Bottle& output, const ConstString& txt) {
+        for (int i=0; i<output.size(); i++) {
+            if (txt == output.get(i).asString()) return;
+        }
+        output.addString(txt);
+    }
+
+    void findFileBaseInner(Property& config, const char *name,
+                           bool isDir, bool allowPathd,
+                           Bottle& output, const ResourceFinderOptions& opts,
+                           const Bottle& predoc, const char *reason) {
+        Bottle doc;
+        if (verbose) {
+            doc = predoc;
+            if (reason) {
+                doc.addString(reason);
+            }
+        }
+        ResourceFinderOptions::SearchLocations locs = opts.searchLocations;
+        ResourceFinderOptions::SearchFlavor flavor = opts.searchFlavor;
+        ConstString resourceType = opts.resourceType;
+
+        bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
+
+        // check current directory
+        if (locs & ResourceFinderOptions::Directory) {
+            if (ConstString(name)==""&&isDir) {
+                addString(output,getPwd());
+                if (justTop) return;
+            }
+            ConstString str = check(getPwd(),resourceType,"",name,isDir,doc,"pwd");
+            if (str!="") {
+                addString(output,str);
+                if (justTop) return;
+            }
+        }
+
+        if (locs & ResourceFinderOptions::NearMainConfig) {
+            if (configFilePath!="") {
+                ConstString str = check(configFilePath.c_str(),resourceType,"",name,isDir,doc,"defaultConfigFile path");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        if (locs & ResourceFinderOptions::ClassicContext) {
+            ConstString cap =
+                config.check("capability_directory",Value("app")).asString();
+            Bottle defCaps =
+                config.findGroup("default_capability").tail();
+
+            // check app dirs
+            for (int i=0; i<apps.size(); i++) {
+                ConstString str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
+                                        name,isDir,doc,"deprecated-old-style-context");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+
+            // check ROOT/app/default/
+            for (int i=0; i<defCaps.size(); i++) {
+                ConstString str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
+                                        name,isDir,doc,"deprecated-old-style-context");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        if (locs & ResourceFinderOptions::Context) {
+            for (int i=0; i<apps.size(); i++) {
+                ConstString app = apps.get(i).asString();
+
+                // New context still apparently applies only to "applications"
+                // which means we need to restrict our attention to "app"
+                // directories.  
+
+                // Nested search to locate context directory
+                Bottle paths;
+                ResourceFinderOptions opts2;
+                prependResourceType(app,"contexts");
+                opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
+                findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
+                appendResourceType(paths,resourceType);
+                for (int j=0; j<paths.size(); j++) {
+                    ConstString str = check(paths.get(j).asString().c_str(),"","",
+                                            name,isDir,doc,"context");
+                    if (str!="") {
+                        addString(output,str);
+                        if (justTop) return;
+                    }
+                }
+            }
+        }
+
+        // check YARP_CONFIG_HOME
+        if ((locs & ResourceFinderOptions::User) &&
+            (flavor & ResourceFinderOptions::ConfigLike)) {
+            ConstString home = ResourceFinder::getConfigHome();
+            if (home!="") {
+                appendResourceType(home,resourceType);
+                ConstString str = check(home.c_str(),"","",name,isDir,
+                                        doc,"YARP_CONFIG_HOME");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        // check YARP_DATA_HOME
+        if ((locs & ResourceFinderOptions::User) &&
+            (flavor & ResourceFinderOptions::DataLike)) {
+            ConstString home = ResourceFinder::getDataHome();
+            if (home!="") {
+                appendResourceType(home,resourceType);
+                ConstString str = check(home.c_str(),"","",name,isDir,
+                                        doc,"YARP_DATA_HOME");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        // check YARP_CONFIG_DIRS
+        if (locs & ResourceFinderOptions::Sysadmin) {
+            Bottle dirs = ResourceFinder::getConfigDirs();
+            appendResourceType(dirs,resourceType);
+            for (int i=0; i<dirs.size(); i++) {
+                ConstString str = check(dirs.get(i).asString().c_str(),
+                                        "","",name,isDir,
+                                        doc,"YARP_CONFIG_DIRS");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        // check YARP_DATA_DIRS
+        if (locs & ResourceFinderOptions::Installed) {
+            Bottle dirs = ResourceFinder::getDataDirs();
+            appendResourceType(dirs,resourceType);
+            for (int i=0; i<dirs.size(); i++) {
+                ConstString str = check(dirs.get(i).asString().c_str(),
+                                        "","",name,isDir,
+                                        doc,"YARP_DATA_DIRS");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        if (allowPathd && (locs & ResourceFinderOptions::Installed)) {
+            // Nested search to locate path.d directories
+            Bottle pathds;
+            ResourceFinderOptions opts2;
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::NearMainConfig));
+            opts2.resourceType = "config";
+            findFileBaseInner(config,"path.d",true,false,pathds,opts2,doc,"path.d");
+
+            for (int i=0; i<pathds.size(); i++) {
+                // check /.../path.d/*
+                // this directory is expected to contain *.ini files like this:
+                //   [search BUNDLE_NAME]
+                //   path /PATH1 /PATH2
+                // for example:
+                //   [search icub]
+                //   path /usr/share/iCub
+                Property pathd;
+                pathd.fromConfigFile(pathds.get(i).asString());
+                Bottle sections = pathd.findGroup("search").tail();
+                for (int i=0; i<sections.size(); i++) {
+                    ConstString search_name = sections.get(i).asString();
+                    Bottle group = pathd.findGroup(search_name);
+                    Bottle paths = group.findGroup("path").tail();
+                    appendResourceType(paths,resourceType);
+                    for (int j=0; j<paths.size(); j++) {
+                        ConstString str = check(paths.get(j).asString().c_str(),"","",
+                                                name,isDir,doc,"yarp.d");
+                        if (str!="") {
+                            addString(output,str);
+                            if (justTop) return;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (locs & ResourceFinderOptions::Robot) {
+            ConstString slash = NetworkBase::getDirectorySeparator();
+            bool found = false;
+            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+                                                            &found);
+            if (!found) robot = "default";
+
+            // Nested search to locate robot directory
+            Bottle paths;
+            ResourceFinderOptions opts2;
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
+            opts2.resourceType = "robots";
+            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
+            appendResourceType(paths,resourceType);
+            for (int j=0; j<paths.size(); j++) {
+                ConstString str = check(paths.get(j).asString().c_str(),
+                                        "","",
+                                        name,isDir,doc,"robot");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
             }
         }
     }
@@ -581,15 +864,25 @@ ResourceFinder::~ResourceFinder() {
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
                                bool skipFirstArgument) {
     isConfiguredFlag = true;
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| configuring\n");
+    }
     return HELPER(implementation).configure(config,policyName,argc,argv,
                                             skipFirstArgument);
 }
 
 bool ResourceFinder::addContext(const char *appName) {
+    if (appName[0]=='\0') return true;
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| adding context [%s]\n", appName);
+    }
     return HELPER(implementation).addAppName(appName);
 }
 
 bool ResourceFinder::clearContext() {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| clearing context\n");
+    }
     return HELPER(implementation).clearAppNames();
 }
 
@@ -599,18 +892,54 @@ bool ResourceFinder::setDefault(const char *key, const char *val) {
 
 
 yarp::os::ConstString ResourceFinder::findFile(const char *name) {
-    return HELPER(implementation).findFile(config,name);
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding file [%s]\n", name);
+    }
+    return HELPER(implementation).findFile(config,name,NULL);
+}
+
+yarp::os::ConstString ResourceFinder::findFile(const char *name,
+                                               const ResourceFinderOptions& options) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding file [%s]\n", name);
+    }
+    return HELPER(implementation).findFile(config,name,&options);
 }
 
 yarp::os::ConstString ResourceFinder::findPath(const char *name) {
-    return HELPER(implementation).findPath(config,name);
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding path [%s]\n", name);
+    }
+    return HELPER(implementation).findPath(config,name,NULL);
+}
+
+yarp::os::ConstString ResourceFinder::findPath(const char *name,
+                                               const ResourceFinderOptions& options) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding path [%s]\n", name);
+    }
+    return HELPER(implementation).findPath(config,name,&options);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const char *name) {
-    return HELPER(implementation).findPaths(config,name);
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding paths [%s]\n", name);
+    }
+    return HELPER(implementation).findPaths(config,name,NULL);
+}
+
+yarp::os::Bottle ResourceFinder::findPaths(const char *name,
+                                           const ResourceFinderOptions& options) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding paths [%s]\n", name);
+    }
+    return HELPER(implementation).findPaths(config,name,&options);
 }
 
 yarp::os::ConstString ResourceFinder::findPath() {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding path\n");
+    }
     return HELPER(implementation).findPath(config);
 }
 
@@ -670,4 +999,146 @@ ResourceFinder ResourceFinder::findNestedResourceFinder(const char *key) {
 
 ResourceFinder& ResourceFinder::getResourceFinderSingleton() {
     return NameClient::getNameClient().getResourceFinder();
+}
+
+
+ConstString ResourceFinder::getDataHome() {
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    bool found = false;
+    ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
+                                                           &found);
+    if (yarp_version != "") return yarp_version;
+    ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
+                                                          &found);
+    if (found) return xdg_version + slash + "yarp";
+#ifdef _WIN32
+    ConstString app_version = NetworkBase::getEnvironment("APPDATA");
+    if (app_version != "") {
+        return app_version + slash + "yarp";
+    }
+#endif
+    ConstString home_version = NetworkBase::getEnvironment("HOME");
+#ifdef __APPLE__
+    if (home_version != "") {
+        return home_version
+            + slash + "Library"
+            + slash + "Application Support"
+            + slash + "yarp";
+    }
+#endif
+    if (home_version != "") {
+        return home_version
+            + slash + ".local"
+            + slash + "share"
+            + slash + "yarp";
+    }
+    return "";
+}
+
+
+ConstString ResourceFinder::getConfigHome() {
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    bool found = false;
+    ConstString yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
+                                                           &found);
+    if (found) return yarp_version;
+    ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
+                                                          &found);
+    if (found) return xdg_version + slash + "yarp";
+#ifdef _WIN32
+    ConstString app_version = NetworkBase::getEnvironment("APPDATA");
+    if (app_version != "") {
+        return app_version + slash + "yarp" + slash + "config";
+    }
+#endif
+
+#ifdef __APPLE__
+    ConstString home_version= getDataHome();
+    if (home_version != "") {
+        return home_version
+            + slash + "config";
+    }
+#endif
+    ConstString home_version = NetworkBase::getEnvironment("HOME");
+    if (home_version != "") {
+        return home_version
+            + slash + ".config"
+            + slash + "yarp";
+    }
+    return "";
+}
+
+
+Bottle ResourceFinder::getDataDirs() {
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    bool found = false;
+    Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_DATA_DIRS",
+                                                                 &found));
+    if (found) return yarp_version;
+    Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_DATA_DIRS",
+                                                                &found));
+    if (found) {
+        appendResourceType(xdg_version,"yarp");
+        return xdg_version;
+    }
+#ifdef _WIN32
+    ConstString app_version = NetworkBase::getEnvironment("YARP_DIR");
+    if (app_version != "") {
+        appendResourceType(app_version,"share");
+        appendResourceType(app_version,"yarp");
+        Bottle result;
+        result.addString(app_version);
+        return result;
+    }
+#endif
+    Bottle result;
+    result.addString("/usr/local/share/yarp");
+    result.addString("/usr/share/yarp");
+    return result;
+}
+
+
+Bottle ResourceFinder::getConfigDirs() {
+    ConstString slash = NetworkBase::getDirectorySeparator();
+    bool found = false;
+    Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_CONFIG_DIRS",
+                                                                 &found));
+    if (found) return yarp_version;
+    Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_CONFIG_DIRS",
+                                                                &found));
+    if (found) {
+        appendResourceType(xdg_version,"yarp");
+        return xdg_version;
+    }
+#ifdef _WIN32
+    ConstString app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
+    if (app_version != "") {
+        appendResourceType(app_version,"yarp");
+        Bottle result;
+        result.addString(app_version);
+        return result;
+    }
+#endif
+
+    Bottle result;
+#ifdef __APPLE__
+    result.addString("/Library/Preferences/yarp");
+#endif
+    result.addString("/etc/yarp");
+    return result;
+}
+
+
+
+bool ResourceFinder::readConfig(Property& config,
+                                const char *key,
+                                const ResourceFinderOptions& options) {
+    Bottle bot = HELPER(implementation).findPaths(config,key,&options,false);
+
+    for (int i=bot.size()-1; i>=0; i--) {
+        ConstString fname = bot.get(i).asString();
+        config.fromConfigFile(fname,false);
+    }
+
+    return bot.size()>=1;
 }

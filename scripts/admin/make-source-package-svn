@@ -8,7 +8,7 @@
 
 function prune {
     cd $1
-    for f in scripts/debian scripts/junkyard src/modules/dimax_u2c/blob .gitattributes .gitignore .mailmap; do
+    for f in scripts/debian src/modules/dimax_u2c/blob .gitattributes .gitignore .mailmap; do
         echo "Removing $f"
         rm -rf $f
     done

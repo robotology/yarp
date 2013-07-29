@@ -15,6 +15,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinderOptions.h>
 
 namespace yarp {
     namespace os {
@@ -152,8 +153,6 @@ public:
 
     /**
      *
-     * WARNING: This is a stub, not implemented yet.
-     *
      * Expand a partial path to a list of paths.
      * Like findPath(key), but continues on to find all
      * instances of the path.
@@ -234,6 +233,93 @@ public:
 
     using Searchable::check;
     using Searchable::findGroup;
+
+
+    /* YARP 2.4 changes begin */
+
+    /**
+     *
+     * Location where user data files are stored.
+     * If $YARP_DATA_HOME is set, that is returned.
+     * Otherwise:
+     *   If $XDG_DATA_HOME is set, "yarp" is appended to it after the 
+     *   OS-appropriate directory separator, and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %APPDATA%\yarp is returned.
+     *     On Linux and all others:
+     *       $HOME/.local/share is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static ConstString getDataHome();
+
+    /**
+     *
+     * Location where user config files are stored.
+     * If $YARP_CONFIG_HOME is set, that is returned.
+     * Otherwise:
+     *   If $XDG_CONFIG_HOME is set, "yarp" is appended to it after the 
+     *   OS-appropriate directory separator, and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %APPDATA%\yarp\config is returned.
+     *     On Linux and all others:
+     *       $HOME/.config/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static ConstString getConfigHome();
+
+    /**
+     *
+     * Locations where packaged data and config files are stored.
+     * If $YARP_DATA_DIRS is set, that is returned.
+     * Otherwise:
+     *   If $XDG_DATA_DIRS is set, "/yarp" or "\yarp" as appropriate
+     *   is appended to each path and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %YARP_DIR%\share\yarp
+     *     On Linux and all others:
+     *       /usr/local/share/yarp:/usr/share/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static Bottle getDataDirs();
+
+    /**
+     *
+     * Locations where system administrator data and config files are stored.
+     * If $YARP_CONFIG_DIRS is set, that is returned.
+     * Otherwise:
+     *   If $XDG_CONFIG_DIRS is set, "/yarp" or "\yarp" as appropriate
+     *   is appended to each path and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %ALLUSERSPROFILE%\yarp
+     *     On Linux and all others:
+     *       /etc/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     */
+    static Bottle getConfigDirs();
+
+    yarp::os::Bottle findPaths(const char *key,
+                               const ResourceFinderOptions& options);
+
+    yarp::os::ConstString findPath(const char *key,
+                                   const ResourceFinderOptions& options);
+
+    yarp::os::ConstString findFile(const char *key,
+                                   const ResourceFinderOptions& options);
+
+    bool readConfig(Property& config,
+                    const char *key,
+                    const ResourceFinderOptions& options);
+
+    /* YARP 2.4 changes end */
+
 private:
 
     // this might be useful, but is not in spec

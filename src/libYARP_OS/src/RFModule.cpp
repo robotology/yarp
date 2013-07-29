@@ -43,8 +43,7 @@ void yarp::os::impl::getTime(ACE_Time_Value& now) {
 #endif
 }
 
-void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period)
-{
+void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period) {
 #ifdef YARP_HAS_ACE
     if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
         sleep_period.set(0,0);
@@ -152,44 +151,35 @@ public:
         //owner.interruptModule();
     }
 
-    bool attach(yarp::os::Port& source)
-    {
+    bool attach(yarp::os::Port& source) {
         attachedToPort=true;
         source.setReader(*this);
         return true;
     }
 
-    bool attach(yarp::os::RpcServer& source)
-    {
+    bool attach(yarp::os::RpcServer& source) {
         attachedToPort=true;
         source.setReader(*this);
         return true;
     }
 
-    bool attachTerminal()
-    {
+    bool attachTerminal() {
         attachedTerminal=true;
 
         Thread::start();
         return true;
     }
 
-    bool isTerminalAttached()
-    {
+    bool isTerminalAttached() {
         return attachedTerminal;
     }
 
-    bool detachTerminal()
-    {
+    bool detachTerminal() {
         fprintf(stderr, "Critial: stopping thread, this might hang\n");
         Thread::stop();
         fprintf(stderr, "done!\n");
         return true;
     }
-
-private:
-public:
-
 };
 
 bool RFModuleHelper::read(ConnectionReader& connection) {
@@ -226,6 +216,7 @@ bool RFModuleHelper::read(ConnectionReader& connection) {
 #define HELPER(x) (*((RFModuleHelper*)(x)))
 
 static RFModule *module = 0;
+
 static void handler (int sig) {
     static int ct = 0;
     ct++;
@@ -256,8 +247,7 @@ static void handler (int sig) {
 // the signal handler. We could not find better way to handle clean remote shutdown of
 // processes in windows.
 #if defined(WIN32)
-static void handler_sigbreak(int sig)
-{
+static void handler_sigbreak(int sig) {
     raise(SIGINT);
 }
 #endif
@@ -290,44 +280,8 @@ RFModule::~RFModule() {
     }
 }
 
- /**
-* Attach this object to a source of messages.
-* @param source a BufferedPort or PortReaderBuffer that
-* receives data.
-*/
-bool RFModule::attach(yarp::os::Port &source) {
-    HELPER(implementation).attach(source);
-    return true;
-}
-
-bool RFModule::attach(yarp::os::RpcServer &source) {
-    HELPER(implementation).attach(source);
-    return true;
-}
-
-bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
-    switch (command.get(0).asVocab()) {
-    case VOCAB4('q','u','i','t'):
-    case VOCAB4('e','x','i','t'):
-    case VOCAB3('b','y','e'):
-        reply.addVocab(Vocab::encode("bye"));
-        stopModule(false); //calls interruptModule()
-   //     interruptModule();
-        return true;
-    default:
-        reply.add("command not recognized");
-        return false;
-    }
-    return false;
-}
-
-bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
-    bool ok = respond(command,reply);
-    if (!ok) {
-        // just in case derived classes don't correctly pass on messages
-        ok = basicRespond(command,reply);
-    }
-    return ok;
+double RFModule::getPeriod() {
+    return 1.0;
 }
 
 int RFModule::runModule() {
@@ -402,25 +356,27 @@ int RFModule::runModule(yarp::os::ResourceFinder &rf) {
     return runModule();
 }
 
-ConstString RFModule::getName(const char *subName) {
-    if (subName==0) {
-        return name;
-    }
+bool RFModule::configure(yarp::os::ResourceFinder &rf) {
+    return true;
+}
 
-    String base = name.c_str();
+bool RFModule::respond(const Bottle& command, Bottle& reply) {
+    return basicRespond(command,reply);
+}
 
-    // Support legacy behavior, check if a "/" needs to be
-    // appended before subName.
-    if (subName[0]!='/')
-    {
-        ACE_OS::printf("WARNING: subName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.\n");
-        ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.\n", name.c_str(), subName);
+ /**
+* Attach this object to a source of messages.
+* @param source a BufferedPort or PortReaderBuffer that
+* receives data.
+*/
+bool RFModule::attach(yarp::os::Port &source) {
+    HELPER(implementation).attach(source);
+    return true;
+}
 
-        base += "/";
-    }
-
-    base += subName;
-    return base.c_str();
+bool RFModule::attach(yarp::os::RpcServer &source) {
+    HELPER(implementation).attach(source);
+    return true;
 }
 
 bool RFModule::attachTerminal() {
@@ -434,3 +390,68 @@ bool RFModule::detachTerminal()
     return true;
 }
 
+bool RFModule::interruptModule() {
+    return true;
+}
+bool RFModule::close() {
+    return true;
+}
+
+void RFModule::stopModule(bool wait) {
+    stopFlag=true;
+    if (!interruptModule()) {
+        fprintf(stderr, "interruptModule() returned an error there could be problems shutting down the module\n");
+    }
+}
+bool RFModule::isStopping() {
+    return stopFlag;
+}
+
+ConstString RFModule::getName(const char *subName) {
+    if (subName==0) {
+        return name;
+    }
+
+    String base = name.c_str();
+
+    // Support legacy behavior, check if a "/" needs to be
+    // appended before subName.
+    if (subName[0]!='/') {
+        ACE_OS::printf("WARNING: subName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.\n");
+        ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.\n", name.c_str(), subName);
+
+        base += "/";
+    }
+
+    base += subName;
+    return base.c_str();
+}
+
+void RFModule::setName(const char *name) {
+    this->name = name;
+}
+
+bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
+    bool ok = respond(command, reply);
+    if (!ok) {
+        // just in case derived classes don't correctly pass on messages
+        ok = basicRespond(command, reply);
+    }
+    return ok;
+}
+
+bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
+    switch (command.get(0).asVocab()) {
+    case VOCAB4('q','u','i','t'):
+    case VOCAB4('e','x','i','t'):
+    case VOCAB3('b','y','e'):
+        reply.addVocab(Vocab::encode("bye"));
+        stopModule(false); //calls interruptModule()
+   //     interruptModule();
+        return true;
+    default:
+        reply.add("command not recognized");
+        return false;
+    }
+    return false;
+}

@@ -15,6 +15,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <yarp/os/impl/PlatformStdlib.h>
 
@@ -76,25 +77,35 @@ bool NameConfig::fromString(const String& txt) {
 }
 
 String NameConfig::expandFilename(const char *fname) {
-    String root = NetworkBase::getEnvironment("YARP_CONF").c_str();
-    String home = NetworkBase::getEnvironment("HOME").c_str();
-    String homepath = NetworkBase::getEnvironment("HOMEPATH").c_str();
-    String conf = "";
+    ConstString root = NetworkBase::getEnvironment("YARP_CONF");
+
+    // yarp 2.4 modifications begin
+    // We should now be using YARP_CONFIG_HOME.
+    // We still respect the YARP_CONF variable if defined, but it
+    // is deprecated.
+    if (root=="") {
+        root = ResourceFinder::getConfigHome();
+    }
+    // yarp 2.4 modifications end
+
+    ConstString home = NetworkBase::getEnvironment("HOME");
+    ConstString homepath = NetworkBase::getEnvironment("HOMEPATH");
+    ConstString conf = "";
     if (root!="") {
         //conf = new File(new File(root,"conf"),"namer.conf");
         //conf = root + "/conf/" + fname;
         // users of YARP_CONF want /conf postfix removed
-        conf = root + "/" + fname;
+        conf = root + NetworkBase::getDirectorySeparator() + fname;
     } else if (homepath!="") {
-        conf = String(NetworkBase::getEnvironment("HOMEDRIVE").c_str()) + homepath + "\\yarp\\conf\\" + fname;
+        conf = NetworkBase::getEnvironment("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + fname;
     } else if (home!="") {
         conf = home + "/.yarp/conf/" + fname;
     } else {
         YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
         ACE_OS::exit(1);
     }
-    YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf);
-    return conf;
+    YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf.c_str());
+    return conf.c_str();
 }
 
 

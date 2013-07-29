@@ -12,9 +12,11 @@
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/Network.h>
 #include <math.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 UnitTest *UnitTest::theRoot = NULL;
 
@@ -220,5 +222,30 @@ String UnitTest::humanize(const String& txt) {
     return result;
 }
 
+
+void UnitTest::saveEnvironment(const char *key) {
+    bool found = false;
+    ConstString val = NetworkBase::getEnvironment(key,&found);
+    Bottle& lst = env.addList();
+    lst.addString(key);
+    lst.addString(val);
+    lst.addInt(found?1:0);
+}
+
+void UnitTest::restoreEnvironment() {
+    for (int i=0; i<env.size(); i++) {
+        Bottle *lst = env.get(i).asList();
+        if (lst==NULL) continue;
+        ConstString key = lst->get(0).asString();
+        ConstString val = lst->get(1).asString();
+        bool found = lst->get(2).asInt()?true:false;
+        if (!found) {
+            NetworkBase::unsetEnvironment(key);
+        } else {
+            NetworkBase::setEnvironment(key,val);
+        }
+    }
+    env.clear();
+}
 
  
