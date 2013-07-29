@@ -3,6 +3,23 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 include(CMakeParseArguments)
+
+# This macro generates the following CMake variables, that can be used as "DESTINATION" argument to the yarp_install macro 
+# to copy/install data into appropriate folders in the calling package's build tree and installation directory:
+# <PACKAGE>_CONTEXTS_INSTALL_DIR for "context" folders, containing configuration files and data that modules look for at runtime
+# <PACKAGE>_PLUGIN_MANIFESTS_INSTALL_DIR for plugin manifest files
+# <PACKAGE>_APPLICATIONS_INSTALL_DIR for XML files describing applications (collections of modules and connections between them)
+# <PACKAGE>_MODULES_INSTALL_DIR for XML files describing modules (including input/output ports)
+# <PACKAGE>_ROBOTS_INSTALL_DIR for robot-specific configuration files
+# <PACKAGE>_TEMPLATES_INSTALL_DIR generic directory for templates; it is however advised to use specific applications/modules templates install directories
+# <PACKAGE>_APPLICATIONS_TEMPLATES_INSTALL_DIR for application templates (XML files with .template extension), which need to be properly customized
+# <PACKAGE>_MODULES_TEMPLATES_INSTALL_DIR for module templates (should not be needed)
+# <PACKAGE>_DATA_INSTALL_DIR generic directory for data; it is however advised to use more specific directories
+# <PACKAGE>_CONFIG_INSTALL_DIR generic directory for configuration files
+#
+# Furthermore, this macro checks if the installation directory of the package is the same as YARP's, in which case it sets up automatic recognition of data directories;
+# otherwise, it warns the user to set up appropriately the YARP_DATA_DIRS environment variable.
+
 macro(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
   if (YARP_INSTALL_PREFIX) #if YARP is installed
 
@@ -18,7 +35,17 @@ macro(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
       install(FILES ${CMAKE_CURRENT_BINARY_DIR}/path.d/${_name}.ini DESTINATION ${YARP_INSTALL_PREFIX}/share/yarp/config/path.d) #Install the file into yarp config dir
       message(STATUS "Setting up installation of ${_name}.ini to ${YARP_INSTALL_PREFIX}/share/yarp/config/path.d folder.")
     else()
-      message(WARNING "Installation prefix is different from YARP's : no file will we be installed into path.d folder, you need to set YARP_DATA_DIRS environment variable to ${CMAKE_INSTALL_PREFIX}/share/${_name}")
+	  if(WIN32)
+	    set(PATH_SEPARATOR ";")
+	  else()
+		set(PATH_SEPARATOR ":")
+	  endif()
+
+	  if("$ENV{YARP_DATA_DIRS}" STREQUAL "")
+	    message(WARNING "Installation prefix is different from YARP's : no file will we be installed into path.d folder, you need to set YARP_DATA_DIRS environment variable to ${YARP_INSTALL_PREFIX}/share/yarp${PATH_SEPARATOR}${CMAKE_INSTALL_PREFIX}/share/${_name}")
+	  else()
+	    message(WARNING "Installation prefix is different from YARP's : no file will we be installed into path.d folder, you need to set YARP_DATA_DIRS environment variable to $ENV{YARP_DATA_DIRS}${PATH_SEPARATOR}${CMAKE_INSTALL_PREFIX}/share/${_name}")
+	  endif()
     endif()
 
   endif()
@@ -35,8 +62,11 @@ macro(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
   set(${_NAME}_CONTEXTS_INSTALL_DIR ${${_NAME}_DATA_INSTALL_DIR}/contexts CACHE INTERNAL "contexts installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_APPLICATIONS_TEMPLATES_INSTALL_DIR ${${_NAME}_DATA_INSTALL_DIR}/templates/applications CACHE INTERNAL "application templates' installation directory for ${_name} (relative to build/installation dir")
   set(${_NAME}_MODULES_TEMPLATES_INSTALL_DIR ${${_NAME}_DATA_INSTALL_DIR}/templates/modules CACHE INTERNAL "module templates' installation directory for ${_name} (relative to build/installation dir")
+  set(${_NAME}_ROBOTS_INSTALL_DIR  ${${_NAME}_DATA_INSTALL_DIR}/robots CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir")
 endmacro()
 
+# This macro has the same signature as CMake "install" command (i.e., with DESTINATION and FILES arguments); in addition to calling the "install" command,
+# it also copies files to the build directory, keeping the same directory tree structure, to allow direct use of build tree without installation.
 macro(YARP_INSTALL)
 #CMakeParseArguments.cmake
    CMAKE_PARSE_ARGUMENTS(currentTarget "" "DESTINATION" "FILES" ${ARGN})
