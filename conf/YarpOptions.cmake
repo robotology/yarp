@@ -25,19 +25,6 @@ endif (MSVC)
 
 
 #########################################################################
-# Encourage user to specify build type.
-
-if(NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
-       "Choose the type of build, recommanded options are: Debug or Release")
-endif(NOT CMAKE_BUILD_TYPE)
-# Hide variable to MSVC users, since it is not needed
-if(MSVC)
-  mark_as_advanced(CMAKE_BUILD_TYPE)
-endif(MSVC)
-
-
-#########################################################################
 # DebugFull builds options
 
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -70,6 +57,19 @@ if(CMAKE_COMPILER_IS_GNUCXX)
                      CMAKE_MODULE_LINKER_FLAGS_PROFILE
                      CMAKE_SHARED_LINKER_FLAGS_PROFILE)
 endif(CMAKE_COMPILER_IS_GNUCXX)
+
+#########################################################################
+# Encourage user to specify build type.
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  set(YARP_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+  if (CMAKE_COMPILER_IS_GNUCXX)
+    list(APPEND YARP_BUILD_TYPES "DebugFull" "Profile")
+  endif()
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_BUILD_TYPES})
+endif()
 
 #########################################################################
 # Simplify compilation of portable binaries.
