@@ -42,7 +42,7 @@ if(NOT YARP_NO_DEPRECATED)
                                 conf/deprecated/FindGtkMMUnix.cmake
                                 conf/deprecated/FindGtkMMWin32.cmake
                                 conf/deprecated/FindGtkPlus.cmake
-                                conf/deprecated/FindGtkWin32.cmake
+                                conf/deprecated/FindGtkWin32.cmake)
 endif()
 
 install(FILES ${YARP_CMAKE_FILES}
