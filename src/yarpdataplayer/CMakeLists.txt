@@ -16,3 +16,7 @@ icub_app_install(${appname}
 icub_app_install(${appname} 
                  FILES ${scripts}
                  DESTINATION scripts)
+
+yarp_install(FILES ${conf} DESTINATION ${ICUB_CONTEXTS_INSTALL_DIR}/${appname}/conf )
+yarp_install(FILES ${scripts}
+                DESTINATION ${ICUB_APPLICATIONS_TEMPLATES_INSTALL_DIR})
