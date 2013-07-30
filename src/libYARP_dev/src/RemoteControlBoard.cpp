@@ -1330,8 +1330,9 @@ public:
      * @param val new value
      * @return true/false on success/failure
      */
-    virtual bool setEncoder(int j, double val)
-    { return set1V1I1D(VOCAB_ENCODER, j, val); }
+    virtual bool setEncoder(int j, double val) {
+        return set1V1I1D(VOCAB_ENCODER, j, val);
+    }
 
     /**
      * Set the value of all encoders.
@@ -1350,13 +1351,13 @@ public:
      */
     virtual bool getEncoder(int j, double *v) {
         // return get1V1I1D(VOCAB_ENCODER, j, v);
-       double localArrivalTime = 0.0;
-       bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+        double localArrivalTime = 0.0;
+        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 
-       if (ret && Time::now()-localArrivalTime>TIMEOUT)
-           ret=false;
+        if (ret && Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
 
-       return ret;
+        return ret;
     }
 
     /**
@@ -1366,16 +1367,16 @@ public:
      * @return true/false, upon success/failure (you knew it, uh?)
      */
     virtual bool getEncoderTimed(int j, double *v, double *t) {
-       // return get1V1I1D(VOCAB_ENCODER, j, v);
-       double localArrivalTime = 0.0;
-       bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+        // return get1V1I1D(VOCAB_ENCODER, j, v);
+        double localArrivalTime = 0.0;
+        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 
-       *t=lastStamp.getTime();
+        *t=lastStamp.getTime();
 
-       if (ret && Time::now()-localArrivalTime>TIMEOUT)
-           ret=false;
+        if (ret && Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
 
-       return ret;
+        return ret;
     }
 
     /**
@@ -1393,9 +1394,9 @@ public:
         Vector tmp(nj);
         double localArrivalTime=0.0;
 
-       // mutex.wait();
+        // mutex.wait();
         bool ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-       // mutex.post();
+        // mutex.post();
 
         if (ret)
         {
