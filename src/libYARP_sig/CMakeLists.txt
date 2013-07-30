@@ -37,7 +37,7 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_sig ${YARP_sig_SRCS} ${YARP_sig_HDRS})
-target_link_libraries(YARP_sig LINK_PRIVATE YARP_OS)
+target_link_libraries(YARP_sig LINK_PRIVATE YARP_OS ${ACE_LIBRARIES})
 install(TARGETS YARP_sig EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_sig)
 

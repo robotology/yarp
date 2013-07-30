@@ -57,6 +57,7 @@ if(YARP_USE_GTK2)
     target_link_libraries(gyarpbuilder YARP_init
                                        YARP_OS
                                        YARP_manager
+                                       ${ACE_LIBRARIES}
                                        ${GTK2_GTK_LIBRARY}
                                        ${GTK2_GDK_LIBRARY}
                                        ${GTK2_GLIB_LIBRARY}
@@ -72,6 +73,7 @@ else(YARP_USE_GTK2)
     target_link_libraries(gyarpbuilder YARP_init
                                        YARP_OS
                                        YARP_manager
+                                       ${ACE_LIBRARIES}
                                        ${GtkMM_LIBRARIES}
                                        ${GooCanvasMM_LIBRARIES})
 endif(YARP_USE_GTK2)

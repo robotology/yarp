@@ -49,7 +49,7 @@ if(UNIX)
 endif(UNIX)
 
 add_executable(gyarpmanager ${folder_source} ${folder_header})
-target_link_libraries(gyarpmanager YARP_init YARP_OS YARP_manager)
+target_link_libraries(gyarpmanager YARP_init YARP_OS YARP_manager ${ACE_LIBRARIES})
 
 if(YARP_USE_GTK2)
     target_link_libraries(gyarpmanager ${GTK2_GTK_LIBRARY}
