@@ -58,7 +58,7 @@ bool BinaryExpParser::parse(string _exp)
     {
         map<string, bool>::iterator itr = operands.begin();
         for(int y = 0; y < (n-1); ++y)
-            (*itr++).second = truthTable[y][x];
+            (*itr++).second = (truthTable[y][x] != 0);
         truthTable[n-1][x] = evalTree(root, operands);
     }
     //printTruthTable(leftOpr);
