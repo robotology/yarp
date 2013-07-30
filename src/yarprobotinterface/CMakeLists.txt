@@ -19,7 +19,7 @@ else()
     message(STATUS "found compatible YARP version (${YARP_VERSION})")
 endif()
 
-find_package(ICUB REQUIRED)
+#find_package(ICUB REQUIRED)
 
 endif()
 
@@ -63,9 +63,9 @@ set(robotInterface_HDRS
 #add_definitions("-Wno-long-long -Wno-variadic-macros -Wshadow")
 add_definitions("-DDEBUG")
 
-add_executable(robot-interface ${robotInterface_SRCS})
+add_executable(robotInterface ${robotInterface_SRCS})
 
-target_link_libraries(robot-interface
+target_link_libraries(robotInterface
                       YARP_OS
                       YARP_init
                       icubmod
