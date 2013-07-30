@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<devices>
-    <device name="torso" type="canmotioncontrol">
-        <param name="canbusdevice">fakecan</param> <!-- FIXME -->
-
-        <params file="hardware/electronics/torso_can.xml" />
-        <params file="hardware/mechanicals/torso_joints.xml" />
-    </device>
-</devices>

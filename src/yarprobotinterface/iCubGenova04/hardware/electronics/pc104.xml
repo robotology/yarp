@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<params>
-    <!--<param name="PC104IpAddress">10.0.1.104</param>-->
-    <param name="PC104IpAddress">10.255.72.111</param>
-</params>

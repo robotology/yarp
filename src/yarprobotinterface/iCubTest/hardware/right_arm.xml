@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<devices>
-    <device name="right_arm" type="canmotioncontrol">
-        <param name="canbusdevice">fakecan</param>
-    </device>
-</devices>

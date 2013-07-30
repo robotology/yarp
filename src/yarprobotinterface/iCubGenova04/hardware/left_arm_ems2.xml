@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<devices>
-    <device name="left_arm_ems2" type="embObjMotionControl">
-        <params files="hardware/electronics/left_arm_ems2.xml" />
-        <params files="hardware/mechanicals/left_arm_ems2.xml" />
-    </device>
-</devices>
