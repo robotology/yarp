@@ -1350,7 +1350,7 @@ public:
      */
     virtual bool getEncoder(int j, double *v) {
         // return get1V1I1D(VOCAB_ENCODER, j, v);
-       double localArrivalTime;
+       double localArrivalTime = 0.0;
        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 
        if (Time::now()-localArrivalTime>TIMEOUT)
@@ -1367,7 +1367,7 @@ public:
      */
     virtual bool getEncoderTimed(int j, double *v, double *t) {
        // return get1V1I1D(VOCAB_ENCODER, j, v);
-       double localArrivalTime;
+       double localArrivalTime = 0.0;
        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 
        *t=lastStamp.getTime();
