@@ -47,6 +47,7 @@ target_link_libraries(gyarpmanager ${GTK2_GTK_LIBRARY}
                                    ${GTK2_GLIBMM_LIBRARY}
                                    ${GTK2_GDKMM_LIBRARY}
                                    ${GTK2_ATKMM_LIBRARY}
-                                   ${GTK2_SIGC++_LIBRARY})
+                                   ${GTK2_SIGC++_LIBRARY}
+								   ${GTK2_GTHREAD_LIBRARY})
 
 install(TARGETS gyarpmanager COMPONENT utilities DESTINATION bin)
