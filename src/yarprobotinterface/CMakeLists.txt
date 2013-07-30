@@ -25,7 +25,10 @@ endif()
 
 find_package(TinyXML 2.6 QUIET)
 
-if(NOT TinyXML_FOUND )
+if(TinyXML_FOUND)
+    option(USE_SYSTEM_TINYXML ON "")
+endif()
+if(NOT USE_SYSTEM_TINYXML)
 	add_subdirectory(extern)
 endif()
 
