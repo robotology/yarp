@@ -37,12 +37,12 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindTinyXML.cmake)
 
 if(NOT YARP_NO_DEPRECATED)
-   list(APPEND YARP_CMAKE_FILES conf/deprecated/FindGthread.cmake
-                                conf/deprecated/FindGtkMM.cmake
-                                conf/deprecated/FindGtkMMUnix.cmake
-                                conf/deprecated/FindGtkMMWin32.cmake
-                                conf/deprecated/FindGtkPlus.cmake
-                                conf/deprecated/FindGtkWin32.cmake)
+   list(APPEND YARP_CMAKE_FILES deprecated/FindGthread.cmake
+                                deprecated/FindGtkMM.cmake
+                                deprecated/FindGtkMMUnix.cmake
+                                deprecated/FindGtkMMWin32.cmake
+                                deprecated/FindGtkPlus.cmake
+                                deprecated/FindGtkWin32.cmake)
 endif()
 
 install(FILES ${YARP_CMAKE_FILES}
