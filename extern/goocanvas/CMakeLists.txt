@@ -6,35 +6,29 @@
 # GooCanvas
 project(YARP_goocanvas)
 
+set(GooCanvas_GTK2_INCLUDE_DIRS ${GTK2_ATK_INCLUDE_DIR}
+                                ${GTK2_CAIRO_INCLUDE_DIR}
+                                ${GTK2_FONTCONFIG_INCLUDE_DIR}
+                                ${GTK2_GDKCONFIG_INCLUDE_DIR}
+                                ${GTK2_GDK_INCLUDE_DIR}
+                                ${GTK2_GDK_PIXBUF_INCLUDE_DIR}
+                                ${GTK2_GLIBCONFIG_INCLUDE_DIR}
+                                ${GTK2_GLIB_INCLUDE_DIR}
+                                ${GTK2_GOBJECT_INCLUDE_DIR}
+                                ${GTK2_GTK_INCLUDE_DIR}
+                                ${GTK2_PANGO_INCLUDE_DIR}
+                                ${FREETYPE_INCLUDE_DIR_freetype2}
+                                ${FREETYPE_INCLUDE_DIR_ft2build})
+set(GooCanvas_GTK2_LIBRARIES ${GTK2_ATK_LIBRARY}
+                             ${GTK2_CAIRO_LIBRARY}
+                             ${GTK2_GDK_LIBRARY}
+                             ${GTK2_GDK_PIXBUF_LIBRARY}
+                             ${GTK2_GLIB_LIBRARY}
+                             ${GTK2_GOBJECT_LIBRARY}
+                             ${GTK2_GTK_LIBRARY}
+                             ${GTK2_PANGO_LIBRARY}
+                             ${GTK2_PANGOCAIRO_LIBRARY})
 
-if(YARP_USE_GTK2)
-    set(GooCanvas_GTK2_INCLUDE_DIRS ${GTK2_ATK_INCLUDE_DIR}
-                                    ${GTK2_CAIRO_INCLUDE_DIR}
-                                    ${GTK2_FONTCONFIG_INCLUDE_DIR}
-                                    ${GTK2_GDKCONFIG_INCLUDE_DIR}
-                                    ${GTK2_GDK_INCLUDE_DIR}
-                                    ${GTK2_GDK_PIXBUF_INCLUDE_DIR}
-                                    ${GTK2_GLIBCONFIG_INCLUDE_DIR}
-                                    ${GTK2_GLIB_INCLUDE_DIR}
-                                    ${GTK2_GOBJECT_INCLUDE_DIR}
-                                    ${GTK2_GTK_INCLUDE_DIR}
-                                    ${GTK2_PANGO_INCLUDE_DIR}
-                                    ${FREETYPE_INCLUDE_DIR_freetype2}
-                                    ${FREETYPE_INCLUDE_DIR_ft2build})
-    set(GooCanvas_GTK2_LIBRARIES ${GTK2_ATK_LIBRARY}
-                                 ${GTK2_CAIRO_LIBRARY}
-                                 ${GTK2_GDK_LIBRARY}
-                                 ${GTK2_GDK_PIXBUF_LIBRARY}
-                                 ${GTK2_GLIB_LIBRARY}
-                                 ${GTK2_GOBJECT_LIBRARY}
-                                 ${GTK2_GTK_LIBRARY}
-                                 ${GTK2_PANGO_LIBRARY}
-                                 ${GTK2_PANGOCAIRO_LIBRARY})
-
-else(YARP_USE_GTK2)
-   set(GooCanvas_GTK2_INCLUDE_DIRS ${GtkPlus_INCLUDE_DIRS})
-   set(GooCanvas_GTK2_LIBRARIES ${GtkPlus_LIBRARIES})
-endif(YARP_USE_GTK2)
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/goocanvas

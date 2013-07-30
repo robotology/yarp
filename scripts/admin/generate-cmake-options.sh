@@ -19,15 +19,8 @@ CMAKE_OPTIONS="\
 -DENABLE_yarpidl_thrift=TRUE \
 "
 
-case $2 in
-    MacOSX)
-        CMAKE_OPTIONS="${CMAKE_OPTIONS} -DYARP_USE_GTK2=TRUE"
-        ;;
-esac
-
 case $3 in
     experimental)
-       # YARP_USE_GTK2 may end up included twice, but that is ok
-        CMAKE_OPTIONS="$CMAKE_OPTIONS -DYARP_USE_GTK2=TRUE -DCREATE_GYARPBUILDER:BOOL=TRUE"
+        CMAKE_OPTIONS="$CMAKE_OPTIONS -DCREATE_GYARPBUILDER:BOOL=TRUE"
         ;;
 esac
