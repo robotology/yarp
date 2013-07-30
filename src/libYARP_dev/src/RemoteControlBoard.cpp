@@ -1353,7 +1353,7 @@ public:
        double localArrivalTime = 0.0;
        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 
-       if (Time::now()-localArrivalTime>TIMEOUT)
+       if (ret && Time::now()-localArrivalTime>TIMEOUT)
            ret=false;
 
        return ret;
@@ -1372,7 +1372,7 @@ public:
 
        *t=lastStamp.getTime();
 
-       if (Time::now()-localArrivalTime>TIMEOUT)
+       if (ret && Time::now()-localArrivalTime>TIMEOUT)
            ret=false;
 
        return ret;
