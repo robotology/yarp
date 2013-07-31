@@ -53,8 +53,7 @@ if(NOT YARP_FOUND)
     set(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
 
     # Pull in any dependencies that YARP libraries may have.
-    get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)
-    include("${YARP_CMAKE}/@YARP_DEPENDENCY_FILENAME@")
+    include("${CMAKE_CURRENT_LIST_DIR}/@YARP_DEPENDENCY_FILENAME@")
 
     # Link directories are rare, so most user scripts don't
     # account for them.  On balance, better to pull them
