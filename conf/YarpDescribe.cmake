@@ -31,7 +31,7 @@ set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
 if (${CMAKE_VERSION} VERSION_LESS 2.8.8) # -> version is 2.8.7 (oldest supported)
-  include(WriteBasicConfigVersionFile )
+  include(WriteBasicConfigVersionFile)
   write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                      VERSION ${YARP_VERSION}
                                      COMPATIBILITY AnyNewerVersion )
