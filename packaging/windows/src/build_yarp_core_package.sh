@@ -286,10 +286,8 @@ for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 	if $add_debug; then
 		cp $YARP_DIR_DBG_UNIX/install/lib/$d/YARP-*.cmake $d
 	fi
-	sed -i '/set.YARP_LIBRARIES/ i \
-	get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)' YARPConfig.cmake
-	sed -i "s|[^\"]*YARP.cmake|\${YARP_CMAKE}/../lib/${d}/YARP.cmake|" YARPConfig.cmake
-	sed -i 's|[^"]*/install|${YARP_CMAKE}/..|g' YARPConfig.cmake
+	sed -i "s|[^\"]*YARP.cmake|\${CMAKE_CURRENT_LIST_DIR}/../lib/${d}/YARP.cmake|" YARPConfig.cmake
+	sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
 	for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
 		sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" $d/YARP-*.cmake
 	done
