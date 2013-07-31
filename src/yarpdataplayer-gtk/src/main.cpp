@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
     rf.setVerbose( true );
     rf.setDefaultConfigFile( "config.ini" );        //overridden by --from parameter
     rf.setDefaultContext( "dataSetPlayer/conf" );   //overridden by --context parameter
-    rf.configure( "ICUB_ROOT", argc, argv );
+    rf.configure( argc, argv );
     gdk_threads_init();
     GDK_THREADS_ENTER();
     Gtk::Main kit(argc, argv);
