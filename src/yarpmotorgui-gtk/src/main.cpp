@@ -707,7 +707,7 @@ int myMain( int   argc, char *argv[] )
     finder->setVerbose();
     finder->setDefaultConfigFile("robotMotorGui.ini");
     finder->setDefault("name", "icub");
-    finder->configure("ICUB_ROOT",argc,argv);
+    finder->configure(argc,argv);
     //fprintf(stderr, "Retrieved finder: %p \n", finder);
     if (finder->check("calib"))
     {
