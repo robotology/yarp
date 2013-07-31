@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     yarp::os::ResourceFinder rf;
     rf.setVerbose( true );
     rf.setDefaultConfigFile( "config.ini" );        //overridden by --from parameter
-    rf.setDefaultContext( "dataSetPlayer/conf" );   //overridden by --context parameter
+    rf.setDefaultContext( "dataSetPlayer" );        //overridden by --context parameter
     rf.configure( argc, argv );
     gdk_threads_init();
     GDK_THREADS_ENTER();
