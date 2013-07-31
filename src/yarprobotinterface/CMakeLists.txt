@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6.4)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-if ( NOT ICUB_ICUBINTERFACE_EXPERIMENTAL ) 
+if(NOT ICUB_ICUBINTERFACE_EXPERIMENTAL)
 #### Find YARP, require that YARP version is at least YARP_REQ_VERSION
 set(YARP_REQ_VERSION_MAJOR "2")
 set(YARP_REQ_VERSION_MINOR "3")
@@ -13,7 +13,7 @@ set(YARP_REQ_VERSION ${YARP_REQ_VERSION_MAJOR}.${YARP_REQ_VERSION_MINOR}.${YARP_
 #set(YARP_REQ_VERSION ${YARP_REQ_VERSION_MAJOR}.${YARP_REQ_VERSION_MINOR}.${YARP_REQ_VERSION_PATCH}.${YARP_REQ_VERSION_TWEAK})
 find_package(YARP REQUIRED)
 
-if (YARP_VERSION VERSION_LESS YARP_REQ_VERSION)
+if(YARP_VERSION VERSION_LESS YARP_REQ_VERSION)
     message(FATAL_ERROR "YARP version is not compatible, please update YARP")
 else()
     message(STATUS "found compatible YARP version (${YARP_VERSION})")
@@ -21,7 +21,7 @@ endif()
 
 #find_package(ICUB REQUIRED)
 
-endif()
+endif(NOT ICUB_ICUBINTERFACE_EXPERIMENTAL)
 
 find_package(TinyXML 2.6 QUIET)
 
@@ -29,7 +29,7 @@ if(TinyXML_FOUND)
     option(USE_SYSTEM_TINYXML ON "")
 endif()
 if(NOT USE_SYSTEM_TINYXML)
-	add_subdirectory(extern)
+    add_subdirectory(extern)
 endif()
 
 
