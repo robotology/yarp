@@ -16,6 +16,12 @@
 # 13/04/2011: added variable to store version (GTKMM_VERSION is copied to GtkMM_VERSION)
 # Split GTKMM_VERSION into GtkMM_VERSION_MAJOR and GtkMM_VERSION_MAJOR
 
+
+if(NOT YARP_NO_DEPRECATED)
+include(${YARP_MODULE_DIR}/YarpDeprecatedWarning.cmake)
+yarp_deprecated_warning("FindGtkMMUnix.cmake is deprecated. Use FindGTK2 from CMake instead.")
+
+
 FIND_PACKAGE(PkgConfig)
 
 # prerequisite
@@ -98,3 +104,5 @@ ELSE (GTHREAD_FOUND)
   MESSAGE(STATUS " pkg-config could not find gthread")
 ENDIF (GTHREAD_FOUND)
 
+
+endif(NOT YARP_NO_DEPRECATED)

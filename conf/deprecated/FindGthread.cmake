@@ -25,6 +25,11 @@
 # Windows: support gtkmm x64, search also using GTKMM64_BASEPATH (this variable is set by the installer).
 
 
+if(NOT YARP_NO_DEPRECATED)
+include(${YARP_MODULE_DIR}/YarpDeprecatedWarning.cmake)
+yarp_deprecated_warning("FindGthread.cmake is deprecated. Use FindGTK2 from CMake instead.")
+
+
 if (NOT Gthread_FOUND)
 
     if(UNIX)
@@ -107,3 +112,6 @@ if(COMMAND set_package_properties)
     set_package_properties(Gthread PROPERTIES DESCRIPTION "Glib thread library"
                                               URL "http://developer.gnome.org/glib/")
 endif()
+
+
+endif(NOT YARP_NO_DEPRECATED)

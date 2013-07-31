@@ -24,6 +24,12 @@
 # Lorenzo Natale 14/05/2010
 
 
+
+if(NOT YARP_NO_DEPRECATED)
+include(${YARP_MODULE_DIR}/YarpDeprecatedWarning.cmake)
+yarp_deprecated_warning("FindGtkPlus.cmake is deprecated. Use FindGTK2 from CMake instead.")
+
+
 # first check if we are using msvc
 if(WIN32)
     find_package(GtkWin32)
@@ -102,3 +108,6 @@ if(COMMAND set_package_properties)
     set_package_properties(GtkPlus PROPERTIES DESCRIPTION "GTK+ graphical user interface library"
                                               URL "http://www.gtk.org/")
 endif()
+
+
+endif(NOT YARP_NO_DEPRECATED)
