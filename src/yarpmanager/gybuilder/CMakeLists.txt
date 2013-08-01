@@ -50,6 +50,7 @@ add_executable(gyarpbuilder ${folder_source} ${folder_header})
 target_link_libraries(gyarpbuilder YARP_init
                                    YARP_OS
                                    YARP_manager
+				   ${ACE_LIBRARIES}
                                    ${GTK2_GTK_LIBRARY}
                                    ${GTK2_GDK_LIBRARY}
                                    ${GTK2_GLIB_LIBRARY}
