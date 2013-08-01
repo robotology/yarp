@@ -67,28 +67,28 @@ Contact Contact::invalid() {
 }
 
 
-Contact Contact::byName(const char *name) {
+Contact Contact::byName(const ConstString& name) {
     Contact result;
     HELPER(result.implementation) = Address().addRegName(name);
     return result;
 }
 
 
-Contact Contact::byCarrier(const char *carrier) {
+Contact Contact::byCarrier(const ConstString& carrier) {
     Contact result;
     HELPER(result.implementation) = Address("",0,carrier);
     return result;
 }
 
-Contact Contact::addCarrier(const char *carrier) const {
+Contact Contact::addCarrier(const ConstString& carrier) const {
     Contact result;
     HELPER(result.implementation) = HELPER(implementation).addCarrier(carrier);
     return result;
 }
 
 
-Contact Contact::bySocket(const char *carrier, 
-                          const char *machineName,
+Contact Contact::bySocket(const ConstString& carrier, 
+                          const ConstString& machineName,
                           int portNumber) {
     Contact result;
     HELPER(result.implementation) = Address(machineName,portNumber,carrier);
@@ -96,8 +96,8 @@ Contact Contact::bySocket(const char *carrier,
 }
 
 
-Contact Contact::addSocket(const char *carrier, 
-                           const char *machineName,
+Contact Contact::addSocket(const ConstString& carrier, 
+                           const ConstString& machineName,
                            int portNumber) const {
     Contact result;
     HELPER(result.implementation) = HELPER(implementation).addSocket(carrier,
@@ -106,7 +106,7 @@ Contact Contact::addSocket(const char *carrier,
     return result;
 }
 
-Contact Contact::addName(const char *name) const {
+Contact Contact::addName(const ConstString& name) const {
     Contact result;
     HELPER(result.implementation) = HELPER(implementation).addRegName(name);
     return result;
@@ -152,7 +152,7 @@ ConstString Contact::toString() const {
 }
 
 
-Contact Contact::fromString(const char *txt) {
+Contact Contact::fromString(const ConstString& txt) {
     ConstString str(txt);
     Contact c;
     ConstString::size_type start = 0;

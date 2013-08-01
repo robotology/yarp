@@ -73,10 +73,10 @@ public:
                     if (v.isList()) {
                         yarp::os::ConstString si = v.asList()->toString();
                         char *buf = (char*)si.c_str();
-                        int idx = 0;
+                        size_t idx = 0;
                         // old name server messages don't have quotes,
                         // so we strip them.
-                        for (int i=0; i<si.length(); i++) {
+                        for (size_t i=0; i<si.length(); i++) {
                             if (si[i]!='\"') {
                                 if (idx!=i) {
                                     buf[idx] = si[i];

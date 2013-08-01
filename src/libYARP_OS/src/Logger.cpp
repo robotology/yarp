@@ -92,19 +92,19 @@ void Logger::setPid() {
 }
 
 
-void __yarp_error(const char *str) {
+void __yarp_error(const ConstString& str) {
     YARP_ERROR(Logger::get(),str);
 }
 
-void __yarp_warn(const char *str) {
+void __yarp_warn(const ConstString& str) {
     YARP_WARN(Logger::get(),str);
 }
 
-void __yarp_info(const char *str) {
+void __yarp_info(const ConstString& str) {
     YARP_INFO(Logger::get(),str);
 }
 
-void __yarp_debug(const char *str) {
+void __yarp_debug(const ConstString& str) {
     YARP_DEBUG(Logger::get(),str);
 }
 

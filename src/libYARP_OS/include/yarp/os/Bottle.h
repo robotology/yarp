@@ -69,7 +69,7 @@ public:
      *
      * @param text the textual form of the bottle to be interpreted.
      */
-    Bottle(const char *text);
+    Bottle(const ConstString& text);
 
     /**
      * Copy constructor.
@@ -126,6 +126,11 @@ public:
      * @param value the Value to add.
      */
     void add(const Value& value);
+
+    // worked "accidentally", user code relies on this
+    void add(const char *txt) {
+        addString(txt);
+    }
 
     /**
      * Add a Value to the bottle, at the end of the list.
@@ -197,7 +202,7 @@ public:
      *
      * @param text the textual form of the bottle to be interpreted.
      */
-    void fromString(const char *text);
+    void fromString(const ConstString& text);
 
     /**
      * Initializes bottle from a binary representation.
@@ -273,11 +278,11 @@ public:
 
     void onCommencement();
 
-    virtual bool check(const char *key);
+    virtual bool check(const ConstString& key);
 
-    virtual Value& find(const char *key);
+    virtual Value& find(const ConstString& key);
 
-    Bottle& findGroup(const char *key);
+    Bottle& findGroup(const ConstString& key);
 
     virtual bool isNull() const;
 
@@ -366,11 +371,12 @@ public:
      */
     void hasChanged();
 
+    static ConstString toString(int x);
 
 private:
 
-    Value& findGroupBit(const char *key);
-    Value& findBit(const char *key);
+    Value& findGroupBit(const ConstString& key);
+    Value& findBit(const ConstString& key);
 
     virtual Bottle *create();
 
@@ -453,8 +459,6 @@ private:
     //virtual Bottle *asList() {
     //  return this;
     //}
-
-
 
 };
 

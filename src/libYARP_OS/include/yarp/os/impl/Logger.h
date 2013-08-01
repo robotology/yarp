@@ -84,12 +84,14 @@ public:
     }
 #endif
 
-    void debug(const String& txt) {
-        show(LM_DEBUG,txt);
-    }
-
     void println(const String& txt) {
         debug(txt);
+    }
+
+
+
+    void debug(const String& txt) {
+        show(LM_DEBUG,txt);
     }
 
     void info(const String& txt) {
@@ -108,6 +110,35 @@ public:
         show(LM_ERROR,txt);
         exit(1);
     }
+
+
+
+    void debug(const char *txt) {
+        String stxt(txt);
+        show(LM_DEBUG,stxt);
+    }
+
+    void info(const char *txt) {
+        String stxt(txt);
+        show(LM_INFO,stxt);
+    }
+
+    void warning(const char *txt) {
+        String stxt(txt);
+        show(LM_WARNING,stxt);
+    }
+
+    void error(const char *txt) {
+        String stxt(txt);
+        show(LM_ERROR,stxt);
+    }
+
+    void fail(const char *txt) {
+        String stxt(txt);
+        show(LM_ERROR,stxt);
+        exit(1);
+    }
+
 
     void assertion(bool cond) {
         if (!cond) {

@@ -31,20 +31,20 @@ public:
 
     virtual Contact getNameServerContact() const;
 
-    virtual Contact queryName(const char *name);
+    virtual Contact queryName(const ConstString& name);
 
-    virtual Contact registerName(const char *name);
+    virtual Contact registerName(const ConstString& name);
 
     virtual Contact registerContact(const Contact& contact);
 
-    virtual Contact unregisterName(const char *name);
+    virtual Contact unregisterName(const ConstString& name);
 
     virtual Contact unregisterContact(const Contact& contact);
 
-    virtual bool setProperty(const char *name, const char *key,
+    virtual bool setProperty(const ConstString& name, const ConstString& key,
                              const Value& value);
 
-    virtual Value *getProperty(const char *name, const char *key);
+    virtual Value *getProperty(const ConstString& name, const ConstString& key);
 
     virtual bool connectPortToTopic(const Contact& src,
                                     const Contact& dest,

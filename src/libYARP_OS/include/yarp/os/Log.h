@@ -14,6 +14,7 @@
 #include <stdlib.h>  // for exit
 
 #include <yarp/os/api.h>
+#include <yarp/os/ConstString.h>
 
 /**
  *
@@ -29,10 +30,10 @@ YARP_OS_API void yarp_print_trace(FILE *out, const char *file, int line);
  */
 #define YARP_ASSERT(x) if (!(x)) { fprintf(stderr,"Assertion failure %s:%d  !(%s)\n",__FILE__,__LINE__, #x ); yarp_print_trace(stderr,__FILE__,__LINE__); ::exit(1); }
 
-YARP_OS_API void __yarp_error(const char *str);
-YARP_OS_API void __yarp_warn(const char *str);
-YARP_OS_API void __yarp_info(const char *str);
-YARP_OS_API void __yarp_debug(const char *str);
+YARP_OS_API void __yarp_error(const yarp::os::ConstString& str);
+YARP_OS_API void __yarp_warn(const yarp::os::ConstString& str);
+YARP_OS_API void __yarp_info(const yarp::os::ConstString& str);
+YARP_OS_API void __yarp_debug(const yarp::os::ConstString& str);
 
 YARP_OS_API bool yarp_show_error();
 YARP_OS_API bool yarp_show_warn();

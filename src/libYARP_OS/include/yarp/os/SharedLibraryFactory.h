@@ -14,12 +14,12 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/SharedLibrary.h>
 #include <yarp/os/SharedLibraryClassApi.h>
+#include <yarp/os/ConstString.h>
 
 
 namespace yarp {
     namespace os {
         class SharedLibraryFactory;
-        class ConstString;
     }
 }
 

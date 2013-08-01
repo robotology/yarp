@@ -19,7 +19,7 @@ yarp::os::RpcServer::~RpcServer() {
     port.close();
 }
 
-bool yarp::os::RpcServer::open(const char *name) {
+bool yarp::os::RpcServer::open(const ConstString& name) {
     port.setInputMode(true);
     port.setOutputMode(false);
     port.setRpcMode(true);
@@ -30,11 +30,12 @@ bool yarp::os::RpcServer::open(const Contact& contact, bool registerName) {
     return port.open(contact,registerName);
 }
 
-bool yarp::os::RpcServer::addOutput(const char *name) {
+bool yarp::os::RpcServer::addOutput(const ConstString& name) {
     return false;
 }
 
-bool yarp::os::RpcServer::addOutput(const char *name, const char *carrier) {
+bool yarp::os::RpcServer::addOutput(const ConstString& name, 
+                                    const ConstString& carrier) {
     return false;
 }
 

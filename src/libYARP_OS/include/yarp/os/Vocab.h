@@ -61,7 +61,7 @@ public:
      * @param str the string to convert
      * @result the integer equivalent of the string form of the identifier
      */
-    static NetInt32 encode(const char *str);
+    static NetInt32 encode(const ConstString& str);
 
     /**
      * Convert a vocabulary identifier into a string.

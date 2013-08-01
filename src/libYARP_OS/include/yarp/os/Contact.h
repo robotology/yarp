@@ -46,7 +46,7 @@ public:
      * @param name the name for the contact
      * @return a named contact
      */
-    static Contact byName(const char *name);
+    static Contact byName(const ConstString& name);
 
     /**
      * Constructor.  Returns an unnamed contact, with information about
@@ -54,7 +54,7 @@ public:
      * @param carrier the carrier to add ("tcp", "udp", ...)
      * @return the new contact
      */
-    static Contact byCarrier(const char *carrier);
+    static Contact byCarrier(const ConstString& carrier);
 
 
     /**
@@ -73,7 +73,7 @@ public:
      * @param carrier the carrier to add
      * @return the new contact
      */
-    Contact addCarrier(const char *carrier) const;
+    Contact addCarrier(const ConstString& carrier) const;
 
     /**
      * Constructor for a socket contact.
@@ -85,8 +85,8 @@ public:
      * @param portNumber the number of the socket port to use
      * @return an unnamed contact with socket communication parameters
      */
-    static Contact bySocket(const char *carrier,
-                            const char *host,
+    static Contact bySocket(const ConstString& carrier,
+                            const ConstString& host,
                             int portNumber);
 
 
@@ -99,8 +99,8 @@ public:
      * @param portNumber the number of the socket port to use
      * @return the new contact with socket communication parameters
      */
-    Contact addSocket(const char *carrier,
-                      const char *host,
+    Contact addSocket(const ConstString& carrier,
+                      const ConstString& host,
                       int portNumber) const;
 
 
@@ -109,7 +109,7 @@ public:
      * Add the name of a contact.
      *
      */
-    Contact addName(const char *name) const;
+    Contact addName(const ConstString& name) const;
 
 
     /**
@@ -178,7 +178,7 @@ public:
      * @param txt the text to parse
      * @return the contact
      */
-    static Contact fromString(const char *txt);
+    static Contact fromString(const ConstString& txt);
 
     /**
      * Checks if a contact is tagged as valid.

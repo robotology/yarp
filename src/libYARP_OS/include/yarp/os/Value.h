@@ -78,7 +78,9 @@ public:
      * @param isVocab set this to true if the string should be interpreted
      * as a vocabulary identifier
      */
-    Value(const char *str, bool isVocab = false);
+    explicit Value(const ConstString& str, bool isVocab = false);
+
+    explicit Value(const char *str, bool isVocab = false);
 
     /**
      * Construct a binary data Value
@@ -236,13 +238,13 @@ public:
     virtual bool write(ConnectionWriter& connection);
 
     // documented in Searchable
-    virtual bool check(const char *key);
+    virtual bool check(const ConstString& key);
 
     // documented in Searchable
-    virtual Value& find(const char *key);
+    virtual Value& find(const ConstString& key);
 
     // documented in Searchable
-    virtual Bottle& findGroup(const char *key);
+    virtual Bottle& findGroup(const ConstString& key);
 
     /**
      * Equality test.
@@ -257,6 +259,16 @@ public:
      * @result true iff the values are not equal
      */
     virtual bool operator != (const Value& alt) const;
+
+    // comparisons with strings worked "accidentally", users depend on them
+    virtual bool operator == (const char *alt) const {
+        return asString() == alt;
+    }
+
+    // comparisons with strings worked "accidentally", users depend on them
+    virtual bool operator != (const char *alt) const {
+        return asString() != alt;
+    }
 
     /**
      * Set value to correspond to a textual representation.
@@ -309,7 +321,7 @@ public:
      * @param str the value to take on
      * @return a string Value
      */
-    static Value *makeString(const char *str);
+    static Value *makeString(const ConstString& str);
 
     /**
      * Create a vocabulary identifier Value
@@ -323,7 +335,7 @@ public:
      * @param str the value to take on
      * @return a vocabulary identifier Value
      */
-    static Value *makeVocab(const char *str);
+    static Value *makeVocab(const ConstString& str);
 
 
     /**
@@ -353,7 +365,7 @@ public:
      * "(5 6 7)" will create a list.
      * @return the Value to which the text description corresponds
      */
-    static Value *makeValue(const char *txt);
+    static Value *makeValue(const ConstString& txt);
 
 
     /**
