@@ -232,7 +232,7 @@ public:
         return address;
     }
 
-    void resetPortName(const char *str) {
+    void resetPortName(const String& str) {
         address = address.addRegName(str);
     }
 

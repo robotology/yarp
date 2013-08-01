@@ -147,7 +147,7 @@ bool WireTwiddler::configure(const char *txt) {
     clear();
     ConstString str(txt);
     char *cstr = (char *)str.c_str();
-    for (int i=0; i<str.length(); i++) {
+    for (size_t i=0; i<str.length(); i++) {
         if (cstr[i]==',') {
             cstr[i] = ' ';
         }

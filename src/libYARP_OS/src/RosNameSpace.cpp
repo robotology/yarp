@@ -28,11 +28,11 @@ Contact RosNameSpace::getNameServerContact() const {
     return contact;
 }
 
-Contact RosNameSpace::queryName(const char *name) {
+Contact RosNameSpace::queryName(const ConstString& name) {
     ConstString full = name;
     ConstString node = full;
     ConstString srv = "";
-    int srv_idx = full.find("#");
+    size_t srv_idx = full.find("#");
     if (srv_idx!=ConstString::npos) {
         node = full.substr(0,srv_idx);
         srv = full.substr(srv_idx+1,full.length());
@@ -105,7 +105,7 @@ Contact RosNameSpace::queryName(const char *name) {
     return contact;
 }
 
-Contact RosNameSpace::registerName(const char *name) {
+Contact RosNameSpace::registerName(const ConstString& name) {
     fprintf(stderr,"ROS name server does not do 'raw' registrations.\n");
     fprintf(stderr,"Use [Buffered]Port::open to get complete registrations.\n");
     exit(1);
@@ -116,8 +116,8 @@ Contact RosNameSpace::registerName(const char *name) {
 Contact RosNameSpace::registerContact(const Contact& contact) {
     ConstString full = contact.getName();
     ConstString name = full;
-    int pub_idx = name.find("+#");
-    int sub_idx = name.find("-#");
+    size_t pub_idx = name.find("+#");
+    size_t sub_idx = name.find("-#");
 
     ConstString node = "";
     ConstString pub = "";
@@ -259,11 +259,11 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
     return contact.addName(node);
 }
 
-Contact RosNameSpace::unregisterName(const char *rname) {
+Contact RosNameSpace::unregisterName(const ConstString& rname) {
     ConstString full = rname;
     ConstString name = full;
-    int pub_idx = name.find("+#");
-    int sub_idx = name.find("-#");
+    size_t pub_idx = name.find("+#");
+    size_t sub_idx = name.find("-#");
 
     ConstString node = "";
     ConstString pub = "";
@@ -324,13 +324,14 @@ Contact RosNameSpace::unregisterContact(const Contact& contact) {
     return Contact();
 }
 
-bool RosNameSpace::setProperty(const char *name,
-                               const char *key,
+bool RosNameSpace::setProperty(const ConstString& name,
+                               const ConstString& key,
                                const Value& value) {
     return false;
 }
 
-Value *RosNameSpace::getProperty(const char *name, const char *key) {
+Value *RosNameSpace::getProperty(const ConstString& name, 
+                                 const ConstString& key) {
         return NULL;
 }
 
@@ -576,7 +577,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
 ConstString RosNameSpace::toRosName(const ConstString& name) {
     if (name.find(":")==ConstString::npos) return name;
     ConstString result;
-    for (int i=0; i<name.length(); i++) {
+    for (size_t i=0; i<name.length(); i++) {
         if (name[i]!=':') {
             result += name[i];
         } else {
@@ -591,7 +592,7 @@ ConstString RosNameSpace::fromRosName(const ConstString& name) {
     // length is at least 2
     ConstString result;
     int ct = 0;
-    for (int i=0; i<name.length(); i++) {
+    for (size_t i=0; i<name.length(); i++) {
         if (name[i]!='_') {
             if (ct) result += '_';
             result += name[i];

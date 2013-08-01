@@ -1416,7 +1416,7 @@ int Companion::cmdResource(int argc, char *argv[]) {
         p2.fromConfigFile(result.get(0).asString().c_str());
         printf(">>> %s\n", p2.toString().c_str());
     }
-    return (result!="")?0:1;
+    return (result.size()>0)?0:1;
 }
 
 

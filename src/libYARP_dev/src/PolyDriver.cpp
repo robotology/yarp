@@ -96,7 +96,7 @@ public:
 #define HELPER(x) (*((YarpDevMonitor*)(x)))
 
 
-bool PolyDriver::open(const char *txt) {
+bool PolyDriver::open(const ConstString& txt) {
     Property p;
     p.put("device",txt);
     return open(p);

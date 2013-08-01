@@ -90,14 +90,14 @@ public:
         con.clear();
     }
 
-    void disconnect(const char *src,
-                    const char *dest,
+    void disconnect(const yarp::os::ConstString& src,
+                    const yarp::os::ConstString& dest,
                     bool srcDrop) {
         connect(src,dest,false);
     }
 
-    void connect(const char *src,
-                 const char *dest,
+    void connect(const yarp::os::ConstString& src,
+                 const yarp::os::ConstString& dest,
                  bool positive = true) {
         //printf("  ??? %s %s\n", src, dest);
         ConnectThread *t = 0/*NULL*/;

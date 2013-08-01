@@ -55,7 +55,7 @@ public:
     virtual ~Port();
 
     // documentation provided in Contactable
-    bool open(const char *name);
+    bool open(const ConstString& name);
 
     // documentation provided in Contactable
     bool open(const Contact& contact, bool registerName = true);
@@ -71,13 +71,13 @@ public:
      * @return true on success
      *
      */
-    bool openFake(const char *name);
+    bool openFake(const ConstString& name);
 
     // documentation provided in Contactable
-    bool addOutput(const char *name);
+    bool addOutput(const ConstString& name);
 
     // documentation provided in Contactable
-    bool addOutput(const char *name, const char *carrier);
+    bool addOutput(const ConstString& name, const ConstString& carrier);
 
     // documentation provided in Contactable
     bool addOutput(const Contact& contact);

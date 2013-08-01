@@ -1626,7 +1626,7 @@ bool yarp::dev::CommandsHelper::initialize() {
         if (i>0) {
             args += " ";
         }
-        args = args + "$f" + ConstString::toString(i);
+        args = args + "$f" + Bottle::toString(i);
     }
     addUsage((ConstString("[set] [poss] (")+args+")").c_str(), 
         "command the position of all axes");

@@ -22,21 +22,20 @@ using namespace std;
 //#define mutex printf("mutex %s %d\n", __FILE__, __LINE__), mutex
 
 
-Contact NameServiceOnTriples::query(const char *portName, 
+Contact NameServiceOnTriples::query(const yarp::os::ConstString& portName, 
                                     NameTripleState& act,
-                                    const char *prefix,
+                                    const yarp::os::ConstString& prefix,
                                     bool nested) {
-    //printf("Local query %s (%d)\n", portName, nested);
     if (!nested) lock();
     Triple t;
-    t.setNameValue("port",portName);
+    t.setNameValue("port",portName.c_str());
     int result = act.mem.find(t,NULL);
     TripleContext context;
     context.setRid(result);
     if (result!=-1) {
         string host = "";
         if (string(prefix)!="") {
-            printf("LOOKING AT IPS FOR %s\n", prefix);
+            printf("LOOKING AT IPS FOR %s\n", prefix.c_str());
             t.setNameValue("ips","*");
             list<Triple> lst = act.mem.query(t,&context);
             for (list<Triple>::iterator it=lst.begin();it!=lst.end();it++) {
@@ -79,7 +78,7 @@ Contact NameServiceOnTriples::query(const char *portName,
 }
 
 
-yarp::os::Contact NameServiceOnTriples::query(const char *port) {
+yarp::os::Contact NameServiceOnTriples::query(const ConstString& port) {
     Contact check = Contact::fromString(port);
     if (check.getHost()!="") return check;
     Bottle cmd,reply,event;
@@ -293,7 +292,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
 }
 
 
-bool NameServiceOnTriples::announce(const char *name, int activity) {
+bool NameServiceOnTriples::announce(const ConstString& name, int activity) {
     if (subscriber!=NULL&&gonePublic) {
         //printf("announcing %s %d\n", name, activity);
         subscriber->welcome(name,activity);

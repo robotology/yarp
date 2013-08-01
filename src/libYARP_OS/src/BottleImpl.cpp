@@ -24,13 +24,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-#ifdef YARP_USE_STL_STRING
-//#define YARP_STRSTR(haystack,needle) haystack.find(needle)
 #define YARP_STRINIT(len) ((size_t) len),0
-#else
-//#define YARP_STRSTR(haystack,needle) haystack.strstr(needle)
-#define YARP_STRINIT(len) ((size_t) len)
-#endif
 
 //#define YMSG(x) ACE_OS::printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))

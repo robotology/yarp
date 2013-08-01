@@ -18,7 +18,7 @@ private:
     yarp::os::ConstString networkChoice;
     yarp::os::ConstString portName;
 public:
-    void apply(const char *str);
+    void apply(const yarp::os::ConstString& str);
 
     yarp::os::ConstString getPortName() {
         return portName;

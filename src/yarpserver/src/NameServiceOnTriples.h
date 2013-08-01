@@ -76,14 +76,14 @@ public:
         this->subscriber = subscriber;
     }
 
-    yarp::os::Contact query(const char *portName, 
+    yarp::os::Contact query(const yarp::os::ConstString& portName, 
                             NameTripleState& act,
-                            const char *prefix,
+                            const yarp::os::ConstString& prefix,
                             bool nested = false);
 
-    virtual bool announce(const char *name, int activity);
+    virtual bool announce(const yarp::os::ConstString& name, int activity);
 
-    virtual yarp::os::Contact query(const char *portName);
+    virtual yarp::os::Contact query(const yarp::os::ConstString& portName);
 
     bool cmdQuery(NameTripleState& act, bool nested = false);
 

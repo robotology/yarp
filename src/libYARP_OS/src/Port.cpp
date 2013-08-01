@@ -260,11 +260,11 @@ Port::Port() {
 }
 
 
-bool Port::openFake(const char *name) {
-    return open(Contact::byName(name),false,name);
+bool Port::openFake(const ConstString& name) {
+    return open(Contact::byName(name),false,name.c_str());
 }
 
-bool Port::open(const char *name) {
+bool Port::open(const ConstString& name) {
     return open(Contact::fromString(name));
 }
 
@@ -398,11 +398,11 @@ bool Port::open(const Contact& contact, bool registerName,
     return success;
 }
 
-bool Port::addOutput(const char *name) {
+bool Port::addOutput(const ConstString& name) {
     return addOutput(Contact::byName(name));
 }
 
-bool Port::addOutput(const char *name, const char *carrier) {
+bool Port::addOutput(const ConstString& name, const ConstString& carrier) {
     return addOutput(Contact::byName(name).addCarrier(carrier));
 }
 

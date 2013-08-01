@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
         fprintf(fout, "Instantiates \\ref cmd_device_%s \"%s\" device implemented by yarp::dev::%s.\n",
                 deviceName.c_str(), deviceName.c_str(), codeName.c_str());
         fprintf(fout, "\\verbatim\n%s\\endverbatim\n",
-                getFile(fileName).c_str());
+                getFile(fileName.c_str()).c_str());
         fprintf(fout, "If this text is saved in a file called %s then the device can be created by doing:\n",
                 shortFileName.c_str());
         fprintf(fout, "\\verbatim\nyarpdev --file %s\n\\endverbatim\n",

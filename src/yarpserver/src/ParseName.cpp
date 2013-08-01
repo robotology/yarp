@@ -15,8 +15,8 @@
 using namespace yarp::os;
 using namespace std;
 
-void ParseName::apply(const char *str) {
-    string name(str);
+void ParseName::apply(const ConstString& s) {
+    ConstString name = s;
     carrier = "";
     networkChoice = "";
     portName = "";

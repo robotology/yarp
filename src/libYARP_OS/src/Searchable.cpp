@@ -9,6 +9,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 
+using namespace yarp::os;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 yarp::os::SearchReport::SearchReport() :
@@ -32,10 +33,10 @@ yarp::os::Searchable::Searchable() :
 yarp::os::Searchable::~Searchable() {
 }
 
-bool yarp::os::Searchable::check(const char *txt,
+bool yarp::os::Searchable::check(const ConstString& txt,
                                  yarp::os::Value *& result,
-                                 const char *comment) {
-    if (getMonitor()!=NULL && comment!=NULL) {
+                                 const ConstString& comment) {
+    if (getMonitor()!=NULL && comment!="") {
         SearchReport report;
         report.key = txt;
         report.value = comment;
@@ -50,10 +51,10 @@ bool yarp::os::Searchable::check(const char *txt,
     return ok;
 }
 
-yarp::os::Value yarp::os::Searchable::check(const char *txt,
+yarp::os::Value yarp::os::Searchable::check(const ConstString& txt,
                                   const yarp::os::Value& fallback,
-                                  const char *comment) {
-    if (getMonitor()!=NULL && comment!=NULL) {
+                                  const ConstString& comment) {
+    if (getMonitor()!=NULL && comment!="") {
         yarp::os::SearchReport report;
         report.key = txt;
         report.value = comment;
@@ -75,9 +76,9 @@ yarp::os::Value yarp::os::Searchable::check(const char *txt,
     return fallback;
 }
 
-bool yarp::os::Searchable::check(const char *key,
-                                 const char *comment) {
-    if (getMonitor()!=NULL && comment!=NULL) {
+bool yarp::os::Searchable::check(const ConstString& key,
+                                 const ConstString& comment) {
+    if (getMonitor()!=NULL && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -87,9 +88,9 @@ bool yarp::os::Searchable::check(const char *key,
     return check(key);
 }
 
-yarp::os::Bottle& yarp::os::Searchable::findGroup(const char *key,
-                                                  const char *comment) {
-    if (getMonitor()!=NULL && comment!=NULL) {
+yarp::os::Bottle& yarp::os::Searchable::findGroup(const ConstString& key,
+                                                  const ConstString& comment) {
+    if (getMonitor()!=NULL && comment!="") {
         yarp::os::SearchReport report;
         report.key = key;
         report.value = comment;
@@ -102,6 +103,12 @@ yarp::os::Bottle& yarp::os::Searchable::findGroup(const char *key,
 bool yarp::os::Searchable::isNull() const {
     return false;
 }
+
+Value yarp::os::Searchable::check(const ConstString& key, const char *fallback,
+                                  const ConstString& comment) {
+    return check(key,Value(fallback),comment);
+}
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -120,7 +127,7 @@ yarp::os::ConstString yarp::os::Searchable::getContext() {
 
 void yarp::os::Searchable::reportToMonitor(const yarp::os::SearchReport& report) {
     if (monitor!=NULL) {
-        monitor->report(report,monitorContext);
+        monitor->report(report,monitorContext.c_str());
     }
 }
 

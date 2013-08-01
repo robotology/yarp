@@ -33,14 +33,14 @@ YarpNameSpace::~YarpNameSpace() {
     }
 }
 
-Contact YarpNameSpace::queryName(const char *name) {
+Contact YarpNameSpace::queryName(const ConstString& name) {
     NameClient& nic = HELPER(this);
     Address address = nic.queryName(name);
     return address.toContact();
 }
 
 
-Contact YarpNameSpace::registerName(const char *name) {
+Contact YarpNameSpace::registerName(const ConstString& name) {
     NameClient& nic = HELPER(this);
     Address address = nic.registerName(name);
     return address.toContact();
@@ -53,7 +53,7 @@ Contact YarpNameSpace::registerContact(const Contact& contact) {
     return address.toContact();
 }
 
-Contact YarpNameSpace::unregisterName(const char *name) {
+Contact YarpNameSpace::unregisterName(const ConstString& name) {
     NameClient& nic = HELPER(this);
     Address address = nic.unregisterName(name);
     return address.toContact();
@@ -66,7 +66,7 @@ Contact YarpNameSpace::unregisterContact(const Contact& contact) {
 }
 
 
-bool YarpNameSpace::setProperty(const char *name, const char *key, 
+bool YarpNameSpace::setProperty(const ConstString& name, const ConstString& key, 
                                 const Value& value) {
     Bottle command;
     command.addString("bot");
@@ -80,7 +80,7 @@ bool YarpNameSpace::setProperty(const char *name, const char *key,
     return reply.size()>0;
 }
 
-Value *YarpNameSpace::getProperty(const char *name, const char *key) {
+Value *YarpNameSpace::getProperty(const ConstString& name, const ConstString& key) {
     Bottle command;
     command.addString("bot");
     command.addString("get");
