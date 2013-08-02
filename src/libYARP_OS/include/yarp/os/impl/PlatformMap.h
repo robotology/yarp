@@ -14,6 +14,35 @@
 #ifndef YARP_USE_STL
 #  include <ace/Hash_Map_Manager.h>
 #  include <ace/Null_Mutex.h>
+#  include <ace/Functor_String.h>
+#  ifndef YARP_ACE_HAS_STRING_HASH
+template<>
+class ACE_Export ACE_Equal_To<std::string>
+{
+public:
+    int operator() (const std::string& x, const std::string& y) const {
+        return x == y;
+    }
+};
+
+template<>
+class ACE_Export ACE_Hash<std::string>
+{
+public:
+    unsigned long operator() (const std::string& x) const {
+        return ACE::hash_pjw(x.c_str(), x.length());
+    }
+};
+
+template<>
+class ACE_Export ACE_Less_Than<std::string>
+{
+public:
+    int operator() (const std::string &x, const std::string &y) const {
+        return x<y;
+    }
+};
+#  endif
 #  define PLATFORM_MAP(x,y) ACE_Hash_Map_Manager<x,y,ACE_Null_Mutex>
 #  define PLATFORM_MAP_ITERATOR(x,y,z) ACE_Hash_Map_Entry<x,y> *z = 0/*NULL*/
 #  define PLATFORM_MAP_ITERATOR_IN_TEMPLATE(x,y,z) PLATFORM_MAP_ITERATOR(x,y,z)
