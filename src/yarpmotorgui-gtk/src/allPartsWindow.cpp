@@ -85,36 +85,36 @@ void sequence_all_save (GtkButton *button, partMover** currentPartMover)
 
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Save File",
-					(GtkWindow*) window,
-					GTK_FILE_CHOOSER_ACTION_SAVE,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-					NULL);
-	
+                    (GtkWindow*) window,
+                    GTK_FILE_CHOOSER_ACTION_SAVE,
+                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                    GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                    NULL);
+    
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
       char *filenameIn; 
       int i;
-    	  
+          
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
-	currentPartMover[i]->save_to_file(filenameIn,currentPartMover[i]);
+    currentPartMover[i]->save_to_file(filenameIn,currentPartMover[i]);
 
       //store the file describing the poses
       fileAll = fopen(filenameIn , "w");
       for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
-	{
-	  sprintf(buffer, "[%s] \n", currentPartMover[i]->partLabel);
-	  fprintf(fileAll, "%s", buffer);
-	  //Specific part filename
-	  sprintf(buffer, "%s.pos%s \n\n", filenameIn, currentPartMover[i]->partLabel);
-	  fprintf(fileAll, "%s", buffer);
-	}
+    {
+      sprintf(buffer, "[%s] \n", currentPartMover[i]->partLabel);
+      fprintf(fileAll, "%s", buffer);
+      //Specific part filename
+      sprintf(buffer, "%s.pos%s \n\n", filenameIn, currentPartMover[i]->partLabel);
+      fprintf(fileAll, "%s", buffer);
+    }
       fclose(fileAll);
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-	
+    
   return;
 
 }
@@ -129,36 +129,36 @@ void sequence_crt_all_save (GtkButton *button, cartesianMover** cm)
 
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Save Cartesian File",
-					(GtkWindow*) window,
-					GTK_FILE_CHOOSER_ACTION_SAVE,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-					NULL);
-	
+                    (GtkWindow*) window,
+                    GTK_FILE_CHOOSER_ACTION_SAVE,
+                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                    GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                    NULL);
+    
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
       char *filenameIn; 
       int i;
-    	  
+          
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       for (i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
-	cm[i]->save_to_file(filenameIn,cm[i]);
+    cm[i]->save_to_file(filenameIn,cm[i]);
 
       //store the file describing the poses
       fileAll = fopen(filenameIn , "w");
       for (i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
-	{
-	  sprintf(buffer, "[%s] \n", cm[i]->partLabel);
-	  fprintf(fileAll, "%s", buffer);
-	  //Specific part filename
-	  sprintf(buffer, "%s.crt%s\n\n", filenameIn, cm[i]->partLabel);
-	  fprintf(fileAll, "%s", buffer);
-	}
+    {
+      sprintf(buffer, "[%s] \n", cm[i]->partLabel);
+      fprintf(fileAll, "%s", buffer);
+      //Specific part filename
+      sprintf(buffer, "%s.crt%s\n\n", filenameIn, cm[i]->partLabel);
+      fprintf(fileAll, "%s", buffer);
+    }
       fclose(fileAll);
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-	
+    
   return;
 
 }
@@ -169,53 +169,53 @@ void sequence_all_load (GtkButton *button, partMover** currentPartMover)
 {
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Open File",
-					(GtkWindow*) window,
-					GTK_FILE_CHOOSER_ACTION_OPEN,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-					NULL);
-	
+                    (GtkWindow*) window,
+                    GTK_FILE_CHOOSER_ACTION_OPEN,
+                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                    NULL);
+    
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
       char *filenameIn; 
       int i, lengthStr;
-    	  
+          
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	  
+      
       //store the file describing the poses
       for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
-	{
-	  Property p;
-	  bool fileExists;
-	  char buffer[800];
+    {
+      Property p;
+      bool fileExists;
+      char buffer[800];
 
-	  fileExists = p.fromConfigFile(filenameIn);
-	  if (fileExists)
-	    {
-	      Bottle& xtmp = p.findGroup(currentPartMover[i]->partLabel);
-	      
-	      sprintf(buffer, "%s",(const char*)xtmp.get(1).toString());
-	      lengthStr = strlen(buffer);
-	      *(buffer + (lengthStr-1)*sizeof(char)) = (char) NULL;
-	      currentPartMover[i]->load_from_file(buffer+(sizeof(char)),currentPartMover[i]); 
-	    }
-	  else
-	    {
-	      dialog_message(GTK_MESSAGE_ERROR,
-			     (char *)"Couldn't find the file describing the positions ", 
-			     (char *)"associated to the currently activated parts", true);
-	    }
-	}
+      fileExists = p.fromConfigFile(filenameIn);
+      if (fileExists)
+        {
+          Bottle& xtmp = p.findGroup(currentPartMover[i]->partLabel);
+          
+          sprintf(buffer, "%s",(const char*)xtmp.get(1).toString().c_str());
+          lengthStr = strlen(buffer);
+          *(buffer + (lengthStr-1)*sizeof(char)) = (char) NULL;
+          currentPartMover[i]->load_from_file(buffer+(sizeof(char)),currentPartMover[i]); 
+        }
+      else
+        {
+          dialog_message(GTK_MESSAGE_ERROR,
+                 (char *)"Couldn't find the file describing the positions ", 
+                 (char *)"associated to the currently activated parts", true);
+        }
+    }
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-	
+    
   return;
 
   
   //int i;
   //for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
-  //	currentPartMover[i]->sequence_load(NULL, currentPartMover[i]);
+  //    currentPartMover[i]->sequence_load(NULL, currentPartMover[i]);
   //return;
 }
 
@@ -225,47 +225,47 @@ void sequence_crt_all_load (GtkButton *button, cartesianMover** cm)
 {
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Open File",
-					(GtkWindow*) window,
-					GTK_FILE_CHOOSER_ACTION_OPEN,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-					NULL);
-	
+                    (GtkWindow*) window,
+                    GTK_FILE_CHOOSER_ACTION_OPEN,
+                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                    NULL);
+    
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
       char *filenameIn; 
       int i, lengthStr;
-    	  
+          
       filenameIn = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	  
+      
       //store the file describing the poses
       for (i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
-	{
-	  Property p;
-	  bool fileExists;
-	  char buffer[800];
+    {
+      Property p;
+      bool fileExists;
+      char buffer[800];
 
-	  fileExists = p.fromConfigFile(filenameIn);
-	  if (fileExists)
-	    {
-	      Bottle& xtmp = p.findGroup(cm[i]->partLabel);
-	      sprintf(buffer, "%s",xtmp.get(1).toString().c_str());
-	      lengthStr = strlen(buffer);
-	      *(buffer + (lengthStr-1)*sizeof(char)) = (char) NULL;
-	      fprintf(stderr, "Loading from %s\n",buffer+sizeof(char));
-	      cm[i]->load_from_file(buffer+sizeof(char),cm[i]);
-	    }
-	  else
-	    {
-	      dialog_message(GTK_MESSAGE_ERROR,
-			     (char *)"Couldn't find the file describing the positions ", 
-			     (char *)"associated to the currently activated parts", true);
-	    }
-	}
+      fileExists = p.fromConfigFile(filenameIn);
+      if (fileExists)
+        {
+          Bottle& xtmp = p.findGroup(cm[i]->partLabel);
+          sprintf(buffer, "%s",xtmp.get(1).toString().c_str());
+          lengthStr = strlen(buffer);
+          *(buffer + (lengthStr-1)*sizeof(char)) = (char) NULL;
+          fprintf(stderr, "Loading from %s\n",buffer+sizeof(char));
+          cm[i]->load_from_file(buffer+sizeof(char),cm[i]);
+        }
+      else
+        {
+          dialog_message(GTK_MESSAGE_ERROR,
+                 (char *)"Couldn't find the file describing the positions ", 
+                 (char *)"associated to the currently activated parts", true);
+        }
+    }
       g_free (filenameIn);
     }
   gtk_widget_destroy (dialog);
-	
+    
   return;
 }
 
