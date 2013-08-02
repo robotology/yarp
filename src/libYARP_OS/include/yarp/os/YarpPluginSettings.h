@@ -51,7 +51,8 @@ public:
      * as a factory
      * 
      */
-    void setLibraryMethodName(const char *dll_name, const char *fn_name) {
+    void setLibraryMethodName(const ConstString& dll_name, 
+                              const ConstString& fn_name) {
         this->dll_name = dll_name;
         this->fn_name = fn_name;
     }
@@ -65,7 +66,7 @@ public:
      * @param name the name of the plugin to load
      *
      */
-    void setPluginName(const char *name) {
+    void setPluginName(const ConstString& name) {
         this->name = name;
     }
 
@@ -81,7 +82,7 @@ public:
     void setSelector(YarpPluginSelector& selector) {
         this->selector = &selector;
         if (name != "") {
-            readFromSelector(name.c_str());
+            readFromSelector(name);
         }
     }
 
@@ -107,12 +108,12 @@ public:
      * @return true on success
      *
      */
-    bool readFromSearchable(Searchable& options, const char *name) {
-        ConstString iname = options.find("library").toString().c_str();
-        ConstString pname = options.find("part").toString().c_str();
+    bool readFromSearchable(Searchable& options, const ConstString& name) {
+        ConstString iname = options.find("library").toString();
+        ConstString pname = options.find("part").toString();
         if (iname=="") iname = name;
         if (pname=="") pname = name;
-        this->name = iname.c_str();
+        this->name = iname;
         this->dll_name = iname;
         this->fn_name = pname;
         verbose = false;
@@ -197,10 +198,10 @@ private:
     bool open(SharedLibraryFactory& factory, const ConstString& dll_name,
               const ConstString& fn_name);
 
-    bool readFromSelector(const char *name) {
+    bool readFromSelector(const ConstString& name) {
         if (!selector) return false;
         Bottle plugins = selector->getSelectedPlugins();
-        Bottle group = plugins.findGroup(name).tail();
+        Bottle group = plugins.findGroup(name.c_str()).tail();
         readFromSearchable(group,name);
         return true;
     }

@@ -72,7 +72,7 @@ public:
 
     static String toString(unsigned int x);
 
-    static int toInt(const char *x);
+    static int toInt(const String& x);
 
     static unsigned long int getCrc(char *buf, size_t len);
 

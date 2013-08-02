@@ -161,7 +161,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     // we may be a pull stream
     sender = isService;
     TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
-                                            isService,raw,rosname);
+                                            isService,raw,rosname.c_str());
 
     if (stream==NULL) { return false; }
 
@@ -378,7 +378,7 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
 
     RosSlave slave(false);
     dbg_printf("Starting temporary slave\n");
-    slave.start(fullDest.getHost(),fullDest.getPort());
+    slave.start(fullDest.getHost().c_str(),fullDest.getPort());
     Contact addr_slave = slave.where();
     Bottle cmd, reply;
     cmd.addString("publisherUpdate");

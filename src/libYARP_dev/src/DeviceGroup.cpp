@@ -81,7 +81,7 @@ public:
         clear();
     }
 
-    bool add(const char *name, yarp::os::Searchable& config) {
+    bool add(const ConstString& name, yarp::os::Searchable& config) {
         //printf("ADDING %s\n", config.toString().c_str());
         PolyDriver *pd = new PolyDriver();
         YARP_ASSERT (pd!=NULL);
@@ -91,7 +91,7 @@ public:
             return false;
         }
         drivers.push_back(pd);
-        names.push_back(ConstString(name));
+        names.push_back(name);
         IService *service = NULL;
         pd->view(service);
         bool backgrounded = true;

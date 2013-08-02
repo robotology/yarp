@@ -24,9 +24,9 @@ public:
         valid = false;
     }
 
-    bool lookupCore(const char *name);
+    bool lookupCore(const yarp::os::ConstString& name);
 
-    bool lookupTopic(const char *name);
+    bool lookupTopic(const yarp::os::ConstString& name);
 
     yarp::os::ConstString toString() {
         char buf[1000];

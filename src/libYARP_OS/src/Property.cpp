@@ -55,7 +55,7 @@ public:
 #endif
         owner(owner) {}
 
-    PropertyItem *getPropNoCreate(const char *key) const {
+    PropertyItem *getPropNoCreate(const ConstString& key) const {
         String n(key);
         PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyItem,entry);
         int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem) *)&data)),n,entry);
@@ -67,7 +67,7 @@ public:
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
 
-    PropertyItem *getProp(const char *key, bool create = true) {
+    PropertyItem *getProp(const ConstString& key, bool create = true) {
         String n(key);
         PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyItem,entry);
         int result = PLATFORM_MAP_FIND(data,n,entry);
@@ -83,7 +83,7 @@ public:
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
 
-    void put(const char *key, const char *val) {
+    void put(const ConstString& key, const ConstString& val) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
         p->bot.clear();
@@ -91,15 +91,7 @@ public:
         p->bot.addString(val);
     }
 
-    void put(const char *key, const ConstString& val) {
-        PropertyItem *p = getProp(key,true);
-        p->singleton = true;
-        p->bot.clear();
-        p->bot.addString(key);
-        p->bot.addString(val);
-    }
-
-    void put(const char *key, const Value& bit) {
+    void put(const ConstString& key, const Value& bit) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
         p->bot.clear();
@@ -107,7 +99,7 @@ public:
         p->bot.add(bit);
     }
 
-    void put(const char *key, Value *bit) {
+    void put(const ConstString& key, Value *bit) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
         p->bot.clear();
@@ -115,17 +107,17 @@ public:
         p->bot.add(bit);
     }
 
-    bool check(const char *key, Value *&output) const {
+    bool check(const ConstString& key, Value *&output) const {
         PropertyItem *p = getPropNoCreate(key);
 
         return p!=NULL;
     }
 
-    void unput(const char *key) {
+    void unput(const ConstString& key) {
         PLATFORM_MAP_UNSET(data,String(key));
     }
 
-    bool check(const char *key) const {
+    bool check(const ConstString& key) const {
         PropertyItem *p = getPropNoCreate(key);
         if (owner.getMonitor()!=NULL) {
             SearchReport report;
@@ -136,7 +128,7 @@ public:
         return p!=NULL;
     }
 
-    Value& get(const char *key) const {
+    Value& get(const ConstString& key) const {
         String out;
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
@@ -184,7 +176,7 @@ public:
     }
 
 
-    Bottle *getBottle(const char *key) const {
+    Bottle *getBottle(const ConstString& key) const {
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
             return &(p->bot);
@@ -196,7 +188,7 @@ public:
         PLATFORM_MAP_CLEAR(data);
     }
 
-    void fromString(const char *txt,bool wipe=true) {
+    void fromString(const ConstString& txt,bool wipe=true) {
         Bottle bot;
         bot.fromString(txt);
         fromBottle(bot,wipe);
@@ -287,13 +279,13 @@ public:
         }
     }
 
-    bool readDir(const  char *dirname,ACE_DIR *&dir, String& result) {
+    bool readDir(const ConstString& dirname, ACE_DIR *&dir, String& result) {
         bool ok = true;
 
         struct YARP_DIRENT **namelist;
         YARP_closedir(dir);
         dir = NULL;
-        int n = YARP_scandir(dirname,&namelist,NULL,YARP_alphasort);
+        int n = YARP_scandir(dirname.c_str(),&namelist,NULL,YARP_alphasort);
         if (n<0) {
             return false;
         }
@@ -317,7 +309,7 @@ public:
             int len = (int)name.length();
             if (len<4) continue;
             if (name.substr(len-4)!=".ini") continue;
-            ConstString fname = ConstString(dirname) + "/" + name;
+            ConstString fname = dirname + "/" + name;
             ok = ok && readFile(fname,result,false);
             result += "\n[]\n";  // reset any nested sections
         }
@@ -327,12 +319,12 @@ public:
         return ok;
     }
 
-    bool readFile(const char *fname, String& result, bool allowDir) {
+    bool readFile(const ConstString& fname, String& result, bool allowDir) {
         if (allowDir) {
-            ACE_DIR *dir = ACE_OS::opendir(fname);
+            ACE_DIR *dir = ACE_OS::opendir(fname.c_str());
             if (dir) return readDir(fname,dir,result);
         }
-        FILE *fin = fopen(fname,"r");
+        FILE *fin = fopen(fname.c_str(),"r");
         if (fin==NULL) return false;
         char buf[25600];
         while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
@@ -343,14 +335,14 @@ public:
         return true;
     }
 
-    bool fromConfigFile(const char *fname,Searchable& env, bool wipe=true) {
+    bool fromConfigFile(const ConstString& fname,Searchable& env, bool wipe=true) {
         String searchPath =
             env.check("CONFIG_PATH",
                       Value(""),
                       "path to search for config files").toString().c_str();
 
         YARP_DEBUG(Logger::get(),
-                   String("looking for ") + fname + ", search path: " +
+                   String("looking for ") + fname.c_str() + ", search path: " +
                    searchPath);
 
         String pathPrefix("");
@@ -772,77 +764,48 @@ const Property& Property::operator = (const Property& prop) {
 }
 
 
-void Property::put(const char *key, const char *val) {
+void Property::put(const ConstString& key, const ConstString& val) {
     HELPER(implementation).put(key,val);
 }
 
-void Property::put(const char *key, const ConstString& val) {
-    HELPER(implementation).put(key,val);
-}
-
-void Property::put(const char *key, const Value& value) {
+void Property::put(const ConstString& key, const Value& value) {
     HELPER(implementation).put(key,value);
 }
 
 
-void Property::put(const char *key, Value *value) {
+void Property::put(const ConstString& key, Value *value) {
     HELPER(implementation).put(key,value);
 }
 
-void Property::put(const char *key, int v) {
+void Property::put(const ConstString& key, int v) {
     put(key,Value::makeInt(v));
 }
 
-void Property::put(const char *key, double v) {
+void Property::put(const ConstString& key, double v) {
     put(key,Value::makeDouble(v));
 }
 
-/*
-  bool Property::check(const char *key, Value *&output) {
-  bool ok = false;
-  if (HELPER(implementation).check(key)) {
-  output = &find(key);
-  ok = true;
-  }
-  return ok;
-  }
-*/
-
-bool Property::check(const char *key) {
+bool Property::check(const ConstString& key) {
     return HELPER(implementation).check(key);
 }
 
 
-void Property::unput(const char *key) {
+void Property::unput(const ConstString& key) {
     HELPER(implementation).unput(key);
 }
 
 
-Value& Property::find(const char *key) {
+Value& Property::find(const ConstString& key) {
     return HELPER(implementation).get(key);
 }
 
-
-/*
-Bottle& Property::putBottle(const char *key, const Bottle& val) {
-    return HELPER(implementation).putBottle(key,val);
-}
-
-Bottle& Property::putBottle(const char *key) {
-    return HELPER(implementation).putBottle(key);
-}
-
-Bottle *Property::getBottle(const char *key) const {
-    return HELPER(implementation).getBottle(key);
-}
-*/
 
 void Property::clear() {
     HELPER(implementation).clear();
 }
 
 
-void Property::fromString(const char *txt,bool wipe) {
+void Property::fromString(const ConstString& txt,bool wipe) {
     HELPER(implementation).fromString(txt,wipe);
 }
 
@@ -864,13 +827,13 @@ void Property::fromCommand(int argc, const char *argv[], bool skipFirst, bool wi
     fromCommand(argc,(char **)argv,skipFirst,wipe);
 }
 
-bool Property::fromConfigFile(const char *fname, bool wipe) {
+bool Property::fromConfigFile(const ConstString& fname, bool wipe) {
     Property p;
     return fromConfigFile(fname,p,wipe);
 }
 
 
-bool Property::fromConfigFile(const char *fname,Searchable& env,bool wipe) {
+bool Property::fromConfigFile(const ConstString& fname,Searchable& env,bool wipe) {
     return HELPER(implementation).fromConfigFile(fname,env,wipe);
 }
 
@@ -902,7 +865,7 @@ bool Property::write(ConnectionWriter& writer) {
 }
 
 
-Bottle& Property::findGroup(const char *key) {
+Bottle& Property::findGroup(const ConstString& key) {
     Bottle *result = HELPER(implementation).getBottle(key);
     if (getMonitor()!=NULL) {
         SearchReport report;

@@ -111,8 +111,8 @@ String NetType::toString(unsigned int x) {
 }
 
 
-int NetType::toInt(const char *x) {
-    return ACE_OS::atoi(x);
+int NetType::toInt(const String& x) {
+    return ACE_OS::atoi(x.c_str());
 }
 
 

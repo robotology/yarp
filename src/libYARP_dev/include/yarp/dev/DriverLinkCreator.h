@@ -28,7 +28,7 @@ private:
     yarp::os::ConstString name;
     PolyDriver holding;
 public:
-    DriverLinkCreator(const char *name, PolyDriver& source) {
+    DriverLinkCreator(const yarp::os::ConstString& name, PolyDriver& source) {
         this->name = name;
         holding.link(source);
     }

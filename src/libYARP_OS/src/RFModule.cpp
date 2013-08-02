@@ -407,8 +407,8 @@ bool RFModule::isStopping() {
     return stopFlag;
 }
 
-ConstString RFModule::getName(const char *subName) {
-    if (subName==0) {
+ConstString RFModule::getName(const ConstString& subName) {
+    if (subName=="") {
         return name;
     }
 
@@ -418,7 +418,7 @@ ConstString RFModule::getName(const char *subName) {
     // appended before subName.
     if (subName[0]!='/') {
         ACE_OS::printf("WARNING: subName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.\n");
-        ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.\n", name.c_str(), subName);
+        ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.\n", name.c_str(), subName.c_str());
 
         base += "/";
     }

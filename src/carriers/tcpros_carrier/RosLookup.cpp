@@ -30,7 +30,7 @@ static bool rpc(const Contact& c,
     return ok;
 }
 
-bool RosLookup::lookupCore(const char *name) {
+bool RosLookup::lookupCore(const ConstString& name) {
     Bottle req, reply;
     req.addString("lookupNode");
     req.addString("dummy_id");
@@ -67,7 +67,7 @@ bool RosLookup::lookupCore(const char *name) {
 }
 
 
-bool RosLookup::lookupTopic(const char *name) {
+bool RosLookup::lookupTopic(const ConstString& name) {
     if (!valid) {
         fprintf(stderr, "Need a node\n");
         return false;
@@ -83,16 +83,16 @@ bool RosLookup::lookupTopic(const char *name) {
     Contact c = Contact::fromString(toString().c_str());
     rpc(c,"xmlrpc",req,reply, verbose);
     if (reply.get(0).asInt()!=1) {
-        fprintf(stderr,"Failure looking up topic %s: %s\n", name, reply.toString().c_str());
+        fprintf(stderr,"Failure looking up topic %s: %s\n", name.c_str(), reply.toString().c_str());
         return false;
     }
     Bottle *pref = reply.get(2).asList();
     if (pref==NULL) {
-        fprintf(stderr,"Failure looking up topic %s: expected list of protocols\n", name);
+        fprintf(stderr,"Failure looking up topic %s: expected list of protocols\n", name.c_str());
         return false;
     }
     if (pref->get(0).asString()!="TCPROS") {
-        fprintf(stderr,"Failure looking up topic %s: unsupported protocol %s\n", name,
+        fprintf(stderr,"Failure looking up topic %s: unsupported protocol %s\n", name.c_str(),
                pref->get(0).asString().c_str());
         return false;
     }
@@ -102,7 +102,8 @@ bool RosLookup::lookupTopic(const char *name) {
     portnum = portnum2.asInt();
     protocol = "tcpros";
     if (verbose) {
-        printf("topic %s available at %s:%d\n", name, hostname.c_str(), portnum);
+        printf("topic %s available at %s:%d\n", name.c_str(), 
+               hostname.c_str(), portnum);
     }
     return true;
 }

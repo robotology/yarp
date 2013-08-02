@@ -118,7 +118,7 @@ int recursiveRemove(ConstString dirName)
                 recursiveRemove(path);
             if ((statbuf.st_mode & S_IFMT)== S_IFREG)
             {
-               YARP_unlink(path);
+                YARP_unlink(path.c_str());
             }
         }
         free(namelist[i]);
