@@ -30,6 +30,7 @@ YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(laserHokuyo)
   add_subdirectory(kinect)
+  add_subdirectory(openni2)
 
   # The dimax_u2c/blob is not exported in the tarball, therefore we
   # disable the build if the folder does not exist
