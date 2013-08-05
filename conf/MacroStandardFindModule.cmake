@@ -28,9 +28,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
-macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
-    include(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
+include(MacroExtractVersion)
 
+macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
     string(TOUPPER ${_name} _NAME)
 
     # Try to use CMake Config file to locate the package
@@ -88,10 +89,8 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
 
     # Extract version numbers
     if(${_name}_FOUND)
-        include(MacroExtractVersion)
         macro_extract_version(${_name})
     endif()
-
 
     # Print some debug output if either MACRO_STANDARD_FIND_MODULE_DEBUG
     # or MACRO_STANDARD_FIND_MODULE_DEBUG_${_name} is set to TRUE
