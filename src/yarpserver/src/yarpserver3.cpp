@@ -60,6 +60,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
         printf("  --subdb subs.db          Store subscription infomation in named database.\n");
         printf("                           Must not be on an NFS file system.\n");
         printf("                           Set to :memory: to store in memory (faster).\n");
+        printf("  --memory                 Shortcut to use :memory: for portdb and subdb\n");
         printf("  --ip IP.AD.DR.ESS        Set IP address of server.\n");
         printf("  --socket NNNNN           Set port number of server.\n");
         printf("  --web dir                Serve web resources from given directory.\n");
@@ -81,10 +82,18 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
         printf("Options can be set on command line or in %s\n", configFilename.c_str());
     }
 
+    ConstString dbDefault = "ports.db";
+    ConstString subdbDefault = "subs.db";
+
+    if (options.check("memory")) {
+        dbDefault = ":memory:";
+        subdbDefault = ":memory:";
+    }
+    
     ConstString dbFilename = options.check("portdb",
-                                           Value("ports.db")).asString();
+                                           Value(dbDefault)).asString();
     ConstString subdbFilename = options.check("subdb",
-                                              Value("subs.db")).asString();
+                                              Value(subdbDefault)).asString();
     ConstString ip = options.check("ip",Value("...")).asString();
     int sock = options.check("socket",Value(Network::getDefaultPortRange())).asInt();
     bool cautious = options.check("cautious");
