@@ -22,7 +22,6 @@ if(UNIX)
     endif()
 
     add_definitions(-Wno-trigraphs)
-
 endif(UNIX)
 
 add_definitions(${GTK2_DEFINITIONS})
