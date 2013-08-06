@@ -186,6 +186,33 @@ public:
         face.close();
     }
 
+    static bool waitConnect(const ConstString& n1,
+                            const ConstString& n2,
+                            double timeout) {
+        double start = Time::now();
+        while (Time::now()-start<timeout) {
+            if (NetworkBase::isConnected(n1,n2)) {
+                return true;
+            }
+            Time::delay(0.1);
+        }
+        return false;
+    }
+
+    void checkTopics() {
+        report(0,"checking topics are effective");
+        Network::connect("/NetworkTest/checkTopic/p1","topic://NetworkTest/checkTopic");
+        Network::connect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
+        Port p1;
+        Port p2;
+        p1.open("/NetworkTest/checkTopic/p1");
+        p2.open("/NetworkTest/checkTopic/p2");
+        checkTrue(waitConnect(p1.getName(),p2.getName(),20), 
+                  "auto connect working");
+        Network::disconnect("/NetworkTest/checkTopic/p1","topic://NetworkTest/checkTopic");
+        Network::disconnect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
@@ -194,6 +221,7 @@ public:
         checkPropertySetGet();
         checkTimeoutNetworkWrite();
         checkTimeoutNetworkExists();
+        checkTopics();
         Network::setLocalMode(false);
     }
 };

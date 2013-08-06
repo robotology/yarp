@@ -66,7 +66,7 @@ public:
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event, 
-                       yarp::os::Contact& remote) {
+                       const yarp::os::Contact& remote) {
         bool ok = ns.apply(cmd,reply,event,remote);
         return ok;
     }

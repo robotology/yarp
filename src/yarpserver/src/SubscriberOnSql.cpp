@@ -376,8 +376,8 @@ bool SubscriberOnSql::checkSubscription(const ConstString& src,const ConstString
             bool srcTopic = (csrc.getCarrier()=="topic");
             bool destTopic = (cdest.getCarrier()=="topic");
             if (!(srcTopic||destTopic)) {
-                printf("++> check connection %s %s\n", 
-                       srcFull.c_str(), destFull.c_str());
+                if (verbose) printf("++> check connection %s %s\n", 
+                                    srcFull.c_str(), destFull.c_str());
                 connect(srcFull,destFull);
             }
         }

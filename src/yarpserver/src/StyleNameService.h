@@ -24,15 +24,15 @@ public:
     StyleNameService() {
     }
 
-    bool configure(const yarp::os::Property& options) {
-        this->options = options;
+    bool configure(const yarp::os::Searchable& options) {
+        this->options.fromString(options.toString());
         return true;
     }
 
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
-                       yarp::os::Contact& remote);
+                       const yarp::os::Contact& remote);
 private:
     yarp::os::Property options;
     yarp::os::Property content;

@@ -13,7 +13,8 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
                        include/yarp/name/NameServerManager.h
                        include/yarp/name/NameService.h)
 
-    set(YARP_name_SRCS src/BootstrapServer.cpp)
+    set(YARP_name_SRCS src/BootstrapServer.cpp
+                       src/NameService.cpp)
 
     source_group("Source Files" FILES ${YARP_name_SRCS})
     source_group("Header Files" FILES ${YARP_name_HDRS})
@@ -36,3 +37,5 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
             COMPONENT development
             DESTINATION include/yarp/name)
 endif()
+
+# touch 1

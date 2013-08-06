@@ -13,6 +13,7 @@
 #include <yarp/name/api.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/NameStore.h>
 
 namespace yarp {
     /**
@@ -35,14 +36,14 @@ namespace yarp {
  * Abstract interface for a name server operator.
  *
  */
-class YARP_name_API yarp::name::NameService {
+class YARP_name_API yarp::name::NameService : public yarp::os::NameStore {
 public:
     virtual ~NameService() {}
 
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
-                       yarp::os::Contact& remote) = 0;
+                       const yarp::os::Contact& remote) = 0;
 
     virtual void onEvent(yarp::os::Bottle& event) {}
 
@@ -50,6 +51,18 @@ public:
     virtual void unlock() {}
 
     virtual void goPublic() {}
+
+    virtual yarp::os::Contact query(const yarp::os::ConstString& name) {
+        return yarp::os::Contact();
+    }
+
+    virtual bool announce(const yarp::os::ConstString& name, int activity) {
+        return false;
+    }
+
+    virtual bool process(yarp::os::PortWriter& in, 
+                         yarp::os::PortReader& out, 
+                         const yarp::os::Contact& remote);
 };
 
 

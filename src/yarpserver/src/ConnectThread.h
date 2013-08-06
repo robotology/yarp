@@ -53,16 +53,16 @@ public:
             if (!needed) { break; }
             if (positive) {
                 if (!yarp::os::NetworkBase::isConnected(src,dest)) {
-                    printf("   (((Trying to connect %s and %s)))\n", 
-                           src.c_str(),
-                           dest.c_str());
+                    //printf("   (((Trying to connect %s and %s)))\n", 
+                    //     src.c_str(),
+                    //     dest.c_str());
                     yarp::os::NetworkBase::connect(src,dest);
                 }
             } else {
                 if (yarp::os::NetworkBase::isConnected(src,dest)) {
-                    printf("   (((Trying to disconnect %s and %s)))\n", 
-                           src.c_str(),
-                           dest.c_str());
+                    //printf("   (((Trying to disconnect %s and %s)))\n", 
+                    //       src.c_str(),
+                    //       dest.c_str());
                     yarp::os::NetworkBase::disconnect(src,dest);
                 }
             }

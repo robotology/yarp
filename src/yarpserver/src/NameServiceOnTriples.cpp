@@ -236,7 +236,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         } else if (carrier!="mcast") {
             string remote = act.remote.getHost().c_str();
             if (remote==""||remote=="...") {
-                fprintf(stderr,"Not detecting real remote machine name, guessing local\n");
+                //fprintf(stderr,"Not detecting real remote machine name, guessing local\n");
                 machine = "localhost";
             } else {
                 machine = remote.c_str();
@@ -252,10 +252,14 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         }
     }
     lock();
-    if (port=="...") {
+    if (port=="..." || port[0]=='=') {
         Contact c = Contact::byName(port.c_str()).addSocket(carrier.c_str(),machine.c_str(),sock);
         c = alloc->completePortName(c);
-        port = c.getName();
+        if (port =="...") {
+            port = c.getName();
+        } else {
+            port = c.getName() + port;
+        }
     }
     t.setNameValue("port",port.c_str());
     act.mem.remove_query(t,NULL);
@@ -294,7 +298,6 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
 
 bool NameServiceOnTriples::announce(const ConstString& name, int activity) {
     if (subscriber!=NULL&&gonePublic) {
-        //printf("announcing %s %d\n", name, activity);
         subscriber->welcome(name,activity);
     }
     return true;
@@ -388,7 +391,9 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
 
 bool NameServiceOnTriples::cmdSet(NameTripleState& act) {
     lock();
-    act.reply.addString("old");
+    if (!act.bottleMode) {
+        act.reply.addString("old");
+    }
     ConstString port = act.cmd.get(1).asString();
     ConstString key = act.cmd.get(2).toString();
     int at = 3;
@@ -421,8 +426,10 @@ bool NameServiceOnTriples::cmdSet(NameTripleState& act) {
 
 bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
     lock();
-    if (act.reply.size()==0) {
-        act.reply.addString("old");
+    if (!act.bottleMode) {
+        if (act.reply.size()==0) {
+            act.reply.addString("old");
+        }
     }
     ConstString port = act.cmd.get(1).asString();
     ConstString key = act.cmd.get(2).toString();
@@ -437,14 +444,22 @@ bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
     context.setRid(result);
     t.setNameValue(key.c_str(),"*");
     list<Triple> lst = act.mem.query(t,&context);
-    Bottle& q = act.reply.addList();
-    q.addString("port");
-    q.addString(port.c_str());
-    q.addString("property");
-    q.addString(key.c_str());
-    q.addString("=");
-    for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
-        q.addString(it->value.c_str());
+    Bottle& q = (act.bottleMode?act.reply:act.reply.addList());
+    if (!act.bottleMode) {
+        q.addString("port");
+        q.addString(port.c_str());
+        q.addString("property");
+        q.addString(key.c_str());
+        q.addString("=");
+        for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
+            q.addString(it->value.c_str());
+        }
+    } else {
+        for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
+            Value v;
+            v.fromString(it->value.c_str());
+            q.add(v);
+        }
     }
     unlock();
     return true;
@@ -539,7 +554,7 @@ bool NameServiceOnTriples::cmdHelp(NameTripleState& act) {
 bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd, 
                                  yarp::os::Bottle& reply, 
                                  yarp::os::Bottle& event,
-                                 yarp::os::Contact& remote) {
+                                 const yarp::os::Contact& remote) {
     ConstString key = cmd.get(0).toString();
     ConstString prefix = " * ";
     
@@ -552,10 +567,11 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
     } else {
         lastRegister = "";
     }
-    printf("%s%s\n", 
-           prefix.c_str(),
-           cmd.toString().c_str());
-
+    if (!silent) {
+        printf("%s%s\n", 
+               prefix.c_str(),
+               cmd.toString().c_str());
+    }
 
     TripleSource& mem = *db;
     //mem.begin();

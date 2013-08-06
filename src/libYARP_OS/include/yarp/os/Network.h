@@ -429,6 +429,8 @@ public:
      */
     static void queryBypass(NameStore *store);
 
+    static NameStore *getQueryBypass();
+
     /**
      *
      * Read a variable from the environment.

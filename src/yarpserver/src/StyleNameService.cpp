@@ -16,7 +16,7 @@ using namespace yarp::os;
 bool yarp::name::StyleNameService::apply(yarp::os::Bottle& cmd, 
                                          yarp::os::Bottle& reply, 
                                          yarp::os::Bottle& event,
-                                         yarp::os::Contact& remote) {
+                                         const yarp::os::Contact& remote) {
     if (cmd.get(0).asString()!="web") return false;
 
     if (!content.check("main.css")) {

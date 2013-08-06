@@ -21,6 +21,8 @@
 
 #include <yarp/name/NameService.h>
 
+#include <stdio.h>
+
 namespace yarp {
     namespace name {
         class NameServerConnectionHandler;
@@ -46,13 +48,14 @@ public:
     }
 
     virtual bool apply(yarp::os::ConnectionReader& reader,
-                       yarp::os::ConnectionWriter *writer = 0/*NULL*/) {
+                       yarp::os::ConnectionWriter *writer,
+                       bool lock = true) {
         yarp::os::Bottle cmd, reply, event;
         bool ok = cmd.read(reader);
         if (!ok) return false;
         yarp::os::Contact remote;
         remote = reader.getRemoteContact();
-        service->lock();
+        if (lock) service->lock();
         ok = service->apply(cmd,reply,event,remote);
         for (int i=0; i<event.size(); i++) {
             yarp::os::Bottle *e = event.get(i).asList();
@@ -60,7 +63,7 @@ public:
                 service->onEvent(*e);
             }
         }
-        service->unlock();
+        if (lock) service->unlock();
         if (writer==0/*NULL*/) {
             writer = reader.getWriter();
         }

@@ -112,16 +112,15 @@ bool PortCore::listen(const Address& address, bool shouldAnnounce) {
     stateMutex.post();
 
     if (announce) {
-        if (!NetworkBase::getLocalMode()) {
-            ConstString serverName = NetworkBase::getNameServerName();
+        if (!(NetworkBase::getLocalMode()&&NetworkBase::getQueryBypass()==NULL)) {
+            //ConstString serverName = NetworkBase::getNameServerName();
             ConstString portName = address.getRegName().c_str();
-            if (serverName!=portName) {
-                Bottle cmd, reply;
-                cmd.addString("announce");
-                cmd.addString(portName.c_str());
-                NetworkBase::write(NetworkBase::getNameServerContact(),
-                                   cmd, reply);
-            }
+            //if (serverName!=portName) {
+            Bottle cmd, reply;
+            cmd.addString("announce");
+            cmd.addString(portName.c_str());
+            ContactStyle style;
+            NetworkBase::writeToNameServer(cmd, reply,style);
         }
     }
 
@@ -277,13 +276,15 @@ void PortCore::interrupt() {
 
 
 void PortCore::closeMain() {
+    YTRACE("PortCore::closeMain");
     stateMutex.wait();
-    if (finishing||!running) {
+    if (finishing||!(running||manual)) {
+        YTRACE("PortCore::closeMainNothingToDo");
         stateMutex.post();
         return;
     }
 
-    YTRACE("PortCore::closeMain");
+    YTRACE("PortCore::closeMainCentral");
 
     // Politely pre-disconnect inputs
     finishing = true;
@@ -370,12 +371,14 @@ void PortCore::closeMain() {
         stateMutex.post();
 
         // wake it up
-        OutputProtocol *op = face->write(address);
-        if (op!=NULL) {
-            op->close();
-            delete op;
+        if (!manual) {
+            OutputProtocol *op = face->write(address);
+            if (op!=NULL) {
+                op->close();
+                delete op;
+            }
+            join();
         }
-        join();
 
         // should be finished
         stateMutex.wait();
@@ -568,7 +571,7 @@ void PortCore::addInput(InputProtocol *ip) {
     unit->start();
 
     units.push_back(unit);
-    YMSG(("there are now %d units\n", units.size()));
+    YMSG(("there are now %d units\n", (int)units.size()));
     stateMutex.post();
 }
 
@@ -690,32 +693,37 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
         YARP_DEBUG(log,"one or more connections need prodding to die");
         // death will happen in due course; we can speed it up a bit
         // by waking up the grim reaper
-        OutputProtocol *op = face->write(address);
-        if (op!=NULL) {
-            op->close();
-            delete op;
-        }
-        YARP_DEBUG(log,"sent message to prod connection death");
 
-        if (synch) {
-            YARP_DEBUG(log,"synchronizing with connection death");
-            // wait until disconnection process is complete
-            bool cont = false;
-            do {
-                stateMutex.wait();
-                //cont = isUnit(route);
-                for (int i=0; i<(int)removals.size(); i++) {
-                    cont = isUnit(route,removals[i]);
-                    if (cont) break;
-                }
-                if (cont) {
-                    connectionListeners++;
-                }
-                stateMutex.post();
-                if (cont) {
-                    connectionChange.wait();
-                }
-            } while (cont);
+        if (manual) {
+            reapUnits();
+        } else {
+            OutputProtocol *op = face->write(address);
+            if (op!=NULL) {
+                op->close();
+                delete op;
+            }
+            YARP_DEBUG(log,"sent message to prod connection death");
+            
+            if (synch) {
+                YARP_DEBUG(log,"synchronizing with connection death");
+                // wait until disconnection process is complete
+                bool cont = false;
+                do {
+                    stateMutex.wait();
+                    //cont = isUnit(route);
+                    for (int i=0; i<(int)removals.size(); i++) {
+                        cont = isUnit(route,removals[i]);
+                        if (cont) break;
+                    }
+                    if (cont) {
+                        connectionListeners++;
+                    }
+                    stateMutex.post();
+                    if (cont) {
+                        connectionChange.wait();
+                    }
+                } while (cont);
+            }
         }
     }
     return needReap;

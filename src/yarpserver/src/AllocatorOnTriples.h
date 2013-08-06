@@ -20,7 +20,16 @@
  */
 class AllocatorOnTriples : public Allocator {
 public:
-    AllocatorOnTriples(TripleSource *db, const AllocatorConfig& config) : db(db), config(config) {
+    AllocatorOnTriples() {
+        regid = -1;
+        tmpid = -1;
+        mcastCursor = -1;
+        db = 0 /*NULL*/;
+    }
+
+    void open(TripleSource *db, const AllocatorConfig& config) {
+        this->db = db;
+        this->config = config;
         regid = -1;
         tmpid = -1;
         mcastCursor = -1;

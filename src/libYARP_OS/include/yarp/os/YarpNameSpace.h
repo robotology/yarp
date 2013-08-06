@@ -113,9 +113,17 @@ public:
                 break;
             }
         }
-        bool ok = NetworkBase::write(getNameServerContact(),
-                                     cmd,
-                                     reply);
+        bool ok = false;
+        if (!NetworkBase::getQueryBypass()) {
+            ok = NetworkBase::write(getNameServerContact(),
+                                    cmd,
+                                    reply);
+        } else {
+            ContactStyle style;
+            ok = NetworkBase::writeToNameServer(cmd,
+                                                reply,
+                                                style);
+        }
         bool fail = (reply.get(0).toString()=="fail")||!ok;
         if (fail) {
             if (!style.quiet) {

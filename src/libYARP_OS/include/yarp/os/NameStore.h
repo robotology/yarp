@@ -11,6 +11,7 @@
 #define _YARP2_NAMESTORE_
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     namespace os {
@@ -27,6 +28,9 @@ public:
     virtual ~NameStore();
     virtual Contact query(const yarp::os::ConstString& name) = 0;
     virtual bool announce(const yarp::os::ConstString& name, int activity) = 0;
+    virtual bool process(PortWriter& in,
+                         PortReader& out,
+                         const Contact& source) = 0;
 };
 
 

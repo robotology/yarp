@@ -137,6 +137,19 @@ Address NameClient::extractAddress(const Bottle& bot) {
 String NameClient::send(const String& cmd, bool multi) {
     //printf("*** OLD YARP command %s\n", cmd.c_str());
     setup();
+
+    if (NetworkBase::getQueryBypass()) {
+        ContactStyle style;
+        Bottle bcmd(cmd.c_str()), reply;       
+        NetworkBase::writeToNameServer(bcmd,reply,style);
+        ConstString si = reply.toString(), so;
+        for (int i=0; i<(int)si.length(); i++) {
+            if (si[i]!='\"') {
+                so += si[i];
+            }
+        }
+        return so.c_str();
+    }
     bool retried = false;
     bool retry = false;
     String result;
@@ -231,6 +244,11 @@ String NameClient::send(const String& cmd, bool multi) {
 
 bool NameClient::send(Bottle& cmd, Bottle& reply) {
     setup();
+    if (NetworkBase::getQueryBypass()) {
+        ContactStyle style;
+        NetworkBase::writeToNameServer(cmd,reply,style);
+        return true;
+    }
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(),"fake mode nameserver");
         return getServer().apply(cmd,reply,

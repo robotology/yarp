@@ -26,11 +26,16 @@ class Subscriber : public yarp::name::NameService {
 private:
     yarp::os::NameStore *store;
     ConnectManager manager;
+    bool silent;
 public:
-    Subscriber() : store(0/*NULL*/) {}
+    Subscriber() : store(0/*NULL*/), silent(false) {}
 
     void setStore(yarp::os::NameStore& store) { this->store = &store; }
     yarp::os::NameStore *getStore() { return store; }
+
+    void setSilent(bool flag) {
+        this->silent = flag;
+    }
 
     void connect(const yarp::os::ConstString& src,
                  const yarp::os::ConstString& dest) {
@@ -70,12 +75,12 @@ public:
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
-                       yarp::os::Contact& remote) {
+                       const yarp::os::Contact& remote) {
         yarp::os::ConstString tag = cmd.get(0).asString();
         bool ok = false;
         if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce"||
             tag=="topic"||tag=="untopic"||tag=="type") {
-            printf("-> %s\n", cmd.toString().c_str());
+            if (!silent) printf("-> %s\n", cmd.toString().c_str());
         }
         if (tag=="subscribe") {
             yarp::os::ConstString src = cmd.get(1).asString();

@@ -6,6 +6,11 @@ option(YARP_COMPILE_TESTS "Compile YARP tests" TRUE)
 
 if (YARP_COMPILE_TESTS)
 
+  if (YARP_USE_PERSISTENT_NAMESERVER)
+    add_definitions(-DYARP_USE_PERSISTENT_NAMESERVER=1)
+    include_directories(${CMAKE_SOURCE_DIR}/src/yarpserver/include)
+  endif()
+
   add_executable(testModule ../libYARP_OS/harness/testModule/module.cpp)
   target_link_libraries(testModule YARP_init YARP_OS)
   
@@ -37,9 +42,12 @@ if (YARP_COMPILE_TESTS)
     add_executable(${EXE} ${harness_code})
     target_link_libraries(${EXE} ${YARP_LIBRARIES})
     target_link_libraries(${EXE} ${ACE_LIBRARIES})
+    if (YARP_USE_PERSISTENT_NAMESERVER)
+      target_link_libraries(${EXE} YARP_serversql)
+    endif ()
     # added by Lorenzo, to fix windows problem. I assume we test RELEASE 
     # builds.
-    GET_TARGET_PROPERTY(EXELOC ${EXE} LOCATION_RELEASE)
+    get_target_property(EXELOC ${EXE} LOCATION_RELEASE)
     #message(STATUS "Exeloc: ${EXELOC}")
     if (NOT YARP_HAS_ACE)
       # Without ACE, we don't currently have UDP
@@ -70,4 +78,4 @@ if (YARP_COMPILE_TESTS)
 
 endif (YARP_COMPILE_TESTS)
 
-# touch 1
+# touch 1 2

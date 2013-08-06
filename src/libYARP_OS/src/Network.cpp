@@ -79,9 +79,10 @@ static int noteDud(const Contact& src) {
     cmd.addString("announce");
     cmd.addString(src.getName().c_str());
     cmd.addInt(0);
-    bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
-                                 cmd,
-                                 reply);
+    ContactStyle style;
+    bool ok = NetworkBase::writeToNameServer(cmd,
+                                             reply,
+                                             style);
     return ok?0:1;
  }
 
@@ -509,7 +510,10 @@ bool NetworkBase::exists(const ConstString& port, const ContactStyle& style) {
         Bottle cmd("[ver]"), resp;
         bool ok = NetworkBase::write(Contact::byName(port),cmd,resp,style2);
         if (!ok) result = 1;
-        if (resp.get(0).toString()!="ver") {
+        if (resp.get(0).toString()!="ver"&&resp.get(0).toString()!="dict") {
+            // YARP nameserver responds with a version
+            // ROS nameserver responds with a dictionary of error data
+            // Treat everything else an unknown
             result = 1;
         }
     }
@@ -693,23 +697,6 @@ bool NetworkBase::write(const Contact& contact,
         }
 
         bool ok = port.write(cmd,reply);
-        /*
-        DummyConnector con;
-        cmd.write(con.getWriter());
-        Bottle in, out;
-        in.read(con.getReader());
-        bool ok = port.write(cmd,out);
-        out.write(con.getCleanWriter());
-        reply.read(con.getReader());
-
-        YARP_SPRINTF3(Logger::get(),
-                      debug,
-                      "NETWORK WROTE: %s: [%s] -> [%s]",
-                      ec.toString().c_str(),
-                      in.toString().c_str(),
-                      out.toString().c_str());
-        */
-
         return ok;
     }
 
@@ -846,6 +833,11 @@ void NetworkBase::setVerbosity(int verbosity) {
 void NetworkBase::queryBypass(NameStore *store) {
     getNameSpace().queryBypass(store);
 }
+
+NameStore *NetworkBase::getQueryBypass() {
+    return getNameSpace().getQueryBypass();
+}
+
 
 
 ConstString NetworkBase::getEnvironment(const char *key,
@@ -1185,6 +1177,11 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
 bool NetworkBase::writeToNameServer(PortWriter& cmd,
                                     PortReader& reply,
                                     const ContactStyle& style) {
+    NameStore *store = getNameSpace().getQueryBypass();
+    if (store) {
+        Contact contact;
+        return store->process(cmd,reply,contact);
+    }
     return getNameSpace().writeToNameServer(cmd,reply,style);
 }
 
