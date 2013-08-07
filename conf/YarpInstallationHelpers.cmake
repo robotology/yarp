@@ -65,12 +65,12 @@ macro(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
   set(${_NAME}_ROBOTS_INSTALL_DIR  ${${_NAME}_DATA_INSTALL_DIR}/robots CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir")
 endmacro()
 
-# This macro has the same signature as CMake "install" command (i.e., with DESTINATION and FILES arguments); in addition to calling the "install" command,
+# This macro has the same signature as CMake "install" command (i.e., with DESTINATION and FILES/DIRECTORY arguments); in addition to calling the "install" command,
 # it also copies files to the build directory, keeping the same directory tree structure, to allow direct use of build tree without installation.
 macro(YARP_INSTALL)
 #CMakeParseArguments.cmake
-   CMAKE_PARSE_ARGUMENTS(currentTarget "" "DESTINATION" "FILES" ${ARGN})
+   CMAKE_PARSE_ARGUMENTS(currentTarget "" "DESTINATION" "FILES;DIRECTORY" ${ARGN})
    install(${ARGN})
-   file(COPY ${currentTarget_FILES} DESTINATION ${CMAKE_BINARY_DIR}/${currentTarget_DESTINATION})
+   file(COPY ${currentTarget_FILES} ${currentTarget_DIRECTORY} DESTINATION ${CMAKE_BINARY_DIR}/${currentTarget_DESTINATION})
 endmacro()
 
