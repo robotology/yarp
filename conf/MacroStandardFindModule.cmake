@@ -78,10 +78,9 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
                              ${_name}_LIBRARIES
                              ${_name}_DEFINITIONS)
 
-        endif(PKG_CONFIG_FOUND)
+            find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_LIBRARIES)
 
-        find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_LIBRARIES)
-
+        endif()
     endif()
 
     # ${_name}_FOUND is uppercase after find_package_handle_standard_args
