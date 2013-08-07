@@ -118,7 +118,7 @@ export ACE_ROOT=$PWD
 if [ ! -e $ACE_ROOT/ace/config.h ] ; then
 	echo "Creating $ACE_ROOT/ace/config.h"	
 	cd $ACE_ROOT/ace
-	echo '#include "ace/config-win32.h"' > config.h
+	echo '#include "ace/config-windows.h"' > config.h
 fi
 if [ "k$COMPILER_FAMILY" = "kmingw" ]; then
 	cd $ACE_ROOT
