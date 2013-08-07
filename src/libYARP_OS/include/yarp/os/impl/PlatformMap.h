@@ -16,6 +16,7 @@
 #  include <ace/Null_Mutex.h>
 #  include <ace/Functor_String.h>
 #  ifndef YARP_ACE_HAS_STRING_HASH
+
 template<>
 class ACE_Export ACE_Equal_To<std::string>
 {
@@ -30,7 +31,17 @@ class ACE_Export ACE_Hash<std::string>
 {
 public:
     unsigned long operator() (const std::string& x) const {
-        return ACE::hash_pjw(x.c_str(), x.length());
+        unsigned long h = 0;
+        for (size_t i=0; i<x.length(); i++) {
+            unsigned char ch = x[i];
+            h = (h << 4) + (ch * 13);
+            unsigned long g = h & 0xf0000000;
+            if (g) {
+                h ^= (g>>24);
+                h ^= g;
+            }
+        }
+        return h;
     }
 };
 
