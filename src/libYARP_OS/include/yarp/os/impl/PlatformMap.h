@@ -10,6 +10,7 @@
 #ifndef _YARP2_PLATFORMMAP_
 #define _YARP2_PLATFORMMAP_
 
+#include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
 #ifndef YARP_USE_STL
 #  include <ace/Hash_Map_Manager.h>
@@ -18,7 +19,7 @@
 #  ifndef YARP_ACE_HAS_STRING_HASH
 
 template<>
-class ACE_Export ACE_Equal_To<std::string>
+class YARP_OS_API ACE_Equal_To<std::string>
 {
 public:
     int operator() (const std::string& x, const std::string& y) const {
@@ -27,7 +28,7 @@ public:
 };
 
 template<>
-class ACE_Export ACE_Hash<std::string>
+class YARP_OS_API ACE_Hash<std::string>
 {
 public:
     unsigned long operator() (const std::string& x) const {
@@ -46,7 +47,7 @@ public:
 };
 
 template<>
-class ACE_Export ACE_Less_Than<std::string>
+class YARP_OS_API ACE_Less_Than<std::string>
 {
 public:
     int operator() (const std::string &x, const std::string &y) const {
