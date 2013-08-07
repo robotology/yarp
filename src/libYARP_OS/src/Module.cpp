@@ -10,6 +10,7 @@
 
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
