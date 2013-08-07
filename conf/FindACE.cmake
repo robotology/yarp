@@ -12,7 +12,7 @@
 
 
 include(MacroStandardFindModule)
-macro_standard_find_module(ACE ACE)
+macro_standard_find_module(ACE ACE SKIP_CMAKE_CONFIG NOT_REQUIRED)
 
 
 ## script does not work if executed twice bc ACE_LIBRARY get appended
