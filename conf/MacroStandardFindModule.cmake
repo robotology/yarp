@@ -1,6 +1,11 @@
 # - Try to find a package using a cmake config file, or pkgconfig
 #
-# MACRO_STANDARD_FIND_MODULE(<name> <pkgconfig name>)
+# MACRO_STANDARD_FIND_MODULE( <name>
+#                             <pkgconfig name>
+#                             [NOT_REQUIRED]
+#                             [SKIP_CMAKE_CONFIG]
+#                             [SKIP_PKG_CONFIG] )
+#
 # If the package is found, the following variables (where possible)
 # are created:
 #
@@ -15,8 +20,13 @@
 #  <name>_TWEAK_VERSION - <name> tweak version
 #
 # In a FindXXX.cmake module, this macro can be used at the beginning.
+# The NOT_REQUIRED can be added to avoid failing if the package was not
+# found, but pkg-config is installed.
 # If <name>_FOUND is FALSE at the end, more "custom" searches can be
 # used (for windows, etc.)
+#
+# If SKIP_CMAKE_CONFIG or SKIP_PKG_CONFIG are set, the relative step
+# is skipped
 #
 # If one of the variables
 #  MACRO_STANDARD_FIND_MODULE_DEBUG
@@ -29,20 +39,26 @@
 
 
 include(FindPackageHandleStandardArgs)
+include(CMakeParseArguments)
 include(MacroExtractVersion)
 
 macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
     string(TOUPPER ${_name} _NAME)
+    cmake_parse_arguments(_OPT_${_NAME} "NOT_REQUIRED;SKIP_CMAKE_CONFIG;SKIP_PKG_CONFIG" "" "" ${ARGN})
 
     # Try to use CMake Config file to locate the package
-    set(_${_name}_FIND_QUIETLY ${${_name}_FIND_QUIETLY})
-    find_package(${_name} QUIET NO_MODULE)
-    set(${_name}_FIND_QUIETLY ${_${_name}_FIND_QUIETLY})
-    mark_as_advanced(${_name}_DIR)
+    if(NOT _OPT_${_NAME}_SKIP_CMAKE_CONFIG)
+        set(_${_name}_FIND_QUIETLY ${${_name}_FIND_QUIETLY})
+        find_package(${_name} QUIET NO_MODULE)
+        set(${_name}_FIND_QUIETLY ${_${_name}_FIND_QUIETLY})
+        mark_as_advanced(${_name}_DIR)
 
-    if (${_name}_FOUND)
-        find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_CONFIG)
-    else()
+        if(${_name}_FOUND)
+            find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_CONFIG)
+        endif()
+    endif()
+
+    if(NOT ${_name}_FOUND AND NOT _OPT_${_NAME}_SKIP_PKG_CONFIG)
         # No CMake Config file was found. Try using PkgConfig
         find_package(PkgConfig QUIET)
         if(PKG_CONFIG_FOUND)
@@ -78,7 +94,21 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
                              ${_name}_LIBRARIES
                              ${_name}_DEFINITIONS)
 
+            # If NOT_REQUIRED unset the _FIND_REQUIRED variable and save it for later
+            if(_OPT_${_NAME}_NOT_REQUIRED AND DEFINED ${_name}_FIND_REQUIRED)
+                set(_${_name}_FIND_REQUIRED ${${_name}_FIND_REQUIRED})
+                set(_${_name}_FIND_QUIETLY ${${_name}_FIND_QUIETLY})
+                unset(${_name}_FIND_REQUIRED)
+                set(${_name}_FIND_QUIETLY 1)
+            endif()
+
             find_package_handle_standard_args(${_name} DEFAULT_MSG ${_name}_LIBRARIES)
+
+            # If NOT_REQUIRED reset the _FIND_REQUIRED variable
+            if(_OPT_${_NAME}_NOT_REQUIRED AND DEFINED _${_name}_FIND_REQUIRED)
+                set(${_name}_FIND_REQUIRED ${_${_name}_FIND_REQUIRED})
+                set(${_name}_FIND_QUIETLY ${_${_name}_FIND_QUIETLY})
+            endif()
 
         endif()
     endif()
@@ -90,6 +120,7 @@ macro(MACRO_STANDARD_FIND_MODULE _name _pkgconfig_name)
     if(${_name}_FOUND)
         macro_extract_version(${_name})
     endif()
+
 
     # Print some debug output if either MACRO_STANDARD_FIND_MODULE_DEBUG
     # or MACRO_STANDARD_FIND_MODULE_DEBUG_${_name} is set to TRUE
