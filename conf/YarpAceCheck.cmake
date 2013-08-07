@@ -6,7 +6,7 @@
 #########################################################################
 # Configure ACE
 
-option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality" FALSE)
+option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality)" FALSE)
 mark_as_advanced(SKIP_ACE)
 
 
