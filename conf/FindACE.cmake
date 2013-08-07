@@ -31,10 +31,6 @@ if(NOT ACE_FOUND)
               DOC "directory containing ace/*.h for ACE library")
     mark_as_advanced(ACE_INCLUDE_DIR)
 
-    # in YARP1, config was in another directory
-    set(ACE_INCLUDE_CONFIG_DIR "" CACHE STRING "location of ace/config.h")
-    mark_as_advanced(ACE_INCLUDE_CONFIG_DIR)
-
     find_library(ACE_LIBRARY_RELEASE
                  NAMES ACE
                        ace
@@ -57,7 +53,7 @@ if(NOT ACE_FOUND)
     select_library_configurations(ACE)
 
     set(ACE_LIBRARIES ${ACE_LIBRARY})
-    set(ACE_INCLUDE_DIRS ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
+    set(ACE_INCLUDE_DIRS ${ACE_INCLUDE_DIR})
 
 
     ########################################################################
