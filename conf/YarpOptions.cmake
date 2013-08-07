@@ -23,6 +23,8 @@ if (MSVC)
     ${CMAKE_BINARY_DIR}/lib/Release)
 endif (MSVC)
 
+set(YARP_OPTIMIZED_CONFIGURATIONS "Release" "MinSizeRel")
+set(YARP_DEBUG_CONFIGURATIONS "Debug" "RelWithDebInfo")
 
 #########################################################################
 # DebugFull builds options
@@ -39,6 +41,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
                      CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
                      CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
                      CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL)
+
+    list(APPEND YARP_DEBUG_CONFIGURATIONS "DebugFull")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 #########################################################################
@@ -56,22 +60,26 @@ if(CMAKE_COMPILER_IS_GNUCXX)
                      CMAKE_EXE_LINKER_FLAGS_PROFILE
                      CMAKE_MODULE_LINKER_FLAGS_PROFILE
                      CMAKE_SHARED_LINKER_FLAGS_PROFILE)
+
+    list(APPEND YARP_DEBUG_CONFIGURATIONS "Profile")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 #########################################################################
-# Encourage user to specify build type.
+# Handle CMAKE_CONFIGURATION_TYPES and CMAKE_BUILD_TYPE
 
 if(NOT CMAKE_CONFIGURATION_TYPES)
+    # Possible values for the CMAKE_BUILD_TYPE variable
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
     if(NOT CMAKE_BUILD_TYPE)
+        # Encourage user to specify build type.
         message(STATUS "Setting build type to 'Release' as none was specified.")
-        set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
     endif()
-    set(YARP_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-    if (CMAKE_COMPILER_IS_GNUCXX)
-        list(APPEND YARP_BUILD_TYPES "DebugFull" "Profile")
-    endif()
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_BUILD_TYPES})
 endif()
+
+# Let CMake know which configurations are the debug ones, so that it can
+# link the right library when both optimized and debug library are found
+set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS ${YARP_DEBUG_CONFIGURATIONS})
 
 
 #########################################################################
