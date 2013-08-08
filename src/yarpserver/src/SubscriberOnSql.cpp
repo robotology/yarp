@@ -216,7 +216,7 @@ bool SubscriberOnSql::addSubscription(const ConstString& src,
                                   pdest.getPortName().c_str(),
                                   src,
                                   dest,
-                                  zmode);
+                                  mode);
             } else {
                 hookup(psrc.getPortName().c_str());
             }

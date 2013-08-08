@@ -213,6 +213,20 @@ public:
         Network::disconnect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
     }
 
+    void checkPersistence() {
+        report(0,"checking non-topic persistence is effective");
+        ContactStyle style;
+        style.persistent = true;
+        Network::connect("/NetworkTest/checkPersistence/p1","/NetworkTest/checkPersistence/p2",style);
+        Port p1;
+        Port p2;
+        p1.open("/NetworkTest/checkPersistence/p1");
+        p2.open("/NetworkTest/checkPersistence/p2");
+        checkTrue(waitConnect(p1.getName(),p2.getName(),20), 
+                  "auto connect working");
+        Network::disconnect("/NetworkTest/checkPersistence/p1","NetworkTest/checkPersistence/p2",style);
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
@@ -222,6 +236,7 @@ public:
         checkTimeoutNetworkWrite();
         checkTimeoutNetworkExists();
         checkTopics();
+        checkPersistence();
         Network::setLocalMode(false);
     }
 };
