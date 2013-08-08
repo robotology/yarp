@@ -166,10 +166,6 @@ public:
     virtual Value check(const ConstString& key, const Value& fallback,
                         const ConstString& comment = "");
 
-    // user code depends on this working "accidentally"
-    Value check(const ConstString& key, const char *fallback,
-                const ConstString& comment);
-
     /**
      * Checks if the object is invalid.
      * @return True if the object is invalid or "null".

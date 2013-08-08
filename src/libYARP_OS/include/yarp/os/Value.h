@@ -80,8 +80,6 @@ public:
      */
     explicit Value(const ConstString& str, bool isVocab = false);
 
-    explicit Value(const char *str, bool isVocab = false);
-
     /**
      * Construct a binary data Value
      * @param data the data to copy

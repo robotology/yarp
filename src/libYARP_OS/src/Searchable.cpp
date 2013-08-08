@@ -104,12 +104,6 @@ bool yarp::os::Searchable::isNull() const {
     return false;
 }
 
-Value yarp::os::Searchable::check(const ConstString& key, const char *fallback,
-                                  const ConstString& comment) {
-    return check(key,Value(fallback),comment);
-}
-
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 void yarp::os::Searchable::setMonitor(yarp::os::SearchMonitor *monitor, const char *context) {
