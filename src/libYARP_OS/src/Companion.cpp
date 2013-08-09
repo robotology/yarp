@@ -1908,9 +1908,11 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     while (!feof(stdin)) {
         String txt = getStdin();
         if (!feof(stdin)) {
-            if (txt[0]<32 && txt[0]!='\n' &&
-                txt[0]!='\r' && txt[0]!='\0' && txt[0]!='\t') {
-                break;  // for example, horrible windows ^D
+            if (txt.length()>0) {
+                if (txt[0]<32 && txt[0]!='\n' &&
+                    txt[0]!='\r' && txt[0]!='\t') {
+                    break;  // for example, horrible windows ^D
+                }
             }
             BottleImpl bot;
             if (!raw) {
@@ -1996,9 +1998,11 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
             }
 
             if (!feof(stdin)) {
-                if (txt[0]<32 && txt[0]!='\n' &&
-                    txt[0]!='\r' && txt[0]!='\0') {
-                    break;  // for example, horrible windows ^D
+                if (txt.length()>0) {
+                    if (txt[0]<32 && txt[0]!='\n' &&
+                        txt[0]!='\r') {
+                        break;  // for example, horrible windows ^D
+                    }
                 }
                 Bottle bot;
                 if (!resendFlag) {
@@ -2050,8 +2054,8 @@ String Companion::readString(bool *eof) {
 
     if (feof(stdin)) {
         end = true;
-    } else if (txt[0]<32 && txt[0]!='\n' &&
-               txt[0]!='\r' && txt[0]!='\0') {
+    } else if (txt.length()>0 && txt[0]<32 && txt[0]!='\n' &&
+               txt[0]!='\r') {
         end = true;
     }
     if (end) {

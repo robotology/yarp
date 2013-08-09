@@ -189,7 +189,7 @@ bool SubscriberOnSql::addSubscription(const ConstString& src,
     }
     char *msg = NULL;
     const char *zmode = mode.c_str();
-    if (mode[0] == '\0') zmode = NULL;
+    if (mode == "") zmode = NULL;
     char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull,mode) VALUES(%Q,%Q,%Q,%Q,%Q)", 
                                   psrc.getPortName().c_str(),
                                   pdest.getPortName().c_str(),

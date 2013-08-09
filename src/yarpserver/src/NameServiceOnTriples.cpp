@@ -252,7 +252,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         }
     }
     lock();
-    if (port=="..." || port[0]=='=') {
+    if (port=="..." || (port.length()>0 && port[0]=='=')) {
         Contact c = Contact::byName(port.c_str()).addSocket(carrier.c_str(),machine.c_str(),sock);
         c = alloc->completePortName(c);
         if (port =="...") {

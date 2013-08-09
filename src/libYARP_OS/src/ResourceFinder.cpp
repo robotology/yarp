@@ -371,7 +371,7 @@ public:
     }
 
     bool isAbsolute(const ConstString& str) {
-        if (str[0]=='/'||str[0]=='\\') {
+        if (str.length()>0 && (str[0]=='/'||str[0]=='\\')) {
             return true;
         }
         if (str.length()>1) {

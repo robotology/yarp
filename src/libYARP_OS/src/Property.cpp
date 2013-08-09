@@ -454,7 +454,7 @@ public:
                 // expand any environment references
                 buf = expand(buf.c_str(),env,owner).c_str();
 
-                if (buf[0]=='[') {
+                if (buf.length()>0 && buf[0]=='[') {
                     YARP_STRING_INDEX stop = YARP_STRSTR(buf,"]");
                     if (stop!=String::npos) {
                         buf = buf.substr(1,stop-1);

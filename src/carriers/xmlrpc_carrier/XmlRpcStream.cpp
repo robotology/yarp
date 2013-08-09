@@ -30,7 +30,7 @@ Value toValue(XmlRpcValue& v, bool outer) {
     case XmlRpcValue::TypeString:
         {
             string s = (string)v;
-            if (s[0]!='[') {
+            if (s.length()==0 || s[0]!='[') {
                 return Value(s.c_str());
             } else {
                 Value v;

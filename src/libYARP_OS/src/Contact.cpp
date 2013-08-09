@@ -163,7 +163,7 @@ Contact Contact::fromString(const ConstString& txt) {
         offset = 1;
     }
     if (base==ConstString::npos) {
-        if (str[0] == '/') {
+        if (str.length()>0 && str[0] == '/') {
             base = 0;
             offset = 0;
         }

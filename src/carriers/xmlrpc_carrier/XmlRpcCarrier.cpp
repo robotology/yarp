@@ -89,7 +89,7 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
     //     header.c_str(), body.c_str());
     Value v;
     //printf("HEADER %s\n", header.c_str());
-    if (header[0]=='q') {
+    if (header.length()>0 && header[0]=='q') {
         body = "yarp.quit";
         // XMLRPC does not need a quit message, this should get stripped
         return false;

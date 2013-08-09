@@ -144,7 +144,7 @@ void BottleImpl::smartAdd(const String& str) {
         if (s!=NULL) {
             s->fromStringNested(str);
             if (ss!=NULL) {
-                if (str[0]!='\"') {
+                if (str.length() == 0 || str[0]!='\"') {
                     String val = ss->asStringFlex();
                     if (val=="true") {
                         delete s;

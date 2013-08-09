@@ -45,7 +45,7 @@ ssize_t MjpegStream::read(const Bytes& b) {
             if (debug) {
                 printf("Read %s\n", s.c_str());
             }
-        } while (s[0]!='-' && delegate->getInputStream().isOk());
+        } while ((s.length()==0||s[0]!='-') && delegate->getInputStream().isOk());
         s = NetType::readLine(delegate->getInputStream());
         if (s!="Content-Type: image/jpeg") {
             if (!delegate->getInputStream().isOk()) {
@@ -78,7 +78,7 @@ ssize_t MjpegStream::read(const Bytes& b) {
             if (debug) {
                 printf("Read %s\n", s.c_str());
             }
-        } while (s[0]!='\0');
+        } while (s.length()>0);
         if (autocompress) {
             cimg.allocate(len);
             NetType::readFull(delegate->getInputStream(),cimg.bytes());
