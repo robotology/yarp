@@ -60,6 +60,7 @@ if(CMAKE_VERSION VERSION_LESS 2.8.12)
                                 cmake-2.8.12/Modules/FindPackageHandleStandardArgs.cmake
                                 cmake-2.8.12/Modules/FindPackageMessage.cmake
                                 cmake-2.8.12/Modules/CMakeParseArguments.cmake
+                                cmake-2.8.12/Modules/SelectLibraryConfigurations.cmake
                                 cmake-2.8.12/Modules/FindFreetype.cmake)
     install(FILES ${YARP_CMAKE_2_8_12_FILES}
             COMPONENT scripts
