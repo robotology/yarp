@@ -12,17 +12,17 @@ file(GLOB folder_header include/iCub/*.h)
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 
-link_directories(
-    ${GTKMM_LIBRARY_DIRS} )
+#link_directories(
+#    ${GTKMM_LIBRARY_DIRS} )
 	
 include_directories(${PROJECT_SOURCE_DIR}/include
-					${GTKMM_INCLUDE_DIRS}
+                    ${GTK2_INCLUDE_DIRS}
                     ${ICUB_INCLUDE_DIRS}
                     ${YARP_INCLUDE_DIRS}
-					${OpenCV_INCLUDE_DIRS} )
+                    ${OpenCV_INCLUDE_DIRS} )
 
 add_executable(${PROJECTNAME} ${folder_header} ${folder_source})
-target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} ${OpenCV_LIBRARIES} ${GTKMM_LIBRARIES} ${GOOCANVASMM_LIBRARIES} )
+target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES} ${OpenCV_LIBRARIES} ${GTK2_LIBRARIES})
 install(TARGETS ${PROJECTNAME} DESTINATION bin)
 
 
