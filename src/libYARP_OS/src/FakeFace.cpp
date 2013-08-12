@@ -14,6 +14,7 @@
 #include <yarp/os/impl/FakeTwoWayStream.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 static Logger fakeFaceLog("FakeFace", Logger::get());
 

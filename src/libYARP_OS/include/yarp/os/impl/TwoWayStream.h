@@ -10,6 +10,7 @@
 #ifndef _YARP2_TWOWAYSTREAM_
 #define _YARP2_TWOWAYSTREAM_
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
