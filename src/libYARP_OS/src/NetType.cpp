@@ -58,11 +58,11 @@ String NetType::readLine(InputStream& is, int terminal, bool *success) {
     return buf;
 }    
 
-ssize_t NetType::readFull(InputStream& is, const Bytes& b) {
-    ssize_t off = 0;
-    ssize_t fullLen = b.length();
-    ssize_t remLen = fullLen;
-    ssize_t result = 1;
+YARP_SSIZE_T NetType::readFull(InputStream& is, const Bytes& b) {
+    YARP_SSIZE_T off = 0;
+    YARP_SSIZE_T fullLen = b.length();
+    YARP_SSIZE_T remLen = fullLen;
+    YARP_SSIZE_T result = 1;
     while (result>0&&remLen>0) {
         result = is.read(b,off,remLen);
         //printf("read result is %d\n",result);
@@ -74,7 +74,7 @@ ssize_t NetType::readFull(InputStream& is, const Bytes& b) {
     return (result<=0)?-1:fullLen;
 }
 
-ssize_t NetType::readDiscard(InputStream& is, size_t len) {
+YARP_SSIZE_T NetType::readDiscard(InputStream& is, size_t len) {
     if (len<100) {
         char buf[100];
         Bytes b(buf,len);

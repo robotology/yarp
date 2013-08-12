@@ -60,9 +60,9 @@ public:
         if (!out.write(b)) close();
     }
 
-    virtual ssize_t read(const Bytes& b)
+    virtual YARP_SSIZE_T read(const Bytes& b)
     {
-        ssize_t ret=in.read(b);
+        YARP_SSIZE_T ret=in.read(b);
         if (ret==-1) close();
         return ret;
     }

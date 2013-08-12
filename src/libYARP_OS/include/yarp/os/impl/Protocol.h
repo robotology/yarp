@@ -260,7 +260,7 @@ private:
     bool expectProtocolSpecifier() {
         char buf[8];
         yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
-        ssize_t len = NetType::readFull(is(),header);
+        YARP_SSIZE_T len = NetType::readFull(is(),header);
         if (len==-1) {
             YARP_DEBUG(log,"no connection");
             return false;

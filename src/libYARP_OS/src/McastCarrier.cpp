@@ -133,7 +133,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(Protocol& proto) {
 bool yarp::os::impl::McastCarrier::expectExtraHeader(Protocol& proto) {
     YARP_DEBUG(Logger::get(),"Expecting extra mcast header");
     ManagedBytes block(6);
-    ssize_t len = NetType::readFull(proto.is(),block.bytes());
+    YARP_SSIZE_T len = NetType::readFull(proto.is(),block.bytes());
     if ((size_t)len!=block.length()) {
         YARP_ERROR(Logger::get(),"problem with MCAST header");
         return false;

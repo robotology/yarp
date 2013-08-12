@@ -81,7 +81,7 @@ bool yarp::os::impl::AbstractCarrier::expectSenderSpecifier(Protocol& proto) {
     NetInt32 numberSrc;
     yarp::os::Bytes number((char*)&numberSrc,sizeof(NetInt32));
     int len = 0;
-    ssize_t r = NetType::readFull(proto.is(),number);
+    YARP_SSIZE_T r = NetType::readFull(proto.is(),number);
     if ((size_t)r!=number.length()) {
         YARP_DEBUG(Logger::get(),"did not get sender name length");
         return false;
@@ -199,7 +199,7 @@ bool yarp::os::impl::AbstractCarrier::defaultExpectAck(Protocol& proto) {
     if (proto.getConnection().requireAck()) {
         char buf[8];
         yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
-        ssize_t hdr = NetType::readFull(proto.is(),header);
+        YARP_SSIZE_T hdr = NetType::readFull(proto.is(),header);
         if ((size_t)hdr!=header.length()) {
             YARP_DEBUG(proto.getLog(),"did not get acknowledgement header");
             return false;
@@ -231,7 +231,7 @@ bool yarp::os::impl::AbstractCarrier::defaultExpectIndex(Protocol& proto) {
     // expect index header
     char buf[8];
     yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
-    ssize_t r = NetType::readFull(proto.is(),header);
+    YARP_SSIZE_T r = NetType::readFull(proto.is(),header);
     if ((size_t)r!=header.length()) {
         YARP_DEBUG(log,"broken index");
         return false;
@@ -263,7 +263,7 @@ bool yarp::os::impl::AbstractCarrier::defaultExpectIndex(Protocol& proto) {
     NetInt32 numberSrc;
     yarp::os::Bytes number((char*)&numberSrc,sizeof(NetInt32));
     for (int i=0; i<inLen; i++) {
-        ssize_t l = NetType::readFull(proto.is(),number);
+        YARP_SSIZE_T l = NetType::readFull(proto.is(),number);
         if ((size_t)l!=number.length()) {
             YARP_DEBUG(log,"bad input block length");
             return false;
@@ -272,7 +272,7 @@ bool yarp::os::impl::AbstractCarrier::defaultExpectIndex(Protocol& proto) {
         total += x;
     }
     for (int i2=0; i2<outLen; i2++) {
-        ssize_t l = NetType::readFull(proto.is(),number);
+        YARP_SSIZE_T l = NetType::readFull(proto.is(),number);
         if ((size_t)l!=number.length()) {
             YARP_DEBUG(log,"bad output block length");
             return false;
@@ -300,7 +300,7 @@ bool yarp::os::impl::AbstractCarrier::defaultSendAck(Protocol& proto) {
 int yarp::os::impl::AbstractCarrier::readYarpInt(Protocol& proto) {
     char buf[8];
     yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
-    ssize_t len = NetType::readFull(proto.is(),header);
+    YARP_SSIZE_T len = NetType::readFull(proto.is(),header);
     if ((size_t)len!=header.length()) {
         YARP_DEBUG(proto.getLog(),"data stream died");
         return -1;

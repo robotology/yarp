@@ -85,7 +85,7 @@ public:
         if (len==0) return true;
         //if (len<0) len = messageLen;
         if (len>0) {
-            ssize_t rlen = NetType::readFull(*in,b);
+            YARP_SSIZE_T rlen = NetType::readFull(*in,b);
             if (rlen>=0) {
                 messageLen -= len;
                 return true;
@@ -111,7 +111,7 @@ public:
         NetType::NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        ssize_t r = in->read(b);
+        YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
             return 0;
@@ -125,7 +125,7 @@ public:
         NetType::NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        ssize_t r = in->read(b);
+        YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
             return 0;
@@ -139,7 +139,7 @@ public:
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
         YARP_ASSERT(in!=NULL);
-        ssize_t r = in->read(b);
+        YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
             delete[] buf;

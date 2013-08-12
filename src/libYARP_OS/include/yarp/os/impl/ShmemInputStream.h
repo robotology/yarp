@@ -60,7 +60,7 @@ public:
 
     bool isOk() { return m_bOpen; }
     bool open(int port,ACE_SOCK_Stream *pSock,int size=SHMEM_DEFAULT_SIZE);
-    ssize_t read(const Bytes& b);
+    YARP_SSIZE_T read(const Bytes& b);
     void close();
 
 protected:

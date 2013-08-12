@@ -51,7 +51,7 @@ int ShmemHybridStream::accept()
 {
 	if (m_bLinked) return -1;
 
-	ssize_t result=m_Acceptor.accept(m_SockStream);
+	YARP_SSIZE_T result=m_Acceptor.accept(m_SockStream);
 
 	if (result<0)
 	{
@@ -110,7 +110,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 	if (m_bLinked) return -1;
 
 	ACE_SOCK_Connector connector;
-	ssize_t result=connector.connect(m_SockStream,ace_address);
+	YARP_SSIZE_T result=connector.connect(m_SockStream,ace_address);
 	if (result<0)
 	{
 		YARP_ERROR(Logger::get(),String("ShmemHybridStream client returned ")+NetType::toString((int)result));

@@ -147,7 +147,7 @@ public:
 
     virtual ~WireTwiddlerReader() {}
 
-    virtual ssize_t read(const yarp::os::Bytes& b);
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
 
     virtual void close() { is.close(); }
 

@@ -110,7 +110,7 @@ public:
 
     virtual void write(const Bytes& b);
 
-    virtual ssize_t read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b);
 
     virtual void interrupt() {
         delegate->getInputStream().interrupt();

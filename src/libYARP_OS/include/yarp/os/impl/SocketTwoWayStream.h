@@ -94,9 +94,9 @@ public:
         happy = false;
     }
 
-    virtual ssize_t read(const Bytes& b) {
+    virtual YARP_SSIZE_T read(const Bytes& b) {
         if (!isOk()) { return -1; }
-        ssize_t result;
+        YARP_SSIZE_T result;
         if (haveReadTimeout) {
             result = stream.recv_n(b.get(),b.length(),&readTimeout);
         } else {
@@ -110,9 +110,9 @@ public:
         return result;
     }
 
-    virtual ssize_t partialRead(const Bytes& b) {
+    virtual YARP_SSIZE_T partialRead(const Bytes& b) {
         if (!isOk()) { return -1; }
-        ssize_t result;
+        YARP_SSIZE_T result;
         if (haveReadTimeout) {
             result = stream.recv(b.get(),b.length(),&readTimeout);
         } else {
@@ -128,7 +128,7 @@ public:
 
     virtual void write(const Bytes& b) {
         if (!isOk()) { return; }
-        ssize_t result;
+        YARP_SSIZE_T result;
         if (haveWriteTimeout) {
             result = stream.send_n(b.get(),b.length(),&writeTimeout);
         } else {

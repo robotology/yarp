@@ -322,7 +322,7 @@ bool WireTwiddler::write(yarp::os::Bottle& bot,
 
 
 
-ssize_t WireTwiddlerReader::read(const Bytes& b) {
+YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
     dbg_printf("Want %d bytes\n", (int)b.length());
     if (index==-1) {
         dbg_printf("WireTwidderReader::read getting started\n");

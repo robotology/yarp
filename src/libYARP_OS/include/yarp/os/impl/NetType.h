@@ -10,6 +10,7 @@
 #ifndef _YARP2_NETTYPE_
 #define _YARP2_NETTYPE_
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/InputStream.h>
@@ -60,9 +61,9 @@ public:
     static String readLine(yarp::os::InputStream& is, int terminal = '\n',
                            bool *success = NULL);
 
-    static ssize_t readFull(yarp::os::InputStream& is, const yarp::os::Bytes& b);
+    static YARP_SSIZE_T readFull(yarp::os::InputStream& is, const yarp::os::Bytes& b);
 
-    static ssize_t readDiscard(yarp::os::InputStream& is, size_t len);
+    static YARP_SSIZE_T readDiscard(yarp::os::InputStream& is, size_t len);
 
     static String toHexString(int x);
 

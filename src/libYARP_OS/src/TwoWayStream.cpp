@@ -48,7 +48,7 @@ void yarp::os::impl::NullStream::beginPacket() {
 void yarp::os::impl::NullStream::endPacket()   {
 }
 
-ssize_t yarp::os::impl::NullStream::read(const Bytes& b) {
+YARP_SSIZE_T yarp::os::impl::NullStream::read(const Bytes& b) {
     return -1;
 }
 
