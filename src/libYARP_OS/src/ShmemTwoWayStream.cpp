@@ -29,7 +29,7 @@ using namespace yarp::os;
 int ShmemTwoWayStream::open(const Address& address, bool sender) {
     int result = -1;
     happy = false;
-    ACE_INET_Addr addr(address.getPort(),address.getName().c_str());
+    ACE_INET_Addr addr(address.getPort(),address.getHost().c_str());
     YARP_DEBUG(Logger::get(),String("trying to open shmem port ") + 
                NetType::toString(address.getPort()));
     if (sender) {
@@ -63,7 +63,7 @@ int ShmemTwoWayStream::open(const Address& address, bool sender) {
         ACE_MEM_Addr server_addr(address.getPort());
         result = acceptor.open(server_addr,1);
         acceptor.get_local_addr(server_addr);
-        localAddress = Address(address.getName(),
+        localAddress = Address(address.getHost(),
                                server_addr.get_port_number());
         remoteAddress = localAddress; // finalized in call to accept()
 

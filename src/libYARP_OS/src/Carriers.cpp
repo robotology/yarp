@@ -204,12 +204,12 @@ Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
 }
 
 
-Face *Carriers::listen(const Address& address) {
+Face *Carriers::listen(const Contact& address) {
     // for now, only TcpFace exists - otherwise would need to manage
     // multiple possibilities
     //YARP_DEBUG(carriersLog,"listen called");
     Face *face = NULL;
-    if (address.getCarrierName() == String("fake")) {
+    if (address.getCarrier() == "fake") {
         face = new FakeFace();
     }
     if (face == NULL) {
@@ -224,7 +224,7 @@ Face *Carriers::listen(const Address& address) {
 }
 
 
-OutputProtocol *Carriers::connect(const Address& address) {
+OutputProtocol *Carriers::connect(const Contact& address) {
     TcpFace tcpFace;
     return tcpFace.write(address);
 }

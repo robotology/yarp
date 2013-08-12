@@ -61,12 +61,12 @@ public:
         return stream->getOutputStream();
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const Contact& getLocalAddress() {
         check();
         return (stream==NULL)?nullStream.getLocalAddress():(stream->getLocalAddress());
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() {
         check();
         return (stream==NULL)?nullStream.getRemoteAddress():(stream->getRemoteAddress());
     }

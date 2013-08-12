@@ -23,7 +23,7 @@ using namespace yarp::os;
 
 void FallbackNameClient::run() {
     NameConfig nc;
-    Address call = FallbackNameServer::getAddress();
+    Contact call = FallbackNameServer::getAddress();
     DgramTwoWayStream send;
     send.join(call,true);
     listen.join(call,false);
@@ -45,7 +45,7 @@ void FallbackNameClient::run() {
         if (YARP_STRSTR(txt,"registration ")==0) {
             address = NameClient::extractAddress(txt);
             YARP_INFO(Logger::get(),String("Received address ") + 
-                      address.toString());
+                      address.toURI());
             return;
         }
     }
@@ -62,12 +62,12 @@ void FallbackNameClient::close() {
 }
 
 
-Address FallbackNameClient::getAddress() {
+Contact FallbackNameClient::getAddress() {
     return address;
 }
 
 
-Address FallbackNameClient::seek() {
+Contact FallbackNameClient::seek() {
     int tries = 3;
     for (int k=0; k<tries; k++) {
 
@@ -103,7 +103,7 @@ Address FallbackNameClient::seek() {
         seeker.close();
         seeker.join();
     }
-    return Address();
+    return Contact();
 }
 
 #else

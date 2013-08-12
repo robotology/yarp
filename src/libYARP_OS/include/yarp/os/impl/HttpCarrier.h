@@ -70,8 +70,8 @@ public:
 
     virtual InputStream& getInputStream();
     virtual OutputStream& getOutputStream();
-    virtual const Address& getLocalAddress();
-    virtual const Address& getRemoteAddress();
+    virtual const Contact& getLocalAddress();
+    virtual const Contact& getRemoteAddress();
 
     virtual bool isOk();
     virtual void reset();

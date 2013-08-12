@@ -43,12 +43,12 @@ public:
 
     virtual ~TcpFace();
 
-    virtual bool open(const Address& address);
+    virtual bool open(const Contact& address);
     virtual void close();
     virtual InputProtocol *read();
-    virtual OutputProtocol *write(const Address& address);
+    virtual OutputProtocol *write(const Contact& address);
 
-    virtual Address getLocalAddress();
+    virtual Contact getLocalAddress();
 
     /**
      * This class like all classes except the port objects does
@@ -58,7 +58,7 @@ public:
 
 private:
     void closeFace();
-    Address address;
+    Contact address;
     PlatformTcpAcceptor peerAcceptor;
 };
 

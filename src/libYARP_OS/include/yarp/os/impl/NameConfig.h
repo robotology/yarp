@@ -11,7 +11,7 @@
 #define _YARP2_NAMECONFIG_
 
 #include <yarp/os/impl/String.h>
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
 
 namespace yarp {
@@ -47,7 +47,7 @@ public:
 
     bool toFile(bool clean = false);
 
-    void setAddress(const Address& address);
+    void setAddress(const Contact& address);
 
     static String getHostName(bool prefer_loopback = false);
 
@@ -57,7 +57,7 @@ public:
 
     static bool isLocalName(const String& name);
 
-    Address getAddress();
+    Contact getAddress();
 
     String getMode() {
         return mode;
@@ -74,7 +74,7 @@ public:
     void setNamespace(const String& ns);
 
 private:
-    Address address;
+    Contact address;
     String space;
     yarp::os::Bottle spaces;
     String mode;

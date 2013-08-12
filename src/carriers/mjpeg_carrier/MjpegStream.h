@@ -74,11 +74,11 @@ public:
     virtual yarp::os::OutputStream& getOutputStream() { return *this; }
 
 
-    virtual const Address& getLocalAddress() {
+    virtual const yarp::os::Contact& getLocalAddress() {
         return delegate->getLocalAddress();
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const yarp::os::Contact& getRemoteAddress() {
         return delegate->getRemoteAddress();
     }
 

@@ -11,6 +11,7 @@
 #include <yarp/os/impl/Name.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 Name::Name(const String& txt) {
     this->txt = txt;
@@ -26,7 +27,7 @@ bool Name::isRooted() const {
 }
 
 
-Address Name::toAddress() const {
+Contact Name::toAddress() const {
     YARP_STRING_INDEX mid = YARP_STRSTR(txt,":/");
     if (mid!=String::npos && mid>0) {
         String first = txt.substr(0,mid);
@@ -36,10 +37,9 @@ Address Name::toAddress() const {
                 first = first.substr(1);
             }
         }
-        return Address("",-1,first,second);
-    } else {
-        return Address("",-1,"",txt);
+        return Contact::bySocket(first,"",-1).addName(second);
     }
+    return Contact::bySocket("","",-1).addName(txt);
 }
 
 

@@ -10,7 +10,7 @@
 #ifndef _YARP2_TWOWAYSTREAM_
 #define _YARP2_TWOWAYSTREAM_
 
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 
@@ -56,7 +56,7 @@ public:
      * @return the address of the local side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const Address& getLocalAddress() = 0;
+    virtual const yarp::os::Contact& getLocalAddress() = 0;
 
     /**
      * Get the address of the remote side of the stream.
@@ -64,7 +64,7 @@ public:
      * @return the address of the remote side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const Address& getRemoteAddress() = 0;
+    virtual const yarp::os::Contact& getRemoteAddress() = 0;
 
     /**
      *
@@ -112,15 +112,15 @@ class yarp::os::impl::NullStream : public TwoWayStream,
                                    public InputStream, 
                                    public yarp::os::OutputStream {
 private:
-    Address address;
+    Contact address;
 public:
     virtual ~NullStream();
 
     virtual InputStream& getInputStream();
     virtual yarp::os::OutputStream& getOutputStream();
     
-    virtual const Address& getLocalAddress();
-    virtual const Address& getRemoteAddress();
+    virtual const yarp::os::Contact& getLocalAddress();
+    virtual const yarp::os::Contact& getRemoteAddress();
 
     virtual bool isOk();
 

@@ -35,34 +35,28 @@ YarpNameSpace::~YarpNameSpace() {
 
 Contact YarpNameSpace::queryName(const ConstString& name) {
     NameClient& nic = HELPER(this);
-    Address address = nic.queryName(name);
-    return address.toContact();
+    return nic.queryName(name);
 }
 
 
 Contact YarpNameSpace::registerName(const ConstString& name) {
     NameClient& nic = HELPER(this);
-    Address address = nic.registerName(name);
-    return address.toContact();
+    return nic.registerName(name);
 }
 
 Contact YarpNameSpace::registerContact(const Contact& contact) {
     NameClient& nic = HELPER(this);
-    Address address = nic.registerName(contact.getName().c_str(),
-                                       Address::fromContact(contact));
-    return address.toContact();
+    return nic.registerName(contact.getName().c_str(),contact);
 }
 
 Contact YarpNameSpace::unregisterName(const ConstString& name) {
     NameClient& nic = HELPER(this);
-    Address address = nic.unregisterName(name);
-    return address.toContact();
+    return nic.unregisterName(name);
 }
 
 Contact YarpNameSpace::unregisterContact(const Contact& contact) {
     NameClient& nic = HELPER(this);
-    Address address = nic.unregisterName(contact.getName().c_str());
-    return address.toContact();
+    return nic.unregisterName(contact.getName());
 }
 
 
@@ -107,12 +101,14 @@ Contact YarpNameSpace::detectNameServer(bool useDetectedServer,
     scanNeeded = nic.didScan();
     serverUsed = nic.didSave();
 
-    Contact c = nic.getAddress().toContact();
-    if (scanNeeded) {
-        Address addr = nic.getAddress();
-        c = c.addSocket("tcp",addr.getName().c_str(),addr.getPort());
-    }
+    Contact c = nic.getAddress();
     c = c.addName(nc.getNamespace().c_str());
+    //Contact c = nic.getAddress().toContact();
+    //    if (scanNeeded) {
+    //        Address addr = nic.getAddress();
+    //        c = c.addSocket("tcp",addr.getName().c_str(),addr.getPort());
+    ////}
+    //c = c.addName(nc.getNamespace().c_str());
     return c;
 }
 

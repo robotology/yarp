@@ -25,8 +25,8 @@
 #ifndef TCPCONNECTOR_H_
 #define TCPCONNECTOR_H_
 
+#include <yarp/os/Contact.h>
 #include <yarp/os/impl/TcpStream.h>
-#include <yarp/os/impl/Address.h>
 // General files
 //#include <sys/types.h>
 //#include <sys/socket.h>
@@ -62,7 +62,7 @@ public:
 	virtual ~TcpConnector();
 
 	int connect (TcpStream &new_stream,
-	               const Address &remote_address);
+		     const yarp::os::Contact &remote_address);
 protected:
 
 	int open(TcpStream &stream);

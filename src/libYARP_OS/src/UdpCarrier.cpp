@@ -52,7 +52,7 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(Protocol& proto) {
     DgramTwoWayStream *stream = new DgramTwoWayStream();
     YARP_ASSERT(stream!=NULL);
 
-    Address remote = proto.getStreams().getRemoteAddress();
+    Contact remote = proto.getStreams().getRemoteAddress();
     bool ok = stream->open(remote);
     if (!ok) {
         delete stream;
@@ -69,8 +69,8 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(Protocol& proto) {
 bool yarp::os::impl::UdpCarrier::expectReplyToHeader(Protocol& proto) {
     // I am the sender
     int myPort = proto.getStreams().getLocalAddress().getPort();
-    String myName = proto.getStreams().getLocalAddress().getName();
-    String altName = proto.getStreams().getRemoteAddress().getName();
+    String myName = proto.getStreams().getLocalAddress().getHost();
+    String altName = proto.getStreams().getRemoteAddress().getHost();
 
     int altPort = readYarpInt(proto);
 
@@ -83,7 +83,7 @@ bool yarp::os::impl::UdpCarrier::expectReplyToHeader(Protocol& proto) {
 
     proto.takeStreams(NULL); // free up port from tcp
     bool ok =
-        stream->open(Address(myName,myPort),Address(altName,altPort));
+        stream->open(Contact(myName,myPort),Contact(altName,altPort));
     if (!ok) {
         delete stream;
         return false;

@@ -12,7 +12,6 @@
 
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Protocol.h>
-#include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/String.h>
 #include "XmlRpcStream.h"
 
@@ -50,7 +49,7 @@ class yarp::os::impl::XmlRpcCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
-    Address host;
+    yarp::os::Contact host;
     String http;
     bool interpretRos;
 public:

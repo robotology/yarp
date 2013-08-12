@@ -75,12 +75,12 @@ public:
         return *this;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const yarp::os::Contact& getLocalAddress() {
         // left undefined
         return local;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const yarp::os::Contact& getRemoteAddress() {
         // left undefined
         return remote;
     }
@@ -101,5 +101,5 @@ public:
     }
 
 private:
-    Address local, remote;
+    yarp::os::Contact local, remote;
 };

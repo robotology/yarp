@@ -11,7 +11,7 @@
 #define _YARP2_NAME_
 
 #include <yarp/os/impl/String.h>
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 
 namespace yarp {
     namespace os {
@@ -49,7 +49,7 @@ public:
      * @return a partially filled address (there is no communication with
      * the name server, just parsing of information in the name).
      */
-    Address toAddress() const;
+    Contact toAddress() const;
 
     String getCarrierModifier(const char *mod, bool *hasModifier = NULL);
 

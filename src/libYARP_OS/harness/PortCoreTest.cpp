@@ -47,7 +47,8 @@ public:
     void testStartStop() {
         report(0,"checking start/stop works...");
 
-        Address address("127.0.0.1",safePort(),"tcp","/port");
+        Contact address = Contact::bySocket("tcp","127.0.0.1",safePort())
+            .addName("/port");
         PortCore core;
         core.listen(address);
         core.start();
@@ -98,8 +99,8 @@ public:
         PortCore sender;
         PortCore receiver;
         receiver.setReadHandler(*this);
-        sender.listen(Address::fromContact(write));
-        receiver.listen(Address::fromContact(read));
+        sender.listen(write);
+        receiver.listen(read);
         sender.start();
         receiver.start();
         //Time::delay(1);
@@ -146,8 +147,8 @@ public:
 
         PortCore receiver;
         receiver.setReadHandler(*this);
-        sender.listen(Address::fromContact(write));
-        receiver.listen(Address::fromContact(read));
+        sender.listen(write);
+        receiver.listen(read);
         sender.start();
         receiver.start();
         //Time::delay(1);

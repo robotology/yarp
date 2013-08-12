@@ -11,7 +11,7 @@
 #define _YARP2_FALLBACKNAMESERVER_
 
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
 namespace yarp {
@@ -36,7 +36,7 @@ public:
     virtual void run();
     virtual void close();
 
-    static Address getAddress();
+    static Contact getAddress();
 
 private:
     NameServerStub& owner;

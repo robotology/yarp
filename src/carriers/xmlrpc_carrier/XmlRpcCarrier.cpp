@@ -111,8 +111,8 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
     //printf("xmlrpc block to write is %s\n", args.toXml().c_str());
     std::string req;
     if (sender) {
-        const Address& addr = host.isValid()?host:proto.getStreams().getRemoteAddress();
-        XmlRpcClient c(addr.getName().c_str(),(addr.getPort()>0)?addr.getPort():80);
+        const Contact& addr = host.isValid()?host:proto.getStreams().getRemoteAddress();
+        XmlRpcClient c(addr.getHost().c_str(),(addr.getPort()>0)?addr.getPort():80);
         c.generateRequest(methodName.c_str(),args);
         req = c.getRequest();
     } else {
@@ -164,8 +164,7 @@ bool XmlRpcCarrier::sendHeader(Protocol& proto) {
         target = "POST /";
         target += pathValue;
         // on the wider web, we should provide real host names
-        Contact contact = NetworkBase::queryName(proto.getRoute().getToName().c_str());
-        host = Address::fromContact(contact);
+        host = NetworkBase::queryName(proto.getRoute().getToName());
     }
     String rospass = n.getCarrierModifier("ros");
     if (rospass=="") {

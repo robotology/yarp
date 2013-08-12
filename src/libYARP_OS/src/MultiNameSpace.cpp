@@ -99,8 +99,7 @@ public:
                 continue;
             }
             String mode = conf2.getMode();
-            Contact address = conf2.getAddress().toContact().addName(n);
-            //printf("ADDRESS %s\n", address.toString().c_str());
+            Contact address = conf2.getAddress().addName(n);
             if (mode=="yarp"||mode=="//") {
                 NameSpace *ns = new YarpNameSpace(address);
                 spaces.push_back(ns);

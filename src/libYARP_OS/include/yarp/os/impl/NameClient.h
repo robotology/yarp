@@ -10,7 +10,7 @@
 #ifndef _YARP2_NAMECLIENT_
 #define _YARP2_NAMECLIENT_
 
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/NameStore.h>
@@ -67,7 +67,7 @@ public:
      * The address of the name server.
      * @return the address of the name server
      */
-    Address getAddress() {
+    Contact getAddress() {
         setup();
         return address;
     }
@@ -85,14 +85,14 @@ public:
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Address queryName(const String& name);
+    Contact queryName(const String& name);
 
     /**
      * Register a port with a given name.
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Address registerName(const String& name);
+    Contact registerName(const String& name);
 
     /**
      * Register a port with a given name and a partial address.
@@ -100,14 +100,14 @@ public:
      * @param address a partially completed address
      * @return the address associated with the port
      */
-    Address registerName(const String& name, const Address& address);
+    Contact registerName(const String& name, const Contact& address);
 
     /**
      * Register disassociation of name from port.
      * @param name the name to remove
      * @return the new result of queries for that name (should be empty)
      */
-    Address unregisterName(const String& name);
+    Contact unregisterName(const String& name);
 
     /**
      * Send a message to the name server, and interpret the result as
@@ -118,7 +118,7 @@ public:
      * @return the address extracted from the reply, all errors result
      * in a non-valid address.
      */
-    Address probe(const String& cmd) {
+    Contact probe(const String& cmd) {
         String result = send(cmd);
         return extractAddress(result);
     }
@@ -130,9 +130,9 @@ public:
      *
      * @return the address corresponding to the text representation
      */
-    static Address extractAddress(const String& txt);
+    static Contact extractAddress(const String& txt);
 
-    static Address extractAddress(const Bottle& bot);
+    static Contact extractAddress(const Bottle& bot);
 
     /**
      * Send a text message to the nameserver, and return the result.
@@ -262,7 +262,7 @@ private:
     NameServer& getServer();
 
 
-    Address address;
+    Contact address;
     String host;
     String mode;
     String process;

@@ -19,9 +19,8 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Address FallbackNameServer::getAddress() {
-    Address mcastLastResort("224.2.1.1",NetworkBase::getDefaultPortRange(),
-                            "mcast","fallback");
+Contact FallbackNameServer::getAddress() {
+    Contact mcastLastResort = Contact::bySocket("mcast","224.2.1.1",NetworkBase::getDefaultPortRange()).addName("fallback");
     return mcastLastResort;
 }
 
@@ -42,9 +41,8 @@ void FallbackNameServer::run() {
         if (listen.isOk()&&!closed) {
             YARP_DEBUG(Logger::get(),String("Fallback server got ") + msg);
             if (YARP_STRSTR(msg,"NAME_SERVER ") == 0) {
-                Address addr;
+                Contact addr;
                 String result = owner.apply(msg,addr);
-                //Bytes b((char*)(result.c_str()),result.length());
                 send.beginPacket();
                 send.writeLine(result.c_str(),(int)result.length());
                 send.flush();

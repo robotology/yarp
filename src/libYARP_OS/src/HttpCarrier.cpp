@@ -15,6 +15,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/ManagedBytes.h>
 
+using namespace yarp::os;
 
 static yarp::os::impl::String quoteFree(const yarp::os::impl::String &src) {
     yarp::os::impl::String result = "";
@@ -339,11 +340,11 @@ yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
     return *this;
 }
 
-const yarp::os::impl::Address& yarp::os::impl::HttpTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() {
     return delegate->getLocalAddress();
 }
 
-const yarp::os::impl::Address& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
     return delegate->getRemoteAddress();
 }
 
@@ -369,12 +370,12 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
     if (ch=='\r') { return; }
     if (ch == '\n') {
         proc = "";
-        Address addr = yarp::os::impl::NameClient::extractAddress(part);
+        Contact addr = yarp::os::impl::NameClient::extractAddress(part);
         if (addr.isValid()) {
-            if (addr.getCarrierName()=="tcp"&&
+            if (addr.getCarrier()=="tcp"&&
                 (YARP_STRSTR(addr.getRegName(),"/quit")==String::npos)) {
                 proc += "<a href=\"http://";
-                proc += addr.getName();
+                proc += addr.getHost();
                 proc += ":";
                 proc += NetType::toString(addr.getPort());
                 proc += "\">";
@@ -645,12 +646,11 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     prop.put("REQUEST_URI",url.c_str());
     //printf("Property %s\n",prop.toString().c_str());
 
-    Contact chome = NetworkBase::getNameServerContact();
-    Address home = Address::fromContact(chome);
-    Address me = proto.getStreams().getLocalAddress();
+    Contact home = NetworkBase::getNameServerContact();
+    Contact me = proto.getStreams().getLocalAddress();
 
     String from = "<html><head><link href=\"http://";
-    from += home.getName();
+    from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
     from += "/web/main.css\" rel=\"stylesheet\" type=\"text/css\"/></head><body bgcolor='#ffffcc'><h1>yarp port ";
@@ -658,25 +658,25 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += "</h1>\n";
 
     from += "<p>(<a href=\"http://";
-    from += home.getName();
+    from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
     from += "/data=list\">All ports</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/\">connections</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/data=help\">help</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/r\">read</a>)&nbsp;&nbsp;\n";
@@ -684,7 +684,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += "</p>\n";
     from += "<p>\n";
     from += "<form method=\"post\" action=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/form\">";

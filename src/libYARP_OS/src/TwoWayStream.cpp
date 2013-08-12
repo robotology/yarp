@@ -8,6 +8,7 @@
 
 #include <yarp/os/impl/TwoWayStream.h>
 
+using namespace yarp::os;
 
 yarp::os::impl::TwoWayStream::~TwoWayStream() {
 }
@@ -23,11 +24,11 @@ yarp::os::OutputStream& yarp::os::impl::NullStream::getOutputStream() {
     return * this;
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NullStream::getLocalAddress() {
+const Contact& yarp::os::impl::NullStream::getLocalAddress() {
     return address;
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NullStream::getRemoteAddress() {
+const Contact& yarp::os::impl::NullStream::getRemoteAddress() {
     return address;
 }
 

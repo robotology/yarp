@@ -23,14 +23,14 @@
 
 using namespace yarp::os::impl;
 
-int SocketTwoWayStream::open(const Address& address) {
+int SocketTwoWayStream::open(const Contact& address) {
     if (address.getPort()==-1) {
         return -1;
     }
-    String host = address.getName();
+    String host = address.getHost();
 #ifdef YARP_HAS_ACE
     ACE_SOCK_Connector connector;
-    if (address.getName() == "localhost") {
+    if (address.getHost() == "localhost") {
         // ACE does not like localhost.  At all.
         NameConfig config;
         host = config.getHostName(true);
@@ -83,8 +83,8 @@ void SocketTwoWayStream::updateAddresses() {
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
-    localAddress = Address(local.get_host_addr(),local.get_port_number());
-    remoteAddress = Address(remote.get_host_addr(),remote.get_port_number());
+    localAddress = Contact(local.get_host_addr(),local.get_port_number());
+    remoteAddress = Contact(remote.get_host_addr(),remote.get_port_number());
 
 #else
     struct sockaddr local, remote;
@@ -93,8 +93,8 @@ void SocketTwoWayStream::updateAddresses() {
     if (local.sa_family == AF_INET) {
         struct sockaddr_in *ipv4local = (struct sockaddr_in *) &local;
         struct sockaddr_in *ipv4remote = (struct sockaddr_in *) &remote;
-        localAddress = Address(inet_ntoa(ipv4local->sin_addr),ipv4local->sin_port);
-        remoteAddress = Address(inet_ntoa(ipv4remote->sin_addr),ipv4remote->sin_port);
+        localAddress = Contact(inet_ntoa(ipv4local->sin_addr),ipv4local->sin_port);
+        remoteAddress = Contact(inet_ntoa(ipv4remote->sin_addr),ipv4remote->sin_port);
     } else {
         YARP_ERROR(Logger::get(),"ipv6 address type not propagated without ACE");
     }

@@ -94,7 +94,6 @@ set(YARP_OS_IDL_HDRS include/yarp/os/idl/WirePortable.h
 
 set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/ACESemaphoreImpl.h
-                      include/yarp/os/impl/Address.h
                       include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
@@ -181,7 +180,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/ydr.h)
 
 set(YARP_OS_SRCS src/AbstractCarrier.cpp
-                 src/Address.cpp
                  src/AuthHMAC.cpp
                  src/Bottle.cpp
                  src/BottleImpl.cpp

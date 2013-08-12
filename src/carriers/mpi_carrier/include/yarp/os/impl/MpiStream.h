@@ -45,7 +45,7 @@ protected:
     String name;
     yarp::os::impl::MpiComm* comm;
 
-    Address local, remote;
+    yarp::os::Contact local, remote;
 public:
 
 
@@ -58,8 +58,8 @@ public:
     virtual void write(const Bytes& b) = 0;
     virtual InputStream& getInputStream();
     virtual OutputStream& getOutputStream();
-    virtual const Address& getLocalAddress();
-    virtual const Address& getRemoteAddress();
+    virtual const yarp::os::Contact& getLocalAddress();
+    virtual const yarp::os::Contact& getRemoteAddress();
     void resetBuffer();
     virtual void reset() { resetBuffer();}
     virtual void beginPacket();

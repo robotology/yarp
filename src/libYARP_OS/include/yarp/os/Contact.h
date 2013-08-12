@@ -28,6 +28,8 @@ namespace yarp {
 class YARP_OS_API yarp::os::Contact {
 public:
 
+    Contact(const ConstString& hostName, int port);
+
     /**
      * Constructor.  Returns a new, blank, unnamed contact.
      * @return a blank contact
@@ -74,6 +76,8 @@ public:
      * @return the new contact
      */
     Contact addCarrier(const ConstString& carrier) const;
+
+    Contact addHost(const ConstString& host) const;
 
     /**
      * Constructor for a socket contact.
@@ -167,11 +171,16 @@ public:
     int getPort() const;
 
     /**
-     * Get a textual representation of the contact.
+     * Get a textual representation of the contact
      * @return a textual representation of the contact.
      */
     ConstString toString() const;
 
+    /**
+     * Get a representation of the contact as a URI
+     * @return a URI representation of the contact.
+     */
+    ConstString toURI() const;
 
     /**
      * Parse a textual representation of a contact.
@@ -193,10 +202,35 @@ public:
     Contact();
 
 
+    /**
+     * Check if this Contact has a timeout.
+     *
+     * @return true iff this Contact has a timeout.
+     */
+    bool hasTimeout() const;
+
+    /**
+     * Set timeout for this Contact.
+     *
+     * @param timeout The timeout to set.
+     */
+    void setTimeout(float timeout);
+
+    /**
+     * Get timeout for this Address.
+     *
+     * @return The timeout for this Address
+     */
+    float getTimeout() const;
+
+    ConstString getRegName() const;
+
 private:
-
-
-    void *implementation;
+    ConstString regName;
+    ConstString hostName;
+    ConstString carrier;
+    int port;
+    float timeout;
 };
 
 #endif

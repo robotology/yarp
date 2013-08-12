@@ -22,7 +22,7 @@ bool NameSpace::checkNetwork() {
     Contact c = queryName(getNameServerName());
     if (!c.isValid()) return false;
 
-    OutputProtocol *out = Carriers::connect(Address::fromContact(c));
+    OutputProtocol *out = Carriers::connect(c);
     if (out==NULL) {
         return false;
     }
@@ -38,9 +38,8 @@ bool NameSpace::checkNetwork(double timeout) {
     Contact c = queryName(getNameServerName());
     if (!c.isValid()) return false;
 
-    Address addr = Address::fromContact(c);
-    addr.setTimeout((float)timeout);
-    OutputProtocol *out = Carriers::connect(addr);
+    c.setTimeout((float)timeout);
+    OutputProtocol *out = Carriers::connect(c);
     if (out==NULL) {
         return false;
     }

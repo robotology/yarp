@@ -50,11 +50,11 @@ public:
         return out;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const Contact& getLocalAddress() {
         return local;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() {
         return remote;
     }
 
@@ -111,8 +111,8 @@ private:
 
     StringInputStream in;
     ActiveStringOutputStream out;
-    Address local;
-    Address remote;
+    Contact local;
+    Contact remote;
     StringInputStream *target;
 };
 

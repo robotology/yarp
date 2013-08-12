@@ -703,10 +703,9 @@ bool NetworkBase::write(const Contact& contact,
     const char *connectionName = "admin";
     ConstString name = contact.getName();
     const char *targetName = name.c_str();  // use carefully!
-    Address address = Address::fromContact(contact);
+    Contact address = contact;
     if (!address.isValid()) {
-        Contact c = getNameSpace().queryName(targetName);
-        address = Address::fromContact(c);
+        address = getNameSpace().queryName(targetName);
     }
     if (!address.isValid()) {
         if (!style.quiet) {

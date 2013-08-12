@@ -9,7 +9,6 @@
 
 
 #include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/PortCommand.h>

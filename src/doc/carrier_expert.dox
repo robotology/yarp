@@ -42,7 +42,7 @@ just about being able to read and write raw data.
 If you want to replace TCP entirely, for the initial handshaking
 done when setting up a connection, you'll need to do a bit more
 work. You'll need to squeeze any addressing information for your 
-network into the yarp::os::impl::Address class
+network into the yarp::os::Contact class
 (or else you can extend that class).  And you'll need to implement
 a subclass of yarp::os::impl::Face that operates like 
 yarp::os::impl::TcpFace.  So that's a bit more work.  I wouldn't 
@@ -72,17 +72,18 @@ You should skim the documentation of the following classes:
  \li yarp::os::InputStream
  \li yarp::os::OutputStream
  \li yarp::os::impl::TwoWayStream
- \li yarp::os::impl::Address
+ \li yarp::os::Contact
 
 You'll be able to include them in your code as follows:
 
 \code
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Carriers.h>
+#include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
+using namespace yarp::os;
 using namespace yarp::os::impl;
 \endcode
 

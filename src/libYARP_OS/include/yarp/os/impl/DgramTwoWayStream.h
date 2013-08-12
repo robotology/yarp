@@ -53,25 +53,25 @@ public:
         return true;
     }
 
-    virtual bool open(const Address& remote);
+    virtual bool open(const Contact& remote);
 
-    virtual bool open(const Address& local, const Address& remote);
+    virtual bool open(const Contact& local, const Contact& remote);
 
-    virtual bool openMcast(const Address& group,
-                           const Address& ipLocal);
+    virtual bool openMcast(const Contact& group,
+                           const Contact& ipLocal);
 
 #ifdef YARP_HAS_ACE
     virtual int restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
-                              const Address& group,
-                              const Address& ipLocal,
+                              const Contact& group,
+                              const Contact& ipLocal,
                               bool add);
 #endif
 
-    virtual bool join(const Address& group, bool sender,
-                      const Address& ipLocal);
+    virtual bool join(const Contact& group, bool sender,
+                      const Contact& ipLocal);
 
-    virtual bool join(const Address& group, bool sender) {
-        return join(group,sender,Address());
+    virtual bool join(const Contact& group, bool sender) {
+        return join(group,sender,Contact());
     }
 
     virtual ~DgramTwoWayStream();
@@ -84,11 +84,11 @@ public:
         return *this;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const Contact& getLocalAddress() {
         return localAddress;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() {
         return remoteAddress;
     }
 
@@ -139,7 +139,7 @@ private:
     void *mgram;
     int localHandle, remoteHandle;
 #endif
-    Address localAddress, remoteAddress, restrictInterfaceIp;
+    Contact localAddress, remoteAddress, restrictInterfaceIp;
     yarp::os::ManagedBytes readBuffer, writeBuffer;
     yarp::os::Semaphore mutex;
     ssize_t readAt, readAvail, writeAvail;

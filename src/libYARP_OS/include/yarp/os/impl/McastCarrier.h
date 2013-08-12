@@ -34,7 +34,7 @@ namespace yarp {
  */
 class yarp::os::impl::McastCarrier : public UdpCarrier {
 protected:
-    Address mcastAddress;
+    Contact mcastAddress;
     String mcastName;
     String key;
 

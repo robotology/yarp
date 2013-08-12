@@ -7,7 +7,6 @@
  *
  */
 
-#include <yarp/os/impl/Address.h>
 #include <yarp/os/Contact.h>
 
 #include <yarp/os/impl/UnitTest.h>
@@ -22,33 +21,32 @@ public:
 
     virtual void testString() {
         report(0,"checking string representation");
-        Address address("127.0.0.1",10000,"tcp");
-        String txt = address.toString();
+        Contact address = Contact::bySocket("tcp","127.0.0.1",10000);
+        String txt = address.toURI();
         checkEqual(txt,"tcp://127.0.0.1:10000","string rep example");
     }
 
     virtual void testCopy() {
         report(0,"checking address copy");
-        Address address("127.0.0.1",10000,"tcp");
-        Address address2;
+        Contact address = Contact::bySocket("tcp","127.0.0.1",10000);
+        Contact address2;
         address2 = address;
-        String txt = address2.toString();
+        String txt = address2.toURI();
         checkEqual(txt,"tcp://127.0.0.1:10000","string rep example");
 
-        Address inv1;
+        Contact inv1;
         address2 = inv1;
         checkTrue(!inv1.isValid(),"invalid source");
         checkTrue(!address2.isValid(),"invalid copy");
     }
 
     virtual void testContact() {
-        report(0,"checking Contact wrapper");
+        report(0,"checking Contact");
         Contact c1;
-        Address inv1;
-        c1 = inv1.toContact();
+        Contact inv1;
+        c1 = inv1;
         checkTrue(!Contact::invalid().isValid(),"good invalid");
         checkTrue(!inv1.isValid(),"invalid source");
-        checkTrue(!inv1.toContact().isValid(),"invalid conversion");
         checkTrue(!c1.isValid(),"invalid copy");
 
         report(0,"checking Contact wrapper on regular url");

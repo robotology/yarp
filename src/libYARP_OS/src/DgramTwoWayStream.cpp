@@ -81,21 +81,20 @@ static void addCrc(char *buf, ssize_t length, ssize_t crcLength, int pct) {
 }
 
 
-bool DgramTwoWayStream::open(const Address& remote) {
-    Address local;
+bool DgramTwoWayStream::open(const Contact& remote) {
     ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
-    local = Address(anywhere.get_host_addr(),
-                    anywhere.get_port_number());
+    Contact local(anywhere.get_host_addr(),
+                  anywhere.get_port_number());
     return open(local,remote);
 }
 
-bool DgramTwoWayStream::open(const Address& local, const Address& remote) {
+bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
     localAddress = local;
     remoteAddress = remote;
 
     localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),(ACE_UINT32)INADDR_ANY);
     if (remote.isValid()) {
-        remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
+        remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
     }
     dgram = new ACE_SOCK_Dgram;
     YARP_ASSERT(dgram!=NULL);
@@ -113,11 +112,11 @@ bool DgramTwoWayStream::open(const Address& local, const Address& remote) {
 
     dgram->get_local_addr(localHandle);
     YARP_DEBUG(Logger::get(),String("starting DGRAM entity on port number ") + NetType::toString(localHandle.get_port_number()));
-    localAddress = Address("127.0.0.1",
+    localAddress = Contact("127.0.0.1",
                            localHandle.get_port_number());
     YARP_DEBUG(Logger::get(),String("Update: DGRAM from ") + 
-               localAddress.toString() + 
-               " to " + remote.toString());
+               localAddress.toURI() + 
+               " to " + remote.toURI());
 
     allocate();
 
@@ -194,13 +193,13 @@ void DgramTwoWayStream::configureSystemBuffers() {
 
 
 int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
-                                     const Address& group,
-                                     const Address& ipLocal,
+                                     const Contact& group,
+                                     const Contact& ipLocal,
                                      bool add) {
     restrictInterfaceIp = ipLocal;
 
     YARP_INFO(Logger::get(),
-              String("multicast connection ") + group.getName() + " on network interface for " + ipLocal.getName());
+              String("multicast connection ") + group.getHost() + " on network interface for " + ipLocal.getHost());
     int result = -1;
     // There's some major damage in ACE mcast interfaces.
     // Most require interface names, yet provide no way to query
@@ -211,9 +210,9 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
     
     ip_mreq multicast_address;
     ACE_INET_Addr group_addr(group.getPort(),
-                             group.getName().c_str());
+                             group.getHost().c_str());
     ACE_INET_Addr interface_addr(ipLocal.getPort(),
-                                 ipLocal.getName().c_str());
+                                 ipLocal.getHost().c_str());
     multicast_address.imr_interface.s_addr =
         htonl (interface_addr.get_ip_address ());
     multicast_address.imr_multiaddr.s_addr =
@@ -251,8 +250,8 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
 }
 
 
-bool DgramTwoWayStream::openMcast(const Address& group, 
-                                  const Address& ipLocal) {
+bool DgramTwoWayStream::openMcast(const Contact& group, 
+                                  const Contact& ipLocal) {
 
     multiMode = true;
 
@@ -266,18 +265,13 @@ bool DgramTwoWayStream::openMcast(const Address& group,
     YARP_ASSERT(dgram!=NULL);
     
     int result = -1;
-    ACE_INET_Addr addr(group.getPort(),group.getName().c_str());
+    ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
     if (ipLocal.isValid()) {
-        //printf("  sender: determine multicast interface from ip %s\n",
-        //     ipLocal.getName().c_str());
-        //result = dmcast->open(addr,localHandle,1); 
         result = dmcast->open(addr,NULL,1); 
         if (result==0) {
-            //result = restrictMcast(dmcast,group,ipLocal,true);
             result = restrictMcast(dmcast,group,ipLocal,false);
         }
     } else {
-        //printf("  generic multicast interface\n");
         result = dmcast->open(addr,NULL,1); 
     }
 
@@ -289,8 +283,8 @@ bool DgramTwoWayStream::openMcast(const Address& group,
     configureSystemBuffers();
 
     remoteAddress = group;
-    localHandle.set(localAddress.getPort(),localAddress.getName().c_str());
-    remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
+    localHandle.set(localAddress.getPort(),localAddress.getHost().c_str());
+    remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
 
     allocate();
 
@@ -298,10 +292,10 @@ bool DgramTwoWayStream::openMcast(const Address& group,
 }
 
 
-bool DgramTwoWayStream::join(const Address& group, bool sender,
-                             const Address& ipLocal) {
+bool DgramTwoWayStream::join(const Contact& group, bool sender,
+                             const Contact& ipLocal) {
     YARP_DEBUG(Logger::get(),String("subscribing to mcast address ") + 
-               group.toString() + " for " +
+               group.toURI() + " for " +
                (sender?"writing":"reading"));
 
     multiMode = true;
@@ -324,21 +318,15 @@ bool DgramTwoWayStream::join(const Address& group, bool sender,
     mgram = dmcast;
     YARP_ASSERT(dgram!=NULL);
 
-    ACE_INET_Addr addr(group.getPort(),group.getName().c_str());
+    ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
 
     int result = -1;
     if (ipLocal.isValid()) {
-        //printf("  receiver: determine multicast interface from ip %s\n",
-        //     ipLocal.getName().c_str());
-
         result = 0;
         result = dmcast->join(addr,1); 
 
         if (result==0) {
-            //if (sender) { // try only doing this for sender
             result = restrictMcast(dmcast,group,ipLocal,true);
-            //printf("Result is %d\n", result);
-            //}
         }
     } else {
         result = dmcast->join(addr,1); 
@@ -353,8 +341,8 @@ bool DgramTwoWayStream::join(const Address& group, bool sender,
     }
     localAddress = group;
     remoteAddress = group;
-    localHandle.set(localAddress.getPort(),localAddress.getName().c_str());
-    remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
+    localHandle.set(localAddress.getPort(),localAddress.getHost().c_str());
+    remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
 
     allocate();
     return true;
@@ -389,7 +377,7 @@ void DgramTwoWayStream::interrupt() {
                              restrictInterfaceIp);
                 } else {
                     YARP_DEBUG(Logger::get(),"* dgram interrupt");
-                    tmp.open(Address(localAddress.getName(),0),
+                    tmp.open(Contact(localAddress.getHost(),0),
                              localAddress);
                 }
                 YARP_DEBUG(Logger::get(),
@@ -484,7 +472,7 @@ ssize_t DgramTwoWayStream::read(const Bytes& b) {
                 printf("  %s\n",remoteAddress.toString().c_str());
                 */
                 ACE_INET_Addr iface(restrictInterfaceIp.getPort(),
-                                    restrictInterfaceIp.getName().c_str());
+                                    restrictInterfaceIp.getHost().c_str());
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
                 result =
                     dgram->recv(readBuffer.get(),readBuffer.length(),dummy);

@@ -17,7 +17,6 @@
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/TcpFace.h>
-#include <yarp/os/impl/Address.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;
@@ -177,7 +176,7 @@ public:
         checkTrue(ok,"a yarp port");
         p.close();
         TcpFace face;
-        Address address(c.getHost().c_str(),c.getPort());
+        Contact address(c.getHost(),c.getPort());
         checkTrue(face.open(address),"open server socket, timeout check proceeds");
         Network::registerContact(c);
         ok = Network::exists("/tcp",style);

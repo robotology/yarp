@@ -9,6 +9,8 @@
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/Protocol.h>
 
+using namespace yarp::os;
+
 // just to keep linkers from complaining about empty archive
 bool dummyNameserCarrierMethod() {
     return false;
@@ -35,11 +37,11 @@ yarp::os::OutputStream& yarp::os::impl::NameserTwoWayStream::getOutputStream() {
     return delegate->getOutputStream();
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NameserTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() {
     return delegate->getLocalAddress();
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
     return delegate->getRemoteAddress();
 }
 

@@ -50,7 +50,7 @@ PortCore::~PortCore() {
 }
 
 
-bool PortCore::listen(const Address& address, bool shouldAnnounce) {
+bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     bool success = false;
 
     if (!NetworkBase::initialized()) {
@@ -59,15 +59,6 @@ bool PortCore::listen(const Address& address, bool shouldAnnounce) {
     }
 
     YTRACE("PortCore::listen");
-
-    /*
-    if (!address.isValid()) {
-        YARP_ERROR(log, "Port does not have a valid address");
-        return false;
-    }
-
-    YARP_ASSERT(address.isValid());
-    */
 
     // try to enter listening phase
     stateMutex.wait();
@@ -92,7 +83,7 @@ bool PortCore::listen(const Address& address, bool shouldAnnounce) {
         this->address = face->getLocalAddress();
         //printf("Updating address to %s\n", this->address.toString().c_str());
         if (this->address.getRegName()=="...") {
-            this->address = this->address.addRegName(String("/") + this->address.getName() + "_" + NetType::toString(this->address.getPort()));
+            this->address = this->address.addName(String("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
             setName(this->address.getRegName());
         }
 
@@ -748,16 +739,16 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
 
     BufferedConnectionWriter bw(true);
 
-    Address parts = Name(dest).toAddress();
+    Contact parts = Name(dest).toAddress();
     Contact contact = NetworkBase::queryName(parts.getRegName().c_str());
-    Address address = Address::fromContact(contact);
+    Contact address = contact;
     if (address.isValid()) {
         // as a courtesy, remove any existing connections between
         // source and destination
         if (onlyIfNeeded) {
             bool except = false;
             removeUnit(Route(getName(),address.getRegName(),
-                             address.getCarrierName()),true,&except);
+                             address.getCarrier()),true,&except);
             if (except) {
                 // connection already present
                 YARP_DEBUG(log,String("output already present to ")+
@@ -770,8 +761,8 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
         }
 
         Route r = Route(getName(),address.getRegName(),
-                        parts.hasCarrierName()?parts.getCarrierName():
-                        address.getCarrierName());
+                        (parts.getCarrier()!="")?parts.getCarrier():
+                        address.getCarrier());
 
         bool allowed = true;
 
@@ -891,7 +882,7 @@ void PortCore::describe(void *id, OutputStream *os) {
     stateMutex.wait();
 
     bw.appendLine(String("This is ") + address.getRegName() + " at " +
-                  address.toString());
+                  address.toURI());
 
     int oct = 0;
     int ict = 0;
@@ -953,7 +944,7 @@ void PortCore::describe(PortReport& reporter) {
     baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
     ConstString portName = address.getRegName().c_str();
     baseInfo.message = (String("This is ") + portName.c_str() + " at " +
-                        address.toString()).c_str();
+                        address.toURI()).c_str();
     reporter.report(baseInfo);
 
     int oct = 0;
@@ -1696,7 +1687,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                               portnum);
                             }
                             if (portnum!=0) {
-                                Address addr(hostname.c_str(),portnum);
+                                Contact addr(hostname.c_str(),portnum);
                                 OutputProtocol *op = NULL;
                                 Route r = Route(getName(),
                                                 pub.c_str(),
@@ -1740,9 +1731,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             result.addInt(1);
             result.addString("dummy_id");
             Bottle& lst = result.addList();
-            Address addr = getAddress();
+            Contact addr = getAddress();
             lst.addString("TCPROS");
-            lst.addString(addr.getName().c_str());
+            lst.addString(addr.getHost().c_str());
             lst.addInt(addr.getPort());
             reader.requestDrop(); // ROS likes to close down.
         }

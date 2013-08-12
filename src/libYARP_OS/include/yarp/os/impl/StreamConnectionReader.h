@@ -198,16 +198,16 @@ public:
 
     virtual yarp::os::Contact getRemoteContact() {
         if (str!=NULL) {
-            Address remote = str->getRemoteAddress();
-            return remote.addRegName(route.getFromName()).toContact();
+            Contact remote = str->getRemoteAddress();
+            return remote.addName(route.getFromName());
         }
-        return yarp::os::Contact::byCarrier(route.getCarrierName().c_str()).addName(route.getFromName().c_str());
+        return yarp::os::Contact::byCarrier(route.getCarrierName()).addName(route.getFromName());
     }
 
     virtual yarp::os::Contact getLocalContact() {
         if (str!=NULL) {
-            Address local = str->getLocalAddress();
-            return local.addRegName(route.getToName()).toContact();
+            Contact local = str->getLocalAddress();
+            return local.addName(route.getToName());
         }
         return yarp::os::Contact::invalid();
     }

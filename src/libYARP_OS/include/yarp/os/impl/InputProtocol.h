@@ -10,7 +10,6 @@
 #ifndef _YARP2_INPUTPROTOCOL_
 #define _YARP2_INPUTPROTOCOL_
 
-#include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/InputStream.h>

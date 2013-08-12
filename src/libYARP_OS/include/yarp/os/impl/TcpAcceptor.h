@@ -60,9 +60,9 @@ public:
 
     virtual ~TcpAcceptor() {};
 
-    int open(const Address& address);
+    int open(const yarp::os::Contact& address);
 
-    int connect(const Address& address);
+    int connect(const yarp::os::Contact& address);
 
     int close();
 
@@ -72,7 +72,7 @@ public:
 
 //    const Address& getRemoteAddress();
 protected:
-    int shared_open(const Address& address);
+    int shared_open(const yarp::os::Contact& address);
 
     int get_handle() { return ad; }
 

@@ -59,14 +59,14 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& prot
 #else
     ShmemHybridStream *stream = new ShmemHybridStream();
     YARP_ASSERT(stream!=NULL);
-    Address base;
+    Contact base;
 
     bool ok = true;
 
     if (!sender) {
         ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
-        base = Address(anywhere.get_host_addr(),
-                        anywhere.get_port_number());
+        base = Contact(anywhere.get_host_addr(),
+                       anywhere.get_port_number());
         bool ok = stream->open(base,sender)==0;
         if (ok) {
             int myPort = stream->getLocalAddress().getPort();
@@ -77,9 +77,9 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& prot
         }
     } else {
         int altPort = readYarpInt(proto);
-        String myName = proto.getStreams().getLocalAddress().getName();
+        String myName = proto.getStreams().getLocalAddress().getHost();
         proto.takeStreams(NULL);
-        base = Address(myName,altPort);
+        base = Contact(myName,altPort);
         ok = stream->open(base,sender)==0;
         if (ok) {
             proto.takeStreams(stream);

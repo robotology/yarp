@@ -103,8 +103,8 @@ public:
 
 
 
-Address NameClient::extractAddress(const String& txt) {
-    Address result;
+Contact NameClient::extractAddress(const String& txt) {
+    Contact result;
     Params p(txt.c_str());
     if (p.size()>=9) {
         // registration name /bozo ip 5.255.112.225 port 10002 type tcp
@@ -113,20 +113,20 @@ Address NameClient::extractAddress(const String& txt) {
             const char *ip = p.get(4);
             int port = atoi(p.get(6));
             const char *carrier = p.get(8);
-            result = Address(ip,port,carrier,regName);
+            result = Contact::bySocket(carrier,ip,port).addName(regName);
         }
     }
     return result;
 }
 
-Address NameClient::extractAddress(const Bottle& bot) {
-    Address result;
+Contact NameClient::extractAddress(const Bottle& bot) {
+    Contact result;
     if (bot.size()>=9) {
         if (bot.get(0).asString()=="registration") {
-            result = Address(bot.get(4).asString().c_str(), // ip
-                             bot.get(6).asInt(),            // port number
-                             bot.get(8).asString().c_str(), // carrier
-                             bot.get(2).asString().c_str());// regname
+            result = Contact::bySocket(bot.get(8).asString().c_str(), // carrier
+                                       bot.get(4).asString().c_str(), // ip
+                                       bot.get(6).asInt()) // port number
+                .addName(bot.get(2).asString().c_str());   // regname
         }
     }
     return result;
@@ -153,7 +153,7 @@ String NameClient::send(const String& cmd, bool multi) {
     bool retried = false;
     bool retry = false;
     String result;
-    Address server = getAddress();
+    Contact server = getAddress();
     float timeout = 10;
     server.setTimeout(timeout);
 
@@ -163,11 +163,11 @@ String NameClient::send(const String& cmd, bool multi) {
 
         if (isFakeMode()) {
             //YARP_DEBUG(Logger::get(),"fake mode nameserver");
-            return getServer().apply(cmd,Address("127.0.0.1",NetworkBase::getDefaultPortRange(),"tcp")) + "\n";
+            return getServer().apply(cmd,Contact::bySocket("tcp","127.0.0.1",NetworkBase::getDefaultPortRange())) + "\n";
         }
         
         TcpFace face;
-        YARP_DEBUG(Logger::get(),String("connecting to ") + getAddress().toString());
+        YARP_DEBUG(Logger::get(),String("connecting to ") + getAddress().toURI());
         OutputProtocol *ip = NULL;
         if (!retry) {
             ip = face.write(server);
@@ -179,7 +179,7 @@ String NameClient::send(const String& cmd, bool multi) {
             if (!allowScan) {
                 YARP_INFO(Logger::get(),"*** try running: yarp detect ***");
             }
-            Address alt;
+            Contact alt;
             if (!isFakeMode()) {
                 if (allowScan) {
                     YARP_INFO(Logger::get(),"no connection to nameserver, scanning mcast");
@@ -252,9 +252,9 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(),"fake mode nameserver");
         return getServer().apply(cmd,reply,
-                                 Address("127.0.0.1",NetworkBase::getDefaultPortRange(),"tcp"));
+                                 Contact::bySocket("tcp","127.0.0.1",NetworkBase::getDefaultPortRange()));
     } else {
-        Contact server = getAddress().toContact();
+        Contact server = getAddress();
         ContactStyle style;
         style.carrier = "name_ser";
         return NetworkBase::write(server,cmd,reply,style);
@@ -263,19 +263,19 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
 
 
 
-Address NameClient::queryName(const String& name) {
+Contact NameClient::queryName(const String& name) {
     String np = getNamePart(name);
     YARP_STRING_INDEX i1 = YARP_STRSTR(np,":");
     if (i1!=String::npos) {
         Contact c = c.fromString(np.c_str());
         if (c.isValid()&&c.getPort()>0) {
-            return Address::fromContact(c);
+            return c;
         }
     }
 
     if (altStore!=NULL) {
         Contact c = altStore->query(np.c_str());
-        return Address::fromContact(c);
+        return c;
     }
 
     String q("NAME_SERVER query ");
@@ -283,16 +283,12 @@ Address NameClient::queryName(const String& name) {
     return probe(q);
 }
 
-Address NameClient::registerName(const String& name) {
-    return registerName(name,Address());
+Contact NameClient::registerName(const String& name) {
+    return registerName(name,Contact());
 }
 
-Address NameClient::registerName(const String& name, const Address& suggest) {
-    //printf("registering name to %s\n", getAddress().toString().c_str());
+Contact NameClient::registerName(const String& name, const Contact& suggest) {
     String np = getNamePart(name);
-    //if (isFakeMode()) {
-    //return getServer().registerName(np,suggest);
-    //}
     Bottle cmd;
     cmd.addString("register");
     if (np!="") {
@@ -302,13 +298,13 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
     }
     ConstString prefix = NetworkBase::getEnvironment("YARP_IP");
     if (suggest.isValid()||prefix!="") {
-        if (suggest.getCarrierName()!="") {
-            cmd.addString(suggest.getCarrierName().c_str());
+        if (suggest.getCarrier()!="") {
+            cmd.addString(suggest.getCarrier().c_str());
         } else {
             cmd.addString("...");
         }
-        if (suggest.getName()!="") {
-            cmd.addString(suggest.getName().c_str());
+        if (suggest.getHost()!="") {
+            cmd.addString(suggest.getHost().c_str());
         } else {
             if (prefix!="") {
                 Bottle ips = NameConfig::getIpsAsBottle();
@@ -331,7 +327,7 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
     Bottle reply;
     send(cmd,reply);
 
-    Address address = extractAddress(reply);
+    Contact address = extractAddress(reply);
     if (address.isValid()) {
         String reg = address.getRegName();
 
@@ -365,11 +361,8 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
     return address;
 }
 
-Address NameClient::unregisterName(const String& name) {
+Contact NameClient::unregisterName(const String& name) {
     String np = getNamePart(name);
-    //if (isFakeMode()) {
-    //return getServer().unregisterName(np);
-    //}
     String q("NAME_SERVER unregister ");
     q += np;
     return probe(q);
@@ -394,7 +387,7 @@ NameServer& NameClient::getServer() {
 
 bool NameClient::updateAddress() {
     NameConfig conf;
-    address = Address();
+    address = Contact();
     mode = "yarp";
     if (conf.fromFile()) {
         address = conf.getAddress();
@@ -408,7 +401,7 @@ bool NameClient::setContact(const yarp::os::Contact& contact) {
     if (!contact.isValid()) {
         fake = true;
     }
-    address = Address::fromContact(contact);
+    address = contact;
     mode = "yarp";
     isSetup = true;
     return true;
@@ -435,7 +428,7 @@ void NameClient::setup() {
         }
         
         YARP_DEBUG(Logger::get(),String("name server address is ") + 
-                   address.toString());
+                   address.toURI());
         isSetup = true;
     }
 }

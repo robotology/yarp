@@ -32,6 +32,7 @@
 #include <iostream>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 /* **************************************************************************************
  * Implementation of TcpConnector
@@ -53,7 +54,7 @@ int TcpConnector::open(TcpStream &stream) {
 /**
  * Connect to server
  */
-int TcpConnector::connect(TcpStream &new_stream, const Address& address) {
+int TcpConnector::connect(TcpStream &new_stream, const Contact& address) {
 //	printf("TCP/IP start in client mode\n");
 //	sockets.set_as_client();
 //	sockets.set_client_sockfd(sockfd);
@@ -66,7 +67,7 @@ int TcpConnector::connect(TcpStream &new_stream, const Address& address) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_port = htons(address.getPort());
 	memset(servAddr.sin_zero, '\0', sizeof servAddr.sin_zero);
-	inet_aton(address.getName().c_str(), &servAddr.sin_addr);
+	inet_aton(address.getHost().c_str(), &servAddr.sin_addr);
 
 //	Address servAddress,
 //	servAddress = Address(inet_ntoa(servAddr.sin_addr),servAddr.sin_port);

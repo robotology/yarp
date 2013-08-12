@@ -17,6 +17,7 @@
 #include <yarp/os/impl/PlatformStdio.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 static Logger tcpFaceLog("TcpFace", Logger::get());
 
@@ -26,8 +27,8 @@ TcpFace::~TcpFace() {
 }
 
 
-bool TcpFace::open(const Address& address) {
-    YARP_DEBUG(tcpFaceLog,String("opening for address ") + address.toString());
+bool TcpFace::open(const Contact& address) {
+    YARP_DEBUG(tcpFaceLog,String("opening for address ") + address.toURI());
 
     this->address = address;
 #ifdef YARP_HAS_ACE
@@ -58,7 +59,7 @@ void TcpFace::closeFace() {
     if (address.isValid()) {
         peerAcceptor.close();
 
-        address = Address();
+        address = Contact();
     }
 }
 
@@ -98,7 +99,7 @@ InputProtocol *TcpFace::read() {
 
 }
 
-OutputProtocol *TcpFace::write(const Address& address) {
+OutputProtocol *TcpFace::write(const Contact& address) {
     SocketTwoWayStream *stream  = new SocketTwoWayStream();
     int result = stream->open(address);
     if (result<0) {
@@ -126,7 +127,7 @@ OutputProtocol *TcpFace::write(const Address& address) {
 }
 
 
-Address TcpFace::getLocalAddress() {
+Contact TcpFace::getLocalAddress() {
     return address;
 }
 

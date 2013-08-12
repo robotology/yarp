@@ -11,7 +11,7 @@
 #define _YARP2_FALLBACKNAMECLIENT_
 
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
 namespace yarp {
@@ -35,12 +35,12 @@ public:
     virtual void run();
     virtual void close();
 
-    Address getAddress();
+    Contact getAddress();
 
-    static Address seek();
+    static Contact seek();
 
 private:
-    Address address;
+    Contact address;
     DgramTwoWayStream listen;
     bool closed;
 };

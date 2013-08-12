@@ -59,11 +59,11 @@ InputStream& MpiStream::getInputStream() {
 yarp::os::OutputStream& MpiStream::getOutputStream() {
     return *this;
 }
-const Address& MpiStream::getLocalAddress() {
+const yarp::os::Contact& MpiStream::getLocalAddress() {
     // left undefined
     return local;
 }
-const Address& MpiStream::getRemoteAddress() {
+const yarp::os::Contact& MpiStream::getRemoteAddress() {
     // left undefined
     return remote;
 }

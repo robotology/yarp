@@ -50,7 +50,7 @@ public:
         haveWriteTimeout = false;
     }
 
-    int open(const Address& address);
+    int open(const Contact& address);
 
     int open(ACE_SOCK_Acceptor& acceptor);
 
@@ -66,11 +66,11 @@ public:
         return *this;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const Contact& getLocalAddress() {
         return localAddress;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() {
         return remoteAddress;
     }
 
@@ -183,7 +183,7 @@ private:
     bool haveReadTimeout;
     ACE_Time_Value writeTimeout;
     ACE_Time_Value readTimeout;
-    Address localAddress, remoteAddress;
+    Contact localAddress, remoteAddress;
     bool happy;
     void updateAddresses();
 };

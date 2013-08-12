@@ -465,7 +465,7 @@ Contact RosNameSpace::detectNameServer(bool useDetectedServer,
                                        bool& serverUsed) {
     NameConfig nc;
     nc.fromFile();
-    Contact c = nc.getAddress().toContact();
+    Contact c = nc.getAddress();
     scanNeeded = false;
     serverUsed = false;
 
@@ -478,7 +478,7 @@ Contact RosNameSpace::detectNameServer(bool useDetectedServer,
             c = c.addCarrier("xmlrpc");
             c = c.addName(nc.getNamespace().c_str());
             NameConfig nc;
-            nc.setAddress(Address::fromContact(c));
+            nc.setAddress(c);
             nc.setMode("ros");
             nc.toFile();
             serverUsed = true;
