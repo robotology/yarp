@@ -160,9 +160,9 @@ Contact NameServer::registerName(const String& name,
 Contact NameServer::queryName(const String& name) {
     String base = name;
     String pat = "";
-    if (YARP_STRSTR(name,"/net=") == 0) {
-        YARP_STRING_INDEX patStart = 5;
-        YARP_STRING_INDEX patEnd = name.find('/',patStart);
+    if (name.find("/net=") == 0) {
+        size_t patStart = 5;
+        size_t patEnd = name.find('/',patStart);
         if (patEnd>=patStart && patEnd!=String::npos) {
             pat = name.substr(patStart,patEnd-patStart);
             base = name.substr(patEnd);
@@ -188,7 +188,7 @@ Contact NameServer::queryName(const String& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const String& name, 
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,NameRecord,entry);
+    PLATFORM_MAP_ITERATOR(String,NameRecord,entry);
     int result = PLATFORM_MAP_FIND(nameMap,name,entry);
     if (result==-1) {
         if (!create) {
@@ -205,7 +205,7 @@ NameServer::NameRecord *NameServer::getNameRecord(const String& name,
 
 NameServer::HostRecord *NameServer::getHostRecord(const String& name,
                                                   bool create) {
-    PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,HostRecord,entry);
+    PLATFORM_MAP_ITERATOR(String,HostRecord,entry);
     int result = PLATFORM_MAP_FIND(hostMap,name,entry);
     if (result==-1) {
         if (!create) {
@@ -511,7 +511,7 @@ String NameServer::cmdList(int argc, char *argv[]) {
     String response = "";
 
     PlatformMultiSet<String> lines;
-    for (PLATFORM_MAP(YARP_KEYED_STRING,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+    for (PLATFORM_MAP(String,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         lines.insert(textify(rec.getAddress()));
     }
@@ -560,7 +560,7 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     }
     
     response.addString("ports");
-    for (PLATFORM_MAP(YARP_KEYED_STRING,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+    for (PLATFORM_MAP(String,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         String iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
@@ -768,7 +768,7 @@ public:
         }
         if (reader.isActive()&&haveMessage) {
             YARP_DEBUG(Logger::get(),String("name server got message ") + msg);
-            YARP_STRING_INDEX index = msg.find("NAME_SERVER");
+            size_t index = msg.find("NAME_SERVER");
             if (index==0) {
                 Contact remote = reader.getRemoteContact();
                 YARP_DEBUG(Logger::get(),
@@ -797,7 +797,7 @@ public:
                     YARP_DEBUG(Logger::get(),
                                String("name server reply is ") + result);
                     String resultSparse = result;
-                    YARP_STRING_INDEX end = resultSparse.find("\n*** end of message");
+                    size_t end = resultSparse.find("\n*** end of message");
                     if (end!=String::npos) {
                         resultSparse[end] = '\0';
                     }

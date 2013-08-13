@@ -125,14 +125,14 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
     String s;
     if (name!=NULL) {
         s = *name;
-        YARP_STRING_INDEX i = YARP_STRSTR(s,"+");
+        size_t i = s.find("+");
         if (i!=String::npos) {
             s[i] = '\0';
             s = s.c_str();
             name = &s;
         }
     }
-    for (YARP_STRING_INDEX i=0; i<(YARP_STRING_INDEX)delegates.size(); i++) {
+    for (size_t i=0; i<(size_t)delegates.size(); i++) {
         Carrier& c = *delegates[i];
         bool match = false;
         if (name!=NULL) {

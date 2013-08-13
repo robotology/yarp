@@ -295,10 +295,10 @@ public:
     virtual bool isString() const { return true; }
     static const int code;
     virtual void copy(const Storable& alt) {
-        yarp::os::ConstString y = alt.asString();
-        String tmp;
-        YARP_STRSET(tmp,(char*)y.c_str(),y.length(),0);
-        x = tmp;
+        //yarp::os::ConstString y = 
+        x = alt.asString();
+        //String tmp(y.c_str(),y.length());
+        //x = tmp;
     }
 };
 
@@ -329,8 +329,7 @@ public:
     static const int code;
     virtual void copy(const Storable& alt) {
         if (alt.isBlob()) {
-            String tmp;
-            YARP_STRSET(tmp,(char*)alt.asBlob(),alt.asBlobLength(),0);
+            String tmp((char*)alt.asBlob(),alt.asBlobLength());
             x = tmp;
         } else {
             x = String();

@@ -84,7 +84,7 @@ public:
     }
 
     void setEnvelope(const Bytes& bytes) {
-        YARP_STRSET(envelope,bytes.get(),bytes.length(),1);
+        envelope = String(bytes.get(),bytes.length());
         //envelope.set(bytes.get(),bytes.length(),1);
     }
 

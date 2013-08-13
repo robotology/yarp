@@ -28,7 +28,7 @@ bool Name::isRooted() const {
 
 
 Contact Name::toAddress() const {
-    YARP_STRING_INDEX mid = YARP_STRSTR(txt,":/");
+    size_t mid = txt.find(":/");
     if (mid!=String::npos && mid>0) {
         String first = txt.substr(0,mid);
         String second = txt.substr(mid+2);
@@ -46,14 +46,14 @@ Contact Name::toAddress() const {
 String Name::getCarrierModifier(const char *mod, bool *hasModifier) {
     bool ok = false;
     String work = txt;
-    YARP_STRING_INDEX mid = YARP_STRSTR(work,":/");
+    size_t mid = work.find(":/");
     if (mid!=String::npos && mid>0) {
         work = work.substr(0,mid);
         String target = String("+")+mod+".";
-        YARP_STRING_INDEX modLoc = YARP_STRSTR(work,target.c_str());
+        size_t modLoc = work.find(target);
         if (modLoc!=String::npos) {
             work = work.substr(modLoc+target.length(),work.length());
-            YARP_STRING_INDEX endLoc = YARP_STRSTR(work,"+");
+            size_t endLoc = work.find("+");
             if (endLoc!=String::npos) {
                 work = work.substr(0,endLoc);
             }

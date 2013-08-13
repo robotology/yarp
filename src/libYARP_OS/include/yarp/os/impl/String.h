@@ -22,11 +22,4 @@ namespace yarp {
     }
 }
 
-#define YARP_STRSTR(haystack,needle) (haystack).find(needle)
-#define YARP_STRSTR_OFFSET(haystack,needle,offset) (haystack).find_first_of(needle,offset)
-#define YARP_STRSET(str,cstr,len,owned) str = std::string(cstr,len)
-typedef size_t YARP_STRING_INDEX;
-
-typedef std::string YARP_KEYED_STRING;
-
 #endif

@@ -373,7 +373,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
         Contact addr = yarp::os::impl::NameClient::extractAddress(part);
         if (addr.isValid()) {
             if (addr.getCarrier()=="tcp"&&
-                (YARP_STRSTR(addr.getRegName(),"/quit")==String::npos)) {
+                (addr.getRegName().find("/quit")==String::npos)) {
                 proc += "<a href=\"http://";
                 proc += addr.getHost();
                 proc += ":";

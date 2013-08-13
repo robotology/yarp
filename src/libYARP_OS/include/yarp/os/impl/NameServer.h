@@ -155,7 +155,7 @@ private:
         }
 
         bool release(const String& name) {
-            if (YARP_STRSTR(name,prefix)==0) {
+            if (name.find(prefix)==0) {
                 String num = name.substr(prefix.length());
                 int x = NetType::toInt(num.c_str());
                 ReusableRecord<int>::release(x);
@@ -279,7 +279,7 @@ private:
             String base = "";
             bool needSpace = false;
             for (unsigned int i=0; i<prop.size(); i++) {
-                if (YARP_STRSTR(prop[i],str)==0) {
+                if (prop[i].find(str)==0) {
                     if (needSpace) base += " ";
                     base += prop[i];
                     needSpace = true;
@@ -304,7 +304,7 @@ private:
     private:
         bool reusablePort;
         bool reusableIp;
-        PLATFORM_MAP(YARP_KEYED_STRING,PropertyRecord) propMap;
+        PLATFORM_MAP(String,PropertyRecord) propMap;
         Contact address;
     public:
         NameRecord() :
@@ -356,7 +356,7 @@ private:
 
 
         PropertyRecord *getPR(const String& key, bool create = true) {
-            PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyRecord,entry);
+            PLATFORM_MAP_ITERATOR(String,PropertyRecord,entry);
             int result = PLATFORM_MAP_FIND(propMap,key,entry);
             if (result==-1 && create) {
                 PropertyRecord blank;
@@ -430,13 +430,8 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    //typedef ACE_Hash_Map_Manager<YARP_KEYED_STRING,NameRecord,ACE_Null_Mutex> NameMapHash;
-
-    //NameMapHash nameMap;
-    //ACE_Hash_Map_Manager<YARP_KEYED_STRING,HostRecord,ACE_Null_Mutex> hostMap;
-
-    PLATFORM_MAP(YARP_KEYED_STRING,NameRecord) nameMap;
-    PLATFORM_MAP(YARP_KEYED_STRING,HostRecord) hostMap;
+    PLATFORM_MAP(String,NameRecord) nameMap;
+    PLATFORM_MAP(String,HostRecord) hostMap;
 
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;

@@ -46,7 +46,7 @@ public:
 
 class PropertyHelper {
 public:
-    PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem) data;
+    PLATFORM_MAP(String,PropertyItem) data;
     Property& owner;
 
     PropertyHelper(Property& owner, int hash_size) :
@@ -57,8 +57,8 @@ public:
 
     PropertyItem *getPropNoCreate(const ConstString& key) const {
         String n(key);
-        PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyItem,entry);
-        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem) *)&data)),n,entry);
+        PLATFORM_MAP_ITERATOR(String,PropertyItem,entry);
+        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(String,PropertyItem) *)&data)),n,entry);
         if (result==-1) {
             return NULL;
         }
@@ -69,7 +69,7 @@ public:
 
     PropertyItem *getProp(const ConstString& key, bool create = true) {
         String n(key);
-        PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyItem,entry);
+        PLATFORM_MAP_ITERATOR(String,PropertyItem,entry);
         int result = PLATFORM_MAP_FIND(data,n,entry);
         if (result==-1) {
             if (!create) {
@@ -206,7 +206,7 @@ public:
                 if (work[0]=='-'&&work[1]=='-') {
                     work = work.substr(2,work.length()-2);
                     isTag = true;
-                    if (YARP_STRSTR(work,"::")!=String::npos) {
+                    if (work.find("::")!=String::npos) {
                         qualified = true;
                     }
                 }
@@ -218,7 +218,7 @@ public:
                 tag = work;
                 accum.clear();
             } else {
-                if (YARP_STRSTR(work,"\\")!=String::npos) {
+                if (work.find("\\")!=String::npos) {
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
@@ -373,7 +373,7 @@ public:
 
         String path("");
         String sfname = fname;
-        YARP_STRING_INDEX index = sfname.rfind('/');
+        size_t index = sfname.rfind('/');
         if (index==String::npos) {
             index = sfname.rfind('\\');
         }
@@ -428,7 +428,7 @@ public:
             if (!done) {
                 including = false;
 
-                if (YARP_STRSTR(buf,"//")!=String::npos) {
+                if (buf.find("//")!=String::npos) {
                     bool quoted = false;
                     int comment = 0;
                     for (unsigned int i=0; i<buf.length(); i++) {
@@ -455,10 +455,10 @@ public:
                 buf = expand(buf.c_str(),env,owner).c_str();
 
                 if (buf.length()>0 && buf[0]=='[') {
-                    YARP_STRING_INDEX stop = YARP_STRSTR(buf,"]");
+                    size_t stop = buf.find("]");
                     if (stop!=String::npos) {
                         buf = buf.substr(1,stop-1);
-                        YARP_STRING_INDEX space = YARP_STRSTR(buf," ");
+                        size_t space = buf.find(" ");
                         if (space!=String::npos) {
                             Bottle bot(buf.c_str());
                             if (bot.size()>1) {
@@ -613,7 +613,7 @@ public:
 
     ConstString toString() {
         Bottle bot;
-        for (PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem)::iterator
+        for (PLATFORM_MAP(String,PropertyItem)::iterator
                  it = data.begin(); it!=data.end(); it++) {
             PropertyItem& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
             Bottle& sub = bot.addList();
@@ -626,7 +626,7 @@ public:
     ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
         String input = txt;
-        if (YARP_STRSTR(input,"$")==String::npos) {
+        if (input.find("$")==String::npos) {
             // no variables present for sure
             return txt;
         }
@@ -687,7 +687,7 @@ public:
                             add = "1";
                         }
                     }
-                    if (YARP_STRSTR(add,"\\")!=String::npos) {
+                    if (add.find("\\")!=String::npos) {
                         // Specifically when reading from the command
                         // line, we will allow windows-style paths.
                         // Hence we have to break the "\" character

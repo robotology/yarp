@@ -28,7 +28,7 @@ bool Terminator::terminateByName(const char *name) {
 
     String s(name);
 
-    if (YARP_STRSTR(s,"/quit")==String::npos) {
+    if (s.find("/quit")==String::npos) {
         // name doesn't include /quit
         // old mechanism won't work, let's try new
         PortCommand pc('\0',"i");

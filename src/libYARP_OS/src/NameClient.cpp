@@ -265,7 +265,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
 
 Contact NameClient::queryName(const String& name) {
     String np = getNamePart(name);
-    YARP_STRING_INDEX i1 = YARP_STRSTR(np,":");
+    size_t i1 = np.find(":");
     if (i1!=String::npos) {
         Contact c = c.fromString(np.c_str());
         if (c.isValid()&&c.getPort()>0) {
@@ -310,7 +310,7 @@ Contact NameClient::registerName(const String& name, const Contact& suggest) {
                 Bottle ips = NameConfig::getIpsAsBottle();
                 for (int i=0; i<ips.size(); i++) {
                     String ip = ips.get(i).asString().c_str();
-                    if (YARP_STRSTR(ip,prefix.c_str())==0) {
+                    if (ip.find(prefix)==0) {
                         prefix = ip.c_str();
                         break;
                     }

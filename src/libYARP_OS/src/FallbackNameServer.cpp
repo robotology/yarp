@@ -40,7 +40,7 @@ void FallbackNameServer::run() {
         YARP_DEBUG(Logger::get(),"Fallback server got something");
         if (listen.isOk()&&!closed) {
             YARP_DEBUG(Logger::get(),String("Fallback server got ") + msg);
-            if (YARP_STRSTR(msg,"NAME_SERVER ") == 0) {
+            if (msg.find("NAME_SERVER ") == 0) {
                 Contact addr;
                 String result = owner.apply(msg,addr);
                 send.beginPacket();

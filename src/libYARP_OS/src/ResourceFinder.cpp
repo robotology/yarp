@@ -157,7 +157,7 @@ public:
 
     static ConstString extractPath(const char *fname) {
         String s = fname;
-        YARP_STRING_INDEX n = s.rfind('/');
+        size_t n = s.rfind('/');
         if (n == String::npos) {
             n = s.rfind('\\');
         }

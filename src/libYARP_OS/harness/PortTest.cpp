@@ -230,7 +230,7 @@ public:
 
         checkEqual(conIn.getName().c_str(),"/in","name is recorded");
 
-        checkTrue(YARP_STRSTR(String(conOut.getName().c_str()),"/tmp")==0,
+        checkTrue(conOut.getName().find("/tmp")==0,
                   "name is created");
 
         Bottle bot1, bot2;

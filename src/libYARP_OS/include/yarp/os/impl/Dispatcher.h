@@ -46,7 +46,7 @@ private:
         }
     };
 
-    PLATFORM_MAP(YARP_KEYED_STRING,Entry) action;
+    PLATFORM_MAP(String,Entry) action;
     PlatformVector<String> names;
 
 public:

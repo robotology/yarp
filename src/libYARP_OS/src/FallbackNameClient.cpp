@@ -42,7 +42,7 @@ void FallbackNameClient::run() {
         listen.endPacket();
         if (closed) return;
         YARP_DEBUG(Logger::get(),String("Fallback name client got ") + txt);
-        if (YARP_STRSTR(txt,"registration ")==0) {
+        if (txt.find("registration ")==0) {
             address = NameClient::extractAddress(txt);
             YARP_INFO(Logger::get(),String("Received address ") + 
                       address.toURI());
