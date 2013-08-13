@@ -10,7 +10,7 @@
 #ifndef _YARP2_FAKEFACE_
 #define _YARP2_FAKEFACE_
 
-#include <yarp/os/impl/Face.h>
+#include <yarp/os/Face.h>
 
 namespace yarp {
     namespace os {

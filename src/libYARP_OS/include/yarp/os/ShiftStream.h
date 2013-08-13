@@ -14,9 +14,7 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class ShiftStream;
-        }
+        class ShiftStream;
     }
 }
 
@@ -27,7 +25,7 @@ namespace yarp {
  * an optimized stream type with user-preferred properties and
  * trade-offs.
  */
-class YARP_OS_impl_API yarp::os::impl::ShiftStream : public TwoWayStream {
+class YARP_OS_API yarp::os::ShiftStream : public TwoWayStream {
 public:
     /**
      * Constructor.

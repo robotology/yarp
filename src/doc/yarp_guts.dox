@@ -55,8 +55,8 @@ yarp::os::impl::PortCoreOutputUnit object held in a list by the
 source port's PortCore, and a yarp::os::impl::PortCoreInputUnit 
 object held in a list by the target port's PortCore.
 
-Every PortCoreUnit has a yarp::os::impl::InputProtocol
-or yarp::os::impl::OutputProtocol object that
+Every PortCoreUnit has a yarp::os::InputProtocol
+or yarp::os::OutputProtocol object that
 manages the overall phases of YARP's network protocol.
 
 The Protocol object delegates to an
@@ -193,7 +193,7 @@ to switch from whatever the carrier used to establish
 the connection is (TCP) to something different for transmitting
 payloads (multicast, shared memory, etc).
 The Protocol object is either
-yarp::os::impl::InputProtocol or yarp::os::impl::OutputProtocol
+yarp::os::InputProtocol or yarp::os::OutputProtocol
 (in fact both of these are interfaces implemented by a single 
 class, yarp::os::impl::Protocol, but most of YARP does not know that).
 

@@ -10,13 +10,12 @@
 #ifndef _YARP2_ROUTE_
 #define _YARP2_ROUTE_
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/api.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class Route;
-        }
+        class Route;
     }
 }
 
@@ -25,7 +24,7 @@ namespace yarp {
  * Contains the names of the endpoints, and the name of
  * the carrier in use between them.
  */
-class YARP_OS_impl_API yarp::os::impl::Route {
+class YARP_OS_API yarp::os::Route {
 public:
     /**
      *
@@ -41,9 +40,9 @@ public:
      * @param toKey Destination of route.
      * @param carrier Type of carrier.
      */
-    Route(const String& fromKey,
-          const String& toKey,
-          const String& carrier) :
+    Route(const ConstString& fromKey,
+          const ConstString& toKey,
+          const ConstString& carrier) :
             fromKey(fromKey),
             toKey(toKey),
             carrier(carrier) {
@@ -65,7 +64,7 @@ public:
      *
      * @return the source of the route (a port name)
      */
-    const String& getFromName() const {
+    const ConstString& getFromName() const {
         return fromKey;
     }
 
@@ -75,7 +74,7 @@ public:
      *
      * @return the destination of the route (a port name)
      */
-    const String& getToName() const {
+    const ConstString& getToName() const {
         return toKey;
     }
 
@@ -85,7 +84,7 @@ public:
      *
      * @return the carrier type of the route.
      */
-    const String& getCarrierName() const {
+    const ConstString& getCarrierName() const {
         return carrier;
     }
 
@@ -96,7 +95,7 @@ public:
      *
      * @return the created route.
      */
-    Route addFromName(const String& fromName) const {
+    Route addFromName(const ConstString& fromName) const {
         return Route(fromName,getToName(),getCarrierName());
     }
 
@@ -107,7 +106,7 @@ public:
      *
      * @return the created route.
      */
-    Route addToName(const String& toName) const {
+    Route addToName(const ConstString& toName) const {
         return Route(getFromName(),toName,getCarrierName());
     }
 
@@ -118,7 +117,7 @@ public:
      *
      * @return the created route.
      */
-    Route addCarrierName(const String& carrierName) const {
+    Route addCarrierName(const ConstString& carrierName) const {
         return Route(getFromName(),getToName(),carrierName);
     }
 
@@ -127,15 +126,15 @@ public:
      *
      * @return the route in text form.
      */
-    String toString() const {
+    ConstString toString() const {
         return getFromName() + "->" + getCarrierName() + "->" +
             getToName();
     }
 
 private:
-    String fromKey;
-    String toKey;
-    String carrier;
+    ConstString fromKey;
+    ConstString toKey;
+    ConstString carrier;
 };
 
 #endif

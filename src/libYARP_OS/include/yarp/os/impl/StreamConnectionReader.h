@@ -17,7 +17,7 @@
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/Route.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/PlatformSize.h>
 #include <yarp/os/Bottle.h>

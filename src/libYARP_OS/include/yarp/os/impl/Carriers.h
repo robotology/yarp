@@ -13,8 +13,8 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Contact.h>
-#include <yarp/os/impl/Face.h>
-#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/Face.h>
+#include <yarp/os/OutputProtocol.h>
 #include <yarp/os/impl/Carrier.h>
 
 #include <yarp/os/impl/PlatformVector.h>

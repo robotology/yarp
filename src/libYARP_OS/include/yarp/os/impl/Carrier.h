@@ -10,8 +10,8 @@
 #ifndef _YARP2_CARRIER_
 #define _YARP2_CARRIER_
 
-#include <yarp/os/impl/ShiftStream.h>
-#include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/ShiftStream.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>

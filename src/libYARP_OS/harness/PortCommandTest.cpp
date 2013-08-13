@@ -13,8 +13,8 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 class PortCommandTest : public UnitTest {

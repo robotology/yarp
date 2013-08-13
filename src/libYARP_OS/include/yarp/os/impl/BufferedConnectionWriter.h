@@ -12,7 +12,7 @@
 
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>

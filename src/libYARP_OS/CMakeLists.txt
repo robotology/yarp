@@ -21,7 +21,9 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/DummyConnector.h
                  include/yarp/os/end_pack_for_net.h
                  include/yarp/os/Event.h
+                 include/yarp/os/Face.h
                  include/yarp/os/IConfig.h
+                 include/yarp/os/InputProtocol.h
                  include/yarp/os/InputStream.h
                  include/yarp/os/LocalReader.h
                  include/yarp/os/Log.h
@@ -42,6 +44,7 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/NullConnectionReader.h
                  include/yarp/os/NullConnectionWriter.h
                  include/yarp/os/Os.h
+                 include/yarp/os/OutputProtocol.h
                  include/yarp/os/OutputStream.h
                  include/yarp/os/Ping.h
                  include/yarp/os/Portable.h
@@ -61,6 +64,7 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/ResourceFinderOptions.h
                  include/yarp/os/RFModule.h
                  include/yarp/os/RosNameSpace.h
+                 include/yarp/os/Route.h
                  include/yarp/os/RpcClient.h
                  include/yarp/os/RpcServer.h
                  include/yarp/os/Run.h
@@ -72,6 +76,8 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/SharedLibraryClass.h
                  include/yarp/os/SharedLibraryFactory.h
                  include/yarp/os/SharedLibrary.h
+                 include/yarp/os/ShiftStream.h
+                 include/yarp/os/SizedWriter.h
                  include/yarp/os/Stamp.h
                  include/yarp/os/Terminator.h
                  include/yarp/os/Thread.h
@@ -105,7 +111,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/DgramTwoWayStream.h
                       include/yarp/os/impl/Dispatcher.h
                       include/yarp/os/impl/Election.h
-                      include/yarp/os/impl/Face.h
                       include/yarp/os/impl/FakeFace.h
                       include/yarp/os/impl/FakeTwoWayStream.h
                       include/yarp/os/impl/FallbackNameClient.h
@@ -113,7 +118,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/hmac/hmac_sha2.h
                       include/yarp/os/impl/hmac/sha2.h
                       include/yarp/os/impl/HttpCarrier.h
-                      include/yarp/os/impl/InputProtocol.h
                       include/yarp/os/impl/IOException.h
                       include/yarp/os/impl/LocalCarrier.h
                       include/yarp/os/impl/Logger.h
@@ -126,7 +130,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/NameserCarrier.h
                       include/yarp/os/impl/NameServer.h
                       include/yarp/os/impl/NetType.h
-                      include/yarp/os/impl/OutputProtocol.h
                       include/yarp/os/impl/PlatformList.h
                       include/yarp/os/impl/PlatformMap.h
                       include/yarp/os/impl/PlatformSet.h
@@ -146,20 +149,17 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/PortManager.h
                       include/yarp/os/impl/POSIXSemaphoreImpl.h
                       include/yarp/os/impl/Protocol.h
-                      include/yarp/os/impl/Route.h
                       include/yarp/os/impl/RunCheckpoints.h
                       include/yarp/os/impl/Runnable.h
                       include/yarp/os/impl/RunProcManager.h
                       include/yarp/os/impl/RunReadWrite.h
                       include/yarp/os/impl/SemaphoreImpl.h
-                      include/yarp/os/impl/ShiftStream.h
                       include/yarp/os/impl/ShmemCarrier.h
                       include/yarp/os/impl/ShmemHybridStream.h
                       include/yarp/os/impl/ShmemInputStream.h
                       include/yarp/os/impl/ShmemOutputStream.h
                       include/yarp/os/impl/ShmemTwoWayStream.h
                       include/yarp/os/impl/ShmemTypes.h
-                      include/yarp/os/impl/SizedWriter.h
                       include/yarp/os/impl/SocketTwoWayStream.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/StreamConnectionReader.h

@@ -11,10 +11,8 @@
 #define _YARP2_FACE_
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/impl/InputProtocol.h>
-#include <yarp/os/impl/OutputProtocol.h>
-
-#include <yarp/os/impl/AuthHMAC.h>
+#include <yarp/os/InputProtocol.h>
+#include <yarp/os/OutputProtocol.h>
 
 namespace yarp {
     namespace os {
@@ -32,7 +30,7 @@ public:
     /**
      * Constructor.
      */
-    Face() : auth() {};
+    Face() {};
 
     /**
      * Destructor.
@@ -91,10 +89,6 @@ public:
     virtual Contact getLocalAddress() {
         return Contact();
     }
-
-protected:
-
-    yarp::os::impl::AuthHMAC auth;
 };
 
 #endif

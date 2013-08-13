@@ -10,7 +10,7 @@
 #ifndef YARP2_WIREIMAGE
 #define YARP2_WIREIMAGE
 
-#include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/impl/StringOutputStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
@@ -52,7 +52,7 @@ public:
  * but we optimize for the truly constant case.
  *
  */
-class RosWireImage : public yarp::os::impl::SizedWriter {
+class RosWireImage : public yarp::os::SizedWriter {
 private:
     RosImageStamp ros_seq_stamp;
     yarp::os::ManagedBytes ros_const_header;
@@ -147,7 +147,7 @@ class YARP_wire_rep_utils_API WireImage {
 private:
     yarp::sig::FlexImage img;
 public:
-    yarp::sig::FlexImage *checkForImage(yarp::os::impl::SizedWriter& writer);
+    yarp::sig::FlexImage *checkForImage(yarp::os::SizedWriter& writer);
 };
 
 #endif

@@ -14,7 +14,7 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetInt32.h>
 
-#include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/impl/PlatformSize.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/Bytes.h>
@@ -155,9 +155,9 @@ public:
 };
 
 
-class YARP_wire_rep_utils_API WireTwiddlerWriter : public yarp::os::impl::SizedWriter {
+class YARP_wire_rep_utils_API WireTwiddlerWriter : public yarp::os::SizedWriter {
 private:
-    yarp::os::impl::SizedWriter *parent;
+    yarp::os::SizedWriter *parent;
     WireTwiddler *twiddler;
     std::vector<yarp::os::Bytes> srcs;
     int block;
@@ -173,7 +173,7 @@ private:
     const char *activeCheck;
     bool errorState;
 public:
-    WireTwiddlerWriter(yarp::os::impl::SizedWriter& parent,
+    WireTwiddlerWriter(yarp::os::SizedWriter& parent,
                        WireTwiddler& twiddler) : parent(&parent),
                                                  twiddler(&twiddler) {
         update();
@@ -184,7 +184,7 @@ public:
         twiddler = NULL;
     }
 
-    void attach(yarp::os::impl::SizedWriter& parent,
+    void attach(yarp::os::SizedWriter& parent,
                 WireTwiddler& twiddler) {
         this->parent = &parent;
         this->twiddler = &twiddler;

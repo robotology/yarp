@@ -13,7 +13,7 @@
 #include "WireTwiddler.h"
 
 #include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/Route.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 

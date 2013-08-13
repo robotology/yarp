@@ -17,7 +17,7 @@
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/ShiftStream.h>
+#include <yarp/os/ShiftStream.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -33,7 +33,7 @@ namespace yarp {
 /**
  * Connection choreographer.  Handles one side of a single YARP connection.
  */
-class YARP_OS_impl_API yarp::os::impl::Protocol : public OutputProtocol, public InputProtocol {
+class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtocol, public yarp::os::InputProtocol {
 public:
 
     /**
@@ -121,7 +121,7 @@ public:
     }
 
 
-    virtual bool open(const String& name) {
+    virtual bool open(const ConstString& name) {
         if (name=="") {
             setCarrier("text");
             if (delegate!=NULL) {
@@ -222,7 +222,7 @@ public:
         return is().setReadTimeout(timeout);
     }
 
-    virtual void setEnvelope(const String& str) {
+    virtual void setEnvelope(const yarp::os::ConstString& str) {
         envelope = str;
     }
 

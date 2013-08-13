@@ -24,11 +24,11 @@
 #include <yarp/os/MultiNameSpace.h>
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/OutputProtocol.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/Route.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/ThreadImpl.h>

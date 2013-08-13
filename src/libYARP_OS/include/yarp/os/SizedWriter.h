@@ -10,19 +10,17 @@
 #ifndef _YARP2_SIZEDWRITER_
 #define _YARP2_SIZEDWRITER_
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
-#include <stddef.h> // defines size_t
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class SizedWriter;
-            using yarp::os::PortReader;
-        }
+        class SizedWriter;
+        //using yarp::os::PortReader;
     }
-    using yarp::os::PortReader;
+    //using yarp::os::PortReader;
 }
 
 /**
@@ -33,7 +31,7 @@ namespace yarp {
  * SizedWriter class is referenced by the library instead of
  * BufferedConnectionWriter specifically to leave that possibility open.
  */
-class YARP_OS_impl_API yarp::os::impl::SizedWriter : public yarp::os::PortWriter {
+class YARP_OS_API yarp::os::SizedWriter : public PortWriter {
 public:
     virtual ~SizedWriter() {}
 
@@ -47,9 +45,9 @@ public:
 
     virtual PortReader *getReplyHandler() = 0;
     
-    virtual yarp::os::Portable *getReference() = 0;
+    virtual Portable *getReference() = 0;
 
-    virtual void write(yarp::os::OutputStream& os) {
+    virtual void write(OutputStream& os) {
         for (size_t i=0; i<length(); i++) {
             Bytes b((char*)data(i),length(i));
             os.write(b);

@@ -10,8 +10,9 @@
 #ifndef _YARP2_TCPFACE_
 #define _YARP2_TCPFACE_
 
-#include  <yarp/os/impl/Face.h>
-//#include  <yarp/Semaphore.h>
+#include <yarp/conf/system.h>
+#include <yarp/os/Face.h>
+#include <yarp/os/impl/AuthHMAC.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/config.h>
@@ -55,6 +56,10 @@ public:
      * not have any notion of running in a multi-threaded environment.
      *
      */
+
+protected:
+
+    yarp::os::impl::AuthHMAC auth;
 
 private:
     void closeFace();

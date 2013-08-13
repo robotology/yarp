@@ -335,7 +335,7 @@ these 8 bytes.  After that, you're free to send anything else you feel
 you need to.  You should definitely pass the name of the originating port, 
 if there is one, so that the recipient knows who it is talking to.
 You can get that information from proto.getRoute().getFromName()
-(yarp::os::impl::Protocol::getRoute(), yarp::os::impl::Route::getFromName()).
+(yarp::os::impl::Protocol::getRoute(), yarp::os::Route::getFromName()).
 </dd>
 
 <dt>yarp::os::impl::Carrier::expectSenderSpecifier (RECIPIENT)</dt>
@@ -434,7 +434,7 @@ commands:
 
 <dd>
 Here, you are given the usual "proto" protocol object, and
-an extra yarp::os::impl::SizedWriter object that knows about 
+an extra yarp::os::SizedWriter object that knows about 
 the size of what is to be sent, and also its content.
 
 Note: historically, the write operation was broken down into an

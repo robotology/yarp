@@ -15,7 +15,7 @@
 
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/impl/StringOutputStream.h>
-#include <yarp/os/impl/Route.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>

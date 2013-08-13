@@ -10,16 +10,16 @@
 #ifndef YARP2_WIREBOTTLE
 #define YARP2_WIREBOTTLE
 
-#include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/SizedWriter.h>
 
 #include <wire_rep_utils_api.h>
 
-class SizedWriterTail : public yarp::os::impl::SizedWriter {
+class SizedWriterTail : public yarp::os::SizedWriter {
 private:
-    yarp::os::impl::SizedWriter *delegate;
+    yarp::os::SizedWriter *delegate;
     size_t payload_index, payload_offset;
 public:
-    void setDelegate(yarp::os::impl::SizedWriter *delegate, int index,
+    void setDelegate(yarp::os::SizedWriter *delegate, int index,
                      int offset) {
         this->delegate = delegate;
         payload_index = index;
@@ -67,7 +67,7 @@ public:
 class YARP_wire_rep_utils_API WireBottle {
 public:
     static bool checkBottle(void *cursor, int len);
-    static bool extractBlobFromBottle(yarp::os::impl::SizedWriter& src,
+    static bool extractBlobFromBottle(yarp::os::SizedWriter& src,
                                       SizedWriterTail& dest);
 };
 

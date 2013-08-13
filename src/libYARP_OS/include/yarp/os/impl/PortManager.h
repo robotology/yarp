@@ -15,6 +15,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/Route.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 
@@ -23,7 +24,6 @@ namespace yarp {
         namespace impl {
             class PortManager;
             class PortCoreUnit;
-            class Route;
         }
     }
 }

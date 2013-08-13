@@ -92,7 +92,7 @@ bool WireBottle::checkBottle(void *cursor, int len) {
     return ::checkBottle((char *)cursor,rem,1,0)!=NULL;
 }
 
-bool WireBottle::extractBlobFromBottle(yarp::os::impl::SizedWriter& src,
+bool WireBottle::extractBlobFromBottle(yarp::os::SizedWriter& src,
                                        SizedWriterTail& dest) {
     size_t total_len = 0;
     for (size_t i=0; i<src.length(); i++) {

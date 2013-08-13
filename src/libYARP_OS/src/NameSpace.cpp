@@ -8,7 +8,7 @@
  */
 
 #include <yarp/os/NameSpace.h>
-#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/OutputProtocol.h>
 #include <yarp/os/impl/Carriers.h>
 
 using namespace yarp::os;
