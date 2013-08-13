@@ -7,7 +7,6 @@
  */
 
 #include <yarp/os/impl/NameserCarrier.h>
-#include <yarp/os/impl/Protocol.h>
 
 using namespace yarp::os;
 
@@ -147,7 +146,7 @@ bool yarp::os::impl::NameserCarrier::canEscape() {
     return false;
 }
 
-bool yarp::os::impl::NameserCarrier::sendHeader(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::sendHeader(ConnectionState& proto) {
     yarp::os::impl::String target = getSpecifierName();
     yarp::os::Bytes b((char*)target.c_str(),8);
     proto.os().write(b);
@@ -155,24 +154,24 @@ bool yarp::os::impl::NameserCarrier::sendHeader(Protocol& proto) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::NameserCarrier::expectSenderSpecifier(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("anon"));
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::expectIndex(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectIndex(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::sendAck(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::sendAck(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::expectAck(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectAck(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::respondToHeader(ConnectionState& proto) {
     // I am the receiver
     NameserTwoWayStream *stream =
         new NameserTwoWayStream(proto.giveStreams());
@@ -180,12 +179,12 @@ bool yarp::os::impl::NameserCarrier::respondToHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectReplyToHeader(ConnectionState& proto) {
     // I am the sender
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     String target = firstSend?"VER ":"NAME_SERVER ";
     Bytes b((char*)target.c_str(),target.length());
     proto.os().write(b);

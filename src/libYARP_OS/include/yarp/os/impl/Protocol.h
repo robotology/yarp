@@ -19,6 +19,7 @@
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/ConnectionState.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 
@@ -33,7 +34,7 @@ namespace yarp {
 /**
  * Connection choreographer.  Handles one side of a single YARP connection.
  */
-class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtocol, public yarp::os::InputProtocol {
+class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtocol, public yarp::os::InputProtocol, public yarp::os::ConnectionState {
 public:
 
     /**
@@ -214,7 +215,7 @@ public:
         this->ref = ref;
     }
 
-    String getSenderSpecifier();
+    yarp::os::ConstString getSenderSpecifier();
 
     virtual bool setTimeout(double timeout) {
         bool ok = os().setWriteTimeout(timeout);
@@ -230,7 +231,7 @@ public:
         return envelope;
     }
 
-    Logger& getLog() {
+    Log& getLog() {
         return log;
     }
 

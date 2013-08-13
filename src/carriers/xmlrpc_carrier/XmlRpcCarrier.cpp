@@ -10,6 +10,7 @@
 #include "XmlRpcCarrier.h"
 #include <yarp/os/impl/StringOutputStream.h>
 #include <yarp/os/impl/Name.h>
+#include <yarp/os/impl/NetType.h>
 #include <yarp/os/Bottle.h>
 
 #include "XmlRpc.h"
@@ -69,12 +70,12 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
     }
 }
 
-bool XmlRpcCarrier::expectSenderSpecifier(Protocol& proto) {
+bool XmlRpcCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("rpc"));
     return true;
 }
 
-bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     //XmlRpc::setVerbosity(10);
     StringOutputStream sos;
     StringInputStream sis;
@@ -148,13 +149,13 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
 }
 
 
-bool XmlRpcCarrier::reply(Protocol& proto, SizedWriter& writer) {
+bool XmlRpcCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
     //printf("Preparing for write\n");
     return write(proto,writer);
 }
 
 
-bool XmlRpcCarrier::sendHeader(Protocol& proto) {
+bool XmlRpcCarrier::sendHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
     //printf("ROUTE is %s\n", proto.getRoute().toString().c_str());
     String pathValue = n.getCarrierModifier("path");
@@ -179,7 +180,7 @@ bool XmlRpcCarrier::sendHeader(Protocol& proto) {
 }
 
 
-bool XmlRpcCarrier::respondToHeader(Protocol& proto) {
+bool XmlRpcCarrier::respondToHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
     String rospass = n.getCarrierModifier("ros");
     if (rospass=="") {

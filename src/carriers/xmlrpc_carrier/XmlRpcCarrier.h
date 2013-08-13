@@ -11,7 +11,6 @@
 #define XMLRPCCARRIER_INC
 
 #include <yarp/os/impl/Carrier.h>
-#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/impl/String.h>
 #include "XmlRpcStream.h"
 
@@ -130,23 +129,23 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
 
-    virtual bool expectSenderSpecifier(Protocol& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
 
-    virtual bool expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) {
         // interpret any extra header information sent - optional
         return true;
     }
 
-    bool respondToHeader(Protocol& proto);
+    bool respondToHeader(ConnectionState& proto);
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto) {
         sender = true;
         XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
                                                 interpretRos);
@@ -162,23 +161,23 @@ public:
 
     // Payload time!
 
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true;
     }
 
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return true;
     }
 

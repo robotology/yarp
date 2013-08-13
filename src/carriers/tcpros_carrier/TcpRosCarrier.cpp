@@ -54,7 +54,7 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 }
 
 
-bool TcpRosCarrier::sendHeader(Protocol& proto) {
+bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     dbg_printf("Route is %s\n", proto.getRoute().toString().c_str());
     Name n(proto.getRoute().getCarrierName() + "://test");
     String mode = "topic";
@@ -113,7 +113,7 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
 }
 
 
-bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
+bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     RosHeader header;
 
     char mlen[4];
@@ -172,7 +172,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     return proto.is().isOk();
 }
 
-bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
+bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("tcpros"));
 
     dbg_printf("Trying for tcpros header\n");
@@ -236,7 +236,7 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     return true;
 }
 
-bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     SizedWriter *flex_writer = &writer;
 
 
@@ -334,7 +334,7 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     return proto.getStreams().isOk();
 }
 
-bool TcpRosCarrier::reply(Protocol& proto, SizedWriter& writer) {
+bool TcpRosCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
     // don't need to do anything special for now.
     writer.write(proto.os());
     return proto.os().isOk();

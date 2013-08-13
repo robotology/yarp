@@ -75,14 +75,14 @@ public:
     virtual bool isTextMode();
     virtual bool supportReply();
     virtual bool canEscape();
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectSenderSpecifier(Protocol& proto);
-    virtual bool expectIndex(Protocol& proto);
-    virtual bool sendAck(Protocol& proto);
-    virtual bool expectAck(Protocol& proto);
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
+    virtual bool expectIndex(ConnectionState& proto);
+    virtual bool sendAck(ConnectionState& proto);
+    virtual bool expectAck(ConnectionState& proto);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 };
 
 #endif

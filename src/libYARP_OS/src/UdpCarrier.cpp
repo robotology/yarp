@@ -8,7 +8,8 @@
  */
 
 #include <yarp/os/impl/UdpCarrier.h>
-#include <yarp/os/impl/Protocol.h>
+
+using namespace yarp::os;
 
 yarp::os::impl::UdpCarrier::UdpCarrier() {
 }
@@ -45,7 +46,7 @@ bool yarp::os::impl::UdpCarrier::isConnectionless() {
 }
 
 
-bool yarp::os::impl::UdpCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::UdpCarrier::respondToHeader(ConnectionState& proto) {
     // I am the receiver
 
     // issue: need a fresh port number...
@@ -66,7 +67,7 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::UdpCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::UdpCarrier::expectReplyToHeader(ConnectionState& proto) {
     // I am the sender
     int myPort = proto.getStreams().getLocalAddress().getPort();
     String myName = proto.getStreams().getLocalAddress().getHost();

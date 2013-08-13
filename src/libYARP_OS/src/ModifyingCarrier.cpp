@@ -8,6 +8,8 @@
 
 #include <yarp/os/impl/ModifyingCarrier.h>
 
+using namespace yarp::os;
+
 bool yarp::os::impl::ModifyingCarrier::checkHeader(const yarp::os::Bytes &header) {
     return false;
 }
@@ -22,7 +24,7 @@ void yarp::os::impl::ModifyingCarrier::getHeader(const yarp::os::Bytes &header) 
     }
 }
 
-bool yarp::os::impl::ModifyingCarrier::respondToHeader(yarp::os::impl::Protocol &proto) {
+bool yarp::os::impl::ModifyingCarrier::respondToHeader(yarp::os::ConnectionState &proto) {
     return false;
 }
 

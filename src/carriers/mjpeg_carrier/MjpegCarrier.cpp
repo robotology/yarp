@@ -59,7 +59,7 @@ typedef net_destination_mgr *net_destination_ptr;
 
 void send_net_data(JOCTET *data, int len, void *client) {
     dbg_printf("Send %d bytes\n", len);
-    Protocol *p = (Protocol *)client;
+    ConnectionState *p = (ConnectionState *)client;
     char hdr[1000];
     sprintf(hdr,"\n");
     const char *brk = "\n";
@@ -135,7 +135,7 @@ void jpeg_net_dest(j_compress_ptr cinfo) {
     dest->pub.term_destination = term_net_destination;
 }
 
-bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     WireImage rep;
     FlexImage *img = rep.checkForImage(writer);
 
@@ -173,12 +173,12 @@ bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
     return true;
 }
 
-bool MjpegCarrier::reply(Protocol& proto, SizedWriter& writer) {
+bool MjpegCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
     return false;
 }
 
 
-bool MjpegCarrier::sendHeader(Protocol& proto) {
+bool MjpegCarrier::sendHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
     String pathValue = n.getCarrierModifier("path");
     String target = "GET /?action=stream\n\n";

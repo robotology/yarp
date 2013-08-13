@@ -39,8 +39,8 @@ public:
     virtual void setParameters(const yarp::os::Bytes& header);
     virtual bool requireAck();
     virtual bool isConnectionless();
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool respondToHeader(yarp::os::ConnectionState& proto);
+    virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto);
 
 private:
     bool requireAckFlag;

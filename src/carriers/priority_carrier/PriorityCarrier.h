@@ -156,7 +156,7 @@ public:
 
     double getActualInput(double t);
 
-    virtual bool configure(yarp::os::impl::Protocol& proto);
+    virtual bool configure(yarp::os::ConnectionState& proto);
 
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
 

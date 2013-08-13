@@ -13,6 +13,7 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/Bytes.h
                  include/yarp/os/Connection.h
                  include/yarp/os/ConnectionReader.h
+                 include/yarp/os/ConnectionState.h
                  include/yarp/os/ConnectionWriter.h
                  include/yarp/os/ConstString.h
                  include/yarp/os/Contactable.h

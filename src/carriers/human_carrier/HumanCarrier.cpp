@@ -9,7 +9,7 @@
 
 #include "HumanCarrier.h"
 
-bool HumanCarrier::sendHeader(Protocol& proto) {
+bool HumanCarrier::sendHeader(ConnectionState& proto) {
     // Send the "magic number" for this carrier
     ManagedBytes header(8);
     getHeader(header.bytes());

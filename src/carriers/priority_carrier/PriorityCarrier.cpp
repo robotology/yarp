@@ -58,7 +58,7 @@ bool PriorityCarrier::acceptIncomingData(yarp::os::ConnectionReader& reader) {
 }
 
 // Read connection settings.
-bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
+bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);

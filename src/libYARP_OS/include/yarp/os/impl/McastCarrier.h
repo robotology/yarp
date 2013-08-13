@@ -52,11 +52,11 @@ public:
     virtual String getName();
 
     virtual int getSpecifierCode();
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectExtraHeader(Protocol& proto);
-    virtual bool becomeMcast(Protocol& proto, bool sender);
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectExtraHeader(ConnectionState& proto);
+    virtual bool becomeMcast(ConnectionState& proto, bool sender);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 
     void addSender(const String& key);
     void addRemove(const String& key);

@@ -65,10 +65,10 @@ void Protocol::setRoute(const Route& route) {
 }
 
 
-String Protocol::getSenderSpecifier() {
+ConstString Protocol::getSenderSpecifier() {
     Route r = getRoute();
-    String from = r.getFromName();
-    String carrier = r.getCarrierName();
+    ConstString from = r.getFromName();
+    ConstString carrier = r.getCarrierName();
     size_t start = carrier.find("+");
     if (start!=String::npos) {
         from += " (";

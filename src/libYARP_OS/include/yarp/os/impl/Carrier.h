@@ -17,6 +17,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Connection.h>
+#include <yarp/os/ConnectionState.h>
 
 #define YARP_ENACT_CONNECT 1
 #define YARP_ENACT_DISCONNECT 2
@@ -27,7 +28,6 @@ namespace yarp {
     namespace os {
         namespace impl {
             class Carrier;
-            class Protocol;
         }
     }
 }
@@ -205,7 +205,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool prepareSend(Protocol& proto) = 0;
+    virtual bool prepareSend(ConnectionState& proto) = 0;
 
     /**
      * Write a header appropriate to the carrier to the connection,
@@ -217,7 +217,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool sendHeader(Protocol& proto) = 0;
+    virtual bool sendHeader(ConnectionState& proto) = 0;
 
     /**
      * Process reply to header, if one is expected for this carrier.
@@ -225,7 +225,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool expectReplyToHeader(Protocol& proto) = 0;
+    virtual bool expectReplyToHeader(ConnectionState& proto) = 0;
 
     /**
      * Write a message.
@@ -233,10 +233,10 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool write(Protocol& proto, SizedWriter& writer) = 0;
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) = 0;
 
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
 
     /**
      * Receive any carrier-specific header.
@@ -244,7 +244,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool expectExtraHeader(Protocol& proto) = 0;
+    virtual bool expectExtraHeader(ConnectionState& proto) = 0;
 
     /**
      * Respond to the header.
@@ -252,7 +252,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool respondToHeader(Protocol& proto) = 0;
+    virtual bool respondToHeader(ConnectionState& proto) = 0;
 
     /**
      * Expect a message header, if there is one for this carrier.
@@ -260,7 +260,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool expectIndex(Protocol& proto) = 0;
+    virtual bool expectIndex(ConnectionState& proto) = 0;
 
     /**
      * Expect the name of the sending port.
@@ -268,7 +268,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool expectSenderSpecifier(Protocol& proto) = 0;
+    virtual bool expectSenderSpecifier(ConnectionState& proto) = 0;
 
     /**
      * Send an acknowledgement, if needed for this carrier.
@@ -276,7 +276,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool sendAck(Protocol& proto) = 0;
+    virtual bool sendAck(ConnectionState& proto) = 0;
 
     /**
      * Receive an acknowledgement, if expected for this carrier.
@@ -284,7 +284,7 @@ public:
      * @param proto the protocol object, which tracks connection state
      * @return true on success, false on failure
      */
-    virtual bool expectAck(Protocol& proto) = 0;
+    virtual bool expectAck(ConnectionState& proto) = 0;
 
     /**
      * Check if carrier is alive and error free.
@@ -399,7 +399,7 @@ public:
      *
      * @return true if the carrier was correctly configured.
      */
-    virtual bool configure(yarp::os::impl::Protocol& proto) {
+    virtual bool configure(yarp::os::ConnectionState& proto) {
         return true;
     }
 

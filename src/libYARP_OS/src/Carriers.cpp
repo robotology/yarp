@@ -236,7 +236,7 @@ bool Carriers::addCarrierPrototype(Carrier *carrier) {
 }
 
 
-bool Carrier::reply(Protocol& proto, SizedWriter& writer) {
+bool Carrier::reply(ConnectionState& proto, SizedWriter& writer) {
     writer.write(proto.os());
     return proto.os().isOk();
 }

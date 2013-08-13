@@ -11,7 +11,6 @@
 #include <yarp/os/impl/McastCarrier.h>
 #include <stdlib.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/Network.h>
 
 using namespace yarp::os::impl;
@@ -66,7 +65,7 @@ int yarp::os::impl::McastCarrier::getSpecifierCode() {
 }
 
 
-bool yarp::os::impl::McastCarrier::sendHeader(Protocol& proto) {
+bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto) {
     // need to do more than the default
     bool ok = defaultSendHeader(proto);
     if (!ok) return false;
@@ -130,7 +129,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::McastCarrier::expectExtraHeader(Protocol& proto) {
+bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto) {
     YARP_DEBUG(Logger::get(),"Expecting extra mcast header");
     ManagedBytes block(6);
     YARP_SSIZE_T len = NetType::readFull(proto.is(),block.bytes());
@@ -160,7 +159,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(Protocol& proto) {
 }
 
 
-bool yarp::os::impl::McastCarrier::becomeMcast(Protocol& proto, bool sender) {
+bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool sender) {
 #ifndef YARP_HAS_ACE
     return false;
 #else
@@ -218,12 +217,12 @@ bool yarp::os::impl::McastCarrier::becomeMcast(Protocol& proto, bool sender) {
 #endif
 }
 
-bool yarp::os::impl::McastCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::McastCarrier::respondToHeader(ConnectionState& proto) {
     return becomeMcast(proto,false);
 }
 
 
-bool yarp::os::impl::McastCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::McastCarrier::expectReplyToHeader(ConnectionState& proto) {
     return becomeMcast(proto,true);
 }
 

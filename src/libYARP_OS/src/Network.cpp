@@ -1002,51 +1002,51 @@ public:
         return getContent().isPush();
     }
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         return getContent().prepareSend(proto);
     }
 
-    virtual bool sendHeader(Protocol& proto) {
+    virtual bool sendHeader(ConnectionState& proto) {
         return getContent().sendHeader(proto);
     }
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto) {
         return getContent().expectReplyToHeader(proto);
     }
 
-    //virtual bool sendIndex(Protocol& proto,SizedWriter& writer) {
+    //virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer) {
     //return getContent().sendIndex(proto,writer);
     //}
 
-    virtual bool write(Protocol& proto, SizedWriter& writer) {
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) {
         return getContent().write(proto,writer);
     }
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer) {
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer) {
         return getContent().reply(proto,writer);
     }
 
-    virtual bool expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) {
         return getContent().expectExtraHeader(proto);
     }
 
-    virtual bool respondToHeader(Protocol& proto){
+    virtual bool respondToHeader(ConnectionState& proto){
         return getContent().respondToHeader(proto);
     }
 
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return getContent().expectIndex(proto);
     }
 
-    virtual bool expectSenderSpecifier(Protocol& proto) {
+    virtual bool expectSenderSpecifier(ConnectionState& proto) {
         return getContent().expectSenderSpecifier(proto);
     }
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return getContent().sendAck(proto);
     }
 
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return getContent().expectAck(proto);
     }
 

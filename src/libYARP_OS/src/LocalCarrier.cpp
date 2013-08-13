@@ -8,13 +8,11 @@
 
 
 #include <yarp/os/impl/LocalCarrier.h>
-#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/Portable.h>
 
+using namespace yarp::os;
 
 yarp::os::impl::LocalCarrierManager yarp::os::impl::LocalCarrier::manager;
-
-
 
 yarp::os::impl::LocalCarrierManager::LocalCarrierManager() :
         senderMutex(1),
@@ -162,7 +160,7 @@ void yarp::os::impl::LocalCarrier::getHeader(const Bytes& header) {
 void yarp::os::impl::LocalCarrier::setParameters(const Bytes& header) {
 }
 
-bool yarp::os::impl::LocalCarrier::sendHeader(Protocol& proto) {
+bool yarp::os::impl::LocalCarrier::sendHeader(ConnectionState& proto) {
     portName = proto.getRoute().getFromName();
 
     manager.setSender(this);
@@ -178,7 +176,7 @@ bool yarp::os::impl::LocalCarrier::sendHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::LocalCarrier::expectExtraHeader(Protocol& proto) {
+bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto) {
     portName = proto.getRoute().getToName();
     // switch over to some local structure to communicate
     peerMutex.wait();
@@ -192,7 +190,7 @@ bool yarp::os::impl::LocalCarrier::expectExtraHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::LocalCarrier::becomeLocal(Protocol& proto, bool sender) {
+bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool sender) {
     LocalCarrierStream *stream = new LocalCarrierStream();
     if (stream!=NULL) {
         stream->attach(this,sender);
@@ -203,7 +201,7 @@ bool yarp::os::impl::LocalCarrier::becomeLocal(Protocol& proto, bool sender) {
     return true;
 }
 
-bool yarp::os::impl::LocalCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::LocalCarrier::write(ConnectionState& proto, SizedWriter& writer) {
 
     yarp::os::Portable *ref = writer.getReference();
     if (ref!=NULL) {
@@ -223,20 +221,20 @@ bool yarp::os::impl::LocalCarrier::write(Protocol& proto, SizedWriter& writer) {
     return true;
 }
 
-bool yarp::os::impl::LocalCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::LocalCarrier::respondToHeader(ConnectionState& proto) {
     // i am the receiver
 
     return becomeLocal(proto,false);
 }
 
 
-bool yarp::os::impl::LocalCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::LocalCarrier::expectReplyToHeader(ConnectionState& proto) {
     // i am the sender
 
     return becomeLocal(proto,true);
 }
 
-bool yarp::os::impl::LocalCarrier::expectIndex(Protocol& proto) {
+bool yarp::os::impl::LocalCarrier::expectIndex(ConnectionState& proto) {
 
     YARP_DEBUG(Logger::get(),"local recv: wait send");
     sent.wait();

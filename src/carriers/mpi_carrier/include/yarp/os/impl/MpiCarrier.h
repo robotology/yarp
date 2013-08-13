@@ -60,32 +60,32 @@ public:
     virtual bool checkHeader(const Bytes& header);
 
 
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectSenderSpecifier(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
 
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 
 
     /////////////////////////////////////////////////
     // Payload time!
 
-    bool write(Protocol& proto, SizedWriter& writer) {
+    bool write(ConnectionState& proto, SizedWriter& writer) {
         writer.write(proto.os());
         return proto.os().isOk();
     }
 
-    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true; }
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return true; }
 
     /////////////////////////////////////////////////
     // Acknowledgements, we don't do them
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return true; }
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return true; }
 
 };

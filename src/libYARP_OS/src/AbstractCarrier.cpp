@@ -7,7 +7,6 @@
  */
 
 #include <yarp/os/impl/AbstractCarrier.h>
-#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/ManagedBytes.h>
 
 using namespace yarp::os;
@@ -54,32 +53,32 @@ String AbstractCarrier::toString() {
     return getName();
 }
 
-bool AbstractCarrier::prepareSend(Protocol& proto) {
+bool AbstractCarrier::prepareSend(ConnectionState& proto) {
     return true;
 }
 
-bool AbstractCarrier::sendHeader(Protocol& proto) {
+bool AbstractCarrier::sendHeader(ConnectionState& proto) {
     return defaultSendHeader(proto);
 }
 
-bool AbstractCarrier::expectReplyToHeader(Protocol& proto) {
+bool AbstractCarrier::expectReplyToHeader(ConnectionState& proto) {
     return true;
 }
 
-bool AbstractCarrier::sendIndex(Protocol& proto,
+bool AbstractCarrier::sendIndex(ConnectionState& proto,
                                                 SizedWriter& writer) {
     return defaultSendIndex(proto,writer);
 }
 
-bool AbstractCarrier::expectExtraHeader(Protocol& proto) {
+bool AbstractCarrier::expectExtraHeader(ConnectionState& proto) {
     return true;
 }
 
-bool AbstractCarrier::expectIndex(Protocol& proto) {
+bool AbstractCarrier::expectIndex(ConnectionState& proto) {
     return defaultExpectIndex(proto);
 }
 
-bool AbstractCarrier::expectSenderSpecifier(Protocol& proto) {
+bool AbstractCarrier::expectSenderSpecifier(ConnectionState& proto) {
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc,sizeof(NetInt32));
     int len = 0;
@@ -105,11 +104,11 @@ bool AbstractCarrier::expectSenderSpecifier(Protocol& proto) {
     return true;
 }
 
-bool AbstractCarrier::sendAck(Protocol& proto) {
+bool AbstractCarrier::sendAck(ConnectionState& proto) {
     return defaultSendAck(proto);
 }
 
-bool AbstractCarrier::expectAck(Protocol& proto) {
+bool AbstractCarrier::expectAck(ConnectionState& proto) {
     return defaultExpectAck(proto);
 }
 
@@ -135,7 +134,7 @@ void AbstractCarrier::createStandardHeader(int specifier,const Bytes& header) {
     createYarpNumber(7777+specifier,header);
 }
 
-bool AbstractCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool AbstractCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     bool ok = sendIndex(proto,writer);
     if (!ok) {
         return false;
@@ -145,13 +144,13 @@ bool AbstractCarrier::write(Protocol& proto, SizedWriter& writer) {
     return proto.os().isOk();
 }
 
-bool AbstractCarrier::defaultSendHeader(Protocol& proto) {
-    bool ok = sendProtocolSpecifier(proto);
+bool AbstractCarrier::defaultSendHeader(ConnectionState& proto) {
+    bool ok = sendConnectionStateSpecifier(proto);
     if (!ok) return false;
     return sendSenderSpecifier(proto);
 }
 
-bool AbstractCarrier::sendProtocolSpecifier(Protocol& proto) {
+bool AbstractCarrier::sendConnectionStateSpecifier(ConnectionState& proto) {
     char buf[8];
     Bytes header((char*)&buf[0],sizeof(buf));
     OutputStream& os = proto.os();
@@ -161,7 +160,7 @@ bool AbstractCarrier::sendProtocolSpecifier(Protocol& proto) {
     return os.isOk();
 }
 
-bool AbstractCarrier::sendSenderSpecifier(Protocol& proto) {
+bool AbstractCarrier::sendSenderSpecifier(ConnectionState& proto) {
     NetInt32 numberSrc;
     Bytes number((char*)&numberSrc,sizeof(NetInt32));
     const String senderName = proto.getSenderSpecifier();
@@ -175,7 +174,7 @@ bool AbstractCarrier::sendSenderSpecifier(Protocol& proto) {
     return os.isOk();
 }
 
-bool AbstractCarrier::defaultSendIndex(Protocol& proto,
+bool AbstractCarrier::defaultSendIndex(ConnectionState& proto,
                                                        SizedWriter& writer) {
     writeYarpInt(10,proto);
     int len = (int)writer.length();
@@ -197,7 +196,7 @@ bool AbstractCarrier::defaultSendIndex(Protocol& proto,
 }
 
 
-bool AbstractCarrier::defaultExpectAck(Protocol& proto) {
+bool AbstractCarrier::defaultExpectAck(ConnectionState& proto) {
     if (proto.getConnection().requireAck()) {
         char buf[8];
         Bytes header((char*)&buf[0],sizeof(buf));
@@ -223,12 +222,12 @@ bool AbstractCarrier::defaultExpectAck(Protocol& proto) {
 
 
 
-bool AbstractCarrier::defaultExpectIndex(Protocol& proto) {
-    Logger& log = proto.getLog();
+bool AbstractCarrier::defaultExpectIndex(ConnectionState& proto) {
+    Log& log = proto.getLog();
     YARP_DEBUG(Logger::get(),"expecting an index");
     YARP_SPRINTF1(Logger::get(),
                   debug,
-                  "Protocol::expectIndex for %s", 
+                  "ConnectionState::expectIndex for %s", 
                   proto.getRoute().toString().c_str());
     // expect index header
     char buf[8];
@@ -291,7 +290,7 @@ bool AbstractCarrier::defaultExpectIndex(Protocol& proto) {
 }
 
 
-bool AbstractCarrier::defaultSendAck(Protocol& proto) {
+bool AbstractCarrier::defaultSendAck(ConnectionState& proto) {
     YARP_DEBUG(Logger::get(),"sending an acknowledgment");
     if (proto.getConnection().requireAck()) {
         writeYarpInt(0,proto);
@@ -299,7 +298,7 @@ bool AbstractCarrier::defaultSendAck(Protocol& proto) {
     return true;
 }
 
-int AbstractCarrier::readYarpInt(Protocol& proto) {
+int AbstractCarrier::readYarpInt(ConnectionState& proto) {
     char buf[8];
     Bytes header((char*)&buf[0],sizeof(buf));
     YARP_SSIZE_T len = NetType::readFull(proto.is(),header);
@@ -310,7 +309,7 @@ int AbstractCarrier::readYarpInt(Protocol& proto) {
     return interpretYarpNumber(header);
 }
 
-void AbstractCarrier::writeYarpInt(int n, Protocol& proto) {
+void AbstractCarrier::writeYarpInt(int n, ConnectionState& proto) {
     char buf[8];
     Bytes header((char*)&buf[0],sizeof(buf));
     createYarpNumber(n,header);

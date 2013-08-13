@@ -16,6 +16,22 @@
 #include <yarp/os/api.h>
 #include <yarp/os/ConstString.h>
 
+namespace yarp {
+    namespace os {
+        class Log;
+    }
+}
+
+class YARP_OS_API yarp::os::Log {
+public:
+    virtual ~Log() {}
+    virtual void debug(const ConstString& txt) = 0;
+    virtual void info(const ConstString& txt) = 0;
+    virtual void warning(const ConstString& txt) = 0;
+    virtual void error(const ConstString& txt) = 0;
+    virtual void fail(const ConstString& txt) = 0;
+};
+
 /**
  *
  * Low level function for printing a stack trace, if implemented (gcc/Linux).

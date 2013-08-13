@@ -16,7 +16,6 @@
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/Protocol.h>
 
 #include <iostream>
 #include <string>

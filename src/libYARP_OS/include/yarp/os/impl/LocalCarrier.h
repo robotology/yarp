@@ -81,13 +81,13 @@ public:
     virtual bool checkHeader(const Bytes& header);
     virtual void getHeader(const Bytes& header);
     virtual void setParameters(const Bytes& header);
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectExtraHeader(Protocol& proto);
-    virtual bool becomeLocal(Protocol& proto, bool sender);
-    virtual bool write(Protocol& proto, SizedWriter& writer);
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
-    virtual bool expectIndex(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectExtraHeader(ConnectionState& proto);
+    virtual bool becomeLocal(ConnectionState& proto, bool sender);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool expectIndex(ConnectionState& proto);
 
     void removePeer();
     void shutdown();

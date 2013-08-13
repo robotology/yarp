@@ -50,19 +50,19 @@ public:
     virtual String toString();
 
     // sender
-    virtual bool prepareSend(Protocol& proto);
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool prepareSend(ConnectionState& proto);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 
-    virtual bool sendIndex(Protocol& proto, SizedWriter& writer);
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer);
 
     // receiver
-    virtual bool expectExtraHeader(Protocol& proto);
-    virtual bool respondToHeader(Protocol& proto) = 0; // left abstract, no good default
-    virtual bool expectIndex(Protocol& proto);
-    virtual bool expectSenderSpecifier(Protocol& proto);
-    virtual bool sendAck(Protocol& proto);
-    virtual bool expectAck(Protocol& proto);
+    virtual bool expectExtraHeader(ConnectionState& proto);
+    virtual bool respondToHeader(ConnectionState& proto) = 0; // left abstract, no good default
+    virtual bool expectIndex(ConnectionState& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
+    virtual bool sendAck(ConnectionState& proto);
+    virtual bool expectAck(ConnectionState& proto);
 
     virtual bool isActive();
 
@@ -72,21 +72,21 @@ public:
     // some default implementations of protocol phases used by
     // certain YARP carriers
 
-    bool defaultSendHeader(Protocol& proto);
-    bool defaultExpectIndex(Protocol& proto);
-    bool defaultSendIndex(Protocol& proto, SizedWriter& writer);
-    bool defaultExpectAck(Protocol& proto);
-    bool defaultSendAck(Protocol& proto);
+    bool defaultSendHeader(ConnectionState& proto);
+    bool defaultExpectIndex(ConnectionState& proto);
+    bool defaultSendIndex(ConnectionState& proto, SizedWriter& writer);
+    bool defaultExpectAck(ConnectionState& proto);
+    bool defaultSendAck(ConnectionState& proto);
 
-    int readYarpInt(Protocol& proto);
-    void writeYarpInt(int n, Protocol& proto);
+    int readYarpInt(ConnectionState& proto);
+    void writeYarpInt(int n, ConnectionState& proto);
 
 protected:
     int getSpecifier(const Bytes& b);
     void createStandardHeader(int specifier,const yarp::os::Bytes& header);
-    virtual bool write(Protocol& proto, SizedWriter& writer);
-    bool sendProtocolSpecifier(Protocol& proto);
-    bool sendSenderSpecifier(Protocol& proto);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
+    bool sendConnectionStateSpecifier(ConnectionState& proto);
+    bool sendSenderSpecifier(ConnectionState& proto);
 
     static int interpretYarpNumber(const yarp::os::Bytes& b) {
         if (b.length()==8) {

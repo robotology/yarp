@@ -41,9 +41,9 @@ namespace yarp {
  * and ACE.
  *
  */
-class YARP_OS_impl_API yarp::os::impl::Logger
+class YARP_OS_impl_API yarp::os::impl::Logger : public yarp::os::Log
 #ifdef YARP_HAS_ACE
-    : public ACE_Log_Msg_Callback
+                                              , public ACE_Log_Msg_Callback
 #endif
 {
 public:

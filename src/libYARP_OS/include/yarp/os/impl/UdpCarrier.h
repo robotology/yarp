@@ -40,8 +40,8 @@ public:
     virtual void setParameters(const Bytes& header);
     virtual bool requireAck();
     virtual bool isConnectionless();
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 };
 
 #endif

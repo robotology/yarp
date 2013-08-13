@@ -9,7 +9,6 @@
 
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/DummyConnector.h>
@@ -584,7 +583,7 @@ bool yarp::os::impl::HttpCarrier::supportReply() {
     return false;
 }
 
-bool yarp::os::impl::HttpCarrier::sendHeader(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
     printf("not yet meant to work\n");
     String target = "GET / HTTP/1.1";
     Bytes b((char*)target.c_str(),8);
@@ -593,7 +592,7 @@ bool yarp::os::impl::HttpCarrier::sendHeader(Protocol& proto) {
 
 }
 
-bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("web"));
     String remainder = NetType::readLine(proto.is());
     if (!urlDone) {
@@ -700,34 +699,34 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::HttpCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
     // expect and ignore CONTENT lines
     String result = NetType::readLine(proto.is());
     return true;
 }
 
 
-bool yarp::os::impl::HttpCarrier::sendIndex(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer) {
     // no index
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::expectIndex(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectIndex(ConnectionState& proto) {
     // no index
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::sendAck(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::sendAck(ConnectionState& proto) {
     // no acknowledgement
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::expectAck(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectAck(ConnectionState& proto) {
     // no acknowledgement
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::respondToHeader(ConnectionState& proto) {
     stream = new HttpTwoWayStream(proto.giveStreams(),
                                     input.c_str(),
                                     prefix.c_str(),
@@ -736,7 +735,7 @@ bool yarp::os::impl::HttpCarrier::respondToHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {
@@ -776,7 +775,7 @@ bool yarp::os::impl::HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {

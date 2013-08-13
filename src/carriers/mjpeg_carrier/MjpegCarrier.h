@@ -11,7 +11,6 @@
 #define MJPEGCARRIER_INC
 
 #include <yarp/os/impl/Carrier.h>
-#include <yarp/os/impl/Protocol.h>
 #include <yarp/os/impl/NetType.h>
 #include "MjpegStream.h"
 
@@ -132,18 +131,18 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
 
-    virtual bool expectSenderSpecifier(Protocol& proto) {
+    virtual bool expectSenderSpecifier(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) {
         String txt;
         do {
             txt = NetType::readLine(proto.is());
@@ -152,7 +151,7 @@ public:
         return true;
     }
 
-    bool respondToHeader(Protocol& proto) {
+    bool respondToHeader(ConnectionState& proto) {
         String target = "HTTP/1.0 200 OK\r\n\
 Connection: close\r\n\
 Server: yarp/mjpeg_carrier/0.1\r\n\
@@ -171,7 +170,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto) {
         String txt;
         do {
             txt = NetType::readLine(proto.is());
@@ -193,23 +192,23 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
 
     // Payload time!
 
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true;
     }
 
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return true;
     }
 
