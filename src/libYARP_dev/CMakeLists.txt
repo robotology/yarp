@@ -97,8 +97,8 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/TestFrameGrabber.cpp
                   src/TorqueControlImpl.cpp)
 
-source_group("Source Files" FILES ${YARP_init_SRCS})
-source_group("Header Files" FILES ${YARP_init_HDRS})
+source_group("Source Files" FILES ${YARP_dev_SRCS})
+source_group("Header Files" FILES ${YARP_dev_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
