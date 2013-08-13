@@ -103,7 +103,7 @@ yarp::os::impl::String yarp::os::impl::NameserCarrier::getSpecifierName() {
     return "NAME_SER";
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::NameserCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() {
     return new NameserCarrier();
 }
 

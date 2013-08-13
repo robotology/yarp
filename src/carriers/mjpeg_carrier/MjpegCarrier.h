@@ -10,7 +10,7 @@
 #ifndef MJPEGCARRIER_INC
 #define MJPEGCARRIER_INC
 
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Carrier.h>
 #include <yarp/os/impl/NetType.h>
 #include "MjpegStream.h"
 

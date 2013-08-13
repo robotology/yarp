@@ -26,9 +26,7 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class Carrier;
-        }
+        class Carrier;
     }
 }
 
@@ -47,7 +45,7 @@ namespace yarp {
  * To understand the protocol phases involved, see see
  * \ref yarp_protocol.
  */
-class YARP_OS_impl_API yarp::os::impl::Carrier : public yarp::os::Connection {
+class YARP_OS_API yarp::os::Carrier : public Connection {
 public:
 
 
@@ -63,7 +61,7 @@ public:
      *
      * @return the name of this carrier
      */
-    virtual String getName() = 0;
+    virtual ConstString getName() = 0;
 
     /**
      * Given the first 8 bytes received on a connection, decide if
@@ -78,7 +76,7 @@ public:
      *               connection
      * @return true if this is the carrier to use.
      */
-    virtual bool checkHeader(const yarp::os::Bytes& header) = 0;
+    virtual bool checkHeader(const Bytes& header) = 0;
 
     /**
      * Configure this carrier based on the first 8 bytes of the
@@ -89,7 +87,7 @@ public:
      * @param header a buffer holding the first 8 bytes received on the
      *               connection
      */
-    virtual void setParameters(const yarp::os::Bytes& header) = 0;
+    virtual void setParameters(const Bytes& header) = 0;
 
     /**
      * Provide 8 bytes describing this connection sufficiently to
@@ -98,7 +96,7 @@ public:
      * @param header a buffer to hold the first 8 bytes to send on a
      *               connection
      */
-    virtual void getHeader(const yarp::os::Bytes& header) = 0;
+    virtual void getHeader(const Bytes& header) = 0;
 
 
     /**
@@ -305,7 +303,7 @@ public:
      *
      * @return name of carrier.
      */
-    virtual String toString() = 0;
+    virtual ConstString toString() = 0;
 
     /**
      * Close the carrier.
@@ -333,7 +331,7 @@ public:
      *
      * @return the name of the bootstrap carrier.
      */
-    virtual String getBootstrapCarrierName() { return "tcp"; }
+    virtual ConstString getBootstrapCarrierName() { return "tcp"; }
 
     /**
      * Some carrier types may require special connection logic.
@@ -349,9 +347,9 @@ public:
      * @result -1 if no attempt made to connect, 0 on success, 1 on
      *         failure.
      */
-    virtual int connect(const yarp::os::Contact& src,
-                        const yarp::os::Contact& dest,
-                        const yarp::os::ContactStyle& style,
+    virtual int connect(const Contact& src,
+                        const Contact& dest,
+                        const ContactStyle& style,
                         int mode,
                         bool reversed) {
         return -1;
@@ -378,7 +376,7 @@ public:
      * @param reader for incoming data.
      * @return reader for modified version of incoming data.
      */
-    virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) {
+    virtual ConnectionReader& modifyIncomingData(ConnectionReader& reader) {
         return reader;
     }
 
@@ -389,7 +387,7 @@ public:
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
+    virtual bool acceptIncomingData(ConnectionReader& reader) {
         return true;
     }
 
@@ -399,7 +397,7 @@ public:
      *
      * @return true if the carrier was correctly configured.
      */
-    virtual bool configure(yarp::os::ConnectionState& proto) {
+    virtual bool configure(ConnectionState& proto) {
         return true;
     }
 
@@ -408,7 +406,7 @@ public:
      *
      * @param carrier properties
      */
-    virtual void setCarrierParams(const yarp::os::Property& params) { }
+    virtual void setCarrierParams(const Property& params) { }
 
     /**
      * Get carrier configuration and deliver it by port administrative
@@ -416,7 +414,7 @@ public:
      *
      * @param carrier properties
      */
-    virtual void getCarrierParams(yarp::os::Property& params) { }
+    virtual void getCarrierParams(Property& params) { }
 
 };
 

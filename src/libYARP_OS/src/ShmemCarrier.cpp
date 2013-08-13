@@ -21,7 +21,7 @@ yarp::os::impl::ShmemCarrier::ShmemCarrier(int version) {
     this->version = version;
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::ShmemCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::ShmemCarrier::create() {
     return new ShmemCarrier(version);
 }
 

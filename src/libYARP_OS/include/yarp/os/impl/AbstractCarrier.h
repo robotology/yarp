@@ -10,7 +10,7 @@
 #ifndef _YARP2_ABSTRACTCARRIER_
 #define _YARP2_ABSTRACTCARRIER_
 
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Carrier.h>
 #include <yarp/os/impl/NetType.h>
 
 namespace yarp {

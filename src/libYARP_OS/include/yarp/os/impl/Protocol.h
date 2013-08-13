@@ -10,7 +10,7 @@
 #ifndef _YARP2_PROTOCOL_
 #define _YARP2_PROTOCOL_
 
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Carrier.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/TwoWayStream.h>

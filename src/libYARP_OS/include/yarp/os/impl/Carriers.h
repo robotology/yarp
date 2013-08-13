@@ -15,7 +15,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/Face.h>
 #include <yarp/os/OutputProtocol.h>
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Carrier.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 

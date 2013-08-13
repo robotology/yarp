@@ -10,7 +10,7 @@
 #ifndef XMLRPCCARRIER_INC
 #define XMLRPCCARRIER_INC
 
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Carrier.h>
 #include <yarp/os/impl/String.h>
 #include "XmlRpcStream.h"
 

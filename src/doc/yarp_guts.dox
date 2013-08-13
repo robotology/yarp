@@ -60,7 +60,7 @@ or yarp::os::OutputProtocol object that
 manages the overall phases of YARP's network protocol.
 
 The Protocol object delegates to an
-object from the yarp::os::impl::Carrier family
+object from the yarp::os::Carrier family
 (yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to 
 manage the peculiarities of a particular connection type.  This 
 carrier can be replaced during the operation of a connection.
@@ -198,7 +198,7 @@ yarp::os::InputProtocol or yarp::os::OutputProtocol
 class, yarp::os::impl::Protocol, but most of YARP does not know that).
 
 The Protocol object deals with switching to a particular carrier
-(implemented by sub-types of yarp::os::impl::Carrier), and
+(implemented by sub-types of yarp::os::Carrier), and
 the details of the YARP network protocol.
 
 @section yarp_guts_mcast Multicast elections

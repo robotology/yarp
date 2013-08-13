@@ -10,7 +10,7 @@
 #ifndef TCPROSCARRIER_INC
 #define TCPROSCARRIER_INC
 
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Carrier.h>
 
 #include "TcpRosStream.h"
 #include "WireImage.h"

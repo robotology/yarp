@@ -8,6 +8,7 @@
 
 #include <yarp/os/api.h>
 #include <yarp/os/impl/Carriers.h>
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 #cmakedefine BUILD_SHARED_LIBS

@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <yarp/os/all.h>
 
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Carrier.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>

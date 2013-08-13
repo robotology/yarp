@@ -507,7 +507,7 @@ yarp::os::impl::HttpCarrier::HttpCarrier() :
         stream(0) /*NULL*/ {
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::HttpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
     return new HttpCarrier();
 }
 
