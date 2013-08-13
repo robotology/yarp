@@ -326,7 +326,7 @@ bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
 }
 
 
-ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
+YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
     // copy across small stuff - the image header
     if (consumed<sizeof(header)) {
         size_t len = b.length();
@@ -335,7 +335,7 @@ ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
         }
         ACE_OS::memcpy(b.get(),((char*)(&header))+consumed,len);
         consumed += len;
-        return (ssize_t) len;
+        return (YARP_SSIZE_T) len;
     }
     // sane client will want to read image into correct-sized block
     if (b.length()==image_data_len) {
@@ -353,7 +353,7 @@ ssize_t BayerCarrier::read(const yarp::os::Bytes& b) {
         }
         ACE_OS::memcpy(b.get(),out.getRawImage()+consumed-sizeof(header),len);
         consumed += len;
-        return (ssize_t) len;
+        return (YARP_SSIZE_T) len;
     }
     return -1;
 }

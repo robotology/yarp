@@ -12,6 +12,7 @@
 
 #include <yarp/os/impl/ShmemHybridStream.h>
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 int ShmemHybridStream::open(const Contact& yarp_address,bool sender)

@@ -21,6 +21,7 @@
 #  include <yarp/os/impl/TcpConnector.h>
 #endif
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 int SocketTwoWayStream::open(const Contact& address) {
