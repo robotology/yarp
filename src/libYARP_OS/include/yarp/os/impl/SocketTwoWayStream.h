@@ -10,7 +10,7 @@
 #ifndef _YARP2_SOCKETTWOWAYSTREAM_
 #define _YARP2_SOCKETTWOWAYSTREAM_
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/conf/system.h>
 

@@ -12,7 +12,7 @@
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/ConstString.h>
 #include "BlobNetworkHeader.h"

@@ -34,7 +34,7 @@ all you need to do.
 If you are creating a carrier that uses a very different kind of
 network than anything already in YARP, you may need to go down a level
 further.  Before you can make a carrier, you need to have a "stream"
-class (implementing yarp::os::impl::TwoWayStream) that supports
+class (implementing yarp::os::TwoWayStream) that supports
 shipping raw data back and forth on that network.  You don't need 
 to worry about YARP protocol issues when making this class, it is
 just about being able to read and write raw data. 
@@ -71,7 +71,7 @@ You should skim the documentation of the following classes:
  \li yarp::os::impl::Carriers
  \li yarp::os::InputStream
  \li yarp::os::OutputStream
- \li yarp::os::impl::TwoWayStream
+ \li yarp::os::TwoWayStream
  \li yarp::os::Contact
 
 You'll be able to include them in your code as follows:
@@ -79,7 +79,7 @@ You'll be able to include them in your code as follows:
 \code
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Contact.h>

@@ -10,7 +10,7 @@
 #ifndef _YARP2_DGRAMTWOWAYSTREAM_
 #define _YARP2_DGRAMTWOWAYSTREAM_
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Semaphore.h>
 

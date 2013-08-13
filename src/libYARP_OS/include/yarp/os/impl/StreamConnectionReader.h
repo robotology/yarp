@@ -11,7 +11,7 @@
 #define _YARP2_STREAMBLOCKREADER_
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/impl/NetType.h>

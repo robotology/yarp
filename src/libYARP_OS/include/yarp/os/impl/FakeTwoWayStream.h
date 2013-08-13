@@ -10,7 +10,7 @@
 #ifndef _YARP2_FAKETWOWAYSTREAM_
 #define _YARP2_FAKETWOWAYSTREAM_
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/impl/StringOutputStream.h>
 

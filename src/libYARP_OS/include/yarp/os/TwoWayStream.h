@@ -17,10 +17,8 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class TwoWayStream;
-            class NullStream;
-        }
+        class TwoWayStream;
+        class NullStream;
     }
 }
 
@@ -30,7 +28,7 @@ namespace yarp {
  * in which case it should fail if requested to communicate in an
  * unsupported direction.
  */
-class YARP_OS_impl_API yarp::os::impl::TwoWayStream {
+class YARP_OS_API yarp::os::TwoWayStream {
 public:
     /**
      * Destructor.
@@ -42,14 +40,14 @@ public:
      *
      * @return the InputStream associated with this object.
      */
-    virtual yarp::os::InputStream& getInputStream() = 0;
+    virtual InputStream& getInputStream() = 0;
 
     /**
      * Get an OutputStream to write to.
      *
      * @return the InputStream associated with this object.
      */
-    virtual yarp::os::OutputStream& getOutputStream() = 0;
+    virtual OutputStream& getOutputStream() = 0;
 
     /**
      * Get the address of the local side of the stream.
@@ -57,7 +55,7 @@ public:
      * @return the address of the local side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const yarp::os::Contact& getLocalAddress() = 0;
+    virtual const Contact& getLocalAddress() = 0;
 
     /**
      * Get the address of the remote side of the stream.
@@ -65,7 +63,7 @@ public:
      * @return the address of the remote side of the stream.
      * The address will be tagged as invalid if the stream is not set up.
      */
-    virtual const yarp::os::Contact& getRemoteAddress() = 0;
+    virtual const Contact& getRemoteAddress() = 0;
 
     /**
      *
@@ -109,29 +107,23 @@ public:
 /**
  * A "null" stream, always invalid.
  */
-class yarp::os::impl::NullStream : public TwoWayStream,
-                                   public InputStream, 
-                                   public yarp::os::OutputStream {
+class yarp::os::NullStream : public TwoWayStream,
+                             public InputStream, 
+                             public OutputStream {
 private:
     Contact address;
 public:
     virtual ~NullStream();
 
     virtual InputStream& getInputStream();
-    virtual yarp::os::OutputStream& getOutputStream();
+    virtual OutputStream& getOutputStream();
     
-    virtual const yarp::os::Contact& getLocalAddress();
-    virtual const yarp::os::Contact& getRemoteAddress();
+    virtual const Contact& getLocalAddress();
+    virtual const Contact& getRemoteAddress();
 
     virtual bool isOk();
-
     virtual void reset();
-
     virtual void close();
-
-    // These should be called at the beginning and end of logical packets.
-    // Streams are encouraged to handle errors and atomicity at the level of
-    // logical packets
     virtual void beginPacket();
     virtual void endPacket();
 

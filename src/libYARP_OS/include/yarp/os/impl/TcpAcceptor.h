@@ -26,7 +26,7 @@
 #define TCPACCEPTOR_H_
 
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/impl/TcpStream.h>

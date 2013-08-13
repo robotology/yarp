@@ -10,7 +10,7 @@
 #ifndef _YARP2_NAMESERCARRIER_
 #define _YARP2_NAMESERCARRIER_
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/TcpCarrier.h>
 
 

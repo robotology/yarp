@@ -13,7 +13,7 @@
 
 #include <yarp/os/all.h>
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>

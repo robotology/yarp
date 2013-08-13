@@ -76,6 +76,7 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/Terminator.h
                  include/yarp/os/Thread.h
                  include/yarp/os/Time.h
+                 include/yarp/os/TwoWayStream.h
                  include/yarp/os/Value.h
                  include/yarp/os/Vocab.h
                  include/yarp/os/Wire.h
@@ -174,7 +175,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/TcpStream.h
                       include/yarp/os/impl/TextCarrier.h
                       include/yarp/os/impl/ThreadImpl.h
-                      include/yarp/os/impl/TwoWayStream.h
                       include/yarp/os/impl/UdpCarrier.h
                       include/yarp/os/impl/UnitTest.h
                       include/yarp/os/impl/ydr.h)
