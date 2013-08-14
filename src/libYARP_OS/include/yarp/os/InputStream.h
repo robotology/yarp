@@ -12,6 +12,7 @@
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Bytes.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
@@ -136,6 +137,27 @@ public:
      *
      */
     virtual bool setReadTimeout(double timeout) { return false; }
+
+    /**
+     *
+     * Read a block of text terminated with a specific marker (or EOF).
+     *
+     */
+    ConstString readLine(int terminal = '\n', bool *success = NULL);
+
+    /**
+     *
+     * Keep reading until buffer is full.
+     *
+     */
+    YARP_SSIZE_T readFull(const Bytes& b);
+
+    /**
+     *
+     * Read and discard a fixed number of bytes.
+     *
+     */
+    YARP_SSIZE_T readDiscard(size_t len);
 };
 
 #endif

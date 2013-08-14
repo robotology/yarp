@@ -10,7 +10,8 @@
 
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/SplitString.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>

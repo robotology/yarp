@@ -7,9 +7,10 @@
  *
  */
 
+#include <string.h>
 #include "HumanStream.h"
 
-ssize_t HumanStream::read(const Bytes& b) {
+YARP_SSIZE_T HumanStream::read(const Bytes& b) {
     if (interrupting) { return -1; }
     while (inputCache.size() < (unsigned int)b.length()) {
         cout << "*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:"

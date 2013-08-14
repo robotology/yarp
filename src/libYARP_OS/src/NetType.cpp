@@ -7,111 +7,57 @@
  *
  */
 
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/ManagedBytes.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-// slow implementation - only relevant for textmode operation
-
-String NetType::readLine(InputStream& is, int terminal, bool *success) {
-    String buf("");
-    bool done = false;
-    int esc = 0;
-    if (success!=NULL) *success = true;
-    while (!done) {
-        //ACE_OS::printf("preget\n");
-        int v = is.read();
-        if (v<0) {
-            if (success!=NULL) *success = false;
-            return "";
-        }
-        //ACE_OS::printf("got [%d]\n",v);
-        char ch = (char)v;
-        if (v=='\\') {
-            esc++;
-        }
-        if (v!=0&&v!='\r'&&v!='\n') {
-            if (v!='\\'||esc>=2) {
-                while (esc) {
-                    buf += '\\';
-                    esc--;
-                }
-            }
-            if (v!='\\') {
-                buf += ch;
-            }
-        }
-        if (ch==terminal) {
-            if (!esc) {
-                done = true;
-            } else {
-                esc = 0;
-            }
-        }
-        if (v<0) { 
-            if (success!=NULL) *success = false;
-            return "";
-        }
-    }
-    return buf;
-}    
-
-YARP_SSIZE_T NetType::readFull(InputStream& is, const Bytes& b) {
-    YARP_SSIZE_T off = 0;
-    YARP_SSIZE_T fullLen = b.length();
-    YARP_SSIZE_T remLen = fullLen;
-    YARP_SSIZE_T result = 1;
-    while (result>0&&remLen>0) {
-        result = is.read(b,off,remLen);
-        //printf("read result is %d\n",result);
-        if (result>0) {
-            remLen -= result;
-            off += result;
-        }
-    }
-    return (result<=0)?-1:fullLen;
+int NetType::netInt(const yarp::os::Bytes& code) {
+    YARP_ASSERT(code.length()==sizeof(NetInt32));
+    NetInt32 tmp;
+    ACE_OS::memcpy((char*)(&tmp),code.get(),code.length());
+    return tmp;
 }
 
-YARP_SSIZE_T NetType::readDiscard(InputStream& is, size_t len) {
-    if (len<100) {
-        char buf[100];
-        Bytes b(buf,len);
-        return readFull(is,b);
-    } else {
-        ManagedBytes b(len);
-        return readFull(is,b.bytes());
+bool NetType::netInt(int data, const yarp::os::Bytes& code) {
+    NetInt32 i = data;
+    yarp::os::Bytes b((char*)(&i),sizeof(i));
+    if (code.length()!=sizeof(i)) {
+        YARP_ERROR(Logger::get(),"not enough room for integer");
+        return false;
     }
+    ACE_OS::memcpy(code.get(),b.get(),code.length());
+    return true;
 }
 
-
-String NetType::toHexString(int x) {
+ConstString NetType::toHexString(int x) {
     char buf[256];
     ACE_OS::sprintf(buf,"%x",x);
     return buf;
 }
 
-String NetType::toString(int x) {
+ConstString NetType::toString(int x) {
     char buf[256];
     ACE_OS::sprintf(buf,"%d",x);
     return buf;
 }
 
-String NetType::toString(long x) {
+ConstString NetType::toString(long x) {
     char buf[256];
     ACE_OS::sprintf(buf,"%ld",x);
     return buf;
 }
 
-String NetType::toString(unsigned int x) {
+ConstString NetType::toString(unsigned int x) {
     char buf[256];
     ACE_OS::sprintf(buf,"%u",x);
     return buf;
 }
 
 
-int NetType::toInt(const String& x) {
+int NetType::toInt(const ConstString& x) {
     return ACE_OS::atoi(x.c_str());
 }
 

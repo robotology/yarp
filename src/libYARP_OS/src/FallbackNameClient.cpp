@@ -12,7 +12,7 @@
 
 #include <yarp/os/impl/FallbackNameClient.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Time.h>
@@ -38,7 +38,7 @@ void FallbackNameClient::run() {
     send.endPacket();
     for (int i=0; i<5; i++) {
         listen.beginPacket();
-        String txt = NetType::readLine(listen);
+        String txt = listen.readLine();
         listen.endPacket();
         if (closed) return;
         YARP_DEBUG(Logger::get(),String("Fallback name client got ") + txt);

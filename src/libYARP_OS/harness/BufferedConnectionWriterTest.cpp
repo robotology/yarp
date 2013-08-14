@@ -8,11 +8,11 @@
  */
 
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/StringOutputStream.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 class BufferedConnectionWriterTest : public UnitTest {

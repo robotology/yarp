@@ -14,7 +14,7 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 #include <ace/SOCK_Dgram_Mcast.h>
 
@@ -40,11 +40,11 @@ using namespace yarp::os;
 
 static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct,
                      int *store_altPct = NULL) {
-    NetType::NetInt32 alt = 
-        (NetType::NetInt32)NetType::getCrc(buf+crcLength,(length>crcLength)?(length-crcLength):0);
+    NetInt32 alt = 
+        (NetInt32)NetType::getCrc(buf+crcLength,(length>crcLength)?(length-crcLength):0);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
-    NetType::NetInt32 curr = NetType::netInt(b);
+    NetInt32 curr = NetType::netInt(b);
     int altPct = NetType::netInt(b2);
     bool ok = (alt == curr && pct==altPct);
     if (!ok) {
@@ -55,10 +55,6 @@ static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int
             YARP_DEBUG(Logger::get(), "packet code broken");
         }
     }
-    //YARP_ERROR(Logger::get(), String("check crc read as ") + NetType::toString(curr));
-    //YARP_ERROR(Logger::get(), String("check crc count is ") + NetType::toString(altPct));
-    //YARP_ERROR(Logger::get(), String("check local count ") + NetType::toString(pct));
-    //YARP_ERROR(Logger::get(), String("check remote count ") + NetType::toString(altPct));
     if (store_altPct!=NULL) {
         *store_altPct = altPct;
     }
@@ -68,16 +64,13 @@ static bool checkCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int
 
 
 static void addCrc(char *buf, YARP_SSIZE_T length, YARP_SSIZE_T crcLength, int pct) {
-    NetType::NetInt32 alt = 
-        (NetType::NetInt32)NetType::getCrc(buf+crcLength,
+    NetInt32 alt = 
+        (NetInt32)NetType::getCrc(buf+crcLength,
                                            (length>crcLength)?(length-crcLength):0);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
-    NetType::netInt((NetType::NetInt32)alt,b);
-    NetType::netInt((NetType::NetInt32)pct,b2);
-    //YARP_ERROR(Logger::get(), String("msg len ") + NetType::toString(length));
-    //YARP_ERROR(Logger::get(), String("crc set to ") + NetType::toString(alt));
-    //YARP_ERROR(Logger::get(), String("crc ct to ") + NetType::toString(pct));
+    NetType::netInt((NetInt32)alt,b);
+    NetType::netInt((NetInt32)pct,b2);
 }
 
 

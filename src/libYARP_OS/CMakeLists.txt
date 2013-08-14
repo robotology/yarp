@@ -32,6 +32,7 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/ManagedBytes.h
                  include/yarp/os/Module.h
                  include/yarp/os/MultiNameSpace.h
+                 include/yarp/os/Name.h
                  include/yarp/os/NameSpace.h
                  include/yarp/os/NameStore.h
                  include/yarp/os/NetFloat32.h
@@ -39,6 +40,7 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/NetInt16.h
                  include/yarp/os/NetInt32.h
                  include/yarp/os/NetInt64.h
+                 include/yarp/os/NetType.h
                  include/yarp/os/NetUint16.h
                  include/yarp/os/NetUint32.h
                  include/yarp/os/NetUint64.h
@@ -81,6 +83,8 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/ShiftStream.h
                  include/yarp/os/SizedWriter.h
                  include/yarp/os/Stamp.h
+                 include/yarp/os/StringInputStream.h
+                 include/yarp/os/StringOutputStream.h
                  include/yarp/os/Terminator.h
                  include/yarp/os/Thread.h
                  include/yarp/os/Time.h
@@ -127,10 +131,8 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/ModifyingCarrier.h
                       include/yarp/os/impl/NameClient.h
                       include/yarp/os/impl/NameConfig.h
-                      include/yarp/os/impl/Name.h
                       include/yarp/os/impl/NameserCarrier.h
                       include/yarp/os/impl/NameServer.h
-                      include/yarp/os/impl/NetType.h
                       include/yarp/os/impl/PlatformList.h
                       include/yarp/os/impl/PlatformMap.h
                       include/yarp/os/impl/PlatformSet.h
@@ -165,8 +167,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/SplitString.h
                       include/yarp/os/impl/StreamConnectionReader.h
                       include/yarp/os/impl/String.h
-                      include/yarp/os/impl/StringInputStream.h
-                      include/yarp/os/impl/StringOutputStream.h
                       include/yarp/os/impl/SystemInfo.h
                       include/yarp/os/impl/SystemInfoSerializer.h
                       include/yarp/os/impl/TcpAcceptor.h
@@ -204,6 +204,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/FallbackNameServer.cpp
                  src/HttpCarrier.cpp
                  src/IConfig.cpp
+		 src/InputStream.cpp
                  src/LocalCarrier.cpp
                  src/Logger.cpp
                  src/ManagedBytes.cpp

@@ -12,7 +12,6 @@
 
 #include <yarp/os/Bottle.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace XmlRpc;
 using namespace std;

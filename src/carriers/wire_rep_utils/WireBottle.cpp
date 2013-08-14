@@ -12,7 +12,7 @@
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;

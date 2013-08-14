@@ -9,7 +9,7 @@
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>

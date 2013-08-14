@@ -25,16 +25,14 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class TcpRosStream;
-        }
+        class TcpRosStream;
     }
 }
 
 
-class YARP_tcpros_carrier_API yarp::os::impl::TcpRosStream : public TwoWayStream, 
-                                                             public yarp::os::InputStream,
-                                                             public yarp::os::OutputStream
+class YARP_tcpros_carrier_API yarp::os::TcpRosStream : public TwoWayStream, 
+                                                       public InputStream,
+                                                       public OutputStream
 {
 private:
     TwoWayStream *delegate;

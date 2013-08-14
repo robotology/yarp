@@ -12,9 +12,9 @@
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/StringInputStream.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Route.h>
@@ -85,7 +85,7 @@ public:
         if (len==0) return true;
         //if (len<0) len = messageLen;
         if (len>0) {
-            YARP_SSIZE_T rlen = NetType::readFull(*in,b);
+            YARP_SSIZE_T rlen = in->readFull(b);
             if (rlen>=0) {
                 messageLen -= len;
                 return true;
@@ -108,7 +108,7 @@ public:
             return pushedInt;
         }
         if (!isGood()) { return 0; }
-        NetType::NetInt32 x = 0;
+        NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
         YARP_SSIZE_T r = in->read(b);
@@ -122,7 +122,7 @@ public:
 
     virtual double expectDouble() {
         if (!isGood()) { return 0; }
-        NetType::NetFloat64 x = 0;
+        NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
         YARP_SSIZE_T r = in->read(b);
@@ -155,7 +155,7 @@ public:
         if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
         bool success = false;
-        String result = NetType::readLine(*in,'\n',&success);
+        String result = in->readLine('\n',&success);
         if (!success) {
             err = true;
             return "";
@@ -222,7 +222,7 @@ public:
         if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
         bool lsuccess = false;
-        String result = NetType::readLine(*in,terminatingChar,&lsuccess);
+        String result = in->readLine(terminatingChar,&lsuccess);
         if (lsuccess) {
             messageLen -= result.length()+1;
         }

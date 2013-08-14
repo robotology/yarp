@@ -11,8 +11,8 @@
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/StringOutputStream.h>
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
+#include <yarp/os/StringInputStream.h>
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetFloat64.h>

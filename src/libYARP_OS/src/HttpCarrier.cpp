@@ -594,7 +594,7 @@ bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
 
 bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("web"));
-    String remainder = NetType::readLine(proto.is());
+    String remainder = proto.is().readLine();
     if (!urlDone) {
         for (unsigned int i=0; i<remainder.length(); i++) {
             if (remainder[i]!=' ') {
@@ -609,7 +609,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
     expectPost = false;
     contentLength = 0;
     while (!done) {
-        String result = NetType::readLine(proto.is());
+        String result = proto.is().readLine();
         if (result == "") {
             done = true;
         } else {
@@ -633,7 +633,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
         //printf("[[[this is a post message of length %d]]]\n", contentLength);
         ManagedBytes blk(contentLength+1);
         Bytes start(blk.get(),contentLength);
-        NetType::readFull(proto.is(),start);
+        proto.is().readFull(start);
         blk.get()[contentLength] = '\0';
         //printf("message: %s\n", blk.get());
         input = blk.get();
@@ -701,7 +701,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
 
 bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
     // expect and ignore CONTENT lines
-    String result = NetType::readLine(proto.is());
+    String result = proto.is().readLine();
     return true;
 }
 

@@ -14,7 +14,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Dispatcher.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>

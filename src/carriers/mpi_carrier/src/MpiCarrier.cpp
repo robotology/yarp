@@ -108,7 +108,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     printf("[MpiCarrier @ %s] Waiting for header\n", route.c_str());
     #endif
 
-    other = NetType::readLine(proto.is());
+    other = proto.is().readLine();
     proto.setRoute(proto.getRoute().addFromName(other));
     // Receiver
     route = name + "<-" + other;
@@ -117,10 +117,10 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     if (! MpiControl.isRunning())
         return false;
 
-    String other_id = NetType::readLine(proto.is());
+    String other_id = proto.is().readLine();
     bool notLocal = comm->notLocal(other_id);
 
-    port = NetType::readLine(proto.is());
+    port = proto.is().readLine();
 
     #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] Header received\n", route.c_str());

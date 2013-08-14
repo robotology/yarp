@@ -18,7 +18,7 @@
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/os/BufferedPort.h>

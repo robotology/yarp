@@ -19,10 +19,8 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class TcpRosCarrier;
-            class RosSrvCarrier;
-        }
+        class TcpRosCarrier;
+        class RosSrvCarrier;
     }
 }
 
@@ -32,7 +30,7 @@ namespace yarp {
 #define TCPROS_TRANSLATE_BOTTLE_BLOB (2)
 #define TCPROS_TRANSLATE_TWIDDLER (3)
 
-class yarp::os::impl::TcpRosCarrier : public Carrier {
+class yarp::os::TcpRosCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
@@ -65,7 +63,7 @@ public:
         return new TcpRosCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return isService?"rossrv":"tcpros";
     }
 
@@ -106,7 +104,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
@@ -175,7 +173,7 @@ public:
         return true;
     }
 
-    virtual String getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName() { return ""; }
 
     virtual int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,
@@ -192,7 +190,7 @@ public:
  * is "rossrv" (see TcpRosCarrier::getName)
  *
  */
-class yarp::os::impl::RosSrvCarrier : public TcpRosCarrier {
+class yarp::os::RosSrvCarrier : public TcpRosCarrier {
 public:
     RosSrvCarrier() {
         isService = true;

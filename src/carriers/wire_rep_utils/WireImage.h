@@ -11,7 +11,7 @@
 #define YARP2_WIREIMAGE
 
 #include <yarp/os/SizedWriter.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/StringOutputStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/sig/Image.h>
@@ -65,7 +65,7 @@ public:
               const yarp::os::ConstString& frame) {
         image = &img;
         yarp::os::impl::BufferedConnectionWriter buf;
-        yarp::os::impl::StringOutputStream ss;
+        yarp::os::StringOutputStream ss;
         // probably need to translate encoding format better, but at
         // a guess "rgb" and "bgr" will work ok.
         yarp::os::ConstString encoding = 

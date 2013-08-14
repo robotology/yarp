@@ -12,8 +12,8 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/SplitString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
@@ -418,9 +418,9 @@ public:
             bool including = false;
             String buf;
             bool good = true;
-            buf = NetType::readLine(sis,'\n',&good);
+            buf = sis.readLine('\n',&good);
             while (good && !BottleImpl::isComplete(buf.c_str())) {
-                buf += NetType::readLine(sis,'\n',&good);
+                buf += sis.readLine('\n',&good);
             }
             if (!good) {
                 done = true;

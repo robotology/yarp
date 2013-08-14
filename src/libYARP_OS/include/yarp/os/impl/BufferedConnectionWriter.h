@@ -15,8 +15,8 @@
 #include <yarp/os/SizedWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 
@@ -125,7 +125,7 @@ public:
     }
 
     virtual void appendInt(int data) {
-        NetType::NetInt32 i = data;
+        NetInt32 i = data;
         yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (addPool(b)) return;
         yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
@@ -134,7 +134,7 @@ public:
     }
 
     virtual void appendDouble(double data) {
-        NetType::NetFloat64 i = data;
+        NetFloat64 i = data;
         yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (addPool(b)) return;
         yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);

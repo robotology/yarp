@@ -36,7 +36,7 @@ extern "C" {
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/Name.h>
 #include <yarp/os/Bytes.h>
 
 #include "WireImage.h"

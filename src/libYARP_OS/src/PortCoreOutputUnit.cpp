@@ -17,7 +17,7 @@
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/Name.h>
 #include <yarp/os/impl/Companion.h>
 
 

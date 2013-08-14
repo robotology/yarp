@@ -15,14 +15,13 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCommand.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/Name.h>
 
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Name.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/NameServer.h>

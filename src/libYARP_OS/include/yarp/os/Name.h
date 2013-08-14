@@ -10,21 +10,18 @@
 #ifndef _YARP2_NAME_
 #define _YARP2_NAME_
 
-#include <yarp/os/impl/String.h>
 #include <yarp/os/Contact.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class Name;
-        }
+        class Name;
     }
 }
 
 /**
  * Simple abstraction for a YARP port name.
  */
-class YARP_OS_impl_API yarp::os::impl::Name {
+class YARP_OS_API yarp::os::Name {
 public:
 
     /**
@@ -32,7 +29,7 @@ public:
      *
      * @param txt the port name.
      */
-    Name(const String& txt);
+    Name(const ConstString& txt);
 
     /**
      * Check if port name begins with "/"
@@ -51,10 +48,10 @@ public:
      */
     Contact toAddress() const;
 
-    String getCarrierModifier(const char *mod, bool *hasModifier = NULL);
+    ConstString getCarrierModifier(const char *mod, bool *hasModifier = NULL);
 
 private:
-    String txt;
+    ConstString txt;
 };
 
 #endif

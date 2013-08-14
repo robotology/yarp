@@ -7,7 +7,7 @@
  *
  */
 
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>

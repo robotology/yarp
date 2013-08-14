@@ -13,8 +13,8 @@
 
 #include <stdio.h>
 
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
@@ -366,8 +366,8 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
         }
         if ((gap.length==-1||gap.unit_length==-1) && override_length==-1) {
             dbg_printf("LOOKING TO EXTERNAL\n");
-            int r = NetType::readFull(is,Bytes((char*)&lengthBuffer,
-                                               sizeof(NetInt32)));
+            int r = is.readFull(Bytes((char*)&lengthBuffer,
+                                      sizeof(NetInt32)));
             if (r!=sizeof(NetInt32)) return -1;
             dbg_printf("Read length %d\n", lengthBuffer);
             pending_length = sizeof(lengthBuffer);
@@ -404,8 +404,8 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
             dbg_printf("### %d pending strings\n", pending_strings);
             if (pending_string_length==0&&pending_string_data==0) {
                 dbg_printf("Checking string length\n");
-                int r = NetType::readFull(is,Bytes((char*)&lengthBuffer,
-                                                   sizeof(NetInt32)));
+                int r = is.readFull(Bytes((char*)&lengthBuffer,
+                                          sizeof(NetInt32)));
                 if (r!=sizeof(NetInt32)) return -1;
                 dbg_printf("Read length %d\n", lengthBuffer);
                 pending_string_length = sizeof(lengthBuffer);
@@ -469,7 +469,7 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                 return r;
             } else {
                 dump.allocateOnNeed(b2.length(),b2.length());
-                r = NetType::readFull(is,dump.bytes());
+                r = is.readFull(dump.bytes());
                 NetInt32 *nn = (NetInt32 *)dump.get();
                 dbg_printf("[[[%d]]]\n", (int)(*nn));
                 dbg_printf("WireTwidderReader sending %d payload bytes\n",r);

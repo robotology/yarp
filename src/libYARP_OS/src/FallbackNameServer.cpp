@@ -12,7 +12,7 @@
 
 #include <yarp/os/impl/FallbackNameServer.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/Bytes.h>
 
@@ -35,7 +35,7 @@ void FallbackNameServer::run() {
         YARP_DEBUG(Logger::get(),"Fallback server waiting");
         String msg;
         listen.beginPacket();
-        msg = NetType::readLine(listen);
+        msg = listen.readLine();
         listen.endPacket();
         YARP_DEBUG(Logger::get(),"Fallback server got something");
         if (listen.isOk()&&!closed) {

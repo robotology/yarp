@@ -7,7 +7,7 @@
  *
  */
 
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/StringInputStream.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"

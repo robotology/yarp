@@ -41,12 +41,12 @@ ssize_t MjpegStream::read(const Bytes& b) {
     while (phase==0 && delegate->getInputStream().isOk()) {
         String s = "";
         do {
-            s = NetType::readLine(delegate->getInputStream());
+            s = delegate->getInputStream().readLine();
             if (debug) {
                 printf("Read %s\n", s.c_str());
             }
         } while ((s.length()==0||s[0]!='-') && delegate->getInputStream().isOk());
-        s = NetType::readLine(delegate->getInputStream());
+        s = delegate->getInputStream().readLine();
         if (s!="Content-Type: image/jpeg") {
             if (!delegate->getInputStream().isOk()) {
                 break;
@@ -57,7 +57,7 @@ ssize_t MjpegStream::read(const Bytes& b) {
         if (debug) {
             printf("Read content type - %s\n", s.c_str());
         }
-        s = NetType::readLine(delegate->getInputStream());
+        s = delegate->getInputStream().readLine();
         if (debug) {
             printf("Read content length - %s\n", s.c_str());
         }
@@ -74,14 +74,14 @@ ssize_t MjpegStream::read(const Bytes& b) {
             printf("Length is %d\n", len);
         }
         do {
-            s = NetType::readLine(delegate->getInputStream());
+            s = delegate->getInputStream().readLine();
             if (debug) {
                 printf("Read %s\n", s.c_str());
             }
         } while (s.length()>0);
         if (autocompress) {
             cimg.allocate(len);
-            NetType::readFull(delegate->getInputStream(),cimg.bytes());
+            delegate->getInputStream().readFull(cimg.bytes());
 
             if (!decompression.decompress(cimg.bytes(),img)) {
                 if (delegate->getInputStream().isOk()) {

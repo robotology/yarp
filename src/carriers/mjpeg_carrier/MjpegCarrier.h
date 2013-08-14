@@ -11,7 +11,7 @@
 #define MJPEGCARRIER_INC
 
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include "MjpegStream.h"
 
 #include <string.h>
@@ -145,8 +145,7 @@ public:
     virtual bool expectExtraHeader(ConnectionState& proto) {
         String txt;
         do {
-            txt = NetType::readLine(proto.is());
-            //printf("Got rest of header: %s\n", txt.c_str());
+            txt = proto.is().readLine();
         } while (txt!="");
         return true;
     }
@@ -173,8 +172,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
     virtual bool expectReplyToHeader(ConnectionState& proto) {
         String txt;
         do {
-            txt = NetType::readLine(proto.is());
-            //printf("Got response to header: %s\n", txt.c_str());
+            txt = proto.is().readLine();
         } while (txt!="");
 
         sender = false;

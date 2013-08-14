@@ -15,7 +15,7 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <yarp/os/impl/PlatformVector.h>

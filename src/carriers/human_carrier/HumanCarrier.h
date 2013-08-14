@@ -18,7 +18,7 @@ public:
         return new HumanCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "human";
     }
 
@@ -55,7 +55,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "humans are handy";
     }
 
@@ -95,7 +95,7 @@ public:
 
     virtual bool expectSenderSpecifier(ConnectionState& proto) {
         // interpret everything that sendHeader wrote
-        proto.setRoute(proto.getRoute().addFromName(NetType::readLine(proto.is())));
+        proto.setRoute(proto.getRoute().addFromName(proto.is().readLine()));
         return proto.is().isOk();
     }
 
@@ -135,15 +135,15 @@ public:
     }
 
     virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer) {
-        String prefix = "human says ";
+        ConstString prefix = "human says ";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectIndex(ConnectionState& proto) {
-        String prefix = "human says ";
-        String compare = prefix;
+        ConstString prefix = "human says ";
+        ConstString compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
@@ -154,15 +154,15 @@ public:
     // Acknowledgements, we don't do them
 
     virtual bool sendAck(ConnectionState& proto) {
-        String prefix = "computers rule!\r\n";
+        ConstString prefix = "computers rule!\r\n";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
     virtual bool expectAck(ConnectionState& proto) {
-        String prefix = "computers rule!\r\n";
-        String compare = prefix;
+        ConstString prefix = "computers rule!\r\n";
+        ConstString compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);

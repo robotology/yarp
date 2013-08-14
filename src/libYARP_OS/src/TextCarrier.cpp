@@ -84,14 +84,14 @@ bool yarp::os::impl::TextCarrier::sendHeader(ConnectionState& proto) {
 bool yarp::os::impl::TextCarrier::expectReplyToHeader(ConnectionState& proto) {
     if (ackVariant) {
         // expect and ignore welcome line
-        yarp::os::impl::String result = NetType::readLine(proto.is());
+        yarp::os::impl::String result = proto.is().readLine();
     }
     return true;
 }
 
 bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto) {
     YARP_SPRINTF0(Logger::get(),debug,"TextCarrier::expectSenderSpecifier");
-    proto.setRoute(proto.getRoute().addFromName(NetType::readLine(proto.is())));
+    proto.setRoute(proto.getRoute().addFromName(proto.is().readLine()));
     return true;
 }
 
@@ -116,7 +116,7 @@ bool yarp::os::impl::TextCarrier::sendAck(ConnectionState& proto) {
 bool yarp::os::impl::TextCarrier::expectAck(ConnectionState& proto) {
     if (ackVariant) {
         // expect and ignore acknowledgement
-        String result = NetType::readLine(proto.is());
+        String result = proto.is().readLine();
     }
     return true;
 }

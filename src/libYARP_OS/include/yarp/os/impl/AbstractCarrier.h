@@ -11,7 +11,8 @@
 #define _YARP2_ABSTRACTCARRIER_
 
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/impl/Logger.h>
 
 namespace yarp {
     namespace os {

@@ -8,7 +8,7 @@
  */
 
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/String.h>
 
 #include <yarp/os/impl/UnitTest.h>

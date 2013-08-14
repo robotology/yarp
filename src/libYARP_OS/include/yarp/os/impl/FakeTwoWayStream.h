@@ -11,8 +11,8 @@
 #define _YARP2_FAKETWOWAYSTREAM_
 
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
 
 namespace yarp {
     namespace os {

@@ -16,7 +16,7 @@
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionState.h>
@@ -261,7 +261,7 @@ private:
     bool expectProtocolSpecifier() {
         char buf[8];
         yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
-        YARP_SSIZE_T len = NetType::readFull(is(),header);
+        YARP_SSIZE_T len = is().readFull(header);
         if (len==-1) {
             YARP_DEBUG(log,"no connection");
             return false;

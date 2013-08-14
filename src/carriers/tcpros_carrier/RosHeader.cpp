@@ -9,11 +9,11 @@
 
 #include "RosHeader.h"
 
+#include <stdio.h>
+#include <string.h>
 #include <yarp/os/Bytes.h>
-#include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/NetType.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace std;
 

@@ -11,27 +11,24 @@
 #define _YARP2_STRINGOUTPUTSTREAM_
 
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class StringOutputStream;
-        }
+        class StringOutputStream;
     }
 }
 
 /**
- * An OutputStream that produces a String.  For testing purposes.
+ * An OutputStream that produces a string.  Handy for testing purposes.
  */
-class yarp::os::impl::StringOutputStream : public yarp::os::OutputStream {
+class yarp::os::StringOutputStream : public OutputStream {
 public:
-    using yarp::os::OutputStream::write;
+    using OutputStream::write;
 
     StringOutputStream() { }
 
-
-    String toString() {
+    ConstString toString() {
         return data;
     }
 
@@ -39,13 +36,9 @@ public:
         data = "";
     }
 
-
-    virtual void write(const Bytes& b) { // throws
-        String tmp((char*)b.get(),b.length());
+    virtual void write(const Bytes& b) {
+        ConstString tmp((char*)b.get(),b.length());
         data += tmp;
-        //for (int i=0; i<b.length(); i++) {
-        //data += b.get()[i];
-        //}
     }
 
     virtual void close() {
@@ -55,10 +48,10 @@ public:
         return true;
     }
 
-    const String& str() { return data; }
+    const ConstString& str() { return data; }
 
 private:
-    String data;
+    ConstString data;
 };
 
 #endif

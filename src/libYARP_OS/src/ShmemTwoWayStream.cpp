@@ -15,7 +15,7 @@
 #if 0
 
 #include <yarp/os/impl/ShmemTwoWayStream.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/Time.h>
 
 #include <ace/INET_Addr.h>

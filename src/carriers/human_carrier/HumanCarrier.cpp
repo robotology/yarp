@@ -7,6 +7,7 @@
  *
  */
 
+#include <yarp/os/ManagedBytes.h>
 #include "HumanCarrier.h"
 
 bool HumanCarrier::sendHeader(ConnectionState& proto) {
@@ -21,7 +22,7 @@ bool HumanCarrier::sendHeader(ConnectionState& proto) {
 
     // let's just send the port name in plain text terminated with a
     // carriage-return / line-feed
-    String from = proto.getRoute().getFromName();
+    ConstString from = proto.getRoute().getFromName();
     Bytes b2((char*)from.c_str(),from.length());
     proto.os().write(b2);
     proto.os().write('\r');

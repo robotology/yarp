@@ -11,14 +11,11 @@
 #define XMLRPCCARRIER_INC
 
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/String.h>
 #include "XmlRpcStream.h"
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class XmlRpcCarrier;
-        }
+        class XmlRpcCarrier;
     }
 }
 
@@ -44,12 +41,12 @@ namespace yarp {
  * will produce the output "30" if the server still exists.
  *
  */
-class yarp::os::impl::XmlRpcCarrier : public Carrier {
+class yarp::os::XmlRpcCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
-    yarp::os::Contact host;
-    String http;
+    Contact host;
+    ConstString http;
     bool interpretRos;
 public:
     XmlRpcCarrier() {
@@ -62,7 +59,7 @@ public:
         return new XmlRpcCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "xmlrpc";
     }
 
@@ -98,7 +95,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "xmlrpc_carrier";
     }
 
@@ -181,7 +178,7 @@ public:
         return true;
     }
 
-    virtual String getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName() { return ""; }
 };
 
 #endif

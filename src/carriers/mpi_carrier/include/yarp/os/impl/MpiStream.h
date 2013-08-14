@@ -17,7 +17,7 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/impl/MpiComm.h>
 

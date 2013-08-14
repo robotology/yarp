@@ -10,7 +10,7 @@
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Value.h>
 

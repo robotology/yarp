@@ -10,12 +10,12 @@
 #ifndef YARP2_WIRETWIDDLER
 #define YARP2_WIRETWIDDLER
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetInt32.h>
 
 #include <yarp/os/SizedWriter.h>
-#include <yarp/os/impl/PlatformSize.h>
 #include <yarp/os/InputStream.h>
 #include <yarp/os/Bytes.h>
 

@@ -13,7 +13,7 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/String.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/Name.h>
 
 namespace yarp {
     namespace os {

@@ -8,14 +8,13 @@
  */
 
 #include "XmlRpcCarrier.h"
-#include <yarp/os/impl/StringOutputStream.h>
-#include <yarp/os/impl/Name.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/StringOutputStream.h>
+#include <yarp/os/Name.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/Bottle.h>
 
 #include "XmlRpc.h"
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace XmlRpc;
 
@@ -76,27 +75,22 @@ bool XmlRpcCarrier::expectSenderSpecifier(ConnectionState& proto) {
 }
 
 bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
-    //XmlRpc::setVerbosity(10);
     StringOutputStream sos;
     StringInputStream sis;
     writer.write(sos);
     sis.reset(sos.toString());
-    String header;
+    ConstString header;
     if (sender) {
-        header = NetType::readLine(sis);
+        header = sis.readLine();
     }
-    String body = NetType::readLine(sis);
-    //printf("Asked to write: hdr %s body %s\n",
-    //     header.c_str(), body.c_str());
+    ConstString body = sis.readLine();
     Value v;
-    //printf("HEADER %s\n", header.c_str());
     if (header.length()>0 && header[0]=='q') {
         body = "yarp.quit";
         // XMLRPC does not need a quit message, this should get stripped
         return false;
     }
     Bottle *bot = v.asList();
-    //Bottle aux;
     bot->fromString(body.c_str());
     ConstString methodName;
     if (sender) {
@@ -109,7 +103,6 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     } else {
         toXmlRpcValue(v,args);
     }
-    //printf("xmlrpc block to write is %s\n", args.toXml().c_str());
     std::string req;
     if (sender) {
         const Contact& addr = host.isValid()?host:proto.getStreams().getRemoteAddress();
@@ -122,7 +115,6 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         req = c.getResponse();
     }
     int start = 0;
-    //printf("converts to %s\n", req.c_str());
     if (sender) {
         if (req.length()<8) {
             fprintf(stderr, "XmlRpcCarrier fail, %s:%d\n", __FILE__, __LINE__);
@@ -142,7 +134,6 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         firstRound = false;
     }
     Bytes b((char*)req.c_str()+start,req.length()-start);
-    //printf("WRITING [%s]\n", req.c_str()+start);
     proto.os().write(b);
 
     return proto.os().isOk();
@@ -150,31 +141,27 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer) {
 
 
 bool XmlRpcCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
-    //printf("Preparing for write\n");
     return write(proto,writer);
 }
 
 
 bool XmlRpcCarrier::sendHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
-    //printf("ROUTE is %s\n", proto.getRoute().toString().c_str());
-    String pathValue = n.getCarrierModifier("path");
-    String target = "POST /RPC2";
+    ConstString pathValue = n.getCarrierModifier("path");
+    ConstString target = "POST /RPC2";
     if (pathValue!="") {
-        //printf("FOUND PATH %s\n", pathValue.c_str());
         target = "POST /";
         target += pathValue;
         // on the wider web, we should provide real host names
         host = NetworkBase::queryName(proto.getRoute().getToName());
     }
-    String rospass = n.getCarrierModifier("ros");
+    ConstString rospass = n.getCarrierModifier("ros");
     if (rospass=="") {
         interpretRos = true;
     }
     target += " HTTP/1.1\n";
     http = target;
     Bytes b((char*)target.c_str(),target.length());
-    //printf("SENDING HEADER [%s]\n", target.c_str());
     proto.os().write(b);
     return true;
 }
@@ -182,7 +169,7 @@ bool XmlRpcCarrier::sendHeader(ConnectionState& proto) {
 
 bool XmlRpcCarrier::respondToHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
-    String rospass = n.getCarrierModifier("ros");
+    ConstString rospass = n.getCarrierModifier("ros");
     if (rospass=="") {
         interpretRos = true;
     }

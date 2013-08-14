@@ -9,20 +9,13 @@
 
 #include <stdio.h>
 #include <yarp/os/all.h>
-
 #include <yarp/os/Carrier.h>
-#include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/String.h>
-#include <yarp/os/Bytes.h>
-#include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/NetType.h>
 
 #include <iostream>
 #include <string>
 
 using namespace std;
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 
 class HumanStream : public TwoWayStream, public InputStream, public OutputStream {

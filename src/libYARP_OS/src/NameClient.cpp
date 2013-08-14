@@ -10,7 +10,7 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/TcpFace.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
 #ifdef YARP_HAS_ACE
@@ -217,7 +217,7 @@ String NameClient::send(const String& cmd, bool multi) {
         bool more = multi;
         while (more) {
             String line = "";
-            line = NetType::readLine(ip->getInputStream());
+            line = ip->getInputStream().readLine();
             if (!(ip->checkStreams())) {
                 more = false;
                 //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");

@@ -11,9 +11,9 @@
 #define _YARP2_HTTPCARRIER_
 
 #include <yarp/os/impl/TcpCarrier.h>
-#include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
 
 namespace yarp {
     namespace os {

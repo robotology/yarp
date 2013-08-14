@@ -14,7 +14,7 @@
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 namespace yarp {
     namespace os {

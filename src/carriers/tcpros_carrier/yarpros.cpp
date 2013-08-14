@@ -11,15 +11,12 @@
 #include <yarp/os/all.h>
 #include "RosSlave.h"
 #include "RosLookup.h"
-//#include "RosType.h"
-//#include "RosTypeCodeGenYarp.h"
 #include "TcpRosStream.h"
 
 #include <string>
 
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace std;
 
 bool verbose = false;

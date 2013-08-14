@@ -14,7 +14,7 @@
 #include <yarp/os/impl/PortCoreInputUnit.h>
 #include <yarp/os/impl/PortCoreOutputUnit.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/Name.h>
 
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/Network.h>

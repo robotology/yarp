@@ -9,14 +9,15 @@
 
 #include "TcpRosStream.h"
 
-#include <yarp/os/impl/NetType.h>
+#include <stdio.h>
+#include <string.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>
 
 #include "WireBottle.h"
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace std;
 
 #define dbg_printf if (0) printf
@@ -48,12 +49,12 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
             // It is probably frightfully important.
             char twiddle[1];
             Bytes twiddle_buf(twiddle,1);
-            NetType::readFull(delegate->getInputStream(),twiddle_buf);
+            delegate->getInputStream().readFull(twiddle_buf);
         }
 
         char mlen[4];
         Bytes mlen_buf(mlen,4);
-        int res = NetType::readFull(delegate->getInputStream(),mlen_buf);
+        int res = delegate->getInputStream().readFull(mlen_buf);
         if (res<4) {
             dbg_printf("tcpros_carrier failed, %s %d\n", __FILE__, __LINE__);
             phase = -1;
@@ -66,8 +67,7 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
         if (raw==-1) raw = 2;
         if (raw==-2) {
             scan.allocate(len);
-            int res = NetType::readFull(delegate->getInputStream(),
-                                        scan.bytes());
+            int res = delegate->getInputStream().readFull(scan.bytes());
             dbg_printf("Read %d bytes with raw==-2\n", res);
             if (res<0) {
                 dbg_printf("tcpros_carrier failed, %s %d\n", __FILE__, __LINE__);
