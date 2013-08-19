@@ -13,6 +13,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>

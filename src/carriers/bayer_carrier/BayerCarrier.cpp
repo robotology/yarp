@@ -10,6 +10,7 @@
 #include "BayerCarrier.h"
 
 #include <yarp/sig/ImageDraw.h>
+#include <string.h>
 
 #ifndef USE_LIBDC1394
 extern "C" {

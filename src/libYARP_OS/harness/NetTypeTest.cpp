@@ -13,6 +13,7 @@
 #include <yarp/os/NetFloat64.h>
 
 #include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;

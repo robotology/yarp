@@ -10,6 +10,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
