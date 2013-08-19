@@ -42,7 +42,6 @@ extern "C" {
 #include "WireImage.h"
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace yarp::sig;
 
 #define dbg_printf if (0) printf
@@ -180,8 +179,8 @@ bool MjpegCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
 
 bool MjpegCarrier::sendHeader(ConnectionState& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
-    String pathValue = n.getCarrierModifier("path");
-    String target = "GET /?action=stream\n\n";
+    ConstString pathValue = n.getCarrierModifier("path");
+    ConstString target = "GET /?action=stream\n\n";
     if (pathValue!="") {
         target = "GET /";
         target += pathValue;

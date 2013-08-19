@@ -18,10 +18,8 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MjpegCarrier;
-            class MjpegCarrierRaw;
-        }
+        class MjpegCarrier;
+        class MjpegCarrierRaw;
     }
 }
 
@@ -43,7 +41,7 @@ namespace yarp {
  *   http://localhost:NNN/?output=stream
  *
  */
-class yarp::os::impl::MjpegCarrier : public Carrier {
+class yarp::os::MjpegCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
@@ -57,7 +55,7 @@ public:
         return new MjpegCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "mjpeg";
     }
 
@@ -98,7 +96,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "mjpeg_carrier";
     }
 
@@ -143,7 +141,7 @@ public:
     }
 
     virtual bool expectExtraHeader(ConnectionState& proto) {
-        String txt;
+        ConstString txt;
         do {
             txt = proto.is().readLine();
         } while (txt!="");
@@ -151,7 +149,7 @@ public:
     }
 
     bool respondToHeader(ConnectionState& proto) {
-        String target = "HTTP/1.0 200 OK\r\n\
+        ConstString target = "HTTP/1.0 200 OK\r\n\
 Connection: close\r\n\
 Server: yarp/mjpeg_carrier/0.1\r\n\
 Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\r\n\
@@ -170,7 +168,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
     }
 
     virtual bool expectReplyToHeader(ConnectionState& proto) {
-        String txt;
+        ConstString txt;
         do {
             txt = proto.is().readLine();
         } while (txt!="");
@@ -210,7 +208,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    virtual String getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName() { return ""; }
 
     virtual bool autoCompression() const;
 };
