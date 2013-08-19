@@ -13,6 +13,7 @@
 #include <yarp/os/Carrier.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 namespace yarp {
     namespace os {
