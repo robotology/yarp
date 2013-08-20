@@ -162,15 +162,15 @@ void YarpPluginSelector::scan() {
             rf.configure(0,NULL);
         }
         rf.setQuiet(true);
-        ConstString target = "plugins";
-        ConstString found = rf.findFile(target);
-        if (found!="") {
-            target = found;
-
-            YARP_SPRINTF0(Logger::get(),
-                          debug,
-                          "Loading configuration files related to plugins.");
-            config.fromConfigFile(target);
+        Bottle plugins = rf.findFile("plugins");
+        if (plugins.size()>0) {
+            for (int i=0; i<plugins.size(); i++) {
+                ConstString target = plugins.get(i).asString();
+                YARP_SPRINTF1(Logger::get(),
+                              debug,
+                              "Loading configuration files related to plugins from %s.", target.c_str());
+                config.fromConfigFile(target);
+            }
         } else {
             YARP_SPRINTF0(Logger::get(),
                           debug,
