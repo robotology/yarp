@@ -70,6 +70,7 @@ add_executable(robotInterface ${robotInterface_SRCS})
 
 target_link_libraries(robotInterface
                       YARP_OS
+                      YARP_dev
                       YARP_init
                       icubmod
                     #  debugStream
