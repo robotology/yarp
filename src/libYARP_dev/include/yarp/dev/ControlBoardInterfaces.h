@@ -646,7 +646,7 @@ public:
  *
  * Interface for control devices, limits commands.
  */
-class yarp::dev::IControlLimits
+class YARP_dev_API yarp::dev::IControlLimits
 {
 public:
     /**

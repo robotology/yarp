@@ -24,7 +24,7 @@ namespace yarp {
  *
  * Interface for control devices, commands to get/set position and veloity limits
  */
-class yarp::dev::IControlLimits2: public yarp::dev::IControlLimits
+class YARP_dev_API yarp::dev::IControlLimits2: public yarp::dev::IControlLimits
 {
 public:
     /**
