@@ -51,7 +51,7 @@ public:
 
     // InputStream
 
-    virtual ssize_t read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b);
 
     // OutputStream
 
