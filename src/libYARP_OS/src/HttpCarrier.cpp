@@ -9,12 +9,14 @@
 
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/ManagedBytes.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 static yarp::os::impl::String quoteFree(const yarp::os::impl::String &src) {
     yarp::os::impl::String result = "";

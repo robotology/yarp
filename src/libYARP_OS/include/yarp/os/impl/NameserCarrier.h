@@ -31,8 +31,8 @@ namespace yarp {
 class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream {
 private:
     TwoWayStream *delegate;
-    String pendingRead;
-    String swallowRead;
+    ConstString pendingRead;
+    ConstString swallowRead;
 public:
     NameserTwoWayStream(TwoWayStream *delegate);
 
@@ -64,8 +64,8 @@ private:
 public:
     NameserCarrier();
 
-    virtual String getName();
-    virtual String getSpecifierName();
+    virtual ConstString getName();
+    virtual ConstString getSpecifierName();
 
     virtual Carrier *create();
 

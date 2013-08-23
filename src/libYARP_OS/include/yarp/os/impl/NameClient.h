@@ -76,7 +76,7 @@ public:
      * Deprecated, this is the identity function.
      *
      */
-    String getNamePart(const String& name) {
+    ConstString getNamePart(const ConstString& name) {
         return name;
     }
 
@@ -85,14 +85,14 @@ public:
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Contact queryName(const String& name);
+    Contact queryName(const ConstString& name);
 
     /**
      * Register a port with a given name.
      * @param name the name of the port
      * @return the address associated with the port
      */
-    Contact registerName(const String& name);
+    Contact registerName(const ConstString& name);
 
     /**
      * Register a port with a given name and a partial address.
@@ -100,14 +100,14 @@ public:
      * @param address a partially completed address
      * @return the address associated with the port
      */
-    Contact registerName(const String& name, const Contact& address);
+    Contact registerName(const ConstString& name, const Contact& address);
 
     /**
      * Register disassociation of name from port.
      * @param name the name to remove
      * @return the new result of queries for that name (should be empty)
      */
-    Contact unregisterName(const String& name);
+    Contact unregisterName(const ConstString& name);
 
     /**
      * Send a message to the name server, and interpret the result as
@@ -118,8 +118,8 @@ public:
      * @return the address extracted from the reply, all errors result
      * in a non-valid address.
      */
-    Contact probe(const String& cmd) {
-        String result = send(cmd);
+    Contact probe(const ConstString& cmd) {
+        ConstString result = send(cmd);
         return extractAddress(result);
     }
 
@@ -130,7 +130,7 @@ public:
      *
      * @return the address corresponding to the text representation
      */
-    static Contact extractAddress(const String& txt);
+    static Contact extractAddress(const ConstString& txt);
 
     static Contact extractAddress(const Bottle& bot);
 
@@ -142,7 +142,7 @@ public:
      *
      * @return the reply from the name server.
      */
-    String send(const String& cmd, bool multi = true);
+    ConstString send(const ConstString& cmd, bool multi = true);
 
     /**
      * Send a message to the nameserver in Bottle format, and return the
@@ -263,9 +263,9 @@ private:
 
 
     Contact address;
-    String host;
-    String mode;
-    String process;
+    ConstString host;
+    ConstString mode;
+    ConstString process;
     bool fake;
     NameServer *fakeServer;
     bool allowScan;

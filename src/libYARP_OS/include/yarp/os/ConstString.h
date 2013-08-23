@@ -19,9 +19,6 @@
 namespace yarp {
     namespace os {
         typedef std::string ConstString;
-        namespace impl {
-            typedef std::string String;
-        }
     }
 }
 

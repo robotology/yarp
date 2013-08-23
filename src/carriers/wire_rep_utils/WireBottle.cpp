@@ -15,7 +15,6 @@
 #include <yarp/os/NetType.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 static NetInt32 getInt(char *cursor) {
     NetInt32 *icursor = (NetInt32 *)cursor;

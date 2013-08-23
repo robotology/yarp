@@ -69,15 +69,15 @@ public:
         }
     }
 
-    void addInputText(const String& str) {
-        in.add(str.c_str());
+    void addInputText(const ConstString& str) {
+        in.add(str);
     }
 
-    String getOutputText() {
+    ConstString getOutputText() {
         return out.toString();
     }
 
-    String getInputText() {
+    ConstString getInputText() {
         return in.toString();
     }
 

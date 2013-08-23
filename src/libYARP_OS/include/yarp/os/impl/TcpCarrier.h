@@ -30,7 +30,7 @@ public:
 
     virtual Carrier *create();
 
-    virtual String getName();
+    virtual ConstString getName();
 
     virtual int getSpecifierCode();
 

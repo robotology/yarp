@@ -8,6 +8,7 @@
 
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/ShmemCarrier.h>
+#include <yarp/os/impl/String.h>
 // removing old shmem version
 // #include <yarp/os/impl/ShmemTwoWayStream.h>
 
@@ -17,6 +18,7 @@
 #endif
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 yarp::os::impl::ShmemCarrier::ShmemCarrier(int version) {
     this->version = version;

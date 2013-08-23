@@ -8,8 +8,10 @@
  */
 
 #include <yarp/os/impl/UdpCarrier.h>
+#include <yarp/os/impl/String.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 yarp::os::impl::UdpCarrier::UdpCarrier() {
 }

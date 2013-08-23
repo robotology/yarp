@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/impl/TcpCarrier.h>
+#include <yarp/os/impl/String.h>
 
 using namespace yarp::os;
 

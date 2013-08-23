@@ -7,8 +7,10 @@
  */
 
 #include <yarp/os/impl/NameserCarrier.h>
+#include <yarp/os/impl/String.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 // just to keep linkers from complaining about empty archive
 bool dummyNameserCarrierMethod() {
