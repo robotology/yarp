@@ -10,7 +10,7 @@
 #ifndef _YARP2_SHMEMCARRIER_
 #define _YARP2_SHMEMCARRIER_
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 
 
 //#include <ace/OS.h>

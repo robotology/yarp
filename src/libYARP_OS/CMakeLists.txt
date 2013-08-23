@@ -4,7 +4,8 @@
 
 project(YARP_OS)
 
-set(YARP_OS_HDRS include/yarp/os/all.h
+set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
+                 include/yarp/os/all.h
                  include/yarp/os/api.h
                  include/yarp/os/begin_pack_for_net.h
                  include/yarp/os/BinPortable.h
@@ -30,6 +31,7 @@ set(YARP_OS_HDRS include/yarp/os/all.h
                  include/yarp/os/LocalReader.h
                  include/yarp/os/Log.h
                  include/yarp/os/ManagedBytes.h
+                 include/yarp/os/ModifyingCarrier.h
                  include/yarp/os/Module.h
                  include/yarp/os/MultiNameSpace.h
                  include/yarp/os/Name.h
@@ -105,8 +107,7 @@ set(YARP_OS_IDL_HDRS include/yarp/os/idl/WirePortable.h
                      include/yarp/os/idl/WireVocab.h
                      include/yarp/os/idl/WireWriter.h)
 
-set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
-                      include/yarp/os/impl/ACESemaphoreImpl.h
+set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/AuthHMAC.h
                       include/yarp/os/impl/BottleImpl.h
                       include/yarp/os/impl/BufferedConnectionWriter.h
@@ -128,7 +129,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/AbstractCarrier.h
                       include/yarp/os/impl/Logger.h
                       include/yarp/os/impl/MachSemaphoreImpl.h
                       include/yarp/os/impl/McastCarrier.h
-                      include/yarp/os/impl/ModifyingCarrier.h
                       include/yarp/os/impl/NameClient.h
                       include/yarp/os/impl/NameConfig.h
                       include/yarp/os/impl/NameserCarrier.h

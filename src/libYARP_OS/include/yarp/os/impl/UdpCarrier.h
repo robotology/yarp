@@ -11,7 +11,7 @@
 #ifndef _YARP2_UDPCARRIER_
 #define _YARP2_UDPCARRIER_
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
 namespace yarp {

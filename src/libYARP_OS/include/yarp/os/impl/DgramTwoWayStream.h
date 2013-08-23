@@ -14,6 +14,8 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Semaphore.h>
 
+#include <yarp/os/impl/PlatformStdlib.h>
+
 #ifdef YARP_HAS_ACE
 #include <ace/SOCK_Dgram.h>
 #include <ace/SOCK_Dgram_Mcast.h>

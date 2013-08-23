@@ -7,9 +7,11 @@
  *
  */
 
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/TextCarrier.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 yarp::os::impl::TextCarrier::TextCarrier(bool ackVariant) {
     this->ackVariant = ackVariant;

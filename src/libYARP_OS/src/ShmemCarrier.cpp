@@ -6,6 +6,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/ShmemCarrier.h>
 // removing old shmem version
 // #include <yarp/os/impl/ShmemTwoWayStream.h>

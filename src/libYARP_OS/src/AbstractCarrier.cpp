@@ -6,8 +6,9 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;;

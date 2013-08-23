@@ -11,7 +11,7 @@
 #define PRIORITYCARRIER_INC
 
 #include <math.h>
-#include <yarp/os/impl/ModifyingCarrier.h>
+#include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/impl/Election.h>
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/Semaphore.h>
@@ -87,7 +87,7 @@ public:
  *   tcp+recv.priority+level.15
  *
  */
-class yarp::os::impl::PriorityCarrier : public yarp::os::impl::ModifyingCarrier {
+class yarp::os::impl::PriorityCarrier : public yarp::os::ModifyingCarrier {
 
 #ifdef WITH_PRIORITY_DEBUG
     friend class PriorityDebugThread;

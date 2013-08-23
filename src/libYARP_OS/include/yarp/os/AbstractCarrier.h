@@ -12,14 +12,10 @@
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class AbstractCarrier;
-        }
+        class AbstractCarrier;
     }
 }
 
@@ -27,12 +23,12 @@ namespace yarp {
  * A starter class for implementing simple carriers.
  * It implements reasonable default behavior.
  */
-class YARP_OS_impl_API yarp::os::impl::AbstractCarrier : public Carrier {
+class YARP_OS_API yarp::os::AbstractCarrier : public Carrier {
 public:
 
     virtual Carrier *create() = 0;
 
-    virtual String getName() = 0;
+    virtual ConstString getName() = 0;
 
     virtual bool checkHeader(const yarp::os::Bytes& header) = 0;
 
@@ -49,7 +45,7 @@ public:
     virtual bool requireAck();
     virtual bool canEscape();
     virtual bool isLocal();
-    virtual String toString();
+    virtual ConstString toString();
 
     // sender
     virtual bool prepareSend(ConnectionState& proto);
@@ -105,8 +101,7 @@ protected:
 
     static void createYarpNumber(int x,const yarp::os::Bytes& header) {
         if (header.length()!=8) {
-            ACE_OS::printf("wrong header length");
-            ACE_OS::exit(1);
+            return;
         }
         char *base = header.get();
         base[0] = 'Y';

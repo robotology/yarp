@@ -10,7 +10,7 @@
 #ifndef _YARP2_MCASTCARRIER_
 #define _YARP2_MCASTCARRIER_
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/UdpCarrier.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
 #include <yarp/os/impl/Logger.h>

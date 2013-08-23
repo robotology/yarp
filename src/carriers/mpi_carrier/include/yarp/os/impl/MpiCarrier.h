@@ -12,7 +12,7 @@
 
 #include <yarp/os/all.h>
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/Bytes.h>
 
 #include <string>

@@ -10,7 +10,7 @@
 #ifndef BAYERCARRIER_INC
 #define BAYERCARRIER_INC
 
-#include <yarp/os/impl/ModifyingCarrier.h>
+#include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/sig/Image.h>
@@ -35,7 +35,7 @@ namespace yarp {
  *   tcp+recv.bayer+size.half+order.bggr
  *
  */
-class yarp::os::impl::BayerCarrier : public yarp::os::impl::ModifyingCarrier,
+class yarp::os::impl::BayerCarrier : public yarp::os::ModifyingCarrier,
                                      public yarp::os::ConnectionReader,
                                      public yarp::os::InputStream {
 private:

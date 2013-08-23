@@ -21,6 +21,7 @@ namespace yarp {
         class ConnectionWriter;
         class PortReader;
         class Portable;
+        class InputStream;
     }
 
     // place in both namespaces
@@ -174,6 +175,13 @@ public:
      */
     virtual bool pushInt(int x) = 0;
 
+    /**
+     *
+     * Create an instance of YARP's standard connection reader 
+     * implementation.
+     *
+     */
+    static ConnectionReader *createConnectionReader(InputStream& is);
 };
 
 #endif
