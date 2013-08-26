@@ -158,7 +158,7 @@ public:
             }
         }
         if (tag=="untopic") {
-            bool result = setTopic(cmd.get(1).asString().c_str(),NULL,false);
+            bool result = setTopic(cmd.get(1).asString().c_str(),"",false);
             reply.clear();
             reply.addVocab(replyCode(result));
             return true;
