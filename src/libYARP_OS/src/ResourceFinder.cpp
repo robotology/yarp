@@ -976,6 +976,9 @@ ConstString ResourceFinder::getContext() {
 }
 
 ConstString ResourceFinder::getContextPath() {
+        ConstString contextPath=findPath(ConstString("contexts/") + HELPER(implementation).getContext());
+        if (contextPath != "")
+            return contextPath;
     return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());
 }
