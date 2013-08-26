@@ -280,7 +280,7 @@ IF (CREATE_LUA)
   IF (UNIX)
     ADD_CUSTOM_COMMAND(TARGET yarp
     POST_BUILD
-    COMMAND ln -s libyarp.so yarp.so 
+    COMMAND ${CMAKE_COMMAND} -E create_symlink libyarp.so yarp.so 
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   ENDIF (UNIX)
 ENDIF (CREATE_LUA)
