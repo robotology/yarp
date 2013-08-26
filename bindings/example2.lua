@@ -22,7 +22,7 @@ sender:open("/lua/write")
 receiver:open("/lua/read")
 
 -- connect sender to receiver
-yarp.NetworkBase_connect(sender:getName():c_str(), receiver:getName():c_str())
+yarp.NetworkBase_connect(sender:getName(), receiver:getName())
 
 for i=1,10 do
 
@@ -44,7 +44,7 @@ for i=1,10 do
 end
 
 -- disconnect sender from receiver
-yarp.NetworkBase_disconnect(sender:getName():c_str(), receiver:getName():c_str())
+yarp.NetworkBase_disconnect(sender:getName(), receiver:getName())
 
 -- close the ports
 sender:close()
