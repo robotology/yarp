@@ -10,14 +10,12 @@
 #ifndef _YARP2_STRING_
 #define _YARP2_STRING_
 
-#include <yarp/os/api.h>
-#include <yarp/conf/system.h>
+#include <yarp/os/ConstString.h>
 
-#include <string>
 namespace yarp {
     namespace os {
         namespace impl {
-            typedef std::string String;
+            typedef ::yarp::os::ConstString String;
         }
     }
 }

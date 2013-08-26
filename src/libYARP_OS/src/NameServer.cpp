@@ -396,7 +396,8 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
         pref = dest;
     }
 
-    String result = "port " + src + " route " + dest + " = " + pref + "\n";
+    String result = "port ";
+    result += src + " route " + dest + " = " + pref + "\n";
     return terminate(result);
 }
 
@@ -499,7 +500,8 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
         if (i>2) {
             response += "\n";
         }
-        response += "port " + target + " property " + 
+        response += "port ";
+        response += target + " property " + 
             key + " value " + argv[i] + " present " + val;
     }
     response += "\n";
@@ -805,7 +807,7 @@ public:
                 }
             } else {
                 YARP_INFO(Logger::get(),
-                          "Name server ignoring unknown command: "+msg);
+                          String("Name server ignoring unknown command: ")+msg);
                 ConnectionWriter *os = reader.getWriter();
                 if (os!=NULL) {
                     // this result is necessary for YARP1 support

@@ -24,9 +24,9 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
     } else if (vin.isDouble()) {
         vout = vin.asDouble();
     } else if (vin.isString()) {
-        vout = vin.asString();
+        vout = std::string(vin.asString());
     } else if (vin.isVocab()) {
-        vout = ConstString("[") + vin.toString() + "]";
+        vout = std::string("[") + std::string(vin.toString()) + "]";
     } else if (vin.isList()) {
         Bottle *bot = vin.asList();
         bool struc = true;
@@ -56,7 +56,7 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
             vout = XmlRpcValue();
             for (int i=offset; i<bot->size(); i++) {
                 Bottle *boti = bot->get(i).asList();
-                XmlRpcValue& vouti=vout[boti->get(0).toString()]=XmlRpcValue();
+                XmlRpcValue& vouti=vout[std::string(boti->get(0).toString())]=XmlRpcValue();
                 toXmlRpcValue(boti->get(1),vouti);
             }
         } else {

@@ -32,8 +32,26 @@ public:
         checkEqual(s[2],'d',"after null");
     }
 
+
+    String mirrorString(const String& txt) {
+        return txt;
+    }
+
+    void testBasics() {
+        report(0,"testing basics");
+        String s = "hello";
+        s += " there";
+        checkEqual(s.c_str(),"hello there","+= operator");
+        checkEqual((s + " you").c_str(),"hello there you","+ operator");
+        String s2(s.c_str());
+        checkEqual(s2.c_str(),"hello there","via copy");
+        checkEqual(mirrorString(s).c_str(),"hello there","via copy 2");
+        checkEqual((s + ":" + s).c_str(),"hello there:hello there","concat");
+    }
+
     virtual void runTests() {
         testNulls();
+        testBasics();
     }
 };
 

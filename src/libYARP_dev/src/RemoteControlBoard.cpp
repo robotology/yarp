@@ -971,7 +971,7 @@ public:
             s2 = local;
             s2 += "/state:i";
 
-            ok = Network::connect(s1.c_str(), state_p.getName(), carrier);
+            ok = Network::connect(s1, state_p.getName(), carrier);
 
             if (!ok) {
                 printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());

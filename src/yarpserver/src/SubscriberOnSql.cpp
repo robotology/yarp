@@ -570,7 +570,7 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
         if (!ok) return false;
     }
 
-    vector<vector<string> > subs;
+    vector<vector<ConstString> > subs;
 
     // go ahead and connect anything needed
     mutex.wait();
@@ -595,7 +595,7 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
         char *srcFull = (char *)sqlite3_column_text(statement,2);
         char *destFull = (char *)sqlite3_column_text(statement,3);
         char *mode = (char *)sqlite3_column_text(statement,4);
-        vector<string> sub;
+        vector<ConstString> sub;
         sub.push_back(src);
         sub.push_back(dest);
         sub.push_back(srcFull);
@@ -608,7 +608,7 @@ bool SubscriberOnSql::setTopic(const ConstString& port, const ConstString& struc
     mutex.post();
 
     for (int i=0; i<(int)subs.size(); i++) {
-        vector<string>& sub = subs[i];
+        vector<ConstString>& sub = subs[i];
         checkSubscription(sub[0],sub[1],sub[2],sub[3],sub[4]);
     }
 

@@ -13,8 +13,7 @@
 
 #define YARP_CMAKE_CONFIG
 
-#cmakedefine YARP_USE_STL_STRING
-#cmakedefine YARP_USE_ACE_STRING
+#cmakedefine YARP_WRAP_STL_STRING
 
 #cmakedefine YARP_HAS_ACE
 

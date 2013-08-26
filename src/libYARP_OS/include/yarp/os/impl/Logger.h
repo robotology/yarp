@@ -11,6 +11,8 @@
 #define _YARP2_LOGGER_
 
 #include <stdio.h>
+#include <yarp/conf/api.h>
+#include <yarp/conf/system.h>
 #include <yarp/os/impl/String.h>
 
 #ifdef YARP_HAS_ACE
