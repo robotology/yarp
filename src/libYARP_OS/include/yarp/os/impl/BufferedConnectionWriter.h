@@ -312,6 +312,10 @@ public:
         applyConvertTextMode();
     }
 
+    virtual SizedWriter *getBuffer() {
+        return this;
+    }
+
 private:
     bool applyConvertTextMode();
 
@@ -536,6 +540,7 @@ public:
     BufferedConnectionWriter& getMessage() { return readerStore; }
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }
+    virtual SizedWriter *getBuffer() { return 0 /*NULL*/; }
 };
 
 

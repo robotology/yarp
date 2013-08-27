@@ -18,9 +18,7 @@
 namespace yarp {
     namespace os {
         class SizedWriter;
-        //using yarp::os::PortReader;
     }
-    //using yarp::os::PortReader;
 }
 
 /**

@@ -7,11 +7,19 @@
  */
 
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 
+using namespace yarp::os;
+using namespace yarp::os::impl;
 
-yarp::os::ConnectionWriter::~ConnectionWriter() {
+ConnectionWriter::~ConnectionWriter() {
 }
 
-bool yarp::os::ConnectionWriter::isNull() const {
+bool ConnectionWriter::isNull() const {
     return false;
+}
+
+
+ConnectionWriter *ConnectionWriter::createBufferedConnectionWriter() {
+    return new BufferedConnectionWriter;
 }

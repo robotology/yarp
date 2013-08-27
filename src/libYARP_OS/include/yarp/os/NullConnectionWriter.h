@@ -41,6 +41,7 @@ public:
     virtual bool isError();
     virtual void requestDrop();
     virtual bool isNull() const;
+    virtual SizedWriter *getBuffer();
 };
 
 #endif

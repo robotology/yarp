@@ -11,7 +11,7 @@
 #define _YARP2_CONNECTIONWRITER_
 
 #include <yarp/os/api.h>
-#include <stddef.h> // defines size_t
+#include <yarp/conf/numeric.h>
 
 namespace yarp {
     namespace os {
@@ -20,6 +20,7 @@ namespace yarp {
         class PortReader;
         class PortWriter;
         class Portable;
+        class SizedWriter;
     }
 }
 
@@ -157,6 +158,22 @@ public:
      *
      */
     virtual bool isNull() const;
+
+
+    /**
+     *
+     * @return a buffer if one is present.
+     *
+     */
+    virtual SizedWriter *getBuffer() = 0;
+
+    /**
+     *
+     * Create a connection writer implementation that stores
+     * to a buffer which can be read later using getBuffer()
+     *
+     */
+    static ConnectionWriter *createBufferedConnectionWriter();
 };
 
 #endif
