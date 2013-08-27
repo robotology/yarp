@@ -17,6 +17,7 @@
 
 #include <yarp/os/SizedWriter.h>
 #include <yarp/os/InputStream.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Bytes.h>
 
 #include <wire_rep_utils_api.h>
@@ -57,6 +58,12 @@ class YARP_wire_rep_utils_API WireTwiddler {
 public:
     WireTwiddler() {
         buffer_start = 0;
+        writer = 0 /*NULL*/;
+    }
+
+    virtual ~WireTwiddler() {
+        if (writer) delete writer;
+        writer = 0 /*NULL*/;
     }
 
     bool configure(const char *txt);
@@ -75,6 +82,7 @@ private:
     int buffer_start;
     std::vector<yarp::os::NetInt32> buffer;
     std::vector<WireTwiddlerGap> gaps;
+    yarp::os::ConnectionWriter *writer;
 
 public:
     void show();

@@ -12,17 +12,19 @@
 #include <vector>
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/Log.h>
 
 using namespace std;
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 #define dbg_flag 0
 #define dbg_printf if (dbg_flag) printf
@@ -300,21 +302,24 @@ bool WireTwiddler::read(Bottle& bot, const Bytes& data) {
     StringInputStream sis;
     sis.add(data);
     WireTwiddlerReader twiddled_input(sis,*this);
-    Route route;
-    StreamConnectionReader reader2;
-    reader2.reset(twiddled_input,NULL,route,0,false);
-    return bot.read(reader2);
+    return ConnectionReader::readFromStream(bot,twiddled_input);
 }
 
 
 bool WireTwiddler::write(yarp::os::Bottle& bot, 
                          yarp::os::ManagedBytes& data) {
     StringOutputStream sos;
-    BufferedConnectionWriter writer;
-    bot.write(writer);
-    WireTwiddlerWriter twiddled_output(writer,*this);
+    if (!writer) {
+        writer = ConnectionWriter::createBufferedConnectionWriter();
+    }
+    if (!writer) return false;
+    SizedWriter *buf = writer->getBuffer();
+    if (!buf) return false;
+    buf->clear();
+    bot.write(*writer);
+    WireTwiddlerWriter twiddled_output(*buf,*this);
     twiddled_output.write(sos);
-    String result = sos.toString();
+    ConstString result = sos.toString();
     data = ManagedBytes(Bytes((char*)result.c_str(),result.length()),false);
     data.copy();
     return true;
@@ -612,7 +617,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
                     dbg_printf(" %03d <--> %03d\n", 
                             activeCheck[i], blockPtr[i+offset]);
                 }
-                YARP_SPRINTF0(Logger::get(),error,"Structure of message is unexpected");
+                YARP_LOG_ERROR("Structure of message is unexpected");
                 errorState = true;
                 return false;
             }
@@ -629,7 +634,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
             if (accumOffset+rem>4) {
                 fprintf(stderr,"ACCUMULATION GONE WRONG %d %d\n",
                         accumOffset, rem);
-                exit(1);
+                ::exit(1);
             }
             memcpy(lengthBytes.get()+accumOffset,blockPtr+offset,rem);
             accumOffset += rem;

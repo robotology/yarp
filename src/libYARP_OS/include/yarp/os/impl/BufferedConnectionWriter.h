@@ -65,7 +65,7 @@ public:
         convertTextModePending = false;
     }
 
-    void clear() {
+    virtual void clear() {
         target = &lst;
         size_t i;
         for (i=0; i<lst.size(); i++) {

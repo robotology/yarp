@@ -8,17 +8,16 @@
  */
 
 #include <stdio.h>
-#include <stdio.h>
+#include <stdlib.h>
 
 #include "WireTwiddler.h"
 
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/ConnectionReader.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 bool testSequence(char *seq, int len, const char *fmt, Bottle ref,
                   bool testWrite = true) {
@@ -39,7 +38,7 @@ bool testSequence(char *seq, int len, const char *fmt, Bottle ref,
                bot.toString().c_str(),
                ref.toString().c_str());
         printf("MISMATCH\n");
-        exit(1);
+        ::exit(1);
         return false;
     }
     printf("[1] %s: read %s as expected\n", fmt, bot.toString().c_str());
@@ -50,11 +49,9 @@ bool testSequence(char *seq, int len, const char *fmt, Bottle ref,
     sis.add(b1);
     WireTwiddlerReader twiddled_input(sis,tt);
     Route route;
-    StreamConnectionReader reader2;
-    reader2.reset(twiddled_input,NULL,route,0,false);
     bot.clear();
     twiddled_input.reset();
-    bot.read(reader2);
+    ConnectionReader::readFromStream(bot,twiddled_input);
 
     if (bot!=ref) {
         printf("%s: read %s, expected %s\n", fmt, 
@@ -66,12 +63,9 @@ bool testSequence(char *seq, int len, const char *fmt, Bottle ref,
     }
     printf("[2] %s: read %s as expected\n", fmt, bot.toString().c_str());
 
-
-    StreamConnectionReader reader3;
-    reader3.reset(twiddled_input,NULL,route,0,false);
     bot.clear();
     twiddled_input.reset();
-    bot.read(reader3);
+    ConnectionReader::readFromStream(bot,twiddled_input);
 
     if (bot!=ref) {
         printf("%s: read %s, expected %s\n", fmt, 

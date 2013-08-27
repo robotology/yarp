@@ -182,6 +182,8 @@ public:
      *
      */
     static ConnectionReader *createConnectionReader(InputStream& is);
+
+    static bool readFromStream(PortReader& portable, InputStream& is);
 };
 
 #endif

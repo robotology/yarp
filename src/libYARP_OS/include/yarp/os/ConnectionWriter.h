@@ -21,6 +21,7 @@ namespace yarp {
         class PortWriter;
         class Portable;
         class SizedWriter;
+        class OutputStream;
     }
 }
 
@@ -174,6 +175,8 @@ public:
      *
      */
     static ConnectionWriter *createBufferedConnectionWriter();
+
+    static bool writeToStream(PortWriter& portable, OutputStream& os);
 };
 
 #endif

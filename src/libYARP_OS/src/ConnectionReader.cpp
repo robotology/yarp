@@ -26,3 +26,10 @@ ConnectionReader *ConnectionReader::createConnectionReader(InputStream& is) {
     reader->reset(is,NULL,r,0,false);
     return reader;
 }
+
+bool ConnectionReader::readFromStream(PortReader& portable, InputStream& is) {
+    StreamConnectionReader reader;
+    Route r;
+    reader.reset(is,NULL,r,0,false);
+    return portable.read(reader);
+}

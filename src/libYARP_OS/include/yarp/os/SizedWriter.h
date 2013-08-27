@@ -75,6 +75,8 @@ public:
      *
      */
     virtual void stopWrite() = 0;
+
+    virtual void clear() {}
 };
 
 #endif

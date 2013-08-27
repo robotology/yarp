@@ -23,3 +23,11 @@ bool ConnectionWriter::isNull() const {
 ConnectionWriter *ConnectionWriter::createBufferedConnectionWriter() {
     return new BufferedConnectionWriter;
 }
+
+bool ConnectionWriter::writeToStream(PortWriter& portable, OutputStream& os) {
+    BufferedConnectionWriter writer;
+    if (!portable.write(writer)) return false;
+    writer.write(os);
+    return os.isOk();
+}
+
