@@ -107,9 +107,9 @@ public:
 /**
  * A "null" stream, always invalid.
  */
-class yarp::os::NullStream : public TwoWayStream,
-                             public InputStream, 
-                             public OutputStream {
+class YARP_OS_API yarp::os::NullStream : public TwoWayStream,
+                                         public InputStream, 
+                                         public OutputStream {
 private:
     Contact address;
 public:
