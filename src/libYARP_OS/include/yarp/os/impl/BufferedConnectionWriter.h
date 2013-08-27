@@ -541,6 +541,10 @@ public:
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }
     virtual SizedWriter *getBuffer() { return 0 /*NULL*/; }
+    
+    virtual bool setSize(size_t len) {
+        return reader->setSize(len);
+    }
 };
 
 

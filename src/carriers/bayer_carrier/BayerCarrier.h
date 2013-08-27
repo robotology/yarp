@@ -11,7 +11,6 @@
 #define BAYERCARRIER_INC
 
 #include <yarp/os/ModifyingCarrier.h>
-#include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
@@ -19,9 +18,7 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class BayerCarrier;
-        }
+        class BayerCarrier;
     }
 }
 
@@ -35,9 +32,9 @@ namespace yarp {
  *   tcp+recv.bayer+size.half+order.bggr
  *
  */
-class yarp::os::impl::BayerCarrier : public yarp::os::ModifyingCarrier,
-                                     public yarp::os::ConnectionReader,
-                                     public yarp::os::InputStream {
+class yarp::os::BayerCarrier : public yarp::os::ModifyingCarrier,
+                               public yarp::os::ConnectionReader,
+                               public yarp::os::InputStream {
 private:
     yarp::sig::ImageOf<yarp::sig::PixelMono> in;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> out;
@@ -46,7 +43,7 @@ private:
     yarp::os::DummyConnector con;
     size_t image_data_len, consumed;
 
-    yarp::os::impl::StreamConnectionReader local;
+    yarp::os::ConnectionReader *local;
     yarp::os::ConnectionReader *parent;
     
     bool need_reset;
@@ -74,7 +71,6 @@ public:
         need_reset = true;
         have_result = false;
         image_data_len = 0;
-        happy = true;
         half = false;
         warned = false;
         goff = 0;
@@ -82,17 +78,19 @@ public:
         bayer_method = -1;
         bayer_method_set = false;
         dcformat = -1;
+        local = yarp::os::ConnectionReader::createConnectionReader(*this);
+        happy = (local!=0);
     }
 
     virtual Carrier *create() {
         return new BayerCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "bayer";
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "bayer_carrier";
     }
 
@@ -117,23 +115,23 @@ public:
     virtual bool processDirect(const yarp::os::Bytes& bytes);
 
     virtual bool expectBlock(const char *data, size_t len) {
-        return local.expectBlock(data,len);
+        return local->expectBlock(data,len);
     }
 
     virtual ConstString expectText(int terminatingChar = '\n') {
-        return local.expectText(terminatingChar);
+        return local->expectText(terminatingChar);
     }
 
     virtual int expectInt() {
-        return local.expectInt();
+        return local->expectInt();
     }
 
     virtual bool pushInt(int x) {
-        return local.pushInt(x);
+        return local->pushInt(x);
     }
 
     virtual double expectDouble() {
-        return local.expectDouble();
+        return local->expectDouble();
     }
 
     virtual bool isTextMode() {
@@ -189,6 +187,9 @@ public:
         return parent->getConnectionModifiers();
     }
 
+    virtual bool setSize(size_t len) {
+        return parent->setSize(len);
+    }
 
     ////////////////////////////////////////////////////////////////////////
     // InputStream methods

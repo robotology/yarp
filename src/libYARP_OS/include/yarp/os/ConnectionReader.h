@@ -175,6 +175,8 @@ public:
      */
     virtual bool pushInt(int x) = 0;
 
+    virtual bool setSize(size_t len) = 0;
+
     /**
      *
      * Create an instance of YARP's standard connection reader 

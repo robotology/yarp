@@ -72,6 +72,11 @@ public:
         pushedIntFlag = false;
     }
 
+    virtual bool setSize(size_t len) {
+        reset(*in,str,route,len,textMode);
+        return true;
+    }
+
     void setProtocol(Protocol *protocol) {
         this->protocol = protocol;
     }

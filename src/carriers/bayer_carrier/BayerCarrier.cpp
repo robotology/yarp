@@ -11,6 +11,7 @@
 
 #include <yarp/sig/ImageDraw.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifndef USE_LIBDC1394
 extern "C" {
@@ -21,7 +22,6 @@ extern "C" {
 #endif
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace yarp::sig;
 
 // can't seem to do ipl/opencv/yarp style end-of-row padding
@@ -85,8 +85,8 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
     Route r;
     bool ok = in.read(reader);
     if (!ok) {
-        local.reset(*this, NULL, r, 0, false);
-        return local;
+        local->setSize(0);
+        return *local;
     }
     ImageNetworkHeader header_in_cmp;
     header_in_cmp.setFromImage(in);
@@ -129,8 +129,8 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
                     warned = true;
                 }
                 happy = false;
-                local.reset(*this, NULL, r, 0, false);
-                return local;
+                local->setSize(0);
+                return *local;
             }
         }
 
@@ -141,10 +141,10 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
         need_reset = false;
         processBuffered();
     }
-    local.reset(*this, NULL, r, sizeof(header)+image_data_len, false);
+    local->setSize(sizeof(header)+image_data_len);
     consumed = 0;
 
-    return local;
+    return *local;
 }
 
 
@@ -311,7 +311,7 @@ bool BayerCarrier::processBuffered() {
 
 bool BayerCarrier::processDirect(const yarp::os::Bytes& bytes) {
     if (have_result) {
-        ACE_OS::memcpy(bytes.get(),out.getRawImage(),bytes.length());
+        memcpy(bytes.get(),out.getRawImage(),bytes.length());
         return true;
     }
     //printf("Copyless conversion\n");
@@ -334,7 +334,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
         if (len>sizeof(header)-consumed) {
             len = sizeof(header)-consumed;
         }
-        ACE_OS::memcpy(b.get(),((char*)(&header))+consumed,len);
+        memcpy(b.get(),((char*)(&header))+consumed,len);
         consumed += len;
         return (YARP_SSIZE_T) len;
     }
@@ -352,7 +352,7 @@ YARP_SSIZE_T BayerCarrier::read(const yarp::os::Bytes& b) {
         if (len>sizeof(header)+out.getRawImageSize()-consumed) {
             len = sizeof(header)+out.getRawImageSize()-consumed;
         }
-        ACE_OS::memcpy(b.get(),out.getRawImage()+consumed-sizeof(header),len);
+        memcpy(b.get(),out.getRawImage()+consumed-sizeof(header),len);
         consumed += len;
         return (YARP_SSIZE_T) len;
     }
