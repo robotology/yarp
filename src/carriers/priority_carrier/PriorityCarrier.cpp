@@ -400,7 +400,7 @@ void PriorityDebugThread::run()
 
 bool PriorityDebugThread::threadInit()
 {
-    debugPortName = pcarrier->portName + pcarrier->sourceName + String(":debug");
+    debugPortName = pcarrier->portName + pcarrier->sourceName + ConstString(":debug");
     return debugPort.open(debugPortName.c_str());
 }
 

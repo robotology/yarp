@@ -10,17 +10,15 @@
 #ifndef _YARP_MPIBCASTCARRIER_
 #define _YARP_MPIBCASTCARRIER_
 
-#include <yarp/os/impl/MpiCarrier.h>
-#include <yarp/os/impl/MpiBcastStream.h>
+#include <yarp/os/MpiCarrier.h>
+#include <yarp/os/MpiBcastStream.h>
 
 #include <yarp/os/impl/Election.h>
 
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MpiBcastCarrier;
-        }
+        class MpiBcastCarrier;
     }
 }
 
@@ -34,7 +32,7 @@ namespace yarp {
  * if one terminates without proper disconnect.
  * @warning Seems to work, but still experimental.
  */
-class yarp::os::impl::MpiBcastCarrier : public MpiCarrier {
+class yarp::os::MpiBcastCarrier : public MpiCarrier {
 private:
     static yarp::os::impl::ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>* caster;
     static yarp::os::impl::ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>& getCaster();
@@ -51,7 +49,7 @@ public:
         return new MpiBcastCarrier();
     }
     void createStream(bool sender);
-    String getName() {
+    ConstString getName() {
         return "bcast";}
     bool supportReply() {
         return false;}
@@ -60,7 +58,7 @@ public:
     }
     void prepareDisconnect();
 
-    bool expectReplyToHeader(Protocol&  proto) {
+    bool expectReplyToHeader(ConnectionState&  proto) {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
         dynamic_cast<MpiBcastStream*> (stream)->post();
         return ok;

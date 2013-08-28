@@ -10,13 +10,11 @@
 #ifndef _YARP_MPIP2PSTREAM_
 #define _YARP_MPIP2PSTREAM_
 
-#include <yarp/os/impl/MpiStream.h>
+#include <yarp/os/MpiStream.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MpiP2PStream;
-        }
+        class MpiP2PStream;
     }
 }
 
@@ -24,9 +22,9 @@ namespace yarp {
  * Implements communication via MPI point-to-point send/receive.
  *
  */
-class yarp::os::impl::MpiP2PStream : public MpiStream {
+class yarp::os::MpiP2PStream : public MpiStream {
 public:
-    MpiP2PStream(String name, MpiComm* comm) : MpiStream(name,comm) {};
+    MpiP2PStream(ConstString name, MpiComm* comm) : MpiStream(name,comm) {};
     ssize_t read(const Bytes& b);
     void write(const Bytes& b);
     void close() {

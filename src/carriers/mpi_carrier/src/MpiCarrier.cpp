@@ -9,11 +9,11 @@
 
 #ifdef CREATE_MPI_CARRIER
 
-#include <yarp/os/impl/MpiCarrier.h>
+#include <yarp/os/MpiCarrier.h>
+#include <yarp/os/Route.h>
 #include <sys/types.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 
 
@@ -117,7 +117,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     if (! MpiControl.isRunning())
         return false;
 
-    String other_id = proto.is().readLine();
+    ConstString other_id = proto.is().readLine();
     bool notLocal = comm->notLocal(other_id);
 
     port = proto.is().readLine();

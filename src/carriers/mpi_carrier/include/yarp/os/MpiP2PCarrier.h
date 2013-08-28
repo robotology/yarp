@@ -10,14 +10,12 @@
 #ifndef _YARP_MPIP2PCARRIER_
 #define _YARP_MPIP2PCARRIER_
 
-#include <yarp/os/impl/MpiCarrier.h>
-#include <yarp/os/impl/MpiP2PStream.h>
+#include <yarp/os/MpiCarrier.h>
+#include <yarp/os/MpiP2PStream.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MpiP2PCarrier;
-        }
+        class MpiP2PCarrier;
     }
 }
 
@@ -30,7 +28,7 @@ namespace yarp {
  * if one terminates without proper disconnect.
  * @warning Seems to work, but still experimental.
  */
-class yarp::os::impl::MpiP2PCarrier : public MpiCarrier {
+class yarp::os::MpiP2PCarrier : public MpiCarrier {
 public:
     MpiP2PCarrier() : MpiCarrier() {
         target = "MPI_____";

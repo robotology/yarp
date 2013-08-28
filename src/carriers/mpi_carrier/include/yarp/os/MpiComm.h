@@ -13,7 +13,7 @@
 
 #include <yarp/os/all.h>
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 
@@ -25,14 +25,12 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MpiComm;
-            class MpiControlThread;
-        }
+        class MpiComm;
+        class MpiControlThread;
     }
 }
 
-class yarp::os::impl::MpiControlThread : public yarp::os::Thread {
+class yarp::os::MpiControlThread : public yarp::os::Thread {
     bool terminate;
 public:
     MpiControlThread() : terminate(false) {}
@@ -45,7 +43,7 @@ public:
     void threadRelease();
 };
 
-extern yarp::os::impl::MpiControlThread MpiControl;
+extern yarp::os::MpiControlThread MpiControl;
 
 
 
@@ -57,8 +55,8 @@ extern yarp::os::impl::MpiControlThread MpiControl;
  *
  * @note Needs an MPI implementation with THREAD_MULTIPLE support.
  */
-class yarp::os::impl::MpiComm {
-    String name;
+class yarp::os::MpiComm {
+    ConstString name;
 
 public:
     char port_name[MPI_MAX_PORT_NAME];
@@ -67,17 +65,17 @@ public:
     yarp::os::Semaphore sema;
 
 
-    MpiComm(String name);
+    MpiComm(ConstString name);
     ~MpiComm() {
         #ifdef MPI_DEBUG
         printf("[MpiComm @ %s] Destructor\n", name.c_str() );
         #endif
         MPI_Comm_disconnect(&comm);
     }
-    bool connect(String port);
+    bool connect(ConstString port);
     bool accept();
     void disconnect(bool disconn);
-    bool notLocal(String other);
+    bool notLocal(ConstString other);
 
     void openPort() {
         MPI_Open_port(MPI_INFO_NULL, port_name);

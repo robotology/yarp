@@ -9,8 +9,9 @@
 
 #ifdef CREATE_MPI_CARRIER
 
-#include <yarp/os/impl/MpiBcastCarrier.h>
+#include <yarp/os/MpiBcastCarrier.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Log.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -89,7 +90,7 @@ ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>& MpiBcastCarrier::getCast
         caster = new ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>;
         yarp::os::NetworkBase::unlock();
         if (caster==NULL) {
-            YARP_ERROR(Logger::get(), "No memory for MpiBcastCarrier::caster");
+            YARP_LOG_ERROR("No memory for MpiBcastCarrier::caster");
             exit(1);
         }
     } else {

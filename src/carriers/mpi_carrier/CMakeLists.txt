@@ -3,8 +3,8 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 IF (COMPILE_PLUGIN_LIBRARY)
-  YARP_PREPARE_CARRIER(mpi_carrier TYPE MpiP2PCarrier INCLUDE include/yarp/os/impl/MpiP2PCarrier.h)
-  YARP_PREPARE_CARRIER(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/impl/MpiBcastCarrier.h)
+  YARP_PREPARE_CARRIER(mpi_carrier TYPE MpiP2PCarrier INCLUDE include/yarp/os/MpiP2PCarrier.h)
+  YARP_PREPARE_CARRIER(mpibcast_carrier TYPE MpiBcastCarrier INCLUDE include/yarp/os/MpiBcastCarrier.h)
   YARP_ADD_CARRIER_FINGERPRINT(mpi.ini mpi_carrier mpibcast_carrier)
 ENDIF (COMPILE_PLUGIN_LIBRARY)
 
@@ -27,9 +27,9 @@ IF (NOT SKIP_mpi_carrier)
     src/MpiCarrier.cpp
     src/MpiComm.cpp
     src/MpiStream.cpp src/MpiP2PStream.cpp
-    include/yarp/os/impl/MpiCarrier.h include/yarp/os/impl/MpiP2PCarrier.h
-    include/yarp/os/impl/MpiStream.h include/yarp/os/impl/MpiP2PStream.h
-    include/yarp/os/impl/MpiComm.h
+    include/yarp/os/MpiCarrier.h include/yarp/os/MpiP2PCarrier.h
+    include/yarp/os/MpiStream.h include/yarp/os/MpiP2PStream.h
+    include/yarp/os/MpiComm.h
   )
   target_link_libraries(yarp_mpi YARP_OS YARP_sig)
   target_link_libraries(yarp_mpi ${ACE_LIBRARIES})
@@ -56,9 +56,9 @@ IF (NOT SKIP_mpibcast_carrier)
     src/MpiCarrier.cpp src/MpiBcastCarrier.cpp
     src/MpiComm.cpp
     src/MpiStream.cpp src/MpiBcastStream.cpp
-    include/yarp/os/impl/MpiCarrier.h include/yarp/os/impl/MpiBcastCarrier.h
-    include/yarp/os/impl/MpiStream.h include/yarp/os/impl/MpiBcastStream.h
-    include/yarp/os/impl/MpiComm.h
+    include/yarp/os/MpiCarrier.h include/yarp/os/MpiBcastCarrier.h
+    include/yarp/os/MpiStream.h include/yarp/os/MpiBcastStream.h
+    include/yarp/os/MpiComm.h
   )
   target_link_libraries(yarp_mpibcast YARP_OS YARP_sig)
   target_link_libraries(yarp_mpibcast ${ACE_LIBRARIES})

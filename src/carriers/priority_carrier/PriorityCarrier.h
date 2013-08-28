@@ -74,7 +74,7 @@ public:
 public:
     int count;
     PriorityCarrier* pcarrier;
-    String debugPortName;
+    ConstString debugPortName;
     BufferedPort<yarp::sig::Vector> debugPort;
 };
 #endif //WITH_PRIORITY_DEBUG
@@ -120,11 +120,11 @@ public:
         return new PriorityCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "priority";
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "priority_carrier";
     }
 
@@ -192,12 +192,12 @@ public:
     bool isActive;                  // true if port is in active state X(t)
     double baias;                   // baias value for excitation
     Bottle excitation;              // a list of exitatory signals as (name, value)
-    String sourceName;
+    ConstString sourceName;
 
     double yi;                      // this is set in the recalculate() for the debug purpose
 
 private:
-    String portName;
+    ConstString portName;
     PriorityGroup *group;
 
     static ElectionOf<PriorityCarrier,PriorityGroup> *peers;

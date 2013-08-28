@@ -18,13 +18,11 @@
 #include <string>
 #include <iostream>
 
-#include <yarp/os/impl/MpiStream.h>
+#include <yarp/os/MpiStream.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MpiCarrier;
-        }
+        class MpiCarrier;
     }
 }
 
@@ -32,19 +30,19 @@ namespace yarp {
  * Abstract base carrier for managing port communication via MPI.
  *
  */
-class yarp::os::impl::MpiCarrier : public AbstractCarrier {
+class yarp::os::MpiCarrier : public AbstractCarrier {
 protected:
     MpiStream* stream;
     MpiComm* comm;
-    String port;
-    String name, other, route;
-    String target;
+    ConstString port;
+    ConstString name, other, route;
+    ConstString target;
 public:
     MpiCarrier() ;
     virtual ~MpiCarrier();
     virtual void close() = 0;
     virtual Carrier *create() = 0;
-    virtual String getName() = 0;
+    virtual ConstString getName() = 0;
 
     virtual void createStream(bool sender) = 0;
 

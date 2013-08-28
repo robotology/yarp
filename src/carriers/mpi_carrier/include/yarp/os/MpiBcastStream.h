@@ -10,7 +10,7 @@
 #ifndef _YARP_MPIBCASTSTREAM_
 #define _YARP_MPIBCASTSTREAM_
 
-#include <yarp/os/impl/MpiStream.h>
+#include <yarp/os/MpiStream.h>
 #include <string.h>
 
 #define CMD_JOIN -1
@@ -18,9 +18,7 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MpiBcastStream;
-        }
+        class MpiBcastStream;
     }
 }
 
@@ -28,10 +26,10 @@ namespace yarp {
  * Implements communication via MPI broadcast.
  *
  */
-class yarp::os::impl::MpiBcastStream : public MpiStream {
+class yarp::os::MpiBcastStream : public MpiStream {
 
 public:
-    MpiBcastStream(String name, MpiComm* comm) : MpiStream(name, comm) {};
+    MpiBcastStream(ConstString name, MpiComm* comm) : MpiStream(name, comm) {};
     ~MpiBcastStream() {
         #ifdef MPI_DEBUG
         printf("[MpiBcastStream @ %s] Destructor\n", name.c_str());

@@ -9,7 +9,7 @@
 
 #ifdef CREATE_MPI_CARRIER
 
-#include <yarp/os/impl/MpiStream.h>
+#include <yarp/os/MpiStream.h>
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os::impl;

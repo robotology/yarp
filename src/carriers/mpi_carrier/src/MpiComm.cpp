@@ -8,20 +8,21 @@
  */
 
 
-#include <yarp/os/impl/MpiComm.h>
+#include <yarp/os/MpiComm.h>
 #include <yarp/os/impl/Logger.h>
 #include <mpi.h>
 
 #include <stdlib.h>
 #include <unistd.h>
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 
 /* --------------------------------------- */
 /* MpiControlThread */
 
-yarp::os::impl::MpiControlThread MpiControl;
+yarp::os::MpiControlThread MpiControl;
 
 void finalizeMPI(void) {
     MpiControl.finalize();
