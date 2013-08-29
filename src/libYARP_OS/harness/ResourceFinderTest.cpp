@@ -369,6 +369,17 @@ public:
         yarp_data_home.addString("yarp");
         mkdir(yarp_data_home);
 
+        Bottle yarp_data_home_shadow;
+        yarp_data_home_shadow.addString(base);
+        yarp_data_home_shadow.addString("home");
+        yarp_data_home_shadow.addString("yarper");
+        yarp_data_home_shadow.addString(".local");
+        yarp_data_home_shadow.addString("share");
+        yarp_data_home_shadow.addString("yarp");
+        yarp_data_home_shadow.addString("contexts");
+        yarp_data_home_shadow.addString("shadowtest");
+        mkdir(yarp_data_home_shadow);
+
         Bottle yarp_config_home;
         yarp_config_home.addString(base);
         yarp_config_home.addString("home");
@@ -392,6 +403,15 @@ public:
         yarp_context_dir.addString("contexts");
         yarp_context_dir.addString("my_app");
         mkdir(yarp_context_dir);
+
+        Bottle yarp_context_dir2;
+        yarp_context_dir2.addString(base);
+        yarp_context_dir2.addString("usr");
+        yarp_context_dir2.addString("share");
+        yarp_context_dir2.addString("yarp");
+        yarp_context_dir2.addString("contexts");
+        yarp_context_dir2.addString("shadowtest");
+        mkdir(yarp_context_dir2);
 
         Bottle yarp_data_dir1;
         yarp_data_dir1.addString(base);
@@ -496,6 +516,24 @@ public:
         fprintf(fout,"magic_number = 1000\n");
         fclose(fout);
         fout = NULL;
+
+        fout = fopen((pathify(yarp_context_dir2)+slash+"shadow.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"magic_number = 5000\n");
+        fclose(fout);
+        fout = NULL;
+
+        fout = fopen((pathify(yarp_data_home_shadow)+slash+"shadow.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"magic_number = 5001\n");
+        fclose(fout);
+        fout = NULL;
+
+        fout = fopen((pathify(yarp_context_dir2)+slash+"noshadow.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"magic_number = 5002\n");
+        fclose(fout);
+        fout = NULL;
     }
 
     void breakDownTestArea() {
@@ -551,11 +589,26 @@ public:
 
         {
             ResourceFinder rf;
-            //rf.setVerbose(true);
             rf.setDefaultContext("my_app");
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(NULL,0,NULL);
             checkEqual(rf.find("magic_number").asInt(),1000,"my_app.ini found as default config file");
+        }
+
+        {
+            ResourceFinder rf;
+            rf.setDefaultContext("shadowtest");
+            rf.setDefaultConfigFile("shadow.ini");
+            rf.configure(NULL,0,NULL);
+            checkEqual(rf.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
+        }
+
+        {
+            ResourceFinder rf;
+            rf.setDefaultContext("shadowtest");
+            rf.setDefaultConfigFile("noshadow.ini");
+            rf.configure(NULL,0,NULL);
+            checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
         }
 
         breakDownTestArea();
