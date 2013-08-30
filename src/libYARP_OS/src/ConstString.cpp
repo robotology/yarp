@@ -43,6 +43,11 @@ ConstString::ConstString(const char *str, int len) {
     YARP_ASSERT(implementation!=NULL);
 }
 
+void ConstString::init(const char *str, size_t len) {
+    implementation = new std::string(str,len);
+    YARP_ASSERT(implementation!=NULL);
+}
+
 ConstString::ConstString(size_t len, char v) {
     implementation = new std::string(len,v);
     YARP_ASSERT(implementation!=NULL);
@@ -68,6 +73,11 @@ const ConstString& ConstString::operator = (const ConstString& alt) {
 const char *ConstString::c_str() const {
     return HELPER(implementation).c_str();
 }
+
+const char *ConstString::data() const {
+    return HELPER(implementation).data();
+}
+
 
 bool ConstString::operator <(const ConstString& alt) const {
     return HELPER(implementation) < HELPER(alt.implementation);
@@ -165,6 +175,11 @@ char& ConstString::operator[](size_t idx) {
 
 const char& ConstString::operator[](size_t idx) const {
     return HELPER(implementation)[idx];
+}
+
+ConstString& ConstString::assign(const char *s, size_t n) {
+    HELPER(implementation).assign(s,n);
+    return *this;
 }
 
 unsigned long ConstString::hash() const {

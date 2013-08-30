@@ -81,6 +81,10 @@ public:
      */
     const char *c_str() const;
 
+    const char *data() const;
+
+    ConstString& assign(const char *s, size_t n);
+
     /**
      * Typecast operator to C-style string.
      */
@@ -112,6 +116,8 @@ public:
 
     size_t length() const;
 
+    size_t size() const { return length(); }
+
     size_t find(const ConstString& needle) const;
     size_t find(const char *needle) const;
     size_t find(const char *needle, size_t start) const;
@@ -140,7 +146,12 @@ public:
     inline operator std::string() const
     { return std::string(c_str(), length()); }
 
+    inline ConstString(const std::string& str) {
+        init(str.c_str(),str.length());
+    }
+
 private:
+    void init(const char *str, size_t len);
 
     void *implementation;
 };
