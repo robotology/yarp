@@ -9,15 +9,14 @@
 
 
 #include <yarp/os/MpiComm.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/NetType.h>
 #include <mpi.h>
 
 #include <stdlib.h>
 #include <unistd.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
-
 
 /* --------------------------------------- */
 /* MpiControlThread */
@@ -69,7 +68,7 @@ bool MpiControlThread::threadInit() {
     }
     else {
         MPI_Finalize();
-        YARP_SPRINTF2(Logger::get(),error, "MpiControlThread: MPI implementation doesn't provide required thread safety: requested %d, provided %d\n", requested, provided);
+        YARP_LOG_ERROR(ConstString("MpiControlThread: MPI implementation doesn't provide required thread safety: requested ") + NetType::toString(requested) + ", provided " + NetType::toString(provided));
         return false;
     }
 }
@@ -78,7 +77,7 @@ bool MpiControlThread::threadInit() {
 /* --------------------------------------- */
 /* MpiComm */
 
-MpiComm::MpiComm(String name) : name(name) {
+MpiComm::MpiComm(ConstString name) : name(name) {
     if (! MpiControl.isRunning()) {
         MpiControl.start();
     }
@@ -100,15 +99,15 @@ MpiComm::MpiComm(String name) : name(name) {
 }
 
 //TODO: replace by static variable check??!?
-bool MpiComm::notLocal(String other) {
-    if (other == String(unique_id)) {
+bool MpiComm::notLocal(ConstString other) {
+    if (other == ConstString(unique_id)) {
         YARP_LOG_ERROR("MPI does not support process local communication\n");
         return false;
     }
     return true;
 }
 
-bool MpiComm::connect(String port) {
+bool MpiComm::connect(ConstString port) {
 
     char* port_name = new char[port.length()+1];
     memcpy(port_name, port.c_str(), port.length());

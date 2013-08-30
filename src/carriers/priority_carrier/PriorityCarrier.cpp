@@ -20,7 +20,6 @@ using namespace yarp::math;
 
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 #ifdef _MSC_VER
 #define safe_printf sprintf_s

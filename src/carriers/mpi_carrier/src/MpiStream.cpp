@@ -10,16 +10,15 @@
 #ifdef CREATE_MPI_CARRIER
 
 #include <yarp/os/MpiStream.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/Log.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
 /* --------------------------------------- */
 /* MpiStream */
 
-MpiStream::MpiStream(String n, MpiComm* c)
+MpiStream::MpiStream(ConstString n, MpiComm* c)
     : terminate(false), name(n), comm(c) {
     readBuffer = NULL;
     resetBuffer();

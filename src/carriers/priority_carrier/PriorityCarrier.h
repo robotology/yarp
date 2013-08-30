@@ -27,13 +27,11 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class PriorityGroup;
-            class PriorityCarrier;
+        class PriorityGroup;
+        class PriorityCarrier;
 #ifdef WITH_PRIORITY_DEBUG
-            class PriorityDebugThread;
+        class PriorityDebugThread;
 #endif //WITH_PRIORITY_DEBUG
-        }
     }
 }
 
@@ -44,7 +42,7 @@ namespace yarp {
  * Manager for priority-aware inputs to a given port.
  *
  */
-class yarp::os::impl::PriorityGroup : public PeerRecord<PriorityCarrier> {
+class yarp::os::PriorityGroup : public PeerRecord<PriorityCarrier> {
 public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
@@ -63,7 +61,7 @@ public:
 
 
 #ifdef WITH_PRIORITY_DEBUG
-class yarp::os::impl::PriorityDebugThread : public yarp::os::RateThread {
+class yarp::os::PriorityDebugThread : public yarp::os::RateThread {
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
     virtual ~PriorityDebugThread();
@@ -87,7 +85,7 @@ public:
  *   tcp+recv.priority+level.15
  *
  */
-class yarp::os::impl::PriorityCarrier : public yarp::os::ModifyingCarrier {
+class yarp::os::PriorityCarrier : public yarp::os::ModifyingCarrier {
 
 #ifdef WITH_PRIORITY_DEBUG
     friend class PriorityDebugThread;

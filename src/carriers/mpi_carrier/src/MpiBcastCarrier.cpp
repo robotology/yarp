@@ -13,7 +13,6 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 MpiBcastCarrier::~MpiBcastCarrier() {
