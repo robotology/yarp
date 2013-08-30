@@ -12,7 +12,7 @@
 
 #include <math.h>
 #include <yarp/os/ModifyingCarrier.h>
-#include <yarp/os/impl/Election.h>
+#include <yarp/os/Election.h>
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
@@ -44,7 +44,7 @@ namespace yarp {
  * Manager for priority-aware inputs to a given port.
  *
  */
-class yarp::os::impl::PriorityGroup : public PeerRecord {
+class yarp::os::impl::PriorityGroup : public PeerRecord<PriorityCarrier> {
 public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
@@ -200,9 +200,9 @@ private:
     ConstString portName;
     PriorityGroup *group;
 
-    static ElectionOf<PriorityCarrier,PriorityGroup> *peers;
+    static ElectionOf<PriorityGroup> *peers;
 
-    static ElectionOf<PriorityCarrier,PriorityGroup>& getPeers();
+    static ElectionOf<PriorityGroup>& getPeers();
 
 #ifdef WITH_PRIORITY_DEBUG
 private:

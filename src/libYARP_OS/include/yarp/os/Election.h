@@ -12,45 +12,45 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/Log.h>
-#include <stdio.h>
+
+#include <map>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class PeerRecord;
-            template <class T> class Election;
-            template <class T, class PR> class ElectionOf;
-        }
+        template <class T> class PeerRecord;
+        template <class PR> class ElectionOf;
     }
 }
 
-class yarp::os::impl::PeerRecord {
+template <class T> 
+class yarp::os::PeerRecord {
 public:
-    PLATFORM_MAP(void *,bool) peerSet;
-    typedef PLATFORM_MAP(void *,bool)::iterator iterator;
-    typedef PLATFORM_MAP(void *,bool)::const_iterator const_iterator;
-    
+    typedef T peer_type;
+    typedef std::map<T *, bool> map_type;
+    map_type peerSet;
+    typedef typename map_type::iterator iterator;
+    typedef typename map_type::const_iterator const_iterator;
+ 
     PeerRecord() {
     }
     
     PeerRecord(const PeerRecord& alt) {
     }
     
-    void add(void *entity) {
-        PLATFORM_MAP_SET(peerSet,entity,true);
+    void add(T *entity) {
+        peerSet[entity] = true;
     }
     
-    void remove(void *entity) {
-        PLATFORM_MAP_UNSET(peerSet,entity);
+    void remove(T *entity) {
+        peerSet.erase(entity);
     }
     
-    void *getFirst() {
+    T *getFirst() {
         if (peerSet.begin()!=peerSet.end()) {
-            return PLATFORM_MAP_ITERATOR_FIRST(peerSet.begin());
+            return peerSet.begin()->first;
         }
-        return NULL;
+        return 0 /*NULL */;
     }
 };
 
@@ -63,59 +63,56 @@ public:
  * PR should be a subclass of PeerRecord.
  */
 template <class PR> 
-class yarp::os::impl::Election {
+class yarp::os::ElectionOf {
 private:
     typedef void *voidPtr;
 
     yarp::os::Semaphore mutex;
 
-    PLATFORM_MAP(yarp::os::ConstString,PR) nameMap;
+    typedef typename std::map<yarp::os::ConstString,PR> map_type;
+    map_type nameMap;
     long ct;
 
     PR *getRecordRaw(const yarp::os::ConstString& key, bool create = false) {
-        PLATFORM_MAP_ITERATOR_IN_TEMPLATE(yarp::os::ConstString,PR,entry);
-        int result = PLATFORM_MAP_FIND(nameMap,key,entry);
-        if (result==-1 && create) {
-            PLATFORM_MAP_SET(nameMap,key,PR());
-            result = PLATFORM_MAP_FIND(nameMap,key,entry);
+        typename map_type::iterator entry = nameMap.find(key);
+        if (entry == nameMap.end() && create) {
+            nameMap[key] = PR();
+            entry = nameMap.find(key);
         }
-        if (result==-1) {
-            return NULL;
+        if (entry == nameMap.end()) {
+            return 0 /*NULL*/;
         }
-        return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
+        return &(entry->second);
     }
  public:
-    Election() : mutex(1) {
+    ElectionOf() : mutex(1) {
         ct = 0;
     }
-    virtual ~Election() {}
+    virtual ~ElectionOf() {}
 
-    PR *add(const yarp::os::ConstString& key, void *entity) {
+    PR *add(const yarp::os::ConstString& key, typename PR::peer_type *entity) {
         mutex.wait();
         ct++;
         PR *rec = getRecordRaw(key,true);
-        YARP_ASSERT(rec!=NULL);
+        YARP_ASSERT(rec);
         rec->add(entity);
         mutex.post();
         return rec;
     }
-    void remove(const yarp::os::ConstString& key, void *entity) {
+    void remove(const yarp::os::ConstString& key, typename PR::peer_type *entity) {
         mutex.wait();
         ct++;
-        PeerRecord *rec = getRecordRaw(key,false);
-        YARP_ASSERT(rec!=NULL);
+        PR *rec = getRecordRaw(key,false);
+        YARP_ASSERT(rec);
         rec->remove(entity);
-        if (rec->getFirst()==NULL) {
-            // PeerRecords persist regardless
-        }
         mutex.post();    
     }
 
-    void *getElect(const yarp::os::ConstString& key) {
+    typename PR::peer_type *getElect(const yarp::os::ConstString& key) {
         mutex.wait();
-        PeerRecord *rec = getRecordRaw(key,false);
+        PR *rec = getRecordRaw(key,false);
         mutex.post();
-        if (rec!=NULL) {
+        if (rec) {
             return rec->getFirst();
         }
         return NULL;
@@ -123,7 +120,7 @@ private:
 
     PR *getRecord(const yarp::os::ConstString& key) {
         mutex.wait();
-        PeerRecord *rec = getRecordRaw(key,false);
+        PR *rec = getRecordRaw(key,false);
         mutex.post();
         return rec;
     }
@@ -140,8 +137,9 @@ private:
 /**
  * Type-safe wrapper for the Election class.
  */
+/*
 template <class T, class PR>
-class yarp::os::impl::ElectionOf : protected Election<PR> {
+class yarp::os::ElectionOf : protected Election<PR> {
 public:
     PR *add(const yarp::os::ConstString& key, T *entity) {
         return Election<PR>::add(key, entity);
@@ -163,6 +161,7 @@ public:
 
     void unlock() { Election<PR>::unlock(); }
 };
+*/
 
 #endif
 

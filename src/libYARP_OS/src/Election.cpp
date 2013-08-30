@@ -7,7 +7,7 @@
  *
  */
 
-#include <yarp/os/impl/Election.h>
+#include <yarp/os/Election.h>
 #include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os::impl;

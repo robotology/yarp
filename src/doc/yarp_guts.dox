@@ -207,7 +207,7 @@ The two McastCarrier objects owned by Port 1
 in the figure above "conspire" behind the
 scenes to make sure only one of them sends data, but as far as the
 rest of YARP is concerned there's nothing special about them.
-This conspiracy is implemented via a global yarp::os::impl::Election
+This conspiracy is implemented via a global yarp::os::Election
 object.
 
 *

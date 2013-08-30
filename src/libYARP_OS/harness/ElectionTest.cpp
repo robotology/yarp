@@ -7,11 +7,11 @@
  *
  */
 
-#include <yarp/os/impl/Election.h>
+#include <yarp/os/Election.h>
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp::os::impl;
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 class ElectionTest : public UnitTest {
@@ -23,7 +23,7 @@ public:
         String c1 = "Magnifico";
         String c2 = "Grasso";
         String c3 = "Bozo";
-        ElectionOf<String,PeerRecord> elector;
+        ElectionOf<PeerRecord<String> > elector;
         elector.add("italy",&c1);
         elector.add("italy",&c2);
         elector.add("france",&c3);

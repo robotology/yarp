@@ -22,6 +22,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Contact.h
                  include/yarp/os/ContactStyle.h
                  include/yarp/os/DummyConnector.h
+                 include/yarp/os/Election.h
                  include/yarp/os/end_pack_for_net.h
                  include/yarp/os/Event.h
                  include/yarp/os/Face.h
@@ -116,7 +117,6 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/CXX11SemaphoreImpl.h
                       include/yarp/os/impl/DgramTwoWayStream.h
                       include/yarp/os/impl/Dispatcher.h
-                      include/yarp/os/impl/Election.h
                       include/yarp/os/impl/FakeFace.h
                       include/yarp/os/impl/FakeTwoWayStream.h
                       include/yarp/os/impl/FallbackNameClient.h

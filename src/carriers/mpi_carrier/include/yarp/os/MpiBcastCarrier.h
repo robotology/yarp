@@ -13,7 +13,7 @@
 #include <yarp/os/MpiCarrier.h>
 #include <yarp/os/MpiBcastStream.h>
 
-#include <yarp/os/impl/Election.h>
+#include <yarp/os/Election.h>
 
 
 namespace yarp {
@@ -34,8 +34,8 @@ namespace yarp {
  */
 class yarp::os::MpiBcastCarrier : public MpiCarrier {
 private:
-    static yarp::os::impl::ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>* caster;
-    static yarp::os::impl::ElectionOf<MpiBcastCarrier,yarp::os::impl::PeerRecord>& getCaster();
+    static yarp::os::ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >* caster;
+    static yarp::os::ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >& getCaster();
 
     bool electionMember;
 

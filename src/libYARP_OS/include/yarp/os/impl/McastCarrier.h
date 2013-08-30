@@ -15,7 +15,7 @@
 #include <yarp/os/impl/DgramTwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <yarp/os/impl/Election.h>
+#include <yarp/os/Election.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSize.h>
 
@@ -38,9 +38,9 @@ protected:
     String mcastName;
     String key;
 
-    static ElectionOf<McastCarrier,PeerRecord> *caster;
+    static ElectionOf<PeerRecord<McastCarrier> > *caster;
 
-    static ElectionOf<McastCarrier,PeerRecord>& getCaster();
+    static ElectionOf<PeerRecord<McastCarrier> >& getCaster();
 
 public:
 
