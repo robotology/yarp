@@ -236,7 +236,7 @@ bool PriorityGroup::recalculate(double t)
 #ifdef WITH_YARPMATH    
     //TODO: find the correct way to get the size of peerSet
     int nConnections = 0;    
-    for(PeerRecord::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
+    for(PriorityGroup::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
         nConnections++;
 
     // calculate matrices X, B, InvA and Y
