@@ -95,8 +95,6 @@ endif(UNIX)
 set(GtkDataboxMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox
                               ${GtkDatabox_INCLUDE_DIRS}
                               ${GtkDataboxMM_GTK2_INCLUDE_DIRS}
-                              CACHE PATH "GtkDataboxMM include directory" FORCE)
-set(GtkDataboxMM_LIBRARIES YARP_gtkdataboxmm CACHE STRING "GtkDataboxMM libraries" FORCE)
-set(GtkDataboxMM_DEFINITIONS "" CACHE STRING "Additional compiler flags for GtkDataboxMM" FORCE)
-
-mark_as_advanced(GtkDataboxMM_INCLUDE_DIRS GtkDataboxMM_LIBRARIES GtkDataboxMM_DEFINITIONS)
+                              PARENT_SCOPE)
+set(GtkDataboxMM_LIBRARIES YARP_gtkdataboxmm PARENT_SCOPE)
+set(GtkDataboxMM_DEFINITIONS "" PARENT_SCOPE)

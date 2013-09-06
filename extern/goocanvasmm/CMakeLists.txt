@@ -157,8 +157,6 @@ endif(UNIX)
 set(GooCanvasMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas
                              ${GooCanvas_INCLUDE_DIRS}
                              ${GooCanvasMM_GTK2_INCLUDE_DIRS}
-                             CACHE PATH "GooCanvasMM include directory" FORCE)
-set(GooCanvasMM_LIBRARIES YARP_goocanvasmm CACHE STRING "GooCanvasMM libraries" FORCE)
-set(GooCanvasMM_DEFINITIONS "" CACHE STRING "Additional compiler flags for GooCanvasMM" FORCE)
-
-mark_as_advanced(GooCanvasMM_INCLUDE_DIRS GooCanvasMM_LIBRARIES GooCanvasMM_DEFINITIONS)
+                             PARENT_SCOPE)
+set(GooCanvasMM_LIBRARIES YARP_goocanvasmm PARENT_SCOPE)
+set(GooCanvasMM_DEFINITIONS "" PARENT_SCOPE)

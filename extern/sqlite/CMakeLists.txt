@@ -23,8 +23,8 @@ if(UNIX)
     target_link_libraries(YARP_sqlite LINK_PRIVATE pthread)
 endif(UNIX)
 
-set(SQLite_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite CACHE PATH "SQLite include directory" FORCE)
-set(SQLite_LIBRARIES YARP_sqlite CACHE STRING "SQLite libraries" FORCE)
-set(SQLite_DEFINITIONS "" CACHE STRING "Additional compiler flags for SQLite" FORCE)
+set(SQLite_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite PARENT_SCOPE)
+set(SQLite_LIBRARIES YARP_sqlite PARENT_SCOPE)
+set(SQLite_DEFINITIONS "" PARENT_SCOPE)
 
 mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARIES SQLite_DEFINITIONS)
