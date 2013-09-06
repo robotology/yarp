@@ -40,7 +40,7 @@ macro(checkandset_dependency package)
         endif(${package}_FOUND OR ${PKG}_FOUND)
     endif(YARP_USE_${PKG})
 
-    set(YARP_USE_SYSTEM_${PKG} TRUE CACHE INTERNAL "" FORCE)
+    unset(YARP_USE_SYSTEM_${PKG} CACHE)
 
     mark_as_advanced(YARP_USE_${package})
 
@@ -65,7 +65,7 @@ macro(checkbuildandset_dependency package)
         mark_as_advanced(YARP_USE_SYSTEM_${PKG})
     else (${package}_FOUND OR ${PKG}_FOUND)
         # If package was not found we force it to be built
-        set(YARP_USE_SYSTEM_${PKG} FALSE CACHE INTERNAL "" FORCE)
+        unset(YARP_USE_SYSTEM_${PKG} CACHE)
     endif (${package}_FOUND OR ${PKG}_FOUND)
 
     if(YARP_USE_${PKG})
