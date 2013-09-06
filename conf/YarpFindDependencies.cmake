@@ -26,27 +26,30 @@ macro(checkandset_dependency package)
 
     string(TOUPPER ${package} PKG)
 
+    # YARP_HAS_SYSTEM_${PKG}
     if(${package}_FOUND OR ${PKG}_FOUND)
-        set(YARP_USE_${PKG} TRUE CACHE BOOL "Use package ${package}")
+        set(YARP_HAS_SYSTEM_${PKG} TRUE)
     else(${package}_FOUND OR ${PKG}_FOUND)
-        set(YARP_USE_${PKG} FALSE CACHE BOOL "Use package ${package}")
+        set(YARP_HAS_SYSTEM_${PKG} FALSE)
     endif(${package}_FOUND OR ${PKG}_FOUND)
 
-    if(YARP_USE_${PKG})
-        if(${package}_FOUND OR ${PKG}_FOUND)
-            set(YARP_HAS_${PKG} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
-        else(${package}_FOUND OR ${PKG}_FOUND)
-            set(YARP_HAS_${PKG} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
-        endif(${package}_FOUND OR ${PKG}_FOUND)
-    endif(YARP_USE_${PKG})
-
-    unset(YARP_USE_SYSTEM_${PKG} CACHE)
-
+    # YARP_USE_${PKG}
+    cmake_dependent_option(YARP_USE_${PKG} "Use package ${package}" TRUE
+                           YARP_HAS_SYSTEM_${PKG} FALSE)
     mark_as_advanced(YARP_USE_${package})
 
+    # YARP_USE_SYSTEM_${PKG}
+    set(YARP_USE_SYSTEM_${PKG} ${YARP_USE_${PKG}} CACHE INTERNAL "Use system-installed ${package}, rather than a private copy (recommended)" FORCE)
+
+    # YARP_HAS_${PKG}
+    if(${YARP_HAS_SYSTEM_${PKG}})
+        set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
+    endif()
+
     #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_SYSTEM_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
 
 endmacro (checkandset_dependency)
@@ -57,27 +60,29 @@ macro(checkbuildandset_dependency package)
 
     string(TOUPPER ${package} PKG)
 
-    set(YARP_USE_${PKG} TRUE CACHE BOOL "Use package ${package}")
-    mark_as_advanced(YARP_USE_${PKG})
-
+    # YARP_HAS_SYSTEM_${PKG}
     if (${package}_FOUND OR ${PKG}_FOUND)
-        set(YARP_USE_SYSTEM_${PKG} TRUE CACHE BOOL "Use system-installed ${package}, rather than a private copy")
-        mark_as_advanced(YARP_USE_SYSTEM_${PKG})
+        set(YARP_HAS_SYSTEM_${PKG} TRUE)
     else (${package}_FOUND OR ${PKG}_FOUND)
-        # If package was not found we force it to be built
-        unset(YARP_USE_SYSTEM_${PKG} CACHE)
+        set(YARP_HAS_SYSTEM_${PKG} FALSE)
     endif (${package}_FOUND OR ${PKG}_FOUND)
 
-    if(YARP_USE_${PKG})
-        set(YARP_HAS_${PKG} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
-    else(YARP_USE_${PKG})
-        set(YARP_HAS_${PKG} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
-    endif(YARP_USE_${PKG})
+    # YARP_USE_${PKG}
+    option(YARP_USE_${PKG} "Use package ${package}" TRUE)
+    mark_as_advanced(YARP_USE_${PKG})
 
+    # YARP_USE_SYSTEM_${PKG}
+    cmake_dependent_option(YARP_USE_SYSTEM_${PKG} "Use system-installed ${package}, rather than a private copy (recommended)" TRUE
+                           "YARP_HAS_SYSTEM_${PKG};YARP_USE_${PKG}" FALSE)
+    mark_as_advanced(YARP_USE_SYSTEM_${PKG})
+
+    # YARP_HAS_${PKG}
+    set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
 
     #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_SYSTEM_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
 
 endmacro(checkbuildandset_dependency)
@@ -120,22 +125,21 @@ macro(print_dependency package)
 
     string(TOUPPER ${package} PKG)
 
+#    message("YARP_HAS_SYSTEM_${PKG} = ${YARP_HAS_SYSTEM_${PKG}}")
+#    message("YARP_USE_${PKG} = ${YARP_USE_${PKG}}")
+#    message("YARP_USE_SYSTEM_${PKG} = ${YARP_USE_SYSTEM_${PKG}}")
+#    message("YARP_HAS_${PKG} = ${YARP_HAS_${PKG}}")
     if(NOT YARP_USE_${PKG})
-        message(STATUS "${package}: disabled")
-    elseif(NOT YARP_USE_SYSTEM_${PKG})
-        if(NOT YARP_HAS_${PKG})
-            message(STATUS "${package}: compiling (not found)")
-        else()
-            message(STATUS "${package}: compiling (system package disabled)")
-        endif()
-    elseif(YARP_HAS_${PKG})
-        message(STATUS "${package}: found")
-    else(NOT YARP_USE_${PKG})
-        message(STATUS "${package}: not found")
-    endif(NOT YARP_USE_${PKG})
-#    message(STATUS "YARP_USE_${PKG} = ${YARP_USE_${PKG}}")
-#    message(STATUS "YARP_HAS_${PKG} = ${YARP_HAS_${PKG}}")
-#    message(STATUS "YARP_USE_SYSTEM_${PKG} = ${YARP_USE_SYSTEM_${PKG}}")
+        message("${package}: disabled")
+    elseif(NOT YARP_HAS_${PKG})
+        message("${package}: not found")
+    elseif(YARP_HAS_SYSTEM_${PKG} AND YARP_USE_SYSTEM_${PKG})
+        message("${package}: found")
+    elseif(YARP_HAS_SYSTEM_${PKG})
+        message("${package}: compiling (system package disabled)")
+    else()
+        message("${package}: compiling (not found)")
+    endif()
 
 endmacro(print_dependency)
 
