@@ -39,6 +39,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Name.h
                  include/yarp/os/NameSpace.h
                  include/yarp/os/NameStore.h
+                 include/yarp/os/NestedContact.h
                  include/yarp/os/NetFloat32.h
                  include/yarp/os/NetFloat64.h
                  include/yarp/os/NetInt16.h
@@ -221,6 +222,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NameServer.cpp
                  src/NameSpace.cpp
                  src/NameStore.cpp
+                 src/NestedContact.cpp
                  src/NetFloat32.cpp
                  src/NetFloat64.cpp
                  src/NetInt16.cpp
