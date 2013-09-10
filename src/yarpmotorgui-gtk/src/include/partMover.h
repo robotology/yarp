@@ -110,11 +110,11 @@ class partMover{
   static void dis_click(GtkButton *button, gtkClassData* currentClassData);
   static void calib_click(GtkButton *button, gtkClassData* currentClassData);
   static void home_click(GtkButton *button, gtkClassData* currentClassData);
-  static void line_click(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gtkClassData* currentClassData);
+  static gboolean line_click(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gtkClassData* currentClassData);
   static GtkTreeModel * refresh_position_list_model(partMover* currentPartMover);
   static void add_columns (GtkTreeView *treeview, gtkClassData* currentClassData);
-  static void edited_sequence (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData);
-  static void edited_timing (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData);
+  static gboolean edited_sequence (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData);
+  static gboolean edited_timing (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData);
   static bool sequence_iterator(partMover* currentPart);
   static bool sequence_iterator_time(partMover* currentPart);
   static int get_index_selection(partMover* currentPart);
@@ -122,13 +122,13 @@ class partMover{
   static void control_mode_click(GtkButton *button, GdkEventButton *event, gtkClassData* currentClassData);
   static void table_open(GtkButton *button, gtkClassData* currentClassData);
 
-  static bool view_onPopupMenu (GtkWidget *treeview, gpointer userdata);
-  static bool view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
-  static void view_popup_menu_onEdit   (GtkWidget *menuitem, gpointer userdata );
-  static void view_popup_menu_onErase  (GtkWidget *menuitem, gpointer userdata );
-  static void view_popup_menu_onCopy   (GtkWidget *menuitem, gpointer userdata );
-  static void view_popup_menu_onInsert (GtkWidget *menuitem, gpointer userdata );
-  static void view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
+  static gboolean view_onPopupMenu (GtkWidget *treeview, gpointer userdata);
+  static gboolean view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
+  static gboolean view_popup_menu_onEdit   (GtkWidget *menuitem, void* userdata );
+  static gboolean view_popup_menu_onErase  (GtkWidget *menuitem, void* userdata );
+  static gboolean view_popup_menu_onCopy   (GtkWidget *menuitem, void* userdata );
+  static gboolean view_popup_menu_onInsert (GtkWidget *menuitem, void* userdata );
+  static gboolean view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
 
 
 
@@ -188,6 +188,13 @@ struct gtkClassData
 {
   int *indexPointer;
   partMover* partPointer;
+};
+
+struct gtkClassDataTree
+{
+  int *indexPointer;
+  partMover* partPointer;
+  GtkWidget* widget;
 };
 
 //Control Modes

@@ -55,7 +55,7 @@ static void destroy_win (GtkButton *button, GtkWindow *window)
  * position in the correponding list position
  */
 
-void partMover::line_click(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gtkClassData* currentClassData)
+gboolean partMover::line_click(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gtkClassData* currentClassData)
 {
 
   partMover *currentPart = currentClassData->partPointer;
@@ -89,7 +89,7 @@ void partMover::line_click(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeVie
   gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_position_list_model(currentPart));
   gtk_widget_draw(GTK_WIDGET(tree_view), NULL);
 	
-  return;
+  return false;
 }
 
 /* 
@@ -164,7 +164,7 @@ GtkTreeModel * partMover::refresh_position_list_model(partMover* currentPart)
  * and redisplay the list
  */
 
-void partMover::edited_sequence (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData)
+gboolean partMover::edited_sequence (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData)
 {
 
   //fprintf(stderr, "Sequence was edited \n");
@@ -183,13 +183,13 @@ void partMover::edited_sequence (GtkCellRendererText *cell, GtkTreePath *path_st
   GtkWidget *tree_view = currentPart->treeview;
 
   gint  new_val = atoi (new_text);
-  if	 (new_val <-1 || new_val>= NUMBER_OF_STORED) return;
+  if	 (new_val <-1 || new_val>= NUMBER_OF_STORED) return true;
   if	 (new_val == NUMBER_OF_STORED -1)
     {
 	 dialog_message(GTK_MESSAGE_ERROR,
 			      (char *) "Please do not use the entire table (leave at least one row). Otherwise increase NUMBER_OF_STORED", 
 			      (char *) "Unfortunately maximum sequence length is not set at runtime (recompile)", true);
-	 return;
+	 return true;
     }
   //---
 	
@@ -200,13 +200,14 @@ void partMover::edited_sequence (GtkCellRendererText *cell, GtkTreePath *path_st
 	
   gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_position_list_model(currentPart));
   gtk_widget_draw(tree_view, NULL);
+  return true;
 }
 
 /*
  * If time has been edited stores the new time
  * and redisplay the list
  */
-void partMover::edited_timing (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData)
+gboolean partMover::edited_timing (GtkCellRendererText *cell, GtkTreePath *path_str, gchar *new_text, gtkClassData* currentClassData)
 {
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
@@ -239,6 +240,7 @@ void partMover::edited_timing (GtkCellRendererText *cell, GtkTreePath *path_str,
   //redisplay list
   gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_position_list_model(currentPart));
   gtk_widget_draw(tree_view, NULL);
+  return true;
 }
 
 
@@ -359,39 +361,47 @@ int partMover::get_index_selection(partMover *currentPart)
  * Open table
  */
 
-void partMover::view_popup_menu_onEdit (GtkWidget *menuitem, gpointer userdata)
+gboolean partMover::view_popup_menu_onEdit (GtkWidget *menuitem, void* userdata)
 {
     /* we passed the view as userdata when we connected the signal */
-    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
+    gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
+    GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
     
     g_print ("Do something!\n");
+    return true;
 }
 
-void partMover::view_popup_menu_onErase (GtkWidget *menuitem, gpointer userdata)
+gboolean partMover::view_popup_menu_onErase (GtkWidget *menuitem, void* userdata)
 {
     /* we passed the view as userdata when we connected the signal */
-    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
-   
+    gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
+    GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
+
     g_print ("Erasing line!\n");
+    return true;
 }
 
-void partMover::view_popup_menu_onInsert (GtkWidget *menuitem, gpointer userdata)
+gboolean partMover::view_popup_menu_onInsert (GtkWidget *menuitem, void* userdata)
 {
     /* we passed the view as userdata when we connected the signal */
-    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
- 
+    gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
+    GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
+
     g_print ("Do something!\n");
+    return true;
 }
 
-void partMover::view_popup_menu_onCopy (GtkWidget *menuitem, gpointer userdata)
+gboolean partMover::view_popup_menu_onCopy (GtkWidget *menuitem, void* userdata)
 {
     /* we passed the view as userdata when we connected the signal */
-    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
- 
+    gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
+    GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
+
     g_print ("Do something!\n");
+    return true;
 }
 
-void partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
+gboolean partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
 {
     GtkWidget *menu;
     GtkWidget *menuitem_edit;
@@ -406,10 +416,16 @@ void partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpo
     menuitem_copy   = gtk_menu_item_new_with_label("Insert before");
     menuitem_insert = gtk_menu_item_new_with_label("Erase row");
  
-    g_signal_connect(menuitem_edit,   "activate", (GCallback) view_popup_menu_onEdit, treeview  );
-    g_signal_connect(menuitem_erase,  "activate", (GCallback) view_popup_menu_onErase, treeview );
-    g_signal_connect(menuitem_copy,   "activate", (GCallback) view_popup_menu_onCopy, treeview  );
-    g_signal_connect(menuitem_insert, "activate", (GCallback) view_popup_menu_onInsert, treeview);
+    gtkClassData* g = (gtkClassData*)(userdata);
+    gtkClassDataTree t;
+    t.indexPointer=g->indexPointer;
+    t.partPointer=g->partPointer;
+    t.widget=treeview;
+
+    g_signal_connect(menuitem_edit,   "activate", (GCallback) view_popup_menu_onEdit,   &t );
+    g_signal_connect(menuitem_erase,  "activate", (GCallback) view_popup_menu_onErase,  &t );
+    g_signal_connect(menuitem_copy,   "activate", (GCallback) view_popup_menu_onCopy,   &t );
+    g_signal_connect(menuitem_insert, "activate", (GCallback) view_popup_menu_onInsert, &t );
  
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_edit);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_copy);
@@ -423,9 +439,10 @@ void partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpo
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
                    (event != NULL) ? event->button : 0,
                    gdk_event_get_time((GdkEvent*)event));
-  }
+    return true;
+}
  
-bool partMover::view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
+gboolean partMover::view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
 {
     /* single click with the right mouse button? */
     if (event->type == GDK_BUTTON_PRESS  &&  event->button == 3)
@@ -470,7 +487,7 @@ bool partMover::view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event
   }
  
  
-bool partMover::view_onPopupMenu (GtkWidget *treeview, gpointer userdata)
+gboolean partMover::view_onPopupMenu (GtkWidget *treeview, gpointer userdata)
 {
     view_popup_menu(treeview, NULL, userdata);
     return TRUE; /* we handled this */
@@ -517,9 +534,11 @@ void partMover::table_open(GtkButton *button, gtkClassData* currentClassData)
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (myTreeview), TRUE);
   treeSelection2 = gtk_tree_view_get_selection(GTK_TREE_VIEW(myTreeview));
   gtk_tree_selection_set_mode(treeSelection2, GTK_SELECTION_SINGLE);
+  //g_signal_connect(myTreeview, "button-press-event", G_CALLBACK (view_onButtonPressed), currentClassData);
+  //g_signal_connect(myTreeview, "popup-menu", G_CALLBACK (view_onPopupMenu), currentClassData);
+  g_signal_connect (myTreeview, "button-press-event", G_CALLBACK (view_onButtonPressed), currentClassData);
   g_signal_connect (myTreeview, "row-activated", G_CALLBACK (line_click), currentClassData);
-  g_signal_connect(myTreeview, "button-press-event", G_CALLBACK (view_onButtonPressed), currentClassData);
-  g_signal_connect(myTreeview, "popup-menu", G_CALLBACK (view_onPopupMenu), currentClassData);
+  //g_signal_connect(myTreeview, "popup-menu", G_CALLBACK (view_onPopupMenu), currentClassData);
 
 				
   g_object_unref (myModel);
