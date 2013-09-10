@@ -377,7 +377,37 @@ gboolean partMover::view_popup_menu_onErase (GtkWidget *menuitem, void* userdata
     gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
     GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
 
-    g_print ("Erasing line!\n");
+    GtkTreeSelection *selection;
+    selection = gtk_tree_view_get_selection(treeview);
+    
+    GtkTreeModel *model;
+    GtkTreePath *path;
+    GtkTreeIter iter;
+
+    g_print("finding row\n");
+    if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), &model, &iter))
+    {  
+        GtkTreePath *path;
+         g_print("finding row\n");
+        path = gtk_tree_model_get_path(model, &iter);
+         g_print("finding row\n");
+        int n = gtk_tree_path_get_indices(path)[0];
+        g_print ("selected ros: %d\n", n);
+
+        for (int i=n; i<NUMBER_OF_STORED-1; i++)
+        {
+            w->partPointer->SEQUENCE[i]=w->partPointer->SEQUENCE[i+1];
+            w->partPointer->TIMING[i]=w->partPointer->TIMING[i+1];
+            w->partPointer->STORED_POS[i]=w->partPointer->STORED_POS[i+1];
+            w->partPointer->STORED_VEL[i]=w->partPointer->STORED_VEL[i+1];
+        }
+
+        g_print ("Erasing line!\n");
+
+        gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
+        gtk_widget_draw(GTK_WIDGET(treeview), NULL);
+    }
+    
     return true;
 }
 
@@ -387,7 +417,37 @@ gboolean partMover::view_popup_menu_onInsert (GtkWidget *menuitem, void* userdat
     gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
     GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
 
-    g_print ("Do something!\n");
+    GtkTreeSelection *selection;
+    selection = gtk_tree_view_get_selection(treeview);
+    
+    GtkTreeModel *model;
+    GtkTreePath *path;
+    GtkTreeIter iter;
+
+    g_print("finding row\n");
+    if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), &model, &iter))
+    {  
+        GtkTreePath *path;
+         g_print("finding row\n");
+        path = gtk_tree_model_get_path(model, &iter);
+         g_print("finding row\n");
+        int n = gtk_tree_path_get_indices(path)[0];
+        g_print ("selected ros: %d\n", n);
+
+        for (int i=n; i<NUMBER_OF_STORED-1; i++)
+        {
+            w->partPointer->SEQUENCE[i]=w->partPointer->SEQUENCE[i+1];
+            w->partPointer->TIMING[i]=w->partPointer->TIMING[i+1];
+            w->partPointer->STORED_POS[i]=w->partPointer->STORED_POS[i+1];
+            w->partPointer->STORED_VEL[i]=w->partPointer->STORED_VEL[i+1];
+        }
+
+        g_print ("Erasing line!\n");
+
+        gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
+        gtk_widget_draw(GTK_WIDGET(treeview), NULL);
+    }
+    
     return true;
 }
 
@@ -397,9 +457,38 @@ gboolean partMover::view_popup_menu_onCopy (GtkWidget *menuitem, void* userdata)
     gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
     GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
 
-    g_print ("Do something!\n");
-    return true;
-}
+    GtkTreeSelection *selection;
+    selection = gtk_tree_view_get_selection(treeview);
+    
+    GtkTreeModel *model;
+    GtkTreePath *path;
+    GtkTreeIter iter;
+
+    g_print("finding row\n");
+    if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), &model, &iter))
+    {  
+        GtkTreePath *path;
+         g_print("finding row\n");
+        path = gtk_tree_model_get_path(model, &iter);
+         g_print("finding row\n");
+        int n = gtk_tree_path_get_indices(path)[0];
+        g_print ("selected ros: %d\n", n);
+
+        for (int i=n; i<NUMBER_OF_STORED-1; i++)
+        {
+            w->partPointer->SEQUENCE[i]=w->partPointer->SEQUENCE[i+1];
+            w->partPointer->TIMING[i]=w->partPointer->TIMING[i+1];
+            w->partPointer->STORED_POS[i]=w->partPointer->STORED_POS[i+1];
+            w->partPointer->STORED_VEL[i]=w->partPointer->STORED_VEL[i+1];
+        }
+
+        g_print ("Erasing line!\n");
+
+        gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
+        gtk_widget_draw(GTK_WIDGET(treeview), NULL);
+    }
+    
+    return true;}
 
 gboolean partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
 {
@@ -411,21 +500,21 @@ gboolean partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event,
  
     menu = gtk_menu_new();
  
-    menuitem_edit   = gtk_menu_item_new_with_label("Edit row");
-    menuitem_erase  = gtk_menu_item_new_with_label("Copy row");
-    menuitem_copy   = gtk_menu_item_new_with_label("Insert before");
-    menuitem_insert = gtk_menu_item_new_with_label("Erase row");
+    menuitem_edit    = gtk_menu_item_new_with_label("Edit row");
+    menuitem_copy    = gtk_menu_item_new_with_label("Copy row");
+    menuitem_insert  = gtk_menu_item_new_with_label("Insert before");
+    menuitem_erase   = gtk_menu_item_new_with_label("Erase row");
  
     gtkClassData* g = (gtkClassData*)(userdata);
-    gtkClassDataTree t;
-    t.indexPointer=g->indexPointer;
-    t.partPointer=g->partPointer;
-    t.widget=treeview;
+    gtkClassDataTree* t = new gtkClassDataTree;
+    t->indexPointer=g->indexPointer;
+    t->partPointer=g->partPointer;
+    t->widget=treeview;
 
-    g_signal_connect(menuitem_edit,   "activate", (GCallback) view_popup_menu_onEdit,   &t );
-    g_signal_connect(menuitem_erase,  "activate", (GCallback) view_popup_menu_onErase,  &t );
-    g_signal_connect(menuitem_copy,   "activate", (GCallback) view_popup_menu_onCopy,   &t );
-    g_signal_connect(menuitem_insert, "activate", (GCallback) view_popup_menu_onInsert, &t );
+    g_signal_connect(menuitem_edit,   "activate", (GCallback) view_popup_menu_onEdit,   t );
+    g_signal_connect(menuitem_copy,   "activate", (GCallback) view_popup_menu_onCopy,   t );
+    g_signal_connect(menuitem_insert, "activate", (GCallback) view_popup_menu_onInsert, t );
+    g_signal_connect(menuitem_erase,  "activate", (GCallback) view_popup_menu_onErase,  t );
  
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_edit);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_copy);
