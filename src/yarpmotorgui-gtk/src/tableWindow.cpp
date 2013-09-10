@@ -381,7 +381,6 @@ gboolean partMover::view_popup_menu_onErase (GtkWidget *menuitem, void* userdata
     selection = gtk_tree_view_get_selection(treeview);
     
     GtkTreeModel *model;
-    GtkTreePath *path;
     GtkTreeIter iter;
 
     g_print("finding row\n");
@@ -421,7 +420,6 @@ gboolean partMover::view_popup_menu_onInsert (GtkWidget *menuitem, void* userdat
     selection = gtk_tree_view_get_selection(treeview);
     
     GtkTreeModel *model;
-    GtkTreePath *path;
     GtkTreeIter iter;
 
     g_print("finding row\n");
@@ -461,7 +459,6 @@ gboolean partMover::view_popup_menu_onCopy (GtkWidget *menuitem, void* userdata)
     selection = gtk_tree_view_get_selection(treeview);
     
     GtkTreeModel *model;
-    GtkTreePath *path;
     GtkTreeIter iter;
 
     g_print("finding row\n");
