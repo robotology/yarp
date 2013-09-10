@@ -10,7 +10,7 @@
 #ifndef _YARP2_NESTEDCONTACT_
 #define _YARP2_NESTEDCONTACT_
 
-#include <yarp/os/Contact.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
@@ -28,9 +28,21 @@ class YARP_OS_API yarp::os::NestedContact {
 public:
     NestedContact() {}
 
-    NestedContact(const char *nFullName);
+    NestedContact(const ConstString& nFullName);
 
-    bool fromString(const char *nFullName);
+    bool fromString(const ConstString& nFullName);
+
+    void setTypeName(const ConstString& nWireType) {
+        wireType = nWireType;
+    }
+
+    void setCategoryWrite() {
+        category = "+";
+    }
+
+    void setCategoryRead() {
+        category = "-";
+    }
 
     ConstString getFullName() const {
         return fullName;
@@ -47,6 +59,15 @@ public:
         return category;
     }
 
+    ConstString getTypeName() const {
+        return wireType;
+    }
+
+    ConstString getTypeNameStar() const {
+        return (wireType!="")?wireType:"*";
+    }
+
+
     bool isNested() const {
         return nestedName!="";
     }
@@ -56,6 +77,7 @@ private:
     ConstString nodeName;
     ConstString nestedName;
     ConstString category;
+    ConstString wireType;
 };
 
 #endif

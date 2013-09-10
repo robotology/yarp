@@ -12,19 +12,20 @@
 
 using namespace yarp::os;
 
-NestedContact::NestedContact(const char *nFullName) {
+NestedContact::NestedContact(const ConstString& nFullName) {
     fromString(nFullName);
 }
 
-bool NestedContact::fromString(const char *nFullName) {
+bool NestedContact::fromString(const ConstString& nFullName) {
     fullName = nFullName;
-    ConstString::size_type idx = fullName.find("#");
+    nodeName = nFullName;
+    ConstString::size_type idx = fullName.find("=");
     if (idx==ConstString::npos) return false;
     nodeName = fullName.substr(0,idx);
     nestedName = fullName.substr(idx+1,fullName.length());
     idx = nestedName.find("/");
     if (idx==0) return true;
     category = nestedName.substr(0,idx);
-    nestedName = nestedName.substr(idx+1,nestedName.length());
+    nestedName = nestedName.substr(idx,nestedName.length());
     return true;
 }
