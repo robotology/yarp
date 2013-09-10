@@ -122,6 +122,17 @@ class partMover{
   static void control_mode_click(GtkButton *button, GdkEventButton *event, gtkClassData* currentClassData);
   static void table_open(GtkButton *button, gtkClassData* currentClassData);
 
+  static bool view_onPopupMenu (GtkWidget *treeview, gpointer userdata);
+  static bool view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
+  static void view_popup_menu_onEdit   (GtkWidget *menuitem, gpointer userdata );
+  static void view_popup_menu_onErase  (GtkWidget *menuitem, gpointer userdata );
+  static void view_popup_menu_onCopy   (GtkWidget *menuitem, gpointer userdata );
+  static void view_popup_menu_onInsert (GtkWidget *menuitem, gpointer userdata );
+  static void view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
+
+
+
+
  public:
   GtkWidget *button1;
   GtkWidget *button2;

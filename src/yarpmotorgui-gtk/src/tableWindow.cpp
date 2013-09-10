@@ -359,6 +359,123 @@ int partMover::get_index_selection(partMover *currentPart)
  * Open table
  */
 
+void partMover::view_popup_menu_onEdit (GtkWidget *menuitem, gpointer userdata)
+{
+    /* we passed the view as userdata when we connected the signal */
+    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
+    
+    g_print ("Do something!\n");
+}
+
+void partMover::view_popup_menu_onErase (GtkWidget *menuitem, gpointer userdata)
+{
+    /* we passed the view as userdata when we connected the signal */
+    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
+   
+    g_print ("Erasing line!\n");
+}
+
+void partMover::view_popup_menu_onInsert (GtkWidget *menuitem, gpointer userdata)
+{
+    /* we passed the view as userdata when we connected the signal */
+    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
+ 
+    g_print ("Do something!\n");
+}
+
+void partMover::view_popup_menu_onCopy (GtkWidget *menuitem, gpointer userdata)
+{
+    /* we passed the view as userdata when we connected the signal */
+    GtkTreeView *treeview = GTK_TREE_VIEW(userdata);
+ 
+    g_print ("Do something!\n");
+}
+
+void partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
+{
+    GtkWidget *menu;
+    GtkWidget *menuitem_edit;
+    GtkWidget *menuitem_erase;
+    GtkWidget *menuitem_copy;
+    GtkWidget *menuitem_insert;
+ 
+    menu = gtk_menu_new();
+ 
+    menuitem_edit   = gtk_menu_item_new_with_label("Edit row");
+    menuitem_erase  = gtk_menu_item_new_with_label("Copy row");
+    menuitem_copy   = gtk_menu_item_new_with_label("Insert before");
+    menuitem_insert = gtk_menu_item_new_with_label("Erase row");
+ 
+    g_signal_connect(menuitem_edit,   "activate", (GCallback) view_popup_menu_onEdit, treeview  );
+    g_signal_connect(menuitem_erase,  "activate", (GCallback) view_popup_menu_onErase, treeview );
+    g_signal_connect(menuitem_copy,   "activate", (GCallback) view_popup_menu_onCopy, treeview  );
+    g_signal_connect(menuitem_insert, "activate", (GCallback) view_popup_menu_onInsert, treeview);
+ 
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_edit);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_copy);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_insert);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_erase); 
+
+    gtk_widget_show_all(menu);
+ 
+    /* Note: event can be NULL here when called from view_onPopupMenu;
+     *  gdk_event_get_time() accepts a NULL argument */
+    gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+                   (event != NULL) ? event->button : 0,
+                   gdk_event_get_time((GdkEvent*)event));
+  }
+ 
+bool partMover::view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
+{
+    /* single click with the right mouse button? */
+    if (event->type == GDK_BUTTON_PRESS  &&  event->button == 3)
+    {
+      g_print ("Single right click on the tree view.\n");
+ 
+      /* optional: select row if no row is selected or only
+       *  one other row is selected (will only do something
+       *  if you set a tree selection mode as described later
+       *  in the tutorial) */
+      if (1)
+      {
+        GtkTreeSelection *selection;
+ 
+        selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+ 
+        /* Note: gtk_tree_selection_count_selected_rows() does not
+         *   exist in gtk+-2.0, only in gtk+ >= v2.2 ! */
+        if (gtk_tree_selection_count_selected_rows(selection)  <= 1)
+        {
+           GtkTreePath *path;
+ 
+           /* Get tree path for row that was clicked */
+           if (gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview),
+                                             (gint) event->x, 
+                                             (gint) event->y,
+                                             &path, NULL, NULL, NULL))
+           {
+             gtk_tree_selection_unselect_all(selection);
+             gtk_tree_selection_select_path(selection, path);
+             gtk_tree_path_free(path);
+           }
+        }
+      } /* end of optional bit */
+ 
+      view_popup_menu(treeview, event, userdata);
+ 
+      return TRUE; /* we handled this */
+    }
+ 
+    return FALSE; /* we did not handle this */
+  }
+ 
+ 
+bool partMover::view_onPopupMenu (GtkWidget *treeview, gpointer userdata)
+{
+    view_popup_menu(treeview, NULL, userdata);
+    return TRUE; /* we handled this */
+}
+
 void partMover::table_open(GtkButton *button, gtkClassData* currentClassData)
 {
   partMover *currentPart = currentClassData->partPointer;
@@ -401,6 +518,9 @@ void partMover::table_open(GtkButton *button, gtkClassData* currentClassData)
   treeSelection2 = gtk_tree_view_get_selection(GTK_TREE_VIEW(myTreeview));
   gtk_tree_selection_set_mode(treeSelection2, GTK_SELECTION_SINGLE);
   g_signal_connect (myTreeview, "row-activated", G_CALLBACK (line_click), currentClassData);
+  g_signal_connect(myTreeview, "button-press-event", G_CALLBACK (view_onButtonPressed), currentClassData);
+  g_signal_connect(myTreeview, "popup-menu", G_CALLBACK (view_onPopupMenu), currentClassData);
+
 				
   g_object_unref (myModel);
   gtk_container_add (GTK_CONTAINER (sw), myTreeview);
