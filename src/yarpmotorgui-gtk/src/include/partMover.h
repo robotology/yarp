@@ -72,6 +72,12 @@ class partMover{
   double    *TIMING;
   int *index;
 
+  //this value are used for copy/paste operations
+  double  *COPY_STORED_POS;
+  double  *COPY_STORED_VEL;
+  int        COPY_SEQUENCE;
+  double       COPY_TIMING;
+
   GtkWidget **sliderVelArray;
   GtkWidget **sliderArray;
   GtkWidget **currPosArray;

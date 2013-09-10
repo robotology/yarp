@@ -111,6 +111,11 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
     interfaceError = true;
   }
 
+  COPY_STORED_POS=0;
+  COPY_STORED_VEL=0;
+  COPY_SEQUENCE=0;
+  COPY_TIMING=0;
+
   if (interfaceError == false)
     {
       fprintf(stderr, "Allocating memory \n");

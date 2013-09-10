@@ -474,18 +474,34 @@ gboolean partMover::view_popup_menu_onCopy (GtkWidget *menuitem, void* userdata)
         int n = gtk_tree_path_get_indices(path)[0];
         g_print ("selected ros: %d\n", n);
 
-        for (int i=n; i<NUMBER_OF_STORED-1; i++)
+        w->partPointer->COPY_SEQUENCE = w->partPointer->SEQUENCE[n];
+        w->partPointer->COPY_TIMING   = w->partPointer->TIMING[n];
+
+        if (w->partPointer->COPY_STORED_POS !=0)
+            delete w->partPointer->COPY_STORED_POS;
+
+        if (w->partPointer->COPY_STORED_VEL !=0)
+            delete w->partPointer->COPY_STORED_VEL;
+
+        int njoints = 0;
+        w->partPointer->iencs->getAxes(&njoints);
+        if (njoints==0)
         {
-            w->partPointer->SEQUENCE[i]=w->partPointer->SEQUENCE[i+1];
-            w->partPointer->TIMING[i]=w->partPointer->TIMING[i+1];
-            w->partPointer->STORED_POS[i]=w->partPointer->STORED_POS[i+1];
-            w->partPointer->STORED_VEL[i]=w->partPointer->STORED_VEL[i+1];
+            g_print ("error copying line!\n");
+            return true;
         }
 
-        g_print ("Erasing line!\n");
+        w->partPointer->COPY_STORED_VEL = new double [njoints];
+        w->partPointer->COPY_STORED_POS = new double [njoints];
 
-        gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
-        gtk_widget_draw(GTK_WIDGET(treeview), NULL);
+        for (int j=0; j<njoints; j++)
+        {
+            w->partPointer->COPY_STORED_POS[j]=w->partPointer->STORED_POS[n][j];
+            w->partPointer->COPY_STORED_VEL[j]=w->partPointer->STORED_VEL[n][j];
+        }
+
+        g_print ("line copied!\n");
+
     }
     
     return true;}
