@@ -114,11 +114,18 @@ void partMover::save_to_file(char* filenameIn, partMover* currentPart)
   char* loc = setlocale(LC_NUMERIC, NULL); 
   setlocale(LC_NUMERIC, "C"); 
 
-  fprintf(stderr, "Start saving file\n");
-  strcpy(filename, filenameIn);
+  int len = strlen (filenameIn);
+  int len2=0;
+  for (len2=0; len2<len; len2++) 
+      if (filenameIn[len2]=='.') break;
+  strncpy(filename, filenameIn, len2);
+  filename[len2]=0;
   strcat(filename, ".pos");
-  strcpy(filenamePart, strcat(filename, currentPart->partLabel));
-  //fprintf(stderr, "%s", filenamePart);
+  strcat(filename, currentPart->partLabel);
+  strcpy(filenamePart, filename);
+  
+  fprintf(stderr, "Saving file %s \n", filenamePart);
+  
   outputFile = fopen(filenamePart,"w");
 	
   for (j = 0; j < NUMBER_OF_STORED; j++)
