@@ -611,6 +611,18 @@ public:
             checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
         }
 
+        {
+            ResourceFinder rf;
+            rf.setDefaultContext("shadowtest");
+            rf.setDefaultConfigFile("noshadow.ini");
+            rf.configure(NULL,0,NULL);
+            checkEqual(rf.find("magic_number").asInt(),5002,"noshadow.ini found as correct location");
+            Property p;
+            ResourceFinderOptions opts;
+            checkTrue(rf.readConfig(p,"shadow.ini",opts),"found shadow.ini");
+            checkEqual(p.find("magic_number").asInt(),5001,"shadow.ini found as correct location");
+        }
+
         breakDownTestArea();
     }
 

@@ -136,10 +136,14 @@ private:
     yarp::os::Property cache;
     bool verbose;
     bool quiet;
+    bool mainActive;
+    bool useNearMain;
 public:
     ResourceFinderHelper() {
         verbose = false;
         quiet = false;
+        mainActive = false;
+        useNearMain = false;
     }
 
     bool addAppName(const char *appName) {
@@ -352,7 +356,9 @@ public:
                 fprintf(RTARGET,"||| default config file specified as %s\n",
                         from.c_str());
             }
+            mainActive = true;
             ConstString corrected = findFile(config,from.c_str(),NULL);
+            mainActive = false;
             if (corrected!="") {
                 from = corrected;
             }
@@ -574,12 +580,13 @@ public:
             }
             ConstString str = check(getPwd(),resourceType,"",name,isDir,doc,"pwd");
             if (str!="") {
+                if (mainActive) useNearMain = true;
                 addString(output,str);
                 if (justTop) return;
             }
         }
 
-        if (locs & ResourceFinderOptions::NearMainConfig) {
+        if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
             if (configFilePath!="") {
                 ConstString str = check(configFilePath.c_str(),resourceType,"",name,isDir,doc,"defaultConfigFile path");
                 if (str!="") {
