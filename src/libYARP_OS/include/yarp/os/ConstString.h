@@ -106,6 +106,9 @@ public:
     bool operator ==(const char *str) const;
     bool operator !=(const char *str) const;
 
+    bool operator <=(const ConstString& alt) const;
+    bool operator >=(const ConstString& alt) const;
+
     ConstString operator + (char ch) const;
     ConstString operator + (const char *str) const;
     ConstString operator + (const ConstString& alt) const;

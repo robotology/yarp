@@ -107,6 +107,14 @@ size_t ConstString::length() const {
     return HELPER(implementation).length();
 }
 
+bool ConstString::operator <=(const ConstString& alt) const {
+    return HELPER(implementation) <= HELPER(alt.implementation);
+}
+
+bool ConstString::operator >=(const ConstString& alt) const {
+    return HELPER(implementation) >= HELPER(alt.implementation);
+}
+
 ConstString ConstString::operator + (char ch) const {
     std::string helper(HELPER(implementation));
     helper += ch;
