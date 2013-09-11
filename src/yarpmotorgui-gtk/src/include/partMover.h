@@ -128,6 +128,7 @@ class partMover{
   static void control_mode_click(GtkButton *button, GdkEventButton *event, gtkClassData* currentClassData);
   static void table_open(GtkButton *button, gtkClassData* currentClassData);
 
+
   static gboolean view_onPopupMenu (GtkWidget *treeview, gpointer userdata);
   static gboolean view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
   static gboolean view_popup_menu_onEdit   (GtkWidget *menuitem, void* userdata );
@@ -137,7 +138,14 @@ class partMover{
   static gboolean view_popup_menu_onInsert (GtkWidget *menuitem, void* userdata );
   static gboolean view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
 
-
+ #define UPDATE_SEQUENCE_INDECES \
+ for (int k=0; k<NUMBER_OF_STORED; k++) \
+    { \
+        if (w->partPointer->SEQUENCE [k] != -1) \
+        { \
+            w->partPointer->SEQUENCE [k] = k; \
+        } \
+    } \
 
 
  public:

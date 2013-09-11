@@ -403,6 +403,7 @@ gboolean partMover::view_popup_menu_onErase (GtkWidget *menuitem, void* userdata
 
         g_print ("Erasing line!\n");
 
+        UPDATE_SEQUENCE_INDECES
         gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
         gtk_widget_draw(GTK_WIDGET(treeview), NULL);
     }
@@ -462,6 +463,8 @@ gboolean partMover::view_popup_menu_onInsert (GtkWidget *menuitem, void* userdat
                     w->partPointer->STORED_VEL[n][j] = w->partPointer->COPY_STORED_VEL[j];
                 }
                 g_print ("line pasted!\n");
+
+                UPDATE_SEQUENCE_INDECES
                 gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
                 gtk_widget_draw(GTK_WIDGET(treeview), NULL);
             }
@@ -508,6 +511,8 @@ gboolean partMover::view_popup_menu_onPaste (GtkWidget *menuitem, void* userdata
                     w->partPointer->STORED_VEL[n][j] = w->partPointer->COPY_STORED_VEL[j];
                 }
                 g_print ("line pasted!\n");
+
+                UPDATE_SEQUENCE_INDECES
                 gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
                 gtk_widget_draw(GTK_WIDGET(treeview), NULL);
             }
