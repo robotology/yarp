@@ -31,12 +31,12 @@ YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(laserHokuyo)
   add_subdirectory(kinect)
   add_subdirectory(openni2)
-<<<<<<< HEAD
-=======
 
+  # The dimax_u2c/blob is not exported in the tarball, therefore we
+  # disable the build if the folder does not exist
+  if(EXISTS ${CMAKE_CURRENT_DIRECTORY}/dimax_u2c/blob)
       add_subdirectory(dimax_u2c)
   endif()
->>>>>>> upstream/master
 
   # We can include remote directories as well - we specify a
   # local directory for producing binaries so there is no interference
@@ -77,3 +77,4 @@ set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpmod ${yarpmod_LIBRARIES})
 install(TARGETS yarpmod EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
 
 endif (CREATE_DEVICE_LIBRARY_MODULES)
+
