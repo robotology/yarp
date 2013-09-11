@@ -19,6 +19,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/impl/NameClient.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -364,6 +365,32 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
     PortCoreAdapter *currentCore = &(HELPER(implementation));
+    if (currentCore!=NULL) {
+        NestedContact nc;
+        nc.fromString(n);
+        if (nc.getNestedName()!="") {
+            if (nc.getCategory()=="") {
+                // we need to add in a category
+                ConstString cat = "";
+                if (currentCore->commitToRead) {
+                    cat = "-";
+                } else if (currentCore->commitToWrite) {
+                    cat = "+";
+                }
+                if (cat!="") {
+                    contact2 = contact2.addName(nc.getNodeName() +
+                                                "=" +
+                                                cat +
+                                                nc.getNestedName());
+                } else {
+                    YARP_SPRINTF1(Logger::get(),error,
+                                  "Port '%s' does not have a defined I/O direction",
+                                  n.c_str());
+                    return false;
+                }
+            }
+        }
+    }
 
     // Allow for open() to be called safely many times on the same Port
     if (currentCore->isOpened()) {
@@ -413,6 +440,12 @@ bool Port::open(const Contact& contact, bool registerName,
     core.setControlRegistration(registerName);
     success = (address.isValid()||local)&&(fakeName==NULL);
 
+    if (success) {
+        // create a node if needed
+        Nodes& nodes = NameClient::getNameClient().getNodes();
+        nodes.prepare(address.getRegName().c_str());
+    }
+
     ConstString blame = "invalid address";
     if (success) {
         success = core.listen(address,registerName);
@@ -460,6 +493,12 @@ bool Port::open(const Contact& contact, bool registerName,
                    ")");
     }
 
+    if (success) {
+        // create a node if needed
+        Nodes& nodes = NameClient::getNameClient().getNodes();
+        nodes.add(*this);
+    }
+
     return success;
 }
 
@@ -472,6 +511,11 @@ bool Port::addOutput(const ConstString& name, const ConstString& carrier) {
 }
 
 void Port::close() {
+    if (!NameClient::isClosed()) {
+        Nodes& nodes = NameClient::getNameClient().getNodes();
+        nodes.remove(*this);
+    }
+
     PortCoreAdapter& core = HELPER(implementation);
     core.finishReading();
     core.finishWriting();
@@ -483,6 +527,9 @@ void Port::close() {
 }
 
 void Port::interrupt() {
+    Nodes& nodes = NameClient::getNameClient().getNodes();
+    nodes.remove(*this);
+
     PortCoreAdapter& core = HELPER(implementation);
     core.interrupt();
 }
@@ -490,6 +537,8 @@ void Port::interrupt() {
 void Port::resume() {
     PortCoreAdapter& core = HELPER(implementation);
     core.resume();
+    Nodes& nodes = NameClient::getNameClient().getNodes();
+    nodes.add(*this);
 }
 
 

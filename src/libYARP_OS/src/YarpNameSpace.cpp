@@ -40,16 +40,55 @@ Contact YarpNameSpace::queryName(const ConstString& name) {
 
 
 Contact YarpNameSpace::registerName(const ConstString& name) {
-    NameClient& nic = HELPER(this);
-    return nic.registerName(name);
+    return registerContact(Contact::byName(name));
 }
 
 Contact YarpNameSpace::registerContact(const Contact& contact) {
     NameClient& nic = HELPER(this);
-    return nic.registerName(contact.getName().c_str(),contact);
+    Contact address = nic.registerName(contact.getName().c_str(),
+                                       contact);
+    if (address.isValid()) {
+        NestedContact nc;
+        nc.fromString(address.getRegName().c_str());
+        ConstString cat = nc.getCategory();
+        if (nc.getNestedName()!="") {
+            //bool service = (cat.find("1") != ConstString::npos);
+            bool publish = (cat.find("+") != ConstString::npos);
+            bool subscribe = (cat.find("-") != ConstString::npos);
+            ContactStyle style;
+            Contact c1 = Contact::byName(nc.getFullName());
+            Contact c2 = Contact::byName(ConstString("topic:/") + nc.getNestedName());
+            if (subscribe) {
+                style.persistenceType = ContactStyle::END_WITH_TO_PORT;
+                connectPortToTopic(c2,c1,style);
+            }
+            if (publish) {
+                style.persistenceType = ContactStyle::END_WITH_FROM_PORT;
+                connectPortToTopic(c1,c2,style);
+            }
+        }
+    }
+    return address;
 }
 
 Contact YarpNameSpace::unregisterName(const ConstString& name) {
+    NestedContact nc;
+    nc.fromString(name);
+    ConstString cat = nc.getCategory();
+    if (nc.getNestedName()!="") {
+        //bool service = (cat.find("1") != ConstString::npos);
+        bool publish = (cat.find("+") != ConstString::npos);
+        bool subscribe = (cat.find("-") != ConstString::npos);
+        ContactStyle style;
+        Contact c1 = Contact::byName(nc.getFullName());
+        Contact c2 = Contact::byName(ConstString("topic:/") + nc.getNestedName());
+        if (subscribe) {
+            disconnectPortFromTopic(c2,c1,style);
+        }
+        if (publish) {
+            disconnectPortFromTopic(c1,c2,style);
+        }
+    }
     NameClient& nic = HELPER(this);
     return nic.unregisterName(name);
 }

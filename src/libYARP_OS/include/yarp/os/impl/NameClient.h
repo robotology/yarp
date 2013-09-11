@@ -16,6 +16,8 @@
 #include <yarp/os/NameStore.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Nodes.h>
+#include <yarp/os/Network.h>
 
 namespace yarp {
     namespace os {
@@ -56,7 +58,12 @@ public:
         if (instance!=NULL) {
             delete instance;
             instance = NULL;
+            instanceClosed = true;
         }
+    }
+
+    static bool isClosed() {
+        return instanceClosed;
     }
 
     static NameClient *create() {
@@ -248,6 +255,10 @@ public:
         return resourceFinder;
     }
 
+    yarp::os::Nodes& getNodes() {
+        return nodes;
+    }
+
     Property& getPluginState() {
         return pluginState;
     }
@@ -275,8 +286,10 @@ private:
     NameStore *altStore;
     yarp::os::ResourceFinder resourceFinder;
     yarp::os::Property pluginState;
+    yarp::os::Nodes nodes;
 
     static NameClient *instance;
+    static bool instanceClosed;
 
     void setup();
 };
