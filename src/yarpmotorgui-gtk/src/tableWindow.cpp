@@ -459,7 +459,6 @@ gboolean partMover::view_popup_menu_onPaste (GtkWidget *menuitem, void* userdata
     selection = gtk_tree_view_get_selection(treeview);
     
     GtkTreeModel *model;
-    GtkTreePath *path;
     GtkTreeIter iter;
 
     g_print("finding row\n");
