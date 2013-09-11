@@ -12,6 +12,7 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/os/NestedContact.h>
 
 namespace yarp {
     namespace os {
@@ -107,6 +108,7 @@ public:
                       const ConstString& host,
                       int portNumber) const;
 
+    Contact addNested(const NestedContact& nc) const;
 
     /**
      *
@@ -163,6 +165,9 @@ public:
     ConstString getCarrier() const;
 
 
+    const NestedContact& getNested() const;
+
+
     /**
      * Get the port number associated with this contact for socket communication.
      * @return The port number associated with this contact, or <= 0
@@ -216,6 +221,8 @@ public:
      */
     void setTimeout(float timeout);
 
+    void setNested(const yarp::os::NestedContact& flavor);
+
     /**
      * Get timeout for this Address.
      *
@@ -229,6 +236,8 @@ private:
     ConstString regName;
     ConstString hostName;
     ConstString carrier;
+    NestedContact flavor;
+
     int port;
     float timeout;
 };

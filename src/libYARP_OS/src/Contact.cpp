@@ -126,6 +126,11 @@ Contact Contact::addName(const ConstString& name) const {
     return result;
 }
 
+Contact Contact::addNested(const NestedContact& nc) const {
+    Contact result(*this);
+    result.setNested(nc);
+    return result;
+}
 
 ConstString Contact::getName() const {
     ConstString name = regName;
@@ -151,6 +156,10 @@ ConstString Contact::getCarrier() const {
 
 int Contact::getPort() const {
     return port;
+}
+
+const NestedContact& Contact::getNested() const {
+    return flavor;
 }
 
 
@@ -312,6 +321,10 @@ bool Contact::hasTimeout() const {
 
 void Contact::setTimeout(float timeout) {
     this->timeout = timeout;
+}
+
+void Contact::setNested(const yarp::os::NestedContact& flavor) {
+    this->flavor = flavor;
 }
 
 float Contact::getTimeout() const {
