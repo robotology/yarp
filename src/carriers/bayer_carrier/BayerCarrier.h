@@ -82,6 +82,10 @@ public:
         happy = (local!=0);
     }
 
+    ~BayerCarrier() {
+        if (local) delete local;
+    }
+
     virtual Carrier *create() {
         return new BayerCarrier();
     }
