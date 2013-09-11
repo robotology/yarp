@@ -6,50 +6,51 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 
+using namespace yarp::os;
 
-yarp::os::impl::TwoWayStream::~TwoWayStream() {
+TwoWayStream::~TwoWayStream() {
 }
 
-yarp::os::impl::NullStream::~NullStream() {
+NullStream::~NullStream() {
 }
 
-yarp::os::InputStream& yarp::os::impl::NullStream::getInputStream() {
+InputStream& NullStream::getInputStream() {
     return *this;
 }
 
-yarp::os::OutputStream& yarp::os::impl::NullStream::getOutputStream() {
+OutputStream& NullStream::getOutputStream() {
     return * this;
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NullStream::getLocalAddress() {
+const Contact& NullStream::getLocalAddress() {
     return address;
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NullStream::getRemoteAddress() {
+const Contact& NullStream::getRemoteAddress() {
     return address;
 }
 
-bool yarp::os::impl::NullStream::isOk() {
+bool NullStream::isOk() {
     return false;
 }
 
-void yarp::os::impl::NullStream::reset() {
+void NullStream::reset() {
 }
 
-void yarp::os::impl::NullStream::close() {
+void NullStream::close() {
 }
 
-void yarp::os::impl::NullStream::beginPacket() {
+void NullStream::beginPacket() {
 }
 
-void yarp::os::impl::NullStream::endPacket()   {
+void NullStream::endPacket()   {
 }
 
-ssize_t yarp::os::impl::NullStream::read(const Bytes& b) {
+YARP_SSIZE_T NullStream::read(const Bytes& b) {
     return -1;
 }
 
-void yarp::os::impl::NullStream::write(const Bytes& b) {
+void NullStream::write(const Bytes& b) {
 }

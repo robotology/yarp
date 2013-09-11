@@ -13,7 +13,7 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/impl/PortManager.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>
@@ -118,7 +118,7 @@ public:
     /**
      * Begin service at a given address.
      */
-    bool listen(const Address& address, bool shouldAnnounce = true);
+    bool listen(const Contact& address, bool shouldAnnounce = true);
 
     /**
      * Check if a message is currently being sent.
@@ -228,12 +228,12 @@ public:
     /**
      * Get the address associated with the port.
      */
-    const Address& getAddress() const {
+    const Contact& getAddress() const {
         return address;
     }
 
-    void resetPortName(const char *str) {
-        address = address.addRegName(str);
+    void resetPortName(const String& str) {
+        address = address.addName(str);
     }
 
     /**
@@ -391,7 +391,7 @@ private:
     Logger log;
     Face *face;
     String name;
-    Address address;
+    yarp::os::Contact address;
     yarp::os::PortReader *reader;
     yarp::os::PortReaderCreator *readableCreator;
     yarp::os::PortReport *eventReporter;

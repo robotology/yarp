@@ -85,20 +85,21 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
 
     MainWindow* wnd = dynamic_cast<MainWindow*>(m_pParent);
 
-    if(m_Application)
-    {
-        string filename = m_Application->getXmlFile();
-        const size_t last_slash_idx = filename.rfind(PATH_SEPERATOR);
-        if (std::string::npos != last_slash_idx)
-        {
-            string directory = filename.substr(0, last_slash_idx);
-#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 24)
-            m_EntryFolderName.append_text(Glib::ustring(directory.c_str()));
-#else
-            m_EntryFolderName.append(Glib::ustring(directory.c_str()));
-#endif          
-        }            
-    }
+//     if(m_Application)
+//     {
+//         string filename = m_Application->getXmlFile();
+//         const size_t last_slash_idx = filename.rfind(PATH_SEPERATOR);
+//         if (std::string::npos != last_slash_idx)
+//         {
+//             string directory = filename.substr(0, last_slash_idx);
+// #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 24)
+//             m_EntryFolderName.append_text(Glib::ustring(directory.c_str()));
+// #else
+//             m_EntryFolderName.append(Glib::ustring(directory.c_str()));
+// #endif
+//         }
+//     }
+
 
     if(wnd->m_config.check("apppath"))
     {
@@ -128,9 +129,24 @@ ApplicationWizard::ApplicationWizard(Gtk::Widget* parent, const char* title, App
         }
 	while (appPaths!="");
 
-        m_EntryFolderName.set_active(0);
-    }
         
+    }
+    
+    if (wnd->m_config.check("yarpdatahome"))
+    {
+        string appPaths(wnd->m_config.find("apppath").asString().c_str());
+        Glib::ustring homePath=wnd->m_config.find("yarpdatahome").asString().c_str();
+        homePath +=  string(PATH_SEPERATOR) + string("applications");
+        
+        if (appPaths.find(homePath)==string::npos)
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION < 24)
+            m_EntryFolderName.prepend_text(homePath);
+#else
+            m_EntryFolderName.prepend(homePath);
+#endif
+    }
+
+    m_EntryFolderName.set_active(0);
     m_EntryVersion.set_text("1.0");
 
     if(m_Application)

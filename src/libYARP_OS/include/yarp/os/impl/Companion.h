@@ -227,7 +227,7 @@ private:
         }
     };
 
-    PLATFORM_MAP(YARP_KEYED_STRING,Entry) action;
+    PLATFORM_MAP(String,Entry) action;
     PlatformVector<String> names;
     PlatformVector<String> tips;
     bool adminMode;
@@ -235,7 +235,7 @@ private:
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = NULL) {
         Entry e(name,fn);
-        PLATFORM_MAP_SET(action,YARP_KEYED_STRING(name),e);
+        PLATFORM_MAP_SET(action,String(name),e);
         // maintain a record of order of keys
         names.push_back(String(name));
         if (tip!=NULL) {

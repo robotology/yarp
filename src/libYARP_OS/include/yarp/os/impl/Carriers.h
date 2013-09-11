@@ -12,10 +12,10 @@
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bytes.h>
-#include <yarp/os/impl/Address.h>
-#include <yarp/os/impl/Face.h>
-#include <yarp/os/impl/OutputProtocol.h>
-#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/Contact.h>
+#include <yarp/os/Face.h>
+#include <yarp/os/OutputProtocol.h>
+#include <yarp/os/Carrier.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 
@@ -67,7 +67,7 @@ public:
      *                listen to.
      * @return the interface object.
      */
-    static Face *listen(const Address& address);
+    static Face *listen(const Contact& address);
 
     /**
      * Initiate a connection to an address.
@@ -76,7 +76,7 @@ public:
      *                connect to.
      * @return the protocol object.
      */
-    static OutputProtocol *connect(const Address& address);
+    static OutputProtocol *connect(const Contact& address);
 
     /**
      * Destructor.

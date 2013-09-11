@@ -9,6 +9,7 @@
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/NetType.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
@@ -48,7 +49,7 @@ const Bottle& Bottle::operator = (const Bottle& bottle) {
 }
 
 
-Bottle::Bottle(const char *text) {
+Bottle::Bottle(const ConstString& text) {
     implementation = new BottleImpl;
     invalid = false;
     YARP_ASSERT(implementation!=NULL);
@@ -140,9 +141,9 @@ bool Bottle::isList(int index) {
     return HELPER(implementation).isList(index);
 }
 
-void Bottle::fromString(const char *text) {
+void Bottle::fromString(const ConstString& text) {
     invalid = false;
-    HELPER(implementation).fromString(text);
+    HELPER(implementation).fromString(text.c_str());
 }
 
 ConstString Bottle::toString() const {
@@ -211,14 +212,14 @@ void Bottle::copy(const Bottle& alt, int first, int len) {
                                      len);
 }
 
-Value& Bottle::findGroupBit(const char *key) {
+Value& Bottle::findGroupBit(const ConstString& key) {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
         if (cursor->isList()) {
             cursor = &(cursor->asList()->get(0));
         }
-        if (String(key)==cursor->toString().c_str()) {
+        if (key==cursor->toString()) {
             return *org;
         }
     }
@@ -227,7 +228,7 @@ Value& Bottle::findGroupBit(const char *key) {
 }
 
 
-Value& Bottle::findBit(const char *key) {
+Value& Bottle::findBit(const ConstString& key) {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
@@ -237,7 +238,7 @@ Value& Bottle::findBit(const char *key) {
             cursor = &(bot->get(0));
             nested = true;
         }
-        if (String(key)==cursor->toString().c_str()) {
+        if (key==cursor->toString()) {
             if (nested) {
                 return org->asList()->get(1);
             }
@@ -264,7 +265,7 @@ Value& Bottle::findBit(const char *key) {
 }
 
 
-bool Bottle::check(const char *key) {
+bool Bottle::check(const ConstString& key) {
     Bottle& val = findGroup(key);
     if (!val.isNull())
         return true;
@@ -273,7 +274,7 @@ bool Bottle::check(const char *key) {
 }
 
 
-Value& Bottle::find(const char *key) {
+Value& Bottle::find(const ConstString& key) {
     Value& val = findBit(key);
 
     if (getMonitor()!=NULL) {
@@ -288,7 +289,7 @@ Value& Bottle::find(const char *key) {
 }
 
 
-Bottle& Bottle::findGroup(const char *key) {
+Bottle& Bottle::findGroup(const ConstString& key) {
     Value& bb = findGroupBit(key);
 
     if (getMonitor()!=NULL) {
@@ -386,3 +387,9 @@ Bottle *Bottle::create() {
 bool Bottle::isList() {
     return true;
 }
+
+
+ConstString Bottle::toString(int x) {
+    return NetType::toString(x);
+}
+

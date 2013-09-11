@@ -14,7 +14,7 @@
  *
  */
 
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageDraw.h>

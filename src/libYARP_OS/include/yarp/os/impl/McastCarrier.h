@@ -10,12 +10,12 @@
 #ifndef _YARP2_MCASTCARRIER_
 #define _YARP2_MCASTCARRIER_
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/UdpCarrier.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <yarp/os/impl/Election.h>
+#include <yarp/os/Election.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSize.h>
 
@@ -34,13 +34,13 @@ namespace yarp {
  */
 class yarp::os::impl::McastCarrier : public UdpCarrier {
 protected:
-    Address mcastAddress;
+    Contact mcastAddress;
     String mcastName;
     String key;
 
-    static ElectionOf<McastCarrier,PeerRecord> *caster;
+    static ElectionOf<PeerRecord<McastCarrier> > *caster;
 
-    static ElectionOf<McastCarrier,PeerRecord>& getCaster();
+    static ElectionOf<PeerRecord<McastCarrier> >& getCaster();
 
 public:
 
@@ -52,11 +52,11 @@ public:
     virtual String getName();
 
     virtual int getSpecifierCode();
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectExtraHeader(Protocol& proto);
-    virtual bool becomeMcast(Protocol& proto, bool sender);
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectExtraHeader(ConnectionState& proto);
+    virtual bool becomeMcast(ConnectionState& proto, bool sender);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 
     void addSender(const String& key);
     void addRemove(const String& key);

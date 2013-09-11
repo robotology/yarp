@@ -20,7 +20,6 @@ using namespace yarp::math;
 
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 #ifdef _MSC_VER
 #define safe_printf sprintf_s
@@ -33,13 +32,13 @@ using namespace yarp::os::impl;
  * Class PriorityCarrier
  */
 
-ElectionOf<PriorityCarrier,PriorityGroup> *PriorityCarrier::peers = NULL;
+ElectionOf<PriorityGroup> *PriorityCarrier::peers = NULL;
 
 // Make a singleton manager for finding peer carriers.
-ElectionOf<PriorityCarrier,PriorityGroup>& PriorityCarrier::getPeers() {
+ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
     NetworkBase::lock();
     if (peers==NULL) {
-        peers = new ElectionOf<PriorityCarrier,PriorityGroup>;
+        peers = new ElectionOf<PriorityGroup>;
         NetworkBase::unlock();
         YARP_ASSERT(peers);
     } else {
@@ -58,7 +57,7 @@ bool PriorityCarrier::acceptIncomingData(yarp::os::ConnectionReader& reader) {
 }
 
 // Read connection settings.
-bool PriorityCarrier::configure(yarp::os::impl::Protocol& proto) {
+bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
@@ -203,9 +202,9 @@ double PriorityCarrier::getActualInput(double t)
         return 0.0;
 
     double E = 0;
-    for (PeerRecord::iterator it = group->peerSet.begin(); it!=group->peerSet.end(); it++)
+    for (PriorityGroup::iterator it = group->peerSet.begin(); it!=group->peerSet.end(); it++)
     {
-        PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
+        PriorityCarrier *peer = it->first;
         if(peer != this)
         {
             for(int i=0; i<peer->excitation.size(); i++)
@@ -237,7 +236,7 @@ bool PriorityGroup::recalculate(double t)
 #ifdef WITH_YARPMATH    
     //TODO: find the correct way to get the size of peerSet
     int nConnections = 0;    
-    for(PeerRecord::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
+    for(PriorityGroup::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
         nConnections++;
 
     // calculate matrices X, B, InvA and Y
@@ -248,9 +247,9 @@ bool PriorityGroup::recalculate(double t)
     InvA.eye();
 
     int row = 0;
-    for(PeerRecord::iterator rowItr=peerSet.begin(); rowItr!=peerSet.end(); rowItr++)
+    for(PriorityGroup::iterator rowItr=peerSet.begin(); rowItr!=peerSet.end(); rowItr++)
     {
-        PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(rowItr);
+        PriorityCarrier *peer = rowItr->first;
         // call 'getActualStimulation' to update 'isActive'
         peer->getActualStimulation(t); 
         double xi = (peer->isActive) ? STIMUL_THRESHOLD : 0.0;
@@ -258,9 +257,9 @@ bool PriorityGroup::recalculate(double t)
         X(row,0) = xi;
 
         int col = 0;
-        for(PeerRecord::iterator colItr=peerSet.begin(); colItr!=peerSet.end(); colItr++)
+        for(PriorityGroup::iterator colItr=peerSet.begin(); colItr!=peerSet.end(); colItr++)
         {
-            PriorityCarrier *peerCol = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(colItr);
+            PriorityCarrier *peerCol = colItr->first;
             for(int i=0; i<peerCol->excitation.size(); i++)
             {
                 Value v = peerCol->excitation.get(i);
@@ -318,9 +317,9 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     int row = 0;
     PriorityCarrier *maxPeer = NULL;
     double maxStimuli = 0.0;
-    for(PeerRecord::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
+    for(PriorityGroup::iterator it=peerSet.begin(); it!=peerSet.end(); it++)
     {
-        PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
+        PriorityCarrier *peer = it->first;
         double output = Y(row,0) * X(row,0);
         peer->yi = output;      // only for debug purpose
 
@@ -342,9 +341,9 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     accept = (actualInput > 0);
     if(accept)
     {
-        for (PeerRecord::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
+        for (PriorityGroup::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
         {
-            PriorityCarrier *peer = (PriorityCarrier *)PLATFORM_MAP_ITERATOR_FIRST(it);
+            PriorityCarrier *peer = it->first;
             if(peer != source)
             {
                 if(actualInput < peer->getActualInput(tNow))
@@ -400,7 +399,7 @@ void PriorityDebugThread::run()
 
 bool PriorityDebugThread::threadInit()
 {
-    debugPortName = pcarrier->portName + pcarrier->sourceName + String(":debug");
+    debugPortName = pcarrier->portName + pcarrier->sourceName + ConstString(":debug");
     return debugPort.open(debugPortName.c_str());
 }
 

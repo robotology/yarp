@@ -16,10 +16,9 @@
 #include <map>
 
 #include <yarp/os/Bytes.h>
-#include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/Name.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
@@ -54,11 +53,11 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 }
 
 
-bool TcpRosCarrier::sendHeader(Protocol& proto) {
+bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     dbg_printf("Route is %s\n", proto.getRoute().toString().c_str());
     Name n(proto.getRoute().getCarrierName() + "://test");
-    String mode = "topic";
-    String modeValue = n.getCarrierModifier("topic");
+    ConstString mode = "topic";
+    ConstString modeValue = n.getCarrierModifier("topic");
     if (modeValue=="") {
         mode = "service";
         modeValue = n.getCarrierModifier("service");
@@ -70,7 +69,7 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
         modeValue = "notopic";
         isService = false;
     }
-    String rawValue = n.getCarrierModifier("raw");
+    ConstString rawValue = n.getCarrierModifier("raw");
 #ifdef FORCE_ROS_NATIVE
     raw = 2;
 #endif
@@ -113,13 +112,13 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
 }
 
 
-bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
+bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     RosHeader header;
 
     char mlen[4];
     Bytes mlen_buf(mlen,4);
 
-    int res = NetType::readFull(proto.is(),mlen_buf);
+    int res = proto.is().readFull(mlen_buf);
     if (res<4) {
         printf("Fail %s %d\n", __FILE__, __LINE__);
         return false;
@@ -131,7 +130,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
         return false;
     }
     ManagedBytes m(len);
-    res = NetType::readFull(proto.is(),m.bytes());
+    res = proto.is().readFull(m.bytes());
     if (res!=len) {
         printf("Fail %s %d\n", __FILE__, __LINE__);
         return false;
@@ -161,7 +160,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     // we may be a pull stream
     sender = isService;
     TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
-                                            isService,raw,rosname);
+                                            isService,raw,rosname.c_str());
 
     if (stream==NULL) { return false; }
 
@@ -172,7 +171,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     return proto.is().isOk();
 }
 
-bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
+bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("tcpros"));
 
     dbg_printf("Trying for tcpros header\n");
@@ -181,7 +180,7 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     NetInt32 ni = headerLen2;
     memcpy(m.get(),(char*)(&ni), 4);
     dbg_printf("reading %d bytes\n", (int)mrem.length());
-    int res = NetType::readFull(proto.is(),mrem);
+    int res = proto.is().readFull(mrem);
     dbg_printf("read %d bytes\n", res);
     if (res!=(int)mrem.length()) {
         printf("Fail %s %d\n", __FILE__, __LINE__);
@@ -236,7 +235,7 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     return true;
 }
 
-bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     SizedWriter *flex_writer = &writer;
 
 
@@ -334,7 +333,7 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     return proto.getStreams().isOk();
 }
 
-bool TcpRosCarrier::reply(Protocol& proto, SizedWriter& writer) {
+bool TcpRosCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
     // don't need to do anything special for now.
     writer.write(proto.os());
     return proto.os().isOk();
@@ -378,7 +377,7 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
 
     RosSlave slave(false);
     dbg_printf("Starting temporary slave\n");
-    slave.start(fullDest.getHost(),fullDest.getPort());
+    slave.start(fullDest.getHost().c_str(),fullDest.getPort());
     Contact addr_slave = slave.where();
     Bottle cmd, reply;
     cmd.addString("publisherUpdate");

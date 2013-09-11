@@ -86,10 +86,11 @@
 %ignore *::setKp(double);
 %ignore *::setKi(double);
 %ignore *::setKd(double);
+%ignore *::setKff(double);
 %ignore *::setScale(double);
 %ignore *::setOffset(double);
 %rename(attach_rpc_server) *::attach(yarp::os::RpcServer&);
-%rename(open_str) yarp::dev::PolyDriver::open(const char *txt);
+%rename(open_str) yarp::dev::PolyDriver::open(const yarp::os::ConstString& txt);
 
 #if defined(SWIGCSHARP)
 	// there's a big CSHARP virtual/override muddle
@@ -111,7 +112,9 @@
 #endif
 
 // Deal with method name conflicts
-%rename(toString_c) *::toString() const;
+#ifndef SWIGJAVA
+	%rename(toString_c) *::toString() const;
+#endif
 
 // python conflict
 #ifdef SWIGPYTHON
@@ -122,7 +125,7 @@
 #ifdef SWIGJAVA
 	%rename(wait_c) *::wait();
 	%rename(clone_c) *::clone() const;
-    %rename(toString_c) *::toString();
+	%rename(toString_c) *::toString();
 #endif
 
 #ifdef SWIGCHICKEN

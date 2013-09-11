@@ -42,6 +42,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
+        exit(1);
     }
     printf("Generating %s\n", fname.c_str());
     fprintf(out,"// This is an automatically generated file.\n");
@@ -65,7 +66,7 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"#include <yarp/os/NetFloat32.h>\n");
     fprintf(out,"#include <yarp/os/NetFloat64.h>\n");
     for (int i=0; i<(int)state.dependencies.size(); i++) {
-        fprintf(out,"#include <%s.h>\n",state.dependencies[i].c_str());
+        fprintf(out,"#include <%s.h>\n",state.dependenciesAsPaths[i].c_str());
     }
     fprintf(out,"\n");
     fprintf(out,"class %s : public yarp::os::Portable {\n", safe_tname.c_str());
@@ -313,6 +314,11 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
     RosYarpType ry;
     ry.rosType = field.rosType;
     ry.yarpType = field.rosType;
+    for (int i=0; i<(int)ry.yarpType.length(); i++) {
+        if (ry.yarpType[i]=='/') {
+            ry.yarpType[i] = '_';
+        }
+    }
     if (field.rosType=="string") {
         ry.yarpType = "std::string";
     }

@@ -12,16 +12,10 @@ set(YarpScope_SRCS
     PortReader.cpp
     PlotManager.cpp
     SimpleLoader.cpp
-    XmlLoader.cpp
-)
+    XmlLoader.cpp)
 
 include_directories(${TinyXML_INCLUDE_DIRS}
-                    ${GtkDataboxMM_INCLUDE_DIRS}
-)
-
-link_directories(${TinyXML_LIBRARY_DIRS}
-                 ${GtkDataboxMM_LIBRARY_DIRS}
-)
+                    ${GtkDataboxMM_INCLUDE_DIRS})
 
 if(WIN32)
     add_definitions(/wd4250)
@@ -30,9 +24,9 @@ endif(WIN32)
 add_executable(yarpscope ${YarpScope_SRCS})
 
 target_link_libraries(yarpscope
-                      YARP_init YARP_OS
+                      YARP_init
+                      YARP_OS
                       ${TinyXML_LIBRARIES}
-                      ${GtkDataboxMM_LIBRARIES}
-)
+                      ${GtkDataboxMM_LIBRARIES})
 
 install(TARGETS yarpscope COMPONENT utilities DESTINATION bin)

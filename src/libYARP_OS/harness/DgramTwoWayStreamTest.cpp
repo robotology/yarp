@@ -13,7 +13,7 @@
 #endif
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -155,7 +155,7 @@ public:
         }
         in.copyMonitor(out);
         in.beginPacket();
-        NetType::readFull(in,recv.bytes());
+        in.readFull(recv.bytes());
         in.endPacket();
         bool mismatch = false;
         for (size_t i=0; i<recv.length(); i++) {
@@ -183,7 +183,7 @@ public:
                 recv.get()[i] = 0;
             }
             in.beginPacket();
-            NetType::readFull(in,recv.bytes());
+            in.readFull(recv.bytes());
             in.endPacket();
             for (size_t i=0; i<recv.length(); i++) {
                 if (recv.get()[i]!=msg.get()[i]) {
@@ -232,7 +232,7 @@ public:
                     recv.get()[i] = 0;
                 }
                 in.beginPacket();
-                int len = NetType::readFull(in,recv.bytes());
+                int len = in.readFull(recv.bytes());
                 in.endPacket();
                 mismatch = false;
                 for (size_t i=0; i<recv.length(); i++) {

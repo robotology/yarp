@@ -610,6 +610,14 @@ public:
         // for backwards compatibility
     }
 
+    void testLoopBug() {
+        report(0,"test infinite loop tickled by gyarpmanager + string type change");
+        Bottle pos("Pos ((x 349.5) (y 122)) ((x 286) (y 122)) ((x 413) (y 122))");
+        for(int i=1; i<pos.size(); i++) {
+            pos.get(i).find("x").asDouble();
+        }
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -643,6 +651,7 @@ public:
         testStringWithNull();
         testBool();
         testDict();
+        testLoopBug();
     }
 
     virtual String getName() {

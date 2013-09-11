@@ -9,7 +9,7 @@
 
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

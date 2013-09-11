@@ -571,7 +571,7 @@ bool YarpBroker::getAllPorts(vector<string> &ports)
 
     ConstString str = reply.get(0).asString();
     const char* delm = "registration name ";
-    int pos1, pos2;
+    size_t pos1, pos2;
     while((pos1 = str.find(delm)) != ConstString::npos) 
     {
         str = str.substr(pos1+strlen(delm));

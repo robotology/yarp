@@ -11,7 +11,7 @@
 #ifndef _YARP2_UDPCARRIER_
 #define _YARP2_UDPCARRIER_
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
 namespace yarp {
@@ -31,8 +31,8 @@ public:
 
     virtual Carrier *create();
 
-    virtual String getName();
-
+    virtual ConstString getName();
+    
     virtual int getSpecifierCode();
 
     virtual bool checkHeader(const Bytes& header);
@@ -40,8 +40,8 @@ public:
     virtual void setParameters(const Bytes& header);
     virtual bool requireAck();
     virtual bool isConnectionless();
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 };
 
 #endif

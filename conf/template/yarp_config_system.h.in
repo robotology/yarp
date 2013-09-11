@@ -13,8 +13,7 @@
 
 #define YARP_CMAKE_CONFIG
 
-#cmakedefine YARP_USE_STL_STRING
-#cmakedefine YARP_USE_ACE_STRING
+#cmakedefine YARP_WRAP_STL_STRING
 
 #cmakedefine YARP_HAS_ACE
 
@@ -34,6 +33,7 @@
 #cmakedefine YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE
 #cmakedefine YARP_ACE_ADDR_HAS_LOOPBACK_METHOD
 #cmakedefine YARP_ACE_COMPILES_WITHOUT_INLINE
+#cmakedefine YARP_ACE_HAS_STRING_HASH
 
 #cmakedefine YARP_HAS_EXECINFO
 

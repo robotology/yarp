@@ -11,8 +11,8 @@
 #define PRIORITYCARRIER_INC
 
 #include <math.h>
-#include <yarp/os/impl/ModifyingCarrier.h>
-#include <yarp/os/impl/Election.h>
+#include <yarp/os/ModifyingCarrier.h>
+#include <yarp/os/Election.h>
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
@@ -27,13 +27,11 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class PriorityGroup;
-            class PriorityCarrier;
+        class PriorityGroup;
+        class PriorityCarrier;
 #ifdef WITH_PRIORITY_DEBUG
-            class PriorityDebugThread;
+        class PriorityDebugThread;
 #endif //WITH_PRIORITY_DEBUG
-        }
     }
 }
 
@@ -44,7 +42,7 @@ namespace yarp {
  * Manager for priority-aware inputs to a given port.
  *
  */
-class yarp::os::impl::PriorityGroup : public PeerRecord {
+class yarp::os::PriorityGroup : public PeerRecord<PriorityCarrier> {
 public:
     virtual ~PriorityGroup() {}
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
@@ -63,7 +61,7 @@ public:
 
 
 #ifdef WITH_PRIORITY_DEBUG
-class yarp::os::impl::PriorityDebugThread : public yarp::os::RateThread {
+class yarp::os::PriorityDebugThread : public yarp::os::RateThread {
 public:
     PriorityDebugThread(PriorityCarrier* carrier);
     virtual ~PriorityDebugThread();
@@ -74,7 +72,7 @@ public:
 public:
     int count;
     PriorityCarrier* pcarrier;
-    String debugPortName;
+    ConstString debugPortName;
     BufferedPort<yarp::sig::Vector> debugPort;
 };
 #endif //WITH_PRIORITY_DEBUG
@@ -87,7 +85,7 @@ public:
  *   tcp+recv.priority+level.15
  *
  */
-class yarp::os::impl::PriorityCarrier : public yarp::os::impl::ModifyingCarrier {
+class yarp::os::PriorityCarrier : public yarp::os::ModifyingCarrier {
 
 #ifdef WITH_PRIORITY_DEBUG
     friend class PriorityDebugThread;
@@ -120,11 +118,11 @@ public:
         return new PriorityCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "priority";
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "priority_carrier";
     }
 
@@ -156,7 +154,7 @@ public:
 
     double getActualInput(double t);
 
-    virtual bool configure(yarp::os::impl::Protocol& proto);
+    virtual bool configure(yarp::os::ConnectionState& proto);
 
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
 
@@ -192,17 +190,17 @@ public:
     bool isActive;                  // true if port is in active state X(t)
     double baias;                   // baias value for excitation
     Bottle excitation;              // a list of exitatory signals as (name, value)
-    String sourceName;
+    ConstString sourceName;
 
     double yi;                      // this is set in the recalculate() for the debug purpose
 
 private:
-    String portName;
+    ConstString portName;
     PriorityGroup *group;
 
-    static ElectionOf<PriorityCarrier,PriorityGroup> *peers;
+    static ElectionOf<PriorityGroup> *peers;
 
-    static ElectionOf<PriorityCarrier,PriorityGroup>& getPeers();
+    static ElectionOf<PriorityGroup>& getPeers();
 
 #ifdef WITH_PRIORITY_DEBUG
 private:

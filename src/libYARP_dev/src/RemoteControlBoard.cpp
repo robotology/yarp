@@ -234,11 +234,11 @@ public:
 */
 class yarp::dev::RemoteControlBoard :
     public IPidControl,
-    public IPositionControl,
-    public IVelocityControl,
+    public IPositionControl2,
+    public IVelocityControl2,
     public IEncodersTimed,
     public IAmplifierControl,
-    public IControlLimits,
+    public IControlLimits2,
     public IAxisInfo,
     public IPreciselyTimed,
     public IControlCalibration2,
@@ -526,6 +526,7 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v);
+        cmd.addInt(len);
         int i;
         Bottle& l1 = cmd.addList();
         for (i = 0; i < len; i++)
@@ -582,7 +583,7 @@ protected:
     }
 
 
-     /**
+    /**
      * Helper method used to get an integer value from the remote peer.
      * @param v is the command to query for
      * @param j is the axis number
@@ -672,6 +673,25 @@ protected:
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
             val = (response.get(2).asInt()!=0);
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        return false;
+    }
+
+    bool get1V1I1IA1B(int v,  const int len, const int *val1, bool &retVal ) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v);
+        cmd.addInt(len);
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < len; i++)
+            l1.addInt(val1[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response)) {
+            retVal = (response.get(2).asInt()!=0);
             getTimeStamp(response, lastStamp);
             return true;
         }
@@ -830,6 +850,42 @@ protected:
         return false;
     }
 
+
+    bool get1V1I1IA1DA(int v, const int len, const int *val1, double *val2)
+    {
+        if(!isLive()) return false;
+
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v);
+        cmd.addInt(len);
+        Bottle &l1 = cmd.addList();
+        for(int i = 0; i < len; i++)
+            l1.addInt(val1[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle& l2 = *(response.get(2).asList());
+            if (&l2 == 0)
+                return false;
+
+            int nj2 = l2.size();
+            if(nj2 != len)
+            {
+                printf("received an answer with an unexpected number of entries!\n");
+                return false;
+            }
+            for (i = 0; i < nj2; i++)
+                val2[i] = l2.get(i).asDouble();
+
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        return false;
+    }
+
 public:
     /**
      * Constructor.
@@ -915,7 +971,7 @@ public:
             s2 = local;
             s2 += "/state:i";
 
-            ok = Network::connect(s1.c_str(), state_p.getName(), carrier);
+            ok = Network::connect(s1, state_p.getName(), carrier);
 
             if (!ok) {
                 printf("Problem connecting to %s from %s, is the remote device available?\n", s1.c_str(), state_p.getName().c_str());
@@ -1274,8 +1330,9 @@ public:
      * @param val new value
      * @return true/false on success/failure
      */
-    virtual bool setEncoder(int j, double val)
-    { return set1V1I1D(VOCAB_ENCODER, j, val); }
+    virtual bool setEncoder(int j, double val) {
+        return set1V1I1D(VOCAB_ENCODER, j, val);
+    }
 
     /**
      * Set the value of all encoders.
@@ -1294,13 +1351,13 @@ public:
      */
     virtual bool getEncoder(int j, double *v) {
         // return get1V1I1D(VOCAB_ENCODER, j, v);
-       double localArrivalTime;
-       bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+        double localArrivalTime = 0.0;
+        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 
-       if (Time::now()-localArrivalTime>TIMEOUT)
-           ret=false;
+        if (ret && Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
 
-       return ret;
+        return ret;
     }
 
     /**
@@ -1310,16 +1367,16 @@ public:
      * @return true/false, upon success/failure (you knew it, uh?)
      */
     virtual bool getEncoderTimed(int j, double *v, double *t) {
-       // return get1V1I1D(VOCAB_ENCODER, j, v);
-       double localArrivalTime;
-       bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
+        // return get1V1I1D(VOCAB_ENCODER, j, v);
+        double localArrivalTime = 0.0;
+        bool ret=state_p.getLast(j, *v, lastStamp, localArrivalTime);
 
-       *t=lastStamp.getTime();
+        *t=lastStamp.getTime();
 
-       if (Time::now()-localArrivalTime>TIMEOUT)
-           ret=false;
+        if (ret && Time::now()-localArrivalTime>TIMEOUT)
+            ret=false;
 
-       return ret;
+        return ret;
     }
 
     /**
@@ -1337,9 +1394,9 @@ public:
         Vector tmp(nj);
         double localArrivalTime=0.0;
 
-       // mutex.wait();
+        // mutex.wait();
         bool ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
-       // mutex.post();
+        // mutex.post();
 
         if (ret)
         {
@@ -1496,19 +1553,6 @@ public:
      */
     virtual bool positionMove(const double *refs) {
         return set1VDA(VOCAB_POSITION_MOVES, refs);
-
-//         if (!isLive()) return false;
-//         CommandMessage& c = command_buffer.get();
-//         c.head.clear();
-//         c.head.addVocab(VOCAB_POSITION_MOVES);
-//
-//         c.body.size(nj);
-//
-//         memcpy(&(c.body[0]), refs, sizeof(double)*nj);
-//
-//         command_buffer.write();
-//
-//         return true;
     }
 
 
@@ -1521,6 +1565,15 @@ public:
      */
     virtual bool relativeMove(int j, double delta) {
         return set1V1I1D(VOCAB_RELATIVE_MOVE, j, delta);
+    }
+
+    /** Set relative position for a subset of joints.
+     * @param joints pointer to the array of joint numbers
+     * @param deltas pointer to the array of relative commands
+     * @return true/false on success/failure
+     */
+    virtual bool relativeMove(const int n_joint, const int *joints, const double *refs) {
+        return set1V1I1IA1DA(VOCAB_RELATIVE_MOVE_GROUP, n_joint, joints, refs);
     }
 
     /**
@@ -1541,6 +1594,15 @@ public:
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
+     * @param joints pointer to the array of joint numbers
+     * @param flag  pointer to the array that will store the actual value of the checkMotionDone
+     * @return true/false if network communication went well.
+     */
+    virtual bool checkMotionDone(const int n_joint, const int *joints, bool *flag) {
+        return get1V1I1IA1B(VOCAB_MOTION_DONE_GROUP, n_joint, joints, *flag);
+    }
+
+    /** Check if the current trajectory is terminated. Non blocking.
      * @param flag: true/false if trajectories for all controlled joints are terminated.
      * @return true on success/failure.
      */
@@ -1555,9 +1617,18 @@ public:
      * @param sp speed value
      * @return true/false upon success/failure
      */
-
     virtual bool setRefSpeed(int j, double sp) {
         return set1V1I1D(VOCAB_REF_SPEED, j, sp);
+    }
+
+    /** Set reference speed on all joints. These values are used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param spds   pointer to the array with speed values.
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefSpeeds(const int n_joint, const int *joints, const double *spds) {
+        return set1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
     }
 
     /**
@@ -1581,6 +1652,16 @@ public:
         return set1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
     }
 
+    /** Set reference acceleration on all joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array with acceleration values
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs) {
+        return set1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
+    }
+
     /**
      * Set reference acceleration on all joints. This is the valure that is
      * used during the generation of the trajectory.
@@ -1600,6 +1681,16 @@ public:
      */
     virtual bool getRefSpeed(int j, double *ref) {
         return get1V1I1D(VOCAB_REF_SPEED, j, ref);
+    }
+
+    /** Set reference speed on all joints. These values are used during the
+     * interpolation of the trajectory.
+     * @param joints pointer to the array of joint numbers
+     * @param spds   pointer to the array with speed values.
+     * @return true/false upon success/failure
+     */
+    virtual bool getRefSpeeds(const int n_joint, const int *joints, double *spds) {
+        return get1V1I1IA1DA(VOCAB_REF_SPEED_GROUP, n_joint, joints, spds);
     }
 
     /**
@@ -1622,6 +1713,16 @@ public:
         return get1V1I1D(VOCAB_REF_ACCELERATION, j, acc);
     }
 
+    /** Get reference acceleration for a joint. Returns the acceleration used to
+     * generate the trajectory profile.
+     * @param joints pointer to the array of joint numbers
+     * @param accs   pointer to the array that will store the acceleration values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs){
+        return get1V1I1IA1DA(VOCAB_REF_ACCELERATION_GROUP, n_joint, joints, accs);
+    }
+
     /**
      * Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
@@ -1639,6 +1740,26 @@ public:
      */
     virtual bool stop(int j) {
         return set1V1I(VOCAB_STOP, j);
+    }
+
+    /** Stop motion for subset of joints
+     * @param joints pointer to the array of joint numbers
+     * @return true/false on success/failure
+     */
+    virtual bool stop(const int len, const int *val1)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_STOP_GROUP);
+        cmd.addInt(len);
+        int i;
+        Bottle& l1 = cmd.addList();
+        for (i = 0; i < len; i++)
+            l1.addInt(val1[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /**
@@ -1783,6 +1904,16 @@ public:
      */
     virtual bool getLimits(int axis, double *min, double *max) {
         return get1V1I2D(VOCAB_LIMITS, axis, min, max);
+    }
+
+    virtual bool setVelLimits(int axis, double min, double max)
+    {
+        return set1V1I2D(VOCAB_VEL_LIMITS, axis, min, max);
+    }
+
+    virtual bool getVelLimits(int axis, double *min, double *max)
+    {
+        return get1V1I2D(VOCAB_VEL_LIMITS, axis, min, max);
     }
 
     /* IAxisInfo */
@@ -2158,8 +2289,8 @@ public:
         Bottle &jointList = c.head.addList();
         for (int i = 0; i < n_joint; i++)
             jointList.addInt(joints[i]);
-        c.body.size(nj);
-        memcpy(&(c.body[0]), refs, sizeof(double)*nj);
+        c.body.size(n_joint);
+        memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
         command_buffer.write();
         return true;
     }
@@ -2173,6 +2304,132 @@ public:
         c.body.size(nj);
         memcpy(&(c.body[0]), refs, sizeof(double)*nj);
         command_buffer.write();
+        return true;
+    }
+
+    //
+    // IVelocityControl2 Interface
+    //
+    bool velocityMove(const int n_joint, const int *joints, const double *spds)
+    {
+        // streaming port
+        if (!isLive())
+            return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_VELOCITY_MOVE_GROUP);
+        c.head.addInt(n_joint);
+        Bottle &jointList = c.head.addList();
+        for (int i = 0; i < n_joint; i++)
+            jointList.addInt(joints[i]);
+        c.body.resize(n_joint);
+        memcpy(&(c.body[0]), spds, sizeof(double)*n_joint);
+        command_buffer.write();
+        return true;
+    }
+
+    bool setVelPid(int j, const Pid &pid)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_VEL_PID);
+        cmd.addInt(j);
+        Bottle& l = cmd.addList();
+        l.addDouble(pid.kp);
+        l.addDouble(pid.kd);
+        l.addDouble(pid.ki);
+        l.addDouble(pid.max_int);
+        l.addDouble(pid.max_output);
+        l.addDouble(pid.offset);
+        l.addDouble(pid.scale);
+        l.addDouble(pid.stiction_up_val);
+        l.addDouble(pid.stiction_down_val);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool setVelPids(const Pid *pids)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_VEL_PIDS);
+        Bottle& l = cmd.addList();
+        int i;
+        for (i = 0; i < nj; i++) {
+            Bottle& m = l.addList();
+            m.addDouble(pids[i].kp);
+            m.addDouble(pids[i].kd);
+            m.addDouble(pids[i].ki);
+            m.addDouble(pids[i].max_int);
+            m.addDouble(pids[i].max_output);
+            m.addDouble(pids[i].offset);
+            m.addDouble(pids[i].scale);
+            m.addDouble(pids[i].stiction_up_val);
+            m.addDouble(pids[i].stiction_down_val);
+        }
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool getVelPid(int j, Pid *pid)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_VEL_PID);
+        cmd.addInt(j);
+
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            pid->kp = l.get(0).asDouble();
+            pid->kd = l.get(1).asDouble();
+            pid->ki = l.get(2).asDouble();
+            pid->max_int = l.get(3).asDouble();
+            pid->max_output = l.get(4).asDouble();
+            pid->offset = l.get(5).asDouble();
+            pid->scale = l.get(6).asDouble();
+            pid->stiction_up_val = l.get(7).asDouble();
+            pid->stiction_down_val = l.get(8).asDouble();
+            return true;
+        }
+        return false;
+    }
+
+    bool getVelPids(Pid *pids)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_VEL_PIDS);
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response))
+        {
+            int i;
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            const int njs = l.size();
+            YARP_ASSERT (njs == nj);
+            for (i = 0; i < nj; i++)
+            {
+                Bottle& m = *(l.get(i).asList());
+                if (&m == 0)
+                    return false;
+                pids[i].kp = m.get(0).asDouble();
+                pids[i].kd = m.get(1).asDouble();
+                pids[i].ki = m.get(2).asDouble();
+                pids[i].max_int = m.get(3).asDouble();
+                pids[i].max_output = m.get(4).asDouble();
+                pids[i].offset = m.get(5).asDouble();
+                pids[i].scale = m.get(6).asDouble();
+                pids[i].stiction_up_val = m.get(7).asDouble();
+                pids[i].stiction_down_val = m.get(8).asDouble();
+            }
+        }
         return true;
     }
 };

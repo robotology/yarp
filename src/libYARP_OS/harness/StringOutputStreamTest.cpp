@@ -7,7 +7,7 @@
  *
  */
 
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/StringOutputStream.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 

@@ -11,10 +11,10 @@
 #define _YARP2_NAMESERVER_
 
 #include <yarp/os/impl/String.h>
-#include <yarp/os/impl/Address.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Dispatcher.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
@@ -45,7 +45,7 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::NameServerStub {
 public:
     virtual ~NameServerStub() {}
-    virtual String apply(const String& txt, const Address& remote) = 0;
+    virtual String apply(const String& txt, const Contact& remote) = 0;
 };
 
 /**
@@ -66,39 +66,39 @@ public:
 
     // address may be partial - partial information gets filled in
     // (not YARP2 compliant yet, won't do fill-in)
-    Address registerName(const String& name,
-                         const Address& address) {
+    Contact registerName(const String& name,
+                         const Contact& address) {
         return registerName(name,address,"...");
     }
 
-    Address registerName(const String& name,
-                         const Address& address,
+    Contact registerName(const String& name,
+                         const Contact& address,
                          const String& remote);
 
-    Address registerName(const String& name) {
-        return registerName(name,Address());
+    Contact registerName(const String& name) {
+        return registerName(name,Contact());
     }
 
-    Address queryName(const String& name);
+    Contact queryName(const String& name);
 
-    Address unregisterName(const String& name);
+    Contact unregisterName(const String& name);
 
     static int main(int argc, char *argv[]);
 
-    virtual String apply(const String& txt, const Address& remote);
+    virtual String apply(const String& txt, const Contact& remote);
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
-               const Address& remote);
+               const Contact& remote);
 
     String apply(const String& txt) {
-        return apply(txt,Address());
+        return apply(txt,Contact());
     }
 
     virtual void onEvent(yarp::os::Bottle& event) {
     }
 
-    static String textify(const Address& addr);
-    static yarp::os::Bottle botify(const Address& address);
+    static String textify(const Contact& addr);
+    static yarp::os::Bottle botify(const Contact& address);
 
     void setBasePort(int basePort) {
         this->basePort = basePort;
@@ -155,7 +155,7 @@ private:
         }
 
         bool release(const String& name) {
-            if (YARP_STRSTR(name,prefix)==0) {
+            if (name.find(prefix)==0) {
                 String num = name.substr(prefix.length());
                 int x = NetType::toInt(num.c_str());
                 ReusableRecord<int>::release(x);
@@ -279,7 +279,7 @@ private:
             String base = "";
             bool needSpace = false;
             for (unsigned int i=0; i<prop.size(); i++) {
-                if (YARP_STRSTR(prop[i],str)==0) {
+                if (prop[i].find(str)==0) {
                     if (needSpace) base += " ";
                     base += prop[i];
                     needSpace = true;
@@ -304,8 +304,8 @@ private:
     private:
         bool reusablePort;
         bool reusableIp;
-        PLATFORM_MAP(YARP_KEYED_STRING,PropertyRecord) propMap;
-        Address address;
+        PLATFORM_MAP(String,PropertyRecord) propMap;
+        Contact address;
     public:
         NameRecord() :
 #ifndef YARP_USE_STL
@@ -337,12 +337,12 @@ private:
 
         void clear() {
             PLATFORM_MAP_CLEAR(propMap);
-            address = Address();
+            address = Contact();
             reusableIp = false;
             reusablePort = false;
         }
 
-        void setAddress(const Address& address,
+        void setAddress(const Contact& address,
                         bool reusablePort=false,
                         bool reusableIp=false) {
             this->address = address;
@@ -350,13 +350,13 @@ private:
             this->reusableIp = reusableIp;
         }
 
-        Address getAddress() {
+        Contact getAddress() {
             return address;
         }
 
 
         PropertyRecord *getPR(const String& key, bool create = true) {
-            PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyRecord,entry);
+            PLATFORM_MAP_ITERATOR(String,PropertyRecord,entry);
             int result = PLATFORM_MAP_FIND(propMap,key,entry);
             if (result==-1 && create) {
                 PropertyRecord blank;
@@ -430,13 +430,8 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    //typedef ACE_Hash_Map_Manager<YARP_KEYED_STRING,NameRecord,ACE_Null_Mutex> NameMapHash;
-
-    //NameMapHash nameMap;
-    //ACE_Hash_Map_Manager<YARP_KEYED_STRING,HostRecord,ACE_Null_Mutex> hostMap;
-
-    PLATFORM_MAP(YARP_KEYED_STRING,NameRecord) nameMap;
-    PLATFORM_MAP(YARP_KEYED_STRING,HostRecord) hostMap;
+    PLATFORM_MAP(String,NameRecord) nameMap;
+    PLATFORM_MAP(String,HostRecord) hostMap;
 
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;

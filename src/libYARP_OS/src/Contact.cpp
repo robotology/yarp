@@ -9,11 +9,11 @@
 
 
 #include <yarp/os/Contact.h>
-#include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/INET_Addr.h>
@@ -28,32 +28,37 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
-// implementation is an Address
-#define HELPER(x) (*((Address*)(x)))
-
 Contact::Contact() {
-    implementation = new Address();
-    YARP_ASSERT(implementation!=NULL);
+    port = -1;
+    timeout = -1;
+}
+
+Contact::Contact(const ConstString& hostName, int port) {
+    this->hostName = hostName;
+    this->port = port;
+    timeout = -1;
 }
 
 Contact::~Contact() {
-    if (implementation!=NULL) {
-        delete (Address*)implementation;
-        implementation = NULL;
-    }
 }
 
 
 Contact::Contact(const Contact& alt) {
-    implementation = new Address();
-    YARP_ASSERT(implementation!=NULL);
-    HELPER(implementation) = HELPER(alt.implementation);
+    regName = alt.regName;
+    hostName = alt.hostName;
+    carrier = alt.carrier;
+    port = alt.port;
+    timeout = alt.timeout;
 }
 
 
 const Contact& Contact::operator = (const Contact& alt) {
-    HELPER(implementation) = HELPER(alt.implementation);
-    return (*this);
+    regName = alt.regName;
+    hostName = alt.hostName;
+    carrier = alt.carrier;
+    port = alt.port;
+    timeout = alt.timeout;
+    return *this;
 }
 
 
@@ -63,96 +68,118 @@ Contact Contact::empty() {
 
 
 Contact Contact::invalid() {
-    return Contact().addSocket("","",-1);
+    return Contact::bySocket("","",-1);
 }
 
 
-Contact Contact::byName(const char *name) {
+Contact Contact::byName(const ConstString& name) {
     Contact result;
-    HELPER(result.implementation) = Address().addRegName(name);
+    result.regName = name;
     return result;
 }
 
 
-Contact Contact::byCarrier(const char *carrier) {
+Contact Contact::byCarrier(const ConstString& carrier) {
     Contact result;
-    HELPER(result.implementation) = Address("",0,carrier);
+    result.carrier = carrier;
     return result;
 }
 
-Contact Contact::addCarrier(const char *carrier) const {
-    Contact result;
-    HELPER(result.implementation) = HELPER(implementation).addCarrier(carrier);
+Contact Contact::addCarrier(const ConstString& carrier) const {
+    Contact result(*this);
+    result.carrier = carrier;
     return result;
 }
 
 
-Contact Contact::bySocket(const char *carrier, 
-                          const char *machineName,
+Contact Contact::addHost(const ConstString& host) const {
+    Contact result(*this);
+    result.hostName = host;
+    return result;
+}
+
+
+Contact Contact::bySocket(const ConstString& carrier, 
+                          const ConstString& machineName,
                           int portNumber) {
     Contact result;
-    HELPER(result.implementation) = Address(machineName,portNumber,carrier);
+    result.carrier = carrier;
+    result.hostName = machineName;
+    result.port = portNumber;
     return result;
 }
 
 
-Contact Contact::addSocket(const char *carrier, 
-                           const char *machineName,
+Contact Contact::addSocket(const ConstString& carrier, 
+                           const ConstString& machineName,
                            int portNumber) const {
-    Contact result;
-    HELPER(result.implementation) = HELPER(implementation).addSocket(carrier,
-                                                                     machineName,
-                                                                     portNumber);
+    Contact result(*this);
+    result.carrier = carrier;
+    result.hostName = machineName;
+    result.port = portNumber;
     return result;
 }
 
-Contact Contact::addName(const char *name) const {
-    Contact result;
-    HELPER(result.implementation) = HELPER(implementation).addRegName(name);
+Contact Contact::addName(const ConstString& name) const {
+    Contact result(*this);
+    result.regName = name;
     return result;
 }
 
 
 ConstString Contact::getName() const {
-    Address& addr = HELPER(implementation);
-    String name = addr.getRegName();
-    if (name == "") {
-        String host = addr.getName();
-        if (host!="") {
-            name = String("/") + host + ":" + 
-                NetType::toString(addr.getPort());
+    ConstString name = regName;
+    if (regName == "") {
+        if (hostName!="" && port>=0) {
+            name = ConstString("/") + hostName + ":" + 
+                NetType::toString(port);
         }
     }
-    return name.c_str();
+    return name;
 }
 
 
 ConstString Contact::getHost() const {
-    return HELPER(implementation).getName().c_str();
+    return hostName;
 }
 
 
 ConstString Contact::getCarrier() const {
-    return HELPER(implementation).getCarrierName().c_str();
+    return carrier;
 }
 
 
 int Contact::getPort() const {
-    return HELPER(implementation).getPort();
+    return port;
 }
 
 
 ConstString Contact::toString() const {
-    Address& addr = HELPER(implementation);
-    ConstString result = getName();
-    if (addr.getCarrierName()!="") {
-        return ConstString((addr.getCarrierName() + ":/" + result.c_str()).c_str());
+    ConstString name = getName();
+    if (carrier!="") {
+        return carrier + ":/" + name;
+    }
+    return name;
+}
+
+
+ConstString Contact::toURI() const {
+    ConstString result = "";
+    if (carrier!="") {
+        result += carrier;
+        result += ":/";
+    }
+    if (hostName!="" && port>=0) {
+        result += "/";
+        result += hostName;
+        result += ":";
+        result += NetType::toString(port);
     }
     return result;
 }
 
 
-Contact Contact::fromString(const char *txt) {
+Contact Contact::fromString(const ConstString& txt) {
     ConstString str(txt);
     Contact c;
     ConstString::size_type start = 0;
@@ -163,7 +190,7 @@ Contact Contact::fromString(const char *txt) {
         offset = 1;
     }
     if (base==ConstString::npos) {
-        if (str[0] == '/') {
+        if (str.length()>0 && str[0] == '/') {
             base = 0;
             offset = 0;
         }
@@ -201,7 +228,6 @@ Contact Contact::fromString(const char *txt) {
                 }
             }
         }
-        //printf("Mode %d nums %d\n", mode, nums);
         if (mode==1 && nums>=1) {
             // yes, machine:nnn
             ConstString machine = str.substr(start+1,colon-start-1);
@@ -210,13 +236,7 @@ Contact Contact::fromString(const char *txt) {
                             machine,
                             atoi(portnum.c_str()));
             start = i;
-        } /* else if (mode==0) {
-            ConstString machine = str.substr(start+1,i-start-1);
-            c = c.addSocket(c.getCarrier().c_str(),
-                            machine,
-                            -1);
-            start = i;
-            }*/
+        }
     }
     ConstString rname = str.substr(start);
     if (rname!="/") {
@@ -228,19 +248,16 @@ Contact Contact::fromString(const char *txt) {
 
 
 bool Contact::isValid() const {
-    Address& addr = HELPER(implementation);
-    return addr.getPort()>=0;
+    return port>=0;
 }
 
 
 Contact Contact::byConfig(Searchable& config) {
     Contact result;
-    Address& addr = HELPER(result.implementation);
-    int port = config.check("port_number",Value(-1)).asInt();
-    String name = config.check("ip",Value("")).asString().c_str();
-    String regName = config.check("name",Value("")).asString().c_str();
-    String carrier = config.check("carrier",Value("tcp")).asString().c_str();
-    addr = Address(name,port,carrier,regName);
+    result.port = config.check("port_number",Value(-1)).asInt();
+    result.hostName = config.check("ip",Value("")).asString().c_str();
+    result.regName = config.check("name",Value("")).asString().c_str();
+    result.carrier = config.check("carrier",Value("tcp")).asString().c_str();
     return result;
 }
 
@@ -279,15 +296,28 @@ ConstString Contact::convertHostToIp(const char *name) {
 
         // convert the IP to a string and print it:
         inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
-
-        //printf("DEBUG: Host %s becomes ip address %s", name, ipstr);
     }
 #endif
 
     if (NameConfig::isLocalName(ipstr)) {
-        return NameConfig::getHostName().c_str();
+        return NameConfig::getHostName();
     }
     return ipstr;
 }
 
 
+bool Contact::hasTimeout() const {
+    return timeout >= 0;
+}
+
+void Contact::setTimeout(float timeout) {
+    this->timeout = timeout;
+}
+
+float Contact::getTimeout() const {
+    return timeout;
+}
+
+ConstString Contact::getRegName() const {
+    return regName;
+}

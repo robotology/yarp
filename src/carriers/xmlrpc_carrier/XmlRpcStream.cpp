@@ -12,7 +12,6 @@
 
 #include <yarp/os/Bottle.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace XmlRpc;
 using namespace std;
@@ -30,7 +29,7 @@ Value toValue(XmlRpcValue& v, bool outer) {
     case XmlRpcValue::TypeString:
         {
             string s = (string)v;
-            if (s[0]!='[') {
+            if (s.length()==0 || s[0]!='[') {
                 return Value(s.c_str());
             } else {
                 Value v;
@@ -88,9 +87,9 @@ Value toValue(XmlRpcValue& v, bool outer) {
     return Value("(type not supported yet out of laziness)");
 }
 
-ssize_t XmlRpcStream::read(const Bytes& b) {
+YARP_SSIZE_T XmlRpcStream::read(const Bytes& b) {
     //printf("XMLRPC READ\n");
-    ssize_t result = sis.read(b);
+    YARP_SSIZE_T result = sis.read(b);
     if (result>0) {
         //printf("RETURNING %d bytes\n", result);
         return result;

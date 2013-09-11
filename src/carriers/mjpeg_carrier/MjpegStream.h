@@ -12,11 +12,9 @@
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/TwoWayStream.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
@@ -27,15 +25,13 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MjpegStream;
-        }
+        class MjpegStream;
     }
 }
 
-class yarp::os::impl::MjpegStream : public TwoWayStream,
-                                    public yarp::os::InputStream,
-                                    public yarp::os::OutputStream
+class yarp::os::MjpegStream : public TwoWayStream,
+                              public InputStream,
+                              public OutputStream
 {
 private:
     TwoWayStream *delegate;
@@ -44,7 +40,7 @@ private:
     yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
     yarp::sig::ImageNetworkHeader imgHeader;
     BlobNetworkHeader blobHeader;
-    yarp::os::ManagedBytes cimg;
+    ManagedBytes cimg;
     yarp::mjpeg::MjpegDecompression decompression;
     int phase;
     char *cursor;
@@ -70,15 +66,15 @@ public:
         }
     }
 
-    virtual yarp::os::InputStream& getInputStream() { return *this; }
-    virtual yarp::os::OutputStream& getOutputStream() { return *this; }
+    virtual InputStream& getInputStream() { return *this; }
+    virtual OutputStream& getOutputStream() { return *this; }
 
 
-    virtual const Address& getLocalAddress() {
+    virtual const Contact& getLocalAddress() {
         return delegate->getLocalAddress();
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() {
         return delegate->getRemoteAddress();
     }
 
@@ -104,7 +100,7 @@ public:
 
     virtual void write(const Bytes& b);
 
-    virtual ssize_t read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b);
 
     virtual void interrupt() {
         delegate->getInputStream().interrupt();

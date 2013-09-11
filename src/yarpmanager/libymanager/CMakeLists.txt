@@ -1,11 +1,11 @@
 #  Yarp Modules Manager
 #  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
 #  Authors: Ali Paikan <ali.paikan@iit.it>
-# 
+#
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 #
 
-GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
 project(YARP_manager)
 
@@ -20,7 +20,6 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
-include_directories(${ACE_INCLUDE_DIRS})
 
 if(CREATE_LIB_MATH)
     ADD_DEFINITIONS( -DWITH_YARPMATH )
@@ -36,4 +35,3 @@ endif(CREATE_LIB_MATH)
 #set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
 #set_property(TARGET YARP_manager PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 #install(DIRECTORY include/yarp/manager COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
-

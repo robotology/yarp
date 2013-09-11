@@ -12,9 +12,9 @@
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 namespace yarp {
     namespace os {
@@ -38,7 +38,7 @@ class yarp::os::impl::ShmemHybridStream : public TwoWayStream,
 public:
     ShmemHybridStream() { m_bLinked=false; }
     virtual ~ShmemHybridStream() { close(); }
-    int open(const Address& yarp_address, bool sender);
+    int open(const Contact& yarp_address, bool sender);
     int accept();
 
     virtual void close()
@@ -60,9 +60,9 @@ public:
         if (!out.write(b)) close();
     }
 
-    virtual ssize_t read(const Bytes& b)
+    virtual YARP_SSIZE_T read(const Bytes& b)
     {
-        ssize_t ret=in.read(b);
+        YARP_SSIZE_T ret=in.read(b);
         if (ret==-1) close();
         return ret;
     }
@@ -82,8 +82,8 @@ public:
     virtual void beginPacket() {}
     virtual void endPacket() {}
 
-    virtual const Address& getLocalAddress() { return m_LocalAddress; }
-    virtual const Address& getRemoteAddress() { return m_RemoteAddress; }
+    virtual const Contact& getLocalAddress() { return m_LocalAddress; }
+    virtual const Contact& getRemoteAddress() { return m_RemoteAddress; }
 
 protected:
     enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF,RESIZE};
@@ -92,7 +92,7 @@ protected:
 
     bool m_bLinked;
 
-    Address m_LocalAddress,m_RemoteAddress;
+    Contact m_LocalAddress,m_RemoteAddress;
     ACE_SOCK_Stream m_SockStream;
     ACE_SOCK_Acceptor m_Acceptor;
 

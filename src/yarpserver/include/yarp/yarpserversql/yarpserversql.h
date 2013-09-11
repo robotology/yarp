@@ -12,6 +12,9 @@
 
 #include <yarp/conf/api.h>
 
+#include <yarp/os/NameStore.h>
+#include <yarp/os/Searchable.h>
+
 // avoid dll export until libYARP_serversql becomes dynamic again
 #define yarpserversql_API
 
@@ -24,5 +27,7 @@
 #endif
 
 yarpserversql_API int yarpserver3_main(int argc, char *argv[]);
+
+yarpserversql_API yarp::os::NameStore *yarpserver3_create(yarp::os::Searchable& options);
 
 #endif

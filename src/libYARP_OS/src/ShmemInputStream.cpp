@@ -174,7 +174,7 @@ int ShmemInputStreamImpl::read(char *data,int len)
 	return len;
 }
 
-ssize_t ShmemInputStreamImpl::read(const Bytes& b)
+YARP_SSIZE_T ShmemInputStreamImpl::read(const Bytes& b)
 {
 	m_ReadSerializerMutex.wait();
 	
@@ -186,7 +186,7 @@ ssize_t ShmemInputStreamImpl::read(const Bytes& b)
 
 	char *data=b.get(),buf;
 	size_t len=b.length();
-	ssize_t ret;
+	YARP_SSIZE_T ret;
 
 	while (!(ret=read(data,(int)len)))
 	{

@@ -18,7 +18,7 @@ public:
         return new HumanCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "human";
     }
 
@@ -55,7 +55,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "humans are handy";
     }
 
@@ -86,25 +86,25 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
 
-    virtual bool expectSenderSpecifier(Protocol& proto) {
+    virtual bool expectSenderSpecifier(ConnectionState& proto) {
         // interpret everything that sendHeader wrote
-        proto.setRoute(proto.getRoute().addFromName(NetType::readLine(proto.is())));
+        proto.setRoute(proto.getRoute().addFromName(proto.is().readLine()));
         return proto.is().isOk();
     }
 
-    virtual bool expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) {
         // interpret any extra header information sent - optional
         return true;
     }
 
-    virtual bool respondToHeader(Protocol& proto) {
+    virtual bool respondToHeader(ConnectionState& proto) {
         // SWITCH TO NEW STREAM TYPE
         HumanStream *stream = new HumanStream();
         if (stream==NULL) { return false; }
@@ -112,7 +112,7 @@ public:
         return true;
     }
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto) {
         // SWITCH TO NEW STREAM TYPE
         HumanStream *stream = new HumanStream();
         if (stream==NULL) { return false; }
@@ -127,23 +127,23 @@ public:
 
     // Payload time!
 
-    virtual bool write(Protocol& proto, SizedWriter& writer) {
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) {
         bool ok = sendIndex(proto,writer);
         if (!ok) return false;
         writer.write(proto.os());
         return proto.os().isOk();
     }
 
-    virtual bool sendIndex(Protocol& proto,SizedWriter& writer) {
-        String prefix = "human says ";
+    virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer) {
+        ConstString prefix = "human says ";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
-    virtual bool expectIndex(Protocol& proto) {
-        String prefix = "human says ";
-        String compare = prefix;
+    virtual bool expectIndex(ConnectionState& proto) {
+        ConstString prefix = "human says ";
+        ConstString compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);
@@ -153,16 +153,16 @@ public:
 
     // Acknowledgements, we don't do them
 
-    virtual bool sendAck(Protocol& proto) {
-        String prefix = "computers rule!\r\n";
+    virtual bool sendAck(ConnectionState& proto) {
+        ConstString prefix = "computers rule!\r\n";
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.os().write(b2);
         return true;
     }
 
-    virtual bool expectAck(Protocol& proto) {
-        String prefix = "computers rule!\r\n";
-        String compare = prefix;
+    virtual bool expectAck(ConnectionState& proto) {
+        ConstString prefix = "computers rule!\r\n";
+        ConstString compare = prefix;
         Bytes b2((char*)prefix.c_str(),prefix.length());
         proto.is().read(b2);
         bool ok = proto.is().isOk() && (prefix==compare);

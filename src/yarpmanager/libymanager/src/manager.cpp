@@ -537,16 +537,16 @@ bool Manager::updateResource(GenericResource* resource)
         comp->getStorage().setTotalSpace(info.storage.totalSpace*1024);
         comp->getStorage().setFreeSpace(info.storage.freeSpace*1024);
 
-        comp->getNetwork().setIP4(info.network.ip4);
-        comp->getNetwork().setIP6(info.network.ip6);
-        comp->getNetwork().setMAC(info.network.mac);
+        comp->getNetwork().setIP4(info.network.ip4.c_str());
+        comp->getNetwork().setIP6(info.network.ip6.c_str());
+        comp->getNetwork().setMAC(info.network.mac.c_str());
 
 
-        comp->getProcessor().setArchitecture(info.processor.architecture);
+        comp->getProcessor().setArchitecture(info.processor.architecture.c_str());
         comp->getProcessor().setCores(info.processor.cores);
         comp->getProcessor().setSiblings(info.processor.siblings);
         comp->getProcessor().setFrequency(info.processor.frequency);
-        comp->getProcessor().setModel(info.processor.model);
+        comp->getProcessor().setModel(info.processor.model.c_str());
         LoadAvg load;
         load.loadAverageInstant = (double)info.load.cpuLoadInstant;
         load.loadAverage1 = info.load.cpuLoad1;
@@ -554,9 +554,9 @@ bool Manager::updateResource(GenericResource* resource)
         load.loadAverage15 = info.load.cpuLoad15;
         comp->getProcessor().setCPULoad(load);
 
-        comp->getPlatform().setName(info.platform.name);
-        comp->getPlatform().setDistribution(info.platform.distribution);
-        comp->getPlatform().setRelease(info.platform.release);
+        comp->getPlatform().setName(info.platform.name.c_str());
+        comp->getPlatform().setDistribution(info.platform.distribution.c_str());
+        comp->getPlatform().setRelease(info.platform.release.c_str());
     }
     return true;
 }

@@ -9,9 +9,9 @@
 
 #ifdef CREATE_MPI_CARRIER
 
-#include <yarp/os/impl/MpiP2PStream.h>
+#include <yarp/os/MpiP2PStream.h>
 
-using namespace yarp::os::impl;
+using namespace yarp::os;
 
 
 /////////////////////////////////////////////////

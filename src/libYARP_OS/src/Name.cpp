@@ -8,11 +8,11 @@
  */
 
 
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/Name.h>
 
-using namespace yarp::os::impl;
+using namespace yarp::os;
 
-Name::Name(const String& txt) {
+Name::Name(const ConstString& txt) {
     this->txt = txt;
 }
 
@@ -26,35 +26,34 @@ bool Name::isRooted() const {
 }
 
 
-Address Name::toAddress() const {
-    YARP_STRING_INDEX mid = YARP_STRSTR(txt,":/");
-    if (mid!=String::npos && mid>0) {
-        String first = txt.substr(0,mid);
-        String second = txt.substr(mid+2);
+Contact Name::toAddress() const {
+    size_t mid = txt.find(":/");
+    if (mid!=ConstString::npos && mid>0) {
+        ConstString first = txt.substr(0,mid);
+        ConstString second = txt.substr(mid+2);
         if (first.length()>=2) {
             if (first[0]=='/') {
                 first = first.substr(1);
             }
         }
-        return Address("",-1,first,second);
-    } else {
-        return Address("",-1,"",txt);
+        return Contact::bySocket(first,"",-1).addName(second);
     }
+    return Contact::bySocket("","",-1).addName(txt);
 }
 
 
-String Name::getCarrierModifier(const char *mod, bool *hasModifier) {
+ConstString Name::getCarrierModifier(const char *mod, bool *hasModifier) {
     bool ok = false;
-    String work = txt;
-    YARP_STRING_INDEX mid = YARP_STRSTR(work,":/");
-    if (mid!=String::npos && mid>0) {
+    ConstString work = txt;
+    size_t mid = work.find(":/");
+    if (mid!=ConstString::npos && mid>0) {
         work = work.substr(0,mid);
-        String target = String("+")+mod+".";
-        YARP_STRING_INDEX modLoc = YARP_STRSTR(work,target.c_str());
-        if (modLoc!=String::npos) {
+        ConstString target = ConstString("+")+mod+".";
+        size_t modLoc = work.find(target);
+        if (modLoc!=ConstString::npos) {
             work = work.substr(modLoc+target.length(),work.length());
-            YARP_STRING_INDEX endLoc = YARP_STRSTR(work,"+");
-            if (endLoc!=String::npos) {
+            size_t endLoc = work.find("+");
+            if (endLoc!=ConstString::npos) {
                 work = work.substr(0,endLoc);
             }
             ok = true;

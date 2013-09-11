@@ -57,7 +57,7 @@ public:
      * true iff the port started operation successfully and is now
      * visible on the YARP network
      */
-    virtual bool open(const char *name) = 0;
+    virtual bool open(const ConstString& name) = 0;
 
     /**
      * Start port operation with user-chosen network parameters.
@@ -76,7 +76,7 @@ public:
      * @param name the name of the target port
      * @return true iff the connection is successfully created
      */
-    virtual bool addOutput(const char *name) = 0;
+    virtual bool addOutput(const ConstString& name) = 0;
 
     /**
      * Add an output connection to the specified port, using a specified
@@ -85,7 +85,7 @@ public:
      * @param carrier the carrier (network protocol) to use, e.g. "tcp", "udp", "mcast", "text", ...
      * @return true iff the connection is successfully created
      */
-    virtual bool addOutput(const char *name, const char *carrier) = 0;
+    virtual bool addOutput(const ConstString& name, const ConstString& carrier) = 0;
 
     /**
      * Add an output connection to the specified port, using specified

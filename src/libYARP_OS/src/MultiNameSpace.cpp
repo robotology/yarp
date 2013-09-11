@@ -99,8 +99,7 @@ public:
                 continue;
             }
             String mode = conf2.getMode();
-            Contact address = conf2.getAddress().toContact().addName(n);
-            //printf("ADDRESS %s\n", address.toString().c_str());
+            Contact address = conf2.getAddress().addName(n);
             if (mode=="yarp"||mode=="//") {
                 NameSpace *ns = new YarpNameSpace(address);
                 spaces.push_back(ns);
@@ -126,7 +125,7 @@ public:
         return Contact();
     }
 
-    Contact queryName(const char *name) {
+    Contact queryName(const ConstString& name) {
         activate();
         for (int i=0; i<(int)spaces.size(); i++) {
             NameSpace *ns = spaces[i];
@@ -134,9 +133,7 @@ public:
             if (ns->getNameServerName()==name) {
                 return ns->getNameServerContact();
             }
-            //printf("Query from %s\n", spaces[i]->getNameServerName().c_str());
             Contact result = ns->queryName(name);
-            //printf("Got %s\n", result.toString().c_str());
             if (result.isValid()) return result;
         }
         return Contact();
@@ -211,7 +208,7 @@ Contact MultiNameSpace::getNameServerContact() const {
     return ((MultiNameSpaceHelper*)system_resource)->getNameServerContact();
 }
 
-Contact MultiNameSpace::queryName(const char *name) {
+Contact MultiNameSpace::queryName(const ConstString& name) {
     return HELPER(this).queryName(name);
 }
 
@@ -263,7 +260,7 @@ bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
     return ns->disconnectPortToPortPersistently(src,dest,style);
 }
 
-Contact MultiNameSpace::registerName(const char *name) {
+Contact MultiNameSpace::registerName(const ConstString& name) {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
     for (int i=0; i<(int)lst.size(); i++) {
@@ -290,7 +287,7 @@ Contact MultiNameSpace::registerContact(const Contact& contact) {
     return result;
 }
 
-Contact MultiNameSpace::unregisterName(const char *name) {
+Contact MultiNameSpace::unregisterName(const ConstString& name) {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
     for (int i=0; i<(int)lst.size(); i++) {
@@ -310,14 +307,14 @@ Contact MultiNameSpace::unregisterContact(const Contact& contact) {
     return result;
 }
 
-bool MultiNameSpace::setProperty(const char *name, const char *key,
+bool MultiNameSpace::setProperty(const ConstString& name, const ConstString& key,
                                 const Value& value) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return false;
     return ns->setProperty(name,key,value);
 }
 
-Value *MultiNameSpace::getProperty(const char *name, const char *key) {
+Value *MultiNameSpace::getProperty(const ConstString& name, const ConstString& key) {
     NameSpace *ns = HELPER(this).getOne();
     if (!ns) return NULL;
     return ns->getProperty(name,key);

@@ -10,17 +10,12 @@
 #ifndef XMLRPCCARRIER_INC
 #define XMLRPCCARRIER_INC
 
-#include <yarp/os/impl/Carrier.h>
-#include <yarp/os/impl/Protocol.h>
-#include <yarp/os/impl/Address.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/Carrier.h>
 #include "XmlRpcStream.h"
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class XmlRpcCarrier;
-        }
+        class XmlRpcCarrier;
     }
 }
 
@@ -46,12 +41,12 @@ namespace yarp {
  * will produce the output "30" if the server still exists.
  *
  */
-class yarp::os::impl::XmlRpcCarrier : public Carrier {
+class yarp::os::XmlRpcCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
-    Address host;
-    String http;
+    Contact host;
+    ConstString http;
     bool interpretRos;
 public:
     XmlRpcCarrier() {
@@ -64,7 +59,7 @@ public:
         return new XmlRpcCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "xmlrpc";
     }
 
@@ -100,7 +95,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "xmlrpc_carrier";
     }
 
@@ -131,23 +126,23 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
 
-    virtual bool expectSenderSpecifier(Protocol& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
 
-    virtual bool expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) {
         // interpret any extra header information sent - optional
         return true;
     }
 
-    bool respondToHeader(Protocol& proto);
+    bool respondToHeader(ConnectionState& proto);
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto) {
         sender = true;
         XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
                                                 interpretRos);
@@ -163,27 +158,27 @@ public:
 
     // Payload time!
 
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true;
     }
 
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual String getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName() { return ""; }
 };
 
 #endif

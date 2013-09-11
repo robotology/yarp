@@ -83,10 +83,10 @@ public:
     virtual bool readRaw(ConnectionReader& connection) = 0;
     virtual bool writeRaw(ConnectionWriter& connection) = 0;
 
-    virtual bool check(const char *key);
+    virtual bool check(const yarp::os::ConstString& key);
 
-    virtual yarp::os::Value& find(const char *key);
-    virtual yarp::os::Bottle& findGroup(const char *key);
+    virtual yarp::os::Value& find(const yarp::os::ConstString& key);
+    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key);
 
     virtual bool operator == (const yarp::os::Value& alt) const;
 
@@ -295,10 +295,10 @@ public:
     virtual bool isString() const { return true; }
     static const int code;
     virtual void copy(const Storable& alt) {
-        yarp::os::ConstString y = alt.asString();
-        String tmp;
-        YARP_STRSET(tmp,(char*)y.c_str(),y.length(),0);
-        x = tmp;
+        //yarp::os::ConstString y = 
+        x = alt.asString();
+        //String tmp(y.c_str(),y.length());
+        //x = tmp;
     }
 };
 
@@ -329,8 +329,7 @@ public:
     static const int code;
     virtual void copy(const Storable& alt) {
         if (alt.isBlob()) {
-            String tmp;
-            YARP_STRSET(tmp,(char*)alt.asBlob(),alt.asBlobLength(),0);
+            String tmp((char*)alt.asBlob(),alt.asBlobLength());
             x = tmp;
         } else {
             x = String();
@@ -395,11 +394,11 @@ public:
     static const int code;
     virtual int subCode() const;
 
-    virtual yarp::os::Value& find(const char *key) {
+    virtual yarp::os::Value& find(const yarp::os::ConstString& key) {
         return content.find(key);
     }
 
-    virtual yarp::os::Bottle& findGroup(const char *key) {
+    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) {
         return content.findGroup(key);
     }
     virtual void copy(const Storable& alt) { content = *(alt.asList()); }
@@ -435,11 +434,11 @@ public:
     }
     static const int code;
   
-    virtual yarp::os::Value& find(const char *key) {
+    virtual yarp::os::Value& find(const yarp::os::ConstString& key) {
         return content.find(key);
     }
 
-    virtual yarp::os::Bottle& findGroup(const char *key) {
+    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) {
         return content.findGroup(key);
     }
     virtual void copy(const Storable& alt) { content = *(alt.asDict()); }
@@ -485,12 +484,8 @@ public:
         add(new StoreDouble(x));
     }
 
-    void addString(const char *text) {
-        add(new StoreString(String(text)));
-    }
-
     void addString(const yarp::os::ConstString& text) {
-        add(new StoreString(String(text.c_str(),text.length())));
+        add(new StoreString(text));
     }
 
     yarp::os::Bottle& addList();

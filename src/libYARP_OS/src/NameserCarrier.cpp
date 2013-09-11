@@ -7,7 +7,10 @@
  */
 
 #include <yarp/os/impl/NameserCarrier.h>
-#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/String.h>
+
+using namespace yarp::os;
+using namespace yarp::os::impl;
 
 // just to keep linkers from complaining about empty archive
 bool dummyNameserCarrierMethod() {
@@ -35,11 +38,11 @@ yarp::os::OutputStream& yarp::os::impl::NameserTwoWayStream::getOutputStream() {
     return delegate->getOutputStream();
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NameserTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getLocalAddress() {
     return delegate->getLocalAddress();
 }
 
-const yarp::os::impl::Address& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::NameserTwoWayStream::getRemoteAddress() {
     return delegate->getRemoteAddress();
 }
 
@@ -63,7 +66,7 @@ void yarp::os::impl::NameserTwoWayStream::endPacket() {
     delegate->endPacket();
 }
 
-ssize_t yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
+YARP_SSIZE_T yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
     // assume it is ok for name_ser to go byte-by-byte
     // since this protocol will be phased out
     if (b.length()<=0) {
@@ -71,7 +74,7 @@ ssize_t yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
     }
     Bytes tmp(b.get(),1);
     while (swallowRead.length()>0) {
-        ssize_t r = delegate->getInputStream().read(tmp);
+        YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
         if (r<=0) { return r; }
         swallowRead = swallowRead.substr(1,swallowRead.length()-1);
     }
@@ -80,7 +83,7 @@ ssize_t yarp::os::impl::NameserTwoWayStream::read(const Bytes& b) {
         pendingRead = pendingRead.substr(1,pendingRead.length()-1);
         return 1;
     }
-    ssize_t r = delegate->getInputStream().read(tmp);
+    YARP_SSIZE_T r = delegate->getInputStream().read(tmp);
     if (r<=0) { return r; }
     if (tmp.get()[0]=='\n') {
         pendingRead = "";
@@ -102,7 +105,7 @@ yarp::os::impl::String yarp::os::impl::NameserCarrier::getSpecifierName() {
     return "NAME_SER";
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::NameserCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::NameserCarrier::create() {
     return new NameserCarrier();
 }
 
@@ -145,7 +148,7 @@ bool yarp::os::impl::NameserCarrier::canEscape() {
     return false;
 }
 
-bool yarp::os::impl::NameserCarrier::sendHeader(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::sendHeader(ConnectionState& proto) {
     yarp::os::impl::String target = getSpecifierName();
     yarp::os::Bytes b((char*)target.c_str(),8);
     proto.os().write(b);
@@ -153,24 +156,24 @@ bool yarp::os::impl::NameserCarrier::sendHeader(Protocol& proto) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::NameserCarrier::expectSenderSpecifier(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("anon"));
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::expectIndex(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectIndex(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::sendAck(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::sendAck(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::expectAck(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectAck(ConnectionState& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::respondToHeader(ConnectionState& proto) {
     // I am the receiver
     NameserTwoWayStream *stream =
         new NameserTwoWayStream(proto.giveStreams());
@@ -178,12 +181,12 @@ bool yarp::os::impl::NameserCarrier::respondToHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::NameserCarrier::expectReplyToHeader(ConnectionState& proto) {
     // I am the sender
     return true;
 }
 
-bool yarp::os::impl::NameserCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::NameserCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     String target = firstSend?"VER ":"NAME_SERVER ";
     Bytes b((char*)target.c_str(),target.length());
     proto.os().write(b);

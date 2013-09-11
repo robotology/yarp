@@ -7,12 +7,13 @@
  *
  */
 
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
 
 #include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;

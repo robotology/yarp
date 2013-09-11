@@ -26,27 +26,30 @@ macro(checkandset_dependency package)
 
     string(TOUPPER ${package} PKG)
 
+    # YARP_HAS_SYSTEM_${PKG}
     if(${package}_FOUND OR ${PKG}_FOUND)
-        set(YARP_USE_${PKG} TRUE CACHE BOOL "Use package ${package}")
+        set(YARP_HAS_SYSTEM_${PKG} TRUE)
     else(${package}_FOUND OR ${PKG}_FOUND)
-        set(YARP_USE_${PKG} FALSE CACHE BOOL "Use package ${package}")
+        set(YARP_HAS_SYSTEM_${PKG} FALSE)
     endif(${package}_FOUND OR ${PKG}_FOUND)
 
-    if(YARP_USE_${PKG})
-        if(${package}_FOUND OR ${PKG}_FOUND)
-            set(YARP_HAS_${PKG} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
-        else(${package}_FOUND OR ${PKG}_FOUND)
-            set(YARP_HAS_${PKG} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
-        endif(${package}_FOUND OR ${PKG}_FOUND)
-    endif(YARP_USE_${PKG})
-
-    set(YARP_USE_SYSTEM_${PKG} TRUE CACHE INTERNAL "" FORCE)
-
+    # YARP_USE_${PKG}
+    cmake_dependent_option(YARP_USE_${PKG} "Use package ${package}" TRUE
+                           YARP_HAS_SYSTEM_${PKG} FALSE)
     mark_as_advanced(YARP_USE_${package})
 
+    # YARP_USE_SYSTEM_${PKG}
+    set(YARP_USE_SYSTEM_${PKG} ${YARP_USE_${PKG}} CACHE INTERNAL "Use system-installed ${package}, rather than a private copy (recommended)" FORCE)
+
+    # YARP_HAS_${PKG}
+    if(${YARP_HAS_SYSTEM_${PKG}})
+        set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
+    endif()
+
     #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_SYSTEM_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
 
 endmacro (checkandset_dependency)
@@ -57,27 +60,29 @@ macro(checkbuildandset_dependency package)
 
     string(TOUPPER ${package} PKG)
 
-    set(YARP_USE_${PKG} TRUE CACHE BOOL "Use package ${package}")
-    mark_as_advanced(YARP_USE_${PKG})
-
+    # YARP_HAS_SYSTEM_${PKG}
     if (${package}_FOUND OR ${PKG}_FOUND)
-        set(YARP_USE_SYSTEM_${PKG} TRUE CACHE BOOL "Use system-installed ${package}, rather than a private copy")
-        mark_as_advanced(YARP_USE_SYSTEM_${PKG})
+        set(YARP_HAS_SYSTEM_${PKG} TRUE)
     else (${package}_FOUND OR ${PKG}_FOUND)
-        # If package was not found we force it to be built
-        set(YARP_USE_SYSTEM_${PKG} FALSE CACHE INTERNAL "" FORCE)
+        set(YARP_HAS_SYSTEM_${PKG} FALSE)
     endif (${package}_FOUND OR ${PKG}_FOUND)
 
-    if(YARP_USE_${PKG})
-        set(YARP_HAS_${PKG} TRUE CACHE INTERNAL "Package ${package} found" FORCE)
-    else(YARP_USE_${PKG})
-        set(YARP_HAS_${PKG} FALSE CACHE INTERNAL "Package ${package} found" FORCE)
-    endif(YARP_USE_${PKG})
+    # YARP_USE_${PKG}
+    option(YARP_USE_${PKG} "Use package ${package}" TRUE)
+    mark_as_advanced(YARP_USE_${PKG})
 
+    # YARP_USE_SYSTEM_${PKG}
+    cmake_dependent_option(YARP_USE_SYSTEM_${PKG} "Use system-installed ${package}, rather than a private copy (recommended)" TRUE
+                           "YARP_HAS_SYSTEM_${PKG};YARP_USE_${PKG}" FALSE)
+    mark_as_advanced(YARP_USE_SYSTEM_${PKG})
+
+    # YARP_HAS_${PKG}
+    set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
 
     #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
+    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_SYSTEM_${PKG})
     set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
 
 endmacro(checkbuildandset_dependency)
@@ -120,18 +125,21 @@ macro(print_dependency package)
 
     string(TOUPPER ${package} PKG)
 
+#    message("YARP_HAS_SYSTEM_${PKG} = ${YARP_HAS_SYSTEM_${PKG}}")
+#    message("YARP_USE_${PKG} = ${YARP_USE_${PKG}}")
+#    message("YARP_USE_SYSTEM_${PKG} = ${YARP_USE_SYSTEM_${PKG}}")
+#    message("YARP_HAS_${PKG} = ${YARP_HAS_${PKG}}")
     if(NOT YARP_USE_${PKG})
         message(STATUS "${package}: disabled")
-    elseif(NOT YARP_USE_SYSTEM_${PKG})
-        message(STATUS "${package}: compiling")
-    elseif(YARP_HAS_${PKG})
-        message(STATUS "${package}: found")
-    else(NOT YARP_USE_${PKG})
+    elseif(NOT YARP_HAS_${PKG})
         message(STATUS "${package}: not found")
-    endif(NOT YARP_USE_${PKG})
-#    message(STATUS "YARP_USE_${PKG} = ${YARP_USE_${PKG}}")
-#    message(STATUS "YARP_HAS_${PKG} = ${YARP_HAS_${PKG}}")
-#    message(STATUS "YARP_USE_SYSTEM_${PKG} = ${YARP_USE_SYSTEM_${PKG}}")
+    elseif(YARP_HAS_SYSTEM_${PKG} AND YARP_USE_SYSTEM_${PKG})
+        message(STATUS "${package}: found")
+    elseif(YARP_HAS_SYSTEM_${PKG})
+        message(STATUS "${package}: compiling (system package disabled)")
+    else()
+        message(STATUS "${package}: compiling (not found)")
+    endif()
 
 endmacro(print_dependency)
 
@@ -187,30 +195,15 @@ if(CREATE_YMANAGER OR CREATE_YARPSCOPE)
 endif(CREATE_YMANAGER OR CREATE_YARPSCOPE)
 
 if(CREATE_GUIS)
-    find_package(Gthread QUIET)
-    checkandset_dependency(Gthread)
+    if(CREATE_YARPSCOPE)
+        find_package(GTK2 2.20 COMPONENTS gtk gtkmm QUIET)
+    elseif(CREATE_GYARPMANAGER)
+        find_package(GTK2 2.8 COMPONENTS gtk gtkmm QUIET)
+    elseif(CREATE_YARPVIEW)
+        find_package(GTK2 2.8 COMPONENTS gtk QUIET)
+    endif(CREATE_YARPSCOPE)
 
-    set(YARP_USE_GTK2 TRUE CACHE BOOL "Use package GTK2")
-
-    if(YARP_USE_GTK2)
-        if(CREATE_YARPSCOPE)
-            find_package(GTK2 2.20 COMPONENTS gtk gtkmm QUIET)
-        elseif(CREATE_GYARPMANAGER)
-            find_package(GTK2 2.8 COMPONENTS gtk gtkmm QUIET)
-        elseif(CREATE_YARPVIEW)
-            find_package(GTK2 2.8 COMPONENTS gtk QUIET)
-        endif(CREATE_YARPSCOPE)
-
-        checkandset_dependency(GTK2)
-
-    else(YARP_USE_GTK2)
-        find_package(GtkPlus QUIET)
-        checkandset_dependency(GtkPlus)
-        if(CREATE_YARPSCOPE OR CREATE_GYARPMANAGER)
-            find_package(GtkMM QUIET)
-            checkandset_dependency(GtkMM)
-        endif(CREATE_YARPSCOPE OR CREATE_GYARPMANAGER)
-    endif(YARP_USE_GTK2)
+    checkandset_dependency(GTK2)
 
     ### FIXME: remove this check when stop supporting debian etch
     ### FIXME: FindGtkMM reports the wrong version on windows, since
@@ -249,20 +242,7 @@ check_optional_dependency(CREATE_LIB_MATH GSL)
 check_optional_dependency(YARP_USE_ATLAS Atlas)
 check_optional_dependency(CREATE_YMANAGER TinyXML)
 check_optional_dependency(CREATE_YARPSCOPE TinyXML)
-check_optional_dependency(CREATE_GUIS Gthread)
-
-if(YARP_USE_GTK2)
-    check_optional_dependency(CREATE_GUIS GTK2)
-else(YARP_USE_GTK2)
-    check_optional_dependency(CREATE_YARPVIEW GtkPlus)
-    check_optional_dependency(CREATE_GYARPMANAGER GtkPlus)
-    check_optional_dependency(CREATE_GYARPMANAGER GtkMM)
-    check_optional_dependency(CREATE_YARPSCOPE GtkPlus)
-    check_optional_dependency(CREATE_YARPSCOPE GtkMM)
-    check_optional_dependency(CREATE_GYARPBUILDER GtkPlus)
-    check_optional_dependency(CREATE_GYARPBUILDER GtkMM)
-endif(YARP_USE_GTK2)
-
+check_optional_dependency(CREATE_GUIS GTK2)
 check_optional_dependency(CREATE_YARPSCOPE GtkDatabox)
 check_optional_dependency(CREATE_YARPSCOPE GtkDataboxMM)
 check_optional_dependency(CREATE_GYARPBUILDER GooCanvas)
@@ -277,15 +257,7 @@ print_dependency(SQLite)
 print_dependency(GSL)
 print_dependency(Atlas)
 print_dependency(TinyXML)
-print_dependency(Gthread)
-
-if(YARP_USE_GTK2)
-    print_dependency(GTK2)
-else(YARP_USE_GTK2)
-    print_dependency(GtkPlus)
-    print_dependency(GtkMM)
-endif(YARP_USE_GTK2)
-
+print_dependency(GTK2)
 print_dependency(GtkDatabox)
 print_dependency(GtkDataboxMM)
 print_dependency(GooCanvas)

@@ -15,14 +15,13 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCommand.h>
-#include <yarp/os/impl/Name.h>
+#include <yarp/os/Name.h>
 
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Name.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/NameServer.h>
@@ -366,7 +365,7 @@ int Companion::ping(const char *port, bool quiet) {
     }
 
     if (address.getCarrier()=="tcp") {
-        out = Carriers::connect(Address::fromContact(address));
+        out = Carriers::connect(address);
         if (out==NULL) {
             YARP_ERROR(Logger::get(),"port found, but cannot connect");
             return 1;
@@ -435,7 +434,7 @@ int Companion::exists(const char *target, const ContactStyle& style) {
         return 2;
     }
 
-    Address address2 = Address::fromContact(address);
+    Contact address2(address);
     if (style.timeout>=0) {
         address2.setTimeout((float)style.timeout);
     }
@@ -506,7 +505,7 @@ int Companion::cmdName(int argc, char *argv[]) {
             fprintf(stderr, "%s not known.\n", cmd.get(1).asString().c_str());
             return 1;
         }
-        ConstString txt = NameServer::textify(Address::fromContact(result)).c_str();
+        ConstString txt = NameServer::textify(result);
         printf("%s", txt.c_str());
         return 0;
     }
@@ -538,7 +537,7 @@ int Companion::cmdName(int argc, char *argv[]) {
         } else {
             result = NetworkBase::registerName(portName);
         }
-        ConstString txt = NameServer::textify(Address::fromContact(result)).c_str();
+        ConstString txt = NameServer::textify(result);
         printf("%s", txt.c_str());
         return 0;
     }
@@ -583,9 +582,9 @@ int Companion::cmdConf(int argc, char *argv[]) {
     }
     if (argc>=2) {
         nc.fromFile();
-        Address prev = nc.getAddress();
+        Contact prev = nc.getAddress();
         String prevMode = nc.getMode();
-        Address next(String(argv[0]),atoi(argv[1]));
+        Contact next(argv[0],atoi(argv[1]));
         nc.setAddress(next);
         if (argc>=3) {
             nc.setMode(argv[2]);
@@ -594,21 +593,21 @@ int Companion::cmdConf(int argc, char *argv[]) {
         }
         nc.toFile();
         nc.fromFile();
-        Address current = nc.getAddress();
+        Contact current = nc.getAddress();
         String currentMode = nc.getMode();
         printf("Configuration file:\n");
         printf("  %s\n",nc.getConfigFileName().c_str());
         if (prev.isValid()) {
             printf("Stored:\n");
             printf("  host %s port number %d (%s name server)\n",
-                   prev.getName().c_str(),
+                   prev.getHost().c_str(),
                    prev.getPort(),
                    prevMode.c_str());
         }
         if (current.isValid()) {
             printf("Now stores:\n");
             printf("  host %s port number %d (%s name server)\n",
-                   current.getName().c_str(),
+                   current.getHost().c_str(),
                    current.getPort(),
                    currentMode.c_str());
         } else {
@@ -640,7 +639,7 @@ int Companion::cmdWhere(int argc, char *argv[]) {
     nc.fromFile();
     if (nc.getAddress().isValid()) {
         printf("Looking for name server on %s, port number %d\n",
-               nc.getAddress().getName().c_str(),
+               nc.getAddress().getHost().c_str(),
                nc.getAddress().getPort());
         printf("If there is a long delay, try:\n");
         printf("  yarp conf --clean\n");
@@ -649,7 +648,7 @@ int Companion::cmdWhere(int argc, char *argv[]) {
 
     bool reachable = false;
     if (address.isValid()) {
-        OutputProtocol *out = Carriers::connect(Address::fromContact(address));
+        OutputProtocol *out = Carriers::connect(address);
         if (out!=NULL) {
             reachable = true;
             out->close();
@@ -671,7 +670,7 @@ int Companion::cmdWhere(int argc, char *argv[]) {
     } else {
         NameConfig conf;
         bool haveFile = conf.fromFile();
-        Address address = conf.getAddress();
+        Contact address = conf.getAddress();
 
         printf("\n");
         printf("=======================================================================\n");
@@ -680,7 +679,7 @@ int Companion::cmdWhere(int argc, char *argv[]) {
         if (haveFile) {
             printf("== No valid YARP name server is available.\n");
             printf("== Here is the expected configuration:\n");
-            printf("==   host: %s port number: %d\n", address.getName().c_str(),
+            printf("==   host: %s port number: %d\n", address.getHost().c_str(),
                    address.getPort());
             printf("==   namespace: %s\n", nc.getNamespace().c_str());
             if (conf.getMode()!="" && conf.getMode()!="//") {
@@ -757,12 +756,12 @@ int Companion::sendMessage(const String& port, PortWriter& writable,
         }
         return 1;
     }
-    OutputProtocol *out = Carriers::connect(Address::fromContact(srcAddress));
+    OutputProtocol *out = Carriers::connect(srcAddress);
     if (out==NULL) {
         if (!quiet) {
             ACE_OS::fprintf(stderr, "Cannot connect to port named %s at %s\n",
                             port.c_str(),
-                            srcAddress.toString().c_str());
+                            srcAddress.toURI().c_str());
         }
         return 1;
     }
@@ -997,10 +996,9 @@ int Companion::cmdRpc(int argc, char *argv[]) {
     if (String(dest)=="--client") {
         return cmdRpc2(argc,argv);
     }
-    Address address = Name(dest).toAddress();
-    if (address.getCarrierName()=="") {
-        Contact contact = NetworkBase::queryName(dest);
-        address = Address::fromContact(contact);
+    Contact address = Name(dest).toAddress();
+    if (address.getCarrier()=="") {
+        address = NetworkBase::queryName(dest);
     }
     // no need for a port
     src = "anon_rpc";
@@ -1321,10 +1319,10 @@ int Companion::cmdClean(int argc, char *argv[]) {
                 if (c.getCarrier()=="mcast") {
                     printf("Skipping mcast port %s...\n", port.c_str());
                 } else {
-                    Address addr = Address::fromContact(c);
+                    Contact addr = c;
                     printf("Testing %s at %s\n",
                            port.c_str(),
-                           addr.toString().c_str());
+                           addr.toURI().c_str());
                     if (addr.isValid()) {
                         if (timeout>=0) {
                             addr.setTimeout((float)timeout);
@@ -1383,13 +1381,24 @@ int Companion::cmdResource(int argc, char *argv[]) {
         return 1;
     }
     if (ok) {
+        ResourceFinderOptions opts;
         if (all) {
-            result = rf.findPaths(p.check("find",Value("test.ini")).asString());
+            opts.duplicateFilesPolicy = ResourceFinderOptions::All;
+        }
+        if (p.check("type")) {
+            opts.resourceType = p.find("type").asString();
+        }
+        if (all) {
+            result = rf.findPaths(p.check("find",Value("test.ini")).asString(),
+                                  opts);
         } else {
             if (dir) {
-                result.addString(rf.findPath(p.check("find",Value("config")).asString()));
+                result.addString(rf.findPath(p.check("find",
+                                                     Value("config")).asString(),
+                                             opts));
             } else {
-                result.addString(rf.findFile(p.check("find",Value("icub.ini")).asString()));;
+                result.addString(rf.findFile(p.check("find",Value("icub.ini")).asString(),
+                                             opts));
             }
         }
     } else {
@@ -1405,7 +1414,7 @@ int Companion::cmdResource(int argc, char *argv[]) {
         p2.fromConfigFile(result.get(0).asString().c_str());
         printf(">>> %s\n", p2.toString().c_str());
     }
-    return (result!="")?0:1;
+    return (result.size()>0)?0:1;
 }
 
 
@@ -1436,7 +1445,7 @@ int Companion::cmdDetectRos(bool write) {
     }
     Contact root = Contact::fromString(uri).addCarrier("xmlrpc");
     fprintf(stderr,"Trying ROS_MASTER_URI=%s...\n", uri.c_str());
-    OutputProtocol *out = Carriers::connect(Address::fromContact(root));
+    OutputProtocol *out = Carriers::connect(root);
     bool ok = (out!=NULL);
     if (ok) delete out;
     if (!ok) {
@@ -1447,7 +1456,7 @@ int Companion::cmdDetectRos(bool write) {
     }
     NameConfig nc;
     nc.fromFile();
-    nc.setAddress(Address::fromContact(root));
+    nc.setAddress(root);
     nc.setMode("ros");
     nc.toFile();
     fprintf(stderr,"Configuration stored.  Testing.\n");
@@ -1488,7 +1497,7 @@ int Companion::cmdDetect(int argc, char *argv[]) {
         printf("If there is a long delay, try:\n");
         printf("  yarp conf --clean\n");
     }
-    OutputProtocol *out = Carriers::connect(Address::fromContact(addr));
+    OutputProtocol *out = Carriers::connect(addr);
     bool ok = (out!=NULL);
     if (ok) delete out;
     if (ok) {
@@ -1687,7 +1696,7 @@ private:
     SemaphoreImpl done;
     bool raw;
     bool env;
-    Address address;
+    Contact address;
 public:
     Port core;
 
@@ -1697,8 +1706,7 @@ public:
         core.setReader(*this);
         if (core.open(name)) {
             companion_active_port = &core;
-            Contact contact = core.where();
-            address = Address::fromContact(contact);
+            address = core.where();
         } else {
             //YARP_ERROR(Logger::get(),"Could not create port");
             done.post();
@@ -1897,9 +1905,11 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     while (!feof(stdin)) {
         String txt = getStdin();
         if (!feof(stdin)) {
-            if (txt[0]<32 && txt[0]!='\n' &&
-                txt[0]!='\r' && txt[0]!='\0' && txt[0]!='\t') {
-                break;  // for example, horrible windows ^D
+            if (txt.length()>0) {
+                if (txt[0]<32 && txt[0]!='\n' &&
+                    txt[0]!='\r' && txt[0]!='\t') {
+                    break;  // for example, horrible windows ^D
+                }
             }
             BottleImpl bot;
             if (!raw) {
@@ -1985,9 +1995,11 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
             }
 
             if (!feof(stdin)) {
-                if (txt[0]<32 && txt[0]!='\n' &&
-                    txt[0]!='\r' && txt[0]!='\0') {
-                    break;  // for example, horrible windows ^D
+                if (txt.length()>0) {
+                    if (txt[0]<32 && txt[0]!='\n' &&
+                        txt[0]!='\r') {
+                        break;  // for example, horrible windows ^D
+                    }
                 }
                 Bottle bot;
                 if (!resendFlag) {
@@ -2039,8 +2051,8 @@ String Companion::readString(bool *eof) {
 
     if (feof(stdin)) {
         end = true;
-    } else if (txt[0]<32 && txt[0]!='\n' &&
-               txt[0]!='\r' && txt[0]!='\0') {
+    } else if (txt.length()>0 && txt[0]<32 && txt[0]!='\n' &&
+               txt[0]!='\r') {
         end = true;
     }
     if (end) {

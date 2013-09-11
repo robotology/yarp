@@ -10,7 +10,6 @@
 #include "FfmpegGrabber.h"
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
-#include <yarp/os/impl/Logger.h>
 
 #include "ffmpeg_api.h"
 
@@ -18,7 +17,6 @@
 
 #define ERROR_PROBLEM
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;

@@ -12,13 +12,14 @@
 
 #include <yarp/os/impl/ShmemHybridStream.h>
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
-int ShmemHybridStream::open(const Address& yarp_address,bool sender)
+int ShmemHybridStream::open(const Contact& yarp_address,bool sender)
 {
 	m_bLinked=false;
 
-	ACE_INET_Addr ace_address(yarp_address.getPort(),yarp_address.getName().c_str());
+	ACE_INET_Addr ace_address(yarp_address.getPort(),yarp_address.getHost().c_str());
 
 	if (sender)
 	{				
@@ -38,7 +39,7 @@ int ShmemHybridStream::open(const Address& yarp_address,bool sender)
 
 		m_Acceptor.get_local_addr(ace_server_addr);
 
-		m_LocalAddress = Address(ace_server_addr.get_host_addr(),ace_server_addr.get_port_number());
+		m_LocalAddress = Contact(ace_server_addr.get_host_addr(),ace_server_addr.get_port_number());
 		m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
 
 		return result;
@@ -51,7 +52,7 @@ int ShmemHybridStream::accept()
 {
 	if (m_bLinked) return -1;
 
-	ssize_t result=m_Acceptor.accept(m_SockStream);
+	YARP_SSIZE_T result=m_Acceptor.accept(m_SockStream);
 
 	if (result<0)
 	{
@@ -63,8 +64,8 @@ int ShmemHybridStream::accept()
     ACE_INET_Addr local,remote;
     m_SockStream.get_local_addr(local);
     m_SockStream.get_remote_addr(remote);
-    m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
-    m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
+    m_LocalAddress=Contact(local.get_host_addr(),local.get_port_number());
+    m_RemoteAddress=Contact(remote.get_host_addr(),remote.get_port_number());
 
 	ShmemPacket_t recv_conn_data;
 	result=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
@@ -110,7 +111,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 	if (m_bLinked) return -1;
 
 	ACE_SOCK_Connector connector;
-	ssize_t result=connector.connect(m_SockStream,ace_address);
+	YARP_SSIZE_T result=connector.connect(m_SockStream,ace_address);
 	if (result<0)
 	{
 		YARP_ERROR(Logger::get(),String("ShmemHybridStream client returned ")+NetType::toString((int)result));
@@ -121,8 +122,8 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 	ACE_INET_Addr local,remote;
     m_SockStream.get_local_addr(local);
     m_SockStream.get_remote_addr(remote);
-    m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
-    m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
+    m_LocalAddress=Contact(local.get_host_addr(),local.get_port_number());
+    m_RemoteAddress=Contact(remote.get_host_addr(),remote.get_port_number());
 
 	out.open(m_LocalAddress.getPort());
 

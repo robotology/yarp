@@ -32,61 +32,62 @@ public:
     /**
      * Constuct an invalid Stamp.
      */
-    Stamp();
+    explicit Stamp();
 
     /**
      * Constuct a Stamp with a given sequence number and time.
-     * @param count the sequence number
-     * @param time the time stamp (in seconds, relative to an arbitrary
+     *
+     * @param count the sequence number.
+     * @param time the time stamp (in seconds, relative to an arbitrary.
      * zero time)
      */
     Stamp(int count, double time);
 
     /**
-     * @return the sequence number
+     * Get the sequence number.
+     *
+     * @return the sequence number.
      */
-    int getCount() {
-        return sequenceNumber;
-    }
+    int getCount();
 
     /**
+     * Get the time stamp.
+     *
      * @return the time stamp
      */
-    double getTime() {
-        return timeStamp;
-    }
+    double getTime();
 
     /**
+     * Check if this Stamp is valid.
+     *
      * @return true if this is a valid Stamp
      */
-    bool isValid() {
-        return sequenceNumber>=0;
-    }
-
+    bool isValid();
 
     /**
-     * @returns the maximum sequence number, after which
-     * an incrementing sequence should return to zero.
+     * Get the maximum sequence number, after which an incrementing sequence
+     * should return to zero.
+     *
+     * @return the maximum sequence number.
      */
     int getMaxCount();
 
-
     /**
-     * This method sets the timestamp to the current time,
-     * and increments the sequence number (wrapping to 0
-     * if the sequence number exceeds Stamp::getMaxCount)
+     * Set the timestamp to the current time, and increment the sequence number
+     * (wrapping to 0 if the sequence number exceeds Stamp::getMaxCount())
      */
     void update();
 
     /**
-     * This method set the timestamp to a given time,
-     * and increments the sequence number (wrapping to 0
-     * if the sequence exceeds Stamp::getMaxCount)
+     * Set the timestamp to a given time, and increments the sequence number
+     * (wrapping to 0 if the sequence exceeds Stamp::getMaxCount())
      */
     void update(double time);
 
+    // Documented in Portable
     virtual bool read(ConnectionReader& connection);
 
+    // Documented in Portable
     virtual bool write(ConnectionWriter& connection);
 };
 
@@ -96,7 +97,10 @@ public:
  */
 class YARP_OS_API yarp::os::Stamped {
 public:
-    virtual ~Stamped() {}
+    /**
+     * Destructor
+     */
+    virtual ~Stamped();
 
     /**
      * @return the Stamp associated with this object (time stamp,

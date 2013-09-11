@@ -9,14 +9,41 @@ if(NOT YARP_FOUND)
     set(YARP_INCLUDE_DIRS "@YARP_INCLUDE_DIRS@")
     set(YARP_LINK_DIRS "@YARP_LINK_DIRS@") # only needed with certain plugins
     set(YARP_DEFINES "@YARP_ALL_DEFINES@") # only needed if you use ACE directly
-    set(YARP_MODULE_DIR "@YARP_MODULE_DIR@")
-    set(YARP_MODULE_PATH "@YARP_MODULE_DIR@")
-# FIXME 2.4 Enable this
-#    if(${CMAKE_VERSION} VERSION_LESS 2.8.12)
-#        list(APPEND YARP_MODULE_PATH "@YARP_MODULE_PATH@/cmake-2.8.12/Modules")
-#    endif()
     set(YARP_BINDINGS "@YARP_BINDINGS@")
 
+    # Check if deprecated methods are built
+    set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
+    if(YARP_NO_DEPRECATED)
+        add_definitions("-DYARP_NO_DEPRECATED")
+    endif(YARP_NO_DEPRECATED)
+
+    # Disable deprecated warnings
+    # FIXME 2.4 re-enable these warnings before releasing YARP 2.4
+    set(YARP_NO_DEPRECATED_WARNINGS TRUE)
+
+    #
+    set(YARP_MODULE_DIR "@YARP_MODULE_DIR@")
+    set(YARP_MODULE_PATH "@YARP_MODULE_DIR@")
+    if(${CMAKE_VERSION} VERSION_LESS 2.8.12)
+       list(APPEND YARP_MODULE_PATH "@YARP_MODULE_DIR@/cmake-2.8.12/Modules")
+    endif()
+    if(NOT YARP_NO_DEPRECATED)
+       list(APPEND YARP_MODULE_PATH "@YARP_MODULE_DIR@/deprecated")
+    endif()
+
+    # Install directories
+    set(YARP_INSTALL_PREFIX "@YARP_INSTALL_PREFIX@")
+    set(YARP_CONFIG_INSTALL_DIR "@YARP_CONFIG_INSTALL_DIR@")
+    set(YARP_PLUGIN_MANIFESTS_INSTALL_DIR "@YARP_PLUGIN_MANIFESTS_INSTALL_DIR@")
+    set(YARP_MODULES_INSTALL_DIR "@YARP_MODULES_INSTALL_DIR@")
+    set(YARP_APPLICATIONS_INSTALL_DIR "@YARP_APPLICATIONS_INSTALL_DIR@")
+    set(YARP_TEMPLATES_INSTALL_DIR "@YARP_TEMPLATES_INSTALL_DIR@")
+    set(YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR "@YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR@")
+    set(YARP_MODULES_TEMPLATES_INSTALL_DIR "@YARP_MODULES_TEMPLATES_INSTALL_DIR@")
+    set(YARP_CONTEXTS_INSTALL_DIR "@YARP_CONTEXTS_INSTALL_DIR@")
+    set(YARP_ROBOTS_INSTALL_DIR "@YARP_ROBOTS_INSTALL_DIR@")
+
+    # Version
     set(YARP_VERSION_MAJOR "@YARP_VERSION_MAJOR@")
     set(YARP_VERSION_MINOR "@YARP_VERSION_MINOR@")
     set(YARP_VERSION_PATCH "@YARP_VERSION_PATCH@")
@@ -26,12 +53,12 @@ if(NOT YARP_FOUND)
     set(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
 
     # Pull in any dependencies that YARP libraries may have.
-    get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)
-    include("${YARP_CMAKE}/@YARP_DEPENDENCY_FILENAME@")
+    include("${CMAKE_CURRENT_LIST_DIR}/@YARP_DEPENDENCY_FILENAME@")
 
     # Link directories are rare, so most user scripts don't
     # account for them.  On balance, better to pull them
     # in automatically.  The only current use is for OpenCV.
+    # FIXME 2.4 This should disappear
     link_directories(${YARP_LINK_DIRS})
 
     # Pass along some compilation options that may be useful for clients
@@ -45,13 +72,8 @@ if(NOT YARP_FOUND)
     set(YARP_HAS_IDL @YARP_HAS_IDL@)
     set(YARP_IDL_BINARY_HINT "@YARP_IDL_BINARY_HINT@")
 
-    # Check if deprecated methods are built
-    set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
-    if(YARP_NO_DEPRECATED)
-        add_definitions("-DYARP_NO_DEPRECATED")
-    endif(YARP_NO_DEPRECATED)
-
     # Export variables for available targets
+    # FIXME 2.4 Use a namespace for exported targets
     set(YARP_OS_LIBRARY YARP_OS)
     set(YARP_SIG_LIBRARY YARP_sig)
     if(YARP_HAS_MATH_LIBRARY)
@@ -63,9 +85,6 @@ if(NOT YARP_FOUND)
     endif(YARP_HAS_NAME_LIBRARY)
     set(YARP_INIT_LIBRARY YARP_init)
 
-    # Disable deprecated warnings
-    # FIXME 2.4 re-enable these warnings before releasing YARP 2.4
-    set(YARP_NO_DEPRECATED_WARNINGS TRUE)
-
+    # Finally set YARP_FOUND variable
     set(YARP_FOUND TRUE)
 endif(NOT YARP_FOUND)

@@ -99,13 +99,7 @@ endmacro(YARP_IDL)
 macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
     set(output_dir ${output_dir})
 
-    # Extract relevant folders / names
-    string(FIND ${yarpidl_file} "/" lastSlash REVERSE)
-    if(lastSlash GREATER 0)
-        string(SUBSTRING ${yarpidl_file} 0 ${lastSlash} include_prefix)
-    else(lastSlash GREATER 0)
-        set(include_prefix "")
-    endif(lastSlash GREATER 0)
+    get_filename_component(include_prefix  ${yarpidl_file} PATH)
     get_filename_component(yarpidlName ${yarpidl_file} NAME_WE)
     get_filename_component(yarpidlExt ${yarpidl_file} EXT)
     string(TOLOWER ${yarpidlExt} yarpidlExt)
@@ -132,7 +126,11 @@ macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
         make_directory(${dir})
         configure_file(${YARP_MODULE_DIR}/template/placeGeneratedYarpIdlFiles.cmake.in ${dir}/place${yarpidlName}.cmake @ONLY)
         execute_process(COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+			RESULT_VARIABLE res)
+	if (NOT "${res}" STREQUAL "0")
+	  message(FATAL_ERROR "yarpidl_${family} failed, aborting.")
+	endif()
         execute_process(COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake)
 
         include(${output_dir}/${yarpidl_target_name}.cmake)

@@ -62,6 +62,7 @@ int main(int argc, char *argv[]) {
     RosTypeCodeGenYarp gen;
     if (p.check("out")) {
         gen.setTargetDirectory(p.find("out").toString().c_str());
+        env.setTargetDirectory(gen.getTargetDirectory().c_str());
     }
     env.lookForService(is_service);
 

@@ -62,9 +62,16 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
-    static bool connect(const char *src, const char *dest,
-                        const char *carrier = NULL,
+    static bool connect(const ConstString& src, const ConstString& dest,
+                        const ConstString& carrier = "",
                         bool quiet = true);
+
+    // Catch old uses of NULL for carrier
+    static bool connect(const char *src, const char *dest,
+                        const char *carrier,
+                        bool quiet = true) {
+        return connect(ConstString(src),ConstString(dest),ConstString(""),quiet);
+    }
 
     /**
      * Request that an output port connect to an input port.
@@ -73,7 +80,7 @@ public:
      * @param style options for connection
      * @return true on success, false on failure
      */
-    static bool connect(const char *src, const char *dest,
+    static bool connect(const ConstString& src, const ConstString& dest,
                         const ContactStyle& style);
 
     /**
@@ -83,7 +90,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
-    static bool disconnect(const char *src, const char *dest,
+    static bool disconnect(const ConstString& src, const ConstString& dest,
                            bool quiet = true);
 
     /**
@@ -93,7 +100,7 @@ public:
      * @param style options for network communication related to disconnection
      * @return true on success, false on failure
      */
-    static bool disconnect(const char *src, const char *dest,
+    static bool disconnect(const ConstString& src, const ConstString& dest,
                            const ContactStyle& style);
 
     /**
@@ -103,7 +110,7 @@ public:
      * @param quiet suppress messages displayed upon success/failure
      * @return true if there is a connection
      */
-    static bool isConnected(const char *src, const char *dest,
+    static bool isConnected(const ConstString& src, const ConstString& dest,
                             bool quiet = true);
 
     /**
@@ -113,7 +120,7 @@ public:
      * @param style options for network communication
      * @return true if there is a connection
      */
-    static bool isConnected(const char *src, const char *dest,
+    static bool isConnected(const ConstString& src, const ConstString& dest,
                             const ContactStyle& style);
 
     /**
@@ -122,7 +129,7 @@ public:
      * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
-    static bool exists(const char *port, bool quiet = true);
+    static bool exists(const ConstString& port, bool quiet = true);
 
     /**
      * Check for a port to be ready and responsive.
@@ -130,7 +137,7 @@ public:
      * @param style options for network communication
      * @return true on success, false on failure
      */
-    static bool exists(const char *port, const ContactStyle& style);
+    static bool exists(const ConstString& port, const ContactStyle& style);
 
     /**
      * Wait for a port to be ready and responsive.
@@ -138,7 +145,7 @@ public:
      * @param quiet suppress messages displayed during wait
      * @return true on success, false on failure
      */
-    static bool sync(const char *port, bool quiet = true);
+    static bool sync(const ConstString& port, bool quiet = true);
 
     /**
      * The standard main method for the YARP companion utility.
@@ -180,7 +187,7 @@ public:
      * known about the name, the returned contact is invalid
      * (Contact::isValid returns false)
      */
-    static Contact queryName(const char *name);
+    static Contact queryName(const ConstString& name);
 
     /**
      * Register a name with the name server.
@@ -190,7 +197,7 @@ public:
      * @return the contact information now associated with that name
      * (in other words, what Contact::queryName would now return)
      */
-    static Contact registerName(const char *name);
+    static Contact registerName(const ConstString& name);
 
     /**
      * Register contact information with the name server.
@@ -209,7 +216,7 @@ public:
      * (in other words, what Contact::queryName would now return).
      * This will be the invalid contact (Contact::isValid is false).
      */
-    static Contact unregisterName(const char *name);
+    static Contact unregisterName(const ConstString& name);
 
     /**
      * Removes the registration for a contact from the name server.
@@ -272,7 +279,7 @@ public:
      * being made/broken in another thread.
      * @return true on success
      */
-    static bool setNameServerName(const char *name);
+    static bool setNameServerName(const ConstString& name);
 
 
     /**
@@ -368,7 +375,7 @@ public:
      *
      * @return true on success
      */
-    static bool write(const char *port_name,
+    static bool write(const ConstString& port_name,
                       PortWriter& cmd,
                       PortReader& reply);
 
@@ -422,6 +429,8 @@ public:
      */
     static void queryBypass(NameStore *store);
 
+    static NameStore *getQueryBypass();
+
     /**
      *
      * Read a variable from the environment.
@@ -434,6 +443,39 @@ public:
     static ConstString getEnvironment(const char *key,
                                       bool *found = 0/*NULL*/);
 
+    /**
+     *
+     * Set or change an environment variable.
+     *
+     * @param key the variable to set or change
+     * @param val the target value
+     *
+     */
+    static void setEnvironment(const ConstString& key,const ConstString& val);
+
+    /**
+     *
+     * Remove an environment variable.
+     *
+     * @param key the variable to remove
+     *
+     */
+    static void unsetEnvironment(const ConstString& key);
+
+
+    /**
+     *
+     * Get an OS-appropriate directory separator (e.g. "/" on linux)
+     *
+     */
+    static ConstString getDirectorySeparator();
+
+    /**
+     *
+     * Get an OS-appropriate path separator (e.g. ":" on linux)
+     *
+     */
+    static ConstString getPathSeparator();
 
     /**
      *

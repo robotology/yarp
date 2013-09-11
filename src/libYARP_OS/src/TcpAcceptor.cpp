@@ -30,6 +30,7 @@
 #include <yarp/os/impl/TcpAcceptor.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 #define BACKLOG                1
 
@@ -49,7 +50,7 @@ TcpAcceptor::TcpAcceptor() {
     ad = -1;
 }
 
-int TcpAcceptor::open(const Address& address) {
+int TcpAcceptor::open(const Contact& address) {
 
 //    printf("TCP/IP start in server mode\n");
     set_handle(socket(AF_INET, SOCK_STREAM, 0));
@@ -71,13 +72,13 @@ int TcpAcceptor::open(const Address& address) {
 /**
  * Open the server port and listen for clients
  */
-int TcpAcceptor::shared_open(const Address& address) {
+int TcpAcceptor::shared_open(const Contact& address) {
 
     struct sockaddr_in servAddr;
     servAddr.sin_addr.s_addr = INADDR_ANY;
     servAddr.sin_family = AF_INET;
     servAddr.sin_port = htons(address.getPort());
-    inet_aton(address.getName().c_str(), &servAddr.sin_addr);
+    inet_aton(address.getHost().c_str(), &servAddr.sin_addr);
     memset(servAddr.sin_zero, '\0', sizeof servAddr.sin_zero);
 
 //    servAddress = Address(inet_ntoa(servAddr.sin_addr),servAddr.sin_port);

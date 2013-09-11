@@ -53,16 +53,16 @@ public:
             if (!needed) { break; }
             if (positive) {
                 if (!yarp::os::NetworkBase::isConnected(src,dest)) {
-                    printf("   (((Trying to connect %s and %s)))\n", 
-                           src.c_str(),
-                           dest.c_str());
+                    //printf("   (((Trying to connect %s and %s)))\n", 
+                    //     src.c_str(),
+                    //     dest.c_str());
                     yarp::os::NetworkBase::connect(src,dest);
                 }
             } else {
                 if (yarp::os::NetworkBase::isConnected(src,dest)) {
-                    printf("   (((Trying to disconnect %s and %s)))\n", 
-                           src.c_str(),
-                           dest.c_str());
+                    //printf("   (((Trying to disconnect %s and %s)))\n", 
+                    //       src.c_str(),
+                    //       dest.c_str());
                     yarp::os::NetworkBase::disconnect(src,dest);
                 }
             }
@@ -90,14 +90,14 @@ public:
         con.clear();
     }
 
-    void disconnect(const char *src,
-                    const char *dest,
+    void disconnect(const yarp::os::ConstString& src,
+                    const yarp::os::ConstString& dest,
                     bool srcDrop) {
         connect(src,dest,false);
     }
 
-    void connect(const char *src,
-                 const char *dest,
+    void connect(const yarp::os::ConstString& src,
+                 const yarp::os::ConstString& dest,
                  bool positive = true) {
         //printf("  ??? %s %s\n", src, dest);
         ConnectThread *t = 0/*NULL*/;

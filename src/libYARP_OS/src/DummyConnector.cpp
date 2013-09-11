@@ -11,7 +11,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/StringInputStream.h>
 
 
 using namespace yarp::os::impl;

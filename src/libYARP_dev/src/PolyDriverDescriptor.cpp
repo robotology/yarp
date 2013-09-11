@@ -9,3 +9,4 @@
 
 //so far all inline
 
+int __yarp__dev__polydriverdescriptor__crickets = 0;

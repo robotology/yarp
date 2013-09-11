@@ -15,16 +15,16 @@
 using namespace yarp::os;
 using namespace std;
 
-void ParseName::apply(const char *str) {
-    string name(str);
+void ParseName::apply(const ConstString& s) {
+    ConstString name = s;
     carrier = "";
     networkChoice = "";
     portName = "";
     int mid = name.find(":/");
     if (mid>0) {
         carrier = name.substr(0,mid).c_str();
-        string tail = name.substr(mid+2);
-        if (carrier[0]=='/') {
+        ConstString tail = name.substr(mid+2);
+        if (carrier.length()>0 && carrier[0]=='/') {
             carrier = string(carrier.c_str()).substr(1).c_str();
         }
         name = tail;

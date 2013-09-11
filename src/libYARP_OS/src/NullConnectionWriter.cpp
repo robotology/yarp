@@ -57,6 +57,11 @@ bool yarp::os::NullConnectionWriter::isError() {
 void yarp::os::NullConnectionWriter::requestDrop() {
 }
 
-bool yarp::os::NullConnectionWriter::isNull() const { return true;
+bool yarp::os::NullConnectionWriter::isNull() const { 
+    return true;
+}
+
+yarp::os::SizedWriter *yarp::os::NullConnectionWriter::getBuffer() {
+    return NULL;
 }
 

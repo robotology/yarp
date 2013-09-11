@@ -8,14 +8,16 @@
  */
 
 #include <yarp/os/impl/TcpCarrier.h>
-#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/String.h>
+
+using namespace yarp::os;
 
 
 yarp::os::impl::TcpCarrier::TcpCarrier(bool requireAckFlag) {
     this->requireAckFlag = requireAckFlag;
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::TcpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::TcpCarrier::create() {
     return new TcpCarrier(requireAckFlag);
 }
 
@@ -55,13 +57,13 @@ bool yarp::os::impl::TcpCarrier::isConnectionless() {
     return false;
 }
 
-bool yarp::os::impl::TcpCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::TcpCarrier::respondToHeader(ConnectionState& proto) {
     int cport = proto.getStreams().getLocalAddress().getPort();
     writeYarpInt(cport,proto);
     return proto.checkStreams();
 }
 
-bool yarp::os::impl::TcpCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::TcpCarrier::expectReplyToHeader(ConnectionState& proto) {
     readYarpInt(proto); // ignore result
     return proto.checkStreams();
 }

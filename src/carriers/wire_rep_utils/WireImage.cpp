@@ -11,7 +11,7 @@
 
 #include <yarp/sig/ImageNetworkHeader.h>
 
-using namespace yarp::os::impl;
+using namespace yarp::os;
 using namespace yarp::sig;
 
 FlexImage *WireImage::checkForImage(SizedWriter& writer) {

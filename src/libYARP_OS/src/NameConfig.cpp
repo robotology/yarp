@@ -10,11 +10,13 @@
 
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/SplitString.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <yarp/os/impl/PlatformStdlib.h>
 
@@ -40,7 +42,7 @@ using namespace yarp::os;
 #define CONF_FILENAME YARP_CONFIG_FILENAME
 
 bool NameConfig::fromString(const String& txt) {
-    address = Address();
+    address = Contact();
     SplitString ss(txt.c_str());
     if (ss.size()>=1) {
         if (ss.get(0)[0]=='[') {
@@ -53,7 +55,7 @@ bool NameConfig::fromString(const String& txt) {
                 fprintf(stderr,"Cannot find yarp group in config file\n");
                 exit(1);
             }
-            address = Address(b.find("host").asString().c_str(),
+            address = Contact(b.find("host").asString().c_str(),
                               b.find("port").asInt());
             mode = b.check("mode",Value("yarp")).asString().c_str();
             return (address.getPort()!=0);
@@ -61,7 +63,7 @@ bool NameConfig::fromString(const String& txt) {
     }
 
     if (ss.size()>=2) {
-        address = Address(ss.get(0),NetType::toInt(ss.get(1)));
+        address = Contact(ss.get(0),NetType::toInt(ss.get(1)));
         if (ss.size()>=3) {
             mode = ss.get(2);
         } else {
@@ -76,25 +78,35 @@ bool NameConfig::fromString(const String& txt) {
 }
 
 String NameConfig::expandFilename(const char *fname) {
-    String root = NetworkBase::getEnvironment("YARP_CONF").c_str();
-    String home = NetworkBase::getEnvironment("HOME").c_str();
-    String homepath = NetworkBase::getEnvironment("HOMEPATH").c_str();
-    String conf = "";
+    ConstString root = NetworkBase::getEnvironment("YARP_CONF");
+
+    // yarp 2.4 modifications begin
+    // We should now be using YARP_CONFIG_HOME.
+    // We still respect the YARP_CONF variable if defined, but it
+    // is deprecated.
+    if (root=="") {
+        root = ResourceFinder::getConfigHome();
+    }
+    // yarp 2.4 modifications end
+
+    ConstString home = NetworkBase::getEnvironment("HOME");
+    ConstString homepath = NetworkBase::getEnvironment("HOMEPATH");
+    ConstString conf = "";
     if (root!="") {
         //conf = new File(new File(root,"conf"),"namer.conf");
         //conf = root + "/conf/" + fname;
         // users of YARP_CONF want /conf postfix removed
-        conf = root + "/" + fname;
+        conf = root + NetworkBase::getDirectorySeparator() + fname;
     } else if (homepath!="") {
-        conf = String(NetworkBase::getEnvironment("HOMEDRIVE").c_str()) + homepath + "\\yarp\\conf\\" + fname;
+        conf = NetworkBase::getEnvironment("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + fname;
     } else if (home!="") {
         conf = home + "/.yarp/conf/" + fname;
     } else {
         YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
         ACE_OS::exit(1);
     }
-    YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf);
-    return conf;
+    YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf.c_str());
+    return conf.c_str();
 }
 
 
@@ -126,7 +138,7 @@ String NameConfig::getConfigFileName(const char *stem, const char *ns) {
 
 
 bool NameConfig::createPath(const String& fileName, int ignoreLevel) {
-    YARP_STRING_INDEX index = fileName.rfind('/');
+    size_t index = fileName.rfind('/');
     if (index==String::npos) {
         index = fileName.rfind('\\');
         if (index==String::npos) {
@@ -184,7 +196,7 @@ bool NameConfig::toFile(bool clean) {
         String txt = "";
         if (!clean) {
             String m = (mode!="")?mode:"yarp";
-            txt += address.getName() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
+            txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
         }
         return writeConfig(fname,txt);
     }
@@ -192,7 +204,7 @@ bool NameConfig::toFile(bool clean) {
 }
 
 
-Address NameConfig::getAddress() {
+Contact NameConfig::getAddress() {
     return address;
 }
 
@@ -380,7 +392,7 @@ String NameConfig::getIps() {
 
 
 
-void NameConfig::setAddress(const Address& address) {
+void NameConfig::setAddress(const Contact& address) {
     this->address = address;
 }
 

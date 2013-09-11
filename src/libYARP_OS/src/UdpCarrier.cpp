@@ -8,12 +8,15 @@
  */
 
 #include <yarp/os/impl/UdpCarrier.h>
-#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/String.h>
+
+using namespace yarp::os;
+using namespace yarp::os::impl;
 
 yarp::os::impl::UdpCarrier::UdpCarrier() {
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::UdpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::UdpCarrier::create() {
     return new UdpCarrier();
 }
 
@@ -45,14 +48,14 @@ bool yarp::os::impl::UdpCarrier::isConnectionless() {
 }
 
 
-bool yarp::os::impl::UdpCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::UdpCarrier::respondToHeader(ConnectionState& proto) {
     // I am the receiver
 
     // issue: need a fresh port number...
     DgramTwoWayStream *stream = new DgramTwoWayStream();
     YARP_ASSERT(stream!=NULL);
 
-    Address remote = proto.getStreams().getRemoteAddress();
+    Contact remote = proto.getStreams().getRemoteAddress();
     bool ok = stream->open(remote);
     if (!ok) {
         delete stream;
@@ -66,11 +69,11 @@ bool yarp::os::impl::UdpCarrier::respondToHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::UdpCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::UdpCarrier::expectReplyToHeader(ConnectionState& proto) {
     // I am the sender
     int myPort = proto.getStreams().getLocalAddress().getPort();
-    String myName = proto.getStreams().getLocalAddress().getName();
-    String altName = proto.getStreams().getRemoteAddress().getName();
+    String myName = proto.getStreams().getLocalAddress().getHost();
+    String altName = proto.getStreams().getRemoteAddress().getHost();
 
     int altPort = readYarpInt(proto);
 
@@ -83,7 +86,7 @@ bool yarp::os::impl::UdpCarrier::expectReplyToHeader(Protocol& proto) {
 
     proto.takeStreams(NULL); // free up port from tcp
     bool ok =
-        stream->open(Address(myName,myPort),Address(altName,altPort));
+        stream->open(Contact(myName,myPort),Contact(altName,altPort));
     if (!ok) {
         delete stream;
         return false;

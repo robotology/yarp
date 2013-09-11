@@ -10,7 +10,7 @@
 #ifndef _YARP2_TCPCARRIER_
 #define _YARP2_TCPCARRIER_
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 
 namespace yarp {
     namespace os {
@@ -30,7 +30,7 @@ public:
 
     virtual Carrier *create();
 
-    virtual String getName();
+    virtual ConstString getName();
 
     virtual int getSpecifierCode();
 
@@ -39,8 +39,8 @@ public:
     virtual void setParameters(const yarp::os::Bytes& header);
     virtual bool requireAck();
     virtual bool isConnectionless();
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool respondToHeader(yarp::os::ConnectionState& proto);
+    virtual bool expectReplyToHeader(yarp::os::ConnectionState& proto);
 
 private:
     bool requireAckFlag;

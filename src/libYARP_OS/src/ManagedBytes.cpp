@@ -95,7 +95,7 @@ bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
 
 void ManagedBytes::copy() {
     if (!owned) {
-        ssize_t len = length();
+        YARP_SSIZE_T len = length();
         char *buf = new char[len];
         yarp::os::NetworkBase::assertion(buf!=NULL);
         ACE_OS::memcpy(buf,get(),len);

@@ -14,10 +14,11 @@
 #include <yarp/os/impl/FakeTwoWayStream.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 static Logger fakeFaceLog("FakeFace", Logger::get());
 
-bool FakeFace::open(const Address& address) {
+bool FakeFace::open(const Contact& address) {
     // happy to open without fuss
     return true;
 }
@@ -30,7 +31,7 @@ InputProtocol *FakeFace::read() {
     return NULL;
 }
 
-OutputProtocol *FakeFace::write(const Address& address) {
+OutputProtocol *FakeFace::write(const Contact& address) {
     Protocol *prot = new Protocol(new FakeTwoWayStream());
     return prot;
 }

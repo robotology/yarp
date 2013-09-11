@@ -5,13 +5,8 @@
 
 if(CREATE_YARPVIEW)
 
-    if(YARP_USE_GTK2)
-        include_directories(${GTK2_INCLUDE_DIRS})
-    else(YARP_USE_GTK2)
-        include_directories(${GtkPlus_INCLUDE_DIRS})
-        include_directories(${Gthread_INCLUDE_DIRS})
-        add_definitions(${GTHREAD_C_FLAGS})
-    endif(YARP_USE_GTK2)
+    include_directories(${GTK2_INCLUDE_DIRS})
+    add_definitions(${GTK2_DEFINITIONS})
 
     get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
     include_directories(${YARP_TREE_INCLUDE_DIRS})
@@ -32,22 +27,23 @@ if(CREATE_YARPVIEW)
         add_executable(yarpview ${folder_source} ${folder_header})
     endif(WIN32 AND NOT CYGWIN)
 
-    target_link_libraries(yarpview YARP_sig YARP_init)
+    target_link_libraries(yarpview YARP_OS YARP_sig YARP_init)
     target_link_libraries(yarpview ${ACE_LIBRARIES})
 
-    if(YARP_USE_GTK2)
-        target_link_libraries(yarpview ${GTK2_GTK_LIBRARY}
-                                       ${GTK2_GLIB_LIBRARY}
-                                       ${GTK2_GDK_LIBRARY}
-                                       ${GTK2_GDK_PIXBUF_LIBRARY}
-                                       ${GTK2_GOBJECT_LIBRARY}
-                                       ${GTK2_GTHREAD_LIBRARY}
-        )
-    else(YARP_USE_GTK2)
-        target_link_libraries(yarpview ${GtkPlus_LIBRARIES})
-        target_link_libraries(yarpview ${Gthread_LIBRARIES})
-    endif(YARP_USE_GTK2)
+    target_link_libraries(yarpview ${GTK2_GTK_LIBRARY}
+                                   ${GTK2_GLIB_LIBRARY}
+                                   ${GTK2_GDK_LIBRARY}
+                                   ${GTK2_GDK_PIXBUF_LIBRARY}
+                                   ${GTK2_GOBJECT_LIBRARY}
+                                   ${GTK2_GTHREAD_LIBRARY})
 
     install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
+
+    yarp_install(FILES yarpview.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
+    #configure_file(yarpview.xml ${CMAKE_BINARY_DIR}/modules/yarpview.xml COPYONLY)
+    #if(YARP_TREE_INCLUDE_DIRS)
+    #    install(FILES ${CMAKE_BINARY_DIR}/modules/yarpview.xml
+    #            DESTINATION share/yarp/modules)
+    #endif(YARP_TREE_INCLUDE_DIRS)
 
 endif(CREATE_YARPVIEW)

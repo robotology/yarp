@@ -9,12 +9,12 @@
 
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 class PortCommandTest : public UnitTest {

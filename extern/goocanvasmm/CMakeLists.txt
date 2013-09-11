@@ -6,36 +6,30 @@
 # GooCanvasMM
 project(YARP_goocanvasmm)
 
-if(YARP_USE_GTK2)
-    set(GooCanvasMM_GTK2_INCLUDE_DIRS ${GTK2_ATKMM_INCLUDE_DIR}
-                                      ${GTK2_CAIROMMCONFIG_INCLUDE_DIR}
-                                      ${GTK2_CAIROMM_INCLUDE_DIR}
-                                      ${GTK2_GDKMMCONFIG_INCLUDE_DIR}
-                                      ${GTK2_GDKMM_INCLUDE_DIR}
-                                      ${GTK2_GIOMM_INCLUDE_DIR}
-                                      ${GTK2_GLIBMMCONFIG_INCLUDE_DIR}
-                                      ${GTK2_GLIBMM_INCLUDE_DIR}
-                                      ${GTK2_GTKMMCONFIG_INCLUDE_DIR}
-                                      ${GTK2_GTKMM_INCLUDE_DIR}
-                                      ${GTK2_PANGOMMCONFIG_INCLUDE_DIR}
-                                      ${GTK2_PANGOMM_INCLUDE_DIR}
-                                      ${GTK2_SIGC++CONFIG_INCLUDE_DIR}
-                                      ${GTK2_SIGC++_INCLUDE_DIR})
-    if(GTK2_GIOMMCONFIG_INCLUDE_DIR)
-        list(APPEND GooCanvasMM_GTK2_INCLUDE_DIRS ${GTK2_GIOMMCONFIG_INCLUDE_DIR})
-    endif()
-    set(GooCanvasMM_GTK2_LIBRARIES ${GTK2_ATKMM_LIBRARY}
-                                   ${GTK2_CAIROMM_LIBRARY}
-                                   ${GTK2_GDKMM_LIBRARY}
-                                   ${GTK2_GLIBMM_LIBRARY}
-                                   ${GTK2_GTKMM_LIBRARY}
-                                   ${GTK2_PANGOMM_LIBRARY}
-                                   ${GTK2_SIGC++_LIBRARY})
-else(YARP_USE_GTK2)
-    set(GooCanvasMM_GTK2_INCLUDE_DIRS ${GtkMM_INCLUDE_DIRS})
-    set(GooCanvasMM_GTK2_LIBRARIES ${GtkMM_LIBRARIES})
-endif(YARP_USE_GTK2)
-
+set(GooCanvasMM_GTK2_INCLUDE_DIRS ${GTK2_ATKMM_INCLUDE_DIR}
+                                  ${GTK2_CAIROMMCONFIG_INCLUDE_DIR}
+                                  ${GTK2_CAIROMM_INCLUDE_DIR}
+                                  ${GTK2_GDKMMCONFIG_INCLUDE_DIR}
+                                  ${GTK2_GDKMM_INCLUDE_DIR}
+                                  ${GTK2_GIOMM_INCLUDE_DIR}
+                                  ${GTK2_GLIBMMCONFIG_INCLUDE_DIR}
+                                  ${GTK2_GLIBMM_INCLUDE_DIR}
+                                  ${GTK2_GTKMMCONFIG_INCLUDE_DIR}
+                                  ${GTK2_GTKMM_INCLUDE_DIR}
+                                  ${GTK2_PANGOMMCONFIG_INCLUDE_DIR}
+                                  ${GTK2_PANGOMM_INCLUDE_DIR}
+                                  ${GTK2_SIGC++CONFIG_INCLUDE_DIR}
+                                  ${GTK2_SIGC++_INCLUDE_DIR})
+if(GTK2_GIOMMCONFIG_INCLUDE_DIR)
+    list(APPEND GooCanvasMM_GTK2_INCLUDE_DIRS ${GTK2_GIOMMCONFIG_INCLUDE_DIR})
+endif()
+set(GooCanvasMM_GTK2_LIBRARIES ${GTK2_ATKMM_LIBRARY}
+                               ${GTK2_CAIROMM_LIBRARY}
+                               ${GTK2_GDKMM_LIBRARY}
+                               ${GTK2_GLIBMM_LIBRARY}
+                               ${GTK2_GTKMM_LIBRARY}
+                               ${GTK2_PANGOMM_LIBRARY}
+                               ${GTK2_SIGC++_LIBRARY})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas/
                     ${GooCanvas_INCLUDE_DIRS}
@@ -163,8 +157,6 @@ endif(UNIX)
 set(GooCanvasMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas
                              ${GooCanvas_INCLUDE_DIRS}
                              ${GooCanvasMM_GTK2_INCLUDE_DIRS}
-                             CACHE PATH "GooCanvasMM include directory" FORCE)
-set(GooCanvasMM_LIBRARIES YARP_goocanvasmm CACHE STRING "GooCanvasMM libraries" FORCE)
-set(GooCanvasMM_DEFINITIONS "" CACHE STRING "Additional compiler flags for GooCanvasMM" FORCE)
-
-mark_as_advanced(GooCanvasMM_INCLUDE_DIRS GooCanvasMM_LIBRARIES GooCanvasMM_DEFINITIONS)
+                             PARENT_SCOPE)
+set(GooCanvasMM_LIBRARIES YARP_goocanvasmm PARENT_SCOPE)
+set(GooCanvasMM_DEFINITIONS "" PARENT_SCOPE)

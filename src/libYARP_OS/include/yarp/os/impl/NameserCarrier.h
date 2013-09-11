@@ -10,7 +10,7 @@
 #ifndef _YARP2_NAMESERCARRIER_
 #define _YARP2_NAMESERCARRIER_
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/TcpCarrier.h>
 
 
@@ -31,8 +31,8 @@ namespace yarp {
 class yarp::os::impl::NameserTwoWayStream : public TwoWayStream, InputStream {
 private:
     TwoWayStream *delegate;
-    String pendingRead;
-    String swallowRead;
+    ConstString pendingRead;
+    ConstString swallowRead;
 public:
     NameserTwoWayStream(TwoWayStream *delegate);
 
@@ -40,8 +40,8 @@ public:
 
     virtual InputStream& getInputStream();
     virtual OutputStream& getOutputStream();
-    virtual const Address& getLocalAddress();
-    virtual const Address& getRemoteAddress();
+    virtual const Contact& getLocalAddress();
+    virtual const Contact& getRemoteAddress();
 
     virtual bool isOk();
     virtual void reset();
@@ -49,7 +49,7 @@ public:
     virtual void beginPacket();
     virtual void endPacket();
 
-    virtual ssize_t read(const yarp::os::Bytes& b);
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
 };
 
 
@@ -64,8 +64,8 @@ private:
 public:
     NameserCarrier();
 
-    virtual String getName();
-    virtual String getSpecifierName();
+    virtual ConstString getName();
+    virtual ConstString getSpecifierName();
 
     virtual Carrier *create();
 
@@ -75,14 +75,14 @@ public:
     virtual bool isTextMode();
     virtual bool supportReply();
     virtual bool canEscape();
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectSenderSpecifier(Protocol& proto);
-    virtual bool expectIndex(Protocol& proto);
-    virtual bool sendAck(Protocol& proto);
-    virtual bool expectAck(Protocol& proto);
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
+    virtual bool expectIndex(ConnectionState& proto);
+    virtual bool sendAck(ConnectionState& proto);
+    virtual bool expectAck(ConnectionState& proto);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 };
 
 #endif

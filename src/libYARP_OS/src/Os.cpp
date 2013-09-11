@@ -57,7 +57,7 @@ int yarp::os::rmdir(const char *p)
 #ifdef YARP_HAS_ACE
     return ACE_OS::rmdir(p);
 #else
-    return -1;
+    return ::rmdir(p);
 #endif
 }
 

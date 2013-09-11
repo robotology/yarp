@@ -55,12 +55,12 @@ yarp::os::impl::PortCoreOutputUnit object held in a list by the
 source port's PortCore, and a yarp::os::impl::PortCoreInputUnit 
 object held in a list by the target port's PortCore.
 
-Every PortCoreUnit has a yarp::os::impl::InputProtocol
-or yarp::os::impl::OutputProtocol object that
+Every PortCoreUnit has a yarp::os::InputProtocol
+or yarp::os::OutputProtocol object that
 manages the overall phases of YARP's network protocol.
 
 The Protocol object delegates to an
-object from the yarp::os::impl::Carrier family
+object from the yarp::os::Carrier family
 (yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to 
 manage the peculiarities of a particular connection type.  This 
 carrier can be replaced during the operation of a connection.
@@ -193,12 +193,12 @@ to switch from whatever the carrier used to establish
 the connection is (TCP) to something different for transmitting
 payloads (multicast, shared memory, etc).
 The Protocol object is either
-yarp::os::impl::InputProtocol or yarp::os::impl::OutputProtocol
+yarp::os::InputProtocol or yarp::os::OutputProtocol
 (in fact both of these are interfaces implemented by a single 
 class, yarp::os::impl::Protocol, but most of YARP does not know that).
 
 The Protocol object deals with switching to a particular carrier
-(implemented by sub-types of yarp::os::impl::Carrier), and
+(implemented by sub-types of yarp::os::Carrier), and
 the details of the YARP network protocol.
 
 @section yarp_guts_mcast Multicast elections
@@ -207,7 +207,7 @@ The two McastCarrier objects owned by Port 1
 in the figure above "conspire" behind the
 scenes to make sure only one of them sends data, but as far as the
 rest of YARP is concerned there's nothing special about them.
-This conspiracy is implemented via a global yarp::os::impl::Election
+This conspiracy is implemented via a global yarp::os::Election
 object.
 
 *

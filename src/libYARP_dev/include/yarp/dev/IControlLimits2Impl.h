@@ -12,6 +12,7 @@
 
 
 #include <yarp/dev/IControlLimits2.h>
+#include <yarp/dev/api.h>
 
 namespace yarp {
     namespace dev {
@@ -25,7 +26,7 @@ namespace yarp {
  *
  * Interface for control devices, commands to get/set position and veloity limits
  */
-class yarp::dev::ImplementControlLimits2: yarp::dev::IControlLimits2
+class YARP_dev_API yarp::dev::ImplementControlLimits2: public IControlLimits2
 {
 protected:
     IControlLimits2Raw *iLimits2;
@@ -65,10 +66,10 @@ public:
      * Destructor. Perform uninitialize if needed.
      */
     virtual ~ImplementControlLimits2();
-    virtual bool setLimits(int axis, double min, double max)=0;
-    virtual bool getLimits(int axis, double *min, double *max)=0;
-    virtual bool setVelLimits(int axis, double min, double max)=0;
-    virtual bool getVelLimits(int axis, double *min, double *max)=0;
+    virtual bool setLimits(int axis, double min, double max);
+    virtual bool getLimits(int axis, double *min, double *max);
+    virtual bool setVelLimits(int axis, double min, double max);
+    virtual bool getVelLimits(int axis, double *min, double *max);
 };
 
 

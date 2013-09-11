@@ -10,8 +10,9 @@
 #ifndef _YARP2_TCPFACE_
 #define _YARP2_TCPFACE_
 
-#include  <yarp/os/impl/Face.h>
-//#include  <yarp/Semaphore.h>
+#include <yarp/conf/system.h>
+#include <yarp/os/Face.h>
+#include <yarp/os/impl/AuthHMAC.h>
 
 #ifdef YARP_HAS_ACE
 #  include <ace/config.h>
@@ -43,12 +44,12 @@ public:
 
     virtual ~TcpFace();
 
-    virtual bool open(const Address& address);
+    virtual bool open(const Contact& address);
     virtual void close();
     virtual InputProtocol *read();
-    virtual OutputProtocol *write(const Address& address);
+    virtual OutputProtocol *write(const Contact& address);
 
-    virtual Address getLocalAddress();
+    virtual Contact getLocalAddress();
 
     /**
      * This class like all classes except the port objects does
@@ -56,9 +57,13 @@ public:
      *
      */
 
+protected:
+
+    yarp::os::impl::AuthHMAC auth;
+
 private:
     void closeFace();
-    Address address;
+    Contact address;
     PlatformTcpAcceptor peerAcceptor;
 };
 

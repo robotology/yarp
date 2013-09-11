@@ -12,24 +12,22 @@
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/TwoWayStream.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
 
 #include "XmlRpcClient.h"
 #include "XmlRpcServerConnection.h"
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class XmlRpcStream;
-        }
+        class XmlRpcStream;
     }
 }
 
-class yarp::os::impl::XmlRpcStream : public TwoWayStream,
-                                     public yarp::os::InputStream,
-                                     public yarp::os::OutputStream
+class yarp::os::XmlRpcStream : public TwoWayStream,
+                               public InputStream,
+                               public OutputStream
 {
 private:
     TwoWayStream *delegate;
@@ -63,11 +61,11 @@ public:
     virtual yarp::os::OutputStream& getOutputStream() { return *this; }
 
 
-    virtual const Address& getLocalAddress() {
+    virtual const yarp::os::Contact& getLocalAddress() {
         return delegate->getLocalAddress();
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const yarp::os::Contact& getRemoteAddress() {
         return delegate->getRemoteAddress();
     }
 
@@ -93,7 +91,7 @@ public:
 
     virtual void write(const Bytes& b);
 
-    virtual ssize_t read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b);
 
     virtual void interrupt() {
         delegate->getInputStream().interrupt();

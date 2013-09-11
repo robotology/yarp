@@ -19,6 +19,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/ResourceFinderOptions.h>
 #include "main_window.h"
 
 
@@ -60,7 +61,7 @@ int main(int __argc, char *__argv[])
     // Setup resource finder
     yarp::os::ResourceFinder rf;
     rf.setVerbose(false);
-    rf.setDefaultContext("");
+//    rf.setDefaultContext("");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(__argc, __argv);
 
@@ -75,11 +76,11 @@ int main(int __argc, char *__argv[])
         cout<<HELP_MESSAGE<<endl;
         return 0;
     }
-    
+
     /**
      *  preparing default options
      */
-    
+
     std::string inifile=rf.findFile("from").c_str();
     std::string inipath="";
     size_t lastSlash=inifile.rfind("/");
@@ -91,22 +92,66 @@ int main(int __argc, char *__argv[])
         if (lastSlash!=std::string::npos)
             inipath=inifile.substr(0, lastSlash+1);
     }
-    
+
     if(!config.check("ymanagerini_dir"))
         config.put("ymanagerini_dir", inipath.c_str());
-    
+
+    yarp::os::Bottle appPaths;
     if(!config.check("apppath"))
-        config.put("apppath", "./");
+    {
+
+        appPaths= rf.findPaths("applications");
+
+        yarp::os::ResourceFinderOptions findRobotScripts;
+        findRobotScripts.searchLocations=yarp::os::ResourceFinderOptions::Robot;
+        yarp::os::Bottle appPaths2=rf.findPaths("scripts", findRobotScripts);
+//        yarp::os::Bottle appPaths2=rf.findPaths("scripts");
+//        std::cout << "app path : " << appPaths.toString()<< std::endl;
+        string appPathsStr="";
+        for (int ind=0; ind < appPaths.size(); ++ind)
+            appPathsStr += (appPaths.get(ind).asString() + ";").c_str() ;
+        for (int ind=0; ind < appPaths2.size(); ++ind)
+            appPathsStr += (appPaths2.get(ind).asString() + ";").c_str() ;
+        config.put("apppath", appPathsStr.c_str());
+    }
 
     if(!config.check("modpath"))
-        config.put("modpath", "./");
-    
+    {
+       appPaths=rf.findPaths("modules");
+       //std::cout << "mod path : " << appPaths.toString()<< std::endl;
+       string modPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+           modPathsStr += (appPaths.get(ind).asString() + ";").c_str();
+
+       config.put("modpath", modPathsStr.c_str());
+    }
+
     if(!config.check("respath"))
-        config.put("respath", "./");
+    {
+       appPaths=rf.findPaths("resources");
+       //std::cout << "res path : " << appPaths.toString()<< std::endl;
+       string resPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+           resPathsStr += (appPaths.get(ind).asString() + ";");
+
+       config.put("respath", resPathsStr.c_str());
+
+    }
+    if(!config.check("templpath"))
+    {
+       appPaths=rf.findPaths("templates/applications");
+      // std::cout << "templ path : " << appPaths.toString()<< std::endl;
+       string templPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+            templPathsStr += (appPaths.get(ind).asString() + ";");
+
+       config.put("templpath", templPathsStr.c_str());
+
+    }
 
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");
-    
+
     if(!config.check("watchdog"))
         config.put("watchdog", "no");
 
@@ -118,7 +163,7 @@ int main(int __argc, char *__argv[])
 
     if(!config.check("auto_connect"))
         config.put("auto_connect", "no");
-    
+
     if(!config.check("auto_dependency"))
         config.put("auto_dependency", "no");
 

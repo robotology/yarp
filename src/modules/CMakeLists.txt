@@ -27,11 +27,16 @@ YARP_BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(firewirecamera)
   add_subdirectory(jrkerr)
   add_subdirectory(urbtc)
-  add_subdirectory(dimax_u2c)
   add_subdirectory(DynamixelAX12Ftdi)
   add_subdirectory(laserHokuyo)
   add_subdirectory(kinect)
   add_subdirectory(openni2)
+<<<<<<< HEAD
+=======
+
+      add_subdirectory(dimax_u2c)
+  endif()
+>>>>>>> upstream/master
 
   # We can include remote directories as well - we specify a
   # local directory for producing binaries so there is no interference

@@ -9,9 +9,9 @@
 
 #ifdef CREATE_MPI_CARRIER
 
-#include <yarp/os/impl/MpiBcastStream.h>
+#include <yarp/os/MpiBcastStream.h>
 
-using namespace yarp::os::impl;
+using namespace yarp::os;
 
 
 void MpiBcastStream::startJoin() {

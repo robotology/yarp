@@ -23,19 +23,8 @@ if (MSVC)
     ${CMAKE_BINARY_DIR}/lib/Release)
 endif (MSVC)
 
-
-#########################################################################
-# Encourage user to specify build type.
-
-if(NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
-       "Choose the type of build, recommanded options are: Debug or Release")
-endif(NOT CMAKE_BUILD_TYPE)
-# Hide variable to MSVC users, since it is not needed
-if(MSVC)
-  mark_as_advanced(CMAKE_BUILD_TYPE)
-endif(MSVC)
-
+set(YARP_OPTIMIZED_CONFIGURATIONS "Release" "MinSizeRel")
+set(YARP_DEBUG_CONFIGURATIONS "Debug" "RelWithDebInfo")
 
 #########################################################################
 # DebugFull builds options
@@ -52,6 +41,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
                      CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
                      CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
                      CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL)
+
+    list(APPEND YARP_DEBUG_CONFIGURATIONS "DebugFull")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 #########################################################################
@@ -69,7 +60,27 @@ if(CMAKE_COMPILER_IS_GNUCXX)
                      CMAKE_EXE_LINKER_FLAGS_PROFILE
                      CMAKE_MODULE_LINKER_FLAGS_PROFILE
                      CMAKE_SHARED_LINKER_FLAGS_PROFILE)
+
+    list(APPEND YARP_DEBUG_CONFIGURATIONS "Profile")
 endif(CMAKE_COMPILER_IS_GNUCXX)
+
+#########################################################################
+# Handle CMAKE_CONFIGURATION_TYPES and CMAKE_BUILD_TYPE
+
+if(NOT CMAKE_CONFIGURATION_TYPES)
+    # Possible values for the CMAKE_BUILD_TYPE variable
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${YARP_OPTIMIZED_CONFIGURATIONS} ${YARP_DEBUG_CONFIGURATIONS})
+    if(NOT CMAKE_BUILD_TYPE)
+        # Encourage user to specify build type.
+        message(STATUS "Setting build type to 'Release' as none was specified.")
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+    endif()
+endif()
+
+# Let CMake know which configurations are the debug ones, so that it can
+# link the right library when both optimized and debug library are found
+set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS ${YARP_DEBUG_CONFIGURATIONS})
+
 
 #########################################################################
 # Simplify compilation of portable binaries.
@@ -198,16 +209,12 @@ endif(YARP_EXPERIMENTAL_CXX11)
 # yarp::os::ConstString could now be set to std::string, if YARP
 # ever decides to accept STL as a dependency.
 
-option(USE_STL_STRING "Do you want the yarp String class to be std::string? (default is to use the ACE string class)" OFF)
-mark_as_advanced(USE_STL_STRING)
-
-if (USE_STL_STRING)
-  message(STATUS "Using std::string")
-  set(YARP_USE_STL_STRING 1)
-else (USE_STL_STRING)
-  set(YARP_USE_ACE_STRING 1)
-endif (USE_STL_STRING)
-
+set (YARP_WRAP_STL_STRING_DEFAULT FALSE)
+if (MSVC)
+  set (YARP_WRAP_STL_STRING_DEFAULT TRUE)
+endif ()
+option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ${YARP_WRAP_STL_STRING_DEFAULT})
+mark_as_advanced(YARP_WRAP_STL_STRING)
 
 #########################################################################
 # Control compilation of device tests.

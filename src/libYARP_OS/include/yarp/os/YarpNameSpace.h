@@ -31,20 +31,20 @@ public:
         return contact;
     }
     
-    virtual Contact queryName(const char *name);
+    virtual Contact queryName(const ConstString& name);
 
-    virtual Contact registerName(const char *name);
+    virtual Contact registerName(const ConstString& name);
 
     virtual Contact registerContact(const Contact& contact);
 
-    virtual Contact unregisterName(const char *name);
+    virtual Contact unregisterName(const ConstString& name);
 
     virtual Contact unregisterContact(const Contact& contact);
 
-    virtual bool setProperty(const char *name, const char *key, 
+    virtual bool setProperty(const ConstString& name, const ConstString& key, 
                              const Value& value);
 
-    virtual Value *getProperty(const char *name, const char *key);
+    virtual Value *getProperty(const ConstString& name, const ConstString& key);
 
     virtual bool connectPortToTopic(const Contact& src, 
                                     const Contact& dest,
@@ -113,9 +113,17 @@ public:
                 break;
             }
         }
-        bool ok = NetworkBase::write(getNameServerContact(),
-                                     cmd,
-                                     reply);
+        bool ok = false;
+        if (!NetworkBase::getQueryBypass()) {
+            ok = NetworkBase::write(getNameServerContact(),
+                                    cmd,
+                                    reply);
+        } else {
+            ContactStyle style;
+            ok = NetworkBase::writeToNameServer(cmd,
+                                                reply,
+                                                style);
+        }
         bool fail = (reply.get(0).toString()=="fail")||!ok;
         if (fail) {
             if (!style.quiet) {

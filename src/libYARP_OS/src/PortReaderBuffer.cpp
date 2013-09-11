@@ -15,7 +15,7 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <yarp/os/impl/PlatformVector.h>
@@ -84,7 +84,7 @@ public:
     }
 
     void setEnvelope(const Bytes& bytes) {
-        YARP_STRSET(envelope,bytes.get(),bytes.length(),1);
+        envelope = String(bytes.get(),bytes.length());
         //envelope.set(bytes.get(),bytes.length(),1);
     }
 

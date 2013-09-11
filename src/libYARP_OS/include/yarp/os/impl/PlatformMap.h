@@ -10,10 +10,51 @@
 #ifndef _YARP2_PLATFORMMAP_
 #define _YARP2_PLATFORMMAP_
 
+#include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
 #ifndef YARP_USE_STL
 #  include <ace/Hash_Map_Manager.h>
 #  include <ace/Null_Mutex.h>
+#  include <ace/Functor_String.h>
+#  ifndef YARP_ACE_HAS_STRING_HASH
+
+template<>
+class YARP_OS_API ACE_Equal_To<std::string>
+{
+public:
+    int operator() (const std::string& x, const std::string& y) const {
+        return x == y;
+    }
+};
+
+template<>
+class YARP_OS_API ACE_Hash<std::string>
+{
+public:
+    unsigned long operator() (const std::string& x) const {
+        unsigned long h = 0;
+        for (size_t i=0; i<x.length(); i++) {
+            unsigned char ch = x[i];
+            h = (h << 4) + (ch * 13);
+            unsigned long g = h & 0xf0000000;
+            if (g) {
+                h ^= (g>>24);
+                h ^= g;
+            }
+        }
+        return h;
+    }
+};
+
+template<>
+class YARP_OS_API ACE_Less_Than<std::string>
+{
+public:
+    int operator() (const std::string &x, const std::string &y) const {
+        return x<y;
+    }
+};
+#  endif
 #  define PLATFORM_MAP(x,y) ACE_Hash_Map_Manager<x,y,ACE_Null_Mutex>
 #  define PLATFORM_MAP_ITERATOR(x,y,z) ACE_Hash_Map_Entry<x,y> *z = 0/*NULL*/
 #  define PLATFORM_MAP_ITERATOR_IN_TEMPLATE(x,y,z) PLATFORM_MAP_ITERATOR(x,y,z)

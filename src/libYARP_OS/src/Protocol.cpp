@@ -36,7 +36,7 @@ void Protocol::setRoute(const Route& route) {
     // to the carrier.
     String from = r.getFromName();
     String carrier = r.getCarrierName();
-    if (YARP_STRSTR(from," ")!=String::npos) {
+    if (from.find(" ")!=String::npos) {
         Bottle b(from.c_str());
         if (b.size()>1) {
             r = r.addFromName(b.get(0).toString().c_str());
@@ -65,16 +65,14 @@ void Protocol::setRoute(const Route& route) {
 }
 
 
-String Protocol::getSenderSpecifier() {
+ConstString Protocol::getSenderSpecifier() {
     Route r = getRoute();
-    String from = r.getFromName();
-    String carrier = r.getCarrierName();
-    YARP_STRING_INDEX start = YARP_STRSTR(carrier,"+");
+    ConstString from = r.getFromName();
+    ConstString carrier = r.getCarrierName();
+    size_t start = carrier.find("+");
     if (start!=String::npos) {
         from += " (";
-        for (YARP_STRING_INDEX i=start+1; 
-             i<(YARP_STRING_INDEX)carrier.length(); 
-             i++) {
+        for (size_t i=start+1; i<(size_t)carrier.length(); i++) {
             char ch = carrier[i];
             if (ch=='+') {
                 from += ") (";

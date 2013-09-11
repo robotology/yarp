@@ -28,13 +28,13 @@ public:
 
     void checkRegister() {
         report(0,"checking register...");
-        Address address("127.0.0.1",safePort(),"tcp");
+        Contact address = Contact::bySocket("tcp","127.0.0.1",safePort());
         NameServer ns;
         ns.registerName("/foo",address);
-        Address a1 = ns.queryName("/foo");
+        Contact a1 = ns.queryName("/foo");
         checkEqual(a1.isValid(),true,"recover address");
-        checkEqual(a1.getName(),"127.0.0.1","machine name matches");
-        Address a2 = ns.queryName("/bar");
+        checkEqual(a1.getHost(),"127.0.0.1","machine name matches");
+        Contact a2 = ns.queryName("/bar");
         checkEqual(a2.isValid(),false,"non-existent address");
     }
 

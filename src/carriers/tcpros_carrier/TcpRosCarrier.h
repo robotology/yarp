@@ -10,8 +10,7 @@
 #ifndef TCPROSCARRIER_INC
 #define TCPROSCARRIER_INC
 
-#include <yarp/os/impl/Carrier.h>
-#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/Carrier.h>
 
 #include "TcpRosStream.h"
 #include "WireImage.h"
@@ -20,10 +19,8 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class TcpRosCarrier;
-            class RosSrvCarrier;
-        }
+        class TcpRosCarrier;
+        class RosSrvCarrier;
     }
 }
 
@@ -33,7 +30,7 @@ namespace yarp {
 #define TCPROS_TRANSLATE_BOTTLE_BLOB (2)
 #define TCPROS_TRANSLATE_TWIDDLER (3)
 
-class yarp::os::impl::TcpRosCarrier : public Carrier {
+class yarp::os::TcpRosCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
@@ -66,7 +63,7 @@ public:
         return new TcpRosCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return isService?"rossrv":"tcpros";
     }
 
@@ -107,7 +104,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
@@ -125,21 +122,21 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
 
-    virtual bool expectSenderSpecifier(Protocol& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
 
-    virtual bool expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) {
         // interpret any extra header information sent - optional
         return true;
     }
 
-    bool respondToHeader(Protocol& proto) {
+    bool respondToHeader(ConnectionState& proto) {
         sender = false;
         //TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender);
         //if (stream==NULL) { return false; }
@@ -147,7 +144,7 @@ public:
         return true;
     }
 
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 
     virtual bool isActive() {
         return true;
@@ -156,27 +153,27 @@ public:
 
     // Payload time!
 
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true;
     }
 
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual String getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName() { return ""; }
 
     virtual int connect(const yarp::os::Contact& src,
                         const yarp::os::Contact& dest,
@@ -193,7 +190,7 @@ public:
  * is "rossrv" (see TcpRosCarrier::getName)
  *
  */
-class yarp::os::impl::RosSrvCarrier : public TcpRosCarrier {
+class yarp::os::RosSrvCarrier : public TcpRosCarrier {
 public:
     RosSrvCarrier() {
         isService = true;

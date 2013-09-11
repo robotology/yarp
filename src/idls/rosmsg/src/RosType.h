@@ -17,6 +17,7 @@
 class RosTypeSearch {
 private:
     bool find_service;
+    std::string target_dir;
 public:
     RosTypeSearch() {
         find_service = false;
@@ -27,6 +28,14 @@ public:
     }
 
     std::string findFile(const char *tname);
+
+    void setTargetDirectory(const char *tname) {
+        target_dir = tname;
+    }
+
+    std::string getTargetDirectory() {
+        return target_dir;
+    }
 };
 
 class RosTypeCodeGen;
@@ -65,6 +74,7 @@ public:
     bool isPrimitive;
     std::string rosType;
     std::string rosName;
+    std::string rosPath;
     RosTypes subRosType;
     std::string txt;
     RosType *reply;
@@ -108,6 +118,7 @@ public:
     std::map<std::string, bool> generated;
     std::map<std::string, bool> usedVariables;
     std::vector<std::string> dependencies;
+    std::vector<std::string> dependenciesAsPaths;
     std::string txt;
 
     std::string useVariable(const std::string& name) {

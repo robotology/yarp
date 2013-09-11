@@ -10,6 +10,9 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
+    #define PATH_SEPERATOR      "\\"
+#else
+    #define PATH_SEPERATOR      "/"
 #endif
 
 #include <iostream>
@@ -19,8 +22,11 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/os/ResourceFinderOptions.h>
+#include <yarp/os/Os.h>
 
 #include "main_window.h"
+#include "ymm-dir.h"
 
 
 using namespace std;
@@ -61,7 +67,6 @@ int main(int __argc, char *__argv[])
     // Setup resource finder
     yarp::os::ResourceFinder rf;
     rf.setVerbose(false);
-    rf.setDefaultContext("");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(__argc, __argv);
 
@@ -97,14 +102,92 @@ int main(int __argc, char *__argv[])
     if(!config.check("ymanagerini_dir"))
         config.put("ymanagerini_dir", inipath.c_str());
     
+    config.put("yarpdatahome", rf.getDataHome());
+    
+    //if it doesn't exist (first time use) prepare user home with appropriate folders and files
+    DIR *dir;
+    if ((dir = opendir(rf.getDataHome().c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir(rf.getDataHome().c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "applications").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "applications").c_str());
+
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "modules").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "modules").c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "resources").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "resources").c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "templates").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "templates").c_str());
+    
+    if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "templates" + PATH_SEPERATOR + "applications").c_str())) != NULL)
+        closedir(dir);
+    else
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "templates" + PATH_SEPERATOR + "applications").c_str());
+        
+        
+    
+    yarp::os::Bottle appPaths;
     if(!config.check("apppath"))
-        config.put("apppath", "./");
+    {
+        appPaths= rf.findPaths("applications");
+        yarp::os::ResourceFinderOptions findRobotScripts;
+        findRobotScripts.searchLocations=yarp::os::ResourceFinderOptions::Robot;
+        yarp::os::Bottle appPaths2=rf.findPaths("scripts", findRobotScripts);
+//        yarp::os::Bottle appPaths2=rf.findPaths("scripts");
+       //std::cout << "app path : " << appPaths.toString()<< std::endl;
+        string appPathsStr="";
+        for (int ind=0; ind < appPaths.size(); ++ind)
+            appPathsStr += (appPaths.get(ind).asString() + ";").c_str() ;
+        for (int ind=0; ind < appPaths2.size(); ++ind)
+            appPathsStr += (appPaths2.get(ind).asString() + ";").c_str() ;
+        config.put("apppath", appPathsStr.c_str());
+    }
 
     if(!config.check("modpath"))
-        config.put("modpath", "./");
-    
+    {
+       appPaths=rf.findPaths("modules");
+       //std::cout << "mod path : " << appPaths.toString()<< std::endl;
+       string modPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+           modPathsStr += (appPaths.get(ind).asString() + ";").c_str();
+
+       config.put("modpath", modPathsStr.c_str());
+        
+    }
     if(!config.check("respath"))
-        config.put("respath", "./");
+    {
+       appPaths=rf.findPaths("resources");
+       //std::cout << "res path : " << appPaths.toString()<< std::endl;
+       string resPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+           resPathsStr += (appPaths.get(ind).asString() + ";");
+       
+       config.put("respath", resPathsStr.c_str());
+        
+    }
+    if(!config.check("templpath"))
+    {
+       appPaths=rf.findPaths("templates/applications");
+      // std::cout << "templ path : " << appPaths.toString()<< std::endl;
+       string templPathsStr="";
+       for (int ind=0; ind < appPaths.size(); ++ind)
+            templPathsStr += (appPaths.get(ind).asString() + ";");
+       
+       config.put("templpath", templPathsStr.c_str());
+
+    }
 
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");
@@ -124,7 +207,7 @@ int main(int __argc, char *__argv[])
     if(!config.check("auto_dependency"))
         config.put("auto_dependency", "no");
 
-
+/*
 #if defined(WIN32)
     //setup signal handler for windows
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) onSignal);
@@ -147,7 +230,7 @@ int main(int __argc, char *__argv[])
     if (old_action.sa_handler != SIG_IGN)
         sigaction (SIGTERM, &new_action, NULL);
 #endif
-
+*/
     if(!Glib::thread_supported())
         Glib::thread_init();
     gdk_threads_init();

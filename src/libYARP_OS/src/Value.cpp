@@ -41,7 +41,7 @@ Value::Value(double x) :
     setProxy(makeDouble(x));
 }
 
-Value::Value(const char *str, bool isVocab) :
+Value::Value(const ConstString& str, bool isVocab) :
         Portable(),
         Searchable(),
         proxy(NULL) {
@@ -228,17 +228,17 @@ bool Value::write(ConnectionWriter& connection) {
     return proxy->write(connection);
 }
 
-bool Value::check(const char *key) {
+bool Value::check(const ConstString& key) {
     ok();
     return proxy->check(key);
 }
 
-Value& Value::find(const char *key) {
+Value& Value::find(const ConstString& key) {
     ok();
     return proxy->find(key);
 }
 
-Bottle& Value::findGroup(const char *key) {
+Bottle& Value::findGroup(const ConstString& key) {
     ok();
     return proxy->findGroup(key);
 }
@@ -296,7 +296,7 @@ Value *Value::makeDouble(double x) {
 }
 
 
-Value *Value::makeString(const char *str) {
+Value *Value::makeString(const ConstString& str) {
     return new StoreString(str);
 }
 
@@ -306,14 +306,13 @@ Value *Value::makeVocab(int v) {
 }
 
 
-Value *Value::makeVocab(const char *str) {
+Value *Value::makeVocab(const ConstString& str) {
     return new StoreVocab(Vocab::encode(str));
 }
 
 
 Value *Value::makeBlob(void *data, int length) {
-    String s;
-    YARP_STRSET(s,(char*)data,length,0);
+    String s((char*)data,length);
     return new StoreBlob(s);
 }
 
@@ -332,7 +331,7 @@ Value *Value::makeList(const char *txt) {
 }
 
 
-Value *Value::makeValue(const char *txt) {
+Value *Value::makeValue(const ConstString& txt) {
     Bottle bot(txt);
     if (bot.size()>1) {
         return makeString(txt);

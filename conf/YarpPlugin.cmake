@@ -44,24 +44,24 @@ if(NOT COMMAND YARP_END_PLUGIN_LIBRARY)
 
 get_property(YARP_TREE_BUILD GLOBAL PROPERTY YARP_TREE_BUILD)
 if(YARP_TREE_BUILD)
-  # When compiling YARP,
-  # Prepare path information for the benefit of clients
+    # When compiling YARP,
+    # Prepare path information for the benefit of clients
 
-  get_target_property(YARP_LIBRARY_PATH YARP_OS LOCATION)
-  get_target_property(YARP_LIBRARY_TYPE YARP_OS TYPE)
-  string(REPLACE "STATIC_LIBRARY" "static" YARP_LIBRARY_TYPE ${YARP_LIBRARY_TYPE})
-  string(REPLACE "SHARED_LIBRARY" "shared" YARP_LIBRARY_TYPE ${YARP_LIBRARY_TYPE})
-  get_filename_component(YARP_LIBRARY_EXTENSION ${YARP_LIBRARY_PATH} EXT)
-  get_filename_component(YARP_LIBRARY_PREFIX ${YARP_LIBRARY_PATH} NAME_WE)
-  string(REPLACE "YARP_OS" "" YARP_LIBRARY_PREFIX ${YARP_LIBRARY_PREFIX})
-  get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} ABSOLUTE)
-  get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
-  configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
-    ${CMAKE_BINARY_DIR}/etc/yarp/plugins/path.ini @ONLY IMMEDIATE)
-  set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
-  configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
-    ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY IMMEDIATE)
-  install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION etc/yarp/plugins)
+    get_target_property(YARP_LIBRARY_PATH YARP_OS LOCATION)
+    get_target_property(YARP_LIBRARY_TYPE YARP_OS TYPE)
+    string(REPLACE "STATIC_LIBRARY" "static" YARP_LIBRARY_TYPE ${YARP_LIBRARY_TYPE})
+    string(REPLACE "SHARED_LIBRARY" "shared" YARP_LIBRARY_TYPE ${YARP_LIBRARY_TYPE})
+    get_filename_component(YARP_LIBRARY_EXTENSION ${YARP_LIBRARY_PATH} EXT)
+    get_filename_component(YARP_LIBRARY_PREFIX ${YARP_LIBRARY_PATH} NAME_WE)
+    string(REPLACE "YARP_OS" "" YARP_LIBRARY_PREFIX ${YARP_LIBRARY_PREFIX})
+    get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} ABSOLUTE)
+    get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
+    configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
+        ${CMAKE_BINARY_DIR}/plugins/path.ini @ONLY IMMEDIATE)
+    set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+    configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
+        ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY IMMEDIATE)
+    install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION share/yarp/plugins)
 endif(YARP_TREE_BUILD)
 
 #########################################################################
@@ -405,8 +405,8 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
         endif(links)
         # add the library initializer code
         _ADD_LIBRARY(${X_YARP_PLUGIN_MASTER} ${code} ${code_stub} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
-        target_link_libraries(${X_YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
-        target_link_libraries(${X_YARP_PLUGIN_MASTER} ${libs})
+        target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE YARP_OS)
+        target_link_libraries(${X_YARP_PLUGIN_MASTER} LINK_PRIVATE ${libs})
         # give user access to a list of all the plugin libraries
         set(${X_YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
         set(X_YARP_PLUGIN_MODE FALSE) # neutralize redefined methods
@@ -436,11 +436,11 @@ endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
 #
 macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
     get_filename_component(out_name ${file_name} NAME)
-    configure_file(${file_name} ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name} COPYONLY)
+    configure_file(${file_name} ${CMAKE_BINARY_DIR}/plugins/${out_name} COPYONLY)
     if(YARP_TREE_INCLUDE_DIRS)
-        install(FILES ${CMAKE_BINARY_DIR}/etc/yarp/plugins/${out_name}
+        install(FILES ${CMAKE_BINARY_DIR}/plugins/${out_name}
                 COMPONENT runtime
-                DESTINATION etc/yarp/plugins)
+                DESTINATION share/yarp/plugins)
     endif(YARP_TREE_INCLUDE_DIRS)
 endmacro(YARP_ADD_CARRIER_FINGERPRINT)
 

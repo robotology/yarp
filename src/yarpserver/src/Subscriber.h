@@ -26,63 +26,61 @@ class Subscriber : public yarp::name::NameService {
 private:
     yarp::os::NameStore *store;
     ConnectManager manager;
+    bool silent;
 public:
-    Subscriber() : store(0/*NULL*/) {}
+    Subscriber() : store(0/*NULL*/), silent(false) {}
 
     void setStore(yarp::os::NameStore& store) { this->store = &store; }
     yarp::os::NameStore *getStore() { return store; }
 
-    /*
-    void connect(const yarp::os::Contact& src,
+    void setSilent(bool flag) {
+        this->silent = flag;
+    }
+
+    void connect(const yarp::os::ConstString& src,
                  const yarp::os::ConstString& dest) {
         manager.connect(src,dest);
     }
-    */
 
-    void connect(const char *src,
-                 const char *dest) {
-        manager.connect(src,dest);
-    }
-
-    void disconnect(const char *src,
-                    const char *dest,
+    void disconnect(const yarp::os::ConstString& src,
+                    const yarp::os::ConstString& dest,
                     bool srcDrop) {
         manager.disconnect(src,dest,srcDrop);
     }
 
-    virtual bool addSubscription(const char *src,
-                                 const char *dest,
-                                 const char *mode) = 0;
+    virtual bool addSubscription(const yarp::os::ConstString& src,
+                                 const yarp::os::ConstString& dest,
+                                 const yarp::os::ConstString& mode) = 0;
 
-    virtual bool removeSubscription(const char *src,
-                                    const char *dest) = 0;
+    virtual bool removeSubscription(const yarp::os::ConstString& src,
+                                    const yarp::os::ConstString& dest) = 0;
 
-    virtual bool listSubscriptions(const char *src,
+    virtual bool listSubscriptions(const yarp::os::ConstString& src,
                                    yarp::os::Bottle& reply) = 0;
 
-    virtual bool welcome(const char *port, int activity) = 0;
+    virtual bool welcome(const yarp::os::ConstString& port, int activity) = 0;
 
-    virtual bool setTopic(const char *port, 
-                          const char *structure, bool active) = 0;
+    virtual bool setTopic(const yarp::os::ConstString& port, 
+                          const yarp::os::ConstString& structure, bool active) = 0;
 
     virtual bool listTopics(yarp::os::Bottle& topics) = 0;
 
-    virtual bool setType(const char *family,
-                         const char *structure,
-                         const char *value) = 0;
+    virtual bool setType(const yarp::os::ConstString& family,
+                         const yarp::os::ConstString& structure,
+                         const yarp::os::ConstString& value) = 0;
 
-    virtual yarp::os::ConstString getType(const char *family,
-                                          const char *structure) = 0;
+    virtual yarp::os::ConstString getType(const yarp::os::ConstString& family,
+                                          const yarp::os::ConstString& structure) = 0;
 
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
-                       yarp::os::Contact& remote) {
+                       const yarp::os::Contact& remote) {
         yarp::os::ConstString tag = cmd.get(0).asString();
         bool ok = false;
         if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce"||
             tag=="topic"||tag=="untopic"||tag=="type") {
-            printf("-> %s\n", cmd.toString().c_str());
+            if (!silent) printf("-> %s\n", cmd.toString().c_str());
         }
         if (tag=="subscribe") {
             yarp::os::ConstString src = cmd.get(1).asString();
@@ -160,7 +158,7 @@ public:
             }
         }
         if (tag=="untopic") {
-            bool result = setTopic(cmd.get(1).asString().c_str(),NULL,false);
+            bool result = setTopic(cmd.get(1).asString().c_str(),"",false);
             reply.clear();
             reply.addVocab(replyCode(result));
             return true;
@@ -169,11 +167,6 @@ public:
     }
 
     virtual void onEvent(yarp::os::Bottle& event) {
-        //yarp::os::ConstString tag = event.get(0).toString();
-        //yarp::os::ConstString port = event.get(1).toString();
-        //if (tag=="add") {
-        //welcome(port.c_str());
-        //}
     }
 
     int replyCode(bool flag) {

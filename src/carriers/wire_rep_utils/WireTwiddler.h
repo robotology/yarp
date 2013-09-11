@@ -10,13 +10,14 @@
 #ifndef YARP2_WIRETWIDDLER
 #define YARP2_WIRETWIDDLER
 
+#include <yarp/conf/numeric.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetInt32.h>
 
-#include <yarp/os/impl/SizedWriter.h>
-#include <yarp/os/impl/PlatformSize.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/InputStream.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Bytes.h>
 
 #include <wire_rep_utils_api.h>
@@ -57,6 +58,12 @@ class YARP_wire_rep_utils_API WireTwiddler {
 public:
     WireTwiddler() {
         buffer_start = 0;
+        writer = 0 /*NULL*/;
+    }
+
+    virtual ~WireTwiddler() {
+        if (writer) delete writer;
+        writer = 0 /*NULL*/;
     }
 
     bool configure(const char *txt);
@@ -75,6 +82,7 @@ private:
     int buffer_start;
     std::vector<yarp::os::NetInt32> buffer;
     std::vector<WireTwiddlerGap> gaps;
+    yarp::os::ConnectionWriter *writer;
 
 public:
     void show();
@@ -147,7 +155,7 @@ public:
 
     virtual ~WireTwiddlerReader() {}
 
-    virtual ssize_t read(const yarp::os::Bytes& b);
+    virtual YARP_SSIZE_T read(const yarp::os::Bytes& b);
 
     virtual void close() { is.close(); }
 
@@ -155,9 +163,9 @@ public:
 };
 
 
-class YARP_wire_rep_utils_API WireTwiddlerWriter : public yarp::os::impl::SizedWriter {
+class YARP_wire_rep_utils_API WireTwiddlerWriter : public yarp::os::SizedWriter {
 private:
-    yarp::os::impl::SizedWriter *parent;
+    yarp::os::SizedWriter *parent;
     WireTwiddler *twiddler;
     std::vector<yarp::os::Bytes> srcs;
     int block;
@@ -173,7 +181,7 @@ private:
     const char *activeCheck;
     bool errorState;
 public:
-    WireTwiddlerWriter(yarp::os::impl::SizedWriter& parent,
+    WireTwiddlerWriter(yarp::os::SizedWriter& parent,
                        WireTwiddler& twiddler) : parent(&parent),
                                                  twiddler(&twiddler) {
         update();
@@ -184,7 +192,7 @@ public:
         twiddler = NULL;
     }
 
-    void attach(yarp::os::impl::SizedWriter& parent,
+    void attach(yarp::os::SizedWriter& parent,
                 WireTwiddler& twiddler) {
         this->parent = &parent;
         this->twiddler = &twiddler;

@@ -24,11 +24,11 @@
 #include <yarp/os/MultiNameSpace.h>
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/OutputProtocol.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/Route.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/ThreadImpl.h>
@@ -39,6 +39,8 @@
 #include <ace/config.h>
 #include <ace/String_Base.h>
 #endif
+
+#include <stdlib.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -77,9 +79,10 @@ static int noteDud(const Contact& src) {
     cmd.addString("announce");
     cmd.addString(src.getName().c_str());
     cmd.addInt(0);
-    bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
-                                 cmd,
-                                 reply);
+    ContactStyle style;
+    bool ok = NetworkBase::writeToNameServer(cmd,
+                                             reply,
+                                             style);
     return ok?0:1;
  }
 
@@ -211,19 +214,16 @@ static int enactConnection(const Contact& src,
 
 */
 
-static int metaConnect(const char *csrc,
-                       const char *cdest,
+static int metaConnect(const ConstString& src,
+                       const ConstString& dest,
                        ContactStyle style,
                        int mode) {
     YARP_SPRINTF3(Logger::get(),debug,
                   "working on connection %s to %s (%s)",
-                  csrc,
-                  cdest,
+                  src.c_str(),
+                  dest.c_str(),
                   (mode==YARP_ENACT_CONNECT)?"connect":((mode==YARP_ENACT_DISCONNECT)?"disconnect":"check")
                   );
-
-    ConstString src = csrc;
-    ConstString dest = cdest;
 
     // get the expressed contacts, without name server input
     Contact dynamicSrc = Contact::fromString(src);
@@ -454,55 +454,55 @@ static int metaConnect(const char *csrc,
     return 1;
 }
 
-bool NetworkBase::connect(const char *src, const char *dest,
-                          const char *carrier,
+bool NetworkBase::connect(const ConstString& src, const ConstString& dest,
+                          const ConstString& carrier,
                           bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
-    if (carrier!=NULL) {
+    if (carrier!="") {
         style.carrier = carrier;
     }
     return connect(src,dest,style);
 }
 
-bool NetworkBase::connect(const char *src,
-                          const char *dest,
+bool NetworkBase::connect(const ConstString& src,
+                          const ConstString& dest,
                           const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_CONNECT);
     return result == 0;
 }
 
-bool NetworkBase::disconnect(const char *src,
-                             const char *dest,
+bool NetworkBase::disconnect(const ConstString& src,
+                             const ConstString& dest,
                              bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
     return disconnect(src,dest,style);
 }
 
-bool NetworkBase::disconnect(const char *src,
-                             const char *dest,
+bool NetworkBase::disconnect(const ConstString& src,
+                             const ConstString& dest,
                              const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_DISCONNECT);
     return result == 0;
 }
 
-bool NetworkBase::isConnected(const char *src,
-                              const char *dest,
+bool NetworkBase::isConnected(const ConstString& src,
+                              const ConstString& dest,
                               bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
     return isConnected(src,dest,style);
 }
 
-bool NetworkBase::exists(const char *port, bool quiet) {
+bool NetworkBase::exists(const ConstString& port, bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
     return exists(port,style);
 }
 
-bool NetworkBase::exists(const char *port, const ContactStyle& style) {
-    int result = Companion::exists(port,style);
+bool NetworkBase::exists(const ConstString& port, const ContactStyle& style) {
+    int result = Companion::exists(port.c_str(),style);
     if (result==0) {
         //Companion::poll(port,true);
         ContactStyle style2 = style;
@@ -510,7 +510,10 @@ bool NetworkBase::exists(const char *port, const ContactStyle& style) {
         Bottle cmd("[ver]"), resp;
         bool ok = NetworkBase::write(Contact::byName(port),cmd,resp,style2);
         if (!ok) result = 1;
-        if (resp.get(0).toString()!="ver") {
+        if (resp.get(0).toString()!="ver"&&resp.get(0).toString()!="dict") {
+            // YARP nameserver responds with a version
+            // ROS nameserver responds with a dictionary of error data
+            // Treat everything else an unknown
             result = 1;
         }
     }
@@ -518,10 +521,10 @@ bool NetworkBase::exists(const char *port, const ContactStyle& style) {
 }
 
 
-bool NetworkBase::sync(const char *port, bool quiet) {
-    int result = Companion::wait(port,quiet);
+bool NetworkBase::sync(const ConstString& port, bool quiet) {
+    int result = Companion::wait(port.c_str(),quiet);
     if (result==0) {
-        Companion::poll(port,true);
+        Companion::poll(port.c_str(),true);
     }
     return result == 0;
 }
@@ -590,10 +593,10 @@ void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
 }
 
-Contact NetworkBase::queryName(const char *name) {
-    YARP_SPRINTF1(Logger::get(),debug,"query name %s",name);
+Contact NetworkBase::queryName(const ConstString& name) {
+    YARP_SPRINTF1(Logger::get(),debug,"query name %s",name.c_str());
     if (getNameServerName()==name) {
-        YARP_SPRINTF1(Logger::get(),debug,"query recognized as name server: %s",name);
+        YARP_SPRINTF1(Logger::get(),debug,"query recognized as name server: %s",name.c_str());
         return getNameServerContact();
     }
     Contact c = c.fromString(name);
@@ -604,8 +607,8 @@ Contact NetworkBase::queryName(const char *name) {
 }
 
 
-Contact NetworkBase::registerName(const char *name) {
-    YARP_SPRINTF1(Logger::get(),debug,"register name %s",name);
+Contact NetworkBase::registerName(const ConstString& name) {
+    YARP_SPRINTF1(Logger::get(),debug,"register name %s",name.c_str());
     return getNameSpace().registerName(name);
 }
 
@@ -616,7 +619,7 @@ Contact NetworkBase::registerContact(const Contact& contact) {
     return getNameSpace().registerContact(contact);
 }
 
-Contact NetworkBase::unregisterName(const char *name) {
+Contact NetworkBase::unregisterName(const ConstString& name) {
     return getNameSpace().unregisterName(name);
 }
 
@@ -694,33 +697,15 @@ bool NetworkBase::write(const Contact& contact,
         }
 
         bool ok = port.write(cmd,reply);
-        /*
-        DummyConnector con;
-        cmd.write(con.getWriter());
-        Bottle in, out;
-        in.read(con.getReader());
-        bool ok = port.write(cmd,out);
-        out.write(con.getCleanWriter());
-        reply.read(con.getReader());
-
-        YARP_SPRINTF3(Logger::get(),
-                      debug,
-                      "NETWORK WROTE: %s: [%s] -> [%s]",
-                      ec.toString().c_str(),
-                      in.toString().c_str(),
-                      out.toString().c_str());
-        */
-
         return ok;
     }
 
     const char *connectionName = "admin";
     ConstString name = contact.getName();
     const char *targetName = name.c_str();  // use carefully!
-    Address address = Address::fromContact(contact);
+    Contact address = contact;
     if (!address.isValid()) {
-        Contact c = getNameSpace().queryName(targetName);
-        address = Address::fromContact(c);
+        address = getNameSpace().queryName(targetName);
     }
     if (!address.isValid()) {
         if (!style.quiet) {
@@ -783,19 +768,19 @@ bool NetworkBase::write(const Contact& contact,
     return true;
 }
 
-bool NetworkBase::write(const char *port_name,
+bool NetworkBase::write(const ConstString& port_name,
                                PortWriter& cmd,
                                PortReader& reply) {
     return write(Contact::byName(port_name),cmd,reply);
 }
 
-bool NetworkBase::isConnected(const char *src, const char *dest,
+bool NetworkBase::isConnected(const ConstString& src, const ConstString& dest,
                               const ContactStyle& style) {
     int result = metaConnect(src,dest,style,YARP_ENACT_EXISTS);
     if (result!=0) {
         if (!style.quiet) {
             printf("No connection from %s to %s found\n",
-                   src, dest);
+                   src.c_str(), dest.c_str());
         }
     }
     return result == 0;
@@ -815,10 +800,10 @@ Contact NetworkBase::getNameServerContact() {
 
 
 
-bool NetworkBase::setNameServerName(const char *name) {
+bool NetworkBase::setNameServerName(const ConstString& name) {
     NameConfig nc;
     String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
-    nc.writeConfig(fname,String(name) + "\n");
+    nc.writeConfig(fname,name + "\n");
     nc.getNamespace(true);
     getNameSpace().activate(true);
     return true;
@@ -848,6 +833,11 @@ void NetworkBase::queryBypass(NameStore *store) {
     getNameSpace().queryBypass(store);
 }
 
+NameStore *NetworkBase::getQueryBypass() {
+    return getNameSpace().getQueryBypass();
+}
+
+
 
 ConstString NetworkBase::getEnvironment(const char *key,
                                         bool *found) {
@@ -859,6 +849,42 @@ ConstString NetworkBase::getEnvironment(const char *key,
         return "";
     }
     return result;
+}
+
+void NetworkBase::setEnvironment(const ConstString& key, const ConstString& val) {
+#if defined(WIN32)
+    _putenv_s(key.c_str(),val.c_str());
+#else
+    ACE_OS::setenv(key.c_str(),val.c_str(),1);
+#endif
+}
+
+void NetworkBase::unsetEnvironment(const ConstString& key) {
+#if defined(WIN32)
+    _putenv_s(key.c_str(),"");
+#else
+    ACE_OS::unsetenv(key.c_str());
+#endif
+}
+
+ConstString NetworkBase::getDirectorySeparator() {
+#ifdef _WIN32
+    // note this may be wrong under cygwin
+    // should be ok for mingw
+    return "\\";
+#else
+    return "/";
+#endif
+}
+
+ConstString NetworkBase::getPathSeparator() {
+#ifdef _WIN32
+    // note this may be wrong under cygwin
+    // should be ok for mingw
+    return ";";
+#else
+    return ":";
+#endif
 }
 
 void NetworkBase::lock() {
@@ -976,51 +1002,51 @@ public:
         return getContent().isPush();
     }
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         return getContent().prepareSend(proto);
     }
 
-    virtual bool sendHeader(Protocol& proto) {
+    virtual bool sendHeader(ConnectionState& proto) {
         return getContent().sendHeader(proto);
     }
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(ConnectionState& proto) {
         return getContent().expectReplyToHeader(proto);
     }
 
-    //virtual bool sendIndex(Protocol& proto,SizedWriter& writer) {
+    //virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer) {
     //return getContent().sendIndex(proto,writer);
     //}
 
-    virtual bool write(Protocol& proto, SizedWriter& writer) {
+    virtual bool write(ConnectionState& proto, SizedWriter& writer) {
         return getContent().write(proto,writer);
     }
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer) {
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer) {
         return getContent().reply(proto,writer);
     }
 
-    virtual bool expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(ConnectionState& proto) {
         return getContent().expectExtraHeader(proto);
     }
 
-    virtual bool respondToHeader(Protocol& proto){
+    virtual bool respondToHeader(ConnectionState& proto){
         return getContent().respondToHeader(proto);
     }
 
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return getContent().expectIndex(proto);
     }
 
-    virtual bool expectSenderSpecifier(Protocol& proto) {
+    virtual bool expectSenderSpecifier(ConnectionState& proto) {
         return getContent().expectSenderSpecifier(proto);
     }
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return getContent().sendAck(proto);
     }
 
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return getContent().expectAck(proto);
     }
 
@@ -1150,6 +1176,11 @@ Contact NetworkBase::detectNameServer(bool useDetectedServer,
 bool NetworkBase::writeToNameServer(PortWriter& cmd,
                                     PortReader& reply,
                                     const ContactStyle& style) {
+    NameStore *store = getNameSpace().getQueryBypass();
+    if (store) {
+        Contact contact;
+        return store->process(cmd,reply,contact);
+    }
     return getNameSpace().writeToNameServer(cmd,reply,style);
 }
 

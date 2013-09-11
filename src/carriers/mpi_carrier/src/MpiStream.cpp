@@ -9,17 +9,16 @@
 
 #ifdef CREATE_MPI_CARRIER
 
-#include <yarp/os/impl/MpiStream.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/MpiStream.h>
+#include <yarp/os/Log.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
 /* --------------------------------------- */
 /* MpiStream */
 
-MpiStream::MpiStream(String n, MpiComm* c)
+MpiStream::MpiStream(ConstString n, MpiComm* c)
     : terminate(false), name(n), comm(c) {
     readBuffer = NULL;
     resetBuffer();
@@ -59,11 +58,11 @@ InputStream& MpiStream::getInputStream() {
 yarp::os::OutputStream& MpiStream::getOutputStream() {
     return *this;
 }
-const Address& MpiStream::getLocalAddress() {
+const yarp::os::Contact& MpiStream::getLocalAddress() {
     // left undefined
     return local;
 }
-const Address& MpiStream::getRemoteAddress() {
+const yarp::os::Contact& MpiStream::getRemoteAddress() {
     // left undefined
     return remote;
 }

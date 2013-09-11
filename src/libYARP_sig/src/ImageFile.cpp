@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 
+using namespace yarp::os;
 using namespace yarp::sig;
 
 static void warn(const char *message)
@@ -24,8 +25,8 @@ static void warn(const char *message)
 }
 
 
-bool file::write(const ImageOf<PixelFloat>& src, const char *dest) {
-	FILE *fp = fopen(dest, "w");
+bool file::write(const ImageOf<PixelFloat>& src, const ConstString& dest) {
+	FILE *fp = fopen(dest.c_str(), "w");
     if (fp==NULL) {
         return false;
     }
@@ -40,10 +41,10 @@ bool file::write(const ImageOf<PixelFloat>& src, const char *dest) {
     return false;
 }
 
-bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
+bool file::read(ImageOf<PixelFloat>& dest, const ConstString& src) {
     int hh = 0, ww = 0;
 
-	FILE *fp = fopen(src, "r");
+	FILE *fp = fopen(src.c_str(), "r");
     if (fp==NULL) {
         return false;
     }
@@ -70,7 +71,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
         }
     }
     fclose(fp);
-	fp = fopen(src, "rb");
+	fp = fopen(src.c_str(), "rb");
     if (fp==NULL) {
         return false;
     }
@@ -393,55 +394,55 @@ static bool ImageWriteMono(ImageOf<PixelMono>& img, const char *filename)
     return SavePGM((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize());
 }
 
-bool file::read(ImageOf<PixelRgb> & dest, const char *src)
+bool file::read(ImageOf<PixelRgb> & dest, const ConstString& src)
 {
-    return ImageReadRGB(dest,src);
+    return ImageReadRGB(dest,src.c_str());
 }
 
-bool file::read(ImageOf<PixelBgr> & dest, const char *src)
+bool file::read(ImageOf<PixelBgr> & dest, const ConstString& src)
 {
-    return ImageReadBGR(dest,src);
+    return ImageReadBGR(dest,src.c_str());
 }
 
-bool file::read(ImageOf<PixelRgba> & dest, const char *src)
+bool file::read(ImageOf<PixelRgba> & dest, const ConstString& src)
 {
 	ImageOf<PixelRgb> img2;
-    bool ok = ImageReadRGB(img2,src);
+    bool ok = ImageReadRGB(img2,src.c_str());
     if (ok) {
         dest.copy(img2);
     }
     return ok;
 }
 
-bool file::write(const ImageOf<PixelRgb> & src, const char *dest)
+bool file::write(const ImageOf<PixelRgb> & src, const ConstString& dest)
 {
-    return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(src), dest);
+    return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(src), dest.c_str());
 }
 
-bool file::write(const ImageOf<PixelBgr> & src, const char *dest)
+bool file::write(const ImageOf<PixelBgr> & src, const ConstString& dest)
 {
-    return ImageWriteBGR(const_cast<ImageOf<PixelBgr> &>(src), dest);
+    return ImageWriteBGR(const_cast<ImageOf<PixelBgr> &>(src), dest.c_str());
 }
 
-bool file::write(const ImageOf<PixelRgba> & src, const char *dest)
+bool file::write(const ImageOf<PixelRgba> & src, const ConstString& dest)
 {
 	ImageOf<PixelRgb> img2;
 	img2.copy(src);
-    return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(img2), dest);
+    return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(img2), dest.c_str());
 }
 
-bool file::read(ImageOf<PixelMono> & dest, const char *src)
+bool file::read(ImageOf<PixelMono> & dest, const ConstString& src)
 {
-    return ImageReadMono(dest,src);
+    return ImageReadMono(dest,src.c_str());
 }
 
-bool file::write(const ImageOf<PixelMono> & src, const char *dest)
+bool file::write(const ImageOf<PixelMono> & src, const ConstString& dest)
 {
-    return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest);
+    return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest.c_str());
 }
 
 
-bool file::write(const Image& src, const char *dest)
+bool file::write(const Image& src, const ConstString& dest)
 {
     ImageOf<PixelRgb> img;
     img.copy(src);

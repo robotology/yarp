@@ -12,11 +12,11 @@
 
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/SizedWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 
@@ -65,7 +65,7 @@ public:
         convertTextModePending = false;
     }
 
-    void clear() {
+    virtual void clear() {
         target = &lst;
         size_t i;
         for (i=0; i<lst.size(); i++) {
@@ -125,7 +125,7 @@ public:
     }
 
     virtual void appendInt(int data) {
-        NetType::NetInt32 i = data;
+        NetInt32 i = data;
         yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (addPool(b)) return;
         yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
@@ -134,7 +134,7 @@ public:
     }
 
     virtual void appendDouble(double data) {
-        NetType::NetFloat64 i = data;
+        NetFloat64 i = data;
         yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (addPool(b)) return;
         yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
@@ -310,6 +310,10 @@ public:
     virtual void stopWrite() {
         // convert, last thing, if requested
         applyConvertTextMode();
+    }
+
+    virtual SizedWriter *getBuffer() {
+        return this;
     }
 
 private:
@@ -536,6 +540,11 @@ public:
     BufferedConnectionWriter& getMessage() { return readerStore; }
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }
+    virtual SizedWriter *getBuffer() { return 0 /*NULL*/; }
+    
+    virtual bool setSize(size_t len) {
+        return reader->setSize(len);
+    }
 };
 
 

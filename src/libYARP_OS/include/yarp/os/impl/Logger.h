@@ -11,6 +11,8 @@
 #define _YARP2_LOGGER_
 
 #include <stdio.h>
+#include <yarp/conf/api.h>
+#include <yarp/conf/system.h>
 #include <yarp/os/impl/String.h>
 
 #ifdef YARP_HAS_ACE
@@ -41,9 +43,9 @@ namespace yarp {
  * and ACE.
  *
  */
-class YARP_OS_impl_API yarp::os::impl::Logger
+class YARP_OS_impl_API yarp::os::impl::Logger : public yarp::os::Log
 #ifdef YARP_HAS_ACE
-    : public ACE_Log_Msg_Callback
+                                              , public ACE_Log_Msg_Callback
 #endif
 {
 public:
@@ -84,12 +86,14 @@ public:
     }
 #endif
 
-    void debug(const String& txt) {
-        show(LM_DEBUG,txt);
-    }
-
     void println(const String& txt) {
         debug(txt);
+    }
+
+
+
+    void debug(const String& txt) {
+        show(LM_DEBUG,txt);
     }
 
     void info(const String& txt) {
@@ -108,6 +112,35 @@ public:
         show(LM_ERROR,txt);
         exit(1);
     }
+
+
+
+    void debug(const char *txt) {
+        String stxt(txt);
+        show(LM_DEBUG,stxt);
+    }
+
+    void info(const char *txt) {
+        String stxt(txt);
+        show(LM_INFO,stxt);
+    }
+
+    void warning(const char *txt) {
+        String stxt(txt);
+        show(LM_WARNING,stxt);
+    }
+
+    void error(const char *txt) {
+        String stxt(txt);
+        show(LM_ERROR,stxt);
+    }
+
+    void fail(const char *txt) {
+        String stxt(txt);
+        show(LM_ERROR,stxt);
+        exit(1);
+    }
+
 
     void assertion(bool cond) {
         if (!cond) {

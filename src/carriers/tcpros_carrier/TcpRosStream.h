@@ -12,7 +12,7 @@
 
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/ConstString.h>
 #include "BlobNetworkHeader.h"
@@ -25,16 +25,14 @@
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class TcpRosStream;
-        }
+        class TcpRosStream;
     }
 }
 
 
-class YARP_tcpros_carrier_API yarp::os::impl::TcpRosStream : public TwoWayStream, 
-                                                             public yarp::os::InputStream,
-                                                             public yarp::os::OutputStream
+class YARP_tcpros_carrier_API yarp::os::TcpRosStream : public TwoWayStream, 
+                                                       public InputStream,
+                                                       public OutputStream
 {
 private:
     TwoWayStream *delegate;
@@ -79,11 +77,11 @@ public:
     virtual yarp::os::OutputStream& getOutputStream() { return *this; }
 
 
-    virtual const Address& getLocalAddress() {
+    virtual const yarp::os::Contact& getLocalAddress() {
         return delegate->getLocalAddress();
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const yarp::os::Contact& getRemoteAddress() {
         return delegate->getRemoteAddress();
     }
 
@@ -110,7 +108,7 @@ public:
 
     virtual void write(const Bytes& b);
 
-    virtual ssize_t read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b);
 
     virtual void interrupt() {
         delegate->getInputStream().interrupt();

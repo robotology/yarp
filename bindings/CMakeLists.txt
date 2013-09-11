@@ -85,10 +85,19 @@ IF (CREATE_JAVA)
   SET(target_name jyarp)
   SWIG_ADD_MODULE(${target_name} java yarp.i)
   IF (PREPARE_CLASS_FILES)
-    ADD_CUSTOM_COMMAND(TARGET ${target_name}
-      POST_BUILD
+    file(GLOB JAVA_IN_SRC RELATIVE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/src/*.java)
+    file(GLOB JAVA_IN_YARP RELATIVE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/yarp/*.java)
+    set(CLASS_FILES)
+    foreach(java_file ${JAVA_IN_SRC} ${JAVA_IN_YARP})
+      string(REPLACE ".java" ".class" class_file ${java_file})
+      list(APPEND CLASS_FILES ${class_file})
+    endforeach()
+    add_custom_command(OUTPUT ${CLASS_FILES}
+
       COMMAND javac -source 1.3 -target 1.3 "src/*.java" "yarp/*.java"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      DEPENDS ${target_name})
+    add_custom_target(${target_name}_classes ALL DEPENDS ${CLASS_FILES})
   ENDIF ()
 
   # issue on MINGW where C++ name-mangling prevents java finding methods
@@ -271,7 +280,7 @@ IF (CREATE_LUA)
   IF (UNIX)
     ADD_CUSTOM_COMMAND(TARGET yarp
     POST_BUILD
-    COMMAND ln -s libyarp.so yarp.so 
+    COMMAND ${CMAKE_COMMAND} -E create_symlink libyarp.so yarp.so 
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   ENDIF (UNIX)
 ENDIF (CREATE_LUA)

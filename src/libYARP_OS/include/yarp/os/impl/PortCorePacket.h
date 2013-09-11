@@ -12,7 +12,7 @@
 
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 #include <yarp/os/impl/PlatformList.h>
 #ifdef YARP_HAS_ACE

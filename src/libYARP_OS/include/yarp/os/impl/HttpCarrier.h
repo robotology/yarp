@@ -11,9 +11,9 @@
 #define _YARP2_HTTPCARRIER_
 
 #include <yarp/os/impl/TcpCarrier.h>
-#include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
 
 namespace yarp {
     namespace os {
@@ -50,16 +50,16 @@ namespace yarp {
  */
 class yarp::os::impl::HttpTwoWayStream : public TwoWayStream, public OutputStream {
 private:
-    String proc;
-    String part;
+    ConstString proc;
+    ConstString part;
     bool data;
     bool filterData;
     bool chunked;
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
-    String format;
-    String outer;
+    ConstString format;
+    ConstString outer;
 public:
     HttpTwoWayStream(TwoWayStream *delegate,
                      const char *txt,
@@ -70,8 +70,8 @@ public:
 
     virtual InputStream& getInputStream();
     virtual OutputStream& getOutputStream();
-    virtual const Address& getLocalAddress();
-    virtual const Address& getRemoteAddress();
+    virtual const Contact& getLocalAddress();
+    virtual const Contact& getRemoteAddress();
 
     virtual bool isOk();
     virtual void reset();
@@ -84,7 +84,7 @@ public:
     void flip();
     void finish();
     bool useJson();
-    String *typeHint();
+    ConstString *typeHint();
 };
 
 
@@ -94,7 +94,7 @@ public:
  */
 class yarp::os::impl::HttpCarrier : public TcpCarrier {
 private:
-    String url, input, prefix;
+    ConstString url, input, prefix;
     bool urlDone;
     bool expectPost;
     int contentLength;
@@ -105,7 +105,7 @@ public:
 
     virtual Carrier *create();
 
-    virtual String getName();
+    virtual ConstString getName();
 
     bool checkHeader(const Bytes& header, const char *prefix);
 
@@ -115,17 +115,17 @@ public:
     virtual bool requireAck();
     virtual bool isTextMode();
     virtual bool supportReply();
-    virtual bool sendHeader(Protocol& proto);
-    virtual bool expectSenderSpecifier(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
-    virtual bool sendIndex(Protocol& proto,SizedWriter& writer);
-    virtual bool expectIndex(Protocol& proto);
-    virtual bool sendAck(Protocol& proto);
-    virtual bool expectAck(Protocol& proto);
-    virtual bool respondToHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
+    virtual bool expectSenderSpecifier(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
+    virtual bool sendIndex(ConnectionState& proto,SizedWriter& writer);
+    virtual bool expectIndex(ConnectionState& proto);
+    virtual bool sendAck(ConnectionState& proto);
+    virtual bool expectAck(ConnectionState& proto);
+    virtual bool respondToHeader(ConnectionState& proto);
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer);
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 };
 
 #endif

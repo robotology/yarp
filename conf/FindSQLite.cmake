@@ -1,40 +1,25 @@
-# Try to find the SQLite 3 library
-# SQLite_FOUND - system has SQLite
-# SQLite_INCLUDE_DIRS - SQLite include directory
-# SQLite_LIBRARY_DIRS - SQLite library directory
-# SQLite_LIBRARIES - SQLite libraries
-
-# Copyright (C) 2012  iCub Facility, Istituto Italiano di Tecnologia
-# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
+# Try to find the SQLite library.
+# Once done this will define the following variables:
 #
+# SQLite_FOUND         - System has SQLite
+# SQLite_INCLUDE_DIRS  - SQLite include directory
+# SQLite_LIBRARIES     - SQLite libraries
+# SQLite_DEFINITIONS   - Additional compiler flags for SQLite
+# SQLite_VERSION       - SQLite version
+# SQLite_MAJOR_VERSION - SQLite major version
+# SQLite_MINOR_VERSION - SQLite minor version
+# SQLite_PATCH_VERSION - SQLite patch version
+# SQLite_TWEAK_VERSION - SQLite tweak version
+
+# Copyright (C) 2012, 2013  iCub Facility, Istituto Italiano di Tecnologia
+# Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+include(MacroStandardFindModule)
+macro_standard_find_module(SQLite sqlite3)
 
-if(NOT WIN32)
-    find_package(PkgConfig)
-    if(PKG_CONFIG_FOUND)
-        if(SQLite_FIND_VERSION)
-            if(SQLite_FIND_VERSION_EXACT)
-                pkg_check_modules(PC_SQLITE QUIET sqlite3=${SQLite_FIND_VERSION})
-            else(SQLite_FIND_VERSION_EXACT)
-                pkg_check_modules(PC_SQLITE QUIET sqlite3>=${SQLite_FIND_VERSION})
-            endif(SQLite_FIND_VERSION_EXACT)
-        else(SQLite_FIND_VERSION)
-            pkg_check_modules(PC_SQLITE QUIET sqlite3)
-        endif(SQLite_FIND_VERSION)
-    endif(PKG_CONFIG_FOUND)
-endif(NOT WIN32)
-
-set(SQLite_INCLUDE_DIRS ${PC_SQLITE_INCLUDE_DIRS} CACHE PATH "SQLite include directory" FORCE)
-set(SQLite_LIBRARY_DIRS ${PC_SQLITE_LIBRARY_DIRS} CACHE PATH "SQLite library directory" FORCE)
-set(SQLite_LIBRARIES ${PC_SQLITE_LIBRARIES} CACHE STRING "SQLite libraries" FORCE)
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(SQLite
-                                  DEFAULT_MSG
-                                  SQLite_LIBRARIES
-)
-
-set(SQLite_FOUND ${SQLITE_FOUND})
-
-mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARY_DIRS SQLite_LIBRARIES)
+# Set package properties if FeatureSummary was included
+if(COMMAND set_package_properties)
+    set_package_properties(SQLite PROPERTIES DESCRIPTION "Self-contained, serverless, zero-configuration, transactional SQL database engine"
+                                             URL "http://sqlite.org/")
+endif()

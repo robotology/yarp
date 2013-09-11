@@ -17,7 +17,6 @@
 
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/TcpFace.h>
-#include <yarp/os/impl/Address.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;
@@ -177,13 +176,54 @@ public:
         checkTrue(ok,"a yarp port");
         p.close();
         TcpFace face;
-        Address address(c.getHost().c_str(),c.getPort());
+        Contact address(c.getHost(),c.getPort());
         checkTrue(face.open(address),"open server socket, timeout check proceeds");
         Network::registerContact(c);
         ok = Network::exists("/tcp",style);
         Network::unregisterContact(c);
         checkFalse(ok,"not a yarp port");
         face.close();
+    }
+
+    static bool waitConnect(const ConstString& n1,
+                            const ConstString& n2,
+                            double timeout) {
+        double start = Time::now();
+        while (Time::now()-start<timeout) {
+            if (NetworkBase::isConnected(n1,n2)) {
+                return true;
+            }
+            Time::delay(0.1);
+        }
+        return false;
+    }
+
+    void checkTopics() {
+        report(0,"checking topics are effective");
+        Network::connect("/NetworkTest/checkTopic/p1","topic://NetworkTest/checkTopic");
+        Network::connect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
+        Port p1;
+        Port p2;
+        p1.open("/NetworkTest/checkTopic/p1");
+        p2.open("/NetworkTest/checkTopic/p2");
+        checkTrue(waitConnect(p1.getName(),p2.getName(),20), 
+                  "auto connect working");
+        Network::disconnect("/NetworkTest/checkTopic/p1","topic://NetworkTest/checkTopic");
+        Network::disconnect("topic://NetworkTest/checkTopic","/NetworkTest/checkTopic/p2");
+    }
+
+    void checkPersistence() {
+        report(0,"checking non-topic persistence is effective");
+        ContactStyle style;
+        style.persistent = true;
+        Network::connect("/NetworkTest/checkPersistence/p1","/NetworkTest/checkPersistence/p2",style);
+        Port p1;
+        Port p2;
+        p1.open("/NetworkTest/checkPersistence/p1");
+        p2.open("/NetworkTest/checkPersistence/p2");
+        checkTrue(waitConnect(p1.getName(),p2.getName(),20), 
+                  "auto connect working");
+        Network::disconnect("/NetworkTest/checkPersistence/p1","NetworkTest/checkPersistence/p2",style);
     }
 
     virtual void runTests() {
@@ -194,6 +234,8 @@ public:
         checkPropertySetGet();
         checkTimeoutNetworkWrite();
         checkTimeoutNetworkExists();
+        checkTopics();
+        checkPersistence();
         Network::setLocalMode(false);
     }
 };

@@ -16,7 +16,7 @@ using namespace yarp::os;
 bool yarp::name::StyleNameService::apply(yarp::os::Bottle& cmd, 
                                          yarp::os::Bottle& reply, 
                                          yarp::os::Bottle& event,
-                                         yarp::os::Contact& remote) {
+                                         const yarp::os::Contact& remote) {
     if (cmd.get(0).asString()!="web") return false;
 
     if (!content.check("main.css")) {
@@ -63,7 +63,7 @@ a:hover{\n\
         if (options.check("web")) {
             ConstString accum = "";
             bool first = true;
-            for (int i=0; i<fileName.length(); i++) {
+            for (size_t i=0; i<fileName.length(); i++) {
                 char ch = fileName[i];
                 if (ch == '.' && !first) continue;
                 if (ch == '/') { first = true; continue; }
@@ -92,13 +92,13 @@ a:hover{\n\
                 fin = NULL;
             }
             content.put(uri,accum);
-            if (uri.find(".css")>=0) {
+            if (uri.find(".css")!=ConstString::npos) {
                 mime.put(uri,"text/css");
-            } else if (uri.find(".png")>=0) {
+            } else if (uri.find(".png")!=ConstString::npos) {
                 mime.put(uri,"image/png");                
-            } else if (uri.find(".jpg")>=0) {
+            } else if (uri.find(".jpg")!=ConstString::npos) {
                 mime.put(uri,"image/jpeg");                
-            } else if (uri.find(".js")>=0) {
+            } else if (uri.find(".js")!=ConstString::npos) {
                 mime.put(uri,"text/javascript");                
             } else {
                 mime.put(uri,"text/html");

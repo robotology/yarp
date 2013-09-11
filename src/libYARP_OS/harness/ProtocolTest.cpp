@@ -13,6 +13,7 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/UnitTest.h>
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 class ProtocolTest : public UnitTest {

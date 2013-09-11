@@ -10,7 +10,7 @@
 #ifndef _YARP2_SOCKETTWOWAYSTREAM_
 #define _YARP2_SOCKETTWOWAYSTREAM_
 
-#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/conf/system.h>
 
@@ -50,7 +50,7 @@ public:
         haveWriteTimeout = false;
     }
 
-    int open(const Address& address);
+    int open(const Contact& address);
 
     int open(ACE_SOCK_Acceptor& acceptor);
 
@@ -66,11 +66,11 @@ public:
         return *this;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const Contact& getLocalAddress() {
         return localAddress;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() {
         return remoteAddress;
     }
 
@@ -94,9 +94,9 @@ public:
         happy = false;
     }
 
-    virtual ssize_t read(const Bytes& b) {
+    virtual YARP_SSIZE_T read(const Bytes& b) {
         if (!isOk()) { return -1; }
-        ssize_t result;
+        YARP_SSIZE_T result;
         if (haveReadTimeout) {
             result = stream.recv_n(b.get(),b.length(),&readTimeout);
         } else {
@@ -110,9 +110,9 @@ public:
         return result;
     }
 
-    virtual ssize_t partialRead(const Bytes& b) {
+    virtual YARP_SSIZE_T partialRead(const Bytes& b) {
         if (!isOk()) { return -1; }
-        ssize_t result;
+        YARP_SSIZE_T result;
         if (haveReadTimeout) {
             result = stream.recv(b.get(),b.length(),&readTimeout);
         } else {
@@ -128,7 +128,7 @@ public:
 
     virtual void write(const Bytes& b) {
         if (!isOk()) { return; }
-        ssize_t result;
+        YARP_SSIZE_T result;
         if (haveWriteTimeout) {
             result = stream.send_n(b.get(),b.length(),&writeTimeout);
         } else {
@@ -183,7 +183,7 @@ private:
     bool haveReadTimeout;
     ACE_Time_Value writeTimeout;
     ACE_Time_Value readTimeout;
-    Address localAddress, remoteAddress;
+    Contact localAddress, remoteAddress;
     bool happy;
     void updateAddresses();
 };

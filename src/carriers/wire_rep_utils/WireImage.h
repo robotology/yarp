@@ -10,11 +10,13 @@
 #ifndef YARP2_WIREIMAGE
 #define YARP2_WIREIMAGE
 
-#include <yarp/os/impl/SizedWriter.h>
-#include <yarp/os/impl/StringOutputStream.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/SizedWriter.h>
+#include <yarp/os/StringOutputStream.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/sig/Image.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <wire_rep_utils_api.h>
 
@@ -52,7 +54,7 @@ public:
  * but we optimize for the truly constant case.
  *
  */
-class RosWireImage : public yarp::os::impl::SizedWriter {
+class RosWireImage : public yarp::os::SizedWriter {
 private:
     RosImageStamp ros_seq_stamp;
     yarp::os::ManagedBytes ros_const_header;
@@ -64,8 +66,11 @@ public:
     void init(const yarp::sig::FlexImage& img, 
               const yarp::os::ConstString& frame) {
         image = &img;
-        yarp::os::impl::BufferedConnectionWriter buf;
-        yarp::os::impl::StringOutputStream ss;
+        yarp::os::ConnectionWriter *pbuf = 
+            yarp::os::ConnectionWriter::createBufferedConnectionWriter();
+        if (!pbuf) ::exit(1);
+        yarp::os::ConnectionWriter& buf = *pbuf;
+        yarp::os::StringOutputStream ss;
         // probably need to translate encoding format better, but at
         // a guess "rgb" and "bgr" will work ok.
         yarp::os::ConstString encoding = 
@@ -80,11 +85,13 @@ public:
         buf.appendBlock(&is_bigendian,1);
         buf.appendInt(image->width()+image->getPadding());
         buf.appendInt(image->getRawImageSize());
-        buf.write(ss);
-        yarp::os::impl::String hdr = ss.toString();
+        buf.getBuffer()->write(ss);
+        yarp::os::ConstString hdr = ss.toString();
         yarp::os::Bytes hdr_wrap((char*)hdr.c_str(),hdr.length());
         ros_const_header = yarp::os::ManagedBytes(hdr_wrap);
         ros_const_header.copy();
+        delete pbuf;
+        pbuf = 0 /*NULL*/;
     }
 
     void update(const yarp::sig::FlexImage *img, int seq, double t) {
@@ -147,7 +154,7 @@ class YARP_wire_rep_utils_API WireImage {
 private:
     yarp::sig::FlexImage img;
 public:
-    yarp::sig::FlexImage *checkForImage(yarp::os::impl::SizedWriter& writer);
+    yarp::sig::FlexImage *checkForImage(yarp::os::SizedWriter& writer);
 };
 
 #endif

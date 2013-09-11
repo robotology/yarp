@@ -10,7 +10,7 @@
 #ifndef _YARP2_SHMEMCARRIER_
 #define _YARP2_SHMEMCARRIER_
 
-#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/AbstractCarrier.h>
 
 
 //#include <ace/OS.h>
@@ -38,7 +38,7 @@ public:
 
     virtual Carrier *create();
 
-    virtual String getName();
+    virtual ConstString getName();
 
     virtual int getSpecifierCode();
     virtual bool requireAck();
@@ -46,21 +46,21 @@ public:
     virtual bool checkHeader(const Bytes& header);
     virtual void getHeader(const Bytes& header);
     virtual void setParameters(const Bytes& header);
-    virtual bool respondToHeader(Protocol& proto);
-    virtual bool expectReplyToHeader(Protocol& proto);
+    virtual bool respondToHeader(ConnectionState& proto);
+    virtual bool expectReplyToHeader(ConnectionState& proto);
 
     /*
       -- unfortunately member templates not working on Visual Studio 6?
     template <class T>
-    void becomeShmemVersion(Protocol& proto, bool sender);
+    void becomeShmemVersion(ConnectionState& proto, bool sender);
     */
 
     /*
-    void becomeShmemVersionTwoWayStream(Protocol& proto, bool sender);
+    void becomeShmemVersionTwoWayStream(ConnectionState& proto, bool sender);
     */
 
-    bool becomeShmemVersionHybridStream(Protocol& proto, bool sender);
-    bool becomeShmem(Protocol& proto, bool sender);
+    bool becomeShmemVersionHybridStream(ConnectionState& proto, bool sender);
+    bool becomeShmem(ConnectionState& proto, bool sender);
 };
 
 #endif

@@ -22,6 +22,10 @@ class AllocatorConfig {
 public:
     int minPortNumber;
     int maxPortNumber;
+
+    AllocatorConfig() {
+        minPortNumber = maxPortNumber = -1;
+    }
 };
 
 

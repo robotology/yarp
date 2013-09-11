@@ -125,14 +125,14 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
     String s;
     if (name!=NULL) {
         s = *name;
-        YARP_STRING_INDEX i = YARP_STRSTR(s,"+");
+        size_t i = s.find("+");
         if (i!=String::npos) {
             s[i] = '\0';
             s = s.c_str();
             name = &s;
         }
     }
-    for (YARP_STRING_INDEX i=0; i<(YARP_STRING_INDEX)delegates.size(); i++) {
+    for (size_t i=0; i<(size_t)delegates.size(); i++) {
         Carrier& c = *delegates[i];
         bool match = false;
         if (name!=NULL) {
@@ -204,12 +204,12 @@ Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
 }
 
 
-Face *Carriers::listen(const Address& address) {
+Face *Carriers::listen(const Contact& address) {
     // for now, only TcpFace exists - otherwise would need to manage
     // multiple possibilities
     //YARP_DEBUG(carriersLog,"listen called");
     Face *face = NULL;
-    if (address.getCarrierName() == String("fake")) {
+    if (address.getCarrier() == "fake") {
         face = new FakeFace();
     }
     if (face == NULL) {
@@ -224,7 +224,7 @@ Face *Carriers::listen(const Address& address) {
 }
 
 
-OutputProtocol *Carriers::connect(const Address& address) {
+OutputProtocol *Carriers::connect(const Contact& address) {
     TcpFace tcpFace;
     return tcpFace.write(address);
 }
@@ -236,7 +236,7 @@ bool Carriers::addCarrierPrototype(Carrier *carrier) {
 }
 
 
-bool Carrier::reply(Protocol& proto, SizedWriter& writer) {
+bool Carrier::reply(ConnectionState& proto, SizedWriter& writer) {
     writer.write(proto.os());
     return proto.os().isOk();
 }

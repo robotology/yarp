@@ -11,6 +11,7 @@
 #define _YARP2_UNITTEST_
 
 #include <yarp/os/impl/String.h>
+#include <yarp/os/Bottle.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 
@@ -80,10 +81,14 @@ public:
 
     String humanize(const String& txt);
 
+    void saveEnvironment(const char *key);
+    void restoreEnvironment();
+
 private:
     UnitTest *parent;
     PlatformVector<UnitTest *> subTests;
     bool hasProblem;
+    yarp::os::Bottle env;
     static UnitTest *theRoot;
 
     void count(int severity);

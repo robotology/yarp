@@ -6,32 +6,34 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <yarp/os/impl/ModifyingCarrier.h>
+#include <yarp/os/ModifyingCarrier.h>
 
-bool yarp::os::impl::ModifyingCarrier::checkHeader(const yarp::os::Bytes &header) {
+using namespace yarp::os;
+
+bool yarp::os::ModifyingCarrier::checkHeader(const yarp::os::Bytes &header) {
     return false;
 }
 
 
-void yarp::os::impl::ModifyingCarrier::getHeader(const yarp::os::Bytes &header) {
+void yarp::os::ModifyingCarrier::getHeader(const yarp::os::Bytes &header) {
     if (header.length()==8) {
-        String target = "ohbehave";
+        ConstString target = "ohbehave";
         for (int i=0; i<8; i++) {
             header.get()[i] = target[i];
         }
     }
 }
 
-bool yarp::os::impl::ModifyingCarrier::respondToHeader(yarp::os::impl::Protocol &proto) {
+bool yarp::os::ModifyingCarrier::respondToHeader(yarp::os::ConnectionState &proto) {
     return false;
 }
 
-bool yarp::os::impl::ModifyingCarrier::modifiesIncomingData() {
+bool yarp::os::ModifyingCarrier::modifiesIncomingData() {
     return true;
 }
 
-void yarp::os::impl::ModifyingCarrier::setCarrierParams(const yarp::os::Property &params) {
+void yarp::os::ModifyingCarrier::setCarrierParams(const yarp::os::Property &params) {
 }
 
-void yarp::os::impl::ModifyingCarrier::getCarrierParams(yarp::os::Property &params) {
+void yarp::os::ModifyingCarrier::getCarrierParams(yarp::os::Property &params) {
 }

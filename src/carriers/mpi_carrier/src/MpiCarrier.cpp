@@ -9,10 +9,11 @@
 
 #ifdef CREATE_MPI_CARRIER
 
-#include <yarp/os/impl/MpiCarrier.h>
+#include <yarp/os/MpiCarrier.h>
+#include <yarp/os/Route.h>
 #include <sys/types.h>
 
-using namespace yarp::os::impl;
+using namespace yarp::os;
 
 
 
@@ -46,7 +47,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     return true;
 }
 
- bool MpiCarrier::sendHeader(Protocol& proto) {
+ bool MpiCarrier::sendHeader(ConnectionState& proto) {
     // Send the "magic number" for this carrier
     ManagedBytes header(8);
     getHeader(header.bytes());
@@ -99,7 +100,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
 
 
 
- bool MpiCarrier::expectSenderSpecifier(Protocol& proto) {
+ bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
     // interpret everything that sendHeader wrote
     name = proto.getRoute().getToName();
 
@@ -107,7 +108,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     printf("[MpiCarrier @ %s] Waiting for header\n", route.c_str());
     #endif
 
-    other = NetType::readLine(proto.is());
+    other = proto.is().readLine();
     proto.setRoute(proto.getRoute().addFromName(other));
     // Receiver
     route = name + "<-" + other;
@@ -116,10 +117,10 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     if (! MpiControl.isRunning())
         return false;
 
-    String other_id = NetType::readLine(proto.is());
+    ConstString other_id = proto.is().readLine();
     bool notLocal = comm->notLocal(other_id);
 
-    port = NetType::readLine(proto.is());
+    port = proto.is().readLine();
 
     #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] Header received\n", route.c_str());
@@ -128,7 +129,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     return notLocal && proto.is().isOk();
 }
 
- bool MpiCarrier::respondToHeader(Protocol& proto) {
+ bool MpiCarrier::respondToHeader(ConnectionState& proto) {
     // SWITCH TO NEW STREAM TYPE
     #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] trying to connect to MpiPort '%s'\n", route.c_str(), port.c_str());
@@ -147,7 +148,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     return proto.is().isOk();
 }
 
- bool MpiCarrier::expectReplyToHeader(Protocol& proto) {
+ bool MpiCarrier::expectReplyToHeader(ConnectionState& proto) {
     // SWITCH TO NEW STREAM TYPE
     if (!comm->accept()) {
         delete stream;

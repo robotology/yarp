@@ -8,22 +8,20 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "MjpegStream.h"
 #include "MjpegDecompression.h"
 
+#include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
-#include <yarp/os/impl/Logger.h>
-
-
-using namespace yarp::os::impl;
+using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::mjpeg;
 using namespace std;
 
-
-ssize_t MjpegStream::read(const Bytes& b) {
+YARP_SSIZE_T MjpegStream::read(const Bytes& b) {
     bool debug = false;
     if (remaining==0) {
         if (phase==1) {
@@ -39,14 +37,14 @@ ssize_t MjpegStream::read(const Bytes& b) {
         }
     }
     while (phase==0 && delegate->getInputStream().isOk()) {
-        String s = "";
+        ConstString s = "";
         do {
-            s = NetType::readLine(delegate->getInputStream());
+            s = delegate->getInputStream().readLine();
             if (debug) {
                 printf("Read %s\n", s.c_str());
             }
-        } while (s[0]!='-' && delegate->getInputStream().isOk());
-        s = NetType::readLine(delegate->getInputStream());
+        } while ((s.length()==0||s[0]!='-') && delegate->getInputStream().isOk());
+        s = delegate->getInputStream().readLine();
         if (s!="Content-Type: image/jpeg") {
             if (!delegate->getInputStream().isOk()) {
                 break;
@@ -57,7 +55,7 @@ ssize_t MjpegStream::read(const Bytes& b) {
         if (debug) {
             printf("Read content type - %s\n", s.c_str());
         }
-        s = NetType::readLine(delegate->getInputStream());
+        s = delegate->getInputStream().readLine();
         if (debug) {
             printf("Read content length - %s\n", s.c_str());
         }
@@ -74,19 +72,18 @@ ssize_t MjpegStream::read(const Bytes& b) {
             printf("Length is %d\n", len);
         }
         do {
-            s = NetType::readLine(delegate->getInputStream());
+            s = delegate->getInputStream().readLine();
             if (debug) {
                 printf("Read %s\n", s.c_str());
             }
-        } while (s[0]!='\0');
+        } while (s.length()>0);
         if (autocompress) {
             cimg.allocate(len);
-            NetType::readFull(delegate->getInputStream(),cimg.bytes());
+            delegate->getInputStream().readFull(cimg.bytes());
 
             if (!decompression.decompress(cimg.bytes(),img)) {
                 if (delegate->getInputStream().isOk()) {
-                    YARP_ERROR(Logger::get(),
-                               "Skipping a problematic JPEG frame");
+                    YARP_LOG_ERROR("Skipping a problematic JPEG frame");
                 }
             }
 

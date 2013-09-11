@@ -11,13 +11,13 @@
 #define _YARP2_STREAMBLOCKREADER_
 
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/TwoWayStream.h>
+#include <yarp/os/StringInputStream.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/Route.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/PlatformSize.h>
 #include <yarp/os/Bottle.h>
@@ -72,6 +72,11 @@ public:
         pushedIntFlag = false;
     }
 
+    virtual bool setSize(size_t len) {
+        reset(*in,str,route,len,textMode);
+        return true;
+    }
+
     void setProtocol(Protocol *protocol) {
         this->protocol = protocol;
     }
@@ -85,7 +90,7 @@ public:
         if (len==0) return true;
         //if (len<0) len = messageLen;
         if (len>0) {
-            ssize_t rlen = NetType::readFull(*in,b);
+            YARP_SSIZE_T rlen = in->readFull(b);
             if (rlen>=0) {
                 messageLen -= len;
                 return true;
@@ -108,10 +113,10 @@ public:
             return pushedInt;
         }
         if (!isGood()) { return 0; }
-        NetType::NetInt32 x = 0;
+        NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        ssize_t r = in->read(b);
+        YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
             return 0;
@@ -122,10 +127,10 @@ public:
 
     virtual double expectDouble() {
         if (!isGood()) { return 0; }
-        NetType::NetFloat64 x = 0;
+        NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        ssize_t r = in->read(b);
+        YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
             return 0;
@@ -139,7 +144,7 @@ public:
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
         YARP_ASSERT(in!=NULL);
-        ssize_t r = in->read(b);
+        YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
             delete[] buf;
@@ -155,7 +160,7 @@ public:
         if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
         bool success = false;
-        String result = NetType::readLine(*in,'\n',&success);
+        String result = in->readLine('\n',&success);
         if (!success) {
             err = true;
             return "";
@@ -198,16 +203,16 @@ public:
 
     virtual yarp::os::Contact getRemoteContact() {
         if (str!=NULL) {
-            Address remote = str->getRemoteAddress();
-            return remote.addRegName(route.getFromName()).toContact();
+            Contact remote = str->getRemoteAddress();
+            return remote.addName(route.getFromName());
         }
-        return yarp::os::Contact::byCarrier(route.getCarrierName().c_str()).addName(route.getFromName().c_str());
+        return yarp::os::Contact::byCarrier(route.getCarrierName()).addName(route.getFromName());
     }
 
     virtual yarp::os::Contact getLocalContact() {
         if (str!=NULL) {
-            Address local = str->getLocalAddress();
-            return local.addRegName(route.getToName()).toContact();
+            Contact local = str->getLocalAddress();
+            return local.addName(route.getToName());
         }
         return yarp::os::Contact::invalid();
     }
@@ -222,7 +227,7 @@ public:
         if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
         bool lsuccess = false;
-        String result = NetType::readLine(*in,terminatingChar,&lsuccess);
+        String result = in->readLine(terminatingChar,&lsuccess);
         if (lsuccess) {
             messageLen -= result.length()+1;
         }

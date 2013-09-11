@@ -12,7 +12,7 @@
 
 #include <yarp/os/impl/FallbackNameClient.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Time.h>
@@ -23,7 +23,7 @@ using namespace yarp::os;
 
 void FallbackNameClient::run() {
     NameConfig nc;
-    Address call = FallbackNameServer::getAddress();
+    Contact call = FallbackNameServer::getAddress();
     DgramTwoWayStream send;
     send.join(call,true);
     listen.join(call,false);
@@ -38,14 +38,14 @@ void FallbackNameClient::run() {
     send.endPacket();
     for (int i=0; i<5; i++) {
         listen.beginPacket();
-        String txt = NetType::readLine(listen);
+        String txt = listen.readLine();
         listen.endPacket();
         if (closed) return;
         YARP_DEBUG(Logger::get(),String("Fallback name client got ") + txt);
-        if (YARP_STRSTR(txt,"registration ")==0) {
+        if (txt.find("registration ")==0) {
             address = NameClient::extractAddress(txt);
             YARP_INFO(Logger::get(),String("Received address ") + 
-                      address.toString());
+                      address.toURI());
             return;
         }
     }
@@ -62,12 +62,12 @@ void FallbackNameClient::close() {
 }
 
 
-Address FallbackNameClient::getAddress() {
+Contact FallbackNameClient::getAddress() {
     return address;
 }
 
 
-Address FallbackNameClient::seek() {
+Contact FallbackNameClient::seek() {
     int tries = 3;
     for (int k=0; k<tries; k++) {
 
@@ -103,7 +103,7 @@ Address FallbackNameClient::seek() {
         seeker.close();
         seeker.join();
     }
-    return Address();
+    return Contact();
 }
 
 #else

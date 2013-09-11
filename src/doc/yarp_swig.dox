@@ -52,10 +52,10 @@ long as it isn't too old).
 Any YARP package from version 2.3.20 on will do.  Older packages
 will work if you replace "$YARP_ROOT/bindings"
 with "$YARP_ROOT/example/swig" throughout this tutorial.
-If you have subversion, you can get piping fresh YARP
+If you have git, you can get piping fresh YARP
 as follows:
 \verbatim
-svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2
+git clone git://github.com/robotology/yarp.git
 \endverbatim
 
 Now that we have all the prerequisites, it is time to configure and 

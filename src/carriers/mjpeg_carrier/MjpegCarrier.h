@@ -10,19 +10,16 @@
 #ifndef MJPEGCARRIER_INC
 #define MJPEGCARRIER_INC
 
-#include <yarp/os/impl/Carrier.h>
-#include <yarp/os/impl/Protocol.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/Carrier.h>
+#include <yarp/os/NetType.h>
 #include "MjpegStream.h"
 
 #include <string.h>
 
 namespace yarp {
     namespace os {
-        namespace impl {
-            class MjpegCarrier;
-            class MjpegCarrierRaw;
-        }
+        class MjpegCarrier;
+        class MjpegCarrierRaw;
     }
 }
 
@@ -44,7 +41,7 @@ namespace yarp {
  *   http://localhost:NNN/?output=stream
  *
  */
-class yarp::os::impl::MjpegCarrier : public Carrier {
+class yarp::os::MjpegCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
@@ -58,7 +55,7 @@ public:
         return new MjpegCarrier();
     }
 
-    virtual String getName() {
+    virtual ConstString getName() {
         return "mjpeg";
     }
 
@@ -99,7 +96,7 @@ public:
         return false;
     }
 
-    virtual String toString() {
+    virtual ConstString toString() {
         return "mjpeg_carrier";
     }
 
@@ -132,28 +129,27 @@ public:
 
     // Now, the initial hand-shaking
 
-    virtual bool prepareSend(Protocol& proto) {
+    virtual bool prepareSend(ConnectionState& proto) {
         // nothing special to do
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto);
+    virtual bool sendHeader(ConnectionState& proto);
 
-    virtual bool expectSenderSpecifier(Protocol& proto) {
+    virtual bool expectSenderSpecifier(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool expectExtraHeader(Protocol& proto) {
-        String txt;
+    virtual bool expectExtraHeader(ConnectionState& proto) {
+        ConstString txt;
         do {
-            txt = NetType::readLine(proto.is());
-            //printf("Got rest of header: %s\n", txt.c_str());
+            txt = proto.is().readLine();
         } while (txt!="");
         return true;
     }
 
-    bool respondToHeader(Protocol& proto) {
-        String target = "HTTP/1.0 200 OK\r\n\
+    bool respondToHeader(ConnectionState& proto) {
+        ConstString target = "HTTP/1.0 200 OK\r\n\
 Connection: close\r\n\
 Server: yarp/mjpeg_carrier/0.1\r\n\
 Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\r\n\
@@ -171,11 +167,10 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
-        String txt;
+    virtual bool expectReplyToHeader(ConnectionState& proto) {
+        ConstString txt;
         do {
-            txt = NetType::readLine(proto.is());
-            //printf("Got response to header: %s\n", txt.c_str());
+            txt = proto.is().readLine();
         } while (txt!="");
 
         sender = false;
@@ -193,27 +188,27 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
 
     // Payload time!
 
-    virtual bool write(Protocol& proto, SizedWriter& writer);
+    virtual bool write(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool reply(Protocol& proto, SizedWriter& writer);
+    virtual bool reply(ConnectionState& proto, SizedWriter& writer);
 
-    virtual bool sendIndex(Protocol& proto, SizedWriter& writer) {
+    virtual bool sendIndex(ConnectionState& proto, SizedWriter& writer) {
         return true;
     }
 
-    virtual bool expectIndex(Protocol& proto) {
+    virtual bool expectIndex(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool sendAck(Protocol& proto) {
+    virtual bool sendAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual bool expectAck(Protocol& proto) {
+    virtual bool expectAck(ConnectionState& proto) {
         return true;
     }
 
-    virtual String getBootstrapCarrierName() { return ""; }
+    virtual ConstString getBootstrapCarrierName() { return ""; }
 
     virtual bool autoCompression() const;
 };

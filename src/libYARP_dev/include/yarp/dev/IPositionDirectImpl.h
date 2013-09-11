@@ -63,10 +63,9 @@ public:
      */
     virtual ~ImplementPositionDirect();
 
-    virtual bool setPosition(int j, double ref)=0;
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)=0;
-    virtual bool setPositions(const double *refs)=0;
-
+    virtual bool setPosition(int j, double ref);
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs);
+    virtual bool setPositions(const double *refs);
 };
 
 

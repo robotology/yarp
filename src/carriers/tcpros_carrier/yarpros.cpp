@@ -11,15 +11,12 @@
 #include <yarp/os/all.h>
 #include "RosSlave.h"
 #include "RosLookup.h"
-//#include "RosType.h"
-//#include "RosTypeCodeGenYarp.h"
 #include "TcpRosStream.h"
 
 #include <string>
 
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace std;
 
 bool verbose = false;
@@ -269,7 +266,7 @@ int main(int argc, char *argv[]) {
             }
             Bottle reply;
             register_port("/roscore", "xmlrpc",
-                          cmd.get(1).asString(), cmd.get(2).asInt(), 
+                          cmd.get(1).asString().c_str(), cmd.get(2).asInt(), 
                           reply);
             printf("%s\n", reply.toString().c_str());
         } else {
@@ -280,7 +277,7 @@ int main(int argc, char *argv[]) {
                 return 1;
             }
             register_port("/roscore", "xmlrpc",
-                          c.getHost(), c.getPort(), 
+                          c.getHost().c_str(), c.getPort(), 
                           reply);
             printf("%s\n", reply.toString().c_str());
         }

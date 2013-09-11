@@ -9,12 +9,14 @@
 
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/ManagedBytes.h>
 
+using namespace yarp::os;
+using namespace yarp::os::impl;
 
 static yarp::os::impl::String quoteFree(const yarp::os::impl::String &src) {
     yarp::os::impl::String result = "";
@@ -339,11 +341,11 @@ yarp::os::OutputStream& yarp::os::impl::HttpTwoWayStream::getOutputStream() {
     return *this;
 }
 
-const yarp::os::impl::Address& yarp::os::impl::HttpTwoWayStream::getLocalAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getLocalAddress() {
     return delegate->getLocalAddress();
 }
 
-const yarp::os::impl::Address& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
+const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
     return delegate->getRemoteAddress();
 }
 
@@ -369,12 +371,12 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch) {
     if (ch=='\r') { return; }
     if (ch == '\n') {
         proc = "";
-        Address addr = yarp::os::impl::NameClient::extractAddress(part);
+        Contact addr = yarp::os::impl::NameClient::extractAddress(part);
         if (addr.isValid()) {
-            if (addr.getCarrierName()=="tcp"&&
-                (YARP_STRSTR(addr.getRegName(),"/quit")==String::npos)) {
+            if (addr.getCarrier()=="tcp"&&
+                (addr.getRegName().find("/quit")==String::npos)) {
                 proc += "<a href=\"http://";
-                proc += addr.getName();
+                proc += addr.getHost();
                 proc += ":";
                 proc += NetType::toString(addr.getPort());
                 proc += "\">";
@@ -507,7 +509,7 @@ yarp::os::impl::HttpCarrier::HttpCarrier() :
         stream(0) /*NULL*/ {
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::HttpCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::HttpCarrier::create() {
     return new HttpCarrier();
 }
 
@@ -583,7 +585,7 @@ bool yarp::os::impl::HttpCarrier::supportReply() {
     return false;
 }
 
-bool yarp::os::impl::HttpCarrier::sendHeader(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
     printf("not yet meant to work\n");
     String target = "GET / HTTP/1.1";
     Bytes b((char*)target.c_str(),8);
@@ -592,9 +594,9 @@ bool yarp::os::impl::HttpCarrier::sendHeader(Protocol& proto) {
 
 }
 
-bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) {
     proto.setRoute(proto.getRoute().addFromName("web"));
-    String remainder = NetType::readLine(proto.is());
+    String remainder = proto.is().readLine();
     if (!urlDone) {
         for (unsigned int i=0; i<remainder.length(); i++) {
             if (remainder[i]!=' ') {
@@ -609,7 +611,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     expectPost = false;
     contentLength = 0;
     while (!done) {
-        String result = NetType::readLine(proto.is());
+        String result = proto.is().readLine();
         if (result == "") {
             done = true;
         } else {
@@ -633,7 +635,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
         //printf("[[[this is a post message of length %d]]]\n", contentLength);
         ManagedBytes blk(contentLength+1);
         Bytes start(blk.get(),contentLength);
-        NetType::readFull(proto.is(),start);
+        proto.is().readFull(start);
         blk.get()[contentLength] = '\0';
         //printf("message: %s\n", blk.get());
         input = blk.get();
@@ -645,12 +647,11 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     prop.put("REQUEST_URI",url.c_str());
     //printf("Property %s\n",prop.toString().c_str());
 
-    Contact chome = NetworkBase::getNameServerContact();
-    Address home = Address::fromContact(chome);
-    Address me = proto.getStreams().getLocalAddress();
+    Contact home = NetworkBase::getNameServerContact();
+    Contact me = proto.getStreams().getLocalAddress();
 
     String from = "<html><head><link href=\"http://";
-    from += home.getName();
+    from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
     from += "/web/main.css\" rel=\"stylesheet\" type=\"text/css\"/></head><body bgcolor='#ffffcc'><h1>yarp port ";
@@ -658,25 +659,25 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += "</h1>\n";
 
     from += "<p>(<a href=\"http://";
-    from += home.getName();
+    from += home.getHost();
     from += ":";
     from += NetType::toString(home.getPort());
     from += "/data=list\">All ports</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/\">connections</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/data=help\">help</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/r\">read</a>)&nbsp;&nbsp;\n";
@@ -684,7 +685,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += "</p>\n";
     from += "<p>\n";
     from += "<form method=\"post\" action=\"http://";
-    from += me.getName();
+    from += me.getHost();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "/form\">";
@@ -700,34 +701,34 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::HttpCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
     // expect and ignore CONTENT lines
-    String result = NetType::readLine(proto.is());
+    String result = proto.is().readLine();
     return true;
 }
 
 
-bool yarp::os::impl::HttpCarrier::sendIndex(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer) {
     // no index
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::expectIndex(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectIndex(ConnectionState& proto) {
     // no index
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::sendAck(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::sendAck(ConnectionState& proto) {
     // no acknowledgement
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::expectAck(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::expectAck(ConnectionState& proto) {
     // no acknowledgement
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::HttpCarrier::respondToHeader(ConnectionState& proto) {
     stream = new HttpTwoWayStream(proto.giveStreams(),
                                     input.c_str(),
                                     prefix.c_str(),
@@ -736,7 +737,7 @@ bool yarp::os::impl::HttpCarrier::respondToHeader(Protocol& proto) {
     return true;
 }
 
-bool yarp::os::impl::HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {
@@ -776,7 +777,7 @@ bool yarp::os::impl::HttpCarrier::write(Protocol& proto, SizedWriter& writer) {
     return proto.os().isOk();
 }
 
-bool yarp::os::impl::HttpCarrier::reply(Protocol& proto, SizedWriter& writer) {
+bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
     DummyConnector con;
     con.setTextMode(true);
     for (size_t i=writer.headerLength(); i<writer.length(); i++) {

@@ -10,9 +10,9 @@
 #ifndef _YARP2_FAKETWOWAYSTREAM_
 #define _YARP2_FAKETWOWAYSTREAM_
 
-#include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/TwoWayStream.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
 
 namespace yarp {
     namespace os {
@@ -28,7 +28,9 @@ namespace yarp {
  */
 class yarp::os::impl::FakeTwoWayStream : public TwoWayStream {
 public:
-    FakeTwoWayStream(StringInputStream *target = NULL) : out(this) {
+    FakeTwoWayStream(StringInputStream *target = NULL) :
+            TwoWayStream() {
+        this->out.owner = this;
         this->target = target;
     }
 
@@ -48,11 +50,11 @@ public:
         return out;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const Contact& getLocalAddress() {
         return local;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const Contact& getRemoteAddress() {
         return remote;
     }
 
@@ -67,15 +69,15 @@ public:
         }
     }
 
-    void addInputText(const String& str) {
-        in.add(str.c_str());
+    void addInputText(const ConstString& str) {
+        in.add(str);
     }
 
-    String getOutputText() {
+    ConstString getOutputText() {
         return out.toString();
     }
 
-    String getInputText() {
+    ConstString getInputText() {
         return in.toString();
     }
 
@@ -94,21 +96,23 @@ private:
 
     class ActiveStringOutputStream : public StringOutputStream {
     public:
-        ActiveStringOutputStream(FakeTwoWayStream *who) : owner(*who) {
+        ActiveStringOutputStream() : owner(NULL) {
         }
 
         virtual void write(const Bytes& b) {
             StringOutputStream::write(b);
-            owner.apply(b);
+            if (owner) {
+                owner->apply(b);
+            }
         }
-    private:
-        FakeTwoWayStream& owner;
+
+        FakeTwoWayStream *owner;
     };
 
     StringInputStream in;
     ActiveStringOutputStream out;
-    Address local;
-    Address remote;
+    Contact local;
+    Contact remote;
     StringInputStream *target;
 };
 

@@ -260,11 +260,11 @@ Port::Port() {
 }
 
 
-bool Port::openFake(const char *name) {
-    return open(Contact::byName(name),false,name);
+bool Port::openFake(const ConstString& name) {
+    return open(Contact::byName(name),false,name.c_str());
 }
 
-bool Port::open(const char *name) {
+bool Port::open(const ConstString& name) {
     return open(Contact::fromString(name));
 }
 
@@ -331,19 +331,18 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     bool success = true;
-    Address caddress(contact2.getHost().c_str(),
-                     contact2.getPort(),
-                     contact2.getCarrier().c_str(),
-                     contact2.getName().c_str());
-    Address address = caddress;
+    Contact caddress = Contact::bySocket(contact2.getCarrier(),
+                                         contact2.getHost(),
+                                         contact2.getPort())
+        .addName(contact2.getName());
+    Contact address = caddress;
 
     core.setReadHandler(core);
     if (contact2.getPort()>0 && contact2.getHost()!="") {
         registerName = false;
     }
     if (registerName&&!local) {
-        Contact contactFull = NetworkBase::registerContact(contact2);
-        address = Address::fromContact(contactFull);
+        address = NetworkBase::registerContact(contact2);
     }
 
     core.setControlRegistration(registerName);
@@ -361,8 +360,8 @@ bool Port::open(const Contact& contact, bool registerName,
     if (success) {
         address = core.getAddress();
         if (registerName&&local) {
-            contact2 = contact2.addSocket(address.getCarrierName().c_str(),
-                                          address.getName().c_str(),
+            contact2 = contact2.addSocket(address.getCarrier(),
+                                          address.getHost(),
                                           address.getPort());
             contact2 = contact2.addName(address.getRegName().c_str());
             Contact newName = NetworkBase::registerContact(contact2);
@@ -375,7 +374,7 @@ bool Port::open(const Contact& contact, bool registerName,
                       String("Port ") +
                       address.getRegName() +
                       " active at " +
-                      address.toString());
+                      address.toURI());
         }
     }
 
@@ -390,7 +389,7 @@ bool Port::open(const Contact& contact, bool registerName,
                    (address.isValid()?(address.getRegName().c_str()):(contact2.getName().c_str())) +
                    " failed to activate" +
                    (address.isValid()?" at ":"") +
-                   (address.isValid()?address.toString():String("")) +
+                   (address.isValid()?address.toURI():String("")) +
                    " (" +
                    blame.c_str() +
                    ")");
@@ -398,11 +397,11 @@ bool Port::open(const Contact& contact, bool registerName,
     return success;
 }
 
-bool Port::addOutput(const char *name) {
+bool Port::addOutput(const ConstString& name) {
     return addOutput(Contact::byName(name));
 }
 
-bool Port::addOutput(const char *name, const char *carrier) {
+bool Port::addOutput(const ConstString& name, const ConstString& carrier) {
     return addOutput(Contact::byName(name).addCarrier(carrier));
 }
 
@@ -440,8 +439,7 @@ Port::~Port() {
 
 Contact Port::where() const {
     PortCoreAdapter& core = HELPER(implementation);
-    Address address = core.getAddress();
-    return address.toContact();
+    return core.getAddress();
 }
 
 

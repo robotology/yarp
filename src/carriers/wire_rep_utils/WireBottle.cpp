@@ -12,10 +12,9 @@
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 static NetInt32 getInt(char *cursor) {
     NetInt32 *icursor = (NetInt32 *)cursor;
@@ -92,7 +91,7 @@ bool WireBottle::checkBottle(void *cursor, int len) {
     return ::checkBottle((char *)cursor,rem,1,0)!=NULL;
 }
 
-bool WireBottle::extractBlobFromBottle(yarp::os::impl::SizedWriter& src,
+bool WireBottle::extractBlobFromBottle(yarp::os::SizedWriter& src,
                                        SizedWriterTail& dest) {
     size_t total_len = 0;
     for (size_t i=0; i<src.length(); i++) {

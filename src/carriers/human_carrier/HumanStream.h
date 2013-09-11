@@ -9,21 +9,13 @@
 
 #include <stdio.h>
 #include <yarp/os/all.h>
-
-#include <yarp/os/impl/Carrier.h>
-#include <yarp/os/impl/Carriers.h>
-#include <yarp/os/impl/String.h>
-#include <yarp/os/Bytes.h>
-#include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/Carrier.h>
 
 #include <iostream>
 #include <string>
 
 using namespace std;
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 
 class HumanStream : public TwoWayStream, public InputStream, public OutputStream {
@@ -59,7 +51,7 @@ public:
 
     // InputStream
 
-    virtual ssize_t read(const Bytes& b);
+    virtual YARP_SSIZE_T read(const Bytes& b);
 
     // OutputStream
 
@@ -75,12 +67,12 @@ public:
         return *this;
     }
 
-    virtual const Address& getLocalAddress() {
+    virtual const yarp::os::Contact& getLocalAddress() {
         // left undefined
         return local;
     }
 
-    virtual const Address& getRemoteAddress() {
+    virtual const yarp::os::Contact& getRemoteAddress() {
         // left undefined
         return remote;
     }
@@ -101,5 +93,5 @@ public:
     }
 
 private:
-    Address local, remote;
+    yarp::os::Contact local, remote;
 };

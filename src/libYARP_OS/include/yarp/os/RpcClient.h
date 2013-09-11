@@ -42,16 +42,17 @@ public:
     virtual ~RpcClient();
 
     // documentation provided in Contactable
-    virtual bool open(const char *name);
+    virtual bool open(const ConstString& name);
 
     // documentation provided in Contactable
     virtual bool open(const Contact& contact, bool registerName = true);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const char *name);
+    virtual bool addOutput(const ConstString& name);
 
     // documentation provided in Contactable
-    virtual bool addOutput(const char *name, const char *carrier);
+    virtual bool addOutput(const ConstString& name, 
+                           const ConstString& carrier);
 
     // documentation provided in Contactable
     virtual bool addOutput(const Contact& contact);

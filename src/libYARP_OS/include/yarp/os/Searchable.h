@@ -69,7 +69,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Searchable() {}
+    virtual ~Searchable();
 
     /**
      * Check if there exists a property of the given name
@@ -77,7 +77,7 @@ public:
      * @return true iff a property of the given name exists, even if
      * it doesn't have a value associated with it
      */
-    virtual bool check(const char *key) = 0;
+    virtual bool check(const ConstString& key) = 0;
 
 
     /**
@@ -87,8 +87,8 @@ public:
      * @return true iff a property of the given name exists, even if
      * it doesn't have a value associated with it
      */
-    virtual bool check(const char *key,
-                       const char *comment);
+    virtual bool check(const ConstString& key,
+                       const ConstString& comment);
 
     /**
      * Gets a value corresponding to a given keyword
@@ -98,7 +98,7 @@ public:
      * true.  Otherwise, the value can be read by calling result.asInt(),
      * result.asString(), etc. as appropriate.
      */
-    virtual Value& find(const char *key) = 0;
+    virtual Value& find(const ConstString& key) = 0;
 
     /**
      * Gets a list corresponding to a given keyword
@@ -110,7 +110,7 @@ public:
      * result.get(i) for i>=1 are the "real" elements of the list.
      *
      */
-    virtual Bottle& findGroup(const char *key) = 0;
+    virtual Bottle& findGroup(const ConstString& key) = 0;
 
     /**
      * Gets a list corresponding to a given keyword
@@ -123,7 +123,7 @@ public:
      * result.get(i) for i>=1 are the "real" elements of the list.
      *
      */
-    Bottle& findGroup(const char *key, const char *comment);
+    Bottle& findGroup(const ConstString& key, const ConstString& comment);
 
     /**
      * Gets a value corresponding to a given keyword.  If a property
@@ -150,8 +150,8 @@ public:
      * false otherwise.  See the find() method for interpreting the
      * value found.
      */
-    virtual bool check(const char *key, Value *& result,
-                       const char *comment = NULL);
+    virtual bool check(const ConstString& key, Value *& result,
+                       const ConstString& comment = "");
 
 
     /**
@@ -163,9 +163,8 @@ public:
      * or the default if nothing is found.  See the find() method for
      * interpreting the value found.
      */
-    virtual Value check(const char *key, const Value& fallback,
-                        const char *comment = NULL);
-
+    virtual Value check(const ConstString& key, const Value& fallback,
+                        const ConstString& comment = "");
 
     /**
      * Checks if the object is invalid.

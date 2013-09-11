@@ -8,10 +8,28 @@
 
 
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
 
-yarp::os::ConnectionReader::~ConnectionReader() {
+using namespace yarp::os;
+using namespace yarp::os::impl;
+
+ConnectionReader::~ConnectionReader() {
 }
 
-yarp::os::Bytes yarp::os::ConnectionReader::readEnvelope() {
-    return yarp::os::Bytes(0,0);
+Bytes ConnectionReader::readEnvelope() {
+    return Bytes(0,0);
+}
+
+ConnectionReader *ConnectionReader::createConnectionReader(InputStream& is) {
+    StreamConnectionReader *reader = new StreamConnectionReader();
+    Route r;
+    reader->reset(is,NULL,r,0,false);
+    return reader;
+}
+
+bool ConnectionReader::readFromStream(PortReader& portable, InputStream& is) {
+    StreamConnectionReader reader;
+    Route r;
+    reader.reset(is,NULL,r,0,false);
+    return portable.read(reader);
 }

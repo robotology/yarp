@@ -13,7 +13,7 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/OutputProtocol.h>
 
 namespace yarp {
     namespace os {

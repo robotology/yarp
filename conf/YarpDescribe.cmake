@@ -27,10 +27,11 @@ endif(ENABLE_yarpidl_thrift)
 set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 set(YARP_DEPENDENCY_FILENAME YARPDependencies.cmake)
 set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
-configure_file(${YARP_MODULE_DIR}/template/YARPConfig.cmake.in
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
 if (${CMAKE_VERSION} VERSION_LESS 2.8.8) # -> version is 2.8.7 (oldest supported)
-  include(WriteBasicConfigVersionFile )
+  include(WriteBasicConfigVersionFile)
   write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                      VERSION ${YARP_VERSION}
                                      COMPATIBILITY AnyNewerVersion )
@@ -49,6 +50,9 @@ set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
 set(YARP_MODULE_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
 set(YARP_IDL_BINARY_HINT ${CMAKE_INSTALL_PREFIX}/bin)
 set(YARP_BINDINGS ${CMAKE_INSTALL_PREFIX}/share/yarp/bindings)
+
+set(YARP_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+
 configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})

@@ -10,7 +10,7 @@
 #ifndef _YARP2_FAKEFACE_
 #define _YARP2_FAKEFACE_
 
-#include <yarp/os/impl/Face.h>
+#include <yarp/os/Face.h>
 
 namespace yarp {
     namespace os {
@@ -25,10 +25,10 @@ namespace yarp {
  */
 class yarp::os::impl::FakeFace : public Face {
 public:
-    virtual bool open(const Address& address);
+    virtual bool open(const Contact& address);
     virtual void close();
     virtual InputProtocol *read();
-    virtual OutputProtocol *write(const Address& address);
+    virtual OutputProtocol *write(const Contact& address);
 private:
 };
 

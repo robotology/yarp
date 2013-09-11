@@ -18,7 +18,7 @@
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NetType.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/os/BufferedPort.h>
@@ -230,7 +230,7 @@ public:
 
         checkEqual(conIn.getName().c_str(),"/in","name is recorded");
 
-        checkTrue(YARP_STRSTR(String(conOut.getName().c_str()),"/tmp")==0,
+        checkTrue(conOut.getName().find("/tmp")==0,
                   "name is created");
 
         Bottle bot1, bot2;

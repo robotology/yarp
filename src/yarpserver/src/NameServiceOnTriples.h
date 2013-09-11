@@ -27,7 +27,7 @@ public:
     yarp::os::Bottle& cmd;
     yarp::os::Bottle& reply;
     yarp::os::Bottle& event;
-    yarp::os::Contact& remote;
+    const yarp::os::Contact& remote;
     TripleSource& mem;
     bool bottleMode;
     bool nestedMode;
@@ -35,7 +35,7 @@ public:
     NameTripleState(yarp::os::Bottle& cmd, 
                     yarp::os::Bottle& reply, 
                     yarp::os::Bottle& event, 
-                    yarp::os::Contact& remote,
+                    const yarp::os::Contact& remote,
                     TripleSource& mem) : cmd(cmd), 
                                          reply(reply), 
                                          event(event), 
@@ -52,8 +52,7 @@ public:
  * An implementation of name service operators on a triple store.
  *
  */
-class NameServiceOnTriples : public yarp::name::NameService, 
-                             public yarp::os::NameStore {
+class NameServiceOnTriples : public yarp::name::NameService {
 private:
     TripleSource *db;
     Allocator *alloc;
@@ -62,28 +61,41 @@ private:
     yarp::os::Contact serverContact;
     yarp::os::Semaphore mutex;
     bool gonePublic;
+    bool silent;
 public:
-    NameServiceOnTriples(TripleSource *db,
-                         Allocator *alloc,
-                         const yarp::os::Contact& serverContact) : 
-        db(db), alloc(alloc), serverContact(serverContact), mutex(1) {
+    NameServiceOnTriples() : mutex(1) {
+        db = 0 /*NULL*/;
+        alloc = 0 /*NULL*/;
         lastRegister = "";
         subscriber = NULL;
         gonePublic = false;
+        silent = false;
+    }
+
+    void open(TripleSource *db,
+              Allocator *alloc,
+              const yarp::os::Contact& serverContact) {
+        this->db = db;
+        this->alloc = alloc;
+        this->serverContact = serverContact;
     }
 
     void setSubscriber(Subscriber *subscriber) {
         this->subscriber = subscriber;
     }
 
-    yarp::os::Contact query(const char *portName, 
+    void setSilent(bool flag) {
+        this->silent = flag;
+    }
+
+    yarp::os::Contact query(const yarp::os::ConstString& portName, 
                             NameTripleState& act,
-                            const char *prefix,
+                            const yarp::os::ConstString& prefix,
                             bool nested = false);
 
-    virtual bool announce(const char *name, int activity);
+    virtual bool announce(const yarp::os::ConstString& name, int activity);
 
-    virtual yarp::os::Contact query(const char *portName);
+    virtual yarp::os::Contact query(const yarp::os::ConstString& portName);
 
     bool cmdQuery(NameTripleState& act, bool nested = false);
 
@@ -108,7 +120,7 @@ public:
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
-                       yarp::os::Contact& remote);
+                       const yarp::os::Contact& remote);
 
     virtual void goPublic() {
         gonePublic = true;

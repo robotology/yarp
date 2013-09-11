@@ -12,17 +12,19 @@
 #include <vector>
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
-#include <yarp/os/impl/Route.h>
+#include <yarp/os/StringInputStream.h>
+#include <yarp/os/StringOutputStream.h>
+#include <yarp/os/Route.h>
 #include <yarp/os/InputStream.h>
-#include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/NetType.h>
+#include <yarp/os/Log.h>
 
 using namespace std;
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 #define dbg_flag 0
 #define dbg_printf if (dbg_flag) printf
@@ -147,7 +149,7 @@ bool WireTwiddler::configure(const char *txt) {
     clear();
     ConstString str(txt);
     char *cstr = (char *)str.c_str();
-    for (int i=0; i<str.length(); i++) {
+    for (size_t i=0; i<str.length(); i++) {
         if (cstr[i]==',') {
             cstr[i] = ' ';
         }
@@ -300,21 +302,24 @@ bool WireTwiddler::read(Bottle& bot, const Bytes& data) {
     StringInputStream sis;
     sis.add(data);
     WireTwiddlerReader twiddled_input(sis,*this);
-    Route route;
-    StreamConnectionReader reader2;
-    reader2.reset(twiddled_input,NULL,route,0,false);
-    return bot.read(reader2);
+    return ConnectionReader::readFromStream(bot,twiddled_input);
 }
 
 
 bool WireTwiddler::write(yarp::os::Bottle& bot, 
                          yarp::os::ManagedBytes& data) {
     StringOutputStream sos;
-    BufferedConnectionWriter writer;
-    bot.write(writer);
-    WireTwiddlerWriter twiddled_output(writer,*this);
+    if (!writer) {
+        writer = ConnectionWriter::createBufferedConnectionWriter();
+    }
+    if (!writer) return false;
+    SizedWriter *buf = writer->getBuffer();
+    if (!buf) return false;
+    buf->clear();
+    bot.write(*writer);
+    WireTwiddlerWriter twiddled_output(*buf,*this);
     twiddled_output.write(sos);
-    String result = sos.toString();
+    ConstString result = sos.toString();
     data = ManagedBytes(Bytes((char*)result.c_str(),result.length()),false);
     data.copy();
     return true;
@@ -322,7 +327,7 @@ bool WireTwiddler::write(yarp::os::Bottle& bot,
 
 
 
-ssize_t WireTwiddlerReader::read(const Bytes& b) {
+YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
     dbg_printf("Want %d bytes\n", (int)b.length());
     if (index==-1) {
         dbg_printf("WireTwidderReader::read getting started\n");
@@ -366,8 +371,8 @@ ssize_t WireTwiddlerReader::read(const Bytes& b) {
         }
         if ((gap.length==-1||gap.unit_length==-1) && override_length==-1) {
             dbg_printf("LOOKING TO EXTERNAL\n");
-            int r = NetType::readFull(is,Bytes((char*)&lengthBuffer,
-                                               sizeof(NetInt32)));
+            int r = is.readFull(Bytes((char*)&lengthBuffer,
+                                      sizeof(NetInt32)));
             if (r!=sizeof(NetInt32)) return -1;
             dbg_printf("Read length %d\n", lengthBuffer);
             pending_length = sizeof(lengthBuffer);
@@ -404,8 +409,8 @@ ssize_t WireTwiddlerReader::read(const Bytes& b) {
             dbg_printf("### %d pending strings\n", pending_strings);
             if (pending_string_length==0&&pending_string_data==0) {
                 dbg_printf("Checking string length\n");
-                int r = NetType::readFull(is,Bytes((char*)&lengthBuffer,
-                                                   sizeof(NetInt32)));
+                int r = is.readFull(Bytes((char*)&lengthBuffer,
+                                          sizeof(NetInt32)));
                 if (r!=sizeof(NetInt32)) return -1;
                 dbg_printf("Read length %d\n", lengthBuffer);
                 pending_string_length = sizeof(lengthBuffer);
@@ -469,7 +474,7 @@ ssize_t WireTwiddlerReader::read(const Bytes& b) {
                 return r;
             } else {
                 dump.allocateOnNeed(b2.length(),b2.length());
-                r = NetType::readFull(is,dump.bytes());
+                r = is.readFull(dump.bytes());
                 NetInt32 *nn = (NetInt32 *)dump.get();
                 dbg_printf("[[[%d]]]\n", (int)(*nn));
                 dbg_printf("WireTwidderReader sending %d payload bytes\n",r);
@@ -612,7 +617,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
                     dbg_printf(" %03d <--> %03d\n", 
                             activeCheck[i], blockPtr[i+offset]);
                 }
-                YARP_SPRINTF0(Logger::get(),error,"Structure of message is unexpected");
+                YARP_LOG_ERROR("Structure of message is unexpected");
                 errorState = true;
                 return false;
             }
@@ -629,7 +634,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
             if (accumOffset+rem>4) {
                 fprintf(stderr,"ACCUMULATION GONE WRONG %d %d\n",
                         accumOffset, rem);
-                exit(1);
+                ::exit(1);
             }
             memcpy(lengthBytes.get()+accumOffset,blockPtr+offset,rem);
             accumOffset += rem;

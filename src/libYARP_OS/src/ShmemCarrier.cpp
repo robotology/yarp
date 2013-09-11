@@ -6,8 +6,9 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/ShmemCarrier.h>
-#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/String.h>
 // removing old shmem version
 // #include <yarp/os/impl/ShmemTwoWayStream.h>
 
@@ -16,11 +17,14 @@
 #include <yarp/os/impl/ShmemHybridStream.h>
 #endif
 
+using namespace yarp::os;
+using namespace yarp::os::impl;
+
 yarp::os::impl::ShmemCarrier::ShmemCarrier(int version) {
     this->version = version;
 }
 
-yarp::os::impl::Carrier *yarp::os::impl::ShmemCarrier::create() {
+yarp::os::Carrier *yarp::os::impl::ShmemCarrier::create() {
     return new ShmemCarrier(version);
 }
 
@@ -53,20 +57,20 @@ void yarp::os::impl::ShmemCarrier::getHeader(const Bytes& header) {
 void yarp::os::impl::ShmemCarrier::setParameters(const Bytes& header) {
 }
 
-bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& proto, bool sender) {
+bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionState& proto, bool sender) {
 #ifndef YARP_HAS_ACE
     return false;
 #else
     ShmemHybridStream *stream = new ShmemHybridStream();
     YARP_ASSERT(stream!=NULL);
-    Address base;
+    Contact base;
 
     bool ok = true;
 
     if (!sender) {
         ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
-        base = Address(anywhere.get_host_addr(),
-                        anywhere.get_port_number());
+        base = Contact(anywhere.get_host_addr(),
+                       anywhere.get_port_number());
         bool ok = stream->open(base,sender)==0;
         if (ok) {
             int myPort = stream->getLocalAddress().getPort();
@@ -77,9 +81,9 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& prot
         }
     } else {
         int altPort = readYarpInt(proto);
-        String myName = proto.getStreams().getLocalAddress().getName();
+        String myName = proto.getStreams().getLocalAddress().getHost();
         proto.takeStreams(NULL);
-        base = Address(myName,altPort);
+        base = Contact(myName,altPort);
         ok = stream->open(base,sender)==0;
         if (ok) {
             proto.takeStreams(stream);
@@ -96,7 +100,7 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(Protocol& prot
 #endif
 }
 
-bool yarp::os::impl::ShmemCarrier::becomeShmem(Protocol& proto, bool sender) {
+bool yarp::os::impl::ShmemCarrier::becomeShmem(ConnectionState& proto, bool sender) {
     if (version==1) {
         // "classic" shmem
         //becomeShmemVersion<ShmemTwoWayStream>(proto,sender);
@@ -111,13 +115,13 @@ bool yarp::os::impl::ShmemCarrier::becomeShmem(Protocol& proto, bool sender) {
     }
 }
 
-bool yarp::os::impl::ShmemCarrier::respondToHeader(Protocol& proto) {
+bool yarp::os::impl::ShmemCarrier::respondToHeader(ConnectionState& proto) {
     // i am the receiver
     return becomeShmem(proto,false);
 }
 
 
-bool yarp::os::impl::ShmemCarrier::expectReplyToHeader(Protocol& proto) {
+bool yarp::os::impl::ShmemCarrier::expectReplyToHeader(ConnectionState& proto) {
     // i am the sender
     return becomeShmem(proto,true);
 }
