@@ -11,6 +11,7 @@
 #define _YARP2_PORTWRITER_
 
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/Type.h>
 
 namespace yarp {
     namespace os {
@@ -55,6 +56,8 @@ public:
      * in use.
      */
     virtual void onCommencement();
+
+    virtual Type getWriteType() { return Type::anon(); }
 };
 
 #endif

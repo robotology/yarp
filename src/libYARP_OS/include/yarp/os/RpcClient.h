@@ -106,6 +106,8 @@ public:
     // documented in Contactable
     void setReader(PortReader& reader);
 
+    virtual Type getType();
+
 private:
     // an RpcClient may be implemented with a regular port
     // (this is not decided yet)

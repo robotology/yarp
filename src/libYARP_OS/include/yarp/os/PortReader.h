@@ -12,6 +12,7 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/Type.h>
 
 namespace yarp {
     namespace os {
@@ -39,6 +40,8 @@ public:
      * @return true iff the object is successfully read
      */
     virtual bool read(ConnectionReader& connection) = 0;
+
+    virtual Type getReadType() { return Type::anon(); }
 };
 
 #endif

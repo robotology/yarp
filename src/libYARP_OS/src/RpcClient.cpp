@@ -99,3 +99,7 @@ void yarp::os::RpcClient::setReader(PortReader& reader) {
     port.setReader(reader);
 }
 
+
+yarp::os::Type yarp::os::RpcClient::getType() {
+    return port.getType();
+}

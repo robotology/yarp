@@ -110,3 +110,7 @@ void yarp::os::RpcServer::setReporter(PortReport& reporter) {
 bool yarp::os::RpcServer::isWriting() {
     return port.isWriting();
 }
+
+yarp::os::Type yarp::os::RpcServer::getType() {
+    return port.getType();
+}

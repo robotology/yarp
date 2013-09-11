@@ -94,6 +94,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Thread.h
                  include/yarp/os/Time.h
                  include/yarp/os/TwoWayStream.h
+                 include/yarp/os/Type.h
                  include/yarp/os/Value.h
                  include/yarp/os/Vocab.h
                  include/yarp/os/Wire.h

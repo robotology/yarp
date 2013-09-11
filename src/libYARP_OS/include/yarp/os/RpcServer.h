@@ -135,6 +135,8 @@ public:
     // documented in Contactable
     virtual bool isWriting();
 
+    virtual Type getType();
+
 private:
     // an RpcServer may be implemented with a regular port
     // (this is not decided yet)
