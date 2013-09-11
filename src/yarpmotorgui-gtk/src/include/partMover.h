@@ -133,6 +133,7 @@ class partMover{
   static gboolean view_popup_menu_onEdit   (GtkWidget *menuitem, void* userdata );
   static gboolean view_popup_menu_onErase  (GtkWidget *menuitem, void* userdata );
   static gboolean view_popup_menu_onCopy   (GtkWidget *menuitem, void* userdata );
+  static gboolean view_popup_menu_onPaste  (GtkWidget *menuitem, void* userdata );
   static gboolean view_popup_menu_onInsert (GtkWidget *menuitem, void* userdata );
   static gboolean view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata);
 

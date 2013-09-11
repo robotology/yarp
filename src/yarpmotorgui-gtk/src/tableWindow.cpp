@@ -449,6 +449,54 @@ gboolean partMover::view_popup_menu_onInsert (GtkWidget *menuitem, void* userdat
     return true;
 }
 
+gboolean partMover::view_popup_menu_onPaste (GtkWidget *menuitem, void* userdata)
+{
+    /* we passed the view as userdata when we connected the signal */
+    gtkClassDataTree* w = (gtkClassDataTree*)(userdata);
+    GtkTreeView *treeview = GTK_TREE_VIEW(w->widget);
+
+    GtkTreeSelection *selection;
+    selection = gtk_tree_view_get_selection(treeview);
+    
+    GtkTreeModel *model;
+    GtkTreePath *path;
+    GtkTreeIter iter;
+
+    g_print("finding row\n");
+    if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), &model, &iter))
+    {  
+        GtkTreePath *path;
+         g_print("finding row\n");
+        path = gtk_tree_model_get_path(model, &iter);
+         g_print("finding row\n");
+        int n = gtk_tree_path_get_indices(path)[0];
+        g_print ("selected ros: %d\n", n);
+
+        int njoints = 0;
+        w->partPointer->iencs->getAxes(&njoints);
+        
+        if (w->partPointer->COPY_STORED_POS !=0 && 
+            w->partPointer->COPY_STORED_VEL !=0 &&
+            w->partPointer->COPY_SEQUENCE   !=0 &&
+            w->partPointer->COPY_TIMING     !=0 &&
+            njoints                         !=0 )
+            {
+                w->partPointer->SEQUENCE [n] = w->partPointer->COPY_SEQUENCE;
+                w->partPointer->TIMING   [n] = w->partPointer->COPY_TIMING;
+                for (int j=0; j<njoints; j++)
+                {
+                    w->partPointer->STORED_POS[n][j] = w->partPointer->COPY_STORED_POS[j];
+                    w->partPointer->STORED_VEL[n][j] = w->partPointer->COPY_STORED_VEL[j];
+                }
+                g_print ("line pasted!\n");
+                gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
+                gtk_widget_draw(GTK_WIDGET(treeview), NULL);
+            }
+    }
+    
+    return true;
+}
+
 gboolean partMover::view_popup_menu_onCopy (GtkWidget *menuitem, void* userdata)
 {
     /* we passed the view as userdata when we connected the signal */
@@ -501,7 +549,8 @@ gboolean partMover::view_popup_menu_onCopy (GtkWidget *menuitem, void* userdata)
 
     }
     
-    return true;}
+    return true;
+}
 
 gboolean partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event, gpointer userdata)
 {
@@ -510,11 +559,13 @@ gboolean partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event,
     GtkWidget *menuitem_erase;
     GtkWidget *menuitem_copy;
     GtkWidget *menuitem_insert;
+    GtkWidget *menuitem_paste;
  
     menu = gtk_menu_new();
  
     menuitem_edit    = gtk_menu_item_new_with_label("Edit row");
     menuitem_copy    = gtk_menu_item_new_with_label("Copy row");
+    menuitem_paste   = gtk_menu_item_new_with_label("Paste");
     menuitem_insert  = gtk_menu_item_new_with_label("Insert before");
     menuitem_erase   = gtk_menu_item_new_with_label("Erase row");
  
@@ -526,11 +577,13 @@ gboolean partMover::view_popup_menu (GtkWidget *treeview, GdkEventButton *event,
 
     g_signal_connect(menuitem_edit,   "activate", (GCallback) view_popup_menu_onEdit,   t );
     g_signal_connect(menuitem_copy,   "activate", (GCallback) view_popup_menu_onCopy,   t );
+    g_signal_connect(menuitem_paste,  "activate", (GCallback) view_popup_menu_onPaste,  t );
     g_signal_connect(menuitem_insert, "activate", (GCallback) view_popup_menu_onInsert, t );
     g_signal_connect(menuitem_erase,  "activate", (GCallback) view_popup_menu_onErase,  t );
  
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_edit);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_copy);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_paste);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_insert);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem_erase); 
 
