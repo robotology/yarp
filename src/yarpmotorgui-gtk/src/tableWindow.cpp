@@ -432,20 +432,40 @@ gboolean partMover::view_popup_menu_onInsert (GtkWidget *menuitem, void* userdat
         int n = gtk_tree_path_get_indices(path)[0];
         g_print ("selected ros: %d\n", n);
 
-        for (int i=n; i<NUMBER_OF_STORED-1; i++)
-        {
-            w->partPointer->SEQUENCE[i]=w->partPointer->SEQUENCE[i+1];
-            w->partPointer->TIMING[i]=w->partPointer->TIMING[i+1];
-            w->partPointer->STORED_POS[i]=w->partPointer->STORED_POS[i+1];
-            w->partPointer->STORED_VEL[i]=w->partPointer->STORED_VEL[i+1];
-        }
+        int njoints = 0;
+        w->partPointer->iencs->getAxes(&njoints);
+        
+        if (w->partPointer->COPY_STORED_POS !=0 && 
+            w->partPointer->COPY_STORED_VEL !=0 &&
+            /*w->partPointer->COPY_SEQUENCE   !=0 &&
+            w->partPointer->COPY_TIMING     !=0 &&*/
+            njoints                         !=0 )
+            {
+                //first move rows down
+                for (int i=NUMBER_OF_STORED-2; i>n; i--)
+                {
+                    w->partPointer->SEQUENCE[i]=w->partPointer->SEQUENCE[i-1];
+                    w->partPointer->TIMING[i]=w->partPointer->TIMING[i-1];
+                    for (int j=0; j<njoints; j++)
+                    {
+                        w->partPointer->STORED_POS[i][j] = w->partPointer->STORED_POS[i-1][j];
+                        w->partPointer->STORED_VEL[i][j] = w->partPointer->STORED_VEL[i-1][j];
+                    }
+                }
 
-        g_print ("Erasing line!\n");
-
-        gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
-        gtk_widget_draw(GTK_WIDGET(treeview), NULL);
+                //overwrite the selected line
+                w->partPointer->SEQUENCE [n] = w->partPointer->COPY_SEQUENCE;
+                w->partPointer->TIMING   [n] = w->partPointer->COPY_TIMING;
+                for (int j=0; j<njoints; j++)
+                {
+                    w->partPointer->STORED_POS[n][j] = w->partPointer->COPY_STORED_POS[j];
+                    w->partPointer->STORED_VEL[n][j] = w->partPointer->COPY_STORED_VEL[j];
+                }
+                g_print ("line pasted!\n");
+                gtk_tree_view_set_model (treeview, refresh_position_list_model(w->partPointer));
+                gtk_widget_draw(GTK_WIDGET(treeview), NULL);
+            }
     }
-    
     return true;
 }
 
