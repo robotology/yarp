@@ -265,7 +265,6 @@ private:
     Contact address;
     ConstString host;
     ConstString mode;
-    ConstString process;
     bool fake;
     NameServer *fakeServer;
     bool allowScan;
