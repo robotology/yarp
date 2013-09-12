@@ -14,6 +14,7 @@
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <list>
 #include <map>
