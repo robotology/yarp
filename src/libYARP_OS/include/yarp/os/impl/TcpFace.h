@@ -38,7 +38,7 @@ namespace yarp {
 /**
  * Communicating with a port via TCP.
  */
-class YARP_OS_impl_API yarp::os::impl::TcpFace : public Face {
+class YARP_OS_impl_API yarp::os::impl::TcpFace : public yarp::os::Face {
 public:
     TcpFace() { }
 
