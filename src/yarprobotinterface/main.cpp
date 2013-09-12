@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
     yarp::os::ResourceFinder rf;
     rf.setVerbose();
-    rf.setDefaultConfigFile("robot-interface.ini");
+    rf.setDefaultConfigFile("robotInterface.ini");
     rf.configure(argc, argv);
 
     // Create and run our module
