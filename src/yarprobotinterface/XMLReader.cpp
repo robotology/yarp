@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <iterator>
 
 #include <yarp/os/Property.h>
 
@@ -29,6 +30,164 @@
 // https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
 // When this bug is fixed upstream we can enable this
 #define TINYXML_UNSIGNED_INT_BUG 0
+
+
+namespace {
+
+// Represent something like this in the xml file
+// <!DOCTYPE robot PUBLIC "-//YARP//DTD robotInterface 1.0//EN" "http://www.icub.org/DTD/robotInterfaceV1.0.dtd">
+class RobotInterfaceDTD
+{
+public:
+    enum DocType {
+        DocTypeUnknown = 0,
+        DocTypeRobot,
+        DocTypeDevices,
+        DocTypeParams,
+    };
+
+    RobotInterfaceDTD() :
+        type(DocTypeUnknown),
+        identifier(""),
+        uri(""),
+        majorVersion(0),
+        minorVersion(0) {}
+
+    bool parse(TiXmlUnknown* unknownNode, std::string curr_filename);
+
+    bool valid() { return type != DocTypeUnknown && majorVersion != 0;}
+
+    void setDefault() {
+        type = RobotInterfaceDTD::DocTypeUnknown;
+        identifier = "-//YARP//DTD robotInterface 1.0//EN";
+        uri = "http://www.icub.org/DTD/robotInterfaceV1.0.dtd";
+        majorVersion = 1;
+        minorVersion = 0;
+    }
+
+    DocType type;
+    std::string identifier;
+    std::string uri;
+    unsigned int majorVersion;
+    unsigned int minorVersion;
+
+    static const std::string baseUri;
+    static const std::string ext;
+};
+
+const std::string RobotInterfaceDTD::baseUri("http://www.icub.org/DTD/robotInterfaceV");
+const std::string RobotInterfaceDTD::ext(".dtd");
+
+
+RobotInterfaceDTD::DocType StringToDocType(const std::string &type) {
+    if (!type.compare("robot")) {
+        return RobotInterfaceDTD::DocTypeRobot;
+    } else if (!type.compare("devices")) {
+        return RobotInterfaceDTD::DocTypeDevices;
+    } else if (!type.compare("params")) {
+        return RobotInterfaceDTD::DocTypeParams;
+    }
+    return RobotInterfaceDTD::DocTypeUnknown;
+}
+
+std::string DocTypeToString(RobotInterfaceDTD::DocType doctype) {
+    switch (doctype) {
+    case RobotInterfaceDTD::DocTypeRobot:
+        return std::string("robot");
+    case RobotInterfaceDTD::DocTypeDevices:
+        return std::string("devices");
+    case RobotInterfaceDTD::DocTypeParams:
+        return std::string("params");
+    default:
+        return std::string();
+    }
+}
+
+bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, std::string curr_filename) {
+    // Very basic and ugly DTD tag parsing as TinyXML does not support it
+    // We just need the version numbers.
+
+    // Split tag in token
+    std::istringstream iss(unknownNode->ValueStr());
+    std::vector<std::string> tokens;
+    std::copy(std::istream_iterator<std::string>(iss),
+              std::istream_iterator<std::string>(),
+              std::back_inserter<std::vector<std::string> >(tokens));
+
+    // Merge token in quotes (and remove quotes)
+    for (std::vector<std::string>::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+        if(it->at(0) == '"' ) {
+            if (it->at(it->size() - 1) == '"') {
+                *it = it->substr(1, it->size() - 2);
+            } else {
+                std::string s = it->substr(1) + " ";
+                yDebug() << s;
+                for (std::vector<std::string>::iterator cit = it + 1; cit != tokens.end(); ) {
+                    if (cit->at(cit->size() - 1) == '"') {
+                        s += cit->substr(0, cit->size() - 1);
+                        cit = tokens.erase(cit);
+                        break;
+                    } else {
+                        s += *cit + " ";
+                        cit = tokens.erase(cit);
+                    }
+                }
+                *it = s;
+            }
+        }
+    }
+
+    if(tokens.size() != 5) {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown node found" << tokens.size();
+    }
+
+    if(tokens.at(0) != "!DOCTYPE") {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown node found";
+    }
+
+    type = StringToDocType(tokens.at(1));
+    if(type == RobotInterfaceDTD::DocTypeUnknown)
+    {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Supported document types are: \"robot\", \"devices\", \"params\"";
+    }
+
+    if(tokens.at(2) != "PUBLIC") {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Expected \"PUBLIC\", found" << tokens.at(2);
+    }
+
+    identifier = tokens.at(3); // For now just skip checks on the identifier
+    uri = tokens.at(4);
+
+    // Extract version numbers from the URI
+    if (uri.find(RobotInterfaceDTD::baseUri) != 0) {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
+    }
+    std::size_t start = RobotInterfaceDTD::baseUri.size();
+    std::size_t end = uri.find(RobotInterfaceDTD::ext, start);
+    if (end == std::string::npos) {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
+    }
+    std::string versionString = uri.substr(start, end - start);
+    std::size_t dot = versionString.find('.');
+    if (dot == std::string::npos) {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
+    }
+    std::string majorVersionString = versionString.substr(0, dot);
+    std::string minorVersionString = versionString.substr(dot + 1);
+    std::istringstream majiss(majorVersionString);
+    if ( !(majiss >> majorVersion) ) {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
+    }
+    std::istringstream miniss(minorVersionString);
+    if ( !(miniss >> minorVersion) ) {
+        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
+    }
+
+    // If we got here, this is a valid DTD declaration
+    return true;
+}
+
+} // namespace
 
 
 class RobotInterface::XMLReader::Private
@@ -61,9 +220,12 @@ public:
     XMLReader * const parent;
     std::string filename;
     std::string path;
+    RobotInterfaceDTD dtd;
     Robot robot;
 
     std::string curr_filename;
+    unsigned int minorVersion;
+    unsigned int majorVersion;
 };
 
 
@@ -94,6 +256,29 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const s
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
+    }
+
+    for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
+        if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
+            if(dtd.parse(childNode->ToUnknown(), curr_filename)) {
+                break;
+            }
+        }
+    }
+
+    if (!dtd.valid()) {
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        dtd.setDefault();
+        dtd.type = RobotInterfaceDTD::DocTypeRobot;
+    }
+
+    if(dtd.type != RobotInterfaceDTD::DocTypeRobot) {
+        SYNTAX_ERROR(doc->Row()) << "Expected document of type" << DocTypeToString(RobotInterfaceDTD::DocTypeRobot)
+                                       << ". Found" << DocTypeToString(dtd.type);
+    }
+
+    if(dtd.majorVersion != 1 || dtd.minorVersion != 0) {
+        SYNTAX_ERROR(doc->Row()) << "Only robotInterface DTD version 1.0 is supported";
     }
 
     readRobotTag(doc->RootElement());
@@ -286,6 +471,30 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesFile(c
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
+    }
+
+    RobotInterfaceDTD devicesFileDTD;
+    for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
+        if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
+            if(devicesFileDTD.parse(childNode->ToUnknown(), curr_filename)) {
+                break;
+            }
+        }
+    }
+
+    if (!devicesFileDTD.valid()) {
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        devicesFileDTD.setDefault();
+        devicesFileDTD.type = RobotInterfaceDTD::DocTypeDevices;
+    }
+
+    if (devicesFileDTD.type != RobotInterfaceDTD::DocTypeDevices) {
+        SYNTAX_ERROR(doc->Row()) << "Expected document of type" << DocTypeToString(RobotInterfaceDTD::DocTypeDevices)
+                                       << ". Found" << DocTypeToString(devicesFileDTD.type);
+    }
+
+    if (devicesFileDTD.majorVersion != dtd.majorVersion) {
+        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different robotInterface DTD version";
     }
 
     RobotInterface::DeviceList devices = readDevicesTag(doc->RootElement());
@@ -551,6 +760,30 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsFile(con
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
+    }
+
+    RobotInterfaceDTD paramsFileDTD;
+    for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
+        if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
+            if(paramsFileDTD.parse(childNode->ToUnknown(), curr_filename)) {
+                break;
+            }
+        }
+    }
+
+    if (!paramsFileDTD.valid()) {
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        paramsFileDTD.setDefault();
+        paramsFileDTD.type = RobotInterfaceDTD::DocTypeParams;
+    }
+
+    if (paramsFileDTD.type != RobotInterfaceDTD::DocTypeParams) {
+        SYNTAX_ERROR(doc->Row()) << "Expected document of type" << DocTypeToString(RobotInterfaceDTD::DocTypeParams)
+                                       << ". Found" << DocTypeToString(paramsFileDTD.type);
+    }
+
+    if (paramsFileDTD.majorVersion != dtd.majorVersion) {
+        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different robotInterface DTD version";
     }
 
     RobotInterface::ParamList params = readParamsTag(doc->RootElement());
