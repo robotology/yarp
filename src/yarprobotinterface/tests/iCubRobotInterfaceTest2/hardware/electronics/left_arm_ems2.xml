@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE params PUBLIC "-//YARP//DTD robotInterface 1.0//EN" "http://www.icub.org/DTD/robotInterfaceV1.0.dtd">
+
+<params robot="icubRobotInterfaceTest2" build="1">
+    <!--<param name="PC104IpAddress">10.0.1.104</param>-->
+    <param name="PC104IpAddress">10.255.72.111</param>
+
+    <group name="ETH">
+        <param name="IpAddress">10.0.1.2</param>
+        <param name="Ems">2</param>
+        <param name="CmdPort">12345</param>
+        <param name="SrvPort">4444</param>
+    </group>
+
+    <group name="GENERAL">
+        <!--                   0             1             2             3             4             5             6             7             8             9             10            11 -->
+        <param name="AxisMap"> 0             1             2             3             4             5             6             7             8             9             10            11</param>
+    </group>
+</params>

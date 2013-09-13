@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<portscope rows="3" columns="1">
+    <plot gridx="0"
+          gridy="0"
+          hspan="1"
+          vspan="1"
+          title="Plot 00"
+          size="500"
+          minval="-180"
+          maxval="-170"
+          bgcolor="LightSlateGrey">
+        <graph remote="/icub/torso/state:o"
+               index="0"
+               color="Red"
+               title="Graph 0"
+               size="1"
+               type="lines" />
+        <graph remote="/icub/torso/state:o"
+               index="2"
+               color="Blue"
+               title="Graph 2"
+               size="1"
+               type="lines" />
+        <graph remote="/icub/torso/state:o"
+               index="3"
+               color="Yellow"
+               title="Graph 2"
+               size="1"
+               type="lines" />
+    </plot>
+    <plot gridx="0"
+          gridy="1"
+          hspan="1"
+          vspan="1"
+          title="Plot 01"
+          size="500"
+          minval="170"
+          maxval="180"
+          bgcolor="LightSlateGrey">
+
+        <graph remote="/icub/torso/state:o"
+               index="1"
+               color="Green"
+               title="Graph 1"
+               size="1"
+               type="lines" />
+    </plot>
+    <plot gridx="0"
+          gridy="2"
+          hspan="1"
+          vspan="1"
+          title="Plot 02"
+          size="500"
+          minval="48"
+          maxval="49"
+          bgcolor="LightSlateGrey">
+        <graph remote="/icub/torso/state:o"
+               index="4"
+               color="Orange"
+               title="Graph 2"
+               size="1"
+               type="lines" />
+    </plot>
+</portscope>

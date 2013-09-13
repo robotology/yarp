@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD robotInterface 1.0//EN" "http://www.icub.org/DTD/robotInterfaceV1.0.dtd">
+
+<robot name="icubRobotInterfaceTest2" build="1" portprefix="icub">
+    <params file="hardware/electronics/pc104.xml" />
+
+    <!-- LEFT ARM -->
+    <devices file="hardware/left_arm_ems1.xml" />
+    <devices file="hardware/left_arm_ems2.xml" />
+    <devices file="wrappers/left_arm.xml" />
+    <devices file="calibrators/left_arm.xml" />
+    <!--<devices file="configurators/left_arm.xml" />-->
+</robot>
