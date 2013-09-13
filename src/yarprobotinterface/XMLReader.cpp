@@ -191,8 +191,7 @@ RobotInterface::Device RobotInterface::XMLReader::Private::readDeviceTag(TiXmlEl
         SYNTAX_ERROR(deviceElem->Row()) << "\"device\" element should contain the \"type\" attribute";
     }
 
-    //TODO Needed?
-    device.params().push_back(Param("robotName", robot.name().c_str()));
+    device.params().push_back(Param("robotName", robot.portprefix().c_str()));
 
     for (TiXmlElement* childElem = deviceElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("action") == 0 ||

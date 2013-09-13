@@ -63,7 +63,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     // User can use YARP_PORT_PREFIX environment variable to override
     // the default name, so we don't care of handling the --name
     // argument
-    setName(mPriv->robot.name().c_str());
+    setName(mPriv->robot.portprefix().c_str());
 
     // Enter startup phase
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
