@@ -24,11 +24,15 @@ public:
     virtual ~Robot();
 
     std::string& name();
+    unsigned int& build();
+    std::string& portprefix();
     ParamList& params();
     DeviceList& devices();
     Device& device(const std::string &name);
 
     const std::string& name() const;
+    const unsigned int& build() const;
+    const std::string& portprefix() const;
     const ParamList& params() const;
     const DeviceList& devices() const;
     const Device& device(const std::string &name) const;

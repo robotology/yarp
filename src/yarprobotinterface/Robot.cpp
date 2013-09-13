@@ -84,6 +84,8 @@ public:
     bool custom(const Device &device, const ParamList &params);
 
     std::string name;
+    unsigned int build;
+    std::string portprefix;
     ParamList params;
     DeviceList devices;
 }; // class RobotInterface::Robot::Private
@@ -396,6 +398,16 @@ std::string& RobotInterface::Robot::name()
     return mPriv->name;
 }
 
+unsigned int& RobotInterface::Robot::build()
+{
+    return mPriv->build;
+}
+
+std::string& RobotInterface::Robot::portprefix()
+{
+    return mPriv->portprefix;
+}
+
 RobotInterface::ParamList& RobotInterface::Robot::params()
 {
     return mPriv->params;
@@ -414,6 +426,16 @@ RobotInterface::Device& RobotInterface::Robot::device(const std::string& name)
 const std::string& RobotInterface::Robot::name() const
 {
     return mPriv->name;
+}
+
+const unsigned int& RobotInterface::Robot::build() const
+{
+    return mPriv->build;
+}
+
+const std::string& RobotInterface::Robot::portprefix() const
+{
+    return mPriv->portprefix;
 }
 
 const RobotInterface::ParamList& RobotInterface::Robot::params() const

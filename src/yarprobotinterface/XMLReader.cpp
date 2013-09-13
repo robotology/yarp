@@ -22,6 +22,7 @@
 #include <yarp/os/Property.h>
 
 #define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
+#define SYNTAX_WARNING(line) yWarning() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 
 
 class RobotInterface::XMLReader::Private
@@ -107,7 +108,29 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotTag(TiXmlEle
         SYNTAX_ERROR(robotElem->Row()) << "\"robot\" element should contain the \"name\" attribute";
     }
 
-    yDebug() << "Found robot [" << robot.name() << "]";
+#if 0
+    // BUG in TinyXML, see
+    // https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
+    // When this bug is fixed upstream we can enable this
+    if (robotElem->QueryUnsignedAttribute("build", &robot.build()) != TIXML_SUCCESS) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(robotElem->Row()) << "\"robot\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+    }
+#else
+    int tmp;
+    if (robotElem->QueryIntAttribute("build", &tmp) != TIXML_SUCCESS || tmp < 0) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(robotElem->Row()) << "\"robot\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+        tmp = 0;
+    }
+    robot.build() = (unsigned)tmp;
+#endif
+
+    if (robotElem->QueryStringAttribute("portprefix", &robot.portprefix()) != TIXML_SUCCESS) {
+        SYNTAX_ERROR(robotElem->Row()) << "\"robot\" element should contain the \"portprefix\" attribute";
+    }
+
+    yDebug() << "Found robot [" << robot.name() << "] build [" << robot.build() << "] portprefix [" << robot.portprefix() << "]";
 
     for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("device") == 0 || childElem->ValueStr().compare("devices") == 0) {
