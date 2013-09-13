@@ -75,3 +75,7 @@ target_link_libraries(robotInterface
                       icubmod
                     #  debugStream
                       ${TinyXML_LIBRARIES})
+
+install(TARGETS robotInterface
+        DESTINATION bin
+        COMPONENT Runtime)
