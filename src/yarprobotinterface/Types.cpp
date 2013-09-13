@@ -18,7 +18,7 @@
 
 bool RobotInterface::hasParam(const RobotInterface::ParamList &list, const std::string& name)
 {
-    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); ++it) {
         const RobotInterface::Param &param = *it;
         if (!name.compare(param.name())) {
             return true;
@@ -29,7 +29,7 @@ bool RobotInterface::hasParam(const RobotInterface::ParamList &list, const std::
 
 std::string RobotInterface::findParam(const RobotInterface::ParamList &list, const std::string& name)
 {
-    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); ++it) {
         const RobotInterface::Param &param = *it;
         if (!name.compare(param.name())) {
             return param.value();
@@ -41,7 +41,7 @@ std::string RobotInterface::findParam(const RobotInterface::ParamList &list, con
 
 bool RobotInterface::hasGroup(const RobotInterface::ParamList &list, const std::string& name)
 {
-    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); ++it) {
         const RobotInterface::Param &param = *it;
         if (param.isGroup() && !name.compare(param.name())) {
             return true;
@@ -52,7 +52,7 @@ bool RobotInterface::hasGroup(const RobotInterface::ParamList &list, const std::
 
 std::string RobotInterface::findGroup(const RobotInterface::ParamList &list, const std::string& name)
 {
-    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); it++) {
+    for (RobotInterface::ParamList::const_iterator it = list.begin(); it != list.end(); ++it) {
         const RobotInterface::Param &param = *it;
         if (param.isGroup() && !name.compare(param.name())) {
             return param.value();
@@ -65,7 +65,7 @@ std::string RobotInterface::findGroup(const RobotInterface::ParamList &list, con
 RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterface::ParamList &list)
 {
     RobotInterface::ParamList params = list;
-    for (RobotInterface::ParamList::iterator it1 = params.begin(); it1 != params.end(); it1++) {
+    for (RobotInterface::ParamList::iterator it1 = params.begin(); it1 != params.end(); ++it1) {
         RobotInterface::Param &param1 = *it1;
         for (RobotInterface::ParamList::iterator it2 = it1 + 1; it2 != params.end(); ) {
             RobotInterface::Param &param2 = *it2;

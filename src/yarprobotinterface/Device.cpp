@@ -107,7 +107,7 @@ public:
         ParamList p = RobotInterface::mergeDuplicateGroups(params);
         std::string s;
         s += "(device " + type + ")";
-        for (RobotInterface::ParamList::const_iterator it = p.begin(); it != p.end(); it++) {
+        for (RobotInterface::ParamList::const_iterator it = p.begin(); it != p.end(); ++it) {
             const RobotInterface::Param &param = *it;
             s += " (" + param.name() + " " + param.value() + ")";
         }

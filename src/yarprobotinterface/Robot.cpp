@@ -90,7 +90,7 @@ public:
 
 bool RobotInterface::Robot::Private::hasDevice(const std::string &name) const
 {
-    for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); it++) {
+    for (DeviceList::const_iterator it = devices.begin(); it != devices.end(); ++it) {
         if (!name.compare(it->name())) {
             return true;
         }
@@ -100,7 +100,7 @@ bool RobotInterface::Robot::Private::hasDevice(const std::string &name) const
 
 RobotInterface::Device* RobotInterface::Robot::Private::findDevice(const std::string &name)
 {
-    for (DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
+    for (DeviceList::iterator it = devices.begin(); it != devices.end(); ++it) {
         if (!name.compare(it->name())) {
             return &(*it);
         }
@@ -112,7 +112,7 @@ RobotInterface::Device* RobotInterface::Robot::Private::findDevice(const std::st
 bool RobotInterface::Robot::Private::openDevices()
 {
     bool ret = true;
-    for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
+    for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); ++it) {
         RobotInterface::Device &device = *it;
 
         yDebug() << device;
@@ -135,7 +135,7 @@ bool RobotInterface::Robot::Private::openDevices()
 bool RobotInterface::Robot::Private::closeDevices()
 {
     bool ret = true;
-    for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); it++) {
+    for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); ++it) {
         RobotInterface::Device &device = *it;
 
         yDebug() << device;
@@ -158,13 +158,13 @@ bool RobotInterface::Robot::Private::closeDevices()
 std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterface::ActionPhase phase) const
 {
     std::vector<unsigned int> levels;
-    for (DeviceList::const_iterator dit = devices.begin(); dit != devices.end(); dit++) {
+    for (DeviceList::const_iterator dit = devices.begin(); dit != devices.end(); ++dit) {
         const Device &device = *dit;
         if (device.actions().empty()) {
             continue;
         }
 
-        for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ait++) {
+        for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ++ait) {
             const Action &action = *ait;
             if (action.phase() == phase) {
                 levels.push_back(action.level());
@@ -183,13 +183,13 @@ std::vector<unsigned int> RobotInterface::Robot::Private::getLevels(RobotInterfa
 std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInterface::Robot::Private::getActions(RobotInterface::ActionPhase phase, unsigned int level) const
 {
     std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > actions;
-    for (DeviceList::const_iterator dit = devices.begin(); dit != devices.end(); dit++) {
+    for (DeviceList::const_iterator dit = devices.begin(); dit != devices.end(); ++dit) {
         const Device &device = *dit;
         if (device.actions().empty()) {
             continue;
         }
 
-        for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ait++) {
+        for (ActionList::const_iterator ait = device.actions().begin(); ait != device.actions().end(); ++ait) {
             const Action &action = *ait;
             if (action.phase() == phase && action.level() == level) {
 // FIXME std::make_pair syntax is slightly changed in C++11
@@ -275,7 +275,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         v.fromString(RobotInterface::findParam(params, "networks").c_str());
         yarp::os::Bottle &targetNetworks = *(v.asList());
 
-        for (int i = 0; i < targetNetworks.size(); i++) {
+        for (int i = 0; i < targetNetworks.size(); ++i) {
             std::string targetNetwork = targetNetworks.get(i).toString().c_str();
 
             if (!RobotInterface::hasParam(params, targetNetwork)) {
@@ -445,13 +445,13 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     std::vector<unsigned int> levels = mPriv->getLevels(phase);
 
     bool ret = true;
-    for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); lit++) {
+    for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); ++lit) {
         // for each level
         const unsigned int level = *lit;
         yDebug() << "Entering action level" << level;
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
 
-        for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ait++) {
+        for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ++ait) {
             // for each action in that level
             Device &device = ait->first;
             Action &action = ait->second;
@@ -509,7 +509,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
         yDebug() << "All actions for action level" << level << "started. Waiting for unfinished actions.";
 
         // Join parallel threads
-        for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); dit++) {
+        for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
             Device &device = *dit;
             device.joinThreads();
             yDebug() << "All actions for device" << device.name() << "at level()" << level << "finished";

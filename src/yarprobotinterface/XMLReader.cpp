@@ -112,12 +112,12 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotTag(TiXmlEle
     for (TiXmlElement* childElem = robotElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr().compare("device") == 0 || childElem->ValueStr().compare("devices") == 0) {
             DeviceList childDevices = readDevices(childElem);
-            for (DeviceList::const_iterator it = childDevices.begin(); it != childDevices.end(); it++) {
+            for (DeviceList::const_iterator it = childDevices.begin(); it != childDevices.end(); ++it) {
                 robot.devices().push_back(*it);
             }
         } else {
             ParamList childParams = readParams(childElem);
-            for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); it++) {
+            for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
                 robot.params().push_back(*it);
             }
         }
@@ -175,12 +175,12 @@ RobotInterface::Device RobotInterface::XMLReader::Private::readDeviceTag(TiXmlEl
         if (childElem->ValueStr().compare("action") == 0 ||
             childElem->ValueStr().compare("actions") == 0) {
             ActionList childActions = readActions(childElem);
-            for (ActionList::const_iterator it = childActions.begin(); it != childActions.end(); it++) {
+            for (ActionList::const_iterator it = childActions.begin(); it != childActions.end(); ++it) {
                 device.actions().push_back(*it);
             }
         } else {
             ParamList childParams = readParams(childElem);
-            for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); it++) {
+            for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
                 device.params().push_back(*it);
             }
         }
@@ -212,7 +212,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesTag(Ti
     DeviceList devices;
     for (TiXmlElement* childElem = devicesElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         DeviceList childDevices = readDevices(childElem);
-        for (DeviceList::const_iterator it = childDevices.begin(); it != childDevices.end(); it++) {
+        for (DeviceList::const_iterator it = childDevices.begin(); it != childDevices.end(); ++it) {
             devices.push_back(*it);
         }
     }
@@ -315,7 +315,7 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readGroupTag(TiXmlElem
     ParamList params;
     for (TiXmlElement* childElem = groupElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
-        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); it++) {
+        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             params.push_back(*it);
         }
     }
@@ -324,7 +324,7 @@ RobotInterface::Param RobotInterface::XMLReader::Private::readGroupTag(TiXmlElem
     }
 
     std::string groupString;
-    for (ParamList::iterator it = params.begin(); it != params.end(); it++) {
+    for (ParamList::iterator it = params.begin(); it != params.end(); ++it) {
         if (!groupString.empty()) {
             groupString += " ";
         }
@@ -378,7 +378,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamListTag(T
     }
 
     // +1 skips the first element, that is the main param
-    for (ParamList::iterator it = params.begin() + 1; it != params.end(); it++) {
+    for (ParamList::iterator it = params.begin() + 1; it != params.end(); ++it) {
         Param &param = *it;
         params.at(0).value() += (params.at(0).value().empty() ? "(" : " ") + param.name();
     }
@@ -417,7 +417,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readSubDeviceTag(T
 
     for (TiXmlElement* childElem = subDeviceElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
-        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); it++) {
+        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             params.push_back(Param(it->name(), it->value()));
         }
     }
@@ -448,7 +448,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsTag(TiXm
     ParamList params;
     for (TiXmlElement* childElem = paramsElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
-        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); it++) {
+        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             params.push_back(*it);
         }
     }
@@ -531,7 +531,7 @@ RobotInterface::Action RobotInterface::XMLReader::Private::readActionTag(TiXmlEl
 
     for (TiXmlElement* childElem = actionElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
-        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); it++) {
+        for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it) {
             action.params().push_back(*it);
         }
     }
@@ -562,7 +562,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsTag(Ti
     ActionList actions;
     for (TiXmlElement* childElem = actionsElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ActionList childActions = readActions(childElem);
-        for (ActionList::const_iterator it = childActions.begin(); it != childActions.end(); it++) {
+        for (ActionList::const_iterator it = childActions.begin(); it != childActions.end(); ++it) {
             actions.push_back(*it);
         }
     }
