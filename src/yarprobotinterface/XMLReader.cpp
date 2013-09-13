@@ -138,21 +138,21 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, std::string curr_filena
     }
 
     if(tokens.size() != 5) {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown node found" << tokens.size();
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown node found" << tokens.size();
     }
 
     if(tokens.at(0) != "!DOCTYPE") {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown node found";
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown node found";
     }
 
     type = StringToDocType(tokens.at(1));
     if(type == RobotInterfaceDTD::DocTypeUnknown)
     {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Supported document types are: \"robot\", \"devices\", \"params\"";
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Supported document types are: \"robot\", \"devices\", \"params\"";
     }
 
     if(tokens.at(2) != "PUBLIC") {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Expected \"PUBLIC\", found" << tokens.at(2);
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Expected \"PUBLIC\", found" << tokens.at(2);
     }
 
     identifier = tokens.at(3); // For now just skip checks on the identifier
@@ -160,27 +160,27 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, std::string curr_filena
 
     // Extract version numbers from the URI
     if (uri.find(RobotInterfaceDTD::baseUri) != 0) {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
     }
     std::size_t start = RobotInterfaceDTD::baseUri.size();
     std::size_t end = uri.find(RobotInterfaceDTD::ext, start);
     if (end == std::string::npos) {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
     }
     std::string versionString = uri.substr(start, end - start);
     std::size_t dot = versionString.find('.');
     if (dot == std::string::npos) {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Unknown url" << uri;
     }
     std::string majorVersionString = versionString.substr(0, dot);
     std::string minorVersionString = versionString.substr(dot + 1);
     std::istringstream majiss(majorVersionString);
     if ( !(majiss >> majorVersion) ) {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
     }
     std::istringstream miniss(minorVersionString);
     if ( !(miniss >> minorVersion) ) {
-        SYNTAX_ERROR(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
+        SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
     }
 
     // If we got here, this is a valid DTD declaration
@@ -273,12 +273,12 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotFile(const s
     }
 
     if(dtd.type != RobotInterfaceDTD::DocTypeRobot) {
-        SYNTAX_ERROR(doc->Row()) << "Expected document of type" << DocTypeToString(RobotInterfaceDTD::DocTypeRobot)
+        SYNTAX_WARNING(doc->Row()) << "Expected document of type" << DocTypeToString(RobotInterfaceDTD::DocTypeRobot)
                                        << ". Found" << DocTypeToString(dtd.type);
     }
 
     if(dtd.majorVersion != 1 || dtd.minorVersion != 0) {
-        SYNTAX_ERROR(doc->Row()) << "Only robotInterface DTD version 1.0 is supported";
+        SYNTAX_WARNING(doc->Row()) << "Only robotInterface DTD version 1.0 is supported";
     }
 
     readRobotTag(doc->RootElement());
@@ -315,7 +315,8 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotTag(TiXmlEle
 #endif
 
     if (robotElem->QueryStringAttribute("portprefix", &robot.portprefix()) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(robotElem->Row()) << "\"robot\" element should contain the \"portprefix\" attribute";
+        SYNTAX_WARNING(robotElem->Row()) << "\"robot\" element should contain the \"portprefix\" attribute. Using \"name\" attribute";
+        robot.portprefix() = robot.name();
     }
 
     yDebug() << "Found robot [" << robot.name() << "] build [" << robot.build() << "] portprefix [" << robot.portprefix() << "]";
@@ -421,11 +422,11 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesTag(Ti
 
     std::string robotName;
     if (devicesElem->QueryStringAttribute("robot", &robotName) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(devicesElem->Row()) << "\"devices\" element should contain the \"robot\" attribute";
+        SYNTAX_WARNING(devicesElem->Row()) << "\"devices\" element should contain the \"robot\" attribute";
     }
 
     if (robotName != robot.name()) {
-        SYNTAX_ERROR(devicesElem->Row()) << "Trying to import a file for the wrong robot. Found" << robotName << "instead of" << robot.name();
+        SYNTAX_WARNING(devicesElem->Row()) << "Trying to import a file for the wrong robot. Found" << robotName << "instead of" << robot.name();
     }
 
     unsigned int build;
@@ -710,11 +711,11 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsTag(TiXm
 
     std::string robotName;
     if (paramsElem->QueryStringAttribute("robot", &robotName) != TIXML_SUCCESS) {
-        SYNTAX_ERROR(paramsElem->Row()) << "\"params\" element should contain the \"robot\" attribute";
+        SYNTAX_WARNING(paramsElem->Row()) << "\"params\" element should contain the \"robot\" attribute";
     }
 
     if (robotName != robot.name()) {
-        SYNTAX_ERROR(paramsElem->Row()) << "Trying to import a file for the wrong robot. Found" << robotName << "instead of" << robot.name();
+        SYNTAX_WARNING(paramsElem->Row()) << "Trying to import a file for the wrong robot. Found" << robotName << "instead of" << robot.name();
     }
 
     unsigned int build;
