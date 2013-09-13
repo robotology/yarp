@@ -25,6 +25,12 @@
 #define SYNTAX_WARNING(line) yWarning() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 
 
+// BUG in TinyXML, see
+// https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
+// When this bug is fixed upstream we can enable this
+#define TINYXML_UNSIGNED_INT_BUG 0
+
+
 class RobotInterface::XMLReader::Private
 {
 public:
@@ -108,10 +114,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::Private::readRobotTag(TiXmlEle
         SYNTAX_ERROR(robotElem->Row()) << "\"robot\" element should contain the \"name\" attribute";
     }
 
-#if 0
-    // BUG in TinyXML, see
-    // https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
-    // When this bug is fixed upstream we can enable this
+#if TINYXML_UNSIGNED_INT_BUG
     if (robotElem->QueryUnsignedAttribute("build", &robot.build()) != TIXML_SUCCESS) {
         // No build attribute. Assuming build="0"
         SYNTAX_WARNING(robotElem->Row()) << "\"robot\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
@@ -229,6 +232,35 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesTag(Ti
         filename = path + "/" + filename;
 #endif //WIN32
         return readDevicesFile(filename);
+    }
+
+    std::string robotName;
+    if (devicesElem->QueryStringAttribute("robot", &robotName) != TIXML_SUCCESS) {
+        SYNTAX_ERROR(devicesElem->Row()) << "\"devices\" element should contain the \"robot\" attribute";
+    }
+
+    if (robotName != robot.name()) {
+        SYNTAX_ERROR(devicesElem->Row()) << "Trying to import a file for the wrong robot. Found" << robotName << "instead of" << robot.name();
+    }
+
+    unsigned int build;
+#if TINYXML_UNSIGNED_INT_BUG
+    if (devicesElem->QueryUnsignedAttribute("build", &build()) != TIXML_SUCCESS) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(devicesElem->Row()) << "\"devices\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+    }
+#else
+    int tmp;
+    if (devicesElem->QueryIntAttribute("build", &tmp) != TIXML_SUCCESS || tmp < 0) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(devicesElem->Row()) << "\"devices\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+        tmp = 0;
+    }
+    build = (unsigned)tmp;
+#endif
+
+    if (build != robot.build()) {
+        SYNTAX_WARNING(devicesElem->Row()) << "Import a file for a different robot build. Found" << build << "instead of" << robot.build();
     }
 
     DeviceList devices;
@@ -467,6 +499,35 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsTag(TiXm
         return readParamsFile(filename);
     }
 
+    std::string robotName;
+    if (paramsElem->QueryStringAttribute("robot", &robotName) != TIXML_SUCCESS) {
+        SYNTAX_ERROR(paramsElem->Row()) << "\"params\" element should contain the \"robot\" attribute";
+    }
+
+    if (robotName != robot.name()) {
+        SYNTAX_ERROR(paramsElem->Row()) << "Trying to import a file for the wrong robot. Found" << robotName << "instead of" << robot.name();
+    }
+
+    unsigned int build;
+#if TINYXML_UNSIGNED_INT_BUG
+    if (paramsElem->QueryUnsignedAttribute("build", &build()) != TIXML_SUCCESS) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(paramsElem->Row()) << "\"params\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+    }
+#else
+    int tmp;
+    if (paramsElem->QueryIntAttribute("build", &tmp) != TIXML_SUCCESS || tmp < 0) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(paramsElem->Row()) << "\"params\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+        tmp = 0;
+    }
+    build = (unsigned)tmp;
+#endif
+
+    if (build != robot.build()) {
+        SYNTAX_WARNING(paramsElem->Row()) << "Import a file for a different robot build. Found" << build << "instead of" << robot.build();
+    }
+
     ParamList params;
     for (TiXmlElement* childElem = paramsElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ParamList childParams = readParams(childElem);
@@ -536,12 +597,9 @@ RobotInterface::Action RobotInterface::XMLReader::Private::readActionTag(TiXmlEl
 
     yDebug() << "Found action [ ]";
 
-#if 0
-    // BUG in TinyXML, see
-    // https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
-    // When this bug is fixed upstream we can enable this
+#if TINYXML_UNSIGNED_INT_BUG
     if (actionElem->QueryUnsignedAttribute("level", &action.level()) != TIXML_SUCCESS) {
-        yFatal() << SYNTAX_ERROR << "\"action\" element should contain the \"level\" attribute";
+        SYNTAX_ERROR(actionElem->Row()) << "\"action\" element should contain the \"level\" attribute [unsigned int]";
     }
 #else
     int tmp;
