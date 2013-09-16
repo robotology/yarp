@@ -16,6 +16,7 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -644,7 +645,7 @@ public:
         // check YARP_CONFIG_HOME
         if ((locs & ResourceFinderOptions::User) &&
             (flavor & ResourceFinderOptions::ConfigLike)) {
-            ConstString home = ResourceFinder::getConfigHome();
+            ConstString home = ResourceFinder::getConfigHomeNoCreate();
             if (home!="") {
                 appendResourceType(home,resourceType);
                 ConstString str = check(home.c_str(),"","",name,isDir,
@@ -659,7 +660,7 @@ public:
         // check YARP_DATA_HOME
         if ((locs & ResourceFinderOptions::User) &&
             (flavor & ResourceFinderOptions::DataLike)) {
-            ConstString home = ResourceFinder::getDataHome();
+            ConstString home = ResourceFinder::getDataHomeNoCreate();
             if (home!="") {
                 appendResourceType(home,resourceType);
                 ConstString str = check(home.c_str(),"","",name,isDir,
@@ -998,7 +999,7 @@ ResourceFinder& ResourceFinder::getResourceFinderSingleton() {
 }
 
 
-ConstString ResourceFinder::getDataHome() {
+ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate) {
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
@@ -1006,33 +1007,35 @@ ConstString ResourceFinder::getDataHome() {
     if (yarp_version != "") return yarp_version;
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
                                                           &found);
-    if (found) return xdg_version + slash + "yarp";
+    if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
-        return app_version + slash + "yarp";
+        return createIfAbsent(mayCreate,app_version + slash + "yarp");
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
 #ifdef __APPLE__
     if (home_version != "") {
-        return home_version
-            + slash + "Library"
-            + slash + "Application Support"
-            + slash + "yarp";
+        return createIfAbsent(mayCreate,
+                              home_version
+                              + slash + "Library"
+                              + slash + "Application Support"
+                              + slash + "yarp");
     }
 #endif
     if (home_version != "") {
-        return home_version
-            + slash + ".local"
-            + slash + "share"
-            + slash + "yarp";
+        return createIfAbsent(mayCreate,
+                              home_version
+                              + slash + ".local"
+                              + slash + "share"
+                              + slash + "yarp");
     }
     return "";
 }
 
 
-ConstString ResourceFinder::getConfigHome() {
+ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate) {
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     ConstString yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
@@ -1040,28 +1043,39 @@ ConstString ResourceFinder::getConfigHome() {
     if (found) return yarp_version;
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
                                                           &found);
-    if (found) return xdg_version + slash + "yarp";
+    if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
-        return app_version + slash + "yarp" + slash + "config";
+        return createIfAbsent(mayCreate,
+                              app_version + slash + "yarp" + slash + "config");
     }
 #endif
 
 #ifdef __APPLE__
-    ConstString home_mac_version= getDataHome();
+    ConstString home_mac_version = getDataHomeNoCreate();
     if (home_mac_version != "") {
-        return home_mac_version
-            + slash + "config";
+        return createIfAbsent(mayCreate,
+                              home_mac_version
+                              + slash + "config");
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
     if (home_version != "") {
-        return home_version
-            + slash + ".config"
-            + slash + "yarp";
+        return createIfAbsent(mayCreate,
+                              home_version
+                              + slash + ".config"
+                              + slash + "yarp");
     }
     return "";
+}
+
+
+ConstString ResourceFinder::createIfAbsent(bool mayCreate,
+                                           const ConstString& path) {
+    if (!mayCreate) return path;
+    NameConfig::createPath(path,0);
+    return path;
 }
 
 
