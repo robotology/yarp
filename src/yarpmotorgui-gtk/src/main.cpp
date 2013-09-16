@@ -736,7 +736,11 @@ int myMain( int   argc, char *argv[] )
     if (pParts!=0)
         NUMBER_OF_AVAILABLE_PARTS=pParts->size();
     else
-        NUMBER_OF_AVAILABLE_PARTS=0;
+    {
+        printf("Setting default parts.\n");
+        pParts=new Bottle("head torso left_arm right_arm left_leg right_leg");
+        NUMBER_OF_AVAILABLE_PARTS=pParts->size();
+    }
 
     if (NUMBER_OF_AVAILABLE_PARTS > MAX_NUMBER_ACTIVATED)
         {
@@ -804,6 +808,8 @@ int myMain( int   argc, char *argv[] )
     gtk_main ();
     fprintf(stderr, "Deleting the finder");
     delete finder;
+    if(pParts)
+        delete pParts;
     fprintf(stderr, "...done!\n");
     return 0;
 }
