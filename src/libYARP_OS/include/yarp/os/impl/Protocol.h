@@ -312,7 +312,9 @@ private:
         return ok;
     }
 
-    void setCarrier(const String& carrierName) {
+    void setCarrier(const String& carrierNameBase) {
+        String carrierName = carrierNameBase;
+        if (carrierNameBase=="") carrierName = "tcp";
         setRoute(getRoute().addCarrierName(carrierName));
         if (delegate==NULL) {
             delegate = Carriers::chooseCarrier(carrierName);
