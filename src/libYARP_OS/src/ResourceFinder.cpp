@@ -621,7 +621,7 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::ClassicContext) {
+        if ((locs & ResourceFinderOptions::ClassicContext) && !useNearMain) {
             ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
             Bottle defCaps =
@@ -648,7 +648,7 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Context) {
+        if ((locs & ResourceFinderOptions::Context) && !useNearMain) {
             for (int i=0; i<apps.size(); i++) {
                 ConstString app = apps.get(i).asString();
 
