@@ -1357,6 +1357,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         //result.addString("[get] # list property values available");
         //result.addString("[get] $prop # get value of property");
         //result.addString("[set] $prop # set value of property");
+        result.addString("[prop] [get] # get port properties");
+        result.addString("[prop] [get] $prop # get a port property");
+        result.addString("[prop] [set] $prop $val # set a port property");
         break;
     case VOCAB3('v','e','r'):
         // This version number is for the network protocol.
@@ -1754,6 +1757,39 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             reader.requestDrop(); // ROS likes to close down.
         }
         break;
+    case VOCAB4('p','r','o','p'):
+        {
+            switch (cmd.get(1).asVocab()) {
+            case VOCAB3('g','e','t'):
+                {
+                    Property *p = acquireProperties(true);
+                    if (p) {
+                        if (!cmd.get(2).isNull()) {
+                            result.add(p->find(cmd.get(2).asString()));
+                        } else {
+                            result.fromString(p->toString());
+                        }
+                    }
+                    releaseProperties(p);
+                }
+                break;
+            case VOCAB3('s','e','t'):
+                {
+                    Property *p = acquireProperties(false);
+                    if (p) {
+                        p->put(cmd.get(2).asString(),cmd.get(3));
+                    }
+                    releaseProperties(p);
+                    result.addVocab(Vocab::encode("ok"));
+                }
+                break;
+            default:
+                result.addVocab(Vocab::encode("fail"));
+                result.addString("property action not known");
+                break;
+            }
+        }
+        break;
     default:
         result.addVocab(Vocab::encode("fail"));
         result.addString("send [help] for list of valid commands");
@@ -1775,4 +1811,18 @@ void PortCore::reportUnit(PortCoreUnit *unit, bool active) {
             logNeeded = true;
         }
     }
+}
+
+Property *PortCore::acquireProperties(bool readOnly) {
+    stateMutex.wait();
+    if (!readOnly) {
+        if (!prop) {
+            prop = new Property();
+        }
+    }
+    return prop;
+}
+
+void PortCore::releaseProperties(Property *prop) {
+    stateMutex.post();
 }

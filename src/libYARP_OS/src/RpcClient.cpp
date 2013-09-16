@@ -103,3 +103,12 @@ void yarp::os::RpcClient::setReader(PortReader& reader) {
 yarp::os::Type yarp::os::RpcClient::getType() {
     return port.getType();
 }
+
+
+yarp::os::Property *yarp::os::RpcClient::acquireProperties(bool readOnly) {
+    return port.acquireProperties(readOnly);
+}
+
+void yarp::os::RpcClient::releaseProperties(Property *prop) {
+    port.releaseProperties(prop);
+}

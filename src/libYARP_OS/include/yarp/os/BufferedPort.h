@@ -304,6 +304,15 @@ public:
         port.setWriteOnly();
     }
 
+
+    virtual Property *acquireProperties(bool readOnly) {
+        return port.acquireProperties(readOnly);
+    }
+
+    virtual void releaseProperties(Property *prop) {
+        port.releaseProperties(prop);
+    }
+
 private:
     PortWriterBuffer<T> writer;
     Port port;

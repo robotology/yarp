@@ -108,6 +108,9 @@ public:
 
     virtual Type getType();
 
+    virtual Property *acquireProperties(bool readOnly);
+    virtual void releaseProperties(Property *prop);
+
 private:
     // an RpcClient may be implemented with a regular port
     // (this is not decided yet)

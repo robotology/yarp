@@ -21,6 +21,7 @@
 #include <yarp/os/impl/PortCorePacket.h>
 
 #include <yarp/os/PortReport.h>
+#include <yarp/os/Property.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 
@@ -94,6 +95,7 @@ public:
         timeout = -1;
         verbosity = 1;
         counter = 1;
+        prop = NULL;
     }
 
     /**
@@ -354,6 +356,9 @@ public:
         return verbosity;
     }
 
+    Property *acquireProperties(bool readOnly);
+    void releaseProperties(Property *prop);
+
 private:
 
     // internal maintenance of sub units
@@ -412,6 +417,7 @@ private:
     String envelope;
     float timeout;
     int counter;
+    yarp::os::Property *prop;
 
     void closeMain();
 

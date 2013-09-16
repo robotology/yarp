@@ -114,3 +114,11 @@ bool yarp::os::RpcServer::isWriting() {
 yarp::os::Type yarp::os::RpcServer::getType() {
     return port.getType();
 }
+
+yarp::os::Property *yarp::os::RpcServer::acquireProperties(bool readOnly) {
+    return port.acquireProperties(readOnly);
+}
+
+void yarp::os::RpcServer::releaseProperties(Property *prop) {
+    port.releaseProperties(prop);
+}

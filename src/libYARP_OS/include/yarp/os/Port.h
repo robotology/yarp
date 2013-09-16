@@ -266,6 +266,10 @@ public:
 
     virtual void setWriteOnly();
 
+    virtual Property *acquireProperties(bool readOnly);
+
+    virtual void releaseProperties(Property *prop);
+
 private:
     void *implementation;
 

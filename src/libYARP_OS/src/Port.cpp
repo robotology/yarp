@@ -759,3 +759,13 @@ void Port::setReadOnly() {
 void Port::setWriteOnly() {
     return HELPER(implementation).setWriteOnly();
 }
+
+
+Property *Port::acquireProperties(bool readOnly) {
+    return HELPER(implementation).acquireProperties(readOnly);
+}
+
+void Port::releaseProperties(Property *prop) {
+    HELPER(implementation).releaseProperties(prop);
+}
+
