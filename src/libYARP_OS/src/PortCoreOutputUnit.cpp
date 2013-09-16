@@ -160,7 +160,9 @@ void PortCoreOutputUnit::closeBasic() {
             route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getToName()).isRooted()) {
-            YARP_INFO(Logger::get(), msg);
+            if (Name(route.getFromName()).isRooted()) {
+                YARP_INFO(Logger::get(), msg);
+            }
         }
 
         getOwner().reportUnit(this,false);
