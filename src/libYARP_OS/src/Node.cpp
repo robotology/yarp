@@ -240,6 +240,11 @@ public:
 void NodeHelper::prepare(const ConstString& name) {
     if (port.getName()=="") {
         port.setReader(*this);
+        Property *prop = port.acquireProperties(false);
+        if (prop) {
+            prop->put("node_like",1);
+        }
+        port.releaseProperties(prop);
         port.open(name);
     }
 }
@@ -284,7 +289,7 @@ bool NodeHelper::read(ConnectionReader& reader) {
     if (!reader.isValid()) return false;
     NodeArgs na;
     na.request.read(reader);
-    //printf("NODE %s >>> %s\n", 
+    //printf("NODE API for %s received %s\n", 
     //name.c_str(),
     //na.request.toString().c_str());
     ConstString key = na.request.get(0).asString();

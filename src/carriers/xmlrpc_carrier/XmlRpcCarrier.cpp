@@ -145,19 +145,50 @@ bool XmlRpcCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
 }
 
 
+bool XmlRpcCarrier::shouldInterpretRosMessages(ConnectionState& proto) {
+    // We need to set the interpretRos flag, which controls
+    // whether ROS-style admin messages are treated as
+    // admin messages or data messages in YARP.
+    // In the future, they should always be data messages.
+    // For now, they should be admin messages for all ports
+    // except ports tagged as corresponding to ros nodes.
+
+    bool nodelike = false;
+    Contactable *port = proto.getContactable();
+    Property opt;
+    if (port) {
+        Property *pport = port->acquireProperties(true);
+        if (pport) {
+            opt = *pport;
+        }
+        port->releaseProperties(pport);
+    }
+    if (opt.check("node_like")) {
+        nodelike = true;
+    }
+
+    Name n(proto.getRoute().getCarrierName() + "://test");
+    ConstString rospass = n.getCarrierModifier("ros");
+    interpretRos = !nodelike;
+    if (rospass=="1"||rospass=="on") {
+        interpretRos = true;
+    }
+    if (rospass=="0"||rospass=="off") {
+        interpretRos = false;
+    }
+    return interpretRos;
+}
+
 bool XmlRpcCarrier::sendHeader(ConnectionState& proto) {
+    shouldInterpretRosMessages(proto);
+    ConstString target = "POST /RPC2";
     Name n(proto.getRoute().getCarrierName() + "://test");
     ConstString pathValue = n.getCarrierModifier("path");
-    ConstString target = "POST /RPC2";
     if (pathValue!="") {
         target = "POST /";
         target += pathValue;
         // on the wider web, we should provide real host names
         host = NetworkBase::queryName(proto.getRoute().getToName());
-    }
-    ConstString rospass = n.getCarrierModifier("ros");
-    if (rospass=="") {
-        interpretRos = true;
     }
     target += " HTTP/1.1\n";
     http = target;
@@ -168,11 +199,7 @@ bool XmlRpcCarrier::sendHeader(ConnectionState& proto) {
 
 
 bool XmlRpcCarrier::respondToHeader(ConnectionState& proto) {
-    Name n(proto.getRoute().getCarrierName() + "://test");
-    ConstString rospass = n.getCarrierModifier("ros");
-    if (rospass=="") {
-        interpretRos = true;
-    }
+    shouldInterpretRosMessages(proto);
     sender = false;
     XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),
                                             sender,
