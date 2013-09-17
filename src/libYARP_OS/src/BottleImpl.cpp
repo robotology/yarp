@@ -849,7 +849,12 @@ bool StoreString::readRaw(ConnectionReader& reader) {
     int len = reader.expectInt();
     String buf(YARP_STRINIT(len));
     reader.expectBlock((const char *)buf.c_str(),len);
-    x = buf.substr(0,len-1);
+    if (len>0) {
+        if (buf[len-1] == '\0') {
+            len--;
+        }
+    }
+    x = buf.substr(0,len);
     return true;
 }
 
