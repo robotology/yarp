@@ -123,7 +123,9 @@ public:
             Contact::byName("...").addSocket("tcp",ip.c_str(),sock);
         
 #ifdef YARP_HAS_ACE
-        BootstrapServer::configFileBootstrap(contact);
+        if (!options.check("local")) {
+            BootstrapServer::configFileBootstrap(contact);
+        }
 #endif
         
         config.minPortNumber = contact.getPort()+2;
