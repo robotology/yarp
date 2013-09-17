@@ -72,6 +72,7 @@ public:
         commitToRead(false),
         commitToWrite(false)
     {
+        setContactable(&owner);
     }
 
     void openable() {

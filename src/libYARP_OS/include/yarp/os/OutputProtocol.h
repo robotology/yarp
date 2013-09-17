@@ -21,6 +21,7 @@ namespace yarp {
     namespace os {
         class OutputProtocol;
         class InputProtocol;
+        class Contactable;
     }
 }
 
@@ -55,6 +56,8 @@ public:
     virtual InputStream& getInputStream() = 0;
 
     virtual bool setTimeout(double timeout) = 0;
+
+    virtual void attachPort(Contactable *port) = 0;
 };
 
 #endif

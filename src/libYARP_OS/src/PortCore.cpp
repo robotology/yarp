@@ -163,6 +163,7 @@ void PortCore::run() {
         // we should shut down
         stateMutex.wait();
         if (ip!=NULL) {
+            ip->attachPort(contactable);
             YARP_DEBUG(log,"PortCore received something");
             if (timeout>0) {
                 ip->setTimeout(timeout);

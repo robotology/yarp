@@ -13,6 +13,7 @@
 #include <yarp/os/Route.h>
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/Contactable.h>
 
 namespace yarp {
     namespace os {
@@ -44,6 +45,7 @@ public:
     virtual TwoWayStream *giveStreams() = 0;
     virtual void setReference(yarp::os::Portable *ref) = 0;
     virtual bool checkStreams() = 0;
+    virtual Contactable *getContactable() = 0;
 };
 
 #endif
