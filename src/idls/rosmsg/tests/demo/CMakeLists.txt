@@ -13,6 +13,7 @@ include(YarpIDL)
 set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
 yarp_idl_to_dir(Demo.msg ${generated_libs_dir})
 yarp_idl_to_dir(Tennis.srv ${generated_libs_dir})
+yarp_idl_to_dir(Rpc.srv ${generated_libs_dir})
 
 include_directories(${generated_libs_dir}/demo)
 include_directories(${generated_libs_dir}/tennis)

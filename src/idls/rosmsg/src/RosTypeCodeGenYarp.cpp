@@ -71,8 +71,8 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"\n");
     fprintf(out,"class %s : public yarp::os::Portable {\n", safe_tname.c_str());
     fprintf(out,"public:\n");
-    fprintf(out,"  yarp::os::ConstString getTypeName() const {\n");
-    fprintf(out,"    return \"%s\";\n", safe_tname.c_str());
+    fprintf(out,"  yarp::os::Type getType() {\n");
+    fprintf(out,"    return yarp::os::Type::byName(\"%s\");\n", tname.c_str());
     fprintf(out,"  }\n\n");
     return true;
 }

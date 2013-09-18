@@ -21,6 +21,7 @@ private:
 public:
     RosTypeSearch() {
         find_service = false;
+        target_dir = ".";
     }
 
     void lookForService(bool flag) {

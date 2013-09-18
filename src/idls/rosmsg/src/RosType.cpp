@@ -121,6 +121,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     for (int i=0; i<nesting; i++) {
         indent += "  ";
     }
+    if (nesting>0) env.lookForService(false); // no srv nesting allowed in ros
     //printf("Checking %s\n", tname);
     clear();
     
