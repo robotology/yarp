@@ -589,6 +589,31 @@ public:
             }
         }
 
+        if (locs & ResourceFinderOptions::Robot) {
+            ConstString slash = NetworkBase::getDirectorySeparator();
+            bool found = false;
+            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+                                                            &found);
+            if (!found) robot = "default";
+
+            // Nested search to locate robot directory
+            Bottle paths;
+            ResourceFinderOptions opts2;
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(ResourceFinderOptions::User | ResourceFinderOptions::Sysadmin | ResourceFinderOptions::Installed);
+            opts2.resourceType = "robots";
+            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
+            appendResourceType(paths,resourceType);
+            for (int j=0; j<paths.size(); j++) {
+                ConstString str = check(paths.get(j).asString().c_str(),
+                                        "","",
+                                        name,isDir,doc,"robot");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
         if (locs & ResourceFinderOptions::ClassicContext) {
             ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
@@ -734,32 +759,6 @@ public:
                             if (justTop) return;
                         }
                     }
-                }
-            }
-        }
-        
-        if (locs & ResourceFinderOptions::Robot) {
-            ConstString slash = NetworkBase::getDirectorySeparator();
-            bool found = false;
-            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
-                                                            &found);
-            if (!found) robot = "default";
-
-            // Nested search to locate robot directory
-            Bottle paths;
-            ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(ResourceFinderOptions::User | ResourceFinderOptions::Sysadmin | ResourceFinderOptions::Installed);
-            //opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
-            opts2.resourceType = "robots";
-            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
-            appendResourceType(paths,resourceType);
-            for (int j=0; j<paths.size(); j++) {
-                ConstString str = check(paths.get(j).asString().c_str(),
-                                        "","",
-                                        name,isDir,doc,"robot");
-                if (str!="") {
-                    addString(output,str);
-                    if (justTop) return;
                 }
             }
         }
