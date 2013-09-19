@@ -136,10 +136,14 @@ private:
     yarp::os::Property cache;
     bool verbose;
     bool quiet;
+    bool mainActive;
+    bool useNearMain;
 public:
     ResourceFinderHelper() {
         verbose = false;
         quiet = false;
+        mainActive = false;
+        useNearMain = false;
     }
 
     bool addAppName(const char *appName) {
@@ -352,7 +356,9 @@ public:
                 fprintf(RTARGET,"||| default config file specified as %s\n",
                         from.c_str());
             }
+            mainActive = true;
             ConstString corrected = findFile(config,from.c_str(),NULL);
+            mainActive = false;
             if (corrected!="") {
                 from = corrected;
             }
@@ -574,12 +580,13 @@ public:
             }
             ConstString str = check(getPwd(),resourceType,"",name,isDir,doc,"pwd");
             if (str!="") {
+                if (mainActive) useNearMain = true;
                 addString(output,str);
                 if (justTop) return;
             }
         }
 
-        if (locs & ResourceFinderOptions::NearMainConfig) {
+        if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
             if (configFilePath!="") {
                 ConstString str = check(configFilePath.c_str(),resourceType,"",name,isDir,doc,"defaultConfigFile path");
                 if (str!="") {
@@ -614,7 +621,7 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::ClassicContext) {
+        if ((locs & ResourceFinderOptions::ClassicContext) && !useNearMain) {
             ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
             Bottle defCaps =
@@ -641,7 +648,7 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Context) {
+        if ((locs & ResourceFinderOptions::Context) && !useNearMain) {
             for (int i=0; i<apps.size(); i++) {
                 ConstString app = apps.get(i).asString();
 
@@ -654,6 +661,7 @@ public:
                 ResourceFinderOptions opts2;
                 prependResourceType(app,"contexts");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)ResourceFinderOptions::Default;
+                opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
                 findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
                 appendResourceType(paths,resourceType);
                 for (int j=0; j<paths.size(); j++) {
