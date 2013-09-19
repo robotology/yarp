@@ -350,6 +350,15 @@ bool Port::open(const Contact& contact, bool registerName,
     ConstString n = contact2.getName();
     if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
         if (fakeName==NULL) {
+            Nodes& nodes = NameClient::getNameClient().getNodes();
+            ConstString node_name = nodes.getActiveName();
+            if (node_name!="") {
+                n = node_name + "=/" + n;
+            }
+        }
+    }
+    if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
+        if (fakeName==NULL) {
             YARP_SPRINTF1(Logger::get(),error,
                           "Port name '%s' needs to start with a '/' character",
                           n.c_str());

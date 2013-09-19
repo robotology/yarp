@@ -15,6 +15,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/NameClient.h>
 
 #include <list>
 #include <map>
@@ -108,10 +109,14 @@ public:
 
     Mutex mutex;
     ConstString name;
+    ConstString prev_name;
+    bool has_prev_name;
 
     NodeHelper() {
         owner = NULL;
         clear();
+        prev_name = "";
+        has_prev_name = false;
     }
 
     ~NodeHelper() {
@@ -343,11 +348,28 @@ Node::Node() {
     HELPER(this).owner = this;
 }
 
+Node::Node(const ConstString& name) {
+    system_resource = new NodeHelper;
+    YARP_ASSERT(system_resource!=NULL);
+    HELPER(this).owner = this;
+    Nodes& nodes = NameClient::getNameClient().getNodes();
+    HELPER(this).prev_name = nodes.getActiveName();
+    HELPER(this).has_prev_name = true;
+    HELPER(this).name = name;
+    prepare(name);
+    nodes.addExternalNode(name,*this);
+    nodes.setActiveName(name);
+}
+
 Node::~Node() {
-    if (system_resource!=NULL) {
-        delete &HELPER(this);
-        system_resource = NULL;
+    if (system_resource==NULL) return;
+    if (HELPER(this).has_prev_name) {
+        Nodes& nodes = NameClient::getNameClient().getNodes();
+        nodes.setActiveName(HELPER(this).prev_name);
+        nodes.removeExternalNode(HELPER(this).name);
     }
+    delete &HELPER(this);
+    system_resource = NULL;
 }
 
 void Node::add(Contactable& contactable) {

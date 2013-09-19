@@ -12,11 +12,28 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/NameClient.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+template <class T>
+class Publisher : public BufferedPort<T> {
+public:
+    Publisher() {
+        BufferedPort<T>::setWriteOnly();
+    }
+};
+
+template <class T>
+class Subscriber : public BufferedPort<T> {
+public:
+    Subscriber() {
+        BufferedPort<T>::setReadOnly();
+    }
+};
 
 class NodeTest : public UnitTest {
 public:
@@ -29,6 +46,7 @@ public:
     void basicApiTest();
     void portTopicCombo();
     void directionTest();
+    void singleNameTest();
 
     virtual void runTests();
 };
@@ -117,7 +135,6 @@ void NodeTest::basicApiTest() {
     checkEqual(reply.get(0).asInt(),1,"getSubscriptions api success");
     cmd.fromString("requestTopic dummy /p2 (TCPROS)");
     NetworkBase::write(Contact::byName("/test"),cmd,reply);
-    //printf("got %s\n", reply.toString().c_str());
     checkEqual(reply.get(0).asInt(),1,"found /p2");
     cmd.fromString("requestTopic dummy /p3 (TCPROS)");
     NetworkBase::write(Contact::byName("/test"),cmd,reply);
@@ -177,6 +194,28 @@ void NodeTest::directionTest() {
     NameClient::getNameClient().getNodes().clear();    
 }
 
+void NodeTest::singleNameTest() {
+    report(0,"single name test");
+    Node n("/ntest");
+    Port p1;
+    p1.setWriteOnly();
+    p1.open("p1");
+    checkEqual(p1.getName(),"/ntest=+/p1","node name goes viral");
+    Publisher<Bottle> p2;
+    p2.open("p2");
+    checkEqual(p2.getName(),"/ntest=+/p2","publisher name ok");
+    Subscriber<Bottle> p3;
+    p3.open("p3");
+    checkEqual(p3.getName(),"/ntest=-/p3","subscriber name ok");
+    Port p4;
+    p4.open("/p4");
+    checkEqual(p4.getName(),"/p4","rooted name ok");
+    Bottle cmd, reply;
+    cmd.fromString("requestTopic dummy /p1 (TCPROS)");
+    NetworkBase::write(Contact::byName("/ntest"),cmd,reply);
+    checkEqual(reply.get(0).asInt(),1,"found /p1");
+}
+
 void NodeTest::runTests() {
     NetworkBase::setLocalMode(true);
     basicNodeTest();
@@ -186,6 +225,7 @@ void NodeTest::runTests() {
     basicApiTest();
     portTopicCombo();
     directionTest();
+    singleNameTest();
     NetworkBase::setLocalMode(false);
 }
 

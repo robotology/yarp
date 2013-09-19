@@ -21,6 +21,7 @@ namespace yarp {
 class YARP_OS_API yarp::os::Node : public Contactables {
 public:
     Node();
+    Node(const ConstString& name);
     virtual ~Node();
     
     virtual void add(Contactable& contactable);

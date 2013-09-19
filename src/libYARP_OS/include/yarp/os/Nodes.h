@@ -14,6 +14,7 @@
 
 namespace yarp {
     namespace os {
+        class Node;
         class Nodes;
     }
 }
@@ -39,6 +40,10 @@ public:
     
     bool enable(bool flag);
     void clear();
+    void setActiveName(const ConstString& name);
+    void addExternalNode(const ConstString& name, Node& node);
+    void removeExternalNode(const ConstString& name);
+    ConstString getActiveName();
 private:
     void *system_resource;
 };

@@ -24,11 +24,14 @@ class NodesHelper {
 public:
     Mutex mutex;
     std::map<ConstString,Node *> by_name;
+    std::map<ConstString,int> is_external;
     bool active;
+    ConstString active_name;
 
     NodesHelper() {
         active = true;
         clear();
+        active_name = "";
     }
 
     ~NodesHelper() {
@@ -69,6 +72,26 @@ public:
         }
         mutex.unlock();
         return result;
+    }
+
+    void setActiveName(const ConstString& name) {
+        is_external[name] = 1;
+        active_name = name;
+    }
+
+    ConstString getActiveName() {
+        return active_name;
+    }
+
+    void addExternalNode(const ConstString& name, Node& node) {
+        YARP_ASSERT(by_name.find(name)==by_name.end());
+        is_external[name] = 1;
+        by_name[name] = &node;
+    }
+    
+    void removeExternalNode(const ConstString& name) {
+        is_external.erase(name);
+        by_name.erase(name);
     }
 };
 
@@ -207,3 +230,26 @@ void Nodes::update(Contactable& contactable) {
     HELPER(this).update(contactable);
     HELPER(this).mutex.lock();
 }
+
+
+void Nodes::setActiveName(const ConstString& name) {
+    HELPER(this).setActiveName(name);
+}
+
+ConstString Nodes::getActiveName() {
+    return HELPER(this).getActiveName();
+}
+
+
+void Nodes::addExternalNode(const ConstString& name, Node& node) {
+    HELPER(this).mutex.lock();
+    HELPER(this).addExternalNode(name,node);
+    HELPER(this).mutex.unlock();
+}
+
+void Nodes::removeExternalNode(const ConstString& name) {
+    HELPER(this).mutex.lock();
+    HELPER(this).removeExternalNode(name);
+    HELPER(this).mutex.unlock();
+}
+
