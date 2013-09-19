@@ -76,6 +76,7 @@ public:
     std::string rosType;
     std::string rosName;
     std::string rosPath;
+    std::string initializer;
     RosTypes subRosType;
     std::string txt;
     RosType *reply;
@@ -92,6 +93,7 @@ public:
         txt = "";
         rosType = "";
         rosName = "";
+        initializer = "";
         subRosType.clear();
         if (reply) {
             delete reply;
@@ -109,6 +111,10 @@ public:
 
     bool emitType(RosTypeCodeGen& gen, 
                   RosTypeCodeGenState& state);
+    
+    bool isConst() const {
+        return initializer != "";
+    }
 };
 
 typedef RosType RosField;

@@ -17,6 +17,7 @@ yarp_idl_to_dir(Rpc.srv ${generated_libs_dir})
 
 include_directories(${generated_libs_dir}/demo)
 include_directories(${generated_libs_dir}/tennis)
+include_directories(${generated_libs_dir}/rpc)
 include_directories(${YARP_INCLUDE_DIRS})
 add_executable(demo_test main.cpp ${generated_libs_dir}/demo/Demo.h ${generated_libs_dir}/tennis/Tennis.h ${generated_libs_dir}/tennis/TennisReply.h)
 target_link_libraries(demo_test ${YARP_LIBRARIES})

@@ -84,7 +84,11 @@ bool RosTypeCodeGenYarp::beginDeclare() {
 bool RosTypeCodeGenYarp::declareField(const RosField& field) {
     RosYarpType t = mapPrimitive(field);
     if (!field.isArray) {
-        fprintf(out,"  %s %s;\n", t.yarpType.c_str(), field.rosName.c_str());
+        if (field.isConst()) {
+            fprintf(out,"  static const %s %s = %s;\n", t.yarpType.c_str(), field.rosName.c_str(), field.initializer.c_str());
+        } else {
+            fprintf(out,"  %s %s;\n", t.yarpType.c_str(), field.rosName.c_str());
+        }
     } else {
         fprintf(out,"  std::vector<%s> %s;\n", t.yarpType.c_str(), 
                field.rosName.c_str());
@@ -110,6 +114,7 @@ bool RosTypeCodeGenYarp::beginRead() {
 // * deal with strings, which are a variable-sized primitive
 
 bool RosTypeCodeGenYarp::readField(const RosField& field) {
+    if (field.isConst()) return true;
     RosYarpType t = mapPrimitive(field);
     if (!first) {
         fprintf(out,"\n");
@@ -222,6 +227,7 @@ bool RosTypeCodeGenYarp::beginWrite() {
 }
 
 bool RosTypeCodeGenYarp::writeField(const RosField& field) {
+    if (field.isConst()) return true;
     RosYarpType t = mapPrimitive(field);
     if (!first) {
         fprintf(out,"\n");

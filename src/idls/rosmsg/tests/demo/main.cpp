@@ -11,6 +11,7 @@
 
 #include <Demo.h>
 #include <Tennis.h>
+#include <Rpc.h>
 #include <yarp/os/all.h>
 
 using namespace yarp::os;

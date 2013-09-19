@@ -38,29 +38,34 @@ vector<string> normalizedMessage(const string& line) {
     string result;
     bool quote = false;
     bool pending = false;
+    bool can_quote = true;
     for (int i=0; i<(int)line.length(); i++) {
         char ch = line[i];
-        if (ch=='\"') {
+        if (ch=='\"'&&can_quote) {
             quote = !quote;
             result += ch;
             pending = true;
         } else if (quote) {
             result += ch;
             pending = true;
-        } else if (ch==' '||ch=='\r'||ch=='\t') {
+        } else if (ch=='\r'||ch=='\t'||((ch==' '||ch=='=')&&can_quote)) {
             if (pending) {
                 if (result[0]=='#') return all;
                 all.push_back(result);
                 pending = false;
             }
             result = "";
+            if (ch=='=') {
+                all.push_back("=");
+                can_quote = false;
+            }
         } else {
             result += ch;
             pending = true;
         }
     }
     if (pending&&result!="") {
-        if (result[0]=='#') return all;
+        if (result[0]=='#'&&can_quote) return all;
         all.push_back(result);
         pending = false;
     }
@@ -214,13 +219,17 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             cursor->rosType = rosType + "Reply";
             continue;
         }
+        bool have_const = false;
+        string const_txt = "";
         if (msg.size()>2) {
             if (msg[2]=="=") {
-                printf("Not worrying about: %s\n", row.c_str());
-                continue;
+                have_const = true;
+                //printf("Not worrying about: %s\n", row.c_str());
+                //continue;
+                const_txt = msg[3];
             }
         }
-        if (msg.size()!=2) {
+        if (msg.size()!=2 && !have_const) {
             if (msg.size()>0) {
                 if (msg[0][0]!='[') {
                     fprintf(stderr,"[type] skip %s\n", row.c_str());
@@ -231,8 +240,8 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         }
         string t = msg[0];
         string n = msg[1];
-        fprintf(stderr,"[type]%s   %s %s\n", indent.c_str(), t.c_str(), 
-                n.c_str());
+        fprintf(stderr,"[type]%s   %s %s [%s]\n", indent.c_str(), t.c_str(), 
+                n.c_str(), const_txt.c_str());
         RosType sub;
         if (!sub.read(t.c_str(),env,gen,nesting+1)) {
             fprintf(stderr, "[type]%s Type not complete: %s\n", 
@@ -241,6 +250,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
             ok = false;
         }
         sub.rosName = n;
+        sub.initializer = const_txt;
         cursor->subRosType.push_back(sub);
     } while (result!=NULL);
     fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
