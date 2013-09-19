@@ -212,6 +212,10 @@ void PortCore::run() {
 
 void PortCore::close() {
     closeMain();
+    if (prop) {
+        delete prop;
+        prop = NULL;
+    }
 }
 
 
