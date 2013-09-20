@@ -821,15 +821,28 @@ public:
     }
 
     ConstString context2path(Property& config, const ConstString& context ) {
-        ConstString cap =
-            config.check("capability_directory",Value("app")).asString();
-        ConstString path = getPath(root,cap,context,"");
-        if (path.length()>1) {
-            if (path[path.length()-1]=='/') {
+        if(useNearMain)
+            return configFilePath;
+        else
+        {
+            ConstString path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
+//         ConstString cap =
+//             config.check("capability_directory",Value("app")).asString();
+//         ConstString path = getPath(root,cap,context,"");
+            if (path.length()>1) {
+                if (path[path.length()-1]=='/') {
                 path = path.substr(0,path.length()-1);
+                }
             }
+
+            ConstString parentPath=getPath(ResourceFinder::getDataHome(), "contexts", "", "");
+            if(yarp::os::stat(parentPath.c_str()))
+                yarp::os::mkdir(parentPath.c_str());
+
+            if (yarp::os::mkdir(path.c_str()) <0 && errno != EEXIST)
+                fprintf(RTARGET,"||| WARNING  Could not create %s directory\n", path.c_str());
+            return path;
         }
-        return path;
     }
 };
 
@@ -984,9 +997,6 @@ ConstString ResourceFinder::getContext() {
 }
 
 ConstString ResourceFinder::getContextPath() {
-        ConstString contextPath=findPath(ConstString("contexts/") + HELPER(implementation).getContext());
-        if (contextPath != "")
-            return contextPath;
     return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());
 }
