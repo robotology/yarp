@@ -259,6 +259,7 @@ protected:
     // BufferedPort<yarp::sig::Vector> state_p;
     StateInputPort state_p;
     PortWriterBuffer<CommandMessage> command_buffer;
+    bool writeStrict;
 
     ConstString remote;
     ConstString local;
@@ -913,6 +914,16 @@ public:
     virtual bool open(Searchable& config) {
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
+
+        Value strict = config.check("writeStrict", Value("off"), "Do I use writeStrict?");
+
+        if(strict.asString() == "on")
+        {
+            writeStrict = true;
+            printf("RemoteControlBoard is using the writeStrict option\n");
+        }
+        else
+            writeStrict = false;
 
         if (local=="") {
             fprintf(stderr,"Problem connecting to remote controlboard, 'local' port prefix not given\n");
@@ -1793,7 +1804,7 @@ public:
         c.head.addVocab(VOCAB_VELOCITY_MOVES);
         c.body.size(nj);
         memcpy(&(c.body[0]), v, sizeof(double)*nj);
-        command_buffer.write();
+        command_buffer.write(writeStrict);
         return true;
     }
 
@@ -2260,7 +2271,7 @@ public:
 
         memcpy(&(c.body[0]), v, sizeof(double)*nj);
 
-        command_buffer.write();
+        command_buffer.write(writeStrict);
 
         return true;
 
@@ -2275,7 +2286,7 @@ public:
         c.head.addInt(j);
         c.body.size(1);
         memcpy(&(c.body[0]), &ref, sizeof(double));
-        command_buffer.write();
+        command_buffer.write(writeStrict);
         return true;
     }
 
@@ -2291,7 +2302,7 @@ public:
             jointList.addInt(joints[i]);
         c.body.size(n_joint);
         memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
-        command_buffer.write();
+        command_buffer.write(writeStrict);
         return true;
     }
 
@@ -2303,7 +2314,7 @@ public:
         c.head.addVocab(VOCAB_POSITION_DIRECTS);
         c.body.size(nj);
         memcpy(&(c.body[0]), refs, sizeof(double)*nj);
-        command_buffer.write();
+        command_buffer.write(writeStrict);
         return true;
     }
 
@@ -2324,7 +2335,7 @@ public:
             jointList.addInt(joints[i]);
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), spds, sizeof(double)*n_joint);
-        command_buffer.write();
+        command_buffer.write(writeStrict);
         return true;
     }
 
