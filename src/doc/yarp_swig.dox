@@ -251,7 +251,7 @@ ways to find out about these differences are:
  - Via your language's introspection features.
  - By compiling the java or python interfaces, and then run javadoc
 or pydoc to build a browsable form of the API.
- + By reading the <tt>bindings/yarp.i</tt> file.  This is a bit complicated, 
+ - By reading the <tt>bindings/yarp.i</tt> file.  This is a bit complicated, 
    but powerful because you'll
    learn how to fix things if you run into problems.  See http://www.swig.org
    for documentation on the syntax of this file.
