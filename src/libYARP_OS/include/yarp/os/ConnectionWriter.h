@@ -10,7 +10,7 @@
 #ifndef _YARP2_CONNECTIONWRITER_
 #define _YARP2_CONNECTIONWRITER_
 
-#include <yarp/os/api.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/conf/numeric.h>
 
 namespace yarp {
@@ -167,6 +167,12 @@ public:
      *
      */
     virtual SizedWriter *getBuffer() = 0;
+
+
+    virtual void appendRawString(const ConstString& str) {
+        appendInt(str.length());
+        appendBlock((char*)str.c_str(),str.length());
+    }
 
     /**
      *
