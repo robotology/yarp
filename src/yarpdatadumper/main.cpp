@@ -101,6 +101,10 @@ by the \ref dataDumper.
   assumed. The leading forward slash will be added if not
   provided.
  
+--dir \e dirname 
+- The parameter \e dirname serves to specify a different storage 
+  directory.
+ 
 --type \e datatype 
 - The parameter \e datatype selects the type of items to be 
   stored. It can be \e bottle, \e image or \e video; if not
@@ -669,34 +673,30 @@ public:
         else
             type=bottle;
 
-        if (rf.check("downsample"))
-            dwnsample=rf.find("downsample").asInt();
-        else
-            dwnsample=1;
-
-        if (rf.check("rxTime"))
-            rxTime=true;
-        else
-            rxTime=false;
-
-        char dirName[255];
-        bool proceed=true;
+        dwnsample=rf.check("downsample",Value(1)).asInt();
+        rxTime=rf.check("rxTime");
+        string templateDirName=rf.check("dir")?rf.find("dir").asString().c_str():portName;
+        string dirName;
 
         // look for a proper directory
-        for (int i=0; proceed; i++)
-        {
-            if (i)
-                sprintf(dirName,"./%s_%.5d",portName,i);
+        int i=0;
+        char checkDirName[255];
+        do
+        {            
+            if (i>0)
+                sprintf(checkDirName,"./%s_%.5d",templateDirName.c_str(),i);
             else
-                sprintf(dirName,"./%s",portName);
+                sprintf(checkDirName,"./%s",templateDirName.c_str());
 
-            proceed=!yarp::os::stat(dirName);
+            dirName=checkDirName;
+            i++;
         }
+        while (!yarp::os::stat(dirName.c_str()));
 
-        createFullPath(dirName);
+        createFullPath(dirName.c_str());
 
         q=new DumpQueue();
-        t=new DumpThread(type,*q,dirName,100,saveData,videoOn);
+        t=new DumpThread(type,*q,dirName.c_str(),100,saveData,videoOn);
 
         if (!t->start())
         {
