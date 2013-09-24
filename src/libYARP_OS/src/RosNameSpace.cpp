@@ -141,6 +141,22 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
             bool ok = NetworkBase::write(getNameServerContact(),
                                          cmd, reply);
             if (!ok) return Contact();
+            if (cat=="-") {
+                Bottle *publishers = reply.get(2).asList();
+                if (publishers && publishers->size()>=1) {
+                    cmd.clear();
+                    cmd.addString("publisherUpdate");
+                    cmd.addString("/yarp/RosNameSpace");
+                    cmd.addString(nc.getNestedName());
+                    cmd.addList() = *publishers;
+                    //printf("SENDING %s to %s\n", cmd.toString().c_str(),
+                    //contact.toURI().c_str());
+                    ContactStyle style;
+                    style.admin = true;
+                    ok = NetworkBase::write(contact, cmd, reply, style);
+                    //printf("REPLY %s\n", reply.toString().c_str());
+                }
+            }
         }
         return contact;
     }

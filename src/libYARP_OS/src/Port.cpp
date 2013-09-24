@@ -585,12 +585,18 @@ bool Port::addOutput(const Contact& contact) {
     PortCoreAdapter& core = HELPER(implementation);
     if (core.isInterrupted()) return false;
     core.alertOnWrite();
+    ConstString name;
+    if (contact.getPort()<=0) {
+        name = contact.toString();
+    } else {
+        name = contact.toURI();
+    }
     if (!core.isListening()) {
-        return core.addOutput(contact.toString().c_str(),NULL,NULL,true);
+        return core.addOutput(name.c_str(),NULL,NULL,true);
     }
     Contact me = where();
     return NetworkBase::connect(me.getName().c_str(),
-                                contact.toString().c_str());
+                                name.c_str());
 }
 
 

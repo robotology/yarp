@@ -688,7 +688,7 @@ bool NetworkBase::write(const Contact& contact,
         if (style.carrier!="") {
             ec = ec.addCarrier(style.carrier);
         }
-        if (!port.addOutput(ec.toString().c_str())) {
+        if (!port.addOutput(ec)) {
             if (!style.quiet) {
                 ACE_OS::fprintf(stderr, "Cannot make connection to '%s'\n",
                                 ec.toString().c_str());
