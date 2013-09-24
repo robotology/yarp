@@ -200,10 +200,12 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
 #ifdef FORCE_ROS_NATIVE
     kind = "";
 #endif
+    /*
     if (kind!="") {
         twiddler.configure(kind.c_str());
         translate = TCPROS_TRANSLATE_TWIDDLER;
     }
+    */
 
     if (header.data.find("callerid")!=header.data.end()) {
         proto.setRoute(proto.getRoute().addFromName(header.data["callerid"].c_str()));
@@ -239,15 +241,17 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     SizedWriter *flex_writer = &writer;
 
 
+    ConstString typ = proto.getContactable()->getType().getName();
     if (raw!=2) {
         // At startup, we check for what kind of messages are going
         // through, and prepare an appropriate byte-rejiggering if
         // needed.
         if (translate==TCPROS_TRANSLATE_UNKNOWN) {
             dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
-            FlexImage *img = NULL; //
-            // wi.checkForImage(writer);
-            // inhibit image conversion
+            FlexImage *img = NULL;
+            if (typ=="yarp/image") {
+                img = wi.checkForImage(writer);
+            }
             if (img) {
                 translate = TCPROS_TRANSLATE_IMAGE;
                 ConstString frame = "/frame";

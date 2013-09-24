@@ -114,8 +114,10 @@ Contact RosNameSpace::registerName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
-    NestedContact nc;
-    nc.fromString(contact.getName());
+    NestedContact nc = contact.getNested();
+    if (nc.getNestedName()=="") {
+        nc.fromString(contact.getName());
+    }
     ConstString cat = nc.getCategory();
     if (nc.getNestedName()!="") {
         if (cat == "+" || cat== "-") {
@@ -124,7 +126,14 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
             cmd.addString((cat=="+")?"registerPublisher":"registerSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(nc.getNestedName());
-            cmd.addString(nc.getTypeNameStar());
+            ConstString typ = nc.getTypeNameStar();
+            if (typ!="*") {
+                // remap some basic native YARP types
+                if (typ=="yarp/image") {
+                    typ = "sensor_msgs/Image";
+                }
+            }
+            cmd.addString(typ);
             Nodes& nodes = NameClient::getNameClient().getNodes();
             Contact c = rosify(nodes.getParent(contact.getName()));
             //Contact c = rosify(contact);
