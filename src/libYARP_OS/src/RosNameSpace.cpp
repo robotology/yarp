@@ -18,6 +18,8 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+#define dbg_printf if (0) printf
+
 RosNameSpace::RosNameSpace(const Contact& contact) : mutex(1) {
     this->contact = contact;
 }
@@ -616,6 +618,7 @@ void RosNameSpace::run() {
             Bottle curr = *bot;
             mutex.post();
 
+            dbg_printf("ROS connection begins: %s\n", curr.toString().c_str());
             ContactStyle style;
             style.admin = true;
             style.carrier = "tcp";
@@ -624,6 +627,7 @@ void RosNameSpace::run() {
             contact = contact.addName("");
             Bottle reply;
             NetworkBase::write(contact, cmd, reply, style);
+            dbg_printf("ROS connection ends: %s\n", curr.toString().c_str());
             
             mutex.wait();
             pending = pending.tail();

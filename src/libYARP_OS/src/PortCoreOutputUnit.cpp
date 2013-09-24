@@ -151,8 +151,7 @@ void PortCoreOutputUnit::closeBasic() {
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
                 //     op->getRoute().toString().c_str());
-                op->write(buf);
-                waitForOther = true;
+                waitForOther = op->write(buf);
             }
         }
 
