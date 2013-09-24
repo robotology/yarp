@@ -470,21 +470,23 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             s += v->toString();
             s += "/quit";
         }
-        terminee = new Terminee(s.c_str());
-        terminatorKey = s.c_str();
-        if (terminee == 0) {
-            printf("Can't allocate terminator port\n");
-            terminatorKey = "";
-            dd.close();
-            return 1;
-        }
-        if (!terminee->isOk()) {
-            printf("Failed to create terminator port\n");
-            terminatorKey = "";
-            delete terminee;
-            terminee = NULL;
-            dd.close();
-            return 1;
+        if (s.find("=") == ConstString::npos) {
+            terminee = new Terminee(s.c_str());
+            terminatorKey = s.c_str();
+            if (terminee == 0) {
+                printf("Can't allocate terminator port\n");
+                terminatorKey = "";
+                dd.close();
+                return 1;
+            }
+            if (!terminee->isOk()) {
+                printf("Failed to create terminator port\n");
+                terminatorKey = "";
+                delete terminee;
+                terminee = NULL;
+                dd.close();
+                return 1;
+            }
         }
     }
 
@@ -501,7 +503,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             service = NULL;
         }
     }
-    while (dd.isValid() && !(terminated||terminee->mustQuit())) {
+    while (dd.isValid() && !(terminated||(terminee&&terminee->mustQuit()))) {
         if (service!=NULL) {
             double now = Time::now();
             if (now-startTime>dnow) {
@@ -522,7 +524,10 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         }
     }
 
-    delete terminee;
+    if (terminee) {
+        delete terminee;
+        terminee = NULL;
+    }
     dd.close();
 
     if (yarp_show_info()) {
