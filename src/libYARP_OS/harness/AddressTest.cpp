@@ -71,6 +71,13 @@ public:
         Contact c5 = Contact::fromString("ziggy:/my/url");
         checkEqual(c5.getCarrier().c_str(),"ziggy","good carrier");
         checkEqual(c5.getName().c_str(),"/my/url","good port name");
+
+        report(0,"checking Contact wrapper on short url");
+        Contact c6 = Contact::fromString("tcp://192.168.1.3:43705");
+        checkEqual(c6.getCarrier().c_str(),"tcp","good carrier");
+        checkEqual(c6.getHost().c_str(),"192.168.1.3","good hostname");
+        checkEqual(c6.getPort(),43705,"good port number");
+        checkEqual(c6.getName().c_str(),"/192.168.1.3:43705","good port name");
     }
 
     virtual void runTests() {

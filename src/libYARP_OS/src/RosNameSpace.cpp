@@ -18,7 +18,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-RosNameSpace::RosNameSpace(const Contact& contact) {
+RosNameSpace::RosNameSpace(const Contact& contact) : mutex(1) {
     this->contact = contact;
 }
 
@@ -145,16 +145,25 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
                 Bottle *publishers = reply.get(2).asList();
                 if (publishers && publishers->size()>=1) {
                     cmd.clear();
+                    cmd.addString(contact.toURI());
                     cmd.addString("publisherUpdate");
                     cmd.addString("/yarp/RosNameSpace");
                     cmd.addString(nc.getNestedName());
                     cmd.addList() = *publishers;
-                    //printf("SENDING %s to %s\n", cmd.toString().c_str(),
-                    //contact.toURI().c_str());
-                    ContactStyle style;
-                    style.admin = true;
-                    ok = NetworkBase::write(contact, cmd, reply, style);
-                    //printf("REPLY %s\n", reply.toString().c_str());
+
+                    mutex.wait();
+                    bool need_start = false;
+                    if (pending.size()==0) {
+                        mutex.post();
+                        stop();
+                        need_start = true;
+                        mutex.wait();
+                    }
+                    pending.addList() = cmd;
+                    if (need_start) {
+                        start();
+                    }
+                    mutex.post();
                 }
             }
         }
@@ -593,3 +602,34 @@ Contact RosNameSpace::rosify(const Contact& contact) {
     return Contact::bySocket("http",contact.getHost().c_str(),
                              contact.getPort());
 }
+
+
+void RosNameSpace::run() {
+    int pct = 0;
+    do {
+        mutex.wait();
+        pct = pending.size();
+        mutex.post();
+        if (pct>0) {
+            mutex.wait();
+            Bottle *bot = pending.get(0).asList();
+            Bottle curr = *bot;
+            mutex.post();
+
+            ContactStyle style;
+            style.admin = true;
+            style.carrier = "tcp";
+            Bottle cmd = curr.tail();
+            Contact contact = Contact::fromString(curr.get(0).asString());
+            contact = contact.addName("");
+            Bottle reply;
+            NetworkBase::write(contact, cmd, reply, style);
+            
+            mutex.wait();
+            pending = pending.tail();
+            pct = pending.size();
+            mutex.post();            
+        }
+    } while (pct>0);
+}
+
