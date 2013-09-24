@@ -226,6 +226,7 @@ public:
     virtual void setWriteOnly() {}
 
     virtual Type getType() = 0;
+    virtual void promiseType(const Type& typ) = 0;
 
     virtual Property *acquireProperties(bool readOnly) = 0;
     virtual void releaseProperties(Property *prop) = 0;

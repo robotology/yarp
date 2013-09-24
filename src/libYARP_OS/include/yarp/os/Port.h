@@ -261,6 +261,7 @@ public:
     int getVerbosity();
 
     virtual Type getType();
+    virtual void promiseType(const Type& typ);
 
     virtual void setReadOnly();
 

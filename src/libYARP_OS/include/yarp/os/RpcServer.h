@@ -137,6 +137,8 @@ public:
 
     virtual Type getType();
 
+    virtual void promiseType(const Type& typ);
+
     virtual Property *acquireProperties(bool readOnly);
     virtual void releaseProperties(Property *prop);
 

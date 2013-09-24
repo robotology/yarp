@@ -314,6 +314,12 @@ public:
         stateMutex.post();
         return t;
     }
+
+    void promiseType(const Type& typ) {
+        stateMutex.wait();
+        this->typ = typ;
+        stateMutex.post();
+    }
 };
 
 // implementation is a PortCoreAdapter
@@ -472,6 +478,13 @@ bool Port::open(const Contact& contact, bool registerName,
                                           address.getHost(),
                                           address.getPort());
             contact2 = contact2.addName(address.getRegName().c_str());
+            ConstString typ = getType().getName();
+            if (typ!="") {
+                NestedContact nc;
+                nc.fromString(contact2.getName());
+                nc.setTypeName(typ);
+                contact2.setNested(nc);
+            }
             Contact newName = NetworkBase::registerContact(contact2);
             core.resetPortName(newName.getName());
             address = core.getAddress();
@@ -760,6 +773,10 @@ int Port::getVerbosity() {
 
 Type Port::getType() {
     return HELPER(implementation).getType();
+}
+
+void Port::promiseType(const Type& typ) {
+    HELPER(implementation).promiseType(typ);
 }
 
 void Port::setReadOnly() {

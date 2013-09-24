@@ -104,6 +104,10 @@ yarp::os::Type yarp::os::RpcClient::getType() {
     return port.getType();
 }
 
+void yarp::os::RpcClient::promiseType(const Type& typ) {
+    port.promiseType(typ);
+}
+
 
 yarp::os::Property *yarp::os::RpcClient::acquireProperties(bool readOnly) {
     return port.acquireProperties(readOnly);

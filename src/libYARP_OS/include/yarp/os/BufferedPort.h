@@ -296,6 +296,10 @@ public:
         return port.getType();
     }
 
+    virtual void promiseType(const Type& typ) {
+        port.promiseType(typ);
+    }
+
     virtual void setReadOnly() {
         port.setReadOnly();
     }
