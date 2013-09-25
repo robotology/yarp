@@ -625,7 +625,9 @@ public:
             }
         }
 
-        if ((locs & ResourceFinderOptions::ClassicContext) && !useNearMain) {
+        if ((locs & ResourceFinderOptions::ClassicContext) && 
+            (!useNearMain) && 
+            root != "") {
             ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
             Bottle defCaps =
