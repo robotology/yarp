@@ -16,8 +16,9 @@
   a factor n, i.e. the parameter n specifies how many
   items (bottles or images) shall be skipped after one
   acquisition.">downsample</param>
-		<switch default="off" required="no" desc="If this option is on,the time of the
+		<switch default="off" required="no" desc="If this option is on, the time of the
   receiving machine on which the service is running will be used as time stamp for saved data instead of the sender time.">rxTime</switch>
+   	    <param required="no" desc="Optional parameter that specifies the storage directory explicitely.">dir</param>
 	</arguments>
 			
 	<authors>

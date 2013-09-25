@@ -102,8 +102,8 @@ by the \ref dataDumper.
   provided.
  
 --dir \e dirname 
-- The parameter \e dirname serves to specify a different storage 
-  directory.
+- The parameter \e dirname serves to specify the storage directory
+  explicitely.
  
 --type \e datatype 
 - The parameter \e datatype selects the type of items to be 
