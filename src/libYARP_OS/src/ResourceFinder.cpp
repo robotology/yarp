@@ -306,6 +306,10 @@ public:
             setVerbose(p.check("verbose",Value(1)).asInt());
         }
 
+        if (isVerbose()) {
+            fprintf(RTARGET,"||| configuring\n");
+        }
+
         ConstString name = "";
         if (policyName!=NULL) {
             name = policyName;
@@ -879,9 +883,6 @@ ResourceFinder::~ResourceFinder() {
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
                                bool skipFirstArgument) {
     isConfiguredFlag = true;
-    if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| configuring\n");
-    }
     return HELPER(implementation).configure(config,policyName,argc,argv,
                                             skipFirstArgument);
 }
