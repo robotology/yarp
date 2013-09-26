@@ -23,10 +23,13 @@ int __dummy_symbol_yarp_os_conststring = 1;
 using namespace yarp::os;
 
 
-// implementation is a std::string
-#define HELPER(x) (*((std::string*)(x)))
 
 size_t ConstString::npos = std::string::npos;
+
+#ifndef YARP_WRAP_STL_STRING_INLINE
+
+ // implementation is a std::string
+#define HELPER(x) (*((std::string*)(x)))
 
 ConstString::ConstString() {
     implementation = new std::string();
@@ -190,8 +193,14 @@ ConstString& ConstString::assign(const char *s, size_t n) {
     return *this;
 }
 
+#endif
+
 unsigned long ConstString::hash() const {
+#ifndef YARP_WRAP_STL_STRING_INLINE
     std::string& x = HELPER(implementation);
+#else
+    const std::string& x = s;
+#endif
     unsigned long h = 0;
     for (size_t i=0; i<x.length(); i++) {
         unsigned char ch = x[i];
