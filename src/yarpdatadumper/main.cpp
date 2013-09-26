@@ -105,6 +105,10 @@ by the \ref dataDumper.
 - The parameter \e dirname serves to specify the storage directory
   explicitely.
  
+--overwrite 
+- If this option is specified, then a pre-existing storage 
+  directory will be overwritten.
+ 
 --type \e datatype 
 - The parameter \e datatype selects the type of items to be 
   stored. It can be \e bottle, \e image or \e video; if not
@@ -678,20 +682,25 @@ public:
         string templateDirName=rf.check("dir")?rf.find("dir").asString().c_str():portName;
         string dirName;
 
-        // look for a proper directory
-        int i=0;
-        char checkDirName[255];
-        do
-        {            
-            if (i>0)
-                sprintf(checkDirName,"./%s_%.5d",templateDirName.c_str(),i);
-            else
-                sprintf(checkDirName,"./%s",templateDirName.c_str());
-
-            dirName=checkDirName;
-            i++;
+        if (rf.check("overwrite"))
+            dirName="./"+templateDirName;
+        else
+        {
+            // look for a proper directory
+            int i=0;
+            char checkDirName[255];
+            do
+            {
+                if (i>0)
+                    sprintf(checkDirName,"./%s_%.5d",templateDirName.c_str(),i);
+                else
+                    sprintf(checkDirName,"./%s",templateDirName.c_str());
+            
+                dirName=checkDirName;
+                i++;
+            }
+            while (!yarp::os::stat(dirName.c_str()));
         }
-        while (!yarp::os::stat(dirName.c_str()));
 
         createFullPath(dirName.c_str());
 

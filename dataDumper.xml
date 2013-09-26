@@ -19,6 +19,7 @@
 		<switch default="off" required="no" desc="If this option is on, the time of the
   receiving machine on which the service is running will be used as time stamp for saved data instead of the sender time.">rxTime</switch>
    	    <param required="no" desc="Optional parameter that specifies the storage directory explicitely.">dir</param>
+		<switch default="off" required="no" desc="If this option is specified, then a pre-existing storage location will be overwritten.">overwrite</switch>	
 	</arguments>
 			
 	<authors>
