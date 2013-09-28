@@ -260,6 +260,17 @@ public:
      */
     int getVerbosity();
 
+    virtual Type getType();
+    virtual void promiseType(const Type& typ);
+
+    virtual void setReadOnly();
+
+    virtual void setWriteOnly();
+
+    virtual Property *acquireProperties(bool readOnly);
+
+    virtual void releaseProperties(Property *prop);
+
 private:
     void *implementation;
 

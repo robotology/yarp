@@ -28,6 +28,7 @@ using namespace yarp::os;
 
 
 NameClient *NameClient::instance = NULL;
+bool NameClient::instanceClosed = false;
 
 
 
@@ -414,7 +415,6 @@ NameClient::NameClient() {
     allowSaveScan = false;
     reportScan = false;
     reportSaveScan = false;
-    process = NetType::toString(ACE_OS::getpid());
     isSetup = false;
     fake = false;
     fakeServer = NULL;

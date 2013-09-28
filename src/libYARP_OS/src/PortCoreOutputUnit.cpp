@@ -151,8 +151,7 @@ void PortCoreOutputUnit::closeBasic() {
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
                 //     op->getRoute().toString().c_str());
-                op->write(buf);
-                waitForOther = true;
+                waitForOther = op->write(buf);
             }
         }
 
@@ -160,7 +159,9 @@ void PortCoreOutputUnit::closeBasic() {
             route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getToName()).isRooted()) {
-            YARP_INFO(Logger::get(), msg);
+            if (Name(route.getFromName()).isRooted()) {
+                YARP_INFO(Logger::get(), msg);
+            }
         }
 
         getOwner().reportUnit(this,false);

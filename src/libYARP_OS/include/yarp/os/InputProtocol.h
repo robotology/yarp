@@ -22,6 +22,7 @@ namespace yarp {
     namespace os {
         class InputProtocol;
         class OutputProtocol;
+        class Contactable;
     }
 }
 
@@ -57,6 +58,8 @@ public:
     virtual void setEnvelope(const ConstString& str) = 0;
 
     virtual bool setTimeout(double timeout) = 0;
+
+    virtual void attachPort(Contactable *port) = 0;
 };
 
 #endif

@@ -504,7 +504,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             */
             if (closed||(result<0)) {
                 happy = false;
-                return result;
+                return -1;
             }
             readAvail = result;
             

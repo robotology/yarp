@@ -100,6 +100,8 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     canDrop = !config.check("no_drop","if present, use strict policy for sending data");
     addStamp = config.check("stamp","if present, add timestamps to data");
 
+    p.promiseType(Type::byName("yarp/image")); // TODO: reflect audio options
+    p.setWriteOnly();
     p.open(config.check("name",Value("/grabber"),
                         "name of port to send data on").asString());
 

@@ -10,6 +10,7 @@
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Vocab.h>
@@ -17,7 +18,9 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-RosNameSpace::RosNameSpace(const Contact& contact) {
+#define dbg_printf if (0) printf
+
+RosNameSpace::RosNameSpace(const Contact& contact) : mutex(1) {
     this->contact = contact;
 }
 
@@ -68,7 +71,6 @@ Contact RosNameSpace::queryName(const ConstString& name) {
     // we need to go a step further and find a service
 
     contact = contact.addName("");
-    //printf("Working with %s\n", contact.toString().c_str());
     Bottle req;
     reply.clear();
     req.addString("requestTopic");
@@ -114,6 +116,64 @@ Contact RosNameSpace::registerName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
+    NestedContact nc = contact.getNested();
+    if (nc.getNestedName()=="") {
+        nc.fromString(contact.getName());
+    }
+    ConstString cat = nc.getCategory();
+    if (nc.getNestedName()!="") {
+        if (cat == "+" || cat== "-") {
+            Bottle cmd, reply;
+            cmd.clear();
+            cmd.addString((cat=="+")?"registerPublisher":"registerSubscriber");
+            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(nc.getNestedName());
+            ConstString typ = nc.getTypeNameStar();
+            if (typ!="*") {
+                // remap some basic native YARP types
+                if (typ=="yarp/image") {
+                    typ = "sensor_msgs/Image";
+                }
+            }
+            cmd.addString(typ);
+            Nodes& nodes = NameClient::getNameClient().getNodes();
+            Contact c = rosify(nodes.getParent(contact.getName()));
+            //Contact c = rosify(contact);
+            cmd.addString(c.toString());
+            bool ok = NetworkBase::write(getNameServerContact(),
+                                         cmd, reply);
+            if (!ok) return Contact();
+            if (cat=="-") {
+                Bottle *publishers = reply.get(2).asList();
+                if (publishers && publishers->size()>=1) {
+                    cmd.clear();
+                    cmd.addString(contact.toURI());
+                    cmd.addString("publisherUpdate");
+                    cmd.addString("/yarp/RosNameSpace");
+                    cmd.addString(nc.getNestedName());
+                    cmd.addList() = *publishers;
+
+                    mutex.wait();
+                    bool need_start = false;
+                    if (pending.size()==0) {
+                        mutex.post();
+                        stop();
+                        need_start = true;
+                        mutex.wait();
+                    }
+                    pending.addList() = cmd;
+                    if (need_start) {
+                        start();
+                    }
+                    mutex.post();
+                }
+            }
+        }
+        return contact;
+    }
+
+    // Remainder of method is supporting older /name+#/foo syntax
+
     ConstString full = contact.getName();
     ConstString name = full;
     size_t pub_idx = name.find("+#");
@@ -146,12 +206,10 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
         cmd.clear();
         cmd.addString("registerPublisher");
         cmd.addString(toRosNodeName(node));
-        //cmd.addString(toRosNodeName(contact.getName().c_str()));
         cmd.addString("/yarp/registration");
         cmd.addString("*");
         Contact c = rosify(contact);
         cmd.addString(c.toString());
-        //printf("Writing to %s\n",getNameServerContact().toString().c_str());
         bool ok = NetworkBase::write(getNameServerContact(),
                                      cmd, reply);
         if (!ok) return Contact();
@@ -164,102 +222,33 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
         NetworkBase::connect(ConstString("topic:/") + sub, node);
     }
 
-    /*
-    // There's a mismatch in how topics work in YARP and ROS.
-    // For YARP, pubs/subs to topics are usually managed
-    // externally, whereas ROS expects them to be set up
-    // in source code.  Hence, YARP ports need a way to
-    // remember topic pub/subs across restarts, since
-    // the name server doesn't expect to manage them.
-    //
-    // Workaround: when unregistering, we don't "clean
-    // up" pub/subs for YARP ports, and when reregistering,
-    // we capture and reaffirm those old pub/subs (otherwise
-    // roscore deletes them)
-
-    Bottle cmd, reply, state;
-    cmd.addString("getSystemState");
-    cmd.addString(contact.getName().c_str());
-    bool ok = NetworkBase::write(getNameServerContact(),
-                                 cmd, state);
-    if (!ok) {
-        return Contact();
-    }
-    YARP_SPRINTF2(Logger::get(),debug,
-                  "ROS registration: sent %s, got %s",
-                  cmd.toString().c_str(),
-                  state.toString().c_str());
-    // for ROS, we fake port name registrations by
-    // registering them as nodes that publish to an arbitrary
-    // topic
-    cmd.clear();
-    cmd.addString("registerPublisher");
-    cmd.addString(contact.getName().c_str());
-    cmd.addString("/yarp/registration");
-    cmd.addString("*");
-    Contact c = rosify(contact);
-    cmd.addString(c.toString());
-    //printf("Writing to %s\n",getNameServerContact().toString().c_str());
-    ok = NetworkBase::write(getNameServerContact(),
-                            cmd, reply);
-    if (!ok) return Contact();
-    YARP_SPRINTF2(Logger::get(),debug,
-                  "ROS registration: sent %s, got %s",
-                  cmd.toString().c_str(),
-                  reply.toString().c_str());
-
-    // recover pubs/subs
-    Bottle *lst = state.get(2).asList();
-    if (lst!=NULL) {
-        Bottle *pubs = lst->get(0).asList();
-        Bottle *subs = lst->get(1).asList();
-        if (pubs!=NULL && subs!=NULL) {
-            YARP_SPRINTF1(Logger::get(),debug,
-                          "  pubs: %s",
-                          pubs->toString().c_str());
-            YARP_SPRINTF1(Logger::get(),debug,
-                          "  subs: %s",
-                          subs->toString().c_str());
-            for (int i=0; i<pubs->size();i++) {
-                Bottle *pub = pubs->get(i).asList();
-                if (pub==NULL) continue;
-                ConstString key = pub->get(0).asString();
-                //if (key=="yarp") continue;
-                Bottle *item = pub->get(1).asList();
-                if (item==NULL) continue;
-                for (int j=0; j<item->size(); j++) {
-                    if (item->get(j).asString()==contact.getName()) {
-                        YARP_SPRINTF1(Logger::get(),debug,
-                                      "  pub match: %s",
-                                      key.c_str());
-                        NetworkBase::connect(contact.getName(),ConstString("topic:/") + key);
-                    }
-                }
-            }
-            for (int i=0; i<subs->size();i++) {
-                Bottle *sub = subs->get(i).asList();
-                if (sub==NULL) continue;
-                ConstString key = sub->get(0).asString();
-                //if (key=="yarp") continue;
-                Bottle *item = sub->get(1).asList();
-                if (item==NULL) continue;
-                for (int j=0; j<item->size(); j++) {
-                    if (item->get(j).asString()==contact.getName()) {
-                        YARP_SPRINTF1(Logger::get(),debug,
-                                      "  sub match: %s",
-                                      key.c_str());
-                        NetworkBase::connect(ConstString("topic:/") + key,contact.getName());
-                    }
-                }
-            }
-        }
-    }
-    */
-
     return contact.addName(node);
 }
 
 Contact RosNameSpace::unregisterName(const ConstString& rname) {
+    NestedContact nc;
+    nc.fromString(rname);
+    ConstString cat = nc.getCategory();
+
+    if (nc.getNestedName()!="") {
+        if (cat == "+" || cat== "-") {
+            Bottle cmd, reply;
+            cmd.clear();
+            cmd.addString((cat=="+")?"unregisterPublisher":"unregisterSubscriber");
+            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(nc.getNestedName());
+            Nodes& nodes = NameClient::getNameClient().getNodes();
+            Contact c = rosify(nodes.getParent(rname));
+            cmd.addString(c.toString());
+            bool ok = NetworkBase::write(getNameServerContact(),
+                                         cmd, reply);
+            if (!ok) return Contact();
+        }
+        return Contact();
+    }
+
+    // Remainder of method is supporting older /name+#/foo syntax
+
     ConstString full = rname;
     ConstString name = full;
     size_t pub_idx = name.find("+#");
@@ -271,12 +260,10 @@ Contact RosNameSpace::unregisterName(const ConstString& rname) {
     if (pub_idx!=ConstString::npos) {
         node = name.substr(0,pub_idx);
         pub = name.substr(pub_idx+2,name.length());
-        //printf("Publish to %s\n",pub.c_str());
     }
     if (sub_idx!=ConstString::npos) {
         node = name.substr(0,sub_idx);
         sub = name.substr(sub_idx+2,name.length());
-        //printf("Subscribe to %s\n",sub.c_str());
     }
     if (node=="") {
         node = name;
@@ -299,16 +286,16 @@ Contact RosNameSpace::unregisterName(const ConstString& rname) {
     Contact c = Contact::bySocket("http",contact.getHost().c_str(),
                                   contact.getPort());
     cmd.addString(c.toString());
-    //printf("Writing to %s\n",getNameServerContact().toString().c_str());
     bool ok = NetworkBase::write(getNameServerContact(),
                                  cmd, reply);
     if (!ok) return Contact();
-    //printf("unregistration: sent %s, got %s\n", cmd.toString().c_str(), reply.toString().c_str());
 
     return Contact();
 }
 
 Contact RosNameSpace::unregisterContact(const Contact& contact) {
+    // Remainder of method is supporting older /name+#/foo syntax
+
     Bottle cmd,reply;
     cmd.addString("unregisterSubscriber");
     cmd.addString(contact.getName());
@@ -316,11 +303,9 @@ Contact RosNameSpace::unregisterContact(const Contact& contact) {
     Contact c = Contact::bySocket("http",contact.getHost().c_str(),
                                   contact.getPort());
     cmd.addString(c.toString());
-    //printf("Writing to %s\n",getNameServerContact().toString().c_str());
     bool ok = NetworkBase::write(getNameServerContact(),
                                  cmd, reply);
     if (!ok) return Contact();
-    //printf("unregistration: sent %s, got %s\n", cmd.toString().c_str(), reply.toString().c_str());
     return Contact();
 }
 
@@ -433,7 +418,6 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
                 cmd2.addString("/yarp");
                 cmd2.addString(dynamicSrc.getName());
                 cmd2.addList() = *lst;
-                //printf("ACTIVE REGISTRATION: %s\n", cmd2.toString().c_str());
                 NetworkBase::write(dynamicDest,
                                     cmd2,
                                     reply,
@@ -564,7 +548,6 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
                 }
             }
         }
-        //if (parts) out.append(*parts);
         out.write(reply);
     }
 
@@ -621,3 +604,36 @@ Contact RosNameSpace::rosify(const Contact& contact) {
     return Contact::bySocket("http",contact.getHost().c_str(),
                              contact.getPort());
 }
+
+
+void RosNameSpace::run() {
+    int pct = 0;
+    do {
+        mutex.wait();
+        pct = pending.size();
+        mutex.post();
+        if (pct>0) {
+            mutex.wait();
+            Bottle *bot = pending.get(0).asList();
+            Bottle curr = *bot;
+            mutex.post();
+
+            dbg_printf("ROS connection begins: %s\n", curr.toString().c_str());
+            ContactStyle style;
+            style.admin = true;
+            style.carrier = "tcp";
+            Bottle cmd = curr.tail();
+            Contact contact = Contact::fromString(curr.get(0).asString());
+            contact = contact.addName("");
+            Bottle reply;
+            NetworkBase::write(contact, cmd, reply, style);
+            dbg_printf("ROS connection ends: %s\n", curr.toString().c_str());
+            
+            mutex.wait();
+            pending = pending.tail();
+            pct = pending.size();
+            mutex.post();            
+        }
+    } while (pct>0);
+}
+

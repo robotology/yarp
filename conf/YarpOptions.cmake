@@ -209,12 +209,16 @@ endif(YARP_EXPERIMENTAL_CXX11)
 # yarp::os::ConstString could now be set to std::string, if YARP
 # ever decides to accept STL as a dependency.
 
-set (YARP_WRAP_STL_STRING_DEFAULT FALSE)
-if (MSVC)
-  set (YARP_WRAP_STL_STRING_DEFAULT TRUE)
-endif ()
-option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" ${YARP_WRAP_STL_STRING_DEFAULT})
+
+option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" TRUE)
 mark_as_advanced(YARP_WRAP_STL_STRING)
+set (YARP_WRAP_STL_STRING_INLINE_DEFAULT TRUE)
+if (MSVC)
+  set (YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
+endif ()
+option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT})
+mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
+  
 
 #########################################################################
 # Control compilation of device tests.

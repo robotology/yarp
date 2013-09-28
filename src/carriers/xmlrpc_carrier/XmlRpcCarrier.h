@@ -179,6 +179,9 @@ public:
     }
 
     virtual ConstString getBootstrapCarrierName() { return ""; }
+
+private:
+    bool shouldInterpretRosMessages(ConnectionState& proto);
 };
 
 #endif

@@ -75,15 +75,15 @@ public:
         // a guess "rgb" and "bgr" will work ok.
         yarp::os::ConstString encoding = 
             yarp::os::Vocab::decode(image->getPixelCode()).c_str();
-        buf.appendInt(frame.length());
-        buf.appendString(frame.c_str());
-        buf.appendInt(image->width());
+        if (encoding=="rgb") encoding = "rgb8";
+        if (encoding=="bgr") encoding = "bgr8";
+        buf.appendRawString(frame);
         buf.appendInt(image->height());
-        buf.appendInt(encoding.length());
-        buf.appendString(encoding.c_str());
+        buf.appendInt(image->width());
+        buf.appendRawString(encoding);
         char is_bigendian = 1;
         buf.appendBlock(&is_bigendian,1);
-        buf.appendInt(image->width()+image->getPadding());
+        buf.appendInt((image->width()*3)+image->getPadding());
         buf.appendInt(image->getRawImageSize());
         buf.getBuffer()->write(ss);
         yarp::os::ConstString hdr = ss.toString();
@@ -116,6 +116,7 @@ public:
             break;
         case 2:
             result = image->getRawImageSize();
+            break;
         default:
             result = 0;
             break;

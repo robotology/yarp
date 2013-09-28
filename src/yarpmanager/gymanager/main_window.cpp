@@ -79,26 +79,44 @@ MainWindow::MainWindow( yarp::os::Property &config)
     if(config.check("modpath"))
     {
         string strPath;
-        stringstream modPaths(config.find("modpath").asString().c_str());
-        while (getline(modPaths, strPath, ';'))
+        string modPaths(config.find("modpath").asString().c_str());
+        while (modPaths!="")
         {
+            string::size_type pos=modPaths.find(";");
+            strPath=modPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                strPath = strPath + string(PATH_SEPERATOR);
             lazyManager.addModules(strPath.c_str());
+            if (pos==string::npos || pos==0)
+                break;
+            modPaths=modPaths.substr(pos+1);
         }
     }
 
     if(config.check("respath"))
     {
         string strPath;
-        stringstream resPaths(config.find("respath").asString().c_str());
-        while (getline(resPaths, strPath, ';'))
+        string resPaths(config.find("respath").asString().c_str());
+        while (resPaths!="")
         {
+            string::size_type pos=resPaths.find(";");
+            strPath=resPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
+
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
+            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                strPath = strPath + string(PATH_SEPERATOR);
+
             lazyManager.addResources(strPath.c_str());
+            if (pos==string::npos)
+                break;
+            resPaths=resPaths.substr(pos+1);
         }
     }
 
@@ -106,38 +124,53 @@ MainWindow::MainWindow( yarp::os::Property &config)
 
     if(config.check("apppath"))
     {
-        string strPath;
-        stringstream appPaths(config.find("apppath").asString().c_str());
-        while (getline(appPaths, strPath, ';'))
+               string strPath;
+        string appPaths(config.find("apppath").asString().c_str());
+        while (appPaths!="")
         {
+            string::size_type pos=appPaths.find(";");
+            strPath=appPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
+
+            if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
+                (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+                    strPath = strPath + string(PATH_SEPERATOR);
+
             if(config.find("load_subfolders").asString() == "yes")
             {
                 if(!loadRecursiveApplications(strPath.c_str()))
                     logger->addError("Cannot load the applications from  " + strPath);
-                if(!loadRecursiveTemplates(strPath.c_str()))
-                     logger->addError("Cannot load the templates from  " + strPath);                   
+                loadRecursiveTemplates(strPath.c_str());
             }
             else
-                lazyManager.addApplications(strPath.c_str()); 
+                lazyManager.addApplications(strPath.c_str());
+
+            if (pos==string::npos)
+                break;
+            appPaths=appPaths.substr(pos+1);
         }
     }
 
     if (config.check("templpath"))
     {
         string strPath;
-        stringstream appPaths(config.find("templpath").asString().c_str());
-        while (getline(appPaths, strPath, ';'))
+        string templPaths(config.find("templpath").asString().c_str());
+        while (templPaths!="")
         {
+            string::size_type pos=templPaths.find(";");
+            strPath=templPaths.substr(0, pos);
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
 
             if(!loadRecursiveTemplates(strPath.c_str()))
-                    logger->addError("Cannot load the templates from  " + strPath);                   
+                    logger->addError("Cannot load the templates from  " + strPath);
 
+            if (pos==string::npos)
+                break;
+            templPaths=templPaths.substr(pos+1);
         }
     }
 
@@ -171,7 +204,7 @@ MainWindow::~MainWindow()
     delete m_refMessageList;
 #if (GLIBMM_MAJOR_VERSION == 2 && GLIBMM_MINOR_VERSION >= 16)
     m_factory.reset();
-#endif    
+#endif
 }
 
 void MainWindow::on_size_allocate(Gtk::Allocation& allocation)
@@ -181,7 +214,7 @@ void MainWindow::on_size_allocate(Gtk::Allocation& allocation)
         dummy_h = allocation.get_height();
         m_VPaned.set_position((int)(allocation.get_height()-allocation.get_height()/3.0));
     }
-    
+
     if(m_VPaned.get_position()<50)
         m_VPaned.set_position(50);
 
@@ -317,7 +350,7 @@ void MainWindow::createWidgets(void)
     if(ex.get())
     {
         std::cerr << "building menus failed: " << ex->what();
-    }   
+    }
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 
     Gtk::Widget* pMenubar = m_refUIManager->get_widget("/MenuBar");
@@ -328,7 +361,7 @@ void MainWindow::createWidgets(void)
     {
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
         ((Gtk::Toolbar*)pToolbar)->set_icon_size(Gtk::IconSize(Gtk::ICON_SIZE_SMALL_TOOLBAR));
-#endif        
+#endif
         m_VBox.pack_start(*pToolbar, Gtk::PACK_SHRINK);
     }
 
@@ -380,8 +413,6 @@ void MainWindow::setupSignals(void)
     signal_delete_event().connect(sigc::mem_fun(*this, 
             &MainWindow::onDeleteEvent));
 
-    
-    
 //  signal_expose_event().connect(sigc::mem_fun(*this,
 //            &MainWindow::onExposeEvent) );    
 }
@@ -615,11 +646,11 @@ void MainWindow::reportErrors(void)
 
         while((err=logger->getLastWarning()))
             m_refMessageList->addWarning(err);
-    }   
+    }
 }
 
 bool MainWindow::loadRecursiveTemplates(const char* szPath)
-{       
+{
     string strPath = szPath;
     if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
@@ -650,7 +681,7 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
         }
     }
     closedir(dir);
-    
+
     return true;
 }
 
@@ -695,7 +726,7 @@ void MainWindow::syncApplicationList(void)
         cnt++;
         m_applicationList.addApplication((*itr));
     }
-    
+
     ResourcePContainer resources = kb->getResources();
     for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++)
     {
@@ -768,7 +799,7 @@ void MainWindow::onMenuFileNewApp()
         filter_app.set_name("Application description files (xml)");
         filter_app.add_mime_type("text/xml");
         dialog.add_filter(filter_app);
-        
+
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
             string fname = dialog.get_filename();
@@ -825,7 +856,7 @@ void MainWindow::onMenuFileNewMod()
         filter_app.set_name("Module description files (xml)");
         filter_app.add_mime_type("text/xml");
         dialog.add_filter(filter_app);
-        
+
         if(dialog.run() == Gtk::RESPONSE_OK)
         {
             string fname = dialog.get_filename();
@@ -1093,7 +1124,7 @@ void MainWindow::onPAppMenuLoad()
             ErrorLogger* logger  = ErrorLogger::Instance(); 
             if(m_config.check("external_editor"))
             {
-                 
+
                 LocalBroker launcher;
                 if(launcher.init(m_config.find("external_editor").asString().c_str(),
                                  name.c_str(), NULL, NULL, NULL, NULL))
@@ -1450,7 +1481,7 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
                 bOnFolderItem = true;
        }
             //Do something with the row.
-            
+
         // if it's not a free click
         if(bOnItem && bOnAppItem && (event->button == 3))
         {   
@@ -1486,8 +1517,8 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
                         m_refUIManager->get_widget("/PopupFile"));
             if(pMenu)
                 pMenu->popup(event->button, event->time);          
-        }       
-#else  
+        }
+#else
         // if it's a right click 
         if(event->button == 3)
         {
@@ -1530,7 +1561,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
         ErrorLogger* logger  = ErrorLogger::Instance(); 
         if(m_config.check("external_editor"))
         {
-             
+
             LocalBroker launcher;
             if(launcher.init(m_config.find("external_editor").asString().c_str(),
                              name.c_str(), NULL, NULL, NULL, NULL))
@@ -1549,7 +1580,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
             reportErrors();
         }
     }
-    
+
 }
 
 
@@ -1747,7 +1778,7 @@ void MainWindow::manageModule(const char* szName)
         hb->show_all_children();
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 10)
         m_mainTab.set_tab_reorderable(*pModWnd);
-#endif        
+#endif
         m_mainTab.show_all_children();
         m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
     }

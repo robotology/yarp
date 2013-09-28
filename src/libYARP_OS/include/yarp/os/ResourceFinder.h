@@ -240,8 +240,11 @@ public:
     /**
      *
      * Location where user data files are stored.
-     * If $YARP_DATA_HOME is set, that is returned.
+     * If $YARP_DATA_HOME is set, that is returned.  We do not check
+     * to see if that directory exists.
      * Otherwise:
+     *   (In all the following cases, we attempt to create the directory 
+     *   returned if it does not already exist).
      *   If $XDG_DATA_HOME is set, "yarp" is appended to it after the 
      *   OS-appropriate directory separator, and the result returned.
      *   Otherwise:
@@ -252,7 +255,20 @@ public:
      *     (an OSX-specific case remains to be defined)
      *
      */
-    static ConstString getDataHome();
+    static ConstString getDataHome() {
+        return getDataHomeWithPossibleCreation(true);
+    }
+
+
+    /**
+     *
+     * Variant of getDataHome that will never create the directory
+     * returned.
+     *
+     */
+    static ConstString getDataHomeNoCreate() {
+        return getDataHomeWithPossibleCreation(false);
+    }
 
     /**
      *
@@ -269,7 +285,19 @@ public:
      *     (an OSX-specific case remains to be defined)
      *
      */
-    static ConstString getConfigHome();
+    static ConstString getConfigHome() {
+        return getConfigHomeWithPossibleCreation(true);        
+    }
+
+    /**
+     *
+     * Variant of getConfigHome that will never create the directory
+     * returned.
+     *
+     */
+    static ConstString getConfigHomeNoCreate() {
+        return getConfigHomeWithPossibleCreation(false);        
+    }
 
     /**
      *
@@ -335,6 +363,10 @@ private:
     yarp::os::Property config;
 
     ResourceFinder(Searchable& data, void *implementation);
+
+    static ConstString getDataHomeWithPossibleCreation(bool mayCreate);
+    static ConstString getConfigHomeWithPossibleCreation(bool mayCreate);
+    static ConstString createIfAbsent(bool mayCreate,const ConstString& path);
 };
 
 

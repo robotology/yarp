@@ -43,7 +43,7 @@ public:
     void threadRelease();
 };
 
-extern yarp::os::MpiControlThread MpiControl;
+extern yarp::os::MpiControlThread *MpiControl;
 
 
 

@@ -1704,6 +1704,7 @@ public:
         raw = false;
         env = showEnvelope;
         core.setReader(*this);
+        core.setReadOnly();
         if (core.open(name)) {
             companion_active_port = &core;
             address = core.where();
@@ -1875,15 +1876,16 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
 
 int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
+    port.setWriteOnly();
     if (companion_active_port==NULL) {
         companion_install_handler();
     }
-#ifndef YARP2_WINDOWS
-    companion_unregister_name = name;
-#endif
     if (!port.open(name)) {
         return 1;
     }
+#ifndef YARP2_WINDOWS
+    companion_unregister_name = port.getName();
+#endif
     if (adminMode) {
         port.setAdminMode();
     }

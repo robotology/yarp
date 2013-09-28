@@ -23,6 +23,7 @@ namespace yarp {
      */
     namespace os {
         class Contactable;
+        class Property;
     }
 }
 
@@ -220,6 +221,16 @@ public:
      * @param reader the external reader to use
      */
     virtual void setReader(PortReader& reader) = 0;
+
+    virtual void setReadOnly() {}
+    virtual void setWriteOnly() {}
+
+    virtual Type getType() = 0;
+    virtual void promiseType(const Type& typ) = 0;
+
+    virtual Property *acquireProperties(bool readOnly) = 0;
+    virtual void releaseProperties(Property *prop) = 0;
+
 };
 
 #endif

@@ -21,10 +21,14 @@ using namespace yarp::os;
 /* --------------------------------------- */
 /* MpiControlThread */
 
-yarp::os::MpiControlThread MpiControl;
+yarp::os::MpiControlThread *MpiControl = NULL;
 
 void finalizeMPI(void) {
-    MpiControl.finalize();
+    if (MpiControl) {
+        MpiControl->finalize();
+        delete MpiControl;
+        MpiControl = NULL;
+    }
     int ct = 0;
     int finalized;
     while (ct < 5) {
@@ -78,8 +82,11 @@ bool MpiControlThread::threadInit() {
 /* MpiComm */
 
 MpiComm::MpiComm(ConstString name) : name(name) {
-    if (! MpiControl.isRunning()) {
-        MpiControl.start();
+    if (MpiControl == NULL) {
+        MpiControl = new yarp::os::MpiControlThread;
+    }
+    if (! MpiControl->isRunning()) {
+        MpiControl->start();
     }
 
     // Complicated way of doing comm = MPI_COMM_SELF;

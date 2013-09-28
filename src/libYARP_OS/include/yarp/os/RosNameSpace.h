@@ -13,6 +13,8 @@
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Thread.h>
+#include <yarp/os/Semaphore.h>
 
 #include <stdio.h>
 
@@ -22,7 +24,7 @@ namespace yarp {
     }
 }
 
-class yarp::os::RosNameSpace : public NameSpace {
+class yarp::os::RosNameSpace : public NameSpace, public Thread {
 public:
     RosNameSpace(const Contact& contact);
 
@@ -93,8 +95,12 @@ public:
     static ConstString fromRosNodeName(const ConstString& name);
     static Contact rosify(const Contact& contact);
 
+    virtual void run();
+
 private:
     Contact contact;
+    Bottle pending;
+    Semaphore mutex;
 };
 
 #endif

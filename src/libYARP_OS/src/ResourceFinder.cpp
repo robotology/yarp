@@ -16,6 +16,7 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
@@ -135,10 +136,14 @@ private:
     yarp::os::Property cache;
     bool verbose;
     bool quiet;
+    bool mainActive;
+    bool useNearMain;
 public:
     ResourceFinderHelper() {
         verbose = false;
         quiet = false;
+        mainActive = false;
+        useNearMain = false;
     }
 
     bool addAppName(const char *appName) {
@@ -301,6 +306,10 @@ public:
             setVerbose(p.check("verbose",Value(1)).asInt());
         }
 
+        if (isVerbose()) {
+            fprintf(RTARGET,"||| configuring\n");
+        }
+
         ConstString name = "";
         if (policyName!=NULL) {
             name = policyName;
@@ -351,7 +360,9 @@ public:
                 fprintf(RTARGET,"||| default config file specified as %s\n",
                         from.c_str());
             }
+            mainActive = true;
             ConstString corrected = findFile(config,from.c_str(),NULL);
+            mainActive = false;
             if (corrected!="") {
                 from = corrected;
             }
@@ -573,12 +584,13 @@ public:
             }
             ConstString str = check(getPwd(),resourceType,"",name,isDir,doc,"pwd");
             if (str!="") {
+                if (mainActive) useNearMain = true;
                 addString(output,str);
                 if (justTop) return;
             }
         }
 
-        if (locs & ResourceFinderOptions::NearMainConfig) {
+        if ((locs & ResourceFinderOptions::NearMainConfig) && useNearMain) {
             if (configFilePath!="") {
                 ConstString str = check(configFilePath.c_str(),resourceType,"",name,isDir,doc,"defaultConfigFile path");
                 if (str!="") {
@@ -588,7 +600,34 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::ClassicContext) {
+        if (locs & ResourceFinderOptions::Robot) {
+            ConstString slash = NetworkBase::getDirectorySeparator();
+            bool found = false;
+            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+                                                            &found);
+            if (!found) robot = "default";
+
+            // Nested search to locate robot directory
+            Bottle paths;
+            ResourceFinderOptions opts2;
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(ResourceFinderOptions::User | ResourceFinderOptions::Sysadmin | ResourceFinderOptions::Installed);
+            opts2.resourceType = "robots";
+            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
+            appendResourceType(paths,resourceType);
+            for (int j=0; j<paths.size(); j++) {
+                ConstString str = check(paths.get(j).asString().c_str(),
+                                        "","",
+                                        name,isDir,doc,"robot");
+                if (str!="") {
+                    addString(output,str);
+                    if (justTop) return;
+                }
+            }
+        }
+
+        if ((locs & ResourceFinderOptions::ClassicContext) && 
+            (!useNearMain) && 
+            root != "") {
             ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
             Bottle defCaps =
@@ -615,7 +654,7 @@ public:
             }
         }
 
-        if (locs & ResourceFinderOptions::Context) {
+        if ((locs & ResourceFinderOptions::Context) && !useNearMain) {
             for (int i=0; i<apps.size(); i++) {
                 ConstString app = apps.get(i).asString();
 
@@ -628,6 +667,7 @@ public:
                 ResourceFinderOptions opts2;
                 prependResourceType(app,"contexts");
                 opts2.searchLocations = (ResourceFinderOptions::SearchLocations)ResourceFinderOptions::Default;
+                opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
                 findFileBaseInner(config,app.c_str(),true,allowPathd,paths,opts2,doc,"context");
                 appendResourceType(paths,resourceType);
                 for (int j=0; j<paths.size(); j++) {
@@ -644,7 +684,7 @@ public:
         // check YARP_CONFIG_HOME
         if ((locs & ResourceFinderOptions::User) &&
             (flavor & ResourceFinderOptions::ConfigLike)) {
-            ConstString home = ResourceFinder::getConfigHome();
+            ConstString home = ResourceFinder::getConfigHomeNoCreate();
             if (home!="") {
                 appendResourceType(home,resourceType);
                 ConstString str = check(home.c_str(),"","",name,isDir,
@@ -659,7 +699,7 @@ public:
         // check YARP_DATA_HOME
         if ((locs & ResourceFinderOptions::User) &&
             (flavor & ResourceFinderOptions::DataLike)) {
-            ConstString home = ResourceFinder::getDataHome();
+            ConstString home = ResourceFinder::getDataHomeNoCreate();
             if (home!="") {
                 appendResourceType(home,resourceType);
                 ConstString str = check(home.c_str(),"","",name,isDir,
@@ -736,32 +776,6 @@ public:
                 }
             }
         }
-        
-        if (locs & ResourceFinderOptions::Robot) {
-            ConstString slash = NetworkBase::getDirectorySeparator();
-            bool found = false;
-            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
-                                                            &found);
-            if (!found) robot = "default";
-
-            // Nested search to locate robot directory
-            Bottle paths;
-            ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(ResourceFinderOptions::User | ResourceFinderOptions::Sysadmin | ResourceFinderOptions::Installed);
-            //opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Robot|ResourceFinderOptions::Context|ResourceFinderOptions::ClassicContext|ResourceFinderOptions::NearMainConfig));
-            opts2.resourceType = "robots";
-            findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
-            appendResourceType(paths,resourceType);
-            for (int j=0; j<paths.size(); j++) {
-                ConstString str = check(paths.get(j).asString().c_str(),
-                                        "","",
-                                        name,isDir,doc,"robot");
-                if (str!="") {
-                    addString(output,str);
-                    if (justTop) return;
-                }
-            }
-        }
     }
 
     bool setVerbose(bool verbose) {
@@ -813,15 +827,39 @@ public:
     }
 
     ConstString context2path(Property& config, const ConstString& context ) {
-        ConstString cap =
-            config.check("capability_directory",Value("app")).asString();
-        ConstString path = getPath(root,cap,context,"");
-        if (path.length()>1) {
-            if (path[path.length()-1]=='/') {
-                path = path.substr(0,path.length()-1);
+        if(useNearMain)
+            return configFilePath;
+        else
+        {
+            if (root != "") //configured with policy
+            {
+                ConstString cap =
+                config.check("capability_directory",Value("app")).asString();
+                ConstString path = getPath(root,cap,context,"");
+                if (path.length()>1) {
+                    if (path[path.length()-1]=='/') {
+                        path = path.substr(0,path.length()-1);
+                    }
+                }
+                return path;
             }
+
+            ConstString path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
+
+            if (path.length()>1) {
+                if (path[path.length()-1]=='/') {
+                path = path.substr(0,path.length()-1);
+                }
+            }
+
+            ConstString parentPath=getPath(ResourceFinder::getDataHome(), "contexts", "", "");
+            if(yarp::os::stat(parentPath.c_str()))
+                yarp::os::mkdir(parentPath.c_str());
+
+            if (yarp::os::mkdir(path.c_str()) <0 && errno != EEXIST)
+                fprintf(RTARGET,"||| WARNING  Could not create %s directory\n", path.c_str());
+            return path;
         }
-        return path;
     }
 };
 
@@ -858,9 +896,6 @@ ResourceFinder::~ResourceFinder() {
 bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
                                bool skipFirstArgument) {
     isConfiguredFlag = true;
-    if (HELPER(implementation).isVerbose()) {
-        fprintf(RTARGET,"||| configuring\n");
-    }
     return HELPER(implementation).configure(config,policyName,argc,argv,
                                             skipFirstArgument);
 }
@@ -976,9 +1011,6 @@ ConstString ResourceFinder::getContext() {
 }
 
 ConstString ResourceFinder::getContextPath() {
-        ConstString contextPath=findPath(ConstString("contexts/") + HELPER(implementation).getContext());
-        if (contextPath != "")
-            return contextPath;
     return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());
 }
@@ -998,7 +1030,7 @@ ResourceFinder& ResourceFinder::getResourceFinderSingleton() {
 }
 
 
-ConstString ResourceFinder::getDataHome() {
+ConstString ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate) {
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     ConstString yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
@@ -1006,33 +1038,35 @@ ConstString ResourceFinder::getDataHome() {
     if (yarp_version != "") return yarp_version;
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
                                                           &found);
-    if (found) return xdg_version + slash + "yarp";
+    if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
-        return app_version + slash + "yarp";
+        return createIfAbsent(mayCreate,app_version + slash + "yarp");
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
 #ifdef __APPLE__
     if (home_version != "") {
-        return home_version
-            + slash + "Library"
-            + slash + "Application Support"
-            + slash + "yarp";
+        return createIfAbsent(mayCreate,
+                              home_version
+                              + slash + "Library"
+                              + slash + "Application Support"
+                              + slash + "yarp");
     }
 #endif
     if (home_version != "") {
-        return home_version
-            + slash + ".local"
-            + slash + "share"
-            + slash + "yarp";
+        return createIfAbsent(mayCreate,
+                              home_version
+                              + slash + ".local"
+                              + slash + "share"
+                              + slash + "yarp");
     }
     return "";
 }
 
 
-ConstString ResourceFinder::getConfigHome() {
+ConstString ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate) {
     ConstString slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     ConstString yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
@@ -1040,28 +1074,39 @@ ConstString ResourceFinder::getConfigHome() {
     if (found) return yarp_version;
     ConstString xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
                                                           &found);
-    if (found) return xdg_version + slash + "yarp";
+    if (found) return createIfAbsent(mayCreate,xdg_version + slash + "yarp");
 #ifdef _WIN32
     ConstString app_version = NetworkBase::getEnvironment("APPDATA");
     if (app_version != "") {
-        return app_version + slash + "yarp" + slash + "config";
+        return createIfAbsent(mayCreate,
+                              app_version + slash + "yarp" + slash + "config");
     }
 #endif
 
 #ifdef __APPLE__
-    ConstString home_mac_version= getDataHome();
+    ConstString home_mac_version = getDataHomeNoCreate();
     if (home_mac_version != "") {
-        return home_mac_version
-            + slash + "config";
+        return createIfAbsent(mayCreate,
+                              home_mac_version
+                              + slash + "config");
     }
 #endif
     ConstString home_version = NetworkBase::getEnvironment("HOME");
     if (home_version != "") {
-        return home_version
-            + slash + ".config"
-            + slash + "yarp";
+        return createIfAbsent(mayCreate,
+                              home_version
+                              + slash + ".config"
+                              + slash + "yarp");
     }
     return "";
+}
+
+
+ConstString ResourceFinder::createIfAbsent(bool mayCreate,
+                                           const ConstString& path) {
+    if (!mayCreate) return path;
+    NameConfig::createPath(path,0);
+    return path;
 }
 
 

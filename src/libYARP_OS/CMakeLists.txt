@@ -18,6 +18,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/ConnectionState.h
                  include/yarp/os/ConnectionWriter.h
                  include/yarp/os/ConstString.h
+                 include/yarp/os/Contactables.h
                  include/yarp/os/Contactable.h
                  include/yarp/os/Contact.h
                  include/yarp/os/ContactStyle.h
@@ -50,6 +51,8 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/NetUint32.h
                  include/yarp/os/NetUint64.h
                  include/yarp/os/Network.h
+                 include/yarp/os/Nodes.h
+                 include/yarp/os/Node.h
                  include/yarp/os/NullConnectionReader.h
                  include/yarp/os/NullConnectionWriter.h
                  include/yarp/os/Os.h
@@ -94,6 +97,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Thread.h
                  include/yarp/os/Time.h
                  include/yarp/os/TwoWayStream.h
+                 include/yarp/os/Type.h
                  include/yarp/os/Value.h
                  include/yarp/os/Vocab.h
                  include/yarp/os/Wire.h
@@ -233,6 +237,8 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NetUint32.cpp
                  src/NetUint64.cpp
                  src/Network.cpp
+                 src/Nodes.cpp
+                 src/Node.cpp
                  src/NullConnectionReader.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp

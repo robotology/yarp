@@ -14,6 +14,9 @@ YARP stands for Yet Another Robot Platform.  What is it?
 If data is the bloodstream of your robot, then YARP is
 the circulatory system.
 
+\li Source code: https://github.com/robotology/yarp
+\li File an issue: https://github.com/robotology/yarp/issues/new
+
 More specifically, YARP supports building a robot control system as a
 \ref note_ports "collection of programs" communicating in a
 peer-to-peer way, with an extensible \ref carrier_config "family of connection types" 

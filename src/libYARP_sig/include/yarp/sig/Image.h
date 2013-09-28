@@ -307,6 +307,10 @@ public:
         return data;
     }
 
+    virtual yarp::os::Type getReadType() {
+        return yarp::os::Type::byName("yarp/image");
+    }
+
 protected:
 
     void setPixelCode(int imgPixelCode);

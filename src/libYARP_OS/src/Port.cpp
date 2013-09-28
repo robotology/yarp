@@ -19,6 +19,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/impl/NameClient.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -29,6 +30,7 @@ private:
     Port& owner;
     SemaphoreImpl stateMutex;
     PortReader *readDelegate;
+    PortReader *permanentReadDelegate;
     PortWriter *writeDelegate;
     //PortReaderCreator *readCreatorDelegate;
     bool readResult, readActive, readBackground, willReply, closed, opened;
@@ -37,9 +39,21 @@ private:
     SemaphoreImpl produce, consume, readBlock;
     PortReaderCreator *recReadCreator;
     int recWaitAfterSend;
+    Type typ;
+    bool checkedType;
+    bool usedForRead;
+    bool usedForWrite;
+    bool usedForRpc;
+
 public:
+    bool commitToRead;
+    bool commitToWrite;
+
     PortCoreAdapter(Port& owner) :
-        owner(owner), stateMutex(1), readDelegate(NULL), writeDelegate(NULL),
+        owner(owner), stateMutex(1), 
+        readDelegate(NULL), 
+        permanentReadDelegate(NULL), 
+        writeDelegate(NULL),
         readResult(false),
         readActive(false),
         readBackground(false),
@@ -50,8 +64,15 @@ public:
         dropDue(false),
         produce(0), consume(0), readBlock(1),
         recReadCreator(NULL),
-        recWaitAfterSend(-1)
+        recWaitAfterSend(-1),
+        checkedType(false),
+        usedForRead(false),
+        usedForWrite(false),
+        usedForRpc(false),
+        commitToRead(false),
+        commitToWrite(false)
     {
+        setContactable(&owner);
     }
 
     void openable() {
@@ -59,6 +80,35 @@ public:
         closed = false;
         opened = true;
         stateMutex.post();
+    }
+
+    void checkType(PortReader& reader) {
+        if (!checkedType) {
+            if (!typ.isValid()) {
+                typ = reader.getReadType();
+            }
+            checkedType = true;
+        }
+    }
+
+    void alertOnRead() {
+        usedForRead = true;
+    }
+
+    void alertOnWrite() {
+        usedForWrite = true;
+    }
+
+    void alertOnRpc() {
+        usedForRpc = true;
+    }
+
+    void setReadOnly() {
+        commitToRead = true;
+    }
+
+    void setWriteOnly() {
+        commitToWrite = true;
     }
 
     void finishReading() {
@@ -86,6 +136,11 @@ public:
     }
 
     virtual bool read(ConnectionReader& reader) {
+        if (permanentReadDelegate!=NULL) {
+            bool result = permanentReadDelegate->read(reader);
+            return result;
+        }
+
         // called by comms code
         readBlock.wait();
 
@@ -173,6 +228,7 @@ public:
         stateMutex.wait();
         readActive = true;
         readDelegate = &reader;
+        checkType(reader);
         writeDelegate = NULL;
         this->willReply = willReply;
         consume.post(); // happy consumer
@@ -191,6 +247,7 @@ public:
     bool reply(PortWriter& writer, bool drop, bool /*interrupted*/) {
         // send reply even if interrupt has happened in interim
         if (!replyDue) return false;
+
         replyDue = false;
         dropDue = drop;
         writeDelegate = &writer;
@@ -210,6 +267,8 @@ public:
         readActive = true;
         readBackground = true;
         readDelegate = &reader;
+        permanentReadDelegate = &reader;
+        checkType(reader);
         consume.post(); // just do this once
         stateMutex.post();
     }
@@ -248,6 +307,19 @@ public:
     void setOpen(bool opened) {
         this->opened = opened;
     }
+
+    Type getType() {
+        stateMutex.wait();
+        Type t = typ;
+        stateMutex.post();
+        return t;
+    }
+
+    void promiseType(const Type& typ) {
+        stateMutex.wait();
+        this->typ = typ;
+        stateMutex.post();
+    }
 };
 
 // implementation is a PortCoreAdapter
@@ -282,7 +354,16 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     ConstString n = contact2.getName();
-    if (n!="..." && n!="" && n[0]!='/') {
+    if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
+        if (fakeName==NULL) {
+            Nodes& nodes = NameClient::getNameClient().getNodes();
+            ConstString node_name = nodes.getActiveName();
+            if (node_name!="") {
+                n = node_name + "=/" + n;
+            }
+        }
+    }
+    if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
         if (fakeName==NULL) {
             YARP_SPRINTF1(Logger::get(),error,
                           "Port name '%s' needs to start with a '/' character",
@@ -290,7 +371,7 @@ bool Port::open(const Contact& contact, bool registerName,
             return false;
         }
     }
-    if (n!="..." && n!="") {
+    if (n!="" && n!="..." && n[0]!='=' && n.substr(0,3)!="...") {
         if (fakeName==NULL) {
             ConstString prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
             if (prefix!="") {
@@ -299,9 +380,35 @@ bool Port::open(const Contact& contact, bool registerName,
             }
         }
     }
+    PortCoreAdapter *currentCore = &(HELPER(implementation));
+    if (currentCore!=NULL) {
+        NestedContact nc;
+        nc.fromString(n);
+        if (nc.getNestedName()!="") {
+            if (nc.getCategory()=="") {
+                // we need to add in a category
+                ConstString cat = "";
+                if (currentCore->commitToRead) {
+                    cat = "-";
+                } else if (currentCore->commitToWrite) {
+                    cat = "+";
+                }
+                if (cat!="") {
+                    contact2 = contact2.addName(nc.getNodeName() +
+                                                "=" +
+                                                cat +
+                                                nc.getNestedName());
+                } else {
+                    YARP_SPRINTF1(Logger::get(),error,
+                                  "Port '%s' does not have a defined I/O direction",
+                                  n.c_str());
+                    return false;
+                }
+            }
+        }
+    }
 
     // Allow for open() to be called safely many times on the same Port
-    PortCoreAdapter *currentCore = &(HELPER(implementation));
     if (currentCore->isOpened()) {
         PortCoreAdapter *newCore = new PortCoreAdapter(*this);
         YARP_ASSERT(newCore!=NULL);
@@ -335,6 +442,7 @@ bool Port::open(const Contact& contact, bool registerName,
                                          contact2.getHost(),
                                          contact2.getPort())
         .addName(contact2.getName());
+    caddress.setNested(contact2.getNested());
     Contact address = caddress;
 
     core.setReadHandler(core);
@@ -347,6 +455,12 @@ bool Port::open(const Contact& contact, bool registerName,
 
     core.setControlRegistration(registerName);
     success = (address.isValid()||local)&&(fakeName==NULL);
+
+    if (success) {
+        // create a node if needed
+        Nodes& nodes = NameClient::getNameClient().getNodes();
+        nodes.prepare(address.getRegName().c_str());
+    }
 
     ConstString blame = "invalid address";
     if (success) {
@@ -364,6 +478,13 @@ bool Port::open(const Contact& contact, bool registerName,
                                           address.getHost(),
                                           address.getPort());
             contact2 = contact2.addName(address.getRegName().c_str());
+            ConstString typ = getType().getName();
+            if (typ!="") {
+                NestedContact nc;
+                nc.fromString(contact2.getName());
+                nc.setTypeName(typ);
+                contact2.setNested(nc);
+            }
             Contact newName = NetworkBase::registerContact(contact2);
             core.resetPortName(newName.getName());
             address = core.getAddress();
@@ -394,6 +515,13 @@ bool Port::open(const Contact& contact, bool registerName,
                    blame.c_str() +
                    ")");
     }
+
+    if (success) {
+        // create a node if needed
+        Nodes& nodes = NameClient::getNameClient().getNodes();
+        nodes.add(*this);
+    }
+
     return success;
 }
 
@@ -406,6 +534,11 @@ bool Port::addOutput(const ConstString& name, const ConstString& carrier) {
 }
 
 void Port::close() {
+    if (!NameClient::isClosed()) {
+        Nodes& nodes = NameClient::getNameClient().getNodes();
+        nodes.remove(*this);
+    }
+
     PortCoreAdapter& core = HELPER(implementation);
     core.finishReading();
     core.finishWriting();
@@ -417,6 +550,9 @@ void Port::close() {
 }
 
 void Port::interrupt() {
+    Nodes& nodes = NameClient::getNameClient().getNodes();
+    nodes.remove(*this);
+
     PortCoreAdapter& core = HELPER(implementation);
     core.interrupt();
 }
@@ -424,6 +560,8 @@ void Port::interrupt() {
 void Port::resume() {
     PortCoreAdapter& core = HELPER(implementation);
     core.resume();
+    Nodes& nodes = NameClient::getNameClient().getNodes();
+    nodes.add(*this);
 }
 
 
@@ -446,12 +584,19 @@ Contact Port::where() const {
 bool Port::addOutput(const Contact& contact) {
     PortCoreAdapter& core = HELPER(implementation);
     if (core.isInterrupted()) return false;
+    core.alertOnWrite();
+    ConstString name;
+    if (contact.getPort()<=0) {
+        name = contact.toString();
+    } else {
+        name = contact.toURI();
+    }
     if (!core.isListening()) {
-        return core.addOutput(contact.toString().c_str(),NULL,NULL,true);
+        return core.addOutput(name.c_str(),NULL,NULL,true);
     }
     Contact me = where();
     return NetworkBase::connect(me.getName().c_str(),
-                                contact.toString().c_str());
+                                name.c_str());
 }
 
 
@@ -461,6 +606,7 @@ bool Port::addOutput(const Contact& contact) {
 bool Port::write(PortWriter& writer, PortWriter *callback) {
     PortCoreAdapter& core = HELPER(implementation);
     if (core.isInterrupted()) return false;
+    core.alertOnWrite();
     bool result = false;
     //WritableAdapter adapter(writer);
     result = core.send(writer,NULL,callback);
@@ -484,6 +630,8 @@ bool Port::write(PortWriter& writer, PortReader& reader,
                  PortWriter *callback) const {
     PortCoreAdapter& core = HELPER(implementation);
     if (core.isInterrupted()) return false;
+    core.alertOnRpc();
+    core.alertOnWrite();
     bool result = false;
     result = core.send(writer,&reader,callback);
     if (!result) {
@@ -503,6 +651,8 @@ bool Port::write(PortWriter& writer, PortReader& reader,
  */
 bool Port::read(PortReader& reader, bool willReply) {
     PortCoreAdapter& core = HELPER(implementation);
+    if (willReply) core.alertOnRpc();
+    core.alertOnRead();
     if (core.isInterrupted()) return false;
     return core.read(reader,willReply);
 }
@@ -528,11 +678,13 @@ bool Port::replyAndDrop(PortWriter& writer) {
 
 void Port::setReader(PortReader& reader) {
     PortCoreAdapter& core = HELPER(implementation);
+    core.alertOnRead();
     core.configReader(reader);
 }
 
 void Port::setReaderCreator(PortReaderCreator& creator) {
     PortCoreAdapter& core = HELPER(implementation);
+    core.alertOnRead();
     core.configReadCreator(creator);
 }
 
@@ -563,11 +715,13 @@ bool Port::getEnvelope(PortReader& envelope) {
 
 int Port::getInputCount() {
     PortCoreAdapter& core = HELPER(implementation);
+    core.alertOnRead();
     return core.getInputCount();
 }
 
 int Port::getOutputCount() {
     PortCoreAdapter& core = HELPER(implementation);
+    core.alertOnWrite();
     return core.getOutputCount();
 }
 
@@ -623,4 +777,28 @@ int Port::getVerbosity() {
     return HELPER(implementation).getVerbosity();
 }
 
+Type Port::getType() {
+    return HELPER(implementation).getType();
+}
+
+void Port::promiseType(const Type& typ) {
+    HELPER(implementation).promiseType(typ);
+}
+
+void Port::setReadOnly() {
+    return HELPER(implementation).setReadOnly();
+}
+
+void Port::setWriteOnly() {
+    return HELPER(implementation).setWriteOnly();
+}
+
+
+Property *Port::acquireProperties(bool readOnly) {
+    return HELPER(implementation).acquireProperties(readOnly);
+}
+
+void Port::releaseProperties(Property *prop) {
+    HELPER(implementation).releaseProperties(prop);
+}
 

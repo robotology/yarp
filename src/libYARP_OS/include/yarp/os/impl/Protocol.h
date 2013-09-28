@@ -54,6 +54,7 @@ public:
         ref = NULL;
         reader.setProtocol(this);
         envelope = "";
+        port = NULL;
     }
 
     virtual ~Protocol() {
@@ -254,6 +255,15 @@ public:
         return *recv_delegate;
     }
 
+
+    virtual void attachPort(yarp::os::Contactable *port) {
+        this->port = port;
+    }
+
+    virtual Contactable *getContactable() {
+        return port;
+    }
+
 private:
 
     bool getRecvDelegate();
@@ -312,7 +322,9 @@ private:
         return ok;
     }
 
-    void setCarrier(const String& carrierName) {
+    void setCarrier(const String& carrierNameBase) {
+        String carrierName = carrierNameBase;
+        if (carrierNameBase=="") carrierName = "tcp";
         setRoute(getRoute().addCarrierName(carrierName));
         if (delegate==NULL) {
             delegate = Carriers::chooseCarrier(carrierName);
@@ -422,6 +434,7 @@ private:
     yarp::os::Portable *ref;
     String envelope;
     NullConnection nullConnection;
+    yarp::os::Contactable *port;
 };
 
 #endif

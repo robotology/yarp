@@ -14,9 +14,8 @@
 #define YARP_CMAKE_CONFIG
 
 #cmakedefine YARP_WRAP_STL_STRING
-
+#cmakedefine YARP_WRAP_STL_STRING_INLINE
 #cmakedefine YARP_HAS_ACE
-
 #cmakedefine YARP_HAS_CXX11
 
 // Use STL if C++11 is active, or if ACE is not available

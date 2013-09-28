@@ -23,7 +23,7 @@ namespace yarp {
 /**
  * A dummy Face for testing purposes.
  */
-class yarp::os::impl::FakeFace : public Face {
+class yarp::os::impl::FakeFace : public yarp::os::Face {
 public:
     virtual bool open(const Contact& address);
     virtual void close();

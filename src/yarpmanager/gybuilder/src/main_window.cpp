@@ -912,16 +912,10 @@ void MainWindow::onMenuFileOpenGymanager()
     if(appWnd)
     {
         OSTRINGSTREAM strParam;
-        if(m_config.check("modpath"))
-            strParam<<" --modpath "<<m_config.find("modpath").asString().c_str();
-        if(m_config.check("apppath"))
-            strParam<<" --apppath "<<m_config.find("apppath").asString().c_str();
-        if(m_config.check("respath"))
-            strParam<<" --respath "<<m_config.find("respath").asString().c_str();
-        strParam<<" --application "<<appWnd->getApplication()->getXmlFile();
+        strParam<<"--application \""<<appWnd->getApplication()->getXmlFile() << "\"";
         LocalBroker launcher;
         if(launcher.init("gyarpmanager",
-                         (string("\"") + strParam.str() + string("\"")).c_str(), NULL, NULL, NULL, NULL))
+                         strParam.str().c_str(), NULL, NULL, NULL, NULL))
             if(!launcher.start() && strlen(launcher.error()))
             {
                 OSTRINGSTREAM msg;

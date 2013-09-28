@@ -106,6 +106,13 @@ public:
     // documented in Contactable
     void setReader(PortReader& reader);
 
+    virtual Type getType();
+
+    virtual void promiseType(const Type& typ);
+
+    virtual Property *acquireProperties(bool readOnly);
+    virtual void releaseProperties(Property *prop);
+
 private:
     // an RpcClient may be implemented with a regular port
     // (this is not decided yet)

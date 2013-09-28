@@ -55,6 +55,7 @@ extern yarp::os::impl::UnitTest& getDgramTwoWayStreamTest();
 extern yarp::os::impl::UnitTest& getSemaphoreTest();
 extern yarp::os::impl::UnitTest& getEventTest();
 extern yarp::os::impl::UnitTest& getRunTest();
+extern yarp::os::impl::UnitTest& getNodeTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -92,6 +93,7 @@ public:
         root.add(getDgramTwoWayStreamTest());
         root.add(getSemaphoreTest());
         root.add(getEventTest());
+        root.add(getNodeTest());
 
 #ifdef YARPRUN_TEST
 		root.add(getRunTest());

@@ -135,6 +135,13 @@ public:
     // documented in Contactable
     virtual bool isWriting();
 
+    virtual Type getType();
+
+    virtual void promiseType(const Type& typ);
+
+    virtual Property *acquireProperties(bool readOnly);
+    virtual void releaseProperties(Property *prop);
+
 private:
     // an RpcServer may be implemented with a regular port
     // (this is not decided yet)

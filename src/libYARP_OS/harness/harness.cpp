@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
     Property opts;
     opts.put("portdb",":memory:");
     opts.put("subdb",":memory:");
+    opts.put("local",1);
     NameStore *store = yarpserver3_create(opts);
     yarp.queryBypass(store);
 #endif

@@ -73,8 +73,19 @@ endmacro()
 # This macro has the same signature as CMake "install" command (i.e., with DESTINATION and FILES/DIRECTORY arguments); in addition to calling the "install" command,
 # it also copies files to the build directory, keeping the same directory tree structure, to allow direct use of build tree without installation.
 macro(YARP_INSTALL)
-   cmake_parse_arguments(currentTarget "" "DESTINATION;COMPONENT" "FILES;DIRECTORY" ${ARGN})
+
    install(${ARGN})
-   file(COPY ${currentTarget_FILES} ${currentTarget_DIRECTORY} DESTINATION ${CMAKE_BINARY_DIR}/${currentTarget_DESTINATION})
+   #change destination argument 'dest' to "${CMAKE_BINARY_DIR}/${dest}"
+   cmake_parse_arguments(currentTarget "" "DESTINATION" "FILES;DIRECTORY;PROGRAMS;PERMISSIONS" "${ARGN}")
+
+   string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" currentTarget_DESTINATION_RELATIVE ${currentTarget_DESTINATION})
+   string(REGEX REPLACE ";DESTINATION;${currentTarget_DESTINATION}(;|$)" ";DESTINATION;${CMAKE_BINARY_DIR}/${currentTarget_DESTINATION_RELATIVE}\\1" copyARGN "${ARGN}")
+   list(REMOVE_AT copyARGN 0)
+   list(INSERT copyARGN 0 COPY)
+   if (currentTarget_PROGRAMS AND NOT currentTarget_PERMISSIONS)
+       list(APPEND copyARGN "FILE_PERMISSIONS;OWNER_READ;OWNER_WRITE;OWNER_EXECUTE;GROUP_READ;GROUP_EXECUTE;WORLD_READ;WORLD_EXECUTE")
+   endif()
+   file(${copyARGN})
+
 endmacro()
 

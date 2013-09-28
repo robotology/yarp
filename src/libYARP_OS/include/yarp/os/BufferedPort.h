@@ -292,8 +292,32 @@ public:
         reader.setTargetPeriod(period);
     }
 
+    virtual Type getType() {
+        return port.getType();
+    }
+
+    virtual void promiseType(const Type& typ) {
+        port.promiseType(typ);
+    }
+
+    virtual void setReadOnly() {
+        port.setReadOnly();
+    }
+
+    virtual void setWriteOnly() {
+        port.setWriteOnly();
+    }
+
+
+    virtual Property *acquireProperties(bool readOnly) {
+        return port.acquireProperties(readOnly);
+    }
+
+    virtual void releaseProperties(Property *prop) {
+        port.releaseProperties(prop);
+    }
+
 private:
-    // solaris preferred order - strange
     PortWriterBuffer<T> writer;
     Port port;
     PortReaderBuffer<T> reader;

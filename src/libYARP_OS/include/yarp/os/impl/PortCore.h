@@ -13,6 +13,7 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 #include <yarp/os/impl/Carriers.h>
+#include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/PortManager.h>
 #include <yarp/os/PortReader.h>
@@ -21,6 +22,7 @@
 #include <yarp/os/impl/PortCorePacket.h>
 
 #include <yarp/os/PortReport.h>
+#include <yarp/os/Property.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 
@@ -94,6 +96,8 @@ public:
         timeout = -1;
         verbosity = 1;
         counter = 1;
+        prop = NULL;
+        contactable = NULL;
     }
 
     /**
@@ -106,6 +110,10 @@ public:
      */
     void setFlags(int flags) {
         this->flags = flags;
+    }
+
+    void setContactable(Contactable *contactable) {
+        this->contactable = contactable;
     }
 
     /**
@@ -354,6 +362,9 @@ public:
         return verbosity;
     }
 
+    Property *acquireProperties(bool readOnly);
+    void releaseProperties(Property *prop);
+
 private:
 
     // internal maintenance of sub units
@@ -412,6 +423,8 @@ private:
     String envelope;
     float timeout;
     int counter;
+    yarp::os::Property *prop;
+    yarp::os::Contactable *contactable;
 
     void closeMain();
 

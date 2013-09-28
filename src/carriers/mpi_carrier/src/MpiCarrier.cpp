@@ -69,7 +69,8 @@ void  MpiCarrier::getHeader(const Bytes& header) {
 
     createStream(true);
 
-    if (! MpiControl.isRunning())
+    if (!MpiControl) return false;
+    if (! MpiControl->isRunning())
         return false;
     comm->openPort();
     char* port = comm->port_name;
@@ -114,7 +115,8 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     route = name + "<-" + other;
 
     createStream(false);
-    if (! MpiControl.isRunning())
+    if (!MpiControl) return false;
+    if (! MpiControl->isRunning())
         return false;
 
     ConstString other_id = proto.is().readLine();
