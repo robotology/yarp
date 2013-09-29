@@ -122,14 +122,14 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
               }
 //            
 //            // else, there is a calibration error
-//            else {
+              else {
 //                Bottle &botErrCalib = skeletonPort->prepare();
 //                botErrCalib.clear();
 //                skeletonPort->setEnvelope(timestamp);
 //                botErrCalib.addString("CALIBRATION ERROR FOR USER");
 //                botErrCalib.addInt(userSkeleton[i].uID);
 //                skeletonPort->write();
-//            }
+              }
         }
 }
 

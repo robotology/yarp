@@ -99,26 +99,26 @@ void yarp::dev::OpenNI2DeviceDriverClient::onRead(ImageOf<PixelMono16>& img){ske
 
 // returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID){
-    if(skeletonData->getSkeletonState(userID) != nite::SKELETON_TRACKED)
+    if(skeletonData->getSkeletonState(userID-1) != nite::SKELETON_TRACKED)
         return false;
     for(int i = 0; i < TOTAL_JOINTS; i++){
         vectorArray[i].resize(4);
         vectorArray[i].zero();
-        if(vectorArray != NULL) vectorArray[i] = skeletonData->getOrientation(userID)[i];
-        if(confidence != NULL) confidence[i] = skeletonData->getOrientationConf(userID)[i];
+        if(vectorArray != NULL) vectorArray[i] = skeletonData->getOrientation(userID-1)[i];
+        if(confidence != NULL) confidence[i] = skeletonData->getOrientationConf(userID-1)[i];
     }
     return true;
 }
 
 // returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID){
-    if(skeletonData->getSkeletonState(userID) != nite::SKELETON_TRACKED)
+    if(skeletonData->getSkeletonState(userID-1) != nite::SKELETON_TRACKED)
         return false;
     for(int i = 0; i < TOTAL_JOINTS; i++){
         vectorArray[i].resize(3);
         vectorArray[i].zero();
-        if(vectorArray != NULL) vectorArray[i] = skeletonData->getPosition(userID)[i];
-        if(confidence != NULL) confidence[i] = skeletonData->getPositionConf(userID)[i];
+        if(vectorArray != NULL) vectorArray[i] = skeletonData->getPosition(userID-1)[i];
+        if(confidence != NULL) confidence[i] = skeletonData->getPositionConf(userID-1)[i];
     }
     return true;
 }
@@ -132,7 +132,7 @@ int *yarp::dev::OpenNI2DeviceDriverClient::getSkeletonState(){
 }
 
 int yarp::dev::OpenNI2DeviceDriverClient::getSkeletonState(int userID){
-    return skeletonData->getSkeletonState(userID);
+    return skeletonData->getSkeletonState(userID-1);
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverClient::getImageFrame(){
