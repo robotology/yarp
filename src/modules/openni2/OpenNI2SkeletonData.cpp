@@ -31,7 +31,7 @@ void OpenNI2SkeletonData::initUserSkeletons(){
             tuserSkeleton->skeletonPosConf[j] = -1;
             tuserSkeleton->skeletonOriConf[j] = -1;
             tuserSkeleton->skeletonState = nite::SKELETON_NONE;
-            tuserSkeleton->uID = 0;
+            tuserSkeleton->uID = i+1;
         }
     }
 }

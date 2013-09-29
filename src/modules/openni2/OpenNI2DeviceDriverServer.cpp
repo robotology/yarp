@@ -106,30 +106,30 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
             }
             
             // if no skeleton found
-            else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
-                Bottle &botCalib = skeletonPort->prepare();
-                botCalib.clear();
-                skeletonPort->setEnvelope(timestamp);
-                
-                if(userSkeleton[i].uID == 0){
-                    //do nothing
-                }
-                else {
-                    botCalib.addString("LOST SKELETON FOR USER");
-                    botCalib.addInt(userSkeleton[i].uID);
-                    skeletonPort->write();
-                }
-            }
-            
-            // else, there is a calibration error
-            else {
-                Bottle &botErrCalib = skeletonPort->prepare();
-                botErrCalib.clear();
-                skeletonPort->setEnvelope(timestamp);
-                botErrCalib.addString("CALIBRATION ERROR FOR USER");
-                botErrCalib.addInt(userSkeleton[i].uID);
-                skeletonPort->write();
-            }
+              else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
+//                Bottle &botCalib = skeletonPort->prepare();
+//                botCalib.clear();
+//                skeletonPort->setEnvelope(timestamp);
+//                
+//                if(userSkeleton[i].uID == 0){
+//                    //do nothing
+//                }
+//                else {
+//                    botCalib.addString("LOST SKELETON FOR USER");
+//                    botCalib.addInt(userSkeleton[i].uID);
+//                    skeletonPort->write();
+//                }
+              }
+//            
+//            // else, there is a calibration error
+//            else {
+//                Bottle &botErrCalib = skeletonPort->prepare();
+//                botErrCalib.clear();
+//                skeletonPort->setEnvelope(timestamp);
+//                botErrCalib.addString("CALIBRATION ERROR FOR USER");
+//                botErrCalib.addInt(userSkeleton[i].uID);
+//                skeletonPort->write();
+//            }
         }
 }
 

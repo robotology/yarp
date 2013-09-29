@@ -47,6 +47,7 @@ public:
         Vector skeletonPointsOri[TOTAL_JOINTS];
         float skeletonOriConfidence[TOTAL_JOINTS];
         bool visible;
+        //bool stillTracking;
         int uID;
     }UserSkeleton;
     /**

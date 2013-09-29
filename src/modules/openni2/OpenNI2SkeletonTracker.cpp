@@ -159,6 +159,8 @@ void OpenNI2SkeletonTracker::initVars(){
     for (int i = 0; i < MAX_USERS; i++) {
         sensorStatus->userSkeleton[i].skeletonState = nite::SKELETON_NONE;
         sensorStatus->userSkeleton[i].uID = i+1;
+        sensorStatus->userSkeleton[i].visible = false;
+        //sensorStatus->userSkeleton[i].stillTracking = false;
         for (int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++){
             sensorStatus->userSkeleton[i].skeletonPointsPos[jointIndex].resize(3);
             sensorStatus->userSkeleton[i].skeletonPointsPos[jointIndex].zero();
@@ -199,7 +201,14 @@ void OpenNI2SkeletonTracker::updateSensor(bool wait){
         }
     }
     // user skeleton tracking data
+    
     if(userTracking && userTracker.isValid()){
+        
+        //cleanup the SKELETON TRACKING state
+        for (int i = 0; i < MAX_USERS; i++) {
+            sensorStatus->userSkeleton[i].skeletonState = nite::SKELETON_NONE;
+        }
+        
         nite::Status niteRc = userTracker.readFrame(&userTrackerFrameRef);
         if (niteRc != nite::STATUS_OK)
         {
@@ -297,11 +306,11 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
     //getSensor()->userSkeleton[user.getId()].uID = user.getId();
     if (getSensor()->userSkeleton[tmpID-1].skeletonState != user.getSkeleton().getState())
     {
-        getSensor()->userSkeleton[tmpID].skeletonState = user.getSkeleton().getState();
+        //getSensor()->userSkeleton[tmpID]-1.skeletonState = user.getSkeleton().getState();
         switch(user.getSkeleton().getState())
         {
             case nite::SKELETON_NONE:
-                getSensor()->userSkeleton[tmpID].skeletonState = nite::SKELETON_NONE;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_NONE;
                 USER_MESSAGE("Stopped tracking.")
                 break;
             case nite::SKELETON_CALIBRATING:
