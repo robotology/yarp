@@ -31,15 +31,16 @@ typedef enum SkeletonJoint
     JOINT_LEFT_SHOULDER = 2,
     JOINT_RIGHT_SHOULDER= 3,
     JOINT_LEFT_ELBOW	= 4,
-    JOINT_LEFT_HAND     = 5,
-    JOINT_RIGHT_HAND    = 6,
-    JOINT_TORSO         = 7,
-    JOINT_LEFT_HIP      = 8,
-    JOINT_RIGHT_HIP     = 9,
-    JOINT_LEFT_KNEE     = 10,
-    JOINT_RIGHT_KNEE    = 11,
-    JOINT_LEFT_FOOT     = 12,
-    JOINT_RIGHT_FOOT    = 13
+    JOINT_RIGHT_ELBOW   = 5,
+    JOINT_LEFT_HAND     = 6,
+    JOINT_RIGHT_HAND    = 7,
+    JOINT_TORSO         = 8,
+    JOINT_LEFT_HIP      = 9,
+    JOINT_RIGHT_HIP     = 10,
+    JOINT_LEFT_KNEE     = 11,
+    JOINT_RIGHT_KNEE    = 12,
+    JOINT_LEFT_FOOT     = 13,
+    JOINT_RIGHT_FOOT    = 14
 } SkeletonJoint;
 
 namespace yarp {
@@ -62,7 +63,7 @@ public:
      * @param userID id of the user skeleton to be retrieved
      * @return false if the user skeleton is not being tracked
      */
-    virtual bool getSkeletonOrientation(yarp::sig::Vector *vectorArray, double *confidence, int userID) = 0;
+    virtual bool getSkeletonOrientation(yarp::sig::Vector *vectorArray, float *confidence, int userID) = 0;
     /**
      * Gets kinect skeleton joints position 3D vector (in millimeters)
      *
@@ -71,7 +72,7 @@ public:
      * @param userID id of the user skeleton to be retrieved
      * @return false if the user skeleton is not being tracked
      */
-    virtual bool getSkeletonPosition(yarp::sig::Vector *vectorArray, double *confidence, int userID) = 0;
+    virtual bool getSkeletonPosition(yarp::sig::Vector *vectorArray, float *confidence, int userID) = 0;
     /**
      * Gets the user state
      *	0 - NO_USER

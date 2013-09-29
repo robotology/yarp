@@ -98,7 +98,7 @@ void yarp::dev::OpenNI2DeviceDriverClient::onRead(ImageOf<PixelMono16>& img){ske
  *****************************************************************************************************/
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID){
     if(skeletonData->getSkeletonState(userID) != nite::SKELETON_TRACKED)
         return false;
     for(int i = 0; i < TOTAL_JOINTS; i++){
@@ -111,7 +111,7 @@ bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonOrientation(Vector *vector
 }
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID){
     if(skeletonData->getSkeletonState(userID) != nite::SKELETON_TRACKED)
         return false;
     for(int i = 0; i < TOTAL_JOINTS; i++){

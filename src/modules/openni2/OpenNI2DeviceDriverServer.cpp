@@ -215,7 +215,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::stopService(){
 
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID){
     updateInterface(false);
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
@@ -229,7 +229,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vector
 }
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID){
     updateInterface(false);
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;

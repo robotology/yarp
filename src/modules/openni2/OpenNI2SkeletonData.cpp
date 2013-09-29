@@ -91,11 +91,11 @@ Vector* OpenNI2SkeletonData::getPosition(int userID){
     return userSkeleton[userID].skeletonPointsPos;
 }
 
-double* OpenNI2SkeletonData::getOrientationConf(int userID){
+float* OpenNI2SkeletonData::getOrientationConf(int userID){
     return userSkeleton[userID].skeletonOriConf;
 }
 
-double* OpenNI2SkeletonData::getPositionConf(int userID){
+float* OpenNI2SkeletonData::getPositionConf(int userID){
     return userSkeleton[userID].skeletonPosConf;
 }
 
