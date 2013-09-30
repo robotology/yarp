@@ -50,7 +50,6 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
     UserSkeleton *tuserSkeleton;
     if(b.get(0).isString()){
         userID = b.get(1).asInt();
-        //userSkeleton[userID].uID = userID;
         string vocab = b.get(0).asString().c_str();
         if(vocab.compare("CALIBRATING FOR USER") == 0){
             userSkeleton[userID-1].skeletonState = nite::SKELETON_CALIBRATING;
@@ -63,12 +62,10 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
     }else if(b.get(0).isList()){
         list = b.get(0).asList();
         userID = list->get(1).asInt();
-        //userSkeleton[userID-1].uID = userID;
         userSkeleton[userID-1].skeletonState = nite::SKELETON_TRACKED;//USER STATUS
         tuserSkeleton = &(userSkeleton[userID-1]);
         int jointIndex = 0;
         for(int i = 1; i < b.size(); i+=6){
-            //int jointIndex = (i-1)/6;
             list = b.get(i+1).asList();// position elements
             tuserSkeleton->skeletonPointsPos[jointIndex][0] = list->get(0).asDouble();
             tuserSkeleton->skeletonPointsPos[jointIndex][1] = list->get(1).asDouble();
