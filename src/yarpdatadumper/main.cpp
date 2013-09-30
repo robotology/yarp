@@ -794,7 +794,7 @@ int main(int argc, char *argv[])
     #endif
         cout << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)"           << endl;
         cout << "\t--rxTime         : dump the receiver time instead of the sender time"             << endl;
-        cout << "\t--overwrite      : overwrite pre-existing storage locations"                      << endl;
+        cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
         cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
 
         return 0;
