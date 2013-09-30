@@ -31,7 +31,7 @@ if(NOT ACE_FOUND)
               DOC "directory containing ace/*.h for ACE library")
     mark_as_advanced(ACE_INCLUDE_DIR)
 
-    find_library(ACE_LIBRARY_RELEASE
+    find_library(ACE_ACE_LIBRARY_RELEASE
                  NAMES ACE
                        ace
                  PATHS $ENV{ACE_ROOT}/lib
@@ -41,7 +41,7 @@ if(NOT ACE_FOUND)
                  DOC "ACE library file")
 
     set(CMAKE_DEBUG_POSTFIX "d")
-    find_library(ACE_LIBRARY_DEBUG
+    find_library(ACE_ACE_LIBRARY_DEBUG
                  NAMES ACE${CMAKE_DEBUG_POSTFIX}
                        ace${CMAKE_DEBUG_POSTFIX}
                  PATHS $ENV{ACE_ROOT}/lib
@@ -50,9 +50,9 @@ if(NOT ACE_FOUND)
                        /usr/local/lib
                  DOC "ACE library file (debug version)")
     include(SelectLibraryConfigurations)
-    select_library_configurations(ACE)
+    select_library_configurations(ACE_ACE)
 
-    set(ACE_LIBRARIES ${ACE_LIBRARY})
+    set(ACE_LIBRARIES ${ACE_ACE_LIBRARY})
     set(ACE_INCLUDE_DIRS ${ACE_INCLUDE_DIR})
 
 
@@ -87,6 +87,11 @@ if(NOT ACE_FOUND)
     include(FindPackageHandleStandardArgs)
     find_package_handle_standard_args(ACE DEFAULT_MSG ACE_LIBRARIES ACE_INCLUDE_DIRS)
 endif()
+
+# Compatibility
+set(ACE_LIBRARY_RELEASE ${ACE_ACE_LIBRARY_RELEASE})
+set(ACE_LIBRARY_DEBUG ${ACE_ACE_LIBRARY_DEBUG})
+set(ACE_LIBRARY ${ACE_ACE_LIBRARY})
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
