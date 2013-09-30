@@ -160,7 +160,7 @@ void OpenNI2SkeletonTracker::initVars(){
         sensorStatus->userSkeleton[i].skeletonState = nite::SKELETON_NONE;
         sensorStatus->userSkeleton[i].uID = i+1;
         sensorStatus->userSkeleton[i].visible = false;
-        //sensorStatus->userSkeleton[i].stillTracking = false;
+        sensorStatus->userSkeleton[i].stillTracking = false;
         for (int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++){
             sensorStatus->userSkeleton[i].skeletonPointsPos[jointIndex].resize(3);
             sensorStatus->userSkeleton[i].skeletonPointsPos[jointIndex].zero();
@@ -204,9 +204,9 @@ void OpenNI2SkeletonTracker::updateSensor(bool wait){
     
     if(userTracking && userTracker.isValid()){
         
-        //cleanup the SKELETON TRACKING state
+        // reset the stillTracking variable
         for (int i = 0; i < MAX_USERS; i++) {
-            sensorStatus->userSkeleton[i].skeletonState = nite::SKELETON_NONE;
+            sensorStatus->userSkeleton[i].stillTracking = false;
         }
         
         nite::Status niteRc = userTracker.readFrame(&userTrackerFrameRef);
@@ -256,6 +256,9 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     int i = user.getId();
     UserSkeleton *userSkeleton = &getSensor()->userSkeleton[i-1];
     
+    // the method is called only if the skeleton is tracked, so set the stillTracking variable
+    userSkeleton->stillTracking = true;
+    
     if (user.getSkeleton().getJoint(joint).getPositionConfidence() > 0.6) {
         
         // position
@@ -290,23 +293,24 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
     if (user.isNew())
         USER_MESSAGE("New")
         
-        // if user is detected
-        else if (user.isVisible() && !getSensor()->userSkeleton[tmpID-1].visible)
-            USER_MESSAGE("Visible")
+    // if user is detected
+    else if (user.isVisible() && !getSensor()->userSkeleton[tmpID-1].visible)
+        USER_MESSAGE("Visible")
             
-            // if user is out of scene
-            else if (!user.isVisible() && getSensor()->userSkeleton[tmpID-1].visible)
-                USER_MESSAGE("Out of Scene")
+    // if user is out of scene
+    else if (!user.isVisible() && getSensor()->userSkeleton[tmpID-1].visible)
+            USER_MESSAGE("Out of Scene")
                 
-                //if user is lost    
-                else if (user.isLost())
-                    USER_MESSAGE("Lost")
+    //if user is lost    
+    else if (user.isLost())
+            USER_MESSAGE("Lost")
                     
-                    getSensor()->userSkeleton[tmpID-1].visible = user.isVisible();
-    //getSensor()->userSkeleton[user.getId()].uID = user.getId();
+    getSensor()->userSkeleton[tmpID-1].visible = user.isVisible();
+    
     if (getSensor()->userSkeleton[tmpID-1].skeletonState != user.getSkeleton().getState())
     {
-        //getSensor()->userSkeleton[tmpID]-1.skeletonState = user.getSkeleton().getState();
+        getSensor()->userSkeleton[tmpID-1].skeletonState = user.getSkeleton().getState();
+        
         switch(user.getSkeleton().getState())
         {
             case nite::SKELETON_NONE:
@@ -340,8 +344,8 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
             case nite::SKELETON_CALIBRATION_ERROR_TORSO:
                 USER_MESSAGE("Calibration failed in torso...")
                 getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_CALIBRATION_ERROR_TORSO;
-                break;
-        }
+                    break;
+            }
     }
 }
 

@@ -64,7 +64,7 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
     // if skeleton is tracked
     if(userTracking)
         for(int i = 0; i < MAX_USERS; i++){
-            if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED){
+            if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED && userSkeleton[i].stillTracking == true){
                 Bottle &botSkeleton = skeletonPort->prepare();
                 botSkeleton.clear();
                 skeletonPort->setEnvelope(timestamp);
