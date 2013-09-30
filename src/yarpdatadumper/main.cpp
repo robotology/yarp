@@ -786,6 +786,8 @@ int main(int argc, char *argv[])
     {
         cout << "Options:" << endl << endl;
         cout << "\t--name       port: service port name (default: /dump)"                            << endl;        
+        cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
+        cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
     #ifdef ADD_VIDEO
         cout << "\t--type       type: type of the data to be dumped [bottle(default), image, video]" << endl;
         cout << "\t--addVideo       : produce video as well (if image is selected)"                  << endl;
@@ -794,8 +796,6 @@ int main(int argc, char *argv[])
     #endif
         cout << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)"           << endl;
         cout << "\t--rxTime         : dump the receiver time instead of the sender time"             << endl;
-        cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
-        cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
 
         return 0;
     }
