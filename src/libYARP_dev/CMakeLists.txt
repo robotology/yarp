@@ -41,6 +41,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementOpenLoopControl.h
                   include/yarp/dev/ImplementTorqueControl.h
                   include/yarp/dev/IOpenLoopControl.h
+		  include/yarp/dev/IOpenNI2DeviceDriver.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl2Impl.h
                   include/yarp/dev/IPositionControl.h
