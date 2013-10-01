@@ -362,6 +362,7 @@ namespace yarp {
 %include <yarp/os/ResourceFinder.h>
 %include <yarp/os/RpcServer.h>
 %include <yarp/os/RpcClient.h>
+%include <yarp/os/DummyConnector.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
