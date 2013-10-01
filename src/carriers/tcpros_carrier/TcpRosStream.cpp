@@ -153,6 +153,7 @@ std::map<std::string, std::string> TcpRosStream::rosToKind() {
     kinds["std_msgs/String"] = "vector string 1 *";
     kinds["std_msgs/Int32"] = "vector int32 1 *";
     kinds["std_msgs/Float64"] = "vector float64 1 *";
+    kinds["sensor_msgs/Image"] = "list 10 uint32 * uint32 * uint32 * string * uint32 * uint32 * string * int8 * int32 * blob *";
     return kinds;
 }
 

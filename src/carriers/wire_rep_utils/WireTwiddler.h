@@ -31,6 +31,7 @@ public:
     int buffer_length;
     int length;
     int unit_length;
+    int wire_unit_length;
     char *byte_start;
     int byte_length;
     bool ignore_external;
@@ -43,6 +44,7 @@ public:
         byte_start = 0/*NULL*/;
         byte_length = 0;
         ignore_external = false;
+        wire_unit_length = -1;
     }
 
     char *getStart() const { return byte_start; }
@@ -160,6 +162,10 @@ public:
     virtual void close() { is.close(); }
 
     virtual bool isOk() { return is.isOk(); }
+
+    YARP_SSIZE_T readMapped(yarp::os::InputStream& is,
+                            const yarp::os::Bytes& b,
+                            const WireTwiddlerGap& gap);
 };
 
 

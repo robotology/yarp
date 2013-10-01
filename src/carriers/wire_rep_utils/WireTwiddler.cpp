@@ -83,9 +83,14 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored) {
 
     int tag = 0;
     int unit_length = 0;
-    if (kind=="int32") {
+    int wire_unit_length = -1;
+    if (kind=="int32"||kind=="uint32") {
         tag = BOTTLE_TAG_INT;
         unit_length = 4;
+    } else if (kind=="int8"||kind=="uint8") {
+        tag = BOTTLE_TAG_INT;
+        unit_length = 4;
+        wire_unit_length = 1;
     } else if (kind=="float64") {
         tag = BOTTLE_TAG_DOUBLE;
         unit_length = 8;
@@ -93,11 +98,21 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored) {
         tag = BOTTLE_TAG_STRING;
         unit_length = -1;
         //len = -1;
+    } else if (kind=="blob") {
+        tag = BOTTLE_TAG_BLOB;
+        unit_length = -1;
+        //len = -1;
+    } else if (kind=="list"||kind=="vector") {
+        //pass
+    } else {
+        fprintf(stderr,"%s does not know about %s\n", __FILE__, kind.c_str());
+        exit(1);
     }
 
-    dbg_printf("Type %s (%s) len %d %s\n", 
+    dbg_printf("Type %s (%s) len %d unit %d %s\n", 
                kind.c_str(),
                is_list?"LIST":(is_vector?"VECTOR":"PRIMITIVE"), len,
+               unit_length,
                ignore?"SKIP":"");
 
     if (!ignore) {
@@ -125,6 +140,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored) {
             gap.buffer_length = 0;
         }
         gap.unit_length = unit_length;
+        gap.wire_unit_length = (wire_unit_length!=-1)?wire_unit_length:unit_length;
         gap.length = len;
         gap.ignore_external = ignore;
         Bottle tmp;
@@ -205,6 +221,9 @@ std::string nameThatCode(int code) {
     case BOTTLE_TAG_LIST:
         return "list";
         break;
+    case BOTTLE_TAG_BLOB:
+        return "blob";
+        break;
     }
     return "unsupported";
 }
@@ -252,16 +271,17 @@ std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
 void WireTwiddler::show() {
     for (int i=0; i<(int)gaps.size(); i++) {
         WireTwiddlerGap& gap = gaps[i];
-        printf("Unit %d\n", i);
+        printf("Block #%d\n", i);
         if (gap.buffer_length!=0) {
             printf("  Buffer from %d to %d\n", gap.buffer_start, 
                    gap.buffer_start+gap.buffer_length-1);
         }
-        if (gap.unit_length!=0) {
-            printf("  Expect %d x %d\n", gap.length, gap.unit_length);
-        }
         if (gap.ignore_external) {
             printf("  External data will be ignored\n");
+        } else {
+            if (gap.unit_length!=0) {
+                printf("  Expect %d x %d\n", gap.length, gap.unit_length);
+            }
         }
     }
 }
@@ -349,7 +369,7 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
     bool more = false;
     do {
         const WireTwiddlerGap& gap = twiddler.getGap(index);
-        dbg_printf("*** index %d sent %d consumed %d / len %d unit %d\n", index, sent, consumed, gap.length, gap.unit_length);
+        dbg_printf("*** index %d sent %d consumed %d / len %d unit %d/%d\n", index, sent, consumed, gap.length, gap.unit_length, gap.wire_unit_length);
         char *byte_start = gap.getStart();
         int byte_length = gap.getLength();
         if (byte_start!=NULL) {
@@ -365,8 +385,8 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
             sent += len;
             consumed += len;
             NetInt32 *nn = (NetInt32 *)b.get();
-            dbg_printf("[[[%d]]]\n", (int)(*nn));
-            dbg_printf("WireTwidderReader sending %d boilerplate bytes\n",len);
+            dbg_printf("WireTwidderReader sending %d boilerplate bytes:\n",len);
+            dbg_printf("   [[[%d]]]\n", (int)(*nn));
             return len;
         }
         if ((gap.length==-1||gap.unit_length==-1) && override_length==-1) {
@@ -401,8 +421,8 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                    (char*)(&lengthBuffer)+sizeof(lengthBuffer)-pending_length,
                    len);
             pending_length -= len;
-            dbg_printf("(((%d)))\n", lengthBuffer);
-            dbg_printf("WireTwidderReader sending %d length bytes\n",len);
+            dbg_printf("WireTwidderReader sending %d length bytes:\n",len);
+            dbg_printf("   (((%d)))\n", lengthBuffer);
             return len;
         }
         while (pending_strings) {
@@ -426,8 +446,8 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                        (char*)(&lengthBuffer)+sizeof(lengthBuffer)-pending_string_length,
                        len);
                 pending_string_length -= len;
-                dbg_printf("(((%d)))\n", lengthBuffer);
-                dbg_printf("WireTwidderReader sending %d string length bytes\n",len);
+                dbg_printf("WireTwidderReader sending %d string length bytes:\n",len);
+                dbg_printf("   (((%d)))\n", lengthBuffer);
                 if (pending_string_length==0&&pending_string_data==0) { pending_strings--; }
                 return len;
             }
@@ -460,10 +480,10 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
             Bytes b2(b.get(),len);
             int r = 0;
             if (!gap.shouldIgnoreExternal()) {
-                r = is.read(b2);
+                r = readMapped(is,b2,gap);
                 NetInt32 *nn = (NetInt32 *)b.get();
-                dbg_printf("[[[%d]]]\n", (int)(*nn));
-                dbg_printf("WireTwidderReader sending %d payload bytes\n",r);
+                dbg_printf("WireTwidderReader sending %d payload bytes:\n",r);
+                dbg_printf("   [[[%d]]]\n", (int)(*nn));
                 if (r>0) {
                     sent += r;
                 }
@@ -476,9 +496,9 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                 dump.allocateOnNeed(b2.length(),b2.length());
                 r = is.readFull(dump.bytes());
                 NetInt32 *nn = (NetInt32 *)dump.get();
-                dbg_printf("[[[%d]]]\n", (int)(*nn));
-                dbg_printf("WireTwidderReader sending %d payload bytes\n",r);
-                dbg_printf("  (ignoring %d payload bytes)\n",r);
+                dbg_printf("WireTwidderReader sending %d payload bytes:\n",r);
+                dbg_printf("   [[[%d]]]\n", (int)(*nn));
+                dbg_printf("   (ignoring %d payload bytes)\n",r);
                 if (r>0) {
                     sent += r;
                 }
@@ -502,10 +522,6 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
 bool WireTwiddlerWriter::update() {
     errorState = false;
     srcs.clear();
-    //int hdr = parent.length();
-    //for (int i=0; i<parent.length(); i++) {
-    //srcs.push_back(Bytes((char*)parent.data(i),parent.length(i)));
-    //}
 
     lengthBytes = Bytes((char*)(&lengthBuffer),sizeof(yarp::os::NetInt32));
     offset = 0;
@@ -669,6 +685,24 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
     }
     return true;
 }
+
+YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
+                                            const yarp::os::Bytes& b,
+                                            const WireTwiddlerGap& gap) {
+    if (gap.wire_unit_length==gap.unit_length) {
+        return is.read(b);
+    }
+    for (int i=0; i<(int)b.length(); i++) {
+        b.get()[i] = 0;
+    }
+    Bytes b2(b.get(),gap.wire_unit_length);
+    YARP_SSIZE_T r = is.readFull(b2);
+    if (r==gap.wire_unit_length) {
+        return gap.unit_length;
+    }
+    return -1;
+}
+
 
 
 //void write(OutputStream& os) {

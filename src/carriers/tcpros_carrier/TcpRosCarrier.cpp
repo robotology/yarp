@@ -53,6 +53,18 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 }
 
 
+static ConstString getRosType(ConnectionState& proto) {
+    ConstString typ = "";
+    ConstString rtyp = "";
+    if (proto.getContactable()) {
+        typ = proto.getContactable()->getType().getName();
+        if (typ=="yarp/image") {
+            rtyp = "sensor_msgs/Image";
+        }
+    }
+    return rtyp;
+}
+
 bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     dbg_printf("Route is %s\n", proto.getRoute().toString().c_str());
     Name n(proto.getRoute().getCarrierName() + "://test");
@@ -87,7 +99,11 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     RosHeader header;
     dbg_printf("Writing to %s\n", proto.getStreams().getRemoteAddress().toString().c_str()); 
     dbg_printf("Writing from %s\n", proto.getStreams().getLocalAddress().toString().c_str());
-    //header.data["type"] = "std_msgs/String";
+
+    ConstString rtyp = getRosType(proto);
+    if (rtyp!="") {
+        header.data["type"] = rtyp.c_str();
+    }
     header.data[mode.c_str()] = modeValue.c_str();
     header.data["md5sum"] = "*";
     header.data["callerid"] = proto.getRoute().getFromName().c_str();
@@ -193,6 +209,12 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     ConstString rosname = "";
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"].c_str();
+    }
+    ConstString rtyp = getRosType(proto);
+    if (rtyp!="") {
+        rosname = rtyp;
+        header.data["type"] = rosname;
+        header.data["md5sum"] = "*";
     }
     dbg_printf("<outgoing> Type of data is %s\n", rosname.c_str());
     kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
