@@ -25,3 +25,16 @@ if(CMAKE_VERSION VERSION_LESS 2.8.10 AND MSVC)
         set(MSVC11 TRUE)
     endif()
 endif()
+
+# CMake 2.8.11 fails on some systems with a very obscure error.
+# This is due to a bug when quoting libraries in try_compile, and it was
+# fixed in 2.8.11.1. Older versions do not seem to be this problem.
+# In order to ensure that the user do not use the bugged version (and
+# consequently complain about not being able to build the project) we
+# ensure here that the version is different from 2.8.11 and print a
+# readable error that the user will be able to understand.
+#
+# See also: http://cmake.org/gitweb?p=cmake.git;a=commit;h=e65ef08bf2719ffd1cc4226f9594ff7127ad8b5e
+if(CMAKE_VERSION VERSION_EQUAL 2.8.11)
+    message(FATAL_ERROR "CMake 2.8.11 is bugged and the build will fail. Please install a different version.")
+endif()
