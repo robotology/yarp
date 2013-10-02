@@ -31,7 +31,7 @@ macro(YARP_CHECK_STRUCT_HAS_MEMBER _STRUCT _MEMBER _HEADER _RESULT)
 
     set(_CHECK_STRUCT_MEMBER_SOURCE_CODE "
 ${_INCLUDE_FILES}
-int main()
+int main(int argc, char **argv)
 {
     ${_STRUCT}* tmp;
     tmp->${_MEMBER}();
