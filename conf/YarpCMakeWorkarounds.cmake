@@ -14,7 +14,7 @@ if(CMAKE_VERSION VERSION_LESS 2.8.10 AND MSVC)
         set(MSVC70 TRUE)
     elseif(MSVC_VERSION EQUAL 1310)
         set(MSVC71 TRUE)
-#for some reason far behond my knowledge MSVC80 is defined since 2.6
+#for some reason far beyond my knowledge MSVC80 is defined since 2.6
 #    elseif(MSVC_VERSION EQUAL 1400)
 #        set(MSVC80 TRUE)
     elseif(MSVC_VERSION EQUAL 1500)
