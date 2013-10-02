@@ -223,7 +223,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vector
         vectorArray[i].resize(4);
         vectorArray[i].zero();
         vectorArray[i] = OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPointsOri[i];
-        confidence[i] = (double)OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPosConfidence[i];
+        confidence[i] = OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPosConfidence[i];
     }
     return true;
 }
@@ -253,7 +253,7 @@ int *yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(){
 
 int yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID){
     updateInterface(false);
-    return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState;
+    return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID-1].skeletonState;
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverServer::getImageFrame(){

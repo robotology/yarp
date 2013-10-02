@@ -21,28 +21,6 @@
 #define KINECT_IMG_WIDTH 640
 #define KINECT_IMG_HEIGHT 480
 
-/**
- * A full list of available joints.
- */
-typedef enum SkeletonJoint
-{
-    JOINT_HEAD			= 0,
-    JOINT_NECK			= 1,
-    JOINT_LEFT_SHOULDER = 2,
-    JOINT_RIGHT_SHOULDER= 3,
-    JOINT_LEFT_ELBOW	= 4,
-    JOINT_RIGHT_ELBOW   = 5,
-    JOINT_LEFT_HAND     = 6,
-    JOINT_RIGHT_HAND    = 7,
-    JOINT_TORSO         = 8,
-    JOINT_LEFT_HIP      = 9,
-    JOINT_RIGHT_HIP     = 10,
-    JOINT_LEFT_KNEE     = 11,
-    JOINT_RIGHT_KNEE    = 12,
-    JOINT_LEFT_FOOT     = 13,
-    JOINT_RIGHT_FOOT    = 14
-} SkeletonJoint;
-
 namespace yarp {
     namespace dev {
         class IOpenNI2DeviceDriver;
