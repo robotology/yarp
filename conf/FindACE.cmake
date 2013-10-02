@@ -4,6 +4,10 @@
 #   ACE_FOUND
 #   ACE_LIBRARIES
 #   ACE_INCLUDE_DIRS
+#   ACE_VERSION
+#   ACE_MAJOR_VERSION
+#   ACE_MINOR_VERSION
+#   ACE_BETA_VERSION
 
 # Copyright: (C) 2009 RobotCub Consortium
 # Copyright: (C) 2013  iCub Facility, Istituto Italiano di Tecnologia
@@ -15,10 +19,11 @@ include(MacroStandardFindModule)
 macro_standard_find_module(ACE ACE SKIP_CMAKE_CONFIG NOT_REQUIRED)
 
 
-## script does not work if executed twice bc ACE_LIBRARY get appended
-# fix "optimized.lib" problem in windows (Lorenzo Natale)
-if(NOT ACE_FOUND)
-
+if(ACE_FOUND)
+    set(ACE_BETA_VERSION ${ACE_PATCH_VERSION})
+    unset(ACE_PATCH_VERSION)
+    unset(ACE_TWEAK_VERSION)
+else()
     ########################################################################
     ##  general find
 
@@ -55,6 +60,28 @@ if(NOT ACE_FOUND)
     set(ACE_LIBRARIES ${ACE_ACE_LIBRARY})
     set(ACE_INCLUDE_DIRS ${ACE_INCLUDE_DIR})
 
+    ########################################################################
+    ## Read version from ace/Version.h file
+    file(STRINGS ${ACE_INCLUDE_DIR}/ace/Version.h _contents REGEX "#define ACE_[A-Z]+_VERSION[ \t]+")
+    if(_contents)
+        string(REGEX REPLACE ".*#define ACE_MAJOR_VERSION[ \t]+([0-9]+).*" "\\1" ACE_MAJOR_VERSION "${_contents}")
+        string(REGEX REPLACE ".*#define ACE_MINOR_VERSION[ \t]+([0-9]+).*" "\\1" ACE_MINOR_VERSION "${_contents}")
+        string(REGEX REPLACE ".*#define ACE_BETA_VERSION[ \t]+([0-9]+).*" "\\1" ACE_BETA_VERSION "${_contents}")
+
+        if(NOT ACE_MAJOR_VERSION MATCHES "[0-9]+")
+            message(FATAL_ERROR "Version parsing failed for ACE_MAJOR_VERSION!")
+        endif()
+        if(NOT ACE_MINOR_VERSION MATCHES "[0-9]+")
+            message(FATAL_ERROR "Version parsing failed for ACE_MINOR_VERSION!")
+        endif()
+        if(NOT ACE_BETA_VERSION MATCHES "[0-9]+")
+            message(FATAL_ERROR "Version parsing failed for ACE_BETA_VERSION!")
+        endif()
+    else()
+        message(FATAL_ERROR "Include file ace/Version.h does not exist")
+    endif()
+
+    set(ACE_VERSION "${ACE_MAJOR_VERSION}.${ACE_MINOR_VERSION}.${ACE_BETA_VERSION}")
 
     ########################################################################
     ## OS-specific extra linkage
@@ -83,9 +110,10 @@ if(NOT ACE_FOUND)
 
     ########################################################################
     ## finished - now just set up flags and complain to user if necessary
-
     include(FindPackageHandleStandardArgs)
-    find_package_handle_standard_args(ACE DEFAULT_MSG ACE_LIBRARIES ACE_INCLUDE_DIRS)
+    find_package_handle_standard_args(ACE FOUND_VAR ACE_FOUND
+                                          REQUIRED_VARS ACE_LIBRARIES ACE_INCLUDE_DIRS
+                                          VERSION_VAR ACE_VERSION)
 endif()
 
 # Compatibility
