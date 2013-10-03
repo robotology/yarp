@@ -276,7 +276,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
             }
             if (img) {
                 translate = TCPROS_TRANSLATE_IMAGE;
-                ConstString frame = "/frame";
+                ConstString frame = "";
                 ri.init(*img,frame);
             } else { 
                 if (WireBottle::extractBlobFromBottle(writer,wt)) {
