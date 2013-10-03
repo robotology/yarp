@@ -19,7 +19,22 @@ NestedContact::NestedContact(const ConstString& nFullName) {
 bool NestedContact::fromString(const ConstString& nFullName) {
     fullName = nFullName;
     nodeName = nFullName;
-    ConstString::size_type idx = fullName.find("=");
+    nestedName = "";
+    category = "";
+    ConstString::size_type idx = fullName.find("@");
+    if (idx!=ConstString::npos) {
+        // Great!  Looks like we are using a new syntax suggested 
+        // by Lorenzo Natale, /topic@/node
+        nestedName = fullName.substr(0,idx);
+        nodeName = fullName.substr(idx+1,fullName.length());
+        char ch = nestedName[nestedName.length()-1];
+        if (ch=='-'||ch=='+') {
+            category += ch;
+            nestedName = nestedName.substr(0,nestedName.length()-1);
+        }
+        return true;
+    } 
+    idx = fullName.find("=");
     if (idx==ConstString::npos) return false;
     nodeName = fullName.substr(0,idx);
     nestedName = fullName.substr(idx+1,fullName.length());

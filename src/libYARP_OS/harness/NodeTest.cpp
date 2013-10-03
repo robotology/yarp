@@ -200,13 +200,13 @@ void NodeTest::singleNameTest() {
     Port p1;
     p1.setWriteOnly();
     p1.open("p1");
-    checkEqual(p1.getName(),"/ntest=+/p1","node name goes viral");
+    checkEqual(p1.getName(),"/p1+@/ntest","node name goes viral");
     Publisher<Bottle> p2;
     p2.open("p2");
-    checkEqual(p2.getName(),"/ntest=+/p2","publisher name ok");
+    checkEqual(p2.getName(),"/p2+@/ntest","publisher name ok");
     Subscriber<Bottle> p3;
     p3.open("p3");
-    checkEqual(p3.getName(),"/ntest=-/p3","subscriber name ok");
+    checkEqual(p3.getName(),"/p3-@/ntest","subscriber name ok");
     Port p4;
     p4.open("/p4");
     checkEqual(p4.getName(),"/p4","rooted name ok");

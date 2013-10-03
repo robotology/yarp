@@ -470,7 +470,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             s += v->toString();
             s += "/quit";
         }
-        if (s.find("=") == ConstString::npos) {
+        if (s.find("=") == ConstString::npos && 
+            s.find("@") == ConstString::npos) {
             terminee = new Terminee(s.c_str());
             terminatorKey = s.c_str();
             if (terminee == 0) {
