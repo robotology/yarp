@@ -390,14 +390,24 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
             fprintf(stderr,"Sorry, cannot handle [%s] images yet.\n", encoding.c_str());
             exit(1);
         }
+        int quantum = 1;
         if (step!=w*3) {
-            fprintf(stderr,"Sorry, cannot handle %dx%d images yet.\n", w, h);
-            exit(1);
+            bool ok = false;
+            while (quantum<=256) {
+                quantum *= 2;
+                if (((w*3+quantum)/quantum)*quantum == step) {
+                    ok = true;
+                    break;
+                }
+            }
+            if (!ok) {
+                quantum = step;
+            }
         }
-        int img_size = w*h*3;
+        int img_size = step*h;
         prop.put("depth",3);
         prop.put("img_size",img_size);
-        prop.put("quantum",1);
+        prop.put("quantum",quantum);
         prop.put("translated_encoding",Vocab::encode(encoding.substr(0,3)));
     }
 }
