@@ -554,7 +554,7 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                 }
                 return r;
             } else {
-                int len2 = b2.length();
+                int len2 = extern_length;
                 if (gap.wire_unit_length>=0 && gap.wire_unit_length<len2) {
                     len2 = gap.wire_unit_length;
                 }
