@@ -17,6 +17,8 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/Logger.h>
 
+#include <yarp/gsl_compatibility.h>
+
 using namespace yarp::sig;
 using namespace yarp::os;
 
@@ -32,7 +34,7 @@ using namespace yarp::os;
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <yarp/gsl_compatibility.h>
+
 
 
 class VectorPortContentHeader
@@ -199,16 +201,13 @@ bool Vector::write(yarp::os::ConnectionWriter& connection)
 
 void Vector::allocGslData()
 {
-    gsl_vector *vect=new gsl_vector;
-    gsl_block *bl=new gsl_block;
-    
-    vect->block=bl;
-
+    gsl_vector *vect = new gsl_vector; 
+    gsl_block *bl = new gsl_block;
+    vect->block = bl;
     //these are constant (at least for now)
-    vect->owner=1;
-    vect->stride=1;
-
-    gslData=vect;
+    vect->owner = 1;
+    vect->stride = 1;
+    gslData = vect;
 }
 
 void Vector::freeGslData()
@@ -227,12 +226,10 @@ void Vector::freeGslData()
 void Vector::updateGslData()
 {
     gsl_vector *tmp = static_cast<gsl_vector *>(gslData);
-    tmp->block->data = data();
-    tmp->data = tmp->block->data;
-    tmp->block->size = size();
+    tmp->data = tmp->block->data = data();
+    tmp->size = tmp->block->size = size();
     tmp->owner = 1;
     tmp->stride = 1;
-    tmp->size = tmp->block->size;
 }
 
 
