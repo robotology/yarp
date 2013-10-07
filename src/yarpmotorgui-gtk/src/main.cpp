@@ -808,8 +808,6 @@ int myMain( int   argc, char *argv[] )
     gtk_main ();
     fprintf(stderr, "Deleting the finder");
     delete finder;
-    if(pParts)
-        delete pParts;
     fprintf(stderr, "...done!\n");
     return 0;
 }
