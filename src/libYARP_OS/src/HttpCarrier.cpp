@@ -158,10 +158,17 @@ static bool asJson(yarp::os::ConstString& accum,
 
 
 yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt,
-                                   const char *prefix,
-                                   yarp::os::Property& prop) :
+                                                   const char *prefix,
+                                                   yarp::os::Property& prop,
+                                                   bool writer) :
         delegate(delegate) {
-
+    this->isWriter = writer;
+    if (writer) {
+        Bottle b;
+        b.addString(txt);
+        sis.add(b.toString().c_str());
+        return;
+    }
     data = false;
     filterData = false;
     chunked = false;
@@ -358,7 +365,7 @@ void yarp::os::impl::HttpTwoWayStream::reset() {
 }
 
 void yarp::os::impl::HttpTwoWayStream::write(const yarp::os::Bytes& b) { // throws
-    if (chunked) {
+    if (chunked||isWriter) {
         delegate->getOutputStream().write(b);
     } else {
         for (size_t i=0; i<b.length(); i++) {
@@ -582,13 +589,17 @@ bool yarp::os::impl::HttpCarrier::isTextMode() {
 
 
 bool yarp::os::impl::HttpCarrier::supportReply() {
-    return false;
+    return true;
 }
 
 bool yarp::os::impl::HttpCarrier::sendHeader(ConnectionState& proto) {
-    printf("not yet meant to work\n");
-    String target = "GET / HTTP/1.1";
-    Bytes b((char*)target.c_str(),8);
+    //String target = "GET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n";
+    ConstString path = proto.getRoute().getToName();
+    String target = "GET / HTTP/1.0\r\n\r\n";
+    if (path.size()>=2) {
+        target = "GET " + path + " HTTP/1.0\r\n\r\n";
+    }
+    Bytes b((char*)target.c_str(),target.length());
     proto.os().write(b);
     return true;
 
@@ -702,8 +713,23 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto) 
 }
 
 bool yarp::os::impl::HttpCarrier::expectReplyToHeader(ConnectionState& proto) {
-    // expect and ignore CONTENT lines
-    String result = proto.is().readLine();
+    input = "";
+    YARP_SSIZE_T len = 1;
+    while (len>0) {
+        char buf[2];
+        Bytes b((char *)&buf[0],1);
+        len = proto.is().read(b);
+        if (len>0) {
+            buf[len] = '\0';
+            input += ConstString(buf,len);
+        }
+    }
+    stream = new HttpTwoWayStream(proto.giveStreams(),
+                                  input.c_str(),
+                                  prefix.c_str(),
+                                  prop,
+                                  true);
+    proto.takeStreams(stream);
     return true;
 }
 
@@ -730,9 +756,10 @@ bool yarp::os::impl::HttpCarrier::expectAck(ConnectionState& proto) {
 
 bool yarp::os::impl::HttpCarrier::respondToHeader(ConnectionState& proto) {
     stream = new HttpTwoWayStream(proto.giveStreams(),
-                                    input.c_str(),
-                                    prefix.c_str(),
-                                    prop);
+                                  input.c_str(),
+                                  prefix.c_str(),
+                                  prop,
+                                  false);
     proto.takeStreams(stream);
     return true;
 }

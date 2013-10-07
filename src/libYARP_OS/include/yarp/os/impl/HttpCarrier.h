@@ -60,11 +60,13 @@ private:
     StringOutputStream sos;
     ConstString format;
     ConstString outer;
+    bool isWriter;
 public:
     HttpTwoWayStream(TwoWayStream *delegate,
                      const char *txt,
                      const char *prefix,
-                     yarp::os::Property& prop);
+                     yarp::os::Property& prop,
+                     bool writer);
 
     virtual ~HttpTwoWayStream();
 
