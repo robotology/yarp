@@ -18,14 +18,20 @@ class RosTypeSearch {
 private:
     bool find_service;
     std::string target_dir;
+    bool allow_web;
 public:
     RosTypeSearch() {
         find_service = false;
         target_dir = ".";
+        allow_web = false;
     }
 
     void lookForService(bool flag) {
         find_service = flag;
+    }
+
+    void allowWeb() {
+        allow_web = true;
     }
 
     std::string findFile(const char *tname);

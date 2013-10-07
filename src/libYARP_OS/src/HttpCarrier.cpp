@@ -167,6 +167,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
         Bottle b;
         b.addString(txt);
         sis.add(b.toString().c_str());
+        sis.add("\n");
         return;
     }
     data = false;
