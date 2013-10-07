@@ -19,11 +19,13 @@ private:
     bool find_service;
     std::string target_dir;
     bool allow_web;
+    bool abort_on_error;
 public:
     RosTypeSearch() {
         find_service = false;
         target_dir = ".";
         allow_web = false;
+        abort_on_error = true;
     }
 
     void lookForService(bool flag) {
@@ -34,7 +36,13 @@ public:
         allow_web = true;
     }
 
+    void softFail() {
+        abort_on_error = false;
+    }
+
     std::string findFile(const char *tname);
+
+    std::string readFile(const char *fname);
 
     void setTargetDirectory(const char *tname) {
         target_dir = tname;

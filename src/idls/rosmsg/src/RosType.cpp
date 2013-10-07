@@ -384,12 +384,24 @@ static std::vector<std::string> &split(const std::string &s, char delim, std::ve
     return elems;
 }
 
+std::string RosTypeSearch::readFile(const char *fname) {
+    char buf[25600];
+    FILE *fin = fopen(fname,"r");
+    if (fin==NULL) return "";
+    std::string result = "";
+    while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+        result += buf;
+    }
+    fclose(fin);
+    fin = NULL;
+    return result;
+}
+
 std::string RosTypeSearch::findFile(const char *tname) {
     struct stat dummy;
 	if (stat(tname, &dummy)==0) {
         return tname;
     }
-    //fprintf(stderr, "[type] Looking for definition of %s\n", tname);
     string target = string(tname);
     if (target.find(".")!=string::npos) {
         return tname;
@@ -492,8 +504,12 @@ std::string RosTypeSearch::findFile(const char *tname) {
                     }
                 }
             }
-            if (!success) exit(1);
         }
+    }
+
+    if (!success) {
+        target = "";
+        if (abort_on_error) exit(1);
     }
 
     return target;

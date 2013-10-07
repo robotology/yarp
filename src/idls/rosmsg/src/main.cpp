@@ -53,6 +53,19 @@ void show_usage() {
     printf("    Start up a service with the given port name for querying types.\n");
 }
 
+void configure_search(RosTypeSearch& env, Searchable& p) {
+    if (p.check("out")) {
+        env.setTargetDirectory(p.find("out").toString().c_str());
+    }
+    if (p.check("web",Value(0)).asInt()!=0) {
+        env.allowWeb();
+    }
+    if (p.check("soft",Value(0)).asInt()!=0) {
+        env.softFail();
+    }
+    env.lookForService(p.check("service"));
+}
+
 int generate_cpp(int argc, char *argv[]) {
     bool is_service = false;
 
@@ -68,6 +81,9 @@ int generate_cpp(int argc, char *argv[]) {
             is_service = true;
         }
     }
+    if (is_service) {
+        p.put("service",1);
+    }
  
     RosTypeSearch env;
     RosType t;
@@ -75,12 +91,8 @@ int generate_cpp(int argc, char *argv[]) {
     RosTypeCodeGenYarp gen;
     if (p.check("out")) {
         gen.setTargetDirectory(p.find("out").toString().c_str());
-        env.setTargetDirectory(gen.getTargetDirectory().c_str());
     }
-    if (p.check("web")) {
-        env.allowWeb();
-    }
-    env.lookForService(is_service);
+    configure_search(env,p);
 
     if (t.read(fname.c_str(),env,gen)) {
         RosTypeCodeGenState state;
@@ -88,36 +100,6 @@ int generate_cpp(int argc, char *argv[]) {
     }
 
     return 0;
-}
-
-string lookup_type(string name, bool find_service) {
-    string cache_file = "/tmp/yarpidl_rosmsg_lookup_cache";
-    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r " + name + " > " + cache_file;
-    fprintf(stderr,"[ros]  %s\n", cmd.c_str());
-    pid_t p = ACE_OS::fork();
-    if (p==0) {
-#ifdef __linux__
-        // This was ACE_OS::execlp, but that fails
-        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#else
-        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#endif
-        ::exit(0);
-    } else {
-        ACE_OS::wait(NULL);
-    }
-    FILE *fin = fopen(cache_file.c_str(),"r");
-    string txt = "";
-    if (fin) {
-        char *result = NULL;
-        do {
-            char buf[2048];
-            result = fgets(buf,sizeof(buf),fin);
-            if (result==NULL) break;
-            txt += result;
-        } while (result!=NULL);
-    }
-    return txt;
 }
 
 int main(int argc, char *argv[]) {
@@ -130,15 +112,21 @@ int main(int argc, char *argv[]) {
         return 0;        
     }
 
-    bool is_service = false;
-
     Property p;
-    string fname;
     p.fromCommand(argc,argv);
 
     if (!p.check("name")) {
         return generate_cpp(argc,argv);
     }
+    if (!p.check("soft")) {
+        p.put("soft",1);
+    }
+    if (!p.check("web")) {
+        p.put("web",1);
+    }
+
+    RosTypeSearch env;
+    configure_search(env,p);
 
     Network yarp;
     Port port;
@@ -156,8 +144,13 @@ int main(int argc, char *argv[]) {
         }
         Bottle resp;
         ConstString tag = req.get(0).asString();
+        string fname = env.findFile(req.get(1).asString().c_str());
+        string txt = "";
+        if (fname!="") {
+            txt = env.readFile(fname.c_str());
+        }
         if (tag=="raw") {
-            resp.addString(lookup_type(req.get(1).asString().c_str(),false));
+            resp.addString(txt);
         } else {
             resp.addString("?");
         }
