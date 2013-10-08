@@ -731,17 +731,17 @@ int myMain( int   argc, char *argv[] )
         speedview_param_enabled = true;
     }
 
+    bool deleteParts=false;
     std::string robotName=finder->find("name").asString().c_str();
     Bottle *pParts=finder->find("parts").asList();
-    if (pParts!=NULL)
-        NUMBER_OF_AVAILABLE_PARTS=pParts->size();
-    else
+    if (pParts==NULL)
     {
         printf("Setting default parts.\n");
         pParts=new Bottle("head torso left_arm right_arm left_leg right_leg");
-        NUMBER_OF_AVAILABLE_PARTS=pParts->size();
+        deleteParts=true;
     }
 
+    NUMBER_OF_AVAILABLE_PARTS=pParts->size();
     if (NUMBER_OF_AVAILABLE_PARTS > MAX_NUMBER_ACTIVATED)
         {
             fprintf(stderr, "The number of parts exceeds the maximum! \n");
@@ -809,6 +809,10 @@ int myMain( int   argc, char *argv[] )
     fprintf(stderr, "Deleting the finder");
     delete finder;
     fprintf(stderr, "...done!\n");
+
+    if (deleteParts)
+        delete pParts;
+
     return 0;
 }
 
