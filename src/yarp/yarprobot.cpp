@@ -12,11 +12,12 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ResourceFinderOptions.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Os.h>
 #include <stdio.h>
 
-
 #include "yarpcontextutils.h"
-#include "yarpcontext.h"
+#include "yarprobot.h"
+
 #if defined(WIN32)
     #define PATH_SEPERATOR      "\\"
 #else
@@ -27,28 +28,28 @@ using namespace yarp::os;
 
 
 
-void yarp_context_help() {
-    printf("Usage: yarp-config context [OPTION]\n\n");
+void yarp_robot_help() {
+    printf("Usage: yarp-config robot [OPTION]\n\n");
     printf("Known values for OPTION are:\n\n");
     printf("  --help       display this help and exit\n");
-    printf("  --list  list contexts that are available; add optional '--user', '--sysadm' or '--installed' parameters to limit the search locations\n");
+    printf("  --list  list robots that are available; add optional '--user', '--sysadm' or '--installed' parameters to limit the search locations\n");
 //    printf("  --show <context-name>  show files that make up a context, and the location of each\n");
-    printf("  --import <context_name> file1 file2 import specified context files to home directory\n");
-    printf("  --import-all import all contexts to home directory\n");
-    printf("  --remove  <context_name>  remove specified context from home directory\n");
-    printf("  --diff  <context_name>  find differences from the context in the home directory with respect to the installation directory\n");
-    printf("  --diff-list  list the contexts in the home directory that are different from the installation directory\n");
-    printf("  --where  <context_name>  print full paths to the contexts that are found for <context_name> (the first one is the default one)\n");
-    printf("  --merge  <context_name>  file1 file2 ... merge differences in selected files-directories\n");
+    printf("  --import <robot_name> file1 file2 ... import specified robot files to home directory\n");
+    printf("  --import-all import all robots to home directory\n");
+    printf("  --remove  <robot_name>  remove specified robot from home directory\n");
+    printf("  --diff  <robot_name>  find differences from the robot in the home directory with respect to the installation directory\n");
+    printf("  --diff-list  list the robots in the home directory that are different from the installation directory\n");
+    //printf("  --where  <context_name>  print full paths to the contexts that are found for <context_name> (the first one is the default one)\n");
+    printf("  --merge  <robot_name>  file1 file2 ... merge differences in selected files-directories\n");
     printf("\n");
 
 }
 
-int yarp_context_main(int argc, char *argv[]) {
+int yarp_robot_main(int argc, char *argv[]) {
     yarp::os::Property options;
     options.fromCommand(argc,argv);
     if (options.check("help")) {
-        yarp_context_help();
+        yarp_robot_help();
         return 0;
     }
     if (options.check("list")) {
@@ -58,17 +59,17 @@ int yarp_context_main(int argc, char *argv[]) {
         if(options.check("user") || options.check("sysadm") || options.check("installed"))
         {
             if (options.check("user"))
-                printUserFolders(rf, CONTEXTS);
+                printUserFolders(rf, ROBOTS);
             if (options.check("sysadm"))
-                printSysadmFolders(rf, CONTEXTS);
+                printSysadmFolders(rf, ROBOTS);
             if (options.check("installed"))
-                printInstalledFolders(rf, CONTEXTS);
+                printInstalledFolders(rf, ROBOTS);
         }
         else
         {
-            printUserFolders(rf, CONTEXTS);
-            printSysadmFolders(rf, CONTEXTS);
-            printInstalledFolders(rf, CONTEXTS);
+            printUserFolders(rf, ROBOTS);
+            printSysadmFolders(rf, ROBOTS);
+            printInstalledFolders(rf, ROBOTS);
         }
         return 0;
     }
@@ -76,12 +77,13 @@ int yarp_context_main(int argc, char *argv[]) {
     if(options.check("import"))
     {
         Bottle importArg=options.findGroup("import");
-        return import(importArg, CONTEXTS, options.check("verbose"));
+        return import(importArg, ROBOTS, options.check("verbose"));
     }
 
     if(options.check("import-all"))
     {
-        return importAll(CONTEXTS, options.check("verbose"));
+
+        return importAll(ROBOTS, options.check("verbose"));
     }
 
     if(options.check("remove"))
@@ -90,10 +92,10 @@ int yarp_context_main(int argc, char *argv[]) {
         ConstString contextName=options.find("remove").asString().c_str();
         if (contextName=="")
         {
-            printf("No context name provided\n");
+            printf("No robot name provided\n");
             return 0;
         }
-        return remove(contextName, CONTEXTS, options.check("verbose"));
+        return remove(contextName, ROBOTS, options.check("verbose"));
     }
 
     if(options.check("where"))
@@ -101,16 +103,26 @@ int yarp_context_main(int argc, char *argv[]) {
         ConstString contextName=options.find("where").asString().c_str();
         if (contextName=="")
         {
-            printf("No context name provided\n");
+            printf("No robot name provided\n");
             return 0;
         }
         yarp::os::ResourceFinder rf;
         if (options.check("verbose"))
             rf.setVerbose(true);
-        yarp::os::Bottle paths=rf.findPaths((ConstString("contexts") + PATH_SEPERATOR +contextName).c_str());
+        yarp::os::Bottle paths=rf.findPaths((ConstString("robots") + PATH_SEPERATOR +contextName).c_str());
         for (int curCont=0; curCont<paths.size(); ++curCont)
             printf("%s\n", paths.get(curCont).asString().c_str());
         return 0;
+    }
+    if(options.check("current"))
+    {
+        const char *result = yarp::os::getenv("YARP_ROBOT_NAME");
+        if (result != NULL)
+            printf("Current robot is %s, identified by the environment variable YARP_ROBOT_NAME\n", result);
+        else
+            printf("No robot is set; please set the YARP_ROBOT_NAME environment variable.");
+        return 0;
+
     }
 
 //         if(options.check("show"))
@@ -140,21 +152,21 @@ int yarp_context_main(int argc, char *argv[]) {
         ConstString contextName=options.find("diff").asString().c_str();
         if (contextName=="")
         {
-            printf("No context name provided\n");
+            printf("No robot name provided\n");
             return 0;
         }
-        return diff(contextName, CONTEXTS, options.check("verbose"));
+        return diff(contextName, ROBOTS, options.check("verbose"));
     }
     if(options.check("diff-list"))
     {
-        return diffList(CONTEXTS, options.check("verbose"));
+        return diffList(ROBOTS, options.check("verbose"));
     }
     if(options.check("merge"))
     {
         Bottle mergeArg=options.findGroup("merge");
-        return merge(mergeArg, CONTEXTS, options.check("verbose"));
+        return merge(mergeArg, ROBOTS, options.check("verbose"));
     }
-    yarp_context_help();
+    yarp_robot_help();
     return 1;
 }
 

@@ -63,6 +63,12 @@ _yarp()
                 ### offset of 1 for additional command
                 _yarprun 1
                ;;
+            context)
+                _yarpcontext
+                ;;
+            robot)
+                _yarprobot
+                ;;
             exists|ping|rpc|terminate|wait)
                 if [ $COMP_CWORD -eq 2 ]; then
                     completion=$(_get_yarp_ports)
@@ -144,21 +150,21 @@ _yarprun() {
 
 _get_all_contexts() {
 
-    for x in `yarp-context --list | grep "^[^\*]" | sort | uniq`;
+    for x in `yarp-config context --list | grep "^[^\*]" | sort | uniq`;
        do echo ${x} ;
     done
 }
 
 _get_user_contexts() {
 
-    for x in `yarp-context --list --user| grep "^[^\*]" | sort | uniq`;
+    for x in `yarp-config context --list --user| grep "^[^\*]" | sort | uniq`;
        do echo ${x} ;
     done
 }
 
 _get_installed_contexts() {
 
-    for x in `yarp-context --list --installed| grep "^[^\*]" | sort | uniq`;
+    for x in `yarp-config context --list --installed| grep "^[^\*]" | sort | uniq`;
        do echo ${x} ;
     done
 }
@@ -167,11 +173,11 @@ _yarpcontext() {
     COMPREPLY=()
     local cur="${COMP_WORDS[COMP_CWORD]}"
     local prev="${COMP_WORDS[COMP_CWORD-1]}"
-    local command="${COMP_WORDS[1]}"
-    local opts="--where --import --remove --diff --merge --list --help --import-all"
+    local command="${COMP_WORDS[2]}"
+    local opts="--where --import --remove --diff --diff-list --merge --list --help --import-all"
 
     completion=""
-    if [ $COMP_CWORD -eq 1 ]; then
+    if [ $COMP_CWORD -eq 2 ]; then
         ### first options
         completion=$opts
     else
@@ -192,12 +198,97 @@ _yarpcontext() {
             ;;
         esac
     fi
+
     COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
 
     return 0
 }
 
-complete -F _yarpcontext yarp-context
+
+_get_all_robots() {
+
+    for x in `yarp-config robot --list | grep "^[^\*]" | sort | uniq`;
+       do echo ${x} ;
+    done
+}
+
+_get_user_robots() {
+
+    for x in `yarp-config robot --list --user| grep "^[^\*]" | sort | uniq`;
+       do echo ${x} ;
+    done
+}
+
+_get_installed_robots() {
+
+    for x in `yarp-config robot --list --installed| grep "^[^\*]" | sort | uniq`;
+       do echo ${x} ;
+    done
+}
+
+
+_yarprobot() {
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
+    local command="${COMP_WORDS[2]}"
+    local opts="--where --current --import --remove --diff --diff-list --merge --list --help --import-all"
+
+    completion=""
+    if [ $COMP_CWORD -eq 2 ]; then
+        ### first options
+        completion=$opts
+    else
+        case "$prev" in
+            "--where")
+                completion=$(_get_all_robots)
+                ;;
+            "--import")
+                completion=$(_get_installed_robots)
+                ;;
+            "--remove"|"--diff"|"--merge")
+                completion=$(_get_user_robots)
+                ;;
+            "--list")
+                completion="--user --sysadm --installed"
+                ;;
+            *)
+            ;;
+        esac
+    fi
+    COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
+
+    return 0
+}
+
+_yarpconfig() {
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
+    local command="${COMP_WORDS[1]}"
+    local opts="context robot --help --namespace --nameserver --version"
+    completion=""
+    if [ $COMP_CWORD -eq 1 ]; then
+        ### first options
+        completion=$opts
+    else
+        case "$command" in
+            "context")
+                _yarpcontext
+                ;;
+            "robot")
+                _yarprobot
+                ;;
+            *)
+            ;;
+        esac
+    fi
+    COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
+
+    return 0
+}
+
+complete -F _yarpconfig yarp-config
 complete -F _yarp yarp
 complete -F _yarprun yarprun
 
