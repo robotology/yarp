@@ -1,23 +1,30 @@
 
+An example which shows how to use a Lua script to modify incoming image
+data in an input port 
+------------------------------------------------------------------------
+
+
 -- Compile yarp with lua binding support
 
--- set LUA_CPATH to include yarp-lua binding library 
+-- Set LUA_CPATH to include yarp-lua binding library 
     (e.g., export LUA_CPATH=";;;$YARP_ROOT/bindings/build-lua/?.so")
 
--- go to the portmonitor_carrier/example directory and run gyarpmanager 
-   (gyarpmanager --application TestMonitorImage.xml)
+-- Open a terminal and run yarpserver
 
--- run and connect the ports. you should see two instances of yarpview showing 
-   the original image from fake test grabber and the modified one using lua script
-   (i.e. the lua script draw a moving circular point over the original image) 
+-- In another terminal go to the $YARP_ROOT/src/carrier/portmonitor_carrier/example 
+   directory and run yarpmanager (yarpmanager --application TestMonitorImage.xml)
 
--- you can change the the forground and background points color using yarp port 
+-- Run and connect the ports (type run then connect). you should see two instances of
+   yarpview showing the original image from fake test grabber and the modified one using
+   Lua script (i.e. the Lua script draws moving circular points over the original image) 
+
+-- You can change the the foreground and background point's color using yarp port 
    administrator as follow: 
   
-    $ yarp admin rpc /view
-    $ set in /grabber (fg 0 255 0)      // this set the forground color to Green (0 G 0)
-    $ set in /grabber (bg 0 0 255)      // this set the forground color to Blue (0 0 B)
-    $ get in /grabber                   // will get the values 
+    $ yarp admin rpc /modified/yarpview/img:i
+    $ set in /grabber (fg 0 255 0)      // this set the foreground color to Green (0 G 0)
+    $ set in /grabber (bg 0 0 255)      // this set the foreground color to Blue (0 0 B)
+    $ get in /grabber                   // will show the parameter's value 
     
 
 

@@ -7,7 +7,7 @@
 
     <module>
         <name>test_grabber</name>
-        <parameters>--mode line</parameters>
+        <parameters>--width 120 --height 120 --mode line</parameters>
         <node>localhost</node>
         <prefix></prefix>
         <deployer>yarpdev</deployer>
