@@ -19,7 +19,7 @@ for i in range(1,top):
     bottle.addInt(i)
     bottle.addString("of")
     bottle.addInt(top)
-    print "Sending", bottle.toString()
+    print ("Sending", bottle.toString())
     p.write()
     yarp.Time.delay(0.5)
 

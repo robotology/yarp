@@ -29,6 +29,7 @@
   %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize, 
 		       SWIG_FromCharPtrAndSize, %checkcode(STDSTRING)); 
   %define YARP_WRAP_STL_STRING %enddef
+  %ignore yarp::os::ConstString;
 #else
   %define _YARP2_CONSTSTRING_ %enddef
   namespace yarp {
