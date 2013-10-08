@@ -1,0 +1,39 @@
+<application>
+    <name>TestMonitorImage</name>
+    <version>1.0</version>
+    <authors>
+        <author email=""></author>
+    </authors>
+
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode line</parameters>
+        <node>localhost</node>
+        <prefix></prefix>
+        <deployer>yarpdev</deployer>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 100</parameters>
+        <node>localhost</node>
+        <prefix>/original</prefix>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters>--x 600</parameters>
+        <node>localhost</node>
+        <prefix>/modified</prefix>
+    </module>
+
+    <connection>
+        <from>/grabber</from>
+        <to>/original/yarpview/img:i</to>
+        <protocol>udp</protocol>
+    </connection>
+
+    <connection>
+        <from>/grabber</from>
+        <to>/modified/yarpview/img:i</to>
+        <protocol>udp+recv.portmonitor+script.lua+file.img_modifier</protocol>
+    </connection>
+</application>
