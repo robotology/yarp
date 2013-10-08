@@ -77,6 +77,7 @@ public:
     int                 recursiveIterations;
 
     MasterThread        *masterThread;
+    MainWindow          *wnd;
 
     /**
     * function that returns the current path string

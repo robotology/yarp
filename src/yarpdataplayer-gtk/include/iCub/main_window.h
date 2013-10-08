@@ -70,6 +70,7 @@ public:
     void onMenuPlayBackPlay();
     void resetButtonOnStop();
     void onMenuPlayBackPause();
+    void onErrorMessage(const char *filename);
     bool getPartPort(const char* szName, char* dest);
     bool execReq(const yarp::os::Bottle &command, yarp::os::Bottle &reply);
     bool respond(const yarp::os::Bottle &command, yarp::os::Bottle &reply)

@@ -126,8 +126,10 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
             {
                 string dataFileName = string(dir + "/" + direntp->d_name + "/data.log");
 
+                bool checkLog = checkLogValidity( filename );
+                bool checkData = checkLogValidity( dataFileName.c_str() );
                 //check log file validity before proceeding
-                if ( checkLogValidity( filename ) && (stat(dataFileName.c_str(),&st) == 0))
+                if ( checkLog && checkData && (stat(dataFileName.c_str(), &st) == 0))
                 {
                     fprintf(stdout," %s IS present adding it to the gui\n",filename);
                     
@@ -140,10 +142,24 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                     logs.push_back( string(dir + "/" + direntp->d_name + "/data.log") );
                     paths.push_back( string(dir + "/" + direntp->d_name + "/") ); //pass full path
                     dir_count++;
-                }else
-                {
-                    fprintf(stdout," %s IS present BUT corrupted not using file\n",filename);
                 }
+                else
+                {
+                    if (!checkLog)
+                    {
+                        fprintf(stdout," %s IS present BUT corrupted not using file\n", filename);
+                        masterThread->wnd->onErrorMessage(filename);
+                    }
+                    if (!checkData)
+                    {
+                        fprintf(stdout," %s IS present BUT corrupted not using file\n", dataFileName.c_str());
+                        wnd->onErrorMessage(dataFileName.c_str());
+                    }
+                }
+            }
+            else
+            {
+                wnd->onErrorMessage(filename);
             }
             if (recursive)
             {
@@ -198,7 +214,8 @@ bool Utilities::checkLogValidity(const char *filename)
             } 
             itr++;
         }    
-        str.close();            
+        str.close();
+        fprintf (stdout, "The size of the file is %d \n",itr );
     }   
     return check;
 }
@@ -228,7 +245,6 @@ bool Utilities::setupDataFromParts(partsData &part)
                 part.portName = b.get(1).toString().c_str();
                 fprintf(stdout, "the name of the port is %s\n",part.portName.c_str());
             }
-
             itr++;
         }
         str.close();

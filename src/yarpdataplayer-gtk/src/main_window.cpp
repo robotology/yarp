@@ -582,6 +582,7 @@ bool MainWindow::safeExit(void)
     }
     return false;
 }
+
 /**********************************************************/
 void MainWindow::onMenuFileOpen()
 {
@@ -608,6 +609,36 @@ void MainWindow::onMenuFileOpen()
         doGuiSetup(fpath);
     }
 }
+/**********************************************************/
+
+void MainWindow::onErrorMessage(const char *filename)
+{
+    Gtk::MessageDialog error("Setup Error", false /* use_markup */, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+
+    string file = filename;
+    string fullMessage = string( "There was a problem opening \n\n" + file + "\n\nplease check its validity");
+
+    error.set_secondary_text(fullMessage.c_str());
+
+    int result = error.run();
+    //Handle the response:
+    switch(result)
+    {
+        case(Gtk::RESPONSE_OK):
+        {
+            std::cout << "OK clicked." << std::endl;
+            break;
+        }
+        default:
+        {
+            std::cout << "Unexpected button clicked." << std::endl;
+            break;
+        }
+    }
+        
+}
+
+
 /**********************************************************/
 void MainWindow::onMenuHelpAbout()
 {
