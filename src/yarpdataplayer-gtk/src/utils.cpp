@@ -159,7 +159,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
             }
             else
             {
-                wnd->onErrorMessage(filename);
+                //wnd->onErrorMessage(filename);
             }
             if (recursive)
             {
