@@ -809,7 +809,6 @@ int myMain( int   argc, char *argv[] )
     fprintf(stderr, "Deleting the finder");
     delete finder;
     fprintf(stderr, "...done!\n");
-    delete pParts;
     return 0;
 }
 
