@@ -547,6 +547,7 @@ void MainWindow::onCommandQuit()
 /**********************************************************/
 bool MainWindow::cmdSafeExit(void)
 {
+    onMenuPlayBackStop();
     fprintf(stdout, "Module closing...\nCleaning up...\n");
     for (int x=0; x < subDirCnt; x++)
         utilities->partDetails[x].worker->release();
@@ -567,6 +568,7 @@ bool MainWindow::safeExit(void)
     dialog.set_secondary_text("Do you want to quit?");
     if(dialog.run() == Gtk::RESPONSE_YES)
     {
+        onMenuPlayBackStop();
         fprintf(stdout, "Module closing...\nCleaning up...\n");
         for (int x=0; x < subDirCnt; x++)
             utilities->partDetails[x].worker->release();
