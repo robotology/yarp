@@ -154,7 +154,6 @@ PortMonitor.getparam = function()
     fg:addInt(PortMonitor.fg.r)
     fg:addInt(PortMonitor.fg.g)
     fg:addInt(PortMonitor.fg.b)
-    print(bt:toString())
     property:fromString(bt:toString())
     return property
 end
