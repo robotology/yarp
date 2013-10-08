@@ -28,8 +28,17 @@ namespace yarp {
 /**
  *
  * Allow to monitor and modify port data from Lua script  Under development.
- * Affected by carrier modifiers.  Examples:
- *   tcp+recv.portmonitor+script.lua+file.my_lua_script_file
+ * Affected by carrier modifiers.  
+ *
+ * Examples: tcp+recv.portmonitor+script.lua+file.my_lua_script_file
+ *
+ */
+
+/**
+ * TODO: 
+ *      - how to pass the filename with prefix via connection paramter? 
+ *        e.g. ...+file.'my_lua_script_file.lua' 
+ *      - using resource finder to find the script file  
  *
  */
 class yarp::os::PortMonitor : public yarp::os::ModifyingCarrier,
@@ -104,10 +113,6 @@ public:
     }
 
     virtual size_t getSize() {
-        /*
-        if (image_data_len) processBuffered();
-        return sizeof(header)+image_data_len;
-        */
         return 0;
     }
 

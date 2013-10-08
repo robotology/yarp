@@ -1,9 +1,27 @@
-
+--
+-- Copyright (C) 2012 IITRBCS
+-- Authors: Ali Paikan
+-- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+--
+ 
 -- loading lua-yarp binding library
 require("yarp")
 
-
+--
+-- PortMonitor table is used by portmonitor_carrier 
+-- to invoke the corresponding methods.The methods are
+-- optional but must satisfy the following format:
+--
+-- PortMonitor = {
+--      create = function() ... return true end, 
+--      destroy = function() ... end, 
+--      update = function(reader) ... return reader end, 
+--      setparam = function(param) ... end, 
+--      getparam = function() ... return param end
+-- }
+--
 -- declaring 'PortMonitor' object as an empty table
+--
 PortMonitor = {}
 
 
@@ -48,7 +66,6 @@ end
 --
 PortMonitor.setparam = function(property) 
 
-    return
 end
 
 

@@ -125,7 +125,6 @@ yarp::os::ConnectionReader& MonitorLua::updateData(yarp::os::ConnectionReader& r
         }
     }
 
-    lua_pop(L, 1);
     return reader;
 }
 
@@ -151,8 +150,6 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
             return false;
         }
     }
-
-    lua_pop(L, 1);
     return true;
 }
 
@@ -193,7 +190,6 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         }
     }
 
-    lua_pop(L, 1);
     return true;
 }
 
