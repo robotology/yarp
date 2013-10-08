@@ -52,6 +52,21 @@ public:
         ConstString cat = nc.getCategory();
         return (cat=="" || cat=="+" || cat=="-");
     }
+
+    bool isServiceServer() {
+        ConstString cat = nc.getCategory();
+        return (cat=="" || cat=="-1");
+    }
+
+    bool isServiceClient() {
+        ConstString cat = nc.getCategory();
+        return (cat=="" || cat=="+1");
+    }
+
+    bool isService() {
+        ConstString cat = nc.getCategory();
+        return (cat=="" || cat=="+1" || cat=="-1");
+    }
 };
 
 class NodeArgs {

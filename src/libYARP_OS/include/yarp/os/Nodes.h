@@ -32,6 +32,8 @@ public:
 
     virtual Contact getParent(const ConstString& name);
 
+    virtual Contact getURI(const ConstString& name);
+
     virtual void prepare(const ConstString& name);
 
     virtual void update(Contactable& contactable);
