@@ -24,6 +24,20 @@
   %include "std_vector.i"
 #endif
 
+// Try to make yarp::os::ConstString act like std::string
+#if defined(SWIGPYTHON)
+  %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize, 
+		       SWIG_FromCharPtrAndSize, %checkcode(STDSTRING)); 
+  %define YARP_WRAP_STL_STRING %enddef
+#else
+  %define _YARP2_CONSTSTRING_ %enddef
+  namespace yarp {
+    namespace os {
+      typedef std::string ConstString;
+    }
+  }
+#endif
+
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
     %typemap(ctype)  unsigned char * "unsigned char *"
