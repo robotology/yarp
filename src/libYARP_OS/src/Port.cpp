@@ -359,7 +359,8 @@ bool Port::open(const Contact& contact, bool registerName,
             Nodes& nodes = NameClient::getNameClient().getNodes();
             ConstString node_name = nodes.getActiveName();
             if (node_name!="") {
-                n = node_name + "=/" + n;
+                // n = node_name + "=/" + n;
+                n = "/" + n + "@" + node_name;
             }
         }
     }
@@ -394,10 +395,14 @@ bool Port::open(const Contact& contact, bool registerName,
                     cat = "+";
                 }
                 if (cat!="") {
-                    contact2 = contact2.addName(nc.getNodeName() +
-                                                "=" +
+                    //contact2 = contact2.addName(nc.getNodeName() +
+                    //                            "=" +
+                    //                            cat +
+                    //                            nc.getNestedName());
+                    contact2 = contact2.addName(nc.getNestedName() +
                                                 cat +
-                                                nc.getNestedName());
+                                                "@" +
+                                                nc.getNodeName());
                 } else {
                     YARP_SPRINTF1(Logger::get(),error,
                                   "Port '%s' does not have a defined I/O direction",

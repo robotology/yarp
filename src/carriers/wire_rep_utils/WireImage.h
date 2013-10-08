@@ -81,7 +81,7 @@ public:
         buf.appendInt(image->height());
         buf.appendInt(image->width());
         buf.appendRawString(encoding);
-        char is_bigendian = 1;
+        char is_bigendian = 0;
         buf.appendBlock(&is_bigendian,1);
         buf.appendInt((image->width()*3)+image->getPadding());
         buf.appendInt(image->getRawImageSize());

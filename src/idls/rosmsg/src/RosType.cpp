@@ -31,6 +31,14 @@
 #endif
 #include <stdlib.h>
 
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Bottle.h>
+
+#include <string>
+#include <sstream>
+#include <vector>
+
 using namespace std;
 
 vector<string> normalizedMessage(const string& line) {
@@ -201,7 +209,8 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
         if (result==NULL) break;
         txt += "//   ";
         txt += result;
-        for (int i=0; i<(int)strlen(result); i++) {
+        int len = (int)strlen(result);
+        for (int i=0; i<len; i++) {
             if (result[i]=='\n') {
                 result[i] = '\0';
                 break;
@@ -366,12 +375,33 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 }
 
 
+static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+std::string RosTypeSearch::readFile(const char *fname) {
+    char buf[25600];
+    FILE *fin = fopen(fname,"r");
+    if (fin==NULL) return "";
+    std::string result = "";
+    while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+        result += buf;
+    }
+    fclose(fin);
+    fin = NULL;
+    return result;
+}
+
 std::string RosTypeSearch::findFile(const char *tname) {
     struct stat dummy;
 	if (stat(tname, &dummy)==0) {
         return tname;
     }
-    //fprintf(stderr, "[type] Looking for definition of %s\n", tname);
     string target = string(tname);
     if (target.find(".")!=string::npos) {
         return tname;
@@ -400,6 +430,88 @@ std::string RosTypeSearch::findFile(const char *tname) {
         ACE_OS::wait(NULL);
     }
     //printf("Ran [%s]\n", cmd.c_str());
+
+    // rosmsg return value no longer reliable?
+
+    bool success = true;
+
+    FILE *fin = fopen(target_full.c_str(),"r");
+    if (!fin) {
+        fprintf(stderr, "[type] FAILED to open %s\n", target_full.c_str());
+        success = false;
+    } else {
+        char buf[10];
+        char *result = fgets(buf,sizeof(buf),fin);
+        fclose(fin);
+        if (result==NULL) {
+            fprintf(stderr, "[type] File is blank: %s\n", target_full.c_str());
+            ACE_OS::unlink(target_full.c_str());
+            success = false;
+        }
+    }
+
+    if (allow_web && !success) {
+        string name = tname;
+        size_t idx = name.find("/");
+        if (idx!=string::npos) {
+            string package = name.substr(0,idx);
+            string typ = name.substr(idx+1,name.length());
+            string url = "http://docs.ros.org:80/api/";
+            url += package;
+            url += "/html/msg/";
+            url += typ;
+            url += ".html";
+            fprintf(stderr, "Trying the web: %s\n", url.c_str());
+            yarp::os::Network yarp;
+            yarp::os::Port port;
+            port.openFake("base");
+            port.addOutput(url);
+            yarp::os::Bottle cmd, reply;
+            cmd.addString("1");
+            port.write(cmd,reply);
+            string txt = reply.get(0).asString() + "\n";
+            vector<string> lines;
+            split(txt,'\n',lines);
+            int phase = 0;
+            for (size_t i=0; i<lines.size(); i++) {
+                std::string line = lines[i];
+                if (line == "<h2>Compact Message Definition</h2>" && i<lines.size()-2) {
+                    std::string def = lines[i+2];
+                    std::string def2;
+                    std::string tag;
+                    bool tagging = false;
+                    for (size_t j=0; j<def.length(); j++) {
+                        char ch = def[j];
+                        if (tagging||ch=='<') {
+                            tagging = true;
+                            tag += ch;
+                            if (ch=='>') {
+                                tagging = false;
+                                if (tag=="<br />") {
+                                    def2 += "\n";
+                                }
+                                tag = "";
+                            }
+                        } else {
+                            def2 += ch;
+                        }
+                    }
+                    FILE *fout = fopen(target_full.c_str(),"w");
+                    if (fout) {
+                        fprintf(fout,"%s",def2.c_str());
+                        fclose(fout);
+                        success = true;
+                    }
+                }
+            }
+        }
+    }
+
+    if (!success) {
+        target = "";
+        if (abort_on_error) exit(1);
+    }
+
     return target;
 }
 

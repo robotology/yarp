@@ -842,6 +842,7 @@ bool openPorts()
 {
     bool ret = false;
 
+    ptr_inputPort->setReadOnly();
     ret= ptr_inputPort->open(_options.portName);
 
     if (!ret)
