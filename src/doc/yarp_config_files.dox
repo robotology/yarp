@@ -360,14 +360,9 @@ height 15
 \endcode
 And the program is called with these arguments:
 \verbatim
---policy none --from config.ini --width 200
+--from config.ini --width 200
 \endverbatim
-The policy flag here tells YARP not to fuss too much
- over what paths should be searched - otherwise it will complain.  
-External projects like the ICUB project like to be able to globally
-control the policy used to search for configuration files.
-You could also set a
-YARP_POLICY environment variable to "none".  In any case, we get:
+In this case, we get:
 \code
 prop.find("width").asInt()   // gives the int 200
 prop.find("height").asInt()  // gives the int 15
@@ -388,7 +383,7 @@ a new top-level <tt>width</tt> value without modifying the <tt>width</tt>
 in the <tt>SIZE</tt> section.  As of yarp 2.3.20, it is possible to
 use a nested notation in the command line, and call the program as:
 \verbatim
---policy none --from config.ini --SIZE::width 200
+--from config.ini --SIZE::width 200
 \endverbatim
 
  *
