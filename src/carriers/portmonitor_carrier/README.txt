@@ -37,6 +37,7 @@ Port Monitor carrier
   PortMonitor = {
        create = function() ... return true end, 
        destroy = function() ... end, 
+       accept = function(reader) ... return true end, 
        update = function(reader) ... return reader end, 
        setparam = function(param) ... end, 
        getparam = function() ... return param end

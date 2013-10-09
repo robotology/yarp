@@ -81,15 +81,51 @@ bool MonitorLua::loadScript(const char* script_file)
         if(lua_pcall(L, 0, 1, 0) != 0)
         {
             YARP_LOG_ERROR(lua_tostring(L, -1));
-            result = false;
+            lua_pop(L, 1);
+            lua_close(L);
+            L = NULL;
+            return false;
         }            
         else    
             result = lua_toboolean(L, -1);
-        lua_pop(L,1);
     }
-
+    
+    lua_pop(L,1);
     return result;
 }
+
+bool MonitorLua::acceptData(yarp::os::ConnectionReader& reader)
+{
+    if(getLocalFunction("accept"))
+    {
+        // mapping to swig type
+        swig_type_info *readerType = SWIG_TypeQuery(L, "yarp::os::ConnectionReader *");        
+        if(!readerType)
+        {            
+            YARP_LOG_ERROR("Swig type of ConnectionReader is not found");
+            lua_pop(L, 1);
+            return false;
+        }
+        
+        // getting the swig-type pointer
+        SWIG_NewPointerObj(L, &reader, readerType, 0);
+        if(lua_pcall(L, 1, 1, 0) != 0)
+        {
+            YARP_LOG_ERROR(lua_tostring(L, -1));
+            lua_pop(L, 1);
+            return false;
+        }
+            
+        // converting the results        
+        bool result = lua_toboolean(L, -1);
+        lua_pop(L, 1);
+        return result;        
+    }
+
+    lua_pop(L, 1);
+    return true;
+}
+
 
 yarp::os::ConnectionReader& MonitorLua::updateData(yarp::os::ConnectionReader& reader)
 {
@@ -128,6 +164,7 @@ yarp::os::ConnectionReader& MonitorLua::updateData(yarp::os::ConnectionReader& r
         }
     }
 
+    lua_pop(L,1);
     return reader;
 }
 
@@ -153,6 +190,8 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
             return false;
         }
     }
+
+    lua_pop(L,1);
     return true;
 }
 
@@ -193,6 +232,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         }
     }
 
+    lua_pop(L,1);
     return true;
 }
 

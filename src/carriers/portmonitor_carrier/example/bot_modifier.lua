@@ -15,6 +15,7 @@ require("yarp")
 -- PortMonitor = {
 --      create = function() ... return true end, 
 --      destroy = function() ... end, 
+--      accept = function(reader) ... return true end, 
 --      update = function(reader) ... return reader end, 
 --      setparam = function(param) ... end, 
 --      getparam = function() ... return param end
@@ -45,11 +46,22 @@ PortMonitor.destroy = function()
 end
 
 
+--
+-- accept is called when the port receives new data
+-- @param reader The ConnectionReader
+-- @return Boolean
+-- if false is returned, the data will be ignored 
+-- and update() will never be called
+PortMonitor.accept = function(reader)
+    return true
+end
+
+
 
 --
 -- update is called when the port receives new data
 -- @param reader The ConnectionReader
---
+-- @return ConnectionReader
 PortMonitor.update = function(reader)
     bt = yarp.Bottle()
     bt:read(reader)

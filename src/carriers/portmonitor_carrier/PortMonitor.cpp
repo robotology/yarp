@@ -69,14 +69,19 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params)
 
 yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader) 
 {
-    /*
-     * TODO: check whether we need to return an empty reader
-     *       to avoid pushing data to the port
-     */
     if(!bReady) return reader;
 
     return binder->updateData(reader);
 }
+
+bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader) 
+{
+    if(!bReady) return false;
+
+    return binder->acceptData(reader);
+}
+
+
 
 YARP_SSIZE_T PortMonitor::read(const yarp::os::Bytes& b) 
 {

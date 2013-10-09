@@ -22,6 +22,7 @@ public:
     virtual bool loadScript(const char* filename) = 0;
     virtual bool setParams(const yarp::os::Property& params) = 0;
     virtual bool getParams(yarp::os::Property& params) = 0;
+    virtual bool acceptData(yarp::os::ConnectionReader& reader) = 0;
     virtual yarp::os::ConnectionReader& updateData(yarp::os::ConnectionReader& reader) = 0;
    
     /**

@@ -160,6 +160,9 @@ public:
         return parent->setSize(len);
     }
 
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader);
+
+
     ////////////////////////////////////////////////////////////////////////
     // InputStream methods
     

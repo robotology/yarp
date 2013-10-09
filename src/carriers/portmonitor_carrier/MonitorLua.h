@@ -23,6 +23,7 @@ public:
     bool loadScript(const char* script_file);
     bool setParams(const yarp::os::Property& params);
     bool getParams(yarp::os::Property& params);
+    bool acceptData(yarp::os::ConnectionReader& reader);
     yarp::os::ConnectionReader& updateData(yarp::os::ConnectionReader& reader);    
 
 private:
