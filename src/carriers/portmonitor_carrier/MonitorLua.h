@@ -29,7 +29,7 @@ private:
     bool getLocalFunction(const char *name);
 
 private:
-    lua_State *L;
+    lua_State *L;    
 
 };
 

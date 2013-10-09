@@ -31,6 +31,7 @@ PortMonitor = {}
 -- @return Boolean
 --
 PortMonitor.create = function()
+    print("on create")
     PortMonitor.img_in = yarp.ImageRgb()
     PortMonitor.img_out = yarp.ImageRgb()
     PortMonitor.index = 0;
@@ -47,6 +48,7 @@ end
 -- destroy is called when port monitor is destroyed
 --
 PortMonitor.destroy = function()
+    print("on destroy")
 end
 
 

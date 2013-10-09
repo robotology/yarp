@@ -26,16 +26,18 @@ MonitorLua::MonitorLua(void)
 
 MonitorLua::~MonitorLua()
 {
-    //  call PortMonitor.destroy if exists
-    if(getLocalFunction("destroy"))
+    if(L)
     {
-        if(lua_pcall(L, 0, 0, 0) != 0)
-            YARP_LOG_ERROR(lua_tostring(L, -1));
-        lua_pop(L,1);
-    }
-   
-    // closing lua state handler
-    lua_close(L);
+        //  call PortMonitor.destroy if exists
+        if(getLocalFunction("destroy"))
+        {
+            if(lua_pcall(L, 0, 0, 0) != 0)
+                YARP_LOG_ERROR(lua_tostring(L, -1));
+            lua_pop(L,1);
+        }
+        // closing lua state handler
+        lua_close(L);
+    }        
 }
 
 bool MonitorLua::loadScript(const char* script_file)
@@ -44,15 +46,12 @@ bool MonitorLua::loadScript(const char* script_file)
     //printf("%s (%d)\n", __FILE__, __LINE__);
     if(luaL_loadfile(L, script_file))
     {   
-        ConstString msg = lua_tostring(L, -1);
+        YARP_LOG_ERROR("Cannot load script file");            
+        YARP_LOG_ERROR(lua_tostring(L, -1));
         lua_pop(L,1);
-        if(luaL_loadfile(L, (ConstString(script_file)+".lua").c_str()))
-        {
-            YARP_LOG_ERROR("Cannot load script file");            
-            YARP_LOG_ERROR(msg);
-            lua_pop(L,1);
+        lua_close(L);
+        L = NULL;
         return false;
-        }
     }
 
     if(lua_pcall(L,0, LUA_MULTRET, 0))
@@ -60,6 +59,8 @@ bool MonitorLua::loadScript(const char* script_file)
         YARP_LOG_ERROR("Cannot run script file");
         YARP_LOG_ERROR(lua_tostring(L, -1));
         lua_pop(L,1);
+        lua_close(L);
+        L = NULL;
         return false;
     }
 
@@ -68,6 +69,8 @@ bool MonitorLua::loadScript(const char* script_file)
     {
         YARP_LOG_ERROR("The script file does not contain any valid \'PortMonitor\' object.");
         lua_pop(L, 1);
+        lua_close(L);
+        L = NULL;
         return false;
     }
 

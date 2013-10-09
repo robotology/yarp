@@ -19,9 +19,10 @@ Port Monitor carrier
 
   You should connect two ports using yarp 'portmonitor' carrier modifier:
   
-  $ yarp connect /out /in tcp+recv.portmonitor+script.lua+file.my_lua_script   
+  $ yarp connect /out /in tcp+recv.portmonitor+script.lua+context.myapp+file.my_lua_script
   
   'script.lua' tells the carrier to create a port monitor object for Lua.  
+  'context.myapp' tells the resource finder to load the script from the 'myapp' context. 
   'file.my_lua_script' indicates 'my_lua_script' should be loaded by monitor object. 
    For now, 'my_lua_script' should be the complete path to the script file. the 
    postfix (e.g., '.lua') is not necessary.  
