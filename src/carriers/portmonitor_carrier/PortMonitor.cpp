@@ -24,8 +24,8 @@ using namespace yarp::os;
 // Read connection settings.
 bool PortMonitor::configure(yarp::os::ConnectionState& proto) 
 {       
-    portName = proto.getRoute().getToName();
-    sourceName = proto.getRoute().getFromName();
+    //portName = proto.getRoute().getToName();
+    //sourceName = proto.getRoute().getFromName();
     
     Property options;
     options.fromString(proto.getSenderSpecifier().c_str());
@@ -82,9 +82,4 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 }
 
 
-
-YARP_SSIZE_T PortMonitor::read(const yarp::os::Bytes& b) 
-{
-    return -1;
-}
 
