@@ -222,8 +222,35 @@ public:
      */
     virtual void setReader(PortReader& reader) = 0;
 
-    virtual void setReadOnly() {}
-    virtual void setWriteOnly() {}
+    /**
+     *
+     * Configure the port to allow or forbid inputs.  By default,
+     * ports allow anything.
+     *
+     * @param expectInput set to true if this port will be used for input
+     *
+     */
+    virtual void setInputMode(bool expectInput) = 0;
+
+    /**
+     *
+     * Configure the port to allow or forbid outputs.  By default,
+     * ports allow anything.
+     *
+     * @param expectOutput set to true if this port will be used for output
+     *
+     */
+    virtual void setOutputMode(bool expectOutput) = 0;
+
+    /**
+     *
+     * Configure the port to be RPC only.  By default all ports can be
+     * used for RPC or streaming communication.
+     *
+     * @param expectRpc set to true if this port will be used for RPC only
+     *
+     */
+    virtual void setRpcMode(bool expectRpc) = 0;
 
     virtual Type getType() = 0;
     virtual void promiseType(const Type& typ) = 0;
@@ -231,6 +258,49 @@ public:
     virtual Property *acquireProperties(bool readOnly) = 0;
     virtual void releaseProperties(Property *prop) = 0;
 
+    /**
+     *
+     * Shorthand for setInputMode(true), setOutputMode(false), setRpcMode(false)
+     *
+     */
+    void setReadOnly() {
+        setInputMode(true);
+        setOutputMode(false);
+        setRpcMode(false);
+    }
+
+    /**
+     *
+     * Shorthand for setInputMode(false), setOutputMode(true), setRpcMode(false)
+     *
+     */
+    void setWriteOnly() {
+        setInputMode(false);
+        setOutputMode(true);
+        setRpcMode(false);
+    }
+
+    /**
+     *
+     * Shorthand for setInputMode(true), setOutputMode(false), setRpcMode(true)
+     *
+     */
+    void setRpcServer() {
+        setInputMode(true);
+        setOutputMode(false);
+        setRpcMode(true);
+    }
+
+    /**
+     *
+     * Shorthand for setInputMode(false), setOutputMode(true), setRpcMode(true)
+     *
+     */
+    void setRpcClient() {
+        setInputMode(false);
+        setOutputMode(true);
+        setRpcMode(true);
+    }
 };
 
 #endif

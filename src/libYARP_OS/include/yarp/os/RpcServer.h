@@ -142,6 +142,10 @@ public:
     virtual Property *acquireProperties(bool readOnly);
     virtual void releaseProperties(Property *prop);
 
+   void setInputMode(bool expectInput);
+   void setOutputMode(bool expectOutput);
+   void setRpcMode(bool expectRpc);
+
 private:
     // an RpcServer may be implemented with a regular port
     // (this is not decided yet)

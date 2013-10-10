@@ -963,6 +963,7 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
 
     Port port;
     companion_install_handler();
+    port.setRpcServer();
     port.open(name);
 #ifndef YARP2_WINDOWS
     companion_unregister_name = name;
