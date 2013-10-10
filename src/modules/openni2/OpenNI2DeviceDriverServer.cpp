@@ -253,7 +253,7 @@ int *yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(){
 
 int yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID){
     updateInterface(false);
-    return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID-1].skeletonState;
+    return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState;
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverServer::getImageFrame(){
