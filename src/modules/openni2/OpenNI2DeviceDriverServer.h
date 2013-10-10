@@ -70,8 +70,8 @@ public:
     virtual bool updateService();
     virtual bool stopService();
     // IKinectDeviceDriver
-    virtual bool getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID);
-    virtual bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
+    virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID);
+    virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID);
     virtual int *getSkeletonState();
     virtual int getSkeletonState(int userID);
     virtual ImageOf<PixelRgb> getImageFrame();
