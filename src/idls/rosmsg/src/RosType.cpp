@@ -458,7 +458,11 @@ std::string RosTypeSearch::findFile(const char *tname) {
             string typ = name.substr(idx+1,name.length());
             string url = "http://docs.ros.org:80/api/";
             url += package;
-            url += "/html/msg/";
+            if (find_service) {
+                url += "/html/srv/";
+            } else {
+                url += "/html/msg/";
+            }
             url += typ;
             url += ".html";
             fprintf(stderr, "Trying the web: %s\n", url.c_str());
@@ -489,6 +493,9 @@ std::string RosTypeSearch::findFile(const char *tname) {
                                 tagging = false;
                                 if (tag=="<br />") {
                                     def2 += "\n";
+                                }
+                                if (tag=="<hr />") {
+                                    def2 += "---\n";
                                 }
                                 tag = "";
                             }

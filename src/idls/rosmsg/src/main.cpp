@@ -57,10 +57,10 @@ void configure_search(RosTypeSearch& env, Searchable& p) {
     if (p.check("out")) {
         env.setTargetDirectory(p.find("out").toString().c_str());
     }
-    if (p.check("web",Value(0)).asInt()!=0) {
+    if (p.check("web",Value(0)).asInt()!=0 || p.findGroup("web").size()==1) {
         env.allowWeb();
     }
-    if (p.check("soft",Value(0)).asInt()!=0) {
+    if (p.check("soft",Value(0)).asInt()!=0 || p.findGroup("soft").size()==1) {
         env.softFail();
     }
     env.lookForService(p.check("service"));
