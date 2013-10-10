@@ -300,12 +300,16 @@ public:
         port.promiseType(typ);
     }
 
-    virtual void setReadOnly() {
-        port.setReadOnly();
+    virtual void setInputMode(bool expectInput) {
+        port.setInputMode(expectInput);
     }
 
-    virtual void setWriteOnly() {
-        port.setWriteOnly();
+    virtual void setOutputMode(bool expectOutput) {
+        port.setOutputMode(expectOutput);
+    }
+
+    virtual void setRpcMode(bool expectRpc) {
+        port.setRpcMode(expectRpc);
     }
 
 

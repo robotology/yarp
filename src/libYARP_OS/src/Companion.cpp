@@ -962,7 +962,12 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
     const char *name = argv[0];
 
     Port port;
+    companion_install_handler();
+    port.setRpcServer();
     port.open(name);
+#ifndef YARP2_WINDOWS
+    companion_unregister_name = name;
+#endif
 
     while (true) {
         printf("Waiting for a message...\n");

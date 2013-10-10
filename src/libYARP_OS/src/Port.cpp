@@ -48,6 +48,7 @@ private:
 public:
     bool commitToRead;
     bool commitToWrite;
+    bool commitToRpc;
 
     PortCoreAdapter(Port& owner) :
         owner(owner), stateMutex(1), 
@@ -70,7 +71,8 @@ public:
         usedForWrite(false),
         usedForRpc(false),
         commitToRead(false),
-        commitToWrite(false)
+        commitToWrite(false),
+        commitToRpc(false)
     {
         setContactable(&owner);
     }
@@ -109,6 +111,10 @@ public:
 
     void setWriteOnly() {
         commitToWrite = true;
+    }
+
+    void setRpc() {
+        commitToRpc = true;
     }
 
     void finishReading() {
@@ -395,6 +401,9 @@ bool Port::open(const Contact& contact, bool registerName,
                     cat = "+";
                 }
                 if (cat!="") {
+                    if (currentCore->commitToRpc) {
+                        cat += "1";
+                    }
                     //contact2 = contact2.addName(nc.getNodeName() +
                     //                            "=" +
                     //                            cat +
@@ -758,14 +767,23 @@ void Port::setAdminMode(bool adminMode) {
   (~mask)) + (val?mask:0))
 
 void Port::setInputMode(bool expectInput) {
+    if (expectInput==false) {
+        HELPER(implementation).setWriteOnly();
+    }
     SET_FLAG(implementation,PORTCORE_IS_INPUT,expectInput);
 }
 
 void Port::setOutputMode(bool expectOutput) {
+    if (expectOutput==false) {
+        HELPER(implementation).setReadOnly();
+    }
     SET_FLAG(implementation,PORTCORE_IS_OUTPUT,expectOutput);
 }
 
 void Port::setRpcMode(bool expectRpc) {
+    if (expectRpc==true) {
+        HELPER(implementation).setRpc();
+    }
     SET_FLAG(implementation,PORTCORE_IS_RPC,expectRpc);
 }
 
@@ -789,15 +807,6 @@ Type Port::getType() {
 void Port::promiseType(const Type& typ) {
     HELPER(implementation).promiseType(typ);
 }
-
-void Port::setReadOnly() {
-    return HELPER(implementation).setReadOnly();
-}
-
-void Port::setWriteOnly() {
-    return HELPER(implementation).setWriteOnly();
-}
-
 
 Property *Port::acquireProperties(bool readOnly) {
     return HELPER(implementation).acquireProperties(readOnly);

@@ -74,6 +74,19 @@ public:
         return result;
     }
 
+    Contact getURI(const ConstString& name) {
+        Contact result;
+        mutex.lock();
+        NestedContact nc;
+        nc.fromString(name);
+        std::map<ConstString,Node *>::const_iterator it = by_name.find(nc.getNodeName());
+        if (it!=by_name.end()) {
+            result = it->second->query(nc.getNestedName());
+        }
+        mutex.unlock();
+        return result;
+    }
+
     void setActiveName(const ConstString& name) {
         is_external[name] = 1;
         active_name = name;
@@ -213,6 +226,10 @@ void Nodes::clear() {
 
 Contact Nodes::getParent(const ConstString& name) {
     return HELPER(this).getParent(name);
+}
+
+Contact Nodes::getURI(const ConstString& name) {
+    return HELPER(this).getURI(name);
 }
 
 void Nodes::prepare(const ConstString& name) {

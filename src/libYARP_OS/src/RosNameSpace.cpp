@@ -122,7 +122,21 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
     }
     ConstString cat = nc.getCategory();
     if (nc.getNestedName()!="") {
-        if (cat == "+" || cat== "-") {
+        if (cat == "-1") {
+            Bottle cmd, reply;
+            cmd.clear();
+            cmd.addString("registerService");
+            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(nc.getNestedName());
+            Contact rosrpc = contact.addCarrier("rosrpc");
+            cmd.addString(rosrpc.toURI());
+            Nodes& nodes = NameClient::getNameClient().getNodes();
+            Contact c = rosify(nodes.getParent(contact.getName()));
+            cmd.addString(c.toString());
+            bool ok = NetworkBase::write(getNameServerContact(),
+                                         cmd, reply);
+            if (!ok) return Contact();
+        } else if (cat == "+" || cat== "-") {
             Bottle cmd, reply;
             cmd.clear();
             cmd.addString((cat=="+")?"registerPublisher":"registerSubscriber");
@@ -231,7 +245,19 @@ Contact RosNameSpace::unregisterName(const ConstString& rname) {
     ConstString cat = nc.getCategory();
 
     if (nc.getNestedName()!="") {
-        if (cat == "+" || cat== "-") {
+        if (cat == "-1") {
+            Nodes& nodes = NameClient::getNameClient().getNodes();
+            Contact c = rosify(nodes.getURI(rname).addCarrier("rosrpc"));
+            Bottle cmd, reply;
+            cmd.clear();
+            cmd.addString("unregisterService");
+            cmd.addString(toRosNodeName(nc.getNodeName()));
+            cmd.addString(nc.getNestedName());
+            cmd.addString(c.toURI());
+            bool ok = NetworkBase::write(getNameServerContact(),
+                                         cmd, reply);
+            if (!ok) return Contact();
+        } else if (cat == "+" || cat== "-") {
             Bottle cmd, reply;
             cmd.clear();
             cmd.addString((cat=="+")?"unregisterPublisher":"unregisterSubscriber");
@@ -601,6 +627,7 @@ ConstString RosNameSpace::fromRosNodeName(const ConstString& name) {
 }
 
 Contact RosNameSpace::rosify(const Contact& contact) {
+    if (contact.getCarrier()=="rosrpc") return contact;
     return Contact::bySocket("http",contact.getHost().c_str(),
                              contact.getPort());
 }

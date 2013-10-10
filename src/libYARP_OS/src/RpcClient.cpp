@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/RpcClient.h>
+#include <yarp/os/Log.h>
 
 
 yarp::os::RpcClient::RpcClient() :
@@ -116,3 +117,19 @@ yarp::os::Property *yarp::os::RpcClient::acquireProperties(bool readOnly) {
 void yarp::os::RpcClient::releaseProperties(Property *prop) {
     port.releaseProperties(prop);
 }
+
+
+void yarp::os::RpcClient::setInputMode(bool expectInput) {
+    YARP_ASSERT(!expectInput);
+}
+
+
+void yarp::os::RpcClient::setOutputMode(bool expectOutput) {
+    YARP_ASSERT(expectOutput);
+}
+
+
+void yarp::os::RpcClient::setRpcMode(bool expectRpc) {
+    YARP_ASSERT(expectRpc);
+}
+
