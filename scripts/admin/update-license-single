@@ -159,6 +159,10 @@ if ($txt =~ /Licensed to the Apache Software Foundation/) {
     $policy = "Apache License, Version 2.0";
 }
 
+if ($txt =~ /Licensed under the Apache License/) {
+    $policy = "Apache License, Version 2.0";
+}
+
 if ($txt =~ /Alexander Chemeris/) {
     $policy = "3-clause BSD";
 }

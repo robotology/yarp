@@ -27,6 +27,7 @@ ENDIF ()
 
 INSTALL(TARGETS yarp ${YARPSERVER_NAME} COMPONENT utilities DESTINATION bin)
 
+include_directories(${CMAKE_SOURCE_DIR}/extern/diff_match_patch)
 ADD_EXECUTABLE(yarp-config yarpconfig.cpp yarpcontext.cpp yarpcontext.h yarprobot.cpp yarprobot.h yarpcontextutils.cpp yarpcontextutils.h)
 TARGET_LINK_LIBRARIES(yarp-config YARP_OS YARP_init ${ACE_LIBRARIES})
 INSTALL(TARGETS yarp-config COMPONENT utilities DESTINATION bin)
