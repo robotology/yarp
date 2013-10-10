@@ -64,7 +64,7 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
     // if skeleton is tracked
     if(userTracking)
         for(int i = 0; i < MAX_USERS; i++){
-            if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED){
+            if(userSkeleton[i].skeletonState == nite::SKELETON_TRACKED && userSkeleton[i].stillTracking == true){
                 Bottle &botSkeleton = skeletonPort->prepare();
                 botSkeleton.clear();
                 skeletonPort->setEnvelope(timestamp);
@@ -106,30 +106,30 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
             }
             
             // if no skeleton found
-            else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
-                Bottle &botCalib = skeletonPort->prepare();
-                botCalib.clear();
-                skeletonPort->setEnvelope(timestamp);
-                
-                if(userSkeleton[i].uID == 0){
-                    //do nothing
-                }
-                else {
-                    botCalib.addString("LOST SKELETON FOR USER");
-                    botCalib.addInt(userSkeleton[i].uID);
-                    skeletonPort->write();
-                }
-            }
-            
-            // else, there is a calibration error
-            else {
-                Bottle &botErrCalib = skeletonPort->prepare();
-                botErrCalib.clear();
-                skeletonPort->setEnvelope(timestamp);
-                botErrCalib.addString("CALIBRATION ERROR FOR USER");
-                botErrCalib.addInt(userSkeleton[i].uID);
-                skeletonPort->write();
-            }
+              else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
+//                Bottle &botCalib = skeletonPort->prepare();
+//                botCalib.clear();
+//                skeletonPort->setEnvelope(timestamp);
+//                
+//                if(userSkeleton[i].uID == 0){
+//                    //do nothing
+//                }
+//                else {
+//                    botCalib.addString("LOST SKELETON FOR USER");
+//                    botCalib.addInt(userSkeleton[i].uID);
+//                    skeletonPort->write();
+//                }
+//             }
+//            
+//            // else, there is a calibration error
+//            else {
+//                Bottle &botErrCalib = skeletonPort->prepare();
+//                botErrCalib.clear();
+//                skeletonPort->setEnvelope(timestamp);
+//                botErrCalib.addString("CALIBRATION ERROR FOR USER");
+//                botErrCalib.addInt(userSkeleton[i].uID);
+//                skeletonPort->write();
+              }
         }
 }
 
@@ -215,7 +215,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::stopService(){
 
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, double *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID){
     updateInterface(false);
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
@@ -223,13 +223,13 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vector
         vectorArray[i].resize(4);
         vectorArray[i].zero();
         vectorArray[i] = OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPointsOri[i];
-        confidence[i] = (double)OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPosConfidence[i];
+        confidence[i] = OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonPosConfidence[i];
     }
     return true;
 }
 
 // returns false if the user skeleton is not being tracked
-bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID){
+bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID){
     updateInterface(false);
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;

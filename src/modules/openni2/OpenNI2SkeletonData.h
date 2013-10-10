@@ -79,14 +79,14 @@ public:
      * @param userID  detected user id
      * @return doubles array with confidence values per each orientation quartenion
      */
-    double* getOrientationConf(int userID);
+    float* getOrientationConf(int userID);
     /**
      * Get a users position confidence array
      *
      * @param userID  detected user id
      * @return doubles array with confidence values per each 3D position vector
      */
-    double* getPositionConf(int userID);
+    float* getPositionConf(int userID);
     /**
      * Get a single user status
      *
@@ -111,8 +111,8 @@ private:
         nite::SkeletonState skeletonState;
         Vector skeletonPointsPos[TOTAL_JOINTS];
         Vector skeletonPointsOri[TOTAL_JOINTS];
-        double skeletonPosConf[TOTAL_JOINTS];
-        double skeletonOriConf[TOTAL_JOINTS];
+        float skeletonPosConf[TOTAL_JOINTS];
+        float skeletonOriConf[TOTAL_JOINTS];
         bool visible;
         int uID;
     }UserSkeleton;

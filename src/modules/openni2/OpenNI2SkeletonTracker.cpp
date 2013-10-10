@@ -158,7 +158,9 @@ void OpenNI2SkeletonTracker::initVars(){
     // initialise UserSkeleton struct
     for (int i = 0; i < MAX_USERS; i++) {
         sensorStatus->userSkeleton[i].skeletonState = nite::SKELETON_NONE;
-        sensorStatus->userSkeleton[i].uID = 0;
+        sensorStatus->userSkeleton[i].uID = i+1;
+        sensorStatus->userSkeleton[i].visible = false;
+        sensorStatus->userSkeleton[i].stillTracking = false;
         for (int jointIndex = 0; jointIndex < TOTAL_JOINTS; jointIndex++){
             sensorStatus->userSkeleton[i].skeletonPointsPos[jointIndex].resize(3);
             sensorStatus->userSkeleton[i].skeletonPointsPos[jointIndex].zero();
@@ -199,7 +201,14 @@ void OpenNI2SkeletonTracker::updateSensor(bool wait){
         }
     }
     // user skeleton tracking data
+    
     if(userTracking && userTracker.isValid()){
+        
+        // reset the stillTracking variable
+        for (int i = 0; i < MAX_USERS; i++) {
+            sensorStatus->userSkeleton[i].stillTracking = false;
+        }
+        
         nite::Status niteRc = userTracker.readFrame(&userTrackerFrameRef);
         if (niteRc != nite::STATUS_OK)
         {
@@ -245,7 +254,10 @@ void OpenNI2SkeletonTracker::updateSensor(bool wait){
 void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, nite::JointType joint, int jIndex){
     
     int i = user.getId();
-    UserSkeleton *userSkeleton = &getSensor()->userSkeleton[i];
+    UserSkeleton *userSkeleton = &getSensor()->userSkeleton[i-1];
+    
+    // the method is called only if the skeleton is tracked, so set the stillTracking variable
+    userSkeleton->stillTracking = true;
     
     if (user.getSkeleton().getJoint(joint).getPositionConfidence() > 0.6) {
         
@@ -276,62 +288,64 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
 
 void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigned long long ts)
 {
+    int tmpID = user.getId();
     // if user is new
     if (user.isNew())
         USER_MESSAGE("New")
         
-        // if user is detected
-        else if (user.isVisible() && !getSensor()->userSkeleton[user.getId()].visible)
-            USER_MESSAGE("Visible")
+    // if user is detected
+    else if (user.isVisible() && !getSensor()->userSkeleton[tmpID-1].visible)
+        USER_MESSAGE("Visible")
             
-            // if user is out of scene
-            else if (!user.isVisible() && getSensor()->userSkeleton[user.getId()].visible)
-                USER_MESSAGE("Out of Scene")
+    // if user is out of scene
+    else if (!user.isVisible() && getSensor()->userSkeleton[tmpID-1].visible)
+            USER_MESSAGE("Out of Scene")
                 
-                //if user is lost    
-                else if (user.isLost())
-                    USER_MESSAGE("Lost")
+    //if user is lost    
+    else if (user.isLost())
+            USER_MESSAGE("Lost")
                     
-                    getSensor()->userSkeleton[user.getId()].visible = user.isVisible();
-    getSensor()->userSkeleton[user.getId()].uID = user.getId();
-    if (getSensor()->userSkeleton[user.getId()].skeletonState != user.getSkeleton().getState())
+    getSensor()->userSkeleton[tmpID-1].visible = user.isVisible();
+    
+    if (getSensor()->userSkeleton[tmpID-1].skeletonState != user.getSkeleton().getState())
     {
-        getSensor()->userSkeleton[user.getId()].skeletonState = user.getSkeleton().getState();
+        getSensor()->userSkeleton[tmpID-1].skeletonState = user.getSkeleton().getState();
+        
         switch(user.getSkeleton().getState())
         {
             case nite::SKELETON_NONE:
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_NONE;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_NONE;
                 USER_MESSAGE("Stopped tracking.")
                 break;
             case nite::SKELETON_CALIBRATING:
                 USER_MESSAGE("Calibrating...")
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_CALIBRATING;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_CALIBRATING;
                 break;
             case nite::SKELETON_TRACKED:
                 USER_MESSAGE("Tracking")
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_TRACKED;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_TRACKED;
                 break;
             case nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE:
                 USER_MESSAGE("Calibration failed - Not in Pose...")
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE;
                 break;
             case nite::SKELETON_CALIBRATION_ERROR_HANDS:
                 USER_MESSAGE("Calibration failed in hands...")
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_CALIBRATION_ERROR_HANDS;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_CALIBRATION_ERROR_HANDS;
                 break;
             case nite::SKELETON_CALIBRATION_ERROR_LEGS:
                 USER_MESSAGE("Calibration failed in legs...")
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_CALIBRATION_ERROR_LEGS;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_CALIBRATION_ERROR_LEGS;
                 break;
             case nite::SKELETON_CALIBRATION_ERROR_HEAD:
                 USER_MESSAGE("Calibration failed in head...")
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_CALIBRATION_ERROR_HEAD;
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_CALIBRATION_ERROR_HEAD;
                 break;
             case nite::SKELETON_CALIBRATION_ERROR_TORSO:
                 USER_MESSAGE("Calibration failed in torso...")
-                getSensor()->userSkeleton[user.getId()].skeletonState = nite::SKELETON_CALIBRATION_ERROR_TORSO;
-                break;
-        }
+                getSensor()->userSkeleton[tmpID-1].skeletonState = nite::SKELETON_CALIBRATION_ERROR_TORSO;
+                    break;
+            }
     }
 }
 

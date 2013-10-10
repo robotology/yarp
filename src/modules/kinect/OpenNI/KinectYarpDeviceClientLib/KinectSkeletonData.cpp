@@ -65,7 +65,7 @@ void KinectSkeletonData::storeData(Bottle& b){
 		userID = list->get(1).asInt();
 		_userSkeleton[userID].skeletonState = SKELETON_TRACKING;//USER STATUS
 		userSkeleton = &(_userSkeleton[userID]);
-		for(int i = 1; i < b.size(); i+=6){
+		for(int i = 1; i < b.size(); i = i+6){
 			int jointIndex = (i-1)/6;
 			list = b.get(i+1).asList();//possition elements
 			userSkeleton->skeletonPointsPos[jointIndex][0] = list->get(0).asDouble();
