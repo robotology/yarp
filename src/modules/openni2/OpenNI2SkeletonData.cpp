@@ -31,7 +31,7 @@ void OpenNI2SkeletonData::initUserSkeletons(){
             tuserSkeleton->skeletonPosConf[j] = -1;
             tuserSkeleton->skeletonOriConf[j] = -1;
             tuserSkeleton->skeletonState = nite::SKELETON_NONE;
-            tuserSkeleton->uID = 0;
+            tuserSkeleton->uID = i+1;
         }
     }
 }
@@ -50,24 +50,22 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
     UserSkeleton *tuserSkeleton;
     if(b.get(0).isString()){
         userID = b.get(1).asInt();
-        userSkeleton[userID].uID = userID;
         string vocab = b.get(0).asString().c_str();
         if(vocab.compare("CALIBRATING FOR USER") == 0){
-            userSkeleton[userID].skeletonState = nite::SKELETON_CALIBRATING;
+            userSkeleton[userID-1].skeletonState = nite::SKELETON_CALIBRATING;
         }
-        else if(vocab.compare("CALIBRATION ERROR FOR USER") == 0){
-            userSkeleton[userID].skeletonState = nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE;}
-        else if(vocab.compare("LOST SKELETON FOR USER") == 0){
-            userSkeleton[userID].skeletonState = nite::SKELETON_NONE;
-        }
+        //else if(vocab.compare("CALIBRATION ERROR FOR USER") == 0){
+          //  userSkeleton[userID].skeletonState = nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE;}
+        //else if(vocab.compare("LOST SKELETON FOR USER") == 0){
+            //userSkeleton[userID].skeletonState = nite::SKELETON_NONE;
+       // }
     }else if(b.get(0).isList()){
         list = b.get(0).asList();
         userID = list->get(1).asInt();
-        userSkeleton[userID].uID = userID;
-        userSkeleton[userID].skeletonState = nite::SKELETON_TRACKED;//USER STATUS
-        tuserSkeleton = &(userSkeleton[userID]);
+        userSkeleton[userID-1].skeletonState = nite::SKELETON_TRACKED;//USER STATUS
+        tuserSkeleton = &(userSkeleton[userID-1]);
+        int jointIndex = 0;
         for(int i = 1; i < b.size(); i+=6){
-            int jointIndex = (i-1)/6;
             list = b.get(i+1).asList();// position elements
             tuserSkeleton->skeletonPointsPos[jointIndex][0] = list->get(0).asDouble();
             tuserSkeleton->skeletonPointsPos[jointIndex][1] = list->get(1).asDouble();
@@ -79,28 +77,29 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
             tuserSkeleton->skeletonPointsOri[jointIndex][2] = list->get(2).asDouble();
             tuserSkeleton->skeletonPointsOri[jointIndex][3] = list->get(3).asDouble();
             tuserSkeleton->skeletonOriConf[jointIndex] = b.get(i+5).asDouble();
+            jointIndex++;
         }
     }
 }
 
 Vector* OpenNI2SkeletonData::getOrientation(int userID){
-    return userSkeleton[userID].skeletonPointsOri;
+    return userSkeleton[userID-1].skeletonPointsOri;
 }
 
 Vector* OpenNI2SkeletonData::getPosition(int userID){
-    return userSkeleton[userID].skeletonPointsPos;
+    return userSkeleton[userID-1].skeletonPointsPos;
 }
 
-double* OpenNI2SkeletonData::getOrientationConf(int userID){
-    return userSkeleton[userID].skeletonOriConf;
+float* OpenNI2SkeletonData::getOrientationConf(int userID){
+    return userSkeleton[userID-1].skeletonOriConf;
 }
 
-double* OpenNI2SkeletonData::getPositionConf(int userID){
-    return userSkeleton[userID].skeletonPosConf;
+float* OpenNI2SkeletonData::getPositionConf(int userID){
+    return userSkeleton[userID-1].skeletonPosConf;
 }
 
 int OpenNI2SkeletonData::getSkeletonState(int userID){
-    return userSkeleton[userID].skeletonState;
+    return userSkeleton[userID-1].skeletonState;
 }
 
 ImageOf<PixelMono16> OpenNI2SkeletonData::getDepthFrame(){
