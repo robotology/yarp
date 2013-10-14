@@ -29,6 +29,7 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/Route.h>
+#include <yarp/os/YarpPlugin.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/ThreadImpl.h>
@@ -583,9 +584,9 @@ void NetworkBase::initMinimum() {
 
 void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
-        Carriers::removeInstance();
         NameClient::removeNameClient();
         removeNameSpace();
+        Carriers::removeInstance();
 #ifdef YARP_HAS_ACE
         ACE::fini();
 #endif
@@ -896,10 +897,6 @@ void NetworkBase::unlock() {
 }
 
 
-#ifdef YARP_HAS_ACE
-
-#include <yarp/os/YarpPlugin.h>
-
 class ForwardingCarrier : public Carrier {
 public:
     SharedLibraryClassFactory<Carrier> *factory;
@@ -1128,10 +1125,8 @@ public:
     }
 };
 
-#endif
 
 bool NetworkBase::registerCarrier(const char *name,const char *dll) {
-#ifdef YARP_HAS_ACE
     StubCarrier *factory = NULL;
     if (dll==NULL) {
         factory = new StubCarrier(name);
@@ -1151,10 +1146,6 @@ bool NetworkBase::registerCarrier(const char *name,const char *dll) {
     }
     Carriers::addCarrierPrototype(factory);
     return true;
-#else
-    YARP_ERROR(Logger::get(),"Cannot creat stub carriers without ACE");
-    return false;
-#endif
 }
 
 

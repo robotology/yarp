@@ -43,6 +43,11 @@ bool TcpFace::open(const Contact& address) {
     }
 #else
     int result = peerAcceptor.open(address);
+    if (address.getPort()<=0) {
+        this->address = address.addSocket("tcp",
+                                          NameConfig::getHostName(),
+                                          peerAcceptor.get_port_number());
+    }
 #endif
     if (result==-1) {
         return false;

@@ -48,6 +48,7 @@ void sigchld_handler(int s) {
 
 TcpAcceptor::TcpAcceptor() {
     ad = -1;
+    port_number = -1;
 }
 
 int TcpAcceptor::open(const Contact& address) {
@@ -77,7 +78,7 @@ int TcpAcceptor::shared_open(const Contact& address) {
     struct sockaddr_in servAddr;
     servAddr.sin_addr.s_addr = INADDR_ANY;
     servAddr.sin_family = AF_INET;
-    servAddr.sin_port = htons(address.getPort());
+    servAddr.sin_port = htons((address.getPort()>0)?address.getPort():0);
     inet_aton(address.getHost().c_str(), &servAddr.sin_addr);
     memset(servAddr.sin_zero, '\0', sizeof servAddr.sin_zero);
 
@@ -102,6 +103,18 @@ int TcpAcceptor::shared_open(const Contact& address) {
         perror("At sigaction(address) there was an error...");
         return -1;
     }
+
+    struct sockaddr_in sin;
+    socklen_t addrlen = sizeof(sin);
+    if (getsockname(get_handle(), (struct sockaddr *)&sin, &addrlen) == 0 &&
+	sin.sin_family == AF_INET &&
+	addrlen == sizeof(sin)) {
+      port_number = (int)ntohs(sin.sin_port);
+    } else {
+      perror("At getsockname(address) there was an error...");
+      return -1;
+    }
+
     return 1;
 }
 

@@ -68,6 +68,10 @@ public:
 
     int accept(TcpStream &new_stream);
 
+    int get_port_number() {
+      return port_number;
+    }
+
 //    const Address& getLocalAddress();
 
 //    const Address& getRemoteAddress();
@@ -80,6 +84,7 @@ protected:
 private:
     // acceptor descriptor
     int ad;
+    int port_number;
 };
 
 #endif /* TCPACCEPTOR_H_ */
