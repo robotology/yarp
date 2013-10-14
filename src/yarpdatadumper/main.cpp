@@ -343,11 +343,11 @@ typedef struct
 class DumpQueue : public deque<DumpItem>
 {
 private:
-    Semaphore mutex;
+    Mutex mutex;
 
 public:
-    void lock()   { mutex.wait(); }
-    void unlock() { mutex.post(); }
+    void lock()   { mutex.lock();   }
+    void unlock() { mutex.unlock(); }
 };
 
 
