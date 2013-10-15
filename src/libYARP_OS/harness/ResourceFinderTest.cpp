@@ -543,8 +543,9 @@ public:
     void testReadConfig() {
         report(0,"test readConfig");
 
-        for (int area=0; area<2; area++) {
+        for (int area=1; area<2; area++) {
             if (area==0) {
+                // currently ruled out in spec, but may come back
                 report(0,"test readConfig with pathd in /etc/...");
             } else {
                 report(0,"test readConfig with pathd in /usr/share/yarp/...");

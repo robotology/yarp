@@ -745,7 +745,7 @@ public:
             // Nested search to locate path.d directories
             Bottle pathds;
             ResourceFinderOptions opts2;
-            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ~(ResourceFinderOptions::Context|ResourceFinderOptions::NearMainConfig));
+            opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(opts.searchLocations & ResourceFinderOptions::Installed);
             opts2.resourceType = "config";
             findFileBaseInner(config,"path.d",true,false,pathds,opts2,doc,"path.d");
 
