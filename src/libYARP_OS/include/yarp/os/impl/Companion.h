@@ -13,6 +13,7 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/ContactStyle.h>
+#include <yarp/os/Contactable.h>
 
 #include <yarp/os/impl/PlatformMap.h>
 #include <yarp/os/impl/PlatformVector.h>
@@ -212,6 +213,7 @@ private:
   
     static Companion instance;
 
+    void applyArgs(yarp::os::Contactable& port);
 
     class Entry {
     public:
@@ -231,6 +233,7 @@ private:
     PlatformVector<String> names;
     PlatformVector<String> tips;
     bool adminMode;
+    yarp::os::ConstString argType;
 
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = NULL) {

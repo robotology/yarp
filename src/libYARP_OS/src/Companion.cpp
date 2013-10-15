@@ -218,12 +218,40 @@ Companion::Companion() {
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
-    //ACE_OS::printf("Dispatching %s\n", name);
+    // new logic to handle some global arguments
+    char **argv_copy = new char *[argc];
+    int argc_copy = argc;
+    if (!argv_copy) {
+        YARP_SPRINTF0(Logger::get(),
+                      error,
+                      "Could not copy argument list");
+        return 1;
+    }
+    int at = 0;
+    int skip = 0;
+    for (int i=0; i<argc; i++) {
+        if (skip>0) {
+            skip--;
+            continue;
+        }
+        ConstString arg = argv[i];
+        if (arg.find("--")==0 && i+1<argc) {
+            if (arg=="--type") {
+                skip = 1;
+                argType = argv[i+1];
+                continue;
+            }
+        }
+        argv_copy[at] = argv[i];
+        at++;
+    }
+    argc_copy = at;
+
     String sname(name);
     Entry e;
     int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
     if (result!=-1) {
-        return (this->*(e.fn))(argc,argv);
+        return (this->*(e.fn))(argc_copy,argv_copy);
     } else {
         YARP_SPRINTF1(Logger::get(),
                       error,
@@ -964,6 +992,7 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
     Port port;
     companion_install_handler();
     port.setRpcServer();
+    applyArgs(port);
     port.open(name);
 #ifndef YARP2_WINDOWS
     companion_unregister_name = name;
@@ -2378,4 +2407,12 @@ int Companion::cmdSample(int argc, char *argv[]) {
 
     return 0;
 }
+
+
+void Companion::applyArgs(yarp::os::Contactable& port) {
+    if (argType!="") {
+        port.promiseType(Type::byName(argType.c_str()));
+    }
+}
+
 
