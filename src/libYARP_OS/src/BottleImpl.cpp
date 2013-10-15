@@ -91,6 +91,7 @@ void BottleImpl::smartAdd(const String& str) {
         bool preamble = true;
         bool hexActive = false;
         int periodCount = 0;
+        int signCount = 0;
         bool hasPeriodOrE = false;
         for (int i=0; i<(int)str.length(); i++) {
             char ch2 = str[i];
@@ -112,6 +113,12 @@ void BottleImpl::smartAdd(const String& str) {
             }
             if (preamble) {
                 if (ch2=='0'||ch2=='+'||ch2=='-') {
+                    if (ch2=='+'||ch2=='-') {
+                        signCount++;
+                        if (signCount>1) {
+                            numberLike = false;
+                        }
+                    }
                     continue;
                 }
             }

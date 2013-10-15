@@ -618,6 +618,12 @@ public:
         }
     }
 
+    void testManyMinus() {
+        report(0,"test a string with several minus characters");
+        Bottle bot("---");
+        checkEqual(bot.get(0).asString().c_str(),"---","interpreted ok");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -652,6 +658,7 @@ public:
         testBool();
         testDict();
         testLoopBug();
+        testManyMinus();
     }
 
     virtual String getName() {
