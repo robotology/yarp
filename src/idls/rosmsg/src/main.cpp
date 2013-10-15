@@ -125,22 +125,28 @@ int main(int argc, char *argv[]) {
         p.put("web",1);
     }
 
+    bool verbose = p.check("verbose");
+
     RosTypeSearch env;
     configure_search(env,p);
 
     Network yarp;
     Port port;
+    // Borrow an accidentally-available service type on ROS, in
+    // order to avoid adding build dependencies for now.
+    port.promiseType(Type::byName("test_roscpp/TestStringString"));
+    port.setRpcServer();
     if (!port.open(p.find("name").asString())) {
         return 1;
     }
     while (true) {
         Bottle req;
         port.read(req,true);
-        Bottle unpack_req;
         if (req.size()==1) {
-            unpack_req.fromString(req.get(0).asString());
-        } else {
-            unpack_req = req;
+            req.fromString(req.get(0).asString());
+        }
+        if (verbose) {
+            printf("Request: %s\n", req.toString().c_str());
         }
         Bottle resp;
         ConstString tag = req.get(0).asString();
@@ -155,6 +161,9 @@ int main(int argc, char *argv[]) {
             resp.addString("?");
         }
         port.reply(resp);
+        if (verbose) {
+            printf("Response: %s\n", resp.toString().c_str());
+        }
     }
     return 0;
 }
