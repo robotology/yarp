@@ -25,7 +25,7 @@
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
-#if defined(SWIGPYTHON)
+#if !defined(SWIGJAVA)
   %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize, 
 		       SWIG_FromCharPtrAndSize, %checkcode(STDSTRING)); 
   %define YARP_WRAP_STL_STRING %enddef
