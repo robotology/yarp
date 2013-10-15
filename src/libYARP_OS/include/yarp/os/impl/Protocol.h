@@ -150,16 +150,18 @@ public:
         if (getConnection().isActive()) {
             YARP_ASSERT(delegate!=NULL);
             getStreams().beginPacket();
-            delegate->write(*this,writer);
+            bool ok = delegate->write(*this,writer);
             getStreams().endPacket();
             PortReader *reply = writer.getReplyHandler();
             if (reply!=NULL) {
                 if (!delegate->supportReply()) {
                     YARP_INFO(log,String("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
                 }
-                reader.reset(is(),&getStreams(), getRoute(),
-                             messageLen,delegate->isTextMode());
-                replied = reply->read(reader);
+                if (ok) {
+                    reader.reset(is(),&getStreams(), getRoute(),
+                                 messageLen,delegate->isTextMode());
+                    replied = reply->read(reader);
+                }
             }
             expectAck(); //MOVE ack to after reply, if present
         }
