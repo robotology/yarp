@@ -23,8 +23,8 @@ if (NOT SKIP_portmonitor_carrier)
                   MonitorBinding.cpp
                   MonitorLua.cpp)
 
-  # target_link_libraries(yarp_portmonitor YARP_OS YARP_sig)
-  target_link_libraries(yarp_portmonitor ${ACE_LIBRARIES} ${LUA_LIBRARY})
+  target_link_libraries(yarp_portmonitor YARP_OS ${LUA_LIBRARY})
+  target_link_libraries(yarp_portmonitor ${ACE_LIBRARIES})
 
 endif ()
 

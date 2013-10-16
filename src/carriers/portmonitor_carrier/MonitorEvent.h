@@ -43,8 +43,8 @@ public:
 class MonitorEventRecord {
 public:
     typedef std::vector<MonitorEvent> vector_type;
-    typedef typename vector_type::iterator iterator;
-    typedef typename vector_type::const_iterator const_iterator;
+    typedef vector_type::iterator iterator;
+    typedef vector_type::const_iterator const_iterator;
      
     bool setEvent(const char* name, MonitorBinding* owner) {
         if(findEvent(name, owner) != events.end())
