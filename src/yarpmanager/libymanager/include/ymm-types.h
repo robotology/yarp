@@ -16,6 +16,9 @@
 //namespace ymm {
 
 #define WITH_GEOMETRY
+/*
+* TODO: check for the proper namespace
+*/
 
 typedef enum __NodeType {
     MODULE,
@@ -27,8 +30,8 @@ typedef enum __NodeType {
     APPLICATION,
     RESOURCE,
     INOUTD,
-    BEHAVIOR,
-    GROUP,
+//    BEHAVIOR,
+//    GROUP,
     NODE_FILENAME,
     NODE_APPTEMPLATE,
     NODE_OTHER
