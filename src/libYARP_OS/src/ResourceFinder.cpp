@@ -827,6 +827,52 @@ public:
         return apps;
     }
 
+    ConstString getHomeContextPath(Property& config, const ConstString& context )
+    {
+        if(useNearMain)
+            return configFilePath;
+        else
+        {
+            ConstString path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
+
+            if (path.length()>1) {
+                if (path[path.length()-1]=='/') {
+                path = path.substr(0,path.length()-1);
+                }
+            }
+
+            ConstString parentPath=getPath(ResourceFinder::getDataHome(), "contexts", "", "");
+            if(yarp::os::stat(parentPath.c_str()))
+                yarp::os::mkdir(parentPath.c_str());
+
+            if (yarp::os::mkdir(path.c_str()) <0 && errno != EEXIST)
+                fprintf(RTARGET,"||| WARNING  Could not create %s directory\n", path.c_str());
+            return path;
+        }
+    }
+
+    ConstString getHomeRobotPath() {
+        bool found = false;
+        ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+                                                            &found);
+        if (!found) robot = "default";
+        ConstString path = getPath(ResourceFinder::getDataHome(), "robots", robot, "");
+
+        if (path.length()>1) {
+            if (path[path.length()-1]=='/') {
+            path = path.substr(0,path.length()-1);
+            }
+        }
+
+        ConstString parentPath=getPath(ResourceFinder::getDataHome(), "robots", "", "");
+        if(yarp::os::stat(parentPath.c_str()))
+            yarp::os::mkdir(parentPath.c_str());
+
+        if (yarp::os::mkdir(path.c_str()) <0 && errno != EEXIST)
+            fprintf(RTARGET,"||| WARNING  Could not create %s directory\n", path.c_str());
+        return path;
+    }
+
     ConstString context2path(Property& config, const ConstString& context ) {
         if(useNearMain)
             return configFilePath;
@@ -844,22 +890,7 @@ public:
                 }
                 return path;
             }
-
-            ConstString path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
-
-            if (path.length()>1) {
-                if (path[path.length()-1]=='/') {
-                path = path.substr(0,path.length()-1);
-                }
-            }
-
-            ConstString parentPath=getPath(ResourceFinder::getDataHome(), "contexts", "", "");
-            if(yarp::os::stat(parentPath.c_str()))
-                yarp::os::mkdir(parentPath.c_str());
-
-            if (yarp::os::mkdir(path.c_str()) <0 && errno != EEXIST)
-                fprintf(RTARGET,"||| WARNING  Could not create %s directory\n", path.c_str());
-            return path;
+            return getHomeContextPath(config, context);
         }
     }
 };
@@ -1032,6 +1063,15 @@ ConstString ResourceFinder::getContext() {
 ConstString ResourceFinder::getContextPath() {
     return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());
+}
+
+ConstString ResourceFinder::getHomeContextPath() {
+    return HELPER(implementation).getHomeContextPath(config,
+                                               HELPER(implementation).getContext());
+}
+
+ConstString ResourceFinder::getHomeRobotPath() {
+    return HELPER(implementation).getHomeRobotPath();
 }
 
 Bottle ResourceFinder::getContexts() {
