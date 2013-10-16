@@ -18,6 +18,7 @@ InputData::InputData(void) : Node(INPUTD)
     bRequired = false;
     bWithPriority = false;
     modOwner = NULL;
+    portType = STREAM_PORT; 
 }
 
 InputData::InputData(const char* szName) : Node(INPUTD) 
@@ -26,6 +27,7 @@ InputData::InputData(const char* szName) : Node(INPUTD)
     bWithPriority = false;
     modOwner = NULL;
     setName(szName);
+    portType = STREAM_PORT; 
 }
 
 InputData::InputData(const InputData &input) : Node(input)
@@ -37,6 +39,7 @@ InputData::InputData(const InputData &input) : Node(input)
     bRequired = input.bRequired;
     strDescription = input.strDescription;
     modOwner = input.modOwner;
+    portType = input.portType;
 }
 
 
@@ -58,6 +61,7 @@ Node* InputData::clone(void)
 OutputData::OutputData(void) : Node(OUTPUTD) 
 {
     modOwner = NULL;
+    portType = STREAM_PORT; 
 }
 
 
@@ -65,6 +69,7 @@ OutputData::OutputData(const char* szName) : Node(OUTPUTD)
 {
     modOwner = NULL;
     setName(szName);
+    portType = STREAM_PORT; 
 }
 
 
@@ -75,6 +80,7 @@ OutputData::OutputData(const OutputData &output) : Node(output)
     carrier = output.carrier;
     strDescription = output.strDescription;
     modOwner = output.modOwner;
+    portType = output.portType;
 }
 
 

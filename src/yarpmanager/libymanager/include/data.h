@@ -47,8 +47,9 @@ public:
     bool isRequired(void) { return bRequired; }
     bool withPriority(void) { return bWithPriority; }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
-    const char* getDescription(void) { return strDescription.c_str(); }
-    
+    const char* getDescription(void) { return strDescription.c_str(); }   
+    void setPortType(NodeType type) { portType = type; }
+    NodeType getPortType(void) { return portType; }
     void setOwner(Node* owner) { modOwner = owner; }
     Node* owner(void) { return modOwner; }
 
@@ -66,6 +67,7 @@ private:
     bool bWithPriority;
     bool bRequired;     
     Node*  modOwner; 
+    NodeType portType;
 };
 
 
@@ -89,7 +91,9 @@ public:
     const char* getCarrier(void) { return carrier.c_str(); }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     const char* getDescription(void) { return strDescription.c_str(); }
-    
+    void setPortType(NodeType type) { portType = type; }
+    NodeType getPortType(void) { return portType; }
+
     void setOwner(Node* owner) { modOwner = owner; }
     Node* owner(void) { return modOwner; }
 
@@ -106,6 +110,7 @@ private:
     string carrier;
     string strDescription;
     Node*  modOwner; 
+    NodeType portType;
 };
  
  

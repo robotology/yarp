@@ -89,7 +89,7 @@ ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested)
     {
         Glib::RefPtr<InternalPortModel> port = InternalPortModel::create(parentWindow, INPUTD, 
                                                         &module->getInputAt(i));
-        port->set_property("x", -5);
+        port->set_property("x", -15);
         port->set_property("y", top +i*PORT_SIZE + i*PORT_GAP);
         this->add_child(port);
         // adding module name
@@ -110,7 +110,7 @@ ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested)
     {
         Glib::RefPtr<InternalPortModel> port = InternalPortModel::create(parentWindow, OUTPUTD, 
                                                          &module->getOutputAt(i));
-        port->set_property("x", w-3);
+        port->set_property("x", w);
         port->set_property("y", top +i*PORT_SIZE + i*PORT_GAP);
         this->add_child(port);
         OSTRINGSTREAM str;

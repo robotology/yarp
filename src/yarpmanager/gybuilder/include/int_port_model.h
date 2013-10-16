@@ -77,11 +77,14 @@ private:
 
 private:
     Glib::RefPtr<Goocanvas::PolylineModel> poly;
+    Glib::RefPtr<Goocanvas::EllipseModel> ellipse;
+    Glib::RefPtr<Goocanvas::PathModel> path;
     ApplicationWindow* parentWindow;
     InputData* input;
     OutputData* output;
     Glib::RefPtr<TooltipModel> tool;
     string strColor;
+    bool bServicePort;
 };
 
 #endif //_INPORT_MODEL_

@@ -315,17 +315,38 @@ Module* XmlModLoader::parsXml(const char* szFile)
             if(compareString(data->Value(), "output"))
             {
                 OutputData output;
-                TiXmlElement* element;
-                if((element = (TiXmlElement*) data->FirstChild("type")))
-                    output.setName(element->GetText());
+                
+                if(compareString(data->Attribute("port_type"), "stream") || !data->Attribute("port_type"))
+                    output.setPortType(STREAM_PORT);
+                else if(compareString(data->Attribute("port_type"), "event"))
+                    output.setPortType(EVENT_PORT);
+                else if(compareString(data->Attribute("port_type"), "service"))
+                    output.setPortType(SERVICE_PORT);
                 else
                 {
                     OSTRINGSTREAM war;
-                    war<<"Output data from "<<szFile<<" at line "\
-                       <<data->Row()<<" has no type.";
-                    logger->addWarning(war);                
+                    war<<"Unknown port type \'"<<data->Attribute("port_type")<<"\' from "<<szFile<<" at line "\
+                       <<data->Row()<<". Available types : stream, event, service";
+                    logger->addWarning(war);
                 }
+
                 
+                TiXmlElement* element;
+                if(output.getPortType() != SERVICE_PORT )
+                {
+                    if((element = (TiXmlElement*) data->FirstChild("type")))
+                        output.setName(element->GetText());
+                    else
+                    {
+                        OSTRINGSTREAM war;
+                        war<<"Output data from "<<szFile<<" at line "\
+                           <<data->Row()<<" has no type.";
+                        logger->addWarning(war);                
+                    }
+                }
+                else
+                    output.setName("*");
+
                 if((element = (TiXmlElement*) data->FirstChild("port")))
                 {
                     output.setPort(element->GetText());                 
@@ -350,17 +371,37 @@ Module* XmlModLoader::parsXml(const char* szFile)
             {                   
                 InputData input;
                 
-                TiXmlElement* element;
-                if((element = (TiXmlElement*) data->FirstChild("type")))
-                    input.setName(element->GetText());
+                if(compareString(data->Attribute("port_type"), "stream") || !data->Attribute("port_type"))
+                    input.setPortType(STREAM_PORT);
+                else if(compareString(data->Attribute("port_type"), "event"))
+                    input.setPortType(EVENT_PORT);
+                else if(compareString(data->Attribute("port_type"), "service"))
+                    input.setPortType(SERVICE_PORT);
                 else
                 {
                     OSTRINGSTREAM war;
-                    war<<"Input data from "<<szFile<<" at line "\
-                       <<data->Row()<<" has no type.";
-                    logger->addWarning(war);                
+                    war<<"Unknown port type \'"<<data->Attribute("port_type")<<"\' from "<<szFile<<" at line "\
+                       <<data->Row()<<". Available types : stream, event, service";
+                    logger->addWarning(war);
                 }
-                
+
+                TiXmlElement* element;
+                if(input.getPortType() != SERVICE_PORT )
+                {
+                    
+                    if((element = (TiXmlElement*) data->FirstChild("type")))
+                        input.setName(element->GetText());
+                    else
+                    {
+                        OSTRINGSTREAM war;
+                        war<<"Input data from "<<szFile<<" at line "\
+                           <<data->Row()<<" has no type.";
+                        logger->addWarning(war);                
+                    }
+                }
+                else
+                    input.setName("*");
+
                 if((element = (TiXmlElement*) data->FirstChild("port")))
                 {
                     input.setPort(element->GetText());                  
