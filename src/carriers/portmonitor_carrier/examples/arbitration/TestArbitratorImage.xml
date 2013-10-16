@@ -1,0 +1,51 @@
+<application>
+    <name>TestArbitratorImage</name>
+    <version>1.0</version>
+    <authors>
+        <author email=""></author>
+    </authors>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode ball</parameters>
+        <node>localhost</node>
+        <prefix>/Ball</prefix>
+        <deployer>yarpdev</deployer>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--mode line</parameters>
+        <node>localhost</node>
+        <prefix>/Line</prefix>
+        <deployer>yarpdev</deployer>
+    </module>
+    <module>
+        <name>test_grabber</name>
+        <parameters>--width 1 --height 1 --freq 0.3 --mode line</parameters>
+        <node>localhost</node>
+        <prefix>/Selector</prefix>
+        <deployer>yarpdev</deployer>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <parameters></parameters>
+        <node>localhost</node>
+        <prefix>/ViewGrabbers</prefix>
+    </module>
+
+    <connection>
+        <from>/Ball/grabber</from>
+        <to>/ViewGrabbers/yarpview/img:i</to>
+        <protocol>udp+recv.portmonitor+script.lua+file.ball_monitor</protocol>
+    </connection>
+    <connection>
+        <from>/Line/grabber</from>
+        <to>/ViewGrabbers/yarpview/img:i</to>
+        <protocol>udp+recv.portmonitor+script.lua+file.line_monitor</protocol>
+    </connection>
+    <connection>
+        <from>/Selector/grabber</from>
+        <to>/ViewGrabbers/yarpview/img:i</to>
+        <protocol>udp+recv.portmonitor+script.lua+file.selector_monitor</protocol>
+    </connection>
+
+</application>

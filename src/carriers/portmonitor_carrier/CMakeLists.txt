@@ -18,6 +18,7 @@ if (NOT SKIP_portmonitor_carrier)
                   PortMonitor.h 
                   MonitorBinding.h 
                   MonitorLua.h 
+                  MonitorEvent.h
                   PortMonitor.cpp 
                   MonitorBinding.cpp
                   MonitorLua.cpp)

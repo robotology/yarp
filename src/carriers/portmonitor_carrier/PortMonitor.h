@@ -12,14 +12,33 @@
 
 #include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/Election.h>
+#include <yarp/os/NullConnectionReader.h>
+#include <yarp/os/Semaphore.h>
 
 #include "MonitorBinding.h"
+#include "MonitorEvent.h"
 
 namespace yarp {
     namespace os {
         class PortMonitor;
+        class PortMonitorGroup;
     }
 }
+
+/**
+ *
+ * Manager for arbitration-aware inputs to a given port.
+ *
+ */
+
+class yarp::os::PortMonitorGroup : public PeerRecord<PortMonitor> {
+public:
+    virtual ~PortMonitorGroup() {}
+    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
+                                    PortMonitor *source);
+};
+
 
 
 /**
@@ -45,9 +64,13 @@ public:
     PortMonitor(){
         bReady = false;
         binder = NULL;
+        group = NULL;
     }
 
     virtual ~PortMonitor() {
+        if (portName!="") {
+            getPeers().remove(portName,this);
+        }
         if (binder) delete binder;
     }
 
@@ -75,13 +98,31 @@ public:
     virtual void getCarrierParams(yarp::os::Property& params);
 
 
+    void lock() { mutex.wait(); }
+    void unlock() { mutex.post(); }
+
+    MonitorBinding* getBinder(void) {
+        if(!bReady)
+            return NULL;
+        return binder;
+    }
+
+public:
+    ConstString portName;
+    ConstString sourceName;
+
+private:    
+    static ElectionOf<PortMonitorGroup> *peers;
+    static ElectionOf<PortMonitorGroup>& getPeers();
+
 
 private:
     bool happy;
     bool bReady;
-    //ConstString portName;
-    //ConstString sourceName;
+
     MonitorBinding* binder;
+    PortMonitorGroup *group;    
+    yarp::os::Semaphore mutex; 
 };
 
 #endif //PORTMONITOR_INC

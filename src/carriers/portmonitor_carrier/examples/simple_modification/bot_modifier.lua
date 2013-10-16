@@ -12,20 +12,14 @@ require("yarp")
 -- to invoke the corresponding methods.The methods are
 -- optional but must satisfy the following format:
 --
--- PortMonitor = {
---      create = function() ... return true end, 
---      destroy = function() ... end, 
---      accept = function(reader) ... return true end, 
---      update = function(reader) ... return reader end, 
---      setparam = function(param) ... end, 
---      getparam = function() ... return param end
--- }
+--  PortMonitor.create = function() ... return true end, 
+--  PortMonitor.destroy = function() ... end, 
+--  PortMonitor.accept = function(reader) ... return true end,     
+--  PortMonitor.update = function(reader) ... return reader end, 
+--  PortMonitor.setparam = function(param) ... end, 
+--  PortMonitor.getparam = function() ... return param end
+--  PortMonitor.trig = function() ... return end
 --
--- declaring 'PortMonitor' object as an empty table
---
-PortMonitor = {}
-
-
 
 --
 -- create is called when the port monitor is created 
@@ -56,6 +50,16 @@ PortMonitor.accept = function(reader)
     return true
 end
 
+
+-- 
+-- trig is called when one of the peer portmonitors
+-- to the same input port receives data. This is 
+-- called before the update() method of the peer 
+-- portmoniotr is invoked
+--
+PortMonitor.trig = function()
+
+end
 
 
 --

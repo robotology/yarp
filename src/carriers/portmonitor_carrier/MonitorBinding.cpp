@@ -22,7 +22,7 @@ MonitorBinding::~MonitorBinding()
 {
 } 
 
-MonitorBinding* MonitorBinding::create(const char* script_type) 
+MonitorBinding* MonitorBinding::create(const char* script_type)
 {
     if(ConstString(script_type) == "lua")
         return new MonitorLua();
