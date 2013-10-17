@@ -135,16 +135,18 @@ else()
 endif()
 
 
+if(ACE_FOUND)
+
 ########################################################################
 ## "__ACE_INLINE__" is needed in some configurations
 
-# If set, save variable for later
-if(DEFINED CMAKE_TRY_COMPILE_CONFIGURATION)
-    set(_CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_TRY_COMPILE_CONFIGURATION})
-endif()
+    # If set, save variable for later
+    if(DEFINED CMAKE_TRY_COMPILE_CONFIGURATION)
+        set(_CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_TRY_COMPILE_CONFIGURATION})
+    endif()
 
-include (CheckCXXSourceCompiles)
-set(_ACE_NEEDS_INLINE_CPP "
+    include (CheckCXXSourceCompiles)
+    set(_ACE_NEEDS_INLINE_CPP "
 #include <ace/OS_NS_unistd.h>
 #include <ace/Time_Value.h>
 
@@ -162,34 +164,36 @@ int main(int argc, char *argv[]) {
 }
 ")
 
-set(_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
-set(_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
-if(ACE_ACE_LIBRARY_RELEASE)
-    set(CMAKE_TRY_COMPILE_CONFIGURATION "Release")
-    check_cxx_source_compiles("${_ACE_NEEDS_INLINE_CPP}" ACE_COMPILES_WITHOUT_INLINE_RELEASE)
-endif()
-if(ACE_ACE_LIBRARY_DEBUG)
-    set(CMAKE_TRY_COMPILE_CONFIGURATION "Debug")
-    check_cxx_source_compiles("${_ACE_NEEDS_INLINE_CPP}" ACE_COMPILES_WITHOUT_INLINE_DEBUG)
-endif()
-set(CMAKE_REQUIRED_INCLUDES ${_CMAKE_REQUIRED_INCLUDES})
-set(CMAKE_REQUIRED_LIBRARIES ${_CMAKE_REQUIRED_LIBRARIES})
+    set(_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+    set(_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+    set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})
+    set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
+    if(ACE_ACE_LIBRARY_RELEASE)
+        set(CMAKE_TRY_COMPILE_CONFIGURATION "Release")
+        check_cxx_source_compiles("${_ACE_NEEDS_INLINE_CPP}" ACE_COMPILES_WITHOUT_INLINE_RELEASE)
+    endif()
+    if(ACE_ACE_LIBRARY_DEBUG)
+        set(CMAKE_TRY_COMPILE_CONFIGURATION "Debug")
+        check_cxx_source_compiles("${_ACE_NEEDS_INLINE_CPP}" ACE_COMPILES_WITHOUT_INLINE_DEBUG)
+    endif()
+    set(CMAKE_REQUIRED_INCLUDES ${_CMAKE_REQUIRED_INCLUDES})
+    set(CMAKE_REQUIRED_LIBRARIES ${_CMAKE_REQUIRED_LIBRARIES})
 
-if(DEFINED _CMAKE_TRY_COMPILE_CONFIGURATION)
-    set(CMAKE_TRY_COMPILE_CONFIGURATION ${_CMAKE_TRY_COMPILE_CONFIGURATION})
-    unset(_CMAKE_TRY_COMPILE_CONFIGURATION)
-endif()
+    if(DEFINED _CMAKE_TRY_COMPILE_CONFIGURATION)
+        set(CMAKE_TRY_COMPILE_CONFIGURATION ${_CMAKE_TRY_COMPILE_CONFIGURATION})
+        unset(_CMAKE_TRY_COMPILE_CONFIGURATION)
+    endif()
 
 
 ########################################################################
 ## Check if some ACE features are available
 
-if("${ACE_VERSION}" VERSION_LESS "5.4.8")
-    set(ACE_ADDR_HAS_LOOPBACK_METHOD 0)
-else()
-    set(ACE_ADDR_HAS_LOOPBACK_METHOD 1)
+    if("${ACE_VERSION}" VERSION_LESS "5.4.8")
+        set(ACE_ADDR_HAS_LOOPBACK_METHOD 0)
+    else()
+        set(ACE_ADDR_HAS_LOOPBACK_METHOD 1)
+    endif()
+
 endif()
 
 
