@@ -44,12 +44,11 @@ else(SKIP_ACE)
     unset(CMAKE_REQUIRED_LIBRARIES)
     set(YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE ${HAVE_SIZE_TYPE})
 
-    include(YarpCheckStructHasMember)
-    set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})
-    set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
-    yarp_check_struct_has_member("ACE_INET_Addr" is_loopback ace/INET_Addr.h YARP_ACE_ADDR_HAS_LOOPBACK_METHOD)
-    unset(CMAKE_REQUIRED_INCLUDES)
-    unset(CMAKE_REQUIRED_LIBRARIES)
+    if("${ACE_VERSION}" VERSION_LESS "5.4.8")
+        set(YARP_ACE_ADDR_HAS_LOOPBACK_METHOD 0)
+    else()
+        set(YARP_ACE_ADDR_HAS_LOOPBACK_METHOD 1)
+    endif()
 
     # With migration to std::string, ACE may need a hash
     set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})
