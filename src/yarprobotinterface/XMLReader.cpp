@@ -45,6 +45,7 @@ public:
         DocTypeRobot,
         DocTypeDevices,
         DocTypeParams,
+        DocTypeActions,
     };
 
     RobotInterfaceDTD() :
@@ -87,6 +88,8 @@ RobotInterfaceDTD::DocType StringToDocType(const std::string &type) {
         return RobotInterfaceDTD::DocTypeDevices;
     } else if (!type.compare("params")) {
         return RobotInterfaceDTD::DocTypeParams;
+    } else if (!type.compare("actions")) {
+        return RobotInterfaceDTD::DocTypeActions;
     }
     return RobotInterfaceDTD::DocTypeUnknown;
 }
@@ -99,6 +102,8 @@ std::string DocTypeToString(RobotInterfaceDTD::DocType doctype) {
         return std::string("devices");
     case RobotInterfaceDTD::DocTypeParams:
         return std::string("params");
+    case RobotInterfaceDTD::DocTypeActions:
+        return std::string("actions");
     default:
         return std::string();
     }
@@ -879,6 +884,35 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsTag(Ti
         return readActionsFile(filename);
     }
 
+    std::string robotName;
+    if (actionsElem->QueryStringAttribute("robot", &robotName) != TIXML_SUCCESS) {
+        SYNTAX_WARNING(actionsElem->Row()) << "\"actions\" element should contain the \"robot\" attribute";
+    }
+
+    if (robotName != robot.name()) {
+        SYNTAX_WARNING(actionsElem->Row()) << "Trying to import a file for the wrong robot. Found" << robotName << "instead of" << robot.name();
+    }
+
+    unsigned int build;
+#if TINYXML_UNSIGNED_INT_BUG
+    if (actionsElem->QueryUnsignedAttribute("build", &build()) != TIXML_SUCCESS) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(actionsElem->Row()) << "\"actions\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+    }
+#else
+    int tmp;
+    if (actionsElem->QueryIntAttribute("build", &tmp) != TIXML_SUCCESS || tmp < 0) {
+        // No build attribute. Assuming build="0"
+        SYNTAX_WARNING(actionsElem->Row()) << "\"actions\" element should contain the \"build\" attribute [unsigned int]. Assuming 0";
+        tmp = 0;
+    }
+    build = (unsigned)tmp;
+#endif
+
+    if (build != robot.build()) {
+        SYNTAX_WARNING(actionsElem->Row()) << "Import a file for a different robot build. Found" << build << "instead of" << robot.build();
+    }
+
     ActionList actions;
     for (TiXmlElement* childElem = actionsElem->FirstChildElement(); childElem != 0; childElem = childElem->NextSiblingElement()) {
         ActionList childActions = readActions(childElem);
@@ -902,6 +936,30 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsFile(c
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
+    }
+
+    RobotInterfaceDTD actionsFileDTD;
+    for (TiXmlNode* childNode = doc->FirstChild(); childNode != 0; childNode = childNode->NextSibling()) {
+        if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
+            if(actionsFileDTD.parse(childNode->ToUnknown(), curr_filename)) {
+                break;
+            }
+        }
+    }
+
+    if (!actionsFileDTD.valid()) {
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version robotInterfaceV1.0";
+        actionsFileDTD.setDefault();
+        actionsFileDTD.type = RobotInterfaceDTD::DocTypeActions;
+    }
+
+    if (actionsFileDTD.type != RobotInterfaceDTD::DocTypeActions) {
+        SYNTAX_ERROR(doc->Row()) << "Expected document of type" << DocTypeToString(RobotInterfaceDTD::DocTypeActions)
+                                 << ". Found" << DocTypeToString(actionsFileDTD.type);
+    }
+
+    if (actionsFileDTD.majorVersion != dtd.majorVersion) {
+        SYNTAX_ERROR(doc->Row()) << "Trying to import a file with a different robotInterface DTD version";
     }
 
     RobotInterface::ActionList actions = readActionsTag(doc->RootElement());
