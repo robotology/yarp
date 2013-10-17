@@ -121,7 +121,6 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, std::string curr_filena
                 *it = it->substr(1, it->size() - 2);
             } else {
                 std::string s = it->substr(1) + " ";
-                yDebug() << s;
                 for (std::vector<std::string>::iterator cit = it + 1; cit != tokens.end(); ) {
                     if (cit->at(cit->size() - 1) == '"') {
                         s += cit->substr(0, cit->size() - 1);
