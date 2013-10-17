@@ -44,11 +44,6 @@ else()
     unset(CMAKE_REQUIRED_LIBRARIES)
     set(YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE ${HAVE_SIZE_TYPE})
 
-    if("${ACE_VERSION}" VERSION_LESS "5.4.8")
-        set(YARP_ACE_ADDR_HAS_LOOPBACK_METHOD 0)
-    else()
-        set(YARP_ACE_ADDR_HAS_LOOPBACK_METHOD 1)
-    endif()
 
     # With migration to std::string, ACE may need a hash
     set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})

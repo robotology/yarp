@@ -284,7 +284,7 @@ String NameConfig::getHostName(bool prefer_loopback) {
                     loopback = true;
                 }
 #ifdef YARP_HAS_ACE
-#ifdef YARP_ACE_ADDR_HAS_LOOPBACK_METHOD
+#ifdef ACE_ADDR_HAS_LOOPBACK_METHOD
                 loopback = ips[i].is_loopback();
 #endif
 #endif

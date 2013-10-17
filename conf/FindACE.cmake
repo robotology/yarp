@@ -179,6 +179,16 @@ endif()
 
 
 ########################################################################
+## Check if some ACE features are available
+
+if("${ACE_VERSION}" VERSION_LESS "5.4.8")
+    set(ACE_ADDR_HAS_LOOPBACK_METHOD 0)
+else()
+    set(ACE_ADDR_HAS_LOOPBACK_METHOD 1)
+endif()
+
+
+########################################################################
 ## Compatibility with older versions
 set(ACE_LIBRARY_RELEASE ${ACE_ACE_LIBRARY_RELEASE})
 set(ACE_LIBRARY_DEBUG ${ACE_ACE_LIBRARY_DEBUG})
