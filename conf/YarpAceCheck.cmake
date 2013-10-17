@@ -12,7 +12,7 @@ mark_as_advanced(SKIP_ACE)
 
 if(SKIP_ACE)
     set(ACE_LIBRARIES pthread rt)
-else(SKIP_ACE)
+else()
     set(YARP_HAS_ACE 1)
 
     find_package(ACE REQUIRED)
@@ -58,4 +58,4 @@ else(SKIP_ACE)
     unset(CMAKE_REQUIRED_INCLUDES)
     unset(CMAKE_REQUIRED_LIBRARIES)
 
-endif(SKIP_ACE)
+endif()

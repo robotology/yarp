@@ -129,6 +129,7 @@ else()
 
 endif()
 
+
 ########################################################################
 ## "__ACE_INLINE__" is needed in some configurations
 
@@ -184,6 +185,7 @@ set(ACE_LIBRARY_DEBUG ${ACE_ACE_LIBRARY_DEBUG})
 set(ACE_LIBRARY ${ACE_ACE_LIBRARY})
 
 
+########################################################################
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
     set_package_properties(ACE PROPERTIES DESCRIPTION "The ADAPTIVE Communication Environment"
