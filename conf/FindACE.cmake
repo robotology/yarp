@@ -71,29 +71,6 @@ else()
     set(ACE_INCLUDE_DIRS ${ACE_INCLUDE_DIR})
 
     ########################################################################
-    ## Read version from ace/Version.h file
-    file(STRINGS ${ACE_INCLUDE_DIR}/ace/Version.h _contents REGEX "#define ACE_[A-Z]+_VERSION[ \t]+")
-    if(_contents)
-        string(REGEX REPLACE ".*#define ACE_MAJOR_VERSION[ \t]+([0-9]+).*" "\\1" ACE_MAJOR_VERSION "${_contents}")
-        string(REGEX REPLACE ".*#define ACE_MINOR_VERSION[ \t]+([0-9]+).*" "\\1" ACE_MINOR_VERSION "${_contents}")
-        string(REGEX REPLACE ".*#define ACE_BETA_VERSION[ \t]+([0-9]+).*" "\\1" ACE_BETA_VERSION "${_contents}")
-
-        if(NOT ACE_MAJOR_VERSION MATCHES "[0-9]+")
-            message(FATAL_ERROR "Version parsing failed for ACE_MAJOR_VERSION!")
-        endif()
-        if(NOT ACE_MINOR_VERSION MATCHES "[0-9]+")
-            message(FATAL_ERROR "Version parsing failed for ACE_MINOR_VERSION!")
-        endif()
-        if(NOT ACE_BETA_VERSION MATCHES "[0-9]+")
-            message(FATAL_ERROR "Version parsing failed for ACE_BETA_VERSION!")
-        endif()
-    else()
-        message(FATAL_ERROR "Include file ace/Version.h does not exist")
-    endif()
-
-    set(ACE_VERSION "${ACE_MAJOR_VERSION}.${ACE_MINOR_VERSION}.${ACE_BETA_VERSION}")
-
-    ########################################################################
     ## OS-specific extra linkage
 
     # Solaris needs some extra libraries that may not have been found already
@@ -124,6 +101,32 @@ else()
     find_package_handle_standard_args(ACE FOUND_VAR ACE_FOUND
                                           REQUIRED_VARS ACE_LIBRARIES ACE_INCLUDE_DIRS
                                           VERSION_VAR ACE_VERSION)
+
+    ########################################################################
+    ## Read version from ace/Version.h file
+    if(ACE_FOUND)
+        file(STRINGS ${ACE_INCLUDE_DIR}/ace/Version.h _contents REGEX "#define ACE_[A-Z]+_VERSION[ \t]+")
+        if(_contents)
+            string(REGEX REPLACE ".*#define ACE_MAJOR_VERSION[ \t]+([0-9]+).*" "\\1" ACE_MAJOR_VERSION "${_contents}")
+            string(REGEX REPLACE ".*#define ACE_MINOR_VERSION[ \t]+([0-9]+).*" "\\1" ACE_MINOR_VERSION "${_contents}")
+            string(REGEX REPLACE ".*#define ACE_BETA_VERSION[ \t]+([0-9]+).*" "\\1" ACE_BETA_VERSION "${_contents}")
+
+            if(NOT ACE_MAJOR_VERSION MATCHES "[0-9]+")
+                message(FATAL_ERROR "Version parsing failed for ACE_MAJOR_VERSION!")
+            endif()
+            if(NOT ACE_MINOR_VERSION MATCHES "[0-9]+")
+                message(FATAL_ERROR "Version parsing failed for ACE_MINOR_VERSION!")
+            endif()
+            if(NOT ACE_BETA_VERSION MATCHES "[0-9]+")
+                message(FATAL_ERROR "Version parsing failed for ACE_BETA_VERSION!")
+            endif()
+        else()
+            message(FATAL_ERROR "Include file ace/Version.h does not exist")
+        endif()
+
+        set(ACE_VERSION "${ACE_MAJOR_VERSION}.${ACE_MINOR_VERSION}.${ACE_BETA_VERSION}")
+    endif()
+
 endif()
 
 # Compatibility
