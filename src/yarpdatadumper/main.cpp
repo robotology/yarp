@@ -680,10 +680,12 @@ public:
         dwnsample=rf.check("downsample",Value(1)).asInt();
         rxTime=rf.check("rxTime");
         string templateDirName=rf.check("dir")?rf.find("dir").asString().c_str():portName;
-        string dirName;
+        if (templateDirName[0]!='/')
+            templateDirName="/"+templateDirName;
 
+        string dirName;
         if (rf.check("overwrite"))
-            dirName="./"+templateDirName;
+            dirName="."+templateDirName;
         else
         {
             // look for a proper directory
@@ -692,9 +694,9 @@ public:
             do
             {
                 if (i>0)
-                    sprintf(checkDirName,"./%s_%.5d",templateDirName.c_str(),i);
+                    sprintf(checkDirName,".%s_%.5d",templateDirName.c_str(),i);
                 else
-                    sprintf(checkDirName,"./%s",templateDirName.c_str());
+                    sprintf(checkDirName,".%s",templateDirName.c_str());
             
                 dirName=checkDirName;
                 i++;
@@ -739,7 +741,8 @@ public:
         rpcPort.open(rpcPortName);
         attach(rpcPort);
 
-        cout << "Service launched with the port name: " << portName << endl;
+        cout << "Service yarp port: " << portName << endl;
+        cout << "Data stored in   : " << dirName  << endl;
 
         return true;
     }
