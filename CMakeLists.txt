@@ -60,6 +60,9 @@ add_subdirectory(extern)
 # Set up the main libraries and utilities.
 add_subdirectory(src)
 
+# Offer to compile bindings
+add_subdirectory(bindings)
+
 # add rule for uninstalling YARP
 # see conf/YARPUninstall.cmake
 include(YARPUninstall)

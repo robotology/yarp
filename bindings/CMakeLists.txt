@@ -4,7 +4,18 @@
 
 cmake_minimum_required(VERSION 2.8.7)
 
+set (YARP_COMPILE_BINDINGS_DEFAULT TRUE)
+set (YARP_COLLISION_AVOIDANCE FALSE)
+set (YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
+if (YARP_VERSION)
+  # this is a nested build
+  set (YARP_COMPILE_BINDINGS_DEFAULT FALSE)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
+  set (YARP_BASE_DIR ${CMAKE_BINARY_DIR})
+endif ()
+option(YARP_COMPILE_BINDINGS "Compile optional language bindings" ${YARP_COMPILE_BINDINGS_DEFAULT})
 
+if (YARP_COMPILE_BINDINGS)
 
 #############################################################################
 ## Discourage inplace compilation
@@ -62,19 +73,19 @@ SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES CPLUSPLUS ON)
 IF (CREATE_JAVA)
   OPTION(PREPARE_CLASS_FILES "Prepare class files" OFF)
   SET(YARP_HELPERS LoadYarp.java YarpImageHelper.java Example1.java)
-  MAKE_DIRECTORY("${CMAKE_CURRENT_BINARY_DIR}/yarp")
-  SET(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/yarp")
+  MAKE_DIRECTORY("${YARP_BASE_DIR}/yarp")
+  SET(CMAKE_SWIG_OUTDIR "${YARP_BASE_DIR}/yarp")
   SET(TARGET_DIR src)
   IF (NOT BINDINGS_SRC_DIR)
     SET(BINDINGS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
   ENDIF ()
   IF (NOT PREPARE_CLASS_FILES)
-    SET(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/generated_src")
+    SET(CMAKE_SWIG_OUTDIR "${YARP_BASE_DIR}/generated_src")
     SET(TARGET_DIR generated_src)
   ENDIF ()
-  MAKE_DIRECTORY("${CMAKE_CURRENT_BINARY_DIR}/${TARGET_DIR}")
+  MAKE_DIRECTORY("${YARP_BASE_DIR}/${TARGET_DIR}")
   FOREACH(src ${YARP_HELPERS})
-    SET(target ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_DIR}/${src})
+    SET(target ${YARP_BASE_DIR}/${TARGET_DIR}/${src})
     CONFIGURE_FILE(${BINDINGS_SRC_DIR}/${src}
       ${target} IMMEDIATE)
     MESSAGE(STATUS "copied ${target}")
@@ -85,17 +96,16 @@ IF (CREATE_JAVA)
   SET(target_name jyarp)
   SWIG_ADD_MODULE(${target_name} java yarp.i)
   IF (PREPARE_CLASS_FILES)
-    file(GLOB JAVA_IN_SRC RELATIVE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/src/*.java)
-    file(GLOB JAVA_IN_YARP RELATIVE ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/yarp/*.java)
+    file(GLOB JAVA_IN_SRC RELATIVE ${YARP_BASE_DIR} ${YARP_BASE_DIR}/src/*.java)
+    file(GLOB JAVA_IN_YARP RELATIVE ${YARP_BASE_DIR} ${YARP_BASE_DIR}/yarp/*.java)
     set(CLASS_FILES)
     foreach(java_file ${JAVA_IN_SRC} ${JAVA_IN_YARP})
       string(REPLACE ".java" ".class" class_file ${java_file})
-      list(APPEND CLASS_FILES ${class_file})
+      list(APPEND CLASS_FILES ${YARP_BASE_DIR}/${class_file})
     endforeach()
     add_custom_command(OUTPUT ${CLASS_FILES}
-
       COMMAND javac -source 1.3 -target 1.3 "src/*.java" "yarp/*.java"
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      WORKING_DIRECTORY ${YARP_BASE_DIR}
       DEPENDS ${target_name})
     add_custom_target(${target_name}_classes ALL DEPENDS ${CLASS_FILES})
   ENDIF ()
@@ -111,6 +121,7 @@ IF (CREATE_JAVA)
   IF(APPLE)
     SET_TARGET_PROPERTIES(${target_name} PROPERTIES SUFFIX ".jnilib")
   ENDIF(APPLE)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_JAVA)
 
 
@@ -131,7 +142,11 @@ IF (CREATE_PYTHON)
     link_directories(${PYTHON_DIR})
   endif()
   
-  SWIG_ADD_MODULE(yarp python yarp.i)
+  set (target_name yarp)
+  if (YARP_COLLISION_AVOIDANCE)
+    set (target_name yarp_python)
+  endif ()
+  SWIG_ADD_MODULE(${target_name} python yarp.i)
   # uncomment if we want a debug version of the library
   #ADD_DEFINITIONS(-DPy_DEBUG)
 
@@ -141,18 +156,19 @@ IF (CREATE_PYTHON)
   EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} 
     -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}'))" 
     OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
-  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py ${CMAKE_CURRENT_BINARY_DIR}/_yarp.so 
+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py ${CMAKE_CURRENT_BINARY_DIR}/_${target_name}.so 
     DESTINATION ${PYTHON_INSTDIR} )
 
   IF (WIN32)
     # Check if we have a target called _yarp as SWIG_ADD_MODULE
     # will currently give. If not, we're probably in the distant
     # future, and we'd best not meddle.
-    GET_TARGET_PROPERTY(yarp_lib_location _yarp LOCATION)
+    GET_TARGET_PROPERTY(yarp_lib_location _${target_name} LOCATION)
     IF (yarp_lib_location)
-      SET_TARGET_PROPERTIES(_yarp PROPERTIES SUFFIX ".pyd")
+      SET_TARGET_PROPERTIES(_${target_name} PROPERTIES SUFFIX ".pyd")
     ENDIF ()    
   ENDIF (WIN32)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_PYTHON)
 
 
@@ -165,6 +181,7 @@ IF (CREATE_PERL)
   FIND_PACKAGE(PerlLibs)
   INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
   SWIG_ADD_MODULE(libperlyarp perl5 yarp.i)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_PERL)
 
 
@@ -176,6 +193,7 @@ ENDIF (CREATE_PERL)
 IF (CREATE_CHICKEN)
   SET(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp")
   SWIG_ADD_MODULE(libcyarp chicken yarp.i)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_CHICKEN)
 
 
@@ -213,6 +231,7 @@ IF (CREATE_ALLEGRO)
       "execute_process( COMMAND \"mkdir\" \"-p\" \"${ALLEGRO_ASDF_SYSTEMS}\"
                               COMMAND \"ln\" \"-s\" \"${ALLEGRO_INSTALL_PREFIX}/yarp/yarp.asd\" \"${ALLEGRO_ASDF_SYSTEMS}\" )" )
   endif( UNIX )
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_ALLEGRO)
 
 IF (CREATE_TCL)
@@ -221,6 +240,7 @@ IF (CREATE_TCL)
   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH})
   LINK_LIBRARIES(${TCL_LIBRARY})
   SWIG_ADD_MODULE(libtclyarp tcl yarp.i)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_TCL)
 
 
@@ -231,7 +251,10 @@ ENDIF (CREATE_TCL)
 IF (CREATE_CSHARP)
 
   # outdir does not seem to work?
-  SET(target_name yarp)
+  set (target_name yarp)
+  if (YARP_COLLISION_AVOIDANCE)
+    set (target_name yarp_cs)
+  endif ()
   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   IF (WIN32 AND NOT CYGWIN)
     OPTION(PREPARE_CLASS_FILES "Prepare NET library" ON)
@@ -248,8 +271,9 @@ IF (CREATE_CSHARP)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     ENDIF ()
   ELSE(WIN32 AND NOT CYGWIN)
-    SWIG_ADD_MODULE(yarp csharp yarp.i)
+    SWIG_ADD_MODULE(${target_name} csharp yarp.i)
   ENDIF (WIN32 AND NOT CYGWIN)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_CSHARP)
 
 
@@ -261,8 +285,13 @@ IF (CREATE_RUBY)
   FIND_PACKAGE(Ruby)
   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   INCLUDE_DIRECTORIES(${RUBY_INCLUDE_PATH})
-  SWIG_ADD_MODULE(yarp ruby yarp.i)
-  SWIG_LINK_LIBRARIES(yarp ${RUBY_LIBRARY})
+  set (target_name yarp)
+  if (YARP_COLLISION_AVOIDANCE)
+    set (target_name yarp_ruby)
+  endif ()
+  SWIG_ADD_MODULE(${target_name} ruby yarp.i)
+  SWIG_LINK_LIBRARIES(${target_name} ${RUBY_LIBRARY})
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_RUBY)
 
 
@@ -274,15 +303,20 @@ ENDIF (CREATE_RUBY)
 IF (CREATE_LUA)
   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   find_package(Lua51 REQUIRED) 
+  set (target_name yarp)
+  if (YARP_COLLISION_AVOIDANCE)
+    set (target_name yarp_lua)
+  endif ()
   INCLUDE_DIRECTORIES(${LUA_INCLUDE_DIR})
-  SWIG_ADD_MODULE(yarp lua yarp.i)
-  SWIG_LINK_LIBRARIES(yarp ${LUA_LIBRARY})
+  SWIG_ADD_MODULE(${target_name} lua yarp.i)
+  SWIG_LINK_LIBRARIES(${target_name} ${LUA_LIBRARY})
   IF (UNIX)
-    ADD_CUSTOM_COMMAND(TARGET yarp
+    ADD_CUSTOM_COMMAND(TARGET ${target_name}
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink libyarp.so yarp.so 
+    COMMAND ${CMAKE_COMMAND} -E create_symlink lib${target_name}.so ${target_name}.so 
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   ENDIF (UNIX)
+  set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_LUA)
 
-
+endif ()

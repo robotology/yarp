@@ -27,6 +27,6 @@ for lang in $SUPPORTED_LANGUAGES; do
     mkdir -p $dir
     cd $dir
     echo "* In $PWD"
-    cmake -DCREATE_$lang=TRUE $YARP_ROOT/bindings
+    cmake -DCREATE_$lang=TRUE -DPREPARE_CLASS_FILES=TRUE $YARP_ROOT/bindings
     make
 done
