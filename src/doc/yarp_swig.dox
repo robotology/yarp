@@ -7,7 +7,7 @@
 /** 
  * @page yarp_swig Using YARP from python, java, ruby, C#, and other languages
 
-\author Paul Fitzpatrick, Lorenzo Natale, Vadim Tikhanoff
+\author Paul Fitzpatrick, Lorenzo Natale, Vadim Tikhanoff, Ali Paikan
 
 YARP is written in C++.  If you wish to use all the features of YARP in
 a program written in a different language, we recommend you use
@@ -32,6 +32,7 @@ Then, install any language-specific packages needed.
  - \ref yarp_swig_java
  - \ref yarp_swig_python
  - \ref yarp_swig_matlab
+ - \ref yarp_swig_lua
  - \ref Other tested languages are: Perl, Chicken Scheme, C#, Allegro Common Lisp, TCL, and Ruby.  Procedure is same as for Java/Python.  You may need to install a development package for your desired language.  To find out:
    - On Linux: Check http://www.dabeaz.com/cgi-bin/wiki.pl?DeveloperInfo/GettingStarted
    - On OSX: A surprising amount of stuff comes pre-installed.
@@ -145,6 +146,34 @@ You can find out where this
 file is by typing in Matlab:
 \verbatim
 which classpath.txt
+\endverbatim
+
+
+@section yarp_swig_lua YARP for Lua
+For Lua on linux, be sure to install Lua development files, e.g. on Debian/Ubuntu:
+\verbatim
+sudo apt-get install liblua5.1-0-dev
+\endverbatim
+
+If you use Windows, try <a href="https://code.google.com/p/luaforwindows/">Lua for Windows</a>, 
+an easy-to-use distribution of Lua packed with several useful libraries.
+
+A more generic way (also for OSX users) is to build lua from the source. Lua is implemented in pure
+ANSI C and compiles unmodified in all platforms that have an ANSI C compiler. For example, to compile
+Lua on OSX, download <a href="http://www.lua.org/ftp/lua-5.1.5.tar.gz">Lua 5.1</a> and try: 
+\verbatim
+tar -xvf lua-5.1.x.tar.gz 
+cd lua-5.1.x
+make macosx
+sudo make install
+\endverbatim
+
+OSX users can also uses Lua binaries from http://lua-users.org/wiki/LuaBinaries
+
+After \ref yarp_swig_compile, make sure that the Lua-Yarp binding shared library 
+(.so/.dll/.dylib/...) is included in your LUA_CPATH environment variable; e.g., on linux: 
+\verbatim
+export LUA_CPATH=";;;$YARP_ROOT/bindings/build-lua/?.so"
 \endverbatim
 
 
