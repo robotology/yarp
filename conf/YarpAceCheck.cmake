@@ -43,14 +43,4 @@ else()
     unset(CMAKE_REQUIRED_INCLUDES)
     unset(CMAKE_REQUIRED_LIBRARIES)
     set(YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE ${HAVE_SIZE_TYPE})
-
-
-    # With migration to std::string, ACE may need a hash
-    set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})
-    set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
-    file(READ ${YARP_MODULE_DIR}/ace_hash_test.cpp YARP_ACE_HAS_STRING_HASH_CPP)
-    check_cxx_source_compiles("${YARP_ACE_HAS_STRING_HASH_CPP}" YARP_ACE_HAS_STRING_HASH)
-    unset(CMAKE_REQUIRED_INCLUDES)
-    unset(CMAKE_REQUIRED_LIBRARIES)
-
 endif()

@@ -13,6 +13,7 @@
 #   ACE_COMPILES_WITHOUT_INLINE_RELEASE
 #   ACE_COMPILES_WITHOUT_INLINE_DEBUG
 #   ACE_ADDR_HAS_LOOPBACK_METHOD
+#   ACE_HAS_STRING_HASH
 
 # Copyright: (C) 2009 RobotCub Consortium
 # Copyright: (C) 2013  iCub Facility, Istituto Italiano di Tecnologia
@@ -135,39 +136,50 @@ else()
 endif()
 
 
+########################################################################
+## If ACE was found, check if some features are available
+
 if(ACE_FOUND)
 
-########################################################################
-## "__ACE_INLINE__" is needed in some configurations
-
-    # If set, save variable for later
+    # If set, save variables for later
     if(DEFINED CMAKE_TRY_COMPILE_CONFIGURATION)
         set(_CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_TRY_COMPILE_CONFIGURATION})
+    else()
+        unset(_CMAKE_TRY_COMPILE_CONFIGURATION)
     endif()
 
+    if(DEFINED CMAKE_REQUIRED_INCLUDES)
+        set(_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+    else()
+        unset(_CMAKE_TRY_COMPILE_CONFIGURATION)
+    endif()
+    set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})
+
+    if(DEFINED CMAKE_REQUIRED_LIBRARIES)
+        set(_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+    else()
+        unset(_CMAKE_REQUIRED_LIBRARIES)
+    endif()
+    set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
+
     include (CheckCXXSourceCompiles)
+
+
+    # "__ACE_INLINE__" is needed in some configurations
     set(_ACE_NEEDS_INLINE_CPP "
 #include <ace/OS_NS_unistd.h>
 #include <ace/Time_Value.h>
-
 void time_delay(double seconds) {
     ACE_Time_Value tv;
     tv.sec (long(seconds));
     tv.usec (long((seconds-long(seconds)) * 1.0e6));
     ACE_OS::sleep(tv);
 }
-
-
 int main(int argc, char *argv[]) {
     time_delay(1);
     return 0;
 }
 ")
-
-    set(_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
-    set(_CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
-    set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIRS})
-    set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
     if(ACE_ACE_LIBRARY_RELEASE)
         set(CMAKE_TRY_COMPILE_CONFIGURATION "Release")
         check_cxx_source_compiles("${_ACE_NEEDS_INLINE_CPP}" ACE_COMPILES_WITHOUT_INLINE_RELEASE)
@@ -176,22 +188,52 @@ int main(int argc, char *argv[]) {
         set(CMAKE_TRY_COMPILE_CONFIGURATION "Debug")
         check_cxx_source_compiles("${_ACE_NEEDS_INLINE_CPP}" ACE_COMPILES_WITHOUT_INLINE_DEBUG)
     endif()
-    set(CMAKE_REQUIRED_INCLUDES ${_CMAKE_REQUIRED_INCLUDES})
-    set(CMAKE_REQUIRED_LIBRARIES ${_CMAKE_REQUIRED_LIBRARIES})
-
-    if(DEFINED _CMAKE_TRY_COMPILE_CONFIGURATION)
-        set(CMAKE_TRY_COMPILE_CONFIGURATION ${_CMAKE_TRY_COMPILE_CONFIGURATION})
-        unset(_CMAKE_TRY_COMPILE_CONFIGURATION)
-    endif()
 
 
-########################################################################
-## Check if some ACE features are available
-
+    # Check for ACE_INET_Addr::is_loopback
     if("${ACE_VERSION}" VERSION_LESS "5.4.8")
         set(ACE_ADDR_HAS_LOOPBACK_METHOD 0)
     else()
         set(ACE_ADDR_HAS_LOOPBACK_METHOD 1)
+    endif()
+
+
+    # Check if std::string can be used with ACE hash map
+    set(_ACE_HAS_STRING_HASH_CPP "
+#include <string>
+#include <ace/Hash_Map_Manager.h>
+#include <ace/Null_Mutex.h>
+#include <ace/Functor_String.h>
+int main(int argc, char *argv[]) {
+    ACE_Hash_Map_Manager<std::string,std::string,ACE_Null_Mutex> my_map;
+    ACE_Hash_Map_Entry<std::string,std::string> *it = NULL;
+    my_map.find(\"hello\",it);
+    return 0;
+}
+")
+    check_cxx_source_compiles("${_ACE_HAS_STRING_HASH_CPP}" ACE_HAS_STRING_HASH)
+
+
+    # Reset variables to their original values
+    if(DEFINED _CMAKE_TRY_COMPILE_CONFIGURATION)
+        set(CMAKE_TRY_COMPILE_CONFIGURATION ${_CMAKE_TRY_COMPILE_CONFIGURATION})
+        unset(_CMAKE_TRY_COMPILE_CONFIGURATION)
+    else()
+        unset(CMAKE_TRY_COMPILE_CONFIGURATION)
+    endif()
+
+    if(DEFINED _CMAKE_REQUIRED_INCLUDES)
+        set(CMAKE_REQUIRED_INCLUDES ${_CMAKE_REQUIRED_INCLUDES})
+        unset(${_CMAKE_REQUIRED_INCLUDES})
+    else()
+        unset(CMAKE_REQUIRED_INCLUDES)
+    endif()
+
+    if(DEFINED _CMAKE_REQUIRED_LIBRARIES)
+        set(CMAKE_REQUIRED_LIBRARIES ${_CMAKE_REQUIRED_LIBRARIES})
+        unset(_CMAKE_REQUIRED_LIBRARIES)
+    else()
+        unset(CMAKE_REQUIRED_LIBRARIES)
     endif()
 
 endif()

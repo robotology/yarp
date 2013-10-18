@@ -16,7 +16,7 @@
 #  include <ace/Hash_Map_Manager.h>
 #  include <ace/Null_Mutex.h>
 #  include <ace/Functor_String.h>
-#  ifndef YARP_ACE_HAS_STRING_HASH
+#  ifndef ACE_HAS_STRING_HASH
 
 template<>
 class YARP_OS_API ACE_Equal_To<std::string>
