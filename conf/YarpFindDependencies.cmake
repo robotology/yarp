@@ -146,6 +146,10 @@ endmacro(print_dependency)
 
 # OPTIONS:
 
+option(SKIP_ACE "Compile YARP without ACE (Linux only, TCP only, limited functionality)" OFF)
+mark_as_advanced(SKIP_ACE)
+
+
 option(CREATE_LIB_MATH "Create math library libYARP_math?" OFF)
 if(CREATE_LIB_MATH)
     # FIXME YARP_USE_ATLAS is probably not a good choice since it can make
@@ -176,6 +180,32 @@ message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 
 
 # FIND PACKAGES:
+
+if(SKIP_ACE)
+    set(ACE_LIBRARIES pthread rt)
+else()
+    find_package(ACE QUIET)
+    checkandset_dependency(ACE)
+    # FIXME Replace SKIP_ACE with YARP_USE_ACE
+    unset(YARP_USE_ACE CACHE)
+
+    # __ACE_INLINE__ is needed in some configurations
+    if(NOT ACE_COMPILES_WITHOUT_INLINE_RELEASE)
+        foreach(_config ${YARP_OPTIMIZED_CONFIGURATIONS})
+            string(TOUPPER ${_config} _CONFIG)
+            set(CMAKE_C_FLAGS_${_CONFIG} "${CMAKE_C_FLAGS_${_CONFIG}} -D__ACE_INLINE__")
+            set(CMAKE_CXX_FLAGS_${_CONFIG} "${CMAKE_CXX_FLAGS_${_CONFIG}} -D__ACE_INLINE__")
+        endforeach()
+    endif()
+
+    if(NOT ACE_COMPILES_WITHOUT_INLINE_DEBUG)
+        foreach(_config ${YARP_DEBUG_CONFIGURATIONS})
+            string(TOUPPER ${_config} _CONFIG)
+            set(CMAKE_C_FLAGS_${_CONFIG} "${CMAKE_C_FLAGS_${_CONFIG}} -D__ACE_INLINE__")
+            set(CMAKE_CXX_FLAGS_${_CONFIG} "${CMAKE_CXX_FLAGS_${_CONFIG}} -D__ACE_INLINE__")
+        endforeach()
+    endif()
+endif()
 
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)

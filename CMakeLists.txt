@@ -44,10 +44,6 @@ include(YarpCMakeWorkarounds)
 # See conf/YarpFindDependencies.cmake.
 include(YarpFindDependencies)
 
-# Check ACE installation.
-# See conf/YarpAceCheck.cmake.
-include(YarpAceCheck)
-
 # Turn on testing.
 enable_testing()
 
