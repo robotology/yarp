@@ -29,7 +29,6 @@
 #  endif
 #endif
 
-#cmakedefine YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE
 #cmakedefine ACE_ADDR_HAS_LOOPBACK_METHOD
 #cmakedefine ACE_HAS_STRING_HASH
 

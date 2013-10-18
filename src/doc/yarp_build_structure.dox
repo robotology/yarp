@@ -573,9 +573,8 @@ It is placed in generated_include/yarp/conf/yarp_config_system.h,
 and should be accessed as "#include <yarp/conf/yarp_config_system.h>".
 It is intended to store some facts about the system upon which YARP
 is built: the types YARP_INT32, YARP_INT16, YARP_FLOAT64, 
-whether the system is big- or little-endian, whether to use ACE strings
-or STL strings, and YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE, an
-awkward detail about ACE's string class.
+whether the system is big- or little-endian, and whether to use ACE strings
+or STL strings
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_system_check
 
