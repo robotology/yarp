@@ -119,7 +119,7 @@ public:
  *
  * Interface for a generic control board device implementing position control.
  */
-class yarp::dev::IPositionControl2 : public IPositionControl
+class YARP_dev_API yarp::dev::IPositionControl2 : public IPositionControl
 {
 public:
 

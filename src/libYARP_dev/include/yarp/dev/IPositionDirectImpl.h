@@ -26,7 +26,7 @@ namespace yarp{
  * be used to easily provide an implementation of IPositionDirect.
  *
  */
-class yarp::dev::ImplementPositionDirect : public IPositionDirect
+class YARP_dev_API yarp::dev::ImplementPositionDirect : public IPositionDirect
 {
 protected:
     IPositionDirectRaw *iPDirect;

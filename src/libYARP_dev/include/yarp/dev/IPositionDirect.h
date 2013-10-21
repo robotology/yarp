@@ -22,11 +22,11 @@ namespace yarp {
  *
  * Interface for a generic control board device implementing position control in encoder
  * coordinates.
- * This interfaceis used to send high frequency streaming commands to the boards, the aim
+ * This interface is used to send high frequency streaming commands to the boards, the aim
  * is to reach low level control in firmware bypassing the trajetory generator.
  */
 
-class yarp::dev::IPositionDirect
+class YARP_dev_API yarp::dev::IPositionDirect
 {
 
 public:

@@ -20,7 +20,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::ImplementVelocityControl2 : public IVelocityControl2
+class YARP_dev_API yarp::dev::ImplementVelocityControl2 : public IVelocityControl2
 {
 protected:
     IVelocityControl2Raw *iVelocity2;

@@ -109,7 +109,7 @@ public:
  *
  * Interface for control boards implementing velocity control.
  */
-class yarp::dev::IVelocityControl
+class YARP_dev_API yarp::dev::IVelocityControl
 {
 public:
     /**

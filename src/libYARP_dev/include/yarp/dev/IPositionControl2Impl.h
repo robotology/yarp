@@ -26,7 +26,7 @@ namespace yarp{
  * be used to easily provide an implementation of IPositionControl2.
  *
  */
-class yarp::dev::ImplementPositionControl2 : public IPositionControl2
+class YARP_dev_API yarp::dev::ImplementPositionControl2 : public IPositionControl2
 {
 protected:
     IPositionControl2Raw *iPosition2;

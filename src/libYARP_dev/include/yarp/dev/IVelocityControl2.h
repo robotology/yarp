@@ -25,7 +25,7 @@ namespace yarp {
  *
  * Interface for control boards implementing velocity control.
  */
-class yarp::dev::IVelocityControl2 : public IVelocityControl
+class YARP_dev_API yarp::dev::IVelocityControl2 : public IVelocityControl
 {
 public:
     /**
