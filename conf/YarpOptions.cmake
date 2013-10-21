@@ -280,3 +280,12 @@ if(CXX_HAS_WFATAL_ERROR)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
     endif(YARP_FATAL_ERRORS)
 endif(CXX_HAS_WFATAL_ERROR)
+
+#########################################################################
+# Display test machine options for reference, if they are set
+
+if (TEST_MACHINE_HOSTNAME)
+  message(STATUS "TEST_MACHINE_HOSTNAME: ${TEST_MACHINE_HOSTNAME}")
+  message(STATUS "TEST_MACHINE_OS_TYPE: ${TEST_MACHINE_OS_TYPE}")
+  message(STATUS "TEST_MACHINE_TEST_TYPE: ${TEST_MACHINE_TEST_TYPE}")
+endif ()
