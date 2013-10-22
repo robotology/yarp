@@ -612,6 +612,7 @@ public:
             ResourceFinderOptions opts2;
             opts2.searchLocations = (ResourceFinderOptions::SearchLocations)(ResourceFinderOptions::User | ResourceFinderOptions::Sysadmin | ResourceFinderOptions::Installed);
             opts2.resourceType = "robots";
+            opts2.duplicateFilesPolicy = ResourceFinderOptions::All;
             findFileBaseInner(config,robot.c_str(),true,allowPathd,paths,opts2,doc,"robot");
             appendResourceType(paths,resourceType);
             for (int j=0; j<paths.size(); j++) {
