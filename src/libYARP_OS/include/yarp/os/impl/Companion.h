@@ -234,6 +234,7 @@ private:
     PlatformVector<String> tips;
     bool adminMode;
     yarp::os::ConstString argType;
+    bool waitConnect;
 
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = NULL) {

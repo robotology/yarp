@@ -154,6 +154,7 @@ static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
 
 Companion::Companion() {
     adminMode = false;
+    waitConnect = false;
     add("check",      &Companion::cmdCheck,
         "run a simple sanity check to see if yarp is working");
     add("clean",  &Companion::cmdClean,
@@ -235,10 +236,17 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
             continue;
         }
         ConstString arg = argv[i];
-        if (arg.find("--")==0 && i+1<argc) {
-            if (arg=="--type") {
-                skip = 1;
-                argType = argv[i+1];
+        if (arg.find("--")==0) {
+            if (i+1<argc) {
+                if (arg=="--type") {
+                    skip = 1;
+                    argType = argv[i+1];
+                    continue;
+                }
+            }
+            if (arg=="--wait-connect") {
+                skip = 0;
+                waitConnect = true;
                 continue;
             }
         }
@@ -1054,6 +1062,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
     }
 
     Port p;
+    applyArgs(p);
     bool ok;
     if (argc>1) {
         ok = p.open(src);
@@ -1910,6 +1919,7 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
 
 int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
+    applyArgs(port);
     port.setWriteOnly();
     if (companion_active_port==NULL) {
         companion_install_handler();
@@ -1955,7 +1965,24 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 bot.fromString(txt.c_str());
             }
             //core.send(bot);
+            if (waitConnect) {
+                double delay = 0.1;
+                while (port.getOutputCount()<1) {
+                    Time::delay(delay);
+                    delay *= 2;
+                    if (delay>4) delay = 4;
+                }
+            }
             port.write(bot);
+        }
+    }
+
+    if (port.isWriting()) {
+        double delay = 0.1;
+        while (port.isWriting()) {
+            Time::delay(delay);
+            delay *= 2;
+            if (delay>4) delay = 4;
         }
     }
 
@@ -2411,7 +2438,7 @@ int Companion::cmdSample(int argc, char *argv[]) {
 
 void Companion::applyArgs(yarp::os::Contactable& port) {
     if (argType!="") {
-        port.promiseType(Type::byName(argType.c_str()));
+        port.promiseType(Type::byNameOnWire(argType.c_str()));
     }
 }
 
