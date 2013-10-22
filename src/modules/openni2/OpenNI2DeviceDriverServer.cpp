@@ -198,10 +198,10 @@ bool yarp::dev::OpenNI2DeviceDriverServer::close(){
     return true;
 }
 
-bool yarp::dev::OpenNI2DeviceDriverServer::updateInterface(bool wait){
+bool yarp::dev::OpenNI2DeviceDriverServer::updateInterface(){
     
     // update sensor data
-    skeleton->updateSensor(wait);
+    skeleton->updateSensor();
     
     // send sensor data to ports
     if(withOpenPorts){
@@ -218,7 +218,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::startService(){
 }
 
 bool yarp::dev::OpenNI2DeviceDriverServer::updateService(){
-    updateInterface(true);
+    updateInterface();
     return true;
 }
 
@@ -229,7 +229,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::stopService(){
 
 // returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID){
-    updateInterface(false);
+    updateInterface();
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
     for(int i = 0; i < TOTAL_JOINTS; i++){
@@ -243,7 +243,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonOrientation(Vector *vector
 
 // returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID){
-    updateInterface(false);
+    updateInterface();
     if(OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState != nite::SKELETON_TRACKED)
         return false;
     for(int i = 0; i < TOTAL_JOINTS; i++){
@@ -256,7 +256,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArr
 }
 
 int *yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(){
-    updateInterface(false);
+    updateInterface();
     int *userState = new int[MAX_USERS];
     for(int i = 0; i < MAX_USERS; i++){
         userState[i] = getSkeletonState(i);
@@ -265,17 +265,17 @@ int *yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(){
 }
 
 nite::SkeletonState yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID){
-    updateInterface(false);
+    updateInterface();
     return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState;
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverServer::getImageFrame(){
-    updateInterface(false);
+    updateInterface();
     return OpenNI2SkeletonTracker::getSensor()->imageFrame;
 }
 
 ImageOf<PixelMono16> yarp::dev::OpenNI2DeviceDriverServer::getDepthFrame(){
-    updateInterface(false);
+    updateInterface();
     return OpenNI2SkeletonTracker::getSensor()->depthFrame;
 }
 

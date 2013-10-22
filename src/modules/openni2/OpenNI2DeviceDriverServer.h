@@ -61,7 +61,7 @@ public:
     OpenNI2DeviceDriverServer(void);
     ~OpenNI2DeviceDriverServer(void);
     // GenericYarpDriver
-    virtual bool updateInterface(bool wait);
+    virtual bool updateInterface();
     // DeviceDriver
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
