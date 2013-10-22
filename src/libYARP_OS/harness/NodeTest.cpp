@@ -39,6 +39,7 @@ class NodeTest : public UnitTest {
 public:
     virtual String getName() { return "NodeTest"; }
 
+    void parseNameTest();
     void basicNodeTest();
     void basicNodesTest();
     void basicTypeTest();
@@ -49,7 +50,32 @@ public:
     void singleNameTest();
 
     virtual void runTests();
+
+private:
+
+    void parseName(const ConstString& arg,
+                   const ConstString& node,
+                   const ConstString& nested,
+                   const ConstString& cat) {
+        NestedContact nc(arg);
+        checkEqual(nc.getNodeName(),node,(ConstString("node name matches for ") + arg).c_str());
+        checkEqual(nc.getNestedName(),nested,(ConstString("nested name matches for ") + arg).c_str());
+        checkEqual(nc.getCategory(),cat,(ConstString("category matches for ") + arg).c_str());
+    }
 };
+
+void NodeTest::parseNameTest() {
+    report(0,"check support for various experimental node/topic/service schemes");
+    parseName("/foo","/foo","","");
+    parseName("/topic@/foo","/foo","/topic","");
+    parseName("/topic-@/foo","/foo","/topic","-");
+    parseName("/topic-1@/foo","/foo","/topic","-1");
+    parseName("/foo=/topic","/foo","/topic","");
+    parseName("/foo=+/topic","/foo","/topic","+");
+    parseName("/foo=+1/topic","/foo","/topic","+1");
+    parseName("/foo-#/topic","/foo","/topic","-");
+    parseName("/foo+#/topic","/foo","/topic","+");
+}
 
 void NodeTest::basicNodeTest() {
     report(0,"most basic node test");
@@ -218,6 +244,7 @@ void NodeTest::singleNameTest() {
 
 void NodeTest::runTests() {
     NetworkBase::setLocalMode(true);
+    parseNameTest();
     basicNodeTest();
     basicNodesTest();
     basicTypeTest();

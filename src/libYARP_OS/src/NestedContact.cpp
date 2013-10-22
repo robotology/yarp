@@ -50,12 +50,25 @@ bool NestedContact::fromString(const ConstString& nFullName) {
         return true;
     } 
     idx = fullName.find("=");
-    if (idx==ConstString::npos) return false;
-    nodeName = fullName.substr(0,idx);
-    nestedName = fullName.substr(idx+1,fullName.length());
-    idx = nestedName.find("/");
-    if (idx==0) return true;
-    category = nestedName.substr(0,idx);
-    nestedName = nestedName.substr(idx,nestedName.length());
-    return true;
+    if (idx!=ConstString::npos) {
+        nodeName = fullName.substr(0,idx);
+        nestedName = fullName.substr(idx+1,fullName.length());
+        idx = nestedName.find("/");
+        if (idx==0) return true;
+        category = nestedName.substr(0,idx);
+        nestedName = nestedName.substr(idx,nestedName.length());
+        return true;
+    }
+    idx = fullName.find("#");
+    if (idx!=ConstString::npos) {
+        nodeName = fullName.substr(0,idx);
+        nestedName = fullName.substr(idx+1,fullName.length());
+        char ch = nodeName[nodeName.length()-1];
+        if (ch=='-'||ch=='+') {
+            category += ch;
+            nodeName = nodeName.substr(0,nodeName.length()-1);
+        }
+        return true;
+    }
+    return false;
 }
