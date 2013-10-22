@@ -50,6 +50,9 @@ public:
         bool stillTracking;
         int uID;
     }UserSkeleton;
+
+    int getDeviceStatus();
+
     /**
      * Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
      */
@@ -78,7 +81,8 @@ public:
 private:
     static SensorStatus *sensorStatus;
     bool userTracking, camerasON, mirrorON;
-    
+    int deviceStatus;
+
     // OpenNI2 and NiTE objects
     openni::Device device;
     nite::UserTracker userTracker;

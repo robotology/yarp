@@ -161,8 +161,21 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
         openPorts(portPrefix, userTracking, camerasON);
     }
     skeleton = new OpenNI2SkeletonTracker(userTracking,camerasON,mirrorON);
-    std::cout << "OpenNI2 Yarp Device started." << endl;
+
+    if (skeleton->getDeviceStatus()==1){
+        cout << "***ERROR*** Sensor could not be initialized." << endl;
+        return false;
+    }
+
+    else if (skeleton->getDeviceStatus()==2) {
+        cout << "***ERROR*** Sensor not found." << endl;
+        return false;
+    }
+
+    else {
+    cout << "OpenNI2 Yarp Device started." << endl;
     return true;
+    }
 }
 
 bool yarp::dev::OpenNI2DeviceDriverServer::close(){

@@ -53,9 +53,11 @@ void OpenNI2SkeletonTracker::close(){
 int OpenNI2SkeletonTracker::init(){
     
     openni::Status rc = openni::OpenNI::initialize();
+    deviceStatus = 0;
     if (rc != openni::STATUS_OK)
     {
         printf("Initialize failed\n%s\n", openni::OpenNI::getExtendedError());
+        deviceStatus = 1;
         return 1;
     }
     
@@ -64,6 +66,7 @@ int OpenNI2SkeletonTracker::init(){
     if (rc != openni::STATUS_OK)
     {
         printf("Couldn't open device\n%s\n", openni::OpenNI::getExtendedError());
+        deviceStatus = 2;
         return 2;
     }
     
@@ -349,3 +352,6 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
     }
 }
 
+int OpenNI2SkeletonTracker::getDeviceStatus(){
+    return deviceStatus;
+}
