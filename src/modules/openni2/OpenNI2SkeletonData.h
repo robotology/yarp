@@ -93,7 +93,7 @@ public:
      * @param userID  detected user id
      * @return int of status
      */
-    int getSkeletonState(int userID);
+    nite::SkeletonState getSkeletonState(int userID);
     /**
      * Get depth frame
      *

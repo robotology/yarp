@@ -73,7 +73,7 @@ public:
      * @param userID id of the user skeleton state to be retrieved
      * @return int value of the user skeleton state
      */
-    virtual int getSkeletonState(int userID) = 0;
+    virtual nite::SkeletonState getSkeletonState(int userID) = 0;
     /**
      * Get RGB camera image
      *
