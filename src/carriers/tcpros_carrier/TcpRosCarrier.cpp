@@ -59,7 +59,8 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
         typ = proto.getContactable()->getType().getName();
         user_type = typ;
         if (typ=="yarp/image") {
-            rtyp = "sensor_msgs/Image";
+            wire_type = "sensor_msgs/Image";
+            rtyp = "";
         } else if (typ=="yarp/bottle") {
             rtyp = proto.getContactable()->getType().getNameOnWire();
             wire_type = rtyp;
@@ -83,6 +84,9 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
             rtyp = package + "/" + modeValue;
         }
     }
+
+    dbg_printf("USER TYPE %s\n", rtyp.c_str());
+    dbg_printf("WIRE TYPE %s\n", wire_type.c_str());
 
     return rtyp;
 }
@@ -300,9 +304,11 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
         isService = (header.data.find("service")!=header.data.end());
     }
     if (rosname!="" && (user_type != wire_type || user_type == "")) {
-        kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
-        TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),true,true);
-        translate = TCPROS_TRANSLATE_TWIDDLER;
+        if (wire_type!="sensor_msgs/Image") { // currently using a custom method for images
+            kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
+            TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),true,true);
+            translate = TCPROS_TRANSLATE_TWIDDLER;
+        }
     }
     sender = isService; 
 
