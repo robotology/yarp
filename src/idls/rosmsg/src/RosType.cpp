@@ -397,6 +397,76 @@ std::string RosTypeSearch::readFile(const char *fname) {
     return result;
 }
 
+
+static bool checkWeb(const char *tname,
+                     bool find_service,
+                     const string& target_full) {
+    bool success = false;
+    string name = tname;
+    size_t idx = name.find("/");
+    if (idx!=string::npos) {
+        string package = name.substr(0,idx);
+        string typ = name.substr(idx+1,name.length());
+        string url = "http://docs.ros.org:80/api/";
+        url += package;
+        if (find_service) {
+            url += "/html/srv/";
+        } else {
+            url += "/html/msg/";
+        }
+        url += typ;
+        url += ".html";
+        fprintf(stderr, "Trying the web: %s\n", url.c_str());
+        yarp::os::Network yarp;
+        yarp::os::Port port;
+        port.openFake("base");
+        port.addOutput(url);
+        yarp::os::Bottle cmd, reply;
+        cmd.addString("1");
+        port.write(cmd,reply);
+        string txt = reply.get(0).asString() + "\n";
+        printf("GOT %s for %s\n", txt.c_str(), url.c_str());
+        vector<string> lines;
+        split(txt,'\n',lines);
+        int phase = 0;
+        for (size_t i=0; i<lines.size(); i++) {
+            std::string line = lines[i];
+            if (line == "<h2>Compact Message Definition</h2>" && i<lines.size()-2) {
+                std::string def = lines[i+2];
+                std::string def2;
+                std::string tag;
+                bool tagging = false;
+                for (size_t j=0; j<def.length(); j++) {
+                    char ch = def[j];
+                    if (tagging||ch=='<') {
+                        tagging = true;
+                        tag += ch;
+                        if (ch=='>') {
+                            tagging = false;
+                            if (tag=="<br />") {
+                                def2 += "\n";
+                            }
+                            if (tag=="<hr />") {
+                                def2 += "---\n";
+                            }
+                            tag = "";
+                        }
+                    } else {
+                        def2 += ch;
+                    }
+                }
+                FILE *fout = fopen(target_full.c_str(),"w");
+                if (fout) {
+                    fprintf(fout,"%s",def2.c_str());
+                    fclose(fout);
+                    success = true;
+                }
+            }
+        }
+    }
+    return success;
+}
+
 std::string RosTypeSearch::findFile(const char *tname) {
     struct stat dummy;
 	if (stat(tname, &dummy)==0) {
@@ -451,65 +521,10 @@ std::string RosTypeSearch::findFile(const char *tname) {
     }
 
     if (allow_web && !success) {
-        string name = tname;
-        size_t idx = name.find("/");
-        if (idx!=string::npos) {
-            string package = name.substr(0,idx);
-            string typ = name.substr(idx+1,name.length());
-            string url = "http://docs.ros.org:80/api/";
-            url += package;
-            if (find_service) {
-                url += "/html/srv/";
-            } else {
-                url += "/html/msg/";
-            }
-            url += typ;
-            url += ".html";
-            fprintf(stderr, "Trying the web: %s\n", url.c_str());
-            yarp::os::Network yarp;
-            yarp::os::Port port;
-            port.openFake("base");
-            port.addOutput(url);
-            yarp::os::Bottle cmd, reply;
-            cmd.addString("1");
-            port.write(cmd,reply);
-            string txt = reply.get(0).asString() + "\n";
-            vector<string> lines;
-            split(txt,'\n',lines);
-            int phase = 0;
-            for (size_t i=0; i<lines.size(); i++) {
-                std::string line = lines[i];
-                if (line == "<h2>Compact Message Definition</h2>" && i<lines.size()-2) {
-                    std::string def = lines[i+2];
-                    std::string def2;
-                    std::string tag;
-                    bool tagging = false;
-                    for (size_t j=0; j<def.length(); j++) {
-                        char ch = def[j];
-                        if (tagging||ch=='<') {
-                            tagging = true;
-                            tag += ch;
-                            if (ch=='>') {
-                                tagging = false;
-                                if (tag=="<br />") {
-                                    def2 += "\n";
-                                }
-                                if (tag=="<hr />") {
-                                    def2 += "---\n";
-                                }
-                                tag = "";
-                            }
-                        } else {
-                            def2 += ch;
-                        }
-                    }
-                    FILE *fout = fopen(target_full.c_str(),"w");
-                    if (fout) {
-                        fprintf(fout,"%s",def2.c_str());
-                        fclose(fout);
-                        success = true;
-                    }
-                }
+        success = checkWeb(tname,find_service,target_full);
+        if (!success) {
+            if (!find_service) {
+                success = checkWeb(tname,true,target_full);
             }
         }
     }

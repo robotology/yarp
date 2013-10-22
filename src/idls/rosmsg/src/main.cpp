@@ -15,6 +15,7 @@
 #include "RosTypeCodeGenYarp.h"
 
 #include <yarp/os/all.h>
+#include <yarp/os/NetType.h>
 
 #include <sys/stat.h>
 
@@ -51,6 +52,58 @@ void show_usage() {
     printf("    The classes generated for Foo.srv are Foo and FooReply.\n");
     printf("\n  yarpidl_rosmsg --name /name\n");
     printf("    Start up a service with the given port name for querying types.\n");
+}
+
+static void generateTypeMap1(RosType& t, ConstString& txt) {
+    if (!t.isValid) return;
+    RosType::RosTypes& lst = t.subRosType;
+    if (lst.size()>0) {
+        bool simple = true;
+        for (size_t i=0; i<lst.size(); i++) { 
+            if (lst[i].rosType != lst[0].rosType ||
+                (!lst[i].isPrimitive) ||
+                lst[i].isArray) {
+                simple = false;
+                break;
+            }
+            
+        }
+        if (!simple) {
+            txt += " list ";
+            txt += NetType::toString((int)lst.size());
+            
+            for (size_t i=0; i<lst.size(); i++) { 
+                generateTypeMap1(lst[i],txt);
+            }
+        } else {
+            txt += " vector ";
+            txt += lst[0].rosType;
+            txt += " ";
+            txt += NetType::toString((int)lst.size());
+            txt += " *";
+        }
+        return;
+    }
+    if (!t.isPrimitive) return;
+    txt += " ";
+    if (t.isArray) {
+        txt += "vector ";
+        txt += t.rosType;
+    } else {
+        txt += t.rosType;
+    }
+    txt += " *";
+}
+
+static void generateTypeMap(RosType& t, ConstString& txt) {
+    txt = "";
+    generateTypeMap1(t,txt);
+    if (txt.length()>0) {
+        txt = txt.substr(1,txt.length());
+    }
+    if (!t.reply) return;
+    txt += " ---";
+    generateTypeMap1(*(t.reply),txt);    
 }
 
 void configure_search(RosTypeSearch& env, Searchable& p) {
@@ -115,7 +168,7 @@ int main(int argc, char *argv[]) {
     Property p;
     p.fromCommand(argc,argv);
 
-    if (!p.check("name")) {
+    if (!(p.check("name")||p.check("cmd"))) {
         return generate_cpp(argc,argv);
     }
     if (!p.check("soft")) {
@@ -125,6 +178,7 @@ int main(int argc, char *argv[]) {
         p.put("web",1);
     }
 
+    bool has_cmd = p.check("cmd");
     bool verbose = p.check("verbose");
 
     RosTypeSearch env;
@@ -132,16 +186,24 @@ int main(int argc, char *argv[]) {
 
     Network yarp;
     Port port;
-    // Borrow an accidentally-available service type on ROS, in
-    // order to avoid adding build dependencies for now.
-    port.promiseType(Type::byName("test_roscpp/TestStringString"));
-    port.setRpcServer();
-    if (!port.open(p.find("name").asString())) {
-        return 1;
+    if (!has_cmd) {
+        // Borrow an accidentally-available service type on ROS, in
+        // order to avoid adding build dependencies for now.
+        port.promiseType(Type::byNameOnWire("test_roscpp/TestStringString"));
+        port.setRpcServer();
+        if (!port.open(p.find("name").asString())) {
+            return 1;
+        }
     }
     while (true) {
         Bottle req;
-        port.read(req,true);
+        if (has_cmd) {
+            req = p.findGroup("cmd").tail();
+        } else {
+            if (!port.read(req,true)) {
+                continue;
+            }
+        }
         if (req.size()==1) {
             req.fromString(req.get(0).asString());
         }
@@ -150,20 +212,30 @@ int main(int argc, char *argv[]) {
         }
         Bottle resp;
         ConstString tag = req.get(0).asString();
-        string fname = env.findFile(req.get(1).asString().c_str());
+        string fname0 = req.get(1).asString().c_str();
+        string fname = env.findFile(fname0.c_str());
         string txt = "";
-        if (fname!="") {
-            txt = env.readFile(fname.c_str());
-        }
         if (tag=="raw") {
+            txt = env.readFile(fname.c_str());
             resp.addString(txt);
+        } else if (tag=="twiddle") {
+            RosTypeCodeGenYarp gen;
+            RosType t;
+            if (t.read(fname0.c_str(),env,gen)) {
+                ConstString txt;
+                generateTypeMap(t,txt);
+                resp.addString(txt);
+            } else {
+                resp.addString("?");
+            }
         } else {
             resp.addString("?");
         }
-        port.reply(resp);
-        if (verbose) {
+        if (!has_cmd) port.reply(resp);
+        if (verbose||has_cmd) {
             printf("Response: %s\n", resp.toString().c_str());
         }
+        if (has_cmd) break;
     }
     return 0;
 }
