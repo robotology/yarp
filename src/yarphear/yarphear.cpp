@@ -8,8 +8,7 @@
  */
 
 
-#include <ace/config.h>
-#include <ace/Unbounded_Queue.h>
+#include <deque>
 
 #include <stdio.h>
 #include <math.h>
@@ -22,7 +21,6 @@
 #include <yarp/sig/SoundFile.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl; // yarphear uses something from the impl namespace, is this correct?
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
@@ -37,7 +35,7 @@ private:
     Semaphore mutex;
     bool muted;
     bool saving;
-    ACE_Unbounded_Queue<Sound> sounds;
+    std::deque<Sound> sounds;
     int samples;
     int channels;
 
@@ -133,7 +131,7 @@ public:
     }
 
     void saveFrame(Sound& sound) {
-        sounds.enqueue_tail(sound);
+        sounds.push_back(sound);
         samples += sound.getSamples();
         channels = sound.getChannels();
         printf("  %ld sound frames buffered in memory (%ld samples)\n", 
@@ -148,9 +146,8 @@ public:
         Sound total;
         total.resize(samples,channels);
         long int at = 0;
-        while (!sounds.is_empty()) {
-            Sound tmp;
-            sounds.dequeue_head(tmp);
+        while (!sounds.empty()) {
+            Sound& tmp = sounds.front();
             for (int i=0; i<channels; i++) {
                 for (int j=0; j<tmp.getSamples(); j++) {
                     total.set(tmp.get(j,i),at+j,i);
@@ -158,6 +155,7 @@ public:
             }
             total.setFrequency(tmp.getFrequency());
             at += tmp.getSamples();
+            sounds.pop_front();
         }
         mutex.post();
         bool ok = write(total,name);
