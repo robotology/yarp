@@ -123,16 +123,8 @@ bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonPosition(Vector *vectorArr
     return true;
 }
 
-int *yarp::dev::OpenNI2DeviceDriverClient::getSkeletonState(){
-    int *userState = new int[MAX_USERS];
-    for(int i = 0; i < MAX_USERS; i++){
-        userState[i] = getSkeletonState(i);
-    }
-    return userState;
-}
-
 nite::SkeletonState yarp::dev::OpenNI2DeviceDriverClient::getSkeletonState(int userID){
-    return skeletonData->getSkeletonState(userID);
+    return skeletonData->getSkeletonState(userID-1);
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverClient::getImageFrame(){

@@ -107,28 +107,6 @@ void yarp::dev::OpenNI2DeviceDriverServer::sendSensorData(){
             
             // if no skeleton found
               else if(userSkeleton[i].skeletonState == nite::SKELETON_NONE){
-//                Bottle &botCalib = skeletonPort->prepare();
-//                botCalib.clear();
-//                skeletonPort->setEnvelope(timestamp);
-//                
-//                if(userSkeleton[i].uID == 0){
-//                    //do nothing
-//                }
-//                else {
-//                    botCalib.addString("LOST SKELETON FOR USER");
-//                    botCalib.addInt(userSkeleton[i].uID);
-//                    skeletonPort->write();
-//                }
-//             }
-//            
-//            // else, there is a calibration error
-//            else {
-//                Bottle &botErrCalib = skeletonPort->prepare();
-//                botErrCalib.clear();
-//                skeletonPort->setEnvelope(timestamp);
-//                botErrCalib.addString("CALIBRATION ERROR FOR USER");
-//                botErrCalib.addInt(userSkeleton[i].uID);
-//                skeletonPort->write();
               }
         }
 }
@@ -255,18 +233,9 @@ bool yarp::dev::OpenNI2DeviceDriverServer::getSkeletonPosition(Vector *vectorArr
     return true;
 }
 
-int *yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(){
-    updateInterface();
-    int *userState = new int[MAX_USERS];
-    for(int i = 0; i < MAX_USERS; i++){
-        userState[i] = getSkeletonState(i);
-    }
-    return userState;
-}
-
 nite::SkeletonState yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID){
     updateInterface();
-    return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState;
+    return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID-1].skeletonState;
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverServer::getImageFrame(){

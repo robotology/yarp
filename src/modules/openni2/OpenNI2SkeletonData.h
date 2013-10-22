@@ -91,7 +91,7 @@ public:
      * Get a single user status
      *
      * @param userID  detected user id
-     * @return int of status
+     * @return nite::SkeletonState state
      */
     nite::SkeletonState getSkeletonState(int userID);
     /**
