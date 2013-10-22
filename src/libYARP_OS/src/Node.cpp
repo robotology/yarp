@@ -233,7 +233,6 @@ public:
 
     void publisherUpdate(NodeArgs& na) {
         ConstString topic = fromRosName(na.args.get(0).asString());
-        printf("pubup %s\n", topic.c_str());
         Contact c = lookup(topic);
         if (!c.isValid()) {
             na.fail("Cannot find topic");
@@ -255,9 +254,7 @@ public:
 
     void requestTopic(NodeArgs& na) {
         ConstString topic = na.args.get(0).asString();
-        printf("TPIC %s\n", topic.c_str());
         topic = fromRosName(topic);
-        printf("TPIC %s\n", topic.c_str());
         Contact c = lookup(topic);
         if (!c.isValid()) {
             na.fail("Cannot find topic");

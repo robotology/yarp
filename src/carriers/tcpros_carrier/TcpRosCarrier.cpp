@@ -196,7 +196,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     if (!isService) {
         isService = (header.data.find("request_type")!=header.data.end());
     }
-    if (rosname!="" && user_type != wire_type) {
+    if (rosname!="" && (user_type != wire_type || user_type == "")) {
         kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
         TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),false,false);
         translate = TCPROS_TRANSLATE_TWIDDLER;
@@ -299,7 +299,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     if (!isService) {
         isService = (header.data.find("service")!=header.data.end());
     }
-    if (rosname!="" && user_type != wire_type) {
+    if (rosname!="" && (user_type != wire_type || user_type == "")) {
         kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
         TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),true,true);
         translate = TCPROS_TRANSLATE_TWIDDLER;

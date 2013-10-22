@@ -806,9 +806,7 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
             if (gap.wire_unit_length==4 && gap.unit_length==8 &&
                 len == 8 &&
                 gap.flavor == BOTTLE_TAG_DOUBLE) {
-                printf("DEALING...\n");
                 NetFloat64 *x = (NetFloat64 *)src;
-                printf("NUMBER %g\n", *x);
                 if (scratchOffset+4>scratch.length()) {
                     scratch.allocateOnNeed(scratchOffset+4,scratchOffset+4);
                 }

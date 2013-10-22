@@ -18,7 +18,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-#define dbg_printf if (1) printf
+#define dbg_printf if (0) printf
 
 RosNameSpace::RosNameSpace(const Contact& contact) : mutex(1) {
     this->contact = contact;
@@ -146,7 +146,6 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
             cmd.addString((cat=="+")?"registerPublisher":"registerSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(toRosName(nc.getNestedName()));
-            printf("Will register %s\n", cmd.toString().c_str());
             ConstString typ = nc.getTypeNameStar();
             if (typ!="*") {
                 // remap some basic native YARP types
