@@ -179,7 +179,7 @@ OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::getSensor(){
     return sensorStatus;
 }
 
-void OpenNI2SkeletonTracker::updateSensor(bool wait){
+void OpenNI2SkeletonTracker::updateSensor(){
     // get camera image
     if(camerasON && imageStream.isValid()){
         imageStream.readFrame(&imageFrameRef);
@@ -198,7 +198,7 @@ void OpenNI2SkeletonTracker::updateSensor(bool wait){
         if (depthFrameRef.isValid()){
             getSensor()->depthFrame.setQuantum(1);
             
-            // put image in Yarp format
+            // put image in Yarp format
             void* tmpDepth = (void*)depthFrameRef.getData();
             getSensor()->depthFrame.setExternal(tmpDepth, depthMode.getResolutionX(), depthMode.getResolutionY());
         }

@@ -70,7 +70,7 @@ public:
     /**
      * Sensor data update function. This function updates the data structs with the latest sensor data.
      */
-    void updateSensor(bool wait);
+    void updateSensor();
     void updateUserState(const nite::UserData& user, unsigned long long ts);
     void updateJointInformation(const nite::UserData& user, nite::JointType joint, int jIndex);
     
