@@ -485,6 +485,10 @@ public:
     * return true iff a vector was written correctly
     */
     virtual bool write(yarp::os::ConnectionWriter& connection);
+
+    virtual yarp::os::Type getType() {
+        return yarp::os::Type::byName("yarp/vector");
+    }
 };
 
 #endif
