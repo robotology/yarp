@@ -248,6 +248,12 @@ public:
     * and all parameters required by the wrapped device driver.
     */
     virtual bool open(Searchable& prop) {
+        rpc_p.setRpcServer();
+        state_p.setWriteOnly();
+        Vector v;
+        state_p.promiseType(v.getType());
+        control_p.setReadOnly();
+
         verb = (prop.check("verbose","if present, give detailed output"));
         if (verb)
             printf("running with verbose output\n");
