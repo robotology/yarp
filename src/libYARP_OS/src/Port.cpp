@@ -245,8 +245,9 @@ public:
         if (!readBackground) {
             readDelegate = NULL;
         }
-        stateMutex.post();
         bool result = readResult;
+        if (!result) replyDue = false;
+        stateMutex.post();
         return result;
     }
 
