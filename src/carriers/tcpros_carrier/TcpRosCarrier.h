@@ -16,6 +16,7 @@
 #include "WireImage.h"
 #include "WireBottle.h"
 #include "WireTwiddler.h"
+#include "RosHeader.h"
 
 namespace yarp {
     namespace os {
@@ -45,6 +46,12 @@ private:
     WireTwiddler twiddler;
     WireTwiddlerWriter twiddler_output;
     yarp::os::ConstString kind;
+    bool persistent;
+    ConstString wire_type;
+    ConstString user_type;
+
+    ConstString getRosType(ConnectionState& proto);
+
 protected:
     bool isService;
 public:
@@ -57,6 +64,7 @@ public:
         raw = -1;
         translate = TCPROS_TRANSLATE_UNKNOWN;
         seq = 0;
+        persistent = true;
     }
 
     virtual Carrier *create() {
@@ -180,6 +188,9 @@ public:
                         const yarp::os::ContactStyle& style,
                         int mode,
                         bool reversed);
+
+private:
+    void processRosHeader(RosHeader& header);
 
 };
 

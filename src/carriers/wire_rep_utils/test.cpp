@@ -26,7 +26,7 @@ bool testSequence(char *seq, int len, const char *fmt, Bottle ref,
     printf(" READ %s\n", fmt);
     Bytes b1(seq,len);
     WireTwiddler tt;
-    tt.configure(fmt);
+    tt.configure(fmt,fmt);
     printf(">>> %s\n", tt.toString().c_str());
     Bottle bot;
     if (!tt.read(bot,b1)) {
@@ -154,6 +154,10 @@ int main(int argc, char *argv[]) {
         {
             char seq[] = {99,0,0,0,42,0,0,0};
             testSequence(seq,sizeof(seq),"skip int32 * list 1 int32 *",Bottle("42"),false);
+        }
+        {
+            char seq[] = {99,0,0,0};
+            testSequence(seq,sizeof(seq),"skip int32 *",Bottle(),false);
         }
     }
     if (argc==2) {

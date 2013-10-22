@@ -40,6 +40,7 @@ public:
     bool computing;
     yarp::os::ConstString origin;
     yarp::os::ConstString var_name;
+    int flavor;
     WireTwiddlerGap() {
         buffer_start = 0;
         buffer_length = 0;
@@ -52,6 +53,7 @@ public:
         save_external = false;
         load_external = false;
         computing = false;
+        flavor = 0;
     }
 
     char *getStart() const { return byte_start; }
@@ -75,7 +77,7 @@ public:
         writer = 0 /*NULL*/;
     }
 
-    bool configure(const char *txt);
+    bool configure(const char *txt, const char *prompt);
 
 
     std::string fromTemplate(const yarp::os::Bottle& msg);
@@ -92,6 +94,7 @@ private:
     std::vector<yarp::os::NetInt32> buffer;
     std::vector<WireTwiddlerGap> gaps;
     yarp::os::ConnectionWriter *writer;
+    yarp::os::ConstString prompt;
 
 public:
     void show();
@@ -113,6 +116,10 @@ public:
     }
 
     yarp::os::ConstString toString() const;
+
+    const yarp::os::ConstString& getPrompt() const {
+        return prompt;
+    }
 
     bool read(yarp::os::Bottle& bot, const yarp::os::Bytes& data);
 
@@ -192,16 +199,20 @@ private:
     int blockLen;
     yarp::os::NetInt32 lengthBuffer;
     yarp::os::Bytes lengthBytes;
+    yarp::os::ManagedBytes zeros;
+    yarp::os::ManagedBytes scratch;
     int accumOffset;
     const char *activeEmit;
+    const WireTwiddlerGap *activeGap;
     int activeEmitLength;
     const char *activeCheck;
     bool errorState;
+    int scratchOffset;
 public:
     WireTwiddlerWriter(yarp::os::SizedWriter& parent,
                        WireTwiddler& twiddler) : parent(&parent),
                                                  twiddler(&twiddler) {
-        update();
+                                                     //update();
     }
 
     WireTwiddlerWriter() {
@@ -213,7 +224,7 @@ public:
                 WireTwiddler& twiddler) {
         this->parent = &parent;
         this->twiddler = &twiddler;
-        update();
+        //update();
     }
 
     bool update();
@@ -246,7 +257,11 @@ public:
 
     bool skip(const char *start, int len);
 
+    bool transform(const WireTwiddlerGap& gap);
+
     bool pass(int len);
+
+    bool pad(int len);
 
     bool readLengthAndPass(int unitLength);
 

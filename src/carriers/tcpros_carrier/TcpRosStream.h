@@ -37,6 +37,7 @@ class YARP_tcpros_carrier_API yarp::os::TcpRosStream : public TwoWayStream,
 private:
     TwoWayStream *delegate;
     bool sender;
+    bool reply;
     int raw;
     bool firstRound;
     BlobNetworkHeader header;
@@ -51,11 +52,13 @@ private:
 public:
     TcpRosStream(TwoWayStream *delegate,
                  bool sender,
+                 bool reply,
                  bool service,
                  int raw,
                  const char *kind) :
             delegate(delegate),
             sender(sender),
+            reply(reply),
             raw(raw),
             firstRound(true),
             phase(0),
@@ -63,7 +66,7 @@ public:
             kind(kind),
             twiddlerReader(delegate->getInputStream(), twiddler)
     {
-        updateKind(kind);
+        updateKind(kind,sender,reply);
     }
 
     virtual ~TcpRosStream() {
@@ -114,10 +117,11 @@ public:
         delegate->getInputStream().interrupt();
     }
 
-    void updateKind(const char *kind);
+    void updateKind(const char *kind, bool sender, bool reply);
 
     static std::map<std::string, std::string> rosToKind();
     static std::string rosToKind(const char *rosname);
+    static bool configureTwiddler(WireTwiddler& twiddler, const char *txt, const char *prompt, bool sender, bool reply);
 };
 
 #endif

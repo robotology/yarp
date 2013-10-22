@@ -14,6 +14,7 @@
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/RosNameSpace.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/NameClient.h>
 
@@ -22,6 +23,14 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+static ConstString toRosName(const ConstString& str) {
+    return RosNameSpace::toRosName(str);
+}
+
+static ConstString fromRosName(const ConstString& str) {
+    return RosNameSpace::fromRosName(str);
+}
 
 class NodeItem {
 public:
@@ -197,7 +206,7 @@ public:
             if (!item.isSubscriber()) continue;
             item.update();
             Bottle& lst = na.reply.addList();
-            lst.addString(item.nc.getNestedName());
+            lst.addString(toRosName(item.nc.getNestedName()));
             lst.addString(item.nc.getTypeName());
         }
         mutex.unlock();
@@ -211,7 +220,7 @@ public:
             if (!item.isPublisher()) continue;
             item.update();
             Bottle& lst = na.reply.addList();
-            lst.addString(item.nc.getNestedName());
+            lst.addString(toRosName(item.nc.getNestedName()));
             lst.addString(item.nc.getTypeName());
         }
         mutex.unlock();
@@ -223,7 +232,8 @@ public:
     }
 
     void publisherUpdate(NodeArgs& na) {
-        ConstString topic = na.args.get(0).asString();
+        ConstString topic = fromRosName(na.args.get(0).asString());
+        printf("pubup %s\n", topic.c_str());
         Contact c = lookup(topic);
         if (!c.isValid()) {
             na.fail("Cannot find topic");
@@ -245,6 +255,9 @@ public:
 
     void requestTopic(NodeArgs& na) {
         ConstString topic = na.args.get(0).asString();
+        printf("TPIC %s\n", topic.c_str());
+        topic = fromRosName(topic);
+        printf("TPIC %s\n", topic.c_str());
         Contact c = lookup(topic);
         if (!c.isValid()) {
             na.fail("Cannot find topic");

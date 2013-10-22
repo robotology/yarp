@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/InputProtocol.h>
+#include <yarp/os/RosNameSpace.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -1625,7 +1626,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         {
             YARP_SPRINTF1(log,debug,
                           "publisherUpdate! --> %s", cmd.toString().c_str());
-            ConstString topic = cmd.get(2).asString();
+            ConstString topic = 
+                RosNameSpace::fromRosName(cmd.get(2).asString());
             Bottle *pubs = cmd.get(3).asList();
             if (pubs!=NULL) {
                 Property listed;

@@ -11,9 +11,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Port.h>
 
 #include "WireBottle.h"
 
@@ -45,8 +47,9 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
     }
     if (phase==0) {
         if (expectTwiddle) {
-            // I have no idea what this is yet, but let's consume it for now.
-            // It is probably frightfully important.
+            // There's a success/failure byte to check.
+            // Here we just consume it, but if it shows failure
+            // we should in fact expect a string afterwards.
             char twiddle[1];
             Bytes twiddle_buf(twiddle,1);
             delegate->getInputStream().readFull(twiddle_buf);
@@ -132,15 +135,15 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
 
 
 void TcpRosStream::write(const Bytes& b) {
+    printf("                   [[[[[ write %d bytes ]]]]]\n", b.length());
     delegate->getOutputStream().write(b);
 }
 
 
-void TcpRosStream::updateKind(const char *kind) {
+void TcpRosStream::updateKind(const char *kind, bool sender, bool reply) {
     string code = rosToKind(kind);
     if (code!="") {
-        code = string("skip int32 * ") + code;
-        twiddler.configure(code.c_str());
+        configureTwiddler(twiddler,code.c_str(),kind,sender,reply);
         this->kind = code.c_str();
     } else {
         this->kind = "";
@@ -153,8 +156,13 @@ std::map<std::string, std::string> TcpRosStream::rosToKind() {
     kinds["std_msgs/String"] = "vector string 1 *";
     kinds["std_msgs/Int32"] = "vector int32 1 *";
     kinds["std_msgs/Float64"] = "vector float64 1 *";
-    //kinds["sensor_msgs/Image"] = "list 10 uint32 * uint32 * uint32 * string * uint32 * uint32 * string * int8 * int32 * blob *";
+
+    // these two are specialized, TODO link them specifically to
+    // yarp/image and yarp/vector
     kinds["sensor_msgs/Image"] = "list 4 skip uint32 * skip uint32 * skip uint32 * skip string *    >height uint32 * >width uint32 * >encoding string * skip int8 * >step int32 *  compute image_params    <=[mat] vocab * <translated_encoding vocab * item_vector int32 5 <depth item * <img_size item * <quantum item * <width item * <height item * blob *";
+
+    kinds["test_roscpp/TestStringString"] = "vector string 1 * --- vector string 1 *";
+    // kinds["rospy_tutorials/AddTwoInts"] = "vector int64 2 * --- vector int64 1 *";
     return kinds;
 }
 
@@ -164,6 +172,43 @@ std::string TcpRosStream::rosToKind(const char *rosname) {
     if (kinds.find(rosname)!=kinds.end()) {
         return kinds[rosname];
     }
+    Port port;
+    port.openFake("yarpidl_rosmsg");
+    if (port.addOutput("/typ")) {
+        Bottle cmd, resp;
+        cmd.addString(ConstString("twiddle ") + rosname);
+        dbg_printf("QUERY yarpidl_rosmsg %s\n", cmd.toString().c_str());
+        port.write(cmd,resp);
+        dbg_printf("GOT yarpidl_rosmsg %s\n", resp.toString().c_str());
+        ConstString txt = resp.get(0).asString();
+        if (txt!="?") return txt;
+    }
+    port.close();
+    if (ConstString(rosname)!="") {
+        fprintf(stderr, "Do not know anything about type '%s'\n", rosname);
+        fprintf(stderr, "Could not connect to a type server to look up type '%s'\n", rosname);
+        ::exit(1);
+    }
     return "";
 }
+
+
+bool TcpRosStream::configureTwiddler(WireTwiddler& twiddler, const char *txt, const char *prompt, bool sender, bool reply) {
+    dbg_printf("CONFIGURE AS %s [%s]\n", txt,
+               sender?"sender":"receiver",
+               reply?"reply":"main");
+    ConstString str(txt);
+    if (reply) {
+        ssize_t idx = str.find("---");
+        if (idx!=ConstString::npos) {
+            str = str.substr(idx+3,str.length());
+        }
+    }
+    str = ConstString("skip int32 * ") + str;
+    if (reply) {
+        str = ConstString("skip int8 * ") + str;
+    }
+    return twiddler.configure(str.c_str(),prompt);
+}
+
 

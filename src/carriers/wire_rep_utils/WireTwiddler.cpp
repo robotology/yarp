@@ -23,6 +23,8 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/NetFloat32.h>
+#include <yarp/os/NetFloat64.h>
 
 using namespace std;
 using namespace yarp::os;
@@ -43,6 +45,10 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
     ConstString kind = desc.get(offset).asString();
     ConstString var = "";
     offset++;
+    if (kind=="---") {
+        offset = desc.size();
+        return offset;
+    }
     if (kind=="skip"||kind=="compute") {
         if (kind=="compute") computing = true;
         ignore = true;
@@ -119,9 +125,17 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
         tag = BOTTLE_TAG_INT;
         unit_length = 4;
         wire_unit_length = 1;
+    } else if (kind=="int64"||kind=="uint64") {
+        tag = BOTTLE_TAG_INT;
+        unit_length = 4;
+        wire_unit_length = 8;
     } else if (kind=="float64") {
         tag = BOTTLE_TAG_DOUBLE;
         unit_length = 8;
+    } else if (kind=="float32") {
+        tag = BOTTLE_TAG_DOUBLE;
+        unit_length = 8;
+        wire_unit_length = 4;
     } else if (kind=="string") {
         tag = BOTTLE_TAG_STRING;
         unit_length = -1;
@@ -178,6 +192,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
         Bottle tmp;
         tmp.copy(desc,start,offset-start-1);
         gap.origin = tmp.toString();
+        gap.flavor = tag;
         gaps.push_back(gap);
     }
     ignored = ignore;
@@ -193,7 +208,8 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
     return offset;
 }
 
-bool WireTwiddler::configure(const char *txt) {
+bool WireTwiddler::configure(const char *txt, const char *prompt) {
+    this->prompt = prompt;
     clear();
     ConstString str(txt);
     char *cstr = (char *)str.c_str();
@@ -202,6 +218,13 @@ bool WireTwiddler::configure(const char *txt) {
             cstr[i] = ' ';
         }
     }
+
+    if (str.find("list") == ConstString::npos &&
+        str.find("vector") == ConstString::npos) {
+        str += " list 0";
+    }
+
+    dbg_printf("Configure as %s\n", str.c_str());
 
     Bottle desc(str.c_str());
 
@@ -565,7 +588,7 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                 return r;
             } else {
                 int len2 = extern_length;
-                if (gap.wire_unit_length>=0 && gap.wire_unit_length<len2) {
+                if (gap.wire_unit_length>=0 && gap.wire_unit_length!=len2) {
                     len2 = gap.wire_unit_length;
                 }
                 dump.allocateOnNeed(len2,len2);
@@ -595,6 +618,7 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
                 }
             }
         }
+        more = false;
         if (index<ct-1) {
             index++;
             consumed = 0;
@@ -611,7 +635,9 @@ YARP_SSIZE_T WireTwiddlerReader::read(const Bytes& b) {
 
 
 bool WireTwiddlerWriter::update() {
+    scratchOffset = 0;
     errorState = false;
+    activeGap = NULL;
     srcs.clear();
 
     lengthBytes = Bytes((char*)(&lengthBuffer),sizeof(yarp::os::NetInt32));
@@ -628,6 +654,7 @@ bool WireTwiddlerWriter::update() {
                (int)parent->length());
 
     for (int i=0; i<twiddler->getGapCount(); i++) {
+        if (errorState) return false;
         ConstString item = "";
         const WireTwiddlerGap& gap = twiddler->getGap(i);
         if (gap.buffer_length!=0) {
@@ -650,7 +677,15 @@ bool WireTwiddlerWriter::update() {
                     readLengthAndPass(gap.unit_length);
                 } else {
                     dbg_printf("Pass [%d*%d bytes]\n", gap.length, gap.unit_length);
-                    pass(gap.length*gap.unit_length);
+                    if (gap.unit_length!=gap.wire_unit_length) {
+                        dbg_printf("Need to tweak length (not correct for neg numbers yet)...\n");
+                        for (int i=0; i<gap.length; i++) {
+                            if (errorState) return false;
+                            transform(gap);
+                        }
+                    } else {
+                        pass(gap.length*gap.unit_length);
+                    }
                 }
             }
         }
@@ -668,6 +703,16 @@ bool WireTwiddlerWriter::skip(const char *start, int len) {
 
 bool WireTwiddlerWriter::pass(int len) {
     return advance(len,true);
+}
+
+bool WireTwiddlerWriter::pad(int len) {
+    if (zeros.length()<len) {
+        zeros.allocate(len);
+        for (int i=0; i<len; i++) {
+            zeros.get()[i] = '\0';
+        }
+    }
+    return emit(zeros.get(),len);
 }
 
 bool WireTwiddlerWriter::readLengthAndPass(int unitLength) {
@@ -724,7 +769,9 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
                     dbg_printf(" %03d <--> %03d\n", 
                             activeCheck[i], blockPtr[i+offset]);
                 }
-                YARP_LOG_ERROR("Structure of message is unexpected");
+                if (!errorState) {
+                    YARP_LOG_ERROR(ConstString("Structure of message is unexpected (expected ") + twiddler->getPrompt() + ")");
+                }
                 errorState = true;
                 return false;
             }
@@ -754,6 +801,30 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
 
 bool WireTwiddlerWriter::emit(const char *src, int len) {
     if (src!=NULL) {
+        if (activeGap) {
+            const WireTwiddlerGap& gap = *activeGap;
+            if (gap.wire_unit_length==4 && gap.unit_length==8 &&
+                len == 8 &&
+                gap.flavor == BOTTLE_TAG_DOUBLE) {
+                printf("DEALING...\n");
+                NetFloat64 *x = (NetFloat64 *)src;
+                printf("NUMBER %g\n", *x);
+                if (scratchOffset+4>scratch.length()) {
+                    scratch.allocateOnNeed(scratchOffset+4,scratchOffset+4);
+                }
+                NetFloat32 *y = (NetFloat32 *)(scratch.get()+scratchOffset);
+                *y = *x;
+                src = scratch.get()+scratchOffset;
+                len = 4;
+                scratchOffset += 4;
+            } else {
+                fprintf(stderr,"WireTwidder::emit needs to be extended to deal with this case\n");
+                ::exit(1);
+            }
+            activeGap = NULL;
+        }
+    }
+    if (src!=NULL) {
         dbg_printf("  cache %ld %d [%d]\n", (long int)src, len, *src);
     }
     if (activeEmit!=NULL) {
@@ -775,6 +846,24 @@ bool WireTwiddlerWriter::emit(const char *src, int len) {
         activeEmitLength = len;
     }
     return true;
+}
+
+bool WireTwiddlerWriter::transform(const WireTwiddlerGap& gap) {
+    // So far, very crude, does not cover all cases
+    if (gap.wire_unit_length>gap.unit_length) {
+        pass(gap.unit_length);
+        pad(gap.wire_unit_length-gap.unit_length);
+        return true;
+    }
+    if (gap.wire_unit_length==4 && gap.unit_length==8 &&
+        gap.flavor == BOTTLE_TAG_DOUBLE) {
+        activeGap = &gap;
+        pass(gap.unit_length);
+        return true;
+    }
+    fprintf(stderr,"WireTwidder::transform needs to be extended to deal with this case\n");
+    ::exit(1);
+    return false;
 }
 
 YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
@@ -805,9 +894,27 @@ YARP_SSIZE_T WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
     for (int i=0; i<(int)b.length(); i++) {
         b.get()[i] = 0;
     }
-    Bytes b2(b.get(),gap.wire_unit_length);
+    int len = gap.wire_unit_length;
+    if (len>b.length()) {
+        len = b.length();
+    }
+    Bytes b2(b.get(),len);
     YARP_SSIZE_T r = is.readFull(b2);
-    if (r==gap.wire_unit_length) {
+    if (r==len) {
+        if (gap.flavor==BOTTLE_TAG_DOUBLE) {
+            if (gap.wire_unit_length==4 && 
+                gap.unit_length==8) {
+                NetFloat32 x = *((NetFloat32 *)b2.get());
+                NetFloat64 *y = (NetFloat64 *)b2.get();
+                *y = x;
+            }
+        }
+        int len2 = gap.wire_unit_length-b.length();
+        if (len2>0) {
+            dump.allocateOnNeed(len2,len2);
+            Bytes b3(dump.get(),len2);
+            is.readFull(b3);
+        }
         return gap.unit_length;
     }
     return -1;

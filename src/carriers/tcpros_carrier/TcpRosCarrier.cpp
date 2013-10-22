@@ -8,7 +8,6 @@
  */
 
 #include "TcpRosCarrier.h"
-#include "RosHeader.h"
 #include "RosSlave.h"
 #include "WireImage.h"
 
@@ -53,15 +52,38 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
 }
 
 
-static ConstString getRosType(ConnectionState& proto) {
+ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
     ConstString typ = "";
     ConstString rtyp = "";
     if (proto.getContactable()) {
         typ = proto.getContactable()->getType().getName();
+        user_type = typ;
         if (typ=="yarp/image") {
             rtyp = "sensor_msgs/Image";
+        } else if (typ=="yarp/bottle") {
+            rtyp = proto.getContactable()->getType().getNameOnWire();
+            wire_type = rtyp;
+        } else if (typ=="yarp/vector") {
+            rtyp = proto.getContactable()->getType().getNameOnWire();
+            if (rtyp=="") {
+                wire_type = "std_msgs/Float64MultiArray";
+            }
         }
     }
+    Name n(proto.getRoute().getCarrierName() + "://test");
+    ConstString mode = "topic";
+    ConstString modeValue = n.getCarrierModifier("topic");
+    if (modeValue=="") {
+        mode = "service";
+        modeValue = n.getCarrierModifier("service");
+    }
+    if (modeValue!="") {
+        ConstString package = n.getCarrierModifier("package");
+        if (package!="") {
+            rtyp = package + "/" + modeValue;
+        }
+    }
+
     return rtyp;
 }
 
@@ -107,6 +129,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     header.data[mode.c_str()] = modeValue.c_str();
     header.data["md5sum"] = "*";
     header.data["callerid"] = proto.getRoute().getFromName().c_str();
+    header.data["persistent"] = "1";
     //"/not/valid/at/all/i/am/afraid/old/chum";
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
@@ -170,12 +193,23 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     rosname = ""; // forget
 #endif
 
-    isService = (header.data.find("request_type")!=header.data.end());
+    if (!isService) {
+        isService = (header.data.find("request_type")!=header.data.end());
+    }
+    if (rosname!="" && user_type != wire_type) {
+        kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
+        TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),false,false);
+        translate = TCPROS_TRANSLATE_TWIDDLER;
+    }
     dbg_printf("tcpros %s mode\n", isService?"service":"topic");
 
     // we may be a pull stream
     sender = isService;
+
+    processRosHeader(header);
+
     TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
+                                            sender,
                                             isService,raw,rosname.c_str());
 
     if (stream==NULL) { return false; }
@@ -256,6 +290,34 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     Bytes b2((char*)header_serial.c_str(),header_serial.length());
     proto.os().write(b2);
 
+    if (header.data.find("probe")!=header.data.end()) {
+        dbg_printf("================PROBE===============\n");
+        return false;
+    }
+
+
+    if (!isService) {
+        isService = (header.data.find("service")!=header.data.end());
+    }
+    if (rosname!="" && user_type != wire_type) {
+        kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
+        TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),true,true);
+        translate = TCPROS_TRANSLATE_TWIDDLER;
+    }
+    sender = isService; 
+
+    processRosHeader(header);
+
+    if (isService) {
+        TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
+                                                false,
+                                                isService,raw,rosname.c_str());
+        
+        if (stream==NULL) { return false; }
+        proto.takeStreams(stream);
+        return proto.is().isOk();
+    }
+
     return true;
 }
 
@@ -263,7 +325,10 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     SizedWriter *flex_writer = &writer;
 
 
-    ConstString typ = proto.getContactable()->getType().getName();
+    ConstString typ = "";
+    if (proto.getContactable()) {
+        typ = proto.getContactable()->getType().getName();
+    }
     if (raw!=2) {
         // At startup, we check for what kind of messages are going
         // through, and prepare an appropriate byte-rejiggering if
@@ -335,7 +400,6 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     }
 
     if (flex_writer == NULL) {
-        fprintf(stderr,"tcpros_carrier skipped sending message\n");
         return false;
     }
 
@@ -355,14 +419,24 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     flex_writer->write(proto.os());
 
     dbg_printf("done sending\n");
+    
+    if (isService) {
+        if (!sender) {
+            if (!persistent) {
+                proto.os().close();
+            }
+        }
+    }
 
     return proto.getStreams().isOk();
 }
 
 bool TcpRosCarrier::reply(ConnectionState& proto, SizedWriter& writer) {
-    // don't need to do anything special for now.
-    writer.write(proto.os());
-    return proto.os().isOk();
+    char twiddle[1];
+    twiddle[0] = 1;
+    Bytes twiddle_buf(twiddle,1);
+    proto.os().write(twiddle_buf);
+    return write(proto,writer);
 }
 
 
@@ -430,4 +504,13 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
     }
 
     return ok?0:1;
+}
+
+
+void TcpRosCarrier::processRosHeader(RosHeader& header) {
+    if (header.data.find("persistent")!=header.data.end()) {
+        persistent = (header.data["persistent"]=="1");
+    } else {
+        persistent = false;
+    }
 }

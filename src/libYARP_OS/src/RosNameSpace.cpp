@@ -18,7 +18,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-#define dbg_printf if (0) printf
+#define dbg_printf if (1) printf
 
 RosNameSpace::RosNameSpace(const Contact& contact) : mutex(1) {
     this->contact = contact;
@@ -32,21 +32,22 @@ Contact RosNameSpace::getNameServerContact() const {
 }
 
 Contact RosNameSpace::queryName(const ConstString& name) {
+    dbg_printf("ROSNameSpace queryName(%s)\n", name.c_str());
+    NestedContact nc(name);
     ConstString full = name;
-    ConstString node = full;
-    ConstString srv = "";
-    size_t srv_idx = full.find("#");
-    if (srv_idx!=ConstString::npos) {
-        node = full.substr(0,srv_idx);
-        srv = full.substr(srv_idx+1,full.length());
-    }
+    ConstString node = nc.getNodeName();
+    ConstString srv = nc.getNestedName();
+    ConstString cat = nc.getCategory();
+    bool is_service = false;
 
     Bottle cmd,reply;
-    cmd.addString("lookupNode");
-    cmd.addString("dummy_id");
-    cmd.addString(toRosNodeName(node));
-    NetworkBase::write(getNameServerContact(),
-                       cmd, reply);
+    if (cat.find("1")==ConstString::npos) {
+        cmd.addString("lookupNode");
+        cmd.addString("dummy_id");
+        cmd.addString(toRosNodeName(node));
+        NetworkBase::write(getNameServerContact(),
+                           cmd, reply);
+    }
     Contact contact;
     if (reply.get(0).asInt()!=1) {
         cmd.clear();
@@ -56,21 +57,22 @@ Contact RosNameSpace::queryName(const ConstString& name) {
         cmd.addString(toRosNodeName(node));
         NetworkBase::write(getNameServerContact(),
                            cmd, reply);
+        is_service = true;
     }
     contact = Contact::fromString(reply.get(2).asString());
     // unfortunate differences in labeling carriers
     if (contact.getCarrier()=="rosrpc") {
-        contact = contact.addCarrier(ConstString("rossrv+service.") + name + "+raw.2");
+        contact = contact.addCarrier(ConstString("rossrv+service.") + name);
     } else {
         contact = contact.addCarrier("xmlrpc");
     }
     contact = contact.addName(name);
 
-    if (srv == "") return contact;
+    if (srv == "" || !is_service) return contact;
 
     // we need to go a step further and find a service
 
-    contact = contact.addName("");
+    //contact = contact.addName("");
     Bottle req;
     reply.clear();
     req.addString("requestTopic");
@@ -100,7 +102,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
     }
     Value hostname2 = pref->get(1);
     Value portnum2 = pref->get(2);
-    contact = contact.addSocket((ConstString("rossrv+service.")+srv + "+raw.2").c_str(),
+    contact = contact.addSocket((ConstString("rossrv+service.")+srv).c_str(),
                                 hostname2.asString().c_str(),
                                 portnum2.asInt());
 
@@ -116,6 +118,8 @@ Contact RosNameSpace::registerName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
+    dbg_printf("ROSNameSpace registerContact(%s)\n", 
+               contact.toString().c_str());
     NestedContact nc = contact.getNested();
     if (nc.getNestedName()=="") {
         nc.fromString(contact.getName());
@@ -127,7 +131,7 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
             cmd.clear();
             cmd.addString("registerService");
             cmd.addString(toRosNodeName(nc.getNodeName()));
-            cmd.addString(nc.getNestedName());
+            cmd.addString(toRosName(nc.getNestedName()));
             Contact rosrpc = contact.addCarrier("rosrpc");
             cmd.addString(rosrpc.toURI());
             Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -141,12 +145,15 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
             cmd.clear();
             cmd.addString((cat=="+")?"registerPublisher":"registerSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
-            cmd.addString(nc.getNestedName());
+            cmd.addString(toRosName(nc.getNestedName()));
+            printf("Will register %s\n", cmd.toString().c_str());
             ConstString typ = nc.getTypeNameStar();
             if (typ!="*") {
                 // remap some basic native YARP types
                 if (typ=="yarp/image") {
                     typ = "sensor_msgs/Image";
+                } else if (typ=="yarp/vector") {
+                    typ = "std_msgs/Float64MultiArray";
                 }
             }
             cmd.addString(typ);
@@ -164,7 +171,7 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
                     cmd.addString(contact.toURI());
                     cmd.addString("publisherUpdate");
                     cmd.addString("/yarp/RosNameSpace");
-                    cmd.addString(nc.getNestedName());
+                    cmd.addString(toRosName(nc.getNestedName()));
                     cmd.addList() = *publishers;
 
                     mutex.wait();
