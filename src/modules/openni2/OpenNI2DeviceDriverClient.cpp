@@ -131,8 +131,8 @@ int *yarp::dev::OpenNI2DeviceDriverClient::getSkeletonState(){
     return userState;
 }
 
-int yarp::dev::OpenNI2DeviceDriverClient::getSkeletonState(int userID){
-    return skeletonData->getSkeletonState(userID-1);
+nite::SkeletonState yarp::dev::OpenNI2DeviceDriverClient::getSkeletonState(int userID){
+    return skeletonData->getSkeletonState(userID);
 }
 
 ImageOf<PixelRgb> yarp::dev::OpenNI2DeviceDriverClient::getImageFrame(){

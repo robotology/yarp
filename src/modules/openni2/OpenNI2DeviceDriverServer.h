@@ -73,7 +73,7 @@ public:
     virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID);
     virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID);
     virtual int *getSkeletonState();
-    virtual int getSkeletonState(int userID);
+    virtual nite::SkeletonState getSkeletonState(int userID);
     virtual ImageOf<PixelRgb> getImageFrame();
     virtual ImageOf<PixelMono16> getDepthFrame();
 private:

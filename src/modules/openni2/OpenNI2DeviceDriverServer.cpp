@@ -251,7 +251,7 @@ int *yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(){
     return userState;
 }
 
-int yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID){
+nite::SkeletonState yarp::dev::OpenNI2DeviceDriverServer::getSkeletonState(int userID){
     updateInterface(false);
     return OpenNI2SkeletonTracker::getSensor()->userSkeleton[userID].skeletonState;
 }

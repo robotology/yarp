@@ -98,8 +98,8 @@ float* OpenNI2SkeletonData::getPositionConf(int userID){
     return userSkeleton[userID-1].skeletonPosConf;
 }
 
-int OpenNI2SkeletonData::getSkeletonState(int userID){
-    return userSkeleton[userID-1].skeletonState;
+nite::SkeletonState OpenNI2SkeletonData::getSkeletonState(int userID){
+    return userSkeleton[userID].skeletonState;
 }
 
 ImageOf<PixelMono16> OpenNI2SkeletonData::getDepthFrame(){
