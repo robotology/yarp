@@ -358,7 +358,7 @@ const Contact& yarp::os::impl::HttpTwoWayStream::getRemoteAddress() {
 }
 
 bool yarp::os::impl::HttpTwoWayStream::isOk() {
-    return delegate->isOk();
+    return true; //delegate->isOk();
 }
 
 void yarp::os::impl::HttpTwoWayStream::reset() {
