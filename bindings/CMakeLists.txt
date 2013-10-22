@@ -317,12 +317,7 @@ IF (CREATE_LUA)
   INCLUDE_DIRECTORIES(${LUA_INCLUDE_DIR})
   SWIG_ADD_MODULE(${target_name} lua yarp.i)
   SWIG_LINK_LIBRARIES(${target_name} ${LUA_LIBRARY})
-  IF (UNIX)
-    ADD_CUSTOM_COMMAND(TARGET ${target_name}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink lib${target_name}.so ${target_name}.so 
-    WORKING_DIRECTORY ${YARP_BASE_DIR})
-  ENDIF (UNIX)
+  set_target_properties(${target_name} PROPERTIES PREFIX "")
   set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_LUA)
 
