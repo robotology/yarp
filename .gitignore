@@ -1,6 +1,11 @@
 *~
 /build*/
 /bindings/build*/
+/bindings/check*/
+/bindings/java/
+/bindings/lua/
+/bindings/python/
+/bindings/ruby/
 *kdev*
 *.orig
 tags
