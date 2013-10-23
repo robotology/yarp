@@ -25,7 +25,7 @@
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
-#if !defined(SWIGJAVA)
+#if !defined(SWIGJAVA) && !defined(SWIGLUA)
   %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize, 
 		       SWIG_FromCharPtrAndSize, %checkcode(STDSTRING)); 
   %define YARP_WRAP_STL_STRING %enddef
@@ -173,6 +173,7 @@
 %ignore yarp::sig::Image::getRow(int) const;
 %ignore yarp::sig::Image::getIplImage() const;
 %ignore yarp::sig::Image::getReadType();
+%ignore yarp::sig::Vector::getType();
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) yarp::os::ConstString::operator const char *() const;
@@ -226,7 +227,6 @@ using namespace yarp::dev;
 #include <Python.h>
 
 void setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h) {
-  fprintf(stderr,"HELLO???\n");
         Py_buffer img_buffer, img_buffer2;
         int reply;
 		fprintf(stderr, "Welcome to setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h)!\nThe parameters you specified are: %ld, %ld, %d, %d\n", (long)img, (long)mem, w, h);
@@ -260,7 +260,6 @@ void setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 }  
 
 void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
-  fprintf(stderr,"HELLO!!! %x\n", PY_VERSION_HEX);
 #if PY_VERSION_HEX >= 0x03000000
         Py_buffer img_buffer;
         int reply;

@@ -29,4 +29,9 @@ for lang in $SUPPORTED_LANGUAGES; do
     echo "* In $PWD"
     cmake -DCREATE_$lang=TRUE -DPREPARE_CLASS_FILES=TRUE $YARP_ROOT/bindings
     make
+    lc=`echo $lang | tr '[:upper:]' '[:lower:]'`
+    run=$YARP_ROOT/bindings/tests/$lc/run.sh
+    if [ -e $run ]; then
+	bash $run
+    fi
 done

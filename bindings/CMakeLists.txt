@@ -81,6 +81,7 @@ IF (CREATE_JAVA)
   OPTION(PREPARE_CLASS_FILES "Prepare class files" OFF)
   SET(YARP_HELPERS LoadYarp.java YarpImageHelper.java Example1.java)
   MAKE_DIRECTORY("${YARP_BASE_DIR}/yarp")
+  SET(CMAKE_SWIG_OUTDIR_SAVE ${CMAKE_SWIG_OUTDIR})
   SET(CMAKE_SWIG_OUTDIR "${YARP_BASE_DIR}/yarp")
   SET(TARGET_DIR src)
   IF (NOT BINDINGS_SRC_DIR)
@@ -129,6 +130,7 @@ IF (CREATE_JAVA)
     SET_TARGET_PROPERTIES(${target_name} PROPERTIES SUFFIX ".jnilib")
   ENDIF(APPLE)
   set (YARP_COLLISION_AVOIDANCE TRUE)
+  set(CMAKE_SWIG_OUTDIR ${CMAKE_SWIG_OUTDIR_SAVE})
 ENDIF (CREATE_JAVA)
 
 
@@ -157,23 +159,24 @@ IF (CREATE_PYTHON)
   # uncomment if we want a debug version of the library
   #ADD_DEFINITIONS(-DPy_DEBUG)
 
+  set_target_properties(_${target_name} PROPERTIES OUTPUT_NAME "_yarp")
+  if (YARP_COLLISION_AVOIDANCE)
+    set_target_properties(_${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY 
+      ${CMAKE_BINARY_DIR}/lib/python)
+  endif ()
+  GET_TARGET_PROPERTY(yarp_lib_location _${target_name} LOCATION)
+
   # installation path is determined reliably on most platforms using distutils
   FIND_PACKAGE(PythonInterp ${CREATE_PYTHON_VERSION})
 
   EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} 
     -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}'))" 
     OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
-  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py ${CMAKE_CURRENT_BINARY_DIR}/_${target_name}.so 
+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py ${yarp_lib_location} 
     DESTINATION ${PYTHON_INSTDIR} )
 
   IF (WIN32)
-    # Check if we have a target called _yarp as SWIG_ADD_MODULE
-    # will currently give. If not, we're probably in the distant
-    # future, and we'd best not meddle.
-    GET_TARGET_PROPERTY(yarp_lib_location _${target_name} LOCATION)
-    IF (yarp_lib_location)
-      SET_TARGET_PROPERTIES(_${target_name} PROPERTIES SUFFIX ".pyd")
-    ENDIF ()    
+    SET_TARGET_PROPERTIES(_${target_name} PROPERTIES SUFFIX ".pyd")
   ENDIF (WIN32)
   set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_PYTHON)
@@ -310,14 +313,16 @@ ENDIF (CREATE_RUBY)
 IF (CREATE_LUA)
   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
   find_package(Lua51 REQUIRED) 
-  set (target_name yarp)
-  if (YARP_COLLISION_AVOIDANCE)
-    set (target_name yarp_lua)
-  endif ()
+  set (target_name yarp_lua)
   INCLUDE_DIRECTORIES(${LUA_INCLUDE_DIR})
   SWIG_ADD_MODULE(${target_name} lua yarp.i)
   SWIG_LINK_LIBRARIES(${target_name} ${LUA_LIBRARY})
   set_target_properties(${target_name} PROPERTIES PREFIX "")
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
+  if (YARP_COLLISION_AVOIDANCE)
+    set_target_properties(${target_name} PROPERTIES LIBRARY_OUTPUT_DIRECTORY 
+      ${CMAKE_BINARY_DIR}/lib/lua)
+  endif ()
   set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_LUA)
 
