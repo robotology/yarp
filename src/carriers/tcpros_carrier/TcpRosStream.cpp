@@ -199,7 +199,7 @@ bool TcpRosStream::configureTwiddler(WireTwiddler& twiddler, const char *txt, co
                reply?"reply":"main");
     ConstString str(txt);
     if (reply) {
-        ssize_t idx = str.find("---");
+        YARP_SSIZE_T idx = str.find("---");
         if (idx!=ConstString::npos) {
             str = str.substr(idx+3,str.length());
         }
