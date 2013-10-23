@@ -1,23 +1,22 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- 
-IF (UNIX)
 
-  IF (COMPILE_DEVICE_LIBRARY)
-    YARP_PREPARE_DEVICE(firewirecamera TYPE FirewireCamera INCLUDE FirewireCamera.h WRAPPER grabber)
-    YARP_ADD_DEVICE_FINGERPRINT(firewirecamera.ini firewirecamera)
-  ENDIF (COMPILE_DEVICE_LIBRARY)
+if(UNIX)
 
-  FIND_PACKAGE(YARP REQUIRED)
+  if(COMPILE_DEVICE_LIBRARY)
+    yarp_prepare_device(firewirecamera TYPE FirewireCamera INCLUDE FirewireCamera.h WRAPPER grabber)
+    yarp_add_device_fingerprint(firewirecamera.ini firewirecamera)
+  endif(COMPILE_DEVICE_LIBRARY)
 
-  IF (NOT SKIP_firewirecamera)
-    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})
-    FIND_PACKAGE(YARP REQUIRED)
-    MESSAGE(STATUS "Warning, just taking it on faith that that raw1394 and dc1394_control exist")
-    LINK_LIBRARIES(dc1394_control ${YARP_LIBRARIES})
-    YARP_ADD_PLUGIN(yarp_firewirecamera FirewireCamera.cpp FirewireCameraSet.cpp FirewireCameraSet.h dc1394settings.h FirewireCamera.h)
+  find_package(YARP REQUIRED)
 
-  ENDIF (NOT SKIP_firewirecamera)
+  if(NOT SKIP_firewirecamera)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})
+    find_package(YARP REQUIRED)
+    message(STATUS "Warning, just taking it on faith that that raw1394 and dc1394_control exist")
+    link_libraries(dc1394_control ${YARP_LIBRARIES})
+    yarp_add_plugin(yarp_firewirecamera FirewireCamera.cpp FirewireCameraSet.cpp FirewireCameraSet.h dc1394settings.h FirewireCamera.h)
+  endif(NOT SKIP_firewirecamera)
 
-ENDIF (UNIX)
+endif(UNIX)

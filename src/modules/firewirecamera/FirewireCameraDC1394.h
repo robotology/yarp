@@ -30,9 +30,9 @@ extern "C"{
 
 class CFWCamera
 {
-public:   
+public:
     CDC1394Settings settings;
-    
+
     CFWCamera() : settings()
     {
         m_aXinc=m_aYinc=NULL;
@@ -40,14 +40,14 @@ public:
         m_PlaneSize=0;
         m_RowLen=0;
         m_AcqMode=FW_UNINIT;
-    
+
         m_pHandle=NULL;
         m_CameraNode=0;
         m_CameraId=-1;
         m_iPort=0;
         m_bDma=true;
     }
-    
+
     bool Create(raw1394handle_t pHandle,nodeid_t CameraNode,int CameraId,bool bDma=true,int xdim=XDIM,int ydim=YDIM,int iPort=0)
     {
         if (m_AcqMode!=FW_UNINIT)
@@ -56,9 +56,9 @@ public:
             fflush(stdout);
             return false;
         }
-    
+
         settings.Create(pHandle,CameraNode);
-        
+
         m_pHandle=pHandle;
         m_CameraNode=CameraNode;
         m_CameraId=CameraId;
@@ -68,15 +68,15 @@ public:
         m_PlaneSize=m_Xdim*m_Ydim;
         m_RowLen=XDIM*2;
         m_iPort=iPort;
-        
+
         if (m_bDma)
         {
             sprintf(dma_device_file,"/dev/video1394/%d",m_iPort);
-       
+
             if (access(dma_device_file,R_OK)) // !=0 == error
             {
                 sprintf(dma_device_file,"/dev/video1394");
-                
+
                 if (access(dma_device_file,R_OK)) // !=0 == error
                 {
                     printf("ERROR: failed to open device file /dev/video1394\n\n"
@@ -84,27 +84,27 @@ public:
                            "       mkdir /dev/video1394\n"
                            "       mknod -m 666 /dev/video1394/0 c 171 16\n\n");
                     fflush(stdout);
-                
+
                     return false;
                 }
             }
-            
+
             int num_dma_buffers=4;
             int drop_frames=1;
             //int do_extra_buffering = 0; //1 introduces high latency when it's turned on
-            
+
             if (dc1394_dma_setup_capture(m_pHandle,
                                          m_CameraNode,
-                                         m_CameraId, 
+                                         m_CameraId,
                                          FORMAT_VGA_NONCOMPRESSED,
                                          USED_ACQ_MODE,
-                                         SPEED_400,				 
-                                         FRAMERATE_30, 
+                                         SPEED_400,
+                                         FRAMERATE_30,
                                          num_dma_buffers,
                                          //do_extra_buffering, //removed for libdc1394-11-dev
-                                         drop_frames, 
+                                         drop_frames,
                                          dma_device_file,
-                                         &capture) 
+                                         &capture)
                 != DC1394_SUCCESS)
             {
                     printf("unable to setup camera %d\n"
@@ -112,10 +112,10 @@ public:
                            "  - the requested video mode, framerate or format,\n"
                            "as specified on line %d of file %s \n"
                            "may not be supported by the camera\n\n",m_CameraId,__LINE__,__FILE__);
-                    
+
                  //this command seems to seg fault here, not having it may lead to a memory leak
-                 //dc1394_release_camera(m_pHandle,&(m_aCameras[idCamera].capture)); 
-                 
+                 //dc1394_release_camera(m_pHandle,&(m_aCameras[idCamera].capture));
+
                  fflush(stdout);
                  return false;
             }
@@ -124,39 +124,39 @@ public:
         {
             if (dc1394_setup_capture(m_pHandle,
                                      m_CameraNode,
-                                     m_CameraId, 
+                                     m_CameraId,
                                      FORMAT_VGA_NONCOMPRESSED,
                                      USED_ACQ_MODE,
                                      SPEED_400,
                                      FRAMERATE_30,
                                      &capture)
-                !=DC1394_SUCCESS) 
+                !=DC1394_SUCCESS)
             {
                 printf("unable to setup camera %d\n"
                            "  - the camera may already be in use\n"
                            "  - the requested video mode, framerate or format,\n"
                            "as specified on line %d of file %s \n"
-                           "may not be supported by the camera\n\n",m_CameraId,__LINE__,__FILE__);              
-                      
+                           "may not be supported by the camera\n\n",m_CameraId,__LINE__,__FILE__);
+
                 //this command seems to seg fault here, not having it may lead to a memory leak
                 //dc1394_release_camera(m_pHandle,&(m_aCameras[idCamera].capture));
-            
+
                 fflush(stdout);
                 return false;
             }
         }
-                
+
         // Start isochronous data transmission
-        if (dc1394_start_iso_transmission(m_pHandle,capture.node) != DC1394_SUCCESS) 
+        if (dc1394_start_iso_transmission(m_pHandle,capture.node) != DC1394_SUCCESS)
         {
             printf("ERROR unable to start camera %d iso transmission\n",m_CameraId);
             fflush(stdout);
-            
+
             if (m_pHandle) dc1394_release_camera(m_pHandle,&capture);
-            
+
             return false;
         }
-        
+
         if (xdim==XDIM && ydim==YDIM)
         {
             m_aXinc=m_aYinc=NULL;
@@ -172,37 +172,37 @@ public:
             m_aXinc=new int[xdim];
             m_aYinc=new int[ydim];
             m_AcqMode=FW_CUSTOM;
-     
+
             double dmx=double(XDIM<<1)/double(xdim);
-                
+
             for (int x=0; x<xdim; ++x)
                 if ((m_aXinc[x]=int(double(x)*dmx)) & 0x01) --m_aXinc[x];
-        
+
             for (int x=0; x<xdim-1; ++x)
                 m_aXinc[x]=m_aXinc[x+1]-m_aXinc[x];
-        
+
             double dmy=double(YDIM<<1)/double(ydim);
 
             for (int y=0; y<ydim; ++y)
                 if ((m_aYinc[y]=int(double(y)*dmy)) & 0x01) --m_aYinc[y];
-        
+
             for (int y=0; y<ydim-1; ++y)
                 m_aYinc[y]=m_aYinc[y+1]-m_aYinc[y];
         }
-        
+
         return true;
     }
-    
+
     bool Close()
     {
         if (m_AcqMode==FW_UNINIT) return false;
-    
+
         m_AcqMode=FW_UNINIT;
 
         dc1394_stop_iso_transmission(m_pHandle,capture.node);
 
         if (m_bDma)
-        { 
+        {
             dc1394_dma_unlisten(m_pHandle,&capture);
             dc1394_dma_release_camera(m_pHandle,&capture);
         }
@@ -210,24 +210,24 @@ public:
         {
             dc1394_release_camera(m_pHandle,&capture);
         }
-    
+
         if (m_aXinc) delete [] m_aXinc;
         if (m_aYinc) delete [] m_aYinc;
-        
+
         m_aXinc=m_aYinc=NULL;
-        
+
         return true;
     }
-    
+
     ~CFWCamera()
     {
         Close();
     }
-    
+
     void GetCameraInfo()
     {
         if (m_AcqMode==FW_UNINIT) return;
-	  
+
         if (!dc1394_get_camera_misc_info(m_pHandle,m_CameraNode,&misc_info) ||
             !dc1394_get_camera_info(m_pHandle,m_CameraNode,&camera_info) ||
             !dc1394_get_camera_feature_set(m_pHandle,camera_info.id,&feature_set))
@@ -236,7 +236,7 @@ public:
             fflush(stdout);
             return;
         }
-    
+
         printf("\n\n");
         dc1394_print_feature_set(&feature_set);
         printf("\n\n");
@@ -245,42 +245,42 @@ public:
 
         if (dc1394_get_iso_channel_and_speed(m_pHandle,camera_info.id,&channel,&speed)!=DC1394_SUCCESS)
             printf("Can't get iso channel and speed\n");
-    
+
         if (dc1394_set_iso_channel_and_speed(m_pHandle,camera_info.id,m_CameraId,speed)!=DC1394_SUCCESS)
             printf("Can't set iso channel and speed\n");
-            
+
         fflush(stdout);
     }
-    
+
     bool Capture(unsigned char* image)
-    { 
+    {
         switch (m_AcqMode)
         {
         case FW_UNINIT:
             return false;
-            
+
         case FW_NORMAL:
             return CaptureZoom100(image);
-   
-        case FW_HALF: 
+
+        case FW_HALF:
             return CaptureZoom50(image);
-    
+
         case FW_CUSTOM:
             return CaptureCustomZoom(image);
         }
 
         return false;
     }
-    
+
     bool CaptureRaw(unsigned char* image)
     {
         unsigned char* buffer=CaptureFrame();
         if (!buffer) return false;
 
         memcpy(image,buffer,m_PlaneSize<<2);
-	
+
         if (m_bDma) dc1394_dma_done_with_buffer(&capture);
-        
+
         return true;
     }
 
@@ -294,18 +294,18 @@ protected:
     int m_Xdim,m_Ydim;
     int m_RowLen,m_PlaneSize;
     int m_AcqMode;
-    
+
     char dma_device_file[64];
     raw1394handle_t m_pHandle;
     nodeid_t m_CameraNode;
     int m_CameraId;
     int m_iPort;
-    bool m_bDma;    
-    	 
+    bool m_bDma;
+
     bool CaptureZoom100(unsigned char* image)
     {
         if (m_AcqMode!=FW_NORMAL) return false;
-        
+
         unsigned char *pR=CaptureFrame(),*pB=pR+m_RowLen;
 
         if (!pR) return false;
@@ -322,27 +322,27 @@ protected:
             }
 
             pR+=m_RowLen;
-            pB+=m_RowLen;          
+            pB+=m_RowLen;
         }
-        
+
         if (m_bDma) dc1394_dma_done_with_buffer(&capture);
-        
+
         return true;
     }
 
     bool CaptureZoom50(unsigned char* image)
     {
         if (m_AcqMode!=FW_HALF) return false;
-       
+
         unsigned char* buffer=CaptureFrame();
-        
+
         if (!buffer) return false;
-        
+
         int _3_row_len=3*m_RowLen;
 
         unsigned char *pRin1=buffer,*pRin2=pRin1+2,*pRin3=pRin1+2*m_RowLen,*pRin4=pRin2+2*m_RowLen;
         unsigned char *pBin1=pRin1+m_RowLen,*pBin2=pBin1+2,*pBin3=pBin1+2*m_RowLen,*pBin4=pBin2+2*m_RowLen;
-        
+
         for (int y=0; y<m_Ydim; ++y)
         {
             for (int x=0; x<m_Xdim; ++x)
@@ -352,7 +352,7 @@ protected:
                          +int(*pBin1++)+int(*pBin2++)+int(*pBin3++)+int(*pBin4++))>>3; //green
                 *image++=(int(*pBin1++)+int(*pBin2++)+int(*pBin3++)+int(*pBin4++))>>2; //blue
 
-                pRin1+=2; pRin2+=2; pRin3+=2; pRin4+=2; 
+                pRin1+=2; pRin2+=2; pRin3+=2; pRin4+=2;
                 pBin1+=2; pBin2+=2; pBin3+=2; pBin4+=2;
             }
 
@@ -365,29 +365,29 @@ protected:
             pBin3+=_3_row_len;
             pBin4+=_3_row_len;
         }
-        
+
         if (m_bDma) dc1394_dma_done_with_buffer(&capture);
-        
+
         return true;
     }
-    
+
     bool CaptureCustomZoom(unsigned char *image)
     {
         if (m_AcqMode!=FW_CUSTOM) return false;
-         
+
         unsigned char* buffer=CaptureFrame();
-        
+
         if (!buffer) return false;
-        
+
         int row_len=XDIM<<1;
         int col_len=YDIM<<1;
-        
+
         double dmy=double(col_len)/double(m_Ydim);
 
         int inc,yin;
 
         unsigned char *pRin,*pGin1,*pGin2,*pBin;
-            
+
         for (int y=0; y<m_Ydim; ++y)
         {
             if ((yin=int(double(y)*dmy)) & 0x01) --yin;
@@ -405,18 +405,18 @@ protected:
 
                 pRin+=(inc=m_aXinc[x]); pBin+=inc; pGin1+=inc; pGin2+=inc;
             }
-        }      
+        }
 
         if (m_bDma) dc1394_dma_done_with_buffer(&capture);
-        
+
         return true;
-    }  
- 
+    }
+
     unsigned char* CaptureFrame()
     {
         if (m_bDma)
         {
-            if (dc1394_dma_single_capture(&capture) != DC1394_SUCCESS) 
+            if (dc1394_dma_single_capture(&capture) != DC1394_SUCCESS)
             {
                 printf("ERROR: dma capture failed on camera %d shutdown firewire\n",m_CameraId);
                 fflush(stdout);
@@ -430,8 +430,8 @@ protected:
             return NULL;
         }
 
-        return (unsigned char *)(capture.capture_buffer); 
-    } 
+        return (unsigned char *)(capture.capture_buffer);
+    }
 };
 
 #endif

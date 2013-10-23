@@ -33,7 +33,7 @@ namespace yarp {
 }
 
 /**
- * \file FirewireCamera.h device driver for managing the 
+ * \file FirewireCamera.h device driver for managing the
  * IEEE-1394 Camera
  */
 
@@ -43,47 +43,47 @@ namespace yarp {
 class yarp::dev::FirewireCameraOpenParameters
 {
 public:
-	// Parameters
-	unsigned int _unit_number;
-	unsigned int _size_x;
-	unsigned int _size_y;
-	unsigned int _video_type;
+    // Parameters
+    unsigned int _unit_number;
+    unsigned int _size_x;
+    unsigned int _size_y;
+    unsigned int _video_type;
 
-	double _whiteR;
-	double _whiteB;
+    double _whiteR;
+    double _whiteB;
 
-	double _brightness;
-	double _shutter;
-	double _gain;
+    double _brightness;
+    double _shutter;
+    double _gain;
 
-	bool _fleacr;  //FLEA color reconstruction flag
+    bool _fleacr;  //FLEA color reconstruction flag
 
-	/**
-	 * Constructor. Add here the parameters for the open().
-	 */
-	FirewireCameraOpenParameters()
-	{
-		// parameters initialization
-		_unit_number = 0;
-		_size_x = 640;
-		_size_y = 480;
-		_video_type = 0;
+    /**
+     * Constructor. Add here the parameters for the open().
+     */
+    FirewireCameraOpenParameters()
+    {
+        // parameters initialization
+        _unit_number = 0;
+        _size_x = 640;
+        _size_y = 480;
+        _video_type = 0;
 
-		//uninitialized - inherit registry stored values
-		_brightness=-1;
-		_shutter=-1;
-		_gain=-1;
-		_whiteR=-1;
-		_whiteB=-1;
+        //uninitialized - inherit registry stored values
+        _brightness=-1;
+        _shutter=-1;
+        _gain=-1;
+        _whiteR=-1;
+        _whiteB=-1;
 
 
-		// FLEA cameras are compatible with DRAGONFLY's but ...
-		// the color reconstruction method is different 
-		// (GBRG instead of RGGB)
-		// The default is to use Dragonsfly's method
-		_fleacr = false;
+        // FLEA cameras are compatible with DRAGONFLY's but ...
+        // the color reconstruction method is different
+        // (GBRG instead of RGGB)
+        // The default is to use Dragonsfly's method
+        _fleacr = false;
 
-	}
+    }
 
 };
 
@@ -92,23 +92,23 @@ public:
  *
  * A generic firewire digital camera (or, on Linux, any digital camera).
  */
-class yarp::dev::FirewireCamera : 
+class yarp::dev::FirewireCamera :
     public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public IFrameGrabberControls, public DeviceDriver
 {
 private:
-	FirewireCamera(const FirewireCamera&);
-	void operator=(const FirewireCamera&);
+    FirewireCamera(const FirewireCamera&);
+    void operator=(const FirewireCamera&);
 
 public:
-	/**
-	 * Constructor.
-	 */
-	FirewireCamera();
+    /**
+     * Constructor.
+     */
+    FirewireCamera();
 
-	/**
-	 * Destructor.
-	 */
-	virtual ~FirewireCamera();
+    /**
+     * Destructor.
+     */
+    virtual ~FirewireCamera();
 
     // temp: here for debug purposes only
     void recColorFSBilinear(const unsigned char *src, unsigned char *out);
@@ -117,58 +117,58 @@ public:
 
 
     /**
-	 * Open the device driver.
+     * Open the device driver.
      * @param par parameters for the device driver
-	 * @return returns true on success, false on failure.
-	 */
+     * @return returns true on success, false on failure.
+     */
     bool open(const FirewireCameraOpenParameters& par);
 
     virtual bool open(yarp::os::Searchable& config)
-	{
+    {
         FirewireCameraOpenParameters params;
-		yarp::os::Value *value;
-		if (config.check("unit_number",value)||config.check("d",value)) {
-			params._unit_number = value->asInt();
-		}
-		if (config.check("size_x",value)||config.check("width",value)){
-			params._size_x  = value->asInt();
-		}
-		if (config.check("size_y",value)||config.check("height",value)){
-			params._size_y  = value->asInt();
-		}
-		params._video_type = config.find("video_type").asInt();
+        yarp::os::Value *value;
+        if (config.check("unit_number",value)||config.check("d",value)) {
+            params._unit_number = value->asInt();
+        }
+        if (config.check("size_x",value)||config.check("width",value)){
+            params._size_x  = value->asInt();
+        }
+        if (config.check("size_y",value)||config.check("height",value)){
+            params._size_y  = value->asInt();
+        }
+        params._video_type = config.find("video_type").asInt();
 
-		//params._offset_y = config.find("offset_y").asInt();
-		//params._offset_x = config.find("offset_x").asInt();
-		//params._alfa = (float)config.find("alfa").asInt();
-		yarp::os::Bottle& whites = config.findGroup("white_balance");
-		if (!whites.isNull()) {
-			params._whiteR = whites.get(1).asDouble();
-			params._whiteB = whites.get(2).asDouble();
-		}
-	
-		if (config.check("brightness", value)){
-			params._brightness=value->asDouble();
-		}
+        //params._offset_y = config.find("offset_y").asInt();
+        //params._offset_x = config.find("offset_x").asInt();
+        //params._alfa = (float)config.find("alfa").asInt();
+        yarp::os::Bottle& whites = config.findGroup("white_balance");
+        if (!whites.isNull()) {
+            params._whiteR = whites.get(1).asDouble();
+            params._whiteB = whites.get(2).asDouble();
+        }
 
-		if (config.check("shutter", value)){
-			params._shutter=value->asDouble();
-		}
-		if (config.check("gain", value)){
-			params._gain=value->asDouble();
-		}
+        if (config.check("brightness", value)){
+            params._brightness=value->asDouble();
+        }
 
-		params._fleacr = config.check("flea", "If present indicates to use Flea color reconstruction ");
-		
+        if (config.check("shutter", value)){
+            params._shutter=value->asDouble();
+        }
+        if (config.check("gain", value)){
+            params._gain=value->asDouble();
+        }
 
-		return open(params);
+        params._fleacr = config.check("flea", "If present indicates to use Flea color reconstruction ");
+
+
+        return open(params);
     }
 
-	/**
-	 * Closes the device driver.
-	 * @return returns true/false on success/failure.
-	 */
-	virtual bool close(void);
+    /**
+     * Closes the device driver.
+     * @return returns true/false on success/failure.
+     */
+    virtual bool close(void);
 
     /**
      * Implements FrameGrabber basic interface.
@@ -188,24 +188,24 @@ public:
      * Implements FrameGrabber basic interface.
      */
     virtual int height() const;
-    
+
     /**
      * Implements FrameGrabber basic interface.
      */
     virtual int width() const;
 
-    /** 
+    /**
      * FrameGrabber bgr interface, returns the last acquired frame as
-     * a buffer of bgr triplets. A demosaicking method is applied to 
+     * a buffer of bgr triplets. A demosaicking method is applied to
      * reconstuct the color from the Bayer pattern of the sensor.
      * @param buffer pointer to the array that will contain the last frame.
      * @return true/false upon success/failure
      */
     virtual bool getRgbBuffer(unsigned char *buffer);
 
-    /** 
+    /**
      * FrameGrabber image interface, returns the last acquired frame as
-     * an rgb image. A demosaicking method is applied to 
+     * an rgb image. A demosaicking method is applied to
      * reconstuct the color from the Bayer pattern of the sensor.
      * @param image that will store the last frame.
      * @return true/false upon success/failure
@@ -227,13 +227,13 @@ public:
      */
     virtual bool setGain(double v);
 
-	/**
+    /**
      * Set normalized white balance [0.0 : 1.0].
      */
-	virtual bool setWhiteBalance(double red, double blue);
+    virtual bool setWhiteBalance(double red, double blue);
 
-	
-	/**
+
+    /**
      * Get normalized shutter time [0.0 : 1.0].
      */
     virtual double getShutter();
@@ -251,21 +251,21 @@ public:
     /**
      * Get normalized image white balance [0.0 : 1.0].
      */
-	virtual bool getWhiteBalance(double &red, double &blue);
+    virtual bool getWhiteBalance(double &red, double &blue);
 
 
 
-	virtual bool setAutoBrightness(bool bAuto=true);
+    virtual bool setAutoBrightness(bool bAuto=true);
 
-	virtual bool setAutoGain(bool bAuto=true);
+    virtual bool setAutoGain(bool bAuto=true);
 
-	virtual bool setAutoShutter(bool bAuto=true);
+    virtual bool setAutoShutter(bool bAuto=true);
 
-	virtual bool setAutoWhiteBalance(bool bAuto=true);
+    virtual bool setAutoWhiteBalance(bool bAuto=true);
 
-	virtual bool setAuto(bool bAuto=true);
+    virtual bool setAuto(bool bAuto=true);
 
-	virtual void PrintSettings();
+    virtual void PrintSettings();
 
 
 
@@ -274,16 +274,16 @@ public:
     }
     virtual bool setSharpness(double v) {
         return false;
-    }    
+    }
     virtual bool setHue(double v) {
         return false;
     }
     virtual bool setSaturation(double v) {
         return false;
-    }    
+    }
      virtual bool setGamma(double v) {
         return false;
-    }    
+    }
     virtual bool setIris(double v) {
         return false;
     }
@@ -302,15 +302,15 @@ public:
     }
     virtual double getGamma() {
         return 0.0;
-    }        
+    }
     virtual double getIris() {
         return 0.0;
     }
-    
+
 
 
 protected:
-	void *system_resources;
+    void *system_resources;
 };
 
 /**

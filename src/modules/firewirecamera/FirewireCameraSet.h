@@ -28,16 +28,16 @@ public:
         m_iPort=0;
         m_ActiveCams=0;
     }
-    
+
     virtual ~CFWCameraSet()
-    {   
+    {
         Shutdown();
-    }    
+    }
 
     ///////////////////////////////////////////////////////
     // Init/Close functions
     ///////////////////////////////////////////////////////
-            
+
     bool Init(int port=0);
     void Shutdown();
     void Restart(int port=0);
@@ -55,7 +55,7 @@ public:
     ///////////////////////////////////////////////////////
     // camera controls
     ///////////////////////////////////////////////////////
-    
+
     bool SetShutter(int camera,double dShutter);
     bool SetGain(int camera,double dGain);
     bool SetBrightness(int camera,double dBrightness);
@@ -70,7 +70,7 @@ public:
     bool SetAutoGain( int camera,bool bAuto=true);
     bool SetAutoBrightness(int camera,bool bAuto=true);
     bool SetAutoWhiteBalance( int camera,bool bAuto=true);
-    
+
     int GetCameraNum()
     {
         return m_ActiveCams;
@@ -88,12 +88,12 @@ protected:
     raw1394handle_t m_pHandle;
     nodeid_t* m_pCameraNodes;
     int m_iPort;
-     
+
     int m_nNumNodes,m_nNumCameras;
     int m_ActiveCams;
 
     char dma_device_file[32];
-            
+
     bool IsCameraReady(int idCamera)
     {
         return m_pHandle && idCamera>=0 && idCamera<m_nNumCameras && m_apCamera && m_apCamera[idCamera];

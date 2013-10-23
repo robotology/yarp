@@ -22,41 +22,41 @@ using namespace yarp::dev;
 class FirewireCameraResources
 {
 public:
-	FirewireCameraResources (void)
-	{
-	}
+    FirewireCameraResources (void)
+    {
+    }
 
-	~FirewireCameraResources () 
-	{ 
+    ~FirewireCameraResources ()
+    {
         _uninitialize();
-	}
-	
-	
-	// Hardware-dependant variables
-	enum { _num_buffers = 3 };
-		
+    }
+
+
+    // Hardware-dependant variables
+    enum { _num_buffers = 3 };
+
     static CFWCameraSet* m_pCameraSet;
     static Semaphore m_InitCloseMutex;
 
     //unsigned char *img;
-    
+
     unsigned int unit_number;
 
-	int sizeX;
-	int sizeY;
+    int sizeX;
+    int sizeY;
     int buffLength;
 
-	//Semaphore mutexArray[_num_buffers];
-	//Semaphore _newFrameMutex;
-	//Semaphore _convImgMutex;
-	
-	inline bool _initialize (const FirewireCameraOpenParameters & params);
-	inline bool _uninitialize();
+    //Semaphore mutexArray[_num_buffers];
+    //Semaphore _newFrameMutex;
+    //Semaphore _convImgMutex;
 
-	inline bool _setBrightness (double value);
-	inline bool _setWhiteBalance (double blueValue, double redValue);
-	inline bool _setShutter (double value);
-	inline bool _setGain (double value);
+    inline bool _initialize (const FirewireCameraOpenParameters & params);
+    inline bool _uninitialize();
+
+    inline bool _setBrightness (double value);
+    inline bool _setWhiteBalance (double blueValue, double redValue);
+    inline bool _setShutter (double value);
+    inline bool _setGain (double value);
 
     inline double _getBrightness();
     inline bool _getWhiteBalance(double& blue,double& red);
@@ -65,18 +65,18 @@ public:
 
     inline bool _setAuto(bool bAuto);
 
-	inline bool _setAutoBrightness(bool bAuto=true);
-	inline bool _setAutoWhiteBalance(bool bAuto=true);
-	inline bool _setAutoShutter(bool bAuto=true);
-	inline bool _setAutoGain(bool bAuto=true);
+    inline bool _setAutoBrightness(bool bAuto=true);
+    inline bool _setAutoWhiteBalance(bool bAuto=true);
+    inline bool _setAutoShutter(bool bAuto=true);
+    inline bool _setAutoGain(bool bAuto=true);
 
     inline void _printSettings()
     {
         m_pCameraSet->PrintSettings(unit_number);
     }
 
-	//inline void _subSampling();
-	
+    //inline void _subSampling();
+
     inline bool _capture(unsigned char *buff)
     {
         return m_pCameraSet->Capture(unit_number,buff);
@@ -95,16 +95,16 @@ Semaphore FirewireCameraResources::m_InitCloseMutex;
 inline bool FirewireCameraResources::_initialize (const FirewireCameraOpenParameters& params)
 {
     m_InitCloseMutex.wait();
-    
+
     if (!m_pCameraSet)
     {
         m_pCameraSet=new CFWCameraSet();
-        
+
         if (!m_pCameraSet->Init()) // default port=0
         {
             delete m_pCameraSet;
             m_pCameraSet=0;
-            m_InitCloseMutex.post(); 
+            m_InitCloseMutex.post();
             return false;
         }
     }
@@ -119,25 +119,25 @@ inline bool FirewireCameraResources::_initialize (const FirewireCameraOpenParame
         ACE_OS::fprintf(stderr, "FirewirecameraResources: can't open camera %d",unit_number);
         return false;
     }
-    
+
     m_InitCloseMutex.post();
-    
+
     //img=new unsigned char [buffLength];
 
     //cam.SetAuto(false);
 
-	// Setup Camera Parameters, Magic Numbers :-)
-	m_pCameraSet->SetBrightness(unit_number,params._brightness);	
-	m_pCameraSet->SetShutter(unit_number,params._shutter);
-	m_pCameraSet->SetGain(unit_number,params._gain);
-	
-	if (params._whiteR>0.0) 
-	{
-		m_pCameraSet->SetWhiteBalance(unit_number,params._whiteB,params._whiteR); 
-	} 
-	else 
-	{
-		m_pCameraSet->SetWhiteBalance(unit_number,0.5,0.5); 
+    // Setup Camera Parameters, Magic Numbers :-)
+    m_pCameraSet->SetBrightness(unit_number,params._brightness);
+    m_pCameraSet->SetShutter(unit_number,params._shutter);
+    m_pCameraSet->SetGain(unit_number,params._gain);
+
+    if (params._whiteR>0.0)
+    {
+        m_pCameraSet->SetWhiteBalance(unit_number,params._whiteB,params._whiteR);
+    }
+    else
+    {
+        m_pCameraSet->SetWhiteBalance(unit_number,0.5,0.5);
     }
 
     return true;
@@ -146,7 +146,7 @@ inline bool FirewireCameraResources::_initialize (const FirewireCameraOpenParame
 inline bool FirewireCameraResources::_uninitialize()
 {
     m_InitCloseMutex.wait();
-    
+
     /*
     if (img)
     {
@@ -158,7 +158,7 @@ inline bool FirewireCameraResources::_uninitialize()
     if (m_pCameraSet)
     {
         m_pCameraSet->ShutdownCamera(unit_number);
-    
+
         if (m_pCameraSet->GetCameraNum()<=0)
         {
             m_pCameraSet->Shutdown();
@@ -166,9 +166,9 @@ inline bool FirewireCameraResources::_uninitialize()
             m_pCameraSet=0;
         }
     }
-    
+
     m_InitCloseMutex.post();
-    
+
     return true;
 }
 
@@ -260,31 +260,31 @@ inline FirewireCameraResources& RES(void *res) { return *(FirewireCameraResource
 
 FirewireCamera::FirewireCamera(void)
 {
-	system_resources=(void *)new FirewireCameraResources;
-	ACE_ASSERT(system_resources!=NULL);
+    system_resources=(void *)new FirewireCameraResources;
+    ACE_ASSERT(system_resources!=NULL);
 }
 
 FirewireCamera::~FirewireCamera()
 {
-	if (system_resources != NULL)
-		delete (FirewireCameraResources *)system_resources;
-	
-	system_resources=NULL;
+    if (system_resources != NULL)
+        delete (FirewireCameraResources *)system_resources;
+
+    system_resources=NULL;
 }
 
 ///
 bool FirewireCamera::open (const FirewireCameraOpenParameters &par)
 {
-	FirewireCameraResources& d=RES(system_resources);
-	
-	return d._initialize(par);
+    FirewireCameraResources& d=RES(system_resources);
+
+    return d._initialize(par);
 }
 
 bool FirewireCamera::close (void)
 {
-	FirewireCameraResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
 
-	return d._uninitialize();
+    return d._uninitialize();
 }
 
 bool FirewireCamera::getRawBuffer(unsigned char *buff)
@@ -301,15 +301,15 @@ bool FirewireCamera::getRgbBuffer(unsigned char *buff)
     return d._capture(buff);
 }
 
-bool FirewireCamera::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) 
+bool FirewireCamera::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
     FirewireCameraResources& d = RES(system_resources);
 
     //d._capture(d.img);
 
     image.resize(d.sizeX,d.sizeY);
-    
-    if(image.getRawImageSize()==d.buffLength) 
+
+    if(image.getRawImageSize()==d.buffLength)
     {
         //memcpy(image.getRawImage(),d.img,d.buffLength);
         d._capture(image.getRawImage());
@@ -327,102 +327,102 @@ int FirewireCamera::getRawBufferSize()
 
 int FirewireCamera::width () const
 {
-	return RES(system_resources).sizeX;
+    return RES(system_resources).sizeX;
 }
 
 int FirewireCamera::height () const
 {
-	return RES(system_resources).sizeY;
+    return RES(system_resources).sizeY;
 }
 
 bool FirewireCamera::setBrightness (double value)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setBrightness(value);
 }
 
 bool FirewireCamera::setShutter(double value)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setShutter(value);
 }
 
 bool FirewireCamera::setGain(double value)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setGain(value);
 }
 
 double FirewireCamera::getBrightness() const
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._getBrightness();
 }
 
 double FirewireCamera::getShutter() const
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._getShutter();
 }
 
 double FirewireCamera::getGain() const
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._getGain();
 }
 
 bool FirewireCamera::setWhiteBalance(double red, double blue)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setWhiteBalance(blue,red);
 }
 
 bool FirewireCamera::getWhiteBalance (double &red, double &blue) const
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._getWhiteBalance(blue,red);
 }
 
 bool FirewireCamera::setAuto(bool bAuto)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setAuto(bAuto);
 }
 
 bool FirewireCamera::setAutoBrightness(bool bAuto)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setAutoBrightness(bAuto);
 }
 
 bool FirewireCamera::setAutoShutter(bool bAuto)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setAutoShutter(bAuto);
 }
 
 bool FirewireCamera::setAutoGain(bool bAuto)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setAutoGain(bAuto);
 }
 
 bool FirewireCamera::setAutoWhiteBalance(bool bAuto)
 {
     FirewireCameraResources& d=RES(system_resources);
-    
+
     return d._setAutoWhiteBalance(bAuto);
 }
 
