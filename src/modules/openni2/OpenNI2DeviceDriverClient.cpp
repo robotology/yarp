@@ -11,9 +11,9 @@
 
 yarp::dev::OpenNI2DeviceDriverClient::OpenNI2DeviceDriverClient(){}
 
-/*******************************************************************************************
- ***GenericYarp****GenericYarp****GenericYarp****GenericYarp****GenericYarp****GenericYarp***
- ********************************************************************************************/
+/*
+ * GenericYarp
+ */
 
 bool yarp::dev::OpenNI2DeviceDriverClient::open(yarp::os::Searchable& config){
     string localPortPrefix,remotePortPrefix;
@@ -93,9 +93,9 @@ void yarp::dev::OpenNI2DeviceDriverClient::onRead(Bottle& b){skeletonData->store
 void yarp::dev::OpenNI2DeviceDriverClient::onRead(ImageOf<PixelRgb>& img){skeletonData->storeData(img);}
 void yarp::dev::OpenNI2DeviceDriverClient::onRead(ImageOf<PixelMono16>& img){skeletonData->storeData(img);}
 
-/*****************************************************************************************************
- **IOpenNI2DeviceDriverClient****
- *****************************************************************************************************/
+/*
+ * IOpenNI2DeviceDriverClient
+ */
 
 // returns false if the user skeleton is not being tracked
 bool yarp::dev::OpenNI2DeviceDriverClient::getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID){

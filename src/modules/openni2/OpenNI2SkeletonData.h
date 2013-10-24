@@ -48,22 +48,22 @@ public:
      */
     void storeData(Bottle& b);
     /**
-     * This should be called each time the kinect rgb camera data is updated
+     * This should be called each time the sensor rgb camera data is updated
      *
      * @param img rgb camera image
      */
     void storeData(ImageOf<PixelRgb>& img);
     /**
-     * This should be called each time the kinect depth camera data is updated
+     * This should be called each time the sensor depth camera data is updated
      *
      * @param img depth camera image (in millimeters)
      */
     void storeData(ImageOf<PixelMono16>& img);
     /**
-     * Get a users orientation matrices array
+     * Get a users orientation vector array
      *
      * @param userID  detected user id
-     * @return matrices array with the orientation matrices (3x3)
+     * @return vector array with the orientation vector
      */
     Vector* getOrientation(int userID);
     /**
@@ -77,7 +77,7 @@ public:
      * Get a users orientation confidence array
      *
      * @param userID  detected user id
-     * @return doubles array with confidence values per each orientation quartenion
+     * @return doubles array with confidence values per each orientation vector 
      */
     float* getOrientationConf(int userID);
     /**
