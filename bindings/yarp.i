@@ -18,25 +18,38 @@
 %feature("director") yarp::os::RFModule;
 %feature("autodoc", "1");
 
-// Try to translate std::string and std::vector to native equivalents
-%include "std_string.i"
+
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %include "std_vector.i"
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
 #if !defined(SWIGJAVA) && !defined(SWIGLUA)
+  // Try to translate std::string and std::vector to native equivalents
+  %include "std_string.i"
   %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize, 
 		       SWIG_FromCharPtrAndSize, %checkcode(STDSTRING)); 
   %define YARP_WRAP_STL_STRING %enddef
   %ignore yarp::os::ConstString;
 #else
-  %define _YARP2_CONSTSTRING_ %enddef
-  namespace yarp {
-    namespace os {
-      typedef std::string ConstString;
-    }
-  }
+  #if (SWIG_VERSION >=0x020007)
+    // Try to translate std::string and std::vector to native equivalents
+    %include "std_string.i"
+//    %define _YARP2_CONSTSTRING_ %enddef
+//    namespace yarp {
+//      namespace os {
+//        typedef std::string ConstString;
+//      }
+//    }
+  #else
+    #if defined (SWIGLUA)
+      %include "std_string_lua.i"
+    #endif
+    #if defined (SWIGJAVA)
+      %include "std_string_java.i"
+    #endif
+  #endif
+%apply std::string {yarp::os::ConstString};
 #endif
 
 #if defined(SWIGCSHARP)
