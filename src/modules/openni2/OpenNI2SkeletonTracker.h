@@ -29,6 +29,7 @@ using namespace yarp::sig;
 
 #define MAX_USERS 10
 #define TOTAL_JOINTS 15
+#define MINIMUM_CONFIDENCE 0.6
 
 /**
  * Class used by the OpenNI2DeviceDriverServer to interface with the sensor.
@@ -52,7 +53,7 @@ public:
     }UserSkeleton;
 
     int getDeviceStatus();
-
+    
     /**
      * Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
      */
@@ -64,7 +65,7 @@ public:
     /**
      * @param userDetection indicates if user callbacks and skeleton tracking should be on
      */
-    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true);
+    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE);
     ~OpenNI2SkeletonTracker(void);
     void close();
     /**
@@ -82,6 +83,7 @@ private:
     static SensorStatus *sensorStatus;
     bool userTracking, camerasON, mirrorON;
     int deviceStatus;
+    double minConfidence;
 
     // OpenNI2 and NiTE objects
     openni::Device device;

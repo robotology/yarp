@@ -118,7 +118,8 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     // this function is used in case of the Yarp Device being used as server
     std::cout << "Starting OpenNI2 YARP Device please wait..." << endl;
     string portPrefix;
-    
+    double mConf;
+
     if(config.check("noCameras")) camerasON = false;
     else camerasON = true;
     
@@ -138,7 +139,12 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
         withOpenPorts  = true;
         openPorts(portPrefix, userTracking, camerasON);
     }
-    skeleton = new OpenNI2SkeletonTracker(userTracking,camerasON,mirrorON);
+
+    if (config.check("minConfidence")){
+        mConf = config.find("minConfidence").asDouble();
+    }
+
+    skeleton = new OpenNI2SkeletonTracker(userTracking,camerasON,mirrorON, mConf);
 
     if (skeleton->getDeviceStatus()==1){
         cout << "***ERROR*** Sensor could not be initialized." << endl;
