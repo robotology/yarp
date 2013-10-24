@@ -2,6 +2,31 @@
 
 set -e
 
+# We test against multiple swig versions.  Where are they?
+# You'll probably need to remove your global swig version to prevent
+# cmake finding it later.
+swig_base="/cache/swig"
+swig_versions="2.0.1 2.0.2 2.0.3 2.0.4 2.0.5 2.0.6 2.0.7 2.0.8 2.0.9 2.0.10 2.0.11"
+
+if [ "$1" = "swig" ]; then
+    echo "Compiling all swig versions"
+    if [ ! -e swig.spec ]; then
+	echo "Please get swig git repo https://github.com/swig/swig and run from repo"
+	exit 1
+    fi
+    for f in $swig_versions; do
+	echo $f
+	git checkout rel-$f
+	./autogen.sh
+	mkdir -p $f
+	./configure --prefix=$swig_base/$f
+	make
+	make install
+    done
+    exit 0
+fi
+
+
 if [ "$YARP_ROOT" = "" ]; then
     YARP_ROOT="$PWD"
 fi
@@ -19,19 +44,24 @@ fi
 
 for lang in $SUPPORTED_LANGUAGES; do
     echo "Working on $lang"
-    cd $YARP_ROOT
-    mkdir -p bindings
-    cd bindings
-    dir="check_$lang"
-    rm -rf $dir
-    mkdir -p $dir
-    cd $dir
-    echo "* In $PWD"
-    cmake -DCREATE_$lang=TRUE -DPREPARE_CLASS_FILES=TRUE $YARP_ROOT/bindings
-    make
-    lc=`echo $lang | tr '[:upper:]' '[:lower:]'`
-    run=$YARP_ROOT/bindings/tests/$lc/run.sh
-    if [ -e $run ]; then
-	bash $run
-    fi
+    for swig_ver in $swig_versions; do
+	echo "Working on $lang with $swig_ver"
+	search_path="-DCMAKE_SYSTEM_PROGRAM_PATH=/cache/swig/$swig_ver/bin -DCMAKE_SYSTEM_PREFIX_PATH=/cache/swig/$swig_ver"
+	cd $YARP_ROOT
+	mkdir -p bindings
+	cd bindings
+	dir="check_$lang"
+	rm -rf $dir
+	mkdir -p $dir
+	cd $dir
+	echo "* In $PWD"
+	cmake -DCREATE_$lang=TRUE -DPREPARE_CLASS_FILES=TRUE $search_path $YARP_ROOT/bindings
+	grep SWIG_EXECUTABLE CMakeCache.txt | grep "/cache/swig/$swig_ver/"
+	make
+	lc=`echo $lang | tr '[:upper:]' '[:lower:]'`
+	run=$YARP_ROOT/bindings/tests/$lc/run.sh
+	if [ -e $run ]; then
+	    bash $run
+	fi
+    done
 done
