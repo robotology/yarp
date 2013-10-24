@@ -14,11 +14,20 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf)
 {
     userTracking= withTracking;
     camerasON = withCamerasOn;
     mirrorON = withMirrorOn;
+
+    if (minConf != MINIMUM_CONFIDENCE){
+        minConfidence = minConf;
+    }
+
+    else{
+        minConfidence = MINIMUM_CONFIDENCE;
+    }
+
     init();
     initVars();
 }
@@ -262,7 +271,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     // the method is called only if the skeleton is tracked, so set the stillTracking variable
     userSkeleton->stillTracking = true;
     
-    if (user.getSkeleton().getJoint(joint).getPositionConfidence() > 0.6) {
+    if (user.getSkeleton().getJoint(joint).getPositionConfidence() > minConfidence) {
         
         // position
         double x = user.getSkeleton().getJoint(joint).getPosition().x;
@@ -273,7 +282,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
         userSkeleton->skeletonPointsPos[jIndex][2] = z;
     }
     
-    if (user.getSkeleton().getJoint(joint).getOrientationConfidence() > 0.6){
+    if (user.getSkeleton().getJoint(joint).getOrientationConfidence() > minConfidence){
         
         // orientation
         userSkeleton->skeletonPointsOri[jIndex][0] = user.getSkeleton().getJoint(joint).getOrientation().w;

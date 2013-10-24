@@ -18,8 +18,8 @@
 //Constants from the OpenNI2SkeletonData
 #define MAX_USERS 10
 #define TOTAL_JOINTS 15
-#define KINECT_IMG_WIDTH 640
-#define KINECT_IMG_HEIGHT 480
+#define SENSOR_IMG_WIDTH 640
+#define SENSOR_IMG_HEIGHT 480
 
 namespace yarp {
     namespace dev {
