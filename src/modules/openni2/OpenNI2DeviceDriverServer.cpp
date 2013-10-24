@@ -120,13 +120,13 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     string portPrefix;
     double mConf;
 
-    if(config.check("noCameras")) camerasON = false;
+    if(config.check("noCameras", "Use only depth sensor")) camerasON = false;
     else camerasON = true;
     
-    if(config.check("noMirror")) mirrorON = false;
+    if(config.check("noMirror", "Disable mirroring")) mirrorON = false;
     else mirrorON = true;
     
-    if(config.check("noUserTracking")) userTracking = false;
+    if(config.check("noUserTracking", "Disable user tracking")) userTracking = false;
     else userTracking = true;
     
     if(config.check("name")){
@@ -140,7 +140,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
         openPorts(portPrefix, userTracking, camerasON);
     }
 
-    if (config.check("minConfidence")){
+    if (config.check("minConfidence", "Set minimum confidence (default=0.6)")){
         mConf = config.find("minConfidence").asDouble();
     }
 

@@ -35,12 +35,12 @@ namespace yarp {
 /**
  * @ingroup dev_impl_media
  *
- * A device implementation to get the kinect data from a sensor conected on another computer running the OpenNI2DeviceDriverServer device.
+ * A device implementation to get the sensor data from a sensor conected on another computer running the OpenNI2DeviceDriverServer device.
  * This implementation opens 4 ports to connect to yarp device OpenNI2DeviceDriverServer ports:
- *	- [localName]:o - input port (does nothing)
- *	- [localName]/userSkeleton:i - userSkeleton detection port
- *	- [localName]/depthFrame:i - depth frame port
- *	- [localName]/imageFrame:i - rgb camera frame port
+ *	- [clientName]:o - input port (does nothing)
+ *	- [clientName]/userSkeleton:i - userSkeleton detection port
+ *	- [clientName]/depthFrame:i - depth image port
+ *	- [clientName]/imageFrame:i - rgb camera image port
  */
 class yarp::dev::OpenNI2DeviceDriverClient : /*public GenericYarpDriver,*/ public TypedReaderCallback<ImageOf<PixelRgb> >,
 public TypedReaderCallback<ImageOf<PixelMono16> >, public TypedReaderCallback<Bottle>, public yarp::dev::IOpenNI2DeviceDriver,
@@ -54,7 +54,7 @@ public:
     virtual void onRead(Bottle& b);
     virtual void onRead(ImageOf<PixelRgb>& img);
     virtual void onRead(ImageOf<PixelMono16>& img);
-    // IKinectDeviceDriver
+    // IOpenNI2DeviceDriver
     virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID);
     virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID);
     virtual nite::SkeletonState getSkeletonState(int userID);
@@ -69,9 +69,9 @@ private:
     /**
      * Connect the OpenNI2DeviceDriverClient ports with the OpenNI2DeviceDriverServer ports.
      *
-     * @param remoteName remote ports prefix
-     * @param localName local ports prefix
-     * @return true/false on sucess/failure to connect
+     * @param remoteName server ports prefix
+     * @param localName client ports prefix
+     * @return true/false on success/failure to connect
      */
     bool connectPorts(string remotePortPrefix, string localPortPrefix);
 };
