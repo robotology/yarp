@@ -59,7 +59,12 @@ private:
     static int getConstraint(lua_State* L);
     static int setEvent(lua_State* L); 
     static int unsetEvent(lua_State* L); 
-    static const struct luaL_reg portMonitorLib[]; 
+#if LUA_VERSION_NUM > 501
+    static const struct luaL_Reg portMonitorLib[];
+#else
+    static const struct luaL_reg portMonitorLib[];
+#endif
+
 };
 
 #endif //_MONITORLUA_INC_

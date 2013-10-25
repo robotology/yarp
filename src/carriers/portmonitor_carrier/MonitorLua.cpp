@@ -279,7 +279,16 @@ bool MonitorLua::getLocalFunction(const char *name)
 
 bool MonitorLua::registerExtraFunctions(void)
 {
-    luaL_openlib(L, "PortMonitor", MonitorLua::portMonitorLib, 0);
+#if LUA_VERSION_NUM > 501
+    lua_newtable(L);
+    luaL_setfuncs (L, MonitorLua::portMonitorLib, 0);
+    lua_pushvalue(L, -1); 
+    lua_setglobal(L, "PortMonitor"); 
+#else
+    // deprecated 
+    //luaL_openlib(L, "PortMonitor", MonitorLua::portMonitorLib, 0);
+    luaL_register(L, "PortMonitor", MonitorLua::portMonitorLib);   
+#endif
     return true;
 }
 
@@ -462,8 +471,11 @@ int MonitorLua::unsetEvent(lua_State* L)
     return 0;
 }
 
-
+#if LUA_VERSION_NUM > 501
+const struct luaL_Reg MonitorLua::portMonitorLib [] = {
+#else
 const struct luaL_reg MonitorLua::portMonitorLib [] = {
+#endif
     {"setConstraint", MonitorLua::setConstraint},
     {"getConstraint", MonitorLua::getConstraint},
     {"setEvent", MonitorLua::setEvent},
