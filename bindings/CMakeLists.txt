@@ -304,6 +304,8 @@ IF (CREATE_RUBY)
   endif ()
   SWIG_ADD_MODULE(${target_name} ruby yarp.i)
   SWIG_LINK_LIBRARIES(${target_name} ${RUBY_LIBRARY})
+  set_target_properties(${target_name} PROPERTIES PREFIX "")
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME "yarp")
   set (YARP_COLLISION_AVOIDANCE TRUE)
 ENDIF (CREATE_RUBY)
 
