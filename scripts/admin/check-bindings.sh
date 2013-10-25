@@ -51,8 +51,14 @@ if [ ! "$1" = "" ]; then
     SUPPORTED_LANGUAGES="$*"
 fi
 
+log=$PWD/check-bindings.txt
+echo "Writing to log $log"
+rm -f $log
+touch $log
 for lang in $SUPPORTED_LANGUAGES; do
     echo "Working on $lang"
+    successes="$lang success: "
+    failures="$lang failure: "
     for swig_ver in $swig_versions; do
 	echo "Working on $lang with $swig_ver"
 	search_path="-DCMAKE_SYSTEM_PROGRAM_PATH=/cache/swig/$swig_ver/bin -DCMAKE_SYSTEM_PREFIX_PATH=/cache/swig/$swig_ver"
@@ -64,13 +70,32 @@ for lang in $SUPPORTED_LANGUAGES; do
 	mkdir -p $dir
 	cd $dir
 	echo "* In $PWD"
-	cmake -DCREATE_$lang=TRUE -DPREPARE_CLASS_FILES=TRUE $search_path $YARP_ROOT/bindings
+	ok=true
+	YARP_JAVA_FLAGS="-DPREPARE_CLASS_FILES=TRUE"
+	YARP_PYTHON_FLAGS="-DCREATE_PYTHON_VERSION=2.7 -DPython_ADDITIONAL_VERSIONS=2.7" # Old swig versions don't work with new python
+	lang_var=YARP_${lang}_FLAGS
+	lang_flags=${!lang_var}
+	cmake -DCREATE_$lang=TRUE $lang_flags $search_path $YARP_ROOT/bindings
 	grep SWIG_EXECUTABLE CMakeCache.txt | grep "/cache/swig/$swig_ver/"
-	make VERBOSE=1
+	make VERBOSE=1 || { 
+	    echo "make failed for $lang $swig_ver" >> $log
+	    ok=false
+	}
 	lc=`echo $lang | tr '[:upper:]' '[:lower:]'`
 	run=$YARP_ROOT/bindings/tests/$lc/run.sh
 	if [ -e $run ]; then
-	    bash $run
+	    bash $run || {
+		echo "runtime failed for $lang $swig_ver" >> $log
+		ok=false
+	    }
+	fi
+	if $ok; then
+	    echo "success for $lang $swig_ver" >> $log
+	    successes="$successes $swig_ver"
+	else
+	    failures="$failures $swig_ver"
 	fi
     done
+    echo $successes >> $log
+    echo $failures >> $log
 done

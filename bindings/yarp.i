@@ -13,6 +13,12 @@
 //  + use of templates
 
 %module(directors="1") yarp
+
+%{
+// missing in some old versions of swig
+#include <stddef.h>
+%}
+
 %import "yarp/conf/api.h"
 %feature("director") yarp::os::PortReader;
 %feature("director") yarp::os::RFModule;
@@ -50,6 +56,15 @@
     #endif
   #endif
 %apply std::string {yarp::os::ConstString};
+#endif
+
+#if defined (SWIGPYTHON)
+%{
+    // add a stray definition missing in SWIG version 2.0.7
+#ifndef PyInt_FromSize_t
+#define PyInt_FromSize_t(x) PyLong_FromSize_t(x)
+#endif
+%}
 #endif
 
 #if defined(SWIGCSHARP)
