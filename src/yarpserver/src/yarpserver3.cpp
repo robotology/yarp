@@ -67,12 +67,11 @@ public:
     }
 
     bool open(Searchable& options) {
-        ConstString dbDefault = "ports.db";
-        ConstString subdbDefault = "subs.db";
+        ConstString dbDefault = ":memory:";
+        ConstString subdbDefault = ":memory:";
         
         if (options.check("memory")) {
-            dbDefault = ":memory:";
-            subdbDefault = ":memory:";
+            fprintf(stderr,"The --memory option was given, but that is now a default. Continuing.\n");
         }
         
         ConstString dbFilename = options.check("portdb",
@@ -90,7 +89,9 @@ public:
                    dbFilename.c_str());
             printf("Using subscription database: %s\n", 
                    subdbFilename.c_str());
-            printf("If you ever need to clear the name server's state, just delete those files.\n\n");
+            if (dbFilename!=":memory:" || subdbFilename!=":memory:") {
+                printf("If you ever need to clear the name server's state, just delete those files.\n\n");
+            }
             printf("IP address: %s\n", 
                    (ip=="...")?"default":ip.c_str());
             printf("Port number: %d\n", sock);
@@ -181,7 +182,6 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
         printf("  --subdb subs.db          Store subscription infomation in named database.\n");
         printf("                           Must not be on an NFS file system.\n");
         printf("                           Set to :memory: to store in memory (faster).\n");
-        printf("  --memory                 Shortcut to use :memory: for portdb and subdb\n");
         printf("  --ip IP.AD.DR.ESS        Set IP address of server.\n");
         printf("  --socket NNNNN           Set port number of server.\n");
         printf("  --web dir                Serve web resources from given directory.\n");
