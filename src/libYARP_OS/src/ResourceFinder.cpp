@@ -851,7 +851,10 @@ public:
         }
     }
 
-    ConstString getHomeRobotPath() {
+    ConstString getHomeRobotPath()
+    {
+//        if(useNearMain)
+//            return configFilePath;
         bool found = false;
         ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
                                                             &found);
