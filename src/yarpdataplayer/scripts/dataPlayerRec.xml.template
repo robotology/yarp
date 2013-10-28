@@ -47,7 +47,7 @@
     </module>
     <module>
         <name>dataDumper</name>
-        <parameters>--name /data/rightArm</parameters>
+        <parameters>--name /data/rightLeg</parameters>
         <node>computer1</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
