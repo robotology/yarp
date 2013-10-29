@@ -195,20 +195,6 @@ public:
      */
     yarp::os::ConstString getContextPath();
 
-     /**
-     *
-     * Return the path to the "user" context directory for the current context
-     *
-     */
-    yarp::os::ConstString getHomeContextPath();
-
-     /**
-     *
-     * Return the path to the "user" robot directory
-     *
-     */
-    yarp::os::ConstString getHomeRobotPath();
-
     /**
      *
      * Return the full stack of contexts used in searching
@@ -317,6 +303,20 @@ public:
     static ConstString getConfigHomeNoCreate() {
         return getConfigHomeWithPossibleCreation(false);        
     }
+
+    /**
+     *
+     * Return the path to the "user" context directory for the current context
+     *
+     */
+    yarp::os::ConstString getHomeContextPath();
+
+     /**
+     *
+     * Return the path to the "user" robot directory
+     *
+     */
+    yarp::os::ConstString getHomeRobotPath();
 
     /**
      *

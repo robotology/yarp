@@ -486,6 +486,7 @@ public:
                                 colon +
                                 pathify(yarp_data_dir1));
         Network::setEnvironment("YARP_CONFIG_DIRS",pathify(yarp_config_dir0));
+        Network::setEnvironment("YARP_ROBOT_NAME", "dummyRobot");
 
 
         fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(),"w");
@@ -649,7 +650,8 @@ void testGetHomeDirsForWriting()
 
             char buf[1000];
             char *result = getcwd(buf,sizeof(buf));
-            checkEqual(rf.getHomeContextPath(),result,"pwd found as directory for writing");
+            checkEqual(rf.getHomeContextPath(),result,"cwd found as context directory for writing");
+            checkEqual(rf.getHomeRobotPath(),result,"cwd found as robot directory for writing");
         }
 
         {
@@ -658,7 +660,13 @@ void testGetHomeDirsForWriting()
             rf.setDefaultConfigFile("my_app.ini");
             rf.configure(NULL,0,NULL);
 
+            bool found;
+            ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
+                                                            &found);
+            if (!found) robot = "default";
             checkEqual(rf.getHomeContextPath(),ResourceFinder::getDataHome() + slash + "contexts" + slash + "my_app","$YARP_DATA_HOME/contexts/my_app found as directory for writing");
+            checkEqual(rf.getHomeRobotPath(),ResourceFinder::getDataHome() + slash + "robots" + slash + robot,"$YARP_DATA_HOME/robots/dummyRobot found as directory for writing");
+
         }
         breakDownTestArea();
     }
