@@ -853,8 +853,8 @@ public:
 
     ConstString getHomeRobotPath()
     {
-//        if(useNearMain)
-//            return configFilePath;
+        if(useNearMain)
+            return configFilePath;
         bool found = false;
         ConstString robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME",
                                                             &found);
