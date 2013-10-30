@@ -20,6 +20,7 @@
 extern "C" {
 #include <avcodec.h>
 #include <avformat.h>
+#include <mathematics.h>
 }
 
 #if LIBAVCODEC_VERSION_INT < (51<<16)
