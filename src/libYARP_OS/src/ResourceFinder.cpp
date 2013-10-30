@@ -874,6 +874,15 @@ ResourceFinder::ResourceFinder() {
     isConfiguredFlag = false;
 }
 
+ResourceFinder::ResourceFinder(const ResourceFinder& alt) {
+    implementation = new ResourceFinderHelper();
+    YARP_ASSERT(implementation!=NULL);
+    owned = true;
+    nullConfig = false;
+    isConfiguredFlag = false;
+    *this = alt;
+}
+
 ResourceFinder::ResourceFinder(Searchable& data, void *implementation) {
     this->implementation = implementation;
     if (!data.isNull()) {
@@ -891,6 +900,14 @@ ResourceFinder::~ResourceFinder() {
         }
         implementation = NULL;
     }
+}
+
+
+const ResourceFinder& ResourceFinder::operator= (const ResourceFinder& alt) {
+    HELPER(implementation) = HELPER(alt.implementation);
+    owned = true;
+    nullConfig = alt.nullConfig;
+    isConfiguredFlag = alt.isConfiguredFlag;
 }
 
 

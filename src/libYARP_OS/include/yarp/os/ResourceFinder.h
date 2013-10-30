@@ -32,7 +32,12 @@ class YARP_OS_API yarp::os::ResourceFinder : public Searchable{
 public:
     ResourceFinder();
 
+    ResourceFinder(const ResourceFinder& alt);
+
     virtual ~ResourceFinder();
+
+    const ResourceFinder& operator= (const ResourceFinder& alt);
+
 
     /**
      *
