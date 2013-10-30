@@ -627,6 +627,12 @@ public:
         breakDownTestArea();
     }
 
+    void testCopy() {
+        report(0,"test context version 2");
+        ResourceFinder rf1;
+        ResourceFinder rf2(rf1);
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
@@ -638,6 +644,7 @@ public:
         testGetConfigDirs();
         testReadConfig();
         testContextVer2();
+        testCopy();
     }
 };
 
