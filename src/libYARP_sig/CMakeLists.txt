@@ -38,11 +38,11 @@ include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_sig ${YARP_sig_SRCS} ${YARP_sig_HDRS})
 target_link_libraries(YARP_sig LINK_PRIVATE YARP_OS ${ACE_LIBRARIES})
-install(TARGETS YARP_sig EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
+install(TARGETS YARP_sig EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_sig)
 
 set_property(TARGET YARP_sig PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
 install(FILES ${YARP_sig_HDRS}
         COMPONENT development
-        DESTINATION include/yarp/sig)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/sig)

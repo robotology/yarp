@@ -109,6 +109,12 @@ set(YARP_HAVE_SYS_TYPES_H ${HAVE_SYS_TYPES_H})
 set(YARP_HAVE_STDDEF_H ${HAVE_STDDEF_H})
 
 #########################################################################
+# Set up install directories
+
+include(GNUInstallDirs)
+
+
+#########################################################################
 # Set up compile flags
 
 add_definitions(-DYARP_PRESENT)

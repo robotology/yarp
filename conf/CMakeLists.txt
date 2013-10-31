@@ -9,7 +9,7 @@ foreach(conf version system options api numeric)
     configure_file(${YARP_MODULE_DIR}/template/yarp_config_${conf}.h.in
                    ${outconf} IMMEDIATE)
     message(STATUS "generated ${outconf}")
-    install(FILES ${outconf} COMPONENT development DESTINATION include/yarp/conf)
+    install(FILES ${outconf} COMPONENT development DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/conf)
 endforeach(conf)
 
 # There are several cmake modules we traditionally make available to
