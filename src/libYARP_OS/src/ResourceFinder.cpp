@@ -876,6 +876,7 @@ public:
         return path;
     }
 
+#ifndef YARP_NO_DEPRECATED
     ConstString context2path(Property& config, const ConstString& context ) {
         if(useNearMain)
             return configFilePath;
@@ -897,6 +898,7 @@ public:
         }
     }
 };
+#endif // YARP_NO_DEPRECATED
 
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
 
@@ -1063,10 +1065,12 @@ ConstString ResourceFinder::getContext() {
     return HELPER(implementation).getContext();
 }
 
+#ifndef YARP_NO_DEPRECATED
 ConstString ResourceFinder::getContextPath() {
     return HELPER(implementation).context2path(config,
                                                HELPER(implementation).getContext());
 }
+#endif // YARP_NO_DEPRECATED
 
 ConstString ResourceFinder::getHomeContextPath() {
     return HELPER(implementation).getHomeContextPath(config,
