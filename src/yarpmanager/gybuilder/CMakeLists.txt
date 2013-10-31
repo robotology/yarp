@@ -62,4 +62,4 @@ target_link_libraries(gyarpbuilder YARP_init
                                    ${GTK2_GTHREAD_LIBRARY}
                                    ${GooCanvasMM_LIBRARIES})
 
-install(TARGETS gyarpbuilder COMPONENT utilities DESTINATION bin)
+install(TARGETS gyarpbuilder COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

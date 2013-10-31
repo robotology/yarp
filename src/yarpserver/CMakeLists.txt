@@ -33,8 +33,8 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
 
   # set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_serversql)
 
-  INSTALL(TARGETS YARP_serversql COMPONENT utilities DESTINATION lib)
-  INSTALL(TARGETS yarpserver yarpserver3 COMPONENT utilities DESTINATION bin)
+  install(TARGETS YARP_serversql COMPONENT utilities DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  install(TARGETS yarpserver yarpserver3 COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   ###############################################################
   ## Some extra test programs

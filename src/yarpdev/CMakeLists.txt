@@ -11,4 +11,4 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
   target_link_libraries(yarpdev yarpmod)
 endif(CREATE_DEVICE_LIBRARY_MODULES)
 
-install(TARGETS yarpdev COMPONENT utilities DESTINATION bin)
+install(TARGETS yarpdev COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

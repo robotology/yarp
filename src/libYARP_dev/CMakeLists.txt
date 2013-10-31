@@ -110,11 +110,11 @@ add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_dev_HDRS})
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
 target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
-install(TARGETS YARP_dev EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
+install(TARGETS YARP_dev EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
 
 set_property(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
 install(FILES ${YARP_dev_HDRS}
         COMPONENT development
-        DESTINATION include/yarp/dev)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev)

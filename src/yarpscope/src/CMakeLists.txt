@@ -29,4 +29,4 @@ target_link_libraries(yarpscope
                       ${TinyXML_LIBRARIES}
                       ${GtkDataboxMM_LIBRARIES})
 
-install(TARGETS yarpscope COMPONENT utilities DESTINATION bin)
+install(TARGETS yarpscope COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

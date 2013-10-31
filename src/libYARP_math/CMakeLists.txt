@@ -50,14 +50,14 @@ if (YARP_HAS_MATH_LIB)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
     target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
-    install(TARGETS YARP_math EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
+    install(TARGETS YARP_math EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
     set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_math)
 
     set_property(TARGET YARP_math PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
     install(FILES ${YARP_math_HDRS}
             COMPONENT development
-            DESTINATION include/yarp/math)
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/math)
 
 endif()
 

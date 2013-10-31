@@ -2,6 +2,8 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+include(GNUInstallDirs)
+
 # Let's see what we built, and record it to facilitate in-tree
 # ("uninstalled") use of YARP.
 get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -41,7 +43,7 @@ else()
 endif()
 export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
-set(VERSIONED_LIB lib${LIB_SUFFIX}/YARP-${YARP_VERSION})
+set(VERSIONED_LIB ${CMAKE_INSTALL_LIBDIR}/YARP-${YARP_VERSION})
 
 # Set up a configuration file for installed use of YARP
 set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/${VERSIONED_LIB}/YARP.cmake)
