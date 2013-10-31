@@ -362,7 +362,6 @@ bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::s
 
         ConstString name = namelist[i]->d_name;
         ACE_stat statbuf;
-        if ((statbuf.st_mode & S_IFMT)== S_IFREG)
         if( name != "." && name != "..")
         {
             YARP_stat((strPath + PATH_SEPARATOR + name.c_str() ).c_str(), &statbuf);
