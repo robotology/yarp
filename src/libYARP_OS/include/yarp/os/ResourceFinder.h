@@ -190,7 +190,7 @@ public:
     /**
      *
      * Return the path that the default context expands to, according to
-     * the policy.
+     * the policy. If no policy was used, behave as getHomeContextPath
      *
      */
     yarp::os::ConstString getContextPath();
@@ -303,6 +303,20 @@ public:
     static ConstString getConfigHomeNoCreate() {
         return getConfigHomeWithPossibleCreation(false);        
     }
+
+    /**
+     *
+     * Return the path to the "user" context directory for the current context
+     *
+     */
+    yarp::os::ConstString getHomeContextPath();
+
+     /**
+     *
+     * Return the path to the "user" robot directory
+     *
+     */
+    yarp::os::ConstString getHomeRobotPath();
 
     /**
      *
