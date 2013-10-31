@@ -187,13 +187,15 @@ public:
      */
     yarp::os::ConstString getContext();
 
+#ifndef YARP_NO_DEPRECATED
     /**
      *
      * Return the path that the default context expands to, according to
      * the policy. If no policy was used, behave as getHomeContextPath
      *
      */
-    yarp::os::ConstString getContextPath();
+    YARP_DEPRECATED yarp::os::ConstString getContextPath();
+#endif // YARP_NO_DEPRECATED
 
     /**
      *
