@@ -13,6 +13,19 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include "yarpcontextutils.h"
 
+#ifdef DELETE
+#undef DELETE
+#endif
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+#include "diff_match_patch.h"
+
 #include <errno.h>
 //#include <stdio>
 
@@ -129,8 +142,8 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
 
             if( name != "." && name != "..")
             {
-                ConstString srcPath=srcDirName + PATH_SEPERATOR + name;
-                ConstString destPath=destDirName + PATH_SEPERATOR + name;
+                ConstString srcPath=srcDirName + PATH_SEPARATOR + name;
+                ConstString destPath=destDirName + PATH_SEPARATOR + name;
                 recursiveCopy(srcPath, destPath);
             }
             free(namelist[i]);
@@ -154,7 +167,7 @@ int recursiveRemove(ConstString dirName)
     for (int i=0; i<n; i++)
     {
         ConstString name = namelist[i]->d_name;
-        ConstString path=dirName + PATH_SEPERATOR + name;
+        ConstString path=dirName + PATH_SEPARATOR + name;
         if( name != "." && name != "..")
         {
             ACE_stat statbuf;
@@ -174,9 +187,9 @@ int recursiveRemove(ConstString dirName)
     return yarp::os::rmdir(dirName.c_str());
 };
 
-std::vector<std::string> listContentDirs(const ConstString &curPath)
+std::vector<yarp::os::ConstString> listContentDirs(const ConstString &curPath)
 {
-    std::vector<std::string> dirsList;
+    std::vector<yarp::os::ConstString> dirsList;
     struct YARP_DIRENT **namelist;
     int n = YARP_scandir(curPath.c_str(),&namelist,NULL,YARP_alphasort);
     if (n<0) {
@@ -188,7 +201,7 @@ std::vector<std::string> listContentDirs(const ConstString &curPath)
         if( name != "." && name != "..")
         {
             ACE_stat statbuf;
-            ConstString path=curPath + PATH_SEPERATOR + name;
+            ConstString path=curPath + PATH_SEPARATOR + name;
             if (YARP_stat(path.c_str(), &statbuf) == -1)
                 printf("Error in checking properties for %s\n", path.c_str());
 
@@ -201,9 +214,9 @@ std::vector<std::string> listContentDirs(const ConstString &curPath)
     return dirsList;
 }
 
-std::vector<std::string> listContentFiles(const ConstString &curPath)
+std::vector<yarp::os::ConstString> listContentFiles(const ConstString &curPath)
 {
-    std::vector<std::string> fileList;
+    std::vector<yarp::os::ConstString> fileList;
     struct YARP_DIRENT **namelist;
     int n = YARP_scandir(curPath.c_str(),&namelist,NULL,YARP_alphasort);
     if (n<0) {
@@ -224,7 +237,7 @@ std::vector<std::string> listContentFiles(const ConstString &curPath)
         if( name != "." && name != "..")
         {
             ACE_stat statbuf;
-            ConstString path=curPath + PATH_SEPERATOR + name;
+            ConstString path=curPath + PATH_SEPARATOR + name;
             if (YARP_stat(path.c_str(), &statbuf) == -1)
                 printf("Error in checking properties for %s\n", path.c_str());
             if ((statbuf.st_mode & S_IFMT)== S_IFREG)
@@ -234,9 +247,9 @@ std::vector<std::string> listContentFiles(const ConstString &curPath)
 
             if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
             {
-                std::vector<std::string> nestedFiles=listContentFiles(path);
-                for(std::vector<std::string>::iterator nestedIt=nestedFiles.begin(); nestedIt !=nestedFiles.end(); ++nestedIt)
-                    fileStack.push_back((path + PATH_SEPERATOR + (*nestedIt)).c_str());
+                std::vector<yarp::os::ConstString> nestedFiles=listContentFiles(path);
+                for(std::vector<yarp::os::ConstString>::iterator nestedIt=nestedFiles.begin(); nestedIt !=nestedFiles.end(); ++nestedIt)
+                    fileStack.push_back((path + PATH_SEPARATOR + (*nestedIt)).c_str());
             }
         }
         fileStack.pop_front();
@@ -246,8 +259,8 @@ std::vector<std::string> listContentFiles(const ConstString &curPath)
 
 void printContentDirs(const ConstString &curPath)
 {
-    std::vector<std::string> dirsList=listContentDirs(curPath);
-    for(std::vector<std::string>::iterator dirsIt=dirsList.begin(); dirsIt!=dirsList.end(); ++dirsIt)
+    std::vector<yarp::os::ConstString> dirsList=listContentDirs(curPath);
+    for(std::vector<yarp::os::ConstString>::iterator dirsIt=dirsList.begin(); dirsIt!=dirsList.end(); ++dirsIt)
         printf("%s\n",(*dirsIt).c_str());
 };
 
@@ -301,19 +314,19 @@ void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
         yarp::os::mkdir((rf.getDataHome()).c_str());
     }
 
-    dir= YARP_opendir((rf.getDataHome() + PATH_SEPERATOR + getFolderStringName(ftype)).c_str());
+    dir= YARP_opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(ftype)).c_str());
     if (dir!=NULL)
         YARP_closedir(dir);
     else
     {
-        yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + getFolderStringName(ftype)).c_str());
+        yarp::os::mkdir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(ftype)).c_str());
     }
-    dir= YARP_opendir((rf.getDataHome() + PATH_SEPERATOR + getFolderStringNameHidden(ftype)).c_str());
+    dir= YARP_opendir((rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(ftype)).c_str());
     if (dir!=NULL)
         YARP_closedir(dir);
     else
     {
-        ConstString hiddenPath=(rf.getDataHome() + PATH_SEPERATOR + getFolderStringNameHidden(ftype));
+        ConstString hiddenPath=(rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(ftype));
         yarp::os::mkdir(hiddenPath.c_str());
 #ifdef WIN32
         SetFileAttributes(hiddenPath.c_str(), FILE_ATTRIBUTE_HIDDEN);
@@ -324,15 +337,15 @@ void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
 bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::string>& filenames)
 {
     string strPath = string (basePath);
-    if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
-            (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
-            strPath = strPath + string(PATH_SEPERATOR);
+    if((strPath.rfind(PATH_SEPARATOR)==string::npos) ||
+            (strPath.rfind(PATH_SEPARATOR)!=strPath.size()-1))
+            strPath = strPath + string(PATH_SEPARATOR);
 
      string mySuffix=string(suffix);
 
-    if(((mySuffix.rfind(PATH_SEPERATOR)==string::npos) ||
-            (mySuffix.rfind(PATH_SEPERATOR)!=mySuffix.size()-1)) && mySuffix!="")
-            mySuffix = mySuffix + string(PATH_SEPERATOR);
+    if(((mySuffix.rfind(PATH_SEPARATOR)==string::npos) ||
+            (mySuffix.rfind(PATH_SEPARATOR)!=mySuffix.size()-1)) && mySuffix!="")
+            mySuffix = mySuffix + string(PATH_SEPARATOR);
 
     strPath += mySuffix;
 
@@ -348,16 +361,19 @@ bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::s
     {
 
         ConstString name = namelist[i]->d_name;
+        ACE_stat statbuf;
+        if ((statbuf.st_mode & S_IFMT)== S_IFREG)
         if( name != "." && name != "..")
         {
-            if (namelist[i]->d_type == DT_REG)
+            YARP_stat((strPath + PATH_SEPARATOR + name.c_str() ).c_str(), &statbuf);
+            if ((statbuf.st_mode & S_IFMT)== S_IFREG)
             {
-                filenames.insert(mySuffix+name);
+                filenames.insert(mySuffix+name.c_str());
             }
             else
-                if(namelist[i]->d_type == DT_DIR)
+                if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
                 {
-                    ok=ok && recursiveFileList(basePath, (mySuffix+ name).c_str(), filenames);
+                    ok=ok && recursiveFileList(basePath, (mySuffix+ name.c_str()).c_str(), filenames);
                 }
         }
         free(namelist[i]);
@@ -383,20 +399,20 @@ int recursiveDiff(yarp::os::ConstString srcDirName, yarp::os::ConstString destDi
         if (destPos!=destFileList.end())
         {
             diff_match_patch<std::string> dmp;
-            ConstString srcFileName=srcDirName+ PATH_SEPERATOR + (*srcIt);
+            ConstString srcFileName=srcDirName+ PATH_SEPARATOR + (*srcIt);
             if (isHidden(srcFileName))
                 continue;
 
             std::ifstream in(srcFileName.c_str());
             std::string srcStr((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
             in.close();
-            in.open((destDirName+ PATH_SEPERATOR +(*destPos)).c_str());
+            in.open((destDirName+ PATH_SEPARATOR +(*destPos)).c_str());
             std::string destStr((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
             std::string patchString = dmp.patch_toText(dmp.patch_make(srcStr, destStr));
             if (patchString!= "")
             {
-                output << "- " << srcDirName + PATH_SEPERATOR + (*srcIt)<<endl;
-                output << "+ " << destDirName + PATH_SEPERATOR + (*destPos) <<endl;
+                output << "- " << srcDirName + PATH_SEPARATOR + (*srcIt)<<endl;
+                output << "+ " << destDirName + PATH_SEPARATOR + (*destPos) <<endl;
                 output << dmp.patch_toText(dmp.patch_make(srcStr, destStr))<<std::endl;
                 nModifiedFiles++;
             }
@@ -404,14 +420,14 @@ int recursiveDiff(yarp::os::ConstString srcDirName, yarp::os::ConstString destDi
         }
 //         else
 //         {
-//             output << "Added file  " << srcDirName+PATH_SEPERATOR +(*srcIt) <<endl;
+//             output << "Added file  " << srcDirName+PATH_SEPARATOR +(*srcIt) <<endl;
 //             nModifiedFiles++;
 //         }
     }
 
 //     for(std::set<std::string>::iterator destIt=destFileList.begin(); destIt !=destFileList.end(); ++destIt)
 //     {
-//         ConstString destFileName=destDirName+ PATH_SEPERATOR + (*destIt);
+//         ConstString destFileName=destDirName+ PATH_SEPARATOR + (*destIt);
 //         if(isHidden(destFileName))
 //             continue;
 //
@@ -461,18 +477,18 @@ int recursiveMerge(yarp::os::ConstString srcDirName, yarp::os::ConstString destD
 
     for(std::set<std::string>::iterator srcIt=srcFileList.begin(); srcIt !=srcFileList.end(); ++srcIt)
     {
-            ConstString srcFileName=srcDirName+ PATH_SEPERATOR + (*srcIt);
+            ConstString srcFileName=srcDirName+ PATH_SEPARATOR + (*srcIt);
             if (isHidden(srcFileName))
                 continue;
 
         std::set<std::string>::iterator destPos=destFileList.find(*srcIt);
         if (destPos!=destFileList.end())
         {
-            ConstString destFileName=destDirName+ PATH_SEPERATOR + (*destPos);
+            ConstString destFileName=destDirName+ PATH_SEPARATOR + (*destPos);
             std::set<std::string>::iterator hiddenDestPos=hiddenFilesList.find(*srcIt);
             if (hiddenDestPos!=hiddenFilesList.end())
             {
-                ConstString hiddenFileName=commonParentName+ PATH_SEPERATOR + (*hiddenDestPos);
+                ConstString hiddenFileName=commonParentName+ PATH_SEPARATOR + (*hiddenDestPos);
                 fileMerge(srcFileName, destFileName, hiddenFileName);
             }
             else
@@ -486,7 +502,7 @@ int recursiveMerge(yarp::os::ConstString srcDirName, yarp::os::ConstString destD
 //             std::set<std::string>::iterator hiddenDestPos=hiddenFilesList.find(*srcIt);
 //             if (hiddenDestPos==hiddenFilesList.end())
 //             {
-//                 output << "File  " << srcDirName+PATH_SEPERATOR +(*srcIt) << " has been added to the original context" << endl;
+//                 output << "File  " << srcDirName+PATH_SEPARATOR +(*srcIt) << " has been added to the original context" << endl;
 //             }
 //         }
     }
@@ -495,7 +511,7 @@ int recursiveMerge(yarp::os::ConstString srcDirName, yarp::os::ConstString destD
 //     {
 //         std::set<std::string>::iterator hiddenDestPos=hiddenFilesList.find(*destIt);
 //         if (hiddenDestPos==hiddenFilesList.end())
-//             output << "File " << destDirName+PATH_SEPERATOR +(*destIt) << " does not belong to the original context" << endl;
+//             output << "File " << destDirName+PATH_SEPARATOR +(*destIt) << " does not belong to the original context" << endl;
 //     }
 
     return (ok? 0: 1);//tbm
@@ -516,10 +532,10 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
     rf.setVerbose(verbose);
     ResourceFinderOptions opts;
     opts.searchLocations=ResourceFinderOptions::Installed;
-    ConstString originalpath=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
-    ConstString destDirname=rf.getDataHome() + PATH_SEPERATOR + getFolderStringName(fType) + PATH_SEPERATOR + contextName;
+    ConstString originalpath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
+    ConstString destDirname=rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(fType) + PATH_SEPARATOR + contextName;
     //tmp:
-    ConstString hiddenDirname=rf.getDataHome() + PATH_SEPERATOR + getFolderStringNameHidden(fType) + PATH_SEPERATOR + contextName;
+    ConstString hiddenDirname=rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(fType) + PATH_SEPARATOR + contextName;
     prepareHomeFolder(rf, fType);
     if (importArg.size() >2 )
     {
@@ -532,8 +548,8 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
             ConstString fileName=importArg.get(i).asString();
             if(fileName != "")
             {
-                ok = (recursiveCopy(originalpath+ PATH_SEPERATOR + fileName, destDirname + PATH_SEPERATOR + fileName) >=0 ) && ok;
-                ok = ok && (recursiveCopy(originalpath+ PATH_SEPERATOR + fileName, hiddenDirname + PATH_SEPERATOR + fileName) >=0 );
+                ok = (recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, destDirname + PATH_SEPARATOR + fileName) >=0 ) && ok;
+                ok = ok && (recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, hiddenDirname + PATH_SEPARATOR + fileName) >=0 );
             }
         }
         if (ok)
@@ -559,7 +575,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
         {
             printf("Copied %s %s from %s to %s .\n", fType==CONTEXTS ? "context" : "robot",  contextName.c_str(), originalpath.c_str(), destDirname.c_str());
             printf("Current locations for this %s:\n", fType==CONTEXTS ? "context" : "robot");
-            yarp::os::Bottle paths=rf.findPaths((getFolderStringName(fType) + PATH_SEPERATOR +contextName).c_str());
+            yarp::os::Bottle paths=rf.findPaths((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str());
             for (int curCont=0; curCont<paths.size(); ++curCont)
                 printf("%s\n", paths.get(curCont).asString().c_str());
         }
@@ -593,13 +609,13 @@ int importAll(folderType fType, bool verbose)
             if( name != "." && name != "..")
             {
                 ACE_stat statbuf;
-                ConstString originalpath=curPath + PATH_SEPERATOR + name;
+                ConstString originalpath=curPath + PATH_SEPARATOR + name;
                 YARP_stat(originalpath.c_str(), &statbuf);
                 if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
                 {
-                    ConstString destDirname=rf.getDataHome() + PATH_SEPERATOR + getFolderStringName(fType) + PATH_SEPERATOR + name;
+                    ConstString destDirname=rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(fType) + PATH_SEPARATOR + name;
                     recursiveCopy(originalpath, destDirname);
-                    ConstString hiddenDirname=rf.getDataHome() + PATH_SEPERATOR + getFolderStringNameHidden(fType) + PATH_SEPERATOR + name;
+                    ConstString hiddenDirname=rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(fType) + PATH_SEPARATOR + name;
                     recursiveCopy(originalpath, hiddenDirname);// TODO: check result!
                 }
             }
@@ -609,7 +625,7 @@ int importAll(folderType fType, bool verbose)
     }
 
     printf("New user %s:\n", fType==CONTEXTS ? "contexts" : "robots");
-    printContentDirs(rf.getDataHome() + PATH_SEPERATOR + getFolderStringName(fType));
+    printContentDirs(rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(fType));
     return 0;
 }
 
@@ -619,7 +635,7 @@ int remove(yarp::os::ConstString contextName, folderType fType, bool verbose)
     rf.setVerbose(verbose);
     ResourceFinderOptions opts;
     opts.searchLocations=ResourceFinderOptions::User;
-    ConstString targetPath=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
+    ConstString targetPath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
     if (targetPath=="")
     {
         printf("Could not find %s %s !\n",fType==CONTEXTS ? "context" : "robot", contextName.c_str());
@@ -638,7 +654,7 @@ int remove(yarp::os::ConstString contextName, folderType fType, bool verbose)
             else
                 printf("Removed folder %s\n", targetPath.c_str());
             //remove hidden folder:
-            ConstString hiddenPath=   rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
+            ConstString hiddenPath=   rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
             if (hiddenPath != "")
                 recursiveRemove(hiddenPath.c_str());
             return result;
@@ -658,10 +674,10 @@ int diff(yarp::os::ConstString contextName, folderType fType, bool verbose)
 
     ResourceFinderOptions opts;
     opts.searchLocations=ResourceFinderOptions::User;
-    ConstString userPath=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
+    ConstString userPath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
 
     opts.searchLocations=ResourceFinderOptions::Installed;
-    ConstString installedPath=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
+    ConstString installedPath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
 
     recursiveDiff(installedPath, userPath);
     return 0;
@@ -676,16 +692,16 @@ int diffList(folderType fType, bool verbose)
     for(int n=0; n <installedPaths.size(); ++n)
     {
         std::string installedPath=installedPaths.get(n).asString();
-        std::vector<std::string> subDirs=listContentDirs(installedPath);
-        for (std::vector<std::string>::iterator subDirIt= subDirs.begin(); subDirIt!=subDirs.end(); ++subDirIt)
+        std::vector<yarp::os::ConstString> subDirs=listContentDirs(installedPath);
+        for (std::vector<yarp::os::ConstString>::iterator subDirIt= subDirs.begin(); subDirIt!=subDirs.end(); ++subDirIt)
         {
             ostream tmp(0);
             opts.searchLocations=ResourceFinderOptions::User;
             rf.setQuiet();
-            ConstString userPath=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +(*subDirIt)).c_str(), opts);
+            ConstString userPath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +(*subDirIt)).c_str(), opts);
             if (userPath == "")
                 continue;
-            if ( recursiveDiff(installedPath + PATH_SEPERATOR + (*subDirIt), userPath, tmp)>0)
+            if ( recursiveDiff(installedPath + PATH_SEPARATOR + (*subDirIt).c_str(), userPath, tmp)>0)
                 std::cout<< (*subDirIt) <<std::endl;
         }
     }
@@ -715,12 +731,12 @@ int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
             {
                 ResourceFinderOptions opts;
                 opts.searchLocations=ResourceFinderOptions::User;
-                ConstString userFileName=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName + PATH_SEPERATOR + fileName).c_str(), opts);
+                ConstString userFileName=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName + PATH_SEPARATOR + fileName).c_str(), opts);
 
-                ConstString hiddenFileName=rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPERATOR +contextName+ PATH_SEPERATOR + fileName).c_str(), opts);
+                ConstString hiddenFileName=rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR +contextName+ PATH_SEPARATOR + fileName).c_str(), opts);
 
                 opts.searchLocations=ResourceFinderOptions::Installed;
-                ConstString installedFileName=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName+ PATH_SEPERATOR + fileName).c_str(), opts);
+                ConstString installedFileName=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName+ PATH_SEPARATOR + fileName).c_str(), opts);
 
                 if (userFileName!="" && hiddenFileName != "" && installedFileName !="")
                     fileMerge(installedFileName, userFileName, hiddenFileName);
@@ -735,12 +751,12 @@ int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
     {
         ResourceFinderOptions opts;
         opts.searchLocations=ResourceFinderOptions::User;
-        ConstString userPath=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
+        ConstString userPath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
 
-        ConstString hiddenUserPath=rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
+        ConstString hiddenUserPath=rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
 
         opts.searchLocations=ResourceFinderOptions::Installed;
-        ConstString installedPath=rf.findPath((getFolderStringName(fType) + PATH_SEPERATOR +contextName).c_str(), opts);
+        ConstString installedPath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
 
         recursiveMerge(installedPath, userPath, hiddenUserPath);
     }

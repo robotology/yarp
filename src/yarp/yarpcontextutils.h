@@ -10,12 +10,13 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ResourceFinder.h>
 #include <iostream>
-#include "diff_match_patch.h"
+#include <vector>
+
 
 #if defined(WIN32)
-    #define PATH_SEPERATOR      "\\"
+    #define PATH_SEPARATOR      "\\"
 #else
-    #define PATH_SEPERATOR      "/"
+    #define PATH_SEPARATOR      "/"
 #endif
 
 enum folderType{CONTEXTS=0, ROBOTS=1};
@@ -23,8 +24,8 @@ enum folderType{CONTEXTS=0, ROBOTS=1};
 bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileName);
 int recursiveCopy(yarp::os::ConstString srcDirName, yarp::os::ConstString destDirName);
 int recursiveRemove(yarp::os::ConstString dirName);
-std::vector<std::string> listContentDirs(const yarp::os::ConstString &curPath);
-std::vector<std::string> listContentFiles(const yarp::os::ConstString &curPath);
+std::vector<yarp::os::ConstString> listContentDirs(const yarp::os::ConstString &curPath);
+std::vector<yarp::os::ConstString> listContentFiles(const yarp::os::ConstString &curPath);
 void printContentDirs(const yarp::os::ConstString &curPath);
 void printUserFolders(yarp::os::ResourceFinder &rf, folderType ftype);
 void printSysadmFolders(yarp::os::ResourceFinder &rf, folderType ftype);

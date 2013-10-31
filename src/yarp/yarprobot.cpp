@@ -18,15 +18,7 @@
 #include "yarpcontextutils.h"
 #include "yarprobot.h"
 
-#if defined(WIN32)
-    #define PATH_SEPERATOR      "\\"
-#else
-    #define PATH_SEPERATOR      "/"
-#endif
-
 using namespace yarp::os;
-
-
 
 void yarp_robot_help() {
     printf("Usage: yarp-config robot [OPTION]\n\n");
@@ -109,7 +101,7 @@ int yarp_robot_main(int argc, char *argv[]) {
         yarp::os::ResourceFinder rf;
         if (options.check("verbose"))
             rf.setVerbose(true);
-        yarp::os::Bottle paths=rf.findPaths((ConstString("robots") + PATH_SEPERATOR +contextName).c_str());
+        yarp::os::Bottle paths=rf.findPaths((ConstString("robots") + PATH_SEPARATOR +contextName).c_str());
         for (int curCont=0; curCont<paths.size(); ++curCont)
             printf("%s\n", paths.get(curCont).asString().c_str());
         return 0;
@@ -136,7 +128,7 @@ int yarp_robot_main(int argc, char *argv[]) {
 //         yarp::os::ResourceFinder rf;
 //         if (options.check("verbose"))
 //             rf.setVerbose(true);
-//         yarp::os::Bottle paths=rf.findPaths((ConstString("contexts") + PATH_SEPERATOR +contextName).c_str());
+//         yarp::os::Bottle paths=rf.findPaths((ConstString("contexts") + PATH_SEPARATOR +contextName).c_str());
 //         std::vector<std::string> fileList;
 //         for (int curCont=0; curCont<paths.size(); ++curCont)
 //         {
