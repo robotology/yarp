@@ -50,4 +50,4 @@ target_link_libraries(gyarpmanager ${GTK2_GTK_LIBRARY}
                                    ${GTK2_SIGC++_LIBRARY}
 								   ${GTK2_GTHREAD_LIBRARY})
 
-install(TARGETS gyarpmanager COMPONENT utilities DESTINATION bin)
+install(TARGETS gyarpmanager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

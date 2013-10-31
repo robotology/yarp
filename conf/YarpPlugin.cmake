@@ -38,6 +38,7 @@
 ##
 #########################################################################
 
+include(GNUInstallDirs)
 
 ## Skip this whole file if it has already been included
 if(NOT COMMAND YARP_END_PLUGIN_LIBRARY)
@@ -61,7 +62,7 @@ if(YARP_TREE_BUILD)
     set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
     configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
         ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY IMMEDIATE)
-    install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION share/yarp/plugins)
+    install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/yarp/plugins)
 endif(YARP_TREE_BUILD)
 
 #########################################################################
@@ -325,7 +326,7 @@ macro(YARP_ADD_PLUGIN LIBNAME)
             install(TARGETS ${LIBNAME}
                     EXPORT YARP
                     COMPONENT runtime
-                    DESTINATION lib)
+                    DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif(YARP_TREE_INCLUDE_DIRS)
     endif(NOT X_IS_IMPORTED)
 endmacro(YARP_ADD_PLUGIN)

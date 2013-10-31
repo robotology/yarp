@@ -28,12 +28,12 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
     add_library(YARP_name ${YARP_name_SRCS} ${YARP_name_HDRS})
     target_link_libraries(YARP_name LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_name LINK_PRIVATE ${ACE_LIBRARIES})
-    install(TARGETS YARP_name EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
+    install(TARGETS YARP_name EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
     set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_name)
 
     set_property(TARGET YARP_name PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
     install(FILES ${YARP_name_HDRS}
             COMPONENT development
-            DESTINATION include/yarp/name)
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/name)
 endif()

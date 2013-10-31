@@ -37,7 +37,7 @@ if(CREATE_YARPVIEW)
                                    ${GTK2_GOBJECT_LIBRARY}
                                    ${GTK2_GTHREAD_LIBRARY})
 
-    install(TARGETS yarpview COMPONENT utilities DESTINATION bin)
+    install(TARGETS yarpview COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
     yarp_install(FILES yarpview.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
     #configure_file(yarpview.xml ${CMAKE_BINARY_DIR}/modules/yarpview.xml COPYONLY)

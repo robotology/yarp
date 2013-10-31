@@ -336,16 +336,16 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(YARP_OS pthread)
 endif()
 
-install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
+install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
 install(FILES ${YARP_OS_HDRS}
         COMPONENT development
-        DESTINATION include/yarp/os)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os)
 install(FILES ${YARP_OS_IDL_HDRS}
         COMPONENT development
-        DESTINATION include/yarp/os/idl)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl)
 install(FILES ${YARP_OS_IMPL_HDRS}
         COMPONENT development
-        DESTINATION include/yarp/os/impl)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl)

@@ -25,9 +25,9 @@ IF (YARP_USE_PERSISTENT_NAMESERVER)
   TARGET_LINK_LIBRARIES(yarp YARP_serversql)
 ENDIF ()
 
-INSTALL(TARGETS yarp ${YARPSERVER_NAME} COMPONENT utilities DESTINATION bin)
+install(TARGETS yarp ${YARPSERVER_NAME} COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 include_directories(${CMAKE_SOURCE_DIR}/extern/diff_match_patch)
 ADD_EXECUTABLE(yarp-config yarpconfig.cpp yarpcontext.cpp yarpcontext.h yarprobot.cpp yarprobot.h yarpcontextutils.cpp yarpcontextutils.h)
 TARGET_LINK_LIBRARIES(yarp-config YARP_OS YARP_init ${ACE_LIBRARIES})
-INSTALL(TARGETS yarp-config COMPONENT utilities DESTINATION bin)
+install(TARGETS yarp-config COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

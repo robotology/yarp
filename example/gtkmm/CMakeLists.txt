@@ -20,8 +20,8 @@ SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 ADD_EXECUTABLE(gtkmmdemo ${folder_source} ${folder_header})
-INSTALL (TARGETS gtkmmdemo RUNTIME DESTINATION bin)
-INSTALL (FILES basic.glade DESTINATION bin)
+install(TARGETS gtkmmdemo RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES basic.glade DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 TARGET_LINK_LIBRARIES(gtkmmdemo ${GTKMM_LINK_FLAGS})
 
