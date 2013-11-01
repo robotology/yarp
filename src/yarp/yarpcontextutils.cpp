@@ -13,6 +13,9 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include "yarpcontextutils.h"
 
+#if defined(WIN32)
+#pragma warning (disable : 4018)
+
 #ifdef DELETE
 #undef DELETE
 #endif
@@ -24,7 +27,14 @@
 #ifdef min
 #undef min
 #endif
+
+#endif
+
 #include "diff_match_patch.h"
+
+#if defined(WIN32)
+#pragma warning(default:4018)
+#endif
 
 #include <errno.h>
 //#include <stdio>
