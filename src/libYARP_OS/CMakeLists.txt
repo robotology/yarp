@@ -333,7 +333,7 @@ add_library(YARP_OS ${YARP_OS_SRCS} ${YARP_OS_HDRS} ${YARP_OS_IDL_HDRS} ${YARP_O
 target_link_libraries(YARP_OS LINK_PRIVATE ${ACE_LIBRARIES})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(YARP_OS pthread)
+    target_link_libraries(YARP_OS LINK_PRIVATE pthread)
 endif()
 
 install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
