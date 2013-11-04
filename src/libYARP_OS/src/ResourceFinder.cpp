@@ -414,10 +414,11 @@ public:
         }
 
         ConstString s = "";
+        ConstString slash = NetworkBase::getDirectorySeparator();
 
         if (base1!="") {
             s = base1;
-            s = s + "/";
+            s = s + slash;
         }
 
         if (isRooted(base2)) {
@@ -426,7 +427,7 @@ public:
             s = s + base2;
         }
         if (base2!="") {
-            s = s + "/";
+            s = s + slash;
         }
 
         if (isRooted(base3)) {
@@ -435,7 +436,7 @@ public:
             s = s + base3;
         }
         if (base3!="") {
-            s = s + "/";
+            s = s + slash;
         }
 
         s = s + name;
@@ -835,9 +836,10 @@ public:
         {
             ConstString path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
 
+            ConstString slash = NetworkBase::getDirectorySeparator();
             if (path.length()>1) {
-                if (path[path.length()-1]=='/') {
-                path = path.substr(0,path.length()-1);
+              if (path[path.length()-1] == slash[0]) {
+                path = path.substr(0,path.length()-slash.size());
                 }
             }
 
@@ -861,9 +863,10 @@ public:
         if (!found) robot = "default";
         ConstString path = getPath(ResourceFinder::getDataHome(), "robots", robot, "");
 
+        ConstString slash = NetworkBase::getDirectorySeparator();
         if (path.length()>1) {
-            if (path[path.length()-1]=='/') {
-            path = path.substr(0,path.length()-1);
+            if (path[path.length()-1]==slash[0]) {
+            path = path.substr(0,path.length()-slash.size());
             }
         }
 
@@ -887,9 +890,10 @@ public:
                 ConstString cap =
                 config.check("capability_directory",Value("app")).asString();
                 ConstString path = getPath(root,cap,context,"");
+                ConstString slash = NetworkBase::getDirectorySeparator();
                 if (path.length()>1) {
-                    if (path[path.length()-1]=='/') {
-                        path = path.substr(0,path.length()-1);
+                    if (path[path.length()-1]==slash[0]) {
+                        path = path.substr(0,path.length()-slash.size());
                     }
                 }
                 return path;
