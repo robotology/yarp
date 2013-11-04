@@ -915,7 +915,7 @@ public:
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
 
-        Value strict = config.check("writeStrict", Value("off"), "Do I use writeStrict?");
+        Value strict = config.check("writeStrict", Value("off"), "Do I use writeStrict (on) or not (off)");
 
         if(strict.asString() == "on")
         {
