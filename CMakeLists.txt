@@ -44,11 +44,6 @@ include(YarpCMakeWorkarounds)
 # See conf/YarpFindDependencies.cmake.
 include(YarpFindDependencies)
 
-# Turn on testing.
-if(YARP_COMPILE_TESTS)
-    enable_testing()
-endif()
-
 # Make some custom header files containing compile settings.
 add_subdirectory(conf)
 

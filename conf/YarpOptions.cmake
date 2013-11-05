@@ -148,11 +148,11 @@ if(YARP_CLEAN_API)
         else(WIN32)
             message(STATUS "Since tests access non-public classes, we'll need to leave all symbols in the shared libraries. If this is undesired, turn one of YARP_COMPILE_TESTS or CREATE_SHARED_LIBRARY off.")
         endif(WIN32)
-    else(YARP_COMPILE_TESTS)
+    else()
         set(YARP_FILTER_API TRUE)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISIBILITY_HIDDEN_FLAGS}")
-    endif(YARP_COMPILE_TESTS)
-endif(YARP_CLEAN_API)
+    endif()
+endif()
 
 
 #########################################################################
@@ -197,9 +197,9 @@ endif(YARP_EXPERIMENTAL_HARDENING)
 option(YARP_EXPERIMENTAL_CXX11 "Build YARP using C++11 standard" FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_CXX11)
 if(YARP_EXPERIMENTAL_CXX11)
-   add_definitions("-DYARP_CXX11")
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
-   set(YARP_HAS_CXX11 TRUE)
+    add_definitions("-DYARP_CXX11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
+    set(YARP_HAS_CXX11 TRUE)
 endif(YARP_EXPERIMENTAL_CXX11)
 
 
@@ -212,13 +212,13 @@ endif(YARP_EXPERIMENTAL_CXX11)
 
 option(YARP_WRAP_STL_STRING "Do you want the yarp string classes to wrap std::string? (as opposed to being exactly std::string)" TRUE)
 mark_as_advanced(YARP_WRAP_STL_STRING)
-set (YARP_WRAP_STL_STRING_INLINE_DEFAULT TRUE)
-if (MSVC)
-  set (YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
-endif ()
+set(YARP_WRAP_STL_STRING_INLINE_DEFAULT TRUE)
+if(MSVC)
+    set(YARP_WRAP_STL_STRING_INLINE_DEFAULT FALSE)
+endif()
 option(YARP_WRAP_STL_STRING_INLINE "If wrapping std::string, should we use an inline implementation? (as opposed to opaque)" ${YARP_WRAP_STL_STRING_INLINE_DEFAULT})
 mark_as_advanced(YARP_WRAP_STL_STRING_INLINE)
-  
+
 
 #########################################################################
 # Control compilation of device tests.
@@ -231,23 +231,23 @@ mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 # Control submission of reports
 option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://dashboard.icub.org/index.php?project=YARP" OFF)
 if (ENABLE_DASHBOARD_SUBMIT)
-  include(Dart)
-endif (ENABLE_DASHBOARD_SUBMIT)
+    include(CTest)
+endif()
 
 
 #########################################################################
 # Control setting an rpath
-if (NOT MSVC)
-  option(INSTALL_WITH_RPATH "When installing YARP, give executables a full RPATH" FALSE)
-  option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables (deprecated, please use INSTALL_WITH_RPATH" FALSE)
-  mark_as_advanced(ENABLE_FORCE_RPATH)
-endif (NOT MSVC)
+if(NOT MSVC)
+    option(INSTALL_WITH_RPATH "When installing YARP, give executables a full RPATH" FALSE)
+    option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables (deprecated, please use INSTALL_WITH_RPATH" FALSE)
+    mark_as_advanced(INSTALL_WITH_RPATH ENABLE_FORCE_RPATH)
+endif()
 
-if (INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-endif ()
+if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
 
 
 #########################################################################
@@ -268,8 +268,8 @@ if(CXX_HAS_WERROR)
     mark_as_advanced(YARP_ABORT_ON_WARNING)
     if(YARP_ABORT_ON_WARNING)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-     endif(YARP_ABORT_ON_WARNING)
-endif(CXX_HAS_WERROR)
+    endif()
+endif()
 
 
 ### -Wfatal-errors
@@ -278,14 +278,14 @@ if(CXX_HAS_WFATAL_ERROR)
     mark_as_advanced(YARP_FATAL_ERRORS)
     if(YARP_FATAL_ERRORS)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
-    endif(YARP_FATAL_ERRORS)
-endif(CXX_HAS_WFATAL_ERROR)
+    endif()
+endif()
 
 #########################################################################
 # Display test machine options for reference, if they are set
 
-if (TEST_MACHINE_HOSTNAME)
+if(TEST_MACHINE_HOSTNAME)
   message(STATUS "TEST_MACHINE_HOSTNAME: ${TEST_MACHINE_HOSTNAME}")
   message(STATUS "TEST_MACHINE_OS_TYPE: ${TEST_MACHINE_OS_TYPE}")
   message(STATUS "TEST_MACHINE_TEST_TYPE: ${TEST_MACHINE_TEST_TYPE}")
-endif ()
+endif()
