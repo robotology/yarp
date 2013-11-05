@@ -4,8 +4,7 @@
 
 project(YARP_dev)
 
-option (NEW_WRAPPERS_WIP "under testing -> use newly imported wrappers from icub repository")
-set(NEW_WRAPPERS_WIP FALSE CACHE BOOL "")
+option (NEW_WRAPPERS_WIP "under testing -> use newly imported wrappers from icub repository" FALSE)
 
 set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/api.h

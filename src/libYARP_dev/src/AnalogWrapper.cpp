@@ -7,6 +7,7 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
+using namespace analogWrapper_yarp_internal_namespace;
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createAnalogWrapper() {

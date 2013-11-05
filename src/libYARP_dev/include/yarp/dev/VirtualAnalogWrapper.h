@@ -52,11 +52,6 @@ namespace virtualAnalogWrapper_yarp_internal_namespace
     class AnalogSubDevice;
 }
 
-using namespace yarp::os;
-using namespace yarp::dev;
-using namespace yarp::sig;
-using namespace virtualAnalogWrapper_yarp_internal_namespace;
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class VirtualAnalogWrapper;
@@ -68,7 +63,7 @@ public:
     AnalogSubDevice();
    ~AnalogSubDevice();
 
-    bool attach(PolyDriver *driver, const std::string &key);
+    bool attach(yarp::dev::PolyDriver *driver, const std::string &key);
     void detach();
 
     bool configure(int map0, int map1, const std::string &key);
@@ -104,15 +99,15 @@ protected:
     bool mIsConfigured;
     bool mIsAttached;
     double lastRecvMsg;
-    PolyDriver            *mpDevice;
-    IVirtualAnalogSensor  *mpSensor;
+    yarp::dev::PolyDriver            *mpDevice;
+    yarp::dev::IVirtualAnalogSensor  *mpSensor;
 };
 
 } // closing namespace virtualAnalogWrapper_yarp_internal_namespace
 
 ///////////////////////////////////////////////////
 // TODO add IVirtualAnalogSensor interface to have Channels number and status??
-class VirtualAnalogWrapper : public DeviceDriver, public Thread, public IMultipleWrapper
+class VirtualAnalogWrapper : public yarp::dev::DeviceDriver, public yarp::os::Thread, public yarp::dev::IMultipleWrapper
 {
 public:
     VirtualAnalogWrapper() : mMutex(1)
@@ -129,7 +124,7 @@ public:
     }
 
     // DeviceDriver //////////////////////////////////////////////////////////
-    virtual bool open(Searchable& config);
+    virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
     //////////////////////////////////////////////////////////////////////////
 
@@ -158,7 +153,7 @@ protected:
     double lastRecv;
     bool first_check;
 
-    std::vector<AnalogSubDevice> mSubdevices;
+    std::vector<virtualAnalogWrapper_yarp_internal_namespace::AnalogSubDevice> mSubdevices;
     yarp::os::BufferedPort<yarp::os::Bottle> mPortInputTorques;
 };
 

@@ -47,14 +47,6 @@ namespace yarp{
     }
 }
 
-
-using namespace yarp::sig;
-using namespace yarp::os;
-using namespace std;
-
-using namespace analogWrapper_yarp_internal_namespace;
-
-
 namespace analogWrapper_yarp_internal_namespace {
 /**
   * Handler of the rpc port related to an analog sensor.
@@ -96,7 +88,6 @@ public:
 
 }  // closing namespace analogWrapper_yarp_internal_namespace
 
-
 /**
   * It reads the data from an analog sensor and sends them on one or more ports.
   * It creates one rpc port and its related handler for every output port.
@@ -109,8 +100,8 @@ private:
     std::string rpcPortName;
     std::string id;
     yarp::dev::IAnalogSensor *analogSensor_p;   // the analog sensor to read from
-    std::vector<AnalogPortEntry> analogPorts;   // the list of output ports
-    std::vector<AnalogServerHandler*> handlers; // the list of rpc port handlers
+    std::vector<analogWrapper_yarp_internal_namespace::AnalogPortEntry> analogPorts;   // the list of output ports
+    std::vector<analogWrapper_yarp_internal_namespace::AnalogServerHandler*> handlers; // the list of rpc port handlers
     yarp::os::Stamp lastStateStamp;             // the last reading time stamp
     int _rate;
     void setHandlers();
@@ -125,13 +116,13 @@ public:
     AnalogWrapper(const char* name, int rate=20);
 
     // Contructor used when one or more output ports are specified  -- obsolete, here for backward compatibility with skinwrapper
-    AnalogWrapper(const std::vector<AnalogPortEntry>& _analogPorts, int rate=20);
+    AnalogWrapper(const std::vector<analogWrapper_yarp_internal_namespace::AnalogPortEntry>& _analogPorts, int rate=20);
 
     ~AnalogWrapper();
 
     bool open(yarp::os::Searchable &params);
     bool close();
-    Bottle getOptions();
+    yarp::os::Bottle getOptions();
 
     void setId(const std::string &i);
     std::string getId();
@@ -153,7 +144,7 @@ private:
     // Function used when there is only one output port
     bool createPort(const char* name, int rate=20);
     // Function used when one or more output ports are specified
-    bool createPorts(const std::vector<AnalogPortEntry>& _analogPorts, int rate=20);
+    bool createPorts(const std::vector<analogWrapper_yarp_internal_namespace::AnalogPortEntry>& _analogPorts, int rate=20);
 };
 
 #endif

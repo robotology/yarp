@@ -67,12 +67,6 @@ namespace yarp
     }
 }
 
-
-using namespace yarp::os;
-using namespace yarp::dev;
-using namespace yarp::sig;
-using namespace CBW2_yarp_internal_namespace;
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 
@@ -82,7 +76,7 @@ enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEV
 * head is a Bottle which contains the specification of the message type
 * body is a Vector which move the robot accordingly
 */
-typedef PortablePair<Bottle, Vector> CommandMessage;
+typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessage;
 
 
 // Envelop this class into anonymous namespace
@@ -91,7 +85,7 @@ namespace CBW2_yarp_internal_namespace {
 * Helper object for reading config commands for the ControlBoardWrapper
 * class.
 */
-class CommandsHelper2 : public DeviceResponder {
+class CommandsHelper2 : public yarp::dev::DeviceResponder {
 protected:
     yarp::dev::ControlBoardWrapper     *caller;
     yarp::dev::IPidControl              *pid;
@@ -109,10 +103,10 @@ protected:
     yarp::dev::IOpenLoopControl         *iOpenLoop;
     yarp::dev::IImpedanceControl        *iImpedance;
     int controlledJoints;
-    Vector vect;
+    yarp::sig::Vector vect;
 
     yarp::os::Stamp lastRpcStamp;
-    Semaphore mutex;
+    yarp::os::Semaphore mutex;
 
 public:
     /**
@@ -121,9 +115,9 @@ public:
     * This is required to recover the pointers to the interfaces that implement the responses
     * to the commands.
     */
-    CommandsHelper2(ControlBoardWrapper *x);
+    CommandsHelper2(yarp::dev::ControlBoardWrapper *x);
 
-    virtual bool respond(const Bottle& cmd, Bottle& response);
+    virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
 
     void handleTorqueMsg(const yarp::os::Bottle& cmd,
         yarp::os::Bottle& response, bool *rec, bool *ok);
@@ -145,14 +139,14 @@ public:
 /**
 * Callback implementation after buffered input.
 */
-class ImplementCallbackHelper2 : public TypedReaderCallback<CommandMessage> {
+class ImplementCallbackHelper2 : public yarp::os::TypedReaderCallback<CommandMessage> {
 protected:
-    IPositionControl  *pos;
-    IPositionControl2 *pos2;
-    IPositionDirect   *posDir;
-    IVelocityControl  *vel;
-    IVelocityControl2 *vel2;
-    IOpenLoopControl  *iOpenLoop;
+    yarp::dev::IPositionControl  *pos;
+    yarp::dev::IPositionControl2 *pos2;
+    yarp::dev::IPositionDirect   *posDir;
+    yarp::dev::IVelocityControl  *vel;
+    yarp::dev::IVelocityControl2 *vel2;
+    yarp::dev::IOpenLoopControl  *iOpenLoop;
     int controlledAxes;
 
 public:
@@ -160,7 +154,7 @@ public:
     * Constructor.
     * @param x is the instance of the container class using the callback.
     */
-    ImplementCallbackHelper2(ControlBoardWrapper *x);
+    ImplementCallbackHelper2(yarp::dev::ControlBoardWrapper *x);
 
     /**
     * Callback function.
@@ -183,31 +177,31 @@ public:
     bool configuredF;
     bool attachedF;
 
-    PolyDriver            *subdevice;
-    IPidControl           *pid;
-    IPositionControl      *pos;
-    IPositionControl2     *pos2;
-    IVelocityControl      *vel;
-    IVelocityControl2     *vel2;
-    IEncodersTimed        *enc;
-    IAmplifierControl     *amp;
-    IControlLimits2       *lim2;
-    IControlCalibration   *calib;
-    IControlCalibration2  *calib2;
-    IPreciselyTimed       *iTimed;
-    ITorqueControl        *iTorque;
-    IImpedanceControl     *iImpedance;
-    IOpenLoopControl      *iOpenLoop;
-    IControlMode          *iMode;
-    IAxisInfo             *info;
-    IPositionDirect       *posDir;
+    yarp::dev::PolyDriver            *subdevice;
+    yarp::dev::IPidControl           *pid;
+    yarp::dev::IPositionControl      *pos;
+    yarp::dev::IPositionControl2     *pos2;
+    yarp::dev::IVelocityControl      *vel;
+    yarp::dev::IVelocityControl2     *vel2;
+    yarp::dev::IEncodersTimed        *enc;
+    yarp::dev::IAmplifierControl     *amp;
+    yarp::dev::IControlLimits2       *lim2;
+    yarp::dev::IControlCalibration   *calib;
+    yarp::dev::IControlCalibration2  *calib2;
+    yarp::dev::IPreciselyTimed       *iTimed;
+    yarp::dev::ITorqueControl        *iTorque;
+    yarp::dev::IImpedanceControl     *iImpedance;
+    yarp::dev::IOpenLoopControl      *iOpenLoop;
+    yarp::dev::IControlMode          *iMode;
+    yarp::dev::IAxisInfo             *info;
+    yarp::dev::IPositionDirect       *posDir;
 
     yarp::sig::Vector subDev_encoders;
     yarp::sig::Vector encodersTimes;
 
     CBW_SubDevice();
 
-    bool attach(PolyDriver *d, const std::string &id);
+    bool attach(yarp::dev::PolyDriver *d, const std::string &id);
     void detach();
 
     bool configure(int base, int top, int axes, const std::string &id);
@@ -227,7 +221,7 @@ public:
 
 };
 
-typedef std::vector<CBW_SubDevice> SubDeviceVector;
+typedef std::vector<CBW2_yarp_internal_namespace::CBW_SubDevice> SubDeviceVector;
 
 struct DevicesLutEntry
 {
@@ -239,10 +233,10 @@ struct DevicesLutEntry
 class WrappedDevice
 {
 public:
-    SubDeviceVector subdevices;
-    std::vector<DevicesLutEntry> lut;
+    CBW2_yarp_internal_namespace::SubDeviceVector subdevices;
+    std::vector<CBW2_yarp_internal_namespace::DevicesLutEntry> lut;
 
-    inline CBW_SubDevice *getSubdevice(unsigned int i)
+    inline CBW2_yarp_internal_namespace::CBW_SubDevice *getSubdevice(unsigned int i)
     {
         if (i>=subdevices.size())
             return 0;
@@ -260,45 +254,45 @@ public:
 * Allows also deferred attach/detach of a subdevice.
 */
 class YARP_dev_API yarp::dev::ControlBoardWrapper:
-                             public DeviceDriver,
-                             public RateThread,
-                             public IPidControl,
-                             public IPositionControl2,
-                             public IPositionDirect,
-                             public IVelocityControl2,
-                             public IEncodersTimed,
-                             public IAmplifierControl,
-                             public IControlLimits2,
-                             public IControlCalibration,
-                             public IControlCalibration2,
-                             public IOpenLoopControl,
-                             public ITorqueControl,
-                             public IImpedanceControl,
-                             public IControlMode,
-                             public IMultipleWrapper,
-                             public IAxisInfo,
-                             public IPreciselyTimed
+                             public yarp::dev::DeviceDriver,
+                             public yarp::os::RateThread,
+                             public yarp::dev::IPidControl,
+                             public yarp::dev::IPositionControl2,
+                             public yarp::dev::IPositionDirect,
+                             public yarp::dev::IVelocityControl2,
+                             public yarp::dev::IEncodersTimed,
+                             public yarp::dev::IAmplifierControl,
+                             public yarp::dev::IControlLimits2,
+                             public yarp::dev::IControlCalibration,
+                             public yarp::dev::IControlCalibration2,
+                             public yarp::dev::IOpenLoopControl,
+                             public yarp::dev::ITorqueControl,
+                             public yarp::dev::IImpedanceControl,
+                             public yarp::dev::IControlMode,
+                             public yarp::dev::IMultipleWrapper,
+                             public yarp::dev::IAxisInfo,
+                             public yarp::dev::IPreciselyTimed
 {
 private:
     WrappedDevice device;
 
-    Port state_p;   // out port to read the state
-    Port control_p; // in port to command the robot
-    Port rpc_p;     // RPC to configure the robot
-    Stamp time;     // envelope to attach to the state port
-    Semaphore timeMutex;
+    yarp::os::Port state_p;   // out port to read the state
+    yarp::os::Port control_p; // in port to command the robot
+    yarp::os::Port rpc_p;     // RPC to configure the robot
+    yarp::os::Stamp time;     // envelope to attach to the state port
+    yarp::os::Semaphore timeMutex;
 
-    PortWriterBuffer<yarp::sig::Vector> state_buffer;
-    PortReaderBuffer<CommandMessage> control_buffer;
+    yarp::os::PortWriterBuffer<yarp::sig::Vector> state_buffer;
+    yarp::os::PortReaderBuffer<CommandMessage> control_buffer;
 
-    ImplementCallbackHelper2 callback_impl;
+    CBW2_yarp_internal_namespace::ImplementCallbackHelper2 callback_impl;
 
-    CommandsHelper2 command_reader;
+    CBW2_yarp_internal_namespace::CommandsHelper2 command_reader;
 
     // for new interface
-    PortReaderBuffer<Bottle> command_buffer;
+    yarp::os::PortReaderBuffer<yarp::os::Bottle> command_buffer;
 
-    Vector            CBW_encoders;
+    yarp::sig::Vector            CBW_encoders;
     std::string       partName;
 
     int               controlledJoints;
@@ -308,8 +302,8 @@ private:
 
 
     bool closeMain() {
-        if (RateThread::isRunning()) {
-            RateThread::stop();
+        if (yarp::os::RateThread::isRunning()) {
+            yarp::os::RateThread::stop();
         }
 
         // close the port connections here!
@@ -320,22 +314,22 @@ private:
         return true;
     }
 
-    Bottle getOptions();
+    yarp::os::Bottle getOptions();
 
     // Default usage
     // Open the wrapper only, the attach method needs to be called before using it
-    bool openDeferredAttach(Property& prop);
+    bool openDeferredAttach(yarp::os::Property& prop);
 
     // For the simulator, if a subdevice parameter is given to the wrapper, it will
     // open it and and attach to it immediatly.
-    PolyDriver *subDeviceOwned;
-    bool openAndAttachSubDevice(Property& prop);
+    yarp::dev::PolyDriver *subDeviceOwned;
+    bool openAndAttachSubDevice(yarp::os::Property& prop);
 
 public:
     /**
     * Constructor.
     */
-    ControlBoardWrapper() : RateThread(20), callback_impl(this), command_reader(this), control_buffer(4)
+    ControlBoardWrapper() :yarp::os::RateThread(20), callback_impl(this), command_reader(this), control_buffer(4)
     {
         ////YARP_TRACE(Logger::get(),"ControlBoardWrapper2::ControlBoardWrapper2()", Logger::get().log_files.f3);
         controlledJoints = 0;
@@ -390,11 +384,11 @@ public:
     *             called, otherwise openDeferredAttach is called.
     * and all parameters required by the wrapper.
     */
-    virtual bool open(Searchable& prop);
+    virtual bool open(yarp::os::Searchable& prop);
 
     virtual bool detachAll()
     {
-        RateThread::stop();
+        yarp::os::RateThread::stop();
 
         int devices=device.subdevices.size();
         for(int k=0;k<devices;k++)
@@ -421,7 +415,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *s=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *s=device.getSubdevice(subIndex);
         if (!s)
             return false;
 
@@ -445,7 +439,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -473,7 +467,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -500,7 +494,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -523,7 +517,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -546,7 +540,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -569,7 +563,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -593,7 +587,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -617,7 +611,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -640,7 +634,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -659,7 +653,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -681,7 +675,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *s=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *s=device.getSubdevice(subIndex);
         if (!s)
             return false;
 
@@ -705,7 +699,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -728,7 +722,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
         if (p->pid)
@@ -749,7 +743,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -772,7 +766,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -795,7 +789,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -819,7 +813,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -839,7 +833,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -859,7 +853,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -897,7 +891,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -920,7 +914,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -947,7 +941,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -972,7 +966,7 @@ public:
         for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
         {
             int subIndex=device.lut[j_wrap].deviceEntry;
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             int wrapped_joints=(p->top - p->base) + 1;
             int *joints = new int[wrapped_joints];
@@ -1034,7 +1028,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice   *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice   *ps[MAX_DEVICES];
 
        for(int i=0; i<nDev; i++)
        {
@@ -1087,7 +1081,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -1111,7 +1105,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -1143,7 +1137,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice   *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice   *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
        {
@@ -1196,7 +1190,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
         if (!p)
             return false;
@@ -1222,7 +1216,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -1258,7 +1252,7 @@ public:
         bool   XFlags = true;
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice   *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice   *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
        {
@@ -1314,7 +1308,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -1338,7 +1332,7 @@ public:
         int nDev = device.subdevices.size();
         for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
         {
-            CBW_SubDevice *p=device.getSubdevice(subDev_idx);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subDev_idx);
 
             if(!p)
                 return false;
@@ -1400,7 +1394,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double   XSpeds[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice   *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice   *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
        {
@@ -1453,7 +1447,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
         if (!p)
             return false;
@@ -1478,7 +1472,7 @@ public:
         // for all subdevices
         for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
         {
-            CBW_SubDevice *p=device.getSubdevice(subDev_idx);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subDev_idx);
 
             if(!p)
                 return false;
@@ -1539,7 +1533,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double   XAccs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice  *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice  *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
        {
@@ -1593,7 +1587,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
         if (!p)
             return false;
@@ -1620,7 +1614,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -1654,7 +1648,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double  XSpeds[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice  *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice  *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
        {
@@ -1673,7 +1667,7 @@ public:
 
         for(subIndex=0; subIndex<nDev; subIndex++)
         {
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if(ps[subIndex]->pos2)   // Position Control 2
             {
                 ret= ret && p->pos2->getRefSpeeds(X_idx[subIndex], XJoints[subIndex], &XSpeds[subIndex][0]);
@@ -1727,7 +1721,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
         if (!p)
             return false;
@@ -1754,7 +1748,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -1788,7 +1782,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double  XAccs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice  *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice  *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
        {
@@ -1807,7 +1801,7 @@ public:
 
         for(subIndex=0; subIndex<nDev; subIndex++)
         {
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if(p->pos2)   // Position Control 2
             {
                 ret= ret && p->pos2->getRefAccelerations(X_idx[subIndex], XJoints[subIndex], &XAccs[subIndex][0]);
@@ -1863,7 +1857,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
         if (!p)
             return false;
@@ -1888,7 +1882,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -1919,7 +1913,7 @@ public:
         int    nDev   = device.subdevices.size();
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice  *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice  *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
        {
@@ -1973,7 +1967,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
         if (!p)
             return false;
@@ -1998,7 +1992,7 @@ public:
         int nDev = device.subdevices.size();
         for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
         {
-            CBW_SubDevice *p=device.getSubdevice(subDev_idx);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subDev_idx);
 
             if(!p)
                 return false;
@@ -2052,7 +2046,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -2079,7 +2073,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2102,7 +2096,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2126,7 +2120,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2150,7 +2144,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2174,7 +2168,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2199,7 +2193,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2221,7 +2215,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2239,7 +2233,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2261,7 +2255,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2286,7 +2280,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2309,7 +2303,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2334,7 +2328,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2360,7 +2354,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2380,7 +2374,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2404,7 +2398,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2428,7 +2422,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2452,7 +2446,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2478,7 +2472,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (p->amp)
                 {
 
@@ -2499,7 +2493,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (p->amp)
             {
                 return p->amp->getAmpStatus(off+base,v);
@@ -2522,7 +2516,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2544,7 +2538,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
         {
             *min=0.0;
@@ -2573,7 +2567,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2598,7 +2592,7 @@ public:
         *min=0.0;
         *max=0.0;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
         {
             return false;
@@ -2626,7 +2620,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *s=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *s=device.getSubdevice(subIndex);
         if (!s)
             return false;
 
@@ -2641,7 +2635,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p = device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p = device.getSubdevice(subIndex);
         if (p && p->calib2)
         {
             return p->calib2->calibrate2(off+base, ui,v1,v2,v3);
@@ -2658,7 +2652,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2686,7 +2680,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2705,7 +2699,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
 
             if (!p)
                 return false;
@@ -2730,7 +2724,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2750,7 +2744,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2770,7 +2764,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2789,7 +2783,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2806,7 +2800,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2822,7 +2816,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2838,7 +2832,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2855,7 +2849,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2872,7 +2866,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2889,7 +2883,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2910,7 +2904,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2929,7 +2923,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -2950,7 +2944,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2973,7 +2967,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -2992,7 +2986,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3013,7 +3007,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3032,7 +3026,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3053,7 +3047,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3072,7 +3066,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3093,7 +3087,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3112,7 +3106,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3129,7 +3123,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3146,7 +3140,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3163,7 +3157,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3184,7 +3178,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3203,7 +3197,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3224,7 +3218,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3243,7 +3237,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3260,7 +3254,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3277,7 +3271,7 @@ public:
          int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3294,7 +3288,7 @@ public:
          int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3311,7 +3305,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3328,7 +3322,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3345,7 +3339,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3362,7 +3356,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3379,7 +3373,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3396,7 +3390,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3413,7 +3407,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3433,7 +3427,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3452,7 +3446,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3471,7 +3465,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3490,7 +3484,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *p=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
 
@@ -3515,7 +3509,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice  *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice  *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
         {
@@ -3557,7 +3551,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3571,9 +3565,9 @@ public:
         return ret;
     }
 
-    virtual Stamp getLastInputStamp() {
+    virtual yarp::os::Stamp getLastInputStamp() {
         timeMutex.wait();
-        Stamp ret=time;
+        yarp::os::Stamp ret=time;
         timeMutex.post();
         return ret;
     }
@@ -3594,7 +3588,7 @@ public:
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         int      X_idx[MAX_DEVICES];
-        CBW_SubDevice  *ps[MAX_DEVICES];
+        CBW2_yarp_internal_namespace::CBW_SubDevice  *ps[MAX_DEVICES];
 
         for(int i=0; i<nDev; i++)
         {
@@ -3642,7 +3636,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *s=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *s=device.getSubdevice(subIndex);
         if (!s)
             return false;
 
@@ -3662,7 +3656,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
@@ -3682,7 +3676,7 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        CBW_SubDevice *s=device.getSubdevice(subIndex);
+        CBW2_yarp_internal_namespace::CBW_SubDevice *s=device.getSubdevice(subIndex);
         if (!s)
             return false;
 
@@ -3702,7 +3696,7 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
-            CBW_SubDevice *p=device.getSubdevice(subIndex);
+            CBW2_yarp_internal_namespace::CBW_SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 

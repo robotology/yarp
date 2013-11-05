@@ -11,6 +11,8 @@
 #include <iostream>
 
 using namespace std;
+using namespace yarp::dev;
+using namespace yarp::os;
 #define MAX_ENTRIES 255
 
 // needed for the driver factory.

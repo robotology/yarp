@@ -11,6 +11,10 @@
 
 #include <iostream>
 
+using namespace yarp::os;
+using namespace yarp::dev;
+using namespace yarp::sig;
+using namespace CBW2_yarp_internal_namespace;
 using namespace std;
 
 // needed for the driver factory.
