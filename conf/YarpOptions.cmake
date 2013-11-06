@@ -113,6 +113,13 @@ if (CREATE_SHARED_LIBRARY)
 endif()
 
 #########################################################################
+# Turn on testing.
+option(YARP_COMPILE_TESTS "Compile YARP tests" TRUE)
+if(YARP_COMPILE_TESTS)
+    enable_testing()
+endif()
+
+#########################################################################
 # Enable these messages for debugging flags
 
 #message(STATUS "WANTED_WARNING_FLAGS = ${WANTED_WARNING_FLAGS}")

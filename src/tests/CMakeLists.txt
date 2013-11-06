@@ -2,10 +2,7 @@
 # Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-option(YARP_COMPILE_TESTS "Compile YARP tests" TRUE)
-
 if(YARP_COMPILE_TESTS)
-    enable_testing()
 
     if(YARP_USE_PERSISTENT_NAMESERVER)
         add_definitions(-DYARP_USE_PERSISTENT_NAMESERVER=1)
