@@ -65,7 +65,7 @@ public:
     /**
      * @param userDetection indicates if user callbacks and skeleton tracking should be on
      */
-    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE);
+    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "");
     ~OpenNI2SkeletonTracker(void);
     void close();
     /**
@@ -81,13 +81,16 @@ public:
     static SensorStatus *getSensor();
 private:
     static SensorStatus *sensorStatus;
-    bool userTracking, camerasON, mirrorON;
+    bool userTracking, camerasON, mirrorON, oniPlayback, oniRecord;
     int deviceStatus;
     double minConfidence;
+    string fileDevice;
+    string oniOutputFile;
 
     // OpenNI2 and NiTE objects
     openni::Device device;
     nite::UserTracker userTracker;
+    openni::Recorder recorder;
     openni::VideoStream depthStream;
     openni::VideoStream imageStream;
     openni::VideoMode depthMode;
