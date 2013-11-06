@@ -48,6 +48,8 @@ public:
      * Constructor.
      */
     BufferedPort() {
+        T example;
+        port.promiseType(example.getType());
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
