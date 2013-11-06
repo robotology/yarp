@@ -129,6 +129,23 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     if(config.check("noUserTracking", "Disable user tracking")) userTracking = false;
     else userTracking = true;
     
+    if(config.check("playback", "Play from .oni file")) {
+        oniPlayback = true;
+        fileDevice = config.find("playback").asString();
+    }
+    else {
+        oniPlayback = false;
+    }
+
+    if(config.check("record", "Record to .oni file")) {
+        oniRecord = true;
+        oniOutputFile = config.find("record").asString();
+    }
+    else {
+        oniRecord = false;
+        oniOutputFile = "";
+    }
+    
     if(config.check("name")){
         portPrefix = config.find("name").asString();
         withOpenPorts = true;
@@ -144,7 +161,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
         mConf = config.find("minConfidence").asDouble();
     }
 
-    skeleton = new OpenNI2SkeletonTracker(userTracking,camerasON,mirrorON, mConf);
+    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile);
 
     if (skeleton->getDeviceStatus()==1){
         cout << "***ERROR*** Sensor could not be initialized." << endl;
