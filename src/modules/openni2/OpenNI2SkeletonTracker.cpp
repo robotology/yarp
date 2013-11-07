@@ -174,7 +174,7 @@ int OpenNI2SkeletonTracker::init(){
         
         // setup and start user tracking
         nite::Status niteRc = nite::NiTE::initialize();
-        niteRc = userTracker.create();
+        niteRc = userTracker.create(&device);
         
         if (niteRc != nite::STATUS_OK)
         {
