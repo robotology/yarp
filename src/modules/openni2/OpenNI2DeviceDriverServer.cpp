@@ -143,10 +143,9 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     }
     else {
         oniRecord = false;
-        oniOutputFile = "";
     }
     
-    if(config.check("name")){
+    if(config.check("name", "Name for the port prefix (default=OpenNI2)")){
         portPrefix = config.find("name").asString();
         withOpenPorts = true;
         openPorts(portPrefix, userTracking, camerasON);
@@ -160,22 +159,34 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     if (config.check("minConfidence", "Set minimum confidence (default=0.6)")){
         mConf = config.find("minConfidence").asDouble();
     }
-
-    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile);
-
-    if (skeleton->getDeviceStatus()==1){
+    
+    if (config.check("loop", "Set playback to loop")){
+        loop = true;
+    }
+    else{
+        loop = false;
+    }
+    
+    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop);
+    
+    if (skeleton->getDeviceStatus()== openni::STATUS_ERROR){
         cout << "***ERROR*** Sensor could not be initialized." << endl;
         return false;
     }
 
-    else if (skeleton->getDeviceStatus()==2) {
-        cout << "***ERROR*** Sensor not found." << endl;
+    else if (skeleton->getDeviceStatus()== openni::STATUS_NO_DEVICE){
+        cout << "***ERROR*** No sensor or ONI file found." << endl;
         return false;
     }
 
-    else {
+    else if (skeleton->getDeviceStatus() == openni::STATUS_OK) {
     cout << "OpenNI2 Yarp Device started." << endl;
     return true;
+    }
+
+    else {
+        cout << "***ERROR*** OpenNI Device could not start." << endl;
+        return false;
     }
 }
 
@@ -201,7 +212,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::close(){
 
 bool yarp::dev::OpenNI2DeviceDriverServer::updateInterface(){
     
-    // update sensor data
+    // update sensor dataoniPlayback
     skeleton->updateSensor();
     
     // send sensor data to ports
