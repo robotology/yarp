@@ -180,10 +180,19 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
     format = p.check("format",Value("html")).asString().c_str();
     outer = p.check("outer",Value("auto")).asString().c_str();
     bool admin = p.check("admin");
+    bool req = p.check("req");
     if (p.check("cmd")) {
         s = p.check("cmd",Value("")).asString().c_str();
-    } else if (p.check("data")) {
-        s = p.check("data",Value("")).asString().c_str();
+    } else if (p.check("data")||req) {
+        if (req) {
+            s = p.check("req",Value("")).asString();
+            if (!p.check("format")) {
+                format = "json";
+                p.put("format","json");
+            }
+        } else {
+            s = p.check("data",Value("")).asString();
+        }
         s += " ";
         String sFixed = "";
         String var = "";
@@ -215,8 +224,6 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             }
         }
 
-
-        Bottle bin(sFixed.c_str());
         sData = sFixed;
         if (admin) {
             s = String("a\n") + sFixed;
@@ -256,7 +263,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
             classic = true;
         }
     }
-    //printf("S is %s, classic? %d\n", s.c_str(), classic);
+    if (req) classic = false;
 
     if (classic) {
         String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n";
@@ -313,18 +320,20 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const
 
     } else {
         chunked = true;
-        if (admin) {
-            sis.add("a\n");
-        } else {
-            sis.add("d\n");
-        }
-        for (int i=0; i<(int)s.length(); i++) {
-            if (s[i]=='/') {
-                s[i] = ' ';
+        if (!req) {
+            if (admin) {
+                sis.add("a\n");
+            } else {
+                sis.add("d\n");
             }
-            if (s[i]=='?') {
-                s = s.substr(0,i);
-                break;
+            for (int i=0; i<(int)s.length(); i++) {
+                if (s[i]=='/') {
+                    s[i] = ' ';
+                }
+                if (s[i]=='?') {
+                    s = s.substr(0,i);
+                    break;
+                }
             }
         }
         sis.add(s);
@@ -869,7 +878,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
     // Could check response codes, mime types here.
 
     if (body.length()!=0 || using_json) {
-        ConstString mime = b.check("mime",Value("text/html")).asString();
+        ConstString mime = b.check("mime",Value(using_json?"application/json":"text/html")).asString();
         String header("HTTP/1.1 200 OK\nContent-Type: ");
         header += mime;
         header += "\n";
