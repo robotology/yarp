@@ -56,7 +56,7 @@ a:hover{\n\
 
     ConstString code = cmd.get(1).asString();
     ConstString uri = cmd.check("REQUEST_URI",Value("")).toString();
-    uri = uri.substr(4);
+    if (uri.length()>=4) { uri = uri.substr(4); } else { uri = ""; }
     ConstString fileName = uri;
 
     if ((!content.check(uri))||options.check("no-web-cache")) {
