@@ -14,7 +14,7 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop)
 {
     userTracking= withTracking;
     camerasON = withCamerasOn;
@@ -29,9 +29,16 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     }
 
     oniPlayback = withOniPlayback;
-    fileDevice = withFileDevice;
     oniRecord = withOniRecord;
-    oniOutputFile = withOniOutputFile;
+    if (oniPlayback) {
+        fileDevice = withFileDevice;
+    }
+    
+    if (oniRecord) {
+         oniOutputFile = withOniOutputFile;
+    }
+    
+    loop = withLoop;
     init();
     initVars();
 }
@@ -70,14 +77,14 @@ void OpenNI2SkeletonTracker::close(){
 }
 
 int OpenNI2SkeletonTracker::init(){
-    
     openni::Status rc = openni::OpenNI::initialize();
-    deviceStatus = 0;
+    deviceStatus = openni::STATUS_OK;
+
     if (rc != openni::STATUS_OK)
     {
         printf("Initialize failed\n%s\n", openni::OpenNI::getExtendedError());
-        deviceStatus = 1;
-        return 1;
+        deviceStatus = rc;
+        return rc;
     }
    
     if (!oniPlayback){
@@ -86,18 +93,21 @@ int OpenNI2SkeletonTracker::init(){
     else {
         rc = device.open(fileDevice.c_str());
         cout << "Playback from " << fileDevice.c_str() << endl;
+        openni::PlaybackControl* playbackControl = device.getPlaybackControl();
+        playbackControl->setRepeatEnabled(loop);
     }
-    
+   
     if (rc != openni::STATUS_OK)
     {   
         if (device.isFile()){
             printf("Couldn't open file\n%s\n", openni::OpenNI::getExtendedError());
+            deviceStatus = rc;
         }
         else {
             printf("Couldn't open device\n%s\n", openni::OpenNI::getExtendedError());
-            }
-        deviceStatus = 2;
-        return 2;
+            deviceStatus = rc;
+        }
+        return rc;
     }
    
     if (oniRecord) {
@@ -158,12 +168,8 @@ int OpenNI2SkeletonTracker::init(){
         else {
             cout << "RGB stream started..." << endl;
         }
-
-        if (oniRecord) {
-            recorder.start();
-        }
     }
-    
+
     if (userTracking){
         
         // setup and start user tracking
@@ -182,7 +188,19 @@ int OpenNI2SkeletonTracker::init(){
         
         printf("\nStart moving around to get detected...\n(PSI pose may be required for skeleton calibration, depending on the configuration)\n");
     }
-    
+   
+    if (oniRecord) {
+        rc = recorder.start();
+
+        if (rc != openni::STATUS_OK) {
+            printf("Couldn't start recorder\n");
+        }
+
+        else {
+            cout << "Recorder started..." << endl;
+        }
+    }
+
     return rc;
 }
 
