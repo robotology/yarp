@@ -4,8 +4,11 @@
 
 project(YARP_dev)
 
+option (NEW_WRAPPERS_WIP "under testing -> use newly imported wrappers from icub repository" FALSE)
+
 set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/api.h
+#                  include/yarp/dev/AnalogWrapper.h
                   include/yarp/dev/AudioGrabberInterfaces.h
                   include/yarp/dev/AudioVisualInterfaces.h
                   include/yarp/dev/CalibratorInterfaces.h
@@ -16,6 +19,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardInterfaces.h
                   include/yarp/dev/ControlBoardInterfacesImpl.h
                   include/yarp/dev/ControlBoardPid.h
+#                  include/yarp/dev/ControlBoardWrapper.h
                   include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
                   include/yarp/dev/DeviceGroup.h
@@ -66,12 +70,15 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ServiceInterfaces.h
                   include/yarp/dev/TestFrameGrabber.h
                   include/yarp/dev/TestMotor.h
+#                  include/yarp/dev/VirtualAnalogWrapper.h
                   include/yarp/dev/Wrapper.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl)
 
 set(YARP_dev_SRCS src/AnalogSensorClient.cpp
+#                  src/AnalogWrapper.cpp
                   src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardPid.cpp
+#                  src/ControlBoardWrapper.cpp
                   src/ControlCalibrationImpl.cpp
                   src/ControlModeImpl.cpp
                   src/DeviceDriver.cpp
@@ -96,7 +103,25 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/ServerControlBoard.cpp
                   src/ServerFrameGrabber.cpp
                   src/TestFrameGrabber.cpp
-                  src/TorqueControlImpl.cpp)
+                  src/TorqueControlImpl.cpp
+#                  src/VirtualAnalogWrapper.cpp
+                  )
+
+# once this will be stable, remove the following 'IF' and uncomment corresponding files
+# in the previous section.
+
+IF (NEW_WRAPPERS_WIP)
+add_definitions( -DUSE_NEW_WRAPPERS_WIP )
+  set(YARP_dev_HDRS   ${YARP_dev_HDRS}
+                      include/yarp/dev/ControlBoardWrapper.h
+                      include/yarp/dev/AnalogWrapper.h
+                      include/yarp/dev/VirtualAnalogWrapper.h)
+
+  set(YARP_dev_SRCS   ${YARP_dev_SRCS}
+                      src/AnalogWrapper.cpp
+                      src/ControlBoardWrapper.cpp
+                      src/VirtualAnalogWrapper.cpp)
+ENDIF(NEW_WRAPPERS_WIP)
 
 source_group("Source Files" FILES ${YARP_dev_SRCS})
 source_group("Header Files" FILES ${YARP_dev_HDRS})

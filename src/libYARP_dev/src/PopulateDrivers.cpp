@@ -37,6 +37,11 @@ using namespace yarp::dev;
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
 extern DriverCreator *createAnalogSensorClient();
+#ifdef USE_NEW_WRAPPERS_WIP
+    extern DriverCreator *createControlBoardWrapper();
+    extern DriverCreator *createAnalogWrapper();
+    extern DriverCreator *createVirtualAnalogWrapper();
+#endif
 
 void Drivers::init() {
 
@@ -76,4 +81,9 @@ void Drivers::init() {
     add(createRemoteControlBoard());
     add(createServerControlBoard());
     add(createAnalogSensorClient());
+#ifdef USE_NEW_WRAPPERS_WIP
+    add(createControlBoardWrapper());
+    add(createAnalogWrapper());
+    add(createVirtualAnalogWrapper());
+#endif
 }

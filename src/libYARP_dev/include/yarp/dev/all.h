@@ -17,6 +17,7 @@
 #include<yarp/dev/ControlBoardInterfaces.h>
 #include<yarp/dev/ControlBoardInterfacesImpl.h>
 #include<yarp/dev/ControlBoardPid.h>
+#include<yarp/dev/ControlBoardWrapper.h>
 #include<yarp/dev/DataSource.h>
 #include<yarp/dev/DeviceDriver.h>
 #include<yarp/dev/DriverLinkCreator.h>
