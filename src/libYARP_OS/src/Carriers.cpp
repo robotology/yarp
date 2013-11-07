@@ -121,7 +121,8 @@ void Carriers::clear() {
 }
 
 Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
-                                 bool load_if_needed) {
+                                 bool load_if_needed,
+                                 bool return_template) {
     String s;
     if (name!=NULL) {
         s = *name;
@@ -146,7 +147,8 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
             }
         }
         if (match) {
-            return c.create();
+            if (!return_template) return c.create();
+            return &c;
         }
     }
     if (load_if_needed) {
@@ -198,6 +200,11 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header,
 Carrier *Carriers::chooseCarrier(const String& name) {
     return getInstance().chooseCarrier(&name,NULL);
 }
+
+Carrier *Carriers::getCarrierTemplate(const String& name) {
+    return getInstance().chooseCarrier(&name,NULL,true,true);
+}
+
 
 Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
     return getInstance().chooseCarrier(NULL,&bytes);

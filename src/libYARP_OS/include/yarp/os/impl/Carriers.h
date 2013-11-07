@@ -46,6 +46,11 @@ public:
     static Carrier *chooseCarrier(const String& name);
 
     /**
+     * Get template for carrier.
+     */
+    static Carrier *getCarrierTemplate(const String& name);
+
+    /**
      * Select a carrier by 8-byte header.
      *
      * @param bytes the 8-byte header describing the desired carrier.
@@ -111,7 +116,8 @@ private:
     static Carriers *yarp_carriers_instance;
 
     Carrier *chooseCarrier(const String * name, const Bytes * bytes,
-                           bool load_if_needed = true);
+                           bool load_if_needed = true,
+                           bool return_template = false);
 };
 
 

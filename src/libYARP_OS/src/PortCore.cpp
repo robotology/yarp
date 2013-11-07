@@ -782,8 +782,15 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
         String err = "";
         if (!allow_output) {
             if (!is_log) {
-                err = "Outputs not allowed";
-                allowed = false;
+                bool push = false;
+                Carrier *c = Carriers::getCarrierTemplate(r.getCarrierName());
+                if (c) {
+                    push = c->isPush();
+                }
+                if (push) {
+                    err = "Outputs not allowed";
+                    allowed = false;
+                }
             }
         } else if (rpc) {
             if (dataOutputCount>=1 && !is_log) {
