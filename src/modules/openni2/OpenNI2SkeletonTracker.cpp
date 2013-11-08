@@ -57,12 +57,18 @@ void OpenNI2SkeletonTracker::close(){
     }
     if (userTracking) {
         cout << "Destroying user tracker...";
-        delete getSensor();
+        for (int i=0; i < MAX_USERS; i++) {
+        userTracker.stopSkeletonTracking(i+1);
+        }
+        userTracker.destroy();
         nite::NiTE::shutdown();
+        delete getSensor();
         cout << "Done" << endl;
     }
     
     if (camerasON) {
+        depthStream.stop();
+        imageStream.stop();
         cout << "Destroying depth stream...";
         depthStream.destroy();
         cout << "Done" << endl;
@@ -73,6 +79,7 @@ void OpenNI2SkeletonTracker::close(){
     
     cout << "Closing sensor device...";
     device.close();
+    openni::OpenNI::shutdown();
     cout << "Done" << endl;
 }
 
