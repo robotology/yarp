@@ -82,7 +82,7 @@ public:
 private:
     static SensorStatus *sensorStatus;
     bool userTracking, camerasON, mirrorON, oniPlayback, oniRecord, loop;
-    openni::Status deviceStatus;
+    int deviceStatus;
     double minConfidence;
     string fileDevice;
     string oniOutputFile;
