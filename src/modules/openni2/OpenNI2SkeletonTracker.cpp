@@ -85,7 +85,7 @@ void OpenNI2SkeletonTracker::close(){
 
 int OpenNI2SkeletonTracker::init(){
     openni::Status rc = openni::OpenNI::initialize();
-    deviceStatus = openni::STATUS_OK;
+    deviceStatus = 0;
 
     if (rc != openni::STATUS_OK)
     {
@@ -93,7 +93,7 @@ int OpenNI2SkeletonTracker::init(){
         deviceStatus = rc;
         return rc;
     }
-   
+
     if (!oniPlayback){
         rc = device.open(openni::ANY_DEVICE);
     }
@@ -103,17 +103,10 @@ int OpenNI2SkeletonTracker::init(){
         openni::PlaybackControl* playbackControl = device.getPlaybackControl();
         playbackControl->setRepeatEnabled(loop);
     }
-   
-    if (rc != openni::STATUS_OK)
-    {   
-        if (device.isFile()){
-            printf("Couldn't open file\n%s\n", openni::OpenNI::getExtendedError());
-            deviceStatus = rc;
-        }
-        else {
-            printf("Couldn't open device\n%s\n", openni::OpenNI::getExtendedError());
-            deviceStatus = rc;
-        }
+
+    if (rc != openni::STATUS_OK) {
+        printf("Couldn't open device\n%s\n", openni::OpenNI::getExtendedError());
+        deviceStatus = rc;
         return rc;
     }
    
@@ -122,7 +115,6 @@ int OpenNI2SkeletonTracker::init(){
     }
 
     if(camerasON){
-        
         // setup and start depth stream
         if (device.getSensorInfo(openni::SENSOR_DEPTH) != NULL)
         {
@@ -132,7 +124,8 @@ int OpenNI2SkeletonTracker::init(){
             if (rc != openni::STATUS_OK)
             {
                 printf("Couldn't create depth stream\n%s\n", openni::OpenNI::getExtendedError());
-                return 3;
+                deviceStatus = rc;
+                return rc;
             }
         }
         if (oniRecord) {
@@ -143,7 +136,8 @@ int OpenNI2SkeletonTracker::init(){
         if (rc != openni::STATUS_OK)
         {
             printf("Couldn't start the depth stream\n%s\n", openni::OpenNI::getExtendedError());
-            return 4;
+            deviceStatus = rc;
+            return rc;
         }
         
         else {
@@ -157,7 +151,8 @@ int OpenNI2SkeletonTracker::init(){
             if (rc != openni::STATUS_OK)
             {
                 printf("Couldn't create RGB stream\n%s\n", openni::OpenNI::getExtendedError());
-                return 3;
+                deviceStatus = rc;
+                return rc;
             }
         }
         
@@ -169,12 +164,16 @@ int OpenNI2SkeletonTracker::init(){
         if (rc != openni::STATUS_OK)
         {
             printf("Couldn't start the RGB stream\n%s\n", openni::OpenNI::getExtendedError());
-            return 4;
+            deviceStatus = rc;
+            return rc;
         }
         
         else {
             cout << "RGB stream started..." << endl;
         }
+        
+        deviceStatus = rc;
+        return rc;
     }
 
     if (userTracking){
@@ -186,7 +185,7 @@ int OpenNI2SkeletonTracker::init(){
         if (niteRc != nite::STATUS_OK)
         {
             printf("Couldn't create user tracker\n");
-            return 3;
+            return rc;
         }
         
         else {

@@ -120,7 +120,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     string portPrefix;
     double mConf;
 
-    if(config.check("noCameras", "Use only depth sensor")) camerasON = false;
+    if(config.check("noCameras", "Use only user tracking")) camerasON = false;
     else camerasON = true;
     
     if(config.check("noMirror", "Disable mirroring")) mirrorON = false;
@@ -145,7 +145,7 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
         oniRecord = false;
     }
     
-    if(config.check("name", "Name for the port prefix (default=OpenNI2)")){
+    if(config.check("name", "Name for the port prefix (default=/OpenNI2)")){
         portPrefix = config.find("name").asString();
         withOpenPorts = true;
         openPorts(portPrefix, userTracking, camerasON);
@@ -169,29 +169,22 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
     
     skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop);
     
-    if (skeleton->getDeviceStatus()== openni::STATUS_ERROR){
-        cout << "***ERROR*** Sensor could not be initialized." << endl;
-        return false;
-    }
-
-    else if (skeleton->getDeviceStatus()== openni::STATUS_NO_DEVICE){
-        cout << "***ERROR*** No sensor or ONI file found." << endl;
-        return false;
-    }
-
-    else if (skeleton->getDeviceStatus() == openni::STATUS_OK) {
+    if (skeleton->getDeviceStatus() == 0) {
     cout << "OpenNI2 Yarp Device started." << endl;
     return true;
     }
-
-    else {
-        cout << "***ERROR*** OpenNI Device could not start." << endl;
+    
+    else if (skeleton->getDeviceStatus()!= 0){
+        cout << "***ERROR*** Device could not be initialized." << endl;
+        close();
         return false;
     }
 }
 
 bool yarp::dev::OpenNI2DeviceDriverServer::close(){
-    skeleton->close();
+    if (skeleton->getDeviceStatus() == openni::STATUS_OK) {
+        skeleton->close();
+    }
     if(withOpenPorts){
         cout << "Closing ports...";
         
