@@ -18,8 +18,8 @@
 //Constants from the OpenNI2SkeletonData
 #define MAX_USERS 10
 #define TOTAL_JOINTS 15
-#define KINECT_IMG_WIDTH 640
-#define KINECT_IMG_HEIGHT 480
+#define SENSOR_IMG_WIDTH 640
+#define SENSOR_IMG_HEIGHT 480
 
 namespace yarp {
     namespace dev {
@@ -29,51 +29,39 @@ namespace yarp {
 /**
  * @ingroup dev_iface_media
  *
- * Interface for the KinectDeviceDriverLocal and KinectDeviceDiverServer
+ * Interface for the OpenNI2DeviceServer and OpenNI2DeviceClient 
  */
 class yarp::dev::IOpenNI2DeviceDriver {
 public:
     /**
      * Gets sensor's skeleton joints orientation quarternion
      *
-     * @param matrixArray Array of matrices that is filled with the new orientation matrices
-     * @param confidence Array of doubles that is filled with the confidence level of each matrice
+     * @param vectrArray Array of vectors that is filled with the new orientation quartenions
+     * @param confidence Array of doubles that is filled with the confidence level of each quartenion
      * @param userID id of the user skeleton to be retrieved
      * @return false if the user skeleton is not being tracked
      */
     virtual bool getSkeletonOrientation(yarp::sig::Vector *vectorArray, float *confidence, int userID) = 0;
     /**
-     * Gets kinect skeleton joints position 3D vector (in millimeters)
+     * Gets sensor skeleton joints position 3D vector (in millimeters)
      *
-     * @param matrixArray Array of vectors that is filled with the new position vector
+     * @param vectorArray Array of vectors that is filled with the new position vector
      * @param confidence Array of doubles that is filled with the confidence level of each vector
      * @param userID id of the user skeleton to be retrieved
      * @return false if the user skeleton is not being tracked
      */
     virtual bool getSkeletonPosition(yarp::sig::Vector *vectorArray, float *confidence, int userID) = 0;
-    /**
-     * Gets the user state
-     *	0 - NO_USER
-     *	1 - USER_LOST
-     *	2 - USER_DETECTED
-     *	3 - CALIBRATING
-     *	4 - SKELETON_TRACKING
-     *
-     * @return int array of the user skeleton state
-     */
-    virtual int *getSkeletonState() = 0;
+    
     /**
      * Gets the user skeleton state
-     *	0 - NO_USER
-     *	1 - USER_LOST
-     *	2 - USER_DETECTED
-     *	3 - CALIBRATING
-     *	4 - SKELETON_TRACKING
+     *	- SKELETON_NONE
+     *	- SKELETON_CALIBRATING
+     *	- SKELETON_ TRACKED
      *
      * @param userID id of the user skeleton state to be retrieved
-     * @return int value of the user skeleton state
+     * @return nite::SkeletonState value of the user skeleton state
      */
-    virtual int getSkeletonState(int userID) = 0;
+    virtual nite::SkeletonState getSkeletonState(int userID) = 0;
     /**
      * Get RGB camera image
      *

@@ -14,11 +14,31 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop)
 {
     userTracking= withTracking;
     camerasON = withCamerasOn;
     mirrorON = withMirrorOn;
+
+    if (minConf != MINIMUM_CONFIDENCE){
+        minConfidence = minConf;
+    }
+
+    else{
+        minConfidence = MINIMUM_CONFIDENCE;
+    }
+
+    oniPlayback = withOniPlayback;
+    oniRecord = withOniRecord;
+    if (oniPlayback) {
+        fileDevice = withFileDevice;
+    }
+    
+    if (oniRecord) {
+         oniOutputFile = withOniOutputFile;
+    }
+    
+    loop = withLoop;
     init();
     initVars();
 }
@@ -28,15 +48,27 @@ OpenNI2SkeletonTracker::~OpenNI2SkeletonTracker(void)
 }
 
 void OpenNI2SkeletonTracker::close(){
-    
+   
+    if (oniRecord) {
+        recorder.stop();
+        cout << "Stopping recorder device...";
+        recorder.destroy(); 
+        cout << "Done" << endl;
+    }
     if (userTracking) {
         cout << "Destroying user tracker...";
-        delete getSensor();
+        for (int i=0; i < MAX_USERS; i++) {
+        userTracker.stopSkeletonTracking(i+1);
+        }
+        userTracker.destroy();
         nite::NiTE::shutdown();
+        delete getSensor();
         cout << "Done" << endl;
     }
     
     if (camerasON) {
+        depthStream.stop();
+        imageStream.stop();
         cout << "Destroying depth stream...";
         depthStream.destroy();
         cout << "Done" << endl;
@@ -47,28 +79,42 @@ void OpenNI2SkeletonTracker::close(){
     
     cout << "Closing sensor device...";
     device.close();
+    openni::OpenNI::shutdown();
     cout << "Done" << endl;
 }
 
 int OpenNI2SkeletonTracker::init(){
-    
     openni::Status rc = openni::OpenNI::initialize();
+    deviceStatus = 0;
+
     if (rc != openni::STATUS_OK)
     {
         printf("Initialize failed\n%s\n", openni::OpenNI::getExtendedError());
-        return 1;
+        deviceStatus = rc;
+        return rc;
     }
-    
-    rc = device.open(openni::ANY_DEVICE);
-    
-    if (rc != openni::STATUS_OK)
-    {
+
+    if (!oniPlayback){
+        rc = device.open(openni::ANY_DEVICE);
+    }
+    else {
+        rc = device.open(fileDevice.c_str());
+        cout << "Playback from " << fileDevice.c_str() << endl;
+        openni::PlaybackControl* playbackControl = device.getPlaybackControl();
+        playbackControl->setRepeatEnabled(loop);
+    }
+
+    if (rc != openni::STATUS_OK) {
         printf("Couldn't open device\n%s\n", openni::OpenNI::getExtendedError());
-        return 2;
+        deviceStatus = rc;
+        return rc;
     }
-    
+   
+    if (oniRecord) {
+        recorder.create(oniOutputFile.c_str());
+    }
+
     if(camerasON){
-        
         // setup and start depth stream
         if (device.getSensorInfo(openni::SENSOR_DEPTH) != NULL)
         {
@@ -78,21 +124,26 @@ int OpenNI2SkeletonTracker::init(){
             if (rc != openni::STATUS_OK)
             {
                 printf("Couldn't create depth stream\n%s\n", openni::OpenNI::getExtendedError());
-                return 3;
+                deviceStatus = rc;
+                return rc;
             }
         }
-        
+        if (oniRecord) {
+            recorder.attach(depthStream);
+        }
+
         rc = depthStream.start();
         if (rc != openni::STATUS_OK)
         {
             printf("Couldn't start the depth stream\n%s\n", openni::OpenNI::getExtendedError());
-            return 4;
+            deviceStatus = rc;
+            return rc;
         }
         
         else {
             cout << "Depth stream started..." << endl;
         }
-        
+            
         // setup and start colour stream
         if (device.getSensorInfo(openni::SENSOR_COLOR) != NULL)
         {
@@ -100,32 +151,41 @@ int OpenNI2SkeletonTracker::init(){
             if (rc != openni::STATUS_OK)
             {
                 printf("Couldn't create RGB stream\n%s\n", openni::OpenNI::getExtendedError());
-                return 3;
+                deviceStatus = rc;
+                return rc;
             }
         }
         
+        if (oniRecord) {
+            recorder.attach(imageStream);
+        }
+
         rc = imageStream.start();
         if (rc != openni::STATUS_OK)
         {
             printf("Couldn't start the RGB stream\n%s\n", openni::OpenNI::getExtendedError());
-            return 4;
+            deviceStatus = rc;
+            return rc;
         }
         
         else {
             cout << "RGB stream started..." << endl;
         }
+        
+        deviceStatus = rc;
+        return rc;
     }
-    
+
     if (userTracking){
         
         // setup and start user tracking
         nite::Status niteRc = nite::NiTE::initialize();
-        niteRc = userTracker.create();
+        niteRc = userTracker.create(&device);
         
         if (niteRc != nite::STATUS_OK)
         {
             printf("Couldn't create user tracker\n");
-            return 3;
+            return rc;
         }
         
         else {
@@ -134,7 +194,19 @@ int OpenNI2SkeletonTracker::init(){
         
         printf("\nStart moving around to get detected...\n(PSI pose may be required for skeleton calibration, depending on the configuration)\n");
     }
-    
+   
+    if (oniRecord) {
+        rc = recorder.start();
+
+        if (rc != openni::STATUS_OK) {
+            printf("Couldn't start recorder\n");
+        }
+
+        else {
+            cout << "Recorder started..." << endl;
+        }
+    }
+
     return rc;
 }
 
@@ -168,7 +240,6 @@ void OpenNI2SkeletonTracker::initVars(){
             sensorStatus->userSkeleton[i].skeletonPointsOri[jointIndex].zero();
         }
     }
-    
 }
 
 // returns the sensor data struct (where all the data is)
@@ -176,7 +247,7 @@ OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::getSensor(){
     return sensorStatus;
 }
 
-void OpenNI2SkeletonTracker::updateSensor(bool wait){
+void OpenNI2SkeletonTracker::updateSensor(){
     // get camera image
     if(camerasON && imageStream.isValid()){
         imageStream.readFrame(&imageFrameRef);
@@ -195,7 +266,7 @@ void OpenNI2SkeletonTracker::updateSensor(bool wait){
         if (depthFrameRef.isValid()){
             getSensor()->depthFrame.setQuantum(1);
             
-            // put image in Yarp format
+            // put image in Yarp format
             void* tmpDepth = (void*)depthFrameRef.getData();
             getSensor()->depthFrame.setExternal(tmpDepth, depthMode.getResolutionX(), depthMode.getResolutionY());
         }
@@ -259,7 +330,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
     // the method is called only if the skeleton is tracked, so set the stillTracking variable
     userSkeleton->stillTracking = true;
     
-    if (user.getSkeleton().getJoint(joint).getPositionConfidence() > 0.6) {
+    if (user.getSkeleton().getJoint(joint).getPositionConfidence() > minConfidence) {
         
         // position
         double x = user.getSkeleton().getJoint(joint).getPosition().x;
@@ -270,7 +341,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
         userSkeleton->skeletonPointsPos[jIndex][2] = z;
     }
     
-    if (user.getSkeleton().getJoint(joint).getOrientationConfidence() > 0.6){
+    if (user.getSkeleton().getJoint(joint).getOrientationConfidence() > minConfidence){
         
         // orientation
         userSkeleton->skeletonPointsOri[jIndex][0] = user.getSkeleton().getJoint(joint).getOrientation().w;
@@ -349,3 +420,6 @@ void OpenNI2SkeletonTracker::updateUserState(const nite::UserData& user, unsigne
     }
 }
 
+int OpenNI2SkeletonTracker::getDeviceStatus(){
+    return deviceStatus;
+}

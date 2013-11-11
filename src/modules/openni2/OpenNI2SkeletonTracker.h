@@ -29,6 +29,7 @@ using namespace yarp::sig;
 
 #define MAX_USERS 10
 #define TOTAL_JOINTS 15
+#define MINIMUM_CONFIDENCE 0.6
 
 /**
  * Class used by the OpenNI2DeviceDriverServer to interface with the sensor.
@@ -50,6 +51,9 @@ public:
         bool stillTracking;
         int uID;
     }UserSkeleton;
+
+    int getDeviceStatus();
+    
     /**
      * Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
      */
@@ -61,13 +65,13 @@ public:
     /**
      * @param userDetection indicates if user callbacks and skeleton tracking should be on
      */
-    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true);
+    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "", bool loop = false);
     ~OpenNI2SkeletonTracker(void);
     void close();
     /**
      * Sensor data update function. This function updates the data structs with the latest sensor data.
      */
-    void updateSensor(bool wait);
+    void updateSensor();
     void updateUserState(const nite::UserData& user, unsigned long long ts);
     void updateJointInformation(const nite::UserData& user, nite::JointType joint, int jIndex);
     
@@ -77,11 +81,17 @@ public:
     static SensorStatus *getSensor();
 private:
     static SensorStatus *sensorStatus;
-    bool userTracking, camerasON, mirrorON;
-    
+    bool userTracking, camerasON, mirrorON, oniPlayback, oniRecord, loop;
+    int deviceStatus;
+    double minConfidence;
+    string fileDevice;
+    string oniOutputFile;
+
     // OpenNI2 and NiTE objects
     openni::Device device;
     nite::UserTracker userTracker;
+    openni::Recorder recorder;
+    //openni::PlaybackControl playbackControl;
     openni::VideoStream depthStream;
     openni::VideoStream imageStream;
     openni::VideoMode depthMode;

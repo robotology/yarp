@@ -48,7 +48,7 @@ namespace yarp {
 /**
  * @ingroup dev_impl_media
  *
- * An OpenNI2 sensor device implementation to get the kinect data from a kinect conected locally.
+ * An OpenNI2 sensor device implementation to get the kinect data from a sensor conected locally.
  * This implementation opens 4 ports:
  *	- [portPrefix]:i - input port (does nothing)
  *	- [portPrefix]/userSkeleton:o - userSkeleton detection port (only opened if user detection is on)
@@ -61,7 +61,7 @@ public:
     OpenNI2DeviceDriverServer(void);
     ~OpenNI2DeviceDriverServer(void);
     // GenericYarpDriver
-    virtual bool updateInterface(bool wait);
+    virtual bool updateInterface();
     // DeviceDriver
     virtual bool open(yarp::os::Searchable& config);
     virtual bool close();
@@ -69,11 +69,10 @@ public:
     virtual bool startService();
     virtual bool updateService();
     virtual bool stopService();
-    // IKinectDeviceDriver
+    // IOpenNI2DeviceServer
     virtual bool getSkeletonOrientation(Vector *vectorArray, float *confidence,  int userID);
     virtual bool getSkeletonPosition(Vector *vectorArray, float *confidence,  int userID);
-    virtual int *getSkeletonState();
-    virtual int getSkeletonState(int userID);
+    virtual nite::SkeletonState getSkeletonState(int userID);
     virtual ImageOf<PixelRgb> getImageFrame();
     virtual ImageOf<PixelMono16> getDepthFrame();
 private:
@@ -82,7 +81,10 @@ private:
     BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono16> > *depthFramePort;
     BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *imageFramePort;
     OpenNI2SkeletonTracker *skeleton;
-    bool withOpenPorts, userTracking, camerasON, mirrorON;
+    bool withOpenPorts, userTracking, camerasON, mirrorON, oniPlayback, oniRecord, loop;
+    string fileDevice;
+    string oniOutputFile;
+
     /**
      * Opens the depth sensor and rgb camera image ports
      */

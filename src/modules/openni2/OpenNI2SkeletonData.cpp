@@ -54,12 +54,9 @@ void OpenNI2SkeletonData::storeData(Bottle& b){
         if(vocab.compare("CALIBRATING FOR USER") == 0){
             userSkeleton[userID-1].skeletonState = nite::SKELETON_CALIBRATING;
         }
-        //else if(vocab.compare("CALIBRATION ERROR FOR USER") == 0){
-          //  userSkeleton[userID].skeletonState = nite::SKELETON_CALIBRATION_ERROR_NOT_IN_POSE;}
-        //else if(vocab.compare("LOST SKELETON FOR USER") == 0){
-            //userSkeleton[userID].skeletonState = nite::SKELETON_NONE;
-       // }
-    }else if(b.get(0).isList()){
+    }
+    
+    else if(b.get(0).isList()){
         list = b.get(0).asList();
         userID = list->get(1).asInt();
         userSkeleton[userID-1].skeletonState = nite::SKELETON_TRACKED;//USER STATUS
@@ -98,7 +95,7 @@ float* OpenNI2SkeletonData::getPositionConf(int userID){
     return userSkeleton[userID-1].skeletonPosConf;
 }
 
-int OpenNI2SkeletonData::getSkeletonState(int userID){
+nite::SkeletonState OpenNI2SkeletonData::getSkeletonState(int userID){
     return userSkeleton[userID-1].skeletonState;
 }
 
