@@ -214,8 +214,8 @@ unsigned long ConstString::hash() const {
     return h;
 }
 
-ConstString operator + (const char *txt, 
-                        const yarp::os::ConstString& alt) {
+ConstString yarp::os::operator + (const char *txt, 
+                                  const yarp::os::ConstString& alt) {
     return ConstString(txt) + alt;
 }
 

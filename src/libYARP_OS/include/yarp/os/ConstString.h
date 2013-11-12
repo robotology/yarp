@@ -259,13 +259,17 @@ private:
 #endif
 };
 
-yarp::os::ConstString operator + (const char *txt, 
-                                  const yarp::os::ConstString& alt);
-
-inline std::ostream& operator<<(std::ostream& stream, 
-                                const yarp::os::ConstString& alt) {
-    stream << (std::string)alt;
-    return stream;
+namespace yarp {
+    namespace os {
+        yarp::os::ConstString operator + (const char *txt, 
+                                          const yarp::os::ConstString& alt);
+        
+        inline std::ostream& operator<<(std::ostream& stream, 
+                                        const yarp::os::ConstString& alt) {
+            stream << (std::string)alt;
+            return stream;
+        }
+    }
 }
 
 #endif
