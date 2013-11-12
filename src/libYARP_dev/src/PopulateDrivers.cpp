@@ -29,7 +29,6 @@
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/TestMotor.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -38,6 +37,11 @@ extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
 extern DriverCreator *createAnalogSensorClient();
 
+#ifdef YARP_COMPILE_EXPERIMENTAL_WRAPPERS
+    extern DriverCreator *createAnalogWrapper();
+    extern DriverCreator *createControlBoardWrapper();
+    extern DriverCreator *createVirtualAnalogWrapper();
+#endif
 void Drivers::init() {
 
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
@@ -76,4 +80,9 @@ void Drivers::init() {
     add(createRemoteControlBoard());
     add(createServerControlBoard());
     add(createAnalogSensorClient());
+#ifdef YARP_COMPILE_EXPERIMENTAL_WRAPPERS
+    add(createAnalogWrapper());
+    add(createControlBoardWrapper());
+    add(createVirtualAnalogWrapper());
+#endif
 }

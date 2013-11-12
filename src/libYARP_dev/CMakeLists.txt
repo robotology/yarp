@@ -98,15 +98,29 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/TestFrameGrabber.cpp
                   src/TorqueControlImpl.cpp)
 
-source_group("Source Files" FILES ${YARP_dev_SRCS})
-source_group("Header Files" FILES ${YARP_dev_HDRS})
+# once new wrappers will be stable, remove the following 'IF'
+option(YARP_COMPILE_EXPERIMENTAL_WRAPPERS  "Experimental: this option may break compilation")
+IF (YARP_COMPILE_EXPERIMENTAL_WRAPPERS )
+    add_definitions( -DYARP_COMPILE_EXPERIMENTAL_WRAPPERS  )
+    set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
+                            src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
+                            src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
+
+    set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
+                            src/modules/ControlBoardWrapper/ControlBoardWrapper.h
+                            src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
+ENDIF(YARP_COMPILE_EXPERIMENTAL_WRAPPERS )
+
+
+source_group("Source Files" FILES ${YARP_dev_SRCS} ${YARP_devices_SRCS})
+source_group("Header Files" FILES ${YARP_dev_HDRS} ${YARP_devices_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 
-add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_dev_HDRS})
+add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_devices_SRCS} ${YARP_dev_HDRS})
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
 target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
@@ -115,6 +129,4 @@ set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
 
 set_property(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
-install(FILES ${YARP_dev_HDRS}
-        COMPONENT development
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev)
+install(FILES ${YARP_dev_HDRS} COMPONENT development DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev)
