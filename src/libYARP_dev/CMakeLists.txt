@@ -99,8 +99,9 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/TorqueControlImpl.cpp)
 
 # once new wrappers will be stable, remove the following 'IF'
-IF (NEW_WRAPPERS_WIP)
-    add_definitions( -DUSE_NEW_WRAPPERS_WIP )
+option(YARP_COMPILE_EXPERIMENTAL_WRAPPERS  "Experimental: this option may break compilation")
+IF (YARP_COMPILE_EXPERIMENTAL_WRAPPERS )
+    add_definitions( -DYARP_COMPILE_EXPERIMENTAL_WRAPPERS  )
     set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                             src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
                             src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
@@ -108,7 +109,7 @@ IF (NEW_WRAPPERS_WIP)
     set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                             src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                             src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
-ENDIF(NEW_WRAPPERS_WIP)
+ENDIF(YARP_COMPILE_EXPERIMENTAL_WRAPPERS )
 
 
 source_group("Source Files" FILES ${YARP_dev_SRCS} ${YARP_devices_SRCS})

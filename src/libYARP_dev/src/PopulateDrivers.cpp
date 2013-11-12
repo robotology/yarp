@@ -37,7 +37,7 @@ extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
 extern DriverCreator *createAnalogSensorClient();
 
-#ifdef USE_NEW_WRAPPERS_WIP
+#ifdef YARP_COMPILE_EXPERIMENTAL_WRAPPERS
     extern DriverCreator *createAnalogWrapper();
     extern DriverCreator *createControlBoardWrapper();
     extern DriverCreator *createVirtualAnalogWrapper();
@@ -80,7 +80,7 @@ void Drivers::init() {
     add(createRemoteControlBoard());
     add(createServerControlBoard());
     add(createAnalogSensorClient());
-#ifdef USE_NEW_WRAPPERS_WIP
+#ifdef YARP_COMPILE_EXPERIMENTAL_WRAPPERS
     add(createAnalogWrapper());
     add(createControlBoardWrapper());
     add(createVirtualAnalogWrapper());
