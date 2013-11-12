@@ -89,6 +89,7 @@ private:
 
     // OpenNI2 and NiTE objects
     openni::Device device;
+    openni::Device* pDevice;
     nite::UserTracker userTracker;
     openni::Recorder recorder;
     //openni::PlaybackControl playbackControl;
