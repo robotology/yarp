@@ -62,7 +62,6 @@ void OpenNI2SkeletonTracker::close(){
         }
         userTracker.destroy();
         nite::NiTE::shutdown();
-        delete getSensor();
         cout << "Done" << endl;
     }
     
@@ -77,6 +76,7 @@ void OpenNI2SkeletonTracker::close(){
         cout << "Done" << endl;
     }
     
+    delete getSensor();
     cout << "Closing sensor device...";
     device.close();
     openni::OpenNI::shutdown();
@@ -133,6 +133,7 @@ int OpenNI2SkeletonTracker::init(){
         }
 
         rc = depthStream.start();
+        
         if (rc != openni::STATUS_OK)
         {
             printf("Couldn't start the depth stream\n%s\n", openni::OpenNI::getExtendedError());
@@ -171,21 +172,19 @@ int OpenNI2SkeletonTracker::init(){
         else {
             cout << "RGB stream started..." << endl;
         }
-        
-        deviceStatus = rc;
-        return rc;
     }
 
     if (userTracking){
         
         // setup and start user tracking
+
         nite::Status niteRc = nite::NiTE::initialize();
         niteRc = userTracker.create(&device);
-        
+
         if (niteRc != nite::STATUS_OK)
         {
             printf("Couldn't create user tracker\n");
-            return rc;
+            return niteRc;
         }
         
         else {

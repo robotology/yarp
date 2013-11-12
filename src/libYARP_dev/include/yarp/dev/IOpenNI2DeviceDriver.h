@@ -30,6 +30,7 @@ namespace yarp {
  * @ingroup dev_iface_media
  *
  * Interface for the OpenNI2DeviceServer and OpenNI2DeviceClient 
+ * See also http://wiki.icub.org/wiki/OpenNI2
  */
 class yarp::dev::IOpenNI2DeviceDriver {
 public:
