@@ -25,7 +25,7 @@ set(CPACK_PACKAGE_VERSION "${YARP_VERSION}")
 
 #if you are making debian packages, this is useful, but not otherwise
 #configure_file(${YARP_MODULE_DIR}/template/control.in
-#               ${CMAKE_BINARY_DIR}/DEBIAN/control @ONLY IMMEDIATE)
+#               ${CMAKE_BINARY_DIR}/DEBIAN/control @ONLY)
 #install_files(/doc/DEBIAN FILES ${CMAKE_BINARY_DIR}/DEBIAN/control)
 
 if(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")

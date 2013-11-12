@@ -58,10 +58,10 @@ if(YARP_TREE_BUILD)
     get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} ABSOLUTE)
     get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
     configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
-        ${CMAKE_BINARY_DIR}/plugins/path.ini @ONLY IMMEDIATE)
+        ${CMAKE_BINARY_DIR}/plugins/path.ini @ONLY)
     set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
     configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
-        ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY IMMEDIATE)
+        ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY)
     install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/yarp/plugins)
 endif(YARP_TREE_BUILD)
 
@@ -199,7 +199,7 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
         set(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
         set(fname_stub ${fdir}/yarpdev_stub_${plugin_name}.cpp)
         configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${category}.cpp.in
-                       ${fname} @ONLY  IMMEDIATE)
+                       ${fname} @ONLY)
 
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
@@ -393,9 +393,9 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
             set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_owned_${dev}(\"${owner}\");")
         endforeach(dev)
         configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.cpp.in
-                       ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY IMMEDIATE)
+                       ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp @ONLY)
         configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib.h.in
-                       ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
+                       ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.h @ONLY)
         get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
         get_property(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
         include_directories(${YARP_INCLUDE_DIRS})
@@ -422,7 +422,7 @@ endmacro(YARP_END_PLUGIN_LIBRARY bundle_name)
 #
 macro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
     configure_file(${YARP_MODULE_DIR}/template/yarpdev_lib_main.cpp.in
-                   ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY  IMMEDIATE)
+                   ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY)
     add_executable(${exename} ${X_YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
     target_link_libraries(${exename} ${bundle_name})
 endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)

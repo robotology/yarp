@@ -32,9 +32,9 @@ endmacro(END_DEVICE_LIBRARY)
 macro(IMPORT_DEVICES hdr bundle_name)
     set(libname ${bundle_name})
     configure_file(${YARP_MODULE_DIR}/template/yarpdev_compat_plugin.h
-                   ${hdr} @ONLY IMMEDIATE)
+                   ${hdr} @ONLY)
     configure_file(${YARP_MODULE_DIR}/template/yarpdev_compat_plugin.cmake
-                   ${CMAKE_BINARY_DIR}/${bundle_name}Config.cmake @ONLY IMMEDIATE)
+                   ${CMAKE_BINARY_DIR}/${bundle_name}Config.cmake @ONLY)
 endmacro(IMPORT_DEVICES)
 
 endif(NOT COMMAND YARP_END_PLUGIN_LIBRARY)

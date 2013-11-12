@@ -7,7 +7,7 @@ set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/generate
 foreach(conf version system options api numeric)
     set(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
     configure_file(${YARP_MODULE_DIR}/template/yarp_config_${conf}.h.in
-                   ${outconf} IMMEDIATE)
+                   ${outconf})
     message(STATUS "generated ${outconf}")
     install(FILES ${outconf} COMPONENT development DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/conf)
 endforeach(conf)

@@ -20,8 +20,7 @@ message(STATUS ${MSG})
 
 set(BINDINGS_SRC_DIR ${CMAKE_SOURCE_DIR}/../../bindings/src)
 # Have to make copy of yarp.i and some other files
-configure_file(${CMAKE_SOURCE_DIR}/../../bindings/yarp.i
-        yarp.i IMMEDIATE)
+configure_file(${CMAKE_SOURCE_DIR}/../../bindings/yarp.i yarp.i)
 
 include("${CMAKE_SOURCE_DIR}/../../bindings/CMakeLists.txt")
 
