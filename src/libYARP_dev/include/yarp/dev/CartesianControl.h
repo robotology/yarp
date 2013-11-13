@@ -14,7 +14,9 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-/*! \file CartesianControl.h define control board standard interfaces */
+/*!
+ * \file CartesianControl.h defines control board standard interfaces
+ */
 
 namespace yarp {
     namespace dev {
@@ -26,14 +28,15 @@ namespace yarp {
 }
 
 
-/**
+/*!
  * \ingroup dev_iface_motor
  *
- * Structure for configuring a cartesian event.
+ * \brief Structure for configuring a cartesian event.
  */
 struct yarp::dev::CartesianEventParameters
 {
-    /** \brief The signature of the event as specified by the user.
+    /*! 
+     * The signature of the event as specified by the user.
      *
      *  Available events are:
      *  - "motion-onset": beginning of motion/new target received.
@@ -44,7 +47,7 @@ struct yarp::dev::CartesianEventParameters
      */
     yarp::os::ConstString type;
 
-    /**
+    /*!
      * The user specifies the motion check-point that raises a
      * "motion-ongoing" event through this parameter which must be
      * in the range [0,1].
@@ -53,25 +56,26 @@ struct yarp::dev::CartesianEventParameters
 };
 
 
-/**
+/*!
  * \ingroup dev_iface_motor
  *
- * Structure for configuring a cartesian event.
+ * \brief Structure for configuring a cartesian event.
  */
 struct yarp::dev::CartesianEventVariables
 {
-    /** The signature of the received event as filled by the event
+    /*! 
+     * The signature of the received event as filled by the event
      *  handler.
      */
     yarp::os::ConstString type;
 
-    /**
+    /*!
      * Contain the time instant of the source when the event took
      * place, as filled by the event handler.
      */
     double time;
 
-    /**
+    /*!
      * Contain the motion check-point that raised a "motion-ongoing"
      * event.
      */
@@ -79,37 +83,38 @@ struct yarp::dev::CartesianEventVariables
 };
 
 
-/**
+/*!
  * \ingroup dev_iface_motor
  *
- * Interface for a event notified by the cartesian controller.
+ * \brief Interface for a event notified by the cartesian 
+ *              controller.
  */
 class yarp::dev::CartesianEvent
 {
 public:
-    /**
+    /*!
      * The user fills this structure to establish the event
      * parameters.
      */
     yarp::dev::CartesianEventParameters cartesianEventParameters;
 
-    /**
+    /*!
      * The event handler fills this structure with useful
      * information at run-time.
      */
     yarp::dev::CartesianEventVariables cartesianEventVariables;
 
-    /**
+    /*!
     * Event callback to be overridden by the user.
     */
     virtual void cartesianEventCallback() = 0;
 };
 
 
-/**
+/*!
  * \ingroup dev_iface_motor
  *
- * Interface for a cartesian controller.
+ * \brief Interface for a cartesian controller.
  *
  * Please read carefully the <a
  * href="http://wiki.icub.org/iCub/main/dox/html/icub_cartesian_interface.html">documentation</a>.
@@ -117,14 +122,14 @@ public:
 class yarp::dev::ICartesianControl
 {
 public:
-    /**
+    /*!
      * Destructor.
      */
     virtual ~ICartesianControl() {}
 
-    /**
-     * \brief Set the controller in tracking or non-tracking mode.
-     *        [wait for reply]
+    /*!
+     * Set the controller in tracking or non-tracking mode. [wait 
+     * for reply] 
      * \param f true for tracking mode, false otherwise.
      * \return true/false on success/failure.
      *
@@ -136,7 +141,7 @@ public:
      */
     virtual bool setTrackingMode(const bool f) = 0;
 
-    /**
+    /*!
      * Get the current controller mode. [wait for reply]
      * \param f here is returned true if controller is in tracking
      *          mode, false otherwise.
@@ -144,7 +149,7 @@ public:
      */
     virtual bool getTrackingMode(bool *f) = 0;
 
-    /**
+    /*!
      * Ask the controller to close the loop with the low-level joints
      * set-points in place of the actual encoders feedback. [wait for
      * reply]
@@ -161,7 +166,7 @@ public:
      */
     virtual bool setReferenceMode(const bool f) = 0;
 
-    /**
+    /*!
      * Get the current controller reference mode. [wait for reply]
      * \param f here is returned true if controller makes use of the
      *         low-level joints set-points, false if it employs
@@ -170,7 +175,7 @@ public:
      */
     virtual bool getReferenceMode(bool *f) = 0;
 
-    /**
+    /*!
      * Get the current pose of the end-effector. [do not wait for
      * reply]
      * \param x a 3-d vector which is filled with the actual
@@ -185,7 +190,7 @@ public:
     virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &od,
                          yarp::os::Stamp *stamp=NULL) = 0;
 
-    /**
+    /*!
      * Get the current pose of the specified link belonging to the
      * kinematic chain. [wait for reply]
      * \param axis joint index (regardless if it is actuated or
@@ -203,7 +208,7 @@ public:
                          yarp::sig::Vector &od,
                          yarp::os::Stamp *stamp=NULL) = 0;
 
-    /**
+    /*!
      * Move the end-effector to a specified pose (position
      * and orientation) in cartesian space. [do not wait for reply]
      * \param xd a 3-d vector which contains the desired position
@@ -220,7 +225,7 @@ public:
                           const yarp::sig::Vector &od,
                           const double t = 0.0) = 0;
 
-    /**
+    /*!
      * Move the end-effector to a specified position in cartesian
      * space, ignore the orientation. [do not wait for reply]
      * \param xd a 3-d vector which contains the desired position
@@ -234,7 +239,7 @@ public:
     virtual bool goToPosition(const yarp::sig::Vector &xd,
                               const double t = 0.0) = 0;
 
-    /**
+    /*!
      * Move the end-effector to a specified pose (position
      * and orientation) in cartesian space. [wait for reply]
      * \param xd a 3-d vector which contains the desired position
@@ -249,7 +254,7 @@ public:
                               const yarp::sig::Vector &od,
                               const double t = 0.0) = 0;
 
-    /**
+    /*!
      * Move the end-effector to a specified position in cartesian
      * space, ignore the orientation. [wait for reply]
      * \param xd a 3-d vector which contains the desired position
@@ -261,7 +266,7 @@ public:
     virtual bool goToPositionSync(const yarp::sig::Vector &xd,
                                   const double t = 0.0) = 0;
 
-    /**
+    /*!
      * Get the actual desired pose and joints configuration as result
      * of kinematic inversion. [wait for reply]
      * \param xdhat a 3-d vector which is filled with the actual
@@ -279,7 +284,7 @@ public:
                             yarp::sig::Vector &odhat,
                             yarp::sig::Vector &qdhat) = 0;
 
-    /**
+    /*!
      * Ask for inverting a given pose without actually moving there.
      * [wait for reply]
      * \param xd a 3-d vector which contains the desired
@@ -304,7 +309,7 @@ public:
                             yarp::sig::Vector &odhat,
                             yarp::sig::Vector &qdhat) = 0;
 
-    /**
+    /*!
      * Ask for inverting a given pose without actually moving there.
      * [wait for reply]
      * \param q0 a vector of length DOF which contains the starting
@@ -333,7 +338,7 @@ public:
                             yarp::sig::Vector &odhat,
                             yarp::sig::Vector &qdhat) = 0;
 
-    /**
+    /*!
      * Ask for inverting a given position without actually moving
      * there. [wait for reply]
      * \param xd a 3-d vector which contains the desired
@@ -354,7 +359,7 @@ public:
                                 yarp::sig::Vector &odhat,
                                 yarp::sig::Vector &qdhat) = 0;
 
-    /**
+    /*!
      * Ask for inverting a given position without actually moving
      * there. [wait for reply]
      * \param q0 a vector of length DOF which contains the starting
@@ -379,7 +384,7 @@ public:
                                 yarp::sig::Vector &odhat,
                                 yarp::sig::Vector &qdhat) = 0;
 
-    /**
+    /*!
      * Get the current DOF configuration of the limb. [wait for
      * reply]
      * \param curDof a vector which is filled with the actual DOF
@@ -393,7 +398,7 @@ public:
      */
     virtual bool getDOF(yarp::sig::Vector &curDof) = 0;
 
-    /**
+    /*!
      * Set a new DOF configuration for the limb. [wait for reply]
      * \param newDof a vector which contains the new DOF
      *            configuration.
@@ -411,7 +416,7 @@ public:
     virtual bool setDOF(const yarp::sig::Vector &newDof,
                         yarp::sig::Vector &curDof) = 0;
 
-    /**
+    /*!
      * Get the current joints rest position. [wait for reply]
      * \param curRestPos a vector which is filled with the current
      *                  joints rest position components [deg].
@@ -424,7 +429,7 @@ public:
      */
     virtual bool getRestPos(yarp::sig::Vector &curRestPos) = 0;
 
-    /**
+    /*!
      * Set a new joints rest position. [wait for reply]
      * \param newRestPos a vector which contains the new joints rest
      *                  position components [deg].
@@ -441,7 +446,7 @@ public:
     virtual bool setRestPos(const yarp::sig::Vector &newRestPos,
                             yarp::sig::Vector &curRestPos) = 0;
 
-    /**
+    /*!
      * Get the current joints rest weights. [wait for reply]
      * \param curRestWeights a vector which is filled with the
      *                  current joints rest weights.
@@ -454,7 +459,7 @@ public:
      */
     virtual bool getRestWeights(yarp::sig::Vector &curRestWeights) = 0;
 
-    /**
+    /*!
      * Set a new joints rest position. [wait for reply]
      * \param newRestWeights a vector which contains the new joints
      *                  rest weights.
@@ -471,7 +476,7 @@ public:
     virtual bool setRestWeights(const yarp::sig::Vector &newRestWeights,
                                 yarp::sig::Vector &curRestWeights) = 0;
 
-    /**
+    /*!
      * Get the current range for the axis. [wait for reply]
      * \param axis joint index (regardless if it is actuated or
      *            not).
@@ -481,7 +486,7 @@ public:
      */
     virtual bool getLimits(const int axis, double *min, double *max) = 0;
 
-    /**
+    /*!
      * Set new range for the axis. Allowed range shall be a valid
      * subset of the real control limits. [wait for reply]
      * \param axis joint index (regardless it it is actuated or
@@ -492,21 +497,21 @@ public:
      */
     virtual bool setLimits(const int axis, const double min, const double max) = 0;
 
-    /**
+    /*!
      * Get the current trajectory duration. [wait for reply]
      * \param t the memory location where the time is returned [s].
      * \return true/false on success/failure.
      */
     virtual bool getTrajTime(double *t) = 0;
 
-    /**
+    /*!
      * Set the duration of the trajectory. [wait for reply]
      * \param t time [s].
      * \return true/false on success/failure.
      */
     virtual bool setTrajTime(const double t) = 0;
 
-    /**
+    /*!
      * Return tolerance for in-target check. [wait for reply]
      * \param tol the memory location where tolerance is returned.
      * \return true/false on success/failure.
@@ -516,7 +521,7 @@ public:
      */
     virtual bool getInTargetTol(double *tol) = 0;
 
-    /**
+    /*!
      * Set tolerance for in-target check. [wait for reply]
      * \param tol tolerance.
      * \return true/false on success/failure.
@@ -526,7 +531,7 @@ public:
      */
     virtual bool setInTargetTol(const double tol) = 0;
 
-    /**
+    /*!
      * Return joints velocities. [wait for reply]
      * \param qdot the vector containing the joints velocities
      *             [deg/s] sent to the robot by the controller.
@@ -534,7 +539,7 @@ public:
      */
     virtual bool getJointsVelocities(yarp::sig::Vector &qdot) = 0;
 
-    /**
+    /*!
      * Return velocities of the end-effector in the task space. [wait
      * for reply]
      * \param xdot the 3-d vector containing the derivative of x,y,z
@@ -550,7 +555,7 @@ public:
     virtual bool getTaskVelocities(yarp::sig::Vector &xdot,
                                    yarp::sig::Vector &odot) = 0;
 
-    /**
+    /*!
      * Set the reference velocities of the end-effector in the task
      * space.
      * \param xdot the 3-d vector containing the x,y,z reference
@@ -562,7 +567,7 @@ public:
     virtual bool setTaskVelocities(const yarp::sig::Vector &xdot,
                                    const yarp::sig::Vector &odot) = 0;
 
-    /**
+    /*!
      * Attach a tip frame to the end-effector.
      * \param x a 3-d vector describing the position of the tip frame
      *          wrt the end-effector (meters).
@@ -576,7 +581,7 @@ public:
     virtual bool attachTipFrame(const yarp::sig::Vector &x,
                                 const yarp::sig::Vector &o) = 0;
 
-    /**
+    /*!
      * Retrieve the tip frame currently attached to the end-effector.
      * \param x a 3-d vector containing the position of the tip frame
      *          wrt the end-effector (meters).
@@ -586,7 +591,7 @@ public:
      */
     virtual bool getTipFrame(yarp::sig::Vector &x, yarp::sig::Vector &o) = 0;
 
-    /**
+    /*!
      * Remove the tip frame currently attached to the end-effector.
      * \return true/false if successful/failed.
      *
@@ -594,14 +599,16 @@ public:
      */
     virtual bool removeTipFrame() = 0;
 
-    /** Check once if the current trajectory is terminated. [wait for
+    /*! 
+     * Check once if the current trajectory is terminated. [wait for
      *   reply]
      * \param f where the result is returned.
      * \return true/false on success/failure.
      */
     virtual bool checkMotionDone(bool *f) = 0;
 
-    /** Wait until the current trajectory is terminated. [wait for
+    /*! 
+     * Wait until the current trajectory is terminated. [wait for
      *   reply]
      * \param period specify the check time period [s].
      * \param timeout specify the check expiration time [s]. If
@@ -613,7 +620,8 @@ public:
     virtual bool waitMotionDone(const double period = 0.1,
                                 const double timeout = 0.0) = 0;
 
-    /** Ask for an immediate stop motion. [wait for reply]
+    /*! 
+     * Ask for an immediate stop motion. [wait for reply]
      * \return true/false on success/failure.
      *
      * \note The control is completely released, i.e. a direct switch
@@ -621,7 +629,8 @@ public:
      */
     virtual bool stopControl() = 0;
 
-    /** Store the controller context. [wait for reply]
+    /*! 
+     * Store the controller context. [wait for reply]
      * \param id specify where to store the returned context id.
      * \return true/false on success/failure.
      *
@@ -631,7 +640,8 @@ public:
      */
     virtual bool storeContext(int *id) = 0;
 
-    /** Restore the controller context previously stored. [wait for
+    /*! 
+     * Restore the controller context previously stored. [wait for
      *   reply]
      * \param id specify the context id to be restored.
      * \return true/false on success/failure.
@@ -642,13 +652,14 @@ public:
      */
     virtual bool restoreContext(const int id) = 0;
 
-    /** Delete a specified controller context. [wait for reply]
+    /*!
+     * Delete a specified controller context. [wait for reply]
      * \param id specify the context id to be removed.
      * \return true/false on success/failure.
      */
     virtual bool deleteContext(const int id) = 0;
 
-    /**
+    /*!
      * Return useful info on the operating state of the controller.
      * [wait for reply]
      * \param info is a property-like bottle containing the info.
@@ -656,7 +667,7 @@ public:
      */
     virtual bool getInfo(yarp::os::Bottle &info) = 0;
 
-    /**
+    /*!
      * Register an event.
      * \param event the event to be registered.
      * \return true/false on success/failure.
@@ -666,14 +677,14 @@ public:
      */
     virtual bool registerEvent(yarp::dev::CartesianEvent &event) = 0;
 
-    /**
+    /*!
      * Unregister an event.
      * \param event the event to be unregistered.
      * \return true/false on success/failure.
      */
     virtual bool unregisterEvent(yarp::dev::CartesianEvent &event) = 0;
 
-    /**
+    /*!
      * Tweak low-level controller's parameters. [wait for reply]
      * \param options is a property-like bottle containing new values
      *                for the low-level controller's configuration.
@@ -684,7 +695,7 @@ public:
      */
     virtual bool tweakSet(const yarp::os::Bottle &options) = 0;
 
-    /**
+    /*!
      * Return low-level controller's parameters. [wait for reply]
      * \param options is a property-like bottle containing the
      *                current values of the low-level controller's

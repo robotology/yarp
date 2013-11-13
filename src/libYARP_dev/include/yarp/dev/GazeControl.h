@@ -15,7 +15,7 @@
 #include <yarp/sig/Vector.h>
 
 /*!
- * \file GazeControl.h define control board standard interfaces
+ * \file GazeControl.h defines control board standard interfaces
  */
 
 namespace yarp {
@@ -31,12 +31,12 @@ namespace yarp {
 /*!
  * \ingroup dev_iface_motor
  *
- * Structure for configuring a gaze event.
+ * \brief Structure for configuring a gaze event.
  */
 struct yarp::dev::GazeEventParameters
 {
     /*!
-     * \brief The signature of the event as specified by the user.
+     * The signature of the event as specified by the user.
      *
      * Available events are:
      *  - "motion-onset": beginning of motion/new target received.
@@ -90,9 +90,9 @@ struct yarp::dev::GazeEventVariables
 
 
 /*!
- * \brief ingroup dev_iface_motor
+ * \ingroup dev_iface_motor
  *
- * Interface for a event notified by the gaze controller.
+ * \brief Interface for a event notified by the gaze controller.
  */
 class yarp::dev::GazeEvent
 {
@@ -594,7 +594,8 @@ public:
      */
     virtual bool setStereoOptions(const yarp::os::Bottle &options) = 0;
 
-    /*! Bind the neck pitch within a specified range. [wait for
+    /*! 
+     * Bind the neck pitch within a specified range. [wait for
      *   reply]
      * \param min the minimum value of the range (in degree).
      * \param max the maximum value of the range (in degree).
@@ -602,7 +603,8 @@ public:
      */
     virtual bool bindNeckPitch(const double min, const double max) = 0;
 
-    /*! Block the neck pitch at a specified angle. [wait for reply]
+    /*! 
+     * Block the neck pitch at a specified angle. [wait for reply]
      * \param val the angle value at which block the joint (in
      *           degree).
      * \return true/false on success/failure.
@@ -612,7 +614,8 @@ public:
      */
     virtual bool blockNeckPitch(const double val) = 0;
 
-    /*! Block the neck pitch at the current angle. [wait for reply]
+    /*! 
+     * Block the neck pitch at the current angle. [wait for reply]
      * \return true/false on success/failure.
      *
      * \note The possibility to block the neck joints is given in
@@ -620,7 +623,8 @@ public:
      */
     virtual bool blockNeckPitch() = 0;
 
-    /*! Bind the neck roll within a specified range. [wait for
+    /*! 
+     * Bind the neck roll within a specified range. [wait for
      *   reply]
      * \param min the minimum value of the range (in degree).
      * \param max the maximum value of the range (in degree).
@@ -628,7 +632,8 @@ public:
      */
     virtual bool bindNeckRoll(const double min, const double max) = 0;
 
-    /*! Block the neck roll at a specified angle. [wait for reply]
+    /*! 
+     * Block the neck roll at a specified angle. [wait for reply]
      * \param val the angle value at which block the joint (in
      *           degree).
      * \return true/false on success/failure.
@@ -638,7 +643,8 @@ public:
      */
     virtual bool blockNeckRoll(const double val) = 0;
 
-    /*! Block the neck roll at the current angle. [wait for reply]
+    /*! 
+     * Block the neck roll at the current angle. [wait for reply]
      * \return true/false on success/failure.
      *
      * \note The possibility to block the neck joints is given in
@@ -646,7 +652,8 @@ public:
      */
     virtual bool blockNeckRoll() = 0;
 
-    /*! Bind the neck yaw within a specified range. [wait for
+    /*! 
+     * Bind the neck yaw within a specified range. [wait for
      *   reply]
      * \param min the minimum value of the range (in degree).
      * \param max the maximum value of the range (in degree).
@@ -654,7 +661,8 @@ public:
      */
     virtual bool bindNeckYaw(const double min, const double max) = 0;
 
-    /*! Block the neck yaw at a specified angle. [wait for reply]
+    /*! 
+     * Block the neck yaw at a specified angle. [wait for reply]
      * \param val the angle value at which block the joint (in
      *           degree).
      * \return true/false on success/failure.
@@ -664,7 +672,8 @@ public:
      */
     virtual bool blockNeckYaw(const double val) = 0;
 
-    /*! Block the neck yaw at the current angle. [wait for reply]
+    /*! 
+     * Block the neck yaw at the current angle. [wait for reply]
      * \return true/false on success/failure.
      *
      * \note The possibility to block the neck joints is given in
@@ -672,7 +681,8 @@ public:
      */
     virtual bool blockNeckYaw() = 0;
 
-    /*! Block the eyes to look always straight ahead with a
+    /*! 
+     * Block the eyes to look always straight ahead with a
      *   specified vergence angle. [wait for reply]
      * \param ver the vergence angle (in degree).
      * \return true/false on success/failure.
@@ -685,7 +695,8 @@ public:
      */
     virtual bool blockEyes() = 0;
 
-    /*! Return the current neck pitch range. [wait for reply]
+    /*! 
+     * Return the current neck pitch range. [wait for reply]
      * \param min the location where to store the minimum of the
      *            range [deg].
      * \param max the location where to store the maximum of the
@@ -694,7 +705,8 @@ public:
      */
     virtual bool getNeckPitchRange(double *min, double *max) = 0;
 
-    /*! Return the current neck roll range. [wait for reply]
+    /*! 
+     * Return the current neck roll range. [wait for reply]
      * \param min the location where to store the minimum of the
      *            range [deg].
      * \param max the location where to store the maximum of the
@@ -703,7 +715,8 @@ public:
      */
     virtual bool getNeckRollRange(double *min, double *max) = 0;
 
-    /*! Return the current neck yaw range. [wait for reply]
+    /*! 
+     * Return the current neck yaw range. [wait for reply]
      * \param min the location where to store the minimum of the
      *            range [deg].
      * \param max the location where to store the maximum of the
@@ -712,7 +725,8 @@ public:
      */
     virtual bool getNeckYawRange(double *min, double *max) = 0;
 
-    /*! Return the current vergence angle used to block the eyes.
+    /*! 
+     * Return the current vergence angle used to block the eyes.
      *   [wait for reply]
      * \param ver the vergence angle [deg].
      * \return true/false on success/failure.
@@ -722,54 +736,62 @@ public:
      */
     virtual bool getBlockedVergence(double *ver) = 0;
 
-    /*! Unblock the neck pitch. [wait for reply]
+    /*! 
+     * Unblock the neck pitch. [wait for reply]
      * \return true/false on success/failure.
      */
     virtual bool clearNeckPitch() = 0;
 
-    /*! Unblock the neck roll. [wait for reply]
+    /*! 
+     * Unblock the neck roll. [wait for reply]
      * \return true/false on success/failure.
      */
     virtual bool clearNeckRoll() = 0;
 
-    /*! Unblock the neck yaw. [wait for reply]
+    /*! 
+     * Unblock the neck yaw. [wait for reply]
      * \return true/false on success/failure.
      */
     virtual bool clearNeckYaw() = 0;
 
-    /*! Unblock the eyes. [wait for reply]
+    /*! 
+     * Unblock the eyes. [wait for reply]
      * \return true/false on success/failure.
      */
     virtual bool clearEyes() = 0;
 
-    /*! Return the current tolerance defined by the user to gaze at
-     *   the target with the neck, meaning that the neck will turn to
-     *   the target with a final "misalignment" specified by this
-     *   tolerance; the residual rotation will be covered by the eyes
-     *   movement. By default, the tolerance is zero, that is the
-     *   neck will be perfectly aligned with the target. [wait for
-     *   reply]
+    /*! 
+     * Return the current tolerance defined by the user to gaze at
+     * the target with the neck, meaning that the neck will turn to
+     * the target with a final "misalignment" specified by this
+     * tolerance; the residual rotation will be covered by the eyes
+     * movement. By default, the tolerance is zero, that is the
+     * neck will be perfectly aligned with the target. [wait for
+     * reply]
      * \param angle the location where to store the current user
      *              tolerance [deg].
      * \return true/false on success/failure.
      */
     virtual bool getNeckAngleUserTolerance(double *angle) = 0;
 
-    /*! Specify a new tolerance to gaze at the target with the neck.
+    /*! 
+     * Specify a new tolerance to gaze at the target with the neck.
      *   [wait for reply]
      * \param angle the new angle user tolerance [deg].
      * \return true/false on success/failure.
      */
     virtual bool setNeckAngleUserTolerance(const double angle) = 0;
 
-    /*! Check once if the current trajectory is terminated. [wait for
+    /*! 
+     * Check once if the current trajectory is terminated. [wait for
      *   reply]
      * \param f where the result is returned.
      * \return true/false on success/failure.
      */
     virtual bool checkMotionDone(bool *f) = 0;
 
-    /*! Wait until the current trajectory is terminated. [wait for
+    /*! 
+     * Wait until the current trajectory is terminated. [wait for
      *   reply]
      * \param period specify the check time period (seconds).
      * \param timeout specify the check expiration time (seconds). If
@@ -780,13 +802,15 @@ public:
      */
     virtual bool waitMotionDone(const double period=0.1, const double timeout=0.0) = 0;
 
-    /*! Check once if the saccade is terminated. [wait for reply]
+    /*! 
+     * Check once if the saccade is terminated. [wait for reply]
      * \param f where the result is returned.
      * \return true/false on success/failure.
      */
     virtual bool checkSaccadeDone(bool *f) = 0;
 
-    /*! Wait until the current saccade is terminated. [wait for
+    /*! 
+     * Wait until the current saccade is terminated. [wait for
      *   reply]
      * \param period specify the check time period (seconds).
      * \param timeout specify the check expiration time (seconds). If
@@ -797,12 +821,14 @@ public:
      */
     virtual bool waitSaccadeDone(const double period=0.1, const double timeout=0.0) = 0;
 
-    /*! Ask for an immediate stop of the motion. [wait for reply]
+    /*! 
+     * Ask for an immediate stop of the motion. [wait for reply]
      * \return true/false on success/failure.
      */
     virtual bool stopControl() = 0;
 
-    /*! Store the controller context. [wait for reply]
+    /*! 
+     * Store the controller context. [wait for reply]
      * \param id specify where to store the returned context id.
      * \return true/false on success/failure.
      *
@@ -812,7 +838,8 @@ public:
      */
     virtual bool storeContext(int *id) = 0;
 
-    /*! Restore the controller context previously stored. [wait for
+    /*! 
+     * Restore the controller context previously stored. [wait for
      *   reply]
      * \param id specify the context id to be restored.
      * \return true/false on success/failure.
@@ -823,7 +850,8 @@ public:
      */
     virtual bool restoreContext(const int id) = 0;
 
-    /*! Delete a specified controller context. [wait for reply]
+    /*! 
+     * Delete a specified controller context. [wait for reply]
      * \param id specify the context id to be removed.
      * \return true/false on success/failure.
      */
