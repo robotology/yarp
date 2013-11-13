@@ -30,19 +30,11 @@ private:
 
 #ifdef YARPRUN_LOG
 
-#define _BEGIN         YarprunCheckpoints::instance().checkpoint("BEGIN",__FUNCTION__,__FILE__,__LINE__);
-#define _CHECKPOINT    YarprunCheckpoints::instance().checkpoint("     ",__FUNCTION__,__FILE__,__LINE__);
-#define _RETURN(val) { YarprunCheckpoints::instance().checkpoint("END  ",__FUNCTION__,__FILE__,__LINE__); return val; }
-#define _RETURN_VOID { YarprunCheckpoints::instance().checkpoint("END  ",__FUNCTION__,__FILE__,__LINE__); return; }
-#define _EXIT(val)   { YarprunCheckpoints::instance().checkpoint("END  ",__FUNCTION__,__FILE__,__LINE__); exit(val); }
+#define RUNLOG(msg) YarprunCheckpoints::instance().checkpoint(msg,__FILE__,__FUNCTION__,__LINE__);
 
 #else
 
-#define _BEGIN
-#define _CHECKPOINT
-#define _RETURN(val) return val;
-#define _RETURN_VOID return;
-#define _EXIT(val)   exit(val);
+#define RUNLOG(msg)
 
 #endif
 

@@ -28,18 +28,42 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
 
+
 #if defined(WIN32)
+
 typedef DWORD PID;
 typedef HANDLE FDESC;
+
 #else
+
 #include <yarp/os/Thread.h>
+
 typedef int PID;
 typedef int FDESC;
 typedef void* HANDLE;
+
 int CLOSE(int h);
 int SIGNAL(int pid,int signum);
-void sigchild_handler(int sig);
+
+class ZombieHunterThread : public yarp::os::Thread
+{
+public:
+    ZombieHunterThread(){}
+   ~ZombieHunterThread(){}
+
+    void run()
+    {
+        while (!isStopping())
+        {
+            PID zombie=wait(NULL);
+
+            if (zombie>0) yarp::os::Run::CleanZombie(zombie);
+        }
+    }
+};
+
 #endif
+
 
 #define YARPRUN_ERROR -1
 
@@ -47,14 +71,32 @@ class YarpRunProcInfo
 {
 public:
     YarpRunProcInfo(yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pidCmd,HANDLE handleCmd,bool hold);
-    virtual ~YarpRunProcInfo(){}
-    virtual bool Match(yarp::os::ConstString& alias){ return mAlias==alias; }
+    virtual ~YarpRunProcInfo()
+    {
 
+    }
+    bool Match(yarp::os::ConstString& alias){ return mAlias==alias; }
+#ifndef WIN32
+    virtual bool Clean(PID pid,YarpRunProcInfo* &pRef)
+    {
+        if (mPidCmd==pid)
+        {
+            mPidCmd=0;
+            pRef=this;
+            return true;
+        }
+
+        pRef=NULL;
+        return false;
+    }
+#endif
     virtual bool Signal(int signum);
 
     virtual bool Clean();
 
     virtual bool IsActive();
+
+    virtual void finalize(){}
 
     void setCmd(yarp::os::ConstString cmd) { mCmd = cmd; }
     void setEnv(yarp::os::ConstString env) { mEnv = env; }
@@ -64,6 +106,7 @@ protected:
     yarp::os::ConstString mOn;
 
     PID mPidCmd;
+    bool mCleanCmd;
 
     HANDLE mHandleCmd; // only windows
     bool mHold;        // only linux
@@ -75,9 +118,6 @@ protected:
 };
 
 class YarpRunInfoVector
-#if !defined(WIN32)
-    : public yarp::os::Thread
-#endif
 {
 public:
     YarpRunInfoVector();
@@ -89,33 +129,10 @@ public:
     int Killall(int signum);
 
 #if defined(WIN32)
+    HANDLE hZombieHunter;
     void GetHandles(HANDLE* &lpHandles,DWORD &nCount);
 #else
-
-protected:
-    int pipe_sigchld_handler_to_zombie_hunter[2];
-
-    void beforeStart()
-    {
-        pipe(pipe_sigchld_handler_to_zombie_hunter);
-    }
-
-    void onStop()
-    {
-        close(pipe_sigchld_handler_to_zombie_hunter[0]);
-        close(pipe_sigchld_handler_to_zombie_hunter[1]);
-    }
-
-    void run(); // zombie hunter
-
-public:
-    void CleanZombies()
-    {
-        char dummy=0;
-
-        write(pipe_sigchld_handler_to_zombie_hunter[1],&dummy,1);
-    }
-
+    bool CleanZombie(int zombie);
 #endif
 
     yarp::os::Bottle PS();
@@ -154,11 +171,72 @@ public:
 
     virtual bool Clean();
 
+    virtual void finalize()
+    {
+        TerminateStdio();
+    }
+
     void TerminateStdio();
 
+#ifndef WIN32
+    virtual bool Clean(PID pid,YarpRunProcInfo* &pRef)
+    {
+        pRef=NULL;
+
+        if (mPidCmd==pid)
+        {
+            mPidCmd=0;
+
+            if (!mKillingStdin && mPidStdin) kill(mPidStdin, SIGTERM);
+            if (!mKillingStdout && mPidStdout) kill(mPidStdout,SIGTERM);
+
+            mKillingStdin=mKillingStdout=true;
+        }
+        else if (mPidStdin==pid)
+        {
+            mPidStdin=0;
+
+            if (!mKillingCmd && mPidCmd) kill(mPidCmd,SIGTERM);
+            if (!mKillingStdout && mPidStdout) kill(mPidStdout,SIGTERM);
+
+            mKillingCmd=mKillingStdout=true;
+        }
+        else if (mPidStdout==pid)
+        {
+            mPidStdout=0;
+
+            if (!mKillingCmd && mPidCmd) kill(mPidCmd,SIGTERM);
+            if (!mKillingStdin && mPidStdin) kill(mPidStdin,SIGTERM);
+
+            mKillingCmd=mKillingStdin=true;
+        }
+        else return false;
+
+        if (!mKillingStdio)
+        {
+            mKillingStdio=true;
+
+            if (mWriteToPipeStdinToCmd)   CLOSE(mWriteToPipeStdinToCmd);
+            if (mReadFromPipeStdinToCmd)  CLOSE(mReadFromPipeStdinToCmd);
+            if (mWriteToPipeCmdToStdout)  CLOSE(mWriteToPipeCmdToStdout);
+            if (mReadFromPipeCmdToStdout) CLOSE(mReadFromPipeCmdToStdout);
+
+            mWriteToPipeStdinToCmd=0;
+            mReadFromPipeStdinToCmd=0;
+            mWriteToPipeCmdToStdout=0;
+            mReadFromPipeCmdToStdout=0;
+        }
+
+        if (!mPidCmd && !mPidStdin && !mPidStdout) pRef=this;
+
+        return true;
+    }
+#endif
 protected:
     PID mPidStdin;
     PID mPidStdout;
+    bool mCleanStdin;
+    bool mCleanStdout;
 
     bool mKillingCmd;
     bool mKillingStdio;

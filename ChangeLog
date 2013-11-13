@@ -1,3 +1,13 @@
+2013-11-13 Alessandro Scalzo <alessandro.scalzo@iit.it>
+    * src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
+    * src/libYARP_OS/include/yarp/os/impl/RunCheckpoints.h
+    * src/libYARP_OS/include/yarp/os/impl/RunReadWrite.h
+    * src/libYARP_OS/include/yarp/os/Run.h
+    * src/libYARP_OS/src/RunProcManager.cpp
+    * src/libYARP_OS/src/RunCheckpoints.cpp
+    * src/libYARP_OS/src/RunReadWrite.cpp
+    * src/libYARP_OS/src/Run.cpp
+
 2013-07-26  Daniele E. Domenichelli <daniele.domenichelli@iit.it>
     * Tagging 2.3.22
 

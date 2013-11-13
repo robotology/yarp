@@ -12,7 +12,7 @@
 //   src/libYARP_OS/src/Run.cpp
 
 #include <yarp/os/Run.h>
-
+#include <yarp/os/Network.h>
 #include <stdio.h>
 
 

@@ -8,6 +8,7 @@
 
 #if defined(WIN32)
 #include <time.h>
+#include <windows.h>
 #else
 #include <sys/time.h>
 #endif
@@ -21,19 +22,21 @@ YarprunCheckpoints::YarprunCheckpoints()
 #if defined(WIN32)
     time_t now=time(NULL);
     srand((unsigned)now);
-    sprintf(path,"C:/Users/user/yarprun_log_%s_%u.txt",ctime(&now),(unsigned)rand());
+    sprintf(path,"C:/Users/user/Documents/yarprun_log/yarprun_log_%d_%s_%u.txt",GetCurrentProcessId(),ctime(&now),(unsigned)rand());
 #else
     timeval now;
     gettimeofday(&now,NULL);
-    sprintf(path,"/tmp/yarprun_log_%s_%06d.txt",ctime(&(now.tv_sec)),(int)now.tv_usec);
+    sprintf(path,"/tmp/yarprun_log_%d_%s_%06d.txt",getpid(),ctime(&(now.tv_sec)),(int)now.tv_usec);
 #endif
 
-    for (int t=0; t<256 && path[t]; ++t)
+    for (int t=10; t<256 && path[t]; ++t)
     {
-        if (path[t]==' ' || path[t]==':' || path[t]=='?') path[t]='_';
+        if (path[t]=='\n' || path[t]=='\r' || path[t]==' ' || path[t]==':' || path[t]=='?') path[t]='_';
     }
 
     mLogFile=fopen(path,"w");
+
+    if (!mLogFile) perror(path);
 }
 
 YarprunCheckpoints::~YarprunCheckpoints()
@@ -48,11 +51,11 @@ YarprunCheckpoints& YarprunCheckpoints::instance()
     return singleton;
 }
 
-void YarprunCheckpoints::checkpoint(const char *prefix,const char* label,const char* sFile,int line)
+void YarprunCheckpoints::checkpoint(const char *prefix,const char* sFile,const char* sFunction,int line)
 {
     if (!mLogFile) return;
 
-    fprintf(mLogFile,"%s: %s section %s line %d\n",prefix,sFile,label,line);
+    fprintf(mLogFile,"%s: file %s function %s line %d\n",prefix,sFile,sFunction,line);
     fflush(mLogFile);
 }
 

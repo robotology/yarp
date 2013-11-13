@@ -11,10 +11,9 @@
 
 #include <string.h>
 #include <yarp/os/api.h>
-#include <yarp/os/Port.h>
+#include <yarp/os/RpcServer.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Network.h>
 
 namespace yarp {
   namespace os {
@@ -28,6 +27,7 @@ namespace yarp {
 #endif
 
 class YARP_OS_API YarpRunInfoVector;
+class YARP_OS_API ZombieHunterThread;
 
 /*
  * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.
@@ -154,35 +154,46 @@ public:
      * @return 0 on success, -1 on failure
      *
      */
-    static int sendToServer(Property& config);
+    static int client(Property& config);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
     static int main(int argc, char *argv[]);
-    static Port *pServerPort;
-    static YarpRunInfoVector mProcessVector;
-    static YarpRunInfoVector mStdioVector;
+    static yarp::os::RpcServer *pServerPort;
+
     static bool mStresstest;
 
-#if !defined(WIN32)
-    static void CleanZombies();
+#if defined(WIN32)
+    static YarpRunInfoVector mProcessVector;
+    static YarpRunInfoVector mStdioVector;
+#else
+    static YarpRunInfoVector *mProcessVector;
+    static YarpRunInfoVector *mStdioVector;
+    static ZombieHunterThread *mBraveZombieHunter;
+    static void CleanZombie(int pid);
 #endif
+
+    static yarp::os::Bottle sendMsg(Bottle& msg,yarp::os::ConstString target,int RETRY=20,double DELAY=0.5);
 
 protected:
     static void Help(const char* msg="");
-    static int Server();
-    static Bottle SendMsg(Bottle& msg,ConstString target);
-    static Bottle ExecuteCmdAndStdio(Bottle& msg);
-    static Bottle ExecuteCmd(Bottle& msg);
-    static int UserStdio(Bottle& msg,Bottle& result,yarp::os::ConstString& stdioUUID);
+    static int server();
+    static int executeCmdAndStdio(Bottle& msg,Bottle& result);
+    static int executeCmd(Bottle& msg,Bottle& result);
+    static int userStdio(Bottle& msg,Bottle& result);
 
     static inline bool IS_PARENT_OF(int pid){ return pid>0; }
     static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
     static inline bool IS_INVALID(int pid){ return pid<0; }
 
-    static yarp::os::Semaphore serializer;
     static ConstString mPortName;
     static int mProcCNT;
+
+#if !defined(WIN32)
+    static void cleanBeforeExec();
+    static void writeToPipe(int fd,yarp::os::ConstString str);
+    static int readFromPipe(int fd,char* &data,int& buffsize);
+#endif
 
     static void cmdcpy(char* &dst,const char* src)
     {
