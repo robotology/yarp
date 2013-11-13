@@ -211,7 +211,8 @@ int OpenNI2SkeletonTracker::init(){
 
 void OpenNI2SkeletonTracker::initVars(){
     sensorStatus = new SensorStatus;
-    
+   
+    if (camerasON) {
     // read frames from streams
     imageStream.readFrame(&imageFrameRef);
     depthStream.readFrame(&depthFrameRef);
@@ -225,6 +226,7 @@ void OpenNI2SkeletonTracker::initVars(){
     imageMode = imageStream.getVideoMode();
     sensorStatus->imageFrame.resize(imageMode.getResolutionX(), imageMode.getResolutionY());
     sensorStatus->imageFrame.zero();
+    }
     
     // initialise UserSkeleton struct
     for (int i = 0; i < MAX_USERS; i++) {

@@ -29,7 +29,7 @@ namespace yarp {
 /**
  * @ingroup dev_iface_media
  *
- * Interface for the OpenNI2DeviceServer and OpenNI2DeviceClient 
+ * Interface for the OpenNI2DeviceServer and OpenNI2DeviceClient.  
  * See also http://wiki.icub.org/wiki/OpenNI2
  */
 class yarp::dev::IOpenNI2DeviceDriver {
@@ -38,7 +38,7 @@ public:
      * Gets sensor's skeleton joints orientation quarternion
      *
      * @param vectrArray Array of vectors that is filled with the new orientation quartenions
-     * @param confidence Array of doubles that is filled with the confidence level of each quartenion
+     * @param confidence Array of floats that is filled with the confidence level of each quartenion
      * @param userID id of the user skeleton to be retrieved
      * @return false if the user skeleton is not being tracked
      */
@@ -47,7 +47,7 @@ public:
      * Gets sensor skeleton joints position 3D vector (in millimeters)
      *
      * @param vectorArray Array of vectors that is filled with the new position vector
-     * @param confidence Array of doubles that is filled with the confidence level of each vector
+     * @param confidence Array of floats that is filled with the confidence level of each vector
      * @param userID id of the user skeleton to be retrieved
      * @return false if the user skeleton is not being tracked
      */
