@@ -300,7 +300,7 @@ Using ImageMagick and YARP
 
 
 /**
- * \example external/nameclient.cpp
+ * \example external/nameclient.c
 
 How to get data from YARP's name server without using any YARP code
 in your own program.

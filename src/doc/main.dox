@@ -8,7 +8,9 @@
 
 
 /**
- * @mainpage Welcome to YARP
+\mainpage Welcome to YARP
+
+\image html yarp-yal02-100.png
 
 YARP stands for Yet Another Robot Platform.  What is it?
 If data is the bloodstream of your robot, then YARP is
@@ -19,11 +21,11 @@ the circulatory system.
 
 More specifically, YARP supports building a robot control system as a
 \ref note_ports "collection of programs" communicating in a
-peer-to-peer way, with an extensible \ref carrier_config "family of connection types" 
-(tcp, udp, multicast, local, MPI, 
+peer-to-peer way, with an extensible \ref carrier_config "family of connection types"
+(tcp, udp, multicast, local, MPI,
 mjpg-over-http, XML/RPC, tcpros, ...) that can be swapped in and out to
-match your needs.  
-We also support similarly flexible interfacing 
+match your needs.
+We also support similarly flexible interfacing
 with hardware devices.  Our strategic goal
 is to increase the longevity of robot software projects [1].
 
@@ -34,7 +36,7 @@ out for world domination.  It is easy to interoperate with YARP-using
 programs without yourself necessarily having to use YARP codebase --
 see the
 \ref yarp_without_yarp "YARP without YARP" tutorial. YARP is written
-in C++.  The <a href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a> 
+in C++.  The <a href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a>
 library is used for Windows builds, and to support extra
 protocols.  On Linux and Mac OSX, ACE can optionally be omitted,
 giving a very light footprint (with the trade-off being the

@@ -15,7 +15,6 @@ if(DOXYGEN_FOUND)
     set(DOX_FILE Doxyfile.part)
     # YARP documentation is always verbose now.  It used to be
     # partially stripped of stuff less interesting to end-users.
-    set(DOX_EXTRA_DIR src conf doc/spec)
     set(DOX_PATTERNS "*.h *.dox *.cpp")
     set(DOX_GENERATE_MAN NO)
     configure_file(${CMAKE_CURRENT_LIST_DIR}/doxygen/${DOX_FILE}.template

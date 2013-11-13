@@ -13,29 +13,29 @@ The command-line utility "yarpmanager" and its graphical companion "gyarpmanager
 
 \image html ymgui.jpg "yarpmanager and gyarpmanager"
 
-\section features Features 
-- Running, stopping, killing and monitoring multiple programs on localhost or remote machines. 
+\section features Features
+- Running, stopping, killing and monitoring multiple programs on localhost or remote machines.
 - Establishing port's connections manually and automatically.
-- Managing multiple programs which are grouped as different applications. 
-- Running programs concerning their dependencies. 
+- Managing multiple programs which are grouped as different applications.
+- Running programs concerning their dependencies.
 - Recovering programs from failure.
 - Using internal launcher to speed up program execution on localhost.
-- Automatically assigning programs to machines using load balancing and smart resource discovery mechanism for improving performance. 
+- Automatically assigning programs to machines using load balancing and smart resource discovery mechanism for improving performance.
 - Discovering information and status of machines in cluster of computers (e.g. Hardware, platform, CPU load).
-- Allowing users to specify resource dependencies of program using module description file. 
+- Allowing users to specify resource dependencies of program using module description file.
 - Allowing users to provide information about specific devices (e.g GPU) of machines using resource description file.
-- Creating new Application, Module and Resource using XML template file. 
+- Creating new Application, Module and Resource using XML template file.
 - Including multiple instances of an application inside another application.
-- Renaming ports name at run time using port prefix mechanism. 
-- Modifying program's parameters from GUI. 
-- Modifying and reloading XML description files from GUI. 
+- Renaming ports name at run time using port prefix mechanism.
+- Modifying program's parameters from GUI.
+- Modifying and reloading XML description files from GUI.
 
 \section concepts What is?
 - Module, is an executable binary file (program) which is developed using YARP or any other libraries.
-- Application, refers to a collection of modules, connections and other applications. 
-- Resource refers to any physical or logical resources which are needed by module. (e.g Computer, Memory, GPU, Platform)  
+- Application, refers to a collection of modules, connections and other applications.
+- Resource refers to any physical or logical resources which are needed by module. (e.g Computer, Memory, GPU, Platform)
 
-See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts. 
+See \ref application, \ref module and \ref resource for more information on how to use XML model to describe each of these concepts.
 
 \section configuration Configuration
 Default configuration file known as "ymanager.ini" can be automatically loaded by (g)yarpmanager from the same folder running the manager; or it can be indicated by parameter "--config".
@@ -44,7 +44,7 @@ $ yarpmanager --config <my_config_file>
 $ gyarpmanager --config <my_config_file>
 \endverbatim
 
-The below example shows the syntax of configuration file: 
+The below example shows the syntax of configuration file:
 
 \verbatim
 # Path to the folder which contains application description files
@@ -82,7 +82,7 @@ external_editor = gvim
 \endverbatim
 
 Items 'apppath', 'modpath' and 'respath' respectively point to the folder where the XML description files of Applications, Modules and Resources can be found. All description file names must have ".xml" extension. If 'load_subfolders=yes', applications description files will be  recursively loaded from sub folders of 'apppath'.
-Set 'external_editor' to your preferable text editor. It will be used by gyarpmanager for editing XML file. 
+Set 'external_editor' to your preferable text editor. It will be used by gyarpmanager for editing XML file.
 
 
 \section examples Running examples
@@ -92,13 +92,13 @@ $ yarpserver
 \endverbatim
 
 \subsection example_y Using yarpmanager
-Open another terminal and try this: 
+Open another terminal and try this:
 \verbatim
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
 $ yarpmanager
 >> help
      # a list of yarpmanager keywords
->> list app 
+>> list app
      # you should see EyesViewer-Localhost, FakeEyes, ...
 >> load app EyesViewer-Localhost
 >> run
@@ -110,7 +110,7 @@ $ yarpmanager
 \endverbatim
 
 \subsection example_g Using gyarpmanager
-Open another terminal and try this: 
+Open another terminal and try this:
 \verbatim
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
 $ gyarpmanager
@@ -118,38 +118,38 @@ $ gyarpmanager
 
 - From "Entities" frame, click the triangle beside Applications, then  double-click "EyesViewer-Localhost".
 - From menu "Manage" press "Run" to run all modules
-- From menu "Manage" press "Connect" to establish all connections. 
-- To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop". 
+- From menu "Manage" press "Connect" to establish all connections.
+- To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop".
 
-To run "EyesViewer-Cluster" using load balancer you need to have yarprun running as server. 
-Open a terminal and type: 
+To run "EyesViewer-Cluster" using load balancer you need to have yarprun running as server.
+Open a terminal and type:
 \verbatim
-$ yarprun --server /node1 
+$ yarprun --server /node1
 \endverbatim
 
-Open another one and type: 
+Open another one and type:
 \verbatim
 $ yarprun --server /node2
 \endverbatim
 
-Then try this: 
+Then try this:
 \verbatim
 $ cd ${YARP_ROOT}/src/yarpmanager/tests
 $ gyarpmanager
 \endverbatim
 
 - From "Entities" frame, click the triangle beside Applications, then  double-click "EyesViewer-Cluster".
-- From the right side, right-click on the frame where you can see all modules and form the pop-up menu chose "Assign hosts". You will see that modules will be automatically assigned to available nodes. (here /node1 and /node2) 
+- From the right side, right-click on the frame where you can see all modules and form the pop-up menu chose "Assign hosts". You will see that modules will be automatically assigned to available nodes. (here /node1 and /node2)
 - From menu "Manage" press "Run" to run all modules
-- From menu "Manage" press "Connect" to establish all connections. 
-- To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop". 
+- From menu "Manage" press "Connect" to establish all connections.
+- To terminate application, chose "Manage">"Disconnect" and "Manage">"Stop".
 
-\note You can use "Assign hosts" whenever all modules are stopped and connections are disconnected.   
+\note You can use "Assign hosts" whenever all modules are stopped and connections are disconnected.
 
-\section application Application description file 
-Application description file is a collection of modules (programs) or other applications and connections. 
- 
-Here is an example of application description file in XML format: 
+\section application Application description file
+Application description file is a collection of modules (programs) or other applications and connections.
+
+Here is an example of application description file in XML format:
 \htmlonly
 <div class="fragment"><pre class="fragment">
 <tt><b><font color="#00458A">&lt;application&gt;</font></b>
@@ -174,32 +174,32 @@ Here is an example of application description file in XML format:
       <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
   <b><font color="#00458A">&lt;/module&gt;</font></b>
   ...
-    
+
   <i><font color="#9A1900">&lt;!-- Embedded applications --&gt;</font></i>
   <b><font color="#00458A">&lt;application&gt;</font></b>
       <b><font color="#00458A">&lt;name&gt;</font></b>Application_Name<b><font color="#00458A">&lt;/name&gt;</font></b>
       <b><font color="#00458A">&lt;prefix&gt;&lt;/prefix&gt;</font></b>
    <b><font color="#00458A">&lt;/application&gt;</font></b>
    ...
-    
-  <i><font color="#9A1900">&lt;!-- Required connections --&gt;</font></i>  
+
+  <i><font color="#9A1900">&lt;!-- Required connections --&gt;</font></i>
   <b><font color="#00458A">&lt;connection</font></b> <font color="#009900">persist</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#00458A">&gt;</font></b>
       <b><font color="#00458A">&lt;from&gt;&lt;/from&gt;</font></b>
       <b><font color="#00458A">&lt;to&gt;&lt;/to&gt;</font></b>
       <b><font color="#00458A">&lt;protocol&gt;&lt;/protocol&gt;</font></b>
   <b><font color="#00458A">&lt;/connection&gt;</font></b>
-  
+
   <b><font color="#00458A">&lt;connection&gt;</font></b>
       <b><font color="#00458A">&lt;from</font></b> <font color="#009900">external</font><font color="#990000">=</font><font color="#FF0000">"true"</font><b><font color="#00458A">&gt;&lt;/from&gt;</font></b>
       <b><font color="#00458A">&lt;to&gt;&lt;/to&gt;</font></b>
       <b><font color="#00458A">&lt;protocol&gt;&lt;/protocol&gt;</font></b>
-  <b><font color="#00458A">&lt;/connection&gt;</font></b>  
+  <b><font color="#00458A">&lt;/connection&gt;</font></b>
   ...
-  
+
 <b><font color="#00458A">&lt;/application&gt;</font></b>
 </tt></pre>
 </div>
-\endhtmlonly 
+\endhtmlonly
 
 \latexonly
 \noindent
@@ -252,17 +252,17 @@ Here is an example of application description file in XML format:
 \endlatexonly
 
 \subsection app_notes Notes
- - In application description file, if you set <node></node> to "localhost", the manager will use an internal module launcher to run the module on localhost.
- - Leaving <node></node> empty, later you can use the load balancer to automatically assign module to a node for better performance. 
- - <prefix> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and <prefix>/MyPrefix</prefix>, after launching the module, the real port name will be "/Myprefix/Port1". 
- - Other applications can be integrated by indicating their names. Setting <prefix> for an included application, port prefix will be applied to all modules and connections which are not set as external.  
- - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in gyarpmanager).    
+ - In application description file, if you set \<node\>\</node\> to "localhost", the manager will use an internal module launcher to run the module on localhost.
+ - Leaving \<node\>\</node\> empty, later you can use the load balancer to automatically assign module to a node for better performance.
+ - \<prefix\> refers to port name's prefix. It will be added to the names of all ports that the module opens. For example, if a module open "/Port1" and \<prefix\>/MyPrefix\</prefix\>, after launching the module, the real port name will be "/Myprefix/Port1".
+ - Other applications can be integrated by indicating their names. Setting \<prefix\> for an included application, port prefix will be applied to all modules and connections which are not set as external.
+ - Persistent connection can be created by setting "persist" property of the corresponding connection tags. They are created by using YARP topics as described in \ref persistent_connections and will be removed when the application is unloaded from manager (i.e. closing the application window in gyarpmanager).
 
 
-\section resource Resource description file 
-The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.  
+\section resource Resource description file
+The resource description file can be used to provide a general information of the machines that are part of the cluster. In very simple form, the resource description file is a list of the names of machines in the cluster.
 
-Here is an example of resource description file in XML format: 
+Here is an example of resource description file in XML format:
 \htmlonly
 <div class="fragment"><pre class="fragment">
 <tt><b><font color="#00458A">&lt;resources&gt;</font></b>
@@ -278,11 +278,11 @@ Here is an example of resource description file in XML format:
     <b><font color="#00458A">&lt;computer&gt;</font></b>
         <b><font color="#00458A">&lt;name&gt;</font></b>hostname2<b><font color="#00458A">&lt;/name&gt;</font></b>
         <b><font color="#00458A">&lt;description&gt;</font></b>a computer with GPU device<b><font color="#00458A">&lt;/description&gt;</font></b>
-        <b><font color="#00458A">&lt;disable&gt;</font></b>no<b><font color="#00458A">&lt;/disable&gt;</font></b> 
+        <b><font color="#00458A">&lt;disable&gt;</font></b>no<b><font color="#00458A">&lt;/disable&gt;</font></b>
         <i><font color="#9A1900">&lt;!-- GPU description section. --&gt;</font></i>
         <b><font color="#00458A">&lt;gpu&gt;</font></b>
             <b><font color="#00458A">&lt;name&gt;</font></b>Tesla C1060<b><font color="#00458A">&lt;/name&gt;</font></b>
-            <b><font color="#00458A">&lt;cores&gt;</font></b>240<b><font color="#00458A">&lt;/cores&gt;</font></b> 
+            <b><font color="#00458A">&lt;cores&gt;</font></b>240<b><font color="#00458A">&lt;/cores&gt;</font></b>
             <b><font color="#00458A">&lt;frequency&gt;</font></b>1600<b><font color="#00458A">&lt;/frequency&gt;</font></b>
             <b><font color="#00458A">&lt;capability&gt;</font></b>1.3<b><font color="#00458A">&lt;/capability&gt;</font></b>
             <b><font color="#00458A">&lt;registers_block&gt;</font></b>128<b><font color="#00458A">&lt;/registers_block&gt;</font></b>
@@ -297,10 +297,10 @@ Here is an example of resource description file in XML format:
             <b><font color="#00458A">&lt;constant_memory&gt;</font></b>
                 <b><font color="#00458A">&lt;total_space&gt;</font></b>16<b><font color="#00458A">&lt;/total_space&gt;</font></b>
             <b><font color="#00458A">&lt;/constant_memory&gt;</font></b>
-        <b><font color="#00458A">&lt;/gpu&gt;</font></b> 
+        <b><font color="#00458A">&lt;/gpu&gt;</font></b>
     <b><font color="#00458A">&lt;/computer&gt;</font></b>
     ...
-    
+
 <b><font color="#00458A">&lt;/resources&gt;</font></b>
 </tt></pre>
 </div>
@@ -352,13 +352,13 @@ Here is an example of resource description file in XML format:
  - Platform, Memory, Storage and Processor specification will be discovered automatically by (g)yarpmanager; but, peripherals such as GPU should to be specifically introduced.
 
 
-\section module Module description file 
-Module description file can be used to provide general information of module and its dependencies. It is mainly used by load balancer to automatically assign machines to module which satisfy the dependencies. By default, if there is no module description, load balancer assumes that the module can be executed on every available machines. Despite it is \b not \b mandatory, it is always useful to have XML description of each module which shows how it should be used for application building (e.g parameters, inputs, outputs).     
+\section module Module description file
+Module description file can be used to provide general information of module and its dependencies. It is mainly used by load balancer to automatically assign machines to module which satisfy the dependencies. By default, if there is no module description, load balancer assumes that the module can be executed on every available machines. Despite it is \b not \b mandatory, it is always useful to have XML description of each module which shows how it should be used for application building (e.g parameters, inputs, outputs).
 
-Here is an example of module description file in XML format: 
+Here is an example of module description file in XML format:
 \htmlonly
 <div class="fragment"><pre class="fragment">
-<tt><b><font color="#00458A">&lt;module&gt;</font></b>    
+<tt><b><font color="#00458A">&lt;module&gt;</font></b>
     <b><font color="#00458A">&lt;name&gt;</font></b>module_name<b><font color="#00458A">&lt;/name&gt;</font></b>
     <b><font color="#00458A">&lt;description&gt;</font></b>Template module<b><font color="#00458A">&lt;/description&gt;</font></b>
     <b><font color="#00458A">&lt;version&gt;</font></b>1.0<b><font color="#00458A">&lt;/version&gt;</font></b>
@@ -376,17 +376,17 @@ Here is an example of module description file in XML format:
      <i><font color="#9A1900">&lt;!-- &lt;data&gt; can have multiple &lt;input&gt; or &lt;output&gt; tags. --&gt;</font></i>
      <b><font color="#00458A">&lt;data&gt;</font></b>
         <i><font color="#9A1900">&lt;!-- input data if available--&gt;</font></i>
-        <b><font color="#00458A">&lt;input&gt;</font></b>            
+        <b><font color="#00458A">&lt;input&gt;</font></b>
             <b><font color="#00458A">&lt;type&gt;</font></b>DataType<b><font color="#00458A">&lt;/type&gt;</font></b>
 
             <i><font color="#9A1900">&lt;!-- input port which receives the data. --&gt;</font></i>
-            <b><font color="#00458A">&lt;port</font></b> <font color="#009900">carrier</font><font color="#990000">=</font><font color="#FF0000">"tcp"</font><b><font color="#00458A">&gt;</font></b>/portname<b><font color="#00458A">&lt;/port&gt;</font></b>            
-            <b><font color="#00458A">&lt;required&gt;</font></b>yes<b><font color="#00458A">&lt;/required&gt;</font></b>           
+            <b><font color="#00458A">&lt;port</font></b> <font color="#009900">carrier</font><font color="#990000">=</font><font color="#FF0000">"tcp"</font><b><font color="#00458A">&gt;</font></b>/portname<b><font color="#00458A">&lt;/port&gt;</font></b>
+            <b><font color="#00458A">&lt;required&gt;</font></b>yes<b><font color="#00458A">&lt;/required&gt;</font></b>
             <b><font color="#00458A">&lt;priority&gt;</font></b>no<b><font color="#00458A">&lt;/priority&gt;</font></b>
             <b><font color="#00458A">&lt;description&gt;&lt;/description&gt;</font></b>
         <b><font color="#00458A">&lt;/input&gt;</font></b>
         ...
-        
+
         <i><font color="#9A1900">&lt;!-- output data if available --&gt;</font></i>
         <b><font color="#00458A">&lt;output&gt;</font></b>
             <b><font color="#00458A">&lt;type&gt;</font></b>DataType<b><font color="#00458A">&lt;/type&gt;</font></b>
@@ -394,14 +394,14 @@ Here is an example of module description file in XML format:
             <b><font color="#00458A">&lt;description&gt;&lt;/description&gt;</font></b>
         <b><font color="#00458A">&lt;/output&gt;</font></b>
         ...
-        
+
     <b><font color="#00458A">&lt;/data&gt;</font></b>
-    
+
     <b><font color="#00458A">&lt;dependencies&gt;</font></b>
         <b><font color="#00458A">&lt;computer&gt;</font></b>
             <b><font color="#00458A">&lt;gpu&gt;</font></b>
                 <b><font color="#00458A">&lt;capability&gt;</font></b>1.3<b><font color="#00458A">&lt;/capability&gt;</font></b>
-            <b><font color="#00458A">&lt;/gpu&gt;</font></b> 
+            <b><font color="#00458A">&lt;/gpu&gt;</font></b>
             ...
         <b><font color="#00458A">&lt;/computer&gt;</font></b>
         ...
@@ -480,15 +480,15 @@ Here is an example of module description file in XML format:
 \endlatexonly
 
 \subsection mode_notes Notes
- 
- - <name> should match its executable file name.
- - <type> refers to nominal type of data (e.g. ImageFrame, String).
+
+ - \<name\> should match its executable file name.
+ - \<type> refers to nominal type of data (e.g. ImageFrame, String).
  - Required input means that execution of module depends on availability of the input data. Notice that not all the input are required for a module to perform its task (e.g. status request input).
- - <priority>yes</priority> forces the execution of module to be delayed until the port become available.
- - Physical and logical resource dependencies can be introduced using <dependencies> tag. Dependencies must follow resource conceptional models. Currently available models are 'memory', 'processor', 'storage', 'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced inside <computer></computer> tags. Resources inside a <computer> tag, represent conjunctional dependency.  Resources from different <computer> tags can be seen as disjunctions. Meaning that, if a module depends on either resource R1 or R2, they can be introduced inside two different <computer> tags. Resource dependencies should be introduced if they are really required. For example, if module's performance drops significantly in case of memory swapping, a memory resource dependency can be introduced with the required memory space.
- - In a multi-platform cluster of computers, if a module depends on specific platform (Operating system), <platform> dependency should be introduced. 
- 
- Resource conceptional model which can be used as module's dependency: 
+ - \<priority\>yes\</priority\> forces the execution of module to be delayed until the port become available.
+ - Physical and logical resource dependencies can be introduced using \<dependencies\> tag. Dependencies must follow resource conceptional models. Currently available models are 'memory', 'processor', 'storage', 'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced inside \<computer\>\</computer\> tags. Resources inside a \<computer\> tag, represent conjunctional dependency.  Resources from different \<computer\> tags can be seen as disjunctions. Meaning that, if a module depends on either resource R1 or R2, they can be introduced inside two different \<computer\> tags. Resource dependencies should be introduced if they are really required. For example, if module's performance drops significantly in case of memory swapping, a memory resource dependency can be introduced with the required memory space.
+ - In a multi-platform cluster of computers, if a module depends on specific platform (Operating system), \<platform\> dependency should be introduced.
+
+ Resource conceptional model which can be used as module's dependency:
 \htmlonly
 <div class="fragment"><pre class="fragment">
 <tt><b><font color="#00458A">&lt;platform&gt;</font></b>
@@ -499,7 +499,7 @@ Here is an example of module description file in XML format:
 
 <b><font color="#00458A">&lt;yarp_port&gt;</font></b>
     <b><font color="#00458A">&lt;name&gt;&lt;/name&gt;</font></b>   <i><font color="#9A1900">&lt;!-- yarp port name --&gt;</font></i>
-<b><font color="#00458A">&lt;yarp_port&gt;</font></b>           
+<b><font color="#00458A">&lt;yarp_port&gt;</font></b>
 
 <b><font color="#00458A">&lt;memory&gt;</font></b>
     <b><font color="#00458A">&lt;free_space&gt;&lt;/free_space&gt;</font></b>    <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
@@ -532,7 +532,7 @@ Here is an example of module description file in XML format:
     <b><font color="#00458A">&lt;constant_memory&gt;</font></b>
         <b><font color="#00458A">&lt;total_space&gt;&lt;/total_space&gt;</font></b>     <i><font color="#9A1900">&lt;!-- in KB --&gt;</font></i>
     <b><font color="#00458A">&lt;/constant_memory&gt;</font></b>
-<b><font color="#00458A">&lt;/gpu&gt;</font></b>     
+<b><font color="#00458A">&lt;/gpu&gt;</font></b>
 </tt></pre>
 </div>
 \endhtmlonly
@@ -585,42 +585,42 @@ Here is an example of module description file in XML format:
 \endlatexonly
 
 \section create Create new XML description file
-gyarpmanager allows for creating new application, module and resource description file using predifined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then 
+gyarpmanager allows for creating new application, module and resource description file using predifined templates. To create a new XML file, first make sure you set 'external_editor' to your preferable editor (e.g. gedit, notepad) then
 - From "File>New" menu chose "New Application". ("New Module" for module and "New Resource" for resource)
-- Chose your application folder and enter proper name (e.g "my-test-app.xml") to save it. The template file will be open using 'external_editor'. 
-- Modify and save it. 
-- Open it using gyarpmanager. 
+- Chose your application folder and enter proper name (e.g "my-test-app.xml") to save it. The template file will be open using 'external_editor'.
+- Modify and save it.
+- Open it using gyarpmanager.
 
 \subsection create_notes Notes
-- (g)yarpmanager allows for identical application names (they will be listed as MyApp(1), MyApp(2), ...). But it is strongly recommended to have unique proper name for each application. Notice that, duplicate names for modules and resources are not allowed and will be ignored by (g)yarpmanager.   
-- If you modify the XML description file, you need to "reopen" it. Identically, you can "remove" and "open" it from GUI. 
- 
+- (g)yarpmanager allows for identical application names (they will be listed as MyApp(1), MyApp(2), ...). But it is strongly recommended to have unique proper name for each application. Notice that, duplicate names for modules and resources are not allowed and will be ignored by (g)yarpmanager.
+- If you modify the XML description file, you need to "reopen" it. Identically, you can "remove" and "open" it from GUI.
+
 \section export Generate application dependency graph
-The arrangement of modules and resources within an application can be visualized as dependency graph. For Instance, dependency graph of application "EyesViewer-Localhost" used in above example is shown below. 
+The arrangement of modules and resources within an application can be visualized as dependency graph. For Instance, dependency graph of application "EyesViewer-Localhost" used in above example is shown below.
 \image html app-graph.jpg "EyesViewer-Localhost"
 
-As shown in the graph, application "EyesViewer-Localhost" consists of two instances of "FakeEyes" with their relevant modules. Each module is associated with a node marked as "MultipleResource". It is linked to machines which satisfy its requirements. Notice that here, "localhost" is specifically assigned by user to each modules; Thus there is no link to machines "node1" and "node2". 
+As shown in the graph, application "EyesViewer-Localhost" consists of two instances of "FakeEyes" with their relevant modules. Each module is associated with a node marked as "MultipleResource". It is linked to machines which satisfy its requirements. Notice that here, "localhost" is specifically assigned by user to each modules; Thus there is no link to machines "node1" and "node2".
  The graph is generated in DOT format which can be visualized using Graphviz tools. To generate the graph:
  - Open an application using gyarpmanager (See above example \ref example_g)
  - From "Edit" menu chose "Export graph"
- - Give a name (e.g "MyApp.dot") and save it. 
- 
-Or open an application using yarpmanager (See above example \ref example_y) and type : 
+ - Give a name (e.g "MyApp.dot") and save it.
+
+Or open an application using yarpmanager (See above example \ref example_y) and type :
 \verbatim
 >> export MyApp.dot
 \endverbatim
- 
-To visualize the graph, Linux users can open a terminal and try this: 
+
+To visualize the graph, Linux users can open a terminal and try this:
 \verbatim
 $ sudo apt-get install graphviz
 $ dot -Tpdf -o MyApp.pdf MyApp.dot
 \endverbatim
-  
-Windows users can download Graphviz tools from http://www.graphviz.org/Download_windows.php and in windows console type : 
-   
+
+Windows users can download Graphviz tools from http://www.graphviz.org/Download_windows.php and in windows console type :
+
 \verbatim
  C:\...\> dot -Tpdf -o MyApp.pdf MyApp.dot
 \endverbatim
 
- 
+
 */

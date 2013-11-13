@@ -33,7 +33,7 @@ namespace yarp {
 /**
  * \ingroup key_class
  *
- * A simple collection of objects that can be described and transmitted
+ * \brief A simple collection of objects that can be described and transmitted
  * in a portable way.
  *
  * Objects are stored in a list, which you can add to and access.

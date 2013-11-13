@@ -30,7 +30,7 @@ namespace XmlRpc {
   class XmlRpcUtil {
   public:
     // hokey xml parsing
-    //! Returns contents between <tag> and </tag>, updates offset to char after </tag>
+    //! Returns contents between \<tag\> and \</tag\>, updates offset to char after \</tag\>
     static std::string parseTag(const char* tag, std::string const& xml, int* offset);
 
     //! Returns true if the tag is found and updates offset to the char after the tag

@@ -24,7 +24,7 @@ of a YARP port. The input port is assumed to contain a vector of numbers.
 At the moment the only way to start YarpScope is by passing an xml file using
 the --xml parameter. The file is located using the YARP default policy.
 
-\section xml_file_format
+\subsection xml_file_format XML File Format
 
 Here is an example of portscope description file in XML format:
 
@@ -179,7 +179,7 @@ axes [optional, default = 201].
 - \a minval and \a maxval are the minimum and maximum values on the Y axes
 [optional, default -100, 100].
 - \a bgcolor is the color of the background for the plot. Color names (white, gray,
-etc.) and RGB values (#FFFFFF, ecc) are accepted [optional, default "white"]
+etc.) and RGB values (\#FFFFFF, ecc) are accepted [optional, default "white"]
 
 
 In each plot you can have one or more graphs:
@@ -195,11 +195,11 @@ In each plot you can have one or more graphs:
 
 
 - \a remote is the YARP port where the data is read. For each port used in the
-xml file, yarpscope will open a port \a $YARP_PORT_PREFIX/yarpscope/<remote> and
+xml file, yarpscope will open a port \a $YARP_PORT_PREFIX/yarpscope/\<remote\> and
 connect it to the \a remote port
 - \a index is the index of the data to graph.
 - \a color is the color of the plot. Color names (white, gray, etc.) and RGB values
-(#FFFFFF, ecc) are accepted [optional, default "black"]
+(\#FFFFFF, ecc) are accepted [optional, default "black"]
 - \a title is the name of the plot as it will appear on the legend [optional,
 currently unused].
 - \a type is the type of graph. It can be:

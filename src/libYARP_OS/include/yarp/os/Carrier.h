@@ -31,7 +31,7 @@ namespace yarp {
 }
 
 /**
- * A base class for connection types (tcp, mcast, shmem, ...) which are
+ * \brief A base class for connection types (tcp, mcast, shmem, ...) which are
  * called carriers in YARP.
  *
  * The methods prepareSend, sendHeader, expectReplyToHeader,

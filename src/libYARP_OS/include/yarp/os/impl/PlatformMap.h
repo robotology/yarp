@@ -10,6 +10,8 @@
 #ifndef _YARP2_PLATFORMMAP_
 #define _YARP2_PLATFORMMAP_
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #include <yarp/conf/api.h>
 #include <yarp/conf/system.h>
 #ifndef YARP_USE_STL
@@ -18,8 +20,9 @@
 #  include <ace/Functor_String.h>
 #  ifndef ACE_HAS_STRING_HASH
 
+
 template<>
-class YARP_OS_API ACE_Equal_To<std::string>
+class YARP_OS_impl_API ACE_Equal_To<std::string>
 {
 public:
     int operator() (const std::string& x, const std::string& y) const {
@@ -28,7 +31,7 @@ public:
 };
 
 template<>
-class YARP_OS_API ACE_Hash<std::string>
+class YARP_OS_impl_API ACE_Hash<std::string>
 {
 public:
     unsigned long operator() (const std::string& x) const {
@@ -47,7 +50,7 @@ public:
 };
 
 template<>
-class YARP_OS_API ACE_Less_Than<std::string>
+class YARP_OS_impl_API ACE_Less_Than<std::string>
 {
 public:
     int operator() (const std::string &x, const std::string &y) const {
@@ -92,6 +95,8 @@ int _platform_map_find_raw(std::map<KEY,VAL>& store,const KEY& key, VAL& val) {
 #  define PLATFORM_MAP_FIND_RAW(x,y,z) _platform_map_find_raw(x,y,z)
 #  define PLATFORM_MAP_CLEAR(x) x.clear()
 #endif
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #endif
 

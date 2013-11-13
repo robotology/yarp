@@ -20,7 +20,8 @@ namespace yarp {
 }
 
 /**
- * A starter class for implementing simple carriers.
+ * \brief A starter class for implementing simple carriers.
+ *
  * It implements reasonable default behavior.
  */
 class YARP_OS_API yarp::os::AbstractCarrier : public Carrier {
