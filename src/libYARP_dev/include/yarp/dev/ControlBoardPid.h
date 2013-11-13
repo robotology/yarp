@@ -12,7 +12,9 @@
 #ifndef __YARPCONTROLBOARDPID__
 #define __YARPCONTROLBOARDPID__
 
-/*! \file ControlBoardPid.h define control board standard interfaces*/
+/*!
+ * \file ControlBoardPid.h define control board standard interfaces
+ */
 
 namespace yarp{
     namespace dev{
@@ -20,98 +22,125 @@ namespace yarp{
     }
 }
 
-/**
- * Contains the parameters for a PID
+/*!
+ * \brief Contains the parameters for a PID
  */
 class YARP_dev_API yarp::dev::Pid
 {
 public:
-    double kp;                 /**< proportional gain */
-    double kd;                 /**< derivative gain */
-    double ki;                 /**< integrative gain */
-    double max_int;            /**< saturation threshold for the integrator */
-    double scale;              /**< scale for the pid output */
-    double max_output;         /**< max output */
-    double offset;             /**< pwm offset added to the pid output */
-    double stiction_up_val;    /**< up stiction offset added to the pid output */
-    double stiction_down_val;  /**< down stiction offset added to the pid output */
-    double kff;                /**< feedforward gain */
+    double kp;                 //!< proportional gain
+    double kd;                 //!< derivative gain
+    double ki;                 //!< integrative gain
+    double max_int;            //!< saturation threshold for the integrator
+    double scale;              //!< scale for the pid output
+    double max_output;         //!< max output
+    double offset;             //!< pwm offset added to the pid output
+    double stiction_up_val;    //!< up stiction offset added to the pid output
+    double stiction_down_val;  //!< down stiction offset added to the pid output
+    double kff;                //!< feedforward gain
 
 public:
-    /*! \brief Default Constructor */
+    /*!
+     * \brief Default Constructor.
+     */
     Pid();
-    /*! \brief Destructor */
+
+    /*!
+     * \brief Destructor.
+     */
     ~Pid();
 
-   /** Basic constructor
-     * @param kp proportional gain
-     * @param kd derivative gain
-     * @param ki integrative gain
-     * @param int_max  integrator max output
-     * @param scale scaling factor
-     * @param out_max cap on output
+    /*!
+     * \brief Basic constructor.
+     *
+     * \param kp proportional gain
+     * \param kd derivative gain
+     * \param ki integrative gain
+     * \param int_max  integrator max output
+     * \param scale scaling factor
+     * \param out_max cap on output
      */
-    Pid(double p, double d, double i, double intm, double sc, double omax);
+    Pid(double kp, double kd, double ki, double int_max, double scale, double out_max);
 
-    /** Advanced constructor
-     * @param kp proportional gain
-     * @param kd derivative gain
-     * @param ki integrative gain
-     * @param int_max  integrator max output
-     * @param scale scaling factor
-     * @param out_max cap on output
-     * @param st_up up stiction offset
-     * @param st_down down stiction offset
-     * @param kff feedforward gain
+    /*!
+     * \brief Advanced constructor.
+     *
+     * \param kp proportional gain
+     * \param kd derivative gain
+     * \param ki integrative gain
+     * \param int_max  integrator max output
+     * \param scale scaling factor
+     * \param out_max cap on output
+     * \param st_up up stiction offset
+     * \param st_down down stiction offset
+     * \param kff feedforward gain
      */
-    Pid(double kp, double kd, double ki, 
+    Pid(double kp, double kd, double ki,
         double int_max, double scale, double out_max, double st_up, double st_down, double kff);
 
-    /** Set proportional gain 
-     * @param p new gain
+    /*!
+     * \brief Set proportional gain.
+     *
+     * \param p new gain
      */
     void setKp(double p);
 
-    /** Set integrative gain 
-     * @param i new gain
+    /*!
+     * \brief Set integrative gain.
+     *
+     * \param i new gain
      */
     void setKi(double i);
 
-    /** Set derivative gain 
-     * @param d new gain
+    /*!
+     * \brief Set derivative gain.
+     *
+     * \param d new gain
      */
     void setKd(double d);
 
-    /** Set max threshold for the integrative part
-     * @param m new max
+    /*!
+     * \brief Set max threshold for the integrative part.
+     *
+     * \param m new max
      */
     void setMaxInt(double m);
 
-    /** Set output scale for the pid.
-     * @param sc scale value
+    /*!
+     * \brief Set output scale for the pid.
+     *
+     * \param sc scale value
      */
     void setScale(double sc);
 
-    /** Set max output value for the pid.
-     * @param m new value
+    /*!
+     * \brief Set max output value for the pid.
+     *
+     * \param m new value
      */
     void setMaxOut(double m);
 
-    /** Set offset value for the pid.
-     * @param o new offset value
+    /*!
+     * \brief Set offset value for the pid.
+     *
+     * \param o new offset value
      */
     void setOffset(double o);
 
-    /** Set the two stiction values for the pid.
-     * @param up_value the new up value
-     * @param down_value the new down value
+    /*!
+     * \brief Set the two stiction values for the pid.
+     *
+     * \param up_value the new up value
+     * \param down_value the new down value
      */
     void setStictionValues(double up_value, double down_value);
 
-    /** Set the feedforward gain for the pid.
-     * @param Kff new gain
+    /*!
+     * \brief Set the feedforward gain for the pid.
+     *
+     * \param Kff new gain
      */
-    void setKff(double ff);
+    void setKff(double Kff);
 };
 
 #endif
