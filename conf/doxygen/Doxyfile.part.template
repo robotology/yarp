@@ -54,7 +54,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = ${CMAKE_BINARY_DIR}/dox
+OUTPUT_DIRECTORY       = @CMAKE_BINARY_DIR@/dox
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -654,19 +654,19 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = ${DOX_EXTRA_DIR} \
-                         ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/yarp/os \
-                         ${CMAKE_SOURCE_DIR}/src/libYARP_sig/include/yarp/sig \
-                         ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include/yarp/dev \
-                         ${CMAKE_SOURCE_DIR}/src/libYARP_math/include/yarp/math \
-                         ${CMAKE_SOURCE_DIR}/src/libYARP_name/include/yarp/name \
-                         ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src \
-                         ${CMAKE_SOURCE_DIR}/src/libyarpc \
-                         ${CMAKE_SOURCE_DIR}/src/libyarpcxx \
-                         ${CMAKE_SOURCE_DIR}/src/modules \
-                         ${CMAKE_SOURCE_DIR}/src/carriers \
-                         ${CMAKE_SOURCE_DIR}/doc/spec \
-                         ${CMAKE_SOURCE_DIR}/src/doc
+INPUT                  = @DOX_EXTRA_DIR@ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_OS/include/yarp/os \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/yarp/sig \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/yarp/dev \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_math/include/yarp/math \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_name/include/yarp/name \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
+                         @CMAKE_SOURCE_DIR@/src/libyarpc \
+                         @CMAKE_SOURCE_DIR@/src/libyarpcxx \
+                         @CMAKE_SOURCE_DIR@/src/modules \
+                         @CMAKE_SOURCE_DIR@/src/carriers \
+                         @CMAKE_SOURCE_DIR@/doc/spec \
+                         @CMAKE_SOURCE_DIR@/src/doc
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -684,7 +684,7 @@ INPUT_ENCODING         = UTF-8
 # *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py
 # *.f90 *.f *.for *.vhd *.vhdl
 
-FILE_PATTERNS          = ${DOX_PATTERNS}
+FILE_PATTERNS          = @DOX_PATTERNS@
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -726,7 +726,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = ${CMAKE_SOURCE_DIR}/example
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/example
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -746,7 +746,7 @@ EXAMPLE_RECURSIVE      = YES
 # directories that contain image that are included in the documentation (see
 # the \image command).
 
-IMAGE_PATH             = ${CMAKE_SOURCE_DIR}/src/doc
+IMAGE_PATH             = @CMAKE_SOURCE_DIR@/src/doc
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -879,7 +879,7 @@ IGNORE_PREFIX          =
 # If the GENERATE_HTML tag is set to YES (the default) Doxygen will
 # generate HTML output.
 
-GENERATE_HTML          = ${DOX_GENERATE_HTML}
+GENERATE_HTML          = @DOX_GENERATE_HTML@
 
 # The HTML_OUTPUT tag is used to specify where the HTML docs will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
@@ -1446,7 +1446,7 @@ RTF_EXTENSIONS_FILE    =
 # If the GENERATE_MAN tag is set to YES (the default) Doxygen will
 # generate man pages
 
-GENERATE_MAN           = ${DOX_GENERATE_MAN}
+GENERATE_MAN           = @DOX_GENERATE_MAN@
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
@@ -1475,7 +1475,7 @@ MAN_LINKS              = NO
 # generate an XML file that captures the structure of
 # the code including all documentation.
 
-GENERATE_XML           = ${DOX_GENERATE_XML}
+GENERATE_XML           = @DOX_GENERATE_XML@
 
 # The XML_OUTPUT tag is used to specify where the XML pages will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
