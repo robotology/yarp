@@ -24,6 +24,11 @@
 %feature("director") yarp::os::RFModule;
 %feature("autodoc", "1");
 
+#if defined (SWIGLUA)
+%include "swiglib/lua/argcargv.i"
+%apply (int ARGC, char *ARGV[]) { (int argc, char *argv[]) }
+#endif
+
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %include "std_vector.i"
