@@ -232,6 +232,11 @@ protected:
     void onPMenuRefresh() { onRefresh(); }
     void onPMenuAttachStdout() { onAttachStdout(); }
 
+    void onPMenuInspectYarpView(void);
+    void onPMenuInspectYarpHear(void);
+    void onPMenuInspectYarpRead(void);
+    void onPMenuInspectYarpScope(void);
+ 
     Gtk::VPaned m_VPaned;
     Gtk::HPaned m_HPaned;
     //Gtk::TreeView m_TreeModView;
@@ -320,6 +325,7 @@ private:
     void doConnect(void);
     void doDisconnect(void);
     void doRefresh(void);
+    bool timeout(double base, double timeout);
 
 };
 

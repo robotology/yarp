@@ -15,6 +15,7 @@
 #include "application_window.h"
 #include "main_window.h"
 #include "icon_res.h"
+#include "localbroker.h"
 
 using namespace std;
 
@@ -361,6 +362,18 @@ void ApplicationWindow::createWidgets(void)
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuConnect) );
     m_refActionGroup->add( Gtk::Action::create("PManageDisconnect", Gtk::Stock::DISCONNECT, "_Disconnect", "Disconnect links"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuDisconnect) );
+    
+    m_refActionGroup->add( Gtk::Action::create("InspectConnection", "Inspect") );    
+    m_refActionGroup->add( Gtk::Action::create("InspectYarpRead", "yarp_read", "yarpread"),
+                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpRead) );
+    m_refActionGroup->add( Gtk::Action::create("InspectYarpView", "yarpview", "yarpview"),
+                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpView) );
+    m_refActionGroup->add( Gtk::Action::create("InspectYarpHear", "yarphear", "yarphear"),
+                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpHear) );
+    m_refActionGroup->add( Gtk::Action::create("InspectYarpScope", "yarpscope", "yarpscope"),
+                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpScope) );    
+    m_refActionGroup->get_action("InspectYarpScope")->set_sensitive(false);
+
     m_refActionGroup->add( Gtk::Action::create("PManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
     m_refActionGroup->add( Gtk::Action::create("PManageStdout", Gtk::Stock::NETWORK, "_Attach to stdout", "Attach to standard output"),
@@ -393,6 +406,14 @@ void ApplicationWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='PManageRefresh'/>"
         "      <menuitem action='PConenctionSelAll'/>"
+        "      <separator/>"
+        "      <menu action='InspectConnection'>"
+        "        <menuitem action='InspectYarpRead'/>"
+        "        <menuitem action='InspectYarpView'/>"
+        "        <menuitem action='InspectYarpHear'/>"
+        "        <menuitem action='InspectYarpScope'/>"      
+        "      </menu>"
+ 
         " </popup>"
         " <popup name='PopupResources'>"
         "      <menuitem action='PManageRefresh'/>"
@@ -1015,6 +1036,194 @@ bool ApplicationWindow::onDisconnect(void)
     yarp::os::Time::delay(0.1);
     m_refTreeConSelection->unselect_all();
     return true;    
+}
+
+void ApplicationWindow::onPMenuInspectYarpView(void)
+{
+    if(manager.busy()) return;
+    ErrorLogger* logger  = ErrorLogger::Instance();
+    
+    m_ConnectionIDs.clear();
+    m_refTreeConSelection= m_TreeConView.get_selection();
+    m_refTreeConSelection->selected_foreach_iter(
+        sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
+
+    for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
+    {
+        Gtk::TreeModel::Row row;
+        if(getConRowByID(m_ConnectionIDs[i], &row))
+        {
+            Glib::ustring from = row[m_conColumns.m_col_from];
+            std::string to = std::string("/inspect") + from.c_str();
+            std::string env = "YARP_PORT_PREFIX=" + to;
+            to += "/yarpview/img:i";
+            LocalBroker launcher;
+            if(launcher.init("yarpview", NULL, NULL, NULL, NULL, env.c_str()))
+            {
+                if(!launcher.start() && strlen(launcher.error()))
+                {
+                    OSTRINGSTREAM msg;
+                    msg<<"Error while launching yarpview";
+                    msg<<". "<<launcher.error();
+                    logger->addError(msg);
+                    reportErrors();
+                }
+                else
+                {
+                    // waiting for the port to get open
+                    double base = yarp::os::Time::now();
+                    while(!timeout(base, 3.0))
+                        if(launcher.exists(to.c_str())) break;
+                    if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
+                    {
+                        OSTRINGSTREAM msg;
+                        msg<<"Cannot inspect '"<<from<<"' :"<<launcher.error();
+                        logger->addError(msg);
+                        launcher.stop();
+                        reportErrors();
+                    }
+                }
+            }
+        }
+    }
+    yarp::os::Time::delay(0.1);
+    m_refTreeConSelection->unselect_all();
+}
+
+inline bool ApplicationWindow::timeout(double base, double timeout)
+{
+    yarp::os::Time::delay(1.0);
+    if((yarp::os::Time::now()-base) > timeout)
+        return true;
+    return false;
+}
+
+
+void ApplicationWindow::onPMenuInspectYarpHear(void)
+{
+    if(manager.busy()) return;
+    ErrorLogger* logger  = ErrorLogger::Instance();
+    
+    m_ConnectionIDs.clear();
+    m_refTreeConSelection= m_TreeConView.get_selection();
+    m_refTreeConSelection->selected_foreach_iter(
+        sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
+
+    for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
+    {
+        Gtk::TreeModel::Row row;
+        if(getConRowByID(m_ConnectionIDs[i], &row))
+        {
+            Glib::ustring from = row[m_conColumns.m_col_from];
+            std::string to = std::string("/inspect/hear/") + from.c_str();
+
+#if defined(WIN32)
+            std::string cmd = "cmd.exe";
+            std::string param = "/C yarphear --name " + to;
+
+#else
+            std::string cmd = "xterm";
+            OSTRINGSTREAM param;
+            param<<"-hold " << "-title " << from << " -e yarphear --nodevice --name " << to;
+#endif
+            LocalBroker launcher;
+            if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
+            {
+                if(!launcher.start() && strlen(launcher.error()))
+                {
+                    OSTRINGSTREAM msg;
+                    msg<<"Error while launching yarpread";
+                    msg<<". "<<launcher.error();
+                    logger->addError(msg);
+                    reportErrors();
+                }
+                else
+                {
+                    // waiting for the port to get open
+                    double base = yarp::os::Time::now();
+                    while(!timeout(base, 3.0))
+                        if(launcher.exists(to.c_str())) break;
+                    if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
+                    {
+                        OSTRINGSTREAM msg;
+                        msg<<"Cannot inspect '"<<from<<"' :"<<launcher.error();
+                        logger->addError(msg);
+                        launcher.stop();
+                        reportErrors();
+                    }
+                }
+            }
+        }
+    }
+    yarp::os::Time::delay(0.1);
+    m_refTreeConSelection->unselect_all();
+
+
+}
+
+void ApplicationWindow::onPMenuInspectYarpRead(void)
+{
+    if(manager.busy()) return;
+    ErrorLogger* logger  = ErrorLogger::Instance();
+    
+    m_ConnectionIDs.clear();
+    m_refTreeConSelection= m_TreeConView.get_selection();
+    m_refTreeConSelection->selected_foreach_iter(
+        sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
+
+    for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
+    {
+        Gtk::TreeModel::Row row;
+        if(getConRowByID(m_ConnectionIDs[i], &row))
+        {
+            Glib::ustring from = row[m_conColumns.m_col_from];
+            std::string to = std::string("/inspect/read/") + from.c_str();
+
+#if defined(WIN32)
+            std::string cmd = "cmd.exe";
+            std::string param = "/C yarp read " + to;
+
+#else
+            std::string cmd = "xterm";
+            OSTRINGSTREAM param;
+            param<<"-hold " << "-title " << from << " -e yarp read " << to;
+#endif
+            LocalBroker launcher;
+            if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
+            {
+                if(!launcher.start() && strlen(launcher.error()))
+                {
+                    OSTRINGSTREAM msg;
+                    msg<<"Error while launching yarpread";
+                    msg<<". "<<launcher.error();
+                    logger->addError(msg);
+                    reportErrors();
+                }
+                else
+                {
+                    // waiting for the port to get open
+                    double base = yarp::os::Time::now();
+                    while(!timeout(base, 3.0))
+                        if(launcher.exists(to.c_str())) break;
+                    if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
+                    {
+                        OSTRINGSTREAM msg;
+                        msg<<"Cannot inspect '"<<from<<"' :"<<launcher.error();
+                        logger->addError(msg);
+                        launcher.stop();
+                        reportErrors();
+                    }
+                }
+            }
+        }
+    }
+    yarp::os::Time::delay(0.1);
+    m_refTreeConSelection->unselect_all();
+
+}
+
+void ApplicationWindow::onPMenuInspectYarpScope(void)
+{
 }
 
 
