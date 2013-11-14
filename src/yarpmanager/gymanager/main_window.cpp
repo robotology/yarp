@@ -1430,7 +1430,6 @@ void MainWindow::onMenuManageRefresh()
         resWnd->onRefresh();
 }
 
-
 void MainWindow::onMenuEditSellAll() 
 {
     int page_num = m_mainTab.get_current_page();
