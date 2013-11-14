@@ -23,6 +23,8 @@
 #if defined(WIN32)
 #include <windows.h>
 #include <io.h>
+#else
+#include <unistd.h>
 #endif
 
 ///////////////////////////////////////////
