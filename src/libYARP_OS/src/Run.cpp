@@ -20,12 +20,15 @@
 #include <yarp/os/Network.h>
 
 #if defined(WIN32)
-#  if !defined(WIN32_LEAN_AND_MEAN)
-#    define WIN32_LEAN_AND_MEAN
-#  endif
-#  include <windows.h>
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 #else
-#  include <unistd.h>
+#include <unistd.h>
+#endif
+
+#if defined(UNIX)
 #include <sys/prctl.h>
 #endif
 
@@ -135,6 +138,21 @@ int yarp::os::Run::main(int argc, char *argv[])
         signal(SIGINT,  sigstdio_handler);
         signal(SIGTERM, sigstdio_handler);
         signal(SIGBREAK,sigstdio_handler);
+#elif defined(__APPLE__)
+        //prctl(PR_SET_PDEATHSIG,SIGTERM);
+
+        struct sigaction new_action;
+        new_action.sa_handler=sigstdio_handler;
+        sigfillset(&new_action.sa_mask);
+        new_action.sa_flags=0;
+
+        sigaction(SIGTERM,&new_action,NULL);
+        sigaction(SIGHUP, &new_action,NULL);
+        //signal(SIGHUP, SIG_IGN);
+        //signal(SIGINT, SIG_IGN);
+        signal(SIGPIPE,SIG_IGN);
+
+        if (getppid()==1) return 0;
 #else
         prctl(PR_SET_PDEATHSIG,SIGTERM);
 
@@ -164,11 +182,11 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::impl::Logger::get().setVerbosity(-1);
         yarp::os::ConstString uuid=config.findGroup("write").get(1).asString();
 
-        #if defined(WIN32)
+#if defined(WIN32)
         signal(SIGINT,  sigstdio_handler);
         signal(SIGTERM, sigstdio_handler);
         signal(SIGBREAK,sigstdio_handler);
-        #else        
+#else
         struct sigaction new_action;
         new_action.sa_handler=sigstdio_handler;
         sigfillset(&new_action.sa_mask);
@@ -177,7 +195,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         //signal(SIGINT,  SIG_IGN);
         signal(SIGPIPE, SIG_IGN);
         signal(SIGHUP,  SIG_IGN);
-        #endif
+#endif
         
         RunWrite w;
         RunTerminator rt(&w);
