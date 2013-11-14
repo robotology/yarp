@@ -29,7 +29,9 @@
 #endif
 
 #if defined(UNIX)
+#if !defined(__APPLE__)
 #include <sys/prctl.h>
+#endif
 #endif
 
 #include <yarp/os/impl/RunCheckpoints.h>
