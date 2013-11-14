@@ -28,7 +28,7 @@
 #include <unistd.h>
 #endif
 
-#if defined(UNIX)
+#if !defined(WIN32)
 #if !defined(__APPLE__)
 #include <sys/prctl.h>
 #endif
