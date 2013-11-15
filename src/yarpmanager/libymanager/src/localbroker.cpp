@@ -142,6 +142,7 @@ LocalBroker::LocalBroker()
     bOnlyConnector = bInitialized = false;  
     ID = 0;
     fd_stdout = NULL;
+	bShowConsole = false;
 }
 
 
@@ -592,10 +593,13 @@ int LocalBroker::ExecuteCmd(void)
     ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
     cmd_startup_info.cb = sizeof(STARTUPINFO); 
-    cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
-    cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
-    cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
-   
+	if(!bShowConsole)
+	{
+		cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
+		cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
+		cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
+	}
+
     /*
      * setting environment variable for child process
      */
@@ -633,7 +637,7 @@ int LocalBroker::ExecuteCmd(void)
                                 NULL,          // process security attributes 
                                 NULL,          // primary thread security attributes 
                                 TRUE,          // handles are inherited 
-                                CREATE_NEW_PROCESS_GROUP, // creation flags 
+                                (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags 
                                 (LPVOID) chNewEnv, // use new environment 
                                 bWorkdir?strWorkdirOk.c_str():NULL, // working directory 
                                 &cmd_startup_info,   // STARTUPINFO pointer 
@@ -646,7 +650,7 @@ int LocalBroker::ExecuteCmd(void)
                                     NULL,          // process security attributes 
                                     NULL,          // primary thread security attributes 
                                     TRUE,          // handles are inherited 
-                                    CREATE_NEW_PROCESS_GROUP, // creation flags 
+									(bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags 
                                     (LPVOID) chNewEnv, // use new environment 
                                     strWorkdirOk.c_str(), // working directory 
                                     &cmd_startup_info,   // STARTUPINFO pointer 
