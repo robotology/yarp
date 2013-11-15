@@ -26,9 +26,9 @@ void yarp_context_help() {
     printf("  --help       display this help and exit\n");
     printf("  --list  list contexts that are available; add optional '--user', '--sysadm' or '--installed' parameters to limit the search locations\n");
 //    printf("  --show <context-name>  show files that make up a context, and the location of each\n");
-    printf("  --import <context_name> file1 file2 import specified context files to home directory\n");
+    printf("  --import <context_name> file1 file2 ... import specified context files to home directory\n");
     printf("  --import-all import all contexts to home directory\n");
-    printf("  --remove  <context_name>  remove specified context from home directory\n");
+    printf("  --remove  <context_name> file1 file2 ... remove specified context files from home directory\n");
     printf("  --diff  <context_name>  find differences from the context in the home directory with respect to the installation directory\n");
     printf("  --diff-list  list the contexts in the home directory that are different from the installation directory\n");
     printf("  --where  <context_name>  print full paths to the contexts that are found for <context_name> (the first one is the default one)\n");
@@ -79,14 +79,8 @@ int yarp_context_main(int argc, char *argv[]) {
 
     if(options.check("remove"))
     {
-
-        ConstString contextName=options.find("remove").asString().c_str();
-        if (contextName=="")
-        {
-            printf("No context name provided\n");
-            return 0;
-        }
-        return remove(contextName, CONTEXTS, options.check("verbose"));
+        Bottle removeArg=options.findGroup("remove");
+        return remove(removeArg, CONTEXTS, options.check("verbose"));
     }
 
     if(options.check("where"))

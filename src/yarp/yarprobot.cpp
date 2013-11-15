@@ -28,7 +28,7 @@ void yarp_robot_help() {
 //    printf("  --show <context-name>  show files that make up a context, and the location of each\n");
     printf("  --import <robot_name> file1 file2 ... import specified robot files to home directory\n");
     printf("  --import-all import all robots to home directory\n");
-    printf("  --remove  <robot_name>  remove specified robot from home directory\n");
+    printf("  --remove  <robot_name> file1 file2 ... remove specified robot files from home directory\n");
     printf("  --diff  <robot_name>  find differences from the robot in the home directory with respect to the installation directory\n");
     printf("  --diff-list  list the robots in the home directory that are different from the installation directory\n");
     //printf("  --where  <context_name>  print full paths to the contexts that are found for <context_name> (the first one is the default one)\n");
@@ -81,13 +81,8 @@ int yarp_robot_main(int argc, char *argv[]) {
     if(options.check("remove"))
     {
 
-        ConstString contextName=options.find("remove").asString().c_str();
-        if (contextName=="")
-        {
-            printf("No robot name provided\n");
-            return 0;
-        }
-        return remove(contextName, ROBOTS, options.check("verbose"));
+        Bottle removeArg=options.findGroup("remove");
+        return remove(removeArg, ROBOTS, options.check("verbose"));
     }
 
     if(options.check("where"))
@@ -112,7 +107,7 @@ int yarp_robot_main(int argc, char *argv[]) {
         if (result != NULL)
             printf("Current robot is %s, identified by the environment variable YARP_ROBOT_NAME\n", result);
         else
-            printf("No robot is set; please set the YARP_ROBOT_NAME environment variable.");
+            printf("No robot is set; please set the YARP_ROBOT_NAME environment variable.\n");
         return 0;
 
     }

@@ -81,26 +81,36 @@ bool isHidden(ConstString fileName)
     return false;
 }
 
-bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileName)
+bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileName, bool force, bool verbose)
 {
     char buf[BUFSIZ];
     size_t size;
     FILE* source = fopen(srcFileName.c_str(), "rb");
     if (source == NULL)
     {
-        printf("Could not open source file %s\n", srcFileName.c_str());
+        if (verbose)
+            printf("Could not open source file %s\n", srcFileName.c_str());
         return false;
     }
     if (!yarp::os::stat(destFileName.c_str()))
     {
-        printf("File already exists : %s\n",destFileName.c_str());
-        fclose(source);
-        return false;
+        if (force)
+        {
+            fileRemove(destFileName);
+        }
+        else
+        {
+            if (verbose)
+                printf("File already exists : %s\n",destFileName.c_str());
+            fclose(source);
+            return false;
+        }
     }
     FILE* dest = fopen(destFileName.c_str(), "wb");
     if(dest ==NULL)
     {
-        printf("Could not open target file %s\n",destFileName.c_str());
+        if (verbose)
+            printf("Could not open target file %s\n",destFileName.c_str());
         fclose(source);
         return false;
     }
@@ -117,33 +127,55 @@ bool fileCopy(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileN
     return true;
 }
 
-int recursiveCopy(ConstString srcDirName, ConstString destDirName)
+bool fileRemove(ConstString fileName)
+{
+    return !YARP_unlink(fileName.c_str());
+}
+
+int recursiveCopy(ConstString srcDirName, ConstString destDirName, bool force, bool verbose)
 {
     bool ok=true;
     ACE_stat statbuf;
     if( YARP_stat(srcDirName.c_str(), &statbuf) ==-1)
     {
-        printf("Error in checking properties for %s\n", srcDirName.c_str());
+        if (verbose)
+            printf("Error in checking properties for %s\n", srcDirName.c_str());
         return -1;
     }
     if ((statbuf.st_mode & S_IFMT)== S_IFREG)
-        ok = fileCopy(srcDirName, destDirName) && ok;
+        ok = fileCopy(srcDirName, destDirName, force, verbose) && ok;
     else if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
     {
         struct YARP_DIRENT **namelist;
         int n = YARP_scandir(srcDirName.c_str(),&namelist,NULL,YARP_alphasort);
         if (n<0)
         {
-            std::cerr << "Could not read from  directory "<< srcDirName <<std::endl;
+            if (verbose)
+                std::cerr << "Could not read from directory "<< srcDirName <<std::endl;
             return -1;
         }
         if (yarp::os::mkdir((destDirName).c_str()) < 0)
         {
-            if (errno == EEXIST)
-                printf("Directory %s already exist; remove it first, or use the diff/merge commands\n", destDirName.c_str());
+            if (errno == EEXIST && force)
+            {
+                bool ok= !recursiveRemove(destDirName, verbose);
+                ok =ok && !yarp::os::mkdir((destDirName).c_str());
+                if (!ok)
+                {
+                    if (verbose)
+                        printf("Could not create directory %s\n", destDirName.c_str());
+                    return -1;
+                }
+            }
             else
-                printf("Could not create directory %s\n", destDirName.c_str());
-            return -1;
+            {
+                if (verbose)
+                    if (errno == EEXIST)
+                        printf("Directory %s already exist; remove it first, or use the diff/merge commands\n", destDirName.c_str());
+                    else
+                        printf("Could not create directory %s\n", destDirName.c_str());
+                return -1;
+            }
         }
         for (int i=0; i<n; i++)
         {
@@ -154,7 +186,7 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
             {
                 ConstString srcPath=srcDirName + PATH_SEPARATOR + name;
                 ConstString destPath=destDirName + PATH_SEPARATOR + name;
-                recursiveCopy(srcPath, destPath);
+                recursiveCopy(srcPath, destPath, force, verbose);
             }
             free(namelist[i]);
         }
@@ -164,37 +196,44 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName)
     return (ok==true ? 0 :-1);
 }
 
-int recursiveRemove(ConstString dirName)
+int recursiveRemove(ConstString dirName, bool verbose)
 {
-    struct YARP_DIRENT **namelist;
-    int n = YARP_scandir(dirName.c_str(),&namelist,NULL,YARP_alphasort);
-    if (n<0)
+    ACE_stat statbuf;
+    if( YARP_stat(dirName.c_str(), &statbuf) ==-1)
     {
-        printf("Could not read from  directory %s\n", dirName.c_str());
-        return yarp::os::rmdir(dirName.c_str()); // TODO check if this is useful...
+        if (verbose)
+            printf("Error in checking properties for %s\n", dirName.c_str());
+        return -1;
     }
-
-    for (int i=0; i<n; i++)
+    if ((statbuf.st_mode & S_IFMT)== S_IFREG)
+        return fileRemove(dirName) ? 0: -1;
+    else if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
     {
-        ConstString name = namelist[i]->d_name;
-        ConstString path=dirName + PATH_SEPARATOR + name;
-        if( name != "." && name != "..")
+        struct YARP_DIRENT **namelist;
+        int n = YARP_scandir(dirName.c_str(),&namelist,NULL,YARP_alphasort);
+        if (n<0)
         {
-            ACE_stat statbuf;
-            if (YARP_stat(path.c_str(), &statbuf) == -1)
-                printf("Error in checking properties for %s\n", path.c_str());
-            if ((statbuf.st_mode & S_IFMT)== S_IFDIR)
-                recursiveRemove(path);
-            if ((statbuf.st_mode & S_IFMT)== S_IFREG)
-            {
-                YARP_unlink(path.c_str());
-            }
+            if (verbose)
+                printf("Could not read from  directory %s\n", dirName.c_str());
+            return yarp::os::rmdir(dirName.c_str()); // TODO check if this is useful...
         }
-        free(namelist[i]);
-    }
-    free(namelist);
 
-    return yarp::os::rmdir(dirName.c_str());
+        for (int i=0; i<n; i++)
+        {
+            ConstString name = namelist[i]->d_name;
+            ConstString path=dirName + PATH_SEPARATOR + name;
+            if( name != "." && name != "..")
+            {
+                recursiveRemove(path, verbose);
+            }
+            free(namelist[i]);
+        }
+        free(namelist);
+
+        return yarp::os::rmdir(dirName.c_str());
+    }
+    else
+        return -1;
 };
 
 std::vector<yarp::os::ConstString> listContentDirs(const ConstString &curPath)
@@ -558,7 +597,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
             if(fileName != "")
             {
                 ok = (recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, destDirname + PATH_SEPARATOR + fileName) >=0 ) && ok;
-                ok = ok && (recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, hiddenDirname + PATH_SEPARATOR + fileName) >=0 );
+                recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, hiddenDirname + PATH_SEPARATOR + fileName, true, false);
             }
         }
         if (ok)
@@ -576,7 +615,7 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
     {
 
         int result= recursiveCopy(originalpath, destDirname);
-        recursiveCopy(originalpath, hiddenDirname);
+        recursiveCopy(originalpath, hiddenDirname, true, false);
 
         if (result < 0)
             printf("ERRORS OCCURRED WHILE IMPORTING %s %s\n", fType==CONTEXTS ? "CONTEXT" : "ROBOT", contextName.c_str());
@@ -625,7 +664,7 @@ int importAll(folderType fType, bool verbose)
                     ConstString destDirname=rf.getDataHome() + PATH_SEPARATOR + getFolderStringName(fType) + PATH_SEPARATOR + name;
                     recursiveCopy(originalpath, destDirname);
                     ConstString hiddenDirname=rf.getDataHome() + PATH_SEPARATOR + getFolderStringNameHidden(fType) + PATH_SEPARATOR + name;
-                    recursiveCopy(originalpath, hiddenDirname);// TODO: check result!
+                    recursiveCopy(originalpath, hiddenDirname, true, false);// TODO: check result!
                 }
             }
             free(namelist[i]);
@@ -638,8 +677,16 @@ int importAll(folderType fType, bool verbose)
     return 0;
 }
 
-int remove(yarp::os::ConstString contextName, folderType fType, bool verbose)
+int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
 {
+    ConstString contextName;
+    if (removeArg.size() >1 )
+        contextName=removeArg.get(1).asString().c_str();
+    if (contextName=="")
+    {
+        printf("No %s name provided\n", fType==CONTEXTS ? "context" : "robot" );
+        return 0;
+    }
     yarp::os::ResourceFinder rf;
     rf.setVerbose(verbose);
     ResourceFinderOptions opts;
@@ -652,26 +699,68 @@ int remove(yarp::os::ConstString contextName, folderType fType, bool verbose)
     }
     else
     {
-        char choice='n';
-        printf("Are you sure you want to remove this folder: %s ? (y/n): ", targetPath.c_str());
-        int got = scanf("%c",&choice);
-        if (choice=='y')
+        if (removeArg.size() <3 )
         {
-            int result= recursiveRemove(targetPath.c_str());
-            if (result < 0)
-                printf("ERRORS OCCURRED WHILE REMOVING %s\n", targetPath.c_str());
+            char choice='n';
+            printf("Are you sure you want to remove this folder: %s ? (y/n): ", targetPath.c_str());
+            int got = scanf("%c",&choice);
+            if (choice=='y')
+            {
+                int result= recursiveRemove(targetPath.c_str());
+                if (result < 0)
+                    printf("ERRORS OCCURRED WHILE REMOVING %s\n", targetPath.c_str());
+                else
+                    printf("Removed folder %s\n", targetPath.c_str());
+                //remove hidden folder:
+                ConstString hiddenPath=   rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
+                if (hiddenPath != "")
+                    recursiveRemove(hiddenPath.c_str(), false);
+                return result;
+            }
             else
-                printf("Removed folder %s\n", targetPath.c_str());
-            //remove hidden folder:
-            ConstString hiddenPath=   rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
-            if (hiddenPath != "")
-                recursiveRemove(hiddenPath.c_str());
-            return result;
+            {
+                printf("Skipped\n");
+                return 0;
+            }
         }
         else
         {
-            printf("Skipped\n");
-            return 0;
+            char choice='n';
+            printf("Are you sure you want to remove files from this folder: %s ? (y/n): ", targetPath.c_str());
+            int got = scanf("%c",&choice);
+            if (choice=='y')
+            {
+                bool ok=true;
+                bool removeHidden=true;
+                ConstString hiddenPath=   rf.findPath((getFolderStringNameHidden(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
+                if (hiddenPath != "")
+                    removeHidden=false;
+
+                for (int i=2; i<removeArg.size(); ++i)
+                {
+                    ConstString fileName=removeArg.get(i).asString();
+                    if(fileName != "")
+                    {
+                        ok = (recursiveRemove(targetPath+ PATH_SEPARATOR + fileName) >=0 ) && ok;
+                        recursiveRemove(hiddenPath + PATH_SEPARATOR + fileName, false);
+                    }
+                }
+                if (ok)
+                {
+                    printf("Removed selected files from %s\n", targetPath.c_str());
+                    return 0;
+                }
+                else
+                {
+                    printf("ERRORS OCCURRED WHILE IMPORTING FILES FOR %s %s\n", fType==CONTEXTS ? "CONTEXT" : "ROBOT" ,  contextName.c_str());
+                    return 1;
+                }
+            }
+            else
+            {
+                printf("Skipped\n");
+                return 0;
+            }
         }
     }
 }
