@@ -62,11 +62,9 @@ public:
      bool attachStdout(void);
      void detachStdout(void);
 
-#if defined(WIN32)
 	 void showConsole(bool show) {
 		 bShowConsole = show;
 	 }
-#endif
 
 public: // for rate thread
     void run();
