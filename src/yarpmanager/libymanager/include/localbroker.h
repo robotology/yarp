@@ -62,6 +62,12 @@ public:
      bool attachStdout(void);
      void detachStdout(void);
 
+#if defined(WIN32)
+	 void showConsole(bool show) {
+		 bShowConsole = show;
+	 }
+#endif
+
 public: // for rate thread
     void run();
     bool threadInit();
@@ -83,7 +89,7 @@ private:
     bool bInitialized;
     int  pipe_to_stdout[2];
     FILE* fd_stdout;
- 
+	bool bShowConsole;
     bool timeout(double base, double timeout);
     void ParseCmd(char* cmd_str,char** arg_str);
     int CountArgs(char *str);

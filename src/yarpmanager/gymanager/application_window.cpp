@@ -1077,7 +1077,7 @@ void ApplicationWindow::onPMenuInspectYarpView(void)
                     if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
                     {
                         OSTRINGSTREAM msg;
-                        msg<<"Cannot inspect '"<<from<<"' :"<<launcher.error();
+                        msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
                         logger->addError(msg);
                         launcher.stop();
                         reportErrors();
@@ -1115,11 +1115,12 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
         if(getConRowByID(m_ConnectionIDs[i], &row))
         {
             Glib::ustring from = row[m_conColumns.m_col_from];
-            std::string to = std::string("/inspect/hear/") + from.c_str();
+            std::string to = std::string("/inspect/hear") + from.c_str();
 
 #if defined(WIN32)
             std::string cmd = "cmd.exe";
-            std::string param = "/C yarphear --name " + to;
+            OSTRINGSTREAM param;
+			param << "/C yarphear --name " <<to;
 
 #else
             std::string cmd = "xterm";
@@ -1127,6 +1128,7 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
             param<<"-hold " << "-title " << from << " -e yarphear --nodevice --name " << to;
 #endif
             LocalBroker launcher;
+			launcher.showConsole(true);
             if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))
@@ -1143,10 +1145,19 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
                     double base = yarp::os::Time::now();
                     while(!timeout(base, 3.0))
                         if(launcher.exists(to.c_str())) break;
-                    if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
+					if(!launcher.exists(to.c_str()))
+					{
+                        OSTRINGSTREAM msg;
+                        msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
+						msg<<". Did you build yarp with 'portaudio' module?";
+						logger->addError(msg);
+                        launcher.stop();
+                        reportErrors();
+					}
+					else if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
                     {
                         OSTRINGSTREAM msg;
-                        msg<<"Cannot inspect '"<<from<<"' :"<<launcher.error();
+                        msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
                         logger->addError(msg);
                         launcher.stop();
                         reportErrors();
@@ -1177,11 +1188,12 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
         if(getConRowByID(m_ConnectionIDs[i], &row))
         {
             Glib::ustring from = row[m_conColumns.m_col_from];
-            std::string to = std::string("/inspect/read/") + from.c_str();
+            std::string to = std::string("/inspect/read") + from.c_str();
 
 #if defined(WIN32)
             std::string cmd = "cmd.exe";
-            std::string param = "/C yarp read " + to;
+			OSTRINGSTREAM param;
+            param << "/C yarp read " << to;
 
 #else
             std::string cmd = "xterm";
@@ -1189,6 +1201,7 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
             param<<"-hold " << "-title " << from << " -e yarp read " << to;
 #endif
             LocalBroker launcher;
+			launcher.showConsole(true);
             if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))
@@ -1208,7 +1221,7 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
                     if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
                     {
                         OSTRINGSTREAM msg;
-                        msg<<"Cannot inspect '"<<from<<"' :"<<launcher.error();
+                        msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
                         logger->addError(msg);
                         launcher.stop();
                         reportErrors();
