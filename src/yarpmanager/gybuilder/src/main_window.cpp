@@ -976,77 +976,77 @@ void MainWindow::onMenuFileNewApp()
 void MainWindow::onMenuFileNewMod()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
+    std::string ext_editor;
     if(m_config.check("external_editor"))
-    {
-        Gtk::FileChooserDialog dialog("Create new Module description file");
-        dialog.set_transient_for(*this);
-        dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-        dialog.set_do_overwrite_confirmation(true);
-        
-        if (m_config.check("yarpdatahome"))
-        {
-            Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
-            homePath +=  string(PATH_SEPERATOR) + string("modules") + string(PATH_SEPERATOR);
-            dialog.set_current_folder(homePath.c_str());
-        }
-        else if(m_config.check("modpath"))
-        {
-            std::string basepath=m_config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
-
-            string strPath;
-            string modPaths(m_config.find("modpath").asString().c_str());
-            string::size_type pos=modPaths.find(";");
-            strPath=modPaths.substr(0, pos);
-            trimString(strPath);
-            if (!isAbsolute(strPath.c_str()))
-                strPath=basepath+strPath;
-    
-            dialog.set_current_folder(strPath.c_str()); 
-        }
-        
-        //Add response buttons the the dialog:
-        dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-        dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-        //Add filters, so that only certain file types can be selected:
-        Gtk::FileFilter filter_app;
-        filter_app.set_name("Module description files (xml)");
-        filter_app.add_mime_type("text/xml");
-        dialog.add_filter(filter_app);
-
-        if(dialog.run() == Gtk::RESPONSE_OK)
-        {
-            string fname = dialog.get_filename();
-            ofstream ser(fname.c_str());
-            if(ser.is_open())
-            {
-                ser<<str_mod_template<<endl;
-                ser.close();
-            }
-            else
-            {
-                logger->addError(string("Cannot create ") + fname);
-                reportErrors();
-                return;
-            }
-
-            LocalBroker launcher;
-            if(launcher.init(m_config.find("external_editor").asString().c_str(),
-                             fname.c_str(), NULL, NULL, NULL, NULL))
-                if(!launcher.start() && strlen(launcher.error()))
-                {
-                    OSTRINGSTREAM msg;
-                    msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
-                    msg<<". "<<launcher.error();
-                    logger->addError(msg);
-                    reportErrors();
-                }
-        }
-    }
+        ext_editor = m_config.find("external_editor").asString();
     else
+#if defined(WIN32)
+        ext_editor = "notepad.exe";
+#else
+        ext_editor = "gedit";
+#endif
+    Gtk::FileChooserDialog dialog("Create new Module description file");
+    dialog.set_transient_for(*this);
+    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+    dialog.set_do_overwrite_confirmation(true);
+    
+    if (m_config.check("yarpdatahome"))
     {
-        logger->addError("External editor is not set.");
-        reportErrors();
+        Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
+        homePath +=  string(PATH_SEPERATOR) + string("modules") + string(PATH_SEPERATOR);
+        dialog.set_current_folder(homePath.c_str());
+    }
+    else if(m_config.check("modpath"))
+    {
+        std::string basepath=m_config.check("ymanagerini_dir", yarp::os::Value("")).asString().c_str();
+
+        string strPath;
+        string modPaths(m_config.find("modpath").asString().c_str());
+        string::size_type pos=modPaths.find(";");
+        strPath=modPaths.substr(0, pos);
+        trimString(strPath);
+        if (!isAbsolute(strPath.c_str()))
+            strPath=basepath+strPath;
+
+        dialog.set_current_folder(strPath.c_str()); 
+    }
+    
+    //Add response buttons the the dialog:
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+
+    //Add filters, so that only certain file types can be selected:
+    Gtk::FileFilter filter_app;
+    filter_app.set_name("Module description files (xml)");
+    filter_app.add_mime_type("text/xml");
+    dialog.add_filter(filter_app);
+
+    if(dialog.run() == Gtk::RESPONSE_OK)
+    {
+        string fname = dialog.get_filename();
+        ofstream ser(fname.c_str());
+        if(ser.is_open())
+        {
+            ser<<str_mod_template<<endl;
+            ser.close();
+        }
+        else
+        {
+            logger->addError(string("Cannot create ") + fname);
+            reportErrors();
+            return;
+        }
+
+        LocalBroker launcher;
+        if(launcher.init(ext_editor.c_str(), fname.c_str(), NULL, NULL, NULL, NULL))
+            if(!launcher.start() && strlen(launcher.error()))
+            {
+                OSTRINGSTREAM msg;
+                msg<<"Error while launching "<ext_editor.c_str();
+                msg<<". "<<launcher.error();
+                logger->addError(msg);
+                reportErrors();
+            }
     }
 }
 
@@ -1054,65 +1054,66 @@ void MainWindow::onMenuFileNewMod()
 void MainWindow::onMenuFileNewRes()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
+    std::string ext_editor;
     if(m_config.check("external_editor"))
-    {
-        Gtk::FileChooserDialog dialog("Create new Resource description file");
-        dialog.set_transient_for(*this);
-        dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
-        dialog.set_do_overwrite_confirmation(true);
-        
-        if (m_config.check("yarpdatahome"))
-        {
-            Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
-            homePath +=  string(PATH_SEPERATOR) + string("resources") + string(PATH_SEPERATOR);
-            
-            dialog.set_current_folder(homePath.c_str());
-
-        }
-
-        //Add response buttons the the dialog:
-        dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-        dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-        //Add filters, so that only certain file types can be selected:
-        Gtk::FileFilter filter_app;
-        filter_app.set_name("Resource description files (xml)");
-        filter_app.add_mime_type("text/xml");
-        dialog.add_filter(filter_app);
-
-        if(dialog.run() == Gtk::RESPONSE_OK)
-        {
-            string fname = dialog.get_filename();
-            ofstream ser(fname.c_str());
-            if(ser.is_open())
-            {
-                ser<<str_res_template<<endl;
-                ser.close();
-            }
-            else
-            {
-                logger->addError(string("Cannot create ") + fname);
-                reportErrors();
-                return;
-            }
-
-            LocalBroker launcher;
-            if(launcher.init(m_config.find("external_editor").asString().c_str(),
-                             fname.c_str(), NULL, NULL, NULL, NULL))
-                if(!launcher.start() && strlen(launcher.error()))
-                {
-                    OSTRINGSTREAM msg;
-                    msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
-                    msg<<". "<<launcher.error();
-                    logger->addError(msg);
-                    reportErrors();
-                }
-        }
-    }
+        ext_editor = m_config.find("external_editor").asString();
     else
+#if defined(WIN32)
+        ext_editor = "notepad.exe";
+#else
+        ext_editor = "gedit";
+#endif
+
+    Gtk::FileChooserDialog dialog("Create new Resource description file");
+    dialog.set_transient_for(*this);
+    dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
+    dialog.set_do_overwrite_confirmation(true);
+    
+    if (m_config.check("yarpdatahome"))
     {
-        logger->addError("External editor is not set.");
-        reportErrors();
+        Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
+        homePath +=  string(PATH_SEPERATOR) + string("resources") + string(PATH_SEPERATOR);
+        
+        dialog.set_current_folder(homePath.c_str());
+
+    }
+
+    //Add response buttons the the dialog:
+    dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+
+    //Add filters, so that only certain file types can be selected:
+    Gtk::FileFilter filter_app;
+    filter_app.set_name("Resource description files (xml)");
+    filter_app.add_mime_type("text/xml");
+    dialog.add_filter(filter_app);
+
+    if(dialog.run() == Gtk::RESPONSE_OK)
+    {
+        string fname = dialog.get_filename();
+        ofstream ser(fname.c_str());
+        if(ser.is_open())
+        {
+            ser<<str_res_template<<endl;
+            ser.close();
+        }
+        else
+        {
+            logger->addError(string("Cannot create ") + fname);
+            reportErrors();
+            return;
+        }
+
+        LocalBroker launcher;
+        if(launcher.init(ext_editor.c_str(), fname.c_str(), NULL, NULL, NULL, NULL))
+            if(!launcher.start() && strlen(launcher.error()))
+            {
+                OSTRINGSTREAM msg;
+                msg<<"Error while launching "<<ext_editor.c_str();
+                msg<<". "<<launcher.error();
+                logger->addError(msg);
+                reportErrors();
+            }
     }
 }
 
@@ -1348,26 +1349,25 @@ void MainWindow::onEditFile()
         Gtk::TreeModel::Row row = *iter;
         Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_filename];
         ErrorLogger* logger  = ErrorLogger::Instance();
+        std::string ext_editor;
         if(m_config.check("external_editor"))
-        {
-
-            LocalBroker launcher;
-            if(launcher.init(m_config.find("external_editor").asString().c_str(),
-                             name.c_str(), NULL, NULL, NULL, NULL))
-                if(!launcher.start() && strlen(launcher.error()))
-                {
-                    OSTRINGSTREAM msg;
-                    msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
-                    msg<<". "<<launcher.error();
-                    logger->addError(msg);
-                    reportErrors();
-                }
-        }
+            ext_editor = m_config.find("external_editor").asString();
         else
-        {
-            logger->addError("External editor is not set.");
-            reportErrors();
-        }
+#if defined(WIN32)
+            ext_editor = "notepad.exe";
+#else
+            ext_editor = "gedit";
+#endif
+        LocalBroker launcher;
+        if(launcher.init(ext_editor.c_str(), name.c_str(), NULL, NULL, NULL, NULL))
+            if(!launcher.start() && strlen(launcher.error()))
+            {
+                OSTRINGSTREAM msg;
+                msg<<"Error while launching "<<ext_editor.c_str();
+                msg<<". "<<launcher.error();
+                logger->addError(msg);
+                reportErrors();
+            }
     }
 }
 
@@ -1963,26 +1963,25 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
         Gtk::TreeModel::Row row = *iter;
         Glib::ustring name = row[m_refApplicationList->m_appColumns.m_col_filename];
         ErrorLogger* logger  = ErrorLogger::Instance();
+        std::string ext_editor;
         if(m_config.check("external_editor"))
-        {
-
-            LocalBroker launcher;
-            if(launcher.init(m_config.find("external_editor").asString().c_str(),
-                             name.c_str(), NULL, NULL, NULL, NULL))
+            ext_editor = m_config.find("external_editor").asString();
+        else
+#if defined(WIN32)
+            ext_editor = "notepad.exe";
+#else
+            ext_editor = "gedit";
+#endif
+           LocalBroker launcher;
+            if(launcher.init(ext_editor.c_str(), name.c_str(), NULL, NULL, NULL, NULL))
                 if(!launcher.start() && strlen(launcher.error()))
                 {
                     OSTRINGSTREAM msg;
-                    msg<<"Error while launching "<<m_config.find("external_editor").asString().c_str();
+                    msg<<"Error while launching "<<ext_editor.c_str();
                     msg<<". "<<launcher.error();
                     logger->addError(msg);
                     reportErrors();
                 }
-        }
-        else
-        {
-            logger->addError("External editor is not set.");
-            reportErrors();
-        }
     }
 
 }
