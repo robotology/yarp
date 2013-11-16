@@ -16,6 +16,7 @@
 #include "main_window.h"
 #include "icon_res.h"
 #include "localbroker.h"
+#include "yscope_window.h"
 
 using namespace std;
 
@@ -372,7 +373,6 @@ void ApplicationWindow::createWidgets(void)
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpHear) );
     m_refActionGroup->add( Gtk::Action::create("InspectYarpScope", "yarpscope", "yarpscope"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpScope) );    
-    m_refActionGroup->get_action("InspectYarpScope")->set_sensitive(false);
 
     m_refActionGroup->add( Gtk::Action::create("PManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
@@ -1237,6 +1237,63 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
 
 void ApplicationWindow::onPMenuInspectYarpScope(void)
 {
+    if(manager.busy()) return;
+    ErrorLogger* logger  = ErrorLogger::Instance();
+  
+    InspectYScopeWindow wnd;
+    if(wnd.run() != Gtk::RESPONSE_OK)
+        return;
+
+    
+    std::string strIndex = wnd.m_EntryIndex.get_text();
+
+    m_ConnectionIDs.clear();
+    m_refTreeConSelection= m_TreeConView.get_selection();
+    m_refTreeConSelection->selected_foreach_iter(
+        sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
+
+    for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
+    {
+        Gtk::TreeModel::Row row;
+        if(getConRowByID(m_ConnectionIDs[i], &row))
+        {
+            Glib::ustring from = row[m_conColumns.m_col_from];
+            std::string to = std::string("/inspect") + from + ":" + strIndex;
+            std::string env = "YARP_PORT_PREFIX=" + to;
+            to += "/yarpscope";
+            OSTRINGSTREAM param;
+            param << "--title "<< from << ":" << strIndex << " --bgcolor white --color blue --graph_size 2 --index " + strIndex;
+            LocalBroker launcher;
+            if(launcher.init("yarpscope", param.str().c_str(), NULL, NULL, NULL, env.c_str()))
+            {
+                if(!launcher.start() && strlen(launcher.error()))
+                {
+                    OSTRINGSTREAM msg;
+                    msg<<"Error while launching yarpscope";
+                    msg<<". "<<launcher.error();
+                    logger->addError(msg);
+                    reportErrors();
+                }
+                else
+                {
+                    // waiting for the port to get open
+                    double base = yarp::os::Time::now();
+                    while(!timeout(base, 3.0))
+                        if(launcher.exists(to.c_str())) break;
+                    if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
+                    {
+                        OSTRINGSTREAM msg;
+                        msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
+                        logger->addError(msg);
+                        launcher.stop();
+                        reportErrors();
+                    }
+                }
+            }
+        }
+    }
+    yarp::os::Time::delay(0.1);
+    m_refTreeConSelection->unselect_all();
 }
 
 
