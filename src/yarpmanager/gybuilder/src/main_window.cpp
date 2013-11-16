@@ -1042,7 +1042,7 @@ void MainWindow::onMenuFileNewMod()
             if(!launcher.start() && strlen(launcher.error()))
             {
                 OSTRINGSTREAM msg;
-                msg<<"Error while launching "<ext_editor.c_str();
+                msg<<"Error while launching "<<ext_editor.c_str();
                 msg<<". "<<launcher.error();
                 logger->addError(msg);
                 reportErrors();
