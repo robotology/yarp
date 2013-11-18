@@ -188,6 +188,7 @@ void AnalogWrapper::setHandlers()
     {
         std::string rpcPortName = analogPorts[i].port_name;
         rpcPortName += "/rpc:i";
+        analogPorts[i].port_name += ":o";
         AnalogServerHandler* ash = new AnalogServerHandler(rpcPortName.c_str());
         handlers.push_back(ash);
     }
@@ -343,7 +344,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     if(!params.check("ports"))
     {
      // if there is no "ports" section open only 1 port and use name as is.
-        createPort((root_name+":o" ).c_str(), _rate );
+        createPort((root_name ).c_str(), _rate );
         cout << "opening port " << root_name.c_str();
 
     }
@@ -388,7 +389,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
             tmpPorts[k].length = taxels;
             tmpPorts[k].offset = wBase;
             cout << "opening port " << ports->get(k).asString().c_str();
-            tmpPorts[k].port_name = root_name+ "/" +string(ports->get(k).asString().c_str()) + ":o";
+            tmpPorts[k].port_name = root_name+ "/" +string(ports->get(k).asString().c_str());
 
             createPorts(tmpPorts, _rate);
             totalT+=taxels;
