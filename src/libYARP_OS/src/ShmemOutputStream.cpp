@@ -11,6 +11,7 @@
 #ifdef YARP_HAS_ACE
 
 #include <yarp/os/impl/ShmemOutputStream.h>
+#include <ace/Lib_Find.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os::impl;

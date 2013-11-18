@@ -39,6 +39,7 @@
 #ifdef YARP_HAS_ACE
 #include <ace/config.h>
 #include <ace/String_Base.h>
+#include <ace/Init_ACE.h>
 #endif
 
 #include <stdlib.h>

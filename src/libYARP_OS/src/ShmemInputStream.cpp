@@ -12,6 +12,7 @@
 
 #include <yarp/os/impl/ShmemInputStream.h>
 #include <yarp/os/impl/PlatformTime.h>
+#include <ace/Lib_Find.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os::impl;
