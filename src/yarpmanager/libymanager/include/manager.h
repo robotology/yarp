@@ -145,6 +145,7 @@ private:
     bool prepare(bool silent=true);
     bool timeout(double base, double timeout);
     bool updateResource(GenericResource* resource);
+    Broker* createBroker(Module* module);
 };
  
  

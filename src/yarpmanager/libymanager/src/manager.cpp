@@ -12,6 +12,7 @@
 #include "yarpbroker.h"
 #include "localbroker.h"
 #include "yarpdevbroker.h"
+#include "scriptbroker.h"
 #include "xmlapploader.h"
 #include "xmlmodloader.h"
 #include "xmlresloader.h"
@@ -273,56 +274,8 @@ bool Manager::prepare(bool silent)
     ModulePIterator itr;
     int id = 0;
     for(itr=modules.begin(); itr!=modules.end(); itr++)
-    {
-        
-        Broker* broker = NULL;
-
-        /*
-        string strCurrentBroker;
-        if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
-            strCurrentBroker = BROKER_YARPRUN;
-        else
-            strCurrentBroker = strDefBroker;
-
-        if(compareString((*itr)->getHost(), "localhost"))
-            broker = new LocalBroker;
-        else if(strCurrentBroker == string(BROKER_YARPRUN))
-            broker = new YarpBroker;
-        //else if( for other brokers )
-        //...
-        */
-
-        if(compareString((*itr)->getBroker(), BROKER_YARPDEV))
-        {
-            if(compareString((*itr)->getHost(), "localhost"))
-               broker = new YarpdevLocalBroker();
-            else
-               broker = new YarpdevYarprunBroker(); 
-        }
-        else if(compareString((*itr)->getBroker(), BROKER_LOCAL))
-        {
-            if(compareString((*itr)->getHost(), "localhost"))
-                broker = new LocalBroker();
-        }    
-        else if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
-                broker = new YarpBroker();
-
-        /**
-         * using default broker if it is still NULL
-         */
-        if(!broker)
-        {
-            if(compareString((*itr)->getHost(), "localhost"))
-                broker = new LocalBroker;
-            else
-                broker = new YarpBroker;
-            //OSTRINGSTREAM war;
-            //war<<"Deployer "<<strCurrentBroker<<" does not exist! (using default (yarprun) deployer)";
-            //logger->addWarning(war);
-            //broker = new YarpBroker;
-            //strCurrentBroker = BROKER_YARPRUN;
-        }
-
+    {       
+        Broker* broker = createBroker(*itr);
         Executable* exe = new Executable(broker, (MEvent*)this, bWithWatchDog);
         exe->setID(id++);
         exe->setCommand((*itr)->getName());
@@ -330,12 +283,9 @@ bool Manager::prepare(bool silent)
         exe->setHost((*itr)->getHost());
         exe->setStdio((*itr)->getStdio());
         exe->setWorkDir((*itr)->getWorkDir());
-        //if(strCurrentBroker == string(BROKER_YARPRUN))
-       // {
-            string env = string("YARP_PORT_PREFIX=") +
-                            string((*itr)->getPrefix());
-            exe->setEnv(env.c_str());
-       // }
+        string env = string("YARP_PORT_PREFIX=") +
+                        string((*itr)->getPrefix());
+        exe->setEnv(env.c_str());
 
         /**
          * Adding connections to their owners
@@ -361,6 +311,28 @@ bool Manager::prepare(bool silent)
     }
 
     return true;
+}
+
+Broker* Manager::createBroker(Module* module)
+{
+    if(strlen(module->getBroker()) == 0)
+    {
+        if(compareString(module->getHost(), "localhost"))
+            return (new LocalBroker());
+        else    
+            return (new YarpBroker());
+    }
+    else if(compareString(module->getBroker(), BROKER_YARPDEV))
+    {
+        if(compareString(module->getHost(), "localhost"))
+           return (new YarpdevLocalBroker());
+        else   
+            return (new YarpdevYarprunBroker()); 
+    }
+    else if(compareString(module->getHost(), "localhost"))
+        return (new ScriptLocalBroker(module->getBroker()));
+    
+    return (new ScriptYarprunBroker(module->getBroker()));
 }
 
 bool Manager::updateExecutable(unsigned int id, const char* szparam,
