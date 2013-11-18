@@ -39,8 +39,6 @@
 #endif
 
 
-namespace { bool _verb;};
-
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
  * name conflicts
  */
@@ -164,7 +162,6 @@ public:
     int axes;
 
     bool configuredF;
-    bool attachedF;
 
     yarp::dev::PolyDriver            *subdevice;
     yarp::dev::IPidControl           *pid;
@@ -192,6 +189,7 @@ public:
 
     bool attach(yarp::dev::PolyDriver *d, const std::string &id);
     void detach();
+    inline void setVerbose(bool _verbose) {_subDevVerbose = _verbose; }
 
     bool configure(int base, int top, int axes, const std::string &id);
 
@@ -201,13 +199,17 @@ public:
     	double tmp = 0;
         for(int j=base, idx=0; j<(base+axes); j++, idx++)
         {
-            enc->getEncoderTimed(j, &subDev_encoders[idx], &encodersTimes[idx]);
+            if(enc)
+                enc->getEncoderTimed(j, &subDev_encoders[idx], &encodersTimes[idx]);
         }
     }
 
     bool isAttached()
     { return attachedF; }
 
+private:
+    bool _subDevVerbose;
+    bool attachedF;
 };
 
 typedef std::vector<yarp::dev::impl::SubDevice> SubDeviceVector;
@@ -288,7 +290,7 @@ private:
     int               base;
     int               top;
     int               thread_period;
-
+    bool              _verb;
 
     bool closeMain() {
         if (yarp::os::RateThread::isRunning()) {

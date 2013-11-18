@@ -63,6 +63,7 @@ SubDevice::SubDevice()
 
     configuredF=false;
     attachedF=false;
+    _subDevVerbose = false;
 }
 
 bool SubDevice::configure(int b, int t, int n, const std::string &key)
@@ -172,68 +173,63 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             return false;
         }
 
-
-    if ((iTimed!=0) && (_verb))
-        std::cout << id << ":using IPreciselyTimed interface"<<endl;
-
-    if ((iMode==0) && (_verb))
+    if ((iMode==0) && (_subDevVerbose ))
         std::cerr << "--> Warning iMode not valid interface\n";
 
-    if ((iTorque==0) && (_verb))
+    if ((iTorque==0) && (_subDevVerbose))
         std::cerr << "--> Warning iTorque not valid interface\n";
 
-    if ((iImpedance==0) && (_verb))
+    if ((iImpedance==0) && (_subDevVerbose))
         std::cerr << "--> Warning iImpedance not valid interface\n";
 
-    if ((iOpenLoop==0) && (_verb))
+    if ((iOpenLoop==0) && (_subDevVerbose))
         std::cerr << "--> Warning iOpenLoop not valid interface\n";
 
     int deviceJoints=0;
 
-    if ( pos!=0 || pos2!=0 || vel!=0)
+    // checking minimum set of intefaces required
+    if( ! (pos || pos2) ) // One of the 2 is enough, therefore if both are missing I raise an error
+    {
+        printf("ControlBoarWrapper Error: neither IPositionControl nor IPositionControl2 interface was not found in subdevice. Quitting\n");
+        return false;
+    }
+
+    if( ! (vel || vel2) ) // One of the 2 is enough, therefor if both are missing I raise an error
+    {
+        printf("ControlBoarWrapper Error: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting\n");
+        return false;
+    }
+
+    if(!enc)
+    {
+        printf("ControlBoarWrapper Error: IEncoderTimed interface was not found in subdevice. Quitting\n");
+        return false;
+    }
+
+    if (pos!=0)
+    {
+        if (!pos->getAxes(&deviceJoints))
         {
-            if (pos!=0)
-                {
-                    if (!pos->getAxes(&deviceJoints))
-                        {
-                            std::cerr<< "Error: attached device has 0 axes\n";
-                            return false;
-                        }
-                }
-
-            if (pos2!=0)
-                {
-                    if (!pos2->getAxes(&deviceJoints))
-                        {
-                            std::cerr<< "Error: attached device has 0 axes\n";
-                            return false;
-                        }
-                }
-
-            if (vel!=0)
-                {
-                    if (!vel->getAxes(&deviceJoints))
-                        {
-                            std::cerr<< "Error: attached device has 0 axes\n";
-                            return false;
-                        }
-                }
-
-            if (deviceJoints<axes)
-                {
-                    std::cerr<<"check device configuration, number of joints of attached device less than the one specified during configuration.\n";
-                    return false;
-                }
-
-            attachedF=true;
-            return true;
-        }
-    else
-        {
+            std::cerr<< "Error: attached device has 0 axes\n";
             return false;
         }
+    }
+    else
+    {
+        if (!pos2->getAxes(&deviceJoints))
+        {
+            std::cerr<< "Error: attached device has 0 axes\n";
+            return false;
+        }
+    }
 
-    return false;
+    if (deviceJoints<axes)
+    {
+        std::cerr<<"check device configuration, number of joints of attached device less than the one specified during configuration.\n";
+        return false;
+    }
+    attachedF=true;
+    return true;
 }
 
 
@@ -2260,7 +2256,10 @@ bool ControlBoardWrapper::open(Searchable& config)
 bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 {
     if (!prop.check("networks", "list of networks merged by this wrapper"))
+    {
+        cerr << "controlBoardWrapper2: List of networks to attach to was not found.\n";
         return false;
+    }
 
     Bottle *nets=prop.find("networks").asList();
     if(nets==0)
@@ -2351,6 +2350,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         }
 
         SubDevice *tmpDevice=device.getSubdevice(k);
+        tmpDevice->setVerbose(_verb);
 
         int axes=top-base+1;
         if (!tmpDevice->configure(base, top, axes, nets->get(k).asString().c_str()))
@@ -2387,10 +2387,8 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     p.fromString(prop.toString().c_str());
 
     p.setMonitor(prop.getMonitor(), "subdevice"); // pass on any monitoring
-
-
     p.unput("device");
-    p.put("device",prop.find("subdevice").asString());
+    p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
     // if error occour during open, quit here.
     printf("opening controlBoardWrapper2 subdevice\n");
@@ -2402,26 +2400,33 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
         return false;
     }
 
-    printf("opening controlBoardWrapper2 subdevice... done\n");
-
-    // getting parameters in simStyle
-    if (!p.check("GENERAL","section for general motor control parameters"))
+    // getting parameters in simStyle... this is different from usual checks of controlBoardWrapper2
+    Bottle &general = p.findGroup("GENERAL", "section for general motor control parameters");
+    if(general.isNull())
     {
-        fprintf(stderr, "Cannot understand configuration parameters\n");
+        fprintf(stderr, "Cannot find GENERAL group configuration parameters\n");
         return false;
     }
 
-    controlledJoints = p.findGroup("GENERAL").check("TotalJoints",Value(1), "Number of total joints").asInt();
+    Value & myjoints = general.find("TotalJoints");
+    if(myjoints.isNull())
+    {
+        printf("ControlBoardWrapper: error, 'TotalJoints' parameter not valid\n");
+        return false;
+    }
+    controlledJoints = myjoints.asInt();
+    printf("joints parameter is %d\n", controlledJoints);
+
+
     device.lut.resize(controlledJoints);
     device.subdevices.resize(1);
-
-    printf("Attaching controlBoardWrapper2 to subdevice\n");
 
     // configure the device
     base = 0;
     top  = controlledJoints-1;
 
     SubDevice *tmpDevice=device.getSubdevice(0);
+    tmpDevice->setVerbose(_verb);
 
     std::string subDevName ((partName + "_" + prop.find("subdevice").asString().c_str()));
     if (!tmpDevice->configure(base, top, controlledJoints, subDevName) )
@@ -2456,33 +2461,40 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
 bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 {
     for(int p=0;p<polylist.size();p++)
+    {
+        // find appropriate entry in list of subdevices
+        // and attach
+        unsigned int k=0;
+        for(k=0; k<device.subdevices.size(); k++)
         {
-            // find appropriate entry in list of subdevices
-            // and attach
-            unsigned int k=0;
-            for(k=0; k<device.subdevices.size(); k++)
+            std::string tmpKey=polylist[p]->key.c_str();
+            if (device.subdevices[k].id==tmpKey)
+            {
+                if (!device.subdevices[k].attach(polylist[p]->poly, tmpKey))
                 {
-                    std::string tmpKey=polylist[p]->key.c_str();
-                    if (device.subdevices[k].id==tmpKey)
-                        {
-                            if (!device.subdevices[k].attach(polylist[p]->poly, tmpKey))
-                                return false;
-                        }
+                    printf("ControlBoardWrapper: attach to subdevice %s failed\n", polylist[p]->key.c_str());
+                    return false;
                 }
+            }
         }
+    }
 
     //check if all devices are attached to the driver
     bool ready=true;
     for(unsigned int k=0; k<device.subdevices.size(); k++)
+    {
+        if (!device.subdevices[k].isAttached())
         {
-            if (!device.subdevices[k].isAttached())
-                {
-                    ready=false;
-                }
+            ready=false;
         }
+    }
 
     if (!ready)
+    {
+        printf("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
         return false;
+    }
+
 
     CBW_encoders.resize(device.lut.size());
 
