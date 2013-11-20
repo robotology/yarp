@@ -51,7 +51,7 @@ public:
 
     bool writeNested(yarp::os::PortWriter& obj);
 
-    bool writeI32(int32_t x);
+    bool writeI32(YARP_INT32 x);
 
     bool writeBool(bool x);
 

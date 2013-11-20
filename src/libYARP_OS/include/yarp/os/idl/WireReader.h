@@ -57,11 +57,11 @@ public:
 
     bool readNested(yarp::os::PortReader& obj);
 
-    bool readI32(int32_t& x);
+    bool readI32(YARP_INT32& x);
 
     bool readBool(bool& x);
 
-    bool readVocab(int32_t& x);
+    bool readVocab(YARP_INT32& x);
 
     bool readDouble(double& x);
 
@@ -78,7 +78,7 @@ public:
     }
 #endif
 
-    bool readEnum(int32_t& x, WireVocab& converter);
+    bool readEnum(YARP_INT32& x, WireVocab& converter);
 
     bool readListHeader();
 

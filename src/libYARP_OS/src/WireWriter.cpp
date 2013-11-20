@@ -56,7 +56,7 @@ bool WireWriter::writeNested(yarp::os::PortWriter& obj) {
     return obj.write(writer);
 }
 
-bool WireWriter::writeI32(int32_t x) {
+bool WireWriter::writeI32(YARP_INT32 x) {
     writer.appendInt(BOTTLE_TAG_INT);
     writer.appendInt((int)x);
     return !writer.isError();

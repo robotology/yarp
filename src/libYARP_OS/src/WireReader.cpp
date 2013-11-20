@@ -24,7 +24,7 @@ WireReader::WireReader(ConnectionReader& reader) : reader(reader) {
 
 WireReader::~WireReader() {
     if (state->need_ok) {
-        int32_t dummy;
+        YARP_INT32 dummy;
         readVocab(dummy);
         state->need_ok = false;
     }
@@ -82,7 +82,7 @@ bool WireReader::readNested(yarp::os::PortReader& obj) {
     return obj.read(reader);
 }
 
-bool WireReader::readI32(int32_t& x) {
+bool WireReader::readI32(YARP_INT32& x) {
     int tag = state->code;
     if (tag<0) {
         if (noMore()) return false;
@@ -91,7 +91,7 @@ bool WireReader::readI32(int32_t& x) {
     if (tag!=BOTTLE_TAG_INT) return false;
     if (noMore()) return false;
     int v = reader.expectInt();
-    x = (int32_t) v;
+    x = (YARP_INT32) v;
     state->len--;
     return !reader.isError();
 }
@@ -109,7 +109,7 @@ bool WireReader::readBool(bool& x) {
     return !reader.isError();
 }
 
-bool WireReader::readVocab(int32_t& x) {
+bool WireReader::readVocab(YARP_INT32& x) {
     int tag = state->code;
     if (tag<0) {
         if (noMore()) return false;
@@ -118,7 +118,7 @@ bool WireReader::readVocab(int32_t& x) {
     if (tag!=BOTTLE_TAG_VOCAB) return false;
     if (noMore()) return false;
     int v = reader.expectInt();
-    x = (int32_t) v;
+    x = (YARP_INT32) v;
     state->len--;
     return !reader.isError();
 }
@@ -172,7 +172,7 @@ bool WireReader::readString(ConstString& str, bool *is_vocab) {
     return !reader.isError();
 }
 
-bool WireReader::readEnum(int32_t& x, WireVocab& converter) {
+bool WireReader::readEnum(YARP_INT32& x, WireVocab& converter) {
     int tag = state->code;
     if (tag<0) {
         if (noMore()) return false;
@@ -181,7 +181,7 @@ bool WireReader::readEnum(int32_t& x, WireVocab& converter) {
     if (tag==BOTTLE_TAG_INT) {
         if (noMore()) return false;
         int v = reader.expectInt();
-        x = (int32_t) v;
+        x = (YARP_INT32) v;
         state->len--;
         return !reader.isError();
     }
@@ -197,7 +197,7 @@ bool WireReader::readEnum(int32_t& x, WireVocab& converter) {
         str.resize(len-1);
         state->len--;
         if (reader.isError()) return false;
-        x = (int32_t)converter.fromString(str);
+        x = (YARP_INT32)converter.fromString(str);
         return (x>=0);
     }
     return false;
@@ -227,7 +227,7 @@ bool WireReader::readListReturn() {
     if (state->len == 1) return true;
     if (state->len != 4) return false;
     // possibly old-style return: [is] foo val [ok]
-    int32_t v = 0;
+    YARP_INT32 v = 0;
     if (!readVocab(v)) return false;
     if (v!=VOCAB2('i','s')) return false;
     ConstString dummy;
