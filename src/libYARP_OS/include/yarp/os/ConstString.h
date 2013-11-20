@@ -124,6 +124,8 @@ public:
 
     size_t size() const { return length(); }
 
+    void resize(size_t n);
+
     size_t find(const ConstString& needle) const;
     size_t find(const char *needle) const;
     size_t find(const char *needle, size_t start) const;
@@ -227,6 +229,8 @@ private:
     inline size_t length() const { return s.length(); }
 
     inline size_t size() const { return length(); }
+
+    inline void resize(size_t n) { s.resize(n); }
 
     inline size_t find(const ConstString& needle) const { return s.find(needle.s); }
     inline size_t find(const char *needle) const        { return s.find(needle); }

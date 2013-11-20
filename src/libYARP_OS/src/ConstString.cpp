@@ -110,6 +110,11 @@ size_t ConstString::length() const {
     return HELPER(implementation).length();
 }
 
+void ConstString::resize(size_t n) {
+    HELPER(implementation).resize(n);
+}
+
+
 bool ConstString::operator <=(const ConstString& alt) const {
     return HELPER(implementation) <= HELPER(alt.implementation);
 }

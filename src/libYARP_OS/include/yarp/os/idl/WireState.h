@@ -32,16 +32,9 @@ public:
     bool need_ok;
     WireState *parent;
 
-    WireState() {
-        len = -1;
-        code = -1;
-        need_ok = false;
-        parent = 0 /*NULL*/;
-    }
+    WireState();
 
-    bool isValid() const {
-        return len>=0;
-    }
+    bool isValid() const;
 };
 
 
