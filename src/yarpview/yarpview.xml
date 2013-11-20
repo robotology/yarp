@@ -17,7 +17,10 @@
 	</arguments>
 			
 	<authors>
-		<author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
+		
+                <author email="lorenzo.natale@iit.it"> Lorenzo Natale </author>
+                <author email="matteo.brunettini@iit.it"> Matteo Brunettini </author>
+                <author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
 	</authors>
 	
 	<data> 
