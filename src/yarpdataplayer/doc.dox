@@ -27,22 +27,15 @@ Make also sure you installed the applications, follow installation instructions 
 
 Download example sequence. This sequence was recorded while the iCub was tracking and grasping a red ball:
 
- - <a href="http://www.icub.org/download/testData_20120803_095402.zip">testData_20120803_095402.zip</a>
+ - <a href="http://www.icub.org/download/software/datasetplayer-demo/testData_20120803_095402.zip">testData_20120803_095402.zip</a>
  
 Unpack the content of the archive in a directory of your choice, e.g. \e /home/\<user\> . You should now have a directory called \e testData_20120803_095402 in \e /home/\<user\>.
 
-On a console run \e yarpserver (if not already running) and an instance of \e yarprun:
+On a console run \e yarpserver (if not already running).
+
+You can run gyarpmanager:
 
 \code
-  yarprun --server /computer1
-\endcode
-
-\e /computer1 is the name that YARP will use to execute commands on your machine.
-
-Go the \e app directory (e.g. $ICUB_ROOT/app) and run \e gyarpmanager:
-
-\code
-  cd $ICUB_ROOT/app
   gyarpmanager
 \endcode
 

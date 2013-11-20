@@ -1,19 +1,18 @@
 <application>
 <name>dataSetPlayer recording example</name>
 <dependencies>
-      <port>/computer1</port>
 </dependencies>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/head</parameters>
-        <node>computer1</node>
+        <node>localhost</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/inertial</parameters>
-        <node>computer1</node>
+        <node>localhost</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
@@ -27,14 +26,14 @@
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/leftArm</parameters>
-        <node>computer1</node>
+        <node>localhost</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/rightArm</parameters>
-        <node>computer1</node>
+        <node>localhost</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
@@ -55,14 +54,14 @@
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/images/left --type image</parameters>
-        <node>computer1</node>
+        <node>localhost</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
     <module>
         <name>dataDumper</name>
         <parameters>--name /data/images/right --type image</parameters>
-        <node>computer1</node>
+        <node>localhost</node>
         <stdio></stdio>
         <tag>dataDumper</tag>
     </module>
