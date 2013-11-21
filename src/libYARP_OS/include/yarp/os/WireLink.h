@@ -28,12 +28,13 @@ namespace yarp {
  */
 class yarp::os::WireLink {
 private:
-    yarp::os::Port *port;
+    yarp::os::UnbufferedContactable *port;
     yarp::os::PortReader *reader;
     yarp::os::PortReader *owner;
     bool replies;
 
-    bool attach(yarp::os::Port& port, const yarp::os::ContactStyle& style) {
+    bool attach(yarp::os::UnbufferedContactable& port, 
+                const yarp::os::ContactStyle& style) {
         reset();
         this->port = &port;
         this->replies = style.expectReply;
@@ -79,7 +80,7 @@ public:
      * @return true on success
      *
      */
-    bool attachAsClient(yarp::os::Port& port) {
+    bool attachAsClient(yarp::os::UnbufferedContactable& port) {
         yarp::os::ContactStyle style;
         attach(port,style);
         return true;
@@ -106,7 +107,7 @@ public:
      * @return true on success
      *
      */
-    bool attachAsServer(yarp::os::Port& port) {
+    bool attachAsServer(yarp::os::UnbufferedContactable& port) {
         yarp::os::ContactStyle style;
         attach(port,style);
         port.setReader(*owner);

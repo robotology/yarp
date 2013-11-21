@@ -12,7 +12,7 @@
 
 #include <yarp/os/api.h>
 #include <yarp/os/Portable.h>
-#include <yarp/os/Contactable.h>
+#include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/PortReaderCreator.h>
@@ -37,7 +37,7 @@ namespace yarp {
  * For examples and help, see: \ref what_is_a_port
  *
  */
-class YARP_OS_API yarp::os::Port : public Contactable {
+class YARP_OS_API yarp::os::Port : public UnbufferedContactable {
 
 public:
     using Contactable::open;
@@ -103,7 +103,7 @@ public:
      * is done (otherwise writer.onCompletion() is called)
      * @return true iff the object is successfully written
      */
-    bool write(PortWriter& writer, PortWriter *callback = 0 /*NULL*/);
+    bool write(PortWriter& writer, PortWriter *callback = 0 /*NULL*/) const;
 
     /**
      * Write an object to the port, then expect one back.

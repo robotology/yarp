@@ -7,138 +7,153 @@
  */
 
 #include <yarp/os/RpcServer.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/impl/Logger.h>
 
+using namespace yarp::os;
+using namespace yarp::os::impl;
 
-yarp::os::RpcServer::RpcServer() :
-        Contactable() {
-    // should configure port object to let it know it will be used
-    // as an RPC server - TODO.
+RpcServer::RpcServer() {
 }
 
-yarp::os::RpcServer::~RpcServer() {
+RpcServer::~RpcServer() {
     port.close();
 }
 
-bool yarp::os::RpcServer::open(const ConstString& name) {
+bool RpcServer::open(const ConstString& name) {
     port.setInputMode(true);
     port.setOutputMode(false);
     port.setRpcMode(true);
     return port.open(name);
 }
 
-bool yarp::os::RpcServer::open(const Contact& contact, bool registerName) {
+bool RpcServer::open(const Contact& contact, bool registerName) {
     return port.open(contact,registerName);
 }
 
-bool yarp::os::RpcServer::addOutput(const ConstString& name) {
+bool RpcServer::addOutput(const ConstString& name) {
     return false;
 }
 
-bool yarp::os::RpcServer::addOutput(const ConstString& name, 
+bool RpcServer::addOutput(const ConstString& name, 
                                     const ConstString& carrier) {
     return false;
 }
 
-bool yarp::os::RpcServer::addOutput(const Contact& contact){
+bool RpcServer::addOutput(const Contact& contact){
     return false;
 }
 
-void yarp::os::RpcServer::close() {
+void RpcServer::close() {
     port.close();
 }
 
-void yarp::os::RpcServer::interrupt() {
+void RpcServer::interrupt() {
     port.interrupt();
 }
 
-void yarp::os::RpcServer::resume() {
+void RpcServer::resume() {
     port.resume();
 }
 
-yarp::os::Contact yarp::os::RpcServer::where() const {
+Contact RpcServer::where() const {
     return port.where();
 }
 
-yarp::os::ConstString yarp::os::RpcServer::getName() const {
+ConstString RpcServer::getName() const {
     return where().getName();
 }
 
-bool yarp::os::RpcServer::read(PortReader& reader, bool willReply) {
+bool RpcServer::write(PortWriter& writer, PortWriter *callback) const {
+    YARP_SPRINTF1(Logger::get(),error,"RpcServer %s cannot write, please use a regular Port or RpcClient for that",port.getName().c_str());
+    return false;
+}
+
+bool RpcServer::write(PortWriter& writer, PortReader& reader,
+                                PortWriter *callback) const {
+    YARP_SPRINTF1(Logger::get(),error,"RpcServer %s cannot write, please use a regular Port or RpcClient for that",port.getName().c_str());
+    return false;
+}
+
+bool RpcServer::read(PortReader& reader, bool willReply) {
     if (!willReply) {
+        YARP_SPRINTF1(Logger::get(),error,"RpcServer %s must reply, please use a regular Port if you do not want to",port.getName().c_str());
         // this is an error for RpcServer
         return false;
     }
     return port.read(reader,true);
 }
 
-bool yarp::os::RpcServer::reply(PortWriter& writer) {
+bool RpcServer::reply(PortWriter& writer) {
     return port.reply(writer);
 }
 
-void yarp::os::RpcServer::setReader(PortReader& reader) {
+bool RpcServer::replyAndDrop(PortWriter& writer) {
+    return port.replyAndDrop(writer);
+}
+
+void RpcServer::setReader(PortReader& reader) {
     port.setReader(reader);
 }
 
-void yarp::os::RpcServer::setReaderCreator(PortReaderCreator& creator) {
+void RpcServer::setReaderCreator(PortReaderCreator& creator) {
     port.setReaderCreator(creator);
 }
 
-bool yarp::os::RpcServer::setEnvelope(PortWriter& envelope) {
+bool RpcServer::setEnvelope(PortWriter& envelope) {
     return port.setEnvelope(envelope);
 }
 
-bool yarp::os::RpcServer::getEnvelope(PortReader& envelope) {
+bool RpcServer::getEnvelope(PortReader& envelope) {
     return port.getEnvelope(envelope);
 }
 
-int yarp::os::RpcServer::getInputCount() {
+int RpcServer::getInputCount() {
     return port.getInputCount();
 }
 
-int yarp::os::RpcServer::getOutputCount() {
+int RpcServer::getOutputCount() {
     return port.getOutputCount();
 }
 
-void yarp::os::RpcServer::getReport(PortReport& reporter) {
+void RpcServer::getReport(PortReport& reporter) {
     port.getReport(reporter);
 }
 
-void yarp::os::RpcServer::setReporter(PortReport& reporter) {
+void RpcServer::setReporter(PortReport& reporter) {
     port.setReporter(reporter);
 }
 
-bool yarp::os::RpcServer::isWriting() {
+bool RpcServer::isWriting() {
     return port.isWriting();
 }
 
-yarp::os::Type yarp::os::RpcServer::getType() {
+Type RpcServer::getType() {
     return port.getType();
 }
 
-void yarp::os::RpcServer::promiseType(const Type& typ) {
+void RpcServer::promiseType(const Type& typ) {
     port.promiseType(typ);
 }
 
-yarp::os::Property *yarp::os::RpcServer::acquireProperties(bool readOnly) {
+Property *RpcServer::acquireProperties(bool readOnly) {
     return port.acquireProperties(readOnly);
 }
 
-void yarp::os::RpcServer::releaseProperties(Property *prop) {
+void RpcServer::releaseProperties(Property *prop) {
     port.releaseProperties(prop);
 }
 
-void yarp::os::RpcServer::setInputMode(bool expectInput) {
+void RpcServer::setInputMode(bool expectInput) {
     YARP_ASSERT(expectInput);
 }
 
 
-void yarp::os::RpcServer::setOutputMode(bool expectOutput) {
+void RpcServer::setOutputMode(bool expectOutput) {
     YARP_ASSERT(!expectOutput);
 }
 
 
-void yarp::os::RpcServer::setRpcMode(bool expectRpc) {
+void RpcServer::setRpcMode(bool expectRpc) {
     YARP_ASSERT(expectRpc);
 }
 

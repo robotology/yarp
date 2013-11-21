@@ -618,7 +618,7 @@ bool Port::addOutput(const Contact& contact) {
 /**
  * write something to the port
  */
-bool Port::write(PortWriter& writer, PortWriter *callback) {
+bool Port::write(PortWriter& writer, PortWriter *callback) const {
     PortCoreAdapter& core = HELPER(implementation);
     if (core.isInterrupted()) return false;
     core.alertOnWrite();

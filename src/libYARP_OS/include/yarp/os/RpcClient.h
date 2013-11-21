@@ -10,7 +10,6 @@
 #ifndef _YARP2_RPCCLIENT_
 #define _YARP2_RPCCLIENT_
 
-#include <yarp/os/Contactable.h>
 #include <yarp/os/Port.h>
 
 namespace yarp {
@@ -26,7 +25,7 @@ namespace yarp {
  * connect to a single server, and receive replies on the same connection.
  *
  */
-class YARP_OS_API yarp::os::RpcClient : public Contactable {
+class YARP_OS_API yarp::os::RpcClient : public UnbufferedContactable {
 public:
     using Contactable::open;
 
@@ -72,15 +71,22 @@ public:
     // documentation provided in Contactable
     virtual ConstString getName() const;
 
-    /**
-     * Write an object to the port, then expect one back.
-     * @param writer any object that knows how to write itself to a
-     * network connection - see for example Bottle
-     * @param reader any object that knows how to read itself from a
-     * network connection - see for example Bottle
-     * @return true iff an object is successfully written and read
-     */
-    bool write(PortWriter& writer, PortReader& reader) const;
+    // documented in UnbufferedContactable
+    virtual bool write(PortWriter& writer, 
+                       PortWriter *callback = 0 /*NULL*/) const;
+
+    // documented in UnbufferedContactable
+    virtual bool write(PortWriter& writer, PortReader& reader,
+                       PortWriter *callback = 0 /*NULL*/) const;
+
+    // documented in UnbufferedContactable
+    virtual bool read(PortReader& reader, bool willReply = false);
+
+    // documented in UnbufferedContactable
+    virtual bool reply(PortWriter& writer);
+
+    // documented in UnbufferedContactable
+    virtual bool replyAndDrop(PortWriter& writer);
 
     // documented in Contactable
     virtual bool setEnvelope(PortWriter& envelope);
@@ -119,7 +125,6 @@ public:
 
 private:
     // an RpcClient may be implemented with a regular port
-    // (this is not decided yet)
     Port port;
 
     // forbid copy constructor and assignment operator by making them private

@@ -10,9 +10,7 @@
 #ifndef _YARP2_RPCSERVER_
 #define _YARP2_RPCSERVER_
 
-#include <yarp/os/Contactable.h>
 #include <yarp/os/Port.h>
-
 
 namespace yarp {
     namespace os {
@@ -28,7 +26,7 @@ namespace yarp {
  * those connections.
  *
  */
-class YARP_OS_API yarp::os::RpcServer : public Contactable {
+class YARP_OS_API yarp::os::RpcServer : public UnbufferedContactable {
 public:
     using Contactable::open;
 
@@ -74,28 +72,22 @@ public:
     // documentation provided in Contactable
     virtual ConstString getName() const;
 
-    /**
-     * Read an object from the port.
-     * @param reader any object that knows how to read itself from a
-     * network connection - see for example Bottle
-     * to it.
-     * @param willReply you must set this to true if you intend to call reply().
-     * For an RpcServer port, you must always call reply().  So this flag must
-     * always be set to true.  It is here for consistency with the API
-     * for yarp::os::Port
-     * @return true iff the object is successfully read
-     */
-    bool read(PortReader& reader, bool willReply);
+    // documented in UnbufferedContactable
+    virtual bool write(PortWriter& writer, 
+                       PortWriter *callback = 0 /*NULL*/) const;
 
-   /**
-     * Send an object as a reply to an object read from the port.
-     * Only call this method if you set the willReply flag to
-     * true when you called Port::read.
-     * @param writer any object that knows how to write itself to a
-     * network connection - see for example Bottle
-     * @return true iff the object is successfully written
-     */
-    bool reply(PortWriter& writer);
+    // documented in UnbufferedContactable
+    virtual bool write(PortWriter& writer, PortReader& reader,
+                       PortWriter *callback = 0 /*NULL*/) const;
+
+    // documented in UnbufferedContactable
+    virtual bool read(PortReader& reader, bool willReply = true);
+
+    // documented in UnbufferedContactable
+    virtual bool reply(PortWriter& writer);
+
+    // documented in UnbufferedContactable
+    virtual bool replyAndDrop(PortWriter& writer);
 
     /**
      * Set an external reader for port data.
