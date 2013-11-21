@@ -12,6 +12,7 @@
 #include <yarp/os/all.h>
 #include <Demo.h>
 #include <SurfaceMeshWithBoundingBox.h>
+#include <Wrapping.h>
 
 using namespace yarp::os;
 
@@ -72,6 +73,16 @@ public:
         return _int;
     }
 };
+
+class WrappingServer : public Wrapping {
+public:
+    virtual int32_t check(const yarp::os::Value& param) {
+        if (param.isInt()) return param.asInt()+1;
+        if (param.asString()=="6*7") return 42;
+        return 9;
+    }
+};
+
 
 class ClientPeek : public PortReader {
 public:
@@ -442,6 +453,37 @@ bool test_surface_mesh() {
     return true;
 }
 
+
+bool test_wrapping() {
+    printf("\n*** test_wrapping()\n");
+
+    Network yarp;
+    yarp.setLocalMode(true);
+
+    Wrapping client;
+    WrappingServer server;
+
+    Port client_port,server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+
+    int x = 0;
+    client.yarp().attachAsClient(client_port);
+    server.yarp().attachAsServer(server_port);
+    x = client.check(99);
+    printf("Result %d\n", x);
+    if (x!=100) return false;
+    x = client.check(Value("6*7"));
+    printf("Result %d\n", x);
+    if (x!=42) return false;
+    x = client.check(Value("test"));
+    printf("Result %d\n", x);
+    if (x!=9) return false;
+
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -453,5 +495,6 @@ int main(int argc, char *argv[]) {
     if (!test_defaults_with_rpc()) return 1;
     if (!test_names_with_spaces()) return 1;
     if (!test_surface_mesh()) return 1;
+    if (!test_wrapping()) return 1;
     return 0;
 }
