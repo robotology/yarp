@@ -195,6 +195,30 @@ _yarpcontext() {
                 completion="--user --sysadm --installed"
                 ;;
             *)
+                case "$command" in
+                "--import" )
+                    local contextName="${COMP_WORDS[3]}"
+                    local directories
+                    for x in `yarp-config context --where $contextName --installed| grep "^[^\*]" | sort | uniq`;
+                       do directories="${directories[@]} $x"
+                    done
+                    for d in ${directories}
+                       do completion+="$(find "${d}" -mindepth 1 -printf '%P\n')"
+                    done
+                    ;;
+                "--remove"|"--merge")
+                    local contextName="${COMP_WORDS[3]}"
+                    local directories
+                    for x in `yarp-config context --where $contextName --user| grep "^[^\*]" | sort | uniq`;
+                       do directories="${directories[@]} $x"
+                    done
+                    for d in ${directories}
+                       do completion+="$(find "${d}" -mindepth 1 -printf '%P\n')"
+                    done
+                    ;;
+                *)
+                ;;
+            esac
             ;;
         esac
     fi
@@ -253,8 +277,33 @@ _yarprobot() {
                 completion="--user --sysadm --installed"
                 ;;
             *)
+            case "$command" in
+                "--import" )
+                    local robotName="${COMP_WORDS[3]}"
+                    local directories
+                    for x in `yarp-config robot --where $robotName --installed| grep "^[^\*]" | sort | uniq`;
+                       do directories="${directories[@]} $x"
+                    done
+                    for d in ${directories}
+                       do completion+="$(find "${d}" -mindepth 1 -printf '%P\n')"
+                    done
+                    ;;
+                "--remove"|"--merge")
+                    local robotName="${COMP_WORDS[3]}"
+                    local directories
+                    for x in `yarp-config robot --where $robotName --user| grep "^[^\*]" | sort | uniq`;
+                       do directories="${directories[@]} $x"
+                    done
+                    for d in ${directories}
+                       do completion+="$(find "${d}" -mindepth 1 -printf '%P\n')"
+                    done
+                    ;;
+                *)
+                ;;
+            esac
             ;;
         esac
+
     fi
     COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
 

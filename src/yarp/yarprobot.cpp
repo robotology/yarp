@@ -93,10 +93,21 @@ int yarp_robot_main(int argc, char *argv[]) {
             printf("No robot name provided\n");
             return 0;
         }
+        ResourceFinderOptions opts;
+        if (options.check("user") || options.check("sysadm") || options.check("installed"))
+        {
+            opts.searchLocations=ResourceFinderOptions::NoLocation;
+            if(options.check("user"))
+                opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::User);
+            if(options.check("sysadm"))
+                opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::Sysadmin);
+            if (options.check("installed"))
+                opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::Installed);
+        }
         yarp::os::ResourceFinder rf;
         if (options.check("verbose"))
             rf.setVerbose(true);
-        yarp::os::Bottle paths=rf.findPaths((ConstString("robots") + PATH_SEPARATOR +contextName).c_str());
+        yarp::os::Bottle paths=rf.findPaths((ConstString("robots") + PATH_SEPARATOR +contextName).c_str(), opts);
         for (int curCont=0; curCont<paths.size(); ++curCont)
             printf("%s\n", paths.get(curCont).asString().c_str());
         return 0;
