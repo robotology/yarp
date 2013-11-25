@@ -77,22 +77,9 @@ dataDumper info.log file example:
 - The parameter \e modName identifies the stem-name of the open
   ports.
 
-\section portsc_sec Ports Created
-
-- \e/<modName>/rpc remote procedure call.\n
-    Recognized remote commands: \n
-    - [help]  : returns the list of available rpc commands.\n
-    - [get]   : get requests \n
-        * [part]:the system returns the requested element. <part> is one of the parts loaded \n
-    - [set]   : set requests \n
-        * [part] [frameNumber] the part will be set to the desired frame. (currently all parts will be set to the same frame number) \n
-    - [step]  : the player will be stepped until all parts have sent data. \n
-    - [quit]  : stops the player \n
-    - [load]  : load request \n
-        * [path] the path name of the folder
-    - [play]  : plays the loaded files
-    - [pause] : pauses the loaded files
-    - [stop]  : stops the loaded files
+ \section portsif_sec Ports Interface
+ The interface to this module is implemented through
+ \ref dataSetPlayer_IDLServer . \n
 
 - The ports belonging to each of the parts are dynamically created and can be changed using the GUI.
 
