@@ -301,7 +301,6 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     params.fromString(config.toString().c_str());
     bool correct=true;
 
-    printf("\n\n\n\n YARP AnalWrap");
     // Verify minimum set of parameters required
     if(!params.check("robotName", "name of the robot.") )
     {
@@ -312,8 +311,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
     if(params.check("deviceId"))
     {
-      string tmp(params.find("deviceId").asString());// .asList();
-//       string tmp(deviceId->get(0).asString());
+      string tmp(params.find("deviceId").asString());
       cout << "AnalogWrapper Debug" << tmp;
       setId(tmp);
     }
@@ -352,22 +350,26 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     {
         Bottle *ports=params.find("ports").asList();
 
-        if (!params.check("total_taxels", "number of taxels of the part"))
+        Value &deviceChannels =  params.find("channels");
+        if (deviceChannels.isNull())
+        {
+            cerr << "Error: 'channels' parameters was not found in config file." << endl;
             return false;
-        int total_taxels=params.find("total_taxels").asInt();
+        }
+
         int nports=ports->size();
-        int totalT = 0;
+        int sumOfChannels = 0;
         std::vector<AnalogPortEntry> tmpPorts;
         tmpPorts.resize(nports);
 
-        for(int k=0;k<ports->size();k++)
+        for(int k=0; k<ports->size(); k++)
         {
             Bottle parameters=params.findGroup(ports->get(k).asString().c_str());
 
             if (parameters.size()!=5)
             {
-                cerr <<"check skin port parameters in part description";
-                cerr << "--> I was expecting "<<ports->get(k).asString().c_str() << " followed by four integers";
+                cerr << "check skin port parameters in part description";
+                cerr << "--> I was expecting " << ports->get(k).asString().c_str() << " followed by four integers" << endl;
                 return false;
             }
 
@@ -380,22 +382,22 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
             //check consistenty
             if(wTop-wBase != top-base){
-                cerr<<"Error: check skin port parameters in part description"<<endl;
-                cerr<<"Numbers of mapped taxels do not match.\n";
+                cerr << "Error: Numbers of mapped taxels do not match.\n";
+                cerr << "check " << ports->get(k).asString().c_str() << " port parameters in part description" << endl;
                 return false;
             }
-            int taxels=top-base+1;
+            int portChannels = top-base+1;
 
-            tmpPorts[k].length = taxels;
+            tmpPorts[k].length = portChannels;
             tmpPorts[k].offset = wBase;
             cout << "opening port " << ports->get(k).asString().c_str();
-            tmpPorts[k].port_name = root_name+ "/" +string(ports->get(k).asString().c_str());
+            tmpPorts[k].port_name = root_name+ "/" + string(ports->get(k).asString().c_str());
 
             createPorts(tmpPorts, _rate);
-            totalT+=taxels;
+            sumOfChannels+=portChannels;
         }
 
-        if (totalT!=total_taxels)
+        if (sumOfChannels!=deviceChannels.asInt())
         {
             cerr << "Error total number of mapped taxels does not correspond to total taxels";
             return false;
@@ -429,13 +431,15 @@ void AnalogWrapper::run()
             {
                 lastStateStamp.update();
                 // send the data on the port(s), splitting them as specified in the config file
-                for(unsigned int i=0; i<analogPorts.size(); i++){
+                for(unsigned int i=0; i<analogPorts.size(); i++)
+                {
                     yarp::sig::Vector &pv = analogPorts[i].port.prepare();
                     first = analogPorts[i].offset;
                     if(analogPorts[i].length==-1)   // read the max length available
                         last = v.size()-1;
                     else
                         last = analogPorts[i].offset + analogPorts[i].length - 1;
+
                     // check vector limit
                     if(last>=(int)v.size()){
                         cerr<<"Error while sending analog sensor output on port "<< analogPorts[i].port_name<< endl;
@@ -443,14 +447,19 @@ void AnalogWrapper::run()
                         continue;
                     }
                     pv = v.subVector(first, last);
+
                     analogPorts[i].port.setEnvelope(lastStateStamp);
                     analogPorts[i].port.write();
                 }
             }
+            else
+            {
+                printf("vector size non valid: %lu\n", v.size());
+            }
         }
         else
         {
-            //todo release
+            printf("Sensor returned error\n");
         }
     }
 }
