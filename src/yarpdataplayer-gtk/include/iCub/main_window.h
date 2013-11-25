@@ -29,6 +29,8 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/Module.h>
+#include <yarp/os/RpcServer.h>
+#include "dataSetPlayer_IDLServer.h"
 
 class PartModelColumns : public Gtk::TreeModel::ColumnRecord
 {
@@ -54,7 +56,7 @@ public:
     Gtk::TreeModelColumn<Glib::ustring> m_col_port;
 };
 
-class MainWindow : public Gtk::Window, public yarp::os::ResourceFinder, public yarp::os::Module
+class MainWindow : public Gtk::Window, public yarp::os::ResourceFinder, public yarp::os::Module, public dataSetPlayer_IDLServer
 {
 public:
     MainWindow(yarp::os::ResourceFinder    &rf);
@@ -72,17 +74,29 @@ public:
     void onMenuPlayBackPause();
     void onErrorMessage(const char *filename);
     bool getPartPort(const char* szName, char* dest);
-    bool execReq(const yarp::os::Bottle &command, yarp::os::Bottle &reply);
+    /*bool execReq(const yarp::os::Bottle &command, yarp::os::Bottle &reply);
     bool respond(const yarp::os::Bottle &command, yarp::os::Bottle &reply)
     {
         if(execReq(command,reply))
             return true;
         else
             return yarp::os::Module::respond(command,reply);
-    }
+    }*/
+
+    bool attach(yarp::os::RpcServer &source);
+    std::string getHelp();
+    bool step();
+    bool setFrame(const std::string &name, const int frameNum);
+    int  getFrame(const std::string &name);
+    bool load(const std::string &path);
+    bool play();
+    bool pause();
+    bool stop();
+    bool quit();
+
 protected:
     bool updateFrameNumber(const char* part, int number);
-    int getFrame(const char* part);
+    int  getFrameCmd(const char* part);
     void stepFromCommand(yarp::os::Bottle &reply);
     void listOfCommands(yarp::os::Bottle &reply);
 
@@ -116,7 +130,7 @@ protected:
 private:
     std::string                 moduleName; //string containing module name
     bool                        add_prefix; //indicates if ports have to be opened with /<moduleName> as prefix
-    yarp::os::Port              rpcHuman;
+    yarp::os::RpcServer         rpcPort;
 
     //Child widgets:
     Gtk::VBox m_VBox;
