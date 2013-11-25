@@ -10,11 +10,11 @@
 
 #include <cstdlib>
 #include <cstring> //needed by strcpy
-#include <time.h>
+#include <stdio.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/NameClient.h>
 
 #ifdef DEBUG_HMAC
   void show_hmac_debug(unsigned char* hex, unsigned int length, std::string context) {
@@ -36,8 +36,25 @@ AuthHMAC::AuthHMAC() {
 #ifdef PORT_AUTH
     ConstString key;
     bool found = false;
-    String fname = String(NetworkBase::getEnvironment("HOME", &found).c_str()) + 
-        "/.yarp/conf/user.conf";
+    ResourceFinder& rf = NameClient::getNameClient().getResourceFinder();
+    ConstString fname;
+    Network::lock();
+    ResourceFinderOptions opt;
+    opt.messageFilter = ResourceFinderOptions::ShowNone;
+    fname = rf.findFile("auth.conf",opt);
+    Network::unlock();
+    found = fname!="";
+    if (!found) {
+        static int auth_warning_shown = false;
+        if (!auth_warning_shown) {
+            fprintf(stderr,"Cannot find auth.conf using ResourceFinder, fallback to .yarp/conf/user.conf\n");
+            fprintf(stderr,"Please move authentication to an auth.conf findable by 'yarp resource'\n");
+            auth_warning_shown = true;
+        }
+        fname = NetworkBase::getEnvironment("HOME", &found) + 
+            "/.yarp/conf/user.conf";
+    }
+    
     if (found) {
         found = false;
         Property config;
@@ -47,12 +64,15 @@ AuthHMAC::AuthHMAC() {
             key = group.find("key").asString();
             if (key.length() > 0) {
                 found = true;
-                //printf("Using key for authentication from 'user.conf'\n");
             }
         }
     }
     if (! found) {
-        //printf("No key for authentication found. Using default...\n");
+        static int auth_key_warning_shown = false;
+        if (!auth_key_warning_shown) {
+            fprintf(stderr,"No key for authentication found. Using default.\n");
+            auth_key_warning_shown = true;
+        }
         key = "DEFAULT_KEY";
     }
     int key_len = key.length();

@@ -34,8 +34,7 @@ USE_PORT_AUTHENTICATION    => ON
 \endcode
 and recompile.
 
-Second, create a file 'user.conf' in the yarp configuration directory (~/.yarp/conf/ or whatever is reported by "yarp conf")
-with the following content:
+Second, create a file 'auth.conf' in a directory that "yarp resource --find auth.conf" would find, with the following content:
 \code
 [AUTH]
 key  "my_secret_key"

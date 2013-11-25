@@ -58,15 +58,25 @@ public:
         ConfigAndDataLike = ConfigLike | DataLike
     };
 
+    enum MessageFilter {
+        ShowNone = 0x0000,
+        ShowDirectories = 0x0001,
+        ShowErrors = 0x0002,
+        ShowFromFlags = 0x0004,
+        ShowAll = ShowDirectories | ShowErrors
+    };
+
     SearchLocations searchLocations;
     DuplicateFilesPolicy duplicateFilesPolicy;
     SearchFlavor searchFlavor;
     ConstString resourceType;
+    MessageFilter messageFilter;
 
     ResourceFinderOptions(SearchLocations searchLocations = ModuleDefault,
                           DuplicateFilesPolicy duplicateFilesPolicy = First,
                           SearchFlavor searchFlavor = ConfigAndDataLike,
-                          const ConstString& resourceType = "");
+                          const ConstString& resourceType = "",
+                          MessageFilter messageFilter = ShowFromFlags);
 
     static ResourceFinderOptions findFirstMatch() {
         return ResourceFinderOptions();

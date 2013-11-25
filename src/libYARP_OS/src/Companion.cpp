@@ -1400,14 +1400,13 @@ int Companion::cmdResource(int argc, char *argv[]) {
     if (argc==0) {
         printf("Looks for, and prints the complete path to, resource files.\n");
         printf("Example usage (from RobotCub project):\n");
-        printf("   yarp resource --policy ICUB_ROOT --find icub.ini\n");
-        printf("   yarp resource --policy ICUB_ROOT --find config --dir\n");
-        printf("   yarp resource --policy ICUB_ROOT --icub icub.ini --find icub\n");
-        printf("   yarp resource --policy ICUB_ROOT --from config.ini --find icub\n");
-        printf("   yarp resource --policy ICUB_ROOT --find icub.ini --verbose 1\n");
-        printf("   yarp resource --policy ICUB_ROOT --ICUB_ROOT /path/to/icub --find icub.ini\n");
-        printf("   yarp resource --policy ICUB_ROOT --find config.ini --all\n");
-        printf("If a policy file is required, be sure to specify --strict\n");
+        printf("   yarp resource --find icub.ini\n");
+        printf("   yarp resource --find config --dir\n");
+        printf("   yarp resource --icub icub.ini --find icub\n");
+        printf("   yarp resource --from config.ini --find icub\n");
+        printf("   yarp resource --find icub.ini --verbose 1\n");
+        printf("   yarp resource --ICUB_ROOT /path/to/icub --find icub.ini\n");
+        printf("   yarp resource --find config.ini --all\n");
         printf("To show what a config file loads as, specify --show\n");
         return 0;
     }

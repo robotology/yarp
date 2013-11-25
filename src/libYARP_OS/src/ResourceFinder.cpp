@@ -538,6 +538,14 @@ public:
         return output.get(0).asString();
     }
 
+    bool canShowErrors(const ResourceFinderOptions& opts) const {
+        if (opts.messageFilter & ResourceFinderOptions::ShowErrors) {
+            return true;
+        }
+        if (opts.messageFilter == ResourceFinderOptions::ShowNone) return false;
+        return !quiet;
+    }
+
     void findFileBase(Property& config, const ConstString& name,
                       bool isDir,
                       Bottle& output, const ResourceFinderOptions& opts) {
@@ -547,7 +555,7 @@ public:
         if (output.size()!=prelen) return;
         bool justTop = (opts.duplicateFilesPolicy==ResourceFinderOptions::First);
         if (justTop) {
-            if (!quiet) {
+            if (canShowErrors(opts)) {
                 fprintf(RTARGET,"||| did not find %s\n", name.c_str());
             }
         }
