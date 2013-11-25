@@ -74,6 +74,15 @@ public:
     }
 };
 
+
+class BrokenServer : public Demo {
+public:
+    virtual int32_t get_answer() {
+        return 42;
+    }
+};
+
+
 class WrappingServer : public Wrapping {
 public:
     virtual int32_t check(const yarp::os::Value& param) {
@@ -460,7 +469,6 @@ bool test_surface_mesh() {
     return true;
 }
 
-
 bool test_wrapping() {
     printf("\n*** test_wrapping()\n");
 
@@ -492,6 +500,35 @@ bool test_wrapping() {
     return true;
 }
 
+bool test_missing_method() {
+    printf("\n*** test_missing_method()\n");
+
+    Network yarp;
+    yarp.setLocalMode(true);
+
+    Demo client;
+    BrokenServer server;
+
+    RpcClient client_port;
+    RpcServer server_port;
+    client_port.open("/client");
+    server_port.open("/server");
+    yarp.connect(client_port.getName(),server_port.getName());
+
+    int x = 0;
+    client.yarp().attachAsClient(client_port);
+    server.yarp().attachAsServer(server_port);
+    x = client.get_answer();
+    printf("Answer %d\n", x);
+    if (x!=42) return false;
+
+    x = client.add_one(88);
+    printf("AddOne gives %d\n", x);
+    if (x==89) return false;
+
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -504,5 +541,6 @@ int main(int argc, char *argv[]) {
     if (!test_names_with_spaces()) return 1;
     if (!test_surface_mesh()) return 1;
     if (!test_wrapping()) return 1;
+    if (!test_missing_method()) return 1;
     return 0;
 }
