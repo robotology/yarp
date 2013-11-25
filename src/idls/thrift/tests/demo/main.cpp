@@ -152,7 +152,8 @@ bool test_live() {
     Demo client;
     Server server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
@@ -183,7 +184,8 @@ bool test_live_rpc() {
     Demo client;
     Server server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
@@ -230,7 +232,8 @@ bool test_enums() {
     Demo client;
     Server server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
@@ -256,7 +259,8 @@ bool test_defaults() {
     Demo client;
     Server server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
@@ -279,7 +283,8 @@ bool test_partial() {
 
     Server server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
@@ -344,7 +349,8 @@ bool test_defaults_with_rpc() {
 
     Server server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
@@ -388,7 +394,8 @@ bool test_names_with_spaces() {
 
     Server server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());
@@ -463,7 +470,8 @@ bool test_wrapping() {
     Wrapping client;
     WrappingServer server;
 
-    Port client_port,server_port;
+    RpcClient client_port;
+    RpcServer server_port;
     client_port.open("/client");
     server_port.open("/server");
     yarp.connect(client_port.getName(),server_port.getName());

@@ -65,8 +65,7 @@ ConstString RpcClient::getName() const {
 }
 
 bool RpcClient::write(PortWriter& writer, PortWriter *callback) const {
-    YARP_SPRINTF1(Logger::get(),error,"message written to RpcClient %s without a place for a reply, please use a regular Port for that",port.getName().c_str());
-    return false;
+    return port.write(writer,callback);
 }
 
 bool RpcClient::write(PortWriter& writer, PortReader& reader,
