@@ -5,9 +5,13 @@
 set(PROJECTNAME dataSetPlayer)
 project(${PROJECTNAME})
 
+# include the idl structure
+include(YarpIDL)
+yarp_idl_to_dir(${PROJECTNAME}.thrift ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Search for source code.
 file(GLOB folder_source src/*.cpp src/*.cc src/*.c)
-file(GLOB folder_header include/iCub/*.h)
+file(GLOB folder_header include/iCub/*.h include/*h)
 
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})

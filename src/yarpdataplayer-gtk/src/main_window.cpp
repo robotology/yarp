@@ -63,96 +63,107 @@ MainWindow::MainWindow(yarp::os::ResourceFinder    &rf)
     //initialize();
     ::signal(SIGINT, sighandler);
     ::signal(SIGTERM, sighandler);
-    rpcHuman.open( ("/"+moduleName+"/rpc:i").c_str() );
-    attach(rpcHuman);
+    rpcPort.open( ("/"+moduleName+"/rpc:i").c_str() );
+    attach(rpcPort);
 }
-/**********************************************************/
-bool MainWindow::execReq(const Bottle &command, Bottle &reply)
+
+/************************************************************************/
+bool MainWindow::attach(RpcServer &source)
 {
-    switch(command.get(0).asVocab())
-    {
-        case(CMD_HELP):
-        {
-            listOfCommands(reply);
-            return true;
-        }
-        case(CMD_STEP):
-        {
-            stepFromCommand(reply);
-            return true;
-        }
-        case(CMD_SET):
-        {
-            if (updateFrameNumber( command.get(1).toString().c_str(), command.get(2).asInt() ))
-                reply.addString("ok");//reply.addInt( command.get(2).asInt() );
-            else
-                reply.addString("error");
-            return true;
-        }
-        case (CMD_GET):
-        {
-            fprintf(stdout, "got command get %s\n",command.get(1).toString().c_str());
-            int frame = getFrame(command.get(1).toString().c_str());
-            if (frame < 1)
-                reply.addString("nothing seems to be loaded");
-            else
-                reply.addInt(frame);/*reply.addString("ok");*/
-            return true;
-        }
-        case (CMD_LOAD):
-        {
-            fprintf(stdout, "got command load %s\n",command.get(1).toString().c_str());
-           
-            fprintf(stdout, "CMD: %s", command.toString().c_str());
-            string cmdPath = command.get(1).toString().c_str();
-            for (int x=0; x < subDirCnt; x++)
-                utilities->closePorts(utilities->partDetails[x]);
-
-            clearUtilities();
-            createUtilities();
-            subDirCnt = 0;
-            size_t slashErr = cmdPath.find('/');
-
-            if (slashErr!=string::npos)
-                doGuiSetup(cmdPath);
-            else
-                reply.addString("Error, please make sure you are using forward slashes '/' in path.");
-
-            if (subDirCnt > 0 )
-                reply.addString("ok");
-            else
-                reply.addString("error");
-
-            return true;
-        }
-        case(CMD_PLAY):
-        {
-            onMenuPlayBackPlay();
-            reply.addString("playing");
-            return true;
-        }
-        case(CMD_PAUSE):
-        {
-            onMenuPlayBackPause();
-            reply.addString("pausing");
-            return true;
-        }
-        case(CMD_STOP):
-        {
-            onMenuPlayBackStop();
-            reply.addString("stopping");
-            return true;
-        }
-        case(CMD_QUIT):
-        {
-            onCommandQuit();
-            reply.addString("quitting");
-            return true;
-        }
-    default:
-    return false;
-    }
+    return this->yarp().attachAsServer(source);
 }
+
+/************************************************************************/
+string MainWindow::getHelp()
+{
+    Bottle reply;
+    listOfCommands(reply);
+    return reply.toString().c_str();
+}
+
+/************************************************************************/
+bool MainWindow::step()
+{
+    Bottle reply;
+    stepFromCommand(reply);
+    if (reply.toString() == "error")
+        return false;
+    if (reply.toString() == "ok")
+        return true;
+    return false;
+}
+
+/************************************************************************/
+bool MainWindow::setFrame(const string &name, const int frameNum)
+{
+    updateFrameNumber(name.c_str(), frameNum);
+    return true;
+}
+
+/************************************************************************/
+int MainWindow::getFrame(const string &name)
+{
+    int frame = getFrameCmd(name.c_str());
+    if (frame < 1)
+        return -1;
+    else
+        return frame;
+}
+
+/************************************************************************/
+bool MainWindow::load(const string &path)
+{
+    string cmdPath = path.c_str();
+    for (int x=0; x < subDirCnt; x++)
+        utilities->closePorts(utilities->partDetails[x]);
+
+    clearUtilities();
+    createUtilities();
+    subDirCnt = 0;
+    size_t slashErr = cmdPath.find('/');
+
+    if (slashErr!=string::npos)
+        doGuiSetup(cmdPath);
+    else
+    {
+        fprintf(stderr,"Error, please make sure you are using forward slashes '/' in path.\n");
+    }
+
+    if (subDirCnt > 0 )
+        return true;
+    else
+        return false;
+    return true;
+}
+
+/**********************************************************/
+bool MainWindow::play()
+{
+    onMenuPlayBackPlay();
+    return true;
+}
+
+/**********************************************************/
+bool MainWindow::pause()
+{
+    onMenuPlayBackPause();
+    return true;
+}
+
+/**********************************************************/
+bool MainWindow::stop()
+{
+    onMenuPlayBackStop();
+    return true;
+}
+
+/**********************************************************/
+bool MainWindow::quit()
+{
+    onCommandQuit();
+    return true;
+}
+
 /**********************************************************/
 void MainWindow::listOfCommands(Bottle &reply)
 {
@@ -172,7 +183,7 @@ void MainWindow::listOfCommands(Bottle &reply)
 MainWindow::~MainWindow()
 {
     fprintf(stdout,"cleaning up rpc port...\n");
-    rpcHuman.close();
+    rpcPort.close();
     fprintf(stdout,"done cleaning rpc port...\n");
 }
 /**********************************************************/
@@ -290,7 +301,7 @@ bool MainWindow::updateFrameNumber(const char* part, int frameNum)
         return false;
 }
 /**********************************************************/
-int MainWindow::getFrame( const char* part )
+int MainWindow::getFrameCmd( const char* part )
 {
     int frame = 0;
     if (subDirCnt > 0)
