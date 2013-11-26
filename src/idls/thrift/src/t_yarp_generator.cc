@@ -832,37 +832,6 @@ std::string t_yarp_generator::print_doc(t_doc* tdoc) {
  */
 string t_yarp_generator::print_type(t_type* ttype) {
   return type_name(ttype);
-
-  // OLD
-  string result;
-  if (ttype->is_container()) {
-    if (ttype->is_list()) {
-      result += "list<";
-      result += print_type(((t_list*)ttype)->get_elem_type());
-      result += ">";
-    } else if (ttype->is_set()) {
-      result += "set<";
-      result += print_type(((t_set*)ttype)->get_elem_type());
-      result += ">";
-    } else if (ttype->is_map()) {
-      result += "map<";
-      result += print_type(((t_map*)ttype)->get_key_type());
-      result += ", ";
-      result += print_type(((t_map*)ttype)->get_val_type());
-      result += ">";
-    }
-  } else if (ttype->is_base_type()) {
-    result += (((t_base_type*)ttype)->is_binary() ? "binary" : ttype->get_name());
-  } else {
-    string prog_name = ttype->get_program()->get_name();
-    string type_name = ttype->get_name();
-    if (ttype->get_program() != program_) {
-      result += prog_name;
-      result += ".";
-    }
-    result += type_name;
-  }
-  return result;
 }
 
 /**
@@ -1234,6 +1203,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   f_stt_ << "public:" << endl;
   indent_up();
 
+  indent(f_stt_) << "// if you want to serialize this class without nesting, use this helper" << endl;
+  indent(f_stt_) << "typedef yarp::os::idl::Unwrapped<" << namespace_decorate(ns,name) << " > unwrapped;" << endl;
+  indent(f_stt_) << endl;
 
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();

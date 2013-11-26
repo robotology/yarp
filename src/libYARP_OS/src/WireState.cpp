@@ -8,6 +8,7 @@
  */
 
 
+#include <yarp/os/idl/Unwrapped.h>
 #include <yarp/os/idl/WireState.h>
 
 using namespace yarp::os::idl;
