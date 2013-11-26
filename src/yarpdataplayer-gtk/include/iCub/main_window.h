@@ -32,6 +32,7 @@
 #include <yarp/os/RpcServer.h>
 #include "dataSetPlayer_IDLServer.h"
 
+/**********************************************************/
 class PartModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
@@ -56,67 +57,188 @@ public:
     Gtk::TreeModelColumn<Glib::ustring> m_col_port;
 };
 
+/**********************************************************/
 class MainWindow : public Gtk::Window, public yarp::os::ResourceFinder, public yarp::os::Module, public dataSetPlayer_IDLServer
 {
 public:
     MainWindow(yarp::os::ResourceFinder    &rf);
     virtual ~MainWindow();
+    /**
+     * function that adds a data part to the main window
+     */
     void addPart(const char* szName, const char* type, int frames, const char* portName, const char* szFileName=NULL);
+    /**
+     * function that sets the dataset part progress bar
+     */
     bool setPartProgress(const char* szName, int percentage);
+    /**
+     * function that sets the initial dataset part progress bar
+     */
     bool setInitialPartProgress(const char* szName, int percentage);
+    /**
+     * function that sets the frame rate
+     */
     bool setFrameRate(const char* szName, int frameRate);
+    /**
+     * function that sets the play progress bar
+     */
     void setPlayProgress(int percentage);
+    /**
+     * function that gets which parts are activated
+     */
     bool getPartActivation(const char* szName);
+    /**
+     * function that handles the play button toggle
+     */
     void onPlayButtonTogle();
+    /**
+     * function that handles the stop menu toggle
+     */
     void onMenuPlayBackStop();
+    /**
+     * function that handles the play menu toggle
+     */
     void onMenuPlayBackPlay();
+    /**
+     * function that handles the reset button toggle
+     */
     void resetButtonOnStop();
+    /**
+     * function that handles the play/pause menu toggle
+     */
     void onMenuPlayBackPause();
+    /**
+     * function that provides the error message
+     */
     void onErrorMessage(const char *filename);
+    /**
+     * function that handles individual dataset part ports
+     */
     bool getPartPort(const char* szName, char* dest);
-    /*bool execReq(const yarp::os::Bottle &command, yarp::os::Bottle &reply);
-    bool respond(const yarp::os::Bottle &command, yarp::os::Bottle &reply)
-    {
-        if(execReq(command,reply))
-            return true;
-        else
-            return yarp::os::Module::respond(command,reply);
-    }*/
 
+    /**
+     * function that that attaches the rpcServer port for IDL
+     */
     bool attach(yarp::os::RpcServer &source);
+    /**
+     * function that andles an IDL message - getHelp
+     */
     std::string getHelp();
+    /**
+     * function that that handles an IDL message - step
+     */
     bool step();
+    /**
+     * function that handles an IDL message - setFrame
+     */
     bool setFrame(const std::string &name, const int frameNum);
+    /**
+     * function that handles an IDL message - getFrame
+     */
     int  getFrame(const std::string &name);
+    /**
+     * function that handles an IDL message - load
+     */
     bool load(const std::string &path);
+    /**
+     * function that handles an IDL message - play
+     */
     bool play();
+    /**
+     * function that handles an IDL message - pause
+     */
     bool pause();
+    /**
+     * function that handles an IDL message - stop
+     */
     bool stop();
+    /**
+     * function that handles an IDL message - quit
+     */
     bool quit();
 
 protected:
+    /**
+     * function that updates the frame number
+     */
     bool updateFrameNumber(const char* part, int number);
+    /**
+     * function that gets the frame command
+     */
     int  getFrameCmd(const char* part);
+    /**
+     * function steps datasets when requeted from terminal
+     */
     void stepFromCommand(yarp::os::Bottle &reply);
+    /**
+     * function that lists the list of commands
+     */
     void listOfCommands(yarp::os::Bottle &reply);
 
-    //Signal handlers:
+    /**
+     * signal handle function - quit
+     */
     void onCommandQuit();
+    /**
+     * signal handle function - menu quit
+     */
     void onMenuFileQuit();
+    /**
+     * signal handle function - menu open
+     */
     void onMenuFileOpen();
+    /**
+     * signal handle function - menu help
+     */
     void onMenuHelpAbout();
+    /**
+     * signal handle function - menu forward
+     */
     void onMenuPlayBackForward();
+    /**
+     * signal handle function - menu backward
+     */
     void onMenuPlayBackBackward();
+    /**
+     * signal handle function - menu send strict
+     */
     void onMenuPlayBackStrict();
+    /**
+     * signal handle function - menu repeat
+     */
     void onMenuPlayBackRepeat();
+    /**
+     * signal handle function - menu speed up
+     */
     void onMenuSpeedUp();
+    /**
+     * signal handle function - menu speed down
+     */
     void onMenuSpeedDown();
+    /**
+     * signal handle function - menu default speed
+     */
     void onMenuSpeedNormal();
+    /**
+     * signal handle function - speed changed
+     */
     void onSpeedValueChanged();
+    /**
+     * signal handle function - position changed
+     */
     void onPlayPositionChanged();
+    /**
+     * signal handle function - position slided
+     */
     void onPlayPositionSlided(Gtk::ScrollType scroll);
+    /**
+     * Tree row modified function
+     */
     void onTreeRowChanged(const Gtk::TreeModel::Path& path,
                           const Gtk::TreeModel::iterator& iter);
+    /**
+     * function that handles delete events
+     */
     bool onDeleteEvent(GdkEventAny* event);
 
     Utilities                   *utilities;
@@ -124,7 +246,13 @@ protected:
     std::map<const char*,int>   partMap;
     int                         itr;
 
+    /**
+     * function that creates utilities
+     */
     void createUtilities();
+    /**
+     * function that deletes utilities
+     */
     void clearUtilities();
 
 private:
@@ -162,13 +290,37 @@ private:
     int                         subDirCnt;
     std::vector<std::string>    dataType;
 
+    /**
+     * function that initializes the main window
+     */
     int initialize(void);
+    /**
+     * function that setups the main window
+     */
     int doGuiSetup(std::string newPath);
+    /**
+     * function that creates the required widgets
+     */
     void createWidgets(void);
+    /**
+     * function that setups the required actions
+     */
     void setupActions(void);
+    /**
+     * function that setups the required signals
+     */
     void setupSignals(void);
+    /**
+     * function that closes the module from the gui
+     */
     bool safeExit(void);
+    /**
+     * function that closes the module from the terminal
+     */
     bool cmdSafeExit(void);
+    /**
+     * function that accesses the dataset row by part
+     */
     bool getRowByPart(const char* szName, Gtk::TreeModel::Row* row );
 };
 

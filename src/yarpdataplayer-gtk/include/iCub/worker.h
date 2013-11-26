@@ -108,15 +108,45 @@ public:
     bool                    stepfromCmd;
     MainWindow* wnd;
 
+    /**
+     * Master thread class
+     */
     MasterThread(Utilities *utilities, int numPart, MainWindow* gui);
+    /**
+     * Thread init
+     */
     bool threadInit();
+    /**
+     * Thread release
+     */
     void threadRelease();
+    /**
+     * Function that steps forwards the data set
+     */
     void forward(int steps);
+    /**
+     * Function that steps backwards the data set
+     */
     void backward(int steps);
+    /**
+     * Function that pauses data set
+     */
     void pause();
+    /**
+     * Function that resumes the data set
+     */
     void resume();
+    /**
+     * Run function
+     */
     void run();
+    /**
+     * Function that steps from command rpc
+     */
     void stepFromCmd();
+    /**
+     * Function that steps normally (without using terminal or rpc)
+     */
     void runNormally();
 };
 
