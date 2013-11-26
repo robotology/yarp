@@ -45,6 +45,7 @@ typedef void* HANDLE;
 int CLOSE(int h);
 int SIGNAL(int pid,int signum);
 
+/*
 class ZombieHunterThread : public yarp::os::Thread
 {
 public:
@@ -55,12 +56,14 @@ public:
     {
         while (!isStopping())
         {
-            PID zombie=wait(NULL);
+            PID zombie=waitpid(-1,NULL,0);
+            fprintf(stderr,"zombie %d\n",errno);
 
             if (zombie>0) yarp::os::Run::CleanZombie(zombie);
         }
     }
 };
+*/
 
 #endif
 

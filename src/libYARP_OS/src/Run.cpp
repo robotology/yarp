@@ -55,7 +55,7 @@ inline yarp::os::ConstString lastError2String()
 #define REDIRECT_TO(from,to) dup2(to,from)
 YarpRunInfoVector* yarp::os::Run::mProcessVector=NULL;
 YarpRunInfoVector* yarp::os::Run::mStdioVector=NULL;
-ZombieHunterThread* yarp::os::Run::mBraveZombieHunter=NULL;
+//ZombieHunterThread* yarp::os::Run::mBraveZombieHunter=NULL;
 #endif
 
 ///////////////////////////
@@ -672,6 +672,7 @@ void yarp::os::Run::cleanBeforeExec()
         mStdioVector=NULL;
         delete p;
     }
+    /*
     if (mBraveZombieHunter)
     {
         ZombieHunterThread *p=mBraveZombieHunter;
@@ -679,7 +680,7 @@ void yarp::os::Run::cleanBeforeExec()
         p->stop();
         delete p;
     }
-
+    */
     //yarp::os::Network::fini();
 }
 
@@ -725,6 +726,23 @@ int yarp::os::Run::readFromPipe(int fd,char* &data,int& buffsize)
     }
 
     return len;
+}
+
+void zombie_hunter(int sig)
+{
+    while (true)
+    {
+        PID zombie=waitpid(-1,NULL,0);
+
+        if (zombie>0)
+        {
+             yarp::os::Run::CleanZombie(zombie);
+        }
+        else
+        {
+            return;
+        }
+    }
 }
 
 int yarp::os::Run::server()
@@ -862,10 +880,10 @@ int yarp::os::Run::server()
         mProcessVector=new YarpRunInfoVector;
         mStdioVector=new YarpRunInfoVector;
 
-        mBraveZombieHunter=new ZombieHunterThread;
-        mBraveZombieHunter->start();
+        //mBraveZombieHunter=new ZombieHunterThread;
+        //mBraveZombieHunter->start();
 
-        //signal(SIGCHLD,sigchild_handler);
+        signal(SIGCHLD,zombie_hunter);
         //signal(SIGINT, SIG_IGN);
         //signal(SIGTERM,SIG_IGN);
 
@@ -1014,6 +1032,7 @@ int yarp::os::Run::server()
 
         mProcessVector->Killall(SIGTERM);
 
+        /*
         if (mBraveZombieHunter)
         {
             ZombieHunterThread *p=mBraveZombieHunter;
@@ -1021,6 +1040,7 @@ int yarp::os::Run::server()
             p->stop();
             delete p;
         }
+        */
 
         delete mProcessVector;
 
