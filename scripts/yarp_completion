@@ -148,6 +148,25 @@ _yarprun() {
     return 0
 }
 
+_yarpserver(){
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+
+    completion=""
+
+    ### check offset (if called from "yarp server" instead of "yarpserver")
+    ### default 0
+    offset=${1:-0}
+
+    if [ $COMP_CWORD -eq $((1+$offset)) ]; then
+        completion=$(echo $(yarpserver --help | grep -o "^  --\S*" |  sed 's/ //g' | sort ) )
+    fi
+
+    COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
+
+    return 0
+}
+
 _get_all_contexts() {
 
     for x in `yarp-config context --list | grep "^[^\*]" | sort | uniq`;
@@ -340,4 +359,5 @@ _yarpconfig() {
 complete -F _yarpconfig yarp-config
 complete -F _yarp yarp
 complete -F _yarprun yarprun
+complete -F _yarpserver yarpserver yarpserver3
 
