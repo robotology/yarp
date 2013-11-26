@@ -108,7 +108,8 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/YarpPluginSelector.h
                  include/yarp/os/YarpPluginSettings.h)
 
-set(YARP_OS_IDL_HDRS include/yarp/os/idl/WirePortable.h
+set(YARP_OS_IDL_HDRS include/yarp/os/idl/Unwrapped.h
+                     include/yarp/os/idl/WirePortable.h
                      include/yarp/os/idl/WireReader.h
                      include/yarp/os/idl/WireState.h
                      include/yarp/os/idl/WireTypes.h

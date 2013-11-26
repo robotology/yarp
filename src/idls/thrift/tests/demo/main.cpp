@@ -11,6 +11,7 @@
 
 #include <yarp/os/all.h>
 #include <Demo.h>
+#include <DemoStructList.h>
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
 
@@ -529,6 +530,26 @@ bool test_missing_method() {
     return true;
 }
 
+bool test_unwrap() {
+    printf("\n*** test_unwrap()\n");
+    
+    DemoStructList s;
+    s.lst.push_back(DemoStruct(5,10));
+    s.lst.push_back(DemoStruct(9,900));
+    Bottle b;
+    b.read(s);
+    printf("Wrapped: %s\n", b.toString().c_str());
+    if (b.size()!=1) return false;
+
+    DemoStructList::unwrapped s2;
+    s2.content.lst = s.lst;
+    b.read(s2);
+    printf("Wrapped: %s\n", b.toString().c_str());
+    if (b.size()!=2) return false;
+
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (!add_one()) return 1;
     if (!test_void()) return 1;
@@ -542,5 +563,6 @@ int main(int argc, char *argv[]) {
     if (!test_surface_mesh()) return 1;
     if (!test_wrapping()) return 1;
     if (!test_missing_method()) return 1;
+    if (!test_unwrap()) return 1;
     return 0;
 }

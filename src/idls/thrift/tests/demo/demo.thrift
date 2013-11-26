@@ -11,6 +11,10 @@ struct DemoStruct {
   2: i32 y
 }
 
+struct DemoStructList {
+  1: list<DemoStruct> lst
+}
+
 service Demo {
   i32 get_answer();
   bool set_answer(1:i32 rightAnswer)
