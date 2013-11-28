@@ -318,6 +318,11 @@ function YarpTabExpansion($lastBlock, $lastWord) {
             getYarpPorts($lastWord)
             break
         }
+        'yarp(.exe)? (read|write) (\S+) (\S*)$'
+        {
+            getYarpPorts($lastWord)
+            break
+        }
         'yarp(.exe)? detect (\S*)$'
         {
             write '--write' |
