@@ -11,6 +11,8 @@
 #define _YARP2_UNWRAPPED_
 
 #include <yarp/os/idl/WirePortable.h>
+#include <yarp/os/idl/WireReader.h>
+#include <yarp/os/idl/WireWriter.h>
 
 namespace yarp {
     namespace os {
