@@ -1,11 +1,11 @@
+# Copyright: (C) 2013 Istituto Italiano di Tecnologia
+# Author: Elena Ceseracciu <elena.ceseracciu@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
 Push-Location (Split-Path -Path $MyInvocation.MyCommand.Definition -Parent)
 
-# Load posh-git module from current directory
-#Import-Module .\posh-git
-
-# If module is installed in a default location ($env:PSModulePath),
-# use this instead (see about_Modules for more information):
-# Import-Module posh-git
+# Load YarpTabExpansion module from current directory
 Import-Module .\YarpTabExpansion.ps1
 
 if(-not (Test-Path Function:\DefaultTabExpansion)) {
@@ -19,7 +19,7 @@ if(-not (Test-Path Function:\DefaultTabExpansion)) {
 function TabExpansion ($line, $lastWord) {
     $lastBlock = [regex]::Split($line, '[|;]')[-1]
     switch -regex($lastBlock) {
-        # Execute git tab completion for all git-related commands
+        # Execute yarp tab completion for all yarp-related commands
         'yarp(server|-config|run)?(.exe)? (.*)' {
 		YarpTabExpansion $lastBlock $lastWord }
         # Fall back on existing tab expansion

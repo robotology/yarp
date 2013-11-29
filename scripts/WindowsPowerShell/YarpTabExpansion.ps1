@@ -1,3 +1,7 @@
+# Copyright: (C) 2013 Istituto Italiano di Tecnologia
+# Author: Elena Ceseracciu <elena.ceseracciu@iit.it>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 ## helper for yarp exe
 function script:getYarpPorts($filter)
 {
