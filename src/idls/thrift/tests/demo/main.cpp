@@ -91,6 +91,11 @@ public:
         if (param.asString()=="6*7") return 42;
         return 9;
     }
+
+    virtual Bottle getBottle() {
+        Bottle b("this is a test (bottle)");
+        return b;
+    }
 };
 
 
@@ -497,6 +502,17 @@ bool test_wrapping() {
     x = client.check(Value("test"));
     printf("Result %d\n", x);
     if (x!=9) return false;
+
+    Bottle b = client.getBottle();
+    printf("Bottle is %s\n", b.toString().c_str());
+    if (b.size()!=5) return false;
+
+    Bottle cmd, reply;
+    cmd.fromString("getBottle");
+    client_port.write(cmd,reply);
+    printf("Bottle is %s\n", reply.get(0).toString().c_str());
+    if (!reply.get(0).isList()) return false;
+    if (reply.get(0).asList()->size()!=5) return false;
 
     return true;
 }

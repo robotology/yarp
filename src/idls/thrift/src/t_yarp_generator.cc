@@ -2349,6 +2349,9 @@ int t_yarp_generator::flat_element_count(t_type* type) {
   if (!type->is_struct()) {
     return 1;
   }
+  if (((t_struct*)type)->annotations_.find("yarp.name") != ((t_struct*)type)->annotations_.end()) {
+    return 1;
+  }
   return flat_element_count((t_struct*)type);
 }
 
