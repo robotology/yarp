@@ -12,6 +12,7 @@
 #include <yarp/os/ResourceFinder.h>
 
 #include "PortMonitor.h"
+#include "KnownThing.h"
 
 
 using namespace yarp::os;
@@ -87,17 +88,24 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     if(!bReady) return reader;
 
     PortMonitor::lock();
-    yarp::os::ConnectionReader& result = binder->updateData(reader);
+    KnownThings thing;
+    thing.read(reader);
+    yarp::os::KnownThings& result = binder->updateData(thing);    
     PortMonitor::unlock();
-    return result;
+    con.reset();
+    if(result.write(con.getWriter()))
+        return con.getReader();
+    return reader;
 }
 
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader) 
-{
+{       
     if(!bReady) return false;
-
+    
     PortMonitor::lock();
-    bool result = binder->acceptData(reader);
+    KnownThings thing;
+    thing.read(reader);
+    bool result = binder->acceptData(thing);
     PortMonitor::unlock();
     if(!result)
         return false;

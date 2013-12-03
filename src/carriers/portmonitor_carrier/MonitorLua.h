@@ -25,8 +25,9 @@ public:
     bool loadScript(const char* script_file);
     bool setParams(const yarp::os::Property& params);
     bool getParams(yarp::os::Property& params);
-    bool acceptData(yarp::os::ConnectionReader& reader);
-    yarp::os::ConnectionReader& updateData(yarp::os::ConnectionReader& reader);    
+    bool acceptData(yarp::os::KnownThings& thing);
+    yarp::os::KnownThings& updateData(yarp::os::KnownThings& thing);
+
     bool peerTrigged(void);
     bool canAccept(void);
 

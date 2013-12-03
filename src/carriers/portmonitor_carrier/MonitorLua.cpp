@@ -108,21 +108,21 @@ bool MonitorLua::loadScript(const char* script_file)
     return result;
 }
 
-bool MonitorLua::acceptData(yarp::os::ConnectionReader& reader)
+bool MonitorLua::acceptData(yarp::os::KnownThings& thing)
 {
     if(getLocalFunction("accept"))
     {
         // mapping to swig type
-        swig_type_info *readerType = SWIG_TypeQuery(L, "yarp::os::ConnectionReader *");        
-        if(!readerType)
+        swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
+        if(!thingsType)
         {            
-            YARP_LOG_ERROR("Swig type of ConnectionReader is not found");
+            YARP_LOG_ERROR("Swig type of Things is not found");
             lua_pop(L, 1);
             return false;
         }
         
         // getting the swig-type pointer
-        SWIG_NewPointerObj(L, &reader, readerType, 0);
+        SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
             YARP_LOG_ERROR(lua_tostring(L, -1));
@@ -141,35 +141,35 @@ bool MonitorLua::acceptData(yarp::os::ConnectionReader& reader)
 }
 
 
-yarp::os::ConnectionReader& MonitorLua::updateData(yarp::os::ConnectionReader& reader)
+yarp::os::KnownThings& MonitorLua::updateData(yarp::os::KnownThings& thing)
 {
     if(getLocalFunction("update"))
     {
         // mapping to swig type
-        swig_type_info *readerType = SWIG_TypeQuery(L, "yarp::os::ConnectionReader *");        
-        if(!readerType)
+        swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");        
+        if(!thingsType)
         {            
-            YARP_LOG_ERROR("Swig type of ConnectionReader is not found");
+            YARP_LOG_ERROR("Swig type of Things is not found");
             lua_pop(L, 1);
-            return reader;
+            return thing;
         }
         
         // getting the swig-type pointer
-        SWIG_NewPointerObj(L, &reader, readerType, 0);
+        SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
             YARP_LOG_ERROR(lua_tostring(L, -1));
             lua_pop(L, 1);
-            return reader;
+            return thing;
         }
 
         // converting the results
-        yarp::os::ConnectionReader* result;
-        if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), readerType, 0) != SWIG_OK )
+        yarp::os::KnownThings* result;
+        if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), thingsType, 0) != SWIG_OK )
         {
             YARP_LOG_ERROR("Cannot get a valid return value from PortMonitor.update");
             lua_pop(L, 1);
-            return reader;
+            return thing;
         }   
         else        
         {
@@ -179,7 +179,7 @@ yarp::os::ConnectionReader& MonitorLua::updateData(yarp::os::ConnectionReader& r
     }
 
     lua_pop(L,1);
-    return reader;
+    return thing;
 }
 
 bool MonitorLua::setParams(const yarp::os::Property& params)

@@ -14,8 +14,8 @@ require("yarp")
 --
 --  PortMonitor.create = function() ... return true end, 
 --  PortMonitor.destroy = function() ... end, 
---  PortMonitor.accept = function(reader) ... return true end,     
---  PortMonitor.update = function(reader) ... return reader end, 
+--  PortMonitor.accept = function(thing) ... return true end,     
+--  PortMonitor.update = function(thing) ... return thing end, 
 --  PortMonitor.setparam = function(param) ... end, 
 --  PortMonitor.getparam = function() ... return param end
 --  PortMonitor.trig = function() ... return end
@@ -42,11 +42,11 @@ end
 
 --
 -- accept is called when the port receives new data
--- @param reader The ConnectionReader
+-- @param thing The Things abstract data type
 -- @return Boolean
 -- if false is returned, the data will be ignored 
 -- and update() will never be called
-PortMonitor.accept = function(reader)
+PortMonitor.accept = function(thing)
     return true
 end
 
@@ -64,15 +64,12 @@ end
 
 --
 -- update is called when the port receives new data
--- @param reader The ConnectionReader
--- @return ConnectionReader
-PortMonitor.update = function(reader)
-    bt = yarp.Bottle()
-    bt:read(reader)
-    bt:addString("modified from Lua")
-    con = yarp.DummyConnector()
-    bt:write(con:getWriter())    
-    return con:getReader()
+-- @param thing The Things abstract data type
+-- @return Things
+PortMonitor.update = function(thing)
+    bt = thing:asBottle()
+    bt:addString("modified from Lua :)")
+    return thing
 end
 
 

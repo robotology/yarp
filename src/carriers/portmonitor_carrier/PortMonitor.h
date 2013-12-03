@@ -119,7 +119,7 @@ private:
 private:
     bool happy;
     bool bReady;
-
+    yarp::os::DummyConnector con;
     MonitorBinding* binder;
     PortMonitorGroup *group;    
     yarp::os::Semaphore mutex; 

@@ -14,8 +14,8 @@ require("yarp")
 --
 -- PortMonitor.create = function() ... return true end, 
 -- PortMonitor.destroy = function() ... end, 
--- PortMonitor.accept = function(reader) ... return true end,     
--- PortMonitor.update = function(reader) ... return reader end, 
+-- PortMonitor.accept = function(thing) ... return true end,     
+-- PortMonitor.update = function(thing) ... return thing end, 
 -- PortMonitor.setparam = function(param) ... end, 
 -- PortMonitor.getparam = function() ... return param end
 -- PortMonitor.trig = function() ... return end
@@ -27,9 +27,6 @@ require("yarp")
 --
 PortMonitor.create = function()
     print("on create")
-
-    PortMonitor.img_in = yarp.ImageRgb()
-    PortMonitor.img_out = yarp.ImageRgb()
     PortMonitor.index = 0;
     PortMonitor.bdraw = true
     PortMonitor.bg = {r=255, g=255, b=255}
@@ -51,11 +48,11 @@ end
 
 --
 -- accept is called when the port receives new data
--- @param reader The ConnectionReader
+-- @param thing The Things abstract data type
 -- @return Boolean
 -- if false is returned, the data will be ignored 
 -- and update() will never be called
-PortMonitor.accept = function(reader)
+PortMonitor.accept = function(thing)
     return true
 end
 
@@ -75,27 +72,27 @@ end
 
 --
 -- update is called when the port receives new data
--- @param reader The ConnectionReader
--- @return ConnectionReader
-PortMonitor.update = function(reader)
-    PortMonitor.img_in:read(reader)
-    PortMonitor.img_out:copy(PortMonitor.img_in)
+-- @param thing The Things abstract data type
+-- @return Things
+PortMonitor.update = function(thing)
+    img_out = thing:asImageOfPixelRgb()
+    --img_out:copy(img_in)
 
-    w = PortMonitor.img_out:width()
-    h = PortMonitor.img_out:height()
+    w = img_out:width()
+    h = img_out:height()
     r = math.min(w,h) / 2
     r = r - r/4
     for i=0,2*math.pi,math.pi/32 do
         x = math.floor(w/2 + r * math.cos(i))
         y = math.floor(h/2 + r * math.sin(i))
         if PortMonitor.bdraw == true then
-            PortMonitor.img_out:pixel(x, y).r = PortMonitor.bg.r
-            PortMonitor.img_out:pixel(x, y).g = PortMonitor.bg.g
-            PortMonitor.img_out:pixel(x, y).b = PortMonitor.bg.b
+            img_out:pixel(x, y).r = PortMonitor.bg.r
+            img_out:pixel(x, y).g = PortMonitor.bg.g
+            img_out:pixel(x, y).b = PortMonitor.bg.b
         else
-            PortMonitor.img_out:pixel(x, y).r = PortMonitor.fg.r
-            PortMonitor.img_out:pixel(x, y).g = PortMonitor.fg.g
-            PortMonitor.img_out:pixel(x, y).b = PortMonitor.fg.b
+            img_out:pixel(x, y).r = PortMonitor.fg.r
+            img_out:pixel(x, y).g = PortMonitor.fg.g
+            img_out:pixel(x, y).b = PortMonitor.fg.b
         end            
     end
  
@@ -103,13 +100,13 @@ PortMonitor.update = function(reader)
         x = math.floor(w/2 + r * math.cos(i))
         y = math.floor(h/2 + r * math.sin(i))
         if PortMonitor.bdraw == true then
-            PortMonitor.img_out:pixel(x, y).r = PortMonitor.fg.r            
-            PortMonitor.img_out:pixel(x, y).g = PortMonitor.fg.g            
-            PortMonitor.img_out:pixel(x, y).b = PortMonitor.fg.b
+            img_out:pixel(x, y).r = PortMonitor.fg.r            
+            img_out:pixel(x, y).g = PortMonitor.fg.g            
+            img_out:pixel(x, y).b = PortMonitor.fg.b
         else
-            PortMonitor.img_out:pixel(x, y).r = PortMonitor.bg.r
-            PortMonitor.img_out:pixel(x, y).g = PortMonitor.bg.g
-            PortMonitor.img_out:pixel(x, y).b = PortMonitor.bg.b
+            img_out:pixel(x, y).r = PortMonitor.bg.r
+            img_out:pixel(x, y).g = PortMonitor.bg.g
+            img_out:pixel(x, y).b = PortMonitor.bg.b
         end            
     end
     
@@ -128,9 +125,7 @@ PortMonitor.update = function(reader)
         PortMonitor.time = t
     end
 
-    con = yarp.DummyConnector()
-    PortMonitor.img_out:write(con:getWriter())
-    return con:getReader()
+    return thing
 end
 
 
