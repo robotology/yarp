@@ -12,7 +12,7 @@
 #include <yarp/os/ResourceFinder.h>
 
 #include "PortMonitor.h"
-#include "KnownThing.h"
+
 
 
 using namespace yarp::os;
@@ -114,6 +114,38 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
     YARP_ASSERT(group);
     result = group->acceptIncomingData(reader,this);
     getPeers().unlock();
+    return result;
+}
+
+
+yarp::os::Portable& PortMonitor::modifyOutgoingData(yarp::os::Portable& portable)
+{
+    if(!bReady) return portable;
+    
+    //portable.write(con.getWriter());
+    //Bottle b;
+    //b.read(con.getReader());
+    //Bottle* b = dynamic_cast<Bottle*>(&portable);
+    //printf("%s\n", b->toString().c_str());
+    //return portable;
+
+    PortMonitor::lock();
+    thing.reset();
+    thing.setReference(&portable);
+    yarp::os::KnownThings& result = binder->updateData(thing);    
+    PortMonitor::unlock();
+    return *result.getReference();
+}
+
+bool PortMonitor::acceptOutgoingData(yarp::os::Portable& portable)
+{
+    if(!bReady) return false;
+    
+    PortMonitor::lock();
+    KnownThings thing;
+    thing.setReference(&portable);
+    bool result = binder->acceptData(thing);
+    PortMonitor::unlock();
     return result;
 }
 

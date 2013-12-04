@@ -62,6 +62,13 @@ void Protocol::setRoute(const Route& route) {
             need_recv_delegate = true;
         }
     }
+
+    if (!send_delegate) {
+        Bottle b(getSenderSpecifier().c_str());
+        if (b.check("send")) {
+            need_send_delegate = true;
+        }
+    }
 }
 
 
@@ -107,7 +114,28 @@ bool Protocol::getRecvDelegate() {
         return false;
     }
     
-    printf("%s : %d\n", __FILE__, __LINE__);
-
     return recv_delegate->configure(*this);
 }
+
+bool Protocol::getSendDelegate() {
+    if (send_delegate) return true;
+    if (!need_send_delegate) return true;
+    Bottle b(getSenderSpecifier().c_str());
+    ConstString tag = b.find("send").asString();
+    send_delegate = Carriers::chooseCarrier(String(tag.c_str()));
+    if (!send_delegate) {
+        fprintf(stderr,"Need carrier \"%s\", but cannot find it.\n",
+                tag.c_str());
+        close();
+        return false;
+    }
+    if (!send_delegate->modifiesOutgoingData()) {
+        fprintf(stderr,"Carrier \"%s\" does not modify outgoing data as expected.\n",
+                tag.c_str());
+        close();
+        return false;
+    }
+    
+    return send_delegate->configure(*this);
+}
+

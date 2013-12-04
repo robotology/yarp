@@ -47,7 +47,9 @@ public:
         route = Route("null","null","tcp");
         delegate = NULL;
         recv_delegate = NULL;
+        send_delegate = NULL;
         need_recv_delegate = false;
+        need_send_delegate = false;
         messageLen = 0;
         pendingAck = false;
         writer = NULL;
@@ -182,7 +184,6 @@ public:
         return *this;
     }
 
-
     virtual yarp::os::ConnectionReader& beginRead() {
         getRecvDelegate();
         if (delegate!=NULL) {
@@ -199,6 +200,11 @@ public:
             respondToIndex();
         }
         return reader;
+    }
+
+
+    virtual void beginWrite() {
+        getSendDelegate();
     }
 
     virtual void suppressReply() {
@@ -259,10 +265,10 @@ public:
 
     // transitional hook, should go away when we have real chaining
     Connection& getSender() {
-        if (delegate==NULL) {
+        if (send_delegate==NULL) {
             return nullConnection;
         }
-        return *delegate;
+        return *send_delegate;
     }
 
 
@@ -277,6 +283,7 @@ public:
 private:
 
     bool getRecvDelegate();
+    bool getSendDelegate();
 
     bool expectProtocolSpecifier() {
         char buf[8];
@@ -429,6 +436,11 @@ private:
             delete recv_delegate;
             recv_delegate = NULL;
         }
+        if (send_delegate!=NULL) {
+            send_delegate->close();
+            delete send_delegate;
+            send_delegate = NULL;
+        }
     }
 
     int messageLen;
@@ -436,8 +448,8 @@ private:
     Logger& log;
     ShiftStream shift;
     bool active;
-    Carrier *delegate, *recv_delegate;
-    bool need_recv_delegate;
+    Carrier *delegate, *recv_delegate, *send_delegate;
+    bool need_recv_delegate, need_send_delegate;
     Route route;
     SizedWriter *writer;
     StreamConnectionReader reader;

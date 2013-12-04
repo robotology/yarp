@@ -18,6 +18,7 @@
 
 #include "MonitorBinding.h"
 #include "MonitorEvent.h"
+#include "KnownThing.h"
 
 namespace yarp {
     namespace os {
@@ -93,6 +94,10 @@ public:
 
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader);
 
+    virtual yarp::os::Portable& modifyOutgoingData(yarp::os::Portable& portable);
+
+    virtual bool acceptOutgoingData(yarp::os::Portable& portable);
+
     virtual void setCarrierParams(const yarp::os::Property& params);
 
     virtual void getCarrierParams(yarp::os::Property& params);
@@ -120,6 +125,7 @@ private:
     bool happy;
     bool bReady;
     yarp::os::DummyConnector con;
+    yarp::os::KnownThings thing;
     MonitorBinding* binder;
     PortMonitorGroup *group;    
     yarp::os::Semaphore mutex; 

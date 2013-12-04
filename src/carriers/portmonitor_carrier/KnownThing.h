@@ -67,6 +67,14 @@ public:
         return getReference()->write(connection);
     }
 
+    void reset() {
+        if(dummy)
+            delete dummy;        
+        setReference(NULL);
+        reader = NULL;
+        dummy = NULL;
+    }
+
     yarp::os::Value* asValue() {
         READ_PORTABLE(yarp::os::Value);
     }

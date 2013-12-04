@@ -42,7 +42,7 @@ public:
 
     virtual Connection& getConnection() = 0;
     virtual Connection& getReceiver() = 0;
-
+    virtual Connection& getSender() = 0;
     virtual bool checkStreams() = 0;
 
     virtual bool write(SizedWriter& writer) = 0;
@@ -59,6 +59,8 @@ public:
     virtual bool setTimeout(double timeout) = 0;
 
     virtual void attachPort(Contactable *port) = 0;
+    
+    virtual void beginWrite() = 0;
 };
 
 #endif

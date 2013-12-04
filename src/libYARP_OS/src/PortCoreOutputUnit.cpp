@@ -227,7 +227,9 @@ void PortCoreOutputUnit::closeMain() {
 
 Route PortCoreOutputUnit::getRoute() {
     if (op!=NULL) {
-        return op->getRoute();
+        Route r = op->getRoute();
+        op->beginWrite();
+        return r;
     }
     return PortCoreUnit::getRoute();
 }
@@ -236,12 +238,17 @@ bool PortCoreOutputUnit::sendHelper() {
     bool replied = false;
     bool done = false;
     if (op!=NULL) {
-
         BufferedConnectionWriter buf(op->getConnection().isTextMode());
         if (cachedReader!=NULL) {
             buf.setReplyHandler(*cachedReader);
         }
 
+        yarp::os::Portable* portable = dynamic_cast<yarp::os::Portable *>(cachedWriter);
+        if(portable)
+        {
+            if(op->getSender().acceptOutgoingData(*portable))
+                cachedWriter = &op->getSender().modifyOutgoingData(*portable);
+        }
 
         if (op->getConnection().isLocal()) {
             buf.setReference(dynamic_cast<yarp::os::Portable *>
