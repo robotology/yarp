@@ -121,6 +121,7 @@
 %feature("abstract") PortWriter;
 %feature("abstract") Searchable;
 %feature("abstract") Contactable;
+%feature("abstract") UnbufferedContactable;
 
 // Deal with overridden method clashes, simply by ignoring them.
 // At some point, these methods should get renamed so they are still
@@ -372,6 +373,7 @@ namespace yarp {
 %include <yarp/os/BufferedPort.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/Contactable.h>
+%include <yarp/os/UnbufferedContactable.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/Network.h>
 %include <yarp/os/PortablePair.h>
