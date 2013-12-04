@@ -632,7 +632,14 @@ public:
     void testCopy() {
         report(0,"test context version 2");
         ResourceFinder rf1;
+        rf1.setDefault("testNumber", "fortytwo");
+        rf1.configure(0, NULL);
+        checkEqual(rf1.find("testNumber").asString(), "fortytwo", "Original RF finds the default value");
         ResourceFinder rf2(rf1);
+        checkEqual(rf2.find("testNumber").asString(), "fortytwo", "Copied RF finds the default passed to the original one");
+        ResourceFinder rf3;
+        rf3=rf1;
+        checkEqual(rf3.find("testNumber").asString(), "fortytwo", "Assigned RF findsthe default passed to the original one");
     }
 
 void testGetHomeDirsForWriting()
