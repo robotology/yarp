@@ -392,6 +392,42 @@ public:
     }
 
     /**
+     * Check if this carrier modifies outgoing data through the
+     * Carrier::modifyOutgoingData method.
+     *
+     * @return true if carrier wants Carrier::modifyOutgoingData called.
+     */
+    virtual bool modifiesOutgoingData() {
+        return false;
+    }
+
+    /**
+     * Modify outgoing payload data, if appropriate.
+     *
+     * Doesn't need to be done immediately, it is fine to hold onto a
+     * reference to the outgoing data reader and use it on demand.
+     * This can be handy in order to avoid unnecessary copies.
+     *
+     * @param portable for outgoing data.
+     * @return portable for modified version of outgoing data.
+     */
+    virtual Portable& modifyOutgoingData(Portable& portable) {
+        return portable;
+    }
+
+    /**
+     * Determine whether outgoing data should be accepted.
+     *
+     * @param portable for outgoing data.
+     * @return true if data should be accepted, false if it should be
+     *         discarded.
+     */
+    virtual bool acceptOutgoingData(Portable& portable) {
+        return true;
+    }
+
+
+    /**
      * Give carrier a shot at looking at how the connection is set up.
      * Currently only called for recv carriers.
      *

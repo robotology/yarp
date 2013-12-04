@@ -106,5 +106,8 @@ bool Protocol::getRecvDelegate() {
         close();
         return false;
     }
+    
+    printf("%s : %d\n", __FILE__, __LINE__);
+
     return recv_delegate->configure(*this);
 }

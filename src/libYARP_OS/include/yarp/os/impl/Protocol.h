@@ -257,6 +257,14 @@ public:
         return *recv_delegate;
     }
 
+    // transitional hook, should go away when we have real chaining
+    Connection& getSender() {
+        if (delegate==NULL) {
+            return nullConnection;
+        }
+        return *delegate;
+    }
+
 
     virtual void attachPort(yarp::os::Contactable *port) {
         this->port = port;

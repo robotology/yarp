@@ -41,6 +41,7 @@ public:
     virtual bool isOk() = 0;
 
     virtual Connection& getConnection() = 0;
+    virtual Connection& getReceiver() = 0;
 
     virtual bool checkStreams() = 0;
 
