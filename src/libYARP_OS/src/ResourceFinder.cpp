@@ -956,6 +956,7 @@ const ResourceFinder& ResourceFinder::operator= (const ResourceFinder& alt) {
     owned = true;
     nullConfig = alt.nullConfig;
     isConfiguredFlag = alt.isConfiguredFlag;
+    config = alt.config;
     return *this;
 }
 
