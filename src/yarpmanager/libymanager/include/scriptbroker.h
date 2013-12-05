@@ -3,7 +3,7 @@
 /*
  *  Yarp Modules Manager
  *  Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
- *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu
+ *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu <elena.ceseracciu@iit.it>
  * 
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
@@ -29,17 +29,7 @@ public:
      virtual ~ScriptLocalBroker() {}
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv ) {
-
-            OSTRINGSTREAM strDevParam;
-            std::string strParam;
-            std::string strCmd;
-            if(szcmd) strCmd = szcmd;
-            if(szparam) strParam = szparam;
-            strDevParam<<strCmd<<" "<<strParam;
-            return LocalBroker::init(script.c_str(), strDevParam.str().c_str(), 
-                                     szhost, szstdio, szworkdir, szenv);
-     }
+            const char* szworkdir, const char* szenv );
 private:
     std::string script;
 };
@@ -56,17 +46,7 @@ public:
      virtual ~ScriptYarprunBroker() {}
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
-            const char* szworkdir, const char* szenv ) {
-
-            OSTRINGSTREAM strDevParam;
-            std::string strParam;
-            std::string strCmd;
-            if(szcmd) strCmd = szcmd;
-            if(szparam) strParam = szparam;
-            strDevParam<<strCmd<<" "<<strParam;
-            return YarpBroker::init(script.c_str(), strDevParam.str().c_str(), 
-                                     szhost, szstdio, szworkdir, szenv);
-     }
+            const char* szworkdir, const char* szenv );
 private:
     std::string script;
 };
