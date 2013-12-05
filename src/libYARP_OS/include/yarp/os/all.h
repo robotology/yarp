@@ -28,6 +28,7 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contactable.h>
+#include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
