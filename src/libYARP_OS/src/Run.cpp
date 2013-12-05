@@ -55,7 +55,7 @@ inline yarp::os::ConstString lastError2String()
 #define REDIRECT_TO(from,to) dup2(to,from)
 YarpRunInfoVector* yarp::os::Run::mProcessVector=NULL;
 YarpRunInfoVector* yarp::os::Run::mStdioVector=NULL;
-//ZombieHunterThread* yarp::os::Run::mBraveZombieHunter=NULL;
+ZombieHunterThread* yarp::os::Run::mBraveZombieHunter=NULL;
 #endif
 
 ///////////////////////////
@@ -105,7 +105,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         {
             int ret=scanf("%s",line);
 
-            if (ret!=0)
+            if (ret>0)
             {
                 fprintf(stderr,"%s\n",line);
                 fflush(stderr);
@@ -672,7 +672,6 @@ void yarp::os::Run::cleanBeforeExec()
         mStdioVector=NULL;
         delete p;
     }
-    /*
     if (mBraveZombieHunter)
     {
         ZombieHunterThread *p=mBraveZombieHunter;
@@ -680,7 +679,7 @@ void yarp::os::Run::cleanBeforeExec()
         p->stop();
         delete p;
     }
-    */
+
     //yarp::os::Network::fini();
 }
 
@@ -726,23 +725,6 @@ int yarp::os::Run::readFromPipe(int fd,char* &data,int& buffsize)
     }
 
     return len;
-}
-
-void zombie_hunter(int sig)
-{
-    while (true)
-    {
-        PID zombie=waitpid(-1,NULL,0);
-
-        if (zombie>0)
-        {
-             yarp::os::Run::CleanZombie(zombie);
-        }
-        else
-        {
-            return;
-        }
-    }
 }
 
 int yarp::os::Run::server()
@@ -880,10 +862,10 @@ int yarp::os::Run::server()
         mProcessVector=new YarpRunInfoVector;
         mStdioVector=new YarpRunInfoVector;
 
-        //mBraveZombieHunter=new ZombieHunterThread;
-        //mBraveZombieHunter->start();
+        mBraveZombieHunter=new ZombieHunterThread;
+        mBraveZombieHunter->start();
 
-        signal(SIGCHLD,zombie_hunter);
+        //signal(SIGCHLD,sigchild_handler);
         //signal(SIGINT, SIG_IGN);
         //signal(SIGTERM,SIG_IGN);
 
@@ -1032,7 +1014,6 @@ int yarp::os::Run::server()
 
         mProcessVector->Killall(SIGTERM);
 
-        /*
         if (mBraveZombieHunter)
         {
             ZombieHunterThread *p=mBraveZombieHunter;
@@ -1040,7 +1021,6 @@ int yarp::os::Run::server()
             p->stop();
             delete p;
         }
-        */
 
         delete mProcessVector;
 
@@ -2336,11 +2316,20 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
                 fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
 
                 yarp::os::ConstString out;
-                for (char buff[1024]; fgets(buff,1024,in_from_child);)
+
+                if (in_from_child)
                 {
-                    out+=yarp::os::ConstString(buff);
+                    char buff[1024];
+
+                    while(true)
+                    {
+                        if (fgets(buff,1024,in_from_child)<=0 || ferror(in_from_child) || feof(in_from_child)) break;
+
+                        out+=yarp::os::ConstString(buff);
+                    }
+        
+                    fclose(in_from_child);
                 }
-                fclose(in_from_child);
 
                 if (out.length()>0)
                 {
@@ -2493,17 +2482,25 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         cmdclean(command);
 
         yarp::os::Time::delay(0.01);
-
+        
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
         fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
-
         yarp::os::ConstString out;
-        for (char buff[1024]; fgets(buff,1024,in_from_child);)
+
+        if (in_from_child)
         {
-            out+=yarp::os::ConstString(buff);
+            char buff[1024];
+
+            while(true)
+            {
+                if (fgets(buff,1024,in_from_child)<=0 || ferror(in_from_child) || feof(in_from_child)) break;
+
+                out+=yarp::os::ConstString(buff);
+            }
+        
+            fclose(in_from_child);
         }
-        fclose(in_from_child);
 
         result.clear();
 
@@ -2700,11 +2697,20 @@ int yarp::os::Run::executeCmd(yarp::os::Bottle& msg,yarp::os::Bottle& result)
         fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
 
         yarp::os::ConstString out;
-        for (char buff[1024]; fgets(buff,1024,in_from_child);)
+
+        if (in_from_child)
         {
-            out+=yarp::os::ConstString(buff);
+            char buff[1024];
+
+            while(true)
+            {
+                if (fgets(buff,1024,in_from_child)<=0 || ferror(in_from_child) || feof(in_from_child)) break;
+
+                out+=yarp::os::ConstString(buff);
+            }
+        
+            fclose(in_from_child);
         }
-        fclose(in_from_child);
 
         if (out.length()>0)
         {

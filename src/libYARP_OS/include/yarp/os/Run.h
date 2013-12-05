@@ -27,7 +27,7 @@ namespace yarp {
 #endif
 
 class YARP_OS_API YarpRunInfoVector;
-//class YARP_OS_API ZombieHunterThread;
+class YARP_OS_API ZombieHunterThread;
 
 /*
  * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.
@@ -169,7 +169,7 @@ public:
 #else
     static YarpRunInfoVector *mProcessVector;
     static YarpRunInfoVector *mStdioVector;
-    //static ZombieHunterThread *mBraveZombieHunter;
+    static ZombieHunterThread *mBraveZombieHunter;
     static void CleanZombie(int pid);
 #endif
 
