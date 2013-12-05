@@ -727,6 +727,14 @@ int yarp::os::Run::readFromPipe(int fd,char* &data,int& buffsize)
     return len;
 }
 
+void sigchld_handler(int sig)
+{
+    if (yarp::os::Run::mBraveZombieHunter)
+    {
+        yarp::os::Run::mBraveZombieHunter->sigchldHandler();
+    }
+}
+
 int yarp::os::Run::server()
 {
     int pipe_server2manager[2];
@@ -865,7 +873,7 @@ int yarp::os::Run::server()
         mBraveZombieHunter=new ZombieHunterThread;
         mBraveZombieHunter->start();
 
-        //signal(SIGCHLD,sigchild_handler);
+        signal(SIGCHLD,sigchld_handler);
         //signal(SIGINT, SIG_IGN);
         //signal(SIGTERM,SIG_IGN);
 
@@ -1016,10 +1024,11 @@ int yarp::os::Run::server()
 
         if (mBraveZombieHunter)
         {
-            ZombieHunterThread *p=mBraveZombieHunter;
-            mBraveZombieHunter=NULL;
-            p->stop();
-            delete p;
+            //ZombieHunterThread *p=mBraveZombieHunter;
+            //mBraveZombieHunter=NULL;
+            //p->stop();
+            //delete p;
+            mBraveZombieHunter->stop();
         }
 
         delete mProcessVector;

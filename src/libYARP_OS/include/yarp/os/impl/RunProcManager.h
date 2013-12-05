@@ -48,25 +48,49 @@ int SIGNAL(int pid,int signum);
 class ZombieHunterThread : public yarp::os::Thread
 {
 public:
-    ZombieHunterThread(){}
+    ZombieHunterThread()
+    {
+        pipe(pipe_sync);
+
+        
+    }
    ~ZombieHunterThread(){}
+
+    void onStop()
+    {
+        close(pipe_sync[0]);
+        close(pipe_sync[1]);
+    }
 
     void run()
     {
+        char dummy[8];
+
         while (!isStopping())
         {
-            PID zombie=wait(NULL);
+            if (read(pipe_sync[0],dummy,1)<=0) break;
+
+            while (true)
+            {
+                PID zombie=wait(NULL);
             
-            if (zombie>0)
-            {
-                yarp::os::Run::CleanZombie(zombie);
-            }
-            else
-            {
-                yarp::os::Time::delay(0.5);
+                //PID zombie=waitpid(-1,NULL,WNOHANG);
+
+                if (zombie>0)
+                {
+                    yarp::os::Run::CleanZombie(zombie);
+                }
             }
         }
     }
+
+    void sigchldHandler()
+    {
+        write(pipe_sync[1],"zombie",1);
+    }
+
+protected:
+    int pipe_sync[2];
 };
 
 #endif
