@@ -27,10 +27,11 @@ using namespace std;
 
 #define HELP_MESSAGE        "\
 Usage:\n\
-      gymanager [option...]\n\n\
+      gyarpmanager [option...]\n\n\
 Options:\n\
   --help                  Show help\n\
-  --from                  Configuration file name\n"
+  --from                  Configuration file name\n\
+  --application           Path to application to open\n"
 
 #define DEF_CONFIG_FILE     "ymanager.ini"
 
