@@ -68,10 +68,15 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
         yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
         for (int i=0; i<possiblePaths.size(); ++i)
         {
-            const char* guess=(possiblePaths.get(i).asString() + slash + szcmd).c_str();
+            ConstString guessString=possiblePaths.get(i).asString() + slash + szcmd;
+            const char* guess=guessString.c_str();
             if (fileExists (guess))
             {
+#ifdef WIN32
+                strCmd = "\"" + std::string(guess) + "\"";
+#else
                 strCmd = guess;
+#endif
                 break;
             }
         }
@@ -99,10 +104,15 @@ bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
         yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
         for (int i=0; i<possiblePaths.size(); ++i)
         {
-            const char* guess=(possiblePaths.get(i).asString() + slash + szcmd).c_str();
+            ConstString guessString=possiblePaths.get(i).asString() + slash + szcmd;
+            const char* guess=guessString.c_str();
             if (fileExists (guess))
             {
+#ifdef WIN32
+                strCmd = "\"" + std::string(guess) + "\"";
+#else
                 strCmd = guess;
+#endif
             }
         }
 
