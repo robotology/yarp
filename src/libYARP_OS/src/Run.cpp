@@ -727,7 +727,7 @@ int yarp::os::Run::readFromPipe(int fd,char* &data,int& buffsize)
     return len;
 }
 
-void sigchld_handler(int sig)
+static void sigchld_handler(int sig)
 {
     if (yarp::os::Run::mBraveZombieHunter)
     {
