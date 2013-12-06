@@ -9,8 +9,65 @@ get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
 project(YARP_manager)
 
-file(GLOB folder_source src/*.cpp tinyxml/*.cpp)
-file(GLOB_RECURSE folder_header include/*.h)
+set(folder_source   src/application.cpp
+                    src/arbitrator.cpp
+                    src/binexparser.cpp
+                    src/broker.cpp
+                    src/data.cpp
+                    src/execstate.cpp
+                    src/executable.cpp
+                    src/graph.cpp
+                    src/kbase.cpp
+                    src/localbroker.cpp
+                    src/logicresource.cpp
+                    src/manager.cpp
+                    src/module.cpp
+                    src/node.cpp
+                    src/physicresource.cpp
+                    src/primresource.cpp
+                    src/resource.cpp
+                    src/scriptbroker.cpp
+                    src/singleapploader.cpp
+                    src/utility.cpp
+                    src/xmlapploader.cpp
+                    src/xmlappsaver.cpp
+                    src/xmlmodloader.cpp
+                    src/xmlresloader.cpp
+                    src/xmltemploader.cpp
+                    src/yarpbroker.cpp)
+
+set(folder_header   include/application.h
+                    include/arbitrator.h
+                    include/binexparser.h
+                    include/broker.h
+                    include/data.h
+                    include/execstate.h
+                    include/executable.h
+                    include/fsm.h
+                    include/graph.h
+                    include/kbase.h
+                    include/localbroker.h
+                    include/logicresource.h
+                    include/manager.h
+                    include/manifestloader.h
+                    include/module.h
+                    include/node.h
+                    include/physicresource.h
+                    include/primresource.h
+                    include/resource.h
+                    include/scriptbroker.h
+                    include/singleapploader.h
+                    include/utility.h
+                    include/xmlapploader.h
+                    include/xmlappsaver.h
+                    include/xmlmodloader.h
+                    include/xmlresloader.h
+                    include/xmltemploader.h
+                    include/yarpbroker.h
+                    include/yarpdevbroker.h
+                    include/ymm-dir.h
+                    include/ymm-types.h)
+
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 

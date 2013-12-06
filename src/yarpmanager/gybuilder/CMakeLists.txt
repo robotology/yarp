@@ -8,8 +8,56 @@
 
 get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
-file(GLOB folder_source src/*.cpp)
-file(GLOB folder_header include/*.h)
+set(folder_source   src/application_list.cpp
+                    src/application_model.cpp
+                    src/application_window.cpp
+                    src/application_wizard.cpp
+                    src/app_property_window.cpp
+                    src/arb_property_window.cpp
+                    src/arrow_model.cpp
+                    src/con_property_window.cpp
+                    src/ext_port_model.cpp
+                    src/gybuilder.cpp
+                    src/int_port_model.cpp
+                    src/label_model.cpp
+                    src/main_window.cpp
+                    src/message_list.cpp
+                    src/midpoint_model.cpp
+                    src/module_model.cpp
+                    src/module_preview_window.cpp
+                    src/module_property_window.cpp
+                    src/module_window.cpp
+                    src/port_abitrator_model.cpp
+                    src/port_model.cpp
+                    src/resource_window.cpp
+                    src/tooltip_model.cpp)
+
+set(folder_header   include/application_list.h
+                    include/application_model.h
+                    include/application_window.h
+                    include/application_wizard.h
+                    include/app_property_window.h
+                    include/arb_property_window.h
+                    include/arrow_model.h
+                    include/con_property_window.h
+                    include/custom_cellrender.h
+                    include/ext_port_model.h
+                    include/icon_res.h
+                    include/int_port_model.h
+                    include/label_model.h
+                    include/main_window.h
+                    include/message_list.h
+                    include/midpoint_model.h
+                    include/module_model.h
+                    include/module_preview_window.h
+                    include/module_property_window.h
+                    include/module_window.h
+                    include/port_abitrator_model.h
+                    include/port_model.h
+                    include/resource_window.h
+                    include/template_res.h
+                    include/tooltip_model.h)
+
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 

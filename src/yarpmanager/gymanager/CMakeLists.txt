@@ -15,8 +15,28 @@ include_directories(${TinyXML_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/include)
 add_definitions(${GTK2_DEFINITIONS})
 
-file(GLOB folder_source *.cpp)
-file(GLOB folder_header *.h)
+set(folder_source   application_list.cpp
+                    application_window.cpp
+                    gymanager.cpp
+                    main_window.cpp
+                    message_list.cpp
+                    module_window.cpp
+                    resource_window.cpp
+                    safe_manager.cpp
+                    stdout_window.cpp)
+
+set(folder_header   application_list.h
+                    application_window.h
+                    icon_res.h
+                    main_window.h
+                    message_list.h
+                    module_window.h
+                    resource_window.h
+                    safe_manager.h
+                    stdout_window.h
+                    template_res.h
+                    yscope_window.h)
+
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 
