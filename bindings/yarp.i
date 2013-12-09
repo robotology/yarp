@@ -629,6 +629,11 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 	}
 }
 
+%extend yarp::os::RpcClient {
+    bool write(Bottle& data1, Bottle& data2) {
+	    return self->write(*((PortWriter*)(&data1)), *((PortReader*)(&data2)));
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with PolyDriver idiom that doesn't translate too well
