@@ -408,21 +408,21 @@ public:
      * reference to the outgoing data reader and use it on demand.
      * This can be handy in order to avoid unnecessary copies.
      *
-     * @param portable for outgoing data.
-     * @return portable for modified version of outgoing data.
+     * @param writer for outgoing data.
+     * @return writer for modified version of outgoing data.
      */
-    virtual Portable& modifyOutgoingData(Portable& portable) {
-        return portable;
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) {
+        return writer;
     }
 
     /**
      * Determine whether outgoing data should be accepted.
      *
-     * @param portable for outgoing data.
+     * @param writer for outgoing data.
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(Portable& portable) {
+    virtual bool acceptOutgoingData(PortWriter& writer) {
         return true;
     }
 

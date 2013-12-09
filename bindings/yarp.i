@@ -1205,3 +1205,10 @@ public static short[] getRawImg(Image img) {
 			   (char**)&tmp[0]);
   }
 }
+
+
+/*
+ * Extending yarp::os::Things.h 
+ */
+%include "things.i"
+

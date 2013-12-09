@@ -108,7 +108,7 @@ bool MonitorLua::loadScript(const char* script_file)
     return result;
 }
 
-bool MonitorLua::acceptData(yarp::os::KnownThings& thing)
+bool MonitorLua::acceptData(yarp::os::Things& thing)
 {
     if(getLocalFunction("accept"))
     {
@@ -141,7 +141,7 @@ bool MonitorLua::acceptData(yarp::os::KnownThings& thing)
 }
 
 
-yarp::os::KnownThings& MonitorLua::updateData(yarp::os::KnownThings& thing)
+yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
 {
     if(getLocalFunction("update"))
     {
@@ -164,7 +164,7 @@ yarp::os::KnownThings& MonitorLua::updateData(yarp::os::KnownThings& thing)
         }
 
         // converting the results
-        yarp::os::KnownThings* result;
+        yarp::os::Things* result;
         if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), thingsType, 0) != SWIG_OK )
         {
             YARP_LOG_ERROR("Cannot get a valid return value from PortMonitor.update");

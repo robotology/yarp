@@ -10,14 +10,8 @@
 #ifndef _YARP2_THINGS_
 #define _YARP2_THINGS_
 
-#include <yarp/os/Value.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/os/Property.h>
-#include <yarp/sig/Vector.h>
-#include <yarp/sig/Matrix.h>
-#include <yarp/sig/Image.h>
-#include <yarp/sig/Sound.h>
-
+#include <yarp/os/Portable.h>
+#include <yarp/os/ConnectionReader.h>
 
 namespace yarp {
     namespace os {
@@ -31,132 +25,71 @@ namespace yarp {
  *
  */
 class YARP_OS_API yarp::os::Things {
-private:
-    yarp::os::Portable* portable;
-
 public:
-
-    /**
-     *
-     * Directly set the reference to a portable object 
-     *
-     */
-    inline void setReference(yarp::os::Portable* portable) {
-        yarp::os::Things::portable = portable;
+  
+    Things() { 
+        conReader = NULL;
+        writer = NULL;
+        portable = NULL;
     }
 
-    /**
-     *
-     * Directly access to the portable object 
+    ~Things() {
+        if(portable)
+            delete portable;
+    }
+
+    /**     
+     * Set the reference to a PortWrtier object 
      *
      */
-    inline yarp::os::Portable* getReference(void) {
-        return portable;
+    void setPortWriter(yarp::os::PortWriter* writer) {
+        yarp::os::Things::writer = writer;
+    }
+
+    yarp::os::PortWriter* getPortWriter(void) {
+        return writer;
     }
 
     /**
      *  Things reader
      */
-    virtual bool read(yarp::os::ConnectionReader& connection) = 0;
+    bool read(yarp::os::ConnectionReader& connection) {
+        conReader = &connection;
+        if(portable)
+            delete portable;
+        portable = NULL;    
+        return true;
+    }
 
     /*
-     * Things  writer
+     * Things writer
      */
-    virtual bool write(yarp::os::ConnectionWriter& connection) = 0;
+    bool write(yarp::os::ConnectionWriter& connection) {
+        if(writer)
+            return writer->write(connection);
+        if(portable)    
+            return portable->write(connection);
+        return false;    
+    }
 
-    /**
-     *
-     * Get Value.
-     *
-     * @return a pointer to Value if thing is indeed a Value object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::os::Value* asValue() = 0; 
-
-    /**
-     *
-     * Get Bottle.
-     *
-     * @return a pointer to Bottle if thing is indeed a Bottle object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::os::Bottle* asBottle() = 0; 
-
-    /**
-     *
-     * Get Porperty.
-     *
-     * @return a pointer to Property if thing is indeed a Property object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::os::Property* asProperty() = 0; 
-
-    /**
-     *
-     * Get Vector.
-     *
-     * @return a pointer to Vector if thing is indeed a Vector object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::sig::Vector* asVector() = 0; 
-
-    /**
-     *
-     * Get Matrix.
-     *
-     * @return a pointer to Matrix if thing is indeed a Matrix object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::sig::Matrix* asMatrix() = 0; 
-
-    /**
-     *
-     * Get Image.
-     *
-     * @return a pointer to Image if thing is indeed an Image object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::sig::Image* asImage() = 0; 
+    void reset() {
+        if(portable)
+            delete portable;        
+        conReader = NULL;
+        writer = NULL;
+        portable = NULL;
+    }
 
 
-    /**
-     *
-     * Get ImageOf<PixelRgb>.
-     *
-     * @return a pointer to ImageOf<PixelRgb> if thing is indeed an ImageOf<PixelRgb> object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::sig::ImageOf<yarp::sig::PixelRgb>* asImageOfPixelRgb() = 0; 
-
-
-    /**
-     *
-     * Get ImageOf<PixelBgr>.
-     *
-     * @return a pointer to ImageOf<PixelBgr> if thing is indeed an ImageOf<PixelBgr> object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::sig::ImageOf<yarp::sig::PixelBgr>* asImageOfPixelBgr() = 0; 
-
-    /**
-     *
-     * Get ImageOf<PixelMono>.
-     *
-     * @return a pointer to ImageOf<PixelMono> if thing is indeed an ImageOf<PixelMono> object. 
-     * Otherwise returns NULL.
-     */
-     virtual yarp::sig::ImageOf<yarp::sig::PixelMono>* asImageOfPixelMono() = 0; 
-
-  
-
-    /**
-     *
-     * Get Sound.
-     *
-     * @return a pointer to Sound if thing is indeed a Sound object. 
-     * Otherwise returns NULL.
-     */
-     //virtual yarp::sig::Sound* asSound() = 0; 
+/**
+ * TODO: these should be private indeed! 
+ *       they are defined as public member to allow 
+ *       accessing them in swig file via 'self->' 
+ */
+public: 
+    yarp::os::ConnectionReader* conReader;
+    yarp::os::PortWriter* writer;
+    yarp::os::Portable* portable;
 
 };
 

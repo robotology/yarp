@@ -12,8 +12,8 @@
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Things.h>
 
-#include "KnownThing.h"
 #include "MonitorEvent.h"
 
 class MonitorBinding 
@@ -24,8 +24,8 @@ public:
     virtual bool loadScript(const char* filename) = 0;
     virtual bool setParams(const yarp::os::Property& params) = 0;
     virtual bool getParams(yarp::os::Property& params) = 0;
-    virtual bool acceptData(yarp::os::KnownThings& thing) = 0;
-    virtual yarp::os::KnownThings& updateData(yarp::os::KnownThings& thing) = 0;
+    virtual bool acceptData(yarp::os::Things& thing) = 0;
+    virtual yarp::os::Things& updateData(yarp::os::Things& thing) = 0;
     virtual bool peerTrigged(void) = 0;
     virtual bool setAcceptConstraint(const char* constraint) = 0;
     virtual const char* getAcceptConstraint(void) = 0;

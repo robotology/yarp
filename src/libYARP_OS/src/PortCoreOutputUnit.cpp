@@ -243,11 +243,12 @@ bool PortCoreOutputUnit::sendHelper() {
             buf.setReplyHandler(*cachedReader);
         }
 
-        yarp::os::Portable* portable = dynamic_cast<yarp::os::Portable *>(cachedWriter);
-        if(portable)
+        if(op->getSender().modifiesOutgoingData())
         {
-            if(op->getSender().acceptOutgoingData(*portable))
-                cachedWriter = &op->getSender().modifyOutgoingData(*portable);
+            if(op->getSender().acceptOutgoingData(*cachedWriter))
+                cachedWriter = &op->getSender().modifyOutgoingData(*cachedWriter);
+            else
+               return (done = true); 
         }
 
         if (op->getConnection().isLocal()) {

@@ -15,10 +15,11 @@
 #include <yarp/os/Election.h>
 #include <yarp/os/NullConnectionReader.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Things.h>
 
 #include "MonitorBinding.h"
 #include "MonitorEvent.h"
-#include "KnownThing.h"
+//#include "KnownThing.h"
 
 namespace yarp {
     namespace os {
@@ -94,9 +95,9 @@ public:
 
     virtual yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader);
 
-    virtual yarp::os::Portable& modifyOutgoingData(yarp::os::Portable& portable);
+    virtual yarp::os::PortWriter& modifyOutgoingData(yarp::os::PortWriter& writer);
 
-    virtual bool acceptOutgoingData(yarp::os::Portable& portable);
+    virtual bool acceptOutgoingData(yarp::os::PortWriter& wrtier);
 
     virtual void setCarrierParams(const yarp::os::Property& params);
 
@@ -125,7 +126,7 @@ private:
     bool happy;
     bool bReady;
     yarp::os::DummyConnector con;
-    yarp::os::KnownThings thing;
+    yarp::os::Things thing;
     MonitorBinding* binder;
     PortMonitorGroup *group;    
     yarp::os::Semaphore mutex; 

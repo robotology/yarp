@@ -126,14 +126,6 @@ public:
      */
     virtual bool isActive() = 0;
 
-    /**
-     * Check if this carrier modifies incoming data through the
-     * Carrier::modifiesOutgoingData method.
-     *
-     * @return true if carrier wants Carrier::modifyOutgoingData called.
-     */
-    //virtual bool modifiesOutgoingData() = 0;
-
 
     /**
      * Check if this carrier modifies incoming data through the
@@ -179,19 +171,19 @@ public:
      * reference to the outgoing data reader and use it on demand.
      * This can be handy in order to avoid unnecessary copies.
      *
-     * @param portable for outgoing data.
-     * @return portable for modified version of outgoing data.
+     * @param writer for outgoing data.
+     * @return writer for modified version of outgoing data.
      */
-    virtual Portable& modifyOutgoingData(Portable& portable) = 0; 
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) = 0; 
     
     /**
      * Determine whether outgoing data should be accepted.
      *
-     * @param portable for outgoing data.
+     * @param writer for outgoing data.
      * @return true if data should be accepted, false if it should be
      *         discarded.
      */
-    virtual bool acceptOutgoingData(Portable& portable) = 0;
+    virtual bool acceptOutgoingData(PortWriter& writer) = 0;
     
     /**
      * Configure carrier from port administrative commands.
@@ -252,11 +244,11 @@ public:
         return false; 
     }
 
-    virtual Portable& modifyOutgoingData(Portable& portable) {
-        return portable;
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) {
+        return writer;
     } 
 
-    virtual bool acceptOutgoingData(Portable& portable) {
+    virtual bool acceptOutgoingData(PortWriter& writer) {
         return true;
     }
 

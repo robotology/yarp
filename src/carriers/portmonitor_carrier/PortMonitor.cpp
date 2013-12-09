@@ -88,9 +88,9 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     if(!bReady) return reader;
 
     PortMonitor::lock();
-    KnownThings thing;
+    yarp:os::Things thing;
     thing.read(reader);
-    yarp::os::KnownThings& result = binder->updateData(thing);    
+    yarp::os::Things& result = binder->updateData(thing);    
     PortMonitor::unlock();
     con.reset();
     if(result.write(con.getWriter()))
@@ -103,7 +103,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
     if(!bReady) return false;
     
     PortMonitor::lock();
-    KnownThings thing;
+    Things thing;
     thing.read(reader);
     bool result = binder->acceptData(thing);
     PortMonitor::unlock();
@@ -118,32 +118,25 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 }
 
 
-yarp::os::Portable& PortMonitor::modifyOutgoingData(yarp::os::Portable& portable)
+yarp::os::PortWriter& PortMonitor::modifyOutgoingData(yarp::os::PortWriter& writer)
 {
-    if(!bReady) return portable;
-    
-    //portable.write(con.getWriter());
-    //Bottle b;
-    //b.read(con.getReader());
-    //Bottle* b = dynamic_cast<Bottle*>(&portable);
-    //printf("%s\n", b->toString().c_str());
-    //return portable;
+    if(!bReady) return writer;
 
     PortMonitor::lock();
     thing.reset();
-    thing.setReference(&portable);
-    yarp::os::KnownThings& result = binder->updateData(thing);    
+    thing.setPortWriter(&writer);
+    yarp::os::Things& result = binder->updateData(thing);    
     PortMonitor::unlock();
-    return *result.getReference();
+    return *result.getPortWriter();
 }
 
-bool PortMonitor::acceptOutgoingData(yarp::os::Portable& portable)
+bool PortMonitor::acceptOutgoingData(yarp::os::PortWriter& writer)
 {
     if(!bReady) return false;
-    
+   
     PortMonitor::lock();
-    KnownThings thing;
-    thing.setReference(&portable);
+    yarp::os::Things thing;
+    thing.setPortWriter(&writer);
     bool result = binder->acceptData(thing);
     PortMonitor::unlock();
     return result;
