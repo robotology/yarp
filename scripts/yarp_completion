@@ -18,6 +18,10 @@ _get_yarp_help(){
 echo $(yarp help | awk 'NR>=4 {print $1}' )
 }
 
+_get_yarp_carriers(){
+echo $(yarp connect --list-carriers)
+}
+
 _yarp() 
 {
     COMPREPLY=()
@@ -30,7 +34,7 @@ _yarp()
     local command="${COMP_WORDS[1]}"
     local cmds=$(_get_yarp_help)
     #local cmds="check clean conf connect detect disconnect exists help name namespace ping read rpc rpcserver run server terminate version wait where write"
-    local carrier="tcp mpi"
+    local connectopts=(--persist --persist-to --persist-from --list-carriers --help)
 
     completion=""
     if [ $COMP_CWORD -eq 1 ]; then
@@ -38,12 +42,28 @@ _yarp()
         completion="${cmds}"
     else
         case "${command}" in
-            connect|disconnect)
+            connect)
+                local secondArg="${COMP_WORDS[2]}"
+                if [ $COMP_CWORD -eq 2 ]; then
+                    ### complete source port
+                    completion="${connectopts[@]} $(_get_yarp_ports)"
+                elif [ $COMP_CWORD -eq 3 ]; then
+                    ### complete destination port
+                    completion=$(_get_yarp_ports)
+                elif [ $COMP_CWORD -eq 4 ]; then
+                    if [[ ${connectopts[*]} =~ "${secondArg}" ]]; then
+                        completion=$(_get_yarp_ports)
+                    else
+                        completion=$(_get_yarp_carriers)
+                    fi
+                elif [[ $COMP_CWORD -eq 5 &&  ${connectopts[*]} =~ "${secondArg}"  ]]; then
+                    completion=$(_get_yarp_carriers)
+                fi
+                ;;
+            disconnect)
                 if [ $COMP_CWORD -le 3 ]; then
                     ### complete source and destination ports
                     completion=$(_get_yarp_ports)
-                else
-                    completion="${carrier}"
                 fi
                 ;;
             read)
