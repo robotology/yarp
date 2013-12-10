@@ -179,6 +179,7 @@ protected:
     static void Help(const char* msg="");
     static int server();
     static int executeCmdAndStdio(Bottle& msg,Bottle& result);
+    static int executeCmdStdout(Bottle& msg,Bottle& result);
     static int executeCmd(Bottle& msg,Bottle& result);
     static int userStdio(Bottle& msg,Bottle& result);
 

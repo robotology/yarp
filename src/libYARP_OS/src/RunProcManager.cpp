@@ -433,6 +433,38 @@ YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
                                                  yarp::os::ConstString& on,
                                                  yarp::os::ConstString& stdio,
                                                  PID pidCmd,
+                                                 PID pidStdout,
+                                                 FDESC readFromPipeCmdToStdout,
+                                                 FDESC writeToPipeCmdToStdout,
+                                                 HANDLE handleCmd,
+                                                 bool hold)
+                                                 :
+YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
+{
+    mPidStdin=0;
+    mPidStdout=pidStdout;
+    mStdio=stdio;
+    mStdioUUID="";
+    mStdioVector=NULL;
+
+    mReadFromPipeStdinToCmd=NULL;
+    mWriteToPipeStdinToCmd=NULL;
+    mReadFromPipeCmdToStdout=readFromPipeCmdToStdout;
+    mWriteToPipeCmdToStdout=writeToPipeCmdToStdout;
+
+    mKillingCmd=false;
+    mKillingStdio=false;
+    mKillingStdin=false;
+    mKillingStdout=false;
+
+    mCleanStdin=true;
+    mCleanStdout=false;
+}
+
+YarpRunCmdWithStdioInfo::YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
+                                                 yarp::os::ConstString& on,
+                                                 yarp::os::ConstString& stdio,
+                                                 PID pidCmd,
                                                  yarp::os::ConstString& stdioUUID,
                                                  YarpRunInfoVector* stdioVector,
                                                  PID pidStdin,
@@ -484,9 +516,9 @@ bool YarpRunCmdWithStdioInfo::Clean()
         mWriteToPipeCmdToStdout=0;
         mReadFromPipeCmdToStdout=0;
 
-        TERMINATE(mPidStdin);
+        if (mPidStdin)  TERMINATE(mPidStdin);
 
-        TERMINATE(mPidStdout);
+        if (mPidStdout) TERMINATE(mPidStdout);
 
         TerminateStdio();
     }
@@ -562,6 +594,8 @@ bool YarpRunCmdWithStdioInfo::Clean()
 
 void YarpRunCmdWithStdioInfo::TerminateStdio()
 {
+    if (!mStdioVector) return;
+
     if (mOn==mStdio)
     {
         mStdioVector->Signal(mAlias,SIGTERM);
