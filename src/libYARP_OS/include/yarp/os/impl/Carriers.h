@@ -16,6 +16,7 @@
 #include <yarp/os/Face.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Carrier.h>
+#include <yarp/os/Bottle.h>
 
 #include <yarp/os/impl/PlatformVector.h>
 
@@ -107,6 +108,8 @@ public:
     static Carriers& getInstance();
 
     static void removeInstance();
+
+    static Bottle listCarriers();
 
 private:
     PlatformVector<Carrier *> delegates;

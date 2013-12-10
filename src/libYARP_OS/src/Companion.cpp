@@ -860,6 +860,13 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         } else if (arg=="--persist-to") {
             persist = true;
             mode = "to";
+        } else if (arg=="--list-carriers") {
+            Bottle lst = Carriers::listCarriers();
+            for (int i=0; i<lst.size(); i++) {
+                printf("%s%s",(i>0)?" ":"",lst.get(i).asString().c_str());
+            }
+            printf("\n");
+            return 0;
         } else if (arg=="--help") {
             printf("USAGE:\n\n");
             printf("yarp connect OUTPUT_PORT INPUT_PORT\n");
@@ -881,6 +888,8 @@ int Companion::cmdConnect(int argc, char *argv[]) {
             printf("  Ask the name server to connect the OUTPUT_PORT whenever available to the\n");
             printf("  INPUT_PORT which exists at the time the connection is requested.  The \n");
             printf("  request expires when INPUT_PORT is closed.\n");
+            printf("yarp connect --list-carriers\n");
+            printf("  List carriers available for connections.\n");
             return 0;
         }
         if (persist) {

@@ -263,3 +263,14 @@ void Carriers::removeInstance() {
         yarp_carriers_instance = NULL;
     }
 }
+
+
+Bottle Carriers::listCarriers() {
+    Bottle lst;
+    PlatformVector<Carrier *>& delegates = getInstance().delegates;
+    for (size_t i=0; i<(size_t)delegates.size(); i++) {
+        Carrier& c = *delegates[i];
+        lst.addString(c.getName());
+    }
+    return lst;
+}
