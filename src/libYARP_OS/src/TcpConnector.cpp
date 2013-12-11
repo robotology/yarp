@@ -29,6 +29,7 @@
 #include <yarp/os/Log.h>
 
 #include <sys/socket.h>
+#include <netdb.h>
 #include <iostream>
 
 using namespace yarp::os::impl;
@@ -67,7 +68,13 @@ int TcpConnector::connect(TcpStream &new_stream, const Contact& address) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_port = htons(address.getPort());
 	memset(servAddr.sin_zero, '\0', sizeof servAddr.sin_zero);
-	inet_aton(address.getHost().c_str(), &servAddr.sin_addr);
+
+	struct hostent *hostInfo = gethostbyname(address.getHost().c_str());
+  	if (hostInfo) {
+	  bcopy(hostInfo->h_addr,(char *)(&servAddr.sin_addr),hostInfo->h_length);
+	} else {
+	  inet_aton(address.getHost().c_str(), &servAddr.sin_addr);
+	}
 
 //	Address servAddress,
 //	servAddress = Address(inet_ntoa(servAddr.sin_addr),servAddr.sin_port);
