@@ -41,7 +41,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
     bool is_service = false;
 
     Bottle cmd,reply;
-    if (cat.find("1")==ConstString::npos) {
+    if (cat.find("-1")==ConstString::npos) {
         cmd.addString("lookupNode");
         cmd.addString("dummy_id");
         cmd.addString(toRosNodeName(node));

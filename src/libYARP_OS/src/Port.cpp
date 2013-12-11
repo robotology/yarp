@@ -477,6 +477,17 @@ bool Port::open(const Contact& contact, bool registerName,
         nodes.prepare(address.getRegName().c_str());
     }
 
+    // If we are a service client, go ahead and connect
+    if (success) {
+        NestedContact nc;
+        nc.fromString(address.getName());
+        if (nc.getNestedName()!="") {
+            if (nc.getCategory() == "+1") {
+                addOutput(nc.getNestedName());
+            }
+        }
+    }
+
     ConstString blame = "invalid address";
     if (success) {
         success = core.listen(address,registerName);
