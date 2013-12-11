@@ -132,8 +132,9 @@ protected:
 class RunWrite : public RunStdio
 {
 public:
-    RunWrite()
+    RunWrite(bool verbose)
     { 
+        mVerbose=verbose;
         mRunning=true;
     }
    ~RunWrite(){}
@@ -164,8 +165,9 @@ public:
 
 protected:
     bool mRunning;
+    bool mVerbose;
 
-    yarp::os::ConstString UUID;
+    //yarp::os::ConstString UUID;
     yarp::os::ConstString wPortName;
     yarp::os::Port wPort;
 };
@@ -194,7 +196,7 @@ public:
 protected:
     bool mRunning;
 
-    yarp::os::ConstString UUID;
+    //yarp::os::ConstString UUID;
     yarp::os::ConstString rPortName;
     yarp::os::Port rPort;
 };

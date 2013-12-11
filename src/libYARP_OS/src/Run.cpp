@@ -242,7 +242,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         signal(SIGHUP,  SIG_IGN);
 #endif
         
-        RunWrite w;
+        RunWrite w(config.check("verbose"));
         RunTerminator rt(&w);
         pTerminator=&rt;
         rt.start();
@@ -1785,7 +1785,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result)
     stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
     BOOL bSuccess=CreateProcess(NULL,   // command name
-                                (char*)(yarp::os::ConstString("yarprun --write ")+strStdout).c_str(), // command line
+                                (char*)(yarp::os::ConstString("yarprun --verbose --write ")+strStdout).c_str(), // command line
                                 NULL,          // process security attributes
                                 NULL,          // primary thread security attributes
                                 TRUE,          // handles are inherited
@@ -2699,7 +2699,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
         //signal(SIGPIPE,SIG_DFL);
 
-        int ret=execlp("yarprun","yarprun","--write",strStdout.c_str(),(char*)NULL);
+        int ret=execlp("yarprun","yarprun","--write",strStdout.c_str(),"--verbose",(char*)NULL);
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 

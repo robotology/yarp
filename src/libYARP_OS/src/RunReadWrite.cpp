@@ -25,9 +25,16 @@ int RunWrite::loop(yarp::os::ConstString &uuid)
 {
     RUNLOG("<<<loop()")
 
-    UUID=uuid;
+    //UUID=uuid;
 
-    wPortName=uuid+"/stdout";
+    if (mVerbose)
+    {
+        wPortName=uuid;
+    }
+    else
+    {
+        wPortName=uuid+"/stdout";
+    }
 
     if (!wPort.open(wPortName.c_str()))
     {
@@ -38,6 +45,8 @@ int RunWrite::loop(yarp::os::ConstString &uuid)
 
     char txt[2048];
 
+    yarp::os::ConstString tag=yarp::os::ConstString("[")+wPortName+yarp::os::ConstString("]");
+
     while (mRunning)
     {
         if (fgets(txt,2048,stdin)<=0 || ferror(stdin) || feof(stdin)) break;
@@ -45,6 +54,7 @@ int RunWrite::loop(yarp::os::ConstString &uuid)
         if (!mRunning) break;
 
         yarp::os::Bottle bot;
+        if (mVerbose) bot.addString(tag.c_str());
         bot.addString(txt);
         wPort.write(bot);
     }        
@@ -60,7 +70,7 @@ int RunRead::loop(yarp::os::ConstString& uuid)
 {
     RUNLOG("<<<loop()")
 
-    UUID=uuid;
+    //UUID=uuid;
 
     rPortName=uuid+"/stdin";
 
