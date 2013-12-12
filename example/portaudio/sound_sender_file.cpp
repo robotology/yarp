@@ -13,6 +13,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+#include <string.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
