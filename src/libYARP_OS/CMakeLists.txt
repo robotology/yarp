@@ -212,7 +212,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/FallbackNameServer.cpp
                  src/HttpCarrier.cpp
                  src/IConfig.cpp
-		 src/InputStream.cpp
+                 src/InputStream.cpp
                  src/LocalCarrier.cpp
                  src/Logger.cpp
                  src/ManagedBytes.cpp
@@ -303,9 +303,9 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Vocab.cpp
                  src/YarpNameSpace.cpp
                  src/YarpPlugin.cpp
-		 src/WireReader.cpp
-		 src/WireState.cpp
-		 src/WireWriter.cpp
+                 src/WireReader.cpp
+                 src/WireState.cpp
+                 src/WireWriter.cpp
                  src/ydr.cpp
                  src/hmac_sha2.c
                  src/sha2.c)
