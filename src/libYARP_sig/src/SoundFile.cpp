@@ -106,7 +106,7 @@ bool yarp::sig::file::read(Sound& dest, const char *src) {
     }
 
     fclose(fp);
-    return false;
+    return true;
 }
 
 
