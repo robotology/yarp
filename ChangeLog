@@ -1,3 +1,8 @@
+2013-12-12 Marco Randazzo <marco.randazzo@iit.it>
+    * example/portaudio 
+    
+    added example: read audio from a file and send data to a port 
+    
 2013-11-13 Alessandro Scalzo <alessandro.scalzo@iit.it>
     * src/libYARP_OS/include/yarp/os/impl/RunProcManager.h
     * src/libYARP_OS/include/yarp/os/impl/RunCheckpoints.h

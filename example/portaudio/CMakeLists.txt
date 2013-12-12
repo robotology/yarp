@@ -9,9 +9,11 @@ INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 LINK_LIBRARIES(${YARP_LIBRARIES})
 
 ADD_EXECUTABLE(sound_receiver sound_receiver.cpp)
-ADD_EXECUTABLE(sound_sender sound_sender.cpp)
+ADD_EXECUTABLE(sound_sender_mic sound_sender_mic.cpp)
+ADD_EXECUTABLE(sound_sender_file sound_sender_file.cpp)
 ADD_EXECUTABLE(sound_loopback sound_loopback.cpp)
 
 TARGET_LINK_LIBRARIES(sound_loopback ${YARP_LIBRARIES})
-TARGET_LINK_LIBRARIES(sound_sender ${YARP_LIBRARIES})
+TARGET_LINK_LIBRARIES(sound_sender_mic ${YARP_LIBRARIES})
+TARGET_LINK_LIBRARIES(sound_sender_file ${YARP_LIBRARIES})
 TARGET_LINK_LIBRARIES(sound_receiver ${YARP_LIBRARIES})
