@@ -15,11 +15,11 @@ _get_yarprun_tags() {
 }
 
 _get_yarp_help(){
-echo $(yarp help | awk 'NR>=4 {print $1}' )
+echo $(yarp help 2>/dev/null| awk 'NR>=4 {print $1}' )
 }
 
 _get_yarp_carriers(){
-echo $(yarp connect --list-carriers)
+echo $(yarp connect --list-carriers 2>/dev/null)
 }
 
 _yarp() 
@@ -33,7 +33,6 @@ _yarp()
     fi
     local command="${COMP_WORDS[1]}"
     local cmds=$(_get_yarp_help)
-    #local cmds="check clean conf connect detect disconnect exists help name namespace ping read rpc rpcserver run server terminate version wait where write"
     local connectopts=(--persist --persist-to --persist-from --list-carriers --help)
 
     completion=""
