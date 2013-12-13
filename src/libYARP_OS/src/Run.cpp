@@ -265,7 +265,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         signal(SIGHUP, SIG_IGN);
         #endif
 
-        RunRead r(uuid+"/stdin");
+        RunRead r(uuid);
         RunTerminator rt(&r);
         pTerminator=&rt;
         rt.start();
@@ -2650,7 +2650,16 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strCmd=msg.find("cmd").asString();
-    yarp::os::ConstString strStdout=msg.find("stdout").asString();
+    
+    yarp::os::ConstString portName="/log";
+    portName+=mPortName+"/";
+
+    yarp::os::ConstString command=strCmd;
+    int space=command.find(" ");
+    if (space!=ConstString::npos) command=command.substr(0,space);
+    portName+=command;
+
+
     
     int  pipe_cmd_to_stdout[2];
     int  ret_cmd_to_stdout=pipe(pipe_cmd_to_stdout);
@@ -2710,7 +2719,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
         //signal(SIGPIPE,SIG_DFL);
 
-        int ret=execlp("yarprun","yarprun","--write",strStdout.c_str(),"--log",(char*)NULL);
+        int ret=execlp("yarprun","yarprun","--write",portName.c_str(),"--log",(char*)NULL);
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -2895,7 +2904,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
                 YarpRunCmdWithStdioInfo* pInf = new YarpRunCmdWithStdioInfo(
                         strAlias,
                         mPortName,
-                        strStdout,
+                        portName,
                         pid_cmd,
                         pid_stdout,
                         pipe_cmd_to_stdout[READ_FROM_PIPE],
