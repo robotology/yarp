@@ -117,7 +117,7 @@ bool RobotInterface::Robot::Private::openDevices()
     for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); ++it) {
         RobotInterface::Device &device = *it;
 
-        yDebug() << device;
+        // yDebug() << device;
 
         if (!device.open()) {
             yWarning() << "Cannot open device" << device.name();
@@ -126,7 +126,7 @@ bool RobotInterface::Robot::Private::openDevices()
 
     }
     if (ret) {
-        yDebug() << "All devices opened.";
+        // yDebug() << "All devices opened.";
     } else {
         yWarning() << "There was some problem opening one or more devices. Please check the log and your configuration";
     }
@@ -140,7 +140,7 @@ bool RobotInterface::Robot::Private::closeDevices()
     for (RobotInterface::DeviceList::iterator it = devices.begin(); it != devices.end(); ++it) {
         RobotInterface::Device &device = *it;
 
-        yDebug() << device;
+        // yDebug() << device;
 
         if (!device.close()) {
             yWarning() << "Cannot close device" << device.name();
@@ -149,7 +149,7 @@ bool RobotInterface::Robot::Private::closeDevices()
 
     }
     if (ret) {
-        yDebug() << "All devices closed.";
+        // yDebug() << "All devices closed.";
     } else {
         yWarning() << "There was some problem closing one or more devices. Please check the log and your configuration";
     }
@@ -269,7 +269,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
         }
         Device &targetDevice = *findDevice(targetDeviceName);
 
-        yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+        // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
         drivers.push(targetDevice.driver(), targetNetwork.c_str());
 
     } else {
@@ -291,7 +291,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
             }
             Device &targetDevice = *findDevice(targetDeviceName);
 
-            yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
+            // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
             drivers.push(targetDevice.driver(), targetNetwork.c_str());
         }
     }
@@ -455,11 +455,11 @@ const RobotInterface::Device& RobotInterface::Robot::device(const std::string& n
 
 bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
 {
-    yDebug() << "Entering" << ActionPhaseToString(phase) << "phase";
+    // yDebug() << "Entering" << ActionPhaseToString(phase) << "phase";
 
     if (phase == ActionPhaseStartup) {
         if (!mPriv->openDevices()) {
-            yError() << "One or more devices failed opening";
+            yError() << "One or more devices failed opening... see previous log messages for more info";
             return false;
         }
     }
@@ -470,7 +470,7 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
     for (std::vector<unsigned int>::const_iterator lit = levels.begin(); lit != levels.end(); ++lit) {
         // for each level
         const unsigned int level = *lit;
-        yDebug() << "Entering action level" << level;
+        // yDebug() << "Entering action level" << level;
         std::vector<std::pair<Device, Action> > actions = mPriv->getActions(phase, level);
 
         for (std::vector<std::pair<Device, Action> >::iterator ait = actions.begin(); ait != actions.end(); ++ait) {
@@ -528,21 +528,19 @@ bool RobotInterface::Robot::enterPhase(RobotInterface::ActionPhase phase)
             }
         }
 
-        yDebug() << "All actions for action level" << level << "started. Waiting for unfinished actions.";
+        // yDebug() << "All actions for action level" << level << "started. Waiting for unfinished actions.";
 
         // Join parallel threads
         for (DeviceList::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
             Device &device = *dit;
             device.joinThreads();
-            yDebug() << "All actions for device" << device.name() << "at level()" << level << "finished";
+            // yDebug() << "All actions for device" << device.name() << "at level()" << level << "finished";
         }
 
-        yDebug() << "All actions for action level" << level << "finished.";
+        // yDebug() << "All actions for action level" << level << "finished.";
     }
 
-    if (ret) {
-        yDebug() << "All actions for phase" << ActionPhaseToString(phase) << "executed.";
-    } else {
+    if (!ret) {
         yWarning() << "There was some problem running actions for phase" << ActionPhaseToString(phase) << ". Please check the log and your configuration";
     }
 

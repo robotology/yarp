@@ -54,11 +54,11 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
     }
 
     const yarp::os::ConstString &filename = rf.findFile("config");
-    yDebug() << "Reading robot config file" << filename;
+    yTrace() << "Reading robot config file" << filename;
 
     RobotInterface::XMLReader reader;
     mPriv->robot = reader.getRobot(filename.c_str());
-    yDebug() << mPriv->robot;
+    // yDebug() << mPriv->robot;
 
     // User can use YARP_PORT_PREFIX environment variable to override
     // the default name, so we don't care of handling the --name
@@ -67,7 +67,7 @@ bool RobotInterface::Module::configure(yarp::os::ResourceFinder &rf)
 
     // Enter startup phase
     if (!mPriv->robot.enterPhase(RobotInterface::ActionPhaseStartup)) {
-        yError() << "Error in startup phase";
+        yError() << "Error in startup phase... see previous messages for more info";
         return false;
     }
 
