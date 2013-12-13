@@ -22,6 +22,7 @@
 
 #if defined(WIN32)
 #include <windows.h>
+#include <process.h>
 #include <io.h>
 #else
 #include <unistd.h>
@@ -132,14 +133,27 @@ protected:
 class RunWrite : public RunStdio
 {
 public:
-    RunWrite(bool verbose)
+    RunWrite(yarp::os::ConstString& portName,bool verbose)
     { 
         mVerbose=verbose;
+    
+        if (mVerbose)
+        {
+            char buff[16];
+            sprintf(buff,"/%d",getpid());
+            wPortName=portName+buff;
+        }
+        else
+        {
+            wPortName=portName+"/stdout";
+        }
+        
         mRunning=true;
     }
+
    ~RunWrite(){}
 
-    int loop(yarp::os::ConstString& uuid);
+    int loop();
 
     void exit()
     {
@@ -167,7 +181,6 @@ protected:
     bool mRunning;
     bool mVerbose;
 
-    //yarp::os::ConstString UUID;
     yarp::os::ConstString wPortName;
     yarp::os::Port wPort;
 };
@@ -177,10 +190,15 @@ protected:
 class RunRead : public RunStdio
 {
 public:
-    RunRead(){ mRunning=true; }
+    RunRead(yarp::os::ConstString &portName)
+    {
+        rPortName=portName+"/stdin";
+
+        mRunning=true; 
+    }
    ~RunRead(){}
 
-    int loop(yarp::os::ConstString& uuid);
+    int loop();
 
     void exit()
     {
@@ -196,7 +214,6 @@ public:
 protected:
     bool mRunning;
 
-    //yarp::os::ConstString UUID;
     yarp::os::ConstString rPortName;
     yarp::os::Port rPort;
 };
@@ -206,11 +223,17 @@ protected:
 class RunReadWrite : public RunStdio, public yarp::os::Thread
 {
 public:
-    RunReadWrite(){ mRunning=true; }
+    RunReadWrite(yarp::os::ConstString &portName)
+    {
+        UUID=portName;
+        wPortName=portName+"/stdio:o";
+        rPortName=portName+"/stdio:i";
+        mRunning=true; 
+    }
    ~RunReadWrite(){}
 
     void run();
-    int loop(yarp::os::ConstString& uuid);
+    int loop();
 
     void exit()
     {

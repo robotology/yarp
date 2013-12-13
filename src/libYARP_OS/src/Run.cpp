@@ -214,18 +214,18 @@ int yarp::os::Run::main(int argc, char *argv[])
         if (getppid()==1) return 0;
 #endif
 
-        RunReadWrite rw;
+        RunReadWrite rw(uuid);
         RunTerminator rt(&rw);
         pTerminator=&rt;
         rt.start();
 
-        return rw.loop(uuid);
+        return rw.loop();
     }
 
     if (config.check("write"))
     {
         yarp::os::impl::Logger::get().setVerbosity(-1);
-        yarp::os::ConstString uuid=config.findGroup("write").get(1).asString();
+        yarp::os::ConstString portName=config.findGroup("write").get(1).asString();
 
 #if defined(WIN32)
         signal(SIGINT,  sigstdio_handler);
@@ -241,13 +241,13 @@ int yarp::os::Run::main(int argc, char *argv[])
         signal(SIGPIPE, SIG_IGN);
         signal(SIGHUP,  SIG_IGN);
 #endif
-        
-        RunWrite w(config.check("verbose"));
+
+        RunWrite w(portName,config.check("log"));
         RunTerminator rt(&w);
         pTerminator=&rt;
         rt.start();
 
-        return w.loop(uuid);
+        return w.loop();
     }
 
     if (config.check("read"))
@@ -265,12 +265,12 @@ int yarp::os::Run::main(int argc, char *argv[])
         signal(SIGHUP, SIG_IGN);
         #endif
 
-        RunRead r;
+        RunRead r(uuid+"/stdin");
         RunTerminator rt(&r);
         pTerminator=&rt;
         rt.start();
 
-        return r.loop(uuid);
+        return r.loop();
     }
 
     //////////////////////////////////////////////////////////
@@ -532,7 +532,7 @@ int yarp::os::Run::server()
         {
             Bottle cmdResult;
 
-            if (msg.check("stdout"))
+            if (msg.check("log"))
             {
                 executeCmdStdout(msg,cmdResult);
             }
@@ -968,7 +968,7 @@ int yarp::os::Run::server()
             {
                 Bottle cmdResult;
 
-                if (msg.check("stdout"))
+                if (msg.check("log"))
                 {
                     executeCmdStdout(msg,cmdResult);
                 }
@@ -1187,7 +1187,13 @@ int yarp::os::Run::client(yarp::os::Property& config)
         msg.addList()=config.findGroup("as");
 
         if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
-        if (config.check("stdout")) msg.addList()=config.findGroup("stdout");
+        if (config.check("log"))
+        {
+            Bottle log;
+            log.addString("log");
+            log.addString("log");
+            msg.addList()=log;
+        }
         if (config.check("env")) msg.addList()=config.findGroup("env");
 
         Bottle response=sendMsg(msg,config.find("on").asString());
@@ -1762,7 +1768,12 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg,Bottle& result)
 int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
-    yarp::os::ConstString strStdout=msg.find("stdout").asString();
+    yarp::os::ConstString portName="/log";
+    portName+=mPortName+"/";
+    yarp::os::ConstString command=msg.findGroup("cmd").get(1).asString();
+    int space=command.find(" ");
+    if (space!=ConstString::npos) command=command.substr(0,space);
+    portName+=command;
     
     // PIPES
     SECURITY_ATTRIBUTES pipe_sec_attr;
@@ -1785,7 +1796,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result)
     stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
     BOOL bSuccess=CreateProcess(NULL,   // command name
-                                (char*)(yarp::os::ConstString("yarprun --verbose --write ")+strStdout).c_str(), // command line
+                                (char*)(yarp::os::ConstString("yarprun --log --write ")+portName).c_str(), // command line
                                 NULL,          // process security attributes
                                 NULL,          // primary thread security attributes
                                 TRUE,          // handles are inherited
@@ -1932,7 +1943,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result)
     // EVERYTHING IS ALL RIGHT
     YarpRunCmdWithStdioInfo* pInf = new YarpRunCmdWithStdioInfo(strAlias,
                                                    mPortName,
-                                                   strStdout,
+                                                   portName,
                                                    cmd_process_info.dwProcessId,
                                                    stdout_process_info.dwProcessId,
                                                    read_from_pipe_cmd_to_stdout,
@@ -1958,7 +1969,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result)
                              +yarp::os::ConstString("\n");
 
     result.addString(out.c_str());
-    result.addString(strStdout.c_str());
+    result.addString(portName.c_str());
     fprintf(stderr,"%s",out.c_str());
 
     return cmd_process_info.dwProcessId;
@@ -2699,7 +2710,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
         //signal(SIGPIPE,SIG_DFL);
 
-        int ret=execlp("yarprun","yarprun","--write",strStdout.c_str(),"--verbose",(char*)NULL);
+        int ret=execlp("yarprun","yarprun","--write",strStdout.c_str(),"--log",(char*)NULL);
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 

@@ -21,20 +21,9 @@
 
 /////////////////////////////////////
 
-int RunWrite::loop(yarp::os::ConstString &uuid)
+int RunWrite::loop()
 {
     RUNLOG("<<<loop()")
-
-    //UUID=uuid;
-
-    if (mVerbose)
-    {
-        wPortName=uuid;
-    }
-    else
-    {
-        wPortName=uuid+"/stdout";
-    }
 
     if (!wPort.open(wPortName.c_str()))
     {
@@ -66,13 +55,9 @@ int RunWrite::loop(yarp::os::ConstString &uuid)
 
 ///////////////////////////////////////////
 
-int RunRead::loop(yarp::os::ConstString& uuid)
+int RunRead::loop()
 {
     RUNLOG("<<<loop()")
-
-    //UUID=uuid;
-
-    rPortName=uuid+"/stdin";
 
     if (!rPort.open(rPortName.c_str()))
     {
@@ -113,16 +98,9 @@ int RunRead::loop(yarp::os::ConstString& uuid)
 
 ///////////////////////////////////////////
 
-int RunReadWrite::loop(yarp::os::ConstString &uuid)
+int RunReadWrite::loop()
 {
     RUNLOG("<<<loop()")
-
-    UUID=uuid;
-
-    RUNLOG(uuid.c_str())
-
-    wPortName=uuid+"/stdio:o";
-    rPortName=uuid+"/stdio:i";
 
     if (!rPort.open(rPortName.c_str()))
     {
@@ -134,7 +112,7 @@ int RunReadWrite::loop(yarp::os::ConstString &uuid)
     yarp::os::ContactStyle style;
     style.persistent=true;
 
-    yarp::os::Network::connect((uuid+"/stdout").c_str(),rPortName.c_str(),style);
+    yarp::os::Network::connect((UUID+"/stdout").c_str(),rPortName.c_str(),style);
     
     #if !defined(WIN32)
     if (getppid()!=1)
