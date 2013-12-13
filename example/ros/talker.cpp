@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
     Bottle msg;
     msg.addString(buf);
     port.write(msg);
+    printf("Wrote: [%s]\n", buf);
     Time::delay(1);
   }
 

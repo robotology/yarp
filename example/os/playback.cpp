@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
     Property options;
     options.fromCommand(argc,argv);
     ConstString portName = 
-        options.check("name","/playback","port name").asString();
+        options.check("name",Value("/playback"),"port name").asString();
 
     // Create a port
     Port p;

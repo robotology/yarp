@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <yarp/os/all.h>
-#include <yarp/os/Node.h>
 
 using namespace yarp::os;
 

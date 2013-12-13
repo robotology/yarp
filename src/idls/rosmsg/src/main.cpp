@@ -43,7 +43,7 @@ void show_usage() {
     printf("    Translates a ROS-format .msg file to a YARP-compatible .h file\n");
     printf("\n  yarpidl_rosmsg <package>/<Foo>\n");
     printf("    Calls 'rosmsg' to find type Foo, then makes a .h file for it\n");
-    printf("\n  yarpidl_rosmsg --web <package>/<Foo>\n");
+    printf("\n  yarpidl_rosmsg --web true <package>/<Foo>\n");
     printf("    Allow YARP to look up missing types on ROS website\n");
     printf("\n  yarpidl_rosmsg --out <dir> <Foo>.msg\n");
     printf("    Generates .h file in the specified directory\n");

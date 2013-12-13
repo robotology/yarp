@@ -31,6 +31,7 @@
 #include <yarp/os/UnbufferedContactable.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Node.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortablePair.h>
