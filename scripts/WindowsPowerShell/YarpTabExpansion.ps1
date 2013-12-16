@@ -6,12 +6,20 @@
 function script:getYarpPorts($filter)
 {
     $portList = @()
-    $portList+= yarp name list |
+    $portList+= yarp name list 2> $null|
             where {$_ -like "registration*"} |
             % {$tmp=$_.split(); write $tmp[2] }|
             where  { $_ -like "$filter*" }
 
     $portList | sort
+}
+
+function script:getYarpCarriers($filter)
+{
+    $carrierList = @()
+    $carrierList+= yarp connect --list-carriers 2> $null | %{$_.split()} |
+            where  { $_ -like "$filter*" }
+    $carrierList | sort
 }
 
 $global:ops = @{
@@ -20,7 +28,6 @@ $global:ops = @{
     yarprun2 = '--kill', '--sigterm', '--sigtermall', '--ps', '--isrunning', '--exit'
     yarpconfig = 'context', 'robot', '--help', '--namespace', '--nameserver', '--version'
     yarpcontext = '--where', '--import', '--remove', '--diff', '--diff-list', '--merge', '--list', '--help', '--import-all'
-    carriers = 'tcp',  'mpi',  'udp',  'mcast'
 }
 
 function script:getYarpRunTags($server, $filter)
@@ -32,7 +39,6 @@ function script:getYarpRunTags($server, $filter)
 }
 
 function script:yarpConnect($wholeBlock, $filter) {
-    $cmdList = @()
     $tmp=$wholeBlock.split()
     $ind=$tmp.length-1
     if ($ind -le 3 )
@@ -41,9 +47,8 @@ function script:yarpConnect($wholeBlock, $filter) {
     }
     else
     {
-        $cmdList = $ops.carriers
+        getYarpCarriers($filter)
     }
-    $cmdList | sort
 }
 
 function script:yarpDisconnect($wholeBlock, $filter) {
@@ -59,7 +64,7 @@ function script:yarpDisconnect($wholeBlock, $filter) {
 
 function script:yarpCommands($filter) {
     $cmdList = @()
-    $cmdList += yarp help |
+    $cmdList += yarp help 2> $null |
             Select -skip 3 |
             ForEach-object { $_.SubString(0, $_.IndexOf(' '))} |
             where { $_ -like "$filter*" }
@@ -114,26 +119,26 @@ function script:yarpRunExpansion($wholeBlock, $lastWord)
 #yarp-config context
 function script:GetYarpAllContexts($filter) {
     $results=@()
-    $results+= yarp-config context --list | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
+    $results+= yarp-config context --list 2> $null | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
     $results | sort
 }
 
 function script:GetYarpUserContexts($filter) {
     $results=@()
-    $results+= yarp-config context --list --user | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
+    $results+= yarp-config context --list --user 2> $null | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
     $results | sort
 }
 
 function script:GetYarpInstalledContexts($filter) {
     $results=@()
-    $results+= yarp-config context --list --installed | where {$_ -match "^[^\*]" } | get-unique | where { $_ -like "$filter*" }
+    $results+= yarp-config context --list --installed 2> $null | where {$_ -match "^[^\*]" } | get-unique | where { $_ -like "$filter*" }
     $results | sort
 }
 
 function script:getFilesForImportContexts ($context, $filter)
 {
     $results=@()
-    $results+=yarp-config context --where $context --installed | foreach-object {$path=$_ ; ls -r $path} |
+    $results+=yarp-config context --where $context --installed 2> $null | foreach-object {$path=$_ ; ls -r $path} |
                 % { $_.FullName.substring($path.length+1) + $(if($_.PsIsContainer){'\'}) } |
                 where { $_ -like "$filter*" }
     $results | get-unique | sort
@@ -142,7 +147,7 @@ function script:getFilesForImportContexts ($context, $filter)
 function script:getFilesForRemoveContexts ($context, $filter)
 {
     $results=@()
-    $results+=yarp-config context --where $context --user | foreach-object {$path=$_ ; ls -r $path} |
+    $results+=yarp-config context --where $context --user 2> $null | foreach-object {$path=$_ ; ls -r $path} |
                 % { $_.FullName.substring($path.length+1) + $(if($_.PsIsContainer){'\'}) } |
                 where { $_ -like "$filter*" }
     $results | get-unique | sort
@@ -151,26 +156,26 @@ function script:getFilesForRemoveContexts ($context, $filter)
 #yarp-config robot
 function script:GetYarpAllRobots($filter) {
     $results=@()
-    $results+= yarp-config robot --list | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
+    $results+= yarp-config robot --list 2> $null | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
     $results | sort
 }
 
 function script:GetYarpUserRobots($filter) {
     $results=@()
-    $results+= yarp-config robot --list --user | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
+    $results+= yarp-config robot --list --user 2> $null | where {$_ -match "^[^\*]" }  | get-unique | where { $_ -like "$filter*" }
     $results | sort
 }
 
 function script:GetYarpInstalledRobots($filter) {
     $results=@()
-    $results+= yarp-config robot --list --installed | where {$_ -match "^[^\*]" } | get-unique | where { $_ -like "$filter*" }
+    $results+= yarp-config robot --list --installed 2> $null | where {$_ -match "^[^\*]" } | get-unique | where { $_ -like "$filter*" }
     $results | sort
 }
 
 function script:getFilesForImportRobots ($context, $filter)
 {
     $results=@()
-    $results+=yarp-config robot --where $context --installed | foreach-object {$path=$_ ; ls -r $path} |
+    $results+=yarp-config robot --where $context --installed 2> $null | foreach-object {$path=$_ ; ls -r $path} |
                 % { $_.FullName.substring($path.length+1) + $(if($_.PsIsContainer){'\'}) } |
                 where { $_ -like "$filter*" }
     $results | get-unique | sort
@@ -179,7 +184,7 @@ function script:getFilesForImportRobots ($context, $filter)
 function script:getFilesForRemoveRobots ($context, $filter)
 {
     $results=@()
-    $results+=yarp-config robot --where $context --user | foreach-object {$path=$_ ; ls -r $path} |
+    $results+=yarp-config robot --where $context --user 2> $null | foreach-object {$path=$_ ; ls -r $path} |
                 % { $_.FullName.substring($path.length+1) + $(if($_.PsIsContainer){'\'}) } |
                 where { $_ -like "$filter*" }
     $results | get-unique | sort
