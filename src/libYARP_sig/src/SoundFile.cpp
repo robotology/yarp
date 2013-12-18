@@ -37,6 +37,11 @@ public:
         NetInt16 pcmBlockAlign;
         NetInt16 pcmBitsPerSample;
     } pcm;
+    ManagedBytes pcmExtraData; 
+
+    NetInt32     dummyHeader;
+    NetInt32     dummyLength;
+    ManagedBytes dummyData;
 
     NetInt32 dataHeader;
     NetInt32 dataLength;
@@ -76,8 +81,39 @@ bool yarp::sig::file::read(Sound& dest, const char *src) {
     }
 
     PcmWavHeader header;
-    fread(&header,sizeof(header),1,fp);
+    fread(&header.wavHeader,sizeof(header.wavHeader),1,fp);
+    fread(&header.wavLength,sizeof(header.wavLength),1,fp);
+    fread(&header.formatHeader1,sizeof(header.formatHeader1),1,fp);
 
+    fread(&header.formatHeader2,sizeof(header.formatHeader2),1,fp);
+    fread(&header.formatLength,sizeof(header.formatLength),1,fp);
+
+    fread(&header.pcm.pcmFormatTag,sizeof(header.pcm.pcmFormatTag),1,fp);
+    fread(&header.pcm.pcmChannels,sizeof(header.pcm.pcmChannels),1,fp);
+    fread(&header.pcm.pcmSamplesPerSecond,sizeof(header.pcm.pcmSamplesPerSecond),1,fp);
+    fread(&header.pcm.pcmBytesPerSecond,sizeof(header.pcm.pcmBytesPerSecond),1,fp);
+    fread(&header.pcm.pcmBlockAlign,sizeof(header.pcm.pcmBlockAlign),1,fp);
+    fread(&header.pcm.pcmBitsPerSample,sizeof(header.pcm.pcmBitsPerSample),1,fp);
+    //extra bytes in pcm chuck
+    int extra_size = header.formatLength-sizeof(header.pcm);
+    header.pcmExtraData.allocate(extra_size);
+    fread(&header.pcmExtraData,extra_size,1,fp);
+
+    //extra chuncks
+    fread(&header.dummyHeader,sizeof(header.dummyHeader),1,fp);
+
+    while (header.dummyHeader!=VOCAB4('d','a','t','a'))
+    {
+        fread(&header.dummyLength,sizeof(header.dummyLength),1,fp);
+        header.dummyData.clear();
+        header.dummyData.allocate(header.dummyLength);
+        fread(&header.dummyData,header.dummyLength,1,fp);
+        fread(&header.dummyHeader,sizeof(header.dummyHeader),1,fp);
+    }
+
+    header.dataHeader=header.dummyHeader;
+    fread(&header.dataLength,sizeof(header.dataLength),1,fp);
+    
     int freq = header.pcm.pcmSamplesPerSecond;
     int channels = header.pcm.pcmChannels;
     int expect = header.dataLength;

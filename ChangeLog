@@ -1,3 +1,8 @@
+2013-12-18 Marco Randazzo <marco.randazzo@iit.it>
+    * src\libYARP_sig\src\soundfile.cpp
+
+    fixed a bug preventing .wav files containing non-data chucks to be loaded correctly
+    
 2013-12-12 Marco Randazzo <marco.randazzo@iit.it>
     * example/portaudio 
     
