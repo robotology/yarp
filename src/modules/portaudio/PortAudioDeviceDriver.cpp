@@ -236,15 +236,15 @@ void PortAudioDeviceDriver::checkDelay(yarp::sig::Sound& sound) {
     int _samples = sound.getSamples();    
     int _channels = sound.getChannels();
     if (!delayed) {
-        if ((_rate!=0&&delayedConfig.rate!=_rate)||
-            (_samples!=0&&delayedConfig.samples!=_samples)||
-            (_samples!=0&&delayedConfig.channels!=_channels)) {
+        if ((_rate!=0 && delayedConfig.rate!=_rate)||
+            (_samples!=0 && delayedConfig.samples!=_samples)||
+            (_channels!=0 && delayedConfig.channels!=_channels)) {
             printf("audio configuration mismatch, resetting\n");
             if (delayedConfig.rate!=_rate) {
                 printf("  (sample rate of %d versus %d)\n",
                        delayedConfig.rate,_rate);
             }
-            if (delayedConfig.rate!=_rate) {
+            if (delayedConfig.samples!=_samples) {
                 printf("  (sample count of %d versus %d)\n",
                        delayedConfig.samples,_samples);
             }
