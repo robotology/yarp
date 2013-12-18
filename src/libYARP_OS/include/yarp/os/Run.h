@@ -163,6 +163,8 @@ public:
 
     static bool mStresstest;
 
+    static bool mLogged;
+
 #if defined(WIN32)
     static YarpRunInfoVector mProcessVector;
     static YarpRunInfoVector mStdioVector;

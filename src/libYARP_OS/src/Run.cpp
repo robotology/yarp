@@ -66,6 +66,7 @@ yarp::os::ConstString yarp::os::Run::mPortName;
 yarp::os::RpcServer* yarp::os::Run::pServerPort=0;
 int yarp::os::Run::mProcCNT=0;
 bool yarp::os::Run::mStresstest=false;
+bool yarp::os::Run::mLogged=false;
 
 ////////////////////////////////////
 
@@ -133,6 +134,8 @@ int yarp::os::Run::main(int argc, char *argv[])
     // SERVER
     if (config.check("server"))
     {
+        mLogged=config.check("log");
+
         mPortName=yarp::os::ConstString(config.find("server").asString());
 
         return server();
@@ -532,7 +535,7 @@ int yarp::os::Run::server()
         {
             Bottle cmdResult;
 
-            if (msg.check("log"))
+            if (mLogged || msg.check("log"))
             {
                 executeCmdStdout(msg,cmdResult);
             }
@@ -968,7 +971,7 @@ int yarp::os::Run::server()
             {
                 Bottle cmdResult;
 
-                if (msg.check("log"))
+                if (mLogged || msg.check("log"))
                 {
                     executeCmdStdout(msg,cmdResult);
                 }
