@@ -1,0 +1,101 @@
+/**
+*
+@page yarp_resource_finder_advanced The ResourceFinder Class (advanced)
+
+In this tutorial we show more details of how to use the ResourceFinder to locate files.
+
+\section sec_intro Introduction
+
+In a previous tutorial (\ref yarp_resource_finder_basic) we showed how to use the ResourceFinder 
+to organize modules parameters in files and place them in directories in $YARP_DATA_HOME/contexts.
+
+We show here that the ResourceFinder is also useful to handle access to all files needed by a module.
+
+In this example our (hypothetical) module performs object recognition on images. It accepts the following parameters:
+
+\verbatim
+--robot name: the name of the robot, used for connecting to a port that streams images
+--module filename: a ppm file that stores a template image
+\endverbatim
+
+Similarly to the previous tutorial we prepare a file that stores the initialization parameters of our module.
+
+\verbatim
+or.ini:
+
+robot icub
+model bottle.ppm
+\endverbatim
+
+we place this file together with the template bottle.ppm in a directory called 'orBottle' in $YARP_DATA_HOME/contexts/tutorials.
+
+main.cpp is something like:
+
+\code
+ResourceFinder rf;
+rf.setVerbose();
+rf.setDefaultConfigFile("or.ini");
+rf.configure(argc, argv);
+\endcode
+
+This creates an instance of the ResourceFinder, and configures it from data from the command line.
+
+This code shows how to query the value of the parameters:
+
+\code
+ConstString robotName=rf.find("robot").asString();
+\endcode
+
+Now we can read the file specified in the parameter 'model' by calling:
+
+\code
+ConstString model=rf.findFile("model");
+\endcode
+
+RF searches the file 'bottle.ppm' in the current initialization context. If successful "model" is a string 
+that contains the full path to the file. Otherwise the string is empty.
+
+\code
+if (model=="")
+	{
+		cout<<"Sorry no model was found, check config parameters"<<endl;
+        return -1;
+	}
+
+cout << "Using object model: " << model.c_str() << endl;
+
+// we can now read the image from disk using full path name
+...
+...
+\endcode
+
+Simply run:
+
+\code
+tutorial_rf_advanced --context tutorial/orBottle
+\endcode
+
+It is quite easy to change configuration files (and model) by switching the initialization context of the module:
+
+\code
+tutorial_rf_advanced --context tutorial/orCup
+\endcode
+
+\section sec_finalnotes Notes
+
+We have shown how to use the ResourceFile class to pass not only parameters but also binary files to 
+a module. We have seen that it is again easy to re-configure a module simply by switching its 
+initialization context.
+
+From these tutorials you might have had the feeling it is better to create a new directory for each new 
+configuration file for a module. This is not always the case. For simple modules (i.e. modules
+that require only a limited set of paramters to run) it will be much better to just use one context and 
+separate configuration files. In other cases, especially when a module uses several resource files, it is 
+more appropriate to duplicate all files in a different context directory in $YARP_DATA_HOME/contexts. What solution is 
+more appropriate depends on the specific case.
+
+\section sec_code Code
+
+See code in: example/resourceFinder/tutorial_rf_advanced.cpp
+*
+**/

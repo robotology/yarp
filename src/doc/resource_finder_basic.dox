@@ -1,0 +1,120 @@
+/**
+*
+@page yarp_resource_finder_basic The ResourceFinder Class (basic)
+
+This tutorial shows how to use the ResourceFinder class to organize parameters passed to 
+modules.
+
+\section sec_intro Introduction
+
+We show here how to write a module that uses the ResourceFinder to read configuration parameters from a file 
+placed in a directory in the user's local "contexts" directory. The actual location is system-dependent (see \ref yarp_data_dirs); in the following, we will call it $YARP_DATA_HOME/contexts
+. We show how to change the parameters used by the module by switching its "initialization context".
+
+Suppose we wish to write a module called 'random_motion' that performs random movements of a single joints. 
+The module is generic in that it can control any of the available joints of one of the limbs of a robot, either a real or a simulated one.
+
+The module should receive the following parameters:
+
+\code
+--robot name
+--part  robotpart
+--joint j
+\endcode
+
+We place these configuration parameters in a file called random.ini. We decide to create a directory, i.e. 
+'randomMotion' to store this file (and hypotetically others needed by this module) in $YARP_DATA_HOME/contexts. Because 
+we are writing a tutorial we actually place this directory in a subdirectory called 'tutorials'.
+
+Here is how this file would look like:
+\code
+$YARP_DATA_HOME/contexts/tutorials/randomMotion/random.ini
+
+robot icub
+part head
+joint 0
+\endcode
+
+In the module main.cpp we add:
+
+\code
+ResourceFinder rf;
+rf.setVerbose();
+rf.setDefaultConfigFile("random.ini");
+rf.configure(argc, argv);
+\endcode
+
+\endcode
+
+This creates an instance of the ResourceFinder, and configures it from data from the command line.
+We also give the ResourceFinder the name of the configuration file we would like to use
+(this is a 'default' value because it can be overwritten from the command line).
+
+This code show how to query the value of the parameters:
+
+\code
+ConstString robotName=rf.find("robot").asString();
+ConstString partName=rf.find("part").asString();
+int joint=rf.find("joint").asInt();
+\endcode
+
+Now we can use robotName, partName and joint to do the module's job.
+
+We now have to tell the module (the ResourceFinder) where to look for the file 'random.ini'. We do this by 
+specifying the ''initialization context'', that is the name of the directory in $YARP_DATA_HOME/contexts that should 
+be used to locate the file 'random.ini'.
+
+You run the module as:
+
+\code
+random_motion --context tutorials/randomMotion
+\endcode
+
+the module will read parameters from $YARP_DATA_HOME/contexts/tutorials/randomMotion/random.ini and perform its job.
+
+We can now create another directory to store a different configuration file. This file could for example
+configure random_motion to connect to the simulator and move joint number 2 of the arm.
+
+Write a new file:
+
+\code
+$YARP_DATA_HOME/contexts/tutorials/randomMotionSim/random.ini:
+
+robot icubSim
+part right_arm
+joint 2
+\endcode
+
+and run:
+
+\code
+random_motion --context tutorials/randomMotionSim
+\endcode
+
+If you wish, you can specify a 'defaultContext' to be used when no parameters are given to the module.
+
+Just add the following line after the call to setDefaultConfigFile():
+
+\code
+rf.setDefaultContext("tutorials/randomMotion");
+\endcode
+
+Now running:
+
+\code
+random_motion
+\endcode
+
+would result in 'random_motion' being configured from the file 'random.ini' in 
+$YARP_DATA_HOME/contexts/tutorials/randomMotion
+
+\section sec_discussion Discussion
+We have seen how the ResourceFinder facilitates passing parameters to a module from a file. The ResourceFinder follows particular
+rules to locate configuration files that allows, for example, to switch the "initialization context" from which a module will be configured. 
+To see why all this is useful you should have a look at the next tutorial \ref yarp_resource_finder_advanced
+ 
+\section sec_code Code
+
+See code in: example/resourceFinder/tutorial_rf_basic.cpp
+*
+**/
