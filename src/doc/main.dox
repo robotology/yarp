@@ -53,6 +53,7 @@ The basics of using YARP:
 \li \ref tutorials
 \li \ref note_ports
 \li \ref note_devices
+\li \ref yarp_data_dirs
 
 Some helpful programs:
 \li \ref yarpdev
