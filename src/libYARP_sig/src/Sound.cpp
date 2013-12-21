@@ -33,6 +33,40 @@ Sound::Sound(const Sound& alt) : yarp::os::Portable() {
     synchronize();
 }
 
+Sound& Sound::operator += (const Sound& alt) {
+    if (alt.channels!= channels)
+    {
+        printf ("unable to concatenate sounds with different number of channels!");
+        return *this;
+    }
+    if (alt.frequency!= frequency)
+    {
+        printf ("unable to concatenate sounds with different sample rate!");
+        return *this;
+    }
+
+    int offset = this->getRawDataSize()/(bytesPerSample*channels)*2;
+    int size   = alt.getRawDataSize()/(bytesPerSample*channels)*2;
+
+    Sound orig= *this;
+    this->resize(this->samples+alt.samples,channels);
+    this->frequency = frequency;
+    
+    unsigned char* p1    = orig.getRawData();
+    unsigned char* p2    = alt.getRawData();
+    unsigned char* pout  = this->getRawData();
+    
+    for (int i=0; i<offset; i++)
+        pout[i]=p1[i];
+    
+    int j=0;
+    for (int i=offset; i<offset+size; i++)
+        pout[i]=p2[j++];
+
+    this->synchronize();
+    return *this;
+}
+
 const Sound& Sound::operator = (const Sound& alt) {
     YARP_ASSERT(getBytesPerSample()==alt.getBytesPerSample());
     FlexImage& img1 = HELPER(implementation);

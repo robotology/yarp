@@ -1,5 +1,9 @@
 2013-12-21 Marco Randazzo <marco.randazzo@iit.it>
-    * example/portaudio/sound_sender_file
+    * /src/libYARP_sig/include/sound.h
+    * /src/libYARP_sig/src/sound.cpp
+    added += operator to yarp::sig::Sound 
+    
+    * /example/portaudio/sound_sender_file
     improved example
     
 2013-12-18 Marco Randazzo <marco.randazzo@iit.it>

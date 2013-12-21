@@ -45,6 +45,13 @@ public:
      */
     const Sound& operator=(const Sound& alt);
 
+     /**
+     * Addition assignment operator.
+     * Appends a sound to another sound (internal memory reallocation)
+     * @param alt the sound to append
+     */
+    Sound& operator+=(const Sound& alt);
+
     void resize(int samples, int channels = 1);
 
     int get(int sample, int channel = 0) const;
