@@ -1,11 +1,13 @@
+2013-12-21 Marco Randazzo <marco.randazzo@iit.it>
+    * example/portaudio/sound_sender_file
+    improved example
+    
 2013-12-18 Marco Randazzo <marco.randazzo@iit.it>
     * src\libYARP_sig\src\soundfile.cpp
-
     fixed a bug preventing .wav files containing non-data chucks to be loaded correctly
     
 2013-12-12 Marco Randazzo <marco.randazzo@iit.it>
     * example/portaudio 
-    
     added example: read audio from a file and send data to a port 
     
 2013-11-13 Alessandro Scalzo <alessandro.scalzo@iit.it>

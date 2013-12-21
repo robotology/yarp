@@ -8,9 +8,12 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/Network.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
 #include <string.h>
@@ -19,13 +22,20 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+#define USE_PORTS 1
+
 int main(int argc, char *argv[])
 {
     //open the network
     Network yarp;
 
     //open the output port
-    Port p;
+#ifdef USE_PORTS
+    Port p;                //use port
+#else
+    BufferedPort<Sound> p; // use buffered port 
+#endif
+
     p.open("/sender");
 
     //get the filename
@@ -50,10 +60,24 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    yarp::os::Network::connect("/sender","/yarphear");
+    //yarp::os::Time::delay (0.1);
+
     //send data on the network
     while (true)
     {
-        p.write(s);
+        printf("sending data...");
+#ifdef  USE_PORTS
+        p.write(s); //use ports
+#else
+        Sound &r = p.prepare(); //use buffered ports
+        r=s;
+        p.write(false);
+#endif
+         printf("done.\n");
+
+        printf("Press enter to repeat, CTRL+C to close\n");
+        while ((getchar()) != '\n');
     }
 
     return 0;
