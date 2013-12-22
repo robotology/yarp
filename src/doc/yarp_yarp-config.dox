@@ -1,0 +1,68 @@
+
+/*
+ * Copyright (C) 2013 Istituto Italiano di Tecnologia
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/** 
+ * @page yarp_yarp-config yarp-config
+
+\author Elena Ceseracciu
+\author Lorenzo Natale
+
+The utility yarp-config allows to gather information about some yarp settings, and to customize data files, by copying them from installation to the user private directories (we call this \e importing).
+Available settings are as following:
+
+\li <EM> yarp-config --version    </EM> report version information
+\li <EM> yarp-config --namespace  </EM> report file that caches the current YARP namespace
+\li <EM> yarp-config --nameserver </EM> report file that caches nameserver contact information
+
+As for data file customization, this tool allows to manage \e context and \e robot files that modules can find employing the ResourceFinder class (see also \ref yarp_data_dirs). This tool knows from the ResourceFinder where all files are located and where to put them given the system and user's environment.
+The main sub-commands are ''context'' to handle files in context directories and ''robot'' to handle robot directories.
+
+\verbatim
+  yarp-config context --list
+\endverbatim
+
+Shows all the contexts visible to the ResourceFinder. To limit the list to the context in the installed locations you can add:
+
+\verbatim
+  yarp-config context --list --installed
+\endverbatim
+
+To import contexts to the home directory:
+
+\verbatim
+  yarp-config context --import <context-name> 
+  yarp-config context --import <context-name> file1 file2
+  yarp-config context --import-all
+\endverbatim
+
+The first two commands affects individual contexts, and allow to import a whole context (first command) or only some specific files (second one); the third command affects all contexts (not recommended).
+After you finish importing a context, you can go to your local private directory (in Linux usually: $HOME/.local/share/yarp/contexts/) and edit it.
+To remove any local changes and restore the default files, one can do:
+
+\verbatim
+  yarp-config context --remove <context-name>
+\endverbatim
+
+The utility works similarly for robot specific files:
+
+\verbatim
+  yarp-config robot --list
+  yarp-config robot --import <robot-name> 
+  yarp-config robot --import <robot-name> file1 file2
+  yarp-config robot --remove <robot-name>
+\endverbatim
+
+In any case:
+
+\verbatim
+  yarp-config help
+\endverbatim
+provides an explanation of the commands supported by the yarp-config tool.
+
+ *
+ */
+

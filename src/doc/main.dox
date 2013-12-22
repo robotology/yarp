@@ -60,6 +60,7 @@ Some helpful programs:
 \li \ref yarprun
 \li \ref yarpmanager
 \li \ref yarpscope
+\li \ref yarp_yarp-config
 
 Interoperability:
 \li \ref yarp_without_yarp
