@@ -44,6 +44,11 @@ int main(int argc, char *argv[])
     {
         if (strcmp(argv[1],"--file")==0)
             strcpy (filename, argv[2]);
+        else
+        {
+            printf ("usage: sound_sender_file --file <filename.wav>\n");
+            return -1;
+        }
     }
     else
     {
