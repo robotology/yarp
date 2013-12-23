@@ -11,10 +11,13 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Time.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
+
+const int rec_seconds = 5;
 
 int main(int argc, char *argv[]) {
 
@@ -27,7 +30,7 @@ int main(int argc, char *argv[]) {
     Property conf;
     conf.put("device","portaudio");
     conf.put("read", "");
-    //conf.put("samples", 4096);
+    conf.put("samples", 44100*rec_seconds);
     //conf.put("rate", 16000);
     PolyDriver poly(conf);
     IAudioGrabberSound *get;
@@ -43,8 +46,11 @@ int main(int argc, char *argv[]) {
     Sound s;
     while (true)
       {
-	get->getSound(s);
-	p.write(s);
+          double t1=yarp::os::Time::now();
+          get->getSound(s);
+          double t2=yarp::os::Time::now();
+          printf("acquired %f seconds\n", t2-t1);
+          p.write(s);
       }
     return 0;
 }
