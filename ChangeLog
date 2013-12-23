@@ -1,3 +1,11 @@
+2013-12-23 Marco Randazzo <marco.randazzo@iit.it>
+    * yarp2\src\libYARP_sig\src\sound
+    added yarp::sig::Sound::subSound() method to split a sound into two subsounds
+    * yarp2\src\modules\portaudio
+    New implementation for the portaudio device driver using callback and ring buffers.
+    PortAudioDeviceDriver::renderSound() function now is not blocking
+    Two playback methods now available: RENDER_IMMEDIATE, RENDER_APPEND
+
 2013-12-21 Marco Randazzo <marco.randazzo@iit.it>
     * /src/libYARP_sig/include/sound.h
     * /src/libYARP_sig/src/sound.cpp

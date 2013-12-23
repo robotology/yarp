@@ -83,6 +83,50 @@ void Sound::synchronize() {
     channels = img.height();
 }
 
+Sound Sound::subSound(int first_sample, int last_sample)
+{
+    if (last_sample  > this->samples)
+        last_sample = samples;
+    if (first_sample > this->samples)
+        first_sample = samples;
+    if (last_sample  < 0)
+        last_sample = 0;
+    if (first_sample < 0)
+        first_sample = 0;
+    if (last_sample < first_sample)
+        last_sample = first_sample;
+
+    Sound s;
+
+    s.resize(last_sample-first_sample, this->channels);
+    s.setFrequency(this->frequency);
+    
+    /*
+    //faster implementation but currently not working
+    unsigned char* p1    = this->getRawData();
+    unsigned char* p2    = s.getRawData();
+    int j=0;
+    for (int i=first_sample; i<last_sample*2; i++)
+    {
+        p2[j++]=p1[i];
+    }
+    */
+
+    //safe implementation
+    int c=0;
+    int j=0;
+    for (int i=first_sample; i<last_sample; i++)
+    {
+        for (int c=0; c< this->channels; c++)
+            s.set(this->get(i,c),j,c);
+        j++;
+    }
+
+    s.synchronize();
+
+    return s;
+}
+
 void Sound::init(int bytesPerSample) {
     implementation = new FlexImage();
     YARP_ASSERT(implementation!=NULL);

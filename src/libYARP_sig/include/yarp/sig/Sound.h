@@ -52,6 +52,13 @@ public:
      */
     Sound& operator+=(const Sound& alt);
 
+     /**
+     * Returns a subpart of the sound
+     * @param first_sample: the starting sample number
+     * @param last_sample: the ending sample number
+     */
+    Sound subSound(int first_sample, int last_sample);
+
     void resize(int samples, int channels = 1);
 
     int get(int sample, int channel = 0) const;

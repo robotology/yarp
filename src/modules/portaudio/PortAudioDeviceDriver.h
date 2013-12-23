@@ -1,8 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
+ * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Authors: Marco Randazzo, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -11,9 +11,18 @@
 #define __PortAudioDeviceDriverh__
 
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/Thread.h>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
+#include <portaudio.h>
+#include "PortAudioBuffer.h"
+
+#define SAMPLE_RATE  (44100)
+#define NUM_CHANNELS    (2)
+#define DITHER_FLAG     (0)
+#define FRAMES_PER_BUFFER (512)
+//#define FRAMES_PER_BUFFER (1024)
 
 namespace yarp {
     namespace dev {
@@ -21,7 +30,6 @@ namespace yarp {
         class PortAudioDeviceDriver;
     }
 }
-
 
 class yarp::dev::PortAudioDeviceDriverSettings {
 public:
@@ -33,25 +41,42 @@ public:
     int deviceNumber;
 };
 
-/**
- * @ingroup dev_impl_media
- *
- * A basic microphone input source based on the PortAudio library.
- * The implementation is very simple right now - if you want to
- * use this for real you should fix it up.
- *
- */
+class streamThread : public yarp::os::Thread
+{
+   public:
+   bool         something_to_play;
+   bool         something_to_record;
+   PaStream*    stream;
+   virtual void threadRelease();
+   virtual bool threadInit();
+   virtual void run();
+
+   private:
+   PaError      err;
+   void handleError(void);
+};
+
 class yarp::dev::PortAudioDeviceDriver : public IAudioGrabberSound, 
             public IAudioRender, public DeviceDriver
 {
 private:
-	PortAudioDeviceDriver(const PortAudioDeviceDriver&);
-	void operator=(const PortAudioDeviceDriver&);
+    PaStreamParameters  inputParameters;
+    PaStreamParameters  outputParameters;
+    PaStream*           stream;
+    PaError             err;
+    circularDataBuffers dataBuffers;
+    int                 i;
+    int                 numSamples;
+    int                 numBytes;
+    streamThread        pThread;
+
+    PortAudioDeviceDriver(const PortAudioDeviceDriver&);
+    void operator=(const PortAudioDeviceDriver&);
 
 public:
-	PortAudioDeviceDriver();
+    PortAudioDeviceDriver();
 
-	virtual ~PortAudioDeviceDriver();
+    virtual ~PortAudioDeviceDriver();
 
     virtual bool open(yarp::os::Searchable& config);
 
@@ -74,41 +99,25 @@ public:
      */
     bool open(PortAudioDeviceDriverSettings& config);
 
-	virtual bool close(void);
-
+    virtual bool close(void);
     virtual bool getSound(yarp::sig::Sound& sound);
-
     virtual bool renderSound(yarp::sig::Sound& sound);
+    
+    bool abortSound(void);
+    bool immediateSound(yarp::sig::Sound& sound);
+    bool appendSound(yarp::sig::Sound& sound);
 
 protected:
     void *system_resource;
-    yarp::os::ManagedBytes buffer;
-    int num_samples;
-    int num_channels;
-    int set_freq;
-    bool canRead, canWrite, loopBack;
+    int  numChannels;
+    int  set_freq;
+    bool loopBack;
 
-    bool delayed;
-    PortAudioDeviceDriverSettings delayedConfig;
-
-    void checkDelay(yarp::sig::Sound& sound);
+    PortAudioDeviceDriverSettings driverConfig;
+    enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
+    void handleError(void);
 };
 
-
-/*
-  class yarp::dev::PortAudioRender : public IAudioRender, public DeviceDriver {
-  public:
-  PortAudioRender();
-
-  virtual ~PortAudioRender();
-
-  virtual bool open(yarp::os::Searchable& config);
-
-  virtual bool close();
-
-  virtual bool renderSound(yarp::sig::Sound& sound);
-  };
-*/
 
 /**
  * @ingroup dev_runtime
