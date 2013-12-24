@@ -2,12 +2,11 @@
 # Author: Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-SET(PROJECTNAME resourceFinder)
-PROJECT(${PROJECTNAME})
+cmake_minimum_required(VERSION 2.8.7)
+project(resourceFinder)
 
-FIND_PACKAGE(YARP)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${YARP_MODULE_PATH})
+find_package(YARP REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 include_directories(${YARP_INCLUDE_DIRS})
 
@@ -17,4 +16,12 @@ target_link_libraries(rf_basic ${YARP_LIBRARIES})
 add_executable(rf_advanced tutorial_rf_advanced.cpp)
 target_link_libraries(rf_advanced ${YARP_LIBRARIES})
 
+
+# to install data files:
+include(YarpInstallationHelpers)
+set(conf conf/or.ini)
+# alternatively, if you are too lazy to list all files explicitly, you can "GLOB" them with:
+# file(GLOB conf conf/*.ini)
+
+yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/tutorials/orBottle)
 

@@ -1,0 +1,86 @@
+/**
+*
+@page yarp_resource_finder_installation How to install files for the ResourceFinder
+
+\section rf_install_intro Introduction
+
+In previous tutorials (\ref yarp_resource_finder_basic and \ref yarp_resource_finder_advanced) we showed how you can employ the ResourceFinder to locate files on your machine. In those tutorials, the files were manually created inside the user's "local" directory; here, we show how to install those files within a project, so that you can provide default configuration files for modules or even complete applications.
+
+\section rf_install_files Files to be installed
+
+The (hypothetical) module from \ref yarp_resource_finder_advanced requires the "robot" and "model" initialization parameters. Default values can be provided in a file:
+
+\verbatim
+or.ini:
+
+robot icub
+model bottle.ppm
+\endverbatim
+
+We save this file into a subdirectory of our source tree; we choose the "conf" subdirectory, in our \e src/examples/resourceFinder directory.
+
+We can define a default initialization context, i.e., "orBottle", for the module to locate files; this means that in the source code, the ResourceFinder will be configured like this:
+
+\code
+ResourceFinder rf;
+rf.setVerbose();
+rf.setDefaultConfigFile("or.ini");
+rf.setDefaultContext("tutorials/orBottle");
+rf.configure(argc, argv);
+\endcode
+
+We'll see now how to setup file installation so that our module will be able to load the default file automatically, without having users explicitly create it on their machines.
+
+\section rf_install_cmake CMake to the rescue
+
+The minimal CMake file that allows to build our tutorial modules is this:
+\verbatim
+cmake_minimum_required(VERSION 2.8.7)
+project(resourceFinder)
+
+find_package(YARP REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+
+include_directories(${YARP_INCLUDE_DIRS})
+
+add_executable(rf_basic tutorial_rf_basic.cpp)
+target_link_libraries(rf_basic ${YARP_LIBRARIES})
+
+add_executable(rf_advanced tutorial_rf_advanced.cpp)
+target_link_libraries(rf_advanced ${YARP_LIBRARIES})
+\endverbatim
+
+We add the following line to load the \c yarp_install macro:
+\verbatim
+include(YarpInstallationHelpers)
+\endverbatim
+
+This needs to be done only once within your project, and after the 
+<tt> list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})</tt>
+line.
+
+Now, we add:
+\verbatim
+set(conf conf/or.ini)
+\endverbatim
+
+to tell CMake which files to install, and
+\verbatim
+yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/tutorials/orBottle)
+\endverbatim
+to tell CMake where to install those files.
+\note 
+Instead of creating the \e conf variable by listing all configuration files explicitly as in <tt>set(conf conf/or.ini)</tt>, one can have CMake figure out the list or all configuration files like this:
+\verbatim
+file(GLOB conf conf/*.ini)
+\endverbatim
+but <em>GLOBBING is EVIL</em>, so we do not recommend it.
+\endnote
+\section rf_install_finalnotes Notes
+Keep in mind that the \c ${YARP_CONTEXTS_INSTALL_DIR} variable expands to a relative path that will be appended to the installation prefix chosen by the user; the user should be warned to use the same installation directory as YARP, or to configure their system as explained \ref datafiles_3rdparty here.
+
+\section sec_code Code
+
+See code in: example/resourceFinder/CMakeLists.txt
+*
+**/
