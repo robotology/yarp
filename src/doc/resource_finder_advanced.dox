@@ -15,7 +15,7 @@ In this example our (hypothetical) module performs object recognition on images.
 
 \verbatim
 --robot name: the name of the robot, used for connecting to a port that streams images
---module filename: a ppm file that stores a template image
+--model filename: a ppm file that stores a template image
 \endverbatim
 
 Similarly to the previous tutorial we prepare a file that stores the initialization parameters of our module.
@@ -83,7 +83,7 @@ tutorial_rf_advanced --context tutorial/orCup
 
 \section sec_finalnotes Notes
 
-We have shown how to use the ResourceFile class to pass not only parameters but also binary files to 
+We have shown how to use the ResourceFinder class to pass not only parameters but also binary files to 
 a module. We have seen that it is again easy to re-configure a module simply by switching its 
 initialization context.
 

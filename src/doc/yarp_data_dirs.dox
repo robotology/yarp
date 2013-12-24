@@ -123,7 +123,7 @@ Other packages need to contribute configuration files for their modules, applica
 
 YARP provides cmake variables and macros to simplify both the above tasks.
 
-If you are not interested in the details you can skip the following sections and go directly to #Configure your build.
+If you are not interested in the details you can skip the following sections and go directly to \ref yarp_external_build.
 
 
 \subsection datafiles_extendsearch Extending the search path 
