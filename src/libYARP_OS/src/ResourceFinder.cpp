@@ -528,6 +528,12 @@ public:
         return result;
     }
 
+    yarp::os::ConstString findFileByName(Property& config, const ConstString& fname,
+                                   const ResourceFinderOptions *externalOptions) {
+        ConstString result = findFileBase(config,fname,false,externalOptions);
+        return result;
+    }
+
     yarp::os::ConstString findFileBase(Property& config, const ConstString& name,
                                        bool isDir, 
                                        const ResourceFinderOptions *externalOptions) {
@@ -1001,6 +1007,22 @@ yarp::os::ConstString ResourceFinder::findFile(const ConstString& name,
     }
     return HELPER(implementation).findFile(config,name,&options);
 }
+
+yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding file %s\n", name.c_str());
+    }
+    return HELPER(implementation).findFileByName(config,name,NULL);
+}
+
+yarp::os::ConstString ResourceFinder::findFileByName(const ConstString& name,
+                                               const ResourceFinderOptions& options) {
+    if (HELPER(implementation).isVerbose()) {
+        fprintf(RTARGET,"||| finding file %s\n", name.c_str());
+    }
+    return HELPER(implementation).findFileByName(config,name,&options);
+}
+
 
 yarp::os::ConstString ResourceFinder::findPath(const ConstString& name) {
     if (HELPER(implementation).isVerbose()) {

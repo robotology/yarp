@@ -79,6 +79,9 @@ public:
             checkTrue(alt!="","default setting is safe");
 
             checkTrue(rf.findPath()!="","existing path found");
+
+            alt=rf.findFileByName(fname1);
+            checkTrue(alt!="","found file by name");
         }
         
     }

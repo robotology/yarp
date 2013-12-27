@@ -143,6 +143,13 @@ public:
 
     /**
      *
+     * Find the full path to a file. The name of the file is provided explicitly.
+     *
+     */
+    yarp::os::ConstString findFileByName(const ConstString& fileName);
+
+    /**
+     *
      * Expand a partial path to a full path.  The path is specified by the
      * name of a key.  The value of the key should be set up either
      * on the command line, through a loaded config file, or
@@ -361,6 +368,9 @@ public:
                                    const ResourceFinderOptions& options);
 
     yarp::os::ConstString findFile(const ConstString& key,
+                                   const ResourceFinderOptions& options);
+
+    yarp::os::ConstString findFileByName(const ConstString& fileName,
                                    const ResourceFinderOptions& options);
 
     bool readConfig(Property& config,
