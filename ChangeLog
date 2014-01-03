@@ -5,6 +5,9 @@
  
     * /example/portaudio/sound_sender_file_chunks.cpp
     added example to demonstrate use of soundStreamReader class 
+ 
+    * /example/portaudio/sound_sender_file_sum.cpp
+    added example to demonstrate the use of += operator for yarp::sig::Sound
     
 2013-12-23 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\libYARP_sig\src\sound
