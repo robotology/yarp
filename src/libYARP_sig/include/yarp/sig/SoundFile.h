@@ -36,6 +36,45 @@ namespace yarp {
              * @return true on success
              */
             bool YARP_sig_API write(const Sound& src, const char *dest);
+
+            class soundStreamReader
+            {
+                private:
+                FILE *fp;
+                size_t index;
+                char fname [255];
+                struct
+                {
+                    int freq;
+                    int channels;
+                    int bits;
+                    int samples;
+                    size_t data_start_offset;
+                } soundInfo;
+
+                public:
+                soundStreamReader()
+                { 
+                    fp = 0;
+                    index=0;
+                    fname[0]=0;
+                }
+
+                ~soundStreamReader()
+                {
+                    if (fp)
+                    {
+                        close();
+                        fp=0;
+                    }
+                }
+
+                bool   open(const char *filename);
+                bool   close();
+                size_t readBlock(Sound& dest, size_t block_size);
+                bool   rewind(size_t sample_offset=0);
+                size_t getIndex();
+            };
         }
     }
 };
