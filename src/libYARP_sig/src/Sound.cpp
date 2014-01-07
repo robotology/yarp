@@ -45,8 +45,8 @@ Sound& Sound::operator += (const Sound& alt) {
         return *this;
     }
 
-    int offset = this->getRawDataSize()/(bytesPerSample*channels)*2;
-    int size   = alt.getRawDataSize()/(bytesPerSample*channels)*2;
+    int offset = this->getRawDataSize();
+    int size   = alt.getRawDataSize();
 
     Sound orig= *this;
     this->resize(this->samples+alt.samples,channels);
@@ -132,8 +132,9 @@ void Sound::init(int bytesPerSample) {
     YARP_ASSERT(implementation!=NULL);
 
     YARP_ASSERT(bytesPerSample==2); // that's all thats implemented right now
-    HELPER(implementation).setPixelSize(sizeof(PixelInt));
-    HELPER(implementation).setPixelCode(VOCAB_PIXEL_INT);
+    HELPER(implementation).setPixelSize(sizeof(PixelMono16));
+    HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
+    HELPER(implementation).setQuantum(2);
 
     samples = 0;
     channels = 0;
@@ -157,7 +158,7 @@ int Sound::get(int location, int channel) const {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
-        return *((NetInt32 *)addr);
+        return *((NetUint16 *)addr);
     }
     YARP_LOG_INFO("sound only implemented for 16 bit samples");
     return 0;
@@ -167,7 +168,7 @@ void Sound::set(int value, int location, int channel) {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
-        *((NetInt32 *)addr) = value;
+        *((NetUint16 *)addr) = value;
         return;
     }
     YARP_LOG_INFO("sound only implemented for 16 bit samples");

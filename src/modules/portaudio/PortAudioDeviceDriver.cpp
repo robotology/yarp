@@ -18,6 +18,8 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+#define SLEEP_TIME 0.005f
+
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
 ** that could mess up the system like calling malloc() or free().
@@ -45,9 +47,9 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         (void) statusFlags;
         (void) userData;
 
-        if( framesLeft/2 < framesPerBuffer )
+        if( framesLeft/NUM_CHANNELS < framesPerBuffer )
         {
-            framesToCalc = framesLeft/2;
+            framesToCalc = framesLeft/NUM_CHANNELS;
             finished = paComplete;
         }
         else
@@ -88,10 +90,10 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         (void) statusFlags;
         (void) userData;
 
-        if( framesLeft/2 < framesPerBuffer )
+        if( framesLeft/NUM_CHANNELS < framesPerBuffer )
         {
             // final buffer
-            for( i=0; i<framesLeft/2; i++ )
+            for( i=0; i<framesLeft/NUM_CHANNELS; i++ )
             {
                 *wptr++ = playdata->read();  // left 
                 if( NUM_CHANNELS == 2 ) *wptr++ = playdata->read();  // right 
@@ -287,17 +289,20 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
     //this is blocking: wait until acquisition is done
     while (pThread.something_to_record == true)
     {
-        yarp::os::Time::delay(0.10);
+         yarp::os::Time::delay(SLEEP_TIME);
     }
 
-    sound.resize(this->numSamples,this->numChannels);
+    if (sound.getChannels()!=this->numChannels && sound.getSamples() != this->numSamples)
+    {
+        sound.resize(this->numSamples,this->numChannels);
+    }
+
     for (int i=0; i<this->numSamples; i++)
         for (int j=0; j<this->numChannels; j++)
             {
                 SAMPLE s = dataBuffers.recData->read();
                 sound.set(s,i,j);
             }
-
     return true;
 }
 
@@ -336,10 +341,12 @@ void streamThread::run()
     {
         if( something_to_play )
         {
+            something_to_play = false;
             err = Pa_StartStream( stream );
             if( err != paNoError ) {handleError(); return;}
         
-            while( ( err = Pa_IsStreamActive( stream ) ) == 1 ) Pa_Sleep(10);
+            while( ( err = Pa_IsStreamActive( stream ) ) == 1 )
+                {yarp::os::Time::delay(SLEEP_TIME);}
             if( err < 0 ) {handleError(); return;}
 
             err = Pa_StopStream( stream );
@@ -347,23 +354,23 @@ void streamThread::run()
             if( err < 0 ) {handleError(); return;}
         
         }
-        something_to_play = false;
         
         if (something_to_record)
         {
+            something_to_record = false;
             err = Pa_StartStream( stream );
             if( err != paNoError ) {handleError(); return;}
         
-            while( ( err = Pa_IsStreamActive( stream ) ) == 1 ) Pa_Sleep(10);
+            while( ( err = Pa_IsStreamActive( stream ) ) == 1 ) 
+                {yarp::os::Time::delay(SLEEP_TIME);}
             if( err < 0 ) {handleError(); return;}
 
             err = Pa_StopStream( stream );
             //err = Pa_AbortStream( stream );
             if( err < 0 ) {handleError(); return;}
         }
-        something_to_record = false;
 
-        yarp::os::Time::delay(0.010);
+        yarp::os::Time::delay(SLEEP_TIME);
     }
     return;
 }
@@ -373,12 +380,12 @@ bool PortAudioDeviceDriver::immediateSound(yarp::sig::Sound& sound)
     dataBuffers.playData->clear();
     
     unsigned char* dataP= sound.getRawData();
-    int num_samples = sound.getRawDataSize();
     int num_bytes = sound.getBytesPerSample();
     int num_channels = sound.getChannels();
+    int num_samples = sound.getRawDataSize()/num_channels/num_bytes;
     // memcpy(data.samplesBuffer,dataP,num_samples/**num_bytes*num_channels*/);
     
-    for (int i=0; i<num_samples/2/2/2; i++)
+    for (int i=0; i<num_samples; i++)
         for (int j=0; j<num_channels; j++)
             dataBuffers.playData->write (sound.get(i,j));
 
@@ -399,12 +406,12 @@ bool PortAudioDeviceDriver::renderSound(yarp::sig::Sound& sound)
 bool PortAudioDeviceDriver::appendSound(yarp::sig::Sound& sound)
 {
     unsigned char* dataP= sound.getRawData();
-    int num_samples = sound.getRawDataSize();
     int num_bytes = sound.getBytesPerSample();
     int num_channels = sound.getChannels();
+    int num_samples = sound.getRawDataSize()/num_channels/num_bytes;
     // memcpy(data.samplesBuffer,dataP,num_samples/**num_bytes*num_channels*/);
     
-    for (int i=0; i<num_samples/2/2/2; i++)
+    for (int i=0; i<num_samples; i++)
         for (int j=0; j<num_channels; j++)
             dataBuffers.playData->write (sound.get(i,j));
 

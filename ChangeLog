@@ -1,3 +1,9 @@
+2014-01-07 Marco Randazzo <marco.randazzo@iit.it>
+    * yarp2\src\libYARP_sig\src\SoundFile.cpp
+    * yarp2\src\libYARP_sig\include\yarp\sig\SoundFile.cpp
+    fixed a critical bug in the size of the storage of the sound type. This was causing a 'click' at the end of the sound reproduction.
+    fixed a race condition in the variable pThread.something_to_play, occuring during continous stream of sound packets (e.g. real time playback from a microphone) 
+    
 2014-01-02 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\libYARP_sig\src\SoundFile.cpp
     * yarp2\src\libYARP_sig\include\yarp\sig\SoundFile.cpp
