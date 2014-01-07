@@ -164,6 +164,13 @@ int Sound::get(int location, int channel) const {
     return 0;
 }
 
+void Sound::clear()
+{
+    int size = this->getRawDataSize();
+    unsigned char* p  = this->getRawData();
+    memset(p,0,size);
+}
+
 void Sound::set(int value, int location, int channel) {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);

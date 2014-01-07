@@ -87,7 +87,13 @@ public:
         return (sample>=0 && channel>=0 && sample<samples && channel<channels);
     }
 
+    /**
+    * set all the samples to zero (silence)
+    */
+    void clear();
+
     int getFrequency() const;
+
     void setFrequency(int freq);
 
     int getBytesPerSample() const { return bytesPerSample; }
