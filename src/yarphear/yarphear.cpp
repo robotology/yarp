@@ -87,7 +87,17 @@ public:
         return true;
     }
 
-    void onRead(Sound& sound) {
+    void onRead(Sound& sound)
+     {
+        #ifdef TEST
+        //this block can be used to measure time elapsed between two sound packets
+        static double t1= yarp::os::Time::now();
+        static double t2= yarp::os::Time::now();
+        t1= yarp::os::Time::now();
+        printf("onread %f\n", t2-t1);
+        t2 = yarp::os::Time::now();
+        #endif
+
         int ct = port.getPendingReads();
         //printf("pending reads %d\n", ct);
         while (ct>padding) {
