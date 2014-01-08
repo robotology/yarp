@@ -13,6 +13,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Log.h>
+#include <string.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;

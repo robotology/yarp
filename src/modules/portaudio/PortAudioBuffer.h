@@ -110,8 +110,10 @@ struct circularDataBuffers
     circularBuffer*     recData;
     bool                canPlay;
     bool                canRec;
+    int                 numChannels;
     circularDataBuffers ()
     {
+        numChannels=1;
         playData=0;
         recData=0;
         canPlay=false;
