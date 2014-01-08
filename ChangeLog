@@ -1,3 +1,7 @@
+2014-01-08 Marco Randazzo <marco.randazzo@iit.it>
+    * yarp2\src\modules\portaudio
+    now able to reproduce audio with rate!=44100 and channels!=2
+    
 2014-01-07 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\libYARP_sig\src\SoundFile.cpp
     * yarp2\src\libYARP_sig\include\yarp\sig\SoundFile.cpp

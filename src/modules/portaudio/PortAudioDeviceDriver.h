@@ -18,11 +18,11 @@
 #include <portaudio.h>
 #include "PortAudioBuffer.h"
 
-#define SAMPLE_RATE  (44100)
-#define NUM_CHANNELS    (2)
-#define DITHER_FLAG     (0)
-#define FRAMES_PER_BUFFER (512)
-//#define FRAMES_PER_BUFFER (1024)
+#define DEFAULT_SAMPLE_RATE  (44100)
+#define DEFAULT_NUM_CHANNELS    (2)
+#define DEFAULT_DITHER_FLAG     (0)
+#define DEFAULT_FRAMES_PER_BUFFER (512)
+//#define DEFAULT_FRAMES_PER_BUFFER (1024)
 
 namespace yarp {
     namespace dev {
@@ -110,7 +110,7 @@ public:
 protected:
     void *system_resource;
     int  numChannels;
-    int  set_freq;
+    int  frequency;
     bool loopBack;
 
     PortAudioDeviceDriverSettings driverConfig;
