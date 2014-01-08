@@ -47,7 +47,7 @@ public:
     NetInt32 dataHeader;
     NetInt32 dataLength;
 
-    void setup_to_write(const Sound& sound);
+    void setup_to_write(const Sound& sound, FILE *fp);
     bool parse_from_file(FILE *fp);
 } PACKED_FOR_NET;
 #include <yarp/os/end_pack_for_net.h>
@@ -97,7 +97,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     return true;
 }
 
-void PcmWavHeader::setup_to_write(const Sound& src)
+void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
 {
     int bitsPerSample = 16;
     int channels = src.getChannels();
@@ -119,6 +119,24 @@ void PcmWavHeader::setup_to_write(const Sound& src)
 
     dataHeader = VOCAB4('d','a','t','a');
     dataLength = bytes;
+
+    size_t result;
+    result = fwrite(&wavHeader,sizeof(wavHeader),1,fp);
+    result = fwrite(&wavLength,sizeof(wavLength),1,fp);
+    result = fwrite(&formatHeader1,sizeof(formatHeader1),1,fp);
+
+    result = fwrite(&formatHeader2,sizeof(formatHeader2),1,fp);
+    result = fwrite(&formatLength,sizeof(formatLength),1,fp);
+
+    result = fwrite(&pcm.pcmFormatTag,sizeof(pcm.pcmFormatTag),1,fp);
+    result = fwrite(&pcm.pcmChannels,sizeof(pcm.pcmChannels),1,fp);
+    result = fwrite(&pcm.pcmSamplesPerSecond,sizeof(pcm.pcmSamplesPerSecond),1,fp);
+    result = fwrite(&pcm.pcmBytesPerSecond,sizeof(pcm.pcmBytesPerSecond),1,fp);
+    result = fwrite(&pcm.pcmBlockAlign,sizeof(pcm.pcmBlockAlign),1,fp);
+    result = fwrite(&pcm.pcmBitsPerSample,sizeof(pcm.pcmBitsPerSample),1,fp);
+
+    result = fwrite(&dataHeader,sizeof(dataHeader),1,fp);
+    result = fwrite(&dataLength,sizeof(dataLength),1,fp);
 }
 
 bool yarp::sig::file::read(Sound& dest, const char *src)
@@ -173,9 +191,8 @@ bool yarp::sig::file::write(const Sound& src, const char *dest)
     }
 
     PcmWavHeader header;
-    header.setup_to_write(src);
-    fwrite((void*)&header, 1, sizeof(header), fp);
- 
+    header.setup_to_write(src, fp);
+
     ManagedBytes bytes(header.dataLength);
     NetInt16 *data = (NetInt16*)bytes.get();
     int ct = 0;
