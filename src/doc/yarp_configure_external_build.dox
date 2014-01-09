@@ -8,8 +8,7 @@
 /** 
  * @page yarp_external_build Configuring your external build
 
-\author Elena Ceseracciu
-\author Lorenzo Natale
+\author Elena Ceseracciu and Lorenzo Natale
 
 These simple instructions show how to configure your build to install data files (xml and config files for applications and modules) so that they can be easily found by programs that use ResourceFinder objects.
 
@@ -27,7 +26,19 @@ Then call:
  include(YarpInstallationHelpers)
 \endverbatim
 
-which brings in a set of YARP macros.
+which brings in a set of YARP macros. You can now use YARP's own data directories, e.g.:
+
+\verbatim
+ yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/${appname})
+ yarp_install(FILES ${templates} DESTINATION ${YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR})
+ yarp_install(FILES ${scripts} DESTINATION ${YARP_APPLICATIONS_INSTALL_DIR})
+\endverbatim
+
+Please note that these CMake variables define relative paths, where data will be installed with respect to the installation prefix you configure your build with (CMAKE_INSTALL_PREFIX CMake variable); for YARP to be able to find these files, you need to make sure that the installation prefix for your build matches the one for YARP, or you will need to tweak your environment by \ref datafiles_extendsearch "setting the YARP_DATA_DIRS environment variable".
+
+\section data-files-inside-specific-directories Install data files inside directories specific for your project
+
+<EM> This is an advanced feauture that should be considered experimental and can be removed in the future.</EM>
 
 If you want to install data files inside directories specific to your project, you should add:
 \verbatim
@@ -59,15 +70,7 @@ Now you can install additional data files by using the macro \e yarp_install, e.
  yarp_install(FILES ${scripts} DESTINATION ${<PACKAGE>_APPLICATIONS_INSTALL_DIR})
 \endverbatim
 
-Otherwise, you can skip the \e yarp_configure_external_installation(PACKAGE) step and use YARP's own data directories, e.g.:
 
-\verbatim
- yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/${appname})
- yarp_install(FILES ${templates} DESTINATION ${YARP_APPLICATIONS_TEMPLATES_INSTALL_DIR})
- yarp_install(FILES ${scripts} DESTINATION ${YARP_APPLICATIONS_INSTALL_DIR})
-\endverbatim
-
-Please note that these CMake variables define relative paths, where data will be installed with respect to the installation prefix you configure your build with (CMAKE_INSTALL_PREFIX CMake variable); for YARP to be able to find these files, you need to make sure that the installation prefix for your build matches the one for YARP, or you will need to tweak your environment by \ref datafiles_extendsearch "setting the YARP_DATA_DIRS environment variable".
 
  *
  */

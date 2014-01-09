@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2013 Istituto Italiano di Tecnologia
+ * Copyright (C) 2013 iCub Facility Istituto Italiano di Tecnologia
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -8,23 +8,23 @@
 /** 
  * @page yarp_data_dirs YARP data directories
 
-\author Elena Ceseracciu
+\author Elena Ceseracciu and Lorenzo Natale
 
-YARP's ResourceFinder allows to find and access data and configuration files at run-time. It is used both by YARP's own executables (to locate generic configuration files and "description files" that allow to manage YARP-based programs) and by user modules (to locate specific, "context-based" configuration files and data). YARP has an OS-dependent set of default locations where to look for files, and a set of rules that define the search priorities. The default locations can be overridden or extended by modifying the environment variables that YARP relies on.
+YARP utilities and modules written by users need to find and access data and configuration files at run-time. The former use generic configuration files and manifest files for modules and plugins. The latter often require configuration and data files. YARP has an OS-dependent set of default locations where to look for files, and a set of rules that define the search priorities. The default locations can be overridden or extended by modifying the environment variables that YARP relies on. To simplify finding and accessing these files YARP provides a helper class called ResourceFinder. 
 
-A full description of how the directories and environment variables used by the ResourceFinder is too detailed for most users. We provide here a short and simplified description of the files layout of typical YARP installations for Windows, Linux and MacOs. 
+A full description of the directories and environment variables used by the ResourceFinder is too detailed for most users. We provide here a short and simplified description of the files layout of typical YARP installations for Windows, Linux and MacOs. 
 
 \section datafiles_rationale Rationale
 
 The key points to keep in mind are:
 
 \li    The software installation should be able to provide reasonable defaults for configuration files so that applications can run out-of-the-box;
-\li    Installation directories are generally non-writable, users without root privileges cannot edit installed configuration files unless they first copy them inside their own private directories; these files must take precedence and hide the others
-\li    Therefore it is normal that configuration files can be in multiple places, inside user-specific, private or shared installation directories
-\li    External packages can install files so that YARP can find them (see \ref datafiles_3rdparty "here")
+\li    Installation directories are generally non-writable, users without root privileges cannot edit installed configuration files unless they first copy them inside their own private directories, the latter must take precedence and hide the others;
+\li    Therefore it is normal that configuration files can be in multiple places, inside user-specific, private or shared installation directories;
+\li    External packages can install files so that YARP can find them (see \ref datafiles_3rdparty "here");
 \li    Type of files are divided in families that are placed in specific sub-directories. Current allowed sub-directories are listed \ref datafiles_datadirs "here". 
 
-File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp-config utility simplifies this process. 
+File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp_yarp_yarp-config utility simplifies this process. 
 
 \section datafiles_datadirs Data directories contents 
 Files are normally organized in the following directories:
@@ -46,18 +46,18 @@ These directories can be stored in a directory private for the \e user (usually 
 
 \subsection datafiles_lin Linux 
 
-The private directories for the user are in \e $HOME/.local/share/
+The private directories for the user are in </EM> $HOME/.local/share/ </EM>
 
-The shared directories for installation are \e usr/local/share/ and \e /usr/share/
+The shared directories for installation are </EM> usr/local/share/ </EM> and </EM> /usr/share/ </EM>
 
 The latter can be changed by defining the environment variable YARP_DATA_DIRS or extended through \e path.d (see \ref datafiles_extendsearch "below").
 
 \subsection datafiles_win Windows
 
 
-The private directories for the user are in <EM> %APPDATA%\yarp </EM>
+The private directories for the user are in <EM> \%APPDATA\%\\yarp\\ </EM>
 
-The shared directory for installation are in <EM> %YARP_DIR%\share\yarp\ </EM>
+The shared directory for installation are in <EM> \%YARP_DIR\%\\share\\yarp\\ </EM>
 
 The latter can be changed by defining the environment variable YARP_DATA_DIRS or extended through \e path.d  (see \ref datafiles_extendsearch "below").
 
@@ -104,7 +104,7 @@ Search of files proceeds from the user private directories to shared installatio
 
 \subsection datafiles_plugins Plugins Manifest files
 
-Plugin manifest files are INI files that describe which class implements the plugin, the library it is included in, and how to find such library. These files are needed by the yarpdev executable.
+Plugin manifest files are INI files that describe which class implements the plugin, the library it is included in, and how to find such library. These files are needed when loading plugins (e.g. by the yarpdev executable).
 
 \subsection datafiles_applications Application Deployment files
 
@@ -113,49 +113,24 @@ Plugin manifest files are INI files that describe which class implements the plu
 
 Templates are XML files with a .template extension. Typical templates are applications that need to be configured (i.e., assigning the node where each module should be run) before they can be executed.
 
+\section managing_data_files Managing data files: the yarp-config utility
+
+Managing configuration and data files requires nothing special, you can copy, edit and remove them using the shell. However YARP provides an utility that simplifies this, see \ref yarp_yarp-config.
+
+
 \section datafiles_3rdparty 3rd party packages (for developers) 
 
-If you are not a developer you can skip this section and go directly to \ref yarp-config .
+<EM> If you are not a developer you can skip this section. </EM>
+
 Other packages need to contribute configuration files for their modules, applications, plugins etc. This can be done in two ways.
 
-\li By extending the ResourceFinder search path
-\li By installing the above files in the YARP directories; YARP exports a set of CMake variables that can be used at this aim
+\li By installing the above files in the YARP directories (YARP exports a set of CMake variables that can be used to this aim);
+\li By extending the ResourceFinder search path.
 
 YARP provides cmake variables and macros to simplify both the above tasks.
 
 If you are not interested in the details you can skip the following sections and go directly to \ref yarp_external_build.
 
-
-\subsection datafiles_extendsearch Extending the search path 
-
-The search path followed by the ResourceFinder can be extended in two ways:
-
-\li Through the YARP_DATA_DIRS variable: this is a list of locations, each is used by the ResourceFinder when looking for shared installation directories
-
-This solution should be adopted for packages that are not installed.
-
-\li By extending the directory \e path.d (see below)
-
-This solution should be adopted for packages that are installed.
-
-\e path.d is a special folder used by YARP to provide an easy way to install 3rd party applications in separate folders. This folder contains a list of text files that contains extra search paths. The ResourceFinder searches for the directory \e path.d in the same locations as "Installed" configuration files before checking the same directory for other files. Each file inside \e path.d indicates an additional path to a directory; the latter is appended to the list of directories used by the ResourceFinder. This mechanisms works similarly to YARP_DATA_DIRS; however it is handy because it allows 3rd party applications to extend the search path without affecting the user environment.
-
-To do so a package should install a .ini file in $YARP_PREFIX/yarp/config/path.d .
-This can be done using the \e yarp_configure_external_installation macro (see #Configure your build)
-
-Example: the iCub package in Linux.
-
-The iCub package contributes a set of application, modules, contexts and robot files to YARP. It does so by installing them in /usr/local/share/iCub to keep them separate from the ones in YARP (/usr/local/share/yarp). To make these files visible to the ResourceFinder \e make \e install add the file \e iCub.ini in:
-
-  /usr/local/share/yarp/config/path.d
-
-The content of the file iCub.ini tells YARP where to look for additional resource files:
-
-\verbatim
-  ###### This file is automatically generated by CMake.
-  [search iCub]
-  path "/usr/local/share/iCub"
-\endverbatim
 
 \subsection datafiles_installedpkgs Installed packages 
 
@@ -171,9 +146,41 @@ Yarp exports the following CMake variables:
 \li YARP_CONTEXTS_INSTALL_DIR
 \li YARP_ROBOTS_INSTALL_DIR
 
-Using the correct CMake variables when installing files will ensure that those files will be in the correct place on every platform.
+Using the correct CMake variables when installing files will ensure that those files will be in the correct place on every platform, provided CMake is instructed to use the same CMAKE_INSTALL_PREFIX (in Linux this is the case by default).
 
-Also non-root installation is supported, but both YARP and 3rd party software will require to be configured with the same $PREFIX, and the environment variables will require to be tweaked accordingly.
+Also non-root installation is supported, but both YARP and 3rd party software will require to be configured with the same CMAKE_INSTALL_PREFIX, and the environment variables (YARP_DATA_DIRS) will require to be tweaked accordingly (see next section).
+
+\subsection datafiles_extendsearch Extending the search path 
+
+For packages that are not installed, the search path followed by the ResourceFinder can be extended in two ways:
+
+\li Through the YARP_DATA_DIRS variable: this is a list of locations, each is used by the ResourceFinder when looking for shared installation directories
+
+
+<EM> Notice: the following should be considered experimental and could be removed in the future if not required) >/EM>
+
+\li By extending the directory \e path.d 
+
+This solution should be adopted for packages that are installed.
+
+\e path.d is a special folder used by YARP to provide an easy way to install 3rd party applications in separate folders. This folder contains a list of text files that contains extra search paths. The ResourceFinder searches for the directory \e path.d in the same locations as "Installed" configuration files before checking the same directory for other files. Each file inside \e path.d indicates an additional path to a directory; the latter is appended to the list of directories used by the ResourceFinder. This mechanisms works similarly to YARP_DATA_DIRS; however it is handy because it allows 3rd party applications to extend the search path without affecting the user environment.
+
+To do so a package should install a .ini file in $YARP_PREFIX/yarp/config/path.d .
+This can be done using the \e yarp_configure_external_installation macro (see \ref yarp_external_build)
+
+Example: the iCub package in Linux.
+
+The iCub package contributes a set of application, modules, contexts and robot files to YARP. It does so by installing them in /usr/local/share/iCub to keep them separate from the ones in YARP (/usr/local/share/yarp). To make these files visible to the ResourceFinder \e make \e install adds the file \e iCub.ini in:
+
+  /usr/local/share/yarp/config/path.d
+
+The content of the file iCub.ini tells YARP where to look for additional resource files:
+
+\verbatim
+  ###### This file is automatically generated by CMake.
+  [search iCub]
+  path "/usr/local/share/iCub"
+\endverbatim
 
  *
  */
