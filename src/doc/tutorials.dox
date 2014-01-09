@@ -47,12 +47,17 @@ YARP implementation:
 \li \ref yarp_build_structure
 \li \ref yarp_plugins
 
+Using the Thrift IDL to define data types and interfaces:
+\li \ref thrift_tutorial_simple
+\li \ref thrift_tutorial 
+
+How to search and install configuration files:
+\li \ref yarp_resource_finder_tutorials
+
 More, more, more:
 \li \ref yarp_code_examples
 \li \ref gpu_tutorial
 \li \ref using_cmake
-\li \ref thrift_tutorial_simple
-\li \ref thrift_tutorial 
 
  *
  */

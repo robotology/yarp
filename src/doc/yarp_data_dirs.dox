@@ -14,6 +14,8 @@ YARP utilities and modules written by users need to find and access data and con
 
 A full description of the directories and environment variables used by the ResourceFinder is too detailed for most users. We provide here a short and simplified description of the files layout of typical YARP installations for Windows, Linux and MacOs. 
 
+If you are confused by this description you can jump directly to the tutorials \ref yarp_resource_finder_tutorials.
+
 \section datafiles_rationale Rationale
 
 The key points to keep in mind are:
@@ -130,7 +132,6 @@ Other packages need to contribute configuration files for their modules, applica
 YARP provides cmake variables and macros to simplify both the above tasks.
 
 If you are not interested in the details you can skip the following sections and go directly to \ref yarp_external_build.
-
 
 \subsection datafiles_installedpkgs Installed packages 
 
