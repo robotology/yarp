@@ -2,6 +2,8 @@
 *
 @page yarp_resource_finder_basic The ResourceFinder Class (basic)
 
+\author Lorenzo Natale and Elena Ceseracciu
+
 This tutorial shows how to use the ResourceFinder class to organize parameters passed to 
 modules.
 
@@ -111,8 +113,11 @@ $YARP_DATA_HOME/contexts/tutorials/randomMotion
 \section sec_discussion Discussion
 We have seen how the ResourceFinder facilitates passing parameters to a module from a file. The ResourceFinder follows particular
 rules to locate configuration files that allows, for example, to switch the "initialization context" from which a module will be configured. 
-To see why all this is useful you should have a look at the next tutorial \ref yarp_resource_finder_advanced
- 
+
+To see why all this is useful you should have a look at the next tutorial \ref yarp_resource_finder_advanced.
+
+Otherwise if you want you can jump directly to \ref yarp_resource_finder_installation which describes how to use CMake to configure your build so that configuration files are automatically installed.
+
 \section sec_code Code
 
 See code in: example/resourceFinder/tutorial_rf_basic.cpp

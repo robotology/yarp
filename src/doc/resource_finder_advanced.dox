@@ -2,6 +2,8 @@
 *
 @page yarp_resource_finder_advanced The ResourceFinder Class (advanced)
 
+\author Lorenzo Natale and Elena Ceseracciu
+
 In this tutorial we show more details of how to use the ResourceFinder to locate files.
 
 \section sec_intro Introduction
@@ -81,7 +83,7 @@ It is quite easy to change configuration files (and model) by switching the init
 tutorial_rf_advanced --context tutorial/orCup
 \endcode
 
-\section sec_finalnotes Notes
+\section sec_final-discussion Discussion
 
 We have shown how to use the ResourceFinder class to pass not only parameters but also binary files to 
 a module. We have seen that it is again easy to re-configure a module simply by switching its 
@@ -90,9 +92,23 @@ initialization context.
 From these tutorials you might have had the feeling it is better to create a new directory for each new 
 configuration file for a module. This is not always the case. For simple modules (i.e. modules
 that require only a limited set of paramters to run) it will be much better to just use one context and 
-separate configuration files. In other cases, especially when a module uses several resource files, it is 
+separate configuration files. The name of the configuration file used by the ResourceFinder is determined by the line:
+
+\code
+   rf.setDefaultConfigFile("or.ini");
+\endcode
+
+this is the \e default name, but it can be modified at runtime by running the module with the parameter \e --from:
+
+\code
+tutorial_rf_advanced --context tutorial/orBottle --from or2.ini 
+\endcode
+
+In other cases, especially when a module uses several resource files, it is 
 more appropriate to duplicate all files in a different context directory in $YARP_DATA_HOME/contexts. What solution is 
 more appropriate depends on the specific case.
+
+You should now read the tutorial \ref yarp_resource_finder_installation which describes how to use CMake to configure your build so that configuration files are automatically installed.
 
 \section sec_code Code
 

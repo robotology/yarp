@@ -2,6 +2,8 @@
 *
 @page yarp_resource_finder_installation How to install files for the ResourceFinder
 
+\author Lorenzo Natale and Elena Ceseracciu
+
 \section rf_install_intro Introduction
 
 In previous tutorials (\ref yarp_resource_finder_basic and \ref yarp_resource_finder_advanced) we showed how you can employ the ResourceFinder to locate files on your machine. In those tutorials, the files were manually created inside the user's "local" directory; here, we show how to install those files within a project, so that you can provide default configuration files for modules or even complete applications.
