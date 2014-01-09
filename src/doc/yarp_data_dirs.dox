@@ -24,7 +24,7 @@ The key points to keep in mind are:
 \li    External packages can install files so that YARP can find them (see \ref datafiles_3rdparty "here");
 \li    Type of files are divided in families that are placed in specific sub-directories. Current allowed sub-directories are listed \ref datafiles_datadirs "here". 
 
-File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp_yarp_yarp-config utility simplifies this process. 
+File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp_yarp-config utility simplifies this process. 
 
 \section datafiles_datadirs Data directories contents 
 Files are normally organized in the following directories:
@@ -157,7 +157,7 @@ For packages that are not installed, the search path followed by the ResourceFin
 \li Through the YARP_DATA_DIRS variable: this is a list of locations, each is used by the ResourceFinder when looking for shared installation directories
 
 
-<EM> Notice: the following should be considered experimental and could be removed in the future if not required) >/EM>
+<EM> Notice: the following should be considered experimental and could be removed in the future if not required) </EM>
 
 \li By extending the directory \e path.d 
 
