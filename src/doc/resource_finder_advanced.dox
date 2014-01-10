@@ -29,7 +29,7 @@ robot icub
 model bottle.ppm
 \endverbatim
 
-we place this file together with the template bottle.ppm in a directory called 'orBottle' in $YARP_DATA_HOME/contexts/tutorials.
+we place this file together with the template bottle.ppm in a directory called 'orBottle' in $YARP_DATA_HOME/contexts .
 
 main.cpp is something like:
 
@@ -74,13 +74,13 @@ cout << "Using object model: " << model.c_str() << endl;
 Simply run:
 
 \code
-tutorial_rf_advanced --context tutorial/orBottle
+tutorial_rf_advanced --context orBottle
 \endcode
 
 It is quite easy to change configuration files (and model) by switching the initialization context of the module:
 
 \code
-tutorial_rf_advanced --context tutorial/orCup
+tutorial_rf_advanced --context orCup
 \endcode
 
 \section sec_final-discussion Discussion
@@ -101,7 +101,7 @@ separate configuration files. The name of the configuration file used by the Res
 this is the \e default name, but it can be modified at runtime by running the module with the parameter \e --from:
 
 \code
-tutorial_rf_advanced --context tutorial/orBottle --from or2.ini 
+tutorial_rf_advanced --context orBottle --from or2.ini
 \endcode
 
 In other cases, especially when a module uses several resource files, it is 

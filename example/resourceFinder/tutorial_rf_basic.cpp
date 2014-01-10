@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     ResourceFinder rf;
     rf.setVerbose();
     rf.setDefaultConfigFile("random.ini");
-    rf.setDefaultContext("tutorials/randomMotion");
+    rf.setDefaultContext("randomMotion");
     rf.configure(argc, argv);
         
     ConstString robotName=rf.find("robot").asString();

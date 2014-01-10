@@ -10,24 +10,24 @@ In previous tutorials (\ref yarp_resource_finder_basic and \ref yarp_resource_fi
 
 \section rf_install_files Files to be installed
 
-The (hypothetical) module from \ref yarp_resource_finder_advanced requires the "robot" and "model" initialization parameters. Default values can be provided in a file:
+The (hypothetical) module from \ref yarp_resource_finder_basic requires the "robot","part", and "joint" initialization parameters. Default values can be provided in a file:
 
+\c random.ini
 \verbatim
-or.ini:
-
 robot icub
-model bottle.ppm
+part head
+joint 0
 \endverbatim
 
-We save this file into a subdirectory of our source tree; we choose the "conf" subdirectory, in our \e src/examples/resourceFinder directory.
+We save this file into a subdirectory of our source tree; we choose the "conf" subdirectory, in our <EM> <YARP_SOURCE_CODE>/examples/resourceFinder </EM> directory.
 
-We can define a default initialization context, i.e., "orBottle", for the module to locate files; this means that in the source code, the ResourceFinder will be configured like this:
+We can define a default initialization context, i.e., "randomMotion", for the module to locate files; this means that in the source code, the ResourceFinder will be configured like this:
 
 \code
 ResourceFinder rf;
 rf.setVerbose();
-rf.setDefaultConfigFile("or.ini");
-rf.setDefaultContext("tutorials/orBottle");
+rf.setDefaultConfigFile("random.ini");
+rf.setDefaultContext("randomMotion");
 rf.configure(argc, argv);
 \endcode
 
@@ -63,16 +63,16 @@ line.
 
 Now, we add:
 \verbatim
-set(conf conf/or.ini)
+set(conf conf/random.ini)
 \endverbatim
 
 to tell CMake which files to install, and
 \verbatim
-yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/tutorials/orBottle)
+yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/randomMotion)
 \endverbatim
 to tell CMake where to install those files.
 \note 
-Instead of creating the \e conf variable by listing all configuration files explicitly as in <tt>set(conf conf/or.ini)</tt>, one can have CMake figure out the list or all configuration files like this:
+Instead of creating the \e conf variable by listing all configuration files explicitly as in <tt>set(conf conf/random.ini)</tt>, one can have CMake figure out the list or all configuration files like this:
 \verbatim
 file(GLOB conf conf/*.ini)
 \endverbatim
@@ -80,6 +80,8 @@ but <em>GLOBBING is EVIL</em>, so we do not recommend it.
 \endnote
 \section rf_install_finalnotes Notes
 Keep in mind that the \c ${YARP_CONTEXTS_INSTALL_DIR} variable expands to a relative path that will be appended to the installation prefix chosen by the user; the user should be warned to use the same installation directory as YARP, or to configure their system as explained \ref datafiles_3rdparty here.
+
+Remember that you can always inspect the state of contexts on your machine, and customize installed configuration files, using the \ref yarp_yarp-config utility.
 
 \section sec_code Code
 

@@ -10,7 +10,7 @@
 
 \author Elena Ceseracciu and Lorenzo Natale
 
-The utility yarp-config inspects the system reports information about installed configuration and data files. In addition it supports the process of customizing data files by copying them from installation to the user private directories (we call this \e importing).
+The utility yarp-config inspects the system and reports information about installed configuration and data files. In addition, it supports the process of customizing data files by copying them from installation to the user private directories (we call this \e importing).
 
 Some commands related to YARP configuration files are:
 
@@ -65,7 +65,7 @@ provides an explanation of the commands supported by the yarp-config tool.
 
 \section yarp-config-example An Example
 
-Suppose you have installed both YARP and iCub.
+Suppose you have installed both YARP and the example provided in <YARP_SOURCE_CODE>/examples/resourceFinder and described in \ref yarp_resource_finder_installation .
 
 Type: 
 
@@ -81,42 +81,32 @@ The result should be something like:
  **SYSADMIN DATA:
  **INSTALLED DATA:
  * Directory : /usr/local/share/yarp/contexts
+ randomMotion
  yarpscope
- * Directory : /usr/local/share/iCub/contexts
- actionPrimitivesExample
- actionsRenderingEngine
- armCartesianController
- boostMILExample
- cameraCalibration
- cartesianSolver
- [..] 
- takeOverTheWorld
- wholeBodyDynamics
 
 \endverbatim
 
 This shows us that:
 
 \li The local user directory /home/nat.local/share/yarp/contexts is empty, i.e. no contexts have been imported
-\li The shared installation directory for YARP /usr/local/share/yarp/contexts contains one context: yarpscope
-\li The shared installation directory for iCub /usr/local/share/iCub/contexts contains several contexts
+\li The shared installation directory for YARP /usr/local/share/yarp/contexts contains two contexts: randomMotion and yarpscope
 
-To be able to modify a contexts, for example to customize one parameter you have to first import it in the user directory. Suppose for example you want to customize the context ''cartesianSolver'':
+To be able to modify a contexts, for example to customize one parameter, you have to first import it in the user directory. Suppose for example you want to customize the context ''randomMotion'':
 
 \verbatim
-  yarp-config context --import cartesianSolver
+  yarp-config context --import randomMotion
 \endverbatim
 
 This is the output you should get:
 
 \verbatim
- Copied context cartesianSolver from 
- /usr/local/share/iCub/contexts/cartesianSolver to 
- /home/nat/.local/share/yarp/contexts/cartesianSolver
+ Copied context randomMotion from
+ /usr/local/share/yarp/contexts/randomMotion to
+ /home/nat/.local/share/yarp/contexts/randomMotion
 
- Current locations for this context: 
- /home/nat/.local/share/yarp/contexts/cartesianSolver 
- /usr/local/share/iCub/contexts/cartesianSolver
+ Current locations for this context:
+ /home/nat/.local/share/yarp/contexts/randomMotion
+ /usr/local/share/iCub/contexts/randomMotion
 \endverbatim
 
 Now type:
@@ -125,14 +115,14 @@ Now type:
   yarp-config context --list 
 \endverbatim
 
-To verify that ''cartesianSolver'' is indeed now present in /home/nat/.local/share/yarp/contexts
+To verify that ''randomMotion'' is indeed now present in /home/nat/.local/share/yarp/contexts
 
-This means that files from ''cartesianSolver'' in /home/nat/.local/share/yarp/contexts/ will take precedence over the ones in /usr/local/share/iCub/contexts. This is indeed what we wanted since the latter contains the default values we are going to modify to customize the behavior of the module.
+This means that files from ''randomMotion'' in /home/nat/.local/share/yarp/contexts/ will take precedence over the ones in /usr/local/share/yarp/contexts. This is indeed what we wanted since the latter contains the default values we are going to modify to customize the behavior of the module.
 
 To undo you can remove the context:
 
 \verbatim
-  yarp-config context --remove cartesianSolver
+  yarp-config context --remove randomMotion
 \endverbatim
 
 

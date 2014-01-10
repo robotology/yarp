@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     ResourceFinder rf;
     rf.setVerbose();
     rf.setDefaultConfigFile("or.ini");
-    rf.setDefaultContext("tutorials/orBottle");
+    rf.setDefaultContext("orBottle");
     rf.configure(argc, argv);
         
     ConstString robotName=rf.find("robot").asString();

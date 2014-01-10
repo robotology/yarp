@@ -39,7 +39,7 @@ Please note that these CMake variables define relative paths, where data will be
 \section data-files-inside-specific-directories Install data files inside directories specific for your project
 
 
-We recommend you now have a look at the utorials in \ref yarp_resource_finder_tutorials to see how you can use these variables and the ResourceFinder class in your project.
+We recommend you now have a look at the tutorials in \ref yarp_resource_finder_tutorials to see how you can use these variables and the ResourceFinder class in your project.
 
 <EM> This is an advanced feauture that should be considered experimental and can be removed in the future.</EM>
 

@@ -25,12 +25,11 @@ The module should receive the following parameters:
 \endcode
 
 We place these configuration parameters in a file called random.ini. We decide to create a directory, i.e. 
-'randomMotion' to store this file (and hypotetically others needed by this module) in $YARP_DATA_HOME/contexts. Because 
-we are writing a tutorial we actually place this directory in a subdirectory called 'tutorials'.
+'randomMotion' to store this file (and hypotetically others needed by this module) in $YARP_DATA_HOME/contexts.
 
 Here is how this file would look like:
 \code
-$YARP_DATA_HOME/contexts/tutorials/randomMotion/random.ini
+$YARP_DATA_HOME/contexts/randomMotion/random.ini
 
 robot icub
 part head
@@ -69,10 +68,10 @@ be used to locate the file 'random.ini'.
 You run the module as:
 
 \code
-random_motion --context tutorials/randomMotion
+random_motion --context randomMotion
 \endcode
 
-the module will read parameters from $YARP_DATA_HOME/contexts/tutorials/randomMotion/random.ini and perform its job.
+the module will read parameters from $YARP_DATA_HOME/contexts/randomMotion/random.ini and perform its job.
 
 We can now create another directory to store a different configuration file. This file could for example
 configure random_motion to connect to the simulator and move joint number 2 of the arm.
@@ -80,7 +79,7 @@ configure random_motion to connect to the simulator and move joint number 2 of t
 Write a new file:
 
 \code
-$YARP_DATA_HOME/contexts/tutorials/randomMotionSim/random.ini:
+$YARP_DATA_HOME/contexts/randomMotionSim/random.ini:
 
 robot icubSim
 part right_arm
@@ -90,7 +89,7 @@ joint 2
 and run:
 
 \code
-random_motion --context tutorials/randomMotionSim
+random_motion --context randomMotionSim
 \endcode
 
 If you wish, you can specify a 'defaultContext' to be used when no parameters are given to the module.
@@ -98,7 +97,7 @@ If you wish, you can specify a 'defaultContext' to be used when no parameters ar
 Just add the following line after the call to setDefaultConfigFile():
 
 \code
-rf.setDefaultContext("tutorials/randomMotion");
+rf.setDefaultContext("randomMotion");
 \endcode
 
 Now running:
@@ -108,7 +107,7 @@ random_motion
 \endcode
 
 would result in 'random_motion' being configured from the file 'random.ini' in 
-$YARP_DATA_HOME/contexts/tutorials/randomMotion
+$YARP_DATA_HOME/contexts/randomMotion
 
 \section sec_discussion Discussion
 We have seen how the ResourceFinder facilitates passing parameters to a module from a file. The ResourceFinder follows particular
