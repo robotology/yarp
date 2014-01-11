@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     ResourceFinder rf;
     rf.setVerbose();
-    rf.setDefaultConfigFile("random.ini");
+    rf.setDefaultConfigFile("config.ini");
     rf.setDefaultContext("randomMotion");
     rf.configure(argc, argv);
         
