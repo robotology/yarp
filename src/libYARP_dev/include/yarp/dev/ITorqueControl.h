@@ -11,6 +11,7 @@
 #define __YARPTORQUECONTROL__
 
 #include <yarp/os/Vocab.h>
+#include <yarp/dev/ControlBoardPid.h>
 
 namespace yarp {
     namespace dev {
