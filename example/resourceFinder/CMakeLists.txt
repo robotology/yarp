@@ -19,7 +19,7 @@ target_link_libraries(rf_advanced ${YARP_LIBRARIES})
 
 # to install data files:
 include(YarpInstallationHelpers)
-set(conf conf/random.ini)
+set(conf randomMotion/config.ini)
 # alternatively, if you are too lazy to list all files explicitly, you can "GLOB" them with:
 # file(GLOB conf conf/*.ini)
 

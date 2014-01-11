@@ -59,10 +59,13 @@ joint:3
 
 Now suppose we wish to place these configuration parameters in a file called \e config.ini. We can put this file together with the sources in a specific folder called \e randomMotion.
 
-Here is how this file would look like:
+Create the file:
 \code
 ./randomMotion/config.ini
+\endcode
 
+Open it with your preferred editor and type:
+\code
 robot icub
 part head
 joint 0
@@ -131,13 +134,17 @@ We create a new directory and add there a new file:
 
 \code
 mkdir $HOME/.local/share/yarp/contexts/randomMotionSim
+\endcode
 
-$HOME/.local/share/yarp/contexts/randomMotionSim/config.ini:
+Create with you preferred editor a file called \e config.ini that contains the following lines:
 
+\code
 robot robbySim
 part right_arm
 joint 2
 \endcode
+
+Put the file in the directory \e randomMotionSim you just created.
 
 We run:
 

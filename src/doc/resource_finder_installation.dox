@@ -10,32 +10,33 @@ In previous tutorials (\ref yarp_resource_finder_basic and \ref yarp_resource_fi
 
 \section rf_install_files Files to be installed
 
-The (hypothetical) module from \ref yarp_resource_finder_basic requires the "robot","part", and "joint" initialization parameters. Default values can be provided in a file:
+The module from \ref yarp_resource_finder_basic required the "robot","part", and "joint" initialization parameters. Default values were provided in a file:
 
-\c random.ini
+\c config.ini
 \verbatim
 robot icub
 part head
 joint 0
 \endverbatim
 
-We save this file into a subdirectory of our source tree; we choose the "conf" subdirectory, in our <EM> <YARP_SOURCE_CODE>/examples/resourceFinder </EM> directory.
+We saved this file into a subdirectory of our source tree; we chose the "randomMotion" subdirectory, in our <EM> <YARP_SOURCE_CODE>/examples/resourceFinder </EM> directory.
 
-We can define a default initialization context, i.e., "randomMotion", for the module to locate files; this means that in the source code, the ResourceFinder will be configured like this:
+We defined a default initialization context, i.e., "randomMotion", for the module to locate files; this means that in the source code, the ResourceFinder was configured like this:
 
 \code
 ResourceFinder rf;
 rf.setVerbose();
-rf.setDefaultConfigFile("random.ini");
+rf.setDefaultConfigFile("config.ini");
 rf.setDefaultContext("randomMotion");
 rf.configure(argc, argv);
 \endcode
 
-We'll see now how to setup file installation so that our module will be able to load the default file automatically, without having users explicitly create it on their machines.
+We'll see now how to setup installation rules so that after compilation the configuration files for the module will be available without manual copies.
 
 \section rf_install_cmake CMake to the rescue
 
-The minimal CMake file that allows to build our tutorial modules is this:
+The minimal CMake file that allows to build our tutorial modules is this (this CMake file actually builds the two Resource Finder tutorials):
+ 
 \verbatim
 cmake_minimum_required(VERSION 2.8.7)
 project(resourceFinder)
@@ -63,7 +64,7 @@ line.
 
 Now, we add:
 \verbatim
-set(conf conf/random.ini)
+set(conf randomMotion/config.ini)
 \endverbatim
 
 to tell CMake which files to install, and
@@ -72,9 +73,9 @@ yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/randomMotion
 \endverbatim
 to tell CMake where to install those files.
 \note 
-Instead of creating the \e conf variable by listing all configuration files explicitly as in <tt>set(conf conf/random.ini)</tt>, one can have CMake figure out the list or all configuration files like this:
+Instead of creating the \e conf variable by listing all configuration files explicitly as in <tt>set(conf randomMotion/configure.ini)</tt>, one can have CMake figure out the list or all configuration files like this:
 \verbatim
-file(GLOB conf conf/*.ini)
+file(GLOB conf randomMotion/*.ini)
 \endverbatim
 but <em>GLOBBING is EVIL</em>, so we do not recommend it.
 \endnote
