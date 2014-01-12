@@ -9,7 +9,7 @@ In this tutorial we show more details of how to use the ResourceFinder to locate
 \section sec_intro Introduction
 
 In a previous tutorial (\ref yarp_resource_finder_basic) we showed how to use the ResourceFinder 
-to organize modules parameters in files and place them in directories in $YARP_DATA_HOME/contexts.
+to organize modules parameters in files and place them in what we called \e context directories in a directory inside the home of the user (e.g. in Linux this was: $HOME/.local/share/yarp/contexts).
 
 We show here that the ResourceFinder is also useful to handle access to all files needed by a module.
 
@@ -25,7 +25,7 @@ Similarly to the previous tutorial we prepare a file that stores the initializat
 \verbatim
 or.ini:
 
-robot icub
+robot robby
 model bottle.ppm
 \endverbatim
 
@@ -98,17 +98,17 @@ separate configuration files. The name of the configuration file used by the Res
    rf.setDefaultConfigFile("or.ini");
 \endcode
 
-this is the \e default name, but it can be modified at runtime by running the module with the parameter \e --from:
+this is the \e default name, but it can be modified at runtime by running the module with the parameter \e --from, as exaplained in the previous tutorial:
 
 \code
 tutorial_rf_advanced --context orBottle --from or2.ini
 \endcode
 
 In other cases, especially when a module uses several resource files, it is 
-more appropriate to duplicate all files in a different context directory in $YARP_DATA_HOME/contexts. What solution is 
+more appropriate to duplicate all files in a different context directory. What solution is 
 more appropriate depends on the specific case.
 
-You should now read the tutorial \ref yarp_resource_finder_installation which describes how to use CMake to configure your build so that configuration files are automatically installed.
+You should now read the tutorial \ref yarp_resource_finder_installation which describes how to use CMake to configure your build so that configuration files are automatically installed. It also links to the documentation of the yarp-config tool, that helps to manage context directories (inspecting the system for all the existing contexts, copying and removing them to/from the user home).
 
 \section sec_code Code
 
