@@ -48,9 +48,9 @@ These directories can be stored in a directory private for the \e user (usually 
 
 \subsection datafiles_lin Linux 
 
-The private directories for the user are in </EM> $HOME/.local/share/ </EM>
+The private directories for the user are in </EM> $HOME/.local/share/yarp </EM>
 
-The shared directories for installation are </EM> usr/local/share/ </EM> and </EM> /usr/share/ </EM>
+The shared directories for installation are </EM> usr/local/share/yarp </EM> and </EM> /usr/share/yarp </EM>
 
 The latter can be changed by defining the environment variable YARP_DATA_DIRS or extended through \e path.d (see \ref datafiles_extendsearch "below").
 
