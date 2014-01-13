@@ -84,7 +84,9 @@ joint 0
 
 Notice that we here assume you are in the \e build directory.
 
-Now what is important is that you can provide the ResourceFinder with a default configuration file so that the user does not have to specify it in the command line (notice that the parameter \e --from overwrites this setting):
+Now in many cases you don't want to bother about the exact path to the ini file. This happens for example if you are writing a script that executes the module and you don't know the exact configuration of the machine (it could even be running a different operating system!). This is the case for example when writing scripts for the \ref yarpmanager.
+
+We will see you to do this. But first let's first provide the ResourceFinder with a default configuration file so that the user does not have to specify it in the command line (notice that the parameter \e --from overwrites this setting):
 
 \code
 ResourceFinder rf;
@@ -93,30 +95,17 @@ rf.setDefaultConfigFile("config.ini"); //specifies a default configuration file
 rf.configure(argc, argv);
 \endcode
 
-Now, this does not tell the ResourceFinder \e where to look for the file. To do this we can run random_motion with the parameter \e --context:
+Now we can put \e config.ini in one of the data directories defined by YARP. A possible option is the directory .local/share/yarp/contexts inside the home of the user (in windows this is \%APPDATA\%/yarp/contexts, see \ref yarp_data_dirs for more details). By default this is the first place in which the ResourceFinder searches for files if not instructed with a precise path (like in this case). 
 
-\code
-random_motion --context ../randomMotion
-[skipping verbose log messages]
-
-Running with:
-robot:robby
-part:head
-joint:3
-\endcode
-
-This is useful because:
-
-\li the context directory can contain more than a single file, by changing only this directory we change the whole configuration of the module with a single command; 
-\li YARP defines a set of places that can contain context directories, in our example the \e randomMotion folder can be installed with the executable and located at runtime without the user providing its exact path (which is system dependent).
-
-As an example we can copy \e randomMotion in a predefined directory inside the home of the user. In Linux by default this is $HOME/.local/share/yarp/contexts (in windows this is \%APPDATA\%/yarp/contexts, see \ref yarp_data_dirs for more details).
+To avoid confusions and clashes with other similar files we keep the file inside the directory \e randomMotion; we call this directory a \e context for the module random_motion.
 
 \code
 cp -r ../randomMotion $HOME/.local/share/yarp/contexts
 \endcode
 
-Now from any working directory in the computer you can run your module and it will read parameters from $HOME/.local/share/yarp/contexts/randomMotion/random.ini and do its job.
+Now from any working directory in the computer you can run your module and it will read parameters from $HOME/.local/share/yarp/contexts/randomMotion/config.ini and do its job.
+
+To do this we can run random_motion with the parameter \e --context:
 
 \code
 ./random_motion --context randomMotion
@@ -128,7 +117,12 @@ part: head
 joint: 0
 \endcode
 
-We can now create another directory to store a different configuration file. This file could for example configure random_motion to connect to a simulator and move joint number 2 of the arm.
+This is useful because:
+
+\li the context directory can contain more than a single file, by changing only this directory we change the whole configuration of the module with a single command; 
+\li YARP defines a set of places that can contain context directories, in our example the \e randomMotion folder can be installed with the executable and located at runtime without the user providing its exact path (which is system dependent).
+
+In fact we can now create another directory to store a different configuration file. This file could for example configure random_motion to connect to a simulator and move joint number 2 of the arm.
 
 We create a new directory and add there a new file:
 
