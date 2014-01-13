@@ -31,7 +31,7 @@ model bottle.ppm
 
 we place this file together with the template bottle.ppm in a directory called 'orBottle' in $YARP_DATA_HOME/contexts .
 
-main.cpp is something like:
+The main function will be something like:
 
 \code
 ResourceFinder rf;
