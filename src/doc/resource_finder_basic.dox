@@ -4,7 +4,7 @@
 
 \author Lorenzo Natale and Elena Ceseracciu
 
-This tutorial shows how to use the ResourceFinder class to organize parameters passed to 
+This tutorial shows how to use the yarp::os::ResourceFinder class to organize parameters passed to 
 modules. The ResourceFinder is a helper class that allows to find and read configuration files from YARP's installation directories or from directories that are user specific (see \ref yarp_data_dirs).
 
 \section sec_intro Introduction
@@ -187,7 +187,7 @@ For simplicity in the above example we used specific Linux commands and director
 
 Normally context directories are not copied manually to the home of the user, but they are installed together with other contexts in YARP's directories and managed with the yarp-config tool. The tutorial \ref yarp_resource_finder_installation describes how to use CMake to configure your build so that configuration files are automatically installed and it links to the yarp-config help page.
 
-More insights on the ResourceFinder are given in a more advanced tutorial \ref yarp_resource_finder_advanced.
+More insights on the ResourceFinder are given in a more advanced tutorial \ref yarp_resource_finder_advanced. See also the yarp::os::ResourceFinder class documentation.
 
 \section sec_code Code
 

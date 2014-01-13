@@ -4,7 +4,7 @@
 
 \author Lorenzo Natale and Elena Ceseracciu
 
-In this tutorial we show more details of how to use the ResourceFinder to locate files.
+In this tutorial we show more details of how to use the yarp::os::ResourceFinder to locate files.
 
 \section sec_intro Introduction
 
@@ -109,6 +109,8 @@ more appropriate to duplicate all files in a different context directory. What s
 more appropriate depends on the specific case.
 
 You should now read the tutorial \ref yarp_resource_finder_installation which describes how to use CMake to configure your build so that configuration files are automatically installed. It also links to the documentation of the yarp-config tool, that helps to manage context directories (inspecting the system for all the existing contexts, copying and removing them to/from the user home).
+
+See also the yarp::os::ResourceFinder class documentation.
 
 \section sec_code Code
 
