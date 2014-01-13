@@ -9,7 +9,7 @@ modules. The ResourceFinder is a helper class that allows to find and read confi
 
 \section sec_intro Introduction
 
-Suppose we wish to write a module called 'random_motion' that performs random movements of a single joints. 
+Suppose we wish to write a module called 'random_motion' that performs random movements of a single joint.
 The module is generic in that it can control any of the available joints of one of the limbs of a robot, either a real or a simulated one.
 
 The module should receive the following parameters:
@@ -108,7 +108,7 @@ joint:3
 This is useful because:
 
 \li the context directory can contain more than a single file, by changing only this directory we change the whole configuration of the module with a single command; 
-\li YARP defines a set of places that can contain context directories, in our example randomMotion can be installed with the executable and located at runtime without knowing it exacts path (which is system dependent).
+\li YARP defines a set of places that can contain context directories, in our example the \e randomMotion folder can be installed with the executable and located at runtime without the user providing its exact path (which is system dependent).
 
 As an example we can copy \e randomMotion in a predefined directory inside the home of the user. In Linux by default this is $HOME/.local/share/yarp/contexts (in windows this is \%APPDATA\%/yarp/contexts, see \ref yarp_data_dirs for more details).
 
@@ -187,7 +187,7 @@ rm -rf $HOME/.local/share/yarp/contexts/randomMotionSim
 
 \section sec_discussion Discussion
 We have seen how the ResourceFinder facilitates passing parameters to a module from a file. The ResourceFinder follows particular
-rules to locate configuration files that allows, for example, to switch the "initialization context" from which a module will be configured. 
+rules to locate configuration files that allow, for example, to switch the "initialization context" from which a module will be configured.
 
 For simplicity in the above example we used specific Linux commands and directories. Adapting this tutorials to other operating systems should be strightforward.
 
