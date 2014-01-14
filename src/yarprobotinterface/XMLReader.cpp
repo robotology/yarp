@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
 
 #define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Syntax error while loading" << curr_filename << "at line" << line << "."
@@ -227,6 +228,7 @@ public:
     std::string path;
     RobotInterfaceDTD dtd;
     Robot robot;
+    yarp::os::ResourceFinder rf;
 
     std::string curr_filename;
     unsigned int minorVersion;
@@ -237,6 +239,7 @@ public:
 RobotInterface::XMLReader::Private::Private(XMLReader *p) :
     parent(p)
 {
+    rf.setVerbose();
 }
 
 RobotInterface::XMLReader::Private::~Private()
@@ -420,12 +423,7 @@ RobotInterface::DeviceList RobotInterface::XMLReader::Private::readDevicesTag(Ti
     std::string filename;
     if (devicesElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
         // yDebug() << "Found devices file [" << filename << "]";
-#ifdef WIN32
-        std::replace(filename.begin(), filename.end(), '/', '\\');
-        filename = path + "\\" + filename;
-#else // WIN32
-        filename = path + "/" + filename;
-#endif //WIN32
+        filename=rf.findFileByName(filename);
         return readDevicesFile(filename);
     }
 
@@ -710,12 +708,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParamsTag(TiXm
     std::string filename;
     if (paramsElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
         // yDebug() << "Found params file [" << filename << "]";
-#ifdef WIN32
-        std::replace(filename.begin(), filename.end(), '/', '\\');
-        filename = path + "\\" + filename;
-#else // WIN32
-        filename = path + "/" + filename;
-#endif //WIN32
+        filename=rf.findFileByName(filename);
         return readParamsFile(filename);
     }
 
@@ -875,12 +868,7 @@ RobotInterface::ActionList RobotInterface::XMLReader::Private::readActionsTag(Ti
     std::string filename;
     if (actionsElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
         // yDebug() << "Found actions file [" << filename << "]";
-#ifdef WIN32
-        std::replace(filename.begin(), filename.end(), '/', '\\');
-        filename = path + "\\" + filename;
-#else // WIN32
-        filename = path + "/" + filename;
-#endif //WIN32
+        filename=rf.findFileByName(filename);
         return readActionsFile(filename);
     }
 
