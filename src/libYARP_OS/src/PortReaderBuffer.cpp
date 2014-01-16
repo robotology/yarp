@@ -622,6 +622,9 @@ bool PortReaderBufferBase::getEnvelope(PortReader& envelope) {
     return HELPER(implementation).getEnvelope(envelope);
 }
 
+void PortReaderBufferBase::clear() {
+    HELPER(implementation).clear();
+}
 
 void typedReaderMissingCallback() {
     YARP_ERROR(Logger::get(), "Missing or incorrectly typed onRead function");

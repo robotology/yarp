@@ -1087,6 +1087,47 @@ public:
         report(0,"successfully closed");        
     }
 
+    void testReopen() {
+        report(0,"checking opening/closing/reopening ports...");
+
+        BufferedPort<Bottle> port2;
+        port2.open("/test2");
+
+        BufferedPort<Bottle> port;
+        port.open("/test");
+
+        Network::connect("/test2", "/test");
+        Network::sync("/test");
+        Network::sync("/test2");
+        port2.prepare().fromString("1 msg");
+        port2.write();
+
+        while (port.getPendingReads()<1) {
+            Time::delay(0.1);
+        }
+
+        checkFalse(port.isClosed(),"port tagged as open");
+        port.close();
+        checkTrue(port.isClosed(),"port tagged as closed");
+        port.open("/test");
+        checkFalse(port.isClosed(),"port tagged as open");
+
+        Bottle *bot = port.read(false);
+        checkTrue(bot==NULL,"reader correctly reset");
+
+        Network::connect("/test2", "/test");
+        Network::sync("/test");
+        Network::sync("/test2");
+        port2.prepare().fromString("2 msg");
+        port2.write();
+
+        bot = port.read();
+        checkFalse(bot==NULL,"reader working");
+        if (bot) {
+            checkEqual(bot->get(0).asInt(),2,"reader read correct message");
+        }
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1129,6 +1170,8 @@ public:
         testInterrupt();
 
         testInterruptReply();
+
+        testReopen();
 
         NetworkBase::setLocalMode(false);
     }

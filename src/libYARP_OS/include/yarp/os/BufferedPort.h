@@ -61,12 +61,14 @@ public:
      * Destructor.
      */
     virtual ~BufferedPort() {
-        port.close();
+        close();
     }
 
 
     // documentation provided in Contactable
     virtual bool open(const ConstString& name) {
+        reader.attach(port);
+        writer.attach(port);
         return port.open(name);
     }
 
@@ -93,6 +95,8 @@ public:
     // documentation provided in Contactable
     virtual void close() {
         port.close();
+        reader.detach();
+        writer.detach();
     }
 
     // documentation provided in Contactable

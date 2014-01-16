@@ -83,6 +83,8 @@ public:
 
     void attach(Port& port);
 
+    void detach();
+
     void write(bool strict);
 
 

@@ -124,6 +124,10 @@ public:
         stateSema.post();
     }
 
+    void detach() {
+        // nothing to do
+    }
+
     void write(bool strict) {
         if (strict) {
             finishWrites();
@@ -197,6 +201,10 @@ int PortWriterBufferBase::getCount() {
 
 void PortWriterBufferBase::attach(Port& port) {
     HELPER(implementation).attach(port);
+}
+
+void PortWriterBufferBase::detach() {
+    HELPER(implementation).detach();
 }
 
 void PortWriterBufferBase::write(bool strict) {

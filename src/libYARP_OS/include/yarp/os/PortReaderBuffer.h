@@ -237,6 +237,8 @@ public:
 
     bool isClosed();
 
+    void clear();
+
     virtual yarp::os::PortReader *create();
 
     void release(yarp::os::PortReader *completed);
@@ -356,6 +358,10 @@ public:
      * Destructor.
      */
     virtual ~PortReaderBuffer() {
+        detach();
+    }
+
+    void detach() {
         // it would also help to close the port, so
         // that incoming inputs are interrupted
         if (reader!=0/*NULL*/) {
@@ -366,6 +372,8 @@ public:
             delete default_value;
             default_value = 0/*NULL*/;
         }
+        last = 0/*NULL*/;
+        implementation.clear();
     }
 
     // documented in TypedReader
