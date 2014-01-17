@@ -10,6 +10,7 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Terminator.h>
@@ -363,6 +364,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
 
     // get command line options
+    ResourceFinder rf;
+    rf.configure(argc, argv);
     Property options;
 
     // yarpdev will by default try to pass its thread on to the device.
@@ -372,7 +375,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     options.put("single_threaded", 1);
 
     // interpret command line options as a set of flags
-    options.fromCommand(argc,argv,true,false);
+    //options.fromCommand(argc,argv,true,false);
+    options.fromString(rf.toString().c_str(), false);
 
     // check if we're being asked to read the options from file
     Value *val;
