@@ -120,8 +120,27 @@ public:
         return setDefaultContext(contextName);
     }
 
-    bool setDefault(const char *key, const char *val);
+    /**
+     *
+     * Provide a default value for a given key; the provided key will be converted to a
+     * yarp::os::Value, so also string representations for lists and numerical values are accepted
+     *
+     */
+    bool setDefault(const char *key, const yarp::os::ConstString& val);
 
+    /**
+     *
+     * Provide a default value for a given key
+     *
+     */
+    bool setDefault(const char *key, const yarp::os::Value& val);
+
+    /**
+     *
+     * Provide a default value for the configuration file
+     * (can be overridden from command line with the --from argument)
+     *
+     */
     bool setDefaultConfigFile(const char *fname) {
         return setDefault("from",fname);
     }

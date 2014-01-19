@@ -201,6 +201,32 @@ public:
         checkTrue(rf3.isNull(),"section3 null ok");
     }
 
+    void testDefaults() {
+        report(0,"test default values of generic type");
+        int defInt=42;
+        double defDouble=42.42;
+        ConstString defString="fortytwo";
+        Bottle defList("(answers (42 24))");
+        const char *argv[] = { NULL };
+        int argc = 1;
+        ResourceFinder rf;
+        rf.setDefault("int", defInt);
+        rf.setDefault("double", defDouble);
+        rf.setDefault("string", defString);
+        rf.setDefault("constchar", defString.c_str());
+        rf.setDefault("list", defList.toString());
+        rf.configure(argc,(char **)argv);
+        checkEqual(rf.find("int").asInt(), defInt, "default integer set correctly");
+        checkEqual(rf.find("double").asDouble(), defDouble, "default double set correctly");
+        checkEqual(rf.find("string").asString(), defString, "default string set correctly");
+        checkEqual(rf.find("constchar").asString(), defString, "default string (passed as const char*) set correctly");
+        Bottle *foundList=rf.find("list").asList();
+        if(foundList!=NULL)
+            checkEqual(rf.find("list").asList()->get(0).asString(), "answers", "default list set correctly");
+        else
+            report(1, "RF could not find default list");
+    }
+
     void testGetDataHome() {
         report(0,"test getDataHome");
         saveEnvironment("YARP_DATA_HOME");
@@ -642,7 +668,7 @@ public:
         checkEqual(rf2.find("testNumber").asString(), "fortytwo", "Copied RF finds the default passed to the original one");
         ResourceFinder rf3;
         rf3=rf1;
-        checkEqual(rf3.find("testNumber").asString(), "fortytwo", "Assigned RF findsthe default passed to the original one");
+        checkEqual(rf3.find("testNumber").asString(), "fortytwo", "Assigned RF finds the default passed to the original one");
     }
 
 void testGetHomeDirsForWriting()
@@ -685,6 +711,7 @@ void testGetHomeDirsForWriting()
         testBasics();
         testCommandLineArgs();
         testContext();
+        testDefaults();
         testSubGroup();
         testGetDataHome();
         testGetConfigHome();

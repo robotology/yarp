@@ -374,7 +374,7 @@ public:
         return configured_normally;
     }
 
-    bool setDefault(Property& config, const char *key, const char *val) {
+    bool setDefault(Property& config, const char *key, const yarp::os::Value &val) {
         if (!config.check(key)) {
             config.put(key,val);
         }
@@ -989,7 +989,12 @@ bool ResourceFinder::clearContext() {
     return HELPER(implementation).clearAppNames();
 }
 
-bool ResourceFinder::setDefault(const char *key, const char *val) {
+bool ResourceFinder::setDefault(const char *key, const yarp::os::ConstString& val) {
+    Value val2;
+    val2.fromString(val.c_str());
+    return HELPER(implementation).setDefault(config,key,val2);
+}
+bool ResourceFinder::setDefault(const char *key, const yarp::os::Value& val) {
     return HELPER(implementation).setDefault(config,key,val);
 }
 
