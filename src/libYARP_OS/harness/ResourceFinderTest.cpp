@@ -14,6 +14,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/YarpPlugin.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -417,12 +418,29 @@ public:
         yarp_config_home.addString("yarp");
         mkdir(yarp_config_home);
 
+        Bottle yarp_config_home_plugins;
+        yarp_config_home_plugins.addString(base);
+        yarp_config_home_plugins.addString("home");
+        yarp_config_home_plugins.addString("yarper");
+        yarp_config_home_plugins.addString(".config");
+        yarp_config_home_plugins.addString("yarp");
+        yarp_config_home_plugins.addString("plugins");
+        mkdir(yarp_config_home_plugins);
+
         Bottle yarp_data_dir0;
         yarp_data_dir0.addString(base);
         yarp_data_dir0.addString("usr");
         yarp_data_dir0.addString("share");
         yarp_data_dir0.addString("yarp");
         mkdir(yarp_data_dir0);
+
+        Bottle yarp_data_dir0_plugins;
+        yarp_data_dir0_plugins.addString(base);
+        yarp_data_dir0_plugins.addString("usr");
+        yarp_data_dir0_plugins.addString("share");
+        yarp_data_dir0_plugins.addString("yarp");
+        yarp_data_dir0_plugins.addString("plugins");
+        mkdir(yarp_data_dir0_plugins);
 
         Bottle yarp_context_dir;
         yarp_context_dir.addString(base);
@@ -565,6 +583,26 @@ public:
         fprintf(fout,"magic_number = 5002\n");
         fclose(fout);
         fout = NULL;
+
+        fout = fopen((pathify(yarp_config_home_plugins)+slash+"fakedev1.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"[plugin fakedev1]\n");
+        fprintf(fout,"type device\n");
+        fprintf(fout,"name fakedev1\n");
+        fprintf(fout,"library yarp_fakedev1\n");
+        fprintf(fout,"part fakedev1\n");
+        fclose(fout);
+        fout = NULL;
+
+        fout = fopen((pathify(yarp_data_dir0_plugins)+slash+"fakedev2.ini").c_str(),"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"[plugin fakedev2]\n");
+        fprintf(fout,"type device\n");
+        fprintf(fout,"name fakedev2\n");
+        fprintf(fout,"library yarp_fakedev2\n");
+        fprintf(fout,"part fakedev2\n");
+        fclose(fout);
+        fout = NULL;
     }
 
     void breakDownTestArea() {
@@ -671,7 +709,8 @@ public:
         checkEqual(rf3.find("testNumber").asString(), "fortytwo", "Assigned RF finds the default passed to the original one");
     }
 
-void testGetHomeDirsForWriting()
+
+    void testGetHomeDirsForWriting()
     {
         ConstString slash = Network::getDirectorySeparator();
         report(0,"test get 'home' dirs for writing");
@@ -707,6 +746,19 @@ void testGetHomeDirsForWriting()
         breakDownTestArea();
     }
 
+
+    void testFindPlugins() {
+        report(0,"test get 'home' dirs for writing");
+        setUpTestArea(false);
+        YarpPluginSelector selector;
+        selector.scan();
+        Bottle lst = selector.getSelectedPlugins();
+        checkTrue(lst.check("fakedev1"),"first device present");
+        checkTrue(lst.check("fakedev2"),"second device present");
+        checkFalse(lst.check("fakedev3"),"non-existent device absent");
+        breakDownTestArea();
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
@@ -721,6 +773,7 @@ void testGetHomeDirsForWriting()
         testContextVer2();
         testCopy();
         testGetHomeDirsForWriting();
+        testFindPlugins();
     }
 };
 
