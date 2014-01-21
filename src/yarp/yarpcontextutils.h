@@ -32,6 +32,7 @@ void printUserFolders(yarp::os::ResourceFinder &rf, folderType ftype);
 void printSysadmFolders(yarp::os::ResourceFinder &rf, folderType ftype);
 void printInstalledFolders(yarp::os::ResourceFinder &rf, folderType ftype);
 void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype);
+bool prepareSubFolders(const yarp::os::ConstString& startDir, const yarp::os::ConstString& fileName);
 int recursiveDiff(yarp::os::ConstString srcDirName, yarp::os::ConstString destDirName, std::ostream &output=std::cout);
 int fileMerge(yarp::os::ConstString srcFileName, yarp::os::ConstString destFileName, yarp::os::ConstString commonParentName);
 int recursiveMerge(yarp::os::ConstString srcDirName, yarp::os::ConstString destDirName, yarp::os::ConstString commonParentName, std::ostream &output=std::cout);

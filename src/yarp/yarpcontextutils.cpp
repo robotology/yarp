@@ -383,6 +383,23 @@ void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
     }
 }
 
+bool prepareSubFolders(const yarp::os::ConstString& startDir, const yarp::os::ConstString& fileName)
+{
+    string fname(fileName);
+    if(fname.find(PATH_SEPARATOR)==string::npos)
+         return true;
+    else
+    {
+        size_t curPos, startPos=0;
+        while((curPos=fname.find(PATH_SEPARATOR, startPos))!=string::npos)
+        {
+            yarp::os::mkdir((startDir+PATH_SEPARATOR+fname.substr(0, curPos)).c_str());
+            startPos=curPos+string(PATH_SEPARATOR).length();
+        }
+    }
+    return true;
+}
+
 bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::string>& filenames)
 {
     string strPath = string (basePath);
@@ -596,8 +613,13 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
             ConstString fileName=importArg.get(i).asString();
             if(fileName != "")
             {
+                ok= prepareSubFolders(destDirname, fileName);
                 ok = (recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, destDirname + PATH_SEPARATOR + fileName) >=0 ) && ok;
-                recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, hiddenDirname + PATH_SEPARATOR + fileName, true, false);
+                if (ok)
+                {
+                    prepareSubFolders(hiddenDirname, fileName);
+                    recursiveCopy(originalpath+ PATH_SEPARATOR + fileName, hiddenDirname + PATH_SEPARATOR + fileName, true, false);
+                }
             }
         }
         if (ok)
