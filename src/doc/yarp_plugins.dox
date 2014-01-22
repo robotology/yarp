@@ -148,7 +148,7 @@ Once the configuration files in <tt>etc/yarp/plugins</tt> can be
 found, YARP will also use any "search" blocks it finds there.
 They look like this:
 \code
-[search basic]   # basic is an arbirary identifier
+[search basic]   # basic is an arbitrary unique identifier
 path "/path/to/directory/to/try"  # possible path to library
 extension ".so"  # extension the libraries use
 prefix "lib"     # prefix the libraries use
