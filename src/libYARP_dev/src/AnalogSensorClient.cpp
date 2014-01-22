@@ -269,8 +269,12 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
     local_rpc += "/rpc:o";
     ConstString remote_rpc = remote;
     remote_rpc += "/rpc:i";
+    ConstString remote_analog = remote;
+    remote_analog += ":o";
+    ConstString local_analog = local;
+    local_analog += ":i";
 
-    if (!inputPort.open(local.c_str()))
+    if (!inputPort.open(local_analog.c_str()))
     {
         fprintf(stderr,"AnalogSensorClient::open() error could not open port %s, check network\n",local.c_str());
         return false;
@@ -283,10 +287,10 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());
+    bool ok=Network::connect(remote_analog.c_str(), local_analog.c_str(), carrier.c_str());
     if (!ok)
     {
-        fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote.c_str());
+        fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote_analog.c_str());
         return false;
     }
 
