@@ -267,7 +267,7 @@ IF (CREATE_CSHARP)
   if (YARP_COLLISION_AVOIDANCE)
     set (target_name yarp_cs)
   endif ()
-  SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+  SET(CMAKE_SWIG_FLAGS "-Wall;-dllimport;${target_name}") #-dllimport is actually needed only for CMake versions prior to 3.0 ( http://public.kitware.com/Bug/view.php?id=13814 )
   IF (WIN32 AND NOT CYGWIN)
     OPTION(PREPARE_CLASS_FILES "Prepare NET library" ON)
     SWIG_ADD_MODULE(${target_name} csharp yarp.i)
@@ -279,8 +279,8 @@ IF (CREATE_CSHARP)
 
       ADD_CUSTOM_COMMAND(TARGET ${target_name}
     POST_BUILD
-    COMMAND move *.cs .\\generated_src
-    WORKING_DIRECTORY ${YARP_BASE_DIR})
+    COMMAND move *.cs ${YARP_BASE_DIR}/generated_src
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     ENDIF ()
   ELSE(WIN32 AND NOT CYGWIN)
     SWIG_ADD_MODULE(${target_name} csharp yarp.i)
