@@ -35,7 +35,7 @@
 #endif
 
 // Try to make yarp::os::ConstString act like std::string
-#if !defined(SWIGJAVA) && !defined(SWIGLUA)
+#if !defined(SWIGJAVA) && !defined(SWIGLUA) && !defined(SWIGCSHARP)
   // Try to translate std::string and std::vector to native equivalents
   %include "std_string.i"
   %typemaps_std_string(yarp::os::ConstString, char, SWIG_AsCharPtrAndSize, 
@@ -59,6 +59,10 @@
     #if defined (SWIGJAVA)
       %include "std_string_java.i"
     #endif
+    #if defined (SWIGCSHARP)
+      %include "std_string_csharp.i"
+    #endif
+
   #endif
 %apply std::string {yarp::os::ConstString};
 #endif
