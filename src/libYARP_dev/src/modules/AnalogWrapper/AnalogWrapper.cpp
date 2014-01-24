@@ -418,6 +418,7 @@ void AnalogWrapper::threadRelease()
 void AnalogWrapper::run()
 {
     int first, last, ret;
+
     if (analogSensor_p!=0)
     {
         // read from the analog sensor
@@ -454,12 +455,12 @@ void AnalogWrapper::run()
             }
             else
             {
-                printf("vector size non valid: %lu\n", v.size());
+                printf("%s: vector size non valid: %lu\n", id.c_str(), v.size());
             }
         }
         else
         {
-            printf("Sensor returned error\n");
+             printf("%s: Sensor returned error\n", id.c_str());
         }
     }
 }
