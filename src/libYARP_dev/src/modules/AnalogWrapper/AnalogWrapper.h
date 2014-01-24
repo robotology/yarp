@@ -124,7 +124,7 @@ public:
   * It contains information about which data of the analog sensor are sent
   * on the port, i.e. an offset and a length.
   */
-struct yarp::dev::impl::AnalogPortEntry
+class yarp::dev::impl::AnalogPortEntry
 {
 public:
     yarp::os::BufferedPort<yarp::sig::Vector> port;
