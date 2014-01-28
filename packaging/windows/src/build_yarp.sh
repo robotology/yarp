@@ -103,7 +103,7 @@ if [ ! -e "$fname" ]; then
 					exit 1
 			}
 		else
-			FNAME="${fname}-r${BUNDLE_YARP_REVISION}"
+			fname="${fname}-rev${BUNDLE_YARP_REVISION}"
 			svn co https://github.com/robotology/yarp/trunk -r $BUNDLE_YARP_REVISION $fname || {
 				echo "Cannot fetch YARP"
 				exit 1

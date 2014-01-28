@@ -146,7 +146,15 @@ source nsis_any_any_any.sh || {
 }
 
 # Make build directory
-fname=yarp_core_package-$BUNDLE_YARP_VERSION
+if [ "$BUNDLE_YARP_REVISION" != "" ]
+then
+	fname=yarp_core_package-${BUNDLE_YARP_REVISION}
+elif [ "$BUNDLE_YARP_VERSION" != "" ]
+then
+	fname=yarp_core_package-${BUNDLE_YARP_VERSION}
+else
+	fname=yarp_core_package
+fi
 fname2=$fname-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
 mkdir -p $fname2
 cd $fname2 || exit 1

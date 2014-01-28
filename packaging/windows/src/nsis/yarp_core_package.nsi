@@ -134,6 +134,7 @@ SectionGroup "YARP core" SecYarp
 	!insertmacro AddEnv "PATH" "$INSTDIR\${YARP_SUB}\lib"
     !insertmacro AddEnv "LIB" "$INSTDIR\${YARP_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${YARP_SUB}\include"
+	!insertmacro AddEnv "YARP_DATA_DIRS" "$INSTDIR\${YARP_SUB}\share\yarp"
 
 	!insertmacro AddEnv1 "YARP_DIR" "$INSTDIR\${YARP_SUB}"
 

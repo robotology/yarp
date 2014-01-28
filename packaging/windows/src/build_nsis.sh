@@ -38,8 +38,12 @@ fi
 fname=nsis-$BUNDLE_NSIS_VERSION
 fname_patch=nsis-patch-$BUNDLE_NSIS_VERSION
 if [ ! -e $fname.zip ]; then
-	zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$BUNDLE_NSIS_VERSION/nsis-$BUNDLE_NSIS_VERSION.zip"
-
+	if [ "$BUNDLE_NSIS_ZIP" != "" ]
+	then
+		zipname="$BUNDLE_NSIS_ZIP"
+	else
+		zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$BUNDLE_NSIS_VERSION/nsis-$BUNDLE_NSIS_VERSION.zip"
+	fi
 	wget -O $fname.zip $zipname || (
 		echo "Cannot fetch NSIS"
 		rm -f $fname.zip
@@ -49,8 +53,12 @@ fi
 
 # Also fetch a patched NSIS that can deal with longer strings
 if [ ! -e $fname_patch.zip ]; then
-	zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$BUNDLE_NSIS_VERSION/nsis-$BUNDLE_NSIS_VERSION-strlen_8192.zip"
-
+	if [ "$BUNDLE_NSIS_PATCHES_ZIP" != "" ]
+	then
+		zipname="$BUNDLE_NSIS_PATCHES_ZIP"
+	else
+		zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$BUNDLE_NSIS_VERSION/nsis-$BUNDLE_NSIS_VERSION-strlen_8192.zip"
+	fi
 	wget -O $fname_patch.zip $zipname || (
 		echo "Cannot fetch NSIS patch"
 		rm -f $fname_patch.zip
