@@ -79,7 +79,6 @@ void OpenNI2SkeletonTracker::close(){
     delete getSensor();
     cout << "Closing sensor device...";
     device.close();
-    cout << "Test1" << endl;
     openni::OpenNI::shutdown();
     cout << "Done" << endl;
 }
@@ -110,7 +109,11 @@ int OpenNI2SkeletonTracker::init(){
         deviceStatus = rc;
         return rc;
     }
-   
+
+    cout << "OpenNI v" << openni::OpenNI::getVersion().openni::Version::major << "." << openni::OpenNI::getVersion().openni::Version::minor << "." << openni::OpenNI::getVersion().openni::Version::maintenance << "." << openni::OpenNI::getVersion().openni::Version::build <<endl;
+    
+     
+    cout << "NiTE v" << nite::NiTE::getVersion().nite::Version::major << "." << nite::NiTE::getVersion().nite::Version::minor << "." << nite::NiTE::getVersion().nite::Version::maintenance << "." << nite::NiTE::getVersion().nite::Version::build << endl;
     if (oniRecord) {
         recorder.create(oniOutputFile.c_str());
     }
@@ -143,6 +146,7 @@ int OpenNI2SkeletonTracker::init(){
         }
         
         else {
+            cout << "Resolution: " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << depthStream.getVideoMode().getFps() << " fps" << endl;
             cout << "Depth stream started..." << endl;
             frameCount = playbackControl->getNumberOfFrames(depthStream);
             fpsCount = depthStream.getVideoMode().getFps();
