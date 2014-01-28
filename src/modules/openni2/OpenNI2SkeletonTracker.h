@@ -86,13 +86,15 @@ private:
     double minConfidence;
     string fileDevice;
     string oniOutputFile;
+    int frameCount;
+    int fpsCount;
 
     // OpenNI2 and NiTE objects
     openni::Device device;
     openni::Device* pDevice;
     nite::UserTracker userTracker;
     openni::Recorder recorder;
-    //openni::PlaybackControl playbackControl;
+    openni::PlaybackControl* playbackControl;
     openni::VideoStream depthStream;
     openni::VideoStream imageStream;
     openni::VideoMode depthMode;

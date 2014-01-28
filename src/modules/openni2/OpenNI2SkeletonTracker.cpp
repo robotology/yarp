@@ -58,7 +58,7 @@ void OpenNI2SkeletonTracker::close(){
     if (userTracking) {
         cout << "Destroying user tracker...";
         for (int i=0; i < MAX_USERS; i++) {
-        userTracker.stopSkeletonTracking(i+1);
+           userTracker.stopSkeletonTracking(i+1);
         }
         userTracker.destroy();
         nite::NiTE::shutdown();
@@ -79,6 +79,7 @@ void OpenNI2SkeletonTracker::close(){
     delete getSensor();
     cout << "Closing sensor device...";
     device.close();
+    cout << "Test1" << endl;
     openni::OpenNI::shutdown();
     cout << "Done" << endl;
 }
@@ -100,7 +101,7 @@ int OpenNI2SkeletonTracker::init(){
     else {
         rc = device.open(fileDevice.c_str());
         cout << "Playback from " << fileDevice.c_str() << endl;
-        openni::PlaybackControl* playbackControl = device.getPlaybackControl();
+        playbackControl = device.getPlaybackControl();
         playbackControl->setRepeatEnabled(loop);
     }
 
@@ -143,6 +144,8 @@ int OpenNI2SkeletonTracker::init(){
         
         else {
             cout << "Depth stream started..." << endl;
+            frameCount = playbackControl->getNumberOfFrames(depthStream);
+            fpsCount = depthStream.getVideoMode().getFps();
         }
             
         // setup and start colour stream
@@ -222,7 +225,7 @@ void OpenNI2SkeletonTracker::initVars(){
     sensorStatus->depthFrame.resize(depthMode.getResolutionX(), depthMode.getResolutionY());
     sensorStatus->depthFrame.zero();
     
-    // get RGB mode properties nd prepare imageFrame
+    // get RGB mode properties and prepare imageFrame
     imageMode = imageStream.getVideoMode();
     sensorStatus->imageFrame.resize(imageMode.getResolutionX(), imageMode.getResolutionY());
     sensorStatus->imageFrame.zero();
@@ -252,6 +255,7 @@ void OpenNI2SkeletonTracker::updateSensor(){
     // get camera image
     if(camerasON && imageStream.isValid()){
         imageStream.readFrame(&imageFrameRef);
+        
         if (imageFrameRef.isValid()){
             getSensor()->imageFrame.setQuantum(1);
             
@@ -264,6 +268,11 @@ void OpenNI2SkeletonTracker::updateSensor(){
     // Get depth image (in millimetres)
     if(camerasON && depthStream.isValid()){
         depthStream.readFrame(&depthFrameRef);
+       
+        if (depthFrameRef.getFrameIndex() == frameCount) {
+            cout << "Finished playback of " << fileDevice.c_str() << endl;
+            cout << "Duration: " << ((double)frameCount/30) << " sec (" << frameCount << " frames at " << fpsCount << "fps)" << endl;
+        }
         if (depthFrameRef.isValid()){
             getSensor()->depthFrame.setQuantum(1);
             
@@ -273,7 +282,7 @@ void OpenNI2SkeletonTracker::updateSensor(){
         }
     }
     // user skeleton tracking data
-    
+   
     if(userTracking && userTracker.isValid()){
         
         // reset the stillTracking variable
