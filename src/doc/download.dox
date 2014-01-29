@@ -9,10 +9,16 @@
 
 <h2>Getting YARP</h2>
 
-Here is the most recent source code package for YARP:
+Here is the most recent source code package (stable version) for YARP:
 <ul>
 <li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.22.tar.gz">yarp-2.3.22.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
 <li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.22.zip">yarp-2.3.22.zip</a> stable release for Windows.</li>
+</ul>
+
+Here is the most recent source code package (developement version) for YARP:
+<ul>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.60.tar.gz">yarp-2.3.60.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.60.zip">yarp-2.3.60.zip</a> stable release for Windows.</li>
 </ul>
 
 <a href=http://www.cmake.org>CMake</a> version 2.6.4 or newer

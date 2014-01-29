@@ -18,7 +18,7 @@
   # check license-statement.txt for sanity
   cp license-statement.txt COPYING
 
-* Update the file ChangeLog.txt with " * tagging version x.y.x"
+* Update the file ChangeLog with " * tagging version x.y.x"
 
 * Update src/doc/download.dox
 

@@ -1,21 +1,22 @@
+2014-01-29 Matteo Brunettini  <matteo.brunettini@iit.it>
+    * tagging version 2.3.60
+
 2014-01-08 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\modules\portaudio
     now able to reproduce audio with rate!=44100 and channels!=2
-    
+
 2014-01-07 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\libYARP_sig\src\SoundFile.cpp
     * yarp2\src\libYARP_sig\include\yarp\sig\SoundFile.cpp
     fixed a critical bug in the size of the storage of the sound type. This was causing a 'click' at the end of the sound reproduction.
     fixed a race condition in the variable pThread.something_to_play, occuring during continous stream of sound packets (e.g. real time playback from a microphone) 
-    
+
 2014-01-02 Marco Randazzo <marco.randazzo@iit.it>
     * yarp2\src\libYARP_sig\src\SoundFile.cpp
     * yarp2\src\libYARP_sig\include\yarp\sig\SoundFile.cpp
     added soundStreamReader class to incrementally read chunks of sound file (instead of the whole file)
- 
     * /example/portaudio/sound_sender_file_chunks.cpp
     added example to demonstrate use of soundStreamReader class 
- 
     * /example/portaudio/sound_sender_file_sum.cpp
     added example to demonstrate the use of += operator for yarp::sig::Sound
     

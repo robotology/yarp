@@ -6,20 +6,19 @@ The list of authors for YARP (ordered by file count) is:
   Paul Fitzpatrick
   Lorenzo Natale
   Ali Paikan
-  iCub Facility, Istituto Italiano di Tecnologia
   Giorgio Metta
   Daniele E. Domenichelli
   Dr. Roland Bock
   Giacomo Spigler
   Anne van Rossum
+  Duarte Aragao
   Alessandro Scalzo
   Daniel Krieg
   Arjan Gijsberts
-  Duarte Aragao
+  Marco Randazzo
   Elena Ceseracciu
   Chris Morley
   Alberto Cardellino
-  Marco Randazzo
   Alexandre Bernardino
   Francesco Nori
   Renaud Detry
@@ -38,6 +37,7 @@ The list of authors for YARP (ordered by file count) is:
   Lars Olsson
   Gianluca Massera
   Free Software Foundation
+  Daniele Domenichelli
   by Chris Morley
   The gtkmm Development Team
   The goocanvasmm Development Team
@@ -52,34 +52,37 @@ The list of authors for YARP (ordered by file count) is:
 
 The list of committers in the YARP repository (ordered by number of commit) is:
   Paul Fitzpatrick
-  Lorenzo Natale
   Daniele E. Domenichelli
-  YARP Developers
+  Lorenzo Natale
   Ali Paikan
-  Alessandro Scalzo
   Ugo Pattacini
+  Alessandro Scalzo
+  Elena Ceseracciu
   Giacomo Spigler
   Giorgio Metta
-  Elena Ceseracciu
   Marco Randazzo
   Alexandre Bernardino
   Duarte Aragao
-  Francesco Nori
-  Andrea Del Prete
-  Arjan Gijsberts
   Alberto Cardellino
+  Francesco Nori
+  Konstantinos Theofilis
+  Andrea Del Prete
+  Matteo Brunettini
+  Arjan Gijsberts
   Carlos Beltran-Gonzalez
   Claudio Castellini
-  Matteo Brunettini
   Daniel Krieg
   Jonas Ruesch
   Michael Bucko
   Vadim Tikhanoff
+  Paul Fitzpatrick
   Bruno Nery
   Fabien Benureau
   Francesco Orabona
   Naeem Assif Mirza
   Ze Ji
+  Enrico
+  Lorenzo Natale
   Serena Ivaldi
   Valentina Gaggero
 
@@ -178,13 +181,13 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
 
 The list of copyright holders for YARP is:
   Copyright 2001, 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013
-  RobotCub Consortium (760 files)
-  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (255 files)
-  iCub Facility, Istituto Italiano di Tecnologia (62 files)
+  RobotCub Consortium (754 files)
+  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (264 files)
+  iCub Facility, Istituto Italiano di Tecnologia (94 files)
   Dr. Roland Bock (35 files)
+  Duarte Aragao (25 files)
   Giacomo Spigler (17 files)
   Daniel Krieg (16 files)
-  Duarte Aragao (16 files)
   Chris Morley (14 files)
   Anne van Rossum (13 files)
   Alexandre Bernardino (7 files)
@@ -202,6 +205,7 @@ The list of copyright holders for YARP is:
   Eric Mislivec (2 files)
   Free Software Foundation (2 files)
   Freyr Magnusson (2 files)
+  Istituto Italiano di Tecnologia (IIT) (10 files)
   Lars Olsson (2 files)
   Matteo Brunettini (2 files)
   Mike P. Blow (2 files)
@@ -241,459 +245,27 @@ All files used in the default YARP build are compatible with the
 LGPL.  Optional modules may require use of YARP under the GPL,
 rather than the LGPL.
 
-conf/FindFFMPEG.cmake
-  Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
-  CopyPolicy: 3-clause BSD
-
-conf/YarpCheckTypeSize.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: 3-clause BSD
-
-conf/FindGSL.cmake
-  Copyright: (C) 2010 Jan Woetzel
-  CopyPolicy: Use under LGPL or BSD license at your choice
-
-conf/cmake-2.8.12/Modules/FindFreetype.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: 3-clause BSD
-
-conf/cmake-2.8.12/Modules/FindGTK2.cmake
-  Copyright: 2009 Kitware, Inc.
-  CopyPolicy: 3-clause BSD
-
-conf/cmake-2.8.12/Modules/FindPackageHandleStandardArgs.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: 3-clause BSD
-
-conf/cmake-2.8.12/Modules/CMakeParseArguments.cmake
-  Copyright: 2010 Alexander Neundorf <neundorf@kde.org>
-  CopyPolicy: 3-clause BSD
-
-conf/cmake-2.8.12/Modules/FindPackageMessage.cmake
-  Copyright: 2008-2009 Kitware, Inc.
-  CopyPolicy: 3-clause BSD
-
-conf/YarpCheckStructHasMember.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: 3-clause BSD
-
-conf/FindOpenCV.cmake
-  Copyright: 2009 Benoit Rat
-  CopyPolicy: LGPLv2.1
-
-example/gtk/gtkdemo.cpp
-  Copyright: 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
-  CopyPolicy: GPLv2 or later
-
-example/matlab/simulink/sfun_time.c
-  Copyright: 2009 The MathWorks, Inc.
-  CopyPolicy: 3-clause BSD
-
-example/yayarpview/CImg.h
-  Copyright: 2004 David Tschumperle
-  CopyPolicy: CeCILL license (use, modify, redistribute)
-
-src/modules/jrkerr/sio_util.cpp
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/jrkerr/nmccom.h
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/jrkerr/sio_util.h
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/jrkerr/picservo.cpp
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/jrkerr/picservo.h
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/jrkerr/nmccom.cpp
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/vfw/vfw_extra_from_australia.h
-  Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
-  CopyPolicy: GPL2 or later, or 4-clause BSD at your choice
-
-src/modules/vfw/vfw_extra_from_wine.h
-  Copyright: (C) 2007 the Wine project
-  CopyPolicy: Released under the terms of the GNU LGPL v2.1. or later
-
-src/modules/urbtc/kernel_module/urbtc.h
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: GPLv2
-
-src/modules/urbtc/kernel_module/urbtc.c
-  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
-  CopyPolicy: GPLv2
-
-src/modules/urbtc/kernel_module/urobotc.h
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: GPLv2
-
-src/modules/dimax_u2c/I2c.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/dimax_u2c/I2c.cpp
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/dimax_u2c/u2c_common_func.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/dimax_u2c/i2cbridge.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/kinect/freenect/CMakeLists.txt
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: GPLv2
-
-src/modules/kinect/freenect/ServerKinect.h
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: GPLv2
-
-src/modules/kinect/freenect/KinectDeviceDriver.cpp
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: GPLv2
-
-src/modules/kinect/freenect/KinectExample.cpp
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: GPLv2
-
-src/modules/kinect/freenect/KinectDeviceDriver.h
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: GPLv2
-
-src/libYARP_OS/include/yarp/os/impl/TcpAcceptor.h
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/include/yarp/os/impl/TcpConnector.h
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/include/yarp/os/impl/hmac/hmac_sha2.h
-  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
-  CopyPolicy: 3-clause BSD
-
-src/libYARP_OS/include/yarp/os/impl/hmac/sha2.h
-  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
-  CopyPolicy: 3-clause BSD
-
-src/libYARP_OS/include/yarp/os/impl/TcpStream.h
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/src/hmac_sha2.c
-  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
-  CopyPolicy: 3-clause BSD
-
-src/libYARP_OS/src/TcpAcceptor.cpp
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/src/Random.cpp
-  Copyright: 1994, Everett F. Carter Jr.
-  CopyPolicy: Preserve copyright notice
-
-src/libYARP_OS/src/sha2.c
-  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
-  CopyPolicy: 3-clause BSD
-
-src/libYARP_OS/src/TcpConnector.cpp
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_OS/src/TcpStream.cpp
-  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
-  CopyPolicy: LGPL; non-binding note discouraging certain uses
-
-src/libYARP_sig/include/yarp/sig/IplImage.h
-  Copyright: (C) 2000, Intel Corporation, all rights reserved.
-  CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
-
-src/idls/thrift/msvc/stdint.h
-  Copyright: (c) 2006-2008 Alexander Chemeris
-  CopyPolicy: 3-clause BSD
-
-src/idls/thrift/msvc/inttypes.h
-  Copyright: (c) 2006 Alexander Chemeris
-  CopyPolicy: 3-clause BSD
-
-src/idls/thrift/src_thrift/platform.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/md5.c
-  Copyright: (C) 1999, 2000, 2002 Aladdin Enterprises.  All rights reserved.
-  CopyPolicy: zlib
-
-src/idls/thrift/src_thrift/generate/t_oop_generator.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/generate/t_generator_registry.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/generate/t_generator.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/md5.h
-  Copyright: (C) 1999, 2002 Aladdin Enterprises.  All rights reserved.
-  CopyPolicy: zlib
-
-src/idls/thrift/src_thrift/globals.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/main.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_typedef.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_list.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_scope.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_service.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_enum_value.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_doc.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_base_type.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_struct.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_program.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_set.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_function.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_container.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_const.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_enum.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_type.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_const_value.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_field.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-src/idls/thrift/src_thrift/parse/t_map.h
-  Copyright: Apache Software Foundation
-  CopyPolicy: Apache License, Version 2.0
-
-extern/goocanvas/goocanvas/demo/mv-table-demo.c
+extern/sqlite/sqlite/sqlite3ext.h
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+extern/sqlite/sqlite/sqlite3.c
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+extern/sqlite/sqlite/shell.c
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+extern/sqlite/sqlite/sqlite3.h
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+extern/goocanvas/goocanvas/src/goocanvasimage.c
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/demo/mv-scalability-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/units-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-animation.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-focus.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-fifteen.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/widgets-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-simple-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-focus.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/scalability-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-events.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-scalability.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-item.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-grabs.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-features.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-animation.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-item.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-large-items.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-large-rect.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-paths.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/generic-position-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-fifteen.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-generic-position-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-clipping.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-events.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-paths.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-clipping.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-scalability.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-large-rect.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-large-line.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-table.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-arrowhead.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-grabs.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/table-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-table.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/simple-demo.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/demo-large-line.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-arrowhead.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/demo/mv-demo-features.c
+extern/goocanvas/goocanvas/src/goocanvasmarshal.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
@@ -701,11 +273,27 @@ extern/goocanvas/goocanvas/src/goocanvasgroup.c
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvasgroup.h
+extern/goocanvas/goocanvas/src/goocanvaspath.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvastable.h
+extern/goocanvas/goocanvas/src/goocanvaspolyline.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvas.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasitemmodel.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasgrid.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasenumtypes.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
@@ -713,11 +301,15 @@ extern/goocanvas/goocanvas/src/goocanvasprivate.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvasenumtypes.c
+extern/goocanvas/goocanvas/src/goocanvasimage.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvasitemmodel.h
+extern/goocanvas/goocanvas/src/goocanvasrect.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasellipse.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
@@ -725,15 +317,19 @@ extern/goocanvas/goocanvas/src/goocanvasitem.c
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvasimage.h
+extern/goocanvas/goocanvas/src/goocanvasitemmodel.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvasimage.c
+extern/goocanvas/goocanvas/src/goocanvasstyle.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvasutils.c
+extern/goocanvas/goocanvas/src/goocanvasenumtypes.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvas.c
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
@@ -741,7 +337,59 @@ extern/goocanvas/goocanvas/src/goocanvastable.c
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
+extern/goocanvas/goocanvas/src/goocanvaspath.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvaswidget.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasutils.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvastable.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
 extern/goocanvas/goocanvas/src/goocanvasgrid.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvaspolyline.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasgroup.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvastext.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasitemsimple.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasitemsimple.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvastext.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasutils.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasitem.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvaswidget.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
@@ -753,99 +401,7 @@ extern/goocanvas/goocanvas/src/goocanvasmarshal.c
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
-extern/goocanvas/goocanvas/src/goocanvasutils.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasenumtypes.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasatk.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvaswidget.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasellipse.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasitemmodel.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasstyle.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvastext.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvas.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasitemsimple.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvaspath.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasitemsimple.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvaspath.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvas.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
 extern/goocanvas/goocanvas/src/goocanvasatk.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvaswidget.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasellipse.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvastext.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasgrid.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasrect.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvaspolyline.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasmarshal.h
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvaspolyline.c
-  Copyright: 2005-2008 Damon Chaplin
-  CopyPolicy: LGPLv2
-
-extern/goocanvas/goocanvas/src/goocanvasitem.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
@@ -853,37 +409,185 @@ extern/goocanvas/goocanvas/src/goocanvasrect.h
   Copyright: 2005-2008 Damon Chaplin
   CopyPolicy: LGPLv2
 
+extern/goocanvas/goocanvas/src/goocanvasellipse.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/src/goocanvasatk.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-fifteen.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/generic-position-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-animation.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-clipping.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-paths.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-arrowhead.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-generic-position-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/scalability-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-grabs.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-scalability-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-animation.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-events.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-grabs.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-table-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-focus.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-events.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-large-line.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-large-rect.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-arrowhead.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-item.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-scalability.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-large-items.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/units-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-large-rect.h
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-simple-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-item.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/table-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/widgets-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-paths.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-features.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-fifteen.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-focus.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/simple-demo.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-clipping.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-scalability.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-table.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/mv-demo-features.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-large-line.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
+extern/goocanvas/goocanvas/demo/demo-table.c
+  Copyright: 2005-2008 Damon Chaplin
+  CopyPolicy: LGPLv2
+
 extern/libdc1394_bayer/libdc1394_bayer.c
   Copyright: Damien Douxchamps and Frederic Devernay
   CopyPolicy: LGPLv2.1
 
-extern/tinyxml/tinyxml/tinyxmlerror.cpp
-  Copyright: (c) 2000-2006 Lee Thomason (www.grinninglizard.com)
-  CopyPolicy: zlib
-
-extern/tinyxml/tinyxml/tinyxml.cpp
-  Copyright: Lee Thomason
-  CopyPolicy: zlib
-
-extern/tinyxml/tinyxml/tinystr.h
-  Copyright: Lee Thomason
-  CopyPolicy: zlib
-
-extern/tinyxml/tinyxml/tinyxmlparser.cpp
-  Copyright: Lee Thomason
-  CopyPolicy: zlib
-
-extern/tinyxml/tinyxml/xmltest.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
-
-extern/tinyxml/tinyxml/tinystr.cpp
-  Copyright: Lee Thomason
-  CopyPolicy: zlib
-
-extern/tinyxml/tinyxml/tinyxml.h
-  Copyright: Lee Thomason
-  CopyPolicy: zlib
+extern/diff_match_patch/diff_match_patch.h
+  Copyright: 2008 Google Inc. All Rights Reserved.
+  CopyPolicy: Apache License, Version 2.0
 
 extern/gtkdatabox/gtkdatabox/gtk/gtkdatabox_ruler.c
   Copyright: (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
@@ -893,27 +597,390 @@ extern/gtkdatabox/gtkdatabox/gtk/gtkdatabox_ruler.h
   Copyright: (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
   CopyPolicy: LGPLv2 or later
 
-extern/gtkdatabox/gtkdatabox/examples/colors.c
-  Copyright: (C) 1998-2008  Dr. Roland Bock
-  CopyPolicy: LGPLv2 or later
-
 extern/gtkdatabox/gtkdatabox/glade/glade-databox.c
   Copyright: (C) 1998-2001  James Henstridge <james@daa.com.au>
   CopyPolicy: LGPLv2 or later
 
-extern/sqlite/sqlite/sqlite3.c
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
+extern/gtkdatabox/gtkdatabox/examples/colors.c
+  Copyright: (C) 1998-2008  Dr. Roland Bock
+  CopyPolicy: LGPLv2 or later
 
-extern/sqlite/sqlite/sqlite3ext.h
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
+extern/tinyxml/tinyxml/tinystr.cpp
+  Copyright: Lee Thomason
+  CopyPolicy: zlib
 
-extern/sqlite/sqlite/shell.c
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
+extern/tinyxml/tinyxml/xmltest.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
 
-extern/sqlite/sqlite/sqlite3.h
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
+extern/tinyxml/tinyxml/tinyxmlparser.cpp
+  Copyright: Lee Thomason
+  CopyPolicy: zlib
+
+extern/tinyxml/tinyxml/tinystr.h
+  Copyright: Lee Thomason
+  CopyPolicy: zlib
+
+extern/tinyxml/tinyxml/tinyxmlerror.cpp
+  Copyright: (c) 2000-2006 Lee Thomason (www.grinninglizard.com)
+  CopyPolicy: zlib
+
+extern/tinyxml/tinyxml/tinyxml.h
+  Copyright: Lee Thomason
+  CopyPolicy: zlib
+
+extern/tinyxml/tinyxml/tinyxml.cpp
+  Copyright: Lee Thomason
+  CopyPolicy: zlib
+
+src/libYARP_OS/src/Random.cpp
+  Copyright: 1994, Everett F. Carter Jr.
+  CopyPolicy: Preserve copyright notice
+
+src/libYARP_OS/src/TcpAcceptor.cpp
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/src/hmac_sha2.c
+  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/src/TcpStream.cpp
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/src/TcpConnector.cpp
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/src/sha2.c
+  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/include/yarp/os/impl/TcpStream.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/include/yarp/os/impl/TcpAcceptor.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/include/yarp/os/impl/hmac/hmac_sha2.h
+  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/include/yarp/os/impl/hmac/sha2.h
+  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/include/yarp/os/impl/TcpConnector.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_sig/include/yarp/sig/IplImage.h
+  Copyright: (C) 2000, Intel Corporation, all rights reserved.
+  CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
+
+src/carriers/portmonitor_carrier/lua_swig.h
+  Copyright: unknown
+  CopyPolicy: unknown
+
+src/libYARP_dev/src/modules/AnalogWrapper/AnalogWrapper.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
+
+src/libYARP_dev/src/modules/AnalogWrapper/AnalogWrapper.h
+  Copyright: unknown
+  CopyPolicy: unknown
+
+src/libYARP_dev/src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
+  Copyright: (C) 2009 RobotCub Consortium
+  Authors: Lorenzo Natale
+  CopyPolicy: GPLv2
+
+src/libYARP_dev/src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
+  Copyright: (C) 2013 RobotCub Consortium
+  Authors: Alberto Cardellino
+  CopyPolicy: GPLv2
+
+src/libYARP_dev/src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
+  Copyright: (C) 2013 RobotCub Consortium
+  Authors: Alberto Cardellino
+  CopyPolicy: GPLv2
+
+src/modules/vfw/vfw_extra_from_australia.h
+  Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
+  CopyPolicy: GPL2 or later, or 4-clause BSD at your choice
+
+src/modules/vfw/vfw_extra_from_wine.h
+  Copyright: (C) 2007 the Wine project
+  CopyPolicy: Released under the terms of the GNU LGPL v2.1. or later
+
+src/modules/urbtc/kernel_module/urbtc.c
+  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
+  CopyPolicy: GPLv2
+
+src/modules/urbtc/kernel_module/urobotc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: GPLv2
+
+src/modules/urbtc/kernel_module/urbtc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: GPLv2
+
+src/modules/dimax_u2c/I2c.cpp
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/I2c.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/i2cbridge.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/u2c_common_func.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/kinect/freenect/KinectExample.cpp
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: GPLv2
+
+src/modules/kinect/freenect/ServerKinect.h
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: GPLv2
+
+src/modules/kinect/freenect/CMakeLists.txt
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: GPLv2
+
+src/modules/kinect/freenect/KinectDeviceDriver.h
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: GPLv2
+
+src/modules/kinect/freenect/KinectDeviceDriver.cpp
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: GPLv2
+
+src/modules/jrkerr/picservo.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/sio_util.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/picservo.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/nmccom.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/sio_util.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/nmccom.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/idls/thrift/src_thrift/generate/t_generator_registry.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/generate/t_oop_generator.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/generate/t_generator.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/main.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/md5.c
+  Copyright: (C) 1999, 2000, 2002 Aladdin Enterprises.  All rights reserved.
+  CopyPolicy: zlib
+
+src/idls/thrift/src_thrift/globals.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/platform.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_function.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_list.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_scope.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_doc.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_enum.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_set.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_field.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_base_type.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_type.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_program.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_service.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_container.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_enum_value.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_struct.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_const.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_const_value.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_typedef.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/parse/t_map.h
+  Copyright: Apache Software Foundation
+  CopyPolicy: Apache License, Version 2.0
+
+src/idls/thrift/src_thrift/md5.h
+  Copyright: (C) 1999, 2002 Aladdin Enterprises.  All rights reserved.
+  CopyPolicy: zlib
+
+src/idls/thrift/msvc/stdint.h
+  Copyright: (c) 2006-2008 Alexander Chemeris
+  CopyPolicy: 3-clause BSD
+
+src/idls/thrift/msvc/inttypes.h
+  Copyright: (c) 2006 Alexander Chemeris
+  CopyPolicy: 3-clause BSD
+
+conf/FindOpenCV.cmake
+  Copyright: 2009 Benoit Rat
+  CopyPolicy: LGPLv2.1
+
+conf/FindFFMPEG.cmake
+  Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
+  CopyPolicy: 3-clause BSD
+
+conf/FindGSL.cmake
+  Copyright: (C) 2010 Jan Woetzel
+  CopyPolicy: Use under LGPL or BSD license at your choice
+
+conf/cmake-3.0.0/Modules/SelectLibraryConfigurations.cmake
+  Copyright: 2009 Will Dicharry <wdicharry@stellarscience.com>
+  CopyPolicy: 3-clause BSD
+
+conf/cmake-3.0.0/Modules/GNUInstallDirs.cmake
+  Copyright: 2011 Kitware, Inc.
+  CopyPolicy: 3-clause BSD
+
+conf/cmake-3.0.0/Modules/CMakeParseArguments.cmake
+  Copyright: 2010 Alexander Neundorf <neundorf@kde.org>
+  CopyPolicy: 3-clause BSD
+
+conf/cmake-3.0.0/Modules/FindFreetype.cmake
+  Copyright: 2007-2009 Kitware, Inc.
+  CopyPolicy: 3-clause BSD
+
+conf/cmake-3.0.0/Modules/FindGTK2.cmake
+  Copyright: 2009 Kitware, Inc.
+  CopyPolicy: 3-clause BSD
+
+conf/cmake-3.0.0/Modules/FindPackageHandleStandardArgs.cmake
+  Copyright: 2007-2009 Kitware, Inc.
+  CopyPolicy: 3-clause BSD
+
+conf/cmake-3.0.0/Modules/FindPackageMessage.cmake
+  Copyright: 2008-2009 Kitware, Inc.
+  CopyPolicy: 3-clause BSD
+
+CTestConfig.cmake
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/gtk/gtkdemo.cpp
+  Copyright: 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
+  CopyPolicy: GPLv2 or later
+
+example/matlab/simulink/sfun_time.c
+  Copyright: 2009 The MathWorks, Inc.
+  CopyPolicy: 3-clause BSD
+
+example/ros/add_int_client_v1.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/ros/CMakeLists.txt
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/ros/listener_v1.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/ros/add_int_server_v1.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/ros/add_int_client_v2.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/ros/talker.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/ros/listener_v2.cpp
+  Copyright: unknown
+  CopyPolicy: unknown
+
+example/yayarpview/CImg.h
+  Copyright: 2004 David Tschumperle
+  CopyPolicy: CeCILL license (use, modify, redistribute)
 
