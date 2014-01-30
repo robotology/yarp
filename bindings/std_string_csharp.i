@@ -1,3 +1,12 @@
+// This is csharp/std_string.i as of commit 12a9671440e9408a07d59a8936e75da096fea5fc
+// on https://github.com/swig/swig , to be used with SWIG versions <2.0.7
+// to be able to use the typemaps also for other strings than std::string
+// According to http://www.swig.org/legal.html , this code was permissively licensed
+// to be redistributed without restriction.
+
+// Copyright: (C) 1995-2011 The SWIG developers
+// CopyPolicy: permissive licence, BSD- and GPL-compatible
+
 /* -----------------------------------------------------------------------------
  * std_string.i
  *
