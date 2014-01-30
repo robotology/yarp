@@ -15,12 +15,14 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
 
+#define CONNECTION_TIMEOUT      5.0         //seconds
+
 
 using namespace yarp::os;
 using namespace yarp::manager;
 
+static char slash = NetworkBase::getDirectorySeparator()[0];
 
-char slash = NetworkBase::getDirectorySeparator()[0];
 ////// adapted from libYARP_OS: ResourceFinder.cpp
 static Bottle parsePaths(const ConstString& txt) {
     char slash = NetworkBase::getDirectorySeparator()[0];
@@ -95,6 +97,43 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
      }
 
 
+bool ScriptYarprunBroker::whichFile(const char* server, const char* filename, std::string& filenameWithPath)
+{
+    if(!strlen(server))
+        return false;
+
+    yarp::os::Bottle msg, grp;
+    grp.clear();
+    grp.addString("which");
+    grp.addString(filename);
+    msg.addList() = grp;
+
+    ContactStyle style;
+    style.quiet = true;
+    style.timeout = CONNECTION_TIMEOUT;
+    //style.carrier = carrier;
+    yarp::os::Port port;
+    port.open("...");
+
+    bool connected = yarp::os::NetworkBase::connect(port.getName(), server, style);
+    if(!connected)
+    {
+        return false;
+    }
+
+    yarp::os::Value filenameReader;
+    bool ret = port.write(msg, filenameReader);
+    filenameWithPath=filenameReader.asString();
+    NetworkBase::disconnect(port.getName().c_str(), server);
+    port.close();
+
+    if(!ret)
+    {
+        return false;
+    }
+    return true;
+}
+
 bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv )
@@ -105,21 +144,12 @@ bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
     std::string strCmd;
     if(szcmd)
     {
-        yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
-        for (int i=0; i<possiblePaths.size(); ++i)
-        {
-            ConstString guessString=possiblePaths.get(i).asString() + slash + szcmd;
-            const char* guess=guessString.c_str();
-            if (fileExists (guess))
-            {
-#ifdef WIN32
-                strCmd = "\"" + std::string(guess) + "\"";
-#else
-                strCmd = guess;
-#endif
-            }
-        }
-
+        std::string strHost;
+        if(szhost[0] != '/')
+            strHost = string("/") + string(szhost);
+        else
+            strHost = szhost;
+        bool ok=whichFile(strHost.c_str(), szcmd, strCmd);
     }
     if(szparam) strParam = szparam;
     strDevParam<<strCmd<<" "<<strParam;

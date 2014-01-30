@@ -82,6 +82,49 @@ void sigstdio_handler(int sig)
 
 ////////////////////////////////////
 
+static char slash = yarp::os::NetworkBase::getDirectorySeparator()[0];
+////// adapted from libYARP_OS: ResourceFinder.cpp
+static yarp::os::Bottle parsePaths(const yarp::os::ConstString& txt) {
+    char slash = yarp::os::NetworkBase::getDirectorySeparator()[0];
+    char sep = yarp::os::NetworkBase::getPathSeparator()[0];
+    yarp::os::Bottle result;
+    const char *at = txt.c_str();
+    int slash_tweak = 0;
+    int len = 0;
+    for (yarp::os::ConstString::size_type i=0; i<txt.length(); i++) {
+        char ch = txt[i];
+        if (ch==sep) {
+            result.addString(yarp::os::ConstString(at,len-slash_tweak));
+            at += len+1;
+            len = 0;
+            slash_tweak = 0;
+            continue;
+        }
+        slash_tweak = (ch==slash && len>0)?1:0;
+        len++;
+    }
+    if (len>0) {
+        result.addString(yarp::os::ConstString(at,len-slash_tweak));
+    }
+    return result;
+}
+
+static bool fileExists(const char *fname) {
+        FILE *fp=NULL;
+        fp = fopen(fname,"r");
+        if(fp == NULL)
+            return false;
+        else
+        {
+            fclose(fp);
+            return true;
+        }
+    }
+
+
+/////////
+
+
 int yarp::os::Run::main(int argc, char *argv[])
 {
     Property config;
@@ -326,7 +369,8 @@ int yarp::os::Run::main(int argc, char *argv[])
      || config.check("isrunning")
      || config.check("ps")
      || config.check("env")
-     || config.check("sysinfo"))
+     || config.check("sysinfo")
+     || config.check("which"))
     {
         int ret=client(config);
 
@@ -629,6 +673,28 @@ int yarp::os::Run::server()
             continue;
         }
 
+        if (msg.check("which"))
+        {
+            ConstString fileName=msg.find("which").asString();
+            if (fileName!="")
+            {
+                yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
+                for (int i=0; i<possiblePaths.size(); ++i)
+                {
+                    ConstString guessString=possiblePaths.get(i).asString() + slash + fileName;
+                    const char* guess=guessString.c_str();
+                    if (fileExists (guess))
+                    {
+                        fileName= "\"" + std::string(guess) + "\"";
+                        break;
+                    }
+                }
+            }
+            yarp::os::Value fileNameWriter(fileName);
+            port.reply(fileNameWriter);
+            continue;
+        }
+
         if (msg.check("exit"))
         {
             pServerPort=0;
@@ -814,6 +880,28 @@ int yarp::os::Run::server()
             {
                 yarp::os::impl::SystemInfoSerializer sysinfo;
                 port.reply(sysinfo);
+                continue;
+            }
+
+            if (msg.check("which"))
+            {
+                ConstString fileName=msg.find("which").asString();
+                if (fileName!="")
+                {
+                    yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
+                    for (int i=0; i<possiblePaths.size(); ++i)
+                    {
+                        ConstString guessString=possiblePaths.get(i).asString() + slash + fileName;
+                        const char* guess=guessString.c_str();
+                        if (fileExists (guess))
+                        {
+                            fileName = guess;
+                            break;
+                        }
+                    }
+                }
+                yarp::os::Value fileNameWriter(fileName);
+                port.reply(fileNameWriter);
                 continue;
             }
 
@@ -1382,6 +1470,27 @@ int yarp::os::Run::client(yarp::os::Property& config)
         //fprintf(stdout, "Network IP6 : %s\n", info.network.ip6.c_str());
         //fprintf(stdout, "Network mac : %s\n\n", info.network.mac.c_str());
 
+        return 0;
+    }
+
+    if (config.check("which"))
+    {
+        if (!config.check("on") || config.find("on").asString()=="")
+        {
+            Help("SYNTAX ERROR: missing remote server\n");
+
+            return YARPRUN_ERROR;
+        }
+
+        yarp::os::Bottle msg;
+        msg.addList()=config.findGroup("which");
+
+        Bottle response=sendMsg(msg,config.find("on").asString());
+
+        if (!response.size())
+        {
+            return YARPRUN_ERROR;
+        }
         return 0;
     }
 
