@@ -1465,6 +1465,7 @@ int yarp::os::Run::client(yarp::os::Property& config)
         fprintf(stdout, "Processor siblings  : %d\n", info.processor.siblings);
         fprintf(stdout, "Processor Mhz       : %.2lf\n\n", info.processor.frequency);
 
+        fprintf(stdout, "Environment variables  :\n%s\n", info.platform.environmentVars.toString().c_str());
         //fprintf(stdout, "Network IP4 : %s\n", info.network.ip4.c_str());
         //fprintf(stdout, "Network IP6 : %s\n", info.network.ip6.c_str());
         //fprintf(stdout, "Network mac : %s\n\n", info.network.mac.c_str());

@@ -30,6 +30,9 @@ using namespace yarp::os::impl;
 #include <linux/if.h>
 #include <sys/statvfs.h>
 #include <pwd.h>
+
+extern char **environ;
+
 #endif
 
 #if defined(WIN32)
@@ -503,6 +506,24 @@ PlatformInfo SystemInfo::getPlatformInfo(void)
         else if((osver.dwMajorVersion == 5) && (osver.dwMinorVersion == 2))
             platform.distribution = "2000";
     }
+
+    const char* a = GetEnvironmentStrings();
+    size_t prev = 0;
+    for(size_t i = 0; ; i++) {
+    if (a[i] == '\0') {
+        std::string tmpVariable(a + prev, a + i);
+        size_t equalsSign=tmpVariable.find("=");
+        if(equalsSign!=std::string::npos && equalsSign!=0) // among enviroment variables there are DOS-related ones that start with a =
+        {
+            platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
+        }
+        prev = i+1;
+        if (a[i + 1] == '\0') {
+            break;
+        }
+    }
+}
+
 #endif 
 
 #if defined(__linux__)
@@ -532,6 +553,18 @@ PlatformInfo SystemInfo::getPlatformInfo(void)
         pclose(release);
     }            
 
+    char *varChar = *environ;
+
+    for (int i = 0; varChar; i++) {
+        std::string tmpVariable(varChar);
+        size_t equalsSign=tmpVariable.find("=");
+        if(equalsSign!=std::string::npos)
+        {
+            platform.environmentVars.put(tmpVariable.substr(0, equalsSign), tmpVariable.substr(equalsSign+1));
+        }
+        varChar = *(environ+i);
+
+    }
 #endif
         return platform;
 }
