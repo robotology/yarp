@@ -1,3 +1,10 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+/*
+ * Copyright (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+ * Authors: Alberto Cardellino <alberto.cardellino@iit.it>
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #ifndef ANALOG_SERVER_H_
 #define ANALOG_SERVER_H_
 
