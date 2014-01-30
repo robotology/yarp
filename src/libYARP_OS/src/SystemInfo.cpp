@@ -654,6 +654,7 @@ bool SystemInfoSerializer::read(yarp::os::ConnectionReader& connection)
     platform.release = connection.expectText();
     platform.codename = connection.expectText();
     platform.kernel = connection.expectText();
+    platform.environmentVars.fromString(connection.expectText());
 
     // reading user
     user.userName = connection.expectText();
@@ -710,6 +711,7 @@ bool SystemInfoSerializer::write(yarp::os::ConnectionWriter& connection)
     connection.appendString(platform.release.c_str());
     connection.appendString(platform.codename.c_str());
     connection.appendString(platform.kernel.c_str());
+    connection.appendString(platform.environmentVars.toString().c_str());
 
     // serializing user
     connection.appendString(user.userName.c_str());
