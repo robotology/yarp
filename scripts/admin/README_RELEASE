@@ -33,7 +33,4 @@
 * Build source packages:
   ./scripts/admin/make-source-package-svn yarp-2.3.21
 
-* Upload to sourceforge:
-
-  cd source-package
-  rsync --recursive yarp-2.3.21 YOUR_USERNAME,yarp0@frs.sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2
+* Upload to sourceforge
