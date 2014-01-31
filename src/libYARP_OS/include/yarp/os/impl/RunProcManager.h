@@ -73,12 +73,16 @@ public:
             while (true)
             {
                 PID zombie=wait(NULL);
-            
+
                 //PID zombie=waitpid(-1,NULL,WNOHANG);
 
                 if (zombie>0)
                 {
                     yarp::os::Run::CleanZombie(zombie);
+                }
+                else
+                {
+                    break;
                 }
             }
         }
