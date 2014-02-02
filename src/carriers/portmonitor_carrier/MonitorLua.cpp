@@ -427,9 +427,23 @@ int MonitorLua::getConstraint(lua_State* L)
 
 int MonitorLua::setEvent(lua_State* L)
 {
+    double lifetime = -1.0;
+    int n_args =  lua_gettop(L); 
     const char *event_name = luaL_checkstring(L, 1);
     if(event_name)
     {
+        // check if the event's lifetime is given as argument
+        if(n_args > 1)                          
+        {
+            if(lua_isnumber(L,2))
+                lifetime = (double) luaL_checknumber(L,2);
+            else
+            {
+                YARP_LOG_ERROR("The second arguemnt of setEvent() must be number");
+                return 0;
+            }
+        }
+
         lua_getglobal(L, "PortMonitor_Owner");
         if(!lua_islightuserdata(L, -1))
         {
@@ -442,7 +456,7 @@ int MonitorLua::setEvent(lua_State* L)
             return 0;
         MonitorEventRecord& record = MonitorEventRecord::getInstance();
         record.lock();
-        record.setEvent(event_name, owner);
+        record.setEvent(event_name, owner, lifetime);
         record.unlock();
     }        
     return 0;

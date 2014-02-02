@@ -104,10 +104,10 @@ Port Monitor carrier
   PortMonitor. These auxiliary functions are used with the PortMonitor to arbitrator multiple 
   connection to the same input port of a module. (See example/arbitration/README.txt) 
 
-    - PortMonitor.setEvent(event)       : set an event into port event record
-    - PortMonitor.unsetEvent(event)     : unset an event into port event record
-    - PortMonitor.setConstraint(rule)   : set the selection rule 
-    - PortMonitor.getConstraint()       : get the selection rule
+    - PortMonitor.setEvent(event, lifetime) : set an event (with optional lifetime) into port event record
+    - PortMonitor.unsetEvent(event)         : unset an event into port event record
+    - PortMonitor.setConstraint(rule)       : set the selection rule 
+    - PortMonitor.getConstraint()           : get the selection rule
 
 
   Port monitor carrier looks for the global table name 'PortMonitor' in the user script and calls its
