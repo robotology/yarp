@@ -16,6 +16,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NameStore.h>
+#include <yarp/os/NameSpace.h>
 
 /**
  *
@@ -27,8 +28,9 @@ private:
     yarp::os::NameStore *store;
     ConnectManager manager;
     bool silent;
+    yarp::os::NameSpace *delegate;
 public:
-    Subscriber() : store(0/*NULL*/), silent(false) {}
+    Subscriber() : store(0/*NULL*/), silent(false), delegate(0/*NULL*/) {}
 
     void setStore(yarp::os::NameStore& store) { this->store = &store; }
     yarp::os::NameStore *getStore() { return store; }
@@ -171,6 +173,14 @@ public:
 
     int replyCode(bool flag) {
         return flag?VOCAB2('o','k'):VOCAB4('f','a','i','l');
+    }
+
+    void setDelegate(yarp::os::NameSpace *delegate) {
+        this->delegate = delegate;
+    }
+
+    yarp::os::NameSpace *getDelegate() {
+        return delegate;
     }
 };
 

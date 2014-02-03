@@ -13,6 +13,7 @@
 #include <yarp/conf/system.h>
 #include <yarp/os/all.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/RosNameSpace.h>
 
 #include <yarp/name/NameServerManager.h>
 #ifdef YARP_HAS_ACE
@@ -44,11 +45,18 @@ private:
     StyleNameService style;
     ComposedNameService combo1;
     bool silent;
+    NameSpace *space;
 public:
     using ComposedNameService::open;
 
     NameServerContainer() {
         silent = false;
+        space = NULL;
+    }
+
+    virtual ~NameServerContainer() {
+        if (space) delete space;
+        space = NULL;
     }
 
     void setSilent(bool silent) {
@@ -128,7 +136,21 @@ public:
             BootstrapServer::configFileBootstrap(contact);
         }
 #endif
-        
+
+        if (options.check("ros") || NetworkBase::getEnvironment("YARP_USE_ROS")!="") {
+            ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
+            Contact c = Contact::fromString(addr.c_str());
+            if (c.isValid()) {
+                c = c.addCarrier("xmlrpc");
+                space = new RosNameSpace(c);
+                subscriber.setDelegate(space);
+                fprintf(stderr, "Using ROS with ROS_MASTER_URI=%s\n", addr.c_str());
+            } else {
+                fprintf(stderr, "Cannot find ROS, check ROS_MASTER_URI (currently '%s')\n", addr.c_str());
+                ::exit(1);
+            }
+        }
+
         config.minPortNumber = contact.getPort()+2;
         config.maxPortNumber = contact.getPort()+9999;
         alloc.open(pmem,config);
@@ -186,6 +208,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
         printf("  --socket NNNNN           Set port number of server.\n");
         printf("  --web dir                Serve web resources from given directory.\n");
         printf("  --no-web-cache           Reload pages from file for each request.\n");
+        printf("  --ros                    Delegate pub/sub to ROS name server.\n");
         return 0;
     } else {
         printf("Call with --help for information on available options\n");

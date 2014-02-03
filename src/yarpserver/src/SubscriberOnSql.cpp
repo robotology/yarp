@@ -13,6 +13,7 @@
 #include "sqlite3.h"
 #include "SubscriberOnSql.h"
 #include "ParseName.h"
+#include <yarp/os/RosNameSpace.h>
 
 #ifndef WIN32
 #include <unistd.h>
@@ -251,8 +252,55 @@ bool SubscriberOnSql::removeSubscription(const ConstString& src,
     return ok;
 }
 
+
+/*
+class RosBackChannel {  // just testing
+public:
+    RosNameSpace *pros;
+
+    RosBackChannel() {
+        pros = NULL;
+    }
+
+    virtual ~RosBackChannel() {
+        if (pros) {
+            delete pros;
+            pros = NULL;
+        }
+    }
+
+    RosNameSpace& ros() {
+        if (!pros) pros = new RosNameSpace(Contact::fromString("xmlrpc://localhost:11311"));
+        return *pros;
+    }
+};
+
+static RosBackChannel ros_channel;
+*/
+
+
 bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
     mutex.wait();
+
+    NameSpace *ns = getDelegate();
+    if (ns) {
+        NestedContact nc(port);
+        if (nc.getNestedName().size()>0) {
+            NameStore *store = getStore();
+            if (store!=NULL) {
+                Contact node = store->query(nc.getNodeName());
+                Contact me = store->query(port);
+                if (node.isValid() && me.isValid()) {
+                    if (activity>0) {
+                        ns->registerAdvanced(me,store);
+                    } else {
+                        ns->unregisterAdvanced(port,store);
+                    }
+                }
+            }
+        }
+    }
+
     char *msg = NULL;
     char *query;
     if (activity>0) {
@@ -294,6 +342,12 @@ bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
 }
 
 bool SubscriberOnSql::hookup(const ConstString& port) {
+    if (getDelegate()) {
+        NestedContact nc(port);
+        if (nc.getNestedName().size()>0) {
+            return false;
+        }
+    }
     mutex.wait();
     sqlite3_stmt *statement = NULL;
     char *query = NULL;
@@ -328,6 +382,12 @@ bool SubscriberOnSql::hookup(const ConstString& port) {
 
 
 bool SubscriberOnSql::breakdown(const ConstString& port) {
+    if (getDelegate()) {
+        NestedContact nc(port);
+        if (nc.getNestedName().size()>0) {
+            return false;
+        }
+    }
     mutex.wait();
     sqlite3_stmt *statement = NULL;
     char *query = NULL;
@@ -364,6 +424,15 @@ bool SubscriberOnSql::checkSubscription(const ConstString& src,const ConstString
                                         const ConstString& srcFull,
                                         const ConstString& destFull,
                                         const ConstString& mode) {
+    if (getDelegate()) {
+        NestedContact nc(src);
+        if (nc.getNestedName().size()>0) {
+            NestedContact nc(dest);
+            if (nc.getNestedName().size()>0) {
+                return false;
+            }
+        }
+    }
     if (verbose) {
         printf("+++ Checking %s %s / %s %s\n",
                src.c_str(), dest.c_str(), srcFull.c_str(), destFull.c_str());
@@ -403,6 +472,15 @@ bool SubscriberOnSql::breakSubscription(const ConstString& dropper,
                                         const ConstString& srcFull, 
                                         const ConstString& destFull,
                                         const ConstString& mode) {
+    if (getDelegate()) {
+        NestedContact nc(src);
+        if (nc.getNestedName().size()>0) {
+            NestedContact nc(dest);
+            if (nc.getNestedName().size()>0) {
+                return false;
+            }
+        }
+    }
     if (verbose) {
         printf("--- Checking %s %s / %s %s\n",
                src.c_str(), dest.c_str(), srcFull.c_str(), destFull.c_str());

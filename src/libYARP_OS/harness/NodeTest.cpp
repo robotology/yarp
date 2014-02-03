@@ -188,8 +188,9 @@ void NodeTest::portTopicCombo() {
     NameClient::getNameClient().getNodes().clear();
     Port p1;
     Port p2;
-    p1.open("/test=+/p1");
-    p2.open("/test=-/p1");
+    // Node names were identical, but changed for ROS compatibility
+    p1.open("/test1=+/p1");
+    p2.open("/test2=-/p1");
     checkTrue(waitConnect(p1.getName(),p2.getName(),20), 
               "auto connect working");
     NameClient::getNameClient().getNodes().clear();
