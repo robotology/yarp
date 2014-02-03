@@ -18,7 +18,11 @@ NestedContact::NestedContact(const ConstString& nFullName) {
 
 bool NestedContact::fromString(const ConstString& nFullName) {
     fullName = nFullName;
-    nodeName = nFullName;
+    ConstString::size_type idx2 = fullName.find(":/");
+    if (idx2!=ConstString::npos) {
+        fullName = fullName.substr(idx2+2,fullName.length());
+    }
+    nodeName = fullName;
     nestedName = "";
     category = "";
     ConstString::size_type idx = fullName.find("@");
