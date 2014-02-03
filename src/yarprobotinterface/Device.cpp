@@ -327,7 +327,7 @@ bool RobotInterface::Device::calibrate(const RobotInterface::Device &target) con
     registerThread(calibratorThread);
 
     if (!calibratorThread->start()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << name();
+        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << target.name();
         return false;
     }
 
@@ -343,7 +343,7 @@ bool RobotInterface::Device::attach(const yarp::dev::PolyDriverList &drivers) co
     }
 
     if (!wrapper->attachAll(drivers)) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach) << "on device" << name();
+        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach);
         return false;
     }
 
@@ -359,7 +359,7 @@ bool RobotInterface::Device::detach() const
     }
 
     if (!wrapper->detachAll()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach) << "on device" << name();
+        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach);
         return false;
     }
 
@@ -390,7 +390,7 @@ bool RobotInterface::Device::park(const Device &target) const
     registerThread(parkerThread);
 
     if (!parkerThread->start()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << name();
+        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << target.name();
         return false;
     }
 
