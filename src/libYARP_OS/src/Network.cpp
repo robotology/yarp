@@ -673,6 +673,7 @@ bool NetworkBase::write(const Contact& contact,
     style.admin = admin;
     style.quiet = quiet;
     style.timeout = timeout;
+    style.carrier = contact.getCarrier();
     return write(contact,cmd,reply,style);
 }
 

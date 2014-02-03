@@ -162,15 +162,15 @@ public:
             return false;
         }
 
-        // wait for happy consumer - don't want to miss a packet
-        if (!readBackground) {
-            consume.wait();
-        }
-
         if (closed) {
             YARP_DEBUG(Logger::get(),"Port::read shutting down");
             readBlock.post();
             return false;
+        }
+
+        // wait for happy consumer - don't want to miss a packet
+        if (!readBackground) {
+            consume.wait();
         }
 
         stateMutex.wait();
