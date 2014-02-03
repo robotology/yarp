@@ -37,6 +37,10 @@ public:
     virtual Contact registerContact(const Contact& contact);
     virtual Contact unregisterName(const ConstString& name);
     virtual Contact unregisterContact(const Contact& contact);
+    virtual Contact registerAdvanced(const Contact& contact, 
+                                     NameStore *store);
+    virtual Contact unregisterAdvanced(const ConstString& name, 
+                                       NameStore *store);
 
     virtual bool setProperty(const ConstString& name, 
                              const ConstString& key, 

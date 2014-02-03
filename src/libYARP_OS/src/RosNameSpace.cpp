@@ -25,6 +25,7 @@ RosNameSpace::RosNameSpace(const Contact& contact) : mutex(1) {
 }
 
 RosNameSpace::~RosNameSpace() {
+    stop();
 }
 
 Contact RosNameSpace::getNameServerContact() const {
@@ -118,8 +119,13 @@ Contact RosNameSpace::registerName(const ConstString& name) {
 }
 
 Contact RosNameSpace::registerContact(const Contact& contact) {
-    dbg_printf("ROSNameSpace registerContact(%s)\n", 
-               contact.toString().c_str());
+    return registerAdvanced(contact,NULL);
+}
+
+Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store) {
+    dbg_printf("ROSNameSpace registerContact(%s / %s)\n", 
+               contact.toString().c_str(),
+               contact.toURI().c_str());
     NestedContact nc = contact.getNested();
     if (nc.getNestedName()=="") {
         nc.fromString(contact.getName());
@@ -134,8 +140,13 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
             cmd.addString(toRosName(nc.getNestedName()));
             Contact rosrpc = contact.addCarrier("rosrpc");
             cmd.addString(rosrpc.toURI());
-            Nodes& nodes = NameClient::getNameClient().getNodes();
-            Contact c = rosify(nodes.getParent(contact.getName()));
+            Contact c;
+            if (store) {
+                c = rosify(store->query(nc.getNodeName()));
+            } else {
+                Nodes& nodes = NameClient::getNameClient().getNodes();
+                c = rosify(nodes.getParent(contact.getName()));
+            }
             cmd.addString(c.toString());
             bool ok = NetworkBase::write(getNameServerContact(),
                                          cmd, reply);
@@ -156,8 +167,13 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
                 }
             }
             cmd.addString(typ);
-            Nodes& nodes = NameClient::getNameClient().getNodes();
-            Contact c = rosify(nodes.getParent(contact.getName()));
+            Contact c;
+            if (store) {
+                c = rosify(store->query(nc.getNodeName()));
+            } else {
+                Nodes& nodes = NameClient::getNameClient().getNodes();
+                c = rosify(nodes.getParent(contact.getName()));
+            }
             //Contact c = rosify(contact);
             cmd.addString(c.toString());
             bool ok = NetworkBase::write(getNameServerContact(),
@@ -246,6 +262,10 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
 }
 
 Contact RosNameSpace::unregisterName(const ConstString& rname) {
+    return unregisterAdvanced(rname,NULL);
+}
+
+Contact RosNameSpace::unregisterAdvanced(const ConstString& rname, NameStore *store) {
     NestedContact nc;
     nc.fromString(rname);
     ConstString cat = nc.getCategory();
@@ -269,8 +289,13 @@ Contact RosNameSpace::unregisterName(const ConstString& rname) {
             cmd.addString((cat=="+")?"unregisterPublisher":"unregisterSubscriber");
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(nc.getNestedName());
-            Nodes& nodes = NameClient::getNameClient().getNodes();
-            Contact c = rosify(nodes.getParent(rname));
+            Contact c;
+            if (store) {
+                c = rosify(store->query(nc.getNodeName()));
+            } else {
+                Nodes& nodes = NameClient::getNameClient().getNodes();
+                c = rosify(nodes.getParent(rname));
+            }
             cmd.addString(c.toString());
             bool ok = NetworkBase::write(getNameServerContact(),
                                          cmd, reply);

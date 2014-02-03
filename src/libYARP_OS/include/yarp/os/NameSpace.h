@@ -13,6 +13,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/NameStore.h>
 
 namespace yarp {
     namespace os {
@@ -41,6 +42,16 @@ public:
     virtual Contact unregisterName(const ConstString& name) = 0;
 
     virtual Contact unregisterContact(const Contact& contact) = 0;
+
+    virtual Contact registerAdvanced(const Contact& contact, 
+                                     NameStore *store) {
+        return registerContact(contact);
+    }
+
+    virtual Contact unregisterAdvanced(const ConstString& name, 
+                                       NameStore *store) {
+        return unregisterName(name);
+    }
 
     virtual bool setProperty(const ConstString& name, const ConstString& key,
                              const Value& value) = 0;
