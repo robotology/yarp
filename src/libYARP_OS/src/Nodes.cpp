@@ -29,9 +29,7 @@ public:
     ConstString active_name;
 
     NodesHelper() {
-        active = true;
         clear();
-        active_name = "";
     }
 
     ~NodesHelper() {
@@ -44,6 +42,9 @@ public:
             if (it->second) delete it->second;
         }
         by_name.clear();
+        is_external.clear();
+        active = true;
+        active_name = "";
     }
 
     Node *getNode(const ConstString& name, bool create);
