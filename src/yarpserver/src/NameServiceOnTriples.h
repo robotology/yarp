@@ -62,6 +62,7 @@ private:
     yarp::os::Semaphore mutex;
     bool gonePublic;
     bool silent;
+    yarp::os::NameSpace *delegate;
 public:
     NameServiceOnTriples() : mutex(1) {
         db = 0 /*NULL*/;
@@ -70,6 +71,7 @@ public:
         subscriber = NULL;
         gonePublic = false;
         silent = false;
+        delegate = 0 /*NULL*/;
     }
 
     void open(TripleSource *db,
@@ -129,6 +131,14 @@ public:
     void lock();
 
     void unlock();
+
+    void setDelegate(yarp::os::NameSpace *delegate) {
+        this->delegate = delegate;
+    }
+
+    yarp::os::NameSpace *getDelegate() {
+        return delegate;
+    }
 };
 
 

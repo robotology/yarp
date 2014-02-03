@@ -74,6 +74,9 @@ Contact NameServiceOnTriples::query(const yarp::os::ConstString& portName,
                                                    sock);
     }
     if (!nested) unlock();
+    if (delegate && !nested) {
+        return delegate->queryName(portName);
+    }
     return Contact::invalid();
 }
 

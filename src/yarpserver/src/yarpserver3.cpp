@@ -144,6 +144,7 @@ public:
                 c = c.addCarrier("xmlrpc");
                 space = new RosNameSpace(c);
                 subscriber.setDelegate(space);
+                ns.setDelegate(space);
                 fprintf(stderr, "Using ROS with ROS_MASTER_URI=%s\n", addr.c_str());
             } else {
                 fprintf(stderr, "Cannot find ROS, check ROS_MASTER_URI (currently '%s')\n", addr.c_str());

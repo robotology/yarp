@@ -71,43 +71,7 @@ Contact RosNameSpace::queryName(const ConstString& name) {
 
     if (srv == "" || !is_service) return contact;
 
-    // we need to go a step further and find a service
-
-    //contact = contact.addName("");
-    Bottle req;
-    reply.clear();
-    req.addString("requestTopic");
-    req.addString("dummy_id");
-    req.addString(srv);
-    Bottle& lst = req.addList();
-    Bottle& sublst = lst.addList();
-    sublst.addString("TCPROS");
-    if (!NetworkBase::write(contact,req,reply,false,true)) {
-        fprintf(stderr,"Failure looking up service %s: %s\n", srv.c_str(), reply.toString().c_str());
-        return Contact();
-    }
-    Bottle *pref = reply.get(2).asList();
-    if (pref==NULL) {
-        fprintf(stderr,"Failure looking up service %s: expected list of protocols\n", srv.c_str());
-        return Contact();
-    }
-    if (pref->get(0).asString()!="TCPROS") {
-        if (pref->get(0).asString() == "faultString") {
-            fprintf(stderr,"Failure looking up service %s: %s\n", srv.c_str(),
-                    pref->toString().c_str());
-        } else {
-            fprintf(stderr,"Failure looking up service %s: unsupported protocol %s\n", srv.c_str(),
-                    pref->get(0).asString().c_str());
-        }
-        return Contact();
-    }
-    Value hostname2 = pref->get(1);
-    Value portnum2 = pref->get(2);
-    contact = contact.addSocket((ConstString("rossrv+service.")+srv).c_str(),
-                                hostname2.asString().c_str(),
-                                portnum2.asInt());
-
-    return contact;
+    return Contact();
 }
 
 Contact RosNameSpace::registerName(const ConstString& name) {
