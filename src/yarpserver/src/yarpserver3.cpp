@@ -69,6 +69,11 @@ public:
         return contact;
     }
 
+    Contact whereDelegate() {
+        if (!space) return Contact();
+        return space->getNameServerContact();
+    }
+
     void preregister(const Contact& c) {
         Network::registerContact(c);
         subscriber.welcome(c.getName().c_str(),1);
@@ -141,7 +146,7 @@ public:
             ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
             Contact c = Contact::fromString(addr.c_str());
             if (c.isValid()) {
-                c = c.addCarrier("xmlrpc");
+                c = c.addCarrier("xmlrpc").addName("/ros");
                 space = new RosNameSpace(c);
                 subscriber.setDelegate(space);
                 ns.setDelegate(space);
@@ -261,6 +266,10 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
 #ifdef YARP_HAS_ACE
     nc.preregister(fallback.where());
 #endif
+    Contact alt = nc.whereDelegate();
+    if (alt.isValid()) {
+        nc.preregister(alt);
+    }
     nc.goPublic();
     printf("Name server can be browsed at http://%s:%d/\n",
            nc.where().getHost().c_str(), nc.where().getPort());
