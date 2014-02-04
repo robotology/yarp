@@ -51,6 +51,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
   iencs		= NULL;
   amp		= NULL;
   pid		= NULL;
+  opl		= NULL;
   trq		= NULL;
   imp		= NULL;
   idbg		= NULL;
@@ -85,6 +86,9 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
   ok &= partDd->view(trq);
   if (!ok)
     fprintf(stderr, "...trq was not ok.\n");
+  ok  = partDd->view(opl);
+  if (!ok)
+    fprintf(stderr, "...opl was not ok...");
   ok &= partDd->view(imp);
   if (!ok)
     fprintf(stderr, "...imp was not ok.\n");

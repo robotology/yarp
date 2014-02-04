@@ -37,11 +37,13 @@ namespace guiPid2
     static GtkWidget *note_lbl3 = NULL;
     static GtkWidget *note_lbl4 = NULL;
     static GtkWidget *note_lbl5 = NULL;
+    static GtkWidget *note_lbl6 = NULL;
     static GtkWidget *note_pag1 = NULL;
     static GtkWidget *note_pag2 = NULL;
     static GtkWidget *note_pag3 = NULL;
     static GtkWidget *note_pag4 = NULL;
     static GtkWidget *note_pag5 = NULL;
+    static GtkWidget *note_pag6 = NULL;
 
     static GtkWidget *dbg_debugBaseEntry =  NULL;
     static GtkWidget *dbg_debug0Des = NULL;
@@ -60,6 +62,9 @@ namespace guiPid2
     static GtkWidget *dbg_debug5Entry = NULL;
     static GtkWidget *dbg_debug6Entry = NULL;
     static GtkWidget *dbg_debug7Entry = NULL;
+
+    static GtkWidget *opl_koDes = NULL;
+    static GtkWidget *opl_koEntry = NULL;
 
     static GtkWidget *trq_kpDes = NULL;
     static GtkWidget *trq_kdDes = NULL;
@@ -120,6 +125,7 @@ namespace guiPid2
     static int               *joint = NULL;
     static partMover         *currentPart = NULL;
     static IPidControl       *iPid = NULL;
+    static IOpenLoopControl  *iOpl = NULL;
     static ITorqueControl    *iTrq = NULL;
     static IImpedanceControl *iImp = NULL;
     static IDebugInterface   *iDbg = NULL;
@@ -134,6 +140,7 @@ namespace guiPid2
     void send_trq_pid (GtkButton *button, Pid *pid);
     void send_imp_pid (GtkButton *button, Pid *pid);
     void send_dbg_pid (GtkButton *button, Pid *pid);
+    void send_opl_pid (GtkButton *button, Pid *pid);
     void dbg_debugBaseEntry_callback (GtkEntry *entry, gpointer  user_data);
     void receive_dbg_pid ();
     void displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label, bool small = false);

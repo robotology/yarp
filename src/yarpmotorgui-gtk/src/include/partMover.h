@@ -56,6 +56,7 @@ class partMover{
   IEncoders *iencs;
   IAmplifierControl *amp;
   IPidControl *pid;
+  IOpenLoopControl *opl;
   ITorqueControl *trq;
   IImpedanceControl *imp;
   IDebugInterface *idbg;
@@ -192,6 +193,7 @@ class partMover{
   inline IEncoders * get_IEncoders () {return iencs;}
   inline IAmplifierControl* get_IAmplifierControl () {return amp;}
   inline IPidControl* get_IPidControl () {return pid;}
+  inline IOpenLoopControl* get_IOpenLoopControl () {return opl;}
   inline ITorqueControl* get_ITorqueControl () {return trq;}
   inline IImpedanceControl* get_IImpedanceControl () {return imp;}
   inline IDebugInterface* get_IDebugControl () {return idbg;}

@@ -86,10 +86,12 @@ void guiPid2::change_page (GtkNotebook *notebook, GtkWidget   *page,  guint page
     gtk_label_set_markup (GTK_LABEL (note_lbl1), g_markup_printf_escaped ("Position PID"));
     gtk_label_set_markup (GTK_LABEL (note_lbl2), g_markup_printf_escaped ("Torque PID"));
     gtk_label_set_markup (GTK_LABEL (note_lbl3), g_markup_printf_escaped ("Stiffness params"));
+    gtk_label_set_markup (GTK_LABEL (note_lbl6), g_markup_printf_escaped ("Openloop params"));
 
     if (page_num==0) gtk_label_set_markup (GTK_LABEL (note_lbl1), g_markup_printf_escaped ("<span bgcolor=\"#95DDBA\">Position PID</span>"));
     if (page_num==1) gtk_label_set_markup (GTK_LABEL (note_lbl2), g_markup_printf_escaped ("<span bgcolor=\"#FF6464\">Torque PID</span>"));
     if (page_num==2) gtk_label_set_markup (GTK_LABEL (note_lbl3), g_markup_printf_escaped ("<span bgcolor=\"#DBA6AB\">Stiffness params</span>"));
+    if (page_num==3) gtk_label_set_markup (GTK_LABEL (note_lbl6), g_markup_printf_escaped ("<span bgcolor=\"#FFFFFF\">Openloop params</span>"));
 
 }
 
@@ -132,6 +134,22 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) pos_posStictionEntry,  buffer);
   sprintf(buffer, "%d", (int) pid->stiction_down_val);
   gtk_entry_set_text((GtkEntry*) pos_negStictionEntry,  buffer);
+}
+
+//*********************************************************************************
+void guiPid2::send_opl_pid (GtkButton *button, Pid *pid)
+{
+  char buffer[40];
+  double offset = 0;
+
+  offset = atoi(gtk_entry_get_text((GtkEntry*) opl_koDes));
+
+  iOpl->setOutput(*joint, offset);
+  iOpl->getOutput(*joint, &offset);
+
+  sprintf(buffer, "%d", (int) offset);
+  gtk_entry_set_text((GtkEntry*) opl_koEntry,  buffer);
+
 }
 
 //*********************************************************************************
@@ -450,6 +468,7 @@ void guiPid2::guiPid2(void *button, void* data)
   iImp  = currentPart->get_IImpedanceControl();
   iDbg  = currentPart->get_IDebugControl();
   iVel  = currentPart->get_IVelocityControl();
+  iOpl  = currentPart->get_IOpenLoopControl();
 
   //GtkWidget *winPid = NULL;
 
@@ -461,6 +480,8 @@ void guiPid2::guiPid2(void *button, void* data)
   GtkWidget *button_Imp_Close;
   GtkWidget *button_Dbg_Send;
   GtkWidget *button_Dbg_Close;
+  GtkWidget *button_Opl_Send;
+  GtkWidget *button_Opl_Close;
   Pid myPosPid(0,0,0,0,0,0);
   Pid myTrqPid(0,0,0,0,0,0);
   double bemfGain=0;
@@ -520,16 +541,19 @@ void guiPid2::guiPid2(void *button, void* data)
   note_lbl3 = gtk_label_new("Stiffness params");
   note_lbl4 = gtk_label_new("Debug1");
   note_lbl5 = gtk_label_new("Debug2");
+  note_lbl6 = gtk_label_new("OpenLoop params");
 
   note_pag1 = gtk_fixed_new ();
   note_pag2 = gtk_fixed_new ();
   note_pag3 = gtk_fixed_new ();
   note_pag4 = gtk_fixed_new ();
   note_pag5 = gtk_fixed_new ();
+  note_pag6 = gtk_fixed_new ();
 
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag1, note_lbl1);
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag2, note_lbl2);
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag3, note_lbl3);
+  gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag6, note_lbl6);
 
   if (iDbg != 0)
   {
@@ -760,41 +784,56 @@ void guiPid2::guiPid2(void *button, void* data)
   imp_offMin   =  gtk_entry_new();
   displayPidValue(off_min, note_pag3, imp_offMin, 140, 140, "Min", true);
 
+  //offset
+  opl_koEntry = gtk_entry_new();
+  displayPidValue((int)offset_val, note_pag6, opl_koEntry, 0, 0, "Current openloop value");
+  //offset desired
+  opl_koDes   =  gtk_entry_new();
+  changePidValue((int)offset_val, note_pag6, opl_koDes, 180, 0, "Desired openloop value");
+
   //Send buttons
   button_Pos_Send = gtk_button_new_with_mnemonic ("Send");
   button_Trq_Send = gtk_button_new_with_mnemonic ("Send");
   button_Imp_Send = gtk_button_new_with_mnemonic ("Send");
   button_Dbg_Send = gtk_button_new_with_mnemonic ("Send");
+  button_Opl_Send = gtk_button_new_with_mnemonic ("Send");
   gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Send, 0, 490+30);
   gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Send, 0, 490+30);
   gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Send, 0, 490+30);
   gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Send, 0, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag6), button_Opl_Send, 0, 490+30);
   g_signal_connect (button_Pos_Send, "clicked", G_CALLBACK (send_pos_pid), &myPosPid);
   g_signal_connect (button_Trq_Send, "clicked", G_CALLBACK (send_trq_pid), &myTrqPid);
   g_signal_connect (button_Imp_Send, "clicked", G_CALLBACK (send_imp_pid), NULL);
   g_signal_connect (button_Dbg_Send, "clicked", G_CALLBACK (send_dbg_pid), NULL);
+  g_signal_connect (button_Opl_Send, "clicked", G_CALLBACK (send_opl_pid), NULL);
   gtk_widget_set_size_request     (button_Pos_Send, 120, 25);
   gtk_widget_set_size_request     (button_Trq_Send, 120, 25);
   gtk_widget_set_size_request     (button_Imp_Send, 120, 25);
   gtk_widget_set_size_request     (button_Dbg_Send, 120, 25);
+  gtk_widget_set_size_request     (button_Opl_Send, 120, 25);
 
   //Close
   button_Pos_Close = gtk_button_new_with_mnemonic ("Close");
   button_Trq_Close = gtk_button_new_with_mnemonic ("Close");
   button_Imp_Close = gtk_button_new_with_mnemonic ("Close");
   button_Dbg_Close = gtk_button_new_with_mnemonic ("Close");
+  button_Opl_Close = gtk_button_new_with_mnemonic ("Close");
   gtk_fixed_put    (GTK_FIXED(note_pag1), button_Pos_Close, 120, 490+30);
   gtk_fixed_put    (GTK_FIXED(note_pag2), button_Trq_Close, 120, 490+30);
   gtk_fixed_put    (GTK_FIXED(note_pag3), button_Imp_Close, 120, 490+30);
   gtk_fixed_put    (GTK_FIXED(note_pag4), button_Dbg_Close, 120, 490+30);
+  gtk_fixed_put    (GTK_FIXED(note_pag6), button_Opl_Close, 120, 490+30);
   g_signal_connect (button_Pos_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Trq_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Imp_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Dbg_Close, "clicked", G_CALLBACK (destroy_win), NULL);
+  g_signal_connect (button_Opl_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   gtk_widget_set_size_request     (button_Pos_Close, 120, 25);
   gtk_widget_set_size_request     (button_Trq_Close, 120, 25);
   gtk_widget_set_size_request     (button_Imp_Close, 120, 25);
   gtk_widget_set_size_request     (button_Dbg_Close, 120, 25);
+  gtk_widget_set_size_request     (button_Opl_Close, 120, 25);
 
   //connection to the destroyer
   g_signal_connect (trq_winPid, "destroy",G_CALLBACK (destroy_win), NULL);
