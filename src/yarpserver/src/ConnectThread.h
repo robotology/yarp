@@ -81,6 +81,10 @@ public:
     }
 
     virtual ~ConnectManager() {
+        clear();
+    }
+
+    void clear() {
         for (std::list<ConnectThread *>::iterator it = con.begin();
              it != con.end(); it++) {
             if ((*it)!=0/*NULL*/) {

@@ -39,6 +39,10 @@ public:
         this->silent = flag;
     }
 
+    void clear() {
+        manager.clear();
+    }
+
     void connect(const yarp::os::ConstString& src,
                  const yarp::os::ConstString& dest) {
         manager.connect(src,dest);

@@ -55,6 +55,7 @@ public:
     }
 
     virtual ~NameServerContainer() {
+        subscriber.clear();
         if (space) delete space;
         space = NULL;
     }
