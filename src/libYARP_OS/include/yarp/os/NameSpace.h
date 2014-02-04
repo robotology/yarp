@@ -21,7 +21,7 @@ namespace yarp {
     }
 }
 
-class yarp::os::NameSpace {
+class YARP_OS_API yarp::os::NameSpace {
 public:
     virtual ~NameSpace();
 

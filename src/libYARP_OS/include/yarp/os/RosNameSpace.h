@@ -24,7 +24,7 @@ namespace yarp {
     }
 }
 
-class yarp::os::RosNameSpace : public NameSpace, public Thread {
+class YARP_OS_API yarp::os::RosNameSpace : public NameSpace, public Thread {
 public:
     RosNameSpace(const Contact& contact);
 

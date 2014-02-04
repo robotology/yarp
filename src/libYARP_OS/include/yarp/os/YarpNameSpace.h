@@ -21,7 +21,7 @@ namespace yarp {
     }
 }
 
-class yarp::os::YarpNameSpace : public NameSpace {
+class YARP_OS_API yarp::os::YarpNameSpace : public NameSpace {
 public:
     YarpNameSpace(const Contact& contact);
 

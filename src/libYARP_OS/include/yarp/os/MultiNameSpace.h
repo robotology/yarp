@@ -19,7 +19,7 @@ namespace yarp {
     }
 }
 
-class yarp::os::MultiNameSpace : public NameSpace {
+class YARP_OS_API yarp::os::MultiNameSpace : public NameSpace {
 public:
     MultiNameSpace();
 
