@@ -2423,7 +2423,7 @@ case VOCAB_INFO_NAME:
     }
     break;
 default:
-    printf("received an unknown request after a VOCAB_GET\n");
+    printf("received an unknown request after a VOCAB_GET: %s\n", yarp::os::Vocab::decode(cmd.get(1).asVocab()).c_str());
     break;
         }
     }
