@@ -194,7 +194,7 @@ void AnalogWrapper::setHandlers()
     {
         std::string rpcPortName = analogPorts[i].port_name;
         rpcPortName += "/rpc:i";
-        analogPorts[i].port_name += ":o";
+//        analogPorts[i].port_name += ":o";
         AnalogServerHandler* ash = new AnalogServerHandler(rpcPortName.c_str());
         handlers.push_back(ash);
     }
@@ -342,7 +342,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
     std::string root_name;
     root_name+="/";
     root_name+=robotName;
-    root_name+= "/" + this->id + "/analog";
+    root_name+= "/" + this->id + "/analog:o";
 
     // port names are optional, do not check for correctness.
     if(!params.check("ports"))
