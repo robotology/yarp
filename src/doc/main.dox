@@ -32,7 +32,7 @@ is to increase the longevity of robot software projects [1].
 YARP is <i>not</i> an operating system for your robot.  We figure you
 already have an operating system, or perhaps several.  Nor does it do
 package management (we like the package managers we have).  We're not
-out for world domination.  It is easy to interoperate with YARP-using
+out for world domination [2].  It is easy to interoperate with YARP-using
 programs without yourself necessarily having to use YARP codebase --
 see the
 \ref yarp_without_yarp "YARP without YARP" tutorial. YARP is written
@@ -86,7 +86,9 @@ Papers:
 
 [1] Towards Long-Lived Robot Genes.  Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale.  Robotics and Autonomous Systems, 56(1):29-45. Online at http://wiki.icub.org/yarp/media/humantech07towards.pdf
 
-[2] YARP: Yet Another Robot Platform. Giorgio Metta, Paul Fitzpatrick, and Lorenzo Natale. International Journal of Advanced Robotic Systems, 3(1):43-48. Online at http://wiki.icub.org/yarp/media/humanoids06long.pdf
+[2] A middle way for robotics middleware.  Elean Ceseracciu, Daniele Domenichelli, Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Ali Paikan. IEEE International Conference on Robotics and Automation (ICRA 2013), Eight full-day Workshop on Software Development and Integration in Robotics (SDIR VIII). Karlsruhe, Karlsruhe, Germany, May 6, 2013.  Online at http://pasa.liralab.it/pasapdf/1380_Ceseracciu_etal2013.pdf
+
+[3] YARP: Yet Another Robot Platform. Giorgio Metta, Paul Fitzpatrick, and Lorenzo Natale. International Journal of Advanced Robotic Systems, 3(1):43-48. Online at http://wiki.icub.org/yarp/media/humanoids06long.pdf
 
 (*) Certain optional plugin devices, carriers, or libraries are under the GPL.
 
