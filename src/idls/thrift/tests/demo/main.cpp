@@ -567,6 +567,18 @@ bool test_unwrap() {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc>1) {
+        Network yarp;
+        Server server;
+        RpcServer server_port;
+        server.yarp().attachAsServer(server_port);
+        server_port.open(argv[1]);
+        while (true) {
+            Time::delay(60);
+        }
+        return 0;
+    }
+
     if (!add_one()) return 1;
     if (!test_void()) return 1;
     if (!test_live()) return 1;
