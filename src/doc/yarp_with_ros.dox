@@ -64,7 +64,7 @@ Using ROS with ROS_MASTER_URI=http://127.0.0.1:11311
 ...
 \endverbatim
 
-As a quick test that everything has worked, start a quick test program in one
+To make sure that everything has worked, start a quick test program in one
 console:
 \verbatim
 yarp read /testtopic@/testnode
