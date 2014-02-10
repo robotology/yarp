@@ -97,22 +97,28 @@ if [ "$ext" = "zip" ]; then
 			rm -f $fname.zip
 			exit 1
 		}
-		GTKMM_PATH="gtkmm"
 	elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
 		wget -O $fname.zip $BUNDLE_GTKMM_64_ZIP || {
 			echo "Cannot fetch GTKMM"
 			rm -f $fname.zip
 			exit 1
 		}
-		GTKMM_PATH="gtkmm64"
 	else
 		echo "Unsupported GTKMM platform $OPT_VARIANT"
 		exit 1
 	fi
   fi
+  if [ "$OPT_VARIANT" == "x86" ] ; then	
+	GTKMM_PATH="gtkmm"
+  elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+	GTKMM_PATH="gtkmm64"
+  else
+	echo "Unsupported GTKMM platform $OPT_VARIANT"
+	exit 1
+  fi
 
   if [ ! -d $fname ] ; then
-    if [ ! -e "$GTKMM_PATH" ] ; then
+    if [ ! -d "$GTKMM_PATH" ] ; then
       unzip $fname.zip || {
 	  	echo "Cannot unpack GTKMM"
 		cd $BUILD_DIR
@@ -138,6 +144,8 @@ if [ "$ext" = "zip" ]; then
 	#mv $fname.zip store-$fname.zip
 	#mv $fname.exe store-$fname.exe
 	sleep 3
+	echo "GTKMM_PATH=$GTKMM_PATH"
+	echo "fname=$fname"
 	mv $GTKMM_PATH $fname || exit 1
 	#mv store-$fname.zip $fname.zip
 	#mv store-$fname.exe $fname.exe
