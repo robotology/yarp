@@ -2090,8 +2090,14 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                 }
                 if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m','a','n','y')) {
                     printf("Responses:\n");
-                    for (int i=1; i<reply.size(); i++) {
-                        Value& v = reply.get(i);
+                    Bottle *lst = &reply;
+                    int start = 1;
+                    if (reply.size()==2 && reply.get(1).isList()) {
+                        lst = reply.get(1).asList();
+                        start = 0;
+                    }
+                    for (int i=start; i<lst->size(); i++) {
+                        Value& v = lst->get(i);
                         if (v.isString()) {
                             printf("  %s\n", v.asString().c_str());
                         } else {
