@@ -163,6 +163,7 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
   void generate_xception(t_struct*   txception);
 
   std::string print_doc        (t_doc* tdoc);
+  std::vector<std::string> print_help       (t_function* tdoc);
   std::string print_type       (t_type* ttype);
   std::string print_const_value(t_const_value* tvalue,
 				t_type* ttype = NULL);
@@ -825,6 +826,43 @@ std::string t_yarp_generator::print_doc(t_doc* tdoc) {
   }
   
   return doxyPar.str();
+}
+
+static std::string replaceInString(const std::string& originalString, std::string toFind, std::string replacement)
+{
+  string docString(originalString);
+  size_t foundToken=docString.find(toFind);
+  while(foundToken!=string::npos)
+  {
+    docString.replace(foundToken, toFind.size(), replacement);
+    foundToken=docString.find(toFind, foundToken+replacement.size());
+  }
+  return docString;
+};
+
+std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc) {
+  std::vector<std::string> doxyPar;
+  //doxyPar << tdoc->get_name();
+  string quotes="\"";
+  string replacement="\\\"";
+  doxyPar.push_back(replaceInString(function_prototype(tdoc, true, NULL), quotes, replacement));
+  if (tdoc->has_doc()) {
+    string doc = tdoc->get_doc();
+    size_t index;
+    while ((index = doc.find_first_of("\r\n")) != string::npos) {
+      if (index!= 0) {
+        //escape all quotes (TODO: may need to escape other characters?)
+        doxyPar.push_back(replaceInString(doc.substr(0, index), quotes, replacement));
+      }
+      if (index + 1 < doc.size() && doc.at(index) != doc.at(index + 1) &&
+    (doc.at(index + 1) == '\r' || doc.at(index + 1) == '\n')) {
+        index++;
+      }
+      doc = doc.substr(index + 1);
+    }
+  }
+
+  return doxyPar;
 }
 
 /**
@@ -1639,6 +1677,9 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     indent(f_srv_) << "virtual bool read(yarp::os::ConnectionReader& connection);"
 		   << endl;
+    indent(f_srv_) << "virtual std::vector<std::string> help(const std::string& functionName=\"--all\");"
+		   << endl;
+
     indent_down();
     indent(f_cpp_) << endl
 		   << "bool " << service_name_ 
@@ -1717,6 +1758,39 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       indent_down();
       indent(f_cpp_) << "}" << endl;
     }
+    // read "help" function
+    indent(f_cpp_) << "if (tag == \"help\") {" <<endl;
+    indent_up();
+    indent(f_cpp_) << "std::string functionName;" <<endl;
+    indent(f_cpp_) << "if (!reader.readString(functionName)) {" <<endl;
+    indent_up();
+    indent(f_cpp_) << "functionName = \"--all\";" <<endl;
+    indent_down();
+    indent(f_cpp_) << "}" <<endl;
+    indent(f_cpp_) << "std::vector<std::string> _return=help(functionName);" <<endl;
+    indent(f_cpp_) << "yarp::os::idl::WireWriter writer(reader);" << endl;
+    indent_up();
+    indent(f_cpp_) << "if (!writer.isNull()) {" << endl;
+    indent_up();
+    indent(f_cpp_) << "if (!writer.writeListHeader(2)) return false;" << endl;
+    indent(f_cpp_) << "if (!writer.writeTag(\"many\",1, 0)) return false;" << endl;
+    indent(f_cpp_) << "if (!writer.writeListBegin(BOTTLE_TAG_INT, static_cast<uint32_t>(_return.size()))) return false;" << endl;
+    indent(f_cpp_) << "std::vector<std::string> ::iterator _iterHelp;" << endl;
+    indent(f_cpp_) << "for (_iterHelp = _return.begin(); _iterHelp != _return.end(); ++_iterHelp)" << endl;
+    indent(f_cpp_) << "{" << endl;
+    indent_up();
+    indent(f_cpp_) << "if (!writer.writeString(*_iterHelp)) return false;" << endl;
+    indent_down();
+    indent(f_cpp_) << " }" << endl;
+    indent(f_cpp_) << "if (!writer.writeListEnd()) return false;" << endl;
+    indent_down();
+    indent(f_cpp_) << "}" << endl;
+    indent_down();
+    indent(f_cpp_) << "reader.accept();" << endl;
+    indent(f_cpp_) << "return true;" << endl;
+    indent_down();
+    indent(f_cpp_) << "}" << endl;
+
     indent(f_cpp_) << "if (reader.noMore()) { reader.fail(); return false; }"
 		   << endl;
     indent(f_cpp_) << "yarp::os::ConstString next_tag = reader.readTag();" << endl;
@@ -1726,10 +1800,39 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     indent(f_cpp_) << "}" << endl;
     indent(f_cpp_) << "return false;" << endl;
     indent_down();
-    indent(f_cpp_) << "}" << endl;
-    indent_up();
+    indent(f_cpp_) << "}" << endl << endl;
 
+    indent(f_cpp_) << "std::vector<std::string> " << service_name_ << "::help(const std::string& functionName) {" <<endl;
+    indent_up();
+    indent(f_cpp_) << "bool showAll=(functionName==\"--all\");" << endl;
+    indent(f_cpp_) << "std::vector<std::string> helpString;" << endl;
+    indent(f_cpp_) << "if(showAll) {" << endl;
+    indent_up();
+    indent(f_cpp_) << "helpString.push_back(\"*** Available commands:\");" << endl;
+    for (fn_iter = functions.begin() ; fn_iter != functions.end(); fn_iter++) {
+        indent(f_cpp_) << "helpString.push_back(\"" << (*fn_iter)->get_name() << "\");" << endl;
+    }
     indent_down();
+    indent(f_cpp_) << "}" << endl;
+    indent(f_cpp_) << "else {"<<endl;
+    indent_up();
+    for ( fn_iter = functions.begin(); fn_iter != functions.end(); fn_iter++) {
+      indent(f_cpp_) << "if (functionName==\"" << (*fn_iter)->get_name() << "\") {" << endl;
+      indent_up();
+      std::vector<std::string> helpList=print_help(*fn_iter);
+      for (std::vector<std::string>::iterator helpIt=helpList.begin(); helpIt!=helpList.end(); ++helpIt)
+        indent(f_cpp_) << "helpString.push_back(\""<< *helpIt<<" \");" <<endl;
+
+      indent_down();
+      indent(f_cpp_) << "}" <<endl;
+    }
+    indent_down();
+    indent(f_cpp_) << "}" <<endl;
+    indent(f_cpp_) << "if ( helpString.empty()) helpString.push_back(\"Command not found\");"<<endl;
+    indent(f_cpp_) << "return helpString;" << endl;
+    indent_down();
+    indent(f_cpp_) << "}" << endl;
+
     f_srv_ << "};" << endl
 	   << endl;
 

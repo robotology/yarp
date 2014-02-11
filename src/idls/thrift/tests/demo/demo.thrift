@@ -1,5 +1,12 @@
 #demo.thrift
 
+/**
+*   Demo Thrift
+*/
+
+/// @cond
+
+
 enum DemoEnum {
   ENUM1 = 1,
   ENUM2 = 2,
@@ -35,5 +42,8 @@ service Demo {
 
   i32 test_tail_defaults(1:DemoEnum x = DemoEnum.ENUM1);
 
+/**
+* Test longer tail defaults
+*/
   i32 test_longer_tail_defaults(1: i32 ignore, 2:DemoEnum _enum = DemoEnum.ENUM2, 3:i32 _int = 42, 4:string _string = "Space Monkey from the Planet: Space");
 }
