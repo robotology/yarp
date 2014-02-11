@@ -51,6 +51,69 @@
 
 #include <stdio.h>
 
+#ifdef WITH_READLINE
+    #include <readline/readline.h>
+    #include <readline/history.h>
+    #include <vector>
+    #include <yarp/os/ConstString.h>
+    static std::vector<yarp::os::impl::String> commands;
+
+    char* dupstr(char* s)
+    {
+        char *r;
+        r = (char*) malloc ((strlen (s) + 1));
+        strcpy (r, s);
+        return (r);
+    };
+    /* Generator function for command completion.  STATE lets us know whether
+   to start from scratch; without any state (i.e. STATE == 0), then we
+   start at the top of the list. */
+    char* command_generator (const char* text, int state)
+    {
+        static int list_index, len;
+        char *name;
+
+        /* if this is a new word to complete, initialize now.  this includes
+            saving the length of text for efficiency, and initializing the index
+            variable to 0. */
+        if (!state)
+            {
+            list_index = 0;
+            len = strlen (text);
+            }
+
+        while ((list_index<commands.size()) && (name = (char*)commands[list_index].c_str()))
+            {
+            list_index++;
+            if (strncmp (name, text, len) == 0)
+                return (dupstr(name));
+            }
+
+        /* if no names matched, then return null. */
+        return ((char *)NULL);
+    };
+    /* Attempt to complete on the contents of TEXT.  START and END show the
+   region of TEXT that contains the word to complete.  We can use the
+   entire line in case we want to do some simple parsing.  Return the
+   array of matches, or NULL if there aren't any. */
+    char ** my_completion (const char* text, int start, int end)
+    {
+        char **matches;
+        matches = (char **)NULL;
+
+        /* If this word is at the start of the line, then it is a command
+        to complete.  Otherwise it is the name of a file in the current
+        directory. */
+        if (start == 0)
+            matches = rl_completion_matches(text, &command_generator);
+        else
+            rl_attempted_completion_over=1;
+
+        return (matches);
+    };
+
+#endif
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
@@ -2037,6 +2100,9 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     int resendCount = 0;
 
     bool firstTimeRound = true;
+#ifdef WITH_READLINE
+    rl_attempted_completion_function = my_completion;
+#endif
 
     while (!feof(stdin)) {
         Port port;
@@ -2062,10 +2128,47 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
             }
         }
 
+#ifdef WITH_READLINE
+        Bottle helpCommand, helpBottle;
+        helpCommand.addString("help");
+        bool helpOk = port.write(helpCommand,helpBottle);
+        Bottle* cmdList=NULL;
+        commands.clear();
+        if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m','a','n','y') )
+        {
+            cmdList=helpBottle.get(1).asList();
+        }
+        else
+            cmdList=helpBottle.get(0).asList();
+        if (cmdList && cmdList->get(0).asString() == "*** Available commands:")
+        {
+            for (int i=1; i<cmdList->size(); ++i)
+                commands.push_back(cmdList->get(i).asString());
+        }
+        commands.push_back(" ");
+#endif
         while (port.getOutputCount()==1&&!feof(stdin)) {
             String txt;
             if (!resendFlag) {
+#ifdef WITH_READLINE
+                static char* szLine = (char*)NULL;
+                if(szLine)
+                {
+                    free(szLine);
+                    szLine = (char*)NULL;
+                }
+
+                szLine = readline(">>");
+                if(szLine && *szLine)
+                {
+                    txt = szLine;
+                    add_history(szLine);
+                }
+                else
+                    txt = "";
+#else
                 txt = getStdin();
+#endif
             }
 
             if (!feof(stdin)) {

@@ -210,6 +210,13 @@ endif()
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)
 
+#find_package(READLINE)
+find_path(READLINE_INCLUDE_DIR readline/readline.h)
+find_library(READLINE_LIBRARY NAMES readline)
+if(READLINE_INCLUDE_DIR AND READLINE_LIBRARY)
+	set(READLINE_FOUND TRUE)
+endif (READLINE_INCLUDE_DIR AND READLINE_LIBRARY)
+
 if(CREATE_LIB_MATH)
     find_package(GSL QUIET)
     checkandset_dependency(GSL)
