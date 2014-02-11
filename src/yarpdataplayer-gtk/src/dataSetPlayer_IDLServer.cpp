@@ -406,12 +406,105 @@ bool dataSetPlayer_IDLServer::read(yarp::os::ConnectionReader& connection) {
       reader.accept();
       return true;
     }
+    if (tag == "help") {
+      std::string functionName;
+      if (!reader.readString(functionName)) {
+        functionName = "--all";
+      }
+      std::vector<std::string> _return=help(functionName);
+      yarp::os::idl::WireWriter writer(reader);
+        if (!writer.isNull()) {
+          if (!writer.writeListHeader(2)) return false;
+          if (!writer.writeTag("many",1, 0)) return false;
+          if (!writer.writeListBegin(BOTTLE_TAG_INT, static_cast<uint32_t>(_return.size()))) return false;
+          std::vector<std::string> ::iterator _iterHelp;
+          for (_iterHelp = _return.begin(); _iterHelp != _return.end(); ++_iterHelp)
+          {
+            if (!writer.writeString(*_iterHelp)) return false;
+           }
+          if (!writer.writeListEnd()) return false;
+        }
+      reader.accept();
+      return true;
+    }
     if (reader.noMore()) { reader.fail(); return false; }
     yarp::os::ConstString next_tag = reader.readTag();
     if (next_tag=="") break;
     tag = tag + "_" + next_tag;
   }
   return false;
+}
+
+std::vector<std::string> dataSetPlayer_IDLServer::help(const std::string& functionName) {
+  bool showAll=(functionName=="--all");
+  std::vector<std::string> helpString;
+  if(showAll) {
+    helpString.push_back("*** Available commands:");
+    helpString.push_back("getHelp");
+    helpString.push_back("step");
+    helpString.push_back("setFrame");
+    helpString.push_back("getFrame");
+    helpString.push_back("load");
+    helpString.push_back("play");
+    helpString.push_back("pause");
+    helpString.push_back("stop");
+    helpString.push_back("quit");
+  }
+  else {
+    if (functionName=="getHelp") {
+      helpString.push_back("std::string getHelp() ");
+      helpString.push_back("Gets the list of commands available ");
+      helpString.push_back("@return Bottle containing all available commands ");
+    }
+    if (functionName=="step") {
+      helpString.push_back("bool step() ");
+      helpString.push_back("Steps the player once. The player will be stepped ");
+      helpString.push_back("until all parts have sent data ");
+      helpString.push_back("@return true/false on success/failure ");
+    }
+    if (functionName=="setFrame") {
+      helpString.push_back("bool setFrame(const std::string& name, const int32_t frameNum) ");
+      helpString.push_back("Sets the frame number to the user desired frame. ");
+      helpString.push_back("@param name specifies the name of the loaded data ");
+      helpString.push_back("@param frameNum specifies the frame number the user ");
+      helpString.push_back(" would like to skip to ");
+      helpString.push_back("@return true/false on success/failure ");
+    }
+    if (functionName=="getFrame") {
+      helpString.push_back("int32_t getFrame(const std::string& name) ");
+      helpString.push_back("Gets the frame number the user is requesting ");
+      helpString.push_back("@param name specifies the name of the data to modify ");
+      helpString.push_back(" would like to skip to ");
+      helpString.push_back("@return i32 returns the current frame index ");
+    }
+    if (functionName=="load") {
+      helpString.push_back("bool load(const std::string& path) ");
+      helpString.push_back("Loads a dataset from a path ");
+      helpString.push_back("@return true/false on success/failure ");
+    }
+    if (functionName=="play") {
+      helpString.push_back("bool play() ");
+      helpString.push_back("Plays the dataSets ");
+      helpString.push_back("@return true/false on success/failure ");
+    }
+    if (functionName=="pause") {
+      helpString.push_back("bool pause() ");
+      helpString.push_back("Pauses the dataSets ");
+      helpString.push_back("@return true/false on success/failure ");
+    }
+    if (functionName=="stop") {
+      helpString.push_back("bool stop() ");
+      helpString.push_back("Stops the dataSets ");
+      helpString.push_back("@return true/false on success/failure ");
+    }
+    if (functionName=="quit") {
+      helpString.push_back("bool quit() ");
+      helpString.push_back("Quit the module. ");
+      helpString.push_back("@return true/false on success/failure ");
+    }
+  }
+  if ( helpString.empty()) helpString.push_back("Command not found");
+  return helpString;
 }
 
 
