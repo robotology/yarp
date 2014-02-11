@@ -321,6 +321,7 @@ source_group("IDL Header Files" FILES ${YARP_OS_IDL_HDRS})
 source_group("Implementation Header Files" FILES ${YARP_OS_IMPL_HDRS})
 
 option(USE_PORT_AUTHENTICATION "Use a 3-way passphrase authentication for connections to ports" FALSE)
+mark_as_advanced(USE_PORT_AUTHENTICATION)
 if (USE_PORT_AUTHENTICATION)
     add_definitions(-DPORT_AUTH)
 endif (USE_PORT_AUTHENTICATION)

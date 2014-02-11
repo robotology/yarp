@@ -68,6 +68,14 @@ void TcpFace::closeFace() {
     }
 }
 
+static void showError(Logger& log) {
+    YARP_ERROR(log,"Authentication failed.");
+    YARP_ERROR(log,"Authentication was enabled with the USE_PORT_AUTHENTICATION");
+    YARP_ERROR(log,"flag when YARP was configured. If you do not want to set up");
+    YARP_ERROR(log,"authentication, please return this flag to its default value.");
+    YARP_ERROR(log,"If you do want to set up authentication, check:");
+    YARP_ERROR(log,"  http://wiki.icub.org/yarpdoc/yarp_port_auth.html");
+}
 
 /**
  * return NULL on failure.  No exceptions thrown.
@@ -91,7 +99,7 @@ InputProtocol *TcpFace::read() {
 
         bool success = auth.authSource(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
-            YARP_ERROR(tcpFaceLog,"authentication failed");
+            showError(tcpFaceLog);
             return NULL;
         }
         stream->setReadTimeout(0.);
@@ -119,7 +127,7 @@ OutputProtocol *TcpFace::write(const Contact& address) {
 
         bool success = auth.authDest(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
-            YARP_ERROR(tcpFaceLog,"authentication failed");
+            showError(tcpFaceLog);
             return NULL;
         }
         stream->setReadTimeout(0.);
