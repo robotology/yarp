@@ -10,6 +10,10 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformTime.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/os/NetworkClock.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Log.h>
 
 #ifdef ACE_WIN32
 // for WIN32 MM functions
@@ -18,42 +22,52 @@
 
 using namespace yarp::os;
 
-/// WARNING: actual precision under WIN32 depends on setting scheduler 
-/// by means of MM functions.
-///
+static SystemClock system_clock;
+static Clock *pclock = NULL;
+static bool clock_owned = false;
+static ConstString network_clock_name = "";
+static bool network_clock_pending = false;
+
+static void removeClock() {
+    if (pclock) {
+        if (clock_owned) {
+            delete pclock;
+            clock_owned = false;
+        }
+        pclock = NULL;
+    }
+    network_clock_name = "";
+    network_clock_pending = false;
+}
+
+static Clock& getClock() {
+    if (network_clock_pending) {
+        ConstString name;
+        NetworkClock *nc = NULL;
+        NetworkBase::lock();
+        if (network_clock_pending) {
+            name = network_clock_name;
+            removeClock();
+            network_clock_pending = false;
+            pclock = nc = new NetworkClock();
+            clock_owned = true;
+            YARP_ASSERT(pclock);
+        }
+        NetworkBase::unlock();
+        if (nc) {
+            nc->open(name);
+        }
+    }
+    if (pclock) return *pclock;
+    return system_clock;
+}
+
 void Time::delay(double seconds) {
-#ifdef YARP_HAS_ACE
-    ACE_Time_Value tv;
-    tv.sec (long(seconds));
-    tv.usec (long((seconds-long(seconds)) * 1.0e6));
-    ACE_OS::sleep(tv);
-#else
-    usleep(seconds*1000000);
-#endif
+    getClock().delay(seconds);
 }
 
 double Time::now() {
-#ifdef ACE_WIN32
-    // only uses high res on Microsoft Windows
-    // This caused problems; maybe only with new ACE versions or Windows 7, can't tell.
-    // Lorenzo
-	// ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
-    ACE_Time_Value timev=ACE_OS::gettimeofday ();
-    //ACE_Time_Value timev = ACE_OS::gettimeofday ();
-    return double(timev.sec()) + timev.usec() * 1e-6; 
-#else
-    // on other operating systems, high res seems dysfunctional
-    // which is weird since ACE manual claims it maps naturally 
-    // on gettimoday...
-#  ifdef YARP_HAS_ACE 
-    ACE_Time_Value timev = ACE_OS::gettimeofday ();
-    return double(timev.sec()) + timev.usec() * 1e-6; 
-#  else
-    struct  timeval currentTime;
-    gettimeofday(&currentTime, NULL);
-    return (double)(currentTime.tv_sec + currentTime.tv_usec/1000000);
-#  endif
-#endif
+    return getClock().now();
 }
 
 void Time::turboBoost() {
@@ -72,5 +86,36 @@ void Time::yield() {
 #else
     sleep(0);
 #endif
+}
+
+
+void Time::useSystemClock() {
+    NetworkBase::lock();
+    removeClock();
+    NetworkBase::unlock();
+}
+
+void Time::useNetworkClock(const ConstString& clock) {
+    NetworkBase::lock();
+    removeClock();
+    network_clock_name = clock;
+    network_clock_pending = true;
+    NetworkBase::unlock();
+}
+
+void Time::useCustomClock(Clock *clock) {
+    NetworkBase::lock();
+    removeClock();
+    pclock = clock;
+    YARP_ASSERT(pclock);
+    NetworkBase::unlock();
+}
+
+bool Time::isSystemClock() {
+    return (pclock==NULL);
+}
+
+bool Time::isValid() {
+    return getClock().isValid();
 }
 

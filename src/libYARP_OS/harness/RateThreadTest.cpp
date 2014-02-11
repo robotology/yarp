@@ -14,12 +14,41 @@
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Clock.h>
+#include <yarp/os/SystemClock.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+class MyClock : public Clock {
+public:
+    double t;
+    bool done;
+
+    MyClock() {
+        t = 0;
+        done = false;
+    }
+
+    virtual double now() {
+        return t;
+    }
+
+    virtual void delay(double seconds) {
+        double target = t+seconds;
+        SystemClock c;
+        while (t<target && !done) {
+            c.delay(0.1);
+        }
+    }
+
+    virtual bool isValid() const {
+        return true;
+    }
+};
 
 class RateThreadTest : public UnitTest {
 private:
@@ -145,8 +174,9 @@ private:
     
     class RateThread4: public RateThread
 	{
-        int count;
 	public:
+        int count;
+
 		RateThread4(int r): RateThread(r),count(10){}
 
 		virtual void run()
@@ -159,7 +189,19 @@ private:
         }
 	
 	};
-	
+
+    class RateThread5: public RateThread
+	{
+	public:
+        int count;
+
+		RateThread5(int r): RateThread(r),count(0){}
+
+		virtual void run() {
+            count++;
+        }
+	};
+
     class Runnable1:public Runnable
 	{
 	public:
@@ -317,11 +359,36 @@ public:
 		report(0, "successful");
 	}
 
+
+    void testSimTime() {
+        report(0, "Testing simulated time");
+        MyClock clock;
+        Time::useCustomClock(&clock);
+        RateThread5 thread(100*1000); // 100 secs
+        thread.start();
+        SystemClock clk;
+        for (int i=0; i<20; i++) {
+            clk.delay(0.1);
+            if (thread.count == 1) break;
+        }
+        checkEqual(thread.count,1,"starting ok");
+        clock.t += 100*1000;
+        for (int i=0; i<20; i++) {
+            clk.delay(0.1);
+            if (thread.count == 2) break;
+        }
+        checkEqual(thread.count,2,"stepping ok");
+        clock.done = true;
+        thread.stop();
+        Time::useSystemClock();    
+    }
+
     virtual void runTests() {
    		testInitSuccessFailure();
 		testInitReleaseSynchro();
 		testRunnable();
 		testRateThread();
+        testSimTime();
     }
 };
 

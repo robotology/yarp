@@ -29,32 +29,40 @@ using namespace yarp::os::impl;
 //time helper functions
 
 void yarp::os::impl::getTime(ACE_Time_Value& now) {
+    if (Time::isSystemClock()) {
 #ifdef YARP_HAS_ACE
 #  ifdef ACE_WIN32
-    // now = ACE_High_Res_Timer::gettimeofday_hr();
-    // Fixing, caused problems with new ACE versions and/or Windows 7.
-    now = ACE_OS::gettimeofday();
+        // now = ACE_High_Res_Timer::gettimeofday_hr();
+        // Fixing, caused problems with new ACE versions and/or Windows 7.
+        now = ACE_OS::gettimeofday();
 #  else
-    now = ACE_OS::gettimeofday ();
+        now = ACE_OS::gettimeofday ();
 #  endif
 #else
-    struct timezone *tz = NULL;
-    gettimeofday(&now, tz);
+        struct timezone *tz = NULL;
+        gettimeofday(&now, tz);
 #endif
+    } else {
+        now.set(Time::now());
+    }
 }
 
 void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period) {
+    if (Time::isSystemClock()) {
 #ifdef YARP_HAS_ACE
-    if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-        sleep_period.set(0,0);
-    ACE_OS::sleep(sleep_period);
+        if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
+            sleep_period.set(0,0);
+        ACE_OS::sleep(sleep_period);
 #else
-    if (sleep_period.tv_usec < 0 || sleep_period.tv_sec < 0) {
-        sleep_period.tv_usec = 0;
-        sleep_period.tv_sec = 0;
-    }
-    usleep(sleep_period.tv_sec * 1000000 + sleep_period.tv_usec );
+        if (sleep_period.tv_usec < 0 || sleep_period.tv_sec < 0) {
+            sleep_period.tv_usec = 0;
+            sleep_period.tv_sec = 0;
+        }
+        usleep(sleep_period.tv_sec * 1000000 + sleep_period.tv_usec );
 #endif
+    } else {
+        Time::delay(toDouble(sleep_period));
+    }
 }
 
 void yarp::os::impl::addTime(ACE_Time_Value& val, const ACE_Time_Value & add) {

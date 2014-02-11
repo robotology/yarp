@@ -10,7 +10,8 @@
 #ifndef _YARP2_TIME_
 #define _YARP2_TIME_
 
-#include <yarp/os/api.h>
+#include <yarp/os/ConstString.h>
+#include <yarp/os/Clock.h>
 
 namespace yarp {
     namespace os {
@@ -33,8 +34,8 @@ public:
 
     /**
      * Return the current time in seconds, relative to an arbitrary 
-     * starting point, using the best possible timer resolution.
-     * @return the system time in seconds
+     * starting point.
+     * @return the time in seconds
      */
     static double now();
 
@@ -53,6 +54,49 @@ public:
      */  
     static void turboBoost();
 
+    /**
+     *
+     * Configure YARP to use system time (this is the default).
+     *
+     */
+    static void useSystemClock();
+
+    /**
+     *
+     * Configure YARP to read time from a specified topic.  The
+     * same effect can also be achieved using the YARP_CLOCK
+     * environment variable.  Topic should provide two integers,
+     * time in seconds followed by residual in nanoseconds.
+     * If yarp is configured according to \ref yarp_with_ros,
+     * then ROS /clock topic will work.
+     * 
+     * \see yarp::os::NetworkClock
+     *
+     */
+    static void useNetworkClock(const ConstString& clock);
+
+    /**
+     *
+     * Provide a custom time source.
+     *
+     */
+    static void useCustomClock(Clock *clock);
+
+    /**
+     *
+     * Check if YARP is providing system time.
+     *
+     */
+    static bool isSystemClock();
+
+    /**
+     *
+     * Check if time is valid (non-zero).  If a network clock is
+     * in use and no timestamp has yet been received, this
+     * method will return false.
+     *
+     */
+    static bool isValid();
 };
 
 #endif

@@ -46,6 +46,7 @@ public:
     void addExternalNode(const ConstString& name, Node& node);
     void removeExternalNode(const ConstString& name);
     ConstString getActiveName();
+    bool requireActiveName();
 private:
     void *system_resource;
 };

@@ -361,6 +361,19 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     ConstString n = contact2.getName();
+
+    NestedContact nc(n);
+    if (nc.getNestedName()!="") {
+        if (nc.getNodeName() == "") {
+            Nodes& nodes = NameClient::getNameClient().getNodes();
+            nodes.requireActiveName();
+            ConstString node_name = nodes.getActiveName();
+            if (node_name!="") {
+                n = n + node_name;
+            }
+        }
+    }
+
     if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
         if (fakeName==NULL) {
             Nodes& nodes = NameClient::getNameClient().getNodes();

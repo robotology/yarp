@@ -27,8 +27,10 @@ public:
     std::map<ConstString,int> is_external;
     bool active;
     ConstString active_name;
+    Node *dummy;
 
     NodesHelper() {
+        dummy = NULL;
         clear();
     }
 
@@ -45,6 +47,10 @@ public:
         is_external.clear();
         active = true;
         active_name = "";
+        if (dummy!=NULL) {
+            delete dummy;
+            dummy = NULL;
+        }
     }
 
     Node *getNode(const ConstString& name, bool create);
@@ -95,6 +101,13 @@ public:
 
     ConstString getActiveName() {
         return active_name;
+    }
+
+    bool requireActiveName() {
+        if (active_name=="") {
+            dummy = new Node("...");
+        }
+        return true;
     }
 
     void addExternalNode(const ConstString& name, Node& node) {
@@ -258,6 +271,9 @@ ConstString Nodes::getActiveName() {
     return HELPER(this).getActiveName();
 }
 
+bool Nodes::requireActiveName() {
+    return HELPER(this).requireActiveName();
+}
 
 void Nodes::addExternalNode(const ConstString& name, Node& node) {
     HELPER(this).mutex.lock();

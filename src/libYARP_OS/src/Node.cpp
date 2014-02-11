@@ -297,6 +297,7 @@ void NodeHelper::prepare(const ConstString& name) {
         }
         port.releaseProperties(prop);
         port.open(name);
+        this->name = port.getName();
     }
 }
 
@@ -403,8 +404,9 @@ Node::Node(const ConstString& name) {
     HELPER(this).has_prev_name = true;
     HELPER(this).name = name;
     prepare(name);
-    nodes.addExternalNode(name,*this);
-    nodes.setActiveName(name);
+    ConstString rname = HELPER(this).port.getName();
+    nodes.addExternalNode(rname,*this);
+    nodes.setActiveName(rname);
 }
 
 Node::~Node() {

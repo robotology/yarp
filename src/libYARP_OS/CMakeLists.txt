@@ -13,6 +13,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/BufferedPort.h
                  include/yarp/os/Bytes.h
                  include/yarp/os/Carrier.h
+                 include/yarp/os/Clock.h
                  include/yarp/os/Connection.h
                  include/yarp/os/ConnectionReader.h
                  include/yarp/os/ConnectionState.h
@@ -51,6 +52,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/NetUint32.h
                  include/yarp/os/NetUint64.h
                  include/yarp/os/Network.h
+                 include/yarp/os/NetworkClock.h
                  include/yarp/os/Nodes.h
                  include/yarp/os/Node.h
                  include/yarp/os/NullConnectionReader.h
@@ -93,6 +95,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/Stamp.h
                  include/yarp/os/StringInputStream.h
                  include/yarp/os/StringOutputStream.h
+                 include/yarp/os/SystemClock.h
                  include/yarp/os/Terminator.h
                  include/yarp/os/Thread.h
                  include/yarp/os/Time.h
@@ -239,6 +242,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NetUint32.cpp
                  src/NetUint64.cpp
                  src/Network.cpp
+                 src/NetworkClock.cpp
                  src/Nodes.cpp
                  src/Node.cpp
                  src/NullConnectionReader.cpp
@@ -285,6 +289,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/SocketTwoWayStream.cpp
                  src/Stamp.cpp
                  src/StreamConnectionReader.cpp
+                 src/SystemClock.cpp
                  src/SystemInfo.cpp
                  src/TcpAcceptor.cpp
                  src/TcpCarrier.cpp
