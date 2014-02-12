@@ -184,6 +184,15 @@ static void companion_install_handler() {
 }
 
 static char* szLine = (char*)NULL;
+static bool readlineEOF=false;
+static bool EOFreached()
+{
+#ifdef WITH_READLINE
+    return readlineEOF;
+#else
+    return feof(stdin);
+#endif
+};
 
 static String getStdin() {
     String txt = "";
@@ -201,7 +210,8 @@ static String getStdin() {
         txt = szLine;
         add_history(szLine);
     }
-
+    else if (!szLine)
+        readlineEOF=true;
 #else
 
     bool done = false;
@@ -1174,7 +1184,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
     }
     while(ok) {
         String txt = getStdin();
-        if (feof(stdin)) {
+        if (EOFreached()) {
             break;
         }
         Bottle cmd(txt.c_str()),reply;
@@ -2044,9 +2054,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     }
 
 
-    while (!feof(stdin)) {
+    while (!EOFreached()) {
         String txt = getStdin();
-        if (!feof(stdin)) {
+        if (!EOFreached()) {
             if (txt.length()>0) {
                 if (txt[0]<32 && txt[0]!='\n' &&
                     txt[0]!='\r' && txt[0]!='\t') {
@@ -2126,7 +2136,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     rl_attempted_completion_function = my_completion;
 #endif
 
-    while (!feof(stdin)) {
+    while (!EOFreached()) {
         Port port;
         port.openFake(connectionName);
         if (!port.addOutput(targetName)) {
@@ -2153,7 +2163,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
 #ifdef WITH_READLINE
         Bottle helpCommand, helpBottle;
         helpCommand.addString("help");
-        bool helpOk = port.write(helpCommand,helpBottle);
+        //bool helpOk = port.write(helpCommand,helpBottle);
         Bottle* cmdList=NULL;
         commands.clear();
         if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m','a','n','y') )
@@ -2169,13 +2179,13 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         }
         commands.push_back(" ");
 #endif
-        while (port.getOutputCount()==1&&!feof(stdin)) {
+        while (port.getOutputCount()==1&&!EOFreached()) {
             String txt;
             if (!resendFlag) {
                 txt = getStdin();
             }
 
-            if (!feof(stdin)) {
+            if (!EOFreached()) {
                 if (txt.length()>0) {
                     if (txt[0]<32 && txt[0]!='\n' &&
                         txt[0]!='\r') {
@@ -2232,11 +2242,11 @@ String Companion::readString(bool *eof) {
 
     String txt;
 
-    if (!feof(stdin)) {
+    if (!EOFreached()) {
         txt = getStdin();
     }
 
-    if (feof(stdin)) {
+    if (EOFreached()) {
         end = true;
     } else if (txt.length()>0 && txt[0]<32 && txt[0]!='\n' &&
                txt[0]!='\r') {
