@@ -39,9 +39,17 @@ public:
     }
 
     void clear() {
-        for (std::map<ConstString,Node *>::const_iterator it = by_name.begin();
-             it != by_name.end(); it++) {
-            if (it->second) delete it->second;
+        std::map<ConstString,Node *> by_name_cp = by_name;
+        std::map<ConstString,int> is_external_cp = is_external;
+        for (std::map<ConstString,Node *>::const_iterator it = by_name_cp.begin();
+             it != by_name_cp.end(); it++) {
+            if (it->second) {
+                bool ext = false;
+                if (is_external_cp.find(it->first) != is_external_cp.end()) {
+                    ext = is_external_cp[it->first];
+                }
+                if (!ext) delete it->second;
+            }
         }
         by_name.clear();
         is_external.clear();
