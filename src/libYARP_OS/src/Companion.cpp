@@ -57,6 +57,8 @@
     #include <vector>
     #include <yarp/os/ConstString.h>
     static std::vector<yarp::os::impl::String> commands;
+    static yarp::os::Port* rpcHelpPort=NULL;
+    static bool commandListInitialized=false;
 
     static char* dupstr(char* s)
     {
@@ -82,6 +84,32 @@
             len = strlen (text);
             }
 
+        if (!commandListInitialized)
+        {
+            commands.clear();
+            yarp::os::Bottle helpCommand, helpBottle;
+            helpCommand.addString("help");
+            bool helpOk=false;
+            if(rpcHelpPort)
+                helpOk = rpcHelpPort->write(helpCommand,helpBottle);
+            if(helpOk)
+            {
+                yarp::os::Bottle* cmdList=NULL;
+                if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m','a','n','y') )
+                {
+                    cmdList=helpBottle.get(1).asList();
+                }
+                else
+                    cmdList=helpBottle.get(0).asList();
+                if (cmdList && cmdList->get(0).asString() == "*** Available commands:")
+                {
+                    for (int i=1; i<cmdList->size(); ++i)
+                        commands.push_back(cmdList->get(i).asString());
+                }
+            }
+            commands.push_back(" ");
+            commandListInitialized=true;
+        }
         while ((list_index<commands.size()) && (name = (char*)commands[list_index].c_str()))
             {
             list_index++;
@@ -2161,23 +2189,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         }
 
 #ifdef WITH_READLINE
-        Bottle helpCommand, helpBottle;
-        helpCommand.addString("help");
-        //bool helpOk = port.write(helpCommand,helpBottle);
-        Bottle* cmdList=NULL;
-        commands.clear();
-        if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m','a','n','y') )
-        {
-            cmdList=helpBottle.get(1).asList();
-        }
-        else
-            cmdList=helpBottle.get(0).asList();
-        if (cmdList && cmdList->get(0).asString() == "*** Available commands:")
-        {
-            for (int i=1; i<cmdList->size(); ++i)
-                commands.push_back(cmdList->get(i).asString());
-        }
-        commands.push_back(" ");
+    rpcHelpPort = &port;
 #endif
         while (port.getOutputCount()==1&&!EOFreached()) {
             String txt;
