@@ -183,9 +183,28 @@ static void companion_install_handler() {
     #endif
 }
 
+static char* szLine = (char*)NULL;
+
 static String getStdin() {
-    bool done = false;
     String txt = "";
+
+#ifdef WITH_READLINE
+    if(szLine)
+    {
+        free(szLine);
+        szLine = (char*)NULL;
+    }
+
+    szLine = readline(">>");
+    if(szLine && *szLine)
+    {
+        txt = szLine;
+        add_history(szLine);
+    }
+
+#else
+
+    bool done = false;
     char buf[2048];
     while (!done) {
         char *result = ACE_OS::fgets(buf,sizeof(buf),stdin);
@@ -202,6 +221,9 @@ static String getStdin() {
             done = true;
         }
     }
+
+#endif
+
     return txt;
 }
 
@@ -2150,25 +2172,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         while (port.getOutputCount()==1&&!feof(stdin)) {
             String txt;
             if (!resendFlag) {
-#ifdef WITH_READLINE
-                static char* szLine = (char*)NULL;
-                if(szLine)
-                {
-                    free(szLine);
-                    szLine = (char*)NULL;
-                }
-
-                szLine = readline(">>");
-                if(szLine && *szLine)
-                {
-                    txt = szLine;
-                    add_history(szLine);
-                }
-                else
-                    txt = "";
-#else
                 txt = getStdin();
-#endif
             }
 
             if (!feof(stdin)) {
