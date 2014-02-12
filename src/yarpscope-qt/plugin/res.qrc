@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/YarpScope">
+        <file>YarpScopeToolBar.qml</file>
+        <file>images/pause-icon.png</file>
+        <file>images/play-icon.png</file>
+        <file>images/clear-icon.png</file>
+        <file>images/rescale-icon.png</file>
+        <file>YarpScopeMenu.qml</file>
+        <file>YarpScopeAbout.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/QtYARPScope/main.qml</file>
+    </qresource>
+</RCC>

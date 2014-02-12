@@ -1,0 +1,384 @@
+#include "plotter.h"
+#include "yarp/os/ContactStyle.h"
+#include "yarp/os/Time.h"
+#include "yarp/os/Stamp.h"
+
+
+Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspan, float minval, float maxval, int size, const QString &bgcolor, bool autorescale,  QObject *parent) :
+    QObject(parent)
+{
+    Q_UNUSED(autorescale);
+    this->title = title;
+    this->gridx = gridx;
+    this->gridy = gridy;
+    this->hspan = hspan;
+    this->vspan = vspan;
+    this->minval = minval;
+    this->maxval = maxval;
+    this->size = size;
+    initialSize = size;
+    start = 0;
+    this->bgcolor = bgcolor;
+    interact = false;
+
+    connect(customPlot.axisRect(),SIGNAL(zoomRequest()),this,SLOT(onInteract()));
+    connect(customPlot.axisRect(),SIGNAL(dragStarted()),this,SLOT(onInteract()));
+
+    customPlot.axisRect()->setBackground(QBrush(QColor(bgcolor)));
+    customPlot.axisRect()->setupFullAxesBox(true);
+    customPlot.axisRect()->axis(QCPAxis::atBottom)->setTickLabelType(QCPAxis::ltNumber);
+    customPlot.axisRect()->axis(QCPAxis::atBottom)->setAutoTickStep(false);
+    customPlot.axisRect()->axis(QCPAxis::atBottom)->setTickStep(25);
+    customPlot.axisRect()->axis(QCPAxis::atBottom)->setRange(0,size);
+    customPlot.axisRect()->axis(QCPAxis::atLeft)->setRange(minval, maxval);
+    customPlot.setInteractions( QCP::iRangeDrag | QCP::iRangeZoom  );
+    QCPItemText *textLabel = new QCPItemText(&customPlot);
+    customPlot.addItem(textLabel);
+    textLabel->setPositionAlignment(Qt::AlignTop|Qt::AlignHCenter);
+    textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
+    textLabel->position->setCoords(0.5, 0); // place position at center/top of axis rect
+    textLabel->setText(title);
+
+    connect(customPlot.xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot.xAxis2, SLOT(setRange(QCPRange)));
+    connect(customPlot.yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot.yAxis2, SLOT(setRange(QCPRange)));
+
+}
+
+
+void Plotter::onInteract()
+{
+    interact = true;
+}
+
+void Plotter::init(QString remotePortName,
+                   QString localPortName,
+                   QString carrier,
+                   bool persistent)
+{
+
+    yarp::os::ContactStyle  style;
+    curr_connection = NULL;
+
+    if (persistent) {
+        style.persistent = persistent;
+        style.persistenceType = yarp::os::ContactStyle::END_WITH_TO_PORT;
+    }
+    style.carrier = carrier.toLatin1().data();
+
+    curr_connection = new Connection(remotePortName, localPortName);
+    curr_connection->connect(style);
+}
+
+Plotter::~Plotter()
+{
+
+    if(curr_connection){
+        delete curr_connection;
+    }
+
+
+    for (int i=0;i<graphList.count(); i++) {
+        Graph *idx = (Graph*)graphList.at(i);
+        if (idx) {
+            delete idx;
+            idx = NULL;
+        }
+    }
+    graphList.clear();
+
+}
+
+
+void Plotter::rescale()
+{
+    interact = false;
+    customPlot.rescaleAxes(true);
+}
+
+void Plotter::setPaintGeometry(QRectF r)
+{
+    paintRectGeometry = r;
+}
+
+int Plotter::addGraph(int index, QString title,QString color,QString type,int size)
+{
+    // Adding a graph
+    if(!curr_connection){
+        return -1;
+    }
+
+    bool found = false;
+    for(int i=0;i<graphList.count();i++){
+        Graph *idx = (Graph*)graphList.at(i);
+        if (idx->index == index) {
+            found = true;
+            break;
+        }
+    }
+
+    Graph *graph = NULL;
+    if (!found) {
+        graph = new Graph(index,title,color,type,size,this->size);
+        graphList.append(graph);
+
+
+        QCPGraph *customGraph = customPlot.addGraph(); // line
+        customGraph->setPen(QPen(QColor(color),size));
+        customGraph->setAntialiased(false);
+        customGraph->setLineStyle(QCPGraph::lsLine);
+
+        if(type == "points"){
+            customGraph->setLineStyle(QCPGraph::lsNone);
+            customGraph->setScatterStyle(QCPScatterStyle::ssDot);
+        }
+
+        if(type == "bars"){
+            customGraph->setLineStyle(QCPGraph::lsImpulse);
+            customGraph->setScatterStyle(QCPScatterStyle::ssNone);
+        }
+
+
+        QCPGraph *customGraphPoint = customPlot.addGraph(); // dot
+        customGraphPoint->setPen(QPen(QColor(color)));
+        customGraphPoint->setLineStyle(QCPGraph::lsNone);
+        customGraphPoint->setScatterStyle(QCPScatterStyle::ssDisc);
+
+        graph->setCustomGraph(customGraph);
+        graph->setCustomGraphPoint(customGraphPoint);
+        customPlot.replot();
+
+    }
+    return 0;
+}
+
+
+
+
+void Plotter::onTimeout()
+{
+    if(!curr_connection){
+        return;
+    }
+
+    if (graphList.empty()) {
+        // Do not read data from this port if we don't need it
+        return;
+    }
+
+    yarp::os::Bottle *b = curr_connection->localPort->read(false);
+    if (!b) {
+        qDebug("No data received. Using previous values.");
+        for (int j=0;j < graphList.count(); j++) {
+            Graph *graph = (Graph*)graphList.at(j);
+            graph->appendPreviousValues();
+        }
+
+    } else {
+        yarp::os::Stamp stmp;
+        curr_connection->localPort->getEnvelope(stmp);
+
+        int c = graphList.count();
+        for (int j=0;j < c; j++) {
+            Graph *graph = (Graph*)graphList.at(j);
+
+            if (b->size() - 1 < graph->index) {
+                qWarning() << "bottle size =" << b->size() << " requested index =" << graph->index;
+                continue;
+            }
+
+            double y = (float)(b->get(graph->index).asDouble());
+            float t;
+            if (curr_connection->realTime && stmp.isValid()) {
+                t = (float)(stmp.getTime() - curr_connection->initialTime);
+            } else {
+                t = -1.0;
+            }
+
+            graph->appendValues(y,t);
+        }
+    }
+
+    // if the user did not interact with the plotter, it remains aligned to the right
+    // else, there is no alignment and the user has the freedom to pan and zoom it
+    if(!interact){
+        Graph *graph = (Graph*)graphList.at(0);
+        if(graph){
+            customPlot.xAxis->setRange(graph->lastX+5, size, Qt::AlignRight);
+        }
+    }
+
+    customPlot.replot();
+
+}
+
+
+
+void Plotter::clear()
+{
+    for (int j=0;j < graphList.count(); j++) {
+        Graph *graph = (Graph*)graphList.at(j);
+        graph->clearData();
+    }
+    customPlot.replot();
+}
+
+
+/***********************************************************/
+Graph::Graph(int index, QString title, QString color, QString type, int size, int buffer_size,QObject *parent) : QObject(parent)
+{
+    this->index = index;
+    this->type = type;
+    this->color = color;
+    this->buffer_size = buffer_size;
+    this->title = title;
+
+    lastX = 0;
+    lastY = 0;
+    lastT = 0;
+
+    lineSize = size;
+    numberAcquiredData = 0;
+
+}
+
+Graph::~Graph()
+{
+    clearData();
+}
+
+int Graph::getType()
+{
+    if(type.compare("lines") == 0){
+        return GRAPH_TYPE_LINE;
+    }
+    if(type.compare("bars") == 0){
+        return GRAPH_TYPE_BARS;
+    }
+    if(type.compare("points") == 0){
+        return GRAPH_TYPE_POINTS;
+    }
+
+    return GRAPH_TYPE_LINE;
+}
+
+int Graph::getLineSize()
+{
+    return lineSize;
+}
+
+QString Graph::getColor()
+{
+    return color;
+}
+
+void Graph::appendPreviousValues()
+{
+    appendValues(lastY,lastT);
+}
+
+void Graph::appendValues(float y, float t)
+{
+    float _t = t;
+    if(t == -1){
+        _t = (float)numberAcquiredData;
+    }
+
+    lastX = numberAcquiredData;
+    lastY = y;
+    lastT = _t;
+
+    if(customGraph && customGraphPoint){
+        customGraph->addData(lastX,lastY);
+        customGraphPoint->clearData();
+        customGraphPoint->addData(lastX,lastY);
+        customGraph->removeDataBefore(lastX - 4*buffer_size);
+        numberAcquiredData++;
+    }
+
+}
+
+void Graph::setCustomGraph(QCPGraph *g)
+{
+    customGraph = g;
+}
+
+void Graph::setCustomGraphPoint(QCPGraph *g)
+{
+    customGraphPoint = g;
+}
+
+
+
+void Graph::clearData()
+{
+    if(customGraph){
+        customGraph->clearData();
+    }
+    if(customGraphPoint){
+        customGraphPoint->clearData();
+    }
+
+}
+
+
+/***************************************************************/
+
+Connection::Connection(QString remotePortName,  QString localPortName, QObject *parent): QObject(parent)
+{
+
+    this->remotePortName = remotePortName;
+    this->localPortName = localPortName;
+    localPort = new yarp::os::BufferedPort<yarp::os::Bottle>();
+    realTime = false;
+    initialTime = 0.0;
+
+
+
+    // Open the local port
+    if (localPortName.isEmpty()) {
+        localPort->open();
+    } else {
+        localPort->open(localPortName.toLatin1().data());
+    }
+
+    realTime = true;
+    initialTime = yarp::os::Time::now();
+}
+
+Connection::~Connection()
+{
+
+
+    yarp::os::Network::disconnect(remotePortName.toLatin1().data(), localPort->getName().c_str(), style);
+    delete localPort;
+
+}
+
+void Connection::connect(const yarp::os::ContactStyle &style) {
+
+    //Get the name of the port after the port is open (and therefore the real name assigned)
+    const QString &realLocalPortName = localPort->getName().c_str();
+
+    // Connect local port to remote port
+    if (!yarp::os::Network::connect(remotePortName.toLatin1().data(), realLocalPortName.toLatin1().data(), style)) {
+        qWarning() << "Connection from port" << realLocalPortName.toLatin1().data() <<  "to port" << remotePortName.toLatin1().data()
+                   << "was NOT successfull. Waiting from explicit connection from user.";
+    } else {
+        qDebug("Listening to port %s from port %s",remotePortName.toLatin1().data(),realLocalPortName.toLatin1().data());
+        // Connection was successfull. Save the ContactStyle in order to reuse it for disconnecting;
+        this->style = style;
+    }
+
+    yarp::os::Stamp stmp;
+    localPort->getEnvelope(stmp);
+    if (stmp.isValid()) {
+        qDebug("will use real time for port %s",remotePortName.toLatin1().data());
+        realTime = true;
+        initialTime = stmp.getTime();
+    } else {
+        qDebug("will NOT use real time for port %s",remotePortName.toLatin1().data());
+        realTime = false;
+    }
+}
+
+
