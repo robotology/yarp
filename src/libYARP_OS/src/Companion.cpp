@@ -130,9 +130,11 @@
         matches = (char **)NULL;
 
         /* If this word is at the start of the line, then it is a command
-        to complete.  Otherwise it is the name of a file in the current
-        directory. */
+        to complete. If we are completing after "help ", it is a command again.
+        Othwerwise, stop completing. */
         if (start == 0)
+            matches = rl_completion_matches(text, &command_generator);
+        else if (start == 5 && strncmp (text, "help ", 5))
             matches = rl_completion_matches(text, &command_generator);
         else
             rl_attempted_completion_over=1;
