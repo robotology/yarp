@@ -10,6 +10,8 @@
 
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/NestedContact.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp::os;
 
@@ -21,7 +23,19 @@ NetworkClock::NetworkClock() {
 
 bool NetworkClock::open(const ConstString& name) {
     port.setReadOnly();
-    return port.open(name + "@");
+    NestedContact nc(name);
+    if (nc.getNestedName()=="") {
+        Contact src = NetworkBase::queryName(name);
+        if (src.isValid()) {
+            bool ok = port.open("");
+            if (!ok) return false;
+            return NetworkBase::connect(name,port.getName());
+        } else {
+            fprintf(stderr,"Cannot find time port \"%s\"; for a time topic specify \"%s@\"\n", name.c_str(), name.c_str());
+            return false;
+        }
+    }
+    return port.open(name);
 }
 
 double NetworkClock::now() {

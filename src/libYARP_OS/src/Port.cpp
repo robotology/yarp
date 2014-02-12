@@ -362,6 +362,13 @@ bool Port::open(const Contact& contact, bool registerName,
 
     ConstString n = contact2.getName();
 
+    bool local = false;
+    if (n == "" && contact2.getPort()<=0) {
+        local = true;
+        registerName = false;
+        n = "...";
+    }
+
     NestedContact nc(n);
     if (nc.getNestedName()!="") {
         if (nc.getNodeName() == "") {
@@ -459,7 +466,6 @@ bool Port::open(const Contact& contact, bool registerName,
 
     core.openable();
 
-    bool local = false;
     if (NetworkBase::localNetworkAllocation()&&contact2.getPort()<=0) {
         YARP_DEBUG(Logger::get(),"local network allocation needed");
         local = true;
@@ -527,14 +533,23 @@ bool Port::open(const Contact& contact, bool registerName,
             Contact newName = NetworkBase::registerContact(contact2);
             core.resetPortName(newName.getName());
             address = core.getAddress();
+        } else if (core.getAddress().getRegName()=="" && !registerName) {
+            core.resetPortName(core.getAddress().addCarrier("").toURI());
+            core.setName(core.getAddress().getRegName());
         }
 
         if (core.getVerbosity()>=1) {
-            YARP_INFO(Logger::get(),
-                      String("Port ") +
-                      address.getRegName() +
-                      " active at " +
-                      address.toURI());
+            if (address.getRegName()=="") {
+                YARP_INFO(Logger::get(),
+                          String("Anonymous port active at ") +
+                          address.toURI());
+            } else {
+                YARP_INFO(Logger::get(),
+                          String("Port ") +
+                          address.getRegName() +
+                          " active at " +
+                          address.toURI());
+            }
         }
     }
 

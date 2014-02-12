@@ -766,7 +766,9 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
             removeUnit(Route(getName(),address.getRegName(),"*"),true);
         }
 
-        Route r = Route(getName(),address.getRegName(),
+        ConstString aname = address.getRegName();
+        if (aname=="") aname = address.addCarrier("").toURI();
+        Route r = Route(getName(),aname,
                         (parts.getCarrier()!="")?parts.getCarrier():
                         address.getCarrier());
 
