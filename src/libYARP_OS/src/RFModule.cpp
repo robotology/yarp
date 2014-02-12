@@ -43,7 +43,13 @@ void yarp::os::impl::getTime(ACE_Time_Value& now) {
         gettimeofday(&now, tz);
 #endif
     } else {
+#ifdef YARP_HAS_ACE
         now.set(Time::now());
+#else
+        double t = Time::now();
+        now.tv_sec = static_cast<int>(t);
+        now.tv_usec = static_cast<int>((t-now.tv_sec)*1e6);
+#endif
     }
 }
 
