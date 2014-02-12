@@ -61,6 +61,9 @@
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/Wire.h>
+#include <yarp/os/Clock.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/os/NetworkClock.h>
 
 #endif
 

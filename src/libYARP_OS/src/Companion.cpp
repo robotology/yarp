@@ -37,6 +37,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Ping.h>
 #include <yarp/os/YarpPlugin.h>
+#include <yarp/os/SystemClock.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
@@ -206,6 +207,8 @@ Companion::Companion() {
         "run yarp name server");
     add("terminate",  &Companion::cmdTerminate,
         "terminate a yarp-terminate-aware process by name");
+    add("time", &Companion::cmdTime,
+        "show the time");
     add("topic",  &Companion::cmdTopic,
         "set a topic name");
     add("version",    &Companion::cmdVersion,
@@ -2457,3 +2460,11 @@ void Companion::applyArgs(yarp::os::Contactable& port) {
 }
 
 
+int Companion::cmdTime(int argc, char *argv[]) {
+    SystemClock clk;
+    while (true) {
+        printf("%f\n", Time::now());
+        clk.delay(0.1);
+    }
+    return 0;
+}

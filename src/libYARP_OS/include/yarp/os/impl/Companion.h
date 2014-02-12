@@ -207,6 +207,8 @@ public:
 
     int ping(const char *port, bool quiet);
 
+    int cmdTime(int argc, char *argv[]);
+
 private:
 
     Companion();
