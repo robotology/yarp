@@ -347,11 +347,11 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(YARP_OS LINK_PRIVATE pthread)
 endif()
 
-if (READLINE_FOUND)
+if (YARP_USE_READLINE)
     add_definitions(-DWITH_READLINE)
     include_directories(${READLINE_INCLUDE_DIR})
     target_link_libraries(YARP_OS LINK_PRIVATE ${READLINE_LIBRARY})
-endif (READLINE_FOUND)
+endif ()
 
 install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)

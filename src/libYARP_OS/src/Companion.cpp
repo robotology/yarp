@@ -58,7 +58,7 @@
     #include <yarp/os/ConstString.h>
     static std::vector<yarp::os::impl::String> commands;
 
-    char* dupstr(char* s)
+    static char* dupstr(char* s)
     {
         char *r;
         r = (char*) malloc ((strlen (s) + 1));
@@ -68,7 +68,7 @@
     /* Generator function for command completion.  STATE lets us know whether
    to start from scratch; without any state (i.e. STATE == 0), then we
    start at the top of the list. */
-    char* command_generator (const char* text, int state)
+    static char* command_generator (const char* text, int state)
     {
         static int list_index, len;
         char *name;
@@ -96,7 +96,7 @@
    region of TEXT that contains the word to complete.  We can use the
    entire line in case we want to do some simple parsing.  Return the
    array of matches, or NULL if there aren't any. */
-    char ** my_completion (const char* text, int start, int end)
+    static char ** my_completion (const char* text, int start, int end)
     {
         char **matches;
         matches = (char **)NULL;
