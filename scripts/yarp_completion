@@ -28,9 +28,9 @@ _yarp()
     COMPREPLY=()
 
     # check if bash completion version is 1.2 or higher
-    if type _get_comp_words_by_ref > /dev/null 2&>1 ;
-    then bc1_2=false;
-    else bc1_2=true;
+    if type _get_comp_words_by_ref > /dev/null 2>&1 ;
+    then bc1_2=true;
+    else bc1_2=false;
     fi;
 
     if $bc1_2 ;
