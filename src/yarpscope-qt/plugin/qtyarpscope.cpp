@@ -222,6 +222,9 @@ void QtYARPScope::onRepaint()
 
 void QtYARPScope::paint(QPainter *painter)
 {
+	if(!loader){
+		return;
+	}
     int rows = loader->portscope_rows;
     int cols = loader->portscope_columns;
     int w = painter->device()->width();
