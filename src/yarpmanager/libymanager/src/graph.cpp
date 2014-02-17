@@ -4,11 +4,11 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
 #include "graph.h"
+
 
 Graph::Graph(void) { }
 

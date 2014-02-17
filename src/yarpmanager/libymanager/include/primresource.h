@@ -4,31 +4,30 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #ifndef __PRIMRESOURCE__
 #define __PRIMRESOURCE__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "node.h"
 #include "utility.h"
 #include "resource.h"
 #include "logicresource.h"
 
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
-typedef size_t Capacity; 
+typedef size_t Capacity;
 
 /**
  * Class Memory
  */
 class Memory : public GenericResource {
-public: 
+public:
     Memory(void);
     Memory(const char* szName);
     Memory(const Memory &res);
@@ -54,7 +53,7 @@ private:
  * class Storage
  */
 class Storage : public GenericResource {
-public: 
+public:
     Storage(void);
     Storage(const char* szName);
     Storage(const Storage &res);
@@ -73,13 +72,13 @@ private:
     Capacity totalSpace;
     Capacity freeSpace;
 };
- 
+
 
 /*
  * Class Network
  */
 class Network : public GenericResource {
-public: 
+public:
     Network(void);
     Network(const char* szName);
     Network(const Network &res);
@@ -105,7 +104,7 @@ private:
 
 typedef struct _LoadAvg {
     double loadAverageInstant;
-    double loadAverage1; 
+    double loadAverage1;
     double loadAverage5;
     double loadAverage15;
 } LoadAvg;
@@ -115,14 +114,14 @@ typedef struct _LoadAvg {
  * Class Processor
  */
 class Processor : public GenericResource {
-public: 
+public:
     Processor(void);
     Processor(const char* szName);
     Processor(const Processor &res);
     virtual ~Processor();
     virtual Node* clone(void);
     virtual bool satisfy(GenericResource* resource);
- 
+
     void setArchitecture(const char* arch) {if(arch) strArchitecure = arch; }
     void setModel(const char* model) {if(model) strModel = model; }
     void setCores(size_t n) { cores = n; }
@@ -139,9 +138,9 @@ public:
 protected:
 
 private:
-    string strArchitecure; 
+    string strArchitecure;
     string strModel;
-    size_t cores; 
+    size_t cores;
     size_t siblings;
     double frequency;
     LoadAvg cpuload;
@@ -160,7 +159,7 @@ typedef vector<Process> ProcessContainer;
 typedef vector<Process>::iterator ProcessIterator;
 
 class Computer : public GenericResource {
-public: 
+public:
     Computer(void);
     Computer(const char* szName);
     Computer(const Computer& rhs);
@@ -174,13 +173,13 @@ public:
     void setProcessor(Processor& proc) { processor = proc; }
     void setNetwork(Network& net) { network = net; }
     void setPlatform(Platform& os) {platform = os; }
-    
+
     Memory& getMemory(void) { return memory; }
     Storage& getStorage(void) { return storage; }
     Processor& getProcessor(void) { return processor; }
     Network& getNetwork(void) { return network; }
     Platform& getPlatform(void) { return platform; }
-   
+
     int peripheralCount(void) const { return peripheralResources.size(); }
     GenericResource& getPeripheralAt(int index) const { return *(peripheralResources[index]); }
     bool addPeripheral(GenericResource& res);
@@ -199,7 +198,7 @@ private:
     Platform platform;
     ResourcePContainer peripheralResources;
 
-    // Processes are not actually part of a resource and only 
+    // Processes are not actually part of a resource and only
     // will be used by gyarpmanager for listing processes running
     // on Computer
     ProcessContainer processes;
@@ -216,4 +215,3 @@ typedef vector<Computer>::iterator ComputerIterator;
 //}
 
 #endif //__PRIMRESOURCE__
-

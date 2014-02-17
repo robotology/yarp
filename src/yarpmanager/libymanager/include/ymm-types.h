@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -26,7 +25,7 @@ typedef enum __NodeType {
     OUTPUTD,
     STREAM_PORT,
     SERVICE_PORT,
-    EVENT_PORT,    
+    EVENT_PORT,
     APPLICATION,
     RESOURCE,
     INOUTD,
@@ -86,6 +85,6 @@ typedef enum __Carrier {
 
 #endif //YMM_DEBUG
 
-//} 
+//}
 
 #endif //__YMMTYPES__

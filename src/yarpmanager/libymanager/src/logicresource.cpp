@@ -2,18 +2,20 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+
 #include "logicresource.h"
-#include <string.h>
+
+#include <cstring>
+
 
 /**
  * Class Platform
  */
-Platform::Platform(void) : GenericResource("Platform") 
+Platform::Platform(void) : GenericResource("Platform")
 {
 }
 
@@ -31,11 +33,11 @@ Platform::Platform(const Platform &resource) : GenericResource(resource)
 Node* Platform::clone(void)
 {
     Platform* resource = new Platform(*this);
-    return resource; 
+    return resource;
 }
 
 bool Platform::satisfy(GenericResource* resource)
-{   
+{
     if(!getAvailability() || getDisable())
         return false;
 
@@ -61,7 +63,7 @@ Platform::~Platform() { }
 /**
  * Class ResYarpPort
  */
-ResYarpPort::ResYarpPort(void) : GenericResource("ResYarpPort") 
+ResYarpPort::ResYarpPort(void) : GenericResource("ResYarpPort")
 {
     timeout = 0;
 }
@@ -75,27 +77,25 @@ ResYarpPort::ResYarpPort(const char* szName) : GenericResource("ResYarpPort")
 ResYarpPort::ResYarpPort(const ResYarpPort &resource) : GenericResource(resource)
 {
     timeout = resource.timeout;
-    strPort = resource.strPort; 
+    strPort = resource.strPort;
 }
 
 Node* ResYarpPort::clone(void)
 {
     ResYarpPort* resource = new ResYarpPort(*this);
-    return resource; 
+    return resource;
 }
 
 bool ResYarpPort::satisfy(GenericResource* resource)
-{   
+{
     if(!getAvailability() || getDisable())
         return false;
 
     ResYarpPort* resport = dynamic_cast<ResYarpPort*>(resource);
     if(!resport)
         return false;
-    return (strPort == string(resport->getPort()) || 
+    return (strPort == string(resport->getPort()) ||
             strPort == string(resport->getName()) );
 }
 
 ResYarpPort::~ResYarpPort() { }
-
-

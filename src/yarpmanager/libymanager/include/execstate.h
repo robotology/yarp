@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -21,8 +20,8 @@ class Executable;
 
 
 /**
- * all transitions are used in state machine 
- */ 
+ * all transitions are used in state machine
+ */
 class ITransition
 {
 public:
@@ -90,13 +89,13 @@ class Ready : public ITransition, public FSM::StateBase
 public:
     Ready(Executable* pExecutable, FSM::IEventSink* pEventSink);
     ~Ready();
-    
+
 public:
     void kill(void);
     void startModule(void);
     void moduleFailed(void);
 
-private: 
+private:
     Executable* executable;
     bool bAborted;
     bool checkPriorityPorts(void);
@@ -121,7 +120,7 @@ public:
     void connectAllPorts(void);
     void moduleFailed(void);
 
-private: 
+private:
     Executable* executable;
     bool checkNormalPorts(void);
     bool bAborted;
@@ -168,7 +167,7 @@ public:
     void killModule(void);
     void disconnectAllPorts(void);
 
-private: 
+private:
     Executable* executable;
 };
 
@@ -189,7 +188,7 @@ public:
     void refresh(void);
     void moduleFailed(void);
 
-private: 
+private:
     Executable* executable;
 };
 
@@ -216,7 +215,7 @@ public:
     void connectionFailed(void* which);
 
 protected:
-    void onTransition(FSM::StateBase* previous, 
+    void onTransition(FSM::StateBase* previous,
                     FSM::Event* event, FSM::StateBase* current);
 
 private:

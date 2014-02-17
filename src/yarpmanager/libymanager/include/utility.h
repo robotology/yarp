@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -20,12 +19,12 @@
 #include <string.h>
 #include <iostream>
 
+#include "ymm-types.h"
+
+
 using namespace std;
 
-#include "ymm-types.h" 
-
-
-class StrStream 
+class StrStream
 {
 public:
     StrStream(void);
@@ -35,7 +34,7 @@ public:
     StrStream& operator<<(StrStream &oss);
     StrStream& operator<<(const std::string &str);
     StrStream& operator<<(int n);
-	StrStream& operator<<(double n);
+    StrStream& operator<<(double n);
     StrStream& operator = (const char* sz);
     StrStream& operator = (char* sz);
     StrStream& operator = (const std::string &str);
@@ -58,32 +57,32 @@ private:
 
 /**
  * Singleton class ErrorLogger
- */  
+ */
 class ErrorLogger
 {
 public:
     static ErrorLogger* Instance(void);
-    
-    void addWarning(const char* szWarning);    
-    void addWarning(const string &str);    
+
+    void addWarning(const char* szWarning);
+    void addWarning(const string &str);
     void addWarning(OSTRINGSTREAM &stream);
     void addError(const char* szError);
     void addError(const string &str);
-    void addError(OSTRINGSTREAM &stream);   
-    const char* getLastError(void);  
+    void addError(OSTRINGSTREAM &stream);
+    const char* getLastError(void);
     const char* getLastWarning(void);
     void clear(void);
     int errorCount(void);
     int warningCount(void);
- 
+
 private:
-    ErrorLogger(){};  
+    ErrorLogger(){};
     ErrorLogger(ErrorLogger const&){};
     static ErrorLogger* pInstance;
     vector<string> errors;
     vector<string> warnings;
 };
- 
+
 
 bool compareString(const char* szFirst, const char* szSecond);
 void trimString(string& str);

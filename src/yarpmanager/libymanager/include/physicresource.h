@@ -4,25 +4,24 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #ifndef __PHYSICRESOURCE__
 #define __PHYSICRESOURCE__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "node.h"
 #include "utility.h"
 #include "primresource.h"
 #include "resource.h"
 
-using namespace std; 
+using namespace std;
 
 class GPU : public GenericResource {
 
-public: 
+public:
     GPU(void);
     GPU(const char* szName);
     GPU(const GPU &res);
@@ -63,9 +62,8 @@ private:
     size_t threadPerBlock;
     bool bOverlap;
 };
- 
- 
+
+
 //}
 
 #endif //__PHYSICRESOURCE__
-

@@ -2,10 +2,10 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
+
 
 #include "resource.h"
 
@@ -14,12 +14,12 @@
  * Class GenericResource
  */
 
-GenericResource::GenericResource(const char* szTypeName) : Node(RESOURCE) 
+GenericResource::GenericResource(const char* szTypeName) : Node(RESOURCE)
 {
     modOwner = NULL;
     bAvailable = true;
     bDisabled = false;
-    if(szTypeName) 
+    if(szTypeName)
         strTypeName = szTypeName;
 }
 
@@ -43,12 +43,12 @@ GenericResource::~GenericResource() { }
  * Class MultiResource
  */
 
-MultiResource::MultiResource(void) : GenericResource("MultipleResource") 
+MultiResource::MultiResource(void) : GenericResource("MultipleResource")
 {
 }
 
 
-MultiResource::MultiResource(const char* szName) : GenericResource("MultipleResource") 
+MultiResource::MultiResource(const char* szName) : GenericResource("MultipleResource")
 {
     setName(szName);
 }
@@ -71,14 +71,14 @@ MultiResource& MultiResource::operator=(const MultiResource& rhs)
 bool MultiResource::addResource(GenericResource& res)
 {
     GenericResource* newres = (GenericResource*) res.clone();
-    resources.push_back(newres);    
+    resources.push_back(newres);
     return true;
 }
 
 bool MultiResource::satisfy(GenericResource* resource)
 {
-    // MultiResource is used as intermediate concept for 
-    // disjunctive resource dependencies and it never 
+    // MultiResource is used as intermediate concept for
+    // disjunctive resource dependencies and it never
     // can be a provider.
     return false;
 }
@@ -87,13 +87,13 @@ bool MultiResource::satisfy(GenericResource* resource)
 Node* MultiResource::clone(void)
 {
     MultiResource* resource = new MultiResource(*this);
-    return resource; 
+    return resource;
 }
 
 void MultiResource::swap(const MultiResource &res)
 {
     clear();
-    // deep copy    
+    // deep copy
     for(int i=0; i<res.resourceCount(); i++)
         addResource(res.getResourceAt(i));
 }
@@ -113,7 +113,3 @@ MultiResource::~MultiResource()
 {
     clear();
 }
-
-
-
-

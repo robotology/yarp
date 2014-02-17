@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -17,26 +16,26 @@
 #include "node.h"
 #include "utility.h"
 
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
 /**
- * Class InputData  
+ * Class InputData
  */
 class InputData : public Node{
 
-public: 
+public:
     InputData(void);
     InputData(const char* szName);
     InputData(const InputData &input);
     virtual ~InputData();
     virtual Node* clone(void);
-    void setName(const char* szName) { 
+    void setName(const char* szName) {
         if(szName){
-            strName = szName; 
+            strName = szName;
         }
-    }   
+    }
     const char* getName(void) { return strName.c_str(); }
     void setPort(const char* szPort) { if(szPort) strPort = szPort; }
     const char* getPort(void) { return strPort.c_str(); }
@@ -47,43 +46,43 @@ public:
     bool isRequired(void) { return bRequired; }
     bool withPriority(void) { return bWithPriority; }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
-    const char* getDescription(void) { return strDescription.c_str(); }   
+    const char* getDescription(void) { return strDescription.c_str(); }
     void setPortType(NodeType type) { portType = type; }
     NodeType getPortType(void) { return portType; }
     void setOwner(Node* owner) { modOwner = owner; }
     Node* owner(void) { return modOwner; }
 
-    bool operator==(const InputData& input) {       
-        return (strName == input.strName); 
+    bool operator==(const InputData& input) {
+        return (strName == input.strName);
     }
-    
+
 protected:
 
 private:
     string strName;
-    string strPort; 
+    string strPort;
     string carrier;
     string strDescription;
     bool bWithPriority;
-    bool bRequired;     
-    Node*  modOwner; 
+    bool bRequired;
+    Node*  modOwner;
     NodeType portType;
 };
 
 
 class OutputData : public Node{
 
-public: 
+public:
     OutputData(void);
     OutputData(const char* szName);
     OutputData(const OutputData &input);
     virtual ~OutputData();
     virtual Node* clone(void);
-    void setName(const char* szName) { 
+    void setName(const char* szName) {
         if(szName){
-            strName = szName; 
+            strName = szName;
         }
-    }   
+    }
     const char* getName(void) { return strName.c_str(); }
     void setPort(const char* szPort) { if(szPort) strPort = szPort; }
     const char* getPort(void) { return strPort.c_str(); }
@@ -97,23 +96,23 @@ public:
     void setOwner(Node* owner) { modOwner = owner; }
     Node* owner(void) { return modOwner; }
 
-   
-    bool operator==(const OutputData& output) {     
-        return (strName == output.strName); 
+
+    bool operator==(const OutputData& output) {
+        return (strName == output.strName);
     }
-    
+
 protected:
 
 private:
     string strName;
-    string strPort; 
+    string strPort;
     string carrier;
     string strDescription;
-    Node*  modOwner; 
+    Node*  modOwner;
     NodeType portType;
 };
- 
- 
+
+
 //}
 
 #endif //__MODULE__

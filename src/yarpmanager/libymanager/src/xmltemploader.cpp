@@ -2,11 +2,14 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+
+#include "xmltemploader.h"
+#include "utility.h"
+#include "ymm-dir.h"
 
 #include <algorithm>
 #include <cctype>
@@ -15,43 +18,41 @@
 
 #include <tinyxml.h>
 
-#include "xmltemploader.h"
-#include "utility.h"
-#include "ymm-dir.h"
 
 using namespace std;
 
+
 /**
- * if szAppName is NULL, XmlTempLoader will load all the applications 
- * found in szPath otherwise only one application named szAppname 
+ * if szAppName is NULL, XmlTempLoader will load all the applications
+ * found in szPath otherwise only one application named szAppname
  * will be loaded.
  */
 XmlTempLoader::XmlTempLoader(const char* szPath, const char* szAppName)
-{    
+{
     if(szAppName)
         strAppName = szAppName;
-    
+
     if(strlen(szPath))
     {
         strPath = szPath;
-        if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+        if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
-    }   
+    }
 }
 
 /**
- * load only one application indicated by its xml file name 
+ * load only one application indicated by its xml file name
  */
 XmlTempLoader::XmlTempLoader(const char* szFileName)
 {
     if(szFileName)
-        strFileName = szFileName;   
+        strFileName = szFileName;
 }
 
 
 XmlTempLoader::~XmlTempLoader()
-{   
+{
 }
 
 
@@ -59,9 +60,9 @@ bool XmlTempLoader::init(void)
 {
     fileNames.clear();
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     /**
-     * loading single applicaition template indicated by its xml file name 
+     * loading single applicaition template indicated by its xml file name
      */
     if(!strFileName.empty())
     {
@@ -72,20 +73,20 @@ bool XmlTempLoader::init(void)
     if(strPath.empty())
     {
         logger->addError("No application template path is introduced.");
-        return false; 
+        return false;
     }
 
     DIR *dir;
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
-    {       
+    {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
     }
-    
-    /* we need to load all xml app templates */  
+
+    /* we need to load all xml app templates */
     while((entry = readdir(dir)))
     {
         string name = entry->d_name;
@@ -96,7 +97,7 @@ bool XmlTempLoader::init(void)
                 fileNames.push_back(strPath+name);
         }
     }
-    closedir(dir);  
+    closedir(dir);
     return true;
 }
 
@@ -109,7 +110,7 @@ void XmlTempLoader::reset(void)
 
 void XmlTempLoader::fini(void)
 {
-    fileNames.clear();  
+    fileNames.clear();
 }
 
 
@@ -121,16 +122,16 @@ AppTemplate* XmlTempLoader::getNextAppTemplate(void)
         while(!app)
         {
             if(fileNames.empty())
-                return NULL;                
+                return NULL;
             string fname = fileNames.back();
             fileNames.pop_back();
-            app = parsXml(fname.c_str());       
-        }   
+            app = parsXml(fname.c_str());
+        }
         return app;
     }
     else
     {
-        vector<string>::iterator itr; 
+        vector<string>::iterator itr;
         for(itr=fileNames.begin(); itr<fileNames.end(); itr++)
         {
          AppTemplate* app = parsXml((*itr).c_str());
@@ -147,11 +148,11 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
 {
     app.name.clear();
     app.tmpFileName.clear();
-    
+
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     TiXmlDocument doc(szFile);
-    if(!doc.LoadFile()) 
+    if(!doc.LoadFile())
     {
         OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
@@ -160,7 +161,7 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
         logger->addError(err);
         return NULL;
     }
-    
+
     /* retrieving root element */
     TiXmlElement *root = doc.RootElement();
     if(!root)
@@ -171,13 +172,13 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
         logger->addError(err);
         return NULL;
     }
-    
+
     if(!compareString(root->Value(), "application"))
     {
         return NULL;
     }
-    
-    app.tmpFileName = szFile;    
+
+    app.tmpFileName = szFile;
 
     /* retrieving name */
     TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
@@ -185,7 +186,7 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
     {
         OSTRINGSTREAM err;
         err<<"Application from "<<szFile<<" has no name.";
-        logger->addError(err);      
+        logger->addError(err);
         //return NULL;
     }
     else
@@ -199,5 +200,3 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
 
     return &app;
 }
-
-

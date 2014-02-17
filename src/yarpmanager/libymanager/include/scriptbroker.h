@@ -4,24 +4,25 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2013 Istituto Italiano di Tecnologia (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu <elena.ceseracciu@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __SCRIPT_BROKER__
 #define __SCRIPT_BROKER__
 
-#include "yarpbroker.h" 
-#include "localbroker.h"
-#include "yarp/os/Log.h"
 #include <string>
+
+#include <yarp/os/Log.h>
+
+#include "yarpbroker.h"
+#include "localbroker.h"
 
 class ScriptLocalBroker: public LocalBroker
 {
 
-public: 
+public:
      ScriptLocalBroker(const char* sc) : LocalBroker() {
         YARP_ASSERT(sc);
         script = sc;
@@ -33,12 +34,12 @@ public:
 private:
     std::string script;
 };
- 
+
 
 class ScriptYarprunBroker: public YarpBroker
 {
 
-public: 
+public:
     ScriptYarprunBroker(const char* sc) : YarpBroker() {
         YARP_ASSERT(sc);
         script = sc;
@@ -50,7 +51,5 @@ public:
 private:
     std::string script;
 };
- 
+
 #endif //__SCRIPT_BROKER__
-
-

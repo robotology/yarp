@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -17,10 +16,10 @@
 #include <string>
 #include <iterator>
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "node.h"
 
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
@@ -30,35 +29,35 @@ typedef map<string, Node*>::iterator NodePIterator;
 class GraphIterator;
 
 /**
- * Class Graph  
+ * Class Graph
  */
 class Graph {
 
-public: 
+public:
     Graph(void);
     virtual ~Graph();
 
     int getSize(void) { return nodes.size(); }
     Node* getNodeAt(int index);
-    
+
     Node* addNode(Node* node);
     bool removeNode(Node* node);
     bool removeNode(const char* szLabel);
-    bool addLink(Node* first, Node* second, 
+    bool addLink(Node* first, Node* second,
                 float weight, bool _virtual=false);
-    bool addLink(const char* szFirst, const char* szSecond, 
+    bool addLink(const char* szFirst, const char* szSecond,
                 float weight, bool _virtual=false);
     bool removeLink(Node* first, Node* second);
     bool removeLink(const char* szFirst, const char* szSecond);
-    void clear(void);   
+    void clear(void);
     void setSatisfied(bool sat);
     void setVisited(bool vis);
     bool hasNode(Node* node);
-    bool hasNode(const char* szLabel);  
+    bool hasNode(const char* szLabel);
     Node* getNode( const char* szLabel);
     GraphIterator begin(void);
     GraphIterator end(void);
-   
+
 protected:
 
 private:
@@ -82,12 +81,12 @@ public:
     bool operator!=(const GraphIterator& rhs) {return itr!=rhs.itr;}
     Node*& operator*() {return (*itr).second;}
     friend class Graph;
-  
+
 private:
     NodePIterator itr;
 };
 
- 
+
 #define PRINT_GRAPH(g)\
         cout<<"Graph "<<#g<<" with "<<g.getSize()<<" nodes:"<<endl;\
         cout<<"{"<<endl;\

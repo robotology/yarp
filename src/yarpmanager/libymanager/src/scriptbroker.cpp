@@ -6,10 +6,11 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu <elena.ceseracciu@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
+
 #include "scriptbroker.h"
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
@@ -122,4 +123,3 @@ bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
     return YarpBroker::init(script.c_str(), strDevParam.str().c_str(),
                                 szhost, szstdio, szworkdir, szenv);
 }
-

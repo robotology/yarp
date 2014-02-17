@@ -4,32 +4,31 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #ifndef __SINGLEAPPLOADER__
 #define __SINGLEAPPLOADER__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "manifestloader.h"
 
 //namespace ymm {
 
 
 /**
- * Class SingleAppLoader  
+ * Class SingleAppLoader
  */
 class SingleAppLoader : public AppLoader {
 
-public: 
+public:
     SingleAppLoader(const char* szModule, const char* strHost);
     virtual ~SingleAppLoader();
     virtual bool init(void);
     virtual void fini(void);
     virtual Application* getNextApplication(void);
-    
+
 protected:
 
 private:
@@ -39,7 +38,7 @@ private:
 };
 
 
- 
+
 //}
 
 #endif //__SINGLEAPPLOADER__

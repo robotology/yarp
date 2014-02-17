@@ -4,16 +4,15 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __MANIFESTLOADER__
 #define __MANIFESTLOADER__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "module.h"
 #include "application.h"
 #include "resource.h"
@@ -21,18 +20,18 @@
 //namespace ymm {
 
 /**
- * Abstract Class AppLoader  
+ * Abstract Class AppLoader
  */
 class AppLoader {
 
-public: 
+public:
     AppLoader(void) {}
     virtual ~AppLoader() {}
-    virtual bool init(void) = 0; 
+    virtual bool init(void) = 0;
     virtual void fini(void) = 0;
     virtual void reset(void) = 0;
     virtual Application* getNextApplication(void) = 0;
-    
+
 protected:
 
 private:
@@ -42,10 +41,10 @@ private:
 class AppSaver
 {
 public:
-    AppSaver() {} 
+    AppSaver() {}
     virtual ~AppSaver() {}
     virtual bool save(Application* application) = 0;
-    
+
 protected:
 
 private:
@@ -54,18 +53,18 @@ private:
 
 
 /**
- * Abstract Class ModuleLoader  
+ * Abstract Class ModuleLoader
  */
 class ModuleLoader {
 
-public: 
+public:
     ModuleLoader(void) {}
     virtual ~ModuleLoader() {}
-    virtual bool init(void) = 0; 
+    virtual bool init(void) = 0;
     virtual void reset(void) = 0;
     virtual void fini(void) = 0;
     virtual Module* getNextModule(void) = 0;
-    
+
 protected:
 
 private:
@@ -74,18 +73,18 @@ private:
 
 
 /**
- * Abstract Class ResourceLoader  
+ * Abstract Class ResourceLoader
  */
 class ResourceLoader {
 
-public: 
+public:
     ResourceLoader(void) {}
     virtual ~ResourceLoader() {}
-    virtual bool init(void) = 0; 
+    virtual bool init(void) = 0;
     virtual void reset(void) = 0;
     virtual void fini(void) = 0;
     virtual GenericResource* getNextResource(void) = 0;
-    
+
 protected:
 
 private:
@@ -94,7 +93,7 @@ private:
 
 
 /**
- * Abstract Class TempLoader  
+ * Abstract Class TempLoader
  */
 
 typedef struct _AppTemplate {
@@ -104,14 +103,14 @@ typedef struct _AppTemplate {
 
 
 class TempLoader {
-public: 
+public:
     TempLoader(void) {}
     virtual ~TempLoader() {}
-    virtual bool init(void) = 0; 
+    virtual bool init(void) = 0;
     virtual void fini(void) = 0;
     virtual void reset(void) = 0;
     virtual AppTemplate* getNextAppTemplate(void) = 0;
-    
+
 protected:
 
 private:

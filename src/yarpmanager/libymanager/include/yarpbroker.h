@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -23,24 +22,26 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
+
+// FIXME Do not use yarp/os/impl in .h files
 #include <yarp/os/impl/SystemInfo.h>
 #include <yarp/os/impl/SystemInfoSerializer.h>
 
-#include "broker.h" 
+#include "broker.h"
 #include "primresource.h"
 
-using namespace std; 
+using namespace std;
 //using namespace yarp::os;
- 
+
 //namespace ymm {
 
 
 /**
- * Class Broker  
+ * Class Broker
  */
 class YarpBroker: public Broker, public yarp::os::RateThread {
 
-public: 
+public:
     YarpBroker();
      virtual ~YarpBroker();
      bool init();
@@ -51,7 +52,7 @@ public:
      bool start();
      bool stop();
      bool kill();
-     bool connect(const char* from, const char* to, 
+     bool connect(const char* from, const char* to,
                         const char* carrier, bool persist=false);
      bool disconnect(const char* from, const char* to);
      bool rmconnect(const char* from, const char* to);
@@ -63,12 +64,12 @@ public:
      bool attachStdout(void);
      void detachStdout(void);
 
-     bool getSystemInfo(const char* server, 
+     bool getSystemInfo(const char* server,
                         yarp::os::impl::SystemInfoSerializer& info);
-     bool getAllProcesses(const char* server, 
+     bool getAllProcesses(const char* server,
                         ProcessContainer &processes);
      bool getAllPorts(vector<std::string> &stingList);
-     
+
 public: // for rate thread
     void run();
     bool threadInit();
@@ -86,24 +87,24 @@ private:
     string strEnv;
     unsigned int ID;
     yarp::os::Property command;
-    string strError;    
+    string strError;
     bool bOnlyConnector;
     bool bInitialized;
     yarp::os::Semaphore semParam;
- 
+
     string strStdioUUID;
     yarp::os::BufferedPort<yarp::os::Bottle> stdioPort;
     yarp::os::Port port;
 
     bool timeout(double base, double timeout);
-    yarp::os::Property& runProperty(void);      
+    yarp::os::Property& runProperty(void);
     int requestServer(yarp::os::Property& config);
-    int SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target, 
+    int SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target,
                 yarp::os::Bottle& resp, float fTimeout=5.0);
-    
+
     string __trace_message;
 };
- 
+
 //}
 
 #endif //__YARPBROKER__

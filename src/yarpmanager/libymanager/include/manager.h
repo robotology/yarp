@@ -4,45 +4,44 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __MANAGER__
 #define __MANAGER__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "kbase.h"
 #include "utility.h"
 #include "executable.h"
 #include "yarpbroker.h"
 
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
 
 
 /**
- * Class Manager  
+ * Class Manager
  */
 class Manager : public MEvent{
 
-public: 
+public:
     Manager( bool withWatchDog=false);
-    Manager(const char* szModPath, const char* szAppPath, 
+    Manager(const char* szModPath, const char* szAppPath,
             const char* szResPath, bool withWatchDog=false);
     virtual ~Manager();
 
     bool addApplication(const char* szFileName, char* szAppName_=NULL);
     bool addApplications(const char* szPath);
     bool addModule(const char* szFileName);
-    bool addModules(const char* szPath); 
+    bool addModules(const char* szPath);
     bool addResource(const char* szFileName);
-    bool addResources(const char* szPath); 
-   
+    bool addResources(const char* szPath);
+
     bool removeApplication(const char* szAppName);
     bool removeModule(const char* szModName);
     bool removeResource(const char* szResName);
@@ -53,8 +52,8 @@ public:
                 const char* szhost, const char* szstdio,
                 const char* szworkdir, const char* szenv );
     bool updateConnection(unsigned int id, const char* from,
-                const char* to, const char* carrier); 
-    
+                const char* to, const char* carrier);
+
     bool run(void);
     bool run(unsigned int id, bool async=false);
     bool stop(void);
@@ -100,11 +99,11 @@ public:
     void disableAutoDependency(void) { bAutoDependancy = false; }
     void enableWatchDog(void) { bWithWatchDog = true; }
     void disableWatchod(void) { bWithWatchDog = false; }
-    bool exportDependencyGraph(const char* szFileName) { 
-        return knowledge.exportAppGraph(szFileName); 
+    bool exportDependencyGraph(const char* szFileName) {
+        return knowledge.exportAppGraph(szFileName);
     }
 
-    KnowledgeBase* getKnowledgeBase(void) { return &knowledge; } 
+    KnowledgeBase* getKnowledgeBase(void) { return &knowledge; }
     ErrorLogger* getLogger(void) { return logger;}
 
 protected:
@@ -128,12 +127,12 @@ private:
     string strDefBroker;
     YarpBroker connector;
 
-    KnowledgeBase knowledge; 
-    ExecutablePContainer runnables; 
+    KnowledgeBase knowledge;
+    ExecutablePContainer runnables;
     CnnContainer connections;
     ModulePContainer modules;
     ResourcePContainer resources;
-    
+
     bool createKnowledgeBase(AppLoader &appLoader);
     void clearExecutables(void);
     bool isServer(Module* module);
@@ -147,8 +146,8 @@ private:
     bool updateResource(GenericResource* resource);
     Broker* createBroker(Module* module);
 };
- 
- 
+
+
 //}
 
 #endif //__MANAGER__

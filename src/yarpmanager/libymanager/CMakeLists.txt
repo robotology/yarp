@@ -78,14 +78,18 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
 
+
 if(CREATE_LIB_MATH)
-    ADD_DEFINITIONS( -DWITH_YARPMATH )
-    add_library(YARP_manager STATIC ${folder_source} ${folder_header})
-    target_link_libraries(YARP_manager YARP_sig YARP_OS YARP_math ${TinyXML_LIBRARIES})
-else(CREATE_LIB_MATH)
-    add_library(YARP_manager STATIC ${folder_source} ${folder_header})
-    target_link_libraries(YARP_manager YARP_sig YARP_OS ${TinyXML_LIBRARIES})	
-endif(CREATE_LIB_MATH)
+    add_definitions( -DWITH_YARPMATH )
+endif()
+
+add_library(YARP_manager STATIC ${folder_source} ${folder_header})
+target_link_libraries(YARP_manager LINK_PRIVATE YARP_sig YARP_OS)
+target_link_libraries(YARP_manager LINK_PRIVATE ${TinyXML_LIBRARIES})
+
+if(CREATE_LIB_MATH)
+    target_link_libraries(YARP_manager LINK_PRIVATE YARP_math)
+endif()
 
 
 #install(TARGETS YARP_manager EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})

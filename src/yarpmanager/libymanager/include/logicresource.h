@@ -4,25 +4,24 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #ifndef __LOGICRESOURCE__
 #define __LOGICRESOURCE__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "node.h"
 #include "utility.h"
 #include "resource.h"
 
-using namespace std; 
+using namespace std;
 
 
-class Platform : public GenericResource 
+class Platform : public GenericResource
 {
-public: 
+public:
     Platform(void);
     Platform(const char* szName);
     Platform(const Platform &res);
@@ -41,13 +40,13 @@ private:
     string strDistrib;
     string strRelease;
     bool satisfy_platform(Platform* os);
-   
-};
- 
 
-class ResYarpPort : public GenericResource 
+};
+
+
+class ResYarpPort : public GenericResource
 {
-public: 
+public:
     ResYarpPort(void);
     ResYarpPort(const char* szName);
     ResYarpPort(const ResYarpPort &res);
@@ -58,16 +57,15 @@ public:
     double getTimeout(void) { return timeout; }
     virtual Node* clone(void);
     virtual bool satisfy(GenericResource* resource);
-    
+
 protected:
 
 private:
-    string strPort; 
+    string strPort;
     double timeout;
 };
- 
- 
+
+
 //}
 
 #endif //__LOGICRESOURCE__
-

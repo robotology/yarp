@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -15,18 +14,19 @@
 
 #include <string>
 #include <vector>
-#include "ymm-types.h" 
-#include "broker.h"
-#include "module.h"
-#include "application.h"
-#include "execstate.h"
 
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 
+#include "ymm-types.h"
+#include "broker.h"
+#include "module.h"
+#include "application.h"
+#include "execstate.h"
+
 //using namespace yarp::os;
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
@@ -39,7 +39,7 @@ typedef enum __RSTATE {
     READY,
     CONNECTING,
     RUNNING,
-    DYING, 
+    DYING,
     DEAD,
     STUNKNOWN
 } RSTATE;
@@ -47,7 +47,7 @@ typedef enum __RSTATE {
 
 class MEvent{
 
-public: 
+public:
     MEvent() {}
     virtual ~MEvent() {}
     virtual void onExecutableStart(void* which) {}
@@ -66,11 +66,11 @@ class ConcurentWrapper;
 class ConcurentRateWrapper;
 
 /**
- * Class Executable  
+ * Class Executable
  */
 class Executable : public BrokerEventSink
 {
-public: 
+public:
     Executable(Broker* _broker, MEvent* _event, bool bWatchDog=true);
     virtual ~Executable();
 
@@ -83,15 +83,15 @@ public:
     void setParam(const char* val) { if(val) strParam = val; }
     void setHost(const char* val) { if(val) strHost = val; }
     void setStdio(const char* val) { if(val) strStdio = val; }
-    void setWorkDir(const char* val) { if(val) strWorkdir = val; } 
+    void setWorkDir(const char* val) { if(val) strWorkdir = val; }
     void setEnv(const char* val) {if(val) strEnv = val; }
 
     void addConnection(Connection &cnn) { connections.push_back(cnn); }
     CnnContainer& getConnections(void) { return connections;}
     void addResource(ResYarpPort &res) { resources.push_back(res); }
     ResourceContainer& getResources(void) { return resources; }
-    
-    RSTATE state(void); 
+
+    RSTATE state(void);
     Broker* getBroker(void) { return broker; }
     MEvent* getEvent(void) { return event; }
     const char* getCommand(void) { return strCommand.c_str(); }
@@ -115,17 +115,17 @@ private:
     string strParam;
     string strHost;
     string strStdio;
-    string strWorkdir;  
+    string strWorkdir;
     string strEnv;
     int theID;
-    
+
     bool bWatchDog;
     Broker* broker;
     MEvent* event;
     CnnContainer connections;
     ResourceContainer resources;
 
-    ExecMachine* execMachine; 
+    ExecMachine* execMachine;
     ErrorLogger* logger;
     ConcurentWrapper* startWrapper;
     ConcurentWrapper* stopWrapper;
@@ -148,13 +148,13 @@ typedef void (Executable::*ExecutableFuncPtr)(void);
 class ConcurentWrapper : public yarp::os::Thread
 {
 public:
-    ConcurentWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor) 
+    ConcurentWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor)
     : labor(ptrLabor), executable(ptrExecutable) { }
-    
+
     virtual ~ConcurentWrapper() { if(isRunning()) stop(); }
 
-        
-    void run() { 
+
+    void run() {
         if(labor && executable)
             (executable->*labor)();
     }
@@ -171,14 +171,14 @@ private:
 class ConcurentRateWrapper: public yarp::os::RateThread
 {
 public:
-    
-    ConcurentRateWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor) 
+
+    ConcurentRateWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor)
     : RateThread(WDOG_PERIOD), labor(ptrLabor), executable(ptrExecutable) { }
 
     virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
 
-        
-    void run() { 
+
+    void run() {
         if(labor && executable)
             (executable->*labor)();
     }
@@ -192,7 +192,7 @@ private:
 };
 
 
- 
+
 //}
 
 #endif //__Executable__

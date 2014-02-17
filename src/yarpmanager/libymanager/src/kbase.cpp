@@ -4,17 +4,18 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#include <stdio.h>
-#include <cctype>
-#include <string>
-#include <string.h>
 
 #include "kbase.h"
 #include "utility.h"
 #include "resource.h"
+
+#include <cstdio>
+#include <cctype>
+#include <string>
+#include <cstring>
+
 
 using namespace std;
 
@@ -223,13 +224,13 @@ const ModulePContainer& KnowledgeBase::getModules(Application* parent)
             if(mod)
                 dummyModules.push_back(mod);
         }
-    }        
+    }
     sort(dummyModules.begin(), dummyModules.end(), sortModules());
     return dummyModules;
 }
 
-//TODO: dummyConnections should be changed to return connections from all 
-// nested applications recursively 
+//TODO: dummyConnections should be changed to return connections from all
+// nested applications recursively
 const CnnContainer& KnowledgeBase::getConnections(Application* parent)
 {
     dummyConnections.clear();
@@ -239,7 +240,7 @@ const CnnContainer& KnowledgeBase::getConnections(Application* parent)
             dummyConnections.push_back(parent->getConnectionAt(i));
     }
     else
-        dummyConnections = selconnections; 
+        dummyConnections = selconnections;
     //sort(dummyConnections.begin(), dummyConnections.end(), sortConnections());
     return dummyConnections;
 }
@@ -349,15 +350,15 @@ bool KnowledgeBase::makeupApplication(Application* application)
             }
             else
             {
-                
+
                 if(appList.find(string(interfaceApp.getName()))==appList.end())
                     appList[interfaceApp.getName()] = 1;
                 OSTRINGSTREAM newname;
                 newname<<application->getName()<<":";
                 newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];
-                
+
                 repapp = replicateApplication(tmpGraph, repapp, newname.str().c_str());
-                
+
                 // seting application base prefix
                 repapp->setBasePrefix(interfaceApp.getPrefix());
 
@@ -397,7 +398,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
     /*
      * updating extera connections with application prefix
      * and connections owner
-     */    
+     */
     for(int i=0; i<application->connectionCount(); i++)
     {
         Connection* cnn = &application->getConnectionAt(i);
@@ -413,7 +414,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
             string strPort = string(application->getPrefix()) + string(cnn->to());
             cnn->setTo(strPort.c_str());
         }
-    }    
+    }
 
     /**
      * Some users tend to introduce YARP port dependencies inside application
@@ -447,7 +448,7 @@ bool KnowledgeBase::setModulePrefix(Module* module, const char* szPrefix, bool u
 
     module->setPrefix(szPrefix);
     if(updateBasePrefix)
-        module->setBasePrefix(szPrefix);        
+        module->setBasePrefix(szPrefix);
 
     // updating port's prefix
     // TODO: check if this is required anymore
@@ -486,7 +487,7 @@ bool KnowledgeBase::setApplicationPrefix(Application* application, const char* s
 
     application->setPrefix(szPrefix);
     if(updateBasePrefix)
-        application->setBasePrefix(szPrefix);        
+        application->setBasePrefix(szPrefix);
 
     /**
      * updating nested application's and module's prefixs
@@ -533,9 +534,9 @@ bool KnowledgeBase::setApplicationPrefix(Application* application, const char* s
     return true;
 }
 
-Connection& KnowledgeBase::addConnectionToApplication(Application* application, 
+Connection& KnowledgeBase::addConnectionToApplication(Application* application,
                                                       Connection &cnn)
-{    
+{
     cnn.setOwner(application);
     for(int i=0; i<application->connectionCount(); i++)
     {
@@ -546,14 +547,14 @@ Connection& KnowledgeBase::addConnectionToApplication(Application* application,
             return *con;
         }
     }
-    
+
     selconnections.push_back(cnn);
     return application->addConnection(cnn);
 }
 
-Arbitrator& KnowledgeBase::addArbitratorToApplication(Application* application, 
+Arbitrator& KnowledgeBase::addArbitratorToApplication(Application* application,
                                                       Arbitrator &arb)
-{    
+{
     arb.setOwner(application);
     for(int i=0; i<application->arbitratorCount(); i++)
     {
@@ -569,11 +570,11 @@ Arbitrator& KnowledgeBase::addArbitratorToApplication(Application* application,
 
 
 
-bool KnowledgeBase::updateConnectionOfApplication(Application* application, 
+bool KnowledgeBase::updateConnectionOfApplication(Application* application,
                                                   Connection& prev, Connection& con )
 {
     __CHECK_NULLPTR(application);
-   
+
     for(int i=0; i<application->connectionCount(); i++)
     {
         Connection* pcon = &application->getConnectionAt(i);
@@ -583,9 +584,9 @@ bool KnowledgeBase::updateConnectionOfApplication(Application* application,
             break;
         }
     }
-    
+
     CnnIterator citr;
-    for(citr=selconnections.begin(); citr<selconnections.end(); citr++) 
+    for(citr=selconnections.begin(); citr<selconnections.end(); citr++)
     {
         if((*citr) == prev)
         {
@@ -600,7 +601,7 @@ bool KnowledgeBase::updateConnectionOfApplication(Application* application,
 bool KnowledgeBase::removeArbitratorFromApplication(Application* application, Arbitrator &arb)
 {
     //printf("[%d] %s\n",__LINE__, __PRETTY_FUNCTION__ );
-    __CHECK_NULLPTR(application);    
+    __CHECK_NULLPTR(application);
     return application->removeArbitrator(arb);
 }
 
@@ -608,9 +609,9 @@ bool KnowledgeBase::removeArbitratorFromApplication(Application* application, Ar
 bool KnowledgeBase::removeConnectionFromApplication(Application* application, Connection &cnn)
 {
     __CHECK_NULLPTR(application);
-    
+
     CnnIterator citr;
-    for(citr=selconnections.begin(); citr<selconnections.end(); citr++) 
+    for(citr=selconnections.begin(); citr<selconnections.end(); citr++)
     {
         if((*citr) == cnn)
         {
@@ -631,7 +632,7 @@ const char* KnowledgeBase::getUniqueAppID(Application* parent, const char* szApp
     return newname.str().c_str();
 }
 
-Application* KnowledgeBase::addIApplicationToApplication(Application* application, 
+Application* KnowledgeBase::addIApplicationToApplication(Application* application,
                                     ApplicationInterface &interfaceApp, bool isNew)
 {
     __CHECK_NULLPTR(application);
@@ -655,12 +656,12 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             logger->addWarning(msg);
         }
         else
-        {            
+        {
             if(appList.find(string(interfaceApp.getName()))==appList.end())
                 appList[interfaceApp.getName()] = 1;
             OSTRINGSTREAM newname;
             newname<<application->getName()<<":";
-            newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];            
+            newname<<interfaceApp.getName()<<":"<<appList[interfaceApp.getName()];
             repapp = replicateApplication(tmpGraph, repapp, newname.str().c_str());
             // seting application base prefix
             repapp->setBasePrefix(interfaceApp.getPrefix());
@@ -688,7 +689,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
 }
 
 
-Module* KnowledgeBase::addIModuleToApplication(Application* application, 
+Module* KnowledgeBase::addIModuleToApplication(Application* application,
                                                ModuleInterface &mod, bool isNew)
 {
     __CHECK_NULLPTR(application);
@@ -741,7 +742,7 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
     module->setOwner(application);
 
     if(isNew)
-        application->addImodule(mod);   
+        application->addImodule(mod);
     return module;
 }
 
@@ -765,7 +766,7 @@ bool KnowledgeBase::removeIModuleFromApplication(Application* application, const
     return false;
 }
 
-//TODO: check if we should free application memory  
+//TODO: check if we should free application memory
 //
 bool KnowledgeBase::removeIApplicationFromApplication(Application* application, const char* szAppTag)
 {
@@ -794,7 +795,7 @@ bool KnowledgeBase::removeIApplicationFromApplication(Application* application, 
             {
                 tmpGraph.removeLink(app, res);
                 tmpGraph.removeNode(res);
-            }                
+            }
         }
     }
 
@@ -894,7 +895,7 @@ bool KnowledgeBase::reasolveDependency(Application* app,
                                             app->getLabel());
 
     //internaly used by makeup application and addIApplicationToApplication
-    appList.clear(); 
+    appList.clear();
     // extend application to its child applications and modules
     if(!makeupApplication(mainApplication))
     {
@@ -1109,7 +1110,7 @@ bool KnowledgeBase::updateModule(Module* module, ModuleInterface* imod )
 
     module->setModelBase(imod->getModelBase());
 
-   
+
     // updating module prefix
     if(strlen(imod->getPrefix()))
         setModulePrefix(module, imod->getPrefix(), false);
@@ -1255,16 +1256,16 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
         Application* embApp = dynamic_cast<Application*>(*itr);
         if(embApp && (embApp != application) && (embApp->owner() == application))
         {
-            ApplicationInterface iapp(embApp->getName());           
+            ApplicationInterface iapp(embApp->getName());
             iapp.setPrefix(embApp->getBasePrefix());
             if(embApp->getModel())
                 iapp.setModelBase(*embApp->getModel());
             else
                 iapp.setModelBase(embApp->getModelBase());
             application->addIapplication(iapp);
-        }        
+        }
     }
- 
+
     //updating imodules
     application->removeAllImodules();
     for(GraphIterator itr=tmpGraph.begin(); itr!=tmpGraph.end(); itr++)
@@ -1275,9 +1276,9 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
             ModuleInterface imod(module);
             imod.setPrefix(module->getBasePrefix());
             application->addImodule(imod);
-        }        
+        }
     }
-    
+
     // updating connections modelBase with Model if exists
     for(int i=0; i<application->connectionCount(); i++)
     {
@@ -1299,7 +1300,7 @@ bool KnowledgeBase::saveApplication(AppSaver* appSaver, Application* application
 
 bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
 {
-   
+
     // removing inputs and outputs and resource
 	GraphIterator itr=graph.begin();
 
@@ -1318,7 +1319,7 @@ bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
                 {
                     graph.removeNode(output);
 					itr=graph.begin();
-                }                
+                }
                 else
                 {
                     MultiResource* res = dynamic_cast<MultiResource*>(*itr);
@@ -1332,7 +1333,7 @@ bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
                 }
             }
 			//itr++;
-        }  
+        }
 
     // removing module
     return graph.removeNode(mod);
@@ -1785,7 +1786,3 @@ const char* KnowledgeBase::createDataLabel(const char* modlabel,
         name += string(postfix);
     return name.c_str();
 }
-
-
-
-

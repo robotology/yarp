@@ -4,25 +4,26 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __KBASE__
 #define __KBASE__
 
-#include "ymm-types.h" 
+#include <cstring>
+#include <algorithm>
+
+#include "ymm-types.h"
 #include "graph.h"
 #include "manifestloader.h"
 #include "resource.h"
 #include "logicresource.h"
 #include "primresource.h"
-#include <string.h>
-#include <algorithm>
 
-using namespace std; 
+
+using namespace std;
 
 //namespace ymm {
 
@@ -35,19 +36,19 @@ typedef vector<Node*>::iterator NodePVIterator;
 
 
 /**
- * Class KnowledgeBase  
+ * Class KnowledgeBase
  */
 class KnowledgeBase{
 
 public:
     KnowledgeBase(void) : mainApplication(NULL) {};
-    virtual ~KnowledgeBase() {     
-        kbGraph.clear(); 
+    virtual ~KnowledgeBase() {
+        kbGraph.clear();
         tmpGraph.clear();
     };
-    
-    bool createFrom(ModuleLoader* _mloader, 
-                    AppLoader* _apploader, 
+
+    bool createFrom(ModuleLoader* _mloader,
+                    AppLoader* _apploader,
                     ResourceLoader* _resloader);
     bool addApplication(Application* application, char* szAppName_=NULL);
     bool addModule(Module* module);
@@ -56,9 +57,9 @@ public:
     bool removeModule(Module* module);
     bool removeResource(GenericResource* resource);
 
-    bool reasolveDependency(const char* szName, 
+    bool reasolveDependency(const char* szName,
                             bool bAutoDependancy=false, bool bSilent=false);
-    bool reasolveDependency(Application* app, 
+    bool reasolveDependency(Application* app,
                             bool bAutoDependancy=false, bool bSilent=false);
     bool checkConsistency(void);
 
@@ -72,30 +73,30 @@ public:
     const ResourcePContainer& getResources(Application* parent=NULL);
     const CnnContainer& getConnections(Application* parent=NULL);
     const ArbContainer& getArbitrators(Application* parent=NULL);
-               
+
     const InputContainer& getInputCandidates(OutputData* output);
     const OutputContainer& getOutputCandidates(InputData* input);
 
-    Module* getModule(const char* szName) { 
-                return dynamic_cast<Module*>(kbGraph.getNode(szName)); 
+    Module* getModule(const char* szName) {
+                return dynamic_cast<Module*>(kbGraph.getNode(szName));
                 }
-    Application* getApplication() { return mainApplication; } 
+    Application* getApplication() { return mainApplication; }
 
-    Application* getApplication(const char* szName) { 
-                return dynamic_cast<Application*>(kbGraph.getNode(szName)); 
+    Application* getApplication(const char* szName) {
+                return dynamic_cast<Application*>(kbGraph.getNode(szName));
                 }
-    GenericResource* getResource(const char* szName) { 
-                return dynamic_cast<GenericResource*>(kbGraph.getNode(szName)); 
+    GenericResource* getResource(const char* szName) {
+                return dynamic_cast<GenericResource*>(kbGraph.getNode(szName));
                 }
 
-    Module* addIModuleToApplication(Application* application, 
+    Module* addIModuleToApplication(Application* application,
                                     ModuleInterface &mod, bool isNew=false);
     bool removeIModuleFromApplication(Application* application, const char* szTag);
     Connection& addConnectionToApplication(Application* application, Connection &cnn);
     bool removeConnectionFromApplication(Application* application, Connection &cnn);
-    bool updateConnectionOfApplication(Application* application, 
+    bool updateConnectionOfApplication(Application* application,
                                        Connection& prev, Connection& con );
-    Application* addIApplicationToApplication(Application* application, 
+    Application* addIApplicationToApplication(Application* application,
                                     ApplicationInterface &app, bool isNew=false);
     bool removeIApplicationFromApplication(Application* application, const char* szTag);
 
@@ -110,39 +111,39 @@ public:
 
     bool exportAppGraph(const char* szFileName) {
             return exportDotGraph(tmpGraph, szFileName); }
-    
+
     bool exportKbGraph(const char* szFileName) {
             return exportDotGraph(kbGraph, szFileName);
     }
 
-    
+
 protected:
 
 private:
     Graph kbGraph;
-    Graph tmpGraph; 
+    Graph tmpGraph;
     ModuleLoader* modloader;
     AppLoader* apploader;
     ResourceLoader* resloader;
-    Application* mainApplication; 
+    Application* mainApplication;
 
-    ApplicaitonPContainer dummyApplications;    
+    ApplicaitonPContainer dummyApplications;
     ModulePContainer dummyModules;
-    ResourcePContainer dummyResources;  
+    ResourcePContainer dummyResources;
     CnnContainer dummyConnections;
     ArbContainer dummyArbitrators;
 
     ApplicaitonPContainer selapplications;
     ModulePContainer selmodules;
     CnnContainer selconnections;
-    ResourcePContainer selresources; 
+    ResourcePContainer selresources;
 
     map<string, int> appList;
 
     bool moduleCompleteness(Module* module);
     void updateNodesLink(Graph& graph, int level);
     void makeResourceLinks(Graph& graph);
-    void updateResourceWeight(Graph& graph, 
+    void updateResourceWeight(Graph& graph,
                               GenericResource* resource, float weight);
 
     //void updateExtraLink(Graph& graph, CnnContainer* connections);
@@ -151,11 +152,11 @@ private:
     const char* createDataLabel(const char* modlabel, const char* port,
                                 const char* postfix=NULL);
     const char* createAppLabel(Application* app);
-    Module* replicateModule(Graph& graph, 
+    Module* replicateModule(Graph& graph,
                             Module* module, const char* szLabel);
-    Application* replicateApplication(Graph& graph, 
+    Application* replicateApplication(Graph& graph,
                             Application* app, const char* szLabel);
-    GenericResource* replicateResource(Graph& graph, 
+    GenericResource* replicateResource(Graph& graph,
                             GenericResource* res, const char* szLabel);
 
     Module* addModuleToGraph(Graph& graph, Module* module);
@@ -166,11 +167,11 @@ private:
     bool reason(Graph* graph, Node* initial,
                          ApplicaitonPContainer &applications,
                          ModulePContainer &modules,
-                         ResourcePContainer& resources, 
+                         ResourcePContainer& resources,
                          CnnContainer &connections,
                          bool bAutoDependancy, bool bSilent);
 
-    bool constrainSatisfied(Node* node, 
+    bool constrainSatisfied(Node* node,
                          bool bAutoDependancy, bool bSilent);
     bool makeupApplication(Application* application);
     bool isExternalResource(Graph& graph, const char* szName);
@@ -179,7 +180,7 @@ private:
     OutputData* findOutputByPort(Graph& graph, const char* szPort);
     InputData* findInputByPort(Graph& graph, const char* szPort);
     GenericResource* findResByName(Graph& graph, const char* szName);
-    Module* findOwner(Graph& graph, InputData* input); 
+    Module* findOwner(Graph& graph, InputData* input);
 
 };
 
@@ -192,7 +193,7 @@ public:
      {
         string strFirst((*f).getName());
         string strSecond((*s).getName());
-        transform(strFirst.begin(), strFirst.end(), strFirst.begin(), 
+        transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
                   (int(*)(int))toupper);
         transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
                   (int(*)(int))toupper);
@@ -208,7 +209,7 @@ public:
      {
         string strFirst((*f).getName());
         string strSecond((*s).getName());
-        transform(strFirst.begin(), strFirst.end(), strFirst.begin(), 
+        transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
                   (int(*)(int))toupper);
         transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
                   (int(*)(int))toupper);
@@ -224,7 +225,7 @@ public:
      {
         string strFirst(f->getName());
         string strSecond(s->getName());
-        transform(strFirst.begin(), strFirst.end(), strFirst.begin(), 
+        transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
                   (int(*)(int))toupper);
         transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
                   (int(*)(int))toupper);

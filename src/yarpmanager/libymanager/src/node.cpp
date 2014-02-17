@@ -4,11 +4,11 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
 #include "node.h"
+
 
 //using namespace ymm;
 
@@ -17,7 +17,7 @@
  */
 
 Node::Node(const Node &node)
-{    
+{
     bVisited = node.bVisited;
     bSatisfied = node.bSatisfied;
     type = node.type;
@@ -75,5 +75,3 @@ LinkIterator Node::findSuc(Node* node)
             return itr;
     return sucessors.end();
 }
-
-

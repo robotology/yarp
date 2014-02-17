@@ -4,16 +4,15 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __XMLMODLOADER__
 #define __XMLMODLOADER__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "module.h"
 #include "data.h"
 #include "manifestloader.h"
@@ -22,7 +21,7 @@
 
 
 /**
- * Class XmlModLoader  
+ * Class XmlModLoader
  */
 class XmlModLoader : public ModuleLoader {
 
@@ -34,7 +33,7 @@ public:
     void reset(void);
     void fini(void);
     Module* getNextModule(void);
-    
+
 protected:
 
 private:
@@ -47,7 +46,7 @@ private:
 };
 
 
- 
+
 //}
 
 #endif //__XMLMODLOADER__

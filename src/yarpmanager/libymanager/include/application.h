@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -23,28 +22,28 @@
 #include "primresource.h"
 #include "arbitrator.h"
 
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
 
 /**
- * Class Portmap  
+ * Class Portmap
  */
 class Portmap{
 
-public: 
+public:
     Portmap(const char* szOld, const char* szNew) {
         if(szOld) strOld = szOld;
         if(szNew) strNew = szNew;
-    }       
+    }
     virtual ~Portmap(){}
     const char* oldPort(void) { return strOld.c_str(); }
     const char* newPort(void) { return strNew.c_str(); }
-    bool operator==(const Portmap& alt) {       
-        return ((strOld == alt.strOld) && (strNew == alt.strNew)); 
+    bool operator==(const Portmap& alt) {
+        return ((strOld == alt.strOld) && (strNew == alt.strNew));
     }
-    
+
 protected:
 
 private:
@@ -58,16 +57,16 @@ typedef vector<Portmap>::iterator PortmapIterator;
 
 
 /**
- * Class Connection  
+ * Class Connection
  */
 class Connection{
 
 public:
-    Connection(void) { Connection(NULL, NULL); } 
+    Connection(void) { Connection(NULL, NULL); }
     Connection(const char* szFrom, const char* szTo, const char* szCr=NULL) {
         if(szFrom) strFrom = szFrom;
         if(szTo) strTo = szTo;
-        if(szCr) strCarrier = szCr;        
+        if(szCr) strCarrier = szCr;
         bWithPriority = false;
         appOwner = NULL;
         bExternalFrom = false;
@@ -90,7 +89,7 @@ public:
     bool isExternalTo(void) { return bExternalTo; }
     bool isPersistent(void) { return bPersist; }
     const char* carrier(void) { return strCarrier.c_str(); }
-   
+
     void setId(const char* id) { if(id) strId = id; }
     const char* getId(void) { return strId.c_str(); }
 
@@ -106,19 +105,19 @@ public:
     bool withPriority(void) { return bWithPriority; }
 
     GraphicModel* getModel(void) { return model;}
-    void setModel(GraphicModel* mdl) { model = mdl; }; 
+    void setModel(GraphicModel* mdl) { model = mdl; };
 
-    // modelBased is used to keep the graphic and geometric 
-    // information which is directly loaded from application 
-    // description file. 
+    // modelBased is used to keep the graphic and geometric
+    // information which is directly loaded from application
+    // description file.
     GraphicModel& getModelBase(void) { return modelBase;}
-    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }; 
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
 
-    bool operator==(const Connection& alt) {        
-        return ((strFrom == alt.strFrom) && (strTo == alt.strTo)); 
+    bool operator==(const Connection& alt) {
+        return ((strFrom == alt.strFrom) && (strTo == alt.strTo));
     }
-    
+
 protected:
 
 private:
@@ -126,11 +125,11 @@ private:
     string strTo;
     string strId;
     bool bExternalTo;
-    bool bExternalFrom; 
+    bool bExternalFrom;
     string strCarrier;
-    bool bPersist; 
+    bool bPersist;
     Node* appOwner;
-    bool bWithPriority; 
+    bool bWithPriority;
     InputData* input;
     OutputData* output;
     GraphicModel* model;
@@ -148,20 +147,20 @@ typedef vector<ResYarpPort>::iterator ResourceIterator;
 
 
 /**
- * Class ModuleInterface  
+ * Class ModuleInterface
  */
 class ModuleInterface{
 
-public: 
+public:
     ModuleInterface( const char* szName) {
         if(szName) strName = szName;
         iRank = -1;
     }
 
     ModuleInterface(Module* module);
-   
+
     virtual ~ModuleInterface(){}
-        
+
     void setHost(const char* szHost) { if(szHost) strHost = szHost; }
     void setParam(const char* szParam) { if(szParam) strParam = szParam; }
     void setRank(int irank) { iRank = irank;}
@@ -175,29 +174,29 @@ public:
     const char* getHost(void) { return strHost.c_str(); }
     const char* getParam(void) { return strParam.c_str(); }
     int getRank(void) { return iRank; }
-    const char* getWorkDir(void) { return strWorkDir.c_str(); } 
+    const char* getWorkDir(void) { return strWorkDir.c_str(); }
     const char* getStdio(void) { return strStdio.c_str(); }
-    const char* getBroker(void) { return strBroker.c_str(); }   
-    const char* getPrefix(void) { return strPrefix.c_str(); }   
-    const char* getTag(void) { return strTag.c_str(); }   
+    const char* getBroker(void) { return strBroker.c_str(); }
+    const char* getPrefix(void) { return strPrefix.c_str(); }
+    const char* getTag(void) { return strTag.c_str(); }
 
-    bool operator==(const ModuleInterface& modint) {        
-        return (strName == modint.strName); 
+    bool operator==(const ModuleInterface& modint) {
+        return (strName == modint.strName);
     }
-   
+
     void addResource(ResYarpPort &res) { resources.push_back(res); }
     ResourceContainer& getResources(void) { return resources; }
- 
+
     int portmapCount(void) { return portmaps.size(); }
     Portmap& getPortmapAt(int index){ return portmaps[index]; }
     bool addPortmap(Portmap &portmap);
     bool removePortmap(Portmap& portmap);
-    
+
     //void setModule(Module* mod) { module = mod; }
-    //Module* getModule(void) { return module;}    
+    //Module* getModule(void) { return module;}
 
     GraphicModel& getModelBase(void) { return modelBase;}
-    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }; 
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
 
 protected:
@@ -212,7 +211,7 @@ private:
     string strPrefix;
     int iRank;
     ResourceContainer resources;
-    PortmapContainer portmaps;  
+    PortmapContainer portmaps;
     PortmapIterator findPortmap(Portmap& portmap);
     string strTag;
     GraphicModel modelBase;
@@ -228,23 +227,23 @@ typedef vector<ModuleInterface>::iterator IModuleIterator;
  */
 class ApplicationInterface {
 
-public: 
+public:
     ApplicationInterface(const char* szName) {
         if(szName) strName = szName;
-    }       
+    }
     virtual ~ApplicationInterface(){}
-    void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; } 
+    void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
     const char* getName(void) { return strName.c_str(); }
     const char* getPrefix(void) { return strPrefix.c_str(); }
-    bool operator==(const ApplicationInterface& alt) {      
-        return (strName == alt.strName); 
+    bool operator==(const ApplicationInterface& alt) {
+        return (strName == alt.strName);
     }
 
-    // modelBased is used to keep the graphic and geometric 
-    // information which is directly loaded from application 
-    // description file. 
+    // modelBased is used to keep the graphic and geometric
+    // information which is directly loaded from application
+    // description file.
     GraphicModel& getModelBase(void) { return modelBase;}
-    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }; 
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
 
 protected:
@@ -260,25 +259,25 @@ typedef vector<ApplicationInterface> IApplicationContainer;
 typedef vector<ApplicationInterface>::iterator IApplicationIterator;
 
 /**
- * Class Application  
+ * Class Application
  */
 class Application : public Node{
 
-public: 
+public:
     Application(void);
     Application(const char* szName);
     Application(const Application &app);
     virtual ~Application();
-    void setName(const char* szName) { 
+    void setName(const char* szName) {
         if(szName){
-            strName = szName; 
+            strName = szName;
         }
     }
     void setVersion(const char* szVersion) { if(szVersion) strVersion = szVersion; }
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     const char* getName(void) { return strName.c_str(); }
     const char* getVersion(void) { return strVersion.c_str(); }
-    const char* getDescription(void) { return strDescription.c_str(); } 
+    const char* getDescription(void) { return strDescription.c_str(); }
     virtual Node* clone(void);
 
     void addAuthor(Author& author) { authors.push_back(author); }
@@ -297,15 +296,15 @@ public:
     bool addIapplication(ApplicationInterface &iapp);
     bool removeIapplication(ApplicationInterface& iapp);
     void removeAllIapplications(void) { Iapplications.clear(); }
-    
+
     int resourcesCount(void) { return resources.size(); }
     ResYarpPort& getResourceAt(int index){ return resources[index]; }
     bool addResource(ResYarpPort &res);
     bool removeResource(ResYarpPort& res);
 
-    void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; } 
+    void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
     const char* getPrefix(void) { return strPrefix.c_str(); }
-    void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; } 
+    void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; }
     const char* getBasePrefix(void) { return strBasePrefix.c_str(); }
 
 
@@ -317,7 +316,7 @@ public:
     Connection& addConnection(Connection &cnn);
     bool removeConnection(Connection& cnn);
     //void updateConnectionPrefix(void);
-    
+
     int arbitratorCount(void) { return arbitrators.size(); }
     Arbitrator& getArbitratorAt(int index){ return arbitrators[index]; }
     Arbitrator& addArbitrator(Arbitrator &arb);
@@ -327,10 +326,10 @@ public:
     Node* owner(void) { return appOwner; }
 
 
-    bool operator==(const Application& app) {       
-        return (strName == app.strName); 
+    bool operator==(const Application& app) {
+        return (strName == app.strName);
     }
-    
+
     void clear(void) {
         strName.clear();
         strVersion.clear();
@@ -346,7 +345,7 @@ public:
     }
 
     GraphicModel& getModelBase(void) { return modelBase;}
-    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }; 
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
     map<string, int> modList;
 
@@ -362,13 +361,13 @@ private:
     ResourceContainer resources;
     CnnContainer connections;
     ArbContainer arbitrators;
-    string strPrefix;  
+    string strPrefix;
     string strBasePrefix;
     string strXmlFile;
     Node* appOwner;
 
     GraphicModel modelBase;
-    
+
     IModuleIterator findImodule(ModuleInterface& imod);
     IApplicationIterator findIapplication(ApplicationInterface& iapp);
     ResourceIterator findResource(ResYarpPort& res);
@@ -376,7 +375,7 @@ private:
     ArbIterator findArbitrator(Arbitrator& arb);
 
 };
- 
+
 typedef vector<Application*> ApplicaitonPContainer;
 typedef vector<Application*>::iterator ApplicationPIterator;
 

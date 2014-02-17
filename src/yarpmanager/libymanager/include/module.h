@@ -4,9 +4,8 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
@@ -20,7 +19,7 @@
 #include "utility.h"
 #include "resource.h"
 
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
@@ -30,7 +29,7 @@ public:
     Author(void) {}
     Author(const char* name, const char* email) {
         if(name) { strName = name;}
-        if(email) { strEmail = email; }        
+        if(email) { strEmail = email; }
     }
     ~Author() {}
 
@@ -38,32 +37,32 @@ public:
     void setEmail(const char* email) { if(email) strEmail = email; }
     const char* getName(void) { return strName.c_str(); }
     const char* getEmail(void) { return strEmail.c_str(); }
-    
-    bool operator==(const Author& alt) {      
-        return (strName == alt.strName); 
+
+    bool operator==(const Author& alt) {
+        return (strName == alt.strName);
     }
- 
+
 private:
     string strName;
     string strEmail;
 };
 
 /**
- * Class Argument  
+ * Class Argument
  */
 class Argument{
 
-public: 
-    Argument(const char* szParam, bool required=false, 
+public:
+    Argument(const char* szParam, bool required=false,
              const char* szDesc=NULL, bool _switch=false) {
         if(szParam) strParam = szParam;
-        if(szDesc) strDesc = szDesc; 
+        if(szDesc) strDesc = szDesc;
         bRequired = required;
         bSwitch = _switch;
         if(bSwitch) strDefault = "off";
         strValue = strDefault;
-    }   
-    virtual ~Argument(){}  
+    }
+    virtual ~Argument(){}
 
     void setParam(const char* szParam) { if(szParam) strParam = szParam; }
     void setDefault(const char* szDefault) {if(szDefault) strDefault = szDefault; }
@@ -71,13 +70,13 @@ public:
     const char* getDefault(void) { return strDefault.c_str(); }
     const char* getParam(void) { return strParam.c_str(); }
     const char* getValue(void) { return strValue.c_str(); }
-    const char* getDescription(void) { return strDesc.c_str(); }    
+    const char* getDescription(void) { return strDesc.c_str(); }
     bool isSwitch(void) { return bSwitch; }
     bool isRequired(void) {return bRequired; }
-    bool operator==(const Argument& alt) {      
-        return (strParam == alt.strParam); 
+    bool operator==(const Argument& alt) {
+        return (strParam == alt.strParam);
     }
-    
+
 protected:
 
 private:
@@ -102,16 +101,16 @@ typedef vector<Argument>::iterator ArgumentIterator;
 
 
 /**
- * Class Module  
+ * Class Module
  */
 class Module : public Node{
 
-public: 
+public:
     Module(void);
     Module(const char* szName);
     Module(const Module &mod);
     virtual ~Module();
-    virtual Node* clone(void);        
+    virtual Node* clone(void);
     Module& operator=(const Module& rhs);
 
     void setName(const char* szName) { if(szName) strName = szName; }
@@ -120,7 +119,7 @@ public:
     void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
     void setHost(const char* szHost) { if(szHost) strHost = szHost; }
     void setForced(bool flag) { bForced = flag; }
-    
+
     bool setParam(const char* szParam);
     void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
     void setWorkDir(const char* szWDir) { if(szWDir) strWorkDir = szWDir; }
@@ -129,29 +128,29 @@ public:
     void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
     void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; }
     void setNeedDeployer(bool need) { bNeedDeployer = need; }
-    
+
     int getRank(void) { return iRank; }
     const char* getName(void) { return strName.c_str(); }
     const char* getVersion(void) { return strVersion.c_str(); }
     const char* getDescription(void) { return strDescription.c_str(); }
-    const char* getHost(void) { return strHost.c_str(); }   
+    const char* getHost(void) { return strHost.c_str(); }
     bool getForced(void) { return bForced; }
     bool getNeedDeployer(void) { return bNeedDeployer; }
-  
-    const char* getParam(void) { return strParam.c_str(); } 
+
+    const char* getParam(void) { return strParam.c_str(); }
     const char* getXmlFile(void) { return strXmlFile.c_str(); }
-    const char* getWorkDir(void) { return strWorkDir.c_str(); } 
+    const char* getWorkDir(void) { return strWorkDir.c_str(); }
     const char* getStdio(void) { return strStdio.c_str(); }
-    const char* getBroker(void) { return strBroker.c_str(); }   
-    const char* getPrefix(void) { return strPrefix.c_str(); }   
-    const char* getBasePrefix(void) { return strBasePrefix.c_str(); }   
+    const char* getBroker(void) { return strBroker.c_str(); }
+    const char* getPrefix(void) { return strPrefix.c_str(); }
+    const char* getBasePrefix(void) { return strBasePrefix.c_str(); }
 
     int argumentCount(void) { return arguments.size(); }
     Argument& getArgumentAt(int index){ return arguments[index]; }
     int outputCount(void) { return outputs.size(); }
     OutputData& getOutputAt(int index) { return outputs[index]; }
     int inputCount(void) { return inputs.size(); }
-    InputData& getInputAt(int index) { return inputs[index]; } 
+    InputData& getInputAt(int index) { return inputs[index]; }
     int resourceCount(void) const { return resources.size(); }
     GenericResource& getResourceAt(int index) const { return *(resources[index]); }
 
@@ -168,7 +167,7 @@ public:
     bool removeInput(InputData& input);
     bool addResource(GenericResource& res);
     bool removeResource(GenericResource& res);
-   
+
     void clearInputs(void) { inputs.clear(); }
     void clearOutputs(void) { outputs.clear(); }
     void clearResources(void) { resources.clear(); }
@@ -177,11 +176,11 @@ public:
     Node* owner(void) { return modOwner; }
 
     void clear(void);
-    // modelBased is used to keep the graphic and geometric 
-    // information which is directly loaded from application 
-    // description file. 
+    // modelBased is used to keep the graphic and geometric
+    // information which is directly loaded from application
+    // description file.
     GraphicModel& getModelBase(void) { return modelBase;}
-    void setModelBase(GraphicModel& mdl) { modelBase = mdl; }; 
+    void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
 
     friend class ModuleInterface;
@@ -190,7 +189,7 @@ protected:
 
 private:
     Node* modOwner;
-    string strName; 
+    string strName;
     string strVersion;
     string strDescription;
     string strHost;
@@ -215,8 +214,8 @@ private:
 
     ArgumentIterator findArgument(Argument& argument);
     InputIterator findInput(InputData& input);
-    OutputIterator findOutput(OutputData& output); 
-    ResourcePIterator findResource(GenericResource& output); 
+    OutputIterator findOutput(OutputData& output);
+    ResourcePIterator findResource(GenericResource& output);
     void swap(const Module &mod);
     bool getParamValue(const char* key, bool bSwitch, std::string &param);
 };

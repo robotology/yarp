@@ -2,18 +2,20 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <string.h>
+
 #include "primresource.h"
+
+#include <cstring>
+
 
 /**
  * Class Memory
  */
-Memory::Memory(void) : GenericResource("Memory") 
+Memory::Memory(void) : GenericResource("Memory")
 {
     totalSpace = (Capacity)0;
     freeSpace = (Capacity)0;
@@ -42,14 +44,14 @@ bool Memory::satisfy(GenericResource* resource)
     Memory* mem = dynamic_cast<Memory*>(resource);
     if(!mem)
         return false;
-    return ( (freeSpace >= mem->getFreeSpace()) && 
+    return ( (freeSpace >= mem->getFreeSpace()) &&
              (totalSpace >= mem->getTotalSpace()) );
 }
 
 Node* Memory::clone(void)
 {
     Memory* resource = new Memory(*this);
-    return resource; 
+    return resource;
 }
 
 
@@ -60,7 +62,7 @@ Memory::~Memory() { }
 /**
  * Class Storage
  */
-Storage::Storage(void) : GenericResource("Storage") 
+Storage::Storage(void) : GenericResource("Storage")
 {
     totalSpace = (Capacity)0;
     freeSpace = (Capacity)0;
@@ -89,14 +91,14 @@ bool Storage::satisfy(GenericResource* resource)
     Storage* mem = dynamic_cast<Storage*>(resource);
     if(!mem)
         return false;
-    return ( (freeSpace >= mem->getFreeSpace()) && 
+    return ( (freeSpace >= mem->getFreeSpace()) &&
              (totalSpace >= mem->getTotalSpace()) );
 }
 
 Node* Storage::clone(void)
 {
     Storage* resource = new Storage(*this);
-    return resource; 
+    return resource;
 }
 
 
@@ -107,7 +109,7 @@ Storage::~Storage() { }
 /**
  * Class Network
  */
-Network::Network(void) : GenericResource("Network") 
+Network::Network(void) : GenericResource("Network")
 {
 }
 
@@ -142,7 +144,7 @@ bool Network::satisfy(GenericResource* resource)
 Node* Network::clone(void)
 {
     Network* resource = new Network(*this);
-    return resource; 
+    return resource;
 }
 
 
@@ -153,7 +155,7 @@ Network::~Network() { }
 /**
  * Class Processor
  */
-Processor::Processor(void) : GenericResource("Processor") 
+Processor::Processor(void) : GenericResource("Processor")
 {
     cores = (size_t)0;
     frequency = (double)0.0;
@@ -193,7 +195,7 @@ bool Processor::satisfy(GenericResource* resource)
     Processor* proc = dynamic_cast<Processor*>(resource);
     if(!proc)
         return false;
-    
+
     bool ret = (!strlen(proc->getArchitecture()))? true : (strArchitecure == string(proc->getArchitecture()));
     ret &= (!strlen(proc->getModel()))? true : (strModel == string(proc->getModel()));
     ret &= (cores >= proc->getCores());
@@ -206,7 +208,7 @@ bool Processor::satisfy(GenericResource* resource)
 Node* Processor::clone(void)
 {
     Processor* resource = new Processor(*this);
-    return resource; 
+    return resource;
 }
 
 
@@ -218,7 +220,7 @@ Processor::~Processor() { }
  * Class Computer
  */
 
-Computer::Computer(void) : GenericResource("Computer") 
+Computer::Computer(void) : GenericResource("Computer")
 {
 }
 
@@ -247,7 +249,7 @@ Computer& Computer::operator=(const Computer& rhs)
 bool Computer::addPeripheral(GenericResource& res)
 {
     GenericResource* newres = (GenericResource*) res.clone();
-    peripheralResources.push_back(newres);    
+    peripheralResources.push_back(newres);
     return true;
 }
 
@@ -264,11 +266,11 @@ bool Computer::satisfy(GenericResource* resource)
             return true;
         for(int i=0; i<mres->resourceCount(); i++)
         {
-            Computer* comp = dynamic_cast<Computer*>(&mres->getResourceAt(i));            
+            Computer* comp = dynamic_cast<Computer*>(&mres->getResourceAt(i));
             if(comp &&satisfyComputer(comp))
-                return true;                    
+                return true;
             else if(satisfyComputerResource(&mres->getResourceAt(i)))
-                    return true;                               
+                    return true;
         }
         return false;
     }
@@ -303,7 +305,7 @@ bool Computer::satisfyComputerResource(GenericResource* resource)
     if(network.satisfy(resource))
         return true;
     if(processor.satisfy(resource))
-        return true; 
+        return true;
     if(platform.satisfy(resource))
         return true;
 
@@ -317,7 +319,7 @@ bool Computer::satisfyComputerResource(GenericResource* resource)
 Node* Computer::clone(void)
 {
     Computer* resource = new Computer(*this);
-    return resource; 
+    return resource;
 }
 
 void Computer::swap(const Computer &comp)
@@ -329,7 +331,7 @@ void Computer::swap(const Computer &comp)
     network = comp.network;
     platform = comp.platform;
     processes = comp.processes;
-    // deep copy    
+    // deep copy
     for(int i=0; i<comp.peripheralCount(); i++)
         addPeripheral(comp.getPeripheralAt(i));
 }
@@ -350,6 +352,3 @@ Computer::~Computer()
 {
     clear();
 }
-
-
-

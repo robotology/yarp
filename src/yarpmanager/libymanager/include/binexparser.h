@@ -4,20 +4,21 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __BINEXPARSER__
 #define __BINEXPARSER__
 
-#include "ymm-types.h" 
-#include "utility.h"
-#include <graph.h>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
+
+#include "ymm-types.h"
+#include "utility.h"
+#include "graph.h"
+
 
 //namespace ymm {
 
@@ -32,16 +33,16 @@ static int node_id = 0;
 class BinaryNode : public Node
 {
 
-public: 
+public:
     BinaryNode(const char* opd) : Node((NodeType)OPERAND) {
         char str[128];
         sprintf(str, "%s%d", opd, node_id++);
         setLabel(str);
         strName = opd;
     }
-    
-    BinaryNode(const char* opt, 
-               BinaryNode* left, 
+
+    BinaryNode(const char* opt,
+               BinaryNode* left,
                BinaryNode* right ) : Node((NodeType)OPERATOR) {
 
         char str[128];
@@ -50,15 +51,15 @@ public:
         strName = opt;
         if(left)
             addSuc(left, 0);
-        if(right)            
+        if(right)
             addSuc(right, 0);
     }
-    
+
     virtual ~BinaryNode() { }
-  
+
     virtual Node* clone(void) {
         BinaryNode* binode = new BinaryNode(*this);
-        return binode; 
+        return binode;
     }
 
     BinaryNode* leftOf() {
@@ -76,8 +77,8 @@ public:
     bool getValue(void) { return value; }
     void setValue(bool val) { value = val; }
 
-    const char* getName(void) {return strName.c_str(); } 
-   
+    const char* getName(void) {return strName.c_str(); }
+
 protected:
 
 private:
@@ -85,17 +86,17 @@ private:
     std::string strName;
 
 };
- 
+
 typedef BinaryNode* BinaryNodePtr;
 
-class BinaryExpParser 
+class BinaryExpParser
 {
 
 public:
     BinaryExpParser();
     virtual ~BinaryExpParser();
 
-    bool parse(std::string _exp);   
+    bool parse(std::string _exp);
     bool exportDotGraph(const char* szFileName);
     void addRestrictedOperand(const char* opnd) {
         if(opnd)
@@ -120,20 +121,20 @@ private:
     std::string getNextOperand(std::string &strexp);
     std::string popNextOperand(std::string &strexp);
     void createTruthTable(const int n);
-    void printTruthTable(std::string lopr);   
+    void printTruthTable(std::string lopr);
     //bool train(int max_itr=1000, double train_rate=1.0);
-    
+
 private:
-    std::string expression; 
+    std::string expression;
     std::string leftOpr;
     Graph binTree;
     // mapping operands to their real value
-    std::map<std::string, bool> operands; 
+    std::map<std::string, bool> operands;
     std::vector<std::string> validOperands;
     std::vector<std::string> invalidOperands;
-    std::vector<std::vector<int> > truthTable; 
+    std::vector<std::vector<int> > truthTable;
     //std::vector<double> alphas;
-    //std::vector<double> errors;  
+    //std::vector<double> errors;
     //double bias;
 };
 
@@ -146,18 +147,18 @@ public:
     }
 
     virtual ~LinkTrainer() {}
-    
+
     bool train(const std::vector<std::vector<int> >  &truthTable);
 
     const std::vector<double> &getAlphas(void) { return alphas; }
-    const std::vector<double> &getErrors(void) { return errors; } 
+    const std::vector<double> &getErrors(void) { return errors; }
     double getBias(void) {return bias; }
 
-private:    
+private:
     int maxIteration;
     double trainRate;
     std::vector<double> alphas;
-    std::vector<double> errors;  
+    std::vector<double> errors;
     double bias;
 
 };

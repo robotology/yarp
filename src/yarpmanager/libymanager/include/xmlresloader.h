@@ -4,16 +4,15 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __XMLRESLOADER__
 #define __XMLRESLOADER__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "resource.h"
 #include "primresource.h"
 #include "manifestloader.h"
@@ -22,9 +21,9 @@
 
 
 /**
- * Class XmlResLoader  
+ * Class XmlResLoader
  */
-class XmlResLoader : public ResourceLoader 
+class XmlResLoader : public ResourceLoader
 {
 public:
     XmlResLoader(const char* szFileName);
@@ -34,7 +33,7 @@ public:
     void reset(void);
     void fini(void);
     GenericResource* getNextResource(void);
-    
+
 protected:
 
 private:
@@ -43,12 +42,12 @@ private:
     string strFileName;
     vector<string> fileNames;
     ComputerContainer computers;
-    Computer dummyComputer; 
+    Computer dummyComputer;
     bool parsXml(const char* szFile);
 };
 
 
- 
+
 //}
 
 #endif //__XMLRESLOADER__

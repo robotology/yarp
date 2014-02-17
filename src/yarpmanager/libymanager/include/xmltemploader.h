@@ -4,22 +4,21 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #ifndef __XMLTEMPLOADER__
 #define __XMLTEMPLOADER__
 
-#include "ymm-types.h" 
+#include "ymm-types.h"
 #include "manifestloader.h"
 
 //namespace ymm {
 
 /**
- * Class XmlTempLoader  
+ * Class XmlTempLoader
  */
 class XmlTempLoader : public TempLoader {
 
@@ -31,7 +30,7 @@ public:
     void fini(void);
     void reset(void);
     AppTemplate* getNextAppTemplate(void);
-    
+
 protected:
 
 private:
@@ -44,7 +43,7 @@ private:
 };
 
 
- 
+
 //}
 
 #endif //__XMLTEMPLOADER__

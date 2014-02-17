@@ -2,16 +2,15 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
 #include "localbroker.h"
 
-#include <signal.h>
-#include <string.h>
+#include <csignal>
+#include <cstring>
 
 #define RUN_TIMEOUT             10.0        //seconds
 #define STOP_TIMEOUT            30.0
@@ -24,17 +23,17 @@
     #include<Windows.h>
     #define SIGKILL 9
 #else
-    #include <stdlib.h>
+    #include <cstdlib>
     #include <sys/types.h>
     #include <sys/stat.h>
     #include <fcntl.h>
-    #include <errno.h>
+    #include <cerrno>
     #include <unistd.h>
 
     #define PIPE_TIMEOUT    0
     #define PIPE_EVENT      1
     #define PIPE_SIGNALED   2
-#endif 
+#endif
 
 using namespace yarp::os;
 
@@ -65,14 +64,14 @@ BOOL CALLBACK LocalTerminateAppEnum(HWND hwnd, LPARAM lParam)
     }
     return TRUE ;
 }
-#if defined(_WIN64) 
+#if defined(_WIN64)
 volatile LONGLONG uniquePipeNumber = 0;
 #else
 volatile LONG uniquePipeNumber = 0;
 #endif
 
 /*
-*  TODO: check deeply for asyn PIPE 
+*  TODO: check deeply for asyn PIPE
 */
 BOOL CreatePipeAsync(
     OUT LPHANDLE lpReadPipe,
@@ -83,9 +82,9 @@ BOOL CreatePipeAsync(
     HANDLE ReadPipeHandle, WritePipeHandle;
     DWORD dwError;
     char PipeNameBuffer[MAX_PATH];
-    nSize = (nSize ==0) ? 100*8096: nSize; 
+    nSize = (nSize ==0) ? 100*8096: nSize;
 
-#if defined(_WIN64) 
+#if defined(_WIN64)
     InterlockedIncrement64(&uniquePipeNumber);
 #else
     InterlockedIncrement(&uniquePipeNumber);
@@ -122,7 +121,7 @@ BOOL CreatePipeAsync(
                         NULL                       // Template file
                       );
 
-    if (INVALID_HANDLE_VALUE == WritePipeHandle) 
+    if (INVALID_HANDLE_VALUE == WritePipeHandle)
     {
         dwError = GetLastError();
         CloseHandle( ReadPipeHandle );
@@ -135,11 +134,11 @@ BOOL CreatePipeAsync(
     return( TRUE );
 }
 
-#endif 
+#endif
 
 LocalBroker::LocalBroker()
 {
-    bOnlyConnector = bInitialized = false;  
+    bOnlyConnector = bInitialized = false;
     ID = 0;
     fd_stdout = NULL;
 	bShowConsole = false;
@@ -189,7 +188,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
         strError = "command is not specified.";
         return false;
     }
-    strCmd = szcmd; 
+    strCmd = szcmd;
     if(szparam && strlen(szparam))
         strParam = szparam;
 
@@ -205,10 +204,10 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
         else
             strStdio = szstdio;
     }
-        
+
     if(szenv && strlen(szenv))
         strEnv = szenv;
-    
+
     /*
     OSTRINGSTREAM sstrID;
     sstrID<<ID;
@@ -226,9 +225,9 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
     // do nothing
     bInitialized = true;
     return true;
-#else   
+#else
     /* avoiding zombie */
-    struct sigaction new_action; 
+    struct sigaction new_action;
     new_action.sa_handler = SIG_IGN;
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;
@@ -241,9 +240,9 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
 
 
 bool LocalBroker::start()
-{   
+{
     if(!bInitialized) return false;
-    if(bOnlyConnector) return false; 
+    if(bOnlyConnector) return false;
 
     if(running())
         return true;
@@ -256,7 +255,7 @@ bool LocalBroker::start()
    if(running())
    {
         return true;
-   }    
+   }
    return false;
 }
 
@@ -268,7 +267,7 @@ bool LocalBroker::stop()
     strError.clear();
 #if defined(WIN32)
     stopCmd(ID);
-    stopStdout();    
+    stopStdout();
 #else
     stopStdout();
     stopCmd(ID);
@@ -292,12 +291,12 @@ bool LocalBroker::kill()
 {
     if(!bInitialized) return true;
     if(bOnlyConnector) return false;
-    
+
     strError.clear();
 
 #if defined(WIN32)
     stopCmd(ID);
-    stopStdout();    
+    stopStdout();
 #else
     stopStdout();
     stopCmd(ID);
@@ -314,7 +313,7 @@ bool LocalBroker::kill()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-    return false;   
+    return false;
 }
 
 
@@ -328,11 +327,11 @@ int LocalBroker::running(void)
 
 /**
  *  connecttion broker
- */ 
-bool LocalBroker::connect(const char* from, const char* to, 
+ */
+bool LocalBroker::connect(const char* from, const char* to,
             const char* carrier, bool persist)
 {
-    
+
     if(!from)
     {
         strError = "no source port is introduced.";
@@ -358,7 +357,7 @@ bool LocalBroker::connect(const char* from, const char* to,
         strError += " does not exist.";
         return false;
     }
-    
+
     NetworkBase::connect(from, to, carrier);
     if(!connected(from, to))
     {
@@ -367,12 +366,12 @@ bool LocalBroker::connect(const char* from, const char* to,
         strError += " to " + string(to);
         return false;
     }
-    return true;     
+    return true;
 }
 
 bool LocalBroker::disconnect(const char* from, const char* to)
 {
-    
+
     if(!from)
     {
         strError = "no source port is introduced.";
@@ -398,7 +397,7 @@ bool LocalBroker::disconnect(const char* from, const char* to)
         strError += " does not exist.";
         return true;
     }
-    
+
     if(!connected(from, to))
         return true;
 
@@ -406,11 +405,11 @@ bool LocalBroker::disconnect(const char* from, const char* to)
     {
         strError = "cannot disconnect ";
         strError +=from;
-        strError += " from " + string(to);      
+        strError += " from " + string(to);
         return false;
     }
     return true;
-    
+
 }
 
 bool LocalBroker::exists(const char* port)
@@ -454,32 +453,32 @@ bool LocalBroker::timeout(double base, double timeout)
     Time::delay(1.0);
     if((Time::now()-base) > timeout)
         return true;
-    return false; 
+    return false;
 }
 
-bool LocalBroker::threadInit() 
+bool LocalBroker::threadInit()
 {
    return true;
 }
 
 
-void LocalBroker::run() 
+void LocalBroker::run()
 {
 
 #if defined(WIN32)
     //windows implementaion
-    DWORD dwRead; 
+    DWORD dwRead;
     CHAR buff[1024];
     while(!Thread::isStopping())
     {
-        BOOL bRet = ReadFile(read_from_pipe_cmd_to_stdout, 
+        BOOL bRet = ReadFile(read_from_pipe_cmd_to_stdout,
                              buff, 1023, &dwRead, NULL);
         if(!bRet)
             break;
         buff[dwRead] = (CHAR)0;
-        if(eventSink && strlen(buff)) 
+        if(eventSink && strlen(buff))
             eventSink->onBrokerStdout(buff);
-        yarp::os::Time::delay(0.5); // this prevents event flooding        
+        yarp::os::Time::delay(0.5); // this prevents event flooding
     }
 #else
     while(!Thread::isStopping())
@@ -492,7 +491,7 @@ void LocalBroker::run()
                 char buff[1024];
                 while(fgets(buff, 1024, fd_stdout))
                     strmsg += string(buff);
-                if(eventSink && strmsg.size())           
+                if(eventSink && strmsg.size())
                     eventSink->onBrokerStdout(strmsg.c_str());
                 yarp::os::Time::delay(0.5); // this prevents event flooding
            }
@@ -546,7 +545,7 @@ int LocalBroker::CountArgs(char *str)
                 bSpace=true;
             }
         }
-    }    
+    }
     return nargs;
 }
 
@@ -564,7 +563,7 @@ string LocalBroker::lastError2String()
 bool LocalBroker::startStdout(void)
 {
     if (!CloseHandle(write_to_pipe_cmd_to_stdout))
-        return false; 
+        return false;
     Thread::start();
     return true;
 }
@@ -577,22 +576,22 @@ void LocalBroker::stopStdout(void)
 
 int LocalBroker::ExecuteCmd(void)
 {
-    string strCmdLine = strCmd + string(" ") + strParam; 
+    string strCmdLine = strCmd + string(" ") + strParam;
 
-    // Setting up child process and pipe for stdout 
-    SECURITY_ATTRIBUTES pipe_sec_attr; 
-    pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES); 
-    pipe_sec_attr.bInheritHandle = TRUE; 
+    // Setting up child process and pipe for stdout
+    SECURITY_ATTRIBUTES pipe_sec_attr;
+    pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES);
+    pipe_sec_attr.bInheritHandle = TRUE;
     pipe_sec_attr.lpSecurityDescriptor = NULL;
-    CreatePipeAsync(&read_from_pipe_cmd_to_stdout, 
-               &write_to_pipe_cmd_to_stdout, 
+    CreatePipeAsync(&read_from_pipe_cmd_to_stdout,
+               &write_to_pipe_cmd_to_stdout,
                &pipe_sec_attr, 0);
 
-    PROCESS_INFORMATION cmd_process_info;    
+    PROCESS_INFORMATION cmd_process_info;
     STARTUPINFO cmd_startup_info;
     ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
-    cmd_startup_info.cb = sizeof(STARTUPINFO); 
+    cmd_startup_info.cb = sizeof(STARTUPINFO);
 	if(!bShowConsole)
 	{
 		cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
@@ -603,11 +602,11 @@ int LocalBroker::ExecuteCmd(void)
     /*
      * setting environment variable for child process
      */
-    TCHAR chNewEnv[32767]; 
+    TCHAR chNewEnv[32767];
 
-    // Get a pointer to the env block. 
+    // Get a pointer to the env block.
     LPTCH chOldEnv = GetEnvironmentStrings();
-    
+
     // copying parent env variables
     LPTSTR lpOld = (LPTSTR) chOldEnv;
     LPTSTR lpNew = (LPTSTR) chNewEnv;
@@ -625,38 +624,38 @@ int LocalBroker::ExecuteCmd(void)
         lstrcpy(lpNew, (LPTCH) strEnv.c_str());
         lpNew += lstrlen(lpNew) + 1;
     }
-   
+
     // closing env block
-    *lpNew = (TCHAR)0;   
+    *lpNew = (TCHAR)0;
 
     bool bWorkdir=(strWorkdir.size()) ? true : false;
     string strWorkdirOk = bWorkdir ? strWorkdir+string("\\") : "";
 
     BOOL bSuccess=CreateProcess(NULL,   // command name
-                                (char*)(strWorkdirOk+strCmdLine).c_str(), // command line 
-                                NULL,          // process security attributes 
-                                NULL,          // primary thread security attributes 
-                                TRUE,          // handles are inherited 
-                                (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags 
-                                (LPVOID) chNewEnv, // use new environment 
-                                bWorkdir?strWorkdirOk.c_str():NULL, // working directory 
-                                &cmd_startup_info,   // STARTUPINFO pointer 
-                                &cmd_process_info);  // receives PROCESS_INFORMATION 
+                                (char*)(strWorkdirOk+strCmdLine).c_str(), // command line
+                                NULL,          // process security attributes
+                                NULL,          // primary thread security attributes
+                                TRUE,          // handles are inherited
+                                (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
+                                (LPVOID) chNewEnv, // use new environment
+                                bWorkdir?strWorkdirOk.c_str():NULL, // working directory
+                                &cmd_startup_info,   // STARTUPINFO pointer
+                                &cmd_process_info);  // receives PROCESS_INFORMATION
 
     if (!bSuccess && bWorkdir)
     {
             bSuccess=CreateProcess(NULL,    // command name
-                                    (char*)(strCmdLine.c_str()), // command line 
-                                    NULL,          // process security attributes 
-                                    NULL,          // primary thread security attributes 
-                                    TRUE,          // handles are inherited 
-									(bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags 
-                                    (LPVOID) chNewEnv, // use new environment 
-                                    strWorkdirOk.c_str(), // working directory 
-                                    &cmd_startup_info,   // STARTUPINFO pointer 
-                                    &cmd_process_info);  // receives PROCESS_INFORMATION 
+                                    (char*)(strCmdLine.c_str()), // command line
+                                    NULL,          // process security attributes
+                                    NULL,          // primary thread security attributes
+                                    TRUE,          // handles are inherited
+									(bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
+                                    (LPVOID) chNewEnv, // use new environment
+                                    strWorkdirOk.c_str(), // working directory
+                                    &cmd_startup_info,   // STARTUPINFO pointer
+                                    &cmd_process_info);  // receives PROCESS_INFORMATION
     }
-    
+
     // deleting old environment variable
     FreeEnvironmentStrings(chOldEnv);
 
@@ -664,11 +663,11 @@ int LocalBroker::ExecuteCmd(void)
     CloseHandle(cmd_process_info.hThread);
 
     if (!bSuccess)
-    { 
+    {
         strError = string("Can't execute command because ") + lastError2String();
         return 0;
     }
-    
+
     return cmd_process_info.dwProcessId;
 }
 
@@ -677,7 +676,7 @@ bool LocalBroker::psCmd(int pid)
     HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_QUERY_INFORMATION, FALSE, pid);
     if (hProc==NULL)
         return false;
-    
+
     DWORD status;
     GetExitCodeProcess(hProc , &status);
     CloseHandle(hProc);
@@ -689,7 +688,7 @@ bool LocalBroker::killCmd(int pid)
     HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE, FALSE, pid);
     if (hProc==NULL)
         return false;
-    
+
     BOOL bRet = TerminateProcess(hProc, 0);
     CloseHandle(hProc);
     return bRet ? true : false;
@@ -707,16 +706,16 @@ bool LocalBroker::stopCmd(int pid)
    // {
     GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid);
     GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid);
-   // }    
+   // }
     CloseHandle(hProc);
-    return true;    
+    return true;
 }
 
 #else   //for UNIX
 
 bool LocalBroker::psCmd(int pid)
 {
-    if(!pid) 
+    if(!pid)
         return false;
     return !::kill(pid, 0);
 }
@@ -724,7 +723,7 @@ bool LocalBroker::psCmd(int pid)
 
 bool LocalBroker::killCmd(int pid)
 {
-    if(!pid) 
+    if(!pid)
         return false;
     return !::kill(pid, SIGKILL);
 }
@@ -732,7 +731,7 @@ bool LocalBroker::killCmd(int pid)
 
 bool LocalBroker::stopCmd(int pid)
 {
-    if(!pid) 
+    if(!pid)
         return false;
    return !::kill(pid, SIGTERM);
 }
@@ -764,8 +763,8 @@ int LocalBroker::waitPipeSignal(int pipe_fd)
     FD_SET(pipe_fd, &fd);
 
     /*
-#if (_POSIX_C_SOURCE >= 200112L) || (_XOPEN_SOURCE >= 600) 
-    struct sigaction new_action; 
+#if (_POSIX_C_SOURCE >= 200112L) || (_XOPEN_SOURCE >= 600)
+    struct sigaction new_action;
     new_action.sa_handler = SIG_IGN;
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;
@@ -773,10 +772,10 @@ int LocalBroker::waitPipeSignal(int pipe_fd)
     sigset_t sset, orgmask;
     sigemptyset(&sset);
     sigaddset(&sset, SIGUSR1);
-    pthread_sigmask(SIG_BLOCK, &sset, &orgmask); 
+    pthread_sigmask(SIG_BLOCK, &sset, &orgmask);
     if(pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, &orgmask))
         return PIPE_EVENT;
-#endif 
+#endif
 */
     if(pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, NULL))
         return PIPE_EVENT;
@@ -796,13 +795,13 @@ bool LocalBroker::startStdout(void)
 
     int oflags = fcntl(pipe_to_stdout[READ_FROM_PIPE], F_GETFL);
     fcntl(pipe_to_stdout[READ_FROM_PIPE], F_SETFL, oflags|O_NONBLOCK);
-    
+
     Thread::start();
     return true;
 }
 
 void LocalBroker::stopStdout(void)
-{ 
+{
     Thread::stop();
     if(fd_stdout)
         fclose(fd_stdout);
@@ -814,25 +813,25 @@ void LocalBroker::stopStdout(void)
 int LocalBroker::ExecuteCmd(void)
 {
 	int  pipe_child_to_parent[2];
-	int ret = pipe(pipe_child_to_parent);    
+	int ret = pipe(pipe_child_to_parent);
     if (ret!=0)
     {
         strError = string("Can't create child pipe because") + string(strerror(errno));
         return 0;
     }
-  
+
     ret = pipe(pipe_to_stdout);
     if (ret!=0)
     {
         strError = string("Can't create stdout pipe because") + string(strerror(errno));
         return 0;
     }
-    
+
 	int pid_cmd = fork();
 
 	if(IS_INVALID(pid_cmd))
 	{
-	    strError = string("Can't fork command because ") + string(strerror(errno)); 
+	    strError = string("Can't fork command because ") + string(strerror(errno));
 		return 0;
 	}
 
@@ -855,11 +854,11 @@ int LocalBroker::ExecuteCmd(void)
         char **szarg = new char*[nargs+1];
         ParseCmd(szcmd, szarg);
         szarg[nargs]=0;
-       
+
 		if(strEnv.size())
 		{
 			char* szenv = new char[strEnv.size()+1];
-			strcpy(szenv,strEnv.c_str()); 
+			strcpy(szenv,strEnv.c_str());
             putenv(szenv);
 			//delete szenv;
 		}
@@ -869,7 +868,7 @@ int LocalBroker::ExecuteCmd(void)
             int ret = chdir(strWorkdir.c_str());
             if (ret!=0)
             {
-                strError = string("Can't set working directory because ") + string(strerror(errno)); 
+                strError = string("Can't set working directory because ") + string(strerror(errno));
                 FILE* out_to_parent = fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
                 fprintf(out_to_parent,"%s", strError.c_str());
                 fflush(out_to_parent);
@@ -895,11 +894,11 @@ int LocalBroker::ExecuteCmd(void)
             strcpy(cwd_szarg[0],currWorkDir);
             strcat(cwd_szarg[0],"/");
             strcat(cwd_szarg[0],szarg[0]);	
-            ret=execvp(cwd_szarg[0],cwd_szarg);  
+            ret=execvp(cwd_szarg[0],cwd_szarg);
             delete [] cwd_szarg[0];
             delete [] cwd_szarg;
         }
-     
+
         if (ret==-1)
         {
 		    ret=execvp(szarg[0],szarg);
@@ -924,8 +923,8 @@ int LocalBroker::ExecuteCmd(void)
         close(pipe_child_to_parent[WRITE_TO_PIPE]);
         FILE* in_from_child = fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
 	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
-	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
-      
+	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
+
         string retError;
         waitPipe(pipe_child_to_parent[READ_FROM_PIPE]);
 
@@ -949,4 +948,3 @@ int LocalBroker::ExecuteCmd(void)
 }
 
 #endif
-

@@ -2,32 +2,32 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+
+#include "xmlapploader.h"
+#include "utility.h"
+#include "ymm-dir.h"
+
+#ifdef WITH_GEOMETRY
+#include <yarp/os/Property.h> // for parsing geometry information
+#endif
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 #include <fstream>
 
-#include "xmlapploader.h"
-#include "tinyxml.h"
-#include "utility.h"
-#include "ymm-dir.h"
+#include <tinyxml.h>
 
-
-#ifdef WITH_GEOMETRY
-#include <yarp/os/Property.h> // for parsing geometry information
-#endif
 
 using namespace std;
 
 /**
- * if szAppName is NULL, XmlAppLoader will load all the applications 
- * found in szPath otherwise only one application named szAppname 
+ * if szAppName is NULL, XmlAppLoader will load all the applications
+ * found in szPath otherwise only one application named szAppname
  * will be loaded.
  */
 XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
@@ -35,29 +35,29 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
     app.clear();
     if(szAppName)
         strAppName = szAppName;
-    
+
     if(strlen(szPath))
     {
         strPath = szPath;
-        if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+        if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
-    }   
+    }
 }
 
 /**
- * load only one application indicated by its xml file name 
+ * load only one application indicated by its xml file name
  */
 XmlAppLoader::XmlAppLoader(const char* szFileName)
 {
     app.clear();
     if(szFileName)
-        strFileName = szFileName;   
+        strFileName = szFileName;
 }
 
 
 XmlAppLoader::~XmlAppLoader()
-{   
+{
 }
 
 
@@ -66,9 +66,9 @@ bool XmlAppLoader::init(void)
     app.clear();
     fileNames.clear();
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     /**
-     * loading single applicaition indicated by its xml file name 
+     * loading single applicaition indicated by its xml file name
      */
     if(!strFileName.empty())
     {
@@ -79,20 +79,20 @@ bool XmlAppLoader::init(void)
     if(strPath.empty())
     {
         logger->addError("No application path is introduced.");
-        return false; 
+        return false;
     }
 
     DIR *dir;
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
-    {       
+    {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
     }
-    
-    /* we need to load all xml apps */  
+
+    /* we need to load all xml apps */
     while((entry = readdir(dir)))
     {
         string name = entry->d_name;
@@ -103,16 +103,16 @@ bool XmlAppLoader::init(void)
                 fileNames.push_back(strPath+name);
         }
     }
-    closedir(dir);  
-/*  
+    closedir(dir);
+/*
     if(fileNames.empty())
     {
         OSTRINGSTREAM err;
         err<<"No xml application file found in "<<strPath;
         logger->addWarning(err);
         //return false;
-    }   
-*/  
+    }
+*/
     return true;
 }
 
@@ -125,7 +125,7 @@ void XmlAppLoader::reset(void)
 
 void XmlAppLoader::fini(void)
 {
-    fileNames.clear();  
+    fileNames.clear();
     app.clear();
 }
 
@@ -138,16 +138,16 @@ Application* XmlAppLoader::getNextApplication(void)
         while(!app)
         {
             if(fileNames.empty())
-                return NULL;                
+                return NULL;
             string fname = fileNames.back();
             fileNames.pop_back();
-            app = parsXml(fname.c_str());       
-        }   
+            app = parsXml(fname.c_str());
+        }
         return app;
     }
     else
     {
-        vector<string>::iterator itr; 
+        vector<string>::iterator itr;
         for(itr=fileNames.begin(); itr<fileNames.end(); itr++)
         {
          Application* app = parsXml((*itr).c_str());
@@ -163,11 +163,11 @@ Application* XmlAppLoader::getNextApplication(void)
 Application* XmlAppLoader::parsXml(const char* szFile)
 {
     app.clear();
-    
+
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     TiXmlDocument doc(szFile);
-    if(!doc.LoadFile()) 
+    if(!doc.LoadFile())
     {
         OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
@@ -176,7 +176,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         logger->addError(err);
         return NULL;
     }
-    
+
     /* retrieving root element */
     TiXmlElement *root = doc.RootElement();
     if(!root)
@@ -187,7 +187,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         logger->addError(err);
         return NULL;
     }
-    
+
     if(!compareString(root->Value(), "application"))
     {
         //OSTRINGSTREAM err;
@@ -195,19 +195,19 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         //logger->addError(err);
         return NULL;
     }
-        
+
     /* retrieving name */
     TiXmlElement* name = (TiXmlElement*) root->FirstChild("name");
     if(!name || !name->GetText())
     {
         OSTRINGSTREAM err;
         err<<"Module from "<<szFile<<" has no name.";
-        logger->addError(err);      
+        logger->addError(err);
         //return NULL;
     }
 
     app.setXmlFile(szFile);
-    
+
     if(name)
     {
         string strname = name->GetText();
@@ -228,11 +228,11 @@ Application* XmlAppLoader::parsXml(const char* szFile)
         app.setVersion(ver->GetText());
 
     /*
-     * TODO: setting prefix of the main application is inactivated. 
-     * Check this should be supported in future or not! 
+     * TODO: setting prefix of the main application is inactivated.
+     * Check this should be supported in future or not!
      */
     /*
-    //retrieving application prefix 
+    //retrieving application prefix
     TiXmlElement* pref;
     if((pref = (TiXmlElement*) root->FirstChild("prefix")))
         app.setPrefix(pref->GetText());
@@ -258,8 +258,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<ath->Row()<<".";
-                logger->addWarning(war);                                
-            }           
+                logger->addWarning(war);
+            }
         }
 
     /* retrieving resources information*/
@@ -282,8 +282,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 OSTRINGSTREAM war;
                 war<<"Unrecognized tag from "<<szFile<<" at line "\
                    <<res->Row()<<".";
-                logger->addWarning(war);                                
-            }           
+                logger->addWarning(war);
+            }
         }
 
     /* retrieving modules information*/
@@ -296,7 +296,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             if((element = (TiXmlElement*) mod->FirstChild("name")))
             {
                 ModuleInterface module(element->GetText());
-                if((element = (TiXmlElement*) mod->FirstChild("node"))) 
+                if((element = (TiXmlElement*) mod->FirstChild("node")))
                     module.setHost(element->GetText());
 
                 if((element = (TiXmlElement*) mod->FirstChild("parameters")))
@@ -307,12 +307,12 @@ Application* XmlAppLoader::parsXml(const char* szFile)
 
                 if((element = (TiXmlElement*) mod->FirstChild("workdir")))
                     module.setWorkDir(element->GetText());
-                
+
                 if((element = (TiXmlElement*) mod->FirstChild("deployer")))
                     module.setBroker(element->GetText());
                 if((element = (TiXmlElement*) mod->FirstChild("prefix")))
                     module.setPrefix(element->GetText());
-            
+
                 if((element = (TiXmlElement*) mod->FirstChild("rank")))
                     module.setRank(atoi(element->GetText()));
 
@@ -321,7 +321,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if(element && element->GetText())
                 {
                     yarp::os::Property prop(element->GetText());
-                    GraphicModel model; 
+                    GraphicModel model;
                     GyPoint pt;
                     if(prop.check("Pos"))
                     {
@@ -331,14 +331,14 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         module.setModelBase(model);
                     }
                 }
-#endif                
+#endif
                 /* retrieving resources information*/
                 TiXmlElement* resources;
                 if((resources = (TiXmlElement*) mod->FirstChild("dependencies")))
                 {
                     for(TiXmlElement* res = resources->FirstChildElement(); res;
                             res = res->NextSiblingElement())
-                    {                        
+                    {
                         if(compareString(res->Value(), "port"))
                         {
                             if(res->GetText())
@@ -355,8 +355,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                             OSTRINGSTREAM war;
                             war<<"Unrecognized tag from "<<szFile<<" at line "\
                                <<res->Row()<<".";
-                            logger->addWarning(war);                                
-                        }           
+                            logger->addWarning(war);
+                        }
                     }
                 }
                 /* retrieving portmaps */
@@ -365,7 +365,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     if(compareString(map->Value(), "portmap"))
                     {
                         TiXmlElement* first;
-                        TiXmlElement* second; 
+                        TiXmlElement* second;
                         if((first=(TiXmlElement*) map->FirstChild("old")) &&
                            (second=(TiXmlElement*) map->FirstChild("new")) )
                         {
@@ -373,7 +373,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                             module.addPortmap(portmap);
                         }
                     }
-                
+
                 app.addImodule(module);
             }
             else
@@ -381,7 +381,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 OSTRINGSTREAM war;
                 war<<"Module from "<<szFile<<" at line "\
                    <<mod->Row()<<" has not name tag.";
-                logger->addWarning(war);                                
+                logger->addWarning(war);
             }
 
         }
@@ -397,7 +397,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             TiXmlElement* prefix;
             if((name=(TiXmlElement*) embApp->FirstChild("name")))
             {
-                ApplicationInterface IApp(name->GetText());                 
+                ApplicationInterface IApp(name->GetText());
                 if((prefix=(TiXmlElement*) embApp->FirstChild("prefix")))
                     IApp.setPrefix(prefix->GetText());
 #ifdef WITH_GEOMETRY
@@ -405,7 +405,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if(element && element->GetText())
                 {
                     yarp::os::Property prop(element->GetText());
-                    GraphicModel model; 
+                    GraphicModel model;
                     GyPoint pt;
                     if(prop.check("Pos"))
                     {
@@ -415,18 +415,18 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         IApp.setModelBase(model);
                     }
                 }
-#endif           
-                app.addIapplication(IApp);  
+#endif
+                app.addIapplication(IApp);
             }
             else
             {
                 OSTRINGSTREAM war;
                 war<<"Incomplete application tag from "<<szFile<<" at line "\
                    <<embApp->Row()<<". (no name)";
-                logger->addWarning(war);                                
+                logger->addWarning(war);
             }
         }
-    }       
+    }
 
 
     /* retrieving arbitrator information*/
@@ -439,7 +439,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             if(port && port->GetText())
             {
                 Arbitrator arbitrator(port->GetText());
-                
+
                 // retrieving rules
                 for(TiXmlElement* rule = arb->FirstChildElement(); rule;
                     rule = rule->NextSiblingElement())
@@ -448,14 +448,14 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     {
                         if(rule->Attribute("connection"))
                             arbitrator.addRule(rule->Attribute("connection"), rule->GetText());
-                    }    
-                }   
+                    }
+                }
 #ifdef WITH_GEOMETRY
                 TiXmlElement* geometry = (TiXmlElement*) arb->FirstChild("geometry");
                 if(geometry && geometry->GetText())
                 {
                     yarp::os::Property prop(geometry->GetText());
-                    GraphicModel model;                     
+                    GraphicModel model;
                     if(prop.check("Pos"))
                     {
                         yarp::os::Bottle pos = prop.findGroup("Pos");
@@ -477,7 +477,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 OSTRINGSTREAM war;
                 war<<"Incomplete arbitrator tag from "<<szFile<<" at line "\
                    <<arb->Row()<<".";
-                logger->addWarning(war);        
+                logger->addWarning(war);
             }
         }
     }
@@ -487,15 +487,15 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             cnn = cnn->NextSiblingElement())
     {
         if(compareString(cnn->Value(), "connection"))
-        {              
+        {
             TiXmlElement* from = (TiXmlElement*) cnn->FirstChild("from");
             TiXmlElement* to = (TiXmlElement*) cnn->FirstChild("to");
-            
+
             if(!from)
                 from = (TiXmlElement*) cnn->FirstChild("output");
             if(!to)
                 to = (TiXmlElement*) cnn->FirstChild("input");
-                 
+
             TiXmlElement* protocol;
             if(from && to)
             {
@@ -506,30 +506,30 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 Connection connection(from->GetText(),
                                     to->GetText(),
                                     strCarrier.c_str());
-                if(from->Attribute("external") && 
+                if(from->Attribute("external") &&
                     compareString(from->Attribute("external"), "true"))
-                {                    
+                {
                     connection.setFromExternal(true);
                     if(from->GetText())
                     {
                         ResYarpPort resource(from->GetText());
                         resource.setPort(from->GetText());
                         app.addResource(resource);
-                    }                        
-                }                    
-                if(to->Attribute("external") && 
+                    }
+                }
+                if(to->Attribute("external") &&
                     compareString(to->Attribute("external"), "true"))
-                {   
+                {
                     if(to->GetText())
                     {
                         connection.setToExternal(true);
                         ResYarpPort resource(to->GetText());
                         resource.setPort(to->GetText());
                         app.addResource(resource);
-                    }                        
+                    }
                 }
 
-                //Connections which have the same port name in Port Resources 
+                //Connections which have the same port name in Port Resources
                 // should also be set as external
                 for(int i=0; i<app.resourcesCount(); i++)
                 {
@@ -543,16 +543,16 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 if(cnn->Attribute("id"))
                     connection.setId(cnn->Attribute("id"));
 
-                if(cnn->Attribute("persist") && 
+                if(cnn->Attribute("persist") &&
                         compareString(cnn->Attribute("persist"), "true"))
-                    connection.setPersistent(true);    
+                    connection.setPersistent(true);
 
 #ifdef WITH_GEOMETRY
                 TiXmlElement* geometry = (TiXmlElement*) cnn->FirstChild("geometry");
                 if(geometry && geometry->GetText())
                 {
                     yarp::os::Property prop(geometry->GetText());
-                    GraphicModel model;                     
+                    GraphicModel model;
                     if(prop.check("Pos"))
                     {
                         yarp::os::Bottle pos = prop.findGroup("Pos");
@@ -566,8 +566,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         connection.setModelBase(model);
                     }
                 }
-#endif                
- 
+#endif
+
                 app.addConnection(connection);
             }
             else
@@ -575,14 +575,12 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 OSTRINGSTREAM war;
                 war<<"Incomplete connection tag from "<<szFile<<" at line "\
                    <<cnn->Row()<<".";
-                logger->addWarning(war);                                
+                logger->addWarning(war);
             }
         }
-    }       
+    }
 
 
     return &app;
 
 }
-
-
