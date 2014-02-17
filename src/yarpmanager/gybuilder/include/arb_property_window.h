@@ -11,8 +11,8 @@
 #define _ARBITRATOR_PROPERTY_WINDOW_H_
 
 #include <gtkmm.h>
-#include "application.h"
-#include "manager.h"
+#include <yarp/manager/application.h>
+#include <yarp/manager/manager.h>
 #include "arrow_model.h"
 #include "port_abitrator_model.h"
 

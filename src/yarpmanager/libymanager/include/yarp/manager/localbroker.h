@@ -26,7 +26,7 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Thread.h>
 
-#include "broker.h"
+#include <yarp/manager/broker.h>
 
 #if defined(WIN32)
     #include<Windows.h>

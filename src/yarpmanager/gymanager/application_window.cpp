@@ -15,8 +15,9 @@
 #include "application_window.h"
 #include "main_window.h"
 #include "icon_res.h"
-#include "localbroker.h"
 #include "yscope_window.h"
+
+#include <yarp/manager/localbroker.h>
 
 using namespace std;
 

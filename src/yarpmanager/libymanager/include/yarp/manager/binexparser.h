@@ -15,9 +15,9 @@
 #include <string>
 #include <cstdio>
 
-#include "ymm-types.h"
-#include "utility.h"
-#include "graph.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/graph.h>
 
 
 //namespace ymm {

@@ -11,8 +11,8 @@
 #define _RESOURCE_WINDOW_H_
 
 #include <gtkmm.h>
-#include "primresource.h"
-#include "manager.h"
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/manager.h>
 
 class MainWindow;
 

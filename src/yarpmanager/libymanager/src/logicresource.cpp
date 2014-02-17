@@ -7,7 +7,7 @@
  */
 
 
-#include "logicresource.h"
+#include <yarp/manager/logicresource.h>
 
 #include <cstring>
 

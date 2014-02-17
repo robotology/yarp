@@ -7,9 +7,9 @@
  */
 
 
-#include "xmlapploader.h"
-#include "utility.h"
-#include "ymm-dir.h"
+#include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/ymm-dir.h>
 
 #ifdef WITH_GEOMETRY
 #include <yarp/os/Property.h> // for parsing geometry information

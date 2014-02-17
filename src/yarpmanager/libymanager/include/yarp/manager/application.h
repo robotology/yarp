@@ -14,13 +14,13 @@
 
 #include <map>
 
-#include "ymm-types.h" 
-#include "node.h"
-#include "module.h"
-#include "utility.h"
-#include "logicresource.h"
-#include "primresource.h"
-#include "arbitrator.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
+#include <yarp/manager/module.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/logicresource.h>
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/arbitrator.h>
 
 using namespace std;
 

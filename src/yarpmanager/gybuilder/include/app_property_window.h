@@ -11,8 +11,8 @@
 #define _APLICATION_PROPERTY_WINDOW_H_
 
 #include <gtkmm.h>
-#include "application.h"
-#include "manager.h"
+#include <yarp/manager/application.h>
+#include <yarp/manager/manager.h>
 
 class MainWindow;
 class ApplicationWindow;

@@ -12,8 +12,8 @@
 #ifndef __XMLAPPSAVER__
 #define __XMLAPPSAVER__
 
-#include "ymm-types.h"
-#include "manifestloader.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/manifestloader.h>
 
 //namespace ymm {
 

@@ -28,18 +28,19 @@
 //#include <iostream>
 #include <fstream>
 #include <string>
-#include "ymm-dir.h"
 
-#include "localbroker.h"
+#include <yarp/manager/ymm-dir.h>
+#include <yarp/manager/localbroker.h>
+#include <yarp/manager/xmltemploader.h>
+#include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/xmlappsaver.h>
+
 #include "main_window.h"
 #include "application_window.h"
 #include "resource_window.h"
 #include "module_window.h"
 #include "icon_res.h"
 #include "template_res.h"
-#include "xmltemploader.h"
-#include "xmlapploader.h"
-#include "xmlappsaver.h"
 #include "application_wizard.h"
 
 using namespace std;

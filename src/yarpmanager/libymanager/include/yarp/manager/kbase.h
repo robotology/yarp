@@ -15,12 +15,12 @@
 #include <cstring>
 #include <algorithm>
 
-#include "ymm-types.h"
-#include "graph.h"
-#include "manifestloader.h"
-#include "resource.h"
-#include "logicresource.h"
-#include "primresource.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/graph.h>
+#include <yarp/manager/manifestloader.h>
+#include <yarp/manager/resource.h>
+#include <yarp/manager/logicresource.h>
+#include <yarp/manager/primresource.h>
 
 
 using namespace std;

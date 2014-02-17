@@ -12,10 +12,10 @@
 #ifndef __MANIFESTLOADER__
 #define __MANIFESTLOADER__
 
-#include "ymm-types.h"
-#include "module.h"
-#include "application.h"
-#include "resource.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/module.h>
+#include <yarp/manager/application.h>
+#include <yarp/manager/resource.h>
 
 //namespace ymm {
 

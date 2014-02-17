@@ -12,12 +12,12 @@
     #pragma warning (disable : 4520)
 #endif
 
-#include "resource_window.h"
-#include "yarpbroker.h"
-#include "primresource.h"
-#include "icon_res.h"
-#include "ymm-dir.h"
+#include <yarp/manager/yarpbroker.h>
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/ymm-dir.h>
 
+#include "resource_window.h"
+#include "icon_res.h"
 #include "main_window.h"
 
 ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent, 

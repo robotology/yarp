@@ -14,7 +14,7 @@
 
 #include "app_property_window.h"
 #include "icon_res.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 
 #include "main_window.h"
 #include "application_window.h"

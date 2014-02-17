@@ -16,8 +16,8 @@
 #include <string>
 #include <iterator>
 
-#include "ymm-types.h"
-#include "node.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
 
 using namespace std;
 

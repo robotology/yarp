@@ -14,8 +14,8 @@
 
 #include <string>
 
-#include "yarpbroker.h"
-#include "localbroker.h"
+#include <yarp/manager/yarpbroker.h>
+#include <yarp/manager/localbroker.h>
 
 class YarpdevLocalBroker: public LocalBroker
 {

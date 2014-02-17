@@ -9,7 +9,7 @@
  */
 
 
-#include "scriptbroker.h"
+#include <yarp/manager/scriptbroker.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>

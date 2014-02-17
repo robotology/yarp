@@ -9,27 +9,28 @@
  */
 
 
-#ifndef __XMLTEMPLOADER__
-#define __XMLTEMPLOADER__
+#ifndef __XMLAPPLOADER__
+#define __XMLAPPLOADER__
 
-#include "ymm-types.h"
-#include "manifestloader.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/manifestloader.h>
 
 //namespace ymm {
 
+
 /**
- * Class XmlTempLoader
+ * Class XmlAppLoader
  */
-class XmlTempLoader : public TempLoader {
+class XmlAppLoader : public AppLoader {
 
 public:
-    XmlTempLoader(const char* szFileName);
-    XmlTempLoader(const char* szPath, const char* szAppName);
-    virtual ~XmlTempLoader();
+    XmlAppLoader(const char* szFileName);
+    XmlAppLoader(const char* szPath, const char* szAppName);
+    virtual ~XmlAppLoader();
     bool init(void);
     void fini(void);
     void reset(void);
-    AppTemplate* getNextAppTemplate(void);
+    Application* getNextApplication(void);
 
 protected:
 
@@ -38,12 +39,12 @@ private:
     string strPath;
     string strFileName;
     vector<string> fileNames;
-    AppTemplate app;
-    AppTemplate* parsXml(const char* szFile);
+    Application app;
+    Application* parsXml(const char* szFile);
 };
 
 
 
 //}
 
-#endif //__XMLTEMPLOADER__
+#endif //__XMLAPPLOADER__

@@ -27,8 +27,8 @@
 #include <yarp/os/impl/SystemInfo.h>
 #include <yarp/os/impl/SystemInfoSerializer.h>
 
-#include "broker.h"
-#include "primresource.h"
+#include <yarp/manager/broker.h>
+#include <yarp/manager/primresource.h>
 
 using namespace std;
 //using namespace yarp::os;

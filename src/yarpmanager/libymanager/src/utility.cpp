@@ -7,11 +7,11 @@
  */
 
 
-#include "utility.h"
-#include "graph.h"
-#include "module.h"
-#include "application.h"
-#include "resource.h"
+#include <yarp/manager/utility.h>
+#include <yarp/manager/graph.h>
+#include <yarp/manager/module.h>
+#include <yarp/manager/application.h>
+#include <yarp/manager/resource.h>
 
 #include <cstdio>
 #include <fstream>

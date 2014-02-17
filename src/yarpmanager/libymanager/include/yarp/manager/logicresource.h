@@ -11,10 +11,10 @@
 #ifndef __LOGICRESOURCE__
 #define __LOGICRESOURCE__
 
-#include "ymm-types.h"
-#include "node.h"
-#include "utility.h"
-#include "resource.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/resource.h>
 
 using namespace std;
 

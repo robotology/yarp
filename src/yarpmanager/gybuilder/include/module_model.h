@@ -12,7 +12,7 @@
 
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "module.h"
+#include <yarp/manager/module.h>
 
 class ApplicationWindow;
 

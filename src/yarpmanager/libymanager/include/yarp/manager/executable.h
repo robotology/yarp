@@ -19,11 +19,11 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 
-#include "ymm-types.h"
-#include "broker.h"
-#include "module.h"
-#include "application.h"
-#include "execstate.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/broker.h>
+#include <yarp/manager/module.h>
+#include <yarp/manager/application.h>
+#include <yarp/manager/execstate.h>
 
 //using namespace yarp::os;
 using namespace std;

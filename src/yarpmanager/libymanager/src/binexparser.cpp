@@ -7,7 +7,7 @@
 */
 
 
-#include "binexparser.h"
+#include <yarp/manager/binexparser.h>
 
 #include <cstdio>
 #include <cstring>

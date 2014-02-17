@@ -16,8 +16,8 @@
 
 #include <yarp/os/Log.h>
 
-#include "yarpbroker.h"
-#include "localbroker.h"
+#include <yarp/manager/yarpbroker.h>
+#include <yarp/manager/localbroker.h>
 
 class ScriptLocalBroker: public LocalBroker
 {

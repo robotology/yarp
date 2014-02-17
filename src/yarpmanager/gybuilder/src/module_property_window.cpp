@@ -12,10 +12,10 @@
     #pragma warning (disable : 4520)
 #endif
 
+#include <yarp/manager/ymm-dir.h>
+
 #include "module_property_window.h"
 #include "icon_res.h"
-#include "ymm-dir.h"
-
 #include "main_window.h"
 #include "arrow_model.h"
 #include "application_window.h"

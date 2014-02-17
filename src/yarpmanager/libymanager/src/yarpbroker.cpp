@@ -7,7 +7,7 @@
  */
 
 
-#include "yarpbroker.h"
+#include <yarp/manager/yarpbroker.h>
 
 #include <csignal>
 #include <cstring>

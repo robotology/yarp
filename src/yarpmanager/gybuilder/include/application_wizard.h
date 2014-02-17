@@ -11,7 +11,7 @@
 #define _APPLICATION_WIZARD_H_
 
 #include <gtkmm.h>
-#include "application.h"
+#include <yarp/manager/application.h>
 
 //class ApplicationWizard;
 class ApplicationWizard: public Gtk::Dialog

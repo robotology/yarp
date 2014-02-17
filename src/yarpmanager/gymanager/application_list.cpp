@@ -13,12 +13,13 @@
 #endif
 
 
+#include "application_list.h"
+#include "icon_res.h"
+
 #include <string>
 #include <iostream>
 
-#include "application_list.h"
-#include "icon_res.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 
 using namespace std;
 

@@ -12,11 +12,11 @@
 #ifndef __MANAGER__
 #define __MANAGER__
 
-#include "ymm-types.h"
-#include "kbase.h"
-#include "utility.h"
-#include "executable.h"
-#include "yarpbroker.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/kbase.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/executable.h>
+#include <yarp/manager/yarpbroker.h>
 
 using namespace std;
 

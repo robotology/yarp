@@ -7,7 +7,7 @@
  */
 
 
-#include "executable.h"
+#include <yarp/manager/executable.h>
 
 
 Executable::Executable(Broker* _broker, MEvent* _event,

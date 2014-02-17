@@ -7,7 +7,7 @@
  */
 
 
-#include "resource.h"
+#include <yarp/manager/resource.h>
 
 
 /**

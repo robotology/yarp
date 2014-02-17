@@ -7,7 +7,7 @@
  */
 
 
-#include "graph.h"
+#include <yarp/manager/graph.h>
 
 
 Graph::Graph(void) { }

@@ -7,12 +7,12 @@
  *
  */
 
-
-#include <string.h>
 #include "ymanager.h"
-#include "xmlapploader.h"
-#include "application.h"
-#include "ymm-dir.h"
+
+#include <cstring>
+#include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/application.h>
+#include <yarp/manager/ymm-dir.h>
 
 /*
  * TODO: using stringstream should be avoided to keep 

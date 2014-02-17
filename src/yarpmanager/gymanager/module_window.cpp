@@ -14,9 +14,9 @@
 
 #include "module_window.h"
 #include "icon_res.h"
-#include "ymm-dir.h"
-
 #include "main_window.h"
+
+#include <yarp/manager/ymm-dir.h>
 
 ModuleWindow::ModuleWindow(Module* module, MainWindow* parent, 
                                Manager* manager)

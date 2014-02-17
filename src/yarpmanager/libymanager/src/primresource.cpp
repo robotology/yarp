@@ -7,7 +7,7 @@
  */
 
 
-#include "primresource.h"
+#include <yarp/manager/primresource.h>
 
 #include <cstring>
 

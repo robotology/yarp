@@ -12,7 +12,7 @@
 
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "application.h"
+#include <yarp/manager/application.h>
 #include "port_model.h"
 #include "ext_port_model.h"
 

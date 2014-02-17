@@ -7,7 +7,8 @@
  */
 
 
-#include "broker.h"
+#include <yarp/manager/broker.h>
+
 
 //unsigned int Broker::UNIQUEID = 0;
 

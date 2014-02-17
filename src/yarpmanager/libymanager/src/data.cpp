@@ -7,7 +7,7 @@
  */
 
 
-#include "data.h"
+#include <yarp/manager/data.h>
 
 
 /**

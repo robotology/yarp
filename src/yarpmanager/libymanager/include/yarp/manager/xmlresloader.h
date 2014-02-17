@@ -9,30 +9,30 @@
  */
 
 
-#ifndef __XMLMODLOADER__
-#define __XMLMODLOADER__
+#ifndef __XMLRESLOADER__
+#define __XMLRESLOADER__
 
-#include "ymm-types.h"
-#include "module.h"
-#include "data.h"
-#include "manifestloader.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/resource.h>
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/manifestloader.h>
 
 //namespace ymm {
 
 
 /**
- * Class XmlModLoader
+ * Class XmlResLoader
  */
-class XmlModLoader : public ModuleLoader {
-
+class XmlResLoader : public ResourceLoader
+{
 public:
-    XmlModLoader(const char* szFileName);
-    XmlModLoader(const char* szPath, const char* szModuleName);
-    virtual ~XmlModLoader();
+    XmlResLoader(const char* szFileName);
+    XmlResLoader(const char* szPath, const char* szResName);
+    virtual ~XmlResLoader();
     bool init(void);
     void reset(void);
     void fini(void);
-    Module* getNextModule(void);
+    GenericResource* getNextResource(void);
 
 protected:
 
@@ -41,12 +41,13 @@ private:
     string strPath;
     string strFileName;
     vector<string> fileNames;
-    Module module;
-    Module* parsXml(const char* szFile);
+    ComputerContainer computers;
+    Computer dummyComputer;
+    bool parsXml(const char* szFile);
 };
 
 
 
 //}
 
-#endif //__XMLMODLOADER__
+#endif //__XMLRESLOADER__

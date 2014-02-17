@@ -13,11 +13,11 @@
 #define __MODULE_H_
 
 
-#include "ymm-types.h" 
-#include "node.h"
-#include "data.h"
-#include "utility.h"
-#include "resource.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
+#include <yarp/manager/data.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/resource.h>
 
 using namespace std;
 

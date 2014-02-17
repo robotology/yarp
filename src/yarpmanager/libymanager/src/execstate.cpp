@@ -7,8 +7,8 @@
  */
 
 
-#include "execstate.h"
-#include "executable.h"
+#include <yarp/manager/execstate.h>
+#include <yarp/manager/executable.h>
 
 #include <yarp/os/Time.h>
 

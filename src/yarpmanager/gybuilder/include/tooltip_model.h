@@ -14,8 +14,8 @@
 #include <string>
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "ymm-types.h"
-#include "node.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
 
 class ApplicationWindow;
 class ArrowModel;

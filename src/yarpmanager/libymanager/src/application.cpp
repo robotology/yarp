@@ -7,7 +7,7 @@
  */
 
 
-#include "application.h"
+#include <yarp/manager/application.h>
 
 
 /**

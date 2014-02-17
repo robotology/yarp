@@ -7,11 +7,11 @@
  */
 
 
-#include "xmlresloader.h"
-#include "utility.h"
-#include "ymm-dir.h"
-#include "physicresource.h"
-#include "logicresource.h"
+#include <yarp/manager/xmlresloader.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/ymm-dir.h>
+#include <yarp/manager/physicresource.h>
+#include <yarp/manager/logicresource.h>
 
 #include <algorithm>
 #include <cctype>

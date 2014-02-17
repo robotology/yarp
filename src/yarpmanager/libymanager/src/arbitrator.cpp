@@ -7,8 +7,8 @@
  */
 
 
-#include "arbitrator.h"
-#include "binexparser.h"
+#include <yarp/manager/arbitrator.h>
+#include <yarp/manager/binexparser.h>
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>

@@ -7,16 +7,16 @@
  */
 
 
-#include "manager.h"
-#include "yarpbroker.h"
-#include "localbroker.h"
-#include "yarpdevbroker.h"
-#include "scriptbroker.h"
-#include "xmlapploader.h"
-#include "xmlmodloader.h"
-#include "xmlresloader.h"
-#include "xmlappsaver.h"
-#include "singleapploader.h"
+#include <yarp/manager/manager.h>
+#include <yarp/manager/yarpbroker.h>
+#include <yarp/manager/localbroker.h>
+#include <yarp/manager/yarpdevbroker.h>
+#include <yarp/manager/scriptbroker.h>
+#include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/xmlmodloader.h>
+#include <yarp/manager/xmlresloader.h>
+#include <yarp/manager/xmlappsaver.h>
+#include <yarp/manager/singleapploader.h>
 
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds

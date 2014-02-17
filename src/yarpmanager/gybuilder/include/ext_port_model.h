@@ -13,9 +13,9 @@
 #include <vector>
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "ymm-types.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/data.h>
 #include "arrow_model.h"
-#include "data.h"
 #include "port_model.h"
 
 class ApplicationWindow;

@@ -7,7 +7,7 @@
  */
 
 
-#include "node.h"
+#include <yarp/manager/node.h>
 
 
 //using namespace ymm;

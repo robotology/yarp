@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-#include "ymm-types.h"
+#include <yarp/manager/ymm-types.h>
 
 using namespace std;
 

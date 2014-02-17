@@ -7,7 +7,7 @@
  */
 
 
-#include "physicresource.h"
+#include <yarp/manager/physicresource.h>
 
 #include <cstring>
 

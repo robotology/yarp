@@ -18,7 +18,7 @@
 
 #include <vector>
 
-#include "manager.h"
+#include <yarp/manager/manager.h>
 
 
 typedef enum __ThreadAction {

@@ -7,7 +7,7 @@
  */
 
 
-#include "module.h"
+#include <yarp/manager/module.h>
 #include <cstdio>
 #include <string>
 #include <cstring>

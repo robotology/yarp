@@ -12,7 +12,7 @@
 #ifndef __Exec_State__
 #define __Exec_State__
 
-#include "fsm.h"
+#include <yarp/manager/fsm.h>
 
 class Executable;
 

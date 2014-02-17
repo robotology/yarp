@@ -14,8 +14,8 @@
 #define __YCONSOLEMANAGER__
 
 
-#include "manager.h"
-#include "utility.h"
+#include <yarp/manager/manager.h>
+#include <yarp/manager/utility.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>

@@ -15,9 +15,9 @@
 #include <map>
 #include <vector>
 
-#include "ymm-types.h" 
-#include "node.h"
-#include "utility.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
+#include <yarp/manager/utility.h>
 
 //namespace ymm {
 

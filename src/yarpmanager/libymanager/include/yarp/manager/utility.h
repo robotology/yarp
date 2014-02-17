@@ -19,7 +19,7 @@
 #include <string.h>
 #include <iostream>
 
-#include "ymm-types.h"
+#include <yarp/manager/ymm-types.h>
 
 
 using namespace std;

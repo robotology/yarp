@@ -7,8 +7,8 @@
  */
 
 
-#include "singleapploader.h"
-#include "utility.h"
+#include <yarp/manager/singleapploader.h>
+#include <yarp/manager/utility.h>
 
 
 using namespace std;

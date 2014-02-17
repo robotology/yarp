@@ -12,9 +12,9 @@
 
 
 #include <gtkmm.h>
-#include "application.h"
-#include "primresource.h"
-#include "xmltemploader.h"
+#include <yarp/manager/application.h>
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/xmltemploader.h>
 
 //Tree model columns:
 class AppModelColumns : public Gtk::TreeModel::ColumnRecord

@@ -7,9 +7,9 @@
  */
 
 
-#include "kbase.h"
-#include "utility.h"
-#include "resource.h"
+#include <yarp/manager/kbase.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/resource.h>
 
 #include <cstdio>
 #include <cctype>

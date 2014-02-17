@@ -16,7 +16,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
 
-#include "manager.h"
+#include <yarp/manager/manager.h>
 
 #include "message_list.h"
 #include "application_list.h"

@@ -13,9 +13,9 @@
 #include <vector>
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "ymm-types.h"
+#include <yarp/manager/ymm-types.h>
 #include <string.h>
-#include "application.h"
+#include <yarp/manager/application.h>
 
 #include "tooltip_model.h"
 

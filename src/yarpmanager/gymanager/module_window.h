@@ -11,8 +11,8 @@
 #define _MODULE_WINDOW_H_
 
 #include <gtkmm.h>
-#include "module.h"
-#include "manager.h"
+#include <yarp/manager/module.h>
+#include <yarp/manager/manager.h>
 
 class MainWindow;
 

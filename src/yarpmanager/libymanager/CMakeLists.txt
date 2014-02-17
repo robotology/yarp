@@ -36,37 +36,37 @@ set(folder_source   src/application.cpp
                     src/xmltemploader.cpp
                     src/yarpbroker.cpp)
 
-set(folder_header   include/application.h
-                    include/arbitrator.h
-                    include/binexparser.h
-                    include/broker.h
-                    include/data.h
-                    include/execstate.h
-                    include/executable.h
-                    include/fsm.h
-                    include/graph.h
-                    include/kbase.h
-                    include/localbroker.h
-                    include/logicresource.h
-                    include/manager.h
-                    include/manifestloader.h
-                    include/module.h
-                    include/node.h
-                    include/physicresource.h
-                    include/primresource.h
-                    include/resource.h
-                    include/scriptbroker.h
-                    include/singleapploader.h
-                    include/utility.h
-                    include/xmlapploader.h
-                    include/xmlappsaver.h
-                    include/xmlmodloader.h
-                    include/xmlresloader.h
-                    include/xmltemploader.h
-                    include/yarpbroker.h
-                    include/yarpdevbroker.h
-                    include/ymm-dir.h
-                    include/ymm-types.h)
+set(folder_header   include/yarp/manager/application.h
+                    include/yarp/manager/arbitrator.h
+                    include/yarp/manager/binexparser.h
+                    include/yarp/manager/broker.h
+                    include/yarp/manager/data.h
+                    include/yarp/manager/execstate.h
+                    include/yarp/manager/executable.h
+                    include/yarp/manager/fsm.h
+                    include/yarp/manager/graph.h
+                    include/yarp/manager/kbase.h
+                    include/yarp/manager/localbroker.h
+                    include/yarp/manager/logicresource.h
+                    include/yarp/manager/manager.h
+                    include/yarp/manager/manifestloader.h
+                    include/yarp/manager/module.h
+                    include/yarp/manager/node.h
+                    include/yarp/manager/physicresource.h
+                    include/yarp/manager/primresource.h
+                    include/yarp/manager/resource.h
+                    include/yarp/manager/scriptbroker.h
+                    include/yarp/manager/singleapploader.h
+                    include/yarp/manager/utility.h
+                    include/yarp/manager/xmlapploader.h
+                    include/yarp/manager/xmlappsaver.h
+                    include/yarp/manager/xmlmodloader.h
+                    include/yarp/manager/xmlresloader.h
+                    include/yarp/manager/xmltemploader.h
+                    include/yarp/manager/yarpbroker.h
+                    include/yarp/manager/yarpdevbroker.h
+                    include/yarp/manager/ymm-dir.h
+                    include/yarp/manager/ymm-types.h)
 
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})

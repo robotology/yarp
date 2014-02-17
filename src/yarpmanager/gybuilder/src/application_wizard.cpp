@@ -17,7 +17,7 @@
 #include "application_wizard.h"
 
 #include "icon_res.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 #include <iostream>
 #include <fstream>
 

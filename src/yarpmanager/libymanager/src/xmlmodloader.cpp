@@ -7,12 +7,12 @@
  */
 
 
-#include "xmlmodloader.h"
-#include "utility.h"
-#include "ymm-dir.h"
-#include "physicresource.h"
-#include "logicresource.h"
-#include "primresource.h"
+#include <yarp/manager/xmlmodloader.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/ymm-dir.h>
+#include <yarp/manager/physicresource.h>
+#include <yarp/manager/logicresource.h>
+#include <yarp/manager/primresource.h>
 
 #include <algorithm>
 #include <cctype>

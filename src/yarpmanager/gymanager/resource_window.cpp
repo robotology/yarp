@@ -13,12 +13,13 @@
 #endif
 
 #include "resource_window.h"
-#include "yarpbroker.h"
-#include "primresource.h"
 #include "icon_res.h"
-#include "ymm-dir.h"
-
 #include "main_window.h"
+
+#include <yarp/manager/yarpbroker.h>
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/ymm-dir.h>
+
 
 ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent, 
                                Manager* manager)

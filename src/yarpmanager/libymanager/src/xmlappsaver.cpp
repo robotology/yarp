@@ -7,9 +7,9 @@
  */
 
 
-#include "xmlappsaver.h"
-#include "utility.h"
-#include "ymm-dir.h"
+#include <yarp/manager/xmlappsaver.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/ymm-dir.h>
 
 #include <algorithm>
 #include <cctype>

@@ -21,7 +21,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Time.h>
 
-#include "manager.h"
+#include <yarp/manager/manager.h>
 #include "module_model.h"
 #include "port_model.h"
 #include "module_property_window.h"
