@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __MANAGER__
-#define __MANAGER__
+#ifndef __YARP_MANAGER_MANAGER__
+#define __YARP_MANAGER_MANAGER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/kbase.h>
@@ -20,8 +20,8 @@
 
 using namespace std;
 
-//namespace ymm {
-
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -147,7 +147,8 @@ private:
     Broker* createBroker(Module* module);
 };
 
+} // namespace yarp
+} // namespace manager
 
-//}
 
-#endif //__MANAGER__
+#endif // __YARP_MANAGER_MANAGER__

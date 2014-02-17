@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __LOCALBROKER__
-#define __LOCALBROKER__
+#ifndef __YARP_MANAGER_LOCALBROKER__
+#define __YARP_MANAGER_LOCALBROKER__
 
 #include <cstdio>
 #include <string>
@@ -32,7 +32,8 @@
     #include<Windows.h>
 #endif
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 /**
  * Class LocalBroker
@@ -108,6 +109,8 @@ private:
     inline bool IS_INVALID(int pid){ return pid<0; }
 };
 
-//}
+} // namespace yarp
+} // namespace manager
 
-#endif //__LOCALBROKER__
+
+#endif // __YARP_MANAGER_LOCALBROKER__

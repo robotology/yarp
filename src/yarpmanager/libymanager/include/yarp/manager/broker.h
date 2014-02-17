@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __BROKER__
-#define __BROKER__
+#ifndef __YARP_MANAGER_BROKER__
+#define __YARP_MANAGER_BROKER__
 
 #include <string>
 #include <vector>
@@ -19,7 +19,9 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
+
 
 class BrokerEventSink
 {
@@ -73,6 +75,8 @@ private:
 
 };
 
-//}
+} // namespace yarp
+} // namespace manager
 
-#endif //__BROKER__
+
+#endif // __YARP_MANAGER_BROKER__

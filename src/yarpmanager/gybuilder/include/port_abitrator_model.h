@@ -31,7 +31,7 @@ public:
     virtual ~PortArbitratorModel();
 
     static Glib::RefPtr<PortArbitratorModel> create(ApplicationWindow* parentWnd,
-                                                     Glib::RefPtr<PortModel> dest, Arbitrator* arb, bool nested=false);
+                                                     Glib::RefPtr<PortModel> dest, yarp::manager::Arbitrator* arb, bool nested=false);
 
     virtual bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -67,8 +67,8 @@ public:
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
     bool isNested(void) { return bNested; }
-    Arbitrator& getArbitrator(void) { return arbitrator; }
-    Arbitrator& setArbitrator(Arbitrator& arb);
+    yarp::manager::Arbitrator& getArbitrator(void) { return arbitrator; }
+    yarp::manager::Arbitrator& setArbitrator(yarp::manager::Arbitrator& arb);
 
     void setErrorMode(bool mode) {
         portColor = (mode) ? "#F9CCCA" : ARBITRATOR_COLOR;
@@ -78,19 +78,19 @@ public:
     ArrowModel* getArrowModel(const char* id) {
         std::vector<ArrowModel*>::iterator itr;
         for(itr = destinationArrows.begin(); itr!= destinationArrows.end(); itr++)
-            if(compareString((*itr)->getId(), id))
+            if(yarp::manager::compareString((*itr)->getId(), id))
                 return (*itr);
         return NULL;
     }
 
 protected: 
     PortArbitratorModel(ApplicationWindow* parentWnd, 
-                        Glib::RefPtr<PortModel> dest, Arbitrator* arb, bool nested=false);
+                        Glib::RefPtr<PortModel> dest, yarp::manager::Arbitrator* arb, bool nested=false);
     Gdk::Point getDefaultSize(void);
 
 private:
     bool selected;
-    Arbitrator arbitrator;
+    yarp::manager::Arbitrator arbitrator;
     ApplicationWindow* parentWindow;
     Glib::RefPtr<PortModel> destination;
     Glib::RefPtr<Goocanvas::PolylineModel> poly;

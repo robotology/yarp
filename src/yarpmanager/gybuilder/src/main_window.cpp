@@ -44,6 +44,7 @@
 #include "application_wizard.h"
 
 using namespace std;
+using namespace yarp::manager;
 
 #define WND_DEF_HEIGHT      600
 #define WND_DEF_WIDTH       800

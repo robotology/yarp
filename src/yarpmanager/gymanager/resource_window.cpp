@@ -20,6 +20,7 @@
 #include <yarp/manager/primresource.h>
 #include <yarp/manager/ymm-dir.h>
 
+using namespace yarp::manager;
 
 ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent, 
                                Manager* manager)

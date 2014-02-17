@@ -18,6 +18,9 @@
 #include "icon_res.h"
 #include "main_window.h"
 
+using namespace yarp::manager;
+
+
 ModuleWindow::ModuleWindow(Module* module, MainWindow* parent, 
                                Manager* manager)
 {

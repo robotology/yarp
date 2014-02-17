@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __GRAPH__
-#define __GRAPH__
+#ifndef __YARP_MANAGER_GRAPH__
+#define __YARP_MANAGER_GRAPH__
 
 #include <map>
 #include <string>
@@ -21,7 +21,8 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 typedef map<string, Node*> NodePContainer;
 typedef map<string, Node*>::iterator NodePIterator;
@@ -109,6 +110,9 @@ private:
     else\
             printf("%s, ", ((vertex*)list_get_at(&l.nodes, i))->lable);\
 */
-//}
 
-#endif //__GRAPH__
+} // namespace yarp
+} // namespace manager
+
+
+#endif // __YARP_MANAGER_GRAPH__

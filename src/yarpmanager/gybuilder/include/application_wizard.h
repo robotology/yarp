@@ -18,7 +18,7 @@ class ApplicationWizard: public Gtk::Dialog
 {
 public:
     ApplicationWizard(Gtk::Widget* parent, const char* title=NULL, 
-                      Application* application=NULL);
+                      yarp::manager::Application* application=NULL);
     virtual ~ApplicationWizard();
 
 protected:
@@ -28,7 +28,7 @@ protected:
     void onEntryNameInsert();
 
 private:
-    Application* m_Application;
+    yarp::manager::Application* m_Application;
     Gtk::Widget* m_pParent;
     Gtk::VBox m_VBox;
     Gtk::HBox m_HBox;

@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __SCRIPT_BROKER__
-#define __SCRIPT_BROKER__
+#ifndef __YARP_MANAGER_SCRIPT_BROKER__
+#define __YARP_MANAGER_SCRIPT_BROKER__
 
 #include <string>
 
@@ -18,6 +18,9 @@
 
 #include <yarp/manager/yarpbroker.h>
 #include <yarp/manager/localbroker.h>
+
+namespace yarp {
+namespace manager {
 
 class ScriptLocalBroker: public LocalBroker
 {
@@ -52,4 +55,8 @@ private:
     std::string script;
 };
 
-#endif //__SCRIPT_BROKER__
+} // namespace yarp
+} // namespace manager
+
+
+#endif // __YARP_MANAGER_SCRIPT_BROKER__

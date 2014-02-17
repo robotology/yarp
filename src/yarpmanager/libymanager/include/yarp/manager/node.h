@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __NODE__
-#define __NODE__
+#ifndef __YARP_MANAGER_NODE__
+#define __YARP_MANAGER_NODE__
 
 #include <iostream>
 #include <vector>
@@ -20,7 +20,8 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 class Node;
 class Link;
@@ -127,6 +128,8 @@ private:
 typedef vector<Node*> NodePVector;
 typedef vector<Node*>::iterator NodePVIterator;
 
-//}
+} // namespace yarp
+} // namespace manager
 
-#endif //__NODE_
+
+#endif // __YARP_MANAGER_NODE_

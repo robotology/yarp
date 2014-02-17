@@ -34,7 +34,7 @@ class InternalPortModel : public PortModel
 public:
     virtual ~InternalPortModel();
 
-    static Glib::RefPtr<InternalPortModel> create(ApplicationWindow* parentWnd, NodeType t=INPUTD, 
+    static Glib::RefPtr<InternalPortModel> create(ApplicationWindow* parentWnd, yarp::manager::NodeType t=yarp::manager::INPUTD,
                                           void* data=NULL);
 
     virtual  bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
@@ -50,11 +50,11 @@ public:
 
     virtual Gdk::Point getContactPoint(ArrowModel* arrow=NULL);
 
-    InputData* getInput(void) { return input; }
-    OutputData* getOutput(void) { return output; }
+    yarp::manager::InputData* getInput(void) { return input; }
+    yarp::manager::OutputData* getOutput(void) { return output; }
     
 protected: 
-    InternalPortModel(ApplicationWindow* parentWnd, NodeType t=INPUTD, void* data=NULL);
+    InternalPortModel(ApplicationWindow* parentWnd, yarp::manager::NodeType t=yarp::manager::INPUTD, void* data=NULL);
 
     virtual void onSourceAdded(void) {
         updateOutputPortColor();
@@ -80,8 +80,8 @@ private:
     Glib::RefPtr<Goocanvas::EllipseModel> ellipse;
     Glib::RefPtr<Goocanvas::PathModel> path;
     ApplicationWindow* parentWindow;
-    InputData* input;
-    OutputData* output;
+    yarp::manager::InputData* input;
+    yarp::manager::OutputData* output;
     Glib::RefPtr<TooltipModel> tool;
     string strColor;
     bool bServicePort;

@@ -10,7 +10,7 @@
 #include <yarp/manager/node.h>
 
 
-//using namespace ymm;
+using namespace yarp::manager;
 
 /**
  * class Node

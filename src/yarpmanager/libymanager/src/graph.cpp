@@ -9,6 +9,7 @@
 
 #include <yarp/manager/graph.h>
 
+using namespace yarp::manager;
 
 Graph::Graph(void) { }
 

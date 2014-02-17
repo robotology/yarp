@@ -25,6 +25,7 @@
 
 using namespace std;
 using namespace yarp::sig;
+using namespace yarp::manager;
 
 
 /**

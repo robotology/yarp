@@ -9,6 +9,7 @@
 
 #include <yarp/manager/data.h>
 
+using namespace yarp::manager;
 
 /**
  * Class InputData

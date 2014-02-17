@@ -15,6 +15,7 @@
 
 #define AUTOSNIPE_MARGINE           5
 
+using namespace yarp::manager;
 
 MidpointModel::MidpointModel(ApplicationWindow* parentWnd,
                              ArrowModel* arw, double x, double y) 

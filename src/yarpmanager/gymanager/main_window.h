@@ -72,7 +72,7 @@ protected:
     void on_size_allocate(Gtk::Allocation& allocation);
 
 private:
-    Manager lazyManager;
+    yarp::manager::Manager lazyManager;
     yarp::os::Property m_config;
 
     //Child widgets:

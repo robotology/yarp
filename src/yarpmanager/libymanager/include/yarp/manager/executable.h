@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __Executable__
-#define __Executable__
+#ifndef __YARP_MANAGER_Executable__
+#define __YARP_MANAGER_Executable__
 
 #include <string>
 #include <vector>
@@ -28,7 +28,8 @@
 //using namespace yarp::os;
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 #define DEF_PERIOD      100  //ms
@@ -191,8 +192,8 @@ private:
     Executable* executable;
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__Executable__
+#endif // __YARP_MANAGER_Executable__

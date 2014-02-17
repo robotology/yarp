@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __DATA__
-#define __DATA__
+#ifndef __YARP_MANAGER_DATA__
+#define __YARP_MANAGER_DATA__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>
@@ -18,7 +18,9 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
+
 
 /**
  * Class InputData
@@ -112,7 +114,8 @@ private:
     NodeType portType;
 };
 
+} // namespace yarp
+} // namespace manager
 
-//}
 
-#endif //__MODULE__
+#endif // __YARP_MANAGER_MODULE__

@@ -26,6 +26,7 @@
 //#include <yarp/os/Bottle.h>
 
 using namespace yarp::os;
+using namespace yarp::manager;
 
 ArbitratorPropertyWindow::ArbitratorPropertyWindow(MainWindow* parent, 
                                Manager* manager, ApplicationWindow* appWnd)

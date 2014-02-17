@@ -22,6 +22,7 @@
 #include <fstream>
 
 using namespace std;
+using namespace yarp::manager;
 
 inline bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
         if (path[0]=='/'||path[0]=='\\') {

@@ -9,6 +9,7 @@
 
 #include <yarp/manager/application.h>
 
+using namespace yarp::manager;
 
 /**
  * Class  ModuleInterface

@@ -40,6 +40,8 @@ const char* yarprun_err_msg[] = { " (Ok) ",
 using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace std;
+using namespace yarp::manager;
+
 
 YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
 {

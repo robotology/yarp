@@ -20,6 +20,9 @@
 #include "arrow_model.h"
 #include "application_window.h"
 
+using namespace yarp::manager;
+
+
 ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent, 
                                Manager* manager, ApplicationWindow* appWnd) : m_pModule(NULL)
 {   

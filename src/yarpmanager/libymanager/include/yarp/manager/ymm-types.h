@@ -9,10 +9,12 @@
  */
 
 
-#ifndef __YMMTYPES__
-#define __YMMTYPES__
+#ifndef __YARP_MANAGER_YMMTYPES__
+#define __YARP_MANAGER_YMMTYPES__
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
+
 
 #define WITH_GEOMETRY
 /*
@@ -61,6 +63,9 @@ typedef enum __Carrier {
 */
 
 
+} // namespace yarp
+} // namespace manager
+
 
 
 /*
@@ -85,6 +90,5 @@ typedef enum __Carrier {
 
 #endif //YMM_DEBUG
 
-//}
 
-#endif //__YMMTYPES__
+#endif // __YARP_MANAGER_YMMTYPES__

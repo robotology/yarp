@@ -9,13 +9,14 @@
  */
 
 
-#ifndef __XMLAPPLOADER__
-#define __XMLAPPLOADER__
+#ifndef __YARP_MANAGER_XMLAPPLOADER__
+#define __YARP_MANAGER_XMLAPPLOADER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -43,8 +44,8 @@ private:
     Application* parsXml(const char* szFile);
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__XMLAPPLOADER__
+#endif // __YARP_MANAGER_XMLAPPLOADER__

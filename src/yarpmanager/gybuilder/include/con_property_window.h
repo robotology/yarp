@@ -39,7 +39,7 @@ public:
 class ConnectionPropertyWindow: public Gtk::ScrolledWindow
 {
 public:
-    ConnectionPropertyWindow(MainWindow* parent, Manager* manager, ApplicationWindow* appWnd=NULL);
+    ConnectionPropertyWindow(MainWindow* parent, yarp::manager::Manager* manager, ApplicationWindow* appWnd=NULL);
     virtual ~ConnectionPropertyWindow();
 
     void onTabCloseRequest();
@@ -65,7 +65,7 @@ private:
 private:
     MainWindow* m_pParent;
 //    Connection* m_pConnection;
-    Manager* m_pManager;
+    yarp::manager::Manager* m_pManager;
     ApplicationWindow* m_pAppWindow;
     Glib::RefPtr<ArrowModel> m_pArrow;
     Gtk::TreeModel::Row carrierRow;

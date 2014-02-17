@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __UTILITY__
-#define __UTILITY__
+#ifndef __YARP_MANAGER_UTILITY__
+#define __YARP_MANAGER_UTILITY__
 
 #include <algorithm>
 #include <cctype>
@@ -18,11 +18,16 @@
 #include <vector>
 #include <string.h>
 #include <iostream>
+#include <sstream>
 
 #include <yarp/manager/ymm-types.h>
 
 
 using namespace std;
+
+namespace yarp {
+namespace manager {
+
 
 class StrStream
 {
@@ -50,7 +55,6 @@ private:
 #if defined(_MSC_VER) && (_MSC_VER == 1600)
     typedef StrStream OSTRINGSTREAM;
 #else
-    #include <sstream>
     typedef std::stringstream OSTRINGSTREAM;
 #endif
 
@@ -90,7 +94,9 @@ OS strToOS(const char* szOS);
 
 class Graph;
 bool exportDotGraph(Graph& graph, const char* szFileName);
-//}
+
+} // namespace yarp
+} // namespace manager
 
 
-#endif //__UTILITY__
+#endif // __YARP_MANAGER_UTILITY__

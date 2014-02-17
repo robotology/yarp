@@ -9,14 +9,16 @@
  */
 
 
-#ifndef __Exec_State__
-#define __Exec_State__
+#ifndef __YARP_MANAGER_Exec_State__
+#define __YARP_MANAGER_Exec_State__
 
 #include <yarp/manager/fsm.h>
 
-class Executable;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
+
+class Executable;
 
 
 /**
@@ -228,8 +230,8 @@ private:
     Dying* dying;
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__Exec_State__
+#endif // __YARP_MANAGER_Exec_State__

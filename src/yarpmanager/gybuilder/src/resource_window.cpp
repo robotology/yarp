@@ -20,6 +20,9 @@
 #include "icon_res.h"
 #include "main_window.h"
 
+using namespace yarp::manager;
+
+
 ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent, 
                                Manager* manager)
 {

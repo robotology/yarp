@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __YARPBROKER__
-#define __YARPBROKER__
+#ifndef __YARP_MANAGER_YARPBROKER__
+#define __YARP_MANAGER_YARPBROKER__
 
 #include <string>
 #include <iostream>
@@ -33,7 +33,8 @@
 using namespace std;
 //using namespace yarp::os;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -105,6 +106,8 @@ private:
     string __trace_message;
 };
 
-//}
+} // namespace yarp
+} // namespace manager
 
-#endif //__YARPBROKER__
+
+#endif // __YARP_MANAGER_YARPBROKER__

@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __APPLICATION__
-#define __APPLICATION__
+#ifndef __YARP_MANAGER_APPLICATION__
+#define __YARP_MANAGER_APPLICATION__
 
 #include <map>
 
@@ -24,7 +24,8 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -379,6 +380,8 @@ private:
 typedef vector<Application*> ApplicaitonPContainer;
 typedef vector<Application*>::iterator ApplicationPIterator;
 
-//}
+} // namespace yarp
+} // namespace manager
 
-#endif //__APPLICATION__
+
+#endif // __YARP_MANAGER_APPLICATION__

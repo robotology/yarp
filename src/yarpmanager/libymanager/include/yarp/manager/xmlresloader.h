@@ -9,15 +9,16 @@
  */
 
 
-#ifndef __XMLRESLOADER__
-#define __XMLRESLOADER__
+#ifndef __YARP_MANAGER_XMLRESLOADER__
+#define __YARP_MANAGER_XMLRESLOADER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/resource.h>
 #include <yarp/manager/primresource.h>
 #include <yarp/manager/manifestloader.h>
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -46,8 +47,8 @@ private:
     bool parsXml(const char* szFile);
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__XMLRESLOADER__
+#endif // __YARP_MANAGER_XMLRESLOADER__

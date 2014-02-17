@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __KBASE__
-#define __KBASE__
+#ifndef __YARP_MANAGER_KBASE__
+#define __YARP_MANAGER_KBASE__
 
 #include <cstring>
 #include <algorithm>
@@ -25,7 +25,8 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 #define NODELINK_SUPERFICIAL    1
@@ -233,7 +234,8 @@ public:
      }
 };
 
+} // namespace yarp
+} // namespace manager
 
-//}
 
-#endif //__KBASE__
+#endif // __YARP_MANAGER_KBASE__

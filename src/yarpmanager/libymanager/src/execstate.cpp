@@ -17,6 +17,7 @@
 
 using namespace std;
 using namespace FSM;
+using namespace yarp::manager;
 
 
 /**

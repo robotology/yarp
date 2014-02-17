@@ -14,6 +14,7 @@
 
 
 using namespace std;
+using namespace yarp::manager;
 
 
 Module::Module(void) : Node(MODULE) { clear();}

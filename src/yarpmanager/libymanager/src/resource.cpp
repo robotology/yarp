@@ -9,6 +9,8 @@
 
 #include <yarp/manager/resource.h>
 
+using namespace yarp::manager;
+
 
 /**
  * Class GenericResource

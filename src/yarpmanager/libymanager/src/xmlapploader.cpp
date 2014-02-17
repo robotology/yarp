@@ -24,6 +24,8 @@
 
 
 using namespace std;
+using namespace yarp::manager;
+
 
 /**
  * if szAppName is NULL, XmlAppLoader will load all the applications

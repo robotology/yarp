@@ -22,7 +22,7 @@
 class ApplicationWindow;
 class ArrowModel;
 
-class MidpointModel : public Goocanvas::RectModel, public GraphicModel
+class MidpointModel : public Goocanvas::RectModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~MidpointModel();

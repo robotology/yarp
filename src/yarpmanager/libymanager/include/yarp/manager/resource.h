@@ -8,8 +8,8 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __RESOURCE__
-#define __RESOURCE__
+#ifndef __YARP_MANAGER_RESOURCE__
+#define __YARP_MANAGER_RESOURCE__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>
@@ -17,7 +17,8 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 class GenericResource : public Node
 {
@@ -93,7 +94,8 @@ private:
     void swap(const MultiResource &res);
 };
 
+} // namespace yarp
+} // namespace manager
 
-//}
 
-#endif //__RESOURCE__
+#endif // __YARP_MANAGER_RESOURCE__

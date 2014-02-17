@@ -20,11 +20,10 @@
  */
 #include <sstream>
 
-
 #include <yarp/os/ResourceFinder.h>
 
 using namespace yarp::os;
-
+using namespace yarp::manager;
 
 #if defined(WIN32)
     #include <yarp/os/impl/PlatformSignal.h>

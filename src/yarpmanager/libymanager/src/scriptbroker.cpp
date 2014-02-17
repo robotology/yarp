@@ -17,7 +17,10 @@
 
 
 using namespace yarp::os;
- char slash = NetworkBase::getDirectorySeparator()[0];
+using namespace yarp::manager;
+
+
+char slash = NetworkBase::getDirectorySeparator()[0];
 ////// adapted from libYARP_OS: ResourceFinder.cpp
 static Bottle parsePaths(const ConstString& txt) {
     char slash = NetworkBase::getDirectorySeparator()[0];

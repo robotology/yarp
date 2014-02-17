@@ -20,7 +20,7 @@
 class ApplicationWindow;
 class ArrowModel;
 
-class TooltipModel : public Goocanvas::GroupModel, public GraphicModel
+class TooltipModel : public Goocanvas::GroupModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~TooltipModel();

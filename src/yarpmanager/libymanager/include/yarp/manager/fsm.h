@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __FSM__
-#define __FSM__
+#ifndef __YARP_MANAGER_FSM__
+#define __YARP_MANAGER_FSM__
 
 #include <iostream>
 #include <string>
@@ -214,4 +214,4 @@ private:
 };
 
 
-#endif //__FSM__
+#endif // __YARP_MANAGER_FSM__

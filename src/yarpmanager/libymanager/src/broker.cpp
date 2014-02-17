@@ -9,6 +9,7 @@
 
 #include <yarp/manager/broker.h>
 
+using namespace yarp::manager;
 
 //unsigned int Broker::UNIQUEID = 0;
 

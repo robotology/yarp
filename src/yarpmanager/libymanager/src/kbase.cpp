@@ -18,6 +18,7 @@
 
 
 using namespace std;
+using namespace yarp::manager;
 
 
 bool KnowledgeBase::createFrom(ModuleLoader* _mloader,

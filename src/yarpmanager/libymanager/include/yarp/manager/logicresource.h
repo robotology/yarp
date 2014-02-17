@@ -8,8 +8,8 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __LOGICRESOURCE__
-#define __LOGICRESOURCE__
+#ifndef __YARP_MANAGER_LOGICRESOURCE__
+#define __YARP_MANAGER_LOGICRESOURCE__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>
@@ -17,6 +17,9 @@
 #include <yarp/manager/resource.h>
 
 using namespace std;
+
+namespace yarp {
+namespace manager {
 
 
 class Platform : public GenericResource
@@ -65,7 +68,8 @@ private:
     double timeout;
 };
 
+} // namespace yarp
+} // namespace manager
 
-//}
 
-#endif //__LOGICRESOURCE__
+#endif // __YARP_MANAGER_LOGICRESOURCE__

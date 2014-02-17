@@ -39,14 +39,14 @@ public:
 class ApplicationPropertyWindow: public Gtk::ScrolledWindow
 {
 public:
-    ApplicationPropertyWindow(MainWindow* parent, Manager* manager, ApplicationWindow* appWnd=NULL);
+    ApplicationPropertyWindow(MainWindow* parent, yarp::manager::Manager* manager, ApplicationWindow* appWnd=NULL);
     virtual ~ApplicationPropertyWindow();
 
     void onTabCloseRequest();
     void onRefresh();
 
-    void update(Application* application);
-    Application* getApplication(void) { return m_pApplication; }
+    void update(yarp::manager::Application* application);
+    yarp::manager::Application* getApplication(void) { return m_pApplication; }
     void release(void) { m_pApplication = NULL; } 
 
 protected:
@@ -63,8 +63,8 @@ private:
 
     MainWindow* m_pParent;
     ApplicationWindow* m_pAppWindow;
-    Application* m_pApplication;
-    Manager* m_pManager;
+    yarp::manager::Application* m_pApplication;
+    yarp::manager::Manager* m_pManager;
 };
 
 

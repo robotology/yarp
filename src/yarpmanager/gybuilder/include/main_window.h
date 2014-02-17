@@ -36,7 +36,7 @@ public:
   
     void reportErrors(void);
 
-    Manager* getManager(void) {return &lazyManager;}
+    yarp::manager::Manager* getManager(void) {return &lazyManager;}
 
 public:
     MessagesList* m_refMessageList;
@@ -105,7 +105,7 @@ protected:
     void on_size_allocate(Gtk::Allocation& allocation);
 
 private:
-    Manager lazyManager;
+    yarp::manager::Manager lazyManager;
 
     //Child widgets:
     int dummy_w;

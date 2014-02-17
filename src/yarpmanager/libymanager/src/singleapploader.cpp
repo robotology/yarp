@@ -12,6 +12,7 @@
 
 
 using namespace std;
+using namespace yarp::manager;
 
 
 SingleAppLoader::SingleAppLoader(const char* szModule, const char* szHost)

@@ -30,6 +30,7 @@
 
 
 using namespace std;
+using namespace yarp::manager;
 
 #define HELP_MESSAGE        "\
 Usage:\n\

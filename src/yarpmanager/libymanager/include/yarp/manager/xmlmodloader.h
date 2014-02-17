@@ -9,15 +9,16 @@
  */
 
 
-#ifndef __XMLMODLOADER__
-#define __XMLMODLOADER__
+#ifndef __YARP_MANAGER_XMLMODLOADER__
+#define __YARP_MANAGER_XMLMODLOADER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/module.h>
 #include <yarp/manager/data.h>
 #include <yarp/manager/manifestloader.h>
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -45,8 +46,8 @@ private:
     Module* parsXml(const char* szFile);
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__XMLMODLOADER__
+#endif // __YARP_MANAGER_XMLMODLOADER__

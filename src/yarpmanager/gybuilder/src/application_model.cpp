@@ -26,6 +26,8 @@
 
 #define APPLICATION_COLOR        0xeeeeeeaa
 
+using namespace yarp::manager;
+
 ApplicationModel::ApplicationModel(ApplicationWindow* parentWnd, Application* app) : GroupModel()
 {
     parentWindow = parentWnd;

@@ -18,6 +18,8 @@
 
 #include <yarp/manager/ymm-dir.h>
 
+using namespace yarp::manager;
+
 ModuleWindow::ModuleWindow(Module* module, MainWindow* parent, 
                                Manager* manager)
 {

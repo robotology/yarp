@@ -57,15 +57,15 @@ public:
 class ModulePropertyWindow: public Gtk::ScrolledWindow
 {
 public:
-    ModulePropertyWindow(MainWindow* parent, Manager* manager, ApplicationWindow* appWnd=NULL);
+    ModulePropertyWindow(MainWindow* parent, yarp::manager::Manager* manager, ApplicationWindow* appWnd=NULL);
     virtual ~ModulePropertyWindow();
 
     void onTabCloseRequest();
     void onRefresh();
 
-    void update(Module* module);
+    void update(yarp::manager::Module* module);
     void release(void) { m_pModule = NULL; m_pIModule = NULL; } 
-    Module* getModule(void) { return m_pModule; }
+    yarp::manager::Module* getModule(void) { return m_pModule; }
 
     void updateModule(const char* item, const char* value);
 
@@ -86,9 +86,9 @@ private:
     bool getRowByName(const char* name, Gtk::TreeModel::Row* row);
 
     MainWindow* m_pParent;
-    Module* m_pModule;
-    ModuleInterface* m_pIModule;
-    Manager* m_pManager;
+    yarp::manager::Module* m_pModule;
+    yarp::manager::ModuleInterface* m_pIModule;
+    yarp::manager::Manager* m_pManager;
     ApplicationWindow* m_pAppWindow;
 };
 

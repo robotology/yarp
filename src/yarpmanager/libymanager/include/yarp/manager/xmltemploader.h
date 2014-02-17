@@ -9,13 +9,15 @@
  */
 
 
-#ifndef __XMLTEMPLOADER__
-#define __XMLTEMPLOADER__
+#ifndef __YARP_MANAGER_XMLTEMPLOADER__
+#define __YARP_MANAGER_XMLTEMPLOADER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
+
 
 /**
  * Class XmlTempLoader
@@ -42,8 +44,8 @@ private:
     AppTemplate* parsXml(const char* szFile);
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__XMLTEMPLOADER__
+#endif // __YARP_MANAGER_XMLTEMPLOADER__

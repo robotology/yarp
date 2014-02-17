@@ -11,10 +11,8 @@
  */
 
 
-#ifndef __YMMDIR__
-#define __YMMDIR__
-
-//namespace ymm {
+#ifndef __YARP_MANAGER_YMMDIR__
+#define __YARP_MANAGER_YMMDIR__
 
 
 #if defined(WIN32)
@@ -317,5 +315,4 @@
 #endif
 
 
-//}
-#endif //__YMMDIR__
+#endif // __YARP_MANAGER_YMMDIR__

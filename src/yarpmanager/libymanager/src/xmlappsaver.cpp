@@ -20,6 +20,7 @@
 
 
 using namespace std;
+using namespace yarp::manager;
 
 
 XmlAppSaver::XmlAppSaver(const char* szFileName)

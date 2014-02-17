@@ -19,6 +19,9 @@
 #include "main_window.h"
 #include "application_window.h"
 
+using namespace yarp::manager;
+
+
 ApplicationPropertyWindow::ApplicationPropertyWindow(MainWindow* parent, 
                                Manager* manager, ApplicationWindow* appWnd) : m_pApplication(NULL)
 {   

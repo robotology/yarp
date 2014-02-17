@@ -21,7 +21,7 @@
 class ApplicationWindow;
 class ArrowModel;
 
-class LabelModel : public Goocanvas::TextModel, public GraphicModel
+class LabelModel : public Goocanvas::TextModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~LabelModel();

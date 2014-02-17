@@ -9,6 +9,7 @@
 
 #include "safe_manager.h"
 
+using namespace yarp::manager;
 
 SafeManager::SafeManager():action(MNOTHING), busyAction(false)
 {

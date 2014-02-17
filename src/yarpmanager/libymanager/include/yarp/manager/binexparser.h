@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __BINEXPARSER__
-#define __BINEXPARSER__
+#ifndef __YARP_MANAGER_BINEXPARSER__
+#define __YARP_MANAGER_BINEXPARSER__
 
 #include <string>
 #include <cstdio>
@@ -20,7 +20,9 @@
 #include <yarp/manager/graph.h>
 
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
+
 
 typedef enum __BinNodeType {
     OPERATOR,
@@ -163,7 +165,8 @@ private:
 
 };
 
+} // namespace yarp
+} // namespace manager
 
-//}
 
-#endif //__BINEXPARSER____
+#endif // __YARP_MANAGER_BINEXPARSER____

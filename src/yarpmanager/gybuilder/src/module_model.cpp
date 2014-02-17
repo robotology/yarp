@@ -26,6 +26,9 @@
 
 #define MODULE_COLOR        "White" //"WhiteSmoke"
 
+using namespace yarp::manager;
+
+
 ModuleModel::ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested) : GroupModel()
 {
     parentWindow = parentWnd;

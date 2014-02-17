@@ -16,12 +16,12 @@
 
 class ApplicationWindow;
 
-class ModuleModel : public Goocanvas::GroupModel, public GraphicModel
+class ModuleModel : public Goocanvas::GroupModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~ModuleModel();
 
-    static Glib::RefPtr<ModuleModel> create(ApplicationWindow* parentWnd, Module* mod, bool nested=false);
+    static Glib::RefPtr<ModuleModel> create(ApplicationWindow* parentWnd, yarp::manager::Module* mod, bool nested=false);
 
     bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -38,18 +38,18 @@ public:
     void setSelected(bool sel);
     bool getSelected(void) { return selected; }
     void setArrowsSelected(bool sel);
-    Module* getModule(void) { return module; }
+    yarp::manager::Module* getModule(void) { return module; }
 
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
 
 
 protected: 
-    ModuleModel(ApplicationWindow* parentWnd, Module* mod, bool nested);
+    ModuleModel(ApplicationWindow* parentWnd, yarp::manager::Module* mod, bool nested);
     //void onItemCreated(const Glib::RefPtr<Goocanvas::Item>& item, 
     //                    const Glib::RefPtr<Goocanvas::ItemModel>& model) ;
 private:
-    Module* module;
+    yarp::manager::Module* module;
     ApplicationWindow* parentWindow;
     Glib::RefPtr<Goocanvas::RectModel> mainRect;
     Glib::RefPtr<Goocanvas::RectModel> shadowRect;

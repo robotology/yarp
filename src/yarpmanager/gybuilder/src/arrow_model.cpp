@@ -28,6 +28,7 @@
 #include <yarp/os/Bottle.h>
 
 using namespace yarp::os;
+using namespace yarp::manager;
 
 #define ARROW_LINEWIDTH     2
 

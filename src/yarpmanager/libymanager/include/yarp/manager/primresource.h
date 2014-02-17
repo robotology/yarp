@@ -8,8 +8,8 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __PRIMRESOURCE__
-#define __PRIMRESOURCE__
+#ifndef __YARP_MANAGER_PRIMRESOURCE__
+#define __YARP_MANAGER_PRIMRESOURCE__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/node.h>
@@ -19,7 +19,8 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 typedef size_t Capacity;
 
@@ -212,6 +213,8 @@ private:
 typedef vector<Computer> ComputerContainer;
 typedef vector<Computer>::iterator ComputerIterator;
 
-//}
+} // namespace yarp
+} // namespace manager
 
-#endif //__PRIMRESOURCE__
+
+#endif // __YARP_MANAGER_PRIMRESOURCE__

@@ -20,12 +20,12 @@
 
 class ApplicationWindow;
 
-class PortModel : public Goocanvas::GroupModel, public GraphicModel
+class PortModel : public Goocanvas::GroupModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~PortModel();
 
-    static Glib::RefPtr<PortModel> create(NodeType t=INPUTD); 
+    static Glib::RefPtr<PortModel> create(yarp::manager::NodeType t=yarp::manager::INPUTD);
 
     virtual bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -41,7 +41,7 @@ public:
     virtual Gdk::Point getContactPoint(ArrowModel* arrow=NULL);
     virtual void updateArrowCoordination(void) { };
 
-    NodeType getType(void) { return type;}
+    yarp::manager::NodeType getType(void) { return type;}
 
     virtual void setSelected(bool sel);
     virtual bool getSelected(void);
@@ -72,14 +72,14 @@ public:
     }
 
 protected: 
-    PortModel(NodeType t=INPUTD);
+    PortModel(yarp::manager::NodeType t=yarp::manager::INPUTD);
     virtual void onSourceAdded(void) {}
     virtual void onSourceRemoved(void) {}
     virtual void onDestinationAdded(void) {}
     virtual void onDestinationRemoved(void) {}
 
 protected:
-    NodeType type;
+    yarp::manager::NodeType type;
     std::vector<ArrowModel*> sourceArrows;
     std::vector<ArrowModel*> destinationArrows;
 };

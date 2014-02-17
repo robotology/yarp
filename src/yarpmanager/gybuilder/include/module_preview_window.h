@@ -25,13 +25,13 @@ public:
 
     void onTabCloseRequest();
     void onRefresh();
-    void update(Module* module);
+    void update(yarp::manager::Module* module);
     void release(void) { m_pModule = NULL; } 
-    Module* getModule(void) { return m_pModule; }
+    yarp::manager::Module* getModule(void) { return m_pModule; }
 
 private:
     MainWindow* m_pParent;
-    Module* m_pModule;
+    yarp::manager::Module* m_pModule;
 
     Goocanvas::Canvas* m_Canvas;
     Glib::RefPtr<Goocanvas::ItemModel> root;
@@ -41,4 +41,3 @@ private:
 
 
 #endif //_MODULE_PREVIEW_WINDOW_H_
-

@@ -36,6 +36,7 @@
 #endif
 
 using namespace yarp::os;
+using namespace yarp::manager;
 
 
 #if defined(WIN32)

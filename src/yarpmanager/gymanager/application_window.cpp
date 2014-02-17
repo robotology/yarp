@@ -20,6 +20,8 @@
 #include <yarp/manager/localbroker.h>
 
 using namespace std;
+using namespace yarp::manager;
+
 
 ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy, 
                                     yarp::os::Property* config, MainWindow* parent)

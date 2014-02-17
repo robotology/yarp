@@ -17,6 +17,9 @@
 #include <fstream>
 
 
+using namespace yarp::manager;
+
+
 //#if defined(_MSC_VER) && (_MSC_VER == 1600)
 
 StrStream::StrStream(void) { }
@@ -271,7 +274,7 @@ const char* carrierToStr(Carrier cr)
 }
 */
 
-OS strToOS(const char* szOS)
+OS yarp::manager::strToOS(const char* szOS)
 {
     if(szOS)
     {
@@ -286,7 +289,7 @@ OS strToOS(const char* szOS)
 }
 
 
-bool compareString(const char* szFirst, const char* szSecond)
+bool yarp::manager::compareString(const char* szFirst, const char* szSecond)
 {
     if(!szFirst && !szSecond)
         return true;
@@ -304,7 +307,7 @@ bool compareString(const char* szFirst, const char* szSecond)
     return false;
 }
 
-void trimString(string& str)
+void yarp::manager::trimString(string& str)
 {
     string::size_type pos = str.find_last_not_of(' ');
     if(pos != string::npos)
@@ -318,7 +321,7 @@ void trimString(string& str)
 }
 
 
-bool exportDotGraph(Graph& graph, const char* szFileName)
+bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
 {
     ofstream dot;
     dot.open(szFileName);

@@ -9,8 +9,8 @@
  */
 
 
-#ifndef __MODULE_H_
-#define __MODULE_H_
+#ifndef __YARP_MANAGER_MODULE_H_
+#define __YARP_MANAGER_MODULE_H_
 
 
 #include <yarp/manager/ymm-types.h>
@@ -21,7 +21,8 @@
 
 using namespace std;
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 class Author {
@@ -260,6 +261,9 @@ typedef vector<Module*>::iterator ModulePIterator;
             <<", "<<m->getOutputAt(i).getPort()<<endl;\
         cout<<endl;\
         }
-//}
 
-#endif //__MODULE__
+} // namespace yarp
+} // namespace manager
+
+
+#endif // __YARP_MANAGER_MODULE__

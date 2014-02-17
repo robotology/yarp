@@ -8,13 +8,14 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#ifndef __SINGLEAPPLOADER__
-#define __SINGLEAPPLOADER__
+#ifndef __YARP_MANAGER_SINGLEAPPLOADER__
+#define __YARP_MANAGER_SINGLEAPPLOADER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -37,8 +38,8 @@ private:
     string strHost;
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__SINGLEAPPLOADER__
+#endif // __YARP_MANAGER_SINGLEAPPLOADER__

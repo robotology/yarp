@@ -34,7 +34,7 @@ typedef enum _ColorTheme {
 /**
  * Class YConsoleManager  
  */
-class YConsoleManager : public Manager {
+class YConsoleManager : public yarp::manager::Manager {
 
 public: 
     YConsoleManager(int argc, char* argv[]);

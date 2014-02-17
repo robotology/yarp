@@ -22,6 +22,7 @@
 
 
 using namespace std;
+using namespace yarp::manager;
 
 
 XmlResLoader::XmlResLoader(const char* szPath, const char* szName)

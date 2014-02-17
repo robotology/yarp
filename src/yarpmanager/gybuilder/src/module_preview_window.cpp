@@ -17,6 +17,9 @@
 #include "icon_res.h"
 #include "main_window.h"
 
+using namespace yarp::manager;
+
+
 ModulePreviewWindow::ModulePreviewWindow(MainWindow* parent) : m_pModule(NULL)
 {   
     m_pParent = parent;

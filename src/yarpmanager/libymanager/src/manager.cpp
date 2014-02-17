@@ -29,6 +29,9 @@
 #define BROKER_ICUBMIODDEV      "icubmoddev"
 
 
+using namespace yarp::manager;
+
+
 /**
  * Class Manager
  */

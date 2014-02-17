@@ -9,13 +9,14 @@
  */
 
 
-#ifndef __XMLAPPSAVER__
-#define __XMLAPPSAVER__
+#ifndef __YARP_MANAGER_XMLAPPSAVER__
+#define __YARP_MANAGER_XMLAPPSAVER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
 
 
 /**
@@ -36,8 +37,8 @@ private:
     std::string strFileName;
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__XMLAPPSAVER__
+#endif // __YARP_MANAGER_XMLAPPSAVER__

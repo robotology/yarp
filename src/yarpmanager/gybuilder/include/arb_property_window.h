@@ -40,7 +40,7 @@ public:
 class ArbitratorPropertyWindow: public Gtk::ScrolledWindow
 {
 public:
-    ArbitratorPropertyWindow(MainWindow* parent, Manager* manager, ApplicationWindow* appWnd=NULL);
+    ArbitratorPropertyWindow(MainWindow* parent, yarp::manager::Manager* manager, ApplicationWindow* appWnd=NULL);
     virtual ~ArbitratorPropertyWindow();
 
     void onTabCloseRequest();
@@ -62,7 +62,7 @@ protected:
 
 private:
     MainWindow* m_pParent;
-    Manager* m_pManager;
+    yarp::manager::Manager* m_pManager;
     ApplicationWindow* m_pAppWindow;
     Glib::RefPtr<PortArbitratorModel> m_arbPort;
     Gtk::TreeModel::Row rulesRow;

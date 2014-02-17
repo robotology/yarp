@@ -23,6 +23,7 @@
 
 
 using namespace std;
+using namespace yarp::manager;
 
 
 XmlModLoader::XmlModLoader(const char* szPath, const char* szName)

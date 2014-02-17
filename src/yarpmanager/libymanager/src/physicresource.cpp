@@ -12,6 +12,9 @@
 #include <cstring>
 
 
+using namespace yarp::manager;
+
+
 /**
  * Class GPU
  */

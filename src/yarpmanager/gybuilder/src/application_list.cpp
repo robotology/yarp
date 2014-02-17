@@ -22,7 +22,7 @@
 #include <yarp/manager/ymm-dir.h>
 
 using namespace std;
-
+using namespace yarp::manager;
 
 ApplicationList::ApplicationList(MainWindow* parent)
 {

@@ -9,15 +9,17 @@
  */
 
 
-#ifndef __MANIFESTLOADER__
-#define __MANIFESTLOADER__
+#ifndef __YARP_MANAGER_MANIFESTLOADER__
+#define __YARP_MANAGER_MANIFESTLOADER__
 
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/module.h>
 #include <yarp/manager/application.h>
 #include <yarp/manager/resource.h>
 
-//namespace ymm {
+namespace yarp {
+namespace manager {
+
 
 /**
  * Abstract Class AppLoader
@@ -117,8 +119,8 @@ private:
 
 };
 
+} // namespace yarp
+} // namespace manager
 
 
-//}
-
-#endif //__MANIFESTLOADER__
+#endif // __YARP_MANAGER_MANIFESTLOADER__
