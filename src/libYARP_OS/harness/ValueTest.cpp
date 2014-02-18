@@ -94,10 +94,36 @@ public:
         checkEqualish(v2.asDouble(),4.2,"value reread ok");
     }
 
+    void checkAssignment() {
+        report(0,"check assignment operator");
+        {
+            Value v;
+            Bottle b("10 (1 2 3) 20");
+            v = b.get(1);
+            checkTrue(v.isList(),"type ok");
+            checkEqual(v.asList()->size(),3,"length ok");
+        }
+        {
+            Value v;
+            Bottle b("(10 (1 2 3) 20)");
+            v = b.get(0).asList()->get(1);
+            checkTrue(v.isList(),"type ok");
+            checkEqual(v.asList()->size(),3,"length ok");
+        }
+        {
+            Value v(1);
+            Bottle b("10 (1 2 3) 20");
+            v = b.get(1);
+            checkTrue(v.isList(),"type ok");
+            checkEqual(v.asList()->size(),3,"length ok");
+        }
+    }
+
     virtual void runTests() {
         checkCopy();
         checkMixedCopy();
         checkReadWrite();
+        checkAssignment();
     }
 };
 

@@ -70,7 +70,7 @@ Value::Value(const Value& alt) :
 const Value& Value::operator = (const Value& alt) {
     if(&alt != this) {
         if (proxy == 0) {
-            if (isLeaf()) {
+            if (isLeaf() && alt.proxy) {
                 // we are guaranteed to be a Storable
                 ((Storable*)this)->copy(*((Storable*)alt.proxy));
             } else {
@@ -88,6 +88,9 @@ const Value& Value::operator = (const Value& alt) {
                 if (proxy) {
                     delete proxy;
                     proxy = NULL;
+                }
+                if (alt.isLeaf()) {
+                    setProxy(alt.clone());
                 }
             }
         }
