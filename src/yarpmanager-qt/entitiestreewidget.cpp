@@ -9,7 +9,7 @@
  */
 
 #include "entitiestreewidget.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
@@ -70,11 +70,11 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 /*! \brief Add an application to the tree
     \param app the application
 */
-void EntitiesTreeWidget::addApplication(Application *app)
+void EntitiesTreeWidget::addApplication(yarp::manager::Application *app)
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(applicationNode,QStringList() << app->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(app));
-    item->setData(0,Qt::UserRole , APPLICATION);
+    item->setData(0,Qt::UserRole, yarp::manager::APPLICATION);
     item->setIcon(0,QIcon(":/images/application_ico.png"));
 
 
@@ -91,17 +91,17 @@ void EntitiesTreeWidget::addApplication(Application *app)
 
     QTreeWidgetItem *xml = new QTreeWidgetItem(item,QStringList() << fname.data());
     xml->setData(0,Qt::UserRole + 1,QString(fpath.data()));
-    xml->setData(0,Qt::UserRole,NODE_FILENAME);
+    xml->setData(0,Qt::UserRole, yarp::manager::NODE_FILENAME);
 }
 
 /*! \brief Add a resource to the tree
     \param comp the resource
 */
-void EntitiesTreeWidget::addComputer(Computer* comp)
+void EntitiesTreeWidget::addComputer(yarp::manager::Computer* comp)
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(resourcesNode,QStringList() << comp->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(comp));
-    item->setData(0,Qt::UserRole, RESOURCE);
+    item->setData(0,Qt::UserRole, yarp::manager::RESOURCE);
     item->setIcon(0,QIcon(":/images/computer_ico.png"));
 
     string fname;
@@ -116,17 +116,17 @@ void EntitiesTreeWidget::addComputer(Computer* comp)
 
     QTreeWidgetItem *xml = new QTreeWidgetItem(item,QStringList() << fname.data());
     xml->setData(0,Qt::UserRole + 1,QString(fpath.data()));
-    xml->setData(0,Qt::UserRole,NODE_FILENAME);
+    xml->setData(0,Qt::UserRole, yarp::manager::NODE_FILENAME);
 }
 
 /*! \brief Add a module to the tree
     \param mod the module
 */
-void EntitiesTreeWidget::addModule(Module* mod)
+void EntitiesTreeWidget::addModule(yarp::manager::Module* mod)
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(modulesNode,QStringList() << mod->getName());
     item->setData(0,Qt::UserRole + 1,qlonglong(mod));
-    item->setData(0,Qt::UserRole, MODULE);
+    item->setData(0,Qt::UserRole, yarp::manager::MODULE);
     item->setIcon(0,QIcon(":/images/module_ico.png"));
 
     string fname;
@@ -141,18 +141,18 @@ void EntitiesTreeWidget::addModule(Module* mod)
 
     QTreeWidgetItem *xml = new QTreeWidgetItem(item,QStringList() << fname.data());
     xml->setData(0,Qt::UserRole + 1,QString(fpath.data()));
-    xml->setData(0,Qt::UserRole,NODE_FILENAME);
+    xml->setData(0,Qt::UserRole, yarp::manager::NODE_FILENAME);
 }
 
 /*! \brief Add an application template to the tree
     \param tmp the application template
 */
-void EntitiesTreeWidget::addAppTemplate(AppTemplate* tmp)
+void EntitiesTreeWidget::addAppTemplate(yarp::manager::AppTemplate* tmp)
 {
 
     QTreeWidgetItem *item = new QTreeWidgetItem(templatesNode,QStringList() << QString("%1 (%2)").arg(tmp->name.data()).arg(tmp->tmpFileName.data()));
 
-    item->setData(0,Qt::UserRole, NODE_APPTEMPLATE);
+    item->setData(0,Qt::UserRole, yarp::manager::NODE_APPTEMPLATE);
     item->setData(0,Qt::UserRole + 1 ,tmp->name.data());
     item->setData(0,Qt::UserRole + 2 ,tmp->tmpFileName.data());
     item->setIcon(0,QIcon(":/images/apptemplate_ico.png"));
@@ -170,22 +170,22 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 {
     Q_UNUSED(column);
 
-    if(item->data(0,Qt::UserRole)  == APPLICATION){
-        Application *app = (Application*)item->data(0,Qt::UserRole + 1).toLongLong();
+    if(item->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+        yarp::manager::Application *app = (yarp::manager::Application*)item->data(0,Qt::UserRole + 1).toLongLong();
         viewApplication(app);
     }
 
-    if(item->data(0,Qt::UserRole)  == MODULE){
-        Module *mod = (Module*)item->data(0,Qt::UserRole + 1).toLongLong();
+    if(item->data(0,Qt::UserRole)  == yarp::manager::MODULE){
+        yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
         viewModule(mod);
     }
 
-    if(item->data(0,Qt::UserRole)  == RESOURCE){
-        Computer *res = (Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
+    if(item->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
+        yarp::manager::Computer *res = (yarp::manager::Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
         viewResource(res);
     }
 
-    if(item->data(0,Qt::UserRole)  == NODE_APPTEMPLATE){
+    if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE){
         QString name = item->data(0,Qt::UserRole + 1).toString();
         QString tmpFileName = item->data(0,Qt::UserRole + 2).toString();
         qDebug("%s",name.toLatin1().data());
@@ -196,7 +196,7 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 
     }
 
-    if(item->data(0,Qt::UserRole)  == NODE_FILENAME){
+    if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_FILENAME){
         QString fileName = item->data(0,Qt::UserRole + 1).toString();
         qDebug("%s",fileName.toLatin1().data());
 
@@ -299,20 +299,20 @@ void EntitiesTreeWidget::onLoadFile()
     }
 
     if(it->parent() == applicationNode){
-        if(it->data(0,Qt::UserRole)  == APPLICATION){
-            Application *app = (Application*)it->data(0,Qt::UserRole + 1).toLongLong();
+        if(it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+            yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewApplication(app);
         }
     }else
     if(it->parent() == resourcesNode){
-        if(it->data(0,Qt::UserRole)  == RESOURCE){
-            Computer *res = (Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
+        if(it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
+            yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewResource(res);
         }
     }else
     if(it->parent() == modulesNode){
-        if(it->data(0,Qt::UserRole)  == MODULE){
-            Module *mod = (Module*)it->data(0,Qt::UserRole + 1).toLongLong();
+        if(it->data(0,Qt::UserRole)  == yarp::manager::MODULE){
+            yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
             viewModule(mod);
         }
     }
@@ -330,13 +330,13 @@ void EntitiesTreeWidget::onEdit()
     if(!item){
         return;
     }
-    if(item->data(0,Qt::UserRole)  == NODE_FILENAME){
+    if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_FILENAME){
         QString fileName = item->data(0,Qt::UserRole + 1).toString();
 
         QProcess *notepad;
         notepad = new QProcess(this);
         notepad->start(TEXTEDITOR,QStringList()<<fileName);
-    }else if(item->data(0,Qt::UserRole)  == NODE_APPTEMPLATE){
+    }else if(item->data(0,Qt::UserRole)  == yarp::manager::NODE_APPTEMPLATE){
             QString name = item->data(0,Qt::UserRole + 1).toString();
             QString tmpFileName = item->data(0,Qt::UserRole + 2).toString();
             qDebug("%s",name.toLatin1().data());

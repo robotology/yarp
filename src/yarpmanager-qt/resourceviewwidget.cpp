@@ -11,14 +11,14 @@
 #include "resourceviewwidget.h"
 #include "ui_resourceviewwidget.h"
 
-ResourceViewWidget::ResourceViewWidget(Computer *res, QWidget *parent) :
+ResourceViewWidget::ResourceViewWidget(yarp::manager::Computer *res, QWidget *parent) :
     GenericViewWidget(parent),
     ui(new Ui::ResourceViewWidget)
 {
     this->res = res;
     ui->setupUi(this);
 
-    type = RESOURCE;
+    type = yarp::manager::RESOURCE;
 
     QTreeWidgetItem *nameItem = ui->treeWidget->topLevelItem(0);
     QTreeWidgetItem *descriptionItem = ui->treeWidget->topLevelItem(1);
@@ -58,29 +58,29 @@ ResourceViewWidget::ResourceViewWidget(Computer *res, QWidget *parent) :
     disableItem->setText(1,QString("%1").arg((res->getDisable() ? "Yes" : "No")));
     availabilityItem->setText(1,QString("%1").arg((res->getAvailability() ? "Yes" : "No")));
 
-    Platform plat = res->getPlatform();
+    yarp::manager::Platform plat = res->getPlatform();
     platformNameItem->setText(1,plat.getName());
     platformDistributionItem->setText(1,plat.getDistribution());
     platformReleaseItem->setText(1,plat.getRelease());
 
-    Processor proc = res->getProcessor();
+    yarp::manager::Processor proc = res->getProcessor();
     processorModelItem->setText(1,proc.getModel());
     processorArchitectureItem->setText(1,proc.getArchitecture());
     processorCoresItem->setText(1,QString("%1").arg(proc.getCores()));
     processorSibilingsItem->setText(1,QString("%1").arg(proc.getSiblings()));
     processorFrequencyItem->setText(1,QString("%1").arg(proc.getFrequency()));
 
-    LoadAvg avg = proc.getCPULoad();
+    yarp::manager::LoadAvg avg = proc.getCPULoad();
     cpuLoadInstantItem->setText(1,QString("%1%").arg((avg.loadAverageInstant >=0 ? avg.loadAverageInstant : 0)));
     cpuLoadAvg1Item->setText(1,QString("%1%").arg((avg.loadAverage1 >=0 ? avg.loadAverage1 : 0)));
     cpuLoadAvg5Item->setText(1,QString("%1%").arg((avg.loadAverage5 >=0 ? avg.loadAverage5 : 0)));
     cpuLoadAvg15Item->setText(1,QString("%1%").arg((avg.loadAverage15 >=0 ? avg.loadAverage15 : 0)));
 
-    Storage storage = res->getStorage();
+    yarp::manager::Storage storage = res->getStorage();
     storageTotalItem->setText(1,QString("%1 KB").arg(storage.getTotalSpace()));
     storageFreeItem->setText(1,QString("%1 KB").arg(storage.getFreeSpace()));
 
-    Memory mem = res->getMemory();
+    yarp::manager::Memory mem = res->getMemory();
     memoryTotalItem->setText(1,QString("%1 KB").arg(mem.getTotalSpace()));
     memoryFreeItem->setText(1,QString("%1 KB").arg(mem.getFreeSpace()));
 
@@ -88,10 +88,10 @@ ResourceViewWidget::ResourceViewWidget(Computer *res, QWidget *parent) :
         QTreeWidgetItem *it = new QTreeWidgetItem(peripheralItem,QStringList() << res->getPeripheralAt(i).getName());
     }
 
-    ProcessContainer procs = res->getProcesses();
+    yarp::manager::ProcessContainer procs = res->getProcesses();
 
     for(int i=0; i<procs.size();i++){
-        Process p  = procs.at(i);
+        yarp::manager::Process p  = procs.at(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(processesItem,QStringList() << QString("%1").arg(p.pid));
     }
 

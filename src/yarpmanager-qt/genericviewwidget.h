@@ -12,7 +12,7 @@
 #define GENERICVIEWWIDGET_H
 
 #include <QWidget>
-#include "manager.h"
+#include <yarp/manager/manager.h>
 #include "safe_manager.h"
 
 /*! \class GenericViewWidget
@@ -26,10 +26,10 @@ class GenericViewWidget : public QWidget
     Q_OBJECT
 public:
     explicit GenericViewWidget(QWidget *parent = 0);
-    NodeType getType();
+    yarp::manager::NodeType getType();
 
 protected:
-    NodeType type;
+    yarp::manager::NodeType type;
 signals:
 
 public slots:

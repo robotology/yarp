@@ -10,7 +10,7 @@
 
 #ifndef RESOURCEVIEWWIDGET_H
 #define RESOURCEVIEWWIDGET_H
-#include "manager.h"
+#include <yarp/manager/manager.h>
 #include <QWidget>
 #include "genericviewwidget.h"
 
@@ -27,11 +27,11 @@ class ResourceViewWidget : public GenericViewWidget
     Q_OBJECT
 
 public:
-    explicit ResourceViewWidget(Computer *res,QWidget *parent = 0);
+    explicit ResourceViewWidget(yarp::manager::Computer *res,QWidget *parent = 0);
     ~ResourceViewWidget();
 
 private:
-    Computer *res;
+    yarp::manager::Computer *res;
     Ui::ResourceViewWidget *ui;
 };
 

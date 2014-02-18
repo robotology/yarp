@@ -10,7 +10,7 @@
 
 #ifndef MODULEVIEWWIDGET_H
 #define MODULEVIEWWIDGET_H
-#include "manager.h"
+#include <yarp/manager/manager.h>
 #include <QWidget>
 #include "genericviewwidget.h"
 
@@ -26,11 +26,11 @@ class ModuleViewWidget : public GenericViewWidget
     Q_OBJECT
 
 public:
-    explicit ModuleViewWidget(Module *mod, QWidget *parent = 0);
+    explicit ModuleViewWidget(yarp::manager::Module *mod, QWidget *parent = 0);
     ~ModuleViewWidget();
 
 private:
-    Module *module;
+    yarp::manager::Module *module;
     Ui::ModuleViewWidget *ui;
 };
 

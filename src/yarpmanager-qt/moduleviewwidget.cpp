@@ -11,13 +11,14 @@
 #include "moduleviewwidget.h"
 #include "ui_moduleviewwidget.h"
 
-ModuleViewWidget::ModuleViewWidget(Module *mod,QWidget *parent) :
+
+ModuleViewWidget::ModuleViewWidget(yarp::manager::Module *mod, QWidget *parent) :
     GenericViewWidget(parent),
     ui(new Ui::ModuleViewWidget)
 {
     ui->setupUi(this);
     module = mod;
-    type = MODULE;
+    type = yarp::manager::MODULE;
 
     QTreeWidgetItem *nameItem = ui->treeWidget->topLevelItem(0);
     QTreeWidgetItem *versionItem = ui->treeWidget->topLevelItem(1);
@@ -33,19 +34,19 @@ ModuleViewWidget::ModuleViewWidget(Module *mod,QWidget *parent) :
     descriptionItem->setText(1,mod->getDescription());
 
     for(int i=0;i<mod->argumentCount();i++){
-        Argument a = mod->getArgumentAt(i);
+        yarp::manager::Argument a = mod->getArgumentAt(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(parametersItem,QStringList() << a.getParam() << a.getDescription());
         Q_UNUSED(it);
     }
 
     for(int i=0;i<mod->authorCount();i++){
-        Author a = mod->getAuthorAt(i);
+        yarp::manager::Author a = mod->getAuthorAt(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(authorsItem,QStringList() << a.getName() << a.getEmail());
         Q_UNUSED(it);
     }
 
     for(int i=0;i<mod->inputCount();i++){
-        InputData a = mod->getInputAt(i);
+        yarp::manager::InputData a = mod->getInputAt(i);
 
         QTreeWidgetItem *type = new QTreeWidgetItem(inputsItem,QStringList() << "Type" << a.getName());
         QTreeWidgetItem *port = new QTreeWidgetItem(type,QStringList() << "Port" << a.getPort());
@@ -57,7 +58,7 @@ ModuleViewWidget::ModuleViewWidget(Module *mod,QWidget *parent) :
     }
 
     for(int i=0;i<mod->outputCount();i++){
-        OutputData a = mod->getOutputAt(i); //TODO controllare
+        yarp::manager::OutputData a = mod->getOutputAt(i); //TODO controllare
 
         QTreeWidgetItem *type = new QTreeWidgetItem(inputsItem,QStringList() << "Type" << a.getName());
         QTreeWidgetItem *port = new QTreeWidgetItem(type,QStringList() << "Port" << a.getPort());

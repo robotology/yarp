@@ -1,6 +1,8 @@
 project(QtYarpManager)
 
-file(GLOB folder_source *.cpp) 
+include_directories(${YARP_MANAGER_INCLUDE_DIRS})
+
+file(GLOB folder_source *.cpp)
 file(GLOB folder_header *.h)
 file(GLOB Resources *.qrc)
 file(GLOB UI_FILES *.ui)
@@ -15,6 +17,6 @@ source_group("UI Files" FILES ${UI_FILES})
 source_group("Generated Files" FILES ${MOC_HEADERS} ${ResourceSources} ${UI_SRCS})
 
 add_executable(QtYarpManager WIN32 ${folder_source} ${folder_header} ${ResourceSources} ${UI_SRCS})
-target_link_libraries(QtYarpManager ${YARP_LIBRARIES} Qt5::Widgets Qt5::Gui)
+target_link_libraries(QtYarpManager ${YARP_LIBRARIES} ${YARP_MANAGER_LIBRARIES} Qt5::Widgets Qt5::Gui)
 
 install(TARGETS QtYarpManager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

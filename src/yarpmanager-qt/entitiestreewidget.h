@@ -12,9 +12,9 @@
 #define ENTITIESTREEWIDGET_H
 
 #include <QTreeWidget>
-#include "manager.h"
 #include <QAction>
 #include <QMenu>
+#include <yarp/manager/manager.h>
 
 #if defined(WIN32)
 #define TEXTEDITOR "notepad.exe"
@@ -32,10 +32,10 @@ class EntitiesTreeWidget : public QTreeWidget
 public:
     explicit EntitiesTreeWidget(QWidget *parent = 0);
 
-    void addApplication(Application *app);
-    void addComputer(Computer* comp);
-    void addModule(Module* mod);
-    void addAppTemplate(AppTemplate* tmp);
+    void addApplication(yarp::manager::Application *app);
+    void addComputer(yarp::manager::Computer* comp);
+    void addModule(yarp::manager::Module* mod);
+    void addAppTemplate(yarp::manager::AppTemplate* tmp);
 
     void clearApplication();
     void clearModules();
@@ -61,9 +61,9 @@ private:
 
 
 signals:
-    void viewResource(Computer*);
-    void viewModule(Module*);
-    void viewApplication(Application*);
+    void viewResource(yarp::manager::Computer*);
+    void viewModule(yarp::manager::Module*);
+    void viewApplication(yarp::manager::Application*);
     void importFiles();
     void openFiles();
 public slots:

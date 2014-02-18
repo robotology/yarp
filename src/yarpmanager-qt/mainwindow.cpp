@@ -10,18 +10,21 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "ymm-dir.h"
-#include "xmlapploader.h"
-#include "xmltemploader.h"
+
+#include <yarp/manager/ymm-dir.h>
+#include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/xmltemploader.h>
+#include <yarp/manager/localbroker.h>
+
 #include "moduleviewwidget.h"
 #include "applicationviewwidget.h"
 #include "resourceviewwidget.h"
-#include <QGridLayout>
 #include "genericviewwidget.h"
-#include "QMessageBox"
-#include <QFileDialog>
-#include "localbroker.h"
 #include "template_res.h"
+
+#include <QGridLayout>
+#include <QMessageBox>
+#include <QFileDialog>
 
 #if defined(WIN32)
     #pragma warning (disable : 4250)
@@ -109,7 +112,7 @@ void MainWindow::init(yarp::os::Property config)
         while (modPaths!=""){
             string::size_type pos=modPaths.find(";");
             strPath=modPaths.substr(0, pos);
-            trimString(strPath);
+            yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
             if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
@@ -128,7 +131,7 @@ void MainWindow::init(yarp::os::Property config)
         while (resPaths!=""){
             string::size_type pos=resPaths.find(";");
             strPath=resPaths.substr(0, pos);
-            trimString(strPath);
+            yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
 
@@ -143,7 +146,7 @@ void MainWindow::init(yarp::os::Property config)
         }
     }
 
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
 
     if(config.check("apppath")){
@@ -152,7 +155,7 @@ void MainWindow::init(yarp::os::Property config)
         while (appPaths!=""){
             string::size_type pos=appPaths.find(";");
             strPath=appPaths.substr(0, pos);
-            trimString(strPath);
+            yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
                 strPath=basepath+strPath;
             }
@@ -184,7 +187,7 @@ void MainWindow::init(yarp::os::Property config)
         while (templPaths!=""){
             string::size_type pos=templPaths.find(";");
             strPath=templPaths.substr(0, pos);
-            trimString(strPath);
+            yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
                 strPath=basepath+strPath;
             }
@@ -205,11 +208,11 @@ void MainWindow::init(yarp::os::Property config)
     syncApplicationList();
 
     if(config.check("application")){
-        XmlAppLoader appload(config.find("application").asString().c_str());
+        yarp::manager::XmlAppLoader appload(config.find("application").asString().c_str());
         if(!appload.init()){
             return;
         }
-        Application* application = appload.getNextApplication();
+        yarp::manager::Application* application = appload.getNextApplication();
         if(!application){
             return;  // TODO far ritornare valore per chiudere in caso di errore
         }
@@ -226,7 +229,7 @@ void MainWindow::init(yarp::os::Property config)
  */
 void MainWindow::reportErrors()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     if(logger->errorCount() || logger->warningCount()){
         const char* err;
         while((err=logger->getLastError())){
@@ -247,25 +250,25 @@ void MainWindow::syncApplicationList()
     ui->entitiesTree->clearResources();
     //ui->entitiesTree->clearTemplates();
 
-    KnowledgeBase* kb = lazyManager.getKnowledgeBase();
-    ApplicaitonPContainer apps =  kb->getApplications();
+    yarp::manager::KnowledgeBase* kb = lazyManager.getKnowledgeBase();
+    yarp::manager::ApplicaitonPContainer apps =  kb->getApplications();
     unsigned int cnt = 0;
-    for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++){
+    for(yarp::manager::ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++){
         cnt++;
-        Application *app = *itr;
+        yarp::manager::Application *app = *itr;
         ui->entitiesTree->addApplication((*itr));
     }
 
-    ResourcePContainer resources = kb->getResources();
-    for(ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++){
-        Computer* comp = dynamic_cast<Computer*>(*itr);
+    yarp::manager::ResourcePContainer resources = kb->getResources();
+    for(yarp::manager::ResourcePIterator itr=resources.begin(); itr!=resources.end(); itr++){
+        yarp::manager::Computer* comp = dynamic_cast<yarp::manager::Computer*>(*itr);
         if(comp){
             ui->entitiesTree->addComputer(comp);
         }
     }
 
-    ModulePContainer modules = kb->getModules();
-    for(ModulePIterator itr=modules.begin(); itr!=modules.end(); itr++){
+    yarp::manager::ModulePContainer modules = kb->getModules();
+    for(yarp::manager::ModulePIterator itr=modules.begin(); itr!=modules.end(); itr++){
            ui->entitiesTree->addModule(*itr);
     }
 
@@ -296,8 +299,8 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
         return false;
 
     // loading from current folder
-    AppTemplate* tmp;
-    XmlTempLoader tempload(strPath.c_str(), NULL);
+    yarp::manager::AppTemplate* tmp;
+    yarp::manager::XmlTempLoader tempload(strPath.c_str(), NULL);
     if(tempload.init())
     {
         while((tmp = tempload.getNextAppTemplate())){
@@ -353,7 +356,7 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
 /*! \brief Load the Resource on the MainWindow
     \param res the resource
  */
-void MainWindow::viewResource(Computer *res)
+void MainWindow::viewResource(yarp::manager::Computer *res)
 {
     for(int i=0;i<ui->mainTabs->count();i++){
         if(ui->mainTabs->tabText(i) == res->getName()){
@@ -370,7 +373,8 @@ void MainWindow::viewResource(Computer *res)
 /*! \brief Load the Module on the MainWindow
     \param module the module
  */
-void MainWindow::viewModule(Module *module)
+
+void MainWindow::viewModule(yarp::manager::Module *module)
 {
     for(int i=0;i<ui->mainTabs->count();i++){
         if(ui->mainTabs->tabText(i) == module->getName()){
@@ -388,7 +392,7 @@ void MainWindow::viewModule(Module *module)
 /*! \brief Load the Application on the MainWindow
     \param app the Application
  */
-void MainWindow::viewApplication(Application *app)
+void MainWindow::viewApplication(yarp::manager::Application *app)
 {
     for(int i=0;i<ui->mainTabs->count();i++){
         if(ui->mainTabs->tabText(i) == app->getName()){
@@ -413,8 +417,8 @@ void MainWindow::onExportGraph()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->exportGraph();
     }
@@ -428,8 +432,8 @@ void MainWindow::onRun()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->runApplicationSet();
     }
@@ -443,8 +447,8 @@ void MainWindow::onStop()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->stopApplicationSet();
     }
@@ -458,8 +462,8 @@ void MainWindow::onKill()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->killApplicationSet();
     }
@@ -473,8 +477,8 @@ void MainWindow::onConnect()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->connectConnectionSet();
     }
@@ -487,8 +491,8 @@ void MainWindow::onDisconnect()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->disconnectConnectionSet();
     }
@@ -501,8 +505,8 @@ void MainWindow::onRefresh()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->refresh();
     }
@@ -516,8 +520,8 @@ void MainWindow::onSelectAll()
     if(!w){
         return;
     }
-    NodeType type = ((GenericViewWidget*)w)->getType();
-    if(type == APPLICATION){
+    yarp::manager::NodeType type = ((GenericViewWidget*)w)->getType();
+    if(type == yarp::manager::APPLICATION){
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->selectAll();
     }
@@ -532,7 +536,7 @@ void MainWindow::onTabClose(int index)
     if(!w){
         return;
     }
-    if(w->getType() == APPLICATION){
+    if(w->getType() == yarp::manager::APPLICATION){
         ApplicationViewWidget *aw = ((ApplicationViewWidget*)w);
         if(aw->isRunning()){
             if( QMessageBox::warning(this,QString("Closing %1").arg(ui->mainTabs->tabText(index)),"You have some running module. After closing the application window you might not be able to recover them. Are you sure?",QMessageBox::Yes,QMessageBox::No) == QMessageBox::No){
@@ -583,7 +587,7 @@ void MainWindow::onTabChangeItem(int index)
 {
 
     GenericViewWidget *w = (GenericViewWidget*)ui->mainTabs->widget(index);
-    if(w && w->getType() == APPLICATION){
+    if(w && w->getType() == yarp::manager::APPLICATION){
         ui->actionSelect_All->setEnabled(true);
         ui->actionRefresh_Status->setEnabled(true);
         ui->actionExport_Graph->setEnabled(true);
@@ -608,7 +612,7 @@ void MainWindow::onTabChangeItem(int index)
 /*! \brief Create a new Application */
 void MainWindow::onNewApplication()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     std::string ext_editor;
     if(config.check("external_editor")){
         ext_editor = config.find("external_editor").asString();
@@ -636,7 +640,7 @@ void MainWindow::onNewApplication()
         return;
     }
 
-    LocalBroker launcher;
+    yarp::manager::LocalBroker launcher;
     if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
         if(!launcher.start() && strlen(launcher.error())){
             QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
@@ -649,7 +653,7 @@ void MainWindow::onNewApplication()
 /*! \brief Create a new Resource */
 void MainWindow::onNewResource()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     std::string ext_editor;
     if(config.check("external_editor")){
         ext_editor = config.find("external_editor").asString();
@@ -677,7 +681,7 @@ void MainWindow::onNewResource()
         return;
     }
 
-    LocalBroker launcher;
+    yarp::manager::LocalBroker launcher;
     if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
         if(!launcher.start() && strlen(launcher.error())){
             QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());
@@ -691,7 +695,7 @@ void MainWindow::onNewResource()
 /*! \brief Create a new Module */
 void MainWindow::onNewModule()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     std::string ext_editor;
     if(config.check("external_editor")){
         ext_editor = config.find("external_editor").asString();
@@ -719,7 +723,7 @@ void MainWindow::onNewModule()
         return;
     }
 
-    LocalBroker launcher;
+    yarp::manager::LocalBroker launcher;
     if(launcher.init(ext_editor.c_str(), fileName.toLatin1().data(), NULL, NULL, NULL, NULL)){
         if(!launcher.start() && strlen(launcher.error())){
             QString msg = QString("Error while launching %1. %2").arg(ext_editor.c_str()).arg(launcher.error());

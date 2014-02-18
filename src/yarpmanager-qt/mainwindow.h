@@ -15,7 +15,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
-#include "manager.h"
+#include <yarp/manager/manager.h>
 #include "entitiestreewidget.h"
 //#include "message_list.h"
 //#include "application_list.h"
@@ -46,7 +46,7 @@ private:
 
 private:
     Ui::MainWindow *ui;
-    Manager lazyManager;
+    yarp::manager::Manager lazyManager;
     yarp::os::Property config;
 
     EntitiesTreeWidget *entitiesTree;
@@ -73,9 +73,9 @@ private slots:
 
 public slots:
     void onTabChangeItem(int);
-    void viewModule(Module*);
-    void viewResource(Computer *res);
-    void viewApplication(Application *app);
+    void viewModule(yarp::manager::Module*);
+    void viewResource(yarp::manager::Computer *res);
+    void viewApplication(yarp::manager::Application *app);
 };
 
 #endif // MAINWINDOW_H

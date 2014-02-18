@@ -12,10 +12,11 @@
 #define APPLICATIONVIEWWIDGET_H
 
 #include <QWidget>
-#include "manager.h"
-#include "safe_manager.h"
+#include <yarp/manager/manager.h>
 #include <QTreeWidgetItem>
+#include "safe_manager.h"
 #include "genericviewwidget.h"
+
 namespace Ui {
 class ApplicationViewWidget;
 }
@@ -28,7 +29,7 @@ class ApplicationViewWidget : public GenericViewWidget, public ApplicationEvent
     Q_OBJECT
 
 public:
-    explicit ApplicationViewWidget(Application *, Manager *lazyManager, yarp::os::Property* config,QWidget *parent = 0);
+    explicit ApplicationViewWidget(yarp::manager::Application *, yarp::manager::Manager *lazyManager, yarp::os::Property* config,QWidget *parent = 0);
     ~ApplicationViewWidget();
 
     void runApplicationSet();
@@ -58,7 +59,7 @@ public:
 private:
     bool getConRowByID(int id, int *row);
     void reportErrors();
-    void prepareManagerFrom(Manager* lazy);
+    void prepareManagerFrom(yarp::manager::Manager* lazy);
     void updateApplicationWindow();
     bool isEditable(QTreeWidgetItem *it,int col);
     void selectAllModule(bool check);
@@ -72,8 +73,8 @@ private:
 private:
     Ui::ApplicationViewWidget *ui;
     SafeManager manager;
-    Manager *lazy;
-    Application *app;
+    yarp::manager::Manager *lazy;
+    yarp::manager::Application *app;
     yarp::os::Property* m_pConfig;
 
     QAction *modRunAction;

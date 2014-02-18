@@ -13,10 +13,10 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QFileDialog>
-#include "localbroker.h"
+#include <yarp/manager/localbroker.h>
 #include "yscopewindow.h"
 
-ApplicationViewWidget::ApplicationViewWidget(Application *app,Manager *lazyManager,yarp::os::Property* config,QWidget *parent) :
+ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,yarp::manager::Manager *lazyManager,yarp::os::Property* config,QWidget *parent) :
     GenericViewWidget(parent), ApplicationEvent(),
     ui(new Ui::ApplicationViewWidget)
 {
@@ -25,7 +25,7 @@ ApplicationViewWidget::ApplicationViewWidget(Application *app,Manager *lazyManag
     this->app = app;
     m_pConfig = config;
 
-    type = APPLICATION;
+    type = yarp::manager::APPLICATION;
 
     prepareManagerFrom(lazy);
 
@@ -224,7 +224,7 @@ void ApplicationViewWidget::onResourceItemSelectionChanged()
     }
 }
 
-void ApplicationViewWidget::prepareManagerFrom(Manager* lazy)
+void ApplicationViewWidget::prepareManagerFrom(yarp::manager::Manager* lazy)
 {
 
     manager.prepare(lazy, m_pConfig,dynamic_cast<ApplicationEvent*>(this));
@@ -244,10 +244,10 @@ void ApplicationViewWidget::updateApplicationWindow()
     ui->connectionList->clear();
     ui->resourcesList->clear();
 
-    ExecutablePContainer modules = manager.getExecutables();
-    CnnContainer connections  = manager.getConnections();
-    ExecutablePIterator moditr;
-    CnnIterator cnnitr;
+    yarp::manager::ExecutablePContainer modules = manager.getExecutables();
+    yarp::manager::CnnContainer connections  = manager.getConnections();
+    yarp::manager::ExecutablePIterator moditr;
+    yarp::manager::CnnIterator cnnitr;
 
     int id = 0;
     for(moditr=modules.begin(); moditr<modules.end(); moditr++)
@@ -265,7 +265,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         l << command << id << "stopped" << host << param << stdio << workDir << env;
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->moduleList,l);
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
-        it->setData(0,Qt::UserRole,MODULE);
+        it->setData(0,Qt::UserRole,yarp::manager::MODULE);
         it->setIcon(0,QIcon(":/images/suspended_ico.png"));
         it->setTextColor(2,QColor("#BF0303"));
         ui->moduleList->addTopLevelItem(it);
@@ -295,24 +295,24 @@ void ApplicationViewWidget::updateApplicationWindow()
         l << type << sId << status << from << to << carrier;
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->connectionList,l);
         ui->moduleList->addTopLevelItem(it);
-        it->setData(0,Qt::UserRole,INOUTD);
+        it->setData(0,Qt::UserRole,yarp::manager::INOUTD);
         it->setIcon(0,QIcon(":/images/disconnected_ico.png"));
         it->setTextColor(2,QColor("#BF0303"));
         id++;
     }
 
     id = 0;
-    ResourcePIterator itrS;
+    yarp::manager::ResourcePIterator itrS;
     for(itrS=manager.getResources().begin(); itrS!=manager.getResources().end(); itrS++)
     {
         //m_resRow = *(m_refTreeResModel->append());
         QString sId = QString("%1").arg(id);
         QString type;
-        if(dynamic_cast<Computer*>(*itrS))
+        if(dynamic_cast<yarp::manager::Computer*>(*itrS))
         {
             type = "computer";
         }
-        else if(dynamic_cast<ResYarpPort*>(*itrS))
+        else if(dynamic_cast<yarp::manager::ResYarpPort*>(*itrS))
         {
             type = "port";
         }
@@ -324,7 +324,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         l << res << sId << type << status ;
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->resourcesList,l);
         ui->moduleList->addTopLevelItem(it);
-        it->setData(0,Qt::UserRole,RESOURCE);
+        it->setData(0,Qt::UserRole,yarp::manager::RESOURCE);
         if(type == "computer"){
             it->setIcon(0,QIcon(":/images/nores_ico.png"));
             it->setTextColor(3,QColor("#BF0303"));
@@ -354,10 +354,10 @@ void ApplicationViewWidget::onItemDoubleClicked(QTreeWidgetItem *it,int col)
 */
 bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
 {
-    NodeType type = (NodeType)it->data(0,Qt::UserRole).toInt();
+    yarp::manager::NodeType type = (yarp::manager::NodeType)it->data(0,Qt::UserRole).toInt();
 
     switch (type) {
-    case MODULE:{
+    case yarp::manager::MODULE:{
            if(col == 3 || col == 4 || col == 5 || col == 6 || col == 7){
                if(it->text(2) == "stopped"){
                     return true;
@@ -365,7 +365,7 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
            }
         break;
     }
-    case INOUTD:{
+    case yarp::manager::INOUTD:{
            if(col == 3 || col == 4 || col == 5 ){
                if(it->text(2) == "disconnected"){
                     return true;
@@ -373,7 +373,7 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
            }
         break;
     }
-    case RESOURCE:{
+    case yarp::manager::RESOURCE:{
            return false;
         break;
     }
@@ -711,7 +711,7 @@ void ApplicationViewWidget::refresh()
 /*! \brief Report all errors*/
 void ApplicationViewWidget::reportErrors()
 {
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
     if(logger->errorCount() || logger->warningCount())
     {
         const char* err;
@@ -738,7 +738,7 @@ void ApplicationViewWidget::exportGraph()
     if(!fileName.isEmpty()){
         if(!manager.exportDependencyGraph(fileName.toLatin1().data()))
         {
-            ErrorLogger* logger  = ErrorLogger::Instance();
+            yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
             logger->addError("Cannot export graph");
             reportErrors();
             return;
@@ -753,7 +753,7 @@ void ApplicationViewWidget::onYarpView()
     if(manager.busy()){
         return;
     }
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
@@ -763,7 +763,7 @@ void ApplicationViewWidget::onYarpView()
             QString env = QString("YARP_PORT_PREFIX=%1").arg(to);
             to += "/yarpview/img:i";
 
-            LocalBroker launcher;
+            yarp::manager::LocalBroker launcher;
             if(launcher.init("yarpview", NULL, NULL, NULL, NULL, env.toLatin1().data()))
             {
                 if(!launcher.start() && strlen(launcher.error()))
@@ -804,7 +804,7 @@ void ApplicationViewWidget::onYarpHear()
     if(manager.busy()){
         return;
     }
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
@@ -823,7 +823,7 @@ void ApplicationViewWidget::onYarpHear()
             param = QString("-hold -title %1 -e yarphear --nodevice --name %2").arg(from).arg(to);
 #endif
 
-            LocalBroker launcher;
+            yarp::manager::LocalBroker launcher;
             launcher.showConsole(true);
             if(launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
             {
@@ -873,7 +873,7 @@ void ApplicationViewWidget::onYarpRead()
     if(manager.busy()){
         return;
     }
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
@@ -892,7 +892,7 @@ void ApplicationViewWidget::onYarpRead()
             param = QString("-hold -title %1 -e yarp read %2").arg(from).arg(to);
 #endif
 
-            LocalBroker launcher;
+            yarp::manager::LocalBroker launcher;
             launcher.showConsole(true);
             if(launcher.init(cmd.toLatin1().data(), param.toLatin1().data(), NULL, NULL, NULL, NULL))
             {
@@ -935,7 +935,7 @@ void ApplicationViewWidget::onYarpScope()
     if(manager.busy()){
         return;
     }
-    ErrorLogger* logger  = ErrorLogger::Instance();
+    yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
 
     YscopeWindow dlg;
     dlg.setModal(true);
@@ -959,7 +959,7 @@ void ApplicationViewWidget::onYarpScope()
             param = QString("--title %1:%2 --bgcolor white --color blue --graph_size 2 --index %2").arg(from).arg(strIndex);
 
 
-            LocalBroker launcher;
+            yarp::manager::LocalBroker launcher;
             if(launcher.init("yarpscope", param.toLatin1().data(), NULL, NULL, NULL, env.toLatin1().data())){
                 if(!launcher.start() && strlen(launcher.error())){
                     QString msg;

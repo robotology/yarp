@@ -16,7 +16,7 @@ GenericViewWidget::GenericViewWidget(QWidget *parent) :
 }
 
 /*! \brief return the type of the list*/
-NodeType GenericViewWidget::getType()
+yarp::manager::NodeType GenericViewWidget::getType()
 {
     return type;
 }
