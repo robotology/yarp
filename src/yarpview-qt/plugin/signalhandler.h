@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #ifndef SIGNALHANDLER_H
 #define SIGNALHANDLER_H
 
@@ -7,6 +17,13 @@
 #include <QTimer>
 #include "FpsStats.h"
 
+/*! \class SignalHandler
+    \brief The class that handles some signals
+
+    This class is used to unlock the backend thread from the GUI thread. It is mainly used for
+    receive the frame from the callback and then redirect the signal to its own thread
+    using a conenction in Qt::QueuedConnection modality
+*/
 class SignalHandler : public QObject
 {
     Q_OBJECT

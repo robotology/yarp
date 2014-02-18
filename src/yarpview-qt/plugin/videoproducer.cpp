@@ -15,11 +15,19 @@ VideoProducer::~VideoProducer()
 }
 
 
+/*! \brief returns the abstract surface
+ *
+ *  this property is called by the qml videooutput to get the render surface
+ */
 QAbstractVideoSurface* VideoProducer::videoSurface() const
 {
     return m_surface;
 }
 
+/*! \brief sets the abstract surface
+ *
+ *  this property is called by the qml videooutput and set the abstract surface to its surface
+ */
 void VideoProducer::setVideoSurface(QAbstractVideoSurface *surface)
 {
     if (m_surface != surface && m_surface && m_surface->isActive()) {
@@ -29,6 +37,9 @@ void VideoProducer::setVideoSurface(QAbstractVideoSurface *surface)
 
 }
 
+/*! \brief returns the width of the surface
+ *  \return the width
+ */
 int VideoProducer::getWidth()
 {
     if(!m_format){
@@ -37,6 +48,9 @@ int VideoProducer::getWidth()
     return m_format->frameWidth();
 }
 
+/*! \brief returns the height of the surface
+ *  \return the height
+ */
 int VideoProducer::getHeight()
 {
     if(!m_format){
@@ -45,6 +59,9 @@ int VideoProducer::getHeight()
     return m_format->frameHeight();
 }
 
+/*! \brief This gets the frame and presents it to the abstract surface
+ *  \param frame the video frame
+ */
 void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
 {
     if (m_surface){

@@ -13,8 +13,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "ImagePort.h"
-//#include "FpsStats.h"
-
 #include <yarp/sig/ImageFile.h>
 
 using namespace yarp::os;
@@ -30,25 +28,29 @@ InputCallback::InputCallback()
 InputCallback::~InputCallback()
 {}
 
+/*! \brief the function callback
+    \param img the image received
+*/
 void InputCallback::onRead(yarp::sig::FlexImage &img)
 {
 
     uchar *tmpBuf;
     QSize s = (QSize(img.width(),img.height()));
     int imgSize = img.getRawImageSize();
+    // Allocate a QVideoFrame
     QVideoFrame frame(img.width() * img.height() * 4,
               s,
               s.width(),
               QVideoFrame::Format_RGB32);
 
+    // Maps the buffer
     frame.map(QAbstractVideoBuffer::WriteOnly);
-
+    // Takes the ownership of the buffer in write only mode
     tmpBuf = frame.bits();
-
     unsigned char *rawImg = img.getRawImage();
     int j = 0;
+    // Inverts the planes because Qt Wants an image in RGB format instead of BGR
     for(int i=0; i<imgSize; i++){
-
         tmpBuf[j+2] = rawImg[i];
         i++;
         tmpBuf[j+1] = rawImg[i];
@@ -56,10 +58,8 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
         tmpBuf[j] = rawImg[i];
         tmpBuf[j+3] = 0;
         j+=4;
-
-
     }
-
+    //unmap the buffer
     frame.unmap();
     if(sigHandler){
         sigHandler->sendVideoFrame(frame);
@@ -67,6 +67,9 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
 
 }
 
+/*! \brief sets the signalhandler to the class
+    \param handler the signal handler
+*/
 void InputCallback::setSignalHandler(SignalHandler *handler)
 {
     sigHandler = handler;

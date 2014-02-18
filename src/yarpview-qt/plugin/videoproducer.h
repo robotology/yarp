@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #ifndef VIDEOPRODUCER_H
 #define VIDEOPRODUCER_H
 
@@ -5,6 +15,11 @@
 #include <QAbstractVideoSurface>
 #include <QVideoSurfaceFormat>
 
+/*! \class VideoProducer
+    \brief The videoproducer class
+
+    This class has a QAbstractVideoSurface where the video frame is rendered and used by the QML VideoOutput
+*/
 class VideoProducer : public QObject
 {
     Q_OBJECT

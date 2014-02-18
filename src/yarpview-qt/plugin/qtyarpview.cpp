@@ -5,13 +5,6 @@ using namespace yarp::os;
 QtYarpView::QtYarpView(QQuickItem *parent):
     QQuickItem(parent),sigHandler(this)
 {
-    // By default, QQuickItem does not draw anything. If you subclass
-    // QQuickItem to create a visual item, you will need to uncomment the
-    // following line and re-implement updatePaintNode()
-
-    // setFlag(ItemHasContents, true);
-
-    //Network yarp;
     ptr_portCallback = NULL;
     setOptionsToDefault();
 
@@ -21,17 +14,7 @@ QtYarpView::QtYarpView(QQuickItem *parent):
     connect(&sigHandler,SIGNAL(sendFps(double,double,double,double,double,double)),
             this, SLOT(onSendFps(double,double,double,double,double,double)));
     createObjects();
-
-
-
     sprintf(_options.portName, "%s", "/view");
-
-    /*if (!openPorts()){
-        qDebug("Error open ports");
-        return;
-    }
-
-    ptr_inputPort->useCallback(*ptr_portCallback);*/
 
 
 }
@@ -46,66 +29,98 @@ QtYarpView::~QtYarpView()
     }
 }
 
+/*! \brief Freeze the video stream.
+ *
+ *  \param check a bool parameter that enbales or disables the freeze state
+ */
 void QtYarpView::freeze(bool check)
 {
     sigHandler.freeze(check);
 }
 
+/*! \brief returns the videoproducer that acts as bridge between C++ code and QML VideoOutput.
+ *
+ *  \return A pointer to the videoproducer
+ */
 QObject *QtYarpView::getVideoProducer()
 {
     return &videoProducer;
 }
 
+/*! \brief Returns the x position from the options.*/
 int QtYarpView::posX()
 {
     return _options.posX;
 }
 
+/*! \brief Returns the y position from the options.*/
 int QtYarpView::posY()
 {
     return _options.posY;
 }
 
+/*! \brief Returns the width from the options.*/
 int QtYarpView::windowWidth()
 {
     return _options.windWidth;
 }
 
+/*! \brief Returns the height from the options.*/
 int QtYarpView::windowHeight()
 {
     return _options.windHeight;
 }
 
+
+/*! \brief Synchs the video stream to the display.
+ *
+ *  \param check a bool parameter that enbales or disables the synch option
+ */
 void QtYarpView::synchToDisplay(bool check)
 {
     sigHandler.synchToDisplay(check);
 }
 
+/*! \brief Changes the refresh interval.
+ *
+ *  \param interval an int value representing the interval
+ */
 void QtYarpView::changeRefreshInterval(int interval)
 {
     sigHandler.changeRefreshInterval(interval);
 }
 
+/*! \brief Saves the current frame. */
 void QtYarpView::saveFrame()
 {
     sigHandler.saveCurrentFrame();
 }
 
+/*! \brief Sets the current filename of the frame is going to be saved.
+ *
+ *  \param url the url to the file
+ */
 void QtYarpView::setFileName(QUrl url)
 {
     sigHandler.setFileName(url);
 }
 
+/*! \brief Sets the current filename of the frame set is going to be saved.
+ *
+ *  \param url the url to the file
+ */
 void QtYarpView::setFilesName(QUrl url)
 {
     sigHandler.setFileNames(url);
 }
 
+/*! \brief Saves the current frame set. */
 void QtYarpView::startDumpFrames()
 {
     sigHandler.startDumpFrames();
 }
 
+/*! \brief Stops the current frame set save mode. */
 void QtYarpView::stopDumpFrames()
 {
     sigHandler.stopDumpFrames();
@@ -148,20 +163,23 @@ void QtYarpView::onSendFps(double portAvg, double portMin, double portMax,
 
 }
 
+/*! \brief Gets the refresh interval from options.
+    \return the refresh interval
+*/
 int QtYarpView::refreshInterval()
 {
     return _options.refreshTime;
 }
 
 
-
+/*! \brief Creates the input port and the port callback.*/
 void QtYarpView::createObjects() {
     ptr_inputPort = new BufferedPort<yarp::sig::FlexImage>;
     ptr_portCallback = new InputCallback;
     ptr_portCallback->setSignalHandler(&sigHandler);
-
 }
 
+/*! \brief Deletes the input port and the port callback.*/
 void QtYarpView::deleteObjects() {
     if (ptr_inputPort!=0)
         delete ptr_inputPort;
@@ -169,6 +187,9 @@ void QtYarpView::deleteObjects() {
         delete ptr_portCallback;
 }
 
+/*! \brief parse the parameters received from the main container in QstringList form
+    \param params the parameter list
+*/
 bool QtYarpView::parseParameters(QStringList params)
 {
 
@@ -208,6 +229,7 @@ bool QtYarpView::parseParameters(QStringList params)
     return true;
 }
 
+/*! \brief Sets the options received from command line*/
 void QtYarpView::setOptions(yarp::os::Searchable& options) {
     // switch to subsections if available
     yarp::os::Value *val;
@@ -262,6 +284,7 @@ void QtYarpView::setOptions(yarp::os::Searchable& options) {
     }
 }
 
+/*! \brief Prints the help menu.*/
 void QtYarpView::printHelp()
 {
     qDebug("yarpview usage:");
@@ -276,6 +299,7 @@ void QtYarpView::printHelp()
     qDebug("--neti: input network");
 }
 
+/*! \brief Stes the options to their defaults.*/
 void QtYarpView::setOptionsToDefault()
 {
     // Options defaults
@@ -302,6 +326,9 @@ void QtYarpView::setOptionsToDefault()
 }
 
 
+/*! \brief Opens the ports.
+    \return false in case of error, true otherwise
+*/
 bool QtYarpView::openPorts()
 {
     bool ret = false;
@@ -330,6 +357,7 @@ bool QtYarpView::openPorts()
     return true;
 }
 
+/*! \brief Closes the ports.*/
 void QtYarpView::closePorts()
 {
 
@@ -347,6 +375,9 @@ void QtYarpView::closePorts()
     }
 }
 
+/*! \brief Save the options to a file.
+    \param fileName the filename
+*/
 void QtYarpView::saveOptFile(char *fileName)
 {
     //FILE *optFile = NULL;

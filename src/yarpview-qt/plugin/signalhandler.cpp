@@ -51,15 +51,24 @@ SignalHandler::~SignalHandler()
     }
 }
 
+/*! \brief Self start the timer of the display.
+ *
+ *  This method is used to start a timer because of the fact that a timer cannot be started
+ *  from a thread different from the on it was created in
+ */
 void SignalHandler::onSelfStartTimer()
 {
     timer.start();
 }
 
+/*! \brief Gets a videoframe.
+ *
+ *   this function gets a videframe and redirect it to itself
+ *
+ *  \param f The FrameVideo
+ */
 void SignalHandler::sendVideoFrame(QVideoFrame f)
 {
-
-
     portFps.update();
 
     if(synchMode){
@@ -92,6 +101,13 @@ void SignalHandler::sendVideoFrame(QVideoFrame f)
 
 }
 
+/*! \brief Receive a videoframe.
+ *
+ *  Receive a videoframe from the internal and sends it with a signal to the
+ *  videoproducer
+ *
+ *  \param f The FrameVideo
+ */
 void SignalHandler::internalReceiveFrame(QVideoFrame f)
 {
     if(!freezeMode){
@@ -99,6 +115,10 @@ void SignalHandler::internalReceiveFrame(QVideoFrame f)
     }
 }
 
+/*! \brief Enable/Disable the synch mode.
+ *
+ *  \param check
+ */
 void SignalHandler::synchToDisplay(bool check)
 {
     synchMode = check;
@@ -113,15 +133,25 @@ void SignalHandler::synchToDisplay(bool check)
     }
 }
 
+/*! \brief Enable/Disable the freeze mode.
+ *
+ *  \param check
+ */
 void SignalHandler::freeze(bool check)
 {
     freezeMode = check;
 }
 
+/*! \brief Sets the refresh interval.
+ *
+ *  \param interval
+ */
 void SignalHandler::changeRefreshInterval(int interval)
 {
     timer.setInterval(interval);
 }
+
+
 
 void SignalHandler::onTimerElapsed()
 {
@@ -131,11 +161,17 @@ void SignalHandler::onTimerElapsed()
     mutex.unlock();
 }
 
+/*! \brief Enable the save curretn frame  mode.
+ */
 void SignalHandler::saveCurrentFrame()
 {
     saveCurrentFrameMode = true;
 }
 
+/*! \brief Sets the filename used for saving a video frame.
+ *
+ *  \param url url to the file
+ */
 void SignalHandler::setFileName(QUrl url)
 {
 
@@ -144,6 +180,10 @@ void SignalHandler::setFileName(QUrl url)
     checkCustomNameCounterCount(this->fileName);
 }
 
+/*! \brief saves the image
+ *
+ *  \param img the image
+ */
 void SignalHandler::saveFrame(QImage img)
 {
     if(fileName.isEmpty()){
@@ -158,6 +198,11 @@ void SignalHandler::saveFrame(QImage img)
     }
 }
 
+
+/*! \brief saves the image set
+ *
+ *  \param img the image
+ */
 void SignalHandler::saveFrameSet(QImage img)
 {
     if(fileNames.isEmpty()){
@@ -172,6 +217,11 @@ void SignalHandler::saveFrameSet(QImage img)
     }
 }
 
+
+/*! \brief Checks the default Save Image name Count
+    it is used to continue the enumeration of the default image name
+    in case the user does not specify a custom name.
+*/
 void SignalHandler::checkDefaultNameCounterCount()
 {
     QDir dir = QDir(QCoreApplication::applicationDirPath());
@@ -188,6 +238,10 @@ void SignalHandler::checkDefaultNameCounterCount()
 
 }
 
+/*! \brief Checks the Custom Save Image name Count
+    it is used to continue the enumeration of the custom image name
+    in case the user specify an existing file name
+*/
 void SignalHandler::checkCustomNameCounterCount(QString file)
 {
     int index = file.lastIndexOf("/");
@@ -208,19 +262,24 @@ void SignalHandler::checkCustomNameCounterCount(QString file)
 
 }
 
-
+/*! \brief Sets the filename used for saving a video frame set.
+ *
+ *  \param url url to the file
+ */
 void SignalHandler::setFileNames(QUrl url)
 {
     if(saveSetFrameMode == false)
         this->fileNames = url.toLocalFile();
 }
 
+/*! \brief Enables the Dump frame modality (Save frame set).*/
 void SignalHandler::startDumpFrames()
 {
     framesetCounter = 0;
     saveSetFrameMode = true;
 }
 
+/*! \brief Stops the Dump frame modality (Save frame set).*/
 void SignalHandler::stopDumpFrames()
 {
     saveSetFrameMode = false;

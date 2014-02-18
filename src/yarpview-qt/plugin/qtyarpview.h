@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #ifndef QTYARPVIEW_H
 #define QTYARPVIEW_H
 
@@ -15,6 +25,9 @@
 //-------------------------------------------------
 // Program Options
 //-------------------------------------------------
+/*! \struct mOptions
+    \brief The struct that stores the options
+*/
 struct mOptions
 {
     unsigned int	refreshTime;
@@ -33,7 +46,13 @@ struct mOptions
 };
 typedef struct mOptions pgmOptions;
 
+/*! \class QtYarpView
+    \brief The plugin Core class
 
+    this is the plugin core class wich acts as bridge between the QML and c++.
+    in the C++ code is implemented the backend logic, instead in the QML is
+    implemented the Visual part.
+*/
 class QtYarpView : public QQuickItem
 {
     Q_OBJECT
