@@ -22,7 +22,6 @@
 
 using namespace yarp::os;
 
-static SystemClock system_clock;
 static Clock *pclock = NULL;
 static bool clock_owned = false;
 static ConstString network_clock_name = "";
@@ -40,7 +39,7 @@ static void removeClock() {
     network_clock_pending = false;
 }
 
-static Clock& getClock() {
+static Clock *getClock() {
     if (network_clock_pending) {
         ConstString name;
         NetworkClock *nc = NULL;
@@ -58,16 +57,22 @@ static Clock& getClock() {
             nc->open(name);
         }
     }
-    if (pclock) return *pclock;
-    return system_clock;
+    return pclock;
 }
 
 void Time::delay(double seconds) {
-    getClock().delay(seconds);
+    Clock *clk = getClock();
+    if (clk) {
+        clk->delay(seconds);
+    } else {
+        SystemClock::delaySystem(seconds);
+    }
 }
 
 double Time::now() {
-    return getClock().now();
+    Clock *clk = getClock();
+    if (clk) return clk->now();
+    return SystemClock::nowSystem();
 }
 
 void Time::turboBoost() {
@@ -116,6 +121,8 @@ bool Time::isSystemClock() {
 }
 
 bool Time::isValid() {
-    return getClock().isValid();
+    Clock *clk = getClock();
+    if (clk) return clk->isValid();
+    return true;
 }
 

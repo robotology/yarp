@@ -21,9 +21,19 @@ namespace yarp {
 
 class YARP_OS_API yarp::os::SystemClock : public Clock {
 public:
-    virtual double now();
-    virtual void delay(double seconds);
-    virtual bool isValid() const      { return true; }
+    virtual double now() { 
+        return nowSystem(); 
+    }
+
+    virtual void delay(double seconds) {
+        delaySystem(seconds);
+    }
+
+    virtual bool isValid() const { return true; }
+
+    static double nowSystem();
+    static void delaySystem(double seconds);
+
 };
 
 

@@ -21,7 +21,7 @@ using namespace yarp::os;
 /// WARNING: actual precision under WIN32 depends on setting scheduler 
 /// by means of MM functions.
 ///
-void SystemClock::delay(double seconds) {
+void SystemClock::delaySystem(double seconds) {
 #ifdef YARP_HAS_ACE
     ACE_Time_Value tv;
     tv.sec (long(seconds));
@@ -32,7 +32,7 @@ void SystemClock::delay(double seconds) {
 #endif
 }
 
-double SystemClock::now() {
+double SystemClock::nowSystem() {
 #ifdef ACE_WIN32
     // only uses high res on Microsoft Windows
     // This caused problems; maybe only with new ACE versions or Windows 7, can't tell.
