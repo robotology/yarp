@@ -237,14 +237,7 @@ bool ThreadImpl::start() {
         }
     }
     //the thread did not start, call afterStart() to warn the user
-#ifdef YARP_HAS_ACE
-    YARP_ERROR(Logger::get(),
-               String("Child thread did not start: ")
-               + ACE_OS::strerror(ACE_OS::last_error()));
-#else
-    YARP_ERROR(Logger::get(),
-               String("Child thread did not start."));
-#endif
+    YARP_ERROR(Logger::get(),String("A thread failed to start."));
     afterStart(false);
     return false;
 }
