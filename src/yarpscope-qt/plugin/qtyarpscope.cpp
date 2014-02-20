@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "qtyarpscope.h"
 #include <yarp/os/ResourceFinder.h>
 #include "simpleloader.h"
@@ -32,7 +42,9 @@ QtYARPScope::~QtYARPScope()
         delete loader;
     }
 }
-
+/*! \brief parse the parameters received from the main container in QstringList form
+    \param params the parameter list
+*/
 bool QtYARPScope::parseParameters(QStringList params)
 {
     // Setup resource finder
@@ -136,31 +148,37 @@ bool QtYARPScope::parseParameters(QStringList params)
     return true;
 }
 
-QObject* QtYARPScope::getPlotManager()
-{
-    return plotManager;
-}
-
+/*! \brief plays or pauses the data flow
+    \param check
+*/
 void QtYARPScope::playPressed(int check)
 {
     plotManager->playPressed(check);
 }
 
+/*! \brief clears the data in the current window*/
 void QtYARPScope::clear()
 {
     plotManager->clear();
 }
 
+/*! \brief changes the refresh interval
+    \param interval the interval
+*/
 void QtYARPScope::changeInterval(int interval)
 {
     plotManager->setInterval(interval);
 }
 
+/*! \brief rescales the graphs in order to contains the maximum and
+ * minimum value visible in the window
+*/
 void QtYARPScope::rescale()
 {
     plotManager->rescale();
 }
 
+/*! \brief Prints the help menu.*/
 void QtYARPScope::usage() {
     qDebug("Usage: yarpscope [OPTIONS]\n");
 
@@ -212,14 +230,16 @@ void QtYARPScope::usage() {
     qDebug(" --cols [uint]          Only one plot is supported from command line. Use XML mode instead.");
 }
 
-
+/*! \brief called when the graphs must be repainted*/
 void QtYARPScope::onRepaint()
 {
-
     update();
 }
 
-
+/*! \brief paint method.
+    In this method each Plotter is grabbed from its own QCustomPlot Widget
+    to a Pixmap and then drawed with the QPainter primitive drawPixmap
+*/
 void QtYARPScope::paint(QPainter *painter)
 {
 	if(!loader){
@@ -258,26 +278,41 @@ void QtYARPScope::paint(QPainter *painter)
 
 
 
-
+/*! \brief the wheel mouse event
+    \param event the event
+*/
 void QtYARPScope::wheelEvent(QWheelEvent* event)
 {
     routeMouseEvents( event );
 }
+
+/*! \brief the mouse press event
+    \param event the event
+*/
 void QtYARPScope::mousePressEvent( QMouseEvent* event )
 {
     routeMouseEvents( event );
 }
 
+/*! \brief the mouse release event
+    \param event the event
+*/
 void QtYARPScope::mouseReleaseEvent( QMouseEvent* event )
 {
     routeMouseEvents( event );
 }
 
+/*! \brief the mouse move event
+    \param event the event
+*/
 void QtYARPScope::mouseMoveEvent( QMouseEvent* event )
 {
     routeMouseEvents( event );
 }
 
+/*! \brief the mouse double click event
+    \param event the event
+*/
 void QtYARPScope::mouseDoubleClickEvent( QMouseEvent* event )
 {
     routeMouseEvents( event );
@@ -288,6 +323,11 @@ void QtYARPScope::graphClicked( QCPAbstractPlottable* plottable )
     //qDebug() << Q_FUNC_INFO << QString( "Clicked on graph '%1 " ).arg( plottable->name() );
 }
 
+/*! \brief this function is used to route the mouse events on the core plugin
+ *  to the relative QCustomPlot.
+ *  This method works fairly well but has some limitations on dragging
+    \param event the event
+*/
 void QtYARPScope::routeMouseEvents( QMouseEvent* event )
 {
     int x = event->x();
@@ -308,6 +348,10 @@ void QtYARPScope::routeMouseEvents( QMouseEvent* event )
     }
 }
 
+/*! \brief this function is used to route the wheel mouse events on the core plugin
+ *  to the relative QCustomPlot.
+    \param event the event
+*/
 void QtYARPScope::routeMouseEvents( QWheelEvent* event )
 {
     int x = event->x();
@@ -328,6 +372,9 @@ void QtYARPScope::routeMouseEvents( QWheelEvent* event )
     }
 }
 
+/*! \brief this function is used to update the size of the QCustomPlots
+ *  when changing the size of the main window
+*/
 void QtYARPScope::updateCustomPlotSize()
 {
 
@@ -350,11 +397,4 @@ void QtYARPScope::updateCustomPlotSize()
 
         plotter->customPlot.setGeometry(0,0,plotterWidth,plotterHeight);
     }
-
-
-}
-
-void QtYARPScope::onCustomReplot()
-{
-    update();
 }

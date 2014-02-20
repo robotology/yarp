@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ymm-dir.h"
@@ -83,7 +93,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
+/*! \brief Init the application with the current configuration.
+ *
+ *  \param config the configuration
+ */
 void MainWindow::init(yarp::os::Property config)
 {
     this->config = config;
@@ -209,6 +222,8 @@ void MainWindow::init(yarp::os::Property config)
     }
 }
 
+/*! \brief Reports tge error on the log window.
+ */
 void MainWindow::reportErrors()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -223,7 +238,8 @@ void MainWindow::reportErrors()
     }
 }
 
-
+/*! \brief Synchs the application list on filesystem with the application tree.
+ */
 void MainWindow::syncApplicationList()
 {
     ui->entitiesTree->clearApplication();
@@ -264,6 +280,9 @@ void MainWindow::syncApplicationList()
     }
 }
 
+/*! \brief Load the Application Templates recursively.
+    \param szPath the path to the directory
+ */
 bool MainWindow::loadRecursiveTemplates(const char* szPath)
 {
     string strPath = szPath;
@@ -301,7 +320,9 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
     return true;
 }
 
-
+/*! \brief Load the Applications recursively.
+    \param szPath the path to the directory
+ */
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
     string strPath = szPath;
@@ -329,6 +350,9 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
     return true;
 }
 
+/*! \brief Load the Resource on the MainWindow
+    \param res the resource
+ */
 void MainWindow::viewResource(Computer *res)
 {
     for(int i=0;i<ui->mainTabs->count();i++){
@@ -343,7 +367,9 @@ void MainWindow::viewResource(Computer *res)
     ui->mainTabs->setTabIcon(index,QIcon(":/images/computer_ico.png"));
     ui->mainTabs->setCurrentIndex(index);
 }
-
+/*! \brief Load the Module on the MainWindow
+    \param module the module
+ */
 void MainWindow::viewModule(Module *module)
 {
     for(int i=0;i<ui->mainTabs->count();i++){
@@ -359,6 +385,9 @@ void MainWindow::viewModule(Module *module)
     ui->mainTabs->setCurrentIndex(index);
 }
 
+/*! \brief Load the Application on the MainWindow
+    \param app the Application
+ */
 void MainWindow::viewApplication(Application *app)
 {
     for(int i=0;i<ui->mainTabs->count();i++){
@@ -376,7 +405,8 @@ void MainWindow::viewApplication(Application *app)
     ui->mainTabs->setCurrentIndex(index);
 }
 
-
+/*! \brief Exports the actual Graph
+ */
 void MainWindow::onExportGraph()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -390,6 +420,8 @@ void MainWindow::onExportGraph()
     }
 }
 
+/*! \brief When Run is clicked the applications in the current Application Tab will go on run state
+ */
 void MainWindow::onRun()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -403,6 +435,8 @@ void MainWindow::onRun()
     }
 }
 
+/*! \brief When Stop is clicked the applications running in the current Application Tab will go on stop state
+ */
 void MainWindow::onStop()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -416,6 +450,8 @@ void MainWindow::onStop()
     }
 }
 
+/*! \brief When Stop is clicked the applications running in the current Application Tab will be killed
+ */
 void MainWindow::onKill()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -429,6 +465,8 @@ void MainWindow::onKill()
     }
 }
 
+/*! \brief When Connect is clicked the applications ports will be connected
+ */
 void MainWindow::onConnect()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -441,7 +479,8 @@ void MainWindow::onConnect()
         ww->connectConnectionSet();
     }
 }
-
+/*! \brief When Disconnect is clicked the applications ports will be disconnected
+ */
 void MainWindow::onDisconnect()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -454,7 +493,8 @@ void MainWindow::onDisconnect()
         ww->disconnectConnectionSet();
     }
 }
-
+/*! \brief Refresh the applications state
+ */
 void MainWindow::onRefresh()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -468,6 +508,8 @@ void MainWindow::onRefresh()
     }
 }
 
+/*! \brief Select all items in Application tab
+ */
 void MainWindow::onSelectAll()
 {
     QWidget *w = ui->mainTabs->currentWidget();
@@ -481,6 +523,9 @@ void MainWindow::onSelectAll()
     }
 }
 
+/*! \brief Close the tab of index index
+    \param index the index of the tab
+ */
 void MainWindow::onTabClose(int index)
 {
     GenericViewWidget *w = (GenericViewWidget*)ui->mainTabs->widget(index);
@@ -499,6 +544,9 @@ void MainWindow::onTabClose(int index)
     delete w;
 }
 
+/*! \brief Logs an error message
+    \param msg the message
+ */
 void MainWindow::onLogError(QString msg)
 {
     QString text = QString ("[ERR] %1").arg(msg);
@@ -507,6 +555,9 @@ void MainWindow::onLogError(QString msg)
     ui->logWidget->setCurrentRow(ui->logWidget->count() - 1);
 }
 
+/*! \brief Logs an warning message
+    \param msg the message
+ */
 void MainWindow::onLogWarning(QString msg)
 {
     QString text = QString ("[WAR] %1").arg(msg);
@@ -515,6 +566,9 @@ void MainWindow::onLogWarning(QString msg)
     ui->logWidget->setCurrentRow(ui->logWidget->count() - 1);
 }
 
+/*! \brief Logs a message
+    \param msg the message
+ */
 void MainWindow::onLogMessage(QString msg)
 {
     QString text = QString ("[MSG] %1").arg(msg);
@@ -522,6 +576,9 @@ void MainWindow::onLogMessage(QString msg)
     ui->logWidget->setCurrentRow(ui->logWidget->count() - 1);
 }
 
+/*! \brief Called when a tab has been pressed
+    \param index the index of the tab
+ */
 void MainWindow::onTabChangeItem(int index)
 {
 
@@ -548,6 +605,7 @@ void MainWindow::onTabChangeItem(int index)
     }
 }
 
+/*! \brief Create a new Application */
 void MainWindow::onNewApplication()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -588,6 +646,7 @@ void MainWindow::onNewApplication()
     }
 }
 
+/*! \brief Create a new Resource */
 void MainWindow::onNewResource()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -629,7 +688,7 @@ void MainWindow::onNewResource()
 
 }
 
-
+/*! \brief Create a new Module */
 void MainWindow::onNewModule()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -671,6 +730,7 @@ void MainWindow::onNewModule()
 
 }
 
+/*! \brief Import Files (Modules, Applications, Resources) */
 void MainWindow::onImportFiles()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Please choose a folder"),
@@ -699,6 +759,7 @@ void MainWindow::onImportFiles()
     }
 }
 
+/*! \brief Called when a tab is going to be closed */
 void MainWindow::onClose()
 {
     int index = ui->mainTabs->currentIndex();
@@ -708,6 +769,7 @@ void MainWindow::onClose()
     onTabClose(index);
 }
 
+/*! \brief Open File (Modules, Applications, Resources) */
 void MainWindow::onOpen()
 {
     QString fileName = QFileDialog::getOpenFileName(this,"Please choose a File",QCoreApplication::applicationDirPath(),

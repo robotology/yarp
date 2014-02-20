@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #ifndef PLOTTER_H
 #define PLOTTER_H
 
@@ -12,6 +22,9 @@
 #define GRAPH_TYPE_BARS     1
 #define GRAPH_TYPE_POINTS   2
 
+/*! \class Graph
+    \brief Class representing a Graph
+*/
 class Graph : public QObject
 {
     Q_OBJECT
@@ -63,6 +76,9 @@ signals:
 
 };
 
+/*! \class Connection
+    \brief Class representing a Connection
+*/
 class Connection : public QObject
 {
     Q_OBJECT
@@ -83,6 +99,9 @@ public:
     yarp::os::ContactStyle style;
 };
 
+/*! \class Plotter
+    \brief Class representing a Plotter
+*/
 class Plotter : public QObject
 {
     Q_OBJECT

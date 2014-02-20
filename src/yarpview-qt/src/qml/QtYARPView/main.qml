@@ -1,7 +1,22 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 import QtQuick.Window 2.0
+
+// Import the YarpView module
 import robotology.yarp.view 1.0
+// Imports the resources of the YarpView Module.
+// This serves in case the the module has its
+// own qml defined in the resources
 import "qrc:/YarpView/" 1.0
 
 ApplicationWindow {

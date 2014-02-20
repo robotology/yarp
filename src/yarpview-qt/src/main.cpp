@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include <QtGui/QGuiApplication>
 #include "qtquick2applicationviewer.h"
 
@@ -7,6 +17,11 @@
 #include <QQmlContext>
 #include <QVariant>
 
+/*! \brief Main method for the YarpView container.
+ *
+ *  \param argc
+ *  \param argv
+ */
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -27,11 +42,12 @@ int main(int argc, char *argv[])
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
-
+    // Pack the argc and argv to a QStrinList so we can pass them easily to the plugin
     QStringList params;
     for(int i=1;i<argc;i++){
         params.append(argv[i]);
     }
+    // Call the parseParameters of the qml object called YarpVideoSurface
     QObject *yarpVideoSurface = topLevel->findChild<QObject*>("YarpVideoSurface");
     QMetaObject::invokeMethod(yarpVideoSurface,"parseParameters",
                               Qt::DirectConnection,

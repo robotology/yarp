@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #ifndef APPLICATIONVIEWWIDGET_H
 #define APPLICATIONVIEWWIDGET_H
 
@@ -10,6 +20,9 @@ namespace Ui {
 class ApplicationViewWidget;
 }
 
+/*! \class ApplicationViewWidget
+    \brief The Application View Widget
+*/
 class ApplicationViewWidget : public GenericViewWidget, public ApplicationEvent
 {
     Q_OBJECT
@@ -43,6 +56,7 @@ public:
 
 
 private:
+    bool getConRowByID(int id, int *row);
     void reportErrors();
     void prepareManagerFrom(Manager* lazy);
     void updateApplicationWindow();

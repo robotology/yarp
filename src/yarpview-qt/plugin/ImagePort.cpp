@@ -1,12 +1,18 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-/* 
+
+/*
  * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author Lorenzo Natale
  * email:   lorenzo.natale@robotcub.org
  * website: www.robotcub.org
+ *
+ * Modified by: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
-
 
 // ImagePort.cpp: implementation of the ImagePort class.
 //

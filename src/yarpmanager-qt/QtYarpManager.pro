@@ -79,7 +79,8 @@ SOURCES += main.cpp\
     safe_manager.cpp \
     genericviewwidget.cpp \
     customtreewidget.cpp \
-    resourceviewwidget.cpp
+    resourceviewwidget.cpp \
+    yscopewindow.cpp
 
 HEADERS  += mainwindow.h \
     entitiestreewidget.h \
@@ -89,12 +90,14 @@ HEADERS  += mainwindow.h \
     genericviewwidget.h \
     customtreewidget.h \
     template_res.h \
-    resourceviewwidget.h
+    resourceviewwidget.h \
+    yscopewindow.h
 
 FORMS    += mainwindow.ui \
     moduleviewwidget.ui \
     applicationviewwidget.ui \
-    resourceviewwidget.ui
+    resourceviewwidget.ui \
+    yscopewindow.ui
 
 RESOURCES += \
     res.qrc

@@ -1,9 +1,31 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "plotter.h"
 #include "yarp/os/ContactStyle.h"
 #include "yarp/os/Time.h"
 #include "yarp/os/Stamp.h"
 
-
+/*! \brief Constructor of the class.
+ *
+ *  \param title the title of the plotter
+ *  \param gridx the x pos in the grid
+ *  \param gridy the y pos in the grid
+ *  \param hspan the horizonatl span
+ *  \param vspan the vertical span
+ *  \param minval the minimum scale value
+ *  \param maxval the maximium scale value
+ *  \param size number of sample of datas in plotter
+ *  \param bgcolor the background color of the plotter
+ *  \param autorescale not used
+ */
 Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspan, float minval, float maxval, int size, const QString &bgcolor, bool autorescale,  QObject *parent) :
     QObject(parent)
 {
@@ -44,12 +66,19 @@ Plotter::Plotter(const QString &title, int gridx, int gridy, int hspan, int vspa
 
 }
 
-
+/*! \brief Sets the interaction mode to true. Called when the user interact with the plotter using mouse*/
 void Plotter::onInteract()
 {
     interact = true;
 }
 
+/*! \brief Inits the plotter.
+ *
+ *  \param remotePortName name of the remote port
+ *  \param localPortName name of the local port
+ *  \param carrier name of the carrier
+ *  \param persistent sets the persistent modality
+ */
 void Plotter::init(QString remotePortName,
                    QString localPortName,
                    QString carrier,
@@ -88,18 +117,26 @@ Plotter::~Plotter()
 
 }
 
-
+/*! \brief Rescales the plotter and its graphs */
 void Plotter::rescale()
 {
     interact = false;
     customPlot.rescaleAxes(true);
 }
 
+/*! \brief Sets the paint geometry for this Plotter */
 void Plotter::setPaintGeometry(QRectF r)
 {
     paintRectGeometry = r;
 }
 
+/*! \brief Add a Graph to the current Plotter
+    \param index the index of the graph
+    \param title the title of the graph
+    \param color the color of the graph
+    \param type the type of the graph (bar, lines, points)
+    \param the tickness of the graph
+*/
 int Plotter::addGraph(int index, QString title,QString color,QString type,int size)
 {
     // Adding a graph
@@ -152,8 +189,7 @@ int Plotter::addGraph(int index, QString title,QString color,QString type,int si
 }
 
 
-
-
+/*! \brief Timeout on which the data is acquired */
 void Plotter::onTimeout()
 {
     if(!curr_connection){
@@ -212,7 +248,7 @@ void Plotter::onTimeout()
 }
 
 
-
+/*! \brief Clears the graphs data */
 void Plotter::clear()
 {
     for (int j=0;j < graphList.count(); j++) {
@@ -246,6 +282,7 @@ Graph::~Graph()
     clearData();
 }
 
+/*! \brief Return the graph type */
 int Graph::getType()
 {
     if(type.compare("lines") == 0){
@@ -261,21 +298,25 @@ int Graph::getType()
     return GRAPH_TYPE_LINE;
 }
 
+/*! \brief Return tickness of the graph */
 int Graph::getLineSize()
 {
     return lineSize;
 }
 
+/*! \brief Return color of the grpah */
 QString Graph::getColor()
 {
     return color;
 }
 
+/*! \brief Append the previous values acquired */
 void Graph::appendPreviousValues()
 {
     appendValues(lastY,lastT);
 }
 
+/*! \brief Append the new values acquired */
 void Graph::appendValues(float y, float t)
 {
     float _t = t;
@@ -297,18 +338,24 @@ void Graph::appendValues(float y, float t)
 
 }
 
+/*! \brief Sets the Custom Graph from the QCustomPlot class to this graph
+    \param g the Custom Graph
+*/
 void Graph::setCustomGraph(QCPGraph *g)
 {
     customGraph = g;
 }
 
+/*! \brief Sets the Custom Graph Point from the QCustomPlot class to this graph
+    \param g the Custom Graph
+*/
 void Graph::setCustomGraphPoint(QCPGraph *g)
 {
     customGraphPoint = g;
 }
 
 
-
+/*! \brief Clears the custom graph datas */
 void Graph::clearData()
 {
     if(customGraph){
@@ -354,6 +401,7 @@ Connection::~Connection()
 
 }
 
+/*! \brief Connect local port to remote port */
 void Connection::connect(const yarp::os::ContactStyle &style) {
 
     //Get the name of the port after the port is open (and therefore the real name assigned)

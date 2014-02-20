@@ -1,9 +1,20 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "applicationviewwidget.h"
 #include "ui_applicationviewwidget.h"
 #include <QMessageBox>
 #include <QMenu>
 #include <QFileDialog>
 #include "localbroker.h"
+#include "yscopewindow.h"
 
 ApplicationViewWidget::ApplicationViewWidget(Application *app,Manager *lazyManager,yarp::os::Property* config,QWidget *parent) :
     GenericViewWidget(parent), ApplicationEvent(),
@@ -63,6 +74,7 @@ ApplicationViewWidget::~ApplicationViewWidget()
     delete ui;
 }
 
+/*! \brief Create the context menu for the modules tree. */
 void ApplicationViewWidget::createModulesViewContextMenu()
 {
     modRunAction = new QAction("Run",this);
@@ -99,6 +111,7 @@ void ApplicationViewWidget::createModulesViewContextMenu()
     connect(modSelectAllAction,SIGNAL(triggered()),this,SLOT(selectAllModule()));
 }
 
+/*! \brief Create the context menu for the connections tree. */
 void ApplicationViewWidget::createConnectionsViewContextMenu()
 {
     connContex = new QMenu(ui->connectionList);
@@ -149,6 +162,7 @@ void ApplicationViewWidget::createConnectionsViewContextMenu()
 
 }
 
+/*! \brief Create the context menu for the resources tree. */
 void ApplicationViewWidget::createResourcesViewContextMenu()
 {
     resRefreshAction = new QAction("Refresh Status", this);
@@ -164,6 +178,7 @@ void ApplicationViewWidget::createResourcesViewContextMenu()
     connect(resSelectAllAction,SIGNAL(triggered()),this,SLOT(selectAllResources()));
 }
 
+/*! \brief Called when an item of the connections tree has been selected. */
 void ApplicationViewWidget::onConnectionItemSelectionChanged()
 {
     if(ui->connectionList->currentItem() == NULL){
@@ -179,6 +194,7 @@ void ApplicationViewWidget::onConnectionItemSelectionChanged()
     }
 }
 
+/*! \brief Called when an item of the modules tree has been selected. */
 void ApplicationViewWidget::onModuleItemSelectionChanged()
 {
     if(ui->moduleList->currentItem() == NULL){
@@ -198,6 +214,7 @@ void ApplicationViewWidget::onModuleItemSelectionChanged()
     }
 }
 
+/*! \brief Called when an item of the resources tree has been selected. */
 void ApplicationViewWidget::onResourceItemSelectionChanged()
 {
     if(ui->resourcesList->currentItem() == NULL){
@@ -210,8 +227,7 @@ void ApplicationViewWidget::onResourceItemSelectionChanged()
 void ApplicationViewWidget::prepareManagerFrom(Manager* lazy)
 {
 
-    manager.prepare(lazy, m_pConfig,
-                    dynamic_cast<ApplicationEvent*>(this));
+    manager.prepare(lazy, m_pConfig,dynamic_cast<ApplicationEvent*>(this));
 
     // loading application
     if(manager.loadApplication(app->getName())){
@@ -221,14 +237,12 @@ void ApplicationViewWidget::prepareManagerFrom(Manager* lazy)
     reportErrors();
 }
 
+/*! \brief Refresh the widget. */
 void ApplicationViewWidget::updateApplicationWindow()
 {
-
     ui->moduleList->clear();
     ui->connectionList->clear();
     ui->resourcesList->clear();
-
-
 
     ExecutablePContainer modules = manager.getExecutables();
     CnnContainer connections  = manager.getConnections();
@@ -322,6 +336,8 @@ void ApplicationViewWidget::updateApplicationWindow()
     }
 
 }
+
+/*! \brief Called when an item has been double clicked */
 void ApplicationViewWidget::onItemDoubleClicked(QTreeWidgetItem *it,int col)
 {
     Qt::ItemFlags tmp = it->flags();
@@ -332,6 +348,10 @@ void ApplicationViewWidget::onItemDoubleClicked(QTreeWidgetItem *it,int col)
     }
 }
 
+/*! \brief Return the editable state of an item
+    \param it The QtreeWidgetItem clicked
+    \param col the column
+*/
 bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
 {
     NodeType type = (NodeType)it->data(0,Qt::UserRole).toInt();
@@ -364,7 +384,7 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
     return false;
 }
 
-
+/*! \brief Called when the Run button has been pressed */
 bool ApplicationViewWidget::onRun()
 {
     if(manager.busy()){
@@ -397,6 +417,7 @@ bool ApplicationViewWidget::onRun()
     return true;
 }
 
+/*! \brief Called when the Stop button has been pressed */
 bool ApplicationViewWidget::onStop()
 {
     if(manager.busy()){
@@ -430,6 +451,7 @@ bool ApplicationViewWidget::onStop()
     return true;
 }
 
+/*! \brief Called when the Kill button has been pressed */
 bool ApplicationViewWidget::onKill()
 {
     if(manager.busy()){
@@ -467,6 +489,7 @@ bool ApplicationViewWidget::onKill()
     return true;
 }
 
+/*! \brief Called when the Conenct button has been pressed */
 bool ApplicationViewWidget::onConnect()
 {
     if(manager.busy()){
@@ -497,6 +520,7 @@ bool ApplicationViewWidget::onConnect()
     return true;
 }
 
+/*! \brief Called when the Disconnect button has been pressed */
 bool ApplicationViewWidget::onDisconnect()
 {
     if(manager.busy()){
@@ -528,6 +552,7 @@ bool ApplicationViewWidget::onDisconnect()
     return true;
 }
 
+/*! \brief Called when the Refresh button has been pressed */
 bool ApplicationViewWidget::onRefresh()
 {
     if(manager.busy()){
@@ -578,21 +603,27 @@ bool ApplicationViewWidget::onRefresh()
     selectAllResources(false);
 }
 
+/*! \brief Select all modules */
 void ApplicationViewWidget::selectAllModule()
 {
     selectAllModule(true);
 }
 
+/*! \brief Select all connections */
 void ApplicationViewWidget::selectAllConnections()
 {
     selectAllConnections(true);
 }
 
+/*! \brief Select all resources */
 void ApplicationViewWidget::selectAllResources()
 {
    selectAllResources(true);
 }
 
+/*! \brief Select/deselect all modules
+    \param check
+*/
 void ApplicationViewWidget::selectAllModule(bool check)
 {
     for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
@@ -601,6 +632,9 @@ void ApplicationViewWidget::selectAllModule(bool check)
     }
 }
 
+/*! \brief Select/deselect all connections
+    \param check
+*/
 void ApplicationViewWidget::selectAllConnections(bool check)
 {
     for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
@@ -609,6 +643,9 @@ void ApplicationViewWidget::selectAllConnections(bool check)
     }
 }
 
+/*! \brief Select/deselect all resources
+    \param check
+*/
 void ApplicationViewWidget::selectAllResources(bool check)
 {
     for(int i=0;i<ui->resourcesList->topLevelItemCount();i++){
@@ -617,6 +654,8 @@ void ApplicationViewWidget::selectAllResources(bool check)
     }
 }
 
+/*! \brief Select all element in the widget (modules, connections, resources)
+*/
 void ApplicationViewWidget::selectAll()
 {
     selectAllConnections(true);
@@ -624,37 +663,42 @@ void ApplicationViewWidget::selectAll()
     selectAllResources(true);
 }
 
-
+/*! \brief Run all modules in the application */
 void ApplicationViewWidget::runApplicationSet()
 {
     selectAllModule(true);
     onRun();
 }
 
+/*! \brief Stop all modules in the application */
 void ApplicationViewWidget::stopApplicationSet()
 {
     selectAllModule(true);
     onStop();
 }
 
+/*! \brief Kill all running modules in the application */
 void ApplicationViewWidget::killApplicationSet()
 {
     selectAllModule(true);
     onKill();
 }
 
+/*! \brief Connect all modules in the application to their ports using connections list*/
 void ApplicationViewWidget::connectConnectionSet()
 {
     selectAllConnections(true);
     onConnect();
 }
 
+/*! \brief Disconnect all modules in the application to their ports using connections list*/
 void ApplicationViewWidget::disconnectConnectionSet()
 {
     selectAllConnections(true);
     onDisconnect();
 }
 
+/*! \brief Refresh all*/
 void ApplicationViewWidget::refresh()
 {
     selectAllConnections(true);
@@ -664,7 +708,7 @@ void ApplicationViewWidget::refresh()
     onRefresh();
 }
 
-
+/*! \brief Report all errors*/
 void ApplicationViewWidget::reportErrors()
 {
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -686,7 +730,7 @@ void ApplicationViewWidget::reportErrors()
 }
 
 
-
+/*! \brief Export the current Graph*/
 void ApplicationViewWidget::exportGraph()
 {
     QString fileName = QFileDialog::getSaveFileName(this,"Export Graph",QApplication::applicationDirPath(),"GraphViz format (*.dot)");
@@ -703,7 +747,7 @@ void ApplicationViewWidget::exportGraph()
 }
 
 
-
+/*! \brief Launch YarpView Inspection modality*/
 void ApplicationViewWidget::onYarpView()
 {
     if(manager.busy()){
@@ -754,6 +798,7 @@ void ApplicationViewWidget::onYarpView()
     yarp::os::Time::delay(0.1);
 }
 
+/*! \brief Launch YarpHear Inspection modality*/
 void ApplicationViewWidget::onYarpHear()
 {
     if(manager.busy()){
@@ -822,6 +867,7 @@ void ApplicationViewWidget::onYarpHear()
 
 }
 
+/*! \brief Launch YarpRead Inspection modality*/
 void ApplicationViewWidget::onYarpRead()
 {
     if(manager.busy()){
@@ -883,65 +929,62 @@ void ApplicationViewWidget::onYarpRead()
 
 }
 
+/*! \brief Launch YarpScope Inspection modality*/
 void ApplicationViewWidget::onYarpScope()
 {
-//    if(manager.busy()){
-//        return;
-//    }
-//    ErrorLogger* logger  = ErrorLogger::Instance();
+    if(manager.busy()){
+        return;
+    }
+    ErrorLogger* logger  = ErrorLogger::Instance();
 
-//    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
-//        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
-//        if(it->isSelected()){
-//            QString from = it->text(3);
-//            QString to = QString("/inspect").arg(from);
-//            QString env = QString("YARP_PORT_PREFIX=%1").arg(to);
-//            to += "/yarpscope";
+    YscopeWindow dlg;
+    dlg.setModal(true);
+    if(dlg.exec() != QDialog::Accepted){
+        return;
+    }
+    int strIndex = dlg.getIndex();
 
-//            QString param;
-//            param = QString("--title %1"<< from << ":" << strIndex << " --bgcolor white --color blue --graph_size 2 --index " + strIndex;
-//        }
-//    }
 
-//    for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
-//    {
-//        Gtk::TreeModel::Row row;
-//        if(getConRowByID(m_ConnectionIDs[i], &row))
-//        {
 
-//            OSTRINGSTREAM param;
-//            param << "--title "<< from << ":" << strIndex << " --bgcolor white --color blue --graph_size 2 --index " + strIndex;
-//            LocalBroker launcher;
-//            if(launcher.init("yarpscope", param.str().c_str(), NULL, NULL, NULL, env.c_str()))
-//            {
-//                if(!launcher.start() && strlen(launcher.error()))
-//                {
-//                    OSTRINGSTREAM msg;
-//                    msg<<"Error while launching yarpscope";
-//                    msg<<". "<<launcher.error();
-//                    logger->addError(msg);
-//                    reportErrors();
-//                }
-//                else
-//                {
-//                    // waiting for the port to get open
-//                    double base = yarp::os::Time::now();
-//                    while(!timeout(base, 3.0))
-//                        if(launcher.exists(to.c_str())) break;
-//                    if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
-//                    {
-//                        OSTRINGSTREAM msg;
-//                        msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
-//                        logger->addError(msg);
-//                        launcher.stop();
-//                        reportErrors();
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    yarp::os::Time::delay(0.1);
-//    m_refTreeConSelection->unselect_all();
+
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
+        if(it->isSelected()){
+            QString from = it->text(3);
+            QString to = QString("/inspect").arg(from);
+            QString env = QString("YARP_PORT_PREFIX=%1").arg(to);
+            to += "/yarpscope";
+
+            QString param;
+            param = QString("--title %1:%2 --bgcolor white --color blue --graph_size 2 --index %2").arg(from).arg(strIndex);
+
+
+            LocalBroker launcher;
+            if(launcher.init("yarpscope", param.toLatin1().data(), NULL, NULL, NULL, env.toLatin1().data())){
+                if(!launcher.start() && strlen(launcher.error())){
+                    QString msg;
+                    msg = QString("Error while launching yarpscope. %1").arg(launcher.error());
+                    logger->addError(msg.toLatin1().data());
+                    reportErrors();
+                }
+                else{
+                    // waiting for the port to get open
+                    double base = yarp::os::Time::now();
+                    while(!timeout(base, 3.0))
+                        if(launcher.exists(to.toLatin1().data())) break;
+                    if(!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")){
+                        QString msg;
+                        msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
+                        logger->addError(msg.toLatin1().data());
+                        launcher.stop();
+                        reportErrors();
+                    }
+                }
+            }
+
+        }
+    }
+    yarp::os::Time::delay(0.1);
 }
 
 
@@ -957,7 +1000,7 @@ bool ApplicationViewWidget::timeout(double base, double timeout)
 
 
 
-
+/*! \brief Tells if a modules is in running state*/
 bool ApplicationViewWidget::isRunning()
 {
     for(int i=0; i< ui->moduleList->topLevelItemCount();i++){
@@ -968,6 +1011,9 @@ bool ApplicationViewWidget::isRunning()
     return false;
 }
 
+/*! \brief Called when a modlue has been started
+    \param which
+*/
 void ApplicationViewWidget::onModStart(int which)
 {
     QTreeWidgetItem *it = ui->moduleList->topLevelItem(which);
@@ -981,6 +1027,10 @@ void ApplicationViewWidget::onModStart(int which)
     }
     reportErrors();
 }
+
+/*! \brief Called when a modlue has been stopped
+    \param which
+*/
 void ApplicationViewWidget::onModStop(int which)
 {
     QTreeWidgetItem *it = ui->moduleList->topLevelItem(which);
@@ -991,7 +1041,15 @@ void ApplicationViewWidget::onModStop(int which)
     }
     reportErrors();
 }
+/*! \brief Called when a modlue has writes on stdout
+    \param which
+    \param msg the message
+*/
 void ApplicationViewWidget::onModStdout(int which, const char* msg) {}
+
+/*! \brief Called when a connection has been performed
+    \param which
+*/
 void ApplicationViewWidget::onConConnect(int which)
 {
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
@@ -1009,6 +1067,10 @@ void ApplicationViewWidget::onConConnect(int which)
         reportErrors();
 
 }
+
+/*! \brief Called when a disconnection has been performed
+    \param which
+*/
 void ApplicationViewWidget::onConDisconnect(int which)
 {
     QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
@@ -1019,6 +1081,10 @@ void ApplicationViewWidget::onConDisconnect(int which)
     }
     reportErrors();
 }
+
+/*! \brief Called when a resource became avaible
+    \param which
+*/
 void ApplicationViewWidget::onResAvailable(int which)
 {
 
@@ -1041,6 +1107,10 @@ void ApplicationViewWidget::onResAvailable(int which)
 
     reportErrors();
 }
+
+/*! \brief Called when a resource become unavaible
+    \param which
+*/
 void ApplicationViewWidget::onResUnAvailable(int which)
 {
     QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
@@ -1054,12 +1124,75 @@ void ApplicationViewWidget::onResUnAvailable(int which)
             it->setTextColor(3,QColor("#BF0303"));
         }
     }
-
-
     reportErrors();
 }
-void ApplicationViewWidget::onConAvailable(int from, int to) {}
-void ApplicationViewWidget::onConUnAvailable(int from, int to) {}
-void ApplicationViewWidget::onError(void) {}
-void ApplicationViewWidget::onLoadBalance(void) {}
 
+/*! \brief Called when a connection become avaible
+    \param which
+*/
+void ApplicationViewWidget::onConAvailable(int from, int to)
+{
+    if(from >= 0){
+        int row;
+        if(getConRowByID(from, &row))
+            ui->connectionList->topLevelItem(row)->setTextColor(3,QColor("#008C00"));
+    }
+
+    if(to >= 0){
+        int row;
+        if(getConRowByID(to, &row))
+            ui->connectionList->topLevelItem(row)->setTextColor(4,QColor("#008C00"));
+    }
+    reportErrors();
+}
+
+/*! \brief Called when a connection become unavaible
+    \param which
+*/
+void ApplicationViewWidget::onConUnAvailable(int from, int to)
+{
+    if(from >= 0){
+        int row;
+        if(getConRowByID(from, &row))
+            ui->connectionList->topLevelItem(row)->setTextColor(3,QColor("#BF0303"));
+    }
+
+    if(to >= 0){
+        int row;
+        if(getConRowByID(to, &row))
+            ui->connectionList->topLevelItem(row)->setTextColor(4,QColor("#BF0303"));
+    }
+    reportErrors();
+}
+
+/*! \brief Called whne an error occurred
+
+*/
+void ApplicationViewWidget::onError(void)
+{
+    reportErrors();
+}
+
+/*! \brief Refresh all and reports errors
+*/
+void ApplicationViewWidget::onLoadBalance(void)
+{
+    updateApplicationWindow();
+    reportErrors();
+}
+/*! \brief Get the connection row by id
+    \param id the requested id
+    \param the output row
+*/
+bool ApplicationViewWidget::getConRowByID(int id, int *row)
+{
+    for(int i=0;i< ui->connectionList->topLevelItemCount();i++){
+        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
+
+        if(it->text(1).toInt() == id){
+            *row = i;
+            return true;
+        }
+    }
+    return false;
+}

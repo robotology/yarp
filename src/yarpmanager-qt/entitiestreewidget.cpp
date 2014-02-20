@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Davide Perrone
+ * Date: Feb 2014
+ * email:   dperrone@aitek.it
+ * website: www.aitek.it
+ *
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include "entitiestreewidget.h"
 #include "ymm-dir.h"
 #include <QProcess>
@@ -57,6 +67,9 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 
 }
 
+/*! \brief Add an application to the tree
+    \param app the application
+*/
 void EntitiesTreeWidget::addApplication(Application *app)
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(applicationNode,QStringList() << app->getName());
@@ -81,6 +94,9 @@ void EntitiesTreeWidget::addApplication(Application *app)
     xml->setData(0,Qt::UserRole,NODE_FILENAME);
 }
 
+/*! \brief Add a resource to the tree
+    \param comp the resource
+*/
 void EntitiesTreeWidget::addComputer(Computer* comp)
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(resourcesNode,QStringList() << comp->getName());
@@ -103,6 +119,9 @@ void EntitiesTreeWidget::addComputer(Computer* comp)
     xml->setData(0,Qt::UserRole,NODE_FILENAME);
 }
 
+/*! \brief Add a module to the tree
+    \param mod the module
+*/
 void EntitiesTreeWidget::addModule(Module* mod)
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(modulesNode,QStringList() << mod->getName());
@@ -125,6 +144,9 @@ void EntitiesTreeWidget::addModule(Module* mod)
     xml->setData(0,Qt::UserRole,NODE_FILENAME);
 }
 
+/*! \brief Add an application template to the tree
+    \param tmp the application template
+*/
 void EntitiesTreeWidget::addAppTemplate(AppTemplate* tmp)
 {
 
@@ -136,7 +158,14 @@ void EntitiesTreeWidget::addAppTemplate(AppTemplate* tmp)
     item->setIcon(0,QIcon(":/images/apptemplate_ico.png"));
 }
 
+/*! \brief Called when an item has been double clicked
 
+    when an elemtn of the entities tree has been double clicked it will open its relative view
+    in the main window
+
+    \param item the item has been double clicked
+    \param column the column has been double clicked
+*/
 void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 {
     Q_UNUSED(column);
@@ -178,6 +207,8 @@ void EntitiesTreeWidget::onItemDoubleClicked(QTreeWidgetItem *item,int column)
 }
 
 
+/*! \brief Clear the application node
+*/
 void EntitiesTreeWidget::clearApplication()
 {
     if(!applicationNode){
@@ -188,6 +219,8 @@ void EntitiesTreeWidget::clearApplication()
     }
 }
 
+/*! \brief Clear the module node
+*/
 void EntitiesTreeWidget::clearModules()
 {
     if(!modulesNode){
@@ -198,6 +231,8 @@ void EntitiesTreeWidget::clearModules()
     }
 }
 
+/*! \brief Clear the resource node
+*/
 void EntitiesTreeWidget::clearResources()
 {
     if(!resourcesNode){
@@ -208,6 +243,8 @@ void EntitiesTreeWidget::clearResources()
     }
 }
 
+/*! \brief Clear the application template node
+*/
 void EntitiesTreeWidget::clearTemplates()
 {
     if(!templatesNode){
@@ -218,7 +255,9 @@ void EntitiesTreeWidget::clearTemplates()
     }
 }
 
-
+/*! \brief Called when a context menu has been requested
+    \param p the point where the context menu should appear
+*/
 void EntitiesTreeWidget::onContext(QPoint p)
 {
     QTreeWidgetItem *it = itemAt(p);
@@ -247,6 +286,10 @@ void EntitiesTreeWidget::onContext(QPoint p)
     }
 }
 
+/*! \brief Called when a file has been loaded.
+ *
+ *  It's the same as double click an item
+*/
 void EntitiesTreeWidget::onLoadFile()
 {
     QTreeWidgetItem *it = currentItem();
@@ -276,7 +319,10 @@ void EntitiesTreeWidget::onLoadFile()
 
 }
 
-
+/*! \brief Edit an item.
+ *
+ * Edit only leafs element of the tree that are xml representing applications, modules, or templates
+*/
 void EntitiesTreeWidget::onEdit()
 {
     QTreeWidgetItem *item = currentItem();
@@ -303,6 +349,8 @@ void EntitiesTreeWidget::onEdit()
 
 }
 
+/*! \brief Remove the selected entity node
+*/
 void EntitiesTreeWidget::onRemove()
 {
     QTreeWidgetItem *item = currentItem();
