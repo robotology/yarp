@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Alex Bernardino, Carlos Beltran-Gonzalez
+ * Copyright (C) 2007 Alex Bernardino, Carlos Beltran-Gonzalez, Francesco Giovannini (francesco.giovannini@iit.it)
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -43,8 +43,7 @@ public:
         read (POSIX). */
     /** int readtimeoutmsec; Specifies the time to wait before returning from read. Negative value
         means infinite timeout. */
-    /** bool parityenb; Enable/disable parity checking. */
-    /** const char *paritymode; Specifies the parity mode. POSIX supports "even" and "odd" parity.
+    /** const char *paritymode; Specifies the parity mode (EVEN, ODD, NONE). POSIX supports "even" and "odd" parity.
         Additionally Win32 supports "mark" and "space" parity modes. */
     /** bool ctsenb; Enable & set CTS mode. Note that RTS & CTS are enabled/disabled
         together on some systems (RTS/CTS is enabled if either
@@ -94,7 +93,7 @@ public:
 
     /**
      * Configures the device.
-     *
+     * @param The serial device configuration object
      * @return true on success
      */
     bool open(SerialDeviceDriverSettings& config);

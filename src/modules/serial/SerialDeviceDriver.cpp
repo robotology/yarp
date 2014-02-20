@@ -64,7 +64,7 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     config2.SerialParams.readmincharacters = config.check("readmincharacters",Value(1),"Specifies the minimum number of characters for non-canonical read (POSIX).").asInt();
     config2.SerialParams.readtimeoutmsec = config.check("readtimeoutmsec",Value(100),"Specifies the time to wait before returning from read. Negative value means infinite timeout.").asInt();
     // config2.SerialParams.parityenb = config.check("parityenb",Value(0),"Enable/disable parity checking.").asInt();
-	yarp::os::ConstString temp = config.check("paritymode",Value("EVEN"),"Specifies the parity mode. POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes.").asString();
+	yarp::os::ConstString temp = config.check("paritymode",Value("EVEN"),"Specifies the parity mode (EVEN, ODD, NONE). POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes.").asString().c_str();
 	config2.SerialParams.paritymode = temp.c_str();
     config2.SerialParams.ctsenb = config.check("ctsenb",Value(0),"Enable & set CTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).").asInt();
     config2.SerialParams.rtsenb = config.check("rtsenb",Value(0),"Enable & set RTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).\n- 0 = Disable RTS.\n- 1 = Enable RTS.\n- 2 = Enable RTS flow-control handshaking (Win32).\n- 3 = Specifies that RTS line will be high if bytes are available for transmission.\nAfter transmission RTS will be low (Win32).").asInt();
@@ -80,31 +80,42 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
 }
 
 bool SerialDeviceDriver::close(void) {
+    _serial_dev.close();
     return true;
 }
 
 bool SerialDeviceDriver::send(const Bottle& msg)
 {
-	if (verbose) ACE_OS::printf("Received string: %s\n", msg.get(0).asString().c_str());
+    if (msg.size() > 0) {
+	    if (verbose) ACE_OS::printf("Sending string: %s\n", msg.get(0).asString().c_str());
     
-	int message_size = msg.get(0).asString().length();
-    // Write message in the serial device
-    ssize_t bytes_written = _serial_dev.send_n((void *)msg.get(0).asString().c_str(), message_size);
+        // Write message to the serial device
+	    int message_size = msg.get(0).asString().length();
+        ssize_t bytes_written = _serial_dev.send_n((void *)msg.get(0).asString().c_str(), message_size);
 
-    if (bytes_written == -1)
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+        if (bytes_written == -1) {
+            ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+            return false;
+        }
+        
+    } else {
+        if (verbose) ACE_OS::printf("The input command bottle is empty. \n");
+        return false;
+    }
     return true;
 } 
 
 bool SerialDeviceDriver::send(char *msg, size_t size)
 {
-    if (verbose) ACE_OS::printf("Received string: %s\n", msg);
+    if (verbose) ACE_OS::printf("Sending string: %s\n", msg);
     
 	// Write message in the serial device
     ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
 
-    if (bytes_written == -1)
+    if (bytes_written == -1) {
         ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+        return false;
+    }
     return true;
 }
 
@@ -117,7 +128,7 @@ int SerialDeviceDriver::receiveChar(char& c)
 
     if (bytes_read == -1)
 	{
-		ACE_ERROR((LM_ERROR, ACE_TEXT ("Error on SerialDeviceDriver : receive \n")));
+		ACE_ERROR((LM_ERROR, ACE_TEXT ("Error in SerialDeviceDriver::receive(). \n")));
 		return 0;
 	}
 
@@ -169,20 +180,23 @@ int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
 
 bool SerialDeviceDriver::receive(Bottle& msg)
 {
+    const int msgSize = 1001;
     char message[1001];
 
     //this function call blocks
-    ssize_t bytes_read = _serial_dev.recv ((void *) message, 1000);
+    ssize_t bytes_read = _serial_dev.recv ((void *) message, msgSize - 1);
 
-    if (bytes_read == -1)
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("Error on SerialDeviceDriver : receive \n")));
+    if (bytes_read == -1) {
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("Error in SerialDeviceDriver::receive(). \n")));
+        return false;
+    }
 
     if (bytes_read == 0)  //nothing there
         return true;
         
     message[bytes_read] = 0;
 
-    if (verbose) ACE_OS::printf("Datareceived in Serial DeviceDriver receive:#%s#\n",message);
+    if (verbose) ACE_OS::printf("Data received from serial device: #%s# \n",message);
 
     // Put message in the bottle
     msg.addString(message);
