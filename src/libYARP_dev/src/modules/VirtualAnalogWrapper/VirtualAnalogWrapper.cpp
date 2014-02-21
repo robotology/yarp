@@ -276,6 +276,7 @@ bool VirtualAnalogWrapper::perform_first_check(int elems)
         if (mChan2Board[i]==-1 || mChan2BAddr[i]==-1)
         {
             cerr << "Error: invalid map entries in networks section, failed runtime check" << endl;
+            cerr << "i: " << i << "mChan2Board[i] is " << mChan2Board[i] << " chan2add is " << mChan2BAddr[i] << endl;
             return false;
         }
     }
@@ -332,13 +333,13 @@ void VirtualAnalogWrapper::run()
                 break;
 
                 case 4: // torso
-                    if (perform_first_check(6)==false) break;
+                    if (perform_first_check(3)==false) break;
                     mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asDouble()); //torso yaw (respect gravity)
                     mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asDouble()); //torso roll (lateral movement)
                     mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asDouble()); //torso pitch (front-back movement)
-                    mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],0.0);
-                    mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],0.0);
-                    mSubdevices[mChan2Board[5]].setTorque(mChan2BAddr[5],0.0);
+//                    mSubdevices[mChan2Board[3]].setTorque(mChan2BAddr[3],0.0);
+//                    mSubdevices[mChan2Board[4]].setTorque(mChan2BAddr[4],0.0);
+//                    mSubdevices[mChan2Board[5]].setTorque(mChan2BAddr[5],0.0);
                 break;
 
                 default:
