@@ -1812,6 +1812,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     for (fn_iter = functions.begin() ; fn_iter != functions.end(); fn_iter++) {
         indent(f_cpp_) << "helpString.push_back(\"" << (*fn_iter)->get_name() << "\");" << endl;
     }
+    indent(f_cpp_) << "helpString.push_back(\"help\");" << endl;
     indent_down();
     indent(f_cpp_) << "}" << endl;
     indent(f_cpp_) << "else {"<<endl;
@@ -1826,6 +1827,16 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       indent_down();
       indent(f_cpp_) << "}" <<endl;
     }
+
+    indent(f_cpp_) << "if (functionName==\"help\") {" << endl;
+    indent_up();
+    indent(f_cpp_) << "helpString.push_back(\"std::vector<std::string> help(const std::string& functionName=\\\"--all\\\")\");" <<endl;
+    indent(f_cpp_) << "helpString.push_back(\"Return list of available commands, or help message for a specific function\");" <<endl;
+    indent(f_cpp_) << "helpString.push_back(\"@param functionName name of command for which to get a detailed description. If none or '--all' is provided, print list of available commands\");" <<endl;
+    indent(f_cpp_) << "helpString.push_back(\"@return list of strings (one string per line)\");" <<endl;
+    indent_down();
+    indent(f_cpp_) << "}" <<endl;
+
     indent_down();
     indent(f_cpp_) << "}" <<endl;
     indent(f_cpp_) << "if ( helpString.empty()) helpString.push_back(\"Command not found\");"<<endl;

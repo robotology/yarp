@@ -210,6 +210,9 @@ endif()
 find_package(SQLite QUIET)
 checkbuildandset_dependency(SQLite)
 
+find_package(Readline)
+checkandset_dependency(Readline)
+
 if(CREATE_LIB_MATH)
     find_package(GSL QUIET)
     checkandset_dependency(GSL)
@@ -292,6 +295,7 @@ print_dependency(GtkDatabox)
 print_dependency(GtkDataboxMM)
 print_dependency(GooCanvas)
 print_dependency(GooCanvasMM)
+print_dependency(Readline)
 
 
 #########################################################################

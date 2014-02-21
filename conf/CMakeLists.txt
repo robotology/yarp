@@ -33,7 +33,8 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindOpenCV.cmake
                      FindPortAudio.cmake
                      FindSQLite.cmake
-                     FindTinyXML.cmake)
+                     FindTinyXML.cmake
+                     FindReadline.cmake)
 
 install(FILES ${YARP_CMAKE_FILES}
        COMPONENT scripts

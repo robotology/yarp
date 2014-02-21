@@ -51,6 +51,99 @@
 
 #include <stdio.h>
 
+#ifdef WITH_READLINE
+    #include <readline/readline.h>
+    #include <readline/history.h>
+    #include <vector>
+    #include <yarp/os/ConstString.h>
+    static std::vector<yarp::os::impl::String> commands;
+    static yarp::os::Port* rpcHelpPort=NULL;
+    static bool commandListInitialized=false;
+
+    static char* dupstr(char* s)
+    {
+        char *r;
+        r = (char*) malloc ((strlen (s) + 1));
+        strcpy (r, s);
+        return (r);
+    };
+    /* Generator function for command completion.  STATE lets us know whether
+   to start from scratch; without any state (i.e. STATE == 0), then we
+   start at the top of the list. */
+    static char* command_generator (const char* text, int state)
+    {
+        static int list_index, len;
+        char *name;
+
+        /* if this is a new word to complete, initialize now.  this includes
+            saving the length of text for efficiency, and initializing the index
+            variable to 0. */
+        if (!state)
+            {
+            list_index = 0;
+            len = strlen (text);
+            }
+
+        if (!commandListInitialized)
+        {
+            commands.clear();
+            yarp::os::Bottle helpCommand, helpBottle;
+            helpCommand.addString("help");
+            bool helpOk=false;
+            if(rpcHelpPort)
+                helpOk = rpcHelpPort->write(helpCommand,helpBottle);
+            if(helpOk)
+            {
+                yarp::os::Bottle* cmdList=NULL;
+                if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==VOCAB4('m','a','n','y') )
+                {
+                    cmdList=helpBottle.get(1).asList();
+                }
+                else
+                    cmdList=helpBottle.get(0).asList();
+                if (cmdList && cmdList->get(0).asString() == "*** Available commands:")
+                {
+                    for (int i=1; i<cmdList->size(); ++i)
+                        commands.push_back(cmdList->get(i).asString());
+                }
+            }
+            commands.push_back(" ");
+            commandListInitialized=true;
+        }
+        while ((list_index<commands.size()) && (name = (char*)commands[list_index].c_str()))
+            {
+            list_index++;
+            if (strncmp (name, text, len) == 0)
+                return (dupstr(name));
+            }
+
+        /* if no names matched, then return null. */
+        return ((char *)NULL);
+    };
+    /* Attempt to complete on the contents of TEXT.  START and END show the
+   region of TEXT that contains the word to complete.  We can use the
+   entire line in case we want to do some simple parsing.  Return the
+   array of matches, or NULL if there aren't any. */
+    static char ** my_completion (const char* text, int start, int end)
+    {
+        char **matches;
+        matches = (char **)NULL;
+
+        /* If this word is at the start of the line, then it is a command
+        to complete. If we are completing after "help ", it is a command again.
+        Othwerwise, stop completing. */
+        if (start == 0)
+            matches = rl_completion_matches(text, &command_generator);
+        else if (start == 5 && strncmp (text, "help ", 5))
+            matches = rl_completion_matches(text, &command_generator);
+        else
+            rl_attempted_completion_over=1;
+
+        return (matches);
+    };
+
+#endif
+
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
@@ -120,9 +213,38 @@ static void companion_install_handler() {
     #endif
 }
 
+static char* szLine = (char*)NULL;
+static bool readlineEOF=false;
+static bool EOFreached()
+{
+#ifdef WITH_READLINE
+    return readlineEOF;
+#else
+    return feof(stdin);
+#endif
+};
+
 static String getStdin() {
-    bool done = false;
     String txt = "";
+
+#ifdef WITH_READLINE
+    if(szLine)
+    {
+        free(szLine);
+        szLine = (char*)NULL;
+    }
+
+    szLine = readline(">>");
+    if(szLine && *szLine)
+    {
+        txt = szLine;
+        add_history(szLine);
+    }
+    else if (!szLine)
+        readlineEOF=true;
+#else
+
+    bool done = false;
     char buf[2048];
     while (!done) {
         char *result = ACE_OS::fgets(buf,sizeof(buf),stdin);
@@ -139,6 +261,9 @@ static String getStdin() {
             done = true;
         }
     }
+
+#endif
+
     return txt;
 }
 
@@ -1089,7 +1214,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
     }
     while(ok) {
         String txt = getStdin();
-        if (feof(stdin)) {
+        if (EOFreached()) {
             break;
         }
         Bottle cmd(txt.c_str()),reply;
@@ -1959,9 +2084,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     }
 
 
-    while (!feof(stdin)) {
+    while (!EOFreached()) {
         String txt = getStdin();
-        if (!feof(stdin)) {
+        if (!EOFreached()) {
             if (txt.length()>0) {
                 if (txt[0]<32 && txt[0]!='\n' &&
                     txt[0]!='\r' && txt[0]!='\t') {
@@ -2037,8 +2162,11 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     int resendCount = 0;
 
     bool firstTimeRound = true;
+#ifdef WITH_READLINE
+    rl_attempted_completion_function = my_completion;
+#endif
 
-    while (!feof(stdin)) {
+    while (!EOFreached()) {
         Port port;
         port.openFake(connectionName);
         if (!port.addOutput(targetName)) {
@@ -2062,13 +2190,16 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
             }
         }
 
-        while (port.getOutputCount()==1&&!feof(stdin)) {
+#ifdef WITH_READLINE
+    rpcHelpPort = &port;
+#endif
+        while (port.getOutputCount()==1&&!EOFreached()) {
             String txt;
             if (!resendFlag) {
                 txt = getStdin();
             }
 
-            if (!feof(stdin)) {
+            if (!EOFreached()) {
                 if (txt.length()>0) {
                     if (txt[0]<32 && txt[0]!='\n' &&
                         txt[0]!='\r') {
@@ -2125,11 +2256,11 @@ String Companion::readString(bool *eof) {
 
     String txt;
 
-    if (!feof(stdin)) {
+    if (!EOFreached()) {
         txt = getStdin();
     }
 
-    if (feof(stdin)) {
+    if (EOFreached()) {
         end = true;
     } else if (txt.length()>0 && txt[0]<32 && txt[0]!='\n' &&
                txt[0]!='\r') {
