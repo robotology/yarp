@@ -2,23 +2,19 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 
-#include "arbitrator.h"
-#include "binexparser.h"
+#include <yarp/manager/arbitrator.h>
+#include <yarp/manager/binexparser.h>
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/sig/Vector.h>
 
-using namespace std;
-using namespace yarp::sig;
-
-#ifdef WITH_YARPMATH       
-#include <math.h>
+#ifdef WITH_YARPMATH
+#include <cmath>
 #include <yarp/math/Math.h>
 //#include <gsl/gsl_version.h>
 //#include <gsl/gsl_math.h>
@@ -26,23 +22,29 @@ using namespace yarp::sig;
 #endif
 
 
+
+using namespace std;
+using namespace yarp::sig;
+using namespace yarp::manager;
+
+
 /**
  * Class Arbitrator
  */
-void Arbitrator::addRule(const char* con, const char* rule) 
-{ 
+void Arbitrator::addRule(const char* con, const char* rule)
+{
     if(con && rule)
     {
-        rules[con] = rule;        
+        rules[con] = rule;
         std::map<std::string, double> w;
         alphas[con] = w;
         biases[con] = 1.0;
-    }            
+    }
 }
 
-void Arbitrator::removeRule(const char* con) 
+void Arbitrator::removeRule(const char* con)
 {
-    rules.erase(rules.find(con));           
+    rules.erase(rules.find(con));
     alphas.erase(alphas.find(con));
     biases.erase(biases.find(con));
 
@@ -56,7 +58,7 @@ void Arbitrator::removeRule(const char* con)
         for(jtr=w.begin(); jtr!=w.end(); jtr++)
             if(jtr->first == string(con))
                 w.erase(jtr);
-    } 
+    }
     */
 }
 
@@ -73,13 +75,13 @@ bool Arbitrator::trainWeights(const char* opnd)
         std::map<std::string, double> w;
         alphas[opnd] = w;
         biases[opnd] = 1.0;
-        return true; 
+        return true;
     }
 
     BinaryExpParser parser;
     std::map<string, string>::iterator itr;
     for(itr=rules.begin(); itr!=rules.end(); itr++)
-        parser.addRestrictedOperand((itr->first).c_str());         
+        parser.addRestrictedOperand((itr->first).c_str());
 
     // parsing the compact logic
     rule = string(opnd) + " : " + rule;
@@ -87,7 +89,7 @@ bool Arbitrator::trainWeights(const char* opnd)
         return false;
 
     // trining the weights
-    LinkTrainer trainer; 
+    LinkTrainer trainer;
     if(trainer.train(parser.getTruthTable()))
     {
         biases[opnd] = trainer.getBias();
@@ -102,14 +104,14 @@ bool Arbitrator::trainWeights(const char* opnd)
         {
             w[itr->first] = alf[i];
             i++;
-        }            
+        }
         alphas[opnd] = w;
     }
     else
     {
         logger->addError("Maximum number of iterations is reached without finding any solution. Check for the correctness of the expression logic.");
         return false;
-    }        
+    }
 
     return true;
 }
@@ -121,7 +123,7 @@ bool Arbitrator::trainWeights(void)
     bool bAllOk = true;
     std::map<string, string>::iterator itr;
     for(itr=rules.begin(); itr!=rules.end(); itr++)
-        bAllOk &= trainWeights((itr->first).c_str());         
+        bAllOk &= trainWeights((itr->first).c_str());
 
     return bAllOk;
 }
@@ -133,7 +135,7 @@ bool Arbitrator::validate(void)
     if(!trainWeights())
         return false;
 
-#ifdef WITH_YARPMATH        
+#ifdef WITH_YARPMATH
 //#if (GSL_MAJOR_VERSION >= 1 && GSL_MINOR_VERSION >= 14)
     int n = alphas.size();
     if(n == 0)
@@ -154,13 +156,13 @@ bool Arbitrator::validate(void)
             if(w.find(opnd) != w.end())
                 A(row,col) = w[opnd];
             else
-                A(row,col) = 0.0;    
-            col++;    
-        }       
-        row++; 
+                A(row,col) = 0.0;
+            col++;
+        }
+        row++;
     }
     //printf("%s\n\n", A.toString(1).c_str());
-    
+
     yarp::sig::Vector real;
     yarp::sig::Vector img;
     yarp::math::eingenValues(A, real, img);
@@ -179,7 +181,7 @@ bool Arbitrator::validate(void)
     /*
     gsl_vector_complex *eval = gsl_vector_complex_alloc(n);
     gsl_matrix_complex *evec = gsl_matrix_complex_alloc(n, n);
-    gsl_eigen_nonsymmv_workspace * w = gsl_eigen_nonsymmv_alloc(n);    
+    gsl_eigen_nonsymmv_workspace * w = gsl_eigen_nonsymmv_alloc(n);
 
     gsl_eigen_nonsymmv ((gsl_matrix *)A.getGslMatrix(), eval, evec, w);
 
@@ -199,7 +201,7 @@ bool Arbitrator::validate(void)
 
     gsl_eigen_nonsymmv_free(w);
     gsl_vector_complex_free(eval);
-    gsl_matrix_complex_free(evec);        
+    gsl_matrix_complex_free(evec);
     return bStable;
     */
 
@@ -214,5 +216,3 @@ bool Arbitrator::validate(void)
 #endif //WITH_YARPMATH
 
 }
-
-

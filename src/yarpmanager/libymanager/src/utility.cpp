@@ -2,32 +2,37 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+
+#include <yarp/manager/utility.h>
+#include <yarp/manager/graph.h>
+#include <yarp/manager/module.h>
+#include <yarp/manager/application.h>
+#include <yarp/manager/resource.h>
+
+#include <cstdio>
 #include <fstream>
-#include "utility.h"
-#include "graph.h"
-#include "module.h"
-#include "application.h"
-#include "resource.h"
-#include <stdio.h>
+
+
+using namespace yarp::manager;
+
 
 //#if defined(_MSC_VER) && (_MSC_VER == 1600)
 
 StrStream::StrStream(void) { }
 
-StrStream::StrStream(const std::string str) { 
-    dummyStr = str; 
+StrStream::StrStream(const std::string str) {
+    dummyStr = str;
 }
 
 StrStream::~StrStream() { }
 
-std::string StrStream::str(void) { 
-    return dummyStr; 
-} 
+std::string StrStream::str(void) {
+    return dummyStr;
+}
 
 StrStream& StrStream::operator<<(StrStream &oss) {
     dummyStr += oss.str();
@@ -92,33 +97,33 @@ std::ostream& operator << (std::ostream &os , StrStream& sstr)
 
 /**
  * Singleton class ErrorLogger
- */  
+ */
 
 // Global static pointer used to ensure a single instance of the class.
-ErrorLogger* ErrorLogger::pInstance = NULL;  
- 
+ErrorLogger* ErrorLogger::pInstance = NULL;
+
 ErrorLogger* ErrorLogger::Instance(void)
 {
     if (!pInstance)
       pInstance = new ErrorLogger;
     return pInstance;
-} 
+}
 
-void ErrorLogger::addWarning(const char* szWarning) { 
-    if(szWarning) 
+void ErrorLogger::addWarning(const char* szWarning) {
+    if(szWarning)
         warnings.push_back(string(szWarning));
 }
 
-void ErrorLogger::addWarning(const string &str) { 
+void ErrorLogger::addWarning(const string &str) {
     warnings.push_back(str);
 }
 
-void ErrorLogger::addWarning(OSTRINGSTREAM &stream) { 
-    addWarning(stream.str());   
+void ErrorLogger::addWarning(OSTRINGSTREAM &stream) {
+    addWarning(stream.str());
 }
 
 void ErrorLogger::addError(const char* szError) {
-    if(szError) 
+    if(szError)
         errors.push_back(string(szError));
 }
 
@@ -130,13 +135,13 @@ void ErrorLogger::addError(OSTRINGSTREAM &stream) {
     addError(stream.str());
 }
 
-const char* ErrorLogger::getLastError(void) { 
+const char* ErrorLogger::getLastError(void) {
     if(errors.empty())
         return NULL;
     static string msg;
     msg = errors.back();
     errors.pop_back();
-    return msg.c_str();         
+    return msg.c_str();
 }
 
 const char* ErrorLogger::getLastWarning(void) {
@@ -145,11 +150,11 @@ const char* ErrorLogger::getLastWarning(void) {
     static string msg;
     msg = warnings.back();
     warnings.pop_back();
-    return msg.c_str(); 
+    return msg.c_str();
 }
 
-void ErrorLogger::clear(void) { 
-    errors.clear(); warnings.clear(); 
+void ErrorLogger::clear(void) {
+    errors.clear(); warnings.clear();
 }
 
 int ErrorLogger::errorCount(void) {
@@ -240,7 +245,7 @@ const string GRAPH_LEGEND =
 /*
 Carrier strToCarrier(const char* szCar)
 {
-    if(szCar) 
+    if(szCar)
     {
         if(compareString(szCar, "TCP"))
             return TCP;
@@ -252,12 +257,12 @@ Carrier strToCarrier(const char* szCar)
             return SHMEM;
         if(compareString(szCar, "TEXT"))
             return TEXT;
-    }   
-    return UNKNOWN; 
+    }
+    return UNKNOWN;
 }
 
 const char* carrierToStr(Carrier cr)
-{   
+{
     switch(cr){
         case TCP:{return("tcp");}
         case UDP:{return("udp");}
@@ -265,13 +270,13 @@ const char* carrierToStr(Carrier cr)
         case SHMEM:{return("shmem");}
         case TEXT:{return("text");}
         default:{return("tcp");}
-     }; 
+     };
 }
 */
 
-OS strToOS(const char* szOS)
+OS yarp::manager::strToOS(const char* szOS)
 {
-    if(szOS) 
+    if(szOS)
     {
         if(compareString(szOS, "LINUX"))
             return LINUX;
@@ -279,56 +284,56 @@ OS strToOS(const char* szOS)
             return WINDOWS;
         if (compareString(szOS, "MAC"))
             return MAC;
-    }   
+    }
     return OTHER;
 }
 
 
-bool compareString(const char* szFirst, const char* szSecond) 
+bool yarp::manager::compareString(const char* szFirst, const char* szSecond)
 {
     if(!szFirst && !szSecond)
-        return true; 
+        return true;
     if( !szFirst || !szSecond)
         return false;
-        
+
     string strFirst(szFirst);
     string strSecond(szSecond);
-    transform(strFirst.begin(), strFirst.end(), strFirst.begin(), 
+    transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
               (int(*)(int))toupper);
     transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
               (int(*)(int))toupper);
-    if(strFirst == strSecond) 
-        return true; 
+    if(strFirst == strSecond)
+        return true;
     return false;
 }
 
-void trimString(string& str)
+void yarp::manager::trimString(string& str)
 {
     string::size_type pos = str.find_last_not_of(' ');
-    if(pos != string::npos) 
+    if(pos != string::npos)
     {
         str.erase(pos + 1);
         pos = str.find_first_not_of(' ');
-        if(pos != string::npos) 
+        if(pos != string::npos)
             str.erase(0, pos);
     }
     else str.erase(str.begin(), str.end());
 }
 
 
-bool exportDotGraph(Graph& graph, const char* szFileName)
+bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
 {
-    ofstream dot; 
+    ofstream dot;
     dot.open(szFileName);
     if(!dot.is_open())
         return false;
-    
+
     dot<<"digraph G {"<<endl;
     dot<<"rankdir=LR;"<<endl;
     dot<<"ranksep=0.0;"<<endl;
     dot<<"nodesep=0.2;"<<endl;
 
-    for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)   
+    for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)
     {
         switch((*itr)->getType()) {
             case MODULE: {
@@ -346,9 +351,9 @@ bool exportDotGraph(Graph& graph, const char* szFileName)
                             dot<<" [label=\"\"];"<<endl;
                         else
                             dot<<" [label=\"\" style=dashed];"<<endl;
-                        
+
                     }
-                    
+
                     break;
                 }
             case INPUTD:{
@@ -375,9 +380,9 @@ bool exportDotGraph(Graph& graph, const char* szFileName)
                         else
                             dot<<" [label=\""<<l.weight()<<"\" style=dashed];"<<endl;
                     }
-                    
+
                     break;
-                }               
+                }
             case OUTPUTD:{
                     OutputData* out = (OutputData*)(*itr);
                     dot<<"\""<<out->getLabel()<<"\"";
@@ -391,15 +396,15 @@ bool exportDotGraph(Graph& graph, const char* szFileName)
                         dot<<"\""<<mod->getLabel()<<"\"";
                         dot<<" [label=\"\" arrowhead=none];"<<endl;
                     }
-                    
+
                     break;
                 }
-            
+
             case APPLICATION:{
                     Application* app = (Application*)(*itr);
                     dot<<"\""<<app->getLabel()<<"\"";
                     dot<<" [shape=folder, color=darkgreen, fillcolor=darkseagreen, peripheries=1, style=filled, penwidth=2";
-                    dot<<" label=\""<<app->getLabel()<<"\""<<"];"<<endl;                    
+                    dot<<" label=\""<<app->getLabel()<<"\""<<"];"<<endl;
                     for(int i=0; i<app->sucCount(); i++)
                     {
                         Link l = app->getLinkAt(i);
@@ -413,7 +418,7 @@ bool exportDotGraph(Graph& graph, const char* szFileName)
                     }
                     break;
             }
-            
+
             case RESOURCE:{
                     GenericResource* res = (GenericResource*)(*itr);
                     dot<<"\""<<res->getLabel()<<"\"";
@@ -433,7 +438,7 @@ bool exportDotGraph(Graph& graph, const char* szFileName)
 
                     break;
             }
-        
+
             default:
                 break;
         };
@@ -444,4 +449,3 @@ bool exportDotGraph(Graph& graph, const char* szFileName)
     dot.close();
     return true;
 }
-

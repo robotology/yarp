@@ -12,18 +12,18 @@
 
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "application.h"
+#include <yarp/manager/application.h>
 #include "port_model.h"
 #include "ext_port_model.h"
 
 class ApplicationWindow;
 
-class ApplicationModel : public Goocanvas::GroupModel, public GraphicModel
+class ApplicationModel : public Goocanvas::GroupModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~ApplicationModel();
 
-    static Glib::RefPtr<ApplicationModel> create(ApplicationWindow* parentWnd, Application* app);
+    static Glib::RefPtr<ApplicationModel> create(ApplicationWindow* parentWnd, yarp::manager::Application* app);
 
     bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -42,7 +42,7 @@ public:
     void setSelected(bool sel);
     bool getSelected(void) { return selected; }
     void setArrowsSelected(bool sel);
-    Application* getApplication(void) { return application; }
+    yarp::manager::Application* getApplication(void) { return application; }
 
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
@@ -50,10 +50,10 @@ public:
     void releaseApplication(void);
 
 protected: 
-    ApplicationModel(ApplicationWindow* parentWnd, Application* app);
+    ApplicationModel(ApplicationWindow* parentWnd, yarp::manager::Application* app);
 
 private:
-    Application* application;
+    yarp::manager::Application* application;
     ApplicationWindow* parentWindow;
     Glib::RefPtr<Goocanvas::PolylineModel> poly;
     Glib::RefPtr<Goocanvas::TextModel> text;
@@ -73,10 +73,10 @@ private:
 private: 
     void updateBounds(void);
     void getApplicationBounds(Goocanvas::Bounds& bound);
-    void findInputOutputData(Connection& cnn,  ModulePContainer &modules,
-                                            InputData* &input_, OutputData* &output_);
-    Glib::RefPtr<PortModel> findModelFromOutput(OutputData* output);
-    Glib::RefPtr<PortModel> findModelFromInput(InputData* input);
+    void findInputOutputData(yarp::manager::Connection& cnn,  yarp::manager::ModulePContainer &modules,
+                                            yarp::manager::InputData* &input_, yarp::manager::OutputData* &output_);
+    Glib::RefPtr<PortModel> findModelFromOutput(yarp::manager::OutputData* output);
+    Glib::RefPtr<PortModel> findModelFromInput(yarp::manager::InputData* input);
  
 };
 

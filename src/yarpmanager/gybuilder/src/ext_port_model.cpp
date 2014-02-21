@@ -23,6 +23,7 @@
 #define FONT_DESC           "Monospace 9"
 #define PORT_DEPTH          10
 
+using namespace yarp::manager;
 
 ExternalPortModel::ExternalPortModel(ApplicationWindow* parentWnd, 
                         NodeType t, const char* port, bool nested) : PortModel(t)

@@ -11,14 +11,14 @@
 #define _APPLICATION_WIZARD_H_
 
 #include <gtkmm.h>
-#include "application.h"
+#include <yarp/manager/application.h>
 
 //class ApplicationWizard;
 class ApplicationWizard: public Gtk::Dialog
 {
 public:
     ApplicationWizard(Gtk::Widget* parent, const char* title=NULL, 
-                      Application* application=NULL);
+                      yarp::manager::Application* application=NULL);
     virtual ~ApplicationWizard();
 
 protected:
@@ -28,7 +28,7 @@ protected:
     void onEntryNameInsert();
 
 private:
-    Application* m_Application;
+    yarp::manager::Application* m_Application;
     Gtk::Widget* m_pParent;
     Gtk::VBox m_VBox;
     Gtk::HBox m_HBox;

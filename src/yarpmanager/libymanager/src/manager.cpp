@@ -4,20 +4,20 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#include "manager.h"
-#include "yarpbroker.h"
-#include "localbroker.h"
-#include "yarpdevbroker.h"
-#include "scriptbroker.h"
-#include "xmlapploader.h"
-#include "xmlmodloader.h"
-#include "xmlresloader.h"
-#include "xmlappsaver.h"
-#include "singleapploader.h"
+#include <yarp/manager/manager.h>
+#include <yarp/manager/yarpbroker.h>
+#include <yarp/manager/localbroker.h>
+#include <yarp/manager/yarpdevbroker.h>
+#include <yarp/manager/scriptbroker.h>
+#include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/xmlmodloader.h>
+#include <yarp/manager/xmlresloader.h>
+#include <yarp/manager/xmlappsaver.h>
+#include <yarp/manager/singleapploader.h>
+
 
 #define RUN_TIMEOUT             10      // Run timeout in seconds
 #define STOP_TIMEOUT            30      // Stop timeout in seconds
@@ -27,6 +27,9 @@
 #define BROKER_YARPRUN          "yarprun"
 #define BROKER_YARPDEV          "yarpdev"
 #define BROKER_ICUBMIODDEV      "icubmoddev"
+
+
+using namespace yarp::manager;
 
 
 /**
@@ -274,7 +277,7 @@ bool Manager::prepare(bool silent)
     ModulePIterator itr;
     int id = 0;
     for(itr=modules.begin(); itr!=modules.end(); itr++)
-    {       
+    {
         Broker* broker = createBroker(*itr);
         Executable* exe = new Executable(broker, (MEvent*)this, bWithWatchDog);
         exe->setID(id++);
@@ -319,19 +322,19 @@ Broker* Manager::createBroker(Module* module)
     {
         if(compareString(module->getHost(), "localhost"))
             return (new LocalBroker());
-        else    
+        else
             return (new YarpBroker());
     }
     else if(compareString(module->getBroker(), BROKER_YARPDEV))
     {
         if(compareString(module->getHost(), "localhost"))
            return (new YarpdevLocalBroker());
-        else   
-            return (new YarpdevYarprunBroker()); 
+        else
+            return (new YarpdevYarprunBroker());
     }
     else if(compareString(module->getHost(), "localhost"))
         return (new ScriptLocalBroker(module->getBroker()));
-    
+
     return (new ScriptYarprunBroker(module->getBroker()));
 }
 
@@ -379,7 +382,7 @@ bool Manager::updateConnection(unsigned int id, const char* from,
         logger->addWarning(msg);
         return false;
     }
-    */ 
+    */
 
     connections[id].setFrom(from);
     connections[id].setTo(to);
@@ -730,7 +733,7 @@ bool Manager::stop(void)
 
     ExecutablePIterator itr;
     for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-    {        
+    {
         (*itr)->stop();
         yarp::os::Time::delay(0.2);
     }
@@ -1156,5 +1159,3 @@ bool Manager::loadModule(const char* szModule, const char* szHost)
 
 }
 */
-
-

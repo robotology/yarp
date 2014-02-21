@@ -2,18 +2,23 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "physicresource.h"
-#include <string.h>
+
+#include <yarp/manager/physicresource.h>
+
+#include <cstring>
+
+
+using namespace yarp::manager;
+
 
 /**
  * Class GPU
  */
-GPU::GPU(void) : GenericResource("GPU") 
+GPU::GPU(void) : GenericResource("GPU")
 {
     cores = (size_t)0;
     frequency = (double)0.0;
@@ -57,7 +62,7 @@ GPU::GPU(const GPU &resource) : GenericResource(resource)
 Node* GPU::clone(void)
 {
     GPU* resource = new GPU(*this);
-    return resource; 
+    return resource;
 }
 
 
@@ -82,5 +87,3 @@ bool GPU::satisfy(GenericResource* resource)
 }
 
 GPU::~GPU() {}
-
-

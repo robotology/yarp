@@ -11,8 +11,8 @@
 #define _RESOURCE_WINDOW_H_
 
 #include <gtkmm.h>
-#include "primresource.h"
-#include "manager.h"
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/manager.h>
 
 class MainWindow;
 
@@ -35,7 +35,7 @@ public:
 class ResourceWindow: public Gtk::ScrolledWindow
 {
 public:
-    ResourceWindow(Computer* computer, MainWindow* parent, Manager* manager);
+    ResourceWindow(yarp::manager::Computer* computer, MainWindow* parent, yarp::manager::Manager* manager);
     virtual ~ResourceWindow();
 
     const char* getResourceName(void) { return m_pComputer->getName(); }    
@@ -48,8 +48,8 @@ protected:
 
 private:
     MainWindow* m_pParent;
-    Computer* m_pComputer;
-    Manager* m_pManager;
+    yarp::manager::Computer* m_pComputer;
+    yarp::manager::Manager* m_pManager;
     void updateWidget(void);
 };
 

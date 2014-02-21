@@ -12,6 +12,9 @@
 #include "main_window.h"
 #include <goocanvas.h>
 
+using namespace yarp::manager;
+
+
 InternalPortModel::InternalPortModel(ApplicationWindow* parentWnd, 
                    NodeType t, void* data) : PortModel(t) 
 {

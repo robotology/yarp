@@ -20,6 +20,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/ResourceFinderOptions.h>
+
 #include "main_window.h"
 
 

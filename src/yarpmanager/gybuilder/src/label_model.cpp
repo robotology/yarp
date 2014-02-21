@@ -13,6 +13,8 @@
 #include "midpoint_model.h"
 #include <goocanvas.h>
 
+using namespace yarp::manager;
+
 
 LabelModel::LabelModel(ApplicationWindow* parentWnd,
                              ArrowModel* arw, const char* text) 

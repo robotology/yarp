@@ -18,7 +18,7 @@
 
 #include <vector>
 
-#include "manager.h"
+#include <yarp/manager/manager.h>
 
 
 typedef enum __ThreadAction {
@@ -55,12 +55,12 @@ public:
 
 
 
-class SafeManager: public Manager, yarp::os::Thread
+class SafeManager: public yarp::manager::Manager, yarp::os::Thread
 {
 public:
     SafeManager();
     virtual ~SafeManager();
-    bool prepare(Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL); 
+    bool prepare(yarp::manager::Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL);
     
     bool threadInit();
     void run();

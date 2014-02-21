@@ -2,15 +2,16 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "yarpbroker.h"
 
-#include <signal.h>
-#include <string.h>
+#include <yarp/manager/yarpbroker.h>
+
+#include <csignal>
+#include <cstring>
+
 
 #define YARPRUN_OK                  0
 #define YARPRUN_NORESPONSE          1
@@ -23,13 +24,13 @@
 #define RUN_TIMEOUT             10.0        //seconds
 #define STOP_TIMEOUT            30.0
 #define KILL_TIMEOUT            10.0
-#define EVENT_THREAD_PERIOD     500 
+#define EVENT_THREAD_PERIOD     500
 
 #if defined(WIN32)
     #define SIGKILL 9
-#endif 
+#endif
 
-const char* yarprun_err_msg[] = { " (Ok) ", 
+const char* yarprun_err_msg[] = { " (Ok) ",
                                   " (Remote host does not respond) ",
                                   " (Remote host does no exist) ",
                                   " (Timeout while connecting to the remote host) ",
@@ -39,10 +40,12 @@ const char* yarprun_err_msg[] = { " (Ok) ",
 using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace std;
+using namespace yarp::manager;
+
 
 YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
 {
-    bOnlyConnector = bInitialized = false;  
+    bOnlyConnector = bInitialized = false;
     ID = generateID();
     strStdioUUID.clear();
 }
@@ -63,7 +66,7 @@ void YarpBroker::fini(void)
 bool YarpBroker::init(void)
 {
     //if(bInitialized)
-    //  return true; 
+    //  return true;
 
     if(!NetworkBase::checkNetwork(CONNECTION_TIMEOUT))
     {
@@ -119,7 +122,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
     else
         strHost = szhost;
 
-    strCmd = szcmd; 
+    strCmd = szcmd;
     if(strlen(szparam))
         strParam = szparam;
     if(strlen(szworkdir))
@@ -132,19 +135,19 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
         else
             strStdio = szstdio;
     }
-        
+
     if(strlen(szenv))
         strEnv = szenv;
-    
+
     OSTRINGSTREAM sstrID;
     sstrID<<(int)ID;
     strTag = strHost + strCmd + strParam + strEnv + sstrID.str();
     string::iterator itr;
     for(itr=strTag.begin(); itr!=strTag.end(); itr++)
-        if(((*itr) == ' ') || ((*itr) == '/') ) 
+        if(((*itr) == ' ') || ((*itr) == '/') )
             (*itr) = ':';
 
-   __trace_message = "(init) cheking yarp network"; 
+   __trace_message = "(init) cheking yarp network";
     if(!NetworkBase::checkNetwork(5.0))
     {
         strError = "Yarp network server is not up.";
@@ -159,7 +162,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
         strError += " does not exist. check yarprun is running as server.";
         __trace_message.clear();
         semParam.post();
-        return false;       
+        return false;
     }
 
     port.setTimeout(CONNECTION_TIMEOUT);
@@ -174,7 +177,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
 
 
 bool YarpBroker::start()
-{   
+{
     if(!bInitialized) return false;
     if(bOnlyConnector) return false;
 
@@ -206,11 +209,11 @@ bool YarpBroker::start()
             return true;
         }
     }
-        
+
     strError = "cannot run ";
     strError += strCmd;
     strError += " on ";
-    strError += strHost;    
+    strError += strHost;
     return false;
 }
 
@@ -221,7 +224,7 @@ bool YarpBroker::stop()
 
     strError.clear();
     yarp::os::Bottle msg,grp,response;
-    
+
     grp.clear();
     grp.addString("on");
     grp.addString(strHost.c_str());
@@ -265,10 +268,10 @@ bool YarpBroker::kill()
 {
     if(!bInitialized) return true;
     if(bOnlyConnector) return false;
-    
+
     strError.clear();
-    
-    yarp::os::Bottle msg,grp,response;  
+
+    yarp::os::Bottle msg,grp,response;
     grp.clear();
     grp.addString("on");
     grp.addString(strHost.c_str());
@@ -306,7 +309,7 @@ bool YarpBroker::kill()
     strError += " on ";
     strError += strHost;
 	RateThread::stop();
-    return false;   
+    return false;
 }
 
 
@@ -314,10 +317,10 @@ int YarpBroker::running(void)
 {
     if(!bInitialized) return -1;
     if(bOnlyConnector) return -1;
-    
+
     strError.clear();
     yarp::os::Bottle msg,grp,response;
-    
+
     grp.clear();
     grp.addString("on");
     grp.addString(strHost.c_str());
@@ -327,7 +330,7 @@ int YarpBroker::running(void)
     grp.addString("isrunning");
     grp.addString(strTag.c_str());
     msg.addList()=grp;
-    
+
     int ret = SendMsg(msg, strHost.c_str(), response, 3.0);
     if(ret != YARPRUN_OK)
     {
@@ -374,8 +377,8 @@ Property& YarpBroker::runProperty(void)
 
 /**
  *  connection broker
- */ 
-bool YarpBroker::connect(const char* from, const char* to, 
+ */
+bool YarpBroker::connect(const char* from, const char* to,
             const char* carrier, bool persist)
 {
     if(!from)
@@ -410,7 +413,7 @@ bool YarpBroker::connect(const char* from, const char* to,
             strError += " does not exist.";
             return false;
         }
-        
+
         NetworkBase::connect(from, to, style);
         if(!connected(from, to))
         {
@@ -441,7 +444,7 @@ bool YarpBroker::connect(const char* from, const char* to,
 
 bool YarpBroker::disconnect(const char* from, const char* to)
 {
-    
+
     if(!from)
     {
         strError = "no source port is introduced.";
@@ -472,7 +475,7 @@ bool YarpBroker::disconnect(const char* from, const char* to)
 
     if(!connected(from, to))
         return true;
-   
+
     ContactStyle style;
     style.quiet = true;
     style.timeout = CONNECTION_TIMEOUT;
@@ -480,11 +483,11 @@ bool YarpBroker::disconnect(const char* from, const char* to)
     {
         strError = "cannot disconnect ";
         strError +=from;
-        strError += " from " + string(to);      
+        strError += " from " + string(to);
         return false;
     }
     return true;
-    
+
 }
 
 bool YarpBroker::exists(const char* port)
@@ -513,7 +516,7 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
     if(!semParam.check())
         return false;
 
-    yarp::os::Bottle msg, grp;    
+    yarp::os::Bottle msg, grp;
     grp.clear();
     grp.addString("sysinfo");
     msg.addList() = grp;
@@ -572,46 +575,46 @@ bool YarpBroker::getAllPorts(vector<string> &ports)
     ConstString str = reply.get(0).asString();
     const char* delm = "registration name ";
     size_t pos1, pos2;
-    while((pos1 = str.find(delm)) != ConstString::npos) 
+    while((pos1 = str.find(delm)) != ConstString::npos)
     {
         str = str.substr(pos1+strlen(delm));
-        if((pos2 = str.find(" ")) != ConstString::npos) 
+        if((pos2 = str.find(" ")) != ConstString::npos)
             ports.push_back(str.substr(0, pos2).c_str());
     }
 
     return true;
 }
 
-bool YarpBroker::getAllProcesses(const char* server, 
+bool YarpBroker::getAllProcesses(const char* server,
                                  ProcessContainer& processes)
 {
     if(!strlen(server))
         return false;
-   
+
     processes.clear();
     strError.clear();
     yarp::os::Bottle msg,grp,response;
-    
+
     grp.clear();
     grp.addString("ps");
     msg.addList()=grp;
-   
+
     int ret = SendMsg(msg, server, response, 3.0);
     if((ret == YARPRUN_OK) || (ret == YARPRUN_NORESPONSE))
     {
         for(int i=0; i<response.size(); i++)
         {
-            Process proc; 
+            Process proc;
             ConstString sprc;
             if(response.get(i).check("pid"))
                 proc.pid = response.get(i).find("pid").asInt();
             if(response.get(i).check("cmd"))
                sprc = response.get(i).find("cmd").asString();
-            if(response.get(i).check("env") && 
+            if(response.get(i).check("env") &&
                response.get(i).find("env").asString().length())
                sprc = sprc + ConstString("; ") + response.get(i).find("env").asString();
-            proc.command = sprc.c_str();    
-            processes.push_back(proc);            
+            proc.command = sprc.c_str();
+            processes.push_back(proc);
         }
         return true;
     }
@@ -636,7 +639,7 @@ bool YarpBroker::rmconnect(const char* from, const char* to)
                                  cmd,
                                  reply,
                                  false,
-                                 true, 
+                                 true,
                                  CONNECTION_TIMEOUT);
 }
 
@@ -652,10 +655,10 @@ bool YarpBroker::timeout(double base, double timeout)
     Time::delay(1.0);
     if((Time::now()-base) > timeout)
         return true;
-    return false; 
+    return false;
 }
 
-bool YarpBroker::threadInit() 
+bool YarpBroker::threadInit()
 {
     if(!strStdioUUID.size())
         return false;
@@ -669,23 +672,23 @@ bool YarpBroker::threadInit()
     style.timeout = CONNECTION_TIMEOUT;
     while(!timeout(base, 5.0))
     {
-        if(NetworkBase::connect(strStdioPort.c_str(), stdioPort.getName(), style)) 
+        if(NetworkBase::connect(strStdioPort.c_str(), stdioPort.getName(), style))
             return true;
     }
 
     strError = "Cannot connect to stdio port ";
     strError += strStdioPort;
     stdioPort.close();
-    return false; 
+    return false;
 }
 
 
-void YarpBroker::run() 
+void YarpBroker::run()
 {
     Bottle *input;
     if( (input=stdioPort.read(false)) && eventSink)
-    {   
-        for (int i=0; i<input->size(); i++) 
+    {
+        for (int i=0; i<input->size(); i++)
             eventSink->onBrokerStdout(input->get(i).asString().c_str());
     }
 }
@@ -722,12 +725,12 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
     }
 
     if(!ret)
-    { 
+    {
         __trace_message.clear();
         semParam.post();
         return YARPRUN_CONNECTION_TIMOUT;
     }
-    
+
     __trace_message = "(SendMsg) writing to " + string(target.c_str());
     ret = port.write(msg, response);
     __trace_message = "(SendMsg) disconnecting from " + string(target.c_str());
@@ -735,7 +738,7 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
     __trace_message.clear();
     semParam.post();
 
-    if(!response.size() || !ret)    
+    if(!response.size() || !ret)
         return YARPRUN_NORESPONSE;
 
     return YARPRUN_OK;
@@ -761,30 +764,30 @@ int YarpBroker::requestServer(Property& config)
         msg.addList()=config.findGroup("cmd");
         msg.addList()=config.findGroup("as");
         msg.addList()=config.findGroup("on");
-        
+
         if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
         if (config.check("geometry")) msg.addList()=config.findGroup("geometry");
         if (config.check("hold")) msg.addList()=config.findGroup("hold");
         if (config.check("env")) msg.addList()=config.findGroup("env");
 
         Bottle response;
-        int ret = SendMsg(msg, config.find("stdio").asString(), 
+        int ret = SendMsg(msg, config.find("stdio").asString(),
                           response, CONNECTION_TIMEOUT);
-        if (ret != YARPRUN_OK) 
+        if (ret != YARPRUN_OK)
             return ret;
 
         if(response.size() > 2)
             strStdioUUID = response.get(2).asString().c_str();
-  
+
         return ((response.get(0).asInt()>0)?YARPRUN_OK:YARPRUN_UNDEF);
     }
-    
+
     // DON'T USE A RUN SERVER TO MANAGE STDIO
     //
     // client -> cmd server
     //
     if (config.check("cmd"))
-    {                
+    {
         if (config.find("cmd").asString()=="")   { return YARPRUN_UNDEF; }
         if (!config.check("as") || config.find("as").asString()=="") {return YARPRUN_UNDEF; }
         if (!config.check("on") || config.find("on").asString()=="") {return YARPRUN_UNDEF; }
@@ -796,14 +799,13 @@ int YarpBroker::requestServer(Property& config)
         if (config.check("env")) msg.addList()=config.findGroup("env");
 
         Bottle response;
-        int ret = SendMsg(msg, config.find("on").asString(), 
+        int ret = SendMsg(msg, config.find("on").asString(),
                           response, CONNECTION_TIMEOUT);
-        if (ret != YARPRUN_OK) 
+        if (ret != YARPRUN_OK)
             return ret;
-    
+
         return ((response.get(0).asInt()>0)?YARPRUN_OK:YARPRUN_UNDEF);
     }
 
     return YARPRUN_UNDEF;
 }
-

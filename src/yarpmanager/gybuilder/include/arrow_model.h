@@ -13,9 +13,9 @@
 #include <vector>
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "ymm-types.h"
+#include <yarp/manager/ymm-types.h>
 #include <string.h>
-#include "application.h"
+#include <yarp/manager/application.h>
 
 #include "tooltip_model.h"
 
@@ -25,14 +25,14 @@ class MidpointModel;
 class LabelModel;
 class ApplicationModel;
 
-class ArrowModel : public Goocanvas::PolylineModel, public GraphicModel
+class ArrowModel : public Goocanvas::PolylineModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~ArrowModel();
 
     static Glib::RefPtr<ArrowModel> create(ApplicationWindow* parentWnd,
                                            Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
-                                           Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
+                                           yarp::manager::Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
 
     bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -67,13 +67,13 @@ public:
     void removeExcitation(const char* szName);
     void renameExcitation(const char* szOld, const char* szNew);
 
-    Connection* getConnection(void) { return &connection; }
+    yarp::manager::Connection* getConnection(void) { return &connection; }
     Glib::RefPtr<PortModel>& getSource(void) { return source; }
     Glib::RefPtr<PortModel>& getDestination(void) { return destination; } 
     
     bool exist(void) { return bExist; } 
     void showLabel(bool bShow);
-    void setConnection(Connection& con) { connection = con; }
+    void setConnection(yarp::manager::Connection& con) { connection = con; }
 
     //bool preciseClicked(GdkEventButton* event);
 
@@ -89,7 +89,7 @@ public:
 protected: 
     ArrowModel(ApplicationWindow* parentWnd, 
                Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
-               Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
+               yarp::manager::Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
 
 private:
     ApplicationWindow* parentWindow;
@@ -102,10 +102,10 @@ private:
     bool bNested;
     bool bNullArrow;
     std::string strLabel;
-    Connection connection;
+    yarp::manager::Connection connection;
     std::string defaultColor;
     ApplicationModel* applicationModel;
-    Application* application;
+    yarp::manager::Application* application;
     Glib::RefPtr<TooltipModel> tool;
 };
 

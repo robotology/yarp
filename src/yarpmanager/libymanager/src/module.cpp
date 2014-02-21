@@ -4,15 +4,18 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#include "module.h"
-#include <stdio.h>
+#include <yarp/manager/module.h>
+#include <cstdio>
 #include <string>
+#include <cstring>
+
+
 using namespace std;
-#include <string.h>
+using namespace yarp::manager;
+
 
 Module::Module(void) : Node(MODULE) { clear();}
 
@@ -160,8 +163,8 @@ bool Module::removeAuthor(Author& author)
         {
             authors.erase(itr);
             return true;
-        }    
-    return true;        
+        }
+    return true;
 }
 
 
@@ -234,7 +237,7 @@ void Module::clear(void)
 }
 
 bool Module::setParam(const char* szParam)
-{ 
+{
     __CHECK_NULLPTR(szParam);
 
     bool bokay = true;
@@ -263,7 +266,7 @@ bool Module::setParam(const char* szParam)
                     (*itr).setValue(strVal.c_str());
             }
         }
-    }    
+    }
     return bokay;
 }
 
@@ -287,8 +290,8 @@ bool Module::getParamValue(const char* key, bool bSwitch, std::string &param)
        return true;
     }
     //printf("%s %d \n", __FILE__, __LINE__);
-    
-    pos += strKey.size(); 
+
+    pos += strKey.size();
     if((pos >= strParam.length()) || (strParam.at(pos) != ' '))
         return false;
 
@@ -296,7 +299,7 @@ bool Module::getParamValue(const char* key, bool bSwitch, std::string &param)
     while(strParam.at(pos++) == ' ')
     {
         if(pos >= strParam.length())
-            return false;     
+            return false;
     }
     pos--;
 
@@ -306,4 +309,3 @@ bool Module::getParamValue(const char* key, bool bSwitch, std::string &param)
     param = strParam.substr(pos, pos2-pos).c_str();
     return true;
 }
-

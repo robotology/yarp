@@ -14,18 +14,19 @@
 
 #include "arb_property_window.h"
 #include "icon_res.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 
 #include "main_window.h"
 #include "ext_port_model.h"
 #include "application_window.h"
 
-#include "binexparser.h"
+#include <yarp/manager/binexparser.h>
 
 //#include <yarp/os/Property.h>
 //#include <yarp/os/Bottle.h>
 
 using namespace yarp::os;
+using namespace yarp::manager;
 
 ArbitratorPropertyWindow::ArbitratorPropertyWindow(MainWindow* parent, 
                                Manager* manager, ApplicationWindow* appWnd)

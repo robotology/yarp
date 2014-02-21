@@ -14,13 +14,13 @@
 #include <string>
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "ymm-types.h"
-#include "node.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
 
 class ApplicationWindow;
 class ArrowModel;
 
-class TooltipModel : public Goocanvas::GroupModel, public GraphicModel
+class TooltipModel : public Goocanvas::GroupModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~TooltipModel();

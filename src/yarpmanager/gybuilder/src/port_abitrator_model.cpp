@@ -24,6 +24,9 @@
 #define MIN_HEIGHT          PORTARB_DEF_HEIGH
 #define FONT_DESC           "Monospace 10"
 
+using namespace yarp::manager;
+
+
 PortArbitratorModel::PortArbitratorModel(ApplicationWindow* parentWnd, 
                                          Glib::RefPtr<PortModel> dest, Arbitrator* arb, bool nested) : PortModel(INOUTD)
 {

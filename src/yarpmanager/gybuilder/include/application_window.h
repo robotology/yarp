@@ -21,7 +21,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Time.h>
 
-#include "manager.h"
+#include <yarp/manager/manager.h>
 #include "module_model.h"
 #include "port_model.h"
 #include "module_property_window.h"
@@ -44,11 +44,11 @@ class MainWindow;
 class ApplicationWindow: public Gtk::Frame
 {
 public:
-    ApplicationWindow(const char* szAppName, Manager* lazy, 
+    ApplicationWindow(const char* szAppName, yarp::manager::Manager* lazy,
         yarp::os::Property* config, MainWindow* parent, bool grid=true, bool snap=true);
     virtual ~ApplicationWindow();
     const char* getApplicationName(void) { return m_strAppName.c_str(); }
-    Application* getApplication(void) { return manager.getKnowledgeBase()->getApplication(); }
+    yarp::manager::Application* getApplication(void) { return manager.getKnowledgeBase()->getApplication(); }
 
     bool onClose(void);    
     bool onRefresh(void);
@@ -88,8 +88,8 @@ public:
     MainWindow* getMainWindow(void) { return m_pParent; }
     Glib::RefPtr<Goocanvas::ItemModel> getRootModel(void) { return root; }
 
-    void onUpdateModuleProperty(Module* module);
-    void onUpdateApplicationProperty(Application* application);
+    void onUpdateModuleProperty(yarp::manager::Module* module);
+    void onUpdateApplicationProperty(yarp::manager::Application* application);
     void onUpdateConnectionProperty(Glib::RefPtr<ArrowModel> &arrow);
     void onUpdateArbitratorProperty(Glib::RefPtr<PortArbitratorModel> &portArb);
 
@@ -103,7 +103,7 @@ public:
     bool m_snapToGrid;
     bool m_showGrid;
     bool m_showLabel;
-    Manager manager;
+    yarp::manager::Manager manager;
 
 protected:
     
@@ -145,7 +145,7 @@ private:
     void createWidgets(void);
     void setupSignals(void);        
     void updateApplicationWindow(void);
-    void prepareManagerFrom(Manager* lazy, const char* szAppName);
+    void prepareManagerFrom(yarp::manager::Manager* lazy, const char* szAppName);
     void reportErrors(void);
     void deleteSelectedArrows(bool delNullArrows=false);
 
@@ -167,12 +167,12 @@ private:
     bool onDragMotion(const Glib::RefPtr<Gdk::DragContext>& drag_context, 
                     int x, int y, guint timestamp);
 
-    Connection* findConnection( CnnContainer& connections, const char* szPort, bool from);
-    InputData* findInputData(Connection* cnn,  ModulePContainer &modules);
-    Glib::RefPtr<PortModel> findModelFromOutput(OutputData* output);
-    Glib::RefPtr<PortModel> findModelFromInput(InputData* input);
-    void findInputOutputData(Connection& cnn,  ModulePContainer &modules,
-                                            InputData* &input_, OutputData* &output_);
+    yarp::manager::Connection* findConnection( yarp::manager::CnnContainer& connections, const char* szPort, bool from);
+    yarp::manager::InputData* findInputData(yarp::manager::Connection* cnn,  yarp::manager::ModulePContainer &modules);
+    Glib::RefPtr<PortModel> findModelFromOutput(yarp::manager::OutputData* output);
+    Glib::RefPtr<PortModel> findModelFromInput(yarp::manager::InputData* input);
+    void findInputOutputData(yarp::manager::Connection& cnn,  yarp::manager::ModulePContainer &modules,
+                                            yarp::manager::InputData* &input_, yarp::manager::OutputData* &output_);
     Goocanvas::Bounds getMinimumBoundingBox();
     void widenCanvas();
     void shrinkCanvas();

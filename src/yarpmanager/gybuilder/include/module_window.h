@@ -11,8 +11,8 @@
 #define _MODULE_WINDOW_H_
 
 #include <gtkmm.h>
-#include "module.h"
-#include "manager.h"
+#include <yarp/manager/module.h>
+#include <yarp/manager/manager.h>
 
 class MainWindow;
 
@@ -37,7 +37,7 @@ public:
 class ModuleWindow: public Gtk::ScrolledWindow
 {
 public:
-    ModuleWindow(Module* module, MainWindow* parent, Manager* manager);
+    ModuleWindow(yarp::manager::Module* module, MainWindow* parent, yarp::manager::Manager* manager);
     virtual ~ModuleWindow();
 
     const char* getModuleName(void) { return m_pModule->getName(); }    
@@ -50,8 +50,8 @@ protected:
 
 private:
     MainWindow* m_pParent;
-    Module* m_pModule;
-    Manager* m_pManager;
+    yarp::manager::Module* m_pModule;
+    yarp::manager::Manager* m_pManager;
     void updateWidget(void);
 };
 

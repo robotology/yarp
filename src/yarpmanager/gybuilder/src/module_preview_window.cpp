@@ -12,10 +12,13 @@
     #pragma warning (disable : 4520)
 #endif
 
+#include <yarp/manager/ymm-dir.h>
 #include "module_preview_window.h"
 #include "icon_res.h"
-#include "ymm-dir.h"
 #include "main_window.h"
+
+using namespace yarp::manager;
+
 
 ModulePreviewWindow::ModulePreviewWindow(MainWindow* parent) : m_pModule(NULL)
 {   

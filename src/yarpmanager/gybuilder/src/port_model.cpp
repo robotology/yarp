@@ -10,6 +10,9 @@
 #include "port_model.h"
 #include "application_window.h"
 
+using namespace yarp::manager;
+
+
 PortModel::PortModel(NodeType t) : GroupModel()
 {
     type = t;

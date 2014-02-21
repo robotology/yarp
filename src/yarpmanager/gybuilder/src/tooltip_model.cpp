@@ -22,6 +22,8 @@
 #define MIN_HEIGHT          10
 #define FONT_DESC           "Monospace 9"
 
+using namespace yarp::manager;
+
 
 TooltipModel::TooltipModel(ApplicationWindow* parentWnd,
                            const char* txt) 

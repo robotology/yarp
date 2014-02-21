@@ -20,6 +20,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace yarp::manager;
 
 MessagesList::MessagesList(Gtk::Window* pParent) : bTimeStamp(false)
 {

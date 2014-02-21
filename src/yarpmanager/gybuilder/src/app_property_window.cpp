@@ -14,10 +14,13 @@
 
 #include "app_property_window.h"
 #include "icon_res.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 
 #include "main_window.h"
 #include "application_window.h"
+
+using namespace yarp::manager;
+
 
 ApplicationPropertyWindow::ApplicationPropertyWindow(MainWindow* parent, 
                                Manager* manager, ApplicationWindow* appWnd) : m_pApplication(NULL)

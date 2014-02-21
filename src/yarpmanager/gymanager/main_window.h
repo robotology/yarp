@@ -16,7 +16,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
 
-#include "manager.h"
+#include <yarp/manager/manager.h>
 
 #include "message_list.h"
 #include "application_list.h"
@@ -72,7 +72,7 @@ protected:
     void on_size_allocate(Gtk::Allocation& allocation);
 
 private:
-    Manager lazyManager;
+    yarp::manager::Manager lazyManager;
     yarp::os::Property m_config;
 
     //Child widgets:

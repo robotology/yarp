@@ -12,9 +12,9 @@
 
 
 #include <gtkmm.h>
-#include "application.h"
-#include "primresource.h"
-#include "xmltemploader.h"
+#include <yarp/manager/application.h>
+#include <yarp/manager/primresource.h>
+#include <yarp/manager/xmltemploader.h>
 
 class MainWindow;
 
@@ -32,7 +32,7 @@ public:
     //Gtk::TreeModelColumn<int> m_col_id;
     Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
     Gtk::TreeModelColumn<Glib::ustring> m_col_name;
-    Gtk::TreeModelColumn<NodeType> m_col_type;
+    Gtk::TreeModelColumn<yarp::manager::NodeType> m_col_type;
     Gtk::TreeModelColumn<Glib::ustring> m_col_filename;
 };
 
@@ -43,10 +43,10 @@ class ApplicationList: public Gtk::ScrolledWindow
 public:
     ApplicationList(MainWindow* parent);
     virtual ~ApplicationList();
-    bool addApplication(Application* app);
-    bool addComputer(Computer* comp);
-    bool addModule(Module* mod);
-    bool addAppTemplate(AppTemplate* temp);
+    bool addApplication(yarp::manager::Application* app);
+    bool addComputer(yarp::manager::Computer* comp);
+    bool addModule(yarp::manager::Module* mod);
+    bool addAppTemplate(yarp::manager::AppTemplate* temp);
 
     bool removeApplication(const char* szAppName);
     bool removeModule(const char* szModName);

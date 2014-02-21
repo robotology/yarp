@@ -13,9 +13,9 @@
 #include <vector>
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "ymm-types.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/data.h>
 #include "arrow_model.h"
-#include "data.h"
 #include "port_model.h"
 
 class ApplicationWindow;
@@ -26,7 +26,7 @@ class ExternalPortModel : public PortModel
 public:
     virtual ~ExternalPortModel();
 
-    static Glib::RefPtr<ExternalPortModel> create(ApplicationWindow* parentWnd, NodeType t, const char* szExternalPort, bool nested=false);
+    static Glib::RefPtr<ExternalPortModel> create(ApplicationWindow* parentWnd, yarp::manager::NodeType t, const char* szExternalPort, bool nested=false);
 
     virtual bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
                         GdkEventButton* event);
@@ -59,7 +59,7 @@ public:
     bool isNested(void) { return bNested; }
 
 protected: 
-    ExternalPortModel(ApplicationWindow* parentWnd, NodeType t, const char* szExternalPort, bool nested=false);
+    ExternalPortModel(ApplicationWindow* parentWnd, yarp::manager::NodeType t, const char* szExternalPort, bool nested=false);
 
 private:
     ApplicationWindow* parentWindow;

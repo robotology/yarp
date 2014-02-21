@@ -169,7 +169,7 @@ private:
 class ApplicationWindow: public Gtk::Frame, ApplicationEvent
 {
 public:
-    ApplicationWindow(const char* szAppName, Manager* lazy, 
+    ApplicationWindow(const char* szAppName, yarp::manager::Manager* lazy,
         yarp::os::Property* config, MainWindow* parent);
     virtual ~ApplicationWindow();
     const char* getApplicationName(void) { return m_strAppName.c_str(); }
@@ -313,7 +313,7 @@ private:
     void setCellsEditable(void);
     bool areAllShutdown(void);
 
-    void prepareManagerFrom(Manager* lazy, const char* szName);
+    void prepareManagerFrom(yarp::manager::Manager* lazy, const char* szName);
     void updateApplicationWindow(void);
 
     void reportErrors(void);

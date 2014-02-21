@@ -14,14 +14,14 @@
 #include <string>
 #include <goocanvasmm.h>
 #include <goocanvasrect.h>
-#include "ymm-types.h"
-#include "node.h"
+#include <yarp/manager/ymm-types.h>
+#include <yarp/manager/node.h>
 
 
 class ApplicationWindow;
 class ArrowModel;
 
-class LabelModel : public Goocanvas::TextModel, public GraphicModel
+class LabelModel : public Goocanvas::TextModel, public yarp::manager::GraphicModel
 {
 public:
     virtual ~LabelModel();

@@ -26,10 +26,11 @@
 #include <yarp/os/Os.h>
 
 #include "main_window.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 
 
 using namespace std;
+using namespace yarp::manager;
 
 #define HELP_MESSAGE        "\
 Usage:\n\

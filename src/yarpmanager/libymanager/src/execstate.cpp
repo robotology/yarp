@@ -2,26 +2,26 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "execstate.h"
-#include "executable.h"
+
+#include <yarp/manager/execstate.h>
+#include <yarp/manager/executable.h>
 
 #include <yarp/os/Time.h>
 
-using namespace FSM;
+#include <iostream>
 
 
-// only for debugging
-#include<iostream>
 using namespace std;
+using namespace FSM;
+using namespace yarp::manager;
 
 
 /**
- * Initializing event factory 
+ * Initializing event factory
  */
 
 Event* EventFactory::startEvent = new Event("start");
@@ -66,15 +66,15 @@ void Suspended::stop(void)
 }
 
 void Suspended::kill(void)
-{   
+{
     castEvent(EventFactory::killEvent);
 }
 
 void Suspended::moduleFailed(void) { /* do nothing*/ }
 
 
-// refresh() from Suspended can be used for recovering from 
-// unexptected termination of manager. 
+// refresh() from Suspended can be used for recovering from
+// unexptected termination of manager.
 void Suspended::refresh(void)
 {
     ErrorLogger* logger = ErrorLogger::Instance();
@@ -105,26 +105,26 @@ Ready::~Ready()
 }
 
 bool Ready::checkPriorityPorts(void)
-{   
+{
     CnnIterator itr;
-    for(itr=executable->getConnections().begin(); 
+    for(itr=executable->getConnections().begin();
         itr!=executable->getConnections().end(); itr++)
     {
-        if((*itr).withPriority() 
+        if((*itr).withPriority()
             && !executable->getBroker()->exists((*itr).from()))
-            return false;   
+            return false;
     }
     return true;
 }
 
 bool Ready::checkResources(void)
-{   
+{
     ResourceIterator itr;
-    for(itr=executable->getResources().begin(); 
+    for(itr=executable->getResources().begin();
         itr!=executable->getResources().end(); itr++)
     {
         if(!executable->getBroker()->exists((*itr).getPort()))
-            return false;   
+            return false;
     }
     return true;
 }
@@ -134,29 +134,29 @@ bool Ready::timeout(double base, double timeout)
     yarp::os::Time::delay(1.0);
     if((yarp::os::Time::now()-base) > timeout)
         return true;
-    return false; 
+    return false;
 }
 
 void Ready::startModule(void)
 {
-    
+
     ErrorLogger* logger = ErrorLogger::Instance();
 
     // wait for priority ports if auto connecte is enabled
     if(executable->autoConnect())
     {
         bAborted = false;
-        while(!checkPriorityPorts()) 
+        while(!checkPriorityPorts())
         {
             yarp::os::Time::delay(1.0);
             if(bAborted) return;
         }
     }
 
-    // finding maximum resource-waiting timeout 
+    // finding maximum resource-waiting timeout
     ResourceIterator itr;
     double maxTimeout = 0;
-    for(itr=executable->getResources().begin(); 
+    for(itr=executable->getResources().begin();
         itr!=executable->getResources().end(); itr++)
     {
         if((*itr).getTimeout() > maxTimeout)
@@ -226,12 +226,12 @@ Connecting::~Connecting()
 bool Connecting::checkNormalPorts(void)
 {
     CnnIterator itr;
-    for(itr=executable->getConnections().begin(); 
+    for(itr=executable->getConnections().begin();
         itr!=executable->getConnections().end(); itr++)
     {
-        if(!executable->getBroker()->exists((*itr).to()) || 
+        if(!executable->getBroker()->exists((*itr).to()) ||
             !executable->getBroker()->exists((*itr).from()))
-            return false;   
+            return false;
     }
     return true;
 }
@@ -246,8 +246,8 @@ void Connecting::connectAllPorts(void)
          *  wait for required ports if auto connecte is enabled
          */
         bAborted = false;
-        while(!checkNormalPorts()) 
-        {   
+        while(!checkNormalPorts())
+        {
             yarp::os::Time::delay(1.0);
             if(bAborted) return;
         }
@@ -256,14 +256,14 @@ void Connecting::connectAllPorts(void)
         for(itr=executable->getConnections().begin();
             itr!=executable->getConnections().end(); itr++)
         {
-            if( !executable->getBroker()->connect((*itr).from(), (*itr).to(), 
+            if( !executable->getBroker()->connect((*itr).from(), (*itr).to(),
                                                  (*itr).carrier()) )
             {
                 OSTRINGSTREAM msg;
                 msg<<"cannot connect "<<(*itr).from() <<" to "<<(*itr).to();
                 if(executable->getBroker()->error())
                     msg<<" : "<<executable->getBroker()->error();
-                logger->addError(msg);          
+                logger->addError(msg);
             }
             else
                 executable->getEvent()->onCnnStablished(&(*itr));
@@ -278,7 +278,7 @@ void Connecting::refresh(void)
     ErrorLogger* logger = ErrorLogger::Instance();
     int ret = executable->getBroker()->running();
     if(ret == 0)
-        Connecting::moduleFailed(); 
+        Connecting::moduleFailed();
     else if(ret == -1)
         logger->addError(executable->getBroker()->error());
 }
@@ -344,7 +344,7 @@ void Running::moduleFailed(void)
     executable->getEvent()->onExecutableFailed(executable);
 }
 
-void Running::connectionFailed(void* which) 
+void Running::connectionFailed(void* which)
 {
     executable->getEvent()->onCnnFailed(which);
 }
@@ -386,7 +386,7 @@ void Dying::stopModule(void)
 }
 
 void Dying::killModule(void)
-{   
+{
     ErrorLogger* logger = ErrorLogger::Instance();
     if(!executable->getBroker()->kill())
     {
@@ -421,13 +421,13 @@ void Dying::disconnectAllPorts(void)
                 msg<<"cannot disconnect "<<(*itr).from() <<" to "<<(*itr).to();
                 if(executable->getBroker()->error())
                     msg<<" : "<<executable->getBroker()->error();
-                logger->addError(msg);          
+                logger->addError(msg);
             }
             else
                 executable->getEvent()->onCnnReleased(&(*itr));
         }
     }
-    // We do not need to handle event disconnectAllPortsEventOk 
+    // We do not need to handle event disconnectAllPortsEventOk
 }
 
 void Dying::refresh(void)
@@ -443,7 +443,7 @@ void Dying::refresh(void)
 
 void Dying::kill(void) { /* do nothing */ }
 
-void Dying::moduleFailed(void) 
+void Dying::moduleFailed(void)
 {
     // Notice that we should not call onExecutableFailed
     // in DYING state!
@@ -480,12 +480,12 @@ void Dead::stop(void)
 
 
 void Dead::kill(void)
-{   
+{
     castEvent(EventFactory::killEvent);
 }
 
-// refresh() from Dead can be used for recovering from 
-// unexpect termination of manager. 
+// refresh() from Dead can be used for recovering from
+// unexpect termination of manager.
 void Dead::refresh(void)
 {
     ErrorLogger* logger = ErrorLogger::Instance();
@@ -635,7 +635,7 @@ void ExecMachine::connectionFailed(void* which)
 }
 
 // For debuging
-void ExecMachine::onTransition(StateBase* previous, 
+void ExecMachine::onTransition(StateBase* previous,
                                 Event* event, StateBase* current)
 {
     /*
@@ -645,4 +645,3 @@ void ExecMachine::onTransition(StateBase* previous,
     std::cout<<"["<<current->getName()<<"]"<<endl;
     */
 }
-

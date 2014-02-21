@@ -4,12 +4,12 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
 
-#include "executable.h"
+#include <yarp/manager/executable.h>
 
+using namespace yarp::manager;
 
 Executable::Executable(Broker* _broker, MEvent* _event,
                     bool _bWatchDog)
@@ -188,5 +188,3 @@ void Executable::watchdogImplement(void)
                 execMachine->connectionFailed(&(*itr));
     }
 }
-
-

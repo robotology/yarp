@@ -2,11 +2,16 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
- *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
+
+#include <yarp/manager/xmlresloader.h>
+#include <yarp/manager/utility.h>
+#include <yarp/manager/ymm-dir.h>
+#include <yarp/manager/physicresource.h>
+#include <yarp/manager/logicresource.h>
 
 #include <algorithm>
 #include <cctype>
@@ -15,36 +20,32 @@
 
 #include <tinyxml.h>
 
-#include "utility.h"
-#include "ymm-dir.h"
-#include "xmlresloader.h"
-#include "physicresource.h"
-#include "logicresource.h"
-
 
 using namespace std;
+using namespace yarp::manager;
+
 
 XmlResLoader::XmlResLoader(const char* szPath, const char* szName)
 {
     if(strlen(szPath))
     {
         strPath = szPath;
-        if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+        if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
     }
-    
+
     if(szName)
         strName = szName;
 }
 
 /**
- * load only one module indicated by its xml file name 
+ * load only one module indicated by its xml file name
  */
-XmlResLoader::XmlResLoader(const char* szFileName) 
+XmlResLoader::XmlResLoader(const char* szFileName)
 {
     if(szFileName)
-        strFileName = szFileName;   
+        strFileName = szFileName;
 }
 
 
@@ -58,9 +59,9 @@ bool XmlResLoader::init(void)
 {
     fileNames.clear();
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     /**
-     * loading single resource indicated by its xml file name 
+     * loading single resource indicated by its xml file name
      */
     if(!strFileName.empty())
     {
@@ -71,20 +72,20 @@ bool XmlResLoader::init(void)
     if(strPath.empty())
     {
         logger->addError("No module path is introduced.");
-        return false; 
+        return false;
     }
 
     DIR *dir;
     struct dirent *entry;
     if ((dir = opendir(strPath.c_str())) == NULL)
-    {       
+    {
         OSTRINGSTREAM err;
         err<<"Cannot access "<<strPath;
         logger->addError(err);
         return false;
     }
-    
-    /* we need to load all xml files */   
+
+    /* we need to load all xml files */
     while((entry = readdir(dir)))
     {
         string name = entry->d_name;
@@ -95,7 +96,7 @@ bool XmlResLoader::init(void)
                 fileNames.push_back(strPath+name);
         }
     }
-    closedir(dir);  
+    closedir(dir);
 
     /*
     if(fileNames.empty())
@@ -104,7 +105,7 @@ bool XmlResLoader::init(void)
         err<<"No xml resource file found in "<<strPath;
         logger->addWarning(err);
         //return true;
-    }   
+    }
     */
     return true;
 }
@@ -124,7 +125,7 @@ void XmlResLoader::fini(void)
 
 
 GenericResource* XmlResLoader::getNextResource(void)
-{  
+{
     if(strName.empty())
     {
         if(computers.size())
@@ -140,12 +141,12 @@ GenericResource* XmlResLoader::getNextResource(void)
             {
                 if(fileNames.empty())
                     return NULL;
-                    
+
                 string fname = fileNames.back();
                 fileNames.pop_back();
-                ret = parsXml(fname.c_str());       
+                ret = parsXml(fname.c_str());
             } while(!ret);
-           
+
             dummyComputer = computers.back();
             computers.pop_back();
             return &dummyComputer;
@@ -154,9 +155,9 @@ GenericResource* XmlResLoader::getNextResource(void)
     else
     {
         /**
-         * we need to check for a single resource 
+         * we need to check for a single resource
          */
-         vector<string>::iterator itr; 
+         vector<string>::iterator itr;
          for(itr=fileNames.begin(); itr<fileNames.end(); itr++)
          {
              if(parsXml((*itr).c_str()))
@@ -177,9 +178,9 @@ bool XmlResLoader::parsXml(const char* szFile)
     computers.clear();
 
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     TiXmlDocument doc(szFile);
-    if(!doc.LoadFile()) 
+    if(!doc.LoadFile())
     {
         OSTRINGSTREAM err;
         err<<"Syntax error while loading "<<szFile<<" at line "\
@@ -198,7 +199,7 @@ bool XmlResLoader::parsXml(const char* szFile)
         logger->addError(err);
         return false;
     }
-        
+
     if(!compareString(root->Value(), "resources"))
     {
         /*
@@ -208,12 +209,12 @@ bool XmlResLoader::parsXml(const char* szFile)
         */
         return false;
     }
-    
+
     /* retrieving all computers descriptions */
     for(TiXmlElement* restag = root->FirstChildElement();
             restag; restag = restag->NextSiblingElement())
     {
-        /* retrieving a computer resource */    
+        /* retrieving a computer resource */
         if(compareString(restag->Value(), "computer"))
         {
             Computer computer;
@@ -221,13 +222,13 @@ bool XmlResLoader::parsXml(const char* szFile)
 
             for(TiXmlElement* comptag = restag->FirstChildElement();
                 comptag; comptag = comptag->NextSiblingElement())
-            {       
+            {
                  /* retrieving name */
-                if(compareString(comptag->Value(), "name"))                               
+                if(compareString(comptag->Value(), "name"))
                     computer.setName(comptag->GetText());
 
                 /* retrieving description */
-                 if(compareString(comptag->Value(), "description"))                  
+                 if(compareString(comptag->Value(), "description"))
                     computer.setDescription(comptag->GetText());
 
                 /* retrieving disablility */
@@ -249,14 +250,14 @@ bool XmlResLoader::parsXml(const char* szFile)
                         OSTRINGSTREAM war;
                         war<<"Platform from "<<szFile<<" at line "\
                            <<comptag->Row()<<" has no name.";
-                        logger->addWarning(war);                
+                        logger->addWarning(war);
                     }
-                    
+
                     if((element = (TiXmlElement*) comptag->FirstChild("distribution")))
                         os.setDistribution(element->GetText());
-                    
+
                     if((element = (TiXmlElement*) comptag->FirstChild("release")))
-                        os.setRelease(element->GetText()); 
+                        os.setRelease(element->GetText());
 
                     computer.setPlatform(os);
                 } // end of platform tag
@@ -267,7 +268,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Memory mem;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                        mem.setTotalSpace((Capacity)atol(element->GetText()));               
+                        mem.setTotalSpace((Capacity)atol(element->GetText()));
                    computer.setMemory(mem);
                 } // end of memory tag
 
@@ -277,7 +278,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     Storage stg;
                     TiXmlElement* element;
                     if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
-                        stg.setTotalSpace((Capacity)atol(element->GetText()));               
+                        stg.setTotalSpace((Capacity)atol(element->GetText()));
                    computer.setStorage(stg);
                 } // end of storage tag
 
@@ -291,7 +292,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                     if((element = (TiXmlElement*) comptag->FirstChild("model")))
                         proc.setModel(element->GetText());
                     if((element = (TiXmlElement*) comptag->FirstChild("cores")))
-                        proc.setCores((size_t)atoi(element->GetText()));               
+                        proc.setCores((size_t)atoi(element->GetText()));
                     if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
                         proc.setFrequency(atof(element->GetText()));
                    computer.setProcessor(proc);
@@ -336,14 +337,14 @@ bool XmlResLoader::parsXml(const char* szFile)
                         else
                             gpu.setOverlap(false);
                     }
-                 
+
                     // global memory
                     if(comptag->FirstChild("global_memory"))
                     {
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("global_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setGlobalMemory((Capacity)atol(element->GetText()));            
+                            gpu.setGlobalMemory((Capacity)atol(element->GetText()));
                     } // end of global memory tag
 
                     // shared memory
@@ -352,7 +353,7 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("shared_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setSharedMemory((Capacity)atol(element->GetText()));            
+                            gpu.setSharedMemory((Capacity)atol(element->GetText()));
                     } // end of shared memory tag
 
                     // constant memory
@@ -361,17 +362,15 @@ bool XmlResLoader::parsXml(const char* szFile)
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("constant_memory");
                         if((element = (TiXmlElement*) element->FirstChild("total_space")))
-                            gpu.setConstantMemory((Capacity)atol(element->GetText()));            
+                            gpu.setConstantMemory((Capacity)atol(element->GetText()));
                     } // end of shared memory tag
 
                    computer.addPeripheral(gpu);
                 } // end of gpu tag
-            } // end of computer loop 
+            } // end of computer loop
 
             computers.push_back(computer);
         } // end of if computer
-    } // end of resources 
+    } // end of resources
     return true;
 }
-
-

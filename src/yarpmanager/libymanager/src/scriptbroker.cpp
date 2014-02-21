@@ -6,17 +6,21 @@
  *  Authors: Ali Paikan <ali.paikan@iit.it>, Elena Ceseracciu <elena.ceseracciu@iit.it>
  *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
  */
 
-#include "scriptbroker.h"
+
+#include <yarp/manager/scriptbroker.h>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConstString.h>
 
 
 using namespace yarp::os;
- char slash = NetworkBase::getDirectorySeparator()[0];
+using namespace yarp::manager;
+
+
+char slash = NetworkBase::getDirectorySeparator()[0];
 ////// adapted from libYARP_OS: ResourceFinder.cpp
 static Bottle parsePaths(const ConstString& txt) {
     char slash = NetworkBase::getDirectorySeparator()[0];
@@ -122,4 +126,3 @@ bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
     return YarpBroker::init(script.c_str(), strDevParam.str().c_str(),
                                 szhost, szstdio, szworkdir, szenv);
 }
-

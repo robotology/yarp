@@ -13,7 +13,7 @@
 #define __CUSTOM_CELLRENDER__
 
 
-#include "ymm-types.h"
+#include <yarp/manager/ymm-types.h>
 #include <gtkmm.h>
 
 

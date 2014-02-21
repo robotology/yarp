@@ -31,6 +31,7 @@
 #define GRID_PATTERN_SIZE       15
 
 using namespace std;
+using namespace yarp::manager;
 
 static void put_pixel (GdkPixbuf *pixbuf, int x, int y, 
             guchar red, guchar green, guchar blue, guchar alpha)

@@ -26,19 +26,21 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 
-#include "localbroker.h"
+#include <yarp/manager/localbroker.h>
+#include <yarp/manager/xmltemploader.h>
+#include <yarp/manager/xmlapploader.h>
+
 #include "main_window.h"
 #include "application_window.h"
 #include "resource_window.h"
 #include "module_window.h"
 #include "icon_res.h"
 #include "template_res.h"
-#include "xmltemploader.h"
-#include "xmlapploader.h"
 
 using namespace std;
+using namespace yarp::manager;
 
 #define WND_DEF_HEIGHT      600
 #define WND_DEF_WIDTH       800

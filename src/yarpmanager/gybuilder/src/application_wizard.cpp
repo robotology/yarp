@@ -17,11 +17,12 @@
 #include "application_wizard.h"
 
 #include "icon_res.h"
-#include "ymm-dir.h"
+#include <yarp/manager/ymm-dir.h>
 #include <iostream>
 #include <fstream>
 
 using namespace std;
+using namespace yarp::manager;
 
 inline bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
         if (path[0]=='/'||path[0]=='\\') {
