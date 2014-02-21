@@ -87,35 +87,58 @@ bool SerialDeviceDriver::close(void) {
 bool SerialDeviceDriver::send(const Bottle& msg)
 {
     if (msg.size() > 0) {
-	    if (verbose) ACE_OS::printf("Sending string: %s\n", msg.get(0).asString().c_str());
-    
-        // Write message to the serial device
-	    int message_size = msg.get(0).asString().length();
-        ssize_t bytes_written = _serial_dev.send_n((void *)msg.get(0).asString().c_str(), message_size);
+        int message_size = msg.get(0).asString().length();
 
-        if (bytes_written == -1) {
-            ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
-            return false;
+        if (message_size > 0) {
+	        if (verbose) {
+                ACE_OS::printf("Sending string: %s", msg.get(0).asString().c_str());
+                if (msg.get(0).asString().c_str()[message_size - 1] != '\n') {    // Add \n only if reply does not contain it already
+                    ACE_OS::printf("\n");
+                }
+            }
+    
+            // Write message to the serial device
+	    
+            ssize_t bytes_written = _serial_dev.send_n((void *) msg.get(0).asString().c_str(), message_size);
+
+            if (bytes_written == -1) {
+                ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+                return false;
+            }
+        } else {
+           if (verbose) ACE_OS::printf("The input command bottle contains an empty string. \n");
+           return false;
         }
-        
     } else {
         if (verbose) ACE_OS::printf("The input command bottle is empty. \n");
         return false;
     }
+
     return true;
 } 
 
 bool SerialDeviceDriver::send(char *msg, size_t size)
 {
-    if (verbose) ACE_OS::printf("Sending string: %s\n", msg);
+    if (size > 0) {
+        if (verbose) {
+            ACE_OS::printf("Sending string: %s", msg);
+            if (msg[size - 1] != '\n') {    // Add \n only if reply does not contain it already
+                ACE_OS::printf("\n");
+            }
+        }
     
-	// Write message in the serial device
-    ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
+	    // Write message in the serial device
+        ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
 
-    if (bytes_written == -1) {
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+        if (bytes_written == -1) {
+            ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+            return false;
+        }
+    } else {
+        if (verbose) ACE_OS::printf("The input message is empty. \n");
         return false;
     }
+
     return true;
 }
 
@@ -196,7 +219,13 @@ bool SerialDeviceDriver::receive(Bottle& msg)
         
     message[bytes_read] = 0;
 
-    if (verbose) ACE_OS::printf("Data received from serial device: #%s# \n",message);
+    if (verbose) {
+        ACE_OS::printf("Data received from serial device: %s",message);
+        if (message[bytes_read - 1] != '\n') {    // Add \n only if reply does not contain it already
+             ACE_OS::printf("\n");
+        }
+    }
+
 
     // Put message in the bottle
     msg.addString(message);
