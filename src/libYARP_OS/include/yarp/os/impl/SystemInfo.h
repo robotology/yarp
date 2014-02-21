@@ -15,6 +15,7 @@
 #define _SYSTEMINFO_H_
 
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Property.h>
 
 
 namespace yarp {
@@ -74,6 +75,7 @@ typedef struct _PlatformInfo {
     yarp::os::ConstString release;
     yarp::os::ConstString codename;
     yarp::os::ConstString kernel;
+    yarp::os::Property environmentVars;
 } PlatformInfo;
 
 typedef struct _UserInfo {

@@ -48,6 +48,7 @@ public:
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv );
 private:
+    bool whichFile(const char* server, const char* filename, std::string& filenameWithPath);
     std::string script;
 };
  
