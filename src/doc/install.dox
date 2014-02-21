@@ -7,28 +7,44 @@
 /**
  * @page install Installing YARP
 
-YARP is available from http://yarp0.sourceforge.net
+YARP is available from https://github.com/robotology/yarp
 
-For Debian and Ubuntu users, here's a quick summary:
+For Debian and Ubuntu users, here's a quick summary of how to 
+get a build of the core YARP libraries and utilities from source:
 \verbatim
   sudo apt-get install cmake libace-dev git
   git clone git://github.com/robotology/yarp.git
   cd yarp && mkdir build && cd build && cmake .. && make
   sudo make install  # Optional.
-  # Alternative: set environment variable YARP_DIR to .../yarp2/build
-  #              and add .../yarp2/build/bin to PATH
+  # Alternative: set environment variable YARP_DIR to .../yarp/build
+  #              and add .../yarp/build/bin to PATH
   yarp check
 \endverbatim
 
-For Microsoft Windows users, there are compiled releases of YARP
-available at http://sourceforge.net/projects/yarp0/files/yarp2/ - you'll 
-need to select the right one for your compiler.
+Or, if you'd like to compile without using the ACE library:
+\verbatim
+  sudo apt-get install cmake git
+  git clone git://github.com/robotology/yarp.git
+  cd yarp && mkdir build && cd build && cmake -DSKIP_ACE=TRUE .. && make
+  yarp check
+\endverbatim
+
+For a more comprehensive build with optional extras, use the CMake GUI, or see: http://wiki.icub.org/wiki/Linux:Installation_from_sources#Compile_YARP
+
+There are also Debian and Ubuntu packages available from the iCub
+project, just follow the instructions at http://wiki.icub.org/wiki/Linux:Installation_from_binaries and then do:
+\verbatim
+sudo apt-get install yarp
+\endverbatim
 
 For OSX users, try homebrew:
 \verbatim
   brew install yarp
 \endverbatim
 
+For Microsoft Windows users:
+ \li Get a YARP installer from http://wiki.icub.org/wiki/Downloads
+ \li Or follow the instructions for compiling YARP at http://wiki.icub.org/wiki/Windows:_installation_from_sources
 
 Here are the more general steps needed to install YARP:
   \li \ref install_cmake "Install CMake"
