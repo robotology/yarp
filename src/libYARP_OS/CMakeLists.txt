@@ -349,8 +349,8 @@ endif()
 
 if (YARP_USE_READLINE)
     add_definitions(-DWITH_READLINE)
-    include_directories(${READLINE_INCLUDE_DIR})
-    target_link_libraries(YARP_OS LINK_PRIVATE ${READLINE_LIBRARY})
+    include_directories(${Readline_INCLUDE_DIRS})
+    target_link_libraries(YARP_OS LINK_PRIVATE ${Readline_LIBRARY})
 endif ()
 
 install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
