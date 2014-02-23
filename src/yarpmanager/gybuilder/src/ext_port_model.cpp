@@ -6,6 +6,11 @@
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
+#if defined(WIN32)
+    #pragma warning (disable : 4250)
+    #pragma warning (disable : 4520)
+    #pragma warning (disable : 4099)
+#endif
 
 #include "ext_port_model.h"
 #include "application_window.h"

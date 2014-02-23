@@ -10,12 +10,11 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
+    #pragma warning (disable : 4099)
 #endif
 
 #include "con_property_window.h"
 #include "icon_res.h"
-#include <yarp/manager/ymm-dir.h>
-
 #include "main_window.h"
 #include "ext_port_model.h"
 #include "port_abitrator_model.h"
@@ -23,6 +22,7 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/manager/ymm-dir.h>
 
 using namespace yarp::os;
 using namespace yarp::manager;

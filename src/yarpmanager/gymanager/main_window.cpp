@@ -26,11 +26,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <yarp/manager/ymm-dir.h>
-
-#include <yarp/manager/localbroker.h>
-#include <yarp/manager/xmltemploader.h>
-#include <yarp/manager/xmlapploader.h>
 
 #include "main_window.h"
 #include "application_window.h"
@@ -38,6 +33,11 @@
 #include "module_window.h"
 #include "icon_res.h"
 #include "template_res.h"
+
+#include <yarp/manager/ymm-dir.h>
+#include <yarp/manager/localbroker.h>
+#include <yarp/manager/xmltemploader.h>
+#include <yarp/manager/xmlapploader.h>
 
 using namespace std;
 using namespace yarp::manager;

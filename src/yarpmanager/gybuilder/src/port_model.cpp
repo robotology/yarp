@@ -7,6 +7,12 @@
  *
  */
 
+#if defined(WIN32)
+    #pragma warning (disable : 4250)
+    #pragma warning (disable : 4520)
+    #pragma warning (disable : 4099)
+#endif
+
 #include "port_model.h"
 #include "application_window.h"
 

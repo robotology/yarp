@@ -10,14 +10,15 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
+    #pragma warning (disable : 4099)
 #endif
 
 #include "app_property_window.h"
 #include "icon_res.h"
-#include <yarp/manager/ymm-dir.h>
-
 #include "main_window.h"
 #include "application_window.h"
+
+#include <yarp/manager/ymm-dir.h>
 
 using namespace yarp::manager;
 

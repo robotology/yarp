@@ -10,13 +10,15 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
-    #define PATH_SEPERATOR      "\\"
+    #pragma warning (disable : 4099)
+	#define PATH_SEPERATOR      "\\"
 #else
     #define PATH_SEPERATOR      "/"
 #endif
 
 #include <iostream>
 #include <gtkmm.h>
+#include "main_window.h"
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -24,8 +26,6 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ResourceFinderOptions.h>
 #include <yarp/os/Os.h>
-
-#include "main_window.h"
 #include <yarp/manager/ymm-dir.h>
 
 

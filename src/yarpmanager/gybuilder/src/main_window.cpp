@@ -11,7 +11,8 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
-    #define NOMINMAX 
+    #pragma warning (disable : 4099)
+	#define NOMINMAX 
     #include <windows.h>
 #else
     #include <unistd.h>
@@ -22,18 +23,11 @@
     #include <signal.h>
 #endif
 
+#if defined(WIN32)
+	#undef max 
+#endif
 
 #include <gtkmm.h>
-
-//#include <iostream>
-#include <fstream>
-#include <string>
-
-#include <yarp/manager/ymm-dir.h>
-#include <yarp/manager/localbroker.h>
-#include <yarp/manager/xmltemploader.h>
-#include <yarp/manager/xmlapploader.h>
-#include <yarp/manager/xmlappsaver.h>
 
 #include "main_window.h"
 #include "application_window.h"
@@ -42,6 +36,14 @@
 #include "icon_res.h"
 #include "template_res.h"
 #include "application_wizard.h"
+
+#include <fstream>
+#include <string>
+#include <yarp/manager/ymm-dir.h>
+#include <yarp/manager/localbroker.h>
+#include <yarp/manager/xmltemploader.h>
+#include <yarp/manager/xmlapploader.h>
+#include <yarp/manager/xmlappsaver.h>
 
 using namespace std;
 using namespace yarp::manager;

@@ -10,18 +10,16 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
+    #pragma warning (disable : 4099)
 #endif
-
-#include <yarp/manager/ymm-dir.h>
 
 #include "module_property_window.h"
 #include "icon_res.h"
 #include "main_window.h"
 #include "arrow_model.h"
 #include "application_window.h"
-
+#include <yarp/manager/ymm-dir.h>
 using namespace yarp::manager;
-
 
 ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent, 
                                Manager* manager, ApplicationWindow* appWnd) : m_pModule(NULL)

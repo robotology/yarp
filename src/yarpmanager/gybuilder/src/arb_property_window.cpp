@@ -10,16 +10,17 @@
 #if defined(WIN32)
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
+    #pragma warning (disable : 4099)
 #endif
+
 
 #include "arb_property_window.h"
 #include "icon_res.h"
-#include <yarp/manager/ymm-dir.h>
-
 #include "main_window.h"
 #include "ext_port_model.h"
 #include "application_window.h"
 
+#include <yarp/manager/ymm-dir.h>
 #include <yarp/manager/binexparser.h>
 
 //#include <yarp/os/Property.h>

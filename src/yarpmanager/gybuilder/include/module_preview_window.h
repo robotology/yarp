@@ -10,6 +10,10 @@
 #ifndef _MODULE_PREVIEW_WINDOW_H_
 #define _MODULE_PREVIEW_WINDOW_H_
 
+
+#if defined(WIN32)
+	#undef max 
+#endif
 #include <gtkmm.h>
 #include <goocanvasmm.h>
 #include "module_model.h"
