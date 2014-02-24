@@ -1,0 +1,12 @@
+diff --git a/extern/diff_match_patch/diff_match_patch.h b/extern/diff_match_patch/diff_match_patch.h
+index 86964e5..eefb7d8 100644
+--- a/extern/diff_match_patch/diff_match_patch.h
++++ b/extern/diff_match_patch/diff_match_patch.h
+@@ -28,6 +28,7 @@
+ #include <map>
+ #include <string>
+ #include <vector>
++#include <algorithm>
+ #include <cstdlib>
+ #include <cwchar>
+ #include <time.h>
