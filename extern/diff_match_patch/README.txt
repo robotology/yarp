@@ -29,8 +29,4 @@ License:
  See the License for the specific language governing permissions and
  limitations under the License.
 
-Version: 035543a22465c5d7f8e2073f60f407cb35287f4e (Aug 20th 2013)
-
-Patches:
-* algorithm.patch: Include <algorithm> from standard c++ library for
-  "std::max()" that is not found on some configurations.
+Version: b2e454ef292145ab08bbdadb802002731f0e8001 (Feb 24th 2014)
