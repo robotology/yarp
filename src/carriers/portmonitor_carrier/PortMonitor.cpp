@@ -85,17 +85,19 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params)
 
 yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader) 
 {
-    if(!bReady) return reader;
+    // When we are here, the incoming data should be in a dummy connection (con). 
+    // The reader passed to this function is infact empty. 
+ 
+    if(!bReady) return con.getReader();
 
     PortMonitor::lock();
     yarp:os::Things thing;
-    thing.read(reader);
+    thing.read(con.getReader());
     yarp::os::Things& result = binder->updateData(thing);    
     PortMonitor::unlock();
     con.reset();
-    if(result.write(con.getWriter()))
-        return con.getReader();
-    return reader;
+    result.write(con.getWriter());
+    return con.getReader();
 }
 
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader) 
@@ -110,9 +112,15 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
     if(!result)
         return false;
 
+    // When data is red here using the reader passed to this functions, 
+    // then it wont be available for modifyIncomingData(). Thus, we write
+    // it to a dumy connection ans pass it to the modifyOutgoingData().
+    con.reset();
+    thing.write(con.getWriter());
+
     getPeers().lock();
     YARP_ASSERT(group);
-    result = group->acceptIncomingData(reader,this);
+    result = group->acceptIncomingData(this);
     getPeers().unlock();
     return result;
 }
@@ -164,10 +172,8 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
 }
 
 // Decide whether data should be accepted, for real.
-bool PortMonitorGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
-                                       PortMonitor *source) 
-{
-    
+bool PortMonitorGroup::acceptIncomingData(PortMonitor *source) 
+{    
     //bool accept = true;
     for (PeerRecord<PortMonitor>::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
     {

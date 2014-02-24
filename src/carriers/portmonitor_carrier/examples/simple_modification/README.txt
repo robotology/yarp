@@ -31,3 +31,7 @@ Now if you write something  in the 'sender' terminal, you will see the text
 [receiver terminal] 
  Hello "modified from Lua"
 
+
+As it is constrained in this PortMonitor.accept() method, If you type "ignore", 
+the word will never be delivered to the input port. 
+

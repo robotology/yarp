@@ -37,8 +37,7 @@ namespace yarp {
 class yarp::os::PortMonitorGroup : public PeerRecord<PortMonitor> {
 public:
     virtual ~PortMonitorGroup() {}
-    virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader,
-                                    PortMonitor *source);
+    virtual bool acceptIncomingData(PortMonitor *source);
 };
 
 

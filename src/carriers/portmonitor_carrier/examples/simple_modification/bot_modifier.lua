@@ -47,6 +47,9 @@ end
 -- if false is returned, the data will be ignored 
 -- and update() will never be called
 PortMonitor.accept = function(thing)
+    if thing:asBottle():toString() == "ignore" then
+        return false
+    end
     return true
 end
 
@@ -58,7 +61,6 @@ end
 -- portmoniotr is invoked
 --
 PortMonitor.trig = function()
-
 end
 
 
