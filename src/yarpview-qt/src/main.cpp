@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
 
     QQmlApplicationEngine engine;
+    engine.addImportPath("../QtYARPViewPlugin/imports");
     engine.load(QUrl("qrc:/qml/QtYARPView/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);
 
