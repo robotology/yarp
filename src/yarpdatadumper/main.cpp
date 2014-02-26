@@ -59,7 +59,7 @@ containing information about the data type stored within the
 or disconnected to the dumper, as in the following:
 
 \code 
-Type: [Bottle]/[Image:ppm]/[Image:ppm; Video:avi(huffyuv)] 
+Type: [Bottle | Image:ppm | Image:ppm; Video:avi(huffyuv)]
 [local-timestamp] /yarp-port-name [connected] 
 [local-timestamp] /yarp-port-name [disconnected]
 \endcode 
@@ -140,8 +140,10 @@ by the \ref dataDumper.
 --txTime
 - Regardless of its availability, the sender time stamp will be
   inserted in the log straightaway. Moreover, if \e txTime is
-  given in conjunction with the \e rxTime option, then the
-  following format will be adopted for the logged data:
+  given in conjunction with the \e rxTime option (or even if
+  \e rxTime is not selected but the sender stamp is invalid),
+    then the following format will be adopted for the logged
+    data:
  
 \code 
 [pck id] [tx stamp] [rx stamp] [bottle content]
