@@ -1,4 +1,8 @@
-#dataSetPlayer.thrift
+# Copyright: (C) 2013 iCub Facility - Istituto Italiano di Tecnologia
+# Authors: Vadim Tikhanoff
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+#
+# dataSetPlayer.thrift
 
 /**
 * dataSetPlayer_IDLServer
