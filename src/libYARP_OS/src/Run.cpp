@@ -505,7 +505,7 @@ int yarp::os::Run::server()
                 botUUID.addString(strUUID.c_str());
                 msg.addList()=botUUID;
 
-                if (msg.check("log"))
+                if (mLogged || msg.check("log"))
                 {
                     yarp::os::ConstString strAlias=msg.find("as").asString();
                     yarp::os::ConstString portName="/log";
@@ -953,7 +953,7 @@ int yarp::os::Run::server()
                     botUUID.addString(strUUID.c_str());
                     msg.addList()=botUUID;
 
-                    if (msg.check("log"))
+                    if (mLogged || msg.check("log"))
                     {
                         yarp::os::ConstString strAlias=msg.find("as").asString();
                         yarp::os::ConstString portName="/log";
