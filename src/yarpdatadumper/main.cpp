@@ -137,6 +137,16 @@ by the \ref dataDumper.
   receiver time will be taken as reference in case of invalid
   message envelope.
  
+--txTime
+- Regardless of its availability, the sender time stamp will be
+  inserted in the log straightaway. Moreover, if \e txTime is
+  given in conjunction with the \e rxTime option, then the
+  following format will be adopted for the logged data:
+ 
+\code 
+[pck id] [tx stamp] [rx stamp] [bottle content]
+\endcode 
+ 
 \section portsa_sec Ports Accessed
 The port the service is listening to.
 
@@ -200,6 +210,7 @@ So, now, have a look inside the directory ./log
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <string>
 #include <deque>
@@ -325,13 +336,53 @@ DumpObj *factory(ImageOf<PixelBgr> &obj)
 }
 
 
+// Class to manage tx and rx time stamps
+/**************************************************************************/
+class DumpTimeStamp
+{
+    double rxStamp;
+    double txStamp;
+    bool   rxOk;
+    bool   txOk;
+
+public:
+    DumpTimeStamp() : rxOk(false), txOk(false) { }
+    void setRxStamp(const double stamp) { rxStamp=stamp; rxOk=true; }
+    void setTxStamp(const double stamp) { txStamp=stamp; txOk=true; }
+    double getStamp() const
+    {
+        if (txOk)
+            return txStamp;
+        else if (rxOk)
+            return rxStamp;
+        else
+            return -1.0;
+    }
+    string getString() const
+    {
+        ostringstream ret;
+        ret<<fixed;
+
+        if (txOk)
+            ret<<txStamp;
+        if (rxOk)
+        {
+            if (!ret.str().empty())
+                ret<<' ';
+            ret<<rxStamp; 
+        }
+        return ret.str();
+    }
+};
+
+
 // Definition of item to be put in the queue
 /**************************************************************************/
 typedef struct
 {
-    int     seqNumber;
-    double  timeStamp;
-    DumpObj *obj;
+    int            seqNumber;
+    DumpTimeStamp  timeStamp;
+    DumpObj       *obj;
 } DumpItem;
 
 
@@ -356,9 +407,10 @@ template <class T>
 class DumpPort : public BufferedPort<T>
 {
 public:
-    DumpPort(DumpQueue &Q, unsigned int _dwnsample=1, bool _rxTime=true) : buf(Q)
+    DumpPort(DumpQueue &Q, unsigned int _dwnsample=1, bool _rxTime=true, bool _txTime=false) : buf(Q)
     {
         rxTime=_rxTime;
+        txTime=_txTime;
         dwnsample=_dwnsample>0?_dwnsample:1;
         cnt=0;
 
@@ -371,6 +423,7 @@ private:
     unsigned int cnt;
     bool firstIncomingData;
     bool rxTime;
+    bool txTime;
 
     void onRead(T &obj)
     {
@@ -384,17 +437,18 @@ private:
 
             DumpItem item;
             Stamp info;
-    
+
             BufferedPort<T>::getEnvelope(info);
-    
             item.seqNumber=info.getCount();
-            if (!info.isValid() || rxTime)
-                item.timeStamp=Time::now();
-            else
-                item.timeStamp=info.getTime();
+
+            if (txTime || (info.isValid() && !rxTime))
+                item.timeStamp.setTxStamp(info.getTime());
+
+            if (rxTime || !info.isValid())
+                item.timeStamp.setRxStamp(Time::now());
 
             item.obj=factory(obj);
-    
+
             buf.lock();
             buf.push_back(item);
             buf.unlock();
@@ -527,7 +581,7 @@ public:
                 int frameW=((IplImage*)itemEnd.obj->getPtr())->width;
                 int frameH=((IplImage*)itemEnd.obj->getPtr())->height;
 
-                double dt=itemEnd.timeStamp-itemFront.timeStamp;
+                double dt=itemEnd.timeStamp.getStamp()-itemFront.timeStamp.getStamp();
                 if (dt<=0.0)
                     fps=25; // default
                 else
@@ -549,7 +603,7 @@ public:
                 buf.pop_front();
                 buf.unlock();
 
-                fdata << item.seqNumber << ' ' << fixed << item.timeStamp << ' ';
+                fdata << item.seqNumber << ' ' << item.timeStamp.getString() << ' ';
                 if (saveData)
                     fdata << item.obj->toFile(dirName,counter++) << endl;
                 else
@@ -620,6 +674,7 @@ private:
     bool                          saveData;
     bool                          videoOn;
     bool                          rxTime;
+    bool                          txTime;
     unsigned int                  dwnsample;
     char                          portName[255];
 
@@ -679,6 +734,7 @@ public:
 
         dwnsample=rf.check("downsample",Value(1)).asInt();
         rxTime=rf.check("rxTime");
+        txTime=rf.check("txTime");
         string templateDirName=rf.check("dir")?rf.find("dir").asString().c_str():portName;
         if (templateDirName[0]!='/')
             templateDirName="/"+templateDirName;
@@ -721,14 +777,14 @@ public:
 
         if (type==bottle)
         {
-            p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime);
+            p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime,txTime);
             p_bottle->useCallback();
             p_bottle->open(portName);
             p_bottle->setReporter(reporter);
         }
         else
         {
-            p_image=new DumpPort<ImageOf<PixelBgr> >(*q,dwnsample,rxTime);
+            p_image=new DumpPort<ImageOf<PixelBgr> >(*q,dwnsample,rxTime,txTime);
             p_image->useCallback();
             p_image->open(portName);
             p_image->setReporter(reporter);
@@ -799,6 +855,7 @@ int main(int argc, char *argv[])
     #endif
         cout << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)"           << endl;
         cout << "\t--rxTime         : dump the receiver time instead of the sender time"             << endl;
+        cout << "\t--txTime         : dump the sender time straightaway"                             << endl;
 
         return 0;
     }
