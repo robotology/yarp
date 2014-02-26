@@ -223,13 +223,26 @@ protected:
 class RunReadWrite : public RunStdio, public yarp::os::Thread
 {
 public:
-    RunReadWrite(yarp::os::ConstString &portName)
+    RunReadWrite(yarp::os::ConstString &portsName,yarp::os::ConstString &fpName)
     {
-        UUID=portName;
-        wPortName=portName+"/stdio:o";
-        rPortName=portName+"/stdio:i";
-        mRunning=true; 
+        UUID=portsName;
+        wPortName=portsName+"/stdio:o";
+        rPortName=portsName+"/stdio:i";
+        mRunning=true;
+
+        if (fpName!="")
+        {
+            char buff[16];
+            sprintf(buff,"/%d",getpid());
+            mForwarded=true;
+            fPortName=fpName+buff;
+        }
+        else
+        {
+            mForwarded=false;
+        }
     }
+
    ~RunReadWrite(){}
 
     void run();
@@ -251,12 +264,15 @@ public:
 
 protected:
     bool mRunning;
+    bool mForwarded;
 
     yarp::os::ConstString UUID;
     yarp::os::ConstString wPortName;
     yarp::os::ConstString rPortName;
+    yarp::os::ConstString fPortName;
     yarp::os::Port wPort;
     yarp::os::Port rPort;
+    yarp::os::Port fPort;
 };
 
 #endif

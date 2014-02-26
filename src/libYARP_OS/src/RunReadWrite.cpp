@@ -114,6 +114,24 @@ int RunReadWrite::loop()
 
     yarp::os::Network::connect((UUID+"/stdout").c_str(),rPortName.c_str(),style);
     
+    // forwarded section
+    yarp::os::ConstString tag;
+    
+    if (mForwarded)
+    {
+        tag=yarp::os::ConstString("[")+fPortName+yarp::os::ConstString("]");
+        if (!fPort.open(fPortName.c_str()))
+        {
+            RUNLOG("RunReadWrite: could not open forward port")
+            fprintf(stderr,"RunReadWrite: could not open forward port\n");
+        
+            rPort.close();
+
+            return 1;
+        }
+    }
+    /////////////////////
+
     #if !defined(WIN32)
     if (getppid()!=1)
     #endif
@@ -144,18 +162,36 @@ int RunReadWrite::loop()
             if (bot.size()==1)
             {
                 printf("%s",bot.get(0).asString().c_str());
+                fflush(stdout);
+
+                if (mForwarded)
+                {
+                    yarp::os::Bottle fwd;
+                    fwd.addString(tag.c_str());
+                    fwd.addString(bot.get(0).asString().c_str());
+                    fPort.write(fwd);
+                }
             }
             else
             {
                 printf("%s\n",bot.toString().c_str());
-            }
+                fflush(stdout);
 
-            fflush(stdout);
+                if (mForwarded)
+                {
+                    yarp::os::Bottle fwd;
+                    fwd.addString(tag.c_str());
+                    fwd.addString(bot.toString().c_str());
+                    fPort.write(fwd);
+                }
+            }
         }
 
         rPort.close();
 
         wPort.close();
+
+        if (mForwarded) fPort.close();
 
 #if defined(WIN32)
         ::exit(0);
