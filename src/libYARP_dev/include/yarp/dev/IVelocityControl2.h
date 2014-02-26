@@ -11,6 +11,7 @@
 #define __YARPVELOCITYCONTROL_V2__
 
 #include <yarp/dev/IVelocityControl.h>
+#include <yarp/dev/ControlBoardPid.h>
 
 namespace yarp {
     namespace dev {
@@ -96,20 +97,20 @@ public:
      * @param pid new pid value
      * @return true/false on success/failure
      */
-    virtual bool setVelPid(int j, const Pid &pid)=0;
+    virtual bool setVelPid(int j, const yarp::dev::Pid &pid)=0;
 
     /** Set new velocity pid value on multiple joints
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-    virtual bool setVelPids(const Pid *pids)=0;
+    virtual bool setVelPids(const yarp::dev::Pid *pids)=0;
 
     /** Get current velocity pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
      * @return success/failure
      */
-    virtual bool getVelPid(int j, Pid *pid)=0;
+    virtual bool getVelPid(int j, yarp::dev::Pid *pid)=0;
 
     /** Get current velocity pid value for a specific subset of joints.
      * @param n_joints: number of joints handled by this call
@@ -117,7 +118,7 @@ public:
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
-    virtual bool getVelPids(Pid *pids)=0;
+    virtual bool getVelPids(yarp::dev::Pid *pids)=0;
 };
 
 
@@ -180,20 +181,20 @@ public:
      * @param pid new pid value
      * @return true/false on success/failure
      */
-    virtual bool setVelPidRaw(int j, const Pid &pid)=0;
+    virtual bool setVelPidRaw(int j, const yarp::dev::Pid &pid)=0;
 
     /** Set new velocity pid value on multiple joints
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-    virtual bool setVelPidsRaw(const Pid *pids)=0;
+    virtual bool setVelPidsRaw(const yarp::dev::Pid *pids)=0;
 
     /** Get current velocity pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
      * @return success/failure
      */
-    virtual bool getVelPidRaw(int j, Pid *pid)=0;
+    virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid)=0;
 
     /** Get current velocity pid value for a specific subset of joints.
      * @param n_joints: number of joints handled by this call
@@ -201,7 +202,7 @@ public:
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
-    virtual bool getVelPidsRaw(Pid *pids)=0;
+    virtual bool getVelPidsRaw(yarp::dev::Pid *pids)=0;
 };
 
 #define VOCAB_VELOCITY_MOVE_GROUP VOCAB4('v','m','o','g')
