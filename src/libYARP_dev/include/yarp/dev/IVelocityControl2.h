@@ -43,31 +43,49 @@ public:
     using IVelocityControl::getRefAccelerations;
     using IVelocityControl::stop;
 
-    /**
-     * Start motion at a given speed for a subset of joints.
-     * @param joints pointer to the array of joint numbers
-     * @param sps    pointer to the array containing the new speed values
-     * @return true/false upon success/failure
+    /** Start motion at a given speed for a subset of joints..
+     * @param n_joints how many joints this command is referring to
+     * @param list of joints controlled. The size of this array is n_joints
+     * @param spds pointer to the array containing the new speed values, one value for each joint, the size of the array is n_joints.
+     * The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          spds    10 30 40
+     * @return true/false on success/failure
      */
     virtual bool velocityMove(const int n_joint, const int *joints, const double *spds)=0;
 
     /** Set reference acceleration for a subset of joints. This is the valure that is
      * used during the generation of the trajectory.
-     * @param joints pointer to the array of joint numbers
-     * @param accs   pointer to the array containing acceleration values
-     * @return true/false upon success/failure
+     * @param n_joints how many joints this command is referring to
+     * @param list of joints controlled. The size of this array is n_joints
+     * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
+     * The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          accs    10 30 40
+     * @return true/false on success/failure
      */
     virtual bool setRefAccelerations(const int n_joint, const int *joints, const double *accs)=0;
 
     /** Get reference acceleration for a subset of joints. These are the values used during the
      * interpolation of the trajectory.
-     * @param joints pointer to the array of joint numbers
-     * @param accs   pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure
+     * @param n_joints how many joints this command is referring to
+     * @param list of joints controlled. The size of this array is n_joints
+     * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
+     * The first value will be the new reference fot the joint joints[0].
+     *          for example:
+     *          n_joint  3
+     *          joints   0  2  4
+     *          accs    10 30 40
+     * @return true/false on success/failure
      */
     virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs)=0;
 
     /** Stop motion for a subset of joints
+     * @param n_joints how many joints this command is referring to
      * @param joints pointer to the array of joint numbers
      * @return true/false on success or failure
      */
