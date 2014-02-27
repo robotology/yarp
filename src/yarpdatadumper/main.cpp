@@ -223,7 +223,6 @@ So, now, have a look inside the directory ./log
 #endif
 
 #include <yarp/os/all.h>
-#include <yarp/os/Os.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageFile.h>
 
