@@ -787,7 +787,8 @@ int yarp::os::Run::server()
 
         if (!port.open(mPortName.c_str()))
         {
-            //yarp::os::Network::fini();
+            if (mPortName[0]!='/') fprintf(stderr,"Invalid port name '%s', it should start with '/'\n",mPortName.c_str());
+
             return YARPRUN_ERROR;
         }
 
