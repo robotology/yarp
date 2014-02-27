@@ -2,31 +2,27 @@
 # Authors: Ugo Pattacini
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-SET(PROJECTNAME dataDumper)
+set(PROJECTNAME dataDumper)
+project(${PROJECTNAME})
 
-PROJECT(${PROJECTNAME})
+if(ICUB_USE_OpenCV)
+   add_definitions(-DADD_VIDEO)
+   include_directories(${OpenCV_INCLUDE_DIRS})
+else(ICUB_USE_OpenCV)
+   message(STATUS "${PROJECTNAME}: OpenCV not selected, keep on building...")
+endif(ICUB_USE_OpenCV)
 
-IF(ICUB_USE_OpenCV)
-   ADD_DEFINITIONS(-DADD_VIDEO)
-   INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-ELSE(ICUB_USE_OpenCV)
-   MESSAGE(STATUS "${PROJECTNAME}: OpenCV not selected, keep on building...")
-ENDIF(ICUB_USE_OpenCV)
+set(folder_source main.cpp)
+source_group("Source Files" FILES ${folder_source})
 
-SET(folder_source main.cpp)
+include_directories(${YARP_INCLUDE_DIRS})
+add_executable(${PROJECTNAME} ${folder_source})
 
-SOURCE_GROUP("Source Files" FILES ${folder_source})
+if(ICUB_USE_OpenCV)
+   target_link_libraries(${PROJECTNAME} ${OpenCV_LIBRARIES})
+endif(ICUB_USE_OpenCV)
 
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-ADD_EXECUTABLE(${PROJECTNAME} ${folder_source})
-
-IF(ICUB_USE_OpenCV)
-   TARGET_LINK_LIBRARIES(${PROJECTNAME} ${OpenCV_LIBRARIES})
-ENDIF(ICUB_USE_OpenCV)
-
-TARGET_LINK_LIBRARIES(${PROJECTNAME} ${YARP_LIBRARIES})
-INSTALL(TARGETS ${PROJECTNAME} DESTINATION bin)
-
-yarp_install(FILES dataDumper.xml DESTINATION ${ICUB_MODULES_INSTALL_DIR})
+target_link_libraries(${PROJECTNAME} ${YARP_LIBRARIES})
+install(TARGETS ${PROJECTNAME} DESTINATION bin)
 
 
