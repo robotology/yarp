@@ -266,8 +266,8 @@ bool Utilities::setupDataFromParts(partsData &part)
             Bottle b( line.c_str() );
             part.bot.addList() = b;
             int timeStampCol = 1;
-            if (withTxColumn)
-                timeStampCol = txColumn;
+            if (withExtraColumn)
+                timeStampCol = column;
 
             part.timestamp.push_back( b.get(timeStampCol).asDouble() );
             itr++;

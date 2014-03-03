@@ -84,7 +84,7 @@ void WorkerClass::run()
     if (isActive)
     {
         Bottle tmp;
-        if (utilities->withTxColumn)
+        if (utilities->withExtraColumn)
             tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail();
         else
             tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail();

@@ -73,7 +73,7 @@ dataDumper info.log file example:
 --hidden
 - run with or without gui
  
---withTxTime index 
+--withExtraTimeCol index
 - loads the log files created by the datadumper with both rx and tx time.
   The user must select which timestamp to use (txTime index = 1 or rxTime index = 2)
 

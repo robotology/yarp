@@ -52,20 +52,20 @@ MainWindow::MainWindow(yarp::os::ResourceFinder    &rf)
 {
     moduleName =  rf.check("name", Value("dataSetPlayer"), "module name (string)").asString();
 
-    if (rf.check("withTxTime"))
+    if (rf.check("withExtraTimeCol"))
     {
-        withTxTime = true;
-        txColumn = rf.check("withTxTime",Value(1)).asInt();
+        withExtraTimeCol = true;
+        column = rf.check("withExtraTimeCol",Value(1)).asInt();
 
-        if (txColumn < 1 || txColumn > 2 )
-            txColumn = 1;
+        if (column < 1 || column > 2 )
+            column = 1;
 
-        fprintf(stdout, "Selected timestamp column to check is %d \n", txColumn);
+        fprintf(stdout, "Selected timestamp column to check is %d \n", column);
 
     }else
     {
-        withTxTime = false;
-        txColumn = 0;
+        withExtraTimeCol = false;
+        column = 0;
     }
 
 
@@ -216,8 +216,8 @@ int MainWindow::initialize(void)
 void MainWindow::createUtilities()
 {
     utilities = new Utilities(moduleName,add_prefix);
-    utilities->withTxColumn = withTxTime;
-    utilities->txColumn = txColumn;
+    utilities->withExtraColumn = withExtraTimeCol;
+    utilities->column = column;
 }
 /**********************************************************/
 void MainWindow::clearUtilities()
