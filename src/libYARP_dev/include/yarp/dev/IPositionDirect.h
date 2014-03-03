@@ -41,21 +41,22 @@ public:
      */
     virtual bool setPosition(int j, double ref)=0;
 
-        /** Set new position for a set of axis.
-     * @param j joint number
-     * @param ref specifies the new ref point
-     * @return true/false on success/failure
-     */
-    virtual bool setPositions(const int n_joint, const int *joints, double *refs)=0;
 
     /** Set new reference point for all axes.
      * @param n_joints how many joints this command is referring to
-     * @param list of joints controlled. The size of this array is n_joints
+     * @param joints list of joints controlled. The size of this array is n_joints
      * @param refs array, new reference points, one value for each joint, the size is n_joints. The first value will be the new reference fot the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4
      *          refs    10 30 40
+     * @return true/false on success/failure
+     */
+    virtual bool setPositions(const int n_joint, const int *joints, double *refs)=0;
+
+    /** Set new position for a set of axis.
+     * @param j joint number
+     * @param ref specifies the new ref point
      * @return true/false on success/failure
      */
     virtual bool setPositions(const double *refs)=0;
@@ -68,7 +69,7 @@ public:
  *
  * Interface for a generic control board device implementing position control in encoder
  * coordinates.
- * This interfaceis used to send high frequency streaming commands to the boards, the aim
+ * This interface is used to send high frequency streaming commands to the boards, the aim
  * is to reach low level control in firmware bypassing the trajetory generator, raw functions.
  */
 
@@ -88,21 +89,22 @@ public:
      */
     virtual bool setPositionRaw(int j, double ref)=0;
 
-        /** Set new position for a set of axis.
-     * @param j joint number
-     * @param ref specifies the new ref point
-     * @return true/false on success/failure
-     */
-    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)=0;
-
     /** Set new reference point for all axes.
      * @param n_joints how many joints this command is referring to
-     * @param list of joints controlled. The size of this array is n_joints
+     * @param joints list of joints controlled. The size of this array is n_joints
      * @param refs array, new reference points, one value for each joint, the size is n_joints. The first value will be the new reference fot the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4
      *          refs    10 30 40
+     * @return true/false on success/failure
+     */
+    virtual bool setPositionsRaw(const int n_joint, const int *joints, double *refs)=0;
+
+
+    /** Set new position for a set of axis.
+     * @param j joint number
+     * @param ref specifies the new ref point
      * @return true/false on success/failure
      */
     virtual bool setPositionsRaw(const double *refs)=0;
