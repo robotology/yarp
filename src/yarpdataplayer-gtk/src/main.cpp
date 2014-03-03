@@ -75,7 +75,7 @@ dataDumper info.log file example:
  
 --withTxTime index 
 - loads the log files created by the datadumper with both rx and tx time.
-  The user must select which to use (txTime index = 1 or rxTime index = 2)
+  The user must select which timestamp to use (txTime index = 1 or rxTime index = 2)
 
 
 --name \e modName

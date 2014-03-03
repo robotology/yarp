@@ -56,6 +56,10 @@ MainWindow::MainWindow(yarp::os::ResourceFinder    &rf)
     {
         withTxTime = true;
         txColumn = rf.check("withTxTime",Value(1)).asInt();
+
+        if (txColumn < 1 || txColumn > 2 )
+            txColumn = 1;
+
         fprintf(stdout, "Selected timestamp column to check is %d \n", txColumn);
 
     }else
