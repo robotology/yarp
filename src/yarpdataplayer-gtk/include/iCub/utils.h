@@ -79,6 +79,9 @@ public:
     MasterThread        *masterThread;
     MainWindow          *wnd;
 
+    bool                withTxColumn;
+    int                 txColumn;
+
     /**
     * function that returns the current path string
     */

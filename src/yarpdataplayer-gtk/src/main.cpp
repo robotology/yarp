@@ -72,6 +72,11 @@ dataDumper info.log file example:
 
 --hidden
 - run with or without gui
+ 
+--withTxTime index 
+- loads the log files created by the datadumper with both rx and tx time.
+  The user must select which to use (txTime index = 1 or rxTime index = 2)
+
 
 --name \e modName
 - The parameter \e modName identifies the stem-name of the open
@@ -166,7 +171,7 @@ int main(int argc, char *argv[])
     GDK_THREADS_ENTER();
     Gtk::Main kit(argc, argv);
     MainWindow window(rf);
-    
+
     if (rf.check("hidden"))
     {
         char env[] = "export DISPLAY=:0";

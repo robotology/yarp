@@ -265,7 +265,11 @@ bool Utilities::setupDataFromParts(partsData &part)
         {
             Bottle b( line.c_str() );
             part.bot.addList() = b;
-            part.timestamp.push_back( b.get(1).asDouble() );
+            int timeStampCol = 1;
+            if (withTxColumn)
+                timeStampCol = txColumn;
+
+            part.timestamp.push_back( b.get(timeStampCol).asDouble() );
             itr++;
         }
         allTimeStamps.push_back( part.timestamp[0] );   //save all first timeStamps dumped for later ease of use 

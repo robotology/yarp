@@ -83,7 +83,12 @@ void WorkerClass::run()
     }
     if (isActive)
     {
-        Bottle tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail();
+        Bottle tmp;
+        if (utilities->withTxColumn)
+            tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail();
+        else
+            tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail();
+
         if (strcmp (utilities->partDetails[part].type.c_str(),"Bottle") == 0)
         {
             

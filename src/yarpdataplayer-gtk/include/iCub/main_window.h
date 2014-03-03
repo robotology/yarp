@@ -245,6 +245,8 @@ protected:
     friend class                Utilities;
     std::map<const char*,int>   partMap;
     int                         itr;
+    int                         txColumn;
+    bool                        withTxTime;
 
     /**
      * function that creates utilities
