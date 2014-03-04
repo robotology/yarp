@@ -25,6 +25,7 @@
 #include <math.h>
 ///////////YARP//////////
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <iCub/DebugInterfaces.h>
@@ -36,6 +37,7 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkmain.h>
 #include "gtkMessages.h"
+#include <yarp/os/Stamp.h>
 
 // #include <yarp/String.h>
 using namespace yarp::dev;
@@ -161,6 +163,8 @@ class partMover{
   ResourceFinder *finder;
   bool      first_time;
   bool      speed_view_enable;
+  Port      sequence_port;
+  yarp::os::Stamp sequence_port_stamp;
 
   char *partLabel;
   bool interfaceError;

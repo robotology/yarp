@@ -40,6 +40,11 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
     fprintf(stderr, "Setting a valid finder \n");
 
   partLabel = partName;
+  std::string sequence_portname = "/robotMotorGui/";
+  sequence_portname += partLabel;
+  sequence_portname += "/sequence:o";
+  sequence_port.open (sequence_portname);
+
   partDd = partDd_d;
   debugDd = debugDd_d;
   vbox = vbox_d;
