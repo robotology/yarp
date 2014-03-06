@@ -29,6 +29,8 @@ bool NetworkClock::open(const ConstString& name) {
         if (src.isValid()) {
             bool ok = port.open("");
             if (!ok) return false;
+            // we want always the last clock received
+            // port.setStrict(false);
             return NetworkBase::connect(name,port.getName());
         } else {
             fprintf(stderr,"Cannot find time port \"%s\"; for a time topic specify \"%s@\"\n", name.c_str(), name.c_str());
@@ -55,8 +57,14 @@ void NetworkClock::delay(double seconds) {
     SystemClock c;
     double start = now();
     do {
-        c.delay(1e-3);
-    } while (now()-start<seconds);
+        /**
+         * if we ask to sleep less than 1E-12, return
+         * this addresses a strange bug where we ask NetworkClock
+         * to sleep for quantities around 1E-15
+         * probably due to int to double conversion
+         */
+        c.delay(seconds - (now()-start) - 1E-12);
+    } while (seconds - (now()-start) > 1E-12);
 }
 
 bool NetworkClock::isValid() const {
