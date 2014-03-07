@@ -506,6 +506,13 @@ typedef yarp::os::BufferedPort<ImageMono> BufferedPortImageMono;
 %}
 
 %{
+typedef yarp::sig::ImageOf<yarp::sig::PixelInt> ImageInt;
+typedef yarp::os::TypedReader<ImageInt> TypedReaderImageInt;
+typedef yarp::os::TypedReaderCallback<ImageInt> TypedReaderCallbackImageInt;
+typedef yarp::os::BufferedPort<ImageInt> BufferedPortImageInt;
+%}
+
+%{
 typedef yarp::os::TypedReader<Sound> TypedReaderSound;
 typedef yarp::os::TypedReaderCallback<Sound> TypedReaderCallbackSound;
 typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
@@ -522,6 +529,10 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %feature("notabstract") ImageMono;
 %feature("notabstract") yarp::os::BufferedPort<ImageMono>;
 %feature("notabstract") BufferedPortImageMono;
+
+%feature("notabstract") ImageInt;
+%feature("notabstract") yarp::os::BufferedPort<ImageInt>;
+%feature("notabstract") BufferedPortImageInt;
 
 %feature("notabstract") Sound;
 %feature("notabstract") yarp::os::BufferedPort<Sound>;
@@ -542,6 +553,11 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
 %template(BufferedPortImageMono) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
 
+%template(ImageInt) yarp::sig::ImageOf<yarp::sig::PixelInt>;
+%template(TypedReaderImageInt) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
+%template(TypedReaderCallbackImageInt) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
+%template(BufferedPortImageInt) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >;
+
 %template(TypedReaderSound) yarp::os::TypedReader<yarp::sig::Sound >;
 %template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::Sound>;
 %template(BufferedPortSound) yarp::os::BufferedPort<yarp::sig::Sound >;
@@ -553,6 +569,17 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
        }
 
    void setPixel(int x, int y, float v) {
+       self->pixel(x,y) = v;
+       }
+}
+
+// Add getPixel and setPixel methods to access int values
+%extend yarp::sig::ImageOf<yarp::sig::PixelInt> {
+  int getPixel(int x, int y) {
+       return self->pixel(x,y);
+       }
+
+   void setPixel(int x, int y, int v) {
        self->pixel(x,y) = v;
        }
 }
