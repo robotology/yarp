@@ -219,7 +219,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/LocalCarrier.cpp
                  src/Logger.cpp
                  src/ManagedBytes.cpp
-                 src/McastCarrier.cpp
                  src/ModifyingCarrier.cpp
                  src/Module.cpp
                  src/MultiNameSpace.cpp
@@ -281,7 +280,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Semaphore.cpp
                  src/SharedLibrary.cpp
                  src/SharedLibraryFactory.cpp
-                 src/ShmemCarrier.cpp
                  src/ShmemHybridStream.cpp
                  src/ShmemInputStream.cpp
                  src/ShmemOutputStream.cpp
@@ -302,7 +300,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ThreadImpl.cpp
                  src/Time.cpp
                  src/TwoWayStream.cpp
-                 src/UdpCarrier.cpp
                  src/UnitTest.cpp
                  src/Value.cpp
                  src/Vocab.cpp
@@ -314,6 +311,15 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/ydr.cpp
                  src/hmac_sha2.c
                  src/sha2.c)
+
+
+if (NOT SKIP_ACE)
+  # these carriers have not yet been implemented without ACE
+  set(YARP_OS_SRCS ${YARP_OS_SRCS}
+                   src/McastCarrier.cpp
+                   src/ShmemCarrier.cpp
+                   src/UdpCarrier.cpp)
+endif()
 
 source_group("Source Files" FILES ${YARP_OS_SRCS})
 source_group("Header Files" FILES ${YARP_OS_HDRS})
