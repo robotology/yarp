@@ -25,7 +25,7 @@ public:
      * Destructor.
      *
      */
-    ~Clock() {}
+    virtual ~Clock() {}
 
 
     /**
