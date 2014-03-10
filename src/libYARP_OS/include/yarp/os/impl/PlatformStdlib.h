@@ -40,7 +40,7 @@
 #endif
 
 // ACE wrappers are glitching on Debian 4; use workaround
-#ifdef __linux__
+#if defined(__linux__) || !defined(YARP_HAS_ACE)
 #define YARP_DIRENT dirent
 #define YARP_readdir ::readdir
 #define YARP_scandir ::scandir
