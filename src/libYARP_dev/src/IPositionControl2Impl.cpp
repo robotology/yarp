@@ -29,6 +29,14 @@ ImplementPositionControl2::~ImplementPositionControl2()
     uninitialize();
 }
 
+/**
+ * Allocate memory for internal data
+ * @param size the number of joints
+ * @param amap axis map for this device wrapper
+ * @param enc encoder conversion factor, from high level to hardware
+ * @param zos offset for setting the zero point. Units are relative to high level user interface (degrees)
+ * @return true if uninitialization is executed, false otherwise.
+ */
 bool ImplementPositionControl2::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
     if(helper != NULL)
