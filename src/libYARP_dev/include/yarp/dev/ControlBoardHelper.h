@@ -53,6 +53,9 @@ public:
         angleToEncoders(0),
         newtonsToSensors(0)
     {
+        _YARP_ASSERT(n>=0);         // if number of joints is negative complain!
+        _YARP_ASSERT(aMap!=0);      // at least the axisMap is required
+
         nj=n;
         alloc(n);
 
