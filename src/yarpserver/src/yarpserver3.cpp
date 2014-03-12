@@ -16,9 +16,7 @@
 #include <yarp/os/RosNameSpace.h>
 
 #include <yarp/name/NameServerManager.h>
-#ifdef YARP_HAS_ACE
 #include <yarp/name/BootstrapServer.h>
-#endif
 
 #include <yarp/yarpserversql/yarpserversql.h>
 
@@ -137,11 +135,9 @@ public:
         contact = 
             Contact::byName("...").addSocket("tcp",ip.c_str(),sock);
         
-#ifdef YARP_HAS_ACE
         if (!options.check("local")) {
             BootstrapServer::configFileBootstrap(contact);
         }
-#endif
 
         if (options.check("ros") || NetworkBase::getEnvironment("YARP_USE_ROS")!="") {
             ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");

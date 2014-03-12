@@ -10,8 +10,9 @@
 #include <yarp/conf/system.h>
 
 #ifdef YARP_HAS_ACE
-
 #include <yarp/os/impl/FallbackNameServer.h>
+#endif
+
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/all.h>
@@ -29,6 +30,7 @@ using namespace yarp::os::impl;
  * Adapt YARP multicast server to use a different NameService.
  *
  */
+#ifdef YARP_HAS_ACE
 class BootstrapServerAdapter : public NameServerStub {
 private:
     FallbackNameServer *fallback;
@@ -70,33 +72,45 @@ public:
         return true;
     }
 };
+#endif
 
 BootstrapServer::BootstrapServer(NameService& owner) {
+#ifdef YARP_HAS_ACE
     implementation = new BootstrapServerAdapter(owner);
     if (implementation==NULL) {
         fprintf(stderr,"Cannot allocate ServerAdapter\n");
         ::exit(1);
     }
+#else
+    fprintf(stderr,"No BootstrapServer available without ACE multicast\n");
+    ::exit(1);
+#endif
 }
 
 BootstrapServer::~BootstrapServer() {
+#ifdef YARP_HAS_ACE
     if (implementation!=NULL) {
         delete ((BootstrapServerAdapter*)implementation);
         implementation = NULL;
     }
+#endif
 }
 
 bool BootstrapServer::start() {
+#ifdef YARP_HAS_ACE
     if (implementation!=NULL) {
         return ((BootstrapServerAdapter*)implementation)->start();
     }
+#endif
     return false;
 }
 
 bool BootstrapServer::stop() {
+#ifdef YARP_HAS_ACE
     if (implementation!=NULL) {
         return ((BootstrapServerAdapter*)implementation)->stop();
     }
+#endif
     return false;
 }
 
@@ -176,10 +190,14 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
 
 
 Contact BootstrapServer::where() {
+#ifdef YARP_HAS_ACE
     Contact addr = FallbackNameServer::getAddress();
     addr.addName("fallback");
     return addr;
+#else
+    return Contact();
+#endif
 }
 
-#endif
+//#endif
 
