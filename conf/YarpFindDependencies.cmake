@@ -120,6 +120,18 @@ macro(check_optional_dependency optionname package)
 endmacro(check_optional_dependency)
 
 
+# Check if a dependency required to disable an option is installed.
+macro(check_skip_dependency optionname package)
+    string(TOUPPER ${package} PKG)
+
+    if(NOT ${optionname})
+        if(NOT YARP_HAS_${PKG})
+            message(FATAL_ERROR "Optional package ${package} not found. Please install it or enable the option \"${optionname}\" to build yarp.")
+        endif()
+    endif()
+endmacro()
+
+
 # Print status for a dependency
 macro(print_dependency package)
 
@@ -270,6 +282,7 @@ endif(CREATE_GYARPBUILDER)
 
 # CHECK DEPENDENCIES:
 
+check_skip_dependency(SKIP_ACE ACE)
 check_required_dependency(SQLite)
 check_optional_dependency(CREATE_LIB_MATH GSL)
 check_optional_dependency(YARP_USE_ATLAS Atlas)
@@ -286,6 +299,7 @@ check_optional_dependency(CREATE_GYARPBUILDER GooCanvasMM)
 
 message(STATUS "I have found the following libraries:")
 
+print_dependency(ACE)
 print_dependency(SQLite)
 print_dependency(GSL)
 print_dependency(Atlas)
