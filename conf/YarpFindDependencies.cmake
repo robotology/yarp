@@ -102,7 +102,7 @@ macro(check_required_dependency package)
 endmacro(check_required_dependency)
 
 
-# Check if an dependency required to enable an option is installed.
+# Check if a dependency required to enable an option is installed.
 macro(check_optional_dependency optionname package)
 
     string(TOUPPER ${package} PKG)
