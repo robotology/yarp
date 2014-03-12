@@ -136,7 +136,12 @@ public:
             Contact::byName("...").addSocket("tcp",ip.c_str(),sock);
         
         if (!options.check("local")) {
-            BootstrapServer::configFileBootstrap(contact);
+            if (!BootstrapServer::configFileBootstrap(contact,
+                                                      options.check("read"),
+                                                      options.check("write"))) {
+                fprintf(stderr,"Aborting.\n");
+                return false;
+            }
         }
 
         if (options.check("ros") || NetworkBase::getEnvironment("YARP_USE_ROS")!="") {

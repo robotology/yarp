@@ -223,14 +223,15 @@ bool NameConfig::writeConfig(const String& fileName, const String& text) {
 
 
 
-String NameConfig::getHostName(bool prefer_loopback) {
+String NameConfig::getHostName(bool prefer_loopback, String seed) {
     // try to pick a good host identifier
 
     ConstString result = "127.0.0.1";
     bool loopback = true;
+    bool found = false;
 
     // Pick an IPv4 address.
-    // Prefer non-local addresses, then shorter addresses.
+    // Prefer non-local addresses, then seed, then shorter addresses.
     // Avoid IPv6.
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = NULL;
@@ -264,34 +265,54 @@ String NameConfig::getHostName(bool prefer_loopback) {
 
             YARP_DEBUG(Logger::get(), String("scanning network interface ") +
                        ip.c_str());
-            bool take = prefer_loopback;
+
             if (ip.find(":")!=ConstString::npos) continue;
-            if (!take) {
-                if (result=="localhost") {
-                    take = true; // can't be worse
-                }
-                if (loopback) {
-                    take = true; // can't be worse
-                } else if (ip.length()<result.length()) {
-                    take = true;
-                }
+
+            bool would_be_loopback = false;
+            if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
+                ip == "127.0.1.1") {
+                would_be_loopback = true;
             }
-            if (take) {
-                if (!prefer_loopback) result = ip;
-                loopback = false;
-                if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
-                    ip == "127.0.1.1") {
-                    loopback = true;
-                }
 #ifdef YARP_HAS_ACE
 #ifdef ACE_ADDR_HAS_LOOPBACK_METHOD
-                loopback = ips[i].is_loopback();
+            would_be_loopback = ips[i].is_loopback();
 #endif
 #endif
 
-                if (prefer_loopback && loopback) {
-                    result = ip;
-                }
+            // If we haven't any interface yet, take this one
+            if (!found) {
+                result = ip;
+                loopback = would_be_loopback;
+                found = true;
+                continue;
+            }
+            
+            // We have an interface
+
+            // If this isn't the right kind of interface, skip it
+            if (would_be_loopback != prefer_loopback) continue;
+
+            // This is the right kind of interface
+
+            // If we haven't the right kind of interface yet, take it
+            if (prefer_loopback != loopback) {
+                result = ip;
+                loopback = would_be_loopback;
+                continue;
+            }
+
+            // If it matches the seed interface, take it
+            if (ip==seed) {
+                result = ip;
+                loopback = would_be_loopback;
+                continue;
+            }
+
+            // If it is shorter, and what we have isn't the seed, take it
+            if (ip.length()<result.length() && result!=seed) {
+                result = ip;
+                loopback = would_be_loopback;
+                continue;
             }
         }
 #ifdef YARP_HAS_ACE
@@ -327,6 +348,15 @@ bool NameConfig::isLocalName(const String& name) {
     char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
     gethostname(hostname, NI_MAXHOST);
     if (strcmp(hostname, name.c_str()) == 0) result = true;
+    if (!result) {
+        Bottle lst = getIpsAsBottle();
+        for (int i=0; i<lst.size(); i++) {
+            if (lst.get(i).asString()==name) {
+                result = true;
+                break;
+            }
+        }
+    }
 #endif
 
     // just in case

@@ -49,7 +49,8 @@ public:
 
     void setAddress(const Contact& address);
 
-    static String getHostName(bool prefer_loopback = false);
+    static String getHostName(bool prefer_loopback = false,
+                              String seed = "");
 
     static String getIps();
 

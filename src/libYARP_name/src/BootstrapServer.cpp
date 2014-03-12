@@ -116,7 +116,8 @@ bool BootstrapServer::stop() {
 
 
 bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
-                                          bool autofix) {
+                                          bool configFileRequired,
+                                          bool mayEditConfigFile) {
     Contact suggest = contact;
     
     // see what address is lying around
@@ -124,7 +125,7 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
     NameConfig conf;
     if (conf.fromFile()) {
         prev = conf.getAddress();
-    } else if (!autofix) {
+    } else if (configFileRequired) {
         fprintf(stderr,"Could not read configuration file %s\n",
                 conf.getConfigFileName().c_str());
         return false;
@@ -168,20 +169,53 @@ bool BootstrapServer::configFileBootstrap(yarp::os::Contact& contact,
             .addName(suggest.getRegName());
     }
     
-    // finally, should make sure IP is local, and if not, correct it
-    if (!conf.isLocalName(suggest.getHost())) {
-        fprintf(stderr,"Overriding non-local address for name server\n");
-        suggest = Contact::bySocket(suggest.getCarrier(),
-                                    conf.getHostName(),suggest.getPort())
-            .addName(suggest.getRegName());
-
+    if (!configFileRequired)  {
+        // finally, should make sure IP is local, and if not, correct it
+        if (!conf.isLocalName(suggest.getHost())) {
+            fprintf(stderr,"Overriding non-local address for name server\n");
+            suggest = Contact::bySocket(suggest.getCarrier(),
+                                        conf.getHostName(),suggest.getPort())
+                .addName(suggest.getRegName());
+        } else {
+            // Let's just check we're not a loopback
+            ConstString betterHost = conf.getHostName(false,suggest.getHost());
+            if (betterHost!=suggest.getHost()) {
+                fprintf(stderr,"Overriding loopback address for name server\n");
+                suggest = Contact::bySocket(suggest.getCarrier(),
+                                            betterHost,suggest.getPort())
+                    .addName(suggest.getRegName());
+            }
+        }
     }
-    
-    // and save
-    conf.setAddress(suggest);
-    if (!conf.toFile()) {
-        fprintf(stderr,"Could not save configuration file %s\n",
+
+    bool changed = false;
+    if (prev.isValid()) {
+        changed = (prev.getHost() != suggest.getHost()) ||
+            (prev.getPort() != suggest.getPort()) ||
+            (conf.getMode() != "yarp" && conf.getMode() != "");
+    }
+    if (changed && !mayEditConfigFile) {
+        fprintf(stderr,"PROBLEM: need to change settings in %s\n",
                 conf.getConfigFileName().c_str());
+        fprintf(stderr,"  Previous settings: host %s port %d family %s\n",
+                prev.getHost().c_str(), prev.getPort(), 
+                (conf.getMode()=="")?"yarp":conf.getMode().c_str());
+        fprintf(stderr,"  Desired settings:  host %s port %d family %s\n",
+                suggest.getHost().c_str(), suggest.getPort(), "yarp");
+        fprintf(stderr,"Please specify '--write' if it is ok to overwrite old settings, or\n");
+        fprintf(stderr,"Please specify '--read' to use the existing settings, or\n");
+        fprintf(stderr,"delete %s\n", conf.getConfigFileName().c_str());
+        return false;
+    }
+    bool shouldSave = changed || !prev.isValid();
+
+    if (shouldSave) {
+        // and save
+        conf.setAddress(suggest);
+        if (!conf.toFile()) {
+            fprintf(stderr,"Could not save configuration file %s\n",
+                    conf.getConfigFileName().c_str());
+        }
     }
 
     contact = suggest;
