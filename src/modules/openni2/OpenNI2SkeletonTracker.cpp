@@ -58,7 +58,7 @@ void OpenNI2SkeletonTracker::close(){
     if (userTracking) {
         cout << "Destroying user tracker...";
         for (int i=0; i < MAX_USERS; i++) {
-        userTracker.stopSkeletonTracking(i+1);
+           userTracker.stopSkeletonTracking(i+1);
         }
         userTracker.destroy();
         nite::NiTE::shutdown();
@@ -100,7 +100,7 @@ int OpenNI2SkeletonTracker::init(){
     else {
         rc = device.open(fileDevice.c_str());
         cout << "Playback from " << fileDevice.c_str() << endl;
-        openni::PlaybackControl* playbackControl = device.getPlaybackControl();
+        playbackControl = device.getPlaybackControl();
         playbackControl->setRepeatEnabled(loop);
     }
 
@@ -109,7 +109,11 @@ int OpenNI2SkeletonTracker::init(){
         deviceStatus = rc;
         return rc;
     }
-   
+
+    cout << "OpenNI v" << openni::OpenNI::getVersion().openni::Version::major << "." << openni::OpenNI::getVersion().openni::Version::minor << "." << openni::OpenNI::getVersion().openni::Version::maintenance << "." << openni::OpenNI::getVersion().openni::Version::build <<endl;
+    
+     
+    cout << "NiTE v" << nite::NiTE::getVersion().nite::Version::major << "." << nite::NiTE::getVersion().nite::Version::minor << "." << nite::NiTE::getVersion().nite::Version::maintenance << "." << nite::NiTE::getVersion().nite::Version::build << endl;
     if (oniRecord) {
         recorder.create(oniOutputFile.c_str());
     }
@@ -142,7 +146,10 @@ int OpenNI2SkeletonTracker::init(){
         }
         
         else {
+            cout << "Resolution: " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << depthStream.getVideoMode().getFps() << " fps" << endl;
             cout << "Depth stream started..." << endl;
+            frameCount = playbackControl->getNumberOfFrames(depthStream);
+            fpsCount = depthStream.getVideoMode().getFps();
         }
             
         // setup and start colour stream
@@ -211,7 +218,8 @@ int OpenNI2SkeletonTracker::init(){
 
 void OpenNI2SkeletonTracker::initVars(){
     sensorStatus = new SensorStatus;
-    
+   
+    if (camerasON) {
     // read frames from streams
     imageStream.readFrame(&imageFrameRef);
     depthStream.readFrame(&depthFrameRef);
@@ -221,10 +229,11 @@ void OpenNI2SkeletonTracker::initVars(){
     sensorStatus->depthFrame.resize(depthMode.getResolutionX(), depthMode.getResolutionY());
     sensorStatus->depthFrame.zero();
     
-    // get RGB mode properties nd prepare imageFrame
+    // get RGB mode properties and prepare imageFrame
     imageMode = imageStream.getVideoMode();
     sensorStatus->imageFrame.resize(imageMode.getResolutionX(), imageMode.getResolutionY());
     sensorStatus->imageFrame.zero();
+    }
     
     // initialise UserSkeleton struct
     for (int i = 0; i < MAX_USERS; i++) {
@@ -250,6 +259,7 @@ void OpenNI2SkeletonTracker::updateSensor(){
     // get camera image
     if(camerasON && imageStream.isValid()){
         imageStream.readFrame(&imageFrameRef);
+        
         if (imageFrameRef.isValid()){
             getSensor()->imageFrame.setQuantum(1);
             
@@ -262,6 +272,11 @@ void OpenNI2SkeletonTracker::updateSensor(){
     // Get depth image (in millimetres)
     if(camerasON && depthStream.isValid()){
         depthStream.readFrame(&depthFrameRef);
+       
+        if (depthFrameRef.getFrameIndex() == frameCount) {
+            cout << "Finished playback of " << fileDevice.c_str() << endl;
+            cout << "Duration: " << ((double)frameCount/30) << " sec (" << frameCount << " frames at " << fpsCount << "fps)" << endl;
+        }
         if (depthFrameRef.isValid()){
             getSensor()->depthFrame.setQuantum(1);
             
@@ -271,7 +286,7 @@ void OpenNI2SkeletonTracker::updateSensor(){
         }
     }
     // user skeleton tracking data
-    
+   
     if(userTracking && userTracker.isValid()){
         
         // reset the stillTracking variable
@@ -336,7 +351,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
         userSkeleton->skeletonPointsPos[jIndex][0]= x;
         double y = user.getSkeleton().getJoint(joint).getPosition().y;
         userSkeleton->skeletonPointsPos[jIndex][1] = y;
-        double z = user.getSkeleton().getJoint(joint).getPosition().x;
+        double z = user.getSkeleton().getJoint(joint).getPosition().z;
         userSkeleton->skeletonPointsPos[jIndex][2] = z;
     }
     
