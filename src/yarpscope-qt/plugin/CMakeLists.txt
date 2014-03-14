@@ -11,9 +11,14 @@ source_group("Header Files" FILES ${QtYARPScopePlugin_HDRS})
 source_group("Resources Files" FILES ${QtYARPScopePlugin_QRC_FILES})
 source_group("Generated Files" FILES ${QtYARPScopePlugin_QRC_GEN_SRCS})
 
+set(QtYARPScopePlugin_QMLDIR "${CMAKE_INSTALL_LIBDIR}/qml/imports/robotology/yarp/scope")
+# file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${QtYARPScopePlugin_QMLDIR})
+
 add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS} ${QtYARPScopePlugin_HDRS} ${QtYARPScopePlugin_QRC_GEN_SRCS} )
 target_link_libraries(QtYARPScopePlugin ${YARP_LIBRARIES} Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Xml Qt5::PrintSupport)
 target_compile_definitions(QtYARPScopePlugin PRIVATE -DQT_PLUGIN)
+set_target_properties(QtYARPScopePlugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${QtYARPScopePlugin_QMLDIR})
+configure_file(qmldir ${CMAKE_BINARY_DIR}/${QtYARPScopePlugin_QMLDIR}/qmldir COPYONLY)
 
-install(TARGETS QtYARPScopePlugin DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/imports/robotology/yarp/scope)
-install(FILES qmldir DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/imports/robotology/yarp/scope)
+install(TARGETS QtYARPScopePlugin DESTINATION ${QtYARPScopePlugin_QMLDIR})
+install(FILES qmldir DESTINATION ${QtYARPScopePlugin_QMLDIR})
