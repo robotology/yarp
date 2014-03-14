@@ -351,7 +351,7 @@ void OpenNI2SkeletonTracker::updateJointInformation(const nite::UserData& user, 
         userSkeleton->skeletonPointsPos[jIndex][0]= x;
         double y = user.getSkeleton().getJoint(joint).getPosition().y;
         userSkeleton->skeletonPointsPos[jIndex][1] = y;
-        double z = user.getSkeleton().getJoint(joint).getPosition().x;
+        double z = user.getSkeleton().getJoint(joint).getPosition().z;
         userSkeleton->skeletonPointsPos[jIndex][2] = z;
     }
     
