@@ -65,7 +65,6 @@
   <zorder>label</zorder>
   <zorder>cancelBtn</zorder>
   <zorder>inspectBtn</zorder>
-  <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>
  <connections/>
