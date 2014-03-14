@@ -1,21 +1,19 @@
-project(QtYARPViewPlugin)    
+project(QtYARPViewPlugin)
 
-add_definitions(-DQT_PLUGIN)
+file(GLOB QtYARPViewPlugin_SRCS *.cpp)
+file(GLOB QtYARPViewPlugin_HDRS *.h)
+file(GLOB QtYARPViewPlugin_QRC_FILES *.qrc)
 
-file(GLOB folder_source *.cpp)
-file(GLOB folder_header *.h)
-file(GLOB Resources *.qrc)
+qt5_add_resources(QtYARPViewPlugin_QRC_GEN_SRCS ${QtYARPViewPlugin_QRC_FILES})
 
-qt5_add_resources(ResourceSources ${Resources})
+source_group("Source Files" FILES ${QtYARPViewPlugin_SRCS})
+source_group("Header Files" FILES ${QtYARPViewPlugin_HDRS})
+source_group("Resources Files" FILES ${QtYARPViewPlugin_QRC_FILES})
+source_group("Generated Files" FILES ${QtYARPViewPlugin_QRC_GEN_SRCS})
 
-source_group("Source Files" FILES ${folder_source})
-source_group("Header Files" FILES ${folder_header})
-source_group("Resources Files" FILES ${Resources})
-source_group("Generated Files" FILES ${ResourceSources})
-
-add_library(QtYARPViewPlugin MODULE ${folder_source} ${folder_header} ${ResourceSources} )
-
+add_library(QtYARPViewPlugin MODULE ${QtYARPViewPlugin_SRCS} ${QtYARPViewPlugin_HDRS} ${QtYARPViewPlugin_QRC_GEN_SRCS} )
 target_link_libraries(QtYARPViewPlugin ${YARP_LIBRARIES} Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Multimedia)
+target_compile_definitions(QtYARPViewPlugin PRIVATE -DQT_PLUGIN)
 
 install(TARGETS QtYARPViewPlugin DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/imports/robotology/yarp/view)
 install(FILES qmldir DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml/imports/robotology/yarp/view)
