@@ -19,6 +19,7 @@
 #include <QtWidgets/QApplication>
 #include <QQmlContext>
 #include <QVariant>
+#include <QDir>
 
 int main(int argc, char *argv[])
 {
@@ -27,9 +28,9 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 #ifdef WIN32
-    engine.addImportPath(QCoreApplication::applicationDirPath() + "\\" + PLUGINS_RELATIVE_PATH);
+    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "\\" + PLUGINS_RELATIVE_PATH));
 #else
-    engine.addImportPath(QCoreApplication::applicationDirPath() + "/" + PLUGINS_RELATIVE_PATH);
+    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + PLUGINS_RELATIVE_PATH));
 #endif
     engine.load(QUrl("qrc:/qml/ContainerExample/main.qml"));
 
