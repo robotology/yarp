@@ -12,6 +12,7 @@
 
 #include <QtGui/QGuiApplication>
 #include "qtquick2applicationviewer.h"
+#include "config.h"
 
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
@@ -25,8 +26,11 @@ int main(int argc, char *argv[])
     QVariant retVal;
 
     QQmlApplicationEngine engine;
-    engine.addImportPath("../QtYARPScopePlugin/imports");
-    engine.addImportPath("../QtYARPViewPlugin/imports");
+#ifdef WIN32
+    engine.addImportPath(QCoreApplication::applicationDirPath() + "\\" + PLUGINS_RELATIVE_PATH);
+#else
+    engine.addImportPath(QCoreApplication::applicationDirPath() + "/" + PLUGINS_RELATIVE_PATH);
+#endif
     engine.load(QUrl("qrc:/qml/ContainerExample/main.qml"));
 
     QObject *topLevel = engine.rootObjects().value(0);
