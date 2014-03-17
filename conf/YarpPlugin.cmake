@@ -503,6 +503,9 @@ macro(ADD_LIBRARY)
     if(NOT X_YARP_PLUGIN_MODE)
         # when not compiling a plugin library, revert to normal operation
         _ADD_LIBRARY(${ARGN})
+    elseif("${ARGN}" MATCHES "(^|;)IMPORTED(;|$)")
+        # Importing some external target. revert to normal operation
+        _ADD_LIBRARY(${ARGN})
     else(NOT X_YARP_PLUGIN_MODE)
         yarp_deprecated_warning("Calling ADD_LIBRARY inside a YARP PLUGIN_LIBRARY block is deprecated. Use YARP_ADD_PLUGIN instead. (If you are trying to add a real library you should do it outside of the PLUGIN_LIBRARY block).")
         yarp_add_plugin(${ARGN})
