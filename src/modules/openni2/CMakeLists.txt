@@ -14,7 +14,7 @@ endif()
 
 if (NOT SKIP_OpenNI2Device)
 
-    find_package(YARP required)
+    find_package(YARP REQUIRED)
 
     find_path(OPENNI2_INCLUDE_LOCAL NAMES OpenNI.h HINTS $ENV{OPENNI2_INCLUDE})
     find_library(OPENNI2_LIBRARY NAMES OpenNI2 libOpenNI2.dylib libOpenNI2 HINTS $ENV{OPENNI2_REDIST})
