@@ -30,7 +30,7 @@ IF (NOT SKIP_all_primesensecamera)
   LINK_LIBRARIES(${LIBFREENECT_LIBRARIES} ${USB_LIBRARIES})
 
   #ADD_DEFINITIONS(-DDEBUG -g)
-  ADD_LIBRARY(kinect KinectDeviceDriver.cpp KinectDeviceDriver.h)
+  yarp_add_plugin(kinect KinectDeviceDriver.cpp KinectDeviceDriver.h)
 
   IF (NOT COMPILE_DEVICE_LIBRARY)
     LINK_LIBRARIES(kinect)

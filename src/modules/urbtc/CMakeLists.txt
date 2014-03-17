@@ -14,7 +14,7 @@ FIND_PACKAGE(YARP REQUIRED)
 IF (UNIX)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-  ADD_LIBRARY(urbtc UrbtcControl.cpp UrbtcControl.h)
+  yarp_add_plugin(urbtc UrbtcControl.cpp UrbtcControl.h)
 
 ELSE (UNIX)
 

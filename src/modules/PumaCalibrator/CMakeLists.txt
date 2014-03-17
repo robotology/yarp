@@ -12,7 +12,7 @@ IF (NOT SKIP_pumacalibrator)
 #	SET(YARP_DEPENDENCIES "medvc60f.lib")
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-  ADD_LIBRARY(pumacalibrator PumaCalibrator.cpp  PumaCalibrator.h )
+  yarp_add_plugin(pumacalibrator PumaCalibrator.cpp  PumaCalibrator.h )
 
 ENDIF (NOT SKIP_pumacalibrator)
 

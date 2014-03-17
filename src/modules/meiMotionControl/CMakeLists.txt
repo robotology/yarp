@@ -12,7 +12,7 @@ IF (NOT SKIP_meiMotionControl)
 	SET(YARP_DEPENDENCIES "medvc60f.lib")
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-  ADD_LIBRARY(meiMotionControl MEIMotionControl.cpp  MEIMotionControl.h )
+  yarp_add_plugin(meiMotionControl MEIMotionControl.cpp  MEIMotionControl.h )
 
 ENDIF (NOT SKIP_meiMotionControl)
 
