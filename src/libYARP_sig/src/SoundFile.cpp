@@ -271,7 +271,7 @@ size_t yarp::sig::file::soundStreamReader::readBlock(Sound& dest, size_t block_s
     dest.setFrequency(soundInfo.freq);
 
     int ct = 0;
-    for (size_t i=0; i<samples_read; i++) {
+    for (int i=0; i<samples_read; i++) {
         for (int j=0; j<soundInfo.channels; j++) {
             dest.set(data[ct],i,j);
             ct++;
@@ -291,7 +291,7 @@ bool  yarp::sig::file::soundStreamReader::rewind(size_t sample_offset)
         return false;
     }
 
-    if (sample_offset<0 || sample_offset>this->soundInfo.samples)
+    if ((int)sample_offset>this->soundInfo.samples)
     {
         printf("invalid sample_offset\n");
         return false;
