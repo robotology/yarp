@@ -280,7 +280,7 @@ if(CREATE_GYARPBUILDER)
 endif()
 
 
-if(NOT SKIP_opencv_grabber)
+if(ENABLE_yarpmod_opencv_grabber)
     find_package(OpenCV QUIET)
     checkandset_dependency(OpenCV)
 endif()
@@ -300,7 +300,7 @@ check_optional_dependency(CREATE_YARPSCOPE GtkDatabox)
 check_optional_dependency(CREATE_YARPSCOPE GtkDataboxMM)
 check_optional_dependency(CREATE_GYARPBUILDER GooCanvas)
 check_optional_dependency(CREATE_GYARPBUILDER GooCanvasMM)
-check_skip_dependency(SKIP_opencv_grabber OpenCV)
+check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)
 
 
 # PRINT DEPENDENCIES STATUS:
