@@ -167,6 +167,7 @@ std::map<std::string, std::string> TcpRosStream::rosToKind() {
 }
 
 std::string TcpRosStream::rosToKind(const char *rosname) {
+    if (ConstString(rosname)=="") return "";
     std::map<std::string, std::string> kinds = rosToKind();
 
     if (kinds.find(rosname)!=kinds.end()) {

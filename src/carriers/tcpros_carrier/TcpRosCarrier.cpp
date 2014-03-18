@@ -69,6 +69,9 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
             if (rtyp=="") {
                 wire_type = "std_msgs/Float64MultiArray";
             }
+        } else if (typ!="") {
+            rtyp = typ;
+            wire_type = typ;
         }
     }
     Name n(proto.getRoute().getCarrierName() + "://test");
@@ -204,6 +207,8 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
         kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
         TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),false,false);
         translate = TCPROS_TRANSLATE_TWIDDLER;
+    } else {
+        rosname = "";
     }
     dbg_printf("tcpros %s mode\n", isService?"service":"topic");
 
@@ -309,6 +314,8 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
             TcpRosStream::configureTwiddler(twiddler,kind.c_str(),rosname.c_str(),true,true);
             translate = TCPROS_TRANSLATE_TWIDDLER;
         }
+    } else {
+        rosname = "";
     }
     sender = isService; 
 

@@ -810,6 +810,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
             }
             op = Carriers::connect(address);
             if (op!=NULL) {
+                op->attachPort(contactable);
                 if (timeout>0) {
                     op->setTimeout(timeout);
                 }
@@ -1716,6 +1717,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                     fprintf(stderr,"NO CONNECTION\n");
                                     exit(1);
                                 } else {
+                                    op->attachPort(contactable);
                                     op->open(r);
                                 }
                                 op->rename(Route().addFromName(op->getRoute().getToName()).addToName(op->getRoute().getFromName()).addCarrierName(op->getRoute().getCarrierName()));
