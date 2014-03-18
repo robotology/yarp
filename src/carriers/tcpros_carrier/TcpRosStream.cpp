@@ -194,7 +194,7 @@ std::string TcpRosStream::rosToKind(const char *rosname) {
 
 
 bool TcpRosStream::configureTwiddler(WireTwiddler& twiddler, const char *txt, const char *prompt, bool sender, bool reply) {
-    dbg_printf("CONFIGURE AS %s [%s]\n", txt,
+    dbg_printf("CONFIGURE AS %s [%s/%s]\n", txt,
                sender?"sender":"receiver",
                reply?"reply":"main");
     ConstString str(txt);
