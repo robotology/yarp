@@ -199,7 +199,11 @@ else()
     find_package(ACE QUIET)
     checkandset_dependency(ACE)
     # FIXME Replace SKIP_ACE with YARP_USE_ACE
-    unset(YARP_USE_ACE CACHE)
+    set_property(CACHE YARP_USE_ACE PROPERTY TYPE INTERNAL)
+    set_property(CACHE YARP_USE_ACE PROPERTY VALUE TRUE)
+    if(SKIP_ACE)
+        set_property(CACHE YARP_USE_ACE PROPERTY VALUE FALSE)
+    endif()
 
     # __ACE_INLINE__ is needed in some configurations
     if(NOT ACE_COMPILES_WITHOUT_INLINE_RELEASE)
