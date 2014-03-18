@@ -10,7 +10,6 @@ endif (COMPILE_PLUGIN_LIBRARY)
 if (NOT SKIP_portmonitor_carrier)
 
   find_package(YARP REQUIRED)
-  find_package(Lua51 REQUIRED) 
 
   include_directories(${YARP_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
 

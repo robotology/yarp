@@ -285,6 +285,10 @@ if(ENABLE_yarpmod_opencv_grabber)
     checkandset_dependency(OpenCV)
 endif()
 
+if(ENABLE_yarpcar_portmonitor_carrier)
+    find_package(Lua51 QUIET)
+    checkandset_dependency(Lua51)
+endif()
 
 
 # CHECK DEPENDENCIES:
@@ -301,6 +305,7 @@ check_optional_dependency(CREATE_YARPSCOPE GtkDataboxMM)
 check_optional_dependency(CREATE_GYARPBUILDER GooCanvas)
 check_optional_dependency(CREATE_GYARPBUILDER GooCanvasMM)
 check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)
+check_optional_dependency(ENABLE_yarpcar_portmonitor_carrier Lua51)
 
 
 # PRINT DEPENDENCIES STATUS:
@@ -319,6 +324,7 @@ print_dependency(GooCanvas)
 print_dependency(GooCanvasMM)
 print_dependency(Readline)
 print_dependency(OpenCV)
+print_dependency(Lua51)
 
 
 #########################################################################
