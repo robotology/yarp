@@ -9,8 +9,6 @@ endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_portmonitor_carrier)
 
-  find_package(YARP REQUIRED)
-
   include_directories(${YARP_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
 
   yarp_add_plugin(yarp_portmonitor
