@@ -104,7 +104,7 @@ Gdk::Point PortArbitratorModel::getContactPoint(ArrowModel* arrow)
     goo_canvas_item_get_bounds(item, &bi);
 
     if(strcmp(arrow->getId(), "O1") == 0)
-        return Gdk::Point((int)bi.x2, (int)(bi.y2+bi.y1)/2.0);
+        return Gdk::Point((int)bi.x2, (int)((bi.y2+bi.y1)/2.0));
 
     Gdk::Point pt = contacts[arrow->getId()];
     return Gdk::Point((int)bi.x1, (int)(bi.y1+pt.get_y()));
@@ -211,7 +211,7 @@ bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow)
 
     // shifting down text position
     std::map<std::string, Glib::RefPtr<Goocanvas::TextModel> >::iterator itr2;        
-    int curY =  labels[arrow->getId()]->property_y().get_value();
+    int curY = (int)labels[arrow->getId()]->property_y().get_value();
     for(itr2=labels.begin(); itr2!=labels.end(); itr2++)
     {
         if(itr2->first != arrow->getId())
