@@ -135,7 +135,7 @@ YARP_SSIZE_T TcpRosStream::read(const Bytes& b) {
 
 
 void TcpRosStream::write(const Bytes& b) {
-    dbg_printf("                   [[[[[ write %d bytes ]]]]]\n", b.length());
+    dbg_printf("                   [[[[[ write %d bytes ]]]]]\n", (int)b.length());
     delegate->getOutputStream().write(b);
 }
 
