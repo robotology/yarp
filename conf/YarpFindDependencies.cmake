@@ -305,6 +305,24 @@ if(ENABLE_yarpcar_portmonitor_carrier)
 endif()
 
 
+# PRINT DEPENDENCIES STATUS:
+
+message(STATUS "I have found the following libraries:")
+print_dependency(ACE)
+print_dependency(SQLite)
+print_dependency(GSL)
+print_dependency(Atlas)
+print_dependency(TinyXML)
+print_dependency(GTK2)
+print_dependency(GtkDatabox)
+print_dependency(GtkDataboxMM)
+print_dependency(GooCanvas)
+print_dependency(GooCanvasMM)
+print_dependency(Readline)
+print_dependency(OpenCV)
+print_dependency(Lua51)
+
+
 # CHECK DEPENDENCIES:
 
 check_skip_dependency(SKIP_ACE ACE)
@@ -321,24 +339,6 @@ check_optional_dependency(CREATE_GYARPBUILDER GooCanvasMM)
 check_optional_dependency(ENABLE_yarpmod_opencv_grabber OpenCV)
 check_optional_dependency(ENABLE_yarpcar_portmonitor_carrier Lua51)
 
-
-# PRINT DEPENDENCIES STATUS:
-
-message(STATUS "I have found the following libraries:")
-
-print_dependency(ACE)
-print_dependency(SQLite)
-print_dependency(GSL)
-print_dependency(Atlas)
-print_dependency(TinyXML)
-print_dependency(GTK2)
-print_dependency(GtkDatabox)
-print_dependency(GtkDataboxMM)
-print_dependency(GooCanvas)
-print_dependency(GooCanvasMM)
-print_dependency(Readline)
-print_dependency(OpenCV)
-print_dependency(Lua51)
 
 
 #########################################################################
