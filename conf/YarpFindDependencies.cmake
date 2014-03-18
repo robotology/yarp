@@ -44,6 +44,8 @@ macro(checkandset_dependency package)
     # YARP_HAS_${PKG}
     if(${YARP_HAS_SYSTEM_${PKG}})
         set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
+    else()
+        set(YARP_HAS_${PKG} FALSE)
     endif()
 
     #store all dependency flags for later export
@@ -144,7 +146,7 @@ macro(print_dependency package)
     if(DEFINED ${package}_REQUIRED_VERSION)
         set(_version " (${${package}_REQUIRED_VERSION})")
     endif()
-    if(NOT YARP_USE_${PKG})
+    if(NOT DEFINED YARP_HAS_${PKG})
         message(STATUS " +++ ${package}${_version}: disabled")
     elseif(NOT YARP_HAS_${PKG})
         message(STATUS " +++ ${package}${_version}: not found")
