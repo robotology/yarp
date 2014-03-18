@@ -14,12 +14,12 @@ if (NOT SKIP_portmonitor_carrier)
 
   include_directories(${YARP_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
 
-  yarp_add_plugin(yarp_portmonitor 
-                  PortMonitor.h 
-                  MonitorBinding.h 
-                  MonitorLua.h 
+  yarp_add_plugin(yarp_portmonitor
+                  PortMonitor.h
+                  MonitorBinding.h
+                  MonitorLua.h
                   MonitorEvent.h
-                  PortMonitor.cpp 
+                  PortMonitor.cpp
                   MonitorBinding.cpp
                   MonitorLua.cpp)
 
