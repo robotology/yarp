@@ -14,6 +14,10 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/conf/numeric.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Mutex.h>
+#include <list>
+#include <utility>
 
 namespace yarp {
     namespace os {
@@ -22,7 +26,7 @@ namespace yarp {
 };
 
 
-class YARP_OS_API yarp::os::NetworkClock : public Clock {
+class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader {
 public:
     NetworkClock();
     
@@ -31,8 +35,15 @@ public:
     virtual double now();
     virtual void delay(double seconds);
     virtual bool isValid() const;
+
+    virtual bool read(ConnectionReader& reader);
 private:
-    BufferedPort<Bottle> port;
+    std::list<std::pair<double, Semaphore*> > waiters;
+    Port port;
+
+    Mutex listMutex;
+    Mutex timeMutex;
+
     YARP_INT32 sec;
     YARP_INT32 nsec;
     double t;

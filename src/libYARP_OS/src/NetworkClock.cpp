@@ -23,6 +23,7 @@ NetworkClock::NetworkClock() {
 
 bool NetworkClock::open(const ConstString& name) {
     port.setReadOnly();
+    port.setReader(*this);
     NestedContact nc(name);
     if (nc.getNestedName()=="") {
         Contact src = NetworkBase::queryName(name);
@@ -39,27 +40,60 @@ bool NetworkClock::open(const ConstString& name) {
 }
 
 double NetworkClock::now() {
-    Bottle *bot = port.read(false);
-    if (bot) {
-        sec = bot->get(0).asInt();
-        nsec = bot->get(1).asInt();
-        t = sec + (nsec*1e-9);
-    }
+    timeMutex.lock();
+    double result = t;
+    timeMutex.unlock();
     return t;
 }
 
 void NetworkClock::delay(double seconds) {
-    if (seconds<=0) {
+    if (seconds<=1E-12) {
         return;
     }
-    SystemClock c;
-    double start = now();
-    do {
-        c.delay(1e-3);
-    } while (now()-start<seconds);
+
+    double wakeMeUpAt = now() + seconds;
+
+    std::list< std::pair<double, Semaphore* > >::iterator waiterIterator;
+    listMutex.lock();
+    std::pair<double, Semaphore*> waiter;
+    waiter.first = wakeMeUpAt;
+    waiter.second = new Semaphore(0);
+    waiterIterator = waiters.insert(waiters.end(), waiter);
+    listMutex.unlock();
+
+    waiter.second->wait();
+
+    listMutex.lock();
+    delete(waiter.second);
+    waiters.erase(waiterIterator);
+    listMutex.unlock();
+
 }
 
 bool NetworkClock::isValid() const {
     return (sec!=0) || (nsec!=0);
+}
+
+bool NetworkClock::read(ConnectionReader& reader) {
+    Bottle bot;
+    bool ok = bot.read(reader);
+    if(!ok) return false;
+
+    timeMutex.lock();
+    sec = bot.get(0).asInt();
+    nsec = bot.get(1).asInt();
+    t = sec + (nsec*1e-9);
+    timeMutex.unlock();
+
+    listMutex.lock();
+    std::list< std::pair<double, Semaphore* > >::iterator waiter_i;
+
+    for(waiter_i = waiters.begin(); waiter_i != waiters.end(); waiter_i++) {
+        if(waiter_i->first - t  < 1E-12 ) // t - waiter_i->seconds >= 0
+            waiter_i->second->post();
+    }
+    listMutex.unlock();
+
+    return true;
 }
 
