@@ -43,7 +43,7 @@ double NetworkClock::now() {
     timeMutex.lock();
     double result = t;
     timeMutex.unlock();
-    return t;
+    return result;
 }
 
 void NetworkClock::delay(double seconds) {
@@ -54,10 +54,11 @@ void NetworkClock::delay(double seconds) {
     double wakeMeUpAt = now() + seconds;
 
     std::list< std::pair<double, Semaphore* > >::iterator waiterIterator;
-    listMutex.lock();
     std::pair<double, Semaphore*> waiter;
     waiter.first = wakeMeUpAt;
     waiter.second = new Semaphore(0);
+    
+    listMutex.lock();
     waiterIterator = waiters.insert(waiters.end(), waiter);
     listMutex.unlock();
 
