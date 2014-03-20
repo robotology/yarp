@@ -12,14 +12,30 @@
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Log.h>
+#include <list>
+#include <utility>
 
 using namespace yarp::os;
+
+typedef std::list<std::pair<double, Semaphore*> > Waiters;
+#define WAITERS(x) (*((Waiters*)(x)))
 
 NetworkClock::NetworkClock() {
     sec = 0;
     nsec = 0;
     t = 0;
+    pwaiters = new Waiters();
+    YARP_ASSERT(pwaiters!=NULL);
 }
+
+NetworkClock::~NetworkClock() {
+    if (pwaiters) {
+        delete &WAITERS(pwaiters);
+        pwaiters = NULL;
+    }
+}
+
 
 bool NetworkClock::open(const ConstString& name) {
     port.setReadOnly();
@@ -51,9 +67,8 @@ void NetworkClock::delay(double seconds) {
         return;
     }
 
-
-
-    std::list< std::pair<double, Semaphore* > >::iterator waiterIterator;
+    Waiters& waiters = WAITERS(pwaiters);
+    Waiters::iterator waiterIterator;
     std::pair<double, Semaphore*> waiter;
     waiter.second = new Semaphore(0);
     
@@ -88,7 +103,8 @@ bool NetworkClock::read(ConnectionReader& reader) {
     t = sec + (nsec*1e-9);
     timeMutex.unlock();
 
-    std::list< std::pair<double, Semaphore* > >::iterator waiter_i;
+    Waiters& waiters = WAITERS(pwaiters);
+    Waiters::iterator waiter_i;
 
     for(waiter_i = waiters.begin(); waiter_i != waiters.end(); waiter_i++) {
         if(waiter_i->first - t  < 1E-12 ) // t - waiter_i->seconds >= 0

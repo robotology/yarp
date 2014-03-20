@@ -16,8 +16,6 @@
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Mutex.h>
-#include <list>
-#include <utility>
 
 namespace yarp {
     namespace os {
@@ -29,6 +27,7 @@ namespace yarp {
 class YARP_OS_API yarp::os::NetworkClock : public Clock, PortReader {
 public:
     NetworkClock();
+    virtual ~NetworkClock();
     
     bool open(const ConstString& name);
 
@@ -38,7 +37,7 @@ public:
 
     virtual bool read(ConnectionReader& reader);
 private:
-    std::list<std::pair<double, Semaphore*> > waiters;
+    void *pwaiters;
     Port port;
 
     Mutex listMutex;
