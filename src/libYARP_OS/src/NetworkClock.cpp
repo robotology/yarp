@@ -51,14 +51,14 @@ void NetworkClock::delay(double seconds) {
         return;
     }
 
-    double wakeMeUpAt = now() + seconds;
+
 
     std::list< std::pair<double, Semaphore* > >::iterator waiterIterator;
     std::pair<double, Semaphore*> waiter;
-    waiter.first = wakeMeUpAt;
     waiter.second = new Semaphore(0);
     
     listMutex.lock();
+    waiter.first = now() + seconds;
     waiterIterator = waiters.insert(waiters.end(), waiter);
     listMutex.unlock();
 
@@ -80,19 +80,21 @@ bool NetworkClock::read(ConnectionReader& reader) {
     bool ok = bot.read(reader);
     if(!ok) return false;
 
+    listMutex.lock();
+
     timeMutex.lock();
     sec = bot.get(0).asInt();
     nsec = bot.get(1).asInt();
     t = sec + (nsec*1e-9);
     timeMutex.unlock();
 
-    listMutex.lock();
     std::list< std::pair<double, Semaphore* > >::iterator waiter_i;
 
     for(waiter_i = waiters.begin(); waiter_i != waiters.end(); waiter_i++) {
         if(waiter_i->first - t  < 1E-12 ) // t - waiter_i->seconds >= 0
             waiter_i->second->post();
     }
+
     listMutex.unlock();
 
     return true;
