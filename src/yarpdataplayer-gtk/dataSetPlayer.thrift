@@ -5,12 +5,12 @@
 # dataSetPlayer.thrift
 
 /**
-* dataSetPlayer_IDLServer
+* dataSetPlayer_IDL
 *
 * Interface. 
 */
 
-service dataSetPlayer_IDLServer
+service dataSetPlayer_IDL
 {
   /**
   * Gets the list of commands available

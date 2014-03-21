@@ -84,7 +84,7 @@ dataDumper info.log file example:
 
  \section portsif_sec Ports Interface
  The interface to this module is implemented through
- \ref dataSetPlayer_IDLServer . \n
+ \ref dataSetPlayer_IDL . \n
 
 - The ports belonging to each of the parts are dynamically created and can be changed using the GUI.
 

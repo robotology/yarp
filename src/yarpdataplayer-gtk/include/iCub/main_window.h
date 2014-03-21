@@ -30,7 +30,7 @@
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/Module.h>
 #include <yarp/os/RpcServer.h>
-#include "dataSetPlayer_IDLServer.h"
+#include "dataSetPlayer_IDL.h"
 
 /**********************************************************/
 class PartModelColumns : public Gtk::TreeModel::ColumnRecord
@@ -58,7 +58,7 @@ public:
 };
 
 /**********************************************************/
-class MainWindow : public Gtk::Window, public yarp::os::ResourceFinder, public yarp::os::Module, public dataSetPlayer_IDLServer
+class MainWindow : public Gtk::Window, public yarp::os::ResourceFinder, public yarp::os::Module, public dataSetPlayer_IDL
 {
 public:
     MainWindow(yarp::os::ResourceFinder    &rf);
