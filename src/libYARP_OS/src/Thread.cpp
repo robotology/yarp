@@ -115,6 +115,10 @@ long int Thread::getKey() {
     return ((ThreadImpl*)implementation)->getKey();
 }
 
+long int Thread::getKeyOfCaller() {
+    return ThreadImpl::getKeyOfCaller();
+}
+
 
 int Thread::setPriority(int priority) {
     return ((ThreadImpl*)implementation)->setPriority(priority);

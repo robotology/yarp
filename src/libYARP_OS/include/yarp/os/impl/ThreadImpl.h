@@ -68,6 +68,7 @@ public:
 
     // get a unique key
     long int getKey();
+    static long int getKeyOfCaller();
 
     //should become private, when the thread is friend
     void notify(bool s);

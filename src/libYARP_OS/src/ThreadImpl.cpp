@@ -15,6 +15,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/PlatformThread.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 using namespace yarp::os::impl;
 
@@ -105,6 +106,14 @@ ThreadImpl::~ThreadImpl() {
 long int ThreadImpl::getKey() {
     // if id doesn't fit in long int, should do local translation
     return (long int)id;
+}
+
+long int ThreadImpl::getKeyOfCaller() {
+#ifdef YARP_HAS_ACE
+    return (long int)ACE_Thread::self();
+#else
+    return (long int)pthread_self();
+#endif
 }
 
 
@@ -211,6 +220,7 @@ bool ThreadImpl::start() {
     }
 
     int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
+    id = (long int) hid;
 #  endif
 #endif
 

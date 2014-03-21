@@ -207,6 +207,21 @@ private:
     };
 
 
+    class ThreadIdentity : public Thread {
+    public:
+        long int dynamicId;
+        long int staticId;
+
+        ThreadIdentity() {
+            dynamicId = staticId = -1;
+        }
+        
+        virtual void run() {
+            dynamicId = getKey();
+            staticId = Thread::getKeyOfCaller();
+        }
+    };
+
     class Runnable1: public Runnable {
     public:
         Runnable1():initCalled(false), 
@@ -391,7 +406,23 @@ public:
         checkFalse(t0.isRunning(),"not running after thread exits");
     }
 
-     virtual void runTests() {
+    virtual void testId() {
+        report(0,"testing IDs...");
+        ThreadIdentity t[3];
+        for (int i=0; i<3; i++) t[i].start();
+        for (int i=0; i<3; i++) t[i].stop();
+        for (int i=0; i<3; i++) {
+            checkEqual(t[i].staticId,t[i].dynamicId,"IDs match appropriately");
+        }
+        for (int i=0; i<3; i++) {
+            for (int j=0; j<3; j++) {
+                if (i==j) continue;
+                checkFalse(t[i].staticId==t[j].staticId,"IDs differ appropriately");
+            }
+        }
+    }
+
+    virtual void runTests() {
         testMin();
         testSync();
         testIsRunning();
@@ -401,7 +432,8 @@ public:
         testInitAndRelease();
         testRunnable();
         testRunningFlag();
-       }
+        testId();
+     }
 };
 
 static ThreadTest theThreadTest;

@@ -157,6 +157,12 @@ public:
     long int getKey();
 
     /**
+     * Get a unique identifier for the calling thread.
+     * @return an identifier for the calling thread
+     */
+    static long int getKeyOfCaller();
+
+    /**
      * Set the priority of the thread, if the OS supports that.
      * @param priority the new priority of the thread.
      * @return -1 if the priority cannot be set.
