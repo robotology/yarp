@@ -1,6 +1,11 @@
 2014-03-21 Marco Randazzo <marco.randazzo@iit.it>
     * src/libYARP_dev/src/RemoteControlBoard.cpp
 	* src/libYARP_dev/src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
+	fixed missing bemf parameter in torque control
+	
+2014-03-21 Marco Randazzo <marco.randazzo@iit.it>
+    * src/libYARP_dev/src/RemoteControlBoard.cpp
+	* src/libYARP_dev/src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
 	fixed missing kff parameter in pid structure
 	
 2014-01-31 Matteo Brunettini  <matteo.brunettini@iit.it>

@@ -482,6 +482,12 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                         }
                         break;
 
+                    case VOCAB_BEMF:
+                        {
+                            *ok = torque->setBemfParam(cmd.get(3).asInt(), cmd.get(4).asDouble());
+                        }
+                        break;
+
                     case VOCAB_REFS:
                         {
                             Bottle *b = cmd.get(3).asList();
@@ -644,6 +650,13 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                     case VOCAB_TRQ:
                         {
                             *ok = torque->getTorque(cmd.get(3).asInt(), &dtmp);
+                            response.addDouble(dtmp);
+                        }
+                        break;
+
+                    case VOCAB_BEMF:
+                        {
+                            *ok = torque->getBemfParam(cmd.get(3).asInt(), &dtmp);
                             response.addDouble(dtmp);
                         }
                         break;
