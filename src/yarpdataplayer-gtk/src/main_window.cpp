@@ -92,14 +92,6 @@ bool MainWindow::attach(RpcServer &source)
 }
 
 /************************************************************************/
-string MainWindow::getHelp()
-{
-    Bottle reply;
-    listOfCommands(reply);
-    return reply.toString().c_str();
-}
-
-/************************************************************************/
 bool MainWindow::step()
 {
     Bottle reply;
@@ -182,21 +174,6 @@ bool MainWindow::quit()
     return true;
 }
 
-/**********************************************************/
-void MainWindow::listOfCommands(Bottle &reply)
-{
-    reply.addString("Commands:");
-    reply.addString("\"help\"returns this list");
-    reply.addString("\"get\"\"part\"the system returns the requested element. <part> is one of the parts loaded");
-    reply.addString("\"set\"\"part\"\"frameNumber\"the part will be set to the desired frame. (currently all parts will be set to the same frame number)");
-    reply.addString("\"step\"the player will be stepped until all parts have sent data.");
-    reply.addString("\"quit\"stops the player");
-    reply.addString("\"load\"\"path\"the player will load the data from the selected path");
-    reply.addString("\"play\"the player will play");
-    reply.addString("\"stop\"the player will stop");
-    reply.addString("\"pause\"the player will pause");
-    //reply.addString(rep.c_str());
-}
 /**********************************************************/
 MainWindow::~MainWindow()
 {

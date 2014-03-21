@@ -121,10 +121,6 @@ public:
      */
     bool attach(yarp::os::RpcServer &source);
     /**
-     * function that andles an IDL message - getHelp
-     */
-    std::string getHelp();
-    /**
      * function that that handles an IDL message - step
      */
     bool step();
@@ -170,11 +166,6 @@ protected:
      * function steps datasets when requeted from terminal
      */
     void stepFromCommand(yarp::os::Bottle &reply);
-    /**
-     * function that lists the list of commands
-     */
-    void listOfCommands(yarp::os::Bottle &reply);
-
     /**
      * signal handle function - quit
      */

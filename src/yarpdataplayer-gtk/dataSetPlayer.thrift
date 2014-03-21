@@ -13,12 +13,6 @@
 service dataSetPlayer_IDL
 {
   /**
-  * Gets the list of commands available
-  * @return Bottle containing all available commands
-  */
-  string getHelp();
-
-  /**
   * Steps the player once. The player will be stepped 
   * until all parts have sent data
   * @return true/false on success/failure
