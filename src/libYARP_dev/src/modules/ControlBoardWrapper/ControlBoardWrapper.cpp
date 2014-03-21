@@ -543,6 +543,7 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                             p.scale = b->get(6).asDouble();
                             p.stiction_up_val = b->get(7).asDouble();
                             p.stiction_down_val = b->get(8).asDouble();
+                            p.kff = b->get(9).asDouble();
                             *ok = torque->setTorquePid(j, p);
                         }
                         break;
@@ -574,6 +575,7 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                                                 p[i].scale = c->get(6).asDouble();
                                                 p[i].stiction_up_val = c->get(7).asDouble();
                                                 p[i].stiction_down_val = c->get(8).asDouble();
+                                                p[i].kff = c->get(9).asDouble();
                                             }
                                             else
                                             {
@@ -735,6 +737,7 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                             b.addDouble(p.scale);
                             b.addDouble(p.stiction_up_val);
                             b.addDouble(p.stiction_down_val);
+                            b.addDouble(p.kff);
                         }
                         break;
 
@@ -756,6 +759,7 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
                                 c.addDouble(p[i].scale);
                                 c.addDouble(p[i].stiction_up_val);
                                 c.addDouble(p[i].stiction_down_val);
+                                c.addDouble(p[i].kff);
                             }
                             delete[] p;
                         }
@@ -1109,6 +1113,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                 p.scale = b->get(6).asDouble();
                                 p.stiction_up_val = b->get(7).asDouble();
                                 p.stiction_down_val = b->get(8).asDouble();
+                                p.kff = b->get(9).asDouble();
                                 ok = pid->setPid(j, p);
                             }
                             break;
@@ -1143,6 +1148,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                             p[i].scale = c->get(6).asDouble();
                                             p[i].stiction_up_val = c->get(7).asDouble();
                                             p[i].stiction_down_val = c->get(8).asDouble();
+                                            p[i].kff = c->get(9).asDouble();
                                         }
                                         else
                                         {

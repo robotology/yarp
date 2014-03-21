@@ -1065,6 +1065,7 @@ public:
         l.addDouble(pid.scale);
         l.addDouble(pid.stiction_up_val);
         l.addDouble(pid.stiction_down_val);
+        l.addDouble(pid.kff);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -1092,6 +1093,7 @@ public:
             m.addDouble(pids[i].scale);
             m.addDouble(pids[i].stiction_up_val);
             m.addDouble(pids[i].stiction_down_val);
+            m.addDouble(pids[i].kff);
         }
 
         bool ok = rpc_p.write(cmd, response);
@@ -1208,6 +1210,7 @@ public:
             pid->scale = l.get(6).asDouble();
             pid->stiction_up_val = l.get(7).asDouble();
             pid->stiction_down_val = l.get(8).asDouble();
+            pid->kff = l.get(9).asDouble();
             return true;
         }
         return false;
@@ -1245,6 +1248,7 @@ public:
                 pids[i].scale = m.get(6).asDouble();
                 pids[i].stiction_up_val = m.get(7).asDouble();
                 pids[i].stiction_down_val = m.get(8).asDouble();
+                pids[i].kff = m.get(9).asDouble();
             }
             return true;
         }
@@ -2006,7 +2010,7 @@ public:
         b.addDouble(pid.scale);
         b.addDouble(pid.stiction_up_val);
         b.addDouble(pid.stiction_down_val);
-
+        b.addDouble(pid.kff);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -2073,6 +2077,7 @@ public:
             pid->scale = l.get(6).asDouble();
             pid->stiction_up_val = l.get(7).asDouble();
             pid->stiction_down_val = l.get(8).asDouble();
+            pid->kff = l.get(9).asDouble();
             return true;
         }
         return false;
@@ -2355,6 +2360,7 @@ public:
         l.addDouble(pid.scale);
         l.addDouble(pid.stiction_up_val);
         l.addDouble(pid.stiction_down_val);
+        l.addDouble(pid.kff);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -2378,6 +2384,7 @@ public:
             m.addDouble(pids[i].scale);
             m.addDouble(pids[i].stiction_up_val);
             m.addDouble(pids[i].stiction_down_val);
+            m.addDouble(pids[i].kff);
         }
 
         bool ok = rpc_p.write(cmd, response);
@@ -2405,6 +2412,7 @@ public:
             pid->scale = l.get(6).asDouble();
             pid->stiction_up_val = l.get(7).asDouble();
             pid->stiction_down_val = l.get(8).asDouble();
+            pid->kff = l.get(9).asDouble();
             return true;
         }
         return false;
@@ -2439,6 +2447,7 @@ public:
                 pids[i].scale = m.get(6).asDouble();
                 pids[i].stiction_up_val = m.get(7).asDouble();
                 pids[i].stiction_down_val = m.get(8).asDouble();
+                pids[i].kff = m.get(9).asDouble();
             }
         }
         return true;
