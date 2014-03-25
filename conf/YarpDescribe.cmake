@@ -38,7 +38,7 @@ foreach(lib ${YARP_LIBS})
      NOT "${lib}" STREQUAL "yarpmod" AND
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND
      NOT "${lib}" STREQUAL "YARP_manager")
-    list(APPEND YARP_LIBRARIES ${lib})
+    list(APPEND YARP_LIBRARIES YARP::${lib})
   endif()
 endforeach()
 
@@ -56,6 +56,7 @@ endif()
 
 # YARPTargets.cmake (build tree)
 export(TARGETS ${YARP_LIBS}
+       NAMESPACE YARP::
        FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
 set(VERSIONED_LIB ${CMAKE_INSTALL_LIBDIR}/YARP-${YARP_VERSION})
@@ -75,6 +76,7 @@ install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuratio
 
 # YARPTargets.cmake (installed)
 install(EXPORT YARP
+        NAMESPACE YARP::
         DESTINATION ${VERSIONED_LIB}
         FILE YARPTargets.cmake)
 
