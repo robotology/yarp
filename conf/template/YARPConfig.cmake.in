@@ -65,6 +65,8 @@ if(NOT YARP_FOUND)
     # to check.
     set(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
     set(YARP_HAS_NAME_LIB @YARP_HAS_NAME_LIB@)
+    set(YARP_HAS_MANAGER_LIB @YARP_HAS_MANAGER_LIB@)
+
     set(YARP_USE_ATLAS @YARP_USE_ATLAS@) # This is a math library option
     set(YARP_IS_SHARED_LIBRARY @CREATE_SHARED_LIBRARY@)
 
@@ -84,6 +86,9 @@ if(NOT YARP_FOUND)
         set(YARP_NAME_LIBRARY YARP_name)
     endif(YARP_HAS_NAME_LIBRARY)
     set(YARP_INIT_LIBRARY YARP_init)
+    if(TARGET YARP_manager)
+        set(YARP_MATH_LIBRARY YARP_manager)
+    endif()
 
     # Finally set YARP_FOUND variable
     set(YARP_FOUND TRUE)
