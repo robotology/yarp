@@ -52,12 +52,6 @@ if(NOT YARP_FOUND)
     set(YARP_VERSION_STRING "@YARP_VERSION_STRING@")
     set(YARP_VERSION_ABI "@YARP_VERSION_ABI@")
 
-    # Link directories are rare, so most user scripts don't
-    # account for them.  On balance, better to pull them
-    # in automatically.  The only current use is for OpenCV.
-    # FIXME 2.4 This should disappear
-    link_directories(${YARP_LINK_DIRS})
-
     # Pass along some compilation options that may be useful for clients
     # to check.
     set(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
