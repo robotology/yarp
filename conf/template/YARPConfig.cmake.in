@@ -89,7 +89,4 @@ if(NOT YARP_FOUND)
     if(TARGET YARP_manager)
         set(YARP_MATH_LIBRARY YARP_manager)
     endif()
-
-    # Finally set YARP_FOUND variable
-    set(YARP_FOUND TRUE)
 endif(NOT YARP_FOUND)
