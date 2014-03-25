@@ -26,8 +26,6 @@ if(ENABLE_yarpidl_thrift)
     endif(MSVC)
 endif(ENABLE_yarpidl_thrift)
 
-set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
-set(YARP_DEPENDENCY_FILENAME YARPDependencies.cmake)
 set(YARP_BINDINGS ${CMAKE_SOURCE_DIR}/bindings)
 
 # Filter out from YARP_LIBRARIES all the plugins, yarpmod, yarpcar
@@ -55,13 +53,14 @@ else()
   include(CMakePackageConfigHelpers)
   WRITE_BASIC_PACKAGE_VERSION_FILE(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake VERSION ${YARP_VERSION} COMPATIBILITY AnyNewerVersion )
 endif()
-export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
+
+# YARPTargets.cmake (build tree)
+export(TARGETS ${YARP_LIBS}
+       FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
 set(VERSIONED_LIB ${CMAKE_INSTALL_LIBDIR}/YARP-${YARP_VERSION})
 
 # Set up a configuration file for installed use of YARP
-set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/${VERSIONED_LIB}/YARP.cmake)
-set(YARP_DEPENDENCY_FILENAME YARP.cmake)
 set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
 set(YARP_MODULE_DIR ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
 set(YARP_IDL_BINARY_HINT ${CMAKE_INSTALL_PREFIX}/bin)
@@ -73,7 +72,11 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})
-install(EXPORT YARP COMPONENT configuration DESTINATION ${VERSIONED_LIB})
+
+# YARPTargets.cmake (installed)
+install(EXPORT YARP
+        DESTINATION ${VERSIONED_LIB}
+        FILE YARPTargets.cmake)
 
 foreach(lib ${YARP_LIBS})
     set_target_properties(${lib} PROPERTIES VERSION ${YARP_VERSION}
