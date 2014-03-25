@@ -21,7 +21,7 @@
 namespace {
     static const int default_portscope_rows = 1;
     static const int default_portscope_columns = 1;
-    static const Glib::ustring default_portscope_carrier = "mcast";
+    static const Glib::ustring default_portscope_carrier = "udp";
     static bool default_portscope_persistent = true;
     static const int default_plot_gridx = -1;
     static const int default_plot_gridy = -1;

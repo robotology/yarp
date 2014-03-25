@@ -16,7 +16,7 @@
 
 namespace {
     static const Glib::ustring default_local_port = "/yarpscope"; // FIXME Use "..."
-    static const Glib::ustring default_portscope_carrier = "mcast";
+    static const Glib::ustring default_portscope_carrier = "udp";
     static bool default_portscope_persistent = true;
     static const float default_plot_minval = -100.;
     static const float default_plot_maxval = 100.;
