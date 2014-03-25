@@ -137,16 +137,30 @@ endif(CREATE_JAVA)
 #############################################################################
 ## Create Python bindings
 
-if(CREATE_PYTHON)
+if(CREATE_PYTHON)	 
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
-  set(CREATE_PYTHON_VERSION "" CACHE STRING "Control python version used, if you wish.")
+  set(CREATE_PYTHON_VERSION "" CACHE STRING "Control python version used, if you wish." )
+  find_package(PythonInterp ${CREATE_PYTHON_VERSION})
+  if(NOT CREATE_PYTHON_VERSION)
+    # try to detect the version of python found by PythonInterp, and
+    # pass that on to PythonLibs.  This may be unnecessary in
+    # later CMake versions: http://public.kitware.com/Bug/view.php?id=13794
+    execute_process(COMMAND ${PYTHON_EXECUTABLE} 
+      -c "from distutils import sysconfig; print(sysconfig.get_python_lib());" 
+      OUTPUT_VARIABLE PYTHON_LIBDIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX MATCH "python([0-9][-_.0-9]+)" PYTHON_IGNORE "${PYTHON_LIBDIR}")    set(CREATE_PYTHON_VERSION ${CMAKE_MATCH_1})
+    if(CREATE_PYTHON_VERSION)
+      message(STATUS "Detected python version ${CREATE_PYTHON_VERSION} (override CREATE_PYTHON_VERSION to change)")
+    endif()
+  endif()
   if(CREATE_PYTHON_VERSION)
     set(PythonLibs_FIND_VERSION ${CREATE_PYTHON_VERSION})
+    set(PythonLibs_FIND_VERSION_EXACT ${CREATE_PYTHON_VERSION})
   endif()
   find_package(PythonLibs ${CREATE_PYTHON_VERSION})
   include_directories(${PYTHON_INCLUDE_PATH})
   link_libraries(${PYTHON_LIBRARY})
-
+  
   ## in Windows it seems necessary to declare explictly the link_directory
   if(WIN32)
     get_filename_component(PYTHON_DIR ${PYTHON_LIBRARY} PATH)
@@ -168,13 +182,11 @@ if(CREATE_PYTHON)
   get_target_property(yarp_lib_location _${target_name} LOCATION)
 
   # installation path is determined reliably on most platforms using distutils
-  find_package(PythonInterp ${CREATE_PYTHON_VERSION})
-
-  execute_process(COMMAND ${PYTHON_EXECUTABLE}
-                          -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}'))"
-                  OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py ${yarp_lib_location}
-          DESTINATION ${PYTHON_INSTDIR})
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} 
+    -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}'))" 
+    OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py ${yarp_lib_location} 
+    DESTINATION ${PYTHON_INSTDIR} )
 
   if(WIN32)
     set_target_properties(_${target_name} PROPERTIES SUFFIX ".pyd")
