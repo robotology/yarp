@@ -49,9 +49,9 @@ add_definitions("-DDEBUG")
 add_executable(robotInterface ${robotInterface_SRCS})
 
 target_link_libraries(robotInterface
-                      YARP_OS
-                      YARP_dev
-                      YARP_init
+                      YARP::YARP_OS
+                      YARP::YARP_dev
+                      YARP::YARP_init
                       icubmod
                     #  debugStream
                       ${TinyXML_LIBRARIES})
