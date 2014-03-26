@@ -54,6 +54,7 @@ class partMover{
   PolyDriver *debugDd;
 
   IPositionControl *pos;
+  IPositionDirect  *iDir;
   IVelocityControl *iVel;
   IEncoders *iencs;
   IAmplifierControl *amp;

@@ -27,6 +27,11 @@
 const int UPDATE_TIME = 200;   //update time in ms
 #define DEBUG_GUI 0
 
+#ifndef VOCAB_CM_POSITION_DIRECT
+#define VOCAB_CM_POSITION_DIRECT VOCAB4('c','m','p','d')
+#else
+#warning "VOCAB_CM_POSITION_DIRECT already defined in yarp!"
+#endif
 /*
  * Disable PID
  */
@@ -210,6 +215,7 @@ bool partMover::entry_update(partMover *currentPart)
   GdkColor color_grey;
   GdkColor color_yellow;
   GdkColor color_green;
+  GdkColor color_dark_green;
   GdkColor color_red;
   GdkColor color_pink;
   GdkColor color_indaco;
@@ -236,6 +242,10 @@ bool partMover::entry_update(partMover *currentPart)
   color_green.green=221*255;
   color_green.blue=186*255;
 
+  color_dark_green.red=(149-30)*255;
+  color_dark_green.green=(221-30)*255;
+  color_dark_green.blue=(186-30)*255;
+
   color_blue.red=150*255;
   color_blue.green=190*255;
   color_blue.blue=255*255;
@@ -255,6 +265,7 @@ bool partMover::entry_update(partMover *currentPart)
   IControlMode     *ictrl = currentPart->ctrlmode;
   IPositionControl  *ipos = currentPart->pos;
   IVelocityControl  *ivel = currentPart->iVel;
+  IPositionDirect   *iDir = currentPart->iDir;
   IEncoders       *iiencs = currentPart->iencs;
   ITorqueControl    *itrq = currentPart->trq;
   IAmplifierControl *iamp = currentPart->amp;
@@ -371,6 +382,14 @@ bool partMover::entry_update(partMover *currentPart)
 			  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"Velocity:");
 			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
 		  break;
+		  case VOCAB_CM_POSITION_DIRECT:
+			  pColor=&color_dark_green;
+			  strcat(frame_title," (POSITION_DIRECT)");
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider1[k]),"Position:");
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"---");
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
 		  case VOCAB_CM_VELOCITY:
 			  pColor=&color_blue;
 			  strcat(frame_title," (VELOCITY)");
@@ -466,6 +485,7 @@ void partMover::sliderVel_release(GtkRange *range, gtkClassData* currentClassDat
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   IPositionControl *ipos = currentPart->pos;
+  IPositionDirect  *iDir = currentPart->iDir;
   GtkWidget **sliderAry = currentPart->sliderArray;
 
   double val = gtk_range_get_value(range);
@@ -488,6 +508,7 @@ void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
   bool *POS_UPDATE = currentPart->CURRENT_POS_UPDATE;
   IPositionControl *ipos = currentPart->pos;
   IPidControl      *ipid = currentPart->pid;
+  IPositionDirect  *iDir = currentPart->iDir;
   GtkWidget **sliderVel = currentPart->sliderVelArray;
 
   double val = gtk_range_get_value(range);
@@ -495,9 +516,15 @@ void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
 
   if (!POS_UPDATE[*joint])
     {
-      ipos->setRefSpeed(*joint, valVel);
-      ipos->positionMove(*joint, val);
-      //ipid->setReference(*joint, val);
+      if (1)
+      {
+         ipos->setRefSpeed(*joint, valVel);
+         ipos->positionMove(*joint, val);
+      }
+      else
+      {
+         iDir->setPosition(*joint, val);
+      }
     }
   return;
 }
@@ -512,6 +539,7 @@ void partMover::slider_pick(GtkRange *range, GdkEvent *e, gtkClassData* currentC
   partMover *currentPart = currentClassData->partPointer;
   int * joint = currentClassData->indexPointer;
   IPositionControl *ipos = currentPart->pos;
+  IPositionDirect  *iDir = currentPart->iDir;
   bool *POS_UPDATE = currentPart->CURRENT_POS_UPDATE;
 
   //fprintf(stderr, "Slider_pick has been called %d \n", *joint);
@@ -533,6 +561,7 @@ void partMover::slider_unpick(GtkRange *range, GdkEvent *e, gtkClassData* curren
   int * joint = currentClassData->indexPointer;
   bool *POS_UPDATE = currentPart->CURRENT_POS_UPDATE;
   IPositionControl *ipos = currentPart->pos;
+  IPositionDirect  *iDir = currentPart->iDir;
 
   //fprintf(stderr, "Slider_unpick has been called %d \n", *joint);
   POS_UPDATE[*joint] = true;
