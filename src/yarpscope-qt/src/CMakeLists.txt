@@ -14,6 +14,6 @@ source_group("Resource Files" FILES ${QtYARPScope_QRC_FILES})
 source_group("Generated Files" FILES ${QtYARPScope_QRC_GEN_SRCS})
 
 add_executable(QtYARPScope WIN32 ${QtYARPScope_SRCS} ${QtYARPScope_HDRS} ${QtYARPScope_QRC_GEN_SRCS})
-target_link_libraries(QtYARPScope ${YARP_LIBRARIES} Qt5::Widgets Qt5::Qml Qt5::Quick)
+target_link_libraries(QtYARPScope Qt5::Widgets Qt5::Qml Qt5::Quick)
 
 install(TARGETS QtYARPScope COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
