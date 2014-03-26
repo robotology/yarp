@@ -13,6 +13,6 @@ source_group("Resources Files" FILES ${QtYARPView_QRC_FILES})
 source_group("Generated Files" FILES ${QtYARPView_QRC_GEN_SRCS})
 
 add_executable(QtYARPView WIN32 ${QtYARPScopePlugin_SRCS} ${QtYARPView_HDRS} ${QtYARPView_QRC_GEN_SRCS})
-target_link_libraries(QtYARPView Qt5::Widgets Qt5::Qml Qt5::Quick)
+qt5_use_modules(QtYARPView Widgets Qml Quick)
 
 install(TARGETS QtYARPView COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

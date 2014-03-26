@@ -13,6 +13,6 @@ source_group("Resources Files" FILES ${ContainerExample_QRC_FILES})
 source_group("Generated Files" FILES ${ContainerExample_QRC_GEN_FILES})
 
 add_executable(ContainerExample WIN32 ${ContainerExample_SRCS} ${ContainerExample_HDRS} ${ContainerExample_QRC_GEN_FILES})
-target_link_libraries(ContainerExample Qt5::Widgets Qt5::Qml Qt5::Quick)
+qt5_use_modules(ContainerExample Widgets Qml Quick)
 
 install(TARGETS ContainerExample COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

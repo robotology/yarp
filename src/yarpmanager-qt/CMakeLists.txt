@@ -17,6 +17,7 @@ source_group("UI Files" FILES ${QtYARPManager_UI_FILES})
 source_group("Generated Files" FILES ${QtYARPManager_QRC_GEN_SRCS} ${QtYARPManager_UI_GEN_SRCS})
 
 add_executable(QtYARPManager WIN32 ${QtYARPManager_SRCS} ${QtYARPManager_HDRS} ${QtYARPManager_QRC_GEN_SRCS} ${QtYARPManager_UI_GEN_SRCS})
-target_link_libraries(QtYARPManager YARP::YARP_OS YARP::YARP_init YARP::YARP_manager Qt5::Widgets Qt5::Gui)
+target_link_libraries(QtYARPManager YARP::YARP_OS YARP::YARP_init YARP::YARP_manager)
+qt5_use_modules(QtYARPManager Widgets Gui)
 
 install(TARGETS QtYARPManager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
