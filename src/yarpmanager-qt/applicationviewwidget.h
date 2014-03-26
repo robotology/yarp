@@ -95,20 +95,20 @@ private:
     QAction *connSelectAllAction;
     QAction *conn1SeparatorAction;
     QAction *connInspectAction;
-    QAction *connYarpViewAction;
-    QAction *connYarpReadAction;
-    QAction *connYarpHearAction;
-    QAction *connYarpScopeAction;
+    QAction *connYARPViewAction;
+    QAction *connYARPReadAction;
+    QAction *connYARPHearAction;
+    QAction *connYARPScopeAction;
 
     QAction *resRefreshAction;
     QAction *resSelectAllAction;
 
 
 private slots:
-    void onYarpView();
-    void onYarpHear();
-    void onYarpRead();
-    void onYarpScope();
+    void onYARPView();
+    void onYARPHear();
+    void onYARPRead();
+    void onYARPScope();
     void onResourceItemSelectionChanged();
     void onConnectionItemSelectionChanged();
     void onModuleItemSelectionChanged();

@@ -23,7 +23,7 @@ Window {
     height: 200
     flags: Qt.Dialog
     modality: Qt.WindowModal
-    title: "About Yarp Port Scope"
+    title: "About YARP Port Scope"
 
     property string name: ""
 
@@ -35,7 +35,7 @@ Window {
 
         Label {
             id: lblName
-            text: "Yarp Port Scope"
+            text: "YARP Port Scope"
             anchors.top: parent.top
             anchors.topMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
@@ -200,7 +200,7 @@ Window {
                 anchors.bottomMargin: 10
 
                 Component.onCompleted: {
-                    //addTab("Written By", Qt.createComponent("qrc:/YarpView/Credits.qml"))
+                    //addTab("Written By", Qt.createComponent("qrc:/YARPView/Credits.qml"))
                 }
             }
 

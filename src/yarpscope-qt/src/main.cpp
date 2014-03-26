@@ -19,7 +19,7 @@
 #include <QVariant>
 #include <QDir>
 
-/*! \brief Main method for the YarpView container.
+/*! \brief Main method for the YARPView container.
  *
  *  \param argc
  *  \param argv

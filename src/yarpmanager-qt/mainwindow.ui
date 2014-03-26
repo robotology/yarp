@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Yarp module manager</string>
+   <string>YARP module manager</string>
   </property>
   <property name="windowIcon">
    <iconset resource="res.qrc">

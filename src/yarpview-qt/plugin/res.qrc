@@ -1,9 +1,9 @@
 <RCC>
-    <qresource prefix="/YarpView">
-        <file>YarpViewMenu.qml</file>
+    <qresource prefix="/YARPView">
+        <file>YARPViewMenu.qml</file>
         <file>images/Record-Pressed-icon.png</file>
         <file>images/Stop-Normal-Red-icon.png</file>
-        <file>YarpViewStatusBar.qml</file>
+        <file>YARPViewStatusBar.qml</file>
         <file>Credits.qml</file>
         <file>VideoSurface.qml</file>
     </qresource>

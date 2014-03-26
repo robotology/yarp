@@ -126,10 +126,10 @@ void ApplicationViewWidget::createConnectionsViewContextMenu()
     conn1SeparatorAction = new QAction(connContex);
     conn1SeparatorAction->setSeparator(connContex);
 
-    connYarpViewAction = new QAction("yarpview",connSubMenu);
-    connYarpReadAction = new QAction("yarpread",connSubMenu);
-    connYarpHearAction = new QAction("yarphear",connSubMenu);
-    connYarpScopeAction = new QAction("yarpscope",connSubMenu);
+    connYARPViewAction = new QAction("yarpview",connSubMenu);
+    connYARPReadAction = new QAction("yarpread",connSubMenu);
+    connYARPHearAction = new QAction("yarphear",connSubMenu);
+    connYARPScopeAction = new QAction("yarpscope",connSubMenu);
 
     connSelectAllAction->setIcon(QIcon(":/images/selectall_ico.png"));
     connRefreshAction->setIcon(QIcon(":/images/progress_ico.png"));
@@ -139,10 +139,10 @@ void ApplicationViewWidget::createConnectionsViewContextMenu()
     connect(connRefreshAction,SIGNAL(triggered()),this,SLOT(onRefresh()));
     connect(connSelectAllAction,SIGNAL(triggered()),this,SLOT(selectAllConnections()));
 
-    connect(connYarpViewAction,SIGNAL(triggered()),this,SLOT(onYarpView()));
-    connect(connYarpReadAction,SIGNAL(triggered()),this,SLOT(onYarpRead()));
-    connect(connYarpHearAction,SIGNAL(triggered()),this,SLOT(onYarpHear()));
-    connect(connYarpScopeAction,SIGNAL(triggered()),this,SLOT(onYarpScope()));
+    connect(connYARPViewAction,SIGNAL(triggered()),this,SLOT(onYARPView()));
+    connect(connYARPReadAction,SIGNAL(triggered()),this,SLOT(onYARPRead()));
+    connect(connYARPHearAction,SIGNAL(triggered()),this,SLOT(onYARPHear()));
+    connect(connYARPScopeAction,SIGNAL(triggered()),this,SLOT(onYARPScope()));
 
     connContex->addAction(connConnectAction);
     connContex->addAction(connDisconnectAction);
@@ -152,10 +152,10 @@ void ApplicationViewWidget::createConnectionsViewContextMenu()
     connContex->addAction(conn1SeparatorAction);
     connContex->addMenu(connSubMenu);
 
-    connSubMenu->addAction(connYarpViewAction);
-    connSubMenu->addAction(connYarpReadAction);
-    connSubMenu->addAction(connYarpHearAction);
-    connSubMenu->addAction(connYarpScopeAction);
+    connSubMenu->addAction(connYARPViewAction);
+    connSubMenu->addAction(connYARPReadAction);
+    connSubMenu->addAction(connYARPHearAction);
+    connSubMenu->addAction(connYARPScopeAction);
 
 
     ui->connectionList->setContextMenu(connContex);
@@ -747,8 +747,8 @@ void ApplicationViewWidget::exportGraph()
 }
 
 
-/*! \brief Launch YarpView Inspection modality*/
-void ApplicationViewWidget::onYarpView()
+/*! \brief Launch YARPView Inspection modality*/
+void ApplicationViewWidget::onYARPView()
 {
     if(manager.busy()){
         return;
@@ -798,8 +798,8 @@ void ApplicationViewWidget::onYarpView()
     yarp::os::Time::delay(0.1);
 }
 
-/*! \brief Launch YarpHear Inspection modality*/
-void ApplicationViewWidget::onYarpHear()
+/*! \brief Launch YARPHear Inspection modality*/
+void ApplicationViewWidget::onYARPHear()
 {
     if(manager.busy()){
         return;
@@ -867,8 +867,8 @@ void ApplicationViewWidget::onYarpHear()
 
 }
 
-/*! \brief Launch YarpRead Inspection modality*/
-void ApplicationViewWidget::onYarpRead()
+/*! \brief Launch YARPRead Inspection modality*/
+void ApplicationViewWidget::onYARPRead()
 {
     if(manager.busy()){
         return;
@@ -929,8 +929,8 @@ void ApplicationViewWidget::onYarpRead()
 
 }
 
-/*! \brief Launch YarpScope Inspection modality*/
-void ApplicationViewWidget::onYarpScope()
+/*! \brief Launch YARPScope Inspection modality*/
+void ApplicationViewWidget::onYARPScope()
 {
     if(manager.busy()){
         return;

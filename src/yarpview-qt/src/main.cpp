@@ -19,7 +19,7 @@
 #include <QVariant>
 #include <QDir>
 
-/*! \brief Main method for the YarpView container.
+/*! \brief Main method for the YARPView container.
  *
  *  \param argc
  *  \param argv
@@ -54,8 +54,8 @@ int main(int argc, char *argv[])
     for(int i=1;i<argc;i++){
         params.append(argv[i]);
     }
-    // Call the parseParameters of the qml object called YarpVideoSurface
-    QObject *yarpVideoSurface = topLevel->findChild<QObject*>("YarpVideoSurface");
+    // Call the parseParameters of the qml object called YARPVideoSurface
+    QObject *yarpVideoSurface = topLevel->findChild<QObject*>("YARPVideoSurface");
     QMetaObject::invokeMethod(yarpVideoSurface,"parseParameters",
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, retVal),

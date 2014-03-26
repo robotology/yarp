@@ -101,9 +101,9 @@ HEADERS += \
     qcustomplot.h
 
 OTHER_FILES = $$DESTDIR/qmldir \
-    YarpScopeToolBar.qml \
-    YarpScopeMenu.qml \
-    YarpScopeAbout.qml
+    YARPScopeToolBar.qml \
+    YARPScopeMenu.qml \
+    YARPScopeAbout.qml
 
 !equals(_PRO_FILE_PWD_, $$OUT_PWD) {
     copy_qmldir.target = $$OUT_PWD/qmldir

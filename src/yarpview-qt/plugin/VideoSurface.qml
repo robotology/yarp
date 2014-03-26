@@ -25,7 +25,7 @@ Rectangle {
     property int posY: yarpViewCore.posY
     property int windowWidth: yarpViewCore.windowWidth
     property int windowHeight: yarpViewCore.windowHeight
-    property YarpViewStatusBar dataArea: undefined
+    property YARPViewStatusBar dataArea: undefined
     property int menuHeight: 0
     property string name: "/name"
     property string version: "1.1"
@@ -191,7 +191,7 @@ Rectangle {
     /******************************/
     /******************************/
 
-    QtYarpViewPlugin{
+    QtYARPViewPlugin{
         id: yarpViewCore
     }
 
@@ -233,7 +233,7 @@ Rectangle {
         Button {
             id: recordSetBtn
             text: qsTr("Record")
-            iconSource: "qrc:/YarpView/images/Record-Pressed-icon.png"
+            iconSource: "qrc:/YARPView/images/Record-Pressed-icon.png"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             anchors.top: parent.top
@@ -248,7 +248,7 @@ Rectangle {
         Button {
             id: stopSetBtn
             text: qsTr("Stop")
-            iconSource: "qrc:/YarpView/images/Stop-Normal-Red-icon.png"
+            iconSource: "qrc:/YARPView/images/Stop-Normal-Red-icon.png"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             anchors.top: parent.top
@@ -315,7 +315,7 @@ Rectangle {
         Button {
             id: button1
             text: qsTr("Save")
-            iconSource: "qrc:/YarpView/images/Record-Pressed-icon.png"
+            iconSource: "qrc:/YARPView/images/Record-Pressed-icon.png"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             anchors.top: parent.top
@@ -618,7 +618,7 @@ Rectangle {
                 anchors.bottomMargin: 10
 
                 Component.onCompleted: {
-                    addTab("Written By", Qt.createComponent("qrc:/YarpView/Credits.qml"))
+                    addTab("Written By", Qt.createComponent("qrc:/YARPView/Credits.qml"))
                 }
             }
 

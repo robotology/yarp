@@ -1,5 +1,5 @@
 /*
- *  Yarp Modules Manager
+ *  YARP Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  * 

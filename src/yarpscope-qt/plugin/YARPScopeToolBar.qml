@@ -77,7 +77,7 @@ Rectangle {
         height: 35
         checkable: true
         checked: true
-        iconSource: playPauseBtn.checked == true ? "qrc:/YarpScope/images/pause-icon.png" : "qrc:/YarpScope/images/play-icon.png"
+        iconSource: playPauseBtn.checked == true ? "qrc:/YARPScope/images/pause-icon.png" : "qrc:/YARPScope/images/play-icon.png"
         onClicked: {
             playPressed(playPauseBtn.checked)
         }
@@ -89,7 +89,7 @@ Rectangle {
         y: 8
         width: 68
         height: 35
-        iconSource: "qrc:/YarpScope/images/clear-icon.png"
+        iconSource: "qrc:/YARPScope/images/clear-icon.png"
         onClicked: {
             clear()
         }
@@ -101,7 +101,7 @@ Rectangle {
         y: 8
         width: 68
         height: 35
-        iconSource: "qrc:/YarpScope/images/rescale-icon.png"
+        iconSource: "qrc:/YARPScope/images/rescale-icon.png"
         onClicked: {
             rescale()
         }

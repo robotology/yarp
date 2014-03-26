@@ -46,18 +46,18 @@ struct mOptions
 };
 typedef struct mOptions pgmOptions;
 
-/*! \class QtYarpView
+/*! \class QtYARPView
     \brief The plugin Core class
 
     this is the plugin core class wich acts as bridge between the QML and c++.
     in the C++ code is implemented the backend logic, instead in the QML is
     implemented the Visual part.
 */
-class QtYarpView : public QQuickItem
+class QtYARPView : public QQuickItem
 {
     Q_OBJECT
 
-    Q_DISABLE_COPY(QtYarpView)
+    Q_DISABLE_COPY(QtYARPView)
     Q_PROPERTY(QObject *videoProducer READ getVideoProducer NOTIFY videoProducerChanged)
     Q_PROPERTY(int posX READ posX NOTIFY posXChanged)
     Q_PROPERTY(int posY READ posY NOTIFY posYChanged)
@@ -66,8 +66,8 @@ class QtYarpView : public QQuickItem
     Q_PROPERTY(int refreshInterval READ refreshInterval NOTIFY refreshIntervalChanged)
 
 public:
-    QtYarpView(QQuickItem *parent = 0);
-    ~QtYarpView();
+    QtYARPView(QQuickItem *parent = 0);
+    ~QtYARPView();
 
     Q_INVOKABLE void freeze(bool check);
     Q_INVOKABLE void synchToDisplay(bool check);

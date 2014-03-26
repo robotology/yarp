@@ -15,8 +15,8 @@ import QtQuick.Controls 1.1
 
 import robotology.yarp.scope 1.0
 import robotology.yarp.view 1.0
-import "qrc:/YarpScope/"
-import "qrc:/YarpView/"
+import "qrc:/YARPScope/"
+import "qrc:/YARPView/"
 
 ApplicationWindow {
     id: window
@@ -24,15 +24,15 @@ ApplicationWindow {
     height: 360
 
     /*************************************************/
-    menuBar: YarpScopeMenu{
+    menuBar: YARPScopeMenu{
         id: menu
     }
 
-    toolBar: YarpScopeToolBar{
+    toolBar: YARPScopeToolBar{
         id: toolBar
     }
 
-    statusBar: YarpViewStatusBar{
+    statusBar: YARPViewStatusBar{
         id: statusBar
     }
 
@@ -42,7 +42,7 @@ ApplicationWindow {
 
         VideoSurface{
             id: vSurface
-            objectName: "YarpVideoSurface"
+            objectName: "YARPVideoSurface"
             x: 0
             y: 0
             width: mainContainer.width/2
@@ -58,7 +58,7 @@ ApplicationWindow {
             height: mainContainer.height
 
             id: graph
-            objectName: "YarpScope1"
+            objectName: "YARPScope1"
         }
 
 

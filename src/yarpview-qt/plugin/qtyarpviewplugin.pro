@@ -91,8 +91,8 @@ HEADERS += \
 
 OTHER_FILES = $$DESTDIR/qmldir \
     VideoSurface.qml \
-    YarpViewMenu.qml \
-    YarpViewStatusBar.qml \
+    YARPViewMenu.qml \
+    YARPViewStatusBar.qml \
     Credits.qml
 
 !equals(_PRO_FILE_PWD_, $$OUT_PWD) {

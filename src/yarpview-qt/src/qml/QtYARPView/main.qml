@@ -12,12 +12,12 @@ import QtQuick 2.0
 import QtQuick.Controls 1.1
 import QtQuick.Window 2.0
 
-// Import the YarpView module
+// Import the YARPView module
 import robotology.yarp.view 1.0
-// Imports the resources of the YarpView Module.
+// Imports the resources of the YARPView Module.
 // This serves in case the the module has its
 // own qml defined in the resources
-import "qrc:/YarpView/" 1.0
+import "qrc:/YARPView/" 1.0
 
 ApplicationWindow {
     id: window
@@ -40,18 +40,18 @@ ApplicationWindow {
 
 
     /**************************************************/
-    menuBar: YarpViewMenu{
+    menuBar: YARPViewMenu{
         id: menu
     }
 
-    statusBar: YarpViewStatusBar{
+    statusBar: YARPViewStatusBar{
         id: statusBar
     }
 
 
     VideoSurface{
         id: vSurface
-        objectName: "YarpVideoSurface"
+        objectName: "YARPVideoSurface"
         anchors.fill: parent
         dataArea: statusBar
         menuHeight: menuH

@@ -77,7 +77,7 @@ bool QtYARPScope::parseParameters(QStringList params)
         return false;
     }
 
-    //Yarp network initialization
+    //YARP network initialization
     if (!yarp.checkNetwork()) {
         qFatal("Cannot connect to yarp network");
         return false;
@@ -86,7 +86,7 @@ bool QtYARPScope::parseParameters(QStringList params)
 //********************** Deprecated options
     // local
     if (options.check("local")) {
-        qWarning() << "--local option is deprecated. YarpScope now uses \"${YARP_PORT_PREFIX}/YarpScope/${REMOTE_PORT_NAME}\"";
+        qWarning() << "--local option is deprecated. YARPScope now uses \"${YARP_PORT_PREFIX}/YARPScope/${REMOTE_PORT_NAME}\"";
     }
 
     // rows
@@ -185,7 +185,7 @@ void QtYARPScope::usage() {
     qDebug("OPTIONS:");
     qDebug(" --help                 Print this help and exit.\n");
 
-    qDebug(" --title [string]       Title of the window (default \"Yarp Port Scope\")");
+    qDebug(" --title [string]       Title of the window (default \"YARP Port Scope\")");
     qDebug(" --x [uint]             Initial X position of the window.");
     qDebug(" --y [uint]             Initial Y position of the window.");
     qDebug(" --dx [uint]            Initial width of the window.");

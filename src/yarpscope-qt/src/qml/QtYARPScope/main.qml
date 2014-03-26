@@ -13,12 +13,12 @@ import QtQuick.Controls 1.1
 import QtQuick.Window 2.0
 import QtQuick.Window 2.1
 
-// Import the YarpScope module
+// Import the YARPScope module
 import robotology.yarp.scope 1.0
-// Imports the resources of the YarpScope Module.
+// Imports the resources of the YARPScope Module.
 // This serves in case the the module has its
 // own qml defined in the resources
-import "qrc:/YarpScope/"
+import "qrc:/YARPScope/"
 
 ApplicationWindow {
     id: window
@@ -26,18 +26,18 @@ ApplicationWindow {
     height: 500
 
     /*************************************************/
-    menuBar: YarpScopeMenu{
+    menuBar: YARPScopeMenu{
         id: menu
     }
 
-    toolBar: YarpScopeToolBar{
+    toolBar: YARPScopeToolBar{
         id: toolBar
     }
 
     QtYARPScopePlugin{
         anchors.fill: parent
         id: graph
-        objectName: "YarpScope1"
+        objectName: "YARPScope1"
     }  
     /*************************************************/
 
@@ -98,7 +98,7 @@ ApplicationWindow {
         return ret
     }
 
-    YarpScopeAbout{
+    YARPScopeAbout{
         id: aboutDlg
         visibility: Window.Hidden
     }
