@@ -106,8 +106,6 @@ if(CREATE_LIB_MATH)
     target_link_libraries(YARP_manager LINK_PRIVATE YARP_math)
 endif()
 
-
-
 if(YARP_EXPERIMENTAL_MANAGER_LIB)
     install(TARGETS YARP_manager
             EXPORT YARP
@@ -121,4 +119,5 @@ if(YARP_EXPERIMENTAL_MANAGER_LIB)
 
     set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
     set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
+    set_property(GLOBAL PROPERTY YARP_HAS_MANAGER_LIB TRUE)
 endif()
