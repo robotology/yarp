@@ -24,7 +24,7 @@
 #include <stdlib.h>
 
 //*********************************************************************************
-void guiControl::destroy_main (GtkWindow *window,	gpointer   user_data)
+void guiControl::destroy_main (GtkWindow *window,    gpointer   user_data)
 {
   gtk_widget_destroy (GTK_WIDGET(window));
   window = NULL;
@@ -48,10 +48,10 @@ void guiControl::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int pos
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
 
-  gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+20);
-  gtk_widget_set_size_request 	(frame, 120, 60);
-  gtk_widget_set_size_request 	(entry, 50, 20);
+  gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
+  gtk_fixed_put    (GTK_FIXED(inv), entry, posX+30, posY+20);
+  gtk_widget_set_size_request     (frame, 120, 60);
+  gtk_widget_set_size_request     (entry, 50, 20);
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
   sprintf(buffer, "%d", k);
@@ -65,10 +65,10 @@ void guiControl::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
 
-  gtk_fixed_put	(GTK_FIXED(inv), frame, posX+20, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+20);
-  gtk_widget_set_size_request 	(frame, 120, 60);
-  gtk_widget_set_size_request 	(entry, 50, 20);
+  gtk_fixed_put    (GTK_FIXED(inv), frame, posX+20, posY);
+  gtk_fixed_put    (GTK_FIXED(inv), entry, posX+50, posY+20);
+  gtk_widget_set_size_request     (frame, 120, 60);
+  gtk_widget_set_size_request     (entry, 50, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
   sprintf(buffer, "%d", k);
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
@@ -77,113 +77,144 @@ void guiControl::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX
 
 static void guiControl::radio_click_idl(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
-	{
-		fprintf(stderr, "joint: %d in IDLE mode!\n", *joint);
-		fprintf(stderr, "(DEBUG: not using iCntrl interface\n", *joint);
-		ipid->disablePid(*joint);
-		iamp->disableAmp(*joint);
-	}
-	else
-	{
-	}
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in IDLE mode!\n", *joint);
+        fprintf(stderr, "(DEBUG: not using iCntrl interface\n", *joint);
+        ipid->disablePid(*joint);
+        iamp->disableAmp(*joint);
+    }
+    else
+    {
+    }
 }
 static void guiControl::radio_click_open(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
-	{
-		fprintf(stderr, "joint: %d in OPENLOOP mode!\n", *joint);
-		icntrl->setOpenLoopMode(*joint);
-	}
-	else
-	{
-	}
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in OPENLOOP mode!\n", *joint);
+        icntrl->setOpenLoopMode(*joint);
+    }
+    else
+    {
+    }
 }
 static void guiControl::radio_click_pos(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
-	{
-		fprintf(stderr, "joint: %d in POSITION mode!\n", *joint);
-		icntrl->setPositionMode(*joint);
-	}
-	else
-	{
-	}
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in POSITION mode!\n", *joint);
+        icntrl->setPositionMode(*joint);
+    }
+    else
+    {
+    }
 }
+
+static void guiControl::radio_click_pos_direct(GtkWidget* radio , gtkClassData* currentClassData)
+{
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in POSITION DIRECT mode!\n", *joint);
+        //icntrl->setPositionDirectMode(*joint);
+    }
+    else
+    {
+    }
+}
+
+static void guiControl::radio_click_mode_mixed(GtkWidget* radio , gtkClassData* currentClassData)
+{
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in MIXED mode!\n", *joint);
+        //icntrl->setMixedMode(*joint);
+    }
+    else
+    {
+    }
+}
+
 static void guiControl::radio_click_vel(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
-	{
-		fprintf(stderr, "joint: %d in VELOCITY mode!\n", *joint);
-		icntrl->setVelocityMode(*joint);
-	}
-	else
-	{
-	}
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in VELOCITY mode!\n", *joint);
+        icntrl->setVelocityMode(*joint);
+    }
+    else
+    {
+    }
 }
 static void guiControl::radio_click_trq(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
-	{
-		fprintf(stderr, "joint: %d in TORQUE mode!\n", *joint);
-		icntrl->setTorqueMode(*joint);
-	}
-	else
-	{
-	}
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in TORQUE mode!\n", *joint);
+        icntrl->setTorqueMode(*joint);
+    }
+    else
+    {
+    }
 }
 static void guiControl::radio_click_imp_pos(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
-	{
-		fprintf(stderr, "joint: %d in IMPEDANCE POSITION mode!\n", *joint);
-		icntrl->setImpedancePositionMode(*joint);
-	}
-	else
-	{
-	}
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in IMPEDANCE POSITION mode!\n", *joint);
+        icntrl->setImpedancePositionMode(*joint);
+    }
+    else
+    {
+    }
 }
 
 static void guiControl::radio_click_imp_vel(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
-	{
-		fprintf(stderr, "joint: %d in IMPEDANCE VELOCITY mode!\n", *joint);
-		icntrl->setImpedanceVelocityMode(*joint);
-	}
-	else
-	{
-	}
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in IMPEDANCE VELOCITY mode!\n", *joint);
+        icntrl->setImpedanceVelocityMode(*joint);
+    }
+    else
+    {
+    }
 }
 //*********************************************************************************
 void guiControl::update_menu(int control_mode)
 {
  switch (control_mode)
   {
-	  case MODE_IDLE:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
-	  break;
-	  case VOCAB_CM_POSITION:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_pos),true);
-	  break;
-  	  case VOCAB_CM_VELOCITY:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_vel),true);
-	  break;
-	  case VOCAB_CM_TORQUE:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_trq),true);
-	  break;
-	  case VOCAB_CM_IMPEDANCE_POS:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp_pos),true);
-	  break;
-	  case VOCAB_CM_IMPEDANCE_VEL:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp_vel),true);
-	  break;
+      case MODE_IDLE:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
+      break;
+      case VOCAB_CM_POSITION:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_pos),true);
+      break;
+     /* case VOCAB_CM_POSITION_DIRECT:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_pos_direct),true);
+      break;
+      case VOCAB_CM_MIXED:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_mixed),true);
+      break;*/
+        case VOCAB_CM_VELOCITY:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_vel),true);
+      break;
+      case VOCAB_CM_TORQUE:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_trq),true);
+      break;
+      case VOCAB_CM_IMPEDANCE_POS:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp_pos),true);
+      break;
+      case VOCAB_CM_IMPEDANCE_VEL:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp_vel),true);
+      break;
 
-	  default:
-	  case VOCAB_CM_UNKNOWN:
-	    //NOTE: Unknown!!!
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
-	  break;
+      default:
+      case VOCAB_CM_UNKNOWN:
+        //NOTE: Unknown!!!
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
+      break;
   }
 }
 
@@ -192,8 +223,8 @@ void guiControl::guiControl(void *button, void* data)
 {
   if (pos_winPid != NULL) 
   {
-	  gtk_window_set_keep_above    (GTK_WINDOW(pos_winPid),true);
-	  return;
+      gtk_window_set_keep_above    (GTK_WINDOW(pos_winPid),true);
+      return;
   }
 
   gtkClassData* currentClassData = (gtkClassData*) data;
@@ -219,21 +250,25 @@ void guiControl::guiControl(void *button, void* data)
   label_title = gtk_label_new (title);
 
   radiobutton_mode_idl  = gtk_radio_button_new_with_label  (NULL, "idle");
-  radiobutton_mode_pos  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "position");
-  radiobutton_mode_vel  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "velocity");
-  radiobutton_mode_trq  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "torque");
-  radiobutton_mode_imp_pos  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "impedance position");
-  radiobutton_mode_imp_vel  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "impedance velocity");
-  radiobutton_mode_open = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "openloop");
+  radiobutton_mode_pos  = gtk_radio_button_new_with_label_from_widget         (GTK_RADIO_BUTTON (radiobutton_mode_idl), "position");
+  radiobutton_mode_vel  = gtk_radio_button_new_with_label_from_widget         (GTK_RADIO_BUTTON (radiobutton_mode_idl), "velocity");
+  radiobutton_mode_trq  = gtk_radio_button_new_with_label_from_widget         (GTK_RADIO_BUTTON (radiobutton_mode_idl), "torque");
+  radiobutton_mode_imp_pos  = gtk_radio_button_new_with_label_from_widget     (GTK_RADIO_BUTTON (radiobutton_mode_idl), "impedance position");
+  radiobutton_mode_imp_vel  = gtk_radio_button_new_with_label_from_widget     (GTK_RADIO_BUTTON (radiobutton_mode_idl), "impedance velocity");
+  radiobutton_mode_open = gtk_radio_button_new_with_label_from_widget         (GTK_RADIO_BUTTON (radiobutton_mode_idl), "openloop");
+  radiobutton_mode_pos_direct  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "position direct");
+  radiobutton_mode_mixed  = gtk_radio_button_new_with_label_from_widget       (GTK_RADIO_BUTTON (radiobutton_mode_idl), "mixed");
 
-  gtk_fixed_put	(GTK_FIXED(inv), label_title,  10,  10    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_idl,  10, 30    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_pos,  10, 50    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_vel,  10, 70    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_trq,  10, 90    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_imp_pos,  10, 110    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_imp_vel,  10, 130    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_open,  10, 150    );
+  gtk_fixed_put    (GTK_FIXED(inv), label_title,                  10, 10    );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_idl,         10, 30    );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_pos,         10, 50    );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_pos_direct,  10, 70    );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_mixed,       10, 90    );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_vel,         10, 110   );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_trq,         10, 130   );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_imp_pos,     10, 150   );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_imp_vel,     10, 170   );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_open,        10, 190   );
 
   int control_mode=VOCAB_CM_UNKNOWN;
   bool ret = icntrl->getControlMode(*joint, &control_mode);
@@ -242,6 +277,8 @@ void guiControl::guiControl(void *button, void* data)
   //Rememeber: these signal_connect MUST be placed after the update_menu!
   g_signal_connect (radiobutton_mode_idl,  "clicked",G_CALLBACK (radio_click_idl), &radiobutton_mode_idl);
   g_signal_connect (radiobutton_mode_pos,  "clicked",G_CALLBACK (radio_click_pos), &radiobutton_mode_pos);
+  g_signal_connect (radiobutton_mode_pos_direct,  "clicked",G_CALLBACK (radio_click_pos_direct), &radiobutton_mode_pos_direct);
+  g_signal_connect (radiobutton_mode_mixed,  "clicked",G_CALLBACK (radio_click_mode_mixed), &radiobutton_mode_mixed);
   g_signal_connect (radiobutton_mode_vel,  "clicked",G_CALLBACK (radio_click_vel), &radiobutton_mode_vel);
   g_signal_connect (radiobutton_mode_trq,  "clicked",G_CALLBACK (radio_click_trq), &radiobutton_mode_trq);
   g_signal_connect (radiobutton_mode_imp_pos,  "clicked",G_CALLBACK (radio_click_imp_pos), &radiobutton_mode_imp_pos);
@@ -258,7 +295,7 @@ void guiControl::guiControl(void *button, void* data)
       gtk_widget_destroy (pos_winPid);
       pos_winPid = NULL;
     }
-	
+    
   gtk_window_set_keep_above    (GTK_WINDOW(pos_winPid),true);
   gtk_main ();
 
