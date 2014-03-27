@@ -51,7 +51,7 @@ double SystemClock::nowSystem() {
 #  else
     struct  timeval currentTime;
     gettimeofday(&currentTime, NULL);
-    return (double)(currentTime.tv_sec + currentTime.tv_usec/1000000);
+    return (double)(currentTime.tv_sec + currentTime.tv_usec * 1e-6);
 #  endif
 #endif
 }
