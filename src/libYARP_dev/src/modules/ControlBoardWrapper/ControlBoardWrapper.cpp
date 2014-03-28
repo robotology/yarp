@@ -971,7 +971,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
 
                 bool ok = vel2->velocityMove(n_joints, joint_list, cmdVector.data());
                 if (!ok)
-                {   fprintf(stderr, "Error while trying to command a streaming position direct message on joint group\n" ); }
+                {   fprintf(stderr, "Error while trying to command a velocity move on joint group\n" ); }
 
                 delete[] joint_list;
             }
