@@ -139,25 +139,19 @@ endif(CREATE_JAVA)
 
 if(CREATE_PYTHON)	 
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
-  set(CREATE_PYTHON_VERSION "" CACHE STRING "Control python version used, if you wish." )
-  find_package(PythonInterp ${CREATE_PYTHON_VERSION})
-  if(NOT CREATE_PYTHON_VERSION)
-    # try to detect the version of python found by PythonInterp, and
-    # pass that on to PythonLibs.  This may be unnecessary in
-    # later CMake versions: http://public.kitware.com/Bug/view.php?id=13794
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} 
-      -c "from distutils import sysconfig; print(sysconfig.get_python_lib());" 
-      OUTPUT_VARIABLE PYTHON_LIBDIR OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(REGEX MATCH "python([0-9][-_.0-9]+)" PYTHON_IGNORE "${PYTHON_LIBDIR}")    set(CREATE_PYTHON_VERSION ${CMAKE_MATCH_1})
-    if(CREATE_PYTHON_VERSION)
-      message(STATUS "Detected python version ${CREATE_PYTHON_VERSION} (override CREATE_PYTHON_VERSION to change)")
-    endif()
+  if(CREATE_PYTHON_VERSION) 
+    message(WARNING "CREATE_PYTHON_VERSION was renamed YARP_USE_PYTHON_VERSION")
+    set(YARP_USE_PYTHON_VERSION "${CREATE_PYTHON_VERSION}" CACHE STRING "Specify python version to use" )
+    unset(CREATE_PYTHON_VERSION CACHE)
+  else()
+    set(YARP_USE_PYTHON_VERSION "" CACHE STRING "Specify python version to use" )
   endif()
-  if(CREATE_PYTHON_VERSION)
-    set(PythonLibs_FIND_VERSION ${CREATE_PYTHON_VERSION})
-    set(PythonLibs_FIND_VERSION_EXACT ${CREATE_PYTHON_VERSION})
+  find_package(PythonInterp ${YARP_USE_PYTHON_VERSION} REQUIRED)
+  set(YARP_USE_PYTHON_VERSION_ARGS)
+  if(NOT YARP_USE_PYTHON_VERSION)
+    set (YARP_USE_PYTHON_VERSION ${PYTHON_VERSION_STRING})
   endif()
-  find_package(PythonLibs ${CREATE_PYTHON_VERSION})
+  find_package(PythonLibs ${YARP_USE_PYTHON_VERSION} EXACT)
   include_directories(${PYTHON_INCLUDE_PATH})
   link_libraries(${PYTHON_LIBRARY})
   
