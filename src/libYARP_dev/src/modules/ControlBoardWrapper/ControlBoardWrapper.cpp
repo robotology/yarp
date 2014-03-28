@@ -1201,7 +1201,6 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
     else
     {
         switch (cmd.get(1).asVocab())
-    {
         {
         case VOCAB_TORQUE:
             handleTorqueMsg(cmd, response, &rec, &ok);
