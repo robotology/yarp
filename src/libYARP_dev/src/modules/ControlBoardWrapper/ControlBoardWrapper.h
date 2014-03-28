@@ -90,6 +90,7 @@ protected:
     yarp::dev::IControlCalibration2     *ical2;
     yarp::dev::IOpenLoopControl         *iOpenLoop;
     yarp::dev::IImpedanceControl        *iImpedance;
+    yarp::dev::IInteractionMode         *iInteract;
     yarp::sig::Vector                   vect;
     yarp::os::Stamp                     lastRpcStamp;
     yarp::os::Semaphore                 mutex;
@@ -118,6 +119,9 @@ public:
         yarp::os::Bottle& response, bool *rec, bool *ok);
 
     void handleImpedanceMsg(const yarp::os::Bottle& cmd,
+        yarp::os::Bottle& response, bool *rec, bool *ok);
+
+    void handleInteractionModeMsg(const yarp::os::Bottle& cmd,
         yarp::os::Bottle& response, bool *rec, bool *ok);
 
     /**
@@ -191,6 +195,7 @@ public:
     yarp::dev::IControlMode          *iMode;
     yarp::dev::IAxisInfo             *info;
     yarp::dev::IPositionDirect       *posDir;
+    yarp::dev::IInteractionMode      *iInteract;
 
     yarp::sig::Vector subDev_encoders;
     yarp::sig::Vector encodersTimes;
@@ -272,7 +277,8 @@ class yarp::dev::ControlBoardWrapper:
                              public yarp::dev::IControlMode,
                              public yarp::dev::IMultipleWrapper,
                              public yarp::dev::IAxisInfo,
-                             public yarp::dev::IPreciselyTimed
+                             public yarp::dev::IPreciselyTimed,
+                             public yarp::dev::IInteractionMode
 {
 private:
     yarp::dev::impl::WrappedDevice device;
@@ -3712,6 +3718,172 @@ public:
         }
         return ret;
     }
+
+    virtual bool getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
+    {
+        int off=device.lut[j].offset;
+        int subIndex=device.lut[j].deviceEntry;
+
+        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
+        if (!s)
+            return false;
+
+        if (s->iInteract)
+        {
+            return s->iInteract->getInteractionMode(off+base, mode);
+        }
+        return false;
+    }
+
+    virtual bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+    {
+        int                              X_idx[MAX_DEVICES];
+        int                              XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+        yarp::dev::InteractionModeEnum   XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+        yarp::dev::impl::SubDevice       *ps[MAX_DEVICES];
+
+        int  nDev  = device.subdevices.size();
+        bool ret = true;
+
+        for(int i=0; i<nDev; i++)
+        {
+            X_idx[i]=0;
+            ps[i]=device.getSubdevice(i);
+        }
+
+        yarp::os::Vocab v;
+        // Create a map of joints for each subDevice
+        int subIndex = 0;
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
+            X_idx[subIndex]++;
+        }
+
+        for(subIndex=0; subIndex<nDev; subIndex++)
+        {
+            if (!ps[subIndex])
+                return false;
+
+            if(ps[subIndex]->iInteract)
+            {
+                ret= ret && ps[subIndex]->iInteract->getInteractionModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
+            }
+            else ret = false;
+        }
+
+        // fill the output vector
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            modes[j] = XModes[subIndex][j];
+        }
+        return ret;
+    }
+
+    virtual bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+    {
+        bool ret = true;
+
+        for(int j=0; j<controlledJoints; j++)
+        {
+            int off=device.lut[j].offset;
+            int subIndex=device.lut[j].deviceEntry;
+
+            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+            if (!p)
+                return false;
+
+            if (p->iInteract)
+            {
+                ret=ret && p->iInteract->getInteractionMode(off+base, &modes[j]);
+            }
+            else
+                ret=false;
+        }
+        return ret;
+    }
+
+    virtual bool setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
+    {
+        int off=device.lut[j].offset;
+        int subIndex=device.lut[j].deviceEntry;
+
+        yarp::dev::impl::SubDevice *s=device.getSubdevice(subIndex);
+        if (!s)
+            return false;
+
+        if (s->iInteract)
+        {
+            return s->iInteract->setInteractionMode(off+base, mode);
+        }
+        return false;
+    }
+
+    virtual bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+    {
+        int                              X_idx[MAX_DEVICES];
+        int                              XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+        yarp::dev::InteractionModeEnum   XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+        yarp::dev::impl::SubDevice       *ps[MAX_DEVICES];
+
+        int  nDev  = device.subdevices.size();
+        bool ret = true;
+
+        for(int i=0; i<nDev; i++)
+        {
+            X_idx[i]=0;
+            ps[i]=device.getSubdevice(i);
+        }
+
+        // Create a map of joints for each subDevice
+        int subIndex = 0;
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
+            XModes[subIndex][X_idx[subIndex]] = modes[j];
+            X_idx[subIndex]++;
+        }
+
+        for(subIndex=0; subIndex<nDev; subIndex++)
+        {
+            if (!ps[subIndex])
+                return false;
+
+            if(ps[subIndex]->iInteract)
+            {
+                ret= ret && ps[subIndex]->iInteract->setInteractionModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
+            }
+            else ret = false;
+        }
+        return ret;
+    }
+
+    virtual bool setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+    {
+        bool ret = true;
+
+        for(int j=0; j<controlledJoints; j++)
+        {
+            int off=device.lut[j].offset;
+            int subIndex=device.lut[j].deviceEntry;
+
+            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+            if (!p)
+                return false;
+
+            if (p->iInteract)
+            {
+                ret=ret && p->iInteract->setInteractionMode(off+base, modes[j]);
+            }
+            else
+                ret=false;
+        }
+        return ret;
+    }
+
 };
 
 #endif

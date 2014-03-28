@@ -51,6 +51,7 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
     return false;
 }
 
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 // encoders should arrive at least every 0.5s to be considered valide
@@ -247,7 +248,8 @@ class yarp::dev::RemoteControlBoard :
     public IControlMode,
     public IOpenLoopControl,
     public DeviceDriver,
-    public IPositionDirect
+    public IPositionDirect,
+    public IInteractionMode
 {
 protected:
     Port rpc_p;
@@ -2454,9 +2456,204 @@ public:
                 pids[i].stiction_down_val = m.get(8).asDouble();
                 pids[i].kff = m.get(9).asDouble();
             }
+            return true;
         }
-        return true;
+        return false;
     }
+
+    // Interaction Mode interface
+    bool getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
+    {
+        Bottle cmd, response;
+
+        if (!isLive()) return false;
+        std::cout << " sending GET VOCAB_INTERACTION_MODE" << std::endl;
+
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODE);
+        cmd.addInt(axis);
+
+        bool ok = rpc_p.write(cmd, response);
+//        std::cout << "cmd sent is" << std::endl;
+//        cmd.toString();
+//        std::cout << "\nresponse got is" << std::endl;
+//        response.toString();
+
+        if (CHECK_FAIL(ok, response))
+        {
+            YARP_ASSERT (response.size()>=1);
+            *mode = (InteractionModeEnum) response.get(0).asVocab();
+            return true;
+        }
+
+        std::cout << " Check failed ";
+        return false;
+    }
+
+    bool getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+    {
+        Bottle cmd, response;
+        if (!isLive()) return false;
+        std::cout << " sending GET VOCAB_INTERACTION_MODE_GROUP" << std::endl;
+
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
+
+        cmd.addInt(n_joints);
+
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < n_joints; i++)
+            l1.addInt(joints[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+
+//        std::cout << "cmd sent is" << std::endl;
+//        cmd.toString();
+//        std::cout << "\nresponse got is" << std::endl;
+//        response.toString();
+
+        if (CHECK_FAIL(ok, response))
+        {
+            int i;
+            Bottle& list = *(response.get(0).asList());
+            YARP_ASSERT(list.size() >= n_joints)
+
+            if (list.size() != n_joints)
+            {
+                std::cerr << " getInteractionModes, length of response does not match: expected " << n_joints << " received " << list.size();
+                return false;
+            }
+            else
+            {
+                for (i = 0; i < n_joints; i++)
+                {
+                    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+                    return true;
+                }
+            }
+        }
+
+
+        std::cout << " Check failed ";
+        return false;
+    }
+
+    bool getInteractionModes(yarp::dev::InteractionModeEnum* modes)
+    {
+        bool ret = false;
+        Bottle cmd, response;
+        if (!isLive()) return false;
+        std::cout << " sending GET VOCAB_INTERACTION_MODES" << std::endl;
+
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODES);
+
+        bool ok = rpc_p.write(cmd, response);
+
+//        std::cout << "cmd sent is" << std::endl;
+//        cmd.toString();
+//        std::cout << "\nresponse got is" << std::endl;
+//        response.toString();
+
+        if (CHECK_FAIL(ok, response))
+        {
+            int i;
+            Bottle& list = *(response.get(0).asList());
+            YARP_ASSERT(list.size() >= nj)
+
+            if (list.size() != nj)
+            {
+                std::cerr << " getInteractionModes, length of response does not match: expected " << nj << " received " << list.size();
+                return false;
+
+            }
+            else
+            {
+                for (i = 0; i < nj; i++)
+                {
+                    modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
+                }
+                ret = true;
+            }
+        }
+        else
+        {
+            std::cout << " Check failed ";
+            ret = false;
+        }
+        return ret;
+    }
+
+    bool setInteractionMode(int axis, yarp::dev::InteractionModeEnum mode)
+    {
+        Bottle cmd, response;
+        if (!isLive()) return false;
+        std::cout << " sending SET VOCAB_INTERACTION_MODE" << std::endl;
+
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODE);
+        cmd.addInt(axis);
+        cmd.addVocab(mode);
+
+        bool ok = rpc_p.write(cmd, response);
+//        std::cout << "cmd sent is" << std::endl;
+//        cmd.toString();
+//        std::cout << "\nresponse got is" << std::endl;
+//        response.toString();
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
+    {
+        Bottle cmd, response;
+        if (!isLive()) return false;
+
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
+        cmd.addInt(n_joints);
+
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < n_joints; i++)
+            l1.addInt(joints[i]);
+
+        Bottle& l2 = cmd.addList();
+        for (int i = 0; i < n_joints; i++)
+            l2.addVocab(modes[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+//        std::cout << "cmd sent is" << std::endl;
+//        cmd.toString();
+//        std::cout << "\nresponse got is" << std::endl;
+//        response.toString();
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool setInteractionModes(yarp::dev::InteractionModeEnum* modes)
+    {
+        Bottle cmd, response;
+        if (!isLive()) return false;
+
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
+        cmd.addVocab(VOCAB_INTERACTION_MODES);
+
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < nj; i++)
+            l1.addVocab(modes[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+//        std::cout << "cmd sent is" << std::endl;
+//        cmd.toString();
+//        std::cout << "\nresponse got is" << std::endl;
+//        response.toString();
+        return CHECK_FAIL(ok, response);
+    }
+
 };
 
 // implementation of CommandsHelper

@@ -26,6 +26,7 @@
 #include <yarp/dev/IPositionControl2.h>
 #include <yarp/dev/IOpenLoopControl.h>
 #include <yarp/dev/IPositionDirect.h>
+#include <yarp/dev/IInteractionMode.h>
 
 namespace yarp {
     namespace dev {

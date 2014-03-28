@@ -40,6 +40,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ImplementImpedanceControl.h
                   include/yarp/dev/ImplementOpenLoopControl.h
                   include/yarp/dev/ImplementTorqueControl.h
+                  include/yarp/dev/IInteractionMode.h
+                  include/yarp/dev/IInteractionModeImpl.h
                   include/yarp/dev/IOpenLoopControl.h
                   include/yarp/dev/IOpenNI2DeviceDriver.h
                   include/yarp/dev/IPositionControl2.h
@@ -82,6 +84,7 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/IControlLimit2sImpl.cpp
                   src/IEncodersTimedImpl.cpp
                   src/ImpedanceControlImpl.cpp
+                  src/IInteractionModeImpl.cpp
                   src/IPositionControl2Impl.cpp
                   src/IPositionDirectImpl.cpp
                   src/IVelocityControl2Impl.cpp

@@ -54,6 +54,7 @@ SubDevice::SubDevice()
     iTorque=0;
     iImpedance=0;
     iMode=0;
+    iInteract=0;
 
     base=-1;
     top=-1;
@@ -120,6 +121,7 @@ void SubDevice::detach()
     iMode=0;
     iTimed=0;
     iOpenLoop=0;
+    iInteract=0;
     configuredF=false;
     attachedF=false;
 }
@@ -166,6 +168,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iMode);
             subdevice->view(iOpenLoop);
             subdevice->view(enc);
+            subdevice->view(iInteract);
         }
     else
         {
@@ -184,6 +187,9 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
     if ((iOpenLoop==0) && (_subDevVerbose))
         std::cerr << "--> Warning iOpenLoop not valid interface\n";
+
+    if ((iInteract==0) && (_subDevVerbose))
+        std::cerr << "--> Warning iInteractionMode not valid interface\n";
 
     int deviceJoints=0;
 
@@ -833,6 +839,187 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
     }
 }
 
+void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
+    yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (caller->verbose())
+        fprintf(stderr, "\nHandling IInteractionMode message\n");
+    if (!iInteract)
+    {
+        fprintf(stderr, "Error I do not have a valid IInteractionMode interface\n");
+        *ok=false;
+        return;
+    }
+
+    if (caller->verbose())
+    {
+        fprintf(stdout, "received command:\n");
+        std::cout << cmd.toString() << std::endl;
+    }
+
+    int action = cmd.get(0).asVocab();
+
+    switch(action)
+    {
+    case VOCAB_SET:
+    {
+        switch (cmd.get(2).asVocab())
+        {
+            yarp::os::Bottle *jointList;
+            yarp::os::Bottle *modeList;
+            yarp::dev::InteractionModeEnum *modes;
+
+            case VOCAB_INTERACTION_MODE:
+            {
+                *ok = iInteract->setInteractionMode(cmd.get(3).asInt(), (yarp::dev::InteractionModeEnum) cmd.get(4).asVocab());
+            }
+            break;
+
+            case VOCAB_INTERACTION_MODE_GROUP:
+            {
+                int n_joints = cmd.get(3).asInt();
+                jointList = cmd.get(4).asList();
+                modeList  = cmd.get(5).asList();
+                if( (jointList->size() != n_joints) || (modeList->size() != n_joints) )
+                {
+                    if (caller->verbose())
+                        fprintf(stderr, "received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
+                    *ok = false;
+                    break;
+                }
+                int *joints = new int[n_joints];
+                modes = new yarp::dev::InteractionModeEnum [n_joints];
+                for( int i=0; i<n_joints; i++)
+                {
+                    joints[i] = jointList->get(i).asInt();
+                    modes[i]  = (yarp::dev::InteractionModeEnum) modeList->get(i).asVocab();
+                }
+                *ok = iInteract->setInteractionModes(n_joints, joints, modes);
+                delete [] joints;
+                delete [] modes;
+
+            }
+            break;
+
+            case VOCAB_INTERACTION_MODES:
+            {
+                modeList  = cmd.get(3).asList();
+                if(modeList->size() != controlledJoints)
+                {
+                    if (caller->verbose())
+                        fprintf(stderr, "received an invalid setInteractionMode message. Size of vector doesn´t match the number of controlled joints\n");
+                    *ok = false;
+                    break;
+                }
+                modes  = new yarp::dev::InteractionModeEnum [controlledJoints];
+                for( int i=0; i<controlledJoints; i++)
+                {
+                    modes[i]  = (yarp::dev::InteractionModeEnum) modeList->get(i).asVocab();
+                }
+                *ok = iInteract->setInteractionModes(modes);
+                delete [] modes;
+            }
+            break;
+
+            default:
+            {
+                if (caller->verbose())
+                    fprintf(stderr, "Error while Handling IInteractionMode message, SET command not understood %s\n", cmd.get(2).asString().c_str());
+                *ok = false;
+            }
+            break;
+        }
+        *rec=true; //or false
+    }
+    break;
+
+    case VOCAB_GET:
+    {
+        yarp::os::Bottle *jointList;
+        yarp::os::Bottle *modeList;
+
+        switch (cmd.get(2).asVocab())
+        {
+            case VOCAB_INTERACTION_MODE:
+            {
+                    yarp::dev::InteractionModeEnum mode;
+                    *ok = iInteract->getInteractionMode(cmd.get(3).asInt(), &mode);
+                    response.addVocab(mode);
+            }
+            break;
+
+            case VOCAB_INTERACTION_MODE_GROUP:
+            {
+                yarp::dev::InteractionModeEnum* modes;
+
+                int n_joints = cmd.get(3).asInt();
+                jointList = cmd.get(4).asList();
+                if(jointList->size() != n_joints )
+                {
+                    if (caller->verbose())
+                        fprintf(stderr, "received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
+                    *ok = false;
+                    break;
+                }
+                int *joints = new int[n_joints];
+                modes = new yarp::dev::InteractionModeEnum [n_joints];
+                for( int i=0; i<n_joints; i++)
+                {
+                    joints[i] = jointList->get(i).asInt();
+                }
+                *ok = iInteract->getInteractionModes(n_joints, joints, modes);
+
+                Bottle& c = response.addList();
+                for( int i=0; i<n_joints; i++)
+                {
+                    c.addVocab(modes[i]);
+                }
+
+                if (caller->verbose())
+                {
+                    fprintf(stdout, "\ngot response bottle\n");
+                    response.toString();
+                }
+                delete [] joints;
+                delete [] modes;
+            }
+            break;
+
+            case VOCAB_INTERACTION_MODES:
+            {
+                    yarp::dev::InteractionModeEnum* modes;
+                    modes  = new yarp::dev::InteractionModeEnum [controlledJoints];
+
+                    *ok = iInteract->getInteractionModes(modes);
+
+                    Bottle& b = response.addList();
+                    for( int i=0; i<controlledJoints; i++)
+                    {
+                        b.addVocab(modes[i]);
+                    }
+                    if (caller->verbose())
+                    {
+                        fprintf(stdout, "\ngot response bottle\n");
+                        response.toString();
+                    }
+                    delete [] modes;
+            }
+            break;
+
+        lastRpcStamp.update();
+        appendTimeStamp(response, lastRpcStamp);
+        }
+    }
+    break; // case VOCAB_GET
+
+    default:
+        fprintf(stderr, "Error while Handling IInteractionMode message, command was not SET nor GET\n");
+        *ok = false;
+    break;
+
+    }
+}
+
 bool ImplementCallbackHelper::initialize()
 {
     controlledAxes=0;
@@ -1009,20 +1196,31 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
         printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
 
-    if ((cmd.size()>1) && (cmd.get(1).asVocab()==VOCAB_TORQUE))
-    {
-        handleTorqueMsg(cmd, response, &rec, &ok);
-    }
-    else if ((cmd.size()>1) && (cmd.get(1).asVocab()==VOCAB_ICONTROLMODE))
-    {
-        handleControlModeMsg(cmd, response, &rec, &ok);
-    }
-    else if ((cmd.size()>1) && (cmd.get(1).asVocab()==VOCAB_IMPEDANCE))
-    {
-        handleImpedanceMsg(cmd, response, &rec, &ok);
-    }
+    if(cmd.size() < 2)
+        ok = false;
     else
     {
+        switch (cmd.get(1).asVocab())
+    {
+        {
+        case VOCAB_TORQUE:
+            handleTorqueMsg(cmd, response, &rec, &ok);
+            break;
+
+        case VOCAB_ICONTROLMODE:
+        handleControlModeMsg(cmd, response, &rec, &ok);
+            break;
+
+        case VOCAB_IMPEDANCE:
+        handleImpedanceMsg(cmd, response, &rec, &ok);
+            break;
+
+        case VOCAB_INTERFACE_INTERACTION_MODE:
+            handleInteractionModeMsg(cmd, response, &rec, &ok);
+            break;
+
+        default:
+            // fallback for old interfaces with no specific name
         switch (code)
         {
             case VOCAB_CALIBRATE_JOINT:
@@ -2138,8 +2336,8 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
     // fprintf(stderr, "--> [%X] done ret %d\n",self, ok);
     return ok;
+  }
 }
-
 
 bool CommandsHelper::initialize()
 {
@@ -2183,6 +2381,7 @@ bool CommandsHelper::initialize()
 CommandsHelper::CommandsHelper() {}
 
 void CommandsHelper::init(ControlBoardWrapper *x)
+															iMode(0), iInteract(0), controlledJoints(0)
 {
     caller = x;
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
@@ -2199,6 +2398,7 @@ void CommandsHelper::init(ControlBoardWrapper *x)
     iImpedance=dynamic_cast<yarp::dev::IImpedanceControl *> (caller);
     torque=dynamic_cast<yarp::dev::ITorqueControl *> (caller);
     iMode=dynamic_cast<yarp::dev::IControlMode *> (caller);
+    iInteract=dynamic_cast<yarp::dev::IInteractionMode *> (caller);
     controlledJoints = 0;
 }
 
