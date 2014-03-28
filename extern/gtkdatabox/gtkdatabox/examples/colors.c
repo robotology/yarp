@@ -194,7 +194,7 @@ create_colors (void)
    g_signal_connect (G_OBJECT (close_button), "clicked",
 		     G_CALLBACK (gtk_main_quit), (gpointer) NULL);
    gtk_box_pack_start (GTK_BOX (box2), close_button, TRUE, TRUE, 0);
-   GTK_WIDGET_SET_FLAGS (close_button, GTK_CAN_DEFAULT);
+   gtk_widget_set_can_default(close_button, GTK_CAN_DEFAULT);
    gtk_widget_grab_default (close_button);
 
 

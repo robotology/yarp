@@ -1,0 +1,25 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$gtkdatabox_8h.html" title="gtk/gtkdatabox.h" alt="" coords="47,83,164,112"/>
+<area shape="rect" id="node8" href="$gtkdatabox__graph_8c.html" title="gtk/gtkdatabox_graph.c" alt="" coords="188,83,345,112"/>
+<area shape="rect" id="node10" href="$gtkdatabox__grid_8h.html" title="gtk/gtkdatabox_grid.h" alt="" coords="369,83,516,112"/>
+<area shape="rect" id="node14" href="$gtkdatabox__xyc__graph_8h.html" title="gtk/gtkdatabox_xyc_graph.h" alt="" coords="580,83,767,112"/>
+<area shape="rect" id="node38" href="$gtkdatabox__xyyc__graph_8h.html" title="gtk/gtkdatabox_xyyc_graph.h" alt="" coords="1359,83,1551,112"/>
+<area shape="rect" id="node5" href="$gtkdatabox_8c.html" title="gtk/gtkdatabox.c" alt="" coords="5,160,123,189"/>
+<area shape="rect" id="node12" href="$gtkdatabox__grid_8c.html" title="gtk/gtkdatabox_grid.c" alt="" coords="147,160,293,189"/>
+<area shape="rect" id="node16" href="$gtkdatabox__bars_8h.html" title="gtk/gtkdatabox_bars.h" alt="" coords="317,160,467,189"/>
+<area shape="rect" id="node20" href="$gtkdatabox__lines_8h.html" title="gtk/gtkdatabox_lines.h" alt="" coords="491,160,643,189"/>
+<area shape="rect" id="node24" href="$gtkdatabox__markers_8h.html" title="gtk/gtkdatabox_markers.h" alt="" coords="667,160,840,189"/>
+<area shape="rect" id="node32" href="$gtkdatabox__points_8h.html" title="gtk/gtkdatabox_points.h" alt="" coords="864,160,1024,189"/>
+<area shape="rect" id="node36" href="$gtkdatabox__xyc__graph_8c.html" title="gtk/gtkdatabox_xyc_graph.c" alt="" coords="1048,160,1235,189"/>
+<area shape="rect" id="node18" href="$gtkdatabox__bars_8c.html" title="gtk/gtkdatabox_bars.c" alt="" coords="301,237,451,267"/>
+<area shape="rect" id="node22" href="$gtkdatabox__lines_8c.html" title="gtk/gtkdatabox_lines.c" alt="" coords="475,237,627,267"/>
+<area shape="rect" id="node26" href="$gtkdatabox__cross__simple_8h.html" title="gtk/gtkdatabox_cross_simple.h" alt="" coords="651,237,853,267"/>
+<area shape="rect" id="node30" href="$gtkdatabox__markers_8c.html" title="gtk/gtkdatabox_markers.c" alt="" coords="877,237,1051,267"/>
+<area shape="rect" id="node28" href="$gtkdatabox__cross__simple_8c.html" title="gtk/gtkdatabox_cross_simple.c" alt="" coords="651,315,853,344"/>
+<area shape="rect" id="node34" href="$gtkdatabox__points_8c.html" title="gtk/gtkdatabox_points.c" alt="" coords="1075,237,1235,267"/>
+<area shape="rect" id="node40" href="$gtkdatabox__offset__bars_8h.html" title="gtk/gtkdatabox_offset_bars.h" alt="" coords="1259,160,1448,189"/>
+<area shape="rect" id="node44" href="$gtkdatabox__regions_8h.html" title="gtk/gtkdatabox_regions.h" alt="" coords="1472,160,1640,189"/>
+<area shape="rect" id="node48" href="$gtkdatabox__xyyc__graph_8c.html" title="gtk/gtkdatabox_xyyc_graph.c" alt="" coords="1664,160,1856,189"/>
+<area shape="rect" id="node42" href="$gtkdatabox__offset__bars_8c.html" title="gtk/gtkdatabox_offset_bars.c" alt="" coords="1259,237,1448,267"/>
+<area shape="rect" id="node46" href="$gtkdatabox__regions_8c.html" title="gtk/gtkdatabox_regions.c" alt="" coords="1472,237,1640,267"/>
+</map>

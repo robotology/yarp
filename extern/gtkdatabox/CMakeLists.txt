@@ -39,10 +39,13 @@ set(gtkdatabox_SRCS
     gtkdatabox/gtk/gtkdatabox_lines.c
     gtkdatabox/gtk/gtkdatabox_markers.c
     gtkdatabox/gtk/gtkdatabox_marshal.c
+    gtkdatabox/gtk/gtkdatabox_offset_bars.c
     gtkdatabox/gtk/gtkdatabox_points.c
+    gtkdatabox/gtk/gtkdatabox_regions.c
     gtkdatabox/gtk/gtkdatabox_ruler.c
     gtkdatabox/gtk/gtkdatabox_scale.c
     gtkdatabox/gtk/gtkdatabox_xyc_graph.c
+    gtkdatabox/gtk/gtkdatabox_xyyc_graph.c
 )
 
 set(gtkdatabox_HDRS
@@ -54,11 +57,14 @@ set(gtkdatabox_HDRS
     gtkdatabox/gtk/gtkdatabox_lines.h
     gtkdatabox/gtk/gtkdatabox_markers.h
     gtkdatabox/gtk/gtkdatabox_marshal.h
+    gtkdatabox/gtk/gtkdatabox_offset_bars.h
     gtkdatabox/gtk/gtkdatabox_points.h
+    gtkdatabox/gtk/gtkdatabox_regions.h
     gtkdatabox/gtk/gtkdatabox_ruler.h
     gtkdatabox/gtk/gtkdatabox_scale.h
     gtkdatabox/gtk/gtkdatabox_typedefs.h
     gtkdatabox/gtk/gtkdatabox_xyc_graph.h
+    gtkdatabox/gtk/gtkdatabox_xyyc_graph.h
 )
 
 add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})
@@ -72,19 +78,19 @@ endif(MSVC)
 if(UNIX)
     set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC")
 
-    include(CheckCCompilerFlag)
-    check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
-    if(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
-        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
-                                    gtkdatabox/gtk/gtkdatabox_lines.c
-                                    gtkdatabox/gtk/gtkdatabox_ruler.c
-                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-but-set-variable")
-    else(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
-        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
-                                    gtkdatabox/gtk/gtkdatabox_lines.c
-                                    gtkdatabox/gtk/gtkdatabox_ruler.c
-                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
-    endif(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+#    include(CheckCCompilerFlag)
+#    check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+#    if(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+#        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
+#                                    gtkdatabox/gtk/gtkdatabox_lines.c
+#                                    gtkdatabox/gtk/gtkdatabox_ruler.c
+#                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-but-set-variable")
+#    else(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+#        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
+#                                    gtkdatabox/gtk/gtkdatabox_lines.c
+#                                    gtkdatabox/gtk/gtkdatabox_ruler.c
+#                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
+#    endif(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
 endif(UNIX)
 
 set(GtkDatabox_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk

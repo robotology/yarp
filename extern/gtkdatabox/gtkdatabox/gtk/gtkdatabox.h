@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -32,21 +32,21 @@
  * @include: gtkdatabox.h
  * @see_also: #GtkDataboxGraph, #GtkDataboxPoints, #GtkDataboxLines, #GtkDataboxMarkers, #GtkDataboxGrid
  *
- * #GtkDatabox is a widget for the GTK+ library designed to display 
- * large amounts of numerical data quickly and easily. It allows 
- * for one or more data sets of thousands of data points (X and Y coordinates) 
- * to be displayed and updated in split seconds. 
- * 
- * It offers the ability to zoom into and out of the data, and to navigate 
- * through your data by scrolling. 
+ * #GtkDatabox is a widget for the GTK+ library designed to display
+ * large amounts of numerical data quickly and easily. It allows
+ * for one or more data sets of thousands of data points (X and Y coordinates)
+ * to be displayed and updated in split seconds.
  *
- * In addition to rulers and a simple 
- * coordinate cross, it allows you to add one (or even more) configurable grids 
- * like on an oscilloscope. 
- * 
- * Data may be presented as dots, lines connecting the data, 
- * or vertical bars. The widget allows you to easily transform pixel 
- * coordinates into data coordinates, thus allowing you to easily create 
+ * It offers the ability to zoom into and out of the data, and to navigate
+ * through your data by scrolling.
+ *
+ * In addition to rulers and a simple
+ * coordinate cross, it allows you to add one (or even more) configurable grids
+ * like on an oscilloscope.
+ *
+ * Data may be presented as dots, lines connecting the data,
+ * or vertical bars. The widget allows you to easily transform pixel
+ * coordinates into data coordinates, thus allowing you to easily create
  * powerful applications for data analysis.
  *
  **/
@@ -68,130 +68,144 @@ G_BEGIN_DECLS
                                            GtkDataboxClass))
 
 
-   typedef struct _GtkDataboxClass GtkDataboxClass;
+typedef struct _GtkDataboxClass GtkDataboxClass;
 
-   /**
-    * GtkDataboxPrivate
-    *
-    * A private data structure used by the #GtkDatabox. It shields all internal things
-    * from developers who are just using the widget. 
-    *
-    **/
-   typedef struct _GtkDataboxPrivate GtkDataboxPrivate;
+/**
+ * GtkDataboxPrivate
+ *
+ * A private data structure used by the #GtkDatabox. It shields all internal things
+ * from developers who are just using the widget.
+ *
+ **/
+typedef struct _GtkDataboxPrivate GtkDataboxPrivate;
 
-   typedef struct
-   {
-      gfloat x1;
-      gfloat x2;
-      gfloat y1;
-      gfloat y2;
-   } GtkDataboxValueRectangle;
+typedef struct
+{
+    gfloat x1;
+    gfloat x2;
+    gfloat y1;
+    gfloat y2;
+} GtkDataboxValueRectangle;
 
-   /**
-    * _GtkDatabox
-    * @box: The parent object 
-    * @priv: A private structure containing internal data.
-    *
-    * Implementation of #GtkDatabox.
-    *
-    **/
-   struct _GtkDatabox
-   {
-      /*< private >*/
-      GtkWidget box;
+/**
+ * _GtkDatabox
+ * @box: The parent object
+ * @priv: A private structure containing internal data.
+ *
+ * Implementation of #GtkDatabox.
+ *
+ **/
+struct _GtkDatabox
+{
+    /*< private >*/
+    GtkWidget box;
 
-      GtkDataboxPrivate *priv;
-   };
+    GtkDataboxPrivate *priv;
+};
 
-   struct _GtkDataboxClass
-   {
-      GtkWidgetClass parent_class;
+struct _GtkDataboxClass
+{
+    GtkWidgetClass parent_class;
 
-      void (*zoomed) (GtkDatabox * box);
-      void (*selection_started) (GtkDatabox * box,
-				 GtkDataboxValueRectangle * selectionValues);
-      void (*selection_changed) (GtkDatabox * box,
-				 GtkDataboxValueRectangle * selectionValues);
-      void (*selection_finalized) (GtkDatabox * box,
-				   GtkDataboxValueRectangle *
-				   selectionValues);
-      void (*selection_canceled) (GtkDatabox * box);
-   };
+    void (*zoomed) (GtkDatabox * box);
+    void (*selection_started) (GtkDatabox * box,
+                               GtkDataboxValueRectangle * selectionValues);
+    void (*selection_changed) (GtkDatabox * box,
+                               GtkDataboxValueRectangle * selectionValues);
+    void (*selection_finalized) (GtkDatabox * box,
+                                 GtkDataboxValueRectangle *
+                                 selectionValues);
+    void (*selection_canceled) (GtkDatabox * box);
+};
 
-   GType gtk_databox_get_type (void);
+GType gtk_databox_get_type (void);
 
-   GtkWidget *gtk_databox_new (void);
+GtkWidget *gtk_databox_new (void);
 
-   gint gtk_databox_graph_add (GtkDatabox * box, GtkDataboxGraph * graph);
-   gint gtk_databox_graph_remove (GtkDatabox * box, GtkDataboxGraph * graph);
-   gint gtk_databox_graph_remove_all (GtkDatabox * box);
+gint gtk_databox_graph_add (GtkDatabox * box, GtkDataboxGraph * graph);
+gint gtk_databox_graph_add_front (GtkDatabox * box, GtkDataboxGraph * graph);
 
-   gint gtk_databox_auto_rescale (GtkDatabox * box, gfloat border);
-   gint gtk_databox_calculate_extrema (GtkDatabox * box,
-				       gfloat * min_x, gfloat * max_x,
-				       gfloat * min_y, gfloat * max_y);
+gint gtk_databox_graph_remove (GtkDatabox * box, GtkDataboxGraph * graph);
+gint gtk_databox_graph_remove_all (GtkDatabox * box);
 
-   void gtk_databox_set_total_limits (GtkDatabox * box,
-				      gfloat left, gfloat right,
-				      gfloat top, gfloat bottom);
-   void gtk_databox_set_visible_limits (GtkDatabox * box,
-					gfloat left, gfloat right,
-					gfloat top, gfloat bottom);
-   void gtk_databox_get_total_limits (GtkDatabox * box,
-				      gfloat * left, gfloat * right,
-				      gfloat * top, gfloat * bottom);
-   void gtk_databox_get_visible_limits (GtkDatabox * box,
-					gfloat * left, gfloat * right,
-					gfloat * top, gfloat * bottom);
+gint gtk_databox_auto_rescale (GtkDatabox * box, gfloat border);
+gint gtk_databox_calculate_extrema (GtkDatabox * box,
+                                    gfloat * min_x, gfloat * max_x,
+                                    gfloat * min_y, gfloat * max_y);
 
-   void gtk_databox_set_adjustment_x (GtkDatabox * box, GtkAdjustment * adj);
-   void gtk_databox_set_adjustment_y (GtkDatabox * box, GtkAdjustment * adj);
-   GtkAdjustment *gtk_databox_get_adjustment_x (GtkDatabox * box);
-   GtkAdjustment *gtk_databox_get_adjustment_y (GtkDatabox * box);
+void gtk_databox_set_total_limits (GtkDatabox * box,
+                                   gfloat left, gfloat right,
+                                   gfloat top, gfloat bottom);
+void gtk_databox_set_visible_limits (GtkDatabox * box,
+                                     gfloat left, gfloat right,
+                                     gfloat top, gfloat bottom);
+void gtk_databox_get_total_limits (GtkDatabox * box,
+                                   gfloat * left, gfloat * right,
+                                   gfloat * top, gfloat * bottom);
+void gtk_databox_get_visible_limits (GtkDatabox * box,
+                                     gfloat * left, gfloat * right,
+                                     gfloat * top, gfloat * bottom);
 
-   void gtk_databox_set_ruler_x (GtkDatabox * box, GtkDataboxRuler * ruler);
-   void gtk_databox_set_ruler_y (GtkDatabox * box, GtkDataboxRuler * ruler);
-   GtkDataboxRuler *gtk_databox_get_ruler_x (GtkDatabox * box);
-   GtkDataboxRuler *gtk_databox_get_ruler_y (GtkDatabox * box);
+void gtk_databox_set_adjustment_x (GtkDatabox * box, GtkAdjustment * adj);
+void gtk_databox_set_adjustment_y (GtkDatabox * box, GtkAdjustment * adj);
+GtkAdjustment *gtk_databox_get_adjustment_x (GtkDatabox * box);
+GtkAdjustment *gtk_databox_get_adjustment_y (GtkDatabox * box);
 
-   void gtk_databox_set_scale_type_x (GtkDatabox * box,
-				      GtkDataboxScaleType scale_type);
-   void gtk_databox_set_scale_type_y (GtkDatabox * box,
-				      GtkDataboxScaleType scale_type);
-   GtkDataboxScaleType gtk_databox_get_scale_type_x (GtkDatabox * box);
-   GtkDataboxScaleType gtk_databox_get_scale_type_y (GtkDatabox * box);
+void gtk_databox_set_ruler_x (GtkDatabox * box, GtkDataboxRuler * ruler);
+void gtk_databox_set_ruler_y (GtkDatabox * box, GtkDataboxRuler * ruler);
+GtkDataboxRuler *gtk_databox_get_ruler_x (GtkDatabox * box);
+GtkDataboxRuler *gtk_databox_get_ruler_y (GtkDatabox * box);
 
-   void gtk_databox_set_enable_selection (GtkDatabox * box, gboolean enable);
-   void gtk_databox_set_enable_zoom (GtkDatabox * box, gboolean enable);
+void gtk_databox_set_scale_type_x (GtkDatabox * box,
+                                   GtkDataboxScaleType scale_type);
+void gtk_databox_set_scale_type_y (GtkDatabox * box,
+                                   GtkDataboxScaleType scale_type);
+GtkDataboxScaleType gtk_databox_get_scale_type_x (GtkDatabox * box);
+GtkDataboxScaleType gtk_databox_get_scale_type_y (GtkDatabox * box);
 
-   gboolean gtk_databox_get_enable_selection (GtkDatabox * box);
-   gboolean gtk_databox_get_enable_zoom (GtkDatabox * box);
+void gtk_databox_set_enable_selection (GtkDatabox * box, gboolean enable);
+void gtk_databox_set_enable_zoom (GtkDatabox * box, gboolean enable);
+void gtk_databox_set_box_shadow(GtkDatabox * box, GtkShadowType which_shadow);
 
-   void gtk_databox_zoom_to_selection (GtkDatabox * box);
-   void gtk_databox_zoom_out (GtkDatabox * box);
-   void gtk_databox_zoom_home (GtkDatabox * box);
+gboolean gtk_databox_get_enable_selection (GtkDatabox * box);
+gboolean gtk_databox_get_enable_zoom (GtkDatabox * box);
+GtkShadowType gtk_databox__get_box_shadow(GtkDatabox * box);
 
-   gint16 gtk_databox_value_to_pixel_x (GtkDatabox * box, gfloat value);
-   gint16 gtk_databox_value_to_pixel_y (GtkDatabox * box, gfloat value);
-   gfloat gtk_databox_pixel_to_value_x (GtkDatabox * box, gint16 pixel);
-   gfloat gtk_databox_pixel_to_value_y (GtkDatabox * box, gint16 pixel);
-   void gtk_databox_values_to_pixels (GtkDatabox * box,
-				      guint len,
-				      const gfloat * values_x,
-				      const gfloat * values_y,
-				      GdkPoint * pixels);
+void gtk_databox_zoom_to_selection (GtkDatabox * box);
+void gtk_databox_zoom_out (GtkDatabox * box);
+void gtk_databox_zoom_home (GtkDatabox * box);
 
-   void gtk_databox_create_box_with_scrollbars_and_rulers (GtkWidget **
-							   p_box,
-							   GtkWidget **
-							   p_table,
-							   gboolean scrollbar_x,
-							   gboolean scrollbar_y,
-							   gboolean ruler_x,
-							   gboolean ruler_y);
-   
-   /* Used by graph objects */
-   GdkPixmap* gtk_databox_get_backing_pixmap(GtkDatabox * box);
+gint16 gtk_databox_value_to_pixel_x (GtkDatabox * box, gfloat value);
+gint16 gtk_databox_value_to_pixel_y (GtkDatabox * box, gfloat value);
+gfloat gtk_databox_pixel_to_value_x (GtkDatabox * box, gint16 pixel);
+gfloat gtk_databox_pixel_to_value_y (GtkDatabox * box, gint16 pixel);
+void gtk_databox_values_to_pixels (GtkDatabox * box,
+                                   guint len,
+                                   const gfloat * values_x,
+                                   const gfloat * values_y,
+                                   GdkPoint * pixels);
+
+void gtk_databox_create_box_with_scrollbars_and_rulers (GtkWidget **
+        p_box,
+        GtkWidget **
+        p_table,
+        gboolean scrollbar_x,
+        gboolean scrollbar_y,
+        gboolean ruler_x,
+        gboolean ruler_y);
+
+void
+gtk_databox_create_box_with_scrollbars_and_rulers_positioned (GtkWidget ** p_box,
+        GtkWidget ** p_table,
+        gboolean scrollbar_x,
+        gboolean scrollbar_y,
+        gboolean ruler_x,
+        gboolean ruler_y,
+        gboolean ruler_x_top,
+        gboolean ruler_y_left);
+
+/* Used by graph objects */
+GdkPixmap* gtk_databox_get_backing_pixmap(GtkDatabox * box);
 
 G_END_DECLS
 #endif				/* __GTK_DATABOX_H__ */

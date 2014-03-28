@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -73,12 +73,12 @@ create_basics (void)
 
    label =
       gtk_label_new
-      ("\nThe code for this example demonstrates\n the simplest way to use a GtkDatabox widget.\n\nUsage:\nDraw a selection with the left button pressed,\nThan click into the selection.\nUse the right mouse button to zoom out.\nShift+ right mouse button zooms to default.");
+      ("\nThe code for this example demonstrates\n the simplet way to use a GtkDatabox widget.\n\nUsage:\nDraw a selection with the left button pressed,\nThan click into the selection.\nUse the right mouse button to zoom out.\nShift+ right mouse button zooms to default.\n\nMouse scroll-wheel: \n*Holding Ctrl+ scrollwheel zooms in/out. \nScroll-wheel moves up/down. \n*Holding Alt+ scroll-wheel moves left/right in the plot.");
    gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
    separator = gtk_hseparator_new ();
    gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, FALSE, 0);
 
-   /* ----------------------------------------------------------------- 
+   /* -----------------------------------------------------------------
     * This is all you need:
     * -----------------------------------------------------------------
     */
@@ -101,7 +101,7 @@ create_basics (void)
    gtk_databox_set_total_limits (GTK_DATABOX (box), -1000., 5000., -10000., 23000.);
    gtk_databox_auto_rescale (GTK_DATABOX (box), 0.05);
 
-   /* ----------------------------------------------------------------- 
+   /* -----------------------------------------------------------------
     * Done :-)
     * -----------------------------------------------------------------
     */
@@ -113,7 +113,7 @@ create_basics (void)
    g_signal_connect_swapped (GTK_OBJECT (close_button), "clicked",
 			     G_CALLBACK (gtk_main_quit), GTK_OBJECT (box));
    gtk_box_pack_start (GTK_BOX (vbox), close_button, FALSE, FALSE, 0);
-   GTK_WIDGET_SET_FLAGS (close_button, GTK_CAN_DEFAULT);
+   gtk_widget_set_can_default(close_button, GTK_CAN_DEFAULT);
    gtk_widget_grab_default (close_button);
    gtk_widget_grab_focus (close_button);
 

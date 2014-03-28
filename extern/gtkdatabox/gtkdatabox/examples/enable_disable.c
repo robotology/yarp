@@ -145,7 +145,7 @@ create_show_hide (void)
    g_signal_connect_swapped (GTK_OBJECT (close_button), "clicked",
 			     G_CALLBACK (gtk_main_quit), GTK_OBJECT (box));
    gtk_box_pack_start (GTK_BOX (box2), close_button, TRUE, TRUE, 0);
-   GTK_WIDGET_SET_FLAGS (close_button, GTK_CAN_DEFAULT);
+   gtk_widget_set_can_default(close_button, GTK_CAN_DEFAULT);
    for (i = 0; i < noEnableSets; ++i)
    {
       GtkWidget *vbox = gtk_vbox_new (FALSE, 10);

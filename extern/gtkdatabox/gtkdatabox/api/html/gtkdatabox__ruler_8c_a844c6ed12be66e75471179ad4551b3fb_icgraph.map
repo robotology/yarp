@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$gtkdatabox_8h.html#a0a2c0e082b92a006d6ce5ac1002a401e" title="gtk_databox_set_ruler_x" alt="" coords="295,5,457,35"/>
+<area shape="rect" id="node5" href="$gtkdatabox_8h.html#afa49483edcb8f3558b811d362b2f136c" title="gtk_databox_create_box_with_scrollbars_and_rulers_positioned" alt="" coords="527,57,916,87"/>
+<area shape="rect" id="node9" href="$gtkdatabox_8h.html#a5a578dfa16f7f9c4007854d2956527a7" title="gtk_databox_set_ruler_y" alt="" coords="295,109,457,139"/>
+<area shape="rect" id="node12" href="$gtkdatabox_8h.html#ab2e4f0151ac4b34972875f8f0630250e" title="gtk_databox_set_scale_type_x" alt="" coords="275,163,477,192"/>
+<area shape="rect" id="node14" href="$gtkdatabox_8h.html#a192ae1623b31058c43d9bc5ffb37ee4f" title="gtk_databox_set_scale_type_y" alt="" coords="275,216,477,245"/>
+<area shape="rect" id="node7" href="$gtkdatabox_8h.html#a4ec019fb9c9522331a249b7a5cd7a2c9" title="gtk_databox_create_box_with_scrollbars_and_rulers" alt="" coords="965,57,1291,87"/>
+</map>

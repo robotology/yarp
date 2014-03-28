@@ -133,7 +133,8 @@ create_basics (void)
    gtk_databox_create_box_with_scrollbars_and_rulers (&box, &table,
 						      TRUE, TRUE, TRUE, TRUE);
    gtk_widget_add_events (box, GDK_KEY_PRESS_MASK);
-   GTK_WIDGET_SET_FLAGS (box, GTK_CAN_FOCUS | GTK_CAN_DEFAULT);
+   gtk_widget_set_can_focus(box, GTK_CAN_FOCUS);
+   gtk_widget_set_can_default(box, GTK_CAN_DEFAULT);
 
    gtk_box_pack_start (GTK_BOX (box1), table, TRUE, TRUE, 0);
 

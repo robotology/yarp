@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -23,6 +23,8 @@
 #include <gtkdatabox_points.h>
 #include <gtkdatabox_lines.h>
 #include <gtkdatabox_bars.h>
+#include <gtkdatabox_offset_bars.h>
+#include <gtkdatabox_regions.h>
 #include <gtkdatabox_cross_simple.h>
 #include <gtkdatabox_ruler.h>
 #include <math.h>
@@ -30,6 +32,8 @@
 #define POINTS 2000
 #define STEPS 50
 #define BARS 25
+#define OFFSET_BARS 25
+#define REGIONS 25
 #define MARKER 10
 
 /*----------------------------------------------------------------
@@ -53,6 +57,8 @@ create_basics (void)
    gfloat min_y, max_y;
    gfloat *X;
    gfloat *Y;
+   gfloat *Y1; /*  for the offset bars and regions*/
+   gfloat *Y2; /* for the offset bars and regions */
    gfloat buffer;
    GdkColor color;
    gint i;
@@ -77,10 +83,10 @@ create_basics (void)
    gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, FALSE, 0);
 
 
-   /* Instead of the following stuff, you could also call 
+   /* Instead of the following stuff, you could also call
     * gtk_databox_create_box_with_scrollbars_and_rulers
     * as it is done in the other examples.
-    * Of course, you are more flexible in using scrollbars and rulers 
+    * Of course, you are more flexible in using scrollbars and rulers
     * by doing it yourself. */
    table = gtk_table_new (3, 3, FALSE);
    box = gtk_databox_new ();
@@ -88,7 +94,7 @@ create_basics (void)
 		     GTK_FILL | GTK_EXPAND | GTK_SHRINK,
 		     GTK_FILL | GTK_EXPAND | GTK_SHRINK, 0, 0);
 
-   /* You can associate a scrollbar with a GtkDatabox widget either 
+   /* You can associate a scrollbar with a GtkDatabox widget either
     * this way ...*/
    scrollbar = gtk_hscrollbar_new (NULL);
    gtk_databox_set_adjustment_x (GTK_DATABOX (box),
@@ -168,6 +174,7 @@ create_basics (void)
       X[i] = i * POINTS / BARS;
       Y[i] = 80. * sin (i * 2 * G_PI / BARS);
    }
+
    color.red = 0;
    color.green = 65535;
    color.blue = 65535;
@@ -182,10 +189,44 @@ create_basics (void)
    graph = gtk_databox_cross_simple_new (&color, 0);
    gtk_databox_graph_add (GTK_DATABOX (box), graph);
 
-   /* Instead of doing stuff what you see below, you could call 
+   X = g_new0 (gfloat, OFFSET_BARS);
+   Y1 = g_new0 (gfloat, OFFSET_BARS);
+   Y2 = g_new0 (gfloat, OFFSET_BARS);
+
+   for (i = 0; i < OFFSET_BARS; i++)
+   {
+      X[i] = (i+0.5) * POINTS / OFFSET_BARS;
+      Y1[i] = 80. * sin ((i+0.5) * 2 * G_PI / OFFSET_BARS);
+      Y2[i] = -0.5*(80. * sin ((i+0.5) * 2 * G_PI / OFFSET_BARS));
+   }
+   color.red = 65535;
+   color.green = 0;
+   color.blue = 65535;
+
+   graph = gtk_databox_offset_bars_new (BARS, X, Y1, Y2, &color, 1);
+   gtk_databox_graph_add (GTK_DATABOX (box), graph);
+
+   X = g_new0 (gfloat, REGIONS);
+   Y1 = g_new0 (gfloat, REGIONS);
+   Y2 = g_new0 (gfloat, REGIONS);
+
+   for (i = 0; i < REGIONS; i++)
+   {
+      X[i] = (i+0.5) * POINTS / REGIONS;
+      Y1[i] = .5*80. * sin ((i+0.5) * 2 * G_PI / REGIONS);
+      Y2[i] = .5*-0.5*(80. * sin ((i+0.5) * 2 * G_PI / REGIONS));
+   }
+   color.red = 0.5*65535;
+   color.green = 0.25*65535;
+   color.blue = 0.5*65535;
+
+   graph = gtk_databox_regions_new (BARS, X, Y1, Y2, &color);
+   gtk_databox_graph_add (GTK_DATABOX (box), graph);
+
+   /* Instead of doing stuff what you see below, you could call
     * gtk_databox_auto_rescale (GTK_DATABOX (box), 0.05);
-    * as is done in the other examples 
-    * Of course, you are more flexible in adjusting the scaling by doing 
+    * as is done in the other examples
+    * Of course, you are more flexible in adjusting the scaling by doing
     * it yourself, though. */
    if (0 >
        gtk_databox_calculate_extrema (GTK_DATABOX (box), &min_x, &max_x,
@@ -225,7 +266,7 @@ create_basics (void)
    g_signal_connect_swapped (GTK_OBJECT (close_button), "clicked",
 			     G_CALLBACK (gtk_main_quit), GTK_OBJECT (box));
    gtk_box_pack_start (GTK_BOX (vbox), close_button, FALSE, FALSE, 0);
-   GTK_WIDGET_SET_FLAGS (close_button, GTK_CAN_DEFAULT);
+   gtk_widget_set_can_default(close_button, GTK_CAN_DEFAULT);
    gtk_widget_grab_default (close_button);
    gtk_widget_grab_focus (close_button);
 

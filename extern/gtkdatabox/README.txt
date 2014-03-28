@@ -9,6 +9,7 @@ Homepage: https://sourceforge.net/projects/gtkdatabox/
 
 Copyright: Copyright (C) 1995-1997  Peter Mattis, Spencer Kimball and Josh MacDonald
            Copyright (C) 1998-2008  Dr. Roland Bock
+           Copyright (C) 2011-2012  Dr. Matt Flax
 
 License: LGPL-2.1
  This program is free software; you can redistribute it and/or
@@ -25,7 +26,4 @@ License: LGPL-2.1
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-Version: 0.9.1.1
-
-Patches: msvc.patch - MSVC does not have log2() method. (Already fixed
-                      in latest gtkdatabox versions)
+Version: 0.9.2
