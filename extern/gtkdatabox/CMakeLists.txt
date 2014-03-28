@@ -78,19 +78,19 @@ endif(MSVC)
 if(UNIX)
     set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC")
 
-#    include(CheckCCompilerFlag)
-#    check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
-#    if(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
-#        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
-#                                    gtkdatabox/gtk/gtkdatabox_lines.c
-#                                    gtkdatabox/gtk/gtkdatabox_ruler.c
-#                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-but-set-variable")
-#    else(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
-#        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
-#                                    gtkdatabox/gtk/gtkdatabox_lines.c
-#                                    gtkdatabox/gtk/gtkdatabox_ruler.c
-#                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
-#    endif(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+    include(CheckCCompilerFlag)
+    check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+    if(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
+                                    gtkdatabox/gtk/gtkdatabox_lines.c
+                                    gtkdatabox/gtk/gtkdatabox_ruler.c
+                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-but-set-variable")
+    else(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
+        set_source_files_properties(gtkdatabox/gtk/gtkdatabox_bars.c
+                                    gtkdatabox/gtk/gtkdatabox_lines.c
+                                    gtkdatabox/gtk/gtkdatabox_ruler.c
+                                    PROPERTIES COMPILE_FLAGS "-Wno-unused-variable")
+    endif(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
 endif(UNIX)
 
 set(GtkDatabox_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk
