@@ -18,8 +18,8 @@
 
 m4_define([databox_major_version], [0]) # Change in case of really major changes
 m4_define([databox_minor_version], [9]) # Change in case of changes in exisiting API
-m4_define([databox_micro_version], [2]) # Change in case of new functions being added
-m4_define([databox_nano_version],  [0]) # Change for bug fixes, code cleanup, etc.
+m4_define([databox_micro_version], [1]) # Change in case of new functions being added
+m4_define([databox_nano_version],  [1]) # Change for bug fixes, code cleanup, etc.
 m4_define([databox_version],       [databox_major_version.databox_minor_version.databox_micro_version.databox_nano_version])
 
 AC_INIT(gtkdatabox, databox_version)
@@ -32,8 +32,7 @@ AC_SUBST(LT_RELEASE, [databox_major_version.databox_minor_version.databox_micro_
 AC_SUBST(LT_CURRENT, [databox_nano_version])
 AC_SUBST(DATABOX_VERSION, [databox_version])
 
-#AM_INIT_AUTOMAKE(gtkdatabox, databox_version)
-AM_INIT_AUTOMAKE([tar-ustar])
+AM_INIT_AUTOMAKE(gtkdatabox, databox_version)
 
 AM_PROG_LIBTOOL
 
@@ -116,6 +115,8 @@ AC_OUTPUT(Makefile              \
 	gtk/Makefile            \
 	glade/Makefile		\
 	examples/Makefile       \
+	docs/Makefile       \
+	docs/reference/Makefile       \
         gtkdatabox.pc           \
         gtkdatabox.spec         \
 	)

@@ -15,8 +15,6 @@ configure, build, and install this package.  The following
 more-detailed instructions are generic; see the `README' file for
 instructions specific to this package.
 
-If the configure script is missing, run the script : scripts/myAutoreconf.sh
-
    The `configure' shell script attempts to guess correct values for
 various system-dependent variables used during compilation.  It uses
 those values to create a `Makefile' in each directory of the package.

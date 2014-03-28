@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -23,7 +23,7 @@
  * @include: gtkdatabox_grid.h
  * @see_also: #GtkDatabox, #GtkDataboxGraph, #GtkDataboxPoints, #GtkDataboxLines,  #GtkDataboxBars, #GtkDataboxMarkers
  *
- * #GtkDataboxGrid is a #GtkDataboxGraph class for displaying a grid (like in an oscilloscope). You can determine
+ * #GtkDataboxGrid is a #GtkDataboxGraph class for displaying a grid (like in an oscilloscope). You can determine 
  * the number of horizontal and vertical lines. When you zoom in, the grid is also zoomed along with the data.
  *
  */
@@ -52,7 +52,7 @@ G_BEGIN_DECLS
 /**
  * GtkDataboxGrid
  *
- * #GtkDataboxGrid is a #GtkDataboxGraph class for displaying a grid (like in an oscilloscope). You can determine
+ * #GtkDataboxGrid is a #GtkDataboxGraph class for displaying a grid (like in an oscilloscope). You can determine 
  * the number of horizontal and vertical lines. When you zoom in, the grid is also zoomed along with the data.
  *
  */
@@ -65,7 +65,7 @@ G_BEGIN_DECLS
     * GtkDataboxGridPrivate
     *
     * A private data structure used by the #GtkDataboxGrid. It shields all internal things
-    * from developers who are just using the object.
+    * from developers who are just using the object. 
     *
     **/
    typedef struct _GtkDataboxGridPrivate GtkDataboxGridPrivate;
@@ -94,12 +94,6 @@ G_BEGIN_DECLS
 
    void gtk_databox_grid_set_vlines (GtkDataboxGrid * grid, gint vlines);
    gint gtk_databox_grid_get_vlines (GtkDataboxGrid * grid);
-
-   void gtk_databox_grid_set_hline_vals (GtkDataboxGrid * grid, gfloat* hline_vals);
-   gfloat* gtk_databox_grid_get_hline_vals (GtkDataboxGrid * grid);
-
-   void gtk_databox_grid_set_vline_vals (GtkDataboxGrid * grid, gfloat* vline_vals);
-   gfloat* gtk_databox_grid_get_vline_vals (GtkDataboxGrid * grid);
 
 G_END_DECLS
 #endif				/* __GTK_DATABOX_GRID_H__ */

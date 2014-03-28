@@ -22,7 +22,7 @@
  * Modified by the GTK+ Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GTK+ Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
+ * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
  */
 
 /*
@@ -47,7 +47,7 @@
  *    </listitem>
  *    <listitem>
  *       <para>
- *           In the vertical orientation, the labels are rotated 90° (instead of being written
+ *           In the vertical orientation, the labels are rotated 90° (instead of being written 
  *           as a vertical column of horizontal characters). This increases readability.
  *       </para>
  *    </listitem>
@@ -88,7 +88,7 @@ typedef struct _GtkDataboxRulerClass GtkDataboxRulerClass;
 /**
  * GTK_DATABOX_RULER_MAX_MAX_LENGTH
  *
- * The maximum upper limit of label length in characters
+ * The maximum upper limit of label length in characters 
  */
 #define GTK_DATABOX_RULER_MAX_MAX_LENGTH 63
 
@@ -96,7 +96,7 @@ typedef struct _GtkDataboxRulerClass GtkDataboxRulerClass;
  * GtkDataboxRulerPrivate
  *
  * A private data structure used by the #GtkDataboxRuler. It shields all internal things
- * from developers who are just using the object.
+ * from developers who are just using the object. 
  *
  **/
  typedef struct _GtkDataboxRulerPrivate GtkDataboxRulerPrivate;
@@ -134,47 +134,11 @@ gtk_databox_ruler_get_type (void)
      GtkDataboxScaleType gtk_databox_ruler_get_scale_type (GtkDataboxRuler *
 							   ruler);
 
-     void gtk_databox_ruler_set_orientation (GtkDataboxRuler * ruler, GtkOrientation orientation);
-     GtkOrientation gtk_databox_ruler_get_orientation (GtkDataboxRuler *ruler);
+     void gtk_databox_ruler_set_orientation (GtkDataboxRuler * ruler,
+					     GtkOrientation orientation);
 
-     void gtk_databox_ruler_set_text_orientation (GtkDataboxRuler * ruler, GtkOrientation orientation);
-     GtkOrientation gtk_databox_ruler_get_text_orientation (GtkDataboxRuler *ruler);
-
-     void gtk_databox_ruler_set_text_alignment (GtkDataboxRuler * ruler, PangoAlignment alignment);
-     PangoAlignment gtk_databox_ruler_get_text_alignment (GtkDataboxRuler * ruler);
-
-    void gtk_databox_ruler_set_text_hoffset (GtkDataboxRuler * ruler,gint offset);
-    gint gtk_databox_ruler_get_text_hoffset (GtkDataboxRuler * ruler);
-
-     void gtk_databox_ruler_set_draw_ticks(GtkDataboxRuler * ruler, gboolean draw);
-    gboolean gtk_databox_ruler_get_draw_ticks(GtkDataboxRuler * ruler);
-
-     void gtk_databox_ruler_set_draw_position(GtkDataboxRuler * ruler, gboolean draw);
-    gboolean gtk_databox_ruler_get_draw_position(GtkDataboxRuler * ruler);
-
-     void gtk_databox_ruler_set_draw_subticks(GtkDataboxRuler * ruler, gboolean draw);
-    gboolean gtk_databox_ruler_get_draw_subticks(GtkDataboxRuler * ruler);
-
-     void gtk_databox_ruler_set_invert_edge(GtkDataboxRuler * ruler, gboolean invert);
-    gboolean gtk_databox_ruler_get_invert_edge(GtkDataboxRuler * ruler);
-
-    void gtk_databox_ruler_set_linear_label_format(GtkDataboxRuler * ruler, gchar *format);
-    void gtk_databox_ruler_set_log_label_format(GtkDataboxRuler * ruler, gchar *format);
-
-    gchar* gtk_databox_ruler_get_linear_label_format(GtkDataboxRuler * ruler);
-    gchar* gtk_databox_ruler_get_log_label_format(GtkDataboxRuler * ruler);
-
-    void gtk_databox_ruler_set_manual_ticks(GtkDataboxRuler * ruler, gfloat* manual_ticks);
-    gfloat* gtk_databox_ruler_get_manual_ticks(GtkDataboxRuler * ruler);
-
-    void gtk_databox_ruler_set_manual_tick_cnt(GtkDataboxRuler * ruler, guint manual_tick_cnt);
-    guint gtk_databox_ruler_get_manual_tick_cnt(GtkDataboxRuler * ruler);
-
-    void gtk_databox_ruler_set_manual_tick_labels(GtkDataboxRuler * ruler, gchar *labels[]);
-    gchar ** gtk_databox_ruler_get_manual_tick_labels(GtkDataboxRuler * ruler);
-
-    void gtk_databox_ruler_set_box_shadow(GtkDataboxRuler * ruler, GtkShadowType which_shadow);
-    GtkShadowType gtk_databox_ruler_get_box_shadow(GtkDataboxRuler * ruler);
+     GtkOrientation gtk_databox_ruler_get_orientation (GtkDataboxRuler *
+						       ruler);
 
 G_END_DECLS
 #endif /* __GTK_DATABOX_RULER_H__ */

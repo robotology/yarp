@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,6 +39,7 @@ struct _GtkDataboxXYCGraphPrivate
    guint len;
    gfloat *X;
    gfloat *Y;
+   GdkPoint *xyc_graph;
 };
 
 static gpointer parent_class = NULL;
@@ -110,7 +111,7 @@ gtk_databox_xyc_graph_set_property (GObject * object,
    }
 }
 
-/**
+/** 
  * gtk_databox_xyc_graph_get_X:
  * @xyc_graph: A #GtkDataboxXYCGraph object
  *
@@ -126,7 +127,7 @@ gtk_databox_xyc_graph_get_X (GtkDataboxXYCGraph * xyc_graph)
    return xyc_graph->priv->X;
 }
 
-/**
+/** 
  * gtk_databox_xyc_graph_get_Y:
  * @xyc_graph: A #GtkDataboxXYCGraph object
  *
@@ -142,7 +143,7 @@ gtk_databox_xyc_graph_get_Y (GtkDataboxXYCGraph * xyc_graph)
    return xyc_graph->priv->Y;
 }
 
-/**
+/** 
  * gtk_databox_xyc_graph_get_length:
  * @xyc_graph: A #GtkDataboxXYCGraph object
  *
@@ -195,6 +196,7 @@ xyc_graph_finalize (GObject * object)
 {
    GtkDataboxXYCGraph *xyc_graph = GTK_DATABOX_XYC_GRAPH (object);
 
+   g_free (xyc_graph->priv->xyc_graph);
    g_free (xyc_graph->priv);
 
    /* Chain up to the parent class */

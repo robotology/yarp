@@ -11,12 +11,16 @@ scroll around. It also offers a grid like on an oscilloscope.
 
 The homepage of the GtkDatabox is
 
-http://sourceforge.net/projects/gtkdatabox/
+http://www.eudoxos.de/gtk/gtkdatabox/
 
-To install, please read the INSTALL file.
+The only available documentation right now are the comments in the 
+header file "gtk/gtkdatabox.h" and the examples in the folder 
+"examples". If that does not help, do not hesitate to contact me, flames 
+being accepted but not necessarily answered :-)
 
-Documentation is in the api/html directory. Look in the Files->Globals->functions for a list of the functions available.
+------------------------------------------------------------------
 
-Hope you enjoy using this code ...
+Martinsried, Germany 2002-05-04
 
-The gtkdatabox team. 2012
+Roland Bock
+

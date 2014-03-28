@@ -1,0 +1,108 @@
+<!-- ##### SECTION Title ##### -->
+GtkDataboxMarkers
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT GtkDataboxMarkersPrivate ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM GtkDataboxMarkersPosition ##### -->
+<para>
+
+</para>
+
+@GTK_DATABOX_MARKERS_C: 
+@GTK_DATABOX_MARKERS_N: 
+@GTK_DATABOX_MARKERS_E: 
+@GTK_DATABOX_MARKERS_S: 
+@GTK_DATABOX_MARKERS_W: 
+
+<!-- ##### ENUM GtkDataboxMarkersTextPosition ##### -->
+<para>
+
+</para>
+
+@GTK_DATABOX_MARKERS_TEXT_CENTER: 
+@GTK_DATABOX_MARKERS_TEXT_N: 
+@GTK_DATABOX_MARKERS_TEXT_NE: 
+@GTK_DATABOX_MARKERS_TEXT_E: 
+@GTK_DATABOX_MARKERS_TEXT_SE: 
+@GTK_DATABOX_MARKERS_TEXT_S: 
+@GTK_DATABOX_MARKERS_TEXT_SW: 
+@GTK_DATABOX_MARKERS_TEXT_W: 
+@GTK_DATABOX_MARKERS_TEXT_NW: 
+
+<!-- ##### ENUM GtkDataboxMarkersType ##### -->
+<para>
+
+</para>
+
+@GTK_DATABOX_MARKERS_NONE: 
+@GTK_DATABOX_MARKERS_TRIANGLE: 
+@GTK_DATABOX_MARKERS_SOLID_LINE: 
+@GTK_DATABOX_MARKERS_DASHED_LINE: 
+
+<!-- ##### STRUCT GtkDataboxMarkers ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GtkDataboxMarkers:markers-type ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gtk_databox_markers_new ##### -->
+<para>
+
+</para>
+
+@len: 
+@X: 
+@Y: 
+@color: 
+@size: 
+@type: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gtk_databox_markers_set_position ##### -->
+<para>
+
+</para>
+
+@markers: 
+@index: 
+@position: 
+
+
+<!-- ##### FUNCTION gtk_databox_markers_set_label ##### -->
+<para>
+
+</para>
+
+@markers: 
+@index: 
+@label_position: 
+@text: 
+@boxed: 
+
+

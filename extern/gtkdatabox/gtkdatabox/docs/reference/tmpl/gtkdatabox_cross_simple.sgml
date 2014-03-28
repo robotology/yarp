@@ -1,0 +1,41 @@
+<!-- ##### SECTION Title ##### -->
+GtkDataboxCrossSimple
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT GtkDataboxCrossSimplePrivate ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GtkDataboxCrossSimple ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gtk_databox_cross_simple_new ##### -->
+<para>
+
+</para>
+
+@color: 
+@size: 
+@Returns: 
+
+

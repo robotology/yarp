@@ -1,0 +1,73 @@
+<!-- ##### SECTION Title ##### -->
+GtkDataboxXYCGraph
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT GtkDataboxXYCGraphPrivate ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GtkDataboxXYCGraph ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GtkDataboxXYCGraph:X-Values ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GtkDataboxXYCGraph:Y-Values ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GtkDataboxXYCGraph:length ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gtk_databox_xyc_graph_get_length ##### -->
+<para>
+
+</para>
+
+@xyc_graph: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gtk_databox_xyc_graph_get_X ##### -->
+<para>
+
+</para>
+
+@xyc_graph: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gtk_databox_xyc_graph_get_Y ##### -->
+<para>
+
+</para>
+
+@xyc_graph: 
+@Returns: 
+
+

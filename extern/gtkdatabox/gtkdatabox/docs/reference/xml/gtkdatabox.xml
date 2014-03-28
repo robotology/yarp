@@ -1,0 +1,1091 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="GtkDatabox">
+<refmeta>
+<refentrytitle role="top_of_page" id="GtkDatabox.top_of_page">GtkDatabox</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>GTKDATABOX Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>GtkDatabox</refname>
+<refpurpose>A GTK+ widget to display large amounts of numerical data quickly and easily.</refpurpose>
+<!--[<xref linkend="desc" endterm="desc.title"/>]-->
+</refnamediv>
+
+<refsynopsisdiv id="GtkDatabox.synopsis" role="synopsis">
+<title role="synopsis.title">Synopsis</title>
+
+<synopsis>
+
+#include &lt;gtkdatabox.h&gt;
+
+                    <link linkend="GtkDataboxPrivate">GtkDataboxPrivate</link>;
+                    <link linkend="GtkDatabox-struct">GtkDatabox</link>;
+<link linkend="GtkWidget">GtkWidget</link>*          <link linkend="gtk-databox-new">gtk_databox_new</link>                     (void);
+<link linkend="gint">gint</link>                <link linkend="gtk-databox-graph-add">gtk_databox_graph_add</link>               (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxGraph">GtkDataboxGraph</link> *graph);
+<link linkend="gint">gint</link>                <link linkend="gtk-databox-graph-remove">gtk_databox_graph_remove</link>            (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxGraph">GtkDataboxGraph</link> *graph);
+<link linkend="gint">gint</link>                <link linkend="gtk-databox-graph-remove-all">gtk_databox_graph_remove_all</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="gint">gint</link>                <link linkend="gtk-databox-auto-rescale">gtk_databox_auto_rescale</link>            (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> border);
+<link linkend="gint">gint</link>                <link linkend="gtk-databox-calculate-extrema">gtk_databox_calculate_extrema</link>       (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> *min_x,
+                                                         <link linkend="gfloat">gfloat</link> *max_x,
+                                                         <link linkend="gfloat">gfloat</link> *min_y,
+                                                         <link linkend="gfloat">gfloat</link> *max_y);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-total-limits">gtk_databox_set_total_limits</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> left,
+                                                         <link linkend="gfloat">gfloat</link> right,
+                                                         <link linkend="gfloat">gfloat</link> top,
+                                                         <link linkend="gfloat">gfloat</link> bottom);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-visible-limits">gtk_databox_set_visible_limits</link>      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> left,
+                                                         <link linkend="gfloat">gfloat</link> right,
+                                                         <link linkend="gfloat">gfloat</link> top,
+                                                         <link linkend="gfloat">gfloat</link> bottom);
+<link linkend="void">void</link>                <link linkend="gtk-databox-get-total-limits">gtk_databox_get_total_limits</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> *left,
+                                                         <link linkend="gfloat">gfloat</link> *right,
+                                                         <link linkend="gfloat">gfloat</link> *top,
+                                                         <link linkend="gfloat">gfloat</link> *bottom);
+<link linkend="void">void</link>                <link linkend="gtk-databox-get-visible-limits">gtk_databox_get_visible_limits</link>      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> *left,
+                                                         <link linkend="gfloat">gfloat</link> *right,
+                                                         <link linkend="gfloat">gfloat</link> *top,
+                                                         <link linkend="gfloat">gfloat</link> *bottom);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-adjustment-x">gtk_databox_set_adjustment_x</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkAdjustment">GtkAdjustment</link> *adj);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-adjustment-y">gtk_databox_set_adjustment_y</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkAdjustment">GtkAdjustment</link> *adj);
+<link linkend="GtkAdjustment">GtkAdjustment</link>*      <link linkend="gtk-databox-get-adjustment-x">gtk_databox_get_adjustment_x</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="GtkAdjustment">GtkAdjustment</link>*      <link linkend="gtk-databox-get-adjustment-y">gtk_databox_get_adjustment_y</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-ruler-x">gtk_databox_set_ruler_x</link>             (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxRuler">GtkDataboxRuler</link> *ruler);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-ruler-y">gtk_databox_set_ruler_y</link>             (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxRuler">GtkDataboxRuler</link> *ruler);
+<link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*    <link linkend="gtk-databox-get-ruler-x">gtk_databox_get_ruler_x</link>             (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*    <link linkend="gtk-databox-get-ruler-y">gtk_databox_get_ruler_y</link>             (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-scale-type-x">gtk_databox_set_scale_type_x</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> scale_type);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-scale-type-y">gtk_databox_set_scale_type_y</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> scale_type);
+<link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> <link linkend="gtk-databox-get-scale-type-x">gtk_databox_get_scale_type_x</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> <link linkend="gtk-databox-get-scale-type-y">gtk_databox_get_scale_type_y</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-enable-selection">gtk_databox_set_enable_selection</link>    (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gboolean">gboolean</link> enable);
+<link linkend="void">void</link>                <link linkend="gtk-databox-set-enable-zoom">gtk_databox_set_enable_zoom</link>         (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gboolean">gboolean</link> enable);
+<link linkend="gboolean">gboolean</link>            <link linkend="gtk-databox-get-enable-selection">gtk_databox_get_enable_selection</link>    (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="gboolean">gboolean</link>            <link linkend="gtk-databox-get-enable-zoom">gtk_databox_get_enable_zoom</link>         (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="void">void</link>                <link linkend="gtk-databox-zoom-to-selection">gtk_databox_zoom_to_selection</link>       (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="void">void</link>                <link linkend="gtk-databox-zoom-out">gtk_databox_zoom_out</link>                (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="void">void</link>                <link linkend="gtk-databox-zoom-home">gtk_databox_zoom_home</link>               (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+<link linkend="gint16">gint16</link>              <link linkend="gtk-databox-value-to-pixel-x">gtk_databox_value_to_pixel_x</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> value);
+<link linkend="gint16">gint16</link>              <link linkend="gtk-databox-value-to-pixel-y">gtk_databox_value_to_pixel_y</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> value);
+<link linkend="gfloat">gfloat</link>              <link linkend="gtk-databox-pixel-to-value-x">gtk_databox_pixel_to_value_x</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gint16">gint16</link> pixel);
+<link linkend="gfloat">gfloat</link>              <link linkend="gtk-databox-pixel-to-value-y">gtk_databox_pixel_to_value_y</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gint16">gint16</link> pixel);
+<link linkend="void">void</link>                <link linkend="gtk-databox-values-to-pixels">gtk_databox_values_to_pixels</link>        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="guint">guint</link> len,
+                                                         const <link linkend="gfloat">gfloat</link> *values_x,
+                                                         const <link linkend="gfloat">gfloat</link> *values_y,
+                                                         <link linkend="GdkPoint">GdkPoint</link> *pixels);
+<link linkend="void">void</link>                <link linkend="gtk-databox-create-box-with-scrollbars-and-rulers">gtk_databox_create_box_with_scrollbars_and_rulers</link>
+                                                        (<link linkend="GtkWidget">GtkWidget</link> **p_box,
+                                                         <link linkend="GtkWidget">GtkWidget</link> **p_table,
+                                                         <link linkend="gboolean">gboolean</link> scrollbar_x,
+                                                         <link linkend="gboolean">gboolean</link> scrollbar_y,
+                                                         <link linkend="gboolean">gboolean</link> ruler_x,
+                                                         <link linkend="gboolean">gboolean</link> ruler_y);
+<link linkend="GdkPixmap">GdkPixmap</link>*          <link linkend="gtk-databox-get-backing-pixmap">gtk_databox_get_backing_pixmap</link>      (<link linkend="GtkDatabox">GtkDatabox</link> *box);
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1 id="GtkDatabox.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<synopsis>
+  <link linkend="GObject">GObject</link>
+   +----<link linkend="GInitiallyUnowned">GInitiallyUnowned</link>
+         +----<link linkend="GtkObject">GtkObject</link>
+               +----<link linkend="GtkWidget">GtkWidget</link>
+                     +----GtkDatabox
+</synopsis>
+
+</refsect1>
+
+
+
+<refsect1 id="GtkDatabox.implemented-interfaces" role="impl_interfaces">
+<title role="impl_interfaces.title">Implemented Interfaces</title>
+<para>
+GtkDatabox implements
+ <link linkend="AtkImplementorIface">AtkImplementorIface</link> and  <link linkend="GtkBuildable">GtkBuildable</link>.</para>
+
+</refsect1>
+
+
+<refsect1 id="GtkDatabox.properties" role="properties">
+<title role="properties.title">Properties</title>
+<synopsis>
+  &quot;<link linkend="GtkDatabox--adjustment-x">adjustment-x</link>&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--adjustment-y">adjustment-y</link>&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--enable-selection">enable-selection</link>&quot;         <link linkend="gboolean">gboolean</link>              : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--enable-zoom">enable-zoom</link>&quot;              <link linkend="gboolean">gboolean</link>              : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--ruler-x">ruler-x</link>&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--ruler-y">ruler-y</link>&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--scale-type-x">scale-type-x</link>&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--scale-type-y">scale-type-y</link>&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct
+</synopsis>
+</refsect1>
+
+<refsect1 id="GtkDatabox.signals" role="signal_proto">
+<title role="signal_proto.title">Signals</title>
+<synopsis>
+  &quot;<link linkend="GtkDatabox-selection-canceled">selection-canceled</link>&quot;                             : Run First
+  &quot;<link linkend="GtkDatabox-selection-changed">selection-changed</link>&quot;                              : Run First
+  &quot;<link linkend="GtkDatabox-selection-finalized">selection-finalized</link>&quot;                            : Run First
+  &quot;<link linkend="GtkDatabox-selection-started">selection-started</link>&quot;                              : Run First
+  &quot;<link linkend="GtkDatabox-zoomed">zoomed</link>&quot;                                         : Run First
+</synopsis>
+</refsect1>
+
+
+<refsect1 id="GtkDatabox.description" role="desc">
+<title role="desc.title">Description</title>
+<para>
+<link linkend="GtkDatabox"><type>GtkDatabox</type></link> is a widget for the GTK+ library designed to display 
+large amounts of numerical data quickly and easily. It allows 
+for one or more data sets of thousands of data points (X and Y coordinates) 
+to be displayed and updated in split seconds. 
+</para>
+<para>
+It offers the ability to zoom into and out of the data, and to navigate 
+through your data by scrolling. 
+</para>
+<para>
+In addition to rulers and a simple 
+coordinate cross, it allows you to add one (or even more) configurable grids 
+like on an oscilloscope. 
+</para>
+<para>
+Data may be presented as dots, lines connecting the data, 
+or vertical bars. The widget allows you to easily transform pixel 
+coordinates into data coordinates, thus allowing you to easily create 
+powerful applications for data analysis.</para>
+<para>
+
+</para>
+</refsect1>
+
+<refsect1 id="GtkDatabox.details" role="details">
+<title role="details.title">Details</title>
+<refsect2 id="GtkDataboxPrivate" role="struct">
+<title>GtkDataboxPrivate</title>
+<indexterm zone="GtkDataboxPrivate"><primary>GtkDataboxPrivate</primary></indexterm><programlisting>typedef struct _GtkDataboxPrivate GtkDataboxPrivate;</programlisting>
+<para>
+A private data structure used by the <link linkend="GtkDatabox"><type>GtkDatabox</type></link>. It shields all internal things
+from developers who are just using the widget.</para>
+<para>
+
+</para></refsect2>
+<refsect2 id="GtkDatabox-struct" role="struct">
+<title>GtkDatabox</title>
+<indexterm zone="GtkDatabox-struct"><primary>GtkDatabox</primary></indexterm><programlisting>typedef struct _GtkDatabox GtkDatabox;</programlisting>
+<para>
+A GTK+ widget to display large amounts of numerical data quickly and easily. 
+The numerical data is represented/displayed by <link linkend="GtkDataboxGraph"><type>GtkDataboxGraph</type></link> objects, e.g.
+<link linkend="GtkDataboxPoints"><type>GtkDataboxPoints</type></link>.
+</para>
+<para>
+Implemented by <link linkend="GtkDatabox"><type>_GtkDatabox</type></link>;</para>
+<para>
+
+</para><variablelist role="struct">
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-new" role="function">
+<title>gtk_databox_new ()</title>
+<indexterm zone="gtk-databox-new"><primary>gtk_databox_new</primary></indexterm><programlisting><link linkend="GtkWidget">GtkWidget</link>*          gtk_databox_new                     (void);</programlisting>
+<para>
+Creates a new <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The new <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-graph-add" role="function">
+<title>gtk_databox_graph_add ()</title>
+<indexterm zone="gtk-databox-graph-add"><primary>gtk_databox_graph_add</primary></indexterm><programlisting><link linkend="gint">gint</link>                gtk_databox_graph_add               (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxGraph">GtkDataboxGraph</link> *graph);</programlisting>
+<para>
+Adds the <parameter>graph</parameter> to the <parameter>box</parameter>. The next time the <parameter>box</parameter> is re-drawn, the graph will be shown.
+</para>
+<para>
+It might be becessary to modify the total_limits in order for the graph to be displayed properly (see <link linkend="gtk-databox-set-total-limits"><function>gtk_databox_set_total_limits()</function></link>).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>graph</parameter>&nbsp;:</term>
+<listitem><simpara> A graph, e.g. a <link linkend="GtkDataboxPoints"><type>GtkDataboxPoints</type></link> or a <link linkend="GtkDataboxGrid"><type>GtkDataboxGrid</type></link> object
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> 0 on success, -1 otherwise
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-graph-remove" role="function">
+<title>gtk_databox_graph_remove ()</title>
+<indexterm zone="gtk-databox-graph-remove"><primary>gtk_databox_graph_remove</primary></indexterm><programlisting><link linkend="gint">gint</link>                gtk_databox_graph_remove            (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxGraph">GtkDataboxGraph</link> *graph);</programlisting>
+<para>
+Removes the <parameter>graph</parameter> from the <parameter>box</parameter> once. The next time the <parameter>box</parameter> is re-drawn, the graph will not be shown (unless it was added more 
+than once).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>graph</parameter>&nbsp;:</term>
+<listitem><simpara> A graph, e.g. a <link linkend="GtkDataboxPoints"><type>GtkDataboxPoints</type></link> or a <link linkend="GtkDataboxGrid"><type>GtkDataboxGrid</type></link> object
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> 0 on success, -1 otherwise
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-graph-remove-all" role="function">
+<title>gtk_databox_graph_remove_all ()</title>
+<indexterm zone="gtk-databox-graph-remove-all"><primary>gtk_databox_graph_remove_all</primary></indexterm><programlisting><link linkend="gint">gint</link>                gtk_databox_graph_remove_all        (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Removes all graphs from the <parameter>box</parameter>. The next time the <parameter>box</parameter> is re-drawn, no graphs will be shown.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> 0 on success, -1 otherwise
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-auto-rescale" role="function">
+<title>gtk_databox_auto_rescale ()</title>
+<indexterm zone="gtk-databox-auto-rescale"><primary>gtk_databox_auto_rescale</primary></indexterm><programlisting><link linkend="gint">gint</link>                gtk_databox_auto_rescale            (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> border);</programlisting>
+<para>
+This function is similar to <link linkend="gtk-databox-set-total-limits"><function>gtk_databox_set_total_limits()</function></link>. It sets the total limits 
+to match the data extrema (see <link linkend="gtk-databox-calculate-extrema"><function>gtk_databox_calculate_extrema()</function></link>). If you do not like data pixels exactly at the 
+widget's border, you can add modify the limits using the border parameter: The limits are extended by  
+<parameter>border</parameter>*(max-min) if max!=min. If max==min, they are extended by <parameter>border</parameter>*max (otherwise the data could not be 
+scaled to the pixel realm).
+</para>
+<para>
+After calling this function, x values grow from left to right, y values grow from bottom to top.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>border</parameter>&nbsp;:</term>
+<listitem><simpara> Relative border width (e.g. 0.1 means that the border on each side is 10% of the data area).
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> 0 on success,
+         -1 if <parameter>box</parameter> is no GtkDatabox widget,
+         -2 if no datasets are available
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-calculate-extrema" role="function">
+<title>gtk_databox_calculate_extrema ()</title>
+<indexterm zone="gtk-databox-calculate-extrema"><primary>gtk_databox_calculate_extrema</primary></indexterm><programlisting><link linkend="gint">gint</link>                gtk_databox_calculate_extrema       (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> *min_x,
+                                                         <link linkend="gfloat">gfloat</link> *max_x,
+                                                         <link linkend="gfloat">gfloat</link> *min_y,
+                                                         <link linkend="gfloat">gfloat</link> *max_y);</programlisting>
+<para>
+Determines the minimum and maximum x and y values of all 
+<link linkend="GtkDataboxGraph"><type>GtkDataboxGraph</type></link> objects which have been added to the <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget via <link linkend="gtk-databox-graph-add"><function>gtk_databox_graph_add()</function></link>.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>min_x</parameter>&nbsp;:</term>
+<listitem><simpara> Will be filled with the lowest x value of all datasets
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>max_x</parameter>&nbsp;:</term>
+<listitem><simpara> Will be filled with the highest x value of all datasets
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>min_y</parameter>&nbsp;:</term>
+<listitem><simpara> Will be filled with the lowest y value of all datasets
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>max_y</parameter>&nbsp;:</term>
+<listitem><simpara> Will be filled with the highest y value of all datasets
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> 0 on success,
+         -1 if <parameter>box</parameter> is no GtkDatabox widget,
+         -2 if no datasets are available
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-total-limits" role="function">
+<title>gtk_databox_set_total_limits ()</title>
+<indexterm zone="gtk-databox-set-total-limits"><primary>gtk_databox_set_total_limits</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_total_limits        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> left,
+                                                         <link linkend="gfloat">gfloat</link> right,
+                                                         <link linkend="gfloat">gfloat</link> top,
+                                                         <link linkend="gfloat">gfloat</link> bottom);</programlisting>
+<para>
+This function is used to set the limits of the total 
+display area of <parameter>box</parameter>.
+This function can be used to invert the orientation of the displayed graphs, 
+e.g. <parameter>top</parameter>=-1000 and  <parameter>bottom</parameter>=0.
+</para>
+<para>
+Side effect: The <parameter>box</parameter> also internally calls <link linkend="gtk-databox-set-visible-limits"><function>gtk_databox_set_visible_limits()</function></link> with the same values.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>left</parameter>&nbsp;:</term>
+<listitem><simpara> Left total limit
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>right</parameter>&nbsp;:</term>
+<listitem><simpara> Right total limit
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>top</parameter>&nbsp;:</term>
+<listitem><simpara> Top total limit
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>bottom</parameter>&nbsp;:</term>
+<listitem><simpara> Bottom total limit
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-visible-limits" role="function">
+<title>gtk_databox_set_visible_limits ()</title>
+<indexterm zone="gtk-databox-set-visible-limits"><primary>gtk_databox_set_visible_limits</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_visible_limits      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> left,
+                                                         <link linkend="gfloat">gfloat</link> right,
+                                                         <link linkend="gfloat">gfloat</link> top,
+                                                         <link linkend="gfloat">gfloat</link> bottom);</programlisting>
+<para>
+This function is used to set the limits of the visible 
+display area of <parameter>box</parameter>. The visible display area can be section of the total 
+area, i.e. the <parameter>box</parameter> zooms in, showing only a part of the complete picture.
+</para>
+<para>
+The orientation of the values have to be the same as in <link linkend="gtk-databox-set-total-limits"><function>gtk_databox_set_total_limits()</function></link> and 
+the visible limits have to be within the total limits. The 
+values will not be used otherwise.
+</para>
+<para>
+Side effect: The <parameter>box</parameter> emits <link linkend="GtkDatabox-zoomed"><type>"zoomed"</type></link>.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>left</parameter>&nbsp;:</term>
+<listitem><simpara> Left visible limit
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>right</parameter>&nbsp;:</term>
+<listitem><simpara> Right visible limit
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>top</parameter>&nbsp;:</term>
+<listitem><simpara> Top visible limit
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>bottom</parameter>&nbsp;:</term>
+<listitem><simpara> Bottom visible limit
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-total-limits" role="function">
+<title>gtk_databox_get_total_limits ()</title>
+<indexterm zone="gtk-databox-get-total-limits"><primary>gtk_databox_get_total_limits</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_get_total_limits        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> *left,
+                                                         <link linkend="gfloat">gfloat</link> *right,
+                                                         <link linkend="gfloat">gfloat</link> *top,
+                                                         <link linkend="gfloat">gfloat</link> *bottom);</programlisting>
+<para>
+Gives the total limits (as set by <link linkend="gtk-databox-auto-rescale"><function>gtk_databox_auto_rescale()</function></link> or <link linkend="gtk-databox-set-total-limits"><function>gtk_databox_set_total_limits()</function></link>).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>left</parameter>&nbsp;:</term>
+<listitem><simpara> Space for total left value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>right</parameter>&nbsp;:</term>
+<listitem><simpara> Space for total right value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>top</parameter>&nbsp;:</term>
+<listitem><simpara> Space for total top value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>bottom</parameter>&nbsp;:</term>
+<listitem><simpara> Space for total bottom value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-visible-limits" role="function">
+<title>gtk_databox_get_visible_limits ()</title>
+<indexterm zone="gtk-databox-get-visible-limits"><primary>gtk_databox_get_visible_limits</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_get_visible_limits      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> *left,
+                                                         <link linkend="gfloat">gfloat</link> *right,
+                                                         <link linkend="gfloat">gfloat</link> *top,
+                                                         <link linkend="gfloat">gfloat</link> *bottom);</programlisting>
+<para>
+Gives the current visible limits. These differ from those given by <link linkend="gtk-databox-get-total-limits"><function>gtk_databox_get_total_limits()</function></link> if 
+you zoomed into the data for instance by <link linkend="gtk-databox-zoom-to-selection"><function>gtk_databox_zoom_to_selection()</function></link> or <link linkend="gtk-databox-set-visible-limits"><function>gtk_databox_set_visible_limits()</function></link> (these values
+can be changed by scrolling, of course).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>left</parameter>&nbsp;:</term>
+<listitem><simpara> Space for visible left value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>right</parameter>&nbsp;:</term>
+<listitem><simpara> Space for visible right value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>top</parameter>&nbsp;:</term>
+<listitem><simpara> Space for visible top value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>bottom</parameter>&nbsp;:</term>
+<listitem><simpara> Space for visible bottom value or <link linkend="NULL:CAPS"><type>NULL</type></link>
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-adjustment-x" role="function">
+<title>gtk_databox_set_adjustment_x ()</title>
+<indexterm zone="gtk-databox-set-adjustment-x"><primary>gtk_databox_set_adjustment_x</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_adjustment_x        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkAdjustment">GtkAdjustment</link> *adj);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--adjustment-x"><type>"adjustment-x"</type></link> property. Normally, it should not be 
+required to use this function, see property documentation.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>adj</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkAdjustment"><type>GtkAdjustment</type></link> object
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-adjustment-y" role="function">
+<title>gtk_databox_set_adjustment_y ()</title>
+<indexterm zone="gtk-databox-set-adjustment-y"><primary>gtk_databox_set_adjustment_y</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_adjustment_y        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkAdjustment">GtkAdjustment</link> *adj);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--adjustment-y"><type>"adjustment-y"</type></link> property. Normally, it should not be 
+required to use this function, see property documentation.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>adj</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkAdjustment"><type>GtkAdjustment</type></link> object
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-adjustment-x" role="function">
+<title>gtk_databox_get_adjustment_x ()</title>
+<indexterm zone="gtk-databox-get-adjustment-x"><primary>gtk_databox_get_adjustment_x</primary></indexterm><programlisting><link linkend="GtkAdjustment">GtkAdjustment</link>*      gtk_databox_get_adjustment_x        (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--adjustment-x"><type>"adjustment-x"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--adjustment-x"><type>"adjustment-x"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-adjustment-y" role="function">
+<title>gtk_databox_get_adjustment_y ()</title>
+<indexterm zone="gtk-databox-get-adjustment-y"><primary>gtk_databox_get_adjustment_y</primary></indexterm><programlisting><link linkend="GtkAdjustment">GtkAdjustment</link>*      gtk_databox_get_adjustment_y        (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--adjustment-y"><type>"adjustment-y"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--adjustment-y"><type>"adjustment-y"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-ruler-x" role="function">
+<title>gtk_databox_set_ruler_x ()</title>
+<indexterm zone="gtk-databox-set-ruler-x"><primary>gtk_databox_set_ruler_x</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_ruler_x             (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxRuler">GtkDataboxRuler</link> *ruler);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--ruler-x"><type>"ruler-x"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>ruler</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDataboxRuler"><type>GtkDataboxRuler</type></link> object
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-ruler-y" role="function">
+<title>gtk_databox_set_ruler_y ()</title>
+<indexterm zone="gtk-databox-set-ruler-y"><primary>gtk_databox_set_ruler_y</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_ruler_y             (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxRuler">GtkDataboxRuler</link> *ruler);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--ruler-y"><type>"ruler-y"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>ruler</parameter>&nbsp;:</term>
+<listitem><simpara> An <link linkend="GtkDataboxRuler"><type>GtkDataboxRuler</type></link> object
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-ruler-x" role="function">
+<title>gtk_databox_get_ruler_x ()</title>
+<indexterm zone="gtk-databox-get-ruler-x"><primary>gtk_databox_get_ruler_x</primary></indexterm><programlisting><link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*    gtk_databox_get_ruler_x             (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--ruler-x"><type>"ruler-x"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--ruler-x"><type>"ruler-x"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-ruler-y" role="function">
+<title>gtk_databox_get_ruler_y ()</title>
+<indexterm zone="gtk-databox-get-ruler-y"><primary>gtk_databox_get_ruler_y</primary></indexterm><programlisting><link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*    gtk_databox_get_ruler_y             (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--ruler-y"><type>"ruler-y"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--ruler-y"><type>"ruler-y"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-scale-type-x" role="function">
+<title>gtk_databox_set_scale_type_x ()</title>
+<indexterm zone="gtk-databox-set-scale-type-x"><primary>gtk_databox_set_scale_type_x</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_scale_type_x        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> scale_type);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--scale-type-x"><type>"scale-type-x"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>scale_type</parameter>&nbsp;:</term>
+<listitem><simpara> An <link linkend="GtkDataboxScaleType"><type>GtkDataboxScaleType</type></link> (linear or logarithmic)
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-scale-type-y" role="function">
+<title>gtk_databox_set_scale_type_y ()</title>
+<indexterm zone="gtk-databox-set-scale-type-y"><primary>gtk_databox_set_scale_type_y</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_scale_type_y        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> scale_type);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--scale-type-y"><type>"scale-type-y"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>scale_type</parameter>&nbsp;:</term>
+<listitem><simpara> An <link linkend="GtkDataboxScaleType"><type>GtkDataboxScaleType</type></link> (linear or logarithmic)
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-scale-type-x" role="function">
+<title>gtk_databox_get_scale_type_x ()</title>
+<indexterm zone="gtk-databox-get-scale-type-x"><primary>gtk_databox_get_scale_type_x</primary></indexterm><programlisting><link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> gtk_databox_get_scale_type_x        (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--scale-type-x"><type>"scale-type-x"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--scale-type-x"><type>"scale-type-x"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-scale-type-y" role="function">
+<title>gtk_databox_get_scale_type_y ()</title>
+<indexterm zone="gtk-databox-get-scale-type-y"><primary>gtk_databox_get_scale_type_y</primary></indexterm><programlisting><link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link> gtk_databox_get_scale_type_y        (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--scale-type-y"><type>"scale-type-y"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--scale-type-y"><type>"scale-type-y"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-enable-selection" role="function">
+<title>gtk_databox_set_enable_selection ()</title>
+<indexterm zone="gtk-databox-set-enable-selection"><primary>gtk_databox_set_enable_selection</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_enable_selection    (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gboolean">gboolean</link> enable);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--enable-selection"><type>"enable-selection"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>enable</parameter>&nbsp;:</term>
+<listitem><simpara> Whether selection via mouse is enabled or not.
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-set-enable-zoom" role="function">
+<title>gtk_databox_set_enable_zoom ()</title>
+<indexterm zone="gtk-databox-set-enable-zoom"><primary>gtk_databox_set_enable_zoom</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_set_enable_zoom         (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gboolean">gboolean</link> enable);</programlisting>
+<para>
+Setter function for the <link linkend="GtkDatabox--enable-zoom"><type>"enable-zoom"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>enable</parameter>&nbsp;:</term>
+<listitem><simpara> Whether zoom via mouse is enabled or not.
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-enable-selection" role="function">
+<title>gtk_databox_get_enable_selection ()</title>
+<indexterm zone="gtk-databox-get-enable-selection"><primary>gtk_databox_get_enable_selection</primary></indexterm><programlisting><link linkend="gboolean">gboolean</link>            gtk_databox_get_enable_selection    (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--enable-selection"><type>"enable-selection"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--enable-selection"><type>"enable-selection"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-enable-zoom" role="function">
+<title>gtk_databox_get_enable_zoom ()</title>
+<indexterm zone="gtk-databox-get-enable-zoom"><primary>gtk_databox_get_enable_zoom</primary></indexterm><programlisting><link linkend="gboolean">gboolean</link>            gtk_databox_get_enable_zoom         (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+Getter function for the <link linkend="GtkDatabox--enable-zoom"><type>"enable-zoom"</type></link> property.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget.
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> The <link linkend="GtkDatabox--enable-zoom"><type>"enable-zoom"</type></link> property value.
+
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-zoom-to-selection" role="function">
+<title>gtk_databox_zoom_to_selection ()</title>
+<indexterm zone="gtk-databox-zoom-to-selection"><primary>gtk_databox_zoom_to_selection</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_zoom_to_selection       (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+This is equivalent to left-clicking into the selected area.
+</para>
+<para>
+This function works, if the attribute <link linkend="enable-zoom"><type>enable-zoom</type></link> is set to <link linkend="TRUE:CAPS"><type>TRUE</type></link>. Calling the function 
+then zooms to the area selected with the mouse. 
+</para>
+<para>
+Side effect: The <parameter>box</parameter> emits <link linkend="GtkDatabox-zoomed"><type>"zoomed"</type></link>.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-zoom-out" role="function">
+<title>gtk_databox_zoom_out ()</title>
+<indexterm zone="gtk-databox-zoom-out"><primary>gtk_databox_zoom_out</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_zoom_out                (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+This is equivalent to right-clicking into the <parameter>box</parameter>.
+</para>
+<para>
+This function works, if the attribute <link linkend="enable-zoom"><type>enable-zoom</type></link> is set to <link linkend="TRUE:CAPS"><type>TRUE</type></link>. Calling the function 
+then zooms out by a factor of 2 in both dimensions (the maximum is defined by the total 
+limits, see <link linkend="gtk-databox-set-total-limits"><function>gtk_databox_set_total_limits()</function></link>).
+</para>
+<para>
+Side effect: The <parameter>box</parameter> emits <link linkend="GtkDatabox-zoomed"><type>"zoomed"</type></link>.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-zoom-home" role="function">
+<title>gtk_databox_zoom_home ()</title>
+<indexterm zone="gtk-databox-zoom-home"><primary>gtk_databox_zoom_home</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_zoom_home               (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+This is equivalent to shift right-clicking into the <parameter>box</parameter>.
+</para>
+<para>
+This function works, if the attribute <link linkend="enable-zoom"><type>enable-zoom</type></link> is set to <link linkend="TRUE:CAPS"><type>TRUE</type></link>. It is equivalent to 
+calling the <link linkend="gtk-databox-set-visible-limits"><function>gtk_databox_set_visible_limits()</function></link> with the total limits.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-value-to-pixel-x" role="function">
+<title>gtk_databox_value_to_pixel_x ()</title>
+<indexterm zone="gtk-databox-value-to-pixel-x"><primary>gtk_databox_value_to_pixel_x</primary></indexterm><programlisting><link linkend="gint16">gint16</link>              gtk_databox_value_to_pixel_x        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> value);</programlisting>
+<para>
+Calculates the horizontal pixel coordinate which represents the x <parameter>value</parameter>.
+Pixel coordinates are relative to the top-left corner of the <parameter>box</parameter> which is equivalent to (0,0).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>value</parameter>&nbsp;:</term>
+<listitem><simpara> An x value
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> Pixel coordinate
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-value-to-pixel-y" role="function">
+<title>gtk_databox_value_to_pixel_y ()</title>
+<indexterm zone="gtk-databox-value-to-pixel-y"><primary>gtk_databox_value_to_pixel_y</primary></indexterm><programlisting><link linkend="gint16">gint16</link>              gtk_databox_value_to_pixel_y        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gfloat">gfloat</link> value);</programlisting>
+<para>
+Calculates the vertical pixel coordinate which represents the y <parameter>value</parameter>.
+Pixel coordinates are relative to the top-left corner of the <parameter>box</parameter> which is equivalent to (0,0).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>value</parameter>&nbsp;:</term>
+<listitem><simpara> A y value
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> Pixel coordinate
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-pixel-to-value-x" role="function">
+<title>gtk_databox_pixel_to_value_x ()</title>
+<indexterm zone="gtk-databox-pixel-to-value-x"><primary>gtk_databox_pixel_to_value_x</primary></indexterm><programlisting><link linkend="gfloat">gfloat</link>              gtk_databox_pixel_to_value_x        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gint16">gint16</link> pixel);</programlisting>
+<para>
+Calculates the x value which is represented by the horizontal <parameter>pixel</parameter> coordinate.
+Pixel coordinates are relative to the top-left corner of the <parameter>box</parameter> which is equivalent to (0,0).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>pixel</parameter>&nbsp;:</term>
+<listitem><simpara> A horizontal pixel coordinate
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> x value
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-pixel-to-value-y" role="function">
+<title>gtk_databox_pixel_to_value_y ()</title>
+<indexterm zone="gtk-databox-pixel-to-value-y"><primary>gtk_databox_pixel_to_value_y</primary></indexterm><programlisting><link linkend="gfloat">gfloat</link>              gtk_databox_pixel_to_value_y        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="gint16">gint16</link> pixel);</programlisting>
+<para>
+Calculates the y value which is represented by the vertical <parameter>pixel</parameter> coordinate.
+Pixel coordinates are relative to the top-left corner of the <parameter>box</parameter> which is equivalent to (0,0).</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>pixel</parameter>&nbsp;:</term>
+<listitem><simpara> A vertical pixel coordinate
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> y value
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-values-to-pixels" role="function">
+<title>gtk_databox_values_to_pixels ()</title>
+<indexterm zone="gtk-databox-values-to-pixels"><primary>gtk_databox_values_to_pixels</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_values_to_pixels        (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                         <link linkend="guint">guint</link> len,
+                                                         const <link linkend="gfloat">gfloat</link> *values_x,
+                                                         const <link linkend="gfloat">gfloat</link> *values_y,
+                                                         <link linkend="GdkPoint">GdkPoint</link> *pixels);</programlisting>
+<para>
+Calculates the pixel equivalents of the given X/Y values and stores them in the <parameter>pixels</parameter> array.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>len</parameter>&nbsp;:</term>
+<listitem><simpara> Number of values/pixels
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>values_x</parameter>&nbsp;:</term>
+<listitem><simpara> Array of X values (length &gt;= len)
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>values_y</parameter>&nbsp;:</term>
+<listitem><simpara> Array of Y values (length &gt;= len)
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>pixels</parameter>&nbsp;:</term>
+<listitem><simpara> Array of pixel coordinates (length &gt;= len)
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-create-box-with-scrollbars-and-rulers" role="function">
+<title>gtk_databox_create_box_with_scrollbars_and_rulers ()</title>
+<indexterm zone="gtk-databox-create-box-with-scrollbars-and-rulers"><primary>gtk_databox_create_box_with_scrollbars_and_rulers</primary></indexterm><programlisting><link linkend="void">void</link>                gtk_databox_create_box_with_scrollbars_and_rulers
+                                                        (<link linkend="GtkWidget">GtkWidget</link> **p_box,
+                                                         <link linkend="GtkWidget">GtkWidget</link> **p_table,
+                                                         <link linkend="gboolean">gboolean</link> scrollbar_x,
+                                                         <link linkend="gboolean">gboolean</link> scrollbar_y,
+                                                         <link linkend="gboolean">gboolean</link> ruler_x,
+                                                         <link linkend="gboolean">gboolean</link> ruler_y);</programlisting>
+<para>
+This is a convenience function which creates a <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget in a 
+GtkTable widget optionally accompanied by scrollbars and rulers. You only 
+have to fill in the data (<link linkend="gtk-databox-graph-add"><function>gtk_databox_graph_add()</function></link>) and adjust the limits
+(<link linkend="gtk-databox-set-total-limits"><function>gtk_databox_set_total_limits()</function></link> or <link linkend="gtk-databox-auto-rescale"><function>gtk_databox_auto_rescale()</function></link>).
+</para>
+<para>
+<parameter>see_also</parameter>: <link linkend="gtk-databox-new"><function>gtk_databox_new()</function></link>, <link linkend="gtk-databox-set-adjustment-x"><function>gtk_databox_set_adjustment_x()</function></link>, <link linkend="gtk-databox-set-adjustment-y"><function>gtk_databox_set_adjustment_y()</function></link>, <link linkend="gtk-databox-set-ruler-x"><function>gtk_databox_set_ruler_x()</function></link>, <link linkend="gtk-databox-set-ruler-y"><function>gtk_databox_set_ruler_y()</function></link></para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>p_box</parameter>&nbsp;:</term>
+<listitem><simpara> Will contain a pointer to a <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>p_table</parameter>&nbsp;:</term>
+<listitem><simpara> Will contain a pointer to a <link linkend="GtkTable"><type>GtkTable</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>scrollbar_x</parameter>&nbsp;:</term>
+<listitem><simpara> Whether to attach a horizontal scrollbar
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>scrollbar_y</parameter>&nbsp;:</term>
+<listitem><simpara> Whether to attach a vertical scrollbar
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>ruler_x</parameter>&nbsp;:</term>
+<listitem><simpara> Whether to attach a horizontal ruler
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>ruler_y</parameter>&nbsp;:</term>
+<listitem><simpara> Whether to attach a vertical ruler
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+<refsect2 id="gtk-databox-get-backing-pixmap" role="function">
+<title>gtk_databox_get_backing_pixmap ()</title>
+<indexterm zone="gtk-databox-get-backing-pixmap"><primary>gtk_databox_get_backing_pixmap</primary></indexterm><programlisting><link linkend="GdkPixmap">GdkPixmap</link>*          gtk_databox_get_backing_pixmap      (<link linkend="GtkDatabox">GtkDatabox</link> *box);</programlisting>
+<para>
+This function returns the pixmap which is used by <parameter>box</parameter> and its <link linkend="GtkDataboxGraph"><type>GtkDataboxGraph</type></link> objects 
+for drawing operations before copying the result to the screen.
+</para>
+<para>
+The function is typically called by the <link linkend="GtkDataboxGraph"><type>GtkDataboxGraph</type></link> objects.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> A <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget
+</simpara></listitem></varlistentry>
+<varlistentry><term><emphasis>Returns</emphasis>&nbsp;:</term><listitem><simpara> Backing pixmap
+</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+
+</refsect1>
+<refsect1 id="GtkDatabox.property-details" role="property_details">
+<title role="property_details.title">Property Details</title>
+<refsect2 id="GtkDatabox--adjustment-x"><title>The <literal>&quot;adjustment-x&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--adjustment-x"><primary>GtkDatabox:adjustment-x</primary></indexterm><programlisting>  &quot;adjustment-x&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct</programlisting>
+<para>GtkAdjustment for horizontal scrolling.</para></refsect2>
+<refsect2 id="GtkDatabox--adjustment-y"><title>The <literal>&quot;adjustment-y&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--adjustment-y"><primary>GtkDatabox:adjustment-y</primary></indexterm><programlisting>  &quot;adjustment-y&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct</programlisting>
+<para>GtkAdjustment for vertical scrolling.</para></refsect2>
+<refsect2 id="GtkDatabox--enable-selection"><title>The <literal>&quot;enable-selection&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--enable-selection"><primary>GtkDatabox:enable-selection</primary></indexterm><programlisting>  &quot;enable-selection&quot;         <link linkend="gboolean">gboolean</link>              : Read / Write / Construct</programlisting>
+<para>
+Defines whether the user can select 
+rectangular areas with the mouse (<link linkend="TRUE:CAPS"><type>TRUE</type></link>) or not (<link linkend="FALSE:CAPS"><type>FALSE</type></link>).</para>
+<para>
+
+</para><para>Default value: TRUE</para>
+</refsect2>
+<refsect2 id="GtkDatabox--enable-zoom"><title>The <literal>&quot;enable-zoom&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--enable-zoom"><primary>GtkDatabox:enable-zoom</primary></indexterm><programlisting>  &quot;enable-zoom&quot;              <link linkend="gboolean">gboolean</link>              : Read / Write / Construct</programlisting>
+<para>
+Defines whether the user can use the mouse to zoom in or out (<link linkend="TRUE:CAPS"><type>TRUE</type></link>) or not (<link linkend="FALSE:CAPS"><type>FALSE</type></link>).</para>
+<para>
+
+</para><para>Default value: TRUE</para>
+</refsect2>
+<refsect2 id="GtkDatabox--ruler-x"><title>The <literal>&quot;ruler-x&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--ruler-x"><primary>GtkDatabox:ruler-x</primary></indexterm><programlisting>  &quot;ruler-x&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct</programlisting>
+<para>A horizontal GtkDataboxRuler or NULL.</para></refsect2>
+<refsect2 id="GtkDatabox--ruler-y"><title>The <literal>&quot;ruler-y&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--ruler-y"><primary>GtkDatabox:ruler-y</primary></indexterm><programlisting>  &quot;ruler-y&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct</programlisting>
+<para>A vertical GtkDataboxRuler or NULL.</para></refsect2>
+<refsect2 id="GtkDatabox--scale-type-x"><title>The <literal>&quot;scale-type-x&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--scale-type-x"><primary>GtkDatabox:scale-type-x</primary></indexterm><programlisting>  &quot;scale-type-x&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct</programlisting>
+<para>Horizontal scale type (linear or logarithmic).</para><para>Default value: GTK_DATABOX_SCALE_LINEAR</para>
+</refsect2>
+<refsect2 id="GtkDatabox--scale-type-y"><title>The <literal>&quot;scale-type-y&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--scale-type-y"><primary>GtkDatabox:scale-type-y</primary></indexterm><programlisting>  &quot;scale-type-y&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct</programlisting>
+<para>Vertical scale type (linear or logarithmic).</para><para>Default value: GTK_DATABOX_SCALE_LINEAR</para>
+</refsect2>
+
+</refsect1>
+
+<refsect1 id="GtkDatabox.signal-details" role="signals">
+<title role="signals.title">Signal Details</title>
+<refsect2 id="GtkDatabox-selection-canceled"><title>The <literal>&quot;selection-canceled&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-canceled"><primary>GtkDatabox::selection-canceled</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)      : Run First</programlisting>
+<para>
+This signal is emitted after a right click outside 
+a selection rectangle.</para>
+<para>
+
+</para>
+
+@:<variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget which zoomed in or out.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-selection-changed"><title>The <literal>&quot;selection-changed&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-changed"><primary>GtkDatabox::selection-changed</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    selection_values,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)             : Run First</programlisting>
+<para>
+This signal is emitted when the mouse is moved 
+with the left button pressed (and the <link linkend="GtkDatabox--enable-selection"><type>"enable-selection"</type></link> property 
+is set). The corners of the selection rectangle are stored in <parameter>selection_values</parameter>.</para>
+<para>
+
+</para>
+
+@: 
+@:<variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget in which the selection was changed.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>selection_values</parameter>&nbsp;:</term>
+<listitem><simpara> The corners of the selection rectangle.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-selection-finalized"><title>The <literal>&quot;selection-finalized&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-finalized"><primary>GtkDatabox::selection-finalized</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    selection_values,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)             : Run First</programlisting>
+<para>
+This signal is emitted when the left mouse button
+is released after a selection was started before.
+</para>
+<para>
+<parameter>see_also</parameter>: <link linkend="GtkDatabox-selection-changed"><type>"selection-changed"</type></link></para>
+<para>
+
+</para>
+
+@: 
+@:<variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget in which the selection has been stopped.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>selection_values</parameter>&nbsp;:</term>
+<listitem><simpara> The corners of the selection rectangle.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-selection-started"><title>The <literal>&quot;selection-started&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-started"><primary>GtkDatabox::selection-started</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    selection_values,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)             : Run First</programlisting>
+<para>
+This signal is emitted when the mouse is firstmoved 
+with the left button pressed after the mouse-down (and the <link linkend="GtkDatabox--enable-selection"><type>"enable-selection"</type></link> property 
+is set). The corners of the selection rectangle are stored in <parameter>selection_values</parameter>.
+</para>
+<para>
+<parameter>see_also</parameter>: <link linkend="GtkDatabox-selection-changed"><type>"selection-changed"</type></link></para>
+<para>
+
+</para>
+
+@: 
+@:<variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget in which the selection has been started.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>selection_values</parameter>&nbsp;:</term>
+<listitem><simpara> The corners of the selection rectangle.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-zoomed"><title>The <literal>&quot;zoomed&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-zoomed"><primary>GtkDatabox::zoomed</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)      : Run First</programlisting>
+<para>
+This signal is emitted each time the zoom of the widget is changed, see for example 
+<link linkend="gtk-databox-zoom-to-selection"><function>gtk_databox_zoom_to_selection()</function></link>, <link linkend="gtk-databox-set-visible-limits"><function>gtk_databox_set_visible_limits()</function></link>.</para>
+<para>
+
+</para>
+
+@:<variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget which zoomed in or out.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+</refsect1>
+
+
+<refsect1 id="GtkDatabox.see-also">
+<title>See Also</title>
+<link linkend="GtkDataboxGraph"><type>GtkDataboxGraph</type></link>, <link linkend="GtkDataboxPoints"><type>GtkDataboxPoints</type></link>, <link linkend="GtkDataboxLines"><type>GtkDataboxLines</type></link>, <link linkend="GtkDataboxMarkers"><type>GtkDataboxMarkers</type></link>, <link linkend="GtkDataboxGrid"><type>GtkDataboxGrid</type></link>
+</refsect1>
+
+</refentry>

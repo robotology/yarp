@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 2.1
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -23,22 +23,20 @@ static void gtk_databox_grid_real_draw (GtkDataboxGraph * grid,
 					GtkDatabox* box);
 static GdkGC* gtk_databox_grid_real_create_gc (GtkDataboxGraph * graph,
 					     GtkDatabox* box);
+static   gfloat *hline_vals=NULL;
+static   gfloat *vline_vals=NULL;
 
 /* IDs of properties */
 enum
 {
    GRID_HLINES = 1,
-   GRID_VLINES,
-   GRID_HLINE_VALS,
-   GRID_VLINE_VALS
+   GRID_VLINES
 };
 
 struct _GtkDataboxGridPrivate
 {
    gint hlines;
    gint vlines;
-   gfloat *hline_vals;
-   gfloat *vline_vals;
 };
 
 static gpointer parent_class = NULL;
@@ -60,16 +58,6 @@ gtk_databox_grid_set_property (GObject * object,
    case GRID_VLINES:
       {
 	 gtk_databox_grid_set_vlines (grid, g_value_get_int (value));
-      }
-      break;
-   case GRID_HLINE_VALS:
-      {
-	 gtk_databox_grid_set_hline_vals (grid, (gfloat *) g_value_get_pointer (value));
-      }
-      break;
-   case GRID_VLINE_VALS:
-      {
-	 gtk_databox_grid_set_vline_vals (grid, (gfloat *) g_value_get_pointer (value));
       }
       break;
    default:
@@ -96,16 +84,6 @@ gtk_databox_grid_get_property (GObject * object,
    case GRID_VLINES:
       {
 	 g_value_set_int (value, gtk_databox_grid_get_vlines (grid));
-      }
-      break;
-   case GRID_HLINE_VALS:
-      {
-    g_value_set_pointer (value, gtk_databox_grid_get_hline_vals (grid));
-      }
-      break;
-   case GRID_VLINE_VALS:
-      {
-    g_value_set_pointer (value, gtk_databox_grid_get_vline_vals (grid));
       }
       break;
    default:
@@ -176,16 +154,6 @@ gtk_databox_grid_class_init (gpointer g_class /*, gpointer g_class_data */ )
    g_object_class_install_property (gobject_class,
 				    GRID_VLINES, grid_param_spec);
 
-   grid_param_spec = g_param_spec_pointer ("grid-hline-vals", "Grid Hline Vals", "The locations of each of the horizontal lines", G_PARAM_READWRITE);
-
-   g_object_class_install_property (gobject_class,
-				    GRID_HLINE_VALS, grid_param_spec);
-
-   grid_param_spec = g_param_spec_pointer ("grid-vline-vals", "Grid Vline Vals", "The locations of each of the vertical lines", G_PARAM_READWRITE);
-
-   g_object_class_install_property (gobject_class,
-				    GRID_VLINE_VALS, grid_param_spec);
-
    graph_class->draw = gtk_databox_grid_real_draw;
    graph_class->create_gc = gtk_databox_grid_real_create_gc;
 }
@@ -240,10 +208,11 @@ GtkDataboxGraph *
 gtk_databox_grid_new (gint hlines, gint vlines, GdkColor * color, guint size)
 {
    GtkDataboxGrid *grid;
+
    grid = g_object_new (GTK_DATABOX_TYPE_GRID,
 			"color", color,
 			"size", size,
-			"grid-hlines", hlines, "grid-vlines", vlines, "grid-hline-vals",NULL, "grid-vline-vals", NULL, NULL);
+			"grid-hlines", hlines, "grid-vlines", vlines, NULL);
 
    return GTK_DATABOX_GRAPH (grid);
 }
@@ -269,7 +238,10 @@ GtkDataboxGraph *gtk_databox_grid_array_new (gint hlines, gint vlines, gfloat * 
    grid = g_object_new (GTK_DATABOX_TYPE_GRID,
 			"color", color,
 			"size", size,
-			"grid-hlines", hlines, "grid-vlines", vlines, "grid-hline-vals", local_hline_vals, "grid-vline-vals", local_vline_vals, NULL);
+			"grid-hlines", hlines, "grid-vlines", vlines, "grid-hline-vals", NULL);
+			//"grid-hlines", hlines, "grid-vlines", vlines, "grid-hline-vals", hline_vals, "grid-vline-vals", vline_vals, NULL);
+   hline_vals = local_hline_vals;
+   vline_vals = local_vline_vals;
 
    return GTK_DATABOX_GRAPH (grid);
 }
@@ -318,7 +290,7 @@ gtk_databox_grid_real_draw (GtkDataboxGraph * graph,
    factor_y =
       (bottom - top) / (grid->priv->hlines + 1);
 
-   if (grid->priv->hline_vals == NULL)
+   if (hline_vals == NULL)
       for (i = 0; i < grid->priv->hlines; i++)
       {
          y = offset_y + (i + 1) * factor_y;
@@ -328,12 +300,12 @@ gtk_databox_grid_real_draw (GtkDataboxGraph * graph,
    else
       for (i = 0; i < grid->priv->hlines; i++)
       {
-         y = grid->priv->hline_vals[i];
+         y = hline_vals[i];
          pixel_y = gtk_databox_value_to_pixel_y (box, y);
          gdk_draw_line (pixmap, gc, 0, pixel_y, width, pixel_y);
       }
 
-   if (grid->priv->vline_vals == NULL)
+   if (vline_vals == NULL)
       for (i = 0; i < grid->priv->vlines; i++)
       {
          x = offset_x + (i + 1) * factor_x;
@@ -343,7 +315,7 @@ gtk_databox_grid_real_draw (GtkDataboxGraph * graph,
    else
       for (i = 0; i < grid->priv->vlines; i++)
       {
-         x = grid->priv->vline_vals[i];
+         x = vline_vals[i];
          pixel_x = gtk_databox_value_to_pixel_x (box, x);
          gdk_draw_line (pixmap, gc, pixel_x, 0, pixel_x, height);
       }
@@ -416,70 +388,4 @@ gtk_databox_grid_get_vlines (GtkDataboxGrid * grid)
    g_return_val_if_fail (GTK_DATABOX_IS_GRID (grid), -1);
 
    return grid->priv->vlines;
-}
-
-/**
- * gtk_databox_grid_set_hline_vals:
- * @grid: a #GtkDataboxGrid graph object
- * @hline_vals: sets the pointer to the hline values for the grid
- *
- * Sets the pointer to the horizontal lines in the @grid.
- **/
-void
-gtk_databox_grid_set_hline_vals (GtkDataboxGrid * grid, gfloat *hline_vals)
-{
-   g_return_if_fail (GTK_DATABOX_IS_GRID (grid));
-
-   grid->priv->hline_vals = hline_vals;
-
-   g_object_notify (G_OBJECT (grid), "grid-hline-vals");
-}
-
-/**
- * gtk_databox_grid_get_hline_vals:
- * @grid: a #GtkDataboxGrid graph object
- *
- * Gets the pointer to the horizontal line values for the @grid.
- *
- * Return value: Pointer to the horizontal line values for the @grid.
- **/
-gfloat*
-gtk_databox_grid_get_hline_vals (GtkDataboxGrid * grid)
-{
-   g_return_val_if_fail (GTK_DATABOX_IS_GRID (grid), -1);
-
-   return grid->priv->hline_vals;
-}
-
-/**
- * gtk_databox_grid_set_vline_vals:
- * @grid: a #GtkDataboxGrid graph object
- * @vline_vals: sets the pointer to the vline values for the grid
- *
- * Sets the pointer to the vertical lines in the @grid.
- **/
-void
-gtk_databox_grid_set_vline_vals (GtkDataboxGrid * grid, gfloat *vline_vals)
-{
-   g_return_if_fail (GTK_DATABOX_IS_GRID (grid));
-
-   grid->priv->vline_vals = vline_vals;
-
-   g_object_notify (G_OBJECT (grid), "grid-vline-vals");
-}
-
-/**
- * gtk_databox_grid_get_vline_vals:
- * @grid: a #GtkDataboxGrid graph object
- *
- * Gets the pointer to the vertical line values for the @grid.
- *
- * Return value: Pointer to the vertical line values for the @grid.
- **/
-gfloat*
-gtk_databox_grid_get_vline_vals (GtkDataboxGrid * grid)
-{
-   g_return_val_if_fail (GTK_DATABOX_IS_GRID (grid), -1);
-
-   return grid->priv->vline_vals;
 }

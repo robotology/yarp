@@ -39,13 +39,10 @@ set(gtkdatabox_SRCS
     gtkdatabox/gtk/gtkdatabox_lines.c
     gtkdatabox/gtk/gtkdatabox_markers.c
     gtkdatabox/gtk/gtkdatabox_marshal.c
-    gtkdatabox/gtk/gtkdatabox_offset_bars.c
     gtkdatabox/gtk/gtkdatabox_points.c
-    gtkdatabox/gtk/gtkdatabox_regions.c
     gtkdatabox/gtk/gtkdatabox_ruler.c
     gtkdatabox/gtk/gtkdatabox_scale.c
     gtkdatabox/gtk/gtkdatabox_xyc_graph.c
-    gtkdatabox/gtk/gtkdatabox_xyyc_graph.c
 )
 
 set(gtkdatabox_HDRS
@@ -57,14 +54,11 @@ set(gtkdatabox_HDRS
     gtkdatabox/gtk/gtkdatabox_lines.h
     gtkdatabox/gtk/gtkdatabox_markers.h
     gtkdatabox/gtk/gtkdatabox_marshal.h
-    gtkdatabox/gtk/gtkdatabox_offset_bars.h
     gtkdatabox/gtk/gtkdatabox_points.h
-    gtkdatabox/gtk/gtkdatabox_regions.h
     gtkdatabox/gtk/gtkdatabox_ruler.h
     gtkdatabox/gtk/gtkdatabox_scale.h
     gtkdatabox/gtk/gtkdatabox_typedefs.h
     gtkdatabox/gtk/gtkdatabox_xyc_graph.h
-    gtkdatabox/gtk/gtkdatabox_xyyc_graph.h
 )
 
 add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})

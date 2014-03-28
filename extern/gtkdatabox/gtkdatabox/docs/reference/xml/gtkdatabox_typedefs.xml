@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="gtkdatabox-gtkdatabox-typedefs">
+<refmeta>
+<refentrytitle role="top_of_page" id="gtkdatabox-gtkdatabox-typedefs.top_of_page">gtkdatabox_typedefs</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>GTKDATABOX Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>gtkdatabox_typedefs</refname>
+<refpurpose></refpurpose>
+<!--[<xref linkend="desc" endterm="desc.title"/>]-->
+</refnamediv>
+
+<refsynopsisdiv id="gtkdatabox-gtkdatabox-typedefs.synopsis" role="synopsis">
+<title role="synopsis.title">Synopsis</title>
+<anchor id="GtkDatabox"/><anchor id="GtkDataboxGraph"/>
+<synopsis>
+                    <link linkend="GtkDatabox-struct">GtkDatabox</link>;
+                    <link linkend="GtkDataboxGraph-struct">GtkDataboxGraph</link>;
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.object-hierarchy" role="object_hierarchy">
+<title role="object_hierarchy.title">Object Hierarchy</title>
+<synopsis>
+  <link linkend="GObject">GObject</link>
+   +----<link linkend="GInitiallyUnowned">GInitiallyUnowned</link>
+         +----<link linkend="GtkObject">GtkObject</link>
+               +----<link linkend="GtkWidget">GtkWidget</link>
+                     +----GtkDatabox
+</synopsis>
+<synopsis>
+  <link linkend="GObject">GObject</link>
+   +----GtkDataboxGraph
+         +----<link linkend="GtkDataboxXYCGraph">GtkDataboxXYCGraph</link>
+         +----<link linkend="GtkDataboxGrid">GtkDataboxGrid</link>
+</synopsis>
+
+</refsect1>
+
+
+
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.implemented-interfaces" role="impl_interfaces">
+<title role="impl_interfaces.title">Implemented Interfaces</title>
+<para>
+GtkDatabox implements
+ <link linkend="AtkImplementorIface">AtkImplementorIface</link> and  <link linkend="GtkBuildable">GtkBuildable</link>.</para>
+
+</refsect1>
+
+
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.properties" role="properties">
+<title role="properties.title">Properties</title>
+<synopsis>
+  &quot;<link linkend="GtkDatabox--adjustment-x">adjustment-x</link>&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--adjustment-y">adjustment-y</link>&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--enable-selection">enable-selection</link>&quot;         <link linkend="gboolean">gboolean</link>              : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--enable-zoom">enable-zoom</link>&quot;              <link linkend="gboolean">gboolean</link>              : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--ruler-x">ruler-x</link>&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--ruler-y">ruler-y</link>&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--scale-type-x">scale-type-x</link>&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct
+  &quot;<link linkend="GtkDatabox--scale-type-y">scale-type-y</link>&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct
+  &quot;<link linkend="GtkDataboxGraph--color">color</link>&quot;                    <link linkend="gpointer">gpointer</link>              : Read / Write
+  &quot;<link linkend="GtkDataboxGraph--hide">hide</link>&quot;                     <link linkend="gboolean">gboolean</link>              : Read / Write
+  &quot;<link linkend="GtkDataboxGraph--size">size</link>&quot;                     <link linkend="gint">gint</link>                  : Read / Write
+</synopsis>
+</refsect1>
+
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.signals" role="signal_proto">
+<title role="signal_proto.title">Signals</title>
+<synopsis>
+  &quot;<link linkend="GtkDatabox-selection-canceled">selection-canceled</link>&quot;                             : Run First
+  &quot;<link linkend="GtkDatabox-selection-changed">selection-changed</link>&quot;                              : Run First
+  &quot;<link linkend="GtkDatabox-selection-finalized">selection-finalized</link>&quot;                            : Run First
+  &quot;<link linkend="GtkDatabox-selection-started">selection-started</link>&quot;                              : Run First
+  &quot;<link linkend="GtkDatabox-zoomed">zoomed</link>&quot;                                         : Run First
+</synopsis>
+</refsect1>
+
+
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.description" role="desc">
+<title role="desc.title">Description</title>
+<para>
+
+</para>
+</refsect1>
+
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.details" role="details">
+<title role="details.title">Details</title>
+<refsect2 id="GtkDatabox-struct" role="struct">
+<title>GtkDatabox</title>
+<indexterm zone="GtkDatabox-struct"><primary>GtkDatabox</primary></indexterm><programlisting>typedef struct _GtkDatabox GtkDatabox;</programlisting>
+<para>
+A GTK+ widget to display large amounts of numerical data quickly and easily. 
+The numerical data is represented/displayed by <link linkend="GtkDataboxGraph"><type>GtkDataboxGraph</type></link> objects, e.g.
+<link linkend="GtkDataboxPoints"><type>GtkDataboxPoints</type></link>.
+</para>
+<para>
+Implemented by <link linkend="GtkDatabox"><type>_GtkDatabox</type></link>;</para>
+<para>
+
+</para><variablelist role="struct">
+</variablelist></refsect2>
+<refsect2 id="GtkDataboxGraph-struct" role="struct">
+<title>GtkDataboxGraph</title>
+<indexterm zone="GtkDataboxGraph-struct"><primary>GtkDataboxGraph</primary></indexterm><programlisting>typedef struct _GtkDataboxGraph GtkDataboxGraph;</programlisting>
+<para>
+The GtkDataboxGraph is the base class for all kinds of graphs (e.g. lines, points, decorations like coordinate crosses) 
+to be shown in a <link linkend="GtkDatabox"><type>GtkDatabox</type></link> wiget.
+</para>
+<para>
+Implemented by <link linkend="GtkDataboxGraph"><type>_GtkDataboxGraph</type></link></para>
+<para>
+
+</para><variablelist role="struct">
+</variablelist></refsect2>
+
+</refsect1>
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.property-details" role="property_details">
+<title role="property_details.title">Property Details</title>
+<refsect2 id="GtkDatabox--adjustment-x"><title>The <literal>&quot;adjustment-x&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--adjustment-x"><primary>GtkDatabox:adjustment-x</primary></indexterm><programlisting>  &quot;adjustment-x&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct</programlisting>
+<para>GtkAdjustment for horizontal scrolling.</para></refsect2>
+<refsect2 id="GtkDatabox--adjustment-y"><title>The <literal>&quot;adjustment-y&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--adjustment-y"><primary>GtkDatabox:adjustment-y</primary></indexterm><programlisting>  &quot;adjustment-y&quot;             <link linkend="GtkAdjustment">GtkAdjustment</link>*        : Read / Write / Construct</programlisting>
+<para>GtkAdjustment for vertical scrolling.</para></refsect2>
+<refsect2 id="GtkDatabox--enable-selection"><title>The <literal>&quot;enable-selection&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--enable-selection"><primary>GtkDatabox:enable-selection</primary></indexterm><programlisting>  &quot;enable-selection&quot;         <link linkend="gboolean">gboolean</link>              : Read / Write / Construct</programlisting>
+<para>
+Defines whether the user can select 
+rectangular areas with the mouse (<link linkend="TRUE:CAPS"><type>TRUE</type></link>) or not (<link linkend="FALSE:CAPS"><type>FALSE</type></link>).</para>
+<para>
+
+</para><para>Default value: TRUE</para>
+</refsect2>
+<refsect2 id="GtkDatabox--enable-zoom"><title>The <literal>&quot;enable-zoom&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--enable-zoom"><primary>GtkDatabox:enable-zoom</primary></indexterm><programlisting>  &quot;enable-zoom&quot;              <link linkend="gboolean">gboolean</link>              : Read / Write / Construct</programlisting>
+<para>
+Defines whether the user can use the mouse to zoom in or out (<link linkend="TRUE:CAPS"><type>TRUE</type></link>) or not (<link linkend="FALSE:CAPS"><type>FALSE</type></link>).</para>
+<para>
+
+</para><para>Default value: TRUE</para>
+</refsect2>
+<refsect2 id="GtkDatabox--ruler-x"><title>The <literal>&quot;ruler-x&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--ruler-x"><primary>GtkDatabox:ruler-x</primary></indexterm><programlisting>  &quot;ruler-x&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct</programlisting>
+<para>A horizontal GtkDataboxRuler or NULL.</para></refsect2>
+<refsect2 id="GtkDatabox--ruler-y"><title>The <literal>&quot;ruler-y&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--ruler-y"><primary>GtkDatabox:ruler-y</primary></indexterm><programlisting>  &quot;ruler-y&quot;                  <link linkend="GtkDataboxRuler">GtkDataboxRuler</link>*      : Read / Write / Construct</programlisting>
+<para>A vertical GtkDataboxRuler or NULL.</para></refsect2>
+<refsect2 id="GtkDatabox--scale-type-x"><title>The <literal>&quot;scale-type-x&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--scale-type-x"><primary>GtkDatabox:scale-type-x</primary></indexterm><programlisting>  &quot;scale-type-x&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct</programlisting>
+<para>Horizontal scale type (linear or logarithmic).</para><para>Default value: GTK_DATABOX_SCALE_LINEAR</para>
+</refsect2>
+<refsect2 id="GtkDatabox--scale-type-y"><title>The <literal>&quot;scale-type-y&quot;</literal> property</title>
+<indexterm zone="GtkDatabox--scale-type-y"><primary>GtkDatabox:scale-type-y</primary></indexterm><programlisting>  &quot;scale-type-y&quot;             <link linkend="GtkDataboxScaleType">GtkDataboxScaleType</link>   : Read / Write / Construct</programlisting>
+<para>Vertical scale type (linear or logarithmic).</para><para>Default value: GTK_DATABOX_SCALE_LINEAR</para>
+</refsect2>
+<refsect2 id="GtkDataboxGraph--color"><title>The <literal>&quot;color&quot;</literal> property</title>
+<indexterm zone="GtkDataboxGraph--color"><primary>GtkDataboxGraph:color</primary></indexterm><programlisting>  &quot;color&quot;                    <link linkend="gpointer">gpointer</link>              : Read / Write</programlisting>
+<para>Color of graph.</para></refsect2>
+<refsect2 id="GtkDataboxGraph--hide"><title>The <literal>&quot;hide&quot;</literal> property</title>
+<indexterm zone="GtkDataboxGraph--hide"><primary>GtkDataboxGraph:hide</primary></indexterm><programlisting>  &quot;hide&quot;                     <link linkend="gboolean">gboolean</link>              : Read / Write</programlisting>
+<para>Determine if graph is hidden or not.</para><para>Default value: FALSE</para>
+</refsect2>
+<refsect2 id="GtkDataboxGraph--size"><title>The <literal>&quot;size&quot;</literal> property</title>
+<indexterm zone="GtkDataboxGraph--size"><primary>GtkDataboxGraph:size</primary></indexterm><programlisting>  &quot;size&quot;                     <link linkend="gint">gint</link>                  : Read / Write</programlisting>
+<para>Size of displayed items.</para><para>Default value: 0</para>
+</refsect2>
+
+</refsect1>
+
+<refsect1 id="gtkdatabox-gtkdatabox-typedefs.signal-details" role="signals">
+<title role="signals.title">Signal Details</title>
+<refsect2 id="GtkDatabox-selection-canceled"><title>The <literal>&quot;selection-canceled&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-canceled"><primary>GtkDatabox::selection-canceled</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)      : Run First</programlisting>
+<para>
+This signal is emitted after a right click outside 
+a selection rectangle.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget which zoomed in or out.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-selection-changed"><title>The <literal>&quot;selection-changed&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-changed"><primary>GtkDatabox::selection-changed</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    selection_values,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)             : Run First</programlisting>
+<para>
+This signal is emitted when the mouse is moved 
+with the left button pressed (and the <link linkend="GtkDatabox--enable-selection"><type>"enable-selection"</type></link> property 
+is set). The corners of the selection rectangle are stored in <parameter>selection_values</parameter>.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget in which the selection was changed.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>selection_values</parameter>&nbsp;:</term>
+<listitem><simpara> The corners of the selection rectangle.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-selection-finalized"><title>The <literal>&quot;selection-finalized&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-finalized"><primary>GtkDatabox::selection-finalized</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    selection_values,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)             : Run First</programlisting>
+<para>
+This signal is emitted when the left mouse button
+is released after a selection was started before.
+</para>
+<para>
+<parameter>see_also</parameter>: <link linkend="GtkDatabox-selection-changed"><type>"selection-changed"</type></link></para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget in which the selection has been stopped.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>selection_values</parameter>&nbsp;:</term>
+<listitem><simpara> The corners of the selection rectangle.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-selection-started"><title>The <literal>&quot;selection-started&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-selection-started"><primary>GtkDatabox::selection-started</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    selection_values,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)             : Run First</programlisting>
+<para>
+This signal is emitted when the mouse is firstmoved 
+with the left button pressed after the mouse-down (and the <link linkend="GtkDatabox--enable-selection"><type>"enable-selection"</type></link> property 
+is set). The corners of the selection rectangle are stored in <parameter>selection_values</parameter>.
+</para>
+<para>
+<parameter>see_also</parameter>: <link linkend="GtkDatabox-selection-changed"><type>"selection-changed"</type></link></para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget in which the selection has been started.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>selection_values</parameter>&nbsp;:</term>
+<listitem><simpara> The corners of the selection rectangle.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2><refsect2 id="GtkDatabox-zoomed"><title>The <literal>&quot;zoomed&quot;</literal> signal</title>
+<indexterm zone="GtkDatabox-zoomed"><primary>GtkDatabox::zoomed</primary></indexterm><programlisting><link linkend="void">void</link>                user_function                      (<link linkend="GtkDatabox">GtkDatabox</link> *box,
+                                                        <link linkend="gpointer">gpointer</link>    user_data)      : Run First</programlisting>
+<para>
+This signal is emitted each time the zoom of the widget is changed, see for example 
+<link linkend="gtk-databox-zoom-to-selection"><function>gtk_databox_zoom_to_selection()</function></link>, <link linkend="gtk-databox-set-visible-limits"><function>gtk_databox_set_visible_limits()</function></link>.</para>
+<para>
+
+</para><variablelist role="params">
+<varlistentry><term><parameter>box</parameter>&nbsp;:</term>
+<listitem><simpara> The <link linkend="GtkDatabox"><type>GtkDatabox</type></link> widget which zoomed in or out.
+</simpara></listitem></varlistentry>
+<varlistentry><term><parameter>user_data</parameter>&nbsp;:</term>
+<listitem><simpara>user data set when the signal handler was connected.</simpara></listitem></varlistentry>
+</variablelist></refsect2>
+</refsect1>
+
+
+
+</refentry>

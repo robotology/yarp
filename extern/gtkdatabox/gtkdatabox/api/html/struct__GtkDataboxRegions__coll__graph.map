@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="$struct__GtkDataboxXYYCGraph.html" title="_GtkDataboxXYYCGraph" alt="" coords="53,197,224,227"/>
-<area shape="rect" id="node4" href="$struct__GtkDataboxXYYCGraphPrivate.html" title="_GtkDataboxXYYCGraphPrivate" alt="" coords="5,101,216,131"/>
-<area shape="rect" id="node6" href="$struct__GtkDataboxGraph.html" title="_GtkDataboxGraph" alt="" coords="240,101,373,131"/>
-<area shape="rect" id="node8" href="$struct__GtkDataboxGraphPrivate.html" title="_GtkDataboxGraphPrivate" alt="" coords="220,5,393,35"/>
-<area shape="rect" id="node10" href="$struct__GtkDataboxRegionsPrivate.html" title="_GtkDataboxRegionsPrivate" alt="" coords="248,197,435,227"/>
-</map>

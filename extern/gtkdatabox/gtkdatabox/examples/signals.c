@@ -287,7 +287,7 @@ create_signals (void)
    g_signal_connect_swapped (G_OBJECT (close_button), "clicked",
 			     G_CALLBACK (gtk_main_quit), G_OBJECT (box));
    gtk_box_pack_start (GTK_BOX (box2), close_button, TRUE, TRUE, 0);
-   gtk_widget_set_can_default(close_button, GTK_CAN_DEFAULT);
+   GTK_WIDGET_SET_FLAGS (close_button, GTK_CAN_DEFAULT);
    gtk_widget_grab_default (close_button);
 
    g_signal_connect (G_OBJECT (box), "zoomed",

@@ -281,7 +281,7 @@ if(CREATE_GUIS)
 endif()
 
 if(CREATE_YARPSCOPE)
-    find_package(GtkDatabox 0.9.2)
+    find_package(GtkDatabox)
     checkbuildandset_dependency(GtkDatabox)
     set(GtkDataboxMM_REQUIRED_VERSION 0.9.3)
     find_package(GtkDataboxMM ${GtkDataboxMM_REQUIRED_VERSION})

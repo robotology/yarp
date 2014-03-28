@@ -1,0 +1,404 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>gtkdatabox_typedefs</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
+<link rel="start" href="index.html" title="GtkDatabox Reference Manual">
+<link rel="up" href="ch01.html" title="GtkDatabox">
+<link rel="prev" href="gtkdatabox-gtkdatabox-scale.html" title="gtkdatabox_scale">
+<meta name="generator" content="GTK-Doc V1.10 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="GtkDatabox">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="gtkdatabox-gtkdatabox-scale.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GtkDatabox Reference Manual</th>
+<td> </td>
+</tr>
+<tr><td colspan="5" class="shortcuts"><nobr><a href="#gtkdatabox-gtkdatabox-typedefs.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#gtkdatabox-gtkdatabox-typedefs.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gtkdatabox-gtkdatabox-typedefs.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gtkdatabox-gtkdatabox-typedefs.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#gtkdatabox-gtkdatabox-typedefs.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#gtkdatabox-gtkdatabox-typedefs.signals" class="shortcut">Signals</a></nobr></td></tr>
+</table>
+<div class="refentry" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="gtkdatabox-gtkdatabox-typedefs.top_of_page"></a>gtkdatabox_typedefs</span></h2>
+<p>gtkdatabox_typedefs</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="gtkdatabox-gtkdatabox-typedefs.synopsis"></a><h2>Synopsis</h2>
+<a name="GtkDatabox"></a><a name="GtkDataboxGraph"></a><pre class="synopsis">
+                    <a class="link" href="GtkDatabox.html#GtkDatabox-struct" title="GtkDatabox">GtkDatabox</a>;
+                    <a class="link" href="GtkDataboxGraph.html#GtkDataboxGraph-struct" title="GtkDataboxGraph">GtkDataboxGraph</a>;
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  GObject
+   +----GInitiallyUnowned
+         +----<a
+href="/usr/share/gtk-doc/html/gtk/GtkObject.html"
+>GtkObject</a>
+               +----<a
+href="/usr/share/gtk-doc/html/gtk/GtkWidget.html"
+>GtkWidget</a>
+                     +----GtkDatabox
+</pre>
+<pre class="synopsis">
+  GObject
+   +----GtkDataboxGraph
+         +----<a class="link" href="GtkDataboxXYCGraph.html" title="GtkDataboxXYCGraph">GtkDataboxXYCGraph</a>
+         +----<a class="link" href="GtkDataboxGrid.html" title="GtkDataboxGrid">GtkDataboxGrid</a>
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GtkDatabox implements
+ AtkImplementorIface and  <a
+href="/usr/share/gtk-doc/html/gtk/gtk-gtkbuildable.html#GtkBuildable"
+>GtkBuildable</a>.</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--adjustment-x" title='The "adjustment-x" property'>adjustment-x</a>"             <a
+href="/usr/share/gtk-doc/html/gtk/GtkAdjustment.html"
+>GtkAdjustment</a>*        : Read / Write / Construct
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--adjustment-y" title='The "adjustment-y" property'>adjustment-y</a>"             <a
+href="/usr/share/gtk-doc/html/gtk/GtkAdjustment.html"
+>GtkAdjustment</a>*        : Read / Write / Construct
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--enable-selection" title='The "enable-selection" property'>enable-selection</a>"         gboolean              : Read / Write / Construct
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--enable-zoom" title='The "enable-zoom" property'>enable-zoom</a>"              gboolean              : Read / Write / Construct
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--ruler-x" title='The "ruler-x" property'>ruler-x</a>"                  <a class="link" href="GtkDataboxRuler.html" title="GtkDataboxRuler">GtkDataboxRuler</a>*      : Read / Write / Construct
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--ruler-y" title='The "ruler-y" property'>ruler-y</a>"                  <a class="link" href="GtkDataboxRuler.html" title="GtkDataboxRuler">GtkDataboxRuler</a>*      : Read / Write / Construct
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--scale-type-x" title='The "scale-type-x" property'>scale-type-x</a>"             <a class="link" href="gtkdatabox-gtkdatabox-scale.html#GtkDataboxScaleType" title="enum GtkDataboxScaleType">GtkDataboxScaleType</a>   : Read / Write / Construct
+  "<a class="link" href="GtkDatabox.html#GtkDatabox--scale-type-y" title='The "scale-type-y" property'>scale-type-y</a>"             <a class="link" href="gtkdatabox-gtkdatabox-scale.html#GtkDataboxScaleType" title="enum GtkDataboxScaleType">GtkDataboxScaleType</a>   : Read / Write / Construct
+  "<a class="link" href="GtkDataboxGraph.html#GtkDataboxGraph--color" title='The "color" property'>color</a>"                    gpointer              : Read / Write
+  "<a class="link" href="GtkDataboxGraph.html#GtkDataboxGraph--hide" title='The "hide" property'>hide</a>"                     gboolean              : Read / Write
+  "<a class="link" href="GtkDataboxGraph.html#GtkDataboxGraph--size" title='The "size" property'>size</a>"                     gint                  : Read / Write
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.signals"></a><h2>Signals</h2>
+<pre class="synopsis">
+  "<a class="link" href="GtkDatabox.html#GtkDatabox-selection-canceled" title='The "selection-canceled" signal'>selection-canceled</a>"                             : Run First
+  "<a class="link" href="GtkDatabox.html#GtkDatabox-selection-changed" title='The "selection-changed" signal'>selection-changed</a>"                              : Run First
+  "<a class="link" href="GtkDatabox.html#GtkDatabox-selection-finalized" title='The "selection-finalized" signal'>selection-finalized</a>"                            : Run First
+  "<a class="link" href="GtkDatabox.html#GtkDatabox-selection-started" title='The "selection-started" signal'>selection-started</a>"                              : Run First
+  "<a class="link" href="GtkDatabox.html#GtkDatabox-zoomed" title='The "zoomed" signal'>zoomed</a>"                                         : Run First
+</pre>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.description"></a><h2>Description</h2>
+<p>
+
+</p>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.details"></a><h2>Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox-struct"></a><h3>GtkDatabox</h3>
+<pre class="programlisting">typedef struct _GtkDatabox GtkDatabox;</pre>
+<p>
+A GTK+ widget to display large amounts of numerical data quickly and easily. 
+The numerical data is represented/displayed by <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">GtkDataboxGraph</span></a> objects, e.g.
+<a class="link" href="GtkDataboxPoints.html" title="GtkDataboxPoints"><span class="type">GtkDataboxPoints</span></a>.
+</p>
+<p>
+Implemented by <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">_GtkDatabox</span></a>;</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGraph-struct"></a><h3>GtkDataboxGraph</h3>
+<pre class="programlisting">typedef struct _GtkDataboxGraph GtkDataboxGraph;</pre>
+<p>
+The GtkDataboxGraph is the base class for all kinds of graphs (e.g. lines, points, decorations like coordinate crosses) 
+to be shown in a <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> wiget.
+</p>
+<p>
+Implemented by <a class="link" href="GtkDataboxGraph.html" title="GtkDataboxGraph"><span class="type">_GtkDataboxGraph</span></a></p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody></tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.property-details"></a><h2>Property Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--adjustment-x"></a><h3>The <code class="literal">"adjustment-x"</code> property</h3>
+<pre class="programlisting">  "adjustment-x"             <a
+href="/usr/share/gtk-doc/html/gtk/GtkAdjustment.html"
+>GtkAdjustment</a>*        : Read / Write / Construct</pre>
+<p>GtkAdjustment for horizontal scrolling.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--adjustment-y"></a><h3>The <code class="literal">"adjustment-y"</code> property</h3>
+<pre class="programlisting">  "adjustment-y"             <a
+href="/usr/share/gtk-doc/html/gtk/GtkAdjustment.html"
+>GtkAdjustment</a>*        : Read / Write / Construct</pre>
+<p>GtkAdjustment for vertical scrolling.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--enable-selection"></a><h3>The <code class="literal">"enable-selection"</code> property</h3>
+<pre class="programlisting">  "enable-selection"         gboolean              : Read / Write / Construct</pre>
+<p>
+Defines whether the user can select 
+rectangular areas with the mouse (<span class="type">TRUE</span>) or not (<span class="type">FALSE</span>).</p>
+<p>
+
+</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--enable-zoom"></a><h3>The <code class="literal">"enable-zoom"</code> property</h3>
+<pre class="programlisting">  "enable-zoom"              gboolean              : Read / Write / Construct</pre>
+<p>
+Defines whether the user can use the mouse to zoom in or out (<span class="type">TRUE</span>) or not (<span class="type">FALSE</span>).</p>
+<p>
+
+</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--ruler-x"></a><h3>The <code class="literal">"ruler-x"</code> property</h3>
+<pre class="programlisting">  "ruler-x"                  <a class="link" href="GtkDataboxRuler.html" title="GtkDataboxRuler">GtkDataboxRuler</a>*      : Read / Write / Construct</pre>
+<p>A horizontal GtkDataboxRuler or NULL.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--ruler-y"></a><h3>The <code class="literal">"ruler-y"</code> property</h3>
+<pre class="programlisting">  "ruler-y"                  <a class="link" href="GtkDataboxRuler.html" title="GtkDataboxRuler">GtkDataboxRuler</a>*      : Read / Write / Construct</pre>
+<p>A vertical GtkDataboxRuler or NULL.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--scale-type-x"></a><h3>The <code class="literal">"scale-type-x"</code> property</h3>
+<pre class="programlisting">  "scale-type-x"             <a class="link" href="gtkdatabox-gtkdatabox-scale.html#GtkDataboxScaleType" title="enum GtkDataboxScaleType">GtkDataboxScaleType</a>   : Read / Write / Construct</pre>
+<p>Horizontal scale type (linear or logarithmic).</p>
+<p>Default value: GTK_DATABOX_SCALE_LINEAR</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox--scale-type-y"></a><h3>The <code class="literal">"scale-type-y"</code> property</h3>
+<pre class="programlisting">  "scale-type-y"             <a class="link" href="gtkdatabox-gtkdatabox-scale.html#GtkDataboxScaleType" title="enum GtkDataboxScaleType">GtkDataboxScaleType</a>   : Read / Write / Construct</pre>
+<p>Vertical scale type (linear or logarithmic).</p>
+<p>Default value: GTK_DATABOX_SCALE_LINEAR</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGraph--color"></a><h3>The <code class="literal">"color"</code> property</h3>
+<pre class="programlisting">  "color"                    gpointer              : Read / Write</pre>
+<p>Color of graph.</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGraph--hide"></a><h3>The <code class="literal">"hide"</code> property</h3>
+<pre class="programlisting">  "hide"                     gboolean              : Read / Write</pre>
+<p>Determine if graph is hidden or not.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDataboxGraph--size"></a><h3>The <code class="literal">"size"</code> property</h3>
+<pre class="programlisting">  "size"                     gint                  : Read / Write</pre>
+<p>Size of displayed items.</p>
+<p>Default value: 0</p>
+</div>
+</div>
+<div class="refsect1" lang="en">
+<a name="gtkdatabox-gtkdatabox-typedefs.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox-selection-canceled"></a><h3>The <code class="literal">"selection-canceled"</code> signal</h3>
+<pre class="programlisting">void                user_function                      (<a class="link" href="GtkDatabox.html" title="GtkDatabox">GtkDatabox</a> *box,
+                                                        gpointer    user_data)      : Run First</pre>
+<p>
+This signal is emitted after a right click outside 
+a selection rectangle.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>box</code></em> :</span></p></td>
+<td> The <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget which zoomed in or out.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox-selection-changed"></a><h3>The <code class="literal">"selection-changed"</code> signal</h3>
+<pre class="programlisting">void                user_function                      (<a class="link" href="GtkDatabox.html" title="GtkDatabox">GtkDatabox</a> *box,
+                                                        gpointer    selection_values,
+                                                        gpointer    user_data)             : Run First</pre>
+<p>
+This signal is emitted when the mouse is moved 
+with the left button pressed (and the <a class="link" href="GtkDatabox.html#GtkDatabox--enable-selection" title='The "enable-selection" property'><span class="type">"enable-selection"</span></a> property 
+is set). The corners of the selection rectangle are stored in <em class="parameter"><code>selection_values</code></em>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>box</code></em> :</span></p></td>
+<td> The <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget in which the selection was changed.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>selection_values</code></em> :</span></p></td>
+<td> The corners of the selection rectangle.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox-selection-finalized"></a><h3>The <code class="literal">"selection-finalized"</code> signal</h3>
+<pre class="programlisting">void                user_function                      (<a class="link" href="GtkDatabox.html" title="GtkDatabox">GtkDatabox</a> *box,
+                                                        gpointer    selection_values,
+                                                        gpointer    user_data)             : Run First</pre>
+<p>
+This signal is emitted when the left mouse button
+is released after a selection was started before.
+</p>
+<p>
+<em class="parameter"><code>see_also</code></em>: <a class="link" href="GtkDatabox.html#GtkDatabox-selection-changed" title='The "selection-changed" signal'><span class="type">"selection-changed"</span></a></p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>box</code></em> :</span></p></td>
+<td> The <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget in which the selection has been stopped.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>selection_values</code></em> :</span></p></td>
+<td> The corners of the selection rectangle.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox-selection-started"></a><h3>The <code class="literal">"selection-started"</code> signal</h3>
+<pre class="programlisting">void                user_function                      (<a class="link" href="GtkDatabox.html" title="GtkDatabox">GtkDatabox</a> *box,
+                                                        gpointer    selection_values,
+                                                        gpointer    user_data)             : Run First</pre>
+<p>
+This signal is emitted when the mouse is firstmoved 
+with the left button pressed after the mouse-down (and the <a class="link" href="GtkDatabox.html#GtkDatabox--enable-selection" title='The "enable-selection" property'><span class="type">"enable-selection"</span></a> property 
+is set). The corners of the selection rectangle are stored in <em class="parameter"><code>selection_values</code></em>.
+</p>
+<p>
+<em class="parameter"><code>see_also</code></em>: <a class="link" href="GtkDatabox.html#GtkDatabox-selection-changed" title='The "selection-changed" signal'><span class="type">"selection-changed"</span></a></p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>box</code></em> :</span></p></td>
+<td> The <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget in which the selection has been started.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>selection_values</code></em> :</span></p></td>
+<td> The corners of the selection rectangle.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" lang="en">
+<a name="GtkDatabox-zoomed"></a><h3>The <code class="literal">"zoomed"</code> signal</h3>
+<pre class="programlisting">void                user_function                      (<a class="link" href="GtkDatabox.html" title="GtkDatabox">GtkDatabox</a> *box,
+                                                        gpointer    user_data)      : Run First</pre>
+<p>
+This signal is emitted each time the zoom of the widget is changed, see for example 
+<a class="link" href="GtkDatabox.html#gtk-databox-zoom-to-selection" title="gtk_databox_zoom_to_selection ()"><code class="function">gtk_databox_zoom_to_selection()</code></a>, <a class="link" href="GtkDatabox.html#gtk-databox-set-visible-limits" title="gtk_databox_set_visible_limits ()"><code class="function">gtk_databox_set_visible_limits()</code></a>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>box</code></em> :</span></p></td>
+<td> The <a class="link" href="GtkDatabox.html" title="GtkDatabox"><span class="type">GtkDatabox</span></a> widget which zoomed in or out.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.10</div>
+</body>
+</html>

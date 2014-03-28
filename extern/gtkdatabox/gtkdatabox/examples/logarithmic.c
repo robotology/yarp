@@ -207,7 +207,7 @@ create_logarithmic (void)
    g_signal_connect (GTK_OBJECT (close_button), "clicked",
 		     G_CALLBACK (gtk_main_quit), NULL);
    gtk_box_pack_start (GTK_BOX (vbox), close_button, FALSE, FALSE, 0);
-   gtk_widget_set_can_default(close_button, GTK_CAN_DEFAULT);
+   GTK_WIDGET_SET_FLAGS (close_button, GTK_CAN_DEFAULT);
    gtk_widget_grab_default (close_button);
    gtk_widget_grab_focus (close_button);
 
