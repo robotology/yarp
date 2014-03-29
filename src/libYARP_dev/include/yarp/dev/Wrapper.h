@@ -38,17 +38,17 @@ public:
      */
     virtual ~IWrapper() {}
 
-    /*
-    * Attach to another object.
-    * @param poly: the polydriver that you want to attach to.
-    * @return true/false on success failure.
-    */
+    /**
+     * Attach to another object.
+     * @param poly: the polydriver that you want to attach to.
+     * @return true/false on success failure.
+     */
     virtual bool attach(PolyDriver *poly)=0;
 
-    /*
-    * Detach the object (you must have first called attach).
-    * @return true/false on success failure.
-    */
+    /**
+     * Detach the object (you must have first called attach).
+     * @return true/false on success failure.
+     */
     virtual bool detach()=0;
 };
 
@@ -70,18 +70,18 @@ public:
      */
     virtual ~IMultipleWrapper() {}
 
-    /*
-    * Attach to a list of objects.
-    * @param poly: the polydriver that you want to attach to.
-    * @key: specify the key which identifies the driver to attach to.
-    * @return true/false on success failure.
-    */
+    /**
+     * Attach to a list of objects.
+     * @param poly: the polydriver that you want to attach to.
+     * @key: specify the key which identifies the driver to attach to.
+     * @return true/false on success failure.
+     */
     virtual bool attachAll(const PolyDriverList &p)=0;
 
-    /*
-    * Detach the object (you must have first called attach).
-    * @return true/false on success failure.
-    */
+    /**
+     * Detach the object (you must have first called attach).
+     * @return true/false on success failure.
+     */
     virtual bool detachAll()=0;
 };
 

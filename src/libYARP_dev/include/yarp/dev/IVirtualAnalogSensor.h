@@ -43,21 +43,23 @@ public:
 
     virtual ~IVirtualAnalogSensor(){}
 
-    /* Check the status of a given channel.
-    * @param ch: channel number.
-    * @return VAS_status type.
-    */
+    /** Check the status of a given channel.
+     * @param ch: channel number.
+     * @return VAS_status type.
+     */
     virtual int getState(int ch)=0;
 
-    /* Get the number of channels of the sensor.
+    /**
+     * Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
     virtual int getChannels()=0;
     
-    /* Set a vector of torque values for virtual sensor
+    /**
+     * Set a vector of torque values for virtual sensor
      * @param vals a vector containing the sensor's last readings.
      * @return true if ok, false otherwise.
-     **/
+     */
     virtual bool updateMeasure(yarp::sig::Vector &measure)=0;
     virtual bool updateMeasure(int ch, double &measure)=0;
 
