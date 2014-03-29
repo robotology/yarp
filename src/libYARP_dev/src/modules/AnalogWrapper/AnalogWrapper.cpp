@@ -259,6 +259,9 @@ void AnalogWrapper::attach(yarp::dev::IAnalogSensor *s)
     {
         handlers[i]->setInterface(analogSensor_p);
     }
+    //Resize vector of read data to avoid further allocation of memory 
+    //as long as the number of channels does not change
+    lastDataRead.resize((size_t)analogSensor_p->getChannels(),0.0);
 }
 
 void AnalogWrapper::detach()
@@ -427,14 +430,11 @@ void AnalogWrapper::run()
 
     if (analogSensor_p!=0)
     {
-        // read from the analog sensor
-        yarp::sig::Vector v;
-
-        ret=analogSensor_p->read(v);
+        ret=analogSensor_p->read(lastDataRead);
 
         if (ret==yarp::dev::IAnalogSensor::AS_OK)
         {
-            if (v.size()>0)
+            if (lastDataRead.size()>0)
             {
                 lastStateStamp.update();
                 // send the data on the port(s), splitting them as specified in the config file
@@ -443,17 +443,17 @@ void AnalogWrapper::run()
                     yarp::sig::Vector &pv = analogPorts[i].port.prepare();
                     first = analogPorts[i].offset;
                     if(analogPorts[i].length==-1)   // read the max length available
-                        last = v.size()-1;
+                        last = lastDataRead.size()-1;
                     else
                         last = analogPorts[i].offset + analogPorts[i].length - 1;
 
                     // check vector limit
-                    if(last>=(int)v.size()){
+                    if(last>=(int)lastDataRead.size()){
                         cerr<<"Error while sending analog sensor output on port "<< analogPorts[i].port_name<< endl;
-                        cerr<<"Vector size expected to be at least "<<last<<" whereas it is "<< v.size()<< endl;
+                        cerr<<"Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size()<< endl;
                         continue;
                     }
-                    pv = v.subVector(first, last);
+                    pv = lastDataRead.subVector(first, last);
 
                     analogPorts[i].port.setEnvelope(lastStateStamp);
                     analogPorts[i].port.write();
@@ -461,7 +461,7 @@ void AnalogWrapper::run()
             }
             else
             {
-                printf("%s: vector size non valid: %lu\n", id.c_str(), v.size());
+                printf("%s: vector size non valid: %lu\n", id.c_str(), lastDataRead.size());
             }
         }
         else
