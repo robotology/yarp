@@ -31,19 +31,22 @@ class YARP_dev_API yarp::dev::IGenericSensor
 public:
     virtual ~IGenericSensor(){}
 
-    /* Read a vector from the sensor.
+    /**
+     * Read a vector from the sensor.
      * @param out a vector containing the sensor's last readings.
      * @return true/false success/failure
-     **/
+     */
     virtual bool read(yarp::sig::Vector &out)=0;
     
-    /* Get the number of channels of the sensor.
+    /** 
+     * Get the number of channels of the sensor.
      * @param nc pointer to storage, return value
      * @return true/false success/failure
      */
     virtual bool getChannels(int *nc)=0;
 
-    /* Calibrate the sensor, single channel.
+    /**
+     * Calibrate the sensor, single channel.
      * @param ch channel number
      * @param v reset valure
      * @return true/false success/failure

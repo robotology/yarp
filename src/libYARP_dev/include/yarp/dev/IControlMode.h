@@ -27,49 +27,49 @@ class YARP_dev_API yarp::dev::IControlMode
 public:
     virtual ~IControlMode(){}
 
-    /*
+    /**
     * Set position mode, single axis.
     * @param j: joint number
     * @return: true/false success failure.
     */
     virtual bool setPositionMode(int j)=0;
 
-    /*
+    /**
     * Set velocity mode, single axis.
     * @param j: joint number
     * @return: true/false success failure.
     */
     virtual bool setVelocityMode(int j)=0;
 
-    /*
+    /**
     * Set torque mode, single axis.
     * @param j: joint number
     * @return: true/false success failure.
     */
     virtual bool setTorqueMode(int j)=0;
 
-	/*
+    /**
     * Set impedance position mode, single axis.
     * @param j: joint number
     * @return: true/false success failure.
     */
     virtual bool setImpedancePositionMode(int j)=0;
 
-	/*
+    /**
     * Set impedance velocity mode, single axis.
     * @param j: joint number
     * @return: true/false success failure.
     */
     virtual bool setImpedanceVelocityMode(int j)=0;
 
-    /*
+    /**
     * Set open loop mode, single axis.
     * @param j: joint number
     * @return: true/false success failure.
     */
     virtual bool setOpenLoopMode(int j)=0;
 
-    /*
+    /**
     * Get the current control mode.
     * @param j: joint number
     * @param mode: a vocab of the current control mode for joint j.
@@ -77,7 +77,7 @@ public:
     */
     virtual bool getControlMode(int j, int *mode)=0;
 
-    /*
+    /**
     * Get the current control mode (multiple joints).
     * @param modes: a vector containing vocabs for the current control modes of the joints.
     * @return: true/false success failure.

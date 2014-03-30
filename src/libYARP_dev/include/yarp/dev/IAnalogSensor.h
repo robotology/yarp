@@ -42,46 +42,53 @@ public:
 
     virtual ~IAnalogSensor(){}
 
-    /* Read a vector from the sensor.
+    /**
+     * Read a vector from the sensor.
      * @param out a vector containing the sensor's last readings.
      * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
-     **/
+     */
     virtual int read(yarp::sig::Vector &out)=0;
    
-    /* Check the state value of a given channel.
-    * @param ch: channel number.
-    * @return status.
-    */
+    /**
+     * Check the state value of a given channel.
+     * @param ch: channel number.
+     * @return status.
+     */
     virtual int getState(int ch)=0;
     
-    /* Get the number of channels of the sensor.
+    /**
+     * Get the number of channels of the sensor.
      * @return number of channels (0 in case of errors).
      */
     virtual int getChannels()=0;
 
-    /* Calibrates the whole sensor.
-	 * @return status.
+    /**
+     * Calibrates the whole sensor.
+     * @return status.
      */
-	virtual int calibrateSensor()=0;
+    virtual int calibrateSensor()=0;
 
-	/* Calibrates the whole sensor, using an vector of calibration values.
+    /**
+     * Calibrates the whole sensor, using an vector of calibration values.
      * @param value: a vector of calibration values.
-	 * @return status.
+     * @return status.
      */
-	virtual int calibrateSensor(const yarp::sig::Vector& value)=0;
+    virtual int calibrateSensor(const yarp::sig::Vector& value)=0;
 
-    /* Calibrates one single channel.
-	 * @param ch: channel number.
-	 * @return status.
+    /**
+     * Calibrates one single channel.
+     * @param ch: channel number.
+     * @return status.
      */
-	virtual int calibrateChannel(int ch)=0;
+    virtual int calibrateChannel(int ch)=0;
 
-    /* Calibrates one single channel, using a calibration value.
-	 * @param ch: channel number.
-	 * @param value: calibration value.
-	 * @return status.
+    /**
+     * Calibrates one single channel, using a calibration value.
+     * @param ch: channel number.
+     * @param value: calibration value.
+     * @return status.
      */
-	virtual int calibrateChannel(int ch, double value)=0;
+    virtual int calibrateChannel(int ch, double value)=0;
 };
 
 #endif

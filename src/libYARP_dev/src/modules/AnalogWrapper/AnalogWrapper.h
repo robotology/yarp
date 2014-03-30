@@ -95,6 +95,7 @@ private:
     std::vector<yarp::dev::impl::AnalogPortEntry> analogPorts;   // the list of output ports
     std::vector<yarp::dev::impl::AnalogServerHandler*> handlers; // the list of rpc port handlers
     yarp::os::Stamp lastStateStamp;             // the last reading time stamp
+    yarp::sig::Vector lastDataRead;             // the last vector of data read from the attached IAnalogSensor
     int _rate;
     void setHandlers();
     void removeHandlers();
