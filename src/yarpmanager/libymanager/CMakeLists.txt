@@ -87,12 +87,6 @@ endif()
 option(YARP_EXPERIMENTAL_MANAGER_LIB "Enable experimental installation of YARP Manager Library" FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_MANAGER_LIB)
 
-if(${CMAKE_VERSION} VERSION_LESS 2.8.10  AND  YARP_EXPERIMENTAL_MANAGER_LIB)
-    message("YARP Manager Library requires CMake 2.8.10 or later. Disabling YARP_EXPERIMENTAL_MANAGER_LIB")
-    set_property(CACHE YARP_EXPERIMENTAL_MANAGER_LIB PROPERTY VALUE FALSE)
-endif()
-
-
 if(NOT YARP_EXPERIMENTAL_MANAGER_LIB)
     add_library(YARP_manager STATIC ${folder_source} ${folder_header})
 else()
