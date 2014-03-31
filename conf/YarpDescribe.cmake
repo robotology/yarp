@@ -36,6 +36,7 @@ set(YARP_LIBRARIES)
 foreach(lib ${YARP_LIBS})
   if(NOT "${lib}" MATCHES "carrier$" AND
      NOT "${lib}" MATCHES "^yarp_" AND
+     NOT "${lib}" MATCHES "^YARP_priv" AND
      NOT "${lib}" STREQUAL "yarpcar" AND
      NOT "${lib}" STREQUAL "yarpmod" AND
      NOT "${lib}" STREQUAL "YARP_wire_rep_utils" AND

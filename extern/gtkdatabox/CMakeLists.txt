@@ -4,7 +4,7 @@
 
 
 # GtkDatabox
-project(YARP_gtkdatabox)
+project(YARP_priv_gtkdatabox)
 
 set(GtkDatabox_GTK2_INCLUDE_DIRS ${GTK2_ATK_INCLUDE_DIR}
                                  ${GTK2_CAIRO_INCLUDE_DIR}
@@ -61,16 +61,16 @@ set(gtkdatabox_HDRS
     gtkdatabox/gtk/gtkdatabox_xyc_graph.h
 )
 
-add_library(YARP_gtkdatabox STATIC ${gtkdatabox_SRCS})
+add_library(YARP_priv_gtkdatabox STATIC ${gtkdatabox_SRCS})
 
-target_link_libraries(YARP_gtkdatabox LINK_PRIVATE ${GtkDatabox_GTK2_LIBRARIES})
+target_link_libraries(YARP_priv_gtkdatabox LINK_PRIVATE ${GtkDatabox_GTK2_LIBRARIES})
 
 if(MSVC)
     add_definitions(/wd4305 /wd4244)
 endif(MSVC)
 
 if(UNIX)
-    set_target_properties(YARP_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC")
+    set_target_properties(YARP_priv_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC")
 
     include(CheckCCompilerFlag)
     check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
@@ -90,5 +90,5 @@ endif(UNIX)
 set(GtkDatabox_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdatabox/gtk
                             ${GtkDatabox_GTK2_INCLUDE_DIRS}
                             PARENT_SCOPE)
-set(GtkDatabox_LIBRARIES YARP_gtkdatabox PARENT_SCOPE)
+set(GtkDatabox_LIBRARIES YARP_priv_gtkdatabox PARENT_SCOPE)
 set(GtkDatabox_DEFINITIONS "" PARENT_SCOPE)

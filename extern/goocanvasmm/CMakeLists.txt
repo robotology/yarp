@@ -4,7 +4,7 @@
 
 
 # GooCanvasMM
-project(YARP_goocanvasmm)
+project(YARP_priv_goocanvasmm)
 
 set(GooCanvasMM_GTK2_INCLUDE_DIRS ${GTK2_ATKMM_INCLUDE_DIR}
                                   ${GTK2_CAIROMMCONFIG_INCLUDE_DIR}
@@ -136,9 +136,9 @@ set(goocanvasmm_HDRS
     goocanvasmm/goocanvas/goocanvasmm/ellipse.h
 )
 
-add_library(YARP_goocanvasmm STATIC ${goocanvasmm_SRCS} ${goocanvasmm_HDRS})
+add_library(YARP_priv_goocanvasmm STATIC ${goocanvasmm_SRCS} ${goocanvasmm_HDRS})
 
-target_link_libraries(YARP_goocanvasmm LINK_PRIVATE ${GooCanvas_LIBRARIES}
+target_link_libraries(YARP_priv_goocanvasmm LINK_PRIVATE ${GooCanvas_LIBRARIES}
                                                     ${GooCanvasMM_GTK2_LIBRARIES})
 
 if(MSVC)
@@ -146,7 +146,7 @@ if(MSVC)
 endif(MSVC)
 
 if(UNIX)
-    set_target_properties(YARP_goocanvasmm PROPERTIES COMPILE_FLAGS -fPIC)
+    set_target_properties(YARP_priv_goocanvasmm PROPERTIES COMPILE_FLAGS -fPIC)
     if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
         if (GtkMM_VERSION_MINOR LESS 22)
             add_definitions(-DGTKMM_LESS_2_22)
@@ -158,5 +158,5 @@ set(GooCanvasMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/goocanvasmm/goocanvas
                              ${GooCanvas_INCLUDE_DIRS}
                              ${GooCanvasMM_GTK2_INCLUDE_DIRS}
                              PARENT_SCOPE)
-set(GooCanvasMM_LIBRARIES YARP_goocanvasmm PARENT_SCOPE)
+set(GooCanvasMM_LIBRARIES YARP_priv_goocanvasmm PARENT_SCOPE)
 set(GooCanvasMM_DEFINITIONS "" PARENT_SCOPE)

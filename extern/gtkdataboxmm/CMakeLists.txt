@@ -4,7 +4,7 @@
 
 
 # GtkDataboxMM
-project(YARP_gtkdataboxmm)
+project(YARP_priv_gtkdataboxmm)
 
 set(GtkDataboxMM_GTK2_INCLUDE_DIRS ${GTK2_ATKMM_INCLUDE_DIR}
                                    ${GTK2_CAIROMMCONFIG_INCLUDE_DIR}
@@ -79,9 +79,9 @@ set(gtkdataboxmm_HDRS
     gtkdataboxmm/gtkdatabox/gtkdataboxmm/ruler.h
 )
 
-add_library(YARP_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
+add_library(YARP_priv_gtkdataboxmm STATIC ${gtkdataboxmm_SRCS})
 
-target_link_libraries(YARP_gtkdataboxmm LINK_PRIVATE ${GtkDatabox_LIBRARIES}
+target_link_libraries(YARP_priv_gtkdataboxmm LINK_PRIVATE ${GtkDatabox_LIBRARIES}
                                                      ${GtkDataboxMM_GTK2_LIBRARIES})
 
 if(MSVC)
@@ -89,12 +89,12 @@ if(MSVC)
 endif(MSVC)
 
 if(UNIX)
-    set_target_properties(YARP_gtkdataboxmm PROPERTIES COMPILE_FLAGS -fPIC)
+    set_target_properties(YARP_priv_gtkdataboxmm PROPERTIES COMPILE_FLAGS -fPIC)
 endif(UNIX)
 
 set(GtkDataboxMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox
                               ${GtkDatabox_INCLUDE_DIRS}
                               ${GtkDataboxMM_GTK2_INCLUDE_DIRS}
                               PARENT_SCOPE)
-set(GtkDataboxMM_LIBRARIES YARP_gtkdataboxmm PARENT_SCOPE)
+set(GtkDataboxMM_LIBRARIES YARP_priv_gtkdataboxmm PARENT_SCOPE)
 set(GtkDataboxMM_DEFINITIONS "" PARENT_SCOPE)

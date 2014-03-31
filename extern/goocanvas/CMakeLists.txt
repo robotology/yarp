@@ -4,7 +4,7 @@
 
 
 # GooCanvas
-project(YARP_goocanvas)
+project(YARP_priv_goocanvas)
 
 set(GooCanvas_GTK2_INCLUDE_DIRS ${GTK2_ATK_INCLUDE_DIR}
                                 ${GTK2_CAIRO_INCLUDE_DIR}
@@ -79,16 +79,16 @@ set(goocanvas_HDRS
     goocanvas/src/goocanvasitem.h
     goocanvas/src/goocanvasrect.h)
 
-add_library(YARP_goocanvas STATIC ${goocanvas_SRCS} ${goocanvas_HDRS})
+add_library(YARP_priv_goocanvas STATIC ${goocanvas_SRCS} ${goocanvas_HDRS})
 
-target_link_libraries(YARP_goocanvas LINK_PRIVATE ${GooCanvas_GTK2_LIBRARIES})
+target_link_libraries(YARP_priv_goocanvas LINK_PRIVATE ${GooCanvas_GTK2_LIBRARIES})
 
 if(MSVC)
     add_definitions(/D_USE_MATH_DEFINES /wd4018 /wd4244)
 endif(MSVC)
 
 if(UNIX)
-    set_target_properties(YARP_goocanvas PROPERTIES COMPILE_FLAGS "-fPIC")
+    set_target_properties(YARP_priv_goocanvas PROPERTIES COMPILE_FLAGS "-fPIC")
 
     include(CheckCCompilerFlag)
     check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
@@ -104,5 +104,5 @@ endif(UNIX)
 set(GooCanvas_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/goocanvas/src
                            ${GooCanvas_GTK2_INCLUDE_DIRS}
                            PARENT_SCOPE)
-set(GooCanvas_LIBRARIES YARP_goocanvas PARENT_SCOPE)
+set(GooCanvas_LIBRARIES YARP_priv_goocanvas PARENT_SCOPE)
 set(GooCanvas_DEFINITIONS "" PARENT_SCOPE)

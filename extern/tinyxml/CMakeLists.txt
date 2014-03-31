@@ -4,7 +4,7 @@
 
 
 # TinyXML
-project(YARP_tinyxml)
+project(YARP_priv_tinyxml)
 
 set(tinyxml_SRCS
     tinyxml/tinystr.cpp
@@ -20,12 +20,20 @@ set(tinyxml_HDRS
 
 add_definitions("-DTIXML_USE_STL")
 
-add_library(YARP_tinyxml STATIC ${tinyxml_SRCS})
+add_library(YARP_priv_tinyxml STATIC ${tinyxml_SRCS})
 
 if(UNIX)
-    set_target_properties(YARP_tinyxml PROPERTIES COMPILE_FLAGS -fPIC)
+    set_target_properties(YARP_priv_tinyxml PROPERTIES COMPILE_FLAGS -fPIC)
 endif(UNIX)
 
 set(TinyXML_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/tinyxml PARENT_SCOPE)
-set(TinyXML_LIBRARIES "YARP_tinyxml" PARENT_SCOPE)
+set(TinyXML_LIBRARIES "YARP_priv_tinyxml" PARENT_SCOPE)
 set(TinyXML_DEFINITIONS "-DTIXML_USE_STL" PARENT_SCOPE)
+
+if(YARP_EXPERIMENTAL_MANAGER_LIB)
+    install(TARGETS YARP_priv_tinyxml
+            EXPORT YARP
+            COMPONENT runtime
+            DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_priv_tinyxml)
+endif()

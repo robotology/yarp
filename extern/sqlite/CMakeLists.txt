@@ -4,7 +4,7 @@
 
 
 # SQLite
-project(YARP_sqlite)
+project(YARP_priv_sqlite)
 
 set(sqlite_SRCS
     sqlite/shell.c
@@ -16,15 +16,15 @@ set(sqlite_HDRS
     sqlite/sqlite3.h
 )
 
-add_library(YARP_sqlite STATIC ${sqlite_SRCS})
+add_library(YARP_priv_sqlite STATIC ${sqlite_SRCS})
 
 if(UNIX)
-    set_target_properties(YARP_sqlite PROPERTIES COMPILE_FLAGS -fPIC)
-    target_link_libraries(YARP_sqlite LINK_PRIVATE pthread)
+    set_target_properties(YARP_priv_sqlite PROPERTIES COMPILE_FLAGS -fPIC)
+    target_link_libraries(YARP_priv_sqlite LINK_PRIVATE pthread)
 endif(UNIX)
 
 set(SQLite_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite PARENT_SCOPE)
-set(SQLite_LIBRARIES YARP_sqlite PARENT_SCOPE)
+set(SQLite_LIBRARIES YARP_priv_sqlite PARENT_SCOPE)
 set(SQLite_DEFINITIONS "" PARENT_SCOPE)
 
 mark_as_advanced(SQLite_INCLUDE_DIRS SQLite_LIBRARIES SQLite_DEFINITIONS)
