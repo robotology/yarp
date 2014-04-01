@@ -126,7 +126,7 @@ public:
     virtual bool getAxes(int *axes) = 0;
 
     /**
-     * Set position mode. This command
+     * Set velocity mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
