@@ -54,6 +54,7 @@ SubDevice::SubDevice()
     iTorque=0;
     iImpedance=0;
     iMode=0;
+    iMode2=0;
     iInteract=0;
 
     base=-1;
@@ -119,6 +120,7 @@ void SubDevice::detach()
     iTorque=0;
     iImpedance=0;
     iMode=0;
+    iMode2=0;
     iTimed=0;
     iOpenLoop=0;
     iInteract=0;
@@ -166,6 +168,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             subdevice->view(iTorque);
             subdevice->view(iImpedance);
             subdevice->view(iMode);
+            subdevice->view(iMode2);
             subdevice->view(iOpenLoop);
             subdevice->view(enc);
             subdevice->view(iInteract);
@@ -176,7 +179,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
             return false;
         }
 
-    if ((iMode==0) && (_subDevVerbose ))
+    if ( ((iMode==0) || (iMode2==0)) && (_subDevVerbose ))
         std::cerr << "--> Warning iMode not valid interface\n";
 
     if ((iTorque==0) && (_subDevVerbose))
@@ -369,7 +372,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
 {
     if (caller->verbose())
         fprintf(stderr, "Handling IControlMode message\n");
-     if (!iMode)
+     if (! (iMode || iMode2) )
         {
             fprintf(stderr, "Error I do not have a valid interface\n");
             *ok=false;
@@ -386,36 +389,78 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
             {
                 if (caller->verbose())
                     fprintf(stderr, "handleControlModeMsg::VOCAB_SET command\n");
+
                 int p=-1;
                 int axis = cmd.get(3).asInt();
-                int mode=cmd.get(2).asVocab();
-                switch (cmd.get(2).asInt())
+                // check desired controlmode
+                switch (cmd.get(2).asVocab())
                 {
                     case VOCAB_CM_POSITION:
-                        *ok = iMode->setPositionMode(axis);
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_POSITION);
+                        else
+                            *ok = iMode->setPositionMode(axis);
                         break;
+
                     case VOCAB_CM_VELOCITY:
-                        *ok = iMode->setVelocityMode(axis);
-                        break;
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_VELOCITY);
+                        else
+                            *ok = iMode->setVelocityMode(axis);
+                            break;
+
                     case VOCAB_CM_TORQUE:
-                        *ok = iMode->setTorqueMode(axis);
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_TORQUE);
+                        else
+                            *ok = iMode->setTorqueMode(axis);
                         break;
+
                     case VOCAB_CM_IMPEDANCE_POS:
-                        *ok = iMode->setImpedancePositionMode(axis);
-                        break;
+                        printf("The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead\n");
+
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_POS);
+                        else
+                            *ok = iMode->setImpedancePositionMode(axis);
+                            break;
+
                     case VOCAB_CM_IMPEDANCE_VEL:
-                        *ok = iMode->setImpedanceVelocityMode(axis);
-                        break;
+                        printf("The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead\n");
+
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_VEL);
+                        else
+                            *ok = iMode->setImpedanceVelocityMode(axis);
+                            break;
+
                     case VOCAB_CM_OPENLOOP:
-                        *ok = iMode->setOpenLoopMode(axis);
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_OPENLOOP);
+                        else
+                            *ok = iMode->setOpenLoopMode(axis);
+                            break;
+
+                    case VOCAB_CM_MIXED:
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_MIXED);
                         break;
+
+                    case VOCAB_CM_FORCE_IDLE:
+                        if(iMode2)
+                            *ok = iMode2->setControlMode(axis, VOCAB_CM_FORCE_IDLE);
+                        break;
+
                     default:
-                        *ok = false;
-                        break;
+                        if (caller->verbose())
+                            fprintf(stderr, "SET unknown controlMode\n");
+                            *ok = false;
+                            break;
                 }
                 *rec=true; //or false
             }
             break;
+
         case VOCAB_GET:
             {
                 if (caller->verbose())
@@ -633,7 +678,16 @@ void CommandsHelper::handleTorqueMsg(const yarp::os::Bottle& cmd,
 
                     case VOCAB_TORQUE_MODE:
                         {
-                            *ok = torque->setTorqueMode();
+                            if(iMode2)
+                            {
+                                int *modes = new int[controlledJoints];
+                                for(int i=0; i<controlledJoints; i++)
+                                    modes[i] = VOCAB_CM_TORQUE;
+                                *ok = iMode2->setControlModes(modes);
+                                delete [] modes;
+                            }
+                                else
+                                *ok = torque->setTorqueMode();
                         }
                         break;
 
@@ -1524,7 +1578,16 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
                         case VOCAB_VELOCITY_MODE:
                             {
-                                ok = vel->setVelocityMode();
+                                if(iMode2)
+                                {
+                                    int *modes = new int[controlledJoints];
+                                    for(int i=0; i<controlledJoints; i++)
+                                        modes[i] = VOCAB_CM_VELOCITY;
+                                    ok = iMode2->setControlModes(modes);
+                                    delete [] modes;
+                                }
+                                else
+                                    ok = vel->setVelocityMode();
                             }
                             break;
 
@@ -1536,8 +1599,16 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
                         case VOCAB_POSITION_MODE:
                             {
-
-                                ok = pos->setPositionMode();
+                                if(iMode2)
+                                {
+                                    int *modes = new int[controlledJoints];
+                                    for(int i=0; i<controlledJoints; i++)
+                                        modes[i] = VOCAB_CM_POSITION;
+                                    ok = iMode2->setControlModes(modes);
+                                    delete [] modes;
+                                }
+                                else
+                                    ok = pos->setPositionMode();
                             }
                             break;
 
@@ -2380,7 +2451,7 @@ bool CommandsHelper::initialize()
 CommandsHelper::CommandsHelper() {}
 
 void CommandsHelper::init(ControlBoardWrapper *x)
-															iMode(0), iInteract(0), controlledJoints(0)
+                                                            iMode(0), iMode2(0), iInteract(0), controlledJoints(0)
 {
     caller = x;
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
@@ -2397,6 +2468,7 @@ void CommandsHelper::init(ControlBoardWrapper *x)
     iImpedance=dynamic_cast<yarp::dev::IImpedanceControl *> (caller);
     torque=dynamic_cast<yarp::dev::ITorqueControl *> (caller);
     iMode=dynamic_cast<yarp::dev::IControlMode *> (caller);
+    iMode2=dynamic_cast<yarp::dev::IControlMode2 *> (caller);
     iInteract=dynamic_cast<yarp::dev::IInteractionMode *> (caller);
     controlledJoints = 0;
 }

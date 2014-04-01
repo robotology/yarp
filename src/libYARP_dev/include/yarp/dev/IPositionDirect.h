@@ -81,6 +81,9 @@ public:
      */
     virtual ~IPositionDirectRaw() {}
 
+
+    // aggiungere setPositionDirectMode() e getAxes()
+
     /** Set new position for a single axis.
      * @param j joint number
      * @param ref specifies the new ref point

@@ -30,12 +30,14 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IControlLimits2.h
                   include/yarp/dev/IControlLimits2Impl.h
                   include/yarp/dev/IControlMode.h
+                  include/yarp/dev/IControlMode2.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
                   include/yarp/dev/IImpedanceControl.h
                   include/yarp/dev/IKinectDeviceDriver.h
                   include/yarp/dev/ImplementControlBoardInterfaces.h
                   include/yarp/dev/ImplementControlMode.h
+                  include/yarp/dev/ImplementControlMode2.h
                   include/yarp/dev/ImplementEncodersTimed.h
                   include/yarp/dev/ImplementImpedanceControl.h
                   include/yarp/dev/ImplementOpenLoopControl.h
@@ -76,6 +78,7 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
                   src/ControlModeImpl.cpp
+                  src/ControlMode2Impl.cpp
                   src/DeviceDriver.cpp
                   src/DeviceGroup.cpp
                   src/DevicePipe.cpp

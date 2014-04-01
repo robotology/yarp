@@ -245,7 +245,8 @@ class yarp::dev::RemoteControlBoard :
     public IControlCalibration2,
     public ITorqueControl,
     public IImpedanceControl,
-    public IControlMode,
+//    public IControlMode,
+    public IControlMode2,
     public IOpenLoopControl,
     public DeviceDriver,
     public IPositionDirect,
@@ -2208,6 +2209,7 @@ public:
     bool setTorqueOffset(int j, double o)
     { return set2V1I1D(VOCAB_TORQUE, VOCAB_ENABLE, j, o); }
 
+    // IControlMode
     bool setPositionMode(int j)
     { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION, j); }
 
@@ -2246,6 +2248,13 @@ public:
         return ok;
     }
 
+    // IControlMode2
+    bool getControlModes(const int n_joint, const int *joints, int *modes)
+    {
+
+    }
+
+    // IControlMode
     bool getControlModes(int *modes)
     {
         if (!isLive()) return false;
@@ -2269,6 +2278,60 @@ public:
         return ok;
     }
 
+    // IControlMode2
+    bool setControlMode(const int j, const int mode)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODE);
+        cmd.addInt(j);
+        cmd.addVocab(mode);
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool setControlModes(const int n_joint, const int *joints, int *modes)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
+        cmd.addInt(n_joint);
+        int i;
+        Bottle& l1 = cmd.addList();
+        for (i = 0; i < n_joint; i++)
+            l1.addInt(joints[i]);
+
+        Bottle& l2 = cmd.addList();
+        for (i = 0; i < n_joint; i++)
+            l2.addVocab(modes[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool setControlModes(int *modes)
+    {
+        if (!isLive()) return false;
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODES);
+
+        int i;
+        Bottle& l2 = cmd.addList();
+        for (i = 0; i < nj; i++)
+            l2.addVocab(modes[i]);
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    //
     bool setOutput(int j, double v)
     { return set1V1I1D(VOCAB_OUTPUT, j, v); }
 

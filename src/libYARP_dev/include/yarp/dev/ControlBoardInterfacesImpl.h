@@ -14,6 +14,7 @@
 
 #include <yarp/dev/ImplementEncodersTimed.h>
 #include <yarp/dev/ImplementControlMode.h>
+#include <yarp/dev/ImplementControlMode2.h>
 #include <yarp/dev/ImplementOpenLoopControl.h>
 #include <yarp/dev/ImplementTorqueControl.h>
 #include <yarp/dev/ImplementImpedanceControl.h>

@@ -38,6 +38,11 @@
     #pragma warning(disable:4355)
 #endif
 
+/*
+ * To optimize memory allocation, for group of joints we can have one mem reserver for rpc port
+ * and on e for streaming. The size could be numOfSubDevices*maxNumOfjointForSubdevice.
+ * (we could also use the actual joint number for each subdevice using a for loop). TODO
+ */
 
 /* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
  * name conflicts
@@ -86,6 +91,7 @@ protected:
     yarp::dev::IControlLimits2          *lim2;
     yarp::dev::ITorqueControl           *torque;
     yarp::dev::IControlMode             *iMode;
+    yarp::dev::IControlMode2            *iMode2;
     yarp::dev::IAxisInfo                *info;
     yarp::dev::IControlCalibration2     *ical2;
     yarp::dev::IOpenLoopControl         *iOpenLoop;
@@ -193,6 +199,7 @@ public:
     yarp::dev::IImpedanceControl     *iImpedance;
     yarp::dev::IOpenLoopControl      *iOpenLoop;
     yarp::dev::IControlMode          *iMode;
+    yarp::dev::IControlMode2         *iMode2;
     yarp::dev::IAxisInfo             *info;
     yarp::dev::IPositionDirect       *posDir;
     yarp::dev::IInteractionMode      *iInteract;
@@ -274,7 +281,7 @@ class yarp::dev::ControlBoardWrapper:
                              public yarp::dev::IOpenLoopControl,
                              public yarp::dev::ITorqueControl,
                              public yarp::dev::IImpedanceControl,
-                             public yarp::dev::IControlMode,
+                             public yarp::dev::IControlMode2,
                              public yarp::dev::IMultipleWrapper,
                              public yarp::dev::IAxisInfo,
                              public yarp::dev::IPreciselyTimed,
@@ -846,10 +853,14 @@ public:
         if (!p)
             return false;
 
-        if (p->pid)
-        {
-            return p->pid->disablePid(off+base);
-        }
+        // Use the newer interface if available, otherwise fallback on the old one.
+        if(p->iMode2)
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_IDLE);
+        else
+            if (p->pid)
+            {
+                return p->pid->disablePid(off+base);
+            }
         return false;
     }
 
@@ -895,6 +906,7 @@ public:
     */
     virtual bool setPositionMode() {
         bool ret=true;
+
         for(int l=0;l<controlledJoints;l++)
         {
             int off=device.lut[l].offset;
@@ -905,13 +917,19 @@ public:
             if (!p)
                 return false;
 
-            if (p->pos)
+            // If the new interface is available use it, otherwise fallback on the old (deprecated) one
+            if (p->iMode2)
             {
-                //calling iControlMode interface
-                ret=ret&&p->iMode->setPositionMode(off+base);
+                ret=ret&&p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
             }
             else
-                ret=false;
+                if (p->pos)
+                {
+                    //calling iControlMode interface
+                    ret=ret&&p->iMode->setPositionMode(off+base);
+                }
+                else
+                    ret=false;
         }
         return ret;
     }
@@ -972,7 +990,7 @@ public:
         int j_wrap = 0;         // index of the wrapper joint
 
         int nDev = device.subdevices.size();
-        for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
+        for(unsigned int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
         {
             int subIndex=device.lut[j_wrap].deviceEntry;
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -985,7 +1003,7 @@ public:
 
             if(p->pos2)   // Position Control 2
             {
-                // verione comandi su subset di giunti
+                // versione comandi su subset di giunti
                 for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
                 {
                     joints[j_dev] = p->base + j_dev;  // for all joints is equivalent to add offset term
@@ -2387,11 +2405,15 @@ public:
         if (!p)
             return false;
 
-        if (p->pos)
-        {
-            return p->amp->disableAmp(off+base);
-        }
-        return false;
+        // Use the newer interface if available, otherwise fallback on the old one.
+        if(p->iMode2)
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_IDLE);
+        else
+            if (p->pos)
+            {
+                return p->amp->disableAmp(off+base);
+            }
+            return false;
     }
 
     /**
@@ -2713,13 +2735,17 @@ public:
             if (!p)
                 return false;
 
-            if (p->pos)
-            {
-                //calling iControlMode interface
-                ret=ret&&p->iMode->setTorqueMode(off+base);
-            }
+            // Use the newer interface if available, otherwise fallback on the old one.
+            if(p->iMode2)
+                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
             else
-                ret=false;
+                if (p->pos)
+                {
+                    //calling iControlMode interface
+                    ret=ret&&p->iMode->setTorqueMode(off+base);
+                }
+                else
+                    ret=false;
         }
         return ret;
     }
@@ -3318,10 +3344,15 @@ public:
         if (!p)
             return false;
 
-        if (p->iMode)
+        if (p->iMode2)
         {
-            return p->iMode->setPositionMode(off+base);
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
         }
+        else
+            if (p->iMode)
+            {
+                return p->iMode->setPositionMode(off+base);
+            }
 
         return false;
     }
@@ -3335,10 +3366,15 @@ public:
         if (!p)
             return false;
 
-        if (p->iMode)
+        if (p->iMode2)
         {
-            return p->iMode->setTorqueMode(off+base);
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
         }
+        else
+            if (p->iMode)
+            {
+                return p->iMode->setTorqueMode(off+base);
+            }
 
         return false;
     }
@@ -3352,10 +3388,16 @@ public:
         if (!p)
             return false;
 
-        if (p->iMode)
+        if (p->iMode2 && p->iInteract)
         {
-            return p->iMode->setImpedancePositionMode(off+base);
+            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION) && ret;
         }
+        else
+            if (p->iMode)
+            {
+                return p->iMode->setImpedancePositionMode(off+base);
+            }
 
         return false;
     }
@@ -3369,10 +3411,16 @@ public:
         if (!p)
             return false;
 
-        if (p->iMode)
+        if (p->iMode2 && p->iInteract)
         {
-            return p->iMode->setImpedanceVelocityMode(off+base);
+            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_VELOCITY) && ret;
         }
+        else
+            if (p->iMode)
+            {
+                return p->iMode->setImpedanceVelocityMode(off+base);
+            }
 
         return false;
     }
@@ -3386,10 +3434,15 @@ public:
         if (!p)
             return false;
 
-        if (p->iMode)
+        if (p->iMode2)
         {
-            return p->iMode->setVelocityMode(off+base);
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_VELOCITY);
         }
+        else
+            if (p->iMode)
+            {
+                return p->iMode->setVelocityMode(off+base);
+            }
 
         return false;
     }
@@ -3403,10 +3456,15 @@ public:
         if (!p)
             return false;
 
-        if (p->iMode)
+        if (p->iMode2)
         {
-            return p->iMode->setOpenLoopMode(off+base);
+            return p->iMode2->setControlMode(off+base, VOCAB_CM_OPENLOOP);
         }
+        else
+            if (p->iMode)
+            {
+                return p->iMode->setOpenLoopMode(off+base);
+            }
 
         return false;
     }
@@ -3450,6 +3508,135 @@ public:
         return ret;
     }
 
+    // iControlMode2
+    virtual bool getControlModes(const int n_joint, const int *joints, int *modes)
+    {
+        bool ret=true;
+
+         for(int l=0; l<n_joint; l++)
+         {
+             int off=device.lut[joints[l]].offset;
+             int subIndex=device.lut[joints[l]].deviceEntry;
+
+             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+             if (!p)
+                 return false;
+
+             if (p->iMode2)
+             {
+                 ret=ret&&p->iMode2->getControlMode(off+base, &modes[l]);
+             }
+             else
+                 ret=false;
+         }
+         return ret;
+    }
+
+    virtual bool setControlMode(const int j, const int mode)
+    {
+        int off=device.lut[j].offset;
+        int subIndex=device.lut[j].deviceEntry;
+
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iMode2)
+        {
+            return p->iMode2->setControlMode(off+base, mode);
+        }
+    }
+
+    virtual bool setControlModes(const int n_joints, const int *joints, int *modes)
+    {
+        bool ret = true;
+
+        /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
+         * then it is optimizable by instantiating the table once and for all during the creation of the class.
+         * TODO check if concurrency problems are real!!
+         */
+        int    nDev  = device.subdevices.size();
+        int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+        int      XModes[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
+        int      X_idx[MAX_DEVICES];
+        yarp::dev::impl::SubDevice  *ps[MAX_DEVICES];
+
+        for(int i=0; i<nDev; i++)
+        {
+            X_idx[i]=0;
+            ps[i]=device.getSubdevice(i);
+        }
+
+
+        // Create a map of joints for each subDevice
+        int subIndex = 0;
+        for(int j=0; j<n_joints; j++)
+        {
+            subIndex = device.lut[joints[j]].deviceEntry;
+            XJoints[subIndex][X_idx[subIndex]] = device.lut[joints[j]].offset + ps[subIndex]->base;
+            XModes[subIndex][X_idx[subIndex]] = modes[j];
+            X_idx[subIndex]++;
+        }
+
+        for(subIndex=0; subIndex<nDev; subIndex++)
+        {
+            if(ps[subIndex]->iMode2)
+            {
+                ret= ret && ps[subIndex]->iMode2->setControlModes(X_idx[subIndex], XJoints[subIndex], XModes[subIndex]);
+            }
+            else
+            {
+                ret=false;
+            }
+        }
+        return ret;
+    }
+
+    virtual bool setControlModes(int *modes)
+    {
+        bool ret = true;
+        int j_wrap = 0;         // index of the wrapper joint
+
+        int nDev = device.subdevices.size();
+        for(unsigned int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
+        {
+            int subIndex=device.lut[j_wrap].deviceEntry;
+            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+            int wrapped_joints=(p->top - p->base) + 1;
+            int *joints = new int[wrapped_joints];
+
+            if(!p)
+                return false;
+
+            if(p->iMode2)   // Control Mode interface 2
+            {
+                // versione comandi su subset di giunti
+                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++)
+                {
+                    joints[j_dev] = p->base + j_dev;  // for all joints is equivalent to add offset term
+                }
+
+                ret = ret && p->iMode2->setControlModes(wrapped_joints, joints, &modes[j_wrap]);
+                j_wrap+=wrapped_joints;
+            }
+            else
+            {
+                ret=false;
+            }
+
+
+            if(joints!=0)
+            {
+                delete [] joints;
+                joints = 0;
+            }
+        }
+
+        return ret;
+    }
+
+    //
     virtual bool setOutput(int j, double v)
     {
         int off=device.lut[j].offset;
@@ -3513,7 +3700,6 @@ public:
          * then it is optimizable by instantiating the table once and for all during the creation of the class.
          * TODO check if concurrency problems are real!!
          */
-
         int    nDev  = device.subdevices.size();
         int    XJoints[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];
         double   XRefs[MAX_DEVICES][MAX_JOINTS_ON_DEVICE];

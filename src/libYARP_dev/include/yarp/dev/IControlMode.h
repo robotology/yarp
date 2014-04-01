@@ -17,7 +17,7 @@ namespace yarp {
     }
 }
 
-        /**
+/**
  * @ingroup dev_iface_motor
  *
  * Interface for setting control mode in control board.
@@ -107,16 +107,29 @@ public:
     virtual bool getControlModesRaw(int* modes)=0;
 };
 
-#define VOCAB_CM_IDLE VOCAB3('c','m','i')
-#define VOCAB_CM_TORQUE VOCAB3('c','m','t')
-#define VOCAB_CM_POSITION VOCAB3('c','m','p')
-#define VOCAB_CM_VELOCITY VOCAB3('c','m','v')
-#define VOCAB_CM_UNKNOWN VOCAB4('c','m','u','k')
-#define VOCAB_CM_OPENLOOP VOCAB4('c','m','o','l')
-#define VOCAB_CM_IMPEDANCE_POS VOCAB4('c','m','i','p')
-#define VOCAB_CM_IMPEDANCE_VEL VOCAB4('c','m','i','v')
-#define VOCAB_CM_CONTROL_MODE  VOCAB4('c','m','o','d')
-#define VOCAB_CM_CONTROL_MODES VOCAB4('c','m','d','s')
+
+// new style VOCABS
+// Interface
+#define VOCAB_ICONTROLMODE          VOCAB4('i','c','m','d')
+
+// Methods
+#define VOCAB_CM_CONTROL_MODE           VOCAB4('c','m','o','d')
+#define VOCAB_CM_CONTROL_MODE_GROUP     VOCAB4('c','m','o','g')
+#define VOCAB_CM_CONTROL_MODES          VOCAB4('c','m','d','s')
+
+// Values
+// Read / Write
+#define VOCAB_CM_IDLE               VOCAB3('i','d','l')
+#define VOCAB_CM_TORQUE             VOCAB4('t','o','r','q')
+#define VOCAB_CM_POSITION           VOCAB3('p','o','s')
+#define VOCAB_CM_POSITION_DIRECT    VOCAB4('p','o','s','d')
+#define VOCAB_CM_VELOCITY           VOCAB3('v','e','l')
+#define VOCAB_CM_OPENLOOP           VOCAB4('o','p','e','n')
+#define VOCAB_CM_IMPEDANCE_POS      VOCAB4('i','m','p','o')  // deprecated
+#define VOCAB_CM_IMPEDANCE_VEL      VOCAB4('i','m','v','e')  // deprecated
+
+// Read only (cannot be set from user)
+#define VOCAB_CM_UNKNOWN            VOCAB4('u','n','k','w')
 
 #endif
 
