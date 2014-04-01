@@ -14,7 +14,7 @@
 
 OpenNI2SkeletonTracker::SensorStatus *OpenNI2SkeletonTracker::sensorStatus;
 
-OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop)
+OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamerasOn, bool withMirrorOn, double minConf, bool withOniPlayback, string withFileDevice, bool withOniRecord, string withOniOutputFile, bool withLoop, bool withFrameSync, bool withImageRegistration)
 {
     userTracking= withTracking;
     camerasON = withCamerasOn;
@@ -39,6 +39,8 @@ OpenNI2SkeletonTracker::OpenNI2SkeletonTracker(bool withTracking, bool withCamer
     }
     
     loop = withLoop;
+    frameSync = withFrameSync;
+    imageRegistration = withImageRegistration;
     init();
     initVars();
 }
@@ -119,6 +121,36 @@ int OpenNI2SkeletonTracker::init(){
     }
 
     if(camerasON){
+	
+	// check if Image registration mode is supported and set accordingly
+	bool modeIsSupported = false;
+	modeIsSupported = device.isImageRegistrationModeSupported(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
+	if (modeIsSupported){
+	    cout << "Image registration mode is supported" << endl;
+	    
+	    if (imageRegistration){
+		device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
+		cout << "Image registration mode is on" << endl;
+		}
+	    else{
+		device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_OFF);
+		cout << "Image registration mode is off" << endl;
+	    }
+	}
+	else{
+	    cout << "Image registration mode is not supported" << endl;
+	}
+	  
+	// if FrameSync option is enabled
+	if (frameSync){
+	    device.setDepthColorSyncEnabled(true);
+	    cout << "Depth/Color frame sync enabled" << endl;
+	}
+	else{
+	    device.setDepthColorSyncEnabled(false);
+	    cout << "Depth/Color frame sync disabled" << endl;
+	}
+	
         // setup and start depth stream
         if (device.getSensorInfo(openni::SENSOR_DEPTH) != NULL)
         {
@@ -146,10 +178,10 @@ int OpenNI2SkeletonTracker::init(){
         }
         
         else {
-            cout << "Resolution: " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << depthStream.getVideoMode().getFps() << " fps" << endl;
+	    fpsCount = depthStream.getVideoMode().getFps();
+            cout << "Resolution: " << depthStream.getVideoMode().getResolutionX() << "x" << depthStream.getVideoMode().getResolutionY() << " - " << fpsCount << " fps" << endl;
             cout << "Depth stream started..." << endl;
             frameCount = playbackControl->getNumberOfFrames(depthStream);
-            fpsCount = depthStream.getVideoMode().getFps();
         }
             
         // setup and start colour stream
@@ -275,7 +307,7 @@ void OpenNI2SkeletonTracker::updateSensor(){
        
         if (depthFrameRef.getFrameIndex() == frameCount) {
             cout << "Finished playback of " << fileDevice.c_str() << endl;
-            cout << "Duration: " << ((double)frameCount/30) << " sec (" << frameCount << " frames at " << fpsCount << "fps)" << endl;
+            cout << "Duration: " << ((double)frameCount/fpsCount) << " sec (" << frameCount << " frames at " << fpsCount << "fps)" << endl;
         }
         if (depthFrameRef.isValid()){
             getSensor()->depthFrame.setQuantum(1);

@@ -167,7 +167,21 @@ bool yarp::dev::OpenNI2DeviceDriverServer::open(yarp::os::Searchable& config){
         loop = false;
     }
     
-    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop);
+    if (config.check("syncFrames", "Synchronize frames")){
+	frameSync = true;
+    }
+    else{
+	frameSync = false;
+    }
+    
+    if (config.check("imageRegistration", "Register Images")){
+	imageRegistration = true;
+    }
+    else{
+	imageRegistration = false;
+    }
+    
+    skeleton = new OpenNI2SkeletonTracker(userTracking, camerasON, mirrorON, mConf, oniPlayback, fileDevice, oniRecord, oniOutputFile, loop, frameSync, imageRegistration);
     
     if (skeleton->getDeviceStatus() == 0) {
     cout << "OpenNI2 Yarp Device started." << endl;
