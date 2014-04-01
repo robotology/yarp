@@ -53,7 +53,7 @@ public:
     }UserSkeleton;
 
     int getDeviceStatus();
-    
+     
     /**
      * Struct with the data from the RGB camera, the depth camera, and a set of userSkeletons
      */
@@ -65,7 +65,7 @@ public:
     /**
      * @param userDetection indicates if user callbacks and skeleton tracking should be on
      */
-    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "", bool loop = false);
+    OpenNI2SkeletonTracker(bool withTracking = false, bool camerasON = true, bool mirrorON = true, double minConf = MINIMUM_CONFIDENCE, bool oniPlayback = false, string fileDevice = "", bool oniRecord  = false, string oniOutputFile = "", bool loop = false, bool frameSync = false, bool imageRegistration = false);
     ~OpenNI2SkeletonTracker(void);
     void close();
     /**
@@ -81,7 +81,7 @@ public:
     static SensorStatus *getSensor();
 private:
     static SensorStatus *sensorStatus;
-    bool userTracking, camerasON, mirrorON, oniPlayback, oniRecord, loop;
+    bool userTracking, camerasON, mirrorON, oniPlayback, oniRecord, loop, frameSync, imageRegistration;
     int deviceStatus;
     double minConfidence;
     string fileDevice;
