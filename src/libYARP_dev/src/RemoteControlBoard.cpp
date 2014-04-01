@@ -2254,7 +2254,35 @@ public:
     // IControlMode2
     bool getControlModes(const int n_joint, const int *joints, int *modes)
     {
+        Bottle cmd, resp;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
+        cmd.addInt(n_joint);
+        Bottle& l1 = cmd.addList();
+        for (int i = 0; i < n_joint; i++)
+            l1.addInt(joints[i]);
 
+        bool ok = rpc_p.write(cmd, resp);
+
+        if (CHECK_FAIL(ok, resp))
+        {
+            Bottle& l = *(resp.get(2).asList());
+            if (&l == 0)
+                return false;
+
+            if (n_joint != l.size())
+            {
+                printf("getControlModes group received an answer of wrong lenght. expected %d, actual size is %d", n_joint, l.size());
+                return false;
+            }
+
+            for (int i = 0; i < n_joint; i++)
+                modes[i] = l.get(i).asInt();
+            return true;
+        }
+
+        return ok;
     }
 
     // IControlMode

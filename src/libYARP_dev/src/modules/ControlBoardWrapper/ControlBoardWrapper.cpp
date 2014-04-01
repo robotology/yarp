@@ -471,39 +471,82 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
             {
                 if (caller->verbose())
                     fprintf(stderr, "GET command\n");
-                if (cmd.get(2).asVocab()==VOCAB_CM_CONTROL_MODES)
+
+                int method = cmd.get(2).asVocab();
+
+                switch(method)
                 {
-                    if (caller->verbose())
-                        fprintf(stderr, "getControlModes\n");
-                    int *p = new int[controlledJoints];
-                    *ok = iMode->getControlModes(p);
+                    case VOCAB_CM_CONTROL_MODES:
+                    {
+                        if (caller->verbose())
+                            fprintf(stderr, "getControlModes\n");
+                        int *p = new int[controlledJoints];
+                        *ok = iMode->getControlModes(p);
 
-                    response.addVocab(VOCAB_IS);
-                    response.addVocab(VOCAB_CM_CONTROL_MODES);
+                        response.addVocab(VOCAB_IS);
+                        response.addVocab(VOCAB_CM_CONTROL_MODES);
 
-                    Bottle& b = response.addList();
-                    int i;
-                    for (i = 0; i < controlledJoints; i++)
-                        b.addVocab(p[i]);
-                    delete[] p;
+                        Bottle& b = response.addList();
+                        int i;
+                        for (i = 0; i < controlledJoints; i++)
+                            b.addVocab(p[i]);
+                        delete[] p;
 
-                    *rec=true;
-                }
-                else if (cmd.get(2).asVocab()==VOCAB_CM_CONTROL_MODE)
-                {
-                    if (caller->verbose())
-                        fprintf(stderr, "getControlMode\n");
+                        *rec=true;
+                    }
+                    break;
 
-                    int p=-1;
-                    int axis = cmd.get(3).asInt();
-                    *ok = iMode->getControlMode(axis, &p);
+                    case VOCAB_CM_CONTROL_MODE:
+                    {
+                        if (caller->verbose())
+                            fprintf(stderr, "getControlMode\n");
 
-                    response.addVocab(VOCAB_IS);
-                    response.addInt(axis);
-                    response.addVocab(p);
+                        int p=-1;
+                        int axis = cmd.get(3).asInt();
+                        *ok = iMode->getControlMode(axis, &p);
 
-                    //fprintf(stderr, "Returning %d\n", p);
-                    *rec=true;
+                        response.addVocab(VOCAB_IS);
+                        response.addInt(axis);
+                        response.addVocab(p);
+
+                        //fprintf(stderr, "Returning %d\n", p);
+                        *rec=true;
+                    }
+                    break;
+
+                    case VOCAB_CM_CONTROL_MODE_GROUP:
+                    {
+                        if (caller->verbose())
+                            fprintf(stderr, "getControlMode group\n");
+
+
+                        int n_joints = cmd.get(3).asInt();
+                        Bottle& lIn = *(cmd.get(4).asList());
+
+                        int *js = new int [n_joints];
+                        int *modes = new int [n_joints];
+                        for(int i=0; i<n_joints; i++)
+                        {
+                            js[i] = lIn.get(i).asInt();
+                        }
+                        *ok = iMode2->getControlModes(n_joints, js, modes);
+
+                        response.addVocab(VOCAB_IS);
+                        response.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
+                        Bottle& b = response.addList();
+                        for(int i=0; i<n_joints; i++)
+                        {
+                            b.addVocab(modes[i]);
+                        }
+
+                        //fprintf(stderr, "Returning %d\n", p);
+                        *rec=true;
+                    }
+                    break;
+
+                default:
+                    printf("Error: received a GET ICONTROLMODE command not understood\n");
+                    break;
                 }
             }
             lastRpcStamp.update();
