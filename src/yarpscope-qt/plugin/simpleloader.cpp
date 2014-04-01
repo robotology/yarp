@@ -96,7 +96,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
 
         if (options->check("graph_title")) {
             if (options->find("graph_title").isList()) {
-                qFatal("\"graph_title\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"graph_title\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
@@ -105,7 +105,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
 
         if (options->check("color")) {
             if (options->find("color").isList()) {
-                qFatal("\"color\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"color\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
@@ -115,7 +115,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
 
         if (options->check("type")) {
             if (options->find("type").isList()) {
-                qFatal("\"type\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"type\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
@@ -126,7 +126,7 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
 
         if (options->check("graph_size")) {
             if (options->find("graph_size").isList()) {
-                qFatal("\"graph_size\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"graph_size\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
@@ -144,13 +144,13 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
         if (options->check("graph_title")) {
             const yarp::os::Value &titlesValue = options->find("graph_title");
             if (!titlesValue.isList()) {
-                qFatal("\"graph_title\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"graph_title\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
             titles = *titlesValue.asList();
             if (titles.size() != indexes.size()) {
-                qFatal("\"graph_title\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"graph_title\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
@@ -161,13 +161,13 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
         if (options->check("color")) {
             const yarp::os::Value &colorsValue = options->find("color");
             if (!colorsValue.isList()) {
-                qFatal("\"color\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"color\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
             colors = *colorsValue.asList();
             if (colors.size() != indexes.size()) {
-                qFatal("\"color\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"color\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
@@ -178,13 +178,13 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
         if (options->check("type")) {
             const yarp::os::Value &typesValue = options->find("type");
             if (!typesValue.isList()) {
-                qFatal("\"type\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"type\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
             types = *typesValue.asList();
             if (types.size() != indexes.size()) {
-                qFatal("\"type\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"type\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
@@ -195,13 +195,13 @@ SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotMa
         if (options->check("graph_size")) {
             const yarp::os::Value &sizesValue = options->find("graph_size");
             if (!sizesValue.isList()) {
-                qFatal("\"graph_size\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"graph_size\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
             sizes = *sizesValue.asList();
             if (sizes.size() != indexes.size()) {
-                qFatal("\"graph_size\" and \"index\" arguments should have the same number of elements");
+                qCritical("\"graph_size\" and \"index\" arguments should have the same number of elements");
                 *ok = false;
                 return;
             }
