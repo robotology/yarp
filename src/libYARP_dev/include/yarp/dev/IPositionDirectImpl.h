@@ -26,7 +26,7 @@ namespace yarp{
  * be used to easily provide an implementation of IPositionDirect.
  *
  */
-class YARP_dev_API yarp::dev::ImplementPositionDirect : public IPositionDirect
+class YARP_dev_API yarp::dev::ImplementPositionDirect : public yarp::dev::IPositionDirect
 {
 protected:
     IPositionDirectRaw *iPDirect;
@@ -63,6 +63,8 @@ public:
      */
     virtual ~ImplementPositionDirect();
 
+    virtual bool getAxes(int *axes);
+    virtual bool setPositionDirectMode();
     virtual bool setPosition(int j, double ref);
     virtual bool setPositions(const int n_joint, const int *joints, double *refs);
     virtual bool setPositions(const double *refs);
@@ -96,14 +98,20 @@ private:
 public:
     virtual ~StubImplPositionDirectRaw(){}
 
+    virtual bool getAxes(int *axis)
+    {return NOT_YET_IMPLEMENTED("getAxes");}
+
+    virtual bool setPositionDirectMode()
+    {return NOT_YET_IMPLEMENTED("setPositionDirectMode");}
+
     virtual bool setPosition(int j, double ref)
     {return NOT_YET_IMPLEMENTED("setPosition");}
 
     virtual bool setPositions(const int n_joint, const int *joints, double *refs)
-    {return NOT_YET_IMPLEMENTED("setPosition");}
+    {return NOT_YET_IMPLEMENTED("setPositions");}
 
     virtual bool setPositions(const double *refs)
-    {return NOT_YET_IMPLEMENTED("setPosition");}
+    {return NOT_YET_IMPLEMENTED("setPositions");}
 };
 
 #endif /* IMPLEMENTIPOSITIONDIRECT_H_ */

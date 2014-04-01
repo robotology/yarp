@@ -3692,6 +3692,27 @@ public:
         return false;
     }
 
+    virtual bool setPositionDirectMode()
+    {
+        bool ret=true;
+        for(int l=0;l<controlledJoints;l++)
+        {
+            int off=device.lut[l].offset;
+            int subIndex=device.lut[l].deviceEntry;
+
+            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+
+            if (!p)
+                return false;
+
+            if(p->iMode2)
+                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
+            else
+                ret=false;
+        }
+        return ret;
+    }
+
     virtual bool setPositions(const int n_joints, const int *joints, double *dpos)
     {
         bool ret = true;
@@ -3711,7 +3732,6 @@ public:
             X_idx[i]=0;
             ps[i]=device.getSubdevice(i);
         }
-
 
         // Create a map of joints for each subDevice
         int subIndex = 0;

@@ -57,6 +57,17 @@ bool ImplementPositionDirect::uninitialize()
     return true;
 }
 
+bool ImplementPositionDirect::getAxes(int *axes)
+{
+    (*axes)=castToMapper(helper)->axes();
+    return true;
+}
+
+bool ImplementPositionDirect::setPositionDirectMode()
+{
+    return iPDirect->setPositionDirectModeRaw();
+}
+
 bool ImplementPositionDirect::setPosition(int j, double ref)
 {
     int k;

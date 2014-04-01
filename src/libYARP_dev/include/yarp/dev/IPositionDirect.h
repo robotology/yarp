@@ -34,6 +34,22 @@ public:
      */
     virtual ~IPositionDirect() {}
 
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual bool getAxes(int *ax)=0;
+
+    /**
+     * Set position direct mode. This command
+     * is required to switch control boards to low-level position
+     * control method.
+     * @return true/false on success failure
+     */
+    virtual bool setPositionDirectMode()=0;
+
+
     /** Set new position for a single axis.
      * @param j joint number
      * @param ref specifies the new ref point
@@ -41,11 +57,11 @@ public:
      */
     virtual bool setPosition(int j, double ref)=0;
 
-
     /** Set new reference point for all axes.
      * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
-     * @param refs array, new reference points, one value for each joint, the size is n_joints. The first value will be the new reference fot the joint joints[0].
+     * @param refs array, new reference points, one value for each joint, the size is n_joints.
+     *        The first value will be the new reference fot the joint joints[0].
      *          for example:
      *          n_joint  3
      *          joints   0  2  4
@@ -81,8 +97,20 @@ public:
      */
     virtual ~IPositionDirectRaw() {}
 
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual bool getAxes(int *axes) = 0;
 
-    // aggiungere setPositionDirectMode() e getAxes()
+    /**
+     * Set position direct mode. This command
+     * is required to switch control boards to low-level position
+     * control method.
+     * @return true/false on success failure
+     */
+    virtual bool setPositionDirectModeRaw()=0;
 
     /** Set new position for a single axis.
      * @param j joint number
