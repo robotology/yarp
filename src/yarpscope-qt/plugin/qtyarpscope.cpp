@@ -79,7 +79,7 @@ bool QtYARPScope::parseParameters(QStringList params)
 
     //YARP network initialization
     if (!yarp.checkNetwork()) {
-        qFatal("Cannot connect to yarp network");
+        qCritical("Cannot connect to yarp network");
         return false;
     }
 
