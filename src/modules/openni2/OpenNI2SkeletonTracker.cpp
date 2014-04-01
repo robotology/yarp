@@ -122,6 +122,7 @@ int OpenNI2SkeletonTracker::init(){
 
     if(camerasON){
 	
+	// check if Image registration mode is supported and set accordingly
 	bool modeIsSupported = false;
 	modeIsSupported = device.isImageRegistrationModeSupported(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
 	if (modeIsSupported){
@@ -129,19 +130,27 @@ int OpenNI2SkeletonTracker::init(){
 	    
 	    if (imageRegistration){
 		device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
-		bool modeStatus = device.getImageRegistrationMode();
-		if (modeStatus=0){
-		    cout << "Image registration mode is off" << endl;
+		cout << "Image registration mode is on" << endl;
 		}
-		else{
-		    cout << "Image registration mode is on" << endl;
-		}
+	    else{
+		device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_OFF);
+		cout << "Image registration mode is off" << endl;
 	    }
 	}
 	else{
 	    cout << "Image registration mode is not supported" << endl;
 	}
 	  
+	// if FrameSync option is enabled
+	if (frameSync){
+	    device.setDepthColorSyncEnabled(true);
+	    cout << "Depth/Color frame sync enabled" << endl;
+	}
+	else{
+	    device.setDepthColorSyncEnabled(false);
+	    cout << "Depth/Color frame sync disabled" << endl;
+	}
+	
         // setup and start depth stream
         if (device.getSensorInfo(openni::SENSOR_DEPTH) != NULL)
         {
