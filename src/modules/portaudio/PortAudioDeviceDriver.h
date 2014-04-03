@@ -102,6 +102,8 @@ public:
     virtual bool close(void);
     virtual bool getSound(yarp::sig::Sound& sound);
     virtual bool renderSound(yarp::sig::Sound& sound);
+    virtual bool startRecording();
+    virtual bool stopRecording();
     
     bool abortSound(void);
     bool immediateSound(yarp::sig::Sound& sound);

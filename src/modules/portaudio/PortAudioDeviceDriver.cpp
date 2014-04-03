@@ -292,6 +292,16 @@ bool PortAudioDeviceDriver::close(void)
     return (err==paNoError);
 }
 
+bool PortAudioDeviceDriver::startRecording()
+{
+    return true;
+}
+
+bool PortAudioDeviceDriver::stopRecording()
+{
+    return true;
+}
+
 bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
 {
     pThread.something_to_record = true;

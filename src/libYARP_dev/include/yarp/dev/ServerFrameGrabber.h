@@ -251,7 +251,17 @@ public:
         if (fgSound==NULL) { return false; }
         return fgSound->getSound(sound);
     }
-    
+
+    virtual bool startRecording() {
+        if (fgSound==NULL) { return false; }
+        return fgSound->startRecording();
+    }
+
+    virtual bool stopRecording() {
+        if (fgSound==NULL) { return false; }
+        return fgSound->stopRecording();
+    }
+
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                 yarp::sig::Sound& sound) {
         if (fgAv==NULL) { return false; }

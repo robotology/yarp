@@ -169,6 +169,16 @@ public:
         return mic->getSound(sound);
     }
 
+    virtual bool startRecording() {
+        if (mic==NULL) { return false; }
+        return mic->startRecording();
+    }
+
+    virtual bool stopRecording() {
+        if (mic==NULL) { return false; }
+        return mic->stopRecording();
+    }
+
     virtual bool getChannels(int *nc)
     {
         if (mic == NULL) { return false; }

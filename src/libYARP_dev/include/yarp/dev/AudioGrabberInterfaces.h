@@ -41,6 +41,20 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getSound(yarp::sig::Sound& sound) = 0;
+
+    /**
+     * Start the recording.
+     * 
+     * @return true/false upon success/failure
+     */
+    virtual bool startRecording() = 0;
+
+     /**
+     * Stop the recording.
+     * 
+     * @return true/false upon success/failure
+     */
+    virtual bool stopRecording() = 0;
 };
 
 
