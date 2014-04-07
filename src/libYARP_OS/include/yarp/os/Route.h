@@ -12,6 +12,7 @@
 
 #include <yarp/os/api.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Contact.h>
 
 namespace yarp {
     namespace os {
@@ -56,6 +57,8 @@ public:
     Route(const Route& alt) :
             fromKey(alt.fromKey),
             toKey(alt.toKey),
+            fromContact(alt.fromContact),
+            toContact(alt.toContact),
             carrier(alt.carrier) {
     }
 
@@ -78,6 +81,17 @@ public:
         return toKey;
     }
 
+
+    /**
+     * Get the destination contact of the route, if avaiable
+     *
+     *
+     * @return the destination of the route as a contact
+     */
+    const Contact& getToContact() const {
+        return toContact;
+    }
+
     /**
      * Get the carrier type of the route.
      *
@@ -96,18 +110,35 @@ public:
      * @return the created route.
      */
     Route addFromName(const ConstString& fromName) const {
-        return Route(fromName,getToName(),getCarrierName());
+        Route result(*this);
+        result.fromKey = fromName;
+        return result;
     }
 
     /**
      * Copy this route with a different destination.
      *
-     * @param fromName The new destination of the route.
+     * @param toName The new destination of the route.
      *
      * @return the created route.
      */
     Route addToName(const ConstString& toName) const {
-        return Route(getFromName(),toName,getCarrierName());
+        Route result(*this);
+        result.toKey = toName;
+        return result;
+    }
+
+    /**
+     * Copy this route with a different contact.
+     *
+     * @param The new destination contact of the route.
+     *
+     * @return the created route.
+     */
+    Route addToContact(const Contact& toContact) const {
+        Route result(*this);
+        result.toContact = toContact;
+        return result;
     }
 
     /**
@@ -118,7 +149,9 @@ public:
      * @return the created route.
      */
     Route addCarrierName(const ConstString& carrierName) const {
-        return Route(getFromName(),getToName(),carrierName);
+        Route result(*this);
+        result.carrier = carrierName;
+        return result;
     }
 
     /**
@@ -134,6 +167,8 @@ public:
 private:
     ConstString fromKey;
     ConstString toKey;
+    Contact fromContact;
+    Contact toContact;
     ConstString carrier;
 };
 
