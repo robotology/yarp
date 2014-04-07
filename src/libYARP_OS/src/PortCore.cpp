@@ -771,6 +771,7 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
         Route r = Route(getName(),aname,
                         (parts.getCarrier()!="")?parts.getCarrier():
                         address.getCarrier());
+        r = r.addToContact(contact);
 
         bool allowed = true;
 
