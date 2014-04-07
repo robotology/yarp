@@ -16,7 +16,12 @@ endif(${IS_BIG_ENDIAN})
 #########################################################################
 # Find 16, 32, and 64 bit types, portably
 
+# CheckTypeSize changes CMAKE_MINIMUM_REQUIRED_VERSION, see
+# http://www.cmake.org/Bug/view.php?id=14864
+# We save it here, and restore it after including the file.
+set(_CMAKE_MINIMUM_REQUIRED_VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
 include(CheckTypeSize)
+cmake_minimum_required(VERSION ${_CMAKE_MINIMUM_REQUIRED_VERSION})
 
 set(YARP_INT16)
 set(YARP_INT32)
