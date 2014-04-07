@@ -7,6 +7,9 @@
 
 
 # Define visual studio version
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 2.8.10)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
 if(CMAKE_VERSION VERSION_LESS 2.8.10 AND MSVC)
     if(MSVC_VERSION EQUAL 1200)
         set(MSVC60 TRUE)
@@ -35,6 +38,9 @@ endif()
 # readable error that the user will be able to understand.
 #
 # See also: http://cmake.org/gitweb?p=cmake.git;a=commit;h=e65ef08bf2719ffd1cc4226f9594ff7127ad8b5e
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 2.8.11)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
 if(CMAKE_VERSION VERSION_EQUAL 2.8.11)
     message(FATAL_ERROR "CMake 2.8.11 is bugged and the build will fail. Please install a different version.")
 endif()

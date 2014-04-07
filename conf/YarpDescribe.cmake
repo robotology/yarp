@@ -47,7 +47,10 @@ endforeach()
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY)
-if (${CMAKE_VERSION} VERSION_LESS 2.8.8) # -> version is 2.8.7 (oldest supported)
+if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 2.8.8)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if (${CMAKE_VERSION} VERSION_LESS 2.8.8)
   include(WriteBasicConfigVersionFile)
   write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                      VERSION ${YARP_VERSION}
