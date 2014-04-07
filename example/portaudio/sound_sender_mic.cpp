@@ -44,14 +44,18 @@ int main(int argc, char *argv[]) {
 
     //Grab and send
     Sound s;
+
+    get->startRecording(); //this is optional, the first get->getsound() will do this anyway.
     while (true)
-      {
-          double t1=yarp::os::Time::now();
-          get->getSound(s);
-          double t2=yarp::os::Time::now();
-          printf("acquired %f seconds\n", t2-t1);
-          p.write(s);
-      }
+    {
+        double t1=yarp::os::Time::now();
+        get->getSound(s);
+        double t2=yarp::os::Time::now();
+        printf("acquired %f seconds\n", t2-t1);
+        p.write(s);
+    }
+    get->stopRecording();  //stops recording.
+
     return 0;
 }
 
