@@ -20,7 +20,6 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
   target_link_libraries(YARP_serversql LINK_PRIVATE YARP_name)
   target_link_libraries(YARP_serversql LINK_PRIVATE ${SQLite_LIBRARIES})
   if (UNIX)
-    set_target_properties(YARP_serversql PROPERTIES COMPILE_FLAGS -fPIC)
     target_link_libraries(YARP_serversql LINK_PRIVATE ${CMAKE_DL_LIBS})
   endif ()
 

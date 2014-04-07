@@ -19,7 +19,6 @@ set(sqlite_HDRS
 add_library(YARP_priv_sqlite STATIC ${sqlite_SRCS})
 
 if(UNIX)
-    set_target_properties(YARP_priv_sqlite PROPERTIES COMPILE_FLAGS -fPIC)
     target_link_libraries(YARP_priv_sqlite LINK_PRIVATE pthread)
 endif(UNIX)
 

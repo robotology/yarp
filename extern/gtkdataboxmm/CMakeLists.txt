@@ -88,10 +88,6 @@ if(MSVC)
     add_definitions(/wd4250)
 endif(MSVC)
 
-if(UNIX)
-    set_target_properties(YARP_priv_gtkdataboxmm PROPERTIES COMPILE_FLAGS -fPIC)
-endif(UNIX)
-
 set(GtkDataboxMM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/gtkdataboxmm/gtkdatabox
                               ${GtkDatabox_INCLUDE_DIRS}
                               ${GtkDataboxMM_GTK2_INCLUDE_DIRS}
