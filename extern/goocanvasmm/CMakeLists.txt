@@ -146,7 +146,6 @@ if(MSVC)
 endif(MSVC)
 
 if(UNIX)
-    set_target_properties(YARP_priv_goocanvasmm PROPERTIES COMPILE_FLAGS -fPIC)
     if (GtkMM_VERSION_MAJOR GREATER 2 OR GtkMM_VERSION_MAJOR EQUAL 2)
         if (GtkMM_VERSION_MINOR LESS 22)
             add_definitions(-DGTKMM_LESS_2_22)
