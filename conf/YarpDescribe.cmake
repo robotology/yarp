@@ -65,7 +65,7 @@ export(TARGETS ${YARP_LIBS}
        NAMESPACE YARP::
        FILE ${CMAKE_BINARY_DIR}/YARPTargets.cmake)
 
-set(VERSIONED_LIB ${CMAKE_INSTALL_LIBDIR}/YARP-${YARP_VERSION})
+set(YARP_CMAKE_DESTINATION ${CMAKE_INSTALL_LIBDIR}/YARP)
 
 # Set up a configuration file for installed use of YARP
 set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
@@ -77,13 +77,13 @@ set(YARP_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})
-install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuration DESTINATION ${YARP_CMAKE_DESTINATION})
 
 # YARPTargets.cmake (installed)
 install(EXPORT YARP
         NAMESPACE YARP::
-        DESTINATION ${VERSIONED_LIB}
+        DESTINATION ${YARP_CMAKE_DESTINATION}
         FILE YARPTargets.cmake)
 
 foreach(lib ${YARP_LIBS})
