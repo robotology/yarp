@@ -1169,7 +1169,7 @@ void ApplicationViewWidget::onSelfResAvailable(int which)
 {
     QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
     if(it){
-        it->setText(3,"avaiable");
+        it->setText(3,"available");
         if(it->text(2) == "computer"){
             it->setIcon(0,QIcon(":/images/computer_ico.png"));
             it->setTextColor(3,QColor("#008C00"));
@@ -1191,7 +1191,7 @@ void ApplicationViewWidget::onSelfResUnavailable(int which)
 {
     QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
     if(it){
-        it->setText(3,"unavaiable");
+        it->setText(3,"unavailable");
         if(it->text(2) == "computer"){
             it->setIcon(0,QIcon(":/images/nores_ico.png"));
             it->setTextColor(3,QColor("#BF0303"));
