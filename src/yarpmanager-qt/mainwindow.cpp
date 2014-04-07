@@ -63,9 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType< QVector<int> >("QVector<int>");
 
 
-    connect(ui->entitiesTree,SIGNAL(viewResource(Computer*)),this,SLOT(viewResource(Computer*)));
-    connect(ui->entitiesTree,SIGNAL(viewModule(Module*)),this,SLOT(viewModule(Module*)));
-    connect(ui->entitiesTree,SIGNAL(viewApplication(Application*)),this,SLOT(viewApplication(Application*)));
+    connect(ui->entitiesTree,SIGNAL(viewResource(yarp::manager::Computer*)),this,SLOT(viewResource(yarp::manager::Computer*)));
+    connect(ui->entitiesTree,SIGNAL(viewModule(yarp::manager::Module*)),this,SLOT(viewModule(yarp::manager::Module*)));
+    connect(ui->entitiesTree,SIGNAL(viewApplication(yarp::manager::Application*)),this,SLOT(viewApplication(yarp::manager::Application*)));
     connect(ui->entitiesTree,SIGNAL(openFiles()),this,SLOT(onOpen()));
     connect(ui->entitiesTree,SIGNAL(importFiles()),this,SLOT(onImportFiles()));
 
