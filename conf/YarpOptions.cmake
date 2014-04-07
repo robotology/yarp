@@ -102,7 +102,7 @@ endif(EXISTS ${STATLIB})
 #########################################################################
 # Control whether libraries are shared or static.
 
-option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" FALSE)
+option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" TRUE)
 if (WIN32)
   set(YARP_FILTER_API TRUE)
 endif (WIN32)
