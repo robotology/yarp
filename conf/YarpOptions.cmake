@@ -258,6 +258,21 @@ endif()
 
 
 #########################################################################
+# Compile libraries using -fPIC to produce position independent code
+# since CMake 2.8.10 the variable CMAKE_POSITION_INDEPENDENT_CODE is
+# used by cmake to determine whether position indipendent code
+# executable and library targets should be created
+# For older versions the position independent code is handled in
+# YarpDescribe.cmake,
+if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER "2.8.9")
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+endif()
+if(CMAKE_VERSION VERSION_GREATER "2.8.9")
+    set(CMAKE_POSITION_INDEPENDENT_CODE "TRUE")
+endif()
+
+
+#########################################################################
 # Control whether build should be aborted on warnings and errors
 
 
