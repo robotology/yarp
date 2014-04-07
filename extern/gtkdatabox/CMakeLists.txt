@@ -70,8 +70,6 @@ if(MSVC)
 endif(MSVC)
 
 if(UNIX)
-    set_target_properties(YARP_priv_gtkdatabox PROPERTIES COMPILE_FLAGS "-fPIC")
-
     include(CheckCCompilerFlag)
     check_c_compiler_flag("-Wno-unused-but-set-variable" C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
     if(C_SUPPORTS_WNO_UNUSED_BUT_SET_VARIABLE)
