@@ -156,11 +156,11 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     }
 
     if (base[0]>='a'&&base[0]<='z'&&base.find("/")==string::npos&&base.find(".")==string::npos) {
-        if (base=="time") {
+        if (base=="time"||base=="duration") {
             if (gen.hasNativeTimeClass()) {
                 isPrimitive = true;
             } else {
-                rosType = "TickTime";
+                rosType = (base=="time")?"TickTime":"TickDuration";
                 isPrimitive = false;
                 RosType t1;
                 t1.rosType = "uint32";
