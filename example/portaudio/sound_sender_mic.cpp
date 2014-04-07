@@ -17,7 +17,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
-const int rec_seconds = 5;
+const int rec_seconds = 1;
 
 int main(int argc, char *argv[]) {
 
