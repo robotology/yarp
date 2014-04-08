@@ -57,6 +57,10 @@ if(YARP_COMPILE_TESTS)
         endforeach()
     endforeach()
 
+    if(UNIX)
+        target_link_libraries(harness_os pthread)
+    endif()
+
     # Add in hardware specific tests, if requested
     option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
     mark_as_advanced(CREATE_PLUGIN_TESTS)
