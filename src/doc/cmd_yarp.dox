@@ -138,7 +138,7 @@ This will report the location of
 the file in which the name server location is configured.
 For the author's machine, the result is:
 \verbatim
-/home/paulfitz/.yarp/conf/yarp.conf
+/home/paulfitz/.config/yarp/conf/yarp.conf
 \endverbatim
 If the YARP_CONF directory is set, this will be where the conf/yarp.conf
 file is created/read.  The first line of that file looks like this:
