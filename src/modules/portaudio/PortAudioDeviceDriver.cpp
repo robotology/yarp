@@ -191,11 +191,12 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
 
     //buffer.allocate(num_samples*num_channels*sizeof(SAMPLE));
     numBytes = numSamples * sizeof(SAMPLE);
+    int twiceTheBuffer = numBytes * 2;
     dataBuffers.numChannels=numChannels;
     if (dataBuffers.playData==0)
-        dataBuffers.playData = new circularBuffer(numBytes);
+        dataBuffers.playData = new circularBuffer(twiceTheBuffer);
     if (dataBuffers.recData==0)
-        dataBuffers.recData = new circularBuffer(numBytes);
+        dataBuffers.recData = new circularBuffer(twiceTheBuffer);
     if (wantRead) dataBuffers.canRec = true;
     if (wantWrite) dataBuffers.canPlay = true;
 
@@ -294,20 +295,28 @@ bool PortAudioDeviceDriver::close(void)
 
 bool PortAudioDeviceDriver::startRecording()
 {
+    pThread.something_to_record = true;
+    err = Pa_StartStream( stream );
+    if( err < 0 ) {handleError(); return false;}
     return true;
 }
 
 bool PortAudioDeviceDriver::stopRecording()
 {
+    pThread.something_to_record = false;
+    err = Pa_StopStream( stream );
+    if( err < 0 ) {handleError(); return false;}
     return true;
 }
 
 bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound)
 {
-    pThread.something_to_record = true;
+    if (pThread.something_to_record == false)
+    {
+        this->startRecording();
+    }
     
-    //this is blocking: wait until acquisition is done
-    while (pThread.something_to_record == true)
+    while (dataBuffers.recData->size()<this->numSamples*this->numChannels)
     {
          yarp::os::Time::delay(SLEEP_TIME);
     }
@@ -377,16 +386,8 @@ void streamThread::run()
         
         if (something_to_record)
         {
-            something_to_record = false;
-            err = Pa_StartStream( stream );
-            if( err != paNoError ) {handleError(); return;}
-        
             while( ( err = Pa_IsStreamActive( stream ) ) == 1 ) 
                 {yarp::os::Time::delay(SLEEP_TIME);}
-            if( err < 0 ) {handleError(); return;}
-
-            err = Pa_StopStream( stream );
-            //err = Pa_AbortStream( stream );
             if( err < 0 ) {handleError(); return;}
         }
 
