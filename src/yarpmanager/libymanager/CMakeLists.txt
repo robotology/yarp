@@ -87,11 +87,9 @@ endif()
 option(YARP_EXPERIMENTAL_MANAGER_LIB "Enable experimental installation of YARP Manager Library" FALSE)
 mark_as_advanced(YARP_EXPERIMENTAL_MANAGER_LIB)
 
-if(NOT YARP_EXPERIMENTAL_MANAGER_LIB)
-    add_library(YARP_manager STATIC ${folder_source} ${folder_header})
-else()
-    add_library(YARP_manager ${folder_source} ${folder_header})
-endif()
+# FIXME All API should use a YARP_manager_API for __declspec(dllimport/dllexport)
+# For now always build the library as STATIC
+add_library(YARP_manager STATIC ${folder_source} ${folder_header})
 
 target_link_libraries(YARP_manager LINK_PRIVATE YARP_sig YARP_OS)
 target_link_libraries(YARP_manager LINK_PRIVATE ${TinyXML_LIBRARIES})
