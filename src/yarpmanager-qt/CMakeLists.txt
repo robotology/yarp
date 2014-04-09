@@ -19,5 +19,9 @@ source_group("Generated Files" FILES ${QtYARPManager_QRC_GEN_SRCS} ${QtYARPManag
 add_executable(QtYARPManager WIN32 ${QtYARPManager_SRCS} ${QtYARPManager_HDRS} ${QtYARPManager_QRC_GEN_SRCS} ${QtYARPManager_UI_GEN_SRCS})
 target_link_libraries(QtYARPManager YARP::YARP_OS YARP::YARP_init YARP::YARP_manager)
 qt5_use_modules(QtYARPManager Widgets Gui)
+qtyarp_deprecate_with_cmake_version(2.8.11)
+if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
+    qt5_use_modules(QtYARPManager Qt5::WinMain)
+endif()
 
 install(TARGETS QtYARPManager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
