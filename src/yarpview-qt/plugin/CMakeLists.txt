@@ -11,15 +11,13 @@ source_group("Header Files" FILES ${QtYARPViewPlugin_HDRS})
 source_group("Resources Files" FILES ${QtYARPViewPlugin_QRC_FILES})
 source_group("Generated Files" FILES ${QtYARPViewPlugin_QRC_GEN_SRCS})
 
-set(QtYARPViewPlugin_QMLDIR "${CMAKE_INSTALL_LIBDIR}/qml/imports/robotology/yarp/view")
-# file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/${QtYARPViewPlugin_QMLDIR})
+set(QtYARPViewPlugin_QMLDIR "qml/imports/robotology/yarp/view/")
 
 add_library(QtYARPViewPlugin MODULE ${QtYARPViewPlugin_SRCS} ${QtYARPViewPlugin_HDRS} ${QtYARPViewPlugin_QRC_GEN_SRCS} )
 target_link_libraries(QtYARPViewPlugin YARP::YARP_OS YARP::YARP_init YARP::YARP_sig)
 qt5_use_modules(QtYARPViewPlugin Widgets Qml Quick Multimedia)
-set_target_properties(QtYARPViewPlugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${QtYARPViewPlugin_QMLDIR})
-set_property(TARGET QtYARPViewPlugin APPEND PROPERTY COMPILE_DEFINITIONS QT_PLUGIN)
-configure_file(qmldir ${CMAKE_BINARY_DIR}/${QtYARPViewPlugin_QMLDIR}/qmldir COPYONLY)
 
-install(TARGETS QtYARPViewPlugin DESTINATION ${QtYARPViewPlugin_QMLDIR})
-install(FILES qmldir DESTINATION ${QtYARPViewPlugin_QMLDIR})
+qtyarp_qml_plugin(QtYARPViewPlugin ${QtYARPViewPlugin_QMLDIR})
+
+install(TARGETS QtYARPViewPlugin DESTINATION ${CMAKE_INSTALL_LIBDIR}/${QtYARPViewPlugin_QMLDIR})
+install(FILES qmldir DESTINATION ${CMAKE_INSTALL_LIBDIR}/${QtYARPViewPlugin_QMLDIR})
