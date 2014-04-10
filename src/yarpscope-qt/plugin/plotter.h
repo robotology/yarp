@@ -126,10 +126,10 @@ public:
     void setPaintGeometry(QRectF);
 
 public:
-    QPixmap    *picture;
+    //QPixmap    *picture;
     QList<QObject*> graphList;
     QCustomPlot customPlot;
-    QCPAxisRect *axisRect;
+    //QCPAxisRect *axisRect;
     QRectF paintRectGeometry;
 
     Connection *curr_connection;

@@ -39,6 +39,9 @@ QtYARPScope::QtYARPScope(QQuickItem *parent):
 QtYARPScope::~QtYARPScope()
 {
     playPressed(false);
+    if(plotManager){
+        delete plotManager;
+    }
     if(loader){
         delete loader;
     }
@@ -64,6 +67,7 @@ bool QtYARPScope::parseParameters(QStringList params)
     }
     if(!rf.configure(c, v)){
         usage();
+        free(v);
         return false;
     }
 
@@ -75,14 +79,17 @@ bool QtYARPScope::parseParameters(QStringList params)
 
     if (options.check("help")) {
         usage();
+        free(v);
         return false;
     }
 
     //YARP network initialization
     if (!yarp.checkNetwork()) {
         qCritical("Cannot connect to yarp network");
+        free(v);
         return false;
     }
+    free(v);
 
 //********************** Deprecated options
     // local

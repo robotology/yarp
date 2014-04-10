@@ -22,9 +22,14 @@ PlotManager::PlotManager(QObject *parent) :
 
 PlotManager::~PlotManager()
 {
+
     if(timer.isActive()){
         timer.stop();
     }
+
+    /*while(!plotterList.isEmpty()){
+        delete ((Plotter*)plotterList.takeLast());
+    }*/
 }
 
 /*! \brief Returns an instance of the class (Singleton). */
