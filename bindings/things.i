@@ -9,6 +9,7 @@
  *
  * Extending yarp::os::Things.h
  */
+#include <stdio.h>
 
 #define READ_PORTABLE(type) \
     if(self->writer)\

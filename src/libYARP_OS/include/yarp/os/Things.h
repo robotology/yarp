@@ -51,10 +51,10 @@ public:
     }
 
     /**
-     *  Things reader
+     *  set a reference to a ConnectionReader
      */
-    bool read(yarp::os::ConnectionReader& connection) {
-        conReader = &connection;
+    bool setConnectionReader(yarp::os::ConnectionReader& reader) {
+        conReader = &reader;
         if(portable)
             delete portable;
         portable = NULL;    

@@ -63,7 +63,8 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
         return bReady;
 
     }
-    return (bReady = false);
+    bReady = false;
+    return bReady;
 }
 
 void PortMonitor::setCarrierParams(const yarp::os::Property& params) 
@@ -85,19 +86,20 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params)
 
 yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader) 
 {
-    // When we are here, the incoming data should be in a dummy connection (con). 
+    if(!bReady) return reader;
+
+    // When we are here, the incoming data should be accessed 
+    // using localReader. 
     // The reader passed to this function is infact empty. 
  
-    if(!bReady) return con.getReader();
-
     PortMonitor::lock();
-    yarp:os::Things thing;
-    thing.read(con.getReader());
+    yarp::os::Things thing;
+    thing.setConnectionReader(*localReader);
     yarp::os::Things& result = binder->updateData(thing);    
     PortMonitor::unlock();
-    con.reset();
-    result.write(con.getWriter());
-    return con.getReader();
+    if(result.write(con.getWriter()))
+        return con.getReader();
+    return *localReader;
 }
 
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader) 
@@ -106,17 +108,24 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
     
     PortMonitor::lock();
     Things thing;
-    thing.read(reader);
+    // set the reference connection reader
+    thing.setConnectionReader(reader);
     bool result = binder->acceptData(thing);
     PortMonitor::unlock();
     if(!result)
         return false;
 
-    // When data is red here using the reader passed to this functions, 
+    // When data is read here using the reader passed to this functions, 
     // then it wont be available for modifyIncomingData(). Thus, we write
-    // it to a dumy connection ans pass it to the modifyOutgoingData().
+    // it to a dumy connection and pass it to the modifyOutgoingData() using 
+    // localReader.  
+    // localReader points to a connection reader which contains 
+    // either the original or modified data.
     con.reset();
-    thing.write(con.getWriter());
+    if(thing.write(con.getWriter()))
+        localReader = &con.getReader();
+    else
+        localReader = &reader;
 
     getPeers().lock();
     YARP_ASSERT(group);

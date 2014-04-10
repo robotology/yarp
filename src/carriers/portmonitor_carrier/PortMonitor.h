@@ -64,8 +64,9 @@ class yarp::os::PortMonitor : public yarp::os::ModifyingCarrier
 public:
     PortMonitor(){
         bReady = false;
-        binder = NULL;
+        binder = NULL;        
         group = NULL;
+        localReader = NULL;
     }
 
     virtual ~PortMonitor() {
@@ -125,6 +126,7 @@ private:
     bool happy;
     bool bReady;
     yarp::os::DummyConnector con;
+    yarp::os::ConnectionReader* localReader;
     yarp::os::Things thing;
     MonitorBinding* binder;
     PortMonitorGroup *group;    
