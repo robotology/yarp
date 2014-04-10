@@ -217,17 +217,20 @@ void MasterThread::runNormally()
     for (int i=0; i < numPart; i++)
     {
         bool isActive  = wnd->getPartActivation(utilities->partDetails[i].name.c_str());
-        if ( utilities->partDetails[i].currFrame < utilities->partDetails[i].maxFrame)
+        if ( utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame )
         {
             if ( virtualTime >= utilities->partDetails[i].timestamp[ utilities->partDetails[i].currFrame ] )
             {
-                utilities->partDetails[i].worker->sendData(utilities->partDetails[i].currFrame, isActive, virtualTime );
                 if ( initTime > 300)
                 {
                     guiUpdate->updateGuiRateThread();
                     initTime = 0;
                 }
-                utilities->partDetails[i].currFrame++;
+                if (!utilities->partDetails[i].hasNotified)
+                {
+                    utilities->partDetails[i].worker->sendData(utilities->partDetails[i].currFrame, isActive, virtualTime );
+                    utilities->partDetails[i].currFrame++;
+                }
             }
         }
         else
@@ -252,8 +255,8 @@ void MasterThread::runNormally()
 
                     if (stopAll == numPart)
                     {
-                        //guiUpdate->updateGuiRateThread();
                         fprintf(stdout, "All parts have Finished!\n");
+                        guiUpdate->updateGuiRateThread();
                         utilities->stopAtEnd();
                     }
                 }
