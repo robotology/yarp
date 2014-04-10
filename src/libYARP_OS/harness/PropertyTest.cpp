@@ -488,6 +488,15 @@ check $x $y\n\
         report(0,"checking monitoring");
     }
 
+    virtual void checkLongLongHex() {
+        report(0,"checking long long hex");
+        const char* parms[]={"foo","--longlonghex","0xFEDCBA9876543210"};
+        yarp::os::Property config;
+        config.fromCommand(3,parms);
+        checkEqual(config.find("longlonghex").asString(),
+                   "0xFEDCBA9876543210","hex that is too big remains a string");
+    }
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
@@ -507,6 +516,7 @@ check $x $y\n\
         checkHex();
         checkNestedCommandLine();
         checkDirectory();
+        checkLongLongHex();
     }
 };
 

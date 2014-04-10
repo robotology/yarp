@@ -90,6 +90,7 @@ void BottleImpl::smartAdd(const String& str) {
         bool numberLike = true;
         bool preamble = true;
         bool hexActive = false;
+        int hexStart = 0;
         int periodCount = 0;
         int signCount = 0;
         bool hasPeriodOrE = false;
@@ -108,6 +109,7 @@ void BottleImpl::smartAdd(const String& str) {
             if (preamble) {
                 if (ch2=='x'||ch2=='X') {
                     hexActive = true;
+                    hexStart = i;
                     continue;
                 }
             }
@@ -129,6 +131,12 @@ void BottleImpl::smartAdd(const String& str) {
                                  (ch2>='A'&&ch2<='F'))))) {
                 numberLike = false;
                 break;
+            }
+        }
+        if (hexActive) {
+            if ((int)str.length()-(hexStart+1)>8) {
+                // we can only deal with 32bit hexadecimal
+                numberLike = false;
             }
         }
 
