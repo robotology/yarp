@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     qRegisterMetaType< QVector<int> >("QVector<int>");
+    ui->mainToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+    ui->menuBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
 
     connect(ui->entitiesTree,SIGNAL(viewResource(yarp::manager::Computer*)),this,SLOT(viewResource(yarp::manager::Computer*)));
