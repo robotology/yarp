@@ -35,11 +35,13 @@ MenuBar {
     Menu {
         title: "Actions"
         MenuItem { id: startStop
-                   text: startStop.checked == true ? "Start" : "Stop"
-                   checkable: true
-                   checked: true
+            property bool started: true
+                   text: started == false ? "Start" : "Stop"
+                   //checkable: true
+                   //checked: false
                    onTriggered: {
-                       playPressed(startStop.checked)
+                       started = !started;
+                       playPressed(started)
                    }}
         MenuItem { text: "Clear"
                     onTriggered: {

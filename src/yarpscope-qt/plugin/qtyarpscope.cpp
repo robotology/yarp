@@ -38,6 +38,7 @@ QtYARPScope::QtYARPScope(QQuickItem *parent):
 
 QtYARPScope::~QtYARPScope()
 {
+    playPressed(false);
     if(loader){
         delete loader;
     }
