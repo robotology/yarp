@@ -37,7 +37,7 @@ InputCallback::~InputCallback()
 /*! \brief the function callback
     \param img the image received
 */
-void InputCallback::onRead(yarp::sig::FlexImage &img)
+void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img)
 {
 
     uchar *tmpBuf;
@@ -56,7 +56,7 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
     unsigned char *rawImg = img.getRawImage();
     int j = 0;
     // Inverts the planes because Qt Wants an image in RGB format instead of BGR
-    for(int i=0; i<imgSize; i++){
+   /* for(int i=0; i<imgSize; i++){
         tmpBuf[j+2] = rawImg[i];
         i++;
         tmpBuf[j+1] = rawImg[i];
@@ -64,7 +64,8 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
         tmpBuf[j] = rawImg[i];
         tmpBuf[j+3] = 0;
         j+=4;
-    }
+    }*/
+    memcpy(tmpBuf,rawImg,img.width() * img.height() * 4);
     //unmap the buffer
     frame.unmap();
     if(sigHandler){
