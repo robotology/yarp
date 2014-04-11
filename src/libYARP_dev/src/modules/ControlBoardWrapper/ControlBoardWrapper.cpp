@@ -1621,6 +1621,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                             {
                                 ok = torque->setTorqueMode();
                             }
+                            break;
 
                         case VOCAB_VELOCITY_MODE:
                             {
