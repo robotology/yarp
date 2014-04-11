@@ -2211,28 +2211,52 @@ public:
 
     // IControlMode
     bool setPositionMode(int j)
-    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION, j); }
+    {
+        return setControlMode(j,VOCAB_CM_POSITION);
+//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION, j);
+    }
 
     bool setPositionDirectMode(int j)
-    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION_DIRECT, j); }
+    {
+        return setControlMode(j,VOCAB_CM_POSITION_DIRECT);
+//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION_DIRECT, j);
+    }
 
     bool setVelocityMode(int j)
-    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_VELOCITY, j); }
+    {
+        return setControlMode(j,VOCAB_CM_VELOCITY);
+//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_VELOCITY, j);
+    }
 
     bool setTorqueMode(int j)
-    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_TORQUE, j); }
+    {
+        return setControlMode(j,VOCAB_CM_TORQUE);
+//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_TORQUE, j);
+    }
 
     bool setImpedancePositionMode(int j)
-    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_POS, j); }
+    {
+        return setControlMode(j,VOCAB_CM_IMPEDANCE_POS);
+//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_POS, j);
+    }
 
     bool setImpedanceVelocityMode(int j)
-    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_VEL, j); }
+    {
+        return setControlMode(j,VOCAB_CM_IMPEDANCE_VEL);
+//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_VEL, j);
+    }
 
     bool setOpenLoopMode()
-    { return set1V(VOCAB_OPENLOOP_MODE); }
+    {
+//        return setControlModes(VOCAB_OPENLOOP_MODE);
+        return set1V(VOCAB_OPENLOOP_MODE);
+    }
 
     bool setOpenLoopMode(int j)
-    {  return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_OPENLOOP, j); }
+    {
+        return setControlMode(j,VOCAB_CM_OPENLOOP);
+//        return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_OPENLOOP, j);
+    }
 
     bool getControlMode(int j, int *mode)
     {
@@ -2384,10 +2408,7 @@ public:
 
     bool setPositionDirectMode()
     {
-        int *modes = new int[nj];
-        for(int i=0; i<nj; i++) modes[i] = VOCAB_CM_POSITION_DIRECT;
-
-        setControlModes(modes);
+        return set1V(VOCAB_POSITION_DIRECT);
     }
 
     bool setPosition(int j, double ref)
