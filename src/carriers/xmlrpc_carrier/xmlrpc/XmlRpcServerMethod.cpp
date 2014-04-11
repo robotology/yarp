@@ -5,7 +5,7 @@
 #include "XmlRpcServerMethod.h"
 #include "XmlRpcServer.h"
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
 
   XmlRpcServerMethod::XmlRpcServerMethod(std::string const& name, XmlRpcServer* server)
@@ -21,4 +21,4 @@ namespace XmlRpc {
   }
 
 
-} // namespace XmlRpc
+} // namespace YarpXmlRpc

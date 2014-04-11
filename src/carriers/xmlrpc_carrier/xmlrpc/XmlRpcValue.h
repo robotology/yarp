@@ -18,7 +18,7 @@
 # include <time.h>
 #endif
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
   //! RPC method arguments and results are represented by Values
   //   should probably refcount them...
@@ -184,10 +184,10 @@ namespace XmlRpc {
     } _value;
     
   };
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 
-std::ostream& operator<<(std::ostream& os, XmlRpc::XmlRpcValue& v);
+std::ostream& operator<<(std::ostream& os, YarpXmlRpc::XmlRpcValue& v);
 
 
 #endif // _XMLRPCVALUE_H_

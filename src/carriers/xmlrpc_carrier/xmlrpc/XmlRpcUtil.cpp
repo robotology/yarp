@@ -14,7 +14,7 @@
 
 #include "XmlRpc.h"
 
-using namespace XmlRpc;
+using namespace YarpXmlRpc;
 
 
 //#define USE_WINDOWS_DEBUG // To make the error and log messages go to VC++ debug output
@@ -24,7 +24,7 @@ using namespace XmlRpc;
 #endif
 
 // Version id
-const char XmlRpc::XMLRPC_VERSION[] = "XMLRPC++ 0.7";
+const char YarpXmlRpc::XMLRPC_VERSION[] = "XMLRPC++ 0.7";
 
 // Default log verbosity: 0 for no messages through 5 (writes everything)
 int XmlRpcLogHandler::_verbosity = 0;
@@ -66,8 +66,8 @@ XmlRpcErrorHandler* XmlRpcErrorHandler::_errorHandler = &defaultErrorHandler;
 
 
 // Easy API for log verbosity
-int XmlRpc::getVerbosity() { return XmlRpcLogHandler::getVerbosity(); }
-void XmlRpc::setVerbosity(int level) { XmlRpcLogHandler::setVerbosity(level); }
+int YarpXmlRpc::getVerbosity() { return XmlRpcLogHandler::getVerbosity(); }
+void YarpXmlRpc::setVerbosity(int level) { XmlRpcLogHandler::setVerbosity(level); }
 
  
 

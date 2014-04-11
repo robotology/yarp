@@ -5,7 +5,7 @@
 #include "XmlRpcSource.h"
 #include "XmlRpcUtil.h"
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
 
   XmlRpcSource::XmlRpcSource(int fd /*= -1*/, bool deleteOnClose /*= false*/) 
@@ -28,4 +28,4 @@ namespace XmlRpc {
     }
   }
 
-} // namespace XmlRpc
+} // namespace YarpXmlRpc

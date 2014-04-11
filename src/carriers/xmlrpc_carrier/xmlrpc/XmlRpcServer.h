@@ -19,7 +19,7 @@
 //#include "XmlRpcDispatch.h"
 #include "XmlRpcSource.h"
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
 
   // An abstract class supporting XML RPC methods
@@ -102,6 +102,6 @@ namespace XmlRpc {
     XmlRpcServerMethod* _methodHelp;
 
   };
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 #endif //_XMLRPCSERVER_H_

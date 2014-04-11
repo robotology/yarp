@@ -16,7 +16,7 @@
 #endif
 
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
   //! A class representing an error.
   //! If server methods throw this exception, a fault response is returned

@@ -24,7 +24,7 @@
 # define strncasecmp strnicmp
 #endif
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
   //! Utilities for XML parsing, encoding, and decoding and message handlers.
   class XmlRpcUtil {
@@ -59,6 +59,6 @@ namespace XmlRpc {
     static void error(const char* fmt, ...);
 
   };
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 #endif // _XMLRPCUTIL_H_

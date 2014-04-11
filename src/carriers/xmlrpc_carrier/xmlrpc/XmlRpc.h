@@ -35,7 +35,7 @@
 #include "XmlRpcValue.h"
 #include "XmlRpcUtil.h"
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
 
   //! An interface allowing custom handling of error message reporting.
@@ -96,6 +96,6 @@ namespace XmlRpc {
   //! Version identifier
   extern const char XMLRPC_VERSION[];
 
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 #endif // _XMLRPC_H_

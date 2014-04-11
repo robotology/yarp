@@ -11,7 +11,7 @@
 # include <string.h>
 #endif
 
-using namespace XmlRpc;
+using namespace YarpXmlRpc;
 
 // Static data
 const char XmlRpcServerConnection::METHODNAME_TAG[] = "<methodName>";

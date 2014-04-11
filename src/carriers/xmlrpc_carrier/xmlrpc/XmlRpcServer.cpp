@@ -9,7 +9,7 @@
 #include "XmlRpcException.h"
 
 
-using namespace XmlRpc;
+using namespace YarpXmlRpc;
 
 
 XmlRpcServer::XmlRpcServer()

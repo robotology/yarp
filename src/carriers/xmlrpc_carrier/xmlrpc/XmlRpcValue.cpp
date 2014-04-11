@@ -18,7 +18,7 @@
 # include <stdio.h>
 #endif
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
 
   static const char VALUE_TAG[]     = "<value>";
@@ -618,11 +618,11 @@ namespace XmlRpc {
     return os;
   }
 
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 
 // ostream
-std::ostream& operator<<(std::ostream& os, XmlRpc::XmlRpcValue& v) 
+std::ostream& operator<<(std::ostream& os, YarpXmlRpc::XmlRpcValue& v) 
 { 
   // If you want to output in xml format:
   //return os << v.toXml(); 

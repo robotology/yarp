@@ -17,7 +17,7 @@
 
 #include "XmlRpcSource.h"
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
   // Arguments and results are represented by XmlRpcValues
   class XmlRpcValue;
@@ -125,6 +125,6 @@ namespace XmlRpc {
 
   };	// class XmlRpcClient
 
-}	// namespace XmlRpc
+}	// namespace YarpXmlRpc
 
 #endif	// _XMLRPCCLIENT_H_

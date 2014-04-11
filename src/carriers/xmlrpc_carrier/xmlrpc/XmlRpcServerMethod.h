@@ -16,7 +16,7 @@
 # include <string>
 #endif
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
   // Representation of a parameter or result value
   class XmlRpcValue;
@@ -46,6 +46,6 @@ namespace XmlRpc {
     std::string _name;
     XmlRpcServer* _server;
   };
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 #endif // _XMLRPCSERVERMETHOD_H_

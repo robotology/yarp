@@ -17,7 +17,7 @@
 #include "XmlRpcValue.h"
 #include "XmlRpcSource.h"
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
 
   // The server waits for client connections and provides methods
@@ -107,6 +107,6 @@ namespace XmlRpc {
     // Whether to keep the current client connection open for further requests
     bool _keepAlive;
   };
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 #endif // _XMLRPCSERVERCONNECTION_H_

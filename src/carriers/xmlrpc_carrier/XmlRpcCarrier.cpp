@@ -16,7 +16,7 @@
 #include "XmlRpc.h"
 
 using namespace yarp::os;
-using namespace XmlRpc;
+using namespace YarpXmlRpc;
 
 void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
     if (vin.isInt()) {

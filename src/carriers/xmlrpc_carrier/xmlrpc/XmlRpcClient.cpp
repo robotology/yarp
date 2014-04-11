@@ -12,7 +12,7 @@
 #include <string.h>
 
 
-using namespace XmlRpc;
+using namespace YarpXmlRpc;
 
 // Static data
 const char XmlRpcClient::REQUEST_BEGIN[] = 

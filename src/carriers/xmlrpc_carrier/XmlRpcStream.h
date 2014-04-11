@@ -31,8 +31,8 @@ class yarp::os::XmlRpcStream : public TwoWayStream,
 {
 private:
     TwoWayStream *delegate;
-    XmlRpc::XmlRpcClient client;
-    XmlRpc::XmlRpcServerConnection server;
+    YarpXmlRpc::XmlRpcClient client;
+    YarpXmlRpc::XmlRpcServerConnection server;
     StringInputStream sis;
     StringOutputStream sos;
     bool sender;

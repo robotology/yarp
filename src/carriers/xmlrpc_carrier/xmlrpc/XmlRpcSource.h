@@ -11,7 +11,7 @@
 # pragma warning(disable:4786)    // identifier was truncated in debug info
 #endif
 
-namespace XmlRpc {
+namespace YarpXmlRpc {
 
   //! An RPC source represents a file descriptor to monitor
   class XmlRpcSource {
@@ -53,6 +53,6 @@ namespace XmlRpc {
     // In the client, keep connections open if you intend to make multiple calls.
     bool _keepOpen;
   };
-} // namespace XmlRpc
+} // namespace YarpXmlRpc
 
 #endif //_XMLRPCSOURCE_H_
