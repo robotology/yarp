@@ -918,19 +918,13 @@ public:
             if (!p)
                 return false;
 
-            // If the new interface is available use it, otherwise fallback on the old (deprecated) one
-            if (p->iMode2)
+            if (p->iMode)
             {
-                ret=ret&&p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
+                //calling iControlMode interface
+                ret=ret&&p->iMode->setPositionMode(off+base);
             }
             else
-                if (p->pos)
-                {
-                    //calling iControlMode interface
-                    ret=ret&&p->iMode->setPositionMode(off+base);
-                }
-                else
-                    ret=false;
+                ret=false;
         }
         return ret;
     }
@@ -947,7 +941,7 @@ public:
             if (!p)
                 return false;
 
-            if (p->pos)
+            if (p->iMode)
             {
                 //calling iControlMode interface
                 ret=ret&&p->iMode->setOpenLoopMode(off+base);
@@ -2736,11 +2730,7 @@ public:
             if (!p)
                 return false;
 
-            // Use the newer interface if available, otherwise fallback on the old one.
-            if(p->iMode2)
-                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
-            else
-                if (p->pos)
+                if (p->iMode)
                 {
                     //calling iControlMode interface
                     ret=ret&&p->iMode->setTorqueMode(off+base);
