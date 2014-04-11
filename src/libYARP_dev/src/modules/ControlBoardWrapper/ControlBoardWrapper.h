@@ -84,6 +84,7 @@ protected:
     yarp::dev::IPidControl              *pid;
     yarp::dev::IPositionControl         *pos;
     yarp::dev::IPositionControl2        *pos2;
+    yarp::dev::IPositionDirect          *iposDir;
     yarp::dev::IVelocityControl         *vel;
     yarp::dev::IVelocityControl2        *vel2;
     yarp::dev::IEncodersTimed           *enc;
@@ -3706,7 +3707,7 @@ public:
                 return false;
 
             if(p->iMode2)
-                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
+                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION_DIRECT);
             else
                 ret=false;
         }

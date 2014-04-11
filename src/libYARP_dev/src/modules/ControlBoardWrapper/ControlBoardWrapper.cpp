@@ -374,12 +374,12 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
         fprintf(stderr, "Handling IControlMode message\n");
      if (! (iMode || iMode2) )
         {
-            fprintf(stderr, "Error I do not have a valid interface\n");
+            fprintf(stderr, "Error I do not have a valid iControlMode interface\n");
             *ok=false;
             return;
         }
 
-    //TODO: handle here messages about  IControlMode interface
+    //handle here messages about  IControlMode interface
     int code = cmd.get(0).asVocab();
     *ok=true;
 
@@ -392,8 +392,9 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                 int p=-1;
                 int axis = cmd.get(3).asInt();
-                // check desired controlmode
-                switch (cmd.get(2).asVocab())
+
+//                std::cout << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab()).c_str() << std::endl;
+                switch (cmd.get(4).asVocab())
                 {
                     case VOCAB_CM_POSITION:
                         if(iMode2)
@@ -458,8 +459,8 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         break;
 
                     default:
-                        if (caller->verbose())
-                            fprintf(stderr, "SET unknown controlMode\n");
+//                        if (caller->verbose())
+                            fprintf(stderr, "SET unknown controlMode : %s \n", cmd.toString().c_str());
                             *ok = false;
                             break;
                 }
@@ -1616,18 +1617,14 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                             }
                             break;
 
+                        case VOCAB_TORQUE_MODE:
+                            {
+                                ok = torque->setTorqueMode();
+                            }
+
                         case VOCAB_VELOCITY_MODE:
                             {
-                                if(iMode2)
-                                {
-                                    int *modes = new int[controlledJoints];
-                                    for(int i=0; i<controlledJoints; i++)
-                                        modes[i] = VOCAB_CM_VELOCITY;
-                                    ok = iMode2->setControlModes(modes);
-                                    delete [] modes;
-                                }
-                                else
-                                    ok = vel->setVelocityMode();
+                                ok = vel->setVelocityMode();
                             }
                             break;
 
@@ -1639,18 +1636,21 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
                         case VOCAB_POSITION_MODE:
                             {
-                                if(iMode2)
-                                {
-                                    int *modes = new int[controlledJoints];
-                                    for(int i=0; i<controlledJoints; i++)
-                                        modes[i] = VOCAB_CM_POSITION;
-                                    ok = iMode2->setControlModes(modes);
-                                    delete [] modes;
-                                }
-                                else
-                                    ok = pos->setPositionMode();
+                                ok = pos->setPositionMode();
                             }
                             break;
+
+                        case VOCAB_POSITION_DIRECT:
+                            {
+                                ok = iposDir->setPositionDirectMode();
+                            }
+                            break;
+
+                        case VOCAB_OPENLOOP_MODE:
+                            {
+                                ok = iOpenLoop->setOpenLoopMode();
+                            }
+                        break;
 
                         case VOCAB_POSITION_MOVE:
                             {
@@ -1993,7 +1993,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
                         default:
                             {
-                                printf("received an unknown command after a VOCAB_SET\n");
+                                printf("received an unknown command after a VOCAB_SET (%s)\n", cmd.toString().c_str());
                             }
                             break;
                     } //switch(cmd.get(1).asVocab()
@@ -2497,6 +2497,7 @@ void CommandsHelper::init(ControlBoardWrapper *x)
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
     pos = dynamic_cast<yarp::dev::IPositionControl *> (caller);
     pos2 = dynamic_cast<yarp::dev::IPositionControl2 *> (caller);
+    iposDir = dynamic_cast<yarp::dev::IPositionDirect *> (caller);
     vel = dynamic_cast<yarp::dev::IVelocityControl *> (caller);
     vel2 = dynamic_cast<yarp::dev::IVelocityControl2 *> (caller);
     enc = dynamic_cast<yarp::dev::IEncodersTimed *> (caller);
