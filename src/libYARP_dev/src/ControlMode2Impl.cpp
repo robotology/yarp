@@ -58,11 +58,64 @@ bool ImplementControlMode2::uninitialize ()
     return true;
 }
 
+
+bool ImplementControlMode2::setPositionMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setPositionModeRaw(k);
+}
+
+bool ImplementControlMode2::setVelocityMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setVelocityModeRaw(k);
+}
+
+bool ImplementControlMode2::setTorqueMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setTorqueModeRaw(k);
+}
+
+bool ImplementControlMode2::setOpenLoopMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setOpenLoopModeRaw(k);
+}
+
+bool ImplementControlMode2::setImpedancePositionMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setImpedancePositionModeRaw(k);
+}
+
+bool ImplementControlMode2::setImpedanceVelocityMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setImpedanceVelocityModeRaw(k);
+}
+
+bool ImplementControlMode2::getControlMode(int j, int *f)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->getControlModeRaw(k, f);
+}
+
+bool ImplementControlMode2::getControlModes(int *modes)
+{
+    int nj = castToMapper(helper)->axes();
+    int *tmp=new int [nj];
+    bool ret=raw->getControlModesRaw(tmp);
+    castToMapper(helper)->toUser(tmp, modes);
+    delete [] tmp;
+    return ret;
+}
+
 bool ImplementControlMode2::getControlModes(const int n_joint, const int *joints, int *modes)
 {
     for(int idx=0; idx<n_joint; idx++)
     {
-        temp_int[idx]=castToMapper(helper)->toHw(joints[idx]);
+        temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
 
     bool ret = raw->getControlModesRaw(n_joint, temp_int, temp_mode);
@@ -80,9 +133,9 @@ bool ImplementControlMode2::setControlModes(const int n_joint, const int *joints
 {
     for(int idx=0; idx<n_joint; idx++)
     {
-        temp_mode[castToMapper(helper)->toUser(idx)]=modes[idx];
+        temp_int[idx] = castToMapper(helper)->toHw(joints[idx]);
     }
-    return raw->setControlModesRaw(n_joint, temp_int, temp_mode);
+    return raw->setControlModesRaw(n_joint, temp_int, modes);
 }
 
 bool ImplementControlMode2::setControlModes(int *modes)

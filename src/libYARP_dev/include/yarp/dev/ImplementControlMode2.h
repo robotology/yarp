@@ -36,6 +36,16 @@ public:
      */
     virtual  ~ImplementControlMode2();
 
+    // Control mode
+    bool setTorqueMode(int j);
+    bool setImpedancePositionMode(int j);
+    bool setImpedanceVelocityMode(int j);
+    bool setOpenLoopMode(int j);
+    bool setPositionMode(int j);
+    bool setVelocityMode(int j);
+    bool getControlMode(int j, int *f);
+    bool getControlModes(int *modes);
+    // Control Mode 2
     bool getControlModes(const int n_joint, const int *joints, int *modes);
     bool setControlMode(const int j, const int mode);
     bool setControlModes(const int n_joint, const int *joints, int *modes);

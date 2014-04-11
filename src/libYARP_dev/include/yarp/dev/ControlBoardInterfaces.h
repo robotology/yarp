@@ -19,7 +19,7 @@
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IEncodersTimed.h>
 #include <yarp/dev/ITorqueControl.h>
-#include <yarp/dev/IControlMode.h>
+#include <yarp/dev/IControlMode2.h>
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/dev/IPositionControl.h>
