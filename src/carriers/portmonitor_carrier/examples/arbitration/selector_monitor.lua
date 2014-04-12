@@ -35,11 +35,11 @@ end
 
 --
 -- accept is called when the port receives new data
--- @param reader The ConnectionReader
+-- @param thing The Things abstract data type
 -- @return Boolean
 -- if false is returned, the data will be ignored 
 -- and update() will never be called
-PortMonitor.accept = function(reader)
+PortMonitor.accept = function(thing)
     print("selector: PortMonitor.accept()")
     if switchDisplay == true then
         switchDisplay = false

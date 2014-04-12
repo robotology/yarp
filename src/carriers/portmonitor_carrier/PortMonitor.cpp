@@ -14,6 +14,7 @@
 #include "PortMonitor.h"
 
 
+
 using namespace yarp::os;
 
 
@@ -62,7 +63,8 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
         return bReady;
 
     }
-    return (bReady = false);
+    bReady = false;
+    return bReady;
 }
 
 void PortMonitor::setCarrierParams(const yarp::os::Property& params) 
@@ -86,26 +88,74 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
 {
     if(!bReady) return reader;
 
+    // When we are here, the incoming data should be accessed 
+    // using localReader. 
+    // The reader passed to this function is infact empty. 
+ 
     PortMonitor::lock();
-    yarp::os::ConnectionReader& result = binder->updateData(reader);
+    yarp::os::Things thing;
+    thing.setConnectionReader(*localReader);
+    yarp::os::Things& result = binder->updateData(thing);    
     PortMonitor::unlock();
-    return result;
+    if(result.write(con.getWriter()))
+        return con.getReader();
+    return *localReader;
 }
 
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader) 
-{
+{       
     if(!bReady) return false;
-
+    
     PortMonitor::lock();
-    bool result = binder->acceptData(reader);
+    Things thing;
+    // set the reference connection reader
+    thing.setConnectionReader(reader);
+    bool result = binder->acceptData(thing);
     PortMonitor::unlock();
     if(!result)
         return false;
 
+    // When data is read here using the reader passed to this functions, 
+    // then it wont be available for modifyIncomingData(). Thus, we write
+    // it to a dumy connection and pass it to the modifyOutgoingData() using 
+    // localReader.  
+    // localReader points to a connection reader which contains 
+    // either the original or modified data.
+    con.reset();
+    if(thing.write(con.getWriter()))
+        localReader = &con.getReader();
+    else
+        localReader = &reader;
+
     getPeers().lock();
     YARP_ASSERT(group);
-    result = group->acceptIncomingData(reader,this);
+    result = group->acceptIncomingData(this);
     getPeers().unlock();
+    return result;
+}
+
+
+yarp::os::PortWriter& PortMonitor::modifyOutgoingData(yarp::os::PortWriter& writer)
+{
+    if(!bReady) return writer;
+
+    PortMonitor::lock();
+    thing.reset();
+    thing.setPortWriter(&writer);
+    yarp::os::Things& result = binder->updateData(thing);    
+    PortMonitor::unlock();
+    return *result.getPortWriter();
+}
+
+bool PortMonitor::acceptOutgoingData(yarp::os::PortWriter& writer)
+{
+    if(!bReady) return false;
+   
+    PortMonitor::lock();
+    yarp::os::Things thing;
+    thing.setPortWriter(&writer);
+    bool result = binder->acceptData(thing);
+    PortMonitor::unlock();
     return result;
 }
 
@@ -131,10 +181,8 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
 }
 
 // Decide whether data should be accepted, for real.
-bool PortMonitorGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
-                                       PortMonitor *source) 
-{
-    
+bool PortMonitorGroup::acceptIncomingData(PortMonitor *source) 
+{    
     //bool accept = true;
     for (PeerRecord<PortMonitor>::iterator it = peerSet.begin(); it!=peerSet.end(); it++)
     {

@@ -29,7 +29,7 @@ Port Monitor carrier
  
   When data arrive to an input port, the port monitor will call the corresponding 
   callback function (i.e., PortMonitor.update) from lua script and passes an instance of 
-  connection reader to the callback function. Using the connection reader, user's script can 
+  Things object to the callback function. Using the Things object, user's script can 
   access the data, modify it and return it to the port monitor object. Beside the 
   'PortMonitor.update' The following callbacks can be  implemented within the global
   'PortMonitor' table:
@@ -60,7 +60,7 @@ Port Monitor carrier
    check whether it should accept or discard it. Returning 'false' will discard delivering 
    data to the port and avoids calling PortMonitor.update(). 
 
-   PortMonitor.accept = function(reader)
+   PortMonitor.accept = function(thing)
         ... 
         return true     --default
    end
@@ -69,11 +69,11 @@ Port Monitor carrier
    PortMonitor.update
    ------------------
    This will be called if the data is accepted by PortMonitor.update(). User can modify and 
-   return it using 'reader' object. 
+   return it using 'thing' object. 
 
-   PortMonitor.update = function(reader)
+   PortMonitor.update = function(thing)
         ... 
-        return reader 
+        return thing 
    end 
 
 
@@ -104,10 +104,10 @@ Port Monitor carrier
   PortMonitor. These auxiliary functions are used with the PortMonitor to arbitrator multiple 
   connection to the same input port of a module. (See example/arbitration/README.txt) 
 
-    - PortMonitor.setEvent(event)       : set an event into port event record
-    - PortMonitor.unsetEvent(event)     : unset an event into port event record
-    - PortMonitor.setConstraint(rule)   : set the selection rule 
-    - PortMonitor.getConstraint()       : get the selection rule
+    - PortMonitor.setEvent(event, lifetime) : set an event (with optional lifetime) into port event record
+    - PortMonitor.unsetEvent(event)         : unset an event into port event record
+    - PortMonitor.setConstraint(rule)       : set the selection rule 
+    - PortMonitor.getConstraint()           : get the selection rule
 
 
   Port monitor carrier looks for the global table name 'PortMonitor' in the user script and calls its

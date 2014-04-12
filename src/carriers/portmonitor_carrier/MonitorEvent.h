@@ -12,6 +12,7 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
 #include <vector>
 
 /*
@@ -27,13 +28,17 @@ class MonitorBinding;
 
 class MonitorEvent {
 public:    
-    MonitorEvent(const char* _name, MonitorBinding* _owner) {
+    MonitorEvent(const char* _name, MonitorBinding* _owner, double lf=-1.0) {
         if(_name) name = _name;
         owner = _owner;
+        lifetime = lf;              // default: infinit life time
+        create_time = yarp::os::Time::now();
     }
     
-    MonitorBinding* owner;
-    yarp::os::ConstString name;
+    MonitorBinding* owner;          // event's owner
+    yarp::os::ConstString name;     // event's symbolic name
+    double lifetime;                // event's life time in second. negative value means infinit life time. 
+    double create_time;             // event's creation or updating time
 };
 
 
@@ -46,26 +51,39 @@ public:
     typedef vector_type::iterator iterator;
     typedef vector_type::const_iterator const_iterator;
      
-    bool setEvent(const char* name, MonitorBinding* owner) {
-        if(findEvent(name, owner) != events.end())
-            return false;        
-        events.push_back(MonitorEvent(name, owner));
-        return true;
+    void setEvent(const char* name, MonitorBinding* owner, double lifetime=-1.0) {
+        // if event already exisits just update the create_time and lifetime
+        MonitorEventRecord::iterator itr = findEvent(name, owner);
+        if(itr != events.end()) 
+        {
+            (*itr).create_time = yarp::os::Time::now();
+            (*itr).lifetime = lifetime;
+            return;
+        }   
+        events.push_back(MonitorEvent(name, owner, lifetime));
+        return;
     }
 
-    bool unsetEvent(const char* name, MonitorBinding* owner) {
+    void unsetEvent(const char* name, MonitorBinding* owner) {
         MonitorEventRecord::iterator itr = findEvent(name, owner);
         if(itr == events.end())
-            return true;
+            return;
         events.erase(itr);
-        return true;
+        return;
     }
 
     bool hasEvent(const char* name){
         MonitorEventRecord::iterator itr;
         for(itr=events.begin(); itr<events.end(); itr++)
             if((*itr).name == name)
-                return true;
+            {
+                if((*itr).lifetime < 0.0)
+                    return true;
+                if((yarp::os::Time::now() - (*itr).create_time) < (*itr).lifetime)
+                    return true;
+                events.erase(itr);          // remove expired event
+                return false;
+            }
         return false;       
     }
 

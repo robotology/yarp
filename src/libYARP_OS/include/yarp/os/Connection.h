@@ -126,6 +126,7 @@ public:
      */
     virtual bool isActive() = 0;
 
+
     /**
      * Check if this carrier modifies incoming data through the
      * Carrier::modifyIncomingData method.
@@ -155,6 +156,35 @@ public:
      */
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) = 0;
 
+    /**
+     * Check if this carrier modifies outgoing data through the
+     * Carrier::modifyOutgoingData method.
+     *
+     * @return true if carrier wants Carrier::modifyOutgoingData called.
+     */
+    virtual bool modifiesOutgoingData() = 0; 
+
+    /**
+     * Modify outgoing payload data, if appropriate.
+     *
+     * Doesn't need to be done immediately, it is fine to hold onto a
+     * reference to the outgoing data reader and use it on demand.
+     * This can be handy in order to avoid unnecessary copies.
+     *
+     * @param writer for outgoing data.
+     * @return writer for modified version of outgoing data.
+     */
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) = 0; 
+    
+    /**
+     * Determine whether outgoing data should be accepted.
+     *
+     * @param writer for outgoing data.
+     * @return true if data should be accepted, false if it should be
+     *         discarded.
+     */
+    virtual bool acceptOutgoingData(PortWriter& writer) = 0;
+    
     /**
      * Configure carrier from port administrative commands.
      *
@@ -207,6 +237,18 @@ public:
     }
 
     virtual bool acceptIncomingData(yarp::os::ConnectionReader& reader) {
+        return true;
+    }
+
+    virtual bool modifiesOutgoingData() { 
+        return false; 
+    }
+
+    virtual PortWriter& modifyOutgoingData(PortWriter& writer) {
+        return writer;
+    } 
+
+    virtual bool acceptOutgoingData(PortWriter& writer) {
         return true;
     }
 
