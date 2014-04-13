@@ -19,7 +19,6 @@
 
 #include "MonitorBinding.h"
 #include "MonitorEvent.h"
-//#include "KnownThing.h"
 
 namespace yarp {
     namespace os {
