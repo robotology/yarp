@@ -234,7 +234,9 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 
 
 
-ImplementCallbackHelper::ImplementCallbackHelper(ControlBoardWrapper *x) {
+ImplementCallbackHelper::ImplementCallbackHelper() {}
+
+void ImplementCallbackHelper::init(ControlBoardWrapper *x) {
     controlledAxes = 0;
     pos = dynamic_cast<yarp::dev::IPositionControl *> (x);
     pos2 = dynamic_cast<yarp::dev::IPositionControl2 *> (x);
@@ -2171,7 +2173,9 @@ bool CommandsHelper::initialize()
     return ok;
 }
 
-CommandsHelper::CommandsHelper(ControlBoardWrapper *x)
+CommandsHelper::CommandsHelper() {}
+
+void CommandsHelper::init(ControlBoardWrapper *x)
 {
     caller = x;
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);

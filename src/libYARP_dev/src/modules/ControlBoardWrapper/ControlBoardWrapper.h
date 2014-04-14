@@ -98,11 +98,16 @@ protected:
 public:
     /**
     * Constructor.
+    */
+    CommandsHelper();
+
+    /**
+    * Initialization.
     * @param x is the pointer to the instance of the object that uses the CommandsHelper.
     * This is required to recover the pointers to the interfaces that implement the responses
     * to the commands.
     */
-    CommandsHelper(yarp::dev::ControlBoardWrapper *x);
+    void init(yarp::dev::ControlBoardWrapper *x);
 
     virtual bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response);
 
@@ -139,9 +144,14 @@ protected:
 public:
     /**
     * Constructor.
+    */
+    ImplementCallbackHelper();
+
+    /**
+    * Initialization.
     * @param x is the instance of the container class using the callback.
     */
-    ImplementCallbackHelper(yarp::dev::ControlBoardWrapper *x);
+    void init(yarp::dev::ControlBoardWrapper *x);
 
     /**
     * Callback function.
@@ -320,8 +330,10 @@ public:
     /**
     * Constructor.
     */
-    ControlBoardWrapper() :yarp::os::RateThread(20), callback_impl(this), command_reader(this), control_buffer(4)
+    ControlBoardWrapper() :yarp::os::RateThread(20), control_buffer(4)
     {
+        callback_impl.init(this);
+        command_reader.init(this);
         ////YARP_TRACE(Logger::get(),"ControlBoardWrapper2::ControlBoardWrapper2()", Logger::get().log_files.f3);
         controlledJoints = 0;
         thread_period = 20; // ms.
