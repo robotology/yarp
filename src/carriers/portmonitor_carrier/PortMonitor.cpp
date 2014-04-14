@@ -97,6 +97,7 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     thing.setConnectionReader(*localReader);
     yarp::os::Things& result = binder->updateData(thing);    
     PortMonitor::unlock();
+    con.reset();
     if(result.write(con.getWriter()))
         return con.getReader();
     return *localReader;
