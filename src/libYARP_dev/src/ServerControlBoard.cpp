@@ -51,9 +51,14 @@ protected:
 public:
     /**
     * Constructor.
+    */
+    ImplementCallbackHelper();
+
+    /**
+    * Initialization.
     * @param x is the instance of the container class using the callback.
     */
-    ImplementCallbackHelper(yarp::dev::ServerControlBoard *x);
+    void init(yarp::dev::ServerControlBoard *x);
 
     /**
     * Callback function.
@@ -86,11 +91,16 @@ protected:
 public:
     /**
     * Constructor.
+    */
+    CommandsHelper();
+
+    /**
+    * Initialization.
     * @param x is the pointer to the instance of the object that uses the CommandsHelper.
     * This is required to recover the pointers to the interfaces that implement the responses
     * to the commands.
     */
-    CommandsHelper(yarp::dev::ServerControlBoard *x);
+    void init(yarp::dev::ServerControlBoard *x);
 
     virtual bool respond(const Bottle& cmd, Bottle& response);
 
@@ -190,8 +200,10 @@ public:
     /**
     * Constructor.
     */
-    ServerControlBoard() : callback_impl(this), command_reader(this)
+    ServerControlBoard()
     {
+        callback_impl.init(this);
+        command_reader.init(this);
         trq    = NULL;
         mod    = NULL;
         pid    = NULL;
@@ -1538,7 +1550,10 @@ yarp::dev::DriverCreator *createServerControlBoard() {
         "ServerControlBoard");
 }
 
-inline yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerControlBoard *x) {
+inline yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper() {
+}
+
+void yarp::dev::ImplementCallbackHelper::init(yarp::dev::ServerControlBoard *x) {
     pos = dynamic_cast<yarp::dev::IPositionControl *> (x);
     YARP_ASSERT (pos != 0);
     vel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
@@ -1596,7 +1611,9 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) { 
+yarp::dev::CommandsHelper::CommandsHelper() {}
+
+void yarp::dev::CommandsHelper::init(yarp::dev::ServerControlBoard *x) { 
     YARP_ASSERT (x != NULL);
     caller = x; 
     trq   = dynamic_cast<yarp::dev::ITorqueControl *> (caller);
