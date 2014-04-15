@@ -47,7 +47,7 @@ namespace yarp
  *
  * @author Alexis Maldonado, Radu Bogdan Rusu
  */
-class YARP_dev_API yarp::dev::ServerInertial : public DeviceDriver,
+class yarp::dev::ServerInertial : public DeviceDriver,
             private yarp::os::Thread,
             public yarp::os::PortReader,
             public yarp::dev::IGenericSensor
