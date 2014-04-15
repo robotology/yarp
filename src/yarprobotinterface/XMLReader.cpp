@@ -524,7 +524,7 @@ RobotInterface::ParamList RobotInterface::XMLReader::Private::readParams(TiXmlEl
         valueStr.compare("params") != 0)
     {
         SYNTAX_ERROR(paramsElem->Row()) << "Expected \"param\", \"group\", \"paramlist\","
-                << "\"subDevice\", or \"params\". Found" << valueStr;
+                << "\"subdevice\", or \"params\". Found" << valueStr;
     }
 
     if (valueStr.compare("param") == 0) {
