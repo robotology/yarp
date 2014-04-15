@@ -42,7 +42,7 @@ namespace yarp
  * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
  *
  */
-class YARP_dev_API yarp::dev::ServerSoundGrabber : public DeviceDriver,
+class yarp::dev::ServerSoundGrabber : public DeviceDriver,
 			private yarp::os::Thread,
 			public yarp::os::PortReader,
 			public IAudioGrabberSound

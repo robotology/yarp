@@ -254,7 +254,7 @@ public:
 * maps only a subpart of the underlying device.
 * Allows also deferred attach/detach of a subdevice.
 */
-class YARP_dev_API yarp::dev::ControlBoardWrapper:
+class yarp::dev::ControlBoardWrapper:
                              public yarp::dev::DeviceDriver,
                              public yarp::os::RateThread,
                              public yarp::dev::IPidControl,
