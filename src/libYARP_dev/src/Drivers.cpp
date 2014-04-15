@@ -365,7 +365,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     // get command line options
     ResourceFinder rf;
-    rf.configure(argc, argv);
+    rf.configure(argc, argv); // this will process --from FILE if present
     Property options;
 
     // yarpdev will by default try to pass its thread on to the device.
@@ -381,6 +381,9 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     // check if we're being asked to read the options from file
     Value *val;
     if (options.check("file",val)) {
+        fprintf(stderr,"*** yarpdev --file is deprecated, please use --from\n");
+        fprintf(stderr,"*** yarpdev --file will be removed in a future version of YARP\n");
+
         ConstString fname = val->toString();
         options.unput("file");
         printf("yarpdev: working with config file %s\n", fname.c_str());
@@ -413,7 +416,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             printf("For example:\n");
             printf("   yarpdev --device test_grabber --width 32 --height 16 --name /grabber\n");
             printf("You can always move options to a configuration file:\n");
-            printf("   yarpdev [--device DEVICENAME] --file CONFIG_FILENAME\n");
+            printf("   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME\n");
             printf("If you have problems, you can add the \"verbose\" flag to get more information\n");
             printf("   yarpdev --verbose --device ffmpeg_grabber\n");
         }
