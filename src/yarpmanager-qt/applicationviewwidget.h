@@ -16,6 +16,8 @@
 #include <QTreeWidgetItem>
 #include "safe_manager.h"
 #include "genericviewwidget.h"
+#include <stdoutwindow.h>
+#include <QList>
 
 namespace Ui {
 class ApplicationViewWidget;
@@ -54,6 +56,7 @@ public:
     void onConUnAvailable(int from, int to);
     void onError(void);
     void onLoadBalance(void);
+
 
 
 private:
@@ -103,8 +106,13 @@ private:
     QAction *resRefreshAction;
     QAction *resSelectAllAction;
 
+    QList <StdoutWindow*> stdoutWinList;
+
 
 private slots:
+    void onCloseStdOut(int);
+    void onAttachStdout(void);
+    void onDetachStdout(void);
     void onYARPView();
     void onYARPHear();
     void onYARPRead();

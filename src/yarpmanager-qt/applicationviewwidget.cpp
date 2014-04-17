@@ -15,6 +15,7 @@
 #include <QFileDialog>
 #include <yarp/manager/localbroker.h>
 #include "yscopewindow.h"
+#include <QTreeWidgetItem>
 
 ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,yarp::manager::Manager *lazyManager,yarp::os::Property* config,QWidget *parent) :
     GenericViewWidget(parent), ApplicationEvent(),
@@ -109,6 +110,7 @@ void ApplicationViewWidget::createModulesViewContextMenu()
     connect(modkillAction,SIGNAL(triggered()),this,SLOT(onKill()));
     connect(modRefreshAction,SIGNAL(triggered()),this,SLOT(onRefresh()));
     connect(modSelectAllAction,SIGNAL(triggered()),this,SLOT(selectAllModule()));
+    connect(modAttachAction,SIGNAL(triggered()),this,SLOT(onAttachStdout()));
 }
 
 /*! \brief Create the context menu for the connections tree. */
@@ -382,6 +384,58 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
     }
 
     return false;
+}
+
+void ApplicationViewWidget::onCloseStdOut(int id)
+{
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+        QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
+        if(it->text(1).toInt() == id){
+            StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
+            if(stdouWin && stdouWin->getId() == id){
+                delete stdouWin;
+                it->setData(0,Qt::UserRole,NULL);
+                return;
+            }
+        }
+    }
+}
+
+void ApplicationViewWidget::onAttachStdout()
+{
+    if(manager.busy()){
+        return;
+    }
+
+    std::vector<int> MIDs;
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+        QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
+        if(it->isSelected()){
+            bool found = false;
+            int id = it->text(1).toInt();
+
+            StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
+            if(stdouWin && stdouWin->getId() == id){
+                found = true;
+                continue;
+            }
+
+            MIDs.push_back(it->text(1).toInt());
+
+            QString name = QString("%1").arg(app->getName());
+            QString strTitle = name + ":" + it->text(0) + ":" + it->text(1);
+
+            StdoutWindow *stdOutWindow = new StdoutWindow(id,strTitle);
+            connect(stdOutWindow,SIGNAL(closeStdOut(int)),this,SLOT(onCloseStdOut(int)));
+            //stdoutWinList.append(stdOutWindow);
+            it->setData(0,Qt::UserRole,QVariant::fromValue(stdOutWindow));
+            stdOutWindow->show();
+        }
+
+    }
+    manager.safeAttachStdout(MIDs);
+
+    //return true;
 }
 
 /*! \brief Called when the Run button has been pressed */
@@ -1045,7 +1099,19 @@ void ApplicationViewWidget::onModStop(int which)
     \param which
     \param msg the message
 */
-void ApplicationViewWidget::onModStdout(int which, const char* msg) {}
+void ApplicationViewWidget::onModStdout(int which, const char* msg)
+{
+    for(int j=0;j<ui->moduleList->topLevelItemCount();j++){
+        //StdoutWindow *stdouWin = stdoutWinList.at(j);
+        QTreeWidgetItem *it = ui->moduleList->topLevelItem(j);
+        StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
+        if(stdouWin && stdouWin->getId() == which){
+            QString s = QString("%1").arg(msg);
+            stdouWin->addMessage(s);
+            break;
+        }
+    }
+}
 
 /*! \brief Called when a connection has been performed
     \param which
@@ -1180,6 +1246,14 @@ void ApplicationViewWidget::onLoadBalance(void)
     updateApplicationWindow();
     reportErrors();
 }
+
+
+
+void ApplicationViewWidget::onDetachStdout(void)
+{
+
+}
+
 /*! \brief Get the connection row by id
     \param id the requested id
     \param the output row

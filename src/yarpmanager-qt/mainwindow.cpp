@@ -89,6 +89,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(close()));
     connect(ui->actionOpen_File,SIGNAL(triggered()),this,SLOT(onOpen()));
 
+
+
     onTabChangeItem(-1);
 
 }

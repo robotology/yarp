@@ -40,5 +40,7 @@
         <file>images/unknown_ico.png</file>
         <file>images/yesres_ico.png</file>
         <file>images/ymanager_ico.png</file>
+        <file>images/clear.png</file>
+        <file>images/Save-icon.png</file>
     </qresource>
 </RCC>

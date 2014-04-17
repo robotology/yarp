@@ -80,7 +80,9 @@ SOURCES += main.cpp\
     genericviewwidget.cpp \
     customtreewidget.cpp \
     resourceviewwidget.cpp \
-    yscopewindow.cpp
+    yscopewindow.cpp \
+    logwidget.cpp \
+    stdoutwindow.cpp
 
 HEADERS  += mainwindow.h \
     entitiestreewidget.h \
@@ -91,13 +93,16 @@ HEADERS  += mainwindow.h \
     customtreewidget.h \
     template_res.h \
     resourceviewwidget.h \
-    yscopewindow.h
+    yscopewindow.h \
+    logwidget.h \
+    stdoutwindow.h
 
 FORMS    += mainwindow.ui \
     moduleviewwidget.ui \
     applicationviewwidget.ui \
     resourceviewwidget.ui \
-    yscopewindow.ui
+    yscopewindow.ui \
+    stdoutwindow.ui
 
 RESOURCES += \
     res.qrc
