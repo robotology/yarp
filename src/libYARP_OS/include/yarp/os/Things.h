@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2012 IITRBCS
- * Authors: Ali paikan and Paul Fitzpatrick
+ * Authors: Ali Paikan and Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -27,19 +27,12 @@ namespace yarp {
 class YARP_OS_API yarp::os::Things {
 public:
   
-    Things() { 
-        conReader = NULL;
-        writer = NULL;
-        portable = NULL;
-    }
+    Things();
 
-    ~Things() {
-        if(portable)
-            delete portable;
-    }
+    virtual ~Things();
 
     /**     
-     * Set the reference to a PortWrtier object 
+     * Set the reference to a PortWriter object 
      *
      */
     void setPortWriter(yarp::os::PortWriter* writer) {

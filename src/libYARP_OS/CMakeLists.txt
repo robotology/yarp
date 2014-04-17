@@ -297,6 +297,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/TcpStream.cpp
                  src/Terminator.cpp
                  src/TextCarrier.cpp
+                 src/Things.cpp
                  src/Thread.cpp
                  src/ThreadImpl.cpp
                  src/Time.cpp
