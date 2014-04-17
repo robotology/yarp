@@ -1061,7 +1061,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
     // it is safe to pick up the address of the reader since this is
     // constant over the lifetime of the input threads.
 
-    if (this->reader!=NULL) {
+    if (this->reader!=NULL && !interrupted) {
         interruptible = false; // no mutexing; user of interrupt() has to be
                                // careful
 

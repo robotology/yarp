@@ -1045,8 +1045,6 @@ public:
         buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
-        //Time::delay(0.2);
-
 
         PortablePair<Bottle,Bottle> bot1;
         bot1.head.fromString("1 2 3");
@@ -1060,6 +1058,102 @@ public:
         output.resume();
         ok = output.write(bot1);
         checkTrue(ok,"output goes through after resume");
+
+        output.close();
+        input.close();
+    }
+
+
+    void testInterruptInputReaderBuf() {
+        report(0,"checking interrupt on input side...");
+        PortReaderBuffer<Bottle> buf;
+        buf.setStrict(true);
+
+        Port input, output;
+        input.open("/in");
+        output.open("/out");
+
+        buf.setStrict();
+        buf.attach(input);
+
+        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+
+        Bottle bot1;
+        bot1.fromString("1 2 3");
+
+        output.write(bot1);
+        for (int i=0; i<20 && buf.getPendingReads()<1; i++) {
+            Time::delay(0.1);
+        }
+        checkEqual(buf.getPendingReads(),1,"first msg came through");
+        Bottle *bot2 = buf.read();
+        YARP_ASSERT(bot2);
+        checkEqual(bot2->size(),3,"data looks ok");
+
+        bot1.addInt(4);
+
+        report(0,"interrupting...");
+        input.interrupt();
+
+        output.write(bot1);
+        for (int i=0; i<10 && buf.getPendingReads()<1; i++) {
+            Time::delay(0.1);
+        }
+        checkEqual(buf.getPendingReads(),0,"msg after interrupt ignored");
+
+        bot1.addInt(5);
+
+        input.resume();
+        output.write(bot1);
+        for (int i=0; i<20 && buf.getPendingReads()<1; i++) {
+            Time::delay(0.1);
+        }
+        checkEqual(buf.getPendingReads(),1,"next msg came through");
+        bot2 = buf.read();
+        YARP_ASSERT(bot2);
+        checkEqual(bot2->size(),5,"data looks ok");
+
+        output.close();
+        input.close();
+    }
+
+
+    void testInterruptInputNoBuf() {
+        report(0,"checking interrupt on input side without buffering...");
+
+        Port input, output;
+        input.open("/in");
+        output.enableBackgroundWrite(true);
+        output.open("/out");
+
+        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+
+        Bottle bot1, bot2;
+        bot1.fromString("1 2 3");
+
+        output.write(bot1);
+        bool ok = input.read(bot2);
+        checkTrue(ok,"first msg came through");
+        checkEqual(bot2.size(),3,"data looks ok");
+
+        bot1.addInt(4);
+
+        report(0,"interrupting...");
+        input.interrupt();
+
+        output.write(bot1);
+        checkFalse(input.read(bot2),"msg after interrupt ignored");
+
+        Time::delay(1);
+
+        bot1.addInt(5);
+
+        report(0,"resuming");
+        input.resume();
+        output.write(bot1);
+        ok = input.read(bot2);
+        checkTrue(ok,"next msg came through");
+        checkEqual(bot2.size(),5,"data looks ok");
 
         output.close();
         input.close();
@@ -1172,6 +1266,9 @@ public:
         testInterruptReply();
 
         testReopen();
+
+        testInterruptInputReaderBuf();
+        testInterruptInputNoBuf();
 
         NetworkBase::setLocalMode(false);
     }

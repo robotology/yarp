@@ -141,6 +141,14 @@ public:
         }
     }
 
+
+    void resumeFull() {
+        while (produce.check()) {}
+        while (readBlock.check()) {}
+        resume();
+        readBlock.post();
+    }
+
     virtual bool read(ConnectionReader& reader) {
         if (permanentReadDelegate!=NULL) {
             bool result = permanentReadDelegate->read(reader);
@@ -151,7 +159,7 @@ public:
         readBlock.wait();
 
         if (!reader.isValid()) {
-            // termination
+            // interrupt
             stateMutex.wait();
             if (readDelegate!=NULL) {
                 readResult = readDelegate->read(reader);
@@ -613,7 +621,7 @@ void Port::interrupt() {
 
 void Port::resume() {
     PortCoreAdapter& core = HELPER(implementation);
-    core.resume();
+    core.resumeFull();
     Nodes& nodes = NameClient::getNameClient().getNodes();
     nodes.add(*this);
 }
