@@ -13,18 +13,19 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   * \author <xsl:for-each select="module/authors/author">
                <xsl:choose>
                  <xsl:when test="position() = last()">
-	              <xsl:value-of select="text()"/> <xsl:value-of select="@email"/>
+                 <xsl:value-of select="text()"/> <xsl:value-of select="@email"/>
                  </xsl:when>
                  <xsl:otherwise>
-                      <xsl:value-of select="text()"/> <xsl:value-of select="@email"/>, 
+                 <xsl:value-of select="text()"/> <xsl:value-of select="@email"/>, 
                  </xsl:otherwise>
-                </xsl:choose>
-	  </xsl:for-each>
+               </xsl:choose>
+     </xsl:for-each>
+  * \n
   * \copyright <xsl:value-of select="module/copypolicy" />
   * \section intro_sec Description
   *
-    <xsl:copy-of select="module/description-long/node()" disable-output-escaping="yes" />
-  * \section parameters_sec Parameters	
+  <xsl:copy-of select="module/description-long/node()" disable-output-escaping="yes" />
+  * \section parameters_sec Parameters     
   <xsl:for-each select="module/arguments/param">
   *- --<xsl:value-of select="text()"/>: <xsl:value-of select="@desc"/>
   </xsl:for-each>
