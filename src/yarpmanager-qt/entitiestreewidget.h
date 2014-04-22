@@ -66,11 +66,15 @@ signals:
     void viewApplication(yarp::manager::Application*);
     void importFiles();
     void openFiles();
+    void reopenApplication(QString, QString);
+    void reopenResource(QString, QString);
+    void reopenModule(QString, QString);
 public slots:
     void onContext(QPoint);
     void onLoadFile();
     void onEdit();
     void onRemove();
+    void onReopen();
     void onItemDoubleClicked(QTreeWidgetItem*item, int column);
 
 };

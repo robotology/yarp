@@ -70,12 +70,17 @@ private slots:
     void onLogError(QString);
     void onLogWarning(QString);
     void onLogMessage(QString);
+    void onHelp();
 
 public slots:
     void onTabChangeItem(int);
     void viewModule(yarp::manager::Module*);
     void viewResource(yarp::manager::Computer *res);
     void viewApplication(yarp::manager::Application *app);
+
+    void onReopenApplication(QString,QString);
+    void onReopenModule(QString,QString);
+    void onReopenResource(QString,QString);
 };
 
 #endif // MAINWINDOW_H

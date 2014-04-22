@@ -25,6 +25,7 @@
 #include <QGridLayout>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDesktopServices>
 
 #if defined(WIN32)
     #pragma warning (disable : 4250)
@@ -70,6 +71,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->entitiesTree,SIGNAL(viewApplication(yarp::manager::Application*)),this,SLOT(viewApplication(yarp::manager::Application*)));
     connect(ui->entitiesTree,SIGNAL(openFiles()),this,SLOT(onOpen()));
     connect(ui->entitiesTree,SIGNAL(importFiles()),this,SLOT(onImportFiles()));
+    connect(ui->entitiesTree,SIGNAL(reopenApplication(QString,QString)),this,SLOT(onReopenApplication(QString,QString)));
+    connect(ui->entitiesTree,SIGNAL(reopenModule(QString,QString)),this,SLOT(onReopenModule(QString,QString)));
+    connect(ui->entitiesTree,SIGNAL(reopenResource(QString,QString)),this,SLOT(onReopenResource(QString,QString)));
 
     connect(ui->actionRun,SIGNAL(triggered()),this,SLOT(onRun()));
     connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(onStop()));
@@ -88,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionClose,SIGNAL(triggered()),this,SLOT(onClose()));
     connect(ui->actionQuit,SIGNAL(triggered()),this,SLOT(close()));
     connect(ui->actionOpen_File,SIGNAL(triggered()),this,SLOT(onOpen()));
+    connect(ui->actionHelp,SIGNAL(triggered()),this,SLOT(onHelp()));
 
 
 
@@ -799,4 +804,33 @@ void MainWindow::onOpen()
     }
     reportErrors();
 
+}
+
+/*! \brief Opens the Help in the default browser */
+
+void MainWindow::onHelp()
+{
+    QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/yarpmanager.html"));
+}
+
+
+void MainWindow::onReopenApplication(QString appName,QString fileName)
+{
+    lazyManager.removeApplication(appName.toLatin1().data());
+    lazyManager.addApplication(fileName.toLatin1().data(),appName.toLatin1().data());
+    syncApplicationList();
+}
+
+void MainWindow::onReopenModule(QString modName,QString fileName)
+{
+    lazyManager.removeModule(modName.toLatin1().data());
+    lazyManager.addModule(fileName.toLatin1().data());
+    syncApplicationList();
+}
+
+void MainWindow::onReopenResource(QString resName,QString fileName)
+{
+    lazyManager.removeResource(resName.toLatin1().data());
+    lazyManager.addResource(fileName.toLatin1().data());
+    syncApplicationList();
 }

@@ -13,6 +13,7 @@
 #include <QProcess>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QTreeWidgetItem>
 
 EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
@@ -64,6 +65,7 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
     connect(importFile,SIGNAL(triggered()),this,SIGNAL(importFiles()));
     connect(edit,SIGNAL(triggered()),this,SLOT(onEdit()));
     connect(remove,SIGNAL(triggered()),this,SLOT(onRemove()));
+    connect(reopen,SIGNAL(triggered()),this,SLOT(onReopen()));
 
 }
 
@@ -349,17 +351,67 @@ void EntitiesTreeWidget::onEdit()
 
 }
 
+/*! \brief Reload the selected entity node
+*/
+void EntitiesTreeWidget::onReopen()
+{
+    QTreeWidgetItem *it = currentItem();
+
+    if(!it){
+        return;
+    }
+
+    if(it->parent() == applicationNode){
+        if(it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+            yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
+
+            QString fileName = QString("%1").arg(app->getXmlFile());
+            QString appName = it->text(0);
+
+            reopenApplication(appName,fileName);
+
+        }
+    }else
+    if(it->parent() == resourcesNode){
+        if(it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
+            yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
+
+            QString fileName = QString("%1").arg(res->getXmlFile());
+            QString resName = it->text(0);
+
+            reopenResource(resName,fileName);
+        }
+    }else
+    if(it->parent() == modulesNode){
+        if(it->data(0,Qt::UserRole)  == yarp::manager::MODULE){
+            yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
+
+            QString fileName = QString("%1").arg(mod->getXmlFile());
+            QString modName = it->text(0);
+
+            reopenModule(modName,fileName);
+
+        }
+    }
+}
+
 /*! \brief Remove the selected entity node
 */
 void EntitiesTreeWidget::onRemove()
 {
     QTreeWidgetItem *item = currentItem();
 
+
     if(!item){
         return;
     }
 
     if(QMessageBox::question(this,"Removing","Are you sure to remove this item?") == QMessageBox::Yes){
-        item->parent()->removeChild(item);
+        while(item->childCount()>0){
+            delete item->takeChild(0);
+        }
+
+        int index = item->parent()->indexOfChild(item);
+        delete item->parent()->takeChild(index);
     }
 }

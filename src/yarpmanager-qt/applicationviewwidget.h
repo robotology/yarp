@@ -72,6 +72,7 @@ private:
     void createConnectionsViewContextMenu();
     void createResourcesViewContextMenu();
     bool timeout(double base, double timeout);
+    bool areAllShutdown();
 
 private:
     Ui::ApplicationViewWidget *ui;
@@ -110,6 +111,7 @@ private:
 
 
 private slots:
+    void onAssignHost();
     void onCloseStdOut(int);
     void onAttachStdout(void);
     void onDetachStdout(void);
@@ -131,9 +133,25 @@ private slots:
     bool onDisconnect();
     bool onRefresh();
 
+    void onSelfSafeLoadBalance();
+    void onSelfConnect(int which);
+    void onSelfDisconnect(int which);
+    void onSelfResAvailable(int which);
+    void onSelfResUnavailable(int which);
+    void onSelfStart(int which);
+    void onSelfStop(int which);
+
 signals:
     void logWarning(QString);
     void logError(QString);
+
+    void selfSafeLoadBolance();
+    void selfConnect(int);
+    void selfDisconnect(int);
+    void selfResAvailable(int);
+    void selfResUnavailable(int);
+    void selfStart(int);
+    void selfStop(int);
 
 };
 

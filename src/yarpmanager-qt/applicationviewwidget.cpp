@@ -62,6 +62,13 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,yar
     connect(ui->connectionList,SIGNAL(itemSelectionChanged()),this,SLOT(onConnectionItemSelectionChanged()));
     connect(ui->connectionList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(onItemDoubleClicked(QTreeWidgetItem*,int)));
 
+    connect(this,SIGNAL(selfSafeLoadBolance()),this,SLOT(onSelfSafeLoadBalance()),Qt::QueuedConnection);
+    connect(this,SIGNAL(selfConnect(int)),this,SLOT(onSelfConnect(int)),Qt::QueuedConnection);
+    connect(this,SIGNAL(selfDisconnect(int)),this,SLOT(onSelfDisconnect(int)),Qt::QueuedConnection);
+    connect(this,SIGNAL(selfResAvailable(int)),this,SLOT(onSelfResAvailable(int)),Qt::QueuedConnection);
+    connect(this,SIGNAL(selfResUnavailable(int)),this,SLOT(onSelfResUnavailable(int)),Qt::QueuedConnection);
+    connect(this,SIGNAL(selfStart(int)),this,SLOT(onSelfStart(int)),Qt::QueuedConnection);
+    connect(this,SIGNAL(selfStop(int)),this,SLOT(onSelfStop(int)),Qt::QueuedConnection);
     createModulesViewContextMenu();
     createConnectionsViewContextMenu();
     createResourcesViewContextMenu();
@@ -111,6 +118,7 @@ void ApplicationViewWidget::createModulesViewContextMenu()
     connect(modRefreshAction,SIGNAL(triggered()),this,SLOT(onRefresh()));
     connect(modSelectAllAction,SIGNAL(triggered()),this,SLOT(selectAllModule()));
     connect(modAttachAction,SIGNAL(triggered()),this,SLOT(onAttachStdout()));
+    connect(modAssignAction,SIGNAL(triggered()),this,SLOT(onAssignHost()));
 }
 
 /*! \brief Create the context menu for the connections tree. */
@@ -263,6 +271,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString workDir = QString("%1").arg((*moditr)->getWorkDir());
         QString env = QString("%1").arg((*moditr)->getEnv());
 
+
         QStringList l;
         l << command << id << "stopped" << host << param << stdio << workDir << env;
         QTreeWidgetItem *it = new QTreeWidgetItem(ui->moduleList,l);
@@ -398,6 +407,68 @@ void ApplicationViewWidget::onCloseStdOut(int id)
                 return;
             }
         }
+    }
+}
+
+bool ApplicationViewWidget::areAllShutdown()
+{
+    for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+        QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
+        if(it->text(2) != "stopped"){
+            return false;
+        }
+    }
+
+    for(int i=0;i<ui->connectionList->topLevelItemCount();i++){
+        QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
+        if(it->text(2) != "disconnected"){
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void ApplicationViewWidget::onSelfSafeLoadBalance()
+{
+    updateApplicationWindow();
+    reportErrors();
+}
+
+void ApplicationViewWidget::onAssignHost()
+{
+    if(areAllShutdown() && !manager.busy()){
+        for(int i=0;i<ui->moduleList->topLevelItemCount();i++){
+            QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
+            if(it->isSelected()){
+                //QString waitHost = QString("%1").arg("?");
+                it->setText(2,"waiting");
+                it->setText(3,"?");
+            }
+
+        }
+        manager.safeLoadBalance();
+        yarp::os::Time::delay(0.1);
+
+        /*typedef Gtk::TreeModel::Children type_children;
+        type_children children = m_refTreeModModel->children();
+        for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
+        {
+            Gtk::TreeModel::Row row = (*iter);
+            row[m_modColumns.m_col_status] = "waiting";
+            row[m_modColumns.m_col_editable] = false;
+            row[m_modColumns.m_col_host] = "?";
+            row[m_modColumns.m_col_color] = Gdk::Color("#000000");
+
+            row.set_value(0, m_refPixWaiting);
+        }
+
+        manager.safeLoadBalance();
+        */
+    }else{
+        yarp::manager::ErrorLogger* logger  = yarp::manager::ErrorLogger::Instance();
+        logger->addError("Running modules should be stopped before assigning hosts.");
+        reportErrors();
     }
 }
 
@@ -1065,10 +1136,74 @@ bool ApplicationViewWidget::isRunning()
     return false;
 }
 
-/*! \brief Called when a modlue has been started
-    \param which
-*/
-void ApplicationViewWidget::onModStart(int which)
+
+void ApplicationViewWidget::onSelfConnect(int which)
+{
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
+    if(it){
+        it->setText(2,"connected");
+        it->setIcon(0,QIcon(":/images/connected_ico.png"));
+        it->setTextColor(2,QColor("#008C00"));
+    }
+
+           /* row[m_conColumns.m_col_status] = "connected";
+            row[m_conColumns.m_col_editable] = false;
+            row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
+            row.set_value(0, m_refPixConnected);*/
+
+    reportErrors();
+}
+
+void ApplicationViewWidget::onSelfDisconnect(int which)
+{
+    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
+    if(it){
+        it->setText(2,"disconnected");
+        it->setIcon(0,QIcon(":/images/disconnected_ico.png"));
+        it->setTextColor(2,QColor("#BF0303"));
+    }
+    reportErrors();
+}
+
+void ApplicationViewWidget::onSelfResAvailable(int which)
+{
+    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
+    if(it){
+        it->setText(3,"avaiable");
+        if(it->text(2) == "computer"){
+            it->setIcon(0,QIcon(":/images/computer_ico.png"));
+            it->setTextColor(3,QColor("#008C00"));
+        }else{
+            it->setIcon(0,QIcon(":/images/port_avail_ico.png"));
+            it->setTextColor(3,QColor("#008C00"));
+        }
+        /*if(row[m_resColumns.m_col_type] == Glib::ustring("computer"))
+            row.set_value(0, m_refPixAvailable);
+        else
+            row.set_value(0, m_refPixPortAvaibable);*/
+    }
+
+
+    reportErrors();
+}
+
+void ApplicationViewWidget::onSelfResUnavailable(int which)
+{
+    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
+    if(it){
+        it->setText(3,"unavaiable");
+        if(it->text(2) == "computer"){
+            it->setIcon(0,QIcon(":/images/nores_ico.png"));
+            it->setTextColor(3,QColor("#BF0303"));
+        }else{
+            it->setIcon(0,QIcon(":/images/port_unavail_ico.png"));
+            it->setTextColor(3,QColor("#BF0303"));
+        }
+    }
+    reportErrors();
+}
+
+void ApplicationViewWidget::onSelfStart(int which)
 {
     QTreeWidgetItem *it = ui->moduleList->topLevelItem(which);
     if(it){
@@ -1082,10 +1217,7 @@ void ApplicationViewWidget::onModStart(int which)
     reportErrors();
 }
 
-/*! \brief Called when a modlue has been stopped
-    \param which
-*/
-void ApplicationViewWidget::onModStop(int which)
+void ApplicationViewWidget::onSelfStop(int which)
 {
     QTreeWidgetItem *it = ui->moduleList->topLevelItem(which);
     if(it){
@@ -1094,6 +1226,22 @@ void ApplicationViewWidget::onModStop(int which)
         it->setTextColor(2,QColor("#BF0303"));
     }
     reportErrors();
+}
+
+/*! \brief Called when a modlue has been started
+    \param which
+*/
+void ApplicationViewWidget::onModStart(int which)
+{
+    selfStart(which);
+}
+
+/*! \brief Called when a modlue has been stopped
+    \param which
+*/
+void ApplicationViewWidget::onModStop(int which)
+{
+    selfStop(which);
 }
 /*! \brief Called when a modlue has writes on stdout
     \param which
@@ -1118,19 +1266,7 @@ void ApplicationViewWidget::onModStdout(int which, const char* msg)
 */
 void ApplicationViewWidget::onConConnect(int which)
 {
-    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
-    if(it){
-        it->setText(2,"connected");
-        it->setIcon(0,QIcon(":/images/connected_ico.png"));
-        it->setTextColor(2,QColor("#008C00"));
-    }
-
-           /* row[m_conColumns.m_col_status] = "connected";
-            row[m_conColumns.m_col_editable] = false;
-            row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
-            row.set_value(0, m_refPixConnected);*/
-
-        reportErrors();
+   selfConnect(which);
 
 }
 
@@ -1139,13 +1275,7 @@ void ApplicationViewWidget::onConConnect(int which)
 */
 void ApplicationViewWidget::onConDisconnect(int which)
 {
-    QTreeWidgetItem *it = ui->connectionList->topLevelItem(which);
-    if(it){
-        it->setText(2,"disconnected");
-        it->setIcon(0,QIcon(":/images/disconnected_ico.png"));
-        it->setTextColor(2,QColor("#BF0303"));
-    }
-    reportErrors();
+    selfDisconnect(which);
 }
 
 /*! \brief Called when a resource became avaible
@@ -1154,24 +1284,7 @@ void ApplicationViewWidget::onConDisconnect(int which)
 void ApplicationViewWidget::onResAvailable(int which)
 {
 
-    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
-    if(it){
-        it->setText(3,"avaiable");
-        if(it->text(2) == "computer"){
-            it->setIcon(0,QIcon(":/images/computer_ico.png"));
-            it->setTextColor(3,QColor("#008C00"));
-        }else{
-            it->setIcon(0,QIcon(":/images/port_avail_ico.png"));
-            it->setTextColor(3,QColor("#008C00"));
-        }
-        /*if(row[m_resColumns.m_col_type] == Glib::ustring("computer"))
-            row.set_value(0, m_refPixAvailable);
-        else
-            row.set_value(0, m_refPixPortAvaibable);*/
-    }
-
-
-    reportErrors();
+    selfResAvailable(which);
 }
 
 /*! \brief Called when a resource become unavaible
@@ -1179,18 +1292,7 @@ void ApplicationViewWidget::onResAvailable(int which)
 */
 void ApplicationViewWidget::onResUnAvailable(int which)
 {
-    QTreeWidgetItem *it = ui->resourcesList->topLevelItem(which);
-    if(it){
-        it->setText(3,"unavaiable");
-        if(it->text(2) == "computer"){
-            it->setIcon(0,QIcon(":/images/nores_ico.png"));
-            it->setTextColor(3,QColor("#BF0303"));
-        }else{
-            it->setIcon(0,QIcon(":/images/port_unavail_ico.png"));
-            it->setTextColor(3,QColor("#BF0303"));
-        }
-    }
-    reportErrors();
+    selfResUnavailable(which);
 }
 
 /*! \brief Called when a connection become avaible
@@ -1231,7 +1333,7 @@ void ApplicationViewWidget::onConUnAvailable(int from, int to)
     reportErrors();
 }
 
-/*! \brief Called whne an error occurred
+/*! \brief Called when an error occurred
 
 */
 void ApplicationViewWidget::onError(void)
@@ -1243,8 +1345,7 @@ void ApplicationViewWidget::onError(void)
 */
 void ApplicationViewWidget::onLoadBalance(void)
 {
-    updateApplicationWindow();
-    reportErrors();
+    selfSafeLoadBolance();
 }
 
 
