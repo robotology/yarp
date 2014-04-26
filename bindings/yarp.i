@@ -22,6 +22,7 @@
 %import "yarp/conf/api.h"
 %feature("director") yarp::os::PortReader;
 %feature("director") yarp::os::RFModule;
+%feature("director") yarp::os::Thread;
 %feature("autodoc", "1");
 
 #if defined (SWIGLUA)
@@ -391,6 +392,7 @@ namespace yarp {
 %include <yarp/os/Searchable.h>
 %include <yarp/os/Semaphore.h>
 %include <yarp/os/Thread.h>
+%include <yarp/os/RateThread.h>
 %include <yarp/os/Time.h>
 %include <yarp/os/RFModule.h>
 %include <yarp/os/Stamp.h>
