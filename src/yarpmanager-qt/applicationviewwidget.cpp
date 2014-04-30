@@ -403,7 +403,7 @@ void ApplicationViewWidget::onCloseStdOut(int id)
             StdoutWindow *stdouWin = qvariant_cast<StdoutWindow *>(it->data(0,Qt::UserRole));
             if(stdouWin && stdouWin->getId() == id){
                 delete stdouWin;
-                it->setData(0,Qt::UserRole,NULL);
+                it->setData(0,Qt::UserRole,QVariant::fromValue(NULL));
                 return;
             }
         }

@@ -11,7 +11,7 @@
 #include "simpleloader.h"
 #include <yarp/os/Value.h>
 
-SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::Property *options, PlotManager *plotManager, bool *ok, QObject *parent) :
+SimpleLoader::SimpleLoader(/* FIXME const */ yarp::os::ResourceFinder *options, PlotManager *plotManager, bool *ok, QObject *parent) :
     GenericLoader(parent)
 {
     this->plotManager = plotManager;

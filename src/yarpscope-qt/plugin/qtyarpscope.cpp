@@ -56,6 +56,7 @@ bool QtYARPScope::parseParameters(QStringList params)
     rf.setVerbose();
     // TODO Read default values from yarpscope.ini
     rf.setDefaultConfigFile("yarpscope.ini");
+    rf.setDefaultContext("yarpscope"); 
 
     // Transform Qt Params array in standard argc & argv
     int c = params.count();
@@ -65,6 +66,7 @@ bool QtYARPScope::parseParameters(QStringList params)
         v[i] = (char*)malloc(sizeof(char) * params.at(i).length()+1);
         strcpy(v[i],params.at(i).toLatin1().data());
     }
+
     if(!rf.configure(c, v)){
         usage();
         free(v);
@@ -72,12 +74,8 @@ bool QtYARPScope::parseParameters(QStringList params)
     }
 
     qDebug("%s",rf.toString().data());
-    // Read command line options
-    yarp::os::Property options;
-    //options.fromString(rf.toString());
-    options.fromCommand(c,v,false);
 
-    if (options.check("help")) {
+    if (rf.check("help")) {
         usage();
         free(v);
         return false;
@@ -93,17 +91,17 @@ bool QtYARPScope::parseParameters(QStringList params)
 
 //********************** Deprecated options
     // local
-    if (options.check("local")) {
+    if (rf.check("local")) {
         qWarning() << "--local option is deprecated. YARPScope now uses \"${YARP_PORT_PREFIX}/YARPScope/${REMOTE_PORT_NAME}\"";
     }
 
     // rows
-    if (options.check("rows")) {
+    if (rf.check("rows")) {
         qWarning() << "--rows option is deprecated. Use XML mode if you need more than one plot in a single window\"";
     }
 
     // cols
-    if (options.check("cols")) {
+    if (rf.check("cols")) {
         qWarning() << "--cols option is deprecated. Use XML mode if you need more than one plot in a single window\"";
     }
 //********************************************
@@ -129,19 +127,17 @@ bool QtYARPScope::parseParameters(QStringList params)
     }
 //*******************************************
 
-
     bool ok;
-    if (options.check("xml")) {
+    if (rf.check("xml")) {
 // XML Mode Options
-        const yarp::os::Value &xmlValue = options.find("xml");
-        const yarp::os::ConstString &filename = rf.findFile(xmlValue.toString().c_str());
+        const yarp::os::ConstString &filename = rf.findFile("xml");
         QString f = QString("%1").arg(filename.data());
         loader = new XmlLoader(f,plotManager,this);
         qDebug("Loading file %s",filename.c_str());
     } else {
 // Command Line Mode Options
         qDebug("Loading from command line");
-        loader = new SimpleLoader(&options,plotManager, &ok,this);
+        loader = new SimpleLoader(&rf,plotManager, &ok,this);
         if (!ok) {
             usage();
             exit(1);

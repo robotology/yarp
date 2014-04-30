@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
     // Pack the argc and argv to a QStrinList so we can pass them easily to the plugin
     QStringList params;
-    for(int i=1;i<argc;i++){
+    for(int i=0;i<argc;i++){
         params.append(argv[i]);
     }
     // Call the parseParameters of the toplevel object
