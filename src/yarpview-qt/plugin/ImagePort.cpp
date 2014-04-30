@@ -37,7 +37,7 @@ InputCallback::~InputCallback()
 /*! \brief the function callback
     \param img the image received
 */
-void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img)
+void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img)
 {
 
     uchar *tmpBuf;

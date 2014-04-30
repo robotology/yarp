@@ -629,6 +629,7 @@ Rectangle {
         title: "Credits"
 
         Rectangle{
+            id: rect
             anchors.fill: parent
 
             TabView{
@@ -636,7 +637,7 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.bottom: licenseCloseBtn.top
+                anchors.bottom: creditsCloseBtn.top
                 anchors.topMargin: 10
                 anchors.leftMargin: 10
                 anchors.rightMargin: 10

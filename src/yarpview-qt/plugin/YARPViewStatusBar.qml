@@ -33,7 +33,7 @@ StatusBar {
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.bottom: displayFps
+        anchors.bottom: displayFps.top
 
         text: "Port: " + bar.avgFps +
               " (min:" + bar.minFps +
@@ -45,7 +45,8 @@ StatusBar {
         anchors.left: parent.left
         anchors.top: fps.bottom
         anchors.right: parent.right
-        anchors.bottom: name
+        anchors.bottom: name.top
+
 
         text: "Display: " + bar.displayAvgFps +
               " (min:" + bar.displayMinFps +

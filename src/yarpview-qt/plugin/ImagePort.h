@@ -31,14 +31,14 @@
 /*! \class InputCallback
     \brief This class is a callback class that receives the video frame from the YARP backend
 */
-class InputCallback: public QObject, public yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >
+class InputCallback: public QObject, public yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelBgra> >
 {
 
 public:
     InputCallback();
     ~InputCallback();
     void setSignalHandler(SignalHandler*);
-    void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img);
+    void onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img);
  
 private:
     int counter;

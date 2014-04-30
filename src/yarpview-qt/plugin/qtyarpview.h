@@ -102,7 +102,7 @@ private:
     SignalHandler sigHandler;
     VideoProducer videoProducer;
 
-    yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *ptr_inputPort;
+    yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelBgra> > *ptr_inputPort;
     yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort;
     InputCallback *ptr_portCallback;
     pgmOptions _options;
