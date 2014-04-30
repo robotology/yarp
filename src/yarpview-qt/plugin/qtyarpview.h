@@ -78,6 +78,7 @@ public:
     Q_INVOKABLE void startDumpFrames();
     Q_INVOKABLE void stopDumpFrames();
     Q_INVOKABLE bool parseParameters(QStringList);
+    Q_INVOKABLE void clickCoords(int x, int y);
 
     QObject *getVideoProducer();
     int posX();
@@ -120,7 +121,6 @@ signals:
     void setName(QString name);
 private slots:
     void onSendFps(double portAvg, double portMin, double portMax, double dispAvg, double dispMin, double dispMax);
-
 };
 
 #endif // QTYARPVIEW_H

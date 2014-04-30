@@ -200,6 +200,31 @@ Rectangle {
         id: mainVideoOutput
         source: yarpViewCore.videoProducer
         fillMode: VideoOutput.Stretch
+
+        MouseArea{
+            anchors.fill: parent
+            id: coordsMouseArea
+
+            onClicked: {
+                var x = mouse.x
+                var y = mouse.y
+
+                var frameW = yarpViewCore.videoProducer.frameWidth;
+                var frameH = yarpViewCore.videoProducer.frameHeight
+
+                var w = mainVideoOutput.width
+                var h = mainVideoOutput.height
+
+                var ratioW = w/frameW
+                var ratioH = h/frameH
+
+                var clickX = x/ratioW
+                var clickY = y/ratioH
+
+                yarpViewCore.clickCoords(clickX,clickY)
+
+            }
+        }
     }
 
 

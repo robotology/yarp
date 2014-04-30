@@ -413,3 +413,25 @@ void QtYARPView::saveOptFile(char *fileName)
     optFile.close();
 }
 
+void QtYARPView::clickCoords(int x,int y)
+{
+    int imageWidth, imageHeight;
+
+    imageWidth = videoProducer.getWidth();
+    imageHeight = videoProducer.getHeight();
+
+    if ( (imageWidth != 0) && (imageHeight != 0) ) {
+        qDebug("Transmitting click information...");
+        if (_pOutPort!=NULL) {
+            yarp::os::Bottle& bot = _pOutPort->prepare();
+            bot.clear();
+            bot.addInt(x);
+            bot.addInt(y);
+            //_pOutPort->Content() = _outBottle;
+            _pOutPort->write();
+        }
+
+    } else {
+        qDebug("I would send a position, but there's no image for scaling");
+    }
+}
