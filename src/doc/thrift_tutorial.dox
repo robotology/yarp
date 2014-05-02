@@ -6,7 +6,7 @@
 
 /**
 *
-@page thrift_tutorial Thrift IDL (Interface Definition Language) in YARP
+@page thrift_tutorial Thrift IDL in YARP: advanced tutorial
 
 This tutorial shows how to use the Apache Thrift Interface Definition Language to serialize data sent over YARP ports and define interfaces for RPC-based services in YARP Modules.
 

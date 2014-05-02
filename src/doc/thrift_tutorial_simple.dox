@@ -6,7 +6,7 @@
 
 /**
 *
-@page thrift_tutorial_simple Thrift interfaces: a basic tutorial
+@page thrift_tutorial_simple Thrift IDL in YARP: simple tutorial
 
 This tutorial shows how to use the Apache Thrift Interface Definition Language (and relative compiler) to easily define RPC-based interfaces for YARP Modules.
 
