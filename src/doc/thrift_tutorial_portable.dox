@@ -4,11 +4,13 @@
 
 \author Lorenzo Natale
 
-YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. This tutorial shows how you can automate this process using the Thirft compiler. 
+YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. This tutorial shows how you can automate this process using the Thrift compiler. 
+
+<b>NOTE: In order to use IDLs, YARP must be built setting the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
 
 \section sec_intro Introduction
 
-Suppose we have two modules that wish to share a \em SharedData \m struct that contains a string and a vector. Normally you would define the data in a C++ header file and write serialization/deserialization methods to allow it to be sent and received to/from a port (this process is called marshalling/demarshalling). This process requires some YARP specific expertise, is error-prone and tedious. The idea here is that instead of manully writing the class you define the structure using an intermediate language (the Thrift IDL language), then you ask a compiler (the yarpidl_thrift compiler) to generate the class for you, including all the required code.
+Suppose we have two modules that wish to share a \em SharedData \m struct that contains a string and a vector. Normally you would define the data in a C++ header file and write serialization/deserialization methods to allow it to be sent and received to/from a port (this process is called marshalling/demarshalling). This process requires some YARP specific expertise, is error-prone and tedious. The idea here is that instead of manually writing the class you define the structure using an intermediate language (the Thrift IDL language), then you ask a compiler (the yarpidl_thrift compiler) to generate the class for you, including all the required code.
 
 Let's see how to do it.
 
@@ -27,7 +29,7 @@ struct SharedData {
 
 name this file \em SharedData.thrift save and close it.
 
-In thrift's syntax this specifies that SharedData is a struct that contains a \em text field of type \em string and a \em content field which type is a \em vector of floats. Thirft in fact supports much more options, see \ref thrift_tutorial.
+In thrift's syntax this specifies that SharedData is a struct that contains a \em text field of type \em string and a \em content field which type is a \em vector of floats. Thrift in fact supports much more options, see \ref thrift_tutorial.
 
 Now the \em yarpidl_thrift compiler can be invoked to generate both SharedData.h and SharedData.cpp. 
 
@@ -47,7 +49,7 @@ Now we can use these files in a YARP program.
 
 \section sec-code Code
 
-This code is strightforward. We define a simple sender executable that open a port and periodically write a SharedData object. 
+This code is straightforward. We define a simple sender executable that open a port and periodically write a SharedData object. 
 
 As usual we start with the CMake code, write your CMakeLists.txt:
 
@@ -131,7 +133,7 @@ yarp: Receiving input from /sender to /tmp/port/1 using tcp
 "Hello from sender" (0.0 0.0)
 \endcode
 
-It is simple to write a receiver to do the same programmatically:
+It is simple to write a receiver:
 
 Append the following to the CMakeLists.txt
 
@@ -180,7 +182,7 @@ int main()
 
 \section sec_using-cmake Using CMake 
 
-YARP provides CMake supports to automate the invokation of yarpidl_thrift. This is convenient in large projects when we generate several files and we do not want to keep track of all of them individually.
+YARP provides CMake supports to automate the invocation of yarpidl_thrift. This is convenient in large projects when we generate several files and we do not want to keep track of all of them individually.
 
 Edit the file CMakeLists.txt:
 
@@ -219,7 +221,7 @@ add_executable(sender sender.cpp ${headers} ${sources})
 TARGET_LINK_LIBRARIES(sender ${YARP_LIBRARIES})
 
 # create the receiver
-add_executable(receiver receiverr.cpp ${headers} ${sources})
+add_executable(receiver receiver.cpp ${headers} ${sources})
 TARGET_LINK_LIBRARIES(receiver ${YARP_LIBRARIES})
 
 \endcode
