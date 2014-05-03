@@ -18,8 +18,10 @@ int main()
    yarp::os::Port port;
 
    if (!port.open("/sender"))
+   {
        cerr<<"Error opening port, check your yarp network\n";
-
+       return -1;
+   }
    cout<<"Starting sender\n";
    
    while(true)
