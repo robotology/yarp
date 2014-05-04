@@ -461,7 +461,7 @@ void AnalogWrapper::run()
             }
             else
             {
-                printf("%s: vector size non valid: %lu\n", id.c_str(), lastDataRead.size());
+                printf("%s: vector size non valid: %lu\n", id.c_str(), static_cast<unsigned long> (lastDataRead.size()));
             }
         }
         else
