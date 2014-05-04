@@ -235,6 +235,15 @@ cmake ../ -DALLOW_IDL_GENERATION=TRUE
 
 The code generation step is required only when \em SharedData.thrift is modified.
 
-See code in: example/idl/portable
+\section sec-realted-tutorials Related Tutorials
+
+The Thrift IDL also allows defining modules interfaces, this is explained here: 
+\li \ref thrift_tutorial_simple
+\li \ref thrift_tutorial 
+
+YARP supports ROS types. An alternative method to define portable objects in YARP is to use the ROS syntax (i.e. through a .msg file). The disadvantage of this approach is that you cannot use native YARP types, but the advantage is that your messages will be compatible with ROS and readable from a topic. This tutorial shows how you do this:
+\li \ref rostypes_tutorial_portable
+
+Code for this tutorial can be found here: example/idl/portable
 *
 **/

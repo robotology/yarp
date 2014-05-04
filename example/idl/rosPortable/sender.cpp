@@ -24,17 +24,17 @@ int main()
    }
 
    cout<<"Starting sender\n";
-   
+   double count=0.0;
    while(true)
    {
       SharedData d;
 
       // d.text is a string
       d.text="Hello from sender";
-
+     
       //d.content is a vector, let's push some data
-      d.content.push_back(0.0);
-      d.content.push_back(0.0);
+      d.content.push_back(count++);
+      d.content.push_back(count++);
 
       port.write(d);
 

@@ -23,14 +23,23 @@ int main()
        return -1;
    }
 
+   network.connect("/sender", "/receiver");
+
+   int count=0;
    while(true)
    {
        SharedData d;
        port.read(d);
 
        //access d
-       cout << "Received SharedData:\n";
-       cout << d.text << "\n";      
+       cout << count << " Received SharedData:\n";
+       cout << d.text << "\n";
+       for (int i=0; i<d.content.size(); i++)
+       {
+          cout<<d.content[i]<<" ";
+       }
+       cout<<"\n";
+       count++;
    }
    
    return 0;

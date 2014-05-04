@@ -47,7 +47,10 @@ YARP implementation:
 \li \ref yarp_build_structure
 \li \ref yarp_plugins
 
-Using the Thrift IDL to define data types and interfaces:
+ROS types in YARP:
+\li \ref rostypes_tutorial_portable
+
+Using the Thirft IDL to define data types and interfaces:
 \li \ref thrift_tutorial_portable
 \li \ref thrift_tutorial_simple
 \li \ref thrift_tutorial 
