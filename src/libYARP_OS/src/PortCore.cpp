@@ -257,6 +257,7 @@ void PortCore::resume() {
 }
 
 void PortCore::interrupt() {
+    if (!listening) return;
     interrupted = true;
     if (interruptible) {
         stateMutex.wait();
