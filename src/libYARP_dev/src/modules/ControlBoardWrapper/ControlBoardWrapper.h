@@ -3536,6 +3536,78 @@ public:
         {
             return p->iMode2->setControlMode(off+base, mode);
         }
+        else
+        {
+            if (p->iMode)
+            {
+                switch(mode)
+                {
+                    case VOCAB_CM_IDLE:
+                    {
+                        bool ret = true;
+                        if(p->amp)
+                        {
+                            ret = ret && p->amp->disableAmp(j);
+                        }
+                        if(p->pid)
+                        {
+                            ret = ret && p->pid->disablePid(j);
+                        }
+                        return ret;
+                    }
+                    break;
+
+                    case VOCAB_CM_TORQUE:
+                    {
+                        return p->iMode->setTorqueMode(j);
+                    }
+                    break;
+
+/*                  Pos Direct has only all joint version
+                    case VOCAB_CM_POSITION_DIRECT:
+                    {
+                       return p->iMode-setPositionDirectMode(j);
+                    }
+                    break;
+*/
+                    case VOCAB_CM_POSITION:
+                    {
+                        return p->iMode->setPositionMode(j);
+                    }
+                    break;
+
+                    case VOCAB_CM_VELOCITY:
+                    {
+                        return p->iMode->setVelocityMode(j);
+                    }
+                    break;
+
+                    case VOCAB_CM_OPENLOOP:
+                    {
+                        return p->iMode->setOpenLoopMode(j);
+                    }
+                    break;
+
+                    case VOCAB_CM_IMPEDANCE_POS:
+                    {
+                        return p->iMode->setImpedancePositionMode(j);
+                    }
+                    break;
+
+                    case VOCAB_CM_IMPEDANCE_VEL:
+                    {
+                        return p->iMode->setImpedanceVelocityMode(j);
+                    }
+                    break;
+
+                    default:
+                    {
+                        std::cout << "ControlBoardWrapper received an invalid  setControlMode " << yarp::os::Vocab::decode(mode) << " for joint " << j;
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     virtual bool setControlModes(const int n_joints, const int *joints, int *modes)
