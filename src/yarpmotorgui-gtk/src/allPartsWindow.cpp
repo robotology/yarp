@@ -185,6 +185,7 @@ void sequence_all_load (GtkButton *button, partMover** currentPartMover)
       //store the file describing the poses
       for (i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
     {
+      fprintf(stderr, "Loading file for PART %d/%d \n", i, NUMBER_OF_ACTIVATED_PARTS);
       Property p;
       bool fileExists;
       char buffer[800];

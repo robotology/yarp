@@ -175,6 +175,7 @@ void partMover::save_to_file(char* filenameIn, partMover* currentPart)
  */
 void partMover::load_from_file(char* filenameIn, partMover* currentPart)
 {
+  fprintf(stderr, "Loading sequence from file \n");
   IPositionControl *ipos = currentPart->pos;
   IEncoders *iiencs = currentPart->iencs;
   IAmplifierControl *iamp = currentPart->amp;
@@ -208,7 +209,7 @@ void partMover::load_from_file(char* filenameIn, partMover* currentPart)
     {
       int NUMBER_OF_JOINTS;
       ipos->getAxes(&NUMBER_OF_JOINTS);
-		
+
       for (j = 0; j < NUMBER_OF_STORED; j++)
 	{
 	  sprintf(buffer, "POSITION%d", j);
@@ -247,16 +248,18 @@ void partMover::load_from_file(char* filenameIn, partMover* currentPart)
 		}
 	    }
 	}
+      fprintf(stderr, "Sequence was loaded. \n");
       if(GTK_IS_TREE_VIEW (tree_view))	
 	{
-	  gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_position_list_model(currentPart));
-	  gtk_widget_draw(GTK_WIDGET(tree_view), NULL);
+	  //gtk_tree_view_set_model (GTK_TREE_VIEW (tree_view), refresh_position_list_model(currentPart));
+	  //gtk_widget_draw(GTK_WIDGET(tree_view), NULL);
 	}
     }
   else
     dialog_message(GTK_MESSAGE_ERROR,
 				(char *) "Wrong format (check estensions) of the file associated with:", 
 				currentPart->partLabel, true);
+  fprintf(stderr, "load_from_file is exiting. \n");
   return;
 }
 
@@ -615,7 +618,9 @@ void partMover::sequence_load(GtkFileChooser *button, partMover *currentPart )
 {
   gchar* filePath = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(button));
   if (filePath == NULL) return;
+  fprintf(stderr, "Entering load from file. \n");
   load_from_file(filePath, currentPart);
+  fprintf(stderr, "Exiting load from file. \n");
   return;
 }
 
