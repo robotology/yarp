@@ -21,6 +21,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Time.h>
+#include <yarp/conf/numeric.h>
 
 #include <string>
 
@@ -31,14 +32,23 @@
 /*! \class InputCallback
     \brief This class is a callback class that receives the video frame from the YARP backend
 */
+
+#ifdef YARP_LITTLE_ENDIAN
 class InputCallback: public QObject, public yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelBgra> >
+#else
+class InputCallback: public QObject, public yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >
+#endif
 {
 
 public:
     InputCallback();
     ~InputCallback();
     void setSignalHandler(SignalHandler*);
+#ifdef YARP_LITTLE_ENDIAN
     void onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img);
+#else
+    void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img);
+#endif
  
 private:
     int counter;

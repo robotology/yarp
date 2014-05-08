@@ -184,7 +184,11 @@ int QtYARPView::refreshInterval()
 
 /*! \brief Creates the input port and the port callback.*/
 void QtYARPView::createObjects() {
+#ifdef YARP_LITTLE_ENDIAN
     ptr_inputPort = new  yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelBgra> >;
+#else
+    ptr_inputPort = new  yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
+#endif
     ptr_portCallback = new InputCallback;
     ptr_portCallback->setSignalHandler(&sigHandler);
 }

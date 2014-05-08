@@ -37,14 +37,18 @@ InputCallback::~InputCallback()
 /*! \brief the function callback
     \param img the image received
 */
+#ifdef YARP_LITTLE_ENDIAN
 void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img)
+#else
+void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img)
+#endif
 {
 
     uchar *tmpBuf;
     QSize s = (QSize(img.width(),img.height()));
     int imgSize = img.getRawImageSize();
     // Allocate a QVideoFrame
-    QVideoFrame frame(img.width() * img.height() * 4,
+    QVideoFrame frame(imgSize,
               s,
               s.width(),
               QVideoFrame::Format_RGB32);
@@ -65,7 +69,7 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img)
         tmpBuf[j+3] = 0;
         j+=4;
     }*/
-    memcpy(tmpBuf,rawImg,img.width() * img.height() * 4);
+    memcpy(tmpBuf,rawImg,imgSize);
     //unmap the buffer
     frame.unmap();
     if(sigHandler){
