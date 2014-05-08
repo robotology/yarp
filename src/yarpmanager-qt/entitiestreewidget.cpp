@@ -364,33 +364,35 @@ void EntitiesTreeWidget::onReopen()
     if(it->parent() == applicationNode){
         if(it->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
             yarp::manager::Application *app = (yarp::manager::Application*)it->data(0,Qt::UserRole + 1).toLongLong();
+            if(app){
+                QString fileName = QString("%1").arg(app->getXmlFile());
+                QString appName = it->text(0);
 
-            QString fileName = QString("%1").arg(app->getXmlFile());
-            QString appName = it->text(0);
-
-            reopenApplication(appName,fileName);
+                reopenApplication(appName,fileName);
+            }
 
         }
     }else
     if(it->parent() == resourcesNode){
         if(it->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
             yarp::manager::Computer *res = (yarp::manager::Computer*)it->data(0,Qt::UserRole + 1).toLongLong();
+            if(res){
+                QString fileName = QString("%1").arg(res->getXmlFile());
+                QString resName = it->text(0);
 
-            QString fileName = QString("%1").arg(res->getXmlFile());
-            QString resName = it->text(0);
-
-            reopenResource(resName,fileName);
+                reopenResource(resName,fileName);
+            }
         }
     }else
     if(it->parent() == modulesNode){
         if(it->data(0,Qt::UserRole)  == yarp::manager::MODULE){
             yarp::manager::Module *mod = (yarp::manager::Module*)it->data(0,Qt::UserRole + 1).toLongLong();
+            if(mod){
+                QString fileName = QString("%1").arg(mod->getXmlFile());
+                QString modName = it->text(0);
 
-            QString fileName = QString("%1").arg(mod->getXmlFile());
-            QString modName = it->text(0);
-
-            reopenModule(modName,fileName);
-
+                reopenModule(modName,fileName);
+            }
         }
     }
 }

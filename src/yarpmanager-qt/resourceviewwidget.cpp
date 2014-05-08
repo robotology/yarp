@@ -10,6 +10,7 @@
 
 #include "resourceviewwidget.h"
 #include "ui_resourceviewwidget.h"
+#include <QTreeWidgetItem>
 
 ResourceViewWidget::ResourceViewWidget(yarp::manager::Computer *res, QWidget *parent) :
     GenericViewWidget(parent),
@@ -20,6 +21,33 @@ ResourceViewWidget::ResourceViewWidget(yarp::manager::Computer *res, QWidget *pa
 
     type = yarp::manager::RESOURCE;
 
+    init();
+
+}
+
+ResourceViewWidget::~ResourceViewWidget()
+{
+    delete ui;
+}
+
+void ResourceViewWidget::refresh()
+{
+    QTreeWidgetItem *peripheralItem = ui->treeWidget->topLevelItem(9);
+    while(peripheralItem->childCount() > 0){
+        peripheralItem->removeChild(peripheralItem->child(0));
+    }
+
+    QTreeWidgetItem *processesItem = ui->treeWidget->topLevelItem(10);
+    while(processesItem->childCount() > 0){
+        processesItem->removeChild(processesItem->child(0));
+    }
+
+    init();
+}
+
+
+void ResourceViewWidget::init()
+{
     QTreeWidgetItem *nameItem = ui->treeWidget->topLevelItem(0);
     QTreeWidgetItem *descriptionItem = ui->treeWidget->topLevelItem(1);
     QTreeWidgetItem *disableItem = ui->treeWidget->topLevelItem(2);
@@ -94,15 +122,4 @@ ResourceViewWidget::ResourceViewWidget(yarp::manager::Computer *res, QWidget *pa
         yarp::manager::Process p  = procs.at(i);
         QTreeWidgetItem *it = new QTreeWidgetItem(processesItem,QStringList() << QString("%1").arg(p.pid));
     }
-
-
-
-
-
-
-}
-
-ResourceViewWidget::~ResourceViewWidget()
-{
-    delete ui;
 }

@@ -13,7 +13,7 @@
 #include <yarp/manager/manager.h>
 #include <QWidget>
 #include "genericviewwidget.h"
-
+#include <QTreeWidgetItem>
 
 namespace Ui {
 class ResourceViewWidget;
@@ -29,6 +29,10 @@ class ResourceViewWidget : public GenericViewWidget
 public:
     explicit ResourceViewWidget(yarp::manager::Computer *res,QWidget *parent = 0);
     ~ResourceViewWidget();
+    void refresh();
+
+private:
+    void init();
 
 private:
     yarp::manager::Computer *res;

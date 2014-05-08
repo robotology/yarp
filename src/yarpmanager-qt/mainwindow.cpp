@@ -264,8 +264,10 @@ void MainWindow::syncApplicationList()
     unsigned int cnt = 0;
     for(yarp::manager::ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++){
         cnt++;
-        yarp::manager::Application *app = *itr;
-        ui->entitiesTree->addApplication((*itr));
+        yarp::manager::Application *app = dynamic_cast<yarp::manager::Application*>(*itr);
+        if(app){
+            ui->entitiesTree->addApplication(app);
+        }
     }
 
     yarp::manager::ResourcePContainer resources = kb->getResources();
@@ -278,7 +280,10 @@ void MainWindow::syncApplicationList()
 
     yarp::manager::ModulePContainer modules = kb->getModules();
     for(yarp::manager::ModulePIterator itr=modules.begin(); itr!=modules.end(); itr++){
-           ui->entitiesTree->addModule(*itr);
+        yarp::manager::Module *mod = dynamic_cast<yarp::manager::Module*>(*itr);
+        if(mod){
+            ui->entitiesTree->addModule(mod);
+        }
     }
 
 
@@ -519,6 +524,11 @@ void MainWindow::onRefresh()
         ApplicationViewWidget *ww = (ApplicationViewWidget*)w;
         ww->refresh();
     }
+
+    if(type == yarp::manager::RESOURCE){
+        ResourceViewWidget *ww = (ResourceViewWidget*)w;
+        ww->refresh();
+    }
 }
 
 /*! \brief Select all items in Application tab
@@ -606,15 +616,18 @@ void MainWindow::onTabChangeItem(int index)
         ui->actionStop->setEnabled(true);
         ui->actionKill->setEnabled(true);
     }else{
+        if(w && w->getType() == yarp::manager::RESOURCE){
+            ui->actionRefresh_Status->setEnabled(true);
+        }else{
+            ui->actionRefresh_Status->setEnabled(false);
+        }
         ui->actionSelect_All->setEnabled(false);
-        ui->actionRefresh_Status->setEnabled(false);
         ui->actionExport_Graph->setEnabled(false);
         ui->actionConnect->setEnabled(false);
         ui->actionDisconnect->setEnabled(false);
         ui->actionRun->setEnabled(false);
         ui->actionStop->setEnabled(false);
         ui->actionKill->setEnabled(false);
-
     }
 }
 
