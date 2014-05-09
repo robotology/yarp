@@ -33,13 +33,35 @@ using namespace yarp::os;
 class PropertyItem {
 public:
     Bottle bot;
+    Property *backing;
     bool singleton;
 
     PropertyItem() {
         singleton = false;
+        backing = NULL;
+    }
+
+    ~PropertyItem() {
+        clear();
+    }
+
+    void clear() {
+        if (backing) {
+            delete backing;
+            backing = NULL;
+        }
+    }
+
+    void flush() {
+        if (backing) {
+            Bottle flatten(backing->toString());
+            bot.append(flatten);
+            clear();
+        }
     }
 
     ConstString toString() {
+        flush();
         return bot.toString();
     }
 };
@@ -86,6 +108,7 @@ public:
     void put(const ConstString& key, const ConstString& val) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
+        p->clear();
         p->bot.clear();
         p->bot.addString(key);
         p->bot.addString(val);
@@ -94,6 +117,7 @@ public:
     void put(const ConstString& key, const Value& bit) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
+        p->clear();
         p->bot.clear();
         p->bot.addString(key);
         p->bot.add(bit);
@@ -102,9 +126,21 @@ public:
     void put(const ConstString& key, Value *bit) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
+        p->clear();
         p->bot.clear();
         p->bot.addString(key);
         p->bot.add(bit);
+    }
+
+    Property& addGroup(const ConstString& key) {
+        PropertyItem *p = getProp(key,true);
+        p->singleton = true;
+        p->clear();
+        p->bot.clear();
+        p->bot.addString(key);
+        p->backing = new Property();
+        YARP_ASSERT(p->backing);
+        return *(p->backing);
     }
 
     bool check(const ConstString& key, Value *&output) const {
@@ -132,6 +168,7 @@ public:
         String out;
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
+            p->flush();
             if (owner.getMonitor()!=NULL) {
                 SearchReport report;
                 report.key = key;
@@ -162,6 +199,7 @@ public:
     Bottle& putBottle(const char *key, const Bottle& val) {
         PropertyItem *p = getProp(key,true);
         p->singleton = false;
+        p->clear();
         // inefficient! copy not implemented yet...
         p->bot.fromString(val.toString().c_str());
         return p->bot;
@@ -171,6 +209,7 @@ public:
     Bottle& putBottle(const char *key) {
         PropertyItem *p = getProp(key,true);
         p->singleton = false;
+        p->clear();
         p->bot.clear();
         return p->bot;
     }
@@ -179,6 +218,7 @@ public:
     Bottle *getBottle(const ConstString& key) const {
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
+            p->flush();
             return &(p->bot);
         }
         return NULL;
@@ -617,6 +657,7 @@ public:
                  it = data.begin(); it!=data.end(); it++) {
             PropertyItem& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
             Bottle& sub = bot.addList();
+            rec.flush();
             sub.copy(rec.bot);
         }
         return bot.toString();
@@ -943,4 +984,9 @@ void Property::fromQuery(const char *url, bool wipe) {
             }
         }
     }
+}
+
+
+Property& yarp::os::Property::addGroup(const ConstString& key) {
+    return HELPER(implementation).addGroup(key);
 }

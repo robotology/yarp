@@ -118,6 +118,19 @@ public:
     void put(const ConstString& key, double v);
 
     /**
+     *
+     * Add a nested group. Careful: the group object returned is
+     * valid only until the next read from the Property it was added
+     * to.  As soon as there is a request for data from that Property,
+     * then it ceases to be usable.
+     *
+     * @param key the key
+     * @return the nested group, represented as a Property
+     *
+     */
+    Property& addGroup(const ConstString& key);
+
+    /**
      * Remove the association from the given key to a value, if present.
      * Guarantees that find(key).isNull() will be true.
      * @param key the key

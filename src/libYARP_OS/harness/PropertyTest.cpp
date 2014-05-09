@@ -497,6 +497,16 @@ check $x $y\n\
                    "0xFEDCBA9876543210","hex that is too big remains a string");
     }
 
+    virtual void checkAddGroup() {
+        report(0,"check add group");
+        Property p;
+        p.put("x",1);
+        Property& psub = p.addGroup("psub");
+        psub.put("y",2);
+        checkEqual(p.find("x").asInt(),1,"basic int");
+        checkEqual(p.findGroup("psub").find("y").asInt(),2,"nested int");
+    }
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
@@ -517,6 +527,7 @@ check $x $y\n\
         checkNestedCommandLine();
         checkDirectory();
         checkLongLongHex();
+        checkAddGroup();
     }
 };
 
