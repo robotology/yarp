@@ -17,7 +17,7 @@ namespace yarp {
         enum
         {
             YARP_SIGTERM,
-            YARP_SIGINT,
+            YARP_SIGINT
         };
 
         typedef void(*YarpSignalHandler)(int);

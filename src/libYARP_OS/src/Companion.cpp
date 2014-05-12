@@ -66,7 +66,7 @@
         r = (char*) malloc ((strlen (s) + 1));
         strcpy (r, s);
         return (r);
-    };
+    }
     /* Generator function for command completion.  STATE lets us know whether
    to start from scratch; without any state (i.e. STATE == 0), then we
    start at the top of the list. */
@@ -119,7 +119,7 @@
 
         /* if no names matched, then return null. */
         return ((char *)NULL);
-    };
+    }
     /* Attempt to complete on the contents of TEXT.  START and END show the
    region of TEXT that contains the word to complete.  We can use the
    entire line in case we want to do some simple parsing.  Return the
@@ -140,7 +140,7 @@
             rl_attempted_completion_over=1;
 
         return (matches);
-    };
+    }
 
 #endif
 
@@ -222,7 +222,7 @@ static bool EOFreached()
 #else
     return feof(stdin);
 #endif
-};
+}
 
 static String getStdin() {
     String txt = "";
