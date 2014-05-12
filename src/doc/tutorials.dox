@@ -28,25 +28,6 @@ Using YARP ports for communication:
 \li \ref yarp_with_ros
 \li \ref yarp_http
 
-Using YARP devices:
-\li \ref note_devices
-\li \ref yarpdev
-\li \ref yarp_motor_control
-\li \ref dev_examples
-\li \ref add_a_plugin (older method: \ref add_a_device)
-\li \ref yarp_config_files
-
-Communication protocol details:
-\li \ref yarp_protocol
-\li \ref data_rep
-\li \ref name_server
-\li \ref terms
-
-YARP implementation:
-\li \ref yarp_guts
-\li \ref yarp_build_structure
-\li \ref yarp_plugins
-
 ROS types in YARP:
 \li \ref rostypes_tutorial_portable
 
@@ -58,10 +39,29 @@ Using the Thirft IDL to define data types and interfaces:
 How to search and install configuration files:
 \li \ref yarp_resource_finder_tutorials
 
-More, more, more:
+Using YARP devices:
+\li \ref note_devices
+\li \ref yarpdev
+\li \ref yarp_motor_control
+\li \ref dev_examples
+\li \ref add_a_plugin (older method: \ref add_a_device)
+\li \ref yarp_config_files
+
+More software tutorials:
 \li \ref yarp_code_examples
 \li \ref gpu_tutorial
 \li \ref using_cmake
+
+Communication protocol details:
+\li \ref yarp_protocol
+\li \ref data_rep
+\li \ref name_server
+\li \ref terms
+
+YARP implementation:
+\li \ref yarp_guts
+\li \ref yarp_build_structure
+\li \ref yarp_plugins
 
  *
  */
