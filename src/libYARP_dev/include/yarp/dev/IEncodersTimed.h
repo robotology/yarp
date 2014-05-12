@@ -44,7 +44,7 @@ public:
      /**
      * Read the instantaneous acceleration of all axes.
      * \param j axis index
-     * \param enc encoder value
+     * \param encs encoder value
      * \param stamp corresponding timestamp
      * \return true if all goes well, false if anything bad happens.
      */
@@ -67,7 +67,7 @@ public:
      /**
      * Read the instantaneous acceleration of all axes.
      * \param encs pointer to the array that will contain the output
-     * \param stamps pointer to the array that will contain individual timestamps
+     * \param time pointer to the array that will contain individual timestamps
      * \return true if all goes well, false if anything bad happens.
      */
     virtual bool getEncodersTimed(double *encs, double *time)=0;
@@ -75,8 +75,8 @@ public:
     /**
     * Read the instantaneous acceleration of all axes.
     * \param j axis index
-    * \param enc encoder value (pointer to)
-    * \param stamp corresponding timestamp (pointer to)
+    * \param encs encoder value (pointer to)
+    * \param time corresponding timestamp (pointer to)
     * \return true if all goes well, false if anything bad happens.
     */
     virtual bool getEncoderTimed(int j, double *encs, double *time)=0;

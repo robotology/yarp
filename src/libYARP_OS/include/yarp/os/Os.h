@@ -20,13 +20,13 @@ namespace yarp {
             YARP_SIGINT,
         };
 
+        typedef void(*YarpSignalHandler)(int);
         /**
         * Wrapper for the ACE_OS::signal signal.
         * Attach a function handler to a signal.
-        * @param signum: signal number (e.g. SIGTERM/SIGINT) to handle
-        * @param sighandler: handler function
+        * @param signum signal number (e.g. SIGTERM/SIGINT) to handle
+        * @param sig handler function
         */
-        typedef void(*YarpSignalHandler)(int);
         YARP_OS_API YarpSignalHandler signal(int signum, YarpSignalHandler sig);
 
         /**
@@ -36,20 +36,20 @@ namespace yarp {
 
         /**
         * Wrapper for ACE_OS::getenv().
-        * @param v: string that containt the environment variable name
+        * @param v string that containt the environment variable name
         * @return the value corresponding to the envarionment variable v
         */
         YARP_OS_API const char *getenv(const char *v);
 
         /**
         * Wrapper for ACE_OS::mkdir(). Create a directory.
-        * @param p: name of the new directory.
+        * @param p name of the new directory.
         */
         YARP_OS_API int mkdir(const char *p);
 
        /**
         * Wrapper for ACE_OS::rmdir(). Remove an empty directory.
-        * @param p: name of the directory.
+        * @param p name of the directory.
         */
         YARP_OS_API int rmdir(const char *p);
 

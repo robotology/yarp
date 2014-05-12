@@ -66,7 +66,7 @@ public:
     virtual ~IEventSink() {}
 
    /**
-   * @param  event
+   * @param event the event
    */
   virtual void castEvent (Event* event) = 0;
 

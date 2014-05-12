@@ -45,8 +45,8 @@ public:
     using IVelocityControl::stop;
 
     /** Start motion at a given speed for a subset of joints..
-     * @param n_joints how many joints this command is referring to
-     * @param list of joints controlled. The size of this array is n_joints
+     * @param n_joint how many joints this command is referring to
+     * @param joints of joints controlled. The size of this array is n_joints
      * @param spds pointer to the array containing the new speed values, one value for each joint, the size of the array is n_joints.
      * The first value will be the new reference fot the joint joints[0].
      *          for example:
@@ -59,8 +59,8 @@ public:
 
     /** Set reference acceleration for a subset of joints. This is the valure that is
      * used during the generation of the trajectory.
-     * @param n_joints how many joints this command is referring to
-     * @param list of joints controlled. The size of this array is n_joints
+     * @param n_joint how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
      * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
      * The first value will be the new reference fot the joint joints[0].
      *          for example:
@@ -73,8 +73,8 @@ public:
 
     /** Get reference acceleration for a subset of joints. These are the values used during the
      * interpolation of the trajectory.
-     * @param n_joints how many joints this command is referring to
-     * @param list of joints controlled. The size of this array is n_joints
+     * @param n_joint how many joints this command is referring to
+     * @param joints list of joints controlled. The size of this array is n_joints
      * @param accs   pointer to the array containing acceleration values, one value for each joint, the size of the array is n_joints.
      * The first value will be the new reference fot the joint joints[0].
      *          for example:
@@ -86,8 +86,8 @@ public:
     virtual bool getRefAccelerations(const int n_joint, const int *joints, double *accs)=0;
 
     /** Stop motion for a subset of joints
-     * @param n_joints how many joints this command is referring to
-     * @param joints pointer to the array of joint numbers
+     * @param n_joint how many joints this command is referring to
+     * @param joints joints pointer to the array of joint numbers
      * @return true/false on success or failure
      */
     virtual bool stop(const int n_joint, const int *joints)=0;
@@ -113,8 +113,6 @@ public:
     virtual bool getVelPid(int j, yarp::dev::Pid *pid)=0;
 
     /** Get current velocity pid value for a specific subset of joints.
-     * @param n_joints: number of joints handled by this call
-     * @param joints pointer to the array of joint numbers
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
@@ -148,8 +146,9 @@ public:
 
     /**
      * Start motion at a given speed for a subset of joints.
+     * @param n_joint how many joints this command is referring to
      * @param joints pointer to the array of joint numbers
-     * @param sps    pointer to the array containing the new speed values
+     * @param spds    pointer to the array containing the new speed values
      * @return true/false upon success/failure
      */
     virtual bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds)=0;
@@ -197,8 +196,6 @@ public:
     virtual bool getVelPidRaw(int j, yarp::dev::Pid *pid)=0;
 
     /** Get current velocity pid value for a specific subset of joints.
-     * @param n_joints: number of joints handled by this call
-     * @param joints pointer to the array of joint numbers
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */

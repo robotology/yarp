@@ -40,7 +40,7 @@ public:
 
     /**
      * Attach to another object.
-     * @param poly: the polydriver that you want to attach to.
+     * @param poly the polydriver that you want to attach to.
      * @return true/false on success failure.
      */
     virtual bool attach(PolyDriver *poly)=0;
@@ -72,8 +72,7 @@ public:
 
     /**
      * Attach to a list of objects.
-     * @param poly: the polydriver that you want to attach to.
-     * @key: specify the key which identifies the driver to attach to.
+     * @param p the polydriver list that you want to attach to.
      * @return true/false on success failure.
      */
     virtual bool attachAll(const PolyDriverList &p)=0;
