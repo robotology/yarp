@@ -426,18 +426,20 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     case VOCAB_CM_IMPEDANCE_POS:
                         printf("The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead\n");
 
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_POS);
-                        else
+//                      Let´s propagate the legacy version as is until it will be removed
+//                        if(iMode2)
+//                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_POS);
+//                        else
                             *ok = iMode->setImpedancePositionMode(axis);
                             break;
 
                     case VOCAB_CM_IMPEDANCE_VEL:
                         printf("The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead\n");
 
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_VEL);
-                        else
+//                      Let´s propagate the legacy version as is until it will be removed
+//                        if(iMode2)
+//                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_VEL);
+//                        else
                             *ok = iMode->setImpedanceVelocityMode(axis);
                             break;
 

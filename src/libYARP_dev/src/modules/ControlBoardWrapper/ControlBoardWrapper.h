@@ -3379,12 +3379,13 @@ public:
         if (!p)
             return false;
 
-        if (p->iMode2 && p->iInteract)
-        {
-            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION) && ret;
-        }
-        else
+//        Let´s propagate the legacy version as is until it will be removed
+//        if (p->iMode2 && p->iInteract)
+//        {
+//            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
+//            return p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION) && ret;
+//        }
+//        else
             if (p->iMode)
             {
                 return p->iMode->setImpedancePositionMode(off+base);
@@ -3401,13 +3402,13 @@ public:
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
-
-        if (p->iMode2 && p->iInteract)
-        {
-            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
-            return p->iMode2->setControlMode(off+base, VOCAB_CM_VELOCITY) && ret;
-        }
-        else
+//        Let´s propagate the legacy version as is until it will be removed
+//        if (p->iMode2 && p->iInteract)
+//        {
+//            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
+//            return p->iMode2->setControlMode(off+base, VOCAB_CM_VELOCITY) && ret;
+//        }
+//        else
             if (p->iMode)
             {
                 return p->iMode->setImpedanceVelocityMode(off+base);
