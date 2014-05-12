@@ -2492,7 +2492,6 @@ bool CommandsHelper::initialize()
 CommandsHelper::CommandsHelper() {}
 
 void CommandsHelper::init(ControlBoardWrapper *x)
-                                                            iMode(0), iMode2(0), iInteract(0), controlledJoints(0)
 {
     caller = x;
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
