@@ -116,7 +116,8 @@ static void guiControl::radio_click_pos_direct(GtkWidget* radio , gtkClassData* 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in POSITION DIRECT mode!\n", *joint);
-        //icntrl->setPositionDirectMode(*joint);
+        if(icntrl2)
+        	icntrl2->setControlMode(*joint, VOCAB_CM_POSITION_DIRECT);
     }
     else
     {
@@ -128,7 +129,8 @@ static void guiControl::radio_click_mode_mixed(GtkWidget* radio , gtkClassData* 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in MIXED mode!\n", *joint);
-        //icntrl->setMixedMode(*joint);
+        if(icntrl2)
+        	icntrl2->setControlMode(*joint, VOCAB_CM_MIXED);
     }
     else
     {
@@ -231,6 +233,7 @@ void guiControl::guiControl(void *button, void* data)
   partMover *currentPart = currentClassData->partPointer;
   joint  = currentClassData->indexPointer;
   icntrl = currentPart->get_IControlMode();
+  icntrl2 = currentPart->get_IControlMode2();
   ipid = currentPart->get_IPidControl();
   iamp = currentPart->get_IAmplifierControl();
 

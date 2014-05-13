@@ -42,6 +42,7 @@ namespace guiControl
 
     static int * joint = NULL;
     static IControlMode *icntrl = NULL;
+    static IControlMode2 *icntrl2 = NULL;
     static IAmplifierControl *iamp = NULL;
     static IPidControl *ipid = NULL;
 

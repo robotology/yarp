@@ -27,26 +27,6 @@
 const int UPDATE_TIME = 200;   //update time in ms
 #define DEBUG_GUI 0
 
-#ifndef VOCAB_CM_POSITION_DIRECT
-#define VOCAB_CM_POSITION_DIRECT VOCAB4('c','m','p','d')
-#else
-#warning "VOCAB_CM_POSITION_DIRECT already defined in yarp!"
-#endif
-
-#ifndef VOCAB_CM_MIXED
-#define VOCAB_CM_MIXED VOCAB4('c','m','m','x')
-#else
-#warning "VOCAB_CM_MIXED already defined in yarp!"
-#endif
-
-#ifndef VOCAB_CM_HW_FAULT 
-#define VOCAB_CM_HW_FAULT VOCAB4('c','m','f','a')
-#else
-#warning "VOCAB_CM_HW_FAULT already defined in yarp!"
-#endif
-
-
-
 /*
  * Disable PID
  */
