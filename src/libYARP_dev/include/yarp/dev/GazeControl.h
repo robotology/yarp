@@ -589,8 +589,8 @@ public:
      * \note The satLim property must be given ordered by rows.
      * \note The sample time Ts should match the rate with which the
      *       method lookAtStereoPixels is called by the user.
-     * \note The special option "dominantEye" allows to select the
-     *       eye used for the monocular approach.
+     * \note The special option "dominantEye" (that can be "left"|"right")
+     *       allows selecting the eye used for the monocular approach.
      */
     virtual bool setStereoOptions(const yarp::os::Bottle &options) = 0;
 
