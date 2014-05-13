@@ -3548,11 +3548,11 @@ public:
                         bool ret = true;
                         if(p->amp)
                         {
-                            ret = ret && p->amp->disableAmp(j);
+                            ret = ret && p->amp->disableAmp(off+base);
                         }
                         if(p->pid)
                         {
-                            ret = ret && p->pid->disablePid(j);
+                            ret = ret && p->pid->disablePid(off+base);
                         }
                         return ret;
                     }
@@ -3560,7 +3560,7 @@ public:
 
                     case VOCAB_CM_TORQUE:
                     {
-                        return p->iMode->setTorqueMode(j);
+                        return p->iMode->setTorqueMode(off+base);
                     }
                     break;
 
@@ -3573,37 +3573,37 @@ public:
 */
                     case VOCAB_CM_POSITION:
                     {
-                        return p->iMode->setPositionMode(j);
+                        return p->iMode->setPositionMode(off+base);
                     }
                     break;
 
                     case VOCAB_CM_VELOCITY:
                     {
-                        return p->iMode->setVelocityMode(j);
+                        return p->iMode->setVelocityMode(off+base);
                     }
                     break;
 
                     case VOCAB_CM_OPENLOOP:
                     {
-                        return p->iMode->setOpenLoopMode(j);
+                        return p->iMode->setOpenLoopMode(off+base);
                     }
                     break;
 
                     case VOCAB_CM_IMPEDANCE_POS:
                     {
-                        return p->iMode->setImpedancePositionMode(j);
+                        return p->iMode->setImpedancePositionMode(off+base);
                     }
                     break;
 
                     case VOCAB_CM_IMPEDANCE_VEL:
                     {
-                        return p->iMode->setImpedanceVelocityMode(j);
+                        return p->iMode->setImpedanceVelocityMode(off+base);
                     }
                     break;
 
                     default:
                     {
-                        std::cout << "ControlBoardWrapper received an invalid  setControlMode " << yarp::os::Vocab::decode(mode) << " for joint " << j;
+                        std::cout << "ControlBoardWrapper received an invalid  setControlMode " << yarp::os::Vocab::decode(mode) << " for joint " << j << " (subdev " << subIndex << " joint " <<  off+base << " )" << std::endl;
                     }
                     break;
                 }
