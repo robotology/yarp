@@ -51,7 +51,7 @@ public:
    
     /**
      * Check the state value of a given channel.
-     * @param ch: channel number.
+     * @param ch channel number.
      * @return status.
      */
     virtual int getState(int ch)=0;
@@ -70,22 +70,22 @@ public:
 
     /**
      * Calibrates the whole sensor, using an vector of calibration values.
-     * @param value: a vector of calibration values.
+     * @param value a vector of calibration values.
      * @return status.
      */
     virtual int calibrateSensor(const yarp::sig::Vector& value)=0;
 
     /**
      * Calibrates one single channel.
-     * @param ch: channel number.
+     * @param ch channel number.
      * @return status.
      */
     virtual int calibrateChannel(int ch)=0;
 
     /**
      * Calibrates one single channel, using a calibration value.
-     * @param ch: channel number.
-     * @param value: calibration value.
+     * @param ch channel number.
+     * @param value calibration value.
      * @return status.
      */
     virtual int calibrateChannel(int ch, double value)=0;

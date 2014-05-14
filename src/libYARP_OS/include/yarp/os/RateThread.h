@@ -140,8 +140,8 @@ public:
 
     /**
      * Return estimated period since last reset.
-     * @param av: average value
-     * @param std: standard deviation
+     * @param av average value
+     * @param std standard deviation
      */
     void getEstPeriod(double &av, double &std);
 
@@ -158,8 +158,8 @@ public:
 
     /**
      * Return estimated duration of the run() function since last reset.
-     * @param av: average value
-     * @param std: standard deviation
+     * @param av average value
+     * @param std standard deviation
      */
     void getEstUsed(double &av, double &std);
 

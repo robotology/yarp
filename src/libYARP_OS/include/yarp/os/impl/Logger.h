@@ -51,7 +51,7 @@ class YARP_OS_impl_API yarp::os::impl::Logger : public yarp::os::Log
 public:
     enum Level {
         MAJOR_DEBUG=LM_INFO,
-        DEFAULT_WARN=LM_INFO,
+        DEFAULT_WARN=LM_INFO
     };
 
     Logger(const char *prefix, Logger *parent = NULL) {

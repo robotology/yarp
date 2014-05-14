@@ -44,7 +44,7 @@ public:
         STATUS_OK = VOCAB2('o','k'),                         //!< Present and sane.
         STATUS_LIBRARY_NOT_LOADED = VOCAB4('l','o','a','d'), //!< Named shared library failed to load.
         STATUS_FACTORY_NOT_FOUND = VOCAB4('f','a','c','t'),  //!< Named method wasn't present in library.
-        STATUS_FACTORY_NOT_FUNCTIONAL = VOCAB3('r','u','n'), //!< Named method is not working right.
+        STATUS_FACTORY_NOT_FUNCTIONAL = VOCAB3('r','u','n') //!< Named method is not working right.
     };
 
     /**

@@ -43,7 +43,7 @@ public:
 
 
     /** Set new reference point for all axes.
-     * @param n_joints how many joints this command is referring to
+     * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
      * @param refs array, new reference points, one value for each joint, the size is n_joints. The first value will be the new reference fot the joint joints[0].
      *          for example:
@@ -55,8 +55,7 @@ public:
     virtual bool setPositions(const int n_joint, const int *joints, double *refs)=0;
 
     /** Set new position for a set of axis.
-     * @param j joint number
-     * @param ref specifies the new ref point
+     * @param refs specifies the new reference points
      * @return true/false on success/failure
      */
     virtual bool setPositions(const double *refs)=0;
@@ -90,7 +89,7 @@ public:
     virtual bool setPositionRaw(int j, double ref)=0;
 
     /** Set new reference point for all axes.
-     * @param n_joints how many joints this command is referring to
+     * @param n_joint how many joints this command is referring to
      * @param joints list of joints controlled. The size of this array is n_joints
      * @param refs array, new reference points, one value for each joint, the size is n_joints. The first value will be the new reference fot the joint joints[0].
      *          for example:
@@ -103,8 +102,7 @@ public:
 
 
     /** Set new position for a set of axis.
-     * @param j joint number
-     * @param ref specifies the new ref point
+     * @param refs specifies the new reference points
      * @return true/false on success/failure
      */
     virtual bool setPositionsRaw(const double *refs)=0;

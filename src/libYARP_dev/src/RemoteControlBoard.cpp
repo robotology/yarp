@@ -774,7 +774,8 @@ protected:
 
     /**
      * Helper method to get an array of double from the remote peer.
-     * @param v is the name of the command
+     * @param v1 is the name of the command
+     * @param v2 v2
      * @param val is the array of double
      * @return true/false on success/failure
      */
@@ -1553,8 +1554,9 @@ public:
 
     /**
      * Set new reference point for a group of axis.
-     * @param j joint number
-     * @param ref specifies the new ref point
+     * @param n_joint number of joints specified in the list
+     * @param joints list of joints controlled
+     * @param refs specifies the new reference points
      * @return true/false on success/failure
      */
     virtual bool positionMove(const int n_joint, const int *joints, const double *refs) {
@@ -1583,8 +1585,9 @@ public:
     }
 
     /** Set relative position for a subset of joints.
+     * @param n_joint number of joints specified in the list
      * @param joints pointer to the array of joint numbers
-     * @param deltas pointer to the array of relative commands
+     * @param refs pointer to the array of relative commands
      * @return true/false on success/failure
      */
     virtual bool relativeMove(const int n_joint, const int *joints, const double *refs) {
@@ -1601,7 +1604,8 @@ public:
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
-     * @param flag: true/false if trajectory is terminated or not.
+     * @param j joint id
+     * @param flag true/false if trajectory is terminated or not.
      * @return true on success/failure.
      */
     virtual bool checkMotionDone(int j, bool *flag) {
@@ -1618,7 +1622,7 @@ public:
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
-     * @param flag: true/false if trajectories for all controlled joints are terminated.
+     * @param flag true/false if trajectories for all controlled joints are terminated.
      * @return true on success/failure.
      */
     virtual bool checkMotionDone(bool *flag) {
@@ -1758,7 +1762,8 @@ public:
     }
 
     /** Stop motion for subset of joints
-     * @param joints pointer to the array of joint numbers
+     * @param len size of joint list
+     * @param val1 list of joints 
      * @return true/false on success/failure
      */
     virtual bool stop(const int len, const int *val1)

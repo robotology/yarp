@@ -131,7 +131,7 @@ public:
     /**
      * Copy this route with a different contact.
      *
-     * @param The new destination contact of the route.
+     * @param toContact new destination contact of the route.
      *
      * @return the created route.
      */
@@ -144,7 +144,7 @@ public:
     /**
      * Copy this route with a different carrier.
      *
-     * @param fromName The new carrier of the route.
+     * @param carrierName The new carrier of the route.
      *
      * @return the created route.
      */

@@ -22,7 +22,7 @@ namespace yarp {
             class ShmemHybridStream;
         }
     }
-};
+}
 
 #include <yarp/os/impl/ShmemInputStream.h>
 #include <yarp/os/impl/ShmemOutputStream.h>

@@ -137,7 +137,7 @@ public:
 
     /**
      * Check how many messages are waiting to be read.
-     * @return
+     * @return number of pending messages
      */
     virtual int getPendingReads() = 0;
 
@@ -197,7 +197,7 @@ public:
      * Similarly, the port should not pass on data more frequently
      * than the given period.
      *
-     * @param the target period in (fractional) seconds.
+     * @param period target period in (fractional) seconds.
      *
      */
     virtual void setTargetPeriod(double period) = 0;
