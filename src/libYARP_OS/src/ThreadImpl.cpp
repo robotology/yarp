@@ -17,6 +17,8 @@
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
 
+#include <stdlib.h>
+
 using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
@@ -224,7 +226,6 @@ bool ThreadImpl::start() {
 #  endif
 #endif
 
-    char tmp[255];
     if (result==0)
     {
         // we must, at some point in the future, join the thread
@@ -248,7 +249,9 @@ bool ThreadImpl::start() {
         }
     }
     //the thread did not start, call afterStart() to warn the user
-    YARP_ERROR(Logger::get(),String("A thread failed to start with error code: ")+String(itoa(result, tmp, 10)));
+    char tmp[80];
+    sprintf(tmp, "%d", result);
+    YARP_ERROR(Logger::get(),String("A thread failed to start with error code: ")+String(tmp));
     afterStart(false);
     return false;
 }
