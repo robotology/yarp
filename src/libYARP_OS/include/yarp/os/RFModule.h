@@ -168,7 +168,7 @@ public:
     /**
      * Ask the module to stop.
      *
-     * @param wait: specifies if stop should block and wait termination. This is
+     * @param wait specifies if stop should block and wait termination. This is
      * not implemented yet.
      */
     void stopModule(bool wait = false);

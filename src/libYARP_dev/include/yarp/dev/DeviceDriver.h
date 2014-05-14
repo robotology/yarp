@@ -165,7 +165,6 @@ public:
      * them on to the respond() method.  There can be no replies made
      * if this handler is used.
      * @param v the message
-     * @return true if the message was read successfully
      */
     virtual void onRead(yarp::os::Bottle& v) {
         yarp::os::Bottle reply;

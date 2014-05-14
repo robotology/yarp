@@ -48,8 +48,8 @@ public:
     /** 
      * Get the software speed limits for a particular axis.
      * @param axis joint number
-     * @param pointer to store the value of the lower limit
-     * @param pointer to store the value of the upper limit
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
     virtual bool getVelLimits(int axis, double *min, double *max)=0;
@@ -86,8 +86,8 @@ public:
     /** 
      * Get the software speed limits for a particular axis.
      * @param axis joint number
-     * @param pointer to store the value of the lower limit
-     * @param pointer to store the value of the upper limit
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false otherwise.
      */
     virtual bool getVelLimitsRaw(int axis, double *min, double *max)=0;

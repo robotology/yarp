@@ -106,8 +106,8 @@ class diff_match_patch {
 
     /**
      * Constructor.  Initializes the diff with the provided values.
-     * @param operation One of INSERT, DELETE or EQUAL.
-     * @param text The text being applied.
+     * @param _operation One of INSERT, DELETE or EQUAL.
+     * @param _text The text being applied.
      */
     Diff(Operation _operation, const string_t &_text) : operation(_operation), text(_text) {}
     Diff() {}
@@ -291,7 +291,7 @@ class diff_match_patch {
    *     If true, then run a faster slightly less optimal diff.
    * @param deadline Time when the diff should be complete by.  Used
    *     internally for recursive calls.  Users should set DiffTimeout instead.
-   * @param Linked List of Diff objects.
+   * @param diffs Linked List of Diff objects.
    */
  private:
   static void diff_main(const string_t &text1, const string_t &text2, bool checklines, clock_t deadline, Diffs& diffs) {
@@ -340,7 +340,7 @@ class diff_match_patch {
    *     line-level diff first to identify the changed areas.
    *     If true, then run a faster slightly less optimal diff.
    * @param deadline Time when the diff should be complete by.
-   * @param Linked List of Diff objects.
+   * @param diffs Linked List of Diff objects.
    */
  private:
   static void diff_compute(string_t text1, string_t text2, bool checklines, clock_t deadline, Diffs& diffs) {
@@ -411,7 +411,7 @@ class diff_match_patch {
    * @param text1 Old string to be diffed.
    * @param text2 New string to be diffed.
    * @param deadline Time when the diff should be complete by.
-   * @param Linked List of Diff objects.
+   * @param diffs Linked List of Diff objects.
    */
  private:
   static void diff_lineMode(string_t text1, string_t text2, clock_t deadline, Diffs& diffs) {
@@ -598,7 +598,7 @@ class diff_match_patch {
    * @param x Index of split point in text1.
    * @param y Index of split point in text2.
    * @param deadline Time at which to bail if not yet complete.
-   * @return LinkedList of Diff objects.
+   * @param diffs LinkedList of Diff objects.
    */
  private:
   static void diff_bisectSplit(const string_t &text1, const string_t &text2, int x, int y, clock_t deadline, Diffs& diffs) {
@@ -834,7 +834,7 @@ class diff_match_patch {
    * @param longtext Longer string.
    * @param shorttext Shorter string.
    * @param i Start index of quarter length substring within longtext.
-   * @param HalfMatchResult object, containing the prefix of longtext, the
+   * @param best HalfMatchResult object, containing the prefix of longtext, the
    *     suffix of longtext, the prefix of shorttext, the suffix of shorttext
    *     and the common middle.
    * @return Boolean true if there was a match, false otherwise.
@@ -1721,7 +1721,7 @@ class diff_match_patch {
   /**
    * Initialise the alphabet for the Bitap algorithm.
    * @param pattern The text to encode.
-   * @return Hash of character locations.
+   * @param s Hash of character locations.
    */
  protected:
   static void match_alphabet(const string_t &pattern, std::map<char_t, int>& s) {

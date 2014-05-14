@@ -234,7 +234,7 @@ int recursiveRemove(ConstString dirName, bool verbose)
     }
     else
         return -1;
-};
+}
 
 std::vector<yarp::os::ConstString> listContentDirs(const ConstString &curPath)
 {
@@ -311,7 +311,7 @@ void printContentDirs(const ConstString &curPath)
     std::vector<yarp::os::ConstString> dirsList=listContentDirs(curPath);
     for(std::vector<yarp::os::ConstString>::iterator dirsIt=dirsList.begin(); dirsIt!=dirsList.end(); ++dirsIt)
         printf("%s\n",(*dirsIt).c_str());
-};
+}
 
 
 void printUserFolders(yarp::os::ResourceFinder &rf, folderType ftype)

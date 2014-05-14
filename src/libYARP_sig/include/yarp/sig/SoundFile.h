@@ -77,6 +77,6 @@ namespace yarp {
             };
         }
     }
-};
+}
 
 #endif

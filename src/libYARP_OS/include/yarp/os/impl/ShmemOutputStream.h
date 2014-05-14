@@ -37,7 +37,7 @@ namespace yarp {
             class ShmemOutputStreamImpl;
         }
     }
-};
+}
 
 class yarp::os::impl::ShmemOutputStreamImpl {
 public:
