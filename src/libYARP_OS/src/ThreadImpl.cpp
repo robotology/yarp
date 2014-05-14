@@ -224,13 +224,14 @@ bool ThreadImpl::start() {
 #  endif
 #endif
 
+    char tmp[255];
     if (result==0)
     {
         // we must, at some point in the future, join the thread
         needJoin = true;
 
         // the thread started correctly, wait for the initialization
-        YARP_DEBUG(Logger::get(), "Child thread initializing");
+        YARP_DEBUG(Logger::get(), String("Child thread initializing"));
         synchroWait();
         if (opened)
         {
@@ -247,7 +248,7 @@ bool ThreadImpl::start() {
         }
     }
     //the thread did not start, call afterStart() to warn the user
-    YARP_ERROR(Logger::get(),String("A thread failed to start."));
+    YARP_ERROR(Logger::get(),String("A thread failed to start with error code: ")+String(itoa(result, tmp, 10)));
     afterStart(false);
     return false;
 }
