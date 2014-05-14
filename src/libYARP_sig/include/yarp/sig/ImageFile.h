@@ -35,7 +35,7 @@ namespace yarp {
                     FORMAT_ANY,
                     FORMAT_PGM,
                     FORMAT_PPM,
-                    FORMAT_NUMERIC,
+                    FORMAT_NUMERIC
                 };
 
             // PPM/PGM format
@@ -70,6 +70,6 @@ namespace yarp {
                                     const yarp::os::ConstString& dest);
         }
     }
-};
+}
 
 #endif

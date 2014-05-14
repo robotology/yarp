@@ -54,8 +54,8 @@ public:
 
      /**
      * Returns a subpart of the sound
-     * @param first_sample: the starting sample number
-     * @param last_sample: the ending sample number
+     * @param first_sample the starting sample number
+     * @param last_sample the ending sample number
      */
     Sound subSound(int first_sample, int last_sample);
 

@@ -440,7 +440,7 @@ public:
     /**
      * Configure carrier from port administrative commands.
      *
-     * @param carrier properties
+     * @param params properties
      */
     virtual void setCarrierParams(const Property& params) { }
 
@@ -448,7 +448,7 @@ public:
      * Get carrier configuration and deliver it by port administrative
      * commands.
      *
-     * @param carrier properties
+     * @param params properties
      */
     virtual void getCarrierParams(Property& params) { }
 

@@ -188,7 +188,7 @@ public:
     /**
      * Configure carrier from port administrative commands.
      *
-     * @param carrier properties
+     * @param params carrier properties
      */
     virtual void setCarrierParams(const yarp::os::Property& params) = 0;
 
@@ -196,7 +196,7 @@ public:
      * Get carrier configuration and deliver it by port administrative
      * commands.
      *
-     * @param carrier properties
+     * @param params output carrier properties
      */
     virtual void getCarrierParams(yarp::os::Property& params) = 0;
 
