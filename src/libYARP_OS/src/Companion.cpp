@@ -2057,13 +2057,18 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
     applyArgs(port);
     port.setWriteOnly();
-    std::string hist_file(getenv("HOME") );
-    hist_file += "/.yarp_write_history";
-    hist_file += targets[0];
-    
-    std::cout<<hist_file<<std::endl;
-    read_history(hist_file.c_str());
-    
+    std::string hist_file;
+    bool disable_file_history=false;
+    if (isatty(fileno(stdin))) //if interactive mode
+    {
+        hist_file=yarp::os::ResourceFinder::getDataHome();
+        hist_file += "/yarp_write_history";
+        hist_file += targets[0];
+        read_history(hist_file.c_str());
+        disable_file_history=false;
+    }
+    else
+        disable_file_history=true;
     if (companion_active_port==NULL) {
         companion_install_handler();
     }
@@ -2117,7 +2122,8 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 }
             }
             port.write(bot);
-            write_history(hist_file.c_str());
+            if (!disable_file_history)
+                write_history(hist_file.c_str());
         }
     }
 
