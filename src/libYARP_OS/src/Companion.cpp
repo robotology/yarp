@@ -2057,6 +2057,13 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
     applyArgs(port);
     port.setWriteOnly();
+    std::string hist_file(getenv("HOME") );
+    hist_file += "/.yarp_write_history";
+    hist_file += targets[0];
+    
+    std::cout<<hist_file<<std::endl;
+    read_history(hist_file.c_str());
+    
     if (companion_active_port==NULL) {
         companion_install_handler();
     }
@@ -2110,6 +2117,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 }
             }
             port.write(bot);
+            write_history(hist_file.c_str());
         }
     }
 
