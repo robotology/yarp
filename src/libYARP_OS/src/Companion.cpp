@@ -2059,7 +2059,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     port.setWriteOnly();
     std::string hist_file;
     bool disable_file_history=false;
-    if (isatty(fileno(stdin))) //if interactive mode
+    if (ACE_OS::isatty(ACE_OS::fileno(stdin))) //if interactive mode
     {
         hist_file=yarp::os::ResourceFinder::getDataHome();
         hist_file += "/yarp_write_history";
