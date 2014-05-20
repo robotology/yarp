@@ -2057,6 +2057,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
     applyArgs(port);
     port.setWriteOnly();
+#ifdef WITH_READLINE
     std::string hist_file;
     bool disable_file_history=false;
     if (ACE_OS::isatty(ACE_OS::fileno(stdin))) //if interactive mode
@@ -2075,6 +2076,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     }
     else
         disable_file_history=true;
+#endif
     if (companion_active_port==NULL) {
         companion_install_handler();
     }
@@ -2128,8 +2130,10 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 }
             }
             port.write(bot);
+#ifdef WITH_READLINE
             if (!disable_file_history)
                 write_history(hist_file.c_str());
+#endif
         }
     }
 
