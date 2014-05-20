@@ -10,12 +10,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <algorithm>
 
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/Name.h>
+#include <yarp/os/Os.h>
 
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -169,7 +171,7 @@ static void companion_sigint_handler(int sig) {
                 if (port!=NULL) {
                     NetworkBase::unregisterName(port->getName());
                 }
-                exit(1);
+                ::exit(1);
             }
         }
         if (port!=NULL) {
@@ -180,7 +182,7 @@ static void companion_sigint_handler(int sig) {
         }
     } else {
         fprintf(stderr,"Aborting...\n");
-        exit(1);
+        ::exit(1);
     }
 }
 
@@ -201,13 +203,13 @@ static void companion_sighup_handler()
 #endif
 
 static void companion_install_handler() {
-	signal(SIGINT,companion_sigint_handler);
-	signal(SIGTERM,companion_sigterm_handler);
+	::signal(SIGINT,companion_sigint_handler);
+	::signal(SIGTERM,companion_sigterm_handler);
 
     #if defined(WIN32)
-    signal(SIGBREAK, (ACE_SignalHandler) companion_sigbreak_handler);
+    ::signal(SIGBREAK, (ACE_SignalHandler) companion_sigbreak_handler);
     #else
-    signal(SIGHUP, (ACE_SignalHandler) companion_sighup_handler);
+    ::signal(SIGHUP, (ACE_SignalHandler) companion_sighup_handler);
     #endif
 }
 
@@ -2063,7 +2065,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         ConstString slash=NetworkBase::getDirectorySeparator();
         hist_file += slash;
         hist_file += "yarp_write";
-        ACE_OS::mkdir(hist_file.c_str());
+        yarp::os::mkdir(hist_file.c_str());
         std::string temp=targets[0];
         std::replace(temp.begin(),temp.end(),'/','_');
         hist_file += slash;
