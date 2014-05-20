@@ -38,6 +38,7 @@
 #include <yarp/os/Ping.h>
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/ConstString.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
@@ -49,13 +50,10 @@
 // we do not have configuration information, disable some features.
 #endif
 
-#include <stdio.h>
-
 #ifdef WITH_READLINE
     #include <readline/readline.h>
     #include <readline/history.h>
     #include <vector>
-    #include <yarp/os/ConstString.h>
     static std::vector<yarp::os::impl::String> commands;
     static yarp::os::Port* rpcHelpPort=NULL;
     static bool commandListInitialized=false;
@@ -2057,6 +2055,24 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
     applyArgs(port);
     port.setWriteOnly();
+    std::string hist_file;
+    bool disable_file_history=false;
+    if (ACE_OS::isatty(ACE_OS::fileno(stdin))) //if interactive mode
+    {
+        hist_file=yarp::os::ResourceFinder::getDataHome();
+        ConstString slash=NetworkBase::getDirectorySeparator();
+        hist_file += slash;
+        hist_file += "yarp_write";
+        ACE_OS::mkdir(hist_file.c_str());
+        std::string temp=targets[0];
+        std::replace(temp.begin(),temp.end(),'/','_');
+        hist_file += slash;
+        hist_file += temp;
+        read_history(hist_file.c_str());
+        disable_file_history=false;
+    }
+    else
+        disable_file_history=true;
     if (companion_active_port==NULL) {
         companion_install_handler();
     }
@@ -2110,6 +2126,8 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 }
             }
             port.write(bot);
+            if (!disable_file_history)
+                write_history(hist_file.c_str());
         }
     }
 
