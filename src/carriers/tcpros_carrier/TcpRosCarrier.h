@@ -131,7 +131,6 @@ public:
     // Now, the initial hand-shaking
 
     virtual bool prepareSend(ConnectionState& proto) {
-        // nothing special to do
         return true;
     }
 
@@ -140,15 +139,11 @@ public:
     virtual bool expectSenderSpecifier(ConnectionState& proto);
 
     virtual bool expectExtraHeader(ConnectionState& proto) {
-        // interpret any extra header information sent - optional
         return true;
     }
 
     bool respondToHeader(ConnectionState& proto) {
         sender = false;
-        //TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender);
-        //if (stream==NULL) { return false; }
-        //proto.takeStreams(stream);
         return true;
     }
 

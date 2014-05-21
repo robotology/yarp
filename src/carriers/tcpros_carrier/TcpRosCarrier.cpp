@@ -24,8 +24,6 @@ using namespace std;
 
 #define dbg_printf if (0) printf
 
-//#define FORCE_ROS_NATIVE
-
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
         return;
@@ -111,9 +109,6 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
         isService = false;
     }
     ConstString rawValue = n.getCarrierModifier("raw");
-#ifdef FORCE_ROS_NATIVE
-    raw = 2;
-#endif
     if (rawValue=="2") {
         raw = 2;
         dbg_printf("ROS-native mode requested\n");
@@ -137,7 +132,6 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     header.data["md5sum"] = "*";
     header.data["callerid"] = proto.getRoute().getFromName().c_str();
     header.data["persistent"] = "1";
-    //"/not/valid/at/all/i/am/afraid/old/chum";
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
@@ -195,10 +189,6 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
         proto.setRoute(proto.getRoute().addToName(name.c_str()));
         dbg_printf("Route is now %s\n", proto.getRoute().toString().c_str());
     }
-
-#ifdef FORCE_ROS_NATIVE
-    rosname = ""; // forget
-#endif
 
     if (!isService) {
         isService = (header.data.find("request_type")!=header.data.end());
@@ -262,15 +252,6 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     dbg_printf("<outgoing> Type of data is %s\n", rosname.c_str());
     kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
     dbg_printf("Loose translation [%s]\n", kind.c_str());
-#ifdef FORCE_ROS_NATIVE
-    kind = "";
-#endif
-    /*
-    if (kind!="") {
-        twiddler.configure(kind.c_str());
-        translate = TCPROS_TRANSLATE_TWIDDLER;
-    }
-    */
 
     if (header.data.find("callerid")!=header.data.end()) {
         proto.setRoute(proto.getRoute().addFromName(header.data["callerid"].c_str()));
@@ -280,7 +261,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
 
     // Let's just ignore everything that is sane and holy, and
     // send the same header right back.
-    // Oh, ok, let's modify the callerid.  Begrudgingly.
+    // **UPDATE** Oh, ok, let's modify the callerid.  Begrudgingly.
     header.data["callerid"] = proto.getRoute().getToName().c_str();
 
     string header_serial = header.writeHeader();
