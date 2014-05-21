@@ -44,7 +44,9 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::BufferedConnectionWriter : public ConnectionWriter, public SizedWriter {
 public:
 
-    BufferedConnectionWriter(bool textMode = false) : textMode(textMode) {
+    BufferedConnectionWriter(bool textMode = false,
+                             bool bareMode = false) : textMode(textMode), bareMode(bareMode)
+        {
         reader = NULL;
         target = &lst;
         ref = NULL;
@@ -170,6 +172,10 @@ public:
 
     virtual bool isTextMode() {
         return textMode;
+    }
+
+    virtual bool isBareMode() {
+        return bareMode;
     }
 
     bool write(ConnectionWriter& connection) {
@@ -329,6 +335,7 @@ private:
     size_t poolLength;
     yarp::os::PortReader *reader;
     bool textMode;
+    bool bareMode;
     bool convertTextModePending;
     yarp::os::Portable *ref;
     bool shouldDrop;
@@ -421,6 +428,10 @@ public:
     }
 
     virtual bool isTextMode() {
+        return false;
+    }
+
+    virtual bool isBareMode() {
         return false;
     }
 

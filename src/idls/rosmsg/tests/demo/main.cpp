@@ -12,6 +12,7 @@
 #include <Demo.h>
 #include <Tennis.h>
 #include <Rpc.h>
+#include <SharedData.h>
 #include <yarp/os/all.h>
 
 using namespace yarp::os;
@@ -33,8 +34,34 @@ bool test_signs() {
     return true;
 }
 
+bool test_serialization() {
+   printf("\n*** test_serialization()\n");
+   SharedData data;
+   data.text = "hello";
+   data.content.push_back(1);
+   data.content.push_back(2);
+   Bottle bot;
+   bot.read(data);
+   if (bot.get(0).asString()!="hello") {
+       printf("Oops, string is not right\n");
+       return false;
+   }
+   if (bot.get(1).asList()==NULL) {
+       printf("Oops, list is not right\n");
+       return false;
+   }
+   if (bot.get(1).asList()->size()!=2) {
+       printf("Oops, length is not right\n");
+       return false;
+   }
+   printf("*** %s (ok!)\n", bot.toString().c_str());
+   return true;
+}
+
+
 int main(int argc, char *argv[]) {
     if (!test_signs()) return 1;
+    if (!test_serialization()) return 1;
 
     return 0;
 }

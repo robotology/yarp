@@ -46,6 +46,13 @@ public:
     virtual bool isTextMode() = 0;
 
     /**
+     * Check if carrier excludes type information from payload
+     *
+     * @return true if carrier is bare
+     */
+    virtual bool isBareMode() { return false; }
+
+    /**
      * Check if carrier can encode administrative messages, as opposed
      * to just user data.  The word escape is used in the sense of
      * escape character or escape sequence here.

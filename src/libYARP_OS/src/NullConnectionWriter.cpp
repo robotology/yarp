@@ -26,7 +26,11 @@ void yarp::os::NullConnectionWriter::appendExternalBlock(const char *data, size_
 }
 
 bool yarp::os::NullConnectionWriter::isTextMode() {
- return false;
+    return false;
+}
+
+bool yarp::os::NullConnectionWriter::isBareMode() {
+    return false;
 }
 
 void yarp::os::NullConnectionWriter::declareSizes(int argc, int *argv) {

@@ -47,6 +47,7 @@ public:
         protocol(NULL),
         messageLen(0),
         textMode(false),
+        bareMode(false),
         valid(false),
         err(false),
         shouldDrop(false),
@@ -59,12 +60,13 @@ public:
     virtual ~StreamConnectionReader();
 
     void reset(yarp::os::InputStream& in, TwoWayStream *str, const Route& route,
-               size_t len, bool textMode) {
+               size_t len, bool textMode, bool bareMode = false) {
         this->in = &in;
         this->str = str;
         this->route = route;
         this->messageLen = len;
         this->textMode = textMode;
+        this->bareMode = bareMode;
         this->valid = true;
         ref = NULL;
         err = false;
@@ -73,7 +75,7 @@ public:
     }
 
     virtual bool setSize(size_t len) {
-        reset(*in,str,route,len,textMode);
+        reset(*in,str,route,len,textMode,bareMode);
         return true;
     }
 
@@ -173,6 +175,9 @@ public:
         return textMode;
     }
 
+    virtual bool isBareMode() {
+        return bareMode;
+    }
 
     virtual bool convertTextMode();
 
@@ -287,6 +292,7 @@ private:
     Protocol *protocol;
     size_t messageLen;
     bool textMode;
+    bool bareMode;
     bool valid;
     bool err;
     bool shouldDrop;

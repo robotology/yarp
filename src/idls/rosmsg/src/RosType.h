@@ -166,15 +166,15 @@ public:
     virtual bool declareField(const RosField& field) = 0;
     virtual bool endDeclare() { return true; }
 
-    virtual bool beginRead() { return true; } 
-    virtual bool readField(const RosField& field) = 0;
-    virtual bool endRead() { return true; }
+    virtual bool beginRead(bool bare, int len) { return true; } 
+    virtual bool readField(bool bare, const RosField& field) = 0;
+    virtual bool endRead(bool bare) { return true; }
 
-    virtual bool beginWrite() { return true; }
-    virtual bool writeField(const RosField& field) = 0;
-    virtual bool endWrite() { return true; }
+    virtual bool beginWrite(bool bare, int len) { return true; }
+    virtual bool writeField(bool bare, const RosField& field) = 0;
+    virtual bool endWrite(bool bare) { return true; }
 
-    virtual bool endType() = 0;
+    virtual bool endType(const std::string& tname) = 0;
 
     virtual bool hasNativeTimeClass() const {
         return false;

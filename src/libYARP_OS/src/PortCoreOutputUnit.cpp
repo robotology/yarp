@@ -146,7 +146,8 @@ void PortCoreOutputUnit::closeBasic() {
                                        route.getFromName().c_str(),true);
         } else {
             if (op->getConnection().canEscape()) {
-                BufferedConnectionWriter buf(op->getConnection().isTextMode());
+                BufferedConnectionWriter buf(op->getConnection().isTextMode(),
+                                             op->getConnection().isBareMode());
                 PortCommand pc('\0',String("q"));
                 pc.write(buf);
                 //printf("Asked for %s to close...\n",
@@ -238,7 +239,8 @@ bool PortCoreOutputUnit::sendHelper() {
     bool replied = false;
     bool done = false;
     if (op!=NULL) {
-        BufferedConnectionWriter buf(op->getConnection().isTextMode());
+        BufferedConnectionWriter buf(op->getConnection().isTextMode(),
+                                     op->getConnection().isBareMode());
         if (cachedReader!=NULL) {
             buf.setReplyHandler(*cachedReader);
         }

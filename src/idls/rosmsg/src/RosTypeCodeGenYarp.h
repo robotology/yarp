@@ -19,6 +19,11 @@ public:
     std::string yarpType;
     std::string writer;
     std::string reader;
+    std::string yarpWriter;
+    std::string yarpWriterCast;
+    std::string yarpTag;
+    std::string yarpReader;
+    std::string yarpWireReader;
     int len;
 
     RosYarpType() {
@@ -48,15 +53,15 @@ public:
     virtual bool declareField(const RosField& field);
     virtual bool endDeclare();
 
-    virtual bool beginRead();
-    virtual bool readField(const RosField& field);
-    virtual bool endRead();
+    virtual bool beginRead(bool bare, int len);
+    virtual bool readField(bool bare, const RosField& field);
+    virtual bool endRead(bool bare);
 
-    virtual bool beginWrite();
-    virtual bool writeField(const RosField& field);
-    virtual bool endWrite();
+    virtual bool beginWrite(bool bare, int len);
+    virtual bool writeField(bool bare,const RosField& field);
+    virtual bool endWrite(bool bare);
 
-    virtual bool endType();
+    virtual bool endType(const std::string& tname);
 
     virtual bool hasNativeTimeClass() const {
         return false;

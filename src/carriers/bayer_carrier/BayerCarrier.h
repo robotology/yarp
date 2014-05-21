@@ -142,6 +142,10 @@ public:
         return false;
     }
 
+    virtual bool isBareMode() {
+        return false;
+    }
+
     virtual bool convertTextMode() {
         return true;
     }

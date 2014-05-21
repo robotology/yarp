@@ -79,6 +79,13 @@ public:
     virtual bool isTextMode() = 0;
 
     /**
+     * Check if the connection is bare mode.  If it is, you are
+     * encouraged to omit type information from your serialization.
+     * @return true if the connection is bare
+     */
+    virtual bool isBareMode() = 0;
+
+    /**
      * Reads in a standard description in text mode, and converts
      * it to a standard description in binary.  Useful if you
      * only operate on the binary description usually, and just

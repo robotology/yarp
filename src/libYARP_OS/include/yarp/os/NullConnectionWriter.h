@@ -32,6 +32,7 @@ public:
     virtual void appendString(const char *str, int terminate = '\n');
     virtual void appendExternalBlock(const char *data, size_t len);
     virtual bool isTextMode();
+    virtual bool isBareMode();
     virtual void declareSizes(int argc, int *argv);
     virtual void setReplyHandler(PortReader& reader);
     virtual void setReference(Portable *obj);

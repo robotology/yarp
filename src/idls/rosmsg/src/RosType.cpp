@@ -353,19 +353,31 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     }
     if (!gen.endDeclare()) return false;
 
-    if (!gen.beginRead()) return false;
+    if (!gen.beginRead(true,(int)subRosType.size())) return false;
     for (int i=0; i<(int)subRosType.size(); i++) {
-        if (!gen.readField(subRosType[i])) return false;
+        if (!gen.readField(true,subRosType[i])) return false;
     }
-    if (!gen.endRead()) return false;
+    if (!gen.endRead(true)) return false;
 
-    if (!gen.beginWrite()) return false;
+    if (!gen.beginRead(false,(int)subRosType.size())) return false;
     for (int i=0; i<(int)subRosType.size(); i++) {
-        if (!gen.writeField(subRosType[i])) return false;
+        if (!gen.readField(false,subRosType[i])) return false;
     }
-    if (!gen.endWrite()) return false;
+    if (!gen.endRead(false)) return false;
 
-    if (!gen.endType()) return false;
+    if (!gen.beginWrite(true,(int)subRosType.size())) return false;
+    for (int i=0; i<(int)subRosType.size(); i++) {
+        if (!gen.writeField(true,subRosType[i])) return false;
+    }
+    if (!gen.endWrite(true)) return false;
+
+    if (!gen.beginWrite(false,(int)subRosType.size())) return false;
+    for (int i=0; i<(int)subRosType.size(); i++) {
+        if (!gen.writeField(false,subRosType[i])) return false;
+    }
+    if (!gen.endWrite(false)) return false;
+
+    if (!gen.endType(rosType)) return false;
 
     state.generated[rosType] = true;
     state.dependencies.push_back(rosType);

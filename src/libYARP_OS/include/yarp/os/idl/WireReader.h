@@ -65,6 +65,18 @@ public:
 
     bool readDouble(double& x);
 
+    int expectInt() {
+        YARP_INT32 x;
+        readI32(x);
+        return x;
+    }
+
+    double expectDouble() {
+        double x;
+        readDouble(x);
+        return x;
+    }
+
     bool readString(yarp::os::ConstString& str, bool *is_vocab = 0 /*NULL*/);
 
 #ifndef YARP_CONSTSTRING_IS_STD_STRING

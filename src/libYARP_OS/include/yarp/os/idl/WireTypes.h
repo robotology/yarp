@@ -33,6 +33,16 @@
 #include <yarp/os/idl/WireState.h>
 #include <yarp/os/idl/WireVocab.h>
 #include <yarp/os/idl/Unwrapped.h>
+#include <yarp/os/idl/BottleStyle.h>
+#include <yarp/os/idl/BareStyle.h>
 #include <yarp/os/Wire.h>
+#include <yarp/os/NetInt16.h>
+#include <yarp/os/NetUint16.h>
+#include <yarp/os/NetInt32.h>
+#include <yarp/os/NetUint32.h>
+#include <yarp/os/NetInt64.h>
+#include <yarp/os/NetUint64.h>
+#include <yarp/os/NetFloat32.h>
+#include <yarp/os/NetFloat64.h>
 
 #endif

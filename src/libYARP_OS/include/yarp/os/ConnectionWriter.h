@@ -90,6 +90,13 @@ public:
     virtual bool isTextMode() = 0;
 
     /**
+     * Check if the connection is bare mode.  If it is, you are
+     * encouraged to omit type information from your serialization.
+     * @return true if the connection is bare
+     */
+    virtual bool isBareMode() = 0;
+
+    /**
      * If you can easily determine how many blocks there are in a message,
      * call this first, before anything else.
      * This may improve efficiency in some situations.

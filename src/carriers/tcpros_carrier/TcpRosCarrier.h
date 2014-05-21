@@ -91,6 +91,10 @@ public:
         return false;
     }
 
+    virtual bool isBareMode() {
+        return true;
+    }
+
     virtual bool canEscape() {
         return false;
     }

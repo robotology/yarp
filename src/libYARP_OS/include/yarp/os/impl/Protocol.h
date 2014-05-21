@@ -161,7 +161,8 @@ public:
                 }
                 if (ok) {
                     reader.reset(is(),&getStreams(), getRoute(),
-                                 messageLen,delegate->isTextMode());
+                                 messageLen,delegate->isTextMode(),
+                                 delegate->isBareMode());
                     replied = reply->read(reader);
                 }
             }
@@ -387,7 +388,8 @@ private:
         }
         if (ok) {
             reader.reset(is(),&getStreams(),getRoute(),
-                         messageLen,delegate->isTextMode());
+                         messageLen,delegate->isTextMode(),
+                         delegate->isBareMode());
             if (ref!=NULL) {
                 reader.setReference(ref);
             }
