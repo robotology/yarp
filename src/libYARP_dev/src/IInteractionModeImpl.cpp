@@ -39,7 +39,7 @@ ImplementInteractionMode::~ImplementInteractionMode()
  */
 bool ImplementInteractionMode::initialize(int size, const int *amap)
 {
-    initialize(size, amap, 0, 0);
+    return initialize(size, amap, 0, 0);
 }
 
 bool ImplementInteractionMode::initialize(int size, const int *amap, const double *enc, const double *zos)
