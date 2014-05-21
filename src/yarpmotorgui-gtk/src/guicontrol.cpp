@@ -80,9 +80,11 @@ static void guiControl::radio_click_idl(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in IDLE mode!\n", *joint);
-        fprintf(stderr, "(DEBUG: not using iCntrl interface\n", *joint);
+/*        fprintf(stderr, "(DEBUG: not using iCntrl interface\n", *joint);
         ipid->disablePid(*joint);
         iamp->disableAmp(*joint);
+*/
+        icntrl2->setControlMode(*joint, VOCAB_CM_IDLE);
     }
     else
     {
@@ -93,7 +95,7 @@ static void guiControl::radio_click_open(GtkWidget* radio , gtkClassData* curren
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in OPENLOOP mode!\n", *joint);
-        icntrl->setOpenLoopMode(*joint);
+        icntrl2->setOpenLoopMode(*joint);
     }
     else
     {
@@ -104,7 +106,7 @@ static void guiControl::radio_click_pos(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in POSITION mode!\n", *joint);
-        icntrl->setPositionMode(*joint);
+        icntrl2->setPositionMode(*joint);
     }
     else
     {
@@ -142,7 +144,7 @@ static void guiControl::radio_click_vel(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in VELOCITY mode!\n", *joint);
-        icntrl->setVelocityMode(*joint);
+        icntrl2->setVelocityMode(*joint);
     }
     else
     {
@@ -153,7 +155,7 @@ static void guiControl::radio_click_trq(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in TORQUE mode!\n", *joint);
-        icntrl->setTorqueMode(*joint);
+        icntrl2->setTorqueMode(*joint);
     }
     else
     {
@@ -163,7 +165,7 @@ static void guiControl::radio_click_imp_pos(GtkWidget* radio , gtkClassData* cur
 {
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
-        fprintf(stderr, "joint: %d in IMPEDANCE POSITION mode!\n", *joint);
+        fprintf(stderr, "WARN: Using old interface! joint: %d in IMPEDANCE POSITION mode!\n", *joint);
         icntrl->setImpedancePositionMode(*joint);
     }
     else
@@ -175,15 +177,40 @@ static void guiControl::radio_click_imp_vel(GtkWidget* radio , gtkClassData* cur
 {
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
-        fprintf(stderr, "joint: %d in IMPEDANCE VELOCITY mode!\n", *joint);
+        fprintf(stderr, "WARN: Using old interface! joint: %d in IMPEDANCE VELOCITY mode!\n", *joint);
         icntrl->setImpedanceVelocityMode(*joint);
     }
     else
     {
     }
 }
+
+static void guiControl::radio_click_stiff(GtkWidget* radio , gtkClassData* currentClassData)
+{
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in STIFF mode!\n", *joint);
+        iinteract->setInteractionMode(*joint, yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF);
+    }
+    else
+    {
+    }
+}
+
+static void guiControl::radio_click_compl(GtkWidget* radio , gtkClassData* currentClassData)
+{
+    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
+    {
+        fprintf(stderr, "joint: %d in COMPLIANT mode!\n", *joint);
+        iinteract->setInteractionMode(*joint, yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT);
+    }
+    else
+    {
+    }
+}
+
 //*********************************************************************************
-void guiControl::update_menu(int control_mode)
+void guiControl::update_menu(int control_mode, int interaction_mode)
 {
  switch (control_mode)
   {
@@ -215,7 +242,25 @@ void guiControl::update_menu(int control_mode)
       default:
       case VOCAB_CM_UNKNOWN:
         //NOTE: Unknown!!!
+        printf("WARNING: get dealing with unknown control mode\n");
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
+      break;
+  }
+
+ switch (interaction_mode)
+  {
+      case VOCAB_IM_STIFF:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_interaction_stiff),true);
+      break;
+      case VOCAB_IM_COMPLIANT:
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_interaction_compl),true);
+      break;
+
+      default:
+      case VOCAB_CM_UNKNOWN:
+        //NOTE: Unknown!!!
+        printf("WARNING: get dealing with unknown interaction mode\n");
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_interaction_stiff),true);
       break;
   }
 }
@@ -234,6 +279,7 @@ void guiControl::guiControl(void *button, void* data)
   joint  = currentClassData->indexPointer;
   icntrl = currentPart->get_IControlMode();
   icntrl2 = currentPart->get_IControlMode2();
+  iinteract = currentPart->get_IInteractionMode();
   ipid = currentPart->get_IPidControl();
   iamp = currentPart->get_IAmplifierControl();
 
@@ -251,6 +297,8 @@ void guiControl::guiControl(void *button, void* data)
   gtk_container_add (GTK_CONTAINER (pos_winPid), inv);
   
   label_title = gtk_label_new (title);
+  sprintf(title,"Interaction mode JNT:%d",*joint);
+  label_title2 = gtk_label_new (title);
 
   radiobutton_mode_idl  = gtk_radio_button_new_with_label  (NULL, "idle");
   radiobutton_mode_pos  = gtk_radio_button_new_with_label_from_widget         (GTK_RADIO_BUTTON (radiobutton_mode_idl), "position");
@@ -261,6 +309,9 @@ void guiControl::guiControl(void *button, void* data)
   radiobutton_mode_open = gtk_radio_button_new_with_label_from_widget         (GTK_RADIO_BUTTON (radiobutton_mode_idl), "openloop");
   radiobutton_mode_pos_direct  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "position direct");
   radiobutton_mode_mixed  = gtk_radio_button_new_with_label_from_widget       (GTK_RADIO_BUTTON (radiobutton_mode_idl), "mixed");
+
+  radiobutton_interaction_stiff  = gtk_radio_button_new_with_label  (NULL, "stiff mode");
+  radiobutton_interaction_compl  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_interaction_stiff), "compliant mode");
 
   gtk_fixed_put    (GTK_FIXED(inv), label_title,                  10, 10    );
   gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_idl,         10, 30    );
@@ -273,9 +324,16 @@ void guiControl::guiControl(void *button, void* data)
   gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_imp_vel,     10, 170   );
   gtk_fixed_put    (GTK_FIXED(inv), radiobutton_mode_open,        10, 190   );
 
+  gtk_fixed_put    (GTK_FIXED(inv), label_title2,                 10, 210   );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_interaction_stiff,10, 230   );
+  gtk_fixed_put    (GTK_FIXED(inv), radiobutton_interaction_compl,10, 250   );
+
   int control_mode=VOCAB_CM_UNKNOWN;
-  bool ret = icntrl->getControlMode(*joint, &control_mode);
-  update_menu(control_mode);
+  yarp::dev::InteractionModeEnum interaction_mode=VOCAB_IM_UNKNOWN;
+  bool ret = true;
+  ret &= icntrl2->getControlMode(*joint, &control_mode);
+  ret &= iinteract->getInteractionMode(*joint, &interaction_mode);
+  update_menu(control_mode, interaction_mode);
  
   //Rememeber: these signal_connect MUST be placed after the update_menu!
   g_signal_connect (radiobutton_mode_idl,  "clicked",G_CALLBACK (radio_click_idl), &radiobutton_mode_idl);
@@ -287,6 +345,9 @@ void guiControl::guiControl(void *button, void* data)
   g_signal_connect (radiobutton_mode_imp_pos,  "clicked",G_CALLBACK (radio_click_imp_pos), &radiobutton_mode_imp_pos);
   g_signal_connect (radiobutton_mode_imp_vel,  "clicked",G_CALLBACK (radio_click_imp_vel), &radiobutton_mode_imp_vel);
   g_signal_connect (radiobutton_mode_open, "clicked",G_CALLBACK (radio_click_open), &radiobutton_mode_open);
+  
+  g_signal_connect (radiobutton_interaction_stiff, "clicked",G_CALLBACK (radio_click_stiff), &radiobutton_interaction_stiff);
+  g_signal_connect (radiobutton_interaction_compl, "clicked",G_CALLBACK (radio_click_compl), &radiobutton_interaction_compl);
 
   //connection to the destroyer
   g_signal_connect (pos_winPid, "destroy",G_CALLBACK (destroy_main), &pos_winPid);

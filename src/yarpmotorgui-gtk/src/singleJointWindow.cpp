@@ -439,7 +439,6 @@ bool partMover::entry_update(partMover *currentPart)
                 gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
               gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
           break;
-          default:
           case VOCAB_CM_HW_FAULT:
               pColor=&color_fault_red;
               strcat(frame_title," (HARDWARE_FAULT)");
@@ -448,6 +447,7 @@ bool partMover::entry_update(partMover *currentPart)
               gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"---");
               gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
               break;
+          default:
           case VOCAB_CM_UNKNOWN:
               pColor=&color_grey;
               //strcat(frame_title," (UNKNOWN)");
