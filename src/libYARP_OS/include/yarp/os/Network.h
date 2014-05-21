@@ -70,7 +70,7 @@ public:
     static bool connect(const char *src, const char *dest,
                         const char *carrier,
                         bool quiet = true) {
-        return connect(ConstString(src),ConstString(dest),ConstString(""),quiet);
+        return connect(ConstString(src),ConstString(dest),ConstString((carrier==NULL)?"":carrier),quiet);
     }
 
     /**
