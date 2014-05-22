@@ -190,7 +190,7 @@ static void guiControl::radio_click_stiff(GtkWidget* radio , gtkClassData* curre
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in STIFF mode!\n", *joint);
-        iinteract->setInteractionMode(*joint, yarp::dev::InteractionModeEnum::VOCAB_IM_STIFF);
+        iinteract->setInteractionMode(*joint, (yarp::dev::InteractionModeEnum) VOCAB_IM_STIFF);
     }
     else
     {
@@ -202,7 +202,7 @@ static void guiControl::radio_click_compl(GtkWidget* radio , gtkClassData* curre
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in COMPLIANT mode!\n", *joint);
-        iinteract->setInteractionMode(*joint, yarp::dev::InteractionModeEnum::VOCAB_IM_COMPLIANT);
+        iinteract->setInteractionMode(*joint, (yarp::dev::InteractionModeEnum) VOCAB_IM_COMPLIANT);
     }
     else
     {
