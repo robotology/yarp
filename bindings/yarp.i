@@ -298,7 +298,7 @@ void setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 }  
 
 void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
-#if PY_VERSION_HEX >= 0x03000000
+#if PY_VERSION_HEX >= 0x02070000
         Py_buffer img_buffer;
         int reply;
         reply = PyObject_GetBuffer(mem, &img_buffer, PyBUF_SIMPLE);
