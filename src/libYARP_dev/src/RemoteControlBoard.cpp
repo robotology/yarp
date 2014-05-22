@@ -2589,7 +2589,6 @@ public:
         Bottle cmd, response;
 
         if (!isLive()) return false;
-        std::cout << " sending GET VOCAB_INTERACTION_MODE" << std::endl;
 
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
@@ -2597,10 +2596,6 @@ public:
         cmd.addInt(axis);
 
         bool ok = rpc_p.write(cmd, response);
-//        std::cout << "cmd sent is" << std::endl;
-//        cmd.toString();
-//        std::cout << "\nresponse got is" << std::endl;
-//        response.toString();
 
         if (CHECK_FAIL(ok, response))
         {
@@ -2608,8 +2603,6 @@ public:
             *mode = (InteractionModeEnum) response.get(0).asVocab();
             return true;
         }
-
-        std::cout << " Check failed ";
         return false;
     }
 
@@ -2617,7 +2610,6 @@ public:
     {
         Bottle cmd, response;
         if (!isLive()) return false;
-        std::cout << " sending GET VOCAB_INTERACTION_MODE_GROUP" << std::endl;
 
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
@@ -2630,11 +2622,6 @@ public:
             l1.addInt(joints[i]);
 
         bool ok = rpc_p.write(cmd, response);
-
-//        std::cout << "cmd sent is" << std::endl;
-//        cmd.toString();
-//        std::cout << "\nresponse got is" << std::endl;
-//        response.toString();
 
         if (CHECK_FAIL(ok, response))
         {
@@ -2649,16 +2636,16 @@ public:
             }
             else
             {
+                std::cerr << " getInteractionModes GROUP  RMC received n_joints " << n_joints << std::endl;
+
                 for (i = 0; i < n_joints; i++)
                 {
                     modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
-                    return true;
+                    std::cerr << " j " << joints[i] << " got " << yarp::os::Vocab::decode(modes[i]) << std::endl;
                 }
+                return true;
             }
         }
-
-
-        std::cout << " Check failed ";
         return false;
     }
 
@@ -2667,18 +2654,12 @@ public:
         bool ret = false;
         Bottle cmd, response;
         if (!isLive()) return false;
-        std::cout << " sending GET VOCAB_INTERACTION_MODES" << std::endl;
 
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
         cmd.addVocab(VOCAB_INTERACTION_MODES);
 
         bool ok = rpc_p.write(cmd, response);
-
-//        std::cout << "cmd sent is" << std::endl;
-//        cmd.toString();
-//        std::cout << "\nresponse got is" << std::endl;
-//        response.toString();
 
         if (CHECK_FAIL(ok, response))
         {
@@ -2703,7 +2684,6 @@ public:
         }
         else
         {
-            std::cout << " Check failed ";
             ret = false;
         }
         return ret;
@@ -2713,7 +2693,6 @@ public:
     {
         Bottle cmd, response;
         if (!isLive()) return false;
-        std::cout << " sending SET VOCAB_INTERACTION_MODE" << std::endl;
 
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_INTERFACE_INTERACTION_MODE);
@@ -2739,14 +2718,17 @@ public:
         cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
         cmd.addInt(n_joints);
 
+        std::cout << "remoteCB, setInteractionMode GROUP, n_joint is " << n_joints << std::endl;
         Bottle& l1 = cmd.addList();
         for (int i = 0; i < n_joints; i++)
             l1.addInt(joints[i]);
 
         Bottle& l2 = cmd.addList();
         for (int i = 0; i < n_joints; i++)
+        {
             l2.addVocab(modes[i]);
-
+            std::cout << "remoteCB adding vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
+        }
         bool ok = rpc_p.write(cmd, response);
 //        std::cout << "cmd sent is" << std::endl;
 //        cmd.toString();

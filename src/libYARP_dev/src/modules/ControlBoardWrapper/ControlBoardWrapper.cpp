@@ -382,184 +382,258 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
     //handle here messages about  IControlMode interface
     int code = cmd.get(0).asVocab();
     *ok=true;
+    *rec=true; //or false
 
     switch(code)
     {
         case VOCAB_SET:
+        {
+            if (caller->verbose())
+                fprintf(stderr, "handleControlModeMsg::VOCAB_SET command\n");
+
+            int method = cmd.get(2).asVocab();
+
+            switch(method)
             {
-                if (caller->verbose())
-                    fprintf(stderr, "handleControlModeMsg::VOCAB_SET command\n");
-
-                int p=-1;
-                int axis = cmd.get(3).asInt();
-
-//                std::cout << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab()).c_str() << std::endl;
-                switch (cmd.get(4).asVocab())
+                case VOCAB_CM_CONTROL_MODE:
                 {
-                    case VOCAB_CM_POSITION:
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_POSITION);
-                        else
-                            *ok = iMode->setPositionMode(axis);
+                    int axis = cmd.get(3).asInt();
+                    std::cerr << "got VOCAB_CM_CONTROL_MODE " << std::endl;
+                    if(iMode2)
+                        *ok = iMode2->setControlMode(axis, VOCAB_CM_POSITION);
+                    else
+                    {
+                        std::cerr << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!" << std::endl;
+                        *rec = false;
+                    }
+                }
+                break;
+
+                case VOCAB_CM_CONTROL_MODE_GROUP:
+                {
+                    std::cerr << "got VOCAB_CM_CONTROL_MODE_GROUP" << std::endl;
+
+                    int n_joints = cmd.get(3).asInt();
+                    Bottle& jList = *(cmd.get(4).asList());
+
+                    int *js = new int [n_joints];
+                    int *modes = new int [n_joints];
+
+                    for(int i=0; i<n_joints; i++)
+                    {
+                        js[i] = jList.get(i).asInt();
+                    }
+
+                    Bottle& modeList = response.addList();
+                    for(int i=0; i<n_joints; i++)
+                    {
+                        modes[i] = modeList.get(i).asVocab();
+                    }
+                    *ok = iMode2->setControlModes(n_joints, js, modes);
+
+                    delete [] js;
+                    delete [] modes;
+                }
+                break;
+
+                case VOCAB_CM_CONTROL_MODES:
+                {
+                    std::cerr << "got VOCAB_CM_CONTROL_MODES"  << std::endl;
+                    yarp::os::Bottle *modeList;
+                    modeList  = cmd.get(3).asList();
+
+                    if(modeList->size() != controlledJoints)
+                    {
+                        if (caller->verbose())
+                            fprintf(stderr, "received an invalid setControlMode message. Size of vector doesn´t match the number of controlled joints\n");
+                        *ok = false;
                         break;
+                    }
+                    int *modes  = new int [controlledJoints];
+                    for( int i=0; i<controlledJoints; i++)
+                    {
+                        modes[i] = modeList->get(i).asVocab();
+                    }
+                    *ok = iMode2->setControlModes(modes);
+                    delete [] modes;
+                }
+                break;
 
-                    case VOCAB_CM_POSITION_DIRECT:
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_POSITION_DIRECT);
-                        break;
+                default:
+                {
+                    // if I´m here, someone is probably sending command using the old interface.
+                    // try to be compatible as much as I can
 
+                    std::cerr << " Error, received a set control mode message using a legacy version, trying to be handle the message anyway " \
+                                 " but please update your client to be compatible with the IControlMode2 interface";
 
-                    case VOCAB_CM_VELOCITY:
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_VELOCITY);
-                        else
-                            *ok = iMode->setVelocityMode(axis);
+                    // std::cout << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab()).c_str() << std::endl;
+                    int axis = cmd.get(3).asInt();
+
+                    switch (cmd.get(4).asVocab())
+                    {
+                        case VOCAB_CM_POSITION:
+                            if(iMode2)
+                                *ok = iMode2->setControlMode(axis, VOCAB_CM_POSITION);
+                            else
+                                *ok = iMode->setPositionMode(axis);
                             break;
 
-                    case VOCAB_CM_TORQUE:
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_TORQUE);
-                        else
-                            *ok = iMode->setTorqueMode(axis);
-                        break;
-
-                    case VOCAB_CM_IMPEDANCE_POS:
-                        printf("The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead\n");
-
-//                      Let´s propagate the legacy version as is until it will be removed
-//                        if(iMode2)
-//                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_POS);
-//                        else
-                            *ok = iMode->setImpedancePositionMode(axis);
+                        case VOCAB_CM_POSITION_DIRECT:
+                            if(iMode2)
+                                *ok = iMode2->setControlMode(axis, VOCAB_CM_POSITION_DIRECT);
                             break;
 
-                    case VOCAB_CM_IMPEDANCE_VEL:
-                        printf("The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead\n");
 
-//                      Let´s propagate the legacy version as is until it will be removed
-//                        if(iMode2)
-//                            *ok = iMode2->setControlMode(axis, VOCAB_CM_IMPEDANCE_VEL);
-//                        else
-                            *ok = iMode->setImpedanceVelocityMode(axis);
+                        case VOCAB_CM_VELOCITY:
+                            if(iMode2)
+                                *ok = iMode2->setControlMode(axis, VOCAB_CM_VELOCITY);
+                            else
+                                *ok = iMode->setVelocityMode(axis);
+                                break;
+
+                        case VOCAB_CM_TORQUE:
+                            if(iMode2)
+                                *ok = iMode2->setControlMode(axis, VOCAB_CM_TORQUE);
+                            else
+                                *ok = iMode->setTorqueMode(axis);
                             break;
 
-                    case VOCAB_CM_OPENLOOP:
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_OPENLOOP);
-                        else
-                            *ok = iMode->setOpenLoopMode(axis);
+                        case VOCAB_CM_IMPEDANCE_POS:
+                            printf("The 'impedancePosition' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_POSITION) instead\n");
+
+    //                      Let´s propagate the legacy version as is until it will be removed
+                                *ok = iMode->setImpedancePositionMode(axis);
+                                break;
+
+                        case VOCAB_CM_IMPEDANCE_VEL:
+                            printf("The 'impedanceVelocity' control mode is deprecated. \nUse setInteractionMode(axis, VOCAB_IM_COMPLIANT) + setControlMode(axis, VOCAB_CM_VELOCITY) instead\n");
+
+    //                      Let´s propagate the legacy version as is until it will be removed
+                                *ok = iMode->setImpedanceVelocityMode(axis);
+                                break;
+
+                        case VOCAB_CM_OPENLOOP:
+                            if(iMode2)
+                                *ok = iMode2->setControlMode(axis, VOCAB_CM_OPENLOOP);
+                            else
+                                *ok = iMode->setOpenLoopMode(axis);
+                                break;
+
+                        case VOCAB_CM_MIXED:
+                            if(iMode2)
+                                *ok = iMode2->setControlMode(axis, VOCAB_CM_MIXED);
                             break;
 
-                    case VOCAB_CM_MIXED:
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_MIXED);
-                        break;
+                        case VOCAB_CM_FORCE_IDLE:
+                            if(iMode2)
+                                *ok = iMode2->setControlMode(axis, VOCAB_CM_FORCE_IDLE);
+                            break;
 
-                    case VOCAB_CM_FORCE_IDLE:
-                        if(iMode2)
-                            *ok = iMode2->setControlMode(axis, VOCAB_CM_FORCE_IDLE);
-                        break;
-
-                    default:
+                        default:
 //                        if (caller->verbose())
                             fprintf(stderr, "SET unknown controlMode : %s \n", cmd.toString().c_str());
                             *ok = false;
+                            *rec = false;
                             break;
+                    }
                 }
-                *rec=true; //or false
+                break;  // close default case
             }
-            break;
+        }
+        break;      // close SET case
 
         case VOCAB_GET:
+        {
+            if (caller->verbose())
+                fprintf(stderr, "GET command\n");
+
+            int method = cmd.get(2).asVocab();
+
+            switch(method)
             {
-                if (caller->verbose())
-                    fprintf(stderr, "GET command\n");
-
-                int method = cmd.get(2).asVocab();
-
-                switch(method)
+                case VOCAB_CM_CONTROL_MODES:
                 {
-                    case VOCAB_CM_CONTROL_MODES:
-                    {
-                        if (caller->verbose())
-                            fprintf(stderr, "getControlModes\n");
-                        int *p = new int[controlledJoints];
-                        *ok = iMode->getControlModes(p);
+                    if (caller->verbose())
+                        fprintf(stderr, "getControlModes\n");
+                    int *p = new int[controlledJoints];
+                    *ok = iMode->getControlModes(p);
 
-                        response.addVocab(VOCAB_IS);
-                        response.addVocab(VOCAB_CM_CONTROL_MODES);
+                    response.addVocab(VOCAB_IS);
+                    response.addVocab(VOCAB_CM_CONTROL_MODES);
 
-                        Bottle& b = response.addList();
-                        int i;
-                        for (i = 0; i < controlledJoints; i++)
-                            b.addVocab(p[i]);
-                        delete[] p;
+                    Bottle& b = response.addList();
+                    int i;
+                    for (i = 0; i < controlledJoints; i++)
+                        b.addVocab(p[i]);
+                    delete[] p;
 
-                        *rec=true;
-                    }
-                    break;
-
-                    case VOCAB_CM_CONTROL_MODE:
-                    {
-                        if (caller->verbose())
-                            fprintf(stderr, "getControlMode\n");
-
-                        int p=-1;
-                        int axis = cmd.get(3).asInt();
-                        *ok = iMode->getControlMode(axis, &p);
-
-                        response.addVocab(VOCAB_IS);
-                        response.addInt(axis);
-                        response.addVocab(p);
-
-                        //fprintf(stderr, "Returning %d\n", p);
-                        *rec=true;
-                    }
-                    break;
-
-                    case VOCAB_CM_CONTROL_MODE_GROUP:
-                    {
-                        if (caller->verbose())
-                            fprintf(stderr, "getControlMode group\n");
-
-
-                        int n_joints = cmd.get(3).asInt();
-                        Bottle& lIn = *(cmd.get(4).asList());
-
-                        int *js = new int [n_joints];
-                        int *modes = new int [n_joints];
-                        for(int i=0; i<n_joints; i++)
-                        {
-                            js[i] = lIn.get(i).asInt();
-                        }
-                        *ok = iMode2->getControlModes(n_joints, js, modes);
-
-                        response.addVocab(VOCAB_IS);
-                        response.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
-                        Bottle& b = response.addList();
-                        for(int i=0; i<n_joints; i++)
-                        {
-                            b.addVocab(modes[i]);
-                        }
-
-                        //fprintf(stderr, "Returning %d\n", p);
-                        *rec=true;
-                    }
-                    break;
-
-                default:
-                    printf("Error: received a GET ICONTROLMODE command not understood\n");
-                    break;
+                    *rec=true;
                 }
+                break;
+
+                case VOCAB_CM_CONTROL_MODE:
+                {
+                    if (caller->verbose())
+                        fprintf(stderr, "getControlMode\n");
+
+                    int p=-1;
+                    int axis = cmd.get(3).asInt();
+                    *ok = iMode->getControlMode(axis, &p);
+
+                    response.addVocab(VOCAB_IS);
+                    response.addInt(axis);
+                    response.addVocab(p);
+
+                    //fprintf(stderr, "Returning %d\n", p);
+                    *rec=true;
+                }
+                break;
+
+                case VOCAB_CM_CONTROL_MODE_GROUP:
+                {
+                    if (caller->verbose())
+                        fprintf(stderr, "getControlMode group\n");
+
+                    int n_joints = cmd.get(3).asInt();
+                    Bottle& lIn = *(cmd.get(4).asList());
+
+                    int *js = new int [n_joints];
+                    int *modes = new int [n_joints];
+                    for(int i=0; i<n_joints; i++)
+                    {
+                        js[i] = lIn.get(i).asInt();
+                    }
+                    *ok = iMode2->getControlModes(n_joints, js, modes);
+
+                    response.addVocab(VOCAB_IS);
+                    response.addVocab(VOCAB_CM_CONTROL_MODE_GROUP);
+                    Bottle& b = response.addList();
+                    for(int i=0; i<n_joints; i++)
+                    {
+                        b.addVocab(modes[i]);
+                    }
+
+                    //fprintf(stderr, "Returning %d\n", p);
+                    *rec=true;
+                }
+                break;
+
+            default:
+                printf("Error: received a GET ICONTROLMODE command not understood\n");
+                break;
             }
-            lastRpcStamp.update();
-            appendTimeStamp(response, lastRpcStamp);
-            break; // case VOCAB_GET
+        }
+
+        lastRpcStamp.update();
+        appendTimeStamp(response, lastRpcStamp);
+        break; // case VOCAB_GET
+
         default:
-            {
-                *rec=false;
-            }
-            break;
+        {
+            *rec=false;
+        }
+        break;
     }
 }
 
@@ -977,12 +1051,15 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
             case VOCAB_INTERACTION_MODE:
             {
+                std::cout << "CBW.h set interactionMode SINGLE" << std::endl;
                 *ok = iInteract->setInteractionMode(cmd.get(3).asInt(), (yarp::dev::InteractionModeEnum) cmd.get(4).asVocab());
             }
             break;
 
             case VOCAB_INTERACTION_MODE_GROUP:
             {
+                std::cout << "CBW.h set interactionMode GROUP" << std::endl;
+
                 int n_joints = cmd.get(3).asInt();
                 jointList = cmd.get(4).asList();
                 modeList  = cmd.get(5).asList();
@@ -999,6 +1076,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                 {
                     joints[i] = jointList->get(i).asInt();
                     modes[i]  = (yarp::dev::InteractionModeEnum) modeList->get(i).asVocab();
+                    std::cout << "CBW.cpp received vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
                 }
                 *ok = iInteract->setInteractionModes(n_joints, joints, modes);
                 delete [] joints;
@@ -1009,6 +1087,8 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
             case VOCAB_INTERACTION_MODES:
             {
+                std::cout << "CBW.c set interactionMode ALL" << std::endl;
+
                 modeList  = cmd.get(3).asList();
                 if(modeList->size() != controlledJoints)
                 {
@@ -1063,12 +1143,12 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                 if(jointList->size() != n_joints )
                 {
                     if (caller->verbose())
-                        fprintf(stderr, "received an invalid setInteractionMode message. Size of vectors doesn´t match\n");
+                        fprintf(stderr, "received an invalid getInteractionMode message. Size of vectors doesn´t match\n");
                     *ok = false;
                     break;
                 }
                 int *joints = new int[n_joints];
-                modes = new yarp::dev::InteractionModeEnum [n_joints];
+                modes       = new yarp::dev::InteractionModeEnum [n_joints];
                 for( int i=0; i<n_joints; i++)
                 {
                     joints[i] = jointList->get(i).asInt();
@@ -1096,6 +1176,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum* modes;
                     modes  = new yarp::dev::InteractionModeEnum [controlledJoints];
 
+                    std::cout << " cbw.cpp getInteractionModes ALL joint" << std::endl;
                     *ok = iInteract->getInteractionModes(modes);
 
                     Bottle& b = response.addList();
@@ -1910,7 +1991,6 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                 break;
 
                             int *j_tmp = new int [len];
-                            double *accs_tmp = new double [len];
 
                             for (int i = 0; i < len; i++)
                                 j_tmp[i] = jBottle_p->get(i).asInt();

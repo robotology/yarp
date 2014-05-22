@@ -19,9 +19,9 @@ namespace yarp {
 
         enum InteractionModeEnum
         {
-            VOCAB_IM_STIFF        =   VOCAB4('i','m','s','t'),
-            VOCAB_IM_COMPLIANT    =   VOCAB4('i','m','c','o'),
-            VOCAB_IM_UNKNOWN      =   VOCAB4('i','m','u','k')
+            VOCAB_IM_STIFF        =   VOCAB4('s','t','i','f'),
+            VOCAB_IM_COMPLIANT    =   VOCAB4('c','o','m','p'),
+            VOCAB_IM_UNKNOWN      =   VOCAB4('u','n','k','n')
         };
     }
 }

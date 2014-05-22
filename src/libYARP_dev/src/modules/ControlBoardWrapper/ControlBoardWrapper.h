@@ -918,9 +918,18 @@ public:
             if (!p)
                 return false;
 
-            if (p->iMode)
+            if (p->iMode2)
             {
-                //calling iControlMode interface
+                std::cout<< "setPositionMode() for ALL joint using NEW interface" << std::endl;
+
+                //calling new iControlMode2 interface
+                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
+            }
+            else if(p->iMode)
+            {
+                std::cout<< "setPositionMode() for ALL joint using OLD interface" << std::endl;
+
+                //calling old iControlMode interface
                 ret=ret&&p->iMode->setPositionMode(off+base);
             }
             else
@@ -931,6 +940,7 @@ public:
 
     virtual bool setOpenLoopMode() {
         bool ret=true;
+
         for(int l=0;l<controlledJoints;l++)
         {
             int off=device.lut[l].offset;
@@ -941,8 +951,17 @@ public:
             if (!p)
                 return false;
 
-            if (p->iMode)
+            if (p->iMode2)
             {
+                std::cout<< "setOpenLoopMode() for ALL joint using NEW interface" << std::endl;
+
+                //calling new iControlMode2 interface
+                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_OPENLOOP);
+            }
+            else if(p->iMode)
+            {
+                std::cout<< "setOpenLoopMode() for ALL joint using OLD interface" << std::endl;
+
                 //calling iControlMode interface
                 ret=ret&&p->iMode->setOpenLoopMode(off+base);
             }
@@ -950,7 +969,6 @@ public:
                 ret=false;
         }
         return ret;
-        return false;
     }
 
     /**
@@ -2061,8 +2079,37 @@ public:
     * Set the controller to velocity mode.
     * @return true/false on success/failure.
     */
-    virtual bool setVelocityMode() {
+    virtual bool setVelocityMode()
+    {
+        std::cout<< "setVelocityMode() for ALL joint " << std::endl;
+
         bool ret=true;
+#if 1
+        int j_wrap = 0;         // index of the wrapper joint
+        for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
+        {
+            yarp::dev::impl::SubDevice *p=device.getSubdevice(subDev_idx);
+
+            if(!p)
+                return false;
+
+            int wrapped_joints=(p->top - p->base) + 1;
+
+            if(p->iMode2)   // ControlMode2
+            {
+                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
+                {   ret = ret && p->iMode2->setControlMode(p->base + j_dev, VOCAB_CM_VELOCITY);   }
+            }
+            else if(p->iMode)
+            {
+                for(int j_dev = 0; j_dev < wrapped_joints; j_dev++, j_wrap++)
+                {
+                    int off=device.lut[j_wrap].offset;
+                    ret = ret && p->iMode->setVelocityMode(p->base+off);
+                }
+            }
+        }
+#else
         for(int l=0;l<controlledJoints;l++)
         {
             int off=device.lut[l].offset;
@@ -2081,6 +2128,7 @@ public:
             else
                 ret=false;
         }
+#endif
         return ret;
     }
 
@@ -2719,6 +2767,8 @@ public:
 
     virtual bool setTorqueMode()
     {
+        std::cout<< "setTorqueMode() for ALL joint " << std::endl;
+
         bool ret=true;
         for(int l=0;l<controlledJoints;l++)
         {
@@ -2730,13 +2780,17 @@ public:
             if (!p)
                 return false;
 
-                if (p->iMode)
-                {
-                    //calling iControlMode interface
-                    ret=ret&&p->iMode->setTorqueMode(off+base);
-                }
-                else
-                    ret=false;
+            if(p->iMode2)   // ControlMode2
+            {
+                ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_TORQUE);
+            }
+            else if(p->iMode)
+            {
+                //calling iControlMode interface
+                ret=ret&&p->iMode->setTorqueMode(off+base);
+            }
+            else
+                ret=false;
         }
         return ret;
     }
@@ -3331,6 +3385,8 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
+        std::cout<< "setPositionMode() for SINGLE joint " << j << std::endl;
+
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
@@ -3380,16 +3436,10 @@ public:
             return false;
 
 //        Let´s propagate the legacy version as is until it will be removed
-//        if (p->iMode2 && p->iInteract)
-//        {
-//            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
-//            return p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION) && ret;
-//        }
-//        else
-            if (p->iMode)
-            {
-                return p->iMode->setImpedancePositionMode(off+base);
-            }
+        if (p->iMode)
+        {
+            return p->iMode->setImpedancePositionMode(off+base);
+        }
 
         return false;
     }
@@ -3403,16 +3453,10 @@ public:
         if (!p)
             return false;
 //        Let´s propagate the legacy version as is until it will be removed
-//        if (p->iMode2 && p->iInteract)
-//        {
-//            bool ret = p->iInteract->setInteractionMode(off+base, VOCAB_IM_COMPLIANT);
-//            return p->iMode2->setControlMode(off+base, VOCAB_CM_VELOCITY) && ret;
-//        }
-//        else
-            if (p->iMode)
-            {
-                return p->iMode->setImpedanceVelocityMode(off+base);
-            }
+        if (p->iMode)
+        {
+            return p->iMode->setImpedanceVelocityMode(off+base);
+        }
 
         return false;
     }
@@ -3425,6 +3469,8 @@ public:
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
+
+        std::cout << "setVelocityMode(int j) @@ p->base:" <<  p->base << ", off:" << off << ", base:" << base << std::endl;
 
         if (p->iMode2)
         {
@@ -3524,10 +3570,86 @@ public:
          return ret;
     }
 
-    virtual bool setControlMode(const int j, const int mode)
+    bool legacySetControlMode(const int j, const int mode)
     {
+        bool ret = true;
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
+
+        std::cout<< "Legacy setControlMode for joint " << j << " mode " << yarp::os::Vocab::decode(mode) << std::endl;
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        switch(mode)
+        {
+            case VOCAB_CM_IDLE:
+            {
+
+                if(p->amp)
+                {
+                    ret = ret && p->amp->disableAmp(off+p->base);
+                }
+                if(p->pid)
+                {
+                    ret = ret && p->pid->disablePid(off+p->base);
+                }
+            }
+            break;
+
+            case VOCAB_CM_TORQUE:
+            {
+                ret = p->iMode->setTorqueMode(off+p->base);
+            }
+            break;
+
+            case VOCAB_CM_POSITION:
+            {
+                ret = p->iMode->setPositionMode(off+p->base);
+            }
+            break;
+
+            case VOCAB_CM_VELOCITY:
+            {
+                ret = p->iMode->setVelocityMode(off+p->base);
+            }
+            break;
+
+            case VOCAB_CM_OPENLOOP:
+            {
+                ret = p->iMode->setOpenLoopMode(off+p->base);
+            }
+            break;
+
+            case VOCAB_CM_IMPEDANCE_POS:
+            {
+                ret = p->iMode->setImpedancePositionMode(off+p->base);
+            }
+            break;
+
+            case VOCAB_CM_IMPEDANCE_VEL:
+            {
+                ret = p->iMode->setImpedanceVelocityMode(off+p->base);
+            }
+            break;
+
+            default:
+            {
+                std::cout << "ControlBoardWrapper received an invalid  setControlMode " << yarp::os::Vocab::decode(mode) << " for joint " << j << std::endl;
+                ret = false;
+            }
+            break;
+        }
+        return ret;
+    }
+
+    virtual bool setControlMode(const int j, const int mode)
+    {
+        bool ret = true;
+        int off=device.lut[j].offset;
+        int subIndex=device.lut[j].deviceEntry;
+
+        std::cout<< "New setControlMode SINGLE for joint " << j << " mode " << yarp::os::Vocab::decode(mode) << std::endl;
 
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
@@ -3535,85 +3657,22 @@ public:
 
         if (p->iMode2)
         {
-            return p->iMode2->setControlMode(off+base, mode);
+            ret = p->iMode2->setControlMode(off+base, mode);
         }
         else
         {
             if (p->iMode)
             {
-                switch(mode)
-                {
-                    case VOCAB_CM_IDLE:
-                    {
-                        bool ret = true;
-                        if(p->amp)
-                        {
-                            ret = ret && p->amp->disableAmp(off+base);
-                        }
-                        if(p->pid)
-                        {
-                            ret = ret && p->pid->disablePid(off+base);
-                        }
-                        return ret;
-                    }
-                    break;
-
-                    case VOCAB_CM_TORQUE:
-                    {
-                        return p->iMode->setTorqueMode(off+base);
-                    }
-                    break;
-
-/*                  Pos Direct has only all joint version
-                    case VOCAB_CM_POSITION_DIRECT:
-                    {
-                       return p->iMode-setPositionDirectMode(j);
-                    }
-                    break;
-*/
-                    case VOCAB_CM_POSITION:
-                    {
-                        return p->iMode->setPositionMode(off+base);
-                    }
-                    break;
-
-                    case VOCAB_CM_VELOCITY:
-                    {
-                        return p->iMode->setVelocityMode(off+base);
-                    }
-                    break;
-
-                    case VOCAB_CM_OPENLOOP:
-                    {
-                        return p->iMode->setOpenLoopMode(off+base);
-                    }
-                    break;
-
-                    case VOCAB_CM_IMPEDANCE_POS:
-                    {
-                        return p->iMode->setImpedancePositionMode(off+base);
-                    }
-                    break;
-
-                    case VOCAB_CM_IMPEDANCE_VEL:
-                    {
-                        return p->iMode->setImpedanceVelocityMode(off+base);
-                    }
-                    break;
-
-                    default:
-                    {
-                        std::cout << "ControlBoardWrapper received an invalid  setControlMode " << yarp::os::Vocab::decode(mode) << " for joint " << j << " (subdev " << subIndex << " joint " <<  off+base << " )" << std::endl;
-                    }
-                    break;
-                }
+                legacySetControlMode(j, mode);
             }
         }
+        return ret;
     }
 
     virtual bool setControlModes(const int n_joints, const int *joints, int *modes)
     {
         bool ret = true;
+        std::cout<< "New setControlMode GROUP with mode " << yarp::os::Vocab::decode(modes[0]) << std::endl;
 
         /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
          * then it is optimizable by instantiating the table once and for all during the creation of the class.
@@ -3650,7 +3709,10 @@ public:
             }
             else
             {
-                ret=false;
+                for(int j = 0; j < X_idx[subIndex]; j++)
+                {
+                    ret = ret && legacySetControlMode(XJoints[subIndex][j], XModes[subIndex][j]);
+                }
             }
         }
         return ret;
@@ -3660,6 +3722,7 @@ public:
     {
         bool ret = true;
         int j_wrap = 0;         // index of the wrapper joint
+        std::cout<< "New setControlMode for joint " << std::endl;
 
         int nDev = device.subdevices.size();
         for(unsigned int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
@@ -3686,9 +3749,11 @@ public:
             }
             else
             {
-                ret=false;
+                for(int j_wrap = 0; j_wrap < wrapped_joints; j_wrap++)
+                {
+                    ret = ret && legacySetControlMode(j_wrap, modes[j_wrap]);
+                }
             }
-
 
             if(joints!=0)
             {
@@ -3758,6 +3823,8 @@ public:
 
     virtual bool setPositionDirectMode()
     {
+        std::cout<< "setPositionDirectMode() for ALL joint " << std::endl;
+
         bool ret=true;
         for(int l=0;l<controlledJoints;l++)
         {
@@ -4021,6 +4088,7 @@ public:
             ps[i]=device.getSubdevice(i);
         }
 
+        std::cout << " CBW: getInteractionModes GROUP" << std::endl;
         yarp::os::Vocab v;
         // Create a map of joints for each subDevice
         int subIndex = 0;
@@ -4056,6 +4124,7 @@ public:
     {
         bool ret = true;
 
+        std::cout << "get interactionMode cbw.h " << std::endl;
         for(int j=0; j<controlledJoints; j++)
         {
             int off=device.lut[j].offset;
@@ -4084,6 +4153,7 @@ public:
         if (!s)
             return false;
 
+        std::cout << "CBW SetinteractionMode SINGLE " << j << " val " << yarp::os::Vocab::decode(mode) << " a.k.a. " << mode << std::endl;
         if (s->iInteract)
         {
             return s->iInteract->setInteractionMode(off+base, mode);
