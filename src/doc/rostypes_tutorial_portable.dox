@@ -10,13 +10,13 @@ For ROS interoperability YARP supports ROS msg types. In this tutorials we see h
 
 <b>NOTE: In order to use IDLs, YARP must be built setting the CREATE_IDLS and ENABLE_yarpidl_rosmsg options to ON in CMake.</b>
 
-\section sec_intro Introduction
+\section rostypes_sec_intro Introduction
 
 Suppose we have two modules that wish to share a \em SharedData \m struct that contains a string and a vector. Normally you would define the data in a C++ header file and write serialization/deserialization methods to allow it to be sent and received to/from a port (this process is called marshalling/demarshalling). This process requires some YARP specific expertise, is error-prone and tedious. The idea here is that instead of manually writing the class you define the structure using the ROS syntax, then you ask a compiler (called \em yarpidl_rosmsg) to generate the class for you, including all the required code. Because you use the ROS syntax this type is also compatible with ROS and can be read from a topic.
 
 Let's see how to do it.
 
-\section sec_ros-defintion ROS definition for SharedData
+\section rostypes_sec_ros-defintion ROS definition for SharedData
 
 We start by defining our \em ShareData structure. Open a text editor and type the following:
 
@@ -52,7 +52,7 @@ In case you are interested you can inspect it to see that it defines a C++ class
 
 Now we can use these files in your YARP programs. We now write a sender and a receiver.
 
-\section sec-code Code
+\section rostypes_sec-code Code
 
 This code is straightforward. We define a sender executable that opens a port and periodically writes a \em SharedData object and a receiver that opens a port and receives the same message type.
 
@@ -68,10 +68,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})
 
 add_executable(sender sender.cpp)
 target_link_libraries(sender ${YARP_LIBRARIES})
-
-
-add_executable(receiver receiver.cpp)
-target_link_libraries(receiver ${YARP_LIBRARIES})
 
 \endcode
 Now we write the code for the sender in \em sender.cpp:
@@ -122,6 +118,34 @@ int main()
 
 \endcode
 
+Now compile the code
+\code
+mkdir build
+cd build
+cmake ../
+make
+
+./sender
+\endcode
+
+Now you can run yarp read on a separate console to inspect the content that is being transmitted on the port, the output should be something like this (you'll need a very recent version of YARP for this to work - if it doesn't just skip it):
+\code
+~$ yarp read ... /sender
+yarp: Port /tmp/port/1 active at tcp://127.0.0.1:10003
+yarp: Receiving input from /sender to /tmp/port/1 using tcp
+"Hello from sender" (276.0 277.0)
+"Hello from sender" (278.0 279.0)
+\endcode
+
+It is simple to write a receiver:
+
+Append the following to the CMakeLists.txt
+
+\code
+add_executable(receiver receiver.cpp)
+target_link_libraries(receiver ${YARP_LIBRARIES})
+\endcode
+
 Now we write the code for the receiver in \em receiver.cpp:
 
 \code
@@ -169,25 +193,7 @@ int main()
 }
 \endcode
 
-
-Now compile the code
-\code
-mkdir build
-cd build
-cmake ../
-make
-\endcode
-
-We execute the sender and the receiver (don't forget to run the yarpserver). This this the output:
-
-Start the sender:
-\code
-$ ./sender 
-yarp: Port /sender active at tcp://192.168.59.129:10002
-Starting sender
-\endcode
-
-Start the receiver:
+Compile, and start the receiver, with the sender running:
 \code
 $ ./receiver 
 Starting receiver
@@ -208,7 +214,62 @@ Hello from sender
 ...
 \endcode
 
-\section sec-realted-tutorials Related Tutorials
+\section rostypes_sec_using-cmake Using CMake 
+
+YARP provides CMake supports to automate the invocation of yarpidl_rosmsg. This is convenient in large projects when we generate several files and we do not want to keep track of all of them individually.
+
+Edit the file CMakeLists.txt:
+
+\code 
+
+cmake_minimum_required(VERSION 2.8.7)
+
+#find YARP
+find_package(YARP REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include(YarpIDL)
+
+\endcode
+
+The last two lines load support for the YarpIDL compiler. 
+
+We now tell CMake to parse SharedData.msg with the rosmsg compiler. All generated files will be placed in separate \em include and \em src directories.
+
+\code
+
+#compile definition file to generate source code into the desired directory
+set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
+yarp_idl_to_dir(SharedData.msg ${generated_libs_dir})
+
+\endcode
+
+The first time you run CMake it will produce a file SharedData_msg.cmake that contains all generated files. This file can be used to compile our executables, i.e.:
+
+\code
+#include files generated previously
+include(SharedData_msg.cmake)
+include_directories(${generated_libs_dir}/include ${YARP_INCLUDE_DIRS})
+
+# create the sender
+add_executable(sender sender.cpp ${headers} ${sources})
+TARGET_LINK_LIBRARIES(sender ${YARP_LIBRARIES})
+
+# create the receiver
+add_executable(receiver receiver.cpp ${headers} ${sources})
+TARGET_LINK_LIBRARIES(receiver ${YARP_LIBRARIES})
+
+\endcode
+
+Now you just have to execute CMake. The variable ALLOW_IDL_GENERATION controls if the rosmsg compiler is executed to generate SharedData.h or not. Notice that the first time you run cmake you \em have to enable this flag otherwise compilation will fail because SharedData.h will be missing.
+
+\code
+cd build
+cmake ../ -DALLOW_IDL_GENERATION=TRUE
+\endcode
+
+The code generation step is required only when \em SharedData.msg is modified.
+
+\section rostypes_sec-related-tutorials Related Tutorials
 
 More information on interoperatiblity with ROS can be found here: \ref yarp_with_ros
 
