@@ -13,3 +13,4 @@ tags
 /license-*.txt
 /license_check/
 /install*/
+.DS_Store

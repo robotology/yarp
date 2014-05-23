@@ -47,6 +47,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Mutex.h>
+#include <yarp/os/LockGuard.h>
 #include <yarp/os/Event.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/RateThread.h>
