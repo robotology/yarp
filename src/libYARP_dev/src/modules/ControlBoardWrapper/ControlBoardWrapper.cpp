@@ -400,7 +400,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                     int axis = cmd.get(3).asInt();
                     std::cerr << "got VOCAB_CM_CONTROL_MODE " << std::endl;
                     if(iMode2)
-                        *ok = iMode2->setControlMode(axis, VOCAB_CM_POSITION);
+                        *ok = iMode2->setControlMode(axis, cmd.get(4).asVocab());
                     else
                     {
                         std::cerr << "ControlBoardWrapper: Unable to handle setControlMode request! This should not happen!" << std::endl;
