@@ -13,7 +13,8 @@ This tutorial shows how to use the Apache Thrift Interface Definition Language t
 \section thrift_tutorial_sec_intro Introduction
 
 Apache Thrift allows to define data types and service interfaces in a simple definition file. Taking that file as input, a compiler generates source code which can be used by different client modules and a server.
-<b>In order to use IDLs, YARP must be built setting the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
+
+<b>This tutorial requires the yarpidl_thrift utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
 
 \section thrift_tutorial_sec_language Language Reference
 

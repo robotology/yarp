@@ -8,7 +8,7 @@ YARP built-in types can be sent through Ports. Sometimes you need to send custom
 
 For ROS interoperability YARP supports ROS msg types. In this tutorials we see how you can automatically generate YARP portable objects using ROS syntax. The advantage in this case is that your type is compatible with ROS and can be directly read from a topic.
 
-<b>NOTE: In order to use IDLs, YARP must be built setting the CREATE_IDLS and ENABLE_yarpidl_rosmsg options to ON in CMake.</b>
+<b>This tutorial requires the yarpidl_rosmsg utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_rosmsg options to ON in CMake.</b>
 
 \section rostypes_sec_intro Introduction
 

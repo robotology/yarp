@@ -14,7 +14,7 @@ This tutorial shows how to use the Apache Thrift Interface Definition Language (
 
 Apache Thrift allows to define service interfaces in a simple definition file. Taking that file as input, a compiler generates source code which handles the RPC communication for commands and replies defined in the interface. This source code can therefore be used by a server that executes the commands and by clients that send requests to the server by means of simple function calls. 
 
-<b>NOTE: In order to use IDLs, YARP must be built setting the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
+<b>This tutorial requires the yarpidl_thrift utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
 
 \section thrift_tutorial_simple_sec_thriftfile Step One: Interface Definition
 

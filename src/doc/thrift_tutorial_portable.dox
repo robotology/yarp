@@ -6,7 +6,7 @@
 
 YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. This tutorial shows how you can automate this process using the Thrift compiler. 
 
-<b>NOTE: In order to use IDLs, YARP must be built setting the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
+<b>This tutorial requires the yarpidl_thrift utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
 
 \section sec_intro Introduction
 
