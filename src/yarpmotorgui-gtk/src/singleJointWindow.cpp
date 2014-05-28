@@ -525,10 +525,13 @@ void partMover::sliderVel_release(GtkRange *range, gtkClassData* currentClassDat
   IPositionControl *ipos = currentPart->pos;
   IPositionDirect  *iDir = currentPart->iDir;
   GtkWidget **sliderAry = currentPart->sliderArray;
+  IControlMode     *iCtrl = currentPart->ctrlmode2;
+  int mode;
 
   double val = gtk_range_get_value(range);
   double posit = gtk_range_get_value((GtkRange *) sliderAry[*joint]);
   ipos->setRefSpeed(*joint, val);
+  iCtrl->getControlMode(*joint, &mode);
   ipos->positionMove(*joint, posit);
   return;
 }
@@ -552,16 +555,25 @@ void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
   double val = gtk_range_get_value(range);
   double valVel = gtk_range_get_value((GtkRange *)sliderVel[*joint]);
 
+  IControlMode     *iCtrl = currentPart->ctrlmode2;
+  int mode;
+
+  iCtrl->getControlMode(*joint, &mode);
+
   if (!POS_UPDATE[*joint])
     {
-      if (1)
+      if( ( mode == VOCAB_CM_POSITION) || (mode == VOCAB_CM_MIXED) )
       {
          ipos->setRefSpeed(*joint, valVel);
          ipos->positionMove(*joint, val);
       }
-      else
+      else if ( mode == VOCAB_CM_POSITION_DIRECT)
       {
          iDir->setPosition(*joint, val);
+      }
+      else
+      {
+          std::cout << " Joint not in position nor positionDirect so cannot send references" << std::endl;
       }
     }
   return;
