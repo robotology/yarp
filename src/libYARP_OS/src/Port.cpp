@@ -20,6 +20,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 #include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -398,6 +399,14 @@ bool Port::open(const Contact& contact, bool registerName,
     }
 
     ConstString n = contact2.getName();
+
+    NameConfig conf;
+    ConstString nenv = ConstString("YARP_RENAME") + conf.getSafeString(n);
+    ConstString rename = NetworkBase::getEnvironment(nenv.c_str());
+    if (rename!="") {
+        n = rename;
+        contact2 = contact2.addName(n);
+    }
 
     bool local = false;
     if (n == "" && contact2.getPort()<=0) {
