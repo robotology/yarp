@@ -433,18 +433,27 @@ bool Port::open(const Contact& contact, bool registerName,
                     if (currentCore->commitToRpc) {
                         cat += "1";
                     }
-                    //contact2 = contact2.addName(nc.getNodeName() +
-                    //                            "=" +
-                    //                            cat +
-                    //                            nc.getNestedName());
                     contact2 = contact2.addName(nc.getNestedName() +
                                                 cat +
                                                 "@" +
                                                 nc.getNodeName());
                 } else {
                     YARP_SPRINTF1(Logger::get(),error,
-                                  "Port '%s' does not have a defined I/O direction",
+                                  "Error: Port '%s' is not committed to being either an input or output port.",
                                   n.c_str());
+                    YARP_SPRINTF0(Logger::get(),error,
+                                  "YARP does not mind, but we are trying to register with a name server that does.");
+                    YARP_SPRINTF0(Logger::get(),error,
+                                  "You can call Port::setWriteOnly() or Port::setReadOnly(), OR rename the port.");
+                    NestedContact nc2 = nc;
+                    nc2.setCategoryWrite();
+                    YARP_SPRINTF1(Logger::get(),error,
+                                  "For an output port, call it: %s (+ adds data)",
+                                  nc2.toString().c_str());
+                    nc2.setCategoryRead();
+                    YARP_SPRINTF1(Logger::get(),error,
+                                  "For an input port, call it: %s (- takes data)",
+                                  nc2.toString().c_str());
                     return false;
                 }
             }

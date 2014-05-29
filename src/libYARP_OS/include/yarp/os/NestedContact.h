@@ -71,7 +71,11 @@ public:
     bool isNested() const {
         return nestedName!="";
     }
-    
+
+    ConstString toString() const {
+        return nestedName + category + "@" + nodeName;
+    }
+
 private:
     ConstString fullName;
     ConstString nodeName;
