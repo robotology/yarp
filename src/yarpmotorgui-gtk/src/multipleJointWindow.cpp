@@ -273,6 +273,7 @@ void partMover::run_all(GtkButton *button, partMover* currentPart)
   IEncoders *iiencs = currentPart->iencs;
   IAmplifierControl *iamp = currentPart->amp;
   IPidControl *ipid = currentPart->pid;
+  IControlMode2 *ictrl = currentPart->ctrlmode2;
   GtkWidget **sliderAry = currentPart->sliderArray;
 	 
   double posJoint;
@@ -283,8 +284,12 @@ void partMover::run_all(GtkButton *button, partMover* currentPart)
   for (joint=0; joint < NUMBER_OF_JOINTS; joint++)
   {
     iiencs->getEncoder(joint, &posJoint);
+    #if 0
     iamp->enableAmp(joint);
     ipid->enablePid(joint);
+    #else
+    ictrl->setControlMode(joint,VOCAB_CM_POSITION);
+    #endif
     gtk_range_set_value ((GtkRange *) (sliderAry[joint]), posJoint);
   }
   return;

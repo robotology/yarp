@@ -214,18 +214,18 @@ void guiControl::update_menu(int control_mode, int interaction_mode)
 {
  switch (control_mode)
   {
-      case MODE_IDLE:
+      case VOCAB_CM_IDLE:
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
       break;
       case VOCAB_CM_POSITION:
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_pos),true);
       break;
-     /* case VOCAB_CM_POSITION_DIRECT:
+      case VOCAB_CM_POSITION_DIRECT:
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_pos_direct),true);
       break;
       case VOCAB_CM_MIXED:
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_mixed),true);
-      break;*/
+      break;
         case VOCAB_CM_VELOCITY:
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_vel),true);
       break;
@@ -238,11 +238,14 @@ void guiControl::update_menu(int control_mode, int interaction_mode)
       case VOCAB_CM_IMPEDANCE_VEL:
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp_vel),true);
       break;
-
+      case VOCAB_CM_HW_FAULT:
+        printf("WARNING: you cannot change control mode of a joint in HARDWARE FAULT\n");
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
+      break; 
       default:
       case VOCAB_CM_UNKNOWN:
         //NOTE: Unknown!!!
-        printf("WARNING: get dealing with unknown control mode\n");
+        printf("WARNING: get dealing with unknown control mode (%d)\n", control_mode);
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_idl),true);
       break;
   }
@@ -282,6 +285,17 @@ void guiControl::guiControl(void *button, void* data)
   iinteract = currentPart->get_IInteractionMode();
   ipid = currentPart->get_IPidControl();
   iamp = currentPart->get_IAmplifierControl();
+
+  bool ret = true;
+  int control_mode=VOCAB_CM_UNKNOWN;
+  yarp::dev::InteractionModeEnum interaction_mode=VOCAB_IM_UNKNOWN;
+  ret &= icntrl2->getControlMode(*joint, &control_mode);
+  ret &= iinteract->getInteractionMode(*joint, &interaction_mode);
+  if (control_mode==VOCAB_CM_HW_FAULT) 
+  {
+      printf("WARNING: you cannot change control mode of a joint in HARDWARE FAULT\n");
+      return;
+  }
 
   //GtkWidget *winPid = NULL;
   GtkWidget *inv    = NULL;
@@ -328,13 +342,8 @@ void guiControl::guiControl(void *button, void* data)
   gtk_fixed_put    (GTK_FIXED(inv), radiobutton_interaction_stiff,10, 230   );
   gtk_fixed_put    (GTK_FIXED(inv), radiobutton_interaction_compl,10, 250   );
 
-  int control_mode=VOCAB_CM_UNKNOWN;
-  yarp::dev::InteractionModeEnum interaction_mode=VOCAB_IM_UNKNOWN;
-  bool ret = true;
-  ret &= icntrl2->getControlMode(*joint, &control_mode);
-  ret &= iinteract->getInteractionMode(*joint, &interaction_mode);
   update_menu(control_mode, interaction_mode);
- 
+
   //Rememeber: these signal_connect MUST be placed after the update_menu!
   g_signal_connect (radiobutton_mode_idl,  "clicked",G_CALLBACK (radio_click_idl), &radiobutton_mode_idl);
   g_signal_connect (radiobutton_mode_pos,  "clicked",G_CALLBACK (radio_click_pos), &radiobutton_mode_pos);
