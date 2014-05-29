@@ -285,6 +285,7 @@ bool partMover::entry_update(partMover *currentPart)
   static int slowSwitcher = 0;
 
   IControlMode     *ictrl = currentPart->ctrlmode;
+  IInteractionMode *iint  = currentPart->iinteract;
   IPositionControl  *ipos = currentPart->pos;
   IVelocityControl  *ivel = currentPart->iVel;
   IPositionDirect   *iDir = currentPart->iDir;
@@ -311,6 +312,8 @@ bool partMover::entry_update(partMover *currentPart)
   double min_torques[MAX_NUMBER_OF_JOINTS];
   static int controlModes[MAX_NUMBER_OF_JOINTS];
   static int controlModesOld[MAX_NUMBER_OF_JOINTS];
+  static yarp::dev::InteractionModeEnum interactionModes[MAX_NUMBER_OF_JOINTS];
+  static yarp::dev::InteractionModeEnum interactionModesOld[MAX_NUMBER_OF_JOINTS];
 
   int k;
   int NUMBER_OF_JOINTS=0;
@@ -380,8 +383,10 @@ bool partMover::entry_update(partMover *currentPart)
   // the new icubinterface does not increase the bandwidth consumption
   // ret = true; useless guys!
   ret=ictrl->getControlModes(controlModes);
-
   if (ret==false) fprintf(stderr,"ictrl->getControlMode failed\n" );
+  ret=iint->getInteractionModes(interactionModes);
+  if (ret==false) fprintf(stderr,"iint->getInteractionlMode failed\n" );
+
   for (k = 0; k < NUMBER_OF_JOINTS; k++)
   {
       if (currentPart->first_time==false && controlModes[k] == controlModesOld[k]) continue;
@@ -468,26 +473,24 @@ bool partMover::entry_update(partMover *currentPart)
               gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
           break;
       }
-
-      //  pColor=&color_blue;
-      //  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-      
-      int curr_amp_status=0;
-      int amp_status[60];                             //fix this!!!
-      for (int i=0; i<60; i++) amp_status[i]=0;       //fix this!!!
-      iamp->getAmpStatus(amp_status);                 //fix this!!!
-      curr_amp_status=amp_status[k];                  //fix this!!!
-
-#if 0
-      if ((amp_status[k] & 0xFF)!=0)
+  }
+  for (k = 0; k < NUMBER_OF_JOINTS; k++)
+  {
+      if (currentPart->first_time==false && interactionModes[k] == interactionModesOld[k]) continue;
+      interactionModesOld[k]=interactionModes[k];
+      switch (interactionModes[k])
       {
-         //fprintf(stderr, "FAULT DETECTED: %x\n", curr_amp_status);
-         //pColor=&color_red;
-         //strcat(frame_title," (FAULT)");
-         //gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-         //gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+           case VOCAB_IM_STIFF:
+               gtk_widget_modify_base ((GtkWidget*)inEntry[k], GTK_STATE_NORMAL, &color_green);
+           break;
+           case VOCAB_IM_COMPLIANT:
+               gtk_widget_modify_base ((GtkWidget*)inEntry[k], GTK_STATE_NORMAL, &color_fault_red);
+           break;
+           default:
+           case VOCAB_CM_UNKNOWN:
+               gtk_widget_modify_base ((GtkWidget*)inEntry[k], GTK_STATE_NORMAL, &color_white);
+           break;
       }
-#endif
   }
 
   currentPart->first_time =false;
