@@ -253,32 +253,6 @@ bool SubscriberOnSql::removeSubscription(const ConstString& src,
 }
 
 
-/*
-class RosBackChannel {  // just testing
-public:
-    RosNameSpace *pros;
-
-    RosBackChannel() {
-        pros = NULL;
-    }
-
-    virtual ~RosBackChannel() {
-        if (pros) {
-            delete pros;
-            pros = NULL;
-        }
-    }
-
-    RosNameSpace& ros() {
-        if (!pros) pros = new RosNameSpace(Contact::fromString("xmlrpc://localhost:11311"));
-        return *pros;
-    }
-};
-
-static RosBackChannel ros_channel;
-*/
-
-
 bool SubscriberOnSql::welcome(const ConstString& port, int activity) {
     mutex.wait();
 
