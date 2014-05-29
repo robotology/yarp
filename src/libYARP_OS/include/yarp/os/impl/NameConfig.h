@@ -34,6 +34,8 @@ public:
 
     static String expandFilename(const char *name);
 
+    String getSafeString(const String& txt);
+
     String getConfigFileName(const char *stem = NULL,
                              const char *ns = NULL);
 

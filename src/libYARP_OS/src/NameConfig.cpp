@@ -109,6 +109,15 @@ String NameConfig::expandFilename(const char *fname) {
     return conf.c_str();
 }
 
+String NameConfig::getSafeString(const String& txt) {
+    String result = txt;
+    for (unsigned int i=0; i<result.length(); i++) {
+        if (result[i]=='/') {
+            result[i] = '_';
+        }
+    }
+    return result;
+}
 
 String NameConfig::getConfigFileName(const char *stem, const char *ns) {
     String fname = (stem!=NULL)?stem:CONF_FILENAME;
@@ -121,14 +130,7 @@ String NameConfig::getConfigFileName(const char *stem, const char *ns) {
         }
         if (space!="/root") {
             // for non-default namespace, need a separate cache file
-            String base = "";
-            for (unsigned int i=0; i<space.length(); i++) {
-                if (space[i]!='/') {
-                    base += space[i];
-                } else {
-                    base += "_";
-                }
-            }
+            String base = getSafeString(space);
             base += ".conf";
             fname = base;
         }
