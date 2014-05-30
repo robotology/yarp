@@ -460,15 +460,39 @@ bool partMover::entry_update(partMover *currentPart)
           case VOCAB_CM_HW_FAULT:
               pColor=&color_fault_red;
               strcat(frame_title," (HARDWARE_FAULT)");
-                gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+              gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
               gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider1[k]),"---");
               gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"---");
               gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
               break;
+         case VOCAB_CM_CALIBRATING:
+              pColor=&color_grey;
+              strcat(frame_title," (CALIBRATING)");
+              gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+              gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+          break;
+         case VOCAB_CM_CALIB_DONE:
+              pColor=&color_grey;
+              strcat(frame_title," (CALIB DONE)");
+              gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+              gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+          break;
+          case VOCAB_CM_NOT_CONFIGURED:
+              pColor=&color_grey;
+              strcat(frame_title," (NOT CONFIGURED)");
+              gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+              gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+          break;
+          case VOCAB_CM_CONFIGURED:
+              pColor=&color_grey;
+              strcat(frame_title," (CONFIGURED)");
+              gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+              gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+          break;
           default:
           case VOCAB_CM_UNKNOWN:
               pColor=&color_grey;
-              //strcat(frame_title," (UNKNOWN)");
+              strcat(frame_title," (UNKNOWN)");
               gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
               gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
           break;
