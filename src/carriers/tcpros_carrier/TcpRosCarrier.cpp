@@ -86,7 +86,7 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
         }
     }
 
-    dbg_printf("USER TYPE %s\n", rtyp.c_str());
+    dbg_printf("USER TYPE %s\n", user_type.c_str());
     dbg_printf("WIRE TYPE %s\n", wire_type.c_str());
 
     return rtyp;
@@ -250,8 +250,6 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
         header.data["md5sum"] = "*";
     }
     dbg_printf("<outgoing> Type of data is %s\n", rosname.c_str());
-    kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
-    dbg_printf("Loose translation [%s]\n", kind.c_str());
 
     if (header.data.find("callerid")!=header.data.end()) {
         proto.setRoute(proto.getRoute().addFromName(header.data["callerid"].c_str()));
