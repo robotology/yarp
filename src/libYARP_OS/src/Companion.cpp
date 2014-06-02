@@ -2067,7 +2067,12 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         hist_file += slash;
         hist_file += "yarp_write";
         yarp::os::mkdir(hist_file.c_str());
-        std::string temp=targets[0];
+        std::string temp;
+        if (ntargets>0) {
+            temp = targets[0];
+        } else {
+            temp = "any";
+        }
         std::replace(temp.begin(),temp.end(),'/','_');
         hist_file += slash;
         hist_file += temp;
