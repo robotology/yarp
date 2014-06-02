@@ -232,7 +232,8 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     int res = proto.is().readFull(mrem);
     dbg_printf("read %d bytes\n", res);
     if (res!=(int)mrem.length()) {
-        printf("Fail %s %d\n", __FILE__, __LINE__);
+        fprintf(stderr,"TCPROS header failure, expected %d bytes, got %d bytes\n",
+                (int)mrem.length(),res);
         return false;
     }
     RosHeader header;
