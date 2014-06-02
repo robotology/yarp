@@ -1,0 +1,286 @@
+/**
+*
+@page rostypes_tutorial_continued ROS Types in YARP: Sending them to ROS
+
+\author Paul Fitzpatrick
+
+*** Under development, unfinished, June 2 2014 ***
+
+This tutorial assumes that you have completed the
+steps in \ref rostypes_tutorial_portable.
+That tutorial showed how to use types defined in
+a ROS-style .msg file within YARP.  Now, we will
+work on sending data from YARP to ROS.
+
+At the beginning of this tutorial, we assume you have a YARP 
+server running, without any special configuration.  During
+the tutorial, we will reconfigure the name server to communicate
+with ROS.
+
+@section rostypes_tutorial_continued_sender Making sender ROS-compatible
+
+The <tt>sender</tt> program from
+\ref rostypes_tutorial_portable looks like this:
+
+\code
+#include "SharedData.h"
+#include <iostream>
+#include <yarp/os/Network.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Time.h>
+
+using namespace std;
+
+int main()
+{
+   yarp::os::Network network;
+
+   yarp::os::Port port;
+
+   if (!port.open("/sender"))
+   {
+       cerr<<"Error opening port, check your yarp network\n";
+       return -1;
+   }
+
+   cout<<"Starting sender\n";
+   double count=0.0;
+   while(true)
+   {
+      SharedData d;
+
+      // d.text is a string
+      d.text="Hello from sender";
+     
+      //d.content is a vector, let's push some data
+      d.content.push_back(count++);
+      d.content.push_back(count++);
+
+      port.write(d);
+
+      yarp::os::Time::delay(0.1);
+   }
+  
+   return 0;
+}
+\endcode
+
+This program was written using a <tt>yarp::os::Port</tt>, a very
+flexible creature. We need to "tame" the port a little so that it 
+commits to behaving in a ROS-like way. For this example, we will
+do that by changing the program code.  First, we need to commit
+the port to either receiving OR sending data, but not both (by
+default, YARP ports have no problem doing both).  We add this 
+line *before* the port is opened:
+
+\code
+port.setWriteOnly();
+\endcode
+
+We also need to commit the port to always sending the same kind 
+of data (by default, YARP ports have no problem sending a different
+kind of data in each message).  We add these lines, again *before*
+the port is opened:
+
+\code
+SharedData example;
+port.promiseType(example.getType());
+\endcode
+
+Great, at this point our port is nice and tame by ROS standards.
+And the code will still work as before if used without ROS.
+
+The last issue is naming.  For streaming data, ROS expects "nodes"
+to "subscribe" and "publish" to "topics".  There are a few ways to
+mimic this in YARP.  One way is to simply name a port using 
+a special "/topic@/node" syntax.  We replace:
+
+\code
+port.open("/sender")
+\endcode
+
+with:
+
+\code
+port.open("/data@/send")
+\endcode
+
+This will open a port that published to the topic "/data" and that belongs
+to a node called "/send". This is the first change we've made that 
+requires us to update our receiver.
+
+
+@section rostypes_tutorial_continued_receiver Making receiver ROS-compatible
+
+The <tt>receiver</tt> program from
+\ref rostypes_tutorial_portable looks like this:
+
+\code
+#include <SharedData.h>
+#include <iostream>
+#include <yarp/os/Network.h>
+#include <yarp/os/BufferedPort.h>
+
+using namespace std;
+
+int main()
+{
+   yarp::os::Network network;
+
+   cout<<"Starting receiver\n";
+
+   yarp::os::Port port;
+   if (!port.open("/receiver"))
+   {
+       cerr<<"Error opening port, check your yarp network\n";
+       return -1;
+   }
+
+   network.connect("/sender", "/receiver");
+
+   int count=0;
+   while(true)
+   {
+       SharedData d;
+       port.read(d);
+
+       //access d
+       cout << count << " Received SharedData:\n";
+       cout << d.text << "\n";
+       for (int i=0; i<d.content.size(); i++)
+       {
+          cout<<d.content[i]<<" ";
+       }
+       cout<<"\n";
+       count++;
+   }
+   
+   return 0;
+}
+\endcode
+
+As for the <tt>sender</tt>, we should tame the port a little before
+opening it so that it isn't too flexible for ROS:
+
+\code
+port.setReadOnly();
+SharedData example;
+port.promiseType(example.getType());
+\endcode
+
+And we fall in with the ROS naming scheme of a node name and a topic name,
+replacing:
+
+\code
+port.open("/receiver")
+\endcode
+
+with:
+
+\code
+port.open("/data@/receive")
+\endcode
+
+The "/data" part is the topic name and needs to match what is used in
+the sender.  The "/receive" part is the node name and is arbitrary.
+
+At this point we can simply remove this line:
+
+\code
+network.connect("/sender", "/receiver"); // REMOVE this, no longer needed
+\endcode
+
+Since ports that read or write to topics get connected automatically
+(with or without ROS).
+
+If we run the sender and receiver programs, we should see messages
+flowing between them just as before.
+
+@section rostypes_tutorial_continued_visible Registering with ROS
+
+Now let's make our programs visible with ROS.  Stop running them,
+and then also stop the yarp name server.  Make sure you have
+a ROS name server running ("roscore"/"rosmaster"), and that the
+<tt>ROS_MASTER_URI</tt> environment variable is correctly set.
+Then run the yarp name server with the <tt>--ros</tt> flag:
+
+\verbatim
+$  yarpserver --ros
+... start-up messages omitted ..
+Using ROS with ROS_MASTER_URI=http://127.0.0.1:11311
+... start-up messages omitted ..
+Ok.  Ready!
+\endverbatim
+
+Done!  Now, if we rerun the sender and receiver programs, they should
+work as before.  The (invisible) difference is that they are being 
+connected by ROS rather than YARP.  A visible difference is that
+the programs are now visible within ROS.  Try:
+
+\verbatim
+$  rostopic list 
+...
+/data
+...
+
+$  rosnode list
+...
+/receive
+/send
+...
+\endverbatim
+
+
+@section rostypes_tutorial_continued_msg Making the .msg file available to ROS
+
+In \ref rostypes_tutorial_portable we defined a <tt>SharedData</tt> 
+structure in a <tt>SharedData.msg</tt> file
+and used it to communicate between sender and receiver programs 
+written using YARP.  Now we need to make that file visible to ROS.
+ROS expects <tt>.msg</tt> files to be in a directory called <tt>msg</tt> within
+a ROS "package".  If you already have a package set up for your work,
+you can just use that. Here we make a very minimal ROS package, just adequate to 
+experiment with.  Do the following:
+ 
+ + Create an empty directory, called say <tt>yarpros_tutorial</tt>.
+ + Within that directory, create another empty directory that will be
+   our package, called say <tt>yarpros</tt>.
+ + Within <tt>yarpros</tt>, create an empty directory called <tt>msg</tt>.
+ + Copy <tt>SharedData.msg</tt> into <tt>yarpros_tutorial/yarpros/msg/</tt>.
+ + Create a file called <tt>yarpros_tutorial/yarpros/package.xml</tt> and place the following in it:
+
+\code
+<package>
+  <name>yarpros</name>
+  <version>1</version>
+  <description>
+  Dummy package for a tutorial.
+  </description>
+  <maintainer email="paul@robotrebuilt.com">Paul Fitzpatrick</maintainer>
+  <license>BSD</license>
+</package>
+\endcode
+
+Now we need to tell ROS about the existence of yarpros_tutorial.
+Just place the directory in an existing ROS workspace if you have
+one, or use rosws (this is recommended by ROS documentation), 
+or add the path to yarpros_tutorial to the
+environment variable <tt>ROS_PACKAGE_PATH</tt>.  In a bash shell, this 
+would be:
+
+\verbatim
+$  ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:.../yarpros_tutorial
+\endverbatim
+
+At this point, the <tt>rosmsg</tt> command should be able to find 
+our type:
+
+\verbatim
+$  rosmsg yarpros/SharedData
+string text
+float64[] content
+\endverbatim
+
+
+*
+*/

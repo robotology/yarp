@@ -30,6 +30,7 @@ Using YARP ports for communication:
 
 ROS types in YARP:
 \li \ref rostypes_tutorial_portable
+\li \ref rostypes_tutorial_continued
 
 Using the Thirft IDL to define data types and interfaces:
 \li \ref thrift_tutorial_portable
