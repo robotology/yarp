@@ -122,12 +122,15 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
             cmd.addString(toRosNodeName(nc.getNodeName()));
             cmd.addString(toRosName(nc.getNestedName()));
             ConstString typ = nc.getTypeNameStar();
-            if (typ!="*") {
+            if (typ!="*"&&typ!="") {
                 // remap some basic native YARP types
                 if (typ=="yarp/image") {
                     typ = "sensor_msgs/Image";
                 } else if (typ=="yarp/vector") {
                     typ = "std_msgs/Float64MultiArray";
+                }
+                if (typ.find("/")==ConstString::npos) {
+                    typ = ConstString("yarp/") + typ;
                 }
             }
             cmd.addString(typ);
@@ -142,7 +145,10 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
             cmd.addString(c.toString());
             bool ok = NetworkBase::write(getNameServerContact(),
                                          cmd, reply);
-            if (!ok) return Contact();
+            if (!ok) {
+                fprintf(stderr, "ROS registration error: %s\n", reply.toString().c_str());
+                return Contact();
+            }
             if (cat=="-") {
                 Bottle *publishers = reply.get(2).asList();
                 if (publishers && publishers->size()>=1) {
