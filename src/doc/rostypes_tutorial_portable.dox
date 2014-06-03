@@ -271,6 +271,9 @@ The code generation step is required only when \em SharedData.msg is modified.
 
 \section rostypes_sec-related-tutorials Related Tutorials
 
+This tutorial continues with:
+\li \ref rostypes_tutorial_continued
+
 More information on interoperatiblity with ROS can be found here: \ref yarp_with_ros
 
 The Thrift IDL allows defining portable objects and modules interfaces with YARP native types: 

@@ -1,10 +1,8 @@
 /**
 *
-@page rostypes_tutorial_continued ROS Types in YARP: Sending them to ROS
+@page rostypes_tutorial_continued ROS Types in YARP: sending data to ROS
 
 \author Paul Fitzpatrick
-
-*** Under development, unfinished, June 2 2014 ***
 
 This tutorial assumes that you have completed the
 steps in \ref rostypes_tutorial_portable.
@@ -12,12 +10,14 @@ That tutorial showed how to use types defined in
 a ROS-style .msg file within YARP.  Now, we will
 work on sending data from YARP to ROS.
 
+<b>Make sure you have the latest version of YARP from github. Make sure you run the latest version of the yarp name server, there have been important fixes.</b>
+
 At the beginning of this tutorial, we assume you have a YARP 
 server running, without any special configuration.  During
 the tutorial, we will reconfigure the name server to communicate
 with ROS.
 
-@section rostypes_tutorial_continued_sender Making sender ROS-compatible
+@section rostypes_tutorial_continued_sender Making the sender program ROS-compatible
 
 The <tt>sender</tt> program from
 \ref rostypes_tutorial_portable looks like this:
@@ -110,7 +110,7 @@ to a node called "/send". This is the first change we've made that
 requires us to update our receiver.
 
 
-@section rostypes_tutorial_continued_receiver Making receiver ROS-compatible
+@section rostypes_tutorial_continued_receiver Making the receiver program ROS-compatible
 
 The <tt>receiver</tt> program from
 \ref rostypes_tutorial_portable looks like this:
@@ -222,7 +222,9 @@ $  rostopic list
 ...
 /data
 ...
+\endverbatim
 
+\verbatim
 $  rosnode list
 ...
 /receive
@@ -230,6 +232,37 @@ $  rosnode list
 ...
 \endverbatim
 
+\verbatim
+$  rostopic info /data
+Type: yarp/SharedData
+
+Publishers: 
+ * /send (http://192.168.1.3:10005)
+
+Subscribers: 
+ * /receive (http://192.168.1.3:10003)
+\endverbatim
+
+\verbatim
+$  rosnode info /receive
+Node [/receive]
+Publications: None
+
+Subscriptions: 
+ * /data [yarp/SharedData]
+
+Services: None
+
+contacting node http://192.168.1.3:10003 ...
+Pid: [12432]
+\endverbatim
+
+Notice that ROS is reporting the topic `/data` as having the type
+`yarp/SharedData`.  ROS needs types to include a "package" name,
+and we haven't specified one yet, so YARP has added a fake one.
+To get full interoperation, we now need to add our `SharedData`
+type in ROS (not just YARP), and as part of that process we'll
+end up making a real ROS package.
 
 @section rostypes_tutorial_continued_msg Making the .msg file available to ROS
 
@@ -239,46 +272,104 @@ and used it to communicate between sender and receiver programs
 written using YARP.  Now we need to make that file visible to ROS.
 ROS expects <tt>.msg</tt> files to be in a directory called <tt>msg</tt> within
 a ROS "package".  If you already have a package set up for your work,
-you can just use that. Here we make a very minimal ROS package, just adequate to 
-experiment with.  Do the following:
+you can just use that. For completeness, we give
+a very minimal ROS package here, just enough to experiment with, but
+you can also just follow ROS tutorials, there's nothing YARP-specific
+here.  Do the following:
  
  + Create an empty directory, called say <tt>yarpros_tutorial</tt>.
+ + Within that directory, create another empty directory called `src`.
  + Within that directory, create another empty directory that will be
-   our package, called say <tt>yarpros</tt>.
- + Within <tt>yarpros</tt>, create an empty directory called <tt>msg</tt>.
- + Copy <tt>SharedData.msg</tt> into <tt>yarpros_tutorial/yarpros/msg/</tt>.
- + Create a file called <tt>yarpros_tutorial/yarpros/package.xml</tt> and place the following in it:
+   our package, called say <tt>yarp</tt>.
+ + Within <tt>yarp</tt>, create an empty directory called <tt>msg</tt>.
+ + Copy <tt>SharedData.msg</tt> into <tt>yarpros_tutorial/src/yarp/msg/</tt>.
+ + Create a file called <tt>yarpros_tutorial/src/yarp/package.xml</tt> and place the following in it:
 
 \code
+<?xml version="1.0"?>
 <package>
-  <name>yarpros</name>
-  <version>1</version>
-  <description>
-  Dummy package for a tutorial.
-  </description>
+  <name>yarp</name>
+  <version>0.0.0</version>
+  <description>A test yarp package</description>
   <maintainer email="paul@robotrebuilt.com">Paul Fitzpatrick</maintainer>
   <license>BSD</license>
+  <build_depend>message_generation</build_depend>
+  <run_depend>message_runtime</run_depend>
+  <buildtool_depend>catkin</buildtool_depend>
 </package>
 \endcode
 
-Now we need to tell ROS about the existence of yarpros_tutorial.
-Just place the directory in an existing ROS workspace if you have
-one, or use rosws (this is recommended by ROS documentation), 
-or add the path to yarpros_tutorial to the
-environment variable <tt>ROS_PACKAGE_PATH</tt>.  In a bash shell, this 
-would be:
+ + Create a file called <tt>yarpros_tutorial/src/CMakeLists.txt</tt> and place the following in it:
+
+\code
+cmake_minimum_required(VERSION 2.8)
+project(yarp)
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs message_generation)
+add_message_files(FILES SharedData.msg)
+generate_messages(DEPENDENCIES std_msgs)
+catkin_package(CATKIN_DEPENDS message_runtime)
+\endcode
+
+ + While in the `yarpros_tutorial` directory, run `catkin_make`.  You should see something like:
 
 \verbatim
-$  ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:.../yarpros_tutorial
+...
+-- +++ processing catkin package: 'yarp'
+...
+Generating C++ code from yarp/SharedData.msg
+[ 50%] Generating Python from MSG yarp/SharedData
+...
+[100%] Built target yarp_generate_messages
+\endverbatim
+
+Now we need to tell ROS about the existence of yarpros_tutorial.
+There are many ways to do that.  In a bash shell, the simplest
+is to do (from the `yarpros_tutorial` directory):
+
+\verbatim
+$  source devel/setup.bash
 \endverbatim
 
 At this point, the <tt>rosmsg</tt> command should be able to find 
 our type:
 
 \verbatim
-$  rosmsg yarpros/SharedData
+$  rosmsg show yarp/SharedData
 string text
 float64[] content
+\endverbatim
+
+And if we run the `sender` program, we can print it from ROS:
+
+\verbatim
+$  rostopic echo /data
+text: Hello from sender
+content: [4794.0, 4795.0]
+---
+text: Hello from sender
+content: [4796.0, 4797.0]
+---
+text: Hello from sender
+content: [4798.0, 4799.0]
+---
+text: Hello from sender
+content: [4800.0, 4801.0]
+---
+\endverbatim
+
+If we stop the `sender` program and run the `receiver`, we can publish to 
+if from ROS.  If we do this:
+
+\verbatim
+rostopic pub /data yarp/SharedData "hello from ROS" "[1.1,2.2,3.3]"
+\endverbatim
+
+The `receiver` program prints this:
+
+\verbatim
+0 Received SharedData:
+hello from ROS
+1.1 2.2 3.3
 \endverbatim
 
 
