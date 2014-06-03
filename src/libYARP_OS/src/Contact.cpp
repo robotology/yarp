@@ -47,6 +47,7 @@ Contact::Contact(const Contact& alt) {
     regName = alt.regName;
     hostName = alt.hostName;
     carrier = alt.carrier;
+    flavor = alt.flavor;
     port = alt.port;
     timeout = alt.timeout;
 }
@@ -56,6 +57,7 @@ const Contact& Contact::operator = (const Contact& alt) {
     regName = alt.regName;
     hostName = alt.hostName;
     carrier = alt.carrier;
+    flavor = alt.flavor;
     port = alt.port;
     timeout = alt.timeout;
     return *this;
