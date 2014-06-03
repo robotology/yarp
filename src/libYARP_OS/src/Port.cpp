@@ -500,6 +500,15 @@ bool Port::open(const Contact& contact, bool registerName,
     if (contact2.getPort()>0 && contact2.getHost()!="") {
         registerName = false;
     }
+
+    ConstString typ = getType().getName();
+    if (typ!="") {
+        NestedContact nc;
+        nc.fromString(contact2.getName());
+        nc.setTypeName(typ);
+        contact2.setNested(nc);
+    }
+
     if (registerName&&!local) {
         address = NetworkBase::registerContact(contact2);
     }
@@ -540,13 +549,6 @@ bool Port::open(const Contact& contact, bool registerName,
                                           address.getHost(),
                                           address.getPort());
             contact2 = contact2.addName(address.getRegName().c_str());
-            ConstString typ = getType().getName();
-            if (typ!="") {
-                NestedContact nc;
-                nc.fromString(contact2.getName());
-                nc.setTypeName(typ);
-                contact2.setNested(nc);
-            }
             Contact newName = NetworkBase::registerContact(contact2);
             core.resetPortName(newName.getName());
             address = core.getAddress();

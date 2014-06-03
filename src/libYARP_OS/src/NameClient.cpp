@@ -298,7 +298,9 @@ Contact NameClient::registerName(const String& name, const Contact& suggest) {
         cmd.addString("...");
     }
     ConstString prefix = NetworkBase::getEnvironment("YARP_IP");
-    if (suggest.isValid()||prefix!="") {
+    NestedContact nc = suggest.getNested();
+    ConstString typ = nc.getTypeNameStar();
+    if (suggest.isValid()||prefix!=""||typ!="*") {
         if (suggest.getCarrier()!="") {
             cmd.addString(suggest.getCarrier().c_str());
         } else {
@@ -323,6 +325,9 @@ Contact NameClient::registerName(const String& name, const Contact& suggest) {
             cmd.addInt(suggest.getPort());
         } else {
             cmd.addString("...");
+        }
+        if (typ!="*") {
+            cmd.addString(typ);
         }
     }
     Bottle reply;

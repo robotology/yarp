@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include <yarp/os/Vocab.h>
+#include <yarp/os/NestedContact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include "NameServiceOnTriples.h"
@@ -68,10 +69,23 @@ Contact NameServiceOnTriples::query(const yarp::os::ConstString& portName,
         if (lst.size()>0) {
             carrier = lst.begin()->value.c_str();
         }
+        t.setNameValue("type","*");
+        string typ = "*";
+        lst = act.mem.query(t,&context);
+        if (lst.size()>0) {
+            typ = lst.begin()->value.c_str();
+        }
         if (!nested) unlock();
-        return Contact::byName(portName).addSocket(carrier.c_str(),
-                                                   host.c_str(),
-                                                   sock);
+        Contact result = Contact::byName(portName).addSocket(carrier.c_str(),
+                                                             host.c_str(),
+                                                             sock);
+        if (typ!="" && typ!="*") {
+            NestedContact nc;
+            nc.fromString(result.getName());
+            nc.setTypeName(typ);
+            result.setNested(nc);
+        }
+        return result;
     }
     if (!nested) unlock();
     if (delegate && !nested) {
@@ -222,6 +236,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     int sock = -1;
     ConstString carrier = "...";
     ConstString machine = "...";
+    ConstString typ = "*";
     if (act.cmd.size()>at) {
         carrier = act.cmd.get(at).asString();
         at++;
@@ -254,6 +269,10 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
             sock = serverContact.getPort();
         }
     }
+    if (act.cmd.size()>at) {
+        typ = act.cmd.get(at).asString();
+        at++;
+    }
     lock();
     if (port=="..." || (port.length()>0 && port[0]=='=')) {
         Contact c = Contact::byName(port.c_str()).addSocket(carrier.c_str(),machine.c_str(),sock);
@@ -282,6 +301,10 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     sprintf(buf,"%d",sock);
     t.setNameValue("socket",buf);
     act.mem.update(t,&context);
+    if (typ!="*") {
+        t.setNameValue("type",typ.c_str());
+        act.mem.update(t,&context);
+    }
     // now, query to report that it worked
     act.mem.reset();
     act.cmd.clear();
