@@ -339,6 +339,12 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                bool *gotReply) {
     bool replied = false;
 
+    if (op!=NULL) {
+        if (!op->getConnection().isActive()) {
+            return NULL;
+        }
+    }
+
     if (!waitBefore || !waitAfter) {
         if (running == false) {
             // we must have a thread if we're going to be skipping waits
