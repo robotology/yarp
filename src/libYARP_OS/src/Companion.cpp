@@ -623,24 +623,36 @@ int Companion::cmdWait(int argc, char *argv[]) {
     if (argc == 1) {
         return wait(argv[0],false);
     }
-
-    ACE_OS::fprintf(stderr,"Please specify a port name\n");
+    if (argc == 2) {
+        return wait(argv[0],false,argv[1]);
+    }
+    ACE_OS::fprintf(stderr,"Please specify a single port name, or a source and destination port name\n");
     return 1;
 }
 
 
-int Companion::wait(const char *target, bool silent) {
+int Companion::wait(const char *target, bool silent, const char *target2) {
     bool done = false;
     int ct = 1;
     while (!done) {
-        if (ct%10==1) {
+        if (ct%30==1) {
             if (!silent) {
-                YARP_SPRINTF1(Logger::get(),info,
-                              "Waiting for %s...\n", target);
+                if (target2!=NULL) {
+                    YARP_SPRINTF2(Logger::get(),info,
+                                  "Waiting for %s->%s...", target, target2);
+                } else {
+                    YARP_SPRINTF1(Logger::get(),info,
+                                  "Waiting for %s...", target);
+                }
             }
         }
         ct++;
-        int result = exists(target,true);
+        int result = 0;
+        if (target2!=NULL) {
+            result = NetworkBase::isConnected(target,target2,true)?0:1;
+        } else {
+            result = exists(target,true);
+        }
         if (result!=0) {
             Time::delay(0.1);
         } else {

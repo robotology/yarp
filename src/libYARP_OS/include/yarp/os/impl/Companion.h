@@ -74,7 +74,8 @@ public:
 
     static int poll(const char *target, bool silent = false); 
 
-    static int wait(const char *target, bool silent = false); 
+    static int wait(const char *target, bool silent = false,
+                    const char *target2 = 0 /*NULL*/);
 
     static int exists(const char *target, bool silent = false) {
         ContactStyle style;

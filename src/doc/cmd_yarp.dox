@@ -855,10 +855,12 @@ YARP Companion utility version 2.0 implemented in C++
 
 \verbatim
 yarp wait /PORT
+yarp wait /SRC /DEST
 \endverbatim
 
-Waits for the named port to come into existence.  Terminates when
-"yarp exists /PORT" would return true.  This can be useful in scripts.
+Waits for the named port or connection to come into existence.  Terminates 
+when "yarp exists /PORT" or "yarp exists /SRC /DEST" would return true.  
+This can be useful in scripts.
 
 
 
