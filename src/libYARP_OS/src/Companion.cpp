@@ -218,31 +218,33 @@ static bool readlineEOF=false;
 static bool EOFreached()
 {
 #ifdef WITH_READLINE
-    return readlineEOF;
-#else
-    return feof(stdin);
+    if (ACE_OS::isatty(ACE_OS::fileno(stdin))) {
+        return readlineEOF;
+    }
 #endif
+    return feof(stdin);
 }
 
 static String getStdin() {
     String txt = "";
 
 #ifdef WITH_READLINE
-    if(szLine)
-    {
-        free(szLine);
-        szLine = (char*)NULL;
+    if (ACE_OS::isatty(ACE_OS::fileno(stdin))) {
+        if(szLine) {
+            free(szLine);
+            szLine = (char*)NULL;
+        }
+        
+        szLine = readline(">>");
+        if(szLine && *szLine) {
+            txt = szLine;
+            add_history(szLine);
+        } else if (!szLine) {
+            readlineEOF=true;
+        }
+        return txt;
     }
-
-    szLine = readline(">>");
-    if(szLine && *szLine)
-    {
-        txt = szLine;
-        add_history(szLine);
-    }
-    else if (!szLine)
-        readlineEOF=true;
-#else
+#endif
 
     bool done = false;
     char buf[2048];
@@ -261,9 +263,6 @@ static String getStdin() {
             done = true;
         }
     }
-
-#endif
-
     return txt;
 }
 
