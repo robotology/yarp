@@ -92,21 +92,28 @@ And the code will still work as before if used without ROS.
 
 The last issue is naming.  For streaming data, ROS expects "nodes"
 to "subscribe" and "publish" to "topics".  There are a few ways to
-mimic this in YARP.  One way is to simply name a port using 
-a special "/topic@/node" syntax.  We replace:
+mimic this in YARP.  One way is to just go ahead and add a node
+to our programs.  We add this header file:
 
 \code
-port.open("/sender")
+#include <yarp/os/Node.h>
+\endcode
+
+And then replace:
+
+\code
+if (!port.open("/sender")) ...
 \endcode
 
 with:
 
 \code
-port.open("/data@/send")
+yarp::os::Node node("/sender");
+if (!port.open("data")) ...
 \endcode
 
-This will open a port that published to the topic "/data" and that belongs
-to a node called "/send". This is the first change we've made that 
+This will open a port that belongs to a node called "/sender",
+and which publishes to the topic "/data". This is the first change we've made that 
 requires us to update our receiver.
 
 
@@ -169,20 +176,22 @@ port.promiseType(example.getType());
 \endcode
 
 And we fall in with the ROS naming scheme of a node name and a topic name,
-replacing:
+by adding `#include <yarp/os/Node.h>` and replacing:
 
 \code
-port.open("/receiver")
+if (!port.open("/receiver")) ...
 \endcode
 
 with:
 
 \code
-port.open("/data@/receive")
+yarp::os::Node node("/receiver");
+if (!port.open("data")) ...
 \endcode
 
-The "/data" part is the topic name and needs to match what is used in
-the sender.  The "/receive" part is the node name and is arbitrary.
+The "/receiver" part is the node name and is arbitrary.
+The "data" part is the topic name and needs to match what is used in
+the sender.
 
 At this point we can simply remove this line:
 
