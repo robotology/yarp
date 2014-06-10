@@ -114,6 +114,7 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
   pid->max_int = atoi(gtk_entry_get_text((GtkEntry*) pos_INT_limitDes));
 
   iPid->setPid(*joint, *pid);
+  yarp::os::Time::delay(0.005);
   iPid->getPid(*joint, pid);
 
   sprintf(buffer, "%d", (int) pid->kp);
@@ -145,6 +146,7 @@ void guiPid2::send_opl_pid (GtkButton *button, Pid *pid)
   offset = atoi(gtk_entry_get_text((GtkEntry*) opl_koDes));
 
   iOpl->setOutput(*joint, offset);
+  yarp::os::Time::delay(0.020); //beware: here we are reading the real PWM output, not the reference
   iOpl->getOutput(*joint, &offset);
 
   sprintf(buffer, "%d", (int) offset);
@@ -174,6 +176,7 @@ void guiPid2::send_trq_pid (GtkButton *button, Pid *pid)
 
   iTrq->setTorquePid(*joint, *pid);
   iTrq->setBemfParam(*joint, bemfGain);
+  yarp::os::Time::delay(0.005);
   iTrq->getTorquePid(*joint, pid);
   iTrq->getBemfParam(*joint, (double*)&bemfGain);
 
@@ -221,6 +224,7 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
   double offset_val=atof(gtk_entry_get_text((GtkEntry*) imp_offDes));
   iImp->setImpedance(*joint,  stiff_val,  damp_val);
   //iImp->setImpedanceOffset(*joint, &offset_val); //DANGEROUS,DO NOT USE! WRONG USER VALUES MAY BREAK THE ROBOT!
+  yarp::os::Time::delay(0.005);
   iImp->getImpedance(*joint, &stiff_val, &damp_val);
   iImp->getImpedanceOffset(*joint, &offset_val);
 
