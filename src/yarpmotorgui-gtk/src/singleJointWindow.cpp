@@ -594,6 +594,12 @@ void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
          ipos->setRefSpeed(*joint, valVel);
          ipos->positionMove(*joint, val);
       }
+      else if( ( mode == MODE_IMPEDANCE_POS))
+      {
+         std::cout << " using old MODE_IMPEDANCE_POS, this control mode is deprecated!" << std::endl;
+         ipos->setRefSpeed(*joint, valVel);
+         ipos->positionMove(*joint, val);
+      }
       else if ( mode == VOCAB_CM_POSITION_DIRECT)
       {
          iDir->setPosition(*joint, val);
