@@ -209,6 +209,11 @@ static void guiControl::radio_click_compl(GtkWidget* radio , gtkClassData* curre
     }
 }
 
+static void guiControl::on_key_press(GtkWidget* radio , gtkClassData* currentClassData)
+{
+    //this empty handler prevents switching control mode by pressing buttons on the keyboard. Only mouse is safe.
+}
+
 //*********************************************************************************
 void guiControl::update_menu(int control_mode, int interaction_mode)
 {
@@ -354,9 +359,20 @@ void guiControl::guiControl(void *button, void* data)
   g_signal_connect (radiobutton_mode_imp_pos,  "clicked",G_CALLBACK (radio_click_imp_pos), &radiobutton_mode_imp_pos);
   g_signal_connect (radiobutton_mode_imp_vel,  "clicked",G_CALLBACK (radio_click_imp_vel), &radiobutton_mode_imp_vel);
   g_signal_connect (radiobutton_mode_open, "clicked",G_CALLBACK (radio_click_open), &radiobutton_mode_open);
-  
   g_signal_connect (radiobutton_interaction_stiff, "clicked",G_CALLBACK (radio_click_stiff), &radiobutton_interaction_stiff);
   g_signal_connect (radiobutton_interaction_compl, "clicked",G_CALLBACK (radio_click_compl), &radiobutton_interaction_compl);
+
+  g_signal_connect (radiobutton_mode_idl, "key_press_event", G_CALLBACK (on_key_press),  &radiobutton_mode_idl);
+  g_signal_connect (radiobutton_mode_pos,  "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_pos);
+  g_signal_connect (radiobutton_mode_pos_direct,  "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_pos_direct);
+  g_signal_connect (radiobutton_mode_mixed,  "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_mixed);
+  g_signal_connect (radiobutton_mode_vel,  "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_vel);
+  g_signal_connect (radiobutton_mode_trq,  "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_trq);
+  g_signal_connect (radiobutton_mode_imp_pos,  "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_imp_pos);
+  g_signal_connect (radiobutton_mode_imp_vel,  "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_imp_vel);
+  g_signal_connect (radiobutton_mode_open, "key_press_event",G_CALLBACK (on_key_press), &radiobutton_mode_open);
+  g_signal_connect (radiobutton_interaction_stiff, "key_press_event",G_CALLBACK (on_key_press), &radiobutton_interaction_stiff);
+  g_signal_connect (radiobutton_interaction_compl, "key_press_event",G_CALLBACK (on_key_press), &radiobutton_interaction_compl);
 
   //connection to the destroyer
   g_signal_connect (pos_winPid, "destroy",G_CALLBACK (destroy_main), &pos_winPid);

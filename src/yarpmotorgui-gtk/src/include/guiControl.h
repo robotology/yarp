@@ -69,6 +69,7 @@ namespace guiControl
     static void radio_click_open(GtkWidget* radio , gtkClassData* currentClassData);    
     static void radio_click_stiff (GtkWidget* radio , gtkClassData* currentClassData);
     static void radio_click_compl (GtkWidget* radio , gtkClassData* currentClassData);
+    static void on_key_press(GtkWidget* radio , gtkClassData* currentClassData);
 };
 
 #endif
