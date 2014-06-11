@@ -19,7 +19,8 @@ using namespace std;
 /**
  * Class MonitorLua
  */
-MonitorLua::MonitorLua(void)
+MonitorLua::MonitorLua(void) : bHasAcceptCallback(false), 
+                               bHasUpdateCallback(false)
 {
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -102,9 +103,17 @@ bool MonitorLua::loadScript(const char* script_file)
         }            
         else    
             result = lua_toboolean(L, -1);
-    }
-    
+    }  
     lua_pop(L,1);
+    
+    // Check if there is accept callback
+    bHasAcceptCallback = getLocalFunction("accept");
+    lua_pop(L,1);
+
+    // Check if there is update callback
+    bHasUpdateCallback = getLocalFunction("update");
+    lua_pop(L,1);
+
     return result;
 }
 

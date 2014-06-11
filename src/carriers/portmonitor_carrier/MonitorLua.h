@@ -25,6 +25,7 @@ public:
     bool loadScript(const char* script_file);
     bool setParams(const yarp::os::Property& params);
     bool getParams(yarp::os::Property& params);
+
     bool acceptData(yarp::os::Things& thing);
     yarp::os::Things& updateData(yarp::os::Things& thing);
 
@@ -43,9 +44,19 @@ public:
         return constraint.c_str();
     }
 
+    bool hasAccept() {
+        return bHasAcceptCallback; 
+    }
+
+    bool hasUpdate() {
+        return bHasUpdateCallback;
+    }
+
 private:
     lua_State *L;   
     std::string constraint;
+    bool bHasAcceptCallback;
+    bool bHasUpdateCallback;
 
 private:
     bool getLocalFunction(const char *name);

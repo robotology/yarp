@@ -87,11 +87,14 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params)
 yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader) 
 {
     if(!bReady) return reader;
+       
+    // When we are here,
+    // the incoming data should be accessed using localReader. 
+    // The reader passed to this function is infact empty.  
+    // first check if we need to call the update callback
+    if(!binder->hasUpdate())
+        return *localReader;   
 
-    // When we are here, the incoming data should be accessed 
-    // using localReader. 
-    // The reader passed to this function is infact empty. 
- 
     PortMonitor::lock();
     yarp::os::Things thing;
     thing.setConnectionReader(*localReader);
@@ -106,25 +109,32 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader) 
 {       
     if(!bReady) return false;
-    
-    PortMonitor::lock();
-    Things thing;
-    // set the reference connection reader
-    thing.setConnectionReader(reader);
-    bool result = binder->acceptData(thing);
-    PortMonitor::unlock();
-    if(!result)
-        return false;
+   
+    bool result;
+    // If no accept callback avoid calling the binder
+    if(binder->hasAccept()) 
+    {
+        PortMonitor::lock();
+        Things thing;
+        // set the reference connection reader
+        thing.setConnectionReader(reader);
+        result = binder->acceptData(thing);
+        PortMonitor::unlock();
+        if(!result)
+            return false;
 
-    // When data is read here using the reader passed to this functions, 
-    // then it wont be available for modifyIncomingData(). Thus, we write
-    // it to a dumy connection and pass it to the modifyOutgoingData() using 
-    // localReader.  
-    // localReader points to a connection reader which contains 
-    // either the original or modified data.
-    con.reset();
-    if(thing.write(con.getWriter()))
-        localReader = &con.getReader();
+        // When data is read here using the reader passed to this functions, 
+        // then it wont be available for modifyIncomingData(). Thus, we write
+        // it to a dumy connection and pass it to the modifyOutgoingData() using 
+        // localReader.  
+        // localReader points to a connection reader which contains 
+        // either the original or modified data.
+        con.reset();
+        if(thing.write(con.getWriter()))
+            localReader = &con.getReader();
+        else
+            localReader = &reader;
+    }
     else
         localReader = &reader;
 
@@ -140,6 +150,10 @@ yarp::os::PortWriter& PortMonitor::modifyOutgoingData(yarp::os::PortWriter& writ
 {
     if(!bReady) return writer;
 
+    // If no update callback avoid calling it
+    if(!binder->hasUpdate())
+        return writer;
+
     PortMonitor::lock();
     thing.reset();
     thing.setPortWriter(&writer);
@@ -151,7 +165,11 @@ yarp::os::PortWriter& PortMonitor::modifyOutgoingData(yarp::os::PortWriter& writ
 bool PortMonitor::acceptOutgoingData(yarp::os::PortWriter& writer)
 {
     if(!bReady) return false;
-   
+
+    // If no accept callback avoid calling it
+    if(!binder->hasAccept())
+        return true;
+
     PortMonitor::lock();
     yarp::os::Things thing;
     thing.setPortWriter(&writer);
@@ -164,7 +182,6 @@ bool PortMonitor::acceptOutgoingData(yarp::os::PortWriter& writer)
 /**
  * Class PortMonitorGroup
  */
-
 
 ElectionOf<PortMonitorGroup> *PortMonitor::peers = NULL;
 
