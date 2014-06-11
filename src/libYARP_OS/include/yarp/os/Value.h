@@ -19,14 +19,6 @@
 namespace yarp {
     namespace os {
         class Value;
-        class ValueType;
-        class ValueInt;
-        class ValueDouble;
-        class ValueString;
-        class ValueVocab;
-        class ValueBlob;
-        class ValueList;
-        class ValueDict;
         class Property;
     }
 }
