@@ -203,6 +203,22 @@ public:
     }
 };
 
+class StreamUser : public Thread {
+public:
+    Port p;
+
+    StreamUser(const char *name) {
+        p.setTimeout(2);
+        p.open(name);
+    }
+
+    virtual void run() {
+        Bottle cmd;
+        cmd.fromString("[add] 1 2");
+        p.write(cmd);
+    }
+};
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
@@ -1181,6 +1197,27 @@ public:
         report(0,"successfully closed");        
     }
 
+    void testInterruptWithBadReader() {
+        report(0,"checking interrupt with bad reader...");
+
+        StreamUser output("/out");
+        Port input;
+        input.open("/in");
+
+        Network::connect("/out","/in");
+
+        output.start();
+        Time::delay(2);
+
+        report(0,"interrupting output...");
+        output.p.interrupt();
+        output.stop();
+        report(0,"made it through");
+
+        input.close();
+    }
+
+
     void testReopen() {
         report(0,"checking opening/closing/reopening ports...");
 
@@ -1269,6 +1306,7 @@ public:
 
         testInterruptInputReaderBuf();
         testInterruptInputNoBuf();
+        testInterruptWithBadReader();
 
         NetworkBase::setLocalMode(false);
     }
