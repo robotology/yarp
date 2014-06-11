@@ -265,8 +265,8 @@ private:
 
 namespace yarp {
     namespace os {
-        yarp::os::ConstString operator + (const char *txt, 
-                                          const yarp::os::ConstString& alt);
+        YARP_OS_API yarp::os::ConstString operator + (const char *txt, 
+                                                      const yarp::os::ConstString& alt);
         
         inline std::ostream& operator<<(std::ostream& stream, 
                                         const yarp::os::ConstString& alt) {
