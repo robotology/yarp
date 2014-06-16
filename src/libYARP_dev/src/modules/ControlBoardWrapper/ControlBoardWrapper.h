@@ -1975,7 +1975,7 @@ public:
         if (!p)
             return false;
 
-        if (p->pos)
+        if (p->vel)
         {
             return p->vel->velocityMove(off+base, v);
         }

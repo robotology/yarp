@@ -197,7 +197,14 @@ bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
     if( ! (vel || vel2) ) // One of the 2 is enough, therefor if both are missing I raise an error
     {
         printf("ControlBoarWrapper Error: neither IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting\n");
+
         return false;
+    }
+    else
+    {
+        // both have to be correct (and they should 'cause the vel2 is derived from 1. Use a workaround here, then investigate more!!
+        if(vel2 && !vel)
+            vel = vel2;
     }
 
     if(!enc)
