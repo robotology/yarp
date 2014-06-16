@@ -45,7 +45,6 @@ namespace guiControl
     static GtkWidget *radiobutton_interaction_compl = NULL;
 
     static int * joint = NULL;
-    static IControlMode *icntrl = NULL;
     static IControlMode2 *icntrl2 = NULL;
     static IInteractionMode *iinteract = NULL;
     static IAmplifierControl *iamp = NULL;

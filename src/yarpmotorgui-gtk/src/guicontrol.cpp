@@ -80,7 +80,8 @@ static void guiControl::radio_click_idl(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in IDLE mode!\n", *joint);
-        icntrl2->setControlMode(*joint, VOCAB_CM_IDLE);
+        if(icntrl2) icntrl2->setControlMode(*joint, VOCAB_CM_IDLE);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -91,7 +92,8 @@ static void guiControl::radio_click_open(GtkWidget* radio , gtkClassData* curren
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in OPENLOOP mode!\n", *joint);
-        icntrl2->setOpenLoopMode(*joint);
+        if(icntrl2) icntrl2->setOpenLoopMode(*joint);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -102,7 +104,8 @@ static void guiControl::radio_click_pos(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in POSITION mode!\n", *joint);
-        icntrl2->setPositionMode(*joint);
+        if(icntrl2) icntrl2->setPositionMode(*joint);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -114,8 +117,8 @@ static void guiControl::radio_click_pos_direct(GtkWidget* radio , gtkClassData* 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in POSITION DIRECT mode!\n", *joint);
-        if(icntrl2)
-        	icntrl2->setControlMode(*joint, VOCAB_CM_POSITION_DIRECT);
+        if(icntrl2) icntrl2->setControlMode(*joint, VOCAB_CM_POSITION_DIRECT);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -127,8 +130,8 @@ static void guiControl::radio_click_mode_mixed(GtkWidget* radio , gtkClassData* 
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in MIXED mode!\n", *joint);
-        if(icntrl2)
-        	icntrl2->setControlMode(*joint, VOCAB_CM_MIXED);
+        if(icntrl2) icntrl2->setControlMode(*joint, VOCAB_CM_MIXED);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -140,7 +143,8 @@ static void guiControl::radio_click_vel(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in VELOCITY mode!\n", *joint);
-        icntrl2->setVelocityMode(*joint);
+        if(icntrl2) icntrl2->setVelocityMode(*joint);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -151,7 +155,8 @@ static void guiControl::radio_click_trq(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in TORQUE mode!\n", *joint);
-        icntrl2->setTorqueMode(*joint);
+        if(icntrl2) icntrl2->setTorqueMode(*joint);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -162,7 +167,8 @@ static void guiControl::radio_click_imp_pos(GtkWidget* radio , gtkClassData* cur
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "WARN: Using old interface! joint: %d in IMPEDANCE POSITION mode!\n", *joint);
-        icntrl->setImpedancePositionMode(*joint);
+        if(icntrl2) icntrl2->setImpedancePositionMode(*joint);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
@@ -174,7 +180,8 @@ static void guiControl::radio_click_imp_vel(GtkWidget* radio , gtkClassData* cur
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "WARN: Using old interface! joint: %d in IMPEDANCE VELOCITY mode!\n", *joint);
-        icntrl->setImpedanceVelocityMode(*joint);
+        if(icntrl2) icntrl2->setImpedanceVelocityMode(*joint);
+        else fprintf(stderr, "ERROR: cannot do!");
     }
     else
     {
