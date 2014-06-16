@@ -41,8 +41,7 @@ void partMover::dis_click(GtkButton *button, gtkClassData* currentClassData)
   IControlMode2 *ictrl = currentPart->ctrlmode2;
 
   #if 0
-  ipid->disablePid(*joint);
-  iamp->disableAmp(*joint);
+  ictrl->setControlMode(*joint,VOCAB_CM_IDLE);
   #else
   ictrl->setControlMode(*joint,VOCAB_CM_FORCE_IDLE);
   #endif
@@ -200,12 +199,7 @@ void partMover::run_click(GtkButton *button, gtkClassData* currentClassData)
   while (!iiencs->getEncoder(*joint, &posJoint))
     Time::delay(0.001);
   
-  #if 0
-  iamp->enableAmp(*joint);
-  ipid->enablePid(*joint);
-  #else
   ictrl->setControlMode(*joint,VOCAB_CM_POSITION);
-  #endif
 
   gtk_range_set_value ((GtkRange *) (sliderAry[*joint]), posJoint);
   return;
@@ -284,7 +278,7 @@ bool partMover::entry_update(partMover *currentPart)
 
   static int slowSwitcher = 0;
 
-  IControlMode     *ictrl = currentPart->ctrlmode;
+  IControlMode     *ictrl = currentPart->ctrlmode2;
   IInteractionMode *iint  = currentPart->iinteract;
   IPositionControl  *ipos = currentPart->pos;
   IVelocityControl  *ivel = currentPart->iVel;

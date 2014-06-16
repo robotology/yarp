@@ -63,7 +63,6 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
   idbg		= NULL;
   lim		= NULL;
   cal		= NULL;
-  ctrlmode	= NULL;
   ctrlmode2 = NULL;
   iinteract = NULL;
 
@@ -103,9 +102,6 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
   ok &= partDd->view(imp);
   if (!ok)
     fprintf(stderr, "...imp was not ok.\n");
-  ok &= partDd->view(ctrlmode);
-  if (!ok)
-	fprintf(stderr, "...ctrlmode was not ok.\n");
   ok &= partDd->view(ctrlmode2);
   if (!ok)
 	fprintf(stderr, "...ctrlmode2 was not ok.\n");

@@ -80,10 +80,6 @@ static void guiControl::radio_click_idl(GtkWidget* radio , gtkClassData* current
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
     {
         fprintf(stderr, "joint: %d in IDLE mode!\n", *joint);
-/*        fprintf(stderr, "(DEBUG: not using iCntrl interface\n", *joint);
-        ipid->disablePid(*joint);
-        iamp->disableAmp(*joint);
-*/
         icntrl2->setControlMode(*joint, VOCAB_CM_IDLE);
     }
     else
@@ -285,7 +281,6 @@ void guiControl::guiControl(void *button, void* data)
   gtkClassData* currentClassData = (gtkClassData*) data;
   partMover *currentPart = currentClassData->partPointer;
   joint  = currentClassData->indexPointer;
-  icntrl = currentPart->get_IControlMode();
   icntrl2 = currentPart->get_IControlMode2();
   iinteract = currentPart->get_IInteractionMode();
   ipid = currentPart->get_IPidControl();
