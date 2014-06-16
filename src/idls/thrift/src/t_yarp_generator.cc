@@ -1241,10 +1241,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   f_stt_ << "public:" << endl;
   indent_up();
 
-  indent(f_stt_) << "// if you want to serialize this class without nesting, use this helper" << endl;
-  indent(f_stt_) << "typedef yarp::os::idl::Unwrapped<" << namespace_decorate(ns,name) << " > unwrapped;" << endl;
-  indent(f_stt_) << endl;
+  ofstream& out = f_stt_;
 
+  indent(out) << "// Fields" << endl;
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();
     string mtype = print_type((*mem_iter)->get_type());
@@ -1253,11 +1252,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(f_stt_) << mtype << " " << mname << ";" << endl; 
   }
 
-
-
-  ofstream& out = f_stt_;
-
   // Default constructor
+  indent(out) << endl;
+  indent(out) << "// Default constructor" << endl;
   indent(out) <<
     tstruct->get_name() << "()";
   
@@ -1299,10 +1296,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   }
   scope_down(out);
 
-
-
-
   // Fill-out constructor
+  indent(out) << endl;
+  indent(out) << "// Constructor with field values" << endl;
   indent(out) << tstruct->get_name() << "(";
   init_ctor = false;
   for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
@@ -1328,7 +1324,34 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent_up();
   scope_down(out);
 
+  // Copy constructor
+  indent(out) << endl;
+  indent(out) << "// Copy constructor" << endl;
+  indent(out) << tstruct->get_name() << "(const " << tstruct->get_name() 
+	      << "& __alt) {" << endl;
+  indent_up();
+  for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
+    indent(out) << "this->" << (*m_iter)->get_name() << " = "
+		<< "__alt." << (*m_iter)->get_name() << ";" << endl;
+  }
+  scope_down(out);
 
+  // Assignment operator
+  indent(out) << endl;
+  indent(out) << "// Assignment operator" << endl;
+  indent(out) << "const " << tstruct->get_name() << "& operator = (const " 
+	      << tstruct->get_name() 
+	      << "& __alt) {" << endl;
+  indent_up();
+  for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
+    indent(out) << "this->" << (*m_iter)->get_name() << " = "
+		<< "__alt." << (*m_iter)->get_name() << ";" << endl;
+  }
+  indent(out) << "return *this;" << endl;
+  scope_down(out);
+
+  indent(f_stt_) << endl;
+  indent(f_stt_) << "// read and write structure on a connection" << endl;
   indent(f_stt_) << "bool read(yarp::os::idl::WireReader& reader);" 
 		 << endl;
 
@@ -1340,6 +1363,10 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 		 << endl;
   indent(f_stt_) << "bool write(yarp::os::ConnectionWriter& connection);" 
 		 << endl;
+
+  indent(f_stt_) << endl;
+  indent(f_stt_) << "// if you want to serialize this class without nesting, use this helper" << endl;
+  indent(f_stt_) << "typedef yarp::os::idl::Unwrapped<" << namespace_decorate(ns,name) << " > unwrapped;" << endl;
 
   indent_down();
   f_stt_ << "};" << endl;
