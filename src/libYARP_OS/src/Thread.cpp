@@ -66,8 +66,7 @@ Thread::~Thread() {
 
 
 bool Thread::join(double seconds) {
-    bool result = ((ThreadImpl*)implementation)->join(seconds);
-    return result;
+    return ((ThreadImpl*)implementation)->join(seconds) == 0;
 }
 
 bool Thread::stop() {
