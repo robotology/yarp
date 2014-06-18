@@ -315,7 +315,7 @@ macro(YARP_ADD_PLUGIN LIBNAME)
         foreach(s ${srcs})
             set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
         endforeach(s)
-        _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
+        add_library(${LIBNAME} ${srcs} ${ARGN})
         # Add the library to the list of plugin libraries.
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
         # Reset the list of generated source code to empty.
@@ -405,7 +405,7 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
             _link_directories(${links})
         endif(links)
         # add the library initializer code
-        _ADD_LIBRARY(${X_YARP_PLUGIN_MASTER} ${code} ${code_stub} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
+        add_library(${X_YARP_PLUGIN_MASTER} ${code} ${code_stub} ${X_YARP_PLUGIN_GEN}/add_${X_YARP_PLUGIN_MASTER}_plugins.cpp)
 
         if(TARGET YARP_OS)
             # Building YARP
