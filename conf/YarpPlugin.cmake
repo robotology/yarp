@@ -505,14 +505,6 @@ macro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
     yarp_add_plugin_library_executable(${ARGN})
 endmacro(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
-macro(ADD_LIBRARY)
-    if(X_YARP_PLUGIN_MODE)
-        # when compiling a plugin library, print a warning, see issue #157
-        message(WARNING "Calling ADD_LIBRARY inside a YARP PLUGIN_LIBRARY block is deprecated and does no longer creates a plugin. Replace this call with YARP_ADD_PLUGIN instead. (If this is a real library you can safely ignore this warning)")
-    endif()
-    _ADD_LIBRARY(${ARGN})
-endmacro(ADD_LIBRARY LIBNAME)
-
 endif(NOT YARP_NO_DEPRECATED)
 
 
