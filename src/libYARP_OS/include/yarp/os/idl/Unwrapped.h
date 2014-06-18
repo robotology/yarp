@@ -18,6 +18,7 @@ namespace yarp {
     namespace os {
         namespace idl {
             template <class T> class Unwrapped;
+            template <class T> class UnwrappedView;
         }
     }
 }
@@ -26,6 +27,24 @@ template <class T>
 class YARP_OS_API yarp::os::idl::Unwrapped : public yarp::os::Portable {
 public:
     T content;
+
+    virtual bool read(yarp::os::ConnectionReader& reader) {
+        WireReader wreader(reader);
+        return content.read(wreader);
+    }
+
+    virtual bool write(yarp::os::ConnectionWriter& writer) {
+        WireWriter wwriter(writer);
+        return content.write(wwriter);
+    }
+};
+
+template <class T>
+class YARP_OS_API yarp::os::idl::UnwrappedView : public yarp::os::Portable {
+public:
+    T& content;
+
+    UnwrappedView(T& content) : content(content) {}
 
     virtual bool read(yarp::os::ConnectionReader& reader) {
         WireReader wreader(reader);

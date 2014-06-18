@@ -566,6 +566,20 @@ bool test_unwrap() {
     return true;
 }
 
+bool test_tostring() {
+    printf("\n*** test_tostring()\n");
+    
+    DemoStructList s;
+    s.lst.push_back(DemoStruct(5,10));
+    s.lst.push_back(DemoStruct(9,900));
+    printf("String: %s\n", s.toString().c_str());
+    if (s.toString() != "(5 10) (9 900)") {
+        fprintf(stderr, "string mismatch\n");
+        return false;
+    }
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     if (argc>1) {
         Network yarp;
@@ -592,5 +606,6 @@ int main(int argc, char *argv[]) {
     if (!test_wrapping()) return 1;
     if (!test_missing_method()) return 1;
     if (!test_unwrap()) return 1;
+    if (!test_tostring()) return 1;
     return 0;
 }

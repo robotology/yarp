@@ -1364,6 +1364,11 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(f_stt_) << "bool write(yarp::os::ConnectionWriter& connection);" 
 		 << endl;
 
+
+  indent(f_stt_) << endl;
+  indent(f_stt_) << "yarp::os::ConstString toString();" 
+		 << endl;
+
   indent(f_stt_) << endl;
   indent(f_stt_) << "// if you want to serialize this class without nesting, use this helper" << endl;
   indent(f_stt_) << "typedef yarp::os::idl::Unwrapped<" << namespace_decorate(ns,name) << " > unwrapped;" << endl;
@@ -1443,6 +1448,16 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 		 << ")) return false;"
 		 << endl;
   indent(f_cpp_) << "return write(writer);" << endl;
+  scope_down(f_cpp_);
+
+  indent(f_cpp_) << "yarp::os::ConstString " << name
+		 << "::toString() {" 
+		 << endl;
+  indent_up();
+  indent(f_cpp_) << "yarp::os::idl::UnwrappedView<" << name << " > v(*this);" << endl;
+  indent(f_cpp_) << "yarp::os::Bottle b;" << endl;
+  indent(f_cpp_) << "b.read(v);" << endl;
+  indent(f_cpp_) << "return b.toString();" << endl;
   scope_down(f_cpp_);
 
   namespace_close(f_cpp_,get_namespace(program_));
