@@ -185,6 +185,7 @@ int PART;
 bool debug_param_enabled = false;
 bool speedview_param_enabled =false;
 bool enable_calib_all =false;
+bool position_direct_enabled = false;
 
 ResourceFinder *finder;
 ////////////////////////
@@ -719,6 +720,7 @@ int myMain( int   argc, char *argv[] )
         printf("Admin mode on.\n");
         enable_calib_all = true;
         debug_param_enabled = true;
+        position_direct_enabled = true;
     }
     if (finder->check("debug"))
     {
@@ -729,6 +731,11 @@ int myMain( int   argc, char *argv[] )
     {
         printf("Speed view requested.\n");
         speedview_param_enabled = true;
+    }
+    if (finder->check("direct"))
+    {
+        printf("Position direct requested.\n");
+        position_direct_enabled = true;
     }
 
     bool deleteParts=false;

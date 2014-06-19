@@ -23,6 +23,8 @@
 #include "include/partMover.h"
 #include <stdlib.h>
 
+extern bool position_direct_enabled;
+
 //*********************************************************************************
 void guiControl::destroy_main (GtkWindow *window,    gpointer   user_data)
 {
@@ -350,6 +352,7 @@ void guiControl::guiControl(void *button, void* data)
   gtk_fixed_put    (GTK_FIXED(inv), radiobutton_interaction_compl,10, 250   );
 
   update_menu(control_mode, interaction_mode);
+  gtk_widget_set_sensitive        (GTK_WIDGET(radiobutton_mode_pos_direct), position_direct_enabled);
 
   //Rememeber: these signal_connect MUST be placed after the update_menu!
   g_signal_connect (radiobutton_mode_idl,  "clicked",G_CALLBACK (radio_click_idl), &radiobutton_mode_idl);
