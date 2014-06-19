@@ -24,7 +24,7 @@ namespace yarp {
 }
 
 template <class T>
-class YARP_OS_API yarp::os::idl::Unwrapped : public yarp::os::Portable {
+class yarp::os::idl::Unwrapped : public yarp::os::Portable {
 public:
     T content;
 
@@ -40,7 +40,7 @@ public:
 };
 
 template <class T>
-class YARP_OS_API yarp::os::idl::UnwrappedView : public yarp::os::Portable {
+class yarp::os::idl::UnwrappedView : public yarp::os::Portable {
 public:
     T& content;
 
