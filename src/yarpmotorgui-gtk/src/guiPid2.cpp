@@ -145,7 +145,7 @@ void guiPid2::send_opl_pid (GtkButton *button, Pid *pid)
 
   offset = atoi(gtk_entry_get_text((GtkEntry*) opl_koDes));
 
-  iOpl->setOutput(*joint, offset);
+  iOpl->setRefOutput(*joint, offset);
   yarp::os::Time::delay(0.020); //beware: here we are reading the real PWM output, not the reference
   iOpl->getOutput(*joint, &offset);
 
