@@ -29,11 +29,13 @@ public:
     bool uninitialize();
     ImplementOpenLoopControl(IOpenLoopControlRaw *v);
     ~ImplementOpenLoopControl();
-    bool setOutput(int j, double v);
-    bool setOutputs(const double *v);
-    bool setOpenLoopMode();
+    bool setRefOutput(int j, double v);
+    bool setRefOutputs(const double *v);
+    bool getRefOutput(int j, double *v);
+    bool getRefOutputs(double *v);
     bool getOutput(int j, double *v);
     bool getOutputs(double *v);
+    bool setOpenLoopMode();
 };
 
 #endif

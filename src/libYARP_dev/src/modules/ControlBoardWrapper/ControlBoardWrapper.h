@@ -131,6 +131,9 @@ public:
     void handleInteractionModeMsg(const yarp::os::Bottle& cmd,
         yarp::os::Bottle& response, bool *rec, bool *ok);
 
+    void handleOpenLoopMsg(const yarp::os::Bottle& cmd,
+        yarp::os::Bottle& response, bool *rec, bool *ok);
+
     /**
     * Initialize the internal data.
     * @return true/false on success/failure
@@ -2767,8 +2770,6 @@ public:
 
     virtual bool setTorqueMode()
     {
-        std::cout<< "setTorqueMode() for ALL joint " << std::endl;
-
         bool ret=true;
         for(int l=0;l<controlledJoints;l++)
         {
@@ -3766,10 +3767,12 @@ public:
     }
 
     //
-    virtual bool setOutput(int j, double v)
+    virtual bool setRefOutput(int j, double v)
     {
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
+
+//        std::cout << "CBW.h setOut j " << j << "; remap to dev " << subIndex << " k " << off+base << std::endl;
 
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
@@ -3777,12 +3780,12 @@ public:
 
         if (p->iOpenLoop)
         {
-            return p->iOpenLoop->setOutput(off+base, v);
+            return p->iOpenLoop->setRefOutput(off+base, v);
         }
         return false;
     }
 
-    virtual bool setOutputs(const double *outs) {
+    virtual bool setRefOutputs(const double *outs) {
         bool ret=true;
 
         for(int l=0;l<controlledJoints;l++)
@@ -3790,13 +3793,15 @@ public:
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
 
+//            std::cout << "CBW.h setOutS j " << l << "; remap to dev " << subIndex << " k " << off+base << std::endl;
+
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
                 return false;
 
             if (p->iOpenLoop)
             {
-                ret=ret&&p->iOpenLoop->setOutput(off+base, outs[l]);
+                ret=ret&&p->iOpenLoop->setRefOutput(off+base, outs[l]);
             }
             else
                 ret=false;
@@ -3823,7 +3828,7 @@ public:
 
     virtual bool setPositionDirectMode()
     {
-        std::cout<< "setPositionDirectMode() for ALL joint " << std::endl;
+//        std::cout<< "setPositionDirectMode() for ALL joint " << std::endl;
 
         bool ret=true;
         for(int l=0;l<controlledJoints;l++)
@@ -4088,7 +4093,7 @@ public:
             ps[i]=device.getSubdevice(i);
         }
 
-        std::cout << " CBW: getInteractionModes GROUP" << std::endl;
+//        std::cout << " CBW: getInteractionModes GROUP" << std::endl;
         yarp::os::Vocab v;
         // Create a map of joints for each subDevice
         int subIndex = 0;
@@ -4124,7 +4129,7 @@ public:
     {
         bool ret = true;
 
-        std::cout << "get interactionMode cbw.h " << std::endl;
+//        std::cout << "get interactionMode cbw.h " << std::endl;
         for(int j=0; j<controlledJoints; j++)
         {
             int off=device.lut[j].offset;
@@ -4153,7 +4158,7 @@ public:
         if (!s)
             return false;
 
-        std::cout << "CBW SetinteractionMode SINGLE " << j << " val " << yarp::os::Vocab::decode(mode) << " a.k.a. " << mode << std::endl;
+//        std::cout << "CBW SetinteractionMode SINGLE " << j << " val " << yarp::os::Vocab::decode(mode) << " a.k.a. " << mode << std::endl;
         if (s->iInteract)
         {
             return s->iInteract->setInteractionMode(off+base, mode);
@@ -4223,6 +4228,58 @@ public:
         }
         return ret;
     }
+
+    /**
+     * Get the last reference sent using the setOutput function
+     * @param outs pointer to the vector that will store the output values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefOutput(int j, double *out)
+    {
+        int off=device.lut[j].offset;
+        int subIndex=device.lut[j].deviceEntry;
+
+//        std::cout << "CBW.h getRefOut j " << j << "; remap to dev " << subIndex << " k " << off+base << std::endl;
+        yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+        if (!p)
+            return false;
+
+        if (p->iOpenLoop)
+        {
+            return p->iOpenLoop->getRefOutput(off+base, out);
+        }
+        *out=0.0;
+        return false;
+    }
+
+    /**
+     * Get the last reference sent using the setOutputs function
+     * @param outs pointer to the vector that will store the output values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefOutputs(double *outs)
+    {
+        bool ret=true;
+
+        for(int l=0;l<controlledJoints;l++)
+        {
+            int off=device.lut[l].offset;
+            int subIndex=device.lut[l].deviceEntry;
+
+            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
+            if (!p)
+                return false;
+
+            if (p->iOpenLoop)
+            {
+                ret=ret && p->iOpenLoop->getRefOutput(off+base, outs+l);
+            }
+            else
+                ret=false;
+        }
+        return ret;
+    }
+
 
 };
 

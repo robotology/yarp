@@ -1051,14 +1051,14 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
             case VOCAB_INTERACTION_MODE:
             {
-                std::cout << "CBW.h set interactionMode SINGLE" << std::endl;
+//                std::cout << "CBW.cpp set interactionMode SINGLE" << std::endl;
                 *ok = iInteract->setInteractionMode(cmd.get(3).asInt(), (yarp::dev::InteractionModeEnum) cmd.get(4).asVocab());
             }
             break;
 
             case VOCAB_INTERACTION_MODE_GROUP:
             {
-                std::cout << "CBW.h set interactionMode GROUP" << std::endl;
+//                std::cout << "CBW.h set interactionMode GROUP" << std::endl;
 
                 int n_joints = cmd.get(3).asInt();
                 jointList = cmd.get(4).asList();
@@ -1076,7 +1076,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                 {
                     joints[i] = jointList->get(i).asInt();
                     modes[i]  = (yarp::dev::InteractionModeEnum) modeList->get(i).asVocab();
-                    std::cout << "CBW.cpp received vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
+//                    std::cout << "CBW.cpp received vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
                 }
                 *ok = iInteract->setInteractionModes(n_joints, joints, modes);
                 delete [] joints;
@@ -1087,7 +1087,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
 
             case VOCAB_INTERACTION_MODES:
             {
-                std::cout << "CBW.c set interactionMode ALL" << std::endl;
+//                std::cout << "CBW.c set interactionMode ALL" << std::endl;
 
                 modeList  = cmd.get(3).asList();
                 if(modeList->size() != controlledJoints)
@@ -1131,6 +1131,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum mode;
                     *ok = iInteract->getInteractionMode(cmd.get(3).asInt(), &mode);
                     response.addVocab(mode);
+                    std::cout << " resp is " << response.toString() << std::endl;
             }
             break;
 
@@ -1176,7 +1177,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum* modes;
                     modes  = new yarp::dev::InteractionModeEnum [controlledJoints];
 
-                    std::cout << " cbw.cpp getInteractionModes ALL joint" << std::endl;
+//                    std::cout << " cbw.cpp getInteractionModes ALL joint" << std::endl;
                     *ok = iInteract->getInteractionModes(modes);
 
                     Bottle& b = response.addList();
@@ -1207,6 +1208,97 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
     }
 }
 
+
+void CommandsHelper::handleOpenLoopMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok)
+{
+    if (!iOpenLoop)
+    {
+        fprintf(stderr, "Error I do not have a valid OpenLoopInterface interface\n");
+        *ok=false;
+        return;
+    }
+
+    if (caller->verbose())
+    {
+        fprintf(stderr, "\nHandling OpenLoopInterface message\n");
+        fprintf(stdout, "received command:\n");
+        std::cout << cmd.toString() << std::endl;
+    }
+
+    int action = cmd.get(0).asVocab();
+
+    switch(action)
+    {
+        case VOCAB_SET:
+        {
+            std::cout << "Error: ControlBoardWrapper2 received a set command in the OpenLoopInterface on rpc port.\n";
+            std::cout << "... This is wrong, no SET command should use rpc for this interface, but they should use the sreaming port!" << std::endl;
+            *rec = false;
+        }
+        break;
+
+        case VOCAB_GET:
+        {
+            response.clear();
+            response.addVocab(VOCAB_IS);
+            response.add(cmd.get(1));
+            switch (cmd.get(2).asVocab())
+            {
+                case VOCAB_OPENLOOP_REF_OUTPUT:
+                {
+                    double tmp;
+                    *rec = true;
+                    *ok = iOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
+                    response.addDouble(tmp);
+                }
+                break;
+
+                case VOCAB_OPENLOOP_REF_OUTPUTS:
+                {
+                    double *p = new double[controlledJoints];
+                    *rec = true;
+                    *ok = iOpenLoop->getRefOutputs(p);
+                    Bottle& b = response.addList();
+
+                    for (int i = 0; i < controlledJoints; i++)
+                        b.addDouble(p[i]);
+                    delete[] p;
+                }
+                break;
+
+                case VOCAB_OPENLOOP_PWM_OUTPUT:
+                {
+                    double tmp;
+                    *rec = true;
+                    *ok = iOpenLoop->getRefOutput(cmd.get(3).asInt(), &tmp);
+                    response.addDouble(tmp);
+                }
+                break;
+
+                case VOCAB_OPENLOOP_PWM_OUTPUTS:
+                {
+                    double *p = new double[controlledJoints];
+                    *rec = true;
+                    *ok = iOpenLoop->getRefOutputs(p);
+                    Bottle& b = response.addList();
+
+                    for (int i = 0; i < controlledJoints; i++)
+                        b.addDouble(p[i]);
+                    delete[] p;
+                }
+                break;
+            }
+        }
+        lastRpcStamp.update();
+        appendTimeStamp(response, lastRpcStamp);
+
+        break;
+        default:
+            *rec = false;
+        break;
+    }
+}
+
 bool ImplementCallbackHelper::initialize()
 {
     controlledAxes=0;
@@ -1216,6 +1308,7 @@ bool ImplementCallbackHelper::initialize()
     return true;
 }
 
+// streaming port callback
 void ImplementCallbackHelper::onRead(CommandMessage& v)
 {
     Bottle& b = v.head;
@@ -1238,7 +1331,43 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
     }
 
     switch (b.get(0).asVocab())
+    {
+        // manage commands with interface name as first
+        case VOCAB_OPENLOOP_INTERFACE:
         {
+            switch(b.get(1).asVocab())
+            {
+                case VOCAB_OPENLOOP_REF_OUTPUT:
+                {
+                    if (iOpenLoop)
+                    {
+                        bool ok = iOpenLoop->setRefOutput(b.get(2).asVocab(), cmdVector[0]);
+                        if (!ok)
+                            fprintf(stderr, "Errors while trying to command an open loop message\n");
+                    }
+                    else
+                        fprintf(stderr, "OpenLoop interface not valid\n");
+                }
+                break;
+
+                case VOCAB_OPENLOOP_REF_OUTPUTS:
+                {
+                    if (iOpenLoop)
+                    {
+                        bool ok=iOpenLoop->setRefOutputs(cmdVector.data());
+                        if (!ok)
+                            fprintf(stderr, "Errors while trying to command an open loop message\n");
+                    }
+                    else
+                        fprintf(stderr, "OpenLoop interface not valid\n");
+                }
+                break;
+            }
+            break;
+        }
+        break;
+
+        // fallback to commands without interface name
         case VOCAB_POSITION_MODE:
             {
                 fprintf(stderr, "Warning: received VOCAB_POSITION_MODE this is an send invalid message on streaming port\n");
@@ -1271,16 +1400,14 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
                     }
             }
             break;
+
         case VOCAB_OUTPUTS:
             {
-                if (iOpenLoop)
-                    {
-                        bool ok=iOpenLoop->setOutputs(cmdVector.data());
-                        if (!ok)
-                            fprintf(stderr, "Errors while trying to command an open loop message\n");
-                    }
+                std::cout << "DEPRECATED openloop setOutputS!! missing interface name! Check you are using the updated RemoteControlBoard class" << std::endl;
+                std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] list_if_values" << std::endl;
             }
             break;
+
         case VOCAB_POSITION_DIRECT:
         {
             if(posDir)
@@ -1293,9 +1420,9 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
             }
         }
         break;
+
         case VOCAB_POSITION_DIRECT_GROUP:
         {
-
             if(posDir)
             {
                 int n_joints = b.get(1).asInt();
@@ -1361,6 +1488,7 @@ void ImplementCallbackHelper::onRead(CommandMessage& v)
         }
 }
 
+// rpc callback
 bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                               yarp::os::Bottle& response)
 {
@@ -1394,6 +1522,10 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
         case VOCAB_INTERFACE_INTERACTION_MODE:
             handleInteractionModeMsg(cmd, response, &rec, &ok);
+            break;
+
+        case VOCAB_OPENLOOP_INTERFACE:
+            handleOpenLoopMsg(cmd, response, &rec, &ok);
             break;
 
         default:
@@ -1456,30 +1588,18 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                     switch(cmd.get(1).asVocab())
                     {
                         case VOCAB_OUTPUT:
-                            {
-                                double v;
-                                int j = cmd.get(2).asInt();
-                                v=cmd.get(3).asDouble();
-                                ok = iOpenLoop->setOutput(j, v);
-                            }
+                        {
+                            std::cout << "DEPRECATED setOutput (should be in streaming!) Check you are using the updated RemoteControlBoard class" << std::endl;
+                            std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUT) << "] joint value" << std::endl;
+                            ok = false;
+                        }
                             break;
 
                         case VOCAB_OUTPUTS:
                             {
-                                Bottle *b = cmd.get(2).asList();
-                                if (b==NULL)
-                                    break;
-
-                                int i;
-                                const int njs = b->size();
-                                if (njs==controlledJoints)
-                                {
-                                    double *p = new double[njs];    // LATER: optimize to avoid allocation.
-                                    for (i = 0; i < njs; i++)
-                                        p[i] = b->get(i).asDouble();
-                                    ok = iOpenLoop->setOutputs(p);
-                                    delete[] p;
-                                }
+                            std::cout << "DEPRECATED setOutpus (should be in streaming!) Check you are using the updated RemoteControlBoard class" << std::endl;
+                            std::cout << "Correct message should be [" << Vocab::decode(VOCAB_OPENLOOP_INTERFACE) << "] [" << Vocab::decode(VOCAB_OPENLOOP_REF_OUTPUTS) << "] joint value" << std::endl;
+                            ok = false;
                             }
                             break;
 

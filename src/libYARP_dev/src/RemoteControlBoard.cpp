@@ -617,6 +617,7 @@ protected:
         cmd.addVocab(v2);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
+
         if (CHECK_FAIL(ok, response)) {
             // ok
             *val = response.get(2).asDouble();
@@ -789,6 +790,7 @@ protected:
         cmd.addVocab(v1);
         cmd.addVocab(v2);
         bool ok = rpc_p.write(cmd, response);
+
         if (CHECK_FAIL(ok, response)) {
             int i;
             Bottle& l = *(response.get(2).asList());
@@ -801,6 +803,7 @@ protected:
                 val[i] = l.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
+
 
             return true;
         }
@@ -1170,24 +1173,24 @@ public:
         return get1VDA(VOCAB_ERRS, errs);
     }
 
-    /**
-     * Get the output of the controller (e.g. pwm value)
-     * @param j joint number
-     * @param out pointer to storage for return value
-     * @return success/failure
-     */
-    virtual bool getOutput(int j, double *out) {
-        return get1V1I1D(VOCAB_OUTPUT, j, out);
-    }
-
-    /**
-     * Get the output of the controllers (e.g. pwm value)
-     * @param outs pinter to the vector that will store the output values
-     * @return true/false on success/failure
-     */
-    virtual bool getOutputs(double *outs) {
-        return get1VDA(VOCAB_OUTPUTS, outs);
-    }
+//    /**
+//     * Get the output of the controller (e.g. pwm value)
+//     * @param j joint number
+//     * @param out pointer to storage for return value
+//     * @return success/failure
+//     */
+//    virtual bool getOutput(int j, double *out) {
+//        return get1V1I1D(VOCAB_OUTPUT, j, out);
+//    }
+//
+//    /**
+//     * Get the output of the controllers (e.g. pwm value)
+//     * @param outs pinter to the vector that will store the output values
+//     * @return true/false on success/failure
+//     */
+//    virtual bool getOutputs(double *outs) {
+//        return get1VDA(VOCAB_OUTPUTS, outs);
+//    }
 
     /**
      * Get current pid value for a specific joint.
@@ -2386,26 +2389,6 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
-    //
-    bool setOutput(int j, double v)
-    { return set1V1I1D(VOCAB_OUTPUT, j, v); }
-
-    bool setOutputs(const double *v)
-    {
-        if (!isLive()) return false;
-        CommandMessage& c = command_buffer.get();
-        c.head.clear();
-        c.head.addVocab(VOCAB_OUTPUTS);
-
-        c.body.size(nj);
-
-        memcpy(&(c.body[0]), v, sizeof(double)*nj);
-
-        command_buffer.write(writeStrict);
-
-        return true;
-    }
-
     bool setPositionDirectMode()
     {
         return set1V(VOCAB_POSITION_DIRECT);
@@ -2701,10 +2684,6 @@ public:
         cmd.addVocab(mode);
 
         bool ok = rpc_p.write(cmd, response);
-//        std::cout << "cmd sent is" << std::endl;
-//        cmd.toString();
-//        std::cout << "\nresponse got is" << std::endl;
-//        response.toString();
         return CHECK_FAIL(ok, response);
     }
 
@@ -2718,7 +2697,6 @@ public:
         cmd.addVocab(VOCAB_INTERACTION_MODE_GROUP);
         cmd.addInt(n_joints);
 
-        std::cout << "remoteCB, setInteractionMode GROUP, n_joint is " << n_joints << std::endl;
         Bottle& l1 = cmd.addList();
         for (int i = 0; i < n_joints; i++)
             l1.addInt(joints[i]);
@@ -2727,13 +2705,8 @@ public:
         for (int i = 0; i < n_joints; i++)
         {
             l2.addVocab(modes[i]);
-            std::cout << "remoteCB adding vocab " << yarp::os::Vocab::decode(modes[i]) << std::endl;
         }
         bool ok = rpc_p.write(cmd, response);
-//        std::cout << "cmd sent is" << std::endl;
-//        cmd.toString();
-//        std::cout << "\nresponse got is" << std::endl;
-//        response.toString();
         return CHECK_FAIL(ok, response);
     }
 
@@ -2751,13 +2724,113 @@ public:
             l1.addVocab(modes[i]);
 
         bool ok = rpc_p.write(cmd, response);
-//        std::cout << "cmd sent is" << std::endl;
-//        cmd.toString();
-//        std::cout << "\nresponse got is" << std::endl;
-//        response.toString();
         return CHECK_FAIL(ok, response);
     }
 
+    //
+    // OPENLOOP interface
+    //
+
+    bool setRefOutput(int j, double v)
+    {
+        //return set2V1I1D(VOCAB_OPENLOOP_INTERFACE, VOCAB_OUTPUT, j, v);
+        // use the streaming port!
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        // in streaming port only SET command can be sent, so it is implicit
+        c.head.addVocab(VOCAB_OPENLOOP_INTERFACE);
+        c.head.addVocab(VOCAB_OPENLOOP_REF_OUTPUT);
+
+        c.body.clear();
+        c.body.size(1);
+        c.body[0] = v;
+        command_buffer.write(writeStrict);
+    }
+
+    bool setRefOutputs(const double *v)
+    {
+//        return set2V1DA(VOCAB_OPENLOOP_INTERFACE, VOCAB_OUTPUTS, v);
+        if (!isLive()) return false;
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_OPENLOOP_INTERFACE);
+        c.head.addVocab(VOCAB_OPENLOOP_REF_OUTPUTS);
+
+        c.body.size(nj);
+
+        memcpy(&(c.body[0]), v, sizeof(double)*nj);
+
+        command_buffer.write(writeStrict);
+
+        return true;
+    }
+
+    /**
+     * Get the last reference sent using the setOutput function
+     * @param j joint number
+     * @param out pointer to storage for return value
+     * @return success/failure
+     */
+    virtual bool getRefOutput(int j, double *out)
+    {
+        //return get2V1D(VOCAB_OPENLOOP_INTERFACE, VOCAB_OPENLOOP_REF_OUTPUTS, out);
+
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
+        cmd.addVocab(VOCAB_OPENLOOP_REF_OUTPUT);
+        cmd.addInt(j);
+        response.clear();
+
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response))
+        {
+            // ok
+            *out = response.get(2).asDouble();
+
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+    }
+
+    /**
+     * Get the last reference sent using the setOutputs function
+     * @param outs pointer to the vector that will store the output values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefOutputs(double *outs) {
+        return get2V1DA(VOCAB_OPENLOOP_INTERFACE, VOCAB_OPENLOOP_REF_OUTPUTS, outs);
+    }
+
+    virtual bool getOutput(int j, double *out)
+    {
+        // both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
+        cmd.addVocab(VOCAB_OUTPUT);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+
+        if (CHECK_FAIL(ok, response))
+        {
+            // ok
+            *out = response.get(0).asDouble();
+
+            getTimeStamp(response, lastStamp);
+            return true;
+        }    }
+
+    /**
+     * Get the last reference sent using the setOutputs function
+     * @param outs pointer to the vector that will store the output values
+     * @return true/false on success/failure
+     */
+    virtual bool getOutputs(double *outs) {
+        return get1VDA(VOCAB_OUTPUTS, outs);
+    }
 };
 
 // implementation of CommandsHelper

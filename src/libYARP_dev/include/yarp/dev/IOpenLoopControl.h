@@ -32,22 +32,39 @@ public:
     /**
      * Command direct output value to joint j.
      */
-    virtual bool setOutputRaw(int j, double v)=0;
+    virtual bool setRefOutputRaw(int j, double v)=0;
 
     /**
      * Command direct output value to all joints.
      */
-    virtual bool setOutputsRaw(const double *v)=0;
+    virtual bool setRefOutputsRaw(const double *v)=0;
 
     /**
-     * Get the controller current output values.
-     */ 
-    virtual bool getOutputsRaw(double *v)=0;
+     * Get the last reference sent using the setRefOutput function
+     * @param j joint number
+     * @param out pointer to storage for return value
+     * @return success/failure
+     */
+    virtual bool getRefOutputRaw(int j, double *v)=0;
 
     /**
-     * Get the controller current output for joint j.
+     * Get the last reference sent using the setRefOutputs function
+     * @param outs pinter to the vector that will store the output values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefOutputsRaw(double *v)=0;
+
+    /** Get the output of the controller (e.g. pwm value)
+     * @param j joint number
+     * @param out pointer to storage for return value
+     * @return success/failure
      */
     virtual bool getOutputRaw(int j, double *v)=0;
+
+    /** Get the output of the controllers (e.g. pwm value)
+     * @param outs pinter to the vector that will store the output values
+     */
+    virtual bool getOutputsRaw(double *v)=0;
     
     /**
      * Enable open loop mode.
@@ -69,20 +86,37 @@ public:
     /**
      * Command direct output value to joint j.
      */
-    virtual bool setOutput(int j, double v)=0;
+    virtual bool setRefOutput(int j, double v)=0;
 
     /**
      * Command direct output value to all joints.
      */
-    virtual bool setOutputs(const double *v)=0;
+    virtual bool setRefOutputs(const double *v)=0;
 
     /**
-     * Get current output command for joint j.
+     * Get the last reference sent using the setRefOutput function
+     * @param j joint number
+     * @param out pointer to storage for return value
+     * @return success/failure
+     */
+    virtual bool getRefOutput(int j, double *v)=0;
+
+    /**
+     * Get the last reference sent using the setRefOutputs function
+     * @param outs pinter to the vector that will store the output values
+     * @return true/false on success/failure
+     */
+    virtual bool getRefOutputs(double *v)=0;
+
+    /** Get the output of the controller (e.g. pwm value)
+     * @param j joint number
+     * @param out pointer to storage for return value
+     * @return success/failure
      */
     virtual bool getOutput(int j, double *v)=0;
 
-    /**
-     * Get current output command, all joints.
+    /** Get the output of the controllers (e.g. pwm value)
+     * @param outs pinter to the vector that will store the output values
      */
     virtual bool getOutputs(double *v)=0;
 
@@ -92,6 +126,15 @@ public:
     virtual bool setOpenLoopMode()=0;
 };
 
+// all sets in streaming
+
+// Interface name
+#define VOCAB_OPENLOOP_INTERFACE VOCAB4('i','o','p','l')
+// methods names
+#define VOCAB_OPENLOOP_REF_OUTPUT  VOCAB3('r','e','f')
+#define VOCAB_OPENLOOP_REF_OUTPUTS VOCAB4('r','e','f','s')
+#define VOCAB_OPENLOOP_PWM_OUTPUT  VOCAB3('p','w','m')
+#define VOCAB_OPENLOOP_PWM_OUTPUTS VOCAB4('p','w','m','s')
 #endif
 
 

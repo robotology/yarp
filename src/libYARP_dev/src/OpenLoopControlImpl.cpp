@@ -9,6 +9,7 @@
 
 #include "yarp/dev/ImplementOpenLoopControl.h"
 #include <yarp/dev/ControlBoardHelper.h>
+#include <iostream>
 
 using namespace yarp::dev;
 
@@ -51,23 +52,42 @@ bool ImplementOpenLoopControl::uninitialize ()
     return true;
 }
 
-bool ImplementOpenLoopControl::setOutput(int j, double v)
+bool ImplementOpenLoopControl::setRefOutput(int j, double v)
 {
     int k=castToMapper(helper)->toHw(j);
 
-    return raw->setOutputRaw(k, v);
+    return raw->setRefOutputRaw(k, v);
 }
 
-bool ImplementOpenLoopControl::setOutputs(const double *v)
+bool ImplementOpenLoopControl::setRefOutputs(const double *v)
 {
     castToMapper(helper)->toHw(v, dummy);
 
-    return raw->setOutputsRaw(dummy);
+    return raw->setRefOutputsRaw(dummy);
 }
 
-bool ImplementOpenLoopControl::setOpenLoopMode()
+bool ImplementOpenLoopControl::getRefOutput(int j, double *v)
 {
-    return raw->setOpenLoopModeRaw();
+    int k=castToMapper(helper)->toHw(j);
+
+    bool ret = raw->getRefOutputRaw(k, v);
+    return ret;
+}
+
+bool ImplementOpenLoopControl::getRefOutputs(double *v)
+{
+    bool ret=raw->getRefOutputsRaw(dummy);
+
+    castToMapper(helper)->toUser(dummy, v);
+    return ret;
+}
+
+bool ImplementOpenLoopControl::getOutput(int j, double *v)
+{
+    int k=castToMapper(helper)->toHw(j);
+
+    bool ret = raw->getOutputRaw(k, v);
+    return ret;
 }
 
 bool ImplementOpenLoopControl::getOutputs(double *v)
@@ -78,10 +98,7 @@ bool ImplementOpenLoopControl::getOutputs(double *v)
     return ret;
 }
 
-bool ImplementOpenLoopControl::getOutput(int j, double *v)
+bool ImplementOpenLoopControl::setOpenLoopMode()
 {
-    int k=castToMapper(helper)->toHw(j);
-
-    return raw->getOutputRaw(k, v);
+    return raw->setOpenLoopModeRaw();
 }
-
