@@ -16,8 +16,10 @@ get a build of the core YARP libraries and utilities from source:
   git clone git://github.com/robotology/yarp.git
   cd yarp && mkdir build && cd build && cmake .. && make
   sudo make install  # Optional.
+  sudo ldconfig      # Do this if you did "sudo make install"
   # Alternative: set environment variable YARP_DIR to .../yarp/build
   #              and add .../yarp/build/bin to PATH
+  #              and add .../yarp/build/lib to LD_LIBRARY_PATH
   yarp check
 \endverbatim
 
