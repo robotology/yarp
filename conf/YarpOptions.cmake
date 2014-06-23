@@ -245,9 +245,9 @@ endif()
 #########################################################################
 # Control setting an rpath
 if(NOT MSVC)
-    option(INSTALL_WITH_RPATH "When installing YARP, give executables a full RPATH" FALSE)
+    option(INSTALL_WITH_RPATH "When installing, give executables hard-coded paths to the libraries they need" FALSE)
     option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables (deprecated, please use INSTALL_WITH_RPATH" FALSE)
-    mark_as_advanced(INSTALL_WITH_RPATH ENABLE_FORCE_RPATH)
+    mark_as_advanced(ENABLE_FORCE_RPATH)
 endif()
 
 if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
