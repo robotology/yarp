@@ -15,20 +15,36 @@ get a build of the core YARP libraries and utilities from source:
   sudo apt-get install cmake libace-dev git
   git clone git://github.com/robotology/yarp.git
   cd yarp && mkdir build && cd build && cmake .. && make
-  sudo make install  # Optional.
-  sudo ldconfig      # Do this if you did "sudo make install"
-  # Alternative: set environment variable YARP_DIR to .../yarp/build
-  #              and add .../yarp/build/bin to PATH
-  #              and add .../yarp/build/lib to LD_LIBRARY_PATH
-  yarp check
 \endverbatim
+If you wish to install YARP programs and libraries system-wide
+(this is *not* required) you would then do:
+\verbatim
+  sudo make install
+  sudo ldconfig
+\endverbatim
+
+You can also install to a custom directory by setting the CMake 
+`CMAKE_INSTALL_PREFIX` variable.  In this case, consider also
+setting the `INSTALL_WITH_RPATH` variable to `ON`, since this will
+make it easier for YARP programs to find the corresponding YARP 
+libraries if they are not in your system's library path.
+
+If using YARP without installing it, consider setting some or all
+of the following environment variables:
+
+ + Set environment variable `YARP_DIR` to `.../yarp/build` to allow
+   cmake to find YARP easily for your own projects.
+ + Add `.../yarp/build/bin` to `PATH` to allow your shell to find
+   YARP programs.
+ + Add `.../yarp/build/lib` to `LD_LIBRARY_PATH` to allow YARP programs
+   to find YARP libraries, if they cannot be found by other means.
 
 Or, if you'd like to compile without using the ACE library:
 \verbatim
   sudo apt-get install cmake git
   git clone git://github.com/robotology/yarp.git
   cd yarp && mkdir build && cd build && cmake -DSKIP_ACE=TRUE .. && make
-  yarp check
+  ./bin/yarp check
 \endverbatim
 
 For a more comprehensive build with optional extras, use the CMake GUI, or see: http://wiki.icub.org/wiki/Linux:Installation_from_sources#Compile_YARP
