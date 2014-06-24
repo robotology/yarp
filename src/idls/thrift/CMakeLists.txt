@@ -3,10 +3,11 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 find_path(THRIFT_ROOT compiler/cpp/src/thrifty.yy PATHS ${CMAKE_SOURCE_DIR}/thrift ${CMAKE_SOURCE_DIR}/../thrift ENV THRIFT_ROOT DOC "Location of Thrift source code repository (optional)")
-mark_as_advanced(THRIFT_ROOT)
+option(THRIFT_USE_EXTERNAL "Use external Thrift source" FALSE)
+mark_as_advanced(THRIFT_ROOT THRIFT_USE_EXTERNAL)
 
 # Use external version of thrift, patching tcc to support yarp
-if (THRIFT_ROOT)
+if (THRIFT_USE_EXTERNAL)
   set(THRIFT_COMPILER_SOURCE ${THRIFT_ROOT}/compiler/cpp)
 
   file(GLOB_RECURSE thrift_source_cc ${THRIFT_COMPILER_SOURCE}/src/*.cc)
@@ -45,7 +46,7 @@ if (THRIFT_ROOT)
   install(TARGETS yarpidl_thrift COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif ()
 
-if (NOT THRIFT_ROOT)
+if (NOT THRIFT_USE_EXTERNAL)
   # Use built-in version of thrift, pre flex/bisoned for min. dependencies.
 
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src_gen)
