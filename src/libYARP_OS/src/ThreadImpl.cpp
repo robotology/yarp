@@ -74,6 +74,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     //ACE_Thread::exit();
 
     thread->notify(false);
+    thread->synchroPost();
 
     return 0;
 }
@@ -84,6 +85,7 @@ ThreadImpl::ThreadImpl() : synchro(0) {
     active = false;
     closing = false;
     needJoin = false;
+    initWasSuccessful = false;
     defaultPriority = -1;
     setOptions();
 }
@@ -126,11 +128,19 @@ void ThreadImpl::setOptions(int stackSize) {
 int ThreadImpl::join(double seconds) {
     closing = true;
     if (needJoin) {
-        //printf("trying to join...\n");
+        if (seconds>0) {
+            if (!initWasSuccessful) {
+                // join called before start completed
+                YARP_ERROR(Logger::get(),String("Tried to join a thread before starting it"));
+                return -1;
+            }
+            synchro.waitWithTimeout(seconds);
+            if (active) return -1;
+        }
         int result = PLATFORM_THREAD_JOIN(hid);
-        //printf("join result %d...\n", result);
         needJoin = false;
         active = false;
+        while (synchro.check()) {}
         return result;
     }
     return 0;
@@ -190,6 +200,7 @@ bool ThreadImpl::start() {
     //YARP_DEBUG(Logger::get(),"Calling ThreadImpl::start()");
 
     closing = false;
+    initWasSuccessful = false;
     beforeStart();
 #ifdef YARP_HAS_CXX11
     hid = std::thread(theExecutiveBranch,(void*)this);
@@ -234,6 +245,7 @@ bool ThreadImpl::start() {
         // the thread started correctly, wait for the initialization
         YARP_DEBUG(Logger::get(), String("Child thread initializing"));
         synchroWait();
+        initWasSuccessful = true;
         if (opened)
         {
             ThreadImpl::changeCount(1);

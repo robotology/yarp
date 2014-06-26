@@ -41,8 +41,21 @@ private:
 
     class ThreadDelay: public Thread {
     public:
+        double delay;
+        bool hold;
+        bool active;
+
+        ThreadDelay(double delay = 0.5, bool hold = false) {
+            this->delay = delay;
+            this->hold = hold;
+            active = true;
+        }
+
         virtual void run() {
-            Time::delay(0.5);
+            do {
+                Time::delay(delay);
+            } while (hold);
+            active = false;
         }
     };
 
@@ -422,6 +435,19 @@ public:
         }
     }
 
+    virtual void testJoinTimeout() {
+        report(0,"testing join timeout...");
+        ThreadDelay t(0.1,true);
+        checkTrue(t.active,"flag starts out ok");
+        t.start();
+        t.join(1);
+        checkTrue(t.active,"timeout join returns before thread stops");
+        t.hold = false;
+        t.stop();
+        checkFalse(t.active,"flag behaves correctly");
+        t.hold = false;
+    }
+
     virtual void runTests() {
         testMin();
         testSync();
@@ -433,6 +459,7 @@ public:
         testRunnable();
         testRunningFlag();
         testId();
+        testJoinTimeout();
      }
 };
 
