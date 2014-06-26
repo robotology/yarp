@@ -78,7 +78,7 @@ public:
      * Thread::isStopping will start returning true.
      * The user-defined Thread::onStop method will be called.
      * Then, this simply sits back and waits. Wait for thread
-     * tarmingation so cannot be called from within run().
+     * termination so cannot be called from within run().
      * @return true iff the thread stops successfully
      */
     bool stop();
