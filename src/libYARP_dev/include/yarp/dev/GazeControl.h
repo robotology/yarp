@@ -245,7 +245,7 @@ public:
      *              the right.
      * \param px a 2-d vector which contains the (u,v) coordinates of
      *           the pixel within the image plane.
-     * \param ver the vergence angle given in degree.
+     * \param ver the vergence angle given in degrees.
      * \return true/false on success/failure.
      */
     virtual bool lookAtMonoPixelWithVergence(const int camSel,
@@ -597,8 +597,8 @@ public:
     /*! 
      * Bind the neck pitch within a specified range. [wait for
      *   reply]
-     * \param min the minimum value of the range (in degree).
-     * \param max the maximum value of the range (in degree).
+     * \param min the minimum value of the range (in degrees).
+     * \param max the maximum value of the range (in degrees).
      * \return true/false on success/failure.
      */
     virtual bool bindNeckPitch(const double min, const double max) = 0;
@@ -606,7 +606,7 @@ public:
     /*! 
      * Block the neck pitch at a specified angle. [wait for reply]
      * \param val the angle value at which block the joint (in
-     *           degree).
+     *           degrees).
      * \return true/false on success/failure.
      *
      * \note The possibility to block the neck joints is given in
@@ -626,8 +626,8 @@ public:
     /*! 
      * Bind the neck roll within a specified range. [wait for
      *   reply]
-     * \param min the minimum value of the range (in degree).
-     * \param max the maximum value of the range (in degree).
+     * \param min the minimum value of the range (in degrees).
+     * \param max the maximum value of the range (in degrees).
      * \return true/false on success/failure.
      */
     virtual bool bindNeckRoll(const double min, const double max) = 0;
@@ -635,7 +635,7 @@ public:
     /*! 
      * Block the neck roll at a specified angle. [wait for reply]
      * \param val the angle value at which block the joint (in
-     *           degree).
+     *           degrees).
      * \return true/false on success/failure.
      *
      * \note The possibility to block the neck joints is given in
@@ -655,8 +655,8 @@ public:
     /*! 
      * Bind the neck yaw within a specified range. [wait for
      *   reply]
-     * \param min the minimum value of the range (in degree).
-     * \param max the maximum value of the range (in degree).
+     * \param min the minimum value of the range (in degrees).
+     * \param max the maximum value of the range (in degrees).
      * \return true/false on success/failure.
      */
     virtual bool bindNeckYaw(const double min, const double max) = 0;
@@ -664,7 +664,7 @@ public:
     /*! 
      * Block the neck yaw at a specified angle. [wait for reply]
      * \param val the angle value at which block the joint (in
-     *           degree).
+     *           degrees).
      * \return true/false on success/failure.
      *
      * \note The possibility to block the neck joints is given in
@@ -684,7 +684,7 @@ public:
     /*! 
      * Block the eyes to look always straight ahead with a
      *   specified vergence angle. [wait for reply]
-     * \param ver the vergence angle (in degree).
+     * \param ver the vergence angle (in degrees).
      * \return true/false on success/failure.
      */
     virtual bool blockEyes(const double ver) = 0;
