@@ -120,13 +120,18 @@ int WorkerClass::sendImages(int part, int frame)
 {
     IplImage* img = NULL;
     string tmpPath = utilities->partDetails[part].path;
-    string tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString().c_str();
+    string tmpName;
+    if (utilities->withExtraColumn)
+        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString().c_str();
+    else
+        tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(0).asString().c_str();
+
     tmpPath = tmpPath + tmpName;
     img = cvLoadImage( tmpPath.c_str(), CV_LOAD_IMAGE_UNCHANGED );
 
     if( img == 0 )
     {
-        fprintf( stderr, "Cannot load file %s!\n", tmpPath.c_str() );
+        fprintf( stderr, "Cannot load file %s !\n", tmpPath.c_str() );
         return 1;
     }else
     {
