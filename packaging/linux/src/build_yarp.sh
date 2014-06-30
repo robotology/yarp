@@ -113,7 +113,7 @@ CMAKE=cmake
 if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
     CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
 else
-    run_in_chroot build_chroot "cd $CHROOT_BUILD && cmake --version | grep ' 2\.4' && ( wget http://www.cmake.org/files/v2.6/cmake-2.6.4-Linux-i386.tar.gz && tar xzvf cmake-2.6.4-Linux-i386.tar.gz && touch local_cmake )"
+    run_in_chroot build_chroot "cd $CHROOT_BUILD && cmake --version | grep ' 2\.[46]' && ( wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1-Linux-i386.tar.gz && tar xzvf cmake-2.8.12.1-Linux-i386.tar.gz && touch local_cmake )"
 fi
 
 # If we downloaded cmake, we need to make sure we have 32-bit libraries
