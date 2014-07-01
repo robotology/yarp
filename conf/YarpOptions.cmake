@@ -262,7 +262,7 @@ if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
         set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
     else()
         # This is relative RPATH for libraries built in the same project
-        # I assume that the directory is 
+        # I assume that the directory is
         #  - install_dir/something for binaries
         #  - install_dir/lib for libraries
         # in this way if libraries and executables are moved together everything will continue to work
@@ -273,18 +273,18 @@ if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
             set(CMAKE_INSTALL_RPATH "\$ORIGIN/${_rel_path}")
         endif()
     endif()
-    
+
     # Enable RPATH on OSX. This also suppress warnings on CMake >= 3.0
     set(CMAKE_MACOSX_RPATH 1)
-    
+
     # When building, don't use the install RPATH already
     # (but later on when installing)
-    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-    
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
     # Add the automatically determined parts of the RPATH
     # which point to directories outside the build tree to the install RPATH
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-    
+
 endif()
 
 
