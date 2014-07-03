@@ -141,7 +141,7 @@ public:
     }
 
     virtual Property *acquireProperties(bool readOnly) {
-        asPort().acquireProperties(readOnly);
+        return asPort().acquireProperties(readOnly);
     }
 
     virtual void releaseProperties(Property *prop) {
