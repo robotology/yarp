@@ -87,6 +87,7 @@ public:
 
     void write(bool strict);
 
+    void waitForWrite();
 
 protected:
 
@@ -177,6 +178,12 @@ public:
         PortWriterBufferBase::write(forceStrict);
     }
 
+    /**
+     * Wait until any pending writes are done.
+     */
+    void waitForWrite() {
+        PortWriterBufferBase::waitForWrite();
+    }
 };
 
 

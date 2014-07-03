@@ -257,6 +257,7 @@ public:
 
     virtual Property *acquireProperties(bool readOnly) = 0;
     virtual void releaseProperties(Property *prop) = 0;
+    virtual void includeNodeInName(bool flag) = 0;
 
     /**
      *

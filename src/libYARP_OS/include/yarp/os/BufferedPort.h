@@ -52,8 +52,14 @@ public:
         T example;
         port.promiseType(example.getType());
         port.enableBackgroundWrite(true);
-        reader.attach(port);
-        writer.attach(port);
+        interrupted = false;
+    }
+
+    /**
+     * Wrap an existing unbuffered port.
+     */
+    BufferedPort(Port& port) {
+        sharedOpen(port);
         interrupted = false;
     }
 
@@ -74,6 +80,8 @@ public:
 
     // documentation provided in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) {
+        reader.attach(port);
+        writer.attach(port);
         return port.open(contact,registerName);
     }
 
@@ -188,10 +196,34 @@ public:
         write(true);
     }
 
+    /**
+     *
+     * Wait for any pending writes to complete.
+     *
+     */
+    void waitForWrite() {
+        writer.waitForWrite();
+    }
+
+    /**
+     *
+     * Never drop any messages read.  If you can't read them as
+     * fast as the come in, watch out.
+     *
+     */
     void setStrict(bool strict=true) {
         reader.setStrict(strict);
     }
 
+    /**
+     *
+     * Read a message from the port.  Waits by default.
+     * May return NULL if the port status has changed.
+     *
+     * @param shouldWait false if the call should return immediately if no message is available
+     * @return a message, or NULL
+     *
+     */
     virtual T *read(bool shouldWait=true) {
         if (interrupted) return 0 /* NULL */;
         T *result = reader.read(shouldWait);
@@ -328,6 +360,10 @@ public:
         port.releaseProperties(prop);
     }
 
+    virtual void includeNodeInName(bool flag) {
+        return port.includeNodeInName(flag);
+    }
+
 private:
     PortWriterBuffer<T> writer;
     Port port;
@@ -341,6 +377,14 @@ private:
     // forbid this
     const BufferedPort& operator = (const BufferedPort& alt) {
         return *this;
+    }
+
+    bool sharedOpen(Port& port) {
+        bool ok = this->port.sharedOpen(port);
+        if (!ok) return false;
+        reader.attach(port);
+        writer.attach(port);
+        return true;
     }
 };
 

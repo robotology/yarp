@@ -56,6 +56,7 @@ extern yarp::os::impl::UnitTest& getSemaphoreTest();
 extern yarp::os::impl::UnitTest& getEventTest();
 extern yarp::os::impl::UnitTest& getRunTest();
 extern yarp::os::impl::UnitTest& getNodeTest();
+extern yarp::os::impl::UnitTest& getPublisherTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -94,6 +95,7 @@ public:
         root.add(getSemaphoreTest());
         root.add(getEventTest());
         root.add(getNodeTest());
+        root.add(getPublisherTest());
 
 #ifdef YARPRUN_TEST
 		root.add(getRunTest());

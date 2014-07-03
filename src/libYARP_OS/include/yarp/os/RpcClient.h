@@ -10,7 +10,7 @@
 #ifndef _YARP2_RPCCLIENT_
 #define _YARP2_RPCCLIENT_
 
-#include <yarp/os/Port.h>
+#include <yarp/os/AbstractContactable.h>
 
 namespace yarp {
     namespace os {
@@ -25,9 +25,9 @@ namespace yarp {
  * connect to a single server, and receive replies on the same connection.
  *
  */
-class YARP_OS_API yarp::os::RpcClient : public UnbufferedContactable {
+class YARP_OS_API yarp::os::RpcClient : public AbstractContactable {
 public:
-    using Contactable::open;
+    using AbstractContactable::open;
 
 
     /**
@@ -40,45 +40,6 @@ public:
      */
     virtual ~RpcClient();
 
-    // documentation provided in Contactable
-    virtual bool open(const ConstString& name);
-
-    // documentation provided in Contactable
-    virtual bool open(const Contact& contact, bool registerName = true);
-
-    // documentation provided in Contactable
-    virtual bool addOutput(const ConstString& name);
-
-    // documentation provided in Contactable
-    virtual bool addOutput(const ConstString& name, 
-                           const ConstString& carrier);
-
-    // documentation provided in Contactable
-    virtual bool addOutput(const Contact& contact);
-
-    // documentation provided in Contactable
-    virtual void close();
-
-    // documentation provided in Contactable
-    virtual void interrupt();
-
-    // documentation provided in Contactable
-    virtual void resume();
-
-    // documentation provided in Contactable
-    virtual Contact where() const;
-
-    // documentation provided in Contactable
-    virtual ConstString getName() const;
-
-    // documented in UnbufferedContactable
-    virtual bool write(PortWriter& writer, 
-                       PortWriter *callback = 0 /*NULL*/) const;
-
-    // documented in UnbufferedContactable
-    virtual bool write(PortWriter& writer, PortReader& reader,
-                       PortWriter *callback = 0 /*NULL*/) const;
-
     // documented in UnbufferedContactable
     virtual bool read(PortReader& reader, bool willReply = false);
 
@@ -88,40 +49,18 @@ public:
     // documented in UnbufferedContactable
     virtual bool replyAndDrop(PortWriter& writer);
 
-    // documented in Contactable
-    virtual bool setEnvelope(PortWriter& envelope);
-
-    // documented in Contactable
-    virtual bool getEnvelope(PortReader& envelope);
-
-    // documented in Contactable
-    virtual int getInputCount();
-
-    // documented in Contactable
-    virtual int getOutputCount();
-
-    // documented in Contactable
-    virtual void getReport(PortReport& reporter);
-
-    // documented in Contactable
-    virtual void setReporter(PortReport& reporter);
-
-    // documented in Contactable
-    virtual bool isWriting();
-
-    // documented in Contactable
-    void setReader(PortReader& reader);
-
-    virtual Type getType();
-
-    virtual void promiseType(const Type& typ);
-
-    virtual Property *acquireProperties(bool readOnly);
-    virtual void releaseProperties(Property *prop);
 
    void setInputMode(bool expectInput);
    void setOutputMode(bool expectOutput);
    void setRpcMode(bool expectRpc);
+
+   virtual Port& asPort() {
+        return port;
+    }
+    
+    virtual const Port& asPort() const {
+        return port;
+    }
 
 private:
     // an RpcClient may be implemented with a regular port
