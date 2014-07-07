@@ -14,7 +14,7 @@ echo USER is "$WEB_USER"
 
 SOURCE=`cygpath -w $PWD`
 GEN="NMake Makefiles"
-CMAKE="/cygdrive/c/Program Files/CMake 2.6/bin/cmake.exe"
+CMAKE="/cygdrive/c/Program Files/CMake 2.8/bin/cmake.exe"
 CMAKEOPTS="-DCREATE_GUIS:BOOL=TRUE -DCMAKE_COLOR_MAKEFILE:BOOL=FALSE -DCREATE_YARPSERVER3:BOOL=TRUE"
 
 YARP1_INCLUDE="$PWD/../yarp/include"

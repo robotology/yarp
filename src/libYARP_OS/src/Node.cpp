@@ -141,6 +141,7 @@ public:
         clear();
         prev_name = "";
         has_prev_name = false;
+        port.includeNodeInName(false);
     }
 
     ~NodeHelper() {

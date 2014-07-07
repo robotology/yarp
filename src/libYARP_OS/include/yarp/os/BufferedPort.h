@@ -50,10 +50,18 @@ public:
      */
     BufferedPort() {
         T example;
+        attached = false;
         port.promiseType(example.getType());
         port.enableBackgroundWrite(true);
-        reader.attach(port);
-        writer.attach(port);
+        interrupted = false;
+    }
+
+    /**
+     * Wrap an existing unbuffered port.
+     */
+    BufferedPort(Port& port) {
+        attached = false;
+        sharedOpen(port);
         interrupted = false;
     }
 
@@ -67,13 +75,13 @@ public:
 
     // documentation provided in Contactable
     virtual bool open(const ConstString& name) {
-        reader.attach(port);
-        writer.attach(port);
+        attachIfNeeded();
         return port.open(name);
     }
 
     // documentation provided in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) {
+        attachIfNeeded();
         return port.open(contact,registerName);
     }
 
@@ -97,6 +105,7 @@ public:
         port.close();
         reader.detach();
         writer.detach();
+        attached = false;
     }
 
     // documentation provided in Contactable
@@ -188,10 +197,35 @@ public:
         write(true);
     }
 
+    /**
+     *
+     * Wait for any pending writes to complete.
+     *
+     */
+    void waitForWrite() {
+        writer.waitForWrite();
+    }
+
+    /**
+     *
+     * Never drop any messages read.  If you can't read them as
+     * fast as the come in, watch out.
+     *
+     */
     void setStrict(bool strict=true) {
+        attachIfNeeded();
         reader.setStrict(strict);
     }
 
+    /**
+     *
+     * Read a message from the port.  Waits by default.
+     * May return NULL if the port status has changed.
+     *
+     * @param shouldWait false if the call should return immediately if no message is available
+     * @return a message, or NULL
+     *
+     */
     virtual T *read(bool shouldWait=true) {
         if (interrupted) return 0 /* NULL */;
         T *result = reader.read(shouldWait);
@@ -212,10 +246,12 @@ public:
     }
 
     void setReplier(PortReader& reader) {
+        attachIfNeeded();
         this->reader.setReplier(reader);
     }
 
     void setReader(PortReader& reader) {
+        attachIfNeeded();
         setReplier(reader);
     }
 
@@ -232,6 +268,7 @@ public:
      * available.
      */
     void useCallback(TypedReaderCallback<T>& callback) {
+        attachIfNeeded();
         reader.useCallback(callback);
     }
 
@@ -240,10 +277,12 @@ public:
      * to be informed about data as it arrives
      */
     void useCallback() {
+        attachIfNeeded();
         reader.useCallback(*this);
     }
 
     void disableCallback() {
+        attachIfNeeded();
         reader.disableCallback();
     }
 
@@ -296,6 +335,7 @@ public:
 
     // documented in TypedReader
     virtual void setTargetPeriod(double period) {
+        attachIfNeeded();
         reader.setTargetPeriod(period);
     }
 
@@ -328,11 +368,16 @@ public:
         port.releaseProperties(prop);
     }
 
+    virtual void includeNodeInName(bool flag) {
+        return port.includeNodeInName(flag);
+    }
+
 private:
     PortWriterBuffer<T> writer;
     Port port;
     PortReaderBuffer<T> reader;
     bool interrupted;
+    bool attached;
 
     // forbid this
     BufferedPort(const BufferedPort& alt) {
@@ -341,6 +386,23 @@ private:
     // forbid this
     const BufferedPort& operator = (const BufferedPort& alt) {
         return *this;
+    }
+
+    void attachIfNeeded() {
+        if (!attached) {
+            reader.attach(port);
+            writer.attach(port);
+            attached = true;
+        }
+    }
+
+    bool sharedOpen(Port& port) {
+        bool ok = this->port.sharedOpen(port);
+        if (!ok) return false;
+        reader.attach(port);
+        writer.attach(port);
+        attached = true;
+        return true;
     }
 };
 

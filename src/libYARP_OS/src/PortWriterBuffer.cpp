@@ -211,6 +211,9 @@ void PortWriterBufferBase::write(bool strict) {
     HELPER(implementation).write(strict);
 }
 
+void PortWriterBufferBase::waitForWrite() {
+    HELPER(implementation).finishWrites();
+}
 
 
 

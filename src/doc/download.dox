@@ -17,11 +17,11 @@ Here is the most recent source code package (stable version) for YARP:
 
 Here is the most recent source code package (developement version) for YARP:
 <ul>
-<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.61.tar.gz">yarp-2.3.61.tar.gz</a> stable release for Linux, Mac OSX, etc.</li>
-<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.61.zip">yarp-2.3.61.zip</a> stable release for Windows.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.62.tar.gz">yarp-2.3.62.tar.gz</a> development release for Linux, Mac OSX, etc.</li>
+<li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.62.zip">yarp-2.3.62.zip</a> development release for Windows.</li>
 </ul>
 
-<a href=http://www.cmake.org>CMake</a> version 2.6.4 or newer
+<a href=http://www.cmake.org>CMake</a> version 2.8.7 or newer
 is required for building these packages, and is required for
 compiling full device support.<br />
 The only difference between the UNIX download and the Windows

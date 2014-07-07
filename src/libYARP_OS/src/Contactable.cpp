@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/Contactable.h>
+#include <yarp/os/AbstractContactable.h>
 
 
 yarp::os::Contactable::~Contactable() {

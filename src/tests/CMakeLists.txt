@@ -78,4 +78,4 @@ if(YARP_COMPILE_TESTS)
     endif()
 endif()
 
-# touch 1 2
+# touch 1 2 3

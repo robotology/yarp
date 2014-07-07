@@ -2,7 +2,7 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# YARP needs CMake 2.6 or greater
+# YARP needs CMake 2.8.7 or greater
 cmake_minimum_required(VERSION 2.8.7)
 
 # find YARP

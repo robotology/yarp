@@ -46,6 +46,7 @@ private:
     bool usedForRpc;
 
 public:
+    bool includeNode;
     bool commitToRead;
     bool commitToWrite;
     bool commitToRpc;
@@ -70,6 +71,7 @@ public:
         usedForRead(false),
         usedForWrite(false),
         usedForRpc(false),
+        includeNode(false),
         commitToRead(false),
         commitToWrite(false),
         commitToRpc(false)
@@ -335,17 +337,29 @@ public:
         this->typ = typ;
         stateMutex.post();
     }
+
+    void includeNodeInName(bool flag) {
+        includeNode = flag;
+    }
+
 };
 
-// implementation is a PortCoreAdapter
-#define HELPER(x) (*((PortCoreAdapter*)(x)))
-
-
-Port::Port() {
-    implementation = new PortCoreAdapter(*this);
-    YARP_ASSERT(implementation!=NULL);
+void *Port::needImplementation() const {
+    if (implementation) return implementation;
+    Port *self = (Port *)this;
+    self->implementation = new PortCoreAdapter(*self);
+    YARP_ASSERT(self->implementation!=NULL);
+    self->owned = true;
+    return self->implementation;
 }
 
+// implementation is a PortCoreAdapter
+#define IMPL() (*((PortCoreAdapter*)(needImplementation())))
+
+Port::Port() {
+    implementation = NULL;
+    owned = false;
+}
 
 bool Port::openFake(const ConstString& name) {
     return open(Contact::byName(name),false,name.c_str());
@@ -389,13 +403,15 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
 
-    if (n!="" && n[0]!='/'  && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
-        if (fakeName==NULL) {
-            Nodes& nodes = NameClient::getNameClient().getNodes();
-            ConstString node_name = nodes.getActiveName();
-            if (node_name!="") {
-                // n = node_name + "=/" + n;
-                n = "/" + n + "@" + node_name;
+    PortCoreAdapter *currentCore = &(IMPL());
+    if (currentCore!=NULL) {
+        if (n!="" && (n[0]!='/'||currentCore->includeNode) && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
+            if (fakeName==NULL) {
+                Nodes& nodes = NameClient::getNameClient().getNodes();
+                ConstString node_name = nodes.getActiveName();
+                if (node_name!="") {
+                    n = (n[0]=='/'?"":"/") + n + "@" + node_name;
+                }
             }
         }
     }
@@ -416,7 +432,6 @@ bool Port::open(const Contact& contact, bool registerName,
             }
         }
     }
-    PortCoreAdapter *currentCore = &(HELPER(implementation));
     if (currentCore!=NULL) {
         NestedContact nc;
         nc.fromString(n);
@@ -475,11 +490,12 @@ bool Port::open(const Contact& contact, bool registerName,
             newCore->configWaitAfterSend(currentCore->checkWaitAfterSend());
         }
         close();
-        delete ((PortCoreAdapter*)implementation);
+        if (owned) delete ((PortCoreAdapter*)implementation);
         implementation = newCore;
+        owned = true;
     }
 
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
 
     core.openable();
 
@@ -607,12 +623,13 @@ bool Port::addOutput(const ConstString& name, const ConstString& carrier) {
 }
 
 void Port::close() {
+    if (!owned) return;
     if (!NameClient::isClosed()) {
         Nodes& nodes = NameClient::getNameClient().getNodes();
         nodes.remove(*this);
     }
 
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.finishReading();
     core.finishWriting();
     core.close();
@@ -626,12 +643,12 @@ void Port::interrupt() {
     Nodes& nodes = NameClient::getNameClient().getNodes();
     nodes.remove(*this);
 
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.interrupt();
 }
 
 void Port::resume() {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.resumeFull();
     Nodes& nodes = NameClient::getNameClient().getNodes();
     nodes.add(*this);
@@ -642,20 +659,22 @@ void Port::resume() {
 Port::~Port() {
     if (implementation!=NULL) {
         close();
-        delete ((PortCoreAdapter*)implementation);
+        if (owned) delete ((PortCoreAdapter*)implementation);
         implementation = NULL;
+        owned = false;
     }
 }
 
 
 Contact Port::where() const {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     return core.getAddress();
 }
 
 
 bool Port::addOutput(const Contact& contact) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
+    if (core.commitToRead) return false;
     if (core.isInterrupted()) return false;
     core.alertOnWrite();
     ConstString name;
@@ -677,7 +696,7 @@ bool Port::addOutput(const Contact& contact) {
  * write something to the port
  */
 bool Port::write(PortWriter& writer, PortWriter *callback) const {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     if (core.isInterrupted()) return false;
     core.alertOnWrite();
     bool result = false;
@@ -701,7 +720,7 @@ bool Port::write(PortWriter& writer, PortWriter *callback) const {
  */
 bool Port::write(PortWriter& writer, PortReader& reader,
                  PortWriter *callback) const {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     if (core.isInterrupted()) return false;
     core.alertOnRpc();
     core.alertOnWrite();
@@ -723,7 +742,7 @@ bool Port::write(PortWriter& writer, PortReader& reader,
  * read something from the port
  */
 bool Port::read(PortReader& reader, bool willReply) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     if (willReply) core.alertOnRpc();
     core.alertOnRead();
     if (core.isInterrupted()) return false;
@@ -733,12 +752,12 @@ bool Port::read(PortReader& reader, bool willReply) {
 
 
 bool Port::reply(PortWriter& writer) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     return core.reply(writer,false,core.isInterrupted());
 }
 
 bool Port::replyAndDrop(PortWriter& writer) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     return core.reply(writer,true,core.isInterrupted());
 }
 
@@ -750,62 +769,62 @@ bool Port::replyAndDrop(PortWriter& writer) {
 //}
 
 void Port::setReader(PortReader& reader) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.alertOnRead();
     core.configReader(reader);
 }
 
 void Port::setReaderCreator(PortReaderCreator& creator) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.alertOnRead();
     core.configReadCreator(creator);
 }
 
 
 void Port::enableBackgroundWrite(bool backgroundFlag) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.configWaitAfterSend(!backgroundFlag);
 }
 
 
 bool Port::isWriting() {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     return core.isWriting();
 }
 
 
 
 bool Port::setEnvelope(PortWriter& envelope) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     return core.setEnvelope(envelope);
 }
 
 
 bool Port::getEnvelope(PortReader& envelope) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     return core.getEnvelope(envelope);
 }
 
 int Port::getInputCount() {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.alertOnRead();
     return core.getInputCount();
 }
 
 int Port::getOutputCount() {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.alertOnWrite();
     return core.getOutputCount();
 }
 
 void Port::getReport(PortReport& reporter) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.describe(reporter);
 }
 
 
 void Port::setReporter(PortReport& reporter) {
-    PortCoreAdapter& core = HELPER(implementation);
+    PortCoreAdapter& core = IMPL();
     core.setReportCallback(&reporter);
 }
 
@@ -822,56 +841,68 @@ void Port::setAdminMode(bool adminMode) {
 
 
 #define SET_FLAG(implementation,mask,val) \
-  HELPER(implementation).setFlags((HELPER(implementation).getFlags() & \
+  IMPL().setFlags((IMPL().getFlags() & \
   (~mask)) + (val?mask:0))
 
 void Port::setInputMode(bool expectInput) {
     if (expectInput==false) {
-        HELPER(implementation).setWriteOnly();
+        IMPL().setWriteOnly();
     }
     SET_FLAG(implementation,PORTCORE_IS_INPUT,expectInput);
 }
 
 void Port::setOutputMode(bool expectOutput) {
     if (expectOutput==false) {
-        HELPER(implementation).setReadOnly();
+        IMPL().setReadOnly();
     }
     SET_FLAG(implementation,PORTCORE_IS_OUTPUT,expectOutput);
 }
 
 void Port::setRpcMode(bool expectRpc) {
     if (expectRpc==true) {
-        HELPER(implementation).setRpc();
+        IMPL().setRpc();
     }
     SET_FLAG(implementation,PORTCORE_IS_RPC,expectRpc);
 }
 
 bool Port::setTimeout(float timeout) {
-    HELPER(implementation).setTimeout(timeout);
+    IMPL().setTimeout(timeout);
     return true;
 }
 
 void Port::setVerbosity(int level) {
-    HELPER(implementation).setVerbosity(level);
+    IMPL().setVerbosity(level);
 }
 
 int Port::getVerbosity() {
-    return HELPER(implementation).getVerbosity();
+    return IMPL().getVerbosity();
 }
 
 Type Port::getType() {
-    return HELPER(implementation).getType();
+    return IMPL().getType();
 }
 
 void Port::promiseType(const Type& typ) {
-    HELPER(implementation).promiseType(typ);
+    IMPL().promiseType(typ);
 }
 
 Property *Port::acquireProperties(bool readOnly) {
-    return HELPER(implementation).acquireProperties(readOnly);
+    return IMPL().acquireProperties(readOnly);
 }
 
 void Port::releaseProperties(Property *prop) {
-    HELPER(implementation).releaseProperties(prop);
+    IMPL().releaseProperties(prop);
+}
+
+void Port::includeNodeInName(bool flag) {
+    IMPL().includeNodeInName(flag);
+}
+
+bool Port::sharedOpen(Port& port) {
+    close();
+    if (owned) delete ((PortCoreAdapter*)implementation);
+    implementation = port.implementation;
+    owned = false;
+    return true;
 }
 
