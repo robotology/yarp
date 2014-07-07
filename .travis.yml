@@ -1,0 +1,5 @@
+language: cpp
+compiler:
+  - gcc
+  - clang
+script: cmake -DSKIP_ACE=TRUE && make && make test
