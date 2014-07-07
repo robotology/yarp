@@ -50,6 +50,7 @@ public:
      */
     BufferedPort() {
         T example;
+        attached = false;
         port.promiseType(example.getType());
         port.enableBackgroundWrite(true);
         interrupted = false;
@@ -59,6 +60,7 @@ public:
      * Wrap an existing unbuffered port.
      */
     BufferedPort(Port& port) {
+        attached = false;
         sharedOpen(port);
         interrupted = false;
     }
@@ -73,15 +75,13 @@ public:
 
     // documentation provided in Contactable
     virtual bool open(const ConstString& name) {
-        reader.attach(port);
-        writer.attach(port);
+        attachIfNeeded();
         return port.open(name);
     }
 
     // documentation provided in Contactable
     virtual bool open(const Contact& contact, bool registerName = true) {
-        reader.attach(port);
-        writer.attach(port);
+        attachIfNeeded();
         return port.open(contact,registerName);
     }
 
@@ -105,6 +105,7 @@ public:
         port.close();
         reader.detach();
         writer.detach();
+        attached = false;
     }
 
     // documentation provided in Contactable
@@ -212,6 +213,7 @@ public:
      *
      */
     void setStrict(bool strict=true) {
+        attachIfNeeded();
         reader.setStrict(strict);
     }
 
@@ -244,10 +246,12 @@ public:
     }
 
     void setReplier(PortReader& reader) {
+        attachIfNeeded();
         this->reader.setReplier(reader);
     }
 
     void setReader(PortReader& reader) {
+        attachIfNeeded();
         setReplier(reader);
     }
 
@@ -264,6 +268,7 @@ public:
      * available.
      */
     void useCallback(TypedReaderCallback<T>& callback) {
+        attachIfNeeded();
         reader.useCallback(callback);
     }
 
@@ -272,10 +277,12 @@ public:
      * to be informed about data as it arrives
      */
     void useCallback() {
+        attachIfNeeded();
         reader.useCallback(*this);
     }
 
     void disableCallback() {
+        attachIfNeeded();
         reader.disableCallback();
     }
 
@@ -328,6 +335,7 @@ public:
 
     // documented in TypedReader
     virtual void setTargetPeriod(double period) {
+        attachIfNeeded();
         reader.setTargetPeriod(period);
     }
 
@@ -369,6 +377,7 @@ private:
     Port port;
     PortReaderBuffer<T> reader;
     bool interrupted;
+    bool attached;
 
     // forbid this
     BufferedPort(const BufferedPort& alt) {
@@ -379,11 +388,20 @@ private:
         return *this;
     }
 
+    void attachIfNeeded() {
+        if (!attached) {
+            reader.attach(port);
+            writer.attach(port);
+            attached = true;
+        }
+    }
+
     bool sharedOpen(Port& port) {
         bool ok = this->port.sharedOpen(port);
         if (!ok) return false;
         reader.attach(port);
         writer.attach(port);
+        attached = true;
         return true;
     }
 };

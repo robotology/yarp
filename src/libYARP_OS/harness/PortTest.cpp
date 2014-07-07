@@ -218,6 +218,19 @@ public:
     }
 };
 
+class DataPort : public BufferedPort<Bottle> {
+public:
+    int ct;
+
+    DataPort() {
+        ct = 0;
+    }
+    
+    virtual void onRead(Bottle& b) {
+        ct++;
+     }
+};
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
@@ -1258,6 +1271,26 @@ public:
         }
     }
 
+    virtual void testBufferedPortCallback() {
+        report(0,"checking BufferedPort callback...");
+        DataPort pin;
+        pin.useCallback();
+        BufferedPort<Bottle> pout;
+        pout.open("/out");
+        pin.open("/in");
+        Network::connect("/out","/in");
+        Network::sync("/out");
+        Network::sync("/in");
+        Bottle& msg = pout.prepare();
+        msg.clear();
+        msg.addInt(42);
+        pout.write();
+        pout.waitForWrite();
+        pout.close();
+        pin.close();
+        checkEqual(pin.ct,1,"callback happened");
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1306,6 +1339,8 @@ public:
         testInterruptInputReaderBuf();
         testInterruptInputNoBuf();
         testInterruptWithBadReader();
+
+        testBufferedPortCallback();
 
         NetworkBase::setLocalMode(false);
     }
