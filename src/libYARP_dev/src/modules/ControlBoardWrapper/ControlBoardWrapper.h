@@ -1006,7 +1006,7 @@ public:
         int j_wrap = 0;         // index of the wrapper joint
 
         int nDev = device.subdevices.size();
-        for(unsigned int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
+        for(int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
         {
             int subIndex=device.lut[j_wrap].deviceEntry;
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -3726,7 +3726,7 @@ public:
         std::cout<< "New setControlMode for joint " << std::endl;
 
         int nDev = device.subdevices.size();
-        for(unsigned int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
+        for(int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
         {
             int subIndex=device.lut[j_wrap].deviceEntry;
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
@@ -4094,7 +4094,6 @@ public:
         }
 
 //        std::cout << " CBW: getInteractionModes GROUP" << std::endl;
-        yarp::os::Vocab v;
         // Create a map of joints for each subDevice
         int subIndex = 0;
         for(int j=0; j<n_joints; j++)

@@ -2746,6 +2746,7 @@ public:
         c.body.size(1);
         c.body[0] = v;
         command_buffer.write(writeStrict);
+        return true;
     }
 
     bool setRefOutputs(const double *v)
@@ -2793,6 +2794,8 @@ public:
             getTimeStamp(response, lastStamp);
             return true;
         }
+        else
+            return false;
     }
 
     /**
@@ -2821,7 +2824,10 @@ public:
 
             getTimeStamp(response, lastStamp);
             return true;
-        }    }
+        }
+        else
+            return false;
+    }
 
     /**
      * Get the last reference sent using the setOutputs function

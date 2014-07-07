@@ -1122,7 +1122,6 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
     case VOCAB_GET:
     {
         yarp::os::Bottle *jointList;
-        yarp::os::Bottle *modeList;
 
         switch (cmd.get(2).asVocab())
         {
@@ -1502,9 +1501,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
         printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
 
-    if(cmd.size() < 2)
-        ok = false;
-    else
+    if(cmd.size() >= 2)
     {
         switch (cmd.get(1).asVocab())
         {
@@ -2647,9 +2644,10 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
     else
         response.addVocab(VOCAB_OK);
 
-    // fprintf(stderr, "--> [%X] done ret %d\n",self, ok);
+    // fprintf(stderr, "--> [%X] done ret %d\n",self, ok);    
+    }
+
     return ok;
-  }
 }
 
 bool CommandsHelper::initialize()
