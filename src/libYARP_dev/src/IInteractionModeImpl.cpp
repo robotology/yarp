@@ -77,7 +77,7 @@ bool ImplementInteractionMode::uninitialize()
 
 bool ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::InteractionModeEnum* mode)
 {
-    int j = castToMapper(helper)->toUser(axis);
+    int j = castToMapper(helper)->toHw(axis);
     return iInteraction->getInteractionModeRaw(j, mode);
 }
 
