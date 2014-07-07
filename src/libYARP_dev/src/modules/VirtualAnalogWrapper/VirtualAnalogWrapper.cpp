@@ -289,7 +289,7 @@ bool VirtualAnalogWrapper::perform_first_check(int elems)
 void VirtualAnalogWrapper::run()
 {
     yarp::os::Bottle *pTorques;
-
+    bool sendLastValueBeforeTimeout = false;
     while (!Thread::isStopping())
     {
         pTorques=mPortInputTorques.read(false);
@@ -297,6 +297,7 @@ void VirtualAnalogWrapper::run()
 
         if (pTorques)
         {
+            sendLastValueBeforeTimeout = false;
             mMutex.wait();
 
             lastRecv=Time::now();
@@ -356,13 +357,13 @@ void VirtualAnalogWrapper::run()
         else
         {
             // sending rate from wholeBody is 10ms, if nothing is got now, wait that much time
-            yarp::os::Time::delay(0.01);
+            yarp::os::Time::delay(0.001);
         }
 
-        if (lastRecv+0.1 < timeNow)
+        if ((lastRecv+0.050 < timeNow) && (!sendLastValueBeforeTimeout))
         {
-            /* If 100ms have passed since the last received message, reset values.
-             * Sending time will be 10ms due to the delay above (else case).
+            /* If 50ms have passed since the last received message, reset values.
+             * Sending time will be 1ms due to the delay above (else case).
              */
             for (int d=0; d<mNSubdevs; ++d)
             {
@@ -372,6 +373,7 @@ void VirtualAnalogWrapper::run()
 //                Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.
 //                status=IAnalogSensor::AS_TIMEOUT;
             }
+            sendLastValueBeforeTimeout = true;
         }
     }
 }
