@@ -2741,6 +2741,7 @@ public:
         // in streaming port only SET command can be sent, so it is implicit
         c.head.addVocab(VOCAB_OPENLOOP_INTERFACE);
         c.head.addVocab(VOCAB_OPENLOOP_REF_OUTPUT);
+        c.head.addInt(j);
 
         c.body.clear();
         c.body.size(1);
