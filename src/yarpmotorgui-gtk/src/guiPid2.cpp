@@ -503,7 +503,9 @@ void guiPid2::guiPid2(void *button, void* data)
   double stiff_min=0;
   double damp_min=0;
   double off_min=0;
-  double offset_val=0;
+  double impedance_offset_val=0;
+  double openloop_reference=0;
+  double openloop_current_pwm=0;
   double debug_param [8];
   for (int i=0; i<8; i++) debug_param[i] =0;
 
@@ -511,10 +513,16 @@ void guiPid2::guiPid2(void *button, void* data)
   iTrq->getTorqueRange(*joint, &off_min, &off_max);
 
   iPid->getPid(*joint, &myPosPid);
+  yarp::os::Time::delay(0.005);
   iTrq->getTorquePid(*joint, &myTrqPid);
   iTrq->getBemfParam(*joint, &bemfGain);
+  yarp::os::Time::delay(0.005);
   iImp->getImpedance(*joint, &stiff_val, &damp_val);
-  iImp->getImpedanceOffset(*joint, &offset_val);
+  iImp->getImpedanceOffset(*joint, &impedance_offset_val);
+  yarp::os::Time::delay(0.005);
+  iOpl->getRefOutput(*joint,&openloop_reference);
+  iOpl->getOutput(*joint, &openloop_current_pwm);
+
   if (iDbg != 0)
   {
     iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
@@ -784,10 +792,10 @@ void guiPid2::guiPid2(void *button, void* data)
 
   //offset
   imp_offEntry = gtk_entry_new();
-  displayPidValue(offset_val, note_pag3, imp_offEntry, 0, 140, "Current Joint Force off");
+  displayPidValue(impedance_offset_val, note_pag3, imp_offEntry, 0, 140, "Current Joint Force off");
   //offset desired
   imp_offDes   =  gtk_entry_new();
-  changePidValue(offset_val, note_pag3, imp_offDes, 180, 140, "Desired Joint Force off");
+  changePidValue(impedance_offset_val, note_pag3, imp_offDes, 180, 140, "Desired Joint Force off");
   //offset limits
   imp_offMax   =  gtk_entry_new();
   displayPidValue(off_max, note_pag3, imp_offMax, 330, 140, "Max", true);
@@ -796,13 +804,13 @@ void guiPid2::guiPid2(void *button, void* data)
 
   //offset
   opl_koEntry = gtk_entry_new();
-  displayPidValue((int)offset_val, note_pag6, opl_koEntry, 0, 0, "Current openloop value");
+  displayPidValue((int)openloop_reference, note_pag6, opl_koEntry, 0, 0, "Current openloop value");
   //offset desired
   opl_koDes   =  gtk_entry_new();
-  changePidValue((int)offset_val, note_pag6, opl_koDes, 120, 0, "Desired openloop value");
+  changePidValue((int)openloop_reference, note_pag6, opl_koDes, 120, 0, "Desired openloop value");
   //offset current reading
   opl_koDisplay   =  gtk_entry_new();
-  displayPidValue((int)offset_val, note_pag6, opl_koDisplay, 50, 90, "Current measured PWM");
+  displayPidValue((int)openloop_current_pwm, note_pag6, opl_koDisplay, 50, 90, "Current measured PWM");
 
   //Send buttons
   button_Pos_Send = gtk_button_new_with_mnemonic ("Send");
