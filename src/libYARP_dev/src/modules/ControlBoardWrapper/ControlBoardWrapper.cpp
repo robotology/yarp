@@ -398,7 +398,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                 case VOCAB_CM_CONTROL_MODE:
                 {
                     int axis = cmd.get(3).asInt();
-                    std::cerr << "got VOCAB_CM_CONTROL_MODE " << std::endl;
+//                    std::cerr << "got VOCAB_CM_CONTROL_MODE " << std::endl;
                     if(iMode2)
                         *ok = iMode2->setControlMode(axis, cmd.get(4).asVocab());
                     else
@@ -411,7 +411,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_CM_CONTROL_MODE_GROUP:
                 {
-                    std::cerr << "got VOCAB_CM_CONTROL_MODE_GROUP" << std::endl;
+//                    std::cerr << "got VOCAB_CM_CONTROL_MODE_GROUP " << cmd.toString() << std::endl;
 
                     int n_joints = cmd.get(3).asInt();
                     Bottle& jList = *(cmd.get(4).asList());
@@ -424,7 +424,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
                         js[i] = jList.get(i).asInt();
                     }
 
-                    Bottle& modeList = response.addList();
+                    Bottle& modeList = *(cmd.get(5).asList());
                     for(int i=0; i<n_joints; i++)
                     {
                         modes[i] = modeList.get(i).asVocab();
@@ -438,7 +438,7 @@ void CommandsHelper::handleControlModeMsg(const yarp::os::Bottle& cmd,
 
                 case VOCAB_CM_CONTROL_MODES:
                 {
-                    std::cerr << "got VOCAB_CM_CONTROL_MODES"  << std::endl;
+//                    std::cerr << "got VOCAB_CM_CONTROL_MODES"  << std::endl;
                     yarp::os::Bottle *modeList;
                     modeList  = cmd.get(3).asList();
 
