@@ -65,6 +65,7 @@ namespace guiPid2
 
     static GtkWidget *opl_koDes = NULL;
     static GtkWidget *opl_koEntry = NULL;
+    static GtkWidget *opl_koDisplay = NULL;
 
     static GtkWidget *trq_kpDes = NULL;
     static GtkWidget *trq_kdDes = NULL;

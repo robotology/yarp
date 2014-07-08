@@ -141,17 +141,23 @@ void guiPid2::send_pos_pid (GtkButton *button, Pid *pid)
 void guiPid2::send_opl_pid (GtkButton *button, Pid *pid)
 {
   char buffer[40];
-  double offset = 0;
+  double set_ref_offset = 0;
+  double get_ref_offset = 0;
+  double get_cur_offset = 0;
 
-  offset = atoi(gtk_entry_get_text((GtkEntry*) opl_koDes));
+  set_ref_offset = atoi(gtk_entry_get_text((GtkEntry*) opl_koDes));
+  iOpl->setRefOutput(*joint, set_ref_offset);
 
-  iOpl->setRefOutput(*joint, offset);
-  yarp::os::Time::delay(0.020); //beware: here we are reading the real PWM output, not the reference
-  iOpl->getOutput(*joint, &offset);
+  yarp::os::Time::delay(0.010);
+  iOpl->getRefOutput(*joint, &get_ref_offset);  //This is the reference reference
+  yarp::os::Time::delay(0.010);
+  iOpl->getOutput   (*joint, &get_cur_offset);  //This is the reak PWM output
 
-  sprintf(buffer, "%d", (int) offset);
+  sprintf(buffer, "%d", (int) get_ref_offset);
   gtk_entry_set_text((GtkEntry*) opl_koEntry,  buffer);
 
+  sprintf(buffer, "%d", (int) get_cur_offset);
+  gtk_entry_set_text((GtkEntry*) opl_koDisplay,  buffer);
 }
 
 //*********************************************************************************
@@ -331,7 +337,7 @@ void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, 
   {
     gtk_fixed_put    (GTK_FIXED(inv), frame, posX+0, posY);
     gtk_fixed_put    (GTK_FIXED(inv), entry, posX+30, posY+30);
-    gtk_widget_set_size_request     (frame, 130, 60);
+    gtk_widget_set_size_request     (frame, 140, 60);
     gtk_widget_set_size_request     (entry, 60, 20);
   }
   else
@@ -579,49 +585,49 @@ void guiPid2::guiPid2(void *button, void* data)
   displayPidValue((int) debug_param[0], note_pag4, dbg_debug0Entry, 0, 0, "Current Debug0");
   //debug_param0 desired
   dbg_debug0Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[0], note_pag4, dbg_debug0Des, 110, 0, "Desired Debug0");
+  changePidValue((int) debug_param[0], note_pag4, dbg_debug0Des, 120, 0, "Desired Debug0");
   //debug_param1
   dbg_debug1Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[1], note_pag4, dbg_debug1Entry, 0, 70, "Current Debug1");
   //debug_param1 desired
   dbg_debug1Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[1], note_pag4, dbg_debug1Des, 110, 70, "Desired Debug1");
+  changePidValue((int) debug_param[1], note_pag4, dbg_debug1Des, 120, 70, "Desired Debug1");
   //debug_param2
   dbg_debug2Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[2], note_pag4, dbg_debug2Entry, 0, 140, "Current debug2");
   //debug_param2 desired
   dbg_debug2Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[2], note_pag4, dbg_debug2Des, 110, 140, "Desired debug2");
+  changePidValue((int) debug_param[2], note_pag4, dbg_debug2Des, 120, 140, "Desired debug2");
   //debug_param3
   dbg_debug3Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[3], note_pag4, dbg_debug3Entry, 0, 210, "Current debug3\nbEMF shift factor");
   //debug_param3 desired
   dbg_debug3Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[3], note_pag4, dbg_debug3Des, 110, 210, "Desired debug3\nbEMF shift factor");
+  changePidValue((int) debug_param[3], note_pag4, dbg_debug3Des, 120, 210, "Desired debug3\nbEMF shift factor");
   //debug_param4
   dbg_debug4Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[4], note_pag4, dbg_debug4Entry, 0, 280, "Current Debug4\nbEMF gain");
   //debug_param4 desired
   dbg_debug4Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[4], note_pag4, dbg_debug4Des, 110, 280, "Desired Debug4\nbEMF gain");
+  changePidValue((int) debug_param[4], note_pag4, dbg_debug4Des, 120, 280, "Desired Debug4\nbEMF gain");
   //debug_param5
   dbg_debug5Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[5], note_pag4, dbg_debug5Entry, 0, 350, "Current Debug5\nfilt freq(mHz)");
   //debug_param5 desired
   dbg_debug5Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[5], note_pag4, dbg_debug5Des, 110, 350, "Desired Debug5\nfilt freq(mHz)");
+  changePidValue((int) debug_param[5], note_pag4, dbg_debug5Des, 120, 350, "Desired Debug5\nfilt freq(mHz)");
   //debug_param6
   dbg_debug6Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[6], note_pag4, dbg_debug6Entry, 0, 420, "Current debug6");
   //debug_param6 desired
   dbg_debug6Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[6], note_pag4, dbg_debug6Des, 110, 420, "Desired debug6");
+  changePidValue((int) debug_param[6], note_pag4, dbg_debug6Des, 120, 420, "Desired debug6");
   //debug_param7
   dbg_debug7Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[7], note_pag4, dbg_debug7Entry, 0, 490, "Current debug7\nspeed damping (torque)");
   //debug_param7 desired
   dbg_debug7Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[7], note_pag4, dbg_debug7Des, 110, 490, "Desired debug7\nspeed damping (torque)");
+  changePidValue((int) debug_param[7], note_pag4, dbg_debug7Des, 120, 490, "Desired debug7\nspeed damping (torque)");
 
   // ------ POSITION CONTROL ------
   //kp
@@ -629,56 +635,56 @@ void guiPid2::guiPid2(void *button, void* data)
   displayPidValue((int) myPosPid.kp, note_pag1, pos_kpEntry, 0, 0, "Current Pos Kp");
   //kp desired
   pos_kpDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.kp, note_pag1, pos_kpDes, 110, 0, "Desired Pos Kp");
+  changePidValue((int) myPosPid.kp, note_pag1, pos_kpDes, 120, 0, "Desired Pos Kp");
   //kd
   pos_kdEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.kd, note_pag1, pos_kdEntry, 0, 70, "Current Pos Kd");
   //kd desired
   pos_kdDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.kd, note_pag1, pos_kdDes, 110, 70, "Desired Pos Kd");
+  changePidValue((int) myPosPid.kd, note_pag1, pos_kdDes, 120, 70, "Desired Pos Kd");
   //ki
   pos_kiEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.ki, note_pag1, pos_kiEntry, 0, 140, "Current Pos Ki");
   //ki desired
   pos_kiDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.ki, note_pag1, pos_kiDes, 110, 140, "Desired Pos Ki");
+  changePidValue((int) myPosPid.ki, note_pag1, pos_kiDes, 120, 140, "Desired Pos Ki");
   //scale
   pos_scaleEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.scale, note_pag1, pos_scaleEntry, 0, 210, "Current Pos shift");
   //scale desired
   pos_scaleDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.scale, note_pag1, pos_scaleDes, 110, 210, "Desired Pos shift");
+  changePidValue((int) myPosPid.scale, note_pag1, pos_scaleDes, 120, 210, "Desired Pos shift");
   //offset
   pos_offsetEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.offset, note_pag1, pos_offsetEntry, 0, 280, "Current Pos offset");
   //offset desired
   pos_offsetDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.offset, note_pag1, pos_offsetDes, 110, 280, "Desired Pos offset");
+  changePidValue((int) myPosPid.offset, note_pag1, pos_offsetDes, 120, 280, "Desired Pos offset");
   //positive stiction
   pos_posStictionEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionEntry, 280, 280, "Current Pos Stiction offset");
   //positive stiction desired
   pos_posStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionDes, 390, 280, "Desired Pos Stiction offset");
+  changePidValue((int) myPosPid.stiction_up_val, note_pag1, pos_posStictionDes, 400, 280, "Desired Pos Stiction offset");
   //negative stiction
   pos_negStictionEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionEntry, 280, 350, "Current Neg Stiction offset");
   //negative stiction desired
   pos_negStictionDes   =  gtk_entry_new();
-  changePidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionDes, 390, 350, "Desired Neg Stiction offset");
+  changePidValue((int) myPosPid.stiction_down_val, note_pag1, pos_negStictionDes, 400, 350, "Desired Neg Stiction offset");
 
   //PWM limit
   pos_PWM_limitEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitEntry, 0, 350, "Current PWM limit");
   //PWM limit desired
   pos_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 110, 350, "Desired PWM limit");
+  changePidValue((int) myPosPid.max_output, note_pag1, pos_PWM_limitDes, 120, 350, "Desired PWM limit");
   //INTEGRAL limit
   pos_INT_limitEntry   =  gtk_entry_new();
   displayPidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitEntry, 0, 420, "Current Integral limit");
   //INTEGRAL limit desired
   pos_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitDes, 110, 420, "Desired Integral limit");
+  changePidValue((int) myPosPid.max_int, note_pag1, pos_INT_limitDes, 120, 420, "Desired Integral limit");
 
     // ------ TORQUE CONTROL ------
   //kp
@@ -686,70 +692,70 @@ void guiPid2::guiPid2(void *button, void* data)
   displayPidValue((int) myTrqPid.kp, note_pag2, trq_kpEntry, 0, 0, "Current Trq Kp");
   //kp desired
   trq_kpDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kp, note_pag2, trq_kpDes, 110, 0, "Desired Trq Kp");
+  changePidValue((int) myTrqPid.kp, note_pag2, trq_kpDes, 120, 0, "Desired Trq Kp");
   //kd
   trq_kdEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.kd, note_pag2, trq_kdEntry, 0, 70, "Current Trq Kd");
   //kd desired
   trq_kdDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kd, note_pag2, trq_kdDes, 110, 70, "Desired Trq Kd");
+  changePidValue((int) myTrqPid.kd, note_pag2, trq_kdDes, 120, 70, "Desired Trq Kd");
   //ki
   trq_kiEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.ki, note_pag2, trq_kiEntry, 0, 140, "Current Trq Ki");
   //ki desired
   trq_kiDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.ki, note_pag2, trq_kiDes, 110, 140, "Desired Trq Ki");
+  changePidValue((int) myTrqPid.ki, note_pag2, trq_kiDes, 120, 140, "Desired Trq Ki");
   
   //kff
   trq_kffEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.kff, note_pag2, trq_kffEntry, 280, 0, "Current Trq Kff");
   //kff desired
   trq_kffDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.kff, note_pag2, trq_kffDes, 390, 0, "Desired Trq Kff");
+  changePidValue((int) myTrqPid.kff, note_pag2, trq_kffDes, 400, 0, "Desired Trq Kff");
   //kbemf
   trq_kbemfEntry   =  gtk_entry_new();
   displayPidValue((int) bemfGain, note_pag2, trq_kbemfEntry, 280, 70, "Current Trq Kbemf");
   //kbemf desired
   trq_kbemfDes   =  gtk_entry_new();
-  changePidValue((int) bemfGain, note_pag2, trq_kbemfDes, 390, 70, "Desired Trq Kbemf");
+  changePidValue((int) bemfGain, note_pag2, trq_kbemfDes, 400, 70, "Desired Trq Kbemf");
 
   //scale
   trq_scaleEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.scale, note_pag2, trq_scaleEntry, 0, 210, "Current Trq shift");
   //scale desired
   trq_scaleDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.scale, note_pag2, trq_scaleDes, 110, 210, "Desired Trq shift");
+  changePidValue((int) myTrqPid.scale, note_pag2, trq_scaleDes, 120, 210, "Desired Trq shift");
   //offset
   trq_offsetEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.offset, note_pag2, trq_offsetEntry, 0, 280, "Current Trq offset");
   //offset desired
   trq_offsetDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.offset, note_pag2, trq_offsetDes, 110, 280, "Desired Trq offset");
+  changePidValue((int) myTrqPid.offset, note_pag2, trq_offsetDes, 120, 280, "Desired Trq offset");
  //positive stiction
   trq_upStictionEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionEntry, 280, 280, "Current Pos Stiction offset");
   //positive stiction desired
   trq_upStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionDes, 390, 280, "Desired Pos Stiction offset");
+  changePidValue((int) myTrqPid.stiction_up_val, note_pag2, trq_upStictionDes, 400, 280, "Desired Pos Stiction offset");
   //negative stiction
   trq_downStictionEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionEntry, 280, 350, "Current Neg Stiction offset");
   //negative stiction desired
   trq_downStictionDes   =  gtk_entry_new();
-  changePidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionDes, 390, 350, "Desired Neg Stiction offset");
+  changePidValue((int) myTrqPid.stiction_down_val, note_pag2, trq_downStictionDes, 400, 350, "Desired Neg Stiction offset");
 
   //PWM limit
   trq_PWM_limitEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitEntry, 0, 350, "Current PWM limit");
   //PWM limit desired
   trq_PWM_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 110, 350, "Desired PWM limit");
+  changePidValue((int) myTrqPid.max_output, note_pag2, trq_PWM_limitDes, 120, 350, "Desired PWM limit");
   //INTEGRAL limit
   trq_INT_limitEntry   =  gtk_entry_new();
   displayPidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitEntry, 0, 420, "Current Integral limit");
   //INTEGRAL limit desired
   trq_INT_limitDes=  gtk_entry_new();
-  changePidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 110, 420, "Desired Integral limit");
+  changePidValue((int) myTrqPid.max_int, note_pag2, trq_INT_limitDes, 120, 420, "Desired Integral limit");
 
   // ------ IMPEDANCE CONTROL ------
   //stiffness
@@ -793,7 +799,10 @@ void guiPid2::guiPid2(void *button, void* data)
   displayPidValue((int)offset_val, note_pag6, opl_koEntry, 0, 0, "Current openloop value");
   //offset desired
   opl_koDes   =  gtk_entry_new();
-  changePidValue((int)offset_val, note_pag6, opl_koDes, 180, 0, "Desired openloop value");
+  changePidValue((int)offset_val, note_pag6, opl_koDes, 120, 0, "Desired openloop value");
+  //offset current reading
+  opl_koDisplay   =  gtk_entry_new();
+  displayPidValue((int)offset_val, note_pag6, opl_koDisplay, 50, 90, "Current measured PWM");
 
   //Send buttons
   button_Pos_Send = gtk_button_new_with_mnemonic ("Send");
