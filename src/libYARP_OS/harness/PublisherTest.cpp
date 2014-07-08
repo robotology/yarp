@@ -118,11 +118,66 @@ public:
         }
     }
 
+    void testUnbufferedPublisher() {
+        report(0,"Unbuffered Publisher test");
+
+        Node n("/node");
+        Publisher<Bottle> p("/very_interesting_topic");
+
+        {
+            Node n2("/node2");
+            BufferedPort<Bottle> pin;
+            pin.setReadOnly();
+            pin.setStrict();
+            pin.open("very_interesting_topic");
+
+            waitForOutput(p,10);
+            
+            Bottle b;
+            b.addInt(42);
+            p.write(b);
+
+            Bottle *bin = pin.read();
+            checkTrue(bin!=NULL,"message arrived");
+            if (!bin) return;
+            checkEqual(bin->get(0).asInt(),42,"message is correct");
+        }
+    }
+
+    void testUnbufferedSubscriber() {
+        report(0,"Unbuffereded Subscriber test");
+
+        Node n("/node");
+        BufferedPort<Bottle> pout;
+        pout.setWriteOnly();
+        pout.open("very_interesting_topic");
+
+        {           
+            Node n2("/node2");
+            Subscriber<Bottle> pin("/very_interesting_topic");
+
+            waitForOutput(pout,10);
+            
+            Bottle& b = pout.prepare();
+            b.clear();
+            b.addInt(42);
+            pout.write();
+
+            Bottle bin;
+            bin.addInt(99);
+            pin.read(bin);
+            pout.waitForWrite();
+            checkEqual(bin.get(0).asInt(),42,"message is correct");
+        }
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         testPublisherToBufferedPort();
         testBufferedPortToSubscriber();
         testPublisherToSubscriber();
+        testUnbufferedPublisher();
+        testUnbufferedSubscriber();
         Network::setLocalMode(false);
     }
 };
