@@ -2813,7 +2813,7 @@ public:
         // both iOpenLoop and iPid getOutputs will pass here and use the VOCAB_OPENLOOP_INTERFACE
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
+//        cmd.addVocab(VOCAB_OPENLOOP_INTERFACE);
         cmd.addVocab(VOCAB_OUTPUT);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
@@ -2821,7 +2821,7 @@ public:
         if (CHECK_FAIL(ok, response))
         {
             // ok
-            *out = response.get(0).asDouble();
+            *out = response.get(2).asDouble();
 
             getTimeStamp(response, lastStamp);
             return true;
