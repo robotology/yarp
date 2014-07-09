@@ -60,7 +60,39 @@ namespace yarp {
  * outgoing connections.  Data coming from incoming connections is
  * directed to the handler set with setReadHandler().  Calls to send()
  * result in data being sent to all the outgoing connections.
- * This class is used to construct yarp::os::Port and yarp::os::BufferedPort.
+ * This class is used to construct yarp::os::Port, which in turn is
+ * used to construct yarp::os::BufferedPort and several other port
+ * variants.
+ *
+ * The port's phase in its lifecycle is reflected by flags as follows.
+ *
+ * ### PortCore()
+ * The port is constructed in an inactive, dormant state.
+ * All flags off initially.
+ *   * -listening -running -starting -closing -finished -finishing
+ *
+ * ### listen()
+ * A call to listen puts the port on the network
+ *   * +listening (server now exists)
+ *
+ * ### start()
+ * A call to start creates a thread to serve network requests
+ *   * +starting
+ *   * +running   (set in server thread)
+ *   * -starting  (set in server thread)
+ *
+ * ### close()
+ * A call to close winds everything down
+ *   * +finishing
+ *   * +closing
+ *   * +finished  (set in server thread)
+ *   * -listening -running -starting -closing -finished -finishing
+ *
+ * It is possible to create a port without creating a server for
+ * it, by using manualStart() rather than start().  Such ports
+ * don't get registered and are not reachable on the network, but
+ * can interact with other ports.
+ *
  */
 class YARP_OS_impl_API yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader {
 public:
@@ -396,35 +428,43 @@ private:
 private:
 
     // main internal PortCore state and operations
-    SemaphoreImpl stateMutex;
-    SemaphoreImpl packetMutex;
-    SemaphoreImpl connectionChange;
-    Logger log;
-    Face *face;
-    String name;
-    yarp::os::Contact address;
-    yarp::os::PortReader *reader;
-    yarp::os::PortReaderCreator *readableCreator;
-    yarp::os::PortReport *eventReporter;
-    bool listening, running, starting, closing, finished, autoHandshake;
-    bool finishing;
-    bool waitBeforeSend, waitAfterSend;
-    bool controlRegistration;
-    bool interruptible;
-    bool interrupted;
-    bool manual;
-    int events;
-    int connectionListeners;
-    int inputCount, outputCount, dataOutputCount;
-    int flags;
-    int verbosity;
-    bool logNeeded;
-    PortCorePackets packets;
-    String envelope;
-    float timeout;
-    int counter;
-    yarp::os::Property *prop;
-    yarp::os::Contactable *contactable;
+    SemaphoreImpl stateMutex;       ///< control access to essential port state
+    SemaphoreImpl packetMutex;      ///< control access to message cache
+    SemaphoreImpl connectionChange; ///< signal changes in connections
+    Logger log;  ///< message logger
+    Face *face;  ///< network server
+    String name; ///< name of port
+    yarp::os::Contact address;    ///< network address of port
+    yarp::os::PortReader *reader; ///< where to send read events
+    yarp::os::PortReaderCreator *readableCreator; ///< factory for readers
+    yarp::os::PortReport *eventReporter; ///< where to send general events
+    bool listening; ///< is the port server listening on the network?
+    bool running;   ///< is the port server thread running?
+    bool starting;  ///< is the port in its startup phase?
+    bool closing;   ///< is the port in its closing phase?
+    bool finished;  ///< is the port server thread finished running?
+    bool autoHandshake;  ///< should we automatically negotiate carriers for connections
+    bool finishing; ///< is the port server thread trying to finish?
+    bool waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
+    bool waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
+    bool controlRegistration;  ///< should the port unregister its name when shutting down?
+    bool interruptible;  ///< is the port in an interruptible state?
+    bool interrupted;    ///< is the port interrupted?
+    bool manual;    ///< is the port operating without a server?
+    int events;     ///< count of events that have occurred on the port
+    int connectionListeners;  ///< how many threads need notification of connection changes
+    int inputCount; ///< how many input connections do we have
+    int outputCount;///< how many output connections do we have
+    int dataOutputCount; ///< how many regular data output connections do we have
+    int flags;      ///< binary flags encoding restrictions on port
+    int verbosity;  ///< threshold on what warnings or debug messages are shown
+    bool logNeeded; ///< port needs to monitor message content
+    PortCorePackets packets; ///< a pool for tracking messages currently being sent
+    String envelope;///< user-defined wrapping data
+    float timeout;  ///< a timeout to apply to all network operations
+    int counter;    ///< port-unique ids for connections
+    yarp::os::Property *prop;  ///< optional unstructured properties associated with port
+    yarp::os::Contactable *contactable;  ///< user-facing object that contains this PortCore
 
     void closeMain();
 
