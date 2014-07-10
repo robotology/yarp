@@ -64,6 +64,9 @@ namespace yarp {
  * used to construct yarp::os::BufferedPort and several other port
  * variants.
  *
+ * Phases
+ * ------
+ *
  * The port's phase in its lifecycle is reflected by flags as follows.
  *
  * ### PortCore()
@@ -92,6 +95,15 @@ namespace yarp {
  * it, by using manualStart() rather than start().  Such ports
  * don't get registered and are not reachable on the network, but
  * can interact with other ports.
+ *
+ * Connections
+ * -----------
+ *
+ * The port's connections are stored in the PortCore#units list.  Input
+ * and output connections are stored in the same list, and a lot
+ * of the code does not distinguish them.  Outgoing messages on the 
+ * connections are tracked using the PortCore#packets list.  A single
+ * message may be associated with many connections.
  *
  */
 class YARP_OS_impl_API yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader {
@@ -399,35 +411,8 @@ public:
 
 private:
 
-    // internal maintenance of sub units
-
-    PlatformVector<PortCoreUnit *> units;
-
-    // only called in "finished" phase
-    void closeUnits();
-
-    // called anytime, garbage collects terminated units
-    void cleanUnits(bool blocking = true);
-
-    // only called by the manager
-    void reapUnits();
-
-    // only called in "running" phase
-    void addInput(InputProtocol *ip);
-
-    bool removeUnit(const Route& route, bool synch = false,
-                    bool *except = NULL);
-
-    int getNextIndex() {
-        int result = counter;
-        counter++;
-        if (counter<0) counter = 1;
-        return result;
-    }
-
-private:
-
     // main internal PortCore state and operations
+    PlatformVector<PortCoreUnit *> units;  ///< list of connections
     SemaphoreImpl stateMutex;       ///< control access to essential port state
     SemaphoreImpl packetMutex;      ///< control access to message cache
     SemaphoreImpl connectionChange; ///< signal changes in connections
@@ -469,6 +454,28 @@ private:
     void closeMain();
 
     bool isUnit(const Route& route, int index);
+
+    // only called in "finished" phase
+    void closeUnits();
+
+    // called anytime, garbage collects terminated units
+    void cleanUnits(bool blocking = true);
+
+    // only called by the manager
+    void reapUnits();
+
+    // only called in "running" phase
+    void addInput(InputProtocol *ip);
+
+    bool removeUnit(const Route& route, bool synch = false,
+                    bool *except = NULL);
+
+    int getNextIndex() {
+        int result = counter;
+        counter++;
+        if (counter<0) counter = 1;
+        return result;
+    }
 };
 
 #endif

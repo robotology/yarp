@@ -39,21 +39,16 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
 
-/*
-  Phases:
-  dormant
-  listening
-  running
-*/
-
 PortCore::~PortCore() {
-    closeMain();
+    close();
 }
 
 
 bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     bool success = false;
 
+    // If we're using ACE, we really need to have it initialized before
+    // this point.
     if (!NetworkBase::initialized()) {
         YARP_ERROR(log, "YARP not initialized; create a yarp::os::Network object before using ports");
         return false;
@@ -61,13 +56,21 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
 
     YTRACE("PortCore::listen");
 
-    // try to enter listening phase
     stateMutex.wait();
+
+    // This method assumes we are not already on the network.
+    // We can assume this because it is not a user-facing class,
+    // and we carefully never call this method again without
+    // calling close().
     YARP_ASSERT(listening==false);
     YARP_ASSERT(running==false);
     YARP_ASSERT(closing==false);
     YARP_ASSERT(finished==false);
     YARP_ASSERT(face==NULL);
+
+    // Try to put the port on the network, using the user-supplied
+    // address (which may be incomplete).  You can think of
+    // this as getting a server socket.
     this->address = address;
     setName(address.getRegName());
     if (timeout>0) {
@@ -75,14 +78,15 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
     }
     face = Carriers::listen(this->address);
 
+    // We failed, abort.
     if (face==NULL) {
         stateMutex.post();
         return false;
     }
 
+    // Update our address if it was incomplete.
     if (this->address.getPort()<=0) {
         this->address = face->getLocalAddress();
-        //printf("Updating address to %s\n", this->address.toString().c_str());
         if (this->address.getRegName()=="...") {
             this->address = this->address.addName(String("/") + this->address.getHost() + "_" + NetType::toString(this->address.getPort()));
             setName(this->address.getRegName());
@@ -90,24 +94,15 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
 
     }
 
-    bool announce = false;
-    if (face!=NULL) {
-        listening = true;
-        success = true;
-        announce = shouldAnnounce;
-    }
-
-    if (success) {
-        log.setPrefix(address.getRegName().c_str());
-    }
-
+    // Move into listening phase
+    listening = true;
+    log.setPrefix(address.getRegName().c_str());
     stateMutex.post();
 
-    if (announce) {
+    // Now that we are on the network, we can let the name server know this.
+    if (shouldAnnounce) {
         if (!(NetworkBase::getLocalMode()&&NetworkBase::getQueryBypass()==NULL)) {
-            //ConstString serverName = NetworkBase::getNameServerName();
             ConstString portName = address.getRegName().c_str();
-            //if (serverName!=portName) {
             Bottle cmd, reply;
             cmd.addString("announce");
             cmd.addString(portName.c_str());
@@ -116,20 +111,20 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce) {
         }
     }
 
-    // we have either entered listening phase (face=valid, listening=true)
-    // or remained in dormant phase
-
-    return success;
+    // Success!
+    return true;
 }
 
 
 void PortCore::setReadHandler(PortReader& reader) {
+    // Don't even try to do this when the port is hot, it'll burn you
     YARP_ASSERT(running==false);
     YARP_ASSERT(this->reader==NULL);
     this->reader = &reader;
 }
 
 void PortCore::setReadCreator(PortReaderCreator& creator) {
+    // Don't even try to do this when the port is hot, it'll burn you
     YARP_ASSERT(running==false);
     YARP_ASSERT(this->readableCreator==NULL);
     this->readableCreator = &creator;
@@ -140,29 +135,44 @@ void PortCore::setReadCreator(PortReaderCreator& creator) {
 void PortCore::run() {
     YTRACE("PortCore::run");
 
-    // enter running phase
+    // This is the server thread for the port.  We listen on
+    // the network and handle any incoming connections.
+    // We don't touch those connections, just shove them
+    // in a list and move on.  It is important that this
+    // thread doesn't make a connecting client wait just
+    // because some other client is slow.
+
+    // We assume that listen() has succeeded and that
+    // start() has been called.
     YARP_ASSERT(listening==true);
     YARP_ASSERT(running==false);
     YARP_ASSERT(closing==false);
     YARP_ASSERT(finished==false);
-    YARP_ASSERT(starting==true); // can only run if called from start
+    YARP_ASSERT(starting==true);
+
+    // Enter running phase
     running = true;
     starting = false;
+
+    // This post is matched with a wait in start()
     stateMutex.post();
 
     YTRACE("PortCore::run running");
 
-    // main loop
+    // Enter main loop, where we block on incoming connections.
+    // The loop is exited when PortCore#closing is set.  One last
+    // connection will be needed to de-block this thread and ensure
+    // that it checks PortCore#closing.
     bool shouldStop = false;
     while (!shouldStop) {
 
-        // block and wait for an event
+        // Block and wait for a connection
         InputProtocol *ip = NULL;
         ip = face->read();
 
-        // got an event, but before processing it, we check whether
-        // we should shut down
         stateMutex.wait();
+
+        // Attach the connection to this port and update its timeout setting
         if (ip!=NULL) {
             ip->attachPort(contactable);
             YARP_DEBUG(log,"PortCore received something");
@@ -170,12 +180,19 @@ void PortCore::run() {
                 ip->setTimeout(timeout);
             }
         }
+
+        // Check whether we should shut down
         shouldStop |= closing;
+
+        // Increment a global count of connection events
         events++;
+
         stateMutex.post();
 
+        // It we are not shutting down, spin off the connection.
+        // It starts life as an input connection (although it
+        // may later morph into an output).
         if (!shouldStop) {
-            // process event
             if (ip!=NULL) {
                 addInput(ip);
             }
@@ -183,13 +200,19 @@ void PortCore::run() {
             ip = NULL;
         }
 
-        // the event normally gets handed off.  If it remains, delete it.
+        // If the connection wasn't spun off, just shut it down.
         if (ip!=NULL) {
             ip->close();
             delete ip;
             ip = NULL;
         }
+
+        // Remove any defunct connections.
         reapUnits();
+
+        // Notify anyone listening for connection changes.
+        // This should be using a condition variable once we have them,
+        // this is not solid TODO
         stateMutex.wait();
         for (int i=0; i<connectionListeners; i++) {
             connectionChange.post();
@@ -200,7 +223,7 @@ void PortCore::run() {
 
     YTRACE("PortCore::run closing");
 
-    // closing phase
+    // The server thread is shutting down.
     stateMutex.wait();
     for (int i=0; i<connectionListeners; i++) {
         connectionChange.post();
@@ -213,6 +236,7 @@ void PortCore::run() {
 
 void PortCore::close() {
     closeMain();
+
     if (prop) {
         delete prop;
         prop = NULL;
@@ -223,21 +247,28 @@ void PortCore::close() {
 bool PortCore::start() {
     YTRACE("PortCore::start");
 
+    // This wait will, on success, be matched by a post in run()
     stateMutex.wait();
+
+    // We assume that listen() has been called.
     YARP_ASSERT(listening==true);
     YARP_ASSERT(running==false);
     YARP_ASSERT(starting==false);
     YARP_ASSERT(finished==false);
     YARP_ASSERT(closing==false);
     starting = true;
+
+    // Start the server thread.
     bool started = ThreadImpl::start();
     if (!started) {
         // run() won't be happening
         stateMutex.post();
     } else {
-        // wait for run() to change state
+        // run() will signal stateMutex once it is active
         stateMutex.wait();
         YARP_ASSERT(running==true);
+
+        // release stateMutex for its normal task of controlling access to state
         stateMutex.post();
     }
     return started;
@@ -245,6 +276,12 @@ bool PortCore::start() {
 
 
 bool PortCore::manualStart(const char *sourceName) {
+    // This variant of start() does not create a server thread.
+    // That is appropriate if we never expect to receive incoming
+    // connections for any reason.  No incoming data, no requests
+    // for state information, no requests to change connections,
+    // nothing.  We set the port's name to something fake, and
+    // act like nothing is wrong.
     interruptible = false;
     manual = true;
     setName(sourceName);
@@ -253,29 +290,42 @@ bool PortCore::manualStart(const char *sourceName) {
 
 
 void PortCore::resume() {
+    // We are no longer interrupted.
     interrupted = false;
 }
 
 void PortCore::interrupt() {
+    // This is a no-op if there is no server thread.
     if (!listening) return;
+
+    // Ignore any future incoming data
     interrupted = true;
-    if (interruptible) {
-        stateMutex.wait();
-        // Check if someone is waiting for input.  If so, wake them up
-        if (reader!=NULL) {
-            // send empty data out
-            YARP_DEBUG(log,"sending interrupt message to listener");
-            StreamConnectionReader sbr;
-            reader->read(sbr);
-        }
-        stateMutex.post();
+
+    // What about data that is already coming in?
+    // If interruptible is not currently set, no worries, the user
+    // did not or will not end up blocked on a read.
+    if (!interruptible) return;
+
+    // Since interruptible is set, it is possible that the user
+    // may be blocked on a read.  We send an empty message, 
+    // which is reserved for giving blocking readers a chance to
+    // update their state.
+    stateMutex.wait();
+    if (reader!=NULL) {
+        YARP_DEBUG(log,"sending update-state message to listener");
+        StreamConnectionReader sbr;
+        reader->read(sbr);
     }
+    stateMutex.post();
 }
 
 
 void PortCore::closeMain() {
     YTRACE("PortCore::closeMain");
+
     stateMutex.wait();
+
+    // We may not have anything to do.
     if (finishing||!(running||manual)) {
         YTRACE("PortCore::closeMainNothingToDo");
         stateMutex.post();
@@ -284,11 +334,17 @@ void PortCore::closeMain() {
 
     YTRACE("PortCore::closeMainCentral");
 
-    // Politely pre-disconnect inputs
+    // Move into official "finishing" phase.
     finishing = true;
     YARP_DEBUG(log,"now preparing to shut down port");
     stateMutex.post();
 
+    // Start disconnecting inputs.  We ask the other side of the 
+    // connection to do this, so it won't come as a surprise.
+    // The details of how disconnection works vary by carrier.
+    // While we are doing this, the server thread may be still running.
+    // This is because other ports may need to talk to the server
+    // to organize details of how a connection should be broken down.
     bool done = false;
     String prevName = "";
     while (!done) {
@@ -334,7 +390,8 @@ void PortCore::closeMain() {
         }
     }
 
-    // politely remove all outputs
+    // Start disconnecting outputs.  We don't negotiate with the
+    // other side, we just break them down.
     done = false;
     while (!done) {
         done = true;
@@ -362,13 +419,15 @@ void PortCore::closeMain() {
     bool stopRunning = running;
     stateMutex.post();
 
+    // If the server thread is still running, we need to bring it down.
     if (stopRunning) {
-        // we need to stop the thread
+        // Let the server thread know we no longer need its services.
         stateMutex.wait();
         closing = true;
         stateMutex.post();
 
-        // wake it up
+        // Wake up the server thread the only way we can, by sending
+        // a message to it.  Then join it, it is done.
         if (!manual) {
             OutputProtocol *op = face->write(address);
             if (op!=NULL) {
@@ -378,14 +437,16 @@ void PortCore::closeMain() {
             join();
         }
 
-        // should be finished
+        // We should be finished now.
         stateMutex.wait();
         YARP_ASSERT(finished==true);
         stateMutex.post();
 
-        // should down units - this is the only time it is valid to do this
+        // Clean up our connection list. We couldn't do this earlier,
+        // because the server thread was running.
         closeUnits();
 
+        // Reset some state flags.
         stateMutex.wait();
         finished = false;
         closing = false;
@@ -393,9 +454,8 @@ void PortCore::closeMain() {
         stateMutex.post();
     }
 
-    // there should be no other threads at this point
-    // can stop listening
-
+    // There should be no other threads at this point and we 
+    // can stop listening on the network.
     if (listening) {
         YARP_ASSERT(face!=NULL);
         face->close();
@@ -404,15 +464,17 @@ void PortCore::closeMain() {
         listening = false;
     }
 
-    // Check if someone is waiting for input.  If so, wake them up
+    // Check if the client is waiting for input.  If so, wake them up
+    // with the bad news.  An empty message signifies a request to
+    // check the port state.
     if (reader!=NULL) {
-        // send empty data out
         YARP_DEBUG(log,"sending end-of-port message to listener");
         StreamConnectionReader sbr;
         reader->read(sbr);
         reader = NULL;
     }
 
+    // We may need to unregister the port with the name server.
     if (stopRunning) {
         String name = getName();
         if (name!=String("")) {
@@ -422,9 +484,10 @@ void PortCore::closeMain() {
         }
     }
 
+    // We are done with the finishing process.
     finishing = false;
 
-    // fresh as a daisy
+    // We are fresh as a daisy.
     YARP_ASSERT(listening==false);
     YARP_ASSERT(running==false);
     YARP_ASSERT(starting==false);
@@ -436,6 +499,7 @@ void PortCore::closeMain() {
 
 
 int PortCore::getEventCount() {
+    // How many times has the server thread spun off a connection.
     stateMutex.wait();
     int ct = events;
     stateMutex.post();
@@ -444,13 +508,14 @@ int PortCore::getEventCount() {
 
 
 void PortCore::closeUnits() {
+    // Empty the PortCore#units list. This is only possible when
+    // the server thread is finished.
     stateMutex.wait();
-    YARP_ASSERT(finished==true); // this is the only valid phase for this
+    YARP_ASSERT(finished==true);
     stateMutex.post();
 
-    // in the "finished" phase, nobody else touches the units,
-    // so we can go ahead and shut them down and delete them
-
+    // In the "finished" phase, nobody else touches the units,
+    // so we can go ahead and shut them down and delete them.
     for (unsigned int i=0; i<units.size(); i++) {
         PortCoreUnit *unit = units[i];
         if (unit!=NULL) {
@@ -463,10 +528,14 @@ void PortCore::closeUnits() {
             units[i] = NULL;
         }
     }
+
+    // Get rid of all our nulls.  Done!
     units.clear();
 }
 
 void PortCore::reapUnits() {
+    // Connections that should be shut down get tagged as "doomed" 
+    // but aren't otherwise touched until it is safe to do so.
     stateMutex.wait();
     if (!finished) {
         for (unsigned int i=0; i<units.size(); i++) {
@@ -479,7 +548,6 @@ void PortCore::reapUnits() {
                     unit->close();
                     YARP_DEBUG(log,String("Closed connection ") +
                                s);
-                    YARP_DEBUG(log,"closed REAPING a unit");
                     unit->join();
                     YARP_DEBUG(log,String("Joined thread of connection ") +
                                s);
@@ -492,18 +560,26 @@ void PortCore::reapUnits() {
 }
 
 void PortCore::cleanUnits(bool blocking) {
+    // We will remove any connections that have finished operating from
+    // the PortCore#units list.
+
+    // Depending on urgency, either wait for a safe time to do this
+    // or skip if unsafe.
     if (blocking) {
         stateMutex.wait();
     } else {
         blocking = stateMutex.check();
         if (!blocking) return;
     }
+
+    // We will update our connection counts as a by-product.
     int updatedInputCount = 0;
     int updatedOutputCount = 0;
     int updatedDataOutputCount = 0;
     YARP_DEBUG(log,"/ routine check of connections to this port begins");
     if (!finished) {
 
+        // First, we delete and null out any defunct entries in the list.
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
             if (unit!=NULL) {
@@ -517,6 +593,7 @@ void PortCore::cleanUnits(bool blocking) {
                     units[i] = NULL;
                     YARP_DEBUG(log,String("|   removed connection ") + con);
                 } else {
+                    // No work to do except updating connection counts.
                     if (!unit->isDoomed()) {
                         if (unit->isOutput()) {
                             updatedOutputCount++;
@@ -533,6 +610,10 @@ void PortCore::cleanUnits(bool blocking) {
                 }
             }
         }
+
+        // Now we do some awkward shuffling (list class may be from ACE
+        // or STL, if ACE it is quite limited).  We move the nulls to 
+        // the end of the list ...
         unsigned int rem = 0;
         for (unsigned int i2=0; i2<units.size(); i2++) {
             if (units[i2]!=NULL) {
@@ -543,11 +624,14 @@ void PortCore::cleanUnits(bool blocking) {
                 rem++;
             }
         }
+
+        // ... Now we get rid of the null entries
         for (unsigned int i3=0; i3<units.size()-rem; i3++) {
             units.pop_back();
         }
-        //YMSG(("cleanUnits: there are now %d units\n", units.size()));
     }
+
+    // Finalize the connection counts.
     dataOutputCount = updatedDataOutputCount;
     stateMutex.post();
     packetMutex.wait();
@@ -558,8 +642,12 @@ void PortCore::cleanUnits(bool blocking) {
 }
 
 
-// only called by manager, in running phase
 void PortCore::addInput(InputProtocol *ip) {
+    // This method is only called by the server thread in its running phase.
+    // It wraps up a network connection as a unit and adds it to
+    // PortCore#units.  The unit will have its own thread associated
+    // with it.
+
     YARP_ASSERT(ip!=NULL);
     stateMutex.wait();
     PortCoreUnit *unit = new PortCoreInputUnit(*this,
@@ -567,7 +655,6 @@ void PortCore::addInput(InputProtocol *ip) {
                                                ip,autoHandshake,false);
     YARP_ASSERT(unit!=NULL);
     unit->start();
-
     units.push_back(unit);
     YMSG(("there are now %d units\n", (int)units.size()));
     stateMutex.post();
@@ -575,24 +662,27 @@ void PortCore::addInput(InputProtocol *ip) {
 
 
 void PortCore::addOutput(OutputProtocol *op) {
-    YARP_ASSERT(op!=NULL);
+    // This method is called from threads associated with input
+    // connections.
+    // It wraps up a network connection as a unit and adds it to
+    // PortCore#units.  The unit will start with its own thread
+    // associated with it, but that thread will be very short-lived
+    // if the port is not configured to do background writes.
 
+    YARP_ASSERT(op!=NULL);
     stateMutex.wait();
     if (!finished) {
         PortCoreUnit *unit = new PortCoreOutputUnit(*this,getNextIndex(),op);
         YARP_ASSERT(unit!=NULL);
-
         unit->start();
-
         units.push_back(unit);
-        //YMSG(("there are now %d units\n", units.size()));
     }
     stateMutex.post();
 }
 
 
 bool PortCore::isUnit(const Route& route, int index) {
-    // not mutexed
+    // Check if a connection with a specified route (and optional ID) is present
     bool needReap = false;
     if (!finished) {
         for (unsigned int i=0; i<units.size(); i++) {
@@ -615,7 +705,6 @@ bool PortCore::isUnit(const Route& route, int index) {
                         ok = ok && (route.getCarrierName()==alt.getCarrierName());
                     }
                 }
-
                 if (ok) {
                     needReap = true;
                     break;
@@ -623,15 +712,13 @@ bool PortCore::isUnit(const Route& route, int index) {
             }
         }
     }
-    //printf("Reporting %s as %d\n", route.toString().c_str(), needReap);
     return needReap;
 }
 
 
 bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
-    // a request to remove a unit
-    // this is the trickiest case, since any thread could here
-    // affect any other thread
+    // This is a request to remove a connection.  It could arise from any
+    // input thread.
 
     if (except!=NULL) {
         YARP_DEBUG(log,String("asked to remove connection in the way of ") + route.toString());
@@ -640,9 +727,9 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
         YARP_DEBUG(log,String("asked to remove connection ") + route.toString());
     }
 
+    // Scan for units that match the given route, and collect their IDs.
+    // Mark them as "doomed".
     PlatformVector<int> removals;
-
-    // how about waking up the manager to do this?
     stateMutex.wait();
     bool needReap = false;
     if (!finished) {
@@ -675,26 +762,24 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
                     removals.push_back(unit->getIndex());
                     unit->setDoomed();
                     needReap = true;
-                    if (route.getToName()!="*") {
-                        // not needed any more
-                        //Companion::disconnectInput(alt.getToName().c_str(),
-                        //                           alt.getFromName().c_str(),
-                        //                           true);
-                        break;
-                    }
                 }
             }
         }
     }
     stateMutex.post();
+
+    // If we find one or more matches, we need to do some work.
+    // We've marked those matches as "doomed" so they'll get cleared
+    // up eventually, but we can speed this up by waking up the
+    // server thread.
     if (needReap) {
         YARP_DEBUG(log,"one or more connections need prodding to die");
-        // death will happen in due course; we can speed it up a bit
-        // by waking up the grim reaper
 
         if (manual) {
+            // No server thread, no problems.
             reapUnits();
         } else {
+            // Send a blank message to make up server thread.
             OutputProtocol *op = face->write(address);
             if (op!=NULL) {
                 op->close();
@@ -703,12 +788,11 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
             YARP_DEBUG(log,"sent message to prod connection death");
             
             if (synch) {
+                // Wait for connections to be cleaned up.
                 YARP_DEBUG(log,"synchronizing with connection death");
-                // wait until disconnection process is complete
                 bool cont = false;
                 do {
                     stateMutex.wait();
-                    //cont = isUnit(route);
                     for (int i=0; i<(int)removals.size(); i++) {
                         cont = isUnit(route,removals[i]);
                         if (cont) break;
