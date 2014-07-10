@@ -1,0 +1,32 @@
+version: 1.0.{build}
+
+clone_folder: c:\projects\yarp
+
+install:
+  - cmd: cinst wget -x86
+  - cmd: cinst 7zip.commandline -x86
+  - cmd: dir c:\projects
+  #- cmd: wget -q http://download.dre.vanderbilt.edu/previous_versions/ACE-6.2.0.zip -O c:\ace.zip
+  #- cmd: 7z x c:\ace.zip -oc:\ -y > nul
+  - cmd: wget -q http://www.icub.org/download/packages/windows/msvc11/ACE_6.1.0-bin-msvc11.zip -O c:\ace.zip
+  - cmd: 7z x c:\ace.zip -oc:\ -y > nul
+
+build:
+
+build_script:
+  - set ACE_ROOT=c:\ACE_wrappers
+  #- cd c:\ACE_wrappers\ace
+  #- copy config-win32.h config.h
+  #- msbuild /m /p:Configuration=Release /p:Platform="Win32" ace_vc10.sln
+  - cd c:\projects\yarp
+  - md build
+  - cd build
+  - cmake -G"Visual Studio 11" ..
+  - msbuild /m /p:Configuration=Release /p:Platform="Win32" yarp.sln
+  - set PATH=%PATH%;c:\ACE_wrappers\bin;c:\projects\yarp\build\bin\Release;c:\projects\yarp\build\lib\Release
+  - dir c:\ACE_wrappers\bin
+  - dir c:\projects\yarp\build\bin
+  - dir c:\projects\yarp\build\lib
+  - dir c:\projects\yarp\build\bin\Release
+  - dir c:\projects\yarp\build\lib\Release
+  - cmake --build . --target RUN_TESTS --config Release

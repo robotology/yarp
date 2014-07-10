@@ -54,5 +54,11 @@ requirements than the LGPL:
  + libYARP_math uses the GNU Scientific Library, under the GPL.
  + devices urbtc, vfw, dimax_u2c have components that are under the GPL.
 
+Status
+------
 
+Linux [![Build Status](https://travis-ci.org/robotology/yarp.png?branch=master)](https://travis-ci.org/robotology/yarp)
+Windows [![Build status](https://ci.appveyor.com/api/projects/status/w3hnssrkf7ssbgok)](https://ci.appveyor.com/project/paulfitz/yarp) and [more](http://dashboard.icub.org/index.php?project=YARP)
+ 
+ 
 

@@ -197,7 +197,7 @@ public:
      *          position x,y,z [m].
      * \param od a 4-d vector which is filled with the actual
      *           orientation using axis-angle representation xa, ya,
-     *           za, theta ([m] and [rad]).
+     *           za, theta [m],[rad].
      * \param stamp the stamp of the encoders employed to compute the
      *              pose.
      * \return true/false on success/failure.
@@ -214,7 +214,7 @@ public:
      *         x,y,z [m] of the given link reference frame.
      * \param od a 4-d vector which is filled with the actual
      * orientation of the given link reference frame using axis-angle
-     * representation xa, ya, za, theta [m]/[rad].
+     * representation xa, ya, za, theta [m],[rad].
      * \param stamp the stamp of the encoders employed to compute the
      *              pose.
      * \return true/false on success/failure.
@@ -227,9 +227,9 @@ public:
      * Move the end-effector to a specified pose (position
      * and orientation) in cartesian space. [do not wait for reply]
      * \param xd a 3-d vector which contains the desired position
-     *           x,y,z
+     *           x,y,z [m].
      * \param od a 4-d vector which contains the desired orientation
-     * using axis-angle representation (xa, ya, za, theta).
+     * using axis-angle representation xa,ya,za,theta [m],[rad].
      * \param t set the trajectory duration time [s]. If t<=0
      *         (as by default) the current execution time is kept.
      * \return true/false on success/failure.
@@ -260,10 +260,13 @@ public:
      * \param xd a 3-d vector which contains the desired position
      *          x,y,z [m].
      * \param od a 4-d vector which contains the desired orientation
-     * using axis-angle representation (xa, ya, za, theta).
+     * using axis-angle representation xa,ya,za,theta [m],[rad].
      * \param t set the trajectory duration time [s]. If t<=0
      *         (as by default) the current execution time is kept.
-     * \return true/false on success/failure.
+     * \return true/false on success/failure. 
+     *  
+     * \note The reply is returned as soon as the controller has 
+     *       initiated the movement.
      */
     virtual bool goToPoseSync(const yarp::sig::Vector &xd,
                               const yarp::sig::Vector &od,
@@ -276,7 +279,10 @@ public:
      *          x,y,z [m].
      * \param t set the trajectory duration time [s]. If t<=0
      *         (as by default) the current execution time is kept.
-     * \return true/false on success/failure.
+     * \return true/false on success/failure. 
+     *  
+     * \note The reply is returned as soon as the controller has 
+     *       initiated the movement.
      */
     virtual bool goToPositionSync(const yarp::sig::Vector &xd,
                                   const double t = 0.0) = 0;
@@ -289,8 +295,8 @@ public:
      *          commanded xd.
      * \param odhat a 4-d vector which is filled with the actual
      *          desired orientation using axis-angle representation
-     *          xa, ya, za, theta [m]/[rad]; it may differ from the
-     *          commanded od.
+     *          xa,ya,za,theta [m],[rad]; it may differ from
+     *          the commanded od.
      * \param qdhat the joints configuration through which the
      *             couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
@@ -305,15 +311,15 @@ public:
      * \param xd a 3-d vector which contains the desired
      *          position x,y,z [m].
      * \param od a 4-d vector which contains the desired
-     *          orientation using axis-angle representation xa, ya,
-     *          za, theta [m]/[rad].
+     *          orientation using axis-angle representation xa,ya,
+     *          za,theta [m],[rad].
      * \param xdhat a 3-d vector which is filled with the final
      *          position x,y,z [m]; it may differ from the commanded
      *          xd.
      * \param odhat a 4-d vector which is filled with the final
-     *          orientation using axis-angle representation xa, ya,
-     *          za, theta [m]/[rad]; it may differ from the commanded
-     *          od.
+     *          orientation using axis-angle representation xa,ya,
+     *          za,theta [m],[rad]; it may differ from the
+     *          commanded od.
      * \param qdhat the joints configuration through which the
      *             couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
@@ -333,15 +339,15 @@ public:
      * \param xd a 3-d vector which contains the desired
      *          position x,y,z [m].
      * \param od a 4-d vector which contains the desired
-     *          orientation using axis-angle representation xa, ya,
-     *          za, theta [m]/[rad].
+     *          orientation using axis-angle representation xa,ya,
+     *          za,theta [m],[rad].
      * \param xdhat a 3-d vector which is filled with the final
      *          position x,y,z [m]; it may differ from the commanded
      *          xd.
      * \param odhat a 4-d vector which is filled with the final
-     *          orientation using axis-angle representation xa, ya,
-     *          za, theta [m]/[rad]; it may differ from the commanded
-     *          od.
+     *          orientation using axis-angle representation xa,ya,
+     *          za,theta [m],[rad]; it may differ from the
+     *          commanded od.
      * \param qdhat the joints configuration through which the
      *             couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
@@ -362,9 +368,9 @@ public:
      *          position x,y,z [m]; it may differ from the commanded
      *          xd.
      * \param odhat a 4-d vector which is filled with the final
-     *          orientation using axis-angle representation xa, ya,
-     *          za, theta [m]/[rad]; it may differ from the commanded
-     *          od.
+     *          orientation using axis-angle representation xa,ya,
+     *          za,theta [m],[rad]; it may differ from the
+     *          commanded od.
      * \param qdhat the joints configuration through which the
      *             couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
@@ -386,9 +392,9 @@ public:
      *          position x,y,z [m]; it may differ from the commanded
      *          xd.
      * \param odhat a 4-d vector which is filled with the final
-     *          orientation using axis-angle representation xa, ya,
-     *          za, theta [m]/[rad]; it may differ from the commanded
-     *          od.
+     *          orientation using axis-angle representation xa,ya,
+     *          za,theta [m],[rad]; it may differ from the
+     *          commanded od.
      * \param qdhat the joints configuration through which the
      *             couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.

@@ -31,6 +31,7 @@ template <class T>
 class yarp::os::Publisher : public AbstractContactable {
 public:
     using Contactable::open;
+    using AbstractContactable::write;
 
     /**
      *
