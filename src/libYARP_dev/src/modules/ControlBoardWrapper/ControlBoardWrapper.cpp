@@ -2386,7 +2386,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                             }
                             break;
 
-/*                        case VOCAB_MOTION_DONE_GROUP:
+                          case VOCAB_MOTION_DONE_GROUP:
                             {
                                 bool x = false;
                                 int len = cmd.get(2).asInt();
@@ -2403,7 +2403,7 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                 delete[] jointList;
                             }
                             break;
-*/
+
                         case VOCAB_MOTION_DONES:
                             {
                                 bool x = false;
