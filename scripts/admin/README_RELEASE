@@ -4,6 +4,14 @@
 
   http://wiki.icub.org/yarpdoc/download.html
 
+* Checkout latest master and make sure that there are no local modifications
+
+  git checkout -f master
+  git fetch origin
+  git reset --hard origin/master
+  git status 
+  (check that there are no uncommitted modifications or new files)
+
 * Check regression tests
 
 * Make sure that conf/YarpVersion.cmake is different to the latest
@@ -22,15 +30,22 @@
 
 * Update src/doc/download.dox
 
-* Commit and push current version:
-  git commit -m "YARP 2.3.21"
-  git push origin master
+* Commit :
+  git commit -a -m "YARP 2.3.21"
 
 * Tag:
-  git tag -a -m "yarp release 2.3.21" v2.3.21
+  git tag -a -m "YARP release 2.3.21" v2.3.21 HEAD
+
+* Further checks :
+  git log --oneline --graph --decorate origin/master...HEAD
+ (Check that the only commit is like "* xxxxxxx (tag: v2.3.21, HEAD, master) YARP 2.3.21)
+
+* Push your modifications
+  git push origin master
   git push origin v2.3.21
 
 * Build source packages:
   ./scripts/admin/make-source-package-svn yarp-2.3.21
 
 * Upload to sourceforge
+

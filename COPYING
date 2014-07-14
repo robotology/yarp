@@ -6,6 +6,7 @@ The list of authors for YARP (ordered by file count) is:
   Paul Fitzpatrick
   Lorenzo Natale
   Ali Paikan
+  iCub Facility, Istituto Italiano di Tecnologia
   Giorgio Metta
   Daniele E. Domenichelli
   Dr. Roland Bock
@@ -13,13 +14,14 @@ The list of authors for YARP (ordered by file count) is:
   Anne van Rossum
   Duarte Aragao
   Alessandro Scalzo
+  Alberto Cardellino
   Daniel Krieg
   Arjan Gijsberts
   Marco Randazzo
   Elena Ceseracciu
   Chris Morley
-  Alberto Cardellino
   Alexandre Bernardino
+  Istituto Italiano di Tecnologia
   Francesco Nori
   Renaud Detry
   Miguel Sarabia del Castillo
@@ -35,10 +37,11 @@ The list of authors for YARP (ordered by file count) is:
   Mike P. Blow
   Matteo Brunettini
   Lars Olsson
+  Istituto Italiano di Tecnologia (IIT)
   Gianluca Massera
   Free Software Foundation
-  Daniele Domenichelli
-  by Chris Morley
+  Francesco Romano
+  Chris Morley
   The gtkmm Development Team
   The goocanvasmm Development Team
   Stephen Hart
@@ -47,6 +50,7 @@ The list of authors for YARP (ordered by file count) is:
   Marco Randazo
   H. Nieuwenhuis
   Hatice Kose-Bagci
+  Francesco Giovannini
   Fabien Benureau
   Alexis Maldonado
 
@@ -54,6 +58,7 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Paul Fitzpatrick
   Daniele E. Domenichelli
   Lorenzo Natale
+  YARP Developers
   Ali Paikan
   Ugo Pattacini
   Alessandro Scalzo
@@ -61,13 +66,13 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Giacomo Spigler
   Giorgio Metta
   Marco Randazzo
+  Alberto Cardellino
   Alexandre Bernardino
   Duarte Aragao
-  Alberto Cardellino
-  Francesco Nori
   Konstantinos Theofilis
-  Andrea Del Prete
   Matteo Brunettini
+  Francesco Nori
+  Andrea Del Prete
   Arjan Gijsberts
   Carlos Beltran-Gonzalez
   Claudio Castellini
@@ -75,16 +80,23 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Jonas Ruesch
   Michael Bucko
   Vadim Tikhanoff
-  Paul Fitzpatrick
+  Mirko
+  Alessio Rocchi
+  Francesco Giovannini
+  Silvio Traversaro
   Bruno Nery
   Fabien Benureau
   Francesco Orabona
+  Francesco Romano
   Naeem Assif Mirza
-  Ze Ji
-  Enrico
-  Lorenzo Natale
-  Serena Ivaldi
+  Silvio Traversaro
   Valentina Gaggero
+  Ze Ji
+  francesco-romano
+  Enrico Mingo
+  Plinio Moreno
+  Serena Ivaldi
+  iCub Developers
 
 The list of people thanked in the ChangeLog (ordered by mention count) is:
   Lorenzo Natale
@@ -180,10 +192,9 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Zenon Mathews
 
 The list of copyright holders for YARP is:
-  Copyright 2001, 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013
+  Copyright 2001, 2002, 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014
   RobotCub Consortium (754 files)
-  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (264 files)
-  iCub Facility, Istituto Italiano di Tecnologia (94 files)
+  Istituto Italiano di Tecnologia (407 files)
   Dr. Roland Bock (35 files)
   Duarte Aragao (25 files)
   Giacomo Spigler (17 files)
@@ -201,14 +212,14 @@ The list of copyright holders for YARP is:
   Ze Ji (4 files)
   Jonas Ruesch (3 files)
   Marco Randazzo (3 files)
-  by Chris Morley (2 files)
+  Chris Morley (2 files)
   Eric Mislivec (2 files)
   Free Software Foundation (2 files)
   Freyr Magnusson (2 files)
-  Istituto Italiano di Tecnologia (IIT) (10 files)
   Lars Olsson (2 files)
   Matteo Brunettini (2 files)
   Mike P. Blow (2 files)
+  Francesco Giovannini (1 file)
   H. Nieuwenhuis (1 file)
   Lorenzo Natale (1 file)
   The goocanvasmm Development Team (1 file)
@@ -685,14 +696,6 @@ src/carriers/portmonitor_carrier/lua_swig.h
   Copyright: unknown
   CopyPolicy: unknown
 
-src/libYARP_dev/src/modules/AnalogWrapper/AnalogWrapper.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
-
-src/libYARP_dev/src/modules/AnalogWrapper/AnalogWrapper.h
-  Copyright: unknown
-  CopyPolicy: unknown
-
 src/libYARP_dev/src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
   Copyright: (C) 2009 RobotCub Consortium
   Authors: Lorenzo Natale
@@ -951,34 +954,6 @@ example/gtk/gtkdemo.cpp
 example/matlab/simulink/sfun_time.c
   Copyright: 2009 The MathWorks, Inc.
   CopyPolicy: 3-clause BSD
-
-example/ros/add_int_client_v1.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
-
-example/ros/CMakeLists.txt
-  Copyright: unknown
-  CopyPolicy: unknown
-
-example/ros/listener_v1.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
-
-example/ros/add_int_server_v1.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
-
-example/ros/add_int_client_v2.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
-
-example/ros/talker.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
-
-example/ros/listener_v2.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
 
 example/yayarpview/CImg.h
   Copyright: 2004 David Tschumperle

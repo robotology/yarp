@@ -1,3 +1,6 @@
+2014-07-14 Matteo Brunettini  <matteo.brunettini@iit.it>
+    * tagging version 2.3.63       
+
 2014-05-24 Ugo Pattacini <ugo.pattacini@iit.it>
     * yarp/src/libYARP_dev/src/include/yarp/dev/CartesianControl.h
     added methods to set/get pose priority
