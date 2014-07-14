@@ -812,141 +812,156 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
 }
 
 
-
-
-////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-//
-// PortManager interface
-//
-
-
 bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                          bool onlyIfNeeded) {
-    bool result = false;
+    YARP_DEBUG(log,String("asked to add output to ")+dest);
 
-    YARP_DEBUG(log,String("asked to add output to ")+
-               dest);
-
+    // Buffer to store text describing outcome (successful connection,
+    // or a failure).
     BufferedConnectionWriter bw(true);
 
+    // Look up the address we'll be connectioning to.
     Contact parts = Name(dest).toAddress();
     Contact contact = NetworkBase::queryName(parts.getRegName().c_str());
     Contact address = contact;
-    if (address.isValid()) {
-        // as a courtesy, remove any existing connections between
-        // source and destination
-        if (onlyIfNeeded) {
-            bool except = false;
-            removeUnit(Route(getName(),address.getRegName(),
-                             address.getCarrier()),true,&except);
-            if (except) {
-                // connection already present
-                YARP_DEBUG(log,String("output already present to ")+
-                           dest);
-                bw.appendLine(String("Desired connection already present from ") + getName() + " to " + dest);
-                return true;
-            }
-        } else {
-            removeUnit(Route(getName(),address.getRegName(),"*"),true);
+
+    // If we can't find it, say so and abort.
+    if (!address.isValid()) {
+        bw.appendLine(String("Do not know how to connect to ") + dest);
+        if(os!=NULL) bw.write(*os);
+        return false;
+    } 
+
+    // We clean all existing connections to the desired destination,
+    // optionally stopping if we find one with the right carrier.
+    if (onlyIfNeeded) {
+        // Remove any existing connections between source and destination
+        // with a different carrier.  If we find a connection already
+        // present with the correct carrier, then we are done.
+        bool except = false;
+        removeUnit(Route(getName(),address.getRegName(),
+                         address.getCarrier()),true,&except);
+        if (except) {
+            // Connection already present.
+            YARP_DEBUG(log,String("output already present to ")+
+                       dest);
+            bw.appendLine(String("Desired connection already present from ") + getName() + " to " + dest);
+            if(os!=NULL) bw.write(*os);
+            return true;
         }
+    } else {
+        // Remove any existing connections between source and destination.
+        removeUnit(Route(getName(),address.getRegName(),"*"),true);
+    }
 
-        ConstString aname = address.getRegName();
-        if (aname=="") aname = address.addCarrier("").toURI();
-        Route r = Route(getName(),aname,
-                        (parts.getCarrier()!="")?parts.getCarrier():
-                        address.getCarrier());
-        r = r.addToContact(contact);
-
-        bool allowed = true;
-
-        // apply any restrictions on the port
-        int f = getFlags();
-        bool allow_output = (f&PORTCORE_IS_OUTPUT);
-        bool rpc = (f&PORTCORE_IS_RPC);
-        Name name(r.getCarrierName() + String("://test"));
-        String mode = name.getCarrierModifier("log");
-        bool is_log = (mode!="");
-        String err = "";
-        if (!allow_output) {
-            if (!is_log) {
-                bool push = false;
-                Carrier *c = Carriers::getCarrierTemplate(r.getCarrierName());
-                if (c) {
-                    push = c->isPush();
-                }
-                if (push) {
-                    err = "Outputs not allowed";
-                    allowed = false;
-                }
+    // Set up a named route for this connection.
+    ConstString aname = address.getRegName();
+    if (aname=="") aname = address.addCarrier("").toURI();
+    Route r = Route(getName(),aname,
+                    (parts.getCarrier()!="")?parts.getCarrier():
+                    address.getCarrier());
+    r = r.addToContact(contact);
+    
+    // Check for any restrictions on the port.  Perhaps it can only
+    // read, or write.
+    bool allowed = true;
+    int f = getFlags();
+    bool allow_output = (f&PORTCORE_IS_OUTPUT);
+    bool rpc = (f&PORTCORE_IS_RPC);
+    Name name(r.getCarrierName() + String("://test"));
+    String mode = name.getCarrierModifier("log");
+    bool is_log = (mode!="");
+    String err = "";
+    if (!allow_output) {
+        if (!is_log) {
+            bool push = false;
+            Carrier *c = Carriers::getCarrierTemplate(r.getCarrierName());
+            if (c) {
+                push = c->isPush();
             }
-        } else if (rpc) {
-            if (dataOutputCount>=1 && !is_log) {
-                err = "RPC output already connected";
+            if (push) {
+                err = "Outputs not allowed";
                 allowed = false;
             }
         }
-
-        if (!allowed) {
-            bw.appendLine(err);
-        } else {
-            OutputProtocol *op = NULL;
-            if (timeout>0) {
-                address.setTimeout(timeout);
-            }
-            op = Carriers::connect(address);
-            if (op!=NULL) {
-                op->attachPort(contactable);
-                if (timeout>0) {
-                    op->setTimeout(timeout);
-                }
-
-                bool ok = op->open(r);
-                if (!ok) {
-                    YARP_DEBUG(log,"open route error");
-                    delete op;
-                    op = NULL;
-                }
-            }
-            if (op!=NULL) {
-                if (op->getConnection().isPush()) {
-                    addOutput(op);
-                } else {
-                    /* IP=OP */
-                    // reverse route
-                    op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
-                    InputProtocol *ip =  &(op->getInput());
-                    stateMutex.wait();
-                    if (!finished) {
-                        PortCoreUnit *unit = new PortCoreInputUnit(*this,
-                                                                   getNextIndex(),
-                                                                   ip,
-                                                                   true,
-                                                                   true);
-                        YARP_ASSERT(unit!=NULL);
-                        unit->start();
-                        units.push_back(unit);
-                    }
-                    stateMutex.post();
-                }
-                bw.appendLine(String("Added connection from ") + getName() + " to " + dest);
-                result = true;
-            } else {
-                bw.appendLine(String("Cannot connect to ") + dest);
-            }
+    } else if (rpc) {
+        if (dataOutputCount>=1 && !is_log) {
+            err = "RPC output already connected";
+            allowed = false;
         }
-    } else {
-        bw.appendLine(String("Do not know how to connect to ") + dest);
     }
 
-    if(os!=NULL) {
-        bw.write(*os);
+    // If we found a relevant restriction, abort.
+    if (!allowed) {
+        bw.appendLine(err);
+        if (os!=NULL) bw.write(*os);
+        return false;
     }
+
+    // Ok! We can go ahead and make a connection.
+    OutputProtocol *op = NULL;
+    if (timeout>0) {
+        address.setTimeout(timeout);
+    }
+    op = Carriers::connect(address);
+    if (op!=NULL) {
+        op->attachPort(contactable);
+        if (timeout>0) {
+            op->setTimeout(timeout);
+        }
+
+        bool ok = op->open(r);
+        if (!ok) {
+            YARP_DEBUG(log,"open route error");
+            delete op;
+            op = NULL;
+        }
+    }
+
+    // No connection, abort.
+    if (op==NULL) {
+        bw.appendLine(String("Cannot connect to ") + dest);
+        if (os!=NULL) bw.write(*os);
+        return false;
+    }
+
+    // Ok, we have a connection, now add it to PortCore#units
+    if (op->getConnection().isPush()) {
+        // This is the normal case
+        addOutput(op);
+    } else {
+        // This is the case for connections that are initiated
+        // in the opposite direction to native YARP connections.
+        // Native YARP has push connections, initiated by the
+        // sender.  HTTP and ROS have pull connections, initiated
+        // by the receiver.
+        // We invert the route, flip the protocol direction, and add.
+        op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+        InputProtocol *ip =  &(op->getInput());
+        stateMutex.wait();
+        if (!finished) {
+            PortCoreUnit *unit = new PortCoreInputUnit(*this,
+                                                       getNextIndex(),
+                                                       ip,
+                                                       true,
+                                                       true);
+            YARP_ASSERT(unit!=NULL);
+            unit->start();
+            units.push_back(unit);
+        }
+        stateMutex.post();
+    }
+
+    // Communicated the good news.
+    bw.appendLine(String("Added connection from ") + getName() + " to " + dest);
+    if (os!=NULL) bw.write(*os);
     cleanUnits();
-    return result;
+    return true;
 }
 
+
 void PortCore::removeOutput(const String& dest, void *id, OutputStream *os) {
+    // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route("*",dest,"*"),true)) {
         bw.appendLine(String("Removed connection from ") + getName() +
@@ -962,6 +977,7 @@ void PortCore::removeOutput(const String& dest, void *id, OutputStream *os) {
 }
 
 void PortCore::removeInput(const String& dest, void *id, OutputStream *os) {
+    // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route(dest,"*","*"),true)) {
         bw.appendLine(String("Removing connection from ") + dest + " to " +
@@ -979,15 +995,18 @@ void PortCore::removeInput(const String& dest, void *id, OutputStream *os) {
 void PortCore::describe(void *id, OutputStream *os) {
     cleanUnits();
 
+    // Buffer to store a human-readable description of the port's
+    // state.
     BufferedConnectionWriter bw(true);
 
     stateMutex.wait();
 
+    // Report name and address.
     bw.appendLine(String("This is ") + address.getRegName() + " at " +
                   address.toURI());
 
+    // Report outgoing connections.
     int oct = 0;
-    int ict = 0;
     for (unsigned int i=0; i<units.size(); i++) {
         PortCoreUnit *unit = units[i];
         if (unit!=NULL) {
@@ -1005,6 +1024,9 @@ void PortCore::describe(void *id, OutputStream *os) {
     if (oct<1) {
         bw.appendLine("There are no outgoing connections");
     }
+
+    // Report incoming connections.
+    int ict = 0;
     for (unsigned int i2=0; i2<units.size(); i2++) {
         PortCoreUnit *unit = units[i2];
         if (unit!=NULL) {
@@ -1027,6 +1049,7 @@ void PortCore::describe(void *id, OutputStream *os) {
 
     stateMutex.post();
 
+    // Send description across network, or print it.
     if (os!=NULL) {
         bw.write(*os);
     } else {
@@ -1042,6 +1065,7 @@ void PortCore::describe(PortReport& reporter) {
 
     stateMutex.wait();
 
+    // Report name and address of port.
     PortInfo baseInfo;
     baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
     ConstString portName = address.getRegName().c_str();
@@ -1049,8 +1073,8 @@ void PortCore::describe(PortReport& reporter) {
                         address.toURI()).c_str();
     reporter.report(baseInfo);
 
+    // Report outgoing connections.
     int oct = 0;
-    int ict = 0;
     for (unsigned int i=0; i<units.size(); i++) {
         PortCoreUnit *unit = units[i];
         if (unit!=NULL) {
@@ -1079,6 +1103,9 @@ void PortCore::describe(PortReport& reporter) {
         info.message = "There are no outgoing connections";
         reporter.report(info);
     }
+
+    // Report incoming connections.
+    int ict = 0;
     for (unsigned int i2=0; i2<units.size(); i2++) {
         PortCoreUnit *unit = units[i2];
         if (unit!=NULL) {
@@ -1122,10 +1149,10 @@ void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
 
 
 void PortCore::report(const PortInfo& info) {
-    // we are in the context of one of the input or output threads,
+    // We are in the context of one of the input or output threads,
     // so our contact with the PortCore must be absolutely minimal.
     //
-    // it is safe to pick up the address of the reporter if this is
+    // It is safe to pick up the address of the reporter if this is
     // kept constant over the lifetime of the input/output threads.
 
     if (eventReporter!=NULL) {
@@ -1138,26 +1165,25 @@ void PortCore::report(const PortInfo& info) {
 
 bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
     bool result = true;
-    // pass the data on out
 
-    // we are in the context of one of the input threads,
+    // We are in the context of one of the input threads,
     // so our contact with the PortCore must be absolutely minimal.
     //
-    // it is safe to pick up the address of the reader since this is
+    // It is safe to pick up the address of the reader since this is
     // constant over the lifetime of the input threads.
 
     if (this->reader!=NULL && !interrupted) {
-        interruptible = false; // no mutexing; user of interrupt() has to be
-                               // careful
+        interruptible = false; // No mutexing; user of interrupt() has to be
+                               // careful.
 
-        bool haveOutputs = (outputCount!=0); // no mutexing, but failure
-        // modes give fine behavior
+        bool haveOutputs = (outputCount!=0); // No mutexing, but failure
+                                             // modes are benign.
 
         if (logNeeded&&haveOutputs) {
             // Normally, yarp doesn't pay attention to the content of
             // messages received by the client.  Likewise, the content
             // of replies are not monitored.  However it may sometimes
-            // be useful this traffic.
+            // be useful to log this traffic.
 
             ConnectionRecorder recorder;
             recorder.init(&reader);
@@ -1172,7 +1198,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 
         interruptible = true;
     } else {
-        // read and ignore
+        // Read and ignore message, there is no where to send it.
         YARP_DEBUG(Logger::get(),"data received in PortCore, no reader for it");
         Bottle b;
         result = b.read(reader);
@@ -1187,10 +1213,7 @@ bool PortCore::send(PortWriter& writer, PortReader *reader,
         return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
     }
     // logging is desired, so we need to wrap up and log this send
-    // (and any reply it gets)
-
-    // NOT IMPLEMENTED YET
-
+    // (and any reply it gets)  -- TODO not yet supported
     return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
 }
 
@@ -1203,78 +1226,95 @@ bool PortCore::sendHelper(PortWriter& writer,
     int logCount = 0;
     String envelopeString = envelope;
 
-    // pass the data to all output units.
-    // for efficiency, it should be converted to block form first.
-    // some ports may want text-mode, some may want binary, so there
-    // may need to be two caches.
+    // Pass a message to all output units for sending on.  We could
+    // be doing more here to cache the serialization of the message
+    // and reuse it across output connections.  However, one key
+    // optimization is present: external blocks written by
+    // yarp::os::ConnectionWriter::appendExternalBlock are never
+    // copied.  So for example the core image array in a yarp::sig::Image
+    // is untouched by the port communications code.
 
-    // for now, just doing a sequential send with no caching.
-    // (mcast protocol can be used to avoid duplicated effort)
     YMSG(("------- send in real\n"));
 
+    // Give user the chance to know that this object is about to be
+    // written.
     writer.onCommencement();
 
+    // All user-facing parts of this port will be blocked on this 
+    // operation, so we'll want to be snappy. How long the 
+    // operation lasts will depend on these flags:
+    //   * waitAfterSend
+    //   * waitBeforeSend
+    // set by setWaitAfterSend() and setWaitBeforeSend().
     stateMutex.wait();
 
+    // If the port is shutting down, abort.
+    if (finished) {
+        stateMutex.post();
+        return false;
+    }
+
     YMSG(("------- send in\n"));
-    // The whole darned port is blocked on this operation.
-    // How long the operation lasts will depend on these flags:
-    //   waitAfterSend and waitBeforeSend,
-    // set by setWaitAfterSend() and setWaitBeforeSend()
-    if (!finished) {
-        packetMutex.wait();
-        PortCorePacket *packet = packets.getFreePacket();
-        packet->setContent(&writer,false,callback);
-        packetMutex.post();
-        YARP_ASSERT(packet!=NULL);
-        for (unsigned int i=0; i<units.size(); i++) {
-            PortCoreUnit *unit = units[i];
-            if (unit!=NULL) {
-                if (unit->isOutput() && !unit->isFinished()) {
-                    bool log = (unit->getMode()!="");
-                    bool ok = (mode==PORTCORE_SEND_NORMAL)?(!log):(log);
-                    if (log) {
-                        logCount++;
-                    }
-                    bool waiter = waitAfterSend||(mode==PORTCORE_SEND_LOG);
-                    if (ok) {
-                        YMSG(("------- -- inc\n"));
-                        packetMutex.wait();
-                        packet->inc();
-                        packetMutex.post();
-                        YMSG(("------- -- presend\n"));
-                        bool gotReplyOne = false;
-                        void *out = unit->send(writer,reader,
-                                               (callback!=NULL)?callback:(&writer),
-                                               (void *)packet,
-                                               envelopeString,
-                                               waiter,waitBeforeSend,
-                                               &gotReplyOne);
-                        gotReply = gotReply||gotReplyOne;
-                        YMSG(("------- -- send\n"));
-                        if (out!=NULL) {
-                            packetMutex.wait();
-                            ((PortCorePacket *)out)->dec();
-                            packets.checkPacket((PortCorePacket *)out);
-                            packetMutex.post();
-                        }
-                        if (waiter) {
-                            if (unit->isFinished()) {
-                                all_ok = false;
-                            }
-                        }
-                        YMSG(("------- -- dec\n"));
-                    }
+    // Prepare a "packet" for tracking a single message which
+    // may travel by multiple outputs.
+    packetMutex.wait();
+    PortCorePacket *packet = packets.getFreePacket();
+    YARP_ASSERT(packet!=NULL);
+    packet->setContent(&writer,false,callback);
+    packetMutex.post();
+
+    // Scan connections, placing message everyhere we can.
+    for (unsigned int i=0; i<units.size(); i++) {
+        PortCoreUnit *unit = units[i];
+        if (unit==NULL) continue;
+        if (unit->isOutput() && !unit->isFinished()) {
+            bool log = (unit->getMode()!="");
+            if (log) {
+                // Some connections are for logging only.
+                logCount++;
+            }
+            bool ok = (mode==PORTCORE_SEND_NORMAL)?(!log):(log);
+            if (!ok) continue;
+            bool waiter = waitAfterSend||(mode==PORTCORE_SEND_LOG);
+            YMSG(("------- -- inc\n"));
+            packetMutex.wait();
+            packet->inc();  // One more connection carrying message.
+            packetMutex.post();
+            YMSG(("------- -- presend\n"));
+            bool gotReplyOne = false;
+            // Send the message off on this connection.
+            void *out = unit->send(writer,reader,
+                                   (callback!=NULL)?callback:(&writer),
+                                   (void *)packet,
+                                   envelopeString,
+                                   waiter,waitBeforeSend,
+                                   &gotReplyOne);
+            gotReply = gotReply||gotReplyOne;
+            YMSG(("------- -- send\n"));
+            if (out!=NULL) {
+                // We got back a report of a message already sent.
+                packetMutex.wait();
+                ((PortCorePacket *)out)->dec();  // Message on one 
+                                                 // fewer connections.
+                packets.checkPacket((PortCorePacket *)out);
+                packetMutex.post();
+            }
+            if (waiter) {
+                if (unit->isFinished()) {
+                    all_ok = false;
                 }
             }
+            YMSG(("------- -- dec\n"));
         }
-        YMSG(("------- pack check\n"));
-        packetMutex.wait();
-        packet->dec();
-        packets.checkPacket(packet);
-        packetMutex.post();
-        YMSG(("------- packed\n"));
     }
+    YMSG(("------- pack check\n"));
+    packetMutex.wait();
+    packet->dec();  // We no longer concern ourselves with the message.
+                    // It may or may not be traveling on some connections.
+                    // But that is not our problem anymore.
+    packets.checkPacket(packet);
+    packetMutex.post();
+    YMSG(("------- packed\n"));
     YMSG(("------- send out\n"));
     if (mode==PORTCORE_SEND_LOG) {
         if (logCount==0) {
