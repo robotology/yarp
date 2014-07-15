@@ -27,6 +27,8 @@
 const int UPDATE_TIME = 200;   //update time in ms
 #define DEBUG_GUI 0
 
+extern bool position_direct_enabled;
+
 /*
  * Disable PID
  */
@@ -596,7 +598,15 @@ void partMover::slider_release(GtkRange *range, gtkClassData* currentClassData)
       }
       else if ( mode == VOCAB_CM_POSITION_DIRECT)
       {
-         iDir->setPosition(*joint, val);
+         if (position_direct_enabled)
+         {
+             iDir->setPosition(*joint, val);
+         }
+         else
+         {
+             std::cout << "You cannot send direct position commands without using --direct option!" << std::endl;
+         }
+
       }
       else
       {

@@ -186,6 +186,7 @@ bool debug_param_enabled = false;
 bool speedview_param_enabled =false;
 bool enable_calib_all =false;
 bool position_direct_enabled = false;
+bool openloop_enabled = false;
 
 ResourceFinder *finder;
 ////////////////////////
@@ -275,7 +276,7 @@ static void myMain2(GtkButton *button,  int *position)
     GtkWidget*  nb1 = gtk_notebook_new();
     gtk_container_add (GTK_CONTAINER (window), nb1);
     g_signal_connect (window, "destroy",G_CALLBACK (destroy_main), &window);
-    gtk_window_set_title (GTK_WINDOW (window), "Robot Motor GUI V1.9");
+    gtk_window_set_title (GTK_WINDOW (window), "Robot Motor GUI V1.10");
 
     char legsLabel[]= "Legs";
     GtkWidget *label;
@@ -687,7 +688,7 @@ int myMain( int   argc, char *argv[] )
     //////////////////////////////////////////////////////////////////////
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     
-    gtk_window_set_title (GTK_WINDOW (window), "Robot Motor GUI V1.9");
+    gtk_window_set_title (GTK_WINDOW (window), "Robot Motor GUI V1.10");
     g_signal_connect (window, "destroy",G_CALLBACK (destroy_main), &window);
     
     gtk_container_set_border_width (GTK_CONTAINER (window), 8);
@@ -721,6 +722,7 @@ int myMain( int   argc, char *argv[] )
         enable_calib_all = true;
         debug_param_enabled = true;
         position_direct_enabled = true;
+        openloop_enabled = true;
     }
     if (finder->check("debug"))
     {
@@ -736,6 +738,11 @@ int myMain( int   argc, char *argv[] )
     {
         printf("Position direct requested.\n");
         position_direct_enabled = true;
+    }
+    if (finder->check("openloop"))
+    {
+        printf("Openloop requested.\n");
+        openloop_enabled = true;
     }
 
     bool deleteParts=false;
