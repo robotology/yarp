@@ -1340,6 +1340,8 @@ bool PortCore::isWriting() {
 
     stateMutex.wait();
 
+    // Check if any port is currently writing.  TODO optimize
+    // this query by counting down with notifyCompletion().
     if (!finished) {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
@@ -1402,6 +1404,8 @@ bool PortCore::setEnvelope(PortWriter& envelope) {
 void PortCore::setEnvelope(const String& envelope) {
     this->envelope = envelope;
     for (unsigned int i=0; i<envelope.length(); i++) {
+        // It looks like envelopes are constrained to be printable ASCII?
+        // I'm not sure why this would be.  TODO check.
         if (this->envelope[i]<32) {
             this->envelope = this->envelope.substr(0,i);
             break;
@@ -1424,9 +1428,13 @@ bool PortCore::getEnvelope(PortReader& envelope) {
     return envelope.read(sbr);
 }
 
+// Shorthand to create a nested (tag, val) pair to add to a message.
 #define STANZA(name,tag,val) Bottle name; name.addString(tag); name.addString(val.c_str());
 
-
+// Make an RPC connection to talk to a ROS API, send a message, get reply.
+// NOTE: ROS support can now be moved out of here, once all documentation
+// of older ways to interoperate with it are purged and people stop
+// doing it.
 static bool __pc_rpc(const Contact& c,
                      const char *carrier,
                      Bottle& writer,
@@ -1440,6 +1448,8 @@ static bool __pc_rpc(const Contact& c,
     return ok;
 }
 
+// ACE is sometimes confused by localhost aliases, in a ROS-incompatible
+// way.  This method does a quick sanity check if we are using ROS.
 static bool __tcp_check(const Contact& c) {
 #ifdef YARP_HAS_ACE
     ACE_INET_Addr addr;
@@ -1465,13 +1475,19 @@ static bool __tcp_check(const Contact& c) {
 bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                           OutputStream *os) {
     Bottle cmd, result;
+
+    // We've received a message to the port that is marked as administrative.
+    // That means that instead of passing it along as data to the user of the
+    // port, the port itself is responsible for reading and responding to
+    // it.  So let's read the message and see what we're supposed to do.
     cmd.read(reader);
 
     StringOutputStream cache;
 
     int vocab = cmd.get(0).asVocab();
 
-    // ROS support
+    // We support ROS client API these days.  Here we recode some long ROS 
+    // command names, just for convenience.
     if (cmd.get(0).asString()=="publisherUpdate") {
         vocab = VOCAB4('r','p','u','p');
     }
@@ -1487,6 +1503,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
 
     switch (vocab) {
     case VOCAB4('h','e','l','p'):
+        // We give a list of the most useful administrative commands.
         result.addString("[help] # give this help");
         result.addString("[add] $targetPort # add an output connection");
         result.addString("[add] $targetPort $carrier # add an output with a given protocol");
@@ -1496,16 +1513,13 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[list] [in] $sourcePort # give details for input");
         result.addString("[list] [out] $targetPort # give details for output");
         result.addString("[ver] # report protocol version information");
-        //result.addString("[get] # list property values available");
-        //result.addString("[get] $prop # get value of property");
-        //result.addString("[set] $prop # set value of property");
         result.addString("[prop] [get] # get port properties");
         result.addString("[prop] [get] $prop # get a port property");
         result.addString("[prop] [set] $prop $val # set a port property");
         break;
     case VOCAB3('v','e','r'):
-        // This version number is for the network protocol.
-        // It is distinct from the YARP library versioning.
+        // Gives a version number for the administrative commands.
+        // It is distinct from YARP library versioning.
         result.addVocab(Vocab::encode("ver"));
         result.addInt(1);
         result.addInt(2);
@@ -1513,6 +1527,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         break;
     case VOCAB3('a','d','d'):
         {
+            // Add an output to the port.
             String output = cmd.get(1).asString().c_str();
             String carrier = cmd.get(2).asString().c_str();
             if (carrier!="") {
@@ -1527,6 +1542,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         break;
     case VOCAB3('d','e','l'):
         {
+            // Delete any inputs or outputs involving the named port.
             removeOutput(String(cmd.get(1).asString().c_str()),id,&cache);
             String r1 = cache.toString();
             cache.reset();
@@ -1547,6 +1563,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         switch (cmd.get(1).asVocab()) {
         case VOCAB2('i','n'):
             {
+                // Return a list of all input connections.
                 ConstString target = cmd.get(2).asString();
                 stateMutex.wait();
                 for (unsigned int i2=0; i2<units.size(); i2++) {
@@ -1577,6 +1594,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         case VOCAB3('o','u','t'):
         default:
             {
+                // Return a list of all output connections.
                 ConstString target = cmd.get(2).asString();
                 stateMutex.wait();
                 for (unsigned int i=0; i<units.size(); i++) {
@@ -1607,6 +1625,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         switch (cmd.get(1).asVocab()) {
         case VOCAB2('i','n'):
             {
+                // Set carrier parameters on a given input connection.
                 ConstString target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
@@ -1646,6 +1665,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         case VOCAB3('o','u','t'):
         default:
             {
+                // Set carrier parameters on a given output connection.
                 ConstString target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
@@ -1689,6 +1709,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         switch (cmd.get(1).asVocab()) {
         case VOCAB2('i','n'):
             {
+                // Get carrier parameters for a given input connection.
                 ConstString target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
@@ -1723,6 +1744,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         case VOCAB3('o','u','t'):
         default:
             {
+                // Get carrier parameters for a given output connection.
                 ConstString target = cmd.get(2).asString();
                 stateMutex.wait();
                 if (target=="") {
@@ -1760,6 +1782,13 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
 
     case VOCAB4('r','p','u','p'):
         {
+            // When running against a ROS name server, we need to
+            // support ROS-style callbacks for connecting publishers
+            // with subscribers.  Note: this should not be necessary
+            // anymore, now that a dedicated yarp::os::Node class
+            // has been implemented, but is still needed for older
+            // ways of interfacing with ROS without using dedicated
+            // node ports.
             YARP_SPRINTF1(log,debug,
                           "publisherUpdate! --> %s", cmd.toString().c_str());
             ConstString topic = 
@@ -1769,7 +1798,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 Property listed;
                 for (int i=0; i<pubs->size(); i++) {
                     ConstString pub = pubs->get(i).asString();
-                    //printf("Deal with %s\n", pub.c_str());
                     listed.put(pub,1);
                 }
                 Property present;
@@ -1781,7 +1809,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             ConstString me = unit->getPupString();
                             present.put(me,1);
                             if (!listed.check(me)) {
-                                //printf("BYE %s\n", me.c_str());
                                 unit->setDoomed(true);
                             }
                         }
@@ -1871,10 +1898,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         break;
     case VOCAB4('r','t','o','p'):
         {
+            // ROS-style query for topics.
             YARP_SPRINTF1(log,debug,"requestTopic! --> %s",
                           cmd.toString().c_str());
-            //ConstString topic = cmd.get(2).asString();
-            //Bottle *pubs = cmd.get(3).asList();
             result.addInt(1);
             result.addString("dummy_id");
             Bottle& lst = result.addList();
@@ -1887,6 +1913,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         break;
     case VOCAB3('p','i','d'):
         {
+            // ROS-style query for PID.
             result.addInt(1);
             result.addString("");
             result.addInt(ACE_OS::getpid());
@@ -1895,6 +1922,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         break;
     case VOCAB3('b','u','s'):
         {
+            // ROS-style query for bus information - we support this
+            // in yarp::os::Node but not otherwise.
             result.addInt(1);
             result.addString("");
             result.addList().addList();
@@ -1903,6 +1932,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         break;
     case VOCAB4('p','r','o','p'):
         {
+            // Set/get arbitrary properties on a port.
             switch (cmd.get(1).asVocab()) {
             case VOCAB3('g','e','t'):
                 {

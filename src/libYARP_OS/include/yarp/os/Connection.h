@@ -19,6 +19,12 @@ namespace yarp {
     }
 }
 
+/**
+ *
+ * A controller for an individual connection.  A bundle of callbacks
+ * that defines how the connection behaves.
+ *
+ */
 class YARP_OS_API yarp::os::Connection {
 public:
 

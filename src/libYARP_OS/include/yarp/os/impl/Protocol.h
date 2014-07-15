@@ -38,7 +38,8 @@ class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtoco
 public:
 
     /**
-     * This becomes owner of shiftstream
+     * Constructor. The Protocol object becomes the owner of 
+     * the provided stream, and will destroy it at some point.
      */
     Protocol(TwoWayStream *stream) :
         log(Logger::get()) {
@@ -59,16 +60,24 @@ public:
         port = NULL;
     }
 
+    /**
+     *
+     * Destructor.
+     *
+     */
     virtual ~Protocol() {
         closeHelper();
     }
 
-    void setRoute(const Route& route);
+    // Documented in yarp::os::ConnectionState.
+    virtual void setRoute(const Route& route);
 
-    const Route& getRoute() {
+    // Documented in yarp::os::ConnectionState.
+    virtual const Route& getRoute() {
         return route;
     }
 
+    // Documented in yarp::os::InputProtocol
     void interrupt() {
         if (active) {
             if (pendingAck) {
@@ -83,10 +92,12 @@ public:
         closeHelper();
     }
 
+    // Documented in yarp::os::ConnectionState.
     TwoWayStream& getStreams() {
         return shift;
     }
 
+    // Documented in yarp::os::ConnectionState.
     void takeStreams(TwoWayStream *streams) {
         shift.takeStream(streams);
         if (streams!=NULL) {
@@ -94,14 +105,17 @@ public:
         }
     }
 
+    // Documented in yarp::os::ConnectionState.
     TwoWayStream *giveStreams() {
         return shift.giveStream();
     }
 
+    // Documented in yarp::os::ConnectionState.
     OutputStream& os() {
         return shift.getOutputStream();
     }
 
+    // Documented in yarp::os::ConnectionState.
     InputStream& is() {
         return shift.getInputStream();
     }
@@ -217,14 +231,17 @@ public:
         sendAck();  //MOVE ack to after reply, if present
     }
 
+    // Documented in yarp::os::ConnectionState.
     virtual bool checkStreams() {
         return shift.isOk();
     }
 
+    // Documented in yarp::os::ConnectionState.
     void setReference(yarp::os::Portable *ref) {
         this->ref = ref;
     }
 
+    // Documented in yarp::os::ConnectionState.
     yarp::os::ConstString getSenderSpecifier();
 
     virtual bool setTimeout(double timeout) {
@@ -241,14 +258,17 @@ public:
         return envelope;
     }
 
+    // Documented in yarp::os::ConnectionState.
     Log& getLog() {
         return log;
     }
 
+    // Documented in yarp::os::ConnectionState.
     void setRemainingLength(int len) {
         messageLen = len;
     }
 
+    // Documented in yarp::os::ConnectionState.
     Connection& getConnection() {
         if (delegate==NULL) {
             return nullConnection;
@@ -277,6 +297,7 @@ public:
         this->port = port;
     }
 
+    // Documented in yarp::os::ConnectionState.
     virtual Contactable *getContactable() {
         return port;
     }
