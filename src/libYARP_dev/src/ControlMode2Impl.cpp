@@ -55,6 +55,8 @@ bool ImplementControlMode2::uninitialize ()
         helper=0;
     }
  
+    checkAndDestroy(temp_int);
+    checkAndDestroy(temp_mode);
     return true;
 }
 
