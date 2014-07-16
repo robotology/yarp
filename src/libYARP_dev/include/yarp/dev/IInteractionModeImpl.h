@@ -16,7 +16,6 @@
 namespace yarp {
     namespace dev {
         class ImplementInteractionMode;
-        class ImplementInteractionModeRaw;
         class StubImplInteractionModeRaw;
     }
 }
