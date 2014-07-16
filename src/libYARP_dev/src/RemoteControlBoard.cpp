@@ -262,7 +262,8 @@ protected:
     // BufferedPort<yarp::sig::Vector> state_p;
     StateInputPort state_p;
     PortWriterBuffer<CommandMessage> command_buffer;
-    bool writeStrict;
+    bool writeStrict_singleJoint;
+    bool writeStrict_moreJoints;
 
     ConstString remote;
     ConstString local;
@@ -901,6 +902,8 @@ public:
     RemoteControlBoard() {
         nj = 0;
         njIsKnown = false;
+        writeStrict_singleJoint = true;
+        writeStrict_moreJoints  = false;
     }
 
     /**
@@ -922,15 +925,25 @@ public:
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
 
-        Value strict = config.check("writeStrict", Value("off"), "Do I use writeStrict?");
-
-        if(strict.asString() == "on")
+        bool writeStrict_isFound = config.check("writeStrict");
+        if(writeStrict_isFound)
         {
-            writeStrict = true;
-            printf("RemoteControlBoard is using the writeStrict option\n");
+            Value &gotStrictVal = config.find("writeStrict");
+            if(gotStrictVal.asString() == "on")
+            {
+                writeStrict_singleJoint = true;
+                writeStrict_moreJoints  = true;
+                printf("RemoteControlBoard is ENABLING the writeStrict option for all commands\n");
+            }
+            else if(gotStrictVal.asString() == "off")
+            {
+                writeStrict_singleJoint = false;
+                writeStrict_moreJoints  = false;
+                printf("RemoteControlBoard is DISABLING the writeStrict opition for all commands\n");
+            }
+            else
+                printf("ERROR, found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
         }
-        else
-            writeStrict = false;
 
         if (local=="") {
             fprintf(stderr,"Problem connecting to remote controlboard, 'local' port prefix not given\n");
@@ -1819,7 +1832,7 @@ public:
         c.head.addVocab(VOCAB_VELOCITY_MOVES);
         c.body.size(nj);
         memcpy(&(c.body[0]), v, sizeof(double)*nj);
-        command_buffer.write(writeStrict);
+        command_buffer.write(writeStrict_moreJoints);
         return true;
     }
 
@@ -2403,7 +2416,7 @@ public:
         c.head.addInt(j);
         c.body.size(1);
         memcpy(&(c.body[0]), &ref, sizeof(double));
-        command_buffer.write(writeStrict);
+        command_buffer.write(writeStrict_singleJoint);
         return true;
     }
 
@@ -2419,7 +2432,7 @@ public:
             jointList.addInt(joints[i]);
         c.body.size(n_joint);
         memcpy(&(c.body[0]), refs, sizeof(double)*n_joint);
-        command_buffer.write(writeStrict);
+        command_buffer.write(writeStrict_moreJoints);
         return true;
     }
 
@@ -2431,7 +2444,7 @@ public:
         c.head.addVocab(VOCAB_POSITION_DIRECTS);
         c.body.size(nj);
         memcpy(&(c.body[0]), refs, sizeof(double)*nj);
-        command_buffer.write(writeStrict);
+        command_buffer.write(writeStrict_moreJoints);
         return true;
     }
 
@@ -2452,7 +2465,7 @@ public:
             jointList.addInt(joints[i]);
         c.body.resize(n_joint);
         memcpy(&(c.body[0]), spds, sizeof(double)*n_joint);
-        command_buffer.write(writeStrict);
+        command_buffer.write(writeStrict_moreJoints);
         return true;
     }
 
@@ -2746,7 +2759,7 @@ public:
         c.body.clear();
         c.body.size(1);
         c.body[0] = v;
-        command_buffer.write(writeStrict);
+        command_buffer.write(writeStrict_singleJoint);
         return true;
     }
 
@@ -2763,7 +2776,7 @@ public:
 
         memcpy(&(c.body[0]), v, sizeof(double)*nj);
 
-        command_buffer.write(writeStrict);
+        command_buffer.write(writeStrict_moreJoints);
 
         return true;
     }
