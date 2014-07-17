@@ -320,8 +320,8 @@ public:
      *          orientation using axis-angle representation xa,ya,
      *          za,theta [m],[rad]; it may differ from the
      *          commanded od.
-     * \param qdhat the joints configuration through which the
-     *             couple (xdhat,odhat) is achieved [deg].
+     * \param qdhat the complete joints configuration through which
+     *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
     virtual bool askForPose(const yarp::sig::Vector &xd,
@@ -348,8 +348,8 @@ public:
      *          orientation using axis-angle representation xa,ya,
      *          za,theta [m],[rad]; it may differ from the
      *          commanded od.
-     * \param qdhat the joints configuration through which the
-     *             couple (xdhat,odhat) is achieved [deg].
+     * \param qdhat the complete joints configuration through which
+     *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
     virtual bool askForPose(const yarp::sig::Vector &q0,
@@ -371,8 +371,8 @@ public:
      *          orientation using axis-angle representation xa,ya,
      *          za,theta [m],[rad]; it may differ from the
      *          commanded od.
-     * \param qdhat the joints configuration through which the
-     *             couple (xdhat,odhat) is achieved [deg].
+     * \param qdhat the complete joints configuration through which
+     *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
     virtual bool askForPosition(const yarp::sig::Vector &xd,
@@ -395,8 +395,8 @@ public:
      *          orientation using axis-angle representation xa,ya,
      *          za,theta [m],[rad]; it may differ from the
      *          commanded od.
-     * \param qdhat the joints configuration through which the
-     *             couple (xdhat,odhat) is achieved [deg].
+     * \param qdhat the complete joints configuration through which
+     *          the couple (xdhat,odhat) is achieved [deg].
      * \return true/false on success/failure.
      */
     virtual bool askForPosition(const yarp::sig::Vector &q0,
