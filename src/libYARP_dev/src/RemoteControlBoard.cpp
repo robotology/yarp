@@ -2627,17 +2627,14 @@ public:
 
             if (list.size() != n_joints)
             {
-                std::cerr << " getInteractionModes, length of response does not match: expected " << n_joints << " received " << list.size();
+                fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", n_joints , list.size() );
                 return false;
             }
             else
             {
-                std::cerr << " getInteractionModes GROUP  RMC received n_joints " << n_joints << std::endl;
-
                 for (i = 0; i < n_joints; i++)
                 {
                     modes[i] = (yarp::dev::InteractionModeEnum) list.get(i).asVocab();
-                    std::cerr << " j " << joints[i] << " got " << yarp::os::Vocab::decode(modes[i]) << std::endl;
                 }
                 return true;
             }
@@ -2665,7 +2662,7 @@ public:
 
             if (list.size() != nj)
             {
-                std::cerr << " getInteractionModes, length of response does not match: expected " << nj << " received " << list.size();
+                fprintf(stderr, "getInteractionModes, length of response does not match: expected %d, received %d\n ", nj , list.size() );
                 return false;
 
             }

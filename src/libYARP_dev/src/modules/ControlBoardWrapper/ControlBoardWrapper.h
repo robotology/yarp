@@ -923,15 +923,11 @@ public:
 
             if (p->iMode2)
             {
-                std::cout<< "setPositionMode() for ALL joint using NEW interface" << std::endl;
-
                 //calling new iControlMode2 interface
                 ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_POSITION);
             }
             else if(p->iMode)
             {
-                std::cout<< "setPositionMode() for ALL joint using OLD interface" << std::endl;
-
                 //calling old iControlMode interface
                 ret=ret&&p->iMode->setPositionMode(off+base);
             }
@@ -956,15 +952,11 @@ public:
 
             if (p->iMode2)
             {
-                std::cout<< "setOpenLoopMode() for ALL joint using NEW interface" << std::endl;
-
                 //calling new iControlMode2 interface
                 ret = ret && p->iMode2->setControlMode(off+base, VOCAB_CM_OPENLOOP);
             }
             else if(p->iMode)
             {
-                std::cout<< "setOpenLoopMode() for ALL joint using OLD interface" << std::endl;
-
                 //calling iControlMode interface
                 ret=ret&&p->iMode->setOpenLoopMode(off+base);
             }
@@ -2084,10 +2076,7 @@ public:
     */
     virtual bool setVelocityMode()
     {
-        std::cout<< "setVelocityMode() for ALL joint " << std::endl;
-
         bool ret=true;
-#if 1
         int j_wrap = 0;         // index of the wrapper joint
         for(unsigned int subDev_idx=0; subDev_idx < device.subdevices.size(); subDev_idx++)
         {
@@ -2112,26 +2101,6 @@ public:
                 }
             }
         }
-#else
-        for(int l=0;l<controlledJoints;l++)
-        {
-            int off=device.lut[l].offset;
-            int subIndex=device.lut[l].deviceEntry;
-
-            yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
-
-            if (!p)
-                return false;
-
-            if (p->pos)
-            {
-                //calling iControlMode interface
-                ret=ret&&p->iMode->setVelocityMode(off+base);
-            }
-            else
-                ret=false;
-        }
-#endif
         return ret;
     }
 
@@ -3386,8 +3355,6 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        std::cout<< "setPositionMode() for SINGLE joint " << j << std::endl;
-
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
@@ -3470,8 +3437,6 @@ public:
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
-
-        std::cout << "setVelocityMode(int j) @@ p->base:" <<  p->base << ", off:" << off << ", base:" << base << std::endl;
 
         if (p->iMode2)
         {
@@ -3577,7 +3542,6 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-        std::cout<< "Legacy setControlMode for joint " << j << " mode " << yarp::os::Vocab::decode(mode) << std::endl;
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
@@ -3636,7 +3600,7 @@ public:
 
             default:
             {
-                std::cout << "ControlBoardWrapper received an invalid  setControlMode " << yarp::os::Vocab::decode(mode) << " for joint " << j << std::endl;
+                fprintf(stderr, "ControlBoardWrapper received an invalid  setControlMode %s for joint %d\n", yarp::os::Vocab::decode(mode).c_str(), j);
                 ret = false;
             }
             break;
@@ -3649,8 +3613,6 @@ public:
         bool ret = true;
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
-
-        std::cout<< "New setControlMode SINGLE for joint " << j << " mode " << yarp::os::Vocab::decode(mode) << std::endl;
 
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
@@ -3673,7 +3635,6 @@ public:
     virtual bool setControlModes(const int n_joints, const int *joints, int *modes)
     {
         bool ret = true;
-        std::cout<< "New setControlMode GROUP with mode " << yarp::os::Vocab::decode(modes[0]) << std::endl;
 
         /* This table is created here each time to avoid concurrency problems... if this shall not be the case,
          * then it is optimizable by instantiating the table once and for all during the creation of the class.
@@ -3723,7 +3684,6 @@ public:
     {
         bool ret = true;
         int j_wrap = 0;         // index of the wrapper joint
-        std::cout<< "New setControlMode for joint " << std::endl;
 
         int nDev = device.subdevices.size();
         for(int subDev_idx=0; subDev_idx < nDev; subDev_idx++)
@@ -3772,8 +3732,6 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-//        std::cout << "CBW.h setOut j " << j << "; remap to dev " << subIndex << " k " << off+base << std::endl;
-
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;
@@ -3792,8 +3750,6 @@ public:
         {
             int off=device.lut[l].offset;
             int subIndex=device.lut[l].deviceEntry;
-
-//            std::cout << "CBW.h setOutS j " << l << "; remap to dev " << subIndex << " k " << off+base << std::endl;
 
             yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
             if (!p)
@@ -3828,8 +3784,6 @@ public:
 
     virtual bool setPositionDirectMode()
     {
-//        std::cout<< "setPositionDirectMode() for ALL joint " << std::endl;
-
         bool ret=true;
         for(int l=0;l<controlledJoints;l++)
         {
@@ -4093,7 +4047,6 @@ public:
             ps[i]=device.getSubdevice(i);
         }
 
-//        std::cout << " CBW: getInteractionModes GROUP" << std::endl;
         // Create a map of joints for each subDevice
         int subIndex = 0;
         for(int j=0; j<n_joints; j++)
@@ -4128,7 +4081,6 @@ public:
     {
         bool ret = true;
 
-//        std::cout << "get interactionMode cbw.h " << std::endl;
         for(int j=0; j<controlledJoints; j++)
         {
             int off=device.lut[j].offset;
@@ -4157,7 +4109,6 @@ public:
         if (!s)
             return false;
 
-//        std::cout << "CBW SetinteractionMode SINGLE " << j << " val " << yarp::os::Vocab::decode(mode) << " a.k.a. " << mode << std::endl;
         if (s->iInteract)
         {
             return s->iInteract->setInteractionMode(off+base, mode);
@@ -4238,7 +4189,6 @@ public:
         int off=device.lut[j].offset;
         int subIndex=device.lut[j].deviceEntry;
 
-//        std::cout << "CBW.h getRefOut j " << j << "; remap to dev " << subIndex << " k " << off+base << std::endl;
         yarp::dev::impl::SubDevice *p=device.getSubdevice(subIndex);
         if (!p)
             return false;

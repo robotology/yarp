@@ -2732,14 +2732,12 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     _verb = (prop.check("verbose","if present, give detailed output"));
     if (_verb)
-        cout<<"running with verbose output\n";
+        fprintf(stdout, "running with verbose output\n");
 
     thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
-    std::cout<<"Using YARP ControlBoardWrapper2\n";
     if(prop.check("subdevice"))
     {
-        std::cout << "\nFound <" << prop.find("subdevice").asString() << "> subdevice, opening it\n";
         if(! openAndAttachSubDevice(prop))
         {
             printf("Error while opening subdevice\n");
@@ -2774,8 +2772,6 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     std::string rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
     partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
-
-    // cout << " rootName " << rootName << " partName " << partName;
 
     rootName+=(partName);
 
