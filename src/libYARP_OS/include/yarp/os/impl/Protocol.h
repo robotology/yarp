@@ -77,7 +77,7 @@ public:
         return route;
     }
 
-    // Documented in yarp::os::InputProtocol
+    // Documented in yarp::os::InputProtocol.
     void interrupt() {
         if (active) {
             if (pendingAck) {
@@ -88,6 +88,7 @@ public:
         }
     }
 
+    // Documented in yarp::os::InputProtocol.
     void close() {
         closeHelper();
     }
@@ -110,35 +111,25 @@ public:
         return shift.giveStream();
     }
 
-    // Documented in yarp::os::ConnectionState.
-    OutputStream& os() {
+    // Documented in yarp::os::InputProtocol.
+    OutputStream& getOutputStream() {
         return shift.getOutputStream();
     }
 
-    // Documented in yarp::os::ConnectionState.
-    InputStream& is() {
+    // Documented in yarp::os::InputProtocol.
+    InputStream& getInputStream() {
         return shift.getInputStream();
     }
 
-    OutputStream& getOutputStream() {
-        return os();
-    }
-
-    InputStream& getInputStream() {
-        return is();
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////
-    // OutputProtocol view
-
+    // Documented in yarp::os::OutputProtocol.
     virtual bool open(const Route& route);
 
+    // Documented in yarp::os::OutputProtocol.
     virtual void rename(const Route& route) {
         setRoute(route);
     }
 
-
+    // Documented in yarp::os::InputProtocol.
     virtual bool open(const ConstString& name) {
         if (name=="") {
             setCarrier("text");
@@ -155,10 +146,12 @@ public:
         return true;
     }
 
+    // Documented in yarp::os::OutputProtocol.
     virtual bool isOk() {
         return checkStreams();
     }
 
+    // Documented in yarp::os::OutputProtocol.
     virtual bool write(SizedWriter& writer) {
         bool replied = false;
         writer.stopWrite();
@@ -186,19 +179,23 @@ public:
         return replied;
     }
 
+    // Documented in yarp::os::InputProtocol.
     void reply(SizedWriter& writer) {
         writer.stopWrite();
         delegate->reply(*this,writer);
     }
 
+    // Documented in yarp::os::InputProtocol.
     virtual OutputProtocol& getOutput() {
         return *this;
     }
 
+    // Documented in yarp::os::OutputProtocol.
     virtual InputProtocol& getInput() {
         return *this;
     }
 
+    // Documented in yarp::os::InputProtocol.
     virtual yarp::os::ConnectionReader& beginRead() {
         getRecvDelegate();
         if (delegate!=NULL) {
@@ -217,18 +214,20 @@ public:
         return reader;
     }
 
+    // Documented in yarp::os::InputProtocol.
+    virtual void endRead() {
+        reader.flushWriter();
+        sendAck();  // acknowledge after reply (if there is one)
+    }
 
+    // Documented in yarp::os::OutputProtocol.
     virtual void beginWrite() {
         getSendDelegate();
     }
 
+    // Documented in yarp::os::InputProtocol.
     virtual void suppressReply() {
         reader.suppressReply();
-    }
-
-    virtual void endRead() {
-        reader.flushWriter();
-        sendAck();  //MOVE ack to after reply, if present
     }
 
     // Documented in yarp::os::ConnectionState.
@@ -244,17 +243,20 @@ public:
     // Documented in yarp::os::ConnectionState.
     yarp::os::ConstString getSenderSpecifier();
 
+    // Documented in yarp::os::InputProtocol.
     virtual bool setTimeout(double timeout) {
         bool ok = os().setWriteTimeout(timeout);
         if (!ok) return false;
         return is().setReadTimeout(timeout);
     }
 
+    // Documented in yarp::os::InputProtocol.
     virtual void setEnvelope(const yarp::os::ConstString& str) {
         envelope = str;
     }
 
-    const String& getEnvelope() {
+    // Documented in yarp::os::ConnectionState.
+    virtual const ConstString& getEnvelope() {
         return envelope;
     }
 
@@ -276,7 +278,7 @@ public:
         return *delegate;
     }
 
-    // transitional hook, should go away when we have real chaining
+    // Documented in yarp::os::InputProtocol.
     Connection& getReceiver() {
         if (recv_delegate==NULL) {
             return nullConnection;
@@ -284,7 +286,7 @@ public:
         return *recv_delegate;
     }
 
-    // transitional hook, should go away when we have real chaining
+    // Documented in yarp::os::OutputProtocol.
     Connection& getSender() {
         if (send_delegate==NULL) {
             return nullConnection;
@@ -292,7 +294,7 @@ public:
         return *send_delegate;
     }
 
-
+    // Documented in yarp::os::InputProtocol.
     virtual void attachPort(yarp::os::Contactable *port) {
         this->port = port;
     }
@@ -303,10 +305,29 @@ public:
     }
 
 private:
-
+    
+    /**
+     *
+     * Scan for a receiver modifier in the carrier options, and
+     * cache the result.
+     *
+     */
     bool getRecvDelegate();
+
+    /**
+     *
+     * Scan for a sender modifier in the carrier options, and
+     * cache the result.
+     *
+     */
     bool getSendDelegate();
 
+    /**
+     *
+     * Default implementation for reading what protocol we should
+     * be using.  These defaults go way back to YARP1, maybe a decade ago?
+     *
+     */
     bool expectProtocolSpecifier() {
         char buf[8];
         yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
@@ -345,11 +366,24 @@ private:
     }
 
 
+    /**
+     *
+     * Read the name of the port on the other side of the connection.
+     *
+     */
     bool expectSenderSpecifier() {
         YARP_ASSERT(delegate!=NULL);
         return delegate->expectSenderSpecifier(*this);
     }
 
+    /**
+     *
+     * Read the various parts of a connection header - the protocol
+     * to use, the name of the port on the other side, and any
+     * carrier-specific material.  These days, all of these parts
+     * may be redefined.
+     *
+     */
     bool expectHeader() {
         messageLen = 0;
         bool ok = expectProtocolSpecifier();
@@ -361,6 +395,12 @@ private:
         return ok;
     }
 
+    /**
+     *
+     * Switch to a named carrier.  May involve switching to a different
+     * kind of network.
+     *
+     */
     void setCarrier(const String& carrierNameBase) {
         String carrierName = carrierNameBase;
         if (carrierNameBase=="") carrierName = "tcp";
@@ -380,16 +420,33 @@ private:
         }
     }
 
+    /**
+     *
+     * Send the various parts of a connection header.
+     *
+     */
     bool sendHeader() {
         YARP_ASSERT(delegate!=NULL);
         return delegate->sendHeader(*this);
     }
 
+    /**
+     *
+     * Read a reply/acknowledgement to the header.  This is often a
+     * no-op.
+     *
+     */
     bool expectReplyToHeader() {
         YARP_ASSERT(delegate!=NULL);
         return delegate->expectReplyToHeader(*this);
     }
 
+    /**
+     *
+     * Send a reply/acknowledgement to a header.  This is often a
+     * no-op.
+     *
+     */
     bool respondToHeader() {
         YARP_ASSERT(delegate!=NULL);
         bool ok = delegate->respondToHeader(*this);
@@ -398,6 +455,15 @@ private:
         return os().isOk();
     }
 
+    /**
+     *
+     * Individual messages may have an index at the beginning.
+     * They did a decade ago with YARP1, these days it is 
+     * entirely unnecessary.  It was just a workaround for 
+     * some limits in the size of QNX buffers.  New carriers
+     * can leave the index classbacks as no-ops.
+     *
+     */
     bool expectIndex() {
         pendingAck = true;
         messageLen = 0;
@@ -420,10 +486,23 @@ private:
         return ok;
     }
 
+    /**
+     *
+     * In principle we could respond to receipt of a message index.
+     * We never have and we never will, but there's a callback for
+     * it.
+     *
+     */
     bool respondToIndex() {
         return true;
     }
 
+    /**
+     *
+     * After sending a message, wait for an acknowledgement of receipt
+     * (if the carrier is one that makes acknowledgements).
+     *
+     */
     bool expectAck() {
         YARP_ASSERT(delegate!=NULL);
         if (delegate->requireAck()) {
@@ -432,6 +511,12 @@ private:
         return true;
     }
 
+    /**
+     *
+     * After receiving a message, send an acknowledgement of receipt
+     * (if the carrier is one that makes acknowledgements).
+     *
+     */
     bool sendAck() {
         bool ok = true;
         pendingAck = false;
@@ -443,6 +528,11 @@ private:
         return ok;
     }
 
+    /**
+     *
+     * Close things down - our streams, our carriers.
+     *
+     */
     void closeHelper() {
         active = false;
         if (pendingAck) {
@@ -466,20 +556,24 @@ private:
         }
     }
 
-    int messageLen;
-    bool pendingAck;
-    Logger& log;
-    ShiftStream shift;
-    bool active;
-    Carrier *delegate, *recv_delegate, *send_delegate;
-    bool need_recv_delegate, need_send_delegate;
-    Route route;
-    SizedWriter *writer;
-    StreamConnectionReader reader;
-    yarp::os::Portable *ref;
-    String envelope;
-    NullConnection nullConnection;
-    yarp::os::Contactable *port;
+    int messageLen;   ///< length remaining in current message (if known)
+    bool pendingAck;  ///< is an acknowledgement due
+    Logger& log;      ///< connection-specific logger
+    ShiftStream shift;///< input and output streams
+    bool active;      ///< is the connection up and running
+    Carrier *delegate;       ///< main carrier specifying behavior of connection
+    Carrier *recv_delegate;  ///< modifier for incoming messages
+    Carrier *send_delegate;  ///< modifier for outgoing messages
+    bool need_recv_delegate; ///< turns false once we've cached recv modifier
+    bool need_send_delegate; ///< turns false once we've cached send modifier
+    Route route;             ///< names of (sender,carrier,receiver) triplet
+    SizedWriter *writer;     ///< writer for current message
+    StreamConnectionReader reader;  ///< reader for incoming messages
+    yarp::os::Portable *ref; ///< source for current message, so we can
+                             ///< bypass serialization on local connections
+    String envelope;         ///< envelope for current message
+    NullConnection nullConnection; ///< dummy connection
+    yarp::os::Contactable *port;   ///< port associated with this connection
 };
 
 #endif

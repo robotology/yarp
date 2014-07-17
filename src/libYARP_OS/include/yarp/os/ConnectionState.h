@@ -57,14 +57,14 @@ public:
      * Access the output stream associated with this connection.
      *
      */
-    virtual OutputStream& os() = 0;
+    virtual OutputStream& getOutputStream() = 0;
 
     /**
      *
      * Access the input stream associated with this connection.
      *
      */
-    virtual InputStream& is() = 0;
+    virtual InputStream& getInputStream() = 0;
 
     /**
      *
@@ -145,6 +145,33 @@ public:
      *
      */
     virtual Contactable *getContactable() = 0;
+
+
+    /**
+     *
+     * Shorthand for getOutputStream()
+     *
+     */
+    OutputStream& os() {
+        return getOutputStream();
+    }
+
+    /**
+     *
+     * Shorthand for getInputStream()
+     *
+     */
+    InputStream& is() {
+        return getInputStream();
+    }
+
+
+    /**
+     *
+     * Read the envelope associated with the current message.
+     *
+     */
+    virtual const ConstString& getEnvelope() = 0;
 };
 
 #endif

@@ -191,7 +191,7 @@ void PortCoreInputUnit::run() {
             if (!ok) continue;
         } else {
             cmd = PortCommand('d',"");
-            if (!ip->checkStreams()) { done = true; break; }
+            if (!ip->isOk()) { done = true; break; }
         }
         
         if (closing||isDoomed()) {
@@ -352,7 +352,7 @@ void PortCoreInputUnit::run() {
             done = true;
             break;
         }
-        if (closing||isDoomed()||(!ip->checkStreams())) {
+        if (closing||isDoomed()||(!ip->isOk())) {
             done = true;
             break;
         }

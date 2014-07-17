@@ -219,7 +219,7 @@ String NameClient::send(const String& cmd, bool multi) {
         while (more) {
             String line = "";
             line = ip->getInputStream().readLine();
-            if (!(ip->checkStreams())) {
+            if (!(ip->isOk())) {
                 more = false;
                 //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
                 retry = true;

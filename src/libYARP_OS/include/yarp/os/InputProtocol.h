@@ -17,6 +17,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Connection.h>
+#include <yarp/os/SizedWriter.h>
 
 namespace yarp {
     namespace os {
@@ -87,6 +88,13 @@ public:
 
     /**
      *
+     * Reply to a message we have just read.
+     *
+     */
+    virtual void reply(SizedWriter& writer) = 0;
+
+    /**
+     *
      * Get the basic connection through which we are communicating.
      *
      */
@@ -104,11 +112,10 @@ public:
 
     /**
      *
-     * Check that the streams associated with the connection are in
-     * good working order.
+     * Check if the connection is valid and can be used.
      *
      */
-    virtual bool checkStreams() = 0;
+    virtual bool isOk() = 0;
 
     /**
      *
@@ -128,8 +135,18 @@ public:
      */
     virtual void suppressReply() = 0;
   
-    // direct access
+    /**
+     *
+     * Access the output stream associated with the connection.
+     *
+     */
     virtual OutputStream& getOutputStream() = 0;
+
+    /**
+     *
+     * Access the input stream associated with the connection.
+     *
+     */
     virtual InputStream& getInputStream() = 0;
 
     /**
