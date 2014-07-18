@@ -283,44 +283,36 @@ YARP_LICENSE="$YARP_ROOT/LGPL.txt"
 cd $YARP_DIR_UNIX/install || exit 1
 nsis_add_recurse yarp_base share ${YARP_SUB}/share
 cd $YARP_DIR_UNIX/install/lib || exit 1
-for d in `ls -1 -d --group-directories-first YARP-* | head`; do
-	mkdir -p $d/fix_release
-	mkdir -p $d/fix_debug/$d
-	cd $d/fix_release
-	mkdir -p $d
-	cp ../*.cmake $d
-	mv $d/YARPConfig.cmake .
-	mv $d/YARPConfigVersion.cmake .
-	if $add_debug; then
-		cp $YARP_DIR_DBG_UNIX/install/lib/$d/YARP-*.cmake $d
+
+mkdir -p temp
+cd temp
+cp $YARP_DIR_UNIX/install/lib/YARP/YARPConfig.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/lib/YARP/YARPConfigVersion.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/lib/YARP/YARPTargets.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/lib/YARP/YARPTargets-release.cmake . || exit 1
+if $add_debug; then
+	cp $YARP_DIR_DBG_UNIX/install/lib/YARP/YARPTargets-debug.cmake . || exit 1
+fi
+sed -i 's|[^"]*/YARPTargets.cmake|include(${CMAKE_CURRENT_LIST_DIR}/../lib/YARP/YARPTargets.cmake|' YARPConfig.cmake
+sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
+for k in release debug; do
+	if [ -e YARPTargets-$k.cmake ] ; then
+		for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
+			sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${GSL_SUB}/lib/$f|g" YARPTargets-$k.cmake
+		done
+		for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
+			sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" YARPTargets-$k.cmake
+		done
 	fi
-	sed -i "s|[^\"]*YARP.cmake|\${CMAKE_CURRENT_LIST_DIR}/../lib/${d}/YARP.cmake|" YARPConfig.cmake
-	sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
-	for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
-		sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" $d/YARP-*.cmake
-	done
-	addition=""
-	for k in release debug; do
-		if [ -e $d/YARP-$k.cmake ] ; then
-			for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
-				sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${GSL_SUB}/lib/$addition$f|g" $d/YARP-$k.cmake
-			done
-		fi
-		addition="debug/"
-	done
-	if $add_debug; then
-		mv $d/YARP-debug.cmake ../fix_debug/$d/
-	fi
-	cd ../..
-	nsis_add_recurse yarp_base $d/fix_release/$d ${YARP_SUB}/lib/$d
-	nsis_add yarp_base $d/fix_release/YARPConfig.cmake ${YARP_SUB}/cmake/YARPConfig.cmake
-	nsis_add yarp_base $d/fix_release/YARPConfigVersion.cmake ${YARP_SUB}/cmake/YARPConfigVersion.cmake
-	if $add_debug; then
-		nsis_add_recurse yarp_base $d/fix_debug/$d ${YARP_SUB}/lib/$d
-	fi
-	YARP_LIB_DIR="$d"
-	YARP_LIB_FILE=`cd $d; ls YARP-*.cmake`
 done
+nsis_add yarp_base YARPConfig.cmake ${YARP_SUB}/cmake/YARPConfig.cmake
+nsis_add yarp_base YARPConfigVersion.cmake ${YARP_SUB}/cmake/YARPConfigVersion.cmake
+nsis_add yarp_base YARPTargets.cmake ${YARP_SUB}/lib/YARP/YARPTargets.cmake
+nsis_add yarp_base YARPTargets-release.cmake ${YARP_SUB}/lib/YARP/YARPTargets-release.cmake
+if $add_debug; then
+	nsis_add yarp_base YARPTargets-debug.cmake ${YARP_SUB}/lib/YARP/YARPTargets-debug.cmake
+fi
+
 cd $YARP_DIR_UNIX/install/lib || exit 1
 for f in `ls -1 *.$LIBEXT | grep -v YARP_math`; do
 	nsis_add yarp_libraries $f ${YARP_SUB}/lib/$f
@@ -453,7 +445,7 @@ fi
 cd $OUT_DIR
 cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
 
-$NSIS_BIN -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DGTKMM_SUB=$GTKMM_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+$NSIS_BIN -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DGTKMM_SUB=$GTKMM_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
 
 # Generate zip files
 if [ "k$SKIP_ZIP" = "k" ] ; then
