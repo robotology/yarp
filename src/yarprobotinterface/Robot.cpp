@@ -219,7 +219,7 @@ std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInt
 
 bool RobotInterface::Robot::Private::configure(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    YFIXME_NOTIMPLEMENTED
+    YFIXME_NOTIMPLEMENTED("configure action")
     return true;
 }
 
@@ -306,7 +306,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
 
 bool RobotInterface::Robot::Private::abort(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    YFIXME_NOTIMPLEMENTED
+    YFIXME_NOTIMPLEMENTED("abort action")
     return true;
 }
 
@@ -340,7 +340,7 @@ bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, 
 
 bool RobotInterface::Robot::Private::custom(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    YFIXME_NOTIMPLEMENTED
+    YFIXME_NOTIMPLEMENTED("custom action")
     return true;
 }
 

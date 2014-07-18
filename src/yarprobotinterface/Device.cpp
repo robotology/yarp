@@ -55,7 +55,7 @@ public:
     Private& operator=(const Private& other)
     {
         (void)other; // UNUSED
-        YFIXME_NOTIMPLEMENTED
+        YFIXME_NOTIMPLEMENTED("operator=")
         return *this;
     }
 
