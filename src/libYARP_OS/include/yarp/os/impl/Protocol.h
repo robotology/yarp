@@ -33,6 +33,9 @@ namespace yarp {
 
 /**
  * Connection choreographer.  Handles one side of a single YARP connection.
+ * The Protocol object for a connection holds its streams (which may
+ * change over time) and its carriers (which may be chained).
+ *
  */
 class YARP_OS_impl_API yarp::os::impl::Protocol : public yarp::os::OutputProtocol, public yarp::os::InputProtocol, public yarp::os::ConnectionState {
 public:
@@ -41,24 +44,7 @@ public:
      * Constructor. The Protocol object becomes the owner of 
      * the provided stream, and will destroy it at some point.
      */
-    Protocol(TwoWayStream *stream) :
-        log(Logger::get()) {
-        shift.takeStream(stream);
-        active = true;
-        route = Route("null","null","tcp");
-        delegate = NULL;
-        recv_delegate = NULL;
-        send_delegate = NULL;
-        need_recv_delegate = false;
-        need_send_delegate = false;
-        messageLen = 0;
-        pendingAck = false;
-        writer = NULL;
-        ref = NULL;
-        reader.setProtocol(this);
-        envelope = "";
-        port = NULL;
-    }
+    Protocol(TwoWayStream *stream);
 
     /**
      *
@@ -78,15 +64,7 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    void interrupt() {
-        if (active) {
-            if (pendingAck) {
-                sendAck();
-            }
-            shift.getInputStream().interrupt();
-            active = false;
-        }
-    }
+    void interrupt();
 
     // Documented in yarp::os::InputProtocol.
     void close() {
@@ -130,21 +108,7 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual bool open(const ConstString& name) {
-        if (name=="") {
-            setCarrier("text");
-            if (delegate!=NULL) {
-                return false;
-            }
-            setRoute(Route("no-name","no-name","no-carrier"));
-        } else {
-            setRoute(getRoute().addToName(name));
-            bool ok = expectHeader();
-            if (!ok) return false;
-            return respondToHeader();
-        }
-        return true;
-    }
+    virtual bool open(const ConstString& name);
 
     // Documented in yarp::os::OutputProtocol.
     virtual bool isOk() {
@@ -152,32 +116,7 @@ public:
     }
 
     // Documented in yarp::os::OutputProtocol.
-    virtual bool write(SizedWriter& writer) {
-        bool replied = false;
-        writer.stopWrite();
-        this->writer = &writer;
-        if (getConnection().isActive()) {
-            YARP_ASSERT(delegate!=NULL);
-            getStreams().beginPacket();
-            bool ok = delegate->write(*this,writer);
-            getStreams().endPacket();
-            PortReader *reply = writer.getReplyHandler();
-            if (reply!=NULL) {
-                if (!delegate->supportReply()) {
-                    YARP_INFO(log,String("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
-                }
-                if (ok) {
-                    reader.reset(is(),&getStreams(), getRoute(),
-                                 messageLen,delegate->isTextMode(),
-                                 delegate->isBareMode());
-                    replied = reply->read(reader);
-                }
-            }
-            expectAck(); //MOVE ack to after reply, if present
-        }
-        this->writer = NULL;
-        return replied;
-    }
+    virtual bool write(SizedWriter& writer);
 
     // Documented in yarp::os::InputProtocol.
     void reply(SizedWriter& writer) {
@@ -196,23 +135,7 @@ public:
     }
 
     // Documented in yarp::os::InputProtocol.
-    virtual yarp::os::ConnectionReader& beginRead() {
-        getRecvDelegate();
-        if (delegate!=NULL) {
-            bool ok = false;
-            while (!ok) {
-                ok = expectIndex();
-                if (!ok) {
-                    if (!is().isOk()) {
-                        // go ahead, we'll be shutting down...
-                        ok = true;
-                    }
-                }
-            }
-            respondToIndex();
-        }
-        return reader;
-    }
+    virtual yarp::os::ConnectionReader& beginRead();
 
     // Documented in yarp::os::InputProtocol.
     virtual void endRead() {
@@ -328,42 +251,7 @@ private:
      * be using.  These defaults go way back to YARP1, maybe a decade ago?
      *
      */
-    bool expectProtocolSpecifier() {
-        char buf[8];
-        yarp::os::Bytes header((char*)&buf[0],sizeof(buf));
-        YARP_SSIZE_T len = is().readFull(header);
-        if (len==-1) {
-            YARP_DEBUG(log,"no connection");
-            return false;
-        }
-        if((size_t)len!=header.length()) {
-            YARP_DEBUG(log,"data stream died");
-            return false;
-        }
-        bool already = false;
-        if (delegate!=NULL) {
-            if (delegate->checkHeader(header)) {
-                already = true;
-            }
-        }
-        if (!already) {
-            delegate = Carriers::chooseCarrier(header);
-            if (delegate==NULL) {
-                // carrier not found; send a message
-                String msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are critical for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
-                yarp::os::Bytes b((char*)msg.c_str(),msg.length());
-                os().write(b);
-                os().flush();
-            }
-        }
-        if (delegate==NULL) {
-            YARP_DEBUG(log,"unrecognized protocol");
-            return false;
-        }
-        setRoute(getRoute().addCarrierName(delegate->getName()));
-        delegate->setParameters(header);
-        return true;
-    }
+    bool expectProtocolSpecifier();
 
 
     /**
@@ -384,16 +272,7 @@ private:
      * may be redefined.
      *
      */
-    bool expectHeader() {
-        messageLen = 0;
-        bool ok = expectProtocolSpecifier();
-        if (!ok) return false;
-        ok = expectSenderSpecifier();
-        if (!ok) return false;
-        YARP_ASSERT(delegate!=NULL);
-        ok = delegate->expectExtraHeader(*this);
-        return ok;
-    }
+    bool expectHeader();
 
     /**
      *
@@ -401,24 +280,7 @@ private:
      * kind of network.
      *
      */
-    void setCarrier(const String& carrierNameBase) {
-        String carrierName = carrierNameBase;
-        if (carrierNameBase=="") carrierName = "tcp";
-        setRoute(getRoute().addCarrierName(carrierName));
-        if (delegate==NULL) {
-            delegate = Carriers::chooseCarrier(carrierName);
-            if (delegate!=NULL) {
-                if (delegate->modifiesIncomingData()) {
-                    if (active) {
-                        fprintf(stderr,"Carrier \"%s\" cannot be used this way, try \"tcp+recv.%s\" instead.\n",carrierName.c_str(),carrierName.c_str());
-                    }
-                    close();
-                    return;
-                }
-                delegate->prepareSend(*this);
-            }
-        }
-    }
+    void setCarrier(const String& carrierNameBase);
 
     /**
      *
@@ -447,13 +309,7 @@ private:
      * no-op.
      *
      */
-    bool respondToHeader() {
-        YARP_ASSERT(delegate!=NULL);
-        bool ok = delegate->respondToHeader(*this);
-        if (!ok) return false;
-        os().flush();
-        return os().isOk();
-    }
+    bool respondToHeader();
 
     /**
      *
@@ -464,27 +320,7 @@ private:
      * can leave the index classbacks as no-ops.
      *
      */
-    bool expectIndex() {
-        pendingAck = true;
-        messageLen = 0;
-        getStreams().beginPacket();
-        ref = NULL;
-        bool ok = false;
-        if (delegate!=NULL) {
-            ok = delegate->expectIndex(*this);
-        }
-        if (ok) {
-            reader.reset(is(),&getStreams(),getRoute(),
-                         messageLen,delegate->isTextMode(),
-                         delegate->isBareMode());
-            if (ref!=NULL) {
-                reader.setReference(ref);
-            }
-        } else {
-            reader.reset(is(),&getStreams(),getRoute(),0,false);
-        }
-        return ok;
-    }
+    bool expectIndex();
 
     /**
      *
@@ -503,13 +339,7 @@ private:
      * (if the carrier is one that makes acknowledgements).
      *
      */
-    bool expectAck() {
-        YARP_ASSERT(delegate!=NULL);
-        if (delegate->requireAck()) {
-            return delegate->expectAck(*this);
-        }
-        return true;
-    }
+    bool expectAck();
 
     /**
      *
@@ -517,44 +347,14 @@ private:
      * (if the carrier is one that makes acknowledgements).
      *
      */
-    bool sendAck() {
-        bool ok = true;
-        pendingAck = false;
-        if (delegate==NULL) return false;
-        if (delegate->requireAck()) {
-            ok = delegate->sendAck(*this);
-        }
-        getStreams().endPacket();
-        return ok;
-    }
+    bool sendAck();
 
     /**
      *
      * Close things down - our streams, our carriers.
      *
      */
-    void closeHelper() {
-        active = false;
-        if (pendingAck) {
-            sendAck();
-        }
-        shift.close();
-        if (delegate!=NULL) {
-            delegate->close();
-            delete delegate;
-            delegate = NULL;
-        }
-        if (recv_delegate!=NULL) {
-            recv_delegate->close();
-            delete recv_delegate;
-            recv_delegate = NULL;
-        }
-        if (send_delegate!=NULL) {
-            send_delegate->close();
-            delete send_delegate;
-            send_delegate = NULL;
-        }
-    }
+    void closeHelper();
 
     int messageLen;   ///< length remaining in current message (if known)
     bool pendingAck;  ///< is an acknowledgement due
