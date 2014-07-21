@@ -187,6 +187,7 @@ bool speedview_param_enabled =false;
 bool enable_calib_all =false;
 bool position_direct_enabled = false;
 bool openloop_enabled = false;
+bool old_impedance_enabled = false;
 
 ResourceFinder *finder;
 ////////////////////////
@@ -723,6 +724,7 @@ int myMain( int   argc, char *argv[] )
         debug_param_enabled = true;
         position_direct_enabled = true;
         openloop_enabled = true;
+        old_impedance_enabled = true;
     }
     if (finder->check("debug"))
     {

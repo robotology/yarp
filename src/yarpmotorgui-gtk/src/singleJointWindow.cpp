@@ -28,6 +28,7 @@ const int UPDATE_TIME = 200;   //update time in ms
 #define DEBUG_GUI 0
 
 extern bool position_direct_enabled;
+extern bool old_impedance_enabled;
 
 /*
  * Disable PID
