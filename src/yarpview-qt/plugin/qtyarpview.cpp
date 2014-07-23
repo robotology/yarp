@@ -24,7 +24,7 @@ QtYARPView::QtYARPView(QQuickItem *parent):
     connect(&sigHandler,SIGNAL(sendFps(double,double,double,double,double,double)),
             this, SLOT(onSendFps(double,double,double,double,double,double)));
     createObjects();
-    sprintf(_options.portName, "%s", "/view");
+    //sprintf(_options.portName, "%s", "/view");
 
 
 }
