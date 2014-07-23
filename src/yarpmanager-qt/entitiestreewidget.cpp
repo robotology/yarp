@@ -408,12 +408,49 @@ void EntitiesTreeWidget::onRemove()
         return;
     }
 
-    if(QMessageBox::question(this,"Removing","Are you sure to remove this item?") == QMessageBox::Yes){
-        while(item->childCount()>0){
-            delete item->takeChild(0);
-        }
 
-        int index = item->parent()->indexOfChild(item);
-        delete item->parent()->takeChild(index);
+
+    if(QMessageBox::question(this,"Removing","Are you sure to remove this item?") == QMessageBox::Yes){
+
+        if(item->parent() == applicationNode){
+            if(item->data(0,Qt::UserRole)  == yarp::manager::APPLICATION){
+                yarp::manager::Application *app = (yarp::manager::Application*)item->data(0,Qt::UserRole + 1).toLongLong();
+                if(app){
+                    QString appName = item->text(0);
+
+                    removeApplication(appName);
+                }
+
+            }
+        }else
+            if(item->parent() == resourcesNode){
+                if(item->data(0,Qt::UserRole)  == yarp::manager::RESOURCE){
+                    yarp::manager::Computer *res = (yarp::manager::Computer*)item->data(0,Qt::UserRole + 1).toLongLong();
+                    if(res){
+                        QString resName = item->text(0);
+
+                        removeResource(resName);
+                    }
+                }
+            }else
+            if(item->parent() == modulesNode){
+                if(item->data(0,Qt::UserRole)  == yarp::manager::MODULE){
+                    yarp::manager::Module *mod = (yarp::manager::Module*)item->data(0,Qt::UserRole + 1).toLongLong();
+                    if(mod){
+                        QString modName = item->text(0);
+
+                        removeModule(modName);
+                    }
+                }
+            }
+
+            while(item->childCount()>0){
+                delete item->takeChild(0);
+            }
+
+            if(item->parent()){
+                int index = item->parent()->indexOfChild(item);
+                delete item->parent()->takeChild(index);
+            }
     }
 }

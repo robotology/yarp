@@ -71,6 +71,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->entitiesTree,SIGNAL(viewApplication(yarp::manager::Application*)),this,SLOT(viewApplication(yarp::manager::Application*)));
     connect(ui->entitiesTree,SIGNAL(openFiles()),this,SLOT(onOpen()));
     connect(ui->entitiesTree,SIGNAL(importFiles()),this,SLOT(onImportFiles()));
+    connect(ui->entitiesTree,SIGNAL(removeApplication(QString)),this,SLOT(onRemoveApplication(QString)));
+    connect(ui->entitiesTree,SIGNAL(removeModule(QString)),this,SLOT(onRemoveModule(QString)));
+    connect(ui->entitiesTree,SIGNAL(removeResource(QString)),this,SLOT(onRemoveResource(QString)));
     connect(ui->entitiesTree,SIGNAL(reopenApplication(QString,QString)),this,SLOT(onReopenApplication(QString,QString)));
     connect(ui->entitiesTree,SIGNAL(reopenModule(QString,QString)),this,SLOT(onReopenModule(QString,QString)));
     connect(ui->entitiesTree,SIGNAL(reopenResource(QString,QString)),this,SLOT(onReopenResource(QString,QString)));
@@ -826,6 +829,12 @@ void MainWindow::onHelp()
     QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/yarpmanager.html"));
 }
 
+void MainWindow::onRemoveApplication(QString appName)
+{
+    lazyManager.removeApplication(appName.toLatin1().data());
+    syncApplicationList();
+}
+
 
 void MainWindow::onReopenApplication(QString appName,QString fileName)
 {
@@ -834,10 +843,22 @@ void MainWindow::onReopenApplication(QString appName,QString fileName)
     syncApplicationList();
 }
 
+void MainWindow::onRemoveModule(QString modName)
+{
+    lazyManager.removeModule(modName.toLatin1().data());
+    syncApplicationList();
+}
+
 void MainWindow::onReopenModule(QString modName,QString fileName)
 {
     lazyManager.removeModule(modName.toLatin1().data());
     lazyManager.addModule(fileName.toLatin1().data());
+    syncApplicationList();
+}
+
+void MainWindow::onRemoveResource(QString resName)
+{
+    lazyManager.removeResource(resName.toLatin1().data());
     syncApplicationList();
 }
 

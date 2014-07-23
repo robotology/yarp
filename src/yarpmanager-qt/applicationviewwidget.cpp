@@ -274,7 +274,7 @@ void ApplicationViewWidget::updateApplicationWindow()
 
         QStringList l;
         l << command << id << "stopped" << host << param << stdio << workDir << env;
-        QTreeWidgetItem *it = new QTreeWidgetItem(ui->moduleList,l);
+        CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->moduleList,l);
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
         it->setData(0,Qt::UserRole,yarp::manager::MODULE);
         it->setIcon(0,QIcon(":/images/suspended_ico.png"));
@@ -304,7 +304,7 @@ void ApplicationViewWidget::updateApplicationWindow()
 
         QStringList l;
         l << type << sId << status << from << to << carrier;
-        QTreeWidgetItem *it = new QTreeWidgetItem(ui->connectionList,l);
+        CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->connectionList,l);
         ui->moduleList->addTopLevelItem(it);
         it->setData(0,Qt::UserRole,yarp::manager::INOUTD);
         it->setIcon(0,QIcon(":/images/disconnected_ico.png"));
@@ -333,7 +333,7 @@ void ApplicationViewWidget::updateApplicationWindow()
 
         QStringList l;
         l << res << sId << type << status ;
-        QTreeWidgetItem *it = new QTreeWidgetItem(ui->resourcesList,l);
+        CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->resourcesList,l);
         ui->moduleList->addTopLevelItem(it);
         it->setData(0,Qt::UserRole,yarp::manager::RESOURCE);
         if(type == "computer"){

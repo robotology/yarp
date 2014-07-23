@@ -66,6 +66,9 @@ signals:
     void viewApplication(yarp::manager::Application*);
     void importFiles();
     void openFiles();
+    void removeApplication(QString);
+    void removeModule(QString);
+    void removeResource(QString);
     void reopenApplication(QString, QString);
     void reopenResource(QString, QString);
     void reopenModule(QString, QString);

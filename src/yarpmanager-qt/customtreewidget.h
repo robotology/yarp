@@ -14,6 +14,31 @@
 #include <QTreeWidget>
 #include <QMenu>
 
+
+/*! \class CustomTreeWidgetItem
+    \brief A custom QTreeWidgetItem
+
+    This class is an override of the original QTreeWidgetItem reimplementing the sort
+    function using the numerical order for the ID columns.
+*/
+class CustomTreeWidgetItem : public QTreeWidgetItem
+{
+public:
+    CustomTreeWidgetItem(QTreeWidget *view, const QStringList &strings, int type = Type) :
+        QTreeWidgetItem(view,strings,type){}
+
+    bool operator< (const QTreeWidgetItem &other) const{
+        int sortCol = treeWidget()->sortColumn();
+        if(sortCol == 1){
+            int myNumber = text(sortCol).toInt();
+            int otherNumber = other.text(sortCol).toInt();
+            return myNumber < otherNumber;
+        }else{
+            return QTreeWidgetItem::operator <(other);
+        }
+    }
+};
+
 /*! \class CustomTreeWidget
     \brief A custom QTreeWidget
 
