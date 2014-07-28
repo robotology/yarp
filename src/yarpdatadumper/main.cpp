@@ -165,9 +165,10 @@ None.
 
 \section out_data_sec Output Data Files
 Within the directory \e ./<portname> the file \e data.log is 
-created containing the acquisitions report. Beside this, if \e 
-image type has been selected, all the acquired images are also 
-stored. 
+created containing the acquisitions. Besides, if \e image type
+has been selected, all the acquired images are also stored. A 
+further file called \e info.log is also produced containing 
+meta-data relevant for the logging. 
  
 Note that in case an acquisition with the same \e <portname> was
 previously carried out, an increasing suffix will be appended 
