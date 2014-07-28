@@ -320,6 +320,17 @@ private:
     bool              _verb;
 
     bool closeMain() {
+
+
+        detachAll();
+
+        rpc_p.interrupt();
+        control_p.interrupt();
+        state_p.interrupt();
+
+        command_buffer.detach();
+        state_buffer.detach();
+
         if (yarp::os::RateThread::isRunning()) {
             yarp::os::RateThread::stop();
         }
@@ -328,6 +339,14 @@ private:
         rpc_p.close();
         control_p.close();
         state_p.close();
+
+        if(subDeviceOwned != NULL)
+        {
+            subDeviceOwned->close();
+            delete subDeviceOwned;
+            subDeviceOwned = NULL;
+        }
+
 
         return true;
     }
@@ -383,13 +402,8 @@ public:
     * Close the device driver by deallocating all resources and closing ports.
     * @return true if successful or false otherwise.
     */
-    virtual bool close() {
-        if(subDeviceOwned != NULL)
-        {
-            subDeviceOwned->close();
-            delete subDeviceOwned;
-            subDeviceOwned = NULL;
-        }
+    virtual bool close()
+    {
         return closeMain();
     }
 
