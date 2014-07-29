@@ -347,8 +347,8 @@ public:
         _verb = false;
     }
 
-    virtual ~ControlBoardWrapper() {
-        //YARP_TRACE(Logger::get(),"ControlBoardWrapper2::~ControlBoardWrapper2()", Logger::get().log_files.f3);
+    virtual ~ControlBoardWrapper() 
+    {
     }
 
     /**
