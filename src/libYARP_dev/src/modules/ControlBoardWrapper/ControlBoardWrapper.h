@@ -294,7 +294,7 @@ class yarp::dev::ControlBoardWrapper:
 private:
     yarp::dev::impl::WrappedDevice device;
 
-    yarp::os::Port state_p;   // out port to read the state
+    yarp::os::BufferedPort<yarp::sig::Vector> state_p;   // out port to read the state
     yarp::os::Port control_p; // in port to command the robot
     yarp::os::Port rpc_p;     // RPC to configure the robot
     yarp::os::Stamp time;     // envelope to attach to the state port
@@ -318,38 +318,6 @@ private:
     int               top;
     int               thread_period;
     bool              _verb;
-
-    bool closeMain() {
-
-
-        detachAll();
-
-        rpc_p.interrupt();
-        control_p.interrupt();
-        state_p.interrupt();
-
-        command_buffer.detach();
-        state_buffer.detach();
-
-        if (yarp::os::RateThread::isRunning()) {
-            yarp::os::RateThread::stop();
-        }
-
-        // close the port connections here!
-        rpc_p.close();
-        control_p.close();
-        state_p.close();
-
-        if(subDeviceOwned != NULL)
-        {
-            subDeviceOwned->close();
-            delete subDeviceOwned;
-            subDeviceOwned = NULL;
-        }
-
-
-        return true;
-    }
 
     yarp::os::Bottle getOptions();
 
@@ -381,7 +349,6 @@ public:
 
     virtual ~ControlBoardWrapper() {
         //YARP_TRACE(Logger::get(),"ControlBoardWrapper2::~ControlBoardWrapper2()", Logger::get().log_files.f3);
-        closeMain();
     }
 
     /**
@@ -402,9 +369,30 @@ public:
     * Close the device driver by deallocating all resources and closing ports.
     * @return true if successful or false otherwise.
     */
-    virtual bool close()
-    {
-        return closeMain();
+    virtual bool close() {
+
+        //stop thread if running
+        if (yarp::os::RateThread::isRunning()) {
+            yarp::os::RateThread::stop();
+        }
+
+        //shut down control port
+        control_p.close();
+        state_p.close();
+        rpc_p.close();
+
+        //if we own a deviced we have to close and delete it
+        if(subDeviceOwned != NULL)
+        {
+            subDeviceOwned->close();
+            delete subDeviceOwned;
+            subDeviceOwned = NULL;
+        }
+        else
+        {
+            detachAll();
+        }
+        return true;
     }
 
 
@@ -422,7 +410,8 @@ public:
 
     virtual bool detachAll()
     {
-        yarp::os::RateThread::stop();
+        if (yarp::os::RateThread::isRunning())
+            yarp::os::RateThread::stop();
 
         int devices=device.subdevices.size();
         for(int k=0;k<devices;k++)

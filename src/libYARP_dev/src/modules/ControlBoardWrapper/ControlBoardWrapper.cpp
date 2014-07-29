@@ -2726,6 +2726,8 @@ Bottle ControlBoardWrapper::getOptions()
 
 bool ControlBoardWrapper::open(Searchable& config)
 {
+    bool deferredAttach=false;
+
     string str=config.toString().c_str();
     Property prop;
     prop.fromString(config.toString().c_str());
@@ -2738,16 +2740,18 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     if(prop.check("subdevice"))
     {
-        if(! openAndAttachSubDevice(prop))
+        if(!openAndAttachSubDevice(prop))
         {
             printf("Error while opening subdevice\n");
             return false;
         }
+        deferredAttach=false;
     }
     else
     {
         if(!openDeferredAttach(prop))
             return false;
+        deferredAttach=true;
     }
 
     /* const values MAX_JOINTS_ON_DEVICE and MAX_DEVICES are used while parsing group joints commands like
@@ -2770,11 +2774,6 @@ bool ControlBoardWrapper::open(Searchable& config)
         return false;
     }
 
-    std::string rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
-    partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
-
-    rootName+=(partName);
-
     // attach readers.
     // rpc_p.setReader(command_reader);
     // changed so that streaming input accepted if offered
@@ -2782,14 +2781,31 @@ bool ControlBoardWrapper::open(Searchable& config)
     command_reader.attach(command_buffer);
 
     // attach buffers.
-    state_buffer.attach(state_p);
     control_buffer.attach(control_p);
     // attach callback.
     control_buffer.useCallback(callback_impl);
 
+    std::string rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
+    partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
+    rootName+=(partName);
+
+    ///// We now open ports
     rpc_p.open((rootName+"/rpc:i").c_str());
     control_p.open((rootName+"/command:i").c_str());
-    state_p.open((rootName+"/state:o").c_str());
+
+    if (!state_p.open((rootName+"/state:o").c_str()))
+    {
+        std::cerr<<"Error opening port "<< rootName+"/state:o\n";
+        return false;
+    }
+        
+    // In case attach is not deferred and the controlboard already owns a valid device
+    // we can start the thread. Otherwise this will happen when attachAll is called
+    if (!deferredAttach)
+        {
+           RateThread::setRate(thread_period);
+           RateThread::start();
+        }
 
     return true;
 }
@@ -2994,9 +3010,6 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     // initialization.
     command_reader.initialize();
 
-    RateThread::setRate(thread_period);
-    RateThread::start();
-
     prop.put("rootName", "");
     return true;
 }
@@ -3055,7 +3068,7 @@ void ControlBoardWrapper::run()
 {
     std::string tmp(partName.c_str());
 
-    yarp::sig::Vector& v = state_buffer.get();
+    yarp::sig::Vector& v = state_p.prepare();
     v.size(controlledJoints);
 
     //getEncoders for all subdevices
@@ -3082,6 +3095,6 @@ void ControlBoardWrapper::run()
     timeMutex.post();
 
     state_p.setEnvelope(time);
-    state_buffer.write();
+    state_p.write();
 }
 
