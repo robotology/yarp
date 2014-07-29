@@ -221,8 +221,8 @@ public:
 
     inline void refreshEncoders()
     {
-    	int idx = 0;
-    	double tmp = 0;
+        int idx = 0;
+        double tmp = 0;
         for(int j=base, idx=0; j<(base+axes); j++, idx++)
         {
             if(enc)
