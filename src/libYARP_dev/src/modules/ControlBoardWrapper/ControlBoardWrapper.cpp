@@ -2782,9 +2782,7 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     // attach buffers.
     control_buffer.attach(control_p);
-    // attach callback.
-    control_buffer.useCallback(callback_impl);
-
+    
     std::string rootName = prop.check("rootName",Value("/"), "starting '/' if needed.").asString().c_str();
     partName=prop.check("name",Value("controlboard"), "prefix for port names").asString().c_str();
     rootName+=(partName);
@@ -2792,6 +2790,8 @@ bool ControlBoardWrapper::open(Searchable& config)
     ///// We now open ports
     rpc_p.open((rootName+"/rpc:i").c_str());
     control_p.open((rootName+"/command:i").c_str());
+    // attach callback.
+    control_buffer.useCallback(callback_impl);
 
     if (!state_p.open((rootName+"/state:o").c_str()))
     {
@@ -3051,7 +3051,6 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
         printf("ControlBoardWrapper: AttachAll failed, some subdevice was not found or its attach failed\n");
         return false;
     }
-
 
     CBW_encoders.resize(device.lut.size());
 
