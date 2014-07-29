@@ -330,16 +330,20 @@ private:
     yarp::dev::PolyDriver *subDeviceOwned;
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
+    bool ownDevices;
+
 public:
     /**
     * Constructor.
     */
-    ControlBoardWrapper() :yarp::os::RateThread(20), control_buffer(4)
+    ControlBoardWrapper() :yarp::os::RateThread(20), 
+        control_buffer(4),
+        ownDevices(true)
     {
         callback_impl.init(this);
         command_reader.init(this);
         ////YARP_TRACE(Logger::get(),"ControlBoardWrapper2::ControlBoardWrapper2()", Logger::get().log_files.f3);
-        controlledJoints = 0;
+        
         thread_period = 20; // ms.
         base = 0;
         top = 0;
@@ -382,11 +386,15 @@ public:
         rpc_p.close();
 
         //if we own a deviced we have to close and delete it
-        if(subDeviceOwned != NULL)
+        if (ownDevices)
         {
-            subDeviceOwned->close();
-            delete subDeviceOwned;
-            subDeviceOwned = NULL;
+            // we should have created a new devices which we need to delete
+            if(subDeviceOwned != NULL)
+            {
+                subDeviceOwned->close();
+                delete subDeviceOwned;
+                subDeviceOwned = NULL;
+            }
         }
         else
         {
@@ -408,17 +416,7 @@ public:
     */
     virtual bool open(yarp::os::Searchable& prop);
 
-    virtual bool detachAll()
-    {
-        if (yarp::os::RateThread::isRunning())
-            yarp::os::RateThread::stop();
-
-        int devices=device.subdevices.size();
-        for(int k=0;k<devices;k++)
-            device.getSubdevice(k)->detach();
-
-        return true;
-    }
+    virtual bool detachAll();
 
     virtual bool attachAll(const yarp::dev::PolyDriverList &l);
 

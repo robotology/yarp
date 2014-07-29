@@ -2738,20 +2738,22 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
+    // check if we need to create subdevice or if they are
+    // passed later on thorugh attachAll()
     if(prop.check("subdevice"))
     {
+        ownDevices=true;
         if(!openAndAttachSubDevice(prop))
         {
             printf("Error while opening subdevice\n");
             return false;
         }
-        deferredAttach=false;
     }
     else
     {
+        ownDevices=false;
         if(!openDeferredAttach(prop))
             return false;
-        deferredAttach=true;
     }
 
     /* const values MAX_JOINTS_ON_DEVICE and MAX_DEVICES are used while parsing group joints commands like
@@ -2801,7 +2803,7 @@ bool ControlBoardWrapper::open(Searchable& config)
         
     // In case attach is not deferred and the controlboard already owns a valid device
     // we can start the thread. Otherwise this will happen when attachAll is called
-    if (!deferredAttach)
+    if (ownDevices)
         {
            RateThread::setRate(thread_period);
            RateThread::start();
@@ -3017,6 +3019,10 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
 
 bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
 {
+    //check if we already instantiated a subdevice previously
+    if (ownDevices)
+        return false;
+
     for(int p=0;p<polylist.size();p++)
     {
         // find appropriate entry in list of subdevices
@@ -3061,6 +3067,22 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList &polylist)
     RateThread::start();
 
     return true;
+}
+
+bool ControlBoardWrapper::detachAll()
+{
+        //check if we already instantiated a subdevice previously
+        if (ownDevices)
+            return false;
+
+        if (yarp::os::RateThread::isRunning())
+            yarp::os::RateThread::stop();
+
+        int devices=device.subdevices.size();
+        for(int k=0;k<devices;k++)
+            device.getSubdevice(k)->detach();
+
+        return true;
 }
 
 void ControlBoardWrapper::run()
