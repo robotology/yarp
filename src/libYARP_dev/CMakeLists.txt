@@ -106,28 +106,34 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/TestFrameGrabber.cpp
                   src/TorqueControlImpl.cpp)
 
-
-set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
-
-set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.h
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
-
 set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
-                        src/modules/ControlBoardWrapper/RPCMessagesParser.cpp
-                        src/modules/ControlBoardWrapper/StreamingMessagesParser.cpp
-                        src/modules/ControlBoardWrapper/SubDevice.cpp)
+                        )
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
-                        src/modules/ControlBoardWrapper/ControlBoardWrapper.h
-                        src/modules/ControlBoardWrapper/RPCMessagesParser.h
-                        src/modules/ControlBoardWrapper/StreamingMessagesParser.h
-                        src/modules/ControlBoardWrapper/SubDevice.cpp)
+                        )
+
+add_subdirectory(src/modules/ControlBoardWrapper)
+get_property(other_files GLOBAL PROPERTY controlBoardWrapper_files)
+
+if(CBW2_USE_YARP_THRIFT)
+    message(STATUS "defining YARP_MSG")
+    add_definitions(-DYARP_MSG)
+endif()
+
+if(CBW2_USE_ROS_MSG)
+    message(STATUS "defining ROS_MSG")
+    add_definitions(-DROS_MSG)
+endif()
+
+set( YARP_devices_SRCS ${YARP_devices_SRCS} ${other_files})
+set( YARP_devices_HRDS ${YARP_devices_HRDS} ${controlBoardWrapper_hrds})
+
+#message(INFO "\n other_files is ${other_files}")
+include_directories(src/modules/ControlBoardWrapper/include)
+#message(STATUS "CMAKE_CURRENT_BINARY_DIR is ${CMAKE_CURRENT_BINARY_DIR} ||")
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstateros )
 
 source_group("Source Files" FILES ${YARP_dev_SRCS})
 source_group("Header Files" FILES ${YARP_dev_HDRS})

@@ -1,17 +1,9 @@
-set(controlBoardWrapper_srcs    src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
-                                src/modules/ControlBoardWrapper/RPCMessagesParser.cpp
-                                src/modules/ControlBoardWrapper/StreamingMessagesParser.cpp
-                                src/modules/ControlBoardWrapper/SubDevice.cpp)
 
-set(controlBoardWrapper_hrds   src/modules/ControlBoardWrapper/ControlBoardWrapper.h
-                                src/modules/ControlBoardWrapper/RPCMessagesParser.h
-                                src/modules/ControlBoardWrapper/StreamingMessagesParser.h
-                                src/modules/ControlBoardWrapper/SubDevice.h)
+option(CBW2_USE_YARP_THRIFT "Use the extended status generted from .thrift file" OFf)
+option(CBW2_USE_ROS_MSG "Create ROS topic" OFF)
 
-set(use_thrift false)
-set(use_ros true)
 
-if(use_thrift)
+if(CBW2_USE_YARP_THRIFT)
     add_definitions(-DYARP_MSG)
 
     set(thrifFile stateExt)
@@ -25,22 +17,23 @@ if(use_thrift)
     set(ALLOW_IDL_GENERATION ON CACHE BOOL "on")
 
 
-    message(INFO " way is true\n")
+    message(INFO " Using YARP message\n")
     #set(generated_libs_dir build/src)        # root folder where place generated files
     set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
     yarp_idl_to_dir(${thrifFile}.thrift ${generated_libs_dir})     # run the generator engine
-#    yarp_idl_to_dir(${thrifFile}2.msg ${generated_libs_dir})     # run the generator engine
 
     #include files generated previously
     include(${thrifFile}_thrift.cmake)
 
     # create the sender
-    message(STATUS " YARP headers is ${headers}")
-    message(STATUS " YARP sources is ${sources}")
+    set(yarp_msg_headers ${headers})
+    set(yarp_msg_sources ${sources})
+    message(STATUS " YARP headers is ${yarp_msg_headers}")
+    message(STATUS " YARP sources is ${yarp_msg_sources}")
 
-endif(use_thrift)
+endif(CBW2_USE_YARP_THRIFT)
 
-if(use_ros)
+if(CBW2_USE_ROS_MSG)
     add_definitions(-DROS_MSG)
 
     set(rosMSG jointState)
@@ -53,8 +46,7 @@ if(use_ros)
 
     set(ALLOW_IDL_GENERATION ON CACHE BOOL "on")
 
-
-    message(INFO " way is true\n")
+    message(INFO " Using ROS message\n")
     #set(generated_libs_dir build/src)        # root folder where place generated files
     set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
     yarp_idl_to_dir(${rosMSG}.msg ${generated_libs_dir})     # run the generator engine
@@ -68,12 +60,24 @@ if(use_ros)
     include(${rosMSG}_msg.cmake)
 
     # create the sender
-    message(STATUS " ROS headers is ${headers}")
-    message(STATUS " ROS sources is ${sources}")
+    set(ros_msg_headers ${headers})
+    set(ros_msg_sources ${sources})
+    message(STATUS " ROS headers is ${ros_msg_headers}")
+    message(STATUS " ROS sources is ${ros_msg_sources}")
 
     include_directories(${CMAKE_CURRENT_BINARY_DIR}/${rosLowerName})
 
-endif(use_ros)
+endif(CBW2_USE_ROS_MSG)
+
+set(controlBoardWrapper_srcs    src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
+                                src/modules/ControlBoardWrapper/RPCMessagesParser.cpp
+                                src/modules/ControlBoardWrapper/StreamingMessagesParser.cpp
+                                src/modules/ControlBoardWrapper/SubDevice.cpp)
+
+set(controlBoardWrapper_hrds   src/modules/ControlBoardWrapper/ControlBoardWrapper.h
+                                src/modules/ControlBoardWrapper/RPCMessagesParser.h
+                                src/modules/ControlBoardWrapper/StreamingMessagesParser.h
+                                src/modules/ControlBoardWrapper/SubDevice.h)
 
 #foreach(file in ${headers})
 #    set(header_files ${header_files} ${CMAKE_CURRENT_SOURCE_DIR}/${generated_libs_dir}/${file})
@@ -83,5 +87,5 @@ endif(use_ros)
 #message(INFO " header_files is ${header_files}")
 
 # add automatically generated files to source list
-set(controlBoardWrapper_srcs ${controlBoardWrapper_srcs} ${sources} )
+set(controlBoardWrapper_srcs ${controlBoardWrapper_srcs} ${yarp_msg_sources}  ${ros_msg_sources} )
 set_property(GLOBAL APPEND PROPERTY controlBoardWrapper_files ${controlBoardWrapper_srcs})

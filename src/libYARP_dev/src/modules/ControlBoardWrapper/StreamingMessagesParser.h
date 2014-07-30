@@ -30,7 +30,6 @@
 #include <string>
 #include <vector>
 
-
 #ifdef MSVC
     #pragma warning(disable:4355)
 #endif
