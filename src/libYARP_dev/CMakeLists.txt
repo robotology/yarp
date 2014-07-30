@@ -133,7 +133,7 @@ set( YARP_devices_HRDS ${YARP_devices_HRDS} ${controlBoardWrapper_hrds})
 #message(INFO "\n other_files is ${other_files}")
 include_directories(src/modules/ControlBoardWrapper/include)
 #message(STATUS "CMAKE_CURRENT_BINARY_DIR is ${CMAKE_CURRENT_BINARY_DIR} ||")
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstateros )
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstate )
 
 source_group("Source Files" FILES ${YARP_dev_SRCS})
 source_group("Header Files" FILES ${YARP_dev_HDRS})
