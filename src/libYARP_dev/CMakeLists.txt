@@ -115,6 +115,19 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/ControlBoardWrapper/ControlBoardWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
 
+set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
+                        src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
+                        src/modules/ControlBoardWrapper/RPCMessagesParser.cpp
+                        src/modules/ControlBoardWrapper/StreamingMessagesParser.cpp
+                        src/modules/ControlBoardWrapper/SubDevice.cpp)
+
+set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
+                        src/modules/ControlBoardWrapper/ControlBoardWrapper.h
+                        src/modules/ControlBoardWrapper/RPCMessagesParser.h
+                        src/modules/ControlBoardWrapper/StreamingMessagesParser.h
+                        src/modules/ControlBoardWrapper/SubDevice.cpp)
 
 source_group("Source Files" FILES ${YARP_dev_SRCS})
 source_group("Header Files" FILES ${YARP_dev_HDRS})
