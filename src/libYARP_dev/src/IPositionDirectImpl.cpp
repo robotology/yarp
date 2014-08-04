@@ -91,3 +91,18 @@ bool ImplementPositionDirect::setPositions(const double *refs)
 
     return iPDirect->setPositionsRaw(temp_double);
 }
+
+
+// Stub impl
+
+bool StubImplPositionDirectRaw::NOT_YET_IMPLEMENTED(const char *func)
+{
+    if (func)
+        fprintf(stderr, "%s:", func);
+    else
+        fprintf(stderr, "Function ");
+
+    fprintf(stderr, "not yet implemented\n");
+
+    return false;
+}

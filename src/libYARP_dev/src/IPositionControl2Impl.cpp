@@ -299,3 +299,19 @@ bool ImplementPositionControl2::getAxes(int *axis)
 
 
 /////////////////// End Implement PostionControl2
+
+
+
+// Stub interface
+
+bool StubImplPositionControl2Raw::NOT_YET_IMPLEMENTED(const char *func)
+{
+    if (func)
+        fprintf(stderr, "%s:", func);
+    else
+        fprintf(stderr, "Function ");
+
+    fprintf(stderr, "not yet implemented\n");
+
+    return false;
+}
