@@ -125,10 +125,6 @@ Rectangle {
                 yarpViewCore.videoProducer.frameHeight === 0){
             return;
         }
-        console.log("Frame width: " + yarpViewCore.videoProducer.frameWidth)
-        console.log("Frame height: " + yarpViewCore.videoProducer.frameHeight)
-        console.log("Data height: " + dataArea.height)
-        console.log("Menu height: " + menuHeight)
         windowWidth = yarpViewCore.videoProducer.frameWidth
         windowHeight = yarpViewCore.videoProducer.frameHeight + (dataArea !== undefined ? dataArea.height:0) + menuHeight
         changeWindowSize(windowWidth,windowHeight)
