@@ -49,3 +49,16 @@ bool StubImplPidControlRaw::NOT_YET_IMPLEMENTED(const char *func)
     return false;
 }
 
+
+bool StubImplPositionControl2Raw::NOT_YET_IMPLEMENTED(char const* func)
+{
+    if (func)
+        fprintf(stderr, "%s:", func);
+    else
+        fprintf(stderr, "Function ");
+
+    fprintf(stderr, "not yet implemented\n");
+
+    return false;
+}
+
