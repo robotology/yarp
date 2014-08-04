@@ -29,13 +29,14 @@ ApplicationWindow {
     property int menuH: 0
     title: vSurface.moduleTitle
 
-    onActiveChanged:   {
+    function calc()    {
         if(menuH != 0){
             return;
         }
 
         menuH = window.height - vSurface.height - statusBar.height
         vSurface.menuHeight =  menuH
+        console.log("ACTIVE CHANGED " + menuH + " Video Surface H: " + vSurface.height)
     }
 
 
@@ -63,6 +64,7 @@ ApplicationWindow {
         onChangeWindowSize:{
             window.width = w
             window.height = h
+            console.log("change win size: " + w + "x" + h)
         }
         onSynch:{
             if(menu !== undefined){
@@ -80,10 +82,12 @@ ApplicationWindow {
             vSurface.freeze(checked)
         }
         onSetOriginalSize:{
+            calc()
             vSurface.setOriginalSize()
         }
 
         onSetOriginalAspectRatio:{
+            calc()
             vSurface.setOriginalAspectRatio()
         }
 
