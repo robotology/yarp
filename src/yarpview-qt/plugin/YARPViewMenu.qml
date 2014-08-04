@@ -14,8 +14,6 @@ import QtQuick.Controls 1.1
 
 MenuBar {
 
-
-
     signal quit()
     signal about()
     signal freeze(bool checked)

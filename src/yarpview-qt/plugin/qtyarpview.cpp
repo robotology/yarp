@@ -17,6 +17,7 @@ QtYARPView::QtYARPView(QQuickItem *parent):
 {
     ptr_portCallback = NULL;
     setOptionsToDefault();
+    _pOutPort = NULL;
 
     connect(&sigHandler,SIGNAL(sendFrame(QVideoFrame*)),&videoProducer,
             SLOT(onNewVideoContentReceived(QVideoFrame*)),Qt::DirectConnection);
@@ -187,7 +188,7 @@ void QtYARPView::createObjects() {
 #ifdef YARP_LITTLE_ENDIAN
     ptr_inputPort = new  yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelBgra> >;
 #else
-    ptr_inputPort = new  yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
+    ptr_inputPort = new  yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
 #endif
     ptr_portCallback = new InputCallback;
     ptr_portCallback->setSignalHandler(&sigHandler);
@@ -363,6 +364,7 @@ bool QtYARPView::openPorts()
             qDebug("Port registration succeed!");
         }
         else{
+            _pOutPort = NULL;
             qDebug("ERROR: Port registration failed.\nQuitting, sorry.");
             return false;
         }
@@ -377,7 +379,7 @@ void QtYARPView::closePorts()
 
     ptr_inputPort->close();
 
-    if (_options.outputEnabled == 1){
+    if (_options.outputEnabled == 1 && _pOutPort){
         _pOutPort->close();
         bool ok = true;
         if  (ok)

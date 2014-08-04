@@ -9,6 +9,7 @@
  */
 
 #include "videoproducer.h"
+#include <QVideoFrame>
 
 VideoProducer::VideoProducer(QObject *parent) :
     QObject(parent)
@@ -55,7 +56,8 @@ int VideoProducer::getWidth()
     if(!m_format){
         return 0;
     }
-    return m_format->frameWidth();
+    int w = m_format->frameWidth();
+    return w;
 }
 
 /*! \brief returns the height of the surface
@@ -66,7 +68,8 @@ int VideoProducer::getHeight()
     if(!m_format){
         return 0;
     }
-    return m_format->frameHeight();
+    int h = m_format->frameHeight();
+    return h;
 }
 
 /*! \brief This gets the frame and presents it to the abstract surface
@@ -83,17 +86,19 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
         }
 
         if(!m_surface->isActive()){
-            m_format = new QVideoSurfaceFormat(frame->size(),frame->pixelFormat());
-            qreal ratio = (qreal)frame->size().width() / (qreal)frame->size().height();
+            QSize s = frame->size();
+            QVideoFrame::PixelFormat f = frame->pixelFormat();
+            m_format = new QVideoSurfaceFormat(s,f);
+            qreal ratio = (qreal)s.width() / (qreal)s.height();
             if(ratio > 2){
 
-                m_format->setFrameSize(frame->size().width(),
-                                       frame->size().height() * 2);
+                m_format->setFrameSize(s.width(),
+                                       s.height() * 2);
             }
 
             bool b = m_surface->start(*m_format);
             if(b){
-                qDebug("Surface STARTED");
+                qDebug("Surface STARTED! Dimensions: %dx%d -- PixelFormat: %d",s.width(),s.height(),(int)f);
             }else{
                 qDebug("Surface START ERROR");
                 delete m_format;

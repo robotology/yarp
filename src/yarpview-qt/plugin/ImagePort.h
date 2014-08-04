@@ -47,7 +47,7 @@ public:
 #ifdef YARP_LITTLE_ENDIAN
     void onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img);
 #else
-    void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img);
+    void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img);
 #endif
  
 private:

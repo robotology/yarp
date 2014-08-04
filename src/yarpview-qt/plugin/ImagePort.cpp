@@ -40,7 +40,7 @@ InputCallback::~InputCallback()
 #ifdef YARP_LITTLE_ENDIAN
 void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelBgra> &img)
 #else
-void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img)
+void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img)
 #endif
 {
 
@@ -58,7 +58,7 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgb> &img)
     // Takes the ownership of the buffer in write only mode
     tmpBuf = frame.bits();
     unsigned char *rawImg = img.getRawImage();
-    int j = 0;
+    //int j = 0;
     // Inverts the planes because Qt Wants an image in RGB format instead of BGR
    /* for(int i=0; i<imgSize; i++){
         tmpBuf[j+2] = rawImg[i];

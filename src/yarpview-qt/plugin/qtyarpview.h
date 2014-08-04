@@ -104,7 +104,7 @@ private:
 #ifdef YARP_LITTLE_ENDIAN
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelBgra> > *ptr_inputPort;
 #else
-    yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *ptr_inputPort;
+    yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgba> > *ptr_inputPort;
 #endif
     yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort;
     InputCallback *ptr_portCallback;
