@@ -36,7 +36,6 @@ ApplicationWindow {
 
         menuH = window.height - vSurface.height - statusBar.height
         vSurface.menuHeight =  menuH
-        console.log("ACTIVE CHANGED " + menuH + " Video Surface H: " + vSurface.height)
     }
 
 
@@ -64,7 +63,6 @@ ApplicationWindow {
         onChangeWindowSize:{
             window.width = w
             window.height = h
-            console.log("change win size: " + w + "x" + h)
         }
         onSynch:{
             if(menu !== undefined){
