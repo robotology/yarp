@@ -94,8 +94,8 @@ void SocketTwoWayStream::updateAddresses() {
     if (local.sa_family == AF_INET) {
         struct sockaddr_in *ipv4local = (struct sockaddr_in *) &local;
         struct sockaddr_in *ipv4remote = (struct sockaddr_in *) &remote;
-        localAddress = Contact(inet_ntoa(ipv4local->sin_addr),ipv4local->sin_port);
-        remoteAddress = Contact(inet_ntoa(ipv4remote->sin_addr),ipv4remote->sin_port);
+        localAddress = Contact(inet_ntoa(ipv4local->sin_addr),ntohs(ipv4local->sin_port));
+        remoteAddress = Contact(inet_ntoa(ipv4remote->sin_addr),ntohs(ipv4remote->sin_port));
     } else {
         YARP_ERROR(Logger::get(),"ipv6 address type not propagated without ACE");
     }
