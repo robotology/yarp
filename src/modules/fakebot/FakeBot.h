@@ -25,7 +25,7 @@ class yarp::dev::FakeBot : public DeviceDriver,
             public IPositionControl, 
             public IVelocityControl,
             public IAmplifierControl,
-            public IEncoders, 
+            public IEncodersTimed,
             public IFrameGrabberImage,
             public IControlCalibration2,
             public IControlLimits,
@@ -288,6 +288,25 @@ public:
         return true;
     }
 
+
+    // IEncodersTimed
+    virtual bool getEncodersTimed(double *encs, double *time)
+    {
+        bool ret = getEncoders(encs);
+        double myTime = yarp::os::Time::now();
+
+        for (int i=0; i<njoints; i++)
+        {
+            time[i] = myTime;
+        }
+        return ret;
+    }
+
+    virtual bool getEncoderTimed(int j, double *enc, double *time)
+    {
+        bool ret = getEncoder(j, enc);
+        *time = yarp::os::Time::now();
+    }
 
 
     virtual bool setVelocityMode() {
