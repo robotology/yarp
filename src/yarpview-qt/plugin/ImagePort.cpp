@@ -50,7 +50,7 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img)
     // Allocate a QVideoFrame
     QVideoFrame frame(imgSize,
               s,
-              s.width(),
+              s.width() * 4,
               QVideoFrame::Format_RGB32);
 
     // Maps the buffer
