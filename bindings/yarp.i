@@ -80,8 +80,8 @@
 #if defined(SWIGCSHARP)
     // Get .NET pointers instead of swig generated types (useful when dealing with images)
     %typemap(ctype)  unsigned char * "unsigned char *"
-    %typemap(imtype) unsigned char * "IntPtr"
-    %typemap(cstype) unsigned char * "IntPtr"
+    %typemap(imtype) unsigned char * "System.IntPtr"
+    %typemap(cstype) unsigned char * "System.IntPtr"
     %typemap(csin)   unsigned char * "$csinput"
     %typemap(in)     unsigned char * %{ $1 = $input; %}
     %typemap(out)    unsigned char * %{ $result = $1; %}
