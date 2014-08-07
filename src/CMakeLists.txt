@@ -41,6 +41,7 @@ add_subdirectory(yarphear)
 add_subdirectory(yarpdev)
 add_subdirectory(yarpmanager)
 add_subdirectory(yarpmanager-console)
+add_subdirectory(yarprunlogger)
 
 # Qt5 GUIs
 add_subdirectory(yarpview-qt)
