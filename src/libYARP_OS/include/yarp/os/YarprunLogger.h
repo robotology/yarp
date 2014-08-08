@@ -68,7 +68,8 @@ class yarp::os::YarprunLogger::LogEntry
     std::list<MessageEntry> entry_list;
 
     public:
-    std::string  port;
+    std::string  port_prefix;
+    std::string  port_complete;
     std::string  process_name;
     std::string  process_pid;
     void clear();
@@ -81,9 +82,10 @@ class yarp::os::YarprunLogger::LoggerEngine
     class logger_thread : public RateThread
     {
         public:
-        logger_thread (int _rate, std::string _portname) : RateThread(_rate) {portName=_portname;};
+        logger_thread (int _rate, std::string _portname, int _max_memory=1000) : RateThread(_rate) {portName=_portname; max_memory=_max_memory;};
 
         public:
+        int         max_memory;
         yarp::os::Semaphore mutex;
         std::list<LogEntry> log_list;
         Port logger_port;
@@ -114,13 +116,14 @@ class yarp::os::YarprunLogger::LoggerEngine
     bool is_logging              () {return logging;}
     bool is_discovering          () {return discovering;}
 
-    void save_to_file            (std::string  filename);
-    void load_from_file          (std::string  filename);
-    int  get_num_of_processes    ();
-    void get_messages            (std::list<MessageEntry>& messages);
-    void get_messages_by_port    (std::string  port,    std::list<MessageEntry>& messages);
-    void get_messages_by_process (std::string  process, std::list<MessageEntry>& messages);
-    void get_messages_by_pid     (std::string  pid,     std::list<MessageEntry>& messages);
+    void save_to_file                  (std::string  filename);
+    void load_from_file                (std::string  filename);
+    int  get_num_of_processes          ();
+    void get_messages                  (std::list<MessageEntry>& messages);
+    void get_messages_by_port_prefix   (std::string  port,    std::list<MessageEntry>& messages);
+    void get_messages_by_port_complete (std::string  port,    std::list<MessageEntry>& messages);
+    void get_messages_by_process       (std::string  process, std::list<MessageEntry>& messages);
+    void get_messages_by_pid           (std::string  pid,     std::list<MessageEntry>& messages);
     
     std::list<MessageEntry> filter_by_level (int level, const std::list<MessageEntry>& messages);
 };
