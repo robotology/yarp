@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>images/run_ico.png</file>
+        <file>images/stop_ico.png</file>
+        <file>images/progress_ico.png</file>
+    </qresource>
+</RCC>
