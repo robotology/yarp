@@ -250,10 +250,42 @@ if(NOT MSVC)
     mark_as_advanced(ENABLE_FORCE_RPATH)
 endif()
 
+#by default do not build with rpath.
+#If this flag is true then all the variables related to RPATH are ignored
+set(CMAKE_SKIP_BUILD_RPATH TRUE)
 if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-    set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+    #enable RPATH
+    set(CMAKE_SKIP_BUILD_RPATH FALSE)
+    #Maintain back-compatibility
+    if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER "2.8.12")
+        message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+    endif()
+    if(CMAKE_VERSION VERSION_LESS 2.8.12)
+        set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+    endif(CMAKE_VERSION VERSION_LESS 2.8.12)
+    
+    #enable RPATH on OSX. This also suppress warnings on CMake >= 3.0
+    set(CMAKE_MACOSX_RPATH 1)
+    
+    # when building, don't use the install RPATH already
+    # (but later on when installing)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+    
+    #This is relative RPATH for libraries built in the same project
+    #I assume that the directory is 
+    # - install_dir/something for binaries
+    # - install_dir/lib for libraries
+    #in this way if libraries and executables are moved together everything will continue to work
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+    else(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
+    endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    
+    # add the automatically determined parts of the RPATH
+    # which point to directories outside the build tree to the install RPATH
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    
 endif()
 
 
