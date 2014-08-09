@@ -31,6 +31,7 @@
 
 #include <list>
 #include <string>
+#include <ctime>
 
 namespace yarp
 {
@@ -40,6 +41,7 @@ namespace yarp
     {
         class  LoggerEngine;
         class  LogEntry;
+        class  LogEntryInfo;
         struct MessageEntry;
         //enum   LevelEnum;
     }
@@ -62,18 +64,25 @@ struct yarp::os::YarprunLogger::MessageEntry
     std::string timestamp;
 };
 
-class yarp::os::YarprunLogger::LogEntry
+class yarp::os::YarprunLogger::LogEntryInfo
 {
-    public:
-    std::list<MessageEntry> entry_list;
-
     public:
     std::string  port_prefix;
     std::string  port_complete;
     std::string  process_name;
     std::string  process_pid;
+    std::time_t  last_update;
+};
+
+class yarp::os::YarprunLogger::LogEntry
+{
+    public:
+    std::list<MessageEntry> entry_list;
     void clear();
     void append(MessageEntry entry);
+
+    public:
+    yarp::os::YarprunLogger::LogEntryInfo logInfo;
 };
 
 class yarp::os::YarprunLogger::LoggerEngine
@@ -119,6 +128,7 @@ class yarp::os::YarprunLogger::LoggerEngine
     void save_to_file                  (std::string  filename);
     void load_from_file                (std::string  filename);
     int  get_num_of_processes          ();
+    void get_infos                     (std::list<LogEntryInfo>&   infos);
     void get_messages                  (std::list<MessageEntry>& messages);
     void get_messages_by_port_prefix   (std::string  port,    std::list<MessageEntry>& messages);
     void get_messages_by_port_complete (std::string  port,    std::list<MessageEntry>& messages);

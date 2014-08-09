@@ -68,8 +68,38 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
             }
         }
     }
-    
 
+    std::list<std::string>::iterator ports_it;
+    for (ports_it=ports.begin(); ports_it!=ports.end(); ports_it++)
+    {
+        LogEntry entry;
+        entry.logInfo.port_complete = (*ports_it);
+        entry.logInfo.port_complete.erase(0,1);
+        entry.logInfo.port_complete.erase(entry.logInfo.port_complete.size()-1);
+        std::istringstream iss(*ports_it);
+        std::string token;
+        getline(iss, token, '/');
+        getline(iss, token, '/');
+        getline(iss, token, '/'); entry.logInfo.port_prefix  = token;
+        getline(iss, token, '/'); entry.logInfo.process_name = token;
+        getline(iss, token, '/'); entry.logInfo.process_pid = token.erase(token.size()-1);
+       
+        std::list<LogEntry>::iterator it;
+        this->log_updater->mutex.wait();
+        bool found = false;
+        for (it = this->log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
+        {
+            if (it->logInfo.port_complete==entry.logInfo.port_complete)
+            {
+                found=true; break;
+            }
+        }
+        if (found==false)
+        {
+            log_updater->log_list.push_back(entry);
+        }
+        this->log_updater->mutex.post();
+    }
 }
 
 void LoggerEngine::connect (const std::list<std::string>& ports)
@@ -101,7 +131,7 @@ void LoggerEngine::logger_thread::run()
     }
 
     yarp::os::Time::delay(0.1);
-
+    std::time_t machine_current_time = std::time(NULL);
     if (logger_port.getInputCount()>0)
     {
         Bottle b;
@@ -146,22 +176,23 @@ void LoggerEngine::logger_thread::run()
         }
 
         LogEntry entry;
-        entry.port_complete = header;
-        entry.port_complete.erase(0,1);
-        entry.port_complete.erase(entry.port_complete.size()-1);
+        entry.logInfo.port_complete = header;
+        entry.logInfo.port_complete.erase(0,1);
+        entry.logInfo.port_complete.erase(entry.logInfo.port_complete.size()-1);
         std::istringstream iss(header);
         std::string token;
         getline(iss, token, '/');
         getline(iss, token, '/');
-        getline(iss, token, '/'); entry.port_prefix  = token;
-        getline(iss, token, '/'); entry.process_name = token;
-        getline(iss, token, '/'); entry.process_pid = token.erase(token.size()-1);
+        getline(iss, token, '/'); entry.logInfo.port_prefix  = token;
+        getline(iss, token, '/'); entry.logInfo.process_name = token;
+        getline(iss, token, '/'); entry.logInfo.process_pid = token.erase(token.size()-1);
         
         std::list<LogEntry>::iterator it;
         for (it = log_list.begin(); it != log_list.end(); it++)
         {
-            if (it->process_pid==entry.process_pid)
+            if (it->logInfo.process_pid==entry.logInfo.process_pid)
             {
+                it->logInfo.last_update=machine_current_time;
                 it->append(body);
                 this->mutex.post();
                 return;
@@ -170,6 +201,7 @@ void LoggerEngine::logger_thread::run()
         if (it == log_list.end())
         {
             entry.append(body);
+            entry.logInfo.last_update=machine_current_time;
             log_list.push_back(entry);
         }
         
@@ -247,6 +279,17 @@ int  LoggerEngine::get_num_of_processes()
     return log_updater->logger_port.getInputCount();
 }
 
+void LoggerEngine::get_infos (std::list<LogEntryInfo>& infos)
+{
+    log_updater->mutex.wait();
+    std::list<LogEntry>::iterator it;
+    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
+    {
+        infos.push_back(it->logInfo);
+    }
+    log_updater->mutex.post();
+}
+
 void LoggerEngine::get_messages (std::list<MessageEntry>& messages)
 {
     log_updater->mutex.wait();
@@ -264,7 +307,7 @@ void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
-        if (it->port_prefix == port)
+        if (it->logInfo.port_prefix == port)
         {
             messages = (it->entry_list);
             break;
@@ -279,7 +322,7 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
-        if (it->port_complete == port)
+        if (it->logInfo.port_complete == port)
         {
             messages = (it->entry_list);
             break;
@@ -294,7 +337,7 @@ void LoggerEngine::get_messages_by_process (std::string  process,  std::list<Mes
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
-        if (it->process_name == process)
+        if (it->logInfo.process_name == process)
         {
             messages = (it->entry_list);
             break;
@@ -309,7 +352,7 @@ void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEn
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
-        if (it->process_pid == pid)
+        if (it->logInfo.process_pid == pid)
         {
             messages = (it->entry_list);
             break;
@@ -343,10 +386,10 @@ void LoggerEngine::save_to_file            (std::string  filename)
     file1 << log_updater->log_list.size() << std::endl;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
-        file1 << it->port_complete << std::endl;
-        file1 << it->port_prefix << std::endl;
-        file1 << it->process_name << std::endl;
-        file1 << it->process_pid << std::endl;
+        file1 << it->logInfo.port_complete << std::endl;
+        file1 << it->logInfo.port_prefix << std::endl;
+        file1 << it->logInfo.process_name << std::endl;
+        file1 << it->logInfo.process_pid << std::endl;
         file1 << it->entry_list.size() << std::endl;
         std::list<MessageEntry>::iterator it1;
         for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
@@ -378,10 +421,10 @@ void LoggerEngine::load_from_file          (std::string  filename)
         for (int i=0; i< size_log_list; i++)
         {
             LogEntry l_tmp;
-            file1 >> l_tmp.port_complete;
-            file1 >> l_tmp.port_prefix;
-            file1 >> l_tmp.process_name;
-            file1 >> l_tmp.process_pid;
+            file1 >> l_tmp.logInfo.port_complete;
+            file1 >> l_tmp.logInfo.port_prefix;
+            file1 >> l_tmp.logInfo.process_name;
+            file1 >> l_tmp.logInfo.process_pid;
             int size_entry_list;
             file1 >> size_entry_list;
             for (int j=0; j< size_entry_list; j++)

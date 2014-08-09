@@ -147,6 +147,21 @@ class logger_module : public yarp::os::RFModule
              the_logger->connect(ports);
              reply.addString("ack");
         }
+        else if (command.get(0).asString()=="get_info")
+        {
+             std::list<LogEntryInfo> infos;
+             the_logger->get_infos(infos);
+             std::list<LogEntryInfo>::iterator it;
+             for (it = infos.begin(); it != infos.end(); it++)
+             {
+                 std::tm* tm = localtime(&it->last_update);
+                 if (tm)
+                 printf("%s %s hour:%d minute:%d sec:%d \n",it->port_prefix.c_str(), it->port_complete.c_str(), tm->tm_hour,tm->tm_min, tm->tm_sec);
+                 else
+                 printf("%s %s no data received yet \n",it->port_prefix.c_str(), it->port_complete.c_str());
+             }
+             reply.addString("ack");
+        }
         else
         {
             reply.addString("nack");
