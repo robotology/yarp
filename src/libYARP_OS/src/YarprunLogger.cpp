@@ -74,15 +74,13 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
     {
         LogEntry entry;
         entry.logInfo.port_complete = (*ports_it);
-        entry.logInfo.port_complete.erase(0,1);
-        entry.logInfo.port_complete.erase(entry.logInfo.port_complete.size()-1);
         std::istringstream iss(*ports_it);
         std::string token;
         getline(iss, token, '/');
         getline(iss, token, '/');
-        getline(iss, token, '/'); entry.logInfo.port_prefix  = token;
+        getline(iss, token, '/'); entry.logInfo.port_prefix  = "/"+ token;
         getline(iss, token, '/'); entry.logInfo.process_name = token;
-        getline(iss, token, '/'); entry.logInfo.process_pid = token.erase(token.size()-1);
+        getline(iss, token, '/'); entry.logInfo.process_pid  = token;
        
         std::list<LogEntry>::iterator it;
         this->log_updater->mutex.wait();
@@ -183,14 +181,14 @@ void LoggerEngine::logger_thread::run()
         std::string token;
         getline(iss, token, '/');
         getline(iss, token, '/');
-        getline(iss, token, '/'); entry.logInfo.port_prefix  = token;
+        getline(iss, token, '/'); entry.logInfo.port_prefix  = "/"+ token;
         getline(iss, token, '/'); entry.logInfo.process_name = token;
-        getline(iss, token, '/'); entry.logInfo.process_pid = token.erase(token.size()-1);
+        getline(iss, token, '/'); entry.logInfo.process_pid  = token.erase(token.size()-1);
         
         std::list<LogEntry>::iterator it;
         for (it = log_list.begin(); it != log_list.end(); it++)
         {
-            if (it->logInfo.process_pid==entry.logInfo.process_pid)
+            if (it->logInfo.port_complete==entry.logInfo.port_complete)
             {
                 it->logInfo.last_update=machine_current_time;
                 it->append(body);
