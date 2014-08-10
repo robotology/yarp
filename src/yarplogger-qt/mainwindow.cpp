@@ -4,6 +4,7 @@
 #include "ui_logtab.h"
 #include <QFile>
 #include <QTextStream>
+#include <Ctime>
 #include <yarp/os/YarprunLogger.h>
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
@@ -19,6 +20,20 @@ void MainWindow::updateMain()
         List << it->text.c_str();
     }
     model->setStringList(List);*/
+
+    std::list<yarp::os::YarprunLogger::LogEntryInfo> infos;
+    this->theLogger->get_infos (infos);
+    std::list<yarp::os::YarprunLogger::LogEntryInfo>::iterator it;
+    for (it=infos.begin(); it!=infos.end(); it++)
+    {
+        const size_t time_size= 50;
+        char time_text[time_size];
+        std::tm* tm = localtime(&it->last_update);
+        if (tm)
+        strftime( time_text, time_size, "", tm );
+        else
+        sprintf ( time_text,"%d\n",0);
+    }
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -59,20 +74,6 @@ void MainWindow::loadTextFile()
     QTextCursor cursor = ui->textEdit->textCursor();
     cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
     */
-}
-
-void MainWindow::on_checkBox_toggled(bool checked)
-{
-    if (checked)
-    {
-        QRegExp regExp("*f*", Qt::CaseInsensitive, QRegExp::Wildcard);
-/////        proxyModel->setFilterRegExp(regExp);
-    }
-    else
-    {
-        QRegExp regExp("*", Qt::CaseInsensitive, QRegExp::Wildcard);
-  /////      proxyModel->setFilterRegExp(regExp);
-    }
 }
 
 void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
@@ -170,5 +171,65 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
     {
         int newtab_index = ui->logtabs->addTab(tab, tabname);
         ui->logtabs->setCurrentIndex(newtab_index);
+    }
+}
+
+void MainWindow::on_DisplayErrorEnable_toggled(bool checked)
+{
+    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
+    if (checked) regExp.setPattern("*");
+    else         regExp.setPattern("*");
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
+    }
+}
+
+void MainWindow::on_DisplayWarningEnable_toggled(bool checked)
+{
+    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
+    if (checked) regExp.setPattern("*");
+    else         regExp.setPattern("*");
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
+    }
+}
+
+void MainWindow::on_DisplayDebugEnable_toggled(bool checked)
+{
+    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
+    if (checked) regExp.setPattern("*");
+    else         regExp.setPattern("*");
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
+    }
+}
+
+void MainWindow::on_DisplayInfoEnable_toggled(bool checked)
+{
+    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
+    if (checked) regExp.setPattern("*");
+    else         regExp.setPattern("*");
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
+    }
+}
+
+void MainWindow::on_DisplayUnformattedEnable_toggled(bool checked)
+{
+    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
+    if (checked) regExp.setPattern("*");
+    else         regExp.setPattern("*");
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
     }
 }

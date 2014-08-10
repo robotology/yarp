@@ -21,8 +21,6 @@ public:
 
 private slots:
 
-    void on_checkBox_toggled(bool checked);
-
     void on_lineEdit_2_textChanged(const QString &arg1);
 
     void updateMain();
@@ -37,6 +35,16 @@ private slots:
     void on_logtabs_tabCloseRequested(int index);
 
     void on_treeView_doubleClicked(const QModelIndex &index);
+
+    void on_DisplayErrorEnable_toggled(bool checked);
+
+    void on_DisplayWarningEnable_toggled(bool checked);
+
+    void on_DisplayDebugEnable_toggled(bool checked);
+
+    void on_DisplayInfoEnable_toggled(bool checked);
+
+    void on_DisplayUnformattedEnable_toggled(bool checked);
 
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
