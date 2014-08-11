@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include "logtab.h"
 #include "ui_logtab.h"
-#include <QFile>
+#include <QString>
 #include <QTextStream>
 #include <Ctime>
 #include <yarp/os/YarprunLogger.h>
@@ -20,19 +20,107 @@ void MainWindow::updateMain()
         List << it->text.c_str();
     }
     model->setStringList(List);*/
-
+    
+    //model_yarprunports->clear();
+    model_yarprunports->setHorizontalHeaderItem(0,new QStandardItem("yarprun"));
+    model_yarprunports->setHorizontalHeaderItem(1,new QStandardItem("process"));
+    model_yarprunports->setHorizontalHeaderItem(2,new QStandardItem("last heard"));
     std::list<yarp::os::YarprunLogger::LogEntryInfo> infos;
     this->theLogger->get_infos (infos);
     std::list<yarp::os::YarprunLogger::LogEntryInfo>::iterator it;
+
+    QStandardItem *itemsRoot = model_yarprunports->invisibleRootItem();
     for (it=infos.begin(); it!=infos.end(); it++)
     {
         const size_t time_size= 50;
         char time_text[time_size];
         std::tm* tm = localtime(&it->last_update);
         if (tm)
-        strftime( time_text, time_size, "", tm );
+        sprintf ( time_text,"%d:%d:%d",tm->tm_hour,tm->tm_min, tm->tm_sec);
         else
-        sprintf ( time_text,"%d\n",0);
+        sprintf ( time_text, "no data received yet");
+        
+//#define TREE_MODEL 1
+#define IN_ROW_MODEL 1
+#if IN_ROW_MODEL
+        bool existing = false;
+        for (int i=0; i<model_yarprunports->rowCount(); i++)
+        {
+            QStandardItem *item = model_yarprunports->item(i,1);
+            if (item && item->text()==it->port_complete.c_str())
+            {
+                model_yarprunports->item(i,2)->text() = time_text;
+                existing = true;
+            }
+        }
+        if (existing == false)
+        {
+            QList<QStandardItem *> rowItems;
+            rowItems << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text);
+            itemsRoot->appendRow(rowItems);
+        }
+
+#elif TREE_MODEL
+        bool level1_exists = false;
+        bool level2_exists = false;
+        for (int i=0; i<model_yarprunports->rowCount(); i++)
+        {
+            QStandardItem *item_level1 = model_yarprunports->item(i,0);
+            if (item_level1 && item_level1->text() == it->port_prefix.c_str())
+            {
+                level1_exists = true;
+                for (int j=0; j<item_level1->rowCount(); j++)
+                {
+                    QStandardItem *item_level2 = item_level1->child(j,0);
+                    if (item_level2 && item_level1->child(j,1)->text() == it->port_complete.c_str())
+                    {
+                        level2_exists = true;
+                        item_level1->child(j,2)->text() = time_text;
+                        break;
+                    }
+                }
+                if (level2_exists == false)
+                {
+                    QList<QStandardItem *> rowItems;
+                    rowItems << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text);
+                    item_level1->appendRow(rowItems);
+                    break;
+                }
+            }
+        }
+        if (level1_exists == false)
+        {
+            /*QList<QStandardItem *> rowItems_l1;
+            QList<QStandardItem *> rowItems_l2;
+            rowItems_l1 << new QStandardItem(it->port_prefix.c_str());
+            rowItems_l2 << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text);
+            rowItems_l1->appendRow(rowItems_l2);
+            itemsRoot->appendRow(rowItems_l1);*/
+            QList<QStandardItem *> rowItems_l1;
+            rowItems_l1 << new QStandardItem(it->port_prefix.c_str());
+            itemsRoot->appendRow(rowItems_l1);
+        }
+        /*if (existing == false)
+        {
+            QList<QStandardItem *> rowItems;
+            rowItems << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text);
+            itemsRoot->appendRow(rowItems);
+        }
+        bool rowfound = false;
+        for (int i=0; i<model_yarprunports->rowCount(); i++)
+        {
+            QStandardItem *rowParent = model_yarprunports->item(i,0);
+            if (rowParent && rowParent->text()==it->port_prefix.c_str())
+            {
+                rowParent->appendRow(rowItems);
+                rowfound = true;
+            }
+        }
+        if  (rowfound==false)
+        {
+            itemsRoot->appendRow(rowItems);
+        }*/
+#endif
     }
 }
 
@@ -43,9 +131,8 @@ MainWindow::MainWindow(QWidget *parent) :
     theLogger = new yarp::os::YarprunLogger::LoggerEngine("/logger");
 
     ui->setupUi(this);
-        loadTextFile();
 
-    model_yarprunports = new QStringListModel(this);
+    model_yarprunports = new QStandardItemModel(this);
     
     mainTimer = new QTimer(this);
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
@@ -57,7 +144,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    this->theLogger->stop_logging();
+    if (mainTimer) {delete mainTimer; mainTimer=0;}
+    if (ui)        {delete ui; ui=0;}
 }
 
 void MainWindow::loadTextFile()
@@ -112,8 +201,11 @@ void MainWindow::on_refreshLogger_clicked()
 {
     std::list<std::string> ports;
     theLogger->discover(ports);
+    updateMain();
     theLogger->connect(ports);
-
+    ui->treeView->setModel(model_yarprunports);
+    ui->treeView->expandAll();
+    /*
     QStringList List;
     std::list<std::string>::iterator it;
     for (it=ports.begin(); it!=ports.end(); it++)
@@ -121,7 +213,8 @@ void MainWindow::on_refreshLogger_clicked()
         List << (*it).c_str() ;
     }
     model_yarprunports->setStringList(List);
-    ui->treeView->setModel(model_yarprunports);
+    */
+    
     /*QStringList l1;
     l1 << "yarprun ports";
     ui->treeView->setHorizontalHeaderLabels (l1);
@@ -155,7 +248,8 @@ void MainWindow::on_logtabs_tabCloseRequested(int index)
 void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
 {
     QTabWidget* tab = new QTabWidget(this);
-    QString tabname = model_yarprunports->data(index,Qt::DisplayRole).toString();
+    int model_row=index.row();
+    QString tabname = model_yarprunports->item(model_row,1)->text();
     LogTab* tmpLogTab = new LogTab(theLogger, tabname.toStdString(), tab);
     tmpLogTab->setObjectName("logtab");
 

@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QStringListModel>
+#include <QStandardItemModel>
 #include <QTimer>
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
@@ -50,7 +50,7 @@ private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 
     Ui::MainWindow *ui;
-    QStringListModel        *model_yarprunports;
+    QStandardItemModel        *model_yarprunports;
     QTimer *mainTimer;
 
     void loadTextFile();
