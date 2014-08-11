@@ -72,6 +72,8 @@ class yarp::os::YarprunLogger::LogEntryInfo
     std::string  process_name;
     std::string  process_pid;
     std::time_t  last_update;
+    int          logsize;
+    LogEntryInfo()  {logsize=0;}
 };
 
 class yarp::os::YarprunLogger::LogEntry

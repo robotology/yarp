@@ -30,11 +30,13 @@ using namespace yarp::os::YarprunLogger;
 void LogEntry::clear()
 {
     entry_list.clear();
+    logInfo.logsize=0;
 }
 
 void LogEntry::append(MessageEntry entry)
 {
     entry_list.push_back(entry);
+    logInfo.logsize++;
 }
 
 void LoggerEngine::discover  (std::list<std::string>& ports)
