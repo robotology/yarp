@@ -17,6 +17,7 @@
 */
 
 #include <iostream>
+#include <cstring>
 #include <string>
 #include <sstream>
 #include <stdio.h>
@@ -26,6 +27,7 @@
 
 using namespace yarp::os;
 using namespace yarp::os::YarprunLogger;
+using namespace std;
 
 void LogEntry::clear()
 {
@@ -60,7 +62,7 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
             if (n2 && n2->get(0).toString()=="name")
             {
                 char* off = 0;
-                off = strstr((char*)(n2->get(1).toString().c_str()), "/log/");
+                off = std::strstr((char*)(n2->get(1).toString().c_str()), "/log/");
                 if (off > 0)
                 {
                     std::string logport = n2->get(1).toString();
@@ -377,8 +379,8 @@ void LoggerEngine::save_to_file            (std::string  filename)
 {
     const int      LOGFILE_VERSION = 1;
 
-    std::fstream file1;
-    file1.open(filename, std::fstream::out);
+    ofstream file1;
+    file1.open(filename.c_str());
     bool wasRunning = log_updater->isRunning();
     if (wasRunning) log_updater->stop();
     std::list<LogEntry>::iterator it;
@@ -407,8 +409,8 @@ void LoggerEngine::load_from_file          (std::string  filename)
 {
     const int      LOGFILE_VERSION = 1;
 
-    std::fstream file1;
-    file1.open(filename, std::fstream::out);
+    ifstream file1;
+    file1.open(filename.c_str());
     int log_file_version;
     bool wasRunning = log_updater->isRunning();
     if (wasRunning) log_updater->stop();
