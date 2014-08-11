@@ -2,7 +2,7 @@
 #define LOGTAB_H
 
 #include <QFrame>
-#include <QStringListModel>
+#include <QStandardItemModel>
 #include <QTimer>
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
@@ -29,8 +29,9 @@ private slots:
 
 public:
     QTimer                  *logTimer;
-    QStringListModel        *logs;
+    QStandardItemModel      *model_logs;
     QSortFilterProxyModel   *proxyModel;
+    bool                    displayTimestamp;
 
 };
 

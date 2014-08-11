@@ -8,6 +8,8 @@
 #include <yarp/os/YarprunLogger.h>
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
+#include <QDesktopServices>
+#include <QUrl>
 
 void MainWindow::updateMain()
 {
@@ -25,6 +27,7 @@ void MainWindow::updateMain()
     model_yarprunports->setHorizontalHeaderItem(0,new QStandardItem("yarprun"));
     model_yarprunports->setHorizontalHeaderItem(1,new QStandardItem("process"));
     model_yarprunports->setHorizontalHeaderItem(2,new QStandardItem("last heard"));
+    model_yarprunports->setHorizontalHeaderItem(3,new QStandardItem("log size"));
     std::list<yarp::os::YarprunLogger::LogEntryInfo> infos;
     this->theLogger->get_infos (infos);
     std::list<yarp::os::YarprunLogger::LogEntryInfo>::iterator it;
@@ -32,14 +35,17 @@ void MainWindow::updateMain()
     QStandardItem *itemsRoot = model_yarprunports->invisibleRootItem();
     for (it=infos.begin(); it!=infos.end(); it++)
     {
-        const size_t time_size= 50;
-        char time_text[time_size];
+        const size_t string_size= 50;
+        char time_text[string_size];
         std::tm* tm = localtime(&it->last_update);
         if (tm)
-        sprintf ( time_text,"%d:%d:%d",tm->tm_hour,tm->tm_min, tm->tm_sec);
+        sprintf ( time_text,"%02d:%02d:%02d",tm->tm_hour,tm->tm_min, tm->tm_sec);
         else
         sprintf ( time_text, "no data received yet");
         
+        char logsize_text[string_size];
+        sprintf (logsize_text, "%d", it->logsize);
+
 //#define TREE_MODEL 1
 #define IN_ROW_MODEL 1
 #if IN_ROW_MODEL
@@ -49,14 +55,16 @@ void MainWindow::updateMain()
             QStandardItem *item = model_yarprunports->item(i,1);
             if (item && item->text()==it->port_complete.c_str())
             {
-                model_yarprunports->item(i,2)->text() = time_text;
+                model_yarprunports->item(i,2)->setText(time_text);
+                model_yarprunports->item(i,3)->setText(logsize_text);
                 existing = true;
+                break;
             }
         }
         if (existing == false)
         {
             QList<QStandardItem *> rowItems;
-            rowItems << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text);
+            rowItems << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text) << new QStandardItem(logsize_text);
             itemsRoot->appendRow(rowItems);
         }
 
@@ -326,4 +334,18 @@ void MainWindow::on_DisplayUnformattedEnable_toggled(bool checked)
         LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
     }
+}
+
+void MainWindow::on_actionShow_Timestamps_toggled(bool arg1)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) logtab->displayTimestamp=arg1;
+    }
+}
+
+void MainWindow::on_actionAbout_QtYarpLogger_triggered()
+{
+    QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/qtyarplogger.html"));
 }

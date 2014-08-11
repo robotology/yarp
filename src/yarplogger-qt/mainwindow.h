@@ -46,6 +46,10 @@ private slots:
 
     void on_DisplayUnformattedEnable_toggled(bool checked);
 
+    void on_actionShow_Timestamps_toggled(bool arg1);
+
+    void on_actionAbout_QtYarpLogger_triggered();
+
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 

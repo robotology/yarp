@@ -164,7 +164,7 @@
           <bool>true</bool>
          </property>
          <attribute name="headerVisible">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
         </widget>
        </item>
@@ -469,6 +469,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionSave_Log"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout_QtYarpLogger">
@@ -477,11 +479,18 @@
    </property>
   </action>
   <action name="actionShow_Timestamps">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show Timestamps</string>
    </property>
   </action>
   <action name="actionSave_Log">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/new/prefix1/images/run_ico.png</normaloff>:/new/prefix1/images/run_ico.png</iconset>
+   </property>
    <property name="text">
     <string>Save Log</string>
    </property>
