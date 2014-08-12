@@ -46,11 +46,20 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img)
 
     uchar *tmpBuf;
     QSize s = (QSize(img.width(),img.height()));
+#if QT_VERSION >= 0x050302
     int imgSize = img.getRawImageSize();
+#else
+    int imgSize = s.width() * s.height() * img.getPixelSize();
+#endif
+
     // Allocate a QVideoFrame
     QVideoFrame frame(imgSize,
               s,
-              s.width() * 4,
+#if QT_VERSION >= 0x050302
+              img.getRowSize(),
+#else
+              s.width() * img.getPixelSize(),
+#endif
               QVideoFrame::Format_RGB32);
 
     // Maps the buffer
@@ -69,7 +78,17 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img)
         tmpBuf[j+3] = 0;
         j+=4;
     }*/
+
+#if QT_VERSION >= 0x050302
     memcpy(tmpBuf,rawImg,imgSize);
+#else
+    for(int x =0; x < s.height(); x++) {
+        memcpy(tmpBuf + x * (img.width() * img.getPixelSize()),
+               rawImg + x * (img.getRowSize()),
+               img.width() * img.getPixelSize());
+    }
+#endif
+
     //unmap the buffer
     frame.unmap();
     if(sigHandler){
