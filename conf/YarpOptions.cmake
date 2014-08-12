@@ -269,10 +269,11 @@ if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
         #  - install_dir/something for binaries
         #  - install_dir/lib for libraries
         # in this way if libraries and executables are moved together everything will continue to work
+        file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}" "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
         if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-            set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+            set(CMAKE_INSTALL_RPATH "@loader_path/${_rel_path}")
         else()
-            set(CMAKE_INSTALL_RPATH "\$ORIGIN/../lib")
+            set(CMAKE_INSTALL_RPATH "\$ORIGIN/${_rel_path}")
         endif()
     endif()
     
