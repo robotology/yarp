@@ -26,6 +26,16 @@
  */
 int main(int argc, char *argv[])
 {
+    // Pack the argc and argv to a QStringList so we can pass them easily to
+    // the plugin.
+    // This list must be packed before creating the QApplication, because
+    // QApplication will remove the known arguments, and this includes the
+    // "--name <name>" argument on linux.
+    QStringList params;
+    for(int i=1;i<argc;i++){
+        params.append(argv[i]);
+    }
+
     QApplication app(argc, argv);
     QVariant retVal;
 
@@ -49,11 +59,6 @@ int main(int argc, char *argv[])
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
 
-    // Pack the argc and argv to a QStrinList so we can pass them easily to the plugin
-    QStringList params;
-    for(int i=1;i<argc;i++){
-        params.append(argv[i]);
-    }
     // Call the parseParameters of the qml object called YARPVideoSurface
     QObject *yarpVideoSurface = topLevel->findChild<QObject*>("YARPVideoSurface");
     QMetaObject::invokeMethod(yarpVideoSurface,"parseParameters",
