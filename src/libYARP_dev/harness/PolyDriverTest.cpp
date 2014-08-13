@@ -11,6 +11,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
 
 #include "TestList.h"
 
@@ -97,12 +98,73 @@ name /mymotor\n\
         checkEqual(reply.get(2).asInt(),10,"axis count is correct");
     }
 
+    void testGrabber() {
+        report(0,"test the grabber wrapper");
+        PolyDriver dd;
+        Property p;
+        p.put("device","grabber");
+        p.put("subdevice","test_grabber");
+        p.put("name","/grabber");
+        bool result;
+        result = dd.open(p);
+        checkTrue(result,"server open reported successful");
+
+        PolyDriver dd2;
+        Property p2;
+        p2.put("device","remote_grabber");
+        p2.put("remote","/grabber");
+        p2.put("local","/grabber/client");
+        result = dd2.open(p2);
+        checkTrue(result,"client open reported successful");
+
+        IFrameGrabberImage *grabber = NULL;
+        result = dd2.view(grabber);
+        checkTrue(result,"interface reported");
+        ImageOf<PixelRgb> img;
+        grabber->getImage(img);
+        checkTrue(img.width()>0,"interface seems functional");
+        result = dd.close() && dd2.close();
+        checkTrue(result,"close reported successful");
+    }
+
+    void testControlBoard() {
+        report(0,"test the controlboard wrapper");
+        PolyDriver dd;
+        Property p;
+        p.put("device","controlboard");
+        p.put("subdevice","test_motor");
+        p.put("name","/motor");
+        p.put("axes",16);
+        bool result;
+        result = dd.open(p);
+        checkTrue(result,"server open reported successful");
+
+        PolyDriver dd2;
+        Property p2;
+        p2.put("device","remote_controlboard");
+        p2.put("remote","/motor");
+        p2.put("local","/motor/client");
+        result = dd2.open(p2);
+        checkTrue(result,"client open reported successful");
+
+        IPositionControl *pos = NULL;
+        result = dd2.view(pos);
+        checkTrue(result,"interface reported");
+        int axes = 0;
+        pos->getAxes(&axes);
+        checkEqual(axes,16,"interface seems functional");
+        result = dd.close() && dd2.close();
+        checkTrue(result,"close reported successful");
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         testBasic();
         testMonitor();
         testPropertyBug();
         testGroup();
+        testGrabber();
+        testControlBoard();
         Network::setLocalMode(false);
     }
 };
