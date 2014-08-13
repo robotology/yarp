@@ -4,7 +4,6 @@
         <file>images/Record-Pressed-icon.png</file>
         <file>images/Stop-Normal-Red-icon.png</file>
         <file>YARPViewStatusBar.qml</file>
-        <file>Credits.qml</file>
         <file>VideoSurface.qml</file>
     </qresource>
 </RCC>
