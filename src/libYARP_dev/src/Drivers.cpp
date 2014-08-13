@@ -183,7 +183,9 @@ public:
         YarpPluginSelector selector;
         selector.scan();
         settings.setSelector(selector);
-        if (plugin.open(settings)) {
+
+        if (plugin.open(settings))
+        {
             dev.open(*plugin.getFactory());
             settings.setLibraryMethodName(plugin.getFactory()->getName(),
                                           settings.getMethodName());
@@ -214,6 +216,10 @@ public:
 
     ConstString getFnName() {
         return settings.getMethodName();
+    }
+
+    ConstString getwrapName() {
+        return settings.getWrapperName();
     }
 };
 #endif
@@ -267,7 +273,7 @@ DriverCreator *DriversHelper::load(const char *name) {
         result = NULL;
         return NULL;
     }
-    DriverCreator *creator = new StubDriverCreator(result->getFnName().c_str(), "", "", result->getDllName().c_str());
+    DriverCreator *creator = new StubDriverCreator(result->getFnName().c_str(), result->getwrapName().c_str(), "", result->getDllName().c_str());
     add(creator);
     delete result;
     return creator;

@@ -33,7 +33,7 @@ public:
      * Constructor.
      *
      */
-    YarpPluginSettings() {
+    YarpPluginSettings() : wrapper_name("unknown") {
         verbose = false;
         selector = 0 /*NULL*/;
     }
@@ -111,11 +111,14 @@ public:
     bool readFromSearchable(Searchable& options, const ConstString& name) {
         ConstString iname = options.find("library").toString();
         ConstString pname = options.find("part").toString();
+
         if (iname=="") iname = name;
         if (pname=="") pname = name;
+
         this->name = iname;
         this->dll_name = iname;
         this->fn_name = pname;
+        this->wrapper_name = options.find("wrapper").toString();
         verbose = false;
         return true;
     }
@@ -156,6 +159,10 @@ public:
         return selector;
     }
 
+    ConstString getWrapperName() const {
+        return wrapper_name;
+    }
+
     /**
      *
      * Initialize a factory object based on the hints available.
@@ -189,6 +196,7 @@ private:
     ConstString dll_name;
     ConstString fn_name;
     ConstString fn_ext;
+    ConstString wrapper_name;
     YarpPluginSelector *selector;
     bool verbose;
 
