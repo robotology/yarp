@@ -1291,6 +1291,24 @@ public:
         checkEqual(pin.ct,1,"callback happened");
     }
 
+    void testAdminReader() {
+        report(0,"checking user-level admin message reads");
+        Port pin;
+        ServiceProvider admin_reader;
+        pin.setAdminReader(admin_reader);
+        pin.open("/in");
+        Port pout;
+        pout.setAdminMode();
+        pout.open("/out");
+        Network::connect("/out","/in");
+        Bottle cmd("hello"), reply;
+        pout.write(cmd,reply);
+        checkEqual(reply.get(1).asInt(),5,"admin_reader was called");
+        cmd.fromString("[ver]");
+        pout.write(cmd,reply);
+        checkTrue(reply.size()>=4,"yarp commands still work");
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1341,6 +1359,8 @@ public:
         testInterruptWithBadReader();
 
         testBufferedPortCallback();
+
+        testAdminReader();
 
         NetworkBase::setLocalMode(false);
     }

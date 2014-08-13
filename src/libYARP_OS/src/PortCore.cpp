@@ -22,6 +22,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/PortInfo.h>
+#include <yarp/os/DummyConnector.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 #ifdef YARP_HAS_ACE
@@ -121,6 +122,13 @@ void PortCore::setReadHandler(PortReader& reader) {
     YARP_ASSERT(running==false);
     YARP_ASSERT(this->reader==NULL);
     this->reader = &reader;
+}
+
+void PortCore::setAdminReadHandler(PortReader& reader) {
+    // Don't even try to do this when the port is hot, it'll burn you
+    YARP_ASSERT(running==false);
+    YARP_ASSERT(this->adminReader==NULL);
+    this->adminReader = &reader;
 }
 
 void PortCore::setReadCreator(PortReaderCreator& creator) {
@@ -1965,8 +1973,21 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         }
         break;
     default:
-        result.addVocab(Vocab::encode("fail"));
-        result.addString("send [help] for list of valid commands");
+        {
+            bool ok = false;
+            if (adminReader) {
+                DummyConnector con;
+                cmd.write(con.getWriter());
+                ok = adminReader->read(con.getReader());
+                if (ok) {
+                    result.read(con.getReader());
+                }
+            }
+            if (!ok) {
+                result.addVocab(Vocab::encode("fail"));
+                result.addString("send [help] for list of valid commands");
+            }
+        }
         break;
     }
 

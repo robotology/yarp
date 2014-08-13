@@ -128,6 +128,7 @@ public:
         events = 0;
         face = NULL;
         reader = NULL;
+        adminReader = NULL;
         readableCreator = NULL;
         outputCount = inputCount = 0;
         dataOutputCount = 0;
@@ -191,6 +192,11 @@ public:
      * Set a callback for incoming data.
      */
     void setReadHandler(yarp::os::PortReader& reader);
+
+    /**
+     * Set a callback for incoming administrative messages.
+     */
+    void setAdminReadHandler(yarp::os::PortReader& reader);
 
     /**
      * Set a callback for creating callbacks for incoming data.
@@ -421,6 +427,7 @@ private:
     String name; ///< name of port
     yarp::os::Contact address;    ///< network address of port
     yarp::os::PortReader *reader; ///< where to send read events
+    yarp::os::PortReader *adminReader; ///< where to send admin read events
     yarp::os::PortReaderCreator *readableCreator; ///< factory for readers
     yarp::os::PortReport *eventReporter; ///< where to send general events
     bool listening; ///< is the port server listening on the network?

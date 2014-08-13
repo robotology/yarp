@@ -120,6 +120,10 @@ public:
         asPort().setReader(reader);
     }
 
+    virtual void setAdminReader(PortReader& reader) {
+        asPort().setAdminReader(reader);
+    }
+
     virtual void setInputMode(bool expectInput) {
         asPort().setInputMode(expectInput);
     }

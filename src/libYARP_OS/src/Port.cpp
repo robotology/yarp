@@ -31,6 +31,7 @@ private:
     SemaphoreImpl stateMutex;
     PortReader *readDelegate;
     PortReader *permanentReadDelegate;
+    PortReader *adminReadDelegate;
     PortWriter *writeDelegate;
     //PortReaderCreator *readCreatorDelegate;
     bool readResult, readActive, readBackground, willReply, closed, opened;
@@ -55,6 +56,7 @@ public:
         owner(owner), stateMutex(1), 
         readDelegate(NULL), 
         permanentReadDelegate(NULL), 
+        adminReadDelegate(NULL), 
         writeDelegate(NULL),
         readResult(false),
         readActive(false),
@@ -290,6 +292,13 @@ public:
         stateMutex.post();
     }
 
+    void configAdminReader(PortReader& reader) {
+        stateMutex.wait();
+        adminReadDelegate = &reader;
+        setAdminReadHandler(reader);
+        stateMutex.post();
+    }
+
     void configReadCreator(PortReaderCreator& creator) {
         recReadCreator = &creator;
         setReadCreator(creator);
@@ -306,6 +315,10 @@ public:
 
     PortReader *checkPortReader() {
         return readDelegate;
+    }
+
+    PortReader *checkAdminPortReader() {
+        return adminReadDelegate;
     }
 
     PortReaderCreator *checkReadCreator() {
@@ -482,6 +495,9 @@ bool Port::open(const Contact& contact, bool registerName,
         // copy state that should survive in a new open()
         if (currentCore->checkPortReader()!=NULL) {
             newCore->configReader(*(currentCore->checkPortReader()));
+        }
+        if (currentCore->checkAdminPortReader()!=NULL) {
+            newCore->configAdminReader(*(currentCore->checkAdminPortReader()));
         }
         if (currentCore->checkReadCreator()!=NULL) {
             newCore->configReadCreator(*(currentCore->checkReadCreator()));
@@ -773,6 +789,12 @@ void Port::setReader(PortReader& reader) {
     core.alertOnRead();
     core.configReader(reader);
 }
+
+void Port::setAdminReader(PortReader& reader) {
+    PortCoreAdapter& core = IMPL();
+    core.configAdminReader(reader);
+}
+
 
 void Port::setReaderCreator(PortReaderCreator& creator) {
     PortCoreAdapter& core = IMPL();

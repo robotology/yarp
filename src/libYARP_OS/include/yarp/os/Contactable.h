@@ -223,6 +223,12 @@ public:
     virtual void setReader(PortReader& reader) = 0;
 
     /**
+     * Set an external reader for unrecognized administrative port messages.
+     * @param reader the external reader to use
+     */
+    virtual void setAdminReader(PortReader& reader) = 0;
+
+    /**
      *
      * Configure the port to allow or forbid inputs.  By default,
      * ports allow anything.

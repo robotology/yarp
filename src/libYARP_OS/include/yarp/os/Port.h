@@ -151,6 +151,9 @@ public:
     // documentation provided in Contactable
     void setReader(PortReader& reader);
 
+    // documentation provided in Contactable
+    virtual void setAdminReader(PortReader& reader);
+
     /**
      * Set a creator for readers for port data.
      * Every port that input is received from will be automatically

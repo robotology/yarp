@@ -255,6 +255,11 @@ public:
         setReplier(reader);
     }
 
+    void setAdminReader(PortReader& reader) {
+        attachIfNeeded();
+        port.setAdminReader(reader);
+    }
+
     /**
      * this method will be called with new data, as long as you've
      * requested this be done by calling useCallback()
