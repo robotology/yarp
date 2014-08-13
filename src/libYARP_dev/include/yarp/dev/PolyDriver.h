@@ -154,7 +154,7 @@ public:
     yarp::os::Value getValue(const char *option);
 
     DeviceDriver *getImplementation() {
-        return dd;
+        return dd->getImplementation();
     }
 
 private:
