@@ -14,7 +14,8 @@
 using namespace yarp::dev;
 
 ImplementControlMode2::ImplementControlMode2(IControlMode2Raw *r):
-temp_int(NULL)
+temp_int(NULL),
+temp_mode(NULL)
 {
     raw=r;
     helper=0;
