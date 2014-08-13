@@ -511,26 +511,13 @@ Rectangle {
             }
 
             Button {
-                id: creditsBtn
-
-                text: "Credits"
-                anchors.top: link.bottom
-                anchors.topMargin: 30
-                anchors.leftMargin: 30
-                anchors.left: container.left
-                onClicked: {
-                    creditsDlg.visibility = Window.Windowed
-                }
-            }
-
-            Button {
                 id: licenseBtn
 
                 text: "License"
                 anchors.top: link.bottom
                 anchors.topMargin: 30
-                anchors.leftMargin: 10
-                anchors.left: creditsBtn.right
+                anchors.leftMargin: 30
+                anchors.left: container.left
                 onClicked: {
                     licenseDlg.visibility = Window.Windowed
                 }
@@ -547,7 +534,6 @@ Rectangle {
                 onClicked: {
                     aboutDlg.visibility = Window.Hidden
                     licenseDlg.visibility = Window.Hidden
-                    creditsDlg.visibility = Window.Hidden
                 }
             }
 
@@ -612,57 +598,6 @@ Rectangle {
 
                 onClicked: {
                     licenseDlg.visibility = Window.Hidden
-                }
-
-            }
-
-        }
-
-    }
-
-    Window {
-        id: creditsDlg
-        width: 300
-        height: 200
-        flags: Qt.Dialog
-        modality: Qt.NonModal
-        title: "Credits"
-
-        Rectangle{
-            id: rect
-            anchors.fill: parent
-
-            TabView{
-                id: tab
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: creditsCloseBtn.top
-                anchors.topMargin: 10
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                anchors.bottomMargin: 10
-
-                Component.onCompleted: {
-                    addTab("Written By", Qt.createComponent("qrc:/YARPView/Credits.qml"))
-                }
-            }
-
-
-
-
-            Button{
-                id: creditsCloseBtn
-
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 10
-                anchors.rightMargin: 10
-
-                text: "Close"
-
-                onClicked: {
-                    creditsDlg.visibility = Window.Hidden
                 }
 
             }
