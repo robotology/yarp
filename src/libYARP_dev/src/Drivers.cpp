@@ -106,18 +106,19 @@ public:
                 s += cxx;
                 s += "  ";
             }
+
             if (wrapper=="") {
-                s += "no network wrapper known";
+                s += "no network wrapper known";  // will never come here since the prop.check fallback is set to unknown few lines above!!!
             } else if (wrapper=="unknown") {
                 //s += "network wrapper unknown";
             } else if (wrapper!=name) {
-                s += "wrapped by \"";
-                s += delegates[i]->getWrapper();
+                s += ", wrapped by \"";
+                s += wrapper.c_str();
                 s += "\"";
             } else {
                 s += "is a network wrapper.";
             }
-            s += "\n";            
+            s += ".\n";
         }
 
         return s;
