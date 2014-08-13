@@ -49,6 +49,9 @@ public:
         bool done = false;
         while (!done) {
             stateSema.wait();
+            if (port) {
+                if (!port->isOpen()) outCt = 0;
+            }
             done = (outCt == 0);
             if (!done) {
                 finishing = true;

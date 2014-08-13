@@ -51,6 +51,7 @@ public:
     bool commitToRead;
     bool commitToWrite;
     bool commitToRpc;
+    bool active;
 
     PortCoreAdapter(Port& owner) :
         owner(owner), stateMutex(1), 
@@ -76,7 +77,8 @@ public:
         includeNode(false),
         commitToRead(false),
         commitToWrite(false),
-        commitToRpc(false)
+        commitToRpc(false),
+        active(false)
     {
         setContactable(&owner);
     }
@@ -418,6 +420,7 @@ bool Port::open(const Contact& contact, bool registerName,
 
     PortCoreAdapter *currentCore = &(IMPL());
     if (currentCore!=NULL) {
+        currentCore->active = false;
         if (n!="" && (n[0]!='/'||currentCore->includeNode) && n[0]!='=' && n!="..." && n.substr(0,3)!="...") {
             if (fakeName==NULL) {
                 Nodes& nodes = NameClient::getNameClient().getNodes();
@@ -509,6 +512,8 @@ bool Port::open(const Contact& contact, bool registerName,
         if (owned) delete ((PortCoreAdapter*)implementation);
         implementation = newCore;
         owned = true;
+        currentCore = newCore;
+        currentCore->active = false;
     }
 
     PortCoreAdapter& core = IMPL();
@@ -627,6 +632,7 @@ bool Port::open(const Contact& contact, bool registerName,
         nodes.add(*this);
     }
 
+    if (success && currentCore!=NULL) currentCore->active = true;
     return success;
 }
 
@@ -650,6 +656,7 @@ void Port::close() {
     core.finishWriting();
     core.close();
     core.join();
+    core.active = false;
 
     // In fact, open flag means "ever opened", so don't reset it
     // core.setOpened(false);
@@ -928,3 +935,7 @@ bool Port::sharedOpen(Port& port) {
     return true;
 }
 
+bool Port::isOpen() const {
+    if (!implementation) return false;
+    return IMPL().active;
+}

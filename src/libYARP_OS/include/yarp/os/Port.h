@@ -274,6 +274,13 @@ public:
 
     bool sharedOpen(Port& port);
 
+    /**
+     *
+     * Check if the port has been opened.
+     *
+     */
+    bool isOpen() const;
+
 private:
     void *implementation;
     bool owned;
