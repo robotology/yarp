@@ -71,11 +71,38 @@ public:
         }
     }
 
+
+    void testGroup() {
+        report(0,"make sure groups of devices can be instantiated correctly");
+        Property p;
+        p.fromConfig("\
+device group\n\
+\n\
+[part mymotor]\n\
+device test_motor\n\
+axes 10\n\
+\n\
+[part mycam]\n\
+device test_grabber\n\
+\n\
+[part broadcast]\n\
+device controlboard\n\
+subdevice mymotor\n\
+name /mymotor\n\
+");
+        p.put("verbose",1);
+        PolyDriver dd(p);
+        Bottle cmd("get axes"), reply;
+        Network::write(Contact::byName("/mymotor/rpc:i"),cmd,reply);
+        checkEqual(reply.get(2).asInt(),10,"axis count is correct");
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         testBasic();
         testMonitor();
         testPropertyBug();
+        testGroup();
         Network::setLocalMode(false);
     }
 };
