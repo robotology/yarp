@@ -27,8 +27,8 @@ Rectangle {
     property int windowHeight: yarpViewCore.windowHeight
     property YARPViewStatusBar dataArea: undefined
     property int menuHeight: 0
-    property string name: "/name"
-    property string version: "1.1"
+    property string name: "yarpview"
+    property string version: "2.0"
 
     signal changeWindowSize(int w, int h)
     signal synch(bool check);
@@ -58,7 +58,6 @@ Rectangle {
         }
 
         onSetName:{
-            maincontainer.name = name
             setName(name)
         }
     }
@@ -502,7 +501,7 @@ Rectangle {
 
             Text {
                 id: link
-                text: "<html><style type='text/css'></style><a href='http://sourceforge.net/projects/yarp0/'>http://sourceforge.net/projects/yarp0/</a></html>"
+                text: "<html><style type='text/css'></style><a href='http://www.yarp.it'>http://www.yarp.it</a></html>"
                 anchors.top: lblInfo.bottom
                 anchors.topMargin: 10
                 anchors.horizontalCenterOffset: 0
