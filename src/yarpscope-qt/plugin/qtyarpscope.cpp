@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
  * Author: Davide Perrone
  * Date: Feb 2014
  * email:   dperrone@aitek.it
