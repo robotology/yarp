@@ -22,6 +22,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <fstream>
+#include <iterator>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/YarprunLogger.h>
 
@@ -29,16 +30,30 @@ using namespace yarp::os;
 using namespace yarp::os::YarprunLogger;
 using namespace std;
 
-void LogEntry::clear()
+void LogEntry::clear_logEntries()
 {
     entry_list.clear();
     logInfo.logsize=0;
+    last_read_message=entry_list.begin();
 }
 
-void LogEntry::append(MessageEntry entry)
+void LogEntry::setLogEntryMaxSize(int size)
 {
+    entry_list_max_size = size;
+    clear_logEntries();
+}
+
+bool LogEntry::append_logEntry(MessageEntry entry)
+{
+    if (logInfo.logsize >= entry_list_max_size)
+        return false;
+
     entry_list.push_back(entry);
+    //set the iterator if the first elem is inserted
+    if (entry_list.size()==1)
+        last_read_message = last_read_message=entry_list.begin();
     logInfo.logsize++;
+    return true;
 }
 
 void LoggerEngine::discover  (std::list<std::string>& ports)
@@ -152,7 +167,10 @@ void LoggerEngine::logger_thread::run()
         std::string s = b.get(1).asString();
 
         body.text = s;
-        body.timestamp = "";
+        char ttstr [20];
+        static int count=0;
+        sprintf(ttstr,"%d",count++);
+        body.timestamp = string(ttstr);
         body.level = 0;
 
         int str = s.find('[',0);
@@ -195,14 +213,14 @@ void LoggerEngine::logger_thread::run()
             if (it->logInfo.port_complete==entry.logInfo.port_complete)
             {
                 it->logInfo.last_update=machine_current_time;
-                it->append(body);
+                it->append_logEntry(body);
                 this->mutex.post();
                 return;
             }
         }
         if (it == log_list.end())
         {
-            entry.append(body);
+            entry.append_logEntry(body);
             entry.logInfo.last_update=machine_current_time;
             log_list.push_back(entry);
         }
@@ -303,7 +321,7 @@ void LoggerEngine::get_messages (std::list<MessageEntry>& messages)
     log_updater->mutex.post();
 }
 
-void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list<MessageEntry>& messages)
+void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
@@ -311,14 +329,36 @@ void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list
     {
         if (it->logInfo.port_prefix == port)
         {
-            messages = (it->entry_list);
+            //messages = (it->entry_list);
+            if (from_beginning==true) 
+            {
+                it->last_read_message = it->entry_list.begin();
+            }
+            std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
+            std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
+            it->last_read_message=last_returned_message;
             break;
         }
     }
     log_updater->mutex.post();
 }
 
-void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages)
+void LoggerEngine::clear_messages_by_port_complete    (std::string  port)
+{
+    log_updater->mutex.wait();
+    std::list<LogEntry>::iterator it;
+    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
+    {
+        if (it->logInfo.port_complete == port)
+           {
+               it->clear_logEntries();
+               break;
+           }
+    }
+    log_updater->mutex.post();
+}
+
+void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
@@ -326,14 +366,33 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
     {
         if (it->logInfo.port_complete == port)
         {
-            messages = (it->entry_list);
+            //messages = (it->entry_list);
+            if (from_beginning==true) 
+            {
+                it->last_read_message = it->entry_list.begin();
+            }
+            /*
+            //std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
+            //std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
+            //it->last_read_message=last_returned_message++;
+            //it->last_read_message=it->entry_list.end();*/
+            
+            std::list<MessageEntry>::iterator l=it->last_read_message;
+            if (l!=it->entry_list.begin()) 
+                l++;
+            for (; l!=it->entry_list.end(); l++)
+            {
+                messages.push_back(*l);
+                it->last_read_message=l;
+            }
+
             break;
         }
     }
     log_updater->mutex.post();
 }
 
-void LoggerEngine::get_messages_by_process (std::string  process,  std::list<MessageEntry>& messages)
+void LoggerEngine::get_messages_by_process (std::string  process,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
@@ -341,14 +400,21 @@ void LoggerEngine::get_messages_by_process (std::string  process,  std::list<Mes
     {
         if (it->logInfo.process_name == process)
         {
-            messages = (it->entry_list);
+            //messages = (it->entry_list);
+            if (from_beginning==true) 
+            {
+                it->last_read_message = it->entry_list.begin();
+            }
+            std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
+            std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
+            it->last_read_message=last_returned_message;
             break;
         }
     }
     log_updater->mutex.post();
 }
 
-void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEntry>& messages)
+void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEntry>& messages,  bool from_beginning)
 {
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
@@ -356,7 +422,14 @@ void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEn
     {
         if (it->logInfo.process_pid == pid)
         {
-            messages = (it->entry_list);
+            //messages = (it->entry_list);
+            if (from_beginning==true) 
+            {
+                it->last_read_message = it->entry_list.begin();
+            }
+            std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
+            std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
+            it->last_read_message=last_returned_message;
             break;
         }
     }
