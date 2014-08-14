@@ -3,6 +3,7 @@
 #include "logtab.h"
 #include "ui_logtab.h"
 #include <QString>
+#include <QMenu>
 #include <QTextStream>
 #include <Ctime>
 #include <yarp/os/YarprunLogger.h>
@@ -132,6 +133,25 @@ void MainWindow::updateMain()
     }
 }
 
+void MainWindow::ctxMenu(const QPoint &pos)
+{
+    QModelIndex index = ui->treeView->indexAt(pos);
+    int model_row=index.row();
+    QString logname = model_yarprunports->item(model_row,1)->text();
+    theLogger->clear_messages_by_port_complete(logname.toStdString());
+    for (int i=0; i<ui->logtabs->count(); i++)
+        if (ui->logtabs->tabText(i) == logname) 
+            {
+                LogTab* l = (LogTab*) ui->logtabs->widget(i);
+                l->clear_model_logs();
+            }
+
+    ///@@@@@ to be completed
+    QMenu *menu = new QMenu;
+    menu->addAction(tr("Test Item"), this, SLOT(test_slot()));
+    menu->exec(ui->treeView->mapToGlobal(pos));
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -141,10 +161,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     model_yarprunports = new QStandardItemModel(this);
-    
+    statusBarLabel = new QLabel;
+    statusBarLabel->setText("Ready");
+    statusBarLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    statusBar()->addWidget(statusBarLabel);
+
     mainTimer = new QTimer(this);
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
     mainTimer->start(500);
+
+    connect(ui->treeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
 
     ui->stopLogger->setEnabled(false);
     ui->refreshLogger->setEnabled(false);
@@ -188,16 +214,18 @@ void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
 
 void MainWindow::on_startLogger_clicked()
 {
+     statusBarLabel->setText("Running");
      this->theLogger->start_logging();
 
-     ui->startLogger->setEnabled(false);
-     ui->stopLogger->setEnabled(true);
-     ui->refreshLogger->setEnabled(true);
+    ui->startLogger->setEnabled(false);
+    ui->stopLogger->setEnabled(true);
+    ui->refreshLogger->setEnabled(true);
 }
 
 
 void MainWindow::on_stopLogger_clicked()
 {
+    statusBarLabel->setText("Stopped");
      this->theLogger->stop_logging();
 
      ui->stopLogger->setEnabled(false);
@@ -207,12 +235,15 @@ void MainWindow::on_stopLogger_clicked()
 
 void MainWindow::on_refreshLogger_clicked()
 {
+    statusBarLabel->setText("Searching for yarprun ports");
     std::list<std::string> ports;
     theLogger->discover(ports);
     updateMain();
     theLogger->connect(ports);
     ui->treeView->setModel(model_yarprunports);
     ui->treeView->expandAll();
+    statusBarLabel->setText("Running");
+
     /*
     QStringList List;
     std::list<std::string>::iterator it;
@@ -348,4 +379,17 @@ void MainWindow::on_actionShow_Timestamps_toggled(bool arg1)
 void MainWindow::on_actionAbout_QtYarpLogger_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/qtyarplogger.html"));
+}
+
+void MainWindow::on_actionStart_Logger_triggered()
+{
+    this->theLogger->start_logging();
+
+    QMenu *m=ui->menuFile;
+   // m->fi
+        //QMenu::actions.at(0).setEnabled(false);
+
+  //  ui->startLogger->setEnabled(false);
+ //   ui->stopLogger->setEnabled(true);
+  //  ui->refreshLogger->setEnabled(true);
 }

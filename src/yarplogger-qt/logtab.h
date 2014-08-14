@@ -25,14 +25,15 @@ private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 
 private slots:
-    void updateLog();
+    void updateLog(bool from_beginning=false);
 
 public:
     QTimer                  *logTimer;
     QStandardItemModel      *model_logs;
     QSortFilterProxyModel   *proxyModel;
-    bool                    displayTimestamp;
+    bool                     displayTimestamp;
 
+    void                     clear_model_logs();
 };
 
 #endif // LOGTAB_H

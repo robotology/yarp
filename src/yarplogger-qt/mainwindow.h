@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QStandardItemModel>
 #include <QTimer>
+#include <QLabel>
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
 
@@ -50,13 +51,17 @@ private slots:
 
     void on_actionAbout_QtYarpLogger_triggered();
 
+    void on_actionStart_Logger_triggered();
+
+    void ctxMenu(const QPoint &pos);
+
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 
     Ui::MainWindow *ui;
     QStandardItemModel        *model_yarprunports;
     QTimer *mainTimer;
-
+    QLabel *statusBarLabel;
     void loadTextFile();
 };
 

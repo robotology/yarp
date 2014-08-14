@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>956</width>
-    <height>520</height>
+    <width>1015</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,418 +20,390 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QSplitter" name="splitter">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>941</width>
-      <height>441</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="midLineWidth">
-     <number>0</number>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-    <property name="handleWidth">
-     <number>7</number>
-    </property>
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::Panel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <widget class="QPushButton" name="refreshLogger">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>320</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/progress_ico.png</normaloff>:/new/prefix1/images/progress_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="startLogger">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>320</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/run_ico.png</normaloff>:/new/prefix1/images/run_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="stopLogger">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>320</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>:/new/prefix1/images/stop_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>30</y>
-        <width>46</width>
-        <height>13</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="verticalLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>9</x>
-        <y>70</y>
-        <width>381</width>
-        <height>194</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QTreeView" name="treeView">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="rootIsDecorated">
-          <bool>false</bool>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-         <attribute name="headerVisible">
-          <bool>false</bool>
-         </attribute>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QFrame" name="frame_2">
-     <property name="frameShape">
-      <enum>QFrame::Panel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <widget class="QTabWidget" name="logtabs">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>60</y>
-        <width>471</width>
-        <height>331</height>
-       </rect>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <property name="tabsClosable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
-      </widget>
-     </widget>
-     <widget class="QPushButton" name="DisplayUnformattedEnable">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>10</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>
-        <normalon>:/new/prefix1/images/run_ico.png</normalon>:/new/prefix1/images/stop_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
-      </property>
-      <property name="default">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_2">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>20</y>
-        <width>46</width>
-        <height>13</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Filter:</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="DisplayInfoEnable">
-      <property name="geometry">
-       <rect>
-        <x>430</x>
-        <y>10</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>
-        <normalon>:/new/prefix1/images/run_ico.png</normalon>:/new/prefix1/images/stop_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
-      </property>
-      <property name="default">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="DisplayWarningEnable">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>10</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>
-        <normalon>:/new/prefix1/images/run_ico.png</normalon>:/new/prefix1/images/stop_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
-      </property>
-      <property name="default">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="DisplayDebugEnable">
-      <property name="geometry">
-       <rect>
-        <x>390</x>
-        <y>10</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>
-        <normalon>:/new/prefix1/images/run_ico.png</normalon>:/new/prefix1/images/stop_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
-      </property>
-      <property name="default">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="DisplayErrorEnable">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>10</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="res.qrc">
-        <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>
-        <normalon>:/new/prefix1/images/run_ico.png</normalon>:/new/prefix1/images/stop_ico.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>32</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
-      </property>
-      <property name="default">
-       <bool>false</bool>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_2">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>20</y>
-        <width>113</width>
-        <height>20</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QFrame" name="frame_3">
-      <property name="geometry">
-       <rect>
-        <x>339</x>
-        <y>279</y>
-        <width>251</width>
-        <height>211</height>
-       </rect>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
+      <property name="midLineWidth">
+       <number>0</number>
       </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="handleWidth">
+       <number>7</number>
+      </property>
+      <widget class="QFrame" name="left_frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>500</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QTreeView" name="treeView">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="rootIsDecorated">
+             <bool>false</bool>
+            </property>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+            <attribute name="headerVisible">
+             <bool>true</bool>
+            </attribute>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="refreshLogger">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/prefix1/images/progress_ico.png</normaloff>:/new/prefix1/images/progress_ico.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="stopLogger">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>:/new/prefix1/images/stop_ico.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="startLogger">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/new/prefix1/images/run_ico.png</normaloff>:/new/prefix1/images/run_ico.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QFrame" name="right_frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>500</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QFrame" name="frame">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <widget class="QPushButton" name="DisplayUnformattedEnable">
+           <property name="geometry">
+            <rect>
+             <x>420</x>
+             <y>10</y>
+             <width>41</width>
+             <height>41</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/new/prefix1/images/all_ico_b.png</normaloff>
+             <normalon>:/new/prefix1/images/all_ico.png</normalon>:/new/prefix1/images/all_ico_b.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="DisplayWarningEnable">
+           <property name="geometry">
+            <rect>
+             <x>270</x>
+             <y>10</y>
+             <width>41</width>
+             <height>41</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/new/prefix1/images/warning_ico_b.png</normaloff>
+             <normalon>:/new/prefix1/images/warning_ico.png</normalon>:/new/prefix1/images/warning_ico_b.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="DisplayInfoEnable">
+           <property name="geometry">
+            <rect>
+             <x>370</x>
+             <y>10</y>
+             <width>41</width>
+             <height>41</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/new/prefix1/images/info_ico_b.png</normaloff>
+             <normalon>:/new/prefix1/images/info_ico.png</normalon>:/new/prefix1/images/info_ico_b.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="DisplayDebugEnable">
+           <property name="geometry">
+            <rect>
+             <x>320</x>
+             <y>10</y>
+             <width>41</width>
+             <height>41</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/new/prefix1/images/debug_ico_b.png</normaloff>
+             <normalon>:/new/prefix1/images/debug_ico.png</normalon>:/new/prefix1/images/debug_ico_b.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="DisplayErrorEnable">
+           <property name="geometry">
+            <rect>
+             <x>220</x>
+             <y>10</y>
+             <width>41</width>
+             <height>41</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/new/prefix1/images/error_ico_b.png</normaloff>
+             <normalon>:/new/prefix1/images/error_ico.png</normalon>:/new/prefix1/images/error_ico_b.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_2">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>0</y>
+             <width>51</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Filter:</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_2">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>171</width>
+             <height>23</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="logtabs">
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+          <property name="tabsClosable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>956</width>
+     <width>1015</width>
      <height>21</height>
     </rect>
    </property>
@@ -439,10 +411,11 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionStart_Logger"/>
+    <addaction name="actionStop_Logger"/>
+    <addaction name="separator"/>
     <addaction name="actionSave_Log"/>
     <addaction name="actionLoad_Log"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -469,8 +442,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionSave_Log"/>
    <addaction name="separator"/>
+   <addaction name="actionStart_Logger"/>
+   <addaction name="actionStop_Logger"/>
+   <addaction name="separator"/>
+   <addaction name="actionSave_Log"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout_QtYarpLogger">
@@ -489,7 +465,7 @@
   <action name="actionSave_Log">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/new/prefix1/images/run_ico.png</normaloff>:/new/prefix1/images/run_ico.png</iconset>
+     <normaloff>:/new/prefix1/images/save_icon.png</normaloff>:/new/prefix1/images/save_icon.png</iconset>
    </property>
    <property name="text">
     <string>Save Log</string>
@@ -500,14 +476,27 @@
     <string>Load Log</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="actionStart_Logger">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/new/prefix1/images/run_ico.png</normaloff>:/new/prefix1/images/run_ico.png</iconset>
+   </property>
    <property name="text">
-    <string>Exit</string>
+    <string>Start Logger</string>
    </property>
   </action>
   <action name="actionAbout_QtYarpLogger_2">
    <property name="text">
     <string>about QtYarpLogger</string>
+   </property>
+  </action>
+  <action name="actionStop_Logger">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>:/new/prefix1/images/stop_ico.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop Logger</string>
    </property>
   </action>
  </widget>
