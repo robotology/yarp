@@ -21,7 +21,8 @@ namespace yarp {
 
 /**
  *
- * Basic wrapper for mutual exclusion.
+ * Basic wrapper for mutual exclusion. Intended to match std::mutex in
+ * C++11, for eventual replacement by that class.
  *
  */
 class YARP_OS_API yarp::os::Mutex {
@@ -44,6 +45,8 @@ public:
     /**
      *
      * Lock the associated resource, waiting if necessary.
+     * Behavior is undefined if called by the thread currently locking
+     * the resource.
      *
      */
     void lock();
@@ -51,8 +54,10 @@ public:
     /**
      *
      * Lock the associated resource if possible.  Don't wait.
+     * Behavior is undefined if called by the thread currently locking
+     * the resource.
      *
-     * @return true if the associated resource was locked.
+     * @return true if the associated resource was successfully locked.
      *
      */
     bool tryLock();
@@ -60,6 +65,8 @@ public:
     /**
      *
      * Unlock the associated resource.
+     * If the resource is not currently locked by the calling thread,
+     * the behavior is undefined.
      *
      */
     void unlock();
