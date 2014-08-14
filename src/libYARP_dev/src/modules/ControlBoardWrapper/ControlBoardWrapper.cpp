@@ -1130,7 +1130,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                     yarp::dev::InteractionModeEnum mode;
                     *ok = iInteract->getInteractionMode(cmd.get(3).asInt(), &mode);
                     response.addVocab(mode);
-                    std::cout << " resp is " << response.toString() << std::endl;
+                    if (caller->verbose())    std::cout << " resp is " << response.toString() << std::endl;
             }
             break;
 
@@ -1142,8 +1142,7 @@ void CommandsHelper::handleInteractionModeMsg(const yarp::os::Bottle& cmd,
                 jointList = cmd.get(4).asList();
                 if(jointList->size() != n_joints )
                 {
-                    if (caller->verbose())
-                        fprintf(stderr, "received an invalid getInteractionMode message. Size of vectors doesn´t match\n");
+                    fprintf(stderr, "received an invalid getInteractionMode message. Size of vectors doesn´t match\n");
                     *ok = false;
                     break;
                 }
