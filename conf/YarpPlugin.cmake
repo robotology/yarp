@@ -273,13 +273,11 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
         endif(EXPECT_CATEGORY)
         if(X_EXPECT_LIBNAME)
             set(X_THE_LIBNAME ${arg})
-            message(INFO " libname found as ${X_THE_LIBNAME}")
             set(X_EXPECT_LIBNAME FALSE)
         endif(X_EXPECT_LIBNAME)
 
         if(${arg} STREQUAL "LIBNAME")  #it does not work without the ${}!!
             set(X_EXPECT_LIBNAME TRUE)
-        message(STATUS " found LIBNAME" )
         endif(${arg} STREQUAL "LIBNAME")
 
         if(arg STREQUAL "TYPE")
