@@ -252,10 +252,7 @@ endif()
 
 # By default do not build with rpath.
 # If this flag is true then all the variables related to RPATH are ignored
-set(CMAKE_SKIP_BUILD_RPATH TRUE)
 if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
-    # Enable RPATH
-    set(CMAKE_SKIP_BUILD_RPATH FALSE)
     # Maintain back-compatibility
     if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER "2.8.12")
         message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
