@@ -42,10 +42,6 @@ if(YARP_COMPILE_TESTS)
         if(YARP_USE_PERSISTENT_NAMESERVER)
             target_link_libraries(${EXE} YARP_serversql)
         endif()
-        # added by Lorenzo, to fix windows problem. I assume we test RELEASE
-        # builds.
-        get_target_property(EXELOC ${EXE} LOCATION_RELEASE)
-        #message(STATUS "Exeloc: ${EXELOC}")
         if(NOT YARP_HAS_ACE)
             # Without ACE, we don't currently have UDP
             list(REMOVE_ITEM harness_code ${CMAKE_SOURCE_DIR}/src/libYARP_${test_family}/harness/DgramTwoWayStreamTest.cpp)
@@ -53,7 +49,7 @@ if(YARP_COMPILE_TESTS)
         foreach(test ${harness_code})
             get_filename_component(XN ${test} NAME_WE)
             #message(STATUS ${XN})
-            add_test("${test_family}::${XN}" ${EXELOC} regression ${XN})
+            add_test(NAME "${test_family}::${XN}" COMMAND $<TARGET_FILE:${EXE}> regression ${XN})
         endforeach()
     endforeach()
 
