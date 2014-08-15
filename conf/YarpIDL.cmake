@@ -129,7 +129,7 @@ macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 			RESULT_VARIABLE res)
 	if (NOT "${res}" STREQUAL "0")
-	  message(FATAL_ERROR "yarpidl_${family} failed, aborting.")
+	  message(FATAL_ERROR "yarpidl_${family} (${YARPIDL_${family}_LOCATION}) failed, aborting.")
 	endif()
         execute_process(COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake)
 
