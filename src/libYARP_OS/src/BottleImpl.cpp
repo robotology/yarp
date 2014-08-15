@@ -10,6 +10,7 @@
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/MemoryOutputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/StringInputStream.h>
@@ -582,9 +583,9 @@ void BottleImpl::synch() {
             }
             s->writeRaw(writer);
         }
-        String str = writer.toString();
-        data.resize(str.length(),' ');
-        memcpy(&data[0],str.c_str(),str.length());
+        data.resize(writer.dataSize(),' ');
+        MemoryOutputStream m(&data[0]);
+        writer.write(m);
         dirty = false;
     }
 }
