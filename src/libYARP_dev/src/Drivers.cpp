@@ -181,7 +181,7 @@ public:
     void init() {
         YarpPluginSelector selector;
         selector.scan();
-        settings.setSelector(selector);
+        if (!settings.setSelector(selector)) return;
         if (plugin.open(settings)) {
             dev.open(*plugin.getFactory());
             settings.setLibraryMethodName(plugin.getFactory()->getName(),

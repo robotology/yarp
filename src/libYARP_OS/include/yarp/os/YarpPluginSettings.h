@@ -12,6 +12,7 @@
 
 #include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/SharedLibraryClass.h>
+#include <yarp/os/Log.h>
 
 namespace yarp {
     namespace os {
@@ -78,12 +79,15 @@ public:
      *
      * @param selector the yarp::os::YarpPluginSelector to use
      *
+     * @return true if a section about the plugin was found
+     *
      */
-    void setSelector(YarpPluginSelector& selector) {
+    bool setSelector(YarpPluginSelector& selector) {
         this->selector = &selector;
         if (name != "") {
-            readFromSelector(name);
+            return readFromSelector(name);
         }
+        return false;
     }
 
     /**
@@ -202,6 +206,10 @@ private:
         if (!selector) return false;
         Bottle plugins = selector->getSelectedPlugins();
         Bottle group = plugins.findGroup(name.c_str()).tail();
+        if (group.isNull()) {
+            YARP_LOG_ERROR(ConstString("No .ini file found for plugin: ") + name);
+            return false;
+        }
         readFromSearchable(group,name);
         return true;
     }
