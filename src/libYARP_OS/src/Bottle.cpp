@@ -374,9 +374,8 @@ void Bottle::append(const Bottle& alt) {
 
 Bottle Bottle::tail() const {
     Bottle b;
-    if (!isNull()) {
-        b.copy(*this,1,size()-1);
-    }
+    if (isNull()) return *this;
+    b.copy(*this,1,size()-1);
     return b;
 }
 
