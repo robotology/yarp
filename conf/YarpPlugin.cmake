@@ -149,7 +149,7 @@ endmacro(YARP_BEGIN_PLUGIN_LIBRARY)
 # a flexible set of arguments, then passes them to YARP_ADD_PLUGIN_NORMALIZED
 # in a clean canonical order.
 #
-macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
+macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category libname)
 
     # Append the current source directory to the set of include paths.
     # Developers seem to expect #include "foo.h" to work if foo.h is
@@ -172,6 +172,8 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
     set(YARPDEV_INCLUDE "${include}")
     set(YARPDEV_WRAPPER "${wrapper}")
     set(YARPDEV_CATEGORY "${category}")
+    set(YARPDEV_LIBNAME "${libname}")
+
     #set(ENABLE_YARPDEV_NAME "1")
 
     # Set up a flag to enable/disable compilation of this plugin.
@@ -201,6 +203,26 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
         configure_file(${YARP_MODULE_DIR}/template/yarp_plugin_${category}.cpp.in
                        ${fname} @ONLY)
 
+        if(YARPDEV_CATEGORY STREQUAL "device")
+            # if the plugin is a device, use the template to generate the .ini manifest file
+            if(YARPDEV_WRAPPER STREQUAL "" )
+                set(PRINT_WRAPPER "")
+            else(YARPDEV_WRAPPER STREQUAL "")
+                set(PRINT_WRAPPER "wrapper")
+            endif(YARPDEV_WRAPPER STREQUAL "")
+
+            # if the libname param is not explicitly provided, use the plugin name as name
+            # of the library file too (i.e.:  ${plugin_name}.so, ${plugin_name}.dll)
+            if(YARPDEV_LIBNAME STREQUAL "" )
+                set(YARPDEV_LIBNAME ${plugin_name} )
+            endif(YARPDEV_LIBNAME STREQUAL "")
+
+            configure_file(${YARP_MODULE_DIR}/template/YarpPluginConfFile.cmake.in
+                           ${CMAKE_CURRENT_SOURCE_DIR}/${plugin_name}_manifest.ini @ONLY)
+
+            # message(STATUS " generating file ${CMAKE_CURRENT_SOURCE_DIR}/${plugin_name}.ini")
+        endif(YARPDEV_CATEGORY STREQUAL "device")
+
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
         set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
         set(YARP_PLUGIN_ACTIVE TRUE)
@@ -212,7 +234,6 @@ macro(YARP_ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
     # We are done!
 
 endmacro(YARP_ADD_PLUGIN_NORMALIZED)
-
 
 
 #########################################################################
@@ -227,9 +248,12 @@ endmacro(YARP_ADD_PLUGIN_NORMALIZED)
 macro(YARP_PREPARE_PLUGIN plugin_name)
     set(X_EXPECT_TYPE FALSE)
     set(X_EXPECT_INCLUDE FALSE)
+    set(X_EXPECT_LIBNAME FALSE)
     set(X_THE_TYPE "")
     set(X_THE_INCLUDE "")
     set(X_THE_WRAPPER "")
+    set(X_THE_LIBNAME "")
+
     foreach(arg ${ARGN})
         if(X_EXPECT_TYPE)
             set(X_THE_TYPE ${arg})
@@ -247,6 +271,15 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
             set(THE_CATEGORY ${arg})
             set(EXPECT_CATEGORY FALSE)
         endif(EXPECT_CATEGORY)
+        if(X_EXPECT_LIBNAME)
+            set(X_THE_LIBNAME ${arg})
+            set(X_EXPECT_LIBNAME FALSE)
+        endif(X_EXPECT_LIBNAME)
+
+        if(${arg} STREQUAL "LIBNAME")  #it does not work without the ${}!!
+            set(X_EXPECT_LIBNAME TRUE)
+        endif(${arg} STREQUAL "LIBNAME")
+
         if(arg STREQUAL "TYPE")
             set(X_EXPECT_TYPE TRUE)
         endif(arg STREQUAL "TYPE")
@@ -259,9 +292,11 @@ macro(YARP_PREPARE_PLUGIN plugin_name)
         if(arg STREQUAL "CATEGORY")
             set(EXPECT_CATEGORY TRUE)
         endif(arg STREQUAL "CATEGORY")
+
+
     endforeach(arg)
     if(X_THE_TYPE AND X_THE_INCLUDE)
-        yarp_add_plugin_normalized(${plugin_name} ${X_THE_TYPE} ${X_THE_INCLUDE} "${X_THE_WRAPPER}" "${THE_CATEGORY}")
+        yarp_add_plugin_normalized(${plugin_name} ${X_THE_TYPE} ${X_THE_INCLUDE} "${X_THE_WRAPPER}" "${THE_CATEGORY}" "${X_THE_LIBNAME}")
     else(X_THE_TYPE AND X_THE_INCLUDE)
         message(STATUS "Not enough information to create ${plugin_name}")
         message(STATUS "  type:    ${X_THE_TYPE}")
