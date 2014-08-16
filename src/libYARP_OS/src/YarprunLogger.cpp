@@ -162,6 +162,7 @@ void LoggerEngine::logger_thread::run()
             return;
         }
 
+        std::string bottlestring = b.toString();
         std::string header = b.get(0).asString();
         MessageEntry body;
         std::string s = b.get(1).asString();
@@ -220,6 +221,12 @@ void LoggerEngine::logger_thread::run()
         }
         if (it == log_list.end())
         {
+            yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
+            if (contact.isValid())
+            {
+                entry.logInfo.ip_address = contact.getHost();
+                //printf ("%s\n", entry.logInfo.ip_address.c_str());
+            };
             entry.append_logEntry(body);
             entry.logInfo.last_update=machine_current_time;
             log_list.push_back(entry);
@@ -448,7 +455,28 @@ const std::list<MessageEntry> filter_by_level (int level, const std::list<Messag
     return ret;
 }
 
-void LoggerEngine::save_to_file            (std::string  filename)
+void LoggerEngine::export_log_to_text_file   (std::string  filename, std::string portname)
+{
+    log_updater->mutex.wait();
+    std::list<LogEntry>::iterator it;
+    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
+    {
+        if (it->logInfo.port_complete == portname)
+        {
+            ofstream file1;
+            file1.open(filename.c_str());
+            std::list<MessageEntry>::iterator it1;
+            for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
+            {
+                file1 << it1->timestamp << " " << it1->level << " " << it1->text << " " << std::endl;
+            }
+            file1.close();
+        }
+    }
+    log_updater->mutex.post();
+}
+
+void LoggerEngine::save_all_logs_to_file   (std::string  filename)
 {
     const int      LOGFILE_VERSION = 1;
 
@@ -478,7 +506,7 @@ void LoggerEngine::save_to_file            (std::string  filename)
     if (wasRunning) log_updater->start();
 }
 
-void LoggerEngine::load_from_file          (std::string  filename)
+void LoggerEngine::load_all_logs_from_file   (std::string  filename)
 {
     const int      LOGFILE_VERSION = 1;
 

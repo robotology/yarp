@@ -71,6 +71,7 @@ class yarp::os::YarprunLogger::LogEntryInfo
     std::string  port_complete;
     std::string  process_name;
     std::string  process_pid;
+    std::string  ip_address;
     std::time_t  last_update;
     int          logsize;
     LogEntryInfo()  {logsize=0;}
@@ -123,8 +124,8 @@ class yarp::os::YarprunLogger::LoggerEngine
     logger_thread* log_updater;
     
     public:
-    void discover  (std::list<std::string>& ports);
-    void connect   (const std::list<std::string>& ports);
+    void discover             (std::list<std::string>& ports);
+    void connect              (const std::list<std::string>& ports);
     
     public:
     LoggerEngine(std::string portName);
@@ -136,8 +137,9 @@ class yarp::os::YarprunLogger::LoggerEngine
     bool is_logging              () {return logging;}
     bool is_discovering          () {return discovering;}
 
-    void save_to_file                    (std::string  filename);
-    void load_from_file                  (std::string  filename);
+    void save_all_logs_to_file           (std::string  filename);
+    void load_all_logs_from_file         (std::string  filename);
+    void export_log_to_text_file         (std::string  filename, std::string portname);
     int  get_num_of_processes            ();
     void get_infos                       (std::list<LogEntryInfo>&   infos);
     void get_messages                    (std::list<MessageEntry>& messages);

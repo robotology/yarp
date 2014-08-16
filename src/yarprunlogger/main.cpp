@@ -106,13 +106,13 @@ class logger_module : public yarp::os::RFModule
         else if (command.get(0).asString()=="save")
         {
             std::string filename = command.get(1).asString();
-            this->the_logger->save_to_file(filename);
+            this->the_logger->save_all_logs_to_file(filename);
             reply.addString("ack");
         }
         else if (command.get(0).asString()=="load")
         {
             std::string filename = command.get(1).asString();
-            this->the_logger->load_from_file(filename);
+            this->the_logger->load_all_logs_from_file(filename);
             reply.addString("ack");
         }
         else if (command.get(0).asString()=="ask_by_proc")
