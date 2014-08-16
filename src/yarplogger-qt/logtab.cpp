@@ -19,7 +19,6 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
     ui->listView->verticalHeader()->setVisible(false);
     ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-
     logTimer = new QTimer(this);
     connect(logTimer, SIGNAL(timeout()), this, SLOT(updateLog()));
     logTimer->start(500);
@@ -27,7 +26,7 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
     model_logs->setHorizontalHeaderItem(0,new QStandardItem("timestamp"));
     model_logs->setHorizontalHeaderItem(1,new QStandardItem("level"));
     model_logs->setHorizontalHeaderItem(2,new QStandardItem("message"));
-
+    
     updateLog(true);
 }
 
@@ -38,11 +37,14 @@ LogTab::~LogTab()
 
 void LogTab::clear_model_logs()
 {
+    mutex.lock();
     if (model_logs) model_logs->clear();
+    mutex.unlock();
 }
 
 void LogTab::updateLog(bool from_beginning)
 {
+    mutex.lock();
     std::list<yarp::os::YarprunLogger::MessageEntry> messages;
     this->theLogger->get_messages_by_port_complete(portName,messages, from_beginning);
     int size_messages= messages.size();
@@ -65,4 +67,5 @@ void LogTab::updateLog(bool from_beginning)
         }
         rootNode->appendRow(rowItem);
     }
+    mutex.unlock();
 }

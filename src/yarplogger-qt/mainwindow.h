@@ -35,7 +35,7 @@ private slots:
 
     void on_logtabs_tabCloseRequested(int index);
 
-    void on_treeView_doubleClicked(const QModelIndex &index);
+    void on_yarprunTreeView_doubleClicked(const QModelIndex &index);
 
     void on_DisplayErrorEnable_toggled(bool checked);
 
@@ -54,6 +54,14 @@ private slots:
     void on_actionStart_Logger_triggered();
 
     void ctxMenu(const QPoint &pos);
+
+    void on_clearLogTab_action();
+    
+    void on_saveLogTab_action();
+
+    void on_actionSave_Log_triggered(bool checked);
+
+    void on_actionLoad_Log_triggered();
 
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;

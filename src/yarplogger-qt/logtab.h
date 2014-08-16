@@ -1,6 +1,7 @@
 #ifndef LOGTAB_H
 #define LOGTAB_H
 
+#include <QMutex.h>
 #include <QFrame>
 #include <QStandardItemModel>
 #include <QTimer>
@@ -23,6 +24,7 @@ private:
     Ui::LogTab *ui;
     std::string                            portName;
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
+    QMutex                                 mutex;
 
 private slots:
     void updateLog(bool from_beginning=false);

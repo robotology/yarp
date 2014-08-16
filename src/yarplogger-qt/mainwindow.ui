@@ -64,7 +64,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QTreeView" name="treeView">
+           <widget class="QTreeView" name="yarprunTreeView">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
               <horstretch>0</horstretch>

@@ -11,21 +11,14 @@
 #include <QStandardItemModel>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QSignalMapper>
+#include <QFileDialog>
+#include <QDateTime>
 
 void MainWindow::updateMain()
 {
-    /*std::list<yarp::os::YarprunLogger::MessageEntry> messages;
-    this->theLogger->get_messages(messages);
-    QStringList List;
-    std::list<yarp::os::YarprunLogger::MessageEntry>::iterator it;
-    for (it=messages.begin(); it!=messages.end(); it++)
-    {
-        List << it->text.c_str();
-    }
-    model->setStringList(List);*/
-    
     //model_yarprunports->clear();
-    model_yarprunports->setHorizontalHeaderItem(0,new QStandardItem("yarprun"));
+    model_yarprunports->setHorizontalHeaderItem(0,new QStandardItem("ip"));
     model_yarprunports->setHorizontalHeaderItem(1,new QStandardItem("process"));
     model_yarprunports->setHorizontalHeaderItem(2,new QStandardItem("last heard"));
     model_yarprunports->setHorizontalHeaderItem(3,new QStandardItem("log size"));
@@ -65,7 +58,7 @@ void MainWindow::updateMain()
         if (existing == false)
         {
             QList<QStandardItem *> rowItems;
-            rowItems << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text) << new QStandardItem(logsize_text);
+            rowItems << new QStandardItem(it->ip_address.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text) << new QStandardItem(logsize_text);
             itemsRoot->appendRow(rowItems);
         }
 
@@ -131,12 +124,19 @@ void MainWindow::updateMain()
         }*/
 #endif
     }
+    ui->yarprunTreeView->setColumnWidth(1,230);
+    ui->yarprunTreeView->setColumnWidth(2,80);
+    ui->yarprunTreeView->setColumnWidth(3,50);
 }
 
-void MainWindow::ctxMenu(const QPoint &pos)
+void MainWindow::on_clearLogTab_action()
 {
-    QModelIndex index = ui->treeView->indexAt(pos);
-    int model_row=index.row();
+    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
+    if (qvar.isValid()==false)
+    {
+        return;
+    }
+    int model_row = qvar.toInt();
     QString logname = model_yarprunports->item(model_row,1)->text();
     theLogger->clear_messages_by_port_complete(logname.toStdString());
     for (int i=0; i<ui->logtabs->count(); i++)
@@ -145,11 +145,36 @@ void MainWindow::ctxMenu(const QPoint &pos)
                 LogTab* l = (LogTab*) ui->logtabs->widget(i);
                 l->clear_model_logs();
             }
+}
 
-    ///@@@@@ to be completed
+void MainWindow::on_saveLogTab_action()
+{
+    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
+    if (qvar.isValid()==false)
+    {
+        return;
+    }
+    int model_row = qvar.toInt();
+    std::string logname = model_yarprunports->item(model_row,1)->text().toStdString();
+    std::string preferred_filename=logname;
+    std::replace(preferred_filename.begin(), preferred_filename.end(), '/', '_');
+    preferred_filename.erase(0,1);
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Export log to text file"),preferred_filename.c_str(), tr("Text Files (*.txt)"));
+    theLogger->export_log_to_text_file(fileName.toStdString(),logname);
+}
+
+void MainWindow::ctxMenu(const QPoint &pos)
+{
+    QModelIndex index = ui->yarprunTreeView->indexAt(pos);
+    int model_row=index.row();
+    if (model_row==-1) return;
+
     QMenu *menu = new QMenu;
-    menu->addAction(tr("Test Item"), this, SLOT(test_slot()));
-    menu->exec(ui->treeView->mapToGlobal(pos));
+    QAction *act1 = menu->addAction(tr("Clear current log"), this, SLOT(on_clearLogTab_action()));
+    QAction *act2 = menu->addAction(tr("Export current log to text file"), this, SLOT(on_saveLogTab_action()));
+    act1->setProperty("model_row", model_row);
+    act2->setProperty("model_row", model_row);
+    menu->exec(ui->yarprunTreeView->mapToGlobal(pos));
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -170,7 +195,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
     mainTimer->start(500);
 
-    connect(ui->treeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
+    connect(ui->yarprunTreeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
 
     ui->stopLogger->setEnabled(false);
     ui->refreshLogger->setEnabled(false);
@@ -240,8 +265,8 @@ void MainWindow::on_refreshLogger_clicked()
     theLogger->discover(ports);
     updateMain();
     theLogger->connect(ports);
-    ui->treeView->setModel(model_yarprunports);
-    ui->treeView->expandAll();
+    ui->yarprunTreeView->setModel(model_yarprunports);
+    ui->yarprunTreeView->expandAll();
     statusBarLabel->setText("Running");
 
     /*
@@ -284,7 +309,7 @@ void MainWindow::on_logtabs_tabCloseRequested(int index)
     delete ui->logtabs->widget(index);
 }
 
-void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
+void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
 {
     QTabWidget* tab = new QTabWidget(this);
     int model_row=index.row();
@@ -392,4 +417,19 @@ void MainWindow::on_actionStart_Logger_triggered()
   //  ui->startLogger->setEnabled(false);
  //   ui->stopLogger->setEnabled(true);
   //  ui->refreshLogger->setEnabled(true);
+}
+
+void MainWindow::on_actionSave_Log_triggered(bool checked)
+{
+    QString dateformat = "yarprunlog_dd_MM_yyyy_hh_mm_ss";
+    QDateTime currDate = QDateTime::currentDateTime();
+    QString preferred_filename = currDate.toString ( dateformat )+".log";
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save to log file"),preferred_filename, tr("Log Files (*.log)"));
+    theLogger->save_all_logs_to_file(fileName.toStdString());
+}
+
+void MainWindow::on_actionLoad_Log_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Load log file"),"./", tr("Log Files (*.log)"));
+    theLogger->load_all_logs_from_file(fileName.toStdString());
 }
