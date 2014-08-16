@@ -145,8 +145,8 @@
       </widget>
       <widget class="QFrame" name="right_frame">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-         <horstretch>1</horstretch>
+        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+         <horstretch>3</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>

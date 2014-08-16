@@ -26,7 +26,10 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
     model_logs->setHorizontalHeaderItem(0,new QStandardItem("timestamp"));
     model_logs->setHorizontalHeaderItem(1,new QStandardItem("level"));
     model_logs->setHorizontalHeaderItem(2,new QStandardItem("message"));
-    
+    ui->listView->horizontalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
+    ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    ui->listView->verticalHeader()->setDefaultSectionSize(20);
+
     updateLog(true);
 }
 

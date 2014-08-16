@@ -22,6 +22,8 @@ void MainWindow::updateMain()
     model_yarprunports->setHorizontalHeaderItem(1,new QStandardItem("process"));
     model_yarprunports->setHorizontalHeaderItem(2,new QStandardItem("last heard"));
     model_yarprunports->setHorizontalHeaderItem(3,new QStandardItem("log size"));
+    model_yarprunports->setHorizontalHeaderItem(4,new QStandardItem("errors"));
+    model_yarprunports->setHorizontalHeaderItem(5,new QStandardItem("warnings"));
     std::list<yarp::os::YarprunLogger::LogEntryInfo> infos;
     this->theLogger->get_infos (infos);
     std::list<yarp::os::YarprunLogger::LogEntryInfo>::iterator it;
@@ -37,8 +39,14 @@ void MainWindow::updateMain()
         else
         sprintf ( time_text, "no data received yet");
         
-        char logsize_text[string_size];
+        char logsize_text[10];
         sprintf (logsize_text, "%d", it->logsize);
+
+        char logerrors_text[10];
+        sprintf (logerrors_text, "%d", it->number_of_errors);
+
+        char logwarnings_text[10];
+        sprintf (logwarnings_text, "%d", it->number_of_warnings);
 
 //#define TREE_MODEL 1
 #define IN_ROW_MODEL 1
@@ -51,6 +59,13 @@ void MainWindow::updateMain()
             {
                 model_yarprunports->item(i,2)->setText(time_text);
                 model_yarprunports->item(i,3)->setText(logsize_text);
+                model_yarprunports->item(i,4)->setText(logerrors_text);
+                model_yarprunports->item(i,5)->setText(logwarnings_text);
+
+                QColor rowcolor = QColor(Qt::white);
+                for (int j=0; j<model_yarprunports->columnCount(); j++)
+                    model_yarprunports->item(i,j)->setBackground(rowcolor);
+                
                 existing = true;
                 break;
             }
@@ -58,7 +73,9 @@ void MainWindow::updateMain()
         if (existing == false)
         {
             QList<QStandardItem *> rowItems;
-            rowItems << new QStandardItem(it->ip_address.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text) << new QStandardItem(logsize_text);
+            rowItems << new QStandardItem(it->ip_address.c_str()) << new QStandardItem(it->port_complete.c_str()) <<
+                        new QStandardItem(time_text) << new QStandardItem(logsize_text) <<
+                        new QStandardItem(logerrors_text) << new QStandardItem (logwarnings_text);
             itemsRoot->appendRow(rowItems);
         }
 
@@ -124,9 +141,12 @@ void MainWindow::updateMain()
         }*/
 #endif
     }
+    ui->yarprunTreeView->setColumnWidth(0,80);
     ui->yarprunTreeView->setColumnWidth(1,230);
     ui->yarprunTreeView->setColumnWidth(2,80);
     ui->yarprunTreeView->setColumnWidth(3,50);
+    ui->yarprunTreeView->setColumnWidth(4,60);
+    ui->yarprunTreeView->setColumnWidth(5,60);
 }
 
 void MainWindow::on_clearLogTab_action()
@@ -314,7 +334,9 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
     QTabWidget* tab = new QTabWidget(this);
     int model_row=index.row();
     QString tabname = model_yarprunports->item(model_row,1)->text();
-    LogTab* tmpLogTab = new LogTab(theLogger, tabname.toStdString(), tab);
+    QVBoxLayout* l= new QVBoxLayout(tab);
+    LogTab* tmpLogTab = new LogTab(theLogger, tabname.toStdString(), this);
+    l->addWidget(tmpLogTab);
     tmpLogTab->setObjectName("logtab");
 
     int exists = -1;
