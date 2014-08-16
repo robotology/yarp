@@ -34,6 +34,10 @@ void LogEntry::clear_logEntries()
 {
     entry_list.clear();
     logInfo.logsize=0;
+    logInfo.number_of_debugs=0;
+    logInfo.number_of_errors=0;
+    logInfo.number_of_infos=0;
+    logInfo.number_of_warnings=0;
     last_read_message=entry_list.begin();
 }
 
@@ -213,6 +217,10 @@ void LoggerEngine::logger_thread::run()
         {
             if (it->logInfo.port_complete==entry.logInfo.port_complete)
             {
+                if      (body.level==1) it->logInfo.number_of_errors++;
+                else if (body.level==2) it->logInfo.number_of_warnings++;
+                else if (body.level==3) it->logInfo.number_of_debugs++;
+                else if (body.level==4) it->logInfo.number_of_infos++;
                 it->logInfo.last_update=machine_current_time;
                 it->append_logEntry(body);
                 this->mutex.post();
@@ -224,6 +232,10 @@ void LoggerEngine::logger_thread::run()
             yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
             if (contact.isValid())
             {
+                if      (body.level==1) entry.logInfo.number_of_errors++;
+                else if (body.level==2) entry.logInfo.number_of_warnings++;
+                else if (body.level==3) entry.logInfo.number_of_debugs++;
+                else if (body.level==4) entry.logInfo.number_of_infos++;
                 entry.logInfo.ip_address = contact.getHost();
                 //printf ("%s\n", entry.logInfo.ip_address.c_str());
             };

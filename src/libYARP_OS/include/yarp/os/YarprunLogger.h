@@ -74,7 +74,11 @@ class yarp::os::YarprunLogger::LogEntryInfo
     std::string  ip_address;
     std::time_t  last_update;
     int          logsize;
-    LogEntryInfo()  {logsize=0;}
+    int          number_of_errors;
+    int          number_of_warnings;
+    int          number_of_debugs;
+    int          number_of_infos;
+    LogEntryInfo()  {logsize=0;number_of_errors=0;number_of_warnings=0;number_of_debugs=0;number_of_infos=0;}
 };
 
 class yarp::os::YarprunLogger::LogEntry
