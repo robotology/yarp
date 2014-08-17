@@ -8,6 +8,11 @@
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
 
+const std::string ERROR_STRING   = "ERROR";
+const std::string WARNING_STRING = "WARNING";
+const std::string INFO_STRING    = "INFO";
+const std::string DEBUG_STRING   = "DEBUG";
+
 namespace Ui {
 class LogTab;
 }
@@ -32,7 +37,8 @@ private slots:
 public:
     QTimer                  *logTimer;
     QStandardItemModel      *model_logs;
-    QSortFilterProxyModel   *proxyModel;
+    QSortFilterProxyModel   *proxyModelButtons;
+    QSortFilterProxyModel   *proxyModelSearch;
     bool                     displayTimestamp;
 
     void                     clear_model_logs();

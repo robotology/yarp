@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1015</width>
+    <width>1025</width>
     <height>532</height>
    </rect>
   </property>
@@ -203,6 +203,9 @@
            <property name="checkable">
             <bool>true</bool>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
            <property name="autoDefault">
             <bool>false</bool>
            </property>
@@ -237,6 +240,9 @@
             </size>
            </property>
            <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
             <bool>true</bool>
            </property>
            <property name="autoDefault">
@@ -275,6 +281,9 @@
            <property name="checkable">
             <bool>true</bool>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
            <property name="autoDefault">
             <bool>false</bool>
            </property>
@@ -311,6 +320,9 @@
            <property name="checkable">
             <bool>true</bool>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
            <property name="autoDefault">
             <bool>false</bool>
            </property>
@@ -345,6 +357,9 @@
             </size>
            </property>
            <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
             <bool>true</bool>
            </property>
            <property name="autoDefault">
@@ -403,7 +418,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1015</width>
+     <width>1025</width>
      <height>21</height>
     </rect>
    </property>

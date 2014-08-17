@@ -10,10 +10,12 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
     displayTimestamp=false;
     ui->setupUi(this);
     model_logs = new QStandardItemModel(this);
-    proxyModel = new QSortFilterProxyModel(this);
-    proxyModel->setSourceModel(model_logs);
-    proxyModel->setFilterKeyColumn(-1); 
-    ui->listView->setModel(proxyModel);
+    proxyModelButtons = new QSortFilterProxyModel(this);
+    proxyModelButtons->setSourceModel(model_logs);
+    proxyModelSearch = new QSortFilterProxyModel(this);
+    proxyModelSearch->setSourceModel(proxyModelButtons);
+    proxyModelSearch->setFilterKeyColumn(-1); 
+    ui->listView->setModel(proxyModelSearch);
     //ui->listView->setModel(model_logs);
 
     ui->listView->verticalHeader()->setVisible(false);
@@ -56,14 +58,17 @@ void LogTab::updateLog(bool from_beginning)
     for (it=messages.begin(); it!=messages.end(); it++)
     {
         QList<QStandardItem *> rowItem;
-        std:: string error_level = "INFO2"; //it->level;
-        rowItem << new QStandardItem(it->timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
         QColor rowcolor;
-        if      (error_level=="ERROR") rowcolor = QColor(Qt::red);
-        else if (error_level=="WARN")  rowcolor = QColor(Qt::yellow);
-        else if (error_level=="INFO")  rowcolor = QColor(Qt::green);
-        else if (error_level=="DEBUG") rowcolor = QColor(Qt::blue);
-        else                           rowcolor = QColor(Qt::white);
+        std:: string error_level;
+        if      (it->level==yarp::os::YarprunLogger::LOGLEVEL_ERROR)     { rowcolor = QColor(Qt::red);    error_level=ERROR_STRING;}
+        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_WARNING)   { rowcolor = QColor(Qt::yellow); error_level=WARNING_STRING; }
+        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_INFO)      { rowcolor = QColor(Qt::green);  error_level=INFO_STRING; }
+        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_DEBUG)     { rowcolor = QColor(Qt::blue);   error_level=DEBUG_STRING;}
+        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_UNDEFINED) { rowcolor = QColor(Qt::white);  error_level="";     }
+        else                                                             { rowcolor = QColor(Qt::white);  error_level="";     }
+
+        rowItem << new QStandardItem(it->timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
+
         for (QList<QStandardItem *>::iterator col_it = rowItem.begin(); col_it != rowItem.end(); col_it++)
         {
             (*col_it)->setBackground(rowcolor);

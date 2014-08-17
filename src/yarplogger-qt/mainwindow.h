@@ -71,6 +71,8 @@ private:
     QTimer *mainTimer;
     QLabel *statusBarLabel;
     void loadTextFile();
+    QString recomputeFilters();
+    void apply_button_filters();
 };
 
 #endif // MAINWINDOW_H

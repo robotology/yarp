@@ -163,7 +163,7 @@ void MainWindow::on_clearLogTab_action()
         if (ui->logtabs->tabText(i) == logname) 
             {
                 LogTab* l = (LogTab*) ui->logtabs->widget(i);
-                l->clear_model_logs();
+                if (l) l->clear_model_logs();
             }
 }
 
@@ -254,7 +254,7 @@ void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
     int currentTab = ui->logtabs->currentIndex();
     LogTab* logtab = ui->logtabs->currentWidget()->findChild<LogTab*>("logtab");
 
-    logtab->proxyModel->setFilterRegExp(regExp);
+    if (logtab) logtab->proxyModelSearch->setFilterRegExp(regExp);
 }
 
 void MainWindow::on_startLogger_clicked()
@@ -352,66 +352,65 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
         int newtab_index = ui->logtabs->addTab(tab, tabname);
         ui->logtabs->setCurrentIndex(newtab_index);
     }
+    apply_button_filters(); //@@@@NOT WOKRING HERE
+}
+
+QString MainWindow::recomputeFilters()
+{
+    QString filter;
+    bool e_debug   = this->ui->DisplayDebugEnable->isChecked();
+    bool e_error   = this->ui->DisplayErrorEnable->isChecked();
+    bool e_info    = this->ui->DisplayInfoEnable->isChecked();
+    bool e_warning = this->ui->DisplayWarningEnable->isChecked();
+    bool e_all     = this->ui->DisplayUnformattedEnable->isChecked();
+    int f = 0;
+    if (e_debug)   {if (f>0) filter=filter +"|"; filter = filter + "^DEBUG$";   f++;}
+    if (e_error)   {if (f>0) filter=filter +"|"; filter = filter + "^ERROR$";   f++;}
+    if (e_info)    {if (f>0) filter=filter +"|"; filter = filter + "^INFO$";    f++;}
+    if (e_warning) {if (f>0) filter=filter +"|"; filter = filter + "^WARNING$"; f++;}
+    if (e_all)     {if (f>0) filter=filter +"|"; filter = filter + "^$";        f++;}
+    std::string debug = filter.toStdString();
+    return filter;
+}
+
+void MainWindow::apply_button_filters()
+{
+    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::RegExp);
+    regExp.setPattern(recomputeFilters());
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) {
+                      logtab->proxyModelButtons->setFilterRegExp(regExp);
+                      logtab->proxyModelButtons->setFilterKeyColumn(1);
+                      break;
+                    }
+    }
 }
 
 void MainWindow::on_DisplayErrorEnable_toggled(bool checked)
 {
-    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
-    if (checked) regExp.setPattern("*");
-    else         regExp.setPattern("*");
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
-    }
+    apply_button_filters();
 }
 
 void MainWindow::on_DisplayWarningEnable_toggled(bool checked)
 {
-    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
-    if (checked) regExp.setPattern("*");
-    else         regExp.setPattern("*");
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
-    }
+    apply_button_filters();
 }
 
 void MainWindow::on_DisplayDebugEnable_toggled(bool checked)
 {
-    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
-    if (checked) regExp.setPattern("*");
-    else         regExp.setPattern("*");
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
-    }
+    apply_button_filters();
 }
 
 void MainWindow::on_DisplayInfoEnable_toggled(bool checked)
 {
-    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
-    if (checked) regExp.setPattern("*");
-    else         regExp.setPattern("*");
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
-    }
+    apply_button_filters();
 }
 
 void MainWindow::on_DisplayUnformattedEnable_toggled(bool checked)
 {
-    QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::Wildcard);
-    if (checked) regExp.setPattern("*");
-    else         regExp.setPattern("*");
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) logtab->proxyModel->setFilterRegExp(regExp);
-    }
+    apply_button_filters();
 }
 
 void MainWindow::on_actionShow_Timestamps_toggled(bool arg1)
