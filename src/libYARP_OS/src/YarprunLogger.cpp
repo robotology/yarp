@@ -176,28 +176,27 @@ void LoggerEngine::logger_thread::run()
         static int count=0;
         sprintf(ttstr,"%d",count++);
         body.timestamp = string(ttstr);
-        body.level = 0;
+        body.level = LOGLEVEL_UNDEFINED;
 
         int str = s.find('[',0);
         int end = s.find(']',0);
         if (str==std::string::npos || end==std::string::npos )
         {
-            body.level = 0;
+            body.level = LOGLEVEL_UNDEFINED;
         }
         else if (str==0)
         {
-            std::string level = s.substr(str,end);
-            body.level = 0;
-            if      (level == "[INFO]")      body.level = 0;
-            else if (level == "[DEBUG]")     body.level = 0;
-            else if (level == "[WARNING]")   body.level = 0;
-            else if (level == "[ERROR]")     body.level = 0;
-            else if (level == "[CRITICAL]")  body.level = 0;
-            body.text = s.substr(end);
+            std::string level = s.substr(str,end+1);
+            body.level = LOGLEVEL_UNDEFINED;
+            if      (level == "[INFO]")      body.level = LOGLEVEL_INFO;
+            else if (level == "[DEBUG]")     body.level = LOGLEVEL_DEBUG;
+            else if (level == "[WARNING]")   body.level = LOGLEVEL_WARNING;
+            else if (level == "[ERROR]")     body.level = LOGLEVEL_ERROR;
+            body.text = s.substr(end+1);
         }
         else 
         {
-            body.level = 0;
+            body.level = LOGLEVEL_UNDEFINED;
         }
 
         LogEntry entry;
@@ -546,7 +545,9 @@ void LoggerEngine::load_all_logs_from_file   (std::string  filename)
             {
                 MessageEntry m_tmp;
                 file1 >> m_tmp.timestamp;
-                file1 >> m_tmp.level;
+                int tmp_level; 
+                file1 >> tmp_level;
+                m_tmp.level = static_cast<LogLevelEnum>(tmp_level);
                 file1 >> m_tmp.text;
                 l_tmp.entry_list.push_back(m_tmp);
             }

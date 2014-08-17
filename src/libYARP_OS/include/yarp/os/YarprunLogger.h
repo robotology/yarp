@@ -43,25 +43,24 @@ namespace yarp
         class  LogEntry;
         class  LogEntryInfo;
         struct MessageEntry;
-        //enum   LevelEnum;
+        enum   LogLevelEnum
+        {
+            LOGLEVEL_UNDEFINED = 0,
+            LOGLEVEL_INFO      = 1,
+            LOGLEVEL_DEBUG     = 2,
+            LOGLEVEL_WARNING   = 3,
+            LOGLEVEL_ERROR     = 4,
+            LOGLEVEL_CRITICAL  = 5
+        };
     }
   }
 }
 
-/*enum yarp::os::YarprunLogger::LevelEnum
-{
-    info = 0,
-    debug = 1,
-    warn = 2,
-    error =3,
-    critical =4
-};*/
-
 struct yarp::os::YarprunLogger::MessageEntry
 {
-    int         level;
-    std::string text;
-    std::string timestamp;
+    LogLevelEnum  level;
+    std::string   text;
+    std::string   timestamp;
 };
 
 class yarp::os::YarprunLogger::LogEntryInfo
