@@ -50,7 +50,10 @@ void LogEntry::setLogEntryMaxSize(int size)
 bool LogEntry::append_logEntry(MessageEntry entry)
 {
     if (logInfo.logsize >= entry_list_max_size)
+    {
+        //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
         return false;
+    }
 
     entry_list.push_back(entry);
     //set the iterator if the first elem is inserted
@@ -63,9 +66,10 @@ bool LogEntry::append_logEntry(MessageEntry entry)
 void LoggerEngine::discover  (std::list<std::string>& ports)
 {
     RpcClient p;
-    p.open("/logger/discover");
+    string logger_portname = log_updater->getPortName();
+    p.open(logger_portname+"/discover");
     std::string yarpservername = yarp::os::Network::getNameServerName();
-    yarp::os::Network::connect("/logger/discover",yarpservername.c_str());
+    yarp::os::Network::connect(logger_portname+"/discover",yarpservername.c_str());
     Bottle cmd,response;
     cmd.addString("bot");
     cmd.addString("list");
@@ -104,7 +108,7 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
         }
         else
         {
-            printf("invalid contact: %s", entry.logInfo.port_complete.c_str());
+            printf("ERROR: invalid contact: %s", entry.logInfo.port_complete.c_str());
         }
         std::istringstream iss(*ports_it);
         std::string token;
@@ -150,7 +154,19 @@ void LoggerEngine::connect (const std::list<std::string>& ports)
 
 std::string LoggerEngine::logger_thread::getPortName()
 {
-    return portName;
+    return logger_portName;
+}
+
+LoggerEngine::logger_thread::logger_thread (int _rate, std::string _portname, int _log_list_max_size) : RateThread(_rate)
+{
+        logger_portName              = _portname;
+        log_list_max_size            = _log_list_max_size;
+        listen_to_LOGLEVEL_INFO      = true;
+        listen_to_LOGLEVEL_DEBUG     = true;
+        listen_to_LOGLEVEL_ERROR     = true;
+        listen_to_LOGLEVEL_WARNING   = true;
+        listen_to_LOGLEVEL_UNDEFINED = true;
+        unknown_format_received      = 0;
 }
 
 void LoggerEngine::logger_thread::run()
@@ -166,12 +182,11 @@ void LoggerEngine::logger_thread::run()
     {
         Bottle b;
         logger_port.read(b);
-        this->mutex.wait();
 
         if (b.size()!=2) 
         {
-            fprintf (stderr, "unknown log format!\n");
-            this->mutex.post();
+            fprintf (stderr, "ERROR: unknown log format!\n");
+            unknown_format_received++;
             return;
         }
 
@@ -208,6 +223,13 @@ void LoggerEngine::logger_thread::run()
             body.level = LOGLEVEL_UNDEFINED;
         }
 
+        if (body.level == LOGLEVEL_INFO      && listen_to_LOGLEVEL_INFO      == false) {return;}
+        if (body.level == LOGLEVEL_DEBUG     && listen_to_LOGLEVEL_DEBUG     == false) {return;}
+        if (body.level == LOGLEVEL_WARNING   && listen_to_LOGLEVEL_WARNING   == false) {return;}
+        if (body.level == LOGLEVEL_ERROR     && listen_to_LOGLEVEL_ERROR     == false) {return;}
+        if (body.level == LOGLEVEL_UNDEFINED && listen_to_LOGLEVEL_UNDEFINED == false) {return;}
+
+        this->mutex.wait();
         LogEntry entry;
         entry.logInfo.port_complete = header;
         entry.logInfo.port_complete.erase(0,1);
@@ -231,28 +253,34 @@ void LoggerEngine::logger_thread::run()
                 else if (body.level==LOGLEVEL_INFO)    it->logInfo.number_of_infos++;
                 it->logInfo.last_update=machine_current_time;
                 it->append_logEntry(body);
-                this->mutex.post();
-                return;
+                break;
             }
         }
         if (it == log_list.end())
         {
-            yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
-            if (contact.isValid())
+            if (log_list.size() < log_list_max_size)
             {
-                if      (body.level==LOGLEVEL_ERROR)   entry.logInfo.number_of_errors++;
-                else if (body.level==LOGLEVEL_WARNING) entry.logInfo.number_of_warnings++;
-                else if (body.level==LOGLEVEL_DEBUG)   entry.logInfo.number_of_debugs++;
-                else if (body.level==LOGLEVEL_INFO)    entry.logInfo.number_of_infos++;
-                entry.logInfo.ip_address = contact.getHost();
+                yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
+                if (contact.isValid())
+                {
+                    if      (body.level==LOGLEVEL_ERROR)   entry.logInfo.number_of_errors++;
+                    else if (body.level==LOGLEVEL_WARNING) entry.logInfo.number_of_warnings++;
+                    else if (body.level==LOGLEVEL_DEBUG)   entry.logInfo.number_of_debugs++;
+                    else if (body.level==LOGLEVEL_INFO)    entry.logInfo.number_of_infos++;
+                    entry.logInfo.ip_address = contact.getHost();
+                }
+                else
+                {
+                    printf("ERROR: invalid contact: %s", entry.logInfo.port_complete.c_str());
+                };
+                entry.append_logEntry(body);
+                entry.logInfo.last_update=machine_current_time;
+                log_list.push_back(entry);
             }
             else
             {
-                printf("invalid contact: %s", entry.logInfo.port_complete.c_str());
-            };
-            entry.append_logEntry(body);
-            entry.logInfo.last_update=machine_current_time;
-            log_list.push_back(entry);
+                printf("WARNING: exceeded log_list_max_size=%d\n",log_list_max_size);
+            }
         }
         
         this->mutex.post();

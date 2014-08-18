@@ -66,28 +66,28 @@ struct yarp::os::YarprunLogger::MessageEntry
 class yarp::os::YarprunLogger::LogEntryInfo
 {
     public:
-    std::string  port_prefix;
-    std::string  port_complete;
-    std::string  process_name;
-    std::string  process_pid;
-    std::string  ip_address;
-    std::time_t  last_update;
-    int          logsize;
-    int          number_of_errors;
-    int          number_of_warnings;
-    int          number_of_debugs;
-    int          number_of_infos;
+    std::string   port_prefix;
+    std::string   port_complete;
+    std::string   process_name;
+    std::string   process_pid;
+    std::string   ip_address;
+    std::time_t   last_update;
+    unsigned int  logsize;
+    unsigned int  number_of_errors;
+    unsigned int  number_of_warnings;
+    unsigned int  number_of_debugs;
+    unsigned int  number_of_infos;
     LogEntryInfo()  {logsize=0;number_of_errors=0;number_of_warnings=0;number_of_debugs=0;number_of_infos=0;}
 };
 
 class yarp::os::YarprunLogger::LogEntry
 {
     private:
-    int                     entry_list_max_size;
+    unsigned int                       entry_list_max_size;
 
     public:
-    std::list<MessageEntry> entry_list;
-    std::list<MessageEntry>::iterator last_read_message;
+    std::list<MessageEntry>            entry_list;
+    std::list<MessageEntry>::iterator  last_read_message;
     void clear_logEntries();
     bool append_logEntry(MessageEntry entry);
 
@@ -106,19 +106,24 @@ class yarp::os::YarprunLogger::LoggerEngine
     class logger_thread : public RateThread
     {
         public:
-        logger_thread (int _rate, std::string _portname, int _log_list_max_size=100) : RateThread(_rate) {portName=_portname; log_list_max_size=_log_list_max_size;};
-
+        logger_thread (int _rate, std::string _portname, int _log_list_max_size=100);
         public:
-        yarp::os::Semaphore mutex;
-        int                 log_list_max_size;
-        std::list<LogEntry> log_list;
-        Port logger_port;
-        std::string portName;
+        yarp::os::Semaphore  mutex;
+        unsigned int         log_list_max_size;
+        std::list<LogEntry>  log_list;
+        Port                 logger_port;
+        std::string          logger_portName;
+        int                  unknown_format_received;
     
         public:
         std::string getPortName();
         void        run();
         void        threadRelease();
+        bool        listen_to_LOGLEVEL_INFO;
+        bool        listen_to_LOGLEVEL_DEBUG;
+        bool        listen_to_LOGLEVEL_ERROR;
+        bool        listen_to_LOGLEVEL_WARNING;
+        bool        listen_to_LOGLEVEL_UNDEFINED;
     };
 
     private:
@@ -131,8 +136,8 @@ class yarp::os::YarprunLogger::LoggerEngine
     void connect              (const std::list<std::string>& ports);
     
     public:
-    LoggerEngine(std::string portName);
-    ~LoggerEngine();
+    LoggerEngine                 (std::string portName);
+    ~LoggerEngine                ();
     bool start_logging           ();
     void stop_logging            ();
     void start_discover          ();
