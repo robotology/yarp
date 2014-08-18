@@ -258,15 +258,15 @@ if(INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
         message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
     endif()
     if(CMAKE_VERSION VERSION_LESS 2.8.12)
-        set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-        set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+        set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
+        set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
     else()
         # This is relative RPATH for libraries built in the same project
         # I assume that the directory is
         #  - install_dir/something for binaries
         #  - install_dir/lib for libraries
         # in this way if libraries and executables are moved together everything will continue to work
-        file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}" "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+        file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_BINDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
         if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
             set(CMAKE_INSTALL_RPATH "@loader_path/${_rel_path}")
         else()
