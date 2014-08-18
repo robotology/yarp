@@ -1,7 +1,7 @@
 #ifndef LOGTAB_H
 #define LOGTAB_H
 
-#include <QMutex.h>
+#include <QMutex>
 #include <QFrame>
 #include <QStandardItemModel>
 #include <QTimer>
@@ -30,6 +30,10 @@ private:
     std::string                            portName;
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
     QMutex                                 mutex;
+    bool                                   displayTimestamp_enabled;
+    bool                                   displayErrorLevel_enabled;
+    bool                                   displayColors_enabled;
+    bool                                   displayGrid_enabled;
 
 private slots:
     void updateLog(bool from_beginning=false);
@@ -39,9 +43,11 @@ public:
     QStandardItemModel      *model_logs;
     QSortFilterProxyModel   *proxyModelButtons;
     QSortFilterProxyModel   *proxyModelSearch;
-    bool                     displayTimestamp;
-
-    void                     clear_model_logs();
+    void                    displayTimestamp  (bool enabled);
+    void                    displayErrorLevel (bool enabled);
+    void                    displayColors     (bool enabled);
+    void                    displayGrid       (bool enabled);
+    void                    clear_model_logs();
 };
 
 #endif // LOGTAB_H

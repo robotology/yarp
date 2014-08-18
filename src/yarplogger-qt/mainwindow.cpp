@@ -5,7 +5,7 @@
 #include <QString>
 #include <QMenu>
 #include <QTextStream>
-#include <Ctime>
+#include <ctime>
 #include <yarp/os/YarprunLogger.h>
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
@@ -197,11 +197,12 @@ void MainWindow::ctxMenu(const QPoint &pos)
     menu->exec(ui->yarprunTreeView->mapToGlobal(pos));
 }
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    theLogger = new yarp::os::YarprunLogger::LoggerEngine("/logger");
+    std::string loggername = rf.check("name",yarp::os::Value("/logger")).asString();
+    theLogger = new yarp::os::YarprunLogger::LoggerEngine(loggername);
 
     ui->setupUi(this);
 
@@ -336,6 +337,10 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
     QString tabname = model_yarprunports->item(model_row,1)->text();
     QVBoxLayout* l= new QVBoxLayout(tab);
     LogTab* tmpLogTab = new LogTab(theLogger, tabname.toStdString(), this);
+    tmpLogTab->displayTimestamp(displayTimestamps);
+    tmpLogTab->displayErrorLevel(displayErrorLevel);
+    tmpLogTab->displayGrid(displayGrid);
+    tmpLogTab->displayColors(displayColors);
     l->addWidget(tmpLogTab);
     tmpLogTab->setObjectName("logtab");
 
@@ -383,7 +388,6 @@ void MainWindow::apply_button_filters()
         if (logtab) {
                       logtab->proxyModelButtons->setFilterRegExp(regExp);
                       logtab->proxyModelButtons->setFilterKeyColumn(1);
-                      break;
                     }
     }
 }
@@ -415,10 +419,14 @@ void MainWindow::on_DisplayUnformattedEnable_toggled(bool checked)
 
 void MainWindow::on_actionShow_Timestamps_toggled(bool arg1)
 {
+    displayTimestamps = arg1;
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) logtab->displayTimestamp=arg1;
+        if (logtab) 
+        {
+            logtab->displayTimestamp(displayTimestamps);
+        }
     }
 }
 
@@ -453,4 +461,43 @@ void MainWindow::on_actionLoad_Log_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Load log file"),"./", tr("Log Files (*.log)"));
     theLogger->load_all_logs_from_file(fileName.toStdString());
+}
+
+void MainWindow::on_actionShow_Error_Level_toggled(bool arg1)
+{
+    displayErrorLevel = arg1;
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) 
+        {
+            logtab->displayErrorLevel(displayErrorLevel);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Colors_toggled(bool arg1)
+{
+    displayColors = arg1;
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) 
+        {
+            logtab->displayColors(displayColors);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Grid_toggled(bool arg1)
+{
+    displayGrid = arg1;
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) 
+        {
+            logtab->displayGrid(displayGrid);
+        }
+    }
 }

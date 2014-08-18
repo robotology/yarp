@@ -437,6 +437,9 @@
      <string>Options</string>
     </property>
     <addaction name="actionShow_Timestamps"/>
+    <addaction name="actionShow_Error_Level"/>
+    <addaction name="actionShow_Colors"/>
+    <addaction name="actionShow_Grid"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -471,6 +474,9 @@
   </action>
   <action name="actionShow_Timestamps">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -512,6 +518,39 @@
    </property>
    <property name="text">
     <string>Stop Logger</string>
+   </property>
+  </action>
+  <action name="actionShow_Error_Level">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Error Level</string>
+   </property>
+  </action>
+  <action name="actionShow_Colors">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Colors</string>
+   </property>
+  </action>
+  <action name="actionShow_Grid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Grid</string>
    </property>
   </action>
  </widget>

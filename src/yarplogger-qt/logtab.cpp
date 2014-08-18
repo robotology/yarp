@@ -7,7 +7,10 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
 { 
     theLogger= _theLogger;
     portName =_portName;
-    displayTimestamp=false;
+    displayTimestamp_enabled=true;
+    displayColors_enabled=true;
+    displayGrid_enabled=true;
+    displayErrorLevel_enabled=true;
     ui->setupUi(this);
     model_logs = new QStandardItemModel(this);
     proxyModelButtons = new QSortFilterProxyModel(this);
@@ -58,7 +61,7 @@ void LogTab::updateLog(bool from_beginning)
     for (it=messages.begin(); it!=messages.end(); it++)
     {
         QList<QStandardItem *> rowItem;
-        QColor rowcolor;
+        QColor rowcolor = QColor(Qt::white);
         std:: string error_level;
         if      (it->level==yarp::os::YarprunLogger::LOGLEVEL_ERROR)     { rowcolor = QColor(Qt::red);    error_level=ERROR_STRING;}
         else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_WARNING)   { rowcolor = QColor(Qt::yellow); error_level=WARNING_STRING; }
@@ -69,11 +72,41 @@ void LogTab::updateLog(bool from_beginning)
 
         rowItem << new QStandardItem(it->timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
 
-        for (QList<QStandardItem *>::iterator col_it = rowItem.begin(); col_it != rowItem.end(); col_it++)
+        if (displayColors_enabled)
         {
-            (*col_it)->setBackground(rowcolor);
+            for (QList<QStandardItem *>::iterator col_it = rowItem.begin(); col_it != rowItem.end(); col_it++)
+            {
+                (*col_it)->setBackground(rowcolor);
+            }
         }
         rootNode->appendRow(rowItem);
     }
+    ui->listView->setColumnHidden(0,!displayTimestamp_enabled);
+    ui->listView->setColumnHidden(1,!displayErrorLevel_enabled);
+    ui->listView->setShowGrid(displayGrid_enabled);
     mutex.unlock();
+}
+
+void LogTab::displayTimestamp  (bool enabled)
+{
+    displayTimestamp_enabled=enabled;
+    ui->listView->setColumnHidden(0,!displayTimestamp_enabled);
+}
+
+void LogTab::displayErrorLevel (bool enabled)
+{
+    displayErrorLevel_enabled=enabled;
+    ui->listView->setColumnHidden(1,!displayErrorLevel_enabled);
+}
+
+void LogTab::displayColors     (bool enabled)
+{
+    displayColors_enabled=enabled;
+    //ui->listView->
+}
+
+void LogTab::displayGrid       (bool enabled)
+{
+    displayGrid_enabled=enabled;
+    ui->listView->setShowGrid(displayGrid_enabled);
 }

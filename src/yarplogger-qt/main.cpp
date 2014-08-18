@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include <yarp/os/all.h>
 #include <yarp/os/YarprunLogger.h>
 
 int main(int argc, char *argv[])
@@ -20,7 +19,7 @@ int main(int argc, char *argv[])
     rf.setDefaultContext("yarprunLogger");                  //overridden by --context parameter
     rf.configure(argc,argv);
 
-    MainWindow w;
+    MainWindow w(rf);
     w.show();
 
     return a.exec();

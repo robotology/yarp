@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
+#include <yarp/os/ResourceFinder.h>
 
 namespace Ui {
 class MainWindow;
@@ -17,7 +18,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(yarp::os::ResourceFinder rf, QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
@@ -63,6 +64,12 @@ private slots:
 
     void on_actionLoad_Log_triggered();
 
+    void on_actionShow_Error_Level_toggled(bool arg1);
+
+    void on_actionShow_Colors_toggled(bool arg1);
+
+    void on_actionShow_Grid_toggled(bool arg1);
+
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 
@@ -73,6 +80,11 @@ private:
     void loadTextFile();
     QString recomputeFilters();
     void apply_button_filters();
+
+    bool displayErrorLevel;
+    bool displayGrid;
+    bool displayColors;
+    bool displayTimestamps;
 };
 
 #endif // MAINWINDOW_H
