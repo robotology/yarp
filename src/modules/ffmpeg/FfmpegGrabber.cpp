@@ -76,6 +76,7 @@ public:
     // video buffers
     AVFrame         *pFrame; 
     AVFrame         *pFrameRGB;
+    AVFrame         *pAudio; 
     uint8_t         *buffer;
     int16_t         *audioBuffer;
     int16_t         *audioBufferAt;
@@ -87,6 +88,7 @@ public:
         pCodecCtx = NULL;
         pFrame = NULL;
         pFrameRGB = NULL;
+        pAudio = NULL;
         buffer = NULL;
         audioBuffer = NULL;
         audioBufferAt = NULL;
@@ -117,6 +119,9 @@ public:
         }
         if (pFrame!=NULL) {
             av_free(pFrame);
+        }
+        if (pAudio!=NULL) {
+            av_free(pAudio);
         }
     }
 
@@ -162,10 +167,10 @@ public:
 
     bool allocateImage() {
         // Allocate video frame
-        pFrame=avcodec_alloc_frame();
+        pFrame=YARP_avcodec_alloc_frame();
         
         // Allocate an AVFrame structure
-        pFrameRGB=avcodec_alloc_frame();
+        pFrameRGB=YARP_avcodec_alloc_frame();
         if(pFrameRGB==NULL) {
             printf("Could not allocate a frame\n");
             return false;
@@ -214,16 +219,38 @@ public:
         int ct = 0;
         int bytesRead = 0;
         int bytesWritten = 0;
+        int gotFrame = 0;
         while (bytesRead<packet.size) {
             ct = audioBufferLen;
-#if LIBAVCODEC_BUILD < 65536
+#ifdef USE_AUDIO4
+            AVPacket tmp = packet;
+            tmp.data += bytesRead;
+            tmp.size -= bytesRead;
+            if (!pAudio) {
+                if (!(pAudio = YARP_avcodec_alloc_frame())) {
+                    fprintf(stderr, "out of memory\n");
+                    ::exit(1);
+                }
+            } else {
+                av_frame_unref(pAudio);
+            }
+            int r = avcodec_decode_audio4(pCodecCtx, pAudio, &gotFrame, &packet);
+            ct = 0;
+            if (gotFrame) {
+                ct = av_samples_get_buffer_size(NULL, pCodecCtx->channels,
+                                                pFrame->nb_samples,
+                                                pCodecCtx->sample_fmt, 
+                                                1);
+            }
+#else
+#  if LIBAVCODEC_BUILD < 65536
             int r = avcodec_decode_audio(pCodecCtx, 
                                          audioBuffer+bytesWritten, 
                                          &ct,
                                          packet.data+bytesRead, 
                                          packet.size-bytesRead);
-#else
-#  ifdef FFEPOCH3            
+#  else
+#    ifdef FFEPOCH3            
             AVPacket tmp = packet;
             tmp.data += bytesRead;
             tmp.size -= bytesRead;
@@ -231,12 +258,13 @@ public:
                                           audioBuffer+bytesWritten, 
                                           &ct,
                                           &packet);
-#  else 
+#    else 
             int r = avcodec_decode_audio2(pCodecCtx, 
                                           audioBuffer+bytesWritten, 
                                           &ct,
                                           packet.data+bytesRead, 
                                           packet.size-bytesRead);
+#    endif
 #  endif
 #endif
             if (r<0) {
@@ -422,7 +450,8 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
     int result = YARP_AV_OPEN_INPUT_FILE(audio?ppFormatCtx2:ppFormatCtx,
                                          v.asString().c_str(),
                                          iformat, 
-                                         &formatParams);
+                                         &formatParams,
+                                         NULL);
 
     bool ok = (result==0);
     if (!ok) {
@@ -454,7 +483,7 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
     return false;
 
 #else
-    AVFormatParameters formatParams;
+    YARP_AVDICT formatParams;
     AVInputFormat *iformat;
     ConstString devname = config.check("devname",
                                        Value("/dev/dv1394"),
@@ -464,7 +493,7 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
 #endif
     iformat = av_find_input_format("dv1394");
     printf("Checking for digital video in %s\n", devname.c_str());
-    return av_open_input_file(ppFormatCtx,
+    return YARP_AV_OPEN_INPUT_FILE(ppFormatCtx,
 #ifndef FACTORED_DEVCE
                               "",
 #else
@@ -477,7 +506,7 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
 
 bool FfmpegGrabber::openFile(AVFormatContext **ppFormatCtx,
                              const char *fname) {
-    return av_open_input_file(ppFormatCtx, fname, NULL, 0, NULL)==0;
+    return YARP_AV_OPEN_INPUT_FILE(ppFormatCtx, fname, NULL, 0, NULL)==0;
 }
 
 
@@ -540,23 +569,23 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 
 
     // Retrieve stream information
-    if(av_find_stream_info(pFormatCtx)<0) {
+    if(YARP_av_find_stream_info(pFormatCtx)<0) {
         printf("Could not find stream information in %s\n", fname.c_str());
         return false; // Couldn't find stream information
     }
     
     // Dump information about file onto standard error
-    dump_format(pFormatCtx, 0, fname.c_str(), false);
+    YARP_dump_format(pFormatCtx, 0, fname.c_str(), false);
 
     if (pFormatCtx2!=NULL) {
         
-        if(av_find_stream_info(pFormatCtx2)<0) {
+        if(YARP_av_find_stream_info(pFormatCtx2)<0) {
             printf("Could not find stream information in %s\n", fname.c_str());
             return false; // Couldn't find stream information
         }
         
         // Dump information about file onto standard error
-        dump_format(pFormatCtx2, 0, fname.c_str(), false);
+        YARP_dump_format(pFormatCtx2, 0, fname.c_str(), false);
     }
 
 
@@ -637,10 +666,10 @@ bool FfmpegGrabber::close() {
     
     // Close the video file
     if (pFormatCtx!=NULL) {
-        av_close_input_file(pFormatCtx);
+        YARP_av_close_input_file(pFormatCtx);
     }
     if (pFormatCtx2!=NULL) {
-        av_close_input_file(pFormatCtx2);
+        YARP_av_close_input_file(pFormatCtx2);
     }
     if (system_resource!=NULL) {
         delete &HELPER(system_resource);

@@ -36,6 +36,13 @@ extern "C" {
 #define GENERALIZED_PARAMETERS
 #endif 
 
+#if LIBAVCODEC_VERSION_INT >= (55<<16)
+#define USE_AV_FRAME_ALLOC
+#define USE_AUDIO4
+#define USE_AVFORMAT_OPEN_INPUT
+#endif
+
+
 #ifndef OLD_FFMPEG
 extern "C" {
 #include <swscale.h>
@@ -97,6 +104,43 @@ typedef AVFormatParameters YARP_AVDICT;
 #define YARP_AVDICT_CLEAN(x) memset(&x, 0, sizeof(x))
 #define YARP_AV_OPEN_INPUT_FILE(a,b,c,d) av_open_input_file(a,strdup(b),c,0,d)
 #define YARP_avcodec_open(x,y) avcodec_open(x,y)
+#endif
+
+
+#ifdef USE_AV_FRAME_ALLOC
+#define YARP_avcodec_alloc_frame av_frame_alloc
+#else
+#define YARP_avcodec_alloc_frame avcodec_alloc_frame
+#endif
+
+#define YARP_av_find_stream_info av_find_stream_info
+#define YARP_dump_format dump_format
+#define YARP_av_close_input_file av_close_input_file
+
+#ifdef USE_AVFORMAT_OPEN_INPUT
+#undef YARP_AV_OPEN_INPUT_FILE
+#define YARP_AV_OPEN_INPUT_FILE(a,b,c,d,e) avformat_open_input(a,b,c,d)
+#undef YARP_av_find_stream_info
+#define YARP_av_find_stream_info(a) avformat_find_stream_info(a,NULL)
+#undef YARP_dump_format
+#define YARP_dump_format av_dump_format
+#undef YARP_av_close_input_file
+#define YARP_av_close_input_file(x) avformat_close_input(&(x))
+#define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000
+#define CodecID AVCodecID
+#define CODEC_ID_NONE AV_CODEC_ID_NONE
+#define CODEC_ID_PCM_S16LE AV_CODEC_ID_PCM_S16LE
+#define CODEC_ID_PCM_S16BE AV_CODEC_ID_PCM_S16BE
+#define CODEC_ID_PCM_U16LE AV_CODEC_ID_PCM_U16LE
+#define CODEC_ID_PCM_U16BE AV_CODEC_ID_PCM_U16BE
+#define CODEC_ID_MPEG1VIDEO AV_CODEC_ID_MPEG1VIDEO
+#define CODEC_ID_MPEG2VIDEO AV_CODEC_ID_MPEG2VIDEO
+#define url_fopen avio_open
+#define url_fclose avio_close
+#define URL_WRONLY AVIO_FLAG_WRITE
+#define AV_NO_SET_PARAMETERS
+#define av_write_header(x) avformat_write_header(x,NULL)
+#define av_new_stream(x,v) avformat_new_stream(x,NULL)
 #endif
 
 #endif

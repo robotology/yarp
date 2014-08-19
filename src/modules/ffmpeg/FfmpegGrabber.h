@@ -11,9 +11,7 @@
 #ifndef FfmpegGrabber_INC
 #define FfmpegGrabber_INC
 
-#ifndef __STDC_CONSTANT_MACROS
-#define __STDC_CONSTANT_MACROS
-#endif
+#include "avpreamble.h"
 
 extern "C" {
 #include <avcodec.h>
@@ -92,6 +90,14 @@ public:
 
     virtual bool hasVideo() {
         return _hasVideo;
+    }
+
+    virtual bool startRecording() {
+        return true;
+    }
+
+    virtual bool stopRecording() {
+        return true;
     }
 
 protected:

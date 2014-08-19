@@ -184,6 +184,40 @@ static void get_audio_frame(int16_t *samples, int frame_size, int nb_channels)
     }
 }
 
+#ifdef USE_AUDIO4
+static void make_audio_frame(AVCodecContext *c, AVFrame * &frame,
+                             void *&samples) {
+    frame = av_frame_alloc();
+    if (!frame) {
+        fprintf(stderr, "Could not allocate audio frame\n");
+        ::exit(1);
+    }
+    frame->nb_samples     = c->frame_size;
+    frame->format         = c->sample_fmt;
+    frame->channel_layout = c->channel_layout;
+    int buffer_size = av_samples_get_buffer_size(NULL, c->channels, 
+                                                 c->frame_size,
+                                                 c->sample_fmt, 0);
+    if (buffer_size < 0) {
+        fprintf(stderr, "Could not get sample buffer size\n");
+        ::exit(1);
+    }
+    samples = av_malloc(buffer_size);
+    if (!samples) {
+        fprintf(stderr, "Could not allocate %d bytes for samples buffer\n",
+                buffer_size);
+        ::exit(1);
+    }
+    /* setup the data pointers in the AVFrame */
+    int ret = avcodec_fill_audio_frame(frame, c->channels, c->sample_fmt,
+                                       (const uint8_t*)samples, buffer_size, 0);
+    if (ret < 0) {
+        fprintf(stderr, "Could not setup audio frame\n");
+        ::exit(1);
+    }
+}
+#endif
+
 static void write_audio_frame(AVFormatContext *oc, AVStream *st)
 {
     AVCodecContext *c;
@@ -194,7 +228,28 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st)
 
     get_audio_frame(samples, audio_input_frame_size, c->channels);
 
+#ifdef USE_AUDIO4
+    AVFrame *frame;
+    void *samples;
+    make_audio_frame(c,frame,samples);
+    AVPacket tmp;
+    int got_packet = 0;
+    av_init_packet(&tmp);
+    tmp.data = audio_outbuf;
+    tmp.size = audio_outbuf_size;
+    pkt.size = avcodec_encode_audio2(c, &tmp, frame, &got_packet);
+    if (tmp.side_data_elems > 0) {
+        for (int i = 0; i < tmp.side_data_elems; i++) {
+            av_free(tmp.side_data[i].data);
+        }
+        av_freep(&tmp.side_data);
+        tmp.side_data_elems = 0;
+    }
+    av_freep(&samples);
+    av_frame_free(&frame);
+#else
     pkt.size= avcodec_encode_audio(c, audio_outbuf, audio_outbuf_size, samples);
+#endif
 
     pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, st->time_base);
     pkt.flags |= PKT_FLAG_KEY;
@@ -238,10 +293,33 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
         if (avail==0) {
             AVPacket pkt;
             av_init_packet(&pkt);
+
+
+#ifdef USE_AUDIO4
+            AVFrame *frame;
+            void *samples;
+            make_audio_frame(c,frame,samples);
+            AVPacket tmp;
+            int got_packet = 0;
+            av_init_packet(&tmp);
+            tmp.data = audio_outbuf;
+            tmp.size = audio_outbuf_size;
+            pkt.size = avcodec_encode_audio2(c, &tmp, frame, &got_packet);
+            if (tmp.side_data_elems > 0) {
+                for (int i = 0; i < tmp.side_data_elems; i++) {
+                    av_free(tmp.side_data[i].data);
+                }
+                av_freep(&tmp.side_data);
+                tmp.side_data_elems = 0;
+            }
+            av_freep(&samples);
+            av_frame_free(&frame);
+#else
             pkt.size= avcodec_encode_audio(c, 
                                            audio_outbuf, 
                                            audio_outbuf_size, 
                                            samples);
+#endif
         
             pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, 
                                   st->time_base);
@@ -339,7 +417,7 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
     uint8_t *picture_buf;
     int size;
 
-    picture = avcodec_alloc_frame();
+    picture = YARP_avcodec_alloc_frame();
     if (!picture)
         return NULL;
     size = avpicture_get_size((PixelFormat)pix_fmt, width, height);
@@ -466,7 +544,23 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
         ret = av_write_frame(oc, &pkt);
     } else {
         /* encode the image */
+#ifdef USE_AUDIO4
+        AVPacket tmp;
+        int got_packet = 0;
+        av_init_packet(&tmp);
+        tmp.data = video_outbuf;
+        tmp.size = video_outbuf_size;
+        out_size = avcodec_encode_video2(c, &tmp, picture, &got_packet);
+        if (tmp.side_data_elems > 0) {
+            for (int i = 0; i < tmp.side_data_elems; i++) {
+                  av_free(tmp.side_data[i].data);
+            }
+            av_freep(&tmp.side_data);
+            tmp.side_data_elems = 0;
+        }
+#else
         out_size = avcodec_encode_video(c, video_outbuf, video_outbuf_size, picture);
+#endif
         /* if zero size, it means the image was buffered */
         if (out_size > 0) {
             AVPacket pkt;
@@ -619,12 +713,14 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
 
     /* set the output parameters (must be done even if no
        parameters). */
+#ifndef AV_NO_SET_PARAMETERS
     if (av_set_parameters(oc, NULL) < 0) {
         fprintf(stderr, "Invalid output format parameters\n");
         ::exit(1);
     }
+#endif
 
-    dump_format(oc, 0, filename.c_str(), 1);
+    YARP_dump_format(oc, 0, filename.c_str(), 1);
 
     /* now that all the parameters are set, we can open the audio and
        video codecs and allocate the necessary encode buffers */
