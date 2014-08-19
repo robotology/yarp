@@ -2,6 +2,7 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+include(GNUInstallDirs)
 
 #########################################################################
 # Control where libraries and executables are placed
