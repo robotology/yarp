@@ -67,6 +67,7 @@ yarp::os::RpcServer* yarp::os::Run::pServerPort=0;
 int yarp::os::Run::mProcCNT=0;
 bool yarp::os::Run::mStresstest=false;
 bool yarp::os::Run::mLogged=false;
+yarp::os::ConstString yarp::os::Run::mLoggerPort("/yarprunlogger");
 
 ////////////////////////////////////
 
@@ -136,6 +137,16 @@ int yarp::os::Run::main(int argc, char *argv[])
     {
         mLogged=config.check("log");
 
+        if (mLogged)
+        {
+            Bottle botPortLogger=config.findGroup("log");
+
+            if (botPortLogger.size()>1)
+            {
+                mLoggerPort=botPortLogger.get(1).asString();
+            }
+        }
+
         mPortName=yarp::os::ConstString(config.find("server").asString());
 
         return server();
@@ -182,7 +193,13 @@ int yarp::os::Run::main(int argc, char *argv[])
         yarp::os::impl::Logger::get().setVerbosity(-1);
         yarp::os::ConstString uuid=config.findGroup("readwrite").get(1).asString();
         yarp::os::ConstString fPortName("");
-        if (config.check("forward")) fPortName=config.findGroup("forward").get(1).asString();
+        yarp::os::ConstString lPortName("");
+
+        if (config.check("forward"))
+        { 
+            fPortName=config.findGroup("forward").get(1).asString();
+            lPortName=config.findGroup("forward").get(2).asString();
+        }
 
 #if defined(WIN32)
         signal(SIGINT,  sigstdio_handler);
@@ -219,7 +236,7 @@ int yarp::os::Run::main(int argc, char *argv[])
         if (getppid()==1) return 0;
 #endif
 
-        RunReadWrite rw(uuid,fPortName);
+        RunReadWrite rw(uuid,fPortName,lPortName);
         RunTerminator rt(&rw);
         pTerminator=&rt;
         rt.start();
@@ -247,12 +264,25 @@ int yarp::os::Run::main(int argc, char *argv[])
         signal(SIGHUP,  SIG_IGN);
 #endif
 
-        RunWrite w(portName,config.check("log"));
-        RunTerminator rt(&w);
-        pTerminator=&rt;
-        rt.start();
-
-        return w.loop();
+        if (config.check("log"))
+        {
+            yarp::os::ConstString loggerName=config.find("log").asString();
+            RunWrite w(portName,loggerName);
+            RunTerminator rt(&w);
+            pTerminator=&rt;
+            rt.start();
+            return w.loop();
+        }
+        else
+        {
+            RunWrite w(portName);
+            RunTerminator rt(&w);
+            pTerminator=&rt;
+            rt.start();
+            return w.loop();
+        }
+        
+        return 0;
     }
 
     if (config.check("read"))
@@ -518,6 +548,23 @@ int yarp::os::Run::server()
                     Bottle botFwd;
                     botFwd.addString("forward");
                     botFwd.addString(portName.c_str());
+                    if (msg.check("log"))
+                    {
+                        yarp::os::Bottle botLogger=msg.findGroup("log");
+
+                        if (botLogger.size()>1)
+                        {
+                            botFwd.addString(botLogger.get(1).asString());
+                        }
+                        else
+                        {
+                            botFwd.addString(mLoggerPort);
+                        }
+                    }
+                    else
+                    {
+                        botFwd.addString(mLoggerPort);
+                    }
                     msg.addList()=botFwd;
                 }
 
@@ -553,9 +600,23 @@ int yarp::os::Run::server()
         {
             Bottle cmdResult;
 
-            if (mLogged || msg.check("log"))
+            if (msg.check("log"))
             {
-                executeCmdStdout(msg,cmdResult);
+                yarp::os::Bottle botLogger=msg.findGroup("log");
+
+                if (botLogger.size()>1)
+                {
+                    yarp::os::ConstString loggerName=botLogger.get(1).asString();
+                    executeCmdStdout(msg,cmdResult,loggerName);    
+                }
+                else
+                {
+                    executeCmdStdout(msg,cmdResult,mLoggerPort);
+                }
+            }
+            else if (mLogged)
+            {
+                executeCmdStdout(msg,cmdResult,mLoggerPort);
             }
             else
             {
@@ -966,7 +1027,28 @@ int yarp::os::Run::server()
                         Bottle botFwd;
                         botFwd.addString("forward");
                         botFwd.addString(portName.c_str());
+                        if (msg.check("log"))
+                        {
+                            yarp::os::Bottle botLogger=msg.findGroup("log");
+
+                            if (botLogger.size()>1)
+                            {
+                                botFwd.addString(botLogger.get(1).asString());
+                            }
+                            else
+                            {
+                                botFwd.addString(mLoggerPort);
+                            }
+                        }
+                        else
+                        {
+                            botFwd.addString(mLoggerPort);
+                        }
                         msg.addList()=botFwd;
+
+                        yarp::os::ContactStyle style;
+                        style.persistent=true;
+                        yarp::os::Network::connect(portName.c_str(),mLoggerPort.c_str(),style);
                     }
 
                     Bottle cmdResult;
@@ -1005,9 +1087,23 @@ int yarp::os::Run::server()
             {
                 Bottle cmdResult;
 
-                if (mLogged || msg.check("log"))
+                if (msg.check("log"))
                 {
-                    executeCmdStdout(msg,cmdResult);
+                    yarp::os::Bottle botLogger=msg.findGroup("log");
+
+                    if (botLogger.size()>1)
+                    {
+                        yarp::os::ConstString loggerName=botLogger.get(1).asString();
+                        executeCmdStdout(msg,cmdResult,loggerName);    
+                    }
+                    else
+                    {
+                       executeCmdStdout(msg,cmdResult,mLoggerPort);
+                    }
+                }
+                else if (mLogged)
+                {
+                    executeCmdStdout(msg,cmdResult,mLoggerPort);
                 }
                 else
                 {
@@ -1165,14 +1261,16 @@ int yarp::os::Run::client(yarp::os::Property& config)
         if (config.check("geometry")) msg.addList()=config.findGroup("geometry");
         if (config.check("hold")) msg.addList()=config.findGroup("hold");
         if (config.check("env")) msg.addList()=config.findGroup("env");
-        if (config.check("log"))
+        if (config.check("log")) msg.addList()=config.findGroup("log");
+        /*
         {
             Bottle log;
             log.addString("log");
             log.addString("log");
             msg.addList()=log;
         }
-        
+        */
+
         ConstString on=config.find("on").asString();
 
         Bottle response=sendMsg(msg,on);
@@ -1213,13 +1311,15 @@ int yarp::os::Run::client(yarp::os::Property& config)
         msg.addList()=config.findGroup("as");
 
         if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
-        if (config.check("log"))
+        if (config.check("log")) msg.addList()=config.findGroup("log");
+        /*
         {
             Bottle log;
             log.addString("log");
             log.addString("log");
             msg.addList()=log;
         }
+        */
         if (config.check("env")) msg.addList()=config.findGroup("env");
 
         Bottle response=sendMsg(msg,config.find("on").asString());
@@ -1791,7 +1891,7 @@ int yarp::os::Run::executeCmdAndStdio(Bottle& msg,Bottle& result)
     return cmd_process_info.dwProcessId;
 }
 
-int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result)
+int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result,yarp::os::ConstString& loggerName)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString portName="/log";
@@ -1822,7 +1922,7 @@ int yarp::os::Run::executeCmdStdout(Bottle& msg,Bottle& result)
     stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
     BOOL bSuccess=CreateProcess(NULL,   // command name
-                                (char*)(yarp::os::ConstString("yarprun --log --write ")+portName).c_str(), // command line
+                                (char*)(yarp::os::ConstString("yarprun --log ")+loggerName+yarp::os::ConstString(" --write ")+portName).c_str(), // command line
                                 NULL,          // process security attributes
                                 NULL,          // primary thread security attributes
                                 TRUE,          // handles are inherited
@@ -2155,7 +2255,7 @@ int yarp::os::Run::userStdio(Bottle& msg,Bottle& result)
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strUUID=msg.find("stdiouuid").asString();
     yarp::os::ConstString strCmd=yarp::os::ConstString("yarprun --readwrite ")+strUUID;
-    if (msg.check("forward")) strCmd+=yarp::os::ConstString(" --forward ")+msg.findGroup("forward").get(1).asString();
+    if (msg.check("forward")) strCmd+=yarp::os::ConstString(" --forward ")+msg.findGroup("forward").get(1).asString()+yarp::os::ConstString(" ")+msg.findGroup("forward").get(2).asString();
 
     BOOL bSuccess=CreateProcess(NULL,   // command name
                                 (char*)strCmd.c_str(), // command line
@@ -2673,7 +2773,7 @@ int yarp::os::Run::executeCmdAndStdio(yarp::os::Bottle& msg,yarp::os::Bottle& re
     return YARPRUN_ERROR;
 }
 
-int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& result)
+int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp::os::ConstString& loggerName)
 {
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strCmd=msg.find("cmd").asString();
@@ -2746,7 +2846,7 @@ int yarp::os::Run::executeCmdStdout(yarp::os::Bottle& msg,yarp::os::Bottle& resu
 
         //signal(SIGPIPE,SIG_DFL);
 
-        int ret=execlp("yarprun","yarprun","--write",portName.c_str(),"--log",(char*)NULL);
+        int ret=execlp("yarprun","yarprun","--write",portName.c_str(),"--log",loggerName.c_str(),(char*)NULL);
 
         CLOSE(pipe_cmd_to_stdout[READ_FROM_PIPE]);
 
@@ -3012,7 +3112,7 @@ int yarp::os::Run::userStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result)
     if (msg.check("forward"))
     {
         strCmd=yarp::os::ConstString("/bin/bash -l -c \"yarprun --readwrite ")+strUUID
-              +yarp::os::ConstString(" --forward ")+msg.findGroup("forward").get(1).asString()+"\"";
+              +yarp::os::ConstString(" --forward ")+msg.findGroup("forward").get(1).asString()+yarp::os::ConstString(" ")+msg.findGroup("forward").get(2).asString()+yarp::os::ConstString("\"");
     }
     else
     {

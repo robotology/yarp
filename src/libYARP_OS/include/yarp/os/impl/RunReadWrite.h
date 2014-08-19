@@ -133,21 +133,27 @@ protected:
 class RunWrite : public RunStdio
 {
 public:
-    RunWrite(yarp::os::ConstString& portName,bool verbose)
+    RunWrite(yarp::os::ConstString& portName,yarp::os::ConstString& loggerName)
     { 
-        mVerbose=verbose;
+        mVerbose=true;
     
-        if (mVerbose)
-        {
-            char buff[16];
-            sprintf(buff,"/%d",getpid());
-            wPortName=portName+buff;
-        }
-        else
-        {
-            wPortName=portName+"/stdout";
-        }
+        char buff[16];
+        sprintf(buff,"/%d",getpid());
+        wPortName=portName+buff;
         
+        yarp::os::ContactStyle style;
+        style.persistent=true;
+        yarp::os::Network::connect(wPortName.c_str(),loggerName.c_str(),style);
+
+        mRunning=true;
+    }
+
+    RunWrite(yarp::os::ConstString& portName)
+    { 
+        mVerbose=false;
+    
+        wPortName=portName+"/stdout";
+      
         mRunning=true;
     }
 
@@ -223,7 +229,7 @@ protected:
 class RunReadWrite : public RunStdio, public yarp::os::Thread
 {
 public:
-    RunReadWrite(yarp::os::ConstString &portsName,yarp::os::ConstString &fpName)
+    RunReadWrite(yarp::os::ConstString &portsName,yarp::os::ConstString &fpName,yarp::os::ConstString &lpName)
     {
         UUID=portsName;
         wPortName=portsName+"/stdio:o";
@@ -236,6 +242,10 @@ public:
             sprintf(buff,"/%d",getpid());
             mForwarded=true;
             fPortName=fpName+buff;
+
+            yarp::os::ContactStyle style;
+            style.persistent=true;
+            yarp::os::Network::connect(fPortName.c_str(),lpName.c_str(),style);
         }
         else
         {
