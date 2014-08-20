@@ -30,6 +30,7 @@
 #include <yarp/os/Semaphore.h>
 
 #include <list>
+#include <vector>
 #include <string>
 #include <ctime>
 
@@ -83,18 +84,19 @@ class yarp::os::YarprunLogger::LogEntryInfo
 class yarp::os::YarprunLogger::LogEntry
 {
     private:
-    unsigned int                       entry_list_max_size;
+    unsigned int                  entry_list_max_size;
 
     public:
-    std::list<MessageEntry>            entry_list;
-    std::list<MessageEntry>::iterator  last_read_message;
-    void clear_logEntries();
-    bool append_logEntry(MessageEntry entry);
+    std::vector<MessageEntry>     entry_list;
+    int                           last_read_message;
+    void                          clear_logEntries();
+    bool                          append_logEntry(MessageEntry entry);
 
     public:
-    LogEntry() {entry_list_max_size=1000;};
-    void setLogEntryMaxSize (int size);
-    int  getLogEntryMaxSize () {return entry_list_max_size;}
+    LogEntry() {entry_list_max_size=1000; last_read_message=-1;entry_list.reserve(entry_list_max_size);};
+
+    int  getLogEntryMaxSize ()    {return entry_list_max_size;}
+    void                          setLogEntryMaxSize (int size);
 
     public:
     yarp::os::YarprunLogger::LogEntryInfo logInfo;
@@ -157,6 +159,10 @@ class yarp::os::YarprunLogger::LoggerEngine
     void get_messages_by_pid             (std::string  pid,     std::list<MessageEntry>& messages, bool from_beginning = false);
     void clear_messages_by_port_complete (std::string  port);
     
+    void set_listen_option               (LogLevelEnum logLevel, bool enable);
+    bool get_listen_option               (LogLevelEnum logLevel);
+    void set_logs_max_size               (int new_size);
+
     std::list<MessageEntry> filter_by_level (int level, const std::list<MessageEntry>& messages);
 };
 

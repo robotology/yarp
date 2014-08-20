@@ -38,12 +38,13 @@ void LogEntry::clear_logEntries()
     logInfo.number_of_errors=0;
     logInfo.number_of_infos=0;
     logInfo.number_of_warnings=0;
-    last_read_message=entry_list.begin();
+    last_read_message=-1;
 }
 
 void LogEntry::setLogEntryMaxSize(int size)
 {
     entry_list_max_size = size;
+    entry_list.reserve(entry_list_max_size);
     clear_logEntries();
 }
 
@@ -54,11 +55,7 @@ bool LogEntry::append_logEntry(MessageEntry entry)
         //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
         return false;
     }
-
     entry_list.push_back(entry);
-    //set the iterator if the first elem is inserted
-    if (entry_list.size()==1)
-        last_read_message = last_read_message=entry_list.begin();
     logInfo.logsize++;
     return true;
 }
@@ -320,12 +317,16 @@ void LoggerEngine::logger_thread::threadRelease()
 
 void LoggerEngine::stop_logging()
 {
+    if (log_updater == NULL) return;
+    
     logging=false;
     if (log_updater->isRunning()==true) log_updater->stop();
 }
 
 void LoggerEngine::start_discover()
 {
+    if (log_updater == NULL) return;
+    
     log_updater->start();
     discovering=true;
 }
@@ -354,11 +355,15 @@ LoggerEngine::~LoggerEngine()
 
 int  LoggerEngine::get_num_of_processes()
 {
+    if (log_updater == NULL) return 0;
+    
     return log_updater->logger_port.getInputCount();
 }
 
 void LoggerEngine::get_infos (std::list<LogEntryInfo>& infos)
 {
+    if (log_updater == NULL) return;
+    
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -370,6 +375,8 @@ void LoggerEngine::get_infos (std::list<LogEntryInfo>& infos)
 
 void LoggerEngine::get_messages (std::list<MessageEntry>& messages)
 {
+    if (log_updater == NULL) return;
+    
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -381,6 +388,8 @@ void LoggerEngine::get_messages (std::list<MessageEntry>& messages)
 
 void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
+    if (log_updater == NULL) return;
+    
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -388,13 +397,20 @@ void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list
         if (it->logInfo.port_prefix == port)
         {
             //messages = (it->entry_list);
+            if (it->last_read_message==-1)
+            {
+                from_beginning=true;
+            }
             if (from_beginning==true) 
             {
-                it->last_read_message = it->entry_list.begin();
+                it->last_read_message = 0;
             }
-            std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
-            std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
-            it->last_read_message=last_returned_message;
+            int i=it->last_read_message;
+            for (; i<(int)it->entry_list.size(); i++)
+            {
+                messages.push_back(it->entry_list[i]);
+            }
+            it->last_read_message=i;
             break;
         }
     }
@@ -403,6 +419,8 @@ void LoggerEngine::get_messages_by_port_prefix    (std::string  port,  std::list
 
 void LoggerEngine::clear_messages_by_port_complete    (std::string  port)
 {
+    if (log_updater == NULL) return;
+    
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -418,6 +436,8 @@ void LoggerEngine::clear_messages_by_port_complete    (std::string  port)
 
 void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
+    if (log_updater == NULL) return;
+    
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -425,25 +445,20 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
         if (it->logInfo.port_complete == port)
         {
             //messages = (it->entry_list);
+            if (it->last_read_message==-1)
+            {
+                from_beginning=true;
+            }
             if (from_beginning==true) 
             {
-                it->last_read_message = it->entry_list.begin();
+                it->last_read_message = 0;
             }
-            /*
-            //std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
-            //std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
-            //it->last_read_message=last_returned_message++;
-            //it->last_read_message=it->entry_list.end();*/
-            
-            std::list<MessageEntry>::iterator l=it->last_read_message;
-            if (l!=it->entry_list.begin()) 
-                l++;
-            for (; l!=it->entry_list.end(); l++)
+            int i=it->last_read_message;
+            for (; i<(int)it->entry_list.size(); i++)
             {
-                messages.push_back(*l);
-                it->last_read_message=l;
+                messages.push_back(it->entry_list[i]);
             }
-
+            it->last_read_message=i;
             break;
         }
     }
@@ -452,6 +467,8 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
 
 void LoggerEngine::get_messages_by_process (std::string  process,  std::list<MessageEntry>& messages,  bool from_beginning)
 {
+    if (log_updater == NULL) return;
+    
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -459,13 +476,20 @@ void LoggerEngine::get_messages_by_process (std::string  process,  std::list<Mes
         if (it->logInfo.process_name == process)
         {
             //messages = (it->entry_list);
+            if (it->last_read_message==-1)
+            {
+                from_beginning=true;
+            }
             if (from_beginning==true) 
             {
-                it->last_read_message = it->entry_list.begin();
+                it->last_read_message = 0;
             }
-            std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
-            std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
-            it->last_read_message=last_returned_message;
+            int i=it->last_read_message;
+            for (; i<(int)it->entry_list.size(); i++)
+            {
+                messages.push_back(it->entry_list[i]);
+            }
+            it->last_read_message=i;
             break;
         }
     }
@@ -474,6 +498,8 @@ void LoggerEngine::get_messages_by_process (std::string  process,  std::list<Mes
 
 void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEntry>& messages,  bool from_beginning)
 {
+    if (log_updater == NULL) return;
+    
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -481,13 +507,20 @@ void LoggerEngine::get_messages_by_pid     (std::string pid, std::list<MessageEn
         if (it->logInfo.process_pid == pid)
         {
             //messages = (it->entry_list);
+            if (it->last_read_message==-1)
+            {
+                from_beginning=true;
+            }
             if (from_beginning==true) 
             {
-                it->last_read_message = it->entry_list.begin();
+                it->last_read_message = 0;
             }
-            std::copy(it->last_read_message, it->entry_list.end(), std::back_inserter(messages));
-            std::list<MessageEntry>::iterator last_returned_message = --(it->entry_list.end());
-            it->last_read_message=last_returned_message;
+            int i=it->last_read_message;
+            for (; i<(int)it->entry_list.size(); i++)
+            {
+                messages.push_back(it->entry_list[i]);
+            }
+            it->last_read_message=i;
             break;
         }
     }
@@ -506,8 +539,32 @@ const std::list<MessageEntry> filter_by_level (int level, const std::list<Messag
     return ret;
 }
 
+void LoggerEngine::set_listen_option               (LogLevelEnum logLevel, bool enable)
+{
+    if (log_updater == NULL) return;
+    log_updater->mutex.wait();
+         if (logLevel == LOGLEVEL_ERROR)      {log_updater->listen_to_LOGLEVEL_ERROR=enable;}
+    else if (logLevel == LOGLEVEL_WARNING)    {log_updater->listen_to_LOGLEVEL_WARNING=enable;}
+    else if (logLevel == LOGLEVEL_DEBUG)      {log_updater->listen_to_LOGLEVEL_DEBUG=enable;}
+    else if (logLevel == LOGLEVEL_INFO)       {log_updater->listen_to_LOGLEVEL_INFO=enable;}
+    else if (logLevel == LOGLEVEL_UNDEFINED)  {log_updater->listen_to_LOGLEVEL_UNDEFINED=enable;}
+    log_updater->mutex.post();
+}
+
+bool LoggerEngine::get_listen_option               (LogLevelEnum logLevel)
+{
+    if (log_updater == NULL) return false;
+         if (logLevel == LOGLEVEL_ERROR)     {return log_updater->listen_to_LOGLEVEL_ERROR;}
+    else if (logLevel == LOGLEVEL_WARNING)   {return log_updater->listen_to_LOGLEVEL_WARNING;}
+    else if (logLevel == LOGLEVEL_DEBUG)     {return log_updater->listen_to_LOGLEVEL_DEBUG;}
+    else if (logLevel == LOGLEVEL_INFO)      {return log_updater->listen_to_LOGLEVEL_INFO;}
+    else if (logLevel == LOGLEVEL_UNDEFINED) {return log_updater->listen_to_LOGLEVEL_UNDEFINED;}
+    else return false;
+}
+
 void LoggerEngine::export_log_to_text_file   (std::string  filename, std::string portname)
 {
+    if (log_updater == NULL) return;
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -516,7 +573,7 @@ void LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
         {
             ofstream file1;
             file1.open(filename.c_str());
-            std::list<MessageEntry>::iterator it1;
+            std::vector<MessageEntry>::iterator it1;
             for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
             {
                 file1 << it1->timestamp << " " << it1->level << " " << it1->text << " " << std::endl;
@@ -529,6 +586,8 @@ void LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
 
 void LoggerEngine::save_all_logs_to_file   (std::string  filename)
 {
+    if (log_updater == NULL) return;
+    
     const int      LOGFILE_VERSION = 1;
 
     ofstream file1;
@@ -545,7 +604,7 @@ void LoggerEngine::save_all_logs_to_file   (std::string  filename)
         file1 << it->logInfo.process_name << std::endl;
         file1 << it->logInfo.process_pid << std::endl;
         file1 << it->entry_list.size() << std::endl;
-        std::list<MessageEntry>::iterator it1;
+        std::vector<MessageEntry>::iterator it1;
         for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
         {
             file1 << it1->timestamp << std::endl;
@@ -559,6 +618,8 @@ void LoggerEngine::save_all_logs_to_file   (std::string  filename)
 
 void LoggerEngine::load_all_logs_from_file   (std::string  filename)
 {
+    if (log_updater == NULL) return;
+    
     const int      LOGFILE_VERSION = 1;
 
     ifstream file1;
@@ -596,4 +657,18 @@ void LoggerEngine::load_all_logs_from_file   (std::string  filename)
     }
     file1.close();
     if (wasRunning) log_updater->start();
+}
+
+void LoggerEngine::set_logs_max_size (int new_size)
+{
+    if (log_updater == NULL) return;
+    log_updater->mutex.wait();
+
+    std::list<LogEntry>::iterator it;
+    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
+    {
+        it->setLogEntryMaxSize(new_size);
+    }
+
+    log_updater->mutex.post();
 }
