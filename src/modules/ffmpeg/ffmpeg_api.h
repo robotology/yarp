@@ -90,7 +90,7 @@ typedef AVDictionary *YARP_AVDICT;
 #define YARP_AVDICT_SET_FRAC(x,k1,k2,v1,v2) { char buf[256]; sprintf(buf,"%d/%d",v1,v2); av_dict_set(&x,YARP_AVDICT_QUOTE(k2),buf,0); }
 #define YARP_AVDICT_DESTROY(x) if (x) { av_dict_free(&x); x = NULL; }
 #define YARP_AVDICT_CLEAN(x)
-#define YARP_AV_OPEN_INPUT_FILE(a,b,c,d) avformat_open_input(a,b,c,d)
+#define YARP_AV_OPEN_INPUT_FILE(a,b,c,d,e) avformat_open_input(a,b,c,d)
 #include <mathematics.h>
 #define YARP_avcodec_open(x,y) avcodec_open2(x,y,NULL)
 #else
