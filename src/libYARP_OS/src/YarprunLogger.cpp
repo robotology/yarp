@@ -30,14 +30,19 @@ using namespace yarp::os;
 using namespace yarp::os::YarprunLogger;
 using namespace std;
 
+const std::string RED    ="\033[01;31m";
+const std::string GREEN  ="\033[01;32m";
+const std::string YELLOW ="\033[01;33m";
+const std::string BLUE   ="\033[01;34m";
+const std::string CLEAR  ="\033[00m";
+
+const std::string RED_ERROR      = RED+"ERROR"+CLEAR;
+const std::string YELLOW_WARNING = YELLOW+"WARNING"+CLEAR;
+
 void LogEntry::clear_logEntries()
 {
     entry_list.clear();
-    logInfo.logsize=0;
-    logInfo.number_of_debugs=0;
-    logInfo.number_of_errors=0;
-    logInfo.number_of_infos=0;
-    logInfo.number_of_warnings=0;
+    logInfo.clear();
     last_read_message=-1;
 }
 
@@ -58,6 +63,35 @@ bool LogEntry::append_logEntry(MessageEntry entry)
     entry_list.push_back(entry);
     logInfo.logsize++;
     return true;
+}
+
+void LogEntryInfo::clear()
+{
+    logsize=0;
+    number_of_debugs=0;
+    number_of_errors=0;
+    number_of_infos=0;
+    number_of_warnings=0;
+    highest_error=LOGLEVEL_UNDEFINED;
+}
+
+LogLevelEnum  LogEntryInfo::getLastError()
+{
+    return highest_error;
+}
+
+void LogEntryInfo::clearLastError()
+{
+    highest_error=LOGLEVEL_UNDEFINED;
+}
+
+void LogEntryInfo::setNewError(LogLevelEnum level)
+{
+    if      (level==LOGLEVEL_ERROR)   number_of_errors++;
+    else if (level==LOGLEVEL_WARNING) number_of_warnings++;
+    else if (level==LOGLEVEL_DEBUG)   number_of_debugs++;
+    else if (level==LOGLEVEL_INFO)    number_of_infos++;
+    if (level>highest_error) highest_error=level;
 }
 
 void LoggerEngine::discover  (std::list<std::string>& ports)
@@ -217,7 +251,17 @@ void LoggerEngine::logger_thread::run()
         }
         else 
         {
-            body.level = LOGLEVEL_UNDEFINED;
+            if (s.at(0) == (const char)'\033')
+            {
+                //header example "\033[01;31m"
+                if      (s.at(8) == (const char)'W') body.level = LOGLEVEL_WARNING;
+                else if (s.at(8) == (const char)'E') body.level = LOGLEVEL_ERROR;
+            }
+            else
+            {
+                //int ss = strncmp(s.c_str,RED.c_str(),RED.size());
+                body.level = LOGLEVEL_UNDEFINED;
+            }
         }
 
         if (body.level == LOGLEVEL_INFO      && listen_to_LOGLEVEL_INFO      == false) {return;}
@@ -244,10 +288,7 @@ void LoggerEngine::logger_thread::run()
         {
             if (it->logInfo.port_complete==entry.logInfo.port_complete)
             {
-                if      (body.level==LOGLEVEL_ERROR)   it->logInfo.number_of_errors++;
-                else if (body.level==LOGLEVEL_WARNING) it->logInfo.number_of_warnings++;
-                else if (body.level==LOGLEVEL_DEBUG)   it->logInfo.number_of_debugs++;
-                else if (body.level==LOGLEVEL_INFO)    it->logInfo.number_of_infos++;
+                it->logInfo.setNewError(body.level);
                 it->logInfo.last_update=machine_current_time;
                 it->append_logEntry(body);
                 break;
@@ -260,10 +301,7 @@ void LoggerEngine::logger_thread::run()
                 yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
                 if (contact.isValid())
                 {
-                    if      (body.level==LOGLEVEL_ERROR)   entry.logInfo.number_of_errors++;
-                    else if (body.level==LOGLEVEL_WARNING) entry.logInfo.number_of_warnings++;
-                    else if (body.level==LOGLEVEL_DEBUG)   entry.logInfo.number_of_debugs++;
-                    else if (body.level==LOGLEVEL_INFO)    entry.logInfo.number_of_infos++;
+                    entry.logInfo.setNewError(body.level);
                     entry.logInfo.ip_address = contact.getHost();
                 }
                 else

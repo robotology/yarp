@@ -66,6 +66,13 @@ struct yarp::os::YarprunLogger::MessageEntry
 
 class yarp::os::YarprunLogger::LogEntryInfo
 {
+    private:
+    LogLevelEnum  highest_error;
+    unsigned int  number_of_errors;
+    unsigned int  number_of_warnings;
+    unsigned int  number_of_debugs;
+    unsigned int  number_of_infos;
+
     public:
     std::string   port_prefix;
     std::string   port_complete;
@@ -74,11 +81,17 @@ class yarp::os::YarprunLogger::LogEntryInfo
     std::string   ip_address;
     std::time_t   last_update;
     unsigned int  logsize;
-    unsigned int  number_of_errors;
-    unsigned int  number_of_warnings;
-    unsigned int  number_of_debugs;
-    unsigned int  number_of_infos;
-    LogEntryInfo()  {logsize=0;number_of_errors=0;number_of_warnings=0;number_of_debugs=0;number_of_infos=0;}
+
+    LogEntryInfo  ()  {clear();}
+    void          clear ();
+
+    LogLevelEnum  getLastError           ();
+    void          clearLastError         ();
+    void          setNewError            (LogLevelEnum level);
+    unsigned int  get_number_of_errors   () { return number_of_errors;   }
+    unsigned int  get_number_of_warnings () { return number_of_warnings; }
+    unsigned int  get_number_of_debugs   () { return number_of_debugs;   }
+    unsigned int  get_number_of_infos    () { return number_of_infos;    }
 };
 
 class yarp::os::YarprunLogger::LogEntry
