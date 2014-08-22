@@ -14,13 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    logtab.cpp
+    logtab.cpp \
+    advanced_dialog.cpp
 
 HEADERS  += mainwindow.h \
-    logtab.h
+    logtab.h \
+    advanced_dialog.h
 
 FORMS    += mainwindow.ui \
-    logtab.ui
+    logtab.ui \
+    advanced_dialog.ui
 
 RESOURCES += \
     res.qrc

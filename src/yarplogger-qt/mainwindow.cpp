@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "advanced_dialog.h"
 #include "logtab.h"
 #include "ui_logtab.h"
 #include <QString>
@@ -35,24 +36,25 @@ void MainWindow::updateMain()
         char time_text[string_size];
         std::tm* tm = localtime(&it->last_update);
         if (tm)
-        sprintf ( time_text,"%02d:%02d:%02d",tm->tm_hour,tm->tm_min, tm->tm_sec);
+           sprintf ( time_text,"%02d:%02d:%02d",tm->tm_hour,tm->tm_min, tm->tm_sec);
         else
-        sprintf ( time_text, "no data received yet");
+           sprintf ( time_text, "no data received yet");
         
         char logsize_text[10];
         sprintf (logsize_text, "%d", it->logsize);
 
         char logerrors_text[10];
-        sprintf (logerrors_text, "%d", it->number_of_errors);
+        sprintf (logerrors_text, "%d", it->get_number_of_errors());
 
         char logwarnings_text[10];
-        sprintf (logwarnings_text, "%d", it->number_of_warnings);
+        sprintf (logwarnings_text, "%d", it->get_number_of_warnings());
 
 //#define TREE_MODEL 1
 #define IN_ROW_MODEL 1
 #if IN_ROW_MODEL
         bool existing = false;
-        for (int i=0; i<model_yarprunports->rowCount(); i++)
+        int i=0;
+        for (i=0; i<model_yarprunports->rowCount(); i++)
         {
             QStandardItem *item = model_yarprunports->item(i,1);
             if (item && item->text()==it->port_complete.c_str())
@@ -63,10 +65,15 @@ void MainWindow::updateMain()
                 model_yarprunports->item(i,5)->setText(logwarnings_text);
 
                 QColor rowcolor = QColor(Qt::white);
+                yarp::os::YarprunLogger::LogLevelEnum last_error = it->getLastError();
+                if      (last_error==yarp::os::YarprunLogger::LOGLEVEL_ERROR)   rowcolor = QColor(Qt::red);
+                else if (last_error==yarp::os::YarprunLogger::LOGLEVEL_WARNING) rowcolor = QColor(Qt::yellow);
+
                 for (int j=0; j<model_yarprunports->columnCount(); j++)
                     model_yarprunports->item(i,j)->setBackground(rowcolor);
                 
                 existing = true;
+                if (!tm && show_mute_ports_enabled==false) {model_yarprunports->removeRow(i);}
                 break;
             }
         }
@@ -76,7 +83,7 @@ void MainWindow::updateMain()
             rowItems << new QStandardItem(it->ip_address.c_str()) << new QStandardItem(it->port_complete.c_str()) <<
                         new QStandardItem(time_text) << new QStandardItem(logsize_text) <<
                         new QStandardItem(logerrors_text) << new QStandardItem (logwarnings_text);
-            itemsRoot->appendRow(rowItems);
+            if (show_mute_ports_enabled || (!show_mute_ports_enabled && tm)) {itemsRoot->appendRow(rowItems);}
         }
 
 #elif TREE_MODEL
@@ -162,8 +169,9 @@ void MainWindow::on_clearLogTab_action()
     for (int i=0; i<ui->logtabs->count(); i++)
         if (ui->logtabs->tabText(i) == logname) 
             {
-                LogTab* l = (LogTab*) ui->logtabs->widget(i);
+                LogTab* l = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
                 if (l) l->clear_model_logs();
+                break;
             }
 }
 
@@ -215,6 +223,9 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     mainTimer = new QTimer(this);
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
     mainTimer->start(500);
+
+    ui->yarprunTreeView->setModel(model_yarprunports);
+    ui->yarprunTreeView->expandAll();
 
     connect(ui->yarprunTreeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
 
@@ -286,8 +297,6 @@ void MainWindow::on_refreshLogger_clicked()
     theLogger->discover(ports);
     updateMain();
     theLogger->connect(ports);
-    ui->yarprunTreeView->setModel(model_yarprunports);
-    ui->yarprunTreeView->expandAll();
     statusBarLabel->setText("Running");
 
     /*
@@ -500,4 +509,15 @@ void MainWindow::on_actionShow_Grid_toggled(bool arg1)
             logtab->displayGrid(displayGrid);
         }
     }
+}
+
+void MainWindow::on_actionAdvanced_triggered()
+{
+    QDialog* advanced = new advanced_dialog(theLogger, this);
+    advanced->show();
+}
+
+void MainWindow::on_actionShow_Mute_Ports_toggled(bool arg1)
+{
+    show_mute_ports_enabled = arg1;
 }

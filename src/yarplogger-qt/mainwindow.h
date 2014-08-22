@@ -70,6 +70,10 @@ private slots:
 
     void on_actionShow_Grid_toggled(bool arg1);
 
+    void on_actionAdvanced_triggered ();
+
+    void on_actionShow_Mute_Ports_toggled(bool arg1);
+
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 
@@ -85,6 +89,7 @@ private:
     bool displayGrid;
     bool displayColors;
     bool displayTimestamps;
+    bool show_mute_ports_enabled;
 };
 
 #endif // MAINWINDOW_H

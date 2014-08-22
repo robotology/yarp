@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>QtYarprun Logger</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -440,6 +440,9 @@
     <addaction name="actionShow_Error_Level"/>
     <addaction name="actionShow_Colors"/>
     <addaction name="actionShow_Grid"/>
+    <addaction name="actionShow_Mute_Ports"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdvanced"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -551,6 +554,22 @@
    </property>
    <property name="text">
     <string>Show Grid</string>
+   </property>
+  </action>
+  <action name="actionAdvanced">
+   <property name="text">
+    <string>Advanced...</string>
+   </property>
+  </action>
+  <action name="actionShow_Mute_Ports">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Mute Ports</string>
    </property>
   </action>
  </widget>

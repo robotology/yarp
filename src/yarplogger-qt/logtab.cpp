@@ -12,15 +12,18 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
     displayGrid_enabled=true;
     displayErrorLevel_enabled=true;
     ui->setupUi(this);
-    model_logs = new QStandardItemModel(this);
+    model_logs = new QStandardItemModel();
     proxyModelButtons = new QSortFilterProxyModel(this);
-    proxyModelButtons->setSourceModel(model_logs);
     proxyModelSearch = new QSortFilterProxyModel(this);
+#define USE_FILTERS 1
+#if USE_FILTERS
+    proxyModelButtons->setSourceModel(model_logs);
     proxyModelSearch->setSourceModel(proxyModelButtons);
     proxyModelSearch->setFilterKeyColumn(-1); 
     ui->listView->setModel(proxyModelSearch);
-    //ui->listView->setModel(model_logs);
-
+#else
+    ui->listView->setModel(model_logs);
+#endif
     ui->listView->verticalHeader()->setVisible(false);
     ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -34,7 +37,7 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
     ui->listView->horizontalHeader()->setSectionResizeMode(2,QHeaderView::Stretch);
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
-
+    
     updateLog(true);
 }
 
@@ -46,7 +49,7 @@ LogTab::~LogTab()
 void LogTab::clear_model_logs()
 {
     mutex.lock();
-    if (model_logs) model_logs->clear();
+    if (model_logs) model_logs->removeRows(0,model_logs->rowCount());
     mutex.unlock();
 }
 
