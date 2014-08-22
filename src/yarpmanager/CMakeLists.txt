@@ -8,7 +8,6 @@
 # yarpmanager
 
 if (CREATE_YMANAGER)
-    add_subdirectory(ymanager)
     add_subdirectory(tests) #should be renamed to xml or templates
     if (CREATE_GUIS)
         if(CREATE_GYARPMANAGER)
