@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -20,7 +20,7 @@ SafeManager::~SafeManager()
 
 }
 
-bool SafeManager::prepare(Manager* lazy, 
+bool SafeManager::prepare(Manager* lazy,
                          yarp::os::Property* pConfig, ApplicationEvent* event)
 {
 
@@ -80,7 +80,7 @@ void SafeManager::run()
     std::vector<int> local_resIds = resIds;
     postSemaphore();
 
-    switch(local_action){ 
+    switch(local_action){
     case MRUN:{
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::run(local_modIds[i], true);
@@ -182,7 +182,7 @@ void SafeManager::run()
                 refreshPortStatus(local_conIds[i]);
             }
         }
- 
+
     case MATTACHSTDOUT:{
             for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::attachStdout(local_modIds[i]);
@@ -213,7 +213,7 @@ void SafeManager::run()
 
 void SafeManager::safeRun(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     modIds = MIDs;
     action = MRUN;
@@ -223,7 +223,7 @@ void SafeManager::safeRun(std::vector<int>& MIDs)
 
 void SafeManager::safeStop(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     modIds = MIDs;
     action = MSTOP;
@@ -233,7 +233,7 @@ void SafeManager::safeStop(std::vector<int>& MIDs)
 
 void SafeManager::safeKill(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     modIds = MIDs;
     action = MKILL;
@@ -245,7 +245,7 @@ void SafeManager::safeKill(std::vector<int>& MIDs)
 
 void SafeManager::safeConnect(std::vector<int>& CIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     conIds = CIDs;
     action = MCONNECT;
@@ -256,7 +256,7 @@ void SafeManager::safeConnect(std::vector<int>& CIDs)
 
 void SafeManager::safeDisconnect(std::vector<int>& CIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     conIds = CIDs;
     action = MDISCONNECT;
@@ -265,11 +265,11 @@ void SafeManager::safeDisconnect(std::vector<int>& CIDs)
 }
 
 
-void SafeManager::safeRefresh(std::vector<int>& MIDs, 
-                     std::vector<int>& CIDs, 
+void SafeManager::safeRefresh(std::vector<int>& MIDs,
+                     std::vector<int>& CIDs,
                      std::vector<int>& RIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     modIds = MIDs;
     conIds = CIDs;
@@ -283,7 +283,7 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
 
 void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     modIds = MIDs;
     action = MATTACHSTDOUT;
@@ -293,7 +293,7 @@ void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 
 void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 {
-    if(busyAction) return; 
+    if(busyAction) return;
     waitSemaphore();
     modIds = MIDs;
     action = MDETACHSTDOUT;
@@ -303,7 +303,7 @@ void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 
 void SafeManager::safeLoadBalance(void)
 {
-   if(busyAction) return; 
+   if(busyAction) return;
    waitSemaphore();
    action = MLOADBALANCE;
    busyAction = true;
@@ -324,7 +324,7 @@ void SafeManager::onExecutableStop(void* which)
     if(eventReceiver && exe)
         eventReceiver->onModStop(exe->getID());
 
-    // Experimental:  
+    // Experimental:
     //  do auto refresh on connections whenever a module stops
     /*
     if(checkSemaphore())
@@ -351,8 +351,8 @@ void SafeManager::onExecutableDied(void* which)
 
 
 void SafeManager::onExecutableFailed(void* which)
-{   
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+{
+    ErrorLogger* logger  = ErrorLogger::Instance();
     Executable* exe = static_cast<Executable*>(which);
     if(exe)
     {
@@ -395,7 +395,7 @@ void SafeManager::onCnnStablished(void* which)
 
 void SafeManager::onCnnFailed(void* which)
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     Connection* cnn = static_cast<Connection*>(which);
     if(cnn)
     {
@@ -435,7 +435,7 @@ void SafeManager::onError(void* which)
 
 void SafeManager::refreshPortStatus(int id)
 {
-    // refreshing ports status 
+    // refreshing ports status
     if(Manager::existPortFrom(id))
     {
         if(eventReceiver) eventReceiver->onConAvailable(id, -1);

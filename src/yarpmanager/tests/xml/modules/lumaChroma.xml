@@ -9,8 +9,8 @@
         <param desc="Name of the module" default="lumaChroma"> name</param>
         <param desc="specifies the configuration file" default="lumaChroma.ini"> from </param>
         <param desc="specifies the sub-path from \c $ICUB_ROOT/icub/app to the configuration file" default="alumaChroma/conf"> context </param>
-	<param desc="specifies the type of the module to work on (yuv or hsv)  " default="yuv"> image</param>
-	<param desc="Y, UV, H, S, V specifies the output on the default port  (y, uv, h, s, v)" default="Y for yuv image type, S for hsv image type"> output </param>	
+        <param desc="specifies the type of the module to work on (yuv or hsv)  " default="yuv"> image</param>
+        <param desc="Y, UV, H, S, V specifies the output on the default port  (y, uv, h, s, v)" default="Y for yuv image type, S for hsv image type"> output </param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -18,9 +18,9 @@
         <author email="vadim.tikhanoff@iit.it"> Vadim Tikhanoff </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
-        
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
+
         <input>
             <type>ImageOfPixelRgb</type>
             <port carrier="tcp">/lumaChroma/image:i</port>
@@ -36,7 +36,7 @@
         </input>
 
 
-	<input>
+        <input>
             <type>Rpc</type>
             <port carrier="tcp">/lumaChroma</port>
             <!-- required input means the execution of module depends on
@@ -61,22 +61,22 @@
             <port carrier="udp">/lumaChroma/UV/image:o</port>
             <description>when YUV is selected</description>
         </output>
-	<output>
+        <output>
             <type>ImageOfPixelMono</type>
             <port carrier="udp">/lumaChroma/H/image:o</port>
             <description>when HSV is selected</description>
         </output>
-	<output>
+        <output>
             <type>ImageOfPixelMono</type>
             <port carrier="udp">/lumaChroma/S/image:o</port>
             <description>when HSV is selected</description>
         </output>
-	<output>
+        <output>
             <type>ImageOfPixelMono</type>
             <port carrier="udp">/lumaChroma/V/image:o</port>
             <description>when HSV is selected</description>
         </output>
-	<output>
+        <output>
             <type>ImageOfPixelMono</type>
             <port carrier="udp">/lumaChroma/image:o</port>
             <description>when HSV is selected</description>
@@ -103,8 +103,7 @@
     <development>
         <header></header>
         <library>YARP</library>
-	<library>OpenCV  (version >= 2.0) </library>
+        <library>OpenCV  (version >= 2.0) </library>
     </development>
 
 </module>
-

@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -11,7 +11,7 @@
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
     #pragma warning (disable : 4099)
-	#define PATH_SEPERATOR      "\\"
+    #define PATH_SEPERATOR      "\\"
 #else
     #define PATH_SEPERATOR      "/"
 #endif
@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 #include <signal.h>
 #endif
 
-int main(int __argc, char *__argv[]) 
+int main(int __argc, char *__argv[])
 {
 
     // Setup resource finder
@@ -87,7 +87,7 @@ int main(int __argc, char *__argv[])
     /**
      *  preparing default options
      */
-    
+
     std::string inifile=rf.findFile("from").c_str();
     std::string inipath="";
     size_t lastSlash=inifile.rfind("/");
@@ -99,19 +99,19 @@ int main(int __argc, char *__argv[])
         if (lastSlash!=std::string::npos)
             inipath=inifile.substr(0, lastSlash+1);
     }
-    
+
     if(!config.check("ymanagerini_dir"))
         config.put("ymanagerini_dir", inipath.c_str());
-    
+
     config.put("yarpdatahome", rf.getDataHome());
-    
+
     //if it doesn't exist (first time use) prepare user home with appropriate folders and files
     DIR *dir;
     if ((dir = opendir(rf.getDataHome().c_str())) != NULL)
         closedir(dir);
     else
         yarp::os::mkdir(rf.getDataHome().c_str());
-    
+
     if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "applications").c_str())) != NULL)
         closedir(dir);
     else
@@ -121,24 +121,24 @@ int main(int __argc, char *__argv[])
         closedir(dir);
     else
         yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "modules").c_str());
-    
+
     if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "resources").c_str())) != NULL)
         closedir(dir);
     else
         yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "resources").c_str());
-    
+
     if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "templates").c_str())) != NULL)
         closedir(dir);
     else
         yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "templates").c_str());
-    
+
     if ((dir = opendir((rf.getDataHome()+ PATH_SEPERATOR + "templates" + PATH_SEPERATOR + "applications").c_str())) != NULL)
         closedir(dir);
     else
         yarp::os::mkdir((rf.getDataHome() + PATH_SEPERATOR + "templates" + PATH_SEPERATOR + "applications").c_str());
-        
-        
-    
+
+
+
     yarp::os::Bottle appPaths;
     if(!config.check("apppath"))
     {
@@ -165,7 +165,7 @@ int main(int __argc, char *__argv[])
            modPathsStr += (appPaths.get(ind).asString() + ";").c_str();
 
        config.put("modpath", modPathsStr.c_str());
-        
+
     }
     if(!config.check("respath"))
     {
@@ -174,9 +174,9 @@ int main(int __argc, char *__argv[])
        string resPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind)
            resPathsStr += (appPaths.get(ind).asString() + ";");
-       
+
        config.put("respath", resPathsStr.c_str());
-        
+
     }
     if(!config.check("templpath"))
     {
@@ -185,26 +185,26 @@ int main(int __argc, char *__argv[])
        string templPathsStr="";
        for (int ind=0; ind < appPaths.size(); ++ind)
             templPathsStr += (appPaths.get(ind).asString() + ";");
-       
+
        config.put("templpath", templPathsStr.c_str());
 
     }
 
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");
-    
+
     if(!config.check("watchdog"))
         config.put("watchdog", "no");
 
     if(!config.check("module_failure"))
         config.put("module_failure", "prompt");
-    
+
     if(!config.check("connection_failure"))
         config.put("connection_failure", "prompt");
 
     if(!config.check("auto_connect"))
         config.put("auto_connect", "no");
-    
+
     if(!config.check("auto_dependency"))
         config.put("auto_dependency", "no");
 
@@ -217,7 +217,7 @@ int main(int __argc, char *__argv[])
 
 #else
     // Set up the structure to specify the new action.
-    struct sigaction new_action, old_action;     
+    struct sigaction new_action, old_action;
     new_action.sa_handler = onSignal;
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;

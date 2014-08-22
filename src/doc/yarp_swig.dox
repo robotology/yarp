@@ -4,7 +4,7 @@
  *
  */
 
-/** 
+/**
  * @page yarp_swig Using YARP from python, java, ruby, C#, and other languages
 
 \author Paul Fitzpatrick, Lorenzo Natale, Vadim Tikhanoff, Ali Paikan
@@ -42,14 +42,14 @@ Now, we need to get YARP ready:
 
 \li You'll need to have YARP installed or compiled on your computer.
 See \ref install for how to do that.
-\li Check that your build of YARP is compatible with SWIG.  
+\li Check that your build of YARP is compatible with SWIG.
 It is best if YARP is compiled as a set of dynamic/shared libraries.
 If you compiled YARP yourself, make sure that the "CREATE_SHARED_LIBRARY"
 flag was turned on.  If not, configure it with CMake and recompile.
 Precompiled YARP builds provide dynamic/shared libraries.
 \li You'll also need an up-to-date copy of the YARP source code.  This
-does <b>not</b> need to match the version of YARP you have installed (as 
-long as it isn't too old).  
+does <b>not</b> need to match the version of YARP you have installed (as
+long as it isn't too old).
 Any YARP package from version 2.3.20 on will do.  Older packages
 will work if you replace "$YARP_ROOT/bindings"
 with "$YARP_ROOT/example/swig" throughout this tutorial.
@@ -59,7 +59,7 @@ as follows:
 git clone git://github.com/robotology/yarp.git
 \endverbatim
 
-Now that we have all the prerequisites, it is time to configure and 
+Now that we have all the prerequisites, it is time to configure and
 compile the YARP language bindings.
 \li \ref yarp_swig_configure
 \li \ref yarp_swig_compile
@@ -79,7 +79,7 @@ Done? Now follow the language-specific steps in \ref yarp_swig_install.
 
 @section yarp_swig_osx Installing SWIG on OSX
 
-Some OSX versions have a version of SWIG pre-installed.  
+Some OSX versions have a version of SWIG pre-installed.
 We recommend you use <a href="http://mxcl.github.com/homebrew/">homebrew</a> to manage packages on OSX.  Once you have homebrew, you may install swig as follows:
 \verbatim
 brew install swig
@@ -90,7 +90,7 @@ Done? Now follow the language-specific steps in \ref yarp_swig_install.
 @section yarp_swig_windows Installing SWIG on Windows
 
  - Download SWIG from the <a href="http://www.swig.org/download.html">SWIG home page</a>.  Look for "Windows users should download..."
- - You should end up with a ZIP file that you unpack.  
+ - You should end up with a ZIP file that you unpack.
  - Remember where you unpack it! You'll need it later.
  - We recommend you set a SWIG_DIR environment variable that points to the directory in which you have unpacked SWIG.  This is optional however.  If you don't do it, you'll need to later tell CMake where you put SWIG (it won't find it automatically).
 
@@ -100,9 +100,9 @@ Done? Now follow the language-specific steps in \ref yarp_swig_install.
 
 @section yarp_swig_java YARP for Java
 
-On Windows: Install the Java Development Kit (JDK). 
-Its name changes from time to time. 
-At the time of writing it was called "J2SE Development Kit 5.0" - get it from http://java.sun.com/javase/downloads/index.jsp 
+On Windows: Install the Java Development Kit (JDK).
+Its name changes from time to time.
+At the time of writing it was called "J2SE Development Kit 5.0" - get it from http://java.sun.com/javase/downloads/index.jsp
 
 On Linux, you have a choice of Java implementations. There is Open JDK:
 \verbatim
@@ -121,13 +121,13 @@ Done? Now follow the configuration steps in \ref yarp_swig_install.
 
 @section yarp_swig_python YARP for Python
 
-For python on linux, be sure to install python development files, 
+For python on linux, be sure to install python development files,
 e.g. on Debian/Ubuntu:
 \verbatim
 sudo apt-get install python-dev
 \endverbatim
 If you have several versions of python installed, that is fine, but do check
-later during configuration that CMake finds the version you expected 
+later during configuration that CMake finds the version you expected
 (click the "SHOW ADVANCED VALUES" checkbox and look for PYTHON_* variables).
 
 On Windows, you can get python from http://www.python.org/getit/windows/
@@ -155,14 +155,14 @@ For Lua on linux, be sure to install Lua development files, e.g. on Debian/Ubunt
 sudo apt-get install liblua5.1-0-dev
 \endverbatim
 
-If you use Windows, try <a href="https://code.google.com/p/luaforwindows/">Lua for Windows</a>, 
+If you use Windows, try <a href="https://code.google.com/p/luaforwindows/">Lua for Windows</a>,
 an easy-to-use distribution of Lua packed with several useful libraries.
 
 A more generic way (also for OSX users) is to build lua from the source. Lua is implemented in pure
 ANSI C and compiles unmodified in all platforms that have an ANSI C compiler. For example, to compile
-Lua on OSX, download <a href="http://www.lua.org/ftp/lua-5.1.5.tar.gz">Lua 5.1</a> and try: 
+Lua on OSX, download <a href="http://www.lua.org/ftp/lua-5.1.5.tar.gz">Lua 5.1</a> and try:
 \verbatim
-tar -xvf lua-5.1.x.tar.gz 
+tar -xvf lua-5.1.x.tar.gz
 cd lua-5.1.x
 make macosx
 sudo make install
@@ -170,8 +170,8 @@ sudo make install
 
 OSX users can also uses Lua binaries from http://lua-users.org/wiki/LuaBinaries
 
-After \ref yarp_swig_compile, make sure that the Lua-Yarp binding shared library 
-(.so/.dll/.dylib/...) is included in your LUA_CPATH environment variable; e.g., on linux: 
+After \ref yarp_swig_compile, make sure that the Lua-Yarp binding shared library
+(.so/.dll/.dylib/...) is included in your LUA_CPATH environment variable; e.g., on linux:
 \verbatim
 export LUA_CPATH=";;;$YARP_ROOT/bindings/build-lua/?.so"
 \endverbatim
@@ -179,10 +179,10 @@ export LUA_CPATH=";;;$YARP_ROOT/bindings/build-lua/?.so"
 
 @section yarp_swig_configure Configuring YARP language bindings
 
-Run the CMake GUI (or <tt>ccmake</tt> from the 
+Run the CMake GUI (or <tt>ccmake</tt> from the
 command line), and set the source directory to $YARP_ROOT/bindings,
 where YARP_ROOT is the path to the YARP source code.
-Set the build directory to be anywhere you like.  When you configure, 
+Set the build directory to be anywhere you like.  When you configure,
 you should see options to enable various languages (CREATE_JAVA,
 CREATE_PYTHON, and so on).  Turn on exactly one of those options
 (you may get conflicts between certain pairs of languages if you
@@ -192,10 +192,10 @@ build directory.  Go build it and you are done!
 
 Here are the steps, one by one.
 
-\li Create an empty build directory.  This can be anywhere you 
+\li Create an empty build directory.  This can be anywhere you
 like.  If you are interested in multiple languages,
 we recommend you use a separate build directory for each.
-From the command-line, you could do this (if YARP_ROOT isn't 
+From the command-line, you could do this (if YARP_ROOT isn't
 set, replace it with the path to YARP's source code):
 \verbatim
 # On Linux...
@@ -247,16 +247,16 @@ make
 sudo make install   # Optional, not sane for all languages.  Good for python.
 \endverbatim
 In any case, everything you need should be sitting in the build directory.
-With Visual Studio: open the solution file in build directory, and compile 
-as usual.  Be sure to use the Release build. 
+With Visual Studio: open the solution file in build directory, and compile
+as usual.  Be sure to use the Release build.
 
 @section yarp_swig_run Running programs that use the YARP language bindings
 
-There are basic examples in the "bindings" subdirectory of the YARP 
-source code for all the supported languages.  There are a few 
+There are basic examples in the "bindings" subdirectory of the YARP
+source code for all the supported languages.  There are a few
 important things to be aware of:
 
-\li When you compiled the bindings, a shared library (.so/.dll/.pyd/...) was 
+\li When you compiled the bindings, a shared library (.so/.dll/.pyd/...) was
 created.  This library needs to be in your operating system's library path.
 On Linux, if you are in the build directory, you can do something like one of:
 \verbatim
@@ -266,7 +266,7 @@ export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
 On Windows, you can update your PATH environment variable.
 \li When you compiled the bindings, one or many wrapper files may
 have been produced in your language of interest.  These files will
-need to be in whatever path is appropriate to guide your language's 
+need to be in whatever path is appropriate to guide your language's
 interpreter/compiler/... to find them.
 
 @section yarp_swig_api Available classes and methods
@@ -280,7 +280,7 @@ ways to find out about these differences are:
  - Via your language's introspection features.
  - By compiling the java or python interfaces, and then run javadoc
 or pydoc to build a browsable form of the API.
- - By reading the <tt>bindings/yarp.i</tt> file.  This is a bit complicated, 
+ - By reading the <tt>bindings/yarp.i</tt> file.  This is a bit complicated,
    but powerful because you'll
    learn how to fix things if you run into problems.  See http://www.swig.org
    for documentation on the syntax of this file.

@@ -59,7 +59,7 @@
         <computer>
             <gpu>
                 <capability>1.3</capability>
-            </gpu> 
+            </gpu>
         </computer>
     </dependencies>
 

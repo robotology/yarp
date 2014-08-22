@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -29,9 +29,9 @@
 using namespace yarp::os;
 using namespace yarp::manager;
 
-ArbitratorPropertyWindow::ArbitratorPropertyWindow(MainWindow* parent, 
+ArbitratorPropertyWindow::ArbitratorPropertyWindow(MainWindow* parent,
                                Manager* manager, ApplicationWindow* appWnd)
-{   
+{
     m_pParent = parent;
     m_pManager = manager;
     m_pAppWindow = appWnd;
@@ -45,7 +45,7 @@ ArbitratorPropertyWindow::ArbitratorPropertyWindow(MainWindow* parent,
     m_refTreeModel = Gtk::TreeStore::create(m_Columns);
     m_TreeView.set_model(m_refTreeModel);
 
-    //Add the Model’s column to the View’s columns: 
+    //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* itemRenderer = Gtk::manage(new Gtk::CellRendererText());
     itemRenderer->property_editable() = false;
     Gtk::TreeViewColumn* itemCol = Gtk::manage(new Gtk::TreeViewColumn("Property", *itemRenderer));
@@ -68,7 +68,7 @@ ArbitratorPropertyWindow::ArbitratorPropertyWindow(MainWindow* parent,
     valueRenderer->signal_edited().connect( sigc::mem_fun(*this,
               &ArbitratorPropertyWindow::onCellEdited) );
     m_TreeView.append_column(*valueCol);
-    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);   
+    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);
 
 
     //m_TreeView.append_column_editable("Value", m_Columns.m_col_value);
@@ -93,9 +93,9 @@ void ArbitratorPropertyWindow::onRefresh()
     m_pParent->reportErrors();
 }
 
-void ArbitratorPropertyWindow::onTabCloseRequest() 
-{ 
-    m_pParent->onTabCloseRequest(this); 
+void ArbitratorPropertyWindow::onTabCloseRequest()
+{
+    m_pParent->onTabCloseRequest(this);
 }
 
 void ArbitratorPropertyWindow::release(void)
@@ -111,7 +111,7 @@ void ArbitratorPropertyWindow::update(Glib::RefPtr<PortArbitratorModel> &arbPort
 
     Gtk::TreeModel::Row row;
     Gtk::TreeModel::Row childrow;
-    
+
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Port";
     row[m_Columns.m_col_value] = arbitrator.getPort();
@@ -144,7 +144,7 @@ void ArbitratorPropertyWindow::update(Glib::RefPtr<PortArbitratorModel> &arbPort
     m_pParent->reportErrors();
 }
 
-void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string, 
+void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     const Glib::ustring& new_text)
 {
     if(!m_arbPort)
@@ -161,7 +161,7 @@ void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         Gtk::TreeModel::Row row = *iter;
 
         //Put the new value in the model:
-        Glib::ustring strName = Glib::ustring(row[m_Columns.m_col_name]);    
+        Glib::ustring strName = Glib::ustring(row[m_Columns.m_col_name]);
         row[m_Columns.m_col_value] = new_text;
         row[m_Columns.m_col_color_value] = Gdk::Color("#000000");
 
@@ -203,17 +203,17 @@ void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
             m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, *curArrow->getConnection(), curCon);
             curArrow->getConnection()->setCarrier(carrier.c_str());
             curArrow->setLabel(carrier.c_str());
-        }          
+        }
         else
         {
-            string oldRule = arbitrator.getRule(strName.c_str()); 
+            string oldRule = arbitrator.getRule(strName.c_str());
             arbitrator.addRule(strName.c_str(), new_text.c_str());
             if(arbitrator.trainWeights(strName.c_str()))
             {
                 std::map<std::string, double>& alphas = arbitrator.getAlphas(strName.c_str());
                 double bias = arbitrator.getBias(strName.c_str());
 
-                string carrier = curCon.carrier();                    
+                string carrier = curCon.carrier();
                 // clearing bias
                 size_t start = carrier.find("+bs");
                 if(start != std::string::npos)
@@ -246,9 +246,9 @@ void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     {
                         //printf("excitation : %s to %s , value:%d\n", arw->getConnection()->from(), curCon.from(), (int)(trainer.getAlphas()[i]*10));
                         setExcitation(arw, curCon.from(), (int)(itr->second*10));
-                    }                           
+                    }
                 }
-        
+
                 // updating carrier
                 curCon.setCarrier(carrier.c_str());
                 m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, *curArrow->getConnection(), curCon);
@@ -262,7 +262,7 @@ void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                 row[m_Columns.m_col_color_value] = Gdk::Color("#FF0000");
             }
 
-        } 
+        }
         m_arbPort->setArbitrator(arbitrator);
         m_arbPort->setErrorMode(!arbitrator.validate());
         m_pParent->reportErrors();
@@ -270,7 +270,7 @@ void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         /*
         typedef Gtk::TreeModel::Children type_children;
         type_children children = rulesRow->children();
-        Glib::ustring param; 
+        Glib::ustring param;
         m_arbPort->setErrorMode(false);
         for(type_children::iterator iter = children.begin(); iter != children.end(); ++iter)
         {
@@ -280,7 +280,7 @@ void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                 m_arbPort->setErrorMode(true);
                 break;
             }
-        } 
+        }
         */
    }
 }
@@ -289,7 +289,7 @@ void ArbitratorPropertyWindow::onCellEdited(const Glib::ustring& path_string,
 void ArbitratorPropertyWindow::setExcitation(ArrowModel* arrow, const char* szLink, int value)
 {
     Connection con = *arrow->getConnection();
-    string carrier = con.carrier();    
+    string carrier = con.carrier();
 
     //printf("Connection: %s\n",arrow->getId());
     string excitation;
@@ -300,12 +300,12 @@ void ArbitratorPropertyWindow::setExcitation(ArrowModel* arrow, const char* szLi
         if(end == std::string::npos)
             end = carrier.length();
         excitation = carrier.substr(start+1, end-(start+1));
-        carrier.erase(start, end-start);        
+        carrier.erase(start, end-start);
     }
 
     //printf("\tvalue:%d, excitation: %s\n", value, excitation.c_str());
     Property options;
-    options.fromString(excitation.c_str()); 
+    options.fromString(excitation.c_str());
     Bottle exc = options.findGroup("ex");
     string strLink = "+(ex";
     bool bEmpty = true;
@@ -320,7 +320,7 @@ void ArbitratorPropertyWindow::setExcitation(ArrowModel* arrow, const char* szLi
                 strLink += string(" (") + b->get(0).asString().c_str();
                 char dummy[64];
                 sprintf(dummy, " %d)", (int)b->get(1).asDouble());
-                strLink += dummy; 
+                strLink += dummy;
                 bEmpty = false;
             }
         }
@@ -336,7 +336,7 @@ void ArbitratorPropertyWindow::setExcitation(ArrowModel* arrow, const char* szLi
     }
     strLink += ")";
 
-    if(!bEmpty)    
+    if(!bEmpty)
         carrier += strLink;
 
     // updating carrier

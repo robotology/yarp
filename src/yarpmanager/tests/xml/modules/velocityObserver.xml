@@ -19,8 +19,8 @@
         <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
         <!-- input data if available-->
         <input>
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->

@@ -4,10 +4,10 @@
  *
  */
 
-/** 
+/**
   * @page data_rep Standard data representation format
 
-The policy for representing data externally in YARP is chosen 
+The policy for representing data externally in YARP is chosen
 carefully to encourage both efficiency and the ability to
 read/write network data by hand.
 
@@ -20,7 +20,7 @@ We define the following:
 
 @section data_rep_base The NetType data-types
 
-We limit our basic data-types to ones which can be easily 
+We limit our basic data-types to ones which can be easily
 read, written, and distinguished from each other in text form.
 The types, and their arbitrary names, are:
 
@@ -94,7 +94,7 @@ where [b:n] represents the number n in b bytes.
 A list of numbers followed by a list of strings might be:
 \verbatim
 text: (91 92 93) (this is a "good list")
-binary: [4:256] [4:2] [4:257] [4:3] [4:91] [4:92] [4:93] [4:260] [4:4] 
+binary: [4:256] [4:2] [4:257] [4:3] [4:91] [4:92] [4:93] [4:260] [4:4]
 [4:5] [5:"this"] [4:3] [3:"is"] [4:2] [2:"a"] [4:10] [10:"good list"]
 \endverbatim
 
@@ -114,7 +114,7 @@ Command-line options of the form:
 \verbatim
 --opt1 arga argb --opt2 argc --opt3
 \endverbatim
-are interpreted to correspond to a list with the following elements in 
+are interpreted to correspond to a list with the following elements in
 unspecified order (expressed here as text)
 \verbatim
 (opt1 arga argb) (opt2 argc) (opt3)
@@ -145,7 +145,7 @@ maxs 100 100 50 100 20
 are interpreted to correspond to a list with the following elements
 (expressed here as text)
 \verbatim
-(SECTION1 (opt1 arga argb) (opt2 argc)) 
+(SECTION1 (opt1 arga argb) (opt2 argc))
 (SECTION2 (joints 5) (mins 0 0 0 0 10) (maxs 100 100 50 100 20))
 \endverbatim
 This mapping is implemented by

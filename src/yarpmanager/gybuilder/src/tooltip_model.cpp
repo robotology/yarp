@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -32,7 +32,7 @@ using namespace yarp::manager;
 
 
 TooltipModel::TooltipModel(ApplicationWindow* parentWnd,
-                           const char* txt) 
+                           const char* txt)
                              : GroupModel()
 {
     parentWindow = parentWnd;
@@ -44,7 +44,7 @@ TooltipModel::TooltipModel(ApplicationWindow* parentWnd,
     text->property_alignment().set_value(Pango::ALIGN_CENTER);
 #endif
 
-    PangoLayout *layout = gtk_widget_create_pango_layout((GtkWidget*)parentWindow->gobj(), 
+    PangoLayout *layout = gtk_widget_create_pango_layout((GtkWidget*)parentWindow->gobj(),
                             txt);
     int text_w, text_h;
     PangoFontDescription *fontdesc = pango_font_description_from_string(FONT_DESC);
@@ -53,14 +53,14 @@ TooltipModel::TooltipModel(ApplicationWindow* parentWnd,
 
     width = text_w + TEXT_MARGINE*2;
     height = text_h + TEXT_MARGINE*2;
-   
+
     /*
     shadowRect = Goocanvas::RectModel::create(3, 3, w, h);
     shadowRect->property_line_width().set_value(1.5) ;
     shadowRect->property_radius_x().set_value(3.0) ;
     shadowRect->property_radius_y().set_value(3.0) ;
     shadowRect->property_stroke_color().set_value("gray") ;
-    shadowRect->property_fill_color().set_value("gray") ;    
+    shadowRect->property_fill_color().set_value("gray") ;
     this->add_child(shadowRect);
     */
 
@@ -79,20 +79,20 @@ TooltipModel::TooltipModel(ApplicationWindow* parentWnd,
 }
 
 
-TooltipModel::~TooltipModel(void) 
+TooltipModel::~TooltipModel(void)
 {
 
 }
 
 
 Glib::RefPtr<TooltipModel> TooltipModel::create(ApplicationWindow* parentWnd,
-                                                const char* txt) 
+                                                const char* txt)
 {
     return Glib::RefPtr<TooltipModel>(new TooltipModel(parentWnd, txt));
 }
 
 
-bool TooltipModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool TooltipModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
     if(event->button == 1)
@@ -102,16 +102,16 @@ bool TooltipModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& i
 }
 
 
-bool TooltipModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool TooltipModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
   if(event->button == 1)
-  {    
+  {
   }
   return true;
 }
 
-bool TooltipModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool TooltipModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventMotion* event)
 {
     if(item)
@@ -120,14 +120,14 @@ bool TooltipModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& 
     return true;
 }
 
-bool TooltipModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool TooltipModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
    // printf("entered\n");
     return true;
 }
 
-bool TooltipModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool TooltipModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     //printf("left\n");

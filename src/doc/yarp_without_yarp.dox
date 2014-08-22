@@ -5,30 +5,30 @@
  *
  */
 
-/** 
+/**
  * @page yarp_without_yarp YARP without YARP
 
 \author Paul Fitzpatrick
 
 This tutorial
 covers how to communicate with a YARP Port without using
-the YARP library.  You might want to do this when trying 
+the YARP library.  You might want to do this when trying
 to hook up some on your non-YARP-using code with a YARP
 robot.  Or you may just want to know that users of your
 robot will have this option in future.
 
 YARP Ports can be communicated with in a choice of protocols.
 Some of those protocols are very simple, simple enough
-to use without any code or to implement yourself in your own code.  
+to use without any code or to implement yourself in your own code.
 
-The tutorial has two parts.  
+The tutorial has two parts.
 For the first part,
 you will need the "telnet" program or an equivalent for this tutorial.
 It is used just as a way to create a socket from the command-line; we don't
-rely on any special parts of the telnet protocol.  
-For the second part, we use a few lines of python to repeat the steps 
-done manually with telnet.  There are examples of 
-interoperating with YARP from other languages in the example/external 
+rely on any special parts of the telnet protocol.
+For the second part, we use a few lines of python to repeat the steps
+done manually with telnet.  There are examples of
+interoperating with YARP from other languages in the example/external
 subdirectory of the YARP source code (YARP can also be used directly
 from many languages via SWIG, but that is a different topic).
 
@@ -71,7 +71,7 @@ registration name fallback ip 224.2.1.1 port 10001 type mcast
 \endverbatim
 
 We can see "/root", the name server, "/read" and "/write", and four
-ports related to the controlboard.  
+ports related to the controlboard.
 We're not concerned here with the details of what you can do with
 motors, you can find out about that elsewhere.
 
@@ -90,7 +90,7 @@ telnet 127.0.0.1 10002
 (Replace these numbers for whatever they are on your system).
 
 We do this, and nothing happens, telnet just sits there doing nothing.
-That's normal.  YARP ports don't respond immediately, they are 
+That's normal.  YARP ports don't respond immediately, they are
 waiting for a header that tells them what protocol you want to use
 (there are several).
 
@@ -134,7 +134,7 @@ a       Signals the beginning of an administrative message
 ?       Gives this help
 \endverbatim
 
-Good, we are clearly talking to a YARP port (it says so).  Let's 
+Good, we are clearly talking to a YARP port (it says so).  Let's
 use the first command listed to get some information about the port.
 Type:
 \verbatim
@@ -148,23 +148,23 @@ There are no outgoing connections
 There is an input connection from foo to /read using text
 \endverbatim
 
-Ah-hah!  We are indeed connected to the "/read" port, and our 
+Ah-hah!  We are indeed connected to the "/read" port, and our
 connection is listed.  The "using text" part means we are using
 a text-mode protocol, chosen by starting the communication with
 "CONNECT " (other choices include more efficient binary protocols,
 protocols that switch to using udp, multi-cast, shared memory, etc).
 
-Every single YARP port responds to the kinds of commands we've 
+Every single YARP port responds to the kinds of commands we've
 used so far.  We could connect to "/write" or "/root" or "/motor/..."
 and do the same thing.
 
 \section yarp_without_yarp_owner Talking to a Port's owner
 
-So far we have chatted with the "/read" Port and found out 
+So far we have chatted with the "/read" Port and found out
 some information about it that we already knew (its name
 is "/read" and we are connected to it).
 
-Now let's send some data to the owner of the "/read" Port, 
+Now let's send some data to the owner of the "/read" Port,
 which is the "yarp read /read" program.  We expect that this
 data will get printed out on the terminal where that program
 is running.
@@ -186,7 +186,7 @@ can type now depends on what the owner is expecting.
 There are several possible data-types in YARP, and users can
 easily define their own.  All well-behaved
 data-types should follow the YARP \ref data_rep, which is
-particularly easy to enter in text-mode - it is just a 
+particularly easy to enter in text-mode - it is just a
 list of space-separated numbers, strings, and nested structures.
 
 Let's see what happens - type:
@@ -198,7 +198,7 @@ Nothing happens in telnet, but if you look on the terminal
 running "yarp read /read", you should see your text appear.
 
 (If you find it disconcerting that you got no acknowledgement
-in telnet, next time you connect to a port, start with 
+in telnet, next time you connect to a port, start with
 "CONNACK foo" rather than "CONNECT foo" - this is a small
 variant of the protocol that always supplies acknowledgements).
 
@@ -265,14 +265,14 @@ you should see something like:
 \endverbatim
 
 You'd need to consult with other tutorials to see what these do.
-Let's send a simple command to get the number of axes in the 
+Let's send a simple command to get the number of axes in the
 controlboard.  Type:
 \verbatim
 d
 [get] [axes]
 \endverbatim
 
-(As a shorthand, you can omit the "[" and "]" characters and everything 
+(As a shorthand, you can omit the "[" and "]" characters and everything
 will still work).
 
 You should see a response like:
@@ -292,7 +292,7 @@ d
 [get] [enc] 2
 \endverbatim
 
-This sets the position of the 5 motors, and then checks the position of 
+This sets the position of the 5 motors, and then checks the position of
 the third one (index 2).  The responses are something like:
 
 \verbatim
@@ -339,7 +339,7 @@ So far, we have been the ones to initiate all communication.
 We send data to a Port's owner, and possibly get a reply back,
 but we are in charge.
 
-Often, the initiative should be in the other direction.  For 
+Often, the initiative should be in the other direction.  For
 example, the "yarp write /write" program takes data typed on
 the terminal and sends it out to anyone listening.  How can
 we listen to it?
@@ -457,7 +457,7 @@ do 2660 1215723086.307388
 The line starting with "d" signals data; "do" means we're not expected
 to reply.  The "do" is followed by some numbers - this is a message
 index and timestamp, an optional part of the protocol (important for
-motor information though).  Then the actual positions of the 
+motor information though).  Then the actual positions of the
 motors are listed, exactly as we set them earlier.
 
 \section yarp_without_yarp_name Talking to the name server
@@ -529,7 +529,7 @@ useful for transmitting images or sound.  For that, we need a binary
 protocol; at this point there's no avoiding reading hairy documentation
 like \ref yarp_protocol and writing some code.
 
-There is sample C code for reading binary data (images 
+There is sample C code for reading binary data (images
 in particular) in the directory example/external/c - there are also
 examples in C that translate the python examples above.
 

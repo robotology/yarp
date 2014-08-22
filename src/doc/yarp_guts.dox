@@ -4,7 +4,7 @@
  *
  */
 
-/** 
+/**
  * @page yarp_guts A trip through the guts of YARP
 
 @author Paul Fitzpatrick
@@ -21,7 +21,7 @@ change as time goes by than other classes.
 
 @section yarp_guts_facade Behind the facade
 
-Many YARP user-facing classes have private implementations, that is they 
+Many YARP user-facing classes have private implementations, that is they
 follow this pattern:
 
 \code
@@ -32,16 +32,16 @@ private:
 };
 \endcode
 
-There are two reasons for this.  One is ABI stability, so that 
-significant changes can 
+There are two reasons for this.  One is ABI stability, so that
+significant changes can
 safely be made to the underlying implementation.
-Another reason is to insulate regular users of YARP from 
+Another reason is to insulate regular users of YARP from
 ACE header files.  We use the ACE library in the implementation
 of YARP because of its portability,
 but it can turn proper compilation into an art-form.
-We don't want to force our users to deal with that (and 
+We don't want to force our users to deal with that (and
 don't want to deal with the confused emails they will send
-us).  So we use ACE in the YARP implementation, but do not 
+us).  So we use ACE in the YARP implementation, but do not
 reference it in user-facing header files.
 
 @section yarp_guts_summary Summary of important implementation classes
@@ -50,9 +50,9 @@ For every port, there is a yarp::os::impl::PortCore object.
 The user-facing yarp::os::Port class is a superficial wrapper around this.
 
 For every connection between two ports (call them the source port
-and the target port), there is a 
+and the target port), there is a
 yarp::os::impl::PortCoreOutputUnit object held in a list by the
-source port's PortCore, and a yarp::os::impl::PortCoreInputUnit 
+source port's PortCore, and a yarp::os::impl::PortCoreInputUnit
 object held in a list by the target port's PortCore.
 
 Every PortCoreUnit has a yarp::os::InputProtocol
@@ -61,13 +61,13 @@ manages the overall phases of YARP's network protocol.
 
 The Protocol object delegates to an
 object from the yarp::os::Carrier family
-(yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to 
-manage the peculiarities of a particular connection type.  This 
+(yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to
+manage the peculiarities of a particular connection type.  This
 carrier can be replaced during the operation of a connection.
 Typically, connections start with a TcpCarrier, and then switch
 (after hand-shaking) to whatever carrier the user has selected.
 
-Here's an example diagram of four ports.  Port 1 is connected by 
+Here's an example diagram of four ports.  Port 1 is connected by
 multicast to ports 2 and 3, and by tcp to port 4.
 
   \dot
@@ -155,9 +155,9 @@ multicast to ports 2 and 3, and by tcp to port 4.
   \enddot
 
 This diagram shows logical data flow, but omits other relationships.
-For example, all McastCarrier objects acting as outputs for the 
-same PortCore work together so that data only gets sent once on 
-a shared logical bus.  See \ref yarp_guts_mcast. 
+For example, all McastCarrier objects acting as outputs for the
+same PortCore work together so that data only gets sent once on
+a shared logical bus.  See \ref yarp_guts_mcast.
 
 
 @section yarp_guts_create Port creation
@@ -174,7 +174,7 @@ Any initial communication with the port is made via the Face.
 The PortCore maintains a list of yarp::os::impl::PortCoreUnit objects.
 These represent incoming and outgoing connections.  When a request is
 received via the Face to connect to some other port, the first
-step is to create a new PortCoreUnit (either a 
+step is to create a new PortCoreUnit (either a
 yarp::os::impl::PortCoreInputUnit or a yarp::os::impl::PortCoreOutputUnit).
 Depending on the configuration of the port, a new thread may be created
 to service that unit.  Inputs always get a new thread.  Outputs get
@@ -183,8 +183,8 @@ this is called for BufferedPorts by default).
 
 @section yarp_guts_connect Connection creation
 
-When the Face object receives a communication from the outside world, 
-it wraps it in a Protocol object.  Concretely, this means that the TcpFace 
+When the Face object receives a communication from the outside world,
+it wraps it in a Protocol object.  Concretely, this means that the TcpFace
 server socket takes each socket it receives and gives it to the PortCore
 as a Protocol object, which then creates a PortCoreUnit to manage
 that Protocol object.  The abstraction is important here because
@@ -194,7 +194,7 @@ the connection is (TCP) to something different for transmitting
 payloads (multicast, shared memory, etc).
 The Protocol object is either
 yarp::os::InputProtocol or yarp::os::OutputProtocol
-(in fact both of these are interfaces implemented by a single 
+(in fact both of these are interfaces implemented by a single
 class, yarp::os::impl::Protocol, but most of YARP does not know that).
 
 The Protocol object deals with switching to a particular carrier

@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -25,7 +25,7 @@ using namespace std;
 StdoutWindow::StdoutWindow(Gtk::Widget* parent, int ID, const char* title) : bTimeStamp(false)
 {
     m_pParent = parent;
-    //set_parent(parent); 
+    //set_parent(parent);
 
     m_ID = ID;
     if(title)
@@ -34,7 +34,7 @@ StdoutWindow::StdoutWindow(Gtk::Widget* parent, int ID, const char* title) : bTi
         set_title("STDOUT");
 
     set_default_size(300, 300);
-   
+
     m_ScrollModView.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_ScrollModView.add(m_textView);
     m_VBox.pack_start(m_ScrollModView);

@@ -5,7 +5,7 @@
  *
  */
 
-/** 
+/**
  * @page port_admin The administrative interface to YARP ports
 
 \author Paul Fitzpatrick
@@ -17,11 +17,11 @@ messages.
 
 In some cases, though, you may find yourself wishing to talk
 to a port itself, in order to query it about its state, or to
-request it to take some action (such as making or breaking a 
+request it to take some action (such as making or breaking a
 connection).  There is a low level protocol for this, but it
 is somewhat arcane (see \ref yarp_protocol_port).
 
-To send an administrative message to a port is simple.  
+To send an administrative message to a port is simple.
 From the commandline, just use "yarp admin write" or
 "yarp admin rpc" instead of "yarp write" or "yarp rpc":
 \verbatim

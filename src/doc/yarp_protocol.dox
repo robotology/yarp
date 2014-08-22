@@ -1,6 +1,6 @@
 
 /**
- * 
+ *
 
 \page yarp_protocol Port and connection protocols
 
@@ -49,7 +49,7 @@ index, and body.
   <li> Transmission of protocol specifier
     <ul>
       <li> Sender transmits 8 bytes that identify the carrier
-	that will be used.  The header may be used to pass a 
+	that will be used.  The header may be used to pass a
 	few flags also.
       <li> Receiver expects 8 bytes, and attempts to find a
 	carrier that is consistent with them.
@@ -73,16 +73,16 @@ index, and body.
 <li> Header reply phase
 
   <ul>
-    
+
   <li> This phase follows immediately after the header phase, and
     concludes the preamble to actual data transmission.  After this
     phase, the two ports are considered connected.
-    
+
   <li> Receiver may transmit some data, depending on the carrier.
     Receiver then may switch from the initial network
     protocol used to something else (udp, mcast, etc), again
     depending on the carrier.
-    
+
   <li> Sender may expect some data, depending on the carrier.
     Sender then may switch from the initial network
     protocol used to something else (udp, mcast, etc), again
@@ -91,39 +91,39 @@ index, and body.
   </ul>
 
 <li> Index phase
-    
+
   <ul>
-    
+
   <li> Sender sends carrier-dependent data describing properties of
     the payload data to come.
-    
+
   <li> Receiver expects carrier-dependent data describing properties
     of the payload data to come.
-    
+
   </ul>
-  
+
 <li> Payload data phase
-  
+
   <ul>
-    
+
   <li> Sender sends carrier-dependent expression of user data (maybe none).
-    
+
   <li> Receiver expects carrier-dependent expression of user data.
-    
+
   </ul>
 
 <li> Acknowledgement phase
 
   <ul>
-    
+
   <li> Receiver sends carrier-dependent acknowledgement of receipt of
     payload data (maybe none).
-    
+
   <li> Sender expects carrier-dependent acknowledgement of receipt of
     payload data (maybe none).
-    
+
   </ul>
-  
+
 </ul>
 
 This is the basic pattern of YARP communication between ports.
@@ -138,14 +138,14 @@ Clearly different carriers have a lot of freedom in how they operate.
 <li> Header and header reply
 
   <ul>
-    
+
   <li> The 8-byte protocol specifier for tcp is:
     {'Y' 'A' 0xE4
     0x1E 0 0 'R' 'P'}.  Another possible variant is: {'Y' 'A'
     0x64 0x1E 0 0 'R' 'P'}.  The first version identifies a connection
     that sends acknowledgements; the second is for connections that
     omit acknowledgements.
-    
+
   <li> The sender name is transmitted and expected to be in the
     following format: a 4 byte integer (little endian) giving the length
     of port, followed by the port name in characters, followed by the null
@@ -155,7 +155,7 @@ Clearly different carriers have a lot of freedom in how they operate.
 
   <li> The header reply is as 8 bytes long: {'Y' 'A' B1 B2 0 0
     'R' 'P'}, where (B1,B2) is a (little-endian) two-byte integer
-    specifying a socket-port number (unused).  
+    specifying a socket-port number (unused).
 
   <li> After the header reply, there is no switch in network protocol
     -- the initial tcp connection continues to be used.
@@ -168,18 +168,18 @@ Clearly different carriers have a lot of freedom in how they operate.
 
   <li> The sender transmits 8 bytes: {'Y' 'A' 10 0 0 0 'R' 'P'}.
     This identifies the length of the ``index header'' as 10.
-    
+
   <li> The sender transmits 10 bytes: {LEN 1 255 255 255 255
     255 255 255 255}.  LEN is the number of blocks of user data need
     to be sent.  This byte-sequence says there are LEN send blocks, 1
     reply block expected, and that the sizes will be listed
     individually next (this odd format is for backward compatability
     with older YARP versions).
-      
+
   <li> The sender transmits LEN 4-byte little-endian integers, one
     for each of the LEN blocks of user data, giving the length of each
     block.
-      
+
   <li> The sender transmits 4 bytes: {0 0 0 0}. This asks for
     a reply length of 0.
 
@@ -201,7 +201,7 @@ Clearly different carriers have a lot of freedom in how they operate.
 <li> Header and header reply
 
   <ul>
-    
+
   <li> The 8-byte protocol specifier for udp is: {'Y' 'A' 0x61
     0x1E 0 0 'R' 'P'}.  The following variant of this should also be
     accepted: {'Y' 'A' 0xE1 0x1E 0 0 'R' 'P'} (it is the same
@@ -219,9 +219,9 @@ Clearly different carriers have a lot of freedom in how they operate.
 
   <li> Identical to tcp.  Data is split arbitrarily to fit into
     datagrams.  Datagrams have sequence numbers and checksums
-	so that if part of message is lost or corrupted the 
+	so that if part of message is lost or corrupted the
 	entire message can be dropped cleanly.
-    
+
   <li> Acknowledgments are not a possibility.
 
   </ul>
@@ -236,7 +236,7 @@ Clearly different carriers have a lot of freedom in how they operate.
 <li> Header and header reply
 
   <ul>
-    
+
   <li> The 8-byte protocol specifier for mcast is: {'Y' 'A' 0x62
     0x1E 0 0 'R' 'P'}.  The following variant of this should also be
     accepted: {'Y' 'A' 0xE2 0x1E 0 0 'R' 'P'} (it is the same
@@ -250,7 +250,7 @@ Clearly different carriers have a lot of freedom in how they operate.
   numbers can be helped by side communication with the name server.
 
   <li> There is no header reply for mcast.
-  
+
   <li> Both sides switch to a multi-cast group on the specified IP
   and socket-port.
 
@@ -266,7 +266,7 @@ Clearly different carriers have a lot of freedom in how they operate.
     should actually write to the multi-cast group.
 
   </ul>
-  
+
 </ul>
 
 
@@ -281,8 +281,8 @@ Clearly different carriers have a lot of freedom in how they operate.
 <li> Header and header reply
 
   <ul>
-    
-  <li> The 8-byte protocol specifier for text is: {'C' 'O' 'N' 'N' 'E' 'C' 'T' ' '}.  
+
+  <li> The 8-byte protocol specifier for text is: {'C' 'O' 'N' 'N' 'E' 'C' 'T' ' '}.
 
   <li> The sender name is sent as plain text followed by the newline
   character `\\n'.
@@ -290,7 +290,7 @@ Clearly different carriers have a lot of freedom in how they operate.
   <li> There is no extra material
 
   <li> There is no header reply expected for text.
-  
+
   <li> There is no network protocol switch.
 
   </ul>
@@ -307,7 +307,7 @@ Clearly different carriers have a lot of freedom in how they operate.
   <li> There is no acknowledgement expected for text.
 
   </ul>
-  
+
 </ul>
 
 
@@ -315,8 +315,8 @@ Clearly different carriers have a lot of freedom in how they operate.
 
 This is essentially the same as the tcp carrier, except that there is no
 header reply, and there is a shift in protocol after header transmission
-on both sides to an ACE shared memory stream.  This carrier is 
-currently being reworked to make its specification independent of ACE, 
+on both sides to an ACE shared memory stream.  This carrier is
+currently being reworked to make its specification independent of ACE,
 and to further improve efficiency in an existing implementation.
 
 The advantage of this carrier is that it is fast -- the best way to
@@ -372,12 +372,12 @@ The ``payload data'' is as follows:
 
 - CHAR = `d': this header is used to signal that user data is
   arriving next, as opposed to a port command
-    
+
 - CHAR = anything else: this signals that a port command
     follows.
 
 
-for the port command case (CHAR = 0) the remainder of the message 
+for the port command case (CHAR = 0) the remainder of the message
 is interpreted as a string S.
 
 - S begins with `/', e.g. `/read': this is a request to add a
@@ -416,7 +416,7 @@ to the port named /write using the udp carrier''.
 
 We can also prepend a network selector of the form
 ``/net=NETNAME/''.  For example, a name such as
-``udp://net=196/write'' means ``connect to the 
+``udp://net=196/write'' means ``connect to the
 port named /write using the udp carrier, and make the
 connection on the network with ip addresses beginning with
 196''.
@@ -470,7 +470,7 @@ d
 0 "hello world"
 \endverbatim
 This is what text mode looks like, for the particular
-data type used by yarp read and write (``bottles'').  
+data type used by yarp read and write (``bottles'').
 As we saw in an earlier section, we can also write to ports in text mode.
 And if we were to restart nc and then try the following:
 \verbatim

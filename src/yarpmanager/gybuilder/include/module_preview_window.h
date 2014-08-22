@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -12,7 +12,7 @@
 
 
 #if defined(WIN32)
-	#undef max 
+    #undef max
 #endif
 #include <gtkmm.h>
 #include <goocanvasmm.h>
@@ -30,7 +30,7 @@ public:
     void onTabCloseRequest();
     void onRefresh();
     void update(yarp::manager::Module* module);
-    void release(void) { m_pModule = NULL; } 
+    void release(void) { m_pModule = NULL; }
     yarp::manager::Module* getModule(void) { return m_pModule; }
 
 private:
@@ -39,7 +39,7 @@ private:
 
     Goocanvas::Canvas* m_Canvas;
     Glib::RefPtr<Goocanvas::ItemModel> root;
-    Gtk::ScrolledWindow m_ScrollView; 
+    Gtk::ScrolledWindow m_ScrollView;
 
 };
 

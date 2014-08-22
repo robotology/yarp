@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -21,8 +21,8 @@ class ApplicationPropItemColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ApplicationPropItemColumns() { 
-        add(m_col_name); 
+    ApplicationPropItemColumns() {
+        add(m_col_name);
         add(m_col_value);
         add(m_col_color_value);
         add(m_col_editable);
@@ -47,14 +47,14 @@ public:
 
     void update(yarp::manager::Application* application);
     yarp::manager::Application* getApplication(void) { return m_pApplication; }
-    void release(void) { m_pApplication = NULL; } 
+    void release(void) { m_pApplication = NULL; }
 
 protected:
     void onCellData(Gtk::CellRenderer*, const Gtk::TreeModel::iterator& iter);
-    void onCellEdited(const Glib::ustring& path_string, 
+    void onCellEdited(const Glib::ustring& path_string,
                     const Glib::ustring& new_text);
 protected:
-    ApplicationPropItemColumns m_Columns;  
+    ApplicationPropItemColumns m_Columns;
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     Gtk::TreeView m_TreeView;
 

@@ -53,13 +53,13 @@ YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
 
 YarpBroker::~YarpBroker()
 {
-	fini();
+    fini();
 }
 
 void YarpBroker::fini(void)
 {
-	if(RateThread::isRunning())
-	    RateThread::stop();
+    if(RateThread::isRunning())
+        RateThread::stop();
     port.close();
 }
 
@@ -202,8 +202,8 @@ bool YarpBroker::start()
         {
             if(strStdioUUID.size())
             {
-			    if(RateThread::isRunning())
-				    RateThread::stop();
+                if(RateThread::isRunning())
+                    RateThread::stop();
                 RateThread::start();
             }
             return true;
@@ -260,7 +260,7 @@ bool YarpBroker::stop()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-	RateThread::stop();
+    RateThread::stop();
     return false;
 }
 
@@ -308,7 +308,7 @@ bool YarpBroker::kill()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-	RateThread::stop();
+    RateThread::stop();
     return false;
 }
 
@@ -666,7 +666,7 @@ bool YarpBroker::threadInit()
     string strStdioPort = strStdioUUID + "/stdout";
     stdioPort.open("...");
 
-	double base = Time::now();
+    double base = Time::now();
     ContactStyle style;
     style.quiet = true;
     style.timeout = CONNECTION_TIMEOUT;

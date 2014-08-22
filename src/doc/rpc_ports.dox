@@ -5,7 +5,7 @@
  *
  */
 
-/** 
+/**
  * @page rpc_ports Specialized RPC ports
 
 \author Paul Fitzpatrick
@@ -13,16 +13,16 @@
 RPC stands for "Remote Procedure Call", and in YARP is used to
 refer to communication that consists of a message and a reply to
 that message.  Historically, YARP has stressed streaming communication
-(without replies) because in our experience it leads to more 
+(without replies) because in our experience it leads to more
 robust and scalable control logic.  However, RPC definitely has
 its place, and this tutorial describes how to do it in YARP.
 
 \section rpc_ports_basics RPC using regular YARP ports
 
-The basic mechanism for getting replies with YARP is described in 
+The basic mechanism for getting replies with YARP is described in
 the \ref port_expert_reply "getting replies" section of the
-\ref port_expert "Port Power" tutorial.  The RPC ports are a 
-thin wrapper around regular ports, for the purpose of 
+\ref port_expert "Port Power" tutorial.  The RPC ports are a
+thin wrapper around regular ports, for the purpose of
 restricting flexibility rather than increasing it.
 
 \section rpc_ports_special RPC using specialized YARP ports
@@ -59,7 +59,7 @@ in two separate terminals, as follows:
 ./rpc_client /client /server
 \endverbatim
 Here we have named the server port "/server" and the client port "/client".
-Every second or so, the client sends a message to the server with 
+Every second or so, the client sends a message to the server with
 a count in it, and the server replies with "you said" followed
 by that message.
 

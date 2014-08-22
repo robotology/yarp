@@ -15,11 +15,11 @@
     <computer>
         <name>hostname2</name>
         <description>a computer with GPU device</description>
-        <disable>no</disable> 
+        <disable>no</disable>
         <!-- GPU description section. -->
         <gpu>
             <name>Tesla C1060</name>
-            <cores>240</cores> 
+            <cores>240</cores>
             <frequency>1600</frequency>
             <capability>1.3</capability>
             <registers_block>128</registers_block>
@@ -34,7 +34,7 @@
             <constant_memory>
                 <total_space>16</total_space>
             </constant_memory>
-        </gpu> 
+        </gpu>
     </computer>
 
 </resources>

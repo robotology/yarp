@@ -35,7 +35,7 @@ ROS types in YARP:
 Using the Thirft IDL to define data types and interfaces:
 \li \ref thrift_tutorial_portable
 \li \ref thrift_tutorial_simple
-\li \ref thrift_tutorial 
+\li \ref thrift_tutorial
 
 How to search and install configuration files:
 \li \ref yarp_resource_finder_tutorials

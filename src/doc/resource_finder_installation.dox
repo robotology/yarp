@@ -36,7 +36,7 @@ We'll see now how to setup installation rules so that after compilation the conf
 \section rf_install_cmake CMake to the rescue
 
 The minimal CMake file that allows to build our tutorial modules is this (this CMake file actually builds the two Resource Finder tutorials):
- 
+
 \verbatim
 cmake_minimum_required(VERSION 2.8.7)
 project(resourceFinder)
@@ -58,7 +58,7 @@ We add the following line to load the \c yarp_install macro:
 include(YarpInstallationHelpers)
 \endverbatim
 
-This needs to be done only once within your project, and after the 
+This needs to be done only once within your project, and after the
 <tt> list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})</tt>
 line.
 
@@ -72,7 +72,7 @@ to tell CMake which files to install, and
 yarp_install(FILES ${conf} DESTINATION ${YARP_CONTEXTS_INSTALL_DIR}/randomMotion)
 \endverbatim
 to tell CMake where to install those files.
-\note 
+\note
 Instead of creating the \e conf variable by listing all configuration files explicitly as in <tt>set(conf randomMotion/configure.ini)</tt>, one can have CMake figure out the list or all configuration files like this:
 \verbatim
 file(GLOB conf randomMotion/*.ini)

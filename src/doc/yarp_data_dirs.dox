@@ -5,14 +5,14 @@
  *
  */
 
-/** 
+/**
  * @page yarp_data_dirs YARP data directories
 
 \author Elena Ceseracciu and Lorenzo Natale
 
-YARP utilities and modules written by users need to find and access data and configuration files at run-time. The former use generic configuration files and manifest files for modules and plugins. The latter often require configuration and data files. YARP has an OS-dependent set of default locations where to look for files, and a set of rules that define the search priorities. The default locations can be overridden or extended by modifying the environment variables that YARP relies on. To simplify finding and accessing these files YARP provides a helper class called ResourceFinder. 
+YARP utilities and modules written by users need to find and access data and configuration files at run-time. The former use generic configuration files and manifest files for modules and plugins. The latter often require configuration and data files. YARP has an OS-dependent set of default locations where to look for files, and a set of rules that define the search priorities. The default locations can be overridden or extended by modifying the environment variables that YARP relies on. To simplify finding and accessing these files YARP provides a helper class called ResourceFinder.
 
-A full description of the directories and environment variables used by the ResourceFinder is too detailed for most users. We provide here a short and simplified description of the files layout of typical YARP installations for Windows, Linux and MacOs. 
+A full description of the directories and environment variables used by the ResourceFinder is too detailed for most users. We provide here a short and simplified description of the files layout of typical YARP installations for Windows, Linux and MacOs.
 
 If you are confused by this description you can jump directly to the tutorials \ref yarp_resource_finder_tutorials.
 
@@ -24,11 +24,11 @@ The key points to keep in mind are:
 \li    Installation directories are generally non-writable, users without root privileges cannot edit installed configuration files unless they first copy them inside their own private directories, the latter must take precedence and hide the others;
 \li    Therefore it is normal that configuration files can be in multiple places, inside user-specific, private or shared installation directories;
 \li    External packages can install files so that YARP can find them (see \ref datafiles_3rdparty "here");
-\li    Type of files are divided in families that are placed in specific sub-directories. Current allowed sub-directories are listed \ref datafiles_datadirs "here". 
+\li    Type of files are divided in families that are placed in specific sub-directories. Current allowed sub-directories are listed \ref datafiles_datadirs "here".
 
-File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp_yarp-config utility simplifies this process. 
+File customization can happen by copying files or contexts from the shared installation directories to the ones private to the user. The \ref yarp_yarp-config utility simplifies this process.
 
-\section datafiles_datadirs Data directories contents 
+\section datafiles_datadirs Data directories contents
 Files are normally organized in the following directories:
  <UL>
 
@@ -46,7 +46,7 @@ Files are normally organized in the following directories:
 </UL>
 These directories can be stored in a directory private for the \e user (usually in its home) or \e installed in a shared directory.
 
-\subsection datafiles_lin Linux 
+\subsection datafiles_lin Linux
 
 The private directories for the user are in <EM> $HOME/.local/share/yarp </EM>
 
@@ -72,7 +72,7 @@ The shared directory for installation are in <EM>/usr/local/share/yarp </EM> and
 
 The latter can be changed by defining the environment variable YARP_DATA_DIRS or extended through \e path.d (see \ref datafiles_extendsearch "below").
 
-\section datafiles_searchpolicy ResourceFinder Search policy 
+\section datafiles_searchpolicy ResourceFinder Search policy
 
 The resource finder searchers for files in the following order of precedence:
 
@@ -95,7 +95,7 @@ When searching for files and directories, the ResourceFinder looks inside these 
 
 \subsection datafiles_contextsrobots Contexts and Robots files
 
-The \e contexts folders contain multiple sub-folders. Each subfolder represents a context, i.e., a collection of configuration files and data that may be used to configure modules at runtime and read/write any type of files. When the resource finder is configured with a specific context-name (either a default, hard-coded one, or provided as command line parameter to the module), contexts/<context-name> is added to the search path in which the initial configuration file and any additional files are sought. 
+The \e contexts folders contain multiple sub-folders. Each subfolder represents a context, i.e., a collection of configuration files and data that may be used to configure modules at runtime and read/write any type of files. When the resource finder is configured with a specific context-name (either a default, hard-coded one, or provided as command line parameter to the module), contexts/<context-name> is added to the search path in which the initial configuration file and any additional files are sought.
 
 The \e robots folders contain multiple sub-folders as well. Each subfolder has the name of a robot, and contains robot-specific files. The ResourceFinder adds robots/$YARP_ROBOT_NAME (default value for this environment variable: default) to the search path, before the context-specific paths.
 
@@ -120,7 +120,7 @@ Templates are XML files with a .template extension. Typical templates are applic
 Managing configuration and data files requires nothing special, you can copy, edit and remove them using the shell. However YARP provides an utility that simplifies this, see \ref yarp_yarp-config.
 
 
-\section datafiles_3rdparty 3rd party packages (for developers) 
+\section datafiles_3rdparty 3rd party packages (for developers)
 
 <EM> If you are not a developer you can skip this section. </EM>
 
@@ -133,7 +133,7 @@ YARP provides cmake variables and macros to simplify both the above tasks.
 
 If you are not interested in the details you can skip the following sections and go directly to \ref yarp_external_build.
 
-\subsection datafiles_installedpkgs Installed packages 
+\subsection datafiles_installedpkgs Installed packages
 
 Yarp exports the following CMake variables:
 \li YARP_INSTALL_PREFIX
@@ -151,7 +151,7 @@ Using the correct CMake variables when installing files will ensure that those f
 
 Also non-root installation is supported, but both YARP and 3rd party software will require to be configured with the same CMAKE_INSTALL_PREFIX, and the environment variables (YARP_DATA_DIRS) will require to be tweaked accordingly (see next section).
 
-\subsection datafiles_extendsearch Extending the search path 
+\subsection datafiles_extendsearch Extending the search path
 
 For packages that are not installed, the search path followed by the ResourceFinder can be extended in two ways:
 
@@ -160,7 +160,7 @@ For packages that are not installed, the search path followed by the ResourceFin
 
 <EM> Notice: the following should be considered experimental and could be removed in the future if not required) </EM>
 
-\li By extending the directory \e path.d 
+\li By extending the directory \e path.d
 
 This solution should be adopted for packages that are installed.
 

@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -24,7 +24,7 @@
 using namespace yarp::manager;
 
 
-ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent, 
+ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent,
                                Manager* manager)
 {
     m_pComputer = computer;
@@ -39,9 +39,9 @@ ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent,
     m_refTreeModel = Gtk::TreeStore::create(m_Columns);
     m_TreeView.set_model(m_refTreeModel);
 
-    //Add the Model’s column to the View’s columns: 
+    //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* cellText = Gtk::manage(new Gtk::CellRendererText());
-    Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf()); 
+    Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf());
     Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Item"));
     col->pack_start(*cellPix, false);
     col->pack_start(*cellText, true);
@@ -52,7 +52,7 @@ ResourceWindow::ResourceWindow(Computer* computer, MainWindow* parent,
 
     m_TreeView.append_column("Value", m_Columns.m_col_value);
     m_TreeView.get_column(1)->set_resizable(true);
-    
+
     updateWidget();
     show_all_children();
 }
@@ -70,7 +70,7 @@ void ResourceWindow::onRefresh()
     {
         YarpBroker broker;
         broker.init();
-    
+
         string strServer = m_pComputer->getName();
         if(strServer[0] != '/')
             strServer = string("/") + strServer;
@@ -83,16 +83,16 @@ void ResourceWindow::onRefresh()
                 m_pComputer->getProcesses().push_back(processes[i]);
         }
         else
-            logger->addError(broker.error());        
+            logger->addError(broker.error());
 
         updateWidget();
     }
     m_pParent->reportErrors();
 }
 
-void ResourceWindow::onTabCloseRequest() 
-{ 
-    m_pParent->onTabCloseRequest(this); 
+void ResourceWindow::onTabCloseRequest()
+{
+    m_pParent->onTabCloseRequest(this);
 }
 
 void ResourceWindow::updateWidget()
@@ -116,7 +116,7 @@ void ResourceWindow::updateWidget()
     if(!m_pComputer->getDisable())
     {
         row[m_Columns.m_col_value] = "No";
-        row.set_value(0, Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+        row.set_value(0, Gdk::Pixbuf::create_from_data(computer_ico.pixel_data,
                                                 Gdk::COLORSPACE_RGB,
                                                 true,
                                                 8,
@@ -127,7 +127,7 @@ void ResourceWindow::updateWidget()
     else
     {
         row[m_Columns.m_col_value] = "Yes";
-        row.set_value(0, Gdk::Pixbuf::create_from_data(computer_disable_ico.pixel_data, 
+        row.set_value(0, Gdk::Pixbuf::create_from_data(computer_disable_ico.pixel_data,
                                                 Gdk::COLORSPACE_RGB,
                                                 true,
                                                 8,
@@ -142,7 +142,7 @@ void ResourceWindow::updateWidget()
     if(m_pComputer->getAvailability())
     {
         row[m_Columns.m_col_value] = "Yes";
-        row.set_value(0, Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data, 
+        row.set_value(0, Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data,
                                                 Gdk::COLORSPACE_RGB,
                                                 true,
                                                 8,
@@ -153,7 +153,7 @@ void ResourceWindow::updateWidget()
     else
     {
         row[m_Columns.m_col_value] = "No";
-        row.set_value(0, Gdk::Pixbuf::create_from_data(nores_ico.pixel_data, 
+        row.set_value(0, Gdk::Pixbuf::create_from_data(nores_ico.pixel_data,
                                                 Gdk::COLORSPACE_RGB,
                                                 true,
                                                 8,
@@ -163,22 +163,22 @@ void ResourceWindow::updateWidget()
         return;
     }
 
-    // platform 
+    // platform
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Platform";
     row[m_Columns.m_col_value] = "";
-    row.set_value(0, Gdk::Pixbuf::create_from_data(module_ico.pixel_data, 
+    row.set_value(0, Gdk::Pixbuf::create_from_data(module_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             module_ico.width,
                                             module_ico.height,
                                             module_ico.bytes_per_pixel*module_ico.width));
-     
+
     childrow = *(m_refTreeModel->append(row.children()));
     childrow[m_Columns.m_col_name] = "Name";
     childrow[m_Columns.m_col_value] = m_pComputer->getPlatform().getName();
-   
+
     childrow = *(m_refTreeModel->append(row.children()));
     childrow[m_Columns.m_col_name] = "Distribution";
     childrow[m_Columns.m_col_value] = m_pComputer->getPlatform().getDistribution();
@@ -191,7 +191,7 @@ void ResourceWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Processor";
     row[m_Columns.m_col_value] = "";
-    row.set_value(0, Gdk::Pixbuf::create_from_data(processor_ico.pixel_data, 
+    row.set_value(0, Gdk::Pixbuf::create_from_data(processor_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -202,11 +202,11 @@ void ResourceWindow::updateWidget()
     childrow = *(m_refTreeModel->append(row.children()));
     childrow[m_Columns.m_col_name] = "Model";
     childrow[m_Columns.m_col_value] = m_pComputer->getProcessor().getModel();
-  
+
     childrow = *(m_refTreeModel->append(row.children()));
     childrow[m_Columns.m_col_name] = "Architecture";
     childrow[m_Columns.m_col_value] = m_pComputer->getProcessor().getArchitecture();
-    
+
     char buff[64];
     childrow = *(m_refTreeModel->append(row.children()));
     childrow[m_Columns.m_col_name] = "Cores";
@@ -227,7 +227,7 @@ void ResourceWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "CPU Load";
     row[m_Columns.m_col_value] = "";
-    row.set_value(0, Gdk::Pixbuf::create_from_data(cpuload_ico.pixel_data, 
+    row.set_value(0, Gdk::Pixbuf::create_from_data(cpuload_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -252,12 +252,12 @@ void ResourceWindow::updateWidget()
     float sibling = (float)m_pComputer->getProcessor().getSiblings();
     if(!sibling) sibling = 1.0F;
     float load1P = ((float)m_pComputer->getProcessor().getCPULoad().loadAverage1 / sibling)*100.0F;
-    if(load1P > 100.0F) load1P = 100.0F; 
+    if(load1P > 100.0F) load1P = 100.0F;
     float load5P = ((float)m_pComputer->getProcessor().getCPULoad().loadAverage5 / sibling)*100.0F;
-    if(load5P > 100.0F) load5P = 100.0F; 
+    if(load5P > 100.0F) load5P = 100.0F;
     float load15P = ((float)m_pComputer->getProcessor().getCPULoad().loadAverage15 / sibling)*100.0F;
-    if(load15P > 100.0F) load15P = 100.0F; 
-  
+    if(load15P > 100.0F) load15P = 100.0F;
+
     childrow = *(m_refTreeModel->append(row.children()));
     childrow[m_Columns.m_col_name] = "Load average 1";
     sprintf(buff, "%.1f%%", load1P);
@@ -278,7 +278,7 @@ void ResourceWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Memory";
     row[m_Columns.m_col_value] = "";
-    row.set_value(0, Gdk::Pixbuf::create_from_data(memory_ico.pixel_data, 
+    row.set_value(0, Gdk::Pixbuf::create_from_data(memory_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -300,7 +300,7 @@ void ResourceWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Storage";
     row[m_Columns.m_col_value] = "";
-    row.set_value(0, Gdk::Pixbuf::create_from_data(storage_ico.pixel_data, 
+    row.set_value(0, Gdk::Pixbuf::create_from_data(storage_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -322,7 +322,7 @@ void ResourceWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Peripheral devices";
     row[m_Columns.m_col_value] = "";
-    row.set_value(0, Gdk::Pixbuf::create_from_data(device_ico.pixel_data, 
+    row.set_value(0, Gdk::Pixbuf::create_from_data(device_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -340,7 +340,7 @@ void ResourceWindow::updateWidget()
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Processes";
     row[m_Columns.m_col_value] = "";
-    row.set_value(0, Gdk::Pixbuf::create_from_data(process_ico.pixel_data, 
+    row.set_value(0, Gdk::Pixbuf::create_from_data(process_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,

@@ -11,7 +11,7 @@ The name server is a YARP program that maintains a list of
 all YARP Ports and how to connect to them.  The name server
 itself has a YARP Port, usually named "/root".  All other
 YARP programs communicate with the name server through this
-port.  This communication is usually hidden within 
+port.  This communication is usually hidden within
 YARP library calls, but we document it here in order to
 allow communication with the name server by clients not
 using the YARP libraries.
@@ -20,15 +20,15 @@ using the YARP libraries.
 
 Connecting to the name server is just like connecting to any
 other YARP Port (see \ref yarp_protocol "Port Protocol").
-The one problem is that you have to find out where the 
+The one problem is that you have to find out where the
 name server is (what machine, what socket port number)
 somehow.  For other YARP Ports, you can solve that problem
 by asking the name server, but that option isn't available
 for the name server itself.
 
-One option is simply to make sure the name server is 
+One option is simply to make sure the name server is
 started on a particular known machine on your lab
-(say 192.168.0.3) on a known socket port number 
+(say 192.168.0.3) on a known socket port number
 (say 10000, the default).
 
 The name server itself, once started, records its
@@ -36,7 +36,7 @@ contact information in a configuration file
 (you can type "yarp conf" to find out where that
 file is).  Other YARP programs will check this file
 to see how to reach the name server.  If that doesn't
-work, there is a multicast protocol for discovering 
+work, there is a multicast protocol for discovering
 the server.  This is discussed in \ref name_server_discovery.
 
 \section name_server_content What the name server stores
@@ -47,7 +47,7 @@ The rest of the record contains whatever information is
 needed to make an initial connection to a given Port; for tcp this
 is at least a hostname and a socket number.  There is also
 a description of what kinds of connections the port can or is willing
-to participate in after the initial connection.  
+to participate in after the initial connection.
 The set of protocols (called ``carrier'' in this context)
 that  the port can accept an
 incoming data connection for are recorded as a set called the ``accept''
@@ -120,7 +120,7 @@ and the nature of its response.
 query PORT
 \endverbatim
 
-Requests registration information for the named port.  Response is of 
+Requests registration information for the named port.  Response is of
 the following form:
 \verbatim
 registration name PORT ip ADDRESS port NUMBER type CARRIER
@@ -147,7 +147,7 @@ command that is easier to use in automation.
 register PORT
 \endverbatim
 
-Requests creation of registration information for the named port.  
+Requests creation of registration information for the named port.
 Response is of the following form:
 \verbatim
 registration name PORT ip ADDRESS port NUMBER type CARRIER
@@ -159,14 +159,14 @@ registration name /write ip 5.255.112.227 port 10001 type tcp
 *** end of message
 \endverbatim
 
-Optionally, the user can take responsibility for more, and 
+Optionally, the user can take responsibility for more, and
 issue commands in one of the following forms:
 \verbatim
 register PORT CARRIER
 register PORT CARRIER IP
 register PORT CARRIER IP NUMBER
 \endverbatim
-Any value (including the port name) can be replaced by ``...'' to leave it 
+Any value (including the port name) can be replaced by ``...'' to leave it
 up to the name-server to choose it.  For example:
 \verbatim
 register ... tcp 127.0.0.1 8080
@@ -176,14 +176,14 @@ Gives something of the form:
 registration name /tmp/port/1 ip 127.0.0.1 port 8080 type tcp
 *** end of message
 \endverbatim
-If you choose to set the ip yourself, be careful -- there is the 
+If you choose to set the ip yourself, be careful -- there is the
 possibility of problems with multiple ways to identify the same
 machine.  It is best to let the name server choose a name,
 which it should do in a consistent way.  If a machine has
-multiple ip addresses on multiple networks, that can be 
-handled -- see the 
+multiple ip addresses on multiple networks, that can be
+handled -- see the
 discussion of the ips property in the section on set.
-That is important for the purposes of controlling which 
+That is important for the purposes of controlling which
 network is used for connections from one port to another.
 
 
@@ -195,7 +195,7 @@ network is used for connections from one port to another.
 unregister PORT
 \endverbatim
 
-Removes registration information for the named port.  
+Removes registration information for the named port.
 Response is of the following form:
 \verbatim
 *** end of message
@@ -258,7 +258,7 @@ lists carriers that an input port can support.
 get PORT PROPERTY
 \endverbatim
 
-Gets the values of a stored property. For example, 
+Gets the values of a stored property. For example,
 after the set command example shown earlier, the command:
 \verbatim
 get /write offers
@@ -275,7 +275,7 @@ port /write property offers = tcp udp mcast
 check PORT PROPERTY VALUE
 \endverbatim
 
-Checks if a stored property can take the given value. For example, 
+Checks if a stored property can take the given value. For example,
 after the set command example shown earlier, the command:
 \verbatim
 check /write offers tcp
@@ -317,8 +317,8 @@ Returns information about a port in an easy-to-parse,
 Bottle-compatible format.  Less easy to read for a human, but much
 better for automation.
 
-The return format is a list with the string "port" as its 
-first item, followed by one sub-list containing a series of key-value 
+The return format is a list with the string "port" as its
+first item, followed by one sub-list containing a series of key-value
 pairs.  One important key is "name", whose value is the name of the port.
 If the port requested does not exist, this key will not be present, and
 instead there will be an error key.
@@ -331,10 +331,10 @@ bot list /PREFIX
 \endverbatim
 
 Returns a list of ports in an easy-to-parse, Bottle-compatible
-format.  Less easy to read for a human, but much better for 
+format.  Less easy to read for a human, but much better for
 automation.
 
-The return format is a list with the string "ports" as its 
+The return format is a list with the string "ports" as its
 first item, followed by one sub-list for each matching port
 (if /PREFIX is supplied, this is all ports named /PREFIX or
 /PREFIX/*; if no prefix is supplied, it is all ports).
@@ -354,7 +354,7 @@ that looks like this:
 This gives the machine and socket-port that the name server is assumed
 to be running on.
 
-(The name of this file will be different if 
+(The name of this file will be different if
 \ref name_server_namespaces "namespaces"
 are in use.  You can always determine the name of this file
 and its expected location by typing \ref yarp_conf).
@@ -395,7 +395,7 @@ We've said that the name server is just a Port, with the name
 "/root".  In fact, you can change the Port name you expect
 a name server to have.  The Port name is called the "namespace".
 
-Type: 
+Type:
 \verbatim
   yarp namespace
 \endverbatim
@@ -441,12 +441,12 @@ rectify that.  On your machine, type:
 \verbatim
   yarp server
 \endverbatim
-This will start up a server with the name "/my/root".  
+This will start up a server with the name "/my/root".
 Now "yarp where" should start working, and if you type:
 \verbatim
   yarp check
 \endverbatim
-it should work, and you should see ports being registered on your personal 
+it should work, and you should see ports being registered on your personal
 name server.  If it does not work (perhaps you are on a wireless network,
 or multicast search is failing for some other reason), type "yarp conf" and
 edit/create the named file in the same way as described in

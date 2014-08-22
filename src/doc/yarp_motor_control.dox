@@ -13,18 +13,18 @@ possibility of efficient and specialized motor control code.
 @section yarp_motorcontrol_base Motor control.
 
 We take an example of a motor control device since this is simpler to
-explain than a general controller. The approach itself is 
-completely general though as for other device abstactions in yarp. 
-In particular, the following is an extract of the EsdMotionControl 
+explain than a general controller. The approach itself is
+completely general though as for other device abstactions in yarp.
+In particular, the following is an extract of the EsdMotionControl
 (see EsdMotionControl.h) declaration which wraps the iCub controller:
 
 \verbatim
 class yarp::dev::EsdMotionControl :
     public DeviceDriver,
-    public IPidControlRaw, 
-    public IPositionControlRaw, 
-    public IVelocityControlRaw, 
-    public IEncodersRaw, 
+    public IPidControlRaw,
+    public IPositionControlRaw,
+    public IVelocityControlRaw,
+    public IEncodersRaw,
     public IAmplifierControlRaw,
     public IControlDebug,
     public IControlLimitsRaw,
@@ -34,7 +34,7 @@ class yarp::dev::EsdMotionControl :
     public ImplementEncoders<EsdMotionControl, IEncoders>,
     public ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>,
     public ImplementControlLimits<EsdMotionControl, IControlLimits>
-    
+
 \endverbatim
 
 Beside the confusion here due to the multiplicity of interfaces the important thing
@@ -49,7 +49,7 @@ assumes:
 - an amplifier to power the actuators (\link yarp::dev::IAmplifierControl IAmplifierControl\endlink)
 
 These features are mapped directly onto interfaces. There are "raw" interfaces
-that speak directly to the control cards and wrapped interfaces that convert and 
+that speak directly to the control cards and wrapped interfaces that convert and
 rescale the values before sending them to the control cards. The wrapped interfaces
 accept angle in degrees, speed in degrees per seconds, etc. The numbering of the
 axes is also made coherent with respect to the robot kinematics.
@@ -67,11 +67,11 @@ Robot control is typically effected by:
 
 when done:
 - turning the amplifiers off
-- closing the device driver (note that the close() unlike the open() method is generic 
+- closing the device driver (note that the close() unlike the open() method is generic
 \link yarp::dev::DeviceDriver DeviceDriver\endlink).
 
 The loading of the controller parameters can be also done from a file by using the
-\link yarp::os::Property Property\endlink class and the fromConfigFile() method. This is 
+\link yarp::os::Property Property\endlink class and the fromConfigFile() method. This is
 the preferred method since the list of parameters is fairly large.
 
 For the \link yarp::dev::EsdMotionControl EsdMotionControl \endlink, for example, you find:
@@ -84,19 +84,19 @@ CanMyAddress	0
 CanPollingInterval	2
 CanTimeout	20
 
-[GENERAL] 
+[GENERAL]
 Joints 6
 MaxDAC 100.0 100.0 100.0 100.0 100.0 100.0
 
-AxisMap 0 1 2 3 4 5 
-Encoder 375.46 375.46 1399.46 1399.46 1399.46 1399.46 
-Zeros 0.0 0.0 0.0 0.0 0.0 0.0 
+AxisMap 0 1 2 3 4 5
+Encoder 375.46 375.46 1399.46 1399.46 1399.46 1399.46
+Zeros 0.0 0.0 0.0 0.0 0.0 0.0
 
 Verbose 0
 
 [LIMITS]
-Max 31.9 31.9 30.0 50.0 80.0 45.0 
-Min -29.29 -29.9 -30.0 -50.0 -80.0 -10.0 
+Max 31.9 31.9 30.0 50.0 80.0 45.0
+Min -29.29 -29.9 -30.0 -50.0 -80.0 -10.0
 Currents 1220.0 1220.0 1220.0 1220.0 1220.0 1220.0
 
 [PIDS]
@@ -114,20 +114,20 @@ general. After loading the parameters and opening the device, perhaps
 through the \link yarp::dev::PolyDriver PolyDriver\endlink, you need to:
 
 - configure the reference values: speed when doing position control or
-  acceleration for velocity control. This is accomplished through the 
-  \link yarp::dev::IPositionControl IPositionControl\endlink or 
-  \link yarp::dev::IVelocityControl IVelocityControl\endlink respectively. 
-  The \link yarp::dev::IEncoders IEncoders\endlink is 
-  used to read the positional information back for your own use: e.g. 
+  acceleration for velocity control. This is accomplished through the
+  \link yarp::dev::IPositionControl IPositionControl\endlink or
+  \link yarp::dev::IVelocityControl IVelocityControl\endlink respectively.
+  The \link yarp::dev::IEncoders IEncoders\endlink is
+  used to read the positional information back for your own use: e.g.
   closing another control loop.
-  
-- turn the amplifiers on: this is obtained through the use of the 
+
+- turn the amplifiers on: this is obtained through the use of the
   \link yarp::dev::IAmplifierControl IAmplifierControl\endlink.
-  
-- the \link yarp::dev::IPidControl IPidControl\endlink interface allows 
+
+- the \link yarp::dev::IPidControl IPidControl\endlink interface allows
   you to change the gains that have been loaded during open.
-  
-All these operations are performed through the wrapped interfaces. The "raw" 
+
+All these operations are performed through the wrapped interfaces. The "raw"
 interfaces are not normally used (they are used internally though). Once
 you are all set with this part, you can then start moving your axes by
 issuing commands through the:
@@ -141,8 +141,8 @@ control card and robot dependent. They assume also that you set the
 reference speeds and accelerations appropriately.
 
 To finish working with a motion control device, be gentle and reverse
-the settings you changed (some of them might stay resident in the 
-controller memory). As a last operation before close(), disable the 
+the settings you changed (some of them might stay resident in the
+controller memory). As a last operation before close(), disable the
 amplifiers so that it becomes safe again to move the robot.
 
 */

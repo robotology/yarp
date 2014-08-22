@@ -64,12 +64,12 @@ device fakebot
 
 In fact, those plugins are also "compiled in" to YARP, as normal.
 
-If we now recompile yarp with ENABLE_yarpmod_fakebot and 
-ENABLE_yarpcar_human_carrier turned OFF, these plugins 
+If we now recompile yarp with ENABLE_yarpmod_fakebot and
+ENABLE_yarpcar_human_carrier turned OFF, these plugins
 are no longer compiled into YARP.  But unless we have actually
 removed the library files we already built (libyarp_fakebot.so and
-libyarp_human.so), YARP will still be able to find them and load 
-them at runtime.  Running <tt>./bin/yarp plugin</tt> should give the same 
+libyarp_human.so), YARP will still be able to find them and load
+them at runtime.  Running <tt>./bin/yarp plugin</tt> should give the same
 results as before.
 
 
@@ -129,15 +129,15 @@ in this directory irrespective of whether the corresponding plugins
 are compiled or not.  To add plugins not included with YARP, an <tt>ini</tt>
 file may be placed in <tt>etc/yarp/plugins</tt>.
 
-YARP looks for <tt>etc/yarp/plugins</tt> using 
-a yarp::os::ResourceFinder.  If you don't already use configuration 
-files with YARP, one way to get going would be to create a file 
+YARP looks for <tt>etc/yarp/plugins</tt> using
+a yarp::os::ResourceFinder.  If you don't already use configuration
+files with YARP, one way to get going would be to create a file
 in your home directory called <tt>.yarp/plugins.ini</tt> (or <tt>yarp\plugins.ini</tt> on Windows) containing:
 \code
 style capability
 default_capability /path/to/your/yarp/build
 \endcode
-and then set a <tt>YARP_POLICY</tt> environment variable to 
+and then set a <tt>YARP_POLICY</tt> environment variable to
 <tt>plugins</tt> (matching the name of the ini file you placed in the <tt>.yarp</tt>/<tt>yarp</tt> directory).
 
 \section yarp_plugins_library Finding library files

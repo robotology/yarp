@@ -4,7 +4,7 @@
  *
  */
 
-/** 
+/**
  * @page carrier_expert Creating carriers for new kinds of connections
 
 \author Paul Fitzpatrick
@@ -13,7 +13,7 @@ In YARP, ports talk to each other via connections.  Connection data is
 carried by TCP by default, but this can be switched very easily to other
 "carriers".  See \ref carrier_config for information about
 how to configure connections using existing carriers.  Here, we are going
-to look at creating entirely new kinds of carriers.  
+to look at creating entirely new kinds of carriers.
 Why might you want to do this?
 
  \li You need to use an unusual kind of network that no YARP user has
@@ -35,17 +35,17 @@ If you are creating a carrier that uses a very different kind of
 network than anything already in YARP, you may need to go down a level
 further.  Before you can make a carrier, you need to have a "stream"
 class (implementing yarp::os::TwoWayStream) that supports
-shipping raw data back and forth on that network.  You don't need 
+shipping raw data back and forth on that network.  You don't need
 to worry about YARP protocol issues when making this class, it is
-just about being able to read and write raw data. 
+just about being able to read and write raw data.
 
 If you want to replace TCP entirely, for the initial handshaking
 done when setting up a connection, you'll need to do a bit more
-work. You'll need to squeeze any addressing information for your 
+work. You'll need to squeeze any addressing information for your
 network into the yarp::os::Contact class
 (or else you can extend that class).  And you'll need to implement
-a subclass of yarp::os::impl::Face that operates like 
-yarp::os::impl::TcpFace.  So that's a bit more work.  I wouldn't 
+a subclass of yarp::os::impl::Face that operates like
+yarp::os::impl::TcpFace.  So that's a bit more work.  I wouldn't
 recommend that being the first new carrier you make, try something
 simpler first to get used to how things work.
 
@@ -58,10 +58,10 @@ the yarp::os::impl ("implementation") namespace may change more from
 release to release than those in yarp::os (intended to be a stable
 user API).
 
-Header files for implementation classes may have dependencies on 
+Header files for implementation classes may have dependencies on
 header files from the ACE library.  This means that you need
 to take some care to make sure that the ACE header files on your
-system match those used to compile YARP.  
+system match those used to compile YARP.
 
 \section carrier_expert_classes Important classes
 
@@ -92,7 +92,7 @@ using namespace yarp::os::impl;
 A few things you need to know.  An important property of YARP carriers is that they do not need
 to be constant throughout a connection.  So, for example, a connection may begin using a TCP
 carrier (and in practice all connections currently do in fact start with TCP, though this is not
-required), and then switch to something more efficient after some handshaking. So watch out for 
+required), and then switch to something more efficient after some handshaking. So watch out for
 that.  In the \ref yarp_guts "YARP Guts" tutorial, you can see a little more
 how a carrier and connections relate.
 
@@ -121,8 +121,8 @@ be loosened, with a bit of care.
 
 \section carrier_expert_example A first example
 
-Here is a example that takes an existing carrier, the \ref carrier_config_text "ordinary text-mode carrier", and modifies it slightly (see example/carrier/carrier_stub.cpp).  The change is very small; we name our new carrier "test" (as 
-opposed to "text") and change its identifying 8-byte header from 
+Here is a example that takes an existing carrier, the \ref carrier_config_text "ordinary text-mode carrier", and modifies it slightly (see example/carrier/carrier_stub.cpp).  The change is very small; we name our new carrier "test" (as
+opposed to "text") and change its identifying 8-byte header from
 "CONNECT " to "TESTTEST".
 
 \include example/carrier/carrier_stub.cpp
@@ -136,7 +136,7 @@ The key steps are:
  an instance of our new class.  We also define the name associated with
  our class by overriding yarp::os::Carrier::getName.
 
- \li At the start of our program, we register an instance of that class 
+ \li At the start of our program, we register an instance of that class
  in a call to yarp::os::impl::Carriers::addCarrierPrototype.
 
 Having taken those steps, we can make connections using our new carrier
@@ -146,9 +146,9 @@ Having taken those steps, we can make connections using our new carrier
 Network::connect(...,...,"test");
 \endcode
 
-To make connections of this type from the command line with the 
-\ref yarp "yarp companion" (the "yarp" command), you need to insert your 
-carrier in the YARP library, or else compile a customized version of 
+To make connections of this type from the command line with the
+\ref yarp "yarp companion" (the "yarp" command), you need to insert your
+carrier in the YARP library, or else compile a customized version of
 the companion.  Here is the companion's source code in its entirety:
 
 \code
@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
 }
 \endcode
 
-So there isn't much to it to just insert a call to 
+So there isn't much to it to just insert a call to
 Carriers::addCarrierPrototype in there.  Otherwise, to put
 the new carrier in the YARP library proper, do a little pattern-matching
 in the constructor for the yarp::os::impl::Carriers class
@@ -173,7 +173,7 @@ The previous example just shows enough to make a carrier that is a small
 tweak of an existing one, but doesn't help much with setting up a completely
 new carrier.
 
-For that, we need to make a subclass of yarp::os::Carrier.  There's 
+For that, we need to make a subclass of yarp::os::Carrier.  There's
 a lot of methods that we need to specify.  First, some easy ones:
 
 <dl>
@@ -190,7 +190,7 @@ would select it in "yarp connect /from /to CARRIERNAME" for example.</dd>
 
 <dd>Return a flag specifying whether your carrier is "connection-based"
 or "connectionless" in the tcp/udp sense.  If connectionless, YARP will
-assume, for example, that failures of the connection on one side may not 
+assume, for example, that failures of the connection on one side may not
 be noticed on the other side, and take appropriate action.
 </dd>
 
@@ -208,7 +208,7 @@ of a connection. Normally this should be true.</dd>
 
 <dd>Return true if your carrier is text-mode, for human reading/writing.
 YARP will use textual variants of its administrative messages if this is
-the case, and objects that serialize using the YARP standard "bottle" 
+the case, and objects that serialize using the YARP standard "bottle"
 format (see \ref data_rep) will serialize in text form.
 </dd>
 
@@ -244,7 +244,7 @@ is no standard for this, it is not much used.</dd>
 </dl>
 
 Okay, that's a lot of stuff, but it is all "meta-data" - it describes
-your carrier, but doesn't implement it.  It is important to get right 
+your carrier, but doesn't implement it.  It is important to get right
 though since it controls how YARP will use your carrier.
 
 Now let us get down to implementation.  It might be worth having
@@ -303,7 +303,7 @@ of memory provided.</dd>
 
 <dt>yarp::os::Carrier::setParameters (RECIPIENT)</dt>
 
-<dd>Configure the carrier based on parameters that might be 
+<dd>Configure the carrier based on parameters that might be
 embedded within the "magic number" passed.  You can assume that
 the Carrier::checkHeader test has already succeeded.  For carriers
 with no variants, this method will do nothing.
@@ -311,7 +311,7 @@ with no variants, this method will do nothing.
 
 </dl>
 
-Now we need to set up a series of callbacks which are invoked 
+Now we need to set up a series of callbacks which are invoked
 during the header and header reply phases.
 
 <dl>
@@ -325,14 +325,14 @@ for historical reasons.</dd>
 <dt>yarp::os::Carrier::sendHeader (INITIATOR)</dt>
 
 <dd>Finally, we send some data!
-This method should first send the 8 bytes determined by 
+This method should first send the 8 bytes determined by
 yarp::os::Carrier::getHeader.
 The "proto" object you are passed has an OutputStream object accessible
 as yarp::os::ConnectionState::os() upon which you can write (you are
 passed a protocol object as an argument in this
 and most other callbacks).  Be sure to flush after writing
 these 8 bytes.  After that, you're free to send anything else you feel
-you need to.  You should definitely pass the name of the originating port, 
+you need to.  You should definitely pass the name of the originating port,
 if there is one, so that the recipient knows who it is talking to.
 You can get that information from proto.getRoute().getFromName()
 (yarp::os::ConnectionState::getRoute(), yarp::os::Route::getFromName()).
@@ -369,10 +369,10 @@ Use the proto.os() stream.  Fine to do nothing.
 This is also the moment to optionally drop the current input/output
 streams associated with the connection (probably TCP) and create
 an entirely different set (e.g. MCAST, UDP, SHMEM, or whatever kind
-of communication you are going to use).  The easiest way to 
+of communication you are going to use).  The easiest way to
 do that is to create suitable yarp::os::InputStream and
-yarp::os::OutputStream implementations, and then substitute 
-them in by calling proto.takeStreams (see 
+yarp::os::OutputStream implementations, and then substitute
+them in by calling proto.takeStreams (see
 yarp::os::ConnectionState::takeStreams).  Look at UdpCarrier.h
 or McastCarrier.h for examples.
 
@@ -384,7 +384,7 @@ or McastCarrier.h for examples.
 If the recipient does yarp::os::Carrier::respondToHeader, the initiator
 needs to read that data here.  Further rounds of handshaking are
 possible, but not formalized with callbacks - just do matching read/write
-sequences in yarp::os::Carrier::respondToHeader and 
+sequences in yarp::os::Carrier::respondToHeader and
 yarp::os::Carrier::expectReplyToHeader.
 
 This is also the moment for the initiator to optionally switch streams,
@@ -400,7 +400,7 @@ Return true if your carrier should be given data to transmit, or false
 if it should be ignored.  Almost always, returning true is what you want.
 However if there is a low-level implementation of broadcasting that you
 can exploit (as for multicast carrier), a set of "logical" connections
-may be identical underneath - so this method can be useful to avoid 
+may be identical underneath - so this method can be useful to avoid
 duplicate messages.
 
 If you didn't understand that, don't worry - just return true.
@@ -420,7 +420,7 @@ to push any data we are asked to transmit.
 One note: we've talked about an INITIATOR and a RECIPIENT carrier,
 based on who started the connection.  After our carriers exchange
 payload data, you should not assume that the carriers retain the
-same identity.  YARP reserves the right to switch around which 
+same identity.  YARP reserves the right to switch around which
 carrier is the initiator (there is a port-level command to do this).
 However, you can assume that there is always exactly one initiator.
 
@@ -434,7 +434,7 @@ commands:
 
 <dd>
 Here, you are given the usual "proto" protocol object, and
-an extra yarp::os::SizedWriter object that knows about 
+an extra yarp::os::SizedWriter object that knows about
 the size of what is to be sent, and also its content.
 
 Note: historically, the write operation was broken down into an
@@ -443,7 +443,7 @@ You still have to define that method, but it can do nothing.
 The write method is guaranteed to be called first.
 
 The last act of the write method should call in turn
-the write method on the SizedWriter object, passing the 
+the write method on the SizedWriter object, passing the
 output stream associated with the protocol object.
 </dd>
 
@@ -451,7 +451,7 @@ output stream associated with the protocol object.
 
 <dd>
 On the receiving side, this method should wait for a message
-to arrive.  If you wrote the message with some kind of 
+to arrive.  If you wrote the message with some kind of
 header, you could go ahead and consume that now.
 
 After expectIndex, YARP will do one or a series of reads
@@ -463,13 +463,13 @@ asymmetry here.
 
 </dl>
 
-Ok, at this point user data has been transmitted!  
+Ok, at this point user data has been transmitted!
 Note that if you want to transform how user data itself is expressed,
 you need to do that with a custom InputStream/OutputStream class.
 
-If your 
+If your
 carrier will send/expect acknowledgements of data transmission,
-you should define the following two methods appropriately - 
+you should define the following two methods appropriately -
 otherwise they should do nothing:
 
 <dl>
@@ -490,7 +490,7 @@ associated with the protocol object.
 
 </dl>
 
-At this point, YARP will call write/expectIndex methods again, and 
+At this point, YARP will call write/expectIndex methods again, and
 we loop.
 
 \section carrier_expert_packets An important detail: packets
@@ -500,9 +500,9 @@ a non-disastrous failure while sending data, they are expected to have a mechani
 for skipping to the next logical packet.  Your streams are informed about
 packet boundaries through the startPacket/endPacket methods.
 
-If your streams are connection-based, you can ignore this, but if they 
+If your streams are connection-based, you can ignore this, but if they
 are connectionless then it is important.
-Take a look at the UDP/MCAST streams (yarp::os::impl::DgramTwoWayStream) 
+Take a look at the UDP/MCAST streams (yarp::os::impl::DgramTwoWayStream)
 implementation, and the DgramTwoWayStreamTest.cpp regression tests.
 
 \section carrier_export_complete A complete example
@@ -582,7 +582,7 @@ What has happened is that the server has made a connection to the
 client, and then switched over to using our "human" protocol for
 transmitting data.  This protocol relies on reading and writing
 instructions to the console for a human to follow.  If we follow
-those instructions exactly, and in order, the program will 
+those instructions exactly, and in order, the program will
 successfully complete just as for any other carrier.
 
 

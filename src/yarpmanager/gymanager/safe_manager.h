@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -37,7 +37,7 @@ typedef enum __ThreadAction {
 
 
 class ApplicationEvent{
-public: 
+public:
     ApplicationEvent() {}
     virtual ~ApplicationEvent() {}
     virtual void onModStart(int which) {}
@@ -61,18 +61,18 @@ public:
     SafeManager();
     virtual ~SafeManager();
     bool prepare(yarp::manager::Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL);
-    
+
     bool threadInit();
     void run();
     void threadRelease();
-    
+
     void safeRun(std::vector<int>& MIDs);
     void safeStop(std::vector<int>& MIDs);
     void safeKill(std::vector<int>& MIDs);
     void safeConnect(std::vector<int>& CIDs);
     void safeDisconnect(std::vector<int>& CDs);
-    void safeRefresh(std::vector<int>& MIDs, 
-                     std::vector<int>& CIDs, 
+    void safeRefresh(std::vector<int>& MIDs,
+                     std::vector<int>& CIDs,
                      std::vector<int>& RIDs);
     void safeAttachStdout(std::vector<int>& MIDs);
     void safeDetachStdout(std::vector<int>& MIDs);
@@ -82,7 +82,7 @@ public:
     bool checkSemaphore(void){ return semManage.check(); }
     void postSemaphore(void) { semManage.post(); }
     void waitSemaphore(void) { semManage.wait(); }
-    bool busy(void) {return busyAction; } 
+    bool busy(void) {return busyAction; }
 
 protected:
     void onExecutableStart(void* which);

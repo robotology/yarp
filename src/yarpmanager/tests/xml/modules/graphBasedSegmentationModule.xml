@@ -19,8 +19,8 @@ for digitization artifacts)"> sigma </param>
         <author email="elena.ceseracciu@iit.it"> Elena Ceseracciu </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
         <!-- input data if available-->
         <input>
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
@@ -55,7 +55,7 @@ for digitization artifacts)"> sigma </param>
             <description>rpc port, accepts the commands defined in \link graphBasedSegmentationInterface.thrift  graphBasedSegmentationInterface.thrift \endlink and documented \link SegmentationModuleInterface here \endlink</description>
         </input>
 
-	
+
 
         <!-- output datas if available -->
         <output>
@@ -88,4 +88,3 @@ for digitization artifacts)"> sigma </param>
     </development>
 
 </module>
-

@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/* 
+/*
  * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author Lorenzo Natale
  * email:   lorenzo.natale@robotcub.org
@@ -22,7 +22,7 @@ public:
     unsigned int iterations;
     double t0;
     double prev;
-    
+
     FpsStats()
     {
         reset();
@@ -70,7 +70,7 @@ public:
             M=0;
         }
     }
-    
+
     void getStats(double &av)
     {
         if (iterations>0)

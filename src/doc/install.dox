@@ -9,7 +9,7 @@
 
 YARP is available from https://github.com/robotology/yarp
 
-For Debian and Ubuntu users, here's a quick summary of how to 
+For Debian and Ubuntu users, here's a quick summary of how to
 get a build of the core YARP libraries and utilities from source:
 \verbatim
   sudo apt-get install cmake libace-dev git
@@ -23,10 +23,10 @@ If you wish to install YARP programs and libraries system-wide
   sudo ldconfig
 \endverbatim
 
-You can also install to a custom directory by setting the CMake 
+You can also install to a custom directory by setting the CMake
 `CMAKE_INSTALL_PREFIX` variable.  In this case, consider also
 setting the `INSTALL_WITH_RPATH` variable to `ON`, since this will
-make it easier for YARP programs to find the corresponding YARP 
+make it easier for YARP programs to find the corresponding YARP
 libraries if they are not in your system's library path.
 
 If using YARP without installing it, consider setting some or all
@@ -68,7 +68,7 @@ Here are the more general steps needed to install YARP:
   \li \ref install_cmake "Install CMake"
   \li \ref install_ace "Install ACE"
   \li \ref install_yarp "Get YARP"
- 
+
 We suggest that, if you are a first-time user of YARP, you install
 it on one or two machines first, before trying to set it up for a
 cluster.
@@ -94,7 +94,7 @@ Read about and install CMake from here: http://www.cmake.org/
 Install CMake from here: http://www.cmake.org/HTML/Download.html
 
     \li Debian/Ubuntu/... Linux: apt-get install cmake
-    \li SUSE Linux: add the GURU YAST repository and use YAST for installing CMake or download directly the rpm from GURU website access 
+    \li SUSE Linux: add the GURU YAST repository and use YAST for installing CMake or download directly the rpm from GURU website access
 
 @subsection cmake_windows CMake in Windows
 
@@ -120,7 +120,7 @@ everything you've told it.
 On UNIX CMake can be used conveniently in two ways:
 
 \li From the command line : type "cmake ."
-\li Interactively: type "ccmake ." 
+\li Interactively: type "ccmake ."
 
 If you are running CMake while in a directory different to where your code is, replace "." with the path to your code.
 
@@ -132,7 +132,7 @@ If you are running CMake while in a directory different to where your code is, r
   cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .
 \endcode
 
-The generated file "CMakeCache.txt" contains all settings stored by CMake. It can be useful to delete this if you want to start over completely. 
+The generated file "CMakeCache.txt" contains all settings stored by CMake. It can be useful to delete this if you want to start over completely.
 
 
 @subsection cmake_example CMake Example
@@ -167,8 +167,8 @@ program. Easy!
 Notice that the abstract description of our project above can be
 shared by developers on Windows, Linux, OSX, ...
 
-\li There's another example you can try here: http://www.cmake.org/HTML/Examples.html 
- \li For more examples, and details, see: http://www.linuxjournal.com/article/6700 
+\li There's another example you can try here: http://www.cmake.org/HTML/Examples.html
+ \li For more examples, and details, see: http://www.linuxjournal.com/article/6700
 
 
 
@@ -191,17 +191,17 @@ details so you don't have to.
 \li For Ubuntu and other deb-based systems, we suggest you install the "libace-dev" package (on rpm-based systems, try libace-devel).
 \li For Windows and other systems we suggest the latest stable release (ACE-N.N.zip/ACE-N.N.tar.gz).  Download ACE here: http://download.dre.vanderbilt.edu/
 
-Compile ACE using our summary instructions, below, or through the 
-official method given here: 
+Compile ACE using our summary instructions, below, or through the
+official method given here:
 
 \code
 http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html
 \endcode
 
-Don't panic! The instructions cover a lot of operating systems and compilers. Just look carefully for your combination. 
+Don't panic! The instructions cover a lot of operating systems and compilers. Just look carefully for your combination.
           \li Windows/DevStudio instructions are here: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#msvc
           \li UNIX/gcc instructions are here: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional
-          \li OSX/gcc users, follow the UNIX instructions. 
+          \li OSX/gcc users, follow the UNIX instructions.
 
 ACE will take a while to compile, but if you can do it you'll be able to deal with anything we throw at you.
 
@@ -212,13 +212,13 @@ If you are on a system with a binary ACE package (Debian, Redhat,
 just install that and you are done. Otherwise you need to download
 ACE-5.5.tar.gz as described above and follow these steps:
 
-    \li Let's suppose you have placed ACE-5.5.tar.gz in the directory $HOME/work/. Then, in this directory, type: 
+    \li Let's suppose you have placed ACE-5.5.tar.gz in the directory $HOME/work/. Then, in this directory, type:
 
 \code
  tar xzvf - < ACE-5.5.tar.gz
 \endcode
 
-    \li You should now have a subdirectory called "ACE_wrappers". Type one (or if you're not sure which, type both) of: 
+    \li You should now have a subdirectory called "ACE_wrappers". Type one (or if you're not sure which, type both) of:
 
 \code
  export ACE_ROOT=$PWD/ACE_wrappers
@@ -226,30 +226,30 @@ ACE-5.5.tar.gz as described above and follow these steps:
 \endcode
 
     \li One of these lines will succeed and the other will fail, depending on what shell you use. That's fine. as long as when you type: "echo $ACE_ROOT" you get the ACE_wrappers directory.
-    \li You now need to configure ACE to your platform, by creating one build file and one include file. If you are on Linux, type: 
+    \li You now need to configure ACE to your platform, by creating one build file and one include file. If you are on Linux, type:
 
 \code
- cd $ACE_ROOT/include/makeinclude/ 
+ cd $ACE_ROOT/include/makeinclude/
  ln -s platform_linux.GNU platform_macros.GNU
  cd $ACE_ROOT/ace
  ln -s config-linux.h config.h
 \endcode
 
     \li If you are not on Linux, or even if you are, you should take a look at the platform_*.GNU and config-*.h files and pick the one that matches you.
-    \li Now, to compile, type: 
+    \li Now, to compile, type:
 
 \code
  cd $ACE_ROOT/ace; make
 \endcode
 
-    \li If all goes well, at the end you will have some files in ACE_wrappers/ace, for example (the .so may be .dylib or other variants): 
+    \li If all goes well, at the end you will have some files in ACE_wrappers/ace, for example (the .so may be .dylib or other variants):
 
 \code
  $ ls $ACE_ROOT/lib/
  libACE.so  libACE.so.5.4.7
 \endcode
 
-    \li One thing remains to be done; programs need to be able to find the ACE library at run time. You can set this up by runing one of the following: 
+    \li One thing remains to be done; programs need to be able to find the ACE library at run time. You can set this up by runing one of the following:
 
 \code
  export LD_LIBRARY_PATH=$ACE_ROOT/lib:$LD_LIBRARY_PATH
@@ -258,13 +258,13 @@ ACE-5.5.tar.gz as described above and follow these steps:
 
     \li (On OSX, the variable you need to set is DYLD_LIBRARY_PATH).
     \li An alternative is to copy the files in $ACE_ROOT/lib to a standard library directory, for example, /usr/lib.
-    \li We've given a simple procedure that works for most people. But if you run into a lot of trouble, we suggest you delete the ACE_wrappers directory, recreate it with tar again as above, and follow carefully all the detailed instructions in: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional 
+    \li We've given a simple procedure that works for most people. But if you run into a lot of trouble, we suggest you delete the ACE_wrappers directory, recreate it with tar again as above, and follow carefully all the detailed instructions in: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional
 
 
 
 @subsection ace_windows Compiling ACE on Windows
 
-For Borland C++Builder, MinGW, Cygwin instructions see: 
+For Borland C++Builder, MinGW, Cygwin instructions see:
 
 \code
 http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#win32
@@ -273,7 +273,7 @@ http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#win32
 For Visual Studio, here's a brief summary of the steps.
   \li Get ACE-5.5.zip as described above.
   \li Unpack its contents to a directory. Find the directory "ACE_wrappers" in the unpacked material.
-  \li In the "ACE_wrappers\ace" directory, create a file called "config.h" and edit it to be just this: 
+  \li In the "ACE_wrappers\ace" directory, create a file called "config.h" and edit it to be just this:
 
 \code
  #include "ace/config-win32.h"
@@ -282,7 +282,7 @@ For Visual Studio, here's a brief summary of the steps.
     \li Open Visual Studio. Go to open a project/workspace/solution, and browse to the directory "ACE_wrappers\ace".
     \li Find the project/workspace/solution that works for you: probably called "ACE.dsw" or "ace_vc8.sln".
     \li Compile! We suggest you compile both debug and release versions of the library.
-          \li On Visual Studio Express, you may need to add the in project properties -> linker -> input -> additional dependencies: kernel32.lib user32.lib advapi32.lib. See http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/ 
+          \li On Visual Studio Express, you may need to add the in project properties -> linker -> input -> additional dependencies: kernel32.lib user32.lib advapi32.lib. See http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/
     \li In the end, you should have some files in the directory ACE_wrappers/lib, including ACE.dll, ACE.lib, ACEd.dll, ACEd.lib (if you compiled both release and debug versions).
     \li You must make sure you include the path to "ACE_wrappers\lib" in your PATH environment variable whenever you run programs that uses ACE. See generic instructions for setting environment variables:
 
@@ -290,7 +290,7 @@ For Visual Studio, here's a brief summary of the steps.
 http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/environment_variables.mspx
 \endcode
 
-    \li It is also a good idea to set an environment variable ACE_ROOT to hold the path to ACE_wrappers. This will make it easier to find the libraries and header files. 
+    \li It is also a good idea to set an environment variable ACE_ROOT to hold the path to ACE_wrappers. This will make it easier to find the libraries and header files.
 
 
 On Windows you can unzip the ACE distribution and simply open the

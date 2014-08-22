@@ -10,7 +10,7 @@
 
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
-        <param desc="Name of the module" default="speechRecognizer"> name</param>	
+        <param desc="Name of the module" default="speechRecognizer"> name</param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -18,10 +18,10 @@
         <author email=""> Stephane Lallee  </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
 
-	<input>
+        <input>
             <type>Rpc</type>
             <port carrier="tcp">/speechRecognizer/rpc</port>
             <!-- required input means the execution of module depends on
@@ -61,7 +61,7 @@
          a memory resource dependency can be introduced with the required memory space. -->
     <dependencies>
         <computer>
-		<platform> Windows </platform>
+        <platform> Windows </platform>
         </computer>
     </dependencies>
 
@@ -69,8 +69,7 @@
     <development>
         <header></header>
         <library>Yarp C# Wrapper (/yarp2/example/swig)</library>
-	<library>System.Speech (available by default in .NET framework 4)</library>
+        <library>System.Speech (available by default in .NET framework 4)</library>
     </development>
 
 </module>
-

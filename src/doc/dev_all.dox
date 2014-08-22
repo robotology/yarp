@@ -17,12 +17,12 @@
  * is something you often have to do in robotics.
  *
  * Of course, pretty much every device has some special magic numbers
- * you need to set up at the beginning.  This process of 
+ * you need to set up at the beginning.  This process of
  * \link dev_class configuration \endlink process is separated out in YARP
  * to make it easy to control it via external command line switches
  * or configuration files.
  *
- * Under normal use, YARP devices are started from the 
+ * Under normal use, YARP devices are started from the
  * \link dev_runtime commandline\endlink.
  *
  */
@@ -32,7 +32,7 @@
  *
  * \defgroup dev_class Device Creation/Configuration
  *
- * Basic classes and methods related to creating and configuring 
+ * Basic classes and methods related to creating and configuring
  * devices, and network communication to and from devices.
  *
  */
@@ -121,10 +121,10 @@
 /**
  * @ingroup dev_all
  *
- * \defgroup dev_runtime Command-line Accessible Devices 
+ * \defgroup dev_runtime Command-line Accessible Devices
  *
  * Devices that can be created and configured from the command-line.
- * Generally you can create them with the yarpdev command by 
+ * Generally you can create them with the yarpdev command by
  * specifying a "--device" option followed by their name, for example:
  *
  @verbatim
@@ -138,10 +138,10 @@
  yarpdev --device test_grabber --width 640 --height 480 --name /test
  @endverbatim
  *
- * How do you know what options are available?  
+ * How do you know what options are available?
  * You can check our list of \ref dev_examples "device invocation examples".
  * Or When you try to run
- * "yarpdev --device yourdevice" 
+ * "yarpdev --device yourdevice"
  * and add the "--verbose" flag, it will tell you what options it is
  * checking, and any documentation present for those options.
  *

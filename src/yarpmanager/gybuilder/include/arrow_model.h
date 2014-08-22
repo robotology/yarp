@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -31,18 +31,18 @@ public:
     virtual ~ArrowModel();
 
     static Glib::RefPtr<ArrowModel> create(ApplicationWindow* parentWnd,
-                                           Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
+                                           Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
                                            yarp::manager::Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
 
-    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventMotion* event);
-    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
     void updatCoordiantes(void);
     void updatLabelCoordiante(void);
@@ -63,15 +63,15 @@ public:
     int addPoint(double x, double y);
     void deletePoint(double x, double y);
     bool deletePoint(int index);
-    
+
     void removeExcitation(const char* szName);
     void renameExcitation(const char* szOld, const char* szNew);
 
     yarp::manager::Connection* getConnection(void) { return &connection; }
     Glib::RefPtr<PortModel>& getSource(void) { return source; }
-    Glib::RefPtr<PortModel>& getDestination(void) { return destination; } 
-    
-    bool exist(void) { return bExist; } 
+    Glib::RefPtr<PortModel>& getDestination(void) { return destination; }
+
+    bool exist(void) { return bExist; }
     void showLabel(bool bShow);
     void setConnection(yarp::manager::Connection& con) { connection = con; }
 
@@ -86,17 +86,17 @@ public:
     const char* getId(void) { return connection.getId(); }
     void setId(const char* id) { connection.setId(id); }
 
-protected: 
-    ArrowModel(ApplicationWindow* parentWnd, 
-               Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest, 
+protected:
+    ArrowModel(ApplicationWindow* parentWnd,
+               Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
                yarp::manager::Connection* con=NULL, ApplicationModel* appModel=NULL, bool nullArw=false);
 
 private:
     ApplicationWindow* parentWindow;
     Glib::RefPtr<PortModel> source;
-    Glib::RefPtr<PortModel> destination; 
-    Glib::RefPtr<LabelModel> label; 
-    std::vector< Glib::RefPtr<MidpointModel> > midpoints; 
+    Glib::RefPtr<PortModel> destination;
+    Glib::RefPtr<LabelModel> label;
+    std::vector< Glib::RefPtr<MidpointModel> > midpoints;
     bool selected;
     bool bExist;
     bool bNested;

@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -30,17 +30,17 @@ public:
     static Glib::RefPtr<MidpointModel> create(ApplicationWindow* parentWnd,
                                            ArrowModel* arw, double x, double y);
 
-    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventMotion* event);
-    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    
+
     void snapToGrid(void);
     void updateCoordiantes(void);
     void setSelected(bool sel);
@@ -48,10 +48,10 @@ public:
     void remove();
     Gdk::Point getContactPoint(void);
 
-    double get_x(void) { return point_x; } 
-    double get_y(void) { return point_y; } 
+    double get_x(void) { return point_x; }
+    double get_y(void) { return point_y; }
 
-protected: 
+protected:
     MidpointModel(ApplicationWindow* parentWnd,
                   ArrowModel* arw, double x, double y);
 

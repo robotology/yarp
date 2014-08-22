@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -37,7 +37,7 @@ MessagesList::MessagesList(Gtk::Window* pParent) : bTimeStamp(false)
 
     //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText());
-    Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Messages")); 
+    Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Messages"));
     textRenderer->property_editable() = false;
     col->pack_start(*textRenderer, true);
     col->add_attribute(*textRenderer, "text", 0);
@@ -81,7 +81,7 @@ MessagesList::MessagesList(Gtk::Window* pParent) : bTimeStamp(false)
     if(ex.get())
     {
         std::cerr << "building popu menus failed: " << ex->what();
-    }   
+    }
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 
 
@@ -178,7 +178,7 @@ void MessagesList::onPMenuSave()
             {
               Gtk::TreeModel::Row row = *iter;
               ser<<row[m_Columns.m_col_text]<<endl;
-            }   
+            }
             ser.close();
         }
         else

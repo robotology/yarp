@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -22,8 +22,8 @@ class ConnectionPropItemColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ConnectionPropItemColumns() { 
-        add(m_col_name); 
+    ConnectionPropItemColumns() {
+        add(m_col_name);
         add(m_col_value);
         add(m_col_color_value);
         add(m_col_editable);
@@ -47,20 +47,20 @@ public:
 
     void update(Glib::RefPtr<ArrowModel>& arrow);
     void release(void);
-    
+
     Glib::RefPtr<ArrowModel>& getArrow(void) { return m_pArrow; }
 
 protected:
     void onCellData(Gtk::CellRenderer*, const Gtk::TreeModel::iterator& iter);
-    void onCellEdited(const Glib::ustring& path_string, 
+    void onCellEdited(const Glib::ustring& path_string,
                     const Glib::ustring& new_text);
 protected:
-    ConnectionPropItemColumns m_Columns;  
+    ConnectionPropItemColumns m_Columns;
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     Gtk::TreeView m_TreeView;
 
-private: 
-    const char* getCarrierOptions(const char* opt); 
+private:
+    const char* getCarrierOptions(const char* opt);
 
 private:
     MainWindow* m_pParent;

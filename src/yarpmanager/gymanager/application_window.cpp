@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -23,7 +23,7 @@ using namespace std;
 using namespace yarp::manager;
 
 
-ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy, 
+ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
                                     yarp::os::Property* config, MainWindow* parent)
 {
     dummy_h = dummy_w = 0;
@@ -73,7 +73,7 @@ void ApplicationWindow::createWidgets(void)
     m_TreeResView.set_rules_hint(true);
 
 
-     m_refPixSuspended =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
+    m_refPixSuspended =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -81,15 +81,15 @@ void ApplicationWindow::createWidgets(void)
                                 suspended_ico.height,
                                 suspended_ico.bytes_per_pixel*suspended_ico.width);
 
-    m_refPixRunning = Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data, 
+    m_refPixRunning = Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
                                 runnin_ico.width,
                                 runnin_ico.height,
                                 runnin_ico.bytes_per_pixel*runnin_ico.width);
-    
-    m_refPixWaiting = Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
+
+    m_refPixWaiting = Gdk::Pixbuf::create_from_data(progress_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -97,7 +97,7 @@ void ApplicationWindow::createWidgets(void)
                                 progress_ico.height,
                                 progress_ico.bytes_per_pixel*progress_ico.width);
 
-    m_refPixConnected = Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
+    m_refPixConnected = Gdk::Pixbuf::create_from_data(connected_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -105,7 +105,7 @@ void ApplicationWindow::createWidgets(void)
                                 connected_ico.height,
                                 connected_ico.bytes_per_pixel*connected_ico.width);
 
-    m_refPixDisconnected = Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
+    m_refPixDisconnected = Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -113,7 +113,7 @@ void ApplicationWindow::createWidgets(void)
                                 disconnected_ico.height,
                                 disconnected_ico.bytes_per_pixel*disconnected_ico.width);
 
-    m_refPixAvailable = Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data, 
+    m_refPixAvailable = Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -121,7 +121,7 @@ void ApplicationWindow::createWidgets(void)
                                 yesres_ico.height,
                                 yesres_ico.bytes_per_pixel*yesres_ico.width);
 
-    m_refPixUnAvailable = Gdk::Pixbuf::create_from_data(nores_ico.pixel_data, 
+    m_refPixUnAvailable = Gdk::Pixbuf::create_from_data(nores_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -129,7 +129,7 @@ void ApplicationWindow::createWidgets(void)
                                 nores_ico.height,
                                 nores_ico.bytes_per_pixel*nores_ico.width);
 
-    m_refPixUnknown = Gdk::Pixbuf::create_from_data(res_comp_unknown_ico.pixel_data, 
+    m_refPixUnknown = Gdk::Pixbuf::create_from_data(res_comp_unknown_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -137,7 +137,7 @@ void ApplicationWindow::createWidgets(void)
                                 res_comp_unknown_ico.height,
                                 res_comp_unknown_ico.bytes_per_pixel*res_comp_unknown_ico.width);
 
-    m_refPixComputer = Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+    m_refPixComputer = Gdk::Pixbuf::create_from_data(computer_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -145,7 +145,7 @@ void ApplicationWindow::createWidgets(void)
                                 computer_ico.height,
                                 computer_ico.bytes_per_pixel*computer_ico.width);
 
-    m_refPixPort = Gdk::Pixbuf::create_from_data(port_ico.pixel_data, 
+    m_refPixPort = Gdk::Pixbuf::create_from_data(port_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -153,7 +153,7 @@ void ApplicationWindow::createWidgets(void)
                                 port_ico.height,
                                 port_ico.bytes_per_pixel*port_ico.width);
 
-    m_refPixPortAvaibable = Gdk::Pixbuf::create_from_data(port_avail_ico.pixel_data, 
+    m_refPixPortAvaibable = Gdk::Pixbuf::create_from_data(port_avail_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -161,14 +161,14 @@ void ApplicationWindow::createWidgets(void)
                                 port_avail_ico.height,
                                 port_avail_ico.bytes_per_pixel*port_avail_ico.width);
 
-    m_refPixPortUnAvailable = Gdk::Pixbuf::create_from_data(port_unavail_ico.pixel_data, 
+    m_refPixPortUnAvailable = Gdk::Pixbuf::create_from_data(port_unavail_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
                                 port_unavail_ico.width,
                                 port_unavail_ico.height,
                                 port_unavail_ico.bytes_per_pixel*port_unavail_ico.width);
-    m_refPixPortUnknown = Gdk::Pixbuf::create_from_data(port_unknown_ico.pixel_data, 
+    m_refPixPortUnknown = Gdk::Pixbuf::create_from_data(port_unknown_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -176,7 +176,7 @@ void ApplicationWindow::createWidgets(void)
                                 port_unknown_ico.height,
                                 port_unknown_ico.bytes_per_pixel*port_unknown_ico.width);
 
-    //Add the Model’s column to the Module View’s columns:  
+    //Add the Model’s column to the Module View’s columns:
     Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Module"));
     Gtk::CellRendererText* cellText = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf());
@@ -207,38 +207,38 @@ void ApplicationWindow::createWidgets(void)
     m_TreeModView.get_column(3)->set_sort_column(m_modColumns.m_col_host);
     m_TreeModView.get_column(3)->set_resizable(true);
     m_TreeModView.get_column(3)->add_attribute(*m_TreeModView.get_column_cell_renderer(3),
-                                                     "editable", 
+                                                     "editable",
                                                      m_modColumns.m_col_editable);
     m_TreeModView.append_column_editable("Parameters", m_modColumns.m_col_param);
     m_TreeModView.get_column(4)->set_sort_column(m_modColumns.m_col_param);
     m_TreeModView.get_column(4)->set_resizable(true);
     m_TreeModView.get_column(4)->add_attribute(*m_TreeModView.get_column_cell_renderer(4),
-                                                     "editable", 
+                                                     "editable",
                                                      m_modColumns.m_col_editable);
 
     m_TreeModView.append_column_editable("Stdio", m_modColumns.m_col_stdio);
     m_TreeModView.get_column(5)->set_sort_column(m_modColumns.m_col_stdio);
     m_TreeModView.get_column(5)->set_resizable(true);
     m_TreeModView.get_column(5)->add_attribute(*m_TreeModView.get_column_cell_renderer(5),
-                                                     "editable", 
+                                                     "editable",
                                                      m_modColumns.m_col_editable);
 
     m_TreeModView.append_column_editable("Work Dir", m_modColumns.m_col_wdir);
     m_TreeModView.get_column(6)->set_sort_column(m_modColumns.m_col_env);
     m_TreeModView.get_column(6)->set_resizable(true);
     m_TreeModView.get_column(6)->add_attribute(*m_TreeModView.get_column_cell_renderer(6),
-                                                     "editable", 
+                                                     "editable",
                                                      m_modColumns.m_col_editable);
 
     m_TreeModView.append_column_editable("Environment", m_modColumns.m_col_env);
     m_TreeModView.get_column(7)->set_sort_column(m_modColumns.m_col_env);
     m_TreeModView.get_column(7)->set_resizable(true);
     m_TreeModView.get_column(7)->add_attribute(*m_TreeModView.get_column_cell_renderer(7),
-                                                     "editable", 
+                                                     "editable",
                                                      m_modColumns.m_col_editable);
 
 
-    //Add the Model’s column to the connection View’s columns:  
+    //Add the Model’s column to the connection View’s columns:
     Gtk::TreeViewColumn* ccol = Gtk::manage(new Gtk::TreeViewColumn("Connection"));
     Gtk::CellRendererText* ccellText = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererPixbuf* ccellPix = Gtk::manage(new Gtk::CellRendererPixbuf());
@@ -247,7 +247,7 @@ void ApplicationWindow::createWidgets(void)
     ccol->add_attribute(*ccellText, "text", 1);
     ccol->add_attribute(*ccellPix, "pixbuf", 0);
     m_TreeConView.append_column(*ccol);
-    
+
     m_TreeConView.append_column("ID", m_conColumns.m_col_id);
 
     Gtk::CellRendererText* statusRenderer2 = Gtk::manage(new Gtk::CellRendererText());
@@ -260,37 +260,37 @@ void ApplicationWindow::createWidgets(void)
     m_TreeConView.append_column(*statusCol2);
 
     int idx = m_TreeConView.append_column_editable("From", m_conColumns.m_col_from) - 1;
-    Gtk::CellRendererText* fromRenderer = 
+    Gtk::CellRendererText* fromRenderer =
             dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(idx));
     if(fromRenderer)
     {
-        m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
-                                                     "editable", 
+        m_TreeConView.get_column(idx)->add_attribute(*fromRenderer,
+                                                     "editable",
                                                      m_conColumns.m_col_editable);
-        m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
-                                                     "foreground-gdk", 
+        m_TreeConView.get_column(idx)->add_attribute(*fromRenderer,
+                                                     "foreground-gdk",
                                                      m_conColumns.m_col_from_color);
-        m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
-                                                     "text", 
+        m_TreeConView.get_column(idx)->add_attribute(*fromRenderer,
+                                                     "text",
                                                      m_conColumns.m_col_from);
         m_TreeConView.get_column(idx)->set_sort_column(m_conColumns.m_col_from);
         m_TreeConView.get_column(idx)->set_resizable(true);
     }
 
     idx = m_TreeConView.append_column_editable("To", m_conColumns.m_col_to) - 1 ;
-    Gtk::CellRendererText* toRenderer = 
+    Gtk::CellRendererText* toRenderer =
             dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(idx));
     if(toRenderer)
     {
         //toRenderer->property_editable() = m_conColumns.m_col_editable;
-        m_TreeConView.get_column(idx)->add_attribute(*toRenderer, 
-                                                     "editable", 
+        m_TreeConView.get_column(idx)->add_attribute(*toRenderer,
+                                                     "editable",
                                                      m_conColumns.m_col_editable);
-        m_TreeConView.get_column(idx)->add_attribute(*toRenderer, 
-                                                     "foreground-gdk", 
+        m_TreeConView.get_column(idx)->add_attribute(*toRenderer,
+                                                     "foreground-gdk",
                                                      m_conColumns.m_col_to_color);
-        m_TreeConView.get_column(idx)->add_attribute(*toRenderer, 
-                                                     "text", 
+        m_TreeConView.get_column(idx)->add_attribute(*toRenderer,
+                                                     "text",
                                                      m_conColumns.m_col_to);
         m_TreeConView.get_column(idx)->set_sort_column(m_conColumns.m_col_to);
         m_TreeConView.get_column(idx)->set_resizable(true);
@@ -298,7 +298,7 @@ void ApplicationWindow::createWidgets(void)
 
     m_TreeConView.append_column_editable("Carrier", m_conColumns.m_col_carrier);
     m_TreeConView.get_column(5)->add_attribute(*m_TreeConView.get_column_cell_renderer(5),
-                                                     "editable", 
+                                                     "editable",
                                                      m_conColumns.m_col_editable);
 
     m_TreeConView.get_column(0)->set_sort_column(m_conColumns.m_col_type);
@@ -314,7 +314,7 @@ void ApplicationWindow::createWidgets(void)
     m_TreeConView.get_column(5)->set_sort_column(m_conColumns.m_col_carrier);
     m_TreeConView.get_column(5)->set_resizable(true);
 
-    //Add the Model’s column to the resource View’s columns:    
+    //Add the Model’s column to the resource View’s columns:
     Gtk::TreeViewColumn* rcol = Gtk::manage(new Gtk::TreeViewColumn("Resource"));
     Gtk::CellRendererText* rcellText = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererPixbuf* rcellPix = Gtk::manage(new Gtk::CellRendererPixbuf());
@@ -325,8 +325,8 @@ void ApplicationWindow::createWidgets(void)
     m_TreeResView.append_column(*rcol);
 
     m_TreeResView.append_column("ID", m_resColumns.m_col_id);
-    
-    Gtk::CellRendererText* statusRenderer3 = Gtk::manage(new Gtk::CellRendererText()); 
+
+    Gtk::CellRendererText* statusRenderer3 = Gtk::manage(new Gtk::CellRendererText());
     statusRenderer3->property_editable() = false;
     Gtk::TreeViewColumn* statusCol3 = Gtk::manage(new Gtk::TreeViewColumn("Status", *statusRenderer3));
     statusCol3->add_attribute(*statusRenderer3, "foreground-gdk", m_resColumns.m_col_color);
@@ -366,8 +366,8 @@ void ApplicationWindow::createWidgets(void)
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuConnect) );
     m_refActionGroup->add( Gtk::Action::create("PManageDisconnect", Gtk::Stock::DISCONNECT, "_Disconnect", "Disconnect links"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuDisconnect) );
-    
-    m_refActionGroup->add( Gtk::Action::create("InspectConnection", "Inspect") );    
+
+    m_refActionGroup->add( Gtk::Action::create("InspectConnection", "Inspect") );
     m_refActionGroup->add( Gtk::Action::create("InspectYarpRead", "yarp_read", "yarpread"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpRead) );
     m_refActionGroup->add( Gtk::Action::create("InspectYarpView", "yarpview", "yarpview"),
@@ -375,12 +375,12 @@ void ApplicationWindow::createWidgets(void)
     m_refActionGroup->add( Gtk::Action::create("InspectYarpHear", "yarphear", "yarphear"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpHear) );
     m_refActionGroup->add( Gtk::Action::create("InspectYarpScope", "yarpscope", "yarpscope"),
-                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpScope) );    
+                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuInspectYarpScope) );
 
     m_refActionGroup->add( Gtk::Action::create("PManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
     m_refActionGroup->add( Gtk::Action::create("PManageStdout", Gtk::Stock::NETWORK, "_Attach to stdout", "Attach to standard output"),
-                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuAttachStdout) );        
+                            sigc::mem_fun(*this, &ApplicationWindow::onPMenuAttachStdout) );
     m_refActionGroup->add( Gtk::Action::create("PModuleSelAll", Gtk::StockID("YSELECTALL"), "Select _all modules", "Select all modules"),
                             sigc::mem_fun(*this, &ApplicationWindow::onPModuleSelectAll) );
     m_refActionGroup->add( Gtk::Action::create("PConenctionSelAll", Gtk::StockID("YSELECTALL"), "_Select all connections", "Select all connections"),
@@ -414,9 +414,9 @@ void ApplicationWindow::createWidgets(void)
         "        <menuitem action='InspectYarpRead'/>"
         "        <menuitem action='InspectYarpView'/>"
         "        <menuitem action='InspectYarpHear'/>"
-        "        <menuitem action='InspectYarpScope'/>"      
+        "        <menuitem action='InspectYarpScope'/>"
         "      </menu>"
- 
+
         " </popup>"
         " <popup name='PopupResources'>"
         "      <menuitem action='PManageRefresh'/>"
@@ -440,14 +440,14 @@ void ApplicationWindow::createWidgets(void)
     if(ex.get())
     {
         std::cerr << "building popup menus failed: " << ex->what();
-    }   
+    }
 #endif //GLIBMM_EXCEPTIONS_ENABLED
 
-    m_TreeModView.setMouseEventCallback(this, 
+    m_TreeModView.setMouseEventCallback(this,
                 &ApplicationWindow::onModuleTreeButtonPressed);
-    m_TreeConView.setMouseEventCallback(this, 
+    m_TreeConView.setMouseEventCallback(this,
                 &ApplicationWindow::onConnectionTreeButtonPressed);
-    m_TreeResView.setMouseEventCallback(this, 
+    m_TreeResView.setMouseEventCallback(this,
                 &ApplicationWindow::onResourceTreeButtonPressed);
 
 }
@@ -468,20 +468,20 @@ void ApplicationWindow::setupSignals(void)
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 6)
     for(unsigned int i=3; i<m_TreeModView.get_columns().size(); i++)
     {
-        Gtk::CellRendererText* render = 
+        Gtk::CellRendererText* render =
             dynamic_cast<Gtk::CellRendererText*>(m_TreeModView.get_column_cell_renderer(i));
         if(render)
         {
             render->signal_editing_started().connect( sigc::mem_fun(*this,
-                &ApplicationWindow::onModuleEditingStarted) );               
+                &ApplicationWindow::onModuleEditingStarted) );
             //render->signal_edited().connect( sigc::mem_fun(*this,
-            //    &ApplicationWindow::onModuleEdited) );               
+            //    &ApplicationWindow::onModuleEdited) );
         }
     }
 
     for(unsigned int i=3; i<m_TreeConView.get_columns().size(); i++)
     {
-        Gtk::CellRendererText* render = 
+        Gtk::CellRendererText* render =
             dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(i));
         if(render)
         {
@@ -495,20 +495,20 @@ void ApplicationWindow::setupSignals(void)
 
 void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 {
-    
-    manager.prepare(lazy, m_pConfig, 
+
+    manager.prepare(lazy, m_pConfig,
                     dynamic_cast<ApplicationEvent*>(this));
 
     // loading application
     if(manager.loadApplication(szAppName))
        updateApplicationWindow();
-    
+
     reportErrors();
 }
 
 void ApplicationWindow::updateApplicationWindow(void)
 {
-    
+
     m_refTreeModModel->clear();
     m_refTreeConModel->clear();
     m_refTreeResModel->clear();
@@ -518,7 +518,7 @@ void ApplicationWindow::updateApplicationWindow(void)
     ExecutablePIterator moditr;
     CnnIterator cnnitr;
 
-    int id = 0;  
+    int id = 0;
     for(moditr=modules.begin(); moditr<modules.end(); moditr++)
     {
         m_modRow = *(m_refTreeModModel->append());
@@ -535,14 +535,14 @@ void ApplicationWindow::updateApplicationWindow(void)
         m_modRow[m_modColumns.m_col_env] = (*moditr)->getEnv();
     }
 
-    id = 0;  
+    id = 0;
     for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
     {
         m_conRow = *(m_refTreeConModel->append());
         m_conRow[m_conColumns.m_col_id] = id++;
         m_conRow.set_value(0, m_refPixDisconnected);
-        
-        
+
+
         if((*cnnitr).isPersistent())
             m_conRow[m_conColumns.m_col_type] = "Persistent";
         else
@@ -560,7 +560,7 @@ void ApplicationWindow::updateApplicationWindow(void)
         m_conRow[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
         //m_conRow[m_conColumns.m_col_from_color] = Gdk::Color("#BF0303");
     }
-    
+
     id = 0;
     ResourcePIterator itrS;
     for(itrS=manager.getResources().begin(); itrS!=manager.getResources().end(); itrS++)
@@ -571,12 +571,12 @@ void ApplicationWindow::updateApplicationWindow(void)
         {
             m_resRow.set_value(0, m_refPixUnknown);
             m_resRow[m_resColumns.m_col_type] = "computer";
-        }            
+        }
         else if(dynamic_cast<ResYarpPort*>(*itrS))
         {
             m_resRow.set_value(0, m_refPixPortUnknown);
             m_resRow[m_resColumns.m_col_type] = "port";
-        }            
+        }
         m_resRow[m_resColumns.m_col_res] = (*itrS)->getName();
         m_resRow[m_resColumns.m_col_status] = "unknown";
         m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
@@ -588,12 +588,12 @@ void ApplicationWindow::updateApplicationWindow(void)
 
 void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
 {
-    //if it's a mouse click 
+    //if it's a mouse click
     if(event->type == GDK_BUTTON_PRESS)
-    {   
+    {
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
-        bool bOnItem = m_TreeModView.get_path_at_pos((int)event->x, 
+        bool bOnItem = m_TreeModView.get_path_at_pos((int)event->x,
                                                      (int)event->y, path);
         // if it's not a free click
         if(bOnItem)
@@ -613,8 +613,8 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
             m_refActionGroup->get_action("PManageStdout")->set_sensitive(false);
             m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
         }
-#endif 
-        // if it's a right click 
+#endif
+        // if it's a right click
         if(event->button == 3)
         {
             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
@@ -627,13 +627,13 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
 
 void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
 {
-    //if it's a mouse click 
+    //if it's a mouse click
     if(event->type == GDK_BUTTON_PRESS)
     {
 
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
-        bool bOnItem = m_TreeConView.get_path_at_pos((int)event->x, 
+        bool bOnItem = m_TreeConView.get_path_at_pos((int)event->x,
                                                      (int)event->y, path);
         // if it's not a free click
         if(bOnItem)
@@ -649,8 +649,8 @@ void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
             m_refActionGroup->get_action("PManageDisconnect")->set_sensitive(false);
             m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
         }
-#endif      
-        // if it's a right click 
+#endif
+        // if it's a right click
         if(event->button == 3)
         {
             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
@@ -664,13 +664,13 @@ void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
 
 void ApplicationWindow::onResourceTreeButtonPressed(GdkEventButton* event)
 {
-    //if it's a mouse click 
+    //if it's a mouse click
     if(event->type == GDK_BUTTON_PRESS)
     {
 
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
-        bool bOnItem = m_TreeResView.get_path_at_pos((int)event->x, 
+        bool bOnItem = m_TreeResView.get_path_at_pos((int)event->x,
                                                      (int)event->y, path);
         // if it's not a free click
         if(bOnItem)
@@ -682,8 +682,8 @@ void ApplicationWindow::onResourceTreeButtonPressed(GdkEventButton* event)
             m_refTreeResSelection->unselect_all();
             m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
         }
-#endif      
-        // if it's a right click 
+#endif
+        // if it's a right click
         if(event->button == 3)
         {
             Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
@@ -771,7 +771,7 @@ bool ApplicationWindow::areAllShutdown(void)
             return false;
     }
 
-    // check for connection status 
+    // check for connection status
     children = m_refTreeConModel->children();
     for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
     {
@@ -784,7 +784,7 @@ bool ApplicationWindow::areAllShutdown(void)
 
 
 /*
-void ApplicationWindow::onModuleEditingStarted(Gtk::CellEditable* cell_editable, 
+void ApplicationWindow::onModuleEditingStarted(Gtk::CellEditable* cell_editable,
                                 const Glib::ustring& path_string)
 {
     Gtk::TreePath path(path_string);
@@ -797,7 +797,7 @@ void ApplicationWindow::onModuleEditingStarted(Gtk::CellEditable* cell_editable,
         Glib::ustring strStatus = Glib::ustring(row[m_modColumns.m_col_status]);
         if(strStatus != Glib::ustring("stopped"))
         {
-            //Tell the user:          
+            //Tell the user:
             OSTRINGSTREAM msg;
             msg<<"Editing "<<Glib::ustring(row[m_modColumns.m_col_name])<<"!";
             Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
@@ -808,7 +808,7 @@ void ApplicationWindow::onModuleEditingStarted(Gtk::CellEditable* cell_editable,
 }
 
 
-void ApplicationWindow::onConnectionEditingStarted(Gtk::CellEditable* cell_editable, 
+void ApplicationWindow::onConnectionEditingStarted(Gtk::CellEditable* cell_editable,
                                 const Glib::ustring& path_string)
 {
     Gtk::TreePath path(path_string);
@@ -821,7 +821,7 @@ void ApplicationWindow::onConnectionEditingStarted(Gtk::CellEditable* cell_edita
         Glib::ustring strStatus = Glib::ustring(row[m_conColumns.m_col_status]);
         if(strStatus != Glib::ustring("disconnected"))
         {
-            //Tell the user:          
+            //Tell the user:
             OSTRINGSTREAM msg;
             msg<<"Editing connections!";
             Gtk::MessageDialog dialog(msg.str(), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
@@ -836,16 +836,16 @@ void ApplicationWindow::setCellsEditable(void)
 {
 /*
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
-    // for the gtkmm > 2.6 we do not use SetCellEditable and 
-    // the corresponding functinality will be taken care by 
+    // for the gtkmm > 2.6 we do not use SetCellEditable and
+    // the corresponding functinality will be taken care by
     // signal_editing_started()
-    //  	
+    //  
 #else
     bool bFlag = areAllShutdown();
 
     for(unsigned int i=3; i<m_TreeModView.get_columns().size(); i++)
     {
-        Gtk::CellRendererText* render = 
+        Gtk::CellRendererText* render =
             dynamic_cast<Gtk::CellRendererText*>(m_TreeModView.get_column_cell_renderer(i));
         if(render)
         {
@@ -853,13 +853,13 @@ void ApplicationWindow::setCellsEditable(void)
                 render->property_editable() = bFlag;
             #else
                 render->_validated.set_property("editable", bFlag);
-            #endif      
+            #endif
         }
     }
 
     for(unsigned int i=3; i<m_TreeConView.get_columns().size(); i++)
     {
-        Gtk::CellRendererText* render = 
+        Gtk::CellRendererText* render =
             dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(i));
         if(render)
         {
@@ -867,10 +867,10 @@ void ApplicationWindow::setCellsEditable(void)
                 render->property_editable() = bFlag;
             #else
                 render->_validated.set_property("editable", bFlag);
-            #endif      
+            #endif
         }
     }
-#endif    
+#endif
 */
 }
 
@@ -883,18 +883,18 @@ bool ApplicationWindow::onRun(void)
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
         sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
-            
+
     // changing icons and updating Executables with cell paramters
     for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
     {
         Gtk::TreeModel::Row row;
         if(getModRowByID(m_ModuleIDs[i], &row))
         {
-            manager.updateExecutable(m_ModuleIDs[i], 
+            manager.updateExecutable(m_ModuleIDs[i],
                 Glib::ustring(row[m_modColumns.m_col_param]).c_str(),
-                Glib::ustring(row[m_modColumns.m_col_host]).c_str(), 
+                Glib::ustring(row[m_modColumns.m_col_host]).c_str(),
                 Glib::ustring(row[m_modColumns.m_col_stdio]).c_str(),
-                Glib::ustring(row[m_modColumns.m_col_wdir]).c_str(), 
+                Glib::ustring(row[m_modColumns.m_col_wdir]).c_str(),
                 Glib::ustring(row[m_modColumns.m_col_env]).c_str() );
 
              row[m_modColumns.m_col_status] = "waiting";
@@ -903,11 +903,11 @@ bool ApplicationWindow::onRun(void)
              row.set_value(0, m_refPixWaiting);
         }
     }
-    setCellsEditable(); 
+    setCellsEditable();
     manager.safeRun(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
     m_refTreeModSelection->unselect_all();
-    return true;    
+    return true;
 }
 
 
@@ -934,7 +934,7 @@ bool ApplicationWindow::onStop(void)
     manager.safeStop(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
     m_refTreeModSelection->unselect_all();
-    return true;    
+    return true;
 }
 
 
@@ -953,11 +953,11 @@ bool ApplicationWindow::onKill(void)
         Gtk::MessageDialog dialog("Killing modules!", false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
         dialog.set_secondary_text("Are you sure?");
         if(dialog.run() != Gtk::RESPONSE_YES)
-        {        
+        {
             m_refTreeModSelection->unselect_all();
             return false;
         }
-   // }   
+   // }
 
     for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
     {
@@ -975,13 +975,13 @@ bool ApplicationWindow::onKill(void)
     manager.safeKill(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
     m_refTreeModSelection->unselect_all();
-    return true;    
+    return true;
 }
 
 
 
-bool ApplicationWindow::onConnect(void) 
-{ 
+bool ApplicationWindow::onConnect(void)
+{
     if(manager.busy()) return false;
 
     m_ConnectionIDs.clear();
@@ -989,15 +989,15 @@ bool ApplicationWindow::onConnect(void)
     m_refTreeConSelection->selected_foreach_iter(
         sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
 
-    // updating connections with modified cell values 
+    // updating connections with modified cell values
     for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
     {
         Gtk::TreeModel::Row row;
         if(getConRowByID(m_ConnectionIDs[i], &row))
         {
-            manager.updateConnection(m_ConnectionIDs[i], 
-                Glib::ustring(row[m_conColumns.m_col_from]).c_str(), 
-                Glib::ustring(row[m_conColumns.m_col_to]).c_str(), 
+            manager.updateConnection(m_ConnectionIDs[i],
+                Glib::ustring(row[m_conColumns.m_col_from]).c_str(),
+                Glib::ustring(row[m_conColumns.m_col_to]).c_str(),
                 Glib::ustring(row[m_conColumns.m_col_carrier]).c_str() );
 
                 row[m_conColumns.m_col_status] = "waiting";
@@ -1011,11 +1011,11 @@ bool ApplicationWindow::onConnect(void)
     manager.safeConnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
     m_refTreeConSelection->unselect_all();
-    return true;    
+    return true;
 }
 
 
-bool ApplicationWindow::onDisconnect(void) 
+bool ApplicationWindow::onDisconnect(void)
 {
     if(manager.busy()) return false;
 
@@ -1038,14 +1038,14 @@ bool ApplicationWindow::onDisconnect(void)
     manager.safeDisconnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
     m_refTreeConSelection->unselect_all();
-    return true;    
+    return true;
 }
 
 void ApplicationWindow::onPMenuInspectYarpView(void)
 {
     if(manager.busy()) return;
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -1106,7 +1106,7 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
 {
     if(manager.busy()) return;
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -1123,7 +1123,7 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
 #if defined(WIN32)
             std::string cmd = "cmd.exe";
             OSTRINGSTREAM param;
-			param << "/C yarphear --name " <<to;
+            param << "/C yarphear --name " <<to;
 
 #else
             std::string cmd = "xterm";
@@ -1131,7 +1131,7 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
             param<<"-hold " << "-title " << from << " -e yarphear --nodevice --name " << to;
 #endif
             LocalBroker launcher;
-			launcher.showConsole(true);
+            launcher.showConsole(true);
             if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))
@@ -1148,16 +1148,16 @@ void ApplicationWindow::onPMenuInspectYarpHear(void)
                     double base = yarp::os::Time::now();
                     while(!timeout(base, 3.0))
                         if(launcher.exists(to.c_str())) break;
-					if(!launcher.exists(to.c_str()))
-					{
+                    if(!launcher.exists(to.c_str()))
+                    {
                         OSTRINGSTREAM msg;
                         msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
-						msg<<". Did you build yarp with 'portaudio' module?";
-						logger->addError(msg);
+                        msg<<". Did you build yarp with 'portaudio' module?";
+                        logger->addError(msg);
                         launcher.stop();
                         reportErrors();
-					}
-					else if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
+                    }
+                    else if(!launcher.connect(from.c_str(), to.c_str(), "udp"))
                     {
                         OSTRINGSTREAM msg;
                         msg<<"Cannot inspect '"<<from<<"' : "<<launcher.error();
@@ -1179,7 +1179,7 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
 {
     if(manager.busy()) return;
     ErrorLogger* logger  = ErrorLogger::Instance();
-    
+
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -1195,7 +1195,7 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
 
 #if defined(WIN32)
             std::string cmd = "cmd.exe";
-			OSTRINGSTREAM param;
+            OSTRINGSTREAM param;
             param << "/C yarp read " << to;
 
 #else
@@ -1204,7 +1204,7 @@ void ApplicationWindow::onPMenuInspectYarpRead(void)
             param<<"-hold " << "-title " << from << " -e yarp read " << to;
 #endif
             LocalBroker launcher;
-			launcher.showConsole(true);
+            launcher.showConsole(true);
             if(launcher.init(cmd.c_str(), param.str().c_str(), NULL, NULL, NULL, NULL))
             {
                 if(!launcher.start() && strlen(launcher.error()))
@@ -1242,12 +1242,12 @@ void ApplicationWindow::onPMenuInspectYarpScope(void)
 {
     if(manager.busy()) return;
     ErrorLogger* logger  = ErrorLogger::Instance();
-  
+
     InspectYScopeWindow wnd;
     if(wnd.run() != Gtk::RESPONSE_OK)
         return;
 
-    
+
     std::string strIndex = wnd.m_EntryIndex.get_text();
 
     m_ConnectionIDs.clear();
@@ -1351,9 +1351,9 @@ bool ApplicationWindow::onRefresh(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    
-    manager.safeRefresh(m_ModuleIDs, 
-                        m_ConnectionIDs, 
+
+    manager.safeRefresh(m_ModuleIDs,
+                        m_ConnectionIDs,
                         m_ResourceIDs);
     yarp::os::Time::delay(0.1);
 
@@ -1361,13 +1361,13 @@ bool ApplicationWindow::onRefresh(void)
     m_refTreeConSelection->unselect_all();
     m_refTreeResSelection->unselect_all();
 
-    return true;    
+    return true;
 
 }
 
 
 bool ApplicationWindow::onAttachStdout()
-{ 
+{
     if(manager.busy()) return false;
 
     m_ModuleIDs.clear();
@@ -1378,7 +1378,7 @@ bool ApplicationWindow::onAttachStdout()
     for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
     {
         int id = m_ModuleIDs[i];
-        std::map<int, StdoutWindow*>::iterator itr = m_MapstdWnds.find(id); 
+        std::map<int, StdoutWindow*>::iterator itr = m_MapstdWnds.find(id);
         if(itr == m_MapstdWnds.end())
         {
             Gtk::TreeModel::Row row;
@@ -1387,7 +1387,7 @@ bool ApplicationWindow::onAttachStdout()
             {
                 string name = Glib::ustring(row[m_modColumns.m_col_name]).c_str();
                 strTitle<<getApplicationName()<<":"<<name<<":"<<id;
-            }                
+            }
             m_MapstdWnds[id] = new StdoutWindow(this, id, strTitle.str().c_str());
         }
         m_MapstdWnds[id]->show();
@@ -1426,30 +1426,30 @@ void ApplicationWindow::onPMenuLoadBalance(void)
 
             row.set_value(0, m_refPixWaiting);
         }
- 
+
         manager.safeLoadBalance();
         yarp::os::Time::delay(0.1);
     }
     else
     {
-        ErrorLogger* logger  = ErrorLogger::Instance(); 
+        ErrorLogger* logger  = ErrorLogger::Instance();
         logger->addError("Running modules should be stopped before assigning hosts.");
         reportErrors();
     }
 }
 
 
-void ApplicationWindow::onTabCloseRequest() 
-{ 
-    m_pParent->onTabCloseRequest(this); 
+void ApplicationWindow::onTabCloseRequest()
+{
+    m_pParent->onTabCloseRequest(this);
 }
 
 
-bool ApplicationWindow::onClose(void) 
+bool ApplicationWindow::onClose(void)
 {
     if(manager.busy()) return false;
 
-    bool bAllStoped = true; 
+    bool bAllStoped = true;
     typedef Gtk::TreeModel::Children type_children;
     type_children children = m_refTreeModModel->children();
     for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
@@ -1480,7 +1480,7 @@ bool ApplicationWindow::onClose(void)
     //yarp::os::Time::delay(2);
     releaseApplication();
     return true;
-} 
+}
 
 
 bool ApplicationWindow::onSelectAll(void)
@@ -1514,7 +1514,7 @@ bool ApplicationWindow::onExportGraph(void)
         string fname = dialog.get_filename();
         if(!manager.exportDependencyGraph(fname.c_str()))
         {
-            ErrorLogger* logger  = ErrorLogger::Instance(); 
+            ErrorLogger* logger  = ErrorLogger::Instance();
             logger->addError("Cannot export graph");
             reportErrors();
             return false;
@@ -1524,7 +1524,7 @@ bool ApplicationWindow::onExportGraph(void)
 }
 
 
-void ApplicationWindow::onModStart(int which) 
+void ApplicationWindow::onModStart(int which)
 {
     GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
@@ -1540,7 +1540,7 @@ void ApplicationWindow::onModStart(int which)
 }
 
 
-void ApplicationWindow::onModStop(int which) 
+void ApplicationWindow::onModStop(int which)
 {
     GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
@@ -1556,7 +1556,7 @@ void ApplicationWindow::onModStop(int which)
     GDK_THREADS_LEAVE();
 }
 
-void ApplicationWindow::onConConnect(int which) 
+void ApplicationWindow::onConConnect(int which)
 {
     GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
@@ -1572,7 +1572,7 @@ void ApplicationWindow::onConConnect(int which)
 }
 
 
-void ApplicationWindow::onConDisconnect(int which) 
+void ApplicationWindow::onConDisconnect(int which)
 {
     GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
@@ -1647,7 +1647,7 @@ void ApplicationWindow::onResAvailable(int which)
     GDK_THREADS_LEAVE();
 }
 
-void ApplicationWindow::onResUnAvailable(int which) 
+void ApplicationWindow::onResUnAvailable(int which)
 {
     GDK_THREADS_ENTER();
     Gtk::TreeModel::Row row;
@@ -1665,7 +1665,7 @@ void ApplicationWindow::onResUnAvailable(int which)
     GDK_THREADS_LEAVE();
 }
 
-void ApplicationWindow::onError(void) 
+void ApplicationWindow::onError(void)
 {
     GDK_THREADS_ENTER();
     reportErrors();
@@ -1675,7 +1675,7 @@ void ApplicationWindow::onError(void)
 void ApplicationWindow::onModStdout(int which, const char* msg)
 {
     GDK_THREADS_ENTER();
-    std::map<int, StdoutWindow*>::iterator itr = m_MapstdWnds.find(which); 
+    std::map<int, StdoutWindow*>::iterator itr = m_MapstdWnds.find(which);
     if(itr != m_MapstdWnds.end())
     {
         StdoutWindow* wnd = (*itr).second;
@@ -1695,14 +1695,14 @@ void ApplicationWindow::onLoadBalance(void)
 
 void ApplicationWindow::releaseApplication(void)
 {
-    std::map<int, StdoutWindow*>::iterator itr; 
+    std::map<int, StdoutWindow*>::iterator itr;
     for(itr=m_MapstdWnds.begin(); itr!=m_MapstdWnds.end(); itr++)
     {
         (*itr).second->hide();
         delete (*itr).second;
     }
     m_MapstdWnds.clear();
-    
+
 #if (GLIBMM_MAJOR_VERSION == 2 && GLIBMM_MINOR_VERSION >= 16)
     m_refPixSuspended.reset();
     m_refPixRunning.reset();
@@ -1711,30 +1711,30 @@ void ApplicationWindow::releaseApplication(void)
     m_refPixDisconnected.reset();
     m_refPixAvailable.reset();
     m_refPixUnAvailable.reset();
-#endif    
+#endif
 }
 
 
 void ApplicationWindow::reportErrors(void)
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     if(logger->errorCount() || logger->warningCount())
     {
         const char* err;
         while((err=logger->getLastError()))
         {
             OSTRINGSTREAM msg;
-            msg<<"("<<getApplicationName()<<") "<<err; 
+            msg<<"("<<getApplicationName()<<") "<<err;
             m_pParent->m_refMessageList->addError(msg.str().c_str());
         }
 
         while((err=logger->getLastWarning()))
         {
             OSTRINGSTREAM msg;
-            msg<<"("<<getApplicationName()<<") "<<err; 
+            msg<<"("<<getApplicationName()<<") "<<err;
             m_pParent->m_refMessageList->addWarning(msg.str().c_str());
         }
-    }   
+    }
 }
 
 

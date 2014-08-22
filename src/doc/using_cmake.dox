@@ -4,7 +4,7 @@
  *
  */
 
-/** 
+/**
  * @page using_cmake Using CMake
 
 \author Paul Fitzpatrick
@@ -23,7 +23,7 @@ with a basic project here:
 
   \li \ref install_cmake
 
-Now we're going to go into CMake usage in a little more 
+Now we're going to go into CMake usage in a little more
 depth.  But let's start simple, with a basic "hello world"
 example.
 
@@ -34,7 +34,7 @@ example.
 Let's use CMake to compile the usual "hello world" program.
 
 Create a directory "cmake_tutorial" to work in.
-Save the following as "main.cpp" within 
+Save the following as "main.cpp" within
 that directory:
 
 \code
@@ -45,7 +45,7 @@ that directory:
     }
 \endcode
 
-Then save the following as "CMakeLists.txt" within the 
+Then save the following as "CMakeLists.txt" within the
 same directory:
 
 \verbatim
@@ -54,13 +54,13 @@ same directory:
     add_executable(hello main.cpp)
 \endverbatim
 
-The first line gives a CMake version number.  CMake is evolving with 
+The first line gives a CMake version number.  CMake is evolving with
 time, so it is useful to warn a user if they have a version of CMake
-too old to work on your project.  More importantly, by giving a 
+too old to work on your project.  More importantly, by giving a
 version number CMake can support your project indefinitely into
 the future as its language changes.
 
-The second line gives a name for our project.  If we compile 
+The second line gives a name for our project.  If we compile
 using Makefiles, this won't do anything, but if we compile with
 something like Visual Studio, the project name will be used for
 our workspace/solution.
@@ -80,9 +80,9 @@ CMake GUI on Windows, see:
 From the command-line, you can see all the options cmake takes
 by running it without any arguments.
 
-we usually run cmake with a single 
-argument that specifies the directory the source code is 
-in.  We could also specify what kind of tool we will want to 
+we usually run cmake with a single
+argument that specifies the directory the source code is
+in.  We could also specify what kind of tool we will want to
 build with (Unix Makefiles, CodeBlocks, Eclipse, KDevelop3, ...).
 By default, CMake will produce Unix Makefiles on systems where
 that make sense.
@@ -140,11 +140,11 @@ and directories we see after CMake has run:
 
 \verbatim
 $ ls
-CMakeCache.txt  CMakeFiles  cmake_install.cmake  CMakeLists.txt  
+CMakeCache.txt  CMakeFiles  cmake_install.cmake  CMakeLists.txt
 main.cpp        Makefile
 \endverbatim
 
-Normally, we don't actually want all this junk mixed in 
+Normally, we don't actually want all this junk mixed in
 with our source code. It is very common
 with CMake to do "out-of-source" builds, where compiling happens
 in a different directory to the source.  So let's try doing
@@ -190,7 +190,7 @@ make a library as well.  The library will be called "namer"
 and it will have a single function "getWorld" that returns
 the name of the nearest planet.
 
-We choose to put this library in a subdirectory called 
+We choose to put this library in a subdirectory called
 "namer" - it doesn't really matter where we put it,
 this is just an example.
 
@@ -234,14 +234,14 @@ and by "main.cpp":
 
 The "include_directories" command makes
 sure "world.h" can be found when included in source code.
-We supply the path relative to "CMAKE_SOURCE_DIR", which is a 
+We supply the path relative to "CMAKE_SOURCE_DIR", which is a
 variable pointing to our source directory.
 
 The "add_library" command tells CMake that we want to make
 a library called "namer" ("namer.lib" on Windows, "libnamer.a"
 on Linux, ...) using the supplied source code.  Note that
 header files should be included in this list (although it
-will work without them).  There are extra commands you can 
+will work without them).  There are extra commands you can
 use to organize code into different groups for presentation
 in IDEs like visual studio, but we'll skip over that.
 
@@ -287,7 +287,7 @@ This is also similar to what we had before, except we now use the
 "find_package" command.  This command is used to find external
 material that your project needs.
 
-If you try configuring and compiling the library, it will work 
+If you try configuring and compiling the library, it will work
 fine.  But the executable will not work yet.
 You will get an error like this (depends on CMake version):
 
@@ -306,8 +306,8 @@ CMake tried some ways it knows but none of them worked.
 
 One way we can help CMake find the Namer package (which will be our
 namer library) is by writing a helper script called FindNamer.cmake.
-This is just another file written in the CMake language that 
-pokes around in all the places our library might be hiding. 
+This is just another file written in the CMake language that
+pokes around in all the places our library might be hiding.
 Here is an example (put this in "hello/FindNamer.cmake"):
 
 \verbatim
@@ -316,7 +316,7 @@ Here is an example (put this in "hello/FindNamer.cmake"):
   find_library(Namer_LIBRARIES namer /usr/lib "$ENV{NAMER_ROOT}")
 
   set(Namer_FOUND TRUE)
- 
+
   if (NOT Namer_INCLUDE_DIRS)
     set(Namer_FOUND FALSE)
   endif (NOT Namer_INCLUDE_DIRS)
@@ -329,7 +329,7 @@ Here is an example (put this in "hello/FindNamer.cmake"):
 The important parts here are the "find_path" and "find_library"
 commands, which look for the header file world.h and the namer
 library.  I wrote them to check the Unix standard locations first,
-then a directory specified by an environment variable.  
+then a directory specified by an environment variable.
 
 Now modify "hello/CMakeLists.txt" so that it can find this script:
 \verbatim

@@ -12,7 +12,7 @@
     #pragma warning (disable : 4250)
     #pragma warning (disable : 4520)
     #pragma warning (disable : 4099)
-	#define NOMINMAX 
+    #define NOMINMAX
     #include <windows.h>
 #else
     #include <unistd.h>
@@ -24,7 +24,7 @@
 #endif
 
 #if defined(WIN32)
-	#undef max 
+    #undef max
 #endif
 
 #include <gtkmm.h>
@@ -74,7 +74,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
     //set_border_width(3);
     set_default_size(WND_DEF_WIDTH, WND_DEF_HEIGHT);
 
-    m_refMessageList = new MessagesList(this);   
+    m_refMessageList = new MessagesList(this);
     m_refMessageList->enableTimeStamp();
     m_refModPreview = new ModulePreviewWindow(this);
 
@@ -99,18 +99,18 @@ MainWindow::MainWindow( yarp::os::Property &config)
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
-            
+
             if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
                 strPath = strPath + string(PATH_SEPERATOR);
 
-            
+
             lazyManager.addModules(strPath.c_str());
             if (pos==string::npos || pos==0)
                 break;
             modPaths=modPaths.substr(pos+1);
         }
-        
+
     }
 
     if(config.check("respath"))
@@ -124,17 +124,17 @@ MainWindow::MainWindow( yarp::os::Property &config)
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
-            
+
             if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
                 strPath = strPath + string(PATH_SEPERATOR);
-         
+
             lazyManager.addResources(strPath.c_str());
             if (pos==string::npos)
                 break;
             resPaths=resPaths.substr(pos+1);
         }
-        
+
     }
 
     ErrorLogger* logger  = ErrorLogger::Instance();
@@ -149,7 +149,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
             trimString(strPath);
             if (!isAbsolute(strPath.c_str()))
                 strPath=basepath+strPath;
-            
+
             if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
                 (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
                     strPath = strPath + string(PATH_SEPERATOR);
@@ -162,12 +162,12 @@ MainWindow::MainWindow( yarp::os::Property &config)
             }
             else
                 lazyManager.addApplications(strPath.c_str());
-                
+
             if (pos==string::npos)
                 break;
             appPaths=appPaths.substr(pos+1);
         }
-        
+
 
 
     }
@@ -185,7 +185,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
 
             if(!loadRecursiveTemplates(strPath.c_str()))
                     logger->addError("Cannot load the templates from  " + strPath);
-            
+
             if (pos==string::npos)
                 break;
             templPaths=templPaths.substr(pos+1);
@@ -207,7 +207,7 @@ MainWindow::~MainWindow()
     delete m_refApplicationList;
 #if (GLIBMM_MAJOR_VERSION == 2 && GLIBMM_MINOR_VERSION >= 16)
     m_factory.reset();
-#endif    
+#endif
 }
 
 void MainWindow::on_size_allocate(Gtk::Allocation& allocation)
@@ -230,7 +230,7 @@ void MainWindow::on_size_allocate(Gtk::Allocation& allocation)
 void MainWindow::createWidgets(void)
 {
 
-     set_icon(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data, 
+     set_icon(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data,
                         Gdk::COLORSPACE_RGB,
                         true,
                         8,
@@ -294,7 +294,7 @@ void MainWindow::createWidgets(void)
 //        "      <menu action='Rotate'>"
 //        "        <menuitem action='RotateRight'/>"
 //        "        <menuitem action='RotateLeft'/>"
-//        "      </menu>" 
+//        "      </menu>"
         "    </menu>"
         "    <menu action='WindowMenu'>"
         "      <menuitem action='WindowItem'/>"
@@ -358,7 +358,7 @@ void MainWindow::createWidgets(void)
         " <popup name='PopupCanvas'>"
         "      <menuitem action='InsertSrcPort'/>"
         "      <menuitem action='InsertDestPort'/>"
-        "      <separator/>" 
+        "      <separator/>"
         "      <menuitem action='EditDelete'/>"
         "      <separator/>"
         "      <menuitem action='EditCut'/>"
@@ -605,7 +605,7 @@ void MainWindow::setupActions(void)
     m_refActionGroup->add(Gtk::Action::create("FileMenu", "File"));
     m_refActionGroup->add(Gtk::Action::create("FileNew", Gtk::Stock::NEW, "New"), Gtk::AccelKey());
     m_refActionGroup->add(Gtk::Action::create("FileNewApp",
-                Gtk::Stock::NEW, "New _Application", "Create a new Application"), 
+                Gtk::Stock::NEW, "New _Application", "Create a new Application"),
                 sigc::mem_fun(*this, &MainWindow::onMenuFileNewApp));
     m_refActionGroup->add(Gtk::Action::create("FileNewMod",
                 Gtk::Stock::NEW, "New _Module", "Create a new Module"), Gtk::AccelKey("<control>m"),
@@ -701,7 +701,7 @@ void MainWindow::setupActions(void)
                             sigc::mem_fun(*this, &MainWindow::onMenuHelpOnlineHelp) );
     m_refActionGroup->add( Gtk::Action::create("HelpAbout", Gtk::Stock::ABOUT),
                             sigc::mem_fun(*this, &MainWindow::onMenuHelpAbout) );
-    
+
     //Popup Application
     m_refActionGroup->add( Gtk::Action::create("PAppRemove", Gtk::Stock::REMOVE, "_Remove", "Remove"),
                             sigc::mem_fun(*this, &MainWindow::onPAppMenuRemove) );
@@ -716,7 +716,7 @@ void MainWindow::setupActions(void)
                             sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
     m_refActionGroup->add( Gtk::Action::create("PEditFile", Gtk::Stock::EDIT , "_Edit File", "Edit xml file"),
                         sigc::mem_fun(*this, &MainWindow::onEditFile) );
-   
+
    m_refActionGroup->add( Gtk::Action::create("PCreateAppFromTemp", Gtk::Stock::NEW , "_Create Application ...", "Create application ..."),
                         sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
 
@@ -764,7 +764,7 @@ void MainWindow::setupActions(void)
 
 void MainWindow::reportErrors(void)
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     if(logger->errorCount() || logger->warningCount())
     {
         const char* err;
@@ -993,7 +993,7 @@ void MainWindow::onMenuFileNewMod()
     dialog.set_transient_for(*this);
     dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
     dialog.set_do_overwrite_confirmation(true);
-    
+
     if (m_config.check("yarpdatahome"))
     {
         Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
@@ -1012,9 +1012,9 @@ void MainWindow::onMenuFileNewMod()
         if (!isAbsolute(strPath.c_str()))
             strPath=basepath+strPath;
 
-        dialog.set_current_folder(strPath.c_str()); 
+        dialog.set_current_folder(strPath.c_str());
     }
-    
+
     //Add response buttons the the dialog:
     dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
     dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
@@ -1072,12 +1072,12 @@ void MainWindow::onMenuFileNewRes()
     dialog.set_transient_for(*this);
     dialog.set_action(Gtk::FILE_CHOOSER_ACTION_SAVE);
     dialog.set_do_overwrite_confirmation(true);
-    
+
     if (m_config.check("yarpdatahome"))
     {
         Glib::ustring homePath=m_config.find("yarpdatahome").asString().c_str();
         homePath +=  string(PATH_SEPERATOR) + string("resources") + string(PATH_SEPERATOR);
-        
+
         dialog.set_current_folder(homePath.c_str());
 
     }
@@ -1220,7 +1220,7 @@ void MainWindow::onMenuFileOpen()
         {
             syncApplicationList();
         }
-        
+
         reportErrors();
         //also update manager for open applications
         for(int i=0; i<m_mainTab.get_n_pages(); i++)
@@ -1234,7 +1234,7 @@ void MainWindow::onMenuFileOpen()
                 appWnd->manager.addModule(fname.c_str());
             }
         }
-        
+
     }
 
 }
@@ -1296,7 +1296,7 @@ void MainWindow::onMenuFileSaveAs()
 }
 
 
-void MainWindow::onMenuFileImport() 
+void MainWindow::onMenuFileImport()
 {
     Gtk::FileChooserDialog dialog("Please choose a folder", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
     dialog.set_transient_for(*this);
@@ -1570,14 +1570,14 @@ void MainWindow::onMenuHelpOnlineHelp()
 {
     string helpPage="http://eris.liralab.it/yarpdoc/yarpmanager.html";
 #ifdef WIN32
-    if (!(int(ShellExecute(NULL, "open", helpPage.c_str(), NULL, NULL, SW_SHOWNORMAL)) > 32)) 
+    if (!(int(ShellExecute(NULL, "open", helpPage.c_str(), NULL, NULL, SW_SHOWNORMAL)) > 32))
     {
         Gtk::MessageDialog dialog("Cannot open online help!", false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_CLOSE);
         dialog.set_secondary_text(helpPage);
         dialog.run();
     }
 #else
-#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)  
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
     GError *error = NULL;
     gtk_show_uri(gdk_screen_get_default(),
                  helpPage.c_str(),
@@ -1599,7 +1599,7 @@ void MainWindow::onMenuHelpOnlineHelp()
 
 void MainWindow::onMenuHelpAbout()
 {
-    Gtk::AboutDialog dialog; 
+    Gtk::AboutDialog dialog;
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 12)
     dialog.set_program_name("YARP Builder");
 #endif
@@ -1817,7 +1817,7 @@ void MainWindow::onMenuWindowMessage()
     act = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic(
             m_refActionGroup->get_action("WindowMessage"));
     if(act)
-    { 
+    {
         if(!act->get_active())
             m_VPaned.remove(*m_VPaned.get_child2());
         else
@@ -2078,7 +2078,7 @@ void MainWindow::manageApplication(const char* szName)
 
 void MainWindow::manageResource(const char* szName)
 {
-    
+
     Glib::ustring name = szName;
     int page_num = -1;
     for(int i=0; i<m_mainTab.get_n_pages(); i++)
@@ -2165,8 +2165,8 @@ void MainWindow::manageTemplate(const char* szName)
             strPath = strPath + string(PATH_SEPERATOR);
 
         string fname = strPath + dialog.m_EntryFileName.get_text();
-        application->setName(dialog.m_EntryName.get_text().c_str());                
-        XmlAppSaver appSaver(fname.c_str());                
+        application->setName(dialog.m_EntryName.get_text().c_str());
+        XmlAppSaver appSaver(fname.c_str());
         if(appSaver.save(application))
         {
             char szAppName[255];

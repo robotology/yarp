@@ -4,7 +4,7 @@
 
 \author Lorenzo Natale
 
-YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. This tutorial shows how you can automate this process using the Thrift compiler. 
+YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. This tutorial shows how you can automate this process using the Thrift compiler.
 
 <b>This tutorial requires the yarpidl_thrift utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
 
@@ -31,17 +31,17 @@ name this file \em SharedData.thrift save and close it.
 
 In thrift's syntax this specifies that SharedData is a struct that contains a \em text field of type \em string and a \em content field which type is a \em vector of floats. Thrift in fact supports much more options, see \ref thrift_tutorial.
 
-Now the \em yarpidl_thrift compiler can be invoked to generate both SharedData.h and SharedData.cpp. 
+Now the \em yarpidl_thrift compiler can be invoked to generate both SharedData.h and SharedData.cpp.
 
 Type:
 
-\code 
+\code
 
 yarpidl_thrift --gen yarp --out ./ SharedData.thrift
 
 \endcode
 
-This will generate two files: \em SharedData.h \em and \em SharedData.cpp \em. 
+This will generate two files: \em SharedData.h \em and \em SharedData.cpp \em.
 
 In case you are interested you can inspect them to see that they define a C++ class with some extra code. The good thing is that you don't actually need to bother about the details, but you can readily use the class in your code.
 
@@ -49,7 +49,7 @@ Now we can use these files in a YARP program.
 
 \section sec-code Code
 
-This code is straightforward. We define a simple sender executable that open a port and periodically write a SharedData object. 
+This code is straightforward. We define a simple sender executable that open a port and periodically write a SharedData object.
 
 As usual we start with the CMake code, write your CMakeLists.txt:
 
@@ -92,7 +92,7 @@ int main()
    }
 
    cout<<"Starting sender\n";
-   
+
    while(true)
    {
       SharedData d;
@@ -108,7 +108,7 @@ int main()
 
       yarp::os::Time::delay(0.1);
    }
-  
+
    return 0;
 }
 
@@ -172,21 +172,21 @@ int main()
        port.read(d);
 
        //access d
-       
+
    }
-   
+
    return 0;
 }
 
 \endcode
 
-\section sec_using-cmake Using CMake 
+\section sec_using-cmake Using CMake
 
 YARP provides CMake supports to automate the invocation of yarpidl_thrift. This is convenient in large projects when we generate several files and we do not want to keep track of all of them individually.
 
 Edit the file CMakeLists.txt:
 
-\code 
+\code
 
 cmake_minimum_required(VERSION 2.8.7)
 
@@ -197,7 +197,7 @@ include(YarpIDL)
 
 \endcode
 
-The last two lines load support for the YarpIDL compiler. 
+The last two lines load support for the YarpIDL compiler.
 
 We now tell CMake to parse SharedData.thrift with the thrift compiler. All generated files will be placed in separate \em include and \em src directories.
 
@@ -237,9 +237,9 @@ The code generation step is required only when \em SharedData.thrift is modified
 
 \section sec-realted-tutorials Related Tutorials
 
-The Thrift IDL also allows defining modules interfaces, this is explained here: 
+The Thrift IDL also allows defining modules interfaces, this is explained here:
 \li \ref thrift_tutorial_simple
-\li \ref thrift_tutorial 
+\li \ref thrift_tutorial
 
 YARP supports ROS types. An alternative method to define portable objects in YARP is to use the ROS syntax (i.e. through a .msg file). The disadvantage of this approach is that you cannot use native YARP types, but the advantage is that your messages will be compatible with ROS and readable from a topic. This tutorial shows how you do this:
 \li \ref rostypes_tutorial_portable

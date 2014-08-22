@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -29,16 +29,16 @@ class ModuleModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ModuleModelColumns() { 
+    ModuleModelColumns() {
         add(m_col_refPix);
-        add(m_col_name); 
+        add(m_col_name);
         add(m_col_id);
-        add(m_col_status); 
-        add(m_col_host); 
-        add(m_col_param); 
-        add(m_col_stdio); 
-        add(m_col_wdir); 
-        add(m_col_env); 
+        add(m_col_status);
+        add(m_col_host);
+        add(m_col_param);
+        add(m_col_stdio);
+        add(m_col_wdir);
+        add(m_col_env);
         add(m_col_color);
         add(m_col_editable);
         }
@@ -62,14 +62,14 @@ class ConnectionModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ConnectionModelColumns() { 
-        add(m_col_refPix); 
+    ConnectionModelColumns() {
+        add(m_col_refPix);
         add(m_col_type);
-        add(m_col_id); 
+        add(m_col_id);
         add(m_col_status);
-        add(m_col_from); 
-        add(m_col_to); 
-        add(m_col_carrier); 
+        add(m_col_from);
+        add(m_col_to);
+        add(m_col_carrier);
         add(m_col_color);
         add(m_col_from_color);
         add(m_col_to_color);
@@ -93,10 +93,10 @@ class ResourceModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ResourceModelColumns() { 
-        add(m_col_refPix); 
-        add(m_col_res); 
-        add(m_col_id); 
+    ResourceModelColumns() {
+        add(m_col_refPix);
+        add(m_col_res);
+        add(m_col_id);
         add(m_col_status);
         add(m_col_color);
         add(m_col_type);
@@ -112,21 +112,21 @@ public:
 
 
 
-class ApplicationWindow; 
+class ApplicationWindow;
 
 
 class MyTreeView: public Gtk::TreeView
 {
 public:
-    MyTreeView() { 
-        __pMouseEventCallback = NULL; 
+    MyTreeView() {
+        __pMouseEventCallback = NULL;
         __pParent = NULL;
     }
 
     virtual ~MyTreeView() {}
 
     void setMouseEventCallback(ApplicationWindow* _parent,
-                              void (ApplicationWindow::*__pCallback)(GdkEventButton*)) 
+                              void (ApplicationWindow::*__pCallback)(GdkEventButton*))
     {
         __pParent = _parent;
         __pMouseEventCallback = __pCallback;
@@ -143,8 +143,8 @@ protected:
             bool bOnItem = get_path_at_pos((int)event->x, (int)event->y, path);
             // if it's not a free click
             if(!bOnItem)
-                get_selection()->unselect_all();    
-#endif 
+                get_selection()->unselect_all();
+#endif
             if(event->button == 3)
             {
                 if(__pMouseEventCallback && __pParent)
@@ -160,7 +160,7 @@ protected:
 
 private:
     ApplicationWindow* __pParent;
-    void (ApplicationWindow::*__pMouseEventCallback)(GdkEventButton*);  
+    void (ApplicationWindow::*__pMouseEventCallback)(GdkEventButton*);
 };
 
 
@@ -223,7 +223,7 @@ protected:
     void onModuleTreeButtonPressed(GdkEventButton* event);
     void onConnectionTreeButtonPressed(GdkEventButton* event);
     void onResourceTreeButtonPressed(GdkEventButton* event);
-    
+
     void onPMenuRun() { onRun(); }
     void onPMenuStop() { onStop(); }
     void onPMenuKill() { onKill(); }
@@ -236,7 +236,7 @@ protected:
     void onPMenuInspectYarpHear(void);
     void onPMenuInspectYarpRead(void);
     void onPMenuInspectYarpScope(void);
- 
+
     Gtk::VPaned m_VPaned;
     Gtk::HPaned m_HPaned;
     //Gtk::TreeView m_TreeModView;
@@ -255,13 +255,13 @@ protected:
     Glib::RefPtr<Gtk::TreeSelection> m_refTreeResSelection;
 
     /*
-    void onModuleEditingStarted(Gtk::CellEditable* cell_editable, 
+    void onModuleEditingStarted(Gtk::CellEditable* cell_editable,
                                 const Glib::ustring& path);
-    void onConnectionEditingStarted(Gtk::CellEditable* cell_editable, 
+    void onConnectionEditingStarted(Gtk::CellEditable* cell_editable,
                                 const Glib::ustring& path);
     */
-    //void onModuleEdited(const Glib::ustring& path_string, 
-    //                    const Glib::ustring& new_text);    
+    //void onModuleEdited(const Glib::ustring& path_string,
+    //                    const Glib::ustring& new_text);
 
     int dummy_h;
     int dummy_w;
@@ -306,7 +306,7 @@ private:
 
     void createWidgets(void);
     void setupSignals(void);
-        
+
     bool getModRowByID(int id, Gtk::TreeModel::Row* row );
     bool getConRowByID(int id, Gtk::TreeModel::Row* row );
     bool getResRowByID(int id, Gtk::TreeModel::Row* row );
@@ -317,7 +317,7 @@ private:
     void updateApplicationWindow(void);
 
     void reportErrors(void);
-    
+
     void doClose(void);
     void doRun(void);
     void doStop(void);

@@ -16,7 +16,7 @@ yarprun is also an API library that supplies access to yarprun services. See \re
 
 \section yarprun_server Running a server
 
-To run a yarprun server on a machine:        
+To run a yarprun server on a machine:
 
 \verbatim
 $ yarprun --server /SERVERPORT
@@ -35,7 +35,7 @@ $ yarprun --on /SERVERPORT --as TAG --cmd COMMAND [ARGLIST]
 - /SERVERPORT is the name of the server that actually runs the command
 - TAG identifies the application process set, and must be unique
 - COMMAND is the application that has to be executed, followed by the optional argument list
- 
+
 Some options can be added to the basic format of yarprun:
 
 \verbatim
@@ -46,7 +46,7 @@ opens a remote shell window where the stdin, stdout and stderr of the applicatio
 - /SERVERPORT2 specifies the machine where the IO shell will be executed, and can be either a remote machine or be equal to /SERVERPORT1 itself.
 
 If "--stdio" is specified, there are two useful sub-options (linux only):
-- --hold keep the stdio window open even if the command is terminated or aborted. 
+- --hold keep the stdio window open even if the command is terminated or aborted.
 - --geometry WxH+X+Y set the stdio window size and position. Example: --geometry 320x240+80+20
 
 \section yarprun_other Other commands

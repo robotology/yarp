@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -41,7 +41,7 @@ ApplicationList::ApplicationList(MainWindow* parent)
     m_TreeView.signal_drag_data_get().connect(sigc::mem_fun(*this,
                                           &ApplicationList::onDragDataGet) );
 
-    m_refPixComputer = Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+    m_refPixComputer = Gdk::Pixbuf::create_from_data(computer_ico.pixel_data,
                                 Gdk::COLORSPACE_RGB,
                                 true,
                                 8,
@@ -49,9 +49,9 @@ ApplicationList::ApplicationList(MainWindow* parent)
                                 computer_ico.height,
                                 computer_ico.bytes_per_pixel*computer_ico.width);
 
-    //Add the Model’s column to the View’s columns: 
+    //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* cellText = Gtk::manage(new Gtk::CellRendererText());
-    Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf()); 
+    Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf());
     Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Entities"));
     col->pack_start(*cellPix, false);
     col->pack_start(*cellText, true);
@@ -64,18 +64,18 @@ ApplicationList::ApplicationList(MainWindow* parent)
     m_appRow = *(m_refTreeModel->append());
     m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_appRow[m_appColumns.m_col_name] = "Applications";
-    m_appRow.set_value(0, Gdk::Pixbuf::create_from_data(folderapp_ico.pixel_data, 
+    m_appRow.set_value(0, Gdk::Pixbuf::create_from_data(folderapp_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             folderapp_ico.width,
                                             folderapp_ico.height,
                                             folderapp_ico.bytes_per_pixel*folderapp_ico.width));
-                                                               
+
     m_modRow = *(m_refTreeModel->append());
     m_modRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_modRow[m_appColumns.m_col_name] = "Modules";
-    m_modRow.set_value(0, Gdk::Pixbuf::create_from_data(foldermod_ico.pixel_data, 
+    m_modRow.set_value(0, Gdk::Pixbuf::create_from_data(foldermod_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -83,11 +83,11 @@ ApplicationList::ApplicationList(MainWindow* parent)
                                             foldermod_ico.height,
                                             foldermod_ico.bytes_per_pixel*foldermod_ico.width));
 
-    
+
     m_resRow = *(m_refTreeModel->append());
     m_resRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_resRow[m_appColumns.m_col_name] = "Resources";
-    m_resRow.set_value(0, Gdk::Pixbuf::create_from_data(folderres_ico.pixel_data, 
+    m_resRow.set_value(0, Gdk::Pixbuf::create_from_data(folderres_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -95,17 +95,17 @@ ApplicationList::ApplicationList(MainWindow* parent)
                                             folderres_ico.height,
                                             folderres_ico.bytes_per_pixel*folderres_ico.width));
 
-    
+
     m_tempRow = *(m_refTreeModel->append());
     m_tempRow[m_appColumns.m_col_type] = NODE_OTHER;
     m_tempRow[m_appColumns.m_col_name] = "Templates";
-    m_tempRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data, 
+    m_tempRow.set_value(0, Gdk::Pixbuf::create_from_data(folder_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             folder_ico.width,
                                             folder_ico.height,
-                                            folder_ico.bytes_per_pixel*folder_ico.width));    
+                                            folder_ico.bytes_per_pixel*folder_ico.width));
     show_all_children();
 }
 
@@ -124,7 +124,7 @@ bool ApplicationList::removeApplication(const char* szAppName)
         Gtk::TreeModel::Row childrow = *itrapp;
         if(childrow[m_appColumns.m_col_name] == Glib::ustring(szAppName))
         {
-            m_refTreeModel->erase(childrow);    
+            m_refTreeModel->erase(childrow);
             return true;
         }
     }
@@ -192,14 +192,14 @@ bool ApplicationList::addApplication(Application* app)
     childrow[m_appColumns.m_col_type] = APPLICATION;
     childrow[m_appColumns.m_col_name] = app->getName();
     childrow[m_appColumns.m_col_filename] = app->getXmlFile();
-    childrow.set_value(0, Gdk::Pixbuf::create_from_data(application_ico.pixel_data, 
+    childrow.set_value(0, Gdk::Pixbuf::create_from_data(application_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             application_ico.width,
                                             application_ico.height,
                                             application_ico.bytes_per_pixel*application_ico.width));
-    
+
     string fname;
     string fpath = app->getXmlFile();
     size_t pos = fpath.rfind(PATH_SEPERATOR);
@@ -207,13 +207,13 @@ bool ApplicationList::addApplication(Application* app)
         fname = fpath.substr(pos+1);
     else
         fname = fpath;
-     fname = fname + string(" (") + fpath + string(")"); 
-    
+     fname = fname + string(" (") + fpath + string(")");
+
     Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(childrow.children()));
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = app->getXmlFile();
-    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data, 
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -225,7 +225,7 @@ bool ApplicationList::addApplication(Application* app)
 
 
 bool ApplicationList::addComputer(Computer* comp)
-{   
+{
     typedef Gtk::TreeModel::Children type_children;
 
     //type_children children = m_refTreeModel->children();
@@ -244,22 +244,22 @@ bool ApplicationList::addComputer(Computer* comp)
     childrow[m_appColumns.m_col_filename] = comp->getXmlFile();
 
     if(comp->getDisable())
-        childrow.set_value(0, Gdk::Pixbuf::create_from_data(computer_disable_ico.pixel_data, 
+        childrow.set_value(0, Gdk::Pixbuf::create_from_data(computer_disable_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             computer_disable_ico.width,
                                             computer_disable_ico.height,
-                                            computer_disable_ico.bytes_per_pixel*computer_disable_ico.width)); 
+                                            computer_disable_ico.bytes_per_pixel*computer_disable_ico.width));
     else
-        childrow.set_value(0, Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+        childrow.set_value(0, Gdk::Pixbuf::create_from_data(computer_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             computer_ico.width,
                                             computer_ico.height,
                                             computer_ico.bytes_per_pixel*computer_ico.width));
-    
+
     string fname;
     string fpath = comp->getXmlFile();
     size_t pos = fpath.rfind(PATH_SEPERATOR);
@@ -267,20 +267,20 @@ bool ApplicationList::addComputer(Computer* comp)
         fname = fpath.substr(pos+1);
     else
         fname = fpath;
-     fname = fname + string(" (") + fpath + string(")"); 
- 
+     fname = fname + string(" (") + fpath + string(")");
+
     Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(childrow.children()));
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = comp->getXmlFile();
-    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data, 
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             document_ico.width,
                                             document_ico.height,
                                             document_ico.bytes_per_pixel*document_ico.width));
-                                                                   
+
     return true;
 }
 
@@ -302,14 +302,14 @@ bool ApplicationList::addModule(Module* mod)
     childrow[m_appColumns.m_col_type] = MODULE;
     childrow[m_appColumns.m_col_name] = mod->getName();
     childrow[m_appColumns.m_col_filename] = mod->getXmlFile();
-    childrow.set_value(0, Gdk::Pixbuf::create_from_data(module_ico.pixel_data, 
+    childrow.set_value(0, Gdk::Pixbuf::create_from_data(module_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             module_ico.width,
                                             module_ico.height,
                                             module_ico.bytes_per_pixel*module_ico.width));
-    
+
     string fname;
     string fpath = mod->getXmlFile();
     size_t pos = fpath.rfind(PATH_SEPERATOR);
@@ -317,13 +317,13 @@ bool ApplicationList::addModule(Module* mod)
         fname = fpath.substr(pos+1);
     else
         fname = fpath;
-     fname = fname + string(" (") + fpath + string(")"); 
+     fname = fname + string(" (") + fpath + string(")");
 
     Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(childrow.children()));
     descrow[m_appColumns.m_col_type] = NODE_FILENAME;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = mod->getXmlFile();
-    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data, 
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(document_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
@@ -335,20 +335,20 @@ bool ApplicationList::addModule(Module* mod)
 
 
 bool ApplicationList::addAppTemplate(AppTemplate* temp)
-{ 
+{
     typedef Gtk::TreeModel::Children type_children;
-    string fname = temp->name + string(" (") + temp->tmpFileName + string(")"); 
+    string fname = temp->name + string(" (") + temp->tmpFileName + string(")");
     Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(m_tempRow.children()));
     descrow[m_appColumns.m_col_type] = NODE_APPTEMPLATE;
     descrow[m_appColumns.m_col_name] = fname;
     descrow[m_appColumns.m_col_filename] = temp->tmpFileName;
-    descrow.set_value(0, Gdk::Pixbuf::create_from_data(apptemplate_ico.pixel_data, 
+    descrow.set_value(0, Gdk::Pixbuf::create_from_data(apptemplate_ico.pixel_data,
                                             Gdk::COLORSPACE_RGB,
                                             true,
                                             8,
                                             apptemplate_ico.width,
                                             apptemplate_ico.height,
-                                            apptemplate_ico.bytes_per_pixel*apptemplate_ico.width));   
+                                            apptemplate_ico.bytes_per_pixel*apptemplate_ico.width));
     return true;
 }
 
@@ -357,10 +357,10 @@ void ApplicationList::onDragBegin(const Glib::RefPtr<Gdk::DragContext>& context)
     Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView.get_selection();
     Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
 
-    if(iter && 
+    if(iter &&
       ((*iter)[m_appColumns.m_col_type] == MODULE))
     {
-        context->set_icon(Gdk::Pixbuf::create_from_data(module_ico.pixel_data, 
+        context->set_icon(Gdk::Pixbuf::create_from_data(module_ico.pixel_data,
                                                 Gdk::COLORSPACE_RGB,
                                                 true,
                                                 8,
@@ -371,7 +371,7 @@ void ApplicationList::onDragBegin(const Glib::RefPtr<Gdk::DragContext>& context)
     }
     else if(iter && ((*iter)[m_appColumns.m_col_type] == RESOURCE))
     {
-        context->set_icon(Gdk::Pixbuf::create_from_data(computer_ico.pixel_data, 
+        context->set_icon(Gdk::Pixbuf::create_from_data(computer_ico.pixel_data,
                                                 Gdk::COLORSPACE_RGB,
                                                 true,
                                                 8,
@@ -379,11 +379,11 @@ void ApplicationList::onDragBegin(const Glib::RefPtr<Gdk::DragContext>& context)
                                                 computer_ico.height,
                                                 computer_ico.bytes_per_pixel*computer_ico.width),
                                                 computer_ico.width, computer_ico.height);
-    }        
-    else if(iter && 
+    }
+    else if(iter &&
       ((*iter)[m_appColumns.m_col_type] == APPLICATION))
     {
-        context->set_icon(Gdk::Pixbuf::create_from_data(application_ico.pixel_data, 
+        context->set_icon(Gdk::Pixbuf::create_from_data(application_ico.pixel_data,
                                                 Gdk::COLORSPACE_RGB,
                                                 true,
                                                 8,
@@ -396,7 +396,7 @@ void ApplicationList::onDragBegin(const Glib::RefPtr<Gdk::DragContext>& context)
 
 
 
-void ApplicationList::onDragDataGet(const Glib::RefPtr<Gdk::DragContext>& context, 
+void ApplicationList::onDragDataGet(const Glib::RefPtr<Gdk::DragContext>& context,
                              Gtk::SelectionData& data, guint info, guint time)
 {
     Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView.get_selection();
@@ -406,19 +406,19 @@ void ApplicationList::onDragDataGet(const Glib::RefPtr<Gdk::DragContext>& contex
     {
         Glib::ustring name = (*iter)[m_appColumns.m_col_name];
         data.set(data.get_target(), MODULE,
-                (const guchar*)name.c_str(), name.size()+1);  
+                (const guchar*)name.c_str(), name.size()+1);
     }
     else if(iter && ((*iter)[m_appColumns.m_col_type] == RESOURCE))
     {
         Glib::ustring name = (*iter)[m_appColumns.m_col_name];
         data.set(data.get_target(), RESOURCE,
-                (const guchar*)name.c_str(), name.size()+1);  
+                (const guchar*)name.c_str(), name.size()+1);
     }
     else if(iter && ((*iter)[m_appColumns.m_col_type] == APPLICATION))
     {
         Glib::ustring name = (*iter)[m_appColumns.m_col_name];
         data.set(data.get_target(), APPLICATION,
-                (const guchar*)name.c_str(), name.size()+1);  
+                (const guchar*)name.c_str(), name.size()+1);
     }
 }
 

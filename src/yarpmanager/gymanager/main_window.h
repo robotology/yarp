@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -28,10 +28,10 @@ public:
     MainWindow( yarp::os::Property &config);
     virtual ~MainWindow();
 
-    void onTabCloseRequest(Widget* wdg); 
+    void onTabCloseRequest(Widget* wdg);
     //Glib::RefPtr<MessagesList> m_refMessageList;
     MessagesList* m_refMessageList;
-    
+
     void reportErrors(void);
 
 protected:
@@ -58,11 +58,11 @@ protected:
     void onMenuEditSellAll();
     void onMenuEditExportGraph();
 
-    void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
+    void onAppListRowActivated(const Gtk::TreeModel::Path& path,
                 Gtk::TreeViewColumn* column);
     void onAppListButtonPressed(GdkEventButton* event);
 
-    void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);   
+    void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);
     bool onDeleteEvent(GdkEventAny* event);
 
     void onPAppMenuLoad();
@@ -84,8 +84,8 @@ private:
     Gtk::Statusbar m_Statusbar;
     Glib::RefPtr<Gtk::UIManager> m_refUIManager;
     Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
-    Gtk::Notebook m_bottomTab;  
-    Gtk::Notebook m_mainTab;    
+    Gtk::Notebook m_bottomTab;
+    Gtk::Notebook m_mainTab;
     Gtk::Frame frame1;
     ApplicationList m_applicationList;
     Gtk::TextView m_commandView;

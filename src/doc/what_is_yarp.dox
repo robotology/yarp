@@ -95,7 +95,7 @@ future changes easier.
 YARP has consequently three levels of configuration: operating
 system, hardware, and robot level. The first level of configuration
 should concern you only if you're planning to compile YARP on a new
-operating system. 
+operating system.
 
 The second level is the hardware. A new addition on an existing
 platform or a new platform altogether might require preparing a few

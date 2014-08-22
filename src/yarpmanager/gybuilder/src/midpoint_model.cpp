@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -24,7 +24,7 @@
 using namespace yarp::manager;
 
 MidpointModel::MidpointModel(ApplicationWindow* parentWnd,
-                             ArrowModel* arw, double x, double y) 
+                             ArrowModel* arw, double x, double y)
                              : RectModel(0, 0, POINT_SIZE, POINT_SIZE)
 
 {
@@ -40,7 +40,7 @@ MidpointModel::MidpointModel(ApplicationWindow* parentWnd,
 }
 
 
-MidpointModel::~MidpointModel(void) 
+MidpointModel::~MidpointModel(void)
 {
 
 }
@@ -51,7 +51,7 @@ void MidpointModel::updateCoordiantes(void)
         return;
 
     Gdk::Point pt = getContactPoint();
-    arrow->setPoint(point_x, point_y, 
+    arrow->setPoint(point_x, point_y,
                     pt.get_x(), pt.get_y());
     point_x = pt.get_x();
     point_y = pt.get_y();
@@ -69,30 +69,30 @@ void MidpointModel::remove(void)
 
 Gdk::Point MidpointModel::getContactPoint(void)
 {
-    GooCanvasItemModel* model = (GooCanvasItemModel*) this->gobj();    
+    GooCanvasItemModel* model = (GooCanvasItemModel*) this->gobj();
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
     if(model && canvas)
     {
-        GooCanvasItem* item = goo_canvas_get_item(canvas, model); 
+        GooCanvasItem* item = goo_canvas_get_item(canvas, model);
         GooCanvasBounds bi;
         goo_canvas_item_get_bounds(item, &bi);
         goo_canvas_item_get_bounds(item, &bi);
         return Gdk::Point((int)(bi.x2-POINT_SIZE/2.0), (int)(bi.y2-POINT_SIZE/2.0));
-    }    
+    }
     return Gdk::Point(-1, -1);
 }
 
 
 Glib::RefPtr<MidpointModel> MidpointModel::create(ApplicationWindow* parentWnd,
-                                            ArrowModel* arw, double x, double y) 
+                                            ArrowModel* arw, double x, double y)
 {
     return Glib::RefPtr<MidpointModel>(new MidpointModel(parentWnd, arw, x, y));
 }
 
 
-bool MidpointModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool MidpointModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
-{   
+{
     if(event->button == 1)
     {
         _dragging = item ;
@@ -102,27 +102,27 @@ bool MidpointModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& 
     return true;
 }
 
-bool MidpointModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool MidpointModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
   if(event->button == 1)
-  {    
+  {
         snapToGrid();
        _dragging.clear() ;
   }
   return true;
 }
 
-bool MidpointModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool MidpointModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventMotion* event)
 {
     if(item && _dragging && item == _dragging)
     {
         parentWindow->setModified();
         double new_x = event->x ;
-        double new_y = event->y ;   
+        double new_y = event->y ;
         item->translate(new_x - _drag_x, new_y - _drag_y);
-  
+
         if(event->state  & GDK_CONTROL_MASK)
         {
            int index = arrow->getIndex(point_x, point_y);
@@ -134,7 +134,7 @@ bool MidpointModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>&
                 current_point = getContactPoint();
 
                 // adjusting to the previous point
-                base_point = arrow->getPoint(index-1);                               
+                base_point = arrow->getPoint(index-1);
                 dist =  current_point.get_y() -  base_point.get_y();
                 if(abs(dist) <= AUTOSNIPE_MARGINE)
                     item->translate(0, -dist);
@@ -143,7 +143,7 @@ bool MidpointModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>&
                     item->translate(-dist, 0);
 
                 // adjusting to the next point
-                base_point = arrow->getPoint(index+1);                               
+                base_point = arrow->getPoint(index+1);
                 dist =  current_point.get_y() -  base_point.get_y();
                 if(abs(dist) <= AUTOSNIPE_MARGINE)
                     item->translate(0, -dist);
@@ -160,23 +160,23 @@ bool MidpointModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>&
             item->translate(-bi.get_x1(), 0);
         if(bi.get_y1() < 0)
             item->translate(0, -bi.get_y1());
-       
+
         snapToGrid();
 
-        // updating arrows coordination        
+        // updating arrows coordination
         updateCoordiantes();
     }
     return true;
 }
 
-bool MidpointModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool MidpointModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
    // printf("entered\n");
     return true;
 }
 
-bool MidpointModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool MidpointModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     //printf("left\n");
@@ -201,11 +201,11 @@ void MidpointModel::setSelected(bool sel)
 
 void MidpointModel::snapToGrid(void)
 {
-    GooCanvasItemModel* model = (GooCanvasItemModel*) this->gobj();    
+    GooCanvasItemModel* model = (GooCanvasItemModel*) this->gobj();
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
     if(model && canvas)
     {
-        GooCanvasItem* item = goo_canvas_get_item(canvas, model); 
+        GooCanvasItem* item = goo_canvas_get_item(canvas, model);
         GooCanvasBounds bi;
         goo_canvas_item_get_bounds(item, &bi);
         double xs, ys;
@@ -216,7 +216,7 @@ void MidpointModel::snapToGrid(void)
         double c_x = (int) (((int)bi.x1+(int)(POINT_SIZE/2.0)) % (int)xs);
         double c_y = (int) (((int)bi.y1+(int)(POINT_SIZE/2.0)) % (int)ys);
         if(parentWindow->m_snapToGrid)
-            goo_canvas_item_translate(item, -c_x, -c_y); 
+            goo_canvas_item_translate(item, -c_x, -c_y);
         // force update
         goo_canvas_item_get_bounds(item, &bi);
         updateCoordiantes();

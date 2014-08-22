@@ -13,8 +13,8 @@
 
 In YARP, a "plugin" is an implementation of some service for which
 there are many choices and alternatives.  There are two basic types of
-plugin for YARP: devices and carriers.  Devices implement 
-interfaces to cameras, controlboards, and other hardware.  Carriers 
+plugin for YARP: devices and carriers.  Devices implement
+interfaces to cameras, controlboards, and other hardware.  Carriers
 implement different network protocols.  Users select which devices
 and carriers they want to have included in YARP (or they can compile
 them separately).
@@ -41,16 +41,16 @@ Here's a quick test program for the device, call it "fake_grabber/test_fake_grab
 \include example/plugin/userlib/fake_grabber/test_fake_grabber.cpp
 
 YARP plugins need a CMakeLists.txt that says how to build them.  The
-CMakeLists.txt is written in the following style (this 
+CMakeLists.txt is written in the following style (this
 would be "fake_grabber/CMakeLists.txt"):
 \include example/plugin/userlib/fake_grabber/CMakeLists.txt
 
 This style is used so that individual plugin directories can be
 compiled standalone for testing purposes, but will also work
 when bundled into a larger library.  If we configure and compile
-this directory, we get a test program that we can run straight 
+this directory, we get a test program that we can run straight
 away.  If it works, then we could immediately plug this device into
-YARP. 
+YARP.
 
 
 \section add_a_plugin_userlib Making a plugin library
@@ -84,7 +84,7 @@ Here's the modified
 "userlib/CMakeLists.txt" file:
 \include example/plugin/userlib/CMakeLists.txt
 
-This assumes that we have moved "fake_grabber" into the "userlib" 
+This assumes that we have moved "fake_grabber" into the "userlib"
 directory.
 
 Now, let's update our test program, "userlib/test_userlib.cpp":

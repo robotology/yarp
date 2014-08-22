@@ -4,7 +4,7 @@
 
 \author Lorenzo Natale and Elena Ceseracciu
 
-This tutorial shows how to use the yarp::os::ResourceFinder class to organize parameters passed to 
+This tutorial shows how to use the yarp::os::ResourceFinder class to organize parameters passed to
 modules. The ResourceFinder is a helper class that allows to find and read configuration files from YARP's installation directories or from directories that are user specific (see \ref yarp_data_dirs).
 
 \section sec_intro Introduction
@@ -38,12 +38,12 @@ cout<<"Running with:"<<endl;
 cout<<"robot: "<<robotName.c_str()<<endl;
 cout<<"part: "<<partName.c_str()<<endl;
 cout<<"joint: "<<joint<<endl;
- 
+
 \endcode
 
 This achieves what we want. The program \e random_motion can parse the parameters from the command line as desired. For example (we here assume you are in the source directory of random_motion and that you wrote a valid CMakeLists.txt):
 
-\code 
+\code
 mkdir build
 cd build
 cmake ../
@@ -90,12 +90,12 @@ We will see you to do this. But first let's first provide the ResourceFinder wit
 
 \code
 ResourceFinder rf;
-rf.setVerbose(); //logs searched directories 
+rf.setVerbose(); //logs searched directories
 rf.setDefaultConfigFile("config.ini"); //specifies a default configuration file
 rf.configure(argc, argv);
 \endcode
 
-Now we can put \e config.ini in one of the data directories defined by YARP. A possible option is the directory .local/share/yarp/contexts inside the home of the user (in windows this is \%APPDATA\%/yarp/contexts, see \ref yarp_data_dirs for more details). By default this is the first place in which the ResourceFinder searches for files if not instructed with a precise path (like in this case). 
+Now we can put \e config.ini in one of the data directories defined by YARP. A possible option is the directory .local/share/yarp/contexts inside the home of the user (in windows this is \%APPDATA\%/yarp/contexts, see \ref yarp_data_dirs for more details). By default this is the first place in which the ResourceFinder searches for files if not instructed with a precise path (like in this case).
 
 To avoid confusions and clashes with other similar files we keep the file inside the directory \e randomMotion; we call this directory a \e context for the module random_motion.
 
@@ -119,7 +119,7 @@ joint: 0
 
 This is useful because:
 
-\li the context directory can contain more than a single file, by changing only this directory we change the whole configuration of the module with a single command; 
+\li the context directory can contain more than a single file, by changing only this directory we change the whole configuration of the module with a single command;
 \li YARP defines a set of places that can contain context directories, in our example the \e randomMotion folder can be installed with the executable and located at runtime without the user providing its exact path (which is system dependent).
 
 In fact we can now create another directory to store a different configuration file. This file could for example configure random_motion to connect to a simulator and move joint number 2 of the arm.

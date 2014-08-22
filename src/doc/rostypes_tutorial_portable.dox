@@ -4,7 +4,7 @@
 
 \author Lorenzo Natale
 
-YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. 
+YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object.
 
 For ROS interoperability YARP supports ROS msg types. In this tutorials we see how you can automatically generate YARP portable objects using ROS syntax. The advantage in this case is that your type is compatible with ROS and can be directly read from a topic.
 
@@ -29,11 +29,11 @@ name this file \em SharedData.msg save and close it.
 
 In ROS this specifies that SharedData is a struct that contains a \em text field of type \em string and a \em content field which type is a \em vector of double precision floating point numbers. ROS in fact supports much more options, see http://wiki.ros.org/msg.
 
-Now you can convert the ROS type in a YARP compatible type. 
+Now you can convert the ROS type in a YARP compatible type.
 
 Type:
 
-\code 
+\code
 yarpidl_rosmsg SharedData.msg
 \endcode
 
@@ -46,7 +46,7 @@ This is the output you shuld get:
 Generating SharedData.h
 \endcode
 
-This will generate one file: \em SharedData.h 
+This will generate one file: \em SharedData.h
 
 In case you are interested you can inspect it to see that it defines a C++ class with some extra code. The good thing is that you don't actually need to bother about the details, but you can readily use the class in your code.
 
@@ -103,7 +103,7 @@ int main()
 
       // d.text is a string
       d.text="Hello from sender";
-     
+
       //d.content is a vector, let's push some data
       d.content.push_back(count++);
       d.content.push_back(count++);
@@ -112,7 +112,7 @@ int main()
 
       yarp::os::Time::delay(0.1);
    }
-  
+
    return 0;
 }
 
@@ -188,39 +188,39 @@ int main()
        cout<<"\n";
        count++;
    }
-   
+
    return 0;
 }
 \endcode
 
 Compile, and start the receiver, with the sender running:
 \code
-$ ./receiver 
+$ ./receiver
 Starting receiver
 yarp: Port /receiver active at tcp://192.168.59.129:10003
 yarp: Receiving input from /sender to /receiver using tcp
 0 Received SharedData:
 Hello from sender
-396 397 
+396 397
 1 Received SharedData:
 Hello from sender
-398 399 
+398 399
 2 Received SharedData:
 Hello from sender
-400 401 
+400 401
 3 Received SharedData:
 Hello from sender
-402 403 
+402 403
 ...
 \endcode
 
-\section rostypes_sec_using-cmake Using CMake 
+\section rostypes_sec_using-cmake Using CMake
 
 YARP provides CMake supports to automate the invocation of yarpidl_rosmsg. This is convenient in large projects when we generate several files and we do not want to keep track of all of them individually.
 
 Edit the file CMakeLists.txt:
 
-\code 
+\code
 
 cmake_minimum_required(VERSION 2.8.7)
 
@@ -231,7 +231,7 @@ include(YarpIDL)
 
 \endcode
 
-The last two lines load support for the YarpIDL compiler. 
+The last two lines load support for the YarpIDL compiler.
 
 We now tell CMake to parse SharedData.msg with the rosmsg compiler. All generated files will be placed in separate \em include and \em src directories.
 
@@ -276,10 +276,10 @@ This tutorial continues with:
 
 More information on interoperatiblity with ROS can be found here: \ref yarp_with_ros
 
-The Thrift IDL allows defining portable objects and modules interfaces with YARP native types: 
+The Thrift IDL allows defining portable objects and modules interfaces with YARP native types:
 \li \ref thrift_tutorial_portable
 \li \ref thrift_tutorial_simple
-\li \ref thrift_tutorial 
+\li \ref thrift_tutorial
 
 
 Code for this tutorial can be found here: example/idl/rosportable

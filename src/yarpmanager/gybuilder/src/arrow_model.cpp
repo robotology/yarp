@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -40,7 +40,7 @@ using namespace yarp::manager;
 
 ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                        Glib::RefPtr<PortModel> src, Glib::RefPtr<PortModel> dest,
-                       Connection* con, ApplicationModel* appModel, bool nullArw): PolylineModel(0,0,0,0), connection(NULL, NULL) 
+                       Connection* con, ApplicationModel* appModel, bool nullArw): PolylineModel(0,0,0,0), connection(NULL, NULL)
 {
     parentWindow = parentWnd;
     source = src;
@@ -48,11 +48,11 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     selected = false;
     bExist = false;
     bNullArrow = nullArw;
-    applicationModel = appModel; 
+    applicationModel = appModel;
     bNested = (applicationModel != NULL);
     if(appModel)
         application = appModel->getApplication();
-    else        
+    else
         application = parentWindow->manager.getKnowledgeBase()->getApplication();
 
     if(con)
@@ -60,7 +60,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         strLabel = con->carrier();
         connection = *con;
     }
-        
+
     this->property_close_path().set_value(false);
     this->property_line_width().set_value(ARROW_LINEWIDTH);
     this->property_arrow_width().set_value(5.0);
@@ -81,7 +81,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     {
         string strCarrier = strLabel;
         string dummyLabel;
-        //Adding connection 
+        //Adding connection
         if(application)
         {
             string strFrom, strTo;
@@ -97,20 +97,20 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
             // port arbitrator at the destination
             arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(destination);
 
-            // source 
+            // source
             intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(source);
             if(intPort)
             {
                 output = intPort->getOutput();
                 module = (Module*) output->owner();
-                strFrom = string(module->getPrefix()) + string(intPort->getOutput()->getPort()); 
+                strFrom = string(module->getPrefix()) + string(intPort->getOutput()->getPort());
                 dummyLabel = string(intPort->getOutput()->getPort());
                 if(!strCarrier.size())
                 {
                     strCarrier = intPort->getOutput()->getCarrier();
                     if(arbPort)
                         strCarrier += "+recv.priority";
-                }                    
+                }
             }
             else
             {
@@ -121,21 +121,21 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                     strCarrier = "udp+recv.priority";
                 bExternFrom = true;
             }
-          
+
             // destination
             intPort = Glib::RefPtr<InternalPortModel>::cast_dynamic(destination);
             if(intPort)
             {
                 input = intPort->getInput();
                 module = (Module*) input->owner();
-                strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort()); 
-                dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" "); 
-                if(!strCarrier.size())   
+                strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort());
+                dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" ");
+                if(!strCarrier.size())
                 {
                     strCarrier = intPort->getInput()->getCarrier();
                     if(arbPort)
                         strCarrier += "+recv.priority";
-                }                    
+                }
             }
             else if(arbPort)
             {
@@ -145,18 +145,18 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
                 {
                     input = intPort->getInput();
                     module = (Module*) input->owner();
-                    strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort()); 
-                    dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" "); 
+                    strTo = string(module->getPrefix()) + string(intPort->getInput()->getPort());
+                    dummyLabel += string(" -> ") + string(intPort->getInput()->getPort()) + string(" ");
                     if(!strCarrier.size())
                     {
                         strCarrier = intPort->getInput()->getCarrier();
                         strCarrier += "+recv.priority";
-                    }                        
+                    }
                 }
                 else
                 {
                     strTo = extPort->getPort();
-                    dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" "); 
+                    dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" ");
                     bExternTo = true;
                     if(!strCarrier.size())
                         strCarrier = "udp+recv.priority";
@@ -166,12 +166,12 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
             {
                 extPort = Glib::RefPtr<ExternalPortModel>::cast_dynamic(destination);
                 strTo = extPort->getPort();
-                dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" "); 
+                dummyLabel += string(" -> ") + string(extPort->getPort()) + string(" ");
                 bExternTo = true;
                 if(!strCarrier.size())
                         strCarrier = "udp";
             }
-            
+
             connection.setFrom(strFrom.c_str());
             connection.setTo(strTo.c_str());
             connection.setCarrier(strCarrier.c_str());
@@ -193,11 +193,11 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
 
         // if it is an auxilary connections
         /*
-        if((strLabel.find("virtual") != std::string::npos) || 
+        if((strLabel.find("virtual") != std::string::npos) ||
            (strLabel.find("auxiliary") != std::string::npos) )
         {
             GooCanvasLineDash *dash = goo_canvas_line_dash_new (ARROW_LINEWIDTH, 3.0, 3.0);
-            g_object_set(this->gobj(), "line-dash", dash, NULL);      
+            g_object_set(this->gobj(), "line-dash", dash, NULL);
         }
         */
 
@@ -213,7 +213,7 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
         showLabel(parentWindow->m_showLabel);
     }
 
-    
+
     Gdk::Point pt1 = source->getContactPoint(this);
     Gdk::Point pt2 = destination->getContactPoint(this);
     setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
@@ -221,28 +221,28 @@ ArrowModel::ArrowModel(ApplicationWindow* parentWnd,
     setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
     setLabel(strLabel.c_str());
     updatCoordiantes();
-    //printf("%s : %d\n", __FILE__, __LINE__); 
+    //printf("%s : %d\n", __FILE__, __LINE__);
 }
-    
+
 void ArrowModel::setLabel(const char* szLabel)
-{    
+{
     if(bNullArrow)
         return;
     if(!szLabel)
         return;
- 
-    
+
+
     string dummy = szLabel;
-    if((dummy.find("virtual") != std::string::npos) || 
+    if((dummy.find("virtual") != std::string::npos) ||
        (dummy.find("auxiliary") != std::string::npos) )
     {
         GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 3.0, 3.0);
-        g_object_set(this->gobj(), "line-dash", dash, NULL);      
+        g_object_set(this->gobj(), "line-dash", dash, NULL);
     }
     else
     {
         GooCanvasLineDash *dash = goo_canvas_line_dash_new (2, 1.0, 0.0);
-        g_object_set(this->gobj(), "line-dash", dash, NULL);      
+        g_object_set(this->gobj(), "line-dash", dash, NULL);
     }
 
     if(dummy.find("recv.priority") != std::string::npos)
@@ -250,14 +250,14 @@ void ArrowModel::setLabel(const char* szLabel)
     else
         strLabel = szLabel;
 
-    label->property_text() = strLabel.c_str();        
+    label->property_text() = strLabel.c_str();
     updatLabelCoordiante();
 }
 
 void ArrowModel::removeExcitation(const char* szName)
 {
     Connection con = connection;
-    string carrier = con.carrier();    
+    string carrier = con.carrier();
     string excitation;
     size_t start = carrier.find("+(ex");
     if(start != std::string::npos)
@@ -266,11 +266,11 @@ void ArrowModel::removeExcitation(const char* szName)
         if(end == std::string::npos)
             end = carrier.length();
         excitation = carrier.substr(start+1, end-start);
-        carrier.erase(start, end-start);        
+        carrier.erase(start, end-start);
     }
 
     Property options;
-    options.fromString(excitation.c_str()); 
+    options.fromString(excitation.c_str());
     Bottle exc = options.findGroup("ex");
     string strLink = "+(ex";
     bool bEmpty = true;
@@ -285,14 +285,14 @@ void ArrowModel::removeExcitation(const char* szName)
                 strLink += string(" (") + b->get(0).asString().c_str();
                 char dummy[64];
                 sprintf(dummy, " %d)", (int)b->get(1).asDouble());
-                strLink += dummy; 
+                strLink += dummy;
                 bEmpty = false;
             }
         }
     }
 
     strLink += ")";
-    if(!bEmpty)    
+    if(!bEmpty)
         carrier += strLink;
 
     con.setCarrier(carrier.c_str());
@@ -304,7 +304,7 @@ void ArrowModel::removeExcitation(const char* szName)
 void ArrowModel::renameExcitation(const char* szOld, const char* szNew)
 {
     Connection con = connection;
-    string carrier = con.carrier();    
+    string carrier = con.carrier();
     string excitation;
     size_t start = carrier.find("+(ex");
     if(start != std::string::npos)
@@ -313,11 +313,11 @@ void ArrowModel::renameExcitation(const char* szOld, const char* szNew)
         if(end == std::string::npos)
             end = carrier.length();
         excitation = carrier.substr(start+1, end-start);
-        carrier.erase(start, end-start);        
+        carrier.erase(start, end-start);
     }
 
     Property options;
-    options.fromString(excitation.c_str()); 
+    options.fromString(excitation.c_str());
     Bottle exc = options.findGroup("ex");
     string strLink = "+(ex";
     bool bEmpty = true;
@@ -332,7 +332,7 @@ void ArrowModel::renameExcitation(const char* szOld, const char* szNew)
                 strLink += string(" (") + szNew;
                 char dummy[64];
                 sprintf(dummy, " %d)", (int)b->get(1).asDouble());
-                strLink += dummy; 
+                strLink += dummy;
                 bEmpty = false;
 
             }
@@ -341,14 +341,14 @@ void ArrowModel::renameExcitation(const char* szOld, const char* szNew)
                 strLink += string(" (") + b->get(0).asString().c_str();
                 char dummy[64];
                 sprintf(dummy, " %d)", (int)b->get(1).asDouble());
-                strLink += dummy; 
+                strLink += dummy;
                 bEmpty = false;
             }
         }
     }
 
     strLink += ")";
-    if(!bEmpty)    
+    if(!bEmpty)
         carrier += strLink;
 
     con.setCarrier(carrier.c_str());
@@ -357,12 +357,12 @@ void ArrowModel::renameExcitation(const char* szOld, const char* szNew)
     setLabel(carrier.c_str());
 }
 
-ArrowModel::~ArrowModel(void) 
+ArrowModel::~ArrowModel(void)
 {
     //printf("[%d] %s\n",__LINE__, __PRETTY_FUNCTION__ );
     if(!bNullArrow)
     {
-        // removing label 
+        // removing label
         int id = parentWindow->getRootModel()->find_child(label);
         if(id != -1)
             parentWindow->getRootModel()->remove_child(id);
@@ -378,12 +378,12 @@ ArrowModel::~ArrowModel(void)
     }
     midpoints.clear();
 
-    // unregistering from source and destination 
+    // unregistering from source and destination
     if(source)
         source->removeSourceArrow(this);
-    if(destination)    
-        destination->removeDestinationArrow(this);   
- 
+    if(destination)
+        destination->removeDestinationArrow(this);
+
     if(!bNullArrow)
     {
         if(application)
@@ -397,20 +397,20 @@ ArrowModel::~ArrowModel(void)
 void ArrowModel::updatCoordiantes(void)
 {
     if(!bNested)
-    {        
+    {
         Gdk::Point pt1 = source->getContactPoint(this);
         Gdk::Point pt2 = destination->getContactPoint(this);
         setPoint(0, pt1.get_x(), pt1.get_y()-ARROW_LINEWIDTH/2.0);
         Goocanvas::Points points = this->property_points().get_value();
         setPoint(points.get_num_points()-1, pt2.get_x(), pt2.get_y()-ARROW_LINEWIDTH/2.0);
         updatLabelCoordiante();
-    }        
+    }
 }
 
 
 void ArrowModel::updatLabelCoordiante(void)
 {
-    
+
     if(!bNullArrow)
     {
         Goocanvas::Points points = this->property_points().get_value();
@@ -421,7 +421,7 @@ void ArrowModel::updatLabelCoordiante(void)
             int index = points.get_num_points() / 2;
             points.get_coordinate(index-1, x1, y1);
             points.get_coordinate(index, x2, y2);
-            
+
             int text_w, text_h;
             PangoLayout *layout = gtk_widget_create_pango_layout((GtkWidget*)parentWindow->gobj(), strLabel.c_str());
             PangoFontDescription *fontdesc = pango_font_description_from_string("Monospace 9");
@@ -429,8 +429,8 @@ void ArrowModel::updatLabelCoordiante(void)
             pango_layout_get_pixel_size (layout, &text_w, &text_h);
 
             setLabelPosition((x1+x2)/2.0 - text_w/2.0, (y1+y2)/2.0);
-        }            
-    }       
+        }
+    }
 }
 
 void ArrowModel::setLabelPosition(double x, double y)
@@ -438,7 +438,7 @@ void ArrowModel::setLabelPosition(double x, double y)
     if(!bNullArrow)
     {
 
-        Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
+        Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label);
         if(item)
         {
             Goocanvas::Bounds bi = item->get_bounds();
@@ -446,7 +446,7 @@ void ArrowModel::setLabelPosition(double x, double y)
             item->translate(x-bi.get_x1(), y-bi.get_y1());
         }
         onPointUpdated();
-    }        
+    }
 }
 
 Gdk::Point ArrowModel::getPoint(int index)
@@ -469,7 +469,7 @@ int ArrowModel::getIndex(double x, double y)
         if((x1 == x) && (y1 == y))
             return i;
     }
-    
+
     return -1;
 }
 
@@ -519,7 +519,7 @@ int ArrowModel::addPoint(double x, double y)
         points.get_coordinate(i+1, x2, y2);
         if((x > fmin(x1, x2)) && (x < fmax(x1, x2)) &&
            (y > fmin(y1, y2)) && (y < fmax(y1, y2)))
-        {   
+        {
             double d = ((x-x1)*(x2-x1) + (y-y1)*(y2-y1)) / ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
             if((d > 0.0) && (d < 1.0))
             {
@@ -567,8 +567,8 @@ void ArrowModel::onPointUpdated(void)
 
     if(!bNullArrow)
     {
-        // Adding label position 
-        Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label); 
+        // Adding label position
+        Glib::RefPtr<Goocanvas::Item> item = parentWindow->m_Canvas->get_item(label);
         if(item)
         {
             Goocanvas::Bounds bi = item->get_bounds();
@@ -600,16 +600,16 @@ Glib::RefPtr<ArrowModel> ArrowModel::create(ApplicationWindow* parentWnd,
 }
 
 
-bool ArrowModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool ArrowModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
     if(!item)
         return false;
 
-    // right click on selected line 
+    // right click on selected line
     if((event->button == 3) && selected && !bNullArrow)
         addMidPoint(event->x, event->y);
-    
+
     parentWindow->setModified();
 
     return true;
@@ -624,27 +624,27 @@ void ArrowModel::addMidPoint(double x, double y, int index)
 
     if(!bNested)
     {
-        Glib::RefPtr<MidpointModel> mid = MidpointModel::create(parentWindow, 
+        Glib::RefPtr<MidpointModel> mid = MidpointModel::create(parentWindow,
                                           this, x, y);
-        parentWindow->getRootModel()->add_child(mid);        
+        parentWindow->getRootModel()->add_child(mid);
         mid->set_property("x", x-POINT_SIZE/2.0);
         mid->set_property("y", y-POINT_SIZE/2.0);
         mid->snapToGrid();
         midpoints.push_back(mid);
-    }        
+    }
 }
 
-bool ArrowModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool ArrowModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
   if(event->button == 1)
-  {    
+  {
        // printf("released\n");
   }
   return true;
 }
 
-bool ArrowModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool ArrowModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventMotion* event)
 {
     if(item)
@@ -654,7 +654,7 @@ bool ArrowModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& it
     return true;
 }
 
-bool ArrowModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool ArrowModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     if(!bNullArrow)
@@ -670,7 +670,7 @@ bool ArrowModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
     return true;
 }
 
-bool ArrowModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool ArrowModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     if(!bNullArrow)
@@ -682,7 +682,7 @@ bool ArrowModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
         //parentWindow->get_window()->set_cursor();
         //this->property_stroke_color().set_value("black");
        // printf("left\n");
-    }       
+    }
     return true;
 }
 
@@ -700,7 +700,7 @@ bool ArrowModel::inside(double p1, double q1, double p2, double q2)
 
     if((x1>=p1) && (x1<=p2) && (y1>=q1) && (y2<=q2))
         return true;
- 
+
     return false;
 }
 
@@ -714,11 +714,11 @@ bool ArrowModel::intersect(double p1, double q1, double p2, double q2)
         points.get_coordinate(i, x1, y1);
         points.get_coordinate(i+1, x2, y2);
 
-        // calculte intersection 
+        // calculte intersection
         double s1_x, s1_y, s2_x, s2_y;
-        s1_x = x2 - x1;     
+        s1_x = x2 - x1;
         s1_y = y2 - y1;
-        s2_x = p2 - p1;     
+        s2_x = p2 - p1;
         s2_y = q2 - q1;
 
         double s, t;
@@ -740,7 +740,7 @@ void ArrowModel::showLabel(bool bShow)
             label->property_visibility().set_value(Goocanvas::ITEM_VISIBLE);
         else
            label->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);
-    }           
+    }
 }
 
 void ArrowModel::setSelected(bool sel)
@@ -755,7 +755,7 @@ void ArrowModel::setSelected(bool sel)
         {
             this->property_stroke_color().set_value("DodgerBlue3");
             this->raise();
-            label->setSelected(true);        
+            label->setSelected(true);
         }
 
         vector<Glib::RefPtr<MidpointModel> >::iterator itr;
@@ -771,8 +771,8 @@ void ArrowModel::setSelected(bool sel)
         if(!bNullArrow)
         {
             this->property_stroke_color().set_value(defaultColor.c_str());
-            label->setSelected(false); 
-        }            
+            label->setSelected(false);
+        }
         vector<Glib::RefPtr<MidpointModel> >::iterator itr;
         for(itr=midpoints.begin(); itr!=midpoints.end(); itr++)
             (*itr)->property_visibility().set_value(Goocanvas::ITEM_HIDDEN);

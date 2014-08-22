@@ -9,7 +9,7 @@ network friendly to UDP and multicast. But if you find yourself
 spending a lot of time on this, you may need to reconsider whether you
 have made the right choice of protocol.
 
-NOTE: if you are just getting started with YARP, you 
+NOTE: if you are just getting started with YARP, you
 don't need to look at any of this yet!  It only matters when you
 are working with a cluster of computers using unreliable protocols,
 or run into bandwidth problems.  But it is important to remember that
@@ -19,13 +19,13 @@ this page is here for when you need it.
 
 If you are doing any non-trivial networking, you need to learn how
 to test your network and debug throughput issues.  A key resource
-in this battle is the "iperf" program. 
+in this battle is the "iperf" program.
 
 - Download from http://iperf.sourceforge.net/
 - Linux: apt-get install iperf (or similar command)
 - OSX: brew install iperf (if you use homebrew)
 
-Please make sure you have iperf available on all your machines 
+Please make sure you have iperf available on all your machines
 before going any further.
 
 @section yarp_cluster_tcp Checking TCP communication
@@ -33,7 +33,7 @@ before going any further.
 TCP is the simplest protocol to work with, so let's start with it.
 Let's check the throughput between two of your machines.
 Pick two machines, and choose one (arbitrarily) to be the iperf
-server.  Determine its IP address of domain name -- let's say it is 
+server.  Determine its IP address of domain name -- let's say it is
 10.0.0.26. Run the following commands:
 
 \verbatim
@@ -127,7 +127,7 @@ MCAST. To check 63KB datagrams, do:
 Make sure you try this in both directions! For example, we've seen an
 asymmetric problems going from a Linux machine to a Windows machine on
 a gigabit network with a particular switch.  If you see problems,
-reduce the "-l" size until things work just to understand your system 
+reduce the "-l" size until things work just to understand your system
 (but if you want to send large images you'll need to tweak your system
 until large packets work).
 
@@ -221,7 +221,7 @@ the \ref carrier_config_udp and \ref carrier_config_mcast.
 
 In case you need to fix something, the relevant source code in YARP is:
 
-- src/libYARP_OS/include/yarp/os/DgramTwoWayStream.h 
+- src/libYARP_OS/include/yarp/os/DgramTwoWayStream.h
 - src/libYARP_OS/src/DgramTwoWayStream.cpp
 
 We appreciate patches to these files. We only have a few networks to test

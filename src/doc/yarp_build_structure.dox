@@ -4,19 +4,19 @@
  *
  */
 
-/** 
+/**
  * @page yarp_build_structure YARP's own build structure
 
 @author Paul Fitzpatrick
 
-For the reference of YARP developers, and the curious, here is a 
+For the reference of YARP developers, and the curious, here is a
 sketch of how YARP builds, including plugins.
 
 The YARP project is profoundly grateful to the creators of CMake,
 for finally giving us a sane way to build a cross-platform library.
 
 Suggested ways to use this document:
-  \li Look at \ref yarp_build_structure_src to pick out the 
+  \li Look at \ref yarp_build_structure_src to pick out the
 general area you are interested in (e.g. modules/carriers).
   \li Or find a specific file or directory of interest using
  the \ref yarp_build_structure_index "index".
@@ -79,20 +79,20 @@ general area you are interested in (e.g. modules/carriers).
 
 @section yarp_build_structure_big The big picture
 
-Before getting into the details, here are a few general notes on YARP's 
+Before getting into the details, here are a few general notes on YARP's
 source code and build:
 \li YARP is often used without installation.  It can be used either
 directly from its build directory ("in-tree use"), or via an install.
 \li Although not required, YARP is designed with out-of-source builds
 in mind.  The description from here on assumes you are doing that.
-\li Each YARP library has its own set of header files, kept 
+\li Each YARP library has its own set of header files, kept
 separate in the source but laid out so that they can be folded together
 after installation.  By convention, YARP header files are accessed
 from C++ as "#include <yarp/os/...>", "#include <yarp/sig/...>" etc.
 The header file locations are chosen
 to allow the difference between in-tree and installed operation to
-be hidden.  For in-tree use, we have an include path of 
-src/libYARP_OS/include, src/libYARP_sig/include, ...  For installed 
+be hidden.  For in-tree use, we have an include path of
+src/libYARP_OS/include, src/libYARP_sig/include, ...  For installed
 use, the include path collapses to just one directory, [prefix]/include.
 This is the reason for the apparent redundancy in header file paths,
 e.g. src/libYARP_OS/include/yarp/os/Port.h - it seems strange
@@ -102,11 +102,11 @@ in the big picture it makes sense.
 of YARP.  They are accessible during in-tree use, but not after installation.
 If there's a good reason to install them, let us know though!
 \li YARP uses ACE in its implementation, but does not expose that use in any
-public header files (anything not in an "impl" directory).  Doing so 
+public header files (anything not in an "impl" directory).  Doing so
 causes all sorts of arcane problems.  YARP developers should take care to
 maintain this constraint.
 \li YARP uses no standard C++ libraries in its core libraries.  STL is not
-used, nor is fstream/iostream/...  Nor are exceptions used.  YARP developers 
+used, nor is fstream/iostream/...  Nor are exceptions used.  YARP developers
 should take care to maintain this constraint.  (ACE in turn
 can be compiled under the same constraints).
 \li *Users* of YARP are of course free to use the STL, exceptions,
@@ -144,8 +144,8 @@ like this:
 # Touch: 1 2 3
 \endverbatim
 When new source files are added to YARP, and no CMakeLists.txt file is
-modified in so doing, it is wise to add another arbitrary number to 
-the "Touch" line.  We've been lazy in YARP and let CMake scan for 
+modified in so doing, it is wise to add another arbitrary number to
+the "Touch" line.  We've been lazy in YARP and let CMake scan for
 source files rather than listing them all explicitly.  Without the
 "touch" line, users could end up with broken builds if they do an "svn update",
 receive a new source file added by someone else, and don't run cmake.
@@ -167,12 +167,12 @@ Now we prepare some options for the user.  Some may be hidden
 as "advanced" options.
 \li The CREATE_SHARED_LIBRARY option - if set to true, shared libraries
  (.so/.dll/.dylib/...) will be built, instead of static.
-\li [ADVANCED] The USE_STL_STRING option - internally, YARP uses an 
+\li [ADVANCED] The USE_STL_STRING option - internally, YARP uses an
  ACE string class.  This can be toggled to std::string if desired.
-\li [ADVANCED] The CREATE_BUILTIN_DEVICE_TESTS option - normally, YARP 
+\li [ADVANCED] The CREATE_BUILTIN_DEVICE_TESTS option - normally, YARP
  won't test devices, but if you turn this flag on it will attempt some
- device tests.  This has the side-benefit of being useful for building 
- documentation about those devices, by probing their "open" method with 
+ device tests.  This has the side-benefit of being useful for building
+ documentation about those devices, by probing their "open" method with
  verbose turned on.
 \li The ENABLE_DASHBOARD_SUBMIT flag - if enabled, builds and tests can
  be submitted to the YARP online dashboard.
@@ -195,7 +195,7 @@ YARP versioning is as follows:
 Here we probe for some system properties needed to compile YARP correctly.
 We set up compiler flags reflecting those properties.
 \li We set YARP_BIG_ENDIAN/YARP_LITTLE_ENDIAN depending on the order
-of bytes in integers.  For example, if the number 42, expressed as a 
+of bytes in integers.  For example, if the number 42, expressed as a
 four byte integer is "42 0 0 0", then YARP_LITTLE_ENDIAN is set.
 If instead it is "0 0 0 42", then YARP_BIG_ENDIAN is set.  This
 will affect the implementation of the yarp::os::NetInt32 type.
@@ -205,12 +205,12 @@ integers.
 \li We figure out an appropriate native type for 16-bit integers,
 32-bit integers, and 64-bit floating point numbers.  The types are stored
 in YARP_INT16, YARP_INT32, and YARP_FLOAT64 respectively.
-\li If the YARP_ADMIN environment flag is set, we turn on some more 
+\li If the YARP_ADMIN environment flag is set, we turn on some more
 aggressive warnings and errors in the compiler.  YARP developers should
 generally have this flag set if possible.
 \li We define YARP_PRESENT for compilation.  This definition is unused.
 \li We define _REENTRANT, for thread-safe C library calls.
-\li Compiler flags that may also be needed by users are recorded in a 
+\li Compiler flags that may also be needed by users are recorded in a
  global property "YARP_DEFS" for later export.
 \li If on Windows, compiling natively, we make sure WIN32 and _WINDOWS are set (ACE relies on them).
 \li If on Windows, compiling under Cygwin, we define CYGWIN (ACE needs this).
@@ -222,7 +222,7 @@ it must be used, but there's no obvious way to check for it in code,
 so we need to explicitly test for it.
 \li Under MSVC, we turn off a set of warnings that ACE triggers.  The warnings
 are for deprecated functions that ACE provides wrappers for.
-\li Under MSVC, we set CMAKE_DEBUG_POSTFIX to "d", to add "d" to library 
+\li Under MSVC, we set CMAKE_DEBUG_POSTFIX to "d", to add "d" to library
 names in debug mode.  This is just a convention.
 
 @section yarp_build_structure_conf conf/CMakeLists.txt
@@ -248,7 +248,7 @@ Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
 \li \ref yarp_build_structure_yarpdev "libYARP_dev" - device management.
 \li \ref yarp_build_structure_modules "modules" - optional plugin devices (some under non-LGPL licenses).
 \li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
-\li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional modules 
+\li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional modules
 and carriers.
 \li \ref yarp_build_structure_yarpname "libYARP_name" - a library to help in construction of name servers. It is compiled if CREATE_YARPSERVER3 is set.
 \li libyarpc - an experimental C API to YARP.
@@ -271,15 +271,15 @@ build.
 
 @section yarp_build_structure_describe conf/YarpDescribe.cmake
 
-Our job here is to capture everything a project that uses YARP will 
-need to know, and export that.  We need to deal with two important 
-cases: where YARP is used directly from its build directory 
+Our job here is to capture everything a project that uses YARP will
+need to know, and export that.  We need to deal with two important
+cases: where YARP is used directly from its build directory
 (without an install), or where YARP is installed in system directories.
 
 First we set up some variables:
 \li We set YARP_INCLUDE_DIRS from the global property YARP_TREE_INCLUDE_DIRS.
-All libraries configured to build will have appended the *internal* paths 
-they need here.  These paths are important for using YARP without an 
+All libraries configured to build will have appended the *internal* paths
+they need here.  These paths are important for using YARP without an
 install.
 \li We set YARP_LIBRARIES from the global property YARP_LIBS.  All libraries
 configured to build will have appended their target name here.
@@ -292,23 +292,23 @@ We now generate three files in the build directory:
 \li YARPConfig.cmake - this is an important file for using YARP directly
 from its build directory without an install.  If the YARP_DIR environment
 variable is set to the build directory, A CMake
-call to "FIND_PACKAGE(YARP)" will find this file and 
+call to "FIND_PACKAGE(YARP)" will find this file and
 pull in everything it needs to know about YARP.
-The template for this file is \ref yarp_build_structure_template_yarpconfig. 
+The template for this file is \ref yarp_build_structure_template_yarpconfig.
 It stores the variables we set up above, tries to read YARPDependencies.cmake
 (see next file), and does some backwards-compatibility gymnastics.
 \li YARPDependencies.cmake - this contains information about the dependencies
 of all YARP targets.  It is generated by the CMake "EXPORT" command.
-\li YARPConfigForInstall.cmake - this is an alternate version of 
-YARPConfig.cmake, appropriate after an install. After installation, it would 
-be placed into [prefix]/lib/YARP/YARPConfig.cmake.  An equivalent of 
+\li YARPConfigForInstall.cmake - this is an alternate version of
+YARPConfig.cmake, appropriate after an install. After installation, it would
+be placed into [prefix]/lib/YARP/YARPConfig.cmake.  An equivalent of
 YARPDependencies.cmake would also be generated upon an installation, in
 [prefix]/lib/YARP/YARP.cmake.  This is generated using the CMake
 "INSTALL(EXPORT ...)" command
-Again, these are locations that 
+Again, these are locations that
 "FIND_PACKAGE(YARP)" can pick up automatically.
 
-@section yarp_build_structure_package conf/YarpPackage.cmake 
+@section yarp_build_structure_package conf/YarpPackage.cmake
 
 CMake comes with a companion utility CPack for generating tarballs,
 zip files, Windows installers, etc.  This file sets some simple
@@ -342,7 +342,7 @@ We go ahead and create the YARP_OS target, linking it against
 all ACE libraries (ACE itself and system dependencies - pthread,
 rt, etc, or whatever the FindACE script decided was needed).
 
-We set up installation, and add the target name to the YARP_LIBS 
+We set up installation, and add the target name to the YARP_LIBS
 global property for later reference.  We also set a property
 "INCLUDE_DIRS" of the YARP_OS target, to hold its include
 path for later reference.
@@ -351,7 +351,7 @@ path for later reference.
 
 This sets up the YARP_sig target, for signal processing.
 Source code is in the src subdirectory, header files are in the
-include subdirectory.  Our include directory is appended to the 
+include subdirectory.  Our include directory is appended to the
 YARP_TREE_INCLUDE_DIRS global property for reference by later targets.
 
 We place everything in YARP_TREE_INCLUDE_DIRS in our include path.
@@ -359,7 +359,7 @@ We also add ACE's include path, since we use ACE in our implementation.
 
 We create the YARP_sig target, linking it against YARP_OS.
 
-We set up installation, and add the target name to the YARP_LIBS 
+We set up installation, and add the target name to the YARP_LIBS
 global property for later reference.  We also set a property
 "INCLUDE_DIRS" of the YARP_sig target, to hold its include
 path for later reference.
@@ -367,17 +367,17 @@ path for later reference.
 @section yarp_build_structure_yarpmath src/libYARP_math/CMakeLists.txt
 
 We follow the pattern of \ref yarp_build_structure_yarpsig
-to create the YARP_math library, 
+to create the YARP_math library,
 for mathematical operations.  There are a few wrinkles:
 \li YARP_math is optional.  We create an option CREATE_LIB_MATH
 which defaults to FALSE.  If FALSE, this target is skipped.
-\li YARP_math depends on GSL.  We use the conf/FindGSL.cmake script to 
+\li YARP_math depends on GSL.  We use the conf/FindGSL.cmake script to
 track this dependency down.
 \li YARP_math optionally can use Atlas with GSL to improve performance
 further.  We create an option YARP_USE_ATLAS that default to FALSE.
 \li If YARP_USE_ATLAS is set to TRUE, we use the conf/FindAtlas.cmake
 script to track this dependency down.
-\li Depending on the options, we store the names of the extra libraries 
+\li Depending on the options, we store the names of the extra libraries
 needed in MATH_LIB_EXTRAS.
 
 The YARP_math target is linked against YARP_sig and YARP_OS, and against
@@ -395,7 +395,7 @@ This is a tiny library.  Its role is to make sure that all the
 optional parts of YARP get initialized in user code.  To
 avoid circular library dependencies, which can cause mayhem in some
 configurations, it is important the YARP is initialized directly
-by the user.  YARP_init solves this problem by defining 
+by the user.  YARP_init solves this problem by defining
 yarp::os::Network::init and yarp::os::Network::fini at the last
 possible minute (and *definitely* not in libYARP_OS).  All the
 other libraries in YARP use yarp::os::NetworkBase rather than
@@ -405,16 +405,16 @@ yarp::os::Network - NetworkBase is Network without init and fini.
 
 We follow the pattern of \ref yarp_build_structure_yarpsig
 to create the YARP_name library (at the time of writing, compilation
-is conditional on the CREATE_YARPSERVER3 flag). 
+is conditional on the CREATE_YARPSERVER3 flag).
 
 @section yarp_build_structure_modules src/modules/CMakeLists.txt
 
 This is one of a pair of directories in YARP that contain optional
 plugins (the other is
-\ref yarp_build_structure_carriers "src/carriers").  
+\ref yarp_build_structure_carriers "src/carriers").
 This directory is devoted to
 devices, while the carriers directory is devoted to network protocols.
-Plugins in YARP are 
+Plugins in YARP are
 handled using a set of macros defined in
 \ref yarp_build_structure_plugin "conf/YarpPlugin.cmake".  Thes macros
 allow us to create a library (in this case "yarpmod")
@@ -429,8 +429,8 @@ YARP_END_PLUGIN_LIBRARY(yarpmod)
 The key thing to know is that the "yarpmod" library is a regular
 CMake library target, containing some automatically generated code
 for initialization, and it has been linked to any and all libraries
-created in the listed subdirectories.  We are given 
-a list of the linked libraries as ${yarpmod_LIBRARIES}.  
+created in the listed subdirectories.  We are given
+a list of the linked libraries as ${yarpmod_LIBRARIES}.
 The generated code for this library and the plugins within it
 will be placed in a "generated_code" subdirectory of the build.
 
@@ -439,7 +439,7 @@ the global property YARP_LIBS.  This is a variable keeping track
 of all the libraries that are configurated to be compiled.
 It is needed by \ref yarp_build_structure_describe.
 
-We tell CMake that, upon installing, the yarpmod library should go to 
+We tell CMake that, upon installing, the yarpmod library should go to
 [prefix]/lib.  We cannot tell it to install the ${yarpmod_LIBRARIES},
 since CMake requires that installation should be set up within
 the CMake script that creates the target.  YarpPlugin.cmake currently
@@ -458,14 +458,14 @@ except that it makes the "yarpcar" library target rather than
 the "yarpmod" library target.
 
 The yarpcar target links against YARP_OS, YARP_sig, YARP_dev,
-yarpmod, and their dependencies. 
+yarpmod, and their dependencies.
 At first glance this may seem excessive, and that YARP_OS
-would suffice.  However, there are some important cases to 
+would suffice.  However, there are some important cases to
 consider:
 \li We may want network protocols specialized for media.
 For example the optional "mjpeg_carrier" is intended to transport
 an image stream.  So it is good to have YARP_sig available.
-\li We may want access to special devices in order to 
+\li We may want access to special devices in order to
 implement new protocols.  This hasn't happened yet, but YARP is
 ready!
 
@@ -496,13 +496,13 @@ generated code is different.
 
 For implementation we also override the following CMake macros:
 \li FIND_PACKAGE - we intercept calls to FIND_PACKAGE(YARP), since these won't
-work before YARP is compiled.  Such calls are bypassed, and always succeed.  
+work before YARP is compiled.  Such calls are bypassed, and always succeed.
 Otherwise, FIND_PACKAGE's behavior is entirely unchanged.
-\li ADD_LIBRARY - we intercept all ADD_LIBRARY calls. If they are not 
+\li ADD_LIBRARY - we intercept all ADD_LIBRARY calls. If they are not
 import operations (which continue unchanged), then we add the name of
 the target to a global list, and call the regular ADD_LIBRARY implementation
-with any extra generated code appended to the list of 
-source code.  Generated code will be present if calls to 
+with any extra generated code appended to the list of
+source code.  Generated code will be present if calls to
 YARP_PREPARE_DEVICE/YARP_PREPARE_CARRIER have been made.  If compiling YARP,
 we set up installation of the library target.
 
@@ -520,7 +520,7 @@ are initialized by \ref yarp_build_structure_yarpinit "libYARP_init".
 The plugin macros can also be used outside of YARP to create
 a library of plugins.  The behavior of those macros changes in the
 following respects:
- \li Installation of targets - when used outside of YARP, it is 
+ \li Installation of targets - when used outside of YARP, it is
 up to the programmer to set up installation of targets.  Which is
 good, because YARP probably wouldn't do it the way you'd like.
  \li Calling FIND_PACKAGE(YARP) - within YARP, lines like this are
@@ -551,7 +551,7 @@ It is placed in generated_include/yarp/conf/yarp_config_options.h,
 and should be accessed as "#include <yarp/conf/yarp_config_options.h>".
 It is intended to store options about what parts of YARP have been compiled.
 Right now, it just optionally defines YARP_HAS_MATH_LIB and YARP_USE_ATLAS,
-since that is all anyone has needed so far.  
+since that is all anyone has needed so far.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_options
 
@@ -572,7 +572,7 @@ configuration.
 It is placed in generated_include/yarp/conf/yarp_config_system.h,
 and should be accessed as "#include <yarp/conf/yarp_config_system.h>".
 It is intended to store some facts about the system upon which YARP
-is built: the types YARP_INT32, YARP_INT16, YARP_FLOAT64, 
+is built: the types YARP_INT32, YARP_INT16, YARP_FLOAT64,
 whether the system is big- or little-endian, and whether to use ACE strings
 or STL strings
 \sa \ref yarp_build_structure_conf
@@ -593,10 +593,10 @@ flag has been turned on.
 @section yarp_build_structure_template_yarpconfig conf/template/YARPConfig.cmake.in
 
 This is a template for YARPConfig.cmake, an important file for
-users of YARP.  It lets CMake 
-automatically pull in the properties of YARP needed to build user 
-code.  YARPConfig.cmake is placed in the build directory.  If 
-YARP_DIR is pointed at this directory during configuration of 
+users of YARP.  It lets CMake
+automatically pull in the properties of YARP needed to build user
+code.  YARPConfig.cmake is placed in the build directory.  If
+YARP_DIR is pointed at this directory during configuration of
 a user project, then "FIND_PACKAGE(YARP)" will succeed, and
 the following variables are defined:
   \li YARP_LIBRARIES
@@ -610,7 +610,7 @@ the following variables are defined:
 @section yarp_build_structure_template_carrier conf/template/yarp_plugin_carrier.cpp.in
 
 A snippet of code to add a carrier plugin.  We make an instance of the carrier
-class, and pass it to a global yarp::os::impl::Carriers object.  The 
+class, and pass it to a global yarp::os::impl::Carriers object.  The
 code is contained in a function called add_FOO() where FOO is the name
 of the carrier.
 
@@ -623,8 +623,8 @@ instantiate carriers freely for administrative purposes.
 
 @section yarp_build_structure_template_device conf/template/yarp_plugin_device.cpp.in
 
-A snippet of code to add a device plugin.  We create a "factory object" 
-for the the device and hand it to yarp::dev::Drivers::factory().  The 
+A snippet of code to add a device plugin.  We create a "factory object"
+for the the device and hand it to yarp::dev::Drivers::factory().  The
 code is contained in a function called add_FOO() where FOO is the name
 of the device.
 
@@ -634,7 +634,7 @@ of the device.
 @section yarp_build_structure_template_libcpp conf/template/yarpdev_lib.cpp.in
 
 A snippet of code to define the main entry point for a plugin library
-(the "yarpdev" in the name is an anachronism).  It defines 
+(the "yarpdev" in the name is an anachronism).  It defines
 a function added add_FOO_devices (where FOO is the name of the plugin
 library).  The function expands to a series of calls to add_NAME1(),
 addNAME2(), ... where NAME1, NAME2, ... are the names of configured

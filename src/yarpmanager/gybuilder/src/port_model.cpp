@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -25,7 +25,7 @@ PortModel::PortModel(NodeType t) : GroupModel()
 }
 
 
-PortModel::~PortModel(void) 
+PortModel::~PortModel(void)
 {
 }
 
@@ -41,41 +41,41 @@ Gdk::Point PortModel::getContactPoint(ArrowModel* arrow)
 }
 
 
-bool PortModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
     return true;
 }
 
-bool PortModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
    return true;
 }
 
-bool PortModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventMotion* event)
 {
    return true;
 }
 
-bool PortModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     return true;
 }
 
-bool PortModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     return true;
 }
 
-void PortModel::setSelected(bool sel) 
-{ 
+void PortModel::setSelected(bool sel)
+{
 }
 
-bool PortModel::getSelected(void) 
+bool PortModel::getSelected(void)
 {
     return false;
 }
@@ -84,7 +84,7 @@ bool PortModel::addSourceArrow(ArrowModel* arrow)
 {
     if(type == INPUTD)
         return false;
-    sourceArrows.push_back(arrow); 
+    sourceArrows.push_back(arrow);
     onSourceAdded();
     return true;
 }
@@ -93,7 +93,7 @@ bool PortModel::addDestinationArrow(ArrowModel* arrow)
 {
     if(type == OUTPUTD)
         return false;
-    destinationArrows.push_back(arrow); 
+    destinationArrows.push_back(arrow);
     onDestinationAdded();
     return true;
 }

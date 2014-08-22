@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -23,9 +23,9 @@
 using namespace yarp::manager;
 
 
-ApplicationPropertyWindow::ApplicationPropertyWindow(MainWindow* parent, 
+ApplicationPropertyWindow::ApplicationPropertyWindow(MainWindow* parent,
                                Manager* manager, ApplicationWindow* appWnd) : m_pApplication(NULL)
-{   
+{
     m_pParent = parent;
     m_pManager = manager;
     m_pAppWindow = appWnd;
@@ -38,7 +38,7 @@ ApplicationPropertyWindow::ApplicationPropertyWindow(MainWindow* parent,
     m_refTreeModel = Gtk::TreeStore::create(m_Columns);
     m_TreeView.set_model(m_refTreeModel);
 
-    //Add the Model’s column to the View’s columns: 
+    //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* itemRenderer = Gtk::manage(new Gtk::CellRendererText());
     itemRenderer->property_editable() = false;
     Gtk::TreeViewColumn* itemCol = Gtk::manage(new Gtk::TreeViewColumn("Property", *itemRenderer));
@@ -60,7 +60,7 @@ ApplicationPropertyWindow::ApplicationPropertyWindow(MainWindow* parent,
     valueRenderer->signal_edited().connect( sigc::mem_fun(*this,
               &ApplicationPropertyWindow::onCellEdited) );
     m_TreeView.append_column(*valueCol);
-    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);   
+    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);
 
     //m_TreeView.append_column_editable("Value", m_Columns.m_col_value);
     //m_TreeView.get_column(1)->set_resizable(true);
@@ -82,9 +82,9 @@ void ApplicationPropertyWindow::onRefresh()
     m_pParent->reportErrors();
 }
 
-void ApplicationPropertyWindow::onTabCloseRequest() 
-{ 
-    m_pParent->onTabCloseRequest(this); 
+void ApplicationPropertyWindow::onTabCloseRequest()
+{
+    m_pParent->onTabCloseRequest(this);
 }
 
 void ApplicationPropertyWindow::update(Application* application)
@@ -105,8 +105,8 @@ void ApplicationPropertyWindow::update(Application* application)
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Description";
     row[m_Columns.m_col_value] = m_pApplication->getDescription();
-    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)   
-         row[m_Columns.m_col_editable] = true;    
+    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)
+         row[m_Columns.m_col_editable] = true;
     else
     {
         row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
@@ -116,21 +116,21 @@ void ApplicationPropertyWindow::update(Application* application)
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Version";
     row[m_Columns.m_col_value] = m_pApplication->getVersion();
-    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)   
-         row[m_Columns.m_col_editable] = true;    
+    if(m_pAppWindow && m_pAppWindow->getApplication() == m_pApplication)
+         row[m_Columns.m_col_editable] = true;
     else
     {
         row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
         row[m_Columns.m_col_editable] = false;
     }
 
-    
-    if(m_pAppWindow && m_pAppWindow->getApplication() != m_pApplication)   
+
+    if(m_pAppWindow && m_pAppWindow->getApplication() != m_pApplication)
     {
         row = *(m_refTreeModel->append());
         row[m_Columns.m_col_name] = "Prefix";
         row[m_Columns.m_col_value] = m_pApplication->getBasePrefix();
-        row[m_Columns.m_col_editable] = true;      
+        row[m_Columns.m_col_editable] = true;
     }
 
     row = *(m_refTreeModel->append());
@@ -166,7 +166,7 @@ void ApplicationPropertyWindow::updateApplication(const char* item, const char* 
         {
              Module* module = dynamic_cast<Module*>(m_pApplication->getLinkAt(i).to());
              if(module)
-             { 
+             {
                 for(int j=0; j<module->outputCount(); j++)
                 {
                     OutputData *output = &module->getOutputAt(j);
@@ -180,18 +180,18 @@ void ApplicationPropertyWindow::updateApplication(const char* item, const char* 
                         {
                             string strFrom = string(module->getPrefix()) + string(output->getPort());
                             updatedCon.setFrom(strFrom.c_str());
-                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication, 
+                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication,
                                                         con, updatedCon);
                             // updating arrow's connection
                             ArrowModel* arrow = dynamic_cast<ArrowModel*>(con.getModel());
                             if(arrow)
                             {
                                 arrow->setConnection(updatedCon);
-                                // updating excitatory links from other connections 
+                                // updating excitatory links from other connections
                                 Glib::RefPtr<PortArbitratorModel> arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(arrow->getDestination());
                                 if(arbPort)
                                     arbPort->updateExcitation(arrow, strOldFrom.c_str(), strFrom.c_str());
-                            }                                
+                            }
                         }
                     }
                 }
@@ -208,7 +208,7 @@ void ApplicationPropertyWindow::updateApplication(const char* item, const char* 
                         {
                             string strTo = string(module->getPrefix()) + string(input->getPort());
                             updatedCon.setTo(strTo.c_str());
-                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication, 
+                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(mainApplication,
                                                         con, updatedCon);
                             // updating arrow's connection
                             if(dynamic_cast<ArrowModel*>(con.getModel()))
@@ -221,7 +221,7 @@ void ApplicationPropertyWindow::updateApplication(const char* item, const char* 
     }
 }
 
-void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string, 
+void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     const Glib::ustring& new_text)
 {
     Gtk::TreePath path(path_string);
@@ -233,7 +233,7 @@ void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         Gtk::TreeModel::Row row = *iter;
         //Put the new value in the model:
         Glib::ustring strName = Glib::ustring(row[m_Columns.m_col_name]);
-    
+
         row[m_Columns.m_col_value] = new_text;
 
         /*
@@ -246,16 +246,16 @@ void ApplicationPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         {
             m_pApplication->setDescription(new_text.c_str());
         }
-     
+
         if(strName == "Version")
         {
             m_pApplication->setVersion(new_text.c_str());
         }
-        
+
         if(strName == "Prefix")
             updateApplication(strName.c_str(), new_text.c_str());
-       
-        if(m_pAppWindow) 
+
+        if(m_pAppWindow)
             m_pAppWindow->setModified();
    }
 }

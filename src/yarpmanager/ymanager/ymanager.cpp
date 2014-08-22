@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -15,7 +15,7 @@
 #include <yarp/manager/ymm-dir.h>
 
 /*
- * TODO: using stringstream should be avoided to keep 
+ * TODO: using stringstream should be avoided to keep
  *  the compatibility with GUI
  */
 #include <sstream>
@@ -57,14 +57,14 @@ using namespace yarp::manager;
     #include <readline/readline.h>
     #include <readline/history.h>
     const char* commands[CMD_COUNTS] = {"help", "exit","list mod", "list app", "list res", "add mod",
-                  "add app", "add res", "load app", "run", "stop", "kill", 
+                  "add app", "add res", "load app", "run", "stop", "kill",
                   "connect", "disconnect", "which", "check state",
                   "check con", "check dep", "set", "get", "export",
                   "show mod", "assign hosts", " "};
     char* command_generator (const char* text, int state);
     char* appname_generator (const char* text, int state);
     char ** my_completion (const char* text, int start, int end);
-    vector<string> appnames;    
+    vector<string> appnames;
 #endif
 
 #define DEF_CONFIG_FILE     "ymanager.ini"
@@ -146,17 +146,17 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         cout<<HELP_MESSAGE<<endl;
         return;
     }
- 
+
     if(config.check("version"))
     {
         cout<<VERSION_MESSAGE<<endl;
         return;
     }
- 
+
     /**
      *  preparing default options
      */
-    
+
     std::string inifile=rf.findFile("from").c_str();
     std::string inipath="";
     size_t lastSlash=inifile.rfind("/");
@@ -168,41 +168,41 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         if (lastSlash!=std::string::npos)
             inipath=inifile.substr(0, lastSlash+1);
     }
-    
-//     if(!config.check("ymanagerini_dir"))   
+
+//     if(!config.check("ymanagerini_dir"))
 //         config.put("ymanagerini_dir", inipath.c_str());
-    
+
     if(!config.check("apppath"))
         config.put("apppath", "./");
 
     if(!config.check("modpath"))
         config.put("modpath", "./");
-    
+
     if(!config.check("respath"))
         config.put("respath", "./");
-   
+
     if(!config.check("load_subfolders"))
         config.put("load_subfolders", "no");
-    
+
     if(!config.check("watchdog"))
         config.put("watchdog", "no");
 
     if(!config.check("module_failure"))
         config.put("module_failure", "prompt");
-    
+
     if(!config.check("connection_failure"))
         config.put("connection_failure", "prompt");
 
     if(!config.check("auto_connect"))
         config.put("auto_connect", "no");
-    
+
     if(!config.check("auto_dependency"))
         config.put("auto_dependency", "no");
 
     if(!config.check("color_theme"))
         config.put("color_theme", "light");
 
-    
+
     /**
      * Set configuration
      */
@@ -227,7 +227,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         enableAutoConnect();
     else
         disableAutoConnect();
-    
+
     if(!config.check("silent"))
     {
         cout<<endl<<OKGREEN<<LOGO_MESSAGE<<ENDC<<endl;
@@ -260,7 +260,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         }
     }
 
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     if(config.check("apppath"))
     {
         string strPath;
@@ -274,13 +274,13 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
             {
                 if(!loadRecursiveApplications(strPath.c_str()))
                     logger->addError("Cannot load the applications from  " + strPath);
-            }        
+            }
             else
-                addApplications(strPath.c_str()); 
+                addApplications(strPath.c_str());
         }
     }
 
-    reportErrors(); 
+    reportErrors();
 
 #ifdef WITH_READLINE
     updateAppNames(&appnames);
@@ -293,7 +293,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) YConsoleManager::onSignal);
 #else
     struct sigaction new_action, old_action;
-     
+
     /* Set up the structure to specify the new action. */
     new_action.sa_handler = YConsoleManager::onSignal;
     sigemptyset (&new_action.sa_mask);
@@ -318,7 +318,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
             Application* application = appload.getNextApplication();
             if(application)
             {
-                // add this application to the manager if does not exist    
+                // add this application to the manager if does not exist
                 if(!getKnowledgeBase()->getApplication(application->getName()))
                     getKnowledgeBase()->addApplication(application);
 
@@ -357,15 +357,15 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
                             if(running(id))
                                 stop(id);
                             id++;
-                        } 
+                        }
                         bShouldRun = !suspended();
-                    }          
+                    }
 
                     if(config.check("kill"))
                     {
                          bShouldRun = false;
                          kill();
-                    }                    
+                    }
 
                     if(config.check("check_con"))
                         checkConnections();
@@ -382,9 +382,9 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
         if(!config.check("silent"))
             reportErrors();
     }
-    
+
     if(!config.check("exit"))
-        YConsoleManager::myMain();         
+        YConsoleManager::myMain();
 }
 
 YConsoleManager::~YConsoleManager()
@@ -408,7 +408,7 @@ void YConsoleManager::onSignal(int signum)
 void YConsoleManager::myMain(void)
 {
 
-        
+
 #ifdef WITH_READLINE
     rl_attempted_completion_function = my_completion;
 #endif
@@ -424,15 +424,15 @@ void YConsoleManager::myMain(void)
             free(szLine);
             szLine = (char*)NULL;
         }
-            
+
         szLine = readline(">>");
         if(szLine && *szLine)
         {
             temp = szLine;
             add_history(szLine);
         }
-        else 
-            temp = "";  
+        else
+            temp = "";
 #else
         cout << ">> ";
         getline(cin, temp);
@@ -484,7 +484,7 @@ bool YConsoleManager::exit(void)
     getline(cin, ans);
     if(compareString(ans.c_str(),"yes"))
     {
-        bShouldRun = false; 
+        bShouldRun = false;
         //kill();
         //reportErrors();
         return true;
@@ -495,13 +495,13 @@ bool YConsoleManager::exit(void)
 
 bool YConsoleManager::process(const vector<string> &cmdList)
 {
-    if (!cmdList.size() || cmdList[0] == "") 
+    if (!cmdList.size() || cmdList[0] == "")
         return true;
-    
+
     /**
-     * help 
+     * help
      */
-     if((cmdList.size() == 1) && 
+     if((cmdList.size() == 1) &&
         (cmdList[0] == "help"))
      {
          help();
@@ -510,9 +510,9 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
 
     /**
-     * add application 
-     */ 
-     if((cmdList.size() == 3) && 
+     * add application
+     */
+     if((cmdList.size() == 3) &&
         (cmdList[0] == "add") && (cmdList[1] == "app"))
      {
          if(addApplication(cmdList[2].c_str()))
@@ -526,8 +526,8 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
     /**
      * add module
-     */ 
-     if((cmdList.size() == 3) && 
+     */
+     if((cmdList.size() == 3) &&
         (cmdList[0] == "add") && (cmdList[1] == "mod"))
      {
          if(addModule(cmdList[2].c_str()))
@@ -538,8 +538,8 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
     /**
      * add resource
-     */ 
-     if((cmdList.size() == 3) && 
+     */
+     if((cmdList.size() == 3) &&
         (cmdList[0] == "add") && (cmdList[1] == "res"))
      {
          if(addResource(cmdList[2].c_str()))
@@ -550,9 +550,9 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
 
     /**
-     * load application 
-     */ 
-     if((cmdList.size() == 3) && 
+     * load application
+     */
+     if((cmdList.size() == 3) &&
         (cmdList[0] == "load") && (cmdList[1] == "app"))
      {
          if(loadApplication(cmdList[2].c_str()))
@@ -566,9 +566,9 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
     /**
      * load module
-     */ 
+     */
     /*
-     if((cmdList.size() >= 3) && 
+     if((cmdList.size() >= 3) &&
         (cmdList[0] == "load") && (cmdList[1] == "mod"))
      {
          if(cmdList.size() > 3)
@@ -578,23 +578,23 @@ bool YConsoleManager::process(const vector<string> &cmdList)
          }
         else
             if(manager.loadModule(cmdList[2].c_str()))
-                cout<<cmdList[2]<<" is successfully loaded."<<endl;     
+                cout<<cmdList[2]<<" is successfully loaded."<<endl;
          reportErrors();
          return true;
      }
     */
 
     /**
-     * run 
-     */ 
-     if((cmdList.size() == 1) && 
+     * run
+     */
+     if((cmdList.size() == 1) &&
         (cmdList[0] == "run"))
      {
          bShouldRun = run();
          reportErrors();
          return true;
      }
-     if((cmdList.size() >= 2) && 
+     if((cmdList.size() >= 2) &&
         (cmdList[0] == "run"))
      {
         bShouldRun = false;
@@ -605,9 +605,9 @@ bool YConsoleManager::process(const vector<string> &cmdList)
      }
 
     /**
-     * stop 
-     */ 
-     if((cmdList.size() == 1) && 
+     * stop
+     */
+     if((cmdList.size() == 1) &&
         (cmdList[0] == "stop"))
      {
          bShouldRun = false;
@@ -615,11 +615,11 @@ bool YConsoleManager::process(const vector<string> &cmdList)
          reportErrors();
          return true;
      }
-     if((cmdList.size() >= 2) && 
+     if((cmdList.size() >= 2) &&
         (cmdList[0] == "stop"))
      {
          //bShouldRun = false;
-        for(unsigned int i=1; i<cmdList.size(); i++) 
+        for(unsigned int i=1; i<cmdList.size(); i++)
             stop(atoi(cmdList[i].c_str()));
          bShouldRun = !suspended();
          reportErrors();
@@ -627,41 +627,41 @@ bool YConsoleManager::process(const vector<string> &cmdList)
      }
 
     /**
-     * kill 
-     */ 
-     if((cmdList.size() == 1) && 
+     * kill
+     */
+     if((cmdList.size() == 1) &&
         (cmdList[0] == "kill"))
      {
-         bShouldRun = false; 
+         bShouldRun = false;
          kill();
          reportErrors();
          return true;
      }
-     if((cmdList.size() >= 2) && 
+     if((cmdList.size() >= 2) &&
         (cmdList[0] == "kill"))
      {
          //bShouldRun = false;
-         for(unsigned int i=1; i<cmdList.size(); i++) 
+         for(unsigned int i=1; i<cmdList.size(); i++)
             kill(atoi(cmdList[i].c_str()));
-         bShouldRun = !suspended(); 
+         bShouldRun = !suspended();
          reportErrors();
          return true;
      }
 
     /**
      * connect
-     */ 
-     if((cmdList.size() == 1) && 
+     */
+     if((cmdList.size() == 1) &&
         (cmdList[0] == "connect"))
      {
          connect();
          reportErrors();
          return true;
      }
-     if((cmdList.size() >= 2) && 
+     if((cmdList.size() >= 2) &&
         (cmdList[0] == "connect"))
      {
-        for(unsigned int i=1; i<cmdList.size(); i++) 
+        for(unsigned int i=1; i<cmdList.size(); i++)
             connect(atoi(cmdList[i].c_str()));
         reportErrors();
         return true;
@@ -670,18 +670,18 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
     /**
      * disconnect
-     */ 
-     if((cmdList.size() == 1) && 
+     */
+     if((cmdList.size() == 1) &&
         (cmdList[0] == "disconnect"))
      {
          disconnect();
          reportErrors();
          return true;
      }
-     if((cmdList.size() >= 2) && 
+     if((cmdList.size() >= 2) &&
         (cmdList[0] == "disconnect"))
      {
-        for(unsigned int i=1; i<cmdList.size(); i++) 
+        for(unsigned int i=1; i<cmdList.size(); i++)
             disconnect(atoi(cmdList[i].c_str()));
         reportErrors();
         return true;
@@ -689,9 +689,9 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
 
     /**
-     * which 
-     */ 
-     if((cmdList.size() == 1) && 
+     * which
+     */
+     if((cmdList.size() == 1) &&
         (cmdList[0] == "which"))
      {
         which();
@@ -701,7 +701,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     /**
      * check for dependencies
      */
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "check") && (cmdList[1] == "dep"))
     {
         if(checkDependency())
@@ -709,12 +709,12 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         reportErrors();
         return true;
     }
-    
-    
+
+
     /**
      * check for running state
      */
-    if((cmdList.size() == 3) && 
+    if((cmdList.size() == 3) &&
         (cmdList[0] == "check") && (cmdList[1] == "state"))
     {
         ExecutablePContainer modules = getExecutables();
@@ -735,7 +735,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         reportErrors();
         return true;
     }
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "check") && (cmdList[1] == "state"))
     {
         checkStates();
@@ -747,7 +747,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     /**
      * check for connection state
      */
-    if((cmdList.size() == 3) && 
+    if((cmdList.size() == 3) &&
         (cmdList[0] == "check") && (cmdList[1] == "con"))
     {
 
@@ -770,7 +770,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         reportErrors();
         return true;
     }
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "check") && (cmdList[1] == "con"))
     {
         checkConnections();
@@ -782,7 +782,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
     /**
      *  list available modules
      */
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "list") && (cmdList[1] == "mod"))
     {
         KnowledgeBase* kb = getKnowledgeBase();
@@ -803,13 +803,13 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
         }
         return true;
-    }   
+    }
 
 
     /**
      *  list available applications
      */
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "list") && (cmdList[1] == "app"))
     {
         KnowledgeBase* kb = getKnowledgeBase();
@@ -830,12 +830,12 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
         }
         return true;
-    }   
+    }
 
     /**
      *  list available resources
      */
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "list") && (cmdList[1] == "res"))
     {
         KnowledgeBase* kb = getKnowledgeBase();
@@ -862,25 +862,25 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             }
         }
         return true;
-    }   
+    }
 
 
     /**
-     *  export knowledgebase graph 
+     *  export knowledgebase graph
      */
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "export") )
     {
         if(!exportDependencyGraph(cmdList[1].c_str()))
             cout<<FAIL<<"ERROR:   "<<INFO<<"Cannot export graph to "<<cmdList[1]<<"."<<ENDC<<endl;
         return true;
-    }   
-    
+    }
+
 
     /**
-     * show module's information 
+     * show module's information
      */
-    if((cmdList.size() == 3) && 
+    if((cmdList.size() == 3) &&
         (cmdList[0] == "show") && (cmdList[1] == "mod"))
     {
         KnowledgeBase* kb = getKnowledgeBase();
@@ -893,17 +893,17 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         PRINT_MODULE(kb->getModule(cmdList[2].c_str()));
         cout<<ENDC;
         return true;
-    }   
+    }
 
     /**
-     * set an option  
-     */ 
-     if((cmdList.size() == 3) && 
+     * set an option
+     */
+     if((cmdList.size() == 3) &&
         (cmdList[0] == "set"))
      {
          config.unput(cmdList[1].c_str());
          config.put(cmdList[1].c_str(), cmdList[2].c_str());
-         
+
         if(cmdList[1] == string("watchdog"))
         {
             if(cmdList[2] == string("yes"))
@@ -927,7 +927,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             else
                 disableAutoConnect();
         }
-    
+
         if(cmdList[1] == string("color_theme"))
         {
             if(cmdList[2] == string("dark"))
@@ -944,8 +944,8 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
     /**
      * get an option
-     */ 
-     if((cmdList.size() == 2) && 
+     */
+     if((cmdList.size() == 2) &&
         (cmdList[0] == "get"))
      {
          if(config.check(cmdList[1].c_str()))
@@ -957,25 +957,25 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             cout<<FAIL<<"ERROR:   "<<INFO<<"'"<<cmdList[1].c_str()<<"' not found."<<ENDC<<endl;
          return true;
      }
-    
+
     /**
      * load balancing
      */
-    if((cmdList.size() == 2) && 
+    if((cmdList.size() == 2) &&
         (cmdList[0] == "assign") && (cmdList[1] == "hosts"))
     {
         loadBalance();
         reportErrors();
         return true;
     }
- 
+
     return false;
 }
 
 
 void YConsoleManager::help(void)
 {
-    cout<<"Here is a list of Yarp manager keywords.\n"<<endl;   
+    cout<<"Here is a list of Yarp manager keywords.\n"<<endl;
     cout<<OKGREEN<<"help"<<INFO<<"                    : show help."<<ENDC<<endl;
     cout<<OKGREEN<<"exit"<<INFO<<"                    : exit yarp manager."<<ENDC<<endl;
     cout<<OKGREEN<<"list mod"<<INFO<<"                : list available modules."<<ENDC<<endl;
@@ -991,18 +991,18 @@ void YConsoleManager::help(void)
     cout<<OKGREEN<<"kill [IDs]"<<INFO<<"              : kill running application or modules indicated by IDs."<<ENDC<<endl;
     cout<<OKGREEN<<"connect [IDs]"<<INFO<<"           : stablish all connections or just one connection indicated by IDs."<<ENDC<<endl;
     cout<<OKGREEN<<"disconnect [IDs]"<<INFO<<"        : remove all connections or just one connection indicated by IDs."<<ENDC<<endl;
-    cout<<OKGREEN<<"which"<<INFO<<"                   : list loaded modules, connections and resource dependencies."<<ENDC<<endl;   
+    cout<<OKGREEN<<"which"<<INFO<<"                   : list loaded modules, connections and resource dependencies."<<ENDC<<endl;
     cout<<OKGREEN<<"check dep"<<INFO<<"               : check for all resource dependencies."<<ENDC<<endl;
     cout<<OKGREEN<<"check state [id]"<<INFO<<"        : check for running state of application or a module indicated by id."<<ENDC<<endl;
     cout<<OKGREEN<<"check con [id]"<<INFO<<"          : check for all connections state or just one connection indicated by id."<<ENDC<<endl;
     cout<<OKGREEN<<"set <option> <value>"<<INFO<<"    : set value to an option."<<ENDC<<endl;
-    cout<<OKGREEN<<"get <option>"<<INFO<<"            : show value of an option."<<ENDC<<endl;  
+    cout<<OKGREEN<<"get <option>"<<INFO<<"            : show value of an option."<<ENDC<<endl;
     cout<<OKGREEN<<"export <filename>"<<INFO<<"       : export application's graph as Graphviz dot format."<<ENDC<<endl;
 //  cout<<"edit mod <modname>      : open module relevant xml file to edit."<<endl;
 //  cout<<"edit app <appname>      : open application relevant xml file to edit."<<endl;
     cout<<OKGREEN<<"show mod <modname>"<<INFO<<"      : display module information (description, input, output,...)."<<ENDC<<endl;
     cout<<OKGREEN<<"assign hosts"<<INFO<<"            : automatically assign modules to proper nodes using load balancer."<<ENDC<<endl;
-   
+
     cout<<endl;
 }
 
@@ -1013,7 +1013,7 @@ void YConsoleManager::which(void)
     CnnContainer connections  = getConnections();
     ExecutablePIterator moditr;
     CnnIterator cnnitr;
-    
+
     cout<<endl<<HEADER<<"Application: "<<ENDC<<endl;
     cout<<OKBLUE<<getApplicationName()<<ENDC<<endl;
 
@@ -1024,7 +1024,7 @@ void YConsoleManager::which(void)
         cout<<INFO<<"("<<id++<<") ";
         cout<<OKBLUE<<(*moditr)->getCommand()<<INFO;
         cout<<" ["<<(*moditr)->getHost()<<"] ["<<(*moditr)->getParam()<<"]";
-        cout<<" ["<<(*moditr)->getEnv()<<"]"<<ENDC<<endl; 
+        cout<<" ["<<(*moditr)->getEnv()<<"]"<<ENDC<<endl;
     }
     cout<<endl<<HEADER<<"Connections: "<<ENDC<<endl;
     id = 0;
@@ -1034,8 +1034,8 @@ void YConsoleManager::which(void)
         cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
             cout<<" ["<<(*cnnitr).carrier()<<"]";
         cout<<ENDC<<endl;
-    }       
-    
+    }
+
     cout<<endl<<HEADER<<"Resources:"<<ENDC<<endl;
     id = 0;
     ResourcePIterator itrS;
@@ -1047,7 +1047,7 @@ void YConsoleManager::which(void)
     cout<<endl;
 }
 
-void YConsoleManager::checkStates(void) 
+void YConsoleManager::checkStates(void)
 {
     ExecutablePContainer modules = getExecutables();
     ExecutablePIterator moditr;
@@ -1090,7 +1090,7 @@ void YConsoleManager::checkConnections(void)
 
 void YConsoleManager::reportErrors(void)
 {
-    ErrorLogger* logger  = ErrorLogger::Instance(); 
+    ErrorLogger* logger  = ErrorLogger::Instance();
     if(logger->errorCount() || logger->warningCount())
     {
         const char* msg;
@@ -1099,9 +1099,9 @@ void YConsoleManager::reportErrors(void)
 
         while((msg=logger->getLastWarning()))
             cout<<WARNING<<"WARNING: "<<INFO<<msg<<ENDC<<endl;
-    }   
+    }
 }
-    
+
 
 void YConsoleManager::onExecutableStart(void* which) { }
 
@@ -1114,7 +1114,7 @@ void YConsoleManager::onExecutableFailed(void* which)
     Executable* exe = (Executable*) which;
     if(config.find("module_failure").asString() == "prompt")
         cout<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed!"<<endl;
-    
+
     if(config.find("module_failure").asString() == "recover")
     {
         cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (restarting...)"<<endl;
@@ -1123,7 +1123,7 @@ void YConsoleManager::onExecutableFailed(void* which)
 
     if(config.find("module_failure").asString() == "terminate")
     {
-        cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (terminating application...)"<<endl;  
+        cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (terminating application...)"<<endl;
         bShouldRun = false;
         stop();
         reportErrors();
@@ -1132,7 +1132,7 @@ void YConsoleManager::onExecutableFailed(void* which)
 
 void YConsoleManager::onCnnStablished(void* which) { }
 
-void YConsoleManager::onCnnFailed(void* which) 
+void YConsoleManager::onCnnFailed(void* which)
 {
     Connection* cnn = (Connection*) which;
     if(config.check("connection_failure") &&
@@ -1153,7 +1153,7 @@ void YConsoleManager::onCnnFailed(void* which)
 bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 {
     string strPath = szPath;
-    if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+    if((strPath.rfind(PATH_SEPERATOR)==string::npos) ||
             (strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
             strPath = strPath + string(PATH_SEPERATOR);
 
@@ -1166,7 +1166,7 @@ bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 
     while((entry = readdir(dir)))
     {
-        if((string(entry->d_name) != string(".")) 
+        if((string(entry->d_name) != string("."))
         && (string(entry->d_name) != string("..")))
         {
             string name = strPath + string(entry->d_name);
@@ -1185,7 +1185,7 @@ void YConsoleManager::updateAppNames(vector<string>* names)
     KnowledgeBase* kb = getKnowledgeBase();
     ApplicaitonPContainer apps =  kb->getApplications();
     for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
-        names->push_back((*itr)->getName());    
+        names->push_back((*itr)->getName());
 }
 
 
@@ -1197,7 +1197,7 @@ void YConsoleManager::setColorTheme(ColorTheme theme)
     // do nothing here
 #else
     switch(theme) {
-        case THEME_DARK : { 
+        case THEME_DARK : {
             HEADER = "\033[01;95m";
             OKBLUE = "\033[94m";
             OKGREEN = "\033[92m";
@@ -1207,7 +1207,7 @@ void YConsoleManager::setColorTheme(ColorTheme theme)
             ENDC = "\033[0m";
             break;
         }
-        case THEME_LIGHT: { 
+        case THEME_LIGHT: {
             HEADER = "\033[01;35m";
             OKBLUE = "\033[34m";
             OKGREEN = "\033[32m";
@@ -1217,7 +1217,7 @@ void YConsoleManager::setColorTheme(ColorTheme theme)
             ENDC = "\033[0m";
             break;
         }
-        default: { 
+        default: {
             HEADER = "";
             OKBLUE = "";
             OKGREEN = "";
@@ -1236,7 +1236,7 @@ void YConsoleManager::setColorTheme(ColorTheme theme)
 
 #ifdef WITH_READLINE
 
-char* dupstr(char* s) 
+char* dupstr(char* s)
 {
   char *r;
   r = (char*) malloc ((strlen (s) + 1));
@@ -1272,7 +1272,7 @@ char ** my_completion (const char* text, int start, int end)
 char* command_generator (const char* text, int state)
 {
   //printf("commmand_genrator\n");
-  
+
   static int list_index, len;
   char *name;
 
@@ -1291,7 +1291,7 @@ char* command_generator (const char* text, int state)
       if (strncmp (name, text, len) == 0)
         return (dupstr(name));
     }
-  
+
   /* if no names matched, then return null. */
   return ((char *)NULL);
 }
@@ -1299,7 +1299,7 @@ char* command_generator (const char* text, int state)
 
 char* appname_generator (const char* text, int state)
 {
-  
+
   static unsigned int list_index, len;
   char *name;
 
@@ -1315,8 +1315,8 @@ char* appname_generator (const char* text, int state)
       if (strncmp (name, text, len) == 0)
         return (dupstr(name));
     }
-  
+
   return ((char *)NULL);
 }
 
-#endif 
+#endif

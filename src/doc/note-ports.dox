@@ -10,7 +10,7 @@ pattern.  Special <i>port</i> objects deliver messages to any number
 of observers (other ports), in any number of processes, distributed across any
 number of machines, using any of several underlying communication
 protocols.
-Here is a very simple network of ports for a visual tracking 
+Here is a very simple network of ports for a visual tracking
 application:
 
   \dot
@@ -25,10 +25,10 @@ application:
 	      subgraph cluster_camera {
 		      style = "invis";
 		      camera [ label="/camera", shape=ellipse];
-	      }	
+	      }
 	      subgraph cluster_tracker {
 		      style = "invis";
-		      tracker_position [ label="/tracker/position", 
+		      tracker_position [ label="/tracker/position",
 					shape=ellipse];
 		      tracker_image [ label="/tracker/image", shape=ellipse];
 	      }
@@ -79,7 +79,7 @@ a process.  They do not need to belong to the same process.  Every
 connection can take place using a different protocol and/or physical
 network.  The use of several different protocol allows us to exploit
 their best characteristics:
-	\li TCP: reliable, it can be used to guarantee the reception 
+	\li TCP: reliable, it can be used to guarantee the reception
             of a message;
 	\li UDP: faster than TCP, but without guarantees;
 	\li multicast: efficient for distributing
@@ -87,7 +87,7 @@ their best characteristics:
 	\li shared memory: employed for local connections (selected
             automatically whenever possible, without the need for
             programmer intervention);
-If messages follow follow YARP guidelines, then they can be 
+If messages follow follow YARP guidelines, then they can be
 automatically converted to and from a "text mode" connection,
 for easy human monitoring and intervention in the system.
 
@@ -106,11 +106,11 @@ for easy human monitoring and intervention in the system.
 		      label = "yarpdev";
 		      color = "black"; style = "solid";
 		      camera [ label="/camera", shape=ellipse];
-	      }	
+	      }
 	      subgraph cluster_tracker {
 		      label="tracker";
 		      color = "black"; style = "solid";
-		      tracker_position [ label="/tracker/position", 
+		      tracker_position [ label="/tracker/position",
 					shape=ellipse];
 		      tracker_image [ label="/tracker/image", shape=ellipse];
 	      }
@@ -173,11 +173,11 @@ guidelines, then communication will not be a problem:
 		      label = "yarpdev";
 		      color = "black"; style = "solid";
 		      camera [ label="/camera", shape=ellipse];
-	      }	
+	      }
 	      subgraph cluster_tracker {
 		      label="tracker";
 		      color = "black"; style = "solid";
-		      tracker_position [ label="/tracker/position", 
+		      tracker_position [ label="/tracker/position",
 					shape=ellipse];
 		      tracker_image [ label="/tracker/image", shape=ellipse];
 	      }
@@ -260,7 +260,7 @@ Our network so far is very simple:
 	      label = "yarp read";
 	      color = "black"; style = "solid";
 	      read [ label="/read", shape=ellipse];
-      }	
+      }
       subgraph cluster_write {
 	      label="yarp write";
 	      color = "black"; style = "solid";
@@ -304,7 +304,7 @@ The network is now as follows:
 	      label = "yarp read";
 	      color = "black"; style = "solid";
 	      read [ label="/read", shape=ellipse];
-      }	
+      }
       subgraph cluster_summer {
 	      label="summer";
 	      color = "black"; style = "solid";
@@ -328,7 +328,7 @@ The network is now as follows:
   \enddot
 
 If you type a list of numbers the "yarp write" terminal, they will show up
-on the "yarp read" terminal as before.  But they will also be sent to 
+on the "yarp read" terminal as before.  But they will also be sent to
 the "summer" process, which will send an extra message to the "yarp read"
 terminal.  For example, if on terminal 3 ("yarp write") you type:
 \verbatim
@@ -377,7 +377,7 @@ The network is now as follows:
 	      label = "yarp read";
 	      color = "black"; style = "solid";
 	      read [ label="/read", shape=ellipse];
-      }	
+      }
       subgraph cluster_summer {
 	      label="summer";
 	      color = "black"; style = "solid";
@@ -418,7 +418,7 @@ a port:
 This tells us that the port called "/summer" is on a machine with IP
 address 5.255.222.252, is listening on socket port 10012, and expects
 any connection with it to be made initially using tcp.  After this
-initial connection, we can request a YARP port to switch to a 
+initial connection, we can request a YARP port to switch to a
 different protocol for that connection.  To see what
 protocols the port will accept, we do:
 \verbatim
@@ -426,15 +426,15 @@ protocols the port will accept, we do:
 [response] port /summer property accepts = tcp text text_ack udp mcast shmem
            *** end of message
 \endverbatim
-We see for example that "tcp" and "mcast" are on this list.  
+We see for example that "tcp" and "mcast" are on this list.
 There's also a "text" protocol.  This is
 to make it easier for a human to make connections manually.
-For example, we could easily connect to "/summer" with telnet using 
+For example, we could easily connect to "/summer" with telnet using
 the socket number we discovered above:
 \verbatim
 telnet localhost 10012
 \endverbatim
-This gives us a TCP connection to the port.  Now let's request we 
+This gives us a TCP connection to the port.  Now let's request we
 switch to "text" mode by typing:
 \verbatim
 CONNECT anonymous
@@ -443,12 +443,12 @@ CONNECT anonymous
 It is important to get the first 8 characters exactly right -- they
 are the code that chooses the protocol. "CONNECT " is the code for
 the text protocol.  Some versions of telnet won't show what you're
-typing, or let you delete, so be careful.  If all goes well, the 
+typing, or let you delete, so be careful.  If all goes well, the
 port will respond with:
 \verbatim
 Welcome anonymous
 \endverbatim
-We won't cover all the things you can do with the port at this 
+We won't cover all the things you can do with the port at this
 point; one thing you can do is send it some data.  We
 can send the list of numbers (10,20,30) by typing:
 \verbatim

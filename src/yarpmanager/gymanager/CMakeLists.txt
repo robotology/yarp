@@ -5,11 +5,11 @@
 #  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 #
 
-get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
 
 include_directories(${GTK2_INCLUDE_DIRS})
-include_directories(${YARP_TREE_INCLUDE_DIRS})
+include_directories(${YARP_OS_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/include)
@@ -68,6 +68,6 @@ target_link_libraries(gyarpmanager ${GTK2_GTK_LIBRARY}
                                    ${GTK2_GDKMM_LIBRARY}
                                    ${GTK2_ATKMM_LIBRARY}
                                    ${GTK2_SIGC++_LIBRARY}
-								   ${GTK2_GTHREAD_LIBRARY})
+                                   ${GTK2_GTHREAD_LIBRARY})
 
 install(TARGETS gyarpmanager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

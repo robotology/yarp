@@ -8,18 +8,17 @@
     <arguments>
         <param desc="specify the period (given in [ms]) of the thread devoted to real-time objects localization." default="30 ms"> rt_localization_period </param>
         <param desc="specify the period (given in [ms]) of the thread devoted to updating the objects properties database." default="60 ms"> memory_update_period </param>
-<param desc="specify the camera used to localized object ( left \ right )" default="left"> camera </param>
-
+        <param desc="specify the camera used to localized object ( left \ right )" default="left"> camera </param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
     <authors>
-	  <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
+      <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
-        
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
+
         <input>
             <type>Image</type>
             <port carrier="udp">/iolStateMachineHandler/img:i</port>
@@ -34,13 +33,13 @@
             <description>Receives the image acquired from the camera previously specified through the command-line parameters</description>
         </input>
 
-	<input><!--ATTENTION! This is called blobs.rpc in main.cpp -->
-	    <type>unk</type>
+    <input><!--ATTENTION! This is called blobs.rpc in main.cpp -->
+        <type>unk</type>
             <port carrier="tcp">/iolStateMachineHandler/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description>Used to forward requests to the blob detector for image segmentation.</description>
-	</input>
+    </input>
         <input>
             <type>Rpc</type>
             <port carrier="tcp">/iolStateMachineHandler/human:rpc</port>
@@ -49,7 +48,7 @@
             <description>Receives requests for actions execution.</description>
         </input>
 
-	<input>
+    <input>
             <type>unk</type>
             <port carrier="tcp">/iolStateMachineHandler/motor_stop:i</port>
             <required>no</required>
@@ -57,7 +56,7 @@
             <description>Receives the [icub-stop] trigger from the verbal commands interpreter.</description>
         </input>
 
-	<input>
+    <input>
             <type>Bottle</type>
             <port carrier="tcp">/iolStateMachineHandler/point:i</port>
             <required>no</required>
@@ -157,4 +156,3 @@
     </development>
 
 </module>
-

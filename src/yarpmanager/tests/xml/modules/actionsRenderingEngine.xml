@@ -15,8 +15,8 @@
         <author email="vadim.tikhanoff@iit.it"> Vadim Tikhanoff </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
         <!-- input data if available-->
         <input>
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
@@ -69,7 +69,7 @@
             <priority>no</priority>
             <description>rpc port to enable/disable options (more or less)</description>
         </input>
-	<input>
+        <input>
             <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->
             <type>Image</type>
 
@@ -82,98 +82,98 @@
             <priority>no</priority>
             <description>disparity port, communicates with stereoDisparity module</description>
         </input>
-       	<!--input>
+           <!--input>
             <type>unk</type>
             <port carrier="tcp">/head</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input-->
-	<!--input>
+        <!--input>
             <type>unk</type>
             <port carrier="tcp">/left_arm</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input-->
-	<!--input>
+        <!--input>
             <type>unk</type>
             <port carrier="tcp">/right_arm</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input-->
-	<input>
+        <input>
             <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/left/img:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<input>
+        <input>
             <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/right/img:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<input>
+        <input>
             <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/left/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<input>
+        <input>
             <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/right/blobs:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<input>
+        <input>
             <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/left/raw:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<input>
+        <input>
             <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/right/raw:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<input>
+        <input>
             <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/MIL/rec:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<input>
+        <input>
             <type>Bottle</type>
             <port carrier="tcp">/actionsRenderingEngine/tracker:i</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input>
-	<!--input>
+        <!--input>
             <type>unk</type>
             <port carrier="tcp">/torso</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input-->
-	<!--input>
+        <!--input>
             <type>unk</type>
             <port carrier="tcp">/gaze</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>
         </input-->
- 	<output>
+        <output>
             <type>Image</type>
             <port carrier="tcp">/actionsRenderingEngine/left/img:o</port>
             <description></description>
@@ -183,7 +183,7 @@
             <port carrier="tcp">/actionsRenderingEngine/right/img:o</port>
             <description></description>
         </output>
- 	<output>
+        <output>
             <type>unk</type>
             <port carrier="tcp">/actionsRenderingEngine/MIL/window:o</port>
             <description></description>
@@ -193,7 +193,7 @@
             <port carrier="tcp">/actionsRenderingEngine/MIL/cmd:o</port>
             <description></description>
         </output>
- 	<output>
+        <output>
             <type>unk</type>
             <port carrier="tcp">/actionsRenderingEngine/MSR/cmd:o</port>
             <description></description>
@@ -223,12 +223,12 @@
          example, if module's performance drops significantly in case of memory swapping,
          a memory resource dependency can be introduced with the required memory space. -->
     <dependencies>
-	<!--yarp_interface>
-		<name>cartesianController</name>
-		<robot>icub</robot>
-	</yarp_interface-->
+    <!--yarp_interface>
+        <name>cartesianController</name>
+        <robot>icub</robot>
+    </yarp_interface-->
         <computer>
-		<!--yarp_port>/icub/camcalib/left/out</yarp_port>
+        <!--yarp_port>/icub/camcalib/left/out</yarp_port>
                 <yarp_port>/icub/cartesianController/left_arm/state:o</yarp_port>
                 <yarp_port>/icub/cartesianController/right_arm/state:o</yarp_port>
                 <yarp_port>/wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o</yarp_port>
@@ -243,4 +243,3 @@
     </development>
 
 </module>
-

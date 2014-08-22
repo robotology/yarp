@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-/* 
+/*
  * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author Lorenzo Natale
  * email:   lorenzo.natale@robotcub.org
@@ -63,7 +63,7 @@ bool InputCallback::attach(ViewerResources *v)
     if (viewer!=0)
         return false;
     viewer=v;
-    
+
     return true;
 }
 
@@ -72,7 +72,7 @@ bool InputCallback::attach(FpsStats *v)
     if (fpsData!=0)
         return false;
     fpsData=v;
-    
+
     return true;
 }
 

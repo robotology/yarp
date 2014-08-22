@@ -8,7 +8,7 @@ In this tutorial we show more details of how to use the yarp::os::ResourceFinder
 
 \section sec_intro Introduction
 
-In a previous tutorial (\ref yarp_resource_finder_basic) we showed how to use the ResourceFinder 
+In a previous tutorial (\ref yarp_resource_finder_basic) we showed how to use the ResourceFinder
 to organize modules parameters in files and place them in what we called \e context directories in a directory inside the home of the user (e.g. in Linux this was: $HOME/.local/share/yarp/contexts).
 
 We show here that the ResourceFinder is also useful to handle access to all files needed by a module.
@@ -54,7 +54,7 @@ Now we can read the file specified in the parameter 'model' by calling:
 ConstString model=rf.findFile("model");
 \endcode
 
-RF searches the file 'bottle.ppm' in the current initialization context. If successful "model" is a string 
+RF searches the file 'bottle.ppm' in the current initialization context. If successful "model" is a string
 that contains the full path to the file. Otherwise the string is empty.
 
 \code
@@ -85,13 +85,13 @@ tutorial_rf_advanced --context orCup
 
 \section sec_final-discussion Discussion
 
-We have shown how to use the ResourceFinder class to pass not only parameters but also binary files to 
-a module. We have seen that it is again easy to re-configure a module simply by switching its 
+We have shown how to use the ResourceFinder class to pass not only parameters but also binary files to
+a module. We have seen that it is again easy to re-configure a module simply by switching its
 initialization context.
 
-From these tutorials you might have had the feeling it is better to create a new directory for each new 
+From these tutorials you might have had the feeling it is better to create a new directory for each new
 configuration file for a module. This is not always the case. For simple modules (i.e. modules
-that require only a limited set of paramters to run) it will be much better to just use one context and 
+that require only a limited set of paramters to run) it will be much better to just use one context and
 separate configuration files. The name of the configuration file used by the ResourceFinder is determined by the line:
 
 \code
@@ -104,8 +104,8 @@ this is the \e default name, but it can be modified at runtime by running the mo
 tutorial_rf_advanced --context orBottle --from or2.ini
 \endcode
 
-In other cases, especially when a module uses several resource files, it is 
-more appropriate to duplicate all files in a different context directory. What solution is 
+In other cases, especially when a module uses several resource files, it is
+more appropriate to duplicate all files in a different context directory. What solution is
 more appropriate depends on the specific case.
 
 You should now read the tutorial \ref yarp_resource_finder_installation which describes how to use CMake to configure your build so that configuration files are automatically installed. It also links to the documentation of the yarp-config tool, that helps to manage context directories (inspecting the system for all the existing contexts, copying and removing them to/from the user home).

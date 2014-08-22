@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-/* 
+/*
  * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author Lorenzo Natale
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -21,7 +21,7 @@ class ViewerResources
 private:
     GdkPixbuf *frame;
     GdkPixbuf *scaledFrame;
- 
+
     FpsStats  *fpsData;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> yimage;
     double lastImageTime;
@@ -106,14 +106,14 @@ public:
                 unsigned int daW=drawArea->allocation.width;
 
                 //trick: we compute the new size of the window by difference
-                
+
                 unsigned int newHeight=(windowH-daH)+targetHeight;
                 unsigned int newWidth=(windowW-daW)+targetWidth;
                 gtk_window_resize(GTK_WINDOW(mainWindow), newWidth, newHeight);
             }
         }
 
-    void draw(GtkWidget *widget, 
+    void draw(GtkWidget *widget,
         unsigned int areaX,
         unsigned int areaY,
         unsigned int areaW,

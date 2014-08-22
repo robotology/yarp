@@ -71,7 +71,7 @@ set(folder_header   include/yarp/manager/application.h
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
   ${PROJECT_SOURCE_DIR}/include)
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 

@@ -8,19 +8,19 @@
     <arguments>
         <param desc="Name of the module" default="blobSelector"> name</param>
 
-	<param desc="" default="0.5"> tracking_threshold </param>
-	<param desc="" default="2.5"> pointing_threshold </param>
+        <param desc="" default="0.5"> tracking_threshold </param>
+        <param desc="" default="2.5"> pointing_threshold </param>
 
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
     <authors>
-	  <author email="carlo.ciliberto@iit.it"> Carlo Ciliberto </author>
+        <author email="carlo.ciliberto@iit.it"> Carlo Ciliberto </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
-        
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
+
         <input>
             <type>ImageFrame</type>
             <port carrier="udp">/blobSelector/img:i</port>
@@ -87,8 +87,7 @@
     <development>
         <header></header>
         <library>YARP</library>
-	<library>OpenCV</library>
+        <library>OpenCV</library>
     </development>
 
 </module>
-

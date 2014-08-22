@@ -1,7 +1,7 @@
 <module>
     <!-- module's name should match its executable file's name. -->
     <name>templatePFTracker</name>
-    <description>This module expects a template from the following port /templatePFTracker/template/image:i in order to commence tracking. This is a simple single-object tracker that uses a color histogram-based observation model. 
+    <description>This module expects a template from the following port /templatePFTracker/template/image:i in order to commence tracking. This is a simple single-object tracker that uses a color histogram-based observation model.
 Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The particle filtering algorithm maintains a probability distribution over the state of the system it is monitoring, in this case, the state -- location, scale, etc. -- of the object being tracked. Particle filtering represents the distribution as a set of weighted samples, or particles. Each particle describes one possible location of the object being tracked. The set of particles contains more weight at locations where the object being tracked is more likely to be. The most probable state of the object is determined by finding the location in the particle filtering distribution with the highest weight. </description>
     <version>1.0</version>
 
@@ -9,7 +9,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
     <arguments>
         <param desc="Name of the module" default="templatePFTracker"> name</param>
         <!--param desc="specifies the configuration file" default="/templatePFTracker.ini"> from </param>
-        <param desc="specifies the sub-path from \c $ICUB_ROOT/icub/app to the configuration file" default="/templatePFTracker/conf"> context </param-->	
+        <param desc="specifies the sub-path from \c $ICUB_ROOT/icub/app to the configuration file" default="/templatePFTracker/conf"> context </param-->
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -17,8 +17,8 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
         <author email="vadim.tikhanoff@iit.it"> Vadim Tikhanoff </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
         <input>
             <type>Image</type>
             <port carrier="udp">/templatePFTracker/template/image:i</port>
@@ -49,7 +49,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
             <description></description>
         </input>
 
-	<input>
+        <input>
             <type>Rpc</type>
             <port carrier="tcp">/templatePFTracker</port>
             <!-- required input means the execution of module depends on
@@ -74,27 +74,27 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
             <port carrier="udp">/templatePFTracker/right/image:o</port>
             <description></description>
         </output>
-	<output>
+        <output>
             <type>Image</type>
             <port carrier="udp">/templatePFTracker/leftblob/image:o</port>
             <description></description>
         </output>
-	<output>
+        <output>
             <type>Image</type>
             <port carrier="udp">/templatePFTracker/rightblob/image:o</port>
             <description></description>
         </output>
-	<output>
+        <output>
             <type>Vector</type>
             <port carrier="tcp">/templatePFTracker/target:o</port>
             <description></description>
         </output>
-	<output>
+        <output>
             <type>unk</type>
             <port carrier="tcp">/templatePFTracker/target3d:o</port>
             <description></description>
         </output>
-	<output>
+        <output>
             <type>unk</type>
             <port carrier="tcp">/templatePFTracker/triangulation:io</port>
             <description></description>
@@ -121,8 +121,7 @@ Particle filtering is a Monte Carlo sampling approach to Bayesian filtering.The 
     <development>
         <header></header>
         <library>YARP</library>
-	<library>OpenCV</library>
+        <library>OpenCV</library>
     </development>
 
 </module>
-

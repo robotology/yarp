@@ -6,7 +6,7 @@
  *
  */
 
-/** 
+/**
  * @page persistent_connections Persistent connections
 
 \author Paul Fitzpatrick
@@ -87,7 +87,7 @@ yarp disconnect --persist /src /dest
 \section persistent_connections_topics Persistence via topics
 
 It is occasionally useful to view a collection of ports as a single
-"topic" to read from or write to.  
+"topic" to read from or write to.
 A topic can be created in YARP
 by doing:
 \verbatim
@@ -114,7 +114,7 @@ yarp connect --persist /topic /dest1
 yarp connect --persist /topic /dest2
 yarp connect --persist /topic /dest3
 \endverbatim
-Every input to the topic will be connected to every output from the 
+Every input to the topic will be connected to every output from the
 topic.  For example, if all of the ports /src1, /src2, /dest1,
 and /dest2 exist, then the following connections will be made and
 maintained:
@@ -129,7 +129,7 @@ yarp connect /src3 /dest1
 yarp connect /src3 /dest2
 yarp connect /src3 /dest3
 \endverbatim
-(if carriers are specified in the persistent connections, the carriers for 
+(if carriers are specified in the persistent connections, the carriers for
 outgoing connections from the topic are respected and those for
 incoming connections to the topic are ignored).
 
@@ -178,8 +178,8 @@ The "topic://" prefix is not needed if the "/vision" topic has been
 explicitly created as described in \ref persistent_connections_topics.
 
 One note of caution: when connecting to a topic, the "connect" command
-may return before all existing ports connected with that topic 
-becoming connected to each other.  If you rely on a 
+may return before all existing ports connected with that topic
+becoming connected to each other.  If you rely on a
 connection existing, test for it using either yarp::os::Network::isConnected
 or yarp::os::Port::getInputCount or yarp::os::Port::getOutputCount.
 

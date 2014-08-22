@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -33,7 +33,7 @@
 using namespace yarp::manager;
 
 
-PortArbitratorModel::PortArbitratorModel(ApplicationWindow* parentWnd, 
+PortArbitratorModel::PortArbitratorModel(ApplicationWindow* parentWnd,
                                          Glib::RefPtr<PortModel> dest, Arbitrator* arb, bool nested) : PortModel(INOUTD)
 {
     portColor = ARBITRATOR_COLOR;
@@ -42,7 +42,7 @@ PortArbitratorModel::PortArbitratorModel(ApplicationWindow* parentWnd,
     destination = dest;
     if(arb)
         arbitrator = *arb;
-    arbitrator.setModel(this); 
+    arbitrator.setModel(this);
     Application* application = parentWindow->manager.getKnowledgeBase()->getApplication();
     arbitrator = parentWindow->manager.getKnowledgeBase()->addArbitratorToApplication(application, arbitrator);
 
@@ -50,12 +50,12 @@ PortArbitratorModel::PortArbitratorModel(ApplicationWindow* parentWnd,
     poly->property_close_path().set_value(true);
     poly->property_line_width().set_value(1.0);
     poly->property_fill_color().set_value(ARBITRATOR_COLOR);
-    poly->property_stroke_color().set_value("black");    
+    poly->property_stroke_color().set_value("black");
 
     shadow = Goocanvas::PolylineModel::create(0,0,0,0);
     shadow->property_close_path().set_value(true);
     shadow->property_fill_color().set_value("gray");
-    shadow->property_stroke_color().set_value("gray");    
+    shadow->property_stroke_color().set_value("gray");
 
     PangoLayout *layout = gtk_widget_create_pango_layout((GtkWidget*)parentWindow->gobj(), "O1");
     int text_w, text_h;
@@ -67,7 +67,7 @@ PortArbitratorModel::PortArbitratorModel(ApplicationWindow* parentWnd,
 
     width =  defSize.get_x();
     height = defSize.get_y();
- 
+
     Goocanvas::Points points(7);
     points.set_coordinate(0, 0, 0);
     points.set_coordinate(1, width, 0);
@@ -85,9 +85,9 @@ PortArbitratorModel::PortArbitratorModel(ApplicationWindow* parentWnd,
 
 }
 
-PortArbitratorModel::~PortArbitratorModel(void) 
+PortArbitratorModel::~PortArbitratorModel(void)
 {
-    //Application* app = arbitrator->owner(); 
+    //Application* app = arbitrator->owner();
     parentWindow->manager.getKnowledgeBase()->removeArbitratorFromApplication((Application*)arbitrator.owner(), arbitrator);
 }
 
@@ -97,9 +97,9 @@ Gdk::Point PortArbitratorModel::getContactPoint(ArrowModel* arrow)
     if(!strlen(arrow->getId()))
         return Gdk::Point(-1, -1);
 
-    GooCanvasItemModel* model = (GooCanvasItemModel*) poly->gobj();    
+    GooCanvasItemModel* model = (GooCanvasItemModel*) poly->gobj();
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
-    GooCanvasItem* item = goo_canvas_get_item(canvas, model); 
+    GooCanvasItem* item = goo_canvas_get_item(canvas, model);
     GooCanvasBounds bi;
     goo_canvas_item_get_bounds(item, &bi);
 
@@ -110,18 +110,18 @@ Gdk::Point PortArbitratorModel::getContactPoint(ArrowModel* arrow)
     return Gdk::Point((int)bi.x1, (int)(bi.y1+pt.get_y()));
 }
 
-bool PortArbitratorModel::addSourceArrow(ArrowModel* arrow) 
+bool PortArbitratorModel::addSourceArrow(ArrowModel* arrow)
 {
     arrow->setId("O1");
-    contacts["O1"] = Gdk::Point(0, 0); 
+    contacts["O1"] = Gdk::Point(0, 0);
     return PortModel::addSourceArrow(arrow);
 }
 
-bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow) 
+bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow)
 {
     int id = 1;
     string strId;
-    std::map<std::string, Gdk::Point>::iterator itr;        
+    std::map<std::string, Gdk::Point>::iterator itr;
     for(itr=contacts.begin(); itr!=contacts.end(); itr++)
     {
         char szId[128];
@@ -130,7 +130,7 @@ bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow)
         {
             strId = szId;
             break;
-        }       
+        }
         id++;
     }
 
@@ -160,7 +160,7 @@ bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow)
     // finding maximum text width of connection ids
     int max_w = text_w;
     int max_h = text_h;
-    //std::map<std::string, Gdk::Point>::iterator itr;        
+    //std::map<std::string, Gdk::Point>::iterator itr;
     for(itr=contacts.begin(); itr!=contacts.end(); itr++)
     {
         int text_w, text_h;
@@ -168,13 +168,13 @@ bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow)
         PangoFontDescription *fontdesc = pango_font_description_from_string(FONT_DESC);
         pango_layout_set_font_description (layout, fontdesc);
         pango_layout_get_pixel_size (layout, &text_w, &text_h);
-        max_w = (max_w<text_w) ? text_w : max_w; 
-        max_h = (max_h<text_h) ? text_h : max_h; 
+        max_w = (max_w<text_w) ? text_w : max_w;
+        max_h = (max_h<text_h) ? text_h : max_h;
     }
 
     width = max_w + H_MARGINE*2;
     height = max_h*contacts.size() + V_MARGINE*(contacts.size()+1);
-  
+
     Goocanvas::Points points(7);
     points.set_coordinate(0, 0, 0);
     points.set_coordinate(1, width, 0);
@@ -198,19 +198,19 @@ bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow)
 
     // shifting down other contacts and labels
     Gdk::Point curPt = contacts[arrow->getId()];
-    //std::map<std::string, Gdk::Point>::iterator itr;        
+    //std::map<std::string, Gdk::Point>::iterator itr;
     for(itr=contacts.begin(); itr!=contacts.end(); itr++)
     {
         if(itr->first != arrow->getId())
         {
             Gdk::Point pt = itr->second;
             if(pt.get_y() >= curPt.get_y())
-                itr->second = Gdk::Point(pt.get_x(), pt.get_y()+(max_h + V_MARGINE));         
+                itr->second = Gdk::Point(pt.get_x(), pt.get_y()+(max_h + V_MARGINE));
         }
     }
 
     // shifting down text position
-    std::map<std::string, Glib::RefPtr<Goocanvas::TextModel> >::iterator itr2;        
+    std::map<std::string, Glib::RefPtr<Goocanvas::TextModel> >::iterator itr2;
     int curY = (int)labels[arrow->getId()]->property_y().get_value();
     for(itr2=labels.begin(); itr2!=labels.end(); itr2++)
     {
@@ -219,11 +219,11 @@ bool PortArbitratorModel::addDestinationArrow(ArrowModel* arrow)
             Glib::RefPtr<Goocanvas::TextModel> text = itr2->second;
             if(text->property_y() >= curY)
                 text->property_y().set_value(text->property_y().get_value() + (max_h + V_MARGINE));
-        } 
+        }
     }
 
     bool ret = PortModel::addDestinationArrow(arrow);
-    
+
     getContactPoint(arrow);
 
     return ret;
@@ -243,7 +243,7 @@ void PortArbitratorModel::setPort(const char* szPort)
     if(port)
     {
         port->setPort(szPort);
-        std::vector<ArrowModel*>::iterator itr;   
+        std::vector<ArrowModel*>::iterator itr;
         for(itr = destinationArrows.begin(); itr!= destinationArrows.end(); itr++)
         {
             Connection* pConnection = (*itr)->getConnection();
@@ -253,7 +253,7 @@ void PortArbitratorModel::setPort(const char* szPort)
             parentWindow->manager.getKnowledgeBase()->updateConnectionOfApplication(application, *pConnection, con);
             pConnection->setTo(szPort);
         }
-    }        
+    }
 }
 
 void PortArbitratorModel::updateExcitation(ArrowModel* arrow, const char* szOld, const char* szNew)
@@ -262,7 +262,7 @@ void PortArbitratorModel::updateExcitation(ArrowModel* arrow, const char* szOld,
     std::vector<ArrowModel*>::iterator jtr;
     for(jtr=destinationArrows.begin(); jtr!=destinationArrows.end(); jtr++)
         if((*jtr) != arrow)
-            (*jtr)->renameExcitation(szOld, szNew); 
+            (*jtr)->renameExcitation(szOld, szNew);
 }
 
 
@@ -281,7 +281,7 @@ bool PortArbitratorModel::removeDestinationArrow(ArrowModel* arrow)
     arbitrator = parentWindow->manager.getKnowledgeBase()->addArbitratorToApplication(application, arbitrator);
 
     contacts.erase(contacts.find(arrow->getId()));
-    //removing the label 
+    //removing the label
     int id = this->find_child(labels[arrow->getId()]);
     if(id != -1) this->remove_child(id);
     labels.erase(labels.find(arrow->getId()));
@@ -289,7 +289,7 @@ bool PortArbitratorModel::removeDestinationArrow(ArrowModel* arrow)
     // updating width and height
     int max_w = 0;
     int max_h = 0;
-    std::map<std::string, Gdk::Point>::iterator itr;        
+    std::map<std::string, Gdk::Point>::iterator itr;
     for(itr=contacts.begin(); itr!=contacts.end(); itr++)
     {
         int text_w, text_h;
@@ -297,12 +297,12 @@ bool PortArbitratorModel::removeDestinationArrow(ArrowModel* arrow)
         PangoFontDescription *fontdesc = pango_font_description_from_string(FONT_DESC);
         pango_layout_set_font_description (layout, fontdesc);
         pango_layout_get_pixel_size (layout, &text_w, &text_h);
-        max_w = (max_w<text_w) ? text_w : max_w; 
-        max_h = (max_h<text_h) ? text_h : max_h; 
+        max_w = (max_w<text_w) ? text_w : max_w;
+        max_h = (max_h<text_h) ? text_h : max_h;
         //updating contact points
         Gdk::Point pt = itr->second;
         if(pt.get_y() > ptRemoved.get_y())
-            itr->second = Gdk::Point(pt.get_x(),pt.get_y()-(text_h + V_MARGINE));         
+            itr->second = Gdk::Point(pt.get_x(),pt.get_y()-(text_h + V_MARGINE));
     }
 
     width = max_w + H_MARGINE*2;
@@ -324,7 +324,7 @@ bool PortArbitratorModel::removeDestinationArrow(ArrowModel* arrow)
     shadow->property_points().set_value(points);
 
         // updating text position
-    std::map<std::string, Glib::RefPtr<Goocanvas::TextModel> >::iterator itr2;        
+    std::map<std::string, Glib::RefPtr<Goocanvas::TextModel> >::iterator itr2;
     for(itr2=labels.begin(); itr2!=labels.end(); itr2++)
     {
         Glib::RefPtr<Goocanvas::TextModel> text = itr2->second;
@@ -338,7 +338,7 @@ bool PortArbitratorModel::removeDestinationArrow(ArrowModel* arrow)
     for(jtr=destinationArrows.begin(); jtr!=destinationArrows.end(); jtr++)
         if((*jtr) != arrow)
             (*jtr)->removeExcitation(arrow->getConnection()->from());
-    
+
     bool ret = PortModel::removeDestinationArrow(arrow);
     updateArrowCoordination();
     return ret;
@@ -356,14 +356,14 @@ Gdk::Point PortArbitratorModel::getDefaultSize(void)
     return Gdk::Point(width, height);
 }
 
-Glib::RefPtr<PortArbitratorModel> PortArbitratorModel::create(ApplicationWindow* parentWnd, 
+Glib::RefPtr<PortArbitratorModel> PortArbitratorModel::create(ApplicationWindow* parentWnd,
                                                               Glib::RefPtr<PortModel> dest, Arbitrator* arb, bool nested)
 {
     return Glib::RefPtr<PortArbitratorModel>(new PortArbitratorModel(parentWnd, dest, arb, nested));
 }
 
 
-bool PortArbitratorModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortArbitratorModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
     if(bNested)
@@ -385,28 +385,28 @@ bool PortArbitratorModel::onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::I
         wnd->m_refUIManager->get_widget("/PopupExtPortModel"));
         if(pMenu)
             pMenu->popup(event->button, event->time);
-        */            
+        */
     }
 
 
     return true;
 }
 
-bool PortArbitratorModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortArbitratorModel::onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventButton* event)
 {
     if(bNested)
         return true;
 
     if(event->button == 1)
-    {    
+    {
         snapToGrid();
        _dragging.clear();
     }
     return true;
 }
 
-bool PortArbitratorModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortArbitratorModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventMotion* event)
 {
     if(bNested)
@@ -415,13 +415,13 @@ bool PortArbitratorModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::
     if(item && _dragging && item == _dragging)
     {
         parentWindow->setModified();
-        
+
         //Goocanvas::Bounds biBase = item->get_bounds();
 
         double new_x = event->x ;
-        double new_y = event->y ;   
+        double new_y = event->y ;
         item->get_parent()->translate(new_x - _drag_x, new_y - _drag_y);
-        
+
         Goocanvas::Bounds bi = item->get_bounds();
         bi = item->get_parent()->get_bounds();
 
@@ -429,7 +429,7 @@ bool PortArbitratorModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::
             item->get_parent()->translate(-bi.get_x1(), 0);
         if(bi.get_y1() < 0)
             item->get_parent()->translate(0, -bi.get_y1());
-       
+
         snapToGrid();
 
         bi = item->get_parent()->get_bounds();
@@ -439,7 +439,7 @@ bool PortArbitratorModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::
         pt.y = bi.get_y1();
         this->points.push_back(pt);
 
-        // updating arrows coordination        
+        // updating arrows coordination
         updateArrowCoordination();
 
         bool needUpdate = false;
@@ -450,9 +450,9 @@ bool PortArbitratorModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::
             needUpdate = (bi.get_x2() > bc.get_x2()) || (bi.get_y2() > bc.get_y2());
             if(needUpdate)
             {
-                new_x = (bi.get_x2() > bc.get_x2()) ? bi.get_x2() : bc.get_x2(); 
-                new_y = (bi.get_y2() > bc.get_y2()) ? bi.get_y2() : bc.get_y2(); 
-                parentWindow->m_Canvas->set_bounds(0,0, new_x, new_y);            
+                new_x = (bi.get_x2() > bc.get_x2()) ? bi.get_x2() : bc.get_x2();
+                new_y = (bi.get_y2() > bc.get_y2()) ? bi.get_y2() : bc.get_y2();
+                parentWindow->m_Canvas->set_bounds(0,0, new_x, new_y);
                 if(parentWindow->m_Grid)
                 {
                     g_object_set(parentWindow->m_Grid, "width", new_x, NULL);
@@ -466,7 +466,7 @@ bool PortArbitratorModel::onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::
     return true;
 }
 
-bool PortArbitratorModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortArbitratorModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     parentWindow->get_window()->set_cursor(Gdk::Cursor(Gdk::HAND1));
@@ -478,7 +478,7 @@ bool PortArbitratorModel::onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>&
     return true;
 }
 
-bool PortArbitratorModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+bool PortArbitratorModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                     GdkEventCrossing* event)
 {
     parentWindow->get_window()->set_cursor();
@@ -498,10 +498,10 @@ bool PortArbitratorModel::onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>&
 }
 
 void PortArbitratorModel::updateArrowCoordination(void)
-{      
+{
    std::vector<ArrowModel*>::iterator itr;
    for(itr = sourceArrows.begin(); itr!= sourceArrows.end(); itr++)
-        (*itr)->updatCoordiantes();                           
+        (*itr)->updatCoordiantes();
    for(itr = destinationArrows.begin(); itr!= destinationArrows.end(); itr++)
     (*itr)->updatCoordiantes();
 }
@@ -537,11 +537,11 @@ void PortArbitratorModel::setSelected(bool sel)
 
 void PortArbitratorModel::snapToGrid(void)
 {
-    GooCanvasItemModel* model = (GooCanvasItemModel*) this->gobj();    
+    GooCanvasItemModel* model = (GooCanvasItemModel*) this->gobj();
     GooCanvas* canvas = (GooCanvas*) parentWindow->m_Canvas->gobj();
     if(model && canvas)
     {
-        GooCanvasItem* item = goo_canvas_get_item(canvas, model); 
+        GooCanvasItem* item = goo_canvas_get_item(canvas, model);
         GooCanvasBounds bi;
         goo_canvas_item_get_bounds(item, &bi);
         double xs, ys;
@@ -552,7 +552,7 @@ void PortArbitratorModel::snapToGrid(void)
         double c_x = (int) (((int)bi.x1) % (int)xs);
         double c_y = (int) (((int)bi.y1) % (int)ys);
         if(parentWindow->m_snapToGrid)
-            goo_canvas_item_translate(item, -c_x, -c_y); 
+            goo_canvas_item_translate(item, -c_x, -c_y);
         // force update
         goo_canvas_item_get_bounds(item, &bi);
         this->points.clear();

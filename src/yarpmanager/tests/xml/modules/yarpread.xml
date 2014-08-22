@@ -13,16 +13,16 @@
         <author email=""> author1 </author>
     </authors>
 
-     <data>
-        <input>            
-            <type>Bottle</type>            
+    <data>
+        <input>
+            <type>Bottle</type>
             <port carrier="tcp">/in</port>
             <required>yes</required>
             <priority>no</priority>
             <description></description>
         </input>
-	</data>
-	
+    </data>
+
     <dependencies>
         <computer>
         </computer>
@@ -35,4 +35,3 @@
     </development>
 
 </module>
-

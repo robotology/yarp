@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -21,9 +21,9 @@ class AppModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    AppModelColumns() { 
-        add(m_col_refPix); 
-        add(m_col_name); 
+    AppModelColumns() {
+        add(m_col_refPix);
+        add(m_col_name);
         add(m_col_type);
         add(m_col_filename);
         }
@@ -49,7 +49,7 @@ public:
     bool removeApplication(const char* szAppName);
     bool removeModule(const char* szModName);
     bool removeResource(const char* szResName);
-    
+
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     AppModelColumns m_appColumns;
     AppModelColumns m_resColumns;

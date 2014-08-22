@@ -23,11 +23,11 @@ every robotics project needs to interface with hardware somehow.
 
 The second step, defining interfaces for families of devices,
 is important in the longer term.  If you change your camera
-or your motor control board, how much of your code needs to 
+or your motor control board, how much of your code needs to
 change too?  If you view your devices through well thought out
 interfaces, the impact of device change can be minimized.
 
-The third step, network wrappers, is important to give 
+The third step, network wrappers, is important to give
 flexibility.  You can scale up your computing cluster, or
 isolate hardware devices that don't play well together,
 or have specific OS dependencies etc.
@@ -58,8 +58,8 @@ Notice that IFrameGrabberImage doesn't do anything itself -- it
 just declares methods to get an image and image dimensions.
 There are several classes in YARP that implement this interface
 (in other words, they inherit from it and define the methods).
-One example is DragonflyDeviceDriver.  This interfaces 
-with a Point Grey digital camera, using different libraries on 
+One example is DragonflyDeviceDriver.  This interfaces
+with a Point Grey digital camera, using different libraries on
 different operating systems.  It implements several
 interfaces; here are just two of them:
 
@@ -128,7 +128,7 @@ file, or without having to worry about where their header file is.
 For these purposes, YARP requires that:
 \li All device drivers inherit from the "DeviceDriver" class.
 \li All device drivers implement an <i>open</i> and <i>close</i> method.
-\li Device drivers should be using no hardware resources before open is 
+\li Device drivers should be using no hardware resources before open is
     called or after close is called.
 YARP in return will promise that <i>open</i> will be the first
 method called after construction, and that if open returns false
@@ -139,7 +139,7 @@ which can contain arbitrary properties.
 This is quite straightforward to do for our fake framegrabber:
 
 \code
-class FakeFrameGrabber : public IFrameGrabberImage, 
+class FakeFrameGrabber : public IFrameGrabberImage,
 			 public yarp::dev::DeviceDriver {
 private:
     int w, int h;
@@ -154,7 +154,7 @@ public:
 	return w>0 && h>0;
     }
 
-    virtual bool open(yarp::os::Searchable& config) { 
+    virtual bool open(yarp::os::Searchable& config) {
 	// extract width and height configuration, if present
 	// otherwise use 128x128
 	int desiredWidth = config.check("w",Value(128)).asInt();
@@ -162,7 +162,7 @@ public:
 	return open(desiredWidth,desiredHeight);
     }
 
-    virtual bool close() { 
+    virtual bool close() {
 	return true; // easy
     }
 
@@ -218,13 +218,13 @@ coupling between modules.
 
 Suppose we want to go further, and let the framegrabber
 we use be controlled by a command line option.  So it could
-either be our FakeFrameGrabber, or a real device like 
+either be our FakeFrameGrabber, or a real device like
 DragonflyDeviceDriver or PicoloDeviceDriver (another framegrabber),
 or RemoteFrameGrabber (a proxy for a framegrabber device on another
 machine).
 
 YARP comes with a helper for doing this.  It maintains a simple
-database of the drivers you have compiled and available.  
+database of the drivers you have compiled and available.
 You can see this database by running "yarpdev",
 which tells you something like:
 \verbatim
@@ -244,7 +244,7 @@ Device <grabber>
    Does not need a network wrapper.
 ...
 \endverbatim
-We see a "dragonfly" listing associated with the DragonflyDeviceDriver 
+We see a "dragonfly" listing associated with the DragonflyDeviceDriver
 class --
 "dragonfly" is this devices <i>common name</i> to which it is referred to in
 configuration files, command line options, etc..
@@ -281,7 +281,7 @@ If we want to be able to create a FakeFrameGrabber through the
 same mechanism, we need to add a <i>factory</i> for it to
 the device driver database.  Here's how:
 \code
-DriverCreator *fakey_factory = 
+DriverCreator *fakey_factory =
    new DriverCreatorOf<FakeFrameGrabber>("fakey","grabber","FakeFrameGrabber");
 Drivers::factory().add(fakey_factory); // hand factory over to YARP
 \endcode
@@ -303,7 +303,7 @@ Now we can do:
   ...
 \endcode
 
-This form is calling FakeFrameGrabber::open without any 
+This form is calling FakeFrameGrabber::open without any
 configuration information set up.  To pass in configuration options,
 we do:
 \code

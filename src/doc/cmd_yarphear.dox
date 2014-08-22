@@ -7,7 +7,7 @@
 /**
  * @page yarphear Listen to YARP audio streams
 
-The command-line utility "yarphear" opens a port and connects it to the 
+The command-line utility "yarphear" opens a port and connects it to the
 speakers.  If data is sent to the port, it is rendered to the speakers.
 Type "help" for commands for saving, muting, etc.
 

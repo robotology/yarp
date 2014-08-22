@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -16,7 +16,7 @@
 class InspectYScopeWindow: public Gtk::Dialog
 {
 public:
-    InspectYScopeWindow() : 
+    InspectYScopeWindow() :
         m_adjustment_index(0.0, 0.0, 100.0, 1.0, 5.0, 0.0)
     {
         set_title("Inspecting using yarpscope");
@@ -26,15 +26,15 @@ public:
         m_EntryIndex.set_wrap(true);
         //m_EntryIndex.set_size_request(20, -1);
         set_resizable(false);
-        add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL); 
-        add_button("Inspect", Gtk::RESPONSE_OK); 
+        add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+        add_button("Inspect", Gtk::RESPONSE_OK);
         m_HBox.set_spacing(3);
         m_HBox.pack_start(m_Label);
         m_HBox.pack_start(m_EntryIndex);
         get_vbox()->pack_start(m_HBox);
         show_all_children();
     }
-    virtual ~InspectYScopeWindow() { } 
+    virtual ~InspectYScopeWindow() { }
 
 private:
     Gtk::HBox m_HBox;

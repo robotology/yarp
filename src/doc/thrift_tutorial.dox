@@ -34,7 +34,7 @@ The <b>Thrift type system</b> consists of pre-defined base types, user-defined s
 \arg \c double: A 64-bit floating point number; mapped to \c double
 \arg \c string: Encoding agnostic text or binary string; mapped to \c std::string
 
-Note that Thrift does not support unsigned integers. 
+Note that Thrift does not support unsigned integers.
 
 \subsection thrift_tutorial_subs_containers Containers
 \arg \c list<t1>: An ordered list of elements of type t1. May contain duplicates. Mapped to \c std::vector.
@@ -56,11 +56,11 @@ struct PointD {
 struct PointDLists{
   1: string name ="pointLists";
   2: list<PointD> firstList;
-  3: list<PointD> secondList; 
+  3: list<PointD> secondList;
 }
 \endcode
 
-Note that structs may contain other structs, and that multiple structs can be defined and referred to within the same Thrift file. 
+Note that structs may contain other structs, and that multiple structs can be defined and referred to within the same Thrift file.
 
 Structs translate to C++ classes that inherit from the yarp::os::idl::WirePortable class. For each struct, a .h and a .cpp file are created, which contain a definition of the class and an implementation of the default constructor and of the read/write methods of the \em WirePortable interface.
 
@@ -92,7 +92,7 @@ Thrift lets you define constants for use across languages. Complex types and str
 const i32 ANSWER = 42
 \endcode
 
-Note that semi-colon is optional; hex values are valid here. 
+Note that semi-colon is optional; hex values are valid here.
 If any typedef (see \ref thrift_tutorial_subs_typedef) or constant value is defined, a \<thriftFileName\>_common.h file is generated, which contains all typedefs and constants; this file is automatically included by all other generated files.
 
 \subsection thrift_tutorial_subs_enums Enums
@@ -111,16 +111,16 @@ struct PointWithQuality{
 }
 \endcode
 
-Note that there is no trailing semi-colon, and that the fully qualified name of the constant must be used when assigning default values. 
+Note that there is no trailing semi-colon, and that the fully qualified name of the constant must be used when assigning default values.
 For each enum, a .h and a .cpp file are created, which contain the definition of the enum and a helper class that handles number/string conversion for the enum elements.
 
 \subsection thrift_tutorial_subs_namespace Namespaces
-Namespaces in Thrift are akin to namespaces in C++ or packages in Java  -  they offer a convenient way of organizing (or isolating) your code. Namespaces may also be used to prevent name clashes between type definitions. Thrift allows you to customize the namespace behavior on a per-language basis. 
+Namespaces in Thrift are akin to namespaces in C++ or packages in Java  -  they offer a convenient way of organizing (or isolating) your code. Namespaces may also be used to prevent name clashes between type definitions. Thrift allows you to customize the namespace behavior on a per-language basis.
 YARP example:
 \code
 namespace yarp yarp.test
 \endcode
-means that all the code in the generated files will be included in 
+means that all the code in the generated files will be included in
 \code
 namespace yarp { namespace test {
  ... all
@@ -130,7 +130,7 @@ namespace yarp { namespace test {
 
 \subsection thrift_tutorial_subs_include Includes
 
-It is often useful to split up Thrift definitions in separate files to ease maintainance, enable reuse and improve modularity/organization. Thrift allows files to include other Thrift files. Included files are looked up in the current directory and by searching relative to the path from which the \c yarp_idl_to_dir macro is executed (see \ref thrift_tutorial_sec_codegen ). 
+It is often useful to split up Thrift definitions in separate files to ease maintainance, enable reuse and improve modularity/organization. Thrift allows files to include other Thrift files. Included files are looked up in the current directory and by searching relative to the path from which the \c yarp_idl_to_dir macro is executed (see \ref thrift_tutorial_sec_codegen ).
 \code
 include "firstInterface/PointD.thrift"
 \endcode
@@ -155,7 +155,7 @@ service Demo {
 
 \endcode
 
-A method definition has a return type and arguments, like C code. Note that argument lists are specified using the exact same syntax as field lists in structs. Return types can be primitive types or structs; the  \c oneway modifier can precede a \c void return type to indicate that the client only requests that the server execute the function, but does not wait for an acknowlegment that the execution has completed (asynchronous processing). Default values can be provided for tail arguments; clients can avoid providing values for those parameters, which is especially useful when sending RPC calls via command line, as will be shown in section \ref thrift_tutorial_sec_completex. 
+A method definition has a return type and arguments, like C code. Note that argument lists are specified using the exact same syntax as field lists in structs. Return types can be primitive types or structs; the  \c oneway modifier can precede a \c void return type to indicate that the client only requests that the server execute the function, but does not wait for an acknowlegment that the execution has completed (asynchronous processing). Default values can be provided for tail arguments; clients can avoid providing values for those parameters, which is especially useful when sending RPC calls via command line, as will be shown in section \ref thrift_tutorial_sec_completex.
 
 Services support inheritance: a service may optionally inherit from another service using the \c extends keyword.
 
@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
     yarp::os::Port port;
     demoServer.yarp().attachAsServer(port);
     if (!port.open("/demoServer")) { return 1; }
-    
+
     while (true) {
         printf("Server running happily\n");
         yarp::os::Time::delay(10);
@@ -262,43 +262,43 @@ An altenative solution is to create a YARP module that implements the service in
 class DemoServerModule : public yarp::test::Demo, public yarp::os::RFModule {
 public:
   /* Thrift Interface Implementation */
- 
+
   <snip> see above
 
   /* RFModule implementation */
   yarp::os::Port cmdPort;
-  
+
   bool attach(yarp::os::Port &source)
   {
       return this->yarp().attachAsServer(source);
   }
   bool configure( yarp::os::ResourceFinder &rf )
     {
-        std::string moduleName = rf.check("name", 
-                yarp::os::Value("demoServerModule"), 
+        std::string moduleName = rf.check("name",
+                yarp::os::Value("demoServerModule"),
                 "module name (string)").asString().c_str();
         setName(moduleName.c_str());
-        
+
         std::string slash="/";
-        
+
         attach(cmdPort);
-        
+
         std::string cmdPortName= "/";
         cmdPortName+= getName();
         cmdPortName += "/cmd";
-        if (!cmdPort.open(cmdPortName.c_str())) {           
-            std::cout << getName() << ": Unable to open port " << cmdPortName << std::endl;  
+        if (!cmdPort.open(cmdPortName.c_str())) {
+            std::cout << getName() << ": Unable to open port " << cmdPortName << std::endl;
             return false;
         }
         return true;
-    }   
+    }
   bool updateModule()
   {
       return true;
   }
   bool close()
   {
-      cmdPort.close(); 
+      cmdPort.close();
       return true;
   }
 };
@@ -310,23 +310,23 @@ int main(int argc, char *argv[]) {
         std::cout<<"Error: yarp server does not seem available"<<std::endl;
         return -1;
     }
-    
+
     yarp::os::ResourceFinder rf;
     rf.setVerbose(true);
     rf.configure(argc, argv);
 
-    DemoServerModule demoMod; 
+    DemoServerModule demoMod;
 
     if (!demoMod.configure(rf))
         return -1;
 
     return demoMod.runModule();
 }
-\endcode 
+\endcode
 
 \section thrift_tutorial_sec_client Client use
 
-Clients can invoke a remote procedure on the server by simply declaring the interface and attaching it to a YARP port connected to the server. 
+Clients can invoke a remote procedure on the server by simply declaring the interface and attaching it to a YARP port connected to the server.
 
 Simple example:
 \code
@@ -394,7 +394,7 @@ A complete example of Thrift code generation and server/client creation with CMa
 The server can be launched from command line (assuming a \em yarpserver is running):
 \verbatim
 $ cd <build_directory>
-$ userImpl/DemoServer  
+$ userImpl/DemoServer
 yarp: Port /demoServer active at tcp://10.xxx.xx.xx:10002
 \endverbatim
 

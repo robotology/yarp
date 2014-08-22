@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -21,7 +21,7 @@
 #include "port_model.h"
 
 #define PORT_SIZE           15
-#define COLOR_NOMAL         "darkgray"   
+#define COLOR_NOMAL         "darkgray"
 #define COLOR_WARNING       "IndianRed1"
 #define COLOR_MISMATCH      "#FFC125" //"Orange"
 
@@ -37,23 +37,23 @@ public:
     static Glib::RefPtr<InternalPortModel> create(ApplicationWindow* parentWnd, yarp::manager::NodeType t=yarp::manager::INPUTD,
                                           void* data=NULL);
 
-    virtual  bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual  bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    virtual bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    virtual bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventMotion* event);
-    virtual bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    virtual bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
 
     virtual Gdk::Point getContactPoint(ArrowModel* arrow=NULL);
 
     yarp::manager::InputData* getInput(void) { return input; }
     yarp::manager::OutputData* getOutput(void) { return output; }
-    
-protected: 
+
+protected:
     InternalPortModel(ApplicationWindow* parentWnd, yarp::manager::NodeType t=yarp::manager::INPUTD, void* data=NULL);
 
     virtual void onSourceAdded(void) {
@@ -68,10 +68,10 @@ protected:
     }
 
     virtual void onDestinationRemoved(void) {
-        updateInputPortColor();        
+        updateInputPortColor();
     }
 
-private: 
+private:
     void updateInputPortColor(void);
     void updateOutputPortColor(void);
 

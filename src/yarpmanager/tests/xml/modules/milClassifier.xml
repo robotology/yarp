@@ -8,18 +8,17 @@
     <arguments>
         <param desc="Name of the module" default="milClassifier"> name</param>
         <param desc="Sub-path from \c $ICUB_ROOT/app to the configuration file" default="milClassifier/conf"> context </param>
-	<param desc="Configuration file" default="config.ini"> from </param>
-
+        <param desc="Configuration file" default="config.ini"> from </param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
     <authors>
-	  <author email="carlo.ciliberto@iit.it"> Carlo Ciliberto </author>
+      <author email="carlo.ciliberto@iit.it"> Carlo Ciliberto </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
-        
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
+
         <input>
             <type>Image</type>
             <port carrier="udp">/milClassifier/img:i</port>
@@ -76,7 +75,7 @@
          a memory resource dependency can be introduced with the required memory space. -->
     <dependencies>
         <computer>
-	<gpu></gpu><!--need to add requirements here! -->
+            <gpu></gpu><!--need to add requirements here! -->
         </computer>
     </dependencies>
 
@@ -84,8 +83,7 @@
     <development>
         <header></header>
         <library>YARP</library>
-	<library>OpenCV</library>
+        <library>OpenCV</library>
     </development>
 
 </module>
-

@@ -142,19 +142,19 @@ LocalBroker::LocalBroker()
     bOnlyConnector = bInitialized = false;
     ID = 0;
     fd_stdout = NULL;
-	bShowConsole = false;
+    bShowConsole = false;
 }
 
 
 LocalBroker::~LocalBroker()
 {
-	fini();
+    fini();
 }
 
 void LocalBroker::fini(void)
 {
-	if(Thread::isRunning())
-	    Thread::stop();
+    if(Thread::isRunning())
+        Thread::stop();
 }
 
 bool LocalBroker::init(void)
@@ -593,12 +593,12 @@ int LocalBroker::ExecuteCmd(void)
     ZeroMemory(&cmd_process_info,sizeof(PROCESS_INFORMATION));
     ZeroMemory(&cmd_startup_info,sizeof(STARTUPINFO));
     cmd_startup_info.cb = sizeof(STARTUPINFO);
-	if(!bShowConsole)
-	{
-		cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
-		cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
-		cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
-	}
+    if(!bShowConsole)
+    {
+        cmd_startup_info.hStdError = write_to_pipe_cmd_to_stdout;
+        cmd_startup_info.hStdOutput = write_to_pipe_cmd_to_stdout;
+        cmd_startup_info.dwFlags |= STARTF_USESTDHANDLES;
+    }
 
     /*
      * setting environment variable for child process
@@ -650,7 +650,7 @@ int LocalBroker::ExecuteCmd(void)
                                     NULL,          // process security attributes
                                     NULL,          // primary thread security attributes
                                     TRUE,          // handles are inherited
-									(bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
+                                    (bShowConsole) ? CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE : CREATE_NEW_PROCESS_GROUP , // creation flags
                                     (LPVOID) chNewEnv, // use new environment
                                     strWorkdirOk.c_str(), // working directory
                                     &cmd_startup_info,   // STARTUPINFO pointer
@@ -813,8 +813,8 @@ void LocalBroker::stopStdout(void)
 
 int LocalBroker::ExecuteCmd(void)
 {
-	int  pipe_child_to_parent[2];
-	int ret = pipe(pipe_child_to_parent);
+    int  pipe_child_to_parent[2];
+    int ret = pipe(pipe_child_to_parent);
     if (ret!=0)
     {
         strError = string("Can't create child pipe because") + string(strerror(errno));
@@ -828,20 +828,20 @@ int LocalBroker::ExecuteCmd(void)
         return 0;
     }
 
-	int pid_cmd = fork();
+    int pid_cmd = fork();
 
-	if(IS_INVALID(pid_cmd))
-	{
-	    strError = string("Can't fork command because ") + string(strerror(errno));
-		return 0;
-	}
+    if(IS_INVALID(pid_cmd))
+    {
+        strError = string("Can't fork command because ") + string(strerror(errno));
+        return 0;
+    }
 
-	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
-	{
+    if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
+    {
         close(pipe_child_to_parent[READ_FROM_PIPE]);
-		//int saved_stderr = dup(STDERR_FILENO);
+        //int saved_stderr = dup(STDERR_FILENO);
         dup2(pipe_to_stdout[WRITE_TO_PIPE], STDOUT_FILENO);
-		dup2(pipe_to_stdout[WRITE_TO_PIPE], STDERR_FILENO);
+        dup2(pipe_to_stdout[WRITE_TO_PIPE], STDERR_FILENO);
         fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) | O_NONBLOCK);
         fcntl(STDERR_FILENO, F_SETFL, fcntl(STDERR_FILENO, F_GETFL) | O_NONBLOCK);
 
@@ -856,16 +856,16 @@ int LocalBroker::ExecuteCmd(void)
         ParseCmd(szcmd, szarg);
         szarg[nargs]=0;
 
-		if(strEnv.size())
-		{
-			char* szenv = new char[strEnv.size()+1];
-			strcpy(szenv,strEnv.c_str());
+        if(strEnv.size())
+        {
+            char* szenv = new char[strEnv.size()+1];
+            strcpy(szenv,strEnv.c_str());
             putenv(szenv);
-			//delete szenv;
-		}
+            //delete szenv;
+        }
 
-		if(strWorkdir.size())
-		{
+        if(strWorkdir.size())
+        {
             int ret = chdir(strWorkdir.c_str());
             if (ret!=0)
             {
@@ -894,7 +894,7 @@ int LocalBroker::ExecuteCmd(void)
 
             strcpy(cwd_szarg[0],currWorkDir);
             strcat(cwd_szarg[0],"/");
-            strcat(cwd_szarg[0],szarg[0]);	
+            strcat(cwd_szarg[0],szarg[0]);
             ret=execvp(cwd_szarg[0],cwd_szarg);
             delete [] cwd_szarg[0];
             delete [] cwd_szarg;
@@ -902,50 +902,50 @@ int LocalBroker::ExecuteCmd(void)
 
         if (ret==-1)
         {
-		    ret=execvp(szarg[0],szarg);
+            ret=execvp(szarg[0],szarg);
         }
 
         if (ret==-1)
-	    {
+        {
             strError = string("Can't execute command because ") + string(strerror(errno));
             FILE* out_to_parent = fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
             fprintf(out_to_parent,"%s", strError.c_str());
             fflush(out_to_parent);
             fclose(out_to_parent);
-	    }
+        }
         close(pipe_child_to_parent[WRITE_TO_PIPE]);
-		delete [] szcmd;
-		delete [] szarg;
-		exit(ret);
-	}
-	
-	if (IS_PARENT_OF(pid_cmd))
-	{
+        delete [] szcmd;
+        delete [] szarg;
+        exit(ret);
+    }
+
+    if (IS_PARENT_OF(pid_cmd))
+    {
         close(pipe_child_to_parent[WRITE_TO_PIPE]);
         FILE* in_from_child = fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
-	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
-	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
+        int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
+        fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK);
 
         string retError;
         waitPipe(pipe_child_to_parent[READ_FROM_PIPE]);
 
         for (char buff[1024]; fgets(buff,1024,in_from_child);)
-	        retError += string(buff);
-	    fclose(in_from_child);
+            retError += string(buff);
+        fclose(in_from_child);
 
-	    if(retError.size())
-	    {
+        if(retError.size())
+        {
             strError = retError;
             close(pipe_child_to_parent[READ_FROM_PIPE]);
             return 0;
-	    }
+        }
 
         close(pipe_to_stdout[WRITE_TO_PIPE]);
         close(pipe_child_to_parent[READ_FROM_PIPE]);
         return pid_cmd;
-	}
+    }
 
-	return 0;
+    return 0;
 }
 
 #endif

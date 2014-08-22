@@ -7,7 +7,7 @@
 /**
  * @page yarpdev The standard YARP device utility
 
-The command-line utility "yarpdev" can create devices and wrap 
+The command-line utility "yarpdev" can create devices and wrap
 them for network visibility.  This is useful in cases where you
 wish to control devices on remote machines.
 
@@ -15,10 +15,10 @@ The devices available to "yarpdev" depend on the options set
 when compiling YARP.  To choose the devices you want compiled,
 run "ccmake ." (on UNIX) or "cmake" (on Windows) on the
 root directory of the YARP source code and select the
-"CREATE_DEVICE_LIBRARY_MODULES" option.  
+"CREATE_DEVICE_LIBRARY_MODULES" option.
 After you configure, new "ENABLE_*"
 options will appear that permit you to choose what devices you want
-to try and compile.  Often this will require that you install 
+to try and compile.  Often this will require that you install
 particular libraries or operating system device drivers.
 
 
@@ -45,7 +45,7 @@ If you have problems, you can add the "verbose" flag to get more information
 
 @section yarpdev_list yarpdev --list
 
-With the --list option present, the devices available on your system 
+With the --list option present, the devices available on your system
 are listed.  For example:
 
 \verbatim
@@ -153,7 +153,7 @@ $ yarpdev --device ffmpeg_grabber --source your_movie.avi
 The device starts correctly.
 
 The "--verbose" information also mentioned an option called "v4l" with
-the comment "if present, read from video4linux".  If we try adding 
+the comment "if present, read from video4linux".  If we try adding
 this option, yarpdev may or may not succeed (depending on whether
 video4linux is present and how it is configured on your machine).
 A typical failed output is:

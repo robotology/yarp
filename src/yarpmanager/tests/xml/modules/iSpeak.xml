@@ -6,18 +6,18 @@
 
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
-	<param desc="Name of the module" default="iSpeak"> name </param>
-	<param desc="Robot to connect to" default="icub"> robot </param>
-	<param desc="The period given in [ms] for controlling the mouth." default=""> period </param>
+        <param desc="Name of the module" default="iSpeak"> name </param>
+        <param desc="Robot to connect to" default="icub"> robot </param>
+        <param desc="The period given in [ms] for controlling the mouth." default=""> period </param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
     <authors>
-	  <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
+        <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
 
         <input>
             <type>Bottle</type>
@@ -57,7 +57,7 @@
          a memory resource dependency can be introduced with the required memory space. -->
     <dependencies>
         <computer>
-	<platform>Linux</platform>
+    <platform>Linux</platform>
         </computer>
     </dependencies>
 
@@ -65,8 +65,7 @@
     <development>
         <header></header>
         <library>YARP</library>
-	<library>festival</library>
+        <library>festival</library>
     </development>
 
 </module>
-

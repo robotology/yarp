@@ -4,7 +4,7 @@
  *
  */
 
-/** 
+/**
  * @page carrier_config Configuring YARP Connections
 
 @author Paul Fitzpatrick
@@ -15,11 +15,11 @@ carry data.  For example there is the tcp carrier, the udp carrier,
 the mcast (multi-cast) carrier.  For each transport, there can
 be several variants of carrier.  For example, across tcp, there
 can be the basic binary-mode tcp carrier, or the text (text-mode)
-carrier, or the fast_tcp carrier which takes some shortcuts for 
+carrier, or the fast_tcp carrier which takes some shortcuts for
 speed.
 
 Before using carriers other than the default, please do make sure you
-understand the performance of your network and check that it is 
+understand the performance of your network and check that it is
 configured well - see \ref yarp_cluster.
 
 Here we look at configuration issues that arise for individual
@@ -86,7 +86,7 @@ out-of-order parts, so the only problem you should have is messages
 simply failing to arrive.
 
 If you have multiple networks, you can control which networks
-individual connections use with the same method described for 
+individual connections use with the same method described for
 the \ref carrier_config_tcp "tcp carrier".
 
 The steps described in \ref yarp_cluster are very important
@@ -102,7 +102,7 @@ worth experimenting across quite a large range, say from 5000 to
 
 \section carrier_config_mcast mcast (multicast) carrier
 
-You can establish a multicast connection between two ports /src and /dest 
+You can establish a multicast connection between two ports /src and /dest
 by typing:
 \verbatim
 yarp connect /src /dest mcast
@@ -111,7 +111,7 @@ yarp connect /src /dest mcast
 CAREFUL: multicast is not supported by all all network hardware, and
 even when it is, support can be a bit hit-and-miss.
 
-For multiple ports reading from the same source, YARP will map 
+For multiple ports reading from the same source, YARP will map
 these logical connections to a single multicasting source.
 
 The mcast carrier is unreliable (by the nature of the underlying
@@ -126,7 +126,7 @@ out-of-order parts, so the only problem you should have is messages
 simply failing to arrive.
 
 If you have multiple networks, you can control which networks
-individual connections use with the same method described for 
+individual connections use with the same method described for
 the \ref carrier_config_tcp "tcp carrier".
 
 The steps described in \ref yarp_cluster are very important
@@ -142,7 +142,7 @@ It is worth experimenting across quite a large range, say from 5000 to
 
 \section carrier_config_shmem shmem (shared memory) carrier
 
-You can establish a shared memory connection between two 
+You can establish a shared memory connection between two
 ports /src and /dest by typing:
 \verbatim
 yarp connect /src /dest shmem
@@ -158,7 +158,7 @@ options for this carrier.
 
 \section carrier_config_local local (within-process) carrier
 
-You can establish a connection via shared process memory between two 
+You can establish a connection via shared process memory between two
 ports /src and /dest by typing:
 \verbatim
 yarp connect /src /dest local
@@ -174,7 +174,7 @@ into a merged pool with zero copies needed.
 
 \section carrier_config_text text (text-mode across tcp) carrier
 
-You can establish a text-mode connection between two 
+You can establish a text-mode connection between two
 ports /src and /dest by typing:
 \verbatim
 yarp connect /src /dest text
@@ -191,7 +191,7 @@ sender of data received.  If this is a problem, use the
 
 \section carrier_config_text_ack text_ack (text-mode across tcp with acknowledgement) carrier
 
-You can establish a text-mode connection between two 
+You can establish a text-mode connection between two
 ports /src and /dest by typing:
 \verbatim
 yarp connect /src /dest text_ack
@@ -222,13 +222,13 @@ is safer to use the regular \ref carrier_config_tcp "tcp carrier".
 \section carrier_config_http http carrier
 
 This is a carrier for use from web browsers.  It is not intended
-for port-to-port connections.  See \ref yarp_http 
+for port-to-port connections.  See \ref yarp_http
 for details.
 
 \section carrier_config_mjpeg mjpeg (mjpeg-over-http) carrier
 
 This carrier is for transporting images only.  It is handy for
-reading directly from IP cameras, or streaming images to a 
+reading directly from IP cameras, or streaming images to a
 browser (most modern browsers can directly render mjpeg-over-http
 streams).  See \ref yarp_http_recv_images.
 
@@ -241,7 +241,7 @@ ENABLE_yarpcar_mjpeg_carrier in CMake.  There will be an extra CMake
 option called MJPEG_AUTOCOMPRESS.  If turned on, this carrier will
 deliver images of standard YARP image format to ports.  If turned
 off, this carrier will deliver blobs that can be read by
-yarp::os::ManagedBytes or yarp::os::Bottle.  See 
+yarp::os::ManagedBytes or yarp::os::Bottle.  See
 yarp::mjpeg::MjpegDecompression for helper functions.
 The motivation for disabling automatic decompression is to reduce
 load for clients that need to read images only occasionally.
@@ -316,15 +316,15 @@ Suppose we start an image viewer and look at the stream from
   yarp connect /grabber /view udp
 \endverbatim
 We will see a monochrome, speckled image (a bayer image).  We
-can now reconnect with a connection that is configured to 
+can now reconnect with a connection that is configured to
 "debayer" the image on the receiver side:
 \verbatim
-  yarp connect /grabber /view udp+recv.bayer 
+  yarp connect /grabber /view udp+recv.bayer
 \endverbatim
 We should now see a color image.  To use a downsampling debayer
 algorithm, we can do:
 \verbatim
-  yarp connect /grabber /view udp+recv.bayer+size.half 
+  yarp connect /grabber /view udp+recv.bayer+size.half
 \endverbatim
 or equivalently:
 \verbatim
@@ -337,7 +337,7 @@ carrier modifier:
 \verbatim
   yarp connect /grabber /view udp+recv.bayer+order.bggr
 \endverbatim
-This says the first pixel on the first row is a blue color, 
+This says the first pixel on the first row is a blue color,
 followed by green.  On the second row, the first pixel
 is green, followed by red.
 

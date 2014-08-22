@@ -16,9 +16,9 @@
         <author email=""> Ajay Mishra </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
-        
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
+
         <input>
             <type>Image</type>
             <port carrier="udp">/activeSeg/image:i</port>
@@ -47,7 +47,7 @@
             <description></description>
         </input>
 
-<input>
+        <input>
             <type>Rpc</type>
             <port carrier="tcp">/activeSeg/rpc</port>
             <!-- required input means the execution of module depends on
@@ -94,8 +94,7 @@
     <development>
         <header></header>
         <library>YARP</library>
-	<library>OpenCV</library>
+        <library>OpenCV</library>
     </development>
 
 </module>
-

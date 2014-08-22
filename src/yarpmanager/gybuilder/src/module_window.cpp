@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -21,7 +21,7 @@
 using namespace yarp::manager;
 
 
-ModuleWindow::ModuleWindow(Module* module, MainWindow* parent, 
+ModuleWindow::ModuleWindow(Module* module, MainWindow* parent,
                                Manager* manager)
 {
     m_pModule = module;
@@ -36,10 +36,10 @@ ModuleWindow::ModuleWindow(Module* module, MainWindow* parent,
     m_refTreeModel = Gtk::TreeStore::create(m_Columns);
     m_TreeView.set_model(m_refTreeModel);
 
-    //Add the Model’s column to the View’s columns: 
+    //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* cellText = Gtk::manage(new Gtk::CellRendererText());
     cellText->property_style() = Pango::STYLE_ITALIC;
-    Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf()); 
+    Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf());
     Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Item"));
     col->pack_start(*cellPix, false);
     col->pack_start(*cellText, true);
@@ -50,7 +50,7 @@ ModuleWindow::ModuleWindow(Module* module, MainWindow* parent,
 
     //m_TreeView.append_column("Value", m_Columns.m_col_value);
     //m_TreeView.get_column(1)->set_resizable(true);
-   
+
     Gtk::CellRendererText* cellValue = Gtk::manage(new Gtk::CellRendererText());
     cellValue->property_editable() = false;
     cellValue->property_wrap_mode() = Pango::WRAP_WORD;
@@ -80,9 +80,9 @@ void ModuleWindow::onRefresh()
     m_pParent->reportErrors();
 }
 
-void ModuleWindow::onTabCloseRequest() 
-{ 
-    //m_pParent->onTabCloseRequest(this); 
+void ModuleWindow::onTabCloseRequest()
+{
+    //m_pParent->onTabCloseRequest(this);
 }
 
 void ModuleWindow::updateWidget()
@@ -142,7 +142,7 @@ void ModuleWindow::updateWidget()
     row[m_Columns.m_col_value] = "";
     row[m_Columns.m_col_width] = width;
 
-    //char buff[64];    
+    //char buff[64];
     for(int i=0; i<m_pModule->authorCount(); i++)
     {
         childrow = *(m_refTreeModel->append(row.children()));

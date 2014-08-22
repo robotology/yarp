@@ -7,11 +7,11 @@ Instantiates \ref cmd_device_ffmpeg_grabber "ffmpeg_grabber" device implemented 
 \verbatim
 # read from a video4linux source
 device ffmpeg_grabber
-v4l 
-v4ldevice /dev/video0 
-channel 1 
+v4l
+v4ldevice /dev/video0
+channel 1
 standard ntsc
-width 640 
+width 640
 height 480
 \endverbatim
 If this text is saved in a file called ffmpeg_grabber_video4linux.ini then the device can be created by doing:

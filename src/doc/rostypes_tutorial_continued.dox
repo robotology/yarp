@@ -12,7 +12,7 @@ work on sending data from YARP to ROS.
 
 <b>Make sure you have the latest version of YARP from github. Make sure you run the latest version of the yarp name server, there have been important fixes.</b>
 
-At the beginning of this tutorial, we assume you have a YARP 
+At the beginning of this tutorial, we assume you have a YARP
 server running, without any special configuration.  During
 the tutorial, we will reconfigure the name server to communicate
 with ROS.
@@ -51,7 +51,7 @@ int main()
 
       // d.text is a string
       d.text="Hello from sender";
-     
+
       //d.content is a vector, let's push some data
       d.content.push_back(count++);
       d.content.push_back(count++);
@@ -60,22 +60,22 @@ int main()
 
       yarp::os::Time::delay(0.1);
    }
-  
+
    return 0;
 }
 \endcode
 
 This program was written using a <tt>yarp::os::Port</tt>, a very
-flexible creature. It can communicate with ROS, if we tame it 
+flexible creature. It can communicate with ROS, if we tame it
 a little bit to fit in with ROS's expectations that promise to
-never change the type of data sent, and promise to always send data in 
+never change the type of data sent, and promise to always send data in
 a particular direction. We can make those promises by calls to
-yarp::os::Port::setWriteOnly and yarp::os::Port::promiseType, or 
+yarp::os::Port::setWriteOnly and yarp::os::Port::promiseType, or
 we can switch to using the helper class <tt>yarp::os::Publisher</tt>
-that is already correctly configured.  We can also add a 
+that is already correctly configured.  We can also add a
 <tt>yarp::os::Node</tt> to make ROS even happier.
 
-\include example/idl/rosPortable/sender2.cpp 
+\include example/idl/rosPortable/sender2.cpp
 
 Great, at this point our port is nice and tame by ROS standards.
 And the code will still work just fine without ROS.  For example,
@@ -89,10 +89,10 @@ to the topic:
 yarp connect topic://data /receiver
 \endverbatim
 
-We can also update the <tt>receiver</tt> code to use 
+We can also update the <tt>receiver</tt> code to use
 the yarp::os::Subscriber helper class:
 
-\include example/idl/rosPortable/receiver2.cpp 
+\include example/idl/rosPortable/receiver2.cpp
 
 @section rostypes_tutorial_continued_visible Registering with ROS
 
@@ -111,12 +111,12 @@ Ok.  Ready!
 \endverbatim
 
 Done!  Now, if we rerun the sender and receiver programs, they should
-work as before.  The (invisible) difference is that they are being 
+work as before.  The (invisible) difference is that they are being
 connected by ROS rather than YARP.  A visible difference is that
 the programs are now visible within ROS.  Try:
 
 \verbatim
-$  rostopic list 
+$  rostopic list
 ...
 /data
 ...
@@ -134,10 +134,10 @@ $  rosnode list
 $  rostopic info /data
 Type: yarp/SharedData
 
-Publishers: 
+Publishers:
  * /sender/node (http://192.168.1.3:10005)
 
-Subscribers: 
+Subscribers:
  * /receiver/node (http://192.168.1.3:10003)
 \endverbatim
 
@@ -146,7 +146,7 @@ $  rosnode info /receiver/node
 Node [/receiver/node]
 Publications: None
 
-Subscriptions: 
+Subscriptions:
  * /data [yarp/SharedData]
 
 Services: None
@@ -164,9 +164,9 @@ end up making a real ROS package.
 
 @section rostypes_tutorial_continued_msg Making the .msg file available to ROS
 
-In \ref rostypes_tutorial_portable we defined a <tt>SharedData</tt> 
+In \ref rostypes_tutorial_portable we defined a <tt>SharedData</tt>
 structure in a <tt>SharedData.msg</tt> file
-and used it to communicate between sender and receiver programs 
+and used it to communicate between sender and receiver programs
 written using YARP.  Now we need to make that file visible to ROS.
 ROS expects <tt>.msg</tt> files to be in a directory called <tt>msg</tt> within
 a ROS "package".  If you already have a package set up for your work,
@@ -174,7 +174,7 @@ you can just use that. For completeness, we give
 a very minimal ROS package here, just enough to experiment with, but
 you can also just follow ROS tutorials, there's nothing YARP-specific
 here.  Do the following:
- 
+
  + Create an empty directory, called say <tt>yarpros_tutorial</tt>.
  + Within that directory, create another empty directory called `src`.
  + Within that directory, create another empty directory that will be
@@ -228,7 +228,7 @@ is to do (from the `yarpros_tutorial` directory):
 $  source devel/setup.bash
 \endverbatim
 
-At this point, the <tt>rosmsg</tt> command should be able to find 
+At this point, the <tt>rosmsg</tt> command should be able to find
 our type:
 
 \verbatim
@@ -255,7 +255,7 @@ content: [4800.0, 4801.0]
 ---
 \endverbatim
 
-If we stop the `sender` program and run the `receiver`, we can publish to 
+If we stop the `sender` program and run the `receiver`, we can publish to
 if from ROS.  If we do this:
 
 \verbatim

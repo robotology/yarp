@@ -5,18 +5,18 @@
  *
  */
 
-/** 
+/**
  * @page yarp_config_files YARP config files
 
 \author Paul Fitzpatrick
 
-This tutorial covers how to write and read configuration files 
-in YARP's native format.  In brief, YARP config files look 
+This tutorial covers how to write and read configuration files
+in YARP's native format.  In brief, YARP config files look
 a lot like
 <a href="http://en.wikipedia.org/wiki/INI_file">INI files</a>
 but are actually closer in spirit to
 <a href="http://en.wikipedia.org/wiki/S-expression">S-expressions</a>.
-YARP config files translate into yarp::os::Property objects 
+YARP config files translate into yarp::os::Property objects
 (see e.g. the yarp::os::Property::fromConfigFile command).
 
  - \ref yarp_config_file_basics
@@ -26,7 +26,7 @@ YARP config files translate into yarp::os::Property objects
  - \ref yarp_config_file_lists
  - \ref yarp_config_file_includes
  - \ref yarp_config_file_comments
- - \ref yarp_config_file_quoting 
+ - \ref yarp_config_file_quoting
  - \ref yarp_config_file_continue
  - \ref yarp_config_list_syntax
  - \ref yarp_config_file_environment
@@ -42,7 +42,7 @@ width 10
 height 15
 \endcode
 
-The format of each line is the same as that of the 
+The format of each line is the same as that of the
 string representation of the yarp::os::Bottle class,
 defined here: \ref data_rep.  In summary, each line is
 a list of items (strings, numbers, sublists, etc) separated by spaces/tabs.
@@ -64,16 +64,16 @@ int main() {
   return 0;
 }
 \endcode
-The Property object prop will contain all the groups in the configuration 
+The Property object prop will contain all the groups in the configuration
 file.  The groups can be accessed by iterating, or by using the
-yarp::os::Property::findGroup command.  This takes a keyword as an 
-argument, and returns the group that has that keyword as its first 
+yarp::os::Property::findGroup command.  This takes a keyword as an
+argument, and returns the group that has that keyword as its first
 element.  So for config.ini:
 \code
 prop.findGroup("width")  // gives the list [width,10]
 prop.findGroup("height") // gives the list [height,15]
 \endcode
-In general, the list of values associated with a group can be found 
+In general, the list of values associated with a group can be found
 with the tail command, which drops the keyword:
 \code
 prop.findGroup("width").tail() // gives the list [10]
@@ -90,10 +90,10 @@ prop.find("height").asInt() // gives the int 15
 
 \section yarp_config_file_add_section A config file with sections
 
-Configuration files often need to have nesting, with 
+Configuration files often need to have nesting, with
 values organized into sections.
 Special tags of the form "[NAME]" are one way to achieve this
-with YARP config files (or INI-style configuration files in general).  
+with YARP config files (or INI-style configuration files in general).
 For example, for a file containing:
 \code
 [SIZE]
@@ -102,7 +102,7 @@ height 15
 [APPEARANCE]
 color red
 \endcode
-the Property object we read in code will now contain the 
+the Property object we read in code will now contain the
 two groups "SIZE" and "APPEARANCE", which will have "width", "height",
 and "color" nested within them.  In other words:
 \code
@@ -115,7 +115,7 @@ In fact, in YARP config files, the above structure could also be written as:
 SIZE (width 10) (height 15)
 APPEARANCE (color red)
 \endcode
-This is exactly equivalent.  The special [SECTION] syntax is just 
+This is exactly equivalent.  The special [SECTION] syntax is just
 a convenience, familiar to many from INI files.
 
 Here is the rule.  Any list on a separate line in a configuration
@@ -131,7 +131,7 @@ for this case is not guaranteed to remain so in the future.
 
 \section yarp_config_file_nesting Nesting configuration files
 
-To include one configuration file, say "preamble.ini", inside another one, 
+To include one configuration file, say "preamble.ini", inside another one,
 do:
 \code
 [include "preamble.ini"]
@@ -142,7 +142,7 @@ called FOO, do instead:
 \code
 [include FOO "preamble.ini"]
 \endcode
-This last form will result in any sections within preamble.ini 
+This last form will result in any sections within preamble.ini
 being nested within FOO.
 
 For example, if preamble.ini is:
@@ -199,12 +199,12 @@ color_correct 0.0 0.0 0.0
 \endcode
 
 So we have a handy "camera" list accessible
-as prop.findGroup("camera").tail() that gives us the names of the 
+as prop.findGroup("camera").tail() that gives us the names of the
 camera-related groups.
 
 \section yarp_config_file_includes Combining section collections and includes
 
-As of YARP 2.2.8, section collections and include file features can be 
+As of YARP 2.2.8, section collections and include file features can be
 combined.  In other words, one can have a configuration file like this:
 \code
 [include camera left "cam_left.ini"]
@@ -291,7 +291,7 @@ encoders (1 2 3 4 5 6 7 8)
 \section yarp_config_list_syntax List syntax
 
 Values in a config file can be any type supported by yarp::os::Bottle.
-That includes lists, which are surrounded by parentheses and 
+That includes lists, which are surrounded by parentheses and
 have spaces (not commas) between items:
 \code
 example_list (1 2 3)
@@ -337,7 +337,7 @@ pairs.
 \section yarp_config_command Command line configuration switches
 
 The yarp::os::ResourceFinder class bundles together some common
-ways to configure YARP programs.  An instance of this class 
+ways to configure YARP programs.  An instance of this class
 is usually passed the command line arguments:
 \code
 int main(int argc, char *argv[]) {

@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -27,9 +27,9 @@
 using namespace yarp::os;
 using namespace yarp::manager;
 
-ConnectionPropertyWindow::ConnectionPropertyWindow(MainWindow* parent, 
+ConnectionPropertyWindow::ConnectionPropertyWindow(MainWindow* parent,
                                Manager* manager, ApplicationWindow* appWnd)
-{   
+{
     m_pParent = parent;
     m_pManager = manager;
     m_pAppWindow = appWnd;
@@ -43,7 +43,7 @@ ConnectionPropertyWindow::ConnectionPropertyWindow(MainWindow* parent,
     m_refTreeModel = Gtk::TreeStore::create(m_Columns);
     m_TreeView.set_model(m_refTreeModel);
 
-    //Add the Model’s column to the View’s columns: 
+    //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* itemRenderer = Gtk::manage(new Gtk::CellRendererText());
     itemRenderer->property_editable() = false;
     Gtk::TreeViewColumn* itemCol = Gtk::manage(new Gtk::TreeViewColumn("Property", *itemRenderer));
@@ -66,7 +66,7 @@ ConnectionPropertyWindow::ConnectionPropertyWindow(MainWindow* parent,
     valueRenderer->signal_edited().connect( sigc::mem_fun(*this,
               &ConnectionPropertyWindow::onCellEdited) );
     m_TreeView.append_column(*valueCol);
-    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);   
+    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);
 
 
     //m_TreeView.append_column_editable("Value", m_Columns.m_col_value);
@@ -91,9 +91,9 @@ void ConnectionPropertyWindow::onRefresh()
     m_pParent->reportErrors();
 }
 
-void ConnectionPropertyWindow::onTabCloseRequest() 
-{ 
-    m_pParent->onTabCloseRequest(this); 
+void ConnectionPropertyWindow::onTabCloseRequest()
+{
+    m_pParent->onTabCloseRequest(this);
 }
 
 void ConnectionPropertyWindow::release(void)
@@ -141,7 +141,7 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Carrier";
     row[m_Columns.m_col_value] = m_pConnection->carrier();
-    carrierRow = row; 
+    carrierRow = row;
     string carrier = m_pConnection->carrier();
     if(carrier.find("recv.priority") != std::string::npos)
     {
@@ -152,11 +152,11 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
             protocol = carrier;
         else
             protocol = carrier.substr(0, carrier.find("+"));
-        
+
         bool dbg = (carrier.find("debug") != std::string::npos);
-        bool aux = (carrier.find("virtual") != std::string::npos) ||  
+        bool aux = (carrier.find("virtual") != std::string::npos) ||
                    (carrier.find("auxilary") != std::string::npos);
-        
+
         double st = 1.0;
         int tc = 1;
         // extracting st
@@ -193,17 +193,17 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
 
         printf("%s\n", getCarrierOptions(stimulation.c_str()));
         Property options;
-        options.fromString(getCarrierOptions(stimulation.c_str())); 
+        options.fromString(getCarrierOptions(stimulation.c_str()));
         //double st = (options.check("st",Value(10)).asInt())/10.0;
         double st = options.find("st").asInt()/10.0;
         int tc = (int) options.check("tc",Value(1)).asInt();
         printf("st:%.2f, tc:%d\n", st, tc);
         */
 
-        char dummy[128]; 
+        char dummy[128];
         row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
         row[m_Columns.m_col_editable] = false;
-        
+
         childrow = *(m_refTreeModel->append(row.children()));
         childrow[m_Columns.m_col_name] = "Protocol";
         childrow[m_Columns.m_col_value] = protocol.c_str();
@@ -216,20 +216,20 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
         childrow[m_Columns.m_col_editable] = true;
 
         childrow = *(m_refTreeModel->append(row.children()));
-        childrow[m_Columns.m_col_name] = "Decay time";        
+        childrow[m_Columns.m_col_name] = "Decay time";
         sprintf(dummy, "%d", tc);
         childrow[m_Columns.m_col_value] = dummy;
         childrow[m_Columns.m_col_editable] = true;
 
         childrow = *(m_refTreeModel->append(row.children()));
-        childrow[m_Columns.m_col_name] = "Auxilary";        
+        childrow[m_Columns.m_col_name] = "Auxilary";
         childrow[m_Columns.m_col_value] = (aux) ? "yes" : "no";
         childrow[m_Columns.m_col_editable] = true;
 
         childrow = *(m_refTreeModel->append(row.children()));
         childrow[m_Columns.m_col_name] = "Debug mode";
         childrow[m_Columns.m_col_value] = (dbg) ? "yes" : "no";
-        childrow[m_Columns.m_col_editable] = true;       
+        childrow[m_Columns.m_col_editable] = true;
     }
     else
         row[m_Columns.m_col_editable] = true;
@@ -242,7 +242,7 @@ void ConnectionPropertyWindow::update(Glib::RefPtr<ArrowModel> &arrow)
     m_TreeView.expand_all();
 }
 
-void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string, 
+void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     const Glib::ustring& new_text)
 {
     if(!m_pArrow)
@@ -261,7 +261,7 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         Gtk::TreeModel::Row row = *iter;
         //Put the new value in the model:
         Glib::ustring strName = Glib::ustring(row[m_Columns.m_col_name]);
-    
+
         row[m_Columns.m_col_value] = new_text;
 
         Application* application = m_pManager->getKnowledgeBase()->getApplication();
@@ -301,20 +301,20 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
         if(strName == "Persistent")
         {
             Connection con = *m_pConnection;
-            if(compareString(new_text.c_str(), "yes")) 
+            if(compareString(new_text.c_str(), "yes"))
                 con.setPersistent(true);
             else
                 con.setPersistent(false);
             m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, *m_pConnection, con);
-            if(compareString(new_text.c_str(), "yes")) 
+            if(compareString(new_text.c_str(), "yes"))
                 m_pConnection->setPersistent(true);
-            else    
+            else
                 m_pConnection->setPersistent(false);
         }
         else
         {
             // create carrier params
-            string carrier = Glib::ustring(carrierRow[m_Columns.m_col_value]).c_str(); 
+            string carrier = Glib::ustring(carrierRow[m_Columns.m_col_value]).c_str();
 
             string exictation;
             // extract bias
@@ -338,10 +338,10 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
             }
 
             //printf("exec: %s\n", exictation.c_str());
-    
+
             typedef Gtk::TreeModel::Children type_children;
             type_children children = carrierRow->children();
-            Glib::ustring param; 
+            Glib::ustring param;
             for(type_children::iterator iter = children.begin(); iter != children.end(); ++iter)
             {
                 Gtk::TreeModel::Row row = *iter;
@@ -349,13 +349,13 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     param = row[m_Columns.m_col_value] + "+recv.priority";
                 else if(row[m_Columns.m_col_name] == "Stimulation")
                 {
-                    // scaling up by 10 
+                    // scaling up by 10
                     string strSt = Glib::ustring(row[m_Columns.m_col_value]).c_str();
                     double st = atof(strSt.c_str());
                     char dummy[64];
                     sprintf(dummy, "%d", (int)(st*10));
                     param += string("+st.") + string(dummy);
-                }                    
+                }
                 else if(row[m_Columns.m_col_name] == "Decay time")
                 {
                     // removing dot e.g. 2.0 -> 2
@@ -364,11 +364,11 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     char dummy[64];
                     sprintf(dummy, "%d", tc);
                     param += string("+tc.") + string(dummy);
-                }                    
-                else if((row[m_Columns.m_col_name] == "Auxilary") 
+                }
+                else if((row[m_Columns.m_col_name] == "Auxilary")
                         && compareString(Glib::ustring(row[m_Columns.m_col_value]).c_str(), "yes" ) )
                     param += "+virtual";
-                else if((row[m_Columns.m_col_name] == "Debug mode") 
+                else if((row[m_Columns.m_col_name] == "Debug mode")
                         && compareString(Glib::ustring(row[m_Columns.m_col_value]).c_str(), "yes" ) )
                     param += "+debug";
             }
@@ -386,7 +386,7 @@ void ConnectionPropertyWindow::onCellEdited(const Glib::ustring& path_string,
 }
 
 // copied from yarp Protocol.cpp
-const char* ConnectionPropertyWindow::getCarrierOptions(const char* opt) 
+const char* ConnectionPropertyWindow::getCarrierOptions(const char* opt)
 {
     string carrier = opt;
     string from;
@@ -397,8 +397,8 @@ const char* ConnectionPropertyWindow::getCarrierOptions(const char* opt)
     //{
         //from = " (protocol \"" + carrier.substr(0, start) + "\")";
     from += " (";
-    for ( unsigned i=start+1; 
-         i<(unsigned)carrier.length(); 
+    for ( unsigned i=start+1;
+         i<(unsigned)carrier.length();
          i++) {
         char ch = carrier[i];
         if (ch=='+') {

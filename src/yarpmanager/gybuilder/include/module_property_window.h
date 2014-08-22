@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -21,8 +21,8 @@ class ModulePropItemColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ModulePropItemColumns() { 
-        add(m_col_name); 
+    ModulePropItemColumns() {
+        add(m_col_name);
         add(m_col_value);
         add(m_col_color_item);
         add(m_col_color_value);
@@ -44,9 +44,9 @@ class ModelColumnsCombo : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ModelColumnsCombo() { 
-        add(m_col_choice); 
-        add(m_col_description); 
+    ModelColumnsCombo() {
+        add(m_col_choice);
+        add(m_col_description);
     }
     Gtk::TreeModelColumn<Glib::ustring> m_col_choice; //The values from which the user may choose.
     Gtk::TreeModelColumn<Glib::ustring> m_col_description; //Extra information to help the user to choose.
@@ -64,17 +64,17 @@ public:
     void onRefresh();
 
     void update(yarp::manager::Module* module);
-    void release(void) { m_pModule = NULL; m_pIModule = NULL; } 
+    void release(void) { m_pModule = NULL; m_pIModule = NULL; }
     yarp::manager::Module* getModule(void) { return m_pModule; }
 
     void updateModule(const char* item, const char* value);
 
 protected:
     void onCellData(Gtk::CellRenderer*, const Gtk::TreeModel::iterator& iter);
-    void onCellEdited(const Glib::ustring& path_string, 
+    void onCellEdited(const Glib::ustring& path_string,
                     const Glib::ustring& new_text);
 protected:
-    ModulePropItemColumns m_Columns;  
+    ModulePropItemColumns m_Columns;
     ModelColumnsCombo m_ColumnsCombo;
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     Gtk::TreeView m_TreeView;

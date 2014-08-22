@@ -1303,7 +1303,7 @@ bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
 {
 
     // removing inputs and outputs and resource
-	GraphIterator itr=graph.begin();
+    GraphIterator itr=graph.begin();
 
         while(itr!=graph.end())
         {
@@ -1311,7 +1311,7 @@ bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
             if(input && (input->owner() == mod))
             {
                 graph.removeNode(input);
-				itr=graph.begin();
+                itr=graph.begin();
             }
             else
             {
@@ -1319,21 +1319,21 @@ bool KnowledgeBase::removeModuleFromGraph(Graph& graph, Module* mod)
                 if(output && (output->owner() == mod))
                 {
                     graph.removeNode(output);
-					itr=graph.begin();
+                    itr=graph.begin();
                 }
                 else
                 {
                     MultiResource* res = dynamic_cast<MultiResource*>(*itr);
                     if(res && (res->owner() == mod))
-					{
+                    {
                          graph.removeNode(res);
-						 itr=graph.begin();
-					}
-					else
-						itr++;
+                         itr=graph.begin();
+                    }
+                    else
+                        itr++;
                 }
             }
-			//itr++;
+            //itr++;
         }
 
     // removing module

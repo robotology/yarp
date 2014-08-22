@@ -55,7 +55,7 @@ Newer versions of yarpview: you can ask yarpview to display all images that are 
 yarpview --synch
 \endverbatim
 
-In this way (if there is enough CPU time free) all images received from the port will be 
+In this way (if there is enough CPU time free) all images received from the port will be
 displayed in the screen. This is useful if you do not want to lose frames.
 
 @section yarpview_help yarpview --help

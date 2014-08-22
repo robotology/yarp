@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -20,7 +20,7 @@ using namespace std;
 
 StdoutWindow::StdoutWindow(Gtk::Window* parent, int ID, const char* title)
 {
-	m_MessageList = Gtk::manage(new MessagesList(this));
+    m_MessageList = Gtk::manage(new MessagesList(this));
     m_ID = ID;
     if(title)
         set_title(title);
@@ -30,7 +30,7 @@ StdoutWindow::StdoutWindow(Gtk::Window* parent, int ID, const char* title)
     //set_border_width(3);
     set_default_size(300, 300);
     //m_MessageList->enableTimeStamp();
-    
+
     add(m_VBox);
     m_VBox.pack_start(*m_MessageList);
 

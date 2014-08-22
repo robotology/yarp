@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -20,9 +20,9 @@ class ResourceItemColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-    ResourceItemColumns() { 
-        add(m_col_refPix); 
-        add(m_col_name); 
+    ResourceItemColumns() {
+        add(m_col_refPix);
+        add(m_col_name);
         add(m_col_value);
     }
 
@@ -38,11 +38,11 @@ public:
     ResourceWindow(yarp::manager::Computer* computer, MainWindow* parent, yarp::manager::Manager* manager);
     virtual ~ResourceWindow();
 
-    const char* getResourceName(void) { return m_pComputer->getName(); }    
+    const char* getResourceName(void) { return m_pComputer->getName(); }
     void onTabCloseRequest();
     void onRefresh();
 protected:
-    ResourceItemColumns m_Columns;  
+    ResourceItemColumns m_Columns;
     Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
     Gtk::TreeView m_TreeView;
 

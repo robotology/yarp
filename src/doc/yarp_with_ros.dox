@@ -5,13 +5,13 @@
  *
  */
 
-/** 
+/**
  * @page yarp_with_ros Using YARP with ROS
 
 \author Paul Fitzpatrick
 
 Programs that use YARP ports may interoperate with the ROS
-"Robot Operating System" in several ways.  While basic 
+"Robot Operating System" in several ways.  While basic
 interoperability has been possible from YARP version 2.3.4 on,
 the most convenient options (described here) need piping
 fresh YARP, so make sure you are up to date.
@@ -82,7 +82,7 @@ rostopic pub /testtopic std_msgs/String "Hello YARP" # yarp read should echo thi
 
 \section yarp_with_ros_name_types Decide what to do about types
 
-ROS has a type system that YARP knows nothing about.  You can tell YARP 
+ROS has a type system that YARP knows nothing about.  You can tell YARP
 about ROS types either at compile-time or at run-time.  In either case,
 you'll need access to the .msg/.srv files stored in ROS packages.  You
 have at least three options:
@@ -148,7 +148,7 @@ yarpidl_rosmsg --name /typ@/yarpidl
 
 That's the only YARP program you'll need on that machine.
 
-Here we've used yarpidl_rosmsg as a server, to pass around 
+Here we've used yarpidl_rosmsg as a server, to pass around
 type information at run-time.  It can also be used to do
 the translation at compile-time, see \ref yarp_with_ros_roscore_ros_types.
 Translation at compile-time works for arbitrary ROS types,
@@ -171,7 +171,7 @@ $ rosnode list
 ...
 /test_node
 ...
-  
+
 $ rostopic info /msg
 Type: unknown type
 Publishers: None
@@ -183,7 +183,7 @@ As invoked, we didn't assign any particular type to the port/topic - this can be
 
 \verbatim
 rostopic pub /msg std_msgs/String "hello yarp"
-rostopic pub /msg turtlesim/Pose 0 5 10 15 20  
+rostopic pub /msg turtlesim/Pose 0 5 10 15 20
 \endverbatim
 
 And you should see the messages print out on the console of yarp read.
@@ -193,7 +193,7 @@ And you should see the messages print out on the console of yarp read.
 Let's start a ROS program to print out strings:
 
 \verbatim
-$ rosrun roscpp_tutorials listener 
+$ rosrun roscpp_tutorials listener
 \endverbatim
 
 This program subscribes to a topic called "/chatter".  Let's publish something there from YARP:
@@ -265,7 +265,7 @@ On the "yarp rpcserver" terminal we will now see:
 Waiting for a message...
 yarp: Receiving input from /add_two_ints_client to /add_two_ints-1@/my_int_server using tcpros
 Message: 3 4
-Reply: 
+Reply:
 \endverbatim
 
 It is waiting for us to reply.  We can type in whatever number we like ("7" if we are feeling constructive), and it will be reported on the "roscpp_tutorials" terminal:
@@ -334,7 +334,7 @@ Here's a YARP equivalent of the ROS listener/talker tutorial:
 
 One thing to watch out for is that if you stop a program using ^C or
 if it crashes, YARP will not yet unregister your ports with ROS.  If
-this bothers you, either add a signal handler to close the 
+this bothers you, either add a signal handler to close the
 Port, or run "rosnode cleanup" from time to time.  Will fix this soon.
 
 
@@ -349,7 +349,7 @@ yarpdev --device test_motor --name /motor
 \endverbatim
 
 One of the ports this creates is /motor/state:o.  ROS forbids
-port names with ":" in them, and YARP versions 2.3.15 and earlier 
+port names with ":" in them, and YARP versions 2.3.15 and earlier
 didn't have a work-around for this, so make sure you are using
 YARP trunk or YARP version > 2.3.15 for this part.
 
@@ -364,7 +364,7 @@ float64[] v # suggested length: 4
 \endverbatim
 This is a valid .msg file, and can be used directly in ROS.
 
-See some more examples in the yarp source code, in the 
+See some more examples in the yarp source code, in the
 example/yarpros_examples directory.
 
 
@@ -524,7 +524,7 @@ public:
 
 #endif
 \endcode
-The sensor_msgs_PointCloud2 datatype can then be used to communicate with 
+The sensor_msgs_PointCloud2 datatype can then be used to communicate with
 a ROS topic of that type (see \ref port_expert for background).
 
 
@@ -563,7 +563,7 @@ If there is a long delay, try:
 ROS Name server /ros is available at ip 127.0.0.1 port 11311
 \endverbatim
 
-An alternative procedure is to manually configure YARP to use a ROS 
+An alternative procedure is to manually configure YARP to use a ROS
 name server with a particular host name or ip address and port number:
 \verbatim
 yarp conf icubsrv 11311 ros
@@ -577,14 +577,14 @@ Or try some of the exercises in \ref note_ports.
 
 YARP ports should behave as normal.
 One caveat: the <i>multicast</i> protocol requires some support from the name server
-that ROSCORE does not currently provide.  
+that ROSCORE does not currently provide.
 So don't use multicast if you want to work also
 with ROS (or use multiple name servers).
 
 
 \section yarp_with_ros_roscore_added Configuring YARP clients to use two nameservers independently
 
-YARP has a general ability to use multiple nameservers.  The trick is to set up two 
+YARP has a general ability to use multiple nameservers.  The trick is to set up two
 namespaces, for example /yarp and /ros:
 
 \verbatim

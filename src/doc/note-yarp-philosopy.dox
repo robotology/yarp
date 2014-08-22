@@ -25,7 +25,7 @@ computation-intensive, and involve interfacing with diverse and
 changing hardware.
 
 We summarize here some of the lessons we have learned over
-the years while working on various robots, some of which are 
+the years while working on various robots, some of which are
 software engineering commonplaces and some of which are more
 specific to long-term robotic research.
 
@@ -89,11 +89,11 @@ It is a commonplace that human cycles are much, much more expensive
 than machine cycles.  In robotics, it turns out that the human
 cost of stopping and restarting a process can be very high.
 For example, that process may interface with some
-custom hardware which requires a physical reset.  
+custom hardware which requires a physical reset.
 That reset many need to be carefully ordered with respect to when the
 process is stopped and started.
 There may be other dependent processes that need to be restarted in
-turn, and other dependent hardware. 
+turn, and other dependent hardware.
 These ordering constraints are time-consuming to satisfy.
 YARP does its part to minimize dependencies between processes.
 Communication channels between processes can come and go without
@@ -101,7 +101,7 @@ process restarts.
 A process that is killed or dies
 unexpectedly does not require processes to which it connects to be
 restarted. This also simplifies cooperation between people, as
-it minimizes the need to synchronize development on different  
+it minimizes the need to synchronize development on different
 parts of the system.
 
 

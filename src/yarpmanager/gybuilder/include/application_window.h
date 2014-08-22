@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -50,7 +50,7 @@ public:
     const char* getApplicationName(void) { return m_strAppName.c_str(); }
     yarp::manager::Application* getApplication(void) { return manager.getKnowledgeBase()->getApplication(); }
 
-    bool onClose(void);    
+    bool onClose(void);
     bool onRefresh(void);
     bool onSelectAll(void);
     bool onSave(const char* szfilename=NULL);
@@ -63,13 +63,13 @@ public:
     void onRotateRight();
     void onRotateLeft();
     void onMenuWindowProperty(bool active);
-    
+
     void onZoomIn(void);
     void onZoomOut(void);
-    void onZoomReset(void); 
+    void onZoomReset(void);
     void onGrid(bool grid) {
         m_showGrid = grid;
-        if(!m_showGrid)        
+        if(!m_showGrid)
             g_object_set(m_Grid, "visibility", GOO_CANVAS_ITEM_HIDDEN, NULL);
         else
             g_object_set(m_Grid, "visibility", GOO_CANVAS_ITEM_VISIBLE, NULL);
@@ -96,7 +96,7 @@ public:
     void setModified(void) {m_bModified = true; }
     void deSelectAll(void);
 
-public: 
+public:
     Goocanvas::Canvas* m_Canvas;
     GooCanvasItemModel *m_Grid;
     Glib::RefPtr<PortModel> m_currentPortModel;
@@ -106,19 +106,19 @@ public:
     yarp::manager::Manager manager;
 
 protected:
-    
+
     Glib::RefPtr<Gtk::ListStore> m_refListStore; //The Tree Model.
     Gtk::TreeView m_TreeView; //The Tree View.
 
     Gtk::VBox m_VBox;
     Gtk::HPaned m_HPaned;
-    Gtk::Notebook m_RightTab;    
+    Gtk::Notebook m_RightTab;
 
-    Gtk::ScrolledWindow m_ScrollView; 
+    Gtk::ScrolledWindow m_ScrollView;
     Glib::RefPtr<Goocanvas::ItemModel> root;
     void on_size_allocate(Gtk::Allocation& allocation);
     bool on_key_press_event(GdkEventKey* event);
-    
+
     int dummy_h;
     int dummy_w;
 
@@ -143,7 +143,7 @@ private:
     double _y;
 private:
     void createWidgets(void);
-    void setupSignals(void);        
+    void setupSignals(void);
     void updateApplicationWindow(void);
     void prepareManagerFrom(yarp::manager::Manager* lazy, const char* szAppName);
     void reportErrors(void);
@@ -159,12 +159,12 @@ private:
     bool on_item_focus_out_event(const Glib::RefPtr<Goocanvas::Item>& view, GdkEventFocus* event) ;
     bool on_item_enter_notify_event(const Glib::RefPtr<Goocanvas::Item>& target, GdkEventCrossing* event);
     bool on_item_leave_notify_event(const Glib::RefPtr<Goocanvas::Item>& target, GdkEventCrossing* event);
-    void onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>& context, 
-                            int x, int y, const Gtk::SelectionData& data, 
+    void onDragDataReceived(const Glib::RefPtr<Gdk::DragContext>& context,
+                            int x, int y, const Gtk::SelectionData& data,
                             guint info, guint time);
-    bool onDragDrop(const Glib::RefPtr<Gdk::DragContext>& drag_context, 
+    bool onDragDrop(const Glib::RefPtr<Gdk::DragContext>& drag_context,
                     int x, int y, guint timestamp);
-    bool onDragMotion(const Glib::RefPtr<Gdk::DragContext>& drag_context, 
+    bool onDragMotion(const Glib::RefPtr<Gdk::DragContext>& drag_context,
                     int x, int y, guint timestamp);
 
     yarp::manager::Connection* findConnection( yarp::manager::CnnContainer& connections, const char* szPort, bool from);

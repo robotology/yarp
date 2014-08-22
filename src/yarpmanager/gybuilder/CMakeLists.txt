@@ -6,7 +6,7 @@
 #
 
 
-get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
 set(folder_source   src/application_list.cpp
                     src/application_model.cpp
@@ -74,7 +74,7 @@ endif(UNIX)
 
 add_definitions(${GTK2_DEFINITIONS})
 
-include_directories(${YARP_TREE_INCLUDE_DIRS})
+include_directories(${YARP_OS_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
 include_directories(${GTK2_INCLUDE_DIRS})
@@ -97,7 +97,7 @@ add_executable(gyarpbuilder ${folder_source} ${folder_header})
 target_link_libraries(gyarpbuilder YARP_init
                                    YARP_OS
                                    YARP_manager
-				   ${ACE_LIBRARIES}
+                                   ${ACE_LIBRARIES}
                                    ${GTK2_GTK_LIBRARY}
                                    ${GTK2_GDK_LIBRARY}
                                    ${GTK2_GLIB_LIBRARY}

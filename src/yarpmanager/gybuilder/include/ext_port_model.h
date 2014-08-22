@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -28,15 +28,15 @@ public:
 
     static Glib::RefPtr<ExternalPortModel> create(ApplicationWindow* parentWnd, yarp::manager::NodeType t, const char* szExternalPort, bool nested=false);
 
-    virtual bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    virtual bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    virtual bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventMotion* event);
-    virtual bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    virtual bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    virtual bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
 
     virtual Gdk::Point getContactPoint(ArrowModel* arrow=NULL);
@@ -46,19 +46,19 @@ public:
     void setArrowsSelected(bool sel);
 
     virtual void setSelected(bool sel);
-    virtual bool getSelected(void) { 
-        return selected; 
-    }  
+    virtual bool getSelected(void) {
+        return selected;
+    }
 
     const char* getPort() { return strPort.c_str(); }
     void setPort(const char* szPort);
-    
+
 
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
     bool isNested(void) { return bNested; }
 
-protected: 
+protected:
     ExternalPortModel(ApplicationWindow* parentWnd, yarp::manager::NodeType t, const char* szExternalPort, bool nested=false);
 
 private:

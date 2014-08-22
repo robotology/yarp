@@ -1,22 +1,21 @@
 <module>
     <!-- module's name should match its executable file's name. -->
     <name>iolRADHelper</name>
-    <description>A container collecting useful functions that help RAD 
-accomplishing its tasks. </description>
+    <description>A container collecting useful functions that help RAD accomplishing its tasks.</description>
     <version>1.0</version>
 
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
-	<param desc="Name of the module" default="iolRADHelper"> name</param>
+        <param desc="Name of the module" default="iolRADHelper"> name</param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
     <authors>
-	  <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
+        <author email="ugo.pattacini@iit.it"> Ugo Pattacini </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
 
         <input>
             <type>Rpc</type>
@@ -59,4 +58,3 @@ accomplishing its tasks. </description>
     </development>
 
 </module>
-

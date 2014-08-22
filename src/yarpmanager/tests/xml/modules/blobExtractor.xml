@@ -8,26 +8,26 @@
     <arguments>
         <param desc="Name of the module" default="blobExtractor"> name</param>
         <param desc="Sub-path from \c $ICUB_ROOT/app to the configuration file" default="blobExtractor/conf"> context </param>
-	<param desc="Configuration file" default="config.ini"> from </param>
+        <param desc="Configuration file" default="config.ini"> from </param>
 
-	<param desc="" default="9"> gaussian_winsize </param>
-	<param desc="" default="10.0"> thresh </param>
-	<param desc="" default="8"> erode_itr </param>
-	<param desc="" default="3"> dilate_itr </param>
-	<param desc="" default="0.6"> window_ratio </param>
-	<param desc="" default="off"> details </param>
-	<param desc="" default="0"> offset </param>
+        <param desc="" default="9"> gaussian_winsize </param>
+        <param desc="" default="10.0"> thresh </param>
+        <param desc="" default="8"> erode_itr </param>
+        <param desc="" default="3"> dilate_itr </param>
+        <param desc="" default="0.6"> window_ratio </param>
+        <param desc="" default="off"> details </param>
+        <param desc="" default="0"> offset </param>
 
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
     <authors>
-	  <author email=""> Anonymous </author>
+        <author email=""> Anonymous </author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>
-        
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
+
         <input>
             <type>ImageFrame</type>
             <port carrier="udp">/blobExtractor/img:i</port>
@@ -86,8 +86,7 @@
     <development>
         <header></header>
         <library>YARP</library>
-	<library>OpenCV</library>
+        <library>OpenCV</library>
     </development>
 
 </module>
-

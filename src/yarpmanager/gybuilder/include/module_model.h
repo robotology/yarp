@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -23,15 +23,15 @@ public:
 
     static Glib::RefPtr<ModuleModel> create(ApplicationWindow* parentWnd, yarp::manager::Module* mod, bool nested=false);
 
-    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventMotion* event);
-    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
     void snapToGrid(void);
     void updateArrowCoordination(void);
@@ -44,9 +44,9 @@ public:
     double getHeight(void) { return height; }
 
 
-protected: 
+protected:
     ModuleModel(ApplicationWindow* parentWnd, yarp::manager::Module* mod, bool nested);
-    //void onItemCreated(const Glib::RefPtr<Goocanvas::Item>& item, 
+    //void onItemCreated(const Glib::RefPtr<Goocanvas::Item>& item,
     //                    const Glib::RefPtr<Goocanvas::ItemModel>& model) ;
 private:
     yarp::manager::Module* module;
@@ -54,7 +54,7 @@ private:
     Glib::RefPtr<Goocanvas::RectModel> mainRect;
     Glib::RefPtr<Goocanvas::RectModel> shadowRect;
 
-    Glib::RefPtr<GroupModel> group; 
+    Glib::RefPtr<GroupModel> group;
     Glib::RefPtr< Goocanvas::Item > _dragging ;
     int _drag_x ;
     int _drag_y ;

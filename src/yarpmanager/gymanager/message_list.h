@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -32,10 +32,10 @@ public:
     void addWarning(const char* warning);
     void addError(const char* error);
     void addMessage(const char* msg);
-    void enableTimeStamp(void) { bTimeStamp = true; } 
-    void disableTimeStamp(void) { bTimeStamp = false; } 
+    void enableTimeStamp(void) { bTimeStamp = true; }
+    void disableTimeStamp(void) { bTimeStamp = false; }
 
-    MsgModelColumns m_Columns;  
+    MsgModelColumns m_Columns;
     Glib::RefPtr<Gtk::ListStore> m_refListStore; //The Tree Model.
 
 protected:
@@ -48,7 +48,7 @@ protected:
     Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
 
 private:
-    bool bTimeStamp; 
+    bool bTimeStamp;
     Gtk::Window* m_pParent;
 
 };

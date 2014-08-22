@@ -2,9 +2,9 @@
  * \ingroup dev_examples
  *
  * \defgroup kinect_openni Example for kinect_device_server and kinect_device_client (kinect_openni)
- 
+
   Both kinect_device_server and kinect_device_client implement the yarp::dev::IKinectDeviceDriver interface. The kinect_device_server is used on a computer where the Kinect sensor is connected locally. The kinect_device_client is used on a computer accessing a remote Kinect sensor.
- 
+
 Instantiation of the \ref cmd_device_kinect_device_server  device implemented by yarp::dev::KinectDeviceDriverServer.
 
 To use this device the OpenNI and NITE APIs need to be installed and the CMake build should have been made with the ENABLE_yarpmod_KinectDeviceLocal checked.
@@ -14,7 +14,7 @@ The device can be started with the command:
 \verbatim
 yarpdev --device KinectDeviceLocal [OPTIONS]
 \endverbatim
- 
+
 Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
 \code
 Property p("(device KinectDeviceServer [OPTIONS])");//device started with no options
@@ -55,11 +55,11 @@ PolyDriver dev;
 dev.open(p);
 if (dev.isValid()) { /* use the device via view method */ }
 \endcode
- 
+
  the (userDetection) is optional.
  The [PORT_A] string is the remote ports prefixes and [PORT_B] string is used has port prefix.
- 
- 
+
+
  Have fun! All the ideas are welcome!
- 
+
  */

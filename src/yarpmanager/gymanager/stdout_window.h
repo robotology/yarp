@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -13,15 +13,15 @@
 #include <gtkmm.h>
 
 //class StdoutWindow;
-class StdoutWindow: public Gtk::Window 
+class StdoutWindow: public Gtk::Window
 {
 public:
     StdoutWindow(Gtk::Widget* parent, int ID, const char* title=NULL);
 
     virtual ~StdoutWindow();
     void addMessage(const char* msg);
-    void enableTimeStamp(void) { bTimeStamp = true; } 
-    void disableTimeStamp(void) { bTimeStamp = false; } 
+    void enableTimeStamp(void) { bTimeStamp = true; }
+    void disableTimeStamp(void) { bTimeStamp = false; }
 
 protected:
     void onPMenuSave();
@@ -29,7 +29,7 @@ protected:
 
 private:
     int m_ID;
-    bool bTimeStamp; 
+    bool bTimeStamp;
     Gtk::Widget* m_pParent;
     Glib::RefPtr<Gtk::TextBuffer> m_refTextBuff;
     Gtk::VBox m_VBox;

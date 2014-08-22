@@ -6,7 +6,7 @@ For a more up-to-date method of dealing with devices see:
 
 \li \ref add_a_device
 
-In YARP, a device driver is a class that implements one or more 
+In YARP, a device driver is a class that implements one or more
 \ref dev_iface "interfaces".
 
 If you're interested in learning how to use device drivers, see \ref
@@ -25,24 +25,24 @@ Additionally a device driver should implement a selection of other
 interfaces that capture what it shares with other families of
 devices. For example a camera might implement yarp:dev::IFrameGrabber (a "raw"
 interface to the raw data) and/or yarp::dev::IFrameGrabberImage
-(a higher-level source of images). For example, 
+(a higher-level source of images). For example,
 the yarp::dev::DragonflyDeviceDriver class implements a few of
 these interfaces. Interfaces are abstract classes, the idea is that
 from outside the user can access a device by using a pointer to the
 interface he/she needs, if that interface is supported by the
 device. This is quite similar to the way COM works (in a simplified way).
 
-In practice to implement a new device you create a new object which 
-derives from DeviceDriver and from the interface you want to support, 
-and you implement them. The interfaces are documented in the code, 
+In practice to implement a new device you create a new object which
+derives from DeviceDriver and from the interface you want to support,
+and you implement them. The interfaces are documented in the code,
 using the doxygen standard. See \ref note_devices for an example.
 
 \section dev-howto-lib Adding a device driver to libYARP_dev
 
-Some practical rules are also required to have cmake include your .cpp/.h 
+Some practical rules are also required to have cmake include your .cpp/.h
 files in the libYARP_dev (device library) project.
 
-Let's assume you want to create the Foo device. 
+Let's assume you want to create the Foo device.
 Start by creating a folder called:
 \verbatim
 libYARP_dev/src/foo/
@@ -58,7 +58,7 @@ all operating systems, if there are any such files.
 
 Each of these directories should be organized as:
 
-- /foo/$subdir$/dd_orig: This contains header and lib files provided with your 
+- /foo/$subdir$/dd_orig: This contains header and lib files provided with your
 specific device by the manufacturer, if any.
 - /foo/$subdir$/yarp: This contains header and cpp files implementing the YARP device driver (for example FooDeviceDriver.cpp).
 
@@ -110,7 +110,7 @@ YARP_EXTERNAL;raw1394;dc1394_control
 In this example we are telling CMake that the device driver foo
 depends on the packages raw1394 and dc1394_control. In this case cmake
 will not do any check, but will print a warning message saying that
-these modules are required. It is the user's responsability (for now, 
+these modules are required. It is the user's responsability (for now,
 and perhaps forever) to install these packages in the correct locations.
 
 Everything going well, you will see on CMake a list of variables whose
@@ -145,7 +145,7 @@ src/libYARP_dev/src/PopulateDrivers.cpp.in
 \endverbatim
 
 This is a template that CMake configures based on the devices the
-user selects, adding factories for them to a global list.  Suppose 
+user selects, adding factories for them to a global list.  Suppose
 your device is called "foo".  Find the part of this file that
 contains a list something like this:
 \code
@@ -186,16 +186,16 @@ And add:
 #include <yarp/Foo.h>
 #endif
 \endcode
-or whatever header file is needed for your device.  The path to the header 
+or whatever header file is needed for your device.  The path to the header
 file should usually work just as yarp/Foo.h rather than anything more
 complicated.
 
-Finally, now that we have our define, and have included the right 
+Finally, now that we have our define, and have included the right
 header file, we can add the factory for your device.  Go to the
 part of PopulateDrivers.cpp.in that has a list of lines like this:
 \code
 #ifdef ENABLE_portaudio
-    add(new DriverCreatorOf<PortAudioDeviceDriver>("portaudio", 
+    add(new DriverCreatorOf<PortAudioDeviceDriver>("portaudio",
                                                    "grabber",
                                                    "PortAudioDeviceDriver"));
 #endif
@@ -203,7 +203,7 @@ part of PopulateDrivers.cpp.in that has a list of lines like this:
 Now add in an entry for your device:
 \code
 #ifdef ENABLE_foo
-    add(new DriverCreatorOf<FooDeviceDriver>("foo", 
+    add(new DriverCreatorOf<FooDeviceDriver>("foo",
                                              "",
                                              "FooDeviceDriver"));
 #endif
@@ -233,7 +233,7 @@ other YARP device.
 
  - Start CMake and go to your YARP root directory.
  - Make sure that the "CREATE_DEVICE_LIBRARY_BUILTINS" option is
-selected.  Otherwise YARP won't try to build any any hardware 
+selected.  Otherwise YARP won't try to build any any hardware
 devices into the library.  When this is selected, and you configure,
 you get a list of options of the form: ENABLE_*.  There should
 be a new one now, called ENABLE_foo (or whatever your device is called).
@@ -244,7 +244,7 @@ Then run:
 yarpdev --list
 \endverbatim
 Your device should show up in the list.  To learn more about
-using devices from code, see \ref note_devices, and the 
+using devices from code, see \ref note_devices, and the
 examples in example/dev.
 
 \section dev-howto-wow Hey, why not automate all this?

@@ -5,7 +5,7 @@
  *
  */
 
-/** 
+/**
  * @page yarp_port_auth YARP port authentication
 
 \author Daniel Krieg
@@ -22,8 +22,8 @@ In particular, all iCub users running the yarprun server for the application man
 should be aware of this issue
 (see <a href="http://wiki.icub.org/wiki/Managing_Applications#Final_considerations">iCub wiki</a>).
 
-To protect your ports, you can enable the port authentication which adds a key exchange to the initial 
-handshaking in order to authenticate any connection request. It uses a 3-way HMAC mechanism 
+To protect your ports, you can enable the port authentication which adds a key exchange to the initial
+handshaking in order to authenticate any connection request. It uses a 3-way HMAC mechanism
 with SHA256.
 
 \section yarp_port_auth_usage How to use the port authentication mechanism
@@ -44,7 +44,7 @@ Finally, you can 'test' it by opening a telnet connection to your nameserver.
 Instead of a welcome message you should see only garbage.
 
 Now, only yarp applications with the same key can connect to each other. This
-also applies to the nameserver (as it is just a regular port). 
+also applies to the nameserver (as it is just a regular port).
 
 \section yarp_port_auth_remarks Remarks
 \li Connections via telnet (as in \ref yarp_without_yarp_begin) or http (for browser-access
@@ -59,7 +59,7 @@ possibly could be inserted into an already established connection.
 
 \section yarp_port_auth_final Final note
 I consider this mechanism to be secure for handshaking,
-but it comes without any warranty. Every user should 
+but it comes without any warranty. Every user should
 still feel responsible for the security of their system.
 
 

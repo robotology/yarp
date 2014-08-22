@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -21,9 +21,9 @@
 #include <yarp/manager/ymm-dir.h>
 using namespace yarp::manager;
 
-ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent, 
+ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
                                Manager* manager, ApplicationWindow* appWnd) : m_pModule(NULL)
-{   
+{
     m_pParent = parent;
     m_pManager = manager;
     m_pModule = NULL;
@@ -38,7 +38,7 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     m_refTreeModel = Gtk::TreeStore::create(m_Columns);
     m_TreeView.set_model(m_refTreeModel);
 
-    //Add the Model’s column to the View’s columns: 
+    //Add the Model’s column to the View’s columns:
     Gtk::CellRendererText* itemRenderer = Gtk::manage(new Gtk::CellRendererText());
     itemRenderer->property_editable() = false;
     Gtk::TreeViewColumn* itemCol = Gtk::manage(new Gtk::TreeViewColumn("Property", *itemRenderer));
@@ -53,7 +53,7 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     valueCol->pack_start(*valueRenderer);
     valueCol->add_attribute(*valueRenderer, "foreground-gdk", m_Columns.m_col_color_value);
     //valueCol->set_resizable(true);
-    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);   
+    valueCol->add_attribute(*valueRenderer, "editable", m_Columns.m_col_editable);
 
   //Make this View column represent the m_col_itemchosen model column:
 #ifdef GLIBMM_PROPERTIES_ENABLED
@@ -66,10 +66,10 @@ ModulePropertyWindow::ModulePropertyWindow(MainWindow* parent,
     valueCol->add_attribute(valueRenderer->property_model(), m_Columns.m_col_choices);
 #else
     valueCol->add_attribute(*valueRenderer, "model", m_Columns.m_col_choices);
-#endif 
+#endif
 
 #ifdef GLIBMM_PROPERTIES_ENABLED
-    valueRenderer->property_text_column() = 0; 
+    valueRenderer->property_text_column() = 0;
 #else
     valueRenderer->set_property("text_column", 0);
 #endif
@@ -96,9 +96,9 @@ void ModulePropertyWindow::onRefresh()
     m_pParent->reportErrors();
 }
 
-void ModulePropertyWindow::onTabCloseRequest() 
-{ 
-    m_pParent->onTabCloseRequest(this); 
+void ModulePropertyWindow::onTabCloseRequest()
+{
+    m_pParent->onTabCloseRequest(this);
 }
 
 void ModulePropertyWindow::update(Module* module)
@@ -144,12 +144,12 @@ void ModulePropertyWindow::update(Module* module)
         if(comp && !compareString(comp->getName(), "localhost"))
         {
             row = *(m_refCombo->append());
-            row[m_ColumnsCombo.m_col_choice] = comp->getName();          
+            row[m_ColumnsCombo.m_col_choice] = comp->getName();
         }
     }
- 
+
     m_refModelCombos.push_back(m_refCombo);
-    
+
     row = *(m_refTreeModel->append());
     row[m_Columns.m_col_name] = "Node";
     row[m_Columns.m_col_value] = m_pModule->getHost();
@@ -204,12 +204,12 @@ void ModulePropertyWindow::update(Module* module)
         row[m_Columns.m_col_value] = m_pModule->getBroker();
     else if(compareString(m_pModule->getHost(), "localhost"))
         row[m_Columns.m_col_value] = "local";
-        
+
     if(m_pModule->getNeedDeployer())
-    {  
+    {
         row[m_Columns.m_col_editable] = false;
         row[m_Columns.m_col_color_value] = Gdk::Color("#888888");
-    }    
+    }
     else
         row[m_Columns.m_col_editable] = true;
     row[m_Columns.m_col_choices] = m_refModelCombos.back();
@@ -230,23 +230,23 @@ void ModulePropertyWindow::update(Module* module)
             comboRow[m_ColumnsCombo.m_col_choice] = m_pModule->getArgumentAt(i).getDefault();
         else
         {
-            comboRow[m_ColumnsCombo.m_col_choice] = "on";    
+            comboRow[m_ColumnsCombo.m_col_choice] = "on";
             comboRow = *(m_refCombo->append());
             comboRow[m_ColumnsCombo.m_col_choice] = "off";
         }
         m_refModelCombos.push_back(m_refCombo);
-     
+
         childrow = *(m_refTreeModel->append(row.children()));
         childrow[m_Columns.m_col_name] = m_pModule->getArgumentAt(i).getParam();
         childrow[m_Columns.m_col_value] = m_pModule->getArgumentAt(i).getValue();
         Glib::ustring strval = childrow[m_Columns.m_col_value];
-        if(m_pModule->getArgumentAt(i).isRequired() 
+        if(m_pModule->getArgumentAt(i).isRequired()
             && !strval.size())
             childrow[m_Columns.m_col_color_item] = Gdk::Color("#BF0303");
         childrow[m_Columns.m_col_editable] = true;
         childrow[m_Columns.m_col_choices] = m_refModelCombos.back();
     }
-    
+
     //updateParamteres();
 
     m_TreeView.expand_all();
@@ -274,10 +274,10 @@ bool ModulePropertyWindow::getRowByName(const char* name, Gtk::TreeModel::Row* r
 Connection* ModulePropertyWindow::findConnection( CnnContainer& connections, const char* szPort, bool from)
 {
     CnnIterator jtr;
-    for(jtr=connections.begin(); jtr!=connections.end(); jtr++)    
+    for(jtr=connections.begin(); jtr!=connections.end(); jtr++)
     {
         if(from && (string((*jtr).from()) == string(szPort)))
-            return &(*jtr);        
+            return &(*jtr);
         if(!from && (string((*jtr).to()) == string(szPort)))
             return &(*jtr);
     }
@@ -307,13 +307,13 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
 
     }
     else if(strcmp(item, "Prefix") == 0)
-    {    
+    {
         m_pModule->setBasePrefix(value);
         string strPrefix;
-        Application* application = m_pManager->getKnowledgeBase()->getApplication(); 
+        Application* application = m_pManager->getKnowledgeBase()->getApplication();
         if(application)
-        {            
-            strPrefix = string(application->getPrefix()) + string(value); 
+        {
+            strPrefix = string(application->getPrefix()) + string(value);
             for(int j=0; j<m_pModule->outputCount(); j++)
             {
                 OutputData *output = &m_pModule->getOutputAt(j);
@@ -329,14 +329,14 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                         {
                             string strFrom = strPrefix + string(output->getPort());
                             updatedCon.setFrom(strFrom.c_str());
-                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, 
+                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application,
                                                         con, updatedCon);
                             // updating arrow's connection
                             ArrowModel* arrow = dynamic_cast<ArrowModel*>(con.getModel());
                             if(arrow)
                             {
                                 arrow->setConnection(updatedCon);
-                                // updating excitatory links from other connections 
+                                // updating excitatory links from other connections
                                 Glib::RefPtr<PortArbitratorModel> arbPort = Glib::RefPtr<PortArbitratorModel>::cast_dynamic(arrow->getDestination());
                                 if(arbPort)
                                     arbPort->updateExcitation(arrow, strOldFrom.c_str(), strFrom.c_str());
@@ -360,7 +360,7 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                         {
                             string strTo = strPrefix + string(input->getPort());
                             updatedCon.setTo(strTo.c_str());
-                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application, 
+                            m_pManager->getKnowledgeBase()->updateConnectionOfApplication(application,
                                                         con, updatedCon);
                             // updating arrow's connection
                             if(dynamic_cast<ArrowModel*>(con.getModel()))
@@ -368,10 +368,10 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
                         }
                     }
                 }
-            }             
+            }
             // updating module prefix.
             m_pManager->getKnowledgeBase()->setModulePrefix(m_pModule, strPrefix.c_str(), false);
-        }        
+        }
     }
     else if(strcmp(item, "Parameters") == 0)
     {
@@ -384,7 +384,7 @@ void ModulePropertyWindow::updateModule(const char* item, const char* value)
     }
 }
 
-void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string, 
+void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
                     const Glib::ustring& new_text)
 {
     if(!m_pModule)
@@ -406,8 +406,8 @@ void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
 
         if(strName == "Deployer")
         {
-            if(strlen(m_pModule->getHost()) && 
-               !compareString(m_pModule->getHost(), "localhost") && 
+            if(strlen(m_pModule->getHost()) &&
+               !compareString(m_pModule->getHost(), "localhost") &&
                (new_text == "local"))
             {
                 logger->addWarning("local deployer cannot be used to deploy a module on the remote host.");
@@ -419,20 +419,20 @@ void ModulePropertyWindow::onCellEdited(const Glib::ustring& path_string,
         if(strName == "Node")
         {
             if(compareString(m_pModule->getBroker(), "local") &&
-               new_text.size() && (new_text != "localhost")) 
-            {    
+               new_text.size() && (new_text != "localhost"))
+            {
                 OSTRINGSTREAM msg;
                 msg<<new_text.c_str()<<" cannot be used with local deployer!";
                 logger->addWarning(msg);
                 m_pParent->reportErrors();
-                
+
                 Gtk::TreeModel::Row row;
                 if(getRowByName("Deployer", &row))
                 {
                     row[m_Columns.m_col_value] = "";
                     updateModule("Deployer", "");
                 }
-            } 
+            }
         }
 
         row[m_Columns.m_col_value] = new_text;
@@ -454,18 +454,18 @@ void ModulePropertyWindow::updateParamteres()
         strName = Glib::ustring((*iter)[m_Columns.m_col_name]);
         if(strName == "Parameters")
         {
-            for(type_children::iterator jter = (*iter).children().begin(); 
+            for(type_children::iterator jter = (*iter).children().begin();
                 jter!=(*iter).children().end(); ++jter)
             {
                 Glib::ustring strItem = Glib::ustring((*jter)[m_Columns.m_col_name]);
                 Glib::ustring strValue = Glib::ustring((*jter)[m_Columns.m_col_value]);
-                for(int i=0; i<m_pModule->argumentCount(); i++) 
+                for(int i=0; i<m_pModule->argumentCount(); i++)
                 {
                     if(strItem == m_pModule->getArgumentAt(i).getParam())
-                    {   
+                    {
                         if(strValue.size())
                         {
-                            if(!m_pModule->getArgumentAt(i).isSwitch())                            
+                            if(!m_pModule->getArgumentAt(i).isSwitch())
                                 strParams<<"--"<<strItem<<" "<<strValue<<" ";
                             else
                             {
@@ -476,13 +476,13 @@ void ModulePropertyWindow::updateParamteres()
                             }
                         }
                         else
-                            if(m_pModule->getArgumentAt(i).isSwitch())                            
+                            if(m_pModule->getArgumentAt(i).isSwitch())
                                 (*jter)[m_Columns.m_col_value] = "off";
-                    }    
+                    }
 
                     if((strItem == m_pModule->getArgumentAt(i).getParam()) &&
                         m_pModule->getArgumentAt(i).isRequired())
-                    {    
+                    {
                         if(!strValue.size())
                             (*jter)[m_Columns.m_col_color_item] = Gdk::Color("#BF0303");
                         else
@@ -494,5 +494,5 @@ void ModulePropertyWindow::updateParamteres()
             updateModule(strName.c_str(), strParams.str().c_str());
             break;
         }
-    }        
+    }
 }

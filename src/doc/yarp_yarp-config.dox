@@ -5,7 +5,7 @@
  *
  */
 
-/** 
+/**
  * @page yarp_yarp-config yarp-config
 
 \author Elena Ceseracciu and Lorenzo Natale
@@ -34,7 +34,7 @@ Shows all the contexts visible to the ResourceFinder, <EM> in the order of prece
 To import contexts to the home directory:
 
 \verbatim
-  yarp-config context --import <context-name> 
+  yarp-config context --import <context-name>
   yarp-config context --import <context-name> file1 file2
   yarp-config context --import-all
 \endverbatim
@@ -51,7 +51,7 @@ The utility works similarly for robot specific files:
 
 \verbatim
   yarp-config robot --list
-  yarp-config robot --import <robot-name> 
+  yarp-config robot --import <robot-name>
   yarp-config robot --import <robot-name> file1 file2
   yarp-config robot --remove <robot-name>
 \endverbatim
@@ -67,7 +67,7 @@ provides an explanation of the commands supported by the yarp-config tool.
 
 Suppose you have installed both YARP and the example provided in <YARP_SOURCE_CODE>/examples/resourceFinder and described in \ref yarp_resource_finder_installation .
 
-Type: 
+Type:
 
 \verbatim
   yarp-config context --list
@@ -112,7 +112,7 @@ This is the output you should get:
 Now type:
 
 \verbatim
-  yarp-config context --list 
+  yarp-config context --list
 \endverbatim
 
 To verify that ''randomMotion'' is indeed now present in /home/nat/.local/share/yarp/contexts

@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -22,7 +22,7 @@ using namespace yarp::manager;
 
 
 ModulePreviewWindow::ModulePreviewWindow(MainWindow* parent) : m_pModule(NULL)
-{   
+{
     m_pParent = parent;
 
     /* Create a new scrolled window, with scrollbars only if needed */
@@ -35,13 +35,13 @@ ModulePreviewWindow::ModulePreviewWindow(MainWindow* parent) : m_pModule(NULL)
     m_Canvas->set_root_item_model(root) ;
     m_Canvas->property_background_color().set_value("GhostWhite");
     m_Canvas->set_bounds(0,0,600,400);
-    //m_Canvas->drag_dest_set(m_pParent->dragTargets, 
+    //m_Canvas->drag_dest_set(m_pParent->dragTargets,
     //                        Gtk::DEST_DEFAULT_ALL, Gdk::ACTION_COPY);
 
 
     m_ScrollView.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_ScrollView.add(*m_Canvas);
-    add(m_ScrollView); 
+    add(m_ScrollView);
     show_all_children();
 }
 
@@ -60,9 +60,9 @@ void ModulePreviewWindow::onRefresh()
     */
 }
 
-void ModulePreviewWindow::onTabCloseRequest() 
-{ 
-    m_pParent->onTabCloseRequest(this); 
+void ModulePreviewWindow::onTabCloseRequest()
+{
+    m_pParent->onTabCloseRequest(this);
 }
 
 

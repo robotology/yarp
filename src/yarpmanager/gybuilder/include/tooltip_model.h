@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -28,17 +28,17 @@ public:
     static Glib::RefPtr<TooltipModel> create(ApplicationWindow* parentWnd,
                                              const char* text);
 
-    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventMotion* event);
-    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    
+
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
 
@@ -48,13 +48,13 @@ public:
     //bool getSelected(void) { return selected; }
     //Gdk::Point getContactPoint(void);
 
-protected: 
+protected:
     TooltipModel(ApplicationWindow* parentWnd,
                  const char* text);
 
 private:
     ApplicationWindow* parentWindow;
-    std::string tooltip; 
+    std::string tooltip;
     double width;
     double height;
 };

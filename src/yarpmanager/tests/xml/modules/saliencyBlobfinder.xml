@@ -7,7 +7,7 @@
     <!-- <arguments> can have multiple <param> tags-->
     <arguments>
         <param default="" desc="specifies the configuration file"> from </param>
-		<param default="" desc="specifies the sub-path from $ICUB_ROOT/app to the configuration file"> context </param>    
+        <param default="" desc="specifies the sub-path from $ICUB_ROOT/app to the configuration file"> context </param>
     </arguments>
 
     <!-- <authors> can have multiple <author> tags. -->
@@ -15,8 +15,8 @@
         <author email="">Rea Francesco</author>
     </authors>
 
-     <!-- <data> can have multiple <input> or <output> tags. -->
-     <data>        
+    <!-- <data> can have multiple <input> or <output> tags. -->
+    <data>
         <input>
             <type>ImageOfPixelRgb</type>
             <port carrier="udp">/blobFinder/icub/left_cam/image:i</port>
@@ -56,7 +56,7 @@
             <priority>no</priority>
             <description></description>
         </input>
-			
+
         <input>
             <type>Rpc</type>
             <port carrier="tcp">/blobFinder/icub/left_cam</port>
@@ -82,7 +82,7 @@
             <port carrier="udp">/blobFinder/icub/left_cam/rg:o</port>
             <description></description>
         </output>
-        
+
         <output>
             <type>ImageOfPixelRgb</type>
             <port carrier="udp">/blobFinder/icub/left_cam/gr:o</port>
@@ -94,24 +94,24 @@
             <port carrier="udp">/blobFinder/icub/left_cam/by:o</port>
             <description></description>
         </output>
-        
+
         <output>
             <type>ImageOfPixelRgb</type>
             <port carrier="udp">/blobFinder/icub/left_cam/foveaBlob:o</port>
             <description></description>
         </output>
-                
+
         <output>
             <type>ImageOfPixelRgb</type>
             <port carrier="udp">/blobFinder/icub/left_cam/foveaRgbBlob:o</port>
             <description></description>
-        </output> 
-                       
+        </output>
+
         <output>
             <type>Vector</type>
             <port carrier="udp">/blobFinder/icub/left_cam/blobList:o</port>
             <description></description>
-        </output> 
+        </output>
 
     </data>
 
@@ -127,4 +127,3 @@
     </development>
 
 </module>
-

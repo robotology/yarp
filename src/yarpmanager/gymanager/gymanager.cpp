@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 #include <signal.h>
 #endif
 
-int main(int __argc, char *__argv[]) 
+int main(int __argc, char *__argv[])
 {
 
     // Setup resource finder
@@ -159,7 +159,7 @@ int main(int __argc, char *__argv[])
 
     if(!config.check("module_failure"))
         config.put("module_failure", "prompt");
-    
+
     if(!config.check("connection_failure"))
         config.put("connection_failure", "prompt");
 
@@ -178,7 +178,7 @@ int main(int __argc, char *__argv[])
 
 #else
     // Set up the structure to specify the new action.
-    struct sigaction new_action, old_action;     
+    struct sigaction new_action, old_action;
     new_action.sa_handler = onSignal;
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;

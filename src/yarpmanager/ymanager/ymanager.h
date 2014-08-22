@@ -4,7 +4,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -20,7 +20,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
 
-using namespace std; 
+using namespace std;
 
 //namespace ymm {
 
@@ -32,11 +32,11 @@ typedef enum _ColorTheme {
 
 
 /**
- * Class YConsoleManager  
+ * Class YConsoleManager
  */
 class YConsoleManager : public yarp::manager::Manager {
 
-public: 
+public:
     YConsoleManager(int argc, char* argv[]);
     ~YConsoleManager();
 
@@ -53,7 +53,7 @@ private:
     bool bShouldRun;
     yarp::os::Property cmdline;
     yarp::os::Property config;
-    
+
     void help(void);
     void myMain(void);
     bool process(const vector<string> &cmdList);

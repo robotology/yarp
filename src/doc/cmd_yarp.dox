@@ -858,8 +858,8 @@ yarp wait /PORT
 yarp wait /SRC /DEST
 \endverbatim
 
-Waits for the named port or connection to come into existence.  Terminates 
-when "yarp exists /PORT" or "yarp exists /SRC /DEST" would return true.  
+Waits for the named port or connection to come into existence.  Terminates
+when "yarp exists /PORT" or "yarp exists /SRC /DEST" would return true.
 This can be useful in scripts.
 
 

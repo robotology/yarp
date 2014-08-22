@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -31,9 +31,9 @@ public:
     MainWindow( yarp::os::Property &config);
     virtual ~MainWindow();
 
-    void onTabCloseRequest(Widget* wdg); 
+    void onTabCloseRequest(Widget* wdg);
     //Glib::RefPtr<MessagesList> m_refMessageList;
-  
+
     void reportErrors(void);
 
     yarp::manager::Manager* getManager(void) {return &lazyManager;}
@@ -43,7 +43,7 @@ public:
     ApplicationList* m_refApplicationList;
     ModulePreviewWindow* m_refModPreview;
 
-    std::list<Gtk::TargetEntry> dragTargets;  
+    std::list<Gtk::TargetEntry> dragTargets;
     Glib::RefPtr<Gtk::UIManager> m_refUIManager;
     Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
     yarp::os::Property m_config;
@@ -59,9 +59,9 @@ protected:
     void onMenuFileOpen();
     void onMenuFileClose();
     void onMenuFileOpenGymanager();
-public:    
+public:
     void onMenuFileSave();
-protected:    
+protected:
     void onMenuFileSaveAs();
     void onMenuFileImport();
     void onMenuHelpAbout();
@@ -89,12 +89,12 @@ protected:
     void onMenuRotateRight();
     void onMenuRotateLeft();
 
-    void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
+    void onAppListRowActivated(const Gtk::TreeModel::Path& path,
                 Gtk::TreeViewColumn* column);
     void onAppListButtonPressed(GdkEventButton* event);
     void onAppListCursorChanged();
 
-    void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);   
+    void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);
     bool onDeleteEvent(GdkEventAny* event);
 
     void onPAppMenuLoad();
@@ -114,8 +114,8 @@ private:
     Gtk::VPaned m_VPaned;
     Gtk::HPaned m_HPaned;
     Gtk::Statusbar m_Statusbar;
-    Gtk::Notebook m_bottomTab;  
-    Gtk::Notebook m_mainTab;    
+    Gtk::Notebook m_bottomTab;
+    Gtk::Notebook m_mainTab;
     Gtk::Frame frame1;
     Gtk::TextView m_commandView;
     Glib::RefPtr<Gtk::TextBuffer> m_refCommandBuffer;

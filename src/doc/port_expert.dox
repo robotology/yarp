@@ -4,7 +4,7 @@
  *
  */
 
-/** 
+/**
  * @page port_expert Port Power, Going Further with Ports
 
 \author Paul Fitzpatrick
@@ -52,13 +52,13 @@ Here's an example of some code that connects the sender to the receiver:
 Network::connect("/out","/in");  // connect two ports.
 \endcode
 
-Characteristic of streaming operation, the sender and the receiver 
+Characteristic of streaming operation, the sender and the receiver
 don't know much about each other.  The sender or receiver could
 be restarted without needing to restart the other.  There could
 be multiple receivers or multiple senders.
 
 Our sender and receiver do have some dependencies on each other.
-In particular, once a receiver starts receiving an object, the 
+In particular, once a receiver starts receiving an object, the
 sender must wait for that process to finish before continuing.
 The sender can change this behavior by calling:
 yarp::os::Port::enableBackgroundWrite()
@@ -66,7 +66,7 @@ before the port is opened.  However, this is only appropriate
 if we can promise the port that any object (b in this case) we ask
 it to write will stay in existence until it is communicated.
 The port won't take a copy of our object (that is inefficient
-in general).  We can tell when writing is finished in two 
+in general).  We can tell when writing is finished in two
 ways.  One is by calling yarp::os::Port::isWriting().  Another is
 by overriding the yarp::os::PortWriter::onCompletion() method on the
 object.  This will be called when the port is finished with
@@ -80,7 +80,7 @@ operating at different rates.  YARP supplies the
 yarp::os::PortWriterBuffer class to manage these details.  There is a
 similar class for reducing timing dependencies during reading, called
 yarp::os::PortReaderBuffer.  These two kinds of buffering are bundled
-with the yarp::os::Port class in yarp::os::BufferedPort.  For 
+with the yarp::os::Port class in yarp::os::BufferedPort.  For
 streaming communication, this class offers many advantages.
 We can rewrite our previous example like this -- the receiver:
 \code
@@ -103,7 +103,7 @@ while (true) {
 }
 \endcode
 
-The code is very similar.  The big difference is that the 
+The code is very similar.  The big difference is that the
 yarp::os::BufferedPort is now responsible for the lifetime
 of the objects being communicated.  It will make a pool of
 them, growing upon need, in order to give smooth performance
@@ -115,7 +115,7 @@ dropping old messages.  If you'd prefer to have all messages
 received, call yarp::os::BufferedPort::setStrict().
 
 By default, if asked to send a message while some
-connections are still writing a previous message, BufferedPort 
+connections are still writing a previous message, BufferedPort
 will simply skip sending that message on those busy connections. If
 you'd rather all messages were send, call
 yarp::os::BufferedPort::writeStrict() when writing.
@@ -163,7 +163,7 @@ p.setReader(processor);  // no need to call p.read() on port any more.
 \endcode
 
 With BufferedPorts, things are a bit easier since these ports
-know what type of data they are dealing with. 
+know what type of data they are dealing with.
 You can override the port's onRead method:
 \code
 class DataPort : public BufferedPort<Bottle> {
@@ -176,7 +176,7 @@ DataPort p;
 p.useCallback();  // input should go to onRead() callback
 p.open("/in");
 \endcode
-Alternatively, you can leave the port unchanged and use 
+Alternatively, you can leave the port unchanged and use
 an external callback as follows:
 \code
 class DataProcessor : public TypedReaderCallback<Bottle> {
@@ -196,11 +196,11 @@ p.useCallback(processor);  // input should go to processor.onRead()
 Sometimes we want to send messages and wait for replies to them.
 If you're considering doing this, beware -- the timing of your processes
 is going to become tightly coupled, and a network of processes written
-this way is much less robust and malleable than with streaming 
+this way is much less robust and malleable than with streaming
 communication.  However, sometimes you really want to be sure a
 particular command gets through, and what the response to it is.
 In this case, we need something new.  Messages with replies are possible
-with normal ports. However, this can be dangerous. For this reason 
+with normal ports. However, this can be dangerous. For this reason
 YARP provides specialized classes (yarp::os::RpcClient and yarp::os::RpcServer)
 which allows to catch errors and provide informative messages (see \ref rpc_ports for details).
 
@@ -226,7 +226,7 @@ while (true) {
   p.read(in,true); // Read from the port, and warn that we'll be replying.
   ...              // Do something with data, prepare reply
   p.reply(out);    // send reply.
-  
+
 }
 \endcode
 
@@ -252,9 +252,9 @@ DataProcessor processor;
 ...
 p.setReader(processor);  // no need to call p.read() on port any more.
 \endcode
-(Technical note: beware that the requested reply does not happen until the 
+(Technical note: beware that the requested reply does not happen until the
 end of the DataProcessor read() method, since only then is the full
-size of the reply known and some lower-level network protocols require 
+size of the reply known and some lower-level network protocols require
 that information to be send in a header.)
 
 Expecting replies is incompatible with buffering, and so can't be done
@@ -288,7 +288,7 @@ Then you can create a buffered port for it this way:
 \code
 BufferedPort< BinPortable<Target> > port;
 \endcode
-The yarp::os::BinPortable class tells YARP that you want to 
+The yarp::os::BinPortable class tells YARP that you want to
 send the Target type across the network by encoding it exactly
 as it is represented in memory.  The method yarp::os::BinPortable::content()
 will give you access to the actual Target object.
@@ -337,10 +337,10 @@ interoperate with.  You can read from them using "yarp read", write to
 them using "yarp write", send/reply to them using "yarp rpc". You can
 even connect your own sockets to them without using YARP to write
 their values in a standard, document text/binary format.  You may not
-see why you'd want to do any of that today, but it might be worth 
-bearing in mind for the future.  
+see why you'd want to do any of that today, but it might be worth
+bearing in mind for the future.
 
-More usually, rather than sending memory images across the network 
+More usually, rather than sending memory images across the network
 (a procedure fraught with gotchas), it is better to provide explicit
 serialization methods for your class by implementing the
 yarp::os::Portable interface.  For example:
@@ -410,7 +410,7 @@ The corresponding read method would be:
   }
 \endcode
 
-The advantages of doing this are for testing - no need to write 
+The advantages of doing this are for testing - no need to write
 special purpose test programs to send and read particular messages,
 the yarp tools already work.  The disadvange is you have to do a
 bit more work.  It is entirely up to you, this issue is independent
@@ -418,7 +418,7 @@ of the rest of YARP.
 
 <b>NOTE:</b> For automatic text conversion to work, your message will need
 to be represented as a list at the top level.  If you try to send a
-single integer, for example, translation will not work.  This is 
+single integer, for example, translation will not work.  This is
 because we chose to omit parentheses from lists at the top level of
 messages in text-mode, so there would be no way to differentiate a
 list containing an integer from an integer on its own.
@@ -428,16 +428,16 @@ list containing an integer from an integer on its own.
 We've said a lot about communication.  But what exactly happens
 when you read or write?  What bytes get sent on the network?
 How reliable is transmission?
-The previous sections on datatypes and replies have started to 
+The previous sections on datatypes and replies have started to
 touch on such issues, and now we go into more detail.
 
 The first thing to realize is that we are now looking closely
-at the connections between ports, rather than the ports 
+at the connections between ports, rather than the ports
 themselves.  The properties of connections are quite loosely
 coupled with ports.  We are free to implement connections in
 all sorts of weird and wonderful ways, and ports won't
 care at all.  The abstraction in yarp for what a connection
-really does is called a "Carrier".  There are 
+really does is called a "Carrier".  There are
 currently carriers for tcp, udp, multi-cast, and shared memory
 communication.  There's nothing to stop you adding more if
 you have some novel kind of network, or want to send messages
@@ -457,7 +457,7 @@ message sizes.
 
 There are some extra carriers designed to be as simple as possible
 for programs not written in YARP to use.  One of these is the
-"text" Carrier.  This allows messages in bottle-compatible  
+"text" Carrier.  This allows messages in bottle-compatible
 format to be sent as plain text.
 
 There is experimental support for http, as a way to browse

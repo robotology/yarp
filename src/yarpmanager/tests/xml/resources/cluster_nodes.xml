@@ -2,13 +2,13 @@
     <computer>
         <name>node1</name>
         <description>a virtual node</description>
-       <disable>no</disable> 
+       <disable>no</disable>
     </computer>
 
     <computer>
         <name>node2</name>
         <description>another virtual node</description>
-       <disable>no</disable> 
+       <disable>no</disable>
     </computer>
 </resources>
 

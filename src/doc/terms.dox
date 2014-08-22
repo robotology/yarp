@@ -9,7 +9,7 @@
 
 The YARP library supports transmission of a stream of
 user data across
-various protocols -- TCP, UDP, MCAST (multi-cast), shared memory -- 
+various protocols -- TCP, UDP, MCAST (multi-cast), shared memory --
 insulating a user of the library from the
 idiosyncratic details of the network technology used.  We call these
 these low-level protocols the ``Carriers'', to distinguish them from
@@ -20,13 +20,13 @@ For the purposes of YARP, communication takes place through
 These form a directed graph, the ``YARP Network'', where Ports are the nodes,
 and Connections are the edges.
 
-Each Port is assigned a unique name, such as ``/motor/wheels/left''.  
+Each Port is assigned a unique name, such as ``/motor/wheels/left''.
 Every Port is registered by name with
 a ``name server''.  The goal is to ensure that if you know the name
-of a Port, that is all you need in order to be able to 
+of a Port, that is all you need in order to be able to
 communicate with it from any machine.
 
-The purpose of Ports is to move ``Content'' (sequences of bytes representing 
+The purpose of Ports is to move ``Content'' (sequences of bytes representing
 user data) from
 one thread to another (or several others) across process and machine
 boundaries.  The flow of data can be manipulated and monitored
@@ -36,7 +36,7 @@ the edges in the YARP Network are entirely mutable.
 A Port can send Content to any number of other Ports.  A
 Port can receive Content from any number of other Ports.  If one
 Port is configured to send Content to another Port, they are
-said to have a Connection.  Connections can be freely added or 
+said to have a Connection.  Connections can be freely added or
 removed, and may use different Carriers.
 
 The YARP name server is a server that tracks information about ports.
@@ -55,7 +55,7 @@ Here are the specifications available in this document:
 
 \li Properties of the YARP utility.
 
-\li Properties of the YARP name server and the protocol used 
+\li Properties of the YARP name server and the protocol used
 for communicating with it.
 
 \li Properties of ports and the protocol used
@@ -81,7 +81,7 @@ is the source port.
 
 \li There is a single name server in a YARP network.
 
-\li The name server maintains a list of registrations.  Each 
+\li The name server maintains a list of registrations.  Each
 registration contains information about a single port, identified
 by name.
 
@@ -102,7 +102,7 @@ queried by communication between an external entity and that port.
 This is done by sending ``port commands'' using the YARP
 connection protocol.
 
-\li Ports communicate with the name server using the 
+\li Ports communicate with the name server using the
 ``YARP name server protocol''.  Such communication is needed
 to create, remove, and query registrations.
 

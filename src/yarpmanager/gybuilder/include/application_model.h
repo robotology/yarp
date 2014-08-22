@@ -2,7 +2,7 @@
  *  Yarp Modules Manager
  *  Copyright: (C) 2011 Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
- * 
+ *
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -25,15 +25,15 @@ public:
 
     static Glib::RefPtr<ApplicationModel> create(ApplicationWindow* parentWnd, yarp::manager::Application* app);
 
-    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonPressEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemButtonReleaseEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventButton* event);
-    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemMotionNotifyEvent(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventMotion* event);
-    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemEnterNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
-    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item, 
+    bool onItemLeaveNotify(const Glib::RefPtr<Goocanvas::Item>& item,
                         GdkEventCrossing* event);
     void snapToGrid(void);
     void updateCoordination(void);
@@ -46,10 +46,10 @@ public:
 
     double getWidth(void) { return width; }
     double getHeight(void) { return height; }
-    
+
     void releaseApplication(void);
 
-protected: 
+protected:
     ApplicationModel(ApplicationWindow* parentWnd, yarp::manager::Application* app);
 
 private:
@@ -59,7 +59,7 @@ private:
     Glib::RefPtr<Goocanvas::TextModel> text;
     Glib::RefPtr<Goocanvas::PolylineModel> shadow;
 
-    Glib::RefPtr<GroupModel> group; 
+    Glib::RefPtr<GroupModel> group;
     Glib::RefPtr< Goocanvas::Item > _dragging ;
     int _drag_x ;
     int _drag_y ;
@@ -70,14 +70,14 @@ private:
     int text_h;
     Goocanvas::Bounds bounds;
 
-private: 
+private:
     void updateBounds(void);
     void getApplicationBounds(Goocanvas::Bounds& bound);
     void findInputOutputData(yarp::manager::Connection& cnn,  yarp::manager::ModulePContainer &modules,
                                             yarp::manager::InputData* &input_, yarp::manager::OutputData* &output_);
     Glib::RefPtr<PortModel> findModelFromOutput(yarp::manager::OutputData* output);
     Glib::RefPtr<PortModel> findModelFromInput(yarp::manager::InputData* input);
- 
+
 };
 
 #endif //_APPLICATION_MODEL_

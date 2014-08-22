@@ -9,7 +9,7 @@
 
 \author Paul Fitzpatrick
 
-In YARP, a device driver is a class that implements one or more 
+In YARP, a device driver is a class that implements one or more
 \ref dev_iface "interfaces".
 
 If you're interested in learning how to use device drivers, see \ref
@@ -28,16 +28,16 @@ Additionally a device driver should implement a selection of other
 interfaces that capture what it shares with other families of
 devices. For example a camera might implement yarp:dev::IFrameGrabber (a "raw"
 interface to the raw data) and/or yarp::dev::IFrameGrabberImage
-(a higher-level source of images). For example, 
+(a higher-level source of images). For example,
 the yarp::dev::DragonflyDeviceDriver class implements a few of
 these interfaces. Interfaces are abstract classes, the idea is that
 from outside the user can access a device by using a pointer to the
 interface he/she needs, if that interface is supported by the
 device. This is quite similar to the way COM works (in a simplified way).
 
-In practice to implement a new device you create a new class which 
-derives from DeviceDriver and from the interfacees you want to support, 
-and you implement them. The interfaces are documented in the code, 
+In practice to implement a new device you create a new class which
+derives from DeviceDriver and from the interfacees you want to support,
+and you implement them. The interfaces are documented in the code,
 using the doxygen standard. See \ref note_devices for an example.
 
 
