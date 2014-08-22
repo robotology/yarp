@@ -22,6 +22,8 @@ add_subdirectory(idls)
 
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_init)
+add_subdirectory(libYARP_manager)
+
 add_subdirectory(libyarpc)
 add_subdirectory(libyarpcxx)
 

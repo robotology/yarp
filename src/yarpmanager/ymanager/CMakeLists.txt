@@ -6,6 +6,7 @@
 
 
 get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
 
 
 file(GLOB folder_source *.cpp)
@@ -14,8 +15,8 @@ source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
 
 include_directories(${YARP_OS_INCLUDE_DIRS})
+include_directories(${YARP_manager_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
-include_directories(../libymanager/include)
 
 if (YARP_USE_READLINE)
     add_definitions( -DWITH_READLINE )

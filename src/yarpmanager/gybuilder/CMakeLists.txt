@@ -7,6 +7,7 @@
 
 
 get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
 
 set(folder_source   src/application_list.cpp
                     src/application_model.cpp
@@ -75,12 +76,12 @@ endif(UNIX)
 add_definitions(${GTK2_DEFINITIONS})
 
 include_directories(${YARP_OS_INCLUDE_DIRS})
+include_directories(${YARP_manager_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
 include_directories(${GTK2_INCLUDE_DIRS})
 include_directories(${GooCanvasMM_INCLUDE_DIRS})
 include_directories(include)
-include_directories(../libymanager/include)
 
 # GTKMM_INCLUDE_DIRS, GTKMM_LIBRARY_DIRS and GTKMM_LIBRARIES
 

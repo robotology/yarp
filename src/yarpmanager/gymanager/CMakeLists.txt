@@ -6,13 +6,14 @@
 #
 
 get_property(YARP_OS_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+get_property(YARP_manager_INCLUDE_DIRS TARGET YARP_manager PROPERTY INCLUDE_DIRS)
 
 
 include_directories(${GTK2_INCLUDE_DIRS})
 include_directories(${YARP_OS_INCLUDE_DIRS})
+include_directories(${YARP_manager_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libymanager/include)
 add_definitions(${GTK2_DEFINITIONS})
 
 set(folder_source   application_list.cpp
