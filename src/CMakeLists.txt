@@ -31,9 +31,11 @@ add_subdirectory(libyarpcxx)
 add_subdirectory(yarpserver)
 add_subdirectory(yarp)
 add_subdirectory(yarprun)
-add_subdirectory(yarpview)
 add_subdirectory(yarphear)
 add_subdirectory(yarpdev)
 add_subdirectory(yarpmanager)
 add_subdirectory(yarpscope)
 add_subdirectory(yarpmanager-console)
+
+# gtk GUIs
+add_subdirectory(yarpview-gtk)
