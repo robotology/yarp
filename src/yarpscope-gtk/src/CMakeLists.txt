@@ -21,12 +21,16 @@ if(WIN32)
     add_definitions(/wd4250)
 endif(WIN32)
 
-add_executable(yarpscope ${YarpScope_SRCS})
+add_executable(yarpscope-gtk ${YarpScope_SRCS})
 
-target_link_libraries(yarpscope
+target_link_libraries(yarpscope-gtk
                       YARP_init
                       YARP_OS
                       ${TinyXML_LIBRARIES}
                       ${GtkDataboxMM_LIBRARIES})
 
-install(TARGETS yarpscope COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS yarpscope-gtk COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+if(NOT TARGET yarpscope-qt OR YARP_DEFAULT_GTK)
+  set_target_properties(yarpscope-gtk PROPERTIES OUTPUT_NAME yarpscope)
+endif()

@@ -34,8 +34,8 @@ add_subdirectory(yarprun)
 add_subdirectory(yarphear)
 add_subdirectory(yarpdev)
 add_subdirectory(yarpmanager)
-add_subdirectory(yarpscope)
 add_subdirectory(yarpmanager-console)
 
 # gtk GUIs
 add_subdirectory(yarpview-gtk)
+add_subdirectory(yarpscope-gtk)
