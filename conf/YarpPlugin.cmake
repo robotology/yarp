@@ -59,10 +59,10 @@ if(YARP_TREE_BUILD)
     get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
     configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
         ${CMAKE_BINARY_DIR}/plugins/path.ini @ONLY)
-    set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+    set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_FULL_LIBDIR})
     configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
         ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY)
-    install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/yarp/plugins)
+    install(FILES ${CMAKE_BINARY_DIR}/path_for_install.ini RENAME path.ini COMPONENT configuration DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/plugins)
 endif(YARP_TREE_BUILD)
 
 #########################################################################
