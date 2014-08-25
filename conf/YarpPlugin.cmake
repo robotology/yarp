@@ -58,7 +58,7 @@ if(YARP_TREE_BUILD)
     get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} ABSOLUTE)
     get_filename_component(YARP_LIBRARY_PATH ${YARP_LIBRARY_PATH} PATH)
     configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
-        ${CMAKE_BINARY_DIR}/plugins/path.ini @ONLY)
+        ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/yarp/plugins/path.ini @ONLY)
     set(YARP_LIBRARY_PATH ${CMAKE_INSTALL_FULL_LIBDIR})
     configure_file(${YARP_MODULE_DIR}/template/YarpPluginPath.cmake
         ${CMAKE_BINARY_DIR}/path_for_install.ini @ONLY)
@@ -443,11 +443,11 @@ endmacro(YARP_ADD_PLUGIN_LIBRARY_EXECUTABLE)
 #
 macro(YARP_ADD_CARRIER_FINGERPRINT file_name)
     get_filename_component(out_name ${file_name} NAME)
-    configure_file(${file_name} ${CMAKE_BINARY_DIR}/plugins/${out_name} COPYONLY)
+    configure_file(${file_name} ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/yarp/plugins/${out_name} COPYONLY)
     if(YARP_TREE_INCLUDE_DIRS)
-        install(FILES ${CMAKE_BINARY_DIR}/plugins/${out_name}
+        install(FILES ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/yarp/plugins/${out_name}
                 COMPONENT runtime
-                DESTINATION share/yarp/plugins)
+                DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/plugins)
     endif(YARP_TREE_INCLUDE_DIRS)
 endmacro(YARP_ADD_CARRIER_FINGERPRINT)
 
