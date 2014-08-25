@@ -265,6 +265,12 @@ macro(YARP_ADD_PLUGIN LIBNAME)
   endif()
   add_library(${LIBNAME} ${X_LIBTYPE} ${srcs} ${ARGN})
   target_link_libraries(${LIBNAME} ${_link_libs})
+  if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
+    # Do not add the "lib" prefix to dynamic plugin libraries.
+    # This simplifies search on different platforms and makes it easier
+    # to distinguish them from linkable libraries.
+    set_target_properties(${LIBNAME} PROPERTIES PREFIX "")
+  endif()
 
   if(NOT YARP_FORCE_DYNAMIC_PLUGINS AND NOT BUILD_SHARED_LIBS)
     set_property(TARGET ${LIBNAME} APPEND PROPERTY COMPILE_DEFINITIONS YARP_STATIC_PLUGIN)

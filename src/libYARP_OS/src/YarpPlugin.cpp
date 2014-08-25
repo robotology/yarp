@@ -72,10 +72,9 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
             Searchable& options = paths.get(i);
             ConstString path = options.find("path").asString();
             ConstString ext = options.find("extension").asString();
-            ConstString prefix = options.find("prefix").asString();
-            ConstString full = path + "/" + prefix + dll_name + ext;
+            ConstString full = path + "/" + dll_name + ext;
             if (dll_name.find(".")!=ConstString::npos) {
-                full = path + "/" + prefix + name + ext;
+                full = path + "/" + name + ext;
             }
             bool ok = subopen(factory,full,(fn_name=="")?name:fn_name);
             if (ok) return true;
