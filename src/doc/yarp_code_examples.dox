@@ -574,7 +574,7 @@ Example showing how to receive portaudio sound  with YARP.
 */
 
 /**
- \example portaudio/sound_sender.cpp
+ \example portaudio/sound_sender_mic.cpp
 
 Example showing how to send portaudio sound  with YARP.
 

@@ -19,7 +19,7 @@ namespace yarp {
     }
 }
 
-/** @class 
+/**
  * This class is a mutex wrapper that provides a convenient RAII-style mechanism for owning
  * a mutex for the duration of a scoped block. When a LockGuard object is created, 
  * it attempts to take ownership of the mutex it is given. 

@@ -140,7 +140,7 @@ protected:
 
 /**
  * @ingroup dev_runtime
- * \defgroup cmd_device_ffmpeg ffmpeg_grabber
+ * \defgroup cmd_device_ffmpeg_grabber ffmpeg_grabber
 
  A wrapper for the ffmpeg library's image sources, see yarp::dev::FfmpegGrabber.
 
