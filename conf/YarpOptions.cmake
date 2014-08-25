@@ -7,15 +7,21 @@ include(GNUInstallDirs)
 #########################################################################
 # Control where libraries and executables are placed
 
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-message(STATUS "Libraries are placed in ${LIBRARY_OUTPUT_PATH}")
-message(STATUS "Executables are placed in ${EXECUTABLE_OUTPUT_PATH}")
-# Make sure the directories actually exist
-make_directory(${LIBRARY_OUTPUT_PATH})
-make_directory(${EXECUTABLE_OUTPUT_PATH})
-mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
+# Output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+foreach(config ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${config} CONFIG)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${CMAKE_INSTALL_BINDIR})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${CMAKE_INSTALL_LIBDIR})
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${CMAKE_INSTALL_LIBDIR})
+endforeach()
+
+message(STATUS "Executables are placed in ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+message(STATUS "Shared libraries (shared) are placed in ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+message(STATUS "Static libraries are placed in ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
+
 if (MSVC)
   # See the Debug/Release subdirectories - is there a more systematic
   # way to do this?  Is this still needed?
