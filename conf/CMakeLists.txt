@@ -55,7 +55,7 @@ set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
                         template/yarpdev_lib_main.cpp.in
                         template/YarpTweakIDL.cmake.in
                         template/placeGeneratedYarpIdlFiles.cmake.in
-                        template/YarpPluginPath.cmake)
+                        conf/template/path.ini.in)
 
 install(FILES ${YARP_TEMPLATE_FILES}
         COMPONENT scripts
