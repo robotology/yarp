@@ -9,7 +9,7 @@ if(YARP_COMPILE_TESTS)
         include_directories(${CMAKE_SOURCE_DIR}/src/yarpserver/include)
     endif()
 
-    add_executable(testModule ../libYARP_OS/harness/testModule/module.cpp)
+    add_executable(testModule ${CMAKE_SOURCE_DIR}/src/libYARP_OS/harness/testModule/module.cpp)
     target_link_libraries(testModule YARP_init YARP_OS)
 
     #### temporary variable for debug
@@ -62,7 +62,7 @@ if(YARP_COMPILE_TESTS)
     mark_as_advanced(CREATE_PLUGIN_TESTS)
     if(CREATE_PLUGIN_TESTS)
         # add in our tests
-        file(GLOB inis ../libYARP_dev/harness/*.ini)
+        file(GLOB inis ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness/*.ini)
         foreach(X ${inis})
             get_filename_component(XN ${X} NAME_WE)
             get_filename_component(XINI ${X} ABSOLUTE)

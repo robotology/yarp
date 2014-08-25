@@ -56,6 +56,9 @@ add_subdirectory(src)
 # Offer to compile bindings
 add_subdirectory(bindings)
 
+# Tests
+add_subdirectory(tests)
+
 # add rule for uninstalling YARP
 # see conf/YARPUninstall.cmake
 include(YARPUninstall)
