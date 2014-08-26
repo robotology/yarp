@@ -188,7 +188,11 @@ void MainWindow::on_saveLogTab_action()
     std::replace(preferred_filename.begin(), preferred_filename.end(), '/', '_');
     preferred_filename.erase(0,1);
     QString fileName = QFileDialog::getSaveFileName(this, tr("Export log to text file"),preferred_filename.c_str(), tr("Text Files (*.txt)"));
-    theLogger->export_log_to_text_file(fileName.toStdString(),logname);
+    if (fileName.size()!=0)
+    {
+        if (theLogger->export_log_to_text_file(fileName.toStdString(),logname))
+            ui->tab->findChild<LogWidget*>("system_message")->addMessage(QString("Current log successfully exported to file: ") + fileName);
+    }
 }
 
 void MainWindow::ctxMenu(const QPoint &pos)
@@ -387,13 +391,23 @@ void MainWindow::on_actionSave_Log_triggered(bool checked)
     QDateTime currDate = QDateTime::currentDateTime();
     QString preferred_filename = currDate.toString ( dateformat )+".log";
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save to log file"),preferred_filename, tr("Log Files (*.log)"));
-    theLogger->save_all_logs_to_file(fileName.toStdString());
+    if (fileName.size()!=0)
+    {
+        if (theLogger->save_all_logs_to_file(fileName.toStdString()))
+            ui->tab->findChild<LogWidget*>("system_message")->addMessage(QString("Log saved to file: ") + fileName);
+    }
 }
 
 void MainWindow::on_actionLoad_Log_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Load log file"),"./", tr("Log Files (*.log)"));
-    theLogger->load_all_logs_from_file(fileName.toStdString());
+    if (fileName.size()!=0)
+    {
+        on_actionStop_Logger_triggered();
+        on_actionClear_triggered();
+        if (theLogger->load_all_logs_from_file(fileName.toStdString()))
+            ui->tab->findChild<LogWidget*>("system_message")->addMessage(QString("Log loaded from file: ") + fileName);
+    }
 }
 
 void MainWindow::on_actionShow_Error_Level_toggled(bool arg1)
@@ -448,6 +462,7 @@ void MainWindow::on_actionShow_Mute_Ports_toggled(bool arg1)
 
 void MainWindow::on_actionStart_Logger_triggered()
 {
+    ui->tab->findChild<LogWidget*>("system_message")->addMessage("Logger started");
     statusBarLabel->setText("Running");
     this->theLogger->start_logging();
 
@@ -459,6 +474,7 @@ void MainWindow::on_actionStart_Logger_triggered()
 
 void MainWindow::on_actionStop_Logger_triggered()
 {
+    ui->tab->findChild<LogWidget*>("system_message")->addMessage("Logger stopped");
     statusBarLabel->setText("Stopped");
     this->theLogger->stop_logging();
 
@@ -470,10 +486,24 @@ void MainWindow::on_actionStop_Logger_triggered()
 
 void MainWindow::on_actionRefresh_triggered()
 {
+    ui->tab->findChild<LogWidget*>("system_message")->addMessage("Searching for yarprun ports");
     statusBarLabel->setText("Searching for yarprun ports");
     std::list<std::string> ports;
     theLogger->discover(ports);
     updateMain();
     theLogger->connect(ports);
+    char text [100];
+    sprintf (text,"found %d ports, logger running", ports.size());
+    ui->tab->findChild<LogWidget*>("system_message")->addMessage(text);
     statusBarLabel->setText("Running");
+}
+
+void MainWindow::on_actionClear_triggered()
+{
+    if (theLogger->clear())
+    {
+        if (model_yarprunports) model_yarprunports->clear();
+        if (ui->logtabs) ui->logtabs->clear();
+        ui->tab->findChild<LogWidget*>("system_message")->addMessage("Log cleared");
+    }
 }

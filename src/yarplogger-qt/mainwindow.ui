@@ -94,6 +94,18 @@
             <verstretch>1</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>150</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -116,17 +128,52 @@
            <item>
             <widget class="QTabWidget" name="tabWidget">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="tab">
               <attribute name="title">
                <string>System Messages</string>
               </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <item>
+                <widget class="LogWidget" name="system_message">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Plain</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
              <widget class="QWidget" name="tab_2">
               <attribute name="title">
                <string>Log Statistics</string>
               </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item>
+                <widget class="QPlainTextEdit" name="plainTextEdit_2">
+                 <property name="frameShadow">
+                  <enum>QFrame::Plain</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_3">
+              <attribute name="title">
+               <string>Notes</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="QPlainTextEdit" name="plainTextEdit">
+                 <property name="frameShadow">
+                  <enum>QFrame::Plain</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </widget>
            </item>
@@ -424,6 +471,8 @@
     <addaction name="separator"/>
     <addaction name="actionSave_Log"/>
     <addaction name="actionLoad_Log"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -575,8 +624,20 @@
     <string>Refresh</string>
    </property>
   </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Clear</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>LogWidget</class>
+   <extends>QListWidget</extends>
+   <header>messagewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="res.qrc"/>
  </resources>

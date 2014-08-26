@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     logtab.cpp \
-    advanced_dialog.cpp
+    advanced_dialog.cpp \
+    messagewidget.cpp
 
 HEADERS  += mainwindow.h \
     logtab.h \
-    advanced_dialog.h
+    advanced_dialog.h \
+    messagewidget.h
 
 FORMS    += mainwindow.ui \
     logtab.ui \
