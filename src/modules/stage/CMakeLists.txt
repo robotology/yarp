@@ -9,7 +9,6 @@ endif()
 
 if(NOT SKIP_stage)
   find_package(YARP REQUIRED)
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
   find_package(Stage)
 
   if(Stage_FOUND)
