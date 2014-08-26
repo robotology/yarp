@@ -1,7 +1,7 @@
 #include "logtab.h"
 #include "ui_logtab.h"
 
-LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _portName, QWidget *parent) :
+LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab)
 { 
@@ -26,10 +26,11 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _
 #endif
     ui->listView->verticalHeader()->setVisible(false);
     ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->listView->setAutoScroll(true);
 
     logTimer = new QTimer(this);
     connect(logTimer, SIGNAL(timeout()), this, SLOT(updateLog()));
-    logTimer->start(500);
+    logTimer->start(refreshRate);
 
     model_logs->setHorizontalHeaderItem(0,new QStandardItem("timestamp"));
     model_logs->setHorizontalHeaderItem(1,new QStandardItem("level"));

@@ -27,13 +27,6 @@ private slots:
 
     void updateMain();
 
-    void on_startLogger_clicked();
-
-
-    void on_stopLogger_clicked();
-
-    void on_refreshLogger_clicked();
-
     void on_logtabs_tabCloseRequested(int index);
 
     void on_yarprunTreeView_doubleClicked(const QModelIndex &index);
@@ -73,6 +66,10 @@ private slots:
     void on_actionAdvanced_triggered ();
 
     void on_actionShow_Mute_Ports_toggled(bool arg1);
+
+    void on_actionStop_Logger_triggered();
+
+    void on_actionRefresh_triggered();
 
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;

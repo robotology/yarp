@@ -62,83 +62,75 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QTreeView" name="yarprunTreeView">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="contextMenuPolicy">
-             <enum>Qt::CustomContextMenu</enum>
-            </property>
-            <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
-            </property>
-            <property name="rootIsDecorated">
-             <bool>false</bool>
-            </property>
-            <property name="sortingEnabled">
-             <bool>true</bool>
-            </property>
-            <attribute name="headerVisible">
-             <bool>true</bool>
-            </attribute>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QPushButton" name="refreshLogger">
-          <property name="text">
-           <string/>
+         <widget class="QTreeView" name="yarprunTreeView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>5</verstretch>
+           </sizepolicy>
           </property>
-          <property name="icon">
-           <iconset resource="res.qrc">
-            <normaloff>:/new/prefix1/images/progress_ico.png</normaloff>:/new/prefix1/images/progress_ico.png</iconset>
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
           </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="headerVisible">
+           <bool>true</bool>
+          </attribute>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="stopLogger">
-          <property name="text">
-           <string/>
+         <widget class="QFrame" name="frame_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
           </property>
-          <property name="icon">
-           <iconset resource="res.qrc">
-            <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>:/new/prefix1/images/stop_ico.png</iconset>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
           </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="startLogger">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="res.qrc">
-            <normaloff>:/new/prefix1/images/run_ico.png</normaloff>:/new/prefix1/images/run_ico.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>32</width>
-            <height>32</height>
-           </size>
-          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QTabWidget" name="tabWidget">
+             <property name="currentIndex">
+              <number>1</number>
+             </property>
+             <widget class="QWidget" name="tab">
+              <attribute name="title">
+               <string>System Messages</string>
+              </attribute>
+             </widget>
+             <widget class="QWidget" name="tab_2">
+              <attribute name="title">
+               <string>Log Statistics</string>
+              </attribute>
+             </widget>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
@@ -428,6 +420,7 @@
     </property>
     <addaction name="actionStart_Logger"/>
     <addaction name="actionStop_Logger"/>
+    <addaction name="actionRefresh"/>
     <addaction name="separator"/>
     <addaction name="actionSave_Log"/>
     <addaction name="actionLoad_Log"/>
@@ -466,6 +459,7 @@
    <addaction name="separator"/>
    <addaction name="actionStart_Logger"/>
    <addaction name="actionStop_Logger"/>
+   <addaction name="actionRefresh"/>
    <addaction name="separator"/>
    <addaction name="actionSave_Log"/>
   </widget>
@@ -570,6 +564,15 @@
    </property>
    <property name="text">
     <string>Show Mute Ports</string>
+   </property>
+  </action>
+  <action name="actionRefresh">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/new/prefix1/images/progress_ico.png</normaloff>:/new/prefix1/images/progress_ico.png</iconset>
+   </property>
+   <property name="text">
+    <string>Refresh</string>
    </property>
   </action>
  </widget>

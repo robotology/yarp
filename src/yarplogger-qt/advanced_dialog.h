@@ -20,6 +20,14 @@ public:
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 
+    void on_radio_log_unlimited_clicked();
+
+    void on_radio_log_limited_clicked();
+
+    void on_radio_ports_unlimited_clicked();
+
+    void on_radio_ports_limited_clicked();
+
 private:
     Ui::advanced_dialog *ui;
     yarp::os::YarprunLogger::LoggerEngine* theLogger;

@@ -22,7 +22,7 @@ class LogTab : public QFrame
     Q_OBJECT
 
 public:
-    explicit LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _portName, QWidget *parent = 0);
+    explicit LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, std::string _portName, QWidget *parent = 0, int refreshRate=100);
     ~LogTab();
 
 private:

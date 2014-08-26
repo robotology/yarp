@@ -229,8 +229,10 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
 
     connect(ui->yarprunTreeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
 
-    ui->stopLogger->setEnabled(false);
-    ui->refreshLogger->setEnabled(false);
+    QMenu *m=ui->menuFile;
+    m->actions().at(0)->setEnabled(true);
+    m->actions().at(1)->setEnabled(false);
+    m->actions().at(2)->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -267,71 +269,6 @@ void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
     LogTab* logtab = ui->logtabs->currentWidget()->findChild<LogTab*>("logtab");
 
     if (logtab) logtab->proxyModelSearch->setFilterRegExp(regExp);
-}
-
-void MainWindow::on_startLogger_clicked()
-{
-     statusBarLabel->setText("Running");
-     this->theLogger->start_logging();
-
-    ui->startLogger->setEnabled(false);
-    ui->stopLogger->setEnabled(true);
-    ui->refreshLogger->setEnabled(true);
-}
-
-
-void MainWindow::on_stopLogger_clicked()
-{
-    statusBarLabel->setText("Stopped");
-     this->theLogger->stop_logging();
-
-     ui->stopLogger->setEnabled(false);
-     ui->startLogger->setEnabled(true);
-     ui->refreshLogger->setEnabled(false);
-}
-
-void MainWindow::on_refreshLogger_clicked()
-{
-    statusBarLabel->setText("Searching for yarprun ports");
-    std::list<std::string> ports;
-    theLogger->discover(ports);
-    updateMain();
-    theLogger->connect(ports);
-    statusBarLabel->setText("Running");
-
-    /*
-    QStringList List;
-    std::list<std::string>::iterator it;
-    for (it=ports.begin(); it!=ports.end(); it++)
-    {
-        List << (*it).c_str() ;
-    }
-    model_yarprunports->setStringList(List);
-    */
-    
-    /*QStringList l1;
-    l1 << "yarprun ports";
-    ui->treeView->setHorizontalHeaderLabels (l1);
-    model_yarprunports->setHeaderData(0);*/
-
-    
-    /*
-    std::list<std::string>::iterator it;
-    for (it=ports.begin(); it!=ports.end(); it++)
-    {
-
-    }
-    QStandardItemModel* model = new QStandardItemModel();
-    QStandardItem* item0 = new QStandardItem(QIcon("test.png"), "1 first item");
-    QStandardItem* item1 = new QStandardItem(QIcon("test.png"), "2 second item");
-    QStandardItem* item3 = new QStandardItem(QIcon("test.png"), "3 third item");
-    QStandardItem* item4 = new QStandardItem("4 forth item");
-    model->appendRow(item0);
-    item0->appendRow(item3);
-    item0->appendRow(item4);
-    model->appendRow(item1);
-    ui->treeView->setModel(model);
-    */
 }
 
 void MainWindow::on_logtabs_tabCloseRequested(int index)
@@ -444,19 +381,6 @@ void MainWindow::on_actionAbout_QtYarpLogger_triggered()
     QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/qtyarplogger.html"));
 }
 
-void MainWindow::on_actionStart_Logger_triggered()
-{
-    this->theLogger->start_logging();
-
-    QMenu *m=ui->menuFile;
-   // m->fi
-        //QMenu::actions.at(0).setEnabled(false);
-
-  //  ui->startLogger->setEnabled(false);
- //   ui->stopLogger->setEnabled(true);
-  //  ui->refreshLogger->setEnabled(true);
-}
-
 void MainWindow::on_actionSave_Log_triggered(bool checked)
 {
     QString dateformat = "yarprunlog_dd_MM_yyyy_hh_mm_ss";
@@ -520,4 +444,36 @@ void MainWindow::on_actionAdvanced_triggered()
 void MainWindow::on_actionShow_Mute_Ports_toggled(bool arg1)
 {
     show_mute_ports_enabled = arg1;
+}
+
+void MainWindow::on_actionStart_Logger_triggered()
+{
+    statusBarLabel->setText("Running");
+    this->theLogger->start_logging();
+
+    QMenu *m=ui->menuFile;
+    m->actions().at(0)->setEnabled(false);
+    m->actions().at(1)->setEnabled(true);
+    m->actions().at(2)->setEnabled(true);
+}
+
+void MainWindow::on_actionStop_Logger_triggered()
+{
+    statusBarLabel->setText("Stopped");
+    this->theLogger->stop_logging();
+
+    QMenu *m=ui->menuFile;
+    m->actions().at(0)->setEnabled(true);
+    m->actions().at(1)->setEnabled(false);
+    m->actions().at(2)->setEnabled(false);
+}
+
+void MainWindow::on_actionRefresh_triggered()
+{
+    statusBarLabel->setText("Searching for yarprun ports");
+    std::list<std::string> ports;
+    theLogger->discover(ports);
+    updateMain();
+    theLogger->connect(ports);
+    statusBarLabel->setText("Running");
 }
