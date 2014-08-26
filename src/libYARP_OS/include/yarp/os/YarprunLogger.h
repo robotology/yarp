@@ -21,6 +21,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
@@ -98,6 +99,7 @@ class yarp::os::YarprunLogger::LogEntry
 {
     private:
     unsigned int                  entry_list_max_size;
+    bool                          entry_list_max_size_enabled;
 
     public:
     std::vector<MessageEntry>     entry_list;
@@ -106,10 +108,12 @@ class yarp::os::YarprunLogger::LogEntry
     bool                          append_logEntry(MessageEntry entry);
 
     public:
-    LogEntry() {entry_list_max_size=1000; last_read_message=-1;entry_list.reserve(entry_list_max_size);};
+    LogEntry                       (int _entry_list_max_size=10000) {entry_list_max_size=_entry_list_max_size; last_read_message=-1;entry_list.reserve(entry_list_max_size);};
 
-    int  getLogEntryMaxSize ()    {return entry_list_max_size;}
-    void                          setLogEntryMaxSize (int size);
+    int  getLogEntryMaxSize        ()          {return entry_list_max_size;}
+    bool getLogEntryMaxSizeEnabled ()          {return entry_list_max_size_enabled;}
+    void setLogEntryMaxSize        (int  size);
+    void setLogEntryMaxSizeEnabled (bool enable);
 
     public:
     yarp::os::YarprunLogger::LogEntryInfo logInfo;
@@ -121,12 +125,13 @@ class yarp::os::YarprunLogger::LoggerEngine
     class logger_thread : public RateThread
     {
         public:
-        logger_thread (int _rate, std::string _portname, int _log_list_max_size=100);
+        logger_thread (std::string _portname, int _rate=10, int _log_list_max_size=100);
         public:
         yarp::os::Semaphore  mutex;
         unsigned int         log_list_max_size;
+        bool                 log_list_max_size_enabled;
         std::list<LogEntry>  log_list;
-        Port                 logger_port;
+        BufferedPort<Bottle> logger_port;
         std::string          logger_portName;
         int                  unknown_format_received;
     
@@ -174,7 +179,11 @@ class yarp::os::YarprunLogger::LoggerEngine
     
     void set_listen_option               (LogLevelEnum logLevel, bool enable);
     bool get_listen_option               (LogLevelEnum logLevel);
-    void set_logs_max_size               (int new_size);
+
+    void set_log_lines_max_size          (bool  enabled,  int new_size);
+    void set_log_list_max_size           (bool  enabled,  int new_size);
+    void get_log_lines_max_size          (bool& enabled, int& current_size);
+    void get_log_list_max_size           (bool& enabled, int& current_size);
 
     std::list<MessageEntry> filter_by_level (int level, const std::list<MessageEntry>& messages);
 };

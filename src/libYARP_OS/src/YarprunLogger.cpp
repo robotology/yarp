@@ -53,9 +53,14 @@ void LogEntry::setLogEntryMaxSize(int size)
     clear_logEntries();
 }
 
+void LogEntry::setLogEntryMaxSizeEnabled (bool enable)
+{  
+    entry_list_max_size_enabled=enable;
+}
+
 bool LogEntry::append_logEntry(MessageEntry entry)
 {
-    if (logInfo.logsize >= entry_list_max_size)
+    if (logInfo.logsize >= entry_list_max_size && entry_list_max_size_enabled)
     {
         //printf("WARNING: exceeded entry_list_max_size=%d\n",entry_list_max_size);
         return false;
@@ -188,7 +193,7 @@ std::string LoggerEngine::logger_thread::getPortName()
     return logger_portName;
 }
 
-LoggerEngine::logger_thread::logger_thread (int _rate, std::string _portname, int _log_list_max_size) : RateThread(_rate)
+LoggerEngine::logger_thread::logger_thread (std::string _portname, int _rate,  int _log_list_max_size) : RateThread(_rate)
 {
         logger_portName              = _portname;
         log_list_max_size            = _log_list_max_size;
@@ -207,118 +212,123 @@ void LoggerEngine::logger_thread::run()
         //yarp::os::Network::
     }
 
-    yarp::os::Time::delay(0.1);
+    //yarp::os::Time::delay(0.001);
     std::time_t machine_current_time = std::time(NULL);
     if (logger_port.getInputCount()>0)
     {
-        Bottle b;
-        logger_port.read(b);
+        int bufferport_size = logger_port.getPendingReads();
 
-        if (b.size()!=2) 
+        while (bufferport_size>0)
         {
-            fprintf (stderr, "ERROR: unknown log format!\n");
-            unknown_format_received++;
-            return;
-        }
+            Bottle *b = logger_port.read(); //this is blocking
+            bufferport_size = logger_port.getPendingReads();
 
-        std::string bottlestring = b.toString();
-        std::string header = b.get(0).asString();
-        MessageEntry body;
-        std::string s = b.get(1).asString();
-
-        body.text = s;
-        char ttstr [20];
-        static int count=0;
-        sprintf(ttstr,"%d",count++);
-        body.timestamp = string(ttstr);
-        body.level = LOGLEVEL_UNDEFINED;
-
-        int str = s.find('[',0);
-        int end = s.find(']',0);
-        if (str==std::string::npos || end==std::string::npos )
-        {
-            body.level = LOGLEVEL_UNDEFINED;
-        }
-        else if (str==0)
-        {
-            std::string level = s.substr(str,end+1);
-            body.level = LOGLEVEL_UNDEFINED;
-            if      (level == "[INFO]")      body.level = LOGLEVEL_INFO;
-            else if (level == "[DEBUG]")     body.level = LOGLEVEL_DEBUG;
-            else if (level == "[WARNING]")   body.level = LOGLEVEL_WARNING;
-            else if (level == "[ERROR]")     body.level = LOGLEVEL_ERROR;
-            body.text = s.substr(end+1);
-        }
-        else 
-        {
-            if (s.at(0) == (const char)'\033')
+            if (b->size()!=2) 
             {
-                //header example "\033[01;31m"
-                if      (s.at(8) == (const char)'W') body.level = LOGLEVEL_WARNING;
-                else if (s.at(8) == (const char)'E') body.level = LOGLEVEL_ERROR;
+                fprintf (stderr, "ERROR: unknown log format!\n");
+                unknown_format_received++;
+                continue;
             }
-            else
+
+            std::string bottlestring = b->toString();
+            std::string header = b->get(0).asString();
+            MessageEntry body;
+            std::string s = b->get(1).asString();
+
+            body.text = s;
+            char ttstr [20];
+            static int count=0;
+            sprintf(ttstr,"%d",count++);
+            body.timestamp = string(ttstr);
+            body.level = LOGLEVEL_UNDEFINED;
+
+            int str = s.find('[',0);
+            int end = s.find(']',0);
+            if (str==std::string::npos || end==std::string::npos )
             {
-                //int ss = strncmp(s.c_str,RED.c_str(),RED.size());
                 body.level = LOGLEVEL_UNDEFINED;
             }
-        }
-
-        if (body.level == LOGLEVEL_INFO      && listen_to_LOGLEVEL_INFO      == false) {return;}
-        if (body.level == LOGLEVEL_DEBUG     && listen_to_LOGLEVEL_DEBUG     == false) {return;}
-        if (body.level == LOGLEVEL_WARNING   && listen_to_LOGLEVEL_WARNING   == false) {return;}
-        if (body.level == LOGLEVEL_ERROR     && listen_to_LOGLEVEL_ERROR     == false) {return;}
-        if (body.level == LOGLEVEL_UNDEFINED && listen_to_LOGLEVEL_UNDEFINED == false) {return;}
-
-        this->mutex.wait();
-        LogEntry entry;
-        entry.logInfo.port_complete = header;
-        entry.logInfo.port_complete.erase(0,1);
-        entry.logInfo.port_complete.erase(entry.logInfo.port_complete.size()-1);
-        std::istringstream iss(header);
-        std::string token;
-        getline(iss, token, '/');
-        getline(iss, token, '/');
-        getline(iss, token, '/'); entry.logInfo.port_prefix  = "/"+ token;
-        getline(iss, token, '/'); entry.logInfo.process_name = token;
-        getline(iss, token, '/'); entry.logInfo.process_pid  = token.erase(token.size()-1);
-        
-        std::list<LogEntry>::iterator it;
-        for (it = log_list.begin(); it != log_list.end(); it++)
-        {
-            if (it->logInfo.port_complete==entry.logInfo.port_complete)
+            else if (str==0)
             {
-                it->logInfo.setNewError(body.level);
-                it->logInfo.last_update=machine_current_time;
-                it->append_logEntry(body);
-                break;
+                std::string level = s.substr(str,end+1);
+                body.level = LOGLEVEL_UNDEFINED;
+                if      (level == "[INFO]")      body.level = LOGLEVEL_INFO;
+                else if (level == "[DEBUG]")     body.level = LOGLEVEL_DEBUG;
+                else if (level == "[WARNING]")   body.level = LOGLEVEL_WARNING;
+                else if (level == "[ERROR]")     body.level = LOGLEVEL_ERROR;
+                body.text = s.substr(end+1);
             }
-        }
-        if (it == log_list.end())
-        {
-            if (log_list.size() < log_list_max_size)
+            else 
             {
-                yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
-                if (contact.isValid())
+                if (s.at(0) == (const char)'\033')
                 {
-                    entry.logInfo.setNewError(body.level);
-                    entry.logInfo.ip_address = contact.getHost();
+                    //header example "\033[01;31m"
+                    if      (s.at(8) == (const char)'W') body.level = LOGLEVEL_WARNING;
+                    else if (s.at(8) == (const char)'E') body.level = LOGLEVEL_ERROR;
                 }
                 else
                 {
-                    printf("ERROR: invalid contact: %s", entry.logInfo.port_complete.c_str());
-                };
-                entry.append_logEntry(body);
-                entry.logInfo.last_update=machine_current_time;
-                log_list.push_back(entry);
+                    //int ss = strncmp(s.c_str,RED.c_str(),RED.size());
+                    body.level = LOGLEVEL_UNDEFINED;
+                }
             }
-            else
-            {
-                printf("WARNING: exceeded log_list_max_size=%d\n",log_list_max_size);
-            }
-        }
+
+            if (body.level == LOGLEVEL_INFO      && listen_to_LOGLEVEL_INFO      == false) {continue;}
+            if (body.level == LOGLEVEL_DEBUG     && listen_to_LOGLEVEL_DEBUG     == false) {continue;}
+            if (body.level == LOGLEVEL_WARNING   && listen_to_LOGLEVEL_WARNING   == false) {continue;}
+            if (body.level == LOGLEVEL_ERROR     && listen_to_LOGLEVEL_ERROR     == false) {continue;}
+            if (body.level == LOGLEVEL_UNDEFINED && listen_to_LOGLEVEL_UNDEFINED == false) {continue;}
+
+            this->mutex.wait();
+            LogEntry entry;
+            entry.logInfo.port_complete = header;
+            entry.logInfo.port_complete.erase(0,1);
+            entry.logInfo.port_complete.erase(entry.logInfo.port_complete.size()-1);
+            std::istringstream iss(header);
+            std::string token;
+            getline(iss, token, '/');
+            getline(iss, token, '/');
+            getline(iss, token, '/'); entry.logInfo.port_prefix  = "/"+ token;
+            getline(iss, token, '/'); entry.logInfo.process_name = token;
+            getline(iss, token, '/'); entry.logInfo.process_pid  = token.erase(token.size()-1);
         
-        this->mutex.post();
+            std::list<LogEntry>::iterator it;
+            for (it = log_list.begin(); it != log_list.end(); it++)
+            {
+                if (it->logInfo.port_complete==entry.logInfo.port_complete)
+                {
+                    it->logInfo.setNewError(body.level);
+                    it->logInfo.last_update=machine_current_time;
+                    it->append_logEntry(body);
+                    break;
+                }
+            }
+            if (it == log_list.end())
+            {
+                if (log_list.size() < log_list_max_size || log_list_max_size_enabled==false )
+                {
+                    yarp::os::Contact contact = yarp::os::Network::queryName(entry.logInfo.port_complete);
+                    if (contact.isValid())
+                    {
+                        entry.logInfo.setNewError(body.level);
+                        entry.logInfo.ip_address = contact.getHost();
+                    }
+                    else
+                    {
+                        printf("ERROR: invalid contact: %s", entry.logInfo.port_complete.c_str());
+                    };
+                    entry.append_logEntry(body);
+                    entry.logInfo.last_update=machine_current_time;
+                    log_list.push_back(entry);
+                }
+                //else
+                //{
+                //    printf("WARNING: exceeded log_list_max_size=%d\n",log_list_max_size);
+                //}
+            }
+        
+            this->mutex.post();
+        }
     }
 
 }
@@ -341,7 +351,7 @@ bool LoggerEngine::start_logging()
         fprintf(stderr,"Unable to start logger: port %s is unavailable\n", log_updater->getPortName().c_str());
         return false;
     }
-
+    log_updater->logger_port.setStrict();
     logging=true;
     log_updater->start();
     return true;
@@ -376,7 +386,8 @@ void LoggerEngine::stop_discover()
 
 LoggerEngine::LoggerEngine(std::string portName)
 {
-    log_updater=new logger_thread (10, portName);
+    int thread_rate = 10;
+    log_updater=new logger_thread (portName,thread_rate);
     logging = false;
     discovering = false;
 }
@@ -492,7 +503,8 @@ void LoggerEngine::get_messages_by_port_complete    (std::string  port,  std::li
                 it->last_read_message = 0;
             }
             int i=it->last_read_message;
-            for (; i<(int)it->entry_list.size(); i++)
+            int size = (int)it->entry_list.size();
+            for (; i<size; i++)
             {
                 messages.push_back(it->entry_list[i]);
             }
@@ -697,7 +709,7 @@ void LoggerEngine::load_all_logs_from_file   (std::string  filename)
     if (wasRunning) log_updater->start();
 }
 
-void LoggerEngine::set_logs_max_size (int new_size)
+void LoggerEngine::set_log_lines_max_size (bool  enabled,  int new_size)
 {
     if (log_updater == NULL) return;
     log_updater->mutex.wait();
@@ -706,7 +718,39 @@ void LoggerEngine::set_logs_max_size (int new_size)
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
         it->setLogEntryMaxSize(new_size);
+        it->setLogEntryMaxSizeEnabled(enabled);
     }
 
+    log_updater->mutex.post();
+}
+
+
+void LoggerEngine::set_log_list_max_size           (bool  enabled,  int new_size)
+{
+    if (log_updater == NULL) return;
+    log_updater->mutex.wait();
+    log_updater->log_list_max_size_enabled = enabled;
+    log_updater->log_list_max_size = new_size;
+    log_updater->mutex.post();
+}
+
+void LoggerEngine::get_log_lines_max_size          (bool& enabled, int& current_size)
+{
+    if (log_updater == NULL) return;
+    log_updater->mutex.wait();
+    if (log_updater->log_list.empty() == true) return;
+
+    std::list<LogEntry>::iterator it = log_updater->log_list.begin();
+    current_size = it->getLogEntryMaxSize();
+    enabled = it->getLogEntryMaxSizeEnabled();
+    log_updater->mutex.post();
+}
+
+void LoggerEngine::get_log_list_max_size           (bool& enabled, int& current_size)
+{
+    if (log_updater == NULL) return;
+    log_updater->mutex.wait();
+    enabled=log_updater->log_list_max_size_enabled;
+    current_size=log_updater->log_list_max_size;
     log_updater->mutex.post();
 }
