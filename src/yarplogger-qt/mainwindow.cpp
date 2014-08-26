@@ -66,8 +66,8 @@ void MainWindow::updateMain()
 
                 QColor rowcolor = QColor(Qt::white);
                 yarp::os::YarprunLogger::LogLevelEnum last_error = it->getLastError();
-                if      (last_error==yarp::os::YarprunLogger::LOGLEVEL_ERROR)   rowcolor = QColor(Qt::red);
-                else if (last_error==yarp::os::YarprunLogger::LOGLEVEL_WARNING) rowcolor = QColor(Qt::yellow);
+                if      (last_error==yarp::os::YarprunLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
+                else if (last_error==yarp::os::YarprunLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
 
                 for (int j=0; j<model_yarprunports->columnCount(); j++)
                     model_yarprunports->item(i,j)->setBackground(rowcolor);
@@ -191,7 +191,7 @@ void MainWindow::on_saveLogTab_action()
     if (fileName.size()!=0)
     {
         if (theLogger->export_log_to_text_file(fileName.toStdString(),logname))
-            ui->tab->findChild<LogWidget*>("system_message")->addMessage(QString("Current log successfully exported to file: ") + fileName);
+            system_message->addMessage(QString("Current log successfully exported to file: ") + fileName);
     }
 }
 
@@ -217,6 +217,9 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     theLogger = new yarp::os::YarprunLogger::LoggerEngine(loggername);
 
     ui->setupUi(this);
+
+    system_message = ui->tab->findChild<LogWidget*>("system_message");
+    system_message->addMessage("Application Started");
 
     model_yarprunports = new QStandardItemModel(this);
     statusBarLabel = new QLabel;
@@ -282,18 +285,9 @@ void MainWindow::on_logtabs_tabCloseRequested(int index)
 
 void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
 {
-    QTabWidget* tab = new QTabWidget(this);
     int model_row=index.row();
     QString tabname = model_yarprunports->item(model_row,1)->text();
-    QVBoxLayout* l= new QVBoxLayout(tab);
-    LogTab* tmpLogTab = new LogTab(theLogger, tabname.toStdString(), this);
-    tmpLogTab->displayTimestamp(displayTimestamps);
-    tmpLogTab->displayErrorLevel(displayErrorLevel);
-    tmpLogTab->displayGrid(displayGrid);
-    tmpLogTab->displayColors(displayColors);
-    l->addWidget(tmpLogTab);
-    tmpLogTab->setObjectName("logtab");
-
+ 
     int exists = -1;
     for (int i=0; i<ui->logtabs->count(); i++)
         if (ui->logtabs->tabText(i) == tabname) exists = i;
@@ -304,6 +298,17 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &index)
     }
     else
     {
+        QTabWidget* tab = new QTabWidget(this);
+        QVBoxLayout* l= new QVBoxLayout(tab);
+        LogTab* tmpLogTab = new LogTab(theLogger, system_message, tabname.toStdString(), this);
+        tmpLogTab->displayYarprunTimestamp(displayYarprunTimestamps);
+        tmpLogTab->displayLocalTimestamp(displayLocalTimestamps);
+        tmpLogTab->displayErrorLevel(displayErrorLevel);
+        tmpLogTab->displayGrid(displayGrid);
+        tmpLogTab->displayColors(displayColors);
+        l->addWidget(tmpLogTab);
+        tmpLogTab->setObjectName("logtab");
+
         int newtab_index = ui->logtabs->addTab(tab, tabname);
         ui->logtabs->setCurrentIndex(newtab_index);
     }
@@ -337,7 +342,7 @@ void MainWindow::apply_button_filters()
         LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab) {
                       logtab->proxyModelButtons->setFilterRegExp(regExp);
-                      logtab->proxyModelButtons->setFilterKeyColumn(1);
+                      logtab->proxyModelButtons->setFilterKeyColumn(2);
                     }
     }
 }
@@ -367,15 +372,28 @@ void MainWindow::on_DisplayUnformattedEnable_toggled(bool checked)
     apply_button_filters();
 }
 
-void MainWindow::on_actionShow_Timestamps_toggled(bool arg1)
+void MainWindow::on_actionShow_YarprunTimestamps_toggled(bool arg1)
 {
-    displayTimestamps = arg1;
+    displayYarprunTimestamps = arg1;
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab) 
         {
-            logtab->displayTimestamp(displayTimestamps);
+            logtab->displayYarprunTimestamp(displayYarprunTimestamps);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_LocalTimestamps_toggled(bool arg1)
+{
+    displayLocalTimestamps = arg1;
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        LogTab* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab) 
+        {
+            logtab->displayLocalTimestamp(displayLocalTimestamps);
         }
     }
 }
@@ -394,7 +412,7 @@ void MainWindow::on_actionSave_Log_triggered(bool checked)
     if (fileName.size()!=0)
     {
         if (theLogger->save_all_logs_to_file(fileName.toStdString()))
-            ui->tab->findChild<LogWidget*>("system_message")->addMessage(QString("Log saved to file: ") + fileName);
+            system_message->addMessage(QString("Log saved to file: ") + fileName);
     }
 }
 
@@ -406,7 +424,7 @@ void MainWindow::on_actionLoad_Log_triggered()
         on_actionStop_Logger_triggered();
         on_actionClear_triggered();
         if (theLogger->load_all_logs_from_file(fileName.toStdString()))
-            ui->tab->findChild<LogWidget*>("system_message")->addMessage(QString("Log loaded from file: ") + fileName);
+            system_message->addMessage(QString("Log loaded from file: ") + fileName);
     }
 }
 
@@ -462,31 +480,41 @@ void MainWindow::on_actionShow_Mute_Ports_toggled(bool arg1)
 
 void MainWindow::on_actionStart_Logger_triggered()
 {
-    ui->tab->findChild<LogWidget*>("system_message")->addMessage("Logger started");
-    statusBarLabel->setText("Running");
-    this->theLogger->start_logging();
-
-    QMenu *m=ui->menuFile;
-    m->actions().at(0)->setEnabled(false);
-    m->actions().at(1)->setEnabled(true);
-    m->actions().at(2)->setEnabled(true);
+    if (this->theLogger->start_logging())
+    {
+        QMenu *m=ui->menuFile;
+        m->actions().at(0)->setEnabled(false);
+        m->actions().at(1)->setEnabled(true);
+        m->actions().at(2)->setEnabled(true);
+        system_message->addMessage("Logger started");
+        statusBarLabel->setText("Running");
+    }
+    else
+    {
+        system_message->addMessage("Unable to start: maybe logger port is conflicting with another running process?",LOGWIDGET_ERROR);
+    }
 }
 
 void MainWindow::on_actionStop_Logger_triggered()
 {
-    ui->tab->findChild<LogWidget*>("system_message")->addMessage("Logger stopped");
-    statusBarLabel->setText("Stopped");
-    this->theLogger->stop_logging();
-
-    QMenu *m=ui->menuFile;
-    m->actions().at(0)->setEnabled(true);
-    m->actions().at(1)->setEnabled(false);
-    m->actions().at(2)->setEnabled(false);
+    if (this->theLogger->stop_logging())
+    {
+        QMenu *m=ui->menuFile;
+        m->actions().at(0)->setEnabled(true);
+        m->actions().at(1)->setEnabled(false);
+        m->actions().at(2)->setEnabled(false);
+        system_message->addMessage("Logger stopped");
+        statusBarLabel->setText("Stopped");
+    }
+    else
+    {
+        system_message->addMessage("Unable to stop: logger is not currently running",LOGWIDGET_ERROR);
+    }
 }
 
 void MainWindow::on_actionRefresh_triggered()
 {
-    ui->tab->findChild<LogWidget*>("system_message")->addMessage("Searching for yarprun ports");
+    system_message->addMessage("Searching for yarprun ports");
     statusBarLabel->setText("Searching for yarprun ports");
     std::list<std::string> ports;
     theLogger->discover(ports);
@@ -494,7 +522,7 @@ void MainWindow::on_actionRefresh_triggered()
     theLogger->connect(ports);
     char text [100];
     sprintf (text,"found %d ports, logger running", ports.size());
-    ui->tab->findChild<LogWidget*>("system_message")->addMessage(text);
+    system_message->addMessage(text);
     statusBarLabel->setText("Running");
 }
 
@@ -504,6 +532,6 @@ void MainWindow::on_actionClear_triggered()
     {
         if (model_yarprunports) model_yarprunports->clear();
         if (ui->logtabs) ui->logtabs->clear();
-        ui->tab->findChild<LogWidget*>("system_message")->addMessage("Log cleared");
+        system_message->addMessage("Log cleared");
     }
 }

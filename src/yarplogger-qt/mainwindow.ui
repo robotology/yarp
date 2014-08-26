@@ -478,7 +478,8 @@
     <property name="title">
      <string>Options</string>
     </property>
-    <addaction name="actionShow_Timestamps"/>
+    <addaction name="actionShow_YarprunTimestamps"/>
+    <addaction name="actionShow_LocalTimestamps"/>
     <addaction name="actionShow_Error_Level"/>
     <addaction name="actionShow_Colors"/>
     <addaction name="actionShow_Grid"/>
@@ -518,7 +519,7 @@
     <string>Help</string>
    </property>
   </action>
-  <action name="actionShow_Timestamps">
+  <action name="actionShow_YarprunTimestamps">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -526,7 +527,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Timestamps</string>
+    <string>Show Yarprun Timestamps</string>
    </property>
   </action>
   <action name="actionSave_Log">
@@ -627,6 +628,17 @@
   <action name="actionClear">
    <property name="text">
     <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionShow_LocalTimestamps">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Local Timestamps</string>
    </property>
   </action>
  </widget>

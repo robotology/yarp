@@ -8,6 +8,7 @@
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
 #include <yarp/os/ResourceFinder.h>
+#include "messagewidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -41,7 +42,7 @@ private slots:
 
     void on_DisplayUnformattedEnable_toggled(bool checked);
 
-    void on_actionShow_Timestamps_toggled(bool arg1);
+    void on_actionShow_YarprunTimestamps_toggled(bool arg1);
 
     void on_actionAbout_QtYarpLogger_triggered();
 
@@ -73,6 +74,8 @@ private slots:
 
     void on_actionClear_triggered();
 
+    void on_actionShow_LocalTimestamps_toggled(bool arg1);
+
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 
@@ -80,6 +83,7 @@ private:
     QStandardItemModel        *model_yarprunports;
     QTimer *mainTimer;
     QLabel *statusBarLabel;
+    LogWidget* system_message;
     void loadTextFile();
     QString recomputeFilters();
     void apply_button_filters();
@@ -87,7 +91,8 @@ private:
     bool displayErrorLevel;
     bool displayGrid;
     bool displayColors;
-    bool displayTimestamps;
+    bool displayYarprunTimestamps;
+    bool displayLocalTimestamps;
     bool show_mute_ports_enabled;
 };
 
