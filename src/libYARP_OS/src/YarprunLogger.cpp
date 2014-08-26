@@ -619,9 +619,11 @@ bool LoggerEngine::get_listen_option               (LogLevelEnum logLevel)
     else return false;
 }
 
-void LoggerEngine::export_log_to_text_file   (std::string  filename, std::string portname)
+bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string portname)
 {
-    if (log_updater == NULL) return;
+    if (log_updater == NULL) return false;
+    if (filename.size() == 0) return false;
+
     log_updater->mutex.wait();
     std::list<LogEntry>::iterator it;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
@@ -630,6 +632,7 @@ void LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
         {
             ofstream file1;
             file1.open(filename.c_str());
+            if (file1.is_open() == false) {log_updater->mutex.post(); return false;}
             std::vector<MessageEntry>::iterator it1;
             for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
             {
@@ -639,16 +642,20 @@ void LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
         }
     }
     log_updater->mutex.post();
+    return true;
 }
 
-void LoggerEngine::save_all_logs_to_file   (std::string  filename)
+bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
 {
-    if (log_updater == NULL) return;
+    if (log_updater == NULL) return false;
+    if (filename.size() == 0) return false;
     
     const int      LOGFILE_VERSION = 1;
 
     ofstream file1;
     file1.open(filename.c_str());
+    if (file1.is_open() == false) return false;
+
     bool wasRunning = log_updater->isRunning();
     if (wasRunning) log_updater->stop();
     std::list<LogEntry>::iterator it;
@@ -656,31 +663,42 @@ void LoggerEngine::save_all_logs_to_file   (std::string  filename)
     file1 << log_updater->log_list.size() << std::endl;
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
+        file1 << it->logInfo.ip_address << std::endl;
         file1 << it->logInfo.port_complete << std::endl;
         file1 << it->logInfo.port_prefix << std::endl;
         file1 << it->logInfo.process_name << std::endl;
         file1 << it->logInfo.process_pid << std::endl;
+        file1 << it->logInfo.get_number_of_errors() << std::endl;
+        file1 << it->logInfo.get_number_of_warnings() << std::endl;
+        file1 << it->logInfo.get_number_of_debugs() << std::endl;
+        file1 << it->logInfo.get_number_of_infos() << std::endl;
+        file1 << it->logInfo.logsize << std::endl;
         file1 << it->entry_list.size() << std::endl;
         std::vector<MessageEntry>::iterator it1;
         for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
         {
             file1 << it1->timestamp << std::endl;
             file1 << it1->level << std::endl;
-            file1 << it1->text << std::endl;
+            file1 << it1->text.size() << " " ;
+            for (unsigned int s=0; s< it1->text.size(); s++) file1.put(it1->text[s]);
         }
     }
     file1.close();
     if (wasRunning) log_updater->start();
+    return true;
 }
 
-void LoggerEngine::load_all_logs_from_file   (std::string  filename)
+bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
 {
-    if (log_updater == NULL) return;
+    if (log_updater == NULL) return false;
+    if (filename.size() == 0) return false;
     
     const int      LOGFILE_VERSION = 1;
 
     ifstream file1;
     file1.open(filename.c_str());
+    if (file1.is_open() == false) return false;
+
     int log_file_version;
     bool wasRunning = log_updater->isRunning();
     if (wasRunning) log_updater->stop();
@@ -693,10 +711,17 @@ void LoggerEngine::load_all_logs_from_file   (std::string  filename)
         for (int i=0; i< size_log_list; i++)
         {
             LogEntry l_tmp;
+            int      dummy;
+            file1 >> l_tmp.logInfo.ip_address;
             file1 >> l_tmp.logInfo.port_complete;
             file1 >> l_tmp.logInfo.port_prefix;
             file1 >> l_tmp.logInfo.process_name;
             file1 >> l_tmp.logInfo.process_pid;
+            file1 >> dummy; //l_tmp.logInfo.number_of_errors;
+            file1 >> dummy; //l_tmp.logInfo.number_of_warning;
+            file1 >> dummy; //l_tmp.logInfo.number_of_debugs;
+            file1 >> dummy; //l_tmp.logInfo.number_of_infos;
+            file1 >> l_tmp.logInfo.logsize;
             int size_entry_list;
             file1 >> size_entry_list;
             for (int j=0; j< size_entry_list; j++)
@@ -706,7 +731,12 @@ void LoggerEngine::load_all_logs_from_file   (std::string  filename)
                 int tmp_level; 
                 file1 >> tmp_level;
                 m_tmp.level = static_cast<LogLevelEnum>(tmp_level);
-                file1 >> m_tmp.text;
+                int size = 0;
+                file1 >> size;
+                file1.ignore(1);
+                char buf [1000];
+                file1.get(buf, size, 0);
+                m_tmp.text=buf;
                 l_tmp.entry_list.push_back(m_tmp);
             }
             log_updater->log_list.push_back(l_tmp);
@@ -714,6 +744,7 @@ void LoggerEngine::load_all_logs_from_file   (std::string  filename)
     }
     file1.close();
     if (wasRunning) log_updater->start();
+    return true;
 }
 
 void LoggerEngine::set_log_lines_max_size (bool  enabled,  int new_size)
@@ -760,4 +791,13 @@ void LoggerEngine::get_log_list_max_size           (bool& enabled, int& current_
     enabled=log_updater->log_list_max_size_enabled;
     current_size=log_updater->log_list_max_size;
     log_updater->mutex.post();
+}
+
+bool LoggerEngine::clear()
+{
+    if (log_updater == NULL) return false;
+    log_updater->mutex.wait();
+    log_updater->log_list.clear();
+    log_updater->mutex.post();
+    return true;
 }

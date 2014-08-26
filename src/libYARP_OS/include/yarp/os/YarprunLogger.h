@@ -164,10 +164,11 @@ class yarp::os::YarprunLogger::LoggerEngine
     void stop_discover           ();
     bool is_logging              () {return logging;}
     bool is_discovering          () {return discovering;}
+    bool clear                   ();
 
-    void save_all_logs_to_file           (std::string  filename);
-    void load_all_logs_from_file         (std::string  filename);
-    void export_log_to_text_file         (std::string  filename, std::string portname);
+    bool save_all_logs_to_file           (std::string  filename);
+    bool load_all_logs_from_file         (std::string  filename);
+    bool export_log_to_text_file         (std::string  filename, std::string portname);
     int  get_num_of_processes            ();
     void get_infos                       (std::list<LogEntryInfo>&   infos);
     void get_messages                    (std::list<MessageEntry>& messages);
