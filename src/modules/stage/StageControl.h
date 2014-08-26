@@ -23,7 +23,7 @@ namespace yarp {
 
 
 
-class yarp::dev::StageControl : public DeviceDriver, 
+class yarp::dev::StageControl : public DeviceDriver,
             public IVelocityControl, public yarp::os::Thread {
 private:
     stg_world_t* world;
@@ -43,11 +43,11 @@ public:
         if (axes!=NULL) { *axes = 3; }
         return true;
     }
-        
+
     virtual bool setVelocityMode() {
         return true;
     }
-        
+
     virtual bool velocityMove(int j, double v) {
         setpoint[j] = v;
         return velocityMove(setpoint);

@@ -5,7 +5,7 @@
  * Implements basic Kinect driver.
  *
  * NOTE: In its current form, the camera needs a few seconds of startup time
- * before it works. If launched too early, garbled images may result. 
+ * before it works. If launched too early, garbled images may result.
  */
 
 #ifndef _KINECTDEVICEDRIVER_H_
@@ -140,14 +140,14 @@ public:
     depthMutex_.wait();
     depthSent_ = false; // new depth data available
     memcpy(depthBuf_, buf, width_*height_*sizeof(uint16_t));
-    depthMutex_.post();    
+    depthMutex_.post();
   }
 
   void rgbImgCb(uint8_t *buf) {
     rgbMutex_.wait();
     rgbSent_ = false; // new rgb data available
     memcpy(rgbBuf_, buf, width_*height_*3);
-    rgbMutex_.post();    
+    rgbMutex_.post();
   }
 
 private:

@@ -20,9 +20,9 @@ using namespace yarp::os;
 
 bool StageControl::open(yarp::os::Searchable& config) {
   ConstString worldFile = config.check("world","",
-				       "stage world file").asString();
+                                       "stage world file").asString();
   ConstString robotName = config.check("robot","",
-				       "robot name").asString();
+                                       "robot name").asString();
   if (worldFile=="") {
     printf("Please specify a world file\n");
     return false;
@@ -33,26 +33,26 @@ bool StageControl::open(yarp::os::Searchable& config) {
   }
 
   int argc = 3;
-  char *argv[] = { "fake", 
-		   (char*)worldFile.c_str(), 
-		   (char*)robotName.c_str() 
+  char *argv[] = { "fake",
+                   (char*)worldFile.c_str(),
+                   (char*)robotName.c_str()
   };
 
   // initialize libstage
   stg_init( argc, argv );
 
   world = stg_world_create_from_file( argv[1] );
-  
+
   char* robotname = argv[2];
 
   // generate the name of the laser attached to the robot
   char lasername[64];
-  snprintf( lasername, 63, "%s.laser:0", robotname ); 
-  
+  snprintf( lasername, 63, "%s.laser:0", robotname );
+
   char sonarname[64];
-  snprintf( sonarname, 63, "%s.ranger:0", robotname ); 
-  
-  position = stg_world_model_name_lookup( world, robotname );  
+  snprintf( sonarname, 63, "%s.ranger:0", robotname );
+
+  position = stg_world_model_name_lookup( world, robotname );
   laser = stg_world_model_name_lookup( world, lasername );
 
   // subscribe to the laser - starts it collecting data
@@ -100,10 +100,10 @@ bool StageControl::velocityMove(const double *v) {
   for (int i=0; i<3; i++) {
     setpoint[i] = v[i];
   }
-  
+
   stg_model_set_cmd( position, &cmd, sizeof(cmd));
   mutex.post();
-  
+
   return true;
 }
 

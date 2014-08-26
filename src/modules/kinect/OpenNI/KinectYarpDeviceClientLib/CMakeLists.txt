@@ -3,15 +3,15 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 # Search for source code.
-FILE(GLOB folder_source *.cpp *.cc *.c)
-FILE(GLOB folder_header *.h)
-SOURCE_GROUP("Source Files" FILES ${folder_source})
-SOURCE_GROUP("Header Files" FILES ${folder_header})
+file(GLOB folder_source *.cpp *.cc *.c)
+file(GLOB folder_header *.h)
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
 # Automatically add include directories if needed.
-FOREACH(header_file ${folder_header})
-  GET_FILENAME_COMPONENT(p ${header_file} PATH)
-ENDFOREACH(header_file ${folder_header})
+foreach(header_file ${folder_header})
+  get_filename_component(p ${header_file} PATH)
+endforeach(header_file ${folder_header})
 
-YARP_ADD_PLUGIN (KinectYarpDeviceClientLib ${folder_source} ${folder_header})
-TARGET_LINK_LIBRARIES(KinectYarpDeviceClientLib ${YARP_LIBRARIES})
+yarp_add_plugin(KinectYarpDeviceClientLib ${folder_source} ${folder_header})
+target_link_libraries(KinectYarpDeviceClientLib ${YARP_LIBRARIES})

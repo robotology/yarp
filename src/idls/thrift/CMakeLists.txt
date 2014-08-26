@@ -24,7 +24,7 @@ if (THRIFT_ROOT)
 
   find_package(BISON REQUIRED)
   find_package(FLEX REQUIRED)
-  
+
   include_directories(${THRIFT_COMPILER_SOURCE})
   include_directories(${THRIFT_COMPILER_SOURCE}/src)
   include_directories(${THRIFT_COMPILER_SOURCE}/src/generate)
@@ -35,7 +35,7 @@ if (THRIFT_ROOT)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-  add_executable(yarpidl_thrift 
+  add_executable(yarpidl_thrift
     ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
     ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
     ${thrift_source_cc}
@@ -55,10 +55,10 @@ if (NOT THRIFT_ROOT)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
   if (MSVC)
     add_definitions(-DYY_NO_UNISTD_H -Dstrtoll=_strtoi64 -DPRIi64="I64i")
-	add_definitions(-DMINGW) # activate windows code in thrift
-	add_definitions(-DPATH_MAX=1000 -DS_ISDIR=1+0*)
-	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/msvc)
-	add_definitions(-D__STDC_VERSION__=199901L)
+    add_definitions(-DMINGW) # activate windows code in thrift
+    add_definitions(-DPATH_MAX=1000 -DS_ISDIR=1+0*)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/msvc)
+    add_definitions(-D__STDC_VERSION__=199901L)
   endif ()
   add_executable(yarpidl_thrift 
     src_gen/parser.cc

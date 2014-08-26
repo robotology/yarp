@@ -3,44 +3,43 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 cmake_minimum_required(VERSION 2.8.7)
 
-  FIND_PACKAGE(YARP REQUIRED)
-  LINK_LIBRARIES(${YARP_LIBRARIES})
-    INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+find_package(YARP REQUIRED)
+link_libraries(${YARP_LIBRARIES})
+include_directories(${YARP_INCLUDE_DIRS})
 
-FIND_PACKAGE(GLUT)
-FIND_PACKAGE(OpenGL)
+find_package(GLUT)
+find_package(OpenGL)
 
  #OPENNI Lib MESSAGE("$ENV{OPEN_NI_INCLUDE}")
-FIND_PATH(OPEN_NI_INCLUDE "XnOpenNI.h" HINTS "$ENV{OPEN_NI_INCLUDE}" "/usr/include/ni" "/usr/include/openni")
-FIND_LIBRARY(OPEN_NI_LIBRARY NAMES OpenNI libOpenNI HINTS $ENV{OPEN_NI_LIB} "/usr/lib")
-LINK_DIRECTORIES($ENV{OPEN_NI_LIB})
-INCLUDE_DIRECTORIES(${OPEN_NI_INCLUDE})
-LINK_LIBRARIES(${OPEN_NI_LIBRARY})
+find_path(OPEN_NI_INCLUDE "XnOpenNI.h" HINTS "$ENV{OPEN_NI_INCLUDE}" "/usr/include/ni" "/usr/include/openni")
+find_library(OPEN_NI_LIBRARY NAMES OpenNI libOpenNI HINTS $ENV{OPEN_NI_LIB} "/usr/lib")
+link_directories($ENV{OPEN_NI_LIB})
+include_directories(${OPEN_NI_INCLUDE})
+link_libraries(${OPEN_NI_LIBRARY})
 
 #NITE Lib MESSAGE("$ENV{XN_NITE_INSTALL_PATH}")
-FIND_PATH(XN_NITE_INCLUDE "XnVNite.h" HINTS "$ENV{XN_NITE_INSTALL_PATH}Include" "/usr/include/nite")
-FIND_LIBRARY(XN_NITE_LIBRARY NAMES XnVNITE libXnVNITE libXnVNITE_1_3_1 libXnVNite_1_3_1 libXnVNite_1_3_1.so XnVNITE_1_3_1 HINTS $ENV{XN_NITE_INSTALL_PATH}Lib "/usr/lib")
-LINK_DIRECTORIES($ENV{XN_NITE_INSTALL_PATH}Lib)
-INCLUDE_DIRECTORIES(${XN_NITE_INCLUDE})
-LINK_LIBRARIES(${XN_NITE_LIBRARY})
+find_path(XN_NITE_INCLUDE "XnVNite.h" HINTS "$ENV{XN_NITE_INSTALL_PATH}Include" "/usr/include/nite")
+find_library(XN_NITE_LIBRARY NAMES XnVNITE libXnVNITE libXnVNITE_1_3_1 libXnVNite_1_3_1 libXnVNite_1_3_1.so XnVNITE_1_3_1 HINTS $ENV{XN_NITE_INSTALL_PATH}Lib "/usr/lib")
+link_directories($ENV{XN_NITE_INSTALL_PATH}Lib)
+include_directories(${XN_NITE_INCLUDE})
+link_libraries(${XN_NITE_LIBRARY})
 
 # Search for source code.
-FILE(GLOB folder_source *.cpp *.cc *.c)
-FILE(GLOB folder_header *.h)
-SOURCE_GROUP("Source Files" FILES ${folder_source})
-SOURCE_GROUP("Header Files" FILES ${folder_header})
+file(GLOB folder_source *.cpp *.cc *.c)
+file(GLOB folder_header *.h)
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
 # Automatically add include directories if needed.
-FOREACH(header_file ${folder_header})
-  GET_FILENAME_COMPONENT(p ${header_file} PATH)
-ENDFOREACH(header_file ${folder_header})
+foreach(header_file ${folder_header})
+  get_filename_component(p ${header_file} PATH)
+endforeach(header_file ${folder_header})
 
 # Set up our main executable.
-IF (folder_source)
-  ADD_EXECUTABLE(DeviceTest ${folder_source} ${folder_header})
-ELSE (folder_source)
-  MESSAGE(FATAL_ERROR "No source code files found. Please add something")
-ENDIF (folder_source)
+if(folder_source)
+  add_executable(DeviceTest ${folder_source} ${folder_header})
+else(folder_source)
+  message(FATAL_ERROR "No source code files found. Please add something")
+endif (folder_source)
 
-
-TARGET_LINK_LIBRARIES(DeviceTest ${CORELIBS} ${OPENGL_LIBRARY} ${GLUT_LIBRARY} ${LINK_LIBRARIES} ${YARP_LIBRARIES})
+target_link_libraries(DeviceTest ${CORELIBS} ${OPENGL_LIBRARY} ${GLUT_LIBRARY} ${LINK_LIBRARIES} ${YARP_LIBRARIES})

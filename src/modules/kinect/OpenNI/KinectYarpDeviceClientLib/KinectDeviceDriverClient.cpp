@@ -59,7 +59,7 @@ bool yarp::dev::KinectDeviceDriverClient::open(yarp::os::Searchable& config){
 bool yarp::dev::KinectDeviceDriverClient::close(){
 //	if(_portMod!=NULL)
 //		return _portMod->close();
-//	else 
+//	else
 	return true;
 }
 
@@ -81,7 +81,7 @@ bool yarp::dev::KinectDeviceDriverClient::connectPorts(string remotePortPrefix, 
 	portsOK = portsOK && _inImageMapPort->open(inImageMapPort.c_str());
 	_inDepthMapPort = new BufferedPort<ImageOf<PixelInt> >();
 	portsOK = portsOK && _inDepthMapPort->open(inDepthMapPort.c_str());
-	
+
 	_outPort = new BufferedPort<Bottle>();
 	portsOK = portsOK && _outPort->open(outLocalPort.c_str());
 	_inUserSkeletonPort = new BufferedPort<Bottle>();

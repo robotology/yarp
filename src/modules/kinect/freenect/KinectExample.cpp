@@ -28,7 +28,7 @@ void spin(KinectDeviceDriver & h, Searchable & s) {
           Time::delay(0.01);
           continue;
         }
-        
+
         PortablePair<ImageOf<PixelMono16>, ImageOf<PixelRgb> > pair;
         // XXX question: are the dtors of HEAD,BODY called when this goes out of scope (yes)?
         bool res = h.getImagePair(pair);
@@ -59,7 +59,7 @@ int main() {
 
   Property p;
   p.fromString(os.str().c_str());
-    
+
   KinectDeviceDriver k;
   spin(k, p);
 

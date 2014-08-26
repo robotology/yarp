@@ -38,7 +38,7 @@ void GLWindow::initVars(){
 		_cameraPos[i] = 0;
 }
 
-void GLWindow::setData(int userID, int userStatus, yarp::sig::Matrix *skeletonOrientation, double *confOrientation, 
+void GLWindow::setData(int userID, int userStatus, yarp::sig::Matrix *skeletonOrientation, double *confOrientation,
 					   yarp::sig::Vector *skeletonPosition, double *confPosition){
 	_userStatus[userID] = userStatus;
 	for(int i = 0; i < TOTAL_JOINTS; i++){

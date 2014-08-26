@@ -34,7 +34,7 @@ class KinectThread : public Thread, public RFModule{
 public:
 	KinectThread(IKinectDeviceDriver *kinect, GLWindow *glWindow){
 		_kinect = kinect;
-		_glWindow = glWindow;	
+		_glWindow = glWindow;
 		imgPort.open("/depthImg");
 	}
 

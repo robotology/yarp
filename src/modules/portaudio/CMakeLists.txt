@@ -1,34 +1,26 @@
-# Copyright: (C) 2009 RobotCub Consortium
+# Copyright:(C) 2009 RobotCub Consortium
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(portaudio TYPE PortAudioDeviceDriver INCLUDE PortAudioDeviceDriver.h WRAPPER grabber)
-  YARP_ADD_DEVICE_FINGERPRINT(portaudio.ini portaudio)
-ENDIF (COMPILE_DEVICE_LIBRARY)
+if(COMPILE_DEVICE_LIBRARY)
+  yarp_prepare_device(portaudio TYPE PortAudioDeviceDriver INCLUDE PortAudioDeviceDriver.h WRAPPER grabber)
+  yarp_add_device_fingerprint(portaudio.ini portaudio)
+endif(COMPILE_DEVICE_LIBRARY)
 
-IF (NOT SKIP_portaudio)
+if(NOT SKIP_portaudio)
+  find_package(YARP REQUIRED)
+  include_directories(${YARP_INCLUDE_DIRS})
+  link_libraries(${YARP_LIBRARIES})
 
-FIND_PACKAGE(YARP REQUIRED)
-INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
-LINK_LIBRARIES(${YARP_LIBRARIES})
+  find_package(PortAudio)
 
-INCLUDE(UsePkgConfig)
-FIND_PACKAGE(PortAudio)
-
-IF (PortAudio_FOUND)
-
-  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${PortAudio_INCLUDE_DIR})
-  LINK_LIBRARIES(${PortAudio_LIBRARIES})
-
-  YARP_ADD_PLUGIN(yarp_portaudio PortAudioBuffer.cpp PortAudioBuffer.h PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
-
-ELSE (PortAudio_FOUND)
-
-  MESSAGE(SEND_ERROR "portaudio not found")
-
-ENDIF (PortAudio_FOUND)
-
-ENDIF (NOT SKIP_portaudio)
+  if(PortAudio_FOUND)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${PortAudio_INCLUDE_DIR})
+    link_libraries(${PortAudio_LIBRARIES})
+    yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp PortAudioBuffer.h PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
+  else(PortAudio_FOUND)
+    message(SEND_ERROR "portaudio not found")
+  endif(PortAudio_FOUND)
+endif(NOT SKIP_portaudio)
 
 

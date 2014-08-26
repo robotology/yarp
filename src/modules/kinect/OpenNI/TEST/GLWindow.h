@@ -26,7 +26,7 @@ public:
 	~GLWindow(void);
 	void runGLWindow();
 	void redraw();
-	void setData(int userID, int userStatus, yarp::sig::Matrix *skeletonOrientation, double *confOrientation, 
+	void setData(int userID, int userStatus, yarp::sig::Matrix *skeletonOrientation, double *confOrientation,
 					   yarp::sig::Vector *skeletonPosition, double *confPosition);
 private:
 	static double _cameraPos[9];

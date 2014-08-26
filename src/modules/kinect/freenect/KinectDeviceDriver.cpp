@@ -5,7 +5,7 @@
  * Implements basic Kinect driver.
  *
  * NOTE: In its current form, the camera needs a few seconds of startup time
- * before it works. If launched too early, garbled images may result. 
+ * before it works. If launched too early, garbled images may result.
  */
 
 #include "KinectDeviceDriver.h"
@@ -18,7 +18,7 @@ KinectDeviceDriver *kinect;
 static void depthimg(uint16_t *buf, int width, int height) {
   kinect->depthImgCb(buf);
 }
-	
+
 //! Rgb callback for libfreenect's C interface
 static void rgbimg(uint8_t *buf, int width, int height) {
   kinect->rgbImgCb(buf);
@@ -31,12 +31,12 @@ bool KinectDeviceDriver::open(const KinectDeviceDriverSettings & cfg) {
     printf("Could not open device\n");
     return false;
   }
-  
+
   kinect = this; // set global pointer
   //cams_init(dev, depthimg, rgbimg);
 
   #error "not sure how cams_init is implemented now"
-  
+
   // start usb grabbing thread
   usbSpinThread_.start();
   return true;

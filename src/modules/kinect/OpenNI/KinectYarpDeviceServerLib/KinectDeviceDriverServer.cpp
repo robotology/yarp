@@ -187,7 +187,7 @@ bool yarp::dev::KinectDeviceDriverServer::updateInterface(bool wait){
 	//update kinect data
 	_skeleton->updateKinect(wait);
 	//send kinect data to ports
-	if(_openPorts) 
+	if(_openPorts)
 		sendKinectData();
 	return true;
 }
