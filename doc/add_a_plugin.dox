@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 Here's a CMakeLists.txt ("userlib/CMakeLists.txt") to compile this:
 
 \verbatim
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 find_package(YARP REQUIRED)
 include_directories(${YARP_INCLUDE_DIRS})
 add_executable(test_userlib test_userlib.cpp)

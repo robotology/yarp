@@ -21,7 +21,7 @@ Here is the most recent source code package (developement version) for YARP:
 <li><a href="http://downloads.sourceforge.net/yarp0/yarp-2.3.63.zip">yarp-2.3.63.zip</a> development release for Windows.</li>
 </ul>
 
-<a href=http://www.cmake.org>CMake</a> version 2.8.7 or newer
+<a href=http://www.cmake.org>CMake</a> version 2.8.9 or newer
 is required for building these packages, and is required for
 compiling full device support.<br />
 The only difference between the UNIX download and the Windows

@@ -283,7 +283,7 @@ Please see "example/ros" in the YARP source code for full examples.  For simple 
 An example CMakeLists.txt file to compile this and link with YARP would be:
 
 \verbatim
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 find_package(YARP REQUIRED)
 include_directories(${YARP_INCLUDE_DIRS})
 add_executable(add_int_client_v1 add_int_client_v1.cpp)

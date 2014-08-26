@@ -3,6 +3,7 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
 # Let's see what we built, and record it to facilitate in-tree
 # ("uninstalled") use of YARP.
@@ -44,18 +45,9 @@ endforeach()
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY)
-if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 2.8.8)
-    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
-endif()
-if (${CMAKE_VERSION} VERSION_LESS 2.8.8)
-  include(WriteBasicConfigVersionFile)
-  write_basic_config_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
-                                     VERSION ${YARP_VERSION}
-                                     COMPATIBILITY AnyNewerVersion )
-else()
-  include(CMakePackageConfigHelpers)
-  WRITE_BASIC_PACKAGE_VERSION_FILE(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake VERSION ${YARP_VERSION} COMPATIBILITY AnyNewerVersion )
-endif()
+write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
+                                 VERSION ${YARP_VERSION}
+                                 COMPATIBILITY AnyNewerVersion)
 
 # YARPTargets.cmake (build tree)
 export(TARGETS ${YARP_LIBS}
@@ -90,12 +82,10 @@ foreach(lib ${YARP_LIBS})
     # Compile libraries using -fPIC to produce position independent code
     # For CMAKE_VERSION >= 2.8.10 this is handled in YarpOptions.cmake
     # using the CMAKE_POSITION_INDEPENDENT_CODE flag
-    if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER 2.8.8)
+    if(${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_GREATER 2.8.9)
         message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
     endif()
     if(CMAKE_VERSION VERSION_EQUAL "2.8.9")
         set_target_properties(${lib} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-    elseif(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_VERSION VERSION_LESS "2.8.9")
-        set_target_properties(${lib} PROPERTIES COMPILE_FLAGS -fPIC)
     endif()
 endforeach(lib)

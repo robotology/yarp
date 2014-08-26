@@ -2,7 +2,7 @@
 # Authors: Lorenzo Natale
 # CopyPolicy:  Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 
 #find YARP
 find_package(YARP REQUIRED)

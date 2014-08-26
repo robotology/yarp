@@ -2,7 +2,7 @@
 # Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 
 set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
 set(YARP_COLLISION_AVOIDANCE FALSE)

@@ -38,7 +38,7 @@ We'll see now how to setup installation rules so that after compilation the conf
 The minimal CMake file that allows to build our tutorial modules is this (this CMake file actually builds the two Resource Finder tutorials):
 
 \verbatim
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 project(resourceFinder)
 
 find_package(YARP REQUIRED)

@@ -2,7 +2,7 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 
 IF (COMPILE_DEVICE_LIBRARY)
   YARP_PREPARE_DEVICE(bazbot TYPE bazbot INCLUDE "bazbot.h")
