@@ -223,6 +223,12 @@ void LoggerEngine::logger_thread::run()
             Bottle *b = logger_port.read(); //this is blocking
             bufferport_size = logger_port.getPendingReads();
 
+            if (b==NULL)
+            {
+                fprintf (stderr, "ERROR: something strange happened here, bufferport_size = %d!\n",bufferport_size);
+                return;
+            }
+
             if (b->size()!=2) 
             {
                 fprintf (stderr, "ERROR: unknown log format!\n");
@@ -351,6 +357,7 @@ bool LoggerEngine::start_logging()
         fprintf(stderr,"Unable to start logger: port %s is unavailable\n", log_updater->getPortName().c_str());
         return false;
     }
+    log_updater->logger_port.resume();
     log_updater->logger_port.setStrict();
     logging=true;
     log_updater->start();
