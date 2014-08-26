@@ -8,7 +8,6 @@ endif(COMPILE_DEVICE_LIBRARY)
 
 if(NOT SKIP_dynamixelAX12Ftdi)
   find_package(YARP REQUIRED)
-  set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_MODULE_PATH})
   find_package(FTDI REQUIRED)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   include_directories(${FTDI_INCLUDE_DIR})

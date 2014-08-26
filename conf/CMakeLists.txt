@@ -34,7 +34,8 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindPortAudio.cmake
                      FindSQLite.cmake
                      FindTinyXML.cmake
-                     FindReadline.cmake)
+                     FindReadline.cmake
+                     FindFTDI.cmake)
 
 install(FILES ${YARP_CMAKE_FILES}
        COMPONENT scripts
