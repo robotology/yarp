@@ -62,7 +62,8 @@ struct yarp::os::YarprunLogger::MessageEntry
 {
     LogLevelEnum  level;
     std::string   text;
-    std::string   timestamp;
+    std::string   yarprun_timestamp;
+    std::string   local_timestamp;
 };
 
 class yarp::os::YarprunLogger::LogEntryInfo
@@ -159,7 +160,7 @@ class yarp::os::YarprunLogger::LoggerEngine
     LoggerEngine                 (std::string portName);
     ~LoggerEngine                ();
     bool start_logging           ();
-    void stop_logging            ();
+    bool stop_logging            ();
     void start_discover          ();
     void stop_discover           ();
     bool is_logging              () {return logging;}

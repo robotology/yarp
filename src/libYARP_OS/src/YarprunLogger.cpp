@@ -213,13 +213,20 @@ void LoggerEngine::logger_thread::run()
     }
 
     //yarp::os::Time::delay(0.001);
-    std::time_t machine_current_time = std::time(NULL);
     if (logger_port.getInputCount()>0)
     {
         int bufferport_size = logger_port.getPendingReads();
 
         while (bufferport_size>0)
         {
+            std::time_t machine_current_time = std::time(NULL);
+            char machine_current_time_c [50];
+            //strftime(machine_current_time_s, 20, "%Y-%m-%d %H:%M:%S", localtime(&machine_current_time));
+            static double d_time_i = yarp::os::Time::now();
+            double d_time = yarp::os::Time::now() - d_time_i;
+            sprintf(machine_current_time_c,"%f",d_time);
+            string machine_current_time_s = string(machine_current_time_c);
+
             Bottle *b = logger_port.read(); //this is blocking
             bufferport_size = logger_port.getPendingReads();
 
@@ -245,7 +252,8 @@ void LoggerEngine::logger_thread::run()
             char ttstr [20];
             static int count=0;
             sprintf(ttstr,"%d",count++);
-            body.timestamp = string(ttstr);
+            body.yarprun_timestamp = string(ttstr);
+            body.local_timestamp   = machine_current_time_s;
             body.level = LOGLEVEL_UNDEFINED;
 
             int str = s.find('[',0);
@@ -348,7 +356,7 @@ bool LoggerEngine::start_logging()
         return true;
     }
 
-    if (log_updater->logger_port.open(log_updater->getPortName().c_str())==true)
+    if (log_updater->logger_port.open(log_updater->getPortName().c_str()))
     {
         fprintf(stdout,"Logger successfully started, listening on port %s\n", log_updater->getPortName().c_str());
     }
@@ -370,12 +378,13 @@ void LoggerEngine::logger_thread::threadRelease()
     logger_port.close();
 }
 
-void LoggerEngine::stop_logging()
+bool LoggerEngine::stop_logging()
 {
-    if (log_updater == NULL) return;
+    if (log_updater == NULL) return false;
     
     logging=false;
     if (log_updater->isRunning()==true) log_updater->stop();
+    return true;
 }
 
 void LoggerEngine::start_discover()
@@ -636,7 +645,7 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
             std::vector<MessageEntry>::iterator it1;
             for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
             {
-                file1 << it1->timestamp << " " << it1->level << " " << it1->text << " " << std::endl;
+                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level << " " << it1->text << " " << std::endl;
             }
             file1.close();
         }
@@ -677,7 +686,8 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
         std::vector<MessageEntry>::iterator it1;
         for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
         {
-            file1 << it1->timestamp << std::endl;
+            file1 << it1->yarprun_timestamp << std::endl;
+            file1 << it1->local_timestamp << std::endl;
             file1 << it1->level << std::endl;
             file1 << it1->text.size() << " " ;
             for (unsigned int s=0; s< it1->text.size(); s++) file1.put(it1->text[s]);
@@ -727,7 +737,8 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
             for (int j=0; j< size_entry_list; j++)
             {
                 MessageEntry m_tmp;
-                file1 >> m_tmp.timestamp;
+                file1 >> m_tmp.yarprun_timestamp;
+                file1 >> m_tmp.local_timestamp;
                 int tmp_level; 
                 file1 >> tmp_level;
                 m_tmp.level = static_cast<LogLevelEnum>(tmp_level);
@@ -775,9 +786,8 @@ void LoggerEngine::set_log_list_max_size           (bool  enabled,  int new_size
 void LoggerEngine::get_log_lines_max_size          (bool& enabled, int& current_size)
 {
     if (log_updater == NULL) return;
-    log_updater->mutex.wait();
     if (log_updater->log_list.empty() == true) return;
-
+    log_updater->mutex.wait();
     std::list<LogEntry>::iterator it = log_updater->log_list.begin();
     current_size = it->getLogEntryMaxSize();
     enabled = it->getLogEntryMaxSizeEnabled();
