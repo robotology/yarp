@@ -15,7 +15,7 @@
 # This is useful to do it this way so that we can always add more libraries
 # if needed to FFMPEG_LIBRARIES if ffmpeg ever changes...
 
-FIND_PATH(FFMPEG_INCLUDE_DIR1 avformat.h
+find_path(FFMPEG_INCLUDE_DIR1 avformat.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavformat
@@ -28,7 +28,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR1 avformat.h
   /usr/local/include/libavformat
 )
 
-FIND_PATH(FFMPEG_INCLUDE_DIR2 avutil.h
+find_path(FFMPEG_INCLUDE_DIR2 avutil.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavutil
@@ -41,7 +41,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR2 avutil.h
   /usr/local/include/libavutil
 )
 
-FIND_PATH(FFMPEG_INCLUDE_DIR3 avcodec.h
+find_path(FFMPEG_INCLUDE_DIR3 avcodec.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavcodec
@@ -54,7 +54,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR3 avcodec.h
   /usr/local/include/libavcodec
 )
 
-FIND_PATH(FFMPEG_INCLUDE_DIR4 swscale.h
+find_path(FFMPEG_INCLUDE_DIR4 swscale.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libswscale
@@ -67,7 +67,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR4 swscale.h
   /usr/local/include/libswscale
 )
 
-FIND_PATH(FFMPEG_INCLUDE_DIR5 avdevice.h
+find_path(FFMPEG_INCLUDE_DIR5 avdevice.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavdevice
@@ -80,31 +80,28 @@ FIND_PATH(FFMPEG_INCLUDE_DIR5 avdevice.h
   /usr/local/include/libavdevice
 )
 
-IF (FFMPEG_INCLUDE_DIR1)
-  IF (FFMPEG_INCLUDE_DIR2)
-    IF (FFMPEG_INCLUDE_DIR3)
-      SET(FFMPEG_INCLUDE_DIR 
-	${FFMPEG_INCLUDE_DIR1}
-	${FFMPEG_INCLUDE_DIR2}
-	${FFMPEG_INCLUDE_DIR3})
-    ENDIF (FFMPEG_INCLUDE_DIR3)
-  ENDIF (FFMPEG_INCLUDE_DIR2)
-ENDIF (FFMPEG_INCLUDE_DIR1)
+if(FFMPEG_INCLUDE_DIR1)
+  if(FFMPEG_INCLUDE_DIR2)
+    if(FFMPEG_INCLUDE_DIR3)
+      set(FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR1}
+                             ${FFMPEG_INCLUDE_DIR2}
+                             ${FFMPEG_INCLUDE_DIR3})
+    endif()
+  endif()
+endif()
 
-IF (FFMPEG_INCLUDE_DIR4)
-      SET(FFMPEG_INCLUDE_DIR 
-	${FFMPEG_INCLUDE_DIR}
-	${FFMPEG_INCLUDE_DIR4})
-ENDIF (FFMPEG_INCLUDE_DIR4)
+if(FFMPEG_INCLUDE_DIR4)
+  set(FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR}
+                         ${FFMPEG_INCLUDE_DIR4})
+endif()
 
-IF (FFMPEG_INCLUDE_DIR5)
-      SET(FFMPEG_INCLUDE_DIR 
-	${FFMPEG_INCLUDE_DIR}
-	${FFMPEG_INCLUDE_DIR5}
-	${FFMPEG_INCLUDE_DIR5}/..)
-ENDIF (FFMPEG_INCLUDE_DIR5)
+if(FFMPEG_INCLUDE_DIR5)
+  set(FFMPEG_INCLUDE_DIR ${FFMPEG_INCLUDE_DIR}
+                         ${FFMPEG_INCLUDE_DIR5}
+                         ${FFMPEG_INCLUDE_DIR5}/..)
+endif()
 
-FIND_LIBRARY(FFMPEG_avformat_LIBRARY avformat
+find_library(FFMPEG_avformat_LIBRARY avformat
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
   $ENV{FFMPEG_DIR}/libavformat
@@ -112,7 +109,7 @@ FIND_LIBRARY(FFMPEG_avformat_LIBRARY avformat
   /usr/lib
 )
 
-FIND_LIBRARY(FFMPEG_avcodec_LIBRARY avcodec
+find_library(FFMPEG_avcodec_LIBRARY avcodec
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
   $ENV{FFMPEG_DIR}/libavcodec
@@ -120,7 +117,7 @@ FIND_LIBRARY(FFMPEG_avcodec_LIBRARY avcodec
   /usr/lib
 )
 
-FIND_LIBRARY(FFMPEG_avutil_LIBRARY avutil
+find_library(FFMPEG_avutil_LIBRARY avutil
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
   $ENV{FFMPEG_DIR}/libavutil
@@ -128,17 +125,17 @@ FIND_LIBRARY(FFMPEG_avutil_LIBRARY avutil
   /usr/lib
 )
 
-IF (NOT DISABLE_SWSCALE)
-FIND_LIBRARY(FFMPEG_swscale_LIBRARY swscale
-  $ENV{FFMPEG_DIR}
-  $ENV{FFMPEG_DIR}/lib
-  $ENV{FFMPEG_DIR}/libswscale
-  /usr/local/lib
-  /usr/lib
-)
-ENDIF (NOT DISABLE_SWSCALE)
+if(NOT DISABLE_SWSCALE)
+  find_library(FFMPEG_swscale_LIBRARY swscale
+    $ENV{FFMPEG_DIR}
+    $ENV{FFMPEG_DIR}/lib
+    $ENV{FFMPEG_DIR}/libswscale
+    /usr/local/lib
+    /usr/lib
+  )
+endif(NOT DISABLE_SWSCALE)
 
-FIND_LIBRARY(FFMPEG_avdevice_LIBRARY avdevice
+find_library(FFMPEG_avdevice_LIBRARY avdevice
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
   $ENV{FFMPEG_DIR}/libavdevice
@@ -146,7 +143,7 @@ FIND_LIBRARY(FFMPEG_avdevice_LIBRARY avdevice
   /usr/lib
 )
 
-FIND_LIBRARY(_FFMPEG_z_LIBRARY_ z
+find_library(_FFMPEG_z_LIBRARY_ z
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
   /usr/local/lib
@@ -155,40 +152,36 @@ FIND_LIBRARY(_FFMPEG_z_LIBRARY_ z
 
 
 
-IF(FFMPEG_INCLUDE_DIR)
-  IF(FFMPEG_avformat_LIBRARY)
-    IF(FFMPEG_avcodec_LIBRARY)
-      IF(FFMPEG_avutil_LIBRARY)
-        SET( FFMPEG_FOUND "YES" )
-        SET( FFMPEG_LIBRARIES 
-          ${FFMPEG_avformat_LIBRARY}
-          ${FFMPEG_avcodec_LIBRARY} 
-          ${FFMPEG_avutil_LIBRARY} 
+if(FFMPEG_INCLUDE_DIR)
+  if(FFMPEG_avformat_LIBRARY)
+    if(FFMPEG_avcodec_LIBRARY)
+      if(FFMPEG_avutil_LIBRARY)
+        set(FFMPEG_FOUND "YES")
+        set(FFMPEG_LIBRARIES ${FFMPEG_avformat_LIBRARY}
+                             ${FFMPEG_avcodec_LIBRARY}
+                             ${FFMPEG_avutil_LIBRARY}
           )
-	IF(FFMPEG_swscale_LIBRARY)
-          SET( FFMPEG_LIBRARIES 
-	    ${FFMPEG_LIBRARIES}
-            ${FFMPEG_swscale_LIBRARY}
+        if(FFMPEG_swscale_LIBRARY)
+          set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES}
+                               ${FFMPEG_swscale_LIBRARY}
           )
-	ENDIF(FFMPEG_swscale_LIBRARY)
-	IF(FFMPEG_avdevice_LIBRARY)
-          SET( FFMPEG_LIBRARIES 
-	    ${FFMPEG_LIBRARIES}
-            ${FFMPEG_avdevice_LIBRARY}
+        endif()
+        if(FFMPEG_avdevice_LIBRARY)
+          set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES}
+                               ${FFMPEG_avdevice_LIBRARY}
           )
-	ENDIF(FFMPEG_avdevice_LIBRARY)
-	IF(_FFMPEG_z_LIBRARY_)
-          SET( FFMPEG_LIBRARIES 
-	    ${FFMPEG_LIBRARIES}
-            ${_FFMPEG_z_LIBRARY_}
+        endif()
+        if(_FFMPEG_z_LIBRARY_)
+          set( FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES}
+                                ${_FFMPEG_z_LIBRARY_}
           )
-	ENDIF(_FFMPEG_z_LIBRARY_)
-      ENDIF(FFMPEG_avutil_LIBRARY)
-    ENDIF(FFMPEG_avcodec_LIBRARY)
-  ENDIF(FFMPEG_avformat_LIBRARY)
-ENDIF(FFMPEG_INCLUDE_DIR)
+        endif()
+      endif()
+    endif()
+  endif()
+endif()
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   FFMPEG_INCLUDE_DIR
   FFMPEG_INCLUDE_DIR1
   FFMPEG_INCLUDE_DIR2
@@ -203,3 +196,6 @@ MARK_AS_ADVANCED(
   _FFMPEG_z_LIBRARY_
   )
 
+# Set package properties if FeatureSummary was included
+set_package_properties(FFMPEG PROPERTIES DESCRIPTION "A complete, cross-platform solution to record, convert and stream audio and video")
+set_package_properties(FFMPEG PROPERTIES URL "http://ffmpeg.org/")
