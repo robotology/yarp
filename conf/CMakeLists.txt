@@ -60,17 +60,19 @@ install(FILES ${YARP_TEMPLATE_FILES}
         DESTINATION share/yarp/cmake/template)
 
 
-# Files from CMake 3.0.0, available only if cmake is older
-if(CMAKE_VERSION VERSION_LESS 3.0.0)
-    set(YARP_CMAKE_2_8_13_FILES cmake-3.0.0/Modules/FindGTK2.cmake
-                                cmake-3.0.0/Modules/FindPackageHandleStandardArgs.cmake
-                                cmake-3.0.0/Modules/FindPackageMessage.cmake
-                                cmake-3.0.0/Modules/CMakeParseArguments.cmake
-                                cmake-3.0.0/Modules/SelectLibraryConfigurations.cmake
-                                cmake-3.0.0/Modules/FindFreetype.cmake)
-    install(FILES ${YARP_CMAKE_2_8_13_FILES}
+# Files from CMake 3.1, available only if cmake is older
+if(${CMAKE_VERSION} VERSION_LESS 3.1)
+    set(YARP_CMAKE_3_1_FILES cmake-3.1/Modules/FindGTK2.cmake
+                             cmake-3.1/Modules/FindPackageHandleStandardArgs.cmake
+                             cmake-3.1/Modules/FindPackageMessage.cmake
+                             cmake-3.1/Modules/CMakeParseArguments.cmake
+                             cmake-3.1/Modules/SelectLibraryConfigurations.cmake
+                             cmake-3.1/Modules/FindFreetype.cmake
+                             cmake-3.1/Modules/CMakePackageConfigHelpers.cmake
+                             cmake-3.1/Modules/FeatureSummary.cmake)
+    install(FILES ${YARP_CMAKE_3_1_FILES}
             COMPONENT scripts
-            DESTINATION share/yarp/cmake/cmake-3.0.0/Modules)
+            DESTINATION share/yarp/cmake/cmake-3.1/Modules)
 endif()
 
 
