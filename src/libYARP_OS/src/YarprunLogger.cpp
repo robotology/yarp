@@ -266,25 +266,15 @@ void LoggerEngine::logger_thread::run()
             {
                 std::string level = s.substr(str,end+1);
                 body.level = LOGLEVEL_UNDEFINED;
-                if      (level == "[INFO]")      body.level = LOGLEVEL_INFO;
-                else if (level == "[DEBUG]")     body.level = LOGLEVEL_DEBUG;
-                else if (level == "[WARNING]")   body.level = LOGLEVEL_WARNING;
-                else if (level == "[ERROR]")     body.level = LOGLEVEL_ERROR;
+                if      (level.find("INFO")!=std::string::npos)    body.level = LOGLEVEL_INFO;
+                else if (level.find("DEBUG")!=std::string::npos)   body.level = LOGLEVEL_DEBUG;
+                else if (level.find("WARNING")!=std::string::npos) body.level = LOGLEVEL_WARNING;
+                else if (level.find("ERROR")!=std::string::npos)   body.level = LOGLEVEL_ERROR;
                 body.text = s.substr(end+1);
             }
             else 
             {
-                if (s.at(0) == (const char)'\033')
-                {
-                    //header example "\033[01;31m"
-                    if      (s.at(8) == (const char)'W') body.level = LOGLEVEL_WARNING;
-                    else if (s.at(8) == (const char)'E') body.level = LOGLEVEL_ERROR;
-                }
-                else
-                {
-                    //int ss = strncmp(s.c_str,RED.c_str(),RED.size());
-                    body.level = LOGLEVEL_UNDEFINED;
-                }
+                body.level = LOGLEVEL_UNDEFINED;
             }
 
             if (body.level == LOGLEVEL_INFO      && listen_to_LOGLEVEL_INFO      == false) {continue;}
