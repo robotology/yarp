@@ -19,9 +19,9 @@ using namespace yarp::dev;
 using namespace yarp::os;
 
 bool StageControl::open(yarp::os::Searchable& config) {
-  ConstString worldFile = config.check("world","",
+  ConstString worldFile = config.check("world",Value(""),
                                        "stage world file").asString();
-  ConstString robotName = config.check("robot","",
+  ConstString robotName = config.check("robot",Value(""),
                                        "robot name").asString();
   if (worldFile=="") {
     printf("Please specify a world file\n");
