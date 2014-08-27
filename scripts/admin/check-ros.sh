@@ -116,6 +116,30 @@ rostopic info $topic && exit 1 || echo "(this is correct)."
 
 
 ########################################################################
+header "Test yarp read name gets listed with right type using twiddle"
+
+typ="test_twiddle/pid$$"
+topic="/test/msg/$typ"
+${YARP_DIR}/yarp read $topic@/test_node~$typ &
+YPID=$!
+
+wait_node_topic /test_node $topic
+
+if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
+    echo "Type problem:"
+    rostopic info $topic
+    kill $YPID
+    echo "That is not right at all"
+    exit 1
+fi
+
+kill $YPID
+
+echo "Topic should now be gone"
+rostopic info $topic && exit 1 || echo "(this is correct)."
+
+
+########################################################################
 header "Test against rospy_tutorials/listener"
 
 rm -f ${BASE}listener.log

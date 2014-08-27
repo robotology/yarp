@@ -25,7 +25,14 @@ bool NestedContact::fromString(const ConstString& nFullName) {
     nodeName = fullName;
     nestedName = "";
     category = "";
-    ConstString::size_type idx = fullName.find("@");
+    ConstString::size_type idx = fullName.find("~");
+    if (idx!=ConstString::npos) {
+        // We have a type name squeezed in here, into what promises
+        // to be a very full port name.
+        wireType = fullName.substr(idx+1,fullName.length());
+        fullName = fullName.substr(0,idx);
+    }
+    idx = fullName.find("@");
     if (idx!=ConstString::npos) {
         // Great!  Looks like we are using a new syntax suggested 
         // by Lorenzo Natale, /topic@/node
