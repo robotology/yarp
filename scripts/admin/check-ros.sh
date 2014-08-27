@@ -22,6 +22,7 @@ function wait_file {
 function wait_node_topic {
     node="$1"
     topic="$2"
+    rostopic info $topic | grep $node
     while [ "`rostopic info $topic | grep $node | wc -c`" = "0" ] ; do
 	echo "waiting for $node on $topic"
 	sleep 1
@@ -65,6 +66,53 @@ kill $YPID
 
 echo "Topic should now be gone"
 rostopic info /test_msg && exit 1 || echo "(this is correct)."
+
+########################################################################
+header "Test yarp write name gets listed with right type"
+
+typ="test_write/pid$$"
+topic="/test/msg/$typ"
+yes | ${YARP_DIR}/yarp write $topic@/test_node --type $typ &
+YPID=$!
+
+wait_node_topic /test_node $topic
+
+if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
+    echo "Type problem:"
+    rostopic info $topic
+    kill $YPID
+    echo "That is not right at all"
+    exit 1
+fi
+
+kill $YPID
+
+echo "Topic should now be gone"
+rostopic info $topic && exit 1 || echo "(this is correct)."
+
+
+########################################################################
+header "Test yarp read name gets listed with right type"
+
+typ="test_read/pid$$"
+topic="/test/msg/$typ"
+${YARP_DIR}/yarp read $topic@/test_node --type $typ &
+YPID=$!
+
+wait_node_topic /test_node $topic
+
+if [ ! "k`rostopic info $topic | grep 'Type:'`" = "kType: $typ" ]; then
+    echo "Type problem:"
+    rostopic info $topic
+    kill $YPID
+    echo "That is not right at all"
+    exit 1
+fi
+
+kill $YPID
+
+echo "Topic should now be gone"
+rostopic info $topic && exit 1 || echo "(this is correct)."
 
 
 ########################################################################
