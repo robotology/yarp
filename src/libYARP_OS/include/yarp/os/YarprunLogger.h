@@ -103,13 +103,14 @@ class yarp::os::YarprunLogger::LogEntry
     bool                          entry_list_max_size_enabled;
 
     public:
+    bool                          logging_enabled;
     std::vector<MessageEntry>     entry_list;
     int                           last_read_message;
     void                          clear_logEntries();
     bool                          append_logEntry(MessageEntry entry);
 
     public:
-    LogEntry                       (int _entry_list_max_size=10000) {entry_list_max_size=_entry_list_max_size; last_read_message=-1;entry_list.reserve(entry_list_max_size);};
+    LogEntry                       (int _entry_list_max_size=10000) {logging_enabled=true;entry_list_max_size=_entry_list_max_size; last_read_message=-1;entry_list.reserve(entry_list_max_size);};
 
     int  getLogEntryMaxSize        ()          {return entry_list_max_size;}
     bool getLogEntryMaxSizeEnabled ()          {return entry_list_max_size_enabled;}
@@ -178,6 +179,8 @@ class yarp::os::YarprunLogger::LoggerEngine
     void get_messages_by_process         (std::string  process, std::list<MessageEntry>& messages, bool from_beginning = false);
     void get_messages_by_pid             (std::string  pid,     std::list<MessageEntry>& messages, bool from_beginning = false);
     void clear_messages_by_port_complete (std::string  port);
+    void set_log_enable_by_port_complete (std::string  port, bool enable);
+    bool get_log_enable_by_port_complete (std::string  port);
     
     void set_listen_option               (LogLevelEnum logLevel, bool enable);
     bool get_listen_option               (LogLevelEnum logLevel);

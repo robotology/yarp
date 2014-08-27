@@ -311,9 +311,16 @@ void LoggerEngine::logger_thread::run()
             {
                 if (it->logInfo.port_complete==entry.logInfo.port_complete)
                 {
-                    it->logInfo.setNewError(body.level);
-                    it->logInfo.last_update=machine_current_time;
-                    it->append_logEntry(body);
+                    if (it->logging_enabled)
+                    {
+                        it->logInfo.setNewError(body.level);
+                        it->logInfo.last_update=machine_current_time;
+                        it->append_logEntry(body);
+                    }
+                    else
+                    {
+                        //just skipping this message
+                    }
                     break;
                 }
             }
@@ -810,4 +817,40 @@ bool LoggerEngine::clear()
     log_updater->log_list.clear();
     log_updater->mutex.post();
     return true;
+}
+
+void LoggerEngine::set_log_enable_by_port_complete (std::string  port, bool enable)
+{
+    if (log_updater == NULL) return;
+    
+    log_updater->mutex.wait();
+    std::list<LogEntry>::iterator it;
+    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
+    {
+        if (it->logInfo.port_complete == port)
+           {
+               it->logging_enabled=enable;
+               break;
+           }
+    }
+    log_updater->mutex.post();
+}
+
+bool  LoggerEngine::get_log_enable_by_port_complete (std::string  port)
+{
+    if (log_updater == NULL) return false;
+    
+    bool enabled=false;
+    log_updater->mutex.wait();
+    std::list<LogEntry>::iterator it;
+    for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
+    {
+        if (it->logInfo.port_complete == port)
+           {
+               enabled=it->logging_enabled;
+               break;
+           }
+    }
+    log_updater->mutex.post();
+    return enabled;
 }
