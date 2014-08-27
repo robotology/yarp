@@ -1890,11 +1890,15 @@ private:
 public:
     Port core;
 
-    BottleReader(const char *name, bool showEnvelope) : done(0) {
+    BottleReader() : done(0) {
         raw = false;
-        env = showEnvelope;
+        env = false;
         core.setReader(*this);
         core.setReadOnly();
+    }
+
+    void open(const char *name, bool showEnvelope) {
+        env = showEnvelope;
         if (core.open(name)) {
             companion_active_port = &core;
             address = core.where();
@@ -1973,7 +1977,8 @@ int Companion::cmdReadWrite(int argc, char *argv[])
     const char *verbatim[] = { "verbatim", NULL };
 
     companion_install_handler();
-    BottleReader reader(read_port_name,false);
+    BottleReader reader;
+    reader.open(read_port_name,false);
 
 	int ret = write(write_port_name,1,(char**)&verbatim);
 
@@ -2051,7 +2056,9 @@ int Companion::cmdTopic(int argc, char *argv[]) {
 
 int Companion::read(const char *name, const char *src, bool showEnvelope) {
     companion_install_handler();
-    BottleReader reader(name,showEnvelope);
+    BottleReader reader;
+    applyArgs(reader.core);
+    reader.open(name,showEnvelope);
     if (src!=NULL) {
         NetworkBase::connect(src,reader.getName().c_str());
         //reader.core.addOutput(reader.getName().c_str());

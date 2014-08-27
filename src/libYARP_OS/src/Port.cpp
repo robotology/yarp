@@ -538,7 +538,10 @@ bool Port::open(const Contact& contact, bool registerName,
         registerName = false;
     }
 
-    ConstString typ = getType().getName();
+    ConstString typ = getType().getNameOnWire();
+    if (typ=="") {
+        typ = getType().getName();
+    }
     if (typ!="") {
         NestedContact nc;
         nc.fromString(contact2.getName());
