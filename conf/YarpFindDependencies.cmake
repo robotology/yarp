@@ -48,12 +48,6 @@ macro(checkandset_dependency package)
         set(YARP_HAS_${PKG} FALSE)
     endif()
 
-    #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_SYSTEM_${PKG})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
-
 endmacro (checkandset_dependency)
 
 
@@ -80,12 +74,6 @@ macro(checkbuildandset_dependency package)
 
     # YARP_HAS_${PKG}
     set(YARP_HAS_${PKG} ${YARP_USE_${PKG}})
-
-    #store all dependency flags for later export
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_${PKG})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_${PKG})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_HAS_SYSTEM_${PKG})
-    set_property(GLOBAL APPEND PROPERTY YARP_DEPENDENCIES_FLAGS YARP_USE_SYSTEM_${PKG})
 
 endmacro(checkbuildandset_dependency)
 
