@@ -136,7 +136,7 @@
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
-                <widget class="LogWidget" name="system_message">
+                <widget class="MessageWidget" name="system_message">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
@@ -675,7 +675,7 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>LogWidget</class>
+   <class>MessageWidget</class>
    <extends>QListWidget</extends>
    <header>messageWidget.h</header>
   </customwidget>
