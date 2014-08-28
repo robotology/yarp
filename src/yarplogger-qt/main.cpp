@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <yarp/os/YarprunLogger.h>
+#include <cstdio>
 
 int main(int argc, char *argv[])
 {
