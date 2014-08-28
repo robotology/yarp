@@ -2,7 +2,7 @@
 #define ADVANCED_DIALOG_H
 
 #include <QDialog>
-#include <qabstractbutton>
+#include <QAbstractButton>
 #include <yarp/os/YarprunLogger.h>
 
 namespace Ui {
