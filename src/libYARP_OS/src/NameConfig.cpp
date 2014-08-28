@@ -112,7 +112,8 @@ String NameConfig::expandFilename(const char *fname) {
 String NameConfig::getSafeString(const String& txt) {
     String result = txt;
     for (unsigned int i=0; i<result.length(); i++) {
-        if (result[i]=='/') {
+        char ch = result[i];
+        if (!((ch>='0'&&ch<='9')||(ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z'))) {
             result[i] = '_';
         }
     }
