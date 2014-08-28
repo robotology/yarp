@@ -197,5 +197,7 @@ mark_as_advanced(
   )
 
 # Set package properties if FeatureSummary was included
-set_package_properties(FFMPEG PROPERTIES DESCRIPTION "A complete, cross-platform solution to record, convert and stream audio and video")
-set_package_properties(FFMPEG PROPERTIES URL "http://ffmpeg.org/")
+if(COMMAND set_package_properties)
+  set_package_properties(FFMPEG PROPERTIES DESCRIPTION "A complete, cross-platform solution to record, convert and stream audio and video")
+  set_package_properties(FFMPEG PROPERTIES URL "http://ffmpeg.org/")
+endif()
