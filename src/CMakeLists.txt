@@ -36,7 +36,12 @@ add_subdirectory(yarpdev)
 add_subdirectory(yarpmanager)
 add_subdirectory(yarpmanager-console)
 
-# gtk GUIs
+# Qt5 GUIs
+add_subdirectory(yarpview-qt)
+add_subdirectory(yarpscope-qt)
+add_subdirectory(yarpmanager-qt)
+
+# GTK2 GUIs
 add_subdirectory(yarpview-gtk)
 add_subdirectory(yarpscope-gtk)
 add_subdirectory(yarpmanager-gtk)

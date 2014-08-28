@@ -5,6 +5,20 @@
 include(CMakeParseArguments)
 include(GNUInstallDirs)
 
+
+# Define CMAKE_INSTALL_QMLDIR for installing QML plugins
+if(NOT DEFINED CMAKE_INSTALL_QMLDIR)
+  set(CMAKE_INSTALL_QMLDIR "${CMAKE_INSTALL_LIBDIR}/qt5/qml" CACHE PATH "qml plugins (lib/qt5/qml)")
+endif()
+mark_as_advanced(CMAKE_INSTALL_QMLDIR)
+if(NOT IS_ABSOLUTE ${CMAKE_INSTALL_QMLDIR})
+  set(CMAKE_INSTALL_FULL_QMLDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_QMLDIR}")
+else()
+  set(CMAKE_INSTALL_FULL_QMLDIR "${CMAKE_INSTALL_QMLDIR}")
+endif()
+
+
+
 # This macro generates the following CMake variables, that can be used as "DESTINATION" argument to the yarp_install macro 
 # to copy/install data into appropriate folders in the calling package's build tree and installation directory:
 # <PACKAGE>_CONTEXTS_INSTALL_DIR for "context" folders, containing configuration files and data that modules look for at runtime
@@ -69,6 +83,7 @@ macro(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
     set(${_NAME}_APPLICATIONS_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/applications" CACHE INTERNAL "application templates' installation directory for ${_name} (relative to build/installation dir")
     set(${_NAME}_MODULES_TEMPLATES_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/templates/modules" CACHE INTERNAL "module templates' installation directory for ${_name} (relative to build/installation dir")
     set(${_NAME}_ROBOTS_INSTALL_DIR "${${_NAME}_DATA_INSTALL_DIR}/robots" CACHE INTERNAL "robot-specific configurations installation directory for ${_name} (relative to build/installation dir")
+    set(${_NAME}_QML2_IMPORT_DIR ${CMAKE_INSTALL_QMLDIR} CACHE INTERNAL "QML2 import directory for ${_name} (relative to build/installation dir")
 endmacro()
 
 # This macro has the same signature as CMake "install" command (i.e., with DESTINATION and FILES/DIRECTORY arguments); in addition to calling the "install" command,

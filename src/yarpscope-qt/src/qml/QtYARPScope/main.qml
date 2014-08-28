@@ -38,7 +38,7 @@ ApplicationWindow {
         anchors.fill: parent
         id: graph
         objectName: "YARPScope1"
-    }  
+    }
     /*************************************************/
 
     Connections{
