@@ -188,7 +188,7 @@ void MainWindow::on_enableLogTab_action()
     QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
     if (qvar.isValid()==false)
     {
-        system_message->addMessage("on_clearLogTab_action error",LOGWIDGET_ERROR);
+        system_message->addMessage("on_clearLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
     int model_row = qvar.toInt();
@@ -215,7 +215,7 @@ void MainWindow::on_clearLogTab_action()
     QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
     if (qvar.isValid()==false)
     {
-        system_message->addMessage("on_clearLogTab_action error",LOGWIDGET_ERROR);
+        system_message->addMessage("on_clearLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
     int model_row = qvar.toInt();
@@ -247,7 +247,7 @@ void MainWindow::on_saveLogTab_action()
     QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
     if (qvar.isValid()==false)
     {
-        system_message->addMessage("on_clearLogTab_action error",LOGWIDGET_ERROR);
+        system_message->addMessage("on_clearLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
     int model_row = qvar.toInt();
@@ -259,7 +259,7 @@ void MainWindow::on_resetCountersLogTab_action()
     QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
     if (qvar.isValid()==false)
     {
-        system_message->addMessage("on_resetCountersLogTab_action error",LOGWIDGET_ERROR);
+        system_message->addMessage("on_resetCountersLogTab_action error",MESSAGE_LEVEL_ERROR);
         return;
     }
     int model_row = qvar.toInt();
@@ -301,7 +301,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
 
     ui->setupUi(this);
 
-    system_message = ui->tab->findChild<LogWidget*>("system_message");
+    system_message = ui->tab->findChild<MessageWidget*>("system_message");
     system_message->addMessage("Application Started");
 
     model_yarprunports = new QStandardItemModel(this);
@@ -578,7 +578,7 @@ void MainWindow::on_actionStart_Logger_triggered()
     }
     else
     {
-        system_message->addMessage("Unable to start: maybe logger port is conflicting with another running process?",LOGWIDGET_ERROR);
+        system_message->addMessage("Unable to start: maybe logger port is conflicting with another running process?",MESSAGE_LEVEL_ERROR);
     }
 }
 
@@ -595,7 +595,7 @@ void MainWindow::on_actionStop_Logger_triggered()
     }
     else
     {
-        system_message->addMessage("Unable to stop: logger is not currently running",LOGWIDGET_ERROR);
+        system_message->addMessage("Unable to stop: logger is not currently running",MESSAGE_LEVEL_ERROR);
     }
 }
 
@@ -629,7 +629,7 @@ void MainWindow::on_actionClear_current_log_triggered()
     if (row>=0)
         on_clearLogTab(row);
     else
-        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
+        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
 }
 
 void MainWindow::on_actionExport_current_log_to_text_file_triggered()
@@ -638,7 +638,7 @@ void MainWindow::on_actionExport_current_log_to_text_file_triggered()
     if (row>=0)
         on_saveLogTab(row);
     else
-        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
+        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
 }
 
 void MainWindow::on_actionDisable_current_log_triggered()
@@ -647,7 +647,7 @@ void MainWindow::on_actionDisable_current_log_triggered()
     if (row>=0)
         on_enableLogTab(row);
     else
-        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
+        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
 }
 
 void MainWindow::on_actionReset_current_log_error_warning_counters_triggered()
@@ -656,5 +656,5 @@ void MainWindow::on_actionReset_current_log_error_warning_counters_triggered()
     if (row>=0)
         on_resetCountersLogTab(row);
     else
-        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
+        system_message->addMessage("Invalid log selected", MESSAGE_LEVEL_ERROR);
 }

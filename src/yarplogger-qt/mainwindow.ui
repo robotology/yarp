@@ -677,7 +677,7 @@
   <customwidget>
    <class>LogWidget</class>
    <extends>QListWidget</extends>
-   <header>messagewidget.h</header>
+   <header>messageWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

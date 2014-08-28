@@ -8,7 +8,7 @@
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
 #include <yarp/os/ResourceFinder.h>
-#include "messagewidget.h"
+#include "messageWidget.h"
 #include "yarprunPortSorting.h"
 
 namespace Ui {
@@ -97,7 +97,7 @@ private:
     QItemSelectionModel              *selection_yarprunports;
     QTimer                           *mainTimer;
     QLabel                           *statusBarLabel;
-    LogWidget                        *system_message;
+    MessageWidget                    *system_message;
     YarprunPortsSortFilterProxyModel *proxyModel;
     void loadTextFile();
     QString recomputeFilters();

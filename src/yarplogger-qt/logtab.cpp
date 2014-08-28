@@ -1,7 +1,7 @@
 #include "logtab.h"
 #include "ui_logtab.h"
 
-LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, LogWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
+LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab)
 { 
