@@ -38,6 +38,10 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, MessageWidget
     model_logs->setHorizontalHeaderItem(1,new QStandardItem("local timestamp"));
     model_logs->setHorizontalHeaderItem(2,new QStandardItem("level"));
     model_logs->setHorizontalHeaderItem(3,new QStandardItem("message"));
+    ui->listView->setColumnWidth(0,120);
+    ui->listView->setColumnWidth(1,120);
+    ui->listView->setColumnWidth(2,120);
+    ui->listView->setColumnWidth(3,100);
     ui->listView->horizontalHeader()->setSectionResizeMode(3,QHeaderView::Stretch);
     ui->listView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     ui->listView->verticalHeader()->setDefaultSectionSize(20);
