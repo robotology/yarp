@@ -36,7 +36,8 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindTinyXML.cmake
                      FindReadline.cmake
                      FindFTDI.cmake
-                     FindStage.cmake)
+                     FindStage.cmake
+                     FindFreenect.cmake)
 
 install(FILES ${YARP_CMAKE_FILES}
        COMPONENT scripts
