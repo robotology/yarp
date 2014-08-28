@@ -1,18 +1,18 @@
-<RCC>
-    <qresource prefix="/new/prefix1">
-        <file>images/run_ico.png</file>
-        <file>images/stop_ico.png</file>
-        <file>images/progress_ico.png</file>
-        <file>images/save_icon.png</file>
-        <file>images/all_ico.png</file>
-        <file>images/all_ico_b.png</file>
-        <file>images/debug_ico.png</file>
-        <file>images/debug_ico_b.png</file>
-        <file>images/error_ico.png</file>
-        <file>images/error_ico_b.png</file>
-        <file>images/info_ico.png</file>
-        <file>images/info_ico_b.png</file>
-        <file>images/warning_ico.png</file>
-        <file>images/warning_ico_b.png</file>
-    </qresource>
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>images/run_ico.png</file>
+    <file>images/stop_ico.png</file>
+    <file>images/progress_ico.png</file>
+    <file>images/save_icon.png</file>
+    <file>images/all_ico.png</file>
+    <file>images/all_ico_b.png</file>
+    <file>images/debug_ico.png</file>
+    <file>images/debug_ico_b.png</file>
+    <file>images/error_ico.png</file>
+    <file>images/error_ico_b.png</file>
+    <file>images/info_ico.png</file>
+    <file>images/info_ico_b.png</file>
+    <file>images/warning_ico.png</file>
+    <file>images/warning_ico_b.png</file>
+</qresource>
 </RCC>

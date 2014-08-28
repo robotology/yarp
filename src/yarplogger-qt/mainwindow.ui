@@ -230,8 +230,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/new/prefix1/images/all_ico_b.png</normaloff>
-             <normalon>:/new/prefix1/images/all_ico.png</normalon>:/new/prefix1/images/all_ico_b.png</iconset>
+             <normaloff>:/images/all_ico_b.png</normaloff>
+             <normalon>:/images/all_ico.png</normalon>:/images/all_ico_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -269,8 +269,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/new/prefix1/images/warning_ico_b.png</normaloff>
-             <normalon>:/new/prefix1/images/warning_ico.png</normalon>:/new/prefix1/images/warning_ico_b.png</iconset>
+             <normaloff>:/images/warning_ico_b.png</normaloff>
+             <normalon>:/images/warning_ico.png</normalon>:/images/warning_ico_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -308,8 +308,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/new/prefix1/images/info_ico_b.png</normaloff>
-             <normalon>:/new/prefix1/images/info_ico.png</normalon>:/new/prefix1/images/info_ico_b.png</iconset>
+             <normaloff>:/images/info_ico_b.png</normaloff>
+             <normalon>:/images/info_ico.png</normalon>:/images/info_ico_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -347,8 +347,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/new/prefix1/images/debug_ico_b.png</normaloff>
-             <normalon>:/new/prefix1/images/debug_ico.png</normalon>:/new/prefix1/images/debug_ico_b.png</iconset>
+             <normaloff>:/images/debug_ico_b.png</normaloff>
+             <normalon>:/images/debug_ico.png</normalon>:/images/debug_ico_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -386,8 +386,8 @@
            </property>
            <property name="icon">
             <iconset resource="res.qrc">
-             <normaloff>:/new/prefix1/images/error_ico_b.png</normaloff>
-             <normalon>:/new/prefix1/images/error_ico.png</normalon>:/new/prefix1/images/error_ico_b.png</iconset>
+             <normaloff>:/images/error_ico_b.png</normaloff>
+             <normalon>:/images/error_ico.png</normalon>:/images/error_ico_b.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -543,7 +543,7 @@
   <action name="actionSave_Log">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/new/prefix1/images/save_icon.png</normaloff>:/new/prefix1/images/save_icon.png</iconset>
+     <normaloff>:/images/save_icon.png</normaloff>:/images/save_icon.png</iconset>
    </property>
    <property name="text">
     <string>Save Log Session</string>
@@ -557,7 +557,7 @@
   <action name="actionStart_Logger">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/new/prefix1/images/run_ico.png</normaloff>:/new/prefix1/images/run_ico.png</iconset>
+     <normaloff>:/images/run_ico.png</normaloff>:/images/run_ico.png</iconset>
    </property>
    <property name="text">
     <string>Start Logger</string>
@@ -571,7 +571,7 @@
   <action name="actionStop_Logger">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/new/prefix1/images/stop_ico.png</normaloff>:/new/prefix1/images/stop_ico.png</iconset>
+     <normaloff>:/images/stop_ico.png</normaloff>:/images/stop_ico.png</iconset>
    </property>
    <property name="text">
     <string>Stop Logger</string>
@@ -629,7 +629,7 @@
   <action name="actionRefresh">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/new/prefix1/images/progress_ico.png</normaloff>:/new/prefix1/images/progress_ico.png</iconset>
+     <normaloff>:/images/progress_ico.png</normaloff>:/images/progress_ico.png</iconset>
    </property>
    <property name="text">
     <string>Refresh</string>
