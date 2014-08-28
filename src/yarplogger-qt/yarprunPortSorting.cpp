@@ -1,5 +1,6 @@
 #include <QString>
 #include <string>
+#include <cstdio>
 #include "yarprunPortSorting.h"
 
 YarprunPortsSortFilterProxyModel::YarprunPortsSortFilterProxyModel( QObject *parent ) : QSortFilterProxyModel( parent )
