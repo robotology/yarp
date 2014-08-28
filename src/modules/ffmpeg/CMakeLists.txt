@@ -1,40 +1,29 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- 
-IF (COMPILE_DEVICE_LIBRARY)
-  YARP_PREPARE_DEVICE(ffmpeg_grabber TYPE FfmpegGrabber INCLUDE FfmpegGrabber.h WRAPPER grabber)
-  YARP_PREPARE_DEVICE(ffmpeg_writer TYPE FfmpegWriter INCLUDE FfmpegWriter.h)
-  YARP_ADD_DEVICE_FINGERPRINT(ffmpeg.ini ffmpeg_grabber ffmpeg_writer)
-ENDIF (COMPILE_DEVICE_LIBRARY)
 
-IF (SKIP_ffmpeg_grabber AND SKIP_ffmpeg_writer)
-  SET(SKIP_ffmpeg TRUE)
-ENDIF (SKIP_ffmpeg_grabber AND SKIP_ffmpeg_writer)
+if(COMPILE_DEVICE_LIBRARY)
+  yarp_prepare_device(ffmpeg_grabber TYPE FfmpegGrabber INCLUDE FfmpegGrabber.h WRAPPER grabber)
+  yarp_prepare_device(ffmpeg_writer TYPE FfmpegWriter INCLUDE FfmpegWriter.h)
+  yarp_add_device_fingerprint(ffmpeg.ini ffmpeg_grabber ffmpeg_writer)
+endif()
 
+if(SKIP_ffmpeg_grabber AND SKIP_ffmpeg_writer)
+  set(SKIP_ffmpeg TRUE)
+endif()
 
-IF (NOT SKIP_ffmpeg)
-
-  FIND_PACKAGE(YARP REQUIRED)
-
-  FIND_PACKAGE(FFMPEG REQUIRED)
-
-  IF (FFMPEG_FOUND)
-
-    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${FFMPEG_INCLUDE_DIR})
-    INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS} ${ACE_INCLUDE_DIRS})
-    LINK_LIBRARIES(${FFMPEG_LIBRARIES} ${YARP_LIBRARIES})
-    IF (MINGW)
-      LINK_LIBRARIES(ws2_32)
-    ENDIF (MINGW)
-
-    YARP_ADD_PLUGIN(yarp_ffmpeg FfmpegGrabber.cpp FfmpegWriter.cpp FfmpegGrabber.h FfmpegWriter.h ffmpeg_api.h ffmpeg_api.cpp)
-
-  ELSE (FFMPEG_FOUND)
-
-    MESSAGE(SEND_ERROR "ffmpeg not found")
-
-  ENDIF (FFMPEG_FOUND)
-
-
-ENDIF (NOT SKIP_ffmpeg)
+if(NOT SKIP_ffmpeg)
+  find_package(YARP REQUIRED)
+  find_package(FFMPEG REQUIRED)
+  if(FFMPEG_FOUND)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${FFMPEG_INCLUDE_DIR})
+    include_directories(${YARP_INCLUDE_DIRS} ${ACE_INCLUDE_DIRS})
+    link_libraries(${FFMPEG_LIBRARIES} ${YARP_LIBRARIES})
+    if(MINGW)
+      link_libraries(ws2_32)
+    endif()
+    yarp_add_plugin(yarp_ffmpeg FfmpegGrabber.cpp FfmpegWriter.cpp FfmpegGrabber.h FfmpegWriter.h ffmpeg_api.h ffmpeg_api.cpp)
+  else()
+    message(SEND_ERROR "ffmpeg not found")
+  endif()
+endif()

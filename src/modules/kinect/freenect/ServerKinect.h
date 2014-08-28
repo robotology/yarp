@@ -6,8 +6,8 @@
  * timestamps.
  *
  * Uses the following parameters:
- * "name": [string] defines yarpdev name as well as kinect port name 
- *                  as <name>_new_kinect. 
+ * "name": [string] defines yarpdev name as well as kinect port name
+ *                  as <name>_new_kinect.
  *                  Make sure to start name with the '/' character.
  * XXX ASSUMED TRUE FOR NOW:
  * "stamp": [bool] defines whether to timestamp the packages on the server side.
@@ -102,7 +102,7 @@ public:
     DeviceResponder::makeUsage();
     addUsage("[get] [w]", "get width of image");
     addUsage("[get] [h]", "get height of image");
-	
+
     // start thread
     if(kinect != 0) {
       start();
@@ -110,7 +110,7 @@ public:
     }
 
     printf("subdevice <%s> doesn't look like a kinect device (no appropriate interfaces were acquired)\n", name->toString().c_str());
-        
+
     return false;
   }
 
@@ -126,7 +126,7 @@ public:
       return false;
   }
 
-  // DeviceResponder interface    
+  // DeviceResponder interface
   virtual bool respond(const Bottle& cmd, Bottle& response) {
     int code = cmd.get(0).asVocab();
     bool rec = false; // command recognized
@@ -141,7 +141,7 @@ public:
         {
           response.addVocab(VOCAB_IS);
           response.add(cmd.get(1));
-          switch(cmd.get(1).asVocab()) 
+          switch(cmd.get(1).asVocab())
           {
             case VOCAB_WIDTH:
               ok = true;
@@ -166,7 +166,7 @@ public:
       response.addVocab(VOCAB_FAILED);
     } else
       response.addVocab(VOCAB_OK);
-	
+
     return ok;
   }
 
@@ -184,12 +184,12 @@ public:
       p.setEnvelope(stamp);
       writer.write();
       // now = Time::now();
-      // give other threads the chance to run 
+      // give other threads the chance to run
       Time::delay(0.010);
     }
     printf("Kinect server stopping\n");
   }
-    
+
 private:
   PolyDriver poly;
   KinectDeviceDriver * kinect;
@@ -197,7 +197,7 @@ private:
   PortWriterBuffer<PortablePair<ImageOf<PixelMono16>, ImageOf<PixelRgb> > > writer;
   bool addStamp;
   Stamp stamp;
-    
+
   bool closeMain() {
     if (Thread::isRunning()) {
       Thread::stop();

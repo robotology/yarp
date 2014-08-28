@@ -313,15 +313,6 @@ endif()
 #########################################################################
 # Control whether build should be aborted on warnings and errors
 
-
-# TODO Remove this later
-set(YARP_ADMIN "$ENV{YARP_ADMIN}")
-
-if(YARP_ADMIN)
-    message("YARP_ADMIN environment variable is deprecated. Consider setting YARP_ABORT_ON_WARNING and/or YARP_FATAL_ERRORS instead")
-endif(YARP_ADMIN)
-
-
 ### -Werror
 if(CXX_HAS_WERROR)
     option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." TRUE)

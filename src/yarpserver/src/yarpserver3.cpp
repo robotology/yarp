@@ -81,11 +81,11 @@ public:
     bool open(Searchable& options) {
         ConstString dbDefault = ":memory:";
         ConstString subdbDefault = ":memory:";
-        
+
         if (options.check("memory")) {
             fprintf(stderr,"The --memory option was given, but that is now a default. Continuing.\n");
         }
-        
+
         ConstString dbFilename = options.check("portdb",
                                                Value(dbDefault)).asString();
         ConstString subdbFilename = options.check("subdb",
@@ -95,16 +95,16 @@ public:
         int sock = options.check("socket",Value(Network::getDefaultPortRange())).asInt();
         bool cautious = options.check("cautious");
         bool verbose = options.check("verbose");
-        
+
         if (!silent) {
-            printf("Using port database: %s\n", 
+            printf("Using port database: %s\n",
                    dbFilename.c_str());
-            printf("Using subscription database: %s\n", 
+            printf("Using subscription database: %s\n",
                    subdbFilename.c_str());
             if (dbFilename!=":memory:" || subdbFilename!=":memory:") {
                 printf("If you ever need to clear the name server's state, just delete those files.\n\n");
             }
-            printf("IP address: %s\n", 
+            printf("IP address: %s\n",
                    (ip=="...")?"default":ip.c_str());
             printf("Port number: %d\n", sock);
         }
@@ -132,9 +132,9 @@ public:
             subscriber.setVerbose(true);
         }
 
-        contact = 
+        contact =
             Contact::byName("...").addSocket("tcp",ip.c_str(),sock);
-        
+
         if (!options.check("local")) {
             if (!BootstrapServer::configFileBootstrap(contact,
                                                       options.check("read"),
@@ -241,7 +241,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     if (!nc.open(options)) {
         return 1;
     }
- 
+
     NameServerManager name(nc);
 #ifdef YARP_HAS_ACE
     BootstrapServer fallback(name);
@@ -276,7 +276,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     printf("Name server can be browsed at http://%s:%d/\n",
            nc.where().getHost().c_str(), nc.where().getPort());
     printf("\nOk.  Ready!\n");
-    
+
     while (true) {
         Time::delay(600);
         printf("Name server running happily\n");

@@ -42,8 +42,8 @@ namespace yarp {
 *	- [localPortPrefix]/depthMap:i - depth map image port
 *	- [localPortPrefix]/imageMap:i - rgb camera image port
 */
-class yarp::dev::KinectDeviceDriverClient : /*public GenericYarpDriver,*/ public TypedReaderCallback<ImageOf<PixelRgb> >, 
-									  public TypedReaderCallback<ImageOf<PixelInt> >, public TypedReaderCallback<Bottle>, public yarp::dev::IKinectDeviceDriver, 
+class yarp::dev::KinectDeviceDriverClient : /*public GenericYarpDriver,*/ public TypedReaderCallback<ImageOf<PixelRgb> >,
+									  public TypedReaderCallback<ImageOf<PixelInt> >, public TypedReaderCallback<Bottle>, public yarp::dev::IKinectDeviceDriver,
 									  public yarp::dev::DeviceDriver {
 public:
 	KinectDeviceDriverClient();

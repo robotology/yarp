@@ -58,7 +58,7 @@ namespace yarp {
 *	- [portPrefix]/depthMap:o - depth map image port
 *	- [portPrefix]/imageMap:o - rgb camera image port
 */
-class yarp::dev::KinectDeviceDriverServer: public IService, public yarp::dev::IKinectDeviceDriver, 
+class yarp::dev::KinectDeviceDriverServer: public IService, public yarp::dev::IKinectDeviceDriver,
 	public yarp::dev::DeviceDriver{
 public:
 	//KinectDeviceDriverServer(bool openPorts = false, bool userDetection = false);

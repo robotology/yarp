@@ -220,8 +220,8 @@ endif(CREATE_CHICKEN)
 
 if(CREATE_ALLEGRO)
   set(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}")
-  set(ALLEGRO_INSTALL_PREFIX "/usr/local/lib/allegro/site" CACHE PATH "Install path prefix of allegro bindings.")
-  set(ALLEGRO_ASDF_SYSTEMS "${ALLEGRO_INSTALL_PREFIX}/../asdf-systems" CACHE PATH "Path to register asdf file.")
+  set(ALLEGRO_INSTALL_DIR "lib/allegro/site" CACHE PATH "Install path of allegro bindings.")
+  set(ALLEGRO_ASDF_SYSTEMS_DIR "lib/allegro/asdf-systems" CACHE PATH "Path to register asdf file.")
 
   set(allegro_PROJ_FILE allegro/yarp.asd)
   set(allegro_SRC_FILE yarp.cl)
@@ -232,19 +232,18 @@ if(CREATE_ALLEGRO)
 
   string(REGEX REPLACE "\\.cl" ".lisp" allegro_DEST_FILE ${allegro_SRC_FILE})
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${allegro_PROJ_FILE}
-          DESTINATION ${ALLEGRO_INSTALL_PREFIX}/yarp)
+          DESTINATION ${ALLEGRO_INSTALL_DIR}/yarp)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${allegro_SRC_FILE}
-          DESTINATION ${ALLEGRO_INSTALL_PREFIX}/yarp/src
+          DESTINATION ${ALLEGRO_INSTALL_DIR}/yarp/src
           RENAME ${allegro_DEST_FILE})
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${allegro_LIBS}
-          DESTINATION ${ALLEGRO_INSTALL_PREFIX}/yarp/lib)
+          DESTINATION ${ALLEGRO_INSTALL_DIR}/yarp/lib)
 
   if(UNIX)
     install(CODE "execute_process(COMMAND \"mkdir\" \"-p\" \"${ALLEGRO_ASDF_SYSTEMS}\"
-                                  COMMAND \"ln\" \"-s\" \"${ALLEGRO_INSTALL_PREFIX}/yarp/yarp.asd\" \"${ALLEGRO_ASDF_SYSTEMS}\")")
-  endif(UNIX)
-  set(YARP_COLLISION_AVOIDANCE TRUE)
-endif(CREATE_ALLEGRO)
+                                  COMMAND \"ln\" \"-s\" \"${CMAKE_INSTALL_PREFIX}/${ALLEGRO_INSTALL_DIR}/yarp/yarp.asd\" \"${CMAKE_INSTALL_PREFIX}/${ALLEGRO_ASDF_SYSTEMS}\")")
+  endif()
+endif()
 
 if(CREATE_TCL)
   set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
@@ -267,7 +266,17 @@ if(CREATE_CSHARP)
   if(YARP_COLLISION_AVOIDANCE)
     set(target_name yarp_cs)
   endif()
-  set(CMAKE_SWIG_FLAGS "-Wall;-dllimport;${target_name}") #-dllimport is actually needed only for CMake versions prior to 3.0 ( http://public.kitware.com/Bug/view.php?id=13814 )
+
+  if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.0)
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. This check can be removed.")
+  endif()
+  # -dllimport is actually needed only for CMake versions prior to 3.0 ( http://public.kitware.com/Bug/view.php?id=13814 )
+  if(${CMAKE_VERSION} VERSION_LESS 3.0)
+    set(CMAKE_SWIG_FLAGS "-Wall;-dllimport;${target_name}")
+  else()
+    set(CMAKE_SWIG_FLAGS "-Wall")
+  endif()
+
   if(WIN32 AND NOT CYGWIN)
     option(PREPARE_CLASS_FILES "Prepare NET library" ON)
     swig_add_module(${target_name} csharp yarp.i)

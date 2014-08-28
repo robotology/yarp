@@ -234,7 +234,7 @@ static String getStdin() {
             free(szLine);
             szLine = (char*)NULL;
         }
-        
+
         szLine = readline(">>");
         if(szLine && *szLine) {
             txt = szLine;
