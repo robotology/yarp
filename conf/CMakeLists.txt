@@ -38,7 +38,8 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      FindFTDI.cmake
                      FindStage.cmake
                      FindFreenect.cmake
-                     FindLibUsb1.cmake)
+                     FindLibUsb1.cmake
+                     FindOpenNI.cmake)
 
 install(FILES ${YARP_CMAKE_FILES}
        COMPONENT scripts
