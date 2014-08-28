@@ -66,11 +66,15 @@ void MainWindow::updateMain()
 
                 QColor rowcolor = QColor(Qt::white);
                 yarp::os::YarprunLogger::LogLevelEnum last_error = it->getLastError();
-                if      (last_error==yarp::os::YarprunLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
-                else if (last_error==yarp::os::YarprunLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
 
-                for (int j=0; j<model_yarprunports->columnCount(); j++)
-                    model_yarprunports->item(i,j)->setBackground(rowcolor);
+                bool     log_enabled =  this->theLogger->get_log_enable_by_port_complete(it->port_complete);
+                if (log_enabled)
+                {
+                    if      (last_error==yarp::os::YarprunLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
+                    else if (last_error==yarp::os::YarprunLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
+                    for (int j=0; j<model_yarprunports->columnCount(); j++)
+                        model_yarprunports->item(i,j)->setBackground(rowcolor);
+                }
                 
                 existing = true;
                 if (!tm && show_mute_ports_enabled==false) {model_yarprunports->removeRow(i);}
@@ -156,14 +160,43 @@ void MainWindow::updateMain()
     ui->yarprunTreeView->setColumnWidth(5,60);
 }
 
-void MainWindow::on_clearLogTab_action()
+void MainWindow::on_enableLogTab(int model_row)
+{
+    std::string logname = model_yarprunports->item(model_row,1)->text().toStdString();
+    bool log_enabled = theLogger->get_log_enable_by_port_complete(logname);
+
+    if (log_enabled) 
+    {
+        theLogger->set_log_enable_by_port_complete(logname,false);
+        for (int j=0; j<model_yarprunports->columnCount(); j++)
+            model_yarprunports->item(model_row,j)->setBackground(QColor("#808080"));
+        QString message = logname.c_str() + QString(" log disabled");
+        system_message->addMessage(message);
+    }
+    else
+    {
+        theLogger->set_log_enable_by_port_complete(logname,true);
+        for (int j=0; j<model_yarprunports->columnCount(); j++)
+            model_yarprunports->item(model_row,j)->setBackground(QColor(Qt::white));
+        QString message = logname.c_str() + QString(" log enabled");
+        system_message->addMessage(message);
+    }
+}
+
+void MainWindow::on_enableLogTab_action()
 {
     QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
     if (qvar.isValid()==false)
     {
+        system_message->addMessage("on_clearLogTab_action error",LOGWIDGET_ERROR);
         return;
     }
     int model_row = qvar.toInt();
+    on_enableLogTab(model_row);
+}
+
+void MainWindow::on_clearLogTab(int model_row)
+{
     QString logname = model_yarprunports->item(model_row,1)->text();
     theLogger->clear_messages_by_port_complete(logname.toStdString());
     for (int i=0; i<ui->logtabs->count(); i++)
@@ -173,16 +206,30 @@ void MainWindow::on_clearLogTab_action()
                 if (l) l->clear_model_logs();
                 break;
             }
+    QString message = logname + QString(" log cleared");
+    system_message->addMessage(message);
 }
 
-void MainWindow::on_saveLogTab_action()
+void MainWindow::on_clearLogTab_action()
 {
     QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
     if (qvar.isValid()==false)
     {
+        system_message->addMessage("on_clearLogTab_action error",LOGWIDGET_ERROR);
         return;
     }
     int model_row = qvar.toInt();
+    on_clearLogTab(model_row);
+}
+
+void MainWindow::on_resetCountersLogTab(int model_row)
+{
+    std::string logname = model_yarprunports->item(model_row,1)->text().toStdString();
+    system_message->addMessage(QString("Counters resetted for log ") + QString(logname.c_str()));
+}
+
+void MainWindow::on_saveLogTab(int model_row)
+{
     std::string logname = model_yarprunports->item(model_row,1)->text().toStdString();
     std::string preferred_filename=logname;
     std::replace(preferred_filename.begin(), preferred_filename.end(), '/', '_');
@@ -195,17 +242,53 @@ void MainWindow::on_saveLogTab_action()
     }
 }
 
+void MainWindow::on_saveLogTab_action()
+{
+    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
+    if (qvar.isValid()==false)
+    {
+        system_message->addMessage("on_clearLogTab_action error",LOGWIDGET_ERROR);
+        return;
+    }
+    int model_row = qvar.toInt();
+    on_saveLogTab(model_row);
+}
+
+void MainWindow::on_resetCountersLogTab_action()
+{
+    QVariant qvar=qobject_cast<QAction*>(sender())->property("model_row");
+    if (qvar.isValid()==false)
+    {
+        system_message->addMessage("on_resetCountersLogTab_action error",LOGWIDGET_ERROR);
+        return;
+    }
+    int model_row = qvar.toInt();
+    on_resetCountersLogTab(model_row);
+}
+
 void MainWindow::ctxMenu(const QPoint &pos)
 {
     QModelIndex index = ui->yarprunTreeView->indexAt(pos);
     int model_row=index.row();
     if (model_row==-1) return;
 
+    std::string portName = model_yarprunports->item(model_row,1)->text().toStdString();
+    bool log_enabled = theLogger->get_log_enable_by_port_complete(portName);
+
     QMenu *menu = new QMenu;
     QAction *act1 = menu->addAction(tr("Clear current log"), this, SLOT(on_clearLogTab_action()));
     QAction *act2 = menu->addAction(tr("Export current log to text file"), this, SLOT(on_saveLogTab_action()));
+    QAction *act3 = 0;
+    if (log_enabled)
+       {act3 = menu->addAction(tr("Disable current log"), this, SLOT(on_enableLogTab_action()));}
+    else
+       {act3 = menu->addAction(tr("Enable current log"), this, SLOT(on_enableLogTab_action()));}
+    QAction *act4 = menu->addAction(tr("Reset errors/warning counters"), this, SLOT(on_resetCountersLogTab_action()));
+
     act1->setProperty("model_row", model_row);
     act2->setProperty("model_row", model_row);
+    act3->setProperty("model_row", model_row);
+    act4->setProperty("model_row", model_row);
     menu->exec(ui->yarprunTreeView->mapToGlobal(pos));
 }
 
@@ -222,6 +305,9 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     system_message->addMessage("Application Started");
 
     model_yarprunports = new QStandardItemModel(this);
+    proxyModel = new YarprunPortsSortFilterProxyModel(this);
+    proxyModel->setSourceModel(model_yarprunports);
+
     statusBarLabel = new QLabel;
     statusBarLabel->setText("Ready");
     statusBarLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -231,8 +317,9 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
     mainTimer->start(500);
 
-    ui->yarprunTreeView->setModel(model_yarprunports);
+    ui->yarprunTreeView->setModel(proxyModel);
     ui->yarprunTreeView->expandAll();
+    selection_yarprunports=ui->yarprunTreeView->selectionModel();
 
     connect(ui->yarprunTreeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
 
@@ -534,4 +621,40 @@ void MainWindow::on_actionClear_triggered()
         if (ui->logtabs) ui->logtabs->clear();
         system_message->addMessage("Log cleared");
     }
+}
+
+void MainWindow::on_actionClear_current_log_triggered()
+{
+    int row = selection_yarprunports->currentIndex().row();
+    if (row>=0)
+        on_clearLogTab(row);
+    else
+        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
+}
+
+void MainWindow::on_actionExport_current_log_to_text_file_triggered()
+{
+    int row = selection_yarprunports->currentIndex().row();
+    if (row>=0)
+        on_saveLogTab(row);
+    else
+        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
+}
+
+void MainWindow::on_actionDisable_current_log_triggered()
+{
+    int row = selection_yarprunports->currentIndex().row();
+    if (row>=0)
+        on_enableLogTab(row);
+    else
+        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
+}
+
+void MainWindow::on_actionReset_current_log_error_warning_counters_triggered()
+{
+    int row = selection_yarprunports->currentIndex().row();
+    if (row>=0)
+        on_resetCountersLogTab(row);
+    else
+        system_message->addMessage("Invalid log selected", LOGWIDGET_ERROR);
 }

@@ -9,6 +9,7 @@
 #include <yarp/os/YarprunLogger.h>
 #include <yarp/os/ResourceFinder.h>
 #include "messagewidget.h"
+#include "yarprunPortSorting.h"
 
 namespace Ui {
 class MainWindow;
@@ -54,6 +55,10 @@ private slots:
     
     void on_saveLogTab_action();
 
+    void on_enableLogTab_action();
+
+    void on_resetCountersLogTab_action();
+
     void on_actionSave_Log_triggered(bool checked);
 
     void on_actionLoad_Log_triggered();
@@ -76,14 +81,24 @@ private slots:
 
     void on_actionShow_LocalTimestamps_toggled(bool arg1);
 
+    void on_actionClear_current_log_triggered();
+
+    void on_actionExport_current_log_to_text_file_triggered();
+
+    void on_actionDisable_current_log_triggered();
+
+    void on_actionReset_current_log_error_warning_counters_triggered();
+
 private:
     yarp::os::YarprunLogger::LoggerEngine* theLogger;
 
-    Ui::MainWindow *ui;
-    QStandardItemModel        *model_yarprunports;
-    QTimer *mainTimer;
-    QLabel *statusBarLabel;
-    LogWidget* system_message;
+    Ui::MainWindow                   *ui;
+    QStandardItemModel               *model_yarprunports;
+    QItemSelectionModel              *selection_yarprunports;
+    QTimer                           *mainTimer;
+    QLabel                           *statusBarLabel;
+    LogWidget                        *system_message;
+    YarprunPortsSortFilterProxyModel *proxyModel;
     void loadTextFile();
     QString recomputeFilters();
     void apply_button_filters();
@@ -94,6 +109,12 @@ private:
     bool displayYarprunTimestamps;
     bool displayLocalTimestamps;
     bool show_mute_ports_enabled;
+
+    //helper methods called by other slots
+    void on_enableLogTab         (int model_row);
+    void on_clearLogTab          (int model_row);
+    void on_saveLogTab           (int model_row);
+    void on_resetCountersLogTab  (int model_row);
 };
 
 #endif // MAINWINDOW_H

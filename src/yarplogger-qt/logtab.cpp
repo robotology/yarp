@@ -15,8 +15,8 @@ LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, LogWidget* _s
     displayErrorLevel_enabled=true;
     ui->setupUi(this);
     model_logs = new QStandardItemModel();
-    proxyModelButtons = new QSortFilterProxyModel(this);
-    proxyModelSearch = new QSortFilterProxyModel(this);
+    proxyModelButtons = new LogSortFilterProxyModel(this);
+    proxyModelSearch = new LogSortFilterProxyModel(this);
 #define USE_FILTERS 1
 #if USE_FILTERS
     proxyModelButtons->setSourceModel(model_logs);
@@ -93,6 +93,7 @@ void LogTab::updateLog(bool from_beginning)
         else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_UNDEFINED) { rowcolor = QColor(Qt::white);  error_level="";     }
         else                                                             { rowcolor = QColor(Qt::white);  error_level="";     }
 
+        //using numbers seems not to work. Hence I'm using strings.
         rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());
 
         if (displayColors_enabled)

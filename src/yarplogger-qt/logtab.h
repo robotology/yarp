@@ -8,6 +8,7 @@
 #include <QSortFilterProxyModel>
 #include <yarp/os/YarprunLogger.h>
 #include "messagewidget.h"
+#include "logtabSorting.h"
 
 const std::string ERROR_STRING   = "ERROR";
 const std::string WARNING_STRING = "WARNING";
@@ -44,8 +45,8 @@ private slots:
 public:
     QTimer                  *logTimer;
     QStandardItemModel      *model_logs;
-    QSortFilterProxyModel   *proxyModelButtons;
-    QSortFilterProxyModel   *proxyModelSearch;
+    LogSortFilterProxyModel *proxyModelButtons;
+    LogSortFilterProxyModel *proxyModelSearch;
     void                    displayYarprunTimestamp  (bool enabled);
     void                    displayLocalTimestamp    (bool enabled);
     void                    displayErrorLevel (bool enabled);
