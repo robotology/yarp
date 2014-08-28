@@ -327,6 +327,12 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     m->actions().at(0)->setEnabled(true);
     m->actions().at(1)->setEnabled(false);
     m->actions().at(2)->setEnabled(false);
+
+    displayYarprunTimestamps=true;
+    displayLocalTimestamps=true;
+    displayErrorLevel=true;
+    displayGrid=true;
+    displayColors=true;
 }
 
 MainWindow::~MainWindow()
