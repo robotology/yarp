@@ -506,7 +506,7 @@ public:
         dataFile+="/data.log";
 
     #ifdef ADD_VIDEO
-        transform(videoType.begin(),videoType.end(),videoType.begin(),tolower);
+        transform(videoType.begin(),videoType.end(),videoType.begin(),::tolower);
         if ((videoType!="mkv") && (videoType!="avi"))
         {
             cout << "unknown video type '" << videoType << "' specified; ";
