@@ -53,15 +53,33 @@ the reference time of the machine where the service is running.
 Anyway, a selection between these two Time Stamps is available 
 for the user through --rxTime option. 
  
-Moreover, a further file called 'info.log' is also produced 
-containing information about the data type stored within the 
-'data.log' file as well as the name of the yarp ports connected 
-or disconnected to the dumper, as in the following:
+Moreover, a file called 'info.log' is produced containing 
+information about the data type stored within the 'data.log' 
+file as well as the name of the yarp ports connected or 
+disconnected to the dumper, as in the following: 
 
 \code 
 Type: [Bottle | Image:ppm | Image:ppm; Video:ext(huffyuv)]
 [local-timestamp] /yarp-port-name [connected] 
 [local-timestamp] /yarp-port-name [disconnected]
+\endcode 
+ 
+Finally, a further file called 'timecodes.log' is also generated
+together with the video, which contains the timecode associated 
+to each frame given in millisecond precision. The file content 
+looks like the following: 
+ 
+\code 
+# timecode format v2
+0
+40
+80 
+\endcode 
+ 
+This is useful to recover the exact timing while post-processing 
+the video relying for example on the \e mkvmerge tool: 
+\code 
+mkvmerge -o out.mkv --timecodes 0:timecodes.log video.mkv 
 \endcode 
  
 The module \ref dataSetPlayer can be used to re-play a dump generated 
@@ -316,7 +334,7 @@ public:
     const string toFile(const string &dirName, unsigned int cnt)
     {
         ostringstream fName;
-        fName << std::setw(8) << std::setfill('0') << cnt << ".ppm";
+        fName << setw(8) << setfill('0') << cnt << ".ppm";
         string ret=fName.str();
 
         string extfName=dirName;
@@ -471,7 +489,7 @@ private:
     DumpQueue     &buf;
     DumpType       type;
     ofstream       finfo;
-    ofstream       fdata;
+    ofstream       fdata;    
     string         dirName;
     string         infoFile;
     string         dataFile;
@@ -486,10 +504,13 @@ private:
     bool           closing;
 
 #ifdef ADD_VIDEO
+    ofstream       ftimecodes;
     string         videoFile;
+    string         timecodesFile;
+    double         t0;
     bool           doImgParamsExtraction;
     bool           doSaveFrame;
-    CvVideoWriter *videoWriter;    
+    CvVideoWriter *videoWriter;
 #endif
 
 public:
@@ -518,6 +539,9 @@ public:
         videoFile+="/video.";
         videoFile+=videoType;
 
+        timecodesFile=dirName;
+        timecodesFile+="/timecodes.log";
+
         doImgParamsExtraction=videoOn;
         doSaveFrame=false;
     #endif
@@ -540,14 +564,7 @@ public:
         finfo.open(infoFile.c_str());
         if (!finfo.is_open())
         {
-            cout << "unable to open file" << endl;
-            return false;
-        }
-
-        fdata.open(dataFile.c_str());
-        if (!fdata.is_open())
-        {
-            cout << "unable to open file" << endl;
+            cout << "unable to open file: " << infoFile <<endl;
             return false;
         }
 
@@ -560,8 +577,28 @@ public:
             if (videoOn)
                 finfo<<" Video:"<<videoType<<"(huffyuv);";
         }
-
         finfo<<endl;
+
+        fdata.open(dataFile.c_str());
+        if (!fdata.is_open())
+        {
+            cout << "unable to open file: " << dataFile <<endl;
+            return false;
+        }
+
+    #ifdef ADD_VIDEO
+        if (videoOn)
+        {
+            ftimecodes.open(timecodesFile.c_str()); 
+            if (!ftimecodes.is_open())
+            {
+                cout << "unable to open file: " << timecodesFile << endl;
+                return false;
+            }
+            ftimecodes<<"# timecode format v2"<<endl;
+        }
+    #endif
+
         return true;
     }
 
@@ -597,7 +634,8 @@ public:
                 int frameW=((IplImage*)itemEnd.obj->getPtr())->width;
                 int frameH=((IplImage*)itemEnd.obj->getPtr())->height;
 
-                double dt=itemEnd.timeStamp.getStamp()-itemFront.timeStamp.getStamp();
+                t0=itemFront.timeStamp.getStamp();
+                double dt=itemEnd.timeStamp.getStamp()-t0;
                 if (dt<=0.0)
                     fps=25; // default
                 else
@@ -625,13 +663,19 @@ public:
                 else
                 {
                     ostringstream frame;
-                    frame << "frame_" << std::setw(8) << std::setfill('0') << counter++;
+                    frame << "frame_" << setw(8) << setfill('0') << counter++;
                     fdata << frame.str() << endl;
                 }
 
             #ifdef ADD_VIDEO
                 if (doSaveFrame)
+                {
                     cvWriteFrame(videoWriter,(IplImage*)item.obj->getPtr());
+
+                    // write the timecode of the frame
+                    int dt=(int)(1000.0*(item.timeStamp.getStamp()-t0));
+                    ftimecodes << dt << endl;
+                }
             #endif
 
                 delete item.obj;
@@ -652,6 +696,9 @@ public:
         fdata.close();
 
     #ifdef ADD_VIDEO
+        if (videoOn)
+            ftimecodes.close();
+
         if (doSaveFrame)
             cvReleaseVideoWriter(&videoWriter);
     #endif
@@ -758,7 +805,7 @@ public:
             {
                 ostringstream checkDirName;
                 if (i>0)
-                    checkDirName << "." << templateDirName << "_" << std::setw(5) << std::setfill('0') << i;
+                    checkDirName << "." << templateDirName << "_" << setw(5) << setfill('0') << i;
                 else
                     checkDirName << "." << templateDirName;
             
