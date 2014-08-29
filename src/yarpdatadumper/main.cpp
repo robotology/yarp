@@ -80,7 +80,8 @@ This is useful to recover the exact timing while post-processing
 the video relying for example on the \e mkvmerge tool: 
 \code 
 mkvmerge -o out.mkv --timecodes 0:timecodes.log video.mkv 
-\endcode 
+\endcode
+To get \e mkvmerge do: sudo apt-get install mkvtoolnix
  
 The module \ref dataSetPlayer can be used to re-play a dump generated 
 by the \ref dataDumper.
