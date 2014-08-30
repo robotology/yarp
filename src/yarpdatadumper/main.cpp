@@ -88,7 +88,7 @@ by the \ref dataDumper.
  
 \section lib_sec Libraries 
 - YARP libraries 
-- To record videos: OpenCV 2.0 and the <a 
+- To record videos: OpenCV 2.4 and the <a 
   href="http://wiki.team-mediaportal.com/9_Glossary/Huffyuv">huffyuv</a>
   codec for lossless data compression.
  
@@ -487,31 +487,31 @@ private:
 class DumpThread : public RateThread
 {
 private:
-    DumpQueue     &buf;
-    DumpType       type;
-    ofstream       finfo;
-    ofstream       fdata;    
-    string         dirName;
-    string         infoFile;
-    string         dataFile;
-    unsigned int   blockSize;
-    unsigned int   cumulSize;
-    unsigned int   counter;
-    double         oldTime;
-    
-    bool           saveData;
-    bool           videoOn;
-    string         videoType;
-    bool           closing;
+    DumpQueue      &buf;
+    DumpType        type;
+    ofstream        finfo;
+    ofstream        fdata;    
+    string          dirName;
+    string          infoFile;
+    string          dataFile;
+    unsigned int    blockSize;
+    unsigned int    cumulSize;
+    unsigned int    counter;
+    double          oldTime;
+                   
+    bool            saveData;
+    bool            videoOn;
+    string          videoType;
+    bool            closing;
 
 #ifdef ADD_VIDEO
-    ofstream       ftimecodes;
-    string         videoFile;
-    string         timecodesFile;
-    double         t0;
-    bool           doImgParamsExtraction;
-    bool           doSaveFrame;
-    CvVideoWriter *videoWriter;
+    ofstream        ftimecodes;
+    string          videoFile;
+    string          timecodesFile;
+    double          t0;
+    bool            doImgParamsExtraction;
+    bool            doSaveFrame;
+    cv::VideoWriter videoWriter;
 #endif
 
 public:
@@ -642,8 +642,8 @@ public:
                 else
                     fps=int(double(sz-1)/dt);
 
-                videoWriter=cvCreateVideoWriter(videoFile.c_str(),CV_FOURCC('H','F','Y','U'),
-                                                fps,cvSize(frameW,frameH),true);
+                videoWriter.open(videoFile.c_str(),CV_FOURCC('H','F','Y','U'),
+                                 fps,cvSize(frameW,frameH),true);
 
                 doImgParamsExtraction=false;
                 doSaveFrame=true;
@@ -671,7 +671,8 @@ public:
             #ifdef ADD_VIDEO
                 if (doSaveFrame)
                 {
-                    cvWriteFrame(videoWriter,(IplImage*)item.obj->getPtr());
+                    cv::Mat img((IplImage*)item.obj->getPtr());
+                    videoWriter<<img;
 
                     // write the timecode of the frame
                     int dt=(int)(1000.0*(item.timeStamp.getStamp()-t0));
@@ -699,9 +700,6 @@ public:
     #ifdef ADD_VIDEO
         if (videoOn)
             ftimecodes.close();
-
-        if (doSaveFrame)
-            cvReleaseVideoWriter(&videoWriter);
     #endif
     }
 };
