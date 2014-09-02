@@ -751,6 +751,7 @@ public:
 
         bool saveData=true;
         bool videoOn=false;
+        string videoType=rf.check("videoType",Value("mkv")).asString().c_str();
 
         if (rf.check("type"))
         {
@@ -781,11 +782,7 @@ public:
         }
         else
             type=bottle;
-
-    #ifdef ADD_VIDEO
-        string videoType=rf.check("videoType",Value("mkv")).asString().c_str();
-    #endif
-
+        
         dwnsample=rf.check("downsample",Value(1)).asInt();
         rxTime=rf.check("rxTime");
         txTime=rf.check("txTime");
