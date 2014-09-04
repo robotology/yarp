@@ -547,20 +547,23 @@ bool Port::open(const Contact& contact, bool registerName,
         registerName = false;
     }
 
-    ConstString typ = getType().getNameOnWire();
-    if (typ=="") {
-        typ = getType().getName();
-    }
-    if (typ=="") {
+    ConstString ntyp = getType().getNameOnWire();
+    if (ntyp=="") {
         NestedContact nc;
         nc.fromString(n);
-        if (nc.getTypeName()!="") typ = nc.getTypeName();
+        if (nc.getTypeName()!="") ntyp = nc.getTypeName();
     }
-    if (typ!="") {
+    if (ntyp=="") {
+        ntyp = getType().getName();
+    }
+    if (ntyp!="") {
         NestedContact nc;
         nc.fromString(contact2.getName());
-        nc.setTypeName(typ);
+        nc.setTypeName(ntyp);
         contact2.setNested(nc);
+        if (getType().getNameOnWire()!=ntyp) {
+            core.promiseType(Type::byNameOnWire(ntyp.c_str()));
+        }
     }
 
     if (registerName&&!local) {

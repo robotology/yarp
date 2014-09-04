@@ -62,11 +62,6 @@ ConstString TcpRosCarrier::getRosType(ConnectionState& proto) {
         } else if (typ=="yarp/bottle") {
             rtyp = proto.getContactable()->getType().getNameOnWire();
             wire_type = rtyp;
-        } else if (typ=="yarp/vector") {
-            rtyp = proto.getContactable()->getType().getNameOnWire();
-            if (rtyp=="") {
-                wire_type = "std_msgs/Float64MultiArray";
-            }
         } else if (typ!="") {
             rtyp = typ;
             wire_type = typ;

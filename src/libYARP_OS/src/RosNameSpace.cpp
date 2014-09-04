@@ -126,8 +126,6 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore *store)
                 // remap some basic native YARP types
                 if (typ=="yarp/image") {
                     typ = "sensor_msgs/Image";
-                } else if (typ=="yarp/vector") {
-                    typ = "std_msgs/Float64MultiArray";
                 }
                 if (typ.find("/")==ConstString::npos) {
                     typ = ConstString("yarp/") + typ;
