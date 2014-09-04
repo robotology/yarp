@@ -258,11 +258,53 @@ public:
      */
     virtual void setRpcMode(bool expectRpc) = 0;
 
+    /**
+     *
+     * Get the type of data the port has committed to send/receive.  Not 
+     * all ports commit to a particular type of data.
+     *
+     * @return type of data to expect/provide
+     *
+     */
     virtual Type getType() = 0;
+
+    /**
+     *
+     * Commit the port to a particular type of data.
+     *
+     * @param typ the type of data the port will send/receive
+     *
+     */
     virtual void promiseType(const Type& typ) = 0;
 
+    /**
+     *
+     * Access unstructured port properties.
+     *
+     * @param readOnly set this if you won't be modifying the properties.
+     *
+     * @return the port properties (or NULL if readOnly and none have been set)
+     *
+     */
     virtual Property *acquireProperties(bool readOnly) = 0;
+
+    /**
+     *
+     * End access unstructured port properties.
+     *
+     * @param prop the port property object provided by acquireProperties()
+     *
+     */
     virtual void releaseProperties(Property *prop) = 0;
+
+    /**
+     *
+     * Choose whether to prepend a node name (if one is available) to
+     * the port's name. Node names are set using yarp::os::Node.
+     *
+     * @param flag true if the node name should be added to port names
+     *
+     */
     virtual void includeNodeInName(bool flag) = 0;
 
     /**
