@@ -368,7 +368,8 @@ public:
             }
             ConstString fromPath = extractPath(from.c_str());
             configFilePath = fromPath;
-            config.fromConfigFile(from,false);
+            if(!config.fromConfigFile(from,false) )
+                configured_normally = false;
             config.fromCommand(argc,argv,skip,false);
         }
         return configured_normally;
