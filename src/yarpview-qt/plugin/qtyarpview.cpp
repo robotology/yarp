@@ -223,6 +223,9 @@ bool QtYARPView::parseParameters(QStringList params)
     if (c==1){
         if (params.at(0).compare("--help") == 0){
             printHelp();
+            for(int i=0;i<params.count();i++) {
+                free(v[i]);
+            }
             free(v);
             return false;
         }
@@ -233,6 +236,9 @@ bool QtYARPView::parseParameters(QStringList params)
         options.fromCommand(c,v,false);
     }
     setOptions(options);
+    for(int i=0;i<params.count();i++) {
+        free(v[i]);
+    }
     free(v);
 
     if (!openPorts()){

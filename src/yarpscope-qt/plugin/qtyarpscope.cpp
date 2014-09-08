@@ -69,6 +69,9 @@ bool QtYARPScope::parseParameters(QStringList params)
 
     if(!rf.configure(c, v)){
         usage();
+        for(int i=0;i<params.count();i++) {
+            free(v[i]);
+        }
         free(v);
         return false;
     }
@@ -77,6 +80,9 @@ bool QtYARPScope::parseParameters(QStringList params)
 
     if (rf.check("help")) {
         usage();
+        for(int i=0;i<params.count();i++) {
+            free(v[i]);
+        }
         free(v);
         return false;
     }
@@ -84,10 +90,16 @@ bool QtYARPScope::parseParameters(QStringList params)
     //YARP network initialization
     if (!yarp.checkNetwork()) {
         qCritical("Cannot connect to yarp network");
+        for(int i=0;i<params.count();i++) {
+            free(v[i]);
+        }
         free(v);
         return false;
     }
-    free(v);
+        for(int i=0;i<params.count();i++) {
+            free(v[i]);
+        }
+        free(v);
 
 //********************** Deprecated options
     // local
