@@ -63,8 +63,7 @@ bool QtYARPScope::parseParameters(QStringList params)
     char **v;
     v = (char**)malloc(sizeof(char*) * c);
     for(int i=0;i<params.count();i++){
-        v[i] = (char*)malloc(sizeof(char) * params.at(i).length()+1);
-        strcpy(v[i],params.at(i).toLatin1().data());
+        v[i] = strdup(params.at(i).toLatin1().data());
     }
 
     if(!rf.configure(c, v)){
