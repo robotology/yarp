@@ -300,7 +300,7 @@ public:
         Property p;
         p.fromCommand(argc,argv,skip);
 
-        //printf("SETTINGS: %s\n", p.toString().c_str());
+        bool user_specified_from = p.check("from");
 
         if (p.check("verbose")) {
             setVerbose(p.check("verbose",Value(1)).asInt());
@@ -368,8 +368,9 @@ public:
             }
             ConstString fromPath = extractPath(from.c_str());
             configFilePath = fromPath;
-            if(!config.fromConfigFile(from,false) )
+            if (!config.fromConfigFile(from,false) && user_specified_from) {
                 configured_normally = false;
+            }
             config.fromCommand(argc,argv,skip,false);
         }
         return configured_normally;

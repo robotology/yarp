@@ -759,6 +759,51 @@ public:
         breakDownTestArea();
     }
 
+    void testFailOnFrom() {
+        report(0,"test fail behavior on --from / setDefaultConfigFile");
+        setUpTestArea(false);
+
+        {
+            ResourceFinder rf;
+            const char *fname1 = "_yarp_regression_test_rf1.txt";
+            rf.setDefaultContext("my_app");
+            rf.setDefaultConfigFile("my_app.ini");
+            bool configures = rf.configure(NULL,0,NULL);
+            checkTrue(configures,"ok with default file that exists");
+        }
+
+        {
+            ResourceFinder rf;
+            rf.setDefaultContext("my_app");
+            const char *argv[] = { "ignore",
+                                   "--from", "my_app.ini",
+                                   NULL };
+            int argc = 3;
+            bool configures = rf.configure("none",argc,(char **)argv);
+            checkTrue(configures,"ok with from file that exists");
+        }
+
+        {
+            ResourceFinder rf;
+            const char *fname1 = "_yarp_regression_test_rf1.txt";
+            rf.setDefaultContext("my_app");
+            rf.setDefaultConfigFile("my_app_not_there.ini");
+            bool configures = rf.configure(NULL,0,NULL);
+            checkTrue(configures,"ok with default file that does not exist");
+        }
+
+        {
+            ResourceFinder rf;
+            rf.setDefaultContext("my_app");
+            const char *argv[] = { "ignore",
+                                   "--from", "my_app_not_there.ini",
+                                   NULL };
+            int argc = 3;
+            bool configures = rf.configure("none",argc,(char **)argv);
+            checkFalse(configures,"fails with from file that is missing");
+        }
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
@@ -774,6 +819,7 @@ public:
         testCopy();
         testGetHomeDirsForWriting();
         testFindPlugins();
+        testFailOnFrom();
     }
 };
 
