@@ -50,7 +50,7 @@ MonitorLua::~MonitorLua()
     }        
 }
 
-bool MonitorLua::loadScript(const char* script_file)
+bool MonitorLua::load(const char* script_file)
 {
     //printf("%s (%d)\n", __FILE__, __LINE__);
     if(luaL_loadfile(L, script_file))

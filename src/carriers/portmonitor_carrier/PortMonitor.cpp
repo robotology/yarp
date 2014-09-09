@@ -56,9 +56,13 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     ConstString strFile = rf.findFile(filename.c_str());
     if(strFile == "")
     {
-        strFile = rf.findFile(filename+".lua");
+        if(script == "lua")
+            strFile = rf.findFile(filename+".lua");
+        else if(script == "dll")
+            strFile = rf.findFile(filename+".so");
+
         PortMonitor::lock();
-        bReady =  binder->loadScript(strFile.c_str());
+        bReady =  binder->load(strFile.c_str());
         PortMonitor::unlock();
         return bReady;
 

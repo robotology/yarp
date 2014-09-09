@@ -9,16 +9,18 @@ endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_portmonitor_carrier)
 
-  include_directories(${YARP_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
+  include_directories(${YARP_INCLUDE_DIRS} ${LUA_INCLUDE_DIR} ./bindings)
 
   yarp_add_plugin(yarp_portmonitor
                   PortMonitor.h
                   MonitorBinding.h
-                  MonitorLua.h
                   MonitorEvent.h
                   PortMonitor.cpp
                   MonitorBinding.cpp
-                  MonitorLua.cpp)
+                  bindings/MonitorLua.h
+                  bindings/MonitorLua.cpp
+                  bindings/MonitorSharedLib.h
+                  bindings/MonitorSharedLib.cpp)
 
   target_link_libraries(yarp_portmonitor YARP_OS ${LUA_LIBRARY})
   target_link_libraries(yarp_portmonitor ${ACE_LIBRARIES})

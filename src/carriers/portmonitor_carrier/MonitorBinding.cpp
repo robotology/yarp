@@ -9,6 +9,7 @@
 
 #include "MonitorBinding.h"
 #include "MonitorLua.h"
+#include "MonitorSharedLib.h"
 
 #include <yarp/os/ConstString.h>
 
@@ -26,6 +27,10 @@ MonitorBinding* MonitorBinding::create(const char* script_type)
 {
     if(ConstString(script_type) == "lua")
         return new MonitorLua();
+
+    if(ConstString(script_type) == "dll")
+        return new MonitorSharedLib();
+       
     return NULL;        
 }
 

@@ -7,22 +7,21 @@
  *
  */
 
-#ifndef _MONITORLUA_INC_
-#define _MONITORLUA_INC_
+#ifndef _MONITOR_SHAREDLIB_INC_
+#define _MONITOR_SHAREDLIB_INC_
 
 #include <string>
 #include <yarp/os/ConstString.h>
 #include "MonitorBinding.h"
-#include "lua_swig.h"
 
-class MonitorLua : public MonitorBinding
+class MonitorSharedLib : public MonitorBinding
 {
 
 public:
-    MonitorLua(void);
-    virtual ~MonitorLua();
+    MonitorSharedLib(void);
+    virtual ~MonitorSharedLib();
     
-    bool loadScript(const char* script_file);
+    bool load(const char* script_file);
     bool setParams(const yarp::os::Property& params);
     bool getParams(yarp::os::Property& params);
 
@@ -35,8 +34,8 @@ public:
     bool setAcceptConstraint(const char* constraint) {
         if(!constraint)
             return false;        
-        MonitorLua::constraint = constraint;
-        trimString(MonitorLua::constraint);
+        MonitorSharedLib::constraint = constraint;
+        //trimString(MonitorSharedLib::constraint);
         return true;
     }
 
@@ -53,32 +52,11 @@ public:
     }
 
 private:
-    lua_State *L;   
     std::string constraint;
     bool bHasAcceptCallback;
     bool bHasUpdateCallback;
-
-private:
-    bool getLocalFunction(const char *name);
-    bool registerExtraFunctions(void); 
-    void trimString(std::string& str);
-    void searchReplace(std::string& str, 
-                       const std::string& oldStr, const std::string& newStr);
-    bool isKeyword(const char* str);
-
-    /* lua accessible fucntion*/
-    static int setConstraint(lua_State* L);
-    static int getConstraint(lua_State* L);
-    static int setEvent(lua_State* L); 
-    static int unsetEvent(lua_State* L); 
-#if LUA_VERSION_NUM > 501
-    static const struct luaL_Reg portMonitorLib[];
-#else
-    static const struct luaL_reg portMonitorLib[];
-#endif
-
 };
 
-#endif //_MONITORLUA_INC_
+#endif //_MONITOR_SHAREDLIB_INC_
 
 
