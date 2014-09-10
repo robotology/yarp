@@ -526,7 +526,7 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
     if(!port.open("...")) {
         __trace_message.clear();
         semParam.post();
-        return YARPRUN_CONNECTION_TIMOUT;
+        return false;
     }
 
     yarp::os::Bottle msg, grp;
