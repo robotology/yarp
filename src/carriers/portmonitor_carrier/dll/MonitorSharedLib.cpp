@@ -40,6 +40,8 @@ bool MonitorSharedLib::load(const char* script_file)
 		return false;
 	}
 
+    monitorFactory.addRef();
+
     monitor.open(monitorFactory);    
     if(!monitor.isValid()) {
         YARP_LOG_ERROR("Cannot create an instance of MonitorObject");
