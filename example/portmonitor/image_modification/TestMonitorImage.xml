@@ -34,6 +34,6 @@
     <connection>
         <from>/grabber</from>
         <to>/modified/yarpview/img:i</to>
-        <protocol>udp+recv.portmonitor+script.lua+file.img_modifier</protocol>
+        <protocol>udp+recv.portmonitor+type.lua+file.img_modifier</protocol>
     </connection>
 </application>

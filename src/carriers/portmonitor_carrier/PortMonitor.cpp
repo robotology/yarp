@@ -35,39 +35,38 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
 
     if(binder) delete binder;
     binder = NULL;        
-    // check which monitor should be used
-    ConstString script = options.check("script", Value("lua")).asString();
+
+    ConstString script = options.check("type", Value("lua")).asString();
+    ConstString filename = options.check("file", Value("modifier")).asString();
+    ConstString constraint = options.check("constraint", Value("")).asString();
+    // context is used to find the script files
+    ConstString context = options.check("context", Value("")).asString();
+
+    // check which monitor should be used    
     if((binder = MonitorBinding::create(script.c_str())) == NULL)
     {
-         yError("Currently only \'lua\' scripting is supported by portmonitor");
+         YARP_LOG_ERROR("Currently only \'lua\' script and \'dll\' object is supported by portmonitor");
          return false;
     }
    
-    // check the acceptance constraint
-    ConstString constraint = options.check("constraint", Value("")).asString();
+    // set the acceptance constraint
     binder->setAcceptConstraint(constraint.c_str());
+    
+    ConstString strFile = filename;
 
-    ConstString context = options.check("context", Value("")).asString();
-    ConstString filename = options.check("file", Value("modifier")).asString();
-    yarp::os::ResourceFinder rf;
-    //rf.setDefaultConfigFile(filename);
-    rf.setDefaultContext(context.c_str());
-    rf.configure(0, NULL);
-    ConstString strFile = rf.findFile(filename.c_str());
-    if(strFile == "")
+    if(script != "dll") 
     {
-        if(script == "lua")
+        yarp::os::ResourceFinder rf;
+        rf.setDefaultContext(context.c_str());
+        rf.configure(0, NULL);
+        strFile = rf.findFile(filename.c_str());
+        if(strFile == "")
             strFile = rf.findFile(filename+".lua");
-        else if(script == "dll")
-            strFile = rf.findFile(filename+".so");
-
-        PortMonitor::lock();
-        bReady =  binder->load(strFile.c_str());
-        PortMonitor::unlock();
-        return bReady;
-
     }
-    bReady = false;
+
+    PortMonitor::lock();
+    bReady =  binder->load(strFile.c_str());
+    PortMonitor::unlock();
     return bReady;
 }
 

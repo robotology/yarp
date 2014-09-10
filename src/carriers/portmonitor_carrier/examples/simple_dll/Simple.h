@@ -9,21 +9,24 @@
 #ifndef SIMPLE_INC
 #define SIMPLE_INC
 
-#include "AbstractMonitorObject.h"
+#include "MonitorObject.h"
 
-class AbstractMonitorObjectImpl : public AbstractMonitorObject 
+class SimpleMonitorObject : public MonitorObject 
 {
 public:
-    bool setParams(const yarp::os::Property& params);
-    bool getParams(yarp::os::Property& params);
-    
+    bool create(void);
+    void destroy(void);
+
+    bool setparam(const yarp::os::Property& params);
+    bool getparam(yarp::os::Property& params);
+
+    bool trig(void);
+
     bool hasAccept();
-    bool acceptData(yarp::os::Things& thing);
+    bool accept(yarp::os::Things& thing);
 
     bool hasUpdate();
-    yarp::os::Things& updateData(yarp::os::Things& thing);
-
-    bool peerTrigged(void);
+    yarp::os::Things& update(yarp::os::Things& thing);
 };
 
 #endif

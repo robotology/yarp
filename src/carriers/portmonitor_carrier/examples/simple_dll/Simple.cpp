@@ -6,46 +6,65 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include "Simple.h"
-
+#include <stdio.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/os/SharedLibraryClass.h>
 
-// just for testing, we make two distinct copies of factory function
-YARP_DEFINE_DEFAULT_SHARED_CLASS(AbstractMonitorObjectImpl);
-YARP_DEFINE_SHARED_SUBCLASS(AbstractMonitorObject_there, AbstractMonitorObjectImpl, AbstractMonitorObject);
+#include "Simple.h"
+
+using namespace yarp::os;
 
 
-bool AbstractMonitorObjectImpl::setParams(const yarp::os::Property& params) 
+YARP_DEFINE_SHARED_SUBCLASS(MonitorObject_there, SimpleMonitorObject, MonitorObject);
+
+
+bool SimpleMonitorObject::create(void)
+{
+   printf("created!\n"); 
+   return true;
+}
+
+void SimpleMonitorObject::destroy(void)
+{
+    printf("destroyed!\n");
+}
+
+bool SimpleMonitorObject::setparam(const yarp::os::Property& params) 
 {
     return true;
 }
 
-bool AbstractMonitorObjectImpl::getParams(yarp::os::Property& params)
+bool SimpleMonitorObject::getparam(yarp::os::Property& params)
 {
     return true;
 }
 
-bool AbstractMonitorObjectImpl::hasAccept()
+bool SimpleMonitorObject::hasAccept()
 {
     return true;
 }
 
-bool AbstractMonitorObjectImpl::acceptData(yarp::os::Things& thing)
-{
+bool SimpleMonitorObject::accept(yarp::os::Things& thing)
+{   
+    Bottle* bt = thing.cast_as<Bottle>();
+    if(bt->toString() == "ignore")
+        return false;
     return true;
 }
 
-bool AbstractMonitorObjectImpl::hasUpdate()
-{
+bool SimpleMonitorObject::hasUpdate()
+{    
     return true;
 }
 
-yarp::os::Things& AbstractMonitorObjectImpl::updateData(yarp::os::Things& thing)
+yarp::os::Things& SimpleMonitorObject::update(yarp::os::Things& thing)
 {
+    Bottle* bt = thing.cast_as<Bottle>();
+    bt->addString("Modified in DLL");
     return thing;
 }
 
-bool AbstractMonitorObjectImpl::peerTrigged(void)
+bool SimpleMonitorObject::trig(void)
 {
     return true;
 }

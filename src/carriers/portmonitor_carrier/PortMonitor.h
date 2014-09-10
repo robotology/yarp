@@ -46,7 +46,7 @@ public:
  * Allow to monitor and modify port data from Lua script  Under development.
  * Affected by carrier modifiers.  
  *
- * Examples: tcp+recv.portmonitor+script.lua+file.my_lua_script_file
+ * Examples: tcp+recv.portmonitor+type.lua+file.my_lua_script_file
  *
  */
 

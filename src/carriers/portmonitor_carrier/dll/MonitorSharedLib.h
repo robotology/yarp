@@ -12,6 +12,10 @@
 
 #include <string>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/SharedLibraryClass.h>
+#include <yarp/os/SharedLibrary.h>
+
+#include "MonitorObject.h"
 #include "MonitorBinding.h"
 
 class MonitorSharedLib : public MonitorBinding
@@ -35,7 +39,6 @@ public:
         if(!constraint)
             return false;        
         MonitorSharedLib::constraint = constraint;
-        //trimString(MonitorSharedLib::constraint);
         return true;
     }
 
@@ -43,18 +46,13 @@ public:
         return constraint.c_str();
     }
 
-    bool hasAccept() {
-        return bHasAcceptCallback; 
-    }
-
-    bool hasUpdate() {
-        return bHasUpdateCallback;
-    }
+    bool hasAccept();
+    bool hasUpdate(); 
 
 private:
     std::string constraint;
-    bool bHasAcceptCallback;
-    bool bHasUpdateCallback;
+    yarp::os::SharedLibraryClassFactory<MonitorObject> monitorFactory;
+    yarp::os::SharedLibraryClass<MonitorObject> monitor;
 };
 
 #endif //_MONITOR_SHAREDLIB_INC_

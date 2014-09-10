@@ -73,6 +73,28 @@ public:
         portable = NULL;
     }
 
+    template<typename T>
+    T* cast_as(void)
+    {
+        if(this->writer)
+            return dynamic_cast<T*>(this->writer);
+
+        if(!this->portable) 
+        {
+            if(!this->conReader)
+                return NULL;
+            this->portable = new T(); 
+            if(!this->portable->read(*this->conReader)) 
+            {
+                delete this->portable; 
+                this->portable = NULL; 
+                return NULL; 
+            }
+        }
+        return dynamic_cast<T*>(this->portable);
+    }
+
+
 
 /**
  * TODO: these should be private indeed! 

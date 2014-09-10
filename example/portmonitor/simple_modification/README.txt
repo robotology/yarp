@@ -16,11 +16,11 @@ in an input port
 
 -- Open another terminal (lets call this the receiver terminal) )and change 
    to the 'simple_modification' directory: 
-   $ cd $YARP_ROOT/src/carrier/portmonitor_carrier/example/simple_modification
+   $ cd $YARP_ROOT/src/carriers/portmonitor_carrier/examples/simple_modification
    $ yarp read /read
   
 -- In another terminal connect the port as follow: 
-   $ yarp connect /write /read tcp+recv.portmonitor+script.lua+file.bot_modifier
+   $ yarp connect /write /read tcp+recv.portmonitor+type.lua+file.bot_modifier
 
 Now if you write something  in the 'sender' terminal, you will see the text 
 "modified from Lua" will be added to the original message. For example: 
