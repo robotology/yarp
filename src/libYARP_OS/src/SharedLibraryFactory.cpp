@@ -14,14 +14,14 @@
 yarp::os::SharedLibraryFactory::SharedLibraryFactory() :
         status(STATUS_NONE),
         returnValue(0),
-        rct(0) {
+        rct(1) {
 }
 
 yarp::os::SharedLibraryFactory::SharedLibraryFactory(const char *dll_name,
                                                      const char *fn_name) :
         status(STATUS_NONE),
         returnValue(0),
-        rct(0) {
+        rct(1) {
     open(dll_name,fn_name);
 }
 

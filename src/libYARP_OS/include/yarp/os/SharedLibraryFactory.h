@@ -124,6 +124,16 @@ public:
      */
     ConstString getName() const;
 
+    /**
+     *
+     * Specify function to use as factory.
+     *
+     * @param factory function to use as factory.
+     *
+     * @result true on success.
+     *
+     */
+    bool useFactoryFunction(void *factory);
 private:
     SharedLibrary lib;
     int status;
@@ -131,8 +141,6 @@ private:
     int returnValue;
     int rct;
     ConstString name;
-
-    bool useFactoryFunction(void *factory);
 };
 
 

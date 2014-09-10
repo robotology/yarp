@@ -64,7 +64,6 @@ public:
         close();
         factory = new SharedLibraryClassFactory<T>();
         if (!factory) return false;
-        factory->addRef();
         if (!settings.open(*factory)) {
             settings.reportStatus(*factory);
             close();
