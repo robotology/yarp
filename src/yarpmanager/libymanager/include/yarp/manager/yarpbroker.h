@@ -95,7 +95,7 @@ private:
 
     string strStdioUUID;
     yarp::os::BufferedPort<yarp::os::Bottle> stdioPort;
-    yarp::os::Port port;
+    //yarp::os::Port port;
 
     bool timeout(double base, double timeout);
     yarp::os::Property& runProperty(void);

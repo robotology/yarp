@@ -60,7 +60,7 @@ void YarpBroker::fini(void)
 {
     if(RateThread::isRunning())
         RateThread::stop();
-    port.close();
+    //port.close();
 }
 
 bool YarpBroker::init(void)
@@ -76,13 +76,14 @@ bool YarpBroker::init(void)
     bInitialized = true;
     bOnlyConnector = true;
 
+    /*
     semParam.wait();
     __trace_message = "(init) opening port ...";
     port.setTimeout(CONNECTION_TIMEOUT);
     port.open("...");
     __trace_message.clear();
     semParam.post();
-
+    */
     return true;
 }
 
@@ -165,13 +166,16 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
         return false;
     }
 
+    /*
     port.setTimeout(CONNECTION_TIMEOUT);
     __trace_message = "(init) opening port ...";
     port.open("...");
     __trace_message.clear();
+    */
 
     bInitialized = true;
     semParam.post();
+
     return true;
 }
 
@@ -490,12 +494,12 @@ bool YarpBroker::disconnect(const char* from, const char* to)
 
 }
 
-bool YarpBroker::exists(const char* port)
+bool YarpBroker::exists(const char* szport)
 {
     ContactStyle style;
     style.quiet = true;
     style.timeout = CONNECTION_TIMEOUT;
-    return NetworkBase::exists(port, style);
+    return NetworkBase::exists(szport, style);
 }
 
 bool YarpBroker::connected(const char* from, const char* to)
@@ -516,6 +520,15 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
     if(!semParam.check())
         return false;
 
+    yarp::os::Port port;
+    // opening the port
+    port.setTimeout(CONNECTION_TIMEOUT);
+    if(!port.open("...")) {
+        __trace_message.clear();
+        semParam.post();
+        return YARPRUN_CONNECTION_TIMOUT;
+    }
+
     yarp::os::Bottle msg, grp;
     grp.clear();
     grp.addString("sysinfo");
@@ -531,6 +544,7 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
     bool connected = yarp::os::NetworkBase::connect(port.getName(), server, style);
     if(!connected)
     {
+        port.close();
         strError = string("Cannot connect to ") + string(server);
         __trace_message.clear();
         semParam.post();
@@ -544,11 +558,14 @@ bool YarpBroker::getSystemInfo(const char* server, SystemInfoSerializer& info)
 
     if(!ret)
     {
+        port.close();
         strError = string(server) + string(" does not respond");
         __trace_message.clear();
         semParam.post();
         return false;
     }
+
+    port.close();
     __trace_message.clear();
     semParam.post();
     return true;
@@ -709,7 +726,15 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
     if(!semParam.check())
         return YARPRUN_SEMAPHORE_PARAM;
 
+    // opening the port
+    yarp::os::Port port;
     port.setTimeout(fTimeout);
+    if(!port.open("...")) 
+    {
+        __trace_message.clear();
+        semParam.post();
+        return YARPRUN_CONNECTION_TIMOUT;
+    }
 
     ContactStyle style;
     style.quiet = true;
@@ -726,6 +751,7 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
 
     if(!ret)
     {
+        port.close();
         __trace_message.clear();
         semParam.post();
         return YARPRUN_CONNECTION_TIMOUT;
@@ -738,8 +764,12 @@ int YarpBroker::SendMsg(Bottle& msg, ConstString target, Bottle& response, float
     __trace_message.clear();
     semParam.post();
 
-    if(!response.size() || !ret)
+    if(!response.size() || !ret) {
+        port.close();
         return YARPRUN_NORESPONSE;
+    }
+
+    port.close();
 
     return YARPRUN_OK;
 }
