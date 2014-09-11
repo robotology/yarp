@@ -1,0 +1,2 @@
+module robotology.yarp.scope
+plugin QtYARPScopePlugin

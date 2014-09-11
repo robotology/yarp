@@ -2,7 +2,7 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 
 project(YARP)
 
@@ -55,6 +55,9 @@ add_subdirectory(src)
 
 # Offer to compile bindings
 add_subdirectory(bindings)
+
+# Tests
+add_subdirectory(tests)
 
 # add rule for uninstalling YARP
 # see conf/YARPUninstall.cmake

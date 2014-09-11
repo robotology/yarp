@@ -4,7 +4,7 @@
 
 # Test finding specific installed version of YARP
 
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 
 #find_package(YARP 1 REQUIRED)  # should fail
 #find_package(YARP 2.3.3 REQUIRED)  # should succeed for YARP 2.3.3

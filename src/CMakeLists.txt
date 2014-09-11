@@ -22,6 +22,8 @@ add_subdirectory(idls)
 
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_init)
+add_subdirectory(libYARP_manager)
+
 add_subdirectory(libyarpc)
 add_subdirectory(libyarpcxx)
 
@@ -29,11 +31,18 @@ add_subdirectory(libyarpcxx)
 add_subdirectory(yarpserver)
 add_subdirectory(yarp)
 add_subdirectory(yarprun)
-add_subdirectory(yarpview)
 add_subdirectory(yarphear)
 add_subdirectory(yarpdev)
 add_subdirectory(yarpmanager)
-add_subdirectory(yarpscope)
+add_subdirectory(yarpmanager-console)
 
-#tests
-add_subdirectory(tests)
+# Qt5 GUIs
+add_subdirectory(yarpview-qt)
+add_subdirectory(yarpscope-qt)
+add_subdirectory(yarpmanager-qt)
+
+# GTK2 GUIs
+add_subdirectory(yarpview-gtk)
+add_subdirectory(yarpscope-gtk)
+add_subdirectory(yarpmanager-gtk)
+add_subdirectory(yarpbuilder-gtk)

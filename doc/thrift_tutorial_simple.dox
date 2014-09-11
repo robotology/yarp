@@ -1,0 +1,421 @@
+/*
+ * Copyright: (C) 2012 Robotics, Brain and Cognitive Sciences - Istituto Italiano di Tecnologia (IIT)
+ * Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+*
+@page thrift_tutorial_simple Thrift IDL in YARP: simple tutorial
+
+This tutorial shows how to use the Apache Thrift Interface Definition Language (and relative compiler) to easily define RPC-based interfaces for YARP Modules.
+
+\section thrift_tutorial_simple_sec_intro Introduction
+
+Apache Thrift allows to define service interfaces in a simple definition file. Taking that file as input, a compiler generates source code which handles the RPC communication for commands and replies defined in the interface. This source code can therefore be used by a server that executes the commands and by clients that send requests to the server by means of simple function calls.
+
+<b>This tutorial requires the yarpidl_thrift utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
+
+\section thrift_tutorial_simple_sec_thriftfile Step One: Interface Definition
+
+Let's assume that we want to create a new module that can receive commands on a RPC port to start/stop execution, and get/set some value. We can create a .thrift text file that defines a  \em Thrift \em service interface for our module like this:
+
+\code
+#demo.thrift
+service Demo {
+  i32 get_answer();
+  bool set_answer(1:i32 rightAnswer)
+  i32 add_one(1:i32 x);
+  bool start();
+  bool stop();
+  bool is_running();
+}
+\endcode
+
+where \c i32 is defined by the Thrift type system as a 32-bit signed integer, and \c bool is a boolean value (true or false), one byte. Note that each argument of a function is associated to a unique, positive integer identifier. For a complete explanation of the Thrift IDL, please see \ref thrift_tutorial.
+
+\section sec_generation Step Two: Source code generation
+
+Now that we have our nice and clear interface definition, we want to generate the source code that provides this interface in YARPic terms, and implements the RPC communication process that occurs between a client that invokes a function call and the server that exectutes it.
+
+Using CMake, generation of code for our demo.thrift file can be performed automatically during the configuration process. We create a \c CMakeLists.txt configuration file in which we calling the \c yarp_idl_to_dir macro defined in the YARP configuration file "YarpIDL.cmake":
+
+\code
+#CMakeList.txt
+cmake_minimum_required(VERSION 2.8.9)
+
+#find YARP
+find_package(YARP REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+include(YarpIDL)
+
+#compile definition file to generate source code into the desired directory
+set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
+yarp_idl_to_dir(demo.thrift ${generated_libs_dir})
+\endcode
+
+We can now run CMake to set up an out-of-source tree build from command line:
+\code
+$ cd <where_we_put_demo.thrift_and_CMakeLists.txt>
+$ mkdir build && cd build
+$ cmake -D ALLOW_IDL_GENERATION=ON ../
+\endcode
+
+The YarpIDL macro defines a CMake "advanced" option, ALLOW_IDL_GENERATION, which is by default set to OFF; we enable it with the -D ALLOW_IDL_GENERATION=ON option. We should now see two folders, "include" and "src", appear in the source tree, together with a demo_thrift.cmake file that helps CMake keep track of the generated files.
+Inside \em include, we find a Demo.h header file, which provides the interface:
+\code
+class Demo : public yarp::os::Wire {
+public:
+  Demo() { yarp().setOwner(*this); }
+  virtual int32_t get_answer();
+  virtual bool set_answer(const int32_t rightAnswer);
+  virtual int32_t add_one(const int32_t x);
+  virtual bool start();
+  virtual bool stop();
+  virtual bool is_running();
+  virtual bool read(yarp::os::ConnectionReader& connection);
+};
+\endcode
+\em Src instead contains a Demo.cpp file that provides implementation for the RPC communication, but there's no need to bother with it: all we need to care about is the interface!
+
+\section thrift_tutorial_simple_sec_server Step Three: Interface Implementation
+
+It is now time to provide an implementation for the functions we defined in the service interface. Let's create a \c DemoServer.cpp file in which:
+\li we include the interface definition
+\code
+#include <yarp/os/all.h>
+#include <Demo.h>
+\endcode
+\li we declare a derived class that overrides the methods of the interface:
+\code
+class DemoServer : public Demo
+{
+  /* Class members declaration */
+  int32_t answer;
+  bool isRunning;
+
+public:
+  DemoServer();
+  /* function declarations, copied from Demo.h */
+  virtual int32_t get_answer();
+  virtual bool set_answer(int32_t rightAnswer);
+  virtual int32_t add_one(const int32_t x);
+  virtual bool start();
+  virtual bool stop();
+  virtual bool is_running();
+
+};
+\endcode
+
+\li we provide an implementation for these methods, for example:
+\code
+int32_t DemoServer::get_answer()
+{
+  std::cout << "The answer is "<< answer << std::endl;
+  return answer;
+}
+\endcode
+
+\li finally, we need to create an istance of the DemoServer class and attach it to a YARP port; a simple test can consist in this main() function:
+\code
+int main(int argc, char *argv[]) {
+    yarp::os::Network yarp;
+
+    DemoServer demoServer;
+    yarp::os::Port port;
+    demoServer.yarp().attachAsServer(port);
+    if (!port.open("/demoServer")) { return 1; }
+
+    while (true) {
+        printf("Server running happily\n");
+        yarp::os::Time::delay(10);
+    }
+    port.close();
+    return 0;
+}
+\endcode
+
+\section thrift_tutorial_simple_sec_client Client use
+
+The thirft engine generates all the required code for the client. Clients can directly invoke remote procedures on the server using a proxy object (generated by thrift) attached to a YARP port.
+
+Simple example:
+
+\code
+#include <iostream>
+#include <yarp/os/all.h>
+#include <Demo.h>
+
+using namespace yarp::os;
+
+int main(int argc, char *argv[]) {
+  Property config;
+  config.fromCommand(argc,argv);
+
+  Network yarp;
+
+  /* This port will be used to talk to the remote server*/
+  Port client_port;
+
+  std::string servername= config.find("server").asString().c_str();
+  client_port.open("/demo/client");
+
+  /* connect to server */
+  if (!yarp.connect("/demo/client",servername.c_str()))
+  {
+     std::cout << "Error! Could not connect to server " << servername << std::endl;
+     return -1;
+  }
+
+  /* Instatate proxy object and attach it to the port -- the proxy will use this port to talk to the server*/
+  Demo demo;
+  demo.yarp().attachAsClient(client_port);
+
+  /* Now we are ready to chat with the server! */
+  /* Notice that from now on we will invoke only the server methods declared in demo.thrift/Demo.h */
+  std::cout << "Hey are you up and running?" << std::endl;
+  while(!demo.is_running())
+  {
+      std::cout << "No? Well... start!" << std::endl;
+      demo.start();
+  }
+
+  std::cout << "Wonderful! I have a question for you... so, what's the answer??" << std::endl;
+  int32_t answer=demo.get_answer();
+  std::cout << "What?? " << answer << "?? Are you kidding??";
+  answer = demo.add_one(answer);
+  std::cout << " It's definitely " << answer << "!!" << std::endl;
+  demo.set_answer(answer);
+  std::cout << "Got it? So, repeat after me: the answer is ... " << demo.get_answer() << "! Great!" << std::endl;
+  std::cout << "Ok you can relax now, I'll leave you alone" << std::endl;
+  demo.stop();
+  std::cout<<"Bye" << std::endl;
+  return 0;
+}
+\endcode
+
+\section thrift_tutorial_simple_sec-module Implementing the server as a RFModule
+
+A nicer altenative is to create a YARP RFModule that also implements the service interface:
+
+\code
+class DemoServerModule : public Demo, public yarp::os::RFModule
+{
+
+  /* Members declaration and service functions implementation */
+
+  /* <snip> see above */
+
+  /* ******************************************
+  /* RFModule functions declaration
+  /* ******************************************/
+
+  bool attach(yarp::os::Port &source);
+  bool configure( yarp::os::ResourceFinder &rf );
+  bool updateModule();
+  bool close();
+};
+\endcode
+
+The RFModule implementation:
+
+\code
+
+bool DemoServerModule::attach(yarp::os::Port &source)
+{
+    return this->yarp().attachAsServer(source);
+}
+
+bool DemoServerModule::configure( yarp::os::ResourceFinder &rf )
+{
+    std::string moduleName = rf.check("name",
+            yarp::os::Value("demoServerModule"),
+            "module name (string)").asString().c_str();
+    setName(moduleName.c_str());
+
+    std::string slash="/";
+
+    attach(cmdPort);
+
+    std::string cmdPortName= "/";
+    cmdPortName+= getName();
+    cmdPortName += "/cmd";
+    if (!cmdPort.open(cmdPortName.c_str())) {
+        std::cout << getName() << ": Unable to open port " << cmdPortName << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool DemoServerModule::updateModule()
+{
+    /* do something very useful */
+
+    return true;
+}
+bool DemoServerModule::close()
+{
+    cmdPort.close();
+    return true;
+}
+\endcode
+
+And the main function:
+
+\code
+
+/* *************************************
+/* Check YARP and run the module
+/* **************************************/
+
+int main(int argc, char *argv[]) {
+    yarp::os::Network yarp;
+    if (!yarp.checkNetwork())
+    {
+        std::cout<<"Error: yarp server does not seem available"<<std::endl;
+        return -1;
+    }
+
+    yarp::os::ResourceFinder rf;
+    rf.setVerbose(true);
+    rf.configure(argc, argv);
+
+    DemoServerModule demoMod;
+
+    if (!demoMod.configure(rf))
+        return -1;
+
+    return demoMod.runModule();
+}
+\endcode
+
+
+\section thrift_tutorial_simple_sec_completex Complete example
+
+A complete example of Thrift code generation and server/client creation with CMake is available in
+\code
+ [YARP_SOURCE]/example/idl/thriftSimple
+\endcode
+
+This is what we get when we launch server and client from command line (assuming a \em yarpserver is running, and we are in the "build" directory):
+
+<TABLE>
+<TR>
+<TD align="center"> \b Client </TD>
+<TD align="center"> \b Server </TD>
+</TR>
+
+<TR>
+<TD VALIGN="top">
+\verbatim
+$ ./demoClient --server /demoServerModule/cmd
+yarp: Port /demo/client active at tcp://10.255.36.53:10003
+\endverbatim
+</TD>
+<TD VALIGN="top">
+\verbatim
+$ ./demoServerModule
+||| policy set to YARP_POLICY
+||| YARP_POLICY:
+      <snip>
+I know the answer!
+yarp: Port /demoServerModule/cmd active at tcp://10.255.36.53:10002
+\endverbatim
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN="top">
+\verbatim
+yarp: Sending output from /demo/client to /demoServerModule/cmd using tcp
+Hey are you up and running?
+No? Well... start!
+\endverbatim
+</TD>
+<TD VALIGN="top">
+\verbatim
+yarp: Receiving input from /demo/client to /demoServerModule/cmd using tcp
+Indeed I am not running
+Starting!
+Indeed I am running
+\endverbatim
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN="top">
+\verbatim
+Wonderful! I have a question for you... so, what's the answer??
+What?? 42?? Are you kidding?? It's definitely 43!!
+
+\endverbatim
+</TD>
+<TD VALIGN="top">
+\verbatim
+The answer is 42
+I'm adding one to 42. That's easy :)
+OMG are you serious? The answer is 43?!?
+\endverbatim
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN="top">
+\verbatim
+Got it? So, repeat after me: the answer is ... 43! Great!
+Ok you can relax now, I'll leave you alone
+
+\endverbatim
+</TD>
+<TD VALIGN="top">
+\verbatim
+The answer is 43
+Stopping!
+
+\endverbatim
+</TD>
+</TR>
+
+<TR>
+<TD VALIGN="top">
+\verbatim
+Bye
+yarp: Removing output from /demo/client to /demoServerModule/cmd
+\endverbatim
+</TD>
+<TD VALIGN="top">
+\verbatim
+yarp: Removing input from /demo/client to /demoServerModule/cmd
+\endverbatim
+</TD>
+</TR>
+
+</TABLE>
+
+
+RPC calls can also be sent to the server from command line (note that commands with "_" in their name can be split):
+\verbatim
+$ yarp rpc /demoServerModule/cmd
+get_answer
+Response: 42
+set_answer 28
+Response: [ok]
+get answer
+Response: 28
+is running
+Response: [fail]
+start
+Response: [ok]
+is running
+Response: [ok]
+stop
+Response: [ok]
+is_running
+Response: [fail]
+\endverbatim
+
+
+\author Elena Ceseracciu (RBCS-IIT)
+
+
+**/

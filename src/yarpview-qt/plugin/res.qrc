@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/YARPView">
+    <file>YARPViewMenu.qml</file>
+    <file>images/Record-Pressed-icon.png</file>
+    <file>images/Stop-Normal-Red-icon.png</file>
+    <file>YARPViewStatusBar.qml</file>
+    <file>VideoSurface.qml</file>
+</qresource>
+</RCC>
