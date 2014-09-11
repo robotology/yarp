@@ -78,6 +78,7 @@ void LogEntryInfo::clear()
     number_of_infos=0;
     number_of_warnings=0;
     highest_error=LOGLEVEL_UNDEFINED;
+    last_update=-1;
 }
 
 LogLevelEnum  LogEntryInfo::getLastError()
