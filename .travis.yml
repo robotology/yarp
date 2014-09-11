@@ -6,7 +6,9 @@ env:
   - TRAVIS_WITH_ACE=true CMAKE_FLAGS=
   - TRAVIS_WITH_ACE=false CMAKE_FLAGS="-DSKIP_ACE=TRUE"
 before_install:
-  - sudo apt-get update
+  - sudo add-apt-repository --yes ppa:kalakris/cmake
+  - sudo apt-get update -qq
+  - sudo apt-get install cmake  # travis version is currently too old
 install:
   - if $TRAVIS_WITH_ACE; then sudo apt-get install libace-dev; fi
 script: cmake $CMAKE_FLAGS . && make && make test
