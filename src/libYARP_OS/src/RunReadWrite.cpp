@@ -31,6 +31,13 @@ int RunWrite::loop()
         fprintf(stderr,"RunWrite: could not open output port\n");
         return 1;
     }
+    if (yarp::os::Network::exists(wLoggerName.c_str()))
+	{
+		if (yarp::os::Network::connect(wPortName.c_str(),wLoggerName.c_str())==false)
+		{
+		    fprintf(stderr,"RunWrite: could not mmake connection with the logger\n");      
+		}
+	}
 
     char txt[2048];
 

@@ -140,10 +140,14 @@ public:
         char buff[16];
         sprintf(buff,"/%d",getpid());
         wPortName=portName+buff;
-        
+        wLoggerName=loggerName;
+
+        /*
+        //persistent connection to the logger, off by default
         yarp::os::ContactStyle style;
         style.persistent=true;
         yarp::os::Network::connect(wPortName.c_str(),loggerName.c_str(),style);
+        */
 
         mRunning=true;
     }
@@ -188,6 +192,7 @@ protected:
     bool mVerbose;
 
     yarp::os::ConstString wPortName;
+    yarp::os::ConstString wLoggerName;
     yarp::os::Port wPort;
 };
 
