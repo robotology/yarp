@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <cstdlib>
 
 #include <yarp/os/Os.h>
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -799,7 +800,23 @@ int diff(yarp::os::ConstString contextName, folderType fType, bool verbose)
     opts.searchLocations=ResourceFinderOptions::Installed;
     ConstString installedPath=rf.findPath((getFolderStringName(fType) + PATH_SEPARATOR +contextName).c_str(), opts);
 
+#ifdef DO_TEXT_DIFF
+    //use this for an internal diff implementation
     recursiveDiff(installedPath, userPath);
+#else
+    //use this for an external diff program
+    char command [500];
+    #ifdef WIN32
+        strcpy (command, "winmerge ");
+    #else
+        strcpy (command, "meld ");
+    #endif
+    strcat (command, installedPath.c_str());
+    strcat (command, " ");
+    strcat (command, userPath.c_str());
+    std::system(command);
+#endif
+    
     return 0;
 }
 
