@@ -25,9 +25,9 @@ CMAKE_OPTIONS="\
 
 case $3 in
     experimental)
+        # add any not-quite-ready-for-primetime options you want to test here
         CMAKE_OPTIONS="\
 $CMAKE_OPTIONS \
--DYARP_EXPERIMENTAL_MANAGER_LIBRARY:BOOL=TRUE \
 "
         ;;
 esac

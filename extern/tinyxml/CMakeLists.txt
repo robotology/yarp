@@ -26,10 +26,8 @@ set(TinyXML_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/tinyxml PARENT_SCOPE)
 set(TinyXML_LIBRARIES "YARP_priv_tinyxml" PARENT_SCOPE)
 set(TinyXML_DEFINITIONS "-DTIXML_USE_STL" PARENT_SCOPE)
 
-if(YARP_EXPERIMENTAL_MANAGER_LIB)
-    install(TARGETS YARP_priv_tinyxml
-            EXPORT YARP
-            COMPONENT runtime
-            DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_priv_tinyxml)
-endif()
+install(TARGETS YARP_priv_tinyxml
+        EXPORT YARP
+        COMPONENT runtime
+        DESTINATION ${CMAKE_INSTALL_LIBDIR})
+set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_priv_tinyxml)
