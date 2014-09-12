@@ -1,0 +1,226 @@
+/**
+*
+@page resource_finder_spec The ResourceFinder Specification
+
+\author Lorenzo Natale, Daniele Domenichelli, and Elena Ceseracciu
+
+Directories used by ResourceFinder
+==================================
+
+Broadly speaking, there are three ways in which the ResourceFinder operates to locate files:
+
+- looking in the current working directory
+- according to a policy
+- performing a system-wide search according to the following environment variables
+
+<b>YARP_CONFIG_HOME</b>
+- Location where user config files are stored `<path to a directory>`
+- Unless the user wants to test some specific setting, this environment variable should be unset
+
+<b>YARP_DATA_HOME</b>
+- Location where user data files are stored `<path to a directory>`
+- Unless the user wants to test some specific setting, this environment variable should be unset
+
+<b>YARP_CONFIG_DIRS</b> 
+- Locations where system administrator data and config files are stored `<list of path separated by (semi)colons>`
+- These directories can be used by the system administrator to modify some specific setting for the system
+
+<b>YARP_DATA_DIRS</b>
+- Locations where installed data and config files are stored `<list of path separated by (semi)colons>`.  
+- These are usually the directories where the installers put the data files.
+- If a user wants to use uninstalled packages, she should modify this environment variable
+
+When searching for files and directories, the ResourceFinder looks inside these directories in the above order, so that files modified by the user take precedence over installed ones.
+
+The default value for these variables is dependent on the operating system.
+
+Linux
+-----
+
+Default values for Linux are based on the XDG Base Directory Specification (see <http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html>). They rely on XDG environment variables, which default to:
+
+<b>$XDG_DATA_HOME</b>: 
+> \$HOME/.local/share/
+<b>$XDG_CONFIG_HOME</b>: 
+> \$HOME/.config/
+<b>$XDG_DATA_DIRS</b>: 
+> /usr/local/share/:/usr/share/
+<b>$XDG_CONFIG_DIRS</b>: 
+> /etc/xdg/  
+
+Default values for Yarp are:
+
+<b>$YARP_DATA_HOME</b>: 
+> $XDG_DATA_HOME + /yarp/
+<b>$YARP_CONFIG_HOME</b>: 
+> $XDG_CONFIG_HOME + /yarp/
+<b>$YARP_DATA_DIRS</b>: 
+> $XDG_DATA_DIRS + /yarp/ (appended to each dir)
+<b>$YARP_CONFIG_DIRS</b>: 
+> $XDG_CONFIG_DIRS + /yarp/ (appended to each dir) 
+> [NOTE: /etc/yarp is used as default instead of /etc/xdg/yarp ]  
+
+Windows
+-------
+
+The following environment variables (with their respective default values) are available on windows:
+
+<b>\%YARP_DIR%</b>: 
+> `C:\Program Files\robotology\YARP_2.X.XX` or `C:\Program Files (x86)\robotology\YARP_2.X.XX` (Set by the installer or by the user)
+<b>\%HOMEPATH%</b>: 
+> `C:\Users\<username>` or `C:\Documents and Settings\<username>` (User home)
+<b>\%APPDATA%</b>: 
+> `%%HOMEPATH%\AppData\Roaming` (Windows 7) or `%%HOMEPATH%\Application Data` (Windows XP) (Location where applications should store their data by default)
+<b>\%ALLUSERSPROFILE%</b>: 
+> `C:\ProgramData` (Windows Vista) or `C:\Documents and Settings\All Users` (Windows XP) (Location of the "All Users" or "Common" profile folder)  
+
+Default values for Yarp are therefore:
+
+<b>\%YARP\_DATA\_HOME%</b>: 
+> `%%APPDATA%\yarp`
+<b>\%YARP\_CONFIG\_HOME%</b>: 
+> `%%APPDATA%\yarp\config\`
+<b>\%YARP\_DATA\_DIRS%</b>: 
+> `%%YARP_DIR%\share\yarp\`
+<b>\%YARP\_CONFIG\_DIRS%</b>:
+> `%%ALLUSERSPROFILE%\yarp\`  
+
+Mac OSX
+-------
+
+On OSX, the following environment variable is used:
+
+<b>$HOME</b>: 
+> `/Users/<username>`  
+
+Default values for Yarp are therefore:
+
+<b>$YARP\_DATA\_HOME</b>: 
+> `$HOME/Library/Application Support/yarp`
+<b>$YARP\_CONFIG\_HOME</b>: 
+> `$HOME/Library/Preferences/yarp`
+<b>$YARP\_DATA\_DIRS</b>: 
+> `/usr/local/share/yarp:/usr/share/yarp`
+<b>$YARP\_CONFIG\_DIRS</b>: 
+> `/etc/yarp:Library/Preferences/yarp`
+
+Configuration Files
+===================
+
+Config files are INI files that contain parameters used by Yarp's own executables.
+
+ 1. User `$YARP_CONFIG_HOME`
+ 
+ 2. Sysadmin `$YARP_CONFIG_DIRS + /config/`
+
+ 3. Installed `($YARP_DATA_DIRS && path.d) + /config/`
+
+### path.d
+
+<b>path.d</b> is a special folder used by yarp to provide a portable way to install 3rd party applications in separate folders (more on this below). It is searched for by the Resource Finder in the same locations as "Installed" configuration files (3) before searching for any "installed" resource. Each file inside this path.d folder contains the path to the "data directory" of the corresponding installed package; this path is therefore appended to the list of paths that make up the Installed locations list (3).
+
+Data directories contents
+=========================
+
+The following directories should be present inside each of the \$YARP\_DATA\_HOME, \$YARP\_CONFIG\_DIRS and \$YARP\_DATA\_DIRS directories so that their content can be found by the Resource Finder
+
+-   contexts
+-   robots
+-   plugins
+-   applications
+-   modules
+-   resources
+-   templates
+    -   applications
+    -   modules
+
+For any of the above-mentioned directories `<dir>`, the possible locations are:
+
+  1. User `$YARP_DATA_HOME + /<dir>/`
+
+  2. Sysadmin `$YARP_CONFIG_DIRS + /<dir>/` [should not be normally needed]
+
+  3. Installed `($YARP_DATA_DIRS && path.d) + /<dir>/`
+
+
+Contexts and Robots files
+-------------------------
+
+The *contexts* folders contain multiple sub-folders. Each subfolder represents a context, i.e., a collection of configuration files and data that may be used to configure modules at runtime and read/write any type of files. When the resource finder is configured with a specific context-name (either a default, hard-coded one, or provided as command line parameter to the module), `contexts/<context-name>` is added to the search path in which the initial configuration file and any additional files are sought. The same `<context-name>` can appear in user and installed *contexts* directories, which means that files associated to a context can actually be located in multiple places (i.e., there are both user files and installed files associated to the same context; user files "mask" installed files with the same name).
+
+The *robots* folders contain multiple sub-folders as well. Each subfolder has the name of a robot, and contains robot-specific files. The ResourceFinder adds `robots/$YARP_ROBOT_NAME` (default value for this environment variable: default) to the search path, before the context-specific paths.
+
+Plugins Manifest Files
+----------------------
+
+Plugin manifest files are INI files that describe which class implements the plugin, the library it is included in, and how to find such library. These files are needed by the yarpdev executable.
+
+Application deployment files
+----------------------------
+
+*Applications*, *modules* and *resources* folders contain XML files that describe programs (modules), the resources available to run the programs (resources), and collections of interconnected modules (applications). The \ref yarpmanager "yarpmanager and gyarpmanager" executables allow to run and monitor applications, while the gyarpbuilder executables allows to design new ones.
+
+Templates are XML files with a `.template` extension. Typical templates are applications that need to be configured (i.e., assigning the node where each module should be run) before they can be executed.
+
+Generation of the search path
+=============================
+
+When looking for an initial configuration file, the ResourceFinder will look inside the following directories (in order):
+
+-   current working directory
+-   robot directory
+    -   user robot directory
+    -   installed robot directory (searches also for `path.d` directory)
+-   (if a context has been specified) context directory
+    -   user context directory
+    -   installed context directory
+-   \$YARP\_CONFIG\_HOME
+-   \$YARP\_DATA\_HOME
+-   \$YARP\_CONFIG\_DIRS
+-   \$YARP\_DATA\_DIRS (and `path.d`)
+
+Subsequent searches for files may follow different routes if the initial configuration file was found relative to the "current working directory" ("local" behaviour). In this case, the search path becomes:
+
+-   current working directory
+-   initial configuration file directory (might be different from previous one if the initial configuration file is provided with a relative path)
+-   robot directory
+    -   user robot directory
+    -   installed robot directory (searches also for [ path.d](#_path.d "wikilink") directory)
+-   \$YARP\_CONFIG\_HOME
+-   \$YARP\_DATA\_HOME
+-   \$YARP\_CONFIG\_DIRS
+-   \$YARP\_DATA\_DIRS (and [ path.d](#_path.d "wikilink") )
+
+3rd party packages
+==================
+
+Installed packages
+------------------
+
+Yarp exports the following CMake variables:
+
+-   YARP\_INSTALL\_PREFIX
+-   YARP\_CONFIG\_INSTALL\_DIR
+-   YARP\_PLUGIN\_MANIFESTS\_INSTALL\_DIR
+-   YARP\_MODULES\_INSTALL\_DIR
+-   YARP\_APPLICATIONS\_INSTALL\_DIR
+-   YARP\_TEMPLATES\_INSTALL\_DIR
+-   YARP\_APPLICATIONS\_TEMPLATES\_INSTALL\_DIR
+-   YARP\_MODULES\_TEMPLATES\_INSTALL\_DIR
+-   YARP\_CONTEXTS\_INSTALL\_DIR
+-   YARP\_ROBOTS\_INSTALL\_DIR
+
+Using the correct CMake variables when installing files will ensure that those files will be in the correct place on every platform.
+
+Also non-root installation is supported, but both yarp and 3rd party software will require to be configured with the same \$PREFIX, and the environment variables will require to be tweaked accordingly.
+
+### Uninstalled packages
+
+Paths to uninstalled data directories can be appended to the \$YARP\_DATA\_DIRS environment variable. Please note that Yarp will consider these packages as installed; local user data should be put inside \$YARP\_DATA\_HOME
+
+### Packages that want to keep their stuff in their own data directory
+
+Packages that want to install their files in their own directory, should install a .ini file in \$YARP\_PREFIX/yarp/config/path.d . This can be done using the *yarp\_configure\_external\_installation* macro provided in <YARP_SOURCE>/conf/YarpInstallationHelpers.cmake.
+
+*
+**/
