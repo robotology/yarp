@@ -44,23 +44,23 @@ loss of support for some non-TCP-based protocols).
 YARP is free and open, under the LGPL (*).
 
 Getting set up:
-\li \ref install
-\li \ref yarp_cluster
-\li \ref yarp
+\li \subpage install
+\li \subpage yarp_cluster
+\li \subpage yarp
 
 The basics of using YARP:
 \li \ref yarp_cmake_hello
-\li \ref tutorials
+\li \subpage tutorials
 \li \ref note_ports
 \li \ref note_devices
 \li \ref yarp_data_dirs
 
 Some helpful programs:
-\li \ref yarpdev
-\li \ref yarprun
-\li \ref yarpmanager
-\li \ref yarpscope
-\li \ref yarp_yarp-config
+\li \subpage yarpdev
+\li \subpage yarprun
+\li \subpage yarpmanager
+\li \subpage yarpscope
+\li \subpage yarp_yarp-config
 
 Interoperability:
 \li \ref yarp_without_yarp
@@ -68,7 +68,7 @@ Interoperability:
 \li \ref yarp_swig
 
 More information:
-\li \ref what_is_yarp
+\li \subpage what_is_yarp
 
 YARP resources:
 \li \ref download

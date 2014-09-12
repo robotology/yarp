@@ -12,57 +12,57 @@
 Here are a collection of tutorials on various topics in YARP.
 
 Using YARP and CMake in your projects:
-\li \ref yarp_cmake_hello
+\li \subpage yarp_cmake_hello
 
 Using YARP ports for communication:
-\li \ref note_ports
-\li \ref port_expert
-\li \ref carrier_config
-\li \ref carrier_expert
-\li \ref rpc_ports
-\li \ref yarp_without_yarp
-\li \ref persistent_connections
-\li \ref port_admin
-\li \ref yarp_port_auth
-\li \ref yarp_without_nameserver
-\li \ref yarp_with_ros
-\li \ref yarp_http
+\li \subpage note_ports
+\li \subpage port_expert
+\li \subpage carrier_config
+\li \subpage carrier_expert
+\li \subpage rpc_ports
+\li \subpage yarp_without_yarp
+\li \subpage persistent_connections
+\li \subpage port_admin
+\li \subpage yarp_port_auth
+\li \subpage yarp_without_nameserver
+\li \subpage yarp_with_ros
+\li \subpage yarp_http
 
 ROS types in YARP:
-\li \ref rostypes_tutorial_portable
-\li \ref rostypes_tutorial_continued
+\li \subpage rostypes_tutorial_portable
+\li \subpage rostypes_tutorial_continued
 
-Using the Thirft IDL to define data types and interfaces:
-\li \ref thrift_tutorial_portable
-\li \ref thrift_tutorial_simple
-\li \ref thrift_tutorial
+Using the Thrift IDL to define data types and interfaces:
+\li \subpage thrift_tutorial_portable
+\li \subpage thrift_tutorial_simple
+\li \subpage thrift_tutorial
 
 How to search and install configuration files:
-\li \ref yarp_resource_finder_tutorials
+\li \subpage yarp_resource_finder_tutorials
 
 Using YARP devices:
-\li \ref note_devices
-\li \ref yarpdev
-\li \ref yarp_motor_control
-\li \ref dev_examples
-\li \ref add_a_plugin (older method: \ref add_a_device)
-\li \ref yarp_config_files
+\li \subpage note_devices
+\li \subpage yarpdev
+\li \subpage yarp_motor_control
+\li \subpage dev_examples
+\li \subpage add_a_plugin (older method: \ref add_a_device)
+\li \subpage yarp_config_files
 
 More software tutorials:
-\li \ref yarp_code_examples
-\li \ref gpu_tutorial
-\li \ref using_cmake
+\li \subpage yarp_code_examples
+\li \subpage gpu_tutorial
+\li \subpage using_cmake
 
 Communication protocol details:
-\li \ref yarp_protocol
-\li \ref data_rep
-\li \ref name_server
-\li \ref terms
+\li \subpage yarp_protocol
+\li \subpage data_rep
+\li \subpage name_server
+\li \subpage terms
 
 YARP implementation:
-\li \ref yarp_guts
-\li \ref yarp_build_structure
-\li \ref yarp_plugins
+\li \subpage yarp_guts
+\li \subpage yarp_build_structure
+\li \subpage yarp_plugins
 
  *
  */
