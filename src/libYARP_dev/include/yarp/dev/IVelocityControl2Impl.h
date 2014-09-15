@@ -16,7 +16,7 @@
 namespace yarp {
     namespace dev {
         class ImplementVelocityControl2;
-        class StubImplVelpcityControl2Raw;
+        class StubImplVelocityControl2Raw;
     }
 }
 
@@ -96,17 +96,27 @@ public:
  * missed to implement useful functionalities.
  *
  */
-class yarp::dev::StubImplVelpcityControl2Raw: public IVelocityControl2Raw
+class yarp::dev::StubImplVelocityControl2Raw: public IVelocityControl2Raw
 {
 private:
     /**
      * Helper for printing error message, see below.
      * Implemented in ControlBoardInterfacesImpl.cpp.
      */
-    bool NOT_YET_IMPLEMENTED(const char *func=0);
+    bool NOT_YET_IMPLEMENTED(const char *func)
+    {
+        if (func)
+            fprintf(stderr, "%s:", func);
+        else
+            fprintf(stderr, "Function ");
+
+        fprintf(stderr, "not yet implemented\n");
+
+        return false;
+    }
 
 public:
-    virtual bool getAxesRaw(int *axes)
+    virtual bool getAxes(int *axes)
     {return NOT_YET_IMPLEMENTED("getAxesRaw");}
 
     virtual bool setVelocityModeRaw()
