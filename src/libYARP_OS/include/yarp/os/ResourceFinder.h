@@ -91,6 +91,16 @@ public:
      *
      * Some elements of policy can be changed from the commandline.
      *
+     * @return true if configuration succeeded. Configuration fails
+     * if the user requests use of a policy and that policy cannot
+     * be found, of if the user requests a configuration file to
+     * be read (via --from for example) and that file cannot be
+     * found. If a default configuration file has been set with
+     * ResourceFinder::setDefaultConfigFile, the presence or 
+     * absence of that file doesn't by itself contribute to 
+     * sucess/failure (since it is perfectly valid for it to be
+     * absent).
+     *
      */
     bool configure(const char *policyName, int argc, char *argv[],
                    bool skipFirstArgument = true);
@@ -99,7 +109,8 @@ public:
      *
      * Variant of configure() that doesn't require a policy name
      * to be specified.  In this case, policy will be read from
-     * an environment variable, YARP_POLICY.
+     * an environment variable, YARP_POLICY.  The meaning of the
+     * return value is specified in the main version of configure()
      *
      */
     bool configure(int argc, char *argv[]) {
