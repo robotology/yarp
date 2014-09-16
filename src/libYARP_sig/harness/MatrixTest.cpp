@@ -468,6 +468,21 @@ public:
         checkEqualish(bot2->get(0).asDouble(),value,"value match");
     }
 
+    void checkEmpty() {
+        report(0,"check data() when matrix is empty...");
+        Matrix m;
+        m.resize(0,0);
+        checkTrue(m.data()==NULL, "size 0x0 => null data()");
+        m.resize(0,5);
+        checkTrue(m.data()==NULL, "size 0x5 => null data()");
+        m.resize(5,0);
+        checkTrue(m.data()==NULL, "size 5x0 => null data()");
+        m.resize(5,5);
+        checkTrue(m.data()!=NULL, "size 5x5 => non-null data()");
+        // This is *not* redundant with earlier test
+        m.resize(0,0);
+        checkTrue(m.data()==NULL, "size 0x0 => null data()");
+    }
 
     virtual void runTests() {
             Network::setLocalMode(true);
@@ -482,6 +497,8 @@ public:
 
             checkFormat();
             checkPair();
+
+            checkEmpty();
 
             Network::setLocalMode(false);
         }

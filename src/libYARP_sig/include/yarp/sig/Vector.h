@@ -89,8 +89,12 @@ private:
     size_t len;
 
     inline void _updatePointers() {
-        first = (T *) bytes.get();
         len = bytes.used()/sizeof(T);
+        if (len==0) {
+            first = 0/*NULL*/;
+        } else {
+            first = (T *) bytes.get();
+        }
     }
 
 public:
@@ -163,10 +167,9 @@ public:
     inline void push_back (const T &elem)
     {
         bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
-        _updatePointers();
-        first[len] = elem;
         bytes.setUsed(bytes.used()+sizeof(T));
-        len++;
+        _updatePointers();
+        first[len-1] = elem;
     }
 
     inline void pop_back (void)
@@ -174,6 +177,7 @@ public:
         if (bytes.used()>sizeof(T)) {
             bytes.setUsed(bytes.used()-sizeof(T));
             len--;
+            _updatePointers();
         }
     }
 
@@ -386,7 +390,7 @@ public:
 
     /**
     * Return a pointer to the first element of the vector.
-    * @return a pointer to double.
+    * @return a pointer to double (or NULL if the vector is of zero length)
     */
     inline double *data()
     { return storage.getFirst(); }
@@ -394,7 +398,7 @@ public:
     /**
     * Return a pointer to the first element of the vector,
     * const version
-    * @return a (const) pointer to double.
+    * @return a (const) pointer to double (or NULL if the vector is of zero length)
     */
     inline const double *data() const
     { return storage.getFirst();}

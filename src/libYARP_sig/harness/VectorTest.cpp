@@ -336,6 +336,17 @@ public:
         checkTrue(ok, "resize(int, double) works");
     }
 
+    void checkEmpty()
+    {
+        Vector v;
+        v.resize(0);
+        checkTrue(v.data()==NULL, "size 0 => null data()");
+        v.resize(1);
+        checkTrue(v.data()!=NULL, "size 1 => non-null data()");
+        v.resize(2);
+        checkTrue(v.data()!=NULL, "size 2 => non-null data()");
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkFormat();
@@ -345,6 +356,7 @@ public:
         checkOperators();
         checkGsl();
         checkResize();
+        checkEmpty();
         Network::setLocalMode(false);
     }
 };

@@ -312,17 +312,17 @@ public:
 
       /**
       * Return a pointer to the first element
-      * @return the pointer to the first element
+      * @return the pointer to the first element (or NULL if either dimension of the matrix is 0)
       */
       inline double *data()
-      {return storage;}
+      {return (nrows>0&&ncols>0)?storage:0/*NULL*/;}
 
       /**
       * Return a pointer to the first element (const version).
-      * @return the (const) pointer to the first element
+      * @return the (const) pointer to the first element (or NULL if either dimension of the matrix is 0)
       */
       inline const double *data() const
-      {return storage;}
+      {return (nrows>0&&ncols>0)?storage:0/*NULL*/;}
 
       /**
       * True iff all elements of a match all element of b.

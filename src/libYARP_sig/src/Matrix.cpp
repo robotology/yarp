@@ -207,7 +207,7 @@ void Matrix::updatePointers()
 
     int r=0;
     matrix=new double* [nrows];
-    matrix[0]=storage;
+    if (nrows>0) matrix[0]=storage;
     for(r=1;r<nrows; r++)
     {
         matrix[r]=matrix[r-1]+ncols;
