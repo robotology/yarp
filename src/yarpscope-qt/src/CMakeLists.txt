@@ -33,7 +33,7 @@ qt5_use_modules(yarpscope-qt Widgets
                              Quick)
 qtyarp_deprecate_with_cmake_version(2.8.11)
 if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    qt5_use_modules(yarpscope-qt WinMain)
+    qt5_use_modules(yarpscope-qt Qt5::WinMain)
 endif()
 
 install(TARGETS yarpscope-qt COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

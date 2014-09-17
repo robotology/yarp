@@ -62,7 +62,7 @@ if(CREATE_GYARPMANAGER AND YARP_HAS_QT5)
                                 Gui)
   qtyarp_deprecate_with_cmake_version(2.8.11)
   if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-      qt5_use_modules(yarpmanager-qt WinMain)
+      qt5_use_modules(yarpmanager-qt Qt5::WinMain)
   endif()
 
   install(TARGETS yarpmanager-qt COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
