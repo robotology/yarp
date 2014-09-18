@@ -19,9 +19,9 @@ if (YARP_USE_PERSISTENT_NAMESERVER)
     source_group("Source Files" FILES ${YARP_name_SRCS})
     source_group("Header Files" FILES ${YARP_name_HDRS})
 
-    set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
-                    ${PROJECT_SOURCE_DIR}/include)
+    set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
     get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+
     include_directories(${YARP_TREE_INCLUDE_DIRS})
     include_directories(${ACE_INCLUDE_DIRS})
 

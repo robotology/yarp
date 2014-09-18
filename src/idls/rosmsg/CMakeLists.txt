@@ -12,7 +12,9 @@ include_directories(src)
 add_executable(yarpidl_rosmsg src/main.cpp src/RosType.cpp src/RosTypeCodeGenYarp.cpp src/RosType.h src/RosTypeCodeGenYarp.h)
 
 target_link_libraries(yarpidl_rosmsg YARP_init YARP_OS ${ACE_LIBRARIES})
-install(TARGETS yarpidl_rosmsg COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS yarpidl_rosmsg
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 option(TEST_yarpidl_rosmsg "Test ROS msg based IDL" OFF)
 if (TEST_yarpidl_rosmsg)

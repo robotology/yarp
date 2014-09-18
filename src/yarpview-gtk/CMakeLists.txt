@@ -38,17 +38,15 @@ if(CREATE_YARPVIEW AND YARP_HAS_GTK2)
                                      ${GTK2_GOBJECT_LIBRARY}
                                      ${GTK2_GTHREAD_LIBRARY})
 
-  install(TARGETS yarpview-gtk COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS yarpview-gtk
+          COMPONENT utilities
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   if(NOT TARGET yarpview-qt OR YARP_DEFAULT_GTK)
     set_target_properties(yarpview-gtk PROPERTIES OUTPUT_NAME yarpview)
   endif()
 
-  yarp_install(FILES yarpview.xml DESTINATION ${YARP_MODULES_INSTALL_DIR})
-  #configure_file(yarpview.xml ${CMAKE_BINARY_DIR}/modules/yarpview.xml COPYONLY)
-  #if(YARP_TREE_INCLUDE_DIRS)
-  #    install(FILES ${CMAKE_BINARY_DIR}/modules/yarpview.xml
-  #            DESTINATION share/yarp/modules)
-  #endif(YARP_TREE_INCLUDE_DIRS)
+  yarp_install(FILES yarpview.xml
+               DESTINATION ${YARP_MODULES_INSTALL_DIR})
 
 endif()

@@ -72,7 +72,9 @@ if (NOT THRIFT_ROOT)
 
 endif ()
 
-install(TARGETS yarpidl_thrift COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS yarpidl_thrift
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 option(TEST_yarpidl_thrift "Test thrift-based IDL" OFF)
 if (TEST_yarpidl_thrift)

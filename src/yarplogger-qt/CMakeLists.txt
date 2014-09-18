@@ -16,12 +16,19 @@ source_group("Resources Files" FILES ${QtYARPLogger_QRC_FILES})
 source_group("UI Files" FILES ${QtYARPLogger_UI_FILES})
 source_group("Generated Files" FILES ${QtYARPLogger_QRC_GEN_SRCS} ${QtYARPLogger_UI_GEN_SRCS})
 
-add_executable(QtYARPLogger WIN32 ${QtYARPLogger_SRCS} ${QtYARPLogger_HDRS} ${QtYARPLogger_QRC_GEN_SRCS} ${QtYARPLogger_UI_GEN_SRCS})
-target_link_libraries(QtYARPLogger YARP::YARP_OS YARP::YARP_init)
-qt5_use_modules(QtYARPLogger Widgets Gui)
+add_executable(QtYARPLogger WIN32 ${QtYARPLogger_SRCS}
+                                  ${QtYARPLogger_HDRS}
+                                  ${QtYARPLogger_QRC_GEN_SRCS}
+                                  ${QtYARPLogger_UI_GEN_SRCS})
+target_link_libraries(QtYARPLogger YARP_OS
+                                   YARP_init)
+qt5_use_modules(QtYARPLogger Widgets
+                             Gui)
 qtyarp_deprecate_with_cmake_version(2.8.11)
-if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
-    qt5_use_modules(QtYARPLogger Qt5::WinMain)
+if(WIN32)
+    target_link_libraries(QtYARPLogger Qt5::WinMain)
 endif()
 
-install(TARGETS QtYARPLogger COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS QtYARPLogger
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})

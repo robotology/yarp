@@ -347,16 +347,18 @@ if (ENABLE_YARPRUN_LOG)
     add_definitions(-DYARPRUN_LOG)
 endif(ENABLE_YARPRUN_LOG)
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
-                ${PROJECT_SOURCE_DIR}/include)
+set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-include_directories(${YARP_TREE_INCLUDE_DIRS})
 
+include_directories(${YARP_TREE_INCLUDE_DIRS})
 if (NOT SKIP_ACE)
   include_directories(${ACE_INCLUDE_DIRS})
 endif ()
 
-add_library(YARP_OS ${YARP_OS_SRCS} ${YARP_OS_HDRS} ${YARP_OS_IDL_HDRS} ${YARP_OS_IMPL_HDRS})
+add_library(YARP_OS ${YARP_OS_SRCS}
+                    ${YARP_OS_HDRS}
+                    ${YARP_OS_IDL_HDRS}
+                    ${YARP_OS_IMPL_HDRS})
 target_link_libraries(YARP_OS LINK_PRIVATE ${ACE_LIBRARIES})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

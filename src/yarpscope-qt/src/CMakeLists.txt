@@ -36,7 +36,9 @@ if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
   target_link_libraries(yarpscope-qt Qt5::WinMain)
 endif()
 
-install(TARGETS yarpscope-qt COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS yarpscope-qt
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpscope-qt PROPERTIES OUTPUT_NAME yarpscope)
