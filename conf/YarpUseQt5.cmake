@@ -16,13 +16,9 @@ endmacro()
 macro(qtyarp_qml_plugin _target _path)
   set_property(TARGET ${_target} APPEND PROPERTY COMPILE_DEFINITIONS QT_PLUGIN)
 
-  set_target_properties(${_target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${_path}
-                                              ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${_path})
-  foreach(config ${CMAKE_CONFIGURATION_TYPES})
-    string(TOUPPER ${config} CONFIG)
-    set_target_properties(${_target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_${CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${_path}
-                                                ARCHIVE_OUTPUT_DIRECTORY_${CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${_path})
-  endforeach()
+  set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${_path}
+                                              LIBRARY_OUTPUT_DIRECTORY ${_path}
+                                              ARCHIVE_OUTPUT_DIRECTORY ${_path})
 
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/qmldir)
     add_custom_command(TARGET ${_target}

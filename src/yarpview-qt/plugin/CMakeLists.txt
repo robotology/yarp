@@ -48,5 +48,10 @@ qt5_use_modules(QtYARPViewPlugin Widgets
 
 qtyarp_qml_plugin(QtYARPViewPlugin "${CMAKE_INSTALL_QMLDIR}/${QtYARPViewPlugin_QMLDIR}")
 
-install(TARGETS QtYARPViewPlugin DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPViewPlugin_QMLDIR}")
+install(TARGETS QtYARPViewPlugin
+        COMPONENT utilities
+        RUNTIME DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPViewPlugin_QMLDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPViewPlugin_QMLDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPViewPlugin_QMLDIR}")
+
 install(FILES qmldir DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPViewPlugin_QMLDIR}")

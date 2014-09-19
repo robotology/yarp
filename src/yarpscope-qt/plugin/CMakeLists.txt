@@ -48,5 +48,10 @@ qt5_use_modules(QtYARPScopePlugin Widgets Qml Quick Xml PrintSupport)
 
 qtyarp_qml_plugin(QtYARPScopePlugin "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}")
 
-install(TARGETS QtYARPScopePlugin DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}")
+install(TARGETS QtYARPScopePlugin
+        COMPONENT utilities
+        RUNTIME DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}")
+
 install(FILES qmldir DESTINATION "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}")

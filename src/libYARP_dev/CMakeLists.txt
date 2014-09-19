@@ -73,6 +73,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/Wrapper.h
                   include/yarp/dev/ControlBoardInterfacesImpl.inl)
 
+set(YARP_dev_IMPL_HDRS )
+
 set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardPid.cpp
@@ -114,9 +116,11 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
 
 
-
-source_group("Source Files" FILES ${YARP_dev_SRCS} ${YARP_devices_SRCS})
-source_group("Header Files" FILES ${YARP_dev_HDRS} ${YARP_devices_HDRS})
+source_group("Source Files" FILES ${YARP_dev_SRCS})
+source_group("Header Files" FILES ${YARP_dev_HDRS})
+source_group("Implementation Header Files" FILES ${YARP_dev_IMPL_HDRS})
+source_group("Devices Files" FILES ${YARP_devices_SRCS}
+                                   ${YARP_devices_HDRS})
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
@@ -128,9 +132,18 @@ add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_devices_SRCS} ${YARP_dev_HDRS})
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
 target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
-install(TARGETS YARP_dev EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS})
+set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS})
+
+install(TARGETS YARP_dev
+        EXPORT YARP
+        COMPONENT runtime
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev"
+        PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev/impl")
+
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
-
 set_property(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
-
-install(FILES ${YARP_dev_HDRS} COMPONENT development DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/dev)
