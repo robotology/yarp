@@ -33,12 +33,6 @@ macro(qtyarp_qml_plugin _target _path)
   endif()
 endmacro()
 
-qtyarp_deprecate_with_cmake_version(2.8.11)
-if(NOT ${CMAKE_VERSION} VERSION_LESS 2.8.11)
-   cmake_policy(SET CMP0020 NEW)
-endif()
-
-
 
 # Instruct CMake to issue deprecation warnings for macros and functions.
 set(CMAKE_WARN_DEPRECATED TRUE)

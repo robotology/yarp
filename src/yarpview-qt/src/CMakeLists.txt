@@ -32,9 +32,8 @@ qt5_use_modules(yarpview-qt Widgets
                             Qml
                             Quick)
 qtyarp_deprecate_with_cmake_version(2.8.11)
-if(WIN32)
-    #qt5_use_modules(yarpview-qt Qt5::WinMain)
-    target_link_libraries(yarpview-qt Qt5::WinMain)
+if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
+  target_link_libraries(yarpview-qt Qt5::WinMain)
 endif()
 
 install(TARGETS yarpview-qt COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
