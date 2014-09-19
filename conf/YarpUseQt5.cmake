@@ -8,7 +8,7 @@ include(GNUInstallDirs)
 
 macro(qtyarp_deprecate_with_cmake_version _version)
   if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS ${_version})
-    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION = ${CMAKE_MINIMUM_REQUIRED_VERSION}. You can remove this check.")
+    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION = ${CMAKE_MINIMUM_REQUIRED_VERSION}. You can remove this.")
   endif()
 endmacro()
 
@@ -32,6 +32,20 @@ macro(qtyarp_qml_plugin _target _path)
                                ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${_path}/qmldir)
   endif()
 endmacro()
+
+
+# Hide qt5_use_modules function (that generates several warnings), when
+# it can be replaced by target_link_libraries (CMake 2.8.11 or later)
+# NOTE: when CMake minimum required version is 2.8.11 or later,
+#       these calls should be replaced with target_link_libraries.
+qtyarp_deprecate_with_cmake_version(2.8.11)
+if(NOT ${CMAKE_VERSION} VERSION_LESS 2.8.11)
+  macro(qt5_use_modules _target)
+    foreach(_qt5lib ${ARGN})
+      target_link_libraries(${_target} Qt5::${_qt5lib})
+    endforeach()
+  endmacro()
+endif()
 
 
 # Instruct CMake to issue deprecation warnings for macros and functions.
