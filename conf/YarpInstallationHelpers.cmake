@@ -8,6 +8,10 @@ include(GNUInstallDirs)
 
 # Define CMAKE_INSTALL_QMLDIR for installing QML plugins
 if(NOT DEFINED CMAKE_INSTALL_QMLDIR)
+  # A library created by "add_library(MODULE)" is always considered
+  # "LIBRARY" and not "RUNTIME" (ON WINDOWS DLLs are usually "RUNTIME"
+  # when created by "add_library(SHARED)"). Therefore it would normally
+  # end in "lib" in all the cases.
   set(CMAKE_INSTALL_QMLDIR "${CMAKE_INSTALL_LIBDIR}/qt5/qml" CACHE PATH "qml plugins (lib/qt5/qml)")
 endif()
 mark_as_advanced(CMAKE_INSTALL_QMLDIR)

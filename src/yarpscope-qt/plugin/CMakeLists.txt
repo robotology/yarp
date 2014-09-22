@@ -46,7 +46,7 @@ target_link_libraries(QtYARPScopePlugin YARP_OS
                                         YARP_init)
 qt5_use_modules(QtYARPScopePlugin Widgets Qml Quick Xml PrintSupport)
 
-qtyarp_qml_plugin(QtYARPScopePlugin "${CMAKE_INSTALL_QMLDIR}/${QtYARPScopePlugin_QMLDIR}")
+qtyarp_qml_plugin(QtYARPScopePlugin "${QtYARPScopePlugin_QMLDIR}")
 
 install(TARGETS QtYARPScopePlugin
         COMPONENT utilities

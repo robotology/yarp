@@ -25,6 +25,8 @@ source_group("Resources Files" FILES ${yarpview_qt_QRC_FILES})
 source_group("QML Files" FILES ${yarpview_qt_QML_FILES})
 source_group("Generated Files" FILES ${yarpview_qt_QRC_GEN_SRCS})
 
+qtyarp_use_qml_plugin()
+
 add_executable(yarpview-qt WIN32 ${yarpview_qt_SRCS}
                                  ${yarpview_qt_HDRS}
                                  ${yarpview_qt_QRC_GEN_SRCS})

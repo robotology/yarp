@@ -46,7 +46,7 @@ qt5_use_modules(QtYARPViewPlugin Widgets
                                  Quick
                                  Multimedia)
 
-qtyarp_qml_plugin(QtYARPViewPlugin "${CMAKE_INSTALL_QMLDIR}/${QtYARPViewPlugin_QMLDIR}")
+qtyarp_qml_plugin(QtYARPViewPlugin "${QtYARPViewPlugin_QMLDIR}")
 
 install(TARGETS QtYARPViewPlugin
         COMPONENT utilities
