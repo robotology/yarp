@@ -468,8 +468,9 @@ public:
             if (!done) {
                 including = false;
 
-                if (buf.find("//")!=String::npos) {
+                if (buf.find("//")!=String::npos||buf.find("#")!=String::npos) {
                     bool quoted = false;
+                    bool prespace = true;
                     int comment = 0;
                     for (unsigned int i=0; i<buf.length(); i++) {
                         char ch = buf[i];
@@ -478,15 +479,20 @@ public:
                             if (ch=='/') {
                                 comment++;
                                 if (comment==2) {
-                                    //buf = buf.substr(0,buf.strstr("//"));
-                                    buf = buf.substr(0,i);
+                                    buf = buf.substr(0,i-1);
                                     break;
                                 }
                             } else {
                                 comment = 0;
+                                if (ch=='#'&&prespace) {
+                                    buf = buf.substr(0,i-1);
+                                    break;
+                                }
                             }
+                            prespace = (ch==' '||ch=='\t');
                         } else {
                             comment = 0;
+                            prespace = false;
                         }
                     }
                 }

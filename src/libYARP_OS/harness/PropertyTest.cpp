@@ -287,6 +287,14 @@ check $x $y\n\
         checkEqual(p.find("x").asInt(),10,"comment ignored ok");
         p.fromConfig("url \"http://www.robotcub.org\"\n");
         checkEqual(p.find("url").asString().c_str(),"http://www.robotcub.org","url with // passed ok");
+        p.fromConfig("x 10 # 15");
+        checkEqual(p.findGroup("x").size(),2,"group size with # ok");
+        p.fromConfig("x 10 // 15");
+        checkEqual(p.findGroup("x").size(),2,"group size with // ok");
+        p.fromConfig("x \"# 1 // 2\" 4 5");
+        checkEqual(p.findGroup("x").size(),4,"group size with quoting ok");
+        p.fromConfig("x 10#15 4 5");
+        checkEqual(p.findGroup("x").size(),4,"group size with x#y ok");
     }
 
     virtual void checkWipe() {
