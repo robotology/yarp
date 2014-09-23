@@ -127,6 +127,7 @@
 %feature("abstract") Searchable;
 %feature("abstract") Contactable;
 %feature("abstract") UnbufferedContactable;
+%feature("abstract") AbstractContactable;
 
 // Deal with overridden method clashes, simply by ignoring them.
 // At some point, these methods should get renamed so they are still
@@ -349,6 +350,7 @@ namespace yarp {
 %include <yarp/os/Contact.h>
 %include <yarp/os/Contactable.h>
 %include <yarp/os/UnbufferedContactable.h>
+%include <yarp/os/AbstractContactable.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/Network.h>
 %include <yarp/os/PortablePair.h>

@@ -29,6 +29,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/UnbufferedContactable.h>
+#include <yarp/os/AbstractContactable.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Node.h>
