@@ -5,25 +5,14 @@
 include(GNUInstallDirs)
 
 #########################################################################
-# Control where libraries and executables are placed
+# Control where libraries and executables are placed during the build
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-message(STATUS "Libraries are placed in ${LIBRARY_OUTPUT_PATH}")
-message(STATUS "Executables are placed in ${EXECUTABLE_OUTPUT_PATH}")
-# Make sure the directories actually exist
-make_directory(${LIBRARY_OUTPUT_PATH})
-make_directory(${EXECUTABLE_OUTPUT_PATH})
-mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
-if (MSVC)
-  # See the Debug/Release subdirectories - is there a more systematic
-  # way to do this?  Is this still needed?
-  LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib
-    ${CMAKE_BINARY_DIR}/lib/Debug
-    ${CMAKE_BINARY_DIR}/lib/Release)
-endif (MSVC)
 
+#########################################################################
+# Build configurations
 set(YARP_OPTIMIZED_CONFIGURATIONS "Release" "MinSizeRel")
 set(YARP_DEBUG_CONFIGURATIONS "Debug" "RelWithDebInfo")
 

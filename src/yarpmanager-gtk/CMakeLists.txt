@@ -17,30 +17,30 @@ if(CREATE_GYARPMANAGER AND YARP_HAS_GTK2)
   include_directories(${TinyXML_INCLUDE_DIRS})
   add_definitions(${GTK2_DEFINITIONS})
 
-  set(folder_source application_list.cpp
-                    application_window.cpp
-                    gymanager.cpp
-                    main_window.cpp
-                    message_list.cpp
-                    module_window.cpp
-                    resource_window.cpp
-                    safe_manager.cpp
-                    stdout_window.cpp)
+  set(yarpmanager_gtk_SRCS application_list.cpp
+                           application_window.cpp
+                           gymanager.cpp
+                           main_window.cpp
+                           message_list.cpp
+                           module_window.cpp
+                           resource_window.cpp
+                           safe_manager.cpp
+                           stdout_window.cpp)
 
-  set(folder_header application_list.h
-                    application_window.h
-                    icon_res.h
-                    main_window.h
-                    message_list.h
-                    module_window.h
-                    resource_window.h
-                    safe_manager.h
-                    stdout_window.h
-                    template_res.h
-                    yscope_window.h)
+  set(yarpmanager_gtk_HDRS application_list.h
+                           application_window.h
+                           icon_res.h
+                           main_window.h
+                           message_list.h
+                           module_window.h
+                           resource_window.h
+                           safe_manager.h
+                           stdout_window.h
+                           template_res.h
+                           yscope_window.h)
 
-  source_group("Source Files" FILES ${folder_source})
-  source_group("Header Files" FILES ${folder_header})
+  source_group("Source Files" FILES ${yarpmanager_gtk_SRCS})
+  source_group("Header Files" FILES ${yarpmanager_gtk_HDRS})
 
 
   if(MSVC)
@@ -51,14 +51,14 @@ if(CREATE_GYARPMANAGER AND YARP_HAS_GTK2)
   include(CheckCXXCompilerFlag)
   check_cxx_compiler_flag("-Wno-mismatched-tags" CXX_HAS_WNO_MISMATCHED_TAGS)
   if(CXX_HAS_WNO_MISMATCHED_TAGS)
-    set_source_files_properties(${folder_source} PROPERTIES COMPILE_FLAGS "-Wno-mismatched-tags")
+    set_source_files_properties(${yarpmanager_gtk_SRCS} PROPERTIES COMPILE_FLAGS "-Wno-mismatched-tags")
   endif(CXX_HAS_WNO_MISMATCHED_TAGS)
 
   if(UNIX)
     add_definitions(-Wno-trigraphs)
   endif(UNIX)
 
-  add_executable(yarpmanager-gtk ${folder_source} ${folder_header})
+  add_executable(yarpmanager-gtk ${yarpmanager_gtk_SRCS} ${yarpmanager_gtk_HDRS})
   target_link_libraries(yarpmanager-gtk YARP_init
                                         YARP_OS
                                         YARP_manager
@@ -73,7 +73,9 @@ if(CREATE_GYARPMANAGER AND YARP_HAS_GTK2)
                                         ${GTK2_SIGC++_LIBRARY}
                                         ${GTK2_GTHREAD_LIBRARY})
 
-  install(TARGETS yarpmanager-gtk COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS yarpmanager-gtk
+          COMPONENT utilities
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   if(NOT TARGET yarpmanager-qt OR YARP_DEFAULT_GTK)
     set_target_properties(yarpmanager-gtk PROPERTIES OUTPUT_NAME yarpmanager)

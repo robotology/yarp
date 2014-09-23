@@ -56,8 +56,8 @@ if(CREATE_GYARPMANAGER AND YARP_HAS_QT5)
                                       ${yarpmanager_qt_QRC_GEN_SRCS}
                                       ${yarpmanager_qt_UI_GEN_SRCS})
   target_link_libraries(yarpmanager-qt YARP_OS
-                                      YARP_init
-                                      YARP_manager)
+                                       YARP_init
+                                       YARP_manager)
   qt5_use_modules(yarpmanager-qt Widgets
                                 Gui)
   qtyarp_deprecate_with_cmake_version(2.8.11)

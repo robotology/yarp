@@ -9,10 +9,12 @@ get_property(YARP_TREE_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 
 set(YARP_init_HDRS)
+set(YARP_init_IMPL_HDRS)
 set(YARP_init_SRCS src/CustomInit.cpp)
 
 source_group("Source Files" FILES ${YARP_init_SRCS})
 source_group("Header Files" FILES ${YARP_init_HDRS})
+source_group("Implementation Header Files" FILES ${YARP_init_IMPL_HDRS})
 
 add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
 target_link_libraries(YARP_init LINK_PRIVATE YARP_OS)
@@ -32,8 +34,12 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
     target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
 endif (CREATE_DEVICE_LIBRARY_MODULES)
 
-install(TARGETS YARP_init EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS YARP_init
+        EXPORT YARP
+        COMPONENT runtime
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_init)
-
 set_property(TARGET YARP_init PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})

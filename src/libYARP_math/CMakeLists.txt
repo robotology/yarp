@@ -21,6 +21,8 @@ if (YARP_HAS_MATH_LIB)
                        include/yarp/math/RandVector.h
                        include/yarp/math/SVD.h)
 
+    set(YARP_math_IMPL_HDRS )
+
     set(YARP_math_SRCS src/math.cpp
                        src/NormRand.cpp
                        src/Rand.cpp
@@ -32,10 +34,11 @@ if (YARP_HAS_MATH_LIB)
 
     source_group("Source Files" FILES ${YARP_math_SRCS})
     source_group("Header Files" FILES ${YARP_math_HDRS})
+    source_group("Implementation Header Files" FILES ${YARP_math_IMPL_HDRS})
 
-    set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
-                    ${PROJECT_SOURCE_DIR}/include)
+    set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
     get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+
     include_directories(${YARP_TREE_INCLUDE_DIRS})
 
     if(YARP_USE_ATLAS)
@@ -46,19 +49,27 @@ if (YARP_HAS_MATH_LIB)
 
     include_directories(${GSL_INCLUDE_DIRS})
 
-    add_library(YARP_math ${YARP_math_SRCS} ${YARP_math_HDRS})
+    add_library(YARP_math ${YARP_math_SRCS}
+                          ${YARP_math_HDRS}
+                          ${YARP_math_IMPL_HDRS})
     target_link_libraries(YARP_math LINK_PRIVATE YARP_OS)
     target_link_libraries(YARP_math LINK_PRIVATE YARP_sig)
     target_link_libraries(YARP_math LINK_PRIVATE ${MATH_LIB_EXTRAS})
-    install(TARGETS YARP_math EXPORT YARP COMPONENT runtime DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+    set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
+    set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})
+
+    install(TARGETS YARP_math
+            EXPORT YARP
+            COMPONENT runtime
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/math"
+            PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/math/impl")
+
     set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_math)
-
     set_property(TARGET YARP_math PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
-
-    install(FILES ${YARP_math_HDRS}
-            COMPONENT development
-            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/math)
-
 endif()
 
 set_property(GLOBAL PROPERTY YARP_HAS_MATH_LIB ${YARP_HAS_MATH_LIB})

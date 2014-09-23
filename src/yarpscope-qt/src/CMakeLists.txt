@@ -24,6 +24,8 @@ source_group("Resource Files" FILES ${yarpscope_qt_QRC_FILES})
 source_group("QML Files" FILES ${yarpscope_qt_QML_FILES})
 source_group("Generated Files" FILES ${yarpscope_qt_QRC_GEN_SRCS})
 
+qtyarp_use_qml_plugin()
+
 add_executable(yarpscope-qt WIN32 ${yarpscope_qt_SRCS}
                                   ${yarpscope_qt_HDRS}
                                   ${yarpscope_qt_QRC_GEN_SRCS})
@@ -36,7 +38,9 @@ if(WIN32 AND CMAKE_VERSION VERSION_LESS 2.8.11)
   target_link_libraries(yarpscope-qt Qt5::WinMain)
 endif()
 
-install(TARGETS yarpscope-qt COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS yarpscope-qt
+        COMPONENT utilities
+        DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 if(NOT YARP_DEFAULT_GTK)
   set_target_properties(yarpscope-qt PROPERTIES OUTPUT_NAME yarpscope)

@@ -35,10 +35,9 @@ int main(int argc, char *argv[])
 
 
     QQmlApplicationEngine engine;
-#ifdef WIN32
-    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "\\" + PLUGINS_RELATIVE_PATH));
-#else
     engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + PLUGINS_RELATIVE_PATH));
+#ifdef CMAKE_INTDIR
+    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../" + PLUGINS_RELATIVE_PATH + "/" + CMAKE_INTDIR));
 #endif
     engine.load(QUrl("qrc:/qml/QtYARPScope/main.qml"));
     QObject *topLevel = engine.rootObjects().value(0);

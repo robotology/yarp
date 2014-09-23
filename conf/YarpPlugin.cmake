@@ -326,7 +326,9 @@ macro(YARP_ADD_PLUGIN LIBNAME)
             install(TARGETS ${LIBNAME}
                     EXPORT YARP
                     COMPONENT runtime
-                    DESTINATION ${CMAKE_INSTALL_LIBDIR})
+                    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif(YARP_TREE_INCLUDE_DIRS)
     endif(NOT X_IS_IMPORTED)
 endmacro(YARP_ADD_PLUGIN)

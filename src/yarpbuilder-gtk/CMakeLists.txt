@@ -111,7 +111,9 @@ if(CREATE_GYARPBUILDER AND YARP_HAS_GTK2)
                                         ${GTK2_GTHREAD_LIBRARY}
                                         ${GooCanvasMM_LIBRARIES})
 
-  install(TARGETS yarpbuilder-gtk COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS yarpbuilder-gtk
+          COMPONENT utilities
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   if(NOT TARGET yarpbuilder-qt OR YARP_DEFAULT_GTK)
     set_target_properties(yarpbuilder-gtk PROPERTIES OUTPUT_NAME yarpbuilder)

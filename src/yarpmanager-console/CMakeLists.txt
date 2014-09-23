@@ -37,6 +37,8 @@ if(CREATE_YMANAGER)
     target_link_libraries(yarpmanager-console ${Readline_LIBRARY})
   endif()
 
-  install(TARGETS yarpmanager-console COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS yarpmanager-console
+          COMPONENT utilities
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 endif()

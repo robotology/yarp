@@ -11,6 +11,8 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
   target_link_libraries(yarphear YARP_OS YARP_sig YARP_dev YARP_init)
   target_link_libraries(yarphear ${ACE_LIBRARIES})
 
-  install(TARGETS yarphear COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS yarphear
+          COMPONENT utilities
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 endif(CREATE_DEVICE_LIBRARY_MODULES)
