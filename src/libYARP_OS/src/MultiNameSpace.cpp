@@ -20,9 +20,12 @@ using namespace yarp::os::impl;
 
 typedef PlatformVector<NameSpace *> SpaceList;
 
+// private implementation of a namespace container
 class MultiNameSpaceHelper {
 public:
-    SpaceList spaces;
+    SpaceList spaces; // list of all namespaces
+
+    // a cache for common flags once we compute them
     bool _localOnly;
     bool _usesCentralServer;
     bool _serverAllocatesPortNumbers;
@@ -37,6 +40,7 @@ public:
     }
 
     void clear() {
+        // remove all namespaces and reset flags
         for (int i=0; i<(int)spaces.size(); i++) {
             NameSpace *ns = spaces[i];
             if (ns) {
@@ -52,17 +56,25 @@ public:
     }
 
     void scan() {
+        // reset flags
         _localOnly = true;
         _usesCentralServer = false;
         _serverAllocatesPortNumbers = true;
+        // now scan each namespace
         for (int i=0; i<(int)spaces.size(); i++) {
             NameSpace *ns = spaces[i];
             if (!ns) continue;
+            // if any namespace is nonlocal, combination is nonlocal
             if (!ns->localOnly()) _localOnly = false;
+            // if any namespace uses a central server, combination also does
             if (ns->usesCentralServer()) _usesCentralServer = true;
+            // if any namespace doesn't allocate port numbers, combination
+            // cannot be relied on to do so either
             if (!ns->serverAllocatesPortNumbers()) {
                 _serverAllocatesPortNumbers = false;
             }
+            // if any namespace lacks informed connections, combination
+            // cannot be relied on to be informed either
             if (!ns->connectionHasNameOfEndpoints()) {
                 _connectionHasNameOfEndpoints = false;
             }
@@ -70,29 +82,36 @@ public:
     }
 
     bool setLocalMode(bool flag) {
+        // remove any existing namespaces
         clear();
         if (flag) {
+            // add a dummy local namespace
             NameSpace *ns = new YarpDummyNameSpace;
             spaces.push_back(ns);
         }
+        // cache flags
         scan();
         return true;
     }
 
     bool activate(bool force = false) {
         if (force) {
+            // wipe if forced
             clear();
         }
+        // return if namespaces already present
         if (spaces.size()!=0) return true;
+        // read namespace list from config file
         NameConfig conf;
         if (!conf.fromFile()) {
             return false;
         }
         Bottle ns = conf.getNamespaces();
+        // loop through namespaces
         for (int i=0; i<ns.size(); i++) {
             ConstString n = ns.get(i).asString();
-            //printf("NAMESPACE %s\n", n.c_str());
             NameConfig conf2;
+            // read configuration of individual namespace
             if (!conf2.fromFile(n.c_str())) {
                 fprintf(stderr, "Could not find namespace %s\n",
                         n.c_str());
@@ -101,25 +120,30 @@ public:
             String mode = conf2.getMode();
             Contact address = conf2.getAddress().addName(n);
             if (mode=="yarp"||mode=="//") {
+                // add a yarp namespace
                 NameSpace *ns = new YarpNameSpace(address);
                 spaces.push_back(ns);
             } else if (mode=="ros") {
+                // add a ros namespace
                 NameSpace *ns = new RosNameSpace(address);
                 spaces.push_back(ns);
             } else {
+                // shrug
                 YARP_SPRINTF1(Logger::get(),error,
                               "cannot deal with namespace of type %s",
                               mode.c_str());
                 return false;
             }
         }
+        // cache flags
         scan();
         return true;
     }
 
     Contact getNameServerContact() {
-        activate();
+        activate(); // make sure we've loaded namespace(s)
         if (spaces.size()>0) {
+            // return first name server
             return spaces[0]->getNameServerContact();
         }
         return Contact();
@@ -127,18 +151,24 @@ public:
 
     Contact queryName(const ConstString& name) {
         activate();
+        // try query against each namespace in order
         for (int i=0; i<(int)spaces.size(); i++) {
             NameSpace *ns = spaces[i];
             if (!ns) continue;
             if (ns->getNameServerName()==name) {
+                // optimization: return cached server address for 
+                // port names that match name of namespace
                 return ns->getNameServerContact();
             }
             Contact result = ns->queryName(name);
+            // return a result once we get one, skipping any remaining
+            // namespaces
             if (result.isValid()) return result;
         }
         return Contact();
     }
 
+    // return one namespace, any namespace (in fact always first)
     NameSpace *getOne() {
         activate();
         if (spaces.size()==0) {
@@ -147,6 +177,7 @@ public:
         return spaces[0];
     }
 
+    // return full list of namespaces
     SpaceList& getAll() {
         activate();
         return spaces;
@@ -263,8 +294,12 @@ bool MultiNameSpace::disconnectPortToPortPersistently(const Contact& src,
 Contact MultiNameSpace::registerName(const ConstString& name) {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
+    // loop through namespaces
     for (int i=0; i<(int)lst.size(); i++) {
         Contact iresult;
+        // Register name with namespace. If contact information is
+        // fleshed out while registering, we carry that along for
+        // registration with the next namespace.
         if (result.getPort()<=0) {
             iresult = lst[i]->registerName(name);
         } else {
@@ -281,6 +316,7 @@ Contact MultiNameSpace::registerContact(const Contact& contact) {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
     for (int i=0; i<(int)lst.size(); i++) {
+        // we register in *all* namespaces (and query in *any*)
         Contact iresult = lst[i]->registerContact(contact);
         if (i==0) result = iresult;
     }
@@ -291,6 +327,7 @@ Contact MultiNameSpace::unregisterName(const ConstString& name) {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
     for (int i=0; i<(int)lst.size(); i++) {
+        // we unregister in *all* namespaces
         Contact iresult = lst[i]->unregisterName(name);
         if (i==0) result = iresult;
     }
@@ -301,6 +338,7 @@ Contact MultiNameSpace::unregisterContact(const Contact& contact) {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
     for (int i=0; i<(int)lst.size(); i++) {
+        // we unregister in *all* namespaces
         Contact iresult = lst[i]->unregisterContact(contact);
         if (i==0) result = iresult;
     }
@@ -323,6 +361,11 @@ Value *MultiNameSpace::getProperty(const ConstString& name, const ConstString& k
 Contact MultiNameSpace::detectNameServer(bool useDetectedServer,
                                         bool& scanNeeded,
                                         bool& serverUsed) {
+    // This code looks like a placeholder that never got replaced.
+    // It is using a heuristic that namespaces with "/ros" in the
+    // name are ros namespaces.  There's no need for guesswork like
+    // that anymore.  Also, code duplication.  Should spin this
+    // off into a proper plugin mechanism for namespaces.
     ConstString name = NetworkBase::getNameServerName();
     Contact fake, r;
     if (name.find("/ros")!=ConstString::npos) {

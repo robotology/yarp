@@ -78,8 +78,21 @@ public:
 
     virtual bool connectionHasNameOfEndpoints() const;
 
+    /**
+     *
+     * Set an alternative place to make name queries.
+     * This method is typically used when writing name servers in
+     * YARP, so you don't end up with a loop.
+     *
+     */
     virtual void queryBypass(NameStore *store);
 
+    /**
+     *
+     * Get any alternative place to make name queries, if one
+     * was set by queryBypass()
+     *
+     */
     virtual NameStore *getQueryBypass();
 
     virtual Contact detectNameServer(bool useDetectedServer,
