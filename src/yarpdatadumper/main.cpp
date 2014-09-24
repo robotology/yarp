@@ -121,8 +121,9 @@ by the \ref dataDumper.
   provided.
  
 --dir \e dirname 
-- The parameter \e dirname serves to specify the storage directory
-  explicitely.
+- The parameter \e dirname serves to specify the storage 
+  directory explicitely (relative to the location where the
+  module has been launched from).
  
 --overwrite 
 - If this option is specified, then a pre-existing storage 
