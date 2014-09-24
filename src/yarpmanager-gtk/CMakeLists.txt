@@ -81,4 +81,25 @@ if(CREATE_GYARPMANAGER AND YARP_HAS_GTK2)
     set_target_properties(yarpmanager-gtk PROPERTIES OUTPUT_NAME yarpmanager)
   endif()
 
+  if(NOT YARP_NO_DEPRECATED)
+    add_executable(gyarpmanager ${yarpmanager_gtk_SRCS} ${yarpmanager_gtk_HDRS})
+    target_link_libraries(gyarpmanager YARP_init
+                                       YARP_OS
+                                       YARP_manager
+                                       ${ACE_LIBRARIES}
+                                       ${GTK2_GTK_LIBRARY}
+                                       ${GTK2_GDK_LIBRARY}
+                                       ${GTK2_GLIB_LIBRARY}
+                                       ${GTK2_GTKMM_LIBRARY}
+                                       ${GTK2_GLIBMM_LIBRARY}
+                                       ${GTK2_GDKMM_LIBRARY}
+                                       ${GTK2_ATKMM_LIBRARY}
+                                       ${GTK2_SIGC++_LIBRARY}
+                                       ${GTK2_GTHREAD_LIBRARY})
+
+    install(TARGETS gyarpmanager
+            COMPONENT deprecated
+            DESTINATION ${CMAKE_INSTALL_BINDIR})
+  endif()
+
 endif()
