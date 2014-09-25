@@ -280,7 +280,7 @@ if(CREATE_GUIS)
         endif()
     endif()
 
-    find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport)
+    find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport QUIET)
     checkandset_dependency(Qt5)
 endif()
 
