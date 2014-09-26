@@ -92,6 +92,11 @@ bool FakeBot::open(yarp::os::Searchable& config) {
     yScale = config.check("sy",Value(1.0),
                           "scaling for y coordinate").asDouble();
 
+    lifetime = config.check("lifetime",Value(-1.0),
+                            "device should exist for this length of time (in seconds)").asDouble();
+    if (lifetime>=0) {
+        start();
+    }
     return true;
 }
 
@@ -156,3 +161,10 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     return true;
 }
     
+void FakeBot::run() {
+    if (lifetime>=0) {
+        Time::delay(lifetime);
+        yarp::os::exit(0);
+    }
+}
+

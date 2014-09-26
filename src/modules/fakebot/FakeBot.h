@@ -29,7 +29,8 @@ class yarp::dev::FakeBot : public DeviceDriver,
             public IFrameGrabberImage,
             public IControlCalibration2,
             public IControlLimits,
-            public DeviceResponder
+            public DeviceResponder,
+            public yarp::os::Thread
 {
 private:
     int njoints;
@@ -42,6 +43,7 @@ private:
     double noiseLevel;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
+    double lifetime;
 
     void init();
 public:
@@ -67,6 +69,7 @@ public:
             loc[i] = 0;
             amp[i] = 1; // initially on - ok for simulator
         }
+        lifetime = -1;
         init();
     }
 
@@ -397,5 +400,7 @@ public:
         fprintf(stderr, "FakeBot: set limits\n");
         return true;
     }
+
+    virtual void run();
 };
 
