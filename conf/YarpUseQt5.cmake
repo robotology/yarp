@@ -51,7 +51,7 @@ macro(qtyarp_use_qml_plugin)
 #endif // QTYARP_CONFIG_H
 ")
   set(PLUGINS_RELATIVE_PATH "../${CMAKE_INSTALL_QMLDIR}")
-  configure_file("${_config_h}.in" "${_config_h}" ONLY)
+  configure_file("${_config_h}.in" "${_config_h}" @ONLY)
 
   # Include current binary dir to be able to find the config.h file
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
