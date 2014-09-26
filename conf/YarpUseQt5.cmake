@@ -19,15 +19,20 @@ macro(qtyarp_qml_plugin _target _path)
   set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_path}
                                               LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_path}
                                               ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_path})
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/qmldir")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/qmldir"
+                   "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_path}/qmldir"
+                   COPYONLY)
+  endif()
   foreach(_config ${CMAKE_CONFIGURATION_TYPES})
     string(TOUPPER ${_config} _CONFIG)
     set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_${_CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_config}/${_path}
                                                 LIBRARY_OUTPUT_DIRECTORY_${_CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_config}/${_path}
                                                 ARCHIVE_OUTPUT_DIRECTORY_${_CONFIG} ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_config}/${_path})
 
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/qmldir)
-      configure_file(${CMAKE_CURRENT_SOURCE_DIR}/qmldir
-                     ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_config}/${_path}/qmldir
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/qmldir")
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/qmldir"
+                     "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_QMLDIR}/${_config}/${_path}/qmldir"
                      COPYONLY)
     endif()
   endforeach()
