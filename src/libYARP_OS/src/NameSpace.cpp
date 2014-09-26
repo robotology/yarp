@@ -19,6 +19,8 @@ NameSpace::~NameSpace() {
 }
 
 bool NameSpace::checkNetwork() {
+    if (localOnly()) return true;
+
     Contact c = queryName(getNameServerName());
     if (!c.isValid()) return false;
 

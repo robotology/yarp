@@ -127,6 +127,9 @@ public:
                 // add a ros namespace
                 NameSpace *ns = new RosNameSpace(address);
                 spaces.push_back(ns);
+            } else if (mode=="local") {
+                NameSpace *ns = new YarpDummyNameSpace;
+                spaces.push_back(ns);
             } else {
                 // shrug
                 YARP_SPRINTF1(Logger::get(),error,
