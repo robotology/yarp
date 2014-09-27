@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ "k$TRAVIS_WITH_ACE" = "kfalse" ] ; then
+    echo Nothing to check yet without ACE
+    exit 0
+fi
 
 function header() {
     echo "###############################################################"
