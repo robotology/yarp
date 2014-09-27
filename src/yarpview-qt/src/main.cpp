@@ -26,6 +26,7 @@
  */
 int main(int argc, char *argv[])
 {
+    bool noWidgets=false;
     // Pack the argc and argv to a QStringList so we can pass them easily to
     // the plugin.
     // This list must be packed before creating the QApplication, because
@@ -34,6 +35,10 @@ int main(int argc, char *argv[])
     QStringList params;
     for(int i=1;i<argc;i++){
         params.append(argv[i]);
+        if (std::string(argv[i]) == "--noWidgets")
+        {
+            noWidgets=true;
+        }
     }
 
     QApplication app(argc, argv);
@@ -49,7 +54,15 @@ int main(int argc, char *argv[])
 #ifdef CMAKE_INTDIR
     engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../" + PLUGINS_RELATIVE_PATH + "/" + CMAKE_INTDIR));
 #endif
-    engine.load(QUrl("qrc:/qml/QtYARPView/main.qml"));
+    if (noWidgets)
+    {
+        engine.load(QUrl("qrc:/qml/QtYARPView/mainNoWidgets.qml"));    
+    }
+    else
+    {
+        engine.load(QUrl("qrc:/qml/QtYARPView/main.qml"));
+    }
+    
     QObject *topLevel = engine.rootObjects().value(0);
 
     if(!topLevel){
@@ -57,6 +70,10 @@ int main(int argc, char *argv[])
     }
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
+    if (noWidgets)
+    {
+        window->setFlags(Qt::FramelessWindowHint);
+    }
 
     // Call the parseParameters of the qml object called YARPVideoSurface
     QObject *yarpVideoSurface = topLevel->findChild<QObject*>("YARPVideoSurface");

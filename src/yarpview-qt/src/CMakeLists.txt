@@ -15,7 +15,7 @@ set(yarpview_qt_SRCS main.cpp
                      qtquick2applicationviewer/qtquick2applicationviewer.cpp)
 set(yarpview_qt_HDRS qtquick2applicationviewer/qtquick2applicationviewer.h)
 set(yarpview_qt_QRC_FILES res.qrc)
-set(yarpview_qt_QML_FILES qml/QtYARPView/main.qml)
+set(yarpview_qt_QML_FILES qml/QtYARPView/main.qml qml/QtYARPView/mainNoWidgets.qml)
 
 qt5_add_resources(yarpview_qt_QRC_GEN_SRCS ${yarpview_qt_QRC_FILES})
 
