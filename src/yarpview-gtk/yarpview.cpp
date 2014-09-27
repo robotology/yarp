@@ -147,18 +147,23 @@ gint timeout_update_CB(gpointer data)
 
     gdk_threads_enter();
 
-    msg=g_strdup_printf("Port: %.1f (min:%.1f max:%.1f) fps", avHz, minHz, maxHz);
-    updateStatusbar(fpsStatusBar, msg);
-    g_free(msg);
+    if (_options.noWidgets == 0)
+    {
+        msg=g_strdup_printf("Port: %.1f (min:%.1f max:%.1f) fps", avHz, minHz, maxHz);
+        updateStatusbar(fpsStatusBar, msg);
+        g_free(msg);
+    }
 
     displayFpsData.getStats(av, min, max);
     displayFpsData.reset();
 
     periodToFreq(av, min, max, avHz, minHz, maxHz);
-
-    msg=g_strdup_printf("Display: %.1f (min:%.1f max:%.1f) fps", avHz, minHz, maxHz);
-    updateStatusbar(fpsStatusBar2, msg);
-    g_free(msg);
+    if (_options.noWidgets == 0)
+    {
+        msg=g_strdup_printf("Display: %.1f (min:%.1f max:%.1f) fps", avHz, minHz, maxHz);
+        updateStatusbar(fpsStatusBar2, msg);
+        g_free(msg);
+    }
 
     gdk_threads_leave();
 
@@ -666,6 +671,11 @@ GtkWidget* createMainWindow(void)
     GtkRequisition actualSize;
     GtkWidget* window;
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    if (_options.noWidgets == 1)
+    {
+        gtk_window_set_decorated (GTK_WINDOW (window), FALSE);
+    }
+
     gtk_window_set_title (GTK_WINDOW (window), "YARP GTK Image Viewer");
     gtk_window_set_default_size(GTK_WINDOW (window), _options.windWidth, _options.windHeight);
     gtk_window_set_resizable (GTK_WINDOW (window), TRUE);
@@ -703,21 +713,26 @@ GtkWidget* createMainWindow(void)
     gtk_box_pack_start(GTK_BOX(box), _resources.drawArea, TRUE, TRUE, 0);
     // StatusBar for main window
 
-    fpsStatusBar=gtk_statusbar_new();
-    gtk_box_pack_start(GTK_BOX (box), fpsStatusBar, FALSE, TRUE, 0);
-    gtk_widget_size_request(fpsStatusBar, &actualSize);
+    if (_options.noWidgets == 0)
+    {
+        // StatusBar for main window
+        
+        fpsStatusBar=gtk_statusbar_new();
+        gtk_box_pack_start(GTK_BOX (box), fpsStatusBar, FALSE, TRUE, 0);
+        gtk_widget_size_request(fpsStatusBar, &actualSize);
 
-    fpsStatusBar2=gtk_statusbar_new();
-    gtk_box_pack_start(GTK_BOX (box), fpsStatusBar2, FALSE, TRUE, 0);
-    gtk_widget_size_request(fpsStatusBar2, &actualSize);
+        fpsStatusBar2=gtk_statusbar_new();
+        gtk_box_pack_start(GTK_BOX (box), fpsStatusBar2, FALSE, TRUE, 0);
+        gtk_widget_size_request(fpsStatusBar2, &actualSize);
 
-    statusbar = gtk_statusbar_new ();
-    gtk_box_pack_start (GTK_BOX (box), statusbar, FALSE, TRUE, 0);
-    gtk_widget_size_request(statusbar, &actualSize);
-    gchar *msg;
-    msg=g_strdup_printf("%s", ptr_inputPort->getName().c_str());
-    updateStatusbar(statusbar, msg);
-    g_free(msg);
+        statusbar = gtk_statusbar_new ();
+        gtk_box_pack_start (GTK_BOX (box), statusbar, FALSE, TRUE, 0);
+        gtk_widget_size_request(statusbar, &actualSize);
+        gchar *msg;
+        msg=g_strdup_printf("%s", ptr_inputPort->getName().c_str());
+        updateStatusbar(statusbar, msg);
+        g_free(msg);
+    }
 
     // TimeOut used to refresh the screen
     //timeout_ID = gtk_timeout_add (_options.refreshTime, timeout_CB, NULL);
@@ -773,6 +788,10 @@ void setOptions(yarp::os::Searchable& options) {
     {
         _options.synch=true;
     }
+    if (options.check("noWidgets"))
+    {
+        _options.noWidgets=true;
+    }
 }
 
 void saveOptFile(char *fileName)
@@ -796,6 +815,7 @@ void saveOptFile(char *fileName)
     ACE_OS::fprintf(optFile,"OutputEnables %d\n", _options.outputEnabled);
     ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
     ACE_OS::fprintf(optFile,"synch %d\n", _options.synch);
+    ACE_OS::fprintf(optFile,"noWidgets %d\n", _options.noWidgets);
     ACE_OS::fclose(optFile);
 }
 
@@ -836,6 +856,7 @@ void setOptionsToDefault()
     _options.posY = 100;
     ACE_OS::sprintf(_options.fileName, "%s","yarpview.conf");
     _options.saveOnExit = 0;
+    _options.noWidgets = 0;
 }
 
 bool openPorts()
