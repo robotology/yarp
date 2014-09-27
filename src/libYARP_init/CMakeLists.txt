@@ -27,12 +27,14 @@ if (CREATE_OPTIONAL_CARRIERS)
 endif (CREATE_OPTIONAL_CARRIERS)
 
 if (CREATE_DEVICE_LIBRARY_MODULES)
-    set_property(SOURCE src/CustomInit.cpp
-                 APPEND PROPERTY COMPILE_DEFINITIONS
-                     PLUGIN_INIT_FUNCTION2=add_yarpmod_devices)
-    target_link_libraries(YARP_init LINK_PRIVATE yarpmod)
-    target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
-endif (CREATE_DEVICE_LIBRARY_MODULES)
+    if (YARP_LINK_PLUGINS)
+        set_property(SOURCE src/CustomInit.cpp
+          APPEND PROPERTY COMPILE_DEFINITIONS
+          PLUGIN_INIT_FUNCTION2=add_yarpmod_devices)
+        target_link_libraries(YARP_init LINK_PRIVATE yarpmod)
+        target_link_libraries(YARP_init LINK_PRIVATE YARP_dev)
+    endif ()
+endif ()
 
 install(TARGETS YARP_init
         EXPORT YARP

@@ -119,7 +119,7 @@ public:
         if (iname=="") iname = name;
         if (pname=="") pname = name;
 
-        this->name = iname;
+        if (this->name=="") this->name = iname;
         this->dll_name = iname;
         this->fn_name = pname;
         this->wrapper_name = options.find("wrapper").toString();

@@ -73,7 +73,10 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
             ConstString path = options.find("path").asString();
             ConstString ext = options.find("extension").asString();
             ConstString prefix = options.find("prefix").asString();
-            ConstString full = path + "/" + prefix + name + ext;
+            ConstString full = path + "/" + prefix + dll_name + ext;
+            if (dll_name.find(".")!=ConstString::npos) {
+                full = path + "/" + prefix + name + ext;
+            }
             bool ok = subopen(factory,full,(fn_name=="")?name:fn_name);
             if (ok) return true;
         }
@@ -81,34 +84,8 @@ bool YarpPluginSettings::open(SharedLibraryFactory& factory) {
     if (dll_name!=""||fn_name!="") {
         return open(factory,dll_name, fn_name);
     }
-#ifdef YARP_HAS_ACE
-    bool ok = false;
-    ConstString str(name);
-    ConstString libName = name;
-    ConstString fnName = name;
-    int sindex = str.find(":");
-    if (sindex>=0) {
-        libName = str.substr(0,sindex);
-        fnName = str.substr(sindex+1);
-        ok = open(factory,libName,fnName);
-    }
-    if ((!ok) && sindex<0) {
-        libName = ConstString("yarp_") + name;
-        fnName = name;
-        ok = open(factory,libName,fnName);
-    }
-    if ((!ok) && sindex<0) {
-        int index = str.find("_");
-        if (index>=0) {
-            libName = ConstString("yarp_") + str.substr(0,index);
-            fnName = str;
-            ok = open(factory,libName,fnName);
-        }
-    }
-    return ok;
-#else
-    return factory.open(dll_name.c_str(), fn_name.c_str());
-#endif
+    return factory.open((ConstString("yarp_") + name).c_str(),
+                        (fn_name=="")?name.c_str():fn_name.c_str());
 }
 
 void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const {
@@ -163,6 +140,9 @@ void YarpPluginSelector::scan() {
         }
         rf.setQuiet(true);
         Bottle plugins = rf.findPaths("plugins");
+        if (plugins.size()==0) {
+            plugins = rf.findPaths("share/yarp/plugins");
+        }
         if (plugins.size()>0) {
             for (int i=0; i<plugins.size(); i++) {
                 ConstString target = plugins.get(i).asString();

@@ -10,6 +10,12 @@ add_subdirectory(libYARP_OS)
 add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
+
+set (YARP_LINK_PLUGINS TRUE)
+if (BUILD_SHARED_LIBS)
+  set (YARP_LINK_PLUGINS FALSE)
+endif()
+
 add_subdirectory(modules)
 
 # We may have picked up some link directories - apply them here.

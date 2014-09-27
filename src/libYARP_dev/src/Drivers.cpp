@@ -173,6 +173,9 @@ public:
     StubDriver(const char *name, bool verbose = true) {
         settings.setPluginName(name);
         settings.setVerboseMode(verbose);
+        YarpPluginSelector selector;
+        selector.scan();
+        if (!settings.setSelector(selector)) return;
         init();
     }
 
@@ -180,9 +183,6 @@ public:
     }
 
     void init() {
-        YarpPluginSelector selector;
-        selector.scan();
-        if (!settings.setSelector(selector)) return;
         if (plugin.open(settings)) {
             dev.open(*plugin.getFactory());
             settings.setLibraryMethodName(plugin.getFactory()->getName(),
@@ -218,6 +218,10 @@ public:
 
     ConstString getwrapName() {
         return settings.getWrapperName();
+    }
+
+    ConstString getPluginName() {
+        return settings.getPluginName();
     }
 };
 #endif
@@ -271,7 +275,7 @@ DriverCreator *DriversHelper::load(const char *name) {
         result = NULL;
         return NULL;
     }
-    DriverCreator *creator = new StubDriverCreator(result->getFnName().c_str(), result->getwrapName().c_str(), "", result->getDllName().c_str());
+    DriverCreator *creator = new StubDriverCreator(result->getPluginName().c_str(), result->getwrapName().c_str(), "", result->getDllName().c_str(), result->getFnName().c_str());
     add(creator);
     delete result;
     return creator;
@@ -553,7 +557,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 DeviceDriver *StubDriverCreator::create() {
 #ifdef YARP_HAS_ACE
     //printf("Creating %s from %s\n", desc.c_str(), libname.c_str());
-    StubDriver *result = new StubDriver(libname.c_str(),desc.c_str());
+    StubDriver *result = new StubDriver(libname.c_str(),fnname.c_str(),false);
     if (result==NULL) return result;
     if (!result->isValid()) {
         delete result;

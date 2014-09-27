@@ -135,11 +135,11 @@ public:
  */
 class YARP_dev_API yarp::dev::StubDriverCreator : public DriverCreator {
 private:
-    yarp::os::ConstString desc, wrap, code, libname;
+    yarp::os::ConstString desc, wrap, code, libname, fnname;
 public:
     StubDriverCreator(const char *name, const char *wrap, const char *code,
-                      const char *libname) : 
-        desc(name), wrap(wrap), code(code), libname(libname)
+                      const char *libname, const char *fnname) : 
+        desc(name), wrap(wrap), code(code), libname(libname), fnname(fnname)
     {
     }
 
