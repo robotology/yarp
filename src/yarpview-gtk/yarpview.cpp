@@ -147,7 +147,7 @@ gint timeout_update_CB(gpointer data)
 
     gdk_threads_enter();
 
-    if (_options.noWidgets == 0)
+    if (_options.compact == 0)
     {
         msg=g_strdup_printf("Port: %.1f (min:%.1f max:%.1f) fps", avHz, minHz, maxHz);
         updateStatusbar(fpsStatusBar, msg);
@@ -158,7 +158,7 @@ gint timeout_update_CB(gpointer data)
     displayFpsData.reset();
 
     periodToFreq(av, min, max, avHz, minHz, maxHz);
-    if (_options.noWidgets == 0)
+    if (_options.compact == 0)
     {
         msg=g_strdup_printf("Display: %.1f (min:%.1f max:%.1f) fps", avHz, minHz, maxHz);
         updateStatusbar(fpsStatusBar2, msg);
@@ -671,7 +671,7 @@ GtkWidget* createMainWindow(void)
     GtkRequisition actualSize;
     GtkWidget* window;
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    if (_options.noWidgets == 1)
+    if (_options.compact == 1)
     {
         gtk_window_set_decorated (GTK_WINDOW (window), FALSE);
     }
@@ -713,7 +713,7 @@ GtkWidget* createMainWindow(void)
     gtk_box_pack_start(GTK_BOX(box), _resources.drawArea, TRUE, TRUE, 0);
     // StatusBar for main window
 
-    if (_options.noWidgets == 0)
+    if (_options.compact == 0)
     {
         // StatusBar for main window
         
@@ -788,9 +788,9 @@ void setOptions(yarp::os::Searchable& options) {
     {
         _options.synch=true;
     }
-    if (options.check("noWidgets"))
+    if (options.check("compact"))
     {
-        _options.noWidgets=true;
+        _options.compact=true;
     }
 }
 
@@ -815,7 +815,7 @@ void saveOptFile(char *fileName)
     ACE_OS::fprintf(optFile,"OutputEnables %d\n", _options.outputEnabled);
     ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
     ACE_OS::fprintf(optFile,"synch %d\n", _options.synch);
-    ACE_OS::fprintf(optFile,"noWidgets %d\n", _options.noWidgets);
+    ACE_OS::fprintf(optFile,"compact %d\n", _options.compact);
     ACE_OS::fclose(optFile);
 }
 
@@ -856,7 +856,7 @@ void setOptionsToDefault()
     _options.posY = 100;
     ACE_OS::sprintf(_options.fileName, "%s","yarpview.conf");
     _options.saveOnExit = 0;
-    _options.noWidgets = 0;
+    _options.compact = 0;
 }
 
 bool openPorts()
