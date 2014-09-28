@@ -119,6 +119,7 @@ struct mOptions
 	char			outNetworkName[256];
 	int				outputEnabled;
     bool            synch;
+    bool			compact;
 };
 typedef struct mOptions pgmOptions;
 
