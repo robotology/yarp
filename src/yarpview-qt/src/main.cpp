@@ -26,7 +26,7 @@
  */
 int main(int argc, char *argv[])
 {
-    bool noWidgets=false;
+    bool compact=false;
     // Pack the argc and argv to a QStringList so we can pass them easily to
     // the plugin.
     // This list must be packed before creating the QApplication, because
@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
     QStringList params;
     for(int i=1;i<argc;i++){
         params.append(argv[i]);
-        if (std::string(argv[i]) == "--noWidgets")
+        if (std::string(argv[i]) == "--compact")
         {
-            noWidgets=true;
+            compact=true;
         }
     }
 
@@ -54,9 +54,9 @@ int main(int argc, char *argv[])
 #ifdef CMAKE_INTDIR
     engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../" + PLUGINS_RELATIVE_PATH + "/" + CMAKE_INTDIR));
 #endif
-    if (noWidgets)
+    if (compact)
     {
-        engine.load(QUrl("qrc:/qml/QtYARPView/mainNoWidgets.qml"));    
+        engine.load(QUrl("qrc:/qml/QtYARPView/mainCompact.qml"));    
     }
     else
     {
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     }
 
     QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
-    if (noWidgets)
+    if (compact)
     {
         window->setFlags(Qt::FramelessWindowHint);
     }

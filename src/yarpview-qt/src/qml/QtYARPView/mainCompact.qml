@@ -1,9 +1,8 @@
 /*
  * Copyright (C) 2014 iCub Facility - Istituto Italiano di Tecnologia
- * Author: Davide Perrone
- * Date: Feb 2014
- * email:   dperrone@aitek.it
- * website: www.aitek.it
+ * Author: Alessandro Roncone
+ * Date: Sep 2014
+ * email:   alessandro.roncone@iit.it
  *
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
