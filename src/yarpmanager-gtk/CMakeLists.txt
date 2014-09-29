@@ -81,7 +81,7 @@ if(CREATE_GYARPMANAGER AND YARP_HAS_GTK2)
     set_target_properties(yarpmanager-gtk PROPERTIES OUTPUT_NAME yarpmanager)
   endif()
 
-  if(NOT YARP_NO_DEPRECATED)
+  if(NOT YARP_NO_DEPRECATED AND NOT TARGET gyarpmanager)
     add_executable(gyarpmanager ${yarpmanager_gtk_SRCS} ${yarpmanager_gtk_HDRS})
     target_link_libraries(gyarpmanager YARP_init
                                        YARP_OS
