@@ -25,9 +25,6 @@ QtYARPView::QtYARPView(QQuickItem *parent):
     connect(&sigHandler,SIGNAL(sendFps(double,double,double,double,double,double)),
             this, SLOT(onSendFps(double,double,double,double,double,double)));
     createObjects();
-    //sprintf(_options.portName, "%s", "/view");
-
-
 }
 
 QtYARPView::~QtYARPView()
@@ -254,17 +251,17 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
     // switch to subsections if available
     yarp::os::Value *val;
     if (options.check("PortName",val)||options.check("name",val)) {
-        sprintf(_options.portName, "%s", val->asString().c_str());
+        qsnprintf(_options.portName, 256, "%s", val->asString().c_str());
         qDebug("%s", val->asString().c_str());
     }
     if (options.check("NetName",val)||options.check("n",val)) {
-        sprintf(_options.networkName, "%s", val->asString().c_str());
+        qsnprintf(_options.networkName, 256, "%s", val->asString().c_str());
     }
     if (options.check("OutPortName",val)||options.check("out",val)) {
-        sprintf(_options.outPortName, "%s", val->asString().c_str());
+        qsnprintf(_options.outPortName, 256, "%s", val->asString().c_str());
     }
     if (options.check("OutNetName",val)||options.check("neto",val)) {
-        sprintf(_options.outNetworkName, "%s", val->asString().c_str());
+        qsnprintf(_options.outNetworkName, 256, "%s", val->asString().c_str());
     }
     if (options.check("RefreshTime",val)||options.check("p",val)) {
         _options.refreshTime = val->asInt();
@@ -324,16 +321,16 @@ void QtYARPView::setOptionsToDefault()
 {
     // Options defaults
     _options.refreshTime = 100;
-    sprintf(_options.portName, "%s","/yarpview/img:i");
-    sprintf(_options.networkName, "%s", "default");
-    sprintf(_options.outPortName, "%s","/yarpview/o:point");
-    sprintf(_options.outNetworkName, "%s", "default");
+    qsnprintf(_options.portName, 256, "%s","/yarpview/img:i");
+    qsnprintf(_options.networkName, 256, "%s", "default");
+    qsnprintf(_options.outPortName, 256, "%s","/yarpview/o:point");
+    qsnprintf(_options.outNetworkName, 256, "%s", "default");
     _options.outputEnabled = 0;
     _options.windWidth = 300;
     _options.windHeight = 300;
     _options.posX = 100;
     _options.posY = 100;
-    sprintf(_options.fileName, "%s","yarpview.conf");
+    qsnprintf(_options.fileName, 256, "%s","yarpview.conf");
     _options.saveOnExit = 0;
 
     posXChanged();
