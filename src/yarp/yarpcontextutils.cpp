@@ -803,6 +803,7 @@ int diff(yarp::os::ConstString contextName, folderType fType, bool verbose)
 #ifdef DO_TEXT_DIFF
     //use this for an internal diff implementation
     recursiveDiff(installedPath, userPath);
+    return 0;
 #else
     //use this for an external diff program
     char command [500];
@@ -814,10 +815,8 @@ int diff(yarp::os::ConstString contextName, folderType fType, bool verbose)
     strcat (command, installedPath.c_str());
     strcat (command, " ");
     strcat (command, userPath.c_str());
-    std::system(command);
+    return std::system(command);
 #endif
-    
-    return 0;
 }
 
 int diffList(folderType fType, bool verbose)
