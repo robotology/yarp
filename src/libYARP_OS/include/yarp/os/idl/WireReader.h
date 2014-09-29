@@ -98,6 +98,10 @@ public:
 
     bool readListReturn();
 
+    int getLength() const {
+        return state->len;
+    }
+
     ConnectionWriter& getWriter();
 
     bool isValid();
