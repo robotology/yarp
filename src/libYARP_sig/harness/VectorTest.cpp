@@ -316,14 +316,14 @@ public:
 
         ok=true;
         for(unsigned int k=0; k<ones.size(); k++)
-            ok=ok&&ones(ones[k]==1.1);
+            ok=ok&&(ones[k]==1.1);
 
         checkTrue(ok, "resize(int) works");
 
         ones.resize(9);
         ok=true;
         for(unsigned int k=0; k<ones.size(); k++)
-            ok=ok&&ones(ones[k]==1.1);
+            ok=ok&&(ones[k]==1.1);
 
         checkTrue(ok, "resizing to smaller vector");
 
