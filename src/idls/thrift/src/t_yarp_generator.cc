@@ -162,7 +162,8 @@ void getNeededType(t_type* curType, std::set<string>& neededTypes)
   void generate_service (t_service*  tservice);
   void generate_xception(t_struct*   txception);
 
-  std::string print_doc        (t_doc* tdoc);
+  void print_doc        (std::ofstream& out, t_doc* tdoc);
+  void quote_doc       (std::vector<std::string>& doxyPar, t_doc* tdoc);
   std::vector<std::string> print_help       (t_function* tdoc);
   std::string print_type       (t_type* ttype);
   std::string print_const_value(t_const_value* tvalue,
@@ -802,30 +803,24 @@ void t_yarp_generator::generate_index() {
  * If the provided documentable object has documentation attached, this
  * will emit it to the output stream in YARP format.
  */
-std::string t_yarp_generator::print_doc(t_doc* tdoc) {
-  stringstream doxyPar;
-  doxyPar.str()="";
+void t_yarp_generator::print_doc(std::ofstream& out, t_doc* tdoc) {
   if (tdoc->has_doc()) {
-      doxyPar << "/**"  << endl;
+    indent(out) << "/**"  << endl;
     string doc = tdoc->get_doc();
     size_t index;
     while ((index = doc.find_first_of("\r\n")) != string::npos) {
       if (index == 0) {
- // f_out_ << "<p/>" << endl;
       } else {
-        doxyPar << " * " << doc.substr(0, index) << endl;
+        indent(out) << " * " << doc.substr(0, index) << endl;
       }
       if (index + 1 < doc.size() && doc.at(index) != doc.at(index + 1) &&
-    (doc.at(index + 1) == '\r' || doc.at(index + 1) == '\n')) {
+	  (doc.at(index + 1) == '\r' || doc.at(index + 1) == '\n')) {
         index++;
       }
       doc = doc.substr(index + 1);
     }
-   // f_out_ << doc << "<br/>";
-   doxyPar << " */" << endl;
+    indent(out) << " */" << endl;
   }
-  
-  return doxyPar.str();
 }
 
 static std::string replaceInString(const std::string& originalString, std::string toFind, std::string replacement)
@@ -840,12 +835,10 @@ static std::string replaceInString(const std::string& originalString, std::strin
   return docString;
 };
 
-std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc) {
-  std::vector<std::string> doxyPar;
-  //doxyPar << tdoc->get_name();
+void t_yarp_generator::quote_doc(std::vector<std::string>& doxyPar, t_doc* tdoc) {
   string quotes="\"";
   string replacement="\\\"";
-  doxyPar.push_back(replaceInString(function_prototype(tdoc, true, NULL), quotes, replacement));
+  std::string result;
   if (tdoc->has_doc()) {
     string doc = tdoc->get_doc();
     size_t index;
@@ -861,7 +854,14 @@ std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc) {
       doc = doc.substr(index + 1);
     }
   }
+}
 
+std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc) {
+  std::vector<std::string> doxyPar;
+  string quotes="\"";
+  string replacement="\\\"";
+  doxyPar.push_back(replaceInString(function_prototype(tdoc, true, NULL), quotes, replacement));
+  quote_doc(doxyPar,tdoc);
   return doxyPar;
 }
 
@@ -949,7 +949,7 @@ string t_yarp_generator::print_const_value(t_const_value* tvalue,
  */
 void t_yarp_generator::generate_typedef(t_typedef* ttypedef) {
   string name = ttypedef->get_name();
-  f_out_common_ << print_doc(ttypedef);
+  print_doc(f_out_common_,ttypedef);
   f_out_common_<< "typedef " << print_type(ttypedef->get_type()) << " " << name <<";" << endl;
 }
 
@@ -1001,7 +1001,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum) {
 
   vector<t_enum_value*> constants = tenum->get_constants();
 
-  f_types_ << print_doc(tenum);
+  print_doc(f_types_,tenum);
   if (!gen_pure_enums_) {
     enum_name = "type";
     f_types_ <<
@@ -1124,7 +1124,7 @@ void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
     } else {
       f << "," << endl;
     }
-    f<< print_doc((*c_iter));
+    print_doc(f,(*c_iter));
     indent(f)
       << prefix << (*c_iter)->get_name() << suffix;
     if (include_values && (*c_iter)->has_value()) {
@@ -1142,7 +1142,7 @@ void t_yarp_generator::generate_enum_constant_list(std::ofstream& f,
  */
 void t_yarp_generator::generate_const(t_const* tconst) {
   string name = tconst->get_name();
-  f_out_common_ <<  print_doc(tconst);   
+  print_doc(f_out_common_,tconst);   
   f_out_common_ << "const "<< print_type(tconst->get_type())<<" " << name << " = " << print_const_value(tconst->get_value()) <<";"<<endl;
    
 
@@ -1236,7 +1236,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   f_stt_ << endl << endl;
   //add documentation (should add a generator option for it?)
 
-  f_stt_ <<  print_doc(tstruct);
+  print_doc(f_stt_,tstruct);
   f_stt_ << "class " << namespace_decorate(ns,name) << " : public yarp::os::idl::WirePortable {" << endl;
   f_stt_ << "public:" << endl;
   indent_up();
@@ -1248,7 +1248,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     string mname = (*mem_iter)->get_name();
     string mtype = print_type((*mem_iter)->get_type());
 
-    f_stt_ << print_doc(*mem_iter);
+    print_doc(f_stt_,*mem_iter);
     indent(f_stt_) << mtype << " " << mname << ";" << endl; 
   }
 
@@ -1350,20 +1350,41 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(out) << "return *this;" << endl;
   scope_down(out);
 
-  indent(f_stt_) << endl;
-  indent(f_stt_) << "// read and write structure on a connection" << endl;
-  indent(f_stt_) << "bool read(yarp::os::idl::WireReader& reader);" 
-		 << endl;
+  indent(out) << endl;
+  indent(out) << "// read and write structure on a connection" << endl;
+  indent(out) << "bool read(yarp::os::idl::WireReader& reader);" 
+	      << endl;
 
-  indent(f_stt_) << "bool read(yarp::os::ConnectionReader& connection);" 
-		 << endl;
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection);" 
+	      << endl;
 
 
-  indent(f_stt_) << "bool write(yarp::os::idl::WireWriter& writer);" 
-		 << endl;
-  indent(f_stt_) << "bool write(yarp::os::ConnectionWriter& connection);" 
-		 << endl;
+  indent(out) << "bool write(yarp::os::idl::WireWriter& writer);" 
+	      << endl;
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection);" 
+	      << endl;
 
+  indent(out) << endl;
+
+  indent_down();
+  indent(out) << "private:" << endl;
+  indent_up();
+
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    t_type* t = get_true_type((*mem_iter)->get_type());
+    indent(out) << "bool write_" << mname << "(yarp::os::idl::WireWriter& writer);" << endl;
+  }
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    t_type* t = get_true_type((*mem_iter)->get_type());
+    indent(out) << "bool read_" << mname << "(yarp::os::idl::WireReader& reader);" << endl;
+  }
+
+  indent_down();
+  indent(out) << endl;
+  indent(out) << "public:" << endl;
+  indent_up();
 
   indent(f_stt_) << endl;
   indent(f_stt_) << "yarp::os::ConstString toString();" 
@@ -1372,14 +1393,155 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(f_stt_) << endl;
   indent(f_stt_) << "// if you want to serialize this class without nesting, use this helper" << endl;
   indent(f_stt_) << "typedef yarp::os::idl::Unwrapped<" << namespace_decorate(ns,name) << " > unwrapped;" << endl;
+  indent(f_stt_) << endl;
+
+  // Editor: setters, getters, individual serializers, and dirty flags?
+  indent(out) << "class Editor : public yarp::os::Portable {" << endl;
+  indent(out) << "public:" << endl;
+  indent_up();
+
+  // Editor constructor
+  indent(out) << endl;
+  indent(out) << "bool edit(" << tstruct->get_name() 
+	      << "& obj, bool dirty = true) {" << endl;
+  indent_up();
+  indent(out) << "this->obj = &obj;" << endl;
+  indent(out) << "dirty_flags(dirty);" << endl;
+  scope_down(out);
+
+  // Editor destructor
+  indent(out) << endl;
+  indent(out) << "virtual ~Editor() {}" << endl;
+
+  // Validity check
+  indent(out) << endl;
+  indent(out) << "bool isValid() const {" << endl;
+  indent_up();
+  indent(out) << "return obj!=0/*NULL*/;" << endl;
+  scope_down(out);
+
+  // State
+  indent(out) << endl;
+  indent(out) << tstruct->get_name() << " *obj;" << endl;
+  indent(out) << endl;
+
+  // set
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    t_type* t = get_true_type((*mem_iter)->get_type());
+    indent(out) << "void set_" << mname << "(" << type_name(t,false,true) << " " << mname << ") {" << endl;
+    indent_up();
+    indent(out) << "will_set_" << mname << "();" << endl;
+    indent(out) << "obj->" << mname << " = " << mname << ";" << endl;
+    indent(out) << "mark_dirty_" << mname << "();" << endl;
+    indent(out) << "did_set_" << mname << "();" << endl;
+    scope_down(out);
+
+    // other container types: maps, sets
+    if (t->is_list()) {
+      indent(out) << "void set_" << mname << "(int index, " << type_name(((t_list*)t)->get_elem_type(),false,true) << " elem) {" << endl;
+      indent_up();
+      indent(out) << "will_set_" << mname << "();" << endl;
+      indent(out) << "obj->" << mname << "[index] = elem;" << endl;
+      indent(out) << "mark_dirty_" << mname << "();" << endl;
+      indent(out) << "did_set_" << mname << "();" << endl;
+      scope_down(out);
+    }
+  }
+
+  // get
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    t_type* t = get_true_type((*mem_iter)->get_type());
+    indent(out) <<  type_name(t,false,true) << " get_" << mname << "() {" << endl;
+    indent_up();
+    indent(out) << "return obj->" << mname << ";" << endl;
+    scope_down(out);
+  }
+
+  // will_set
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    t_type* t = get_true_type((*mem_iter)->get_type());
+    indent(out) <<  "virtual bool will_set_" << mname << "() { return true; }" << endl;
+  }
+
+  // did_set
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    t_type* t = get_true_type((*mem_iter)->get_type());
+    indent(out) <<  "virtual bool did_set_" << mname << "() { return true; }" << endl;
+  }
+
+  // mark dirty overall
+  indent(out) << "void clean() {" << endl;
+  indent_up();
+  indent(out) << "dirty_flags(false);" << endl;
+  scope_down(out);
+
+
+  // serialize
+  indent(out) << "bool read(yarp::os::ConnectionReader& connection);" << endl;
+  indent(out) << "bool write(yarp::os::ConnectionWriter& connection);" << endl;
+
 
   indent_down();
-  f_stt_ << "};" << endl;
+  indent(out) << "private:" << endl;
+  indent_up();
 
-  f_stt_ << endl;
+  // mark dirty overall
+  indent(out) << "void mark_dirty() {" << endl;
+  indent_up();
+  indent(out) << "is_dirty = true;" << endl;
+  scope_down(out);
 
-  f_stt_ << "#endif" << endl;
-  f_stt_ << endl;
+  // mark dirty
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    string mtype = print_type((*mem_iter)->get_type());
+    indent(out) << "void mark_dirty_" << mname << "() {" << endl;
+    indent_up();
+    indent(out) << "if (is_dirty_" << mname << ") return;" << endl;
+    indent(out) << "dirty_count++;" << endl;
+    indent(out) << "is_dirty_" << mname << " = true;" << endl;
+    indent(out) << "mark_dirty();" << endl;    
+    scope_down(out);
+  }
+
+  indent(out) << "void dirty_flags(bool flag) {" << endl;
+  indent_up();
+  indent(out) << "is_dirty = flag;" << endl; 
+  int ct = 0;
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    string mtype = print_type((*mem_iter)->get_type());
+    indent(out) << "is_dirty_" << mname << " = flag;" << endl; 
+    ct++;
+  }
+  indent(out) << "dirty_count = flag ? " << ct << " : 0;" << endl; 
+  indent_down();
+  indent(out) << "}" << endl;
+
+  indent(out) << "bool is_dirty;" << endl; 
+  indent(out) << "int dirty_count;" << endl; 
+  int mem_ct = 0;
+  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+    string mname = (*mem_iter)->get_name();
+    string mtype = print_type((*mem_iter)->get_type());
+    indent(out) << "bool is_dirty_" << mname << ";" << endl; 
+    mem_ct++;
+  }
+
+  indent_down();
+  indent(out) << "};" << endl;
+
+  indent_down();
+  indent(out) << "};" << endl;
+
+  out << endl;
+
+  out << "#endif" << endl;
+  out << endl;
 
 
   // header done - now generate source
@@ -1395,68 +1557,212 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   namespace_open(f_cpp_,ns);
 
-  indent(f_cpp_) << "bool " << name
-		 << "::read(yarp::os::idl::WireReader& reader) {" 
-		 << endl;
-  indent_up();
-  for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
-    string mname = (*mem_iter)->get_name();
-    string mtype = print_type((*mem_iter)->get_type());
-    generate_deserialize_field(f_cpp_, *mem_iter, "");
+  {
+    ofstream& out = f_cpp_;
+
+    for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      indent(out) << "bool " << name
+		  << "::read_" << mname << "(yarp::os::idl::WireReader& reader) {" 
+		  << endl;
+      indent_up();
+      generate_deserialize_field(out, *mem_iter, "");
+      indent(out) << "return true;" << endl;
+      scope_down(out);
+    }
+
+    indent(out) << "bool " << name
+		<< "::read(yarp::os::idl::WireReader& reader) {" 
+		<< endl;
+    indent_up();
+    for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      indent(out) << "if (!read_" << mname << "(reader)) return false;" << endl;
+    }
+    indent(out) << "return !reader.isError();" 
+		<< endl;
+    scope_down(out);
+    indent(out) << endl;
+
+    indent(out) << "bool " << name
+		<< "::read(yarp::os::ConnectionReader& connection) {" 
+		<< endl;
+    indent_up();
+    indent(out) << "yarp::os::idl::WireReader reader(connection);" 
+		<< endl;
+    indent(out) << "if (!reader.readListHeader(" 
+		<< flat_element_count(tstruct)
+		<< ")) return false;"
+		<< endl;
+    indent(out) << "return read(reader);"  << endl;
+    scope_down(out);
+    indent(out) << endl;
+
+
+    for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      indent(out) << "bool " << name
+		  << "::write_" << mname << "(yarp::os::idl::WireWriter& writer) {" 
+		  << endl;
+      indent_up();
+      generate_serialize_field(out, *mem_iter, "");
+      indent(out) << "return true;" << endl;
+      scope_down(out);
+    }
+
+    indent(out) << "bool " << name
+		<< "::write(yarp::os::idl::WireWriter& writer) {" 
+		<< endl;
+    indent_up();
+    for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      indent(out) << "if (!write_" << mname << "(writer)) return false;" << endl;
+    }
+    indent(out) << "return !writer.isError();" 
+		<< endl;
+    scope_down(out);
+    indent(out) << endl;
+
+    indent(out) << "bool " << name
+		<< "::write(yarp::os::ConnectionWriter& connection) {" 
+		<< endl;
+    indent_up();
+    indent(out) << "yarp::os::idl::WireWriter writer(connection);" 
+		<< endl;
+    indent(out) << "if (!writer.writeListHeader(" 
+		<< flat_element_count(tstruct)
+		<< ")) return false;"
+		<< endl;
+    indent(out) << "return write(writer);" << endl;
+    scope_down(out);
   }
-  indent(f_cpp_) << "return !reader.isError();" 
-		 << endl;
-  scope_down(f_cpp_);
-  indent(f_cpp_) << endl;
 
-  indent(f_cpp_) << "bool " << name
-		 << "::read(yarp::os::ConnectionReader& connection) {" 
-		 << endl;
-  indent_up();
-  indent(f_cpp_) << "yarp::os::idl::WireReader reader(connection);" 
-		 << endl;
-  indent(f_cpp_) << "if (!reader.readListHeader(" 
-		 << flat_element_count(tstruct)
-		 << ")) return false;"
-		 << endl;
-  indent(f_cpp_) << "return read(reader);"  << endl;
-  scope_down(f_cpp_);
-  indent(f_cpp_) << endl;
+  {
+    ofstream& out = f_cpp_;
 
-  indent(f_cpp_) << "bool " << name
-		 << "::write(yarp::os::idl::WireWriter& writer) {" 
-		 << endl;
-  indent_up();
-  for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
-    string mname = (*mem_iter)->get_name();
-    string mtype = print_type((*mem_iter)->get_type());
-    generate_serialize_field(f_cpp_, *mem_iter, "");
+    indent(out) << "bool " << name
+		<< "::Editor::write(yarp::os::ConnectionWriter& connection) {" 
+		<< endl;
+    indent_up();
+    indent(out) << "if (!isValid()) return false;" << endl;
+    indent(out) << "yarp::os::idl::WireWriter writer(connection);" 
+		<< endl;
+    indent(out) << "if (!writer.writeListHeader(dirty_count+1)) return false;" << endl;
+    indent(out) << "if (!writer.writeString(\"patch\")) return false;" << endl;
+    for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      indent(out) << "if (is_dirty_" << mname << ") {" << endl;
+      indent_up();
+      indent(out) << "if (!writer.writeListHeader(3)) return false;" << endl;
+      indent(out) << "if (!writer.writeString(\"set\")) return false;" << endl;
+      indent(out) << "if (!writer.writeString(\"" << mname << "\")) return false;" << endl;
+      indent(out) << "if (!obj->write_" << mname << "(writer)) return false;" << endl;
+      scope_down(out);
+    }
+    indent(out) << "return !writer.isError();" 
+		   << endl;
+    scope_down(out);
+
+
+    indent(out) << "bool " << name
+		<< "::Editor::read(yarp::os::ConnectionReader& connection) {" 
+		<< endl;
+    indent_up();
+    indent(out) << "if (!isValid()) return false;" << endl;
+    indent(out) << "yarp::os::idl::WireReader reader(connection);" << endl;
+    indent(out) << "reader.expectAccept();" << endl;
+    indent(out) << "if (!reader.readListHeader()) return false;" << endl;
+    indent(out) << "int len = reader.getLength();" << endl;
+    indent(out) << "if (len==0) {" << endl;
+    indent_up();
+    indent(out) << "yarp::os::idl::WireWriter writer(reader);" << endl;
+    indent(out) << "if (writer.isNull()) return true;" << endl;
+    indent(out) << "if (!writer.writeListHeader(1)) return false;" << endl;
+    indent(out) << "writer.writeString(\"send: 'help' or 'patch (param1 val1) (param2 val2)'\");" << endl;
+    indent(out) << "return true;" << endl;
+    scope_down(out);
+    indent(out) << "yarp::os::ConstString tag;" << endl;
+    indent(out) << "if (!reader.readString(tag)) return false;" << endl;
+    indent(out) << "if (tag!=\"patch\") {" << endl;
+    indent_up();
+    indent(out) << "yarp::os::idl::WireWriter writer(reader);" << endl;
+    indent(out) << "if (writer.isNull()) return true;" << endl;
+    indent(out) << "if (!writer.writeListHeader(2)) return false;" << endl;
+    indent(out) << "if (!writer.writeTag(\"many\",1, 0)) return false;" << endl;
+    indent(out) << "if (tag==\"help\" && reader.getLength()>0) {" << endl;
+    indent_up();
+    indent(out) << "yarp::os::ConstString field;" << endl;
+    indent(out) << "if (!reader.readString(field)) return false;" << endl;
+    for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      indent(out) << "if (field==\"" << mname << "\") {" << endl;
+      indent_up();
+      std::vector<std::string> doc;
+      quote_doc(doc,*mem_iter);
+      indent(out) << "if (!writer.writeListHeader(" << (1+doc.size())
+		  << ")) return false;" << endl;
+      string mtype = print_type((*mem_iter)->get_type());
+      indent(out) << "if (!writer.writeString(\"" << mtype << " " << mname << "\")) return false;" << endl;
+      for (int i=0; i<(int)doc.size(); i++) {
+	indent(out) << "if (!writer.writeString(\"" << doc[i] << "\")) return false;" << endl;
+      }
+      scope_down(out);    
+    }
+    scope_down(out);    
+    indent(out) << "if (!writer.writeListHeader(" << (mem_ct+1)
+		<< ")) return false;" << endl;
+    indent(out) << "writer.writeString(\"*** Available fields:\");" << endl;
+    for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      indent(out) << "writer.writeString(\"" << mname << "\");" << endl;    
+    }
+    indent(out) << "return true;" << endl;
+    scope_down(out);
+    indent(out) << "for (int i=1; i<len; i++) {" << endl;
+    indent_up();
+    indent(out) << "if (!reader.readListHeader(3)) return false;" << endl;
+    indent(out) << "yarp::os::ConstString act;" << endl;
+    indent(out) << "yarp::os::ConstString key;" << endl;
+    indent(out) << "if (!reader.readString(act)) return false;" << endl;
+    indent(out) << "if (!reader.readString(key)) return false;" << endl;
+    indent(out) << "// inefficient code follows, bug paulfitz to improve it" << endl;
+    for (mem_iter=members.begin() ; mem_iter != members.end(); mem_iter++) {
+      string mname = (*mem_iter)->get_name();
+      if (mem_iter!=members.begin()) {
+	indent_down();
+	indent(out) << "} else ";
+      } else {
+	indent(out);
+      }
+      out <<  "if (key == \"" << mname << "\") {" << endl;
+      indent_up();
+      indent(out) << "will_set_" << mname << "();" << endl;
+      indent(out) << "if (!obj->read_" << mname << "(reader)) return false;" << endl;
+      indent(out) << "did_set_" << mname << "();" << endl;
+    }
+    if (members.begin()!=members.end()) {
+      indent_down();
+      indent(out) << "} else {" << endl;
+      indent_up();
+    }
+    indent(out) << "// would be useful to have a fallback here" << endl;
+    if (members.begin()!=members.end()) {
+      scope_down(out);
+    }
+    scope_down(out);
+    indent(out) << "reader.accept();" << endl;
+    indent(out) << "return true;" << endl;
+    scope_down(out);
+
+    indent(out) << endl;
   }
-  indent(f_cpp_) << "return !writer.isError();" 
-		 << endl;
-  scope_down(f_cpp_);
-  indent(f_cpp_) << endl;
-
-  indent(f_cpp_) << "bool " << name
-		 << "::write(yarp::os::ConnectionWriter& connection) {" 
-		 << endl;
-  indent_up();
-  indent(f_cpp_) << "yarp::os::idl::WireWriter writer(connection);" 
-		 << endl;
-  indent(f_cpp_) << "if (!writer.writeListHeader(" 
-		 << flat_element_count(tstruct)
-		 << ")) return false;"
-		 << endl;
-  indent(f_cpp_) << "return write(writer);" << endl;
-  scope_down(f_cpp_);
 
   indent(f_cpp_) << "yarp::os::ConstString " << name
 		 << "::toString() {" 
 		 << endl;
   indent_up();
-  indent(f_cpp_) << "yarp::os::idl::UnwrappedView<" << name << " > v(*this);" << endl;
   indent(f_cpp_) << "yarp::os::Bottle b;" << endl;
-  indent(f_cpp_) << "b.read(v);" << endl;
+  indent(f_cpp_) << "b.read(*this);" << endl;
   indent(f_cpp_) << "return b.toString();" << endl;
   scope_down(f_cpp_);
 
@@ -1533,7 +1839,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
       if (extends_service != NULL) {
         f_srv_ << "#include <" << get_include_prefix(*(extends_service->get_program())) << extends_service->get_name() << ".h>" << endl;
       }
-    
+
       vector<t_function*> functions = tservice->get_functions();
       vector<t_function*>::iterator fn_iter;
 
@@ -1646,7 +1952,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
 
     //add documentation (should add a generator option for it?)
    //if(tservice->has_doc())
-    f_srv_ << print_doc(tservice);
+    print_doc(f_srv_,tservice);
        // f_srv_ << "/** \class "<< svcname << f_header_name << f_header_name << endl<< print_doc(tservice)<< " */" <<endl;
     string extends = "";
     if (extends_service != NULL) {
@@ -1665,7 +1971,7 @@ void t_yarp_generator::generate_service(t_service* tservice) {
     fn_iter = functions.begin();
     for ( ; fn_iter != functions.end(); fn_iter++) {
       //  if((*fn_iter)->has_doc())
-      f_srv_ <<print_doc((*fn_iter));
+      print_doc(f_srv_,(*fn_iter));
       indent(f_srv_) << "virtual " << function_prototype(*fn_iter,true)
 		     << ";" << endl;
 

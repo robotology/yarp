@@ -12,6 +12,7 @@
 #include <yarp/os/all.h>
 #include <Demo.h>
 #include <DemoStructList.h>
+#include <DemoStructExt.h>
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
 
@@ -98,6 +99,35 @@ public:
     }
 };
 
+class DemoStructCallbacks : public DemoStruct::Editor {
+public:
+    int wsx, dsx, wsy, dsy;
+
+    DemoStructCallbacks() {
+        wsx = dsx = wsy = dsy = 0;
+    }
+
+    virtual bool will_set_x() {
+        printf("will_set_x called, x is %d\n", get_x());
+        wsx = get_x();
+        return true;
+    }
+    virtual bool will_set_y() {
+        printf("will_set_y called, y is %d\n", get_y());
+        wsy = get_y();
+        return true;
+    }
+    virtual bool did_set_x() {
+        printf("did_set_x called, x is %d\n", get_x());
+        dsx = get_x();
+        return true;
+    }
+    virtual bool did_set_y() {
+        printf("did_set_y called, y is %d\n", get_y());
+        dsy = get_y();
+        return true;
+    }
+};
 
 class ClientPeek : public PortReader {
 public:
@@ -573,10 +603,255 @@ bool test_tostring() {
     s.lst.push_back(DemoStruct(5,10));
     s.lst.push_back(DemoStruct(9,900));
     printf("String: %s\n", s.toString().c_str());
-    if (s.toString() != "(5 10) (9 900)") {
+    if (s.toString() != "((5 10) (9 900))") {
         fprintf(stderr, "string mismatch\n");
         return false;
     }
+
+    DemoStruct d;
+    d.x = 10;
+    d.y = 20;
+    printf("String: %s\n", d.toString().c_str());
+    if (d.toString() != "10 20") {
+        fprintf(stderr, "string mismatch\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool test_editor() {
+    printf("\n*** test_editor()\n");
+    DemoStruct d;
+    d.x = 0;
+    d.y = 0;
+    DemoStruct::Editor e;
+    e.edit(d,false);
+    e.set_x(15);
+    Bottle b;
+    b.read(e);
+    printf(">>> set_x -> %s\n", b.toString().c_str());
+    if (b.size()!=2) {
+        fprintf(stderr, "wrong length after set_x\n");
+        return false;
+    }
+    if (b.get(1).asList()==NULL) {
+        fprintf(stderr, "wrong type after set_x\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(0).asString()!="set") {
+        fprintf(stderr, "wrong act after set_x\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(1).asString()!="x") {
+        fprintf(stderr, "wrong tag after set_x\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(2).asInt()!=15) {
+        fprintf(stderr, "wrong value after set_x\n");
+        return false;
+    }
+
+    e.clean();
+    e.set_y(30);
+    b.read(e);
+    printf(">>> set_y -> %s\n", b.toString().c_str());
+    if (b.size()!=2) {
+        fprintf(stderr, "wrong length after set_y\n");
+        return false;
+    }
+    if (b.get(1).asList()==NULL) {
+        fprintf(stderr, "wrong type after set_y\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(1).asString()!="y") {
+        fprintf(stderr, "wrong tag after set_y\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(2).asInt()!=30) {
+        fprintf(stderr, "wrong value after set_y\n");
+        return false;
+    }
+
+    e.clean();
+    e.set_x(1);
+    e.set_y(2);
+    b.read(e);
+    printf(">>> set_x set_y -> %s\n", b.toString().c_str());
+    if (b.size()!=3) {
+        fprintf(stderr, "wrong length after set_x set_y\n");
+        return false;
+    }
+    if (b.get(1).asList()==NULL) {
+        fprintf(stderr, "wrong type 0 after set_x set_y\n");
+        return false;
+    }
+    if (b.get(2).asList()==NULL) {
+        fprintf(stderr, "wrong type 1 after set_x set_y\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(1).asString()!="x") {
+        fprintf(stderr, "wrong x tag after set_x set_y\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(2).asInt()!=1) {
+        fprintf(stderr, "wrong x value after set_x set_y\n");
+        return false;
+    }
+    if (b.get(2).asList()->get(1).asString()!="y") {
+        fprintf(stderr, "wrong y tag after set_x set_y\n");
+        return false;
+    }
+    if (b.get(2).asList()->get(2).asInt()!=2) {
+        fprintf(stderr, "wrong y value after set_x set_y\n");
+        return false;
+    }
+
+    DemoStruct d2;
+    DemoStruct::Editor e2;
+    e2.edit(d2,false);
+    d2.x = 99;
+    d2.y = 99;
+    e.clean();
+    e.set_y(30);
+    Portable::copyPortable(e,e2);
+    if (d2.x!=99) {
+        fprintf(stderr, "wrong x value after patch\n");
+        return false;
+    }
+    if (d2.y!=30) {
+        fprintf(stderr, "wrong y value after patch\n");
+        return false;
+    }
+
+    DemoStructCallbacks c;
+    c.edit(d2,false);
+    d2.x = 99;
+    d2.y = 99;
+    c.clean();
+    c.set_y(30);
+    if (c.wsy!=99||c.dsy!=30) {
+        fprintf(stderr, "callback muddle\n");
+        return false;
+    }
+
+    DemoStruct d3;
+    d3.x = 0;
+    d3.y = 0;
+    DemoStructCallbacks c2;
+    c2.edit(d3,false);
+    Portable::copyPortable(c,c2);
+    if (c2.wsy!=0||c2.dsy!=30) {
+        fprintf(stderr, "callback muddle\n");
+        return false;
+    }
+
+    return true;
+}
+
+
+bool test_list_editor() {
+    printf("\n*** test_list_editor()\n");
+    DemoStructExt d;
+    d.int_list.resize(5);
+    DemoStructExt::Editor e;
+    e.edit(d,false);
+    e.set_int_list(4,15);
+    Bottle b;
+    b.read(e);
+    printf(">>> set_int_list -> %s\n", b.toString().c_str());
+    if (b.size()!=2) {
+        fprintf(stderr, "wrong length after set_int_list\n");
+        return false;
+    }
+    if (b.get(1).asList()==NULL) {
+        fprintf(stderr, "no patch after set_int_list\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(1).asString()!="int_list") {
+        fprintf(stderr, "wrong tag after set_int_list\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(2).asList()==NULL) {
+        fprintf(stderr, "no list after set_int_list\n");
+        return false;
+    }
+    if (b.get(1).asList()->get(2).asList()->get(4).asInt()!=15) {
+        fprintf(stderr, "wrong value after set_int_list\n");
+        return false;
+    }
+    return true;
+}
+
+bool test_help() {
+    printf("\n*** test_help()\n");
+
+    {
+        Server server;
+        Bottle bot("[help]");
+        DummyConnector con;
+        bot.write(con.getWriter());
+        server.read(con.getReader());
+        bot.read(con.getReader());
+        printf("Service general help is %s\n", bot.toString().c_str());
+        ConstString help = bot.toString();
+        if (help.find("get_answer")==ConstString::npos) {
+            fprintf(stderr,"no list given\n");
+            return false;
+        }
+    }
+
+    {
+        Server server;
+        Bottle bot("[help] get_answer");
+        DummyConnector con;
+        bot.write(con.getWriter());
+        server.read(con.getReader());
+        bot.read(con.getReader());
+        printf("Service specific help is %s\n", bot.toString().c_str());
+        ConstString help = bot.toString();
+        if (help.find("gets the answer")==ConstString::npos) {
+            fprintf(stderr,"no help given\n");
+            return false;
+        }
+    }
+
+    {
+        DemoStruct d;
+        DemoStruct::Editor e;
+        e.edit(d,false);
+        Bottle bot("help");
+        DummyConnector con;
+        
+        bot.write(con.getWriter());
+        e.read(con.getReader());
+        bot.read(con.getReader());
+        printf("Structure general help is %s\n", bot.toString().c_str());
+        ConstString help = bot.toString();
+        if (help.find("x")==ConstString::npos) {
+            fprintf(stderr,"no field list\n");
+            return false;
+        }
+    }
+
+    {
+        DemoStruct d;
+        DemoStruct::Editor e;
+        e.edit(d,false);
+        Bottle bot("help x");
+        DummyConnector con;
+        
+        bot.write(con.getWriter());
+        e.read(con.getReader());
+        bot.read(con.getReader());
+        printf("Structure specific help is %s\n", bot.toString().c_str());
+        ConstString help = bot.toString();
+        if (help.find("this is the x part")==ConstString::npos) {
+            fprintf(stderr,"no help given\n");
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -607,5 +882,8 @@ int main(int argc, char *argv[]) {
     if (!test_missing_method()) return 1;
     if (!test_unwrap()) return 1;
     if (!test_tostring()) return 1;
+    if (!test_editor()) return 1;
+    if (!test_list_editor()) return 1;
+    if (!test_help()) return 1;
     return 0;
 }
