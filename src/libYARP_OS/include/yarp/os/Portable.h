@@ -35,6 +35,15 @@ public:
     virtual bool write(ConnectionWriter& connection) = 0;
 
     virtual Type getType() { return getReadType(); }
+
+    /**
+     *
+     * Copy one portable to another, via writing and reading.
+     *
+     * @return true iff writer.write and reader.read both succeeded.
+     *
+     */
+    static bool copyPortable(PortWriter& writer, PortReader& reader);
 };
 
 #endif

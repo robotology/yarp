@@ -257,6 +257,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/NullConnectionWriter.cpp
                  src/Os.cpp
                  src/Ping.cpp
+                 src/Portable.cpp
                  src/PortablePair.cpp
                  src/PortCommand.cpp
                  src/PortCore.cpp

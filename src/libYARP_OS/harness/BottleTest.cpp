@@ -19,6 +19,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/DummyConnector.h>
+#include <yarp/os/Stamp.h>
 
 //#include "TestList.h"
 
@@ -624,6 +625,21 @@ public:
         checkEqual(bot.get(0).asString().c_str(),"---","interpreted ok");
     }
 
+    void testCopyPortable() {
+        report(0,"test copyPortable method");
+        Bottle b1("1 2 3"), b2;
+        Portable::copyPortable(b1,b2);
+        checkEqual(b2.size(),b1.size(),"length ok");
+        checkEqual(b2.get(2).asInt(),3,"content ok");
+        Stamp s1(42,10.0),s2,s3;
+        Portable::copyPortable(s1,s2);
+        checkEqual(s1.getCount(),42,"stamp-to-stamp ok");
+        Portable::copyPortable(s1,b1);
+        checkEqual(b1.get(0).asInt(),42,"stamp-to-bottle ok");
+        Portable::copyPortable(b1,s3);
+        checkEqual(s3.getCount(),42,"bottle-to-stamp ok");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -659,6 +675,7 @@ public:
         testDict();
         testLoopBug();
         testManyMinus();
+        testCopyPortable();
     }
 
     virtual String getName() {
