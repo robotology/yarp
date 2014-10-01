@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "k$TRAVIS_WITH_ACE" = "kfalse" ] ; then
-    echo Nothing to check yet without ACE
+if [ "k$TRAVIS_WITH_RUNTIME" = "kfalse" ] ; then
+    echo Nothing to check
     exit 0
 fi
 

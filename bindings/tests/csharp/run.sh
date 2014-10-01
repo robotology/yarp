@@ -6,10 +6,11 @@
 
 set -e
 
+export CSLIB="$PWD"
 if [ ! "$YARP_DIR" = "" ]; then
-    export CSLIB="$YARP_DIR/lib/csharp/"
-else
-    export CSLIB="$PWD"
+    if [ ! -e $PWD/Network.cs ]; then
+	export CSLIB="$YARP_DIR/lib/csharp/"
+    fi
 fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

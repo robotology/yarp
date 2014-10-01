@@ -3,12 +3,19 @@ compiler:
   - gcc
   - clang
 env:
-  - TRAVIS_WITH_ACE=true CMAKE_FLAGS=
-  - TRAVIS_WITH_ACE=false CMAKE_FLAGS="-DSKIP_ACE=TRUE"
+#  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=true
+#  - TRAVIS_WITH_ACE=false CMAKE_FLAGS="-DSKIP_ACE=TRUE" TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false
+  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
 before_install:
   - sudo add-apt-repository --yes ppa:kalakris/cmake
   - sudo apt-get update -qq
   - sudo apt-get install cmake  # travis version is currently too old
+  - if $TRAVIS_WITH_SWIG; then wget https://github.com/paulfitz/swigs/releases/download/v0.0.3/swigs.zip; fi
+  - if $TRAVIS_WITH_SWIG; then unzip -q swigs.zip; mkdir -p cache; mv swigs cache/swig; fi
 install:
   - if $TRAVIS_WITH_ACE; then sudo apt-get install libace-dev; fi
-script: mkdir -p build && cd build && cmake $CMAKE_FLAGS .. && make && make test && ../scripts/admin/check-runtime.sh
+  - if $TRAVIS_WITH_SWIG; then sudo apt-get install liblua5.1-0-dev lua5.1 tcl-dev tk-dev mono-gmcs; fi
+script:
+  - mkdir -p build && cd build && cmake $CMAKE_FLAGS .. && make && make test && ../scripts/admin/check-runtime.sh && cd ..
+  - if $TRAVIS_WITH_SWIG; then ./build/bin/yarp conf 0 0 local; fi
+  - if $TRAVIS_WITH_SWIG; then YARP_DIR=$PWD/build ./scripts/admin/check-bindings.sh PYTHON JAVA LUA RUBY CSHARP PERL TCL; fi

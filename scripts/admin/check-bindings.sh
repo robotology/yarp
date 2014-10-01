@@ -6,9 +6,14 @@ set -e
 # You'll probably need to remove your global swig version to prevent
 # cmake finding it later.
 swig_base="/cache/swig"
+if [ -e "cache/swig" ]; then
+    swig_base="$PWD/cache/swig"
+fi
 swig_versions="1.3.39 1.3.40 2.0.1 2.0.2 2.0.3 2.0.4 2.0.5 2.0.6 2.0.7 2.0.8 2.0.9 2.0.10 2.0.11 2.0.12 3.0.0 3.0.1 3.0.2"
 
-SUPPORTED_LANGUAGES="LUA PYTHON JAVA RUBY CSHARP PERL TCL"
+skip_versions="RUBY_1.3.39 RUBY_1.3.40 LUA_2.0.11"
+
+SUPPORTED_LANGUAGES="PYTHON JAVA LUA RUBY CSHARP PERL TCL"
 
 if [ "$1" = "" ]; then
     echo "Possible SWIG versions are $swig_versions"
@@ -70,13 +75,24 @@ log=$PWD/check-bindings.txt
 echo "Writing to log $log"
 rm -f $log
 touch $log
+failed=false
 for lang in $SUPPORTED_LANGUAGES; do
-    echo "Working on $lang"
     successes="$lang success: "
     failures="$lang failure: "
+    skips="$lang skips: "
     for swig_ver in $swig_versions; do
+	echo " "
+	echo "================================================================"
 	echo "Working on $lang with $swig_ver"
-	search_path="-DCMAKE_SYSTEM_PROGRAM_PATH=/cache/swig/$swig_ver/bin -DCMAKE_SYSTEM_PREFIX_PATH=/cache/swig/$swig_ver"
+	echo " $skip_versions " | grep " ${lang}_${swig_ver} " && skip=true || skip=false
+	if $skip; then
+	    echo "Skipping $lang $swig_ver"
+	    skips="$skips $swig_ver"
+	    continue
+	fi
+	export SWIG_LIB=$swig_base/$swig_ver/share/swig/$swig_ver
+	$swig_base/$swig_ver/bin/swig -swiglib
+	search_path="-DCMAKE_SYSTEM_PROGRAM_PATH=$swig_base/$swig_ver/bin -DCMAKE_SYSTEM_PREFIX_PATH=$swig_base/$swig_ver"
 	cd $YARP_ROOT
 	mkdir -p bindings
 	cd bindings
@@ -90,16 +106,25 @@ for lang in $SUPPORTED_LANGUAGES; do
 	YARP_PYTHON_FLAGS="-DCREATE_PYTHON_VERSION=2.7 -DPython_ADDITIONAL_VERSIONS=2.7" # Old swig versions don't work with new python
 	lang_var=YARP_${lang}_FLAGS
 	lang_flags=${!lang_var}
-	cmake -DCREATE_$lang=TRUE $lang_flags $search_path $YARP_ROOT/bindings
-	grep SWIG_EXECUTABLE CMakeCache.txt | grep "/cache/swig/$swig_ver/" || {
+	echo "Running cmake"
+	cmake -DCREATE_$lang=TRUE $lang_flags $search_path $YARP_ROOT/bindings > result.txt 2>&1
+	grep SWIG_EXECUTABLE CMakeCache.txt | grep "$swig_base/$swig_ver/" || {
 	    echo "CMake is picking up wrong SWIG version"
 	    echo "Remove this: `grep SWIG_EXECUTABLE CMakeCache.txt`"
 	    exit 1
 	}
-	make VERBOSE=1 || { 
-	    echo "make failed for $lang $swig_ver" >> $log
-	    ok=false
-	}
+	echo "Running make"
+	{
+	    make VERBOSE=1 || { 
+		echo "make failed for $lang $swig_ver" >> $log
+		ok=false
+	    }
+	} >> result.txt 2>&1
+	if $ok; then
+	    echo "make succeeded for $lang $swig_ver"
+	else
+	    cat result.txt
+	fi
 	lc=`echo $lang | tr '[:upper:]' '[:lower:]'`
 	run=$YARP_ROOT/bindings/tests/$lc/run.sh
 	if [ -e $run ]; then
@@ -113,8 +138,14 @@ for lang in $SUPPORTED_LANGUAGES; do
 	    successes="$successes $swig_ver"
 	else
 	    failures="$failures $swig_ver"
+	    failed=true
 	fi
     done
     echo $successes >> $log
     echo $failures >> $log
+    echo $skips >> $log
 done
+cat $log
+if $failed; then
+    exit 1
+fi
