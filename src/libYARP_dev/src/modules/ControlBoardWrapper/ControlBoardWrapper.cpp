@@ -2011,7 +2011,8 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                     spds_tmp[i] = velBottle_p->get(i).asDouble();
 
                                 ok = pos2->setRefSpeeds(len, j_tmp, spds_tmp);
-                                delete[] j_tmp, spds_tmp;
+                                delete[] j_tmp;
+                                delete[] spds_tmp;
                             }
                             break;
 
@@ -2064,7 +2065,8 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                 accs_tmp[i] = accBottle_p->get(i).asDouble();
 
                             ok = pos2->setRefAccelerations(len, j_tmp, accs_tmp);
-                            delete[] j_tmp, accs_tmp;
+                            delete[] j_tmp;
+                            delete[] accs_tmp;
                         }
                         break;
 
@@ -2435,7 +2437,8 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                                 for (int i = 0; i < len; i++)
                                     b.addDouble(speeds[i]);
 
-                                delete[] jointList, speeds;
+                                delete[] jointList;
+                                delete[] speeds;
                             }
                             break;
 
@@ -2475,7 +2478,8 @@ bool CommandsHelper::respond(const yarp::os::Bottle& cmd,
                             for (int i = 0; i < len; i++)
                                 b.addDouble(accs[i]);
 
-                            delete[] jointList, accs;
+                            delete[] jointList;
+                            delete[] accs;
                         }
                         break;
 
