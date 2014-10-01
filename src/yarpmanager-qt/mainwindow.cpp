@@ -645,7 +645,7 @@ void MainWindow::onNewApplication()
 #if defined(WIN32)
         ext_editor = "notepad.exe";
 #else
-        ext_editor = "gedit";
+        ext_editor = "xdg-open";
 #endif
     }
 
@@ -686,7 +686,7 @@ void MainWindow::onNewResource()
 #if defined(WIN32)
         ext_editor = "notepad.exe";
 #else
-        ext_editor = "gedit";
+        ext_editor = "xdg-open";
 #endif
     }
 
@@ -728,7 +728,7 @@ void MainWindow::onNewModule()
 #if defined(WIN32)
         ext_editor = "notepad.exe";
 #else
-        ext_editor = "gedit";
+        ext_editor = "xdg-open";
 #endif
     }
 

@@ -19,7 +19,7 @@
 #if defined(WIN32)
 #define TEXTEDITOR "notepad.exe"
 #else
-#define TEXTEDITOR "gedit"
+#define TEXTEDITOR "xdg-open"
 #endif
 
 
