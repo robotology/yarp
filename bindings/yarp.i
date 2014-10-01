@@ -350,13 +350,13 @@ namespace yarp {
 %include <yarp/os/Contact.h>
 %include <yarp/os/Contactable.h>
 %include <yarp/os/UnbufferedContactable.h>
+%include <yarp/os/Port.h>
 %include <yarp/os/AbstractContactable.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/Network.h>
 %include <yarp/os/PortablePair.h>
 %include <yarp/os/PortReaderCreator.h>
 %include <yarp/os/Property.h>
-%include <yarp/os/Port.h>
 %include <yarp/os/Bottle.h>
 %include <yarp/os/PortReaderBuffer.h>
 %include <yarp/os/PortWriterBuffer.h>
