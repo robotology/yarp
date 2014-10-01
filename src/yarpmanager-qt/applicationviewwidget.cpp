@@ -271,10 +271,15 @@ void ApplicationViewWidget::updateApplicationWindow()
         QString workDir = QString("%1").arg((*moditr)->getWorkDir());
         QString env = QString("%1").arg((*moditr)->getEnv());
 
-
         QStringList l;
         l << command << id << "stopped" << host << param << stdio << workDir << env;
         CustomTreeWidgetItem *it = new CustomTreeWidgetItem(ui->moduleList,l);
+
+        if (host=="localhost")
+        {
+            it->setTextColor(3,QColor("#A0A0A0"));
+        }
+
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
         it->setData(0,Qt::UserRole,yarp::manager::MODULE);
         it->setIcon(0,QIcon(":/images/suspended_ico.png"));
@@ -369,10 +374,15 @@ bool ApplicationViewWidget::isEditable(QTreeWidgetItem *it,int col)
 
     switch (type) {
     case yarp::manager::MODULE:{
-           if(col == 3 || col == 4 || col == 5 || col == 6 || col == 7){
+           if(col == 4 || col == 5 || col == 6 || col == 7){
                if(it->text(2) == "stopped"){
                     return true;
                }
+           }
+           if(col == 3){
+                if(it->text(3) != "localhost" && it->text(2) == "stopped"){
+                    return true;
+                }
            }
         break;
     }
