@@ -3,9 +3,13 @@ compiler:
   - gcc
   - clang
 env:
-#  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=true
-#  - TRAVIS_WITH_ACE=false CMAKE_FLAGS="-DSKIP_ACE=TRUE" TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false
+  - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=true
+  - TRAVIS_WITH_ACE=false CMAKE_FLAGS="-DSKIP_ACE=TRUE" TRAVIS_WITH_SWIG=false TRAVIS_WITH_RUNTIME=false
   - TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
+matrix:
+  exclude:
+    - compiler: gcc
+    - env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
 before_install:
   - sudo add-apt-repository --yes ppa:kalakris/cmake
   - sudo apt-get update -qq
