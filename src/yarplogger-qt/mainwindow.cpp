@@ -339,6 +339,13 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     displayErrorLevel=true;
     displayGrid=true;
     displayColors=true;
+
+    bool autostart = rf.check("start");
+    if (autostart)
+    {
+        system_message->addMessage("start option found");
+        on_actionStart_Logger_triggered();
+    }
 }
 
 MainWindow::~MainWindow()
