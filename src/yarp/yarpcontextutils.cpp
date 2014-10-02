@@ -170,12 +170,13 @@ int recursiveCopy(ConstString srcDirName, ConstString destDirName, bool force, b
             }
             else
             {
-                if (verbose)
+	      if (verbose) {
 		  if (errno == EEXIST) {
                         printf("Directory %s already exist; remove it first, or use the diff/merge commands\n", destDirName.c_str());
 		  } else {
                         printf("Could not create directory %s\n", destDirName.c_str());
 		  }
+	      }
                 return -1;
             }
         }
