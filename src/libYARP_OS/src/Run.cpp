@@ -67,7 +67,7 @@ yarp::os::RpcServer* yarp::os::Run::pServerPort=0;
 int yarp::os::Run::mProcCNT=0;
 bool yarp::os::Run::mStresstest=false;
 bool yarp::os::Run::mLogged=false;
-yarp::os::ConstString yarp::os::Run::mLoggerPort("/yarprunlogger");
+yarp::os::ConstString yarp::os::Run::mLoggerPort("/yarplogger");
 
 ////////////////////////////////////
 

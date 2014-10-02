@@ -302,7 +302,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    std::string loggername = rf.check("name",yarp::os::Value("/logger")).asString();
+    std::string loggername = rf.check("name",yarp::os::Value("/yarplogger")).asString();
     theLogger = new yarp::os::YarprunLogger::LoggerEngine(loggername);
 
     ui->setupUi(this);
