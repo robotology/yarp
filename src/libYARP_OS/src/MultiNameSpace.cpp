@@ -104,6 +104,11 @@ public:
         // read namespace list from config file
         NameConfig conf;
         if (!conf.fromFile()) {
+            static bool shown = false;
+            if (!shown) {
+                shown = true;
+                fprintf(stderr,"warning: YARP name server(s) not configured\n");
+            }
             return false;
         }
         Bottle ns = conf.getNamespaces();
