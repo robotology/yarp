@@ -9,7 +9,7 @@ env:
 matrix:
   exclude:
     - compiler: gcc
-    - env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
+      env: TRAVIS_WITH_ACE=true CMAKE_FLAGS= TRAVIS_WITH_SWIG=true TRAVIS_WITH_RUNTIME=false
 before_install:
   - sudo add-apt-repository --yes ppa:kalakris/cmake
   - sudo apt-get update -qq
