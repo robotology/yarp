@@ -56,13 +56,13 @@ int main(int argc, char *argv[])
 #endif
     if (compact)
     {
-        engine.load(QUrl("qrc:/qml/QtYARPView/mainCompact.qml"));    
+        engine.load(QUrl("qrc:/qml/QtYARPView/mainCompact.qml"));
     }
     else
     {
         engine.load(QUrl("qrc:/qml/QtYARPView/main.qml"));
     }
-    
+
     QObject *topLevel = engine.rootObjects().value(0);
 
     if(!topLevel){
