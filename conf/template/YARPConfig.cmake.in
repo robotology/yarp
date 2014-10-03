@@ -84,4 +84,12 @@ if(NOT YARP_FOUND)
     if(TARGET YARP::YARP_manager)
         set(YARP_MATH_LIBRARY YARP::YARP_manager)
     endif()
+
+    # Macro for enabling idl support
+    macro(YARP_ENABLE_IDL)
+      if (NOT COMMAND YARP_IDL_TO_DIR)
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${YARP_MODULE_PATH})
+	include(YarpIDL)
+      endif()
+    endmacro()
 endif(NOT YARP_FOUND)

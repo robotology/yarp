@@ -2,8 +2,16 @@
 # Authors: Elena Ceseracciu, Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# Take an IDL file and generate code for it in the specified directory.
-macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
+# Take an IDL file and generate code for it in the specified directory,
+# optionally storing the list of source/header files in the supplied
+# variables. Call as:
+#   yarp_idl_to_dir(foo.thrift foo)
+#   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS)
+#   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS INCLUDE_PATHS)
+function(YARP_IDL_TO_DIR yarpidl_file output_dir)
+    # Store optional output variable(s).
+    set(out_vars ${ARGN})
+
     # Make sure output_dir variable is visible when expanding templates.
     set(output_dir ${output_dir})
 
@@ -44,6 +52,8 @@ macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
     option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" ${files_missing})
     mark_as_advanced(ALLOW_IDL_GENERATION)
 
+    set(full_headers)
+    set(full_sources)
     if(ALLOW_IDL_GENERATION)
         # Say what we are doing.
         message(STATUS "${family} code for ${yarpidl_file} => ${output_dir}")
@@ -68,9 +78,11 @@ macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
         set(DEST_FILES)
         foreach(generatedFile ${headers})
             list(APPEND DEST_FILES ${output_dir}/${generatedFile})
+            list(APPEND full_headers ${output_dir}/${generatedFile})
         endforeach(generatedFile)
         foreach(generatedFile ${sources})
             list(APPEND DEST_FILES ${output_dir}/${generatedFile})
+            list(APPEND full_sources ${output_dir}/${generatedFile})
         endforeach(generatedFile)
 
 	# Add a command/target to regenerate the files if the IDL file changes.
@@ -83,4 +95,16 @@ macro(YARP_IDL_TO_DIR yarpidl_file output_dir)
     else ()
         message(STATUS "Not processing ${family} file ${yarpidl_file}, ALLOW_IDL_GENERATION=${ALLOW_IDL_GENERATION}")
     endif(ALLOW_IDL_GENERATION)
-endmacro(YARP_IDL_TO_DIR)
+
+    list(LENGTH out_vars len)
+    if (len GREATER 1)
+      list(GET out_vars 0 target_src)
+      list(GET out_vars 1 target_hdr)
+      set(${target_src} ${full_sources} PARENT_SCOPE)
+      set(${target_hdr} ${full_headers} PARENT_SCOPE)
+    endif()
+    if (len GREATER 2)
+      list(GET out_vars 2 target_paths)
+      set(${target_paths} ${output_dir} ${output_dir}/include PARENT_SCOPE)
+    endif()
+endfunction(YARP_IDL_TO_DIR)
