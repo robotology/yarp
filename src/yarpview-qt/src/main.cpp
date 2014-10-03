@@ -50,9 +50,13 @@ int main(int argc, char *argv[])
 
 
     QQmlApplicationEngine engine;
-    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/" + PLUGINS_RELATIVE_PATH));
+    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() +
+                                         PLUGINS_RELATIVE_PATH));
 #ifdef CMAKE_INTDIR
-    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../" + PLUGINS_RELATIVE_PATH + "/" + CMAKE_INTDIR));
+    engine.addImportPath(QDir::cleanPath(QCoreApplication::applicationDirPath() + QDir::separator() +
+                                         ".." + QDir::separator() +
+                                         PLUGINS_RELATIVE_PATH + QDir::separator() +
+                                         CMAKE_INTDIR));
 #endif
     if (compact)
     {
