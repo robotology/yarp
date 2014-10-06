@@ -1374,11 +1374,13 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     string mname = (*mem_iter)->get_name();
     t_type* t = get_true_type((*mem_iter)->get_type());
     indent(out) << "bool write_" << mname << "(yarp::os::idl::WireWriter& writer);" << endl;
+    indent(out) << "bool nested_write_" << mname << "(yarp::os::idl::WireWriter& writer);" << endl;
   }
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
     string mname = (*mem_iter)->get_name();
     t_type* t = get_true_type((*mem_iter)->get_type());
     indent(out) << "bool read_" << mname << "(yarp::os::idl::WireReader& reader);" << endl;
+    indent(out) << "bool nested_read_" << mname << "(yarp::os::idl::WireReader& reader);" << endl;
   }
 
   indent_down();
@@ -1569,6 +1571,13 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
       generate_deserialize_field(out, *mem_iter, "");
       indent(out) << "return true;" << endl;
       scope_down(out);
+      indent(out) << "bool " << name
+		  << "::nested_read_" << mname << "(yarp::os::idl::WireReader& reader) {" 
+		  << endl;
+      indent_up();
+      generate_deserialize_field(out, *mem_iter, "", "", true);
+      indent(out) << "return true;" << endl;
+      scope_down(out);
     }
 
     indent(out) << "bool " << name
@@ -1606,6 +1615,13 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 		  << endl;
       indent_up();
       generate_serialize_field(out, *mem_iter, "");
+      indent(out) << "return true;" << endl;
+      scope_down(out);
+      indent(out) << "bool " << name
+		  << "::nested_write_" << mname << "(yarp::os::idl::WireWriter& writer) {" 
+		  << endl;
+      indent_up();
+      generate_serialize_field(out, *mem_iter, "", "", true);
       indent(out) << "return true;" << endl;
       scope_down(out);
     }
@@ -1656,7 +1672,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
       indent(out) << "if (!writer.writeListHeader(3)) return false;" << endl;
       indent(out) << "if (!writer.writeString(\"set\")) return false;" << endl;
       indent(out) << "if (!writer.writeString(\"" << mname << "\")) return false;" << endl;
-      indent(out) << "if (!obj->write_" << mname << "(writer)) return false;" << endl;
+      indent(out) << "if (!obj->nested_write_" << mname << "(writer)) return false;" << endl;
       scope_down(out);
     }
     indent(out) << "return !writer.isError();" 
@@ -1737,7 +1753,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
       out <<  "if (key == \"" << mname << "\") {" << endl;
       indent_up();
       indent(out) << "will_set_" << mname << "();" << endl;
-      indent(out) << "if (!obj->read_" << mname << "(reader)) return false;" << endl;
+      indent(out) << "if (!obj->nested_read_" << mname << "(reader)) return false;" << endl;
       indent(out) << "did_set_" << mname << "();" << endl;
     }
     if (members.begin()!=members.end()) {
