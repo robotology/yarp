@@ -121,9 +121,17 @@ void LoggerEngine::discover  (std::list<std::string>& ports)
             Bottle* n2 = n1->get(1).asList();
             if (n2 && n2->get(0).toString()=="name")
             {
-                char* off = 0;
-                off = std::strstr((char*)(n2->get(1).toString().c_str()), "/log/");
-                if (off > 0)
+                char* log_off = 0;
+                char* yarprun_log_off = 0;
+                log_off = std::strstr((char*)(n2->get(1).toString().c_str()), "/log/");
+                if (log_off > 0)
+                {
+                    std::string logport = n2->get(1).toString();
+                    printf ("%s\n", logport.c_str());
+                    ports.push_back(logport);
+                }
+                yarprun_log_off = std::strstr((char*)(n2->get(1).toString().c_str()), "/yarprunlog/");
+                if (yarprun_log_off > 0)
                 {
                     std::string logport = n2->get(1).toString();
                     printf ("%s\n", logport.c_str());
