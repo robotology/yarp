@@ -73,18 +73,21 @@ function(YARP_IDL_TO_DIR yarpidl_file output_dir)
 	endif()
 	# Place the files in their final location.
         execute_process(COMMAND ${CMAKE_COMMAND} -P ${dir}/place${yarpidlName}.cmake)
-	# Prepare list of generated files.
-        include(${settings_file})
-        set(DEST_FILES)
-        foreach(generatedFile ${headers})
-            list(APPEND DEST_FILES ${output_dir}/${generatedFile})
-            list(APPEND full_headers ${output_dir}/${generatedFile})
-        endforeach(generatedFile)
-        foreach(generatedFile ${sources})
-            list(APPEND DEST_FILES ${output_dir}/${generatedFile})
-            list(APPEND full_sources ${output_dir}/${generatedFile})
-        endforeach(generatedFile)
+    endif()
 
+    # Prepare list of generated files.
+    include(${settings_file})
+    set(DEST_FILES)
+    foreach(generatedFile ${headers})
+      list(APPEND DEST_FILES ${output_dir}/${generatedFile})
+      list(APPEND full_headers ${output_dir}/${generatedFile})
+    endforeach(generatedFile)
+    foreach(generatedFile ${sources})
+      list(APPEND DEST_FILES ${output_dir}/${generatedFile})
+      list(APPEND full_sources ${output_dir}/${generatedFile})
+    endforeach(generatedFile)
+    
+    if(ALLOW_IDL_GENERATION)
 	# Add a command/target to regenerate the files if the IDL file changes.
         add_custom_command(OUTPUT ${output_dir}/${yarpidl_target_name}.cmake ${DEST_FILES}
                            COMMAND ${YARPIDL_${family}_LOCATION} --out ${dir} --gen yarp:include_prefix --I ${CMAKE_CURRENT_SOURCE_DIR} ${yarpidl_file}
