@@ -2,11 +2,6 @@
 # Author: Daniele E. Domenichelli <daniele.domenichelli@iit.it>
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# Remove -rdynamic from CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS.
-# This is needed for some weird reason, or executables will not load resources
-# from the plugins.
-string(REPLACE "-rdynamic" "" CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS}")
-
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 

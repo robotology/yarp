@@ -40,6 +40,11 @@ endmacro()
 
 
 macro(qtyarp_use_qml_plugin)
+  # Remove -rdynamic from CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS.
+  # This is needed for some weird reason, or executables will not load resources
+  # from the plugins.
+  string(REPLACE "-rdynamic" "" CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS}")
+
   # Configure config.h file
   set(_config_h "${CMAKE_CURRENT_BINARY_DIR}/config.h")
   file(WRITE "${_config_h}.in"
