@@ -75,7 +75,7 @@ RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterf
                 }
                 param1.value() += std::string(" ");
                 param1.value() += param2.value();
-                params.erase(it2);
+                it2 = params.erase(it2);
             }
             else it2++;
         }
