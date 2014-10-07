@@ -46,7 +46,7 @@ private:
     void reset() {
         reader = 0/*NULL*/; port = 0/*NULL*/;
         replies = true;
-        can_write = can_read = true;
+        can_write = can_read = false;
     }
 
 public:
@@ -86,6 +86,7 @@ public:
     bool attachAsClient(yarp::os::UnbufferedContactable& port) {
         yarp::os::ContactStyle style;
         attach(port,style);
+        can_write = true;
         can_read = false;
         return true;
     }
@@ -101,6 +102,7 @@ public:
     bool attachAsClient(yarp::os::PortReader& reader) {
         reset();
         this->reader = &reader;
+        can_write = true;
         can_read = false;
         return true;
     }
@@ -117,6 +119,7 @@ public:
         attach(port,style);
         port.setReader(*owner);
         can_write = false;
+        can_read = true;
         return true;
     }
 

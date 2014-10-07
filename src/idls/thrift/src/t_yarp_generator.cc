@@ -1398,22 +1398,46 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(f_stt_) << endl;
 
   // Editor: setters, getters, individual serializers, and dirty flags?
-  indent(out) << "class Editor : public yarp::os::Portable {" << endl;
+  indent(out) << "class Editor : public yarp::os::Wire, public yarp::os::PortWriter {" << endl;
   indent(out) << "public:" << endl;
   indent_up();
 
   // Editor constructor
   indent(out) << endl;
+  indent(out) << "Editor() {" << endl;
+  indent_up();
+  indent(out) << "group = 0;" << endl;
+  indent(out) << "obj_owned = true;" << endl;
+  indent(out) << "obj = new " << tstruct->get_name() <<  ";" << endl;
+  indent(out) << "dirty_flags(false);" << endl;
+  indent(out) << "yarp().setOwner(*this);" << endl;
+  scope_down(out);
+  indent(out) << endl;
+  indent(out) << "Editor(" << tstruct->get_name() 
+	      << "& obj) {" << endl;
+  indent_up();
+  indent(out) << "group = 0;" << endl;
+  indent(out) << "obj_owned = false;" << endl;
+  indent(out) << "edit(obj,false);" << endl;
+  indent(out) << "yarp().setOwner(*this);" << endl;
+  scope_down(out);
+
+  indent(out) << endl;
   indent(out) << "bool edit(" << tstruct->get_name() 
 	      << "& obj, bool dirty = true) {" << endl;
   indent_up();
+  indent(out) << "if (obj_owned) delete this->obj;" << endl;
   indent(out) << "this->obj = &obj;" << endl;
+  indent(out) << "obj_owned = false;" << endl;
   indent(out) << "dirty_flags(dirty);" << endl;
   scope_down(out);
 
   // Editor destructor
   indent(out) << endl;
-  indent(out) << "virtual ~Editor() {}" << endl;
+  indent(out) << "virtual ~Editor() {" << endl;
+  indent(out) << "if (obj_owned) delete obj;" << endl;
+  indent_up();
+  scope_down(out);
 
   // Validity check
   indent(out) << endl;
@@ -1424,8 +1448,17 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
 
   // State
   indent(out) << endl;
-  indent(out) << tstruct->get_name() << " *obj;" << endl;
+  indent(out) << tstruct->get_name() << "& state() { return *obj; }" << endl;
   indent(out) << endl;
+
+  // Grouping
+  indent(out) << "void begin() { group++; }" << endl;
+  indent(out) << endl;
+  indent(out) << "void end() {" << endl;
+  indent_up();
+  indent(out) << "group--;" << endl;
+  indent(out) << "if (group==0&&is_dirty) communicate();" << endl;
+  scope_down(out);
 
   // set
   for (mem_iter = members.begin() ; mem_iter != members.end(); mem_iter++) {
@@ -1436,6 +1469,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
     indent(out) << "will_set_" << mname << "();" << endl;
     indent(out) << "obj->" << mname << " = " << mname << ";" << endl;
     indent(out) << "mark_dirty_" << mname << "();" << endl;
+    indent(out) << "communicate();" << endl;
     indent(out) << "did_set_" << mname << "();" << endl;
     scope_down(out);
 
@@ -1446,6 +1480,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
       indent(out) << "will_set_" << mname << "();" << endl;
       indent(out) << "obj->" << mname << "[index] = elem;" << endl;
       indent(out) << "mark_dirty_" << mname << "();" << endl;
+      indent(out) << "communicate();" << endl;
       indent(out) << "did_set_" << mname << "();" << endl;
       scope_down(out);
     }
@@ -1490,6 +1525,23 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent_down();
   indent(out) << "private:" << endl;
   indent_up();
+
+  // State
+  indent(out) << endl;
+  indent(out) << tstruct->get_name() << " *obj;" << endl;
+  indent(out) << endl;
+  indent(out) << "bool obj_owned;" << endl;
+  indent(out) << "int group;" << endl;
+  indent(out) << endl;
+
+  // Send if possible
+  indent(out) << "void communicate() {" << endl;
+  indent_up();
+  indent(out) << "if (yarp().canWrite()) {" << endl;
+  indent(out) << "yarp().write(*this);" << endl;
+  indent(out) << "clean();" << endl;
+  scope_down(out);
+  scope_down(out);
 
   // mark dirty overall
   indent(out) << "void mark_dirty() {" << endl;
