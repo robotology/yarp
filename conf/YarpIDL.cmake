@@ -8,7 +8,7 @@
 #   yarp_idl_to_dir(foo.thrift foo)
 #   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS)
 #   yarp_idl_to_dir(foo.thrift foo SOURCES HEADERS INCLUDE_PATHS)
-function(YARP_IDL_TO_DIR yarpidl_file output_dir)
+function(YARP_IDL_TO_DIR_CORE yarpidl_file output_dir)
     # Store optional output variable(s).
     set(out_vars ${ARGN})
 
@@ -110,4 +110,4 @@ function(YARP_IDL_TO_DIR yarpidl_file output_dir)
       list(GET out_vars 2 target_paths)
       set(${target_paths} ${output_dir} ${output_dir}/include PARENT_SCOPE)
     endif()
-endfunction(YARP_IDL_TO_DIR)
+endfunction()
