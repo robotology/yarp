@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
 	if( sched_setscheduler(0, SCHED_FIFO, &sch_param) != 0 )
 		 yWarning() << "Cannot set the scheduler to FIFO. (check superuser permission)";
 
-    if( mlockall(MCL_CURRENT | MCL_FUTURE) != 0 )
-        yWarning() << "Cannot lock memory swapping (check superuser permission)";
+    //if( mlockall(MCL_CURRENT | MCL_FUTURE) != 0 )
+    //    yWarning() << "Cannot lock memory swapping (check superuser permission)";
 #endif //ICUB_USE_REALTIME_LINUX
 
     yarp::os::Time::turboBoost();
