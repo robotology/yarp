@@ -17,6 +17,7 @@
 
 #include <yarp/os/impl/PlatformThread.h>
 
+#include <yarp/os/Property.h>
 
 namespace yarp {
     namespace os {
@@ -79,6 +80,9 @@ public:
     int setPriority(int priority = -1);
     int getPriority();
 
+    //Setting the scheduling params (scheduling policy and thread priority).  
+    bool setSchedulingParam(const char* policy, int priority);
+
     static void setDefaultStackSize(int stackSize);
 
     static SemaphoreImpl *threadMutex;
@@ -90,7 +94,7 @@ private:
     int defaultPriority;
     int stackSize;
     Platform_hthread_t hid;
-    Platform_thread_t id;
+    Platform_thread_t  id;
     bool active;
     bool opened;
     bool closing;

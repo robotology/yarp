@@ -19,6 +19,10 @@
 
 #include <stdlib.h>
 
+#if !defined(WIN32)
+    #include <pthread.h>
+#endif
+
 using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
@@ -60,7 +64,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     */
 
     ThreadImpl *thread = (ThreadImpl *)args;
-
+   
     YARP_DEBUG(Logger::get(),"Thread starting up");
 
     bool success=thread->threadInit();
@@ -224,7 +228,7 @@ bool ThreadImpl::start() {
     }
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
-                                   THR_JOINABLE | THR_NEW_LWP,
+                                   THR_JOINABLE | THR_NEW_LWP | THR_EXPLICIT_SCHED,
                                    &id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
@@ -348,6 +352,45 @@ int ThreadImpl::getPriority() {
     }
     return prio;
 }
+
+bool ThreadImpl::setSchedulingParam(const char* szPolicy, int priority)
+{
+
+#if !defined(WIN32)
+    /**
+     * This works on both linux RT and vanilla kernels
+     * - increase the priority to the desired level
+     * - set the scheduler to FIFO
+     */
+
+    //printf("Setting policy(%s) and priority(%d) of thread id:%ld ", szPolicy, priority, hid);
+    struct sched_param thread_param;
+    int policy;
+
+    bool bOk = (pthread_getschedparam(hid, &policy, &thread_param) == 0);
+
+    thread_param.sched_priority = priority;
+
+    if(String(szPolicy) == "FIFO")
+        policy = SCHED_FIFO;
+    else if(String(szPolicy) == "RR")
+        policy = SCHED_RR;
+    else if(String(szPolicy) == "OTHER")
+        policy = SCHED_OTHER;        
+    bOk &= (pthread_setschedparam(hid, SCHED_FIFO, &thread_param) == 0);
+
+    if(!bOk) {
+        YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters! check the permission");
+        return false;
+    }
+
+    return true;
+#else
+    YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters on non-POSIX system");
+    return false;
+#endif
+}
+
 
 void ThreadImpl::setDefaultStackSize(int stackSize) {
     defaultStackSize = stackSize;

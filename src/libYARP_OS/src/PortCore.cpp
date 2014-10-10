@@ -1958,11 +1958,40 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             case VOCAB3('s','e','t'):
                 {
                     Property *p = acquireProperties(false);
+                    bool bOk = true;
                     if (p) {
-                        p->put(cmd.get(2).asString(),cmd.get(3));
+                        p->put(cmd.get(2).asString(), cmd.get(3));                        
+                        
+                        // check if we need to set the PortCoreUnit scheduling policy
+                        // e.g., "prop set /portname (sched ((policy FIFO) (priority 30)))"
+                        Bottle* value = cmd.get(3).asList();
+                        if(value && value->check("sched")) 
+                        {
+                               if(cmd.get(2).asString().size() > 0 
+                               && cmd.get(2).asString()[0] == '/') {
+                                bOk = false;
+                                for (unsigned int i=0; i<units.size(); i++) {
+                                    PortCoreUnit *unit = units[i];
+                                    if (unit && !unit->isFinished()) {
+                                        Route route = unit->getRoute();
+                                        ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
+                                        if (portName == cmd.get(2).asString()) {
+                                            Bottle* sched_prop = value->find("sched").asList();
+                                            if(sched_prop != NULL) {                                               
+                                                bOk = unit->setSchedulingParam(sched_prop->find("policy").asString().c_str(), 
+                                                                               sched_prop->find("priority").asInt());
+                                            }
+                                            else
+                                                bOk = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }            
+                        }
                     }
                     releaseProperties(p);
-                    result.addVocab(Vocab::encode("ok"));
+                    result.addVocab((bOk) ? Vocab::encode("ok") : Vocab::encode("fail"));
                 }
                 break;
             default:
