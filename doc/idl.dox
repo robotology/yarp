@@ -1,0 +1,17 @@
+/*
+ * Copyright (C) 2014 iCub Facility
+ * Authors: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page idls Using IDLs
+ *
+
+\li \subpage idl_thrift
+\li \subpage idl_rosmsg
+
+ *
+ */
+

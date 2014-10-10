@@ -6,7 +6,7 @@
 
 YARP built-in types can be sent through Ports. Sometimes you need to send custom datatypes, in YARP objects that can be sent through ports are called \em portable objects. \ref port_expert shows how you can manually implement a portable object. This tutorial shows how you can automate this process using the Thrift compiler.
 
-<b>This tutorial requires the yarpidl_thrift utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
+<b>This tutorial requires the yarpidl_thrift utility. If it is missing, please upgrade YARP.</b>
 
 \section sec_intro Introduction
 
@@ -184,37 +184,15 @@ int main()
 
 YARP provides CMake supports to automate the invocation of yarpidl_thrift. This is convenient in large projects when we generate several files and we do not want to keep track of all of them individually.
 
-Edit the file CMakeLists.txt:
+We can use `yarp_idl_to_dir` to tell CMake to parse SharedData.thrift with the thrift compiler. All generated files will be placed in separate \em include and \em src directories.
 
 \code
 
-cmake_minimum_required(VERSION 2.8.9)
-
-#find YARP
-find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include(YarpIDL)
-
-\endcode
-
-The last two lines load support for the YarpIDL compiler.
-
-We now tell CMake to parse SharedData.thrift with the thrift compiler. All generated files will be placed in separate \em include and \em src directories.
-
-\code
-
-#compile definition file to generate source code into the desired directory
+# compile definition file to generate source code into the desired directory
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
-yarp_idl_to_dir(SharedData.thrift ${generated_libs_dir})
+yarp_idl_to_dir(SharedData.thrift ${generated_libs_dir} sources headers include_dirs)
 
-\endcode
-
-The first time you run CMake it will produce a file SharedData_thrift.cmake that contains all generated files. This file can be used to compile our executables, i.e.:
-
-\code
-#include files generated previously
-include(SharedData_thrift.cmake)
-include_directories(${generated_libs_dir}/include ${YARP_INCLUDE_DIRS})
+include_directories(${include_dirs} ${YARP_INCLUDE_DIRS})
 
 # create the sender
 add_executable(sender sender.cpp ${headers} ${sources})
@@ -226,7 +204,7 @@ TARGET_LINK_LIBRARIES(receiver ${YARP_LIBRARIES})
 
 \endcode
 
-Now you just have to execute CMake. The variable ALLOW_IDL_GENERATION controls if the thrift compiler is executed to generate SharedData.h/cpp or not. Notice that the first time you run cmake you \em have to enable this flag otherwise compilation will fail because SharedData.h and SharedData.cpp will be missing.
+Now you just have to execute CMake. The variable ALLOW_IDL_GENERATION controls if the thrift compiler is executed to generate SharedData.h/cpp or not. It will be off by default if there is already generated code in the desired directory, you'll need to turn it on to overwrite that.
 
 \code
 cd build

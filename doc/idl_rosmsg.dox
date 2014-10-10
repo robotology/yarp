@@ -1,0 +1,16 @@
+/*
+ * Copyright (C) 2014 iCub Facility
+ * Authors: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/**
+ * @page idl_rosmsg ROS message types
+ *
+
+\li \subpage rostypes_tutorial_portable
+\li \subpage rostypes_tutorial_continued
+
+ *
+ */

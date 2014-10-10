@@ -27,15 +27,16 @@ Using YARP ports for communication:
 \li \subpage yarp_without_nameserver
 \li \subpage yarp_with_ros
 \li \subpage yarp_http
+\li \subpage idls
 
 ROS types in YARP:
-\li \subpage rostypes_tutorial_portable
-\li \subpage rostypes_tutorial_continued
+\li \ref rostypes_tutorial_portable
+\li \ref rostypes_tutorial_continued
 
 Using the Thrift IDL to define data types and interfaces:
-\li \subpage thrift_tutorial_portable
-\li \subpage thrift_tutorial_simple
-\li \subpage thrift_tutorial
+\li \ref thrift_tutorial_portable
+\li \ref thrift_tutorial_simple
+\li \ref thrift_tutorial
 
 How to search and install configuration files:
 \li \subpage yarp_resource_finder_tutorials

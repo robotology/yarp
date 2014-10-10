@@ -14,7 +14,7 @@ This tutorial shows how to use the Apache Thrift Interface Definition Language (
 
 Apache Thrift allows to define service interfaces in a simple definition file. Taking that file as input, a compiler generates source code which handles the RPC communication for commands and replies defined in the interface. This source code can therefore be used by a server that executes the commands and by clients that send requests to the server by means of simple function calls.
 
-<b>This tutorial requires the yarpidl_thrift utility. If it is missing, you may be using an older version of YARP and need to turn the CREATE_IDLS and ENABLE_yarpidl_thrift options to ON in CMake.</b>
+<b>This tutorial requires the yarpidl_thrift utility. If it is missing, please upgrade YARP.</b>
 
 \section thrift_tutorial_simple_sec_thriftfile Step One: Interface Definition
 
@@ -38,7 +38,7 @@ where \c i32 is defined by the Thrift type system as a 32-bit signed integer, an
 
 Now that we have our nice and clear interface definition, we want to generate the source code that provides this interface in YARPic terms, and implements the RPC communication process that occurs between a client that invokes a function call and the server that exectutes it.
 
-Using CMake, generation of code for our demo.thrift file can be performed automatically during the configuration process. We create a \c CMakeLists.txt configuration file in which we calling the \c yarp_idl_to_dir macro defined in the YARP configuration file "YarpIDL.cmake":
+Using CMake, generation of code for our demo.thrift file can be performed automatically during the configuration process. We create a \c CMakeLists.txt configuration file in which we call the \c yarp_idl_to_dir macro:
 
 \code
 #CMakeList.txt
@@ -46,12 +46,13 @@ cmake_minimum_required(VERSION 2.8.9)
 
 #find YARP
 find_package(YARP REQUIRED)
-list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
-include(YarpIDL)
 
 #compile definition file to generate source code into the desired directory
 set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
-yarp_idl_to_dir(demo.thrift ${generated_libs_dir})
+yarp_idl_to_dir(demo.thrift ${generated_libs_dir} sources headers include_dirs)
+# generated source files now listed in ${sources}
+# generated header files now listed in ${headers}
+# paths to include now listed in ${include_dirs}
 \endcode
 
 We can now run CMake to set up an out-of-source tree build from command line:
@@ -61,7 +62,7 @@ $ mkdir build && cd build
 $ cmake -D ALLOW_IDL_GENERATION=ON ../
 \endcode
 
-The YarpIDL macro defines a CMake "advanced" option, ALLOW_IDL_GENERATION, which is by default set to OFF; we enable it with the -D ALLOW_IDL_GENERATION=ON option. We should now see two folders, "include" and "src", appear in the source tree, together with a demo_thrift.cmake file that helps CMake keep track of the generated files.
+The YarpIDL macro defines a CMake "advanced" option, ALLOW_IDL_GENERATION, which is by default set to OFF if generated code is already present in the desired directory; we enable it with the -D ALLOW_IDL_GENERATION=ON option. We should now see two folders, "include" and "src", appear in the source tree, together with a demo_thrift.cmake file that helps CMake keep track of the generated files.
 Inside \em include, we find a Demo.h header file, which provides the interface:
 \code
 class Demo : public yarp::os::Wire {
