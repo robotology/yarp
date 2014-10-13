@@ -35,6 +35,7 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/BottleImpl.h>
 
 #ifdef YARP_HAS_ACE
 #include <ace/config.h>
@@ -553,6 +554,8 @@ void NetworkBase::initMinimum() {
 #ifdef YARP_HAS_ACE
         ACE::init();
 #endif
+        ThreadImpl::init();
+        BottleImpl::getNull();
         ConstString quiet = getEnvironment("YARP_QUIET");
         Bottle b2(quiet.c_str());
         if (b2.get(0).asInt()>0) {
@@ -595,6 +598,8 @@ void NetworkBase::finiMinimum() {
         removeNameSpace();
         Carriers::removeInstance();
         Time::useSystemClock();
+        BottleImpl::fini();
+        ThreadImpl::fini();
 #ifdef YARP_HAS_ACE
         ACE::fini();
 #endif
@@ -898,11 +903,13 @@ ConstString NetworkBase::getPathSeparator() {
 }
 
 void NetworkBase::lock() {
-    ThreadImpl::threadMutex.wait();
+    ThreadImpl::init();
+    ThreadImpl::threadMutex->wait();
 }
 
 void NetworkBase::unlock() {
-    ThreadImpl::threadMutex.post();
+    ThreadImpl::init();
+    ThreadImpl::threadMutex->post();
 }
 
 

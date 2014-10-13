@@ -23,8 +23,18 @@ using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
 int ThreadImpl::defaultStackSize = 0;
-SemaphoreImpl ThreadImpl::threadMutex(1);
+SemaphoreImpl *ThreadImpl::threadMutex = NULL;
 
+void ThreadImpl::init() {
+    if (!threadMutex) threadMutex = new SemaphoreImpl(1);
+}
+
+void ThreadImpl::fini() {
+    if (threadMutex) {
+        delete threadMutex;
+        threadMutex = NULL;
+    }
+}
 
 #ifdef __WIN32__
 static unsigned __stdcall theExecutiveBranch (void *args)
@@ -288,17 +298,19 @@ bool ThreadImpl::isClosing() {
 }
 
 int ThreadImpl::getCount() {
-    threadMutex.wait();
+    init();
+    threadMutex->wait();
     int ct = threadCount;
-    threadMutex.post();
+    threadMutex->post();
     return ct;
 }
 
 
 void ThreadImpl::changeCount(int delta) {
-    threadMutex.wait();
+    init();
+    threadMutex->wait();
     threadCount+=delta;
-    threadMutex.post();
+    threadMutex->post();
 }
 
 int ThreadImpl::setPriority(int priority) {

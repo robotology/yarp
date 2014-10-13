@@ -24,7 +24,7 @@ using namespace yarp::os;
 
 static Clock *pclock = NULL;
 static bool clock_owned = false;
-static ConstString network_clock_name = "";
+static ConstString *network_clock_name = NULL;
 static bool network_clock_pending = false;
 
 static void removeClock() {
@@ -35,7 +35,8 @@ static void removeClock() {
         }
         pclock = NULL;
     }
-    network_clock_name = "";
+    if (network_clock_name) delete network_clock_name;
+    network_clock_name = NULL;
     network_clock_pending = false;
 }
 
@@ -45,7 +46,8 @@ static Clock *getClock() {
         NetworkClock *nc = NULL;
         NetworkBase::lock();
         if (network_clock_pending) {
-            name = network_clock_name;
+            name = "";
+            if (network_clock_name) name = *network_clock_name;
             removeClock();
             network_clock_pending = false;
             pclock = nc = new NetworkClock();
@@ -103,7 +105,7 @@ void Time::useSystemClock() {
 void Time::useNetworkClock(const ConstString& clock) {
     NetworkBase::lock();
     removeClock();
-    network_clock_name = clock;
+    network_clock_name = new ConstString(clock);
     network_clock_pending = true;
     NetworkBase::unlock();
 }

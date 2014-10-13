@@ -55,7 +55,7 @@ const int StoreDict::code = BOTTLE_TAG_LIST|BOTTLE_TAG_DICT;
 #define GROUP_MASK (BOTTLE_TAG_LIST|BOTTLE_TAG_DICT)
 
 
-yarp::os::impl::StoreNull BottleImpl::storeNull;
+yarp::os::impl::StoreNull *BottleImpl::storeNull = 0/*NULL*/;
 
 BottleImpl::BottleImpl() {
     dirty = true;
@@ -1096,7 +1096,7 @@ Storable& BottleImpl::get(int index) const {
     if (index>=0 && index<(int)size()) {
         return *(content[index]);
     }
-    return storeNull;
+    return getNull();
 }
 
 int BottleImpl::getInt(int index) {

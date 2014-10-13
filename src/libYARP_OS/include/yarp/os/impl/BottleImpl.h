@@ -556,7 +556,8 @@ public:
     }
 
     static StoreNull& getNull() {
-        return storeNull;
+        if (!storeNull) storeNull = new StoreNull;
+        return *storeNull;
     }
 
     // check if a piece of text is a completed bottle
@@ -566,8 +567,15 @@ public:
         dirty = true;
     }
 
+    static void fini() {
+        if (storeNull) {
+            delete storeNull;
+            storeNull = 0/*NULL*/;
+        }
+    }
+
 private:
-    static StoreNull storeNull;
+    static StoreNull *storeNull;
 
     PlatformVector<Storable*> content;
     PlatformVector<char> data;

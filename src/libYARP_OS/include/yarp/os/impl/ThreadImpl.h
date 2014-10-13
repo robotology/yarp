@@ -81,7 +81,10 @@ public:
 
     static void setDefaultStackSize(int stackSize);
 
-    static SemaphoreImpl threadMutex;
+    static SemaphoreImpl *threadMutex;
+
+    static void init();
+    static void fini();
 
 private:
     int defaultPriority;
