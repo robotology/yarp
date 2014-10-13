@@ -19,10 +19,6 @@
 
 #include <stdlib.h>
 
-#if !defined(WIN32)
-    #include <pthread.h>
-#endif
-
 using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
@@ -228,7 +224,7 @@ bool ThreadImpl::start() {
     }
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
-                                   THR_JOINABLE | THR_NEW_LWP | THR_EXPLICIT_SCHED,
+                                   THR_JOINABLE | THR_NEW_LWP | ACE_SCOPE_PROCESS,
                                    &id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
@@ -356,38 +352,51 @@ int ThreadImpl::getPriority() {
 bool ThreadImpl::setSchedulingParam(const char* szPolicy, int priority)
 {
 
-#if !defined(WIN32)
-    /**
-     * This works on both linux RT and vanilla kernels
-     * - increase the priority to the desired level
-     * - set the scheduler to FIFO
-     */
-
-    //printf("Setting policy(%s) and priority(%d) of thread id:%ld ", szPolicy, priority, hid);
-    struct sched_param thread_param;
-    int policy;
-
-    bool bOk = (pthread_getschedparam(hid, &policy, &thread_param) == 0);
-
-    thread_param.sched_priority = priority;
-
-    if(String(szPolicy) == "FIFO")
-        policy = SCHED_FIFO;
-    else if(String(szPolicy) == "RR")
-        policy = SCHED_RR;
-    else if(String(szPolicy) == "OTHER")
-        policy = SCHED_OTHER;        
-    bOk &= (pthread_setschedparam(hid, SCHED_FIFO, &thread_param) == 0);
-
-    if(!bOk) {
-        YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters! check the permission");
-        return false;
-    }
-
-    return true;
+#if defined(YARP_HAS_CXX11)
+        YARP_ERROR(Logger::get(),"Cannot set the thread scheduling parameters with C++11");
 #else
-    YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters on non-POSIX system");
-    return false;
+    #if defined(YARP_HAS_ACE) // Use ACE API
+        ACE_Sched_Params::Policy policy;
+        if(String(szPolicy) == "FIFO")
+            policy = ACE_SCHED_FIFO;
+        else if(String(szPolicy) == "RR")
+            policy = ACE_SCHED_RR;
+        else if(String(szPolicy) == "OTHER")
+            policy = ACE_SCHED_OTHER;
+        else
+            policy = -1;
+       
+        if( ACE_OS::thr_setprio(hid, priority, policy) == -1 ) {
+            YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters! check the permission");
+            return false;
+        }
+        return true;
+
+    #elif defined(UNIX) // Use the POSIX syscalls 
+        struct sched_param thread_param;
+        int policy;
+        bool bOk = (pthread_getschedparam(hid, &policy, &thread_param) == 0);
+        thread_param.sched_priority = priority;
+        if(String(szPolicy) == "FIFO")
+            policy = SCHED_FIFO;
+        else if(String(szPolicy) == "RR")
+            policy = SCHED_RR;
+        else if(String(szPolicy) == "OTHER")
+            policy = SCHED_OTHER;        
+        else
+            policy = -1;
+
+        bOk &= (pthread_setschedparam(hid, SCHED_FIFO, &thread_param) == 0);
+        if(!bOk) {
+            YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters! check the permission");
+            return false;
+        }
+        return true;
+
+    #else  // Threw error on non-posix system
+        YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters on non-POSIX system without ACE");
+        return false;
+    #endif
 #endif
 }
 
