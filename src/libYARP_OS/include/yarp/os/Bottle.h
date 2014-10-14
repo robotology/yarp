@@ -462,7 +462,7 @@ private:
     //}
 
     static void fini();
-    friend NetworkBase;
+    friend class NetworkBase;
 
 };
 
