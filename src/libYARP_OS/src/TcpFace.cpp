@@ -19,7 +19,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-static Logger tcpFaceLog("TcpFace", Logger::get());
 
 
 TcpFace::~TcpFace() {
@@ -28,7 +27,7 @@ TcpFace::~TcpFace() {
 
 
 bool TcpFace::open(const Contact& address) {
-    YARP_DEBUG(tcpFaceLog,String("opening for address ") + address.toURI());
+    YARP_DEBUG(Logger::get(),String("opening for address ") + address.toURI());
 
     this->address = address;
 #ifdef YARP_HAS_ACE
@@ -99,7 +98,7 @@ InputProtocol *TcpFace::read() {
 
         bool success = auth.authSource(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
-            showError(tcpFaceLog);
+            showError(Logger::get());
             return NULL;
         }
         stream->setReadTimeout(0.);
@@ -127,7 +126,7 @@ OutputProtocol *TcpFace::write(const Contact& address) {
 
         bool success = auth.authDest(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
-            showError(tcpFaceLog);
+            showError(Logger::get());
             return NULL;
         }
         stream->setReadTimeout(0.);

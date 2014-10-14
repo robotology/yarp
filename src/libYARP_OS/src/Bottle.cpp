@@ -21,10 +21,10 @@ class NullBottle : public Bottle {
 public:
     virtual bool isNull() const    { return true; }
 
-    static NullBottle bottleNull;
+    static NullBottle *bottleNull;
 };
 
-NullBottle NullBottle::bottleNull;
+NullBottle *NullBottle::bottleNull = NULL;
 
 
 // implementation is a BottleImpl
@@ -335,9 +335,17 @@ void Bottle::add(const Value& value) {
 
 
 Bottle& Bottle::getNullBottle() {
-    return NullBottle::bottleNull;
+    if (!NullBottle::bottleNull) NullBottle::bottleNull = new NullBottle();
+    return *NullBottle::bottleNull;
 }
 
+
+void Bottle::fini() {
+    if (NullBottle::bottleNull) {
+        delete NullBottle::bottleNull;
+        NullBottle::bottleNull = NULL;
+    }
+}
 
 bool Bottle::operator == (const Bottle& alt) {
     return String(toString().c_str()) == alt.toString().c_str();

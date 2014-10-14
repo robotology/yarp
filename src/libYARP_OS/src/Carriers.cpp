@@ -31,8 +31,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-static Logger carriersLog("Carriers", Logger::get());
-
 Carriers *Carriers::yarp_carriers_instance = NULL;
 
 static bool matchCarrier(const Bytes *header, Bottle& code) {
@@ -214,7 +212,6 @@ Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
 Face *Carriers::listen(const Contact& address) {
     // for now, only TcpFace exists - otherwise would need to manage
     // multiple possibilities
-    //YARP_DEBUG(carriersLog,"listen called");
     Face *face = NULL;
     if (address.getCarrier() == "fake") {
         face = new FakeFace();

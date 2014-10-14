@@ -18,10 +18,16 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Logger Logger::root("yarp");
+Logger *Logger::root = NULL;
 
 Logger& Logger::get() {
-    return root;
+    if (!root) root = new Logger("yarp");
+    return *root;
+}
+
+void Logger::fini() {
+    if (root) delete root;
+    root = NULL;
 }
 
 #ifdef YARP_HAS_EXECINFO

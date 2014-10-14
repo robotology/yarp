@@ -556,6 +556,8 @@ void NetworkBase::initMinimum() {
 #endif
         ThreadImpl::init();
         BottleImpl::getNull();
+        Bottle::getNullBottle();
+        Logger::get();
         ConstString quiet = getEnvironment("YARP_QUIET");
         Bottle b2(quiet.c_str());
         if (b2.get(0).asInt()>0) {
@@ -598,6 +600,8 @@ void NetworkBase::finiMinimum() {
         removeNameSpace();
         Carriers::removeInstance();
         Time::useSystemClock();
+        Logger::fini();
+        Bottle::fini();
         BottleImpl::fini();
         ThreadImpl::fini();
 #ifdef YARP_HAS_ACE

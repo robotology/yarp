@@ -26,6 +26,7 @@ namespace yarp {
     namespace os {
         class Bottle;
         class Property;
+        class NetworkBase;
     }
 }
 
@@ -459,6 +460,9 @@ private:
     //virtual Bottle *asList() {
     //  return this;
     //}
+
+    static void fini();
+    friend NetworkBase;
 
 };
 

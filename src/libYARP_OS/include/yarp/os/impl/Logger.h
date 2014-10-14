@@ -61,7 +61,7 @@ public:
         low = DEFAULT_WARN;
         stream = NULL;
 #ifdef YARP_HAS_ACE
-        if (this==&root) {
+        if (this==root) {
             ACE_Log_Msg *acer = ACE_Log_Msg::instance();
             acer->set_flags(8);
             acer->clr_flags(1);
@@ -79,6 +79,7 @@ public:
     }
 
     static Logger& get();
+    static void fini();
 
 #ifdef YARP_HAS_ACE
     virtual void log(ACE_Log_Record& log_record) {
@@ -178,7 +179,7 @@ private:
     void show(int level, const String& txt);
     void exit(int result);
 
-    static Logger root;
+    static Logger *root;
     String prefix;
     Logger *parent;
     int verbose;

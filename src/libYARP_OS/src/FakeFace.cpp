@@ -16,8 +16,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-static Logger fakeFaceLog("FakeFace", Logger::get());
-
 bool FakeFace::open(const Contact& address) {
     // happy to open without fuss
     return true;
@@ -27,7 +25,7 @@ void FakeFace::close() {
 }
 
 InputProtocol *FakeFace::read() {
-    fakeFaceLog.fail("not yet implemented");
+    fprintf(stderr,"not implemented\n");
     return NULL;
 }
 
