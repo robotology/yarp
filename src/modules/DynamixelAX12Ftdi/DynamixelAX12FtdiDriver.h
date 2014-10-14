@@ -264,6 +264,8 @@ public:
     bool enableTorquePid(int j);
     bool setTorqueOffset(int j, double v);
 
+    bool getBemfParam(int j, double *bemf);
+    bool setBemfParam(int j, double bemf);
 
     bool resetEncoder(int j);
     bool resetEncoders();
