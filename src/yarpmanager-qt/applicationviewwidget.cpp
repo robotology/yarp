@@ -1215,7 +1215,10 @@ void ApplicationViewWidget::onSelfResUnavailable(int which)
 
 void ApplicationViewWidget::onSelfStart(int which)
 {
-    QTreeWidgetItem *it = ui->moduleList->topLevelItem(which);
+    int row;
+    getModRowByID(which,&row);
+    QTreeWidgetItem *it = ui->moduleList->topLevelItem(row);
+
     if(it){
         it->setText(2,"running");
         it->setIcon(0,QIcon(":/images/runnin_ico.png"));
@@ -1229,7 +1232,9 @@ void ApplicationViewWidget::onSelfStart(int which)
 
 void ApplicationViewWidget::onSelfStop(int which)
 {
-    QTreeWidgetItem *it = ui->moduleList->topLevelItem(which);
+    int row;
+    getModRowByID(which,&row);
+    QTreeWidgetItem *it = ui->moduleList->topLevelItem(row);
     if(it){
         it->setText(2,"stopped");
         it->setIcon(0,QIcon(":/images/suspended_ico.png"));
@@ -1373,6 +1378,22 @@ bool ApplicationViewWidget::getConRowByID(int id, int *row)
 {
     for(int i=0;i< ui->connectionList->topLevelItemCount();i++){
         QTreeWidgetItem *it = ui->connectionList->topLevelItem(i);
+
+        if(it->text(1).toInt() == id){
+            *row = i;
+            return true;
+        }
+    }
+    return false;
+}
+/*! \brief Get the Module row by id
+    \param id the requested id
+    \param the output row
+*/
+bool ApplicationViewWidget::getModRowByID(int id, int *row)
+{
+    for(int i=0;i< ui->moduleList->topLevelItemCount();i++){
+        QTreeWidgetItem *it = ui->moduleList->topLevelItem(i);
 
         if(it->text(1).toInt() == id){
             *row = i;

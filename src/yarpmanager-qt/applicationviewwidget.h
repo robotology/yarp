@@ -61,6 +61,7 @@ public:
 
 private:
     bool getConRowByID(int id, int *row);
+	bool getModRowByID(int id, int *row);
     void reportErrors();
     void prepareManagerFrom(yarp::manager::Manager* lazy);
     void updateApplicationWindow();
