@@ -1,7 +1,13 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <yarp/os/YarprunLogger.h>
+#include <yarp/os/Os.h>
 #include <cstdio>
+
+static void sighandler (int signal)
+{
+    fprintf(stdout,"This module cannot be closed with CTRL-C. Use <quit> menu to exit\n");
+}
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +25,13 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("yarprunLogger.ini");           //overridden by --from parameter
     rf.setDefaultContext("yarprunLogger");                  //overridden by --context parameter
     rf.configure(argc,argv);
+
+    bool cannot_close = rf.check("no_stop");
+    if (cannot_close)
+    {
+        yarp::os::signal(yarp::os::YARP_SIGINT, sighandler);
+        yarp::os::signal(yarp::os::YARP_SIGTERM, sighandler);
+    }
 
     MainWindow w(rf);
     w.show();
