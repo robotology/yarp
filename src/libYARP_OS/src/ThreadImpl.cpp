@@ -71,6 +71,12 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     if (success)
         {
             thread->setPriority();
+            // check whether we need to set the schduling parameters 
+            String policy;
+            int priority; 
+            thread->getSchedulingParam(policy, priority);
+            if(policy != "")
+                thread->setSchedulingParam(policy.c_str(), priority); 
             thread->run();
             thread->threadRelease();
         }
@@ -98,6 +104,7 @@ ThreadImpl::ThreadImpl() : synchro(0) {
     initWasSuccessful = false;
     defaultPriority = -1;
     setOptions();
+    schedParam.policy = String("");
 }
 
 
@@ -224,7 +231,7 @@ bool ThreadImpl::start() {
     }
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
-                                   THR_JOINABLE | THR_NEW_LWP | ACE_SCOPE_PROCESS,
+                                   THR_JOINABLE | THR_NEW_LWP,
                                    &id,
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
@@ -356,6 +363,12 @@ bool ThreadImpl::setSchedulingParam(const char* szPolicy, int priority)
         YARP_ERROR(Logger::get(),"Cannot set the thread scheduling parameters with C++11");
 #else
     #if defined(YARP_HAS_ACE) // Use ACE API
+        if( hid == (Platform_hthread_t)0 ) {
+            schedParam.policy = szPolicy;
+            schedParam.priority = priority;
+            return true;
+        }
+
         ACE_Sched_Params::Policy policy;
         if(String(szPolicy) == "FIFO")
             policy = ACE_SCHED_FIFO;
@@ -365,7 +378,7 @@ bool ThreadImpl::setSchedulingParam(const char* szPolicy, int priority)
             policy = ACE_SCHED_OTHER;
         else
             policy = -1;
-       
+
         if( ACE_OS::thr_setprio(hid, priority, policy) == -1 ) {
             YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters! check the permission");
             return false;
@@ -373,6 +386,12 @@ bool ThreadImpl::setSchedulingParam(const char* szPolicy, int priority)
         return true;
 
     #elif defined(UNIX) // Use the POSIX syscalls 
+        if( hid == (Platform_hthread_t)0 ) {
+            schedParam.policy = szPolicy;
+            schedParam.priority = priority;
+            return true;
+        }
+
         struct sched_param thread_param;
         int policy;
         bool bOk = (pthread_getschedparam(hid, &policy, &thread_param) == 0);
@@ -400,6 +419,10 @@ bool ThreadImpl::setSchedulingParam(const char* szPolicy, int priority)
 #endif
 }
 
+void ThreadImpl::getSchedulingParam(String &policy, int &priority) {
+    policy = schedParam.policy;
+    priority = schedParam.priority;
+}
 
 void ThreadImpl::setDefaultStackSize(int stackSize) {
     defaultStackSize = stackSize;
