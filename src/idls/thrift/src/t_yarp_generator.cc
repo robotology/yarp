@@ -1430,6 +1430,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(out) << "this->obj = &obj;" << endl;
   indent(out) << "obj_owned = false;" << endl;
   indent(out) << "dirty_flags(dirty);" << endl;
+  indent(out) << "return true;" << endl;
   scope_down(out);
 
   // Editor destructor
@@ -1538,6 +1539,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct) {
   indent(out) << "void communicate() {" << endl;
   indent_up();
   indent(out) << "if (yarp().canWrite()) {" << endl;
+  indent_up();
   indent(out) << "yarp().write(*this);" << endl;
   indent(out) << "clean();" << endl;
   scope_down(out);
