@@ -51,7 +51,6 @@ Sound& Sound::operator += (const Sound& alt) {
 
     Sound orig= *this;
     this->resize(this->samples+alt.samples,channels);
-    this->frequency = frequency;
     
     unsigned char* p1    = orig.getRawData();
     unsigned char* p2    = alt.getRawData();
