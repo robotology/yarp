@@ -185,6 +185,8 @@ private:
     yarp::dev::PolyDriver *subDeviceOwned;
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
+    bool ownDevices;
+
 public:
     /**
     * Constructor.

@@ -34,38 +34,35 @@ if(CBW2_USE_YARP_THRIFT)
 endif(CBW2_USE_YARP_THRIFT)
 
 if(CBW2_USE_ROS_MSG)
-    add_definitions(-DROS_MSG)
 
-    set(rosMSG jointState)
-    ## Load yarp stuff
-    find_package(YARP REQUIRED)     ## make cmake look for yarp
-    list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})  ## add path of the yarp-cmake files full of wonderful macros
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})  ## include yarp header files
+        message(INFO " Using ROS message\n")
+        add_definitions(-DROS_MSG)
 
-    include(YarpIDL)    ## wa want to use IDL so include their macros
+    # prepare some stuff
+        # name of the file
+        set(rosMSG jointState)
+        ## Load yarp stuff --> why it is required, I´m inside yarp after all. Is there a better way???
+        find_package(YARP REQUIRED)     ## make cmake look for yarp
+        list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})  ## add path of the yarp-cmake files full of wonderful macros
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${YARP_INCLUDE_DIRS})  ## include yarp header files
 
-    set(ALLOW_IDL_GENERATION ON CACHE BOOL "on")
-
-    message(INFO " Using ROS message\n")
-    #set(generated_libs_dir build/src)        # root folder where place generated files
-    set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
-    yarp_idl_to_dir(${rosMSG}.msg ${generated_libs_dir})     # run the generator engine
-
-    string(TOLOWER ${rosMSG} rosLowerName)
-    message(STATUS "generated_libs_dir is ${generated_libs_dir} ||")
-    message(STATUS "include folder should be ${CMAKE_CURRENT_BINARY_DIR}/${rosLowerName} ||")
+        include(YarpIDL)    ## we want to use IDL so include their macros
+        set(ALLOW_IDL_GENERATION ON CACHE BOOL "on")  # force generation for now ... TBR
 
 
-    #include files generated previously
-    include(${rosMSG}_msg.cmake)
+    #idl commands
+        set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}")
+        yarp_idl_to_dir(${rosMSG}.msg ${generated_libs_dir} ros_msg_sources ros_msg_headers include_dirs)
+        include_directories(${include_dirs})
+        include(${rosMSG}_msg.cmake)
+        include_directories(${generated_libs_dir}/include ${YARP_INCLUDE_DIRS})
 
-    # create the sender
-    set(ros_msg_headers ${headers})
-    set(ros_msg_sources ${sources})
-    message(STATUS " ROS headers is ${ros_msg_headers}")
-    message(STATUS " ROS sources is ${ros_msg_sources}")
+    #debug messages
+        message(STATUS " ROS headers is ${ros_msg_headers}")
+        message(STATUS " ROS sources is ${ros_msg_sources}")
+        message(STATUS " ROS include_dirs is ${include_dirs}")
+        message(STATUS " generated_libs_dir is ${generated_libs_dir}")
 
-    include_directories(${CMAKE_CURRENT_BINARY_DIR}/${rosLowerName})
 
 endif(CBW2_USE_ROS_MSG)
 
@@ -79,12 +76,6 @@ set(controlBoardWrapper_hrds   src/modules/ControlBoardWrapper/ControlBoardWrapp
                                 src/modules/ControlBoardWrapper/StreamingMessagesParser.h
                                 src/modules/ControlBoardWrapper/SubDevice.h)
 
-#foreach(file in ${headers})
-#    set(header_files ${header_files} ${CMAKE_CURRENT_SOURCE_DIR}/${generated_libs_dir}/${file})
-#    message(INFO " header_files is ${header_files}")
-#endforeach(file)
-
-#message(INFO " header_files is ${header_files}")
 
 # add automatically generated files to source list
 set(controlBoardWrapper_srcs ${controlBoardWrapper_srcs} ${yarp_msg_sources}  ${ros_msg_sources} )
