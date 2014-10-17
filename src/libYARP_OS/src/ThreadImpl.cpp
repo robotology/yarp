@@ -71,12 +71,6 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     if (success)
         {
             thread->setPriority();
-            // check whether we need to set the schduling parameters 
-            String policy;
-            int priority; 
-            thread->getSchedulingParam(policy, priority);
-            if(policy != "")
-                thread->setSchedulingParam(policy.c_str(), priority); 
             thread->run();
             thread->threadRelease();
         }
@@ -103,8 +97,8 @@ ThreadImpl::ThreadImpl() : synchro(0) {
     needJoin = false;
     initWasSuccessful = false;
     defaultPriority = -1;
+    defaultPolicy = -1;
     setOptions();
-    schedParam.policy = String("");
 }
 
 
@@ -114,6 +108,7 @@ ThreadImpl::ThreadImpl(Runnable *target) : synchro(0) {
     closing = false;
     needJoin = false;
     defaultPriority = -1;
+    defaultPolicy = -1;
     setOptions();
 }
 
@@ -320,109 +315,76 @@ void ThreadImpl::changeCount(int delta) {
     threadMutex->post();
 }
 
-int ThreadImpl::setPriority(int priority) {
+int ThreadImpl::setPriority(int priority, int policy) {
     if (priority==-1) {
         priority = defaultPriority;
+        policy = defaultPolicy;
     } else {
         defaultPriority = priority;
+        defaultPolicy = policy;
     }
     if (active && priority!=-1) {
-#ifdef YARP_HAS_CXX11
+
+#if defined(YARP_HAS_CXX11)
         YARP_ERROR(Logger::get(),"Cannot set priority with C++11");
 #else
-  #ifdef YARP_HAS_ACE
-        return ACE_Thread::setprio(hid, priority);
-  #else
+    #if defined(YARP_HAS_ACE) // Use ACE API
+        return ACE_Thread::setprio(hid, priority, policy);
+    #elif defined(UNIX) // Use the POSIX syscalls 
+        struct sched_param thread_param;
+        thread_param.sched_priority = priority;
+        int ret pthread_setschedparam(hid, policy, &thread_param);
+        return (ret != 0) ? -1 : 0;
+    #else
         YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
-  #endif
+    #endif
 #endif
     }
-    return -1;
+    return 0;
 }
 
 int ThreadImpl::getPriority() {
-    int prio = -1;
+    int prio = defaultPriority;
     if (active) {
-#ifdef YARP_HAS_CXX11
+#if defined(YARP_HAS_CXX11)
         YARP_ERROR(Logger::get(),"Cannot get priority with C++11");
 #else
-  #ifdef YARP_HAS_ACE
+    #if defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio);
-  #else
+    #elif defined(UNIX) // Use the POSIX syscalls 
+        struct sched_param thread_param;
+        int policy;
+        if(pthread_getschedparam(hid, &policy, &thread_param) == 0)
+            prio = thread_param.priority;
+    #else
         YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
-  #endif
+    #endif
 #endif
     }
     return prio;
 }
 
-bool ThreadImpl::setSchedulingParam(const char* szPolicy, int priority)
-{
-
+int ThreadImpl::getPolicy() {
+    int policy = defaultPolicy;    
+    int prio;
+    if (active) {
 #if defined(YARP_HAS_CXX11)
-        YARP_ERROR(Logger::get(),"Cannot set the thread scheduling parameters with C++11");
+        YARP_ERROR(Logger::get(),"Cannot get scheduiling policy with C++11");
 #else
-    #if defined(YARP_HAS_ACE) // Use ACE API
-        if( hid == (Platform_hthread_t)0 ) {
-            schedParam.policy = szPolicy;
-            schedParam.priority = priority;
-            return true;
-        }
-
-        ACE_Sched_Params::Policy policy;
-        if(String(szPolicy) == "FIFO")
-            policy = ACE_SCHED_FIFO;
-        else if(String(szPolicy) == "RR")
-            policy = ACE_SCHED_RR;
-        else if(String(szPolicy) == "OTHER")
-            policy = ACE_SCHED_OTHER;
-        else
-            policy = -1;
-
-        if( ACE_OS::thr_setprio(hid, priority, policy) == -1 ) {
-            YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters! check the permission");
-            return false;
-        }
-        return true;
-
+    #if defined(YARP_HAS_ACE) // Use ACE API        
+        ACE_Thread::getprio(hid, prio, policy);
     #elif defined(UNIX) // Use the POSIX syscalls 
-        if( hid == (Platform_hthread_t)0 ) {
-            schedParam.policy = szPolicy;
-            schedParam.priority = priority;
-            return true;
-        }
-
         struct sched_param thread_param;
-        int policy;
-        bool bOk = (pthread_getschedparam(hid, &policy, &thread_param) == 0);
-        thread_param.sched_priority = priority;
-        if(String(szPolicy) == "FIFO")
-            policy = SCHED_FIFO;
-        else if(String(szPolicy) == "RR")
-            policy = SCHED_RR;
-        else if(String(szPolicy) == "OTHER")
-            policy = SCHED_OTHER;        
-        else
-            policy = -1;
-
-        bOk &= (pthread_setschedparam(hid, SCHED_FIFO, &thread_param) == 0);
-        if(!bOk) {
-            YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters! check the permission");
-            return false;
-        }
-        return true;
-
-    #else  // Threw error on non-posix system
-        YARP_ERROR(Logger::get(), "Cannot set the thread scheduling parameters on non-POSIX system without ACE");
-        return false;
+        if(pthread_getschedparam(hid, &policy, &thread_param) != 0)
+            policy = defaultPolicy;
+    #else
+        YARP_ERROR(Logger::get(),"Cannot read scheduling policy without ACE");
     #endif
 #endif
+    }
+    return policy;
 }
 
-void ThreadImpl::getSchedulingParam(String &policy, int &priority) {
-    policy = schedParam.policy;
-    priority = schedParam.priority;
-}
 
 void ThreadImpl::setDefaultStackSize(int stackSize) {
     defaultStackSize = stackSize;

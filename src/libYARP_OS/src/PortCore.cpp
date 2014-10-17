@@ -1963,12 +1963,15 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         p->put(cmd.get(2).asString(), cmd.get(3));                        
                         
                         // check if we need to set the PortCoreUnit scheduling policy
-                        // e.g., "prop set /portname (sched ((policy FIFO) (priority 30)))"
+                        // e.g., "prop set /portname (sched ((priority 30) (policy 1)))"
+                        // The priority and policy values on Linux are: 
+                        // SCHED_OTHER : policy=0, priority=[0 ..  0]
+                        // SCHED_FIFO  : policy=1, priority=[1 .. 99]
+                        // SCHED_RR    : policy=2, priority=[1 .. 99]
                         Bottle* value = cmd.get(3).asList();
                         if(value && value->check("sched")) 
                         {
-                               if(cmd.get(2).asString().size() > 0 
-                               && cmd.get(2).asString()[0] == '/') {
+                            if((cmd.get(2).asString().size() > 0) && (cmd.get(2).asString()[0] == '/')) {
                                 bOk = false;
                                 for (unsigned int i=0; i<units.size(); i++) {
                                     PortCoreUnit *unit = units[i];
@@ -1977,9 +1980,14 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                         ConstString portName = (unit->isOutput()) ? route.getToName() : route.getFromName();
                                         if (portName == cmd.get(2).asString()) {
                                             Bottle* sched_prop = value->find("sched").asList();
-                                            if(sched_prop != NULL) {                                               
-                                                bOk = unit->setSchedulingParam(sched_prop->find("policy").asString().c_str(), 
-                                                                               sched_prop->find("priority").asInt());
+                                            if(sched_prop != NULL) {
+                                                int prio = -1;
+                                                int policy = -1;
+                                                if(sched_prop->check("priority"))
+                                                    prio = sched_prop->find("priority").asInt();
+                                                if(sched_prop->check("policy"))
+                                                    policy = sched_prop->find("policy").asInt();
+                                                bOk = (unit->setPriority(prio, policy) != -1);
                                             }
                                             else
                                                 bOk = false;

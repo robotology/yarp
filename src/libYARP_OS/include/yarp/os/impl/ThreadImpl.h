@@ -34,11 +34,6 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable {
 public:
     
-    typedef struct {
-        String policy;
-        int priority;
-    } SchedulingParam;
-
     ThreadImpl();
     ThreadImpl(Runnable *target);
 
@@ -84,12 +79,9 @@ public:
     void synchroWait();
     void synchroPost();
 
-    int setPriority(int priority = -1);
+    int setPriority(int priority = -1, int policy = -1);
     int getPriority();
-
-    //Setting the scheduling params (scheduling policy and thread priority).  
-    bool setSchedulingParam(const char* policy, int priority);
-    void getSchedulingParam(String &policy, int &priority);
+    int getPolicy();
 
     static void setDefaultStackSize(int stackSize);
 
@@ -100,6 +92,7 @@ public:
 
 private:
     int defaultPriority;
+    int defaultPolicy;
     int stackSize;
     Platform_hthread_t hid;
     Platform_thread_t  id;
@@ -108,7 +101,6 @@ private:
     bool closing;
     bool needJoin;
     Runnable *delegate;
-    SchedulingParam schedParam;
 
     SemaphoreImpl synchro;
     //ACE_Auto_Event synchro;   // event for init synchro
