@@ -163,11 +163,19 @@ public:
     static long int getKeyOfCaller();
 
     /**
-     * Set the priority of the thread, if the OS supports that.
+     * Set the priority and scheduling policy of the thread, if the OS supports that.
      * @param priority the new priority of the thread.
+     * @param policy the scheduling policy of the thread
      * @return -1 if the priority cannot be set.
+     * @note The thread plolicy is highly OS dependant and a right combination of 
+     * priority and policy should be used. In some platform changing thread priorities 
+     * is subject to having the right permission. For example, the following combinations
+     * are supported on most Linux platforms: 
+     * SCHED_OTHER : policy=0, priority=[0 ..  0]
+     * SCHED_FIFO  : policy=1, priority=[1 .. 99]
+     * SCHED_RR    : policy=2, priority=[1 .. 99]
      */
-    int setPriority(int priority);
+    int setPriority(int priority, int policy=-1);
 
     /**
      * Query the current priority of the thread, if the OS supports that.
