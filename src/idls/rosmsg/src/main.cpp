@@ -150,6 +150,7 @@ int generate_cpp(int argc, char *argv[]) {
     if (t.read(fname.c_str(),env,gen)) {
         RosTypeCodeGenState state;
         t.emitType(gen,state);
+        t.cache(fname.c_str(),env,gen);
     }
 
     return 0;

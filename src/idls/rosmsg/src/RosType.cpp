@@ -269,6 +269,38 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     return isValid;
 }
 
+bool RosType::cache(const char *tname, RosTypeSearch& env, 
+                    RosTypeCodeGen& gen) {
+    string rosType = tname;
+    if (rosType.find(".")==string::npos) {
+        return false;
+    }
+    rosType = rosType.substr(0,rosType.rfind("."));
+    FILE *fin = fopen((env.getTargetDirectory() + "/" + tname).c_str(),"r");
+    FILE *fout = fopen((env.getTargetDirectory() + "/" + rosType).c_str(),"w");
+    if (!fin) {
+        fin = fopen(tname,"r");
+    }
+    if (!fin) {
+        fprintf(stderr, "[type] FAILED to open %s\n", tname);
+        exit(1);
+    }
+    if (!fout) {
+        fprintf(stderr, "[type] FAILED to open %s\n", rosType.c_str());
+        exit(1);
+    }
+
+    do {
+        char buf[2048];
+        char *result = fgets(buf,sizeof(buf),fin);
+        if (result==NULL) break;
+        fputs(result,fout);
+    } while (true);
+    fclose(fout);
+    fclose(fin);
+    return true;
+}
+
 
 
 void RosType::show() {
@@ -497,23 +529,33 @@ std::string RosTypeSearch::findFile(const char *tname) {
 	if (stat(target_full.c_str(), &dummy)==0) {
         return target;
     }
-    string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+tname+" > " + target_full + " || rm -f " + target_full;
-    fprintf(stderr,"[ros]  %s\n", cmd.c_str());
-    pid_t p = ACE_OS::fork();
-    if (p==0) {
-#ifdef __linux__
-        // This was ACE_OS::execlp, but that fails
-        ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#else
-        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
-#endif
-        exit(0);
-    } else {
-        ACE_OS::wait(NULL);
-    }
-    //printf("Ran [%s]\n", cmd.c_str());
 
-    // rosmsg return value no longer reliable?
+    if (std::string(tname)=="Header") {
+        // support Header natively, for the sake of tests
+        FILE *fout = fopen(target_full.c_str(),"w");
+        if (fout) {
+            fprintf(fout,"[roslib/Header]\n");
+            fprintf(fout,"uint32 seq\n");
+            fprintf(fout,"time stamp\n");
+            fprintf(fout,"string frame_id\n");
+        }
+        fclose(fout);
+    } else {
+        string cmd = string(find_service?"rossrv":"rosmsg") + " show -r "+tname+" > " + target_full + " || rm -f " + target_full;
+        fprintf(stderr,"[ros]  %s\n", cmd.c_str());
+        pid_t p = ACE_OS::fork();
+        if (p==0) {
+#ifdef __linux__
+            // This was ACE_OS::execlp, but that fails
+            ::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#else
+            ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char *)NULL);
+#endif
+            exit(0);
+        } else {
+            ACE_OS::wait(NULL);
+        }
+    } 
 
     bool success = true;
 

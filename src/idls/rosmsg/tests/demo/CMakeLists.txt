@@ -10,7 +10,7 @@ find_package(YARP REQUIRED)
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 include(YarpIDL)
 
-set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
+set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/bits")
 yarp_idl_to_dir(Demo.msg ${generated_libs_dir} S1 H1)
 yarp_idl_to_dir(Tennis.srv ${generated_libs_dir} S2 H3)
 yarp_idl_to_dir(Rpc.srv ${generated_libs_dir} S3 H3)

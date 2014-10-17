@@ -21,11 +21,13 @@ function(YARP_IDL_TO_DIR_CORE yarpidl_file output_dir)
     get_filename_component(yarpidlExt ${yarpidl_file} EXT)
     string(TOLOWER ${yarpidlExt} yarpidlExt)
     string(TOLOWER ${yarpidlName} yarpidlNameLower)
+    set(dir_add "")
 
     # Figure out format we are working with.
     set(family none)
     if (yarpidlExt STREQUAL ".thrift")
       set(family thrift)
+      set(dir_add "/${yarpidlNameLower}")
     endif ()
     if (yarpidlExt STREQUAL ".msg")
       set(family rosmsg)
@@ -37,8 +39,13 @@ function(YARP_IDL_TO_DIR_CORE yarpidl_file output_dir)
       message(FATAL_ERROR "yarp_idl_to_dir does not know what to do with ${yarpidl_file}, unrecognized extension ${yarpidlExt}")
     endif ()
 
+    string(LENGTH "${include_prefix}" include_prefix_len)
+    if (include_prefix_len GREATER 0) 
+      set(include_prefix "/${include_prefix}")
+    endif ()
+
     # Set intermediate output directory.
-    set(dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_/${include_prefix}/${yarpidlNameLower})
+    set(dir ${CMAKE_CURRENT_BINARY_DIR}/_yarp_idl_${include_prefix}${dir_add})
     string(REGEX REPLACE "[^a-zA-Z0-9]" "_" yarpidl_target_name ${yarpidl_file})
     set(settings_file ${output_dir}/${yarpidl_target_name}.cmake)
 

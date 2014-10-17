@@ -121,6 +121,7 @@ public:
 
     bool read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
               int nesting = 0);
+    bool cache(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen);
     void show();
 
     bool emitType(RosTypeCodeGen& gen, 
