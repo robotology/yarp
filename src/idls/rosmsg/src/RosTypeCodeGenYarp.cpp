@@ -39,6 +39,9 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         FILE *index = fopen(iname.c_str(),"w");
         if (index!=NULL) {
             fprintf(index,"%s\n",fname.c_str());
+            for (int i=0; i<(int)state.dependencies.size(); i++) {
+                fprintf(index,"%s.h\n",state.dependenciesAsPaths[i].c_str());
+            }
             fclose(index);
             index = NULL;
         }

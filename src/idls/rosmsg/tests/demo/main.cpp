@@ -13,6 +13,8 @@
 #include <Tennis.h>
 #include <Rpc.h>
 #include <SharedData.h>
+#include <HeaderTest.h>
+#include <HeaderTest2.h>
 #include <yarp/os/all.h>
 
 using namespace yarp::os;
