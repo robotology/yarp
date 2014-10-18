@@ -18,8 +18,6 @@
 #include <yarp/os/impl/PlatformThread.h>
 #include <yarp/os/impl/String.h>
 
-#include <yarp/os/Property.h>
-
 namespace yarp {
     namespace os {
         namespace impl {
