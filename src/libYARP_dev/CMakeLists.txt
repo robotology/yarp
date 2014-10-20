@@ -116,6 +116,7 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
 
 add_subdirectory(src/modules/ControlBoardWrapper)
 get_property(other_files GLOBAL PROPERTY controlBoardWrapper_files)
+get_property(other_include_path GLOBAL PROPERTY controlBoardWrapper_include_paths)
 
 if(CBW2_USE_YARP_THRIFT)
     message(STATUS "defining YARP_MSG")
@@ -146,8 +147,11 @@ get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
+include_directories(${other_include_path})
 
 add_library(YARP_dev ${YARP_dev_SRCS} ${YARP_devices_SRCS} ${YARP_dev_HDRS})
+add_dependencies(YARP_dev yarpidl_rosmsg yarpidl_thrift )
+
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_OS)
 target_link_libraries(YARP_dev LINK_PRIVATE YARP_sig)
 target_link_libraries(YARP_dev LINK_PRIVATE ${ACE_LIBRARIES})
