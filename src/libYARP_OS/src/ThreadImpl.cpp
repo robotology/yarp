@@ -60,7 +60,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     */
 
     ThreadImpl *thread = (ThreadImpl *)args;
-
+   
     YARP_DEBUG(Logger::get(),"Thread starting up");
 
     bool success=thread->threadInit();
@@ -97,6 +97,7 @@ ThreadImpl::ThreadImpl() : synchro(0) {
     needJoin = false;
     initWasSuccessful = false;
     defaultPriority = -1;
+    defaultPolicy = -1;
     setOptions();
 }
 
@@ -107,6 +108,7 @@ ThreadImpl::ThreadImpl(Runnable *target) : synchro(0) {
     closing = false;
     needJoin = false;
     defaultPriority = -1;
+    defaultPolicy = -1;
     setOptions();
 }
 
@@ -313,41 +315,76 @@ void ThreadImpl::changeCount(int delta) {
     threadMutex->post();
 }
 
-int ThreadImpl::setPriority(int priority) {
+int ThreadImpl::setPriority(int priority, int policy) {
     if (priority==-1) {
         priority = defaultPriority;
+        policy = defaultPolicy;
     } else {
         defaultPriority = priority;
+        defaultPolicy = policy;
     }
     if (active && priority!=-1) {
-#ifdef YARP_HAS_CXX11
+
+#if defined(YARP_HAS_CXX11)
         YARP_ERROR(Logger::get(),"Cannot set priority with C++11");
 #else
-  #ifdef YARP_HAS_ACE
-        return ACE_Thread::setprio(hid, priority);
-  #else
+    #if defined(YARP_HAS_ACE) // Use ACE API
+        return ACE_Thread::setprio(hid, priority, policy);
+    #elif defined(UNIX) // Use the POSIX syscalls 
+        struct sched_param thread_param;
+        thread_param.sched_priority = priority;
+        int ret pthread_setschedparam(hid, policy, &thread_param);
+        return (ret != 0) ? -1 : 0;
+    #else
         YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
-  #endif
+    #endif
 #endif
     }
-    return -1;
+    return 0;
 }
 
 int ThreadImpl::getPriority() {
-    int prio = -1;
+    int prio = defaultPriority;
     if (active) {
-#ifdef YARP_HAS_CXX11
+#if defined(YARP_HAS_CXX11)
         YARP_ERROR(Logger::get(),"Cannot get priority with C++11");
 #else
-  #ifdef YARP_HAS_ACE
+    #if defined(YARP_HAS_ACE) // Use ACE API
         ACE_Thread::getprio(hid, prio);
-  #else
+    #elif defined(UNIX) // Use the POSIX syscalls 
+        struct sched_param thread_param;
+        int policy;
+        if(pthread_getschedparam(hid, &policy, &thread_param) == 0)
+            prio = thread_param.priority;
+    #else
         YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
-  #endif
+    #endif
 #endif
     }
     return prio;
 }
+
+int ThreadImpl::getPolicy() {
+    int policy = defaultPolicy;    
+    int prio;
+    if (active) {
+#if defined(YARP_HAS_CXX11)
+        YARP_ERROR(Logger::get(),"Cannot get scheduiling policy with C++11");
+#else
+    #if defined(YARP_HAS_ACE) // Use ACE API        
+        ACE_Thread::getprio(hid, prio, policy);
+    #elif defined(UNIX) // Use the POSIX syscalls 
+        struct sched_param thread_param;
+        if(pthread_getschedparam(hid, &policy, &thread_param) != 0)
+            policy = defaultPolicy;
+    #else
+        YARP_ERROR(Logger::get(),"Cannot read scheduling policy without ACE");
+    #endif
+#endif
+    }
+    return policy;
+}
+
 
 void ThreadImpl::setDefaultStackSize(int stackSize) {
     defaultStackSize = stackSize;
