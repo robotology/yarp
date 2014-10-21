@@ -98,7 +98,6 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp
                   src/PopulateDrivers.cpp
-                  src/RemoteControlBoard.cpp
                   src/RemoteFrameGrabber.cpp
                   src/RemoteFrameGrabberDC1394.cpp
                   src/ServerControlBoard.cpp
@@ -114,10 +113,12 @@ set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
                         src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
                         )
 
-add_subdirectory(src/modules/ControlBoardWrapper)
-get_property(other_files GLOBAL PROPERTY controlBoardWrapper_files)
-get_property(other_include_path GLOBAL PROPERTY controlBoardWrapper_include_paths)
+# handle the ros / yarp thrift messages
+# the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
+add_subdirectory(src/modules/msgs)
 
+
+# defined in msgs forder, for now TBR
 if(CBW2_USE_YARP_THRIFT)
     message(STATUS "defining YARP_MSG")
     add_definitions(-DYARP_MSG)
@@ -128,11 +129,20 @@ if(CBW2_USE_ROS_MSG)
     add_definitions(-DROS_MSG)
 endif()
 
-set( YARP_devices_SRCS ${YARP_devices_SRCS} ${other_files})
-set( YARP_devices_HRDS ${YARP_devices_HRDS} ${controlBoardWrapper_hrds})
+# handle the source file for the controlboardwrapper2 device
+# the variable cbw2_core_srcs, cbw2_core_hrds, cbw2_core_incl_dirs will be set inside
+add_subdirectory(src/modules/ControlBoardWrapper)
+
+# handle the source file for the RemoteControlBoard device
+# the variables rmc_core_srcs and rmc_core_hrds and rmc_core_incl_dirs will be set inside
+add_subdirectory(src/modules/RemoteControlBoard)
+
+
+set( YARP_devices_SRCS ${YARP_devices_SRCS} ${cbw2_core_srcs} ${rmc_core_srcs} ${cbw2_msgs_srcs})
+set( YARP_devices_HRDS ${YARP_devices_HRDS} ${cbw2_core_hrds} ${rmc_core_hrds} ${cbw2_msgs_hrds})
 
 #message(INFO "\n other_files is ${other_files}")
-include_directories(src/modules/ControlBoardWrapper/include)
+include_directories(${cbw2_core_incl_dirs} ${rmc_core_incl_dirs} ${cbw2_msgs_incl_dirs})
 #message(STATUS "CMAKE_CURRENT_BINARY_DIR is ${CMAKE_CURRENT_BINARY_DIR} ||")
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src/modules/ControlBoardWrapper/jointstate )
 

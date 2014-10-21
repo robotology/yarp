@@ -127,17 +127,7 @@ private:
 
     yarp::os::PortWriterBuffer<yarp::sig::Vector>   outputPositionState_buffer;     // Buffer associated to the outputPositionStatePort port
 
-#if defined(YARP_MSG) && defined(ROS_MSG)
-    // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
-    // from the ROS .msg file
-    yarp::os::PortWriterBuffer<jointState>           extendedOutputState_buffer;
-    yarp::os::Publisher<jointState>  rosPublisherPort;  // changed Port to Publisher
-    yarp::os::Port extendedOutputStatePort;     // Port /stateExt:o streaming out the encoder positions
-    // ROS state publisher
-    yarp::os::Node *rosNode;   // added a Node
-#endif
-
-#if defined(YARP_MSG) && ! defined(ROS_MSG)
+#if defined(YARP_MSG)
     // Buffer associated to the extendedOutputStatePort port; in this case we will use the type generated
     // from the YARP .thrift file
     yarp::os::PortWriterBuffer<jointData>           extendedOutputState_buffer;
@@ -145,16 +135,11 @@ private:
 #endif
 
 
-#if ! defined(YARP_MSG) && defined(ROS_MSG)
+#if defined(ROS_MSG)
     // ROS state publisher
     yarp::os::Node *rosNode;   // added a Node
-    yarp::os::PortWriterBuffer<jointState>           extendedOutputState_buffer;     // Buffer associated to the extendedOutputStatePort port
+    yarp::os::PortWriterBuffer<jointState>           rosOutputState_buffer;     // Buffer associated to the extendedOutputStatePort port
     yarp::os::Publisher<jointState>  rosPublisherPort;  // changed Port to Publisher
-#endif
-
-
-#if !defined(YARP_MSG) && !defined(ROS_MSG)
-    // nothing to do in this case
 #endif
 
 

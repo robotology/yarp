@@ -94,6 +94,10 @@ bool ControlBoardWrapper::closeMain()
 #if defined(YARP_MSG)
     extendedOutputStatePort.close();
 #endif
+
+#if defined(ROS_MSG)
+//    rosOutputState_buffer;
+#endif
     return true;
 }
 
@@ -526,50 +530,48 @@ void ControlBoardWrapper::run()
 
     static int loopCounting = 0;
 
-/* if both are set to on, we can use the class generated from ros.msg file both
- *for yarp port and ros topic */
-#if defined(YARP_MSG) && defined(ROS_MSG)
-    jointState &test = extendedOutputState_buffer.get();
-#endif
+#if defined(YARP_MSG)
+    jointData &yarp_struct = extendedOutputState_buffer.get();
 
-#if defined(YARP_MSG) && !defined(ROS_MSG)
-    jointData &test = extendedOutputState_buffer.get();
-#endif
+    yarp_struct.position.resize(controlledJoints);
+    yarp_struct.velocity.resize(controlledJoints);
+    yarp_struct.acceleration.resize(controlledJoints);
+    yarp_struct.torque.resize(controlledJoints);
+    yarp_struct.pidOutput.resize(controlledJoints);
+    yarp_struct.controlMode.resize(controlledJoints);
+    yarp_struct.interactionMode.resize(controlledJoints);
 
+    getEncoders(yarp_struct.position.data());
+    getEncoderSpeeds(yarp_struct.velocity.data());
+    getEncoderAccelerations(yarp_struct.acceleration.data());
+    getTorques(yarp_struct.torque.data());
+    getOutputs(yarp_struct.pidOutput.data());
+    getControlModes(yarp_struct.controlMode.data());
+    getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
 
-#if !defined(YARP_MSG) && defined(ROS_MSG)
-    jointState test;
-#endif
-
-
-#if !defined(YARP_MSG) && !defined(ROS_MSG)
-    // nothing to do in this case.
-#endif
-
-#if defined(YARP_MSG) || defined(ROS_MSG)
-    test.name.resize(controlledJoints);
-    test.position.resize(controlledJoints);
-    test.velocity.resize(controlledJoints);
-    test.effort.resize(controlledJoints);
-
-    for(int i=0; i<controlledJoints; i++)
-    {
-        std::stringstream ss;
-        ss << " pippo " << i;
-
-        test.name[i] = std::string(ss.str() );
-        test.position[i] = 10000 + loopCounting;
-        test.velocity[i] = 20000 + loopCounting/2.0f;
-        test.effort[i]   = 30000 + loopCounting^2;
-    }
-#endif
-
-#ifdef YARP_MSG  // both yarp and yarp+ros
     extendedOutputState_buffer.write();
 #endif
 
 #if defined(ROS_MSG)
-    rosPublisherPort.write(test);
+    jointState ros_struct;
+
+    ros_struct.name.resize(controlledJoints);
+    ros_struct.position.resize(controlledJoints);
+    ros_struct.velocity.resize(controlledJoints);
+    ros_struct.effort.resize(controlledJoints);
+
+    for(int i=0; i<controlledJoints; i++)
+    {
+        std::stringstream ss;
+        ss << " rosName " << i;
+
+        ros_struct.name[i] = std::string(ss.str() );
+        ros_struct.position[i] = 10000 + loopCounting;
+        ros_struct.velocity[i] = 20000 + loopCounting/2.0f;
+        ros_struct.effort[i]   = 30000 + loopCounting^2;
+    }
+
+    rosPublisherPort.write(ros_struct);
 #endif
     loopCounting++;
 }
