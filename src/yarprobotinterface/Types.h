@@ -13,7 +13,7 @@
 #include <list>
 
 namespace yarp { namespace os { class Thread; } }
-namespace DebugStream { class Debug; }
+namespace yarp { namespace os { class LogStream; } }
 
 namespace RobotInterface
 {

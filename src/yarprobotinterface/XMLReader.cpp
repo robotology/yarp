@@ -12,7 +12,7 @@
 #include "Robot.h"
 #include "Types.h"
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 #include <tinyxml.h>
 #include <string>

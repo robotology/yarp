@@ -42,8 +42,8 @@ private:
 
 } // RobotInterface
 
-std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Param &t);
-DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Param &t);
+namespace std { std::ostream& operator<<(std::ostream &oss, const RobotInterface::Param &t); }
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Param &t);
 
 
 #endif // ROBOTINTERFACE_PARAM_H

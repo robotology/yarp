@@ -12,7 +12,7 @@
 #include "Robot.h"
 #include "XMLReader.h"
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/ResourceFinder.h>
 

@@ -50,7 +50,7 @@ private:
 } // namespace RobotInterface
 
 std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Robot &t);
-DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Robot &t);
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Robot &t);
 
 
 #endif // ROBOTINTERFACE_ROBOT_H

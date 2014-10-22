@@ -8,7 +8,7 @@
 
 #include "CalibratorThread.h"
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/Log.h>
 #include <yarp/os/Semaphore.h>

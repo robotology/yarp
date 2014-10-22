@@ -7,14 +7,14 @@
 
 #include "Param.h"
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/Property.h>
 
 #include <string>
 
 
-std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Param &t)
+std::ostream& std::operator<<(std::ostream &oss, const RobotInterface::Param &t)
 {
     oss << "(\"" << t.name() << "\"" << (t.isGroup() ? " [group]" : "") << " = \"" << t.value() << "\")";
     return oss;
@@ -31,7 +31,7 @@ public:
     bool isGroup;
 };
 
-DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Param &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Param &t)
 {
     std::ostringstream oss;
     oss << t;

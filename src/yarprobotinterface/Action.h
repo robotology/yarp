@@ -45,8 +45,8 @@ private:
 } // namespace RobotInterface
 
 
-std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Action &t);
-DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Action &t);
+namespace std { std::ostream& operator<<(std::ostream &oss, const RobotInterface::Action &t); }
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Action &t);
 
 
 #endif // ROBOTINTERFACE_ACTION_H

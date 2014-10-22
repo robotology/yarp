@@ -11,7 +11,7 @@
 #include "Param.h"
 
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Semaphore.h>
@@ -55,7 +55,7 @@ public:
     Private& operator=(const Private& other)
     {
         (void)other; // UNUSED
-        YFIXME_NOTIMPLEMENTED("operator=")
+        YARP_FIXME_NOTIMPLEMENTED("operator=")
         return *this;
     }
 
@@ -122,7 +122,7 @@ public:
 
 };
 
-std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Device &t)
+std::ostream& std::operator<<(std::ostream &oss, const RobotInterface::Device &t)
 {
     oss << "(name = \"" << t.name() << "\", type = \"" << t.type() << "\"";
     if (!t.params().empty()) {
@@ -139,7 +139,7 @@ std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::De
     return oss;
 }
 
-DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Device &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Device &t)
 {
     std::ostringstream oss;
     oss << t;

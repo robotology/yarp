@@ -8,7 +8,7 @@
 #include "Action.h"
 #include "Param.h"
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 #include <string>
 
@@ -25,7 +25,7 @@ public:
     ParamList params;
 };
 
-std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Action &t)
+std::ostream& std::operator<<(std::ostream &oss, const RobotInterface::Action &t)
 {
     oss << "(\"" << ActionPhaseToString(t.phase()) << ":" << ActionTypeToString(t.type()) << ":" << t.level() << "\"";
     if (!t.params().empty()) {
@@ -38,7 +38,7 @@ std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Ac
 }
 
 
-DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Action &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Action &t)
 {
     std::ostringstream oss;
     oss << t;

@@ -13,7 +13,7 @@
 #include <sstream>
 
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 
 bool RobotInterface::hasParam(const RobotInterface::ParamList &list, const std::string& name)

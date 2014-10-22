@@ -10,7 +10,7 @@
 #include "Device.h"
 #include "Param.h"
 
-#include <debugStream/Debug.h>
+#include <yarp/os/LogStream.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
@@ -219,7 +219,7 @@ std::vector<std::pair<RobotInterface::Device, RobotInterface::Action> > RobotInt
 
 bool RobotInterface::Robot::Private::configure(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    YFIXME_NOTIMPLEMENTED("configure action")
+    YARP_FIXME_NOTIMPLEMENTED("configure action")
     return true;
 }
 
@@ -306,7 +306,7 @@ bool RobotInterface::Robot::Private::attach(const RobotInterface::Device &device
 
 bool RobotInterface::Robot::Private::abort(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    YFIXME_NOTIMPLEMENTED("abort action")
+    YARP_FIXME_NOTIMPLEMENTED("abort action")
     return true;
 }
 
@@ -340,11 +340,11 @@ bool RobotInterface::Robot::Private::park(const RobotInterface::Device &device, 
 
 bool RobotInterface::Robot::Private::custom(const RobotInterface::Device &device, const RobotInterface::ParamList &params)
 {
-    YFIXME_NOTIMPLEMENTED("custom action")
+    YARP_FIXME_NOTIMPLEMENTED("custom action")
     return true;
 }
 
-DebugStream::Debug operator<<(DebugStream::Debug dbg, const RobotInterface::Robot &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Robot &t)
 {
     std::ostringstream oss;
     oss << t;
