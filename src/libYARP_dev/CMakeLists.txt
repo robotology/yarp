@@ -79,8 +79,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
 
 set(YARP_dev_IMPL_HDRS )
 
-set(YARP_dev_SRCS src/AnalogSensorClient.cpp
-                  src/ControlBoardInterfacesImpl.cpp
+set(YARP_dev_SRCS src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardPid.cpp
                   src/ControlCalibrationImpl.cpp
                   src/ControlModeImpl.cpp
@@ -113,13 +112,15 @@ set(YARP_dev_SRCS src/AnalogSensorClient.cpp
                   src/TorqueControlImpl.cpp)
 
 set(YARP_devices_SRCS   src/modules/AnalogWrapper/AnalogWrapper.cpp
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp
-                        )
+                        src/modules/AnalogSensorClient/AnalogSensorClient.cpp
+                        src/modules/ControlBoardWrapper/ControlBoardWrapper.cpp
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
 
 set(YARP_devices_HDRS   src/modules/AnalogWrapper/AnalogWrapper.h
-                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h
-                        )
-
+                        src/modules/AnalogSensorClient/AnalogSensorClient.h
+                        src/modules/ControlBoardWrapper/ControlBoardWrapper.h
+                        src/modules/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
+                        
 # handle the ros / yarp thrift messages
 # the variables cbw2_msgs_srcs, cbw2_msgs_hrds and cbw2_msgs_incl_dirs will be set inside
 add_subdirectory(src/modules/msgs)
@@ -155,6 +156,7 @@ source_group("Devices Files" FILES ${YARP_devices_SRCS}
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include")
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/modules/AnalogSensorClient)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
 include_directories(SYSTEM ${ACE_INCLUDE_DIRS})
 
