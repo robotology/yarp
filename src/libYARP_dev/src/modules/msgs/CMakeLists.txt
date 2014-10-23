@@ -12,7 +12,8 @@ if(CBW2_USE_YARP_THRIFT)
     set(thrifFile stateExt)
 
     #idl commands
-    set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+#    set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/yarp")
 
     # run the generator engine
     yarp_idl_to_dir(${thrifFile}.thrift ${generated_libs_dir} yarp_msg_sources yarp_msg_headers yarp_msg_include_dirs)
@@ -37,7 +38,8 @@ if(CBW2_USE_ROS_MSG)
     set(rosMSG jointState)
 
     #idl commands
-    set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+#    set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set(generated_libs_dir "${CMAKE_CURRENT_SOURCE_DIR}/ros")
 
     # run the generator engine
     yarp_idl_to_dir(${rosMSG}.msg ${generated_libs_dir} ros_msg_sources ros_msg_headers ros_msg_include_dirs)
