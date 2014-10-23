@@ -310,17 +310,17 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider1[k],  60+sliderOffsetX, 10+sliderOffsetY    );
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderArray[k],    65+sliderOffsetX, 20+sliderOffsetY   );
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderVelArray[k], 65+sliderOffsetX, 20+50+sliderOffsetY );
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArray[k],   95+sliderOffsetX, 15+100+sliderOffsetY);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArray[k],   95+sliderOffsetX, 35+100+sliderOffsetY);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArrayLbl[k],   145+sliderOffsetX, 15+103+sliderOffsetY);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArrayLbl[k],   145+sliderOffsetX, 35+103+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArray[k],   85+sliderOffsetX, 15+100+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArray[k],   85+sliderOffsetX, 35+100+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArrayLbl[k],   147+sliderOffsetX, 15+103+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArrayLbl[k],   147+sliderOffsetX, 35+103+sliderOffsetY);
 
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), inPosArray[k],     65+sliderOffsetX, 15+100+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), inPosArray[k],     60+sliderOffsetX, 15+100+sliderOffsetY);
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider2[k],  60+sliderOffsetX, 60+sliderOffsetY    );
 	  if (speed_view_enable)
 	  {
-		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArray[k], 95+sliderOffsetX, 55+100+sliderOffsetY);
-		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArrayLbl[k],   145+sliderOffsetX, 55+103+sliderOffsetY);
+		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArray[k], 85+sliderOffsetX, 55+100+sliderOffsetY);
+		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArrayLbl[k],   147+sliderOffsetX, 55+103+sliderOffsetY);
 	  }
 
 	  int buttonDist= 26;
@@ -337,8 +337,8 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	  gtk_widget_set_size_request 	(frame_slider1[k], 110, 50);
 	  gtk_widget_set_size_request   (frameColorBack[k], width, height);
 	  gtk_widget_set_size_request 	(sliderArray[k], 90, 40);
-	  gtk_widget_set_size_request 	(currPosArray[k], 50, 20);
-	  gtk_widget_set_size_request 	(currTrqArray[k], 50, 20);
+	  gtk_widget_set_size_request 	(currPosArray[k], 60, 20);
+	  gtk_widget_set_size_request 	(currTrqArray[k], 60, 20);
 	  gtk_widget_set_size_request 	(currSpeedArray[k], 50, 20);
 	  gtk_widget_set_size_request 	(inPosArray[k], 20, 20);
 	  gtk_widget_set_size_request 	(homeArray[k], 50, 25);
