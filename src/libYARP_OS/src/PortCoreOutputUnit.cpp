@@ -324,7 +324,7 @@ bool PortCoreOutputUnit::sendHelper() {
         closeBasic();
         finished = true;
         closing = true;
-        setDoomed(true);
+        setDoomed();
     }
     return replied;
 }

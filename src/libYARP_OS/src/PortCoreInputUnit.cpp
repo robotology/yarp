@@ -358,7 +358,7 @@ void PortCoreInputUnit::run() {
         }
     }
 
-    setDoomed(true);
+    setDoomed();
   
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closing ip");
     access.wait();
@@ -417,27 +417,6 @@ void PortCoreInputUnit::run() {
 }
 
 
-
-void PortCoreInputUnit::runSimulation() {
-    /*
-    // simulation
-    running = true;
-    while (true) {
-    ACE_OS::printf("tick\n");
-    Time::delay(0.3);
-    if (closing) {
-    break;
-    }
-    }
-    */
-
-    ACE_OS::printf("stopping\n");
-
-    running = false;
-    finished = true;
-}
-
-
 bool PortCoreInputUnit::interrupt() {
     // give a kick (unfortunately unavoidable)
     access.wait();
@@ -474,8 +453,6 @@ void PortCoreInputUnit::closeMain() {
     }
     running = false;
     closing = false;
-    //finished = false;
-    //setDoomed(false);
 }
 
 

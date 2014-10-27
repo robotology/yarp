@@ -1817,7 +1817,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             ConstString me = unit->getPupString();
                             present.put(me,1);
                             if (!listed.check(me)) {
-                                unit->setDoomed(true);
+                                unit->setDoomed();
                             }
                         }
                     }
@@ -1890,7 +1890,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                                                                            true,
                                                                            true);
                                 YARP_ASSERT(unit!=NULL);
-                                unit->setPupped(true,pub);
+                                unit->setPupped(pub);
                                 unit->start();
                                 units.push_back(unit);
                             }
