@@ -637,7 +637,7 @@
   </action>
   <action name="actionClear">
    <property name="text">
-    <string>Clear</string>
+    <string>Clear Session</string>
    </property>
   </action>
   <action name="actionShow_LocalTimestamps">

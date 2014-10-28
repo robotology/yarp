@@ -1,7 +1,7 @@
 #include "advanced_dialog.h"
 #include "ui_advanced_dialog.h"
 
-advanced_dialog::advanced_dialog(yarp::os::YarprunLogger::LoggerEngine* logger, QWidget *parent) :
+advanced_dialog::advanced_dialog(yarp::yarpLogger::LoggerEngine* logger, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::advanced_dialog)
 {
@@ -10,11 +10,11 @@ advanced_dialog::advanced_dialog(yarp::os::YarprunLogger::LoggerEngine* logger, 
     ui->log_max_size->setValidator   ( new QIntValidator(100, 100000, this) );
     ui->ports_max_size->setValidator ( new QIntValidator(10,  1000,   this) );
     ui->refresh_rate->setValidator   ( new QIntValidator(10,  100000, this) );
-    ui->cap_error->setChecked(theLogger->get_listen_option(yarp::os::YarprunLogger::LOGLEVEL_ERROR));
-    ui->cap_warning->setChecked(theLogger->get_listen_option(yarp::os::YarprunLogger::LOGLEVEL_WARNING));
-    ui->cap_debug->setChecked(theLogger->get_listen_option(yarp::os::YarprunLogger::LOGLEVEL_DEBUG));
-    ui->cap_info->setChecked(theLogger->get_listen_option(yarp::os::YarprunLogger::LOGLEVEL_INFO));
-    ui->cap_unformatted->setChecked(theLogger->get_listen_option(yarp::os::YarprunLogger::LOGLEVEL_UNDEFINED));
+    ui->cap_error->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_ERROR));
+    ui->cap_warning->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_WARNING));
+    ui->cap_debug->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_DEBUG));
+    ui->cap_info->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_INFO));
+    ui->cap_unformatted->setChecked(theLogger->get_listen_option(yarp::yarpLogger::LOGLEVEL_UNDEFINED));
 
     bool enable_log_lines_limit;
     int  log_lines_limit;
@@ -42,11 +42,11 @@ advanced_dialog::~advanced_dialog()
 
 void advanced_dialog::on_buttonBox_clicked(QAbstractButton *button)
 {
-    theLogger->set_listen_option(yarp::os::YarprunLogger::LOGLEVEL_ERROR,ui->cap_error->checkState());
-    theLogger->set_listen_option(yarp::os::YarprunLogger::LOGLEVEL_WARNING,ui->cap_warning->checkState());
-    theLogger->set_listen_option(yarp::os::YarprunLogger::LOGLEVEL_DEBUG,ui->cap_debug->checkState());
-    theLogger->set_listen_option(yarp::os::YarprunLogger::LOGLEVEL_INFO,ui->cap_info->checkState());
-    theLogger->set_listen_option(yarp::os::YarprunLogger::LOGLEVEL_UNDEFINED,ui->cap_unformatted->checkState());
+    theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_ERROR,ui->cap_error->checkState());
+    theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_WARNING,ui->cap_warning->checkState());
+    theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_DEBUG,ui->cap_debug->checkState());
+    theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_INFO,ui->cap_info->checkState());
+    theLogger->set_listen_option(yarp::yarpLogger::LOGLEVEL_UNDEFINED,ui->cap_unformatted->checkState());
 
     QString s_lines    = ui->log_max_size->text();
     int size_log_lines = atoi (s_lines.toStdString().c_str());

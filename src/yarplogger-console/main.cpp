@@ -21,14 +21,14 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/YarprunLogger.h>
 #include <yarp/os/RFModule.h>
+#include <yarp/logger/YarpLogger.h>
 
 #include <string>
 #include <stdio.h>
 
 using namespace yarp::os;
-using namespace yarp::os::YarprunLogger;
+using namespace yarp::yarpLogger;
 
 class logger_module : public yarp::os::RFModule
 {

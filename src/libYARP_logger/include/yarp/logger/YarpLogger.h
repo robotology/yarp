@@ -16,8 +16,8 @@
  * Public License for more details
 */
 
-#ifndef _YARPRUN_LOGGER_
-#define _YARPRUN_LOGGER_
+#ifndef _YARP_LOGGER_
+#define _YARP_LOGGER_
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
@@ -37,9 +37,7 @@
 
 namespace yarp
 {
-  namespace os
-  {
-    namespace YarprunLogger
+    namespace yarpLogger
     {
         class  LoggerEngine;
         class  LogEntry;
@@ -55,10 +53,9 @@ namespace yarp
             LOGLEVEL_CRITICAL  = 5
         };
     }
-  }
 }
 
-struct yarp::os::YarprunLogger::MessageEntry
+struct yarp::yarpLogger::MessageEntry
 {
     LogLevelEnum  level;
     std::string   text;
@@ -66,7 +63,7 @@ struct yarp::os::YarprunLogger::MessageEntry
     std::string   local_timestamp;
 };
 
-class yarp::os::YarprunLogger::LogEntryInfo
+class yarp::yarpLogger::LogEntryInfo
 {
     private:
     LogLevelEnum  highest_error;
@@ -96,7 +93,7 @@ class yarp::os::YarprunLogger::LogEntryInfo
     unsigned int  get_number_of_infos    () { return number_of_infos;    }
 };
 
-class yarp::os::YarprunLogger::LogEntry
+class yarp::yarpLogger::LogEntry
 {
     private:
     unsigned int                  entry_list_max_size;
@@ -118,13 +115,13 @@ class yarp::os::YarprunLogger::LogEntry
     void setLogEntryMaxSizeEnabled (bool enable);
 
     public:
-    yarp::os::YarprunLogger::LogEntryInfo logInfo;
+    yarp::yarpLogger::LogEntryInfo logInfo;
 };
 
-class yarp::os::YarprunLogger::LoggerEngine
+class yarp::yarpLogger::LoggerEngine
 {
     //private class
-    class logger_thread : public RateThread
+    class logger_thread : public yarp::os::RateThread
     {
         public:
         logger_thread (std::string _portname, int _rate=10, int _log_list_max_size=100);
@@ -133,7 +130,7 @@ class yarp::os::YarprunLogger::LoggerEngine
         unsigned int         log_list_max_size;
         bool                 log_list_max_size_enabled;
         std::list<LogEntry>  log_list;
-        BufferedPort<Bottle> logger_port;
+        yarp::os::BufferedPort<yarp::os::Bottle> logger_port;
         std::string          logger_portName;
         int                  unknown_format_received;
     

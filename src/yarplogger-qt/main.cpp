@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include <yarp/os/YarprunLogger.h>
+#include <yarp/logger/YarpLogger.h>
 #include <yarp/os/Os.h>
 #include <cstdio>
 

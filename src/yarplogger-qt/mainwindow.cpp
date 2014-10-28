@@ -7,7 +7,7 @@
 #include <QMenu>
 #include <QTextStream>
 #include <ctime>
-#include <yarp/os/YarprunLogger.h>
+#include <yarp/logger/YarpLogger.h>
 #include <QAbstractItemModel>
 #include <QStandardItemModel>
 #include <QDesktopServices>
@@ -25,9 +25,9 @@ void MainWindow::updateMain()
     model_yarprunports->setHorizontalHeaderItem(3,new QStandardItem("log size"));
     model_yarprunports->setHorizontalHeaderItem(4,new QStandardItem("errors"));
     model_yarprunports->setHorizontalHeaderItem(5,new QStandardItem("warnings"));
-    std::list<yarp::os::YarprunLogger::LogEntryInfo> infos;
+    std::list<yarp::yarpLogger::LogEntryInfo> infos;
     this->theLogger->get_infos (infos);
-    std::list<yarp::os::YarprunLogger::LogEntryInfo>::iterator it;
+    std::list<yarp::yarpLogger::LogEntryInfo>::iterator it;
 
     QStandardItem *itemsRoot = model_yarprunports->invisibleRootItem();
     for (it=infos.begin(); it!=infos.end(); it++)
@@ -67,13 +67,13 @@ void MainWindow::updateMain()
                 model_yarprunports->item(i,5)->setText(logwarnings_text);
 
                 QColor rowcolor = QColor(Qt::white);
-                yarp::os::YarprunLogger::LogLevelEnum last_error = it->getLastError();
+                yarp::yarpLogger::LogLevelEnum last_error = it->getLastError();
 
                 bool     log_enabled =  this->theLogger->get_log_enable_by_port_complete(it->port_complete);
                 if (log_enabled)
                 {
-                    if      (last_error==yarp::os::YarprunLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
-                    else if (last_error==yarp::os::YarprunLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
+                    if      (last_error==yarp::yarpLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
+                    else if (last_error==yarp::yarpLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
                     for (int j=0; j<model_yarprunports->columnCount(); j++)
                         model_yarprunports->item(i,j)->setBackground(rowcolor);
                 }
@@ -303,7 +303,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder rf, QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     std::string loggername = rf.check("name",yarp::os::Value("/yarplogger")).asString();
-    theLogger = new yarp::os::YarprunLogger::LoggerEngine(loggername);
+    theLogger = new yarp::yarpLogger::LoggerEngine(loggername);
 
     ui->setupUi(this);
 

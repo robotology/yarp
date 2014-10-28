@@ -24,10 +24,10 @@
 #include <fstream>
 #include <iterator>
 #include <yarp/os/RpcClient.h>
-#include <yarp/os/YarprunLogger.h>
+#include <yarp/logger/YarpLogger.h>
 
 using namespace yarp::os;
-using namespace yarp::os::YarprunLogger;
+using namespace yarp::yarpLogger;
 using namespace std;
 
 const std::string RED    ="\033[01;31m";

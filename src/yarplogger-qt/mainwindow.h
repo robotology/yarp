@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QLabel>
 #include <QSortFilterProxyModel>
-#include <yarp/os/YarprunLogger.h>
+#include <yarp/logger/YarpLogger.h>
 #include <yarp/os/ResourceFinder.h>
 #include "messageWidget.h"
 #include "yarprunPortSorting.h"
@@ -90,7 +90,7 @@ private slots:
     void on_actionReset_current_log_error_warning_counters_triggered();
 
 private:
-    yarp::os::YarprunLogger::LoggerEngine* theLogger;
+    yarp::yarpLogger::LoggerEngine* theLogger;
 
     Ui::MainWindow                   *ui;
     QStandardItemModel               *model_yarprunports;

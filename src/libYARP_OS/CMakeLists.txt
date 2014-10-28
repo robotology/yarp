@@ -114,8 +114,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/YarpNameSpace.h
                  include/yarp/os/YarpPlugin.h
                  include/yarp/os/YarpPluginSelector.h
-                 include/yarp/os/YarpPluginSettings.h
-                 include/yarp/os/YarprunLogger.h)
+                 include/yarp/os/YarpPluginSettings.h)
 
 set(YARP_OS_IDL_HDRS include/yarp/os/idl/BareStyle.h
                      include/yarp/os/idl/BottleStyle.h
@@ -317,7 +316,6 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/Vocab.cpp
                  src/YarpNameSpace.cpp
                  src/YarpPlugin.cpp
-                 src/YarprunLogger.cpp
                  src/WireReader.cpp
                  src/WireState.cpp
                  src/WireWriter.cpp

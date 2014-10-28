@@ -6,7 +6,7 @@
 #include <QStandardItemModel>
 #include <QTimer>
 #include <QSortFilterProxyModel>
-#include <yarp/os/YarprunLogger.h>
+#include <yarp/logger/YarpLogger.h>
 #include "messageWidget.h"
 #include "logtabSorting.h"
 
@@ -24,13 +24,13 @@ class LogTab : public QFrame
     Q_OBJECT
 
 public:
-    explicit LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent = 0, int refreshRate=100);
+    explicit LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent = 0, int refreshRate=100);
     ~LogTab();
 
 private:
     Ui::LogTab *ui;
     std::string                            portName;
-    yarp::os::YarprunLogger::LoggerEngine* theLogger;
+    yarp::yarpLogger::LoggerEngine* theLogger;
     MessageWidget*                         system_message;
     QMutex                                 mutex;
     bool                                   displayYarprunTimestamp_enabled;

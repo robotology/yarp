@@ -29,6 +29,7 @@ add_subdirectory(idls)
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_init)
 add_subdirectory(libYARP_manager)
+add_subdirectory(libYARP_logger)
 
 add_subdirectory(libyarpc)
 add_subdirectory(libyarpcxx)
@@ -41,7 +42,7 @@ add_subdirectory(yarphear)
 add_subdirectory(yarpdev)
 add_subdirectory(yarpmanager)
 add_subdirectory(yarpmanager-console)
-add_subdirectory(yarprunlogger)
+add_subdirectory(yarplogger-console)
 
 # Qt5 GUIs
 add_subdirectory(yarpview-qt)
