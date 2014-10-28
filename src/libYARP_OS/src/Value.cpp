@@ -231,17 +231,17 @@ bool Value::write(ConnectionWriter& connection) {
     return proxy->write(connection);
 }
 
-bool Value::check(const ConstString& key) {
+bool Value::check(const ConstString& key) const {
     ok();
     return proxy->check(key);
 }
 
-Value& Value::find(const ConstString& key) {
+Value& Value::find(const ConstString& key) const {
     ok();
     return proxy->find(key);
 }
 
-Bottle& Value::findGroup(const ConstString& key) {
+Bottle& Value::findGroup(const ConstString& key) const {
     ok();
     return proxy->findGroup(key);
 }

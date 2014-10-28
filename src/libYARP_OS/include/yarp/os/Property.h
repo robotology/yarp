@@ -74,7 +74,7 @@ public:
     const Property& operator = (const Property& prop);
 
     // documented in Searchable
-    bool check(const ConstString& key);
+    bool check(const ConstString& key) const;
 
     /**
      * Associate the given key with the given string, so that
@@ -138,10 +138,10 @@ public:
     void unput(const ConstString& key);
 
     // documented in Searchable
-    virtual Value& find(const ConstString& key);
+    virtual Value& find(const ConstString& key) const;
 
     // documented in Searchable
-    virtual Bottle& findGroup(const ConstString& key);
+    virtual Bottle& findGroup(const ConstString& key) const;
 
     /**
      * Remove all associations.

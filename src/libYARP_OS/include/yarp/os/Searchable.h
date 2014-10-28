@@ -77,7 +77,7 @@ public:
      * @return true iff a property of the given name exists, even if
      * it doesn't have a value associated with it
      */
-    virtual bool check(const ConstString& key) = 0;
+    virtual bool check(const ConstString& key) const = 0;
 
 
     /**
@@ -88,7 +88,7 @@ public:
      * it doesn't have a value associated with it
      */
     virtual bool check(const ConstString& key,
-                       const ConstString& comment);
+                       const ConstString& comment) const;
 
     /**
      * Gets a value corresponding to a given keyword
@@ -98,7 +98,7 @@ public:
      * true.  Otherwise, the value can be read by calling result.asInt(),
      * result.asString(), etc. as appropriate.
      */
-    virtual Value& find(const ConstString& key) = 0;
+    virtual Value& find(const ConstString& key) const = 0;
 
     /**
      * Gets a list corresponding to a given keyword
@@ -110,7 +110,7 @@ public:
      * result.get(i) for i>=1 are the "real" elements of the list.
      *
      */
-    virtual Bottle& findGroup(const ConstString& key) = 0;
+    virtual Bottle& findGroup(const ConstString& key) const = 0;
 
     /**
      * Gets a list corresponding to a given keyword
@@ -123,7 +123,7 @@ public:
      * result.get(i) for i>=1 are the "real" elements of the list.
      *
      */
-    Bottle& findGroup(const ConstString& key, const ConstString& comment);
+    Bottle& findGroup(const ConstString& key, const ConstString& comment) const;
 
     /**
      * Gets a value corresponding to a given keyword.  If a property
@@ -151,7 +151,7 @@ public:
      * value found.
      */
     virtual bool check(const ConstString& key, Value *& result,
-                       const ConstString& comment = "");
+                       const ConstString& comment = "") const;
 
 
     /**
@@ -164,7 +164,7 @@ public:
      * interpreting the value found.
      */
     virtual Value check(const ConstString& key, const Value& fallback,
-                        const ConstString& comment = "");
+                        const ConstString& comment = "") const;
 
     /**
      * Checks if the object is invalid.
@@ -183,9 +183,9 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     virtual void setMonitor(SearchMonitor *monitor, const char *context="");
-    virtual SearchMonitor *getMonitor();
-    virtual ConstString getContext();
-    virtual void reportToMonitor(const SearchReport& report);
+    virtual SearchMonitor *getMonitor() const;
+    virtual ConstString getContext() const;
+    virtual void reportToMonitor(const SearchReport& report) const;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 

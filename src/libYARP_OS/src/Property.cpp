@@ -832,7 +832,7 @@ void Property::put(const ConstString& key, double v) {
     put(key,Value::makeDouble(v));
 }
 
-bool Property::check(const ConstString& key) {
+bool Property::check(const ConstString& key) const {
     return HELPER(implementation).check(key);
 }
 
@@ -842,7 +842,7 @@ void Property::unput(const ConstString& key) {
 }
 
 
-Value& Property::find(const ConstString& key) {
+Value& Property::find(const ConstString& key) const {
     return HELPER(implementation).get(key);
 }
 
@@ -912,7 +912,7 @@ bool Property::write(ConnectionWriter& writer) {
 }
 
 
-Bottle& Property::findGroup(const ConstString& key) {
+Bottle& Property::findGroup(const ConstString& key) const {
     Bottle *result = HELPER(implementation).getBottle(key);
     if (getMonitor()!=NULL) {
         SearchReport report;

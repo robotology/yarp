@@ -1165,15 +1165,15 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
 
 
 
-Value& Storable::find(const ConstString& txt) {
+Value& Storable::find(const ConstString& txt) const {
     return BottleImpl::getNull();
 }
 
-Bottle& Storable::findGroup(const ConstString& txt) {
+Bottle& Storable::findGroup(const ConstString& txt) const {
     return Bottle::getNullBottle();
 }
 
-bool Storable::check(const ConstString& key) {
+bool Storable::check(const ConstString& key) const {
     Bottle& val = findGroup(key);
     if (!val.isNull()) return true;
     Value& val2 = find(key);
