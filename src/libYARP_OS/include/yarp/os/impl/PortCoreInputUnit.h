@@ -29,8 +29,6 @@ namespace yarp {
  */
 class yarp::os::impl::PortCoreInputUnit : public PortCoreUnit {
 public:
-    // specifically for managing input connections
-
     /**
      * Constructor.
      *

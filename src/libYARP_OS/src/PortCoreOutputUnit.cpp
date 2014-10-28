@@ -35,7 +35,7 @@ bool PortCoreOutputUnit::start() {
     if (!threaded) {
         running = false;
         sending = false;
-        runSimulation();
+        runSingleThreaded();
         phase.post();
         return true;
     }
@@ -59,7 +59,7 @@ void PortCoreOutputUnit::run() {
     // By default, we don't start up a thread for outputs.
 
     if (!threaded) {
-        runSimulation();
+        runSingleThreaded();
         phase.post();
     } else {
         phase.post();
@@ -96,7 +96,7 @@ void PortCoreOutputUnit::run() {
 
 
 
-void PortCoreOutputUnit::runSimulation() {
+void PortCoreOutputUnit::runSingleThreaded() {
 
     if (op!=NULL) {
         Route route = op->getRoute();
