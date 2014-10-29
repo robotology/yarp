@@ -28,22 +28,9 @@ public:
     const unsigned int line;
     const char *func;
 
-#ifdef WIN32
-#pragma warning (push)
-// Disable C4251:
-//    class 'std::basic_ofstream<_Elem,_Traits>' needs to have dll-interface
-// According to http://msdn.microsoft.com/en-us/library/esew7y1w.aspx
-// C4251 can be ignored if you are deriving from a type in the Standard
-// C++ Library, compiling a debug release (/MTd) and where the compiler
-// error message refers to _Container_base.
-#pragma warning(disable : 4251)
-#endif
     static std::ofstream ftrc; /// Used by yTrace()
     static std::ofstream fout; /// Used by yDebug() and yInfo()
     static std::ofstream ferr; /// Used by yWarning(), yError() and yFatal()
-#ifdef WIN32
-#pragma warning (pop)
-#endif
 
     static bool colored_output;
     static bool verbose_output;
