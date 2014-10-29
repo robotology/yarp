@@ -339,7 +339,6 @@ void yarp_print_trace(FILE *out, const char *file, int line) {
     }
     free(stack_strings); // malloc()ed by backtrace_symbols
     fflush(out);
-}
 #else
     // Not implemented on this platform
 #endif
