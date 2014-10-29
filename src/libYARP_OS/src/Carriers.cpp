@@ -248,7 +248,7 @@ bool Carrier::reply(ConnectionState& proto, SizedWriter& writer) {
 Carriers& Carriers::getInstance() {
     if (yarp_carriers_instance == NULL) {
         yarp_carriers_instance = new Carriers();
-        YARP_ASSERT(yarp_carriers_instance!=NULL);
+        yAssert(yarp_carriers_instance!=NULL);
     }
     return *yarp_carriers_instance;
 }

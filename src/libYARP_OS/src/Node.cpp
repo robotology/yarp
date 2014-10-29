@@ -392,13 +392,13 @@ bool NodeHelper::read(ConnectionReader& reader) {
 
 Node::Node() {
     system_resource = new NodeHelper;
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
     HELPER(this).owner = this;
 }
 
 Node::Node(const ConstString& name) {
     system_resource = new NodeHelper;
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
     HELPER(this).owner = this;
     Nodes& nodes = NameClient::getNameClient().getNodes();
     HELPER(this).prev_name = nodes.getActiveName();

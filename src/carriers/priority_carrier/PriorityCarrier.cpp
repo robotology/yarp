@@ -40,7 +40,7 @@ ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
     if (peers==NULL) {
         peers = new ElectionOf<PriorityGroup>;
         NetworkBase::unlock();
-        YARP_ASSERT(peers);
+        yAssert(peers);
     } else {
         NetworkBase::unlock();
     }
@@ -50,7 +50,7 @@ ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
 // Decide whether data should be accepted.
 bool PriorityCarrier::acceptIncomingData(yarp::os::ConnectionReader& reader) {
     getPeers().lock();
-    YARP_ASSERT(group);
+    yAssert(group);
     bool result = group->acceptIncomingData(reader,this);
     getPeers().unlock();
     return result;

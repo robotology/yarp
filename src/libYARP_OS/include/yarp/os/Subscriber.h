@@ -48,7 +48,7 @@ public:
         port.setOutputMode(false);
         port.setRpcMode(false);
         if (name!="") {
-            YARP_ASSERT(topic(name));
+            yAssert(topic(name));
         }
     }
 
@@ -140,7 +140,7 @@ private:
     BufferedPort<T>& buffer() {
         if (!buffered_port) {
             buffered_port = new BufferedPort<T>(port);
-            YARP_ASSERT(buffered_port);
+            yAssert(buffered_port);
         }
         return *buffered_port;
     }

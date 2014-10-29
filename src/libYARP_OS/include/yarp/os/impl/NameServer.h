@@ -226,7 +226,7 @@ private:
             last = x;
             int v1 = x%255;
             int v2 = x/255;
-            YARP_ASSERT(v2<255);
+            yAssert(v2<255);
             return String("224.1.") + NetType::toString(v2+1) + "." +
                 NetType::toString(v1+1);
         }
@@ -238,7 +238,7 @@ private:
         void releaseAddress(const char *addr) {
             SplitString ss(addr,'.');
             int ip[] = { 224, 3, 1, 1 };
-            YARP_ASSERT(ss.size()==4);
+            yAssert(ss.size()==4);
             for (int i=0; i<4; i++) {
                 ip[i] = NetType::toInt(ss.get(i));
             }
@@ -362,7 +362,7 @@ private:
                 PropertyRecord blank;
                 PLATFORM_MAP_SET(propMap,key,blank);
                 result = PLATFORM_MAP_FIND(propMap,key,entry);
-                YARP_ASSERT(result!=-1);
+                yAssert(result!=-1);
             }
             if (result==-1) {
                 return NULL;
@@ -440,7 +440,7 @@ private:
 
     NameRecord &getNameRecord(const String& name) {
         NameRecord *result = getNameRecord(name,true);
-        YARP_ASSERT(result!=NULL);
+        yAssert(result!=NULL);
         return *result;
     }
 
@@ -448,7 +448,7 @@ private:
 
     HostRecord &getHostRecord(const String& name) {
         HostRecord *result = getHostRecord(name,true);
-        YARP_ASSERT(result!=NULL);
+        yAssert(result!=NULL);
         return *result;
     }
 

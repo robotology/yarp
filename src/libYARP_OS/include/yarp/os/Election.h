@@ -94,7 +94,7 @@ private:
         mutex.wait();
         ct++;
         PR *rec = getRecordRaw(key,true);
-        YARP_ASSERT(rec);
+        yAssert(rec);
         rec->add(entity);
         mutex.post();
         return rec;
@@ -103,7 +103,7 @@ private:
         mutex.wait();
         ct++;
         PR *rec = getRecordRaw(key,false);
-        YARP_ASSERT(rec);
+        yAssert(rec);
         rec->remove(entity);
         mutex.post();    
     }

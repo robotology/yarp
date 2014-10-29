@@ -62,7 +62,7 @@ bool yarp::os::impl::ShmemCarrier::becomeShmemVersionHybridStream(ConnectionStat
     return false;
 #else
     ShmemHybridStream *stream = new ShmemHybridStream();
-    YARP_ASSERT(stream!=NULL);
+    yAssert(stream!=NULL);
     Contact base;
 
     bool ok = true;

@@ -87,7 +87,7 @@ public:
         if (!isGood()) {
             return false;
         }
-        YARP_ASSERT(in!=NULL);
+        yAssert(in!=NULL);
         size_t len = b.length();
         if (len==0) return true;
         //if (len<0) len = messageLen;
@@ -117,7 +117,7 @@ public:
         if (!isGood()) { return 0; }
         NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
-        YARP_ASSERT(in!=NULL);
+        yAssert(in!=NULL);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -131,7 +131,7 @@ public:
         if (!isGood()) { return 0; }
         NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
-        YARP_ASSERT(in!=NULL);
+        yAssert(in!=NULL);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -145,7 +145,7 @@ public:
         if (!isGood()) { return ""; }
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
-        YARP_ASSERT(in!=NULL);
+        yAssert(in!=NULL);
         YARP_SSIZE_T r = in->read(b);
         if (r<0 || (size_t)r<b.length()) {
             err = true;
@@ -160,7 +160,7 @@ public:
 
     virtual String expectLine() {
         if (!isGood()) { return ""; }
-        YARP_ASSERT(in!=NULL);
+        yAssert(in!=NULL);
         bool success = false;
         String result = in->readLine('\n',&success);
         if (!success) {
@@ -230,7 +230,7 @@ public:
 
     virtual ::yarp::os::ConstString expectText(int terminatingChar) {
         if (!isGood()) { return ""; }
-        YARP_ASSERT(in!=NULL);
+        yAssert(in!=NULL);
         bool lsuccess = false;
         String result = in->readLine(terminatingChar,&lsuccess);
         if (lsuccess) {

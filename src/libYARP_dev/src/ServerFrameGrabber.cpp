@@ -117,9 +117,9 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         !config.check("shared-ports",
                       "If present, send audio and images on same port")) {
         separatePorts = true;
-        YARP_ASSERT(p2==NULL);
+        yAssert(p2==NULL);
         p2 = new Port;
-        YARP_ASSERT(p2!=NULL);
+        yAssert(p2!=NULL);
         p2->open(config.check("name2",Value("/grabber2"),
                               "Name of second port to send data on, when audio and images sent separately").asString());
     }
@@ -127,7 +127,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     if (fgAv!=NULL) {
         if (separatePorts) {
             yInfo("Grabber for images and sound (in separate ports)");
-            YARP_ASSERT(p2!=NULL);
+            yAssert(p2!=NULL);
             thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop,addStamp));
         } else {
             yInfo("Grabber for images and sound (in shared port)");

@@ -139,7 +139,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         localReader = &reader;
 
     getPeers().lock();
-    YARP_ASSERT(group);
+    yAssert(group);
     result = group->acceptIncomingData(this);
     getPeers().unlock();
     return result;
@@ -191,7 +191,7 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
     if (peers==NULL) {
         peers = new ElectionOf<PortMonitorGroup>;
         NetworkBase::unlock();
-        YARP_ASSERT(peers);
+        yAssert(peers);
     } else {
         NetworkBase::unlock();
     }

@@ -119,7 +119,7 @@ protected:
     }
 
     yarp::os::OutputStream& getOutputStream() {
-        YARP_ASSERT(os!=NULL);
+        yAssert(os!=NULL);
         return *os;
     }
 

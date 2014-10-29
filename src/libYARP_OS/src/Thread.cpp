@@ -52,7 +52,7 @@ public:
 
 Thread::Thread() {
     implementation = new ThreadCallbackAdapter(*this);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     stopping = false;
 }
 

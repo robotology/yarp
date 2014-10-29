@@ -475,7 +475,7 @@ public:
         }
         bool ok = exists(s.c_str(),isDir);
         Value status;
-        YARP_ASSERT(status.asList());
+        yAssert(status.asList());
         status.asList()->addDouble(Time::now());
         status.asList()->addInt(ok?1:0);
         cache.put(s,status);
@@ -924,7 +924,7 @@ public:
 
 ResourceFinder::ResourceFinder() {
     implementation = new ResourceFinderHelper();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     owned = true;
     nullConfig = false;
     isConfiguredFlag = false;
@@ -932,7 +932,7 @@ ResourceFinder::ResourceFinder() {
 
 ResourceFinder::ResourceFinder(const ResourceFinder& alt) {
     implementation = new ResourceFinderHelper();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     owned = true;
     nullConfig = false;
     isConfiguredFlag = false;

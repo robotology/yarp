@@ -353,7 +353,7 @@ void Value::setProxy(Value *proxy) {
         delete this->proxy;
         this->proxy = NULL;
     }
-    YARP_ASSERT(proxy!=NULL);
+    yAssert(proxy!=NULL);
     this->proxy = proxy;
 }
 

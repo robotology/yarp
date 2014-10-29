@@ -736,7 +736,7 @@ protected:
                 return false;
 
             int njs = l.size();
-            YARP_ASSERT (nj == njs);
+            yAssert(nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asInt();
 
@@ -766,7 +766,7 @@ protected:
                 return false;
 
             int njs = l.size();
-            YARP_ASSERT (nj == njs);
+            yAssert(nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asDouble();
 
@@ -799,7 +799,7 @@ protected:
                 return false;
 
             int njs = l.size();
-            YARP_ASSERT (nj == njs);
+            yAssert(nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asDouble();
 
@@ -1253,7 +1253,7 @@ public:
             if (&l == 0)
                 return false;
             const int njs = l.size();
-            YARP_ASSERT (njs == nj);
+            yAssert(njs == nj);
             for (i = 0; i < nj; i++)
             {
                 Bottle& m = *(l.get(i).asList());
@@ -1438,7 +1438,7 @@ public:
             if (tmp.size() != (size_t)nj)
                 fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            YARP_ASSERT (tmp.size() == (size_t)nj);
+            yAssert(tmp.size() == (size_t)nj);
             memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
 
             ////////////////////////// HANDLE TIMEOUT
@@ -1471,7 +1471,7 @@ public:
             if (tmp.size() != (size_t)nj)
                 fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            YARP_ASSERT (tmp.size() == (size_t)nj);
+            yAssert(tmp.size() == (size_t)nj);
             for(int j=0; j<nj; j++)
             {
                 encs[j]=tmp[j];
@@ -2340,7 +2340,7 @@ public:
             if (&l == 0)
                 return false;
             int njs = l.size();
-            YARP_ASSERT (nj == njs);
+            yAssert(nj == njs);
             for (int i = 0; i < nj; i++)
                 modes[i] = l.get(i).asInt();
             return true;
@@ -2557,7 +2557,7 @@ public:
             if (&l == 0)
                 return false;
             const int njs = l.size();
-            YARP_ASSERT (njs == nj);
+            yAssert(njs == nj);
             for (i = 0; i < nj; i++)
             {
                 Bottle& m = *(l.get(i).asList());
@@ -2595,7 +2595,7 @@ public:
 
         if (CHECK_FAIL(ok, response))
         {
-            YARP_ASSERT (response.size()>=1);
+            yAssert(response.size()>=1);
             *mode = (InteractionModeEnum) response.get(0).asVocab();
             return true;
         }
@@ -2623,7 +2623,7 @@ public:
         {
             int i;
             Bottle& list = *(response.get(0).asList());
-            YARP_ASSERT(list.size() >= n_joints)
+            yAssert(list.size() >= n_joints)
 
             if (list.size() != n_joints)
             {
@@ -2658,7 +2658,7 @@ public:
         {
             int i;
             Bottle& list = *(response.get(0).asList());
-            YARP_ASSERT(list.size() >= nj)
+            yAssert(list.size() >= nj)
 
             if (list.size() != nj)
             {

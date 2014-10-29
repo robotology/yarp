@@ -113,7 +113,7 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
     if (system_resource==NULL) {
         system_resource = new YarpDevMonitor;
     }
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
     bool removeMonitorAfterwards = false;
     if (config.getMonitor()==NULL) {
         config.setMonitor(&HELPER(system_resource));
@@ -138,7 +138,7 @@ bool PolyDriver::closeMain() {
         yDebug("PolyDriver closing %s", HELPER(system_resource).info.toString().c_str());
         int ct = HELPER(system_resource).removeRef();
         if (ct==0) {
-            YARP_ASSERT(system_resource!=NULL);
+            yAssert(system_resource!=NULL);
             delete &HELPER(system_resource);
             system_resource = NULL;
             if (dd!=NULL) {
@@ -163,8 +163,8 @@ bool PolyDriver::link(PolyDriver& alt) {
     if (isValid()) return false;
     dd = alt.dd;
     system_resource = alt.system_resource;
-    YARP_ASSERT(dd!=NULL);
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(dd!=NULL);
+    yAssert(system_resource!=NULL);
     HELPER(system_resource).addRef();
     return true;
 }
@@ -173,8 +173,8 @@ bool PolyDriver::link(PolyDriver& alt) {
 
 PolyDriver::~PolyDriver() {
     closeMain();
-    YARP_ASSERT(dd==NULL);
-    YARP_ASSERT(system_resource==NULL);
+    yAssert(dd==NULL);
+    yAssert(system_resource==NULL);
 }
 
 
@@ -310,7 +310,7 @@ bool PolyDriver::give(DeviceDriver *dd, bool own) {
         if (system_resource==NULL) {
             system_resource = new YarpDevMonitor;
         }
-        YARP_ASSERT(system_resource!=NULL);
+        yAssert(system_resource!=NULL);
         if (!own) {
             HELPER(system_resource).addRef();
         }

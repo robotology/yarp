@@ -90,7 +90,7 @@ bool DgramTwoWayStream::open(const Contact& local, const Contact& remote) {
         remoteHandle.set(remoteAddress.getPort(),remoteAddress.getHost().c_str());
     }
     dgram = new ACE_SOCK_Dgram;
-    YARP_ASSERT(dgram!=NULL);
+    yAssert(dgram!=NULL);
 
     int result = dgram->open(localHandle,
                              ACE_PROTOCOL_FAMILY_INET,
@@ -255,7 +255,7 @@ bool DgramTwoWayStream::openMcast(const Contact& group,
     ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
     dgram = dmcast;
     mgram = dmcast;
-    YARP_ASSERT(dgram!=NULL);
+    yAssert(dgram!=NULL);
     
     int result = -1;
     ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
@@ -309,7 +309,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender,
 
     dgram = dmcast;
     mgram = dmcast;
-    YARP_ASSERT(dgram!=NULL);
+    yAssert(dgram!=NULL);
 
     ACE_INET_Addr addr(group.getPort(),group.getHost().c_str());
 
@@ -453,7 +453,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
             readAt = 0;
 
 
-            //YARP_ASSERT(dgram!=NULL);
+            //yAssert(dgram!=NULL);
             //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
             YARP_SSIZE_T result = -1;
             if (mgram && restrictInterfaceIp.isValid()) { 
@@ -475,7 +475,7 @@ YARP_SSIZE_T DgramTwoWayStream::read(const Bytes& b) {
                 
             } else if (dgram!=NULL) {
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
-                YARP_ASSERT(dgram!=NULL);
+                yAssert(dgram!=NULL);
                 //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
                 result =
                     dgram->recv(readBuffer.get(),readBuffer.length(),dummy);
@@ -615,7 +615,7 @@ void DgramTwoWayStream::flush() {
 
     while (writeAvail>0) {
         YARP_SSIZE_T writeAt = 0;
-        //YARP_ASSERT(dgram!=NULL);
+        //yAssert(dgram!=NULL);
         YARP_SSIZE_T len = 0;
 
         if (mgram!=NULL) {

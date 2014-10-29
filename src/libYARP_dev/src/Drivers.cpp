@@ -230,7 +230,7 @@ public:
 
 Drivers::Drivers() {
     implementation = new DriversHelper;
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     init();
 }
 

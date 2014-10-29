@@ -243,7 +243,7 @@ RateThread::RateThread(int p)
 {
     // use p
     implementation = new RateThreadCallbackAdapter(*this, p);
-    YARP_ASSERT(implementation!=0);
+    yAssert(implementation!=0);
 }
 
 RateThread::~RateThread()

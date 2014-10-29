@@ -412,7 +412,7 @@ int MonitorLua::setConstraint(lua_State* L)
         }
 
         MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-        YARP_ASSERT(owner);
+        yAssert(owner);
         owner->setAcceptConstraint(cst);
     }        
     return 0;
@@ -428,7 +428,7 @@ int MonitorLua::getConstraint(lua_State* L)
     }
 
     MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-    YARP_ASSERT(owner);
+    yAssert(owner);
     lua_pushstring(L, owner->getAcceptConstraint());
     return 0;
 }
@@ -460,7 +460,7 @@ int MonitorLua::setEvent(lua_State* L)
             return 0;
         }
         MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-        YARP_ASSERT(owner);
+        yAssert(owner);
         if(owner->isKeyword(event_name))
             return 0;
         MonitorEventRecord& record = MonitorEventRecord::getInstance();
@@ -483,7 +483,7 @@ int MonitorLua::unsetEvent(lua_State* L)
             return 0;
         }
         MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-        YARP_ASSERT(owner);
+        yAssert(owner);
         if(owner->isKeyword(event_name))
             return 0;
         MonitorEventRecord& record = MonitorEventRecord::getInstance();

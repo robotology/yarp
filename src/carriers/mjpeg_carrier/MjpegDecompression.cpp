@@ -169,7 +169,7 @@ public:
 
 MjpegDecompression::MjpegDecompression() {
     system_resource = new MjpegDecompressionHelper;
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
 }
 
 MjpegDecompression::~MjpegDecompression() {

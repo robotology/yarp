@@ -595,9 +595,9 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         pAudioFormatCtx = pFormatCtx;
     }
         
-    YARP_ASSERT(system_resource==NULL);
+    yAssert(system_resource==NULL);
     system_resource = new FfmpegHelper;
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
     FfmpegHelper& helper = HELPER(system_resource);
     DecoderState& videoDecoder = helper.videoDecoder;
     DecoderState& audioDecoder = helper.audioDecoder;

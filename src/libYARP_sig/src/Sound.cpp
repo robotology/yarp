@@ -68,7 +68,7 @@ Sound& Sound::operator += (const Sound& alt) {
 }
 
 const Sound& Sound::operator = (const Sound& alt) {
-    YARP_ASSERT(getBytesPerSample()==alt.getBytesPerSample());
+    yAssert(getBytesPerSample()==alt.getBytesPerSample());
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);
     img1.copy(img2);
@@ -129,9 +129,9 @@ Sound Sound::subSound(int first_sample, int last_sample)
 
 void Sound::init(int bytesPerSample) {
     implementation = new FlexImage();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 
-    YARP_ASSERT(bytesPerSample==2); // that's all thats implemented right now
+    yAssert(bytesPerSample==2); // that's all thats implemented right now
     HELPER(implementation).setPixelSize(sizeof(PixelMono16));
     HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
     HELPER(implementation).setQuantum(2);

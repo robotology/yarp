@@ -1115,7 +1115,7 @@ public:
         }
         checkEqual(buf.getPendingReads(),1,"first msg came through");
         Bottle *bot2 = buf.read();
-        YARP_ASSERT(bot2);
+        yAssert(bot2);
         checkEqual(bot2->size(),3,"data looks ok");
 
         bot1.addInt(4);
@@ -1138,7 +1138,7 @@ public:
         }
         checkEqual(buf.getPendingReads(),1,"next msg came through");
         bot2 = buf.read();
-        YARP_ASSERT(bot2);
+        yAssert(bot2);
         checkEqual(bot2->size(),5,"data looks ok");
 
         output.close();

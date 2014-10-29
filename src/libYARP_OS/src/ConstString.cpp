@@ -33,27 +33,27 @@ size_t ConstString::npos = std::string::npos;
 
 ConstString::ConstString() {
     implementation = new std::string();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 ConstString::ConstString(const char *str) {
     implementation = new std::string(str);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 ConstString::ConstString(const char *str, int len) {
     implementation = new std::string(str,len);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 void ConstString::init(const char *str, size_t len) {
     implementation = new std::string(str,len);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 ConstString::ConstString(size_t len, char v) {
     implementation = new std::string(len,v);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 ConstString::~ConstString() {
@@ -65,7 +65,7 @@ ConstString::~ConstString() {
 
 ConstString::ConstString(const ConstString& alt) {
     implementation = new std::string(HELPER(alt.implementation));
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 const ConstString& ConstString::operator = (const ConstString& alt) {

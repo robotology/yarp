@@ -386,7 +386,7 @@ NameServer& NameClient::getServer() {
     if (fakeServer==NULL) {
         fakeServer = new NameServer;
     }
-    YARP_ASSERT(fakeServer!=NULL);
+    yAssert(fakeServer!=NULL);
     return *fakeServer;
 }
 
