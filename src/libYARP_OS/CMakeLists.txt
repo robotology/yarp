@@ -146,6 +146,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/IOException.h
                       include/yarp/os/impl/LocalCarrier.h
                       include/yarp/os/impl/Logger.h
+                      include/yarp/os/impl/LogImpl.h
                       include/yarp/os/impl/MachSemaphoreImpl.h
                       include/yarp/os/impl/McastCarrier.h
                       include/yarp/os/impl/MemoryOutputStream.h
