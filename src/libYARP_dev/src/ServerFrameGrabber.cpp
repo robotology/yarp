@@ -135,14 +135,10 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
                                                         addStamp));
         }
     } else if (fgImage!=NULL) {
-        if (yarp_show_debug()) {
-            printf("Grabber for rgb images\n");
-        }
+        yDebug("Grabber for rgb images");
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgImageRaw!=NULL) {
-        if (yarp_show_debug()) {
-            printf("Grabber for raw images\n");
-        }
+        yDebug("Grabber for raw images");
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelMono> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgSound!=NULL) {
         yInfo("Grabber for sound\n");
