@@ -160,7 +160,7 @@ int Sound::get(int location, int channel) const {
     if (bytesPerSample==2) {
         return *((NetUint16 *)addr);
     }
-    YARP_LOG_INFO("sound only implemented for 16 bit samples");
+    yInfo("sound only implemented for 16 bit samples");
     return 0;
 }
 
@@ -178,7 +178,7 @@ void Sound::set(int value, int location, int channel) {
         *((NetUint16 *)addr) = value;
         return;
     }
-    YARP_LOG_INFO("sound only implemented for 16 bit samples");
+    yInfo("sound only implemented for 16 bit samples");
 }
 
 int Sound::getFrequency() const {

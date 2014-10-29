@@ -117,7 +117,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         int rate = options.check("rate", Value(10)).asInt();
         safe_printf(dummy, 1024, "   db.rate: %dms\n", rate);
         msg+= dummy;
-        YARP_LOG_INFO(msg.c_str());
+        yInfo(msg.c_str());
         debugger.stop();
         debugger.setRate(rate);
         debugger.start();

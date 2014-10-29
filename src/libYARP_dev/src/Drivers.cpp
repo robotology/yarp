@@ -345,23 +345,15 @@ static void handler (int) {
     handleTime = now;
     ct++;
     if (ct>3) {
-        if (yarp_show_info()) {
-            printf("Aborting...\n");
-        }
+        yInfo("Aborting...");
         ACE_OS::exit(1);
     }
     if (terminatorKey!="") {
-        if (yarp_show_info()) {
-            printf("[try %d of 3] Trying to shut down %s\n",
-                   ct,
-                   terminatorKey.c_str());
-        }
+        yInfo("[try %d of 3] Trying to shut down %s", ct, terminatorKey.c_str());
         terminated = true;
         Terminator::terminateByName(terminatorKey.c_str());
     } else {
-        if (yarp_show_info()) {
-            printf("Aborting...\n");
-        }
+        yInfo("Aborting...");
         ACE_OS::exit(1);
     }
 }
@@ -524,9 +516,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (service!=NULL) {
             double now = Time::now();
             if (now-startTime>dnow) {
-                if (yarp_show_info()) {
-                    YARP_LOG_INFO("device active...");
-                }
+                yInfo("device active...");
                 startTime += dnow;
             }
             // we requested single threading, so need to
@@ -534,9 +524,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             service->updateService();
         } else {
             // we don't need to do anything
-            if (yarp_show_info()) {
-                YARP_LOG_INFO("device active in background...");
-            }
+            yInfo("device active in background...");
             Time::delay(dnow);
         }
     }
@@ -547,9 +535,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
     dd.close();
 
-    if (yarp_show_info()) {
-        printf("yarpdev is finished.\n");
-    }
+    yInfo("yarpdev is finished.");
 
     return 0;
 }

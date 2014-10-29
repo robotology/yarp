@@ -276,9 +276,7 @@ public:
 
         Value *name;
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {
-            if (yarp_show_info()) {
-                printf("ControlBoard subdevice is %s\n", name->toString().c_str());
-            }
+            yInfo("ControlBoard subdevice is %s", name->toString().c_str());
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
                 Property p;
@@ -392,9 +390,7 @@ public:
     * The thread main loop deals with writing on ports here.
     */
     virtual void run() {
-        if (yarp_show_info()) {
-            printf("Server control board starting\n");
-        }
+        yInfo("Server control board starting");
         double before, now;
         while (!isStopping()) {
             before = Time::now();
@@ -425,9 +421,7 @@ public:
                 }
             }
         }
-        if (yarp_show_info()) {
-            printf("Server control board stopping\n");
-        }
+        yInfo("Server control board stopping\n");
     }
 
     /* IPidControl */

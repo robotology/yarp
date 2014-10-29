@@ -162,7 +162,7 @@ static void companion_sigint_handler(int sig) {
         Port *port = companion_active_port;
         if (!showedMessage) {
             showedMessage = true;
-            YARP_LOG_INFO("Interrupting...");
+            yInfo("Interrupting...");
         }
         if (companion_unregister_name!="") {
             if (!unregistered) {

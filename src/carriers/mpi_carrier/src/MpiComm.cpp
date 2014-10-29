@@ -44,9 +44,9 @@ void finalizeMPI(void) {
 }
 
 void MpiControlThread::threadRelease() {
-    YARP_LOG_INFO("MpiControlThread: Trying to finalize MPI...");
+    yInfo("MpiControlThread: Trying to finalize MPI...");
     MPI_Finalize();
-    YARP_LOG_INFO("MpiControlThread: Successfully finalized MPI...");
+    yInfo("MpiControlThread: Successfully finalized MPI...");
 }
 
 bool MpiControlThread::threadInit() {
