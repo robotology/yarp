@@ -135,7 +135,7 @@ public:
     }
 #endif
 
-    inline LogStream& operator<<(yarp::os::ConstString t) {
+    inline LogStream& operator<<(const yarp::os::ConstString &t) {
         stream->oss << t.c_str();
         stream->oss << ' ';
         return *this;
