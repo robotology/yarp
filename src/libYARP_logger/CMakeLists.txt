@@ -58,5 +58,3 @@ install(TARGETS YARP_logger
 
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_logger)
 set_property(TARGET YARP_logger PROPERTY INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include)
-
-message("***********************************************************")
