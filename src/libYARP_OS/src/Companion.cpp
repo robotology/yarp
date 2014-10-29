@@ -478,7 +478,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
             } else if (ConstString(argv[0])=="--rate") {
                 rate = true;
             } else {
-                YARP_LOG_ERROR("Unrecognized option");
+                yError("Unrecognized option");
                 argc = 1;
             }
             argc--;

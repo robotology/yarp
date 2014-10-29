@@ -43,7 +43,7 @@ MonitorLua::~MonitorLua()
         if(getLocalFunction("destroy"))
         {
             if(lua_pcall(L, 0, 0, 0) != 0)
-                YARP_LOG_ERROR(lua_tostring(L, -1));
+                yError(lua_tostring(L, -1));
         }
         // closing lua state handler
         lua_close(L);
@@ -55,8 +55,8 @@ bool MonitorLua::loadScript(const char* script_file)
     //printf("%s (%d)\n", __FILE__, __LINE__);
     if(luaL_loadfile(L, script_file))
     {   
-        YARP_LOG_ERROR("Cannot load script file");            
-        YARP_LOG_ERROR(lua_tostring(L, -1));
+        yError("Cannot load script file");
+        yError(lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
         L = NULL;
@@ -65,8 +65,8 @@ bool MonitorLua::loadScript(const char* script_file)
 
     if(lua_pcall(L,0, LUA_MULTRET, 0))
     {
-        YARP_LOG_ERROR("Cannot run script file");
-        YARP_LOG_ERROR(lua_tostring(L, -1));
+        yError("Cannot run script file");
+        yError(lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
         L = NULL;
@@ -82,7 +82,7 @@ bool MonitorLua::loadScript(const char* script_file)
     lua_getglobal(L, "PortMonitor");
     if(lua_istable(L, -1) == 0) 
     {
-        YARP_LOG_ERROR("The script file does not contain any valid \'PortMonitor\' object.");
+        yError("The script file does not contain any valid \'PortMonitor\' object.");
         lua_pop(L, 1);
         lua_close(L);
         L = NULL;
@@ -95,7 +95,7 @@ bool MonitorLua::loadScript(const char* script_file)
     {
         if(lua_pcall(L, 0, 1, 0) != 0)
         {
-            YARP_LOG_ERROR(lua_tostring(L, -1));
+            yError(lua_tostring(L, -1));
             lua_pop(L, 1);
             lua_close(L);
             L = NULL;
@@ -125,7 +125,7 @@ bool MonitorLua::acceptData(yarp::os::Things& thing)
         swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
         if(!thingsType)
         {            
-            YARP_LOG_ERROR("Swig type of Things is not found");
+            yError("Swig type of Things is not found");
             lua_pop(L, 1);
             return false;
         }
@@ -134,7 +134,7 @@ bool MonitorLua::acceptData(yarp::os::Things& thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            YARP_LOG_ERROR(lua_tostring(L, -1));
+            yError(lua_tostring(L, -1));
             lua_pop(L, 1);
             return false;
         }
@@ -158,7 +158,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");        
         if(!thingsType)
         {            
-            YARP_LOG_ERROR("Swig type of Things is not found");
+            yError("Swig type of Things is not found");
             lua_pop(L, 1);
             return thing;
         }
@@ -167,7 +167,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            YARP_LOG_ERROR(lua_tostring(L, -1));
+            yError(lua_tostring(L, -1));
             lua_pop(L, 1);
             return thing;
         }
@@ -176,7 +176,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         yarp::os::Things* result;
         if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), thingsType, 0) != SWIG_OK )
         {
-            YARP_LOG_ERROR("Cannot get a valid return value from PortMonitor.update");
+            yError("Cannot get a valid return value from PortMonitor.update");
             lua_pop(L, 1);
             return thing;
         }   
@@ -199,7 +199,7 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
         if(!propType)
         {            
-            YARP_LOG_ERROR("Swig type of Property is not found");
+            yError("Swig type of Property is not found");
             lua_pop(L, 1);
             return false;
         }
@@ -208,7 +208,7 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         SWIG_NewPointerObj(L, &params, propType, 0);
         if(lua_pcall(L, 1, 0, 0) != 0)
         {
-            YARP_LOG_ERROR(lua_tostring(L, -1));
+            yError(lua_tostring(L, -1));
             lua_pop(L, 1);
             return false;
         }
@@ -227,7 +227,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
         if(!propType)
         {            
-            YARP_LOG_ERROR("Swig type of Property is not found");
+            yError("Swig type of Property is not found");
             lua_pop(L, 1);
             return false;
         }
@@ -235,7 +235,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         // calling PortMonitor.getparam from lua
         if(lua_pcall(L, 0, 1, 0) != 0)
         {
-            YARP_LOG_ERROR(lua_tostring(L, -1));
+            yError(lua_tostring(L, -1));
             lua_pop(L, 1);
             return false;
         }
@@ -244,7 +244,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         yarp::os::Property* result;
         if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), propType, 0) != SWIG_OK )
         {
-            YARP_LOG_ERROR("Cannot get a valid return value from PortMonitor.getparam");
+            yError("Cannot get a valid return value from PortMonitor.getparam");
             lua_pop(L, 1);
             return false;
         }   
@@ -266,7 +266,7 @@ bool MonitorLua::peerTrigged(void)
     {
         if(lua_pcall(L, 0, 0, 0) != 0)
         {
-            YARP_LOG_ERROR(lua_tostring(L, -1));
+            yError(lua_tostring(L, -1));
             lua_pop(L, 1);
             return false;
         }
@@ -345,13 +345,13 @@ bool MonitorLua::canAccept(void)
 
     if(luaL_dostring(L, strConstraint.c_str()) != 0)
     {        
-        YARP_LOG_ERROR(lua_tostring(L, -1));
+        yError(lua_tostring(L, -1));
         return false;
     }
     
     if(!lua_isboolean(L, -1))
     {
-        YARP_LOG_ERROR(lua_tostring(L, -1));
+        yError(lua_tostring(L, -1));
         return false;      
     }
     
@@ -407,7 +407,7 @@ int MonitorLua::setConstraint(lua_State* L)
         lua_getglobal(L, "PortMonitor_Owner");
         if(!lua_islightuserdata(L, -1))
         {
-            YARP_LOG_ERROR("Cannot get PortMonitor_Owner");
+            yError("Cannot get PortMonitor_Owner");
             return 0;
         }
 
@@ -423,7 +423,7 @@ int MonitorLua::getConstraint(lua_State* L)
     lua_getglobal(L, "PortMonitor_Owner");
     if(!lua_islightuserdata(L, -1))
     {
-        YARP_LOG_ERROR("Cannot get PortMonitor_Owner");
+        yError("Cannot get PortMonitor_Owner");
         return 0;
     }
 
@@ -448,7 +448,7 @@ int MonitorLua::setEvent(lua_State* L)
                 lifetime = (double) luaL_checknumber(L,2);
             else
             {
-                YARP_LOG_ERROR("The second arguemnt of setEvent() must be number");
+                yError("The second arguemnt of setEvent() must be number");
                 return 0;
             }
         }
@@ -456,7 +456,7 @@ int MonitorLua::setEvent(lua_State* L)
         lua_getglobal(L, "PortMonitor_Owner");
         if(!lua_islightuserdata(L, -1))
         {
-            YARP_LOG_ERROR("Cannot get PortMonitor_Owner");
+            yError("Cannot get PortMonitor_Owner");
             return 0;
         }
         MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
@@ -479,7 +479,7 @@ int MonitorLua::unsetEvent(lua_State* L)
         lua_getglobal(L, "PortMonitor_Owner");
         if(!lua_islightuserdata(L, -1))
         {
-            YARP_LOG_ERROR("Cannot get PortMonitor_Owner");
+            yError("Cannot get PortMonitor_Owner");
             return 0;
         }
         MonitorLua* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));

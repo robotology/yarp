@@ -282,7 +282,7 @@ bool PriorityGroup::recalculate(double t)
     double determinant = yarp::math::det(InvA);
     if(determinant == 0)
     {
-        YARP_LOG_ERROR("Inconsistent regulation! non-invertible weight matrix");
+        yError("Inconsistent regulation! non-invertible weight matrix");
         return false;
     }
 

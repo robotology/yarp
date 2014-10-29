@@ -39,7 +39,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     ConstString script = options.check("script", Value("lua")).asString();
     if((binder = MonitorBinding::create(script.c_str())) == NULL)
     {
-         YARP_LOG_ERROR("Currently only \'lua\' scripting is supported by portmonitor");
+         yError("Currently only \'lua\' scripting is supported by portmonitor");
          return false;
     }
    
