@@ -15,14 +15,16 @@
 #include <cstring>
 #include <cstdarg>
 
-#include <yarp/os/impl/PlatformStdio.h>
 #ifdef YARP_HAS_ACE
-#include <ace/Stack_Trace.h>
+# include <ace/Stack_Trace.h>
+#elif defined(YARP_HAS_EXECINFO)
+# include <execinfo.h>
 #endif
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 
 #define YARP_MAX_LOG_MSG_SIZE 512
@@ -324,5 +326,21 @@ void yarp_print_trace(FILE *out, const char *file, int line) {
     // TODO demangle symbols using <cxxabi.h> and abi::__cxa_demangle
     //      when available.
     ACE_OS::fprintf(out, "%s", st.c_str());
+#elif defined(YARP_HAS_EXECINFO)
+    const size_t max_depth = 100;
+    size_t stack_depth;
+    void *stack_addrs[max_depth];
+    char **stack_strings;
+    stack_depth = backtrace(stack_addrs, max_depth);
+    stack_strings = backtrace_symbols(stack_addrs, stack_depth);
+    fprintf(out, "Assertion thrown at %s:%d by code called from:\n", file, line);
+    for (size_t i = 1; i < stack_depth; i++) {
+        fprintf(out, " --> %s\n", stack_strings[i]);
+    }
+    free(stack_strings); // malloc()ed by backtrace_symbols
+    fflush(out);
+}
+#else
+    // Not implemented on this platform
 #endif
 }
