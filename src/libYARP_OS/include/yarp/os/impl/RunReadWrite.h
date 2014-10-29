@@ -22,6 +22,7 @@
 
 #if defined(WIN32)
 #include <windows.h>
+#include <process.h>
 #include <io.h>
 #else
 #include <unistd.h>
@@ -132,13 +133,37 @@ protected:
 class RunWrite : public RunStdio
 {
 public:
-    RunWrite()
+    RunWrite(yarp::os::ConstString& portName,yarp::os::ConstString& loggerName)
     { 
+        mVerbose=true;
+    
+        char buff[16];
+        sprintf(buff,"/%d",getpid());
+        wPortName=portName+buff;
+        wLoggerName=loggerName;
+
+        /*
+        //persistent connection to the logger, off by default
+        yarp::os::ContactStyle style;
+        style.persistent=true;
+        yarp::os::Network::connect(wPortName.c_str(),loggerName.c_str(),style);
+        */
+
         mRunning=true;
     }
+
+    RunWrite(yarp::os::ConstString& portName)
+    { 
+        mVerbose=false;
+    
+        wPortName=portName+"/stdout";
+      
+        mRunning=true;
+    }
+
    ~RunWrite(){}
 
-    int loop(yarp::os::ConstString& uuid);
+    int loop();
 
     void exit()
     {
@@ -164,9 +189,10 @@ public:
 
 protected:
     bool mRunning;
+    bool mVerbose;
 
-    yarp::os::ConstString UUID;
     yarp::os::ConstString wPortName;
+    yarp::os::ConstString wLoggerName;
     yarp::os::Port wPort;
 };
 
@@ -175,10 +201,15 @@ protected:
 class RunRead : public RunStdio
 {
 public:
-    RunRead(){ mRunning=true; }
+    RunRead(yarp::os::ConstString &portName)
+    {
+        rPortName=portName+"/stdin";
+
+        mRunning=true; 
+    }
    ~RunRead(){}
 
-    int loop(yarp::os::ConstString& uuid);
+    int loop();
 
     void exit()
     {
@@ -194,7 +225,6 @@ public:
 protected:
     bool mRunning;
 
-    yarp::os::ConstString UUID;
     yarp::os::ConstString rPortName;
     yarp::os::Port rPort;
 };
@@ -204,11 +234,34 @@ protected:
 class RunReadWrite : public RunStdio, public yarp::os::Thread
 {
 public:
-    RunReadWrite(){ mRunning=true; }
+    RunReadWrite(yarp::os::ConstString &portsName,yarp::os::ConstString &fpName,yarp::os::ConstString &lpName)
+    {
+        UUID=portsName;
+        wPortName=portsName+"/stdio:o";
+        rPortName=portsName+"/stdio:i";
+        mRunning=true;
+
+        if (fpName!="")
+        {
+            char buff[16];
+            sprintf(buff,"/%d",getpid());
+            mForwarded=true;
+            fPortName=fpName+buff;
+
+            yarp::os::ContactStyle style;
+            style.persistent=true;
+            yarp::os::Network::connect(fPortName.c_str(),lpName.c_str(),style);
+        }
+        else
+        {
+            mForwarded=false;
+        }
+    }
+
    ~RunReadWrite(){}
 
     void run();
-    int loop(yarp::os::ConstString& uuid);
+    int loop();
 
     void exit()
     {
@@ -226,12 +279,15 @@ public:
 
 protected:
     bool mRunning;
+    bool mForwarded;
 
     yarp::os::ConstString UUID;
     yarp::os::ConstString wPortName;
     yarp::os::ConstString rPortName;
+    yarp::os::ConstString fPortName;
     yarp::os::Port wPort;
     yarp::os::Port rPort;
+    yarp::os::Port fPort;
 };
 
 #endif

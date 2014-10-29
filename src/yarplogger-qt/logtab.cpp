@@ -1,7 +1,25 @@
+/* 
+ * Copyright (C)2014  iCub Facility - Istituto Italiano di Tecnologia
+ * Author: Marco Randazzo
+ * email:  marco.randazzo@iit.it
+ * website: www.robotcub.org
+ * Permission is granted to copy, distribute, and/or modify this program
+ * under the terms of the GNU General Public License, version 2 or any
+ * later version published by the Free Software Foundation.
+ *
+ * A copy of the license can be found at
+ * http://www.robotcub.org/icub/license/gpl.txt
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details
+*/
+
 #include "logtab.h"
 #include "ui_logtab.h"
 
-LogTab::LogTab(yarp::os::YarprunLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
+LogTab::LogTab(yarp::yarpLogger::LoggerEngine*  _theLogger, MessageWidget* _system_message, std::string _portName, QWidget *parent, int refreshRate) :
     QFrame(parent),
     ui(new Ui::LogTab)
 { 
@@ -80,22 +98,22 @@ void LogTab::updateLog(bool from_beginning)
     */
 
     mutex.lock();
-    std::list<yarp::os::YarprunLogger::MessageEntry> messages;
+    std::list<yarp::yarpLogger::MessageEntry> messages;
     this->theLogger->get_messages_by_port_complete(portName,messages, from_beginning);
     int size_messages= messages.size();
-    std::list<yarp::os::YarprunLogger::MessageEntry>::iterator it;
+    std::list<yarp::yarpLogger::MessageEntry>::iterator it;
     QStandardItem *rootNode = model_logs->invisibleRootItem();
     for (it=messages.begin(); it!=messages.end(); it++)
     {
         QList<QStandardItem *> rowItem;
         QColor rowcolor = QColor(Qt::white);
         std:: string error_level;
-        if      (it->level==yarp::os::YarprunLogger::LOGLEVEL_ERROR)     { rowcolor = QColor("#FF7070");  error_level=ERROR_STRING;}
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_WARNING)   { rowcolor = QColor("#FFFF70");  error_level=WARNING_STRING; }
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_INFO)      { rowcolor = QColor("#70FF70");  error_level=INFO_STRING; }
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_DEBUG)     { rowcolor = QColor("#7070FF");  error_level=DEBUG_STRING;}
-        else if (it->level==yarp::os::YarprunLogger::LOGLEVEL_UNDEFINED) { rowcolor = QColor(Qt::white);  error_level="";     }
-        else                                                             { rowcolor = QColor(Qt::white);  error_level="";     }
+        if      (it->level==yarp::yarpLogger::LOGLEVEL_ERROR)     { rowcolor = QColor("#FF7070");  error_level=ERROR_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_WARNING)   { rowcolor = QColor("#FFFF70");  error_level=WARNING_STRING; }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_INFO)      { rowcolor = QColor("#70FF70");  error_level=INFO_STRING; }
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_DEBUG)     { rowcolor = QColor("#7070FF");  error_level=DEBUG_STRING;}
+        else if (it->level==yarp::yarpLogger::LOGLEVEL_UNDEFINED) { rowcolor = QColor(Qt::white);  error_level="";     }
+        else                                                    { rowcolor = QColor(Qt::white);  error_level="";     }
 
         //using numbers seems not to work. Hence I'm using strings.
         rowItem << new QStandardItem(it->yarprun_timestamp.c_str()) << new QStandardItem(it->local_timestamp.c_str()) << new QStandardItem(error_level.c_str()) << new QStandardItem(it->text.c_str());

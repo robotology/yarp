@@ -163,6 +163,9 @@ public:
 
     static bool mStresstest;
 
+    static bool mLogged;
+    static yarp::os::ConstString mLoggerPort;
+
 #if defined(WIN32)
     static YarpRunInfoVector mProcessVector;
     static YarpRunInfoVector mStdioVector;
@@ -179,6 +182,7 @@ protected:
     static void Help(const char* msg="");
     static int server();
     static int executeCmdAndStdio(Bottle& msg,Bottle& result);
+    static int executeCmdStdout(Bottle& msg,Bottle& result,yarp::os::ConstString& loggerName);
     static int executeCmd(Bottle& msg,Bottle& result);
     static int userStdio(Bottle& msg,Bottle& result);
 

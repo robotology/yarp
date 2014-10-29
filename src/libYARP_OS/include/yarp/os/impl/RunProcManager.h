@@ -191,6 +191,16 @@ public:
         yarp::os::ConstString& on,
         yarp::os::ConstString& stdio,
         PID pidCmd,
+        PID pidStdout,
+        FDESC readFromPipeCmdToStdout,
+        FDESC writeToPipeCmdToStdout,
+        HANDLE handleCmd,
+        bool hold);
+
+    YarpRunCmdWithStdioInfo(yarp::os::ConstString& alias,
+        yarp::os::ConstString& on,
+        yarp::os::ConstString& stdio,
+        PID pidCmd,
         yarp::os::ConstString& stdioUUID,
         YarpRunInfoVector* stdioVector,
         PID pidStdin,
