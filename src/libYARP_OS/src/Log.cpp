@@ -16,7 +16,9 @@
 #include <cstdarg>
 
 #include <yarp/os/impl/PlatformStdio.h>
+#ifdef YARP_HAS_ACE
 #include <ace/Stack_Trace.h>
+#endif
 
 #include <yarp/conf/system.h>
 #include <yarp/os/Os.h>
@@ -317,8 +319,10 @@ void yarp::os::Log::setErrorFile(const std::string& filename)
 }
 
 void yarp_print_trace(FILE *out, const char *file, int line) {
+#ifdef YARP_HAS_ACE
     ACE_Stack_Trace st(-1);
     // TODO demangle symbols using <cxxabi.h> and abi::__cxa_demangle
     //      when available.
     ACE_OS::fprintf(out, "%s", st.c_str());
+#endif
 }
