@@ -415,10 +415,7 @@ public:
                 Time::delay(k);
             }
             else {
-                if (yarp_show_warn()) {
-                    printf("Can't comply with the %d ms period\n", 
-                           thread_period);
-                }
+                yWarning("Can't comply with the %d ms period", thread_period);
             }
         }
         yInfo("Server control board stopping\n");
