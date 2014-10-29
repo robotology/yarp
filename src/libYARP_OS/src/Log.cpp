@@ -15,7 +15,7 @@
 #include <cstring>
 #include <cstdarg>
 
-#include <ace/OS.h>
+#include <yarp/os/impl/PlatformStdio.h>
 #include <ace/Stack_Trace.h>
 
 #include <yarp/conf/system.h>
