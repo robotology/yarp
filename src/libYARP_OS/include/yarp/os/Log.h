@@ -29,19 +29,31 @@
 #endif // __GNUC__
 
 
+namespace yarp { namespace os { class LogStream; }}
+namespace yarp { namespace os { namespace impl { class LogImpl; }}}
+
+
 namespace yarp {
 namespace os {
-
-
-class LogStream;
 
 class YARP_OS_API Log
 {
 public:
+
     Log(const char *file,
         const unsigned int line,
         const char *func);
     Log();
+    virtual ~Log();
+
+    enum LogType {
+        TraceType,
+        DebugType,
+        InfoType,
+        WarningType,
+        ErrorType,
+        FatalType
+    };
 
     void trace(const char *msg, ...) const;
     void debug(const char *msg, ...) const;
@@ -72,52 +84,7 @@ public:
      */
     static void setErrorFile(const std::string &filename);
 
-private:
-
-    enum LogType {
-        TraceType,
-        DebugType,
-        InfoType,
-        WarningType,
-        ErrorType,
-        FatalType
-    };
-
-    const char *file;
-    const unsigned int line;
-    const char *func;
-
-    static void print_output(LogType t,
-                             const char *msg,
-                             const char *file,
-                             unsigned int line,
-                             const char *func);
-
-#ifdef WIN32
-#pragma warning (push)
-// Disable C4251:
-//    class 'std::basic_ofstream<_Elem,_Traits>' needs to have dll-interface
-// According to http://msdn.microsoft.com/en-us/library/esew7y1w.aspx
-// C4251 can be ignored if you are deriving from a type in the Standard
-// C++ Library, compiling a debug release (/MTd) and where the compiler
-// error message refers to _Container_base.
-#pragma warning(disable : 4251)
-#endif
-    static std::ofstream ftrc; /// Used by yTrace()
-    static std::ofstream fout; /// Used by yDebug() and yInfo()
-    static std::ofstream ferr; /// Used by yWarning(), yError() and yFatal()
-#ifdef WIN32
-#pragma warning (pop)
-#endif
-
-    static bool colored_output;
-    static bool verbose_output;
-    static bool trace_output;
-
-    friend class LogStream;
-
 #ifndef YARP_NO_DEPRECATED
-public:
     YARP_DEPRECATED virtual void debug(const ConstString& txt) const { debug(txt.c_str()); } ///< \deprecated since YARP 2.3.64
     YARP_DEPRECATED virtual void info(const ConstString& txt) const { info(txt.c_str()); } ///< \deprecated since YARP 2.3.64
     YARP_DEPRECATED virtual void warning(const ConstString& txt) const { warning(txt.c_str()); } ///< \deprecated since YARP 2.3.64
@@ -125,6 +92,20 @@ public:
     YARP_DEPRECATED virtual void fail(const ConstString& txt) const { fatal(txt.c_str()); } ///< \deprecated since YARP 2.3.64
 #endif // YARP_NO_DEPRECATED
 
+    typedef void (*LogCallback)(yarp::os::Log::LogType,
+                                const char *,
+                                const char *,
+                                const unsigned int,
+                                const char *);
+
+    static void setLogCallback(LogCallback);
+
+private:
+    yarp::os::impl::LogImpl * const mPriv;
+
+    static LogCallback print_output;
+
+    friend class LogStream;
 }; // class Log
 
 } // namespace os
