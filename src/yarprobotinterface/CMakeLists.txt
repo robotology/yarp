@@ -12,9 +12,6 @@ project(robot-interface)
     add_subdirectory(extern)
 #endif()
 
-# debugStream must be before YARP to use the "new" yarp/os/Log.h until
-# it is moved to YARP.
-include_directories(${CMAKE_SOURCE_DIR}/src/libraries/icubmod/debugStream)
 include_directories(${YARP_INCLUDE_DIRS})
 include_directories(${iCubDev_INCLUDE_DIRS})
 include_directories(${TinyXML_INCLUDE_DIRS})
@@ -53,7 +50,6 @@ target_link_libraries(robotInterface
                       YARP::YARP_dev
                       YARP::YARP_init
                       icubmod
-                      debugStream
                       ${TinyXML_LIBRARIES})
 
 install(TARGETS robotInterface
