@@ -26,7 +26,7 @@ NetworkClock::NetworkClock() {
     nsec = 0;
     t = 0;
     pwaiters = new Waiters();
-    YARP_ASSERT(pwaiters!=NULL);
+    yAssert(pwaiters!=NULL);
 }
 
 NetworkClock::~NetworkClock() {

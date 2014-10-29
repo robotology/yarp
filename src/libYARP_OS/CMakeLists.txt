@@ -35,6 +35,7 @@ set(YARP_OS_HDRS include/yarp/os/AbstractCarrier.h
                  include/yarp/os/LocalReader.h
                  include/yarp/os/LockGuard.h
                  include/yarp/os/Log.h
+                 include/yarp/os/LogStream.h
                  include/yarp/os/ManagedBytes.h
                  include/yarp/os/ModifyingCarrier.h
                  include/yarp/os/Module.h
@@ -226,6 +227,7 @@ set(YARP_OS_SRCS src/AbstractCarrier.cpp
                  src/InputStream.cpp
                  src/LocalCarrier.cpp
                  src/LockGuard.cpp
+                 src/Log.cpp
                  src/Logger.cpp
                  src/ManagedBytes.cpp
                  src/ModifyingCarrier.cpp

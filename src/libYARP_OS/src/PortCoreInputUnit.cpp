@@ -71,7 +71,7 @@ void PortCoreInputUnit::run() {
 
     bool done = false;
     
-    YARP_ASSERT(ip!=NULL);
+    yAssert(ip!=NULL);
     
     PortCommand cmd;
     

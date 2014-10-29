@@ -51,7 +51,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
         if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
         const char *ptr = getMemoryBlock();
-        YARP_ASSERT (ptr != 0);
+        yAssert(ptr != 0);
         int elemSize=getElementSize();
         ok = connection.expectBlock(ptr, elemSize*header.listLen);
         if (!ok) return false;
@@ -72,7 +72,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     connection.appendBlock((char*)&header, sizeof(header));
     const char *ptr = getMemoryBlock();
     int elemSize=getElementSize();
-    YARP_ASSERT (ptr != NULL);
+    yAssert(ptr != NULL);
 
     connection.appendExternalBlock(ptr, elemSize*header.listLen);
 

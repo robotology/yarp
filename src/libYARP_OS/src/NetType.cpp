@@ -16,7 +16,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 int NetType::netInt(const yarp::os::Bytes& code) {
-    YARP_ASSERT(code.length()==sizeof(NetInt32));
+    yAssert(code.length()==sizeof(NetInt32));
     NetInt32 tmp;
     ACE_OS::memcpy((char*)(&tmp),code.get(),code.length());
     return tmp;

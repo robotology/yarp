@@ -259,7 +259,7 @@ bool PortCoreOutputUnit::sendHelper() {
         } else {
 
 
-            YARP_ASSERT(cachedWriter!=NULL);
+            yAssert(cachedWriter!=NULL);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
                 done = true;

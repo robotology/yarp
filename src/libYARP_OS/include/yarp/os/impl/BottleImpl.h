@@ -166,7 +166,7 @@ public:
      */
     virtual Storable *cloneStorable() const {
         Storable *item = createStorable();
-        YARP_ASSERT(item!=NULL);
+        yAssert(item!=NULL);
         item->copy(*this);
         return item;
     }

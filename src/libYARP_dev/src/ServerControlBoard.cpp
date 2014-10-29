@@ -276,9 +276,7 @@ public:
 
         Value *name;
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {
-            if (yarp_show_info()) {
-                printf("ControlBoard subdevice is %s\n", name->toString().c_str());
-            }
+            yInfo("ControlBoard subdevice is %s", name->toString().c_str());
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
                 Property p;
@@ -392,9 +390,7 @@ public:
     * The thread main loop deals with writing on ports here.
     */
     virtual void run() {
-        if (yarp_show_info()) {
-            printf("Server control board starting\n");
-        }
+        yInfo("Server control board starting");
         double before, now;
         while (!isStopping()) {
             before = Time::now();
@@ -419,15 +415,10 @@ public:
                 Time::delay(k);
             }
             else {
-                if (yarp_show_warn()) {
-                    printf("Can't comply with the %d ms period\n", 
-                           thread_period);
-                }
+                yWarning("Can't comply with the %d ms period", thread_period);
             }
         }
-        if (yarp_show_info()) {
-            printf("Server control board stopping\n");
-        }
+        yInfo("Server control board stopping\n");
     }
 
     /* IPidControl */
@@ -1555,9 +1546,9 @@ inline yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper() {
 
 void yarp::dev::ImplementCallbackHelper::init(yarp::dev::ServerControlBoard *x) {
     pos = dynamic_cast<yarp::dev::IPositionControl *> (x);
-    YARP_ASSERT (pos != 0);
+    yAssert(pos != 0);
     vel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
-    YARP_ASSERT (vel != 0);
+    yAssert(vel != 0);
 }
 
 
@@ -1614,7 +1605,7 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
 yarp::dev::CommandsHelper::CommandsHelper() {}
 
 void yarp::dev::CommandsHelper::init(yarp::dev::ServerControlBoard *x) { 
-    YARP_ASSERT (x != NULL);
+    yAssert(x != NULL);
     caller = x; 
     trq   = dynamic_cast<yarp::dev::ITorqueControl *> (caller);
     mod   = dynamic_cast<yarp::dev::IControlMode *> (caller);
@@ -1790,9 +1781,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 Pid *p = new Pid[njs];
-                YARP_ASSERT (p != NULL);
+                yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                 {
                     Bottle& c = *(b.get(i).asList());
@@ -1822,9 +1813,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                YARP_ASSERT (p != NULL);
+                yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pid->setReferences (p);
@@ -1843,9 +1834,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                YARP_ASSERT (p != NULL);
+                yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pid->setErrorLimits (p);
@@ -1901,7 +1892,7 @@ case VOCAB_SET:
                 int i;
                 if (b==NULL) break;
                 const int njs = b->size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 vect.size(nj);
                 for (i = 0; i < njs; i++) {
                     vect[i] = b->get(i).asDouble();
@@ -1921,7 +1912,7 @@ case VOCAB_SET:
                 int i;
                 if (b==NULL) break;
                 const int njs = b->size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 vect.size(nj);
                 for (i = 0; i < njs; i++)
                     vect[i] = b->get(i).asDouble();
@@ -1942,9 +1933,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                YARP_ASSERT (p != NULL);
+                yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->relativeMove(p);
@@ -1963,9 +1954,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                YARP_ASSERT (p != NULL);
+                yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->setRefSpeeds(p);
@@ -1984,9 +1975,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                YARP_ASSERT (p != NULL);
+                yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->setRefAccelerations(p);
@@ -2029,9 +2020,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                YARP_ASSERT (njs == nj);
+                yAssert(njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                YARP_ASSERT (p != NULL);
+                yAssert(p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = enc->setEncoders(p);
@@ -2094,7 +2085,7 @@ case VOCAB_TORQUE:
         case VOCAB_TRQS:
             {
                 double *p = new double[nj];
-                YARP_ASSERT(p!=NULL);
+                yAssert(p!=NULL);
                 ok= trq->getTorques(p);
                 Bottle& b = response.addList(); 
                 response.addDouble(dtmp);       
@@ -2119,7 +2110,7 @@ case VOCAB_ICONTROLMODE:
             {
 
                 int *p = new int[nj];
-                YARP_ASSERT(p!=NULL);
+                yAssert(p!=NULL);
                 ok = mod->getControlModes(p);
                 Bottle& b = response.addList();
                 int i;
@@ -2149,7 +2140,7 @@ case VOCAB_ERR:
 case VOCAB_ERRS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = pid->getErrors(p);
         Bottle& b = response.addList();
         int i;
@@ -2169,7 +2160,7 @@ case VOCAB_OUTPUT:
 case VOCAB_OUTPUTS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = pid->getOutputs(p);
         Bottle& b = response.addList();
         int i;
@@ -2199,7 +2190,7 @@ case VOCAB_PID:
 case VOCAB_PIDS: 
     {
         Pid *p = new Pid[nj];
-        YARP_ASSERT (p != NULL);
+        yAssert(p != NULL);
         ok = pid->getPids(p);
         Bottle& b = response.addList();
         int i;
@@ -2230,7 +2221,7 @@ case VOCAB_REFERENCE:
 case VOCAB_REFERENCES: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = pid->getReferences(p);
         Bottle& b = response.addList();
         int i;
@@ -2250,7 +2241,7 @@ case VOCAB_LIM:
 case VOCAB_LIMS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = pid->getErrorLimits(p);
         Bottle& b = response.addList();
         int i;
@@ -2291,7 +2282,7 @@ case VOCAB_REF_SPEED:
 case VOCAB_REF_SPEEDS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = pos->getRefSpeeds(p);
         Bottle& b = response.addList();
         int i;
@@ -2311,7 +2302,7 @@ case VOCAB_REF_ACCELERATION:
 case VOCAB_REF_ACCELERATIONS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = pos->getRefAccelerations(p);
         Bottle& b = response.addList();
         int i;
@@ -2331,7 +2322,7 @@ case VOCAB_ENCODER:
 case VOCAB_ENCODERS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = enc->getEncoders(p);
         Bottle& b = response.addList();
         int i;
@@ -2352,7 +2343,7 @@ case VOCAB_ENCODER_SPEED:
 case VOCAB_ENCODER_SPEEDS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = enc->getEncoderSpeeds(p);
         Bottle& b = response.addList();
         int i;
@@ -2372,7 +2363,7 @@ case VOCAB_ENCODER_ACCELERATION:
 case VOCAB_ENCODER_ACCELERATIONS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = enc->getEncoderAccelerations(p);
         Bottle& b = response.addList();
         int i;
@@ -2392,7 +2383,7 @@ case VOCAB_AMP_CURRENT:
 case VOCAB_AMP_CURRENTS: 
     {
         double *p = new double[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = amp->getCurrents(p);
         Bottle& b = response.addList();
         int i;
@@ -2405,7 +2396,7 @@ case VOCAB_AMP_CURRENTS:
 case VOCAB_AMP_STATUS: 
     {
         int *p = new int[nj];
-        YARP_ASSERT(p!=NULL);
+        yAssert(p!=NULL);
         ok = amp->getAmpStatus(p);
         Bottle& b = response.addList();
         int i;

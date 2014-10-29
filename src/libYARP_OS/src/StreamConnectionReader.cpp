@@ -25,7 +25,7 @@ yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
     }
     if (writer==NULL) {
         writer = new BufferedConnectionWriter;
-        YARP_ASSERT(writer!=NULL);
+        yAssert(writer!=NULL);
         writer->reset(isTextMode());
     }
     writer->clear();

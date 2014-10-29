@@ -134,14 +134,12 @@ public:
         use_mono = config.check("mono","should emit a monochrome image?");
         use_mono = use_mono||use_bayer;
 
-        if (yarp_show_info()) {
-            if (freq!=-1) {
-                printf("Test grabber period %g / freq %g , mode [%s]\n", period, freq,
-                       yarp::os::Vocab::decode(mode).c_str());
-            } else {
-                printf("Test grabber period %g / freq [inf], mode [%s]\n", period,
-                       yarp::os::Vocab::decode(mode).c_str());
-            }
+        if (freq!=-1) {
+            yInfo("Test grabber period %g / freq %g , mode [%s]", period, freq,
+                   yarp::os::Vocab::decode(mode).c_str());
+        } else {
+            yInfo("Test grabber period %g / freq [inf], mode [%s]", period,
+                   yarp::os::Vocab::decode(mode).c_str());
         }
 
 		bx = w/2;

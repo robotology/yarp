@@ -40,7 +40,7 @@ public:
     PortCoreOutputUnit(PortCore& owner, int index, OutputProtocol *op) :
         PortCoreUnit(owner,index), op(op), phase(1), activate(0), trackerMutex(1) {
 
-        YARP_ASSERT(op!=NULL);
+        yAssert(op!=NULL);
         closing = false;
         finished = false;
         running = false;

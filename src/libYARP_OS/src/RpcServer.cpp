@@ -43,16 +43,16 @@ bool RpcServer::read(PortReader& reader, bool willReply) {
 }
 
 void RpcServer::setInputMode(bool expectInput) {
-    YARP_ASSERT(expectInput);
+    yAssert(expectInput);
 }
 
 
 void RpcServer::setOutputMode(bool expectOutput) {
-    YARP_ASSERT(!expectOutput);
+    yAssert(!expectOutput);
 }
 
 
 void RpcServer::setRpcMode(bool expectRpc) {
-    YARP_ASSERT(expectRpc);
+    yAssert(expectRpc);
 }
 

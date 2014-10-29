@@ -53,7 +53,7 @@ bool PortCommand::write(ConnectionWriter& writer) {
         if (ch=='\0') {
             len = (int)str.length()+1;
         }
-        YARP_ASSERT(header.length()==8);
+        yAssert(header.length()==8);
         char *base = header.get();
         Bytes b(base,4);
         NetType::netInt(len,b);

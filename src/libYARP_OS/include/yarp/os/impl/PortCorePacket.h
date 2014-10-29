@@ -147,7 +147,7 @@ public:
 #else
             obj = new PortCorePacket();
 #endif
-            YARP_ASSERT(obj!=NULL);
+            yAssert(obj!=NULL);
             PLATFORM_LIST_PUSH_BACK(inactive,obj);
         }
         PortCorePacket *next = NULL;
@@ -187,9 +187,9 @@ public:
             }
             fflush(stderr);
             */
-            YARP_ASSERT(1==0);
+            yAssert(1==0);
         }
-        YARP_ASSERT(next!=NULL);
+        yAssert(next!=NULL);
         inactive.remove(next);
         PLATFORM_LIST_PUSH_BACK(active,next);
         return next;

@@ -197,8 +197,8 @@ NameServer::NameRecord *NameServer::getNameRecord(const String& name,
         PLATFORM_MAP_SET(nameMap,name,NameRecord());
         result = PLATFORM_MAP_FIND(nameMap,name,entry);
     }
-    YARP_ASSERT(result!=-1);
-    //YARP_ASSERT(entry!=NULL);
+    yAssert(result!=-1);
+    //yAssert(entry!=NULL);
     return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
@@ -213,11 +213,11 @@ NameServer::HostRecord *NameServer::getHostRecord(const String& name,
         }
         PLATFORM_MAP_SET(hostMap,name,HostRecord());
         result = PLATFORM_MAP_FIND(hostMap,name,entry);
-        //YARP_ASSERT(entry!=NULL);
+        //yAssert(entry!=NULL);
         PLATFORM_MAP_ITERATOR_SECOND(entry).setBase(basePort);
     }
-    YARP_ASSERT(result!=-1);
-    //YARP_ASSERT(entry!=NULL);
+    yAssert(result!=-1);
+    //yAssert(entry!=NULL);
     return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 

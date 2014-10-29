@@ -37,16 +37,16 @@ bool RpcClient::replyAndDrop(PortWriter& writer) {
 }
 
 void RpcClient::setInputMode(bool expectInput) {
-    YARP_ASSERT(!expectInput);
+    yAssert(!expectInput);
 }
 
 
 void RpcClient::setOutputMode(bool expectOutput) {
-    YARP_ASSERT(expectOutput);
+    yAssert(expectOutput);
 }
 
 
 void RpcClient::setRpcMode(bool expectRpc) {
-    YARP_ASSERT(expectRpc);
+    yAssert(expectRpc);
 }
 

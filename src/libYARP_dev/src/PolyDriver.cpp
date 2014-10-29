@@ -105,26 +105,26 @@ bool PolyDriver::open(const ConstString& txt) {
 
 bool PolyDriver::open(yarp::os::Searchable& config) {
     if (isValid()) {
-        YARP_LOG_DEBUG("PolyDriver already open");
+        yDebug("PolyDriver already open");
         // already open - should close first
         return false;
     }
-    YARP_LOG_DEBUG("PolyDriver opening...");
+    yDebug("PolyDriver opening...");
     if (system_resource==NULL) {
         system_resource = new YarpDevMonitor;
     }
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
     bool removeMonitorAfterwards = false;
     if (config.getMonitor()==NULL) {
         config.setMonitor(&HELPER(system_resource));
         removeMonitorAfterwards = true;
     }
 
-    YARP_LOG_DEBUG("PolyDriver calling factory...");
+    yDebug("PolyDriver calling factory...");
     //dd = Drivers::factory().open(config);
     coreOpen(config);
     HELPER(system_resource).info.fromString(config.toString());
-    YARP_LOG_DEBUG("PolyDriver opened.");
+    yDebug("PolyDriver opened.");
     if (removeMonitorAfterwards) {
         config.setMonitor(NULL);        
     }
@@ -135,22 +135,21 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
 bool PolyDriver::closeMain() {
     bool result = false;
     if (system_resource!=NULL) {
-        YARP_LOG_DEBUG(ConstString("PolyDriver closing ") +
-                       HELPER(system_resource).info.toString().c_str());
+        yDebug("PolyDriver closing %s", HELPER(system_resource).info.toString().c_str());
         int ct = HELPER(system_resource).removeRef();
         if (ct==0) {
-            YARP_ASSERT(system_resource!=NULL);
+            yAssert(system_resource!=NULL);
             delete &HELPER(system_resource);
             system_resource = NULL;
             if (dd!=NULL) {
                 result = dd->close();
-                YARP_LOG_DEBUG("PolyDriver closed.");
+                yDebug("PolyDriver closed.");
                 delete dd;
                 dd = NULL;
             }
             result = true;
         } else {
-            YARP_LOG_DEBUG("PolyDriver still in use.");
+            yDebug("PolyDriver still in use.");
         }
         dd = NULL;
         system_resource = NULL;
@@ -164,8 +163,8 @@ bool PolyDriver::link(PolyDriver& alt) {
     if (isValid()) return false;
     dd = alt.dd;
     system_resource = alt.system_resource;
-    YARP_ASSERT(dd!=NULL);
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(dd!=NULL);
+    yAssert(system_resource!=NULL);
     HELPER(system_resource).addRef();
     return true;
 }
@@ -174,8 +173,8 @@ bool PolyDriver::link(PolyDriver& alt) {
 
 PolyDriver::~PolyDriver() {
     closeMain();
-    YARP_ASSERT(dd==NULL);
-    YARP_ASSERT(system_resource==NULL);
+    yAssert(dd==NULL);
+    yAssert(system_resource==NULL);
 }
 
 
@@ -225,7 +224,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
         str = p.find("device").asString().c_str();
         config = &p;
     }
-    YARP_LOG_DEBUG(ConstString("Drivers::open starting for ") + str);
+    yDebug("Drivers::open starting for %s", str.c_str());
 
     DeviceDriver *driver = NULL;
 
@@ -259,7 +258,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
         printf("yarpdev: ***ERROR*** could not find device <%s>\n", str.c_str());
     }
 
-    YARP_LOG_DEBUG(ConstString("Drivers::open started for ") + str);
+    yDebug("Drivers::open started for %s", str.c_str());
 
     if (driver!=NULL) {
         PolyDriver *manager = creator->owner();
@@ -269,9 +268,9 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
         }
 
         //printf("yarpdev: parameters are %s\n", config->toString().c_str());
-        YARP_LOG_DEBUG(ConstString("Drivers::open config for ") + str);
+        yDebug("Drivers::open config for %s", str.c_str());
         bool ok = driver->open(*config);
-        YARP_LOG_DEBUG(ConstString("Drivers::open configed for ") + str);
+        yDebug("Drivers::open configed for ", str.c_str());
         if (!ok) {
             printf("yarpdev: ***ERROR*** driver <%s> was found but could not open\n", config->find("device").toString().c_str());
             //YARP_DEBUG(Logger::get(),String("Discarding ") + str);
@@ -283,13 +282,10 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
                 ConstString name = creator->getName();
                 ConstString wrapper = creator->getWrapper();
                 ConstString code = creator->getCode();
-                if (yarp_show_info()) {
-                    ConstString msg = ConstString("created ") +
-                        ((name==wrapper)?"wrapper":"device") +
-                        " <" + name + ">. See C++ class " +
-                        code + " for documentation.";
-                    YARP_LOG_INFO(msg);
-                }
+                yInfo("created %s <%s>. See C++ class %s for documentation.",
+                      ((name==wrapper)?"wrapper":"device"),
+                      name.c_str(),
+                      code.c_str());
             }
         }
         dd = driver;
@@ -314,7 +310,7 @@ bool PolyDriver::give(DeviceDriver *dd, bool own) {
         if (system_resource==NULL) {
             system_resource = new YarpDevMonitor;
         }
-        YARP_ASSERT(system_resource!=NULL);
+        yAssert(system_resource!=NULL);
         if (!own) {
             HELPER(system_resource).addRef();
         }

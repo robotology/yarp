@@ -162,7 +162,7 @@ static void companion_sigint_handler(int sig) {
         Port *port = companion_active_port;
         if (!showedMessage) {
             showedMessage = true;
-            YARP_LOG_INFO("Interrupting...");
+            yInfo("Interrupting...");
         }
         if (companion_unregister_name!="") {
             if (!unregistered) {
@@ -478,7 +478,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
             } else if (ConstString(argv[0])=="--rate") {
                 rate = true;
             } else {
-                YARP_LOG_ERROR("Unrecognized option");
+                yError("Unrecognized option");
                 argc = 1;
             }
             argc--;

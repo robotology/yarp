@@ -21,7 +21,7 @@ public:
         :sema(initialCount)
     {
         int result = semaphore_create(mach_task_self(), &sema, SYNC_POLICY_FIFO, initialCount);
-	    YARP_ASSERT(result==KERN_SUCCESS);
+	    yAssert(result==KERN_SUCCESS);
     }
 
     virtual ~SemaphoreImpl() {

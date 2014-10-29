@@ -39,14 +39,14 @@ void finalizeMPI(void) {
         }
         ct++;
     }
-    YARP_LOG_ERROR("MpiControlThread: Finalizing MPI failed! Calling MPI_Abort");
+    yError("MpiControlThread: Finalizing MPI failed! Calling MPI_Abort");
     MPI_Abort(MPI_COMM_WORLD,1);
 }
 
 void MpiControlThread::threadRelease() {
-    YARP_LOG_INFO("MpiControlThread: Trying to finalize MPI...");
+    yInfo("MpiControlThread: Trying to finalize MPI...");
     MPI_Finalize();
-    YARP_LOG_INFO("MpiControlThread: Successfully finalized MPI...");
+    yInfo("MpiControlThread: Successfully finalized MPI...");
 }
 
 bool MpiControlThread::threadInit() {
@@ -63,7 +63,7 @@ bool MpiControlThread::threadInit() {
     // Passing NULL for argc/argv pointers is fine for MPI-2
     int err = MPI_Init_thread(NULL, NULL, requested , &provided);
     if (err != MPI_SUCCESS ) {
-        YARP_LOG_ERROR("MpiControlThread: Couldn't initialize MPI\n");
+        yError("MpiControlThread: Couldn't initialize MPI\n");
         return false;
     }
 
@@ -72,7 +72,7 @@ bool MpiControlThread::threadInit() {
     }
     else {
         MPI_Finalize();
-        YARP_LOG_ERROR(ConstString("MpiControlThread: MPI implementation doesn't provide required thread safety: requested ") + NetType::toString(requested) + ", provided " + NetType::toString(provided));
+        yError("MpiControlThread: MPI implementation doesn't provide required thread safety: requested %s, provided %s"), NetType::toString(requested), NetType::toString(provided));
         return false;
     }
 }
@@ -108,7 +108,7 @@ MpiComm::MpiComm(ConstString name) : name(name) {
 //TODO: replace by static variable check??!?
 bool MpiComm::notLocal(ConstString other) {
     if (other == ConstString(unique_id)) {
-        YARP_LOG_ERROR("MPI does not support process local communication\n");
+        yError("MPI does not support process local communication\n");
         return false;
     }
     return true;
@@ -130,7 +130,7 @@ bool MpiComm::connect(ConstString port) {
     MPI_Comm_set_errhandler(comm, MPI_ERRORS_ARE_FATAL);
 
     if (err != MPI_SUCCESS ) {
-        YARP_LOG_ERROR("MpiCarrier: Couldn't create connection\n");
+        yError("MpiCarrier: Couldn't create connection\n");
         return false;
     }
 

@@ -84,8 +84,8 @@ public:
         if (result==-1) {
             return NULL;
         }
-        YARP_ASSERT(result!=-1);
-        //YARP_ASSERT(entry!=NULL);
+        yAssert(result!=-1);
+        //yAssert(entry!=NULL);
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
 
@@ -100,8 +100,8 @@ public:
             PLATFORM_MAP_SET(data,n,PropertyItem());
             result = PLATFORM_MAP_FIND(data,n,entry);
         }
-        YARP_ASSERT(result!=-1);
-        //YARP_ASSERT(entry!=NULL);
+        yAssert(result!=-1);
+        //yAssert(entry!=NULL);
         return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
 
@@ -139,7 +139,7 @@ public:
         p->bot.clear();
         p->bot.addString(key);
         p->backing = new Property();
-        YARP_ASSERT(p->backing);
+        yAssert(p->backing);
         return *(p->backing);
     }
 
@@ -779,20 +779,20 @@ public:
 
 Property::Property(int hash_size) {
     implementation = new PropertyHelper(*this,hash_size);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 
 Property::Property(const char *str) {
     implementation = new PropertyHelper(*this,0);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     fromString(str);
 }
 
 
 Property::Property(const Property& prop) : Searchable(), Portable() {
     implementation = new PropertyHelper(*this,0);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     fromString(prop.toString());
 }
 

@@ -21,7 +21,7 @@ using namespace yarp::os::impl;
 
 YarpNameSpace::YarpNameSpace(const Contact& contact) {
     system_resource = NameClient::create();
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
     HELPER(this).setContact(contact);
     this->contact = contact;
 }
