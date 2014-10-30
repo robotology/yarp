@@ -447,8 +447,8 @@ YarpRunProcInfo(alias,on,pidCmd,handleCmd,hold)
     mStdioUUID="";
     mStdioVector=NULL;
 
-    mReadFromPipeStdinToCmd=NULL;
-    mWriteToPipeStdinToCmd=NULL;
+    mReadFromPipeStdinToCmd=0/*NULL*/;
+    mWriteToPipeStdinToCmd=0/*NULL*/;
     mReadFromPipeCmdToStdout=readFromPipeCmdToStdout;
     mWriteToPipeCmdToStdout=writeToPipeCmdToStdout;
 
