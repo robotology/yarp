@@ -1079,17 +1079,17 @@ bool ResourceFinder::setQuiet(bool quiet) {
 
 
 
-bool ResourceFinder::check(const ConstString& key) {
+bool ResourceFinder::check(const ConstString& key) const {
     return config.check(key);
 }
 
 
-Value& ResourceFinder::find(const ConstString& key) {
+Value& ResourceFinder::find(const ConstString& key) const {
     return config.find(key);
 }
 
 
-Bottle& ResourceFinder::findGroup(const ConstString& key) {
+Bottle& ResourceFinder::findGroup(const ConstString& key) const {
     return config.findGroup(key);
 }
 

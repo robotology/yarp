@@ -83,10 +83,10 @@ public:
     virtual bool readRaw(ConnectionReader& connection) = 0;
     virtual bool writeRaw(ConnectionWriter& connection) = 0;
 
-    virtual bool check(const yarp::os::ConstString& key);
+    virtual bool check(const yarp::os::ConstString& key) const;
 
-    virtual yarp::os::Value& find(const yarp::os::ConstString& key);
-    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key);
+    virtual yarp::os::Value& find(const yarp::os::ConstString& key) const;
+    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) const;
 
     virtual bool operator == (const yarp::os::Value& alt) const;
 
@@ -394,11 +394,11 @@ public:
     static const int code;
     virtual int subCode() const;
 
-    virtual yarp::os::Value& find(const yarp::os::ConstString& key) {
+    virtual yarp::os::Value& find(const yarp::os::ConstString& key) const {
         return content.find(key);
     }
 
-    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) {
+    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) const {
         return content.findGroup(key);
     }
     virtual void copy(const Storable& alt) { content = *(alt.asList()); }
@@ -434,11 +434,11 @@ public:
     }
     static const int code;
   
-    virtual yarp::os::Value& find(const yarp::os::ConstString& key) {
+    virtual yarp::os::Value& find(const yarp::os::ConstString& key) const {
         return content.find(key);
     }
 
-    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) {
+    virtual yarp::os::Bottle& findGroup(const yarp::os::ConstString& key) const {
         return content.findGroup(key);
     }
     virtual void copy(const Storable& alt) { content = *(alt.asDict()); }
