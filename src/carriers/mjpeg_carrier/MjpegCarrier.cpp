@@ -185,7 +185,14 @@ bool MjpegCarrier::sendHeader(ConnectionState& proto) {
         target = "GET /";
         target += pathValue;
     }
-    target += " HTTP/1.1\n\n";
+    target += " HTTP/1.1\n";
+    Contact host = proto.getRoute().getToContact();
+    if (host.getHost()!="") {
+        target += "Host: ";
+        target += host.getHost();
+        target += "\r\n";
+    }
+    target += "\n";
     Bytes b((char*)target.c_str(),target.length());
     proto.os().write(b);
     return true;
