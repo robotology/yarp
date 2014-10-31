@@ -9,13 +9,11 @@
     <file>images/cpuload_ico.png</file>
     <file>images/device_ico.png</file>
     <file>images/disconnected_ico.png</file>
-    <file>images/folder_ico.png</file>
-    <file>images/folderapp_ico.png</file>
-    <file>images/foldermod_ico.png</file>
-    <file>images/folderres_ico.png</file>
     <file>images/gridsnap_ico.png</file>
     <file>images/gridview_ico.png</file>
+    <file>images/quit_ico.png</file>
     <file>images/import_ico.png</file>
+    <file>images/import_folder_ico.png</file>
     <file>images/kill_ico.png</file>
     <file>images/memory_ico.png</file>
     <file>images/module_ico.png</file>
@@ -41,6 +39,6 @@
     <file>images/yesres_ico.png</file>
     <file>images/ymanager_ico.png</file>
     <file>images/clear.png</file>
-    <file>images/Save-icon.png</file>
+    <file>images/save_ico.png</file>
 </qresource>
 </RCC>

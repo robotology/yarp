@@ -119,7 +119,7 @@ public:
     }
 
     void addExternalNode(const ConstString& name, Node& node) {
-        YARP_ASSERT(by_name.find(name)==by_name.end());
+        yAssert(by_name.find(name)==by_name.end());
         is_external[name] = 1;
         by_name[name] = &node;
     }
@@ -138,7 +138,7 @@ Node *NodesHelper::getNode(const ConstString& name, bool create) {
     if (it == by_name.end()) {
         if (create) {
             node = new Node();
-            YARP_ASSERT(node!=NULL);
+            yAssert(node!=NULL);
             by_name[nc.getNodeName()] = node;
             node->prepare(nc.getNodeName());
         }
@@ -196,7 +196,7 @@ void NodesHelper::interrupt() {
 
 Nodes::Nodes() {
     system_resource = new NodesHelper;
-    YARP_ASSERT(system_resource!=NULL);
+    yAssert(system_resource!=NULL);
 }
 
 

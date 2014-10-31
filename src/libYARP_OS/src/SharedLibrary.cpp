@@ -38,7 +38,7 @@ bool SharedLibrary::open(const char *filename) {
 #ifdef YARP_HAS_ACE
     close();
     implementation = new ACE_DLL();
-    YARP_ASSERT(implementation);
+    yAssert(implementation);
     int result = HELPER(implementation).open(filename);
     if (result!=0) {
         close();

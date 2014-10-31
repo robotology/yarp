@@ -137,7 +137,7 @@ void UnitTest::startTestSystem() {
 // is to avoid link order dependency problems
 UnitTest& UnitTest::getRoot() {
     startTestSystem();
-    YARP_ASSERT(theRoot!=NULL);
+    yAssert(theRoot!=NULL);
     return *theRoot;
 }
 

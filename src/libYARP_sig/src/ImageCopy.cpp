@@ -85,7 +85,7 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO16)
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_INT)
     *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO_SIGNED)
     *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_SIGNED)
@@ -109,35 +109,35 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_BGR)
 dest->g = src->g;
 dest->b = src->b;
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO16)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGBA)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_BGRA)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_INT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_BGR)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO_SIGNED)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_SIGNED)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_MONO_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_RGB_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV,VOCAB_PIXEL_INT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 
 SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO)
@@ -147,7 +147,7 @@ SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO16)
 SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_INT)
     *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_MONO_SIGNED)
     *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_SIGNED)
@@ -177,7 +177,7 @@ SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_RGB_INT)
 dest->g = src->g;
 dest->b = src->b;
 SPECIAL_COPY(VOCAB_PIXEL_BGR,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 
 
@@ -188,7 +188,7 @@ SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_MONO16)
 SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_INT)
     *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_MONO_SIGNED)
     *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGB_SIGNED)
@@ -217,7 +217,7 @@ SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_RGB_INT)
 dest->g = src->g;
 dest->b = src->b;
 SPECIAL_COPY(VOCAB_PIXEL_RGBA,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 
 SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO)
@@ -227,7 +227,7 @@ SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO16)
 SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_INT)
     *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_MONO_SIGNED)
     *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_RGB_SIGNED)
@@ -256,7 +256,7 @@ SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_RGB_INT)
 dest->g = src->g;
 dest->b = src->b;
 SPECIAL_COPY(VOCAB_PIXEL_BGRA,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 
 
@@ -267,7 +267,7 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO16)
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_INT)
     *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO_SIGNED)
     *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB_SIGNED)
@@ -297,7 +297,7 @@ dest->g = (unsigned char)src->g;
 dest->b = (unsigned char)src->b;
 dest->a = 255;
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 
 
@@ -335,7 +335,7 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO16)
 SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_INT)
     *dest = (int)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_MONO_SIGNED)
     *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB)
@@ -367,7 +367,7 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_RGB_FLOAT)
 dest->g = src->g;
 dest->b = src->b;
 SPECIAL_COPY(VOCAB_PIXEL_RGB_SIGNED,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 SPECIAL_COPY(VOCAB_PIXEL_MONO_FLOAT,VOCAB_PIXEL_MONO)
     *dest = (unsigned char)*src;
@@ -407,7 +407,7 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_INT)
 SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_MONO16)
     *dest = (yarp::sig::PixelMono16)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_MONO_SIGNED)
     *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGB)
@@ -439,34 +439,34 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_RGB_SIGNED)
 dest->g = (signed char) src->g;
 dest->b = (signed char) src->b;
 SPECIAL_COPY(VOCAB_PIXEL_RGB_FLOAT,VOCAB_PIXEL_HSV_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO16)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_BGR)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGBA)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_BGRA)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB_INT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO_SIGNED)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB_SIGNED)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_MONO_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_RGB_FLOAT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_HSV)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 SPECIAL_COPY(VOCAB_PIXEL_HSV_FLOAT,VOCAB_PIXEL_INT)
-    YARP_ASSERT(implemented_yet == 0);
+    yAssert(implemented_yet == 0);
 
 SPECIAL_COPY(VOCAB_PIXEL_INT,VOCAB_PIXEL_RGB)
     dest->r = dest->g = dest->b = (char)*src;

@@ -42,4 +42,6 @@ if(CREATE_YARPLOGGER AND YARP_HAS_QT5)
   install(TARGETS yarplogger-qt
           COMPONENT utilities
           DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+  set_target_properties(yarplogger-qt PROPERTIES OUTPUT_NAME yarplogger)
 endif()

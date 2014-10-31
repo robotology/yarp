@@ -46,7 +46,7 @@ public:
         PortCoreUnit(owner,index), ip(ip), phase(1), access(1),
         autoHandshake(autoHandshake), reversed(reversed) {
 
-        YARP_ASSERT(ip!=NULL);
+        yAssert(ip!=NULL);
         closing = false;
         finished = false;
         running = false;

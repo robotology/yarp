@@ -306,7 +306,7 @@
   <action name="actionOpen_File">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/folder_ico.png</normaloff>:/images/folder_ico.png</iconset>
+     <normaloff>:/images/import_ico.png</normaloff>:/images/import_ico.png</iconset>
    </property>
    <property name="text">
     <string>Open File</string>
@@ -322,6 +322,10 @@
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/images/save_ico.png</normaloff>:/images/save_ico.png</iconset>
+   </property>
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -340,13 +344,17 @@
   <action name="actionImport_Files">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/import_ico.png</normaloff>:/images/import_ico.png</iconset>
+     <normaloff>:/images/import_folder_ico.png</normaloff>:/images/import_folder_ico.png</iconset>
    </property>
    <property name="text">
-    <string>Import Files</string>
+    <string>Import Folder</string>
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/images/quit_ico.png</normaloff>:/images/quit_ico.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>

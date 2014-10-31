@@ -33,13 +33,13 @@ NullBottle *NullBottle::bottleNull = NULL;
 Bottle::Bottle() {
     implementation = new BottleImpl;
     invalid = false;
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 Bottle::Bottle(const Bottle& bottle) : Portable(), Searchable() {
     implementation = new BottleImpl;
     invalid = false;
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     copy(bottle);
 }
 
@@ -52,7 +52,7 @@ const Bottle& Bottle::operator = (const Bottle& bottle) {
 Bottle::Bottle(const ConstString& text) {
     implementation = new BottleImpl;
     invalid = false;
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     fromString(text);
 }
 
@@ -212,7 +212,7 @@ void Bottle::copy(const Bottle& alt, int first, int len) {
                                      len);
 }
 
-Value& Bottle::findGroupBit(const ConstString& key) {
+Value& Bottle::findGroupBit(const ConstString& key) const {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
@@ -228,7 +228,7 @@ Value& Bottle::findGroupBit(const ConstString& key) {
 }
 
 
-Value& Bottle::findBit(const ConstString& key) {
+Value& Bottle::findBit(const ConstString& key) const {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
@@ -265,7 +265,7 @@ Value& Bottle::findBit(const ConstString& key) {
 }
 
 
-bool Bottle::check(const ConstString& key) {
+bool Bottle::check(const ConstString& key) const {
     Bottle& val = findGroup(key);
     if (!val.isNull())
         return true;
@@ -274,7 +274,7 @@ bool Bottle::check(const ConstString& key) {
 }
 
 
-Value& Bottle::find(const ConstString& key) {
+Value& Bottle::find(const ConstString& key) const {
     Value& val = findBit(key);
 
     if (getMonitor()!=NULL) {
@@ -289,7 +289,7 @@ Value& Bottle::find(const ConstString& key) {
 }
 
 
-Bottle& Bottle::findGroup(const ConstString& key) {
+Bottle& Bottle::findGroup(const ConstString& key) const {
     Value& bb = findGroupBit(key);
 
     if (getMonitor()!=NULL) {
@@ -319,7 +319,7 @@ Bottle& Bottle::findGroup(const ConstString& key) {
 
 Bottle *Bottle::clone() {
     Bottle *b = new Bottle();
-    YARP_ASSERT(b!=NULL);
+    yAssert(b!=NULL);
     b->copy(*this);
     return b;
 }

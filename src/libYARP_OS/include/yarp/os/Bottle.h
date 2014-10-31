@@ -279,11 +279,11 @@ public:
 
     void onCommencement();
 
-    virtual bool check(const ConstString& key);
+    virtual bool check(const ConstString& key) const;
 
-    virtual Value& find(const ConstString& key);
+    virtual Value& find(const ConstString& key) const;
 
-    Bottle& findGroup(const ConstString& key);
+    Bottle& findGroup(const ConstString& key) const;
 
     virtual bool isNull() const;
 
@@ -376,8 +376,8 @@ public:
 
 private:
 
-    Value& findGroupBit(const ConstString& key);
-    Value& findBit(const ConstString& key);
+    Value& findGroupBit(const ConstString& key) const;
+    Value& findBit(const ConstString& key) const;
 
     virtual Bottle *create();
 

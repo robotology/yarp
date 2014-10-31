@@ -39,7 +39,7 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     ConstString script = options.check("script", Value("lua")).asString();
     if((binder = MonitorBinding::create(script.c_str())) == NULL)
     {
-         YARP_LOG_ERROR("Currently only \'lua\' scripting is supported by portmonitor");
+         yError("Currently only \'lua\' scripting is supported by portmonitor");
          return false;
     }
    
@@ -139,7 +139,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         localReader = &reader;
 
     getPeers().lock();
-    YARP_ASSERT(group);
+    yAssert(group);
     result = group->acceptIncomingData(this);
     getPeers().unlock();
     return result;
@@ -191,7 +191,7 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
     if (peers==NULL) {
         peers = new ElectionOf<PortMonitorGroup>;
         NetworkBase::unlock();
-        YARP_ASSERT(peers);
+        yAssert(peers);
     } else {
         NetworkBase::unlock();
     }

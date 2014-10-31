@@ -243,9 +243,9 @@ public:
     yarp::os::Bottle getContexts();
 
     // Searchable interface
-    virtual bool check(const ConstString& key);
-    virtual Value& find(const ConstString& key);
-    virtual Bottle& findGroup(const ConstString& key);
+    virtual bool check(const ConstString& key) const;
+    virtual Value& find(const ConstString& key) const;
+    virtual Bottle& findGroup(const ConstString& key) const;
     virtual bool isNull() const;
     virtual ConstString toString() const;
 

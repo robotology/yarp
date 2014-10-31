@@ -55,7 +55,7 @@ static MultiNameSpace *__multi_name_space = NULL;
 static MultiNameSpace& getNameSpace() {
     if (__multi_name_space == NULL) {
         __multi_name_space = new MultiNameSpace;
-        YARP_ASSERT(__multi_name_space!=NULL);
+        yAssert(__multi_name_space!=NULL);
     }
     return *__multi_name_space;
 }
@@ -671,7 +671,7 @@ bool NetworkBase::getLocalMode() {
 void NetworkBase::assertion(bool shouldBeTrue) {
     // could replace with ACE assertions, except should not
     // evaporate in release mode
-    YARP_ASSERT(shouldBeTrue);
+    yAssert(shouldBeTrue);
 }
 
 

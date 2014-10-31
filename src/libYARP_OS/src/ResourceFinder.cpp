@@ -475,7 +475,7 @@ public:
         }
         bool ok = exists(s.c_str(),isDir);
         Value status;
-        YARP_ASSERT(status.asList());
+        yAssert(status.asList());
         status.asList()->addDouble(Time::now());
         status.asList()->addInt(ok?1:0);
         cache.put(s,status);
@@ -833,7 +833,7 @@ public:
         return false;
         */
         return true;
-	}
+    }
 
 
     ConstString getContext() {
@@ -924,7 +924,7 @@ public:
 
 ResourceFinder::ResourceFinder() {
     implementation = new ResourceFinderHelper();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     owned = true;
     nullConfig = false;
     isConfiguredFlag = false;
@@ -932,7 +932,7 @@ ResourceFinder::ResourceFinder() {
 
 ResourceFinder::ResourceFinder(const ResourceFinder& alt) {
     implementation = new ResourceFinderHelper();
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
     owned = true;
     nullConfig = false;
     isConfiguredFlag = false;
@@ -1079,17 +1079,17 @@ bool ResourceFinder::setQuiet(bool quiet) {
 
 
 
-bool ResourceFinder::check(const ConstString& key) {
+bool ResourceFinder::check(const ConstString& key) const {
     return config.check(key);
 }
 
 
-Value& ResourceFinder::find(const ConstString& key) {
+Value& ResourceFinder::find(const ConstString& key) const {
     return config.find(key);
 }
 
 
-Bottle& ResourceFinder::findGroup(const ConstString& key) {
+Bottle& ResourceFinder::findGroup(const ConstString& key) const {
     return config.findGroup(key);
 }
 

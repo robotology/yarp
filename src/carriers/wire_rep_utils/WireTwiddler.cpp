@@ -770,7 +770,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
                             activeCheck[i], blockPtr[i+offset]);
                 }
                 if (!errorState) {
-                    YARP_LOG_ERROR(ConstString("Structure of message is unexpected (expected ") + twiddler->getPrompt() + ")");
+                    yError("Structure of message is unexpected (expected %s)", twiddler->getPrompt().c_str());
                 }
                 errorState = true;
                 return false;

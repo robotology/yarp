@@ -74,7 +74,7 @@ public:
         }
         stateSema.wait();
         PortCorePacket *packet = packets.getFreePacket();
-        YARP_ASSERT(packet!=NULL);
+        yAssert(packet!=NULL);
         if (packet->getContent()==NULL) {
             YARP_DEBUG(Logger::get(), "creating a writer buffer");
             //packet->setContent(owner.create(*this,packet),true);
@@ -175,9 +175,9 @@ PortWriterBufferBase::PortWriterBufferBase() {
 }
 
 void PortWriterBufferBase::init() {
-    YARP_ASSERT(implementation==NULL);
+    yAssert(implementation==NULL);
     implementation = new PortWriterBufferBaseHelper(*this);
-    YARP_ASSERT(implementation!=NULL);
+    yAssert(implementation!=NULL);
 }
 
 
