@@ -543,7 +543,7 @@
   <action name="actionSave_Log">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/save_icon.png</normaloff>:/images/save_icon.png</iconset>
+     <normaloff>:/images/save_ico.png</normaloff>:/images/save_ico.png</iconset>
    </property>
    <property name="text">
     <string>Save Log Session</string>
