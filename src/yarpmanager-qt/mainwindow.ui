@@ -403,7 +403,7 @@
   <action name="actionConnect">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/connected_ico.png</normaloff>:/images/connected_ico.png</iconset>
+     <normaloff>:/images/connect_ico.png</normaloff>:/images/connect_ico.png</iconset>
    </property>
    <property name="text">
     <string>Connect</string>
@@ -412,7 +412,7 @@
   <action name="actionDisconnect">
    <property name="icon">
     <iconset resource="res.qrc">
-     <normaloff>:/images/disconnected_ico.png</normaloff>:/images/disconnected_ico.png</iconset>
+     <normaloff>:/images/disconnect_ico.png</normaloff>:/images/disconnect_ico.png</iconset>
    </property>
    <property name="text">
     <string>Disconnect</string>

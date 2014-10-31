@@ -6,9 +6,11 @@
     <file>images/computer_disable_ico.png</file>
     <file>images/computer_ico.png</file>
     <file>images/connected_ico.png</file>
+    <file>images/connect_ico.png</file>
     <file>images/cpuload_ico.png</file>
     <file>images/device_ico.png</file>
     <file>images/disconnected_ico.png</file>
+    <file>images/disconnect_ico.png</file>
     <file>images/gridsnap_ico.png</file>
     <file>images/gridview_ico.png</file>
     <file>images/quit_ico.png</file>
@@ -27,6 +29,7 @@
     <file>images/process_ico.png</file>
     <file>images/processor_ico.png</file>
     <file>images/progress_ico.png</file>
+    <file>images/refresh_ico.png</file>
     <file>images/res_comp_disabled_ico.png</file>
     <file>images/res_comp_unknown_ico.png</file>
     <file>images/run_ico.png</file>
