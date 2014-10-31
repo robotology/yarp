@@ -237,9 +237,7 @@ So, now, have a look inside the directory ./log
 
 #include <cstdio>
 #include <fstream>
-#include <iostream>
 #include <sstream>
-#include <iomanip>
 #include <string>
 #include <deque>
 
@@ -456,7 +454,7 @@ private:
         {
             if (firstIncomingData)
             {
-                cout << "Incoming data detected" << endl;
+                yInfo() << "Incoming data detected";
                 firstIncomingData=false;
             }
 
@@ -532,8 +530,8 @@ public:
         transform(videoType.begin(),videoType.end(),videoType.begin(),::tolower);
         if ((videoType!="mkv") && (videoType!="avi"))
         {
-            cout << "unknown video type '" << videoType << "' specified; ";
-            cout << "'mkv' type will be used." << endl;
+            yWarning() << "unknown video type '" << videoType << "' specified; "
+                       << "'mkv' type will be used.";
             videoType="mkv";
         }
 
@@ -566,7 +564,7 @@ public:
         finfo.open(infoFile.c_str());
         if (!finfo.is_open())
         {
-            cout << "unable to open file: " << infoFile <<endl;
+            yError() << "unable to open file: " << infoFile;
             return false;
         }
 
@@ -584,7 +582,7 @@ public:
         fdata.open(dataFile.c_str());
         if (!fdata.is_open())
         {
-            cout << "unable to open file: " << dataFile <<endl;
+            yError() << "unable to open file: " << dataFile;
             return false;
         }
 
@@ -594,7 +592,7 @@ public:
             ftimecodes.open(timecodesFile.c_str()); 
             if (!ftimecodes.is_open())
             {
-                cout << "unable to open file: " << timecodesFile << endl;
+                yError() << "unable to open file: " << timecodesFile;
                 return false;
             }
             ftimecodes<<"# timecode format v2"<<endl;
@@ -685,7 +683,7 @@ public:
             }
 
             cumulSize+=sz;
-            cout << sz << " items stored [cumul #: " << cumulSize << "]" << endl;
+            yInfo() << sz << " items stored [cumul #: " << cumulSize << "]";
         }
     }
 
@@ -777,7 +775,7 @@ public:
         #endif
             else
             {
-                cout << "Error: invalid type" << endl;
+                yError() << "Error: invalid type";
                 return false;
             }
         }
@@ -845,8 +843,8 @@ public:
         rpcPort.open((portName+"/rpc").c_str());
         attach(rpcPort);
 
-        cout << "Service yarp port: " << portName << endl;
-        cout << "Data stored in   : " << dirName  << endl;
+        yInfo() << "Service yarp port: " << portName;
+        yInfo() << "Data stored in   : " << dirName;
 
         return true;
     }
@@ -891,20 +889,20 @@ int main(int argc, char *argv[])
 
     if (rf.check("help"))
     {
-        cout << "Options:" << endl << endl;
-        cout << "\t--name       port: service port name (default: /dump)"                            << endl;        
-        cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
-        cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
+        yInfo() << "Options:";
+        yInfo() << "\t--name       port: service port name (default: /dump)";
+        yInfo() << "\t--dir        name: provide explicit name of storage directory";
+        yInfo() << "\t--overwrite      : overwrite pre-existing storage directory";
     #ifdef ADD_VIDEO
-        cout << "\t--type       type: type of the data to be dumped [bottle(default), image, video]" << endl;
-        cout << "\t--addVideo       : produce video as well (if image is selected)"                  << endl;
-        cout << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]" << endl;
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, video]";
+        yInfo() << "\t--addVideo       : produce video as well (if image is selected)";
+        yInfo() << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]";
     #else
-        cout << "\t--type       type: type of the data to be dumped [bottle(default), image]"        << endl;
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image]";
     #endif
-        cout << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)"           << endl;
-        cout << "\t--rxTime         : dump the receiver time instead of the sender time"             << endl;
-        cout << "\t--txTime         : dump the sender time straightaway"                             << endl;
+        yInfo() << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)";
+        yInfo() << "\t--rxTime         : dump the receiver time instead of the sender time";
+        yInfo() << "\t--txTime         : dump the sender time straightaway";
 
         return 0;
     }
@@ -912,7 +910,7 @@ int main(int argc, char *argv[])
     Network yarp;
     if (!yarp.checkNetwork())
     {
-        cout<<"YARP server not available!"<<endl;
+        yError()<<"YARP server not available!";
         return -1;
     }
 
