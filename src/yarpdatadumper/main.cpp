@@ -235,7 +235,6 @@ So, now, have a look inside the directory ./log
 \sa dataSetPlayer
 */ 
 
-#include <cstdio>
 #include <fstream>
 #include <sstream>
 #include <string>
