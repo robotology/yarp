@@ -14,7 +14,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 
-#include <yarp/os/impl/PortCorePacket.h>
+#include <yarp/os/impl/PortCorePackets.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

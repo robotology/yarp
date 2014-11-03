@@ -19,7 +19,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>
 #include <yarp/os/PortWriter.h>
-#include <yarp/os/impl/PortCorePacket.h>
+#include <yarp/os/impl/PortCorePackets.h>
 
 #include <yarp/os/PortReport.h>
 #include <yarp/os/Property.h>

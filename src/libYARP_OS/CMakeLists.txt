@@ -169,6 +169,7 @@ set(YARP_OS_IMPL_HDRS include/yarp/os/impl/ACESemaphoreImpl.h
                       include/yarp/os/impl/PortCoreInputUnit.h
                       include/yarp/os/impl/PortCoreOutputUnit.h
                       include/yarp/os/impl/PortCorePacket.h
+                      include/yarp/os/impl/PortCorePackets.h
                       include/yarp/os/impl/PortCoreUnit.h
                       include/yarp/os/impl/PortManager.h
                       include/yarp/os/impl/POSIXSemaphoreImpl.h
