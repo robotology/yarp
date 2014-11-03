@@ -235,6 +235,8 @@ So, now, have a look inside the directory ./log
 \sa dataSetPlayer
 */ 
 
+#include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -682,7 +684,7 @@ public:
             }
 
             cumulSize+=sz;
-            yInfo() << sz << " items stored [cumul #: " << cumulSize << "]";
+            cout << sz << " items stored [cumul #: " << cumulSize << "]" << endl;
         }
     }
 
@@ -888,20 +890,21 @@ int main(int argc, char *argv[])
 
     if (rf.check("help"))
     {
-        yInfo() << "Options:";
-        yInfo() << "\t--name       port: service port name (default: /dump)";
-        yInfo() << "\t--dir        name: provide explicit name of storage directory";
-        yInfo() << "\t--overwrite      : overwrite pre-existing storage directory";
+        cout << "Options:";
+        cout << "\t--name       port: service port name (default: /dump)"                            << endl;
+        cout << "\t--dir        name: provide explicit name of storage directory"                    << endl;
+        cout << "\t--overwrite      : overwrite pre-existing storage directory"                      << endl;
     #ifdef ADD_VIDEO
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, video]";
-        yInfo() << "\t--addVideo       : produce video as well (if image is selected)";
-        yInfo() << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]";
+        cout << "\t--type       type: type of the data to be dumped [bottle(default), image, video]" << endl;
+        cout << "\t--addVideo       : produce video as well (if image is selected)"                  << endl;
+        cout << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]" << endl;
     #else
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image]";
+        cout << "\t--type       type: type of the data to be dumped [bottle(default), image]"        << endl;
     #endif
-        yInfo() << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)";
-        yInfo() << "\t--rxTime         : dump the receiver time instead of the sender time";
-        yInfo() << "\t--txTime         : dump the sender time straightaway";
+        cout << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)"           << endl;
+        cout << "\t--rxTime         : dump the receiver time instead of the sender time"             << endl;
+        cout << "\t--txTime         : dump the sender time straightaway"                             << endl;
+        cout << endl;
 
         return 0;
     }
@@ -916,6 +919,5 @@ int main(int argc, char *argv[])
     DumpModule mod;
     return mod.runModule(rf);
 }
-
 
 
