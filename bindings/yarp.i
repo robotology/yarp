@@ -132,8 +132,8 @@
 // Deal with overridden method clashes, simply by ignoring them.
 // At some point, these methods should get renamed so they are still
 // available.
-%ignore *::check(const ConstString& key, Value *& result);
-%ignore *::check(const ConstString& key, Value *& result, const ConstString& comment);
+%ignore *::check(const ConstString& key, Value *& result) const;
+%ignore *::check(const ConstString& key, Value *& result, const ConstString& comment) const;
 %rename(where_c) *::where();
 %rename(seed_c) *::seed(int seed);  // perl clash
 %ignore *::setPid(int j, const Pid &pid);
